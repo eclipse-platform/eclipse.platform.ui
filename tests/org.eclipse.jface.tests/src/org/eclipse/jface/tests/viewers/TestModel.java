@@ -33,8 +33,6 @@ public class TestModel {
 
 	/**
 	 * Fires a model changed event to all listeners.
-	 *
-	 * @param change
 	 */
 	public void fireModelChanged(TestModelChange change) {
 		for (int i = 0; i < fListeners.size(); ++i) {

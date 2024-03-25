@@ -117,7 +117,6 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 	 * @return the listeners attached to this event manager.
 	 * The listeners currently attached; may be empty, but never
 	 * null.
-	 *
 	 */
 	protected final Object[] getListeners() {
 		final ListenerList<IPropertyChangeListener> list = listenerList;

@@ -44,8 +44,7 @@ import org.w3c.dom.Element;
  *
  *
  * {@link IElementProvider} SWT implementation to retrieve w3c Element
- * {@link SWTElement} linked to SWT widget.
- *
+ * {@link Element} linked to SWT widget.
  */
 public class SWTElementProvider implements IElementProvider {
 

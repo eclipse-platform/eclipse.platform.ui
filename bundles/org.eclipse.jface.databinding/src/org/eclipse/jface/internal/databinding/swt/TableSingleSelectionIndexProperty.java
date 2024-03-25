@@ -19,12 +19,8 @@ import org.eclipse.swt.widgets.Table;
 
 /**
  * @since 3.3
- *
  */
 public class TableSingleSelectionIndexProperty extends SingleSelectionIndexProperty<Table> {
-	/**
-	 *
-	 */
 	public TableSingleSelectionIndexProperty() {
 		super(new int[] { SWT.Selection, SWT.DefaultSelection });
 	}

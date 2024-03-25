@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.rcp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -31,25 +31,23 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class WorkbenchAdvisorTest {
 
 
 	private Display display = null;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-
 		assertNull(display);
 		display = PlatformUI.createDisplay();
 		assertNotNull(display);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		assertNotNull(display);
 		display.dispose();
@@ -166,6 +164,7 @@ public class WorkbenchAdvisorTest {
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
@@ -213,7 +212,7 @@ public class WorkbenchAdvisorTest {
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
-		// wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
+		wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
 		wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
@@ -244,6 +243,7 @@ public class WorkbenchAdvisorTest {
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
@@ -294,10 +294,6 @@ public class WorkbenchAdvisorTest {
 		assertEquals(PlatformUI.RETURN_OK, code);
 	}
 
-//  testShellClose() is commented out because it was failing with the shells having already been disposed.
-//      It's unclear what this was really trying to test anyway.
-
-	@Ignore
 	@Test
 	public void testShellClose() {
 		WorkbenchAdvisorObserver wa = new WorkbenchAdvisorObserver() {
@@ -308,7 +304,7 @@ public class WorkbenchAdvisorTest {
 
 				Shell[] shells = disp.getShells();
 				for (Shell shell : shells) {
-					if (shell != null) {
+					if (shell != null && !shell.isDisposed()) {
 						shell.close();
 					}
 				}
@@ -323,6 +319,7 @@ public class WorkbenchAdvisorTest {
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
+		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_RESTORE);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
 		wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_SHELL_CLOSE);

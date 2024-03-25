@@ -43,16 +43,10 @@ public class CSSRuleListImpl implements CSSRuleList {
 
 	//Additional
 
-	/**
-	 * @throws IndexOutOfBoundsException
-	 */
 	public void add(CSSRule rule) {
 		ruleList.add(rule);
 	}
 
-	/**
-	 * @throws IndexOutOfBoundsException
-	 */
 	public void remove(int position) {
 		ruleList.remove(position);
 	}

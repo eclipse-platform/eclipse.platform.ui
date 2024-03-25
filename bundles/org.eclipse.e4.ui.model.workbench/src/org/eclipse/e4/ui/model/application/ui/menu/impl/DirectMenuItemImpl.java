@@ -118,9 +118,10 @@ public class DirectMenuItemImpl extends MenuItemImpl implements MDirectMenuItem 
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.DIRECT_MENU_ITEM__CONTRIBUTION_URI,
 					oldContributionURI, contributionURI));
+		}
 	}
 
 	/**
@@ -142,9 +143,10 @@ public class DirectMenuItemImpl extends MenuItemImpl implements MDirectMenuItem 
 	public void setObject(Object newObject) {
 		Object oldObject = object;
 		object = newObject;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.DIRECT_MENU_ITEM__OBJECT, oldObject,
 					object));
+		}
 	}
 
 	/**
@@ -269,8 +271,9 @@ public class DirectMenuItemImpl extends MenuItemImpl implements MDirectMenuItem 
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (contributionURI: "); //$NON-NLS-1$

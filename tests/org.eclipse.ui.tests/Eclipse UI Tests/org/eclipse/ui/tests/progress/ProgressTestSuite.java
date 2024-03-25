@@ -23,7 +23,6 @@ import org.junit.runners.Suite;
  *
  * @since 3.6
  * @author Prakash G.R. (grprakash@in.ibm.com)
- *
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

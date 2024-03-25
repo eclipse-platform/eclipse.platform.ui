@@ -131,9 +131,6 @@ public class BindingTable {
 	private Map<TriggerSequence, ArrayList<Binding>> conflicts = new HashMap<>();
 	private Map<TriggerSequence, ArrayList<Binding>> orderedBindingsByTrigger = new HashMap<>();
 
-	/**
-	 * @param context
-	 */
 	public BindingTable(Context context) {
 		tableId = context;
 	}
@@ -259,9 +256,6 @@ public class BindingTable {
 		}
 	}
 
-	/**
-	 * @param binding
-	 */
 	private void evaluateOrderedBindings(TriggerSequence sequence, Binding binding) {
 		ArrayList<Binding> bindingList = orderedBindingsByTrigger.get(sequence);
 

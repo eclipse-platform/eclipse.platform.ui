@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.viewers.internal.ExpandableNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Control;
@@ -55,7 +56,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 		/**
 		 * Create a new instance of the receiver.
-		 *
 		 */
 		public VirtualManager() {
 			addTableListener();
@@ -81,8 +81,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 					// Keep looking if it is not in the cache.
 					IContentProvider contentProvider = getContentProvider();
 					// If we are building lazily then request lookup now
-					if (contentProvider instanceof ILazyContentProvider) {
-						ILazyContentProvider lazyProvider = (ILazyContentProvider) contentProvider;
+					if (contentProvider instanceof ILazyContentProvider lazyProvider) {
 						if (!isBusy()) {
 							lazyProvider.updateElement(index);
 						} else {
@@ -108,7 +107,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		/**
 		 * Get the element at index.Resolve it lazily if this is available.
 		 *
-		 * @param index
 		 * @return Object or <code>null</code> if it could not be found
 		 */
 		protected Object resolveElement(int index) {
@@ -123,9 +121,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 		/**
 		 * A non visible item has been added.
-		 *
-		 * @param element
-		 * @param index
 		 */
 		public void notVisibleAdded(Object element, int index) {
 
@@ -146,8 +141,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		/**
 		 * The elements with the given indices need to be removed from the
 		 * cache.
-		 *
-		 * @param indices
 		 */
 		public void removeIndices(int[] indices) {
 			if (indices.length == 1) {
@@ -172,9 +165,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		/**
 		 * The elements between the given indices (inclusive) need to be removed
 		 * from the cache.
-		 *
-		 * @param from
-		 * @param to
 		 */
 		public void removeIndicesFromTo(int from, int to) {
 			int indexAfterTo = to + 1;
@@ -188,16 +178,12 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		}
 
 		/**
-		 * @param element
 		 * @return the index of the element in the cache, or null
 		 */
 		public int find(Object element) {
 			return Arrays.asList(cachedElements).indexOf(element);
 		}
 
-		/**
-		 * @param count
-		 */
 		public void adjustCacheSize(int count) {
 			if (count == cachedElements.length) {
 				return;
@@ -239,8 +225,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	/**
 	 * Initialize the virtual manager to manage the virtual state if the table
 	 * is VIRTUAL. If not use the default no-op version.
-	 *
-	 * @param style
 	 */
 	private void initializeVirtualManager(int style) {
 		if ((style & SWT.VIRTUAL) == 0) {
@@ -269,8 +253,21 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			return;
 		Object[] filtered = filter(elements);
 
+		final int itemsLimit = getItemsLimit();
 		for (Object element : filtered) {
 			int index = indexForElement(element);
+			// 1. Cost is negligible if you don't set limit.
+			// 2. Fast way to check if items have reached the limit.
+			if (itemsLimit > 0) {
+				if (doGetItemCount() == itemsLimit) {
+					createExpandableNode(element, index);
+					continue;
+				}
+				if (getLastElement() instanceof ExpandableNode expNode) {
+					addElementAtIndex(element, index, expNode);
+					continue;
+				}
+			}
 			createItem(element, index);
 		}
 	}
@@ -278,12 +275,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	/**
 	 * Create a new TableItem at index if required.
 	 *
-	 * @param element
 	 * @param index
 	 *
 	 * @since 3.1
 	 */
-	private void createItem(Object element, int index) {
+	void createItem(Object element, int index) {
 		if (virtualManager == null) {
 			updateItem(internalCreateNewRowPart(SWT.NONE, index).getItem(),
 					element);
@@ -353,9 +349,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		boolean oldBusy = isBusy();
 		setBusy(true);
 		try {
-			if (widget instanceof Item) {
-				final Item item = (Item) widget;
-
+			if (widget instanceof Item item) {
 				// remember element we are showing
 				if (fullMap) {
 					associate(element, item);
@@ -384,19 +378,16 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
 				// TableViewer with 0 columns does not work
 				for (int column = 0; column < columnCount || column == 0; column++) {
-					ViewerColumn columnViewer = getViewerColumn(column);
-					ViewerCell cellToUpdate = updateCell(viewerRowFromItem,
-							column, element);
 
-					// If the control is virtual, we cannot use the cached cell object. See bug 188663.
-					if (isVirtual) {
-						cellToUpdate = new ViewerCell(cellToUpdate.getViewerRow(), cellToUpdate.getColumnIndex(), element);
+					// ExpandableNode is shown in first column only.
+					if (element instanceof ExpandableNode && column != 0) {
+						continue;
 					}
 
-					columnViewer.refresh(cellToUpdate);
+					ViewerColumn columnViewer = getViewerColumn(column);
+					ViewerCell cellToUpdate = new ViewerCell(viewerRowFromItem, column, element);
 
-					// clear cell (see bug 201280)
-					updateCell(null, 0, null);
+					columnViewer.refresh(cellToUpdate);
 
 					// As it is possible for user code to run the event
 					// loop check here.
@@ -493,8 +484,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 		List<Object> result = new ArrayList<>();
 		int[] selectionIndices = doGetSelectionIndices();
-		if (getContentProvider() instanceof ILazyContentProvider) {
-			ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
+		if (getContentProvider() instanceof ILazyContentProvider lazy) {
 			for (int selectionIndex : selectionIndices) {
 				lazy.updateElement(selectionIndex);// Start the update
 				// check for the case where the content provider changed the number of items
@@ -597,6 +587,14 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			add(element);
 			return;
 		}
+
+		// if limit is set and still some elements are not populated.Assumption that
+		// user has already updated the model and needs addition of item.
+		if (getItemsLimit() > 0 && getLastElement() instanceof ExpandableNode) {
+			internalRefreshAll(false);
+			return;
+		}
+
 		if (position == -1) {
 			position = doGetItemCount();
 		}
@@ -666,9 +664,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		// e.g. if (a, b) is replaced by (b, a), the disassociate of b to
 		// item 1 could undo
 		// the associate of b to item 0.
-
-		Object[] children = getSortedChildren(getRoot());
 		Item[] items = doGetItems();
+		Object[] children = getChildrenWithLimitApplied(getRoot(), items);
+		if (children == null) {
+			children = getSortedChildren(getRoot());
+		}
 		int min = Math.min(children.length, items.length);
 		for (int i = 0; i < min; ++i) {
 
@@ -747,6 +747,14 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				return;
 			}
 		}
+
+		// if limit is set and still some elements are not populated.Assumption that
+		// user has already updated the model and needs removal of an item.
+		if (getItemsLimit() > 0 && getLastElement() instanceof ExpandableNode) {
+			internalRefreshAll(false);
+			return;
+		}
+
 		// use remove(int[]) rather than repeated TableItem.dispose() calls
 		// to allow SWT to optimize multiple removals
 		int[] indices = new int[elements.length];
@@ -758,8 +766,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				if (index != -1) {
 					indices[count++] = index;
 				}
-			} else if (w instanceof Item) {
-				Item item = (Item) w;
+			} else if (w instanceof Item item) {
 				disassociate(item);
 				indices[count++] = doIndexOf(item);
 			}
@@ -777,6 +784,32 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		if (doGetItemCount() == 0) {
 			doRemoveAll();
 		}
+	}
+
+	/**
+	 * Returns the data of the last item on the viewer.
+	 *
+	 * @return may return null
+	 */
+	Object getLastElement() {
+		Item lastItem;
+		try {
+			// fast path first
+			int itemCount = doGetItemCount();
+			if (itemCount == 0) {
+				return null;
+			}
+			lastItem = doGetItem(itemCount - 1);
+		} catch (Exception e) {
+			// something went wrong with indexes
+			Item[] items = doGetItems();
+			int length = items.length;
+			if (length == 0) {
+				return null;
+			}
+			lastItem = items[length - 1];
+		}
+		return lastItem == null ? null : lastItem.getData();
 	}
 
 	/**
@@ -825,8 +858,24 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	public void reveal(Object element) {
 		Assert.isNotNull(element);
 		Widget w = findItem(element);
-		if (w instanceof Item) {
-			doShowItem((Item) w);
+
+		if (w == null && getItemsLimit() > 0) {
+			// if limited elements are populated, element to reveal may be inside
+			// ExpandableNode.
+			if (getLastElement() instanceof ExpandableNode node) {
+				Item[] items = doGetItems();
+				Object[] remEles = node.getRemainingElements();
+				for (Object object : remEles) {
+					if (equals(object, element)) {
+						w = items[items.length - 1];
+						break;
+					}
+				}
+			}
+		}
+
+		if (w instanceof Item item) {
+			doShowItem(item);
 		}
 	}
 
@@ -851,8 +900,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			for (int i = 0; i < size; ++i) {
 				Object o = list.get(i);
 				Widget w = findItem(o);
-				if (w instanceof Item) {
-					Item item = (Item) w;
+				if (w instanceof Item item) {
 					items[count++] = item;
 				}
 			}
@@ -885,6 +933,30 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 					System.arraycopy(indices, 0, indices = new int[count], 0, count);
 				}
 
+				// item to select may be hidden inside expandable node.
+				if (getItemsLimit() > 0 && indices.length < list.size()
+						&& getLastElement() instanceof ExpandableNode expNode) {
+
+					// extract only non found items already.
+					List<Object> notFoundItems = new ArrayList<>(list);
+					for (int index : indices) {
+						notFoundItems.remove(doGetItem(index).getData());
+					}
+
+					Object[] remEles = expNode.getRemainingElements();
+					OuterLoop : for (Object searchItem : notFoundItems) {
+						for (Object remEle : remEles) {
+							if (equals(remEle, searchItem)) {
+								int[] placeHolder = new int[indices.length + 1];
+								System.arraycopy(indices, 0, placeHolder, 0, indices.length);
+								placeHolder[placeHolder.length - 1] = items.length - 1;
+								indices = placeHolder;
+								break OuterLoop;
+							}
+						}
+					}
+				}
+
 				doSelect(indices);
 			}
 		}
@@ -908,8 +980,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		for (int i = 0; i < size; ++i) {
 			Object o = list.get(i);
 			Widget w = findItem(o);
-			if (w instanceof Item) {
-				Item item = (Item) w;
+			if (w instanceof Item item) {
 				indices[count++] = doIndexOf(item);
 				if (firstItem == null) {
 					firstItem = item;
@@ -919,15 +990,13 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			}
 		}
 
-		if (getContentProvider() instanceof ILazyContentProvider) {
-			ILazyContentProvider provider = (ILazyContentProvider) getContentProvider();
-
+		if (getContentProvider() instanceof ILazyContentProvider provider) {
 			// Now go through it again until all is done or we are no longer
 			// virtual
 			// This may create all items so it is not a good
 			// idea in general.
 			// Use #setSelection (int [] indices,boolean reveal) instead
-			for (int i = 0; virtualElements.size() > 0 && i < doGetItemCount(); i++) {
+			for (int i = 0; !virtualElements.isEmpty() && i < doGetItemCount(); i++) {
 				provider.updateElement(i);
 				Item item = doGetItem(i);
 				if (virtualElements.contains(item.getData())) {
@@ -1055,6 +1124,83 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	protected void assertContentProviderType(IContentProvider provider) {
 		Assert.isTrue(provider instanceof IStructuredContentProvider
 				|| provider instanceof ILazyContentProvider);
+	}
+
+	private void createExpandableNode(Object element, int index) {
+		// case2 : if ExpNode absent. Create an ExpNode
+		Item[] items = doGetItems();
+		// there is an extra element being added.
+		Object[] allEles = new Object[items.length + 1];
+
+		// case2.1 : new element goes inside ExpNode and a new ExpNode is created
+		if (index >= doGetItemCount()) {
+			for (int i = 0; i < items.length; i++) {
+				allEles[i] = items[i].getData();
+			}
+			allEles[allEles.length - 1] = element;
+			ExpandableNode expNode = new ExpandableNode(allEles, items.length, getItemsLimit(), this);
+			createItem(expNode, -1);
+		} else {
+			// case2.2 : insert the element at it's appropriate position. update all
+			// elements until last element and create an ExpNode.
+
+			// copy data until index
+			for (int i = 0; i < index; i++) {
+				allEles[i] = items[i].getData();
+
+			}
+			// copy new element at it's index
+			allEles[index] = element;
+
+			Object temp = items[index].getData();
+			// update the index with new element.
+			doUpdateItem(items[index], element, true);
+
+			Object temp1 = null;
+
+			// move all elements one position ahead from index(including)
+			// after the loop 'temp' will contain last element which will go inside ExpNode.
+			for (int i = index; i < items.length - 1; i++) {
+				temp1 = items[i + 1].getData();
+				doUpdateItem(items[i + 1], temp, true);
+				allEles[i + 1] = temp;
+				temp = temp1;
+			}
+
+			allEles[allEles.length - 1] = temp;
+
+			ExpandableNode expNode = new ExpandableNode(allEles, items.length, getItemsLimit(), this);
+			createItem(expNode, -1);
+		}
+	}
+
+	private void addElementAtIndex(Object element, int index, ExpandableNode expNode) {
+		final int itemCount = doGetItemCount();
+		if (index >= itemCount - 1) {
+			// case 1.2 : this element belongs to hidden elements in the expandable node
+			expNode.addElement(element);
+			doUpdateItem(doGetItem(itemCount - 1), expNode, true);
+		} else {
+			// case 1.1 : element need to be inserted in the visible items.
+			Item[] items = doGetItems();
+			// we know last element is ExpNode and last but one now must go into this node.
+			Item visibleLast = items[items.length - 2];
+			expNode.addElement(visibleLast.getData());
+			doUpdateItem(doGetItem(itemCount - 1), expNode, true);
+
+			// backup index element and update it with new element being added.
+			Object temp = items[index].getData();
+			doUpdateItem(items[index], element, true);
+
+			Object temp1 = items[index + 1].getData();
+
+			// update all the items to one position next from the index.
+			for (int i = index + 1; i < items.length - 1; i++) {
+				temp1 = items[i].getData();
+				doUpdateItem(items[i], temp, true);
+				temp = temp1;
+			}
+		}
 	}
 
 	/**
@@ -1317,8 +1463,31 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @param indices the array of indices for the items to select
 	 *
 	 * @exception IllegalArgumentException - if the array of indices is null
-	 *
 	 */
 	protected abstract void doSelect(int[] indices);
+
+	/**
+	 * Returns true if the element is present in the viewer. If the viewer has
+	 * incremental display set then the element is searched inside expandable node
+	 * also. i.e. it searches inside the remaining elements to be populated.
+	 *
+	 * @param element model element
+	 * @return if given model element is contained in the viewer
+	 * @since 3.31
+	 */
+	public boolean contains(Object element) {
+		if (findItem(element) != null) {
+			return true;
+		}
+
+		if (getItemsLimit() <= 0) {
+			return false;
+		}
+
+		if (getLastElement() instanceof ExpandableNode node) {
+			return node.contains(element);
+		}
+		return false;
+	}
 
 }

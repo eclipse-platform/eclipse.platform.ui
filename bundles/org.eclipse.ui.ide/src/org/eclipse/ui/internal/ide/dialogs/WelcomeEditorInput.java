@@ -95,6 +95,11 @@ public class WelcomeEditorInput implements IEditorInput {
 	}
 
 	@Override
+	public int hashCode() {
+		return aboutInfo.getFeatureId().hashCode();
+	}
+
+	@Override
 	public String getToolTipText() {
 		return NLS.bind(IDEWorkbenchMessages.WelcomeEditor_toolTip, aboutInfo.getFeatureLabel());
 	}

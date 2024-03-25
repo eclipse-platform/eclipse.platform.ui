@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class HeadlessPage extends FormPage {
-	private int count;
+	private final int count;
 
 	public HeadlessPage(FormEditor editor, int count) {
 		super(editor, "page"+count, "Page "+count);

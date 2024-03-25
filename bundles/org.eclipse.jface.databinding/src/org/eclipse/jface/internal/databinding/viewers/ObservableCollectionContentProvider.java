@@ -85,8 +85,6 @@ public abstract class ObservableCollectionContentProvider<E> implements IStructu
 
 	/**
 	 * Constructs an ObservableCollectionContentProvider
-	 *
-	 * @param explicitViewerUpdater
 	 */
 	protected ObservableCollectionContentProvider(IViewerUpdater<E> explicitViewerUpdater) {
 		this.explicitViewerUpdater = explicitViewerUpdater;

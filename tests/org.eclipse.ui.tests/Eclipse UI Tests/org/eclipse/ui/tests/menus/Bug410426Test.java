@@ -105,10 +105,10 @@ public class Bug410426Test {
 		ExtendedLogReaderService log = window
 				.getService(ExtendedLogReaderService.class);
 		LogListener logListener = entry -> {
-			if (entry.getLevel() == LogService.LOG_ERROR && entry.getException() instanceof ClassCastException
+			if (entry.getLevel() == LogService.LOG_ERROR && entry.getException() instanceof ClassCastException cce
 					&& entry.getException().getMessage()
 							.contains("MenuManager cannot be cast to org.eclipse.jface.action.ContributionItem")) { // $NON-NLS-N$
-				cces.add((ClassCastException) entry.getException());
+				cces.add(cce);
 			}
 		};
 		LogFilter logFilter = (bundle, loggerName, logLevel) -> logLevel == LogService.LOG_ERROR && loggerName == null

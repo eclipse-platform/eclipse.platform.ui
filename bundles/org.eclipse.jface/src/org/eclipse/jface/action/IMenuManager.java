@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import org.eclipse.pde.api.tools.annotations.NoImplement;
+
 /**
  * The <code>IMenuManager</code> interface provides protocol for managing
  * contributions to a menu bar and its sub menus. An <code>IMenuManager</code>
@@ -26,9 +28,8 @@ package org.eclipse.jface.action;
  * This package provides a concrete menu manager implementation,
  * {@link MenuManager MenuManager}.
  * </p>
- *
- * @noimplement This interface is not intended to be implemented by clients.
  */
+@NoImplement
 public interface IMenuManager extends IContributionManager, IContributionItem {
 	/**
 	 * Adds a menu listener to this menu.

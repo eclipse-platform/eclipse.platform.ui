@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -62,7 +61,6 @@ import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
  * point to add support for more project kinds.
  *
  * @since 3.12
- *
  */
 public class SmartImportJob extends Job {
 
@@ -113,8 +111,8 @@ public class SmartImportJob extends Job {
 		setWorkingSets(workingSets);
 		this.configureProjects = configureProjects;
 		this.deepChildrenDetection = recuriveChildrenDetection;
-		this.report = Collections.synchronizedMap(new HashMap<IProject, List<ProjectConfigurator>>());
-		this.errors = Collections.synchronizedMap(new HashMap<IPath, Exception>());
+		this.report = Collections.synchronizedMap(new HashMap<>());
+		this.errors = Collections.synchronizedMap(new HashMap<>());
 		this.crawlerJobGroup = new JobGroup(DataTransferMessages.SmartImportJob_detectAndConfigureProjects, 0, 1);
 	}
 
@@ -144,7 +142,6 @@ public class SmartImportJob extends Job {
 	 * Sets the directories that have been detected by preliminary detection and that
 	 * user has selected to import. Those will be imported and configured in any case.
 	 * This does not impact output of {@link #getImportProposals(IProgressMonitor)}
-	 * @param directories
 	 */
 	public void setDirectoriesToImport(Set<File> directories) {
 		this.directoriesToImport = directories;
@@ -155,7 +152,6 @@ public class SmartImportJob extends Job {
 	 * Projects UNDER those directories may be imported, but never project directly
 	 * in one of those directories.
 	 * This does not impact output of {@link #getImportProposals(IProgressMonitor)}
-	 * @param directories
 	 */
 	public void setExcludedDirectories(Set<File> directories) {
 		this.excludedDirectories = directories;
@@ -164,8 +160,6 @@ public class SmartImportJob extends Job {
 	/**
 	 * Adds a listener to be notified of progress (detection/configuration of
 	 * sub-projects)
-	 *
-	 * @param listener
 	 */
 	public void setListener(RecursiveImportListener listener) {
 		this.listener = listener;
@@ -210,7 +204,7 @@ public class SmartImportJob extends Job {
 						leafToRootProjects.put(directoryToImport, newProject);
 						loopMonitor.worked(1);
 					} catch (CouldNotImportProjectException ex) {
-						Path path = new Path(directoryToImport.getAbsolutePath());
+						IPath path = IPath.fromOSString(directoryToImport.getAbsolutePath());
 						if (listener != null) {
 							listener.errorHappened(path, ex);
 						}
@@ -350,7 +344,7 @@ public class SmartImportJob extends Job {
 		}
 		parentContainer.refreshLocal(IResource.DEPTH_ONE, progressMonitor); // make sure we know all children
 		Set<IFolder> childrenToProcess = new HashSet<>();
-		final Set<IProject> res = Collections.synchronizedSet(new HashSet<IProject>());
+		final Set<IProject> res = Collections.synchronizedSet(new HashSet<>());
 		for (IResource childResource : parentContainer.members()) {
 			if (childResource.getType() == IResource.FOLDER && !childResource.isDerived()) {
 				IPath location = childResource.getLocation();
@@ -410,7 +404,7 @@ public class SmartImportJob extends Job {
 		Set<IPath> excludedPaths = new HashSet<>();
 		if (this.excludedDirectories != null) {
 			for (File excludedDirectory : this.excludedDirectories) {
-				excludedPaths.add(new Path(excludedDirectory.getAbsolutePath()));
+				excludedPaths.add(IPath.fromOSString(excludedDirectory.getAbsolutePath()));
 			}
 		}
 		container.refreshLocal(IResource.DEPTH_INFINITE, progressMonitor);
@@ -537,11 +531,7 @@ public class SmartImportJob extends Job {
 	}
 
 	/**
-	 * @param directory
-	 * @param workingSets
 	 * @param refreshMode One {@link IResource#BACKGROUND_REFRESH} for background refresh, or {@link IResource#NONE} for immediate refresh
-	 * @return
-	 * @throws Exception
 	 */
 	private IProject toExistingOrNewProject(File directory, IProgressMonitor progressMonitor, int refreshMode) throws CouldNotImportProjectException {
 		try {
@@ -584,7 +574,7 @@ public class SmartImportJob extends Job {
 		IProjectDescription desc = null;
 		File expectedProjectDescriptionFile = new File(directory, IProjectDescription.DESCRIPTION_FILE_NAME);
 		if (expectedProjectDescriptionFile.exists()) {
-			desc = ResourcesPlugin.getWorkspace().loadProjectDescription(new Path(expectedProjectDescriptionFile.getAbsolutePath()));
+			desc = ResourcesPlugin.getWorkspace().loadProjectDescription(IPath.fromOSString(expectedProjectDescriptionFile.getAbsolutePath()));
 			String expectedName = desc.getName();
 			IProject projectWithSameName = this.workspaceRoot.getProject(expectedName);
 			if (projectWithSameName.exists()) {
@@ -599,7 +589,7 @@ public class SmartImportJob extends Job {
 			String projectName = generateNewProjectName(directory, this.workspaceRoot);
 			desc = ResourcesPlugin.getWorkspace().newProjectDescription(projectName);
 		}
-		desc.setLocation(new Path(directory.getAbsolutePath()));
+		desc.setLocation(IPath.fromOSString(directory.getAbsolutePath()));
 		IProject res = this.workspaceRoot.getProject(desc.getName());
 		res.create(desc, progressMonitor);
 		PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(res, this.workingSets);
@@ -656,7 +646,6 @@ public class SmartImportJob extends Job {
 
 	/**
 	 *
-	 * @param monitor
 	 * @return the proposals for the import operation.
 	 */
 	public Map<File, List<ProjectConfigurator>> getImportProposals(IProgressMonitor monitor) {
@@ -721,8 +710,6 @@ public class SmartImportJob extends Job {
 	 * Sets whether the job should look for nested projects. This value is
 	 * ignored if consumer specifies directories to import via
 	 * {@link #setDirectoriesToImport(Set)}.
-	 *
-	 * @param detectNestedProjects
 	 */
 	public void setDetectNestedProjects(boolean detectNestedProjects) {
 		this.deepChildrenDetection = detectNestedProjects;

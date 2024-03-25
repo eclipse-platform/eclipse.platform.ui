@@ -20,7 +20,6 @@ package org.eclipse.ui.navigator;
  * rendered as a separator or group marker.
  *
  * @since 3.2
- *
  */
 public final class MenuInsertionPoint {
 	private String name;

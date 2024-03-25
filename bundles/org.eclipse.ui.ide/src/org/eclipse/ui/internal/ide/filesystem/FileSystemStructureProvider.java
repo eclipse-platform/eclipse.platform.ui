@@ -34,14 +34,14 @@ import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
  */
 public class FileSystemStructureProvider implements IImportStructureProvider {
 
-	private Set visitedDirs;
+	private Set<String> visitedDirs;
 
 	@Override
 	public List getChildren(Object element) {
 		File folder = (File) element;
 		String[] children = folder.list();
 		int childrenLength = children == null ? 0 : children.length;
-		List result = new ArrayList(childrenLength);
+		List<File> result = new ArrayList<>(childrenLength);
 
 		for (int i = 0; i < childrenLength; i++) {
 			File file = new File(folder, children[i]);
@@ -55,7 +55,7 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
 
 	private void initVisitedDirs(){
 		if(visitedDirs == null){
-			visitedDirs = new HashSet();
+			visitedDirs = new HashSet<>();
 		}
 	}
 

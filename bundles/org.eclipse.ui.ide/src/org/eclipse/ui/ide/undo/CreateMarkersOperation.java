@@ -17,12 +17,13 @@ package org.eclipse.ui.ide.undo;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.undo.snapshot.IMarkerSnapshot;
+import org.eclipse.core.resources.undo.snapshot.ResourceSnapshotFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.ui.internal.ide.undo.MarkerDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
@@ -34,7 +35,6 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * intended to be subclassed by clients.
  *
  * @since 3.3
- *
  */
 public class CreateMarkersOperation extends AbstractMarkersOperation {
 
@@ -56,7 +56,8 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 	 */
 	public CreateMarkersOperation(String type, Map attributes,
 			IResource resource, String name) {
-		super(null, new MarkerDescription[] { new MarkerDescription(type,
+		super(null, new IMarkerSnapshot[] {
+				ResourceSnapshotFactory.fromMarkerDetails(type,
 				attributes, resource) }, null, name);
 	}
 
@@ -79,10 +80,9 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 	public CreateMarkersOperation(String[] types, Map[] attributes,
 			IResource[] resources, String name) {
 		super(null, null, null, name);
-		MarkerDescription[] markersToCreate = new MarkerDescription[attributes.length];
+		IMarkerSnapshot[] markersToCreate = new IMarkerSnapshot[attributes.length];
 		for (int i = 0; i < markersToCreate.length; i++) {
-			markersToCreate[i] = new MarkerDescription(types[i], attributes[i],
-					resources[i]);
+			markersToCreate[i] = ResourceSnapshotFactory.fromMarkerDetails(types[i], attributes[i], resources[i]);
 		}
 		setMarkerDescriptions(markersToCreate);
 	}
@@ -106,10 +106,9 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 	public CreateMarkersOperation(String type, Map[] attributes,
 			IResource[] resources, String name) {
 		super(null, null, null, name);
-		MarkerDescription[] markersToCreate = new MarkerDescription[attributes.length];
+		IMarkerSnapshot[] markersToCreate = new IMarkerSnapshot[attributes.length];
 		for (int i = 0; i < markersToCreate.length; i++) {
-			markersToCreate[i] = new MarkerDescription(type, attributes[i],
-					resources[i]);
+			markersToCreate[i] = ResourceSnapshotFactory.fromMarkerDetails(type, attributes[i], resources[i]);
 		}
 		setMarkerDescriptions(markersToCreate);
 	}

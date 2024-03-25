@@ -25,7 +25,6 @@ import org.eclipse.ui.internal.views.markers.MarkerItemDefaults;
  * by clients.
  *
  * @since 3.4
- *
  */
 public abstract class MarkerItem {
 

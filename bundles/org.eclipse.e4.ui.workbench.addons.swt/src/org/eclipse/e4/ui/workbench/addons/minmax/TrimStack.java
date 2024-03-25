@@ -15,18 +15,17 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
 import org.eclipse.e4.ui.internal.workbench.swt.ShellActivationListener;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
@@ -334,7 +333,9 @@ public class TrimStack {
 			for (ToolItem item : trimStackTB.getItems()) {
 				item.setSelection(false);
 			}
-		} else if (isEditorStack() || minimizedElement instanceof MPlaceholder) {
+		} else if ((isEditorStack() || minimizedElement instanceof MPlaceholder)
+				&& trimStackTB.getItemCount() > 1) {
+
 			trimStackTB.getItem(1).setSelection(true);
 		} else if (isPerspectiveStack()) {
 			MPerspectiveStack pStack = (MPerspectiveStack) minimizedElement;
@@ -572,7 +573,7 @@ public class TrimStack {
 	}
 
 	@PostConstruct
-	void createWidget(Composite parent, MToolControl me, CSSRenderingUtils cssUtils) {
+	void createWidget(Composite parent, MToolControl me) {
 		if (minimizedElement == null) {
 			minimizedElement = findElement();
 		}

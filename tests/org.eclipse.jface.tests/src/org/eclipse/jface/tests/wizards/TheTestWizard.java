@@ -22,9 +22,9 @@ public class TheTestWizard extends Wizard {
 	public TheTestWizardPage page1;
 	public TheTestWizardPage page2;
 	public TheTestWizardPage page3;
-	public final String page1Name = "PAGE1";
-	public final String page2Name = "PAGE2";
-	public final String page3Name = "PAGE3";
+	public static final String page1Name = "PAGE1";
+	public static final String page2Name = "PAGE2";
+	public static final String page3Name = "PAGE3";
 	private boolean throwExceptionOnDispose;
 
 	public TheTestWizard() {

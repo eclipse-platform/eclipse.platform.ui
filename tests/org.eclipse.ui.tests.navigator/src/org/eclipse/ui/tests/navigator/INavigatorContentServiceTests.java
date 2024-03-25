@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.ui.tests.navigator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -185,7 +186,7 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 		for (String visibleId : visibleIds) {
 			if (!TEST_CONTENT.equals(visibleId) && !COMMON_NAVIGATOR_RESOURCE_EXT.equals(visibleId)
 					&& !TEST_CONTENT_HAS_CHILDREN.equals(visibleId)) {
-				assertTrue("The extension id is invalid:" + visibleId, false);
+				fail("The extension id is invalid:" + visibleId);
 			}
 		}
 
@@ -197,8 +198,7 @@ public class INavigatorContentServiceTests extends NavigatorTestBase {
 					&& !COMMON_NAVIGATOR_RESOURCE_EXT.equals(visibleDescriptors[i]
 							.getId())
 						&& !TEST_CONTENT_HAS_CHILDREN.equals(visibleDescriptors[i].getId())) {
-				assertTrue("The extension id is invalid:"
-						+ visibleDescriptors[i].getId(), false);
+				fail("The extension id is invalid:" + visibleDescriptors[i].getId());
 			}
 		}
 

@@ -6,13 +6,17 @@
  */
 package org.eclipse.e4.emf.xpath.test.model.xpathtest.util;
 
-import org.eclipse.e4.emf.xpath.test.model.xpathtest.*;
-
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Menu;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuContainer;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuElement;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuItem;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Node;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Root;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -70,7 +74,7 @@ public class XpathtestAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	protected XpathtestSwitch<Adapter> modelSwitch =
-		new XpathtestSwitch<Adapter>() {
+		new XpathtestSwitch<>() {
 			@Override
 			public Adapter caseRoot(Root object) {
 				return createRootAdapter();

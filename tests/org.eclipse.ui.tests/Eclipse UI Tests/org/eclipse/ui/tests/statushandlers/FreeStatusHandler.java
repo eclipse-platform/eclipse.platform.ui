@@ -19,7 +19,6 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
 /**
  * This status handler is not bound to any product.
  * @since 3.5
- *
  */
 public class FreeStatusHandler extends AbstractStatusHandler {
 

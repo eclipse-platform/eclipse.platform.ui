@@ -16,9 +16,9 @@ package org.eclipse.e4.ui.progress.internal;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.ui.model.application.MApplication;
+
+import jakarta.inject.Inject;
 
 
 public class Preferences {

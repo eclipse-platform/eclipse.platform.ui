@@ -148,9 +148,6 @@ public abstract class Binding extends ValidationStatusProvider {
 		super.dispose();
 	}
 
-	/**
-	 * @param context
-	 */
 	/* package */ void setDataBindingContext(DataBindingContext context) {
 		this.context = context;
 	}

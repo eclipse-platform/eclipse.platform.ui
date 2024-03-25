@@ -22,7 +22,7 @@ import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
  */
 public class TextTestsTabDescriptor extends AbstractTabDescriptor {
 
-	private String word;
+	private final String word;
 
 	public TextTestsTabDescriptor(String aWord) {
 		super();

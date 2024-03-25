@@ -14,10 +14,10 @@
 
 package org.eclipse.e4.core.commands.internal;
 
+import jakarta.inject.Inject;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import javax.inject.Inject;
 import org.eclipse.core.commands.AbstractParameterValueConverter;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
@@ -36,9 +36,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 
-/**
- *
- */
 public class HandlerServiceImpl implements EHandlerService {
 	/**
 	 * The static context key under which a command 'trigger' from legacy code is stored during
@@ -96,7 +93,6 @@ public class HandlerServiceImpl implements EHandlerService {
 	/**
 	 * @param context
 	 *            the context to start the lookup process
-	 * @param commandId
 	 * @return a handler, or <code>null</code>
 	 */
 	public static Object lookUpHandler(IEclipseContext context, String commandId) {
@@ -105,8 +101,6 @@ public class HandlerServiceImpl implements EHandlerService {
 
 	/**
 	 * Fill in a temporary static context for execution.
-	 *
-	 * @param command
 	 */
 	@SuppressWarnings("rawtypes")
 	private void addParms(ParameterizedCommand command, IEclipseContext staticContext) {
@@ -126,9 +120,6 @@ public class HandlerServiceImpl implements EHandlerService {
 	/**
 	 * Convert the parameter's value according to it's type.
 	 *
-	 * @param command
-	 * @param parameterId
-	 * @param value
 	 * @return converted value
 	 * @see org.eclipse.e4.ui.model.application.commands.MCommandParameter#getTypeId()
 	 */

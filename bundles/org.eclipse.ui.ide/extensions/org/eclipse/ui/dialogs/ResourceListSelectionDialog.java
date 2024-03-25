@@ -93,16 +93,16 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
 	private boolean allowUserToToggleDerived;
 
-	static class ResourceDescriptor implements Comparable {
+	static class ResourceDescriptor implements Comparable<ResourceDescriptor> {
 		String label;
 
-		ArrayList resources = new ArrayList();
+		ArrayList<IResource> resources = new ArrayList<>();
 
 		boolean resourcesSorted = true;
 
 		@Override
-		public int compareTo(Object o) {
-			return collator.compare(label, ((ResourceDescriptor) o).label);
+		public int compareTo(ResourceDescriptor o) {
+			return collator.compare(label, o.label);
 		}
 	}
 
@@ -411,30 +411,29 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-
-		Composite dialogArea = (Composite) super.createDialogArea(parent);
-		Label l = new Label(dialogArea, SWT.NONE);
+		Composite dialogAreaComposite = (Composite) super.createDialogArea(parent);
+		Label l = new Label(dialogAreaComposite, SWT.NONE);
 		l.setText(IDEWorkbenchMessages.ResourceSelectionDialog_label);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		l.setLayoutData(data);
 
-		pattern = new Text(dialogArea, SWT.SINGLE | SWT.BORDER);
+		pattern = new Text(dialogAreaComposite, SWT.SINGLE | SWT.BORDER);
 		pattern.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		l = new Label(dialogArea, SWT.NONE);
+		l = new Label(dialogAreaComposite, SWT.NONE);
 		l.setText(IDEWorkbenchMessages.ResourceSelectionDialog_matching);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		l.setLayoutData(data);
-		resourceNames = new Table(dialogArea, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+		resourceNames = new Table(dialogAreaComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 12 * resourceNames.getItemHeight();
 		resourceNames.setLayoutData(data);
 
-		l = new Label(dialogArea, SWT.NONE);
+		l = new Label(dialogAreaComposite, SWT.NONE);
 		l.setText(IDEWorkbenchMessages.ResourceSelectionDialog_folders);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		l.setLayoutData(data);
 
-		folderNames = new Table(dialogArea, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		folderNames = new Table(dialogAreaComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = 300;
 		data.heightHint = 4 * folderNames.getItemHeight();
@@ -477,7 +476,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 		});
 
 		if (getAllowUserToToggleDerived()) {
-			showDerivedButton = new Button(dialogArea, SWT.CHECK);
+			showDerivedButton = new Button(dialogAreaComposite, SWT.CHECK);
 			showDerivedButton.setText(IDEWorkbenchMessages.ResourceSelectionDialog_showDerived);
 			showDerivedButton.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -489,8 +488,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 			showDerivedButton.setSelection(getShowDerived());
 		}
 
-		applyDialogFont(dialogArea);
-		return dialogArea;
+		applyDialogFont(dialogAreaComposite);
+		return dialogAreaComposite;
 	}
 
 	/**
@@ -515,8 +514,6 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 		allowUserToToggleDerived = allow;
 	}
 
-	/**
-	 */
 	private void filterResources(boolean force) {
 		String oldPattern = force ? null : patternString;
 		patternString = adjustPattern();
@@ -573,7 +570,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 				match = true;
 			} else {
 				int compare = descriptors[index].compareTo(desc);
-				if (compare == -1) {
+				if (compare < 0) {
 					low = index;
 				} else {
 					high = index;
@@ -586,8 +583,6 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 		return -1;
 	}
 
-	/**
-	 */
 	private void gatherResources(boolean force) {
 		String oldPattern = force ? null : patternString;
 		patternString = adjustPattern();
@@ -637,7 +632,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 	 * @return an image for a resource descriptor.
 	 */
 	private Image getImage(ResourceDescriptor desc) {
-		IResource r = (IResource) desc.resources.get(0);
+		IResource r = desc.resources.get(0);
 		return labelProvider.getImage(r);
 	}
 
@@ -660,7 +655,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 				match = true;
 			} else {
 				int compare = descriptors[index].compareTo(desc);
-				if (compare == -1) {
+				if (compare < 0) {
 					low = index;
 				} else {
 					high = index;
@@ -778,10 +773,10 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 				return;
 			}
 			ResourceDescriptor current = descriptors[index];
-			IResource currentResource = (IResource) current.resources.get(0);
+			IResource currentResource = current.resources.get(0);
 			for (int i2 = 1; i2 < descriptorsSize; i2++) {
 				ResourceDescriptor next = descriptors[i2];
-				IResource nextResource = (IResource) next.resources.get(0);
+				IResource nextResource = next.resources.get(0);
 				if (nextResource.getType() == currentResource.getType() && next.label.equals(current.label)) {
 					current.resources.add(nextResource);
 					// If we are merging resources with the same name, into a single descriptor,
@@ -796,7 +791,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 					descriptors[index + 1] = descriptors[i2];
 					index++;
 					current = descriptors[index];
-					currentResource = (IResource) current.resources.get(0);
+					currentResource = current.resources.get(0);
 				}
 			}
 			descriptorsSize = index + 1;
@@ -824,7 +819,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 	protected void okPressed() {
 		TableItem items[] = folderNames.getSelection();
 		if (items.length == 1) {
-			ArrayList result = new ArrayList();
+			ArrayList<Object> result = new ArrayList<>();
 			result.add(items[0].getData());
 			setResult(result);
 		}
@@ -836,6 +831,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 	 * resource matches the current pattern string, this method will be called. If
 	 * this method answers false, the resource will not be included in the list of
 	 * matches and the resource's children will NOT be considered for matching.
+	 *
+	 * @param resource to be used by overrides
 	 */
 	protected boolean select(IResource resource) {
 		return true;
@@ -869,8 +866,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 			if (!desc.resourcesSorted) {
 				// sort the folder names
 				desc.resources.sort((o1, o2) -> {
-					String s1 = getParentLabel((IResource) o1);
-					String s2 = getParentLabel((IResource) o2);
+					String s1 = getParentLabel(o1);
+					String s2 = getParentLabel(o2);
 					return collator.compare(s1, s2);
 				});
 				desc.resourcesSorted = true;

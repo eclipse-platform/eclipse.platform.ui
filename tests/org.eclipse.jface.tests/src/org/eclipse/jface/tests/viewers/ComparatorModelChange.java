@@ -19,14 +19,13 @@ import org.eclipse.jface.tests.viewers.ViewerComparatorTest.TeamMember;
 
 /**
  * @since 3.2
- *
  */
 public class ComparatorModelChange {
-	private int fKind;
+	private final int fKind;
 
-	private Team fParent;
+	private final Team fParent;
 
-	private TeamMember[] fChildren;
+	private final TeamMember[] fChildren;
 
 	public static final int KIND_MASK = 0x0F;
 

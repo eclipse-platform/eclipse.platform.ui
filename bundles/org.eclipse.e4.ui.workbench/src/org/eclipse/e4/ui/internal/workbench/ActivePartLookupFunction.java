@@ -23,9 +23,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 
-/**
- *
- */
 public class ActivePartLookupFunction extends ContextFunction {
 
 	@Override

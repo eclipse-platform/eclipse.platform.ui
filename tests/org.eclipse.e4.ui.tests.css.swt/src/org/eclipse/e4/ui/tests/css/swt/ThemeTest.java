@@ -14,9 +14,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -26,9 +26,9 @@ import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.swt.widgets.Display;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -43,26 +43,26 @@ public class ThemeTest extends CSSSWTTestCase {
 	private ServiceReference<IThemeManager> themeManagerReference;
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUp() {
 		super.setUp();
 		Bundle b = FrameworkUtil.getBundle(this.getClass());
-		assertNotNull("Not running in an OSGi environment", b);
+		assertNotNull(b, "Not running in an OSGi environment");
 		context = b.getBundleContext();
-		assertNotNull("Not running in an OSGi environment", b);
+		assertNotNull(b, "Not running in an OSGi environment");
 		themeManagerReference = context
 				.getServiceReference(IThemeManager.class);
 	}
 
 	@Override
-	@After
+	@AfterEach
 	public void tearDown() {
 		themeListenerRegistration.unregister();
 		super.tearDown();
 	}
 
 	@Test
-	public void testThemeChangeNotification() {
+	void testThemeChangeNotification() {
 		// we don't call createEngine() as ThemeEngine creates its own engine
 
 		final Display display = Display.getDefault();
@@ -90,7 +90,7 @@ public class ThemeTest extends CSSSWTTestCase {
 
 	private IThemeEngine getThemeEngine(Display display) {
 		IThemeManager manager = context.getService(themeManagerReference);
-		assertNotNull("Theme manager service not available", manager);
+		assertNotNull(manager, "Theme manager service not available");
 		return manager.getEngineForDisplay(display);
 	}
 

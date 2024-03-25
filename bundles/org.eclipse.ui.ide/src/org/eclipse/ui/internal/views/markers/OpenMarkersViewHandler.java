@@ -30,7 +30,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * OpenMarkersViewHandler is used to open another markers view.
  *
  * @since 3.4
- *
  */
 public class OpenMarkersViewHandler extends MarkerViewHandler {
 

@@ -25,7 +25,6 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 
 /**
  * The LinearViewerTest is a test that tests viewers.
- *
  */
 public abstract class ViewerTest extends BasicPerformanceTest {
 
@@ -59,7 +58,6 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 
 	/**
 	 * Get the initial input for the receiver.
-	 * @return
 	 */
 	protected Object getInitialInput() {
 		return this;
@@ -67,8 +65,6 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 
 	/**
 	 * Create the viewer we are testing.
-	 * @param aShell
-	 * @return
 	 */
 	protected abstract StructuredViewer createViewer(Shell shell);
 

@@ -18,9 +18,9 @@ import org.eclipse.ui.IActionFilter;
 
 public class ListElement implements IAdaptable {
 
-	private String name;
+	private final String name;
 
-	private boolean flag;
+	private final boolean flag;
 
 	public ListElement(String name) {
 		this(name, false);

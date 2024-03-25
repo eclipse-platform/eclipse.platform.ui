@@ -59,7 +59,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.4
- *
  */
 public class KeyController {
 	private static final String DELIMITER = ","; //$NON-NLS-1$
@@ -221,8 +220,7 @@ public class KeyController {
 	private void addSetKeySequenceListener() {
 		addPropertyChangeListener(event -> {
 			if (BindingElement.PROP_TRIGGER.equals(event.getProperty())) {
-				updateTrigger((BindingElement) event.getSource(), (KeySequence) event.getOldValue(),
-						(KeySequence) event.getNewValue());
+				updateTrigger((BindingElement) event.getSource(), (KeySequence) event.getNewValue());
 			}
 		});
 	}
@@ -254,16 +252,12 @@ public class KeyController {
 	private void addSetSchemeListener() {
 		addPropertyChangeListener(event -> {
 			if (event.getSource() == fSchemeModel && CommonModel.PROP_SELECTED_ELEMENT.equals(event.getProperty())) {
-				changeScheme((SchemeElement) event.getOldValue(), (SchemeElement) event.getNewValue());
+				changeScheme((SchemeElement) event.getNewValue());
 			}
 		});
 	}
 
-	/**
-	 * @param oldScheme
-	 * @param newScheme
-	 */
-	protected void changeScheme(SchemeElement oldScheme, SchemeElement newScheme) {
+	protected void changeScheme(SchemeElement newScheme) {
 		if (newScheme == null || newScheme.getModelObject() == fBindingManager.getActiveScheme()) {
 			return;
 		}
@@ -308,12 +302,7 @@ public class KeyController {
 		}
 	}
 
-	/**
-	 * @param activeBinding
-	 * @param oldSequence
-	 * @param keySequence
-	 */
-	public void updateTrigger(BindingElement activeBinding, KeySequence oldSequence, KeySequence keySequence) {
+	private void updateTrigger(BindingElement activeBinding, KeySequence keySequence) {
 		if (activeBinding == null) {
 			return;
 		}
@@ -409,7 +398,6 @@ public class KeyController {
 	 *
 	 * @param actionSets <code>true</code> to filter action set contexts
 	 * @param internal   <code>false</code> to filter internal contexts
-	 *
 	 */
 	public void filterContexts(boolean actionSets, boolean internal) {
 		contextModel.filterContexts(actionSets, internal);
@@ -417,8 +405,6 @@ public class KeyController {
 
 	/**
 	 * Sets the bindings to default.
-	 *
-	 * @param bindingService
 	 */
 	public void setDefaultBindings(IBindingService bindingService) {
 		// Fix the scheme in the local changes.

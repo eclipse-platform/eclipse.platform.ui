@@ -42,12 +42,6 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregat
 	 */
 	private boolean inElementConstruction = false;
 
-	/**
-	 *
-	 * @param name
-	 * @param label
-	 * @param components
-	 */
 	public AggregateWorkingSet(String name, String label, IWorkingSet[] components) {
 		super(name, label);
 
@@ -57,12 +51,6 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregat
 		constructElements(false);
 	}
 
-	/**
-	 *
-	 * @param name
-	 * @param label
-	 * @param memento
-	 */
 	public AggregateWorkingSet(String name, String label, IMemento memento) {
 		super(name, label);
 		workingSetMemento = memento;

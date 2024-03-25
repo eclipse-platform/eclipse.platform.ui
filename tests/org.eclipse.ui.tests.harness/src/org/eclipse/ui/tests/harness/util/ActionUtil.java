@@ -88,7 +88,6 @@ public class ActionUtil {
 	 *
 	 * @param test the current test case
 	 * @param mgr the containing menu manager
-	 * @param label the action label
 	 */
 	public static void runActionUsingPath(TestCase test, IMenuManager mgr,
 			String idPath) {
@@ -103,7 +102,6 @@ public class ActionUtil {
 	 *
 	 * @param test the current test case
 	 * @param win the containing window
-	 * @param label the action label
 	 */
 	public static void runActionUsingPath(TestCase test, IWorkbenchWindow win,
 			String idPath) {

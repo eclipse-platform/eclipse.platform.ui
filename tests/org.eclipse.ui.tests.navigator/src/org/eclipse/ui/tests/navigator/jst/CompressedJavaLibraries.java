@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class CompressedJavaLibraries implements ICompressedNode {
 
-	private CompressedJavaProject compressedProject;
+	private final CompressedJavaProject compressedProject;
 
 	public CompressedJavaLibraries(CompressedJavaProject compressedProject) {
 		this.compressedProject = compressedProject;

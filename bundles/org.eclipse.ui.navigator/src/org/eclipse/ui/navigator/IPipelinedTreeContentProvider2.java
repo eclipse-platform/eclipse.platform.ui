@@ -44,7 +44,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  * @see INavigatorPipelineService
  * @see INavigatorContentService#getPipelineService()
  * @since 3.5
- *
  */
 public interface IPipelinedTreeContentProvider2 extends IPipelinedTreeContentProvider {
 

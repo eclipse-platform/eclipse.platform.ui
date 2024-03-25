@@ -32,7 +32,6 @@ public interface IInstallationPageContainer {
 	 *
 	 * @param page   the page that created the button
 	 * @param button the button to be managed
-	 *
 	 */
 	void registerPageButton(InstallationPage page, Button button);
 

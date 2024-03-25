@@ -31,7 +31,6 @@ public abstract class AbstractObservableValueContractDelegate extends
 	/**
 	 * Invokes {@link #createObservableValue(Realm)}.
 	 *
-	 * @param realm
 	 * @return observable
 	 */
 	@Override
@@ -42,7 +41,6 @@ public abstract class AbstractObservableValueContractDelegate extends
 	/**
 	 * Default implementation returns <code>null</code>.
 	 *
-	 * @param observable
 	 * @return value type
 	 */
 	@Override
@@ -54,7 +52,6 @@ public abstract class AbstractObservableValueContractDelegate extends
 	/**
 	 * Default implementation returns <code>null</code>.
 	 *
-	 * @param observable
 	 * @return value
 	 */
 	@Override

@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.TreeColumn;
  * A simple TreeViewer to demonstrate usage
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet027TreeLayout {
 	private static class MyContentProvider implements ITreeContentProvider {

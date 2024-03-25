@@ -56,9 +56,10 @@ public abstract class FrameAction extends Action {
 	}
 
 	/**
-	 * Handles a property change event from the frame list.
-	 * This implementation calls <code>update()</code>.
-	 * @param event
+	 * Handles a property change event from the frame list. This implementation
+	 * calls <code>update()</code>.
+	 *
+	 * @param event needed as IPropertyChangeListener
 	 */
 	protected void handlePropertyChange(PropertyChangeEvent event) {
 		update();

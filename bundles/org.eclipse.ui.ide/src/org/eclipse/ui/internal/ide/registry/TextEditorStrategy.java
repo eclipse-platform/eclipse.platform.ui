@@ -20,7 +20,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * @since 3.12
- *
  */
 public final class TextEditorStrategy implements IUnassociatedEditorStrategy {
 

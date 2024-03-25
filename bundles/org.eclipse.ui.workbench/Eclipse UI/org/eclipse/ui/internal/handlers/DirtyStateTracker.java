@@ -31,7 +31,6 @@ import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * @since 3.7
- *
  */
 public class DirtyStateTracker implements IPartListener, IWindowListener, IPropertyListener {
 

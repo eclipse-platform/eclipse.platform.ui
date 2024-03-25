@@ -68,7 +68,7 @@ public class ObjectFilterTest {
 	 * @param object the object to examine
 	 * @return <code>true</code> if there is a filter match.
 	 */
-	public boolean matches(Object object, boolean adaptable) {
+	boolean matches(Object object) {
 		// Optimize it.
 		if (filterElements == null) {
 			return true;

@@ -38,7 +38,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class ObservableCollectionTreeContentProviderTest extends AbstractDefaultRealmTestCase {
 	private Shell shell;

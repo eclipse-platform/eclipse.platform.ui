@@ -15,6 +15,7 @@ package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -93,7 +94,7 @@ public class ResourceSelectionDialog extends SelectionDialog {
 	 * portion of this dialog's resource selection viewer.
 	 */
 	private void checkInitialSelections() {
-		Iterator itemsToCheck = getInitialElementSelections().iterator();
+		Iterator<?> itemsToCheck = getInitialElementSelections().iterator();
 
 		while (itemsToCheck.hasNext()) {
 			IResource currentElement = (IResource) itemsToCheck.next();
@@ -132,7 +133,7 @@ public class ResourceSelectionDialog extends SelectionDialog {
 
 		// create the input element, which has the root resource
 		// as its only child
-		ArrayList input = new ArrayList();
+		List<IAdaptable> input = new ArrayList<>();
 		input.add(root);
 
 		createMessageArea(composite);
@@ -183,7 +184,7 @@ public class ResourceSelectionDialog extends SelectionDialog {
 					}
 
 					// filter out the desired resource types
-					ArrayList results = new ArrayList();
+					List<IResource> results = new ArrayList<>();
 					for (IResource member : members) {
 						// And the test bits with the resource types to see if they are what we want
 						if ((member.getType() & resourceType) > 0) {
@@ -194,7 +195,7 @@ public class ResourceSelectionDialog extends SelectionDialog {
 				}
 				// input element case
 				if (o instanceof ArrayList) {
-					return ((ArrayList) o).toArray();
+					return ((ArrayList<?>) o).toArray();
 				}
 				return new Object[0];
 			}
@@ -222,8 +223,8 @@ public class ResourceSelectionDialog extends SelectionDialog {
 	 */
 	@Override
 	protected void okPressed() {
-		Iterator resultEnum = selectionGroup.getAllCheckedListItems();
-		ArrayList list = new ArrayList();
+		Iterator<?> resultEnum = selectionGroup.getAllCheckedListItems();
+		List<Object> list = new ArrayList<>();
 		while (resultEnum.hasNext()) {
 			list.add(resultEnum.next());
 		}

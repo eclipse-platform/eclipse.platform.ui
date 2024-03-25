@@ -76,7 +76,14 @@ public class ShellActivationListener implements Listener {
 			activate(shell);
 			break;
 		case SWT.Deactivate:
-			deactivate(shell);
+			// bug 412001. Cannot assume anything about a non-modelled Shell's
+			// deactivation. It could be:
+			// * some other application got activated
+			// * some dialog we cannot see (IE's Find dialog in 412001) get's
+			// activated
+			// * another unmodelled shell is about to be activated
+			// * a modelled shell is about to be activated.
+			// No matter what, the time to do things is on activation
 			break;
 		}
 	}
@@ -139,18 +146,6 @@ public class ShellActivationListener implements Listener {
 
 	}
 
-	private void deactivate(Shell shell) {
-		// bug 412001. Cannot assume anything about a non-modelled Shell's
-		// deactivation. It could be:
-		// * some other application got activated
-		// * some dialog we cannot see (IE's Find dialog in 412001) get's
-		// activated
-		// * another unmodelled shell is about to be activated
-		// * a modelled shell is about to be activated.
-		// No matter what, the time to do things is on activation
-
-	}
-
 	/**
 	 * Retrieves the eclipse context for the specified shell. If one cannot be
 	 * found, a child context will be created off of the provided parent
@@ -182,7 +177,6 @@ public class ShellActivationListener implements Listener {
 		contextService.activateContext(EBindingService.DIALOG_CONTEXT_ID);
 
 		shell.addDisposeListener(e -> {
-			deactivate(shell);
 			context.dispose();
 		});
 

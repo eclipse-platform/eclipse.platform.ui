@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 IBM Corporation and others.
+ * Copyright (c) 2010, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,10 +11,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 180308, 472654
+ *     Daniel Kruegler - #399, #401
  *******************************************************************************/
 package org.eclipse.ui.internal.menus;
 
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,7 +22,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -30,15 +29,14 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -74,86 +72,9 @@ public class MenuHelper {
 	}
 
 	private static final Pattern SCHEME_PATTERN = Pattern.compile("\\p{Alpha}[\\p{Alnum}+.-]*:.*"); //$NON-NLS-1$
-	private static Field urlField;
-	private static Field urlSupplierField;
-
-	/**
-	 * The private 'location' field that is defined in the FileImageDescriptor.
-	 *
-	 * @see #getLocation(ImageDescriptor)
-	 */
-	private static Field locationField;
-
-	/**
-	 * The private 'name' field that is defined in the FileImageDescriptor.
-	 *
-	 * @see #getName(ImageDescriptor)
-	 */
-	private static Field nameField;
 
 	public static String getImageUrl(ImageDescriptor imageDescriptor) {
 		return getIconURI(imageDescriptor, null);
-	}
-
-	private static String getUrl(Class<? extends ImageDescriptor> idc, ImageDescriptor imageDescriptor) {
-		try {
-			if (urlField == null) {
-				urlField = idc.getDeclaredField("url"); //$NON-NLS-1$
-				urlField.setAccessible(true);
-			}
-			Object value = urlField.get(imageDescriptor);
-			if (value != null) {
-				return value.toString();
-			}
-		} catch (SecurityException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-			WorkbenchPlugin.log(e);
-		}
-		return null;
-	}
-
-	private static String getUrlSupplier(Class<? extends ImageDescriptor> idc, ImageDescriptor imageDescriptor) {
-		try {
-			if (urlSupplierField == null) {
-				urlSupplierField = idc.getDeclaredField("supplier"); //$NON-NLS-1$
-				urlSupplierField.setAccessible(true);
-			}
-			Object value = urlSupplierField.get(imageDescriptor);
-			if (value != null && value instanceof Supplier) {
-				@SuppressWarnings("unchecked")
-				Supplier<URL> supplier = (Supplier<URL>) value;
-				URL url = supplier.get();
-				return url == null ? null : url.toString();
-			}
-		} catch (SecurityException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-			WorkbenchPlugin.log(e);
-		}
-		return null;
-	}
-
-	private static Class<?> getLocation(ImageDescriptor imageDescriptor) {
-		try {
-			if (locationField == null) {
-				locationField = imageDescriptor.getClass().getDeclaredField("location"); //$NON-NLS-1$
-				locationField.setAccessible(true);
-			}
-			return (Class<?>) locationField.get(imageDescriptor);
-		} catch (SecurityException | NoSuchFieldException | IllegalAccessException e) {
-			WorkbenchPlugin.log(e);
-		}
-		return null;
-	}
-
-	private static String getName(ImageDescriptor imageDescriptor) {
-		try {
-			if (nameField == null) {
-				nameField = imageDescriptor.getClass().getDeclaredField("name"); //$NON-NLS-1$
-				nameField.setAccessible(true);
-			}
-			return (String) nameField.get(imageDescriptor);
-		} catch (SecurityException | NoSuchFieldException | IllegalAccessException e) {
-			WorkbenchPlugin.log(e);
-		}
-		return null;
 	}
 
 	static MExpression getVisibleWhen(final IConfigurationElement commandAddition) {
@@ -460,54 +381,25 @@ public class MenuHelper {
 
 		// Attempt to retrieve URIs from the descriptor and convert into a more
 		// durable form in case it's to be persisted
-		if (descriptor.getClass().toString().endsWith("URLImageDescriptor")) { //$NON-NLS-1$
-			String url = getUrl(descriptor.getClass(), descriptor);
-			return rewriteDurableURL(url);
-		} else if (descriptor.getClass().toString().endsWith("DeferredImageDescriptor")) { //$NON-NLS-1$
-			String url = getUrlSupplier(descriptor.getClass(), descriptor);
-			return rewriteDurableURL(url);
-		} else if (descriptor.getClass().toString().endsWith("FileImageDescriptor")) { //$NON-NLS-1$
-			Class<?> sourceClass = getLocation(descriptor);
-			if (sourceClass == null) {
-				return null;
-			}
-
-			String path = getName(descriptor);
-			if (path == null) {
-				return null;
-			}
-
-			Bundle bundle = FrameworkUtil.getBundle(sourceClass);
-			// get the fully qualified class name
-			String parentPath = sourceClass.getName();
-			// remove the class's name
-			parentPath = parentPath.substring(0, parentPath.lastIndexOf('.'));
-			// swap '.' with '/' so that it becomes a path
-			parentPath = parentPath.replace('.', '/');
-
-			// construct the URL
-			URL url = FileLocator.find(bundle, new Path(parentPath).append(path), null);
-			return url == null ? null : rewriteDurableURL(url.toString());
-		} else if (descriptor instanceof IAdaptable) {
-			Object o = ((IAdaptable) descriptor).getAdapter(URL.class);
+		Adapter adapter = context != null ? context.get(Adapter.class) : null;
+		if (adapter != null) {
+			Object o = adapter.adapt(descriptor, URL.class);
 			if (o != null) {
 				return rewriteDurableURL(o.toString());
 			}
-			o = ((IAdaptable) descriptor).getAdapter(URI.class);
+			o = adapter.adapt(descriptor, URI.class);
 			if (o != null) {
 				return rewriteDurableURL(o.toString());
 			}
-		} else if (context != null) {
-			IAdapterManager adapter = context.get(IAdapterManager.class);
-			if (adapter != null) {
-				Object o = adapter.getAdapter(descriptor, URL.class);
-				if (o != null) {
-					return rewriteDurableURL(o.toString());
-				}
-				o = adapter.getAdapter(descriptor, URI.class);
-				if (o != null) {
-					return rewriteDurableURL(o.toString());
-				}
+		}
+		else {
+			Object o = Adapters.adapt(descriptor, URL.class);
+			if (o != null) {
+				return rewriteDurableURL(o.toString());
+			}
+			o = Adapters.adapt(descriptor, URI.class);
+			if (o != null) {
+				return rewriteDurableURL(o.toString());
 			}
 		}
 		return null;
@@ -555,10 +447,6 @@ public class MenuHelper {
 		return getIconURI(descriptor, workbench);
 	}
 
-	/**
-	 * @param item
-	 * @param disabledIconURI
-	 */
 	public static void setDisabledIconURI(MToolItem item, String disabledIconURI) {
 		item.getTransientData().put(IPresentationEngine.DISABLED_ICON_IMAGE_KEY, disabledIconURI);
 	}

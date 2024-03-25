@@ -61,9 +61,6 @@ public class Snippet039ListViewer {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);

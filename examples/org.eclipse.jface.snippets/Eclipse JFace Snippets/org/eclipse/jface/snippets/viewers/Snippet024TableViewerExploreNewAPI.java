@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Shell;
  * Example usage of ITableLabelProvider using images and labels
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet024TableViewerExploreNewAPI {
 
@@ -49,7 +48,7 @@ public class Snippet024TableViewerExploreNewAPI {
 	}
 
 	protected abstract class AbstractEditingSupport extends EditingSupport {
-		private TextCellEditor editor;
+		private final TextCellEditor editor;
 
 		public AbstractEditingSupport(TableViewer viewer) {
 			super(viewer);
@@ -174,9 +173,6 @@ public class Snippet024TableViewerExploreNewAPI {
 				new Person("Jeanderson", "Candido", "jeandersonbc@gmail.com") };
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

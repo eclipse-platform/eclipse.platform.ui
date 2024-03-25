@@ -77,7 +77,7 @@ public class FragmentAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected FragmentSwitch<Adapter> modelSwitch = new FragmentSwitch<Adapter>() {
+	protected FragmentSwitch<Adapter> modelSwitch = new FragmentSwitch<>() {
 		@Override
 		public Adapter caseModelFragments(MModelFragments object) {
 			return createModelFragmentsAdapter();

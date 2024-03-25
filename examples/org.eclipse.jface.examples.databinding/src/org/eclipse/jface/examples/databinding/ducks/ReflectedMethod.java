@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
  */
 public class ReflectedMethod {
 
-	private Object subject;
+	private final Object subject;
 	private Method method;
 
 	/**

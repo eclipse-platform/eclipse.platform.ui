@@ -90,7 +90,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ApplicationSwitch<Adapter> modelSwitch = new ApplicationSwitch<Adapter>() {
+	protected ApplicationSwitch<Adapter> modelSwitch = new ApplicationSwitch<>() {
 		@Override
 		public Adapter caseStringToStringMap(Map.Entry<String, String> object) {
 			return createStringToStringMapAdapter();

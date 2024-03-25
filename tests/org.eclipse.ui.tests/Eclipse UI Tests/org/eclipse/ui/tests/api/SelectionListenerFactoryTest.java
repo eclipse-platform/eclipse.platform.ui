@@ -41,9 +41,6 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class SelectionListenerFactoryTest extends UITestCase implements ISelectionListener {
-	/**
-	 *
-	 */
 	private static final String KNOCK_KNOCK = "KnockKnock";
 
 	private IWorkbenchWindow fWindow;

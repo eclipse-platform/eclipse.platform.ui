@@ -15,8 +15,8 @@
 
 package org.eclipse.e4.core.commands.internal;
 
+import jakarta.inject.Inject;
 import java.util.Map;
-import javax.inject.Inject;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
@@ -24,9 +24,6 @@ import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 
-/**
- *
- */
 public class CommandServiceImpl implements ECommandService {
 
 	private CommandManager commandManager;

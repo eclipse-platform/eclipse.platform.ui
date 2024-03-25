@@ -30,7 +30,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Element;
  */
 public class OverrideTestsSelectionProvider implements ISelectionProvider {
 
-	private ListenerList<ISelectionChangedListener> selectionChangedListeners = new ListenerList<>();
+	private final ListenerList<ISelectionChangedListener> selectionChangedListeners = new ListenerList<>();
 
 	private final TableViewer viewer;
 

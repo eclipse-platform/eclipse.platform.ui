@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
-import java.util.Set;
-import javax.annotation.PostConstruct;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -149,7 +148,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	@PostConstruct
 	public void init(IEclipseContext context) {
 		this.context = context;
-		this.context.set(SHARED_ELEMENTS_STORE, new HashMap<MUIElement, Set<MPlaceholder>>());
+		this.context.set(SHARED_ELEMENTS_STORE, new HashMap<>());
 	}
 
 }

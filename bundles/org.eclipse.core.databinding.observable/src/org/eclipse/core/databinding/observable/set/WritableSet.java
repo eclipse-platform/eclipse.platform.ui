@@ -45,7 +45,6 @@ public class WritableSet<E> extends ObservableSet<E> {
 	/**
 	 * Constructs a new empty instance in the default realm with a
 	 * <code>null</code> element type.
-	 *
 	 */
 	public WritableSet() {
 		this(Realm.getDefault());

@@ -199,10 +199,6 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 
 	private IStaleListener staleListener = staleEvent -> fireStale();
 
-	/**
-	 * @param map
-	 * @param valueProperty
-	 */
 	public MapDelegatingValueObservableMap(IObservableMap<K, I> map, DelegatingValueProperty<S, V> valueProperty) {
 		super(map.getRealm());
 		this.masterMap = map;

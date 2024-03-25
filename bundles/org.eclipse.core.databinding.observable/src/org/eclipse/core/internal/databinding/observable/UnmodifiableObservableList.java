@@ -38,9 +38,6 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 public class UnmodifiableObservableList<E> extends DecoratingObservableList<E> {
 	private List<E> unmodifiableList;
 
-	/**
-	 * @param decorated
-	 */
 	public UnmodifiableObservableList(IObservableList<E> decorated) {
 		super(decorated, false);
 		this.unmodifiableList = Collections.unmodifiableList(decorated);

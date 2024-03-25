@@ -30,7 +30,6 @@ import java.util.Set;
  * The only reason these are two separate interfaces is historical.
  *
  * @since 3.2
- *
  */
 public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 

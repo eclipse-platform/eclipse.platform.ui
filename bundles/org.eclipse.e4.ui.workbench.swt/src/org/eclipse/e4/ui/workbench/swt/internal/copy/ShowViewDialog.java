@@ -86,11 +86,6 @@ public class ShowViewDialog extends Dialog implements
 
 	/**
 	 * Constructs a new ShowViewDialog.
-	 *
-	 * @param window
-	 *            the workbench window
-	 * @param viewReg
-	 *            the view registry
 	 */
 	public ShowViewDialog(Shell shell, MApplication application,
 			IEclipseContext context) {
@@ -224,7 +219,6 @@ public class ShowViewDialog extends Dialog implements
 	/**
 	 * Return whether or not there are less than two views in the list.
 	 *
-	 * @param tree
 	 * @return <code>true</code> if there are less than two views in the list.
 	 */
 	private boolean hasAtMostOneView(TreeViewer tree) {

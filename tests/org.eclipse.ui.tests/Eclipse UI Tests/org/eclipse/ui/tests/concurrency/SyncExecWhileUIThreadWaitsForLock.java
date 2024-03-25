@@ -21,7 +21,6 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
@@ -156,7 +155,7 @@ public class SyncExecWhileUIThreadWaitsForLock {
 		UITestCase.processEventsUntil(() -> logView.getElements().length > 0, 30000);
 		AbstractEntry[] elements = logView.getElements();
 		List<AbstractEntry> list = Arrays.asList(elements).stream()
-				.filter(x -> ((LogEntry) x).getMessage().startsWith("To avoid deadlock")).collect(Collectors.toList());
+				.filter(x -> ((LogEntry) x).getMessage().startsWith("To avoid deadlock")).toList();
 		assertEquals("Unexpected list content: " + list, 1, list.size());
 		AbstractEntry[] children = list.get(0).getChildren(list.get(0));
 		assertEquals("Unexpected children content: " + Arrays.toString(children), 2, children.length);

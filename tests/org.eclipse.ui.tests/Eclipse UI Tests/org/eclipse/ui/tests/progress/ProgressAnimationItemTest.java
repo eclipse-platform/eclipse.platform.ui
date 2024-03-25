@@ -109,14 +109,14 @@ public class ProgressAnimationItemTest {
 
 			@Override
 			public void finished(JobTreeElement jte) {
-				if (jte instanceof JobInfo && ((JobInfo) jte).getJob() == job) {
+				if (jte instanceof JobInfo ji && ji.getJob() == job) {
 					finishedCount.incrementAndGet();
 				}
 			}
 
 			@Override
 			public void removed(JobTreeElement jte) {
-				if (jte instanceof JobInfo && ((JobInfo) jte).getJob() == job) {
+				if (jte instanceof JobInfo ji && ji.getJob() == job) {
 					removedCount.incrementAndGet();
 				}
 			}
@@ -202,8 +202,8 @@ public class ProgressAnimationItemTest {
 	private ToolBar getToolBar(ProgressAnimationItem animationItem) {
 		Composite top = (Composite) animationItem.getControl();
 		for (Control child : top.getChildren()) {
-			if (child instanceof ToolBar) {
-				return (ToolBar) child;
+			if (child instanceof ToolBar tbar) {
+				return tbar;
 			}
 		}
 		return null;

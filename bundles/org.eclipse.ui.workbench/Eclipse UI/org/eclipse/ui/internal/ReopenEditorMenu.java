@@ -17,7 +17,6 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.Arrays;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -109,7 +108,7 @@ public class ReopenEditorMenu extends ContributionItem {
 			// sometimes it's the same as name, so it shouldn't be treated as a path then
 			pathName = ""; //$NON-NLS-1$
 		}
-		IPath path = new Path(pathName);
+		IPath path = IPath.fromOSString(pathName);
 		// if last segment in path is the fileName, remove it
 		if (path.segmentCount() > 1 && path.segment(path.segmentCount() - 1).equals(fileName)) {
 			path = path.removeLastSegments(1);

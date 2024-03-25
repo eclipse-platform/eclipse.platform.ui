@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
@@ -48,7 +47,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 	static {
 		Bundle bundle = org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator
 				.getDefault().getBundle();
-		IPath path = new Path("$nl$/icons/full/obj16/fldr_obj.png");
+		IPath path = IPath.fromOSString("$nl$/icons/full/obj16/fldr_obj.png");
 		URL url = FileLocator.find(bundle, path, null);
 		ImageDescriptor enabledDesc = ImageDescriptor.createFromURL(url);
 		if (enabledDesc != null)
@@ -59,13 +58,6 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 
 	private IEclipseContext context;
 
-	/**
-	 * @param window
-	 *            the workbench window
-	 * @param dimmedForeground
-	 *            the dimmed foreground color to use for views that are already
-	 *            open
-	 */
 	public ViewLabelProvider(IEclipseContext context) {
 		this.context = context;
 	}

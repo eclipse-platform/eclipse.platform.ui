@@ -1219,9 +1219,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		final SafeRunnable runnable = new SafeRunnable() {
 			@Override
 			public void run() throws IOException {
-				Writer fileWriter = null;
-				try {
-					fileWriter = new BufferedWriter(new FileWriter(filePath));
+				try (Writer fileWriter = new BufferedWriter(new FileWriter(filePath))) {
 					final TableItem[] items = tableBindings.getItems();
 					final int numColumns = tableBindings.getColumnCount();
 					for (final TableItem item : items) {
@@ -1234,15 +1232,6 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 							}
 						}
 						fileWriter.write(System.lineSeparator());
-					}
-
-				} finally {
-					if (fileWriter != null) {
-						try {
-							fileWriter.close();
-						} catch (final IOException e) {
-							// At least I tried.
-						}
 					}
 
 				}

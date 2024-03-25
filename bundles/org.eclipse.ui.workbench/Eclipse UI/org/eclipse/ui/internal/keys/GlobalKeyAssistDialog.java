@@ -31,8 +31,6 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  * Extends the key conflict popup dialog to provide a full list of global key
  * bindings for the workbench. If {@link #open()} is called while this dialog is
  * still open, the keys preference page is opened.
- *
- *
  */
 public class GlobalKeyAssistDialog extends KeyAssistDialog {
 
@@ -44,7 +42,7 @@ public class GlobalKeyAssistDialog extends KeyAssistDialog {
 	/**
 	 * ID of the key binding preference page
 	 */
-	private final String keysPageId = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
+	private static final String keysPageId = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
 
 	/**
 	 * Whether this dialog is currently open, if the dialog is opened again, we open
@@ -52,10 +50,6 @@ public class GlobalKeyAssistDialog extends KeyAssistDialog {
 	 */
 	private boolean isOpen;
 
-	/**
-	 * @param context
-	 * @param associatedKeyboard
-	 */
 	public GlobalKeyAssistDialog(IEclipseContext context, KeyBindingDispatcher associatedKeyboard) {
 		super(context, associatedKeyboard);
 		this.context = context;

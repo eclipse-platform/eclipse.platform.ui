@@ -31,7 +31,6 @@ import org.eclipse.ui.navigator.ICommonFilterDescriptor;
  * <b>org.eclipse.ui.navigator.navigatorContent</b> extension.
  *
  * @since 3.2
- *
  */
 public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 		INavigatorContentExtPtConstants {

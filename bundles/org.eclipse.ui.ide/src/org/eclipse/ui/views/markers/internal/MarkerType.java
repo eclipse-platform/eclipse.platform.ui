@@ -31,11 +31,6 @@ public class MarkerType {
 
 	/**
 	 * Creates a new marker type.
-	 *
-	 * @param model
-	 * @param id
-	 * @param label
-	 * @param supertypeIds
 	 */
 	public MarkerType(MarkerTypesModel model, String id, String label, String[] supertypeIds) {
 		this.model = model;

@@ -20,12 +20,8 @@ import org.eclipse.swt.widgets.Widget;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public abstract class SingleSelectionIndexProperty<S extends Widget> extends WidgetIntValueProperty<S> {
-	/**
-	 * @param events
-	 */
 	public SingleSelectionIndexProperty(int[] events) {
 		super(events);
 	}

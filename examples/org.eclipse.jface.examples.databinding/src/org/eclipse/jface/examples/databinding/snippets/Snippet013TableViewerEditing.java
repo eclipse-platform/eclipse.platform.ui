@@ -66,7 +66,7 @@ public class Snippet013TableViewerEditing {
 
 	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
@@ -118,7 +118,7 @@ public class Snippet013TableViewerEditing {
 	 */
 	static class ViewModel {
 		// The model to bind
-		private List<Person> people = new LinkedList<>();
+		private final List<Person> people = new LinkedList<>();
 		{
 			people.add(new Person("Steve Northover"));
 			people.add(new Person("Grant Gayed"));
@@ -148,7 +148,7 @@ public class Snippet013TableViewerEditing {
 	 */
 	private static class InlineEditingSupport extends ObservableValueEditingSupport<Person, String, String> {
 
-		private CellEditor cellEditor;
+		private final CellEditor cellEditor;
 
 		public InlineEditingSupport(ColumnViewer viewer, DataBindingContext bindingContext) {
 			super(viewer, bindingContext);
@@ -173,7 +173,7 @@ public class Snippet013TableViewerEditing {
 
 	/** The GUI view. */
 	static class View {
-		private ViewModel viewModel;
+		private final ViewModel viewModel;
 		private Table committers;
 		private Label selectedCommitter;
 

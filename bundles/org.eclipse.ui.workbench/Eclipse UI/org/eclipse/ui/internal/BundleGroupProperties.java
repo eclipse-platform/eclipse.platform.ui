@@ -268,7 +268,6 @@ public class BundleGroupProperties extends BrandingProperties implements IBundle
 	/**
 	 * A Feature's branding plugin id.
 	 *
-	 * @param bundleGroup
 	 * @return the ID or <code>null</code> if not provided.
 	 */
 	public static String getBrandingBundleId(IBundleGroup bundleGroup) {
@@ -278,7 +277,6 @@ public class BundleGroupProperties extends BrandingProperties implements IBundle
 	/**
 	 * A Feature's branding plugin version.
 	 *
-	 * @param bundleGroup
 	 * @return the version, or <code>null</code> if not provided.
 	 */
 	public static String getBrandingBundleVersion(IBundleGroup bundleGroup) {

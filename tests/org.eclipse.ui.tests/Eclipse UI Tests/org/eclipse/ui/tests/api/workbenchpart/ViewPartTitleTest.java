@@ -52,7 +52,7 @@ public class ViewPartTitleTest extends UITestCase {
 
 	boolean contentChangeEvent = false;
 
-	private IPropertyListener propertyListener = (source, propId) -> {
+	private final IPropertyListener propertyListener = (source, propId) -> {
 		switch (propId) {
 		case IWorkbenchPartConstants.PROP_TITLE:
 			titleChangeEvent = true;
@@ -143,8 +143,6 @@ public class ViewPartTitleTest extends UITestCase {
 	/**
 	 * Ensures that we can call ViewPart.setTitle(null) without throwing
 	 * any exceptions
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testNullTitle() throws Throwable {

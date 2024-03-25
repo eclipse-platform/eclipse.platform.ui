@@ -36,8 +36,6 @@ public interface IOverrideTestsItem {
 	 *
 	 * @param parent
 	 *            the parent composite for the item.
-	 * @param factory
-	 *            the factory to create widgets for the item.
 	 */
 	public void createControls(Composite parent);
 
@@ -54,9 +52,11 @@ public interface IOverrideTestsItem {
 	public Composite getComposite();
 
 	/**
-	 * Get the kind of {@link Element} that this item applies to.
+	 * Get the kind of
+	 * {@link org.eclipse.ui.tests.views.properties.tabbed.model.Element} that this
+	 * item applies to.
 	 *
-	 * @return the kind of {@link Element} that this item applies to.
+	 * @return the kind of element that this item applies to.
 	 */
 	public Class getElement();
 

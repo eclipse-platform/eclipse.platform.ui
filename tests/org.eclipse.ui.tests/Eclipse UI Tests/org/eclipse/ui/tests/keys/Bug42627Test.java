@@ -14,7 +14,6 @@
 
 package org.eclipse.ui.tests.keys;
 
-import org.eclipse.core.runtime.CoreException;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -49,9 +48,6 @@ public class Bug42627Test {
 
 	/**
 	 * Tests that actions with no defined command ID are logged.
-	 *
-	 * @throws CoreException
-	 *            If something fails when trying to open a new project.
 	 */
 	@Test
 	public void testLogUndefined() /*throws CoreException*/{

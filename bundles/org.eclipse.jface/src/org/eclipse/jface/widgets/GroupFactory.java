@@ -52,7 +52,6 @@ import org.eclipse.swt.widgets.Group;
  * </p>
  *
  * @since 3.24
- *
  */
 public class GroupFactory extends AbstractCompositeFactory<GroupFactory, Group> {
 
@@ -64,7 +63,6 @@ public class GroupFactory extends AbstractCompositeFactory<GroupFactory, Group> 
 	 * Creates a new GroupFactory with the given style. Refer to
 	 * {@link Group#Group(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new GroupFactory instance
 	 */
 	public static GroupFactory newGroup(int style) {

@@ -19,7 +19,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 public class FormEditorInput implements IEditorInput {
-	private String name;
+	private final String name;
 	public FormEditorInput(String name) {
 		this.name = name;
 	}

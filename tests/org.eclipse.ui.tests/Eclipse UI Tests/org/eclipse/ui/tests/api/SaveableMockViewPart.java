@@ -38,6 +38,7 @@ import org.eclipse.ui.internal.DefaultSaveable;
 public class SaveableMockViewPart extends MockViewPart implements
 		ISaveablePart, ISaveablesSource {
 
+	@SuppressWarnings("hiding")
 	public static String ID = "org.eclipse.ui.tests.api.SaveableMockViewPart";
 
 	private boolean isDirty = false;
@@ -92,9 +93,6 @@ public class SaveableMockViewPart extends MockViewPart implements
 		saveAsToggle.setSelection(saveAsAllowed);
 	}
 
-	/**
-	 * @param selection
-	 */
 	protected void setAdapt(boolean selection) {
 		this.adapt = selection;
 	}

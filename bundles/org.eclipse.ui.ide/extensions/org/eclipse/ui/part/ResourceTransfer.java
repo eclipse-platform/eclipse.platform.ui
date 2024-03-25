@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
@@ -129,25 +129,21 @@ public class ResourceTransfer extends ByteArrayTransfer {
 
 		int resourceCount = resources.length;
 
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			DataOutputStream dataOut = new DataOutputStream(out);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try (DataOutputStream dataOut = new DataOutputStream(out)) {
 
-			//write the number of resources
+			// write the number of resources
 			dataOut.writeInt(resourceCount);
 
-			//write each resource
+			// write each resource
 			for (IResource resource : resources) {
 				writeResource(dataOut, resource);
 			}
 
-			//cleanup
-			dataOut.close();
-			out.close();
 			byte[] bytes = out.toByteArray();
 			super.javaToNative(bytes, transferData);
 		} catch (IOException e) {
-			//it's best to send nothing if there were problems
+			// it's best to send nothing if there were problems
 		}
 	}
 
@@ -202,9 +198,9 @@ public class ResourceTransfer extends ByteArrayTransfer {
 		String path = dataIn.readUTF();
 		switch (type) {
 		case IResource.FOLDER:
-			return workspace.getRoot().getFolder(new Path(path));
+			return workspace.getRoot().getFolder(IPath.fromOSString(path));
 		case IResource.FILE:
-			return workspace.getRoot().getFile(new Path(path));
+			return workspace.getRoot().getFile(IPath.fromOSString(path));
 		case IResource.PROJECT:
 			return workspace.getRoot().getProject(path);
 		}

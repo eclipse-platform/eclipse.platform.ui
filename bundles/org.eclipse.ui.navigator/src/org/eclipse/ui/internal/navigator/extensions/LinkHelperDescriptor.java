@@ -31,7 +31,6 @@ import org.eclipse.ui.navigator.ILinkHelper;
  * <b>org.eclipse.ui.navigator.navigatorContent/linkHelper</b> extensions.
  *
  * @since 3.2
- *
  */
 public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 

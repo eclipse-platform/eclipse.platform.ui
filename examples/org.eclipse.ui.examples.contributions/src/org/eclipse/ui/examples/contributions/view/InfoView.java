@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,7 +57,7 @@ public class InfoView extends ViewPart {
 	private IHandler countHandler;
 	private ArrayList<Object> viewerInput;
 
-	private IPropertyChangeListener personListener = event -> {
+	private final IPropertyChangeListener personListener = event -> {
 		if (IPersonService.PROP_CHANGE.equals(event.getProperty())) {
 			refresh();
 		} else if (IPersonService.PROP_ADD.equals(event.getProperty())) {
@@ -79,8 +79,8 @@ public class InfoView extends ViewPart {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof List) {
-				return ((List<?>) inputElement).toArray();
+			if (inputElement instanceof List<?> list) {
+				return list.toArray();
 			}
 			return null;
 		}
@@ -159,9 +159,6 @@ public class InfoView extends ViewPart {
 
 	/**
 	 * Swap the 2 given elements from the model.
-	 *
-	 * @param p1
-	 * @param p2
 	 */
 	public void swap(Person p1, Person p2) {
 		List<?> elements = viewerInput;

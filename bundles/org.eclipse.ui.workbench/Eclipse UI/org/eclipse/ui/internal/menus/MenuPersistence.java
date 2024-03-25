@@ -58,10 +58,6 @@ final public class MenuPersistence extends RegistryPersistence {
 			.compareToIgnoreCase(c2.getContributor().getName());
 	private Pattern contributorFilter;
 
-	/**
-	 * @param application
-	 * @param appContext
-	 */
 	public MenuPersistence(MApplication application, IEclipseContext appContext) {
 		this.application = application;
 		this.appContext = appContext;
@@ -134,7 +130,7 @@ final public class MenuPersistence extends RegistryPersistence {
 			if (isProgramaticContribution(configElement)) {
 				MenuFactoryGenerator gen = new MenuFactoryGenerator(application, appContext, configElement,
 						configElement.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI));
-				gen.mergeIntoModel(menuContributions, toolBarContributions, trimContributions);
+				gen.mergeIntoModel(menuContributions, toolBarContributions);
 			} else {
 				MenuAdditionCacheEntry menuContribution = new MenuAdditionCacheEntry(application, appContext,
 						configElement, configElement.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),

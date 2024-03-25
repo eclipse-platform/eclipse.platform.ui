@@ -37,7 +37,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class UnmodifiableObservableValueTest extends
 		AbstractDefaultRealmTestCase {
@@ -89,7 +88,7 @@ public class UnmodifiableObservableValueTest extends
 
 	private static class Delegate extends
 			AbstractObservableValueContractDelegate {
-		private Object valueType = new Object();
+		private final Object valueType = new Object();
 
 		@Override
 		public IObservableValue createObservableValue(Realm realm) {

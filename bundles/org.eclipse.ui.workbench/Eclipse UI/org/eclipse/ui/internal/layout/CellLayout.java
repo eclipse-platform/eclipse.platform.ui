@@ -309,9 +309,6 @@ public class CellLayout extends Layout {
 	 * Returns the row info that controls the size of the given row. Will return the
 	 * default row settings for this layout if no custom row info has been assigned
 	 * to the row.
-	 *
-	 * @param rowNum
-	 * @return
 	 */
 	private Row getRow(int rowNum, boolean isHorizontal) {
 		if (isHorizontal) {
@@ -488,11 +485,6 @@ public class CellLayout extends Layout {
 
 	/**
 	 * Returns the preferred dynamic width of the layout
-	 *
-	 * @param constraints
-	 * @param fixedSizes
-	 * @param computingRows
-	 * @return
 	 */
 	int getDynamicSize(int[] constraints, int[] fixedSizes, boolean computingRows) {
 		int result = 0;
@@ -573,11 +565,6 @@ public class CellLayout extends Layout {
 	/**
 	 * Returns the relative amount that a control starting on the given row and
 	 * spanning the given length will contribute
-	 *
-	 * @param start
-	 * @param length
-	 * @param computingRows
-	 * @return
 	 */
 	int getGrowthRatio(int start, int length, boolean computingRows) {
 		boolean willGrow = false;
@@ -763,8 +750,6 @@ public class CellLayout extends Layout {
 	/**
 	 * Returns the total space that will be required for margins and spacing between
 	 * and around cells. initGrid(...) must have been called first.
-	 *
-	 * @return
 	 */
 	private Point totalEmptySpace() {
 		int numRows = gridInfo.getRows();
@@ -846,9 +831,6 @@ public class CellLayout extends Layout {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public int getColumns() {
 		return numCols;
 	}

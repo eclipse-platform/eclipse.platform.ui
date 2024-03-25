@@ -16,12 +16,11 @@ import org.eclipse.urischeme.IScheme;
 
 /**
  * Implementation of {@link IScheme} for testing purpose.
- *
  */
 public class Scheme implements IScheme {
 
-	private String name;
-	private String desription;
+	private final String name;
+	private final String desription;
 
 	public Scheme(String name, String desription) {
 		this.name = name;

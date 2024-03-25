@@ -20,7 +20,6 @@ import org.eclipse.ui.internal.tweaklets.Tweaklets.TweakKey;
 
 /**
  * @since 3.4
- *
  */
 public abstract class InterceptContributions {
 	public static TweakKey KEY = new Tweaklets.TweakKey(InterceptContributions.class);

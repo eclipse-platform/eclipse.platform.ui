@@ -15,7 +15,7 @@
 package org.eclipse.core.tests.internal.databinding;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.eclipse.core.databinding.BindingProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
@@ -60,12 +60,8 @@ public class ConverterValuePropertyTest extends AbstractDefaultRealmTestCase {
 	public void testSetValue() {
 		IValueProperty<Object, String> property = BindingProperties.convertedValue(converter);
 
-		try {
-			property.setValue(123, "123");
-			fail("setting a value should trigger an exception!");
-		} catch (UnsupportedOperationException e) {
-			// expected exception
-		}
+		assertThrows("setting a value should trigger an exception!", UnsupportedOperationException.class,
+				() -> property.setValue(123, "123"));
 	}
 
 	@Test

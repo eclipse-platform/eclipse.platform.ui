@@ -297,8 +297,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 
 	/**
 	 * Clear the cursor on the supplied control.
-	 *
-	 * @param control
 	 */
 	private void clearCursor(Control control) {
 		if (control != null && !control.isDisposed()) {

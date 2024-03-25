@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.handlers;
 import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -28,7 +27,7 @@ import org.eclipse.ui.internal.e4.compatibility.E4Util;
 public class ClosePerspectiveHandler extends AbstractHandler {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) {
 		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 		if (activeWorkbenchWindow != null) {
 			WorkbenchPage page = (WorkbenchPage) activeWorkbenchWindow.getActivePage();

@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
@@ -23,7 +23,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DescendentTest extends CSSSWTTestCase {
 
@@ -55,7 +55,7 @@ public class DescendentTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testDescendentSpecificity() {
+	void testDescendentSpecificity() {
 		Button[] buttons = createTestWidgets(
 				"Composite.special Button { background: #FF0000}\n" +  //specificity a=1 b=0 c=1 = 101
 						"Composite Button { background: #00FF00}\n" + //specificity a=0 b=0 c=2 = 002

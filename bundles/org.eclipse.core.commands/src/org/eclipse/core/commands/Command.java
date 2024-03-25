@@ -877,7 +877,6 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *
 	 * @param commandListener
 	 *            The listener to be removed; must not be <code>null</code>.
-	 *
 	 */
 	public void removeCommandListener(final ICommandListener commandListener) {
 		if (commandListener == null) {
@@ -892,7 +891,6 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 *
 	 * @param executionListener
 	 *            The listener to be removed; must not be <code>null</code>.
-	 *
 	 */
 	public void removeExecutionListener(final IExecutionListener executionListener) {
 		if (executionListener == null) {

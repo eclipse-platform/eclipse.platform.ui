@@ -136,10 +136,6 @@ public class UnmodifiableObservableSetTest extends AbstractDefaultRealmTestCase 
 	}
 
 	private static class MutableObservableSet extends ObservableSet {
-		/**
-		 * @param wrappedList
-		 * @param elementType
-		 */
 		public MutableObservableSet(Set wrappedSet, Object elementType) {
 			super(wrappedSet, elementType);
 		}
@@ -160,7 +156,7 @@ public class UnmodifiableObservableSetTest extends AbstractDefaultRealmTestCase 
 
 	private static class Delegate extends
 			AbstractObservableCollectionContractDelegate {
-		private Object elementType = new Object();
+		private final Object elementType = new Object();
 
 		@Override
 		public IObservableCollection createObservableCollection(Realm realm,

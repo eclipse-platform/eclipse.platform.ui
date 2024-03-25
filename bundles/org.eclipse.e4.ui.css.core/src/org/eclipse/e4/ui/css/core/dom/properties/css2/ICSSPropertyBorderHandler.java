@@ -28,12 +28,6 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all of the properties for the four
 	 * borders in one declaration. Available values are= border-width
 	 * border-style border-color
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorder(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
@@ -42,36 +36,18 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all of the properties for the bottom
 	 * border in one declaration. Available values are=border-bottom-width
 	 * border-style border-color
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderBottom(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the color of the bottom border. Available values are=border-color
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderBottomColor(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the style of the bottom border. Available values are=border-style
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderBottomStyle(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
@@ -79,12 +55,6 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the width of the bottom border. Available values are= thin medium
 	 * thick length
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderBottomWidth(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
@@ -92,12 +62,6 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the color of the four borders, can have from one to four colors.
 	 * Available values are=color
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
@@ -106,36 +70,18 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all of the properties for the left
 	 * border in one declaration. Available values are=border-left-width
 	 * border-style border-color
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderLeft(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the color of the left border. Available values are=border-color
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderLeftColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the style of the left border. Available values are=border-style
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderLeftStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
@@ -143,12 +89,6 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the width of the left border. Available values are=thin medium thick
 	 * length
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderLeftWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
@@ -157,36 +97,18 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all of the properties for the right
 	 * border in one declaration. Available values are=border-right-width
 	 * border-style border-color
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderRight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the color of the right border. Available values are=border-color
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderRightColor(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the style of the right border. Available values are=border-style
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderRightStyle(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
@@ -194,12 +116,6 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the width of the right border.Available values are= thin medium
 	 * thick length
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderRightWidth(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
@@ -208,12 +124,6 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * Sets the style of the four borders, can have from one to four styles.
 	 * Available values are=none hidden dotted dashed solid double groove ridge
 	 * inset outset
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
@@ -222,36 +132,18 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all of the properties for the top border
 	 * in one declaration. Available values are=border-top-width border-style
 	 * border-color
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderTop(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the color of the top border. Available values are=border-color
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderTopColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the style of the top border. Available values are=border-style
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderTopStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
@@ -259,12 +151,6 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the width of the top border. Available values are=thin medium thick
 	 * length
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderTopWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
@@ -273,12 +159,6 @@ public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting the width of the four borders in one
 	 * declaration, can have from one to four values. Available values are=thin
 	 * medium thick length
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyBorderWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;

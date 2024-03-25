@@ -413,7 +413,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MWindowElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MWindowElement>(MWindowElement.class, this,
+			children = new EObjectContainmentWithInverseEList<>(MWindowElement.class, this,
 					BasicPackageImpl.WINDOW__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
 				private static final long serialVersionUID = 1L;
 
@@ -458,8 +458,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__LABEL, oldLabel, label));
+		}
 	}
 
 	/**
@@ -483,9 +484,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__ICON_URI, oldIconURI,
 					iconURI));
+		}
 	}
 
 	/**
@@ -509,9 +511,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__TOOLTIP, oldTooltip,
 					tooltip));
+		}
 	}
 
 	/**
@@ -553,9 +556,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public void setContext(IEclipseContext newContext) {
 		IEclipseContext oldContext = context;
 		context = newContext;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__CONTEXT, oldContext,
 					context));
+		}
 	}
 
 	/**
@@ -566,7 +570,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, BasicPackageImpl.WINDOW__VARIABLES);
+			variables = new EDataTypeUniqueEList<>(String.class, this, BasicPackageImpl.WINDOW__VARIABLES);
 		}
 		return variables;
 	}
@@ -579,7 +583,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+			properties = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
 					StringToStringMapImpl.class, this, BasicPackageImpl.WINDOW__PROPERTIES);
 		}
 		return properties.map();
@@ -593,7 +597,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
-			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, BasicPackageImpl.WINDOW__HANDLERS);
+			handlers = new EObjectContainmentEList<>(MHandler.class, this, BasicPackageImpl.WINDOW__HANDLERS);
 		}
 		return handlers;
 	}
@@ -606,7 +610,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this,
+			bindingContexts = new EObjectResolvingEList<>(MBindingContext.class, this,
 					BasicPackageImpl.WINDOW__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
@@ -620,7 +624,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MUIElement> getSnippets() {
 		if (snippets == null) {
-			snippets = new EObjectContainmentEList<MUIElement>(MUIElement.class, this,
+			snippets = new EObjectContainmentEList<>(MUIElement.class, this,
 					BasicPackageImpl.WINDOW__SNIPPETS);
 		}
 		return snippets;
@@ -647,10 +651,11 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
 					BasicPackageImpl.WINDOW__MAIN_MENU, oldMainMenu, newMainMenu);
-			if (msgs == null)
+			if (msgs == null) {
 				msgs = notification;
-			else
+			} else {
 				msgs.add(notification);
+			}
 		}
 		return msgs;
 	}
@@ -664,18 +669,22 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	public void setMainMenu(MMenu newMainMenu) {
 		if (newMainMenu != mainMenu) {
 			NotificationChain msgs = null;
-			if (mainMenu != null)
+			if (mainMenu != null) {
 				msgs = ((InternalEObject) mainMenu).eInverseRemove(this,
 						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.WINDOW__MAIN_MENU, null, msgs);
-			if (newMainMenu != null)
+			}
+			if (newMainMenu != null) {
 				msgs = ((InternalEObject) newMainMenu).eInverseAdd(this,
 						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.WINDOW__MAIN_MENU, null, msgs);
+			}
 			msgs = basicSetMainMenu(newMainMenu, msgs);
-			if (msgs != null)
+			if (msgs != null) {
 				msgs.dispatch();
-		} else if (eNotificationRequired())
+			}
+		} else if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__MAIN_MENU, newMainMenu,
 					newMainMenu));
+		}
 	}
 
 	/**
@@ -699,8 +708,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		x = newX;
 		boolean oldXESet = xESet;
 		xESet = true;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__X, oldX, x, !oldXESet));
+		}
 	}
 
 	/**
@@ -714,9 +724,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		boolean oldXESet = xESet;
 		x = X_EDEFAULT;
 		xESet = false;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.UNSET, BasicPackageImpl.WINDOW__X, oldX, X_EDEFAULT,
 					oldXESet));
+		}
 	}
 
 	/**
@@ -750,8 +761,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		y = newY;
 		boolean oldYESet = yESet;
 		yESet = true;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__Y, oldY, y, !oldYESet));
+		}
 	}
 
 	/**
@@ -765,9 +777,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		boolean oldYESet = yESet;
 		y = Y_EDEFAULT;
 		yESet = false;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.UNSET, BasicPackageImpl.WINDOW__Y, oldY, Y_EDEFAULT,
 					oldYESet));
+		}
 	}
 
 	/**
@@ -801,9 +814,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		width = newWidth;
 		boolean oldWidthESet = widthESet;
 		widthESet = true;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__WIDTH, oldWidth, width,
 					!oldWidthESet));
+		}
 	}
 
 	/**
@@ -817,9 +831,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		boolean oldWidthESet = widthESet;
 		width = WIDTH_EDEFAULT;
 		widthESet = false;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.UNSET, BasicPackageImpl.WINDOW__WIDTH, oldWidth,
 					WIDTH_EDEFAULT, oldWidthESet));
+		}
 	}
 
 	/**
@@ -853,9 +868,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		height = newHeight;
 		boolean oldHeightESet = heightESet;
 		heightESet = true;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__HEIGHT, oldHeight, height,
 					!oldHeightESet));
+		}
 	}
 
 	/**
@@ -869,9 +885,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		boolean oldHeightESet = heightESet;
 		height = HEIGHT_EDEFAULT;
 		heightESet = false;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.UNSET, BasicPackageImpl.WINDOW__HEIGHT, oldHeight,
 					HEIGHT_EDEFAULT, oldHeightESet));
+		}
 	}
 
 	/**
@@ -892,7 +909,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MWindow> getWindows() {
 		if (windows == null) {
-			windows = new EObjectContainmentEList<MWindow>(MWindow.class, this, BasicPackageImpl.WINDOW__WINDOWS);
+			windows = new EObjectContainmentEList<>(MWindow.class, this, BasicPackageImpl.WINDOW__WINDOWS);
 		}
 		return windows;
 	}
@@ -905,7 +922,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	@Override
 	public List<MUIElement> getSharedElements() {
 		if (sharedElements == null) {
-			sharedElements = new EObjectContainmentEList<MUIElement>(MUIElement.class, this,
+			sharedElements = new EObjectContainmentEList<>(MUIElement.class, this,
 					BasicPackageImpl.WINDOW__SHARED_ELEMENTS);
 		}
 		return sharedElements;
@@ -977,10 +994,11 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		case BasicPackageImpl.WINDOW__VARIABLES:
 			return getVariables();
 		case BasicPackageImpl.WINDOW__PROPERTIES:
-			if (coreType)
+			if (coreType) {
 				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
-			else
+			} else {
 				return getProperties();
+			}
 		case BasicPackageImpl.WINDOW__HANDLERS:
 			return getHandlers();
 		case BasicPackageImpl.WINDOW__BINDING_CONTEXTS:
@@ -1392,8 +1410,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$
@@ -1407,25 +1426,33 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		result.append(", variables: "); //$NON-NLS-1$
 		result.append(variables);
 		result.append(", x: "); //$NON-NLS-1$
-		if (xESet)
+		if (xESet) {
 			result.append(x);
-		else
+		}
+		else {
 			result.append("<unset>"); //$NON-NLS-1$
+		}
 		result.append(", y: "); //$NON-NLS-1$
-		if (yESet)
+		if (yESet) {
 			result.append(y);
-		else
+		}
+		else {
 			result.append("<unset>"); //$NON-NLS-1$
+		}
 		result.append(", width: "); //$NON-NLS-1$
-		if (widthESet)
+		if (widthESet) {
 			result.append(width);
-		else
+		}
+		else {
 			result.append("<unset>"); //$NON-NLS-1$
+		}
 		result.append(", height: "); //$NON-NLS-1$
-		if (heightESet)
+		if (heightESet) {
 			result.append(height);
-		else
+		}
+		else {
 			result.append("<unset>"); //$NON-NLS-1$
+		}
 		result.append(')');
 		return result.toString();
 	}

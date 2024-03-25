@@ -81,10 +81,6 @@ public abstract class MockWorkbenchPart extends MockPart implements IWorkbenchPa
 				& testActionBars(getActionBars()));
 	}
 
-	/**
-	 * @param actionBars
-	 * @return
-	 */
 	private boolean testActionBars(IActionBars bars) {
 		return bars != null && bars.getMenuManager() != null && bars.getToolBarManager() != null
 				&& bars.getStatusLineManager() != null;

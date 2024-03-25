@@ -108,7 +108,7 @@ public class ObservableTracker {
 		currentGetterCalledSet.set(observableSet);
 		currentChangeListener.set(changeListener);
 		currentStaleListener.set(staleListener);
-		currentIgnoreCount.set(null);
+		currentIgnoreCount.remove();
 		try {
 			runnable.run();
 		} finally {
@@ -147,7 +147,7 @@ public class ObservableTracker {
 		Set<IObservable> observableSet = new IdentitySet<>();
 		// Push the new listeners to the top of the stack
 		currentObservableCreatedSet.set(observableSet);
-		currentIgnoreCount.set(null);
+		currentIgnoreCount.remove();
 		try {
 			runnable.run();
 		} finally {
@@ -201,7 +201,11 @@ public class ObservableTracker {
 		if (newCount < 0)
 			throw new IllegalStateException("Ignore count is already zero"); //$NON-NLS-1$
 
-		currentIgnoreCount.set(newCount == 0 ? null : Integer.valueOf(newCount));
+		if (newCount == 0) {
+			currentIgnoreCount.remove();
+		} else {
+			currentIgnoreCount.set(Integer.valueOf(newCount));
+		}
 	}
 
 	/**

@@ -51,8 +51,8 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 	public Color getBackground(Object element) {
 
 		int switchNumber = 0;
-		if(element instanceof TreeElement) {
-			switchNumber = ((TreeElement) element).level;
+		if (element instanceof TreeElement treeElem) {
+			switchNumber = treeElem.level;
 		} else {
 			switchNumber = ((TableElement) element).index%4;
 		}
@@ -78,8 +78,8 @@ public class TestLabelProvider implements ILabelProvider, IColorProvider, IFontP
 	public Color getForeground(Object element) {
 
 		int switchNumber = 0;
-		if(element instanceof TreeElement) {
-			switchNumber = ((TreeElement) element).level;
+		if (element instanceof TreeElement treeElem) {
+			switchNumber = treeElem.level;
 		} else {
 			switchNumber = ((TableElement) element).index%4;
 		}

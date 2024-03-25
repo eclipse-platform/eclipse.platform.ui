@@ -38,8 +38,6 @@ import org.junit.Test;
 public class WritableValueTest extends AbstractDefaultRealmTestCase {
 	/**
 	 * All constructors delegate to the 3 arg constructor.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testConstructor() throws Exception {

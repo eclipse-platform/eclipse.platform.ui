@@ -83,7 +83,6 @@ import org.eclipse.urischeme.IUriSchemeExtensionReader;
 /**
  * This page contributes to URL handler for URISchemes in preference page of
  * General section
- *
  */
 public class UriSchemeHandlerPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -102,7 +101,6 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 	private Composite handlerComposite;
 	private volatile boolean isLoading = false;
 
-	@SuppressWarnings("javadoc")
 	public UriSchemeHandlerPreferencePage() {
 		super.setDescription(UrlHandlerPreferencePage_Page_Description);
 	}
@@ -327,7 +325,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		}
 	}
 
-	private final class ItemLabelProvider extends LabelProvider implements ITableLabelProvider {
+	private static final class ItemLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -471,7 +469,6 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		 * to operating system are consolidated here
 		 *
 		 * @return the supported and registered URI schemes of this instance of eclipse
-		 * @throws Exception
 		 */
 		private Collection<UiSchemeInformation> retrieveSchemeInformationList() {
 			Collection<UiSchemeInformation> returnList = new ArrayList<>();

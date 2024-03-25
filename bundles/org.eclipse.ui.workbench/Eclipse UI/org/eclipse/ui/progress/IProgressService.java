@@ -109,7 +109,6 @@ public interface IProgressService extends IRunnableContext {
 	 * @throws InterruptedException      propagated by the context if the runnable
 	 *                                   acknowledges cancelation by throwing this
 	 *                                   exception.
-	 *
 	 */
 	void runInUI(IRunnableContext context, IRunnableWithProgress runnable, ISchedulingRule rule)
 			throws InvocationTargetException, InterruptedException;

@@ -12,9 +12,6 @@
  *    IBM Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
-/**
- *
- */
 public class BrowserDescriptorWorkingCopy extends BrowserDescriptor implements IBrowserDescriptorWorkingCopy {
 	protected BrowserDescriptor browser;
 

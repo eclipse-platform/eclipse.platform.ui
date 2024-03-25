@@ -885,15 +885,32 @@ public class ExpandableComposite extends Canvas {
 	}
 
 	/**
-	 * Programmatically changes expanded state.
+	 * Changes expanded state.
+	 *
+	 * Equivalent to <code>setExpanded(expanded, false)</code>.
+	 *
+	 * @param expanded the new expanded state
+	 * @see #setExpanded(boolean, boolean)
+	 */
+	public void setExpanded(boolean expanded) {
+		setExpanded(expanded, false);
+	}
+
+	/**
+	 * Changes expanded state.
 	 *
 	 * @param expanded
 	 *            the new expanded state
+	 * @param fireExpanding
+	 *            if true, listeners will be notified
+	 *
+	 * @since 3.13
 	 */
-	public void setExpanded(boolean expanded) {
-		internalSetExpanded(expanded);
-		if (toggle != null)
+	public void setExpanded(boolean expanded, boolean fireExpanding) {
+		internalSetExpanded(expanded, fireExpanding);
+		if (toggle != null) {
 			toggle.setExpanded(expanded);
+		}
 	}
 
 	/**
@@ -1083,11 +1100,29 @@ public class ExpandableComposite extends Canvas {
 
 	private void toggleState() {
 		boolean newState = !isExpanded();
-		fireExpanding(newState, true);
-		internalSetExpanded(newState);
-		fireExpanding(newState, false);
+		internalSetExpanded(newState, true);
 		if (newState)
 			FormUtil.ensureVisible(this);
+	}
+
+	/**
+	 * Performs the expanded state change for the expandable control.
+	 *
+	 * @param expanded
+	 *            the new expanded state
+	 * @param fireExpanding
+	 *            if true, listeners will be notified
+	 */
+	private void internalSetExpanded(boolean expanded, boolean fireExpanding) {
+		if (fireExpanding) {
+			fireExpanding(expanded, true);
+		}
+
+		internalSetExpanded(expanded);
+
+		if (fireExpanding) {
+			fireExpanding(expanded, false);
+		}
 	}
 
 	private void fireExpanding(boolean state, boolean before) {

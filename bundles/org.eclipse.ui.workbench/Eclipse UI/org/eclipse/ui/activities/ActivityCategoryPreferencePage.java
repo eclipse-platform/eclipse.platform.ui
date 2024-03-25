@@ -33,6 +33,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -44,8 +46,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -60,7 +60,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.OverlayIcon;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.activities.InternalActivityHelper;
 import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
@@ -141,17 +140,10 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 			ImageDescriptor descriptor = PlatformUI.getWorkbench().getActivitySupport().getImageDescriptor(category);
 			if (descriptor != null) {
 				try {
-					if (decorate) {
-						if (isLocked(category)) {
-							if (lockDescriptor.isPresent()) {
-								ImageData originalImageData = descriptor.getImageData(100);
-								OverlayIcon overlay = new OverlayIcon(descriptor, lockDescriptor.get(),
-										new Point(originalImageData.width, originalImageData.height));
-								return manager.createImage(overlay);
-							}
-						}
+					if (decorate && isLocked(category) && lockDescriptor.isPresent()) {
+						descriptor = new DecorationOverlayIcon(descriptor, lockDescriptor.get(), IDecoration.TOP_RIGHT);
 					}
-					return manager.createImage(descriptor);
+					return manager.create(descriptor);
 				} catch (DeviceResourceException e) {
 					WorkbenchPlugin.log(e);
 				}
@@ -195,7 +187,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 	}
 
 	private class CategoryContentProvider implements IStructuredContentProvider {
-		@SuppressWarnings("unchecked")
 		@Override
 		public Object[] getElements(Object inputElement) {
 			// convert to category objects
@@ -278,9 +269,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 		return composite;
 	}
 
-	/**
-	 * @param composite
-	 */
 	private void createPromptButton(Composite composite) {
 		activityPromptButton = new Button(composite, SWT.CHECK);
 		activityPromptButton
@@ -319,9 +307,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createDetailsArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -347,9 +332,6 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 		dependantViewer.setInput(Collections.EMPTY_SET);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createCategoryArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();

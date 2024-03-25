@@ -18,13 +18,13 @@ package org.eclipse.e4.ui.tests.workbench;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.annotation.PostConstruct;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.UISynchronize;
@@ -129,10 +129,11 @@ public class ModelAssemblerFragmentOrderingTests {
 	 * Empty application.
 	 * <p>
 	 * Contributed fragments:
-	 * <li>fragment1 - menu item a
-	 * <li>fragment2 - menu item b
-	 * <li>fragment3 - menu item c
-	 * <p>
+	 * <ul>
+	 * <li>fragment1 - menu item a</li>
+	 * <li>fragment2 - menu item b</li>
+	 * <li>fragment3 - menu item c</li>
+	 * </ul>
 	 * Expected result: a, b, c.
 	 */
 	@Test
@@ -339,10 +340,11 @@ public class ModelAssemblerFragmentOrderingTests {
 	 * Empty application.
 	 * <p>
 	 * Contributed fragments:
-	 * <li>fragment1 - menu item a - index:1
-	 * <li>fragment2 - menu item b - index:2
-	 * <li>fragment3 - menu item c - index:3
-	 * <p>
+	 * <ul>
+	 * <li>fragment1 - menu item a - index:1</li>
+	 * <li>fragment2 - menu item b - index:2</li>
+	 * <li>fragment3 - menu item c - index:3</li>
+	 * </ul>
 	 * Expected result: a, b, c.
 	 */
 	@Test
@@ -394,10 +396,11 @@ public class ModelAssemblerFragmentOrderingTests {
 	 * Empty application.
 	 * <p>
 	 * Contributed fragments:
-	 * <li>fragment1 - menu item a - index:3
-	 * <li>fragment2 - menu item b - index:2
-	 * <li>fragment3 - menu item c - index:1
-	 * <p>
+	 * <ul>
+	 * <li>fragment1 - menu item a - index:3</li>
+	 * <li>fragment2 - menu item b - index:2</li>
+	 * <li>fragment3 - menu item c - index:1</li>
+	 * </ul>
 	 * Expected result: c, b, a.
 	 */
 	@Test
@@ -450,10 +453,11 @@ public class ModelAssemblerFragmentOrderingTests {
 	 * Empty application.
 	 * <p>
 	 * Contributed fragments:
-	 * <li>fragment1 - menu item a - index:3
-	 * <li>fragment2 - menu item b - index:1
-	 * <li>fragment3 - menu item c - index:2
-	 * <p>
+	 * <ul>
+	 * <li>fragment1 - menu item a - index:3</li>
+	 * <li>fragment2 - menu item b - index:1</li>
+	 * <li>fragment3 - menu item c - index:2</li>
+	 * </ul>
 	 * Expected result: c, b, a.
 	 */
 	@Test
@@ -506,11 +510,12 @@ public class ModelAssemblerFragmentOrderingTests {
 	 * Application with menu items x y z .
 	 * <p>
 	 * Contributed fragments:
-	 * <li>fragment1 - menu item a - index:9
-	 * <li>fragment2 - menu item b - index:1
-	 * <li>fragment3 - menu item c - index:0
-	 * <li>fragment4 - menu item d - index:3
-	 * <p>
+	 * <ul>
+	 * <li>fragment1 - menu item a - index:9</li>
+	 * <li>fragment2 - menu item b - index:1</li>
+	 * <li>fragment3 - menu item c - index:0</li>
+	 * <li>fragment4 - menu item d - index:3</li>
+	 * </ul>
 	 * Expected result: c, b, x, d, y, z, a
 	 */
 	@Test
@@ -2159,8 +2164,6 @@ public class ModelAssemblerFragmentOrderingTests {
 	 * imports Menu 0.0 from fragment2
 	 * <p>
 	 * fragment2 contributes Menu0.0, Menu 0.2 and MenuItem 0.0.1
-	 *
-	 *
 	 */
 	@Test
 	public void testMenuAndItemsInFragmentsWithImports() {

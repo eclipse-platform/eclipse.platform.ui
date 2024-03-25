@@ -33,16 +33,11 @@ import org.eclipse.core.databinding.property.list.ListProperty;
  * @param <E> type of the elements in the list
  *
  * @since 3.3
- *
  */
 public class BeanListPropertyDecorator<S, E> extends ListProperty<S, E> implements IBeanListProperty<S, E> {
 	private final IListProperty<S, E> delegate;
 	private final PropertyDescriptor propertyDescriptor;
 
-	/**
-	 * @param delegate
-	 * @param propertyDescriptor
-	 */
 	public BeanListPropertyDecorator(IListProperty<S, E> delegate, PropertyDescriptor propertyDescriptor) {
 		this.delegate = delegate;
 		this.propertyDescriptor = propertyDescriptor;

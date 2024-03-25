@@ -119,17 +119,13 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	 *
 	 * @return current {@link WorkbenchStatusDialogManager}
 	 */
-	private WorkbenchStatusDialogManager getStatusDialogManager() {
+	private synchronized WorkbenchStatusDialogManager getStatusDialogManager() {
 		if (statusDialogManager == null) {
-			synchronized (this) {
-				if (statusDialogManager == null) {
-					statusDialogManager = new WorkbenchStatusDialogManager(null);
-					statusDialogManager.setProperty(IStatusDialogConstants.SHOW_SUPPORT, Boolean.TRUE);
-					statusDialogManager.setProperty(IStatusDialogConstants.HANDLE_OK_STATUSES, Boolean.TRUE);
-					statusDialogManager.setProperty(IStatusDialogConstants.ERRORLOG_LINK, Boolean.TRUE);
-					configureStatusDialog(statusDialogManager);
-				}
-			}
+			statusDialogManager = new WorkbenchStatusDialogManager(null);
+			statusDialogManager.setProperty(IStatusDialogConstants.SHOW_SUPPORT, Boolean.TRUE);
+			statusDialogManager.setProperty(IStatusDialogConstants.HANDLE_OK_STATUSES, Boolean.TRUE);
+			statusDialogManager.setProperty(IStatusDialogConstants.ERRORLOG_LINK, Boolean.TRUE);
+			configureStatusDialog(statusDialogManager);
 		}
 		return statusDialogManager;
 	}

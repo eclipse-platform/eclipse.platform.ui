@@ -281,9 +281,6 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	}
 
 	/**
-	 * @param layout
-	 * @param cell
-	 * @param applyColors
 	 * @return the text width delta (0 if the text layout contains no other font)
 	 */
 	private int updateTextLayout(TextLayout layout, ViewerCell cell,

@@ -84,14 +84,16 @@ public class DummyMailService implements IMailService {
 						.withSubject(
 								"This is a message about the cool Eclipse RCP!")
 						.withBody(
-								"This RCP Application was generated from the PDE Plug-in Project wizard. This sample shows how to:\n"
-										+ "- add a top-level menu and toolbar with actions\n"
-										+ "- add keybindings to actions\n"
-										+ "- create views that can't be closed and\n"
-										+ "  multiple instances of the same view\n"
-										+ "- perspectives with placeholders for new views\n"
-										+ "- use the default about dialog\n"
-										+ "- create a product definition\n")
+								"""
+									This RCP Application was generated from the PDE Plug-in Project wizard. This sample shows how to:
+									- add a top-level menu and toolbar with actions
+									- add keybindings to actions
+									- create views that can't be closed and
+									  multiple instances of the same view
+									- perspectives with placeholders for new views
+									- use the default about dialog
+									- create a product definition
+									""")
 						.create());
 			}
 		};

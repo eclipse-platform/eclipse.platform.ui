@@ -19,7 +19,6 @@ import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -53,8 +52,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  * @model
  * @generated
  */
-public interface MPart extends MUIElement, MPartSashContainerElement, MStackElement, MContribution, MContext, MUILabel,
-MHandlerContainer, MDirtyable, MBindings, MWindowElement {
+public interface MPart extends MPartSashContainerElement, MStackElement, MContribution, MContext, MUILabel,
+		MHandlerContainer, MDirtyable, MBindings, MWindowElement {
 	/**
 	 * Returns the value of the '<em><b>Menus</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.menu.MMenu}.

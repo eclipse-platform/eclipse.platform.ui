@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -42,7 +41,7 @@ public class DialogUtil {
 	 * Open an error style dialog for PartInitException by including any extra
 	 * information from the nested CoreException if present.
 	 */
-	public static void openError(Shell parent, String title, String message, PartInitException exception) {
+	public static void openError(String message, PartInitException exception) {
 		// Check for a nested CoreException
 		CoreException nestedException = null;
 		IStatus status = exception.getStatus();

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -91,20 +92,19 @@ public class DirectoryProposalContentAssistTestCase extends AbstractFieldAssistT
 		}
 		TableItem[] proposals = tableOptional.get().getItems();
 
-		assertTrue("Proposal size must be " + size, size == proposals.length);
+		assertEquals("Proposal size must be " + size, size, proposals.length);
 	}
 
 	private Table retrieveTable(Shell shell) {
 		Control[] children = shell.getChildren();
 		if (children.length >= 1) {
 			Control control = children[0];
-			if (control instanceof Composite) {
-				Composite composite = (Composite) control;
+			if (control instanceof Composite composite) {
 				Control[] children2 = composite.getChildren();
 				if (children2.length >= 1) {
 					Control control2 = composite.getChildren()[0];
-					if (control2 instanceof Table) {
-						return (Table) control2;
+					if (control2 instanceof Table t) {
+						return t;
 					}
 				}
 			}

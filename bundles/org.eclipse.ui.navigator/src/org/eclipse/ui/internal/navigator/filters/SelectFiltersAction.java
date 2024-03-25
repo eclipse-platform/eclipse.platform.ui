@@ -13,7 +13,6 @@
  *******************************************************************************/
 /*
  * Created on Feb 9, 2004
- *
  */
 package org.eclipse.ui.internal.navigator.filters;
 
@@ -40,8 +39,6 @@ public class SelectFiltersAction extends Action {
 	/**
 	 * Create an action to drive the Filter selection dialog
 	 * for a particular instance of the CommonViewer.
-	 * @param aCommonViewer
-	 * @param aFilterGroup
 	 */
 	public SelectFiltersAction(CommonViewer aCommonViewer, FilterActionGroup aFilterGroup) {
 		super(CommonNavigatorMessages.SelectFiltersActionDelegate_0);

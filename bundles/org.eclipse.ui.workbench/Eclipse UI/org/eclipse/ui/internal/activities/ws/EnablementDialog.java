@@ -235,9 +235,6 @@ public class EnablementDialog extends Dialog {
 		}
 	}
 
-	/**
-	 *
-	 */
 	protected void setDetailHints() {
 		GridData data = (GridData) detailsComposite.getLayoutData();
 		if (showDetails) {

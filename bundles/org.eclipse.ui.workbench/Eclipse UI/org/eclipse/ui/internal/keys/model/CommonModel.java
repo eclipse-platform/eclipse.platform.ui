@@ -16,16 +16,12 @@ package org.eclipse.ui.internal.keys.model;
 
 /**
  * @since 3.4
- *
  */
 public class CommonModel extends ModelElement {
 
 	public static final String PROP_SELECTED_ELEMENT = "selectedElement"; //$NON-NLS-1$
 	private ModelElement selectedElement;
 
-	/**
-	 * @param kc
-	 */
 	public CommonModel(KeyController kc) {
 		super(kc);
 	}

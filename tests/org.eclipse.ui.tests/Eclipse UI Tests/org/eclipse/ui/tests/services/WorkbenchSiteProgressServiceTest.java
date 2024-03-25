@@ -14,7 +14,8 @@
 
 package org.eclipse.ui.tests.services;
 
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,7 +55,8 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase {
 	private WorkbenchSiteProgressService progressService;
 	private IWorkbenchPartSite site;
 
-	private SimpleDateFormat dateFormat;
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS Z") //$NON-NLS-1$
+			.withZone(ZoneId.systemDefault());
 
 	@Override
 	protected void doSetUp() throws Exception {
@@ -66,8 +68,6 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase {
 		site = activePart.getSite();
 		progressService = (WorkbenchSiteProgressService) site.getService(IWorkbenchSiteProgressService.class);
 		updateJob = progressService.getUpdateJob();
-
-		dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z");
 	}
 
 	public void forceUpdate() {
@@ -212,7 +212,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase {
 	}
 
 	private void logTime(String message) {
-		System.out.println(message + dateFormat.format(new Date()));
+		System.out.println(message + dateFormat.format(new Date().toInstant()));
 	}
 
 	static class LongJob extends Job{

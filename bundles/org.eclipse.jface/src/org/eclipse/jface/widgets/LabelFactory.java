@@ -53,7 +53,6 @@ import org.eclipse.swt.widgets.Label;
  * </p>
  *
  * @since 3.18
- *
  */
 public final class LabelFactory extends AbstractControlFactory<LabelFactory, Label> {
 
@@ -65,7 +64,6 @@ public final class LabelFactory extends AbstractControlFactory<LabelFactory, Lab
 	 * Creates a new LabelFactory with the given style. Refer to
 	 * {@link Label#Label(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new LabelFactory instance
 	 */
 	public static LabelFactory newLabel(int style) {

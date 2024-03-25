@@ -111,7 +111,6 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 		/**
 		 * Return the label text for the passed element.
 		 *
-		 * @param element
 		 * @return String
 		 */
 		abstract String getLabelText(Object element);
@@ -208,16 +207,12 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 	 * Get the category for the node if there is one. If there isn't return
 	 * <code>null</code>.
 	 *
-	 * @param node
 	 * @return String or <code>null</code>.
 	 */
 	abstract String getCategory(Object node);
 
 	/**
 	 * Add the node to the parent.
-	 *
-	 * @param parent
-	 * @param node
 	 */
 	abstract void add(Object parent, Object node);
 
@@ -249,8 +244,6 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 	/**
 	 * Create a node for categorization from the reader and the supplied object.
 	 *
-	 * @param reader
-	 * @param object
 	 * @return CategoryNode
 	 */
 	abstract CategoryNode createCategoryNode(CategorizedPageRegistryReader reader, Object object);
@@ -258,17 +251,12 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 	/**
 	 * Searches for the top-level node with the given id.
 	 *
-	 * @param id
 	 * @return Object of the type being categorized or <code>null</code>
 	 */
 	abstract Object findNode(String id);
 
 	/**
 	 * Find the node with the given parent with the id of currentToken.
-	 *
-	 * @param parent
-	 * @param currentToken
-	 * @return
 	 */
 	abstract Object findNode(Object parent, String currentToken);
 

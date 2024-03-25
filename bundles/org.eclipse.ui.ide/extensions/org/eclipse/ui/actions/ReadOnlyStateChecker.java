@@ -69,7 +69,7 @@ public class ReadOnlyStateChecker {
 	 * Return true if all items are selected and false if any are skipped.
 	 */
 	private boolean checkAcceptedResource(IResource resourceToCheck,
-			List selectedChildren) throws CoreException {
+			List<IResource> selectedChildren) throws CoreException {
 
 		if (resourceToCheck.getType() == IResource.FILE) {
 			selectedChildren.add(resourceToCheck);
@@ -142,7 +142,7 @@ public class ReadOnlyStateChecker {
 	 * @param allSelected the List of currently selected resources to add to.
 	 */
 	private int checkReadOnlyResources(IResource[] itemsToCheck,
-			List allSelected) throws CoreException {
+			List<IResource> allSelected) throws CoreException {
 
 		//Shortcut. If the user has already selected yes to all then just return it
 		if (yesToAllSelected) {
@@ -150,7 +150,7 @@ public class ReadOnlyStateChecker {
 		}
 
 		boolean noneSkipped = true;
-		List selectedChildren = new ArrayList();
+		List<IResource> selectedChildren = new ArrayList<>();
 
 		for (IResource resourceToCheck : itemsToCheck) {
 			ResourceAttributes checkAttributes = resourceToCheck.getResourceAttributes();

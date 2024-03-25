@@ -34,14 +34,11 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class PersonWizardPage extends WizardPage implements Listener {
 
-	private IServiceLocator locator;
+	private final IServiceLocator locator;
 	private Text surnameText;
 	private Text givennameText;
 	private Text idText;
 
-	/**
-	 * @param pageName
-	 */
 	public PersonWizardPage(IServiceLocator locator) {
 		super("personWizardPage"); //$NON-NLS-1$
 		this.locator = locator;

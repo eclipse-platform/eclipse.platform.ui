@@ -38,7 +38,6 @@ import org.eclipse.core.databinding.property.set.SimpleSetProperty;
  * @param <E>
  *            type of the elements in the set
  * @since 1.2
- *
  */
 public class SimplePropertyObservableSet<S, E> extends AbstractObservableSet<E>
 		implements IPropertyObservable<SimpleSetProperty<S, E>> {
@@ -54,11 +53,6 @@ public class SimplePropertyObservableSet<S, E> extends AbstractObservableSet<E>
 	private Set<E> cachedSet;
 	private boolean stale;
 
-	/**
-	 * @param realm
-	 * @param source
-	 * @param property
-	 */
 	public SimplePropertyObservableSet(Realm realm, S source, SimpleSetProperty<S, E> property) {
 		super(realm);
 		this.source = source;

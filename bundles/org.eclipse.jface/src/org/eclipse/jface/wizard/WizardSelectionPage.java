@@ -115,6 +115,8 @@ public abstract class WizardSelectionPage extends WizardPage {
 		}
 
 		if (!isCreated) {
+			// Allow the wizard to know its surrounding container
+			wizard.setContainer(getContainer());
 			// Allow the wizard to create its pages
 			wizard.addPages();
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,7 +21,7 @@ package org.eclipse.ui.examples.contributions.model;
  */
 public class Person {
 
-	private int id;
+	private final int id;
 	private String surname;
 	private String givenname;
 	private boolean admin = false;
@@ -86,8 +86,7 @@ public class Person {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof Person) {
-			Person p = (Person) o;
+		if (o instanceof Person p) {
 			return p.givenname == givenname && p.id == id
 					&& p.surname == surname;
 		}

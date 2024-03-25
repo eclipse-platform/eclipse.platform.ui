@@ -45,7 +45,6 @@ public class UriSchemeExtensionReader implements IUriSchemeExtensionReader {
 	private static final String EXT_POINT_ATTRIBUTE_URI_SCHEME = "uriScheme"; //$NON-NLS-1$
 	/**
 	 * Attribute "uriSchemeDecription" of an registered uri scheme handler
-	 *
 	 */
 	private static final String EXT_POINT_ATTRIBUTE_URI_SCHEME_DESCRIPTION = "uriSchemeDescription"; //$NON-NLS-1$
 	/**

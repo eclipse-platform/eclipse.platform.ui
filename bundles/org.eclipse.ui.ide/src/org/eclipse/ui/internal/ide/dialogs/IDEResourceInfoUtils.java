@@ -33,7 +33,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.osgi.util.NLS;
@@ -45,7 +44,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * Utility class supporting common information required from resources.
  *
  * @since 3.2
- *
  */
 public class IDEResourceInfoUtils {
 
@@ -85,7 +83,6 @@ public class IDEResourceInfoUtils {
 	/**
 	 * Return whether or not the file called pathName exists.
 	 *
-	 * @param pathName
 	 * @return boolean <code>true</code> if the file exists.
 	 * @see IFileInfo#exists()
 	 */
@@ -150,7 +147,6 @@ public class IDEResourceInfoUtils {
 	 * Return the fileInfo at pathName or <code>null</code> if the format is
 	 * invalid or if the file info cannot be determined.
 	 *
-	 * @param pathName
 	 * @return IFileInfo or <code>null</code>
 	 */
 	public static IFileInfo getFileInfo(IPath pathName) {
@@ -165,7 +161,6 @@ public class IDEResourceInfoUtils {
 	 * Return the fileInfo at pathName or <code>null</code> if the format is
 	 * invalid or if the file info cannot be determined.
 	 *
-	 * @param pathName
 	 * @return IFileInfo or <code>null</code>
 	 */
 	public static IFileInfo getFileInfo(String pathName) {
@@ -180,7 +175,6 @@ public class IDEResourceInfoUtils {
 	 * Return the fileInfo for location. Return <code>null</code> if there is
 	 * a CoreException looking it up
 	 *
-	 * @param location
 	 * @return String or <code>null</code>
 	 */
 	public static IFileInfo getFileInfo(URI location) {
@@ -196,12 +190,11 @@ public class IDEResourceInfoUtils {
 	/**
 	 * Get the file store for the local file system path.
 	 *
-	 * @param string
 	 * @return IFileStore or <code>null</code> if there is a
 	 *         {@link CoreException}.
 	 */
 	public static IFileStore getFileStore(String string) {
-		Path location = new Path(string);
+		IPath location = IPath.fromOSString(string);
 		//see if there is an existing resource at that location that might have a different file store
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(location);
 		if (file != null) {
@@ -213,7 +206,6 @@ public class IDEResourceInfoUtils {
 	/**
 	 * Get the file store for the URI.
 	 *
-	 * @param uri
 	 * @return IFileStore or <code>null</code> if there is a
 	 *         {@link CoreException}.
 	 */
@@ -229,7 +221,6 @@ public class IDEResourceInfoUtils {
 	/**
 	 * Get the location of a resource
 	 *
-	 * @param resource
 	 * @return String the text to display the location
 	 */
 	public static String getLocationText(IResource resource) {
@@ -280,7 +271,6 @@ public class IDEResourceInfoUtils {
 	 * Get the resolved location of a resource. This resolves path variables if
 	 * present in the resource path.
 	 *
-	 * @param resource
 	 * @return String
 	 */
 	public static String getResolvedLocationText(IResource resource) {
@@ -316,7 +306,6 @@ public class IDEResourceInfoUtils {
 	/**
 	 * Return a String that indicates the size of the supplied file.
 	 *
-	 * @param resource
 	 * @return String
 	 */
 	public static String getSizeString(IResource resource) {
@@ -353,8 +342,6 @@ public class IDEResourceInfoUtils {
 	/**
 	 * Get the string that identifies the type of this resource.
 	 *
-	 * @param resource
-	 * @param description
 	 * @return String
 	 */
 	public static String getTypeString(IResource resource,
@@ -433,9 +420,6 @@ public class IDEResourceInfoUtils {
 	/**
 	 * Return the file stores that are a child of store that the filter accepts.
 	 *
-	 * @param store
-	 * @param fileFilter
-	 * @param monitor
 	 * @return IFileStore[]
 	 */
 	public static IFileStore[] listFileStores(IFileStore store,
@@ -460,7 +444,6 @@ public class IDEResourceInfoUtils {
 
 	/**
 	 * Log the CoreException
-	 * @param e
 	 */
 	private static void log(CoreException e) {
 		StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);

@@ -13,37 +13,40 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed;
 
-import junit.framework.TestCase;
-
-import org.eclipse.swt.widgets.Display;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.text.IDocument;
-
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.views.properties.tabbed.text.TextTestsLabelSection;
 import org.eclipse.ui.tests.views.properties.tabbed.text.TextTestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
 import org.eclipse.ui.views.properties.tabbed.ISection;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabContents;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the text tests view.
  *
  * @since 3.4
  */
-public class TabbedPropertySheetPageTextTest extends TestCase {
+public class TabbedPropertySheetPageTextTest {
 
 	private static final long TIME_OUT_TO_GET_ACTIVE_TABS= 30000; // in ms
 
 	private TextTestsView textTestsView;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws WorkbenchException {
 
 		/**
 		 * Close the existing perspectives.
@@ -71,10 +74,8 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 		textTestsView = (TextTestsView) view;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-
+	@After
+	public void tearDown() {
 		/**
 		 * Bug 175070: Make sure the views have finished painting.
 		 */
@@ -87,6 +88,7 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 	/**
 	 * When text is selected, there is one tab for each selected word.
 	 */
+	@Test
 	public void test_tabForSelectedTextDisplay() {
 		IDocument document = textTestsView.getViewer().getDocument();
 		document.set("This is a test");
@@ -118,6 +120,7 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 	/**
 	 * Test changing the selected tab through API (Bug 119085).
 	 */
+	@Test
 	public void test_tabSelectedTab() {
 		IDocument document = textTestsView.getViewer().getDocument();
 		document.set("The fifth tab is selected");
@@ -170,6 +173,7 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 	 * TextTestsTabDescriptor returns two sections and one section is always
 	 * filtered (Bug 245690).
 	 */
+	@Test
 	public void test_listOfSections() {
 		IDocument document = textTestsView.getViewer().getDocument();
 		document.set("This is a test");

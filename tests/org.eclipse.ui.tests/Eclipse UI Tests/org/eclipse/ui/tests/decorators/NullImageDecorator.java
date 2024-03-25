@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.ui.tests.internal.ForcedException;
 
 /**
- * @see ILabelDecorator
+ * @see org.eclipse.jface.viewers.ILabelDecorator
  */
 public class NullImageDecorator implements ILightweightLabelDecorator {
 	/**
@@ -27,9 +27,6 @@ public class NullImageDecorator implements ILightweightLabelDecorator {
 	 */
 	public static boolean fail = false;
 
-	/**
-	 *
-	 */
 	public NullImageDecorator() {
 	}
 

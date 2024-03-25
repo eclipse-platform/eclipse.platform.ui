@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2018 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,8 @@
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
  *******************************************************************************/
 package org.eclipse.ui.tests.browser.internal;
+
+import static org.junit.Assert.fail;
 
 import java.text.MessageFormat;
 import java.util.Iterator;
@@ -189,7 +191,7 @@ public class UITestHelper {
 		if (preferred.x > size.x) {
 			//close the dialog
 			button.getShell().dispose();
-			Assert.assertTrue(message, false);
+			fail(message);
 		}
 	}
 
@@ -217,7 +219,7 @@ public class UITestHelper {
 		if (preferred.x > size.x) {
 			//close the dialog
 			label.getShell().dispose();
-			Assert.assertTrue(message, false);
+			fail(message);
 		}
 	}
 

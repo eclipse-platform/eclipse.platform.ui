@@ -79,7 +79,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
- *
  */
 @RunWith(JUnit4.class)
 @Ignore("broke during e4 transition and still need adjustments")
@@ -359,8 +358,8 @@ public class CommandEnablementTest {
 		}
 		IEclipseContext ctx = fWorkbench.getService(IEclipseContext.class);
 		Object handler = HandlerServiceImpl.lookUpHandler(ctx, command.getId());
-		if (handler instanceof E4HandlerProxy) {
-			return ((E4HandlerProxy) handler).getHandler();
+		if (handler instanceof E4HandlerProxy e4HandlerProxy) {
+			return e4HandlerProxy.getHandler();
 		}
 		return null;
 	}

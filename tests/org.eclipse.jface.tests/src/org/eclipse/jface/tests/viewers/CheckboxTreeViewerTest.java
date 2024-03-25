@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +31,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
+import org.junit.Test;
 
 public class CheckboxTreeViewerTest extends TreeViewerTest {
 	public static class CheckboxTableTestLabelProvider extends TestLabelProvider implements ITableLabelProvider {
@@ -55,10 +60,6 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		}
 	}
 
-	public CheckboxTreeViewerTest(String name) {
-		super(name);
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		fTreeViewer = new CheckboxTreeViewer(parent);
@@ -66,10 +67,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		return fTreeViewer;
 	}
 
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(CheckboxTreeViewerTest.class);
-	}
-
+	@Test
 	public void testCheckSubtree() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 		TestElement first = fRootElement.getFirstChild();
@@ -87,22 +85,24 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		assertTrue(!ctv.getChecked(firstfirstfirst));
 	}
 
+	@Test
 	public void testGrayed() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 		TestElement element = fRootElement.getFirstChild();
 
-		assertTrue(ctv.getGrayedElements().length == 0);
+		assertEquals(0, ctv.getGrayedElements().length);
 		assertTrue(!ctv.getGrayed(element));
 
 		ctv.setGrayed(element, true);
-		assertTrue(ctv.getGrayedElements().length == 1);
+		assertEquals(1, ctv.getGrayedElements().length);
 		assertTrue(ctv.getGrayed(element));
 
 		ctv.setGrayed(element, false);
-		assertTrue(ctv.getGrayedElements().length == 0);
+		assertEquals(0, ctv.getGrayedElements().length);
 		assertTrue(!ctv.getGrayed(element));
 	}
 
+	@Test
 	public void testParentGrayed() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 		TestElement first = fRootElement.getFirstChild();
@@ -112,17 +112,18 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 
 		ctv.setParentsGrayed(firstfirstfirst, true);
 		Object[] elements = ctv.getGrayedElements();
-		assertTrue(elements.length == 3);
+		assertEquals(3, elements.length);
 		for (Object element : elements) {
 			assertTrue(ctv.getGrayed(element));
 		}
 
-		assertTrue(elements[0] == first);
-		assertTrue(elements[1] == firstfirst);
-		assertTrue(elements[2] == firstfirstfirst);
+		assertEquals(first, elements[0]);
+		assertEquals(firstfirst, elements[1]);
+		assertEquals(firstfirstfirst, elements[2]);
 		ctv.setParentsGrayed(firstfirstfirst, false);
 	}
 
+	@Test
 	public void testWithoutCheckProvider() {
 		// Check that without a provider, no exceptions are thrown
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
@@ -130,6 +131,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		ctv.refresh();
 	}
 
+	@Test
 	public void testCheckProviderInvoked() {
 		// Check that a refresh successfully causes the provider's
 		// setChecked and setGrayed methods to be invoked.
@@ -138,16 +140,17 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		TestMethodsInvokedCheckStateProvider provider = new TestMethodsInvokedCheckStateProvider();
 
 		ctv.setCheckStateProvider(provider);
-		assertTrue("isChecked should be invoked on a refresh", (!provider.isCheckedInvokedOn.isEmpty()));
-		assertTrue("isGrayed should be invoked on a refresh", (!provider.isGrayedInvokedOn.isEmpty()));
+		assertFalse("isChecked should be invoked on a refresh", provider.isCheckedInvokedOn.isEmpty());
+		assertFalse("isGrayed should be invoked on a refresh", provider.isGrayedInvokedOn.isEmpty());
 
 		provider.reset();
 		ctv.refresh();
-		assertTrue("isChecked should be invoked on a refresh", (!provider.isCheckedInvokedOn.isEmpty()));
-		assertTrue("isGrayed should be invoked on a refresh", (!provider.isGrayedInvokedOn.isEmpty()));
+		assertFalse("isChecked should be invoked on a refresh", provider.isCheckedInvokedOn.isEmpty());
+		assertFalse("isGrayed should be invoked on a refresh", provider.isGrayedInvokedOn.isEmpty());
 
 	}
 
+	@Test
 	public void testCheckProviderLazilyInvoked() {
 		// Check that a refresh successfully causes the provider's
 		// setChecked and setGrayed methods to be invoked.
@@ -179,18 +182,22 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		}
 	}
 
+	@Test
 	public void testCheckedFalseGrayedFalse() {
 		testSpecificState(false, false);
 	}
 
+	@Test
 	public void testCheckedFalseGrayedTrue() {
 		testSpecificState(false, true);
 	}
 
+	@Test
 	public void testCheckedTrueGrayedFalse() {
 		testSpecificState(true, false);
 	}
 
+	@Test
 	public void testCheckedTrueGrayedTrue() {
 		testSpecificState(true, true);
 	}
@@ -216,6 +223,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		assertEquals(item.getGrayed(), isGrayed);
 	}
 
+	@Test
 	public void testSetCheckProviderRefreshesItems() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 
@@ -239,6 +247,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		ctv.refresh();
 	}
 
+	@Test
 	public void testCheckProviderWithSorter() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 
@@ -253,6 +262,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		checkAllStates("Testing checkbox state with a sorter", ctv, 0);
 	}
 
+	@Test
 	public void testCheckProviderWithFilter() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 
@@ -280,6 +290,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		}
 	}
 
+	@Test
 	public void testSetNewCheckProvider() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 
@@ -327,7 +338,6 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 	/**
 	 * Invokes the appropriate asserts to verify the state of a TestElement.
 	 *
-	 * @param te
 	 * @param viewer the viewer <code>te</code> is in.
 	 * @param shift  the shift parameter being used
 	 */
@@ -340,7 +350,6 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 	 * Invokes the appropriate asserts to verify the state of a TestElement's
 	 * associated TreeItem
 	 *
-	 * @param te
 	 * @param item  the item representing <code>te</code>
 	 * @param shift the shift parameter being used
 	 */
@@ -351,6 +360,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 				item.getGrayed());
 	}
 
+	@Test
 	public void testGetCheckedElements() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 
@@ -372,6 +382,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		assertTrue("getCheckedElements should not include any unchecked elements", checked.isEmpty());
 	}
 
+	@Test
 	public void testSetCheckedElements() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 
@@ -396,6 +407,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		}
 	}
 
+	@Test
 	public void testSetGrayedElements() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 
@@ -419,6 +431,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		}
 	}
 
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testSetAllChecked() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
@@ -439,6 +452,7 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		}
 	}
 
+	@Test
 	public void testSetGrayChecked() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;
 

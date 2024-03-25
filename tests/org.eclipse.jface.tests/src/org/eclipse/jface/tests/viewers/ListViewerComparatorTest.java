@@ -14,24 +14,19 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Composite;
+import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class ListViewerComparatorTest extends ViewerComparatorTest {
-
-	/**
-	 * @param name
-	 */
-	public ListViewerComparatorTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -41,12 +36,14 @@ public class ListViewerComparatorTest extends ViewerComparatorTest {
 		return viewer;
 	}
 
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testViewerSorter() {
 		fViewer.setSorter(new ViewerSorter());
 		assertSortedResult(TEAM1_SORTED);
 	}
 
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testViewerSorterInsertElement() {
 		fViewer.setSorter(new ViewerSorter());
@@ -54,11 +51,13 @@ public class ListViewerComparatorTest extends ViewerComparatorTest {
 		assertSortedResult(TEAM1_SORTED_WITH_INSERT);
 	}
 
+	@Test
 	public void testViewerComparator() {
 		fViewer.setComparator(new ViewerComparator());
 		assertSortedResult(TEAM1_SORTED);
 	}
 
+	@Test
 	public void testViewerComparatorInsertElement() {
 		fViewer.setComparator(new ViewerComparator());
 		team1.addMember("Duong");
@@ -80,13 +79,6 @@ public class ListViewerComparatorTest extends ViewerComparatorTest {
 
 	protected ListViewer getListViewer() {
 		return (ListViewer) fViewer;
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(ListViewerComparatorTest.class);
 	}
 
 }

@@ -29,8 +29,8 @@ import org.eclipse.swt.widgets.Layout;
  */
 public class ConstantAreaLayout extends Layout {
 
-	private int area;
-	private int preferredWidth;
+	private final int area;
+	private final int preferredWidth;
 
 	public ConstantAreaLayout(int area, int preferredWidth) {
 		this.area = area;

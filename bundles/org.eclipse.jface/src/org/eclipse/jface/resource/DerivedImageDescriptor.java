@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,8 +28,8 @@ import org.eclipse.swt.widgets.Display;
  */
 final class DerivedImageDescriptor extends ImageDescriptor {
 
-	private ImageDescriptor original;
-	private int flags;
+	private final ImageDescriptor original;
+	private final int flags;
 
 	/**
 	 * Create a new image descriptor
@@ -66,13 +66,7 @@ final class DerivedImageDescriptor extends ImageDescriptor {
 
 	@Override
 	public boolean equals(Object arg0) {
-		if (arg0 instanceof DerivedImageDescriptor) {
-			DerivedImageDescriptor desc = (DerivedImageDescriptor)arg0;
-
-			return desc.original.equals(original) && flags == desc.flags;
-		}
-
-		return false;
+		return arg0 instanceof DerivedImageDescriptor desc && desc.original.equals(original) && flags == desc.flags;
 	}
 
 	/**

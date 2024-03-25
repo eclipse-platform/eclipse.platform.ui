@@ -11,13 +11,9 @@ import org.junit.Before;
 
 /**
  * @since 3.5
- *
  */
 public abstract class ResourceActionTest {
 
-	/**
-	 *
-	 */
 	public ResourceActionTest() {
 		super();
 	}
@@ -71,21 +67,10 @@ public abstract class ResourceActionTest {
 	 */
 	protected static class TestDeleteResourceAction extends DeleteResourceAction {
 
-		public boolean fRan = false;
-
 		public TestDeleteResourceAction(IShellProvider provider) {
 			super(provider);
 			fTestingMode = true;
 		}
 
-		@Override
-		public void run() {
-			super.run();
-			fRan = true;
-		}
-
-		public boolean didRun() {
-			return fRan;
-		}
 	}
 }

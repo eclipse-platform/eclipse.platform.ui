@@ -17,10 +17,17 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -35,6 +42,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -69,6 +78,11 @@ public class ModeledPageLayout implements IPageLayout {
 	public static final String HIDDEN_TOOLBAR_PREFIX = "persp.hideToolbarSC:"; //$NON-NLS-1$
 	public static final String HIDDEN_ACTIONSET_PREFIX = "persp.hideActionSetSC:"; //$NON-NLS-1$
 	public static final String HIDDEN_ITEMS_KEY = "persp.hiddenItems"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING = "persp.editorOnboarding"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING_TEXT = EDITOR_ONBOARDING + "Text:"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING_IMAGE = EDITOR_ONBOARDING + "ImageUri:"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING_COMMAND = EDITOR_ONBOARDING + "Command:"; //$NON-NLS-1$
+	public static final String EDITOR_ONBOARDING_COMMAND_SEPARATOR = "$$$"; //$NON-NLS-1$
 
 	public static List<String> getIds(MPerspective model, String tagPrefix) {
 		if (model == null) {
@@ -613,6 +627,40 @@ public class ModeledPageLayout implements IPageLayout {
 				addViewActivator(viewModel);
 			}
 		}
+	}
+
+	@Override
+	public void setEditorOnboardingText(String text) {
+		perspModel.getTags().add(EDITOR_ONBOARDING_TEXT + text);
+	}
+
+	@Override
+	public void setEditorOnboardingImageUri(String iconUri) {
+		perspModel.getTags().add(EDITOR_ONBOARDING_IMAGE + iconUri);
+	}
+
+	@Override
+	public void addEditorOnboardingCommandId(String commandId) {
+		long numberOfOnboardingCommands = perspModel.getTags().stream()
+				.filter(t -> t.startsWith(EDITOR_ONBOARDING_COMMAND)).count();
+		if (numberOfOnboardingCommands >= 5)
+			return;
+
+		Predicate<MKeyBinding> commandWithEqualId = b -> Optional.of(b).map(MKeyBinding::getCommand)
+				.map(MCommand::getElementId).filter(elementId -> elementId.equals(commandId)).isPresent();
+
+		Function<MKeyBinding, String> toCommandText = b -> {
+			try {
+				return b.getCommand().getCommandName() + EDITOR_ONBOARDING_COMMAND_SEPARATOR
+						+ KeySequence.getInstance(b.getKeySequence()).format();
+			} catch (ParseException e) {
+				return b.getCommand().getCommandName() + EDITOR_ONBOARDING_COMMAND_SEPARATOR + b.getKeySequence();
+			}
+		};
+
+		application.getBindingTables().stream().map(MBindingTable::getBindings).flatMap(Collection::stream)
+				.filter(commandWithEqualId).findFirst().map(toCommandText)
+				.ifPresent(text -> perspModel.getTags().add(EDITOR_ONBOARDING_COMMAND + text));
 	}
 
 }

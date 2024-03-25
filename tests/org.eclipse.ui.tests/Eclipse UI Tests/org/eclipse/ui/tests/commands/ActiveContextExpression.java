@@ -30,9 +30,9 @@ public class ActiveContextExpression extends Expression {
 	private static final int HASH_INITIAL = ActivePartExpression.class
 			.getName().hashCode();
 
-	private String contextId;
+	private final String contextId;
 
-	private String[] expressionInfo;
+	private final String[] expressionInfo;
 
 	public ActiveContextExpression(String id, String[] info) {
 		contextId = id;
@@ -60,8 +60,7 @@ public class ActiveContextExpression extends Expression {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof ActiveContextExpression) {
-			ActiveContextExpression ace = (ActiveContextExpression) o;
+		if (o instanceof ActiveContextExpression ace) {
 			return equals(contextId, ace.contextId);
 		}
 		return false;

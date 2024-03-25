@@ -25,17 +25,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- *
- */
 public class IBFDragAgent extends DragAgent {
 
 	private ImageBasedFrame frame;
 	private Shell ds;
 
-	/**
-	 * @param manager
-	 */
 	public IBFDragAgent(DnDManager manager) {
 		super(manager);
 	}

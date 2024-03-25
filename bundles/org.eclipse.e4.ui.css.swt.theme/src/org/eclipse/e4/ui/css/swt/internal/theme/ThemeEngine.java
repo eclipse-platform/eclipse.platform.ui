@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2022 Tom Schindl and others.
+ * Copyright (c) 2010, 2023 Tom Schindl and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -105,7 +104,7 @@ public class ThemeEngine implements IThemeEngine {
 		} catch (IOException e1) {
 		}
 
-		IPath path = new Path(e4CSSPath + File.separator);
+		IPath path = IPath.fromOSString(e4CSSPath + File.separator);
 		File modDir= new File(path.toFile().toURI());
 		if (!modDir.exists()) {
 			modDir.mkdirs();
@@ -544,7 +543,7 @@ public class ThemeEngine implements IThemeEngine {
 
 	@Override
 	public synchronized List<ITheme> getThemes() {
-		return Collections.unmodifiableList(new ArrayList<ITheme>(themes));
+		return Collections.unmodifiableList(new ArrayList<>(themes));
 	}
 
 	@Override
@@ -566,23 +565,12 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 	void copyFile(String from, String to) throws IOException {
-		FileInputStream fStream = null;
-		BufferedOutputStream outputStream = null;
-		try {
-			fStream = new FileInputStream(from);
-			outputStream = new BufferedOutputStream(new FileOutputStream(to));
+		try (FileInputStream fStream = new FileInputStream(from);
+				BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(to))) {
 			byte[] buffer = new byte[4096];
 			int c;
 			while ((c = fStream.read(buffer)) != -1) {
 				outputStream.write(buffer, 0, c);
-			}
-
-		} finally {
-			if (fStream != null) {
-				fStream.close();
-			}
-			if (outputStream != null) {
-				outputStream.close();
 			}
 		}
 	}

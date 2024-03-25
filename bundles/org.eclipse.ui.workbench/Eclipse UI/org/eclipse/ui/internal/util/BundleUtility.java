@@ -16,8 +16,9 @@ package org.eclipse.ui.internal.util;
 
 import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -65,7 +66,7 @@ public class BundleUtility {
 		if (bundle == null) {
 			return null;
 		}
-		return FileLocator.find(bundle, new Path(path));
+		return FileLocator.find(bundle, IPath.fromOSString(path));
 	}
 
 	public static URL find(String bundleId, String path) {
@@ -80,6 +81,6 @@ public class BundleUtility {
 		IStatus status = new Status(IStatus.ERROR, bundleId, IStatus.ERROR,
 				exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
 				exception);
-		Platform.getLog(bundle).log(status);
+		ILog.of(bundle).log(status);
 	}
 }

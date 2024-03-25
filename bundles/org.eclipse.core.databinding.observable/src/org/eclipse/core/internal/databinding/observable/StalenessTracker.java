@@ -26,7 +26,6 @@ import org.eclipse.core.internal.databinding.identity.IdentityMap;
 
 /**
  * @since 1.0
- *
  */
 public class StalenessTracker {
 
@@ -50,10 +49,6 @@ public class StalenessTracker {
 
 	private ChildListener childListener = new ChildListener();
 
-	/**
-	 * @param observables
-	 * @param stalenessConsumer
-	 */
 	public StalenessTracker(IObservable[] observables,
 			IStalenessConsumer stalenessConsumer) {
 		this.stalenessConsumer = stalenessConsumer;
@@ -63,10 +58,6 @@ public class StalenessTracker {
 		stalenessConsumer.setStale(staleCount > 0);
 	}
 
-	/**
-	 * @param child
-	 * @param callback
-	 */
 	public void processStalenessChange(IObservable child, boolean callback) {
 		boolean oldStale = staleCount > 0;
 		boolean oldChildStale = getOldChildStale(child);
@@ -85,17 +76,11 @@ public class StalenessTracker {
 		}
 	}
 
-	/**
-	 * @param child
-	 */
 	private boolean getOldChildStale(IObservable child) {
 		Boolean oldChildValue = staleMap.get(child);
 		return oldChildValue != null && oldChildValue;
 	}
 
-	/**
-	 * @param observable
-	 */
 	public void addObservable(IObservable observable) {
 		doAddObservable(observable, true);
 	}
@@ -106,9 +91,6 @@ public class StalenessTracker {
 		observable.addStaleListener(childListener);
 	}
 
-	/**
-	 * @param observable
-	 */
 	public void removeObservable(IObservable observable) {
 		boolean oldStale = staleCount > 0;
 		boolean oldChildStale = getOldChildStale(observable);

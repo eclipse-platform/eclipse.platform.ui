@@ -13,22 +13,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.actions;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.FileDialog;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-
-import org.eclipse.core.runtime.Path;
-
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -46,7 +41,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  */
 public class OpenLocalFileAction extends Action implements IWorkbenchWindowActionDelegate {
 
-	private IWorkbenchWindow window;
+	private IWorkbenchWindow workbenchWindow;
 	private String filterPath;
 
 	/**
@@ -58,13 +53,13 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 
 	@Override
 	public void dispose() {
-		window =  null;
+		workbenchWindow =  null;
 		filterPath =  null;
 	}
 
 	@Override
 	public void init(IWorkbenchWindow window) {
-		this.window =  window;
+		this.workbenchWindow =  window;
 		filterPath =  System.getProperty("user.home"); //$NON-NLS-1$
 	}
 
@@ -79,7 +74,7 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 
 	@Override
 	public void run() {
-		FileDialog dialog =  new FileDialog(window.getShell(), SWT.OPEN | SWT.MULTI | SWT.SHEET);
+		FileDialog dialog =  new FileDialog(workbenchWindow.getShell(), SWT.OPEN | SWT.MULTI | SWT.SHEET);
 		dialog.setText(IDEWorkbenchMessages.OpenLocalFileAction_title);
 		dialog.setFilterPath(filterPath);
 		dialog.open();
@@ -91,17 +86,17 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 			int numberOfFilesNotFound =  0;
 			StringBuilder notFound =  new StringBuilder();
 			for (String name : names) {
-				IFileStore fileStore =  EFS.getLocalFileSystem().getStore(new Path(filterPath));
+				IFileStore fileStore =  EFS.getLocalFileSystem().getStore(IPath.fromOSString(filterPath));
 				fileStore =  fileStore.getChild(name);
 				IFileInfo fetchInfo = fileStore.fetchInfo();
 				if (!fetchInfo.isDirectory() && fetchInfo.exists()) {
-					IWorkbenchPage page =  window.getActivePage();
+					IWorkbenchPage page =  workbenchWindow.getActivePage();
 					try {
 						IDE.openEditorOnFileStore(page, fileStore);
 					} catch (PartInitException e) {
 						String msg =  NLS.bind(IDEWorkbenchMessages.OpenLocalFileAction_message_errorOnOpen, fileStore.getName());
 						IDEWorkbenchPlugin.log(msg,e.getStatus());
-						MessageDialog.open(MessageDialog.ERROR,window.getShell(), IDEWorkbenchMessages.OpenLocalFileAction_title, msg, SWT.SHEET);
+						MessageDialog.open(MessageDialog.ERROR,workbenchWindow.getShell(), IDEWorkbenchMessages.OpenLocalFileAction_title, msg, SWT.SHEET);
 					}
 				} else {
 					if (++numberOfFilesNotFound > 1)
@@ -113,7 +108,7 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 			if (numberOfFilesNotFound > 0) {
 				String msgFmt =  numberOfFilesNotFound == 1 ? IDEWorkbenchMessages.OpenLocalFileAction_message_fileNotFound : IDEWorkbenchMessages.OpenLocalFileAction_message_filesNotFound;
 				String msg =  NLS.bind(msgFmt, notFound.toString());
-				MessageDialog.open(MessageDialog.ERROR, window.getShell(), IDEWorkbenchMessages.OpenLocalFileAction_title, msg, SWT.SHEET);
+				MessageDialog.open(MessageDialog.ERROR, workbenchWindow.getShell(), IDEWorkbenchMessages.OpenLocalFileAction_title, msg, SWT.SHEET);
 			}
 		}
 	}

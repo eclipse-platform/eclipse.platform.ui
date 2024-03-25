@@ -24,7 +24,6 @@ import org.junit.runners.JUnit4;
  * MarkerSupportTests are tests for the markerSupport extension
  * point.
  * @since 3.2
- *
  */
 @RunWith(JUnit4.class)
 public class MarkerSupportRegistryTests extends UITestCase {
@@ -38,7 +37,6 @@ public class MarkerSupportRegistryTests extends UITestCase {
 
 	/**
 	 * Test that the marker categories expected are found.
-	 *
 	 */
 	@Test
 	public void testMarkerCategories() {
@@ -49,8 +47,6 @@ public class MarkerSupportRegistryTests extends UITestCase {
 
 	/**
 	 * Test that the marker type specified is in a category.
-	 *
-	 * @param string
 	 */
 	private void doTestCategory(String string) {
 		String category = MarkerSupportRegistry.getInstance().getCategory(

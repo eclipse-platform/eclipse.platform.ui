@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.browser;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -43,7 +43,7 @@ class ImageResourceManager {
 	 * @return image descriptor
 	 */
 	static ImageDescriptor getImageDescriptor(String path) {
-		URL url = FileLocator.find(FrameworkUtil.getBundle(ImageResourceManager.class), new Path(path), null);
+		URL url = FileLocator.find(FrameworkUtil.getBundle(ImageResourceManager.class), IPath.fromOSString(path), null);
 		return ImageDescriptor.createFromURL(url);
 	}
 
@@ -55,7 +55,7 @@ class ImageResourceManager {
 	 * @return the image
 	 */
 	Image getImage(ImageDescriptor descriptor) {
-		return (Image) manager.get(descriptor);
+		return manager.get(descriptor);
 	}
 }
 

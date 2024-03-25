@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007,2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -141,10 +141,11 @@ public class FormsPerformanceTest extends PerformanceTestCase {
 		//eci.setImage(ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));
 		ec.setTextClient(eci);
 		ec.setText("Expandable Composite title");
-		String ctext = "We will now create a somewhat long text so that "+
-		"we can use it as content for the expandable composite. "+
-		"Expandable composite is used to hide or show the text using the "+
-		"toggle control";
+		String ctext = """
+				We will now create a somewhat long text so that
+				we can use it as content for the expandable composite.
+				Expandable composite is used to hide or show the text using the
+				toggle control""";
 		Label client = toolkit.createLabel(ec, ctext, SWT.WRAP);
 		ec.setClient(client);
 		td = new TableWrapData();

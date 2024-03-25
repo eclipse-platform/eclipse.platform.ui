@@ -38,9 +38,6 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-/**
- *
- */
 public class TrimBarRenderer extends SWTPartRenderer {
 	private MApplication application;
 
@@ -112,9 +109,8 @@ public class TrimBarRenderer extends SWTPartRenderer {
 		MElementContainer<?> trimObj = me;
 		MTrimBar trimModel = (MTrimBar) trimObj;
 		ArrayList<MTrimContribution> toContribute = new ArrayList<>();
-		ContributionsAnalyzer.gatherTrimContributions(trimModel,
-				application.getTrimContributions(), trimModel.getElementId(),
-				toContribute, eContext);
+		ContributionsAnalyzer.gatherTrimContributions(application.getTrimContributions(), trimModel.getElementId(),
+				toContribute);
 		addTrimContributions(trimModel, toContribute, ctx, eContext);
 	}
 

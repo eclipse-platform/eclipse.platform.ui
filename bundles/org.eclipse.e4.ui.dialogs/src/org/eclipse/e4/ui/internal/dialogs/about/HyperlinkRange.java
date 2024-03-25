@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.internal.dialogs.about;
 
 /**
  * Container for hyperlink ranges for the about dialog text.
- *
  */
 final class HyperlinkRange {
 

@@ -15,11 +15,11 @@
 
 package org.eclipse.e4.ui.internal.workbench.addons;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
@@ -28,6 +28,7 @@ import org.eclipse.core.commands.ICommandManagerListener;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -70,11 +71,7 @@ public class CommandProcessingAddon {
 	private ICommandManagerListener cmListener;
 
 	/**
-	 * @param cmd
-	 * @param modelService
-	 * @param categoryModel
 	 * @return a command model element
-	 * @throws NotDefinedException
 	 */
 	public static MCommand createCommand(Command cmd, EModelService modelService,
 			final MCategory categoryModel) throws NotDefinedException {
@@ -148,7 +145,6 @@ public class CommandProcessingAddon {
 
 	private void registerCommandListener() {
 		cmListener = new ICommandManagerListener() {
-			@SuppressWarnings("restriction")
 			@Override
 			public void commandManagerChanged(CommandManagerEvent commandManagerEvent) {
 				if (commandManagerEvent.isCommandChanged()) {
@@ -168,8 +164,7 @@ public class CommandProcessingAddon {
 									categoryModel);
 							application.getCommands().add(createdCommand);
 						} catch (NotDefinedException e) {
-							Activator.getDefault().getLogService()
-									.log(0, "Failed to create command " + commandId, e); //$NON-NLS-1$
+							ILog.get().error("Failed to create command " + commandId, e); //$NON-NLS-1$
 						}
 					}
 				}

@@ -54,8 +54,6 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 
 	/**
 	 * Add static pseudo instance
-	 *
-	 * @param instance
 	 */
 	public void addStaticPseudoInstance(String pseudoE) {
 		if (staticPseudoInstances == null) {

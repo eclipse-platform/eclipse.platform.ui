@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
@@ -32,7 +32,6 @@ import org.junit.Test;
  * This simulates the CDT usage of the CNF.
  *
  * @since 3.3
- *
  */
 public class CdtTest extends NavigatorTestBase {
 
@@ -51,8 +50,8 @@ public class CdtTest extends NavigatorTestBase {
 		_contentService.getActivationService().activateExtensions(
 				new String[] { TEST_C_CONTENT }, false);
 
-		TestWorkspace.initProject(new ProjectUnzipUtil(new Path(
-				"testdata/cproject.zip"), new String[] { CPROJECT_NAME }),
+		TestWorkspace.initProject(
+				new ProjectUnzipUtil(IPath.fromOSString("testdata/cproject.zip"), new String[] { CPROJECT_NAME }),
 				CPROJECT_NAME);
 
 		refreshViewer();

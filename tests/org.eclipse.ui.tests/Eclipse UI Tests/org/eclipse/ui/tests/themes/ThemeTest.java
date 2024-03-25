@@ -57,9 +57,6 @@ public abstract class ThemeTest extends UITestCase {
 
 	protected IThemeManager fManager;
 
-	/**
-	 * @param testName
-	 */
 	public ThemeTest(String testName) {
 		super(testName);
 		// TODO Auto-generated constructor stub
@@ -82,18 +79,12 @@ public abstract class ThemeTest extends UITestCase {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	protected ITheme getDefaultTheme() {
 		ITheme defaultTheme = fManager.getTheme(IThemeManager.DEFAULT_THEME);
 		assertNotNull(defaultTheme);
 		return defaultTheme;
 	}
 
-	/**
-	 * @return
-	 */
 	protected ITheme getTheme1() {
 		ITheme theme1 = fManager.getTheme(THEME1);
 		assertNotNull(theme1);

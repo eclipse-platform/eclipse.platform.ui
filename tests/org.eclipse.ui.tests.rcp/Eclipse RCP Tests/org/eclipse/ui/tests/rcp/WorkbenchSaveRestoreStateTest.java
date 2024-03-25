@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.rcp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,10 +43,10 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.internal.UIPlugin;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class WorkbenchSaveRestoreStateTest {
 
@@ -57,15 +57,14 @@ public class WorkbenchSaveRestoreStateTest {
 
 	private Display display = null;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
-
 		assertNull(display);
 		display = PlatformUI.createDisplay();
 		assertNotNull(display);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		assertNotNull(display);
 		display.dispose();
@@ -283,7 +282,7 @@ public class WorkbenchSaveRestoreStateTest {
 	/**
 	 * Test on-demand save/restore state API
 	 */
-	@Ignore
+	@Disabled
 	@Test
 	public void testOnDemandSaveRestoreState() {
 

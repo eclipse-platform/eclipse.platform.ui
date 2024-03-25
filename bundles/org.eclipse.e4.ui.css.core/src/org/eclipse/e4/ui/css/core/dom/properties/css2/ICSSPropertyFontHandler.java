@@ -29,12 +29,6 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	 * declaration. Available values are=font-style font-variant font-weight
 	 * font-size/line-height font-family caption icon menu message-box
 	 * small-caption status-bar
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	void applyCSSPropertyFont(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
@@ -42,26 +36,12 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	/**
 	 * A prioritized list of font family names and/or generic family names for
 	 * an element.
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @return
-	 * @throws Exception
 	 */
 	void applyCSSPropertyFontFamily(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the size of a font.
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @return
-	 * @throws Exception
 	 */
 	void applyCSSPropertyFontSize(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
@@ -69,65 +49,30 @@ public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 	/**
 	 * Specifies an aspect value for an element that will preserve the x-height
 	 * of the first-choice font.
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @return
-	 * @throws Exception
 	 */
 	void applyCSSPropertyFontSizeAdjust(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Condenses or expands the current font-family.
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @return
-	 * @throws Exception
 	 */
 	void applyCSSPropertyFontStretch(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the style of the font.
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @return
-	 * @throws Exception
 	 */
 	void applyCSSPropertyFontStyle(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Displays text in a small-caps font or a normal font.
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @return
-	 * @throws Exception
 	 */
 	void applyCSSPropertyFontVariant(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the weight of a font.
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @return
-	 * @throws Exception
 	 */
 	void applyCSSPropertyFontWeight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;

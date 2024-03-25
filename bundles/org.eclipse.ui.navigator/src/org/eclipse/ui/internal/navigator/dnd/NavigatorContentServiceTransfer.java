@@ -26,7 +26,6 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * handling of drop operations in other viewers.
  *
  * @since 3.2
- *
  */
 public class NavigatorContentServiceTransfer {
 

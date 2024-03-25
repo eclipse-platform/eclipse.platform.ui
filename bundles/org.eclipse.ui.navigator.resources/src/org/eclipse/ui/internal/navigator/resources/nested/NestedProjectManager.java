@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * @since 3.3
- *
  */
 public class NestedProjectManager {
 
@@ -109,7 +108,6 @@ public class NestedProjectManager {
 	/**
 	 * A shorthand for {@code getProject(folder) != null}.
 	 *
-	 * @param folder
 	 * @return {@code true} if project having the same location as {@code folder} exists and nested is enabled, {@code false} otherwise
 	 */
 	public boolean isShownAsProject(IFolder folder) {
@@ -201,7 +199,6 @@ public class NestedProjectManager {
 	}
 
 	/**
-	 * @param container
 	 * @return whether the container has some projects as direct children
 	 */
 	public boolean hasDirectChildrenProjects(IContainer container) {

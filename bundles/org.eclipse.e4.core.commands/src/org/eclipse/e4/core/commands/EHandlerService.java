@@ -50,7 +50,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  *
  * Command command = cs.getCommand(commandId);
  * if (command.isDefined()) {
- *	Map<String, Object> parameters = new HashMap<String, Object>();
+ *	Map&lt;String Object&gt; parameters = new HashMap&lt;String, Object&gt;();
  *	parameters.put("parm1", "hello, world");
  *	ParameterizedCommand parmCmd = cs.createCommand(commandId, parameters);
  *	if (hs.canExecute(parmCmd)) {
@@ -75,7 +75,6 @@ public interface EHandlerService {
 	 *
 	 * @param commandId Must not be <code>null</code>
 	 * @param handler   Must not be <code>null</code>
-	 *
 	 */
 	public void activateHandler(String commandId, Object handler);
 

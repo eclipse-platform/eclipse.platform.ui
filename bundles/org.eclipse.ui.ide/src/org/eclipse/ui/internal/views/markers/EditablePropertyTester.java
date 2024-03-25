@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IMarker;
  * selected marker.
  *
  * @since 3.4
- *
  */
 public class EditablePropertyTester extends PropertyTester {
 
@@ -42,8 +41,7 @@ public class EditablePropertyTester extends PropertyTester {
 	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
-		if (property.equals(EDITABLE)) {
-			MarkerSupportItem item = (MarkerSupportItem) receiver;
+		if (property.equals(EDITABLE) && receiver instanceof MarkerSupportItem item) {
 			Set<IMarker> markers = new HashSet<>();
 			if (item.isConcrete()) {
 				markers.add(((MarkerEntry) receiver).getMarker());

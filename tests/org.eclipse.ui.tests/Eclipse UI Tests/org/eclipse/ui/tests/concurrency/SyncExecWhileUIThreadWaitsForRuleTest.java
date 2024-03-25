@@ -17,6 +17,9 @@ package org.eclipse.ui.tests.concurrency;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -86,21 +89,14 @@ public class SyncExecWhileUIThreadWaitsForRuleTest {
 			}
 		};
 		locking.start();
-		//create a thread that will cancel the monitor after 60 seconds so we don't hang the tests
-		final long waitStart = System.currentTimeMillis();
-		Thread canceler = new Thread("Canceler") {
+		Timer timeout = new Timer();
+		timeout.schedule(new TimerTask() {
+
 			@Override
 			public void run() {
-				while (true) {
-					if (System.currentTimeMillis() - waitStart > 60000) {
-						beginRuleMonitor.setCanceled(true);
-						break;
-					}
-				}
-
+				beginRuleMonitor.setCanceled(true);
 			}
-		};
-		canceler.start();
+		}, 60000);
 		//wait until we succeeded to acquire the lock in the UI thread
 		Display display = Display.getDefault();
 		while (!lockAcquired[0]) {
@@ -117,8 +113,8 @@ public class SyncExecWhileUIThreadWaitsForRuleTest {
 		assertFalse("deadlock occurred", beginRuleMonitor.isCanceled());
 		// if we get here, the test succeeded
 		if (Thread.interrupted()) {
-			// TODO: re-enable this check after bug 505920 is fixed
-			// fail("Thread was interrupted at end of test");
+			fail("Thread was interrupted at end of test");
 		}
+		timeout.cancel();
 	}
 }

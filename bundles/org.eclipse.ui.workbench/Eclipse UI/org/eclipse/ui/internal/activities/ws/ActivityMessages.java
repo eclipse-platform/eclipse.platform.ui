@@ -17,7 +17,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * The ActivtyMessages are the messages used by the activities support.
- *
  */
 public class ActivityMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.activities.ws.messages";//$NON-NLS-1$

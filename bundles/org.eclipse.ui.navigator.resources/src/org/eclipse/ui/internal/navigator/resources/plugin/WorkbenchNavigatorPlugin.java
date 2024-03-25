@@ -62,10 +62,6 @@ public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 	/**
 	 * Create a status associated with this plugin.
 	 *
-	 * @param severity
-	 * @param aCode
-	 * @param aMessage
-	 * @param exception
 	 * @return A status configured with this plugin's id and the given
 	 *         parameters.
 	 */
@@ -75,9 +71,6 @@ public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 
 	/**
 	 *
-	 * @param aCode
-	 * @param aMessage
-	 * @param exception
 	 * @return A status configured with this plugin's id and the given
 	 *         parameters.
 	 */
@@ -89,8 +82,6 @@ public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 
 	/**
 	 *
-	 * @param aMessage
-	 * @param exception
 	 * @return A status configured with this plugin's id and the given
 	 *         parameters.
 	 */
@@ -100,7 +91,6 @@ public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 
 	/**
 	 *
-	 * @param aMessage
 	 * @return A status configured with this plugin's id and the given
 	 *         parameters.
 	 */
@@ -111,7 +101,6 @@ public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 
 	/**
 	 *
-	 * @param aMessage
 	 * @return A status configured with this plugin's id and the given
 	 *         parameters.
 	 */

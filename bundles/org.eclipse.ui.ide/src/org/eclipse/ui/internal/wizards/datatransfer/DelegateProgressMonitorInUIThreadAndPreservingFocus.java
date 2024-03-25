@@ -33,9 +33,6 @@ class DelegateProgressMonitorInUIThreadAndPreservingFocus implements IProgressMo
 	private ProgressMonitorPart delegate;
 	private Display display;
 
-	/**
-	 * @param delegate
-	 */
 	public DelegateProgressMonitorInUIThreadAndPreservingFocus(ProgressMonitorPart delegate) {
 		this.delegate = delegate;
 		this.display = delegate.getDisplay();

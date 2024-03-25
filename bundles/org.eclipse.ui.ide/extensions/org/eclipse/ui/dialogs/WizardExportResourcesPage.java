@@ -79,7 +79,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	private IStructuredSelection initialResourceSelection;
 
-	private List selectedTypes = new ArrayList();
+	private List<Object> selectedTypes = new ArrayList<>();
 
 	// widgets
 	private ResourceTreeAndListGroup resourceGroup;
@@ -272,7 +272,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
 		// create the input element, which has the root resource
 		// as its only child
-		List input = new ArrayList();
+		List<IProject> input = new ArrayList<>();
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
 			if (project.isOpen()) {
@@ -282,9 +282,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
 		showLinkedResources = getShowLinkedResources();
 		this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
-				getResourceProvider(IResource.FOLDER | IResource.PROJECT, showLinkedResources),
+				getResourceProvider(IResource.FOLDER | IResource.PROJECT),
 				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-				getResourceProvider(IResource.FILE, showLinkedResources),
+				getResourceProvider(IResource.FILE),
 				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.NONE,
 				DialogUtil.inRegularFontMode(parent));
 
@@ -308,7 +308,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	 * @deprecated Only retained for backwards compatibility.
 	 */
 	@Deprecated
-	protected boolean ensureResourcesLocal(List resources) {
+	protected boolean ensureResourcesLocal(@SuppressWarnings("unused") List resources) {
 		return true;
 	}
 
@@ -322,11 +322,11 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	 *         <code>IResource</code>)
 	 */
 	protected List extractNonLocalResources(List originalList) {
-		ArrayList result = new ArrayList(originalList.size());
-		Iterator resourcesEnum = originalList.iterator();
+		ArrayList<IResource> result = new ArrayList<>(originalList.size());
+		Iterator<IResource> resourcesEnum = originalList.iterator();
 
 		while (resourcesEnum.hasNext()) {
-			IResource currentResource = (IResource) resourcesEnum.next();
+			IResource currentResource = resourcesEnum.next();
 			if (!currentResource.isLocal(IResource.DEPTH_ZERO)) {
 				result.add(currentResource);
 			}
@@ -386,7 +386,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	 * Returns a content provider for <code>IResource</code>s that returns only
 	 * children of the given resource type.
 	 */
-	private ITreeContentProvider getResourceProvider(int resourceType, boolean showLinkedResources) {
+	private ITreeContentProvider getResourceProvider(int resourceType) {
 		return new ResourceProvider(resourceType, showLinkedResources);
 	}
 
@@ -408,10 +408,10 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	 */
 	protected void updateContentProviders(boolean showLinked) {
 		showLinkedResources = showLinked;
-		resourceGroup.setTreeProviders(getResourceProvider(IResource.FOLDER | IResource.PROJECT, showLinkedResources),
+		resourceGroup.setTreeProviders(getResourceProvider(IResource.FOLDER | IResource.PROJECT),
 				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
 
-		resourceGroup.setListProviders(getResourceProvider(IResource.FILE, showLinkedResources),
+		resourceGroup.setListProviders(getResourceProvider(IResource.FILE),
 				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
 	}
 
@@ -424,8 +424,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	 *         type: <code>IResource</code>)
 	 */
 	protected List getSelectedResources() {
-		Iterator resourcesToExportIterator = this.getSelectedResourcesIterator();
-		List resourcesToExport = new ArrayList();
+		Iterator<?> resourcesToExportIterator = this.getSelectedResourcesIterator();
+		List<Object> resourcesToExport = new ArrayList<>();
 		while (resourcesToExportIterator.hasNext()) {
 			resourcesToExport.add(resourcesToExportIterator.next());
 		}
@@ -477,7 +477,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 		Object[] newSelectedTypes = queryResourceTypesToExport();
 
 		if (newSelectedTypes != null) { // ie.- did not press Cancel
-			this.selectedTypes = new ArrayList(newSelectedTypes.length);
+			this.selectedTypes = new ArrayList<>(newSelectedTypes.length);
 			this.selectedTypes.addAll(Arrays.asList(newSelectedTypes));
 			setupSelectionsBasedOnSelectedTypes();
 		}
@@ -504,7 +504,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
 		String extension = resourceName.substring(separatorIndex + 1);
 
-		Iterator it = selectedTypes.iterator();
+		Iterator<Object> it = selectedTypes.iterator();
 		while (it.hasNext()) {
 			if (extension.equalsIgnoreCase((String) it.next())) {
 				return true;
@@ -584,18 +584,18 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	private void setupSelectionsBasedOnSelectedTypes() {
 
 		Runnable runnable = () -> {
-			Map selectionMap = new Hashtable();
+			Map<IContainer, List<IResource>> selectionMap = new Hashtable<>();
 			// Only get the white selected ones
-			Iterator resourceIterator = resourceGroup.getAllWhiteCheckedItems().iterator();
+			Iterator<?> resourceIterator = resourceGroup.getAllWhiteCheckedItems().iterator();
 			while (resourceIterator.hasNext()) {
 				// handle the files here - white checked containers require recursion
 				IResource resource = (IResource) resourceIterator.next();
 				if (resource.getType() == IResource.FILE) {
 					if (hasExportableExtension(resource.getName())) {
-						List resourceList = new ArrayList();
+						List<IResource> resourceList = new ArrayList<>();
 						IContainer parent = resource.getParent();
 						if (selectionMap.containsKey(parent)) {
-							resourceList = (List) selectionMap.get(parent);
+							resourceList = selectionMap.get(parent);
 						}
 						resourceList.add(resource);
 						selectionMap.put(parent, resourceList);
@@ -616,9 +616,9 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 	 * selectionMap. If a resource is a file see if it matches one of the selected
 	 * extensions. If not then check the children.
 	 */
-	private void setupSelectionsBasedOnSelectedTypes(Map selectionMap, IContainer parent) {
+	private void setupSelectionsBasedOnSelectedTypes(Map<IContainer, List<IResource>> selectionMap, IContainer parent) {
 
-		List selections = new ArrayList();
+		List<IResource> selections = new ArrayList<>();
 		IResource[] resources;
 		boolean hasFiles = false;
 

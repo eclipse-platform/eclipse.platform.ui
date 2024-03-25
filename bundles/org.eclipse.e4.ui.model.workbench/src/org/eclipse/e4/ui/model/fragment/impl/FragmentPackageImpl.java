@@ -322,8 +322,9 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public static FragmentPackageImpl init() {
-		if (isInited)
+		if (isInited) {
 			return (FragmentPackageImpl) EPackage.Registry.INSTANCE.getEPackage(FragmentPackageImpl.eNS_URI);
+		}
 
 		// Obtain or create and register package
 		Object registeredFragmentPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
@@ -512,8 +513,9 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated)
+		if (isCreated) {
 			return;
+		}
 		isCreated = true;
 
 		// Create classes and their features
@@ -546,8 +548,9 @@ public class FragmentPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized)
+		if (isInitialized) {
 			return;
+		}
 		isInitialized = true;
 
 		// Initialize package

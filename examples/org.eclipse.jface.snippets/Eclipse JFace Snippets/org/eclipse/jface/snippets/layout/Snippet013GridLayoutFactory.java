@@ -108,9 +108,6 @@ public class Snippet013GridLayoutFactory {
 		return shell;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

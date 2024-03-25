@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.dialogs.cpd;
 
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -39,5 +40,10 @@ class TableToolTip extends NameAndDescriptionToolTip {
 			return null;
 		}
 		return tableItem.getData();
+	}
+
+	@Override
+	protected void addContent(Composite destination, Object modelElement) {
+		// do nothing
 	}
 }

@@ -47,7 +47,6 @@ import org.junit.runners.JUnit4;
  * These tests cover restoring state from old and new settings files.
  *
  * @since 3.1
- *
  */
 @RunWith(JUnit4.class)
 @Ignore
@@ -67,8 +66,6 @@ public class Bug75909Test {
 	 * MarkerFilter.resetState() should make all of the available
 	 * MarkerTypes selected.  The just tests that the environment
 	 * has some datafill in it.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testBasicFilter() throws Throwable {
@@ -93,8 +90,6 @@ public class Bug75909Test {
 	 * Settings can be restored (at least once :-) from the old settings
 	 * attribute format.  Any marker type not listed in the attribute
 	 * will appear as not selected.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testRestoreOldState() throws Throwable {
@@ -121,8 +116,6 @@ public class Bug75909Test {
 	 * When restoring settings from the new attribute, a marker type
 	 * id that is not true or false has just been introduced.  Test that
 	 * the new marker type shows up as selected.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testRestoreNewStateMissingId() throws Throwable {
@@ -169,7 +162,6 @@ public class Bug75909Test {
 
 	/**
 	 * Get the settings for the filter tag.
-	 * @param settings
 	 * @return IDialogSettings
 	 */
 	private IDialogSettings getFilterSettings(IDialogSettings settings) {
@@ -180,8 +172,6 @@ public class Bug75909Test {
 	 * MarkerFilter.saveState(IDialogSettings) should now save selected
 	 * types with <b>true</b> and unselected types are now saved to the
 	 * list with <b>false</b>.  This is an "identity transform" test.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testSaveState() throws Throwable {

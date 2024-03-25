@@ -29,19 +29,18 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
  */
 public class ResizeTest extends BasicPerformanceTest {
 
-	private TestWidgetFactory widgetFactory;
+	private final TestWidgetFactory widgetFactory;
 
-	private int xIterations = 5;
+	private final int xIterations = 5;
 
-	private int yIterations = 5;
+	private final int yIterations = 5;
 
-	private String tagString;
+	private final String tagString;
 
 
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param factory
 	 */
 	public ResizeTest(TestWidgetFactory factory) {
 		this(factory, NONE, factory.getName() + " setSize");
@@ -51,9 +50,6 @@ public class ResizeTest extends BasicPerformanceTest {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param factory
-	 * @param tagging
-	 * @param tag
 	 */
 	public ResizeTest(TestWidgetFactory factory, int tagging,
 			String tag) {

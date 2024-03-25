@@ -88,15 +88,11 @@ public interface IToolBarManager2 extends IToolBarManager {
 
 	/**
 	 * Registers a property change listner with this manager.
-	 *
-	 * @param listener
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
 
 	/**
 	 * Removes a property change listner from this manager.
-	 *
-	 * @param listener
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener);
 

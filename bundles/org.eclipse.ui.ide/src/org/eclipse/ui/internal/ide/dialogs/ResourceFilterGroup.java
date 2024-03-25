@@ -157,9 +157,6 @@ public class ResourceFilterGroup {
 	private IContainer nonExistantResource = getNonExistantResource();
 	private IContainer resource = nonExistantResource;
 
-	/**
-	 *
-	 */
 	public ResourceFilterGroup() {
 		ResourceLocator.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
 				"$nl$/icons/full/obj16/fileType_filter.png").ifPresent(d -> fileIcon = d.createImage()); //$NON-NLS-1$
@@ -1159,18 +1156,12 @@ public class ResourceFilterGroup {
 		return result;
 	}
 
-	/**
-	 * @param filters
-	 */
 	public void setFilters(IResourceFilterDescription[] filters) {
 		initialFilters = new UIResourceFilterDescription[filters.length];
 		for (int i = 0; i < filters.length; i++)
 			initialFilters[i] = UIResourceFilterDescription.wrap(filters[i]);
 	}
 
-	/**
-	 * @param filters
-	 */
 	public void setFilters(UIResourceFilterDescription[] filters) {
 		initialFilters = filters;
 	}
@@ -1298,7 +1289,7 @@ public class ResourceFilterGroup {
 			return null;
 		}
 
-		private final String MYTYPENAME = "org.eclipse.ui.ide.internal.filterCopy"; //$NON-NLS-1$
+		private static final String MYTYPENAME = "org.eclipse.ui.ide.internal.filterCopy"; //$NON-NLS-1$
 		private final int MYTYPEID = registerType(MYTYPENAME);
 
 		@Override
@@ -1454,9 +1445,6 @@ class FilterTypeUtil {
 		return names.toArray(new String[0]);
 	}
 
-	/**
-	 * @param descriptors
-	 */
 	private static void sortDescriptors(IFilterMatcherDescriptor[] descriptors) {
 		Arrays.sort(descriptors, (arg0, arg1) -> {
 			if (arg0.getId().equals(FileInfoAttributesMatcher.ID))
@@ -1607,10 +1595,6 @@ class FilterCopy extends UIResourceFilterDescription {
 		id = FilterTypeUtil.getDefaultFilterID();
 	}
 
-	/**
-	 * @param parent
-	 * @param description
-	 */
 	public FilterCopy(FilterCopy parent, FileInfoMatcherDescription description) {
 		children = null;
 		id = description.getId();
@@ -1700,6 +1684,11 @@ class FilterCopy extends UIResourceFilterDescription {
 		return serialNumber == filter.serialNumber;
 	}
 
+	@Override
+	public int hashCode() {
+		return serialNumber;
+	}
+
 	public int getSerialNumber() {
 		return serialNumber;
 	}
@@ -1731,17 +1720,14 @@ class FilterCopy extends UIResourceFilterDescription {
 		if (children == null) {
 			if (getChildrenLimit() > 0) {
 				children = new LinkedList<>();
-				Object arguments = getArguments();
-				if (arguments instanceof IResourceFilterDescription[]) {
-					IResourceFilterDescription[] filters = (IResourceFilterDescription[]) arguments;
+				if (getArguments() instanceof IResourceFilterDescription[] filters) {
 					for (IResourceFilterDescription filter : filters) {
 						FilterCopy child = new FilterCopy(UIResourceFilterDescription.wrap(filter));
 						child.parent = this;
 						children.add(child);
 					}
 				}
-				if (arguments instanceof FilterCopy[]) {
-					FilterCopy[] filters = (FilterCopy[]) arguments;
+				if (getArguments() instanceof FilterCopy[] filters) {
 					if (filters != null)
 						for (FilterCopy filter : filters) {
 							FilterCopy child = filter;
@@ -1837,7 +1823,7 @@ class FilterEditDialog extends TrayDialog {
 		@Override
 		public Object getID() {return "dummy";} //$NON-NLS-1$
 		@Override
-		public void create(Composite argumentComposite, Font font) {}
+		public void create(Composite composite, Font font) {}
 		@Override
 		public void dispose() {}
 		@Override
@@ -1845,18 +1831,12 @@ class FilterEditDialog extends TrayDialog {
 		@Override
 		public String validate() {return null;}
 		@Override
-		public StyledString formatStyledText(FilterCopy filter,
+		public StyledString formatStyledText(FilterCopy filterCopy,
 				Styler fPlainStyler, Styler fBoldStyler) {return null;}
 	};
 
 	/**
 	 * Constructor for FilterEditDialog.
-	 * @param resource
-	 * @param filterGroup
-	 * @param parentShell
-	 * @param filter
-	 * @param createGroupOnly
-	 * @param creatingNewFilter
 	 */
 	public FilterEditDialog(IResource resource, ResourceFilterGroup filterGroup, Shell parentShell, FilterCopy filter, boolean createGroupOnly, boolean creatingNewFilter) {
 		super(parentShell);
@@ -1968,10 +1948,6 @@ class FilterEditDialog extends TrayDialog {
 		return composite;
 	}
 
-	/**
-	 * @param font
-	 * @param composite
-	 */
 	private void createInheritableArea(Font font, Composite composite) {
 		Composite inheritableComposite = createGroup(font, composite, NLS.bind(
 				IDEWorkbenchMessages.ResourceFilterPage_columnFilterMode,
@@ -2134,9 +2110,6 @@ class FilterEditDialog extends TrayDialog {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void selectComboItem(String filterID) {
 		IFilterMatcherDescriptor descriptor = ResourcesPlugin.getWorkspace()
 		.getFilterMatcherDescriptor(filterID);
@@ -2152,8 +2125,6 @@ class FilterEditDialog extends TrayDialog {
 	}
 
 	/**
-	 * @param font
-	 * @param composite
 	 * @return the group
 	 */
 	private Composite createGroup(Font font, Composite composite, String text,
@@ -2180,10 +2151,6 @@ class FilterEditDialog extends TrayDialog {
 		return modeComposite;
 	}
 
-	/**
-	 * @param font
-	 * @param composite
-	 */
 	private void createTargetArea(Font font, Composite composite) {
 		GridData data;
 		Composite targetComposite = createGroup(font, composite,
@@ -2323,34 +2290,20 @@ interface ICustomFilterArgumentUI {
 	Object getID();
 
 	/**
-	 * @param filter
-	 * @param fPlainStyler
-	 * @param fBoldStyler
 	 * @return the formatted StyledText
 	 */
-	StyledString formatStyledText(FilterCopy filter, Styler fPlainStyler,
+	StyledString formatStyledText(FilterCopy filterCopy, Styler fPlainStyler,
 			Styler fBoldStyler);
 
 	/**
 	 * @return null if there's no issue
-	 *
 	 */
 	String validate();
 
-	/**
-	 *
-	 */
 	void selectionChanged();
 
-	/**
-	 * @param argumentComposite
-	 * @param font
-	 */
 	void create(Composite argumentComposite, Font font);
 
-	/**
-	 *
-	 */
 	void dispose();
 
 }
@@ -2388,11 +2341,6 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	protected Label dummyLabel2;
 	protected static GregorianCalendar gregorianCalendar = new GregorianCalendar();
 
-	/**
-	 * @param dialog
-	 * @param parentShell
-	 * @param filter
-	 */
 	public MultiMatcherCustomFilterArgumentUI(FilterEditDialog dialog, Shell parentShell,
 			FilterCopy filter) {
 		this.shell = parentShell;
@@ -2475,10 +2423,6 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		initializationComplete = true;
 	}
 
-	/**
-	 * @param font
-	 * @param composite
-	 */
 	private void createDescriptionArea(Font font, Composite composite) {
 		GridData data;
 		description = new Label(composite, SWT.LEFT | SWT.WRAP);
@@ -2665,13 +2609,13 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			arguments.addModifyListener(e -> validateInputText());
 
 			dummyLabel1 = new Label(multiArgumentComposite, SWT.NONE);
-			data = new GridData(SWT.LEFT, SWT.CENTER, true, true);
+			data = new GridData(SWT.LEFT, SWT.CENTER, false, true);
 			dummyLabel1.setText(""); //$NON-NLS-1$
 			data.horizontalSpan = 1;
 			dummyLabel1.setLayoutData(data);
 
 			dummyLabel2 = new Label(multiArgumentComposite, SWT.NONE);
-			data = new GridData(SWT.LEFT, SWT.CENTER, true, true);
+			data = new GridData(SWT.LEFT, SWT.CENTER, false, true);
 			dummyLabel2.setText(""); //$NON-NLS-1$
 			data.horizontalSpan = 1;
 			dummyLabel2.setLayoutData(data);
@@ -3054,13 +2998,13 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	}
 
 	@Override
-	public StyledString formatStyledText(FilterCopy filter,
+	public StyledString formatStyledText(FilterCopy filterCopy,
 			Styler fPlainStyler, Styler fBoldStyler) {
-		return new StyledString(formatMultiMatcherArgument(filter), fPlainStyler);
+		return new StyledString(formatMultiMatcherArgument(filterCopy), fPlainStyler);
 	}
 
-	private String formatMultiMatcherArgument(FilterCopy filter) {
-		String argumentString = (String) filter.getArguments();
+	private String formatMultiMatcherArgument(FilterCopy filterCopy) {
+		String argumentString = (String) filterCopy.getArguments();
 		FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments(argumentString);
 
 		StringBuilder builder = new StringBuilder();
@@ -3098,11 +3042,6 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
 	public static final String REGEX_FILTER_ID = "org.eclipse.core.resources.regexFilterMatcher"; //$NON-NLS-1$
 
-	/**
-	 * @param dialog
-	 * @param parentShell
-	 * @param filter
-	 */
 	public DefaultCustomFilterArgumentUI(FilterEditDialog dialog, Shell parentShell, FilterCopy filter) {
 		this.shell = parentShell;
 		this.dialog = dialog;
@@ -3207,10 +3146,6 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				.getDescriptor(filter.getId()).getDescription());
 	}
 
-	/**
-	 * @param font
-	 * @param composite
-	 */
 	private void createDescriptionArea(Font font, Composite composite) {
 		GridData data;
 		description = new Label(composite, SWT.LEFT | SWT.WRAP);
@@ -3230,9 +3165,10 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	}
 
 	@Override
-	public StyledString formatStyledText(FilterCopy filter,
+	public StyledString formatStyledText(FilterCopy filterCopy,
 			Styler fPlainStyler, Styler fBoldStyler) {
-		return new StyledString(filter.getArguments() != null ? filter.getArguments().toString() :
+		return new StyledString(
+				filterCopy.getArguments() != null ? filterCopy.getArguments().toString() :
 			"", fPlainStyler); //$NON-NLS-1$
 	}
 }

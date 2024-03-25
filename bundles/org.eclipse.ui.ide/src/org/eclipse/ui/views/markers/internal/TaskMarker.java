@@ -28,9 +28,6 @@ public class TaskMarker extends ConcreteMarker {
 
 	private int done;
 
-	/**
-	 * @param toCopy
-	 */
 	public TaskMarker(IMarker toCopy) {
 		super(toCopy);
 	}

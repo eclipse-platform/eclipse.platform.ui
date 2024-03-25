@@ -29,7 +29,6 @@ import org.eclipse.ui.PlatformUI;
  *
  *              Planned to be deleted, please see Bug
  *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=549953
- *
  */
 /* package */interface INavigatorHelpContextIds {
 	public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$

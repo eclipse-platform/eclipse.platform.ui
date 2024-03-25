@@ -31,13 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- */
 public class MApplicationCommandAccessTest {
-	/**
-	 *
-	 */
 	private static final int NUMBER_OF_COMMANDS = 1000;
 	protected IEclipseContext applicationContext;
 	protected E4Workbench wb;
@@ -124,8 +118,6 @@ public class MApplicationCommandAccessTest {
 
 	/**
 	 * Create an application with lots of commands
-	 *
-	 * @return
 	 */
 	private MApplication createAppWithCommands() {
 		EModelService modelService = applicationContext.get(EModelService.class);

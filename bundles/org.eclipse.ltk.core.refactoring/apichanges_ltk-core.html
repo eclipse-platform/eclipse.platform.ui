@@ -1,0 +1,96 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="IBM">
+  <title>LTK Core API changes</title>
+  <link rel="stylesheet" href="http://dev.eclipse.org/default_style.css"
+ type="text/css">
+</head>
+<body>
+<p>This document lists the API changes that occurred between
+R3.3 and R3.4 and
+how to migrate from the R3.3 API to the R3.4 API.
+</p>
+<table border="0" cellpadding="2" cellspacing="5" width="100%" summary="Breaking API changes">
+  <tbody>
+    <tr>
+      <td align="left" width="72%"> <font size="+3"><b>LTK Core Refactoring -
+Breaking API changes from R3.3 to R3.4</b></font> <br>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      None
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p> </p>
+<table border="0" cellpadding="2" cellspacing="5" width="100%" summary="Non-breaking API changes">
+  <tbody>
+    <tr>
+      <td align="left" width="72%"> <font size="+3"><b>LTK Core Refactoring -
+Non-breaking API changes from R3.3 to R3.4</b></font> <br>
+      </td>
+    </tr>
+     <tr>
+      <td>Added 'Rename resource refactoring' (Pushed down from JDT).
+      <ul>
+      <li><code>RenameResourceDescriptor</code>: refactoring descriptor to configure and create a refactoring</li>
+      <li><code>RenameResourceChange</code>: Change to rename a resource</li>
+      <li><code>ResourceChange</code>: Abstract base class for resource changes</li>
+      </ul>
+      All in package <code>org.eclipse.ltk.core.refactoring.resource</code>.
+      </td>
+    </tr>
+    <tr><td><hr></td></tr>         
+    <tr>
+      <td>Added 'Move resources refactoring' (<code>org.eclipse.ltk.core.refactoring.resource</code>).
+      <ul>
+      <li><code>MoveResourcesDescriptor</code>: refactoring descriptor to configure and create a refactoring</li>
+      <li><code>MoveResourceChange</code>: Change to move a resource</li>
+      </ul>
+    </td>
+    </tr>    
+    <tr><td><hr></td></tr>
+     <tr>
+      <td>Added 'Delete resources refactoring' (<code>org.eclipse.ltk.core.refactoring.resource</code>).
+      <ul>
+      <li><code>DeleteResourcesDescriptor</code>: refactoring descriptor to configure and create a refactoring</li>
+      <li><code>DeleteResourceChange</code>: Change to delete a resource</li>
+      </ul>
+      </td>
+    </tr>
+    <tr><td><hr></td></tr>
+     <tr>
+      <td><code>ProcessorBasedRefactoring (org.eclipse.ltk.core.refactoring.participants</code>) can now be instantiated (was abstract before).
+      <ul>
+      <li>the default implementation of <code>getProcessor()</code> now returns the processor passed in <code>ProcessorBasedRefactoring(RefactoringProcessor)</code> or by (new API) <code>setProcessor(...)</code></li>
+      <li><code>ProcessorBasedRefactoring(RefactoringProcessor)</code> made public (was protected)</li>
+      <li><code>setProcessor</code> added as new API</li>
+      </ul>
+      </td>
+    </tr>
+    <tr><td><hr></td></tr>
+     <tr>
+      <td>Added <code>PerformRefactoringHistoryOperation.createRefactoring(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)</code>) as replacement
+      for <code>createRefactoring(RefactoringDescriptor, RefactoringStatus)</code> (deprecated).
+      </td>
+    </tr>
+        <tr><td><hr></td></tr>
+     <tr>
+      <td>Added API <code>ParticipantExtensionPoint (org.eclipse.ltk.core.refactoring.participants)</code> to be used 
+      to manage contributions of participants.
+      </td>
+    </tr>
+    
+    
+   </tbody>
+</table>
+<p>
+API changes from 3.2 to 3.3 can be found <a href="./notes/r3.3/apichanges_ltk-core.html?view=co">here</a>.
+</p>
+</body>
+</html>

@@ -14,14 +14,14 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LinkTest extends CSSSWTTestCase {
 
@@ -47,7 +47,7 @@ public class LinkTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testLinkColors() {
+	void testLinkColors() {
 		Link widgetToTest = createTestLink(
 				"Link { background-color: #FF0000; color: #00FF00; swt-link-foreground-color: #0000FF;}");
 		assertEquals(RED, widgetToTest.getBackground().getRGB());

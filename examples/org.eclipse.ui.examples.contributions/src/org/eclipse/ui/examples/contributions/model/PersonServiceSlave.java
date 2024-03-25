@@ -33,7 +33,7 @@ public class PersonServiceSlave implements IPersonService, IDisposable {
 
 	private IServiceLocator serviceLocator;
 	private IPersonService parentService;
-	private ListenerList<IPropertyChangeListener> localListeners = new ListenerList<>(
+	private final ListenerList<IPropertyChangeListener> localListeners = new ListenerList<>(
 			ListenerList.IDENTITY);
 
 	public PersonServiceSlave(IServiceLocator locator, IPersonService parent) {

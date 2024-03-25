@@ -23,7 +23,6 @@ import org.eclipse.ui.IFileEditorInput;
  * FileInputAdapterFactory is the adapter factory for the
  * IFileEditorInput.
  * @since 3.2
- *
  */
 
 public class FileInputAdapterFactory implements IAdapterFactory {

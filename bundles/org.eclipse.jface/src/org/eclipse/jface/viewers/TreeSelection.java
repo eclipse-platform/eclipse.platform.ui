@@ -45,6 +45,7 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 	 * The canonical empty selection. This selection should be used instead of
 	 * <code>null</code>.
 	 */
+	@SuppressWarnings("hiding")
 	public static final TreeSelection EMPTY = new TreeSelection();
 
 	private static final TreePath[] EMPTY_TREE_PATHS= new TreePath[0];

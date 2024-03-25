@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.jobs.MultiRule;
  * to, or is most likely to have the same name as a project being imported
  * (prevents from trying to create twice the same resource.
  * @author mistria
- *
  */
 public class SubdirectoryOrSameNameSchedulingRule implements ISchedulingRule {
 

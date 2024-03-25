@@ -30,8 +30,8 @@ public class MoveBoxOperation extends BoxOperation {
 	/*
 	 * The point the box should move to/from.
 	 */
-	private Point origin;
-	private Point target;
+	private final Point origin;
+	private final Point target;
 
 	public MoveBoxOperation(String label, IUndoContext context, Box box, Canvas canvas, Point newOrigin) {
 		super(label, context, null, box, canvas);
@@ -73,15 +73,15 @@ public class MoveBoxOperation extends BoxOperation {
 		stringBuffer.append(super.getLabel());
 		stringBuffer.append("["); //$NON-NLS-1$
 		stringBuffer.append("("); //$NON-NLS-1$
-		stringBuffer.append(Integer.valueOf(origin.x).toString());
+		stringBuffer.append(Integer.toString(origin.x));
 		stringBuffer.append(", "); //$NON-NLS-1$
-		stringBuffer.append(Integer.valueOf(origin.y).toString());
+		stringBuffer.append(Integer.toString(origin.y));
 		stringBuffer.append(')');
 		stringBuffer.append(", "); //$NON-NLS-1$
 		stringBuffer.append("("); //$NON-NLS-1$
-		stringBuffer.append(Integer.valueOf(target.x).toString());
+		stringBuffer.append(Integer.toString(target.x));
 		stringBuffer.append(", "); //$NON-NLS-1$
-		stringBuffer.append(Integer.valueOf(target.y).toString());
+		stringBuffer.append(Integer.toString(target.y));
 		stringBuffer.append(')');
 		stringBuffer.append(']');
 		return stringBuffer.toString();

@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Control;
  * tests that use multiple label provider suppliers.
  *
  * @since 3.3
- *
  */
 public abstract class CompositeLabelProviderTest extends ViewerTestCase {
 
@@ -58,18 +57,7 @@ public abstract class CompositeLabelProviderTest extends ViewerTestCase {
 	Font font;
 
 	/**
-	 * Create a new instance of the receiver.
-	 *
-	 * @param name
-	 */
-	public CompositeLabelProviderTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * Initialize the colors used by the receiver.
-	 *
-	 * @param parent
 	 */
 	void initializeColors(Control parent) {
 		background = parent.getDisplay().getSystemColor(SWT.COLOR_RED);

@@ -31,7 +31,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -45,7 +44,7 @@ public class TestContentProvider implements ITreeContentProvider,
 
 	private static final Object[] NO_CHILDREN = new Object[0];
 
-	public static final IPath MODEL_FILE_PATH = new Path("model.properties");
+	public static final IPath MODEL_FILE_PATH = IPath.fromOSString("model.properties");
 
 	private final Map rootElements = new HashMap();
 
@@ -89,11 +88,6 @@ public class TestContentProvider implements ITreeContentProvider,
 		return NO_CHILDREN;
 	}
 
-	/**
-	 * @param parentElement
-	 * @param class1
-	 * @return
-	 */
 	private IProject adaptToProject(Object parentElement) {
 		if(parentElement instanceof IProject)
 			return (IProject) parentElement;
@@ -103,9 +97,6 @@ public class TestContentProvider implements ITreeContentProvider,
 			return Platform.getAdapterManager().getAdapter(parentElement, IProject.class);
 	}
 
-	/**
-	 * @param modelFile
-	 */
 	private TestExtensionTreeData updateModel(IFile modelFile) {
 		Properties model = new Properties();
 		if (modelFile.exists()) {

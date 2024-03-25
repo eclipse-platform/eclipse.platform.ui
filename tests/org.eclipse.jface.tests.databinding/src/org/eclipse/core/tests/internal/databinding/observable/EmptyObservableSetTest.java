@@ -26,7 +26,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class EmptyObservableSetTest {
 
@@ -147,7 +146,7 @@ public class EmptyObservableSetTest {
 
 	private static class Delegate extends
 			AbstractObservableCollectionContractDelegate {
-		private Object elementType = new Object();
+		private final Object elementType = new Object();
 
 		@Override
 		public IObservableCollection createObservableCollection(Realm realm,

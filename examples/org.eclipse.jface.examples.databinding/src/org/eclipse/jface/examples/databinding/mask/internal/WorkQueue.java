@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Listener;
 
 /**
  * @since 3.2
- *
  */
 public class WorkQueue {
 
@@ -33,18 +32,18 @@ public class WorkQueue {
 
 	private boolean paintListenerAttached = false;
 
-	private Deque<Runnable> pendingWork = new LinkedList<>();
+	private final Deque<Runnable> pendingWork = new LinkedList<>();
 
-	private Display d;
+	private final Display d;
 
-	private Set<Runnable> pendingWorkSet = new HashSet<>();
+	private final Set<Runnable> pendingWorkSet = new HashSet<>();
 
-	private Runnable updateJob = () -> {
+	private final Runnable updateJob = () -> {
 		doUpdate();
 		updateScheduled = false;
 	};
 
-	private Listener paintListener = new Listener() {
+	private final Listener paintListener = new Listener() {
 		@Override
 		public void handleEvent(Event event) {
 			paintListenerAttached = false;
@@ -53,9 +52,6 @@ public class WorkQueue {
 		}
 	};
 
-	/**
-	 * @param targetDisplay
-	 */
 	public WorkQueue(Display targetDisplay) {
 		d = targetDisplay;
 	}

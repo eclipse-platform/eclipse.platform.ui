@@ -14,7 +14,7 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;

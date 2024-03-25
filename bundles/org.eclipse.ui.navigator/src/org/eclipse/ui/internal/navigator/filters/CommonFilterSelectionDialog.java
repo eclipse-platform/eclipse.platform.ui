@@ -45,7 +45,6 @@ import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 /**
  *
  * @since 3.2
- *
  */
 public class CommonFilterSelectionDialog extends TrayDialog {
 
@@ -76,8 +75,6 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 
 	/**
 	 * Public only for tests.
-	 *
-	 * @param aCommonViewer
 	 */
 	public CommonFilterSelectionDialog(CommonViewer aCommonViewer) {
 		super(aCommonViewer.getControl().getShell());

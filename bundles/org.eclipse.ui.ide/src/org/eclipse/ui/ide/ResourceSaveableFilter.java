@@ -32,7 +32,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * or indirect child of one of the roots.
  *
  * @since 3.9
- *
  */
 public class ResourceSaveableFilter implements ISaveableFilter {
 

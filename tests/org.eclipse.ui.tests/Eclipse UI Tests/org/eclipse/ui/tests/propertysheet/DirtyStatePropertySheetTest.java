@@ -43,7 +43,7 @@ public class DirtyStatePropertySheetTest extends AbstractPropertySheetTest {
 
 	static class MockAdapterFactory implements IAdapterFactory {
 
-		private Map<Class<?>, Object> adaptersMap;
+		private final Map<Class<?>, Object> adaptersMap;
 
 		public MockAdapterFactory() {
 			adaptersMap = new HashMap<>();

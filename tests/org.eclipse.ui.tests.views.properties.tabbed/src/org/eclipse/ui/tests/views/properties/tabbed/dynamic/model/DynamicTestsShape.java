@@ -62,7 +62,7 @@ public class DynamicTestsShape {
 	}
 
 	/**
-	 * @param shape
+	 * @param aShape
 	 *            the shape to set
 	 */
 	public void setShape(String aShape) {

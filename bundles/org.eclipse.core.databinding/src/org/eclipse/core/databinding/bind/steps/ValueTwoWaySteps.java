@@ -127,7 +127,6 @@ public final class ValueTwoWaySteps {
 		 *
 		 * @see UpdateValueStrategy#setAfterGetValidator
 		 * @see UpdateValueStrategy#validateAfterConvert
-		 * @param validator
 		 * @return next step
 		 */
 		THIS validateTwoWay(IValidator<? super T> validator);

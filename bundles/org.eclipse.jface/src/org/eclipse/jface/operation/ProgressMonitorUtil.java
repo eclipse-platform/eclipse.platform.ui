@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Display;
  * Contains static methods for constructing and manipulating progress monitors.
  *
  * @since 3.13
- *
  */
 public final class ProgressMonitorUtil {
 

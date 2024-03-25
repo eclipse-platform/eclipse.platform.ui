@@ -28,9 +28,6 @@ import org.eclipse.ui.IWorkbench;
  */
 public class DynamicWizard implements INewWizard {
 
-	/**
-	 *
-	 */
 	public DynamicWizard() {
 		super();
 	}

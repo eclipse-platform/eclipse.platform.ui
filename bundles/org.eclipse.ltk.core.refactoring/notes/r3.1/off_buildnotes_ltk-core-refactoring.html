@@ -1,0 +1,63 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
+   <title>LTK Core Refactoring Release Notes</title>
+</head>
+<body>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+LTK Core Refactoring</h1>
+<h3>April 19, 2005</h3>
+<h4>Problem Reports Fixed</h4>
+<h4>Implementation Changes</h4>
+<ul>
+  <li>The ProcessorBasedRefactoring has been instrumented with performance stats:
+    <ul>
+      <li>org.eclipse.ltk.core/perf/participants/checkConditions
+      </li>
+      <li>org.eclipse.ltk.core/perf/participants/createChanges
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>February 15, 2005</h3>
+<h4>Problem Reports Fixed</h4>
+<h4>Implementation Changes</h4>
+<ul>
+  <li>Support got added for participating in copy refactorings. See the additional
+      copy participant extension point as well as the new classes CopyRefactoring,
+      CopyProcessor and CopyArguments.
+  </li>
+</ul>
+<h3>October 11, 2004</h3>
+<h4>Problem Reports Fixed</h4>
+<h4>Implementation Changes</h4>
+<ul>
+  <li>Participants can now manipulate textual resources which are also manipulated
+      by a processor as long as the manipulated regions are disjoint. See additional
+      Javadoc for class RefactoringParticipant and the new method getTextChange().
+  </li>
+</ul>
+<h3>June 18, 2004</h3>
+<h4>Problem Reports Fixed</h4>
+<h4>Implementation Changes</h4>
+<ul>
+  <li>To align the method RefactoringStatus#create(IStatus) with the implementation of IStatus
+      the method createStatus now returns a fatal error when IStatus has a severity of CANCEL.
+  </li>
+</ul>
+<h3>Mai 7, 2004</h3>
+<h4>Problem Reports Fixed</h4>
+<h4>Implementation Changes</h4>
+<ul>
+  <li>The getPreview* and getContent* methods provided by class TextChange are now requiring 
+      a progress monitor.</li>
+</ul>
+</body>
+</html>
+

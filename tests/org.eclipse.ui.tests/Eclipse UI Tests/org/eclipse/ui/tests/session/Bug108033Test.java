@@ -15,9 +15,6 @@ package org.eclipse.ui.tests.session;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -32,6 +29,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ViewSite;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 /**
  * Bug 108033 Need a test to ensure that view tab order is the same on start up
  * as it was in the last session.
@@ -40,7 +40,6 @@ import org.eclipse.ui.internal.ViewSite;
  * from method to method.
  *
  * @since 3.2
- *
  */
 public class Bug108033Test extends TestCase {
 
@@ -188,8 +187,8 @@ public class Bug108033Test extends TestCase {
 		assertEquals("Different number of tabs", order.length, children.size());
 		for (int i = 0; i < children.size(); ++i) {
 			MUIElement child = children.get(i);
-			if (child instanceof MPlaceholder) {
-				child = ((MPlaceholder) child).getRef();
+			if (child instanceof MPlaceholder placeholder) {
+				child = placeholder.getRef();
 			}
 			assertEquals("Failed on tab " + i, order[i], ((MUILabel)child).getLabel());
 		}

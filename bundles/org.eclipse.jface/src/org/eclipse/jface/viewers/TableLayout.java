@@ -237,9 +237,6 @@ public class TableLayout extends Layout {
 
 	/**
 	 * Set the width of the item.
-	 *
-	 * @param item
-	 * @param width
 	 */
 	private void setWidth(Item item, int width) {
 		if (item instanceof TreeColumn) {
@@ -253,7 +250,6 @@ public class TableLayout extends Layout {
 	/**
 	 * Return the columns for the receiver.
 	 *
-	 * @param composite
 	 * @return Item[]
 	 */
 	private Item[] getColumns(Composite composite) {

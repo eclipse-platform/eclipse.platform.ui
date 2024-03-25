@@ -38,9 +38,9 @@ import org.eclipse.swt.widgets.Shell;
 public class Snippet072WizardWithProgressSubtasksAndCancel {
 
 	private static final class MyWizard extends Wizard {
-		private int fTasks;
+		private final int fTasks;
 
-		private int fSubTasks;
+		private final int fSubTasks;
 
 		private MyPage fPage;
 

@@ -41,10 +41,6 @@ public class NameSection
 
 	private Text nameText;
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySection#createControls(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage)
-	 */
 	@Override
 	public void createControls(Composite parent,
 			TabbedPropertySheetPage tabbedPropertySheetPage) {
@@ -80,9 +76,6 @@ public class NameSection
 		return treeNode;
 	}
 
-	/*
-	 * @see org.eclipse.ui.views.properties.tabbed.view.ITabbedPropertySection#refresh()
-	 */
 	@Override
 	public void refresh() {
 		Element element = (Element) getTreeNode().getValue();

@@ -19,7 +19,6 @@ import org.eclipse.core.databinding.observable.IObservable;
 
 /**
  * @since 3.3
- *
  */
 public class PropertyObservableUtil {
 	/**

@@ -27,7 +27,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
- *
  */
 @RunWith(JUnit4.class)
 public class PropertyShowInContextTest extends AbstractPropertySheetTest {
@@ -63,8 +62,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testHashCode3() throws PartInitException {
@@ -81,8 +78,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testHashCode4() throws PartInitException {
@@ -100,8 +95,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testHashCode5() throws PartInitException {
@@ -115,8 +108,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testHashCode6() throws PartInitException {
@@ -131,8 +122,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testHashCode7() throws PartInitException {
@@ -178,8 +167,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testEquals3() throws PartInitException {
@@ -197,8 +184,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testEquals4() throws PartInitException {
@@ -217,8 +202,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testEquals5() throws PartInitException {
@@ -233,8 +216,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testEqualsNullInput() throws PartInitException {
@@ -251,8 +232,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testEqualsNullInputBoth() throws PartInitException {
@@ -269,8 +248,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testEqualsNonNullInput() throws PartInitException {
@@ -287,8 +264,6 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public final void testEquals7() throws PartInitException {

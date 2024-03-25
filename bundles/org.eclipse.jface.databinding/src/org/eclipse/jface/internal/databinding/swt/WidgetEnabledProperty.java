@@ -32,9 +32,6 @@ public class WidgetEnabledProperty<S extends Widget> extends WidgetDelegatingVal
 	IValueProperty<ScrollBar, Boolean> scrollBar;
 	IValueProperty<ToolItem, Boolean> toolItem;
 
-	/**
-	 *
-	 */
 	public WidgetEnabledProperty() {
 		super(Boolean.TYPE);
 	}

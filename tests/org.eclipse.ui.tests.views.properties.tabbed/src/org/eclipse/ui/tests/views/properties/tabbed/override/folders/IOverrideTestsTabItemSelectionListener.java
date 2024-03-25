@@ -30,8 +30,8 @@ public interface IOverrideTestsTabItemSelectionListener {
 	/**
 	 * Notifies this listener that the selected item has changed.
 	 *
-	 * @param key
-	 *            the name of the selected item.
+	 * @param item
+	 *            the selected item.
 	 */
 	public void itemSelected(IOverrideTestsItem item);
 }

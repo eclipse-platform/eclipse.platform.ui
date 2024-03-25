@@ -43,7 +43,6 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Example usage of none mandatory interfaces of ITableFontProvider and
  * ITableColorProvider
- *
  */
 public class Snippet035TableCursorCellHighlighter {
 
@@ -64,7 +63,7 @@ public class Snippet035TableCursorCellHighlighter {
 
 	private class MyEditingSupport extends EditingSupport {
 
-		private String property;
+		private final String property;
 
 		public MyEditingSupport(ColumnViewer viewer, String property) {
 			super(viewer);
@@ -95,7 +94,7 @@ public class Snippet035TableCursorCellHighlighter {
 
 	private static class MyColumnLabelProvider extends ColumnLabelProvider {
 		FontRegistry registry = JFaceResources.getFontRegistry();
-		private String columnIndex;
+		private final String columnIndex;
 
 		public MyColumnLabelProvider(String columnIndex) {
 			this.columnIndex = columnIndex;
@@ -185,9 +184,6 @@ public class Snippet035TableCursorCellHighlighter {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

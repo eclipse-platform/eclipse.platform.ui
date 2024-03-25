@@ -127,7 +127,7 @@ public class WorkingSetTypePage extends WizardPage {
 			@Override
 			public Image getImage(Object element) {
 				ImageDescriptor imageDescriptor = ((WorkingSetDescriptor) element).getIcon();
-				return imageDescriptor == null ? null : (Image) images.get(imageDescriptor);
+				return imageDescriptor == null ? null : images.get(imageDescriptor);
 			}
 		});
 		typesListViewer.setInput(descriptors);

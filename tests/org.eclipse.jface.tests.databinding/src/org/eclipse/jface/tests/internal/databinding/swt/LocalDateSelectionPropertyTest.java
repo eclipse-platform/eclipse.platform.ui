@@ -15,7 +15,7 @@
 package org.eclipse.jface.tests.internal.databinding.swt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.time.LocalDate;
 
@@ -27,8 +27,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DateTime;
 import org.junit.Test;
 
-/**
- */
 public class LocalDateSelectionPropertyTest extends AbstractSWTTestCase {
 	@Test
 	public void testSetInObservable() {
@@ -65,23 +63,16 @@ public class LocalDateSelectionPropertyTest extends AbstractSWTTestCase {
 	public void testWrongKind() {
 		DateTime control = new DateTime(getShell(), SWT.TIME);
 		IObservableValue<LocalDate> time = WidgetProperties.localDateSelection().observe(control);
-		try {
-			time.setValue(LocalDate.of(1999, 11, 22));
-			fail();
-		} catch (IllegalStateException exc) {
-			// Expected
-		}
+		assertThrows(IllegalStateException.class, () -> time.setValue(LocalDate.of(1999, 11, 22)));
 	}
 
 	@Test
 	public void testNullNotThrowingNullPointerException() {
 		DateTime control = new DateTime(getShell(), SWT.DATE);
 
-		try {
-			WidgetProperties.localDateSelection().setValue(control, null);
-		} catch (NullPointerException notExpected) {
-			fail("No NPE should be thrown, because a null value should cause the method to return silently");
-		}
+		// No NPE should be thrown, because a null value should cause the method to
+		// return silently
+		WidgetProperties.localDateSelection().setValue(control, null);
 	}
 
 	@Test

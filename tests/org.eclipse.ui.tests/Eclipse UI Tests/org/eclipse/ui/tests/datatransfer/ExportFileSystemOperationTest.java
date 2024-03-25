@@ -15,14 +15,21 @@ package org.eclipse.ui.tests.datatransfer;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -31,6 +38,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.wizards.datatransfer.FileSystemExportOperation;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.internal.VirtualTestFileSystem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -211,6 +219,31 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 
 		// +1 for .settings
 		verifyFolders(directoryNames.length + 1);
+	}
+
+	/* Export (virtual) resources without local location. */
+	@Test
+	public void testExportVirtualResources() throws Exception {
+		String projectName = "ExportVirtual_" + UUID.randomUUID().toString();
+		IProjectDescription projectDescription = ResourcesPlugin.getWorkspace().newProjectDescription(projectName);
+		projectDescription.setLocationURI(URI.create(VirtualTestFileSystem.SCHEME + ":/" + projectName));
+		IProject projectVirtual = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		try {
+			projectVirtual.create(projectDescription, new NullProgressMonitor());
+			projectVirtual.open(new NullProgressMonitor());
+			IFile testFile = projectVirtual.getFile("test");
+			testFile.create(new ByteArrayInputStream("hello world".getBytes(StandardCharsets.UTF_8)), 0, null);
+
+			FileSystemExportOperation operation = new FileSystemExportOperation(null, List.of(testFile), localDirectory,
+					this);
+			openTestWindow().run(true, true, operation);
+
+			Path expectedFile = Path.of(localDirectory).resolve(projectName).resolve("test");
+			assertTrue(Files.exists(expectedFile));
+			assertEquals("hello world", new String(Files.readAllBytes(expectedFile), StandardCharsets.UTF_8));
+		} finally {
+			projectVirtual.delete(true, true, null);
+		}
 	}
 
 	private boolean isFile(IResource resource){

@@ -50,7 +50,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
  * @generated
  */
 public interface MPerspective
-extends MElementContainer<MPartSashContainerElement>, MUILabel, MContext, MHandlerContainer, MBindings {
+		extends MElementContainer<MPartSashContainerElement>, MUILabel, MContext, MHandlerContainer, MBindings {
 	/**
 	 * Returns the value of the '<em><b>Windows</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.basic.MWindow}.

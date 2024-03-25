@@ -18,26 +18,26 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class TitleAreaDialogTest extends TestCase {
+public class TitleAreaDialogTest {
 
 	static ImageDescriptor descriptor = ResourceLocator
 			.imageDescriptorFromBundle("org.eclipse.jface.tests", "icons/anything.gif").orElse(null);
 
 	private TitleAreaDialog dialog;
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();
 			dialog = null;
 		}
-		super.tearDown();
 	}
 
 	// Test setting the title image before creating the dialog.
+	@Test
 	public void testSetTitleImageEarly() {
 		dialog = new TitleAreaDialog(null);
 		dialog.setBlockOnOpen(false);
@@ -49,6 +49,7 @@ public class TitleAreaDialogTest extends TestCase {
 		dialog.open();
 	}
 
+	@Test
 	public void testSetTitleImageNull() {
 		dialog = new TitleAreaDialog(null);
 		dialog.setBlockOnOpen(false);

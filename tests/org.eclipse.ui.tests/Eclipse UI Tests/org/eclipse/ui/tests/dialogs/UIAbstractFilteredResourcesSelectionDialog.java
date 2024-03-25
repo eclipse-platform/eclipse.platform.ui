@@ -33,7 +33,6 @@ import org.junit.Before;
 
 /**
  * @since 3.3
- *
  */
 public class UIAbstractFilteredResourcesSelectionDialog {
 
@@ -74,8 +73,6 @@ public class UIAbstractFilteredResourcesSelectionDialog {
 
 	/**
 	 * A hook for subclasses - provides means to change filesystem tree.
-	 *
-	 * @return
 	 */
 	protected String getProjectName() {
 		return PROJECT_NAME;
@@ -83,8 +80,6 @@ public class UIAbstractFilteredResourcesSelectionDialog {
 
 	/**
 	 * A hook for subclasses - provides means to change filesystem tree.
-	 *
-	 * @return
 	 */
 	protected String getFirstFolderName() {
 		return FOLDER_NAME1;
@@ -92,8 +87,6 @@ public class UIAbstractFilteredResourcesSelectionDialog {
 
 	/**
 	 * A hook for subclasses - provides means to change filesystem tree.
-	 *
-	 * @return
 	 */
 	protected String getSecondFolderName() {
 		return FOLDER_NAME2;
@@ -101,8 +94,6 @@ public class UIAbstractFilteredResourcesSelectionDialog {
 
 	/**
 	 * A hook for subclasses - provides means to change filesystem tree.
-	 *
-	 * @return
 	 */
 	protected String[] getHistoryFiles() {
 		return HISTORY_FILES;
@@ -110,8 +101,6 @@ public class UIAbstractFilteredResourcesSelectionDialog {
 
 	/**
 	 * A hook for subclasses - provides means to change filesystem tree.
-	 *
-	 * @return
 	 */
 	protected String[] getNonHistoryFiles() {
 		return NONHISTORY_FILES;

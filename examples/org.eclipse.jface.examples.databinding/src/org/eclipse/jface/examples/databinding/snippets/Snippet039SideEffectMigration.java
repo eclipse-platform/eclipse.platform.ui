@@ -81,7 +81,7 @@ public class Snippet039SideEffectMigration {
 
 		public static final String PROPERTY_LAST_NAME = "lastName";
 
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		private String firstName = "Simon";
 
@@ -122,7 +122,7 @@ public class Snippet039SideEffectMigration {
 	}
 
 	static class ObservableView {
-		private ObservableBeanPerson person;
+		private final ObservableBeanPerson person;
 		private Text personFirstNameText;
 		private Text personLastNameText;
 
@@ -194,9 +194,9 @@ public class Snippet039SideEffectMigration {
 	/** Observable Person model. */
 	static class TrackedPerson {
 
-		private WritableValue<String> firstName = new WritableValue<>("Simon", String.class);
+		private final WritableValue<String> firstName = new WritableValue<>("Simon", String.class);
 
-		private WritableValue<String> lastName = new WritableValue<>("Scholz", String.class);
+		private final WritableValue<String> lastName = new WritableValue<>("Scholz", String.class);
 
 		public String getFirstName() {
 			return firstName.getValue();
@@ -216,7 +216,7 @@ public class Snippet039SideEffectMigration {
 	}
 
 	static class TrackedView {
-		private TrackedPerson person;
+		private final TrackedPerson person;
 		private Text personFirstNameText;
 		private Text personLastNameText;
 

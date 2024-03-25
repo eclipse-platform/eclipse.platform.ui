@@ -104,9 +104,6 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		assertEquals(newValue, bean.getValue());
 	}
 
-	/**
-	 *
-	 */
 	protected void closeCellEditor() {
 		editingSupport.text.notifyListeners(SWT.DefaultSelection, new Event());
 	}
@@ -177,10 +174,6 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 
 		IObservableValue<String> model;
 
-		/**
-		 * @param viewer
-		 * @param dbc
-		 */
 		public ObservableValueEditingSupportStub(ColumnViewer viewer,
 				DataBindingContext dbc) {
 			super(viewer, dbc);

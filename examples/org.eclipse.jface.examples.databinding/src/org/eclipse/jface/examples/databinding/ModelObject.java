@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ModelObject {
-	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private String id;
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {

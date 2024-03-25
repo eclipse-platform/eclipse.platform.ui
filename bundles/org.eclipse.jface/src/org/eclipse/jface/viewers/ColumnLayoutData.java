@@ -13,14 +13,16 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
+
 /**
  * An abstract column layout data describing the information needed
  * (by <code>TableLayout</code>) to properly lay out a table.
  * <p>
  * This class is not intended to be subclassed outside the framework.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public abstract class ColumnLayoutData {
 
 	/**

@@ -26,12 +26,6 @@ public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the height of an element. Available values are=auto length %
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	public void applyCSSPropertyHeight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
@@ -39,72 +33,36 @@ public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
 	/**
 	 * Sets the distance between lines. Available values are=normal number
 	 * length %
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	public void applyCSSPropertyLineHeight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the maximum height of an element. Available values are= none length %
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	public void applyCSSPropertyMaxHeight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the maximum width of an element. Available values are=none length %
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	public void applyCSSPropertyMaxWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the minimum height of an element. Available values are=length %
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	public void applyCSSPropertyMinHeight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the minimum width of an element. Available values are=length %
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	public void applyCSSPropertyMinWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
 
 	/**
 	 * Sets the width of an element. Available values are=auto % length
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	public void applyCSSPropertyWidth(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;

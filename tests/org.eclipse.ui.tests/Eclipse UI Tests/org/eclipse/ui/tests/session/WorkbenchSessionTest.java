@@ -21,7 +21,6 @@ import java.util.Map.Entry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.core.tests.session.SessionTestSuite;
 import org.eclipse.core.tests.session.Setup;
@@ -41,7 +40,7 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 
 	private Map<String, String> arguments;
 
-	private String dataLocation;
+	private final String dataLocation;
 
 	/**
 	 * Create a new workbench session test.
@@ -102,8 +101,6 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 
 	/**
 	 * Ensures setup uses this suite's instance location.
-	 *
-	 * @throws SetupException
 	 */
 	@Override
 	protected Setup newSetup() throws SetupException {
@@ -142,7 +139,7 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 			throw new IllegalArgumentException();
 		}
 
-		IPath path = new Path(fullPathString.getPath());
+		IPath path = IPath.fromOSString(fullPathString.getPath());
 
 		File origin = path.toFile();
 		if (!origin.exists()) {

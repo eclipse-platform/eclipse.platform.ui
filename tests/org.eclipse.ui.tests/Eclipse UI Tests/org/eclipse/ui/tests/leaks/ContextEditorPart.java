@@ -31,7 +31,6 @@ import org.eclipse.ui.part.EditorPart;
 
 /**
  * @since 3.4
- *
  */
 public class ContextEditorPart extends EditorPart {
 

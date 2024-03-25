@@ -93,7 +93,6 @@ public class ContentAssistField extends DecoratedField {
 	 * @param enabled <code>true</code> if content assist is enabled and responding
 	 *                to user input, <code>false</code> if it is ignoring user
 	 *                input.
-	 *
 	 */
 	public void setEnabled(boolean enabled) {
 		adapter.setEnabled(enabled);
@@ -107,7 +106,6 @@ public class ContentAssistField extends DecoratedField {
 	/*
 	 * Get a field decoration appropriate for cueing the user, including a
 	 * description of the active key binding.
-	 *
 	 */
 	private FieldDecoration getFieldDecoration() {
 		FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();

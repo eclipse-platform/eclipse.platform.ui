@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Latha Patil (ETAS GmbH) - GitHub Issue 748
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -23,7 +24,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
@@ -41,7 +41,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * </p>
  *
  * <pre>
- * ContainerGenerator gen = new ContainerGenerator(new Path("/A/B"));
+ * ContainerGenerator gen = new ContainerGenerator(IPath.fromOSString("/A/B"));
  * IContainer res = null;
  * try {
  * 	res = gen.getContainer(monitor); // creates project A and folder B if required
@@ -57,7 +57,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 public class ContainerGenerator {
 	private IPath containerFullPath;
 
-	private IContainer container;
+	private IContainer generatedContainer;
 
 	/**
 	 * Creates a generator for the container resource (folder or project) at the
@@ -99,7 +99,7 @@ public class ContainerGenerator {
 	 * @return the new folder resource handle
 	 */
 	private IFolder createFolderHandle(IContainer container, String folderName) {
-		return container.getFolder(new Path(folderName));
+		return container.getFolder(IPath.fromOSString(folderName));
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class ContainerGenerator {
 	private IProject createProject(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
 		projectHandle.create(subMonitor.split(1));
-		projectHandle.open(subMonitor.split(1));
+		projectHandle.open(IResource.BACKGROUND_REFRESH, subMonitor.split(1));
 		return projectHandle;
 	}
 
@@ -149,22 +149,22 @@ public class ContainerGenerator {
 		IDEWorkbenchPlugin.getPluginWorkspace().run(monitor1 -> {
 			SubMonitor subMonitor = SubMonitor.convert(monitor1,
 					IDEWorkbenchMessages.ContainerGenerator_progressMessage, containerFullPath.segmentCount());
-			if (container != null) {
+			if (generatedContainer != null) {
 				return;
 			}
 
 			// Does the container exist already?
 			IWorkspaceRoot root = getWorkspaceRoot();
-			container = (IContainer) root.findMember(containerFullPath);
-			if (container != null) {
+			generatedContainer = (IContainer) root.findMember(containerFullPath);
+			if (generatedContainer != null) {
 				return;
 			}
 
 			// Create the container for the given path
-			container = root;
+			generatedContainer = root;
 			for (int i = 0; i < containerFullPath.segmentCount(); i++) {
 				String currentSegment = containerFullPath.segment(i);
-				IResource resource = container.findMember(currentSegment);
+				IResource resource = generatedContainer.findMember(currentSegment);
 				if (resource != null) {
 					if (resource.getType() == IResource.FILE) {
 						String msg = NLS.bind(IDEWorkbenchMessages.ContainerGenerator_pathOccupied,
@@ -172,18 +172,18 @@ public class ContainerGenerator {
 						throw new CoreException(
 								new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, msg, null));
 					}
-					container = (IContainer) resource;
+					generatedContainer = (IContainer) resource;
 					subMonitor.worked(1);
 				} else if (i == 0) {
 					IProject projectHandle = createProjectHandle(root, currentSegment);
-					container = createProject(projectHandle, subMonitor.split(1));
+					generatedContainer = createProject(projectHandle, subMonitor.split(1));
 				} else {
-					IFolder folderHandle = createFolderHandle(container, currentSegment);
-					container = createFolder(folderHandle, subMonitor.split(1));
+					IFolder folderHandle = createFolderHandle(generatedContainer, currentSegment);
+					generatedContainer = createFolder(folderHandle, subMonitor.split(1));
 				}
 			}
 		}, null, IResource.NONE, monitor);
-		return container;
+		return generatedContainer;
 	}
 
 	/**

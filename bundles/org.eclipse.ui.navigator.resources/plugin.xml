@@ -95,7 +95,7 @@
          </enablement>
 
         <commonSorter
-              class="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionSorter"
+              class="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionComparator"
               id="org.eclipse.ui.navigator.resources.sorters.defaultSorter">
            <parentExpression>
            		  <or>
@@ -259,9 +259,17 @@
       			id="org.eclipse.ui.navigator.resources.FoldersAsProjectsActionProvider"
 				class="org.eclipse.ui.internal.navigator.resources.actions.FoldersAsProjectsActionProvider">
 			<enablement>
-				<or>
-					<adapt type="org.eclipse.core.resources.IFolder" />
-				</or>
+      <with
+            variable="selection">
+         <and>
+            <iterate
+                  ifEmpty="false">
+               <adapt
+                     type="org.eclipse.core.resources.IFolder">
+               </adapt>
+            </iterate>
+         </and>
+      </with>
 			</enablement>
 		</actionProvider>
       <actionProvider
@@ -448,7 +456,7 @@
             </instanceof>
          </possibleChildren>
          <commonSorter
-               class="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionSorter"
+               class="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionComparator"
                id="org.eclipse.ui.navigator.resources.sorters.defaultSorter">
             <parentExpression>
                <or>

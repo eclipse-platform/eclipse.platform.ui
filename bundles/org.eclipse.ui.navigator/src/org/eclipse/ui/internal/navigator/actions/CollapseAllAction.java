@@ -20,7 +20,6 @@ import org.eclipse.ui.navigator.CommonViewer;
 
 /**
  * This action delegate collapses all expanded elements in a Navigator view.
- *
  */
 public class CollapseAllAction extends Action {
 

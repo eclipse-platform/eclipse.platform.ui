@@ -44,12 +44,8 @@ import org.eclipse.e4.emf.internal.xpath.helper.ValueUtils;
 /**
  * A pointer describing a node that has properties, each of which could be
  * a collection.
- *
  */
 public abstract class EStructuralFeatureOwnerPointer extends NodePointer {
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private static final Object UNINITIALIZED = new Object();

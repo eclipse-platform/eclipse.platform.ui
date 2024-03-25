@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.swt.internal.win32;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.swt.internal.win32.OS;
 import org.osgi.service.event.EventHandler;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 
 @SuppressWarnings("restriction")
 public class DarkThemeProcessor {

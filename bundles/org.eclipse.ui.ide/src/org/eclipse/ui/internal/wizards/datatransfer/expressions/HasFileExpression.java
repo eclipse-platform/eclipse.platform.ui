@@ -21,7 +21,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Expression to check whether a given container (IContainer or folder typed as
@@ -51,8 +51,6 @@ public class HasFileExpression extends Expression {
 	/**
 	 * Build expression retrieving the suffix as the 'path' attribute on the
 	 * provided {@link IConfigurationElement}.
-	 *
-	 * @param element
 	 */
 	public HasFileExpression(IConfigurationElement element) {
 		this(element.getAttribute("path")); //$NON-NLS-1$
@@ -64,10 +62,10 @@ public class HasFileExpression extends Expression {
 		if (root instanceof File) {
 			return EvaluationResult.valueOf( new File((File)root, this.path).exists() );
 		} else if (root instanceof IContainer) {
-			return EvaluationResult.valueOf( ((IContainer)root).getFile(new Path(this.path)).exists() );
+			return EvaluationResult.valueOf( ((IContainer)root).getFile(IPath.fromOSString(this.path)).exists() );
 		} else if (root instanceof IAdaptable) {
 			IContainer container = ((IAdaptable)root).getAdapter(IContainer.class);
-			return EvaluationResult.valueOf( container.getFile(new Path(this.path)).exists() );
+			return EvaluationResult.valueOf( container.getFile(IPath.fromOSString(this.path)).exists() );
 		}
 		return EvaluationResult.FALSE;
 	}

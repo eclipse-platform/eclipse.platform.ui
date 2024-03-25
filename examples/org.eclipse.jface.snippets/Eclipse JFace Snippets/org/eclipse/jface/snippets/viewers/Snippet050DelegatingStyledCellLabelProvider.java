@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -187,8 +187,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 
 		@Override
 		public Image getImage(Object element) {
-			if (element instanceof File) {
-				File file= (File) element;
+			if (element instanceof File file) {
 				if (file.isDirectory()) {
 					return IMAGE1;
 				} else {
@@ -206,8 +205,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 		@Override
 		public StyledString getStyledText(Object element) {
 			StyledString styledString= new StyledString();
-			if (element instanceof File) {
-				File file= (File) element;
+			if (element instanceof File file) {
 				if (file.getName().length() == 0) {
 					styledString.append(file.getAbsolutePath());
 				} else {
@@ -231,9 +229,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 		@Override
 		public StyledString getStyledText(Object element) {
 			StyledString styledString= new StyledString();
-			if (element instanceof File) {
-				File file= (File) element;
-
+			if (element instanceof File file) {
 				String date= DateFormat.getDateInstance().format(new Date(file.lastModified()));
 				styledString.append(date);
 
@@ -250,24 +246,22 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 
 		@Override
 		public Object[] getChildren(Object element) {
-			if (element instanceof File) {
-				File file= (File) element;
+			if (element instanceof File file) {
 				if (file.isDirectory()) {
 					File[] listFiles= file.listFiles();
 					if (listFiles != null) {
 						return listFiles;
 					}
 				}
-			} else if (element instanceof FileSystemRoot) {
-				return ((FileSystemRoot) element).getRoots();
+			} else if (element instanceof FileSystemRoot fsRoot) {
+				return fsRoot.getRoots();
 			}
 			return new Object[0];
 		}
 
 		@Override
 		public Object getParent(Object element) {
-			if (element instanceof File) {
-				File file= (File) element;
+			if (element instanceof File file) {
 				return file.getParentFile();
 			}
 			return null;

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:basic_1="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_zPmxwL5fEe2xycAdAs49Bg">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_2DG0IL5fEe2xycAdAs49Bg" featurename="commands" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Command" xmi:id="__OUmgL5fEe2xycAdAs49Bg" elementId="org.eclipse.ui.tests.command.iconTest" commandName="Test Icon Command" commandIconURI="platform:/plugin/org.eclipse.ui.tests/icons/view.gif"/>
+    <elements xsi:type="commands:Command" xmi:id="_syckcCn0Ee6GCubbIJXTcg" elementId="org.eclipse.ui.tests.command.openCompositePart" commandName="Open Composite Part"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_MALdgL5iEe2xycAdAs49Bg" featurename="handlers" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Handler" xmi:id="_NTEBsL5iEe2xycAdAs49Bg" elementId="org.eclipse.ui.tests.handler.iconTest" contributionURI="bundleclass://org.eclipse.ui.tests/org.eclipse.ui.tests.commands.EmptyE4CommandHandler" command="__OUmgL5fEe2xycAdAs49Bg"/>
+    <elements xsi:type="commands:Handler" xmi:id="_vKc9oCn0Ee6GCubbIJXTcg" elementId="org.eclipse.ui.tests.handler.openCompositePart" contributionURI="bundleclass://org.eclipse.ui.tests/org.eclipse.ui.tests.e4.OpenCompositePartHandler" command="_syckcCn0Ee6GCubbIJXTcg"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_6zwroOM-Ee2Ne81-gfjahg" featurename="snippets" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="basic:CompositePart" xmi:id="_HAAmEOM_Ee2Ne81-gfjahg" elementId="org.eclipse.ui.tests.compositepart.test" contributionURI="bundleclass://org.eclipse.ui.tests/org.eclipse.ui.tests.e4.E4CompositePart" label="Wrapper" closeable="true">
+      <children xsi:type="basic:PartSashContainer" xmi:id="_MepZAOM_Ee2Ne81-gfjahg" elementId="org.eclipse.ui.tests.partsashcontainer.0" horizontal="true">
+        <children xsi:type="basic:PartStack" xmi:id="_gtThIDFTEe6hAtk0uJc72w" elementId="org.eclipse.ui.tests.partstack.0">
+          <children xsi:type="basic:Part" xmi:id="_QQpD8OM_Ee2Ne81-gfjahg" elementId="org.eclipse.ui.tests.compositepart.part.left" contributionURI="bundleclass://org.eclipse.ui.tests/org.eclipse.ui.tests.e4.E4Part" label="Left"/>
+          <children xsi:type="basic:Part" xmi:id="_QhgKcOM_Ee2Ne81-gfjahg" elementId="org.eclipse.ui.tests.compositepart.part.right" contributionURI="bundleclass://org.eclipse.ui.tests/org.eclipse.ui.tests.e4.E4Part" label="Right"/>
+        </children>
+      </children>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_FzAhAC05Ee6-nc55BrYmhA" featurename="descriptors" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="basic_1:PartDescriptor" xmi:id="_IQpoIC05Ee6-nc55BrYmhA" elementId="org.eclipse.ui.tests.partdescriptor.e4testpart" label="E4UndoRedoTestPart" allowMultiple="true" closeable="true" contributionURI="bundleclass://org.eclipse.ui.tests/org.eclipse.ui.tests.e4.E4UndoRedoTestPart"/>
+  </fragments>
+</fragment:ModelFragments>

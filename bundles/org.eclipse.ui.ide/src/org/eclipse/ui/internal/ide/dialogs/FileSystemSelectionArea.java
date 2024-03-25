@@ -30,7 +30,6 @@ import org.eclipse.ui.internal.ide.filesystem.FileSystemSupportRegistry;
 /**
  * FileSystemSelectionArea is the area used to select the file system.
  * @since 3.2
- *
  */
 
 public class FileSystemSelectionArea {
@@ -47,7 +46,6 @@ public class FileSystemSelectionArea {
 
 	/**
 	 * Create the contents of the receiver in composite.
-	 * @param composite
 	 */
 	public void createContents(Composite composite) {
 
@@ -94,7 +92,6 @@ public class FileSystemSelectionArea {
 
 	/**
 	 * Set the enablement state of the widget.
-	 * @param enabled
 	 */
 	public void setEnabled(boolean enabled) {
 		fileSystemTitle.setEnabled(enabled);

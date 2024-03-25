@@ -28,7 +28,6 @@ import org.eclipse.ui.part.ViewPart;
 
 /**
  * @since 3.5
- *
  */
 public class TextControlView extends ViewPart {
 	public static final String ID = "org.eclipse.ui.tests.textHandlerView";

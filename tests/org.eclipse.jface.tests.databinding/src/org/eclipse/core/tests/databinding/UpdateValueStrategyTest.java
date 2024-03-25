@@ -17,8 +17,8 @@ package org.eclipse.core.tests.databinding;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -208,14 +208,11 @@ public class UpdateValueStrategyTest extends AbstractDefaultRealmTestCase {
 
 		// Invalid use: source type Object does not extend converter from-type
 		// String
-		strategy = new UpdateValueStrategyStub<>();
-		strategy.setConverter(new IdentityConverter(String.class, Object.class));
-		try {
-			strategy.fillDefaults(WritableValue.withValueType(Object.class),
-					WritableValue.withValueType(Object.class));
-			fail("Expected BindingException since Object does not extend String");
-		} catch (BindingException expected) {
-		}
+		UpdateValueStrategyStub<Object, Object> strategy2 = new UpdateValueStrategyStub<>();
+		strategy2.setConverter(new IdentityConverter(String.class, Object.class));
+		assertThrows("Expected BindingException since Object does not extend String", BindingException.class, () ->
+		strategy2.fillDefaults(WritableValue.withValueType(Object.class),
+				WritableValue.withValueType(Object.class)));
 	}
 
 	/**
@@ -242,14 +239,11 @@ public class UpdateValueStrategyTest extends AbstractDefaultRealmTestCase {
 
 		// Invalid use: converter to-type Object does not extend destination
 		// type String
-		strategy = new UpdateValueStrategyStub<>();
-		strategy.setConverter(new IdentityConverter(Object.class, Object.class));
-		try {
-			strategy.fillDefaults(WritableValue.withValueType(Object.class),
-					WritableValue.withValueType(String.class));
-			fail("Expected BindingException since Object does not extend String");
-		} catch (BindingException expected) {
-		}
+		UpdateValueStrategyStub<String, Object> strategy2 = new UpdateValueStrategyStub<>();
+		strategy2.setConverter(new IdentityConverter(Object.class, Object.class));
+		assertThrows("Expected BindingException since Object does not extend String", BindingException.class,
+				() -> strategy2.fillDefaults(WritableValue.withValueType(Object.class),
+						WritableValue.withValueType(String.class)));
 	}
 
 	private void assertDefaultValidator(Class<?> fromType, Class<?> toType, Class<?> validatorType) {

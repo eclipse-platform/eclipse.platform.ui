@@ -50,9 +50,6 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 	private PathVariablesGroup pathVariablesGroup;
 	private LinkedResourceEditor linkedResourceEditor;
 
-	/**
-	 *
-	 */
 	public ProjectLinkedResourcePage() {
 		pathVariablesGroup = new PathVariablesGroup(true, IResource.FILE | IResource.FOLDER);
 		linkedResourceEditor = new LinkedResourceEditor();
@@ -208,6 +205,5 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 	protected void updateWidgetState(boolean enableLinking) {
 		topLabel.setEnabled(enableLinking);
 		pathVariablesGroup.setEnabled(enableLinking);
-		linkedResourceEditor.setEnabled(enableLinking);
 	}
 }

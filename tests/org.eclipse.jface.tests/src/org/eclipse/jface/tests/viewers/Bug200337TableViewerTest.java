@@ -23,20 +23,12 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
+import org.junit.Test;
 
 /**
  * @since 3.3
- *
  */
 public class Bug200337TableViewerTest extends ViewerTestCase {
-
-	/**
-	 * @param name
-	 */
-	public Bug200337TableViewerTest(String name) {
-		super(name);
-		// TODO Auto-generated constructor stub
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -86,6 +78,7 @@ public class Bug200337TableViewerTest extends ViewerTestCase {
 		return (TableViewer) fViewer;
 	}
 
+	@Test
 	public void testBug200337() {
 		getTableViewer().editElement(getTableViewer().getElementAt(0), 0);
 		getTableViewer().editElement(getTableViewer().getElementAt(90), 0);

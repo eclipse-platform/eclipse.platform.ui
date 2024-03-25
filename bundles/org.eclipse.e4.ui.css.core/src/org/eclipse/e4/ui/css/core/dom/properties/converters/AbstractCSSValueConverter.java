@@ -20,7 +20,6 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public abstract class AbstractCSSValueConverter implements ICSSValueConverter {
 

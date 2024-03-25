@@ -20,7 +20,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 public class MockWorkbenchWindowActionDelegate extends MockActionDelegate
 		implements IActionDelegate2 {
-	public static MockWorkbenchWindowActionDelegate lastDelegate;
+	public static MockWorkbenchWindowActionDelegate lastMockWorkbenchWindowActionDelegate;
 
 	public static String SET_ID = "org.eclipse.ui.tests.api.MockActionSet";
 
@@ -31,7 +31,7 @@ public class MockWorkbenchWindowActionDelegate extends MockActionDelegate
 	 */
 	public MockWorkbenchWindowActionDelegate() {
 		super();
-		lastDelegate = this;
+		lastMockWorkbenchWindowActionDelegate = this;
 	}
 
 	@Override

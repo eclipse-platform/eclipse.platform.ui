@@ -70,7 +70,6 @@ import org.eclipse.ui.menus.IMenuService;
 
 /**
  * @since 3.5
- *
  */
 public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaround {
 
@@ -83,10 +82,6 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 	private Map<AbstractContributionFactory, Object> factoriesToContributions = new HashMap<>();
 	private EModelService modelService;
 
-	/**
-	 * @param serviceLocator
-	 * @param e4Context
-	 */
 	public WorkbenchMenuService(ServiceLocator serviceLocator, IEclipseContext e4Context) {
 		this.serviceLocator = serviceLocator;
 		this.e4Context = e4Context;
@@ -404,9 +399,6 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 		}
 	}
 
-	/**
-	 * @param toolbar
-	 */
 	private void releaseContributionManager(ToolBarManager toolbarManager) {
 		final IRendererFactory factory = e4Context.get(IRendererFactory.class);
 		final AbstractPartRenderer obj = factory.getRenderer(MenuFactoryImpl.eINSTANCE.createToolBar(), null);
@@ -435,9 +427,6 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 		mToolBar.getTransientData().remove(ModelUtils.CONTAINING_PARENT);
 	}
 
-	/**
-	 * @param menu
-	 */
 	private void releaseContributionManager(MenuManager menuManager) {
 		final IRendererFactory factory = e4Context.get(IRendererFactory.class);
 		final AbstractPartRenderer obj = factory.getRenderer(((WorkbenchWindow) getWindow()).getModel().getMainMenu(),
@@ -469,9 +458,6 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 
 	/**
 	 * Disposes contributions created by service for given part. See bug 537046.
-	 *
-	 * @param site
-	 * @param part
 	 */
 	@Override
 	public void clearContributions(PartSite site, MPart part) {

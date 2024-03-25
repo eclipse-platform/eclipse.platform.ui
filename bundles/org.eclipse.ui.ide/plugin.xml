@@ -456,6 +456,9 @@
             id="org.eclipse.ui.ide.general"
             label="%PreferenceKeywords.General"/>
       <keyword
+            id="org.eclipse.ui.ide.viewlimit"
+            label="%PreferenceKeywords.ViewLimit"/>
+      <keyword
             id="org.eclipse.ui.ide.themes"
             label="%PreferenceKeywords.Themes"/>
       <keyword
@@ -564,6 +567,7 @@
             class="org.eclipse.ui.internal.ide.dialogs.IDEWorkbenchPreferencePage"
             id="org.eclipse.ui.preferencePages.Workbench">
          <keywordReference id="org.eclipse.ui.ide.general"/>
+         <keywordReference id="org.eclipse.ui.ide.viewlimit"/>
       </page>
       <page
             name="%PreferencePages.Globalization"
@@ -719,13 +723,6 @@
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.progress.ProgressView"
             id="org.eclipse.ui.views.ProgressView">
-      </view>
-      <view
-            name="%Views.ResourceNavigator"
-            icon="$nl$/icons/full/eview16/filenav_nav.png"
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.views.navigator.ResourceNavigator"
-            id="org.eclipse.ui.views.ResourceNavigator">
       </view>
       <view
             allowMultiple="true"

@@ -43,7 +43,7 @@ public class IDESelectionConversionService implements
 	public IStructuredSelection convertToResources(
 			IStructuredSelection originalSelection) {
 
-		List result = new ArrayList();
+		List<Object> result = new ArrayList<>();
 
 		for (Object currentElement : originalSelection) {
 

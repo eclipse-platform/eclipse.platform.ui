@@ -21,9 +21,6 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class DynamicView extends ViewPart {
 
-	/**
-	 *
-	 */
 	public DynamicView() {
 		super();
 	}

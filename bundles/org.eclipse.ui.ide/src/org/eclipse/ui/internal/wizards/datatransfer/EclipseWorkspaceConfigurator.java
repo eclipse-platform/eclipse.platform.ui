@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
 
 /**
@@ -38,13 +37,13 @@ public class EclipseWorkspaceConfigurator implements ProjectConfigurator {
 
 	@Override
 	public boolean shouldBeAnEclipseProject(IContainer container, IProgressMonitor monitor) {
-		return container.getFolder(new Path(".metadata")).exists(); //$NON-NLS-1$
+		return container.getFolder(IPath.fromOSString(".metadata")).exists(); //$NON-NLS-1$
 	}
 
 	@Override
 	public Set<IFolder> getFoldersToIgnore(IProject project, IProgressMonitor monitor) {
 		Set<IFolder> res = new HashSet<>();
-		res.add(project.getFolder(new Path(".metadata"))); //$NON-NLS-1$
+		res.add(project.getFolder(IPath.fromOSString(".metadata"))); //$NON-NLS-1$
 		return res;
 	}
 

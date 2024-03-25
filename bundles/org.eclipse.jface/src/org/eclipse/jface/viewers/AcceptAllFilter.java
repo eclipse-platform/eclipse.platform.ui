@@ -43,7 +43,12 @@ public final class AcceptAllFilter implements IFilter {
 
 	@Override
 	public boolean equals(Object other) {
-		return other == this || other instanceof AcceptAllFilter;
+		return other instanceof AcceptAllFilter; // singleton
+	}
+
+	@Override
+	public int hashCode() {
+		return 1; // singleton
 	}
 
 }

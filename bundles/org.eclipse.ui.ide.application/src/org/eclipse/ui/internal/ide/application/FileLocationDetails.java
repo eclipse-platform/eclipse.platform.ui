@@ -13,17 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
+import java.nio.file.InvalidPathException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @since 3.3
- *
  */
 
 /**
@@ -42,8 +43,20 @@ import org.eclipse.core.runtime.Path;
  * @see #resolve(String)
  */
 public class FileLocationDetails {
+
+	private static final Pattern lPattern = Pattern.compile("^(?<path>.*?)[+:](?<line>\\d+)$"); //$NON-NLS-1$
+	private static final Pattern lcPattern = Pattern.compile("^(?<path>.*?)[+:](?<line>\\d+)[:+](?<column>\\d+)$"); //$NON-NLS-1$
+
+	private static String getPath(Matcher m) {
+		return m.group("path"); //$NON-NLS-1$
+	}
+
+	private static int getValue(String name, Matcher m) {
+		return Integer.parseInt(m.group(name));
+	}
+
 	// vars are package protected for access from DelayedEventsProcessor
-	Path path;
+	IPath path;
 	IFileStore fileStore;
 	IFileInfo fileInfo;
 
@@ -51,30 +64,30 @@ public class FileLocationDetails {
 	int column = -1;
 
 	/**
-	 * Check if path exists with optional encoded line and/or column
-	 * specification
+	 * Check if path exists with optional encoded line and/or column specification
 	 *
-	 * @param path
-	 *            the possibly-encoded file path with optional line/column
-	 *            details
+	 * @param path the possibly-encoded file path with optional line/column details
 	 * @return the location details or {@code null} if the file doesn't exist
 	 */
 	public static FileLocationDetails resolve(String path) {
-		FileLocationDetails details = checkLocation(path, -1, -1);
-		if (details != null) {
-			return details;
-		}
-		// Ideally we'd use a regex, except that we need to be greedy
-		// in matching. For example, we're trying to open /tmp/foo:3:3
+		// Ideally we'd use a regex, except that we need to be greedy in matching.
+		// For example, we're trying to open /tmp/foo:3:3
 		// and there is an actual file named /tmp/foo:3
-		Pattern lPattern = Pattern.compile("^(?<path>.*?)[+:](?<line>\\d+)$"); //$NON-NLS-1$
-		Pattern lcPattern = Pattern.compile("^(?<path>.*?)[+:](?<line>\\d+)[:+](?<column>\\d+)$"); //$NON-NLS-1$
+		if (isValidPath(path)) {
+			FileLocationDetails details = checkLocation(path, -1, -1);
+			if (details != null) {
+				return details;
+			}
+		}
 		Matcher m = lPattern.matcher(path);
 		if (m.matches()) {
 			try {
-				details = checkLocation(m.group("path"), Integer.parseInt(m.group("line")), -1); //$NON-NLS-1$//$NON-NLS-2$
-				if (details != null) {
-					return details;
+				String matchedPath = getPath(m);
+				if (isValidPath(matchedPath)) {
+					FileLocationDetails details = checkLocation(matchedPath, getValue("line", m), -1); //$NON-NLS-1$
+					if (details != null) {
+						return details;
+					}
 				}
 			} catch (NumberFormatException e) {
 				// shouldn't happen
@@ -84,8 +97,7 @@ public class FileLocationDetails {
 		m = lcPattern.matcher(path);
 		if (m.matches()) {
 			try {
-				details = checkLocation(m.group("path"), Integer.parseInt(m.group("line")), //$NON-NLS-1$//$NON-NLS-2$
-						m.group("column") != null ? Integer.parseInt(m.group("column")) : -1); //$NON-NLS-1$ //$NON-NLS-2$
+				FileLocationDetails details = checkLocation(getPath(m), getValue("line", m), getValue("column", m)); //$NON-NLS-1$//$NON-NLS-2$
 				if (details != null) {
 					return details;
 				}
@@ -97,10 +109,21 @@ public class FileLocationDetails {
 		return null;
 	}
 
+	private static boolean isValidPath(String path) {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			try { // On windows : is forbidden in filenames
+				java.nio.file.Path.of(path);
+			} catch (InvalidPathException e) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/** Return details if {@code path} exists */
 	private static FileLocationDetails checkLocation(String path, int line, int column) {
 		FileLocationDetails spec = new FileLocationDetails();
-		spec.path = new Path(path);
+		spec.path = IPath.fromOSString(path);
 		spec.fileStore = EFS.getLocalFileSystem().getStore(spec.path);
 		spec.fileInfo = spec.fileStore.fetchInfo();
 		spec.line = line;

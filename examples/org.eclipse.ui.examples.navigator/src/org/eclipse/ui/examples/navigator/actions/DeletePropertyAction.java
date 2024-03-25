@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,8 +22,8 @@ import java.util.Properties;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -46,8 +46,8 @@ public class DeletePropertyAction extends ActionDelegate {
 
 	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
-		if(sel instanceof IStructuredSelection)
-			selection = (IStructuredSelection) sel;
+		if (sel instanceof IStructuredSelection structuredSelection)
+			selection = structuredSelection;
 		else
 			selection = StructuredSelection.EMPTY;
 	}
@@ -64,9 +64,7 @@ public class DeletePropertyAction extends ActionDelegate {
 					if(selection.size() == 1) {
 
 						Object firstElement = selection.getFirstElement();
-						if(firstElement instanceof PropertiesTreeData) {
-							PropertiesTreeData data = (PropertiesTreeData) firstElement;
-
+						if (firstElement instanceof PropertiesTreeData data) {
 							IFile propertiesFile = data.getFile();
 							monitor.worked(1);
 
@@ -94,7 +92,7 @@ public class DeletePropertyAction extends ActionDelegate {
 									monitor.worked(1);
 								} catch (IOException e) {
 									// handle error gracefully
-									Platform.getLog(DeletePropertyAction.class).error("Could not delete property!", e); //$NON-NLS-1$
+									ILog.of(DeletePropertyAction.class).error("Could not delete property!", e); //$NON-NLS-1$
 									MessageDialog.openError(Display.getDefault().getActiveShell(),
 											"Error Deleting Property",  //$NON-NLS-1$
 											"Could not delete property!");   //$NON-NLS-1$
@@ -122,7 +120,7 @@ public class DeletePropertyAction extends ActionDelegate {
 			PlatformUI.getWorkbench().getProgressService().run(true, false, deletePropertyOperation);
 		} catch (InvocationTargetException | InterruptedException e) {
 			// handle error gracefully
-			Platform.getLog(DeletePropertyAction.class).error("Could not delete property!", e); //$NON-NLS-1$
+			ILog.of(DeletePropertyAction.class).error("Could not delete property!", e); //$NON-NLS-1$
 			MessageDialog.openError(Display.getDefault().getActiveShell(),
 					"Error Deleting Property",  //$NON-NLS-1$
 					"Could not delete property!");   //$NON-NLS-1$

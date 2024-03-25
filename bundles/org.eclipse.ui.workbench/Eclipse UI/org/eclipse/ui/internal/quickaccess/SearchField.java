@@ -22,10 +22,10 @@ package org.eclipse.ui.internal.quickaccess;
 import static org.eclipse.swt.events.MenuListener.menuHiddenAdapter;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import java.util.Arrays;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
@@ -121,7 +121,6 @@ public class SearchField {
 
 	/**
 	 * Compute the best binding for the command and sets the trigger
-	 *
 	 */
 	protected void updateQuickAccessTriggerSequence() {
 		triggerSequence = bindingService.getBestActiveBindingFor(QUICK_ACCESS_COMMAND_ID);

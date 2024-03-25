@@ -35,7 +35,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * MarkerPriorityField is the field for task priority.
  *
  * @since 3.4
- *
  */
 public class MarkerPriorityField extends MarkerField {
 
@@ -45,8 +44,6 @@ public class MarkerPriorityField extends MarkerField {
 
 		/**
 		 * Create a new instance of the receiver.
-		 *
-		 * @param viewer
 		 */
 		public PriorityEditingSupport(ColumnViewer viewer) {
 			super(viewer);
@@ -103,10 +100,8 @@ public class MarkerPriorityField extends MarkerField {
 
 	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
-		return item2.getAttributeValue(IMarker.PRIORITY,
-				IMarker.PRIORITY_NORMAL)
-				- item1.getAttributeValue(IMarker.PRIORITY,
-						IMarker.PRIORITY_NORMAL);
+		return Integer.compare(item1.getAttributeValue(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL),
+				item1.getAttributeValue(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL));
 	}
 
 	@Override

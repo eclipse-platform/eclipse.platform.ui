@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.properties.tabbed;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.e4.ui.tests.css.swt.CSSSWTTestCase;
 import org.eclipse.swt.SWT;
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyTitle;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TabbedPropertiesTitleTest extends CSSSWTTestCase {
 
@@ -63,7 +63,7 @@ public class TabbedPropertiesTitleTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void titleBackgroundColorIsStyled() {
+	void titleBackgroundColorIsStyled() {
 		createTabbedPropertiesTitle(null);
 
 		engine.applyStyles(shell, true);
@@ -75,7 +75,7 @@ public class TabbedPropertiesTitleTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void titleBackgroundColorIsStyledAndReset() {
+	void titleBackgroundColorIsStyledAndReset() {
 		createTabbedPropertiesTitle(null);
 
 		RGB colorGradStartBeforStyling = factory.getColors().getColor(IFormColors.H_GRADIENT_START).getRGB();
@@ -92,7 +92,7 @@ public class TabbedPropertiesTitleTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void colorsAreNotChangedWhenNoStyleGivenInCss() {
+	void colorsAreNotChangedWhenNoStyleGivenInCss() {
 		createTabbedPropertiesTitle(
 				"SomeOtherWidget { h-gradient-start-color: #FF0000; h-gradient-end-color: #FF0000; h-bottom-keyline-1-color: #FF0000; h-bottom-keyline-2-color: #FF0000;}");
 

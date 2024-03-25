@@ -50,7 +50,6 @@ import org.eclipse.ui.part.PluginTransfer;
  *      and Drop in the Eclipse UI (Custom Transfer Types)</a>
  *
  * @since 3.2
- *
  */
 public abstract class CommonDragAdapterAssistant {
 

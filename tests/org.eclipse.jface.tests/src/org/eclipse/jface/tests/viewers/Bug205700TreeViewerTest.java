@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 Lasse Knudsen and others.
+ * Copyright (c) 2007, 2023 Lasse Knudsen and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +26,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class Bug205700TreeViewerTest extends TestCase {
+public class Bug205700TreeViewerTest {
 
 	private Shell shell;
 
@@ -41,8 +44,8 @@ public class Bug205700TreeViewerTest extends TestCase {
 
 	private final TreeNode child10 = new TreeNode("Child10");
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		shell = new Shell();
 
 		viewer = new TreeViewer(shell, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -55,11 +58,12 @@ public class Bug205700TreeViewerTest extends TestCase {
 		shell.open();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		shell.close();
 	}
 
+	@Test
 	public void testAddWithoutSorter() throws Exception {
 		assertItemNames(new String[] { "Child1", "Child5", "Child10" });
 
@@ -77,23 +81,17 @@ public class Bug205700TreeViewerTest extends TestCase {
 				"Child8", "Child9" });
 	}
 
-	/**
-	 * @param names
-	 */
 	private void assertItemNames(String[] names) {
 		for (int i = 0; i < names.length; i++) {
 			assertItemName(i, names[i]);
 		}
 	}
 
-	/**
-	 * @param index
-	 * @param name
-	 */
 	private void assertItemName(int index, String name) {
 		assertEquals("at " + index, name, viewer.getTree().getItem(index).getText());
 	}
 
+	@Test
 	public void testAddWithSorter() throws Exception {
 		assertItemNames(new String[] { "Child1", "Child5", "Child10" });
 		viewer.setComparator(new ViewerComparator());
@@ -113,6 +111,7 @@ public class Bug205700TreeViewerTest extends TestCase {
 				"Child8", "Child9" });
 	}
 
+	@Test
 	public void testAddEquallySortedElements() throws Exception {
 		assertItemNames(new String[] { "Child1", "Child5", "Child10" });
 		viewer.setComparator(new ViewerComparator());
@@ -140,7 +139,7 @@ public class Bug205700TreeViewerTest extends TestCase {
 
 		private final String name;
 
-		private TreeNode parent = null;
+		private final TreeNode parent = null;
 
 		private final List<TreeNode> children = new ArrayList<>();
 
@@ -175,8 +174,8 @@ public class Bug205700TreeViewerTest extends TestCase {
 	private static class InternalLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
-			if (element instanceof TreeNode) {
-				return ((TreeNode) element).getName();
+			if (element instanceof TreeNode treeNode) {
+				return treeNode.getName();
 			}
 			return null;
 		}
@@ -185,24 +184,24 @@ public class Bug205700TreeViewerTest extends TestCase {
 	private static class InternalContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof TreeNode) {
-				return ((TreeNode) parentElement).getChildren().toArray();
+			if (parentElement instanceof TreeNode treeNode) {
+				return treeNode.getChildren().toArray();
 			}
 			return new Object[0];
 		}
 
 		@Override
 		public Object getParent(Object element) {
-			if (element instanceof TreeNode) {
-				return ((TreeNode) element).getParent();
+			if (element instanceof TreeNode treeNode) {
+				return treeNode.getParent();
 			}
 			return null;
 		}
 
 		@Override
 		public boolean hasChildren(Object element) {
-			if (element instanceof TreeNode) {
-				return !((TreeNode) element).getChildren().isEmpty();
+			if (element instanceof TreeNode treeNode) {
+				return treeNode.getChildren().isEmpty();
 			}
 			return false;
 		}

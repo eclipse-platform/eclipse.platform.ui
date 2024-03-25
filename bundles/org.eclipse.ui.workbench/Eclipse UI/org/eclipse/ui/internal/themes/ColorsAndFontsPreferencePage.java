@@ -514,7 +514,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		 * Returns the DEFINITION_NOT_AVAIL_COLOR color when definition is not present
 		 * in the current theme or null when it is available
 		 *
-		 * @param def the definition
 		 * @return the DEFINITION_NOT_AVAIL_COLOR color or null
 		 */
 		@Override
@@ -796,9 +795,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	/**
 	 * Create a button for the preference page.
-	 *
-	 * @param parent
-	 * @param label
 	 */
 	private Button createButton(Composite parent, String label) {
 		Button button = new Button(parent, SWT.PUSH | SWT.CENTER);
@@ -1384,8 +1380,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	/**
 	 * Apply the dialog font to the control and store it for later so that it can be
 	 * used for a later update.
-	 *
-	 * @param control
 	 */
 	private void myApplyDialogFont(Control control) {
 		control.setFont(JFaceResources.getDialogFont());
@@ -1607,9 +1601,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	/**
 	 * Updates the working registry.
-	 *
-	 * @param definition
-	 * @param newRGB
 	 */
 	protected void setRegistryValue(ColorDefinition definition, RGB newRGB) {
 		colorRegistry.put(definition.getId(), newRGB);
@@ -1649,8 +1640,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 	/**
 	 * Update for a change in the dialog font.
-	 *
-	 * @param newFont
 	 */
 	private void updateForDialogFontChange(Font newFont) {
 		Iterator<Control> iterator = dialogFontWidgets.iterator();
@@ -1924,7 +1913,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * Find out if the default can be edited. Note, isEditable=false also means that
 	 * a property is not shown to user.
 	 *
-	 * @param definition
 	 * @return True if definition has a default and the default's isEditable=true.
 	 *         False otherwise.
 	 */
@@ -2189,11 +2177,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	}
 
 	private static class CascadingThemeExt extends CascadingTheme {
-		/**
-		 * @param currentTheme
-		 * @param colorRegistry
-		 * @param fontRegistry
-		 */
 		public CascadingThemeExt(ITheme currentTheme, CascadingColorRegistry colorRegistry,
 				CascadingFontRegistry fontRegistry) {
 			super(currentTheme, colorRegistry, fontRegistry);

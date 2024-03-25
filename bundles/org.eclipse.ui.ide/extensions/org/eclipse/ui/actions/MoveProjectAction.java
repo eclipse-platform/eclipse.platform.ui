@@ -48,6 +48,7 @@ public class MoveProjectAction extends CopyProjectAction {
 	/**
 	 * The id of this action.
 	 */
+	@SuppressWarnings("hiding")
 	public static final String ID = PlatformUI.PLUGIN_ID + ".MoveProjectAction";//$NON-NLS-1$
 
 	/**

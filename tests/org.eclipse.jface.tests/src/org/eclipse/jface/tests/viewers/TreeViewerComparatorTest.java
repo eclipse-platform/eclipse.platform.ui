@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,8 +14,9 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -28,10 +29,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class TreeViewerComparatorTest extends ViewerComparatorTest {
 
@@ -44,27 +45,24 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof List) {
+			if (parentElement instanceof List<?> list) {
 				List<Team> children = new ArrayList<>();
-				Iterator<?> iter = ((List<?>) parentElement).iterator();
-				while (iter.hasNext()) {
-					Object next = iter.next();
-					if (next instanceof Team) {
-						Team team = (Team) next;
+				for (Object next : list) {
+					if (next instanceof Team team) {
 						children.add(team);
 					}
 				}
 				return children.toArray(new Team[children.size()]);
-			} else if (parentElement instanceof Team) {
-				return ((Team) parentElement).members;
+			} else if (parentElement instanceof Team team) {
+				return team.members;
 			}
 			return null;
 		}
 
 		@Override
 		public Object getParent(Object element) {
-			if (element instanceof TeamMember) {
-				return ((TeamMember) element).team;
+			if (element instanceof TeamMember member) {
+				return member.team;
 			}
 			return null;
 		}
@@ -84,25 +82,20 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			List<Team> oldElement = (List<Team>) oldInput;
 			if (oldElement != null) {
-				Iterator<Team> iter = oldElement.iterator();
-				while (iter.hasNext()) {
-					iter.next().removeListener(this);
+				for (Team element : oldElement) {
+					element.removeListener(this);
 				}
 			}
 			List<Team> newElement = (List<Team>) newInput;
 			if (newElement != null) {
-				Iterator<Team> iter = newElement.iterator();
-				while (iter.hasNext()) {
-					iter.next().addListener(this);
+				for (Team element : newElement) {
+					element.addListener(this);
 				}
 			}
 		}
 	}
 
-	public TreeViewerComparatorTest(String name) {
-		super(name);
-	}
-
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testViewerSorter() {
 		fViewer.setSorter(new ViewerSorter());
@@ -111,6 +104,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 		assertSortedResult(expected);
 	}
 
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testViewerSorterInsertElement() {
 		fViewer.setSorter(new ViewerSorter());
@@ -120,6 +114,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 		assertSortedResult(expected);
 	}
 
+	@Test
 	public void testViewerComparator() {
 		fViewer.setComparator(new ViewerComparator());
 		getTreeViewer().expandAll();
@@ -127,6 +122,7 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 		assertSortedResult(expected);
 	}
 
+	@Test
 	public void testViewerComparatorInsertElement() {
 		fViewer.setComparator(new ViewerComparator());
 		getTreeViewer().expandAll();
@@ -185,13 +181,6 @@ public class TreeViewerComparatorTest extends ViewerComparatorTest {
 		input.add(team2);
 		input.add(team3);
 		fViewer.setInput(input);
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(TreeViewerComparatorTest.class);
 	}
 
 }

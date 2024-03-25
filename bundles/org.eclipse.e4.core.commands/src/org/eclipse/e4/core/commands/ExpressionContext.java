@@ -103,9 +103,11 @@ public class ExpressionContext implements IEvaluationContext {
 		return obj == null ? IEvaluationContext.UNDEFINED_VARIABLE : obj;
 	}
 
+	/**
+	 * @throws CoreException may be thrown by overrides
+	 */
 	@Override
 	public Object resolveVariable(String name, Object[] args) throws CoreException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

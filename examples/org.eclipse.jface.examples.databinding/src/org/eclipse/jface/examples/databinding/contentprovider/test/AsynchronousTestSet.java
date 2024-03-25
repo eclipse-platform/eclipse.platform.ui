@@ -44,9 +44,9 @@ public class AsynchronousTestSet extends ObservableSet<Object> {
 
 	private static Random randomNumberGenerator = new Random();
 
-	private Display display;
+	private final Display display;
 
-	private boolean stale = false;
+	private final boolean stale = false;
 
 	/**
 	 * Average number of elements to add or remove

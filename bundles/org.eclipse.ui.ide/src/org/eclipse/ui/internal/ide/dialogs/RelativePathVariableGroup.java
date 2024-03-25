@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,7 +37,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
  * @since 3.4
- *
  */
 public class RelativePathVariableGroup {
 
@@ -53,24 +51,13 @@ public class RelativePathVariableGroup {
 	private String label;
 
 	public interface IModel {
-		/**
-		 * @return
-		 */
 		IResource getResource();
 
-		/**
-		 * @param object
-		 */
 		void setVariable(String string);
 
-		/**
-		 * @return
-		 */
 		String getVariable();
 	}
-	/**
-	 *
-	 */
+	
 	public RelativePathVariableGroup(IModel content) {
 		this.content = content;
 	}
@@ -81,7 +68,6 @@ public class RelativePathVariableGroup {
 	}
 
 	/**
-	 * @param variableGroup
 	 * @return the control
 	 */
 	public Control createContents(Composite variableGroup) {
@@ -141,9 +127,6 @@ public class RelativePathVariableGroup {
 		return variableGroup;
 	}
 
-	/**
-	 *
-	 */
 	public void setupVariableContent() {
 		IPathVariableManager pathVariableManager;
 		if (content.getResource() != null)
@@ -186,9 +169,6 @@ public class RelativePathVariableGroup {
 		}
 	}
 
-	/**
-	 * @param var
-	 */
 	public void selectVariable(String var) {
 		String[] items = variableCombo.getItems();
 		for (int i = 0; i < items.length; i++) {
@@ -202,18 +182,12 @@ public class RelativePathVariableGroup {
 		content.setVariable(items[0]);
 	}
 
-	/**
-	 * @param b
-	 */
 	public void setEnabled(boolean b) {
 		variableCheckbox.setEnabled(b);
 		variableCombo.setEnabled(variableCheckbox.getSelection() && variableCheckbox.isEnabled());
 		setupVariableCheckboxToolTip();
 	}
 
-	/**
-	 * @param b
-	 */
 	public void setSelection(boolean b) {
 		variableCheckbox.setSelection(b);
 		setupVariableCheckboxToolTip();
@@ -345,14 +319,11 @@ public class RelativePathVariableGroup {
 			IContainer target) {
 		IPath[] paths = new IPath[names.length];
 		for (int i = 0; i < names.length; i++) {
-			paths[i] = Path.fromOSString(names[i]);
+			paths[i] = IPath.fromOSString(names[i]);
 		}
 		return getPreferredVariable(paths, target);
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean getSelection() {
 		return variableCheckbox.getSelection();
 	}

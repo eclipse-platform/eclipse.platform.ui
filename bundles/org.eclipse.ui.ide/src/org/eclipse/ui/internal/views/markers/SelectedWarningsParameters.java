@@ -25,7 +25,6 @@ import org.eclipse.ui.views.markers.FiltersContributionParameters;
  * SelectedWarningsParameters is the parameters for warnings.
  *
  * @since 3.4
- *
  */
 public class SelectedWarningsParameters extends FiltersContributionParameters {
 

@@ -632,7 +632,6 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	 * @param cbItem           the conribution item to relocate
 	 * @param index            the index to locate this item
 	 * @param contributionList the current list of conrtributions
-	 * @param itemLocation
 	 */
 	private void relocate(IContributionItem cbItem, int index, ArrayList<IContributionItem> contributionList,
 			HashMap<IContributionItem, Integer> itemLocation) {

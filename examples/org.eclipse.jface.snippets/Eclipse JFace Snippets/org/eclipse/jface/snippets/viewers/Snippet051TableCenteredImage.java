@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.TableItem;
 /**
  * Example showing how to centre an image and use graphics using an owner draw
  * label provider
- *
  */
 public class Snippet051TableCenteredImage {
 	private static Image[] images;
@@ -152,9 +151,6 @@ public class Snippet051TableCenteredImage {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

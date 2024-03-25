@@ -28,7 +28,6 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
  * Provides the Go Into action for the {@link ProjectExplorer}
  *
  * @since 3.4
- *
  */
 public class GoIntoActionProvider extends CommonActionProvider {
 

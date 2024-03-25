@@ -76,7 +76,6 @@ import org.eclipse.ui.part.ResourceTransfer;
  * </p>
  *
  * @since 3.2
- *
  */
 public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 

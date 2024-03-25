@@ -27,7 +27,6 @@ public interface IDialogSettingsProvider {
 	 * {@link IDialogSettings} if there is no existing dialog settings.
 	 *
 	 * @return an instance of {@link IDialogSettings}
-	 *
 	 */
 	IDialogSettings loadDialogSettings();
 

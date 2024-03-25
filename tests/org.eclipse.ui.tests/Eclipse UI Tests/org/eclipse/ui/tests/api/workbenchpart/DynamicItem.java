@@ -26,7 +26,6 @@ import org.eclipse.ui.actions.CompoundContributionItem;
  * Test implementation for dynamic menu item support.
  *
  * @since 3.3
- *
  */
 public class DynamicItem extends CompoundContributionItem {
 

@@ -62,7 +62,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * @author Hitesh Soliwal
  *
  * @noextend This class is not intended to be subclassed by clients.
- *
  */
 abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 
@@ -85,8 +84,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param parentShell
 	 */
 	ViewerColumnsDialog(Shell parentShell) {
 		super(parentShell);
@@ -94,8 +91,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 
 	/**
 	 * Initialize visible /non-visible columns.
-	 *
-	 * @param columnObjs
 	 */
 	void setColumnsObjs(T[] columnObjs) {
 		IColumnInfoProvider<T> columnInfo = doGetColumnInfoProvider();
@@ -142,8 +137,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 
 	/**
 	 * The Up and Down button to change column ordering.
-	 *
-	 * @param parent
 	 */
 	Control createUpDownBtt(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -176,7 +169,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	/**
 	 * Create the controls responsible to display/edit column widths.
 	 *
-	 * @param parent
 	 * @return {@link Control}
 	 */
 	Control createWidthArea(Composite parent) {
@@ -219,7 +211,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	/**
 	 * Creates the table that lists out visible columns in the viewer
 	 *
-	 * @param parent
 	 * @return {@link Control}
 	 */
 	Control createVisibleTable(Composite parent) {
@@ -255,7 +246,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	/**
 	 * Creates the table that lists out non-visible columns in the viewer
 	 *
-	 * @param parent
 	 * @return {@link Control}
 	 */
 	Control createInvisibleTable(Composite parent) {
@@ -295,7 +285,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	 * Creates buttons for moving columns from non-visible to visible and
 	 * vice-versa
 	 *
-	 * @param parent
 	 * @return {@link Control}
 	 */
 	Control createMoveButtons(Composite parent) {
@@ -332,8 +321,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	/**
 	 * Handles a selection change in the viewer that lists out the non-visible
 	 * columns
-	 *
-	 * @param selection
 	 */
 	void handleNonVisibleSelection(ISelection selection) {
 		Object[] nvKeys = ((IStructuredSelection) selection).toArray();
@@ -348,11 +335,8 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	/**
 	 * Handles a selection change in the viewer that lists out the visible
 	 * columns. Takes care of various enablements.
-	 *
-	 * @param selection
 	 */
 	void handleVisibleSelection(ISelection selection) {
-		@SuppressWarnings("unchecked")
 		List<T> selVCols = ((IStructuredSelection) selection).toList();
 		List<T> allVCols = getVisible();
 		toNonVisibleBtt.setEnabled(selVCols.size() > 0 && allVCols.size() > selVCols.size());
@@ -403,7 +387,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	 */
 	void handleDownButton(Event e) {
 		IStructuredSelection selection = visibleViewer.getStructuredSelection();
-		@SuppressWarnings("unchecked")
 		List<T> selVCols = selection.toList();
 		List<T> allVCols = getVisible();
 		IColumnUpdater<T> updater = doGetColumnUpdater();
@@ -427,7 +410,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	 */
 	void handleUpButton(Event e) {
 		IStructuredSelection selection = visibleViewer.getStructuredSelection();
-		@SuppressWarnings("unchecked")
 		List<T> selVCols = selection.toList();
 		List<T> allVCols = getVisible();
 		IColumnUpdater<T> updater = doGetColumnUpdater();
@@ -450,7 +432,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	 */
 	void handleToVisibleButton(Event e) {
 		IStructuredSelection selection = nonVisibleViewer.getStructuredSelection();
-		@SuppressWarnings("unchecked")
 		List<T> selVCols = selection.toList();
 		getNonVisible().removeAll(selVCols);
 
@@ -480,7 +461,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 			return;
 		}
 		IStructuredSelection structuredSelection = visibleViewer.getStructuredSelection();
-		@SuppressWarnings("unchecked")
 		List<T> selVCols = structuredSelection.toList();
 		getVisible().removeAll(selVCols);
 		getNonVisible().addAll(selVCols);
@@ -552,7 +532,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 
 	/**
 	 * An adapter class to {@link ITableLabelProvider}
-	 *
 	 */
 	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
@@ -567,7 +546,7 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	}
 
 	/**
-	 * Internal helper to @see {@link ViewerColumnsDialog#getLabelProvider()}
+	 * Internal helper to {@link ViewerColumnsDialog#getLabelProvider()}
 	 */
 	ITableLabelProvider doGetLabelProvider() {
 		return getLabelProvider();
@@ -595,7 +574,7 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	protected abstract IColumnInfoProvider<T> getColumnInfoProvider();
 
 	/**
-	 * Internal helper to @see {@link ViewerColumnsDialog#getColumnUpdater()}
+	 * Internal helper to {@link ViewerColumnsDialog#getColumnUpdater()}
 	 */
 	IColumnUpdater<T> doGetColumnUpdater() {
 		return getColumnUpdater();
@@ -607,13 +586,9 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	 */
 	protected abstract IColumnUpdater<T> getColumnUpdater();
 
-	/**
-	 *
-	 */
 	private void updateWidth() {
 		try {
 			int width = Integer.parseInt(widthText.getText());
-			@SuppressWarnings("unchecked")
 			T data = (T) visibleViewer.getStructuredSelection().getFirstElement();
 			if (data != null) {
 				IColumnUpdater<T> updater = getColumnUpdater();
@@ -627,15 +602,12 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	/**
 	 * Update various aspects of a columns from a viewer such
 	 * {@link TableViewer}
-	 *
-	 * @param <T>
 	 */
 	public interface IColumnInfoProvider<T> {
 
 		/**
 		 * Get corresponding index for the column
 		 *
-		 * @param columnObj
 		 * @return corresponding index for the column
 		 */
 		public int getColumnIndex(T columnObj);
@@ -643,27 +615,23 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 		/**
 		 * Get the width of the column
 		 *
-		 * @param columnObj
 		 * @return the width of the column
 		 */
 		public int getColumnWidth(T columnObj);
 
 		/**
-		 * @param columnObj
 		 * @return true if the column represented by parameters is showing in
 		 *         the viewer
 		 */
 		public boolean isColumnVisible(T columnObj);
 
 		/**
-		 * @param columnObj
 		 * @return true if the column represented by parameters is configured as
 		 *         movable
 		 */
 		public boolean isColumnMovable(T columnObj);
 
 		/**
-		 * @param columnObj
 		 * @return true if the column represented by parameters is configured as
 		 *         resizable
 		 */
@@ -674,50 +642,33 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 	/**
 	 * Update various aspects of a columns from a viewer such
 	 * {@link TableViewer}
-	 *
-	 * @param <T>
 	 */
 	public interface IColumnUpdater<T> {
 
 		/**
 		 * Set the column represented by parameters as visible
-		 *
-		 * @param columnObj
-		 * @param visible
 		 */
 		public void setColumnVisible(T columnObj, boolean visible);
 
 		/**
 		 * Dummy method - more a result of symmetry
-		 *
-		 * @param columnObj
-		 * @param movable
 		 */
 		public void setColumnMovable(T columnObj, boolean movable);
 
 		/**
 		 * Call back to notify change in the index of the column represented by
 		 * columnObj
-		 *
-		 * @param columnObj
-		 * @param index
 		 */
 		public void setColumnIndex(T columnObj, int index);
 
 		/**
 		 * Dummy method - more a result of symmetry
-		 *
-		 * @param columnObj
-		 * @param resizable
 		 */
 		public void setColumnResizable(T columnObj, boolean resizable);
 
 		/**
 		 * Call back to notify change in the width of the column represented by
 		 * columnObj
-		 *
-		 * @param columnObj
-		 * @param newWidth
 		 */
 		public void setColumnWidth(T columnObj, int newWidth);
 
@@ -907,8 +858,6 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 
 		/**
 		 * Demo
-		 *
-		 * @param args
 		 */
 		public static void main(String[] args) {
 			Display display = new Display();

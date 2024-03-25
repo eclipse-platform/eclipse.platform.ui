@@ -407,11 +407,7 @@ public final class CommandPersistence extends RegistryPersistence {
 	}
 
 	/**
-	 * Reads all of the commands and categories from the registry,
-	 *
-	 * @param commandManager The command service which should be populated with the
-	 *                       values from the registry; must not be
-	 *                       <code>null</code>.
+	 * Reads all of the commands and categories from the registry.
 	 */
 	@Override
 	protected void read() {

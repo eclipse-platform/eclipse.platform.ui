@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, 2019 Google Inc and others.
+ * Copyright (C) 2014, 2023 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,21 +17,27 @@
 package org.eclipse.ui.internal.monitoring;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.monitoring.preferences.MonitoringPreferenceListener;
 import org.eclipse.ui.monitoring.PreferenceConstants;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
+import org.osgi.service.event.propertytypes.EventTopics;
 
 /**
  * Starts the event loop monitoring thread. Initializes preferences from {@link IPreferenceStore}.
  */
-public class MonitoringStartup implements IStartup {
+@Component(service = EventHandler.class)
+@EventTopics(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
+public class MonitoringStartup implements EventHandler {
 	private EventLoopMonitorThread monitoringThread;
 
 	@Override
-	public void earlyStartup() {
+	public void handleEvent(Event event) {
 		if (monitoringThread != null) {
 			return;
 		}

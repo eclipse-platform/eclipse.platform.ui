@@ -21,7 +21,6 @@ package org.eclipse.core.commands.operations;
  * another.
  *
  * @since 3.2
- *
  */
 public interface IContextReplacingOperation {
 
@@ -34,7 +33,6 @@ public interface IContextReplacingOperation {
 	 *
 	 * @param original the undo context which is to be replaced
 	 * @param replacement the undo context which is replacing the original
-	 *
 	 */
 	void replaceContext(IUndoContext original, IUndoContext replacement);
 }

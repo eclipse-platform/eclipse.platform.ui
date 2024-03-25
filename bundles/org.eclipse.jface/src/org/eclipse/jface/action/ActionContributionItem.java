@@ -31,6 +31,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -51,8 +52,8 @@ import org.eclipse.swt.widgets.Widget;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ActionContributionItem extends ContributionItem {
 
 	/**
@@ -1080,7 +1081,6 @@ public class ActionContributionItem extends ContributionItem {
 	 * @param item
 	 *            the tool item the text belongs to
 	 * @return the shortened string
-	 *
 	 */
 	protected String shortenText(String textValue, ToolItem item) {
 		if (textValue == null) {

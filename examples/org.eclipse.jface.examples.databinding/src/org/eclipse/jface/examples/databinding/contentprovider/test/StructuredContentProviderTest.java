@@ -69,7 +69,7 @@ public class StructuredContentProviderTest {
 	/**
 	 * Top-level shell for the dialog
 	 */
-	private Shell shell;
+	private final Shell shell;
 
 	/**
 	 * Random number stream. Used for the "add" button.
@@ -363,9 +363,6 @@ public class StructuredContentProviderTest {
 		return addRemoveComposite;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
 		realm = DisplayRealm.getRealm(display);

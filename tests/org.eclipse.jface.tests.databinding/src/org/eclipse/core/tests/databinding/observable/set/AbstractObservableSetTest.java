@@ -28,8 +28,6 @@ import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTes
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.TestCollection;
 
-/**
- */
 public class AbstractObservableSetTest {
 	public static void addConformanceTest(TestCollection suite) {
 		suite.addTest(ObservableCollectionContractTest.class, new Delegate());
@@ -67,8 +65,8 @@ public class AbstractObservableSetTest {
 	}
 
 	private static class AbstractObservableSetStub<E> extends AbstractObservableSet<E> {
-		private Object type;
-		private HashSet<E> set;
+		private final Object type;
+		private final HashSet<E> set;
 
 		private AbstractObservableSetStub(Realm realm, Object type) {
 			super (realm);

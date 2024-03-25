@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * A simple TableViewer to demonstrate the usage of a standard content provider
  * with a virtual table
- *
  */
 public class Snippet029VirtualTableViewer {
 
@@ -76,9 +75,6 @@ public class Snippet029VirtualTableViewer {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);

@@ -267,9 +267,6 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 			this(Realm.getDefault());
 		}
 
-		/**
-		 * @param realm
-		 */
 		public ObservableStub(Realm realm) {
 			super(realm);
 		}

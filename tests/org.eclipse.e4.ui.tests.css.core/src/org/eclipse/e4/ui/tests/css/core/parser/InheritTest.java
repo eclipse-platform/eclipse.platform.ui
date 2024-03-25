@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Stefan Winkler and others.
+ * Copyright (c) 2014, 2023 Stefan Winkler and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -104,8 +104,8 @@ public class InheritTest {
 
 			@Override
 			public Element getElement(Object element) {
-				if (element instanceof TestElement) {
-					return (TestElement) element;
+				if (element instanceof TestElement e) {
+					return e;
 				}
 
 				return super.getElement(element);
@@ -154,7 +154,7 @@ public class InheritTest {
 	private static class TestHandlerProvider implements
 	ICSSPropertyHandlerProvider {
 
-		private PropertyToAttributeMapper propertyToAttributeMapper = new PropertyToAttributeMapper();
+		private final PropertyToAttributeMapper propertyToAttributeMapper = new PropertyToAttributeMapper();
 
 		@Override
 		public CSSStyleDeclaration getDefaultCSSStyleDeclaration(

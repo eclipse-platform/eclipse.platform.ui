@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -54,9 +54,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-/**
- *
- */
 public class MWindowTest {
 
 	@Rule
@@ -102,13 +99,13 @@ public class MWindowTest {
 		assertTrue(topWidget instanceof Shell);
 
 		Shell shell = (Shell) topWidget;
-		assertTrue(shell.getVisible() == true);
+		assertTrue(shell.getVisible());
 
 		window.setVisible(false);
-		assertTrue(shell.getVisible() == false);
+		assertFalse(shell.getVisible());
 
 		window.setVisible(true);
-		assertTrue(shell.getVisible() == true);
+		assertTrue(shell.getVisible());
 	}
 
 	@Test
@@ -125,7 +122,7 @@ public class MWindowTest {
 		assertTrue(topWidget instanceof Shell);
 
 		Shell shell = (Shell) topWidget;
-		assertTrue(shell.getVisible() == false);
+		assertFalse(shell.getVisible());
 	}
 
 	@Test
@@ -185,7 +182,7 @@ public class MWindowTest {
 				break;
 			}
 		}
-		assertFalse(window.getContext() == child);
+		assertNotEquals(window.getContext(), child);
 
 		MPart contextPart = child.get(MPart.class);
 

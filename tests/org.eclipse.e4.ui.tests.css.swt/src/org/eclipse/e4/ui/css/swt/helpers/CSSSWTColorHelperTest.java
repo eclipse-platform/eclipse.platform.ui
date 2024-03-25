@@ -15,36 +15,37 @@
 package org.eclipse.e4.ui.css.swt.helpers;
 
 import static org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper.getSWTColor;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSSWTColorHelperTest extends CSSSWTHelperTestCase {
 	private Display display;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		display = Display.getDefault();
 	}
 
 	@Test
-	public void testGetSWTColor() {
+	void testGetSWTColor() {
 		Color result = getSWTColor(colorValue("red"), display);
-		assertNotNull(result);
+		Assertions.assertNotNull(result);
 		assertEquals(255, result.getRed());
 		assertEquals(0, result.getBlue());
 		assertEquals(0, result.getGreen());
 	}
 
 	@Test
-	public void testGetSWTColorWhenNotSupportedColorType() {
+	void testGetSWTColorWhenNotSupportedColorType() {
 		Color result = getSWTColor(colorValue("123213", CSSValue.CSS_CUSTOM),
 				display);
 
@@ -52,7 +53,7 @@ public class CSSSWTColorHelperTest extends CSSSWTHelperTestCase {
 	}
 
 	@Test
-	public void testGetSWTColorWhenInvalidColorValue() {
+	void testGetSWTColorWhenInvalidColorValue() {
 		Color result = getSWTColor(colorValue("asdsad12"), display);
 
 		assertNotNull(result);
@@ -62,7 +63,7 @@ public class CSSSWTColorHelperTest extends CSSSWTHelperTestCase {
 	}
 
 	@Test
-	public void testGetSWTColorWhenColorFromDefinition() {
+	void testGetSWTColorWhenColorFromDefinition() {
 		registerColorProviderWith("org.eclipse.jdt.debug.ui.InDeadlockColor", new RGB(0, 255, 0));
 
 		Color result = getSWTColor(

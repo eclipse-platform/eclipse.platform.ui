@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+  <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+  <meta content="IBM" name="Author">
+  <meta content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]" name="GENERATOR"><title>projections</title></head>
+
+<body>
+<p>This package provides an implementation of projection documents. Projection 
+  is a specific master/slave mapping. Non-overlapping fragments if a master document 
+  form the segments of a slave document. The slave document is completely built 
+  out of segments, i.e. there are no gaps between two neighboring segments. The 
+  segments have exactly the same sequence in which they apprear as fragments in 
+  the master document.</p>
+<h2>Package Specification</h2>
+<p><code>ProjectionDocument</code> is custom 
+  <code>IDocument</code> implementation that 
+  uses a <code>ProjectionTextStore. </code>The 
+  content of the <code>ProjectionDocument</code> 
+  is defined by the <code>ProjectionMapping. 
+  </code>The<code> ProjectionDocumentManager</code> 
+  manages the life cycle of <code>ProjectionDocuments</code> 
+  and their relation to their master documents.</p>
+</body></html>

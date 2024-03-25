@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.IStatus;
  * </p>
  *
  * @since 3.1
- *
  */
 public interface IAdvancedUndoableOperation {
 
@@ -53,7 +52,6 @@ public interface IAdvancedUndoableOperation {
 	 * @param event
 	 *            the event that is about to be sent with the pending
 	 *            notification
-	 *
 	 */
 	void aboutToNotify(OperationHistoryEvent event);
 

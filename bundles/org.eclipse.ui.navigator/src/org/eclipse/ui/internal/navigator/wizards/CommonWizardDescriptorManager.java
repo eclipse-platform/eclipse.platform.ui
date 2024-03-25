@@ -161,8 +161,6 @@ public class CommonWizardDescriptorManager {
 	}
 
 	/**
-	 * @param aContentService
-	 * @param descriptor
 	 * @return True if the descriptor is visible to the given content service.
 	 */
 	private boolean isVisible(INavigatorContentService aContentService, CommonWizardDescriptor descriptor) {

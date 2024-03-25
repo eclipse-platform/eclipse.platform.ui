@@ -22,9 +22,9 @@ import org.eclipse.ui.WorkbenchException;
  */
 public class AutoTestLogger extends AbstractTestLogger {
 
-	private TestResults errors = new TestResults();
+	private final TestResults errors = new TestResults();
 	private TestResults expectedResults;
-	private TestResults unknownTests = new TestResults();
+	private final TestResults unknownTests = new TestResults();
 
 	public AutoTestLogger(URL expectedResultsFile) throws WorkbenchException {
 		this(new TestResults(XmlUtil.read(expectedResultsFile)));

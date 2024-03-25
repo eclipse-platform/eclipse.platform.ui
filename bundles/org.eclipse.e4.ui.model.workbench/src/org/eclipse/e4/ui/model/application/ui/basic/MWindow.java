@@ -54,7 +54,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
  * @generated
  */
 public interface MWindow
-extends MElementContainer<MWindowElement>, MUILabel, MContext, MHandlerContainer, MBindings, MSnippetContainer {
+		extends MElementContainer<MWindowElement>, MUILabel, MContext, MHandlerContainer, MBindings, MSnippetContainer {
 	/**
 	 * Returns the value of the '<em><b>Main Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->

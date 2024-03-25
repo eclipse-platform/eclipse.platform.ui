@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Layout;
  * controls so it may not be capable of performing the calculation.
  *
  * @author emoffatt
- *
  */
 public class TrimmedPartLayout extends Layout {
 
@@ -92,8 +91,6 @@ public class TrimmedPartLayout extends Layout {
 	/**
 	 * This layout is used to support parts that want trim for their containing
 	 * composites.
-	 *
-	 * @param trimOwner
 	 */
 	public TrimmedPartLayout(Composite parent) {
 		clientArea = new Composite(parent, SWT.NONE);
@@ -181,11 +178,6 @@ public class TrimmedPartLayout extends Layout {
 		}
 	}
 
-	/**
-	 * @param top2
-	 * @param b
-	 * @return
-	 */
 	public Composite getTrimComposite(Composite parent, int side) {
 		switch (side) {
 		case SWT.TOP:

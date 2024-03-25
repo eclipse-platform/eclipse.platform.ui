@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Widget;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class WidgetTooltipTextProperty<S extends Widget> extends WidgetDelegatingValueProperty<S, String> {
 	private IValueProperty<S, String> cTabItem;
@@ -39,9 +38,6 @@ public class WidgetTooltipTextProperty<S extends Widget> extends WidgetDelegatin
 	private IValueProperty<S, String> trayItem;
 	private IValueProperty<S, String> treeColumn;
 
-	/**
-	 *
-	 */
 	public WidgetTooltipTextProperty() {
 		super(String.class);
 	}

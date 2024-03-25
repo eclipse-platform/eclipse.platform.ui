@@ -22,9 +22,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -84,7 +84,7 @@ public class CopyProjectOperation {
 			String newName, String[] modelProviderIds) {
 		IResourceChangeDescriptionFactory factory = ResourceChangeValidator
 				.getValidator().createDeltaFactory();
-		factory.copy(project, new Path(newName));
+		factory.copy(project, IPath.fromOSString(newName));
 		return IDE.promptToConfirm(shell,
 				IDEWorkbenchMessages.CopyProjectAction_confirm, NLS.bind(
 						IDEWorkbenchMessages.CopyProjectAction_warning, project

@@ -67,6 +67,7 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/Command/parameters"/>
         <genFeatures notify="false" createChild="false" propertySortChoices="true"
             ecoreFeature="ecore:EReference UIElements.ecore#//commands/Command/category"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Command/commandIconURI"/>
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Command/localizedCommandName"
             get="return &lt;%org.eclipse.e4.ui.model.LocalizationHelper%>.getLocalizedFeature(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME, this);"/>
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Command/localizedDescription"

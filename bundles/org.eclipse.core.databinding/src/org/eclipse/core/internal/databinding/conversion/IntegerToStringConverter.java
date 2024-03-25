@@ -33,11 +33,6 @@ public class IntegerToStringConverter extends Converter<Object, String> {
 	private final Format numberFormat;
 	private final Class<?> boxedType;
 
-	/**
-	 * @param numberFormat
-	 * @param fromType
-	 * @param boxedType
-	 */
 	private IntegerToStringConverter(Format numberFormat, Class<?> fromType, Class<?> boxedType) {
 		super(fromType, String.class);
 		this.primitive = fromType.isPrimitive();
@@ -61,7 +56,6 @@ public class IntegerToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param primitive
 	 * @return converter
 	 */
 	public static IntegerToStringConverter fromShort(boolean primitive) {
@@ -69,8 +63,6 @@ public class IntegerToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
 	 * @return converter
 	 */
 	public static IntegerToStringConverter fromShort(Format numberFormat,
@@ -80,7 +72,6 @@ public class IntegerToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param primitive
 	 * @return converter
 	 */
 	public static IntegerToStringConverter fromByte(boolean primitive) {
@@ -88,8 +79,6 @@ public class IntegerToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
 	 * @return converter
 	 */
 	public static IntegerToStringConverter fromByte(Format numberFormat,

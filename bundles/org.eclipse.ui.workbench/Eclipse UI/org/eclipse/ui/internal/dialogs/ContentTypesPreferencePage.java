@@ -21,10 +21,9 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -33,6 +32,7 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -68,6 +68,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.EditorSelectionDialog;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -113,7 +114,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 
 	private Button addEditorAssociationButton;
 
-	private Set<Image> disposableEditorIcons = new HashSet<>();
+	private Collection<Image> disposableEditorIcons = new ArrayList<>();
 
 	private static class Spec {
 		/**
@@ -138,7 +139,6 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 		 *                     {@link IContentType#FILE_EXTENSION_SPEC},
 		 *                     {@link IContentType#FILE_PATTERN_SPEC}
 		 * @param isPredefined true if predefined, false is user-defined
-		 * @param sortValue
 		 */
 		public Spec(String specText, int specType, boolean isPredefined, int sortValue) {
 			if (specType != IContentType.FILE_NAME_SPEC && specType != IContentType.FILE_EXTENSION_SPEC
@@ -358,14 +358,19 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 			return new Object[0];
 		});
 		editorAssociationsViewer.setLabelProvider(
-				createTextImageProvider(element -> ((IEditorDescriptor) element).getLabel(),
-						element -> {
-							Image res = ((IEditorDescriptor) element).getImageDescriptor().createImage();
-							if (res != null) {
-								disposableEditorIcons.add(res);
-							}
-							return res;
-						}));
+				createTextImageProvider(element -> {
+					IEditorDescriptor descriptor = (IEditorDescriptor) element;
+					if (isDefault(descriptor)) {
+						return descriptor.getLabel() + " " + WorkbenchMessages.FileEditorPreference_defaultLabel; //$NON-NLS-1$
+					}
+					return descriptor.getLabel();
+				}, element -> {
+					Image res = ((IEditorDescriptor) element).getImageDescriptor().createImage();
+					if (res != null) {
+						disposableEditorIcons.add(res);
+					}
+					return res;
+				}));
 
 		Composite buttonsComposite = new Composite(composite, SWT.NONE);
 		buttonsComposite.setLayout(new GridLayout(1, false));
@@ -415,6 +420,46 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 		});
 		addEditorAssociationButton.setEnabled(editorAssociationsViewer.getInput() != null);
 		removeEditorButton.setEnabled(editorAssociationsViewer.getInput() != null);
+
+		final Button defaultEditorButton = new Button(buttonsComposite, SWT.PUSH);
+		defaultEditorButton.setText(WorkbenchMessages.FileEditorPreference_default);
+		setButtonLayoutData(defaultEditorButton);
+		defaultEditorButton.setEnabled(false);
+
+		defaultEditorButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IEditorDescriptor editor = (IEditorDescriptor) editorAssociationsViewer.getStructuredSelection()
+						.getFirstElement();
+				if (editor == null) {
+					defaultEditorButton.setEnabled(false);
+					return;
+				}
+				IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+				IContentType contentType = (IContentType) editorAssociationsViewer.getInput();
+				String key = IPreferenceConstants.DEFAULT_EDITOR_FOR_CONTENT_TYPE + contentType.getId();
+				String defaultEditorId = store.getString(key);
+				if (defaultEditorId != null && !defaultEditorId.isBlank() && defaultEditorId.equals(editor.getId())) {
+					store.setValue(key, IPreferenceStore.STRING_DEFAULT_DEFAULT);
+				} else {
+					store.setValue(key, editor.getId());
+				}
+				editorAssociationsViewer.refresh();
+			}
+		});
+		editorAssociationsViewer.addSelectionChangedListener(event -> {
+			if (editorRegistry instanceof EditorRegistry) {
+				defaultEditorButton.setEnabled(editorAssociationsViewer.getInput() != null);
+			}
+		});
+	}
+
+	boolean isDefault(IEditorDescriptor editor) {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		IContentType contentType = (IContentType) editorAssociationsViewer.getInput();
+		String key = IPreferenceConstants.DEFAULT_EDITOR_FOR_CONTENT_TYPE + contentType.getId();
+		String defaultEditorId = store.getString(key);
+		return defaultEditorId != null && !defaultEditorId.isBlank() && defaultEditorId.equals(editor.getId());
 	}
 
 	private void createCharset(final Composite parent) {
@@ -476,7 +521,6 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void createFileAssociations(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));

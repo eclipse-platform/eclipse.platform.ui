@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2018 IBM Corporation and others.
+ * Copyright (c) 2015, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,7 +33,6 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.PaintEvent;
@@ -84,16 +83,16 @@ public class FolderPreviewView extends ViewPart {
 
 	private TableViewer viewer;
 
-	private ISelectionListener mailFolderChangedListener = (part, selection) -> {
-		if (part instanceof FoldersView && selection instanceof StructuredSelection) {
-			Object selected = ((TreeSelection) selection).getFirstElement();
-			if (selected instanceof TreeItem && ((TreeItem) selected).getValue() instanceof FolderType) {
-				updateMailFolder((FolderType) ((TreeItem) selected).getValue());
+	private final ISelectionListener mailFolderChangedListener = (part, selection) -> {
+		if (part instanceof FoldersView && selection instanceof StructuredSelection structuredSelection) {
+			Object selected = structuredSelection.getFirstElement();
+			if (selected instanceof TreeItem ti && ti.getValue() instanceof FolderType) {
+				updateMailFolder((FolderType) ti.getValue());
 			}
 		}
 	};
 
-	private Listener tableItemPaintListener = new ItemPaintListener<TableItem>() {
+	private final Listener tableItemPaintListener = new ItemPaintListener<TableItem>() {
 		@Override
 		protected String getText(TableItem item, int index) {
 			return item.getText(index);
@@ -128,7 +127,7 @@ public class FolderPreviewView extends ViewPart {
 		}
 	};
 
-	private SelectionAdapter tableSelectionChangedListener = new SelectionAdapter() {
+	private final SelectionAdapter tableSelectionChangedListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object data = e.item.getData();
@@ -136,13 +135,13 @@ public class FolderPreviewView extends ViewPart {
 		}
 	};
 
-	private Listener shellReskinListener = event -> {
+	private final Listener shellReskinListener = event -> {
 		viewer.refresh();
 		refreshControl(messageBodyComposite);
 		messageText.setBackground(viewer.getTable().getBackground());
 	};
 
-	private SelectionAdapter senderLinkSelectionAdapter = new SelectionAdapter() {
+	private final SelectionAdapter senderLinkSelectionAdapter = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			MessageDialog.openInformation(getSite().getShell(), "Not Implemented",
@@ -150,8 +149,8 @@ public class FolderPreviewView extends ViewPart {
 		}
 	};
 
-	private PaintListener senderLinkPaintListener = new PaintListener() {
-		private Pattern HREF_TAG_PATTERN = Pattern.compile("<a>(.+)</a>");
+	private final PaintListener senderLinkPaintListener = new PaintListener() {
+		private final Pattern HREF_TAG_PATTERN = Pattern.compile("<a>(.+)</a>");
 
 		@Override
 		public void paintControl(PaintEvent e) {
@@ -250,8 +249,8 @@ public class FolderPreviewView extends ViewPart {
 	}
 
 	private void refreshControl(org.eclipse.swt.widgets.Control control) {
-		if (control instanceof Composite) {
-			for (Control child : ((Composite) control).getChildren()) {
+		if (control instanceof Composite composite) {
+			for (Control child : composite.getChildren()) {
 				refreshControl(child);
 			}
 		} else {
@@ -327,7 +326,7 @@ public class FolderPreviewView extends ViewPart {
 	}
 
 	private static class ColumnLabelProviderExt extends ColumnLabelProvider {
-		private int columnIndex;
+		private final int columnIndex;
 
 		public ColumnLabelProviderExt(int columnIndex) {
 			this.columnIndex = columnIndex;

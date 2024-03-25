@@ -46,7 +46,6 @@ import org.eclipse.ui.views.markers.MarkerField;
  * problem filters. See the org.eclipse.ui.markerSupport extension point.
  *
  * @since 3.2
- *
  */
 public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
@@ -227,8 +226,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * map of groupingEntries and attribueMappings processed for post
 	 * processing.
 	 *
-	 * @param tracker
-	 * @param extension
 	 * @param groupIDsToEntries
 	 *            Mapping of group names to the markerGroupingEntries registered
 	 *            for them
@@ -324,10 +321,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Create a table of MarkerFields
-	 *
-	 * @param tracker
-	 * @param extension
-	 * @param element
 	 */
 	private void processMarkerField(IExtensionTracker tracker, IExtension extension, IConfigurationElement element) {
 		MarkerField field = null;
@@ -386,8 +379,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Process the grouping entries into thier required grouping entries.
-	 *
-	 * @param groupingEntries
 	 */
 	private void processGroupingEntries(Map<String, Collection<MarkerGroupingEntry>> groupingEntries) {
 		for (Entry<String, Collection<MarkerGroupingEntry>> entry : groupingEntries.entrySet()) {
@@ -408,9 +399,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Process the attribute mappings into thier required grouping entries.
-	 *
-	 * @param entryIDsToEntries
-	 * @param attributeMappings
 	 */
 	private void processAttributeMappings(Map<String, MarkerGroupingEntry> entryIDsToEntries,
 			Collection<AttributeMarkerGrouping> attributeMappings) {
@@ -448,7 +436,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Get the markerTypes defined in element.
 	 *
-	 * @param element
 	 * @return String[]
 	 */
 	private String[] getMarkerTypes(IConfigurationElement element) {
@@ -492,7 +479,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Get the constant for scope from element. Return -1 if there is no value.
 	 *
-	 * @param element
 	 * @return int one of MarkerView#ON_ANY MarkerView#ON_SELECTED_ONLY
 	 *         MarkerView#ON_SELECTED_AND_CHILDREN
 	 *         MarkerView#ON_ANY_IN_SAME_CONTAINER
@@ -520,7 +506,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Get the constant for scope from element. Return -1 if there is no value.
 	 *
-	 * @param element
 	 * @return int one of MarkerView#ON_ANY MarkerView#ON_SELECTED_ONLY
 	 *         MarkerView#ON_SELECTED_AND_CHILDREN
 	 *         MarkerView#ON_ANY_IN_SAME_CONTAINER
@@ -658,9 +643,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Remove the value from all of the collection sets in cache. If the
 	 * collection is empty remove the key as well.
-	 *
-	 * @param value
-	 * @param cache
 	 */
 	private void removeValues(String value, Map<String, String> cache) {
 		Collection<String> keysToRemove = new ArrayList<>();
@@ -678,7 +660,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * Get the category associated with marker. Return <code>null</code> if
 	 * there are none.
 	 *
-	 * @param marker
 	 * @return String or <code>null</code>
 	 */
 	public String getCategory(IMarker marker) {
@@ -694,7 +675,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * Get the category associated with markerType. Return <code>null</code>
 	 * if there are none.
 	 *
-	 * @param markerType
 	 * @return String or <code>null</code>
 	 */
 	public String getCategory(String markerType) {
@@ -704,7 +684,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Return the TableSorter that corresponds to type.
 	 *
-	 * @param type
 	 * @return TableSorter
 	 */
 	public TableComparator getSorterFor(String type) {
@@ -736,8 +715,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * Find the best match sorter for typeName in the children. If it cannot be
 	 * found then return <code>null</code>.
 	 *
-	 * @param typeName
-	 * @param type
 	 * @return TableSorter or <code>null</code>.
 	 */
 	private TableComparator findSorterInChildren(String typeName, MarkerType type) {
@@ -774,7 +751,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Get the generator descriptor for id
 	 *
-	 * @param id
 	 * @return ContentGeneratorDescriptor or <code>null</code>.
 	 */
 	public ContentGeneratorDescriptor getContentGenDescriptor (String id) {
@@ -796,7 +772,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Get the markerGroup associated with categoryName
 	 *
-	 * @param categoryName
 	 * @return FieldMarkerGroup or <code>null</code>
 	 */
 	public MarkerGroup getMarkerGroup(String categoryName) {
@@ -806,7 +781,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Return the field that maps to id.
 	 *
-	 * @param id
 	 * @return {@link MarkerField} or <code>null</code>
 	 */
 	public MarkerField getField(String id) {

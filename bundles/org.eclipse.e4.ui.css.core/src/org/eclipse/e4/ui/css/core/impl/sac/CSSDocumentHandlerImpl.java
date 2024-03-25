@@ -35,8 +35,8 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 
 /**
- * This class provides an implementation for the
- * {@link org.eclipse.ui.css.core.sac.ExtendedDocumentHandler} interface.
+ * This class provides an implementation for the {@link ExtendedDocumentHandler}
+ * interface.
  */
 public class CSSDocumentHandlerImpl implements ExtendedDocumentHandler {
 

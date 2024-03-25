@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Image;
  * be mapped to a ColumnLabelProvider.
  *
  * @since 3.3
- *
  */
 class WrappedViewerLabelProvider extends ColumnLabelProvider {
 
@@ -43,8 +42,6 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 
 	/**
 	 * Create a new instance of the receiver based on labelProvider.
-	 *
-	 * @param labelProvider
 	 */
 	public WrappedViewerLabelProvider(IBaseLabelProvider labelProvider) {
 		super();

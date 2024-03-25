@@ -45,7 +45,6 @@ import org.eclipse.swt.widgets.Shell;
  * A simple TreeViewer to demonstrate usage
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet026TreeViewerTabEditing {
 	public Snippet026TreeViewerTabEditing(final Shell shell) {

@@ -38,9 +38,6 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 public class UnmodifiableObservableMap<K, V> extends DecoratingObservableMap<K, V> {
 	Map<K, V> unmodifiableMap;
 
-	/**
-	 * @param decorated
-	 */
 	public UnmodifiableObservableMap(IObservableMap<K, V> decorated) {
 		super(decorated, false);
 		this.unmodifiableMap = Collections.unmodifiableMap(decorated);

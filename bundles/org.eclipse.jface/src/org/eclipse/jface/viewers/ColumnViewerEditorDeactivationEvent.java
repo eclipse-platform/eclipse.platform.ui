@@ -18,18 +18,16 @@ package org.eclipse.jface.viewers;
 
 import java.util.EventObject;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
+
 /**
  * This event is fired when an editor deactivated
  *
  * @since 3.3
- * @noextend This class is not intended to be subclassed by clients.
- *
  */
+@NoExtend
 public class ColumnViewerEditorDeactivationEvent extends EventObject {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/**

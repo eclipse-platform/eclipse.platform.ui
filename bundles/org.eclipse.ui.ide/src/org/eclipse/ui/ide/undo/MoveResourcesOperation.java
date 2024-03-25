@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -47,7 +48,6 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 3.3
- *
  */
 public class MoveResourcesOperation extends
 		AbstractCopyOrMoveResourcesOperation {
@@ -129,12 +129,12 @@ public class MoveResourcesOperation extends
 		subMonitor.setTaskName(UndoMessages.AbstractResourcesOperation_MovingResources);
 		List<IResource> resourcesAtDestination = new ArrayList<>();
 		List<IPath> undoDestinationPaths = new ArrayList<>();
-		List<ResourceDescription> overwrittenResources = new ArrayList<>();
+		List<IResourceSnapshot<? extends IResource>> overwrittenResources = new ArrayList<>();
 
 		for (int i = 0; i < resources.length; i++) {
 			// Move the resources and record the overwrites that would
 			// be restored if this operation were reversed
-			ResourceDescription[] overwrites;
+			IResourceSnapshot<? extends IResource>[] overwrites;
 			overwrites = WorkspaceUndoUtil.move(new IResource[] { resources[i] }, getDestinationPath(resources[i], i),
 					resourcesAtDestination, undoDestinationPaths, subMonitor.split(1), uiInfo, true);
 
@@ -144,7 +144,7 @@ public class MoveResourcesOperation extends
 
 		// Are there any previously overwritten resources to restore now?
 		if (resourceDescriptions != null) {
-			for (ResourceDescription resourceDescription : resourceDescriptions) {
+			for (IResourceSnapshot<? extends IResource> resourceDescription : resourceDescriptions) {
 				if (resourceDescription != null) {
 					resourceDescription.createResource(subMonitor.split(1));
 				}
@@ -153,7 +153,7 @@ public class MoveResourcesOperation extends
 
 		// Reset resource descriptions to the just overwritten resources
 		setResourceDescriptions(overwrittenResources
-				.toArray(new ResourceDescription[overwrittenResources.size()]));
+				.toArray(new IResourceSnapshot<?>[overwrittenResources.size()]));
 
 		// Reset the target resources to refer to the resources in their new
 		// location.
@@ -180,7 +180,7 @@ public class MoveResourcesOperation extends
 		// only the files that were originally merged. This makes us more
 		// adaptable to changes in the target.
 		setTargetResources(originalResources);
-		this.resourceDescriptions = new ResourceDescription[0];
+		this.resourceDescriptions = new IResourceSnapshot<?>[0];
 		this.destination = originalDestination;
 		this.destinationPaths = originalDestinationPaths;
 	}

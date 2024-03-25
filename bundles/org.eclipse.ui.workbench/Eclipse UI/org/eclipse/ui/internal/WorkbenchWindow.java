@@ -23,6 +23,9 @@
 
 package org.eclipse.ui.internal;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,9 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
@@ -47,6 +47,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -814,11 +815,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			fireWindowOpening();
 			configureShell(getShell(), windowContext);
 
-			try {
-				page = new WorkbenchPage(this, input);
-			} catch (WorkbenchException e) {
-				WorkbenchPlugin.log(e);
-			}
+			page = new WorkbenchPage(this, input);
 			menuOverride = new MenuOverrides(page);
 			toolbarOverride = new ToolbarOverrides(page);
 
@@ -1853,10 +1850,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	/**
 	 * Fires perspective changed
-	 *
-	 * @param page
-	 * @param perspective
-	 * @param changeId
 	 */
 	public void firePerspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 		// Some callers call this even when there is no active perspective.
@@ -1869,11 +1862,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	/**
 	 * Fires perspective changed for an affected part
-	 *
-	 * @param page
-	 * @param perspective
-	 * @param partRef
-	 * @param changeId
 	 */
 	public void firePerspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective,
 			IWorkbenchPartReference partRef, String changeId) {
@@ -2342,14 +2330,15 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				final InterruptedException[] ie = new InterruptedException[1];
 
 				BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+					IProgressMonitor progressMonitor = manager.getProgressMonitor();
 					try {
-						ModalContext.run(runnable, fork, manager.getProgressMonitor(), getShell().getDisplay());
+						ModalContext.run(runnable, fork, progressMonitor, getShell().getDisplay());
 					} catch (InvocationTargetException e1) {
 						ite[0] = e1;
 					} catch (InterruptedException e2) {
 						ie[0] = e2;
 					} finally {
-						manager.getProgressMonitor().done();
+						progressMonitor.done();
 					}
 				});
 

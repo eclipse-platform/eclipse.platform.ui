@@ -13,10 +13,11 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.jface.util.SafeRunnable;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * NOTE - these tests are not really very good, in order to really test this you
@@ -24,9 +25,8 @@ import junit.framework.TestCase;
  * hand.
  *
  * @since 3.4
- *
  */
-public class SafeRunnableErrorTest extends TestCase {
+public class SafeRunnableErrorTest {
 
 	int count;
 
@@ -43,6 +43,7 @@ public class SafeRunnableErrorTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testSafeRunnableHandler() {
 		// Just make sure that nothing bad happens when we throw here
 		SafeRunnable.run(new SafeRunnable() {
@@ -53,12 +54,14 @@ public class SafeRunnableErrorTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testSafeRunnableHandlerOtherThread() throws Exception {
 		Thread t = runner();
 		t.run();
 		t.join();
 	}
 
+	@Test
 	public void testSafeRunnableHandlerMulti() {
 		ISafeRunnable runnable = new SafeRunnable() {
 			@Override

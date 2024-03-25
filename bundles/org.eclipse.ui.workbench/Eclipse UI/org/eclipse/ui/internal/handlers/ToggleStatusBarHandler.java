@@ -37,7 +37,6 @@ import org.osgi.service.event.EventHandler;
 /**
  * Toggle the visibility of the status bar. Implementation of the
  * {@code org.eclipse.ui.window.togglestatusbar} command.
- *
  */
 public class ToggleStatusBarHandler extends AbstractHandler implements IElementUpdater {
 
@@ -68,9 +67,6 @@ public class ToggleStatusBarHandler extends AbstractHandler implements IElementU
 		return null;
 	}
 
-	/**
-	 * @param window
-	 */
 	private void initializeEventHandler(IWorkbenchWindow window) {
 		final IEventBroker eventBroker = window.getService(IEventBroker.class);
 		eventBrokers.put(window, eventBroker);

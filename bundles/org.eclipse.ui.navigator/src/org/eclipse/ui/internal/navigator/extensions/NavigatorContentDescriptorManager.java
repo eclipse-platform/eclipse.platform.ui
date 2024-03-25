@@ -122,7 +122,6 @@ public class NavigatorContentDescriptorManager {
 	 * @param aVisibilityAssistant
 	 *            The relevant viewer assistant; used to filter out unbound
 	 *            content descriptors.
-	 * @param considerOverrides
 	 * @return the best content descriptor for the given element.
 	 */
 	public Set<NavigatorContentDescriptor> findDescriptorsForTriggerPoint(Object anElement,
@@ -141,7 +140,6 @@ public class NavigatorContentDescriptorManager {
 	 * @param aVisibilityAssistant
 	 *            The relevant viewer assistant; used to filter out unbound
 	 *            content descriptors.
-	 * @param toComputeOverrides
 	 * @return the best content descriptor for the given element.
 	 */
 	public Set<NavigatorContentDescriptor> findDescriptorsForPossibleChild(Object anElement,
@@ -310,9 +308,6 @@ public class NavigatorContentDescriptorManager {
 		}
 	}
 
-	/**
-	 * @param desc
-	 */
 	private void addNavigatorContentDescriptor(NavigatorContentDescriptor desc) {
 		if (desc == null) {
 			return;
@@ -353,9 +348,6 @@ public class NavigatorContentDescriptorManager {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void computeOverrides() {
 		if (overridingDescriptors.size() > 0) {
 			NavigatorContentDescriptor descriptor;

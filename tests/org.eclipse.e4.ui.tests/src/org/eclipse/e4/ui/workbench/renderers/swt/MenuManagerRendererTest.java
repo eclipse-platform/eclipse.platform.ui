@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
@@ -32,9 +32,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-/**
- *
- */
 public class MenuManagerRendererTest {
 
 	@Rule

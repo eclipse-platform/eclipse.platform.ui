@@ -16,14 +16,14 @@ package org.eclipse.core.tests.internal.databinding.conversion;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
+
+import java.text.NumberFormat;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToShortConverter;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.text.NumberFormat;
 
 
 /**
@@ -34,13 +34,13 @@ public class StringToShortConverterTest {
 	private StringToShortConverter converter;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		numberFormat = NumberFormat.getIntegerInstance();
 		converter = StringToShortConverter.toShort(numberFormat, false);
 	}
 
 	@Test
-	public void testConvertsToShort() throws Exception {
+	public void testConvertsToShort() {
 		Short value = (short) 1;
 		Short result = converter.convert(numberFormat.format(value));
 
@@ -48,7 +48,7 @@ public class StringToShortConverterTest {
 	}
 
 	@Test
-	public void testConvertsToShortPrimitive() throws Exception {
+	public void testConvertsToShortPrimitive() {
 		converter = StringToShortConverter.toShort(numberFormat, true);
 		Short value = (short) 1;
 		Short result = converter.convert(numberFormat.format(value));
@@ -56,33 +56,28 @@ public class StringToShortConverterTest {
 	}
 
 	@Test
-	public void testFromTypeIsString() throws Exception {
+	public void testFromTypeIsString() {
 		assertEquals(String.class, converter.getFromType());
 	}
 
 	@Test
-	public void testToTypeIsShort() throws Exception {
+	public void testToTypeIsShort() {
 		assertEquals(Short.class, converter.getToType());
 	}
 
 	@Test
-	public void testToTypeIsShortPrimitive() throws Exception {
+	public void testToTypeIsShortPrimitive() {
 		converter = StringToShortConverter.toShort(true);
 		assertEquals(Short.TYPE, converter.getToType());
 	}
 
 	@Test
-	public void testReturnsNullBoxedTypeForEmptyString() throws Exception {
+	public void testReturnsNullBoxedTypeForEmptyString() {
 		assertNull(converter.convert(""));
 	}
 
 	@Test
-	public void testThrowsIllegalArgumentExceptionIfAskedToConvertNonString()
-			throws Exception {
-		try {
-			((IConverter<Object, ?>) converter).convert(1);
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+	public void testThrowsIllegalArgumentExceptionIfAskedToConvertNonString() {
+		assertThrows(IllegalArgumentException.class, () -> ((IConverter<Object, ?>) converter).convert(1));
 	}
 }

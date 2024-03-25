@@ -22,7 +22,6 @@ import java.util.Objects;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.Viewer;
@@ -73,8 +72,6 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	/**
 	 * Creates a new <code>WizardCollectionElement</code>. Parent can be null.
 	 *
-	 * @param element
-	 * @param parent
 	 * @since 3.1
 	 */
 	public WizardCollectionElement(IConfigurationElement element, WizardCollectionElement parent) {
@@ -172,7 +169,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	 * @return the element
 	 */
 	public WorkbenchWizardElement findWizard(String searchId, boolean recursive) {
-		for (Object wizard : getWizards()) {
+		for (IWizardDescriptor wizard : getWizards()) {
 			WorkbenchWizardElement currentWizard = (WorkbenchWizardElement) wizard;
 			if (currentWizard.getId().equals(searchId)) {
 				return currentWizard;
@@ -230,7 +227,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	@Override
 	public IPath getPath() {
 		if (parent == null) {
-			return new Path(""); //$NON-NLS-1$
+			return IPath.fromOSString(""); //$NON-NLS-1$
 		}
 
 		return parent.getPath().append(getId());
@@ -432,7 +429,6 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	 * @param viewerFilter    the ViewerFilter
 	 * @param inputCollection collection to filter
 	 * @return inputCollection, modified copy of inputCollection or null
-	 *
 	 */
 	static WizardCollectionElement filter(Viewer viewer, ViewerFilter viewerFilter,
 			WizardCollectionElement inputCollection) {

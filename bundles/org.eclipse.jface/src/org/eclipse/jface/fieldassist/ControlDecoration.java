@@ -16,6 +16,7 @@ package org.eclipse.jface.fieldassist;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.Util;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeListener;
@@ -75,9 +76,8 @@ import org.eclipse.swt.widgets.Widget;
  *
  * @see FieldDecoration
  * @see FieldDecorationRegistry
- *
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ControlDecoration {
 	/**
 	 * Debug flag for tracing
@@ -846,7 +846,6 @@ public class ControlDecoration {
 	 * hovering in the decoration.
 	 * <p>
 	 * This message has no effect if there is no current hover.
-	 *
 	 */
 	public void hideHover() {
 		if (hover != null) {

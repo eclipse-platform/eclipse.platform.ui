@@ -121,7 +121,6 @@ public abstract class DateConversionSupport {
 	 * this class was to be exposed.
 	 * </p>
 	 *
-	 * @param index
 	 * @return date format
 	 */
 	protected DateFormat getDateFormat(int index) {

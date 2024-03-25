@@ -19,7 +19,6 @@ import org.junit.Test;
 
 /**
  * @since 3.1
- *
  */
 public class GenerateIdentifiersTest extends BasicPerformanceTest {
 

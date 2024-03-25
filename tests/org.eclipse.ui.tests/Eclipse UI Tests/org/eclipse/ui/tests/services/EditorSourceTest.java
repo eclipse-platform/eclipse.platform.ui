@@ -44,7 +44,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
- *
  */
 @RunWith(JUnit4.class)
 @Ignore("See bug 436755 and commit 0d6ce84b3d3a588733bdae43224c612239a0a9a7")
@@ -58,8 +57,8 @@ public class EditorSourceTest extends UITestCase {
 		public void propertyChange(PropertyChangeEvent event) {
 			count++;
 			if (event.getProperty() == IEvaluationService.RESULT
-					&& event.getNewValue() instanceof Boolean) {
-				currentValue = ((Boolean) event.getNewValue()).booleanValue();
+					&& event.getNewValue() instanceof Boolean bool) {
+				currentValue = bool.booleanValue();
 			}
 		}
 	}

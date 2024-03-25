@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -95,9 +96,8 @@ public abstract class CellEditor {
 	/**
 	 * Struct-like layout data for cell editors, with reasonable defaults for
 	 * all fields.
-	 *
-	 * @noextend This class is not intended to be subclassed by clients.
 	 */
+	@NoExtend
 	public static class LayoutData {
 		/**
 		 * Horizontal alignment; <code>SWT.LEFT</code> by default.
@@ -914,7 +914,6 @@ public abstract class CellEditor {
 	 * @param event
 	 *            deactivation event
 	 * @since 3.4
-	 *
 	 */
 	protected void deactivate(ColumnViewerEditorDeactivationEvent event) {
 		deactivate();

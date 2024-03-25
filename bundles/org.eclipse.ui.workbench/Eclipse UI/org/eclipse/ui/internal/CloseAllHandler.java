@@ -20,7 +20,6 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPage;
@@ -35,7 +34,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * </p>
  *
  * @since 3.3
- *
  */
 public class CloseAllHandler extends AbstractEvaluationHandler {
 	private Expression enabledWhen;
@@ -60,7 +58,7 @@ public class CloseAllHandler extends AbstractEvaluationHandler {
 		if (enabledWhen == null) {
 			enabledWhen = new Expression() {
 				@Override
-				public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+				public EvaluationResult evaluate(IEvaluationContext context) {
 					IWorkbenchPart part = InternalHandlerUtil.getActivePart(context);
 					Object perspective = InternalHandlerUtil.getVariable(context,
 							ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);

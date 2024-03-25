@@ -25,21 +25,15 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 
 /**
  * @since 3.3
- *
  */
 public class ProgressMonitorDialogPerformanceTest extends BasicPerformanceTest {
 
-	/**
-	 * @param testName
-	 */
 	public ProgressMonitorDialogPerformanceTest(String testName) {
 		super(testName);
 	}
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param testName
-	 * @param tagging
 	 */
 	public ProgressMonitorDialogPerformanceTest(String testName, int tagging) {
 		super(testName, tagging);
@@ -48,8 +42,6 @@ public class ProgressMonitorDialogPerformanceTest extends BasicPerformanceTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 *
-	 * @throws Throwable
 	 */
 	public void testLongNames() throws Throwable {
 

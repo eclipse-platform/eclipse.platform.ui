@@ -107,14 +107,8 @@ public interface IObservableMap<K, V> extends Map<K, V>, IObservable {
 	 */
 	@Override V get(Object key);
 
-	/**
-	 *
-	 */
 	@Override V put(K key, V value);
 
-	/**
-	 *
-	 */
 	@Override V remove(Object key);
 
 	/**

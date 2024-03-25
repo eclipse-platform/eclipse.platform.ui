@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
+import org.eclipse.pde.api.tools.annotations.NoImplement;
+
 /**
  * IDialogLabelKeys contains publicly accessible keys to the common dialog
  * labels used throughout JFace.  <code>IDialogConstants</code> provides
@@ -24,10 +26,8 @@ package org.eclipse.jface.dialogs;
  *
  * @see IDialogConstants
  * @since 3.7
- *
- * @noimplement This interface is not intended to be implemented by clients.
-
  */
+@NoImplement
 public interface IDialogLabelKeys {
 
 	/**

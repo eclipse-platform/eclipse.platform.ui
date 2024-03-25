@@ -38,7 +38,6 @@ import org.junit.Test;
 /**
  * @since 3.5
  * @author Prakash G.R.
- *
  */
 public class Bug264804Test {
 
@@ -91,10 +90,6 @@ public class Bug264804Test {
 		}
 	}
 
-	/**
-	 * @param id
-	 * @param items
-	 */
 	private void find(String id, IContributionItem[] items) throws Exception {
 		for (IContributionItem item : items) {
 			if (id.equals(item.getId())) {

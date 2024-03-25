@@ -30,10 +30,6 @@ public interface ICSSPropertyHandlerProvider {
 	/**
 	 * Return list of {@link ICSSPropertyHandler} linked to the CSS Property
 	 * <code>property</code>.
-	 *
-	 * @param property
-	 * @return
-	 * @throws Exception
 	 */
 	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
 			String property) throws Exception;
@@ -41,13 +37,6 @@ public interface ICSSPropertyHandlerProvider {
 	/**
 	 * Return the default CSS style declaration of the <code>element</code>
 	 * before apply the <code>newStyle</code> {@link CSSStyleDeclaration}.
-	 *
-	 * @param engine
-	 * @param element
-	 * @param newStyle
-	 * @param pseudoE
-	 * @return
-	 * @throws Exception
 	 */
 	public CSSStyleDeclaration getDefaultCSSStyleDeclaration(CSSEngine engine,
 			Object element, CSSStyleDeclaration newStyle, String pseudoE)
@@ -59,9 +48,7 @@ public interface ICSSPropertyHandlerProvider {
 	 *
 	 * @param element
 	 *            the DOM element
-	 * @param property
 	 * @return the handlers for the element
-	 * @throws Exception
 	 */
 	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(
 			Object element, String property) throws Exception;

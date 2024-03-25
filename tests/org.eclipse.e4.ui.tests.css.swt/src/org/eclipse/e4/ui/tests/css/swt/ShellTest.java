@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import java.util.HashSet;
 
@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ShellTest extends CSSSWTTestCase {
 
@@ -54,14 +54,14 @@ public class ShellTest extends CSSSWTTestCase {
 
 
 	@Test
-	public void testColor() {
+	void testColor() {
 		Shell shellToTest = createTestShell("Shell { background-color: #FF0000; color: #0000FF }");
 		assertEquals(RED, shellToTest.getBackground().getRGB());
 		assertEquals(BLUE, shellToTest.getForeground().getRGB());
 	}
 
 	@Test
-	public void testFontRegular() {
+	void testFontRegular() {
 		Shell shellToTest = createTestShell("Shell { font: Verdana 16px }");
 		assertEquals(1, shellToTest.getFont().getFontData().length);
 		FontData fontData = shellToTest.getFont().getFontData()[0];
@@ -71,7 +71,7 @@ public class ShellTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testFontBold() {
+	void testFontBold() {
 		Shell shellToTest = createTestShell("Shell { font: Arial 12px; font-weight: bold }");
 		assertEquals(1, shellToTest.getFont().getFontData().length);
 		FontData fontData = shellToTest.getFont().getFontData()[0];
@@ -81,7 +81,7 @@ public class ShellTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testFontItalic() {
+	void testFontItalic() {
 		Shell shellToTest = createTestShell("Shell { font-style: italic }");
 		assertEquals(1, shellToTest.getFont().getFontData().length);
 		FontData fontData = shellToTest.getFont().getFontData()[0];
@@ -90,7 +90,7 @@ public class ShellTest extends CSSSWTTestCase {
 
 	// bug 375069: ensure children aren't caught up in parent
 	@Test
-	public void test375069ChildShellDifferentiation() {
+	void test375069ChildShellDifferentiation() {
 		engine = createEngine("Shell.parent { font-style: italic; }", display);
 
 		Shell parent = new Shell(display, SWT.NONE);
@@ -114,7 +114,7 @@ public class ShellTest extends CSSSWTTestCase {
 
 	// bug 375069: ensure children shells are still captured by Shell
 	@Test
-	public void test375069AllShell() {
+	void test375069AllShell() {
 		engine = createEngine("Shell { font-style: italic; }", display);
 
 		Shell parent = new Shell(display, SWT.NONE);
@@ -137,7 +137,7 @@ public class ShellTest extends CSSSWTTestCase {
 
 	// bug 375069: ensure children shells are still captured by Shell
 	@Test
-	public void testShellParentage() {
+	void testShellParentage() {
 		engine = createEngine(
 				"Shell[parentage='parent'] { font-style: italic; }", display);
 
@@ -160,7 +160,7 @@ public class ShellTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testShellUnparentedPseudoelement() {
+	void testShellUnparentedPseudoelement() {
 		engine = createEngine(
 				"Shell:swt-unparented { font-style: italic; }", display);
 
@@ -183,7 +183,7 @@ public class ShellTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testShellParentedPseudoelement() {
+	void testShellParentedPseudoelement() {
 		engine = createEngine(
 				"Shell:swt-parented { font-style: italic; }", display);
 
@@ -206,7 +206,7 @@ public class ShellTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testSwtDataClassAttribute() {
+	void testSwtDataClassAttribute() {
 		engine = createEngine(
 				"Shell[swt-data-class ~= 'java.util.HashSet'] { font-style: italic; }",
 				display);
@@ -222,7 +222,7 @@ public class ShellTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testBackgroundMode() {
+	void testBackgroundMode() {
 		Shell shellToTest = createTestShell("Shell { swt-background-mode: force; }");
 		assertEquals(SWT.INHERIT_FORCE, shellToTest.getBackgroundMode());
 	}

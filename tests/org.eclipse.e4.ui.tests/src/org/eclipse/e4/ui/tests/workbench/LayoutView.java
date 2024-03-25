@@ -14,7 +14,7 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.swt.widgets.Composite;
 
 public class LayoutView {

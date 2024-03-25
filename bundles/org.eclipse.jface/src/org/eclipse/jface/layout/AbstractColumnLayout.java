@@ -157,11 +157,6 @@ public abstract class AbstractColumnLayout extends Layout {
 	/**
 	 * Layout the scrollable based on the supplied width and area. Only increase
 	 * the size of the scrollable if increase is <code>true</code>.
-	 *
-	 * @param scrollable
-	 * @param width
-	 * @param area
-	 * @param increase
 	 */
 	private void layoutTableTree(final Scrollable scrollable, final int width,
 			final Rectangle area, final boolean increase) {
@@ -255,7 +250,7 @@ public abstract class AbstractColumnLayout extends Layout {
 		Rectangle area = composite.getClientArea();
 		Scrollable table = getControl(composite);
 		int tableWidth = table.getSize().x;
-		int trim = computeTrim(area, table, tableWidth);
+		int trim = computeTrim(table, tableWidth);
 		int width = Math.max(0, area.width - trim);
 
 		if (width > 1)
@@ -272,12 +267,9 @@ public abstract class AbstractColumnLayout extends Layout {
 	/**
 	 * Compute the area required for trim.
 	 *
-	 * @param area
-	 * @param scrollable
-	 * @param currentWidth
 	 * @return int
 	 */
-	private int computeTrim(Rectangle area, Scrollable scrollable,
+	private int computeTrim(Scrollable scrollable,
 			int currentWidth) {
 		int trim;
 

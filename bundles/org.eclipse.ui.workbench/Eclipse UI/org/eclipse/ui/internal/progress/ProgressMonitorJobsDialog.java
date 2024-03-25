@@ -253,7 +253,6 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
 	/**
 	 * Create a monitor for the receiver that wrappers the superclasses monitor.
-	 *
 	 */
 	public void createWrapperedMonitor() {
 		wrapperedMonitor = new IProgressMonitor() {

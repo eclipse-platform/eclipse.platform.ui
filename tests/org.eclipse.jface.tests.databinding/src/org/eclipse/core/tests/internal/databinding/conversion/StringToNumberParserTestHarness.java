@@ -159,8 +159,6 @@ public abstract class StringToNumberParserTestHarness {
 		 * replacement plugin. So in order to ensure that we handle Number's
 		 * that are not part of the JDK stub a number implemenation and ensure
 		 * that the double representation of this number is used.
-		 *
-		 * @throws Exception
 		 */
 		class MyNumber extends Number {
 			double value;

@@ -20,7 +20,6 @@ public final class AdaptedValueProperty<S, T> extends SimpleValueProperty<S, T> 
 		return adapter;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected T doGetValue(S source) {
 		if (adapter.isInstance(source))

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,19 +48,19 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class LabelProviderTest2 {
 
-	private Shell shell;
+	private final Shell shell;
 
-	private ListViewer list;
+	private final ListViewer list;
 
-	private WritableList<RenamableItem> listOfRenamables;
+	private final WritableList<RenamableItem> listOfRenamables;
 
-	private Button addButton;
+	private final Button addButton;
 
-	private Button removeButton;
+	private final Button removeButton;
 
-	private Button renameButton;
+	private final Button renameButton;
 
-	private SelectionListener buttonSelectionListener = new SelectionAdapter() {
+	private final SelectionListener buttonSelectionListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button pressed = (Button) e.widget;
@@ -76,11 +76,8 @@ public class LabelProviderTest2 {
 		}
 	};
 
-	private IObservableValue<RenamableItem> selectedRenamable;
+	private final IObservableValue<RenamableItem> selectedRenamable;
 
-	/**
-	 *
-	 */
 	public LabelProviderTest2() {
 
 		// Create shell
@@ -97,9 +94,7 @@ public class LabelProviderTest2 {
 
 			@Override
 			public void updateLabel(ViewerLabel label, Object element) {
-				if (element instanceof RenamableItem) {
-					RenamableItem item = (RenamableItem) element;
-
+				if (element instanceof RenamableItem item) {
 					label.setText(item.getName());
 				}
 			}
@@ -143,9 +138,6 @@ public class LabelProviderTest2 {
 				LayoutConstants.getMargins()).generateLayout(shell);
 	}
 
-	/**
-	 * @param currentSelection
-	 */
 	protected void rename(final RenamableItem currentSelection) {
 		InputDialog inputDialog = new InputDialog(
 				shell,
@@ -155,16 +147,10 @@ public class LabelProviderTest2 {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	protected RenamableItem getCurrentSelection() {
 		return selectedRenamable.getValue();
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		final Display display = Display.getDefault();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {

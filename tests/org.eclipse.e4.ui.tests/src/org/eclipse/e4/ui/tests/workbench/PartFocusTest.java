@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 IBM Corporation and others.
+ * Copyright (c) 2010, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,9 +19,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -183,7 +183,7 @@ public class PartFocusTest {
 
 	@Test
 	public void testNoActivationOnExplicitInPartWidgetSelection() {
-		assertTrue(eps.getActivePart() == otherPart);
+		assertEquals(otherPart, eps.getActivePart());
 		assertTrue(((PartBackend) otherPart.getObject()).text1.isFocusControl());
 
 		final boolean[] changed = new boolean[] { false };

@@ -30,8 +30,6 @@ import org.eclipse.jface.databinding.conformance.util.TestCollection;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Test;
 
-/**
- */
 public class WritableSetTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testWithElementType() throws Exception {

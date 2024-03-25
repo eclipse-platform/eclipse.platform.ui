@@ -29,16 +29,12 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Element;
 public class LabelProvider
 	extends org.eclipse.jface.viewers.LabelProvider {
 
-	/**
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
 	@Override
 	public Image getImage(Object obj) {
 		if (obj == null || obj.equals(StructuredSelection.EMPTY)) {
 			return null;
 		}
-		if (obj instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = (IStructuredSelection) obj;
+		if (obj instanceof IStructuredSelection structuredSelection) {
 			if (areDifferentTypes(structuredSelection)) {
 				return null;
 			}
@@ -48,17 +44,13 @@ public class LabelProvider
 		return element.getImage();
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
 	@Override
 	public String getText(Object obj) {
 		if (obj == null || obj.equals(StructuredSelection.EMPTY)) {
 			return null;
 		}
 		int size = 1;
-		if (obj instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = (IStructuredSelection) obj;
+		if (obj instanceof IStructuredSelection structuredSelection) {
 			if (areDifferentTypes(structuredSelection)) {
 				return structuredSelection.size() + " items selected";//$NON-NLS-1$
 			}

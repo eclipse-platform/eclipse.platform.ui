@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2023 Oakland Software Incorporated and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -107,7 +107,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		TreeItem[] items = _viewer.getTree().getItems();
 		// The bug is here where the first item is a IFile, not the enclosing
 		// project
-		assertTrue("First item needs to be project", items[0].getData().equals(_p1));
+		assertEquals("First item needs to be project", _p1, items[0].getData());
 		assertEquals("ws1", _commonNavigator.getWorkingSetLabel());
 	}
 
@@ -138,7 +138,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		TreeItem[] items = _viewer.getTree().getItems();
 		// The bug is here where the first item is a IFile, not the enclosing
 		// project
-		assertTrue("First item needs to be working set", items[0].getData().equals(workingSet));
+		assertEquals("First item needs to be working set", workingSet, items[0].getData());
 		assertEquals("ws1", _commonNavigator.getWorkingSetLabel());
 
 		// bug 268250 [CommonNavigator] Project labels missing in Project
@@ -181,19 +181,19 @@ public class WorkingSetTest extends NavigatorTestBase {
 
 		TreeItem[] items = _viewer.getTree().getItems();
 
-		assertTrue("First item needs to be working set", items[0].getData().equals(workingSet));
+		assertEquals("First item needs to be working set", workingSet, items[0].getData());
 
 		extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, false);
 		refreshViewer();
 
 		items = _viewer.getTree().getItems();
-		assertTrue("First item needs to be project", items[0].getData().equals(_p1));
+		assertEquals("First item needs to be project", _p1, items[0].getData());
 
 		extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, true);
 		refreshViewer();
 
 		items = _viewer.getTree().getItems();
-		assertTrue("First item needs to be working set", items[0].getData().equals(workingSet));
+		assertEquals("First item needs to be working set", workingSet, items[0].getData());
 
 		// Restore active working sets
 		activePage.setWorkingSets(activeWorkingSets);
@@ -300,14 +300,14 @@ public class WorkingSetTest extends NavigatorTestBase {
 		// DisplayHelper.runEventLoop(Display.getCurrent(), 100);
 
 		TreeItem[] items = _viewer.getTree().getItems();
-		assertTrue(items[0].getData().equals(_p2));
+		assertEquals(_p2, items[0].getData());
 
 		l = provider.getFilterChangeListener();
 		event = new PropertyChangeEvent(this, WorkingSetFilterActionGroup.CHANGE_WORKING_SET, null, ws1);
 		l.propertyChange(event);
 		// DisplayHelper.runEventLoop(Display.getCurrent(), 100);
 		items = _viewer.getTree().getItems();
-		assertTrue(items[0].getData().equals(_p1));
+		assertEquals(_p1, items[0].getData());
 
 		workingSetManager.removeWorkingSet(ws2);
 
@@ -319,7 +319,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		l.propertyChange(event);
 		// DisplayHelper.runEventLoop(Display.getCurrent(), 100);
 		items = _viewer.getTree().getItems();
-		assertTrue(items[0].getData().equals(_p2));
+		assertEquals(_p2, items[0].getData());
 
 		if (SLEEP_LONG)
 			DisplayHelper.sleep(Display.getCurrent(), 10000000);
@@ -345,12 +345,12 @@ public class WorkingSetTest extends NavigatorTestBase {
 		TreeItem[] items = _viewer.getTree().getItems();
 		assertEquals("Missing working set or 'other projects'", 2, items.length);
 
-		assertTrue("First item needs to be working set", items[0].getData().equals(workingSet));
+		assertEquals("First item needs to be working set", workingSet, items[0].getData());
 		assertEquals(workingSet, items[0].getData());
 		assertEquals(_p1, items[0].getItem(0).getData());
 
-		assertTrue("Last item needs to be 'other project'",
-				items[1].getData().equals(WorkingSetsContentProvider.OTHERS_WORKING_SET));
+		assertEquals("Last item needs to be 'other project'", WorkingSetsContentProvider.OTHERS_WORKING_SET,
+				items[1].getData());
 		assertEquals(_p1.getWorkspace().getRoot().getProjects().length - 1, items[1].getItemCount());
 
 		// Put all projects in same working set to disable "others"
@@ -374,12 +374,12 @@ public class WorkingSetTest extends NavigatorTestBase {
 		items = _viewer.getTree().getItems();
 		assertEquals("Missing working set or 'other projects'", 2, items.length);
 
-		assertTrue("First item needs to be working set", items[0].getData().equals(workingSet));
+		assertEquals("First item needs to be working set", workingSet, items[0].getData());
 		assertEquals(workingSet, items[0].getData());
 		assertEquals(_p1, items[0].getItem(0).getData());
 
-		assertTrue("Last item needs to be 'other project'",
-				items[1].getData().equals(WorkingSetsContentProvider.OTHERS_WORKING_SET));
+		assertEquals("Last item needs to be 'other project'", WorkingSetsContentProvider.OTHERS_WORKING_SET,
+				items[1].getData());
 		assertEquals(_p1.getWorkspace().getRoot().getProjects().length - 1, items[1].getItemCount());
 	}
 

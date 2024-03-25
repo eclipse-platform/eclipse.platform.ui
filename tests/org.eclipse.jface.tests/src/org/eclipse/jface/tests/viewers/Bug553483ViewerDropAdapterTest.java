@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -31,13 +34,11 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-/**
- *
- */
-public class Bug553483ViewerDropAdapterTest extends TestCase {
+public class Bug553483ViewerDropAdapterTest {
 
 	private Display display;
 	private Shell shell;
@@ -47,7 +48,7 @@ public class Bug553483ViewerDropAdapterTest extends TestCase {
 	private Point tgtPos2;
 	private int numberOfDrops;
 
-	@Override
+	@Before
 	public void setUp() throws Exception {
 		display = new Display();
 		shell = new Shell(display);
@@ -106,13 +107,14 @@ public class Bug553483ViewerDropAdapterTest extends TestCase {
 		}
 	}
 
-	@Override
+	@After
 	public void tearDown() throws Exception {
 		assertTrue(shell.isDisposed());
 
 		display.dispose();
 	}
 
+	@Test
 	public void testBug553483() {
 		boolean copyWasPosted = false;
 		boolean moveWasPosted = false;

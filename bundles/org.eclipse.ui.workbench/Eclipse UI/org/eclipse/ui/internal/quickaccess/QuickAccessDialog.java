@@ -82,7 +82,6 @@ import org.osgi.framework.FrameworkUtil;
  * done through a shell in {@link SearchField}.
  *
  * @since 3.3
- *
  */
 public class QuickAccessDialog extends PopupDialog {
 	private TriggerSequence[] invokingCommandKeySequences;
@@ -163,9 +162,6 @@ public class QuickAccessDialog extends PopupDialog {
 					QuickAccessDialog.this.close();
 				}
 
-				/**
-				 * @param element
-				 */
 				void addPreviousPick(String text, QuickAccessElement element) {
 					previousPicksProvider.addPreviousPick(element, removedElement -> {
 						ArrayList<String> removedList = textMap.remove(removedElement);
@@ -425,10 +421,6 @@ public class QuickAccessDialog extends PopupDialog {
 		return res;
 	}
 
-	/**
-	 * @param dialogSettings
-	 * @return
-	 */
 	private Collection<String> getPreviousPickProviderIds(IDialogSettings dialogSettings) {
 		if (dialogSettings == null) {
 			return Collections.emptySet();

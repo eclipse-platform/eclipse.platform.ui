@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -54,8 +54,7 @@ public class MultiPageContributor extends MultiPageEditorActionBarContributor {
 		IActionBars actionBars = getActionBars();
 		if (actionBars != null) {
 
-			ITextEditor editor = (part instanceof ITextEditor) ? (ITextEditor) part
-					: null;
+			ITextEditor editor = (part instanceof ITextEditor mpPart) ? mpPart : null;
 
 			actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(),
 					getAction(editor, ActionFactory.DELETE.getId()));

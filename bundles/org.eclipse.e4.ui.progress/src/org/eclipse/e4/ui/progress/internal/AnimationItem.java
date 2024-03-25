@@ -54,9 +54,6 @@ public abstract class AnimationItem {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param workbenchWindow
-	 *            the window being created
 	 */
 	public AnimationItem(AnimationManager animationManager) {
 		this.animationManager = animationManager;
@@ -135,11 +132,4 @@ public abstract class AnimationItem {
 	void setAnimationContainer(IAnimationContainer container) {
 		this.animationContainer = container;
 	}
-
-	/**
-	 * @return Returns the window.
-	 */
-//	public WorkbenchWindow getWindow() {
-//		return window;
-//	}
 }

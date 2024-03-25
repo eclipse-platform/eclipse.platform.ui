@@ -17,6 +17,7 @@ package org.eclipse.e4.ui.workbench.modeling;
  * @noreference This class is not intended to be referenced by clients.
  * @since 1.0
  */
+@SuppressWarnings("unused") // parameters unused - this class should acts as interface only
 public class ModelHandlerBase {
 	protected ModelHandlerBase() {
 	}

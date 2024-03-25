@@ -16,6 +16,7 @@ package org.eclipse.jface.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -27,11 +28,9 @@ import org.eclipse.swt.widgets.Widget;
  * @param <W> widget
  * @param <P> parent
  *
- * @noextend this class is not intended to be subclassed by clients.
- *
  * @since 3.18
- *
  */
+@NoExtend
 public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?, ?>, W extends Widget, P extends Widget> {
 	private Class<F> factoryClass;
 
@@ -39,10 +38,6 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 
 	private List<Property<W>> properties = new ArrayList<>();
 
-	/**
-	 * @param factoryClass
-	 * @param widgetCreator
-	 */
 	AbstractWidgetFactory(Class<F> factoryClass, WidgetSupplier<W, P> widgetCreator) {
 		this.factoryClass = factoryClass;
 		this.widgetCreator = widgetCreator;
@@ -60,7 +55,6 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 	}
 
 	/**
-	 * @param parent
 	 * @return this
 	 */
 	public final W create(P parent) {
@@ -106,6 +100,23 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 	 */
 	public F data(Object data) {
 		addProperty(b -> b.setData(data));
+		return cast(this);
+	}
+
+	/**
+	 * Sets the application defined property of the receiver with the specified name
+	 * to the given value.
+	 *
+	 * @param key   the name of the property
+	 * @param value the new value for the property
+	 * @return this
+	 *
+	 * @see Widget#setData(String, Object)
+	 *
+	 * @since 3.33
+	 */
+	public F data(String key, Object value) {
+		addProperty(b -> b.setData(key, value));
 		return cast(this);
 	}
 }

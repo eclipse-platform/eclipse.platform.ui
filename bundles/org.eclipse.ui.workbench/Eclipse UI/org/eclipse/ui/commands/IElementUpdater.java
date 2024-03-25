@@ -23,7 +23,6 @@ import org.eclipse.ui.menus.UIElement;
  * registered element mechanism must implement this interface.
  *
  * @since 3.3
- *
  */
 public interface IElementUpdater {
 	/**

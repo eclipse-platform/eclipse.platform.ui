@@ -44,7 +44,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 
-	private String id;
+	private final String id;
 
 	@Parameters
 	public static Collection<Object[]> data() {
@@ -113,9 +113,6 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 		assertPerformance();
 	}
 
-	/**
-	 * @param activePage
-	 */
 	private void closePerspective(IWorkbenchPage activePage) {
 		IPerspectiveDescriptor persp = activePage.getPerspective();
 

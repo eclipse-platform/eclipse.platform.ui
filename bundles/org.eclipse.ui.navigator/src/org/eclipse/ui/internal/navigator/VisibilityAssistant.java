@@ -27,7 +27,6 @@ import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 
 /**
  * Stores information about programmatic bindings and activation settings.
- *
  */
 public class VisibilityAssistant implements IExtensionActivationListener {
 
@@ -43,13 +42,11 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 
 	/**
 	 * Notifies clients of changes in extension visibility or activation.
-	 *
 	 */
 	public interface VisibilityListener {
 
 		/**
 		 * Respond to the change in visibility or activation.
-		 *
 		 */
 		void onVisibilityOrActivationChange();
 	}
@@ -73,7 +70,6 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 
 	/**
 	 * Dispose of any resources held onto by this assistant.
-	 *
 	 */
 	public void dispose() {
 		activationService.removeExtensionActivationListener(this);
@@ -83,7 +79,6 @@ public class VisibilityAssistant implements IExtensionActivationListener {
 	 *
 	 * @param theExtensions
 	 *            The extensions that should be made visible to the viewer.
-	 * @param isRoot
 	 */
 	public void bindExtensions(String[] theExtensions, boolean isRoot) {
 		if (theExtensions == null) {

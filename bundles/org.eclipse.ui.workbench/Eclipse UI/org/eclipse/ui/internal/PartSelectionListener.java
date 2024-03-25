@@ -81,9 +81,6 @@ public class PartSelectionListener implements ISelectionListener, INullSelection
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private ISelectionModel getModel() {
 		return new ISelectionModel() {
 

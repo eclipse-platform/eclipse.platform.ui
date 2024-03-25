@@ -10,7 +10,6 @@
  *
  * Contributors:
  *   Ed Merks, IBM - Initial API and implementation (bug 220843)
- *
  */
 package org.eclipse.ui.views.properties;
 

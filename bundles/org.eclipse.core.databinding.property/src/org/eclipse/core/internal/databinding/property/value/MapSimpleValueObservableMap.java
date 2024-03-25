@@ -53,7 +53,6 @@ import org.eclipse.core.internal.databinding.identity.IdentitySet;
  * @param <V>
  *            type of the values in the map
  * @since 1.2
- *
  */
 public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractObservableMap<K, V>
 		implements IPropertyObservable<SimpleValueProperty<S, V>> {
@@ -66,7 +65,7 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 
 	private boolean updating = false;
 
-	private IMapChangeListener<K, I> masterListener = new IMapChangeListener<K, I>() {
+	private IMapChangeListener<K, I> masterListener = new IMapChangeListener<>() {
 		@Override
 		public void handleMapChange(final MapChangeEvent<? extends K, ? extends I> event) {
 			if (!isDisposed()) {
@@ -126,10 +125,6 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 
 	private INativePropertyListener<S> detailListener;
 
-	/**
-	 * @param map
-	 * @param valueProperty
-	 */
 	public MapSimpleValueObservableMap(IObservableMap<K, I> map, SimpleValueProperty<S, V> valueProperty) {
 		super(map.getRealm());
 		this.masterMap = map;

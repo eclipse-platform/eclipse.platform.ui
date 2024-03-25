@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -69,10 +69,6 @@ public class NewStylePage extends FormPage {
 	private static final String[] MESSAGE_NAMES = { "text", "info", "warning",
 			"error" };
 
-	/**
-	 * @param id
-	 * @param title
-	 */
 	public NewStylePage(FormEditor editor) {
 		super(editor, "newStyle", "New Style");
 	}
@@ -304,8 +300,7 @@ public class NewStylePage extends FormPage {
 		Control[] children = client.getChildren();
 		ArrayList<Button> buttons = new ArrayList<>();
 		for (Control element : children) {
-			if (element instanceof Button) {
-				Button button = (Button) element;
+			if (element instanceof Button button) {
 				if ((button.getStyle() & SWT.CHECK) != 0 && !button.equals(dbutton)) {
 					buttons.add(button);
 				}
@@ -322,8 +317,8 @@ public class NewStylePage extends FormPage {
 		SelectionAdapter mmListener = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (manageMessage.getSelection() && e.widget instanceof Button)
-					addRemoveMessage((Button) e.widget, form.getMessageManager());
+				if (manageMessage.getSelection() && e.widget instanceof Button buttom)
+					addRemoveMessage(buttom, form.getMessageManager());
 			}
 		};
 		for (Button checkbox : checkboxes)

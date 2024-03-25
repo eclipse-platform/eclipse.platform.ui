@@ -257,11 +257,6 @@ public class SizeCache {
 	 * Compute the control's size, and ensure that non-default hints are returned
 	 * verbatim (this tries to compensate for SWT's hints, which aren't really the
 	 * outer width of the control).
-	 *
-	 * @param control
-	 * @param widthHint
-	 * @param heightHint
-	 * @return
 	 */
 	private Point computeSize(Control control, int widthHint, int heightHint) {
 		int adjustedWidthHint = widthHint == SWT.DEFAULT ? SWT.DEFAULT : Math.max(0, widthHint - widthAdjustment);
@@ -297,9 +292,6 @@ public class SizeCache {
 	 * value of false may decrease performance, but incorrectly returning a value of
 	 * true will generate incorrect layouts... so always return false if unsure.
 	 * </p>
-	 *
-	 * @param control
-	 * @return
 	 */
 	static boolean independentLengthAndWidth(Control control) {
 		if (control == null) {
@@ -327,8 +319,6 @@ public class SizeCache {
 	 * into the given control's computeSize(...) method. This tries to compensate
 	 * for bug 46112. To be removed once SWT provides an "official" way to compute
 	 * one dimension of a control's size given the other known dimension.
-	 *
-	 * @param control
 	 */
 	private void computeHintOffset(Control control) {
 		if (control instanceof Composite) {
@@ -356,9 +346,6 @@ public class SizeCache {
 	 * but to be safe they will only be added to the list once the property has been
 	 * confirmed.
 	 * </p>
-	 *
-	 * @param control
-	 * @return
 	 */
 	private static boolean isPreferredWidthMaximum(Control control) {
 		return (control instanceof ToolBar

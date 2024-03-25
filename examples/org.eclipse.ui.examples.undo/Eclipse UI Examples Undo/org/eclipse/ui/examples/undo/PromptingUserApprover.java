@@ -34,7 +34,7 @@ import org.eclipse.ui.examples.undo.preferences.PreferenceConstants;
  */
 public final class PromptingUserApprover implements IOperationApprover {
 
-	private IUndoContext context;
+	private final IUndoContext context;
 
 	/*
 	 * Create the operation approver.

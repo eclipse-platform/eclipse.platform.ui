@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -40,8 +41,8 @@ import org.eclipse.swt.widgets.Widget;
  * with a domain-specific content provider, label provider, element filter (optional),
  * and element sorter (optional).
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class CheckboxTableViewer extends TableViewer implements ICheckable {
 
 	/**

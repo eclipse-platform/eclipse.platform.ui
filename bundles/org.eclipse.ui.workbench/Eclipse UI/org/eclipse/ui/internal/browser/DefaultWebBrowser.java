@@ -41,9 +41,6 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 
 	/**
 	 * Creates the browser instance.
-	 *
-	 * @param support
-	 * @param id
 	 */
 	public DefaultWebBrowser(DefaultWorkbenchBrowserSupport support, String id) {
 		super(id);
@@ -70,7 +67,7 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 			Program.launch(localHref);
 		} else if (Util.isMac()) {
 			try {
-				Runtime.getRuntime().exec("/usr/bin/open " + localHref); //$NON-NLS-1$
+				Runtime.getRuntime().exec(new String[] { "/usr/bin/open", localHref }); //$NON-NLS-1$
 			} catch (IOException e) {
 				throw new PartInitException(WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser, e);
 			}
@@ -85,7 +82,8 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 						 */
 						String encodedLocalHref = urlEncodeForSpaces(localHref.toCharArray());
 						if (webBrowserOpened) {
-							Runtime.getRuntime().exec(webBrowser + " -remote openURL(" + encodedLocalHref + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+							Runtime.getRuntime()
+									.exec(new String[] { webBrowser, "-remote", "openURL(" + encodedLocalHref + ")" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						} else {
 							Process p = openWebBrowser(encodedLocalHref);
 							webBrowserOpened = true;
@@ -117,7 +115,6 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 	/**
 	 * This method encodes the url, removes the spaces from the url and replaces the
 	 * same with <code>"%20"</code>. This method is required to fix Bug 77840.
-	 *
 	 */
 	private String urlEncodeForSpaces(char[] input) {
 		StringBuilder retu = new StringBuilder(input.length);
@@ -137,7 +134,7 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 		if (webBrowser == null) {
 			try {
 				webBrowser = "firefox"; //$NON-NLS-1$
-				p = Runtime.getRuntime().exec(webBrowser + "  " + href); //$NON-NLS-1$ ;
+				p = Runtime.getRuntime().exec(new String[] { webBrowser, href });
 			} catch (IOException e) {
 				p = null;
 				webBrowser = "mozilla"; //$NON-NLS-1$
@@ -146,7 +143,7 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 
 		if (p == null) {
 			try {
-				p = Runtime.getRuntime().exec(webBrowser + " " + href); //$NON-NLS-1$ ;
+				p = Runtime.getRuntime().exec(new String[] { webBrowser, href });
 			} catch (IOException e) {
 				p = null;
 				webBrowser = "netscape"; //$NON-NLS-1$
@@ -155,7 +152,7 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 
 		if (p == null) {
 			try {
-				p = Runtime.getRuntime().exec(webBrowser + " " + href); //$NON-NLS-1$ ;
+				p = Runtime.getRuntime().exec(new String[] { webBrowser, href });
 			} catch (IOException e) {
 				p = null;
 				throw e;

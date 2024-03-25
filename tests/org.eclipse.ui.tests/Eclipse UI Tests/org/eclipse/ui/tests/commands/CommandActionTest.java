@@ -34,7 +34,6 @@ import org.junit.Test;
 
 /**
  * @since 3.3
- *
  */
 public class CommandActionTest {
 	// you can find these commands in org.eclipse.ui.tests/plugin.xml

@@ -103,9 +103,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
-/**
- *
- */
 public class E4Application implements IApplication {
 
 	private static final String PLUGIN_ID = "org.eclipse.e4.ui.workbench.swt"; //$NON-NLS-1$
@@ -372,10 +369,6 @@ public class E4Application implements IApplication {
 		return (MApplication) resource.getContents().get(0);
 	}
 
-	/**
-	 * @param appContext
-	 * @return
-	 */
 	private URI determineApplicationModelURI(IApplicationContext appContext) {
 		Optional<String> appModelPath = getArgValue(IWorkbench.XMI_URI_ARG, appContext, false);
 
@@ -694,23 +687,12 @@ public class E4Application implements IApplication {
 			return;
 		}
 
-		OutputStream output = null;
-		try {
-			String versionLine = WORKSPACE_VERSION_KEY + '=' + WORKSPACE_VERSION_VALUE;
-
-			output = new FileOutputStream(versionFile);
+		String versionLine = WORKSPACE_VERSION_KEY + '=' + WORKSPACE_VERSION_VALUE;
+		try (OutputStream output = new FileOutputStream(versionFile)) {
 			output.write(versionLine.getBytes(StandardCharsets.UTF_8));
 		} catch (IOException e) {
 			Logger logger = new WorkbenchLogger(PLUGIN_ID);
 			logger.error(e);
-		} finally {
-			try {
-				if (output != null) {
-					output.close();
-				}
-			} catch (IOException e) {
-				// do nothing
-			}
 		}
 	}
 

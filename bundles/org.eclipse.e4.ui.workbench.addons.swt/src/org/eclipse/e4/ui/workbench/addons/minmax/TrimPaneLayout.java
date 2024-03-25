@@ -25,9 +25,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
-/**
- *
- */
 public class TrimPaneLayout extends Layout {
 	private static int BORDER_WIDTH = 4;
 	private static final Rectangle EMPTY_RECT = new Rectangle(0, 0, 0, 0);
@@ -175,9 +172,6 @@ public class TrimPaneLayout extends Layout {
 		resizeInstalled = true;
 	}
 
-	/**
-	 * @param p
-	 */
 	protected void setCursor(Composite composite, Point p) {
 		if (hSizingRect.contains(p)) {
 			composite.setCursor(composite.getDisplay().getSystemCursor(SWT.CURSOR_SIZEWE));

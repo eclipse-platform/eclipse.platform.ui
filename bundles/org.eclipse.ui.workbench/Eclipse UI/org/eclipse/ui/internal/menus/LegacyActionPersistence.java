@@ -150,7 +150,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	/**
 	 * Removes all of the image bindings made by this class, and then clears the
 	 * collection. This should be called before every read.
-	 *
 	 */
 	private void clearImages() {
 		// TODO Implement

@@ -52,7 +52,6 @@ public class ValueChangeEventTracker<T> implements IValueChangeListener<T> {
 	/**
 	 * Convenience method to register a new listener.
 	 *
-	 * @param observable
 	 * @return tracker
 	 */
 	public static <T> ValueChangeEventTracker<T> observe(IObservableValue<T> observable) {

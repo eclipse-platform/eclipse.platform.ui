@@ -1386,7 +1386,6 @@ public class ContentProposalAdapter {
 	 *            <code>null</code> and the keyStroke value is
 	 *            <code>null</code>, then all alphanumeric characters will
 	 *            auto-activate content proposal.
-	 *
 	 */
 	public void setAutoActivationCharacters(char[] autoActivationCharacters) {
 		if (autoActivationCharacters == null) {
@@ -1564,7 +1563,6 @@ public class ContentProposalAdapter {
 	 *            <code>true</code> if the adapter is enabled and responding
 	 *            to user input, <code>false</code> if it is ignoring user
 	 *            input.
-	 *
 	 */
 	public void setEnabled(boolean enabled) {
 		// If we are disabling it while it's proposing content, close the

@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.keys.FormalKeyFormatter;
  * @since 3.0
  * @see org.eclipse.ui.keys.IKeyFormatter
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2024-03")
 public final class KeyFormatterFactory {
 	private static final IKeyFormatter COMPACT_KEY_FORMATTER = new CompactKeyFormatter();
 

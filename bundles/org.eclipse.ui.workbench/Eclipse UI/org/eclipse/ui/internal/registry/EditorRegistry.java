@@ -20,6 +20,7 @@ package org.eclipse.ui.internal.registry;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -92,7 +93,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		/**
 		 * Return the objects related to the type.
 		 *
-		 * @param type
 		 * @return the objects related to the type
 		 */
 		public IEditorDescriptor[] getRelatedObjects(IContentType type) {
@@ -113,7 +113,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		/**
 		 * Return the objects related to the filename
 		 *
-		 * @param fileName
 		 * @return the objects related to the filename
 		 */
 		public IEditorDescriptor[] getRelatedObjects(String fileName) {
@@ -182,8 +181,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	/**
 	 * Return an instance of the receiver. Adds listeners into the extension
 	 * registry for dynamic UI purposes.
-	 *
-	 * @param contentTypeManager
 	 */
 	public EditorRegistry(IContentTypeManager contentTypeManager) {
 		super();
@@ -208,7 +205,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 *                          plugin file and built by the registry reader)
 	 * @param extensions        Collection of file extensions the editor applies to
 	 * @param filenames         Collection of filenames the editor applies to
-	 * @param contentTypeVector
 	 * @param bDefault          Indicates whether the editor should be made the
 	 *                          default editor and hence appear first inside a
 	 *                          FileEditorMapping
@@ -694,18 +690,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			return false;
 		}
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		Reader reader = null;
-		FileInputStream stream = null;
-		try {
-			// Get the editors defined in the preferences store
-			String xmlString = store.getString(IPreferenceConstants.EDITORS);
-			if (xmlString == null || xmlString.isEmpty()) {
-				stream = new FileInputStream(
-						workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
-				reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-			} else {
-				reader = new StringReader(xmlString);
-			}
+		// Get the editors defined in the preferences store
+		String xmlString = store.getString(IPreferenceConstants.EDITORS);
+		try (Reader reader = createReader(xmlString, workbenchStatePath, IWorkbenchConstants.EDITOR_FILE_NAME)) {
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
 			// Get the editors and validate each one
 			for (IMemento childMemento : memento.getChildren(IWorkbenchConstants.TAG_DESCRIPTOR)) {
@@ -756,17 +743,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			ErrorDialog.openError((Shell) null, WorkbenchMessages.EditorRegistry_errorTitle,
 					WorkbenchMessages.EditorRegistry_errorMessage, e.getStatus());
 			return false;
-		} finally {
-			try {
-				if (reader != null) {
-					reader.close();
-				} else if (stream != null)
-					stream.close();
-			} catch (IOException ex) {
-				WorkbenchPlugin.log("Error reading editors: Could not close steam", ex); //$NON-NLS-1$
-			}
 		}
-
 		return true;
 	}
 
@@ -794,8 +771,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * @param editorTable The editor table containing the defined editors.
 	 * @param reader      Reader containing the preferences content for the
 	 *                    resources.
-	 *
-	 * @throws WorkbenchException
 	 */
 	public void readResources(Map<String, IEditorDescriptor> editorTable, Reader reader) throws WorkbenchException {
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
@@ -852,11 +827,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		}
 	}
 
-	/**
-	 * @param children
-	 * @param editorTable
-	 * @return
-	 */
 	private List<IEditorDescriptor> getEditorDescriptors(IMemento[] children,
 			Map<String, IEditorDescriptor> editorTable) {
 		if (children == null || children.length == 0) {
@@ -903,18 +873,10 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			return false;
 		}
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		Reader reader = null;
-		FileInputStream stream = null;
-		try {
-			// Get the resource types
-			String xmlString = store.getString(IPreferenceConstants.RESOURCES);
-			if (xmlString == null || xmlString.isEmpty()) {
-				stream = new FileInputStream(
-						workbenchStatePath.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME).toOSString());
-				reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-			} else {
-				reader = new StringReader(xmlString);
-			}
+		// Get the resource types
+		String xmlString = store.getString(IPreferenceConstants.RESOURCES);
+
+		try (Reader reader = createReader(xmlString, workbenchStatePath, IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME)) {
 			// Read the defined resources into the table
 			readResources(editorTable, reader);
 		} catch (IOException e) {
@@ -925,19 +887,20 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			ErrorDialog.openError((Shell) null, WorkbenchMessages.EditorRegistry_errorTitle,
 					WorkbenchMessages.EditorRegistry_errorMessage, e.getStatus());
 			return false;
-		} finally {
-			try {
-				if (reader != null) {
-					reader.close();
-				} else if (stream != null) {
-					stream.close();
-				}
-			} catch (IOException ex) {
-				WorkbenchPlugin.log("Error reading resources: Could not close steam", ex); //$NON-NLS-1$
-			}
 		}
 		return true;
 
+	}
+
+	private Reader createReader(String xmlString, IPath workbenchStatePath, String fileName)
+			throws FileNotFoundException {
+		if (xmlString == null || xmlString.isEmpty()) {
+			return new BufferedReader(new InputStreamReader(
+					new FileInputStream(
+							workbenchStatePath.append(fileName).toOSString()),
+					StandardCharsets.UTF_8));
+		}
+		return new StringReader(xmlString);
 	}
 
 	/**
@@ -1200,7 +1163,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		 * @return the mappings
 		 */
 		public FileEditorMapping[] allMappings() {
-			@SuppressWarnings("unchecked")
 			HashMap<String, FileEditorMapping> merge = (HashMap<String, FileEditorMapping>) defaultMap.clone();
 			merge.putAll(map);
 			Collection<FileEditorMapping> values = merge.values();
@@ -1373,17 +1335,43 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * @since 3.1
 	 */
 	private IEditorDescriptor getEditorForContentType(String filename, IContentType contentType) {
-		IEditorDescriptor desc = null;
-		Object[] contentTypeResults = findRelatedObjects(contentType, filename, relatedRegistry);
-		if (contentTypeResults != null && contentTypeResults.length > 0) {
-			desc = (IEditorDescriptor) contentTypeResults[0];
+		List<IEditorDescriptor> contentTypeResults = findRelatedObjects(contentType, filename, relatedRegistry);
+		if (contentTypeResults.isEmpty()) {
+			return null;
 		}
-		return desc;
+		if (contentTypeResults.size() == 1 || contentType == null) {
+			return contentTypeResults.get(0);
+		}
+		return selectDefaultEditor(contentTypeResults, contentType);
+	}
+
+	/**
+	 * Selects preferred editor from the list, based on user preferences
+	 *
+	 * @param descriptors non empty list with editor descriptors for given type
+	 * @param contentType non null content type
+	 * @return user preferred editor for content type, or just the first editor from
+	 *         given list if no preferences are set
+	 */
+	private IEditorDescriptor selectDefaultEditor(List<IEditorDescriptor> descriptors, IContentType contentType) {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		String key = IPreferenceConstants.DEFAULT_EDITOR_FOR_CONTENT_TYPE + contentType.getId();
+		String defaultEditorId = store.getString(key);
+		IEditorDescriptor descriptor = null;
+		if (defaultEditorId != null && !defaultEditorId.isBlank()) {
+			descriptor = descriptors.stream().filter(d -> defaultEditorId.equals(d.getId())).findFirst().orElse(null);
+		}
+		if (descriptor != null) {
+			// There is some editor set as default for this content type by user
+			return descriptor;
+		}
+		// Just return the first one as before
+		return descriptors.get(0);
 	}
 
 	@Override
 	public IEditorDescriptor[] getEditors(String fileName, IContentType contentType) {
-		return findRelatedObjects(contentType, fileName, relatedRegistry);
+		return findRelatedObjects(contentType, fileName, relatedRegistry).toArray(IEditorDescriptor[]::new);
 	}
 
 	@Override
@@ -1448,12 +1436,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * This method is temporary and exists only to back us off of the
 	 * soon-to-be-removed IContentTypeManager.IRelatedRegistry API.
 	 *
-	 * @param type
-	 * @param fileName
-	 * @param registry
 	 * @return the related objects
 	 */
-	private IEditorDescriptor[] findRelatedObjects(IContentType type, String fileName, RelatedRegistry registry) {
+	private List<IEditorDescriptor> findRelatedObjects(IContentType type, String fileName, RelatedRegistry registry) {
 		List<IEditorDescriptor> allRelated = new ArrayList<>();
 		List<IEditorDescriptor> nonDefaultFileEditors = new ArrayList<>();
 
@@ -1529,6 +1514,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			}
 		}
 
+
 		// add all non-default editors to the list
 		for (IEditorDescriptor editor : nonDefaultFileEditors) {
 			if (editor != null && !allRelated.contains(editor) && !WorkbenchActivityHelper.filterItem(editor)) {
@@ -1536,7 +1522,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			}
 		}
 
-		return allRelated.toArray(new IEditorDescriptor[allRelated.size()]);
+		return allRelated;
 	}
 
 	/**
@@ -1632,8 +1618,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	}
 
 	/**
-	 * @param contentType
-	 * @param editor
 	 * @return whether the association between content-type and editor was defined
 	 *         in user space
 	 */
@@ -1642,10 +1626,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 				&& this.contentTypeToEditorMappingsFromUser.get(contentType).contains(editor);
 	}
 
-	/**
-	 * @param contentType
-	 * @param editor
-	 */
 	public void removeUserAssociation(IContentType contentType, IEditorDescriptor editor) {
 		if (this.contentTypeToEditorMappingsFromUser.containsKey(contentType)) {
 			this.contentTypeToEditorMappingsFromUser.get(contentType).remove(editor);
@@ -1653,10 +1633,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		saveAssociations();
 	}
 
-	/**
-	 * @param contentType
-	 * @param selectedEditor
-	 */
 	public void addUserAssociation(IContentType contentType, IEditorDescriptor selectedEditor) {
 		if (!this.contentTypeToEditorMappingsFromUser.containsKey(contentType)) {
 			this.contentTypeToEditorMappingsFromUser.put(contentType, new LinkedHashSet<>());

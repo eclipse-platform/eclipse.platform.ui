@@ -16,6 +16,7 @@ package org.eclipse.jface.widgets;
 
 import java.util.function.Supplier;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
@@ -29,18 +30,12 @@ import org.eclipse.swt.widgets.Control;
  * @param <F> factory
  * @param <C> control
  *
- * @noextend this class is not intended to be subclassed by clients.
- *
  * @since 3.18
- *
  */
+@NoExtend
 public abstract class AbstractControlFactory<F extends AbstractControlFactory<?, ?>, C extends Control>
 		extends AbstractWidgetFactory<F, C, Composite> {
 
-	/**
-	 * @param factoryClass
-	 * @param controlCreator
-	 */
 	AbstractControlFactory(Class<F> factoryClass, WidgetSupplier<C, Composite> controlCreator) {
 		super(factoryClass, controlCreator);
 	}
@@ -52,9 +47,9 @@ public abstract class AbstractControlFactory<F extends AbstractControlFactory<?,
 	 * setting the tool tip text to an empty string replaces the default, causing no
 	 * tool tip text to be shown.
 	 *
-	 * The mnemonic indicator (character '&') is not displayed in a tool tip. To
-	 * display a single '&' in the tool tip, the character '&' can be escaped by
-	 * doubling it in the string.
+	 * The mnemonic indicator (character '&amp;') is not displayed in a tool tip. To
+	 * display a single '&amp;' in the tool tip, the character '&amp;' can be
+	 * escaped by doubling it in the string.
 	 *
 	 * @param tooltipText the tool tip text
 	 * @return this

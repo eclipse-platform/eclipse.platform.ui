@@ -33,7 +33,6 @@ public class SingleSelectionProperty<S extends ISelectionService, T> extends Sim
 			selection = ((ISelectionService) source).getSelection();
 		}
 		if (selection instanceof IStructuredSelection) {
-			@SuppressWarnings("unchecked")
 			T elem = (T) ((IStructuredSelection) selection).getFirstElement();
 			return elem;
 		}

@@ -42,7 +42,6 @@ import org.eclipse.ui.internal.ide.registry.UnassociatedEditorStrategyRegistry;
 
 /**
  * @since 3.12
- *
  */
 public class ExtendedFileEditorsPreferencePage extends FileEditorsPreferencePage {
 

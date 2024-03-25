@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014 , 2019 Google Inc and others.
+ * Copyright (C) 2014 , 2023 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ package org.eclipse.ui.internal.monitoring;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.PlatformUI;
@@ -29,7 +28,7 @@ import org.eclipse.ui.monitoring.PreferenceConstants;
  */
 public class MonitoringPlugin {
 
-	private static ILog logger = Platform.getLog(MonitoringPlugin.class);
+	private static ILog logger = ILog.of(MonitoringPlugin.class);
 	private static IPreferenceStore store;
 
 	public static void logError(String message, Throwable e) {

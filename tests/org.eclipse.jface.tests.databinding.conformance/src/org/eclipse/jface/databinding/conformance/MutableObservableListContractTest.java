@@ -49,13 +49,10 @@ import org.junit.Test;
  */
 public class MutableObservableListContractTest extends
 		MutableObservableCollectionContractTest {
-	private IObservableCollectionContractDelegate delegate;
+	private final IObservableCollectionContractDelegate delegate;
 
 	private IObservableList list;
 
-	/**
-	 * @param delegate
-	 */
 	public MutableObservableListContractTest(
 			IObservableCollectionContractDelegate delegate) {
 		super(delegate);

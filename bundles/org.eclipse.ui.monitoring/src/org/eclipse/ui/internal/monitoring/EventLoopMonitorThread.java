@@ -18,10 +18,11 @@ package org.eclipse.ui.internal.monitoring;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -251,7 +252,7 @@ public class EventLoopMonitorThread extends Thread {
 	 * Circular buffer recording SWT events. Used for tracing.
 	 */
 	private static class EventHistory {
-		private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
+		private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss.SSS").withZone(ZoneId.systemDefault()); //$NON-NLS-1$
 
 		private static class EventInfo {
 			long timestamp;
@@ -290,7 +291,7 @@ public class EventLoopMonitorThread extends Thread {
 			for (int i = 0; i < size; i++) {
 				int j = (start + i) % buffer.length;
 				EventInfo eventInfo = buffer[j];
-				buf.append(TIME_FORMAT.format(new Date(eventInfo.timestamp)));
+				buf.append(TIME_FORMAT.format(Instant.ofEpochMilli(eventInfo.timestamp)));
 				buf.append(": "); //$NON-NLS-1$
 				switch (eventInfo.eventType) {
 				case SWT.PreEvent:

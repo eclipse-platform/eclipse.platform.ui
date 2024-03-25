@@ -39,7 +39,6 @@ import org.eclipse.ui.internal.WorkbenchImages;
  * <li>It <code>hasCustomFile</code>, in which case the user created a new
  * perspective.</li>
  * </ol>
- *
  */
 public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginContribution {
 

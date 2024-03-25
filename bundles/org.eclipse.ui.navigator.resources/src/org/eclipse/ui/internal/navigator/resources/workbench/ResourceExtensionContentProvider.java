@@ -43,9 +43,6 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 	private static final Object[] NO_CHILDREN = new Object[0];
 	private Viewer viewer;
 
-	/**
-	 *
-	 */
 	public ResourceExtensionContentProvider() {
 		super();
 	}
@@ -89,8 +86,6 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 
 	/**
 	 * Process the resource delta.
-	 *
-	 * @param delta
 	 */
 	@Override
 	protected void processDelta(IResourceDelta delta) {
@@ -291,7 +286,6 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 
 	/**
 	 * Return a runnable for refreshing a resource.
-	 * @param resource
 	 * @return Runnable
 	 */
 	private Runnable getRefreshRunnable(final IResource resource) {
@@ -300,7 +294,6 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 
 	/**
 	 * Run all of the runnables that are the widget updates
-	 * @param runnables
 	 */
 	private void runUpdates(Collection<Runnable> runnables) {
 		for (Runnable runnable : runnables) {

@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.views.log;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
@@ -37,7 +36,7 @@ public class OpenIDELogFileAction extends Action {
 
 	@Override
 	public void run() {
-		IPath logPath = new Path(fView.getLogFile().getAbsolutePath());
+		IPath logPath = IPath.fromOSString(fView.getLogFile().getAbsolutePath());
 		IFileStore fileStore = EFS.getLocalFileSystem().getStore(logPath);
 		if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
 			IWorkbenchWindow ww = PlatformUI.getWorkbench().getActiveWorkbenchWindow();

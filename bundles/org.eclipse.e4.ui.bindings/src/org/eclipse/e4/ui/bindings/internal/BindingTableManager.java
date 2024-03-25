@@ -14,11 +14,11 @@
 
 package org.eclipse.e4.ui.bindings.internal;
 
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
-import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -149,10 +149,6 @@ public class BindingTableManager {
 		return result;
 	}
 
-	/**
-	 * @param currentResult
-	 * @return
-	 */
 	private boolean isMostActiveScheme(Binding currentResult) {
 		if (activeSchemeIds == null || activeSchemeIds.length < 2) {
 			return true;
@@ -236,9 +232,6 @@ public class BindingTableManager {
 		return bindings;
 	}
 
-	/**
-	 * @param activeSchemeIds
-	 */
 	public void setActiveSchemes(String[] activeSchemeIds) {
 		this.activeSchemeIds = activeSchemeIds;
 		BindingTable.BEST_SEQUENCE.setActiveSchemes(activeSchemeIds);

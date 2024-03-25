@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CompositeTest extends CSSSWTTestCase {
 
@@ -63,15 +63,14 @@ public class CompositeTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testCompositeColor() {
+	void testCompositeColor() {
 		Composite compositeToTest = createTestComposite("Composite { background-color: #FF0000; color: #0000FF }");
 		assertEquals(RED, compositeToTest.getBackground().getRGB());
 		assertEquals(BLUE, compositeToTest.getForeground().getRGB());
 	}
 
 	@Test
-
-	public void testCompositeAsInnerClass() {
+	void testCompositeAsInnerClass() {
 		// for inner classes you to use OuterWidget-InnerWidget
 		// see https://wiki.eclipse.org/Eclipse4/RCP/CSS
 		Composite compositeToTest = createTestCompositeAsInnerClass(

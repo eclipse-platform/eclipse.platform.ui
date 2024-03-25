@@ -21,13 +21,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.notifications.NotificationPopup;
 import org.eclipse.jface.notifications.NotificationPopup.Builder;
 import org.eclipse.jface.notifications.internal.CommonImages;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -48,6 +48,7 @@ public class NotificationPopupTest {
 
 	private Display display;
 	private Builder builder;
+	private Shell shell;
 
 	@Before
 	public void setUp() {
@@ -57,6 +58,10 @@ public class NotificationPopupTest {
 
 	@After
 	public void tearDown() {
+		if (shell != null) {
+			shell.close();
+			shell.dispose();
+		}
 		if (!Platform.isRunning()) {
 			if (this.display != null) {
 				this.display.syncExec(() -> this.display.dispose());
@@ -68,7 +73,7 @@ public class NotificationPopupTest {
 	public void createsWithTextAndTitle() {
 		NotificationPopup notication = this.builder.text("This is a test").title("Hello World", false).delay(1).build();
 		notication.open();
-		List<Control> controls = getNotificationPopupControls();
+		List<Control> controls = getNotificationPopupControls(notication);
 
 		assertThat(controls, hasItem(aLabelWith("Hello World")));
 		assertThat(controls, hasItem(aLabelWith("This is a test")));
@@ -79,7 +84,7 @@ public class NotificationPopupTest {
 	public void createsWithCloseButton() {
 		NotificationPopup notication = this.builder.text("This is a test").title("Hello World", true).delay(1).build();
 		notication.open();
-		List<Control> controls = getNotificationPopupControls();
+		List<Control> controls = getNotificationPopupControls(notication);
 
 		assertThat(controls, hasItem(aLabelWith(CommonImages.getImage(CommonImages.NOTIFICATION_CLOSE))));
 		notication.close();
@@ -88,15 +93,14 @@ public class NotificationPopupTest {
 	@Test
 	public void createsWithTextContent() {
 		Text[] text = new Text[1];
-		NotificationPopup notication =
-		this.builder.title("Hello World", false).content(parent -> {
+		NotificationPopup notication = this.builder.title("Hello World", false).content(parent -> {
 			text[0] = new Text(parent, SWT.NONE);
 			text[0].setText("My custom Text");
 			return text[0];
 		}).delay(1).build();
 
 		notication.open();
-		List<Control> controls = getNotificationPopupControls();
+		List<Control> controls = getNotificationPopupControls(notication);
 
 		assertThat(controls, hasItem(is(text[0])));
 		notication.close();
@@ -112,15 +116,28 @@ public class NotificationPopupTest {
 		}, false).delay(1).build();
 
 		notication.open();
-		List<Control> controls = getNotificationPopupControls();
+		List<Control> controls = getNotificationPopupControls(notication);
 		notication.close();
 		assertThat(controls, hasItem(is(text[0])));
 	}
 
-	private List<Control> getNotificationPopupControls() {
-		Shell[] shells = this.display.getShells();
-		Shell shell = shells[shells.length - 1];
-		return getChildrenStream(shell).collect(Collectors.toList());
+	@Test
+	public void createsForShell() {
+		shell = WidgetFactory.shell(SWT.NONE).create(display);
+		this.builder = NotificationPopup.forShell(shell);
+
+		NotificationPopup notication = this.builder.text("This is a test").title("Hello World", false).delay(1).build();
+		notication.open();
+		List<Control> controls = getNotificationPopupControls(notication);
+
+		assertThat(controls, hasItem(aLabelWith("Hello World")));
+		assertThat(controls, hasItem(aLabelWith("This is a test")));
+		notication.close();
+	}
+
+	private List<Control> getNotificationPopupControls(NotificationPopup notication) {
+		Shell shell = notication.getShell();
+		return getChildrenStream(shell).toList();
 	}
 
 	private Stream<Control> getChildrenStream(Control c) {
@@ -140,7 +157,7 @@ public class NotificationPopupTest {
 		return allOf(isA(Label.class), new LabelMatcher(expectedImage));
 	}
 
-	private class LabelMatcher extends BaseMatcher<Label> {
+	private static class LabelMatcher extends BaseMatcher<Label> {
 
 		String expectedText;
 		private Image expectedImage;

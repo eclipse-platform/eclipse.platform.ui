@@ -66,7 +66,6 @@ public final class TableFactory extends AbstractControlFactory<TableFactory, Tab
 	 * Creates a new TableFactory with the given style. Refer to
 	 * {@link Table#Table(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new TableFactory instance
 	 */
 	public static TableFactory newTable(int style) {

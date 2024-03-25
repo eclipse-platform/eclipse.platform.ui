@@ -626,8 +626,6 @@ public class PropertySheetEntry extends EventManager implements IPropertySheetEn
 
 	/**
 	 * Set the descriptor.
-	 *
-	 * @param newDescriptor
 	 */
 	private void setDescriptor(IPropertyDescriptor newDescriptor) {
 		// if our descriptor is changing, we have to get rid
@@ -651,8 +649,6 @@ public class PropertySheetEntry extends EventManager implements IPropertySheetEn
 
 	/**
 	 * Sets the parent of the entry to be propertySheetEntry.
-	 *
-	 * @param propertySheetEntry
 	 */
 	private void setParent(PropertySheetEntry propertySheetEntry) {
 		parent = propertySheetEntry;

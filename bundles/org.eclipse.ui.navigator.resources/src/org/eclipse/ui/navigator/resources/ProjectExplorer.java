@@ -73,13 +73,13 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.views.WorkbenchViewerSetup;
 
 /**
  *
  * @see CommonNavigator
  * @see INavigatorContentService
  * @since 3.2
- *
  */
 @SuppressWarnings("restriction")
 public final class ProjectExplorer extends CommonNavigator implements ISecondarySaveableSource {
@@ -335,6 +335,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 	protected CommonViewer createCommonViewer(Composite aParent) {
 		CommonViewer viewer = super.createCommonViewer(aParent);
 		emptyWorkspaceHelper.setNonEmptyControl(viewer.getControl());
+		WorkbenchViewerSetup.setupViewer(viewer);
 		return viewer;
 	}
 

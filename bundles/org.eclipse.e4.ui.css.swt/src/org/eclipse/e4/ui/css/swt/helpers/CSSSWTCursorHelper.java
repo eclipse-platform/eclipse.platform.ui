@@ -25,7 +25,8 @@ public class CSSSWTCursorHelper {
 	private static final String DEFAULT_CURSOR = "defaultCursor";
 
 	/**
-	 * @see http://www.w3schools.com/css/pr_class_cursor.asp
+	 * @see <a href=
+	 *      "http://www.w3schools.com/css/pr_class_cursor.asp">http://www.w3schools.com/css/pr_class_cursor.asp</a>
 	 */
 	public static Cursor getSWTCursor(CSSValue value, Display display) {
 		if (!(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {

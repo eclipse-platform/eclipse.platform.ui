@@ -351,10 +351,6 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 		mon.done();
 	}
 
-	/**
-	 * @param collection
-	 * @param toAdd
-	 */
 	private static void filteredAdd(LazySortedCollection collection, Object[] toAdd, IFilter filter) {
 		if (filter != AcceptAllFilter.getInstance()) {
 			for (Object object : toAdd) {

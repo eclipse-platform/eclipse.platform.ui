@@ -492,8 +492,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 			/**
 			 * Updates the listeners for the receiver for the event.
-			 *
-			 * @param event
 			 */
 			private void updateFor(IJobChangeEvent event) {
 				if (managedJobs.contains(event.getJob())) {
@@ -542,8 +540,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 	/**
 	 * Refreshes the group when info is sleeping.
-	 *
-	 * @param group
 	 */
 	private void sleepGroup(GroupInfo group, JobInfo info) {
 		for (IJobProgressManagerListener listener : listeners) {
@@ -560,11 +556,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 	/**
 	 * Sets up the image in the image registry.
-	 *
-	 * @param iconsRoot
-	 * @param fileName
-	 * @param key
-	 * @throws MalformedURLException
 	 */
 	private void setUpImage(URL iconsRoot, String fileName, String key) throws MalformedURLException {
 		JFaceResources.getImageRegistry().put(key, ImageDescriptor.createFromURL(new URL(iconsRoot, fileName)));
@@ -616,8 +607,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 	/**
 	 * Adds an IJobProgressManagerListener to listen to the changes.
-	 *
-	 * @param listener
 	 */
 	void addListener(IJobProgressManagerListener listener) {
 		listeners.add(listener);
@@ -625,8 +614,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 	/**
 	 * Removes the supplied IJobProgressManagerListener from the list of listeners.
-	 *
-	 * @param listener
 	 */
 	void removeListener(IJobProgressManagerListener listener) {
 		listeners.remove(listener);
@@ -731,7 +718,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Returns whether or not this job is currently displayable.
 	 *
-	 * @param job
 	 * @param debug if the listener is in debug mode
 	 * @return boolean <code>true</code> if the job is not displayed
 	 */
@@ -742,8 +728,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Returns whether or not we even display this job with debug mode set to debug.
 	 *
-	 * @param job
-	 * @param debug
 	 * @return boolean
 	 */
 	boolean isNeverDisplaying(Job job, boolean debug) {
@@ -793,7 +777,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Returns the image descriptor with the given relative path.
 	 *
-	 * @param source
 	 * @return Image
 	 */
 	Image getImage(ImageData source) {
@@ -854,9 +837,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Shows the busy cursor while the runnable is running. Schedule a job to
 	 * replace it with a progress dialog.
-	 *
-	 * @param dialogWaitRunnable
-	 * @param dialog
 	 */
 	private void busyCursorWhile(Runnable dialogWaitRunnable, ProgressMonitorJobsDialog dialog) {
 		// Create the job that will open the dialog after a delay.
@@ -919,9 +899,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 	/**
 	 * Adds the listener to the family.
-	 *
-	 * @param family
-	 * @param listener
 	 */
 	void addListenerToFamily(Object family, IJobBusyListener listener) {
 		synchronized (familyListeners) {
@@ -936,8 +913,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 	/**
 	 * Removes the listener from all families.
-	 *
-	 * @param listener
 	 */
 	void removeListener(IJobBusyListener listener) {
 		synchronized (familyListeners) {
@@ -957,7 +932,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Returns the listeners for the job.
 	 *
-	 * @param job
 	 * @return Collection of IJobBusyListener
 	 */
 	private Collection<IJobBusyListener> busyListenersForJob(Job job) {
@@ -1081,7 +1055,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Checks the if the job should be removed from the list as it may be stale.
 	 *
-	 * @param job
 	 * @return boolean
 	 */
 	boolean checkForStaleness(Job job) {

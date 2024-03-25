@@ -49,8 +49,6 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 
 	/**
 	 * Set the container resource to be edited.
-	 *
-	 * @param container
 	 */
 	public void setContainer(IContainer container) {
 		resourceFilterGroup.setContainer(container);
@@ -78,9 +76,9 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite dialogArea = (Composite) super.createDialogArea(parent);
-		resourceFilterGroup.createContents(dialogArea);
-		return dialogArea;
+		Composite dialogAreaComposite = (Composite) super.createDialogArea(parent);
+		resourceFilterGroup.createContents(dialogAreaComposite);
+		return dialogAreaComposite;
 	}
 
 	@Override

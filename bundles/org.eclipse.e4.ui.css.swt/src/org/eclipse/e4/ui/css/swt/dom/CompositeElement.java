@@ -26,7 +26,6 @@ import org.w3c.dom.Node;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Composite}.
- *
  */
 public class CompositeElement extends ControlElement implements IStreamingNodeList {
 	private static final String BACKGROUND_OVERRIDDEN_BY_CSS_MARKER = "bgOverriddenByCSS";

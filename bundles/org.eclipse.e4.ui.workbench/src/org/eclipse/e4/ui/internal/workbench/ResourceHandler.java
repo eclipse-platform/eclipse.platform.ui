@@ -19,18 +19,18 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
-import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -92,9 +92,6 @@ public class ResourceHandler implements IModelResourceHandler {
 
 	/**
 	 * Constructor.
-	 *
-	 * @param saveAndRestore
-	 * @param clearPersistedState
 	 */
 	@Inject
 	public ResourceHandler(@Named(IWorkbench.PERSIST_STATE) boolean saveAndRestore,
@@ -294,7 +291,9 @@ public class ResourceHandler implements IModelResourceHandler {
 			// The DataArea.assertLocationInitialized is called by ResourceSetImpl.getResource(URI,
 			// boolean)
 			resource = resourceSet.createResource(uri);
-			resource.load(new URL(uri.toString()).openStream(), resourceSet.getLoadOptions());
+			try (InputStream openStream = new URL(uri.toString()).openStream()) {
+				resource.load(openStream, resourceSet.getLoadOptions());
+			}
 		}
 
 		return resource;
@@ -319,7 +318,9 @@ public class ResourceHandler implements IModelResourceHandler {
 				// PlatformURLPluginConnection which doesn't expose the
 				// last-modification time. So we try to resolve the file through
 				// the bundle to obtain a BundleURLConnection instead.
-				Object[] obj = PlatformURLPluginConnection.parse(url.getFile().trim(), url);
+				@SuppressWarnings("restriction")
+				Object[] obj = org.eclipse.core.internal.runtime.PlatformURLPluginConnection.parse(url.getFile().trim(),
+						url);
 				Bundle b = (Bundle) obj[0];
 				// first try to resolve as an bundle file entry, then as a resource using
 				// the bundle's classpath

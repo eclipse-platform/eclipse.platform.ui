@@ -17,21 +17,20 @@ package org.eclipse.jface.tests.window;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class ApplicationWindowTest extends TestCase {
+public class ApplicationWindowTest {
 
 	private ApplicationWindow window;
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (window != null) {
 			// close the window
 			window.close();
 			window = null;
 		}
-		super.tearDown();
 	}
 
 	private void testBug334093(boolean fork, boolean cancelable) throws Exception {
@@ -64,6 +63,7 @@ public class ApplicationWindowTest extends TestCase {
 		});
 	}
 
+	@Test
 	public void testBug334093() throws Exception {
 		boolean[] options = new boolean[] { true, false };
 		for (boolean forkOption : options) {

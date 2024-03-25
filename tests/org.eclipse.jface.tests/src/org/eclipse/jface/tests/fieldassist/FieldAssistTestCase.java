@@ -34,7 +34,6 @@ import org.junit.Test;
  * pre-configured content assist command adapter should go here.
  *
  * @since 3.6
- *
  */
 public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 	static final String SAMPLE_CONTENT = "s";

@@ -20,7 +20,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -106,11 +106,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
 	/**
 	 * Create an instance of this class
-	 *
-	 * @param mainPage
-	 * @param wizardCategories
-	 * @param primaryWizards
-	 * @param projectsOnly
 	 */
 	public NewWizardNewPage(NewWizardSelectionPage mainPage, IWizardCategory wizardCategories,
 			IWizardDescriptor[] primaryWizards, boolean projectsOnly) {
@@ -202,7 +197,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
 	}
 
 	/**
-	 * @param wizard
 	 * @return whether the given wizard is primary
 	 */
 	private boolean isPrimary(IWizardDescriptor wizard) {
@@ -468,7 +462,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
 		if (wizardCategories != null) {
 			for (String expandedCategoryPath : expandedCategoryPaths) {
-				IWizardCategory category = wizardCategories.findCategory(new Path(expandedCategoryPath));
+				IWizardCategory category = wizardCategories.findCategory(IPath.fromOSString(expandedCategoryPath));
 				if (category != null) {
 					categoriesToExpand.add(category);
 				}
@@ -492,7 +486,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
 	/**
 	 * Set self's widgets to the values that they held last time this page was open
-	 *
 	 */
 	protected void restoreWidgetValues() {
 		expandPreviouslyExpandedCategories();
@@ -502,7 +495,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
 	/**
 	 * Store the current values of self's widgets so that they can be restored in
 	 * the next instance of self
-	 *
 	 */
 	public void saveWidgetValues() {
 		storeExpandedCategories();
@@ -551,7 +543,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 			return;
 		}
 
-		Object selected = wizardCategories.findCategory(new Path(selectedId));
+		Object selected = wizardCategories.findCategory(IPath.fromOSString(selectedId));
 
 		if (selected == null) {
 			selected = wizardCategories.findWizard(selectedId);
@@ -676,9 +668,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
 		return false;
 	}
 
-	/**
-	 * @param selectedObject
-	 */
 	private void updateWizardSelection(IWizardDescriptor selectedObject) {
 		selectedElement = selectedObject;
 		WorkbenchWizardNode selectedNode;

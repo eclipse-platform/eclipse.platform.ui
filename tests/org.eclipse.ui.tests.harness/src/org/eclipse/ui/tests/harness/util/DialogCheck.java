@@ -77,9 +77,6 @@ public class DialogCheck {
 	 *
 	 * @param dialog
 	 *            the test dialog to be verified.
-	 * @param assertion
-	 *            this is the test case object, assertions will be executed on this
-	 *            object.
 	 */
 	public static void assertDialogTexts(Dialog dialog) {
 		assertNotNull(dialog);

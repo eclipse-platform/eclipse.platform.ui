@@ -34,9 +34,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
-/**
- *
- */
 public class BrowserDescriptorDialog extends Dialog {
 	protected IBrowserDescriptorWorkingCopy browser;
 	protected boolean isEdit;

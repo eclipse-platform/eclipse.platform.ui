@@ -57,9 +57,6 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 	private EPartService partService;
 
 	/**
-	 * @param context
-	 * @param modelService
-	 * @param partService
 	 * @param window           the workbench window
 	 * @param dimmedForeground the dimmed foreground color to use for views that are
 	 *                         already open

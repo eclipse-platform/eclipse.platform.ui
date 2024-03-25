@@ -488,7 +488,6 @@ public class DataBindingContext {
 	/**
 	 * Updates all model observable objects to reflect the current state of the
 	 * target observable objects.
-	 *
 	 */
 	public final void updateModels() {
 		for (Binding binding : bindings) {
@@ -499,7 +498,6 @@ public class DataBindingContext {
 	/**
 	 * Updates all target observable objects to reflect the current state of the
 	 * model observable objects.
-	 *
 	 */
 	public final void updateTargets() {
 		for (Binding binding : bindings) {

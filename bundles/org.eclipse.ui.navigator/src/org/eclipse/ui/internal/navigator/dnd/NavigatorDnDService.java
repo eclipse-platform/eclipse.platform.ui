@@ -43,7 +43,6 @@ import org.eclipse.ui.navigator.INavigatorDnDService;
  * </p>
  *
  * @since 3.2
- *
  */
 public class NavigatorDnDService implements INavigatorDnDService {
 

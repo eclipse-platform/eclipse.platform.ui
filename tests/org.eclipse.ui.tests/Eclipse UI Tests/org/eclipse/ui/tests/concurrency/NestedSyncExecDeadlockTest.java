@@ -50,7 +50,7 @@ public class NestedSyncExecDeadlockTest {
 	private IResourceChangeListener listener;
 	private IProject project;
 
-	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	private final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 	public NestedSyncExecDeadlockTest() {
 		super();

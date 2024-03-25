@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.genericeditor" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.ui.genericeditor" id="icons" name="GenericEditorIcons"/>
+      </appinfo>
+      <documentation>
+         The icons extension point provides a way of linking different types of icons to a particular content type.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="icon" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="icon">
+      <annotation>
+         <appinfo>
+            <meta.element labelAttribute="contentType"/>
+         </appinfo>
+         <documentation>
+            The icon to associate with a particular content type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="contentType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The identifier of the content type with which the icons should be associated.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The path to the icon which should be used.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         1.1.500
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         &lt;pre&gt;
+ &lt;extension
+ point=&quot;org.eclipse.ui.genericeditor.icons&quot;&gt;
+  &lt;icon
+  contentType=&quot;org.eclipse.core.runtime.xml&quot;
+  icon=&quot;icons/xml_content.png&quot; /&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;pre&gt;
+ &lt;extension
+ point=&quot;org.eclipse.ui.genericeditor.icons&quot;&gt;
+  &lt;icon
+  contentType=&quot;org.eclipse.core.runtime.text&quot;
+  icon=&quot;platform:/plugin/org.eclipse.ui.test/icons/text_content.png&quot; /&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2019 Lakshminarayana Nekkanti(narayana.nekkanti@gmail.com)
+ 
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License 2.0 which is available at
+  http://www.eclipse.org/legal/epl-2.0.
+ 
+  SPDX-License-Identifier: EPL-2.0 3
+ 
+  Contributor
+  Lakshminarayana Nekkanti - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>

@@ -30,7 +30,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * FiltersContribution is the contribution for the filters menu.
  *
  * @since 3.4
- *
  */
 public class FiltersContribution extends MarkersContribution {
 
@@ -68,8 +67,6 @@ public class FiltersContribution extends MarkersContribution {
 				/**
 				 * Return the menu item listener for selection of a filter.
 				 *
-				 * @param filter
-				 * @param extendedView
 				 * @return Listener
 				 */
 				private Listener getMenuItemListener(final MarkerFieldFilterGroup filter,

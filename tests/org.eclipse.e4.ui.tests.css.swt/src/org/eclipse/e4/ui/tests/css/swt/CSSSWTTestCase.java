@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -28,10 +28,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class CSSSWTTestCase {
 	static final RGB RED = new RGB(255, 0, 0);
@@ -39,8 +37,6 @@ public class CSSSWTTestCase {
 	static final RGB BLUE = new RGB(0, 0, 255);
 	static final RGB WHITE = new RGB(255, 255, 255);
 
-	@Rule
-	public TestName testName = new TestName();
 
 	protected Display display;
 	protected CSSEngine engine;
@@ -59,12 +55,12 @@ public class CSSSWTTestCase {
 
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		display = Display.getDefault();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		if (!display.isDisposed()) {
 			for (Shell shell : display.getShells()) {

@@ -29,8 +29,6 @@ public class SafariBrowser extends DefaultBrowser {
 	/**
 	 * Creates the final command to launch.
 	 *
-	 * @param path
-	 * @param url
 	 * @return String[]
 	 */
 	@Override

@@ -12,7 +12,6 @@ package org.eclipse.urischeme.internal.registration;
 
 /**
  * Interface for executing processes on operating system level
- *
  */
 public interface IProcessExecutor {
 

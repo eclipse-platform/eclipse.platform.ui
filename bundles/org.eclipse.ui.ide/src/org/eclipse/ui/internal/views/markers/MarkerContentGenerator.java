@@ -58,7 +58,6 @@ import org.eclipse.ui.views.markers.internal.Util;
  * extension point.
  *
  * @since 3.4
- *
  */
 public class MarkerContentGenerator {
 
@@ -90,7 +89,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * focusResources
-	 *
 	 */
 	private IResource[] selectedResources = MarkerSupportInternalUtilities.EMPTY_RESOURCE_ARRAY;
 
@@ -105,8 +103,6 @@ public class MarkerContentGenerator {
 	/**
 	 * Create a new MarkerContentGenerator
 	 *
-	 * @param generatorDescriptor
-	 * @param builder
 	 * @param viewId
 	 * 				needed for backward compatibility
 	 */
@@ -119,8 +115,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Attach the generator to a builder
-	 *
-	 * @param builder
 	 */
 	void setBuilder(CachedMarkerBuilder builder) {
 		this.builder = builder;
@@ -148,7 +142,6 @@ public class MarkerContentGenerator {
 	 * Return whether or not all of {@link MarkerTypesModel} arein the
 	 * selectedTypes.
 	 *
-	 * @param selectedTypes
 	 * @return boolean
 	 */
 	boolean allTypesSelected(Collection<MarkerType> selectedTypes) {
@@ -175,8 +168,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Set the visible fields.
-	 *
-	 * @param visible
 	 */
 	void setVisibleFields(Collection<MarkerField> visible) {
 		MarkerField[] newFields = new MarkerField[visible.size()];
@@ -354,8 +345,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Add group to the enabled filters.
-	 *
-	 * @param group
 	 */
 	void toggleFilter(MarkerFieldFilterGroup group) {
 		Collection<MarkerFieldFilterGroup> enabled = getEnabledFilters();
@@ -371,9 +360,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Update the filters.
-	 *
-	 * @param newFilters
-	 * @param newAndFilters
 	 */
 	void updateFilters(Collection<MarkerFieldFilterGroup> newFilters, boolean newAndFilters) {
 		setAndFilters(newAndFilters);
@@ -385,8 +371,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Set whether the filters are being ANDed or ORed.
-	 *
-	 * @param and
 	 */
 	void setAndFilters(boolean and) {
 		andFilters = and;
@@ -469,8 +453,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Load the settings from the memento.
-	 *
-	 * @param memento
 	 */
 	private void loadFilterSettings(IMemento memento) {
 		if (memento == null) {
@@ -498,8 +480,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Load the filters defined in memento string.
-	 *
-	 * @param mementoString
 	 */
 	private void loadFiltersFrom(String mementoString) {
 		if (mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT)) {
@@ -533,8 +513,6 @@ public class MarkerContentGenerator {
 	 * Load the group with id from the child if there is a matching system group
 	 * registered.
 	 *
-	 * @param child
-	 * @param id
 	 * @return <code>true</code> if a matching group was found
 	 */
 	private boolean loadGroupWithID(IMemento child, String id) {
@@ -553,8 +531,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Load the user supplied filter
-	 *
-	 * @param child
 	 */
 	private void loadUserFilter(IMemento child) {
 		MarkerFieldFilterGroup newGroup = new MarkerFieldFilterGroup(null, this);
@@ -604,8 +580,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Write the settings for the filters to the memento.
-	 *
-	 * @param memento
 	 */
 	private void writeFiltersSettings(XMLMemento memento) {
 		memento.putBoolean(TAG_AND, andFilters());
@@ -653,7 +627,6 @@ public class MarkerContentGenerator {
 	/**
 	 * Get the group called groupName from the receiver
 	 *
-	 * @param groupName
 	 * @return MarkerGroup or <code>null</code>
 	 */
 	MarkerGroup getMarkerGroup(String groupName) {
@@ -713,7 +686,6 @@ public class MarkerContentGenerator {
 	/**
 	 * Return the type for typeId.
 	 *
-	 * @param typeId
 	 * @return {@link MarkerType} or <code>null</code> if it is not found.
 	 */
 	MarkerType getType(String typeId) {
@@ -761,8 +733,6 @@ public class MarkerContentGenerator {
 	 * Update the focus resources from list. If there is an update required
 	 * return <code>true</code>. This method assumes that there are filters on
 	 * resources enabled.
-	 *
-	 * @param elements
 	 */
 	void internalUpdateSelectedElements(Object[] elements) {
 		Collection<IResource> resourceCollection = new ArrayList<>();
@@ -781,7 +751,6 @@ public class MarkerContentGenerator {
 	/**
 	 * Update the receiver for a change in selection.
 	 *
-	 * @param newElements
 	 * @param forceUpdate <code>true</code> if update must be done, <code>false</code> to only update when needed
 	 */
 	void updateSelectedResource(Object[] newElements, boolean forceUpdate) {
@@ -861,7 +830,6 @@ public class MarkerContentGenerator {
 	 *
 	 * @return list of resource we want to collect markers for taking various
 	 *         enabled filters into account.
-	 *
 	 */
 	Collection<IResource> getResourcesForBuild() {
 		currentResources = MarkerResourceUtil.computeResources(
@@ -929,8 +897,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Refresh gathered markers entries
-	 *
-	 * @param monitor
 	 */
 	Collection<MarkerEntry> generateMarkerEntries(IProgressMonitor monitor) {
 		List<MarkerEntry> result = new LinkedList<>();
@@ -946,8 +912,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Refresh gathered markers entries
-	 * @param result
-	 * @param monitor
 	 */
 	boolean generateMarkerEntries(Collection<MarkerEntry> result,IProgressMonitor monitor) {
 		String[] typeIds = getTypes();
@@ -957,10 +921,6 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Gather markers into result.
-	 * @param typeIds
-	 * @param includeSubTypes
-	 * @param result
-	 * @param monitor
 	 */
 	boolean gatherMarkers(String[] typeIds, boolean includeSubTypes,
 			Collection<MarkerEntry> result, IProgressMonitor monitor) {
@@ -998,12 +958,6 @@ public class MarkerContentGenerator {
 	/**
 	 * A helper to the
 	 * {@link #gatherMarkers(String[], boolean, Collection, IProgressMonitor)}
-	 *
-	 * @param resources
-	 * @param typeId
-	 * @param includeSubTypes
-	 * @param result
-	 * @param monitor
 	 */
 	private boolean internalGatherMarkers(Collection<IResource> resources, String typeId,
 			boolean includeSubTypes, Collection<MarkerEntry> result, IProgressMonitor monitor) {

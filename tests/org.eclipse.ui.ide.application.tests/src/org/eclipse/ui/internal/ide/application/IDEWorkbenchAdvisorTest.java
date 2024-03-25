@@ -107,7 +107,6 @@ public class IDEWorkbenchAdvisorTest {
 	 *
 	 * Regression test for bug 501404 Timeout annotation parameter can't be
 	 * used, as it makes test to be executed in non-UI thread.
-	 *
 	 */
 	@Test
 	public void testShutdownWithLockedWorkspace() throws CoreException {
@@ -145,7 +144,6 @@ public class IDEWorkbenchAdvisorTest {
 	 *
 	 * Regression test for bug 501404 Timeout annotation parameter can't be
 	 * used, as it makes test to be executed in non-UI thread.
-	 *
 	 */
 	@Test
 	public void testShutdownWithForeverLockedWorkspace() throws CoreException {

@@ -24,14 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.providers.AbstractCSSPropertyHandlerProvider;
@@ -232,7 +230,7 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 
 	protected void logError(String message) {
 		// we log as an error to ensure it's shown
-		RuntimeLog.log(new Status(IStatus.ERROR, "org.eclipse.e4.ui.css.core", message));
+		ILog.get().error(message);
 	}
 
 	private class DeprecatedPropertyHandlerWrapper implements ICSSPropertyHandler {

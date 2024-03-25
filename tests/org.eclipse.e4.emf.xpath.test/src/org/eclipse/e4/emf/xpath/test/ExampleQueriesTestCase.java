@@ -17,8 +17,8 @@ package org.eclipse.e4.emf.xpath.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 
@@ -79,14 +79,7 @@ public class ExampleQueriesTestCase {
 		assertNotNull(application);
 		assertSame(RootImpl.class, application.getClass());
 
-		try {
-			application = xpathContext.getValue(".[@id='nixda']");
-			fail("This query should fail with JXPathNotFoundException");
-		} catch (JXPathNotFoundException path) {
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
+		assertThrows(JXPathNotFoundException.class, () -> xpathContext.getValue(".[@id='nixda']"));
 
 		application = xpathContext.getValue(".[@id='root']");
 		assertNotNull(application);

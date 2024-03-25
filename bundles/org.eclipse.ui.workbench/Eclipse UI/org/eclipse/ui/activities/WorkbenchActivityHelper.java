@@ -68,7 +68,7 @@ public final class WorkbenchActivityHelper {
 	 *         enablement.
 	 * @see #allowUseOf(ITriggerPoint, Object)
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2024-03")
 	public static boolean allowUseOf(Object object) {
 		return allowUseOf(PlatformUI.getWorkbench().getActivitySupport().getTriggerPointManager()
 				.getTriggerPoint(ITriggerPointManager.UNKNOWN_TRIGGER_POINT_ID), object);
@@ -313,8 +313,7 @@ public final class WorkbenchActivityHelper {
 	public static Set<String> getActivityIdsForCategory(ICategory category) {
 		Set<ICategoryActivityBinding> bindings = category.getCategoryActivityBindings();
 		Set<String> activityIds = new HashSet<>();
-		for (Object name : bindings) {
-			ICategoryActivityBinding binding = (ICategoryActivityBinding) name;
+		for (ICategoryActivityBinding binding : bindings) {
 			activityIds.add(binding.getActivityId());
 		}
 		return activityIds;
@@ -457,8 +456,7 @@ public final class WorkbenchActivityHelper {
 	public static boolean isPartiallyEnabled(IActivityManager activityManager, String categoryId) {
 		Set<String> activityIds = getActivityIdsForCategory(activityManager.getCategory(categoryId));
 		int foundCount = 0;
-		for (Object name : activityIds) {
-			String activityId = (String) name;
+		for (String activityId : activityIds) {
 			if (activityManager.getEnabledActivityIds().contains(activityId)) {
 				foundCount++;
 			}

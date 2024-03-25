@@ -22,7 +22,6 @@ import org.eclipse.ui.navigator.ILinkHelper;
 
 /**
  * @since 3.2
- *
  */
 public class SkeletonLinkHelper implements ILinkHelper {
 

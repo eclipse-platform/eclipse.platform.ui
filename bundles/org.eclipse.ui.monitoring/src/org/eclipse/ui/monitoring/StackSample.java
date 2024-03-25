@@ -31,8 +31,7 @@ public class StackSample {
 	 *
 	 * @param timestamp time in milliseconds since January 1, 1970 UTC when the thread stacks
 	 *     were sampled
-	 * @param traces thread information for either all threads or just the display thread,
-	 *     depending on the value of the {@link PreferenceConstants#DUMP_ALL_THREADS} preference
+	 * @param traces thread information for either all threads or just the display thread
 	 */
 	public StackSample(long timestamp, ThreadInfo[] traces) {
 		this.timestamp = timestamp;

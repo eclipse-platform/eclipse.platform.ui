@@ -40,9 +40,8 @@ public class IntroTests extends DynamicTestCase {
 	private static final String INTRO_ID = "org.eclipse.newIntro1.newIntro1";
 	private IntroDescriptor oldDesc;
 	private IWorkbenchWindow window;
-	/**
-	 * @param testName
-	 */
+	
+
 	public IntroTests() {
 		super(IntroTests.class.getSimpleName());
 	}
@@ -99,10 +98,6 @@ public class IntroTests extends DynamicTestCase {
 		}
 	}
 
-	/**
-	 * @param desc
-	 * @throws CoreException
-	 */
 	private void testIntroProperties(IIntroDescriptor desc) throws CoreException {
 		assertNotNull(desc.getId());
 		try {

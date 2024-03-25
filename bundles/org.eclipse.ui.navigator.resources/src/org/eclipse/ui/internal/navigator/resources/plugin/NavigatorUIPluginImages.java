@@ -18,7 +18,7 @@ import java.net.URL;
 import java.util.Collections;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -47,7 +47,7 @@ public class NavigatorUIPluginImages {
 	// Create the icon location
 	static {
 		String pathSuffix = "icons/full/"; //$NON-NLS-1$
-		fgIconLocation = FileLocator.find(NavigatorPlugin.getDefault().getBundle(), new Path(pathSuffix),
+		fgIconLocation = FileLocator.find(NavigatorPlugin.getDefault().getBundle(), IPath.fromOSString(pathSuffix),
 				Collections.<String, String> emptyMap());
 	}
 

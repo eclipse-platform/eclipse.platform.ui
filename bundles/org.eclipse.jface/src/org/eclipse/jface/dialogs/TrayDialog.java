@@ -59,7 +59,7 @@ public abstract class TrayDialog extends Dialog {
 
 		private final GridData data;
 		private final Shell shell;
-		private final int TRAY_RATIO = 100; // Percentage of extra width devoted to tray when resizing
+		private static final int TRAY_RATIO = 100; // Percentage of extra width devoted to tray when resizing
 		private int remainder = 0; // Used to prevent rounding errors from accumulating
 
 		private ResizeListener(GridData data, Shell shell) {
@@ -193,7 +193,6 @@ public abstract class TrayDialog extends Dialog {
 	 *
 	 * @param container
 	 *            the potential parent
-	 * @param control
 	 * @return boolean <code>true</code> if control is a child of container
 	 */
 	private boolean isContained(Control container, Control control) {

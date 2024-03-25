@@ -37,14 +37,9 @@ public abstract class WidgetDelegatingValueProperty<S extends Widget, T> extends
 				"Widget [" + source.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
-	/**
-	 */
 	public WidgetDelegatingValueProperty() {
 	}
 
-	/**
-	 * @param valueType
-	 */
 	public WidgetDelegatingValueProperty(Object valueType) {
 		super(valueType);
 	}

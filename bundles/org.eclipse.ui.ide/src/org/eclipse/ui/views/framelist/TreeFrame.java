@@ -124,9 +124,9 @@ public class TreeFrame extends Frame {
 	 * @param memento memento to restore elements from
 	 * @return list of restored elements. May be empty.
 	 */
-	private List restoreElements(IMemento memento) {
+	private List<IAdaptable> restoreElements(IMemento memento) {
 		IMemento[] elementMem = memento.getChildren(TAG_ELEMENT);
-		List elements = new ArrayList(elementMem.length);
+		List<IAdaptable> elements = new ArrayList<>(elementMem.length);
 
 		for (IMemento currentMemento : elementMem) {
 			String factoryID = currentMemento.getString(TAG_FACTORY_ID);
@@ -167,14 +167,14 @@ public class TreeFrame extends Frame {
 		}
 		IMemento expandedMem = memento.getChild(TAG_EXPANDED);
 		if (expandedMem != null) {
-			List elements = restoreElements(expandedMem);
+			List<IAdaptable> elements = restoreElements(expandedMem);
 			expandedElements = elements.toArray(new Object[elements.size()]);
 		} else {
 			expandedElements = new Object[0];
 		}
 		IMemento selectionMem = memento.getChild(TAG_SELECTION);
 		if (selectionMem != null) {
-			List elements = restoreElements(selectionMem);
+			List<IAdaptable> elements = restoreElements(selectionMem);
 			selection = new StructuredSelection(elements);
 		} else {
 			selection = StructuredSelection.EMPTY;

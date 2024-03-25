@@ -1,0 +1,36 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (WinNT; I) [Netscape]">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Provides a framework for connecting document regions
+with annotations and for displaying those.
+<h2>
+Package Specification</h2>
+<p><code>IAnnotationModels</code> manage <code>Annotations</code>. 
+  When an annotation model is connected to an <code>IDocument</code>, 
+  any change to the document is reflected in the position of the managed annotations. 
+  Implementers of <code>IAnnotationModelListener</code> 
+  registered with an <code>IAnnotationModel</code> 
+  object get informed about changes of the model in respect to annotations.</p>
+
+
+<!-- ============================================================================================================ -->
+<!-- Below is the package documentation for org.eclipse.jface.text.source from the org.eclipse.jface.text plug-in -->
+<!-- ============================================================================================================ -->
+
+<p><code>ISourceViewer</code> defines the concept of a document based, editable
+viewer supporting visual annotations. <code>ISourceViewer</code> supports document-specific
+and viewer-specific annotations attached to the viewer's input document.
+An <code>ISourceViewer</code> uses an <code>IAnnotationModel</code> to manage annotations
+and to inform implementers of <code>IAnnotationModelListener</code> about changes
+in respect to annotations. An <code>IVerticalRuler</code> represents an <code>IAnnotationModel</code>
+access adapter for an SWT widget capapble of display annotations.&nbsp;
+This package also provides default implementations for all defined interfaces.
+<br></p>
+</body>
+</html>

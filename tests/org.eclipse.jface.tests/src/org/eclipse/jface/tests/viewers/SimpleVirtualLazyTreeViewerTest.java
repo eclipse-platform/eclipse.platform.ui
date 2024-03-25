@@ -15,6 +15,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
+
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -28,6 +32,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests TreeViewer's VIRTUAL support with a lazy content provider.
@@ -38,16 +44,13 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	private static final int NUM_ROOTS = 100;
 	private static final int NUM_CHILDREN = 10;
 
-	private boolean callbacksEnabled = true;
-	private boolean printCallbacks = false;
+	private final boolean callbacksEnabled = true;
+	private final boolean printCallbacks = false;
 	private int offset = 0;
 
 	private int updateElementCallCount = 0;
 
 	private class LazyTreeContentProvider implements ILazyTreeContentProvider {
-		/**
-		 *
-		 */
 		private Object input;
 
 		@Override
@@ -90,10 +93,6 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		}
 	}
 
-	public SimpleVirtualLazyTreeViewerTest(String name) {
-		super(name);
-	}
-
 	public TreeViewer getTreeViewer() {
 		return (TreeViewer) fViewer;
 	}
@@ -109,6 +108,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	 */
 	protected boolean setDataCalled = false;
 
+	@Before
 	@Override
 	public void setUp() {
 		super.setUp();
@@ -130,11 +130,10 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		return treeViewer;
 	}
 
+	@Test
 	public void testCreation() {
-		if (disableTestsBug347491) {
-			System.out.println(getName() + " disabled due to Bug 347491");
-			return;
-		}
+		assumeFalse("disabled due to Bug 347491", disableTestsBug347491);
+		
 		assertTrue("SWT.SetData not received", setDataCalled);
 		processEvents();
 		assertTrue("tree should have items", getTreeViewer().getTree().getItemCount() > 0);
@@ -144,6 +143,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		assertEquals("R-0", getTreeViewer().getTree().getItem(0).getText());
 	}
 
+	@Test
 	public void testExpand() {
 		processEvents();
 		Tree tree = getTreeViewer().getTree();
@@ -176,25 +176,25 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		}
 	}
 
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testSetSorterOnNullInput() {
 		fViewer.setInput(null);
 		fViewer.setSorter(new ViewerSorter());
 	}
 
+	@Test
 	public void testSetComparatorOnNullInput() {
 		fViewer.setInput(null);
 		fViewer.setComparator(new ViewerComparator());
 	}
 
 	/* test TreeViewer.remove(parent, index) */
+	@Test
 	public void testRemoveAt() {
+		assumeFalse("disabled due to Bug 347491", disableTestsBug347491);
 		assertTrue("expected less than " + (NUM_ROOTS / 2) + " but got " + updateElementCallCount,
 				updateElementCallCount < NUM_ROOTS / 2);
-		if (disableTestsBug347491) {
-			System.out.println(getName() + " disabled due to Bug 347491");
-			return;
-		}
 		assertTrue("SWT.SetData not received", setDataCalled);
 		TreeViewer treeViewer = (TreeViewer) fViewer;
 		// correct what the content provider is answering with

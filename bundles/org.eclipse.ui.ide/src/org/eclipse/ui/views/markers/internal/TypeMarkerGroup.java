@@ -28,7 +28,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
  * cannot be expressed currently using the markerSupport extension point.
  *
  * @since 3.4
- *
  */
 public class TypeMarkerGroup extends MarkerGroup {
 
@@ -37,7 +36,6 @@ public class TypeMarkerGroup extends MarkerGroup {
 	 * TypeMarkerField is the MarkerField used for MarkerGroupungs
 	 *
 	 * @since 3.4
-	 *
 	 */
 	class TypeMarkerField extends GroupMarkerField {
 
@@ -88,8 +86,6 @@ public class TypeMarkerGroup extends MarkerGroup {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param name
 	 */
 	public TypeMarkerGroup(String name) {
 		super(null);

@@ -30,9 +30,6 @@ import org.eclipse.core.databinding.observable.ObservableEvent;
  */
 public class ListChangeEvent<E> extends ObservableEvent {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -9154315534258776672L;
 
 	static final Object TYPE = new Object();

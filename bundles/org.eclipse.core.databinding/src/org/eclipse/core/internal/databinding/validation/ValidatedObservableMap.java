@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.IStatus;
  * @param <V>
  *            The value type.
  * @since 3.3
- *
  */
 public class ValidatedObservableMap<K, V> extends ObservableMap<K, V> {
 	private IObservableMap<K, V> target;
@@ -91,10 +90,6 @@ public class ValidatedObservableMap<K, V> extends ObservableMap<K, V> {
 		}
 	};
 
-	/**
-	 * @param target
-	 * @param validationStatus
-	 */
 	public ValidatedObservableMap(final IObservableMap<K, V> target, final IObservableValue<IStatus> validationStatus) {
 		super(target.getRealm(), new HashMap<>(target));
 		Assert.isNotNull(validationStatus,

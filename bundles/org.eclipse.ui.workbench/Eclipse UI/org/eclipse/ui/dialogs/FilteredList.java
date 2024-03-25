@@ -604,8 +604,6 @@ public class FilteredList extends Composite {
 
 		/**
 		 * Update the selection for the supplied indices.
-		 *
-		 * @param indices
 		 */
 		void updateSelection(final int[] indices) {
 			indicesToSelect = indices;
@@ -626,8 +624,6 @@ public class FilteredList extends Composite {
 
 		/**
 		 * Select the supplied indices and notify any listeners
-		 *
-		 * @param indices
 		 */
 		private void selectAndNotify(final int[] indices) {
 			// It is possible that the table was disposed

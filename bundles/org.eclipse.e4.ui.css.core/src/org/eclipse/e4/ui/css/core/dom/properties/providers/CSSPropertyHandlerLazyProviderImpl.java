@@ -88,8 +88,6 @@ AbstractCSSPropertyHandlerProvider {
 	/**
 	 * Register a package path "name.name1." where to search for PropertyHandler
 	 * class
-	 *
-	 * @param packageName
 	 */
 	public void registerPackage(String packageName) {
 		packageNames.add(packageName);
@@ -105,11 +103,6 @@ AbstractCSSPropertyHandlerProvider {
 
 	/**
 	 * Reflexive method that return a property handler class
-	 *
-	 * @param packageName
-	 * @param handlerClassName
-	 * @return
-	 * @throws Exception
 	 */
 	protected ICSSPropertyHandler getCSSPropertyHandler(String packageName,
 			String handlerClassName) throws Exception {
@@ -133,9 +126,6 @@ AbstractCSSPropertyHandlerProvider {
 	 * Return the handler class name corresponding to the property label given
 	 * as argument A Property Handler Class Name is CSSPropertyXXXHandler (like
 	 * CSSPropertyBorderTopColorHandler)
-	 *
-	 * @param property
-	 * @return
 	 */
 	protected String getHandlerClassName(String property) {
 		StringBuilder handlerClassName = new StringBuilder("CSSProperty"); //$NON-NLS-1$

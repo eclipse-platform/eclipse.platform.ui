@@ -49,7 +49,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.AbstractWorkspaceOperation;
@@ -207,10 +206,9 @@ public class WorkspaceOperationsTests extends UITestCase {
 		boolean isValid(IResource parent) throws CoreException {
 			IResource resource = getWorkspaceRoot().findMember(
 					parent.getFullPath().append(name));
-			if (resource == null || !(resource instanceof IFile)) {
+			if (resource == null || !(resource instanceof IFile file)) {
 				return false;
 			}
-			IFile file = (IFile) resource;
 			boolean contentMatch = readContent(file).equals(content);
 			if (file.isLinked()) {
 				contentMatch = contentMatch
@@ -249,10 +247,9 @@ public class WorkspaceOperationsTests extends UITestCase {
 		boolean isValid(IResource parent) throws CoreException {
 			IResource resource = getWorkspaceRoot().findMember(
 					parent.getFullPath().append(name));
-			if (resource == null || !(resource instanceof IFolder)) {
+			if (resource == null || !(resource instanceof IFolder folder)) {
 				return false;
 			}
-			IFolder folder = (IFolder) resource;
 			if (folder.isLinked()) {
 				if (!folder.getLocationURI().equals(location)) {
 					return false;
@@ -317,10 +314,9 @@ public class WorkspaceOperationsTests extends UITestCase {
 		boolean isValid(IResource parent) throws CoreException {
 			IResource resource = getWorkspaceRoot().findMember(
 					parent.getFullPath().append(name));
-			if (resource == null || !(resource instanceof IProject)) {
+			if (resource == null || !(resource instanceof IProject project)) {
 				return false;
 			}
-			IProject project = (IProject) resource;
 			// Must open it to validate the content
 			boolean open = project.isOpen();
 			if (!open) {
@@ -502,14 +498,14 @@ public class WorkspaceOperationsTests extends UITestCase {
 
 	private ResourceSnapshot snapshotFromResource(IResource resource)
 			throws CoreException {
-		if (resource instanceof IFile) {
-			return new FileSnapshot((IFile) resource);
+		if (resource instanceof IFile file) {
+			return new FileSnapshot(file);
 		}
-		if (resource instanceof IFolder) {
-			return new FolderSnapshot((IFolder) resource);
+		if (resource instanceof IFolder folder) {
+			return new FolderSnapshot(folder);
 		}
-		if (resource instanceof IProject) {
-			return new ProjectSnapshot((IProject) resource);
+		if (resource instanceof IProject project) {
+			return new ProjectSnapshot(project);
 		}
 		fail("Unknown resource type");
 		// making compiler happy
@@ -1075,7 +1071,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 	public void testProjectRenameUndoRedo() throws ExecutionException,
 			CoreException {
 		MoveResourcesOperation op = new MoveResourcesOperation(testProject,
-				new Path(TEST_NEWPROJECT_NAME), "testProjectRename");
+				IPath.fromOSString(TEST_NEWPROJECT_NAME), "testProjectRename");
 		ProjectSnapshot snap = new ProjectSnapshot(testProject);
 		execute(op);
 		IProject renamedProject = getWorkspaceRoot().getProject(
@@ -1205,7 +1201,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("Folder deletion failed", folder.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFOLDER_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFOLDER_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(path));
@@ -1232,7 +1228,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("Folder deletion failed", folder.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFOLDER_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFOLDER_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testFolder.getFullPath().append(path));
@@ -1306,7 +1302,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("Folder deletion failed", folder.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFOLDER_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFOLDER_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(path));
@@ -1599,7 +1595,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("File deletion failed", file.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFILE_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFILE_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(path));
@@ -1629,7 +1625,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("File deletion failed", file.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFILE_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFILE_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testSubFolder.getFullPath().append(path));
@@ -1685,7 +1681,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 		assertFalse("File deletion failed", file.exists());
 		// Ensure all created parents are gone, too
-		IPath path = new Path(TEST_NEWNESTEDFILE_NAME);
+		IPath path = IPath.fromOSString(TEST_NEWNESTEDFILE_NAME);
 		path.removeLastSegments(path.segmentCount() - 1);
 		IFolder parent = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(path));

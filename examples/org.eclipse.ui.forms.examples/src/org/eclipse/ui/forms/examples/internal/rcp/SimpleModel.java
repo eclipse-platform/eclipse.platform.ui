@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class SimpleModel {
-	private ArrayList<IModelListener> modelListeners;
+	private final ArrayList<IModelListener> modelListeners;
 	private ArrayList<NamedObject> objects;
 	public SimpleModel() {
 		modelListeners = new ArrayList<>();

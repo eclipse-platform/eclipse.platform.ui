@@ -28,13 +28,9 @@ import org.eclipse.core.databinding.observable.ObservableEvent;
  * @param <V>
  *            type of the values in the map
  * @since 1.0
- *
  */
 public class MapChangeEvent<K, V> extends ObservableEvent {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -8092347212410548463L;
 	static final Object TYPE = new Object();
 

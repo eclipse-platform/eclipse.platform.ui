@@ -44,7 +44,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * Preference page that allows to enable auto-save for textual editors.
  *
  * @since 3.12
- *
  */
 public class AutoSavePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 

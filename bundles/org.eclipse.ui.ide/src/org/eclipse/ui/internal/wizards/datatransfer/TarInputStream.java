@@ -27,10 +27,10 @@ import java.nio.charset.StandardCharsets;
  */
 public class TarInputStream extends FilterInputStream
 {
-	private int nextEntry = 0;
-	private int nextEOF = 0;
-	private int filepos = 0;
-	private int bytesread = 0;
+	private long nextEntry = 0;
+	private long nextEOF = 0;
+	private long filepos = 0;
+	private long bytesread = 0;
 	private TarEntry firstEntry = null;
 	private String longLinkName = null;
 
@@ -38,8 +38,6 @@ public class TarInputStream extends FilterInputStream
 	 * Creates a new tar input stream on the given input stream.
 	 *
 	 * @param in input stream
-	 * @throws TarException
-	 * @throws IOException
 	 */
 	public TarInputStream(InputStream in) throws TarException, IOException {
 		super(in);
@@ -55,8 +53,6 @@ public class TarInputStream extends FilterInputStream
 	 *
 	 * @param in input stream
 	 * @param entry skips to this entry in the file
-	 * @throws TarException
-	 * @throws IOException
 	 */
 	TarInputStream(InputStream in, TarEntry entry) throws TarException, IOException {
 		super(in);
@@ -67,7 +63,6 @@ public class TarInputStream extends FilterInputStream
 	 *  The checksum of a tar file header is simply the sum of the bytes in
 	 *  the header.
 	 *
-	 * @param header
 	 * @return checksum
 	 */
 	private long headerChecksum(byte[] header) {
@@ -81,13 +76,10 @@ public class TarInputStream extends FilterInputStream
 	/**
 	 * Skips ahead to the position of the given entry in the file.
 	 *
-	 * @param entry
 	 * @return false if the entry has already been passed
-	 * @throws TarException
-	 * @throws IOException
 	 */
 	boolean skipToEntry(TarEntry entry) throws TarException, IOException {
-		int bytestoskip = entry.filepos - bytesread;
+		long bytestoskip = entry.filepos - bytesread;
 		if(bytestoskip < 0) {
 			return false;
 		}
@@ -110,7 +102,6 @@ public class TarInputStream extends FilterInputStream
 	/**
 	 * Returns true if the header checksum is correct.
 	 *
-	 * @param header
 	 * @return true if this header has a valid checksum
 	 */
 	private boolean isValidTarHeader(byte[] header) {
@@ -155,8 +146,6 @@ public class TarInputStream extends FilterInputStream
 	 * GNU @LongLink extensions.
 	 *
 	 * @return the next entry in the tar file
-	 * @throws TarException
-	 * @throws IOException
 	 */
 	TarEntry getNextEntryInternal() throws TarException, IOException {
 		byte[] header = new byte[512];
@@ -287,8 +276,6 @@ public class TarInputStream extends FilterInputStream
 	 * a TarEntry object describing it.
 	 *
 	 * @return the next entry in the tar file
-	 * @throws TarException
-	 * @throws IOException
 	 */
 	public TarEntry getNextEntry() throws TarException, IOException {
 		TarEntry entry = getNextEntryInternal();
@@ -298,13 +285,13 @@ public class TarInputStream extends FilterInputStream
 			// We get a file called ././@LongLink which just contains
 			// the real pathname.
 			byte[] longNameData = new byte[(int) entry.getSize()];
-			int bytesread = 0;
-			while (bytesread < longNameData.length) {
-				int cur = read(longNameData, bytesread, longNameData.length - bytesread);
+			int readBytesOfEntry = 0;
+			while (readBytesOfEntry < longNameData.length) {
+				int cur = read(longNameData, readBytesOfEntry, longNameData.length - readBytesOfEntry);
 				if (cur < 0) {
 					throw new IOException("early end of stream"); //$NON-NLS-1$
 				}
-				bytesread += cur;
+				readBytesOfEntry += cur;
 			}
 
 			int pos = 0;
@@ -323,7 +310,7 @@ public class TarInputStream extends FilterInputStream
 			return -1;
 		}
 		if(len > nextEOF) {
-			len = nextEOF;
+			len = (int) nextEOF;
 		}
 		int size = super.read(b, off, len);
 		nextEntry -= size;

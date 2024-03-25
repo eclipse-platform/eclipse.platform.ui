@@ -30,7 +30,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.HandleObjectManager;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -38,7 +40,7 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
-import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.commands.internal.util.Tracing;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -67,8 +69,8 @@ import org.eclipse.jface.util.Util;
  *
  * @since 3.1
  */
-public final class BindingManager extends HandleObjectManager implements
-		IContextManagerListener, ISchemeListener {
+public final class BindingManager extends HandleObjectManager<Scheme>
+		implements IContextManagerListener, ISchemeListener {
 
 	/**
 	 * This flag can be set to <code>true</code> if the binding manager should
@@ -822,6 +824,7 @@ public final class BindingManager extends HandleObjectManager implements
 		while (contextIdItr.hasNext()) {
 			String contextId = (String) contextIdItr.next();
 			Context context = contextManager.getContext(contextId);
+			Objects.requireNonNull(context);
 			try {
 				String parentId = context.getParentId();
 				while (parentId != null) {
@@ -854,21 +857,13 @@ public final class BindingManager extends HandleObjectManager implements
 				contextIdItr.remove();
 
 				// This is a logging optimization, only log the error once.
-				if (context == null || !bindingErrors.contains(context.getId())) {
-					if (context != null) {
-						bindingErrors.add(context.getId());
-					}
+				if (!bindingErrors.contains(context.getId())) {
+					bindingErrors.add(context.getId());
 
 					// now log like you've never logged before!
-					Policy
-							.getLog()
-							.log(
-									new Status(
-											IStatus.ERROR,
-											Policy.JFACE,
-											IStatus.OK,
-											"Undefined context while filtering dialog/window contexts", //$NON-NLS-1$
-											e));
+					Status status = new Status(IStatus.ERROR, Policy.JFACE, IStatus.OK,
+							"Undefined context while filtering dialog/window contexts", e); //$NON-NLS-1$
+					Policy.getLog().log(status);
 				}
 			}
 		}
@@ -1421,7 +1416,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         <code>null</code>.
 	 */
 	public Scheme[] getDefinedSchemes() {
-		return (Scheme[]) definedHandleObjects
+		return definedHandleObjects
 				.toArray(new Scheme[definedHandleObjects.size()]);
 	}
 
@@ -1541,7 +1536,7 @@ public final class BindingManager extends HandleObjectManager implements
 	public Scheme getScheme(final String schemeId) {
 		checkId(schemeId);
 
-		Scheme scheme = (Scheme) handleObjectsById.get(schemeId);
+		Scheme scheme = handleObjectsById.get(schemeId);
 		if (scheme == null) {
 			scheme = new Scheme(schemeId);
 			handleObjectsById.put(schemeId, scheme);
@@ -1848,7 +1843,6 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            Currently ignored.
 	 * @param type
 	 *            The type to look for.
-	 *
 	 */
 	public void removeBindings(final TriggerSequence sequence,
 			final String schemeId, final String contextId, final String locale,
@@ -2088,6 +2082,9 @@ public final class BindingManager extends HandleObjectManager implements
 				conflict = false;
 				continue;
 			} else if (bestMatch.getType() > current.getType()) {
+				continue;
+			} else if (hasDisabledHandler(current) || hasDisabledHandler(bestMatch)) {
+				// at least one of the bindings cannot be handled by its handler in the current context
 				continue;
 			}
 
@@ -2355,5 +2352,19 @@ public final class BindingManager extends HandleObjectManager implements
 			fireBindingManagerChanged(new BindingManagerEvent(this, false,
 					null, false, null, false, false, true));
 		}
+	}
+
+	private static boolean hasDisabledHandler(Binding binding) {
+		ParameterizedCommand parameterizedCommand = binding.getParameterizedCommand();
+		if (parameterizedCommand != null) {
+			Command command = parameterizedCommand.getCommand();
+			if (command != null) {
+				IHandler handler = command.getHandler();
+				if (handler != null) {
+					return !handler.isEnabled();
+				}
+			}
+		}
+		return false;
 	}
 }

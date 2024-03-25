@@ -48,7 +48,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.2
- *
  */
 public interface INavigatorFilterService {
 
@@ -106,7 +105,6 @@ public interface INavigatorFilterService {
 	 *
 	 * @param theFilterIds
 	 *            An array of filter ids to activate.
-	 *
 	 */
 	void setActiveFilterIds(String[] theFilterIds);
 

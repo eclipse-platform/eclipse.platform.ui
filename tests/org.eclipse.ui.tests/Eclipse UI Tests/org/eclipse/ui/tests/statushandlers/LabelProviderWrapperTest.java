@@ -40,13 +40,13 @@ import org.junit.Test;
 
 /**
  * @since 3.5
- *
  */
 public class LabelProviderWrapperTest {
 
 	private LabelProviderWrapper wrapper;
 	private Map<Object, Object> dialogState = new HashMap<>();
 
+	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() throws Exception {
 		dialogState = new HashMap<>();
@@ -119,6 +119,7 @@ public class LabelProviderWrapperTest {
 	/*
 	 *	StatusAdapter contains all information necessary to display the dialog.
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testProvidedText_1(){
 		final String title = "title";

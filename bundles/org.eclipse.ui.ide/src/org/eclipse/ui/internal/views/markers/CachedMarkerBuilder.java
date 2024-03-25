@@ -37,7 +37,6 @@ import org.eclipse.ui.views.markers.internal.MarkerGroup;
  * a generator.
  *
  * @since 3.4
- *
  */
 public class CachedMarkerBuilder {
 
@@ -76,7 +75,6 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Create a new instance of the receiver. Update using the updateJob.
-	 * @param view
 	 */
 	public CachedMarkerBuilder(ExtendedMarkersView view) {
 		active = false;
@@ -186,7 +184,6 @@ public class CachedMarkerBuilder {
 	/**
 	 * Get the sort direction of field
 	 *
-	 * @param field
 	 * @return int one of {@link MarkerComparator#ASCENDING} or
 	 *         {@link MarkerComparator#DESCENDING}
 	 */
@@ -280,8 +277,6 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Save the state of the receiver to memento
-	 *
-	 * @param m
 	 */
 	void saveState(IMemento m) {
 		getComparator().saveState(m);
@@ -294,7 +289,6 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Schedule an update of the markers with a delay.
-	 *
 	 */
 	void scheduleUpdate() {
 		if (active) {
@@ -304,7 +298,6 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Schedule an update of the markers with a delay.
-	 *
 	 */
 	void scheduleUpdate(long delay) {
 		if (active) {
@@ -324,7 +317,6 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Schedule pending updates to happen quickly.
-	 *
 	 */
 	void speedUpPendingUpdates() {
 		if (active) {
@@ -350,8 +342,6 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Categorise by the default setting for contentGenerator.
-	 *
-	 * @param contentGenerator
 	 */
 	private void setDefaultCategoryGroup(MarkerContentGenerator contentGenerator) {
 		String categoryName = contentGenerator.getCategoryName();
@@ -365,8 +355,6 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Set the generator and update the contents.
-	 *
-	 * @param newGenerator
 	 */
 	void setGenerator(MarkerContentGenerator newGenerator) {
 		generator = newGenerator;
@@ -379,8 +367,6 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Set the primary sort field for the receiver.
-	 *
-	 * @param field
 	 */
 	void setPrimarySortField(MarkerField field) {
 		getComparator().setPrimarySortField(field);
@@ -392,8 +378,6 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Set the progress service for the receiver.
-	 *
-	 * @param service
 	 */
 	void setProgressService(IWorkbenchSiteProgressService service) {
 		progressService = service;
@@ -560,7 +544,6 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * @return lastUpdateTime
-	 *
 	 */
 	long getLastUpdateTime() {
 		if (updateJob != null) {
@@ -629,9 +612,6 @@ public class CachedMarkerBuilder {
 		Arrays.fill(this.changeFlags, false);
 	}
 
-	/**
-	 * @param newChangeFlags
-	 */
 	void updateChangeFlags(boolean[] newChangeFlags) {
 		for (int i = 0; i < newChangeFlags.length; i++) {
 			this.changeFlags[i] = this.changeFlags[i] | newChangeFlags[i];
@@ -640,7 +620,6 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Handles an incremental update
-	 * @param update
 	 */
 	void incrementalUpdate(MarkerUpdate update) {
 		synchronized (getUpdateScheduler().getSchedulingLock()) {
@@ -659,7 +638,6 @@ public class CachedMarkerBuilder {
 	/**
 	 * The WorkingSet listener, since marker filters can be scoped to
 	 * workingsets; listen for changes to them.
-	 *
 	 */
 	private class WorkingSetListener implements IPropertyChangeListener{
 		@Override

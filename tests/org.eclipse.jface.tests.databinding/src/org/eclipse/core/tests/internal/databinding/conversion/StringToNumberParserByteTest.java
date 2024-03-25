@@ -18,7 +18,6 @@ import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 
 /**
  * @since 3.2
- *
  */
 public class StringToNumberParserByteTest extends
 		StringToNumberParserTestHarness {

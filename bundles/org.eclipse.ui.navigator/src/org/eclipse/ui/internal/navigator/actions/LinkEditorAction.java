@@ -123,7 +123,6 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 	 * @param aViewer
 	 *            The common viewer instance with a
 	 *            {@link INavigatorContentService}.
-	 * @param linkHelperService
 	 */
 	public LinkEditorAction(CommonNavigator aNavigator, CommonViewer aViewer, LinkHelperService linkHelperService) {
 		super(CommonNavigatorMessages.LinkEditorActionDelegate_0);
@@ -175,9 +174,6 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 
 	}
 
-	/**
-	 *
-	 */
 	public void dispose() {
 		commonNavigator.removePropertyListener(this);
 		if (isChecked()) {
@@ -221,9 +217,6 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 		}
 	}
 
-	/**
-	 * @param toEnableLinking
-	 */
 	private void updateLinkingEnabled(boolean toEnableLinking) {
 		setChecked(toEnableLinking);
 

@@ -18,8 +18,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.junit.Test;
@@ -32,23 +32,18 @@ public abstract class NumberToNumberTestHarness {
 	/**
 	 * Invoked when a to primitive validator is needed.
 	 *
-	 * @param fromType
 	 * @return validator, <code>null</code> if the type does not have a primitive form
 	 */
 	protected abstract IConverter<Object, ? extends Number> doGetToPrimitiveValidator(Class<?> fromType);
 
 	/**
 	 * Invoked when a to boxed validator is needed.
-	 *
-	 * @param fromType
-	 * @return
 	 */
 	protected abstract IConverter<Object, ? extends Number> doGetToBoxedTypeValidator(Class<?> fromType);
 
 	/**
 	 * Invoked when the type is needed.
 	 *
-	 * @param primitive
 	 * @return type, <code>null</code> if the type does not have a primitive form
 	 */
 	protected abstract Class<?> doGetToType(boolean primitive);
@@ -108,11 +103,8 @@ public abstract class NumberToNumberTestHarness {
 			//the number does not have bounds (e.g. BigInteger or BigDecimal)
 			return;
 		}
-		try {
-			doGetToBoxedTypeValidator(Integer.class).convert(outOfRange);
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class,
+				() -> doGetToBoxedTypeValidator(Integer.class).convert(outOfRange));
 	}
 
 	@Test
@@ -124,11 +116,7 @@ public abstract class NumberToNumberTestHarness {
 			return;
 		}
 
-		try {
-			doGetToPrimitiveValidator(Integer.class).convert(null);
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> doGetToPrimitiveValidator(Integer.class).convert(null));
 	}
 
 	@Test
@@ -138,10 +126,6 @@ public abstract class NumberToNumberTestHarness {
 
 	@Test
 	public void testNonNumberThrowsIllegalArgumentException() throws Exception {
-		try {
-			doGetToBoxedTypeValidator(Integer.class).convert("");
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> doGetToBoxedTypeValidator(Integer.class).convert(""));
 	}
 }

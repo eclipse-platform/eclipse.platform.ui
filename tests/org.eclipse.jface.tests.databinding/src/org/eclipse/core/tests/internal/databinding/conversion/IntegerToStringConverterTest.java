@@ -14,25 +14,23 @@
 
 package org.eclipse.core.tests.internal.databinding.conversion;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
+import java.text.NumberFormat;
+
 import org.eclipse.core.internal.databinding.conversion.IntegerToStringConverter;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.text.NumberFormat;
-
-import junit.framework.TestCase;
-
 /**
  * @since 1.1
  */
-public class IntegerToStringConverterTest extends TestCase {
+public class IntegerToStringConverterTest {
 	private NumberFormat integerFormat;
 
-	@Override
 	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-
+	public void setUp() {
 		integerFormat = NumberFormat.getIntegerInstance();
 	}
 
@@ -86,10 +84,6 @@ public class IntegerToStringConverterTest extends TestCase {
 	@Test
 	public void testIllegalArgumentExceptionIfSourceIsNotExpectedType() throws Exception {
 		IntegerToStringConverter converter = IntegerToStringConverter.fromByte(false);
-		try {
-			converter.convert(Integer.valueOf(1));
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> converter.convert(Integer.valueOf(1)));
 	}
 }

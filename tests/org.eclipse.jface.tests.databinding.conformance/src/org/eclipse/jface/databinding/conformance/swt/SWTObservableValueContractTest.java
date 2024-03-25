@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Display;
  * @since 3.2
  */
 public class SWTObservableValueContractTest extends ObservableValueContractTest {
-	private IObservableValueContractDelegate delegate;
+	private final IObservableValueContractDelegate delegate;
 
 	public SWTObservableValueContractTest(
 			IObservableValueContractDelegate delegate) {

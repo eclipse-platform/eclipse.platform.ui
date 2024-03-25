@@ -40,9 +40,6 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 
 	private HashMap<String, WorkingSetDescriptor> workingSetDescriptors = new HashMap<>();
 
-	/**
-	 *
-	 */
 	public WorkingSetRegistry() {
 		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
 		tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));
@@ -51,7 +48,6 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 
 	/**
 	 *
-	 * @return
 	 * @since 3.3
 	 */
 	private IExtensionPoint getExtensionPointFilter() {

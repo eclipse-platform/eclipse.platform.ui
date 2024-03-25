@@ -18,6 +18,7 @@
 package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.JFaceColors;
@@ -138,7 +139,7 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 	@Override
 	protected void okPressed() {
 
-		ArrayList list = new ArrayList();
+		List<String> list = new ArrayList<>();
 		list.add(getProject().getName());
 		list.add(locationArea.getProjectLocation());
 		setResult(list);

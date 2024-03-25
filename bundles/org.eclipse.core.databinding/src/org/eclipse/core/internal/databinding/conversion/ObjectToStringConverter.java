@@ -22,16 +22,10 @@ import org.eclipse.core.databinding.conversion.IConverter;
 public class ObjectToStringConverter implements IConverter<Object, String> {
 	private final Class<?> fromClass;
 
-	/**
-	 *
-	 */
 	public ObjectToStringConverter() {
 		this(Object.class);
 	}
 
-	/**
-	 * @param fromClass
-	 */
 	public ObjectToStringConverter(Class<?> fromClass) {
 		this.fromClass = fromClass;
 	}

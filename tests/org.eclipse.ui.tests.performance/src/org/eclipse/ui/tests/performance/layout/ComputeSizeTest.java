@@ -27,9 +27,9 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
  */
 public class ComputeSizeTest extends BasicPerformanceTest {
 
-	private TestWidgetFactory widgetFactory;
-	private int xIterations = 10;
-	private int yIterations = 10;
+	private final TestWidgetFactory widgetFactory;
+	private final int xIterations = 10;
+	private final int yIterations = 10;
 
 	public ComputeSizeTest(TestWidgetFactory widgetFactory) {
 		super(widgetFactory.getName() + " computeSize");

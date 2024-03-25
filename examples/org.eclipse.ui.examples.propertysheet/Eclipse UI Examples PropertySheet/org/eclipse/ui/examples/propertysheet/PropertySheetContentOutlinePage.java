@@ -29,7 +29,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
  */
 public class PropertySheetContentOutlinePage extends ContentOutlinePage {
 
-	private IAdaptable model;
+	private final IAdaptable model;
 
 	/**
 	 * Create a new instance of the reciver using adapatable

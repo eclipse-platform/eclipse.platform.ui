@@ -37,7 +37,7 @@ public class SelectionProviderView extends ViewPart implements
 
 	public static final String ID_2 = "org.eclipse.ui.tests.SelectionProviderView2";
 
-	private ListenerList<ISelectionChangedListener> selectionChangedListeners = new ListenerList<>();
+	private final ListenerList<ISelectionChangedListener> selectionChangedListeners = new ListenerList<>();
 
 	private ISelection lastSelection = StructuredSelection.EMPTY;
 

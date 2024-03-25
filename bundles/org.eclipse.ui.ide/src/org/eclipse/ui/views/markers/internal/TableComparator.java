@@ -21,7 +21,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
-public class TableComparator extends ViewerComparator implements Comparator {
+public class TableComparator extends ViewerComparator implements Comparator<TableComparator> {
 
 	public static final int MAX_DEPTH = 4;
 
@@ -88,8 +88,6 @@ public class TableComparator extends ViewerComparator implements Comparator {
 
 	/**
 	 * Return a TableSorter based on the supplied fields.
-	 *
-	 * @param sortingFields
 	 */
 	static TableComparator createTableSorter(IField[] sortingFields) {
 		int[] defaultPriorities = new int[sortingFields.length];
@@ -209,10 +207,6 @@ public class TableComparator extends ViewerComparator implements Comparator {
 	 * Compare obj1 and obj2 at depth. If continueSearching continue searching
 	 * below depth to continue the comparison.
 	 *
-	 * @param obj1
-	 * @param obj2
-	 * @param depth
-	 * @param continueSearching
 	 * @return int
 	 */
 	protected int compare(Object obj1, Object obj2, int depth,
@@ -237,7 +231,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 		return fields;
 	}
 
-	private boolean verifyPriorities(int[] priorities) {
+	private static boolean verifyPriorities(int[] priorities) {
 		int length = priorities.length;
 		boolean[] included = new boolean[length];
 		Arrays.fill(included, false);
@@ -254,7 +248,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 		return true;
 	}
 
-	private boolean verifyDirections(int[] directions) {
+	private static boolean verifyDirections(int[] directions) {
 		for (int direction : directions) {
 			if (direction != ASCENDING && direction != DESCENDING) {
 				return false;
@@ -264,7 +258,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 	}
 
 	@Override
-	public int compare(Object o1, Object o2) {
+	public int compare(TableComparator o1, TableComparator o2) {
 		return compare(null, o1, o2);
 	}
 
@@ -343,11 +337,6 @@ public class TableComparator extends ViewerComparator implements Comparator {
 	/**
 	 * Sorts the given elements in-place, modifying the given array from index
 	 * start to index end.
-	 *
-	 * @param viewer
-	 * @param elements
-	 * @param start
-	 * @param end
 	 */
 	public void sort(final Viewer viewer, Object[] elements, int start, int end) {
 		Arrays.sort(elements, start, end, (a, b) -> TableComparator.this.compare(viewer, a, b));

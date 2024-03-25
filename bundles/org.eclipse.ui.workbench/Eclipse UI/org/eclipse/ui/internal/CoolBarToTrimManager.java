@@ -62,7 +62,6 @@ import org.eclipse.ui.menus.CommandContributionItem;
 
 /**
  * @since 3.5
- *
  */
 public class CoolBarToTrimManager extends ContributionManager implements ICoolBarManager2 {
 
@@ -555,7 +554,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public void resetItemOrder() {
-		updateAll(true);
+		updateAll();
 	}
 
 	@Override
@@ -617,10 +616,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 		}
 	}
 
-	/**
-	 * @param force
-	 */
-	public void updateAll(boolean force) {
+	private void updateAll() {
 		final List<MToolBar> children = modelService.findElements(window, null, MToolBar.class, null);
 		for (MToolBar mToolbar : children) {
 			if (mToolbar == null) {

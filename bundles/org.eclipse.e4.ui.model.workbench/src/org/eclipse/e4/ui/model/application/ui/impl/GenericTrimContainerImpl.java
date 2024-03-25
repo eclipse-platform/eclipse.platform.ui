@@ -94,9 +94,10 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 	public void setSide(SideValue newSide) {
 		SideValue oldSide = side;
 		side = newSide == null ? SIDE_EDEFAULT : newSide;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE, oldSide,
 					side));
+		}
 	}
 
 	/**
@@ -170,8 +171,9 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (side: "); //$NON-NLS-1$

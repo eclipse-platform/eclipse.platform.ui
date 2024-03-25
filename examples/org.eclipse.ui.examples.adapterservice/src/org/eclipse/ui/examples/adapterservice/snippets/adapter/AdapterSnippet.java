@@ -14,17 +14,16 @@
 
 package org.eclipse.ui.examples.adapterservice.snippets.adapter;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.ui.examples.adapterservice.snippets.SnippetSetup;
 
+import jakarta.inject.Inject;
+
 /**
  * This snippet demonstrates user of the Adapter service.
- *
  */
 @SuppressWarnings("restriction")
 public class AdapterSnippet implements IApplication{

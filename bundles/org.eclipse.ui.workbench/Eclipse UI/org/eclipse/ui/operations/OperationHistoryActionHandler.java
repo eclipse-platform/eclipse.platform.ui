@@ -421,7 +421,6 @@ public abstract class OperationHistoryActionHandler extends Action
 	 *
 	 * @param prune <code>true</code> if the history should be pruned by the
 	 *              handler, and <code>false</code> if it should not.
-	 *
 	 */
 	public void setPruneHistory(boolean prune) {
 		pruning = prune;

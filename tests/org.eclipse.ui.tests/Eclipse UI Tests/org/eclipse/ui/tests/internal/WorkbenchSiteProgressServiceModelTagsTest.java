@@ -34,7 +34,6 @@ import org.osgi.service.event.EventHandler;
 
 /**
  * @since 3.5
- *
  */
 @RunWith(JUnit4.class)
 public class WorkbenchSiteProgressServiceModelTagsTest extends UITestCase {

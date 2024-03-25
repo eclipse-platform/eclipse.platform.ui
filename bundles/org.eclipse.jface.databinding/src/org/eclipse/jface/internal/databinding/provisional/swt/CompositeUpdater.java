@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Widget;
  * @param <E> type of the elements in the model list
  *
  * @since 1.1
- *
  */
 public abstract class CompositeUpdater<E> {
 
@@ -125,7 +124,6 @@ public abstract class CompositeUpdater<E> {
 	 * {@link #createWidget(int)} if this updater's composite's layout may need to
 	 * be updated.
 	 *
-	 * @param control
 	 * @since 1.2
 	 */
 	protected void requestLayout(Control control) {
@@ -188,7 +186,6 @@ public abstract class CompositeUpdater<E> {
 	}
 
 	/**
-	 * @param position
 	 * @since 1.2
 	 */
 	protected void disposeWidget(int position) {

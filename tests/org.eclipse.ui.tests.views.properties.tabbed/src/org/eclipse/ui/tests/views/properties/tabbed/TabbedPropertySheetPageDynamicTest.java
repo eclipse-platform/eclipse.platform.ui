@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +27,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.model.DynamicTestsColor;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.model.DynamicTestsElement;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.model.DynamicTestsShape;
@@ -31,8 +36,9 @@ import org.eclipse.ui.tests.views.properties.tabbed.dynamic.views.DynamicTestsVi
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.views.DynamicTestsViewContentProvider;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the dynamic tab and section support.
@@ -40,15 +46,14 @@ import junit.framework.TestCase;
  * @author Anthony Hunter
  * @since 3.4
  */
-public class TabbedPropertySheetPageDynamicTest extends TestCase {
+public class TabbedPropertySheetPageDynamicTest {
 
 	private DynamicTestsView dynamicTestsView;
 
 	private DynamicTestsTreeNode[] treeNodes;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws WorkbenchException {
 
 		/**
 		 * Close the existing perspectives.
@@ -84,12 +89,11 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 		DynamicTestsViewContentProvider viewContentProvider = (DynamicTestsViewContentProvider) contentProvider;
 		treeNodes = (DynamicTestsTreeNode[]) viewContentProvider
 				.getInvisibleRoot().getChildren();
-		assertEquals(treeNodes.length, 11);
+		assertEquals(11, treeNodes.length);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() {
 
 		/**
 		 * Bug 175070: Make sure the views have finished painting.
@@ -118,6 +122,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the three blue nodes are selected, two tabs display.
 	 */
+	@Test
 	public void test_BlueStaticContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_STATIC);
@@ -127,6 +132,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the three blue nodes are selected, two tabs display.
 	 */
+	@Test
 	public void test_BlueDynamicTabContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_TABS);
@@ -136,6 +142,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the three blue nodes are selected, two tabs display.
 	 */
+	@Test
 	public void test_BlueDynamicSectionContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_SECTIONS);
@@ -154,7 +161,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 			}
 		}
 		DynamicTestsTreeNode[] selectNodes = blueList.toArray(new DynamicTestsTreeNode[blueList.size()]);
-		assertEquals(blueList.size(), 3);
+		assertEquals(3, blueList.size());
 
 		setSelection(selectNodes);
 
@@ -176,6 +183,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the three triangle nodes are selected, two tabs display.
 	 */
+	@Test
 	public void test_TriangleStaticContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_STATIC);
@@ -185,6 +193,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the three triangle nodes are selected, two tabs display.
 	 */
+	@Test
 	public void test_TriangleDynamicTabContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_TABS);
@@ -194,6 +203,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the three triangle nodes are selected, two tabs display.
 	 */
+	@Test
 	public void test_TriangleDynamicSectionContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_SECTIONS);
@@ -212,7 +222,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 			}
 		}
 		DynamicTestsTreeNode[] selectNodes = triangleList.toArray(new DynamicTestsTreeNode[triangleList.size()]);
-		assertEquals(triangleList.size(), 4);
+		assertEquals(4, triangleList.size());
 
 		setSelection(selectNodes);
 
@@ -234,6 +244,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the black triangle is selected, three tabs display.
 	 */
+	@Test
 	public void test_BlackTriangleStaticContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_STATIC);
@@ -248,6 +259,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the black triangle is selected, four tabs display.
 	 */
+	@Test
 	public void test_BlackTriangleDynamicTabContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_TABS);
@@ -266,6 +278,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the black triangle is selected, three tabs display.
 	 */
+	@Test
 	public void test_BlackTriangleDynamicSectionContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_SECTIONS);
@@ -311,6 +324,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the red star is selected, three tabs display.
 	 */
+	@Test
 	public void test_RedStarStaticContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_STATIC);
@@ -329,6 +343,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the red star is selected, four tabs display.
 	 */
+	@Test
 	public void test_RedStarDynamicTabContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_TABS);
@@ -347,6 +362,7 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	/**
 	 * When the red star is selected, three tabs display.
 	 */
+	@Test
 	public void test_RedStarDynamicSectionContribution() {
 		dynamicTestsView
 				.setContributorId(DynamicTestsView.DYNAMIC_TESTS_VIEW_DYNAMIC_SECTIONS);

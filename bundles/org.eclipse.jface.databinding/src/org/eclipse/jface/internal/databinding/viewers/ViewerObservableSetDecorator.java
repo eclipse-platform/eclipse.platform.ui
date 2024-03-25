@@ -28,10 +28,6 @@ import org.eclipse.jface.viewers.Viewer;
 public class ViewerObservableSetDecorator<E> extends DecoratingObservableSet<E> implements IViewerObservableSet<E> {
 	private final Viewer viewer;
 
-	/**
-	 * @param decorated
-	 * @param viewer
-	 */
 	public ViewerObservableSetDecorator(IObservableSet<E> decorated, Viewer viewer) {
 		super(decorated, true);
 		this.viewer = viewer;

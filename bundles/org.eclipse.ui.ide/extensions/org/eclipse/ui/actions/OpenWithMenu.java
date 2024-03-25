@@ -134,7 +134,7 @@ public class OpenWithMenu extends ContributionItem {
 		if (imageDesc == null) {
 			return null;
 		}
-		return IDEWorkbenchPlugin.getDefault().getResourceManager().createImage(imageDesc);
+		return IDEWorkbenchPlugin.getDefault().getResourceManager().create(imageDesc);
 	}
 
 	/**

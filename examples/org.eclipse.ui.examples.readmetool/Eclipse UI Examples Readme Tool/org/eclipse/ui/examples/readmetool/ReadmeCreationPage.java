@@ -45,7 +45,7 @@ import org.eclipse.ui.ide.IDE;
  * file immediately for editing after creation.
  */
 public class ReadmeCreationPage extends WizardNewFileCreationPage {
-	private IWorkbench workbench;
+	private final IWorkbench workbench;
 
 	// widgets
 	private Button sectionCheckbox;

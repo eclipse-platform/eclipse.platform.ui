@@ -15,6 +15,7 @@
 
 package org.eclipse.ui.internal.commands;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,9 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -77,8 +81,6 @@ public final class CommandImagePersistence extends RegistryPersistence {
 	private static void readImagesFromRegistry(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final CommandImageManager commandImageManager,
 			final ICommandService commandService) {
-		// Undefine all the previous images.
-		commandImageManager.clear();
 
 		final List<IStatus> warningsToLog = new ArrayList<>(1);
 
@@ -124,6 +126,36 @@ public final class CommandImagePersistence extends RegistryPersistence {
 
 		logWarnings(warningsToLog,
 				"Warnings while parsing the images from the 'org.eclipse.ui.commandImages' extension point."); //$NON-NLS-1$
+	}
+
+	private static void readImagesFromApplicationModel(final CommandImageManager commandImageManager) {
+
+		MApplication application = E4Workbench.getServiceContext().get(MApplication.class);
+
+		final List<IStatus> warningsToLog = new ArrayList<>();
+
+		for (MCommand command : application.getCommands()) {
+
+			if (command.getCommandIconURI() != null) {
+				try {
+					registerImage(command, CommandImageManager.TYPE_DEFAULT, commandImageManager,
+							command.getCommandIconURI());
+				} catch (MalformedURLException e) {
+					addWarning(warningsToLog, "Malformed Icon Url: " + e.getMessage(), null, command.getElementId(), //$NON-NLS-1$
+							"iconUri", //$NON-NLS-1$
+							command.getCommandIconURI());
+				}
+			}
+		}
+
+		logWarnings(warningsToLog, "Warnings while processing command images from persisted state"); //$NON-NLS-1$
+	}
+
+	private static void registerImage(MCommand command, int type, CommandImageManager commandImageManager,
+			String iconURI)
+			throws MalformedURLException {
+		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(new URL(iconURI));
+		commandImageManager.bind(command.getElementId(), type, null, imageDescriptor);
 	}
 
 	/**
@@ -187,8 +219,14 @@ public final class CommandImagePersistence extends RegistryPersistence {
 			}
 		}
 
+		// Undefine all the previous images.
+		commandImageManager.clear();
+
 		readImagesFromRegistry(indexedConfigurationElements[INDEX_IMAGES], imageCount, commandImageManager,
 				commandService);
+
+		readImagesFromApplicationModel(commandImageManager);
+
 		// Associate product icon to About command
 		IProduct product = Platform.getProduct();
 		if (product != null) {

@@ -28,7 +28,6 @@ import org.junit.runners.JUnit4;
 /**
  * SessionCreateTest runs the first half of our session
  * presistance tests.
- *
  */
 @RunWith(JUnit4.class)
 public class SessionCreateTest extends UITestCase {

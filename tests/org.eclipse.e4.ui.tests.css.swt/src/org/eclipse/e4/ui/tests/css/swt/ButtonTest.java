@@ -15,8 +15,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
@@ -25,8 +25,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ButtonTest extends CSSSWTTestCase {
 
@@ -52,14 +52,14 @@ public class ButtonTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testColor() {
+	void testColor() {
 		Button buttonToTest = createTestButton("Button { background-color: #FF0000; color: #0000FF }", SWT.CHECK);
 		assertEquals(RED, buttonToTest.getBackground().getRGB());
 		assertEquals(BLUE, buttonToTest.getForeground().getRGB());
 	}
 
 	@Test
-	public void testASpecificColor() {
+	void testASpecificColor() {
 		// #054169 maps to RGB Decimal 5, 65, 105 see https://www.colorhexa.com/054169
 		var RGB_SPECIAL = new RGB(5, 65, 105);
 		Button buttonToTest = createTestButton("Button { background-color: #054169; color: #054169; }", SWT.PUSH);
@@ -68,7 +68,7 @@ public class ButtonTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testFontRegular() {
+	void testFontRegular() {
 		Button buttonToTest = createTestButton("Button { font: Verdana 16px }", SWT.CHECK);
 		assertEquals(1, buttonToTest.getFont().getFontData().length);
 		FontData fontData = buttonToTest.getFont().getFontData()[0];
@@ -78,7 +78,7 @@ public class ButtonTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testFontBold() {
+	void testFontBold() {
 		Button buttonToTest = createTestButton("Button { font: Arial 12px; font-weight: bold }", SWT.CHECK);
 		assertEquals(1, buttonToTest.getFont().getFontData().length);
 		FontData fontData = buttonToTest.getFont().getFontData()[0];
@@ -88,15 +88,16 @@ public class ButtonTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testFontItalic() {
+	void testFontItalic() {
 		Button buttonToTest = createTestButton("Button { font-style: italic }", SWT.CHECK);
 		assertEquals(1, buttonToTest.getFont().getFontData().length);
 		FontData fontData = buttonToTest.getFont().getFontData()[0];
 		assertEquals(SWT.ITALIC, fontData.getStyle());
 	}
 
-	@Ignore
-	public void testSelectedPseudo() {
+	@Disabled
+	@Test
+	void testSelectedPseudo() {
 		Button buttonToTest = createTestButton("Button { color: #FF0000; }\n" + "Button:selected { color: #0000FF; }",
 				SWT.CHECK);
 		assertEquals(RED, buttonToTest.getForeground().getRGB());
@@ -106,7 +107,7 @@ public class ButtonTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testAlignment() {
+	void testAlignment() {
 		Button buttonToTest = createTestButton("Button { swt-alignment: right; }", SWT.CHECK);
 		assertEquals(SWT.RIGHT, buttonToTest.getAlignment());
 
@@ -118,7 +119,7 @@ public class ButtonTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testAlignment2() {
+	void testAlignment2() {
 		Button buttonToTest = createTestButton("Button { swt-alignment: trail; }", SWT.CHECK);
 		assertEquals(SWT.TRAIL, buttonToTest.getAlignment());
 
@@ -127,7 +128,7 @@ public class ButtonTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testArrowAlignment() {
+	void testArrowAlignment() {
 		Button buttonToTest = createTestButton("Button { swt-alignment: up; }", SWT.ARROW);
 		assertEquals(SWT.UP, buttonToTest.getAlignment());
 
@@ -142,7 +143,7 @@ public class ButtonTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void ensurePseudoAttributeAllowsToSelectionPushButton() {
+	void ensurePseudoAttributeAllowsToSelectionPushButton() {
 		Button buttonToTest = createTestButton("Button[style~='SWT.CHECK'] { background-color: #FF0000; color: #0000FF }", SWT.CHECK);
 
 		assertEquals(RED, buttonToTest.getBackground().getRGB());

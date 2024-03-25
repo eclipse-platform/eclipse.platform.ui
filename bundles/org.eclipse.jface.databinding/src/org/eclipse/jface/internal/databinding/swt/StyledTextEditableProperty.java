@@ -18,7 +18,6 @@ import org.eclipse.swt.custom.StyledText;
 
 /**
  * @since 3.3
- *
  */
 public class StyledTextEditableProperty extends WidgetBooleanValueProperty<StyledText> {
 	@Override

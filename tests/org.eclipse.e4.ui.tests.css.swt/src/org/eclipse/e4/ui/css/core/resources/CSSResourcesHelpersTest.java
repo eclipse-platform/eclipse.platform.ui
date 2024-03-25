@@ -16,17 +16,17 @@ package org.eclipse.e4.ui.css.core.resources;
 
 import static org.eclipse.e4.ui.css.core.resources.CSSResourcesHelpers.getCSSFontPropertiesKey;
 import static org.eclipse.e4.ui.css.core.resources.CSSResourcesHelpers.getCSSValueKey;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTHelperTestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.css.CSSPrimitiveValue;
 
 public class CSSResourcesHelpersTest extends CSSSWTHelperTestCase {
 	@Test
-	public void testGetCSSValueKeyWhenFont() {
+	void testGetCSSValueKeyWhenFont() {
 		CSS2FontProperties fontProperties = fontProperties("Arial", 10, null, null);
 		String result = getCSSValueKey(fontProperties);
 		assertNotNull(result);
@@ -34,7 +34,7 @@ public class CSSResourcesHelpersTest extends CSSSWTHelperTestCase {
 	}
 
 	@Test
-	public void testGetCSSValueKeyWhenDefinitionAsFontFamily() {
+	void testGetCSSValueKeyWhenDefinitionAsFontFamily() {
 		CSS2FontProperties fontProperties = fontProperties(addFontDefinitionMarker("symbolicName"), 10, null, null);
 		String result = getCSSValueKey(fontProperties);
 		assertNotNull(result);
@@ -42,7 +42,7 @@ public class CSSResourcesHelpersTest extends CSSSWTHelperTestCase {
 	}
 
 	@Test
-	public void testGetCSSValueKeyWhenRgbAsColorValue() {
+	void testGetCSSValueKeyWhenRgbAsColorValue() {
 		CSSPrimitiveValue colorValue = colorValue("rgb(255,0,0)");
 		String result = getCSSValueKey(colorValue);
 		assertNotNull(result);
@@ -50,7 +50,7 @@ public class CSSResourcesHelpersTest extends CSSSWTHelperTestCase {
 	}
 
 	@Test
-	public void testGetCSSValueKeyWhenDefinitionAsColorValue() {
+	void testGetCSSValueKeyWhenDefinitionAsColorValue() {
 		CSSPrimitiveValue colorValue = colorValue(addColorDefinitionMarker("symbolicName"));
 
 		String result = getCSSValueKey(colorValue);

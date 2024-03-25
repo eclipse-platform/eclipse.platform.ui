@@ -36,7 +36,6 @@ public abstract class BasicUIJob extends Job {
 	 *
 	 * @param name
 	 *            the job name
-	 *
 	 */
 	public BasicUIJob(String name, Display display) {
 		super(name);
@@ -79,7 +78,6 @@ public abstract class BasicUIJob extends Job {
 	/**
 	 * Run the job in the UI Thread.
 	 *
-	 * @param monitor
 	 * @return IStatus
 	 */
 	public abstract IStatus runInUIThread(IProgressMonitor monitor);

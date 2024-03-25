@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Widget;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public final class WidgetSingleSelectionIndexProperty<S extends Widget>
 		extends WidgetDelegatingValueProperty<S, Integer> {
@@ -34,9 +33,6 @@ public final class WidgetSingleSelectionIndexProperty<S extends Widget>
 	private IValueProperty<S, Integer> list;
 	private IValueProperty<S, Integer> table;
 
-	/**
-	 *
-	 */
 	public WidgetSingleSelectionIndexProperty() {
 		super(Integer.TYPE);
 	}

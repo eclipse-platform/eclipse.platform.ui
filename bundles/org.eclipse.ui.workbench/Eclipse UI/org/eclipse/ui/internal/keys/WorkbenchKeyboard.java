@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Listener;
 
 /**
  * @since 3.5
- *
  */
 public class WorkbenchKeyboard {
 	private KeyBindingDispatcher delegate;
@@ -31,10 +30,6 @@ public class WorkbenchKeyboard {
 	static class KeyDownFilter implements Listener {
 		private KeyBindingDispatcher.KeyDownFilter delegate;
 
-		/**
-		 * @param event
-		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-		 */
 		@Override
 		public void handleEvent(Event event) {
 			delegate.handleEvent(event);
@@ -67,7 +62,6 @@ public class WorkbenchKeyboard {
 	}
 
 	/**
-	 * @return
 	 * @see org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher#getKeyDownFilter()
 	 */
 	public KeyDownFilter getKeyDownFilter() {
@@ -75,9 +69,6 @@ public class WorkbenchKeyboard {
 	}
 
 	/**
-	 * @param potentialKeyStrokes
-	 * @param event
-	 * @return
 	 * @see org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher#press(java.util.List,
 	 *      org.eclipse.swt.widgets.Event)
 	 */
@@ -86,7 +77,6 @@ public class WorkbenchKeyboard {
 	}
 
 	/**
-	 * @param context
 	 * @see org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher#setContext(org.eclipse.e4.core.contexts.IEclipseContext)
 	 */
 	public void setContext(IEclipseContext context) {
@@ -97,10 +87,6 @@ public class WorkbenchKeyboard {
 		delegate = kbd;
 	}
 
-	/**
-	 * @param ctrlShiftT
-	 * @return
-	 */
 	public static List<KeyStroke> generatePossibleKeyStrokes(Event event) {
 		return KeyBindingDispatcher.generatePossibleKeyStrokes(event);
 	}

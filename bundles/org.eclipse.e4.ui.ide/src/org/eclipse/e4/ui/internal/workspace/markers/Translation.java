@@ -19,7 +19,6 @@ import java.util.function.Consumer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -46,7 +45,7 @@ public final class Translation {
 	 * Use {@link ILog} of enclosing bundle as {@link CoreException} consumer
 	 */
 	public Translation() {
-		this(e -> Platform.getLog(FrameworkUtil.getBundle(Translation.class)).log(e.getStatus()));
+		this(e -> ILog.of(FrameworkUtil.getBundle(Translation.class)).log(e.getStatus()));
 	}
 
 	/**
@@ -62,7 +61,6 @@ public final class Translation {
 	/**
 	 * Retrieves the value of the {@link IMarker#MESSAGE} attribute of the marker.
 	 *
-	 * @param marker
 	 * @return the optional result
 	 */
 	public Optional<String> message(IMarker marker) {
@@ -82,7 +80,6 @@ public final class Translation {
 	 * Retrieves the value of Translation#NAME_ATTRIBUTE if the marker has it.
 	 * Otherwise use the name of the resource.
 	 *
-	 * @param marker
 	 * @return the optional result
 	 */
 	public Optional<String> name(IMarker marker) {

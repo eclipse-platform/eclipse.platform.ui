@@ -27,8 +27,6 @@ public class Snippet058VistaProgressBars {
 
 	/**
 	 * Open a progress monitor dialog and switch the blocking.
-	 *
-	 * @param args
 	 */
 	public static void main(String[] args) {
 

@@ -591,7 +591,7 @@ If this value is not set the value is ON_ANY
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         The following is an example of a problem filter definition in the marker support. This example only shows java warnings on the selected element and its children and filters out those with the String NON-NLS
+         The following is an example of a problem filter definition in the marker support. This example only shows java warnings on the selected elements and their children and filters out those with the String NON-NLS
 &lt;p&gt;
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.ui.ide.markerSupport&quot;&gt;

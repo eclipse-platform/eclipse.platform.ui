@@ -33,7 +33,6 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
  * @param <V>
  *            type of the values in the map
  * @since 1.2
- *
  */
 public abstract class DelegatingMapProperty<S, K, V> extends MapProperty<S, K, V> {
 	private final Object keyType;

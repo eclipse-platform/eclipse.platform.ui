@@ -112,9 +112,10 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	public void setCoreExpressionId(String newCoreExpressionId) {
 		String oldCoreExpressionId = coreExpressionId;
 		coreExpressionId = newCoreExpressionId;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION_ID,
 					oldCoreExpressionId, coreExpressionId));
+		}
 	}
 
 	/**
@@ -136,9 +137,10 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	public void setCoreExpression(Object newCoreExpression) {
 		Object oldCoreExpression = coreExpression;
 		coreExpression = newCoreExpression;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION,
 					oldCoreExpression, coreExpression));
+		}
 	}
 
 	/**
@@ -224,8 +226,9 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (coreExpressionId: "); //$NON-NLS-1$

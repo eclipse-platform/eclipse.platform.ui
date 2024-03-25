@@ -40,7 +40,6 @@ import org.junit.runners.JUnit4;
 /**
  * @since 3.6
  * @author Prakash G.R.
- *
  */
 @RunWith(JUnit4.class)
 public class ProgressViewTests extends ProgressTestCase {
@@ -206,8 +205,7 @@ public class ProgressViewTests extends ProgressTestCase {
 			if(info instanceof TaskInfo) {
 				// if task info then get the parent and check
 				JobTreeElement parent = info.getParent();
-				if(parent instanceof JobInfo) {
-					JobInfo jobInfo = (JobInfo) parent;
+				if (parent instanceof JobInfo jobInfo) {
 					if (containsJob(jobInfo, job)) {
 						count++;
 					}

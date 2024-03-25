@@ -43,7 +43,6 @@ public class WWinActionBars implements IActionBars2 {
 
 	/**
 	 * Returns the cool bar manager.
-	 *
 	 */
 	@Override
 	public ICoolBarManager getCoolBarManager() {
@@ -91,7 +90,6 @@ public class WWinActionBars implements IActionBars2 {
 
 	/**
 	 * Returns the tool bar manager.
-	 *
 	 */
 	@Override
 	public IToolBarManager getToolBarManager() {

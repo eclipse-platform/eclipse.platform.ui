@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * @since 3.3
- *
  */
 public class PathComparator implements Comparator<IPath> {
 

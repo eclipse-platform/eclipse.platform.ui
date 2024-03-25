@@ -38,10 +38,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -214,27 +213,17 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 
 		// otherwise look for bundle specific dialog settings
 		Bundle bundle = context.getBundle();
-		URL dsURL = FileLocator.find(bundle, new Path(FN_DIALOG_SETTINGS), null);
+		URL dsURL = FileLocator.find(bundle, IPath.fromOSString(FN_DIALOG_SETTINGS), null);
 		if (dsURL == null) {
 			return;
 		}
 
-		InputStream is = null;
-		try {
-			is = dsURL.openStream();
+		try (InputStream is = dsURL.openStream()) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 			dialogSettings.load(reader);
 		} catch (IOException e) {
 			// load failed so ensure we have an empty settings
 			dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
-		} finally {
-			try {
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				// do nothing
-			}
 		}
 	}
 
@@ -277,7 +266,7 @@ public class WorkbenchSWTActivator implements BundleActivator, DebugOptionsListe
 		// However, using it causes problems in the activation order
 		// So, for now, we get it directly.
 		try {
-			return InternalPlatform.getDefault().getStateLocation(context.getBundle(), true);
+			return Platform.getStateLocation(context.getBundle());
 		} catch (IllegalStateException e) {
 			// This occurs if -data=@none is explicitly specified, so ignore
 			// this silently.

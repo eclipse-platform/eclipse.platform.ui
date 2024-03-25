@@ -26,9 +26,6 @@ public class StringToLongValidator extends AbstractStringToNumberValidator {
 	private static final Long MIN = Long.valueOf(Long.MIN_VALUE);
 	private static final Long MAX = Long.valueOf(Long.MAX_VALUE);
 
-	/**
-	 * @param converter
-	 */
 	public StringToLongValidator(NumberFormatConverter<?, ?> converter) {
 		super(converter, MIN, MAX);
 	}

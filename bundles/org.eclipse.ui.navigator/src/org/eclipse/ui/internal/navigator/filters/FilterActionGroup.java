@@ -40,7 +40,6 @@ import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
  * Creates the last 5 filters that were touched as view menu options.
  *
  * @since 3.2
- *
  */
 public class FilterActionGroup extends ActionGroup implements IMementoAware {
 
@@ -137,9 +136,6 @@ public class FilterActionGroup extends ActionGroup implements IMementoAware {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void makeActions() {
 		boolean hideAvailableCustomizationsDialog = viewerDescriptor
 				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG);

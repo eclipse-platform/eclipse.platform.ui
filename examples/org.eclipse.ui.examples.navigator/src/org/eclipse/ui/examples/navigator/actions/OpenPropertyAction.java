@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,7 @@
 package org.eclipse.ui.examples.navigator.actions;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
@@ -36,13 +36,12 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * @since 3.2
- *
  */
 public class OpenPropertyAction extends Action {
 
-	private IWorkbenchPage page;
+	private final IWorkbenchPage page;
 	private PropertiesTreeData data;
-	private ISelectionProvider provider;
+	private final ISelectionProvider provider;
 
 
 	/**
@@ -62,9 +61,8 @@ public class OpenPropertyAction extends Action {
 		if(!selection.isEmpty()) {
 			IStructuredSelection sSelection = (IStructuredSelection) selection;
 			if(sSelection.size() == 1 &&
-				sSelection.getFirstElement() instanceof PropertiesTreeData)
-			{
-				data = ((PropertiesTreeData)sSelection.getFirstElement());
+					sSelection.getFirstElement() instanceof PropertiesTreeData ptData) {
+				data = ptData;
 				return true;
 			}
 		}
@@ -80,9 +78,7 @@ public class OpenPropertyAction extends Action {
 				IFile propertiesFile = data.getFile();
 				IEditorPart editor = IDE.openEditor(page, propertiesFile);
 
-				if (editor instanceof ITextEditor) {
-					ITextEditor textEditor = (ITextEditor) editor;
-
+				if (editor instanceof ITextEditor textEditor) {
 					IDocumentProvider documentProvider =
 						textEditor.getDocumentProvider();
 					IDocument document =
@@ -103,7 +99,7 @@ public class OpenPropertyAction extends Action {
 						((ITextEditor)editor).selectAndReveal(region.getOffset(), region.getLength());
 
 					} catch (BadLocationException e) {
-						Platform.getLog(OpenPropertyAction.class).error("Could not open property!", e); //$NON-NLS-1$
+						ILog.of(OpenPropertyAction.class).error("Could not open property!", e); //$NON-NLS-1$
 						MessageDialog.openError(Display.getDefault().getActiveShell(),
 								"Error Opening Property",  //$NON-NLS-1$
 								"Could not open property!");   //$NON-NLS-1$
@@ -112,7 +108,7 @@ public class OpenPropertyAction extends Action {
 				}
 			}
 		} catch (PartInitException e) {
-			Platform.getLog(OpenPropertyAction.class).error("Could not open property!", e); //$NON-NLS-1$
+			ILog.of(OpenPropertyAction.class).error("Could not open property!", e); //$NON-NLS-1$
 			MessageDialog.openError(Display.getDefault().getActiveShell(),
 					"Error Opening Property",  //$NON-NLS-1$
 					"Could not open property!");   //$NON-NLS-1$

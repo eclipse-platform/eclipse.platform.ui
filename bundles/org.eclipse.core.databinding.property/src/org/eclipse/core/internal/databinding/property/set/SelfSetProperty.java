@@ -27,14 +27,10 @@ import org.eclipse.core.databinding.property.set.SimpleSetProperty;
  * @param <E>
  *            type of the elements in the set
  * @since 3.3
- *
  */
 public final class SelfSetProperty<E> extends SimpleSetProperty<Set<E>, E> {
 	private final Object elementType;
 
-	/**
-	 * @param elementType
-	 */
 	public SelfSetProperty(Object elementType) {
 		this.elementType = elementType;
 	}

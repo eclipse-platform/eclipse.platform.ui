@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services.internal.events;
 
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
@@ -22,8 +24,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UISynchronize;

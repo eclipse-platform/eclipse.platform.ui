@@ -32,10 +32,7 @@ import org.eclipse.ui.forms.widgets.*;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class SecondPage extends FormPage {
-	/**
-	 * @param id
-	 * @param title
-	 */
+
 	public SecondPage(FormEditor editor) {
 		super(editor, "second", "Section Page");
 	}

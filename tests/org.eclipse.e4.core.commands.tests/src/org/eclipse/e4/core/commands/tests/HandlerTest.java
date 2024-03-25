@@ -22,8 +22,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 
-import javax.inject.Named;
-
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.IParameterValues;
@@ -42,6 +40,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.FrameworkUtil;
+
+import jakarta.inject.Named;
 
 public class HandlerTest {
 

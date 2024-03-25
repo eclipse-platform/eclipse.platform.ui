@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.editors">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.editors" id="annotationTypes" name="Annotation Types"/>
+      </appInfo>
+      <documentation>
+         An Annotation is a piece of information attached to a certain region of a text document. New kinds of annotations may be defined using this extension point. Annotations are attached to documents via their annotation model and may be displayed in text editors and views.
+
+Annotation types form a hierarchy: an annotation type may refine another type by specifying it in its &lt;code&gt;super&lt;/code&gt; attribute.
+
+Some annotations serve as the UI counterpart of markers (see &lt;code&gt;org.eclipse.core.resources.IMarker&lt;/code&gt;), while others exist on their own without having a persistable form. The mapping between markers and annotation types is defined by the optional &lt;code&gt;markerType&lt;/code&gt; and &lt;code&gt;markerSeverity&lt;/code&gt; attributes.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="type" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="type">
+      <annotation>
+         <documentation>
+            A marker type definition.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the unique name of this annotation type. This is used whenever an annotation type is referenced, e.g. when specifying an &lt;code&gt;org.eclipse.ui.editors.markerAnnotationSpecification&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="markerType" type="string">
+            <annotation>
+               <documentation>
+                  the marker type that this annotation type corresponds to, if any
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.markers/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="super" type="string">
+            <annotation>
+               <documentation>
+                  the name of the parent type, if this type is a descendant of another annotation type
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors.annotationTypes/type/@name"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="markerSeverity">
+            <annotation>
+               <documentation>
+                  the optional severity of this annotation type, used for mapping an annotation type to a marker. Any out of IMarker.SEVERITY_INFO, IMarker.SEVERITY_WARNING, SEVERITY_ERROR.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="0">
+                  </enumeration>
+                  <enumeration value="1">
+                  </enumeration>
+                  <enumeration value="2">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         This is an excerpt from the plugin.xml for JDT UI, which adds the java compiler error and warning annotations:
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.editors.annotationTypes&quot;&gt;
+      &lt;type
+         name=&quot;org.eclipse.jdt.ui.error&quot;
+         super=&quot;org.eclipse.ui.workbench.texteditor.error&quot;
+         markerType=&quot;org.eclipse.jdt.core.problem&quot;
+         markerSeverity=&quot;2&quot;&gt;
+      &lt;/type&gt;
+      &lt;type
+         name=&quot;org.eclipse.jdt.ui.warning&quot;
+         super=&quot;org.eclipse.ui.workbench.texteditor.warning&quot;
+         markerType=&quot;org.eclipse.jdt.core.problem&quot;
+         markerSeverity=&quot;1&quot;&gt;
+      &lt;/type&gt;
+      &lt;type
+         name=&quot;org.eclipse.jdt.ui.info&quot;
+         super=&quot;org.eclipse.ui.workbench.texteditor.info&quot;
+         markerType=&quot;org.eclipse.jdt.core.problem&quot;
+         markerSeverity=&quot;0&quot;&gt;
+      &lt;/type&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         See the org.eclipse.jface.text.source.Annotation class and the org.eclipse.ui.editors.markerAnnotationSpecification extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2001, 2008 IBM Corporation and others.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

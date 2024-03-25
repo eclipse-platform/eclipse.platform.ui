@@ -14,7 +14,7 @@
 
 package org.eclipse.jface.tests.databinding.viewers;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -56,9 +56,8 @@ public class ViewerSupportTest extends AbstractSWTTestCase {
 
 		oldLog = Policy.getLog();
 		Policy.setLog(status -> {
-			if (status.getException() != null)
-				throw new RuntimeException(status.getException());
-			fail("Unexpected status: " + status);
+			assertNotNull("Unexpected status: " + status, status.getException());
+			throw new RuntimeException(status.getException());
 		});
 
 		oldRunner = SafeRunnable.getRunner();

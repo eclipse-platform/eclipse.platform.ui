@@ -49,7 +49,6 @@ public interface INestable {
 	/**
 	 * Notifies this service that the component within which it exists has become
 	 * active. The service should modify its state as appropriate.
-	 *
 	 */
 	void activate();
 

@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Table;
  * keyboard
  *
  * @since 3.3
- *
  */
 public class TableViewerFocusCellManager extends SWTFocusCellManager {
 	private static final CellNavigationStrategy TABLE_NAVIGATE = new CellNavigationStrategy();

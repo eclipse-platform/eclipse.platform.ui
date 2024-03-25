@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Text;
 /**
  * A simple TreeViewer example to demonstrate the usage of an
  * ILazyContentProvider.
- *
  */
 public class Snippet047VirtualLazyTreeViewer {
 
@@ -40,9 +39,9 @@ public class Snippet047VirtualLazyTreeViewer {
 
 	private long fGlobalChildrenLoaded = 0;
 
-	private TreeViewer fViewer;
+	private final TreeViewer fViewer;
 
-	private Text fText;
+	private final Text fText;
 
 	private class MyContentProvider implements ILazyTreeContentProvider {
 
@@ -67,15 +66,15 @@ public class Snippet047VirtualLazyTreeViewer {
 	}
 
 	public class Node {
-		private int fChildCount;
+		private final int fChildCount;
 
 		public int fChildrenLoaded;
 
 		private Node[] fChildren;
 
-		private int fCounter;
+		private final int fCounter;
 
-		private Node fParent;
+		private final Node fParent;
 
 		public Node(int counter, int childCount, Node parent) {
 			fCounter = counter;
@@ -140,9 +139,6 @@ public class Snippet047VirtualLazyTreeViewer {
 		// at this point the model only contains what is visible on the screen.
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);

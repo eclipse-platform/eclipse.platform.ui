@@ -53,7 +53,7 @@ public class Snippet009TableViewer {
 
 	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
@@ -105,7 +105,7 @@ public class Snippet009TableViewer {
 	 */
 	static class ViewModel {
 		/** The model to bind. */
-		private List<Person> people = new LinkedList<>();
+		private final List<Person> people = new LinkedList<>();
 		{
 			people.add(new Person("Steve Northover"));
 			people.add(new Person("Grant Gayed"));
@@ -123,7 +123,7 @@ public class Snippet009TableViewer {
 
 	/** The GUI view. */
 	static class View {
-		private ViewModel viewModel;
+		private final ViewModel viewModel;
 		private Table committers;
 
 		public View(ViewModel viewModel) {

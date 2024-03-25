@@ -56,12 +56,14 @@ public enum Position {
 	 *         string, or <code>null</code> if none can be found
 	 */
 	public static final Position find(String positionInfo) {
-		if (positionInfo == null || positionInfo.length() <= 0)
+		if (positionInfo == null || positionInfo.length() <= 0) {
 			return null;
+		}
 
 		for (Position position : Position.values()) {
-			if (positionInfo.startsWith(position.prefix))
+			if (positionInfo.startsWith(position.prefix)) {
 				return position;
+			}
 		}
 
 		return null;

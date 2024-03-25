@@ -94,4 +94,12 @@ public class ErrorEditorPart extends EditorPart {
 		super.dispose();
 		parentControl = null;
 	}
+
+	/**
+	 * @return Returns the error status or <code>null</code> if part was created
+	 *         without an explicit error status.
+	 */
+	public IStatus getError() {
+		return error;
+	}
 }

@@ -45,7 +45,7 @@ public class Snippet016TableUpdater {
 	}
 
 	static class Stuff {
-		private WritableValue<Integer> counter = new WritableValue<>(1, Integer.class);
+		private final WritableValue<Integer> counter = new WritableValue<>(1, Integer.class);
 
 		public Stuff(final Display display) {
 			display.timerExec(1000, new Runnable() {

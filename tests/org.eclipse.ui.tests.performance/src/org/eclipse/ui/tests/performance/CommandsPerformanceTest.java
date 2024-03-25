@@ -148,7 +148,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	/**
 	 * Constructs an instance of <code>CommandsPerformanceTest</code>.
 	 *
-	 * @param testName
+	 * @param name
 	 *            Test's name.
 	 */
 	public CommandsPerformanceTest(final String name) {

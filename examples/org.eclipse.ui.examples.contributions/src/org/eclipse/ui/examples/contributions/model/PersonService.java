@@ -36,9 +36,9 @@ import org.eclipse.ui.services.ISourceProviderService;
 public class PersonService implements IPersonService, IDisposable {
 
 	private static final int ME = 1114;
-	private Map<Integer, Person> people = new TreeMap<>();
+	private final Map<Integer, Person> people = new TreeMap<>();
 	private IServiceLocator serviceLocator;
-	private ListenerList<IPropertyChangeListener> listeners = new ListenerList<>(ListenerList.IDENTITY);
+	private final ListenerList<IPropertyChangeListener> listeners = new ListenerList<>(ListenerList.IDENTITY);
 
 	public PersonService(IServiceLocator locator) {
 		serviceLocator = locator;
@@ -102,10 +102,6 @@ public class PersonService implements IPersonService, IDisposable {
 		firePersonChange(PROP_CHANGE, oldVal, person);
 	}
 
-	/**
-	 * @param oldVal
-	 * @param person
-	 */
 	private void firePersonChange(String property, Person oldVal, Person person) {
 		if (listeners.isEmpty()) {
 			return;

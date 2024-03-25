@@ -44,27 +44,22 @@ public interface IFormColors {
 
 	/**
 	 * Key for the form header background gradient starting color.
-	 *
 	 */
 	String H_GRADIENT_START = H_PREFIX + "GRADIENT_START"; //$NON-NLS-1$
 	/**
 	 * Key for the form header bottom keyline 1 color.
-	 *
 	 */
 	String H_BOTTOM_KEYLINE1 = H_PREFIX + "BOTTOM_KEYLINE1"; //$NON-NLS-1$
 	/**
 	 * Key for the form header bottom keyline 2 color.
-	 *
 	 */
 	String H_BOTTOM_KEYLINE2 = H_PREFIX + "BOTTOM_KEYLINE2"; //$NON-NLS-1$
 	/**
 	 * Key for the form header light hover color.
-	 *
 	 */
 	String H_HOVER_LIGHT = H_PREFIX + "H_HOVER_LIGHT"; //$NON-NLS-1$
 	/**
 	 * Key for the form header full hover color.
-	 *
 	 */
 	String H_HOVER_FULL = H_PREFIX + "H_HOVER_FULL"; //$NON-NLS-1$
 
@@ -110,7 +105,6 @@ public interface IFormColors {
 
 	/**
 	 * Key for the section toggle hover color.
-	 *
 	 */
 	String TB_TOGGLE_HOVER = TB_PREFIX + "TOGGLE_HOVER"; //$NON-NLS-1$
 }

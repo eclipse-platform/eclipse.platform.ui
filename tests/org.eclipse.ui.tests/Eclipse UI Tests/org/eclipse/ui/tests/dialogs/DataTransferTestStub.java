@@ -20,7 +20,8 @@ package org.eclipse.ui.tests.dialogs;
  * <code>org.eclipse.ui.wizards.datatransfer</code>.  For the purpose
  * of testing.
  * </p>
- * @private
+ *
+ * @noreference
  */
 public class DataTransferTestStub {
 	//Prevent instantiation

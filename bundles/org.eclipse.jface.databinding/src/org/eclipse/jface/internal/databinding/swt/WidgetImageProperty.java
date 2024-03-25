@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Widget;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class WidgetImageProperty<S extends Widget> extends WidgetDelegatingValueProperty<S, Image> {
 	private IValueProperty<S, Image> button;
@@ -34,9 +33,6 @@ public class WidgetImageProperty<S extends Widget> extends WidgetDelegatingValue
 	private IValueProperty<S, Image> item;
 	private IValueProperty<S, Image> label;
 
-	/**
-	 *
-	 */
 	public WidgetImageProperty() {
 		super(Image.class);
 	}

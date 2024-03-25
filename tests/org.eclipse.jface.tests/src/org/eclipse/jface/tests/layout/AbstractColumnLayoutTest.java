@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Micah Hainline and others.
+ * Copyright (c) 2008, 2023 Micah Hainline and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,9 @@
 
 package org.eclipse.jface.tests.layout;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -25,19 +28,19 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.4
- *
  */
-public final class AbstractColumnLayoutTest extends TestCase {
+public final class AbstractColumnLayoutTest {
 	Display display;
 	Shell shell;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		display = Display.getCurrent();
 		if (display == null) {
 			display = new Display();
@@ -48,22 +51,22 @@ public final class AbstractColumnLayoutTest extends TestCase {
 
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		shell.dispose();
 	}
 
 	/**
-	 * Ensures that the minimum size is not taken into account in a shell unless
-	 * the weighted size falls below the minimum.
+	 * Ensures that the minimum size is not taken into account in a shell unless the
+	 * weighted size falls below the minimum.
 	 */
+	@Test
 	public void testIgnoreMinimumSize() {
 		Composite composite = new Composite(shell, SWT.NONE);
 		TableColumnLayout layout = new TableColumnLayout();
 		composite.setLayout(layout);
 
-		Table table = new Table(composite, SWT.BORDER | SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		Table table = new Table(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		TableColumn col1 = new TableColumn(table, SWT.LEFT);
 		TableColumn col2 = new TableColumn(table, SWT.LEFT);
 		TableColumn col3 = new TableColumn(table, SWT.LEFT);
@@ -75,36 +78,35 @@ public final class AbstractColumnLayoutTest extends TestCase {
 		// Needed because last column on GTK always maximized
 		layout.setColumnData(col4, new ColumnPixelData(1));
 
-
 		composite.layout(true, true);
 		shell.open();
 
 		assertTrue(col1.getWidth() > 100);
-		assertTrue(col1.getWidth() == col2.getWidth());
+		assertEquals(col1.getWidth(), col2.getWidth());
 		assertTrue(Math.abs(col1.getWidth() - 2 * col3.getWidth()) <= 1);
 	}
 
 	/**
-	 * Ensures that width values based on weight are recalculated when a column falls below minimums.
+	 * Ensures that width values based on weight are recalculated when a column
+	 * falls below minimums.
 	 */
+	@Test
 	public void testRecalculatePreferredSize() {
 		Composite composite = new Composite(shell, SWT.NONE);
 		TableColumnLayout layout = new TableColumnLayout();
 		composite.setLayout(layout);
 
-		Table table = new Table(composite, SWT.BORDER | SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		Table table = new Table(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		TableColumn col1 = new TableColumn(table, SWT.LEFT);
 		TableColumn col2 = new TableColumn(table, SWT.LEFT);
 		TableColumn col3 = new TableColumn(table, SWT.LEFT);
 		TableColumn col4 = new TableColumn(table, SWT.LEFT);
 
-		layout.setColumnData(col1, new ColumnWeightData(4,40));
-		layout.setColumnData(col2, new ColumnWeightData(1,200));
-		layout.setColumnData(col3, new ColumnWeightData(2,30));
+		layout.setColumnData(col1, new ColumnWeightData(4, 40));
+		layout.setColumnData(col2, new ColumnWeightData(1, 200));
+		layout.setColumnData(col3, new ColumnWeightData(2, 30));
 		// Needed because last column on GTK always maximized
 		layout.setColumnData(col4, new ColumnPixelData(1));
-
 
 		composite.layout(true, true);
 		shell.open();
@@ -116,9 +118,10 @@ public final class AbstractColumnLayoutTest extends TestCase {
 	}
 
 	/**
-	 * Ensures that computeSize doesn't rely on the current size. That strategy
-	 * can lead to endless growth on {@link Shell#pack()}.
+	 * Ensures that computeSize doesn't rely on the current size. That strategy can
+	 * lead to endless growth on {@link Shell#pack()}.
 	 */
+	@Test
 	public void testComputeSize() {
 		Composite composite = new Composite(shell, SWT.NONE);
 		TableColumnLayout layout = new TableColumnLayout();

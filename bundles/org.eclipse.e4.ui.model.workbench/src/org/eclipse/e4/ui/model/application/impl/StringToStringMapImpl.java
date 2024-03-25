@@ -112,9 +112,10 @@ public class StringToStringMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	public void setTypedKey(String newKey) {
 		String oldKey = key;
 		key = newKey;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.STRING_TO_STRING_MAP__KEY,
 					oldKey, key));
+		}
 	}
 
 	/**
@@ -134,9 +135,10 @@ public class StringToStringMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	public void setTypedValue(String newValue) {
 		String oldValue = value;
 		value = newValue;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.STRING_TO_STRING_MAP__VALUE,
 					oldValue, value));
+		}
 	}
 
 	/**
@@ -220,8 +222,9 @@ public class StringToStringMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (key: "); //$NON-NLS-1$

@@ -33,7 +33,6 @@ import org.w3c.dom.Node;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Control}.
- *
  */
 public class ControlElement extends WidgetElement {
 	private static final String WEBSITE_CLASS = "org.eclipse.swt.browser.WebSite";

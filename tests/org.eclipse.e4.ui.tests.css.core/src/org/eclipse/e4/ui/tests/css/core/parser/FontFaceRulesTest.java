@@ -37,10 +37,12 @@ public class FontFaceRulesTest {
 
 	@Test
 	void testFontFaceRuleWithProperties() throws Exception {
-		String css = "@font-face {\n"
-				+ "  font-family: \"Robson Celtic\";\n"
-				+ "  src: url(\"http://site/fonts/rob-celt\")\n" + "}\n"
-				+ "Label { background-color: #FF0000 }";
+		String css = """
+			@font-face {
+			  font-family: "Robson Celtic";
+			  src: url("http://site/fonts/rob-celt")
+			}
+			Label { background-color: #FF0000 }""";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		assertNotNull(styleSheet);
 		assertEquals(1, styleSheet.getCssRules().getLength());

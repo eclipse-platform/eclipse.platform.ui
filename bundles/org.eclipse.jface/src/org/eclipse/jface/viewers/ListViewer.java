@@ -20,6 +20,7 @@ package org.eclipse.jface.viewers;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -38,8 +39,8 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  *
  * @see TableViewer
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ListViewer extends AbstractListViewer {
 
 	/**

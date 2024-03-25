@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Stefan Winkler and others.
+ * Copyright (c) 2019, 2023 Stefan Winkler and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.navigator;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.concurrent.Semaphore;
 
@@ -33,13 +34,11 @@ import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.DecorationSchedulerRaceConditionTestDecorator;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @since 3.3
- *
  */
 public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 
@@ -94,7 +93,7 @@ public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 			p1Project.setSessionProperty(DecorationSchedulerRaceConditionTestDecorator.DECO_PROP, DECORATION_TEXT_1);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			Assert.fail("Exception caught: " + e);
+			fail("Exception caught: " + e);
 		}
 
 		IDecoratorManager manager = PlatformUI.getWorkbench().getDecoratorManager();
@@ -102,7 +101,7 @@ public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 			manager.setEnabled("org.eclipse.ui.tests.navigator.bug417255Decorator", true);
 		} catch (CoreException e) {
 			e.printStackTrace();
-			Assert.fail("Exception caught: " + e);
+			fail("Exception caught: " + e);
 		}
 
 		waitForP1Decoration.waitForCondition(Display.getCurrent(), TIMEOUT_DECORATOR); // wait for decorator to run

@@ -16,7 +16,7 @@ package org.eclipse.core.tests.internal.databinding.conversion;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter;
 import org.junit.Before;
@@ -80,20 +80,12 @@ public class StringToCharacterConverterTest {
 
 	@Test
 	public void testNullCharacterIsNotOKForPrimitive() throws Exception {
-		try {
-			primitiveConverter.convert(null);
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> primitiveConverter.convert(null));
 	}
 
 	@Test
 	public void testThrowsIllegalArgumentExceptionIfAskedToConvertNonString()
 			throws Exception {
-		try {
-			converter.convert(Integer.valueOf(1));
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> converter.convert(Integer.valueOf(1)));
 	}
 }

@@ -25,6 +25,7 @@ import org.eclipse.ui.IPageLayout;
  */
 public class PerspectiveWithMultiViewPlaceholdersInFolder extends PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder {
 
+	@SuppressWarnings("hiding")
 	public static String PERSP_ID = "org.eclipse.ui.tests.PerspectiveWithMultiViewPlaceholdersInFolder"; //$NON-NLS-1$
 
 	public PerspectiveWithMultiViewPlaceholdersInFolder() {

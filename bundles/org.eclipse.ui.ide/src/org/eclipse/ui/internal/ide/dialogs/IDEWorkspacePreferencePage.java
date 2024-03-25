@@ -1,5 +1,5 @@
  /****************************************************************************
-* Copyright (c) 2000, 2018 IBM Corporation and others.
+* Copyright (c) 2000, 2023 IBM Corporation and others.
 *
 * This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License 2.0
@@ -182,9 +182,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		}
 	}
 
-	/**
-	 * @param composite
-	 */
 	private void createMissingNaturePref(Composite parent) {
 		missingNatureSeverityCombo = new ComboFieldEditorInGrid(ResourcesPlugin.PREF_MISSING_NATURE_MARKER_SEVERITY,
 				IDEWorkbenchMessages.IDEWorkspacePreference_UnknownNatureSeverity,
@@ -201,7 +198,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		missingNatureSeverityCombo.load();
 	}
 
-	@SuppressWarnings("restriction")
 	private void createMissingEncodingPref(Composite parent) {
 		missingEncodingSeverityCombo = new ComboFieldEditorInGrid(ResourcesPlugin.PREF_MISSING_ENCODING_MARKER_SEVERITY,
 				IDEWorkbenchMessages.IDEWorkspacePreference_UnknownEncodingSeverity,
@@ -374,8 +370,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 	/**
 	 * Create the Refresh controls
-	 *
-	 * @param parent
 	 */
 	private void createAutoRefreshControls(Composite parent) {
 
@@ -398,8 +392,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 	/**
 	 * Create a composite that contains the encoding controls
-	 *
-	 * @param parent
 	 */
 	private void createEncodingEditorControls(Composite parent){
 		Composite encodingComposite = new Composite(parent,SWT.NONE);
@@ -422,8 +414,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 	/**
 	 * Create a composite that contains the line delimiter controls
-	 *
-	 * @param parent
 	 */
 	private void createLineSeparatorEditorControls(Composite parent){
 		Composite lineComposite = new Composite(parent,SWT.NONE);
@@ -441,8 +431,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 	/**
 	 * Create the widget for the system explorer command.
-	 *
-	 * @param composite
 	 */
 	protected void createSystemExplorerGroup(Composite composite) {
 		Composite groupComposite = new Composite(composite, SWT.LEFT);

@@ -21,7 +21,6 @@ import org.eclipse.urischeme.internal.UriSchemeProcessor;
 /**
  * API to process URI scheme handling as defined in extension point
  * <code> org.eclipse.core.runtime.uriSchemeHandlers</code>
- *
  */
 public interface IUriSchemeProcessor {
 	/**
@@ -52,7 +51,6 @@ public interface IUriSchemeProcessor {
 	/**
 	 * Return whether a handler can process the given URI, according to its scheme.
 	 *
-	 * @param uri
 	 * @return whether a handler can process the given URI, according to its scheme.
 	 * @since 1.1
 	 */

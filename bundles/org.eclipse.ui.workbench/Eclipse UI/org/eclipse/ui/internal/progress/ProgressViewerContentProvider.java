@@ -115,8 +115,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 			return elements;
 		}
 		Set<JobTreeElement> roots = new LinkedHashSet<>();
-		for (Object element : elements) {
-			JobTreeElement jobTreeElement = (JobTreeElement) element;
+		for (JobTreeElement jobTreeElement : elements) {
 			if (jobTreeElement.isJobInfo()) {
 				GroupInfo group = ((JobInfo) jobTreeElement).getGroupInfo();
 				if (group == null) {

@@ -20,7 +20,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.AbstractTableInformationControl;
@@ -82,7 +81,6 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
  *
  * @see AbstractTableInformationControl and CycleBaseHandler
  * @since 4.6.2
- *
  */
 
 public abstract class FilteredTableBaseHandler extends AbstractHandler implements IExecutableExtension {
@@ -340,7 +338,6 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	 * {@link FocusListener} for active controls. When the focus event is complete,
 	 * the listener check if focus is still on one of the active components. If not,
 	 * closes the dialog.
-	 *
 	 */
 	private FocusAdapter fAdapter = new FocusAdapter() {
 		@Override
@@ -362,8 +359,6 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 
 	/**
 	 * Sets the dialog's location on the screen.
-	 *
-	 * @param dialog
 	 */
 	protected void setDialogLocation(final Shell dialog, IWorkbenchPart activePart) {
 		Display display = dialog.getDisplay();
@@ -800,7 +795,11 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 		return null;
 	}
 
-	/** Set the filter text entered by the User, does nothing by default */
+	/**
+	 * Set the filter text entered by the User, does nothing by default
+	 *
+	 * @param pattern may be used in overrides
+	 */
 	protected void setMatcherString(String pattern) {
 	}
 
@@ -824,8 +823,6 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	/**
 	 * Sets the label provider for the only column visible in the table. Subclasses
 	 * can override this method to style the table, using a StyledCellLabelProvider.
-	 *
-	 * @param tableViewerColumn
 	 */
 	protected void setLabelProvider(TableViewerColumn tableViewerColumn) {
 		tableViewerColumn.setLabelProvider(getColumnLabelProvider());
@@ -886,6 +883,8 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	 * Get TableHeader, return title for non-filtered lists. By default returns an
 	 * empty String. Subclasses can use the active part to detect the type of
 	 * object.
+	 *
+	 * @param activePart may be used in overrides
 	 */
 	protected String getTableHeader(IWorkbenchPart activePart) {
 		return EMPTY_STRING;
@@ -908,8 +907,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	}
 
 	@Override
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-			throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		// true by default, but depends on data
 		gotoDirection = data == null || "true".equals(data); //$NON-NLS-1$
 	}

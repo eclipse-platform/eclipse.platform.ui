@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -113,8 +113,7 @@ public class ReadmeFilePropertyPage extends PropertyPage {
 			// We will get the sections property and simply
 			// report number of elements found.
 			IAdaptable sections = getSections(resource);
-			if (sections instanceof AdaptableList) {
-				AdaptableList list = (AdaptableList) sections;
+			if (sections instanceof AdaptableList list) {
 				label = createLabel(panel, String.valueOf(list.size()));
 				grabExcessSpace(label);
 			}
@@ -149,8 +148,8 @@ public class ReadmeFilePropertyPage extends PropertyPage {
 	 * (resource is not a readme file).
 	 */
 	private AdaptableList getSections(IAdaptable adaptable) {
-		if (adaptable instanceof IFile)
-			return ReadmeModelFactory.getInstance().getSections((IFile) adaptable);
+		if (adaptable instanceof IFile file)
+			return ReadmeModelFactory.getInstance().getSections(file);
 		return null;
 	}
 

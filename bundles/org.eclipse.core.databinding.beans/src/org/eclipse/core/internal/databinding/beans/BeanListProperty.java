@@ -33,16 +33,11 @@ import org.eclipse.core.databinding.property.list.SimpleListProperty;
  * @param <E> type of the elements in the list
  *
  * @since 3.3
- *
  */
 public class BeanListProperty<S, E> extends SimpleListProperty<S, E> {
 	private final PropertyDescriptor propertyDescriptor;
 	private final Class<E> elementType;
 
-	/**
-	 * @param propertyDescriptor
-	 * @param elementType
-	 */
 	@SuppressWarnings("unchecked")
 	public BeanListProperty(PropertyDescriptor propertyDescriptor, Class<E> elementType) {
 		this.propertyDescriptor = propertyDescriptor;

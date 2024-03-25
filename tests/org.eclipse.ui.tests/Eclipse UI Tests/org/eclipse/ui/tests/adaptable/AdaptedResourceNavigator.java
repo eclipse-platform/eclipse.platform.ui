@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,8 +60,6 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.navigator.ResourceSorter;
-
 /**
  * Implements the Resource Navigator view.
  */
@@ -84,11 +82,11 @@ public class AdaptedResourceNavigator extends ViewPart {
 	 */
 	private static final String LINK_NAVIGATOR_TO_EDITOR = "LINK_NAVIGATOR_TO_EDITOR"; //$NON-NLS-1$
 
-	private IPartListener partListener = new IPartListener() {
+	private final IPartListener partListener = new IPartListener() {
 		@Override
 		public void partActivated(IWorkbenchPart part) {
-			if (part instanceof IEditorPart) {
-				editorActivated((IEditorPart) part);
+			if (part instanceof IEditorPart editorPart) {
+				editorActivated(editorPart);
 			}
 		}
 
@@ -127,8 +125,7 @@ public class AdaptedResourceNavigator extends ViewPart {
 	 */
 	StructuredSelection convertSelection(ISelection selection) {
 		ArrayList<IResource> list = new ArrayList<>();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection ssel) {
 			for (Object o : ssel) {
 				IResource resource = Adapters.adapt(o, IResource.class);
 				if (resource != null) {
@@ -165,8 +162,6 @@ public class AdaptedResourceNavigator extends ViewPart {
 
 		// Update the global action enable state to match
 		// the current selection.
-		IStructuredSelection selection = viewer.getStructuredSelection();
-		actionGroup.updateGlobalActions(selection);
 
 		viewer.addSelectionChangedListener(this::handleSelectionChanged);
 		viewer.addDoubleClickListener(this::handleDoubleClick);
@@ -181,8 +176,6 @@ public class AdaptedResourceNavigator extends ViewPart {
 				handleKeyReleased(event);
 			}
 		});
-
-		actionGroup.fillActionBars(selection);
 
 		getSite().setSelectionProvider(viewer);
 
@@ -210,8 +203,7 @@ public class AdaptedResourceNavigator extends ViewPart {
 		}
 
 		IEditorInput input = editor.getEditorInput();
-		if (input instanceof IFileEditorInput) {
-			IFileEditorInput fileInput = (IFileEditorInput) input;
+		if (input instanceof IFileEditorInput fileInput) {
 			IFile file = fileInput.getFile();
 			ISelection newSelection = new StructuredSelection(file);
 			if (!viewer.getSelection().equals(newSelection)) {
@@ -263,14 +255,6 @@ public class AdaptedResourceNavigator extends ViewPart {
 	}
 
 	/**
-	 * Returns the current sorter.
-	 * @since 2.0
-	 */
-	public ResourceSorter getSorter() {
-		return (ResourceSorter) getViewer().getSorter();
-	}
-
-	/**
 	 * Returns the tree viewer which shows the resource hierarchy.
 	 * @since 2.0
 	 */
@@ -295,8 +279,8 @@ public class AdaptedResourceNavigator extends ViewPart {
 	String getStatusLineMessage(IStructuredSelection selection) {
 		if (selection.size() == 1) {
 			Object o = selection.getFirstElement();
-			if (o instanceof IResource) {
-				return ((IResource) o).getFullPath().makeRelative().toString();
+			if (o instanceof IResource r) {
+				return r.getFullPath().makeRelative().toString();
 			}
 			return ResourceNavigatorMessages.ResourceNavigator_oneItemSelected;
 		}
@@ -310,8 +294,8 @@ public class AdaptedResourceNavigator extends ViewPart {
 	 * Returns the tool tip text for the given element.
 	 */
 	String getToolTipText(Object element) {
-		if (element instanceof IResource) {
-			IPath path = ((IResource) element).getFullPath();
+		if (element instanceof IResource r) {
+			IPath path = r.getFullPath();
 			if (path.isRoot()) {
 				return ResourceNavigatorMessages.ResourceManager_toolTip;
 			}
@@ -347,13 +331,13 @@ public class AdaptedResourceNavigator extends ViewPart {
 	protected void handleSelectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection sel = event.getStructuredSelection();
 		updateStatusLine(sel);
-		actionGroup.updateGlobalActions(sel);
-		actionGroup.selectionChanged(sel);
 		linkToEditor(sel);
 	}
 
 	/**
 	 * Handles a key press in viewer. By default do nothing.
+	 *
+	 * @param event the KeyEvent to handle
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
 
@@ -361,6 +345,8 @@ public class AdaptedResourceNavigator extends ViewPart {
 
 	/**
 	 * Handles a key release in viewer.
+	 *
+	 * @param event the KeyEvent to handle
 	 */
 	protected void handleKeyReleased(KeyEvent event) {
 
@@ -408,15 +394,13 @@ public class AdaptedResourceNavigator extends ViewPart {
 		}
 
 		Object obj = selection.getFirstElement();
-		if (obj instanceof IFile && selection.size() == 1) {
-			IFile file = (IFile) obj;
+		if (obj instanceof IFile file && selection.size() == 1) {
 			IWorkbenchPage page = getSite().getPage();
 			IEditorReference editorArray[] = page.getEditorReferences();
 			for (IEditorReference element : editorArray) {
 				IEditorPart editor = element.getEditor(true);
 				IEditorInput input = editor.getEditorInput();
-				if (input instanceof IFileEditorInput
-						&& file.equals(((IFileEditorInput) input).getFile())) {
+				if (input instanceof IFileEditorInput fei && file.equals(fei.getFile())) {
 					page.bringToTop(editor);
 					return;
 				}
@@ -432,8 +416,9 @@ public class AdaptedResourceNavigator extends ViewPart {
 	}
 
 	/**
-	 * Restore the state of the receiver to the state described in
-	 * momento.
+	 * Restore the state of the receiver to the state described in momento.
+	 *
+	 * @param memento the IMemento to restore
 	 * @since 2.0
 	 */
 

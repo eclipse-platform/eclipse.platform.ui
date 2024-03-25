@@ -13,6 +13,8 @@
 ******************************************************************************/
 package org.eclipse.jface.widgets;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
+import org.eclipse.pde.api.tools.annotations.NoImplement;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -28,19 +30,15 @@ import org.eclipse.swt.widgets.Widget;
  *
  * @param <T> the type of the widget the property is used for
  *
- * @noimplement this interface is not intended to be implemented by clients.
- * @noextend this class is not intended to be subclassed by clients.
- *
  * @since 3.18
- *
  */
+@NoImplement
+@NoExtend
 @FunctionalInterface
 public interface Property<T extends Widget> {
 
 	/**
 	 * Called when the widget is created and the property should be applied.
-	 *
-	 * @param widget
 	 */
 	void apply(T widget);
 }

@@ -19,7 +19,7 @@ import org.eclipse.core.commands.ParameterValueConversionException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * A command parameter value converter to convert between IResources and strings
@@ -33,7 +33,7 @@ public final class ResourcePathConverter extends
 	@Override
 	public final Object convertToObject(final String parameterValue)
 			throws ParameterValueConversionException {
-		final Path path = new Path(parameterValue);
+		final IPath path = IPath.fromOSString(parameterValue);
 		final IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace()
 				.getRoot();
 		final IResource resource = workspaceRoot.findMember(path);

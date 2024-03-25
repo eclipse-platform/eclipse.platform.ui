@@ -30,16 +30,10 @@ import junit.framework.TestSuite;
  */
 public class SessionTests extends TestSuite {
 
-	/**
-	 * @return
-	 */
 	public static Test suite() {
 		return new SessionTests();
 	}
 
-	/**
-	 *
-	 */
 	public SessionTests() {
 		addHandlerStateTests();
 		addIntroTests();
@@ -51,9 +45,6 @@ public class SessionTests extends TestSuite {
 		addWindowlessSessionTest();
 	}
 
-	/**
-	 *
-	 */
 	private void addWindowlessSessionTest() {
 		// Windowless apps are available only on Cocoa
 		if (Util.isCocoa()) {
@@ -68,9 +59,6 @@ public class SessionTests extends TestSuite {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void addStatusHandlingTests() {
 		//actually we do not care which workspace is used
 		StatusHandlerConfigurationSuite test = new StatusHandlerConfigurationSuite("themeSessionTests");
@@ -78,9 +66,6 @@ public class SessionTests extends TestSuite {
 		addTest(test);
 	}
 
-	/**
-	 *
-	 */
 	private void addThemeTests() {
 		WorkbenchSessionTest test = new WorkbenchSessionTest("themeSessionTests");
 		test.addTest(ThemeStateTest.suite());

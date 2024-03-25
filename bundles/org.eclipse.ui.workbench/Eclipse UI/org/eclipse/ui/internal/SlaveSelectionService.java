@@ -25,7 +25,6 @@ import org.eclipse.ui.services.IDisposable;
 
 /**
  * @since 3.4
- *
  */
 public class SlaveSelectionService implements ISelectionService, IDisposable {
 
@@ -36,9 +35,6 @@ public class SlaveSelectionService implements ISelectionService, IDisposable {
 
 	private ISelectionService parentSelectionService;
 
-	/**
-	 * @param parentSelectionService
-	 */
 	public SlaveSelectionService(ISelectionService parentSelectionService) {
 		if (parentSelectionService == null) {
 			throw new IllegalArgumentException("The parent selection service cannot be null"); //$NON-NLS-1$

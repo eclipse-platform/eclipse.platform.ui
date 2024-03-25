@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  *
  * @since 3.3
- *
  */
 public interface IDragAndDropService {
 	/**

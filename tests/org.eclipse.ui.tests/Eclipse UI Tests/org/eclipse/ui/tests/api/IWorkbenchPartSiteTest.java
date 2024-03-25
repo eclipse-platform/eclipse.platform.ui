@@ -140,8 +140,8 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
 		DummyService service = site.getService(DummyService.class);
 
 		assertTrue(service.isActive());
-		if(part instanceof IViewPart) {
-			fPage.hideView((IViewPart) part);
+		if (part instanceof IViewPart viewPart) {
+			fPage.hideView(viewPart);
 		} else {
 			fPage.closeEditor((IEditorPart) part, false);
 		}

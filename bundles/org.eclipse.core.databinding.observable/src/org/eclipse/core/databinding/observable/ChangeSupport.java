@@ -17,7 +17,6 @@ package org.eclipse.core.databinding.observable;
 
 /**
  * @since 1.0
- *
  */
 public abstract class ChangeSupport extends ChangeManager {
 
@@ -45,15 +44,9 @@ public abstract class ChangeSupport extends ChangeManager {
 		super.fireEvent(event);
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	protected abstract void firstListenerAdded();
 
-	/**
-	 *
-	 */
 	@Override
 	protected abstract void lastListenerRemoved();
 

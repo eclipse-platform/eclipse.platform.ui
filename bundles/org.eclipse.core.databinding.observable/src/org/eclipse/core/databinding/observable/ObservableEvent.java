@@ -22,7 +22,6 @@ import java.util.EventObject;
  * of dispatching events can be improved in later versions of the framework.
  *
  * @since 1.0
- *
  */
 public abstract class ObservableEvent extends EventObject {
 
@@ -35,9 +34,6 @@ public abstract class ObservableEvent extends EventObject {
 		super(source);
 	}
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 7693906965267871813L;
 
 	/**

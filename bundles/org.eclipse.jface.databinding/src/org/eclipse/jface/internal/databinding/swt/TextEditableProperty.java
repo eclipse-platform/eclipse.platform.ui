@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.3
- *
  */
 public class TextEditableProperty extends WidgetBooleanValueProperty<Text> {
 	@Override

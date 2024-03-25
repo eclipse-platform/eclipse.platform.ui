@@ -70,7 +70,7 @@ public class Snippet002UpdateComboRetainSelection {
 
 	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
@@ -128,7 +128,7 @@ public class Snippet002UpdateComboRetainSelection {
 
 	/** The GUI view. */
 	static class View {
-		private ViewModel viewModel;
+		private final ViewModel viewModel;
 		/**
 		 * This field is used to make a new choices array unique.
 		 */

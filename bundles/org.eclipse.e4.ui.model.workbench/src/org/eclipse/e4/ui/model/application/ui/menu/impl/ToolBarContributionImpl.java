@@ -109,7 +109,7 @@ public class ToolBarContributionImpl extends ElementContainerImpl<MToolBarElemen
 	@Override
 	public List<MToolBarElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MToolBarElement>(MToolBarElement.class, this,
+			children = new EObjectContainmentWithInverseEList<>(MToolBarElement.class, this,
 					MenuPackageImpl.TOOL_BAR_CONTRIBUTION__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
 				private static final long serialVersionUID = 1L;
 
@@ -152,9 +152,10 @@ public class ToolBarContributionImpl extends ElementContainerImpl<MToolBarElemen
 	public void setParentId(String newParentId) {
 		String oldParentId = parentId;
 		parentId = newParentId;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_BAR_CONTRIBUTION__PARENT_ID,
 					oldParentId, parentId));
+		}
 	}
 
 	/**
@@ -176,9 +177,10 @@ public class ToolBarContributionImpl extends ElementContainerImpl<MToolBarElemen
 	public void setPositionInParent(String newPositionInParent) {
 		String oldPositionInParent = positionInParent;
 		positionInParent = newPositionInParent;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET,
 					MenuPackageImpl.TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT, oldPositionInParent, positionInParent));
+		}
 	}
 
 	/**
@@ -263,8 +265,9 @@ public class ToolBarContributionImpl extends ElementContainerImpl<MToolBarElemen
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (parentId: "); //$NON-NLS-1$

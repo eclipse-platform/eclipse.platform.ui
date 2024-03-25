@@ -19,12 +19,8 @@ import org.eclipse.swt.widgets.Spinner;
 
 /**
  * @since 3.3
- *
  */
 public class SpinnerSelectionProperty extends WidgetIntValueProperty<Spinner> {
-	/**
-	 *
-	 */
 	public SpinnerSelectionProperty() {
 		super(SWT.Modify);
 	}

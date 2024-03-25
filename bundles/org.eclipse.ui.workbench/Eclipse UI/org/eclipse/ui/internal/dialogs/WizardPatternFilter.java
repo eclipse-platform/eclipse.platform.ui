@@ -23,13 +23,10 @@ import org.eclipse.ui.dialogs.PatternFilter;
  * string and keywords
  *
  * @since 3.2
- *
  */
 public class WizardPatternFilter extends PatternFilter {
 	/**
-	 * Create a new instance of a WizardPatternFilter
-	 *
-	 * @param isMatchItem
+	 * Create a new instance of a WizardPatternFilter.
 	 */
 	public WizardPatternFilter() {
 		super();

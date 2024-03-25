@@ -22,8 +22,8 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
  * @since 1.0
  */
 public class SimpleNode {
-	private String nodeName;
-	private IObservableSet<Object> children;
+	private final String nodeName;
+	private final IObservableSet<Object> children;
 
 	public SimpleNode(String nodeName, IObservableSet<Object> children) {
 		super();

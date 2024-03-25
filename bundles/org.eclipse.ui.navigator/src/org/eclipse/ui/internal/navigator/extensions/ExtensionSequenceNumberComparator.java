@@ -21,7 +21,6 @@ import org.eclipse.ui.navigator.INavigatorContentExtension;
 
 /**
  * @since 3.2
- *
  */
 public class ExtensionSequenceNumberComparator implements Comparator {
 

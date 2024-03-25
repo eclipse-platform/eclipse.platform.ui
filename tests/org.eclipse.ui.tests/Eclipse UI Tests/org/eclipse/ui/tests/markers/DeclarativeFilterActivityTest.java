@@ -52,7 +52,6 @@ public class DeclarativeFilterActivityTest extends DeclarativeFilterTest {
 
 	/**
 	 * Check that all of the filters match filteredOut.
-	 * @param filteredOut
 	 */
 	private void checkFilteredOut(boolean filteredOut) {
 		String[] allFilterNames = getAllFilterNames();

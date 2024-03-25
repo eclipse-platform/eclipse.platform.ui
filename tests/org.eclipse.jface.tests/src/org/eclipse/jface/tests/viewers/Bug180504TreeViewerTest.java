@@ -27,10 +27,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.junit.Test;
 
 /**
  * @since 3.3
- *
  */
 public class Bug180504TreeViewerTest extends ViewerTestCase {
 	public static class MyModel {
@@ -56,13 +56,6 @@ public class Bug180504TreeViewerTest extends ViewerTestCase {
 
 			return rv;
 		}
-	}
-	/**
-	 * @param name
-	 */
-	public Bug180504TreeViewerTest(String name) {
-		super(name);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -160,11 +153,13 @@ public class Bug180504TreeViewerTest extends ViewerTestCase {
 		return (TreeViewer) fViewer;
 	}
 
+	@Test
 	public void testBug201002() {
 		getTreeViewer().editElement(((MyModel)getTreeViewer().getInput()).child.get(90).child.get(10), 0);
 		getTreeViewer().applyEditorValue();
 	}
 
+	@Test
 	public void testBug180504CancleEditor() {
 		getTreeViewer().editElement(((MyModel)getTreeViewer().getInput()).child.get(90).child.get(10), 0);
 		getTreeViewer().cancelEditing();

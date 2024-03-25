@@ -28,9 +28,6 @@ public class ProjectExplorerFilterActionGroup extends FilterActionGroup {
 	private SelectFiltersAction selectFiltersAction;
 	private CommonViewer commonViewer;
 
-	/**
-	 * @param aCommonViewer
-	 */
 	public ProjectExplorerFilterActionGroup(CommonViewer aCommonViewer) {
 		super(aCommonViewer);
 		commonViewer = aCommonViewer;
@@ -51,9 +48,6 @@ public class ProjectExplorerFilterActionGroup extends FilterActionGroup {
 		super.fillActionBars(actionBars);
 	}
 
-	/**
-	 * @param toolBar
-	 */
 	protected void fillToolbar(IToolBarManager toolBar) {
 		toolBar.add(selectFiltersAction);
 	}

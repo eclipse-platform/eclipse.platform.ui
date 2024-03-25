@@ -31,9 +31,11 @@ public class MediaRulesTest {
 	@Test
 	@Disabled("//THIS TEST KNOWN TO FAIL Dec 16/08")
 	void testMediaRule() throws Exception {
-		String css = "@media screen, print {\n"
-				+ "BODY { line-height: 1.2 }\n"
-				+ "}\n" + "Label { background-color: #FF0000 }";
+		String css = """
+			@media screen, print {
+			BODY { line-height: 1.2 }
+			}
+			Label { background-color: #FF0000 }""";
 		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
 		assertNotNull(styleSheet);
 		CSSRuleList rules = styleSheet.getCssRules();

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
+import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -80,7 +81,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 			IResourceChangeDescriptionFactory factory, int operation) {
 		boolean modified = false;
 		if (operation == UNDO) {
-			for (ResourceDescription resourceDescription : resourceDescriptions) {
+			for (IResourceSnapshot<? extends IResource> resourceDescription : resourceDescriptions) {
 				if (resourceDescription != null) {
 					IResource resource = resourceDescription.createResourceHandle();
 					factory.create(resource);

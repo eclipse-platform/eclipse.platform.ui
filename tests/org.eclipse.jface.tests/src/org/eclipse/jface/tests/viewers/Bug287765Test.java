@@ -27,14 +27,14 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Shell;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.4
- *
  */
-public class Bug287765Test extends TestCase {
+public class Bug287765Test {
 	private TreeViewer treeViewer;
 	private Node root;
 
@@ -127,10 +127,8 @@ public class Bug287765Test extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		final Shell shell = new Shell();
 		shell.setLayout(new GridLayout());
 		shell.setSize(new Point(500, 200));
@@ -158,17 +156,17 @@ public class Bug287765Test extends TestCase {
 		shell.open();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		treeViewer.getControl().getShell().dispose();
 		treeViewer = null;
 		root = null;
-		super.tearDown();
 	}
 
 	/**
 	 * Test to make the bug occur
 	 */
+	@Test
 	public void testException() {
 		// Expand all the nodes
 		treeViewer.expandAll();

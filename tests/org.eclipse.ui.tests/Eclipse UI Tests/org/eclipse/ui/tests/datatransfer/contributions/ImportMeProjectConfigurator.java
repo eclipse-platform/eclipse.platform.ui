@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 
 public class ImportMeProjectConfigurator implements org.eclipse.ui.wizards.datatransfer.ProjectConfigurator {
 
@@ -57,7 +56,7 @@ public class ImportMeProjectConfigurator implements org.eclipse.ui.wizards.datat
 
 	@Override
 	public boolean shouldBeAnEclipseProject(IContainer container, IProgressMonitor monitor) {
-		return container.getFile(new Path(IMPORTME_FILENAME)).exists();
+		return container.getFile(IPath.fromOSString(IMPORTME_FILENAME)).exists();
 	}
 
 	@Override

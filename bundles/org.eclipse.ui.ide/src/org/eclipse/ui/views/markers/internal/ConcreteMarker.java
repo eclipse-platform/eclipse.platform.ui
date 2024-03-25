@@ -185,7 +185,6 @@ public class ConcreteMarker extends MarkerNode{
 
 	/**
 	 * Set the category the receiver is in.
-	 * @param category
 	 */
 	public void setCategory(MarkerNode category) {
 		markerCategory = category;

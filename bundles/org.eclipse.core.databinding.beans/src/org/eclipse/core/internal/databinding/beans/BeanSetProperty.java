@@ -33,16 +33,11 @@ import org.eclipse.core.databinding.property.set.SimpleSetProperty;
  * @param <E> type of the elements in the set
  *
  * @since 3.3
- *
  */
 public class BeanSetProperty<S, E> extends SimpleSetProperty<S, E> {
 	private final PropertyDescriptor propertyDescriptor;
 	private final Class<E> elementType;
 
-	/**
-	 * @param propertyDescriptor
-	 * @param elementType
-	 */
 	@SuppressWarnings("unchecked")
 	public BeanSetProperty(PropertyDescriptor propertyDescriptor, Class<E> elementType) {
 		this.propertyDescriptor = propertyDescriptor;

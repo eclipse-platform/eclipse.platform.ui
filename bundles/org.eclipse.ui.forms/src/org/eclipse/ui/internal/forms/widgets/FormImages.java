@@ -348,7 +348,7 @@ public class FormImages {
 
 	private synchronized Image getGradient(AbstractImageDescriptor desc, Display display) {
 		checkHashMaps();
-		Image result = manager.getResourceManager(display).createImage(desc);
+		Image result = manager.getResourceManager(display).create(desc);
 		descriptors.put(Integer.valueOf(result.hashCode()), desc);
 		return result;
 	}
@@ -359,7 +359,7 @@ public class FormImages {
 		AbstractImageDescriptor desc = descriptors.get(imageHashCode);
 		if (desc != null) {
 			LocalResourceManager resourceManager = manager.getResourceManager(display);
-			resourceManager.destroyImage(desc);
+			resourceManager.destroy(desc);
 			if (resourceManager.find(desc) == null) {
 				descriptors.remove(imageHashCode);
 				validateHashMaps();

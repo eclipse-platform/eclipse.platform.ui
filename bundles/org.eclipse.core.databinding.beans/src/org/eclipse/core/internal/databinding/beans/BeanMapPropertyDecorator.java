@@ -34,16 +34,11 @@ import org.eclipse.core.databinding.property.map.MapProperty;
  * @param <V> type of the values in the map
  *
  * @since 3.3
- *
  */
 public class BeanMapPropertyDecorator<S, K, V> extends MapProperty<S, K, V> implements IBeanMapProperty<S, K, V> {
 	private final IMapProperty<S, K, V> delegate;
 	private final PropertyDescriptor propertyDescriptor;
 
-	/**
-	 * @param delegate
-	 * @param propertyDescriptor
-	 */
 	public BeanMapPropertyDecorator(IMapProperty<S, K, V> delegate,
 			PropertyDescriptor propertyDescriptor) {
 		this.delegate = delegate;

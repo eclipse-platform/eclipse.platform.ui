@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2023 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,17 +59,14 @@ public class MockDocumentHandler implements org.w3c.css.sac.DocumentHandler {
 				+ selectors + ", length=" + length);
 		for (int i = 0; i < length; i++) {
 			Selector selector = selectors.item(i);
-			if (selector instanceof ElementSelector) {
+			if (selector instanceof ElementSelector elementSelector) {
 				// Element selector
-				ElementSelector elementSelector = (ElementSelector) selector;
 				System.out.println("\tElementSelector=> localName="
 						+ elementSelector.getLocalName());
-			} else if (selector instanceof ConditionalSelector) {
-				ConditionalSelector conditionalSelector = (ConditionalSelector) selector;
+			} else if (selector instanceof ConditionalSelector conditionalSelector) {
 				System.out.println("\tConditionalSelector");
 				Condition condition = conditionalSelector.getCondition();
-				if (condition instanceof AttributeCondition) {
-					AttributeCondition attributeCondition = (AttributeCondition) condition;
+				if (condition instanceof AttributeCondition attributeCondition) {
 					System.out
 							.println("\t\tCondition (type=AttributeCondition)=> localName="
 									+ attributeCondition.getLocalName()

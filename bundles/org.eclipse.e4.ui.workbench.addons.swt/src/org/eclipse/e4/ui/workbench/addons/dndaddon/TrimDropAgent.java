@@ -34,16 +34,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- *
- */
 public class TrimDropAgent extends DropAgent {
 	private SideValue side;
 	private MTrimBar trimBar;
 
-	/**
-	 * @param manager
-	 */
 	public TrimDropAgent(DnDManager manager) {
 		super(manager);
 	}
@@ -144,8 +138,6 @@ public class TrimDropAgent extends DropAgent {
 
 	@Override
 	public void dragEnter(MUIElement dragElement, DnDInfo info) {
-		super.dragEnter(dragElement, info);
-
 		MTrimmedWindow window = (MTrimmedWindow) dndManager.getDragWindow();
 		trimBar = dndManager.getModelService().getTrim(window, side);
 		trimBar.setToBeRendered(true);
@@ -162,7 +154,6 @@ public class TrimDropAgent extends DropAgent {
 		side = null;
 
 		dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_NO));
-		super.dragLeave(dragElement, info);
 	}
 
 	@Override

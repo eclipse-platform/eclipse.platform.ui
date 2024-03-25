@@ -35,7 +35,6 @@ import org.eclipse.ui.activities.ICategoryActivityBinding;
  * </p>
  *
  * @since 3.4
- *
  */
 public final class InternalActivityHelper {
 

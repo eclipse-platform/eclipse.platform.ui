@@ -38,7 +38,6 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * </p>
  *
  * @since 3.2
- *
  */
 public class WizardShortcutAction extends Action implements IPluginContribution {
 	private IWizardDescriptor descriptor;

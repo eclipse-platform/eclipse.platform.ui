@@ -56,8 +56,11 @@ public class ViewCSSTest {
 	void testGetComputedStyle() throws Exception {
 		// Two rules with the same specificity, the second rule should take
 		// precedence because of its position in the stylesheet
-		String css = "Label { color: black; }" + "Button { color: blue; font-weight: bold; }\n"
-				+ "Button { color: green; }\n";
+		String css = """
+			Label { color: black; }\
+			Button { color: blue; font-weight: bold; }
+			Button { color: green; }
+			""";
 		ViewCSS viewCSS = createViewCss(css);
 
 		TestElement shell = new TestElement("Shell", engine);

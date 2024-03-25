@@ -23,16 +23,12 @@ import org.eclipse.swt.widgets.Tree;
  * The MarkersTreeViewer is a viewer that optimizes the expandToLevel method.
  *
  * @since 3.4
- *
  */
 
 public class MarkersTreeViewer extends TreeViewer {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param parent
-	 * @param style
 	 */
 	public MarkersTreeViewer(Composite parent, int style) {
 		super(parent, style);
@@ -41,8 +37,6 @@ public class MarkersTreeViewer extends TreeViewer {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param parent
 	 */
 	public MarkersTreeViewer(Composite parent) {
 		super(parent);
@@ -50,8 +44,6 @@ public class MarkersTreeViewer extends TreeViewer {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param tree
 	 */
 	public MarkersTreeViewer(Tree tree) {
 		super(tree);
@@ -71,9 +63,10 @@ public class MarkersTreeViewer extends TreeViewer {
 		/*
 		 * For performance reasons clear cache of the item used in updating UI.
 		 */
-		MarkerSupportItem cellItem = (MarkerSupportItem) element;
-		if (cellItem.isConcrete())
-			cellItem.clearCache();
+		if (element instanceof MarkerSupportItem cellItem) {
+			if (cellItem.isConcrete())
+				cellItem.clearCache();
+		}
 	}
 
 }

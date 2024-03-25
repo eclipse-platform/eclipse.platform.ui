@@ -33,7 +33,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- * @no
  */
 public class DateTimeCalendarObservableValueTest extends AbstractSWTTestCase {
 	private DateTime dateTime;

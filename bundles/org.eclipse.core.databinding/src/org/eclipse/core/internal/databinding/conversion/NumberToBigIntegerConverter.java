@@ -27,10 +27,6 @@ import java.text.Format;
  * @since 1.0
  */
 public class NumberToBigIntegerConverter extends NumberToNumberConverter<BigInteger> {
-	/**
-	 * @param numberFormat
-	 * @param fromType
-	 */
 	public NumberToBigIntegerConverter(Format numberFormat, Class<?> fromType) {
 		super(numberFormat, fromType, BigInteger.class);
 	}

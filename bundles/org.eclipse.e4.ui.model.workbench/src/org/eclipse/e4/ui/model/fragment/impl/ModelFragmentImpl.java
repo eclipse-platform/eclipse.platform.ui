@@ -80,7 +80,7 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 	@Override
 	public List<MApplicationElement> getElements() {
 		if (elements == null) {
-			elements = new EObjectContainmentEList<MApplicationElement>(MApplicationElement.class, this,
+			elements = new EObjectContainmentEList<>(MApplicationElement.class, this,
 					FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS);
 		}
 		return elements;

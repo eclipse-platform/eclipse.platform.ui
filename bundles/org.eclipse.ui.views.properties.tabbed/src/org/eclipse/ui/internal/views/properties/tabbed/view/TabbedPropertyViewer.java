@@ -93,6 +93,7 @@ public class TabbedPropertyViewer extends StructuredViewer {
 		/* not implemented */
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected List getSelectionFromWidget() {
 		int index = list.getSelectionIndex();
@@ -119,7 +120,7 @@ public class TabbedPropertyViewer extends StructuredViewer {
 	 * element will represent the selection.
 	 */
 	@Override
-	protected void setSelectionToWidget(List l, boolean reveal) {
+	protected void setSelectionToWidget(@SuppressWarnings("rawtypes") List l, boolean reveal) {
 		if (l == null || l.isEmpty()) { // clear selection
 			list.deselectAll();
 		} else {

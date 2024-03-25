@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.ISafeRunnableRunner;
 import org.eclipse.jface.util.Policy;
@@ -27,10 +30,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class ComboViewerComparerTest extends TestCase {
+public class ComboViewerComparerTest {
 
 	private Shell shell;
 
@@ -53,6 +57,7 @@ public class ComboViewerComparerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testSetSelection() {
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setComparer(new IElementComparer() {
@@ -80,8 +85,8 @@ public class ComboViewerComparerTest extends TestCase {
 		assertEquals(aElement.getName(), selectedElement.getName());
 	}
 
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		oldLogger = Policy.getLog();
 		oldRunner = SafeRunnable.getRunner();
 		Policy.setLog(status -> fail(status.getMessage()));
@@ -103,8 +108,8 @@ public class ComboViewerComparerTest extends TestCase {
 		shell.open();
 	}
 
-	@Override
-	protected void tearDown() {
+	@After
+	public void tearDown() {
 		Policy.setLog(oldLogger);
 		SafeRunnable.setRunner(oldRunner);
 		processEvents();

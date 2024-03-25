@@ -59,8 +59,7 @@ import org.eclipse.ui.keys.IBindingService;
 
 /**
  * A tooltip with useful information based on the type of ContributionItem the
- * cursor hovers over in a Tree. In addition to the content provided by the
- * {@link NameAndDescriptionToolTip} this includes action set information and
+ * cursor hovers over in a Tree. This adds action set information and
  * key binding data.
  *
  * @since 3.5
@@ -74,7 +73,6 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 	private CustomizePerspectiveDialog dialog;
 
 	/**
-	 * @param dialog
 	 * @param tree   The tree for the tooltip to hover over
 	 */
 	ItemDetailToolTip(CustomizePerspectiveDialog dialog, TreeViewer v, Tree tree, boolean showActionSet,
@@ -325,7 +323,6 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 	}
 
 	/**
-	 * @param bindings
 	 * @return a String representing the key bindings in <code>bindings</code>
 	 */
 	static String keyBindingsAsString(Binding[] bindings) {

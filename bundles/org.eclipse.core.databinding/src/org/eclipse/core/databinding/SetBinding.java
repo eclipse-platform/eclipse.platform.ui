@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.Status;
  * @param <M>
  *            the type of the elements in the set on the model side
  * @since 1.1
- *
  */
 public class SetBinding<M, T> extends Binding {
 
@@ -217,9 +216,6 @@ public class SetBinding<M, T> extends Binding {
 	/**
 	 * Merges the provided <code>newStatus</code> into the
 	 * <code>multiStatus</code>.
-	 *
-	 * @param multiStatus
-	 * @param newStatus
 	 */
 	/* package */void mergeStatus(MultiStatus multiStatus, IStatus newStatus) {
 		if (!newStatus.isOK()) {

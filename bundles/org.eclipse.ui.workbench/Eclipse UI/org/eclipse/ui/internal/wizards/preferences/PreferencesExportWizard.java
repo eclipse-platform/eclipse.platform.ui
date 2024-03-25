@@ -49,7 +49,6 @@ import org.osgi.framework.FrameworkUtil;
  * </p>
  *
  * @since 3.1
- *
  */
 public class PreferencesExportWizard extends Wizard implements IExportWizard {
 

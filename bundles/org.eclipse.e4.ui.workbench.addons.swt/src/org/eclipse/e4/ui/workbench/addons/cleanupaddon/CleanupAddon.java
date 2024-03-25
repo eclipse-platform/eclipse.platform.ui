@@ -15,7 +15,7 @@
 
 package org.eclipse.e4.ui.workbench.addons.cleanupaddon;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -48,7 +48,7 @@ import org.osgi.service.event.Event;
 
 public class CleanupAddon {
 
-	private static final String DISABLE_CLEANUP_ADDON = "DisableCleanupAddon";
+	private static final String DISABLE_CLEANUP_ADDON = "DisableCleanupAddon"; //$NON-NLS-1$
 
 	@Inject
 	IEventBroker eventBroker;

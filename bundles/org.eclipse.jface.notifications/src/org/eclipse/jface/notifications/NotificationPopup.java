@@ -24,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * NotificationPopup is a default implementation of
@@ -53,7 +54,6 @@ public class NotificationPopup extends AbstractNotificationPopup {
 	 * method returns the same builder instance).
 	 *
 	 * @since 0.4
-	 *
 	 */
 	public static class Builder {
 
@@ -64,9 +64,15 @@ public class NotificationPopup extends AbstractNotificationPopup {
 		private Boolean fadeIn;
 		private boolean hasCloseButton;
 		private Image titleImage;
+		private Shell shell;
 
 		private Builder(Display display) {
 			this.display = display;
+		}
+
+		private Builder shell(Shell shell) {
+			this.shell = shell;
+			return this;
 		}
 
 		/**
@@ -183,6 +189,21 @@ public class NotificationPopup extends AbstractNotificationPopup {
 		return new Builder(display);
 	}
 
+	/**
+	 * Creates a new builder instance using a shell.
+	 * <p>
+	 * The shell is set as parent shell in the notification popup.
+	 * </p>
+	 *
+	 * @see AbstractNotificationPopup#setParentShell(Shell)
+	 * @param shell the shell to use
+	 * @return the builder instance
+	 * @since 0.7
+	 */
+	public static Builder forShell(Shell shell) {
+		return new Builder(shell.getDisplay()).shell(shell);
+	}
+
 	private Function<Composite, ? extends Control> contentCreator;
 	private Function<Composite, Control> titleCreator;
 	private boolean hasCloseButton;
@@ -200,6 +221,10 @@ public class NotificationPopup extends AbstractNotificationPopup {
 		}
 		if (builder.fadeIn != null) {
 			setFadingEnabled(builder.fadeIn);
+		}
+
+		if (builder.shell != null) {
+			setParentShell(builder.shell);
 		}
 	}
 

@@ -17,6 +17,8 @@ package org.eclipse.jface.viewers;
 
 import java.util.Collection;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
+
 /**
  * This implementation of <code>IStructuredContentProvider</code> handles
  * the case where the viewer input is an unchanging array or collection of elements.
@@ -25,8 +27,8 @@ import java.util.Collection;
  * </p>
  *
  * @since 2.1
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ArrayContentProvider implements IStructuredContentProvider {
 
 	private static ArrayContentProvider instance;

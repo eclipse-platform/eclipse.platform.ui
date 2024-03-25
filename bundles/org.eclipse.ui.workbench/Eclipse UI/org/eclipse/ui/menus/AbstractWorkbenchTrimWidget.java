@@ -24,15 +24,11 @@ import org.eclipse.ui.IWorkbenchWindow;
  * widgets as to which workbench window they're currently being hosted in.
  *
  * @since 3.2
- *
  */
 public abstract class AbstractWorkbenchTrimWidget extends AbstractTrimWidget implements IWorkbenchWidget {
 
 	private IWorkbenchWindow wbWindow;
 
-	/**
-	 *
-	 */
 	public AbstractWorkbenchTrimWidget() {
 		super();
 	}

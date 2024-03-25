@@ -178,8 +178,6 @@ public class ErrorDialog extends IconAndMessageDialog {
 
 	/**
 	 * Create the area for extra error support information.
-	 *
-	 * @param parent
 	 */
 	private void createSupportArea(Composite parent) {
 
@@ -629,10 +627,6 @@ public class ErrorDialog extends IconAndMessageDialog {
 
 	/**
 	 * Put the details of the status of the error onto the stream.
-	 *
-	 * @param buildingStatus
-	 * @param buffer
-	 * @param nesting
 	 */
 	private void populateCopyBuffer(IStatus buildingStatus,
 			StringBuilder buffer, int nesting) {

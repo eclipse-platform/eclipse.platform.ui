@@ -17,7 +17,7 @@ package org.eclipse.e4.ui.progress.internal;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.progress.IProgressConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -45,7 +45,7 @@ public class ImageTools {
 			String relativePath) {
 		//TODO E4 - the only place that requires org.eclipse.core.runtime
 		URL url = FileLocator.find(Platform
-				.getBundle(IProgressConstants.PLUGIN_ID), new Path(
+				.getBundle(IProgressConstants.PLUGIN_ID), IPath.fromOSString(
 				ICONS_LOCATION + relativePath), null);
 		return ImageDescriptor.createFromURL(url);
 	}

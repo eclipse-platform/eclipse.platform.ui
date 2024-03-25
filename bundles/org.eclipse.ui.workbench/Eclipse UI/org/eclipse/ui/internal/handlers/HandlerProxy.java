@@ -24,7 +24,7 @@ import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.IHandlerListener;
-import org.eclipse.core.commands.IStateListener;
+import org.eclipse.core.commands.IObjectWithState;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -64,9 +64,6 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 
 	private static Map<IConfigurationElement, HandlerProxy> CEToProxyMap = new HashMap<>();
 
-	/**
-	 *
-	 */
 	private static final String PROP_ENABLED = "enabled"; //$NON-NLS-1$
 
 	/**
@@ -202,9 +199,6 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void registerEnablement() {
 		enablementRef = evaluationService.addEvaluationListener(enabledWhenExpression, getEnablementListener(),
 				PROP_ENABLED);
@@ -341,6 +335,11 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 				if (configurationElement != null) {
 					handler = (IHandler) configurationElement.createExecutableExtension(handlerAttributeName);
 					handler.addHandlerListener(getHandlerListener());
+					if (handler instanceof IObjectWithState) {
+						for (String id : getStateIds()) {
+							((IObjectWithState) handler).addState(id, getState(id));
+						}
+					}
 					setEnabled(evaluationService == null ? null : evaluationService.getCurrentState());
 					refreshElements();
 					return true;
@@ -453,9 +452,6 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 			radioState = state;
 			refreshElements();
 		}
-		if (handler instanceof IStateListener) {
-			((IStateListener) handler).handleStateChange(state, oldValue);
-		}
 	}
 
 	/**
@@ -474,5 +470,21 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 	 */
 	public IHandler getHandler() {
 		return handler;
+	}
+
+	@Override
+	public void addState(String stateId, State state) {
+		super.addState(stateId, state);
+		if (handler instanceof IObjectWithState) {
+			((IObjectWithState) handler).addState(stateId, state);
+		}
+	}
+
+	@Override
+	public void removeState(String stateId) {
+		if (handler instanceof IObjectWithState) {
+			((IObjectWithState) handler).removeState(stateId);
+		}
+		super.removeState(stateId);
 	}
 }

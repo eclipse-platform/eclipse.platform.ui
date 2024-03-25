@@ -24,9 +24,9 @@ import org.junit.Test;
 
 public class FieldAssistAPITests extends AbstractFieldAssistTestCase {
 
-	private String description = "Description";
-	private String label = "LabelForName";
-	private String content = "Name";
+	private final String description = "Description";
+	private final String label = "LabelForName";
+	private final String content = "Name";
 	private IContentProposal proposal;
 
 	@Test

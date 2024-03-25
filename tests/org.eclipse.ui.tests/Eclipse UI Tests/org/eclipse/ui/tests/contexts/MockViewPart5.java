@@ -29,18 +29,15 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.tests.api.MockWorkbenchPart;
 
 public class MockViewPart5 extends MockWorkbenchPart implements IViewPart {
-	/**
-	 *
-	 */
 	public static final String PART_CONTEXT_ID = "org.eclipse.ui.tests.contexts.ViewPart";
 
 	public static String ID = "org.eclipse.ui.tests.contexts.MockViewPart5";
 
 	public static String NAME = "Context Mock View 5";
 
-	private ContributionItem toolbarItem = new ContributionItem("someId") {
+	private final ContributionItem toolbarItem = new ContributionItem("someId") {
 
-		private DisposeListener disposeListener = e -> toolbarContributionItemWidgetDisposed();
+		private final DisposeListener disposeListener = e -> toolbarContributionItemWidgetDisposed();
 
 		@Override
 		public void fill(ToolBar parent, int index) {

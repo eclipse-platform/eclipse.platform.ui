@@ -20,9 +20,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import jakarta.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
-import javax.inject.Inject;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
@@ -39,9 +39,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-/**
- *
- */
 public class ToolBarManagerRendererTest {
 
 	@Rule

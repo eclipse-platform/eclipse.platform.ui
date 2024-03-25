@@ -31,8 +31,6 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 
 	/**
 	 * Create an instance of the receiver.
-	 *
-	 * @param testName
 	 */
 	public ResourceMappingMarkersTest() {
 		super(ResourceMappingMarkersTest.class.getSimpleName());
@@ -40,8 +38,6 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 
 	/**
 	 * Set up the receiver.
-	 *
-	 * @throws Exception
 	 */
 	@Override
 	protected void doSetUp() throws Exception {

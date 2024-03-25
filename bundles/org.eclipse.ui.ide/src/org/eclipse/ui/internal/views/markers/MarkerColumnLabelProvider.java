@@ -26,7 +26,6 @@ import org.eclipse.ui.views.markers.MarkerField;
  * The MarkerColumnLabelProvider is a label provider for an individual column.
  *
  * @since 3.4
- *
  */
 public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 
@@ -35,8 +34,6 @@ public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 
 	/**
 	 * Create a MarkerViewLabelProvider on a field.
-	 *
-	 * @param field
 	 */
 	MarkerColumnLabelProvider(MarkerField field) {
 		FieldDecorationRegistry.getDefault();

@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Item;
  *
  * @since 3.4
  * @noextend This interface is not intended to be extended by clients.
- *
  */
 public interface ICommonViewerMapper {
 

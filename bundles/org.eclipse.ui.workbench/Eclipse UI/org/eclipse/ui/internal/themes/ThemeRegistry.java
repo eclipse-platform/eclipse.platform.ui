@@ -84,11 +84,6 @@ public class ThemeRegistry implements IThemeRegistry {
 		return (IThemeDescriptor) findDescriptor(getThemes(), id);
 	}
 
-	/**
-	 * @param descriptors
-	 * @param id
-	 * @return
-	 */
 	private IThemeElementDefinition findDescriptor(IThemeElementDefinition[] descriptors, String id) {
 		int idx = Arrays.binarySearch(descriptors, id, ID_COMPARATOR);
 		if (idx < 0) {
@@ -195,9 +190,6 @@ public class ThemeRegistry implements IThemeRegistry {
 		return null;
 	}
 
-	/**
-	 * @param definition
-	 */
 	void add(FontDefinition definition) {
 		if (findFont(definition.getId()) != null) {
 			return;
@@ -219,9 +211,6 @@ public class ThemeRegistry implements IThemeRegistry {
 		return (FontDefinition) findDescriptor(getFonts(), id);
 	}
 
-	/**
-	 * @param definition
-	 */
 	void add(ThemeElementCategory definition) {
 		if (findCategory(definition.getId()) != null) {
 			return;
@@ -238,10 +227,6 @@ public class ThemeRegistry implements IThemeRegistry {
 		return retArray;
 	}
 
-	/**
-	 * @param name
-	 * @param value
-	 */
 	void setData(String name, String value) {
 		if (dataMap.containsKey(name)) {
 			return;

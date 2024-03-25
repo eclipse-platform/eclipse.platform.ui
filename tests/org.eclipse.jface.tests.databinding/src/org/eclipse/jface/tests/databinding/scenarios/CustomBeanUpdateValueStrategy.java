@@ -27,7 +27,6 @@ import org.eclipse.core.databinding.validation.IValidator;
  * properties, if a get&lt;PropertyName&gt;Validator method is defined. Makes it
  * easy to associate validators with the properties that they are responsible
  * for validating.
- *
  */
 public class CustomBeanUpdateValueStrategy<S, D> extends UpdateValueStrategy<S, D> {
 

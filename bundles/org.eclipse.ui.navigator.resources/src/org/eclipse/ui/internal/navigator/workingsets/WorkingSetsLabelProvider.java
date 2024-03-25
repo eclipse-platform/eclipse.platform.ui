@@ -18,7 +18,7 @@ import java.net.URL;
 import java.util.Collections;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -30,7 +30,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Provides a text label and icon for Working Sets.
- *
  */
 public class WorkingSetsLabelProvider implements ILabelProvider {
 
@@ -50,7 +49,7 @@ public class WorkingSetsLabelProvider implements ILabelProvider {
 	private Image getWorkingSetImage() {
 		if (workingSetImage == null) {
 			URL iconUrl = FileLocator.find(WorkbenchNavigatorPlugin.getDefault().getBundle(),
-					Path.fromPortableString("icons/full/obj16/otherprojects_workingsets.png"), //$NON-NLS-1$
+					IPath.fromPortableString("icons/full/obj16/otherprojects_workingsets.png"), //$NON-NLS-1$
 					Collections.emptyMap());
 			workingSetImage = ImageDescriptor.createFromURL(iconUrl).createImage();
 		}

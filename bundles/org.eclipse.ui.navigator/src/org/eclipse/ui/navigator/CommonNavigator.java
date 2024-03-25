@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2019 IBM Corporation and others.
+ * Copyright (c) 2003, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -134,11 +134,10 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	/**
 	 * <p>
-	 * Used to track changes to the {@link #isLinkingEnabled}&nbsp;property.
+	 * Used to track changes to {@link #isLinkingEnabled()}.
 	 * </p>
 	 *
 	 * Make sure this does not conflict with anything in IWorkbenchPartConstants.
-	 *
 	 */
 	public static final int IS_LINKING_ENABLED_PROPERTY = 0x10000;
 
@@ -161,9 +160,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	private LinkHelperService linkService;
 
-	/**
-	 *
-	 */
 	public CommonNavigator() {
 		super();
 	}
@@ -225,8 +221,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 		commonActionGroup = createCommonActionGroup();
 		commonActionGroup.fillActionBars(getViewSite().getActionBars());
-		if (memento != null && commonActionGroup instanceof IMementoAware) {
-			((IMementoAware) commonActionGroup).restoreState(memento);
+		if (memento != null && commonActionGroup instanceof IMementoAware mementoAware) {
+			mementoAware.restoreState(memento);
 		}
 
 		ISaveablesLifecycleListener saveablesLifecycleListener = new ISaveablesLifecycleListener() {
@@ -287,7 +283,6 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * @param anElement element to get text for
 	 * @return the tool tip text
 	 * @since 3.4
-	 *
 	 */
 	public String getFrameToolTipText(Object anElement) {
 		if (commonViewer == null)
@@ -356,8 +351,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		super.saveState(aMemento);
 		commonManager.saveState(aMemento);
 		commonViewer.getNavigatorContentService().saveState(aMemento);
-		if (commonActionGroup instanceof IMementoAware) {
-			((IMementoAware) commonActionGroup).saveState(aMemento);
+		if (commonActionGroup instanceof IMementoAware mementoAware) {
+			mementoAware.saveState(aMemento);
 		}
 	}
 
@@ -687,9 +682,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 			}
 		}
 		Object input = context.getInput();
-		if (input instanceof IEditorInput) {
+		if (input instanceof IEditorInput editorInput) {
 			LinkHelperService lhs = getLinkHelperService();
-			selection = lhs.getSelectionFor((IEditorInput) input);
+			selection = lhs.getSelectionFor(editorInput);
 			if (selection != null && !selection.isEmpty()) {
 				selectReveal(selection);
 				return true;

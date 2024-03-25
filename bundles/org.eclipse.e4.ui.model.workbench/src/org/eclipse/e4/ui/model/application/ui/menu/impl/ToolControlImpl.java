@@ -119,9 +119,10 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI,
 					oldContributionURI, contributionURI));
+		}
 	}
 
 	/**
@@ -143,9 +144,10 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	public void setObject(Object newObject) {
 		Object oldObject = object;
 		object = newObject;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_CONTROL__OBJECT, oldObject,
 					object));
+		}
 	}
 
 	/**
@@ -282,8 +284,9 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (contributionURI: "); //$NON-NLS-1$

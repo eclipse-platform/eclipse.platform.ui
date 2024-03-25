@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2016, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  * Mickael Istria (Red Hat Inc.) - [266030] Allow "others" working set
+ * Nikifor Fedorov (ArSysOp) - Import more than one project at once (eclipse.platform#226)
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.plugin;
 
@@ -70,14 +71,19 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String ProjectExplorerPart_workingSetModel;
 
 	public static String OpenProjectAction_OpenExistingProject;
+	public static String OpenProjectAction_OpenExistingProjects;
 	public static String OpenProjectAction_OpenExistingProject_desc;
+	public static String OpenProjectAction_opening;
+	public static String OpenProjectAction_multiple;
 
 	public static String SelectProjectForFolderAction_SelectProject;
+	public static String SelectProjectForFolderAction_SelectProjects;
 
 	public static String NestedProjectLabelProvider_nestedProjectLabel;
 
 	public static String workingSet_others;
 	public static String ShowInActionProvider_showInAction_label;
+
 
 
 	static {

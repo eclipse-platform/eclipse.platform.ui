@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.themes;
 
 import java.util.Hashtable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.swt.graphics.RGB;
@@ -96,10 +95,8 @@ public class RGBVisibleContrastColorFactory implements IColorFactory, IExecutabl
 	 * SWT constants.
 	 */
 	@Override
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-			throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		if (data instanceof Hashtable) {
-			@SuppressWarnings("unchecked")
 			Hashtable<String, String> table = (Hashtable<String, String>) data;
 			fg = table.get("foreground"); //$NON-NLS-1$
 			bg = table.get("background"); //$NON-NLS-1$

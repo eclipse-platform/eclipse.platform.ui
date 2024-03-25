@@ -14,7 +14,6 @@
 package org.eclipse.ui.tests.dialogs;
 
 import static java.util.Collections.singleton;
-import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -103,7 +102,7 @@ public class ContainerCheckedTreeViewerTest {
 			return;
 		}
 
-		List<SelectionState> childStates = Arrays.stream(children).map(this::stateOf).collect(toList());
+		List<SelectionState> childStates = Arrays.stream(children).map(this::stateOf).toList();
 
 		SelectionState expectedState = aggregate(childStates);
 		SelectionState actualState = stateOf(node);

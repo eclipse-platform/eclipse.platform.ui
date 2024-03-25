@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@ package org.eclipse.e4.ui.bindings.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -153,7 +154,7 @@ public class BindingTableTests {
 		Binding match1 = table.getPerfectMatch(ctrlV);
 		assertEquals(pasteCmd, match1.getParameterizedCommand());
 		Binding match2 = table.getPerfectMatch(shiftIns);
-		assertFalse(match1 == match2);
+		assertNotEquals(match1, match2);
 		assertEquals(pasteCmd, match2.getParameterizedCommand());
 	}
 

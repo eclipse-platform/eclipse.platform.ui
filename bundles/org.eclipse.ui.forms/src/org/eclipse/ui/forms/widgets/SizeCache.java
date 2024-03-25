@@ -349,7 +349,6 @@ public class SizeCache {
 	 * if unsure.
 	 * </p>
 	 *
-	 * @param control
 	 * @return <code>true</code> iff the preferred length of the given control
 	 *         is independent of the width and vice versa
 	 */
@@ -381,8 +380,6 @@ public class SizeCache {
 	 * compensate for bug 46112. To be removed once SWT provides an "official"
 	 * way to compute one dimension of a control's size given the other known
 	 * dimension.
-	 *
-	 * @param control
 	 */
 	private void computeHintOffset(Control control) {
 		if (control instanceof Scrollable) {
@@ -411,7 +408,6 @@ public class SizeCache {
 	 * property has been confirmed.
 	 * </p>
 	 *
-	 * @param control
 	 * @return value as described above
 	 */
 	private static boolean isPreferredWidthMaximum(Control control) {

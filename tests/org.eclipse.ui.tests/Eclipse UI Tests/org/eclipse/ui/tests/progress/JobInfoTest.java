@@ -53,7 +53,7 @@ public class JobInfoTest {
 	 */
 	static final int YIELDING = 0x40;
 
-	private List<JobInfo> jobinfos = new ArrayList<>();
+	private final List<JobInfo> jobinfos = new ArrayList<>();
 
 	@Before
 	public void setUp() throws Exception {
@@ -86,8 +86,8 @@ public class JobInfoTest {
 	}
 
 	/**
-	 * Test that {@link org.eclipse.ui.internal.progress.JobInfo#compareTo(Object)}
-	 * is valid implemented and complies to the interface method contract.
+	 * Test that {@link JobSnapshot#compareTo(JobSnapshot)} is valid implemented and
+	 * complies to the interface method contract.
 	 */
 	@Test
 	public void testCompareToContractCompliance() {
@@ -134,13 +134,6 @@ public class JobInfoTest {
 		}
 	}
 
-	/**
-	 * @param user
-	 * @param system
-	 * @param jobstate
-	 * @param counter
-	 * @return
-	 */
 	private int createAndAddJobInfos(boolean user, boolean system, int jobstate, int counter) {
 		TestJob job;
 		JobInfo ji;

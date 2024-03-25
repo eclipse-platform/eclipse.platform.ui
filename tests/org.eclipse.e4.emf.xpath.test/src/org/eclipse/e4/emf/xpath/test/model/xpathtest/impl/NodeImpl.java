@@ -12,18 +12,13 @@ import org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuElement;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.Node;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.Root;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
@@ -36,6 +31,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.NodeImpl#getMenus <em>Menus</em>}</li>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.NodeImpl#getParent <em>Parent</em>}</li>
@@ -47,7 +43,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.NodeImpl#getInrefs <em>Inrefs</em>}</li>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.NodeImpl#getOutrefs <em>Outrefs</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -189,7 +184,7 @@ public class NodeImpl extends EObjectImpl implements Node {
 	@Override
 	public EList<MenuElement> getMenus() {
 		if (menus == null) {
-			menus = new EObjectContainmentEList<>(MenuElement.class, this, XpathtestPackage.NODE__MENUS);
+			menus = new EObjectContainmentEList<MenuElement>(MenuElement.class, this, XpathtestPackage.NODE__MENUS);
 		}
 		return menus;
 	}
@@ -211,7 +206,8 @@ public class NodeImpl extends EObjectImpl implements Node {
 	 * @generated
 	 */
 	public NotificationChain basicSetParent(Node newParent, NotificationChain msgs) {
-		return eBasicSetContainer((InternalEObject)newParent, XpathtestPackage.NODE__PARENT, msgs);
+		msgs = eBasicSetContainer((InternalEObject)newParent, XpathtestPackage.NODE__PARENT, msgs);
+		return msgs;
 	}
 
 	/**
@@ -223,7 +219,7 @@ public class NodeImpl extends EObjectImpl implements Node {
 	public void setParent(Node newParent) {
 		if (newParent != eInternalContainer() || (eContainerFeatureID() != XpathtestPackage.NODE__PARENT && newParent != null)) {
 			if (EcoreUtil.isAncestor(this, newParent))
-				throw new IllegalArgumentException("Recursive containment not allowed for " + this);
+				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
 			NotificationChain msgs = null;
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
@@ -244,7 +240,7 @@ public class NodeImpl extends EObjectImpl implements Node {
 	@Override
 	public EList<Node> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<>(Node.class, this, XpathtestPackage.NODE__CHILDREN, XpathtestPackage.NODE__PARENT);
+			children = new EObjectContainmentWithInverseEList<Node>(Node.class, this, XpathtestPackage.NODE__CHILDREN, XpathtestPackage.NODE__PARENT);
 		}
 		return children;
 	}
@@ -366,7 +362,7 @@ public class NodeImpl extends EObjectImpl implements Node {
 	@Override
 	public EList<Node> getInrefs() {
 		if (inrefs == null) {
-			inrefs = new EObjectWithInverseResolvingEList.ManyInverse<>(Node.class, this, XpathtestPackage.NODE__INREFS, XpathtestPackage.NODE__OUTREFS);
+			inrefs = new EObjectWithInverseResolvingEList.ManyInverse<Node>(Node.class, this, XpathtestPackage.NODE__INREFS, XpathtestPackage.NODE__OUTREFS);
 		}
 		return inrefs;
 	}
@@ -379,7 +375,7 @@ public class NodeImpl extends EObjectImpl implements Node {
 	@Override
 	public EList<Node> getOutrefs() {
 		if (outrefs == null) {
-			outrefs = new EObjectWithInverseResolvingEList.ManyInverse<>(Node.class, this, XpathtestPackage.NODE__OUTREFS, XpathtestPackage.NODE__INREFS);
+			outrefs = new EObjectWithInverseResolvingEList.ManyInverse<Node>(Node.class, this, XpathtestPackage.NODE__OUTREFS, XpathtestPackage.NODE__INREFS);
 		}
 		return outrefs;
 	}

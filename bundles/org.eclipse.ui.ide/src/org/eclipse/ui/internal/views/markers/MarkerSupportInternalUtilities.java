@@ -54,7 +54,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * functionality used by multiple classes.
  *
  * @since 3.4
- *
  */
 public class MarkerSupportInternalUtilities {
 
@@ -118,7 +117,6 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * Create the image at the supplied path.
 	 *
-	 * @param completeImagePath
 	 * @param manager the resource manager to allocate the image in
 	 * @return Image or <code>null</code>.
 	 */
@@ -133,7 +131,6 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * Return a StatusAdapter for the error
 	 *
-	 * @param exception
 	 * @return StatusAdapter
 	 */
 	static final StatusAdapter errorFor(Throwable exception) {
@@ -199,7 +196,6 @@ public class MarkerSupportInternalUtilities {
 	 * Return the children of the given marker item (may return an array of
 	 * length 0)
 	 *
-	 * @param markerItem
 	 * @return the children
 	 */
 	public static final MarkerItem[] getChildren(MarkerItem markerItem) {
@@ -212,7 +208,6 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * Determine the average width of font used by the control.
 	 *
-	 * @param control
 	 * @return int
 	 */
 	public static final int getFontWidth(Control control) {
@@ -225,8 +220,6 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * Return the group value of the item in group.
 	 *
-	 * @param group
-	 * @param item
 	 * @return String
 	 */
 	public static final String  getGroupValue(MarkerGroup group, MarkerItem item) {
@@ -246,7 +239,6 @@ public class MarkerSupportInternalUtilities {
 	 * Returns the highest severity of the given marker item and all its
 	 * children.
 	 *
-	 * @param markerItem
 	 * @return the severity
 	 */
 	public static final int getHighestSeverity(MarkerItem markerItem) {
@@ -262,7 +254,6 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * Return the id for the field.
 	 *
-	 * @param field
 	 * @return String
 	 */
 	public static final String getId(MarkerField field) {
@@ -273,7 +264,6 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * Get the IDE image at path.
 	 *
-	 * @param constantName
 	 * @return Image
 	 */
 	private static Image getIDEImage(String constantName) {
@@ -288,7 +278,6 @@ public class MarkerSupportInternalUtilities {
 	 * Return the severity value for item. A value of -1 indicates
 	 * that there is no severity value.
 	 *
-	 * @param item
 	 * @return int
 	 */
 	static int getSeverity(MarkerItem item) {
@@ -298,7 +287,6 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * Get the image for the supplied severity
 	 *
-	 * @param severity
 	 * @return {@link Image}
 	 */
 	public static Image getSeverityImage(int severity) {
@@ -320,7 +308,6 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * Create the MarkerItem that wraps marker.
 	 *
-	 * @param marker
 	 * @return {@link MarkerItem}
 	 */
 	static MarkerItem newMarkerItem(IMarker marker) {
@@ -330,8 +317,6 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * Show the marker in view if possible.
 	 *
-	 * @param view
-	 * @param marker
 	 * @return <code>true</code> if the marker is shown
 	 */
 	public static boolean showMarker(IViewPart view, IMarker marker) {
@@ -362,8 +347,6 @@ public class MarkerSupportInternalUtilities {
 
 	/**
 	 * Log an exception from a markers view.
-	 *
-	 * @param exception
 	 */
 	public static void logViewError(Exception exception) {
 		handleViewError(exception, StatusManager.LOG);
@@ -371,15 +354,12 @@ public class MarkerSupportInternalUtilities {
 
 	/**
 	 * Show an exception from a markers view.
-	 *
-	 * @param exception
 	 */
 	public static void showViewError(Exception exception) {
 		handleViewError(exception, StatusManager.LOG | StatusManager.SHOW);
 	}
 
 	/**
-	 * @param exception
 	 * @param handlingMethod
 	 *            StatusManager.LOG, StatusManager.SHOW,etc, bitwise ORed
 	 */

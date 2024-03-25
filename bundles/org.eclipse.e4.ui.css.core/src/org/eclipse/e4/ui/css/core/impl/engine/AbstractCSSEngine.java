@@ -38,7 +38,6 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.ChildVisibilityAwareElement;
 import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
@@ -97,7 +96,6 @@ import org.w3c.dom.stylesheets.StyleSheet;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public abstract class AbstractCSSEngine implements CSSEngine {
 
@@ -206,7 +204,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			if (importRule.getHref().startsWith("platform")) {
 				url = FileLocator.resolve(new URL(importRule.getHref()));
 			} else {
-				Path p = new Path(source.getURI());
+				IPath p = IPath.fromOSString(source.getURI());
 				IPath trim = p.removeLastSegments(1);
 				boolean isArchive = source.getURI().contains(ARCHIVE_IDENTIFIER);
 				url = FileLocator
@@ -267,9 +265,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	/**
 	 * Return true if <code>source</code> is valid and false otherwise.
-	 *
-	 * @param source
-	 * @throws IOException
 	 */
 	private void checkInputSource(InputSource source) throws IOException {
 		Reader reader = source.getCharacterStream();
@@ -450,7 +445,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 * Allow the CSS engine to skip particular elements if they are not visible.
 	 * Elements need to be restyled when they become visible.
 	 *
-	 * @param elt
 	 * @return true if the element is visible, false if not visible.
 	 */
 	protected boolean isVisible(Element elt) {
@@ -525,9 +519,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/**
 	 * Callback method called when styles applied of <code>nodes</code>
 	 * children of the <code>element</code>.
-	 *
-	 * @param element
-	 * @param nodes
 	 */
 	protected void onStylesAppliedToChildNodes(Element element, NodeList nodes) {
 		if (element instanceof CSSStylableElement) {
@@ -712,9 +703,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 *
 	 * @param element
 	 *            may be a widget or a node or some object
-	 * @param property
-	 * @param value
-	 * @param pseudo
 	 */
 	@Override
 	public ICSSPropertyHandler applyCSSProperty(Object element, String property, CSSValue value, String pseudo)
@@ -823,7 +811,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/**
 	 * Return the set of property names and handlers for the provided node.
 	 *
-	 * @param node
 	 * @return the property names and handlers
 	 */
 	@Override
@@ -849,9 +836,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	/**
 	 * Return the w3c Element linked to the Object element.
-	 *
-	 * @param element
-	 * @return
 	 */
 	@Override
 	public Element getElement(Object element) {
@@ -956,7 +940,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/**
 	 * Handle exceptions thrown while parsing, applying styles. By default this
 	 * method call CSS Error Handler if it is initialized.
-	 *
 	 */
 	@Override
 	public void handleExceptions(Exception e) {

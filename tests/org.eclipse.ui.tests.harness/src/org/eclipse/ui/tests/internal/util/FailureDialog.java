@@ -34,9 +34,9 @@ public class FailureDialog extends Dialog {
 
 	private String _log;
 
-	private int SIZING_TEXT_WIDTH = 400;
+	private final int SIZING_TEXT_WIDTH = 400;
 
-	private int SIZING_TEXT_HEIGHT = 200;
+	private final int SIZING_TEXT_HEIGHT = 200;
 
 	/**
 	 * Constructor for FailureDialog

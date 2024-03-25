@@ -68,8 +68,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
-/**
- */
 public class OleEditor extends EditorPart {
 
 	/**
@@ -214,8 +212,6 @@ public class OleEditor extends EditorPart {
 
 	/**
 	 * Display an error dialog with the supplied title and message.
-	 * @param title
-	 * @param message
 	 */
 	private void displayErrorDialog(String title, String message) {
 		Shell parent = null;

@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.ui.progress.internal.legacy.TrimUtil;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -29,6 +26,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 /**
  * The ProgressRegion is class for the region of the workbench where the
@@ -74,9 +74,6 @@ public class ProgressRegion {
 	 *
 	 * @param parent
 	 *            The parent widget of the composite.
-	 * @param window
-	 *            The WorkbenchWindow this is in.
-	 * @return Control
 	 */
 	@PostConstruct
 	public Control createContents(Composite parent) {
@@ -218,7 +215,6 @@ public class ProgressRegion {
 	/**
 	 * Answer true if the side is a horizonal one
 	 *
-	 * @param dropSide
 	 * @return <code>true</code> if the side is horizontal
 	 */
 	private boolean isHorizontal(int dropSide) {
@@ -231,7 +227,6 @@ public class ProgressRegion {
 	/**
 	 * Answer true if the side is a horizonal one
 	 *
-	 * @param dropSide
 	 * @return <code>true</code> if the side is horizontal
 	 */
 	private boolean isVertical(int dropSide) {

@@ -37,7 +37,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * filter.
  *
  * @since 3.4
- *
  */
 class ScopeArea extends GroupFilterConfigurationArea {
 
@@ -248,7 +247,6 @@ class ScopeArea extends GroupFilterConfigurationArea {
 
 	/**
 	 * Set the scope
-	 * @param value
 	 */
 	private void setScope(int value){
 		scope = value;

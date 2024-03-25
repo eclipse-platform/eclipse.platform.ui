@@ -17,7 +17,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * ContentOutlineMessages is the message class for the messages used in the content outline.
- *
  */
 public class ContentOutlineMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.views.contentoutline.messages";//$NON-NLS-1$

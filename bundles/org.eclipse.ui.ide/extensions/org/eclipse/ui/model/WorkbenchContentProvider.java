@@ -67,10 +67,10 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 	}
 
 	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		super.inputChanged(viewer, oldInput, newInput);
+	public void inputChanged(Viewer newViewer, Object oldInput, Object newInput) {
+		super.inputChanged(newViewer, oldInput, newInput);
 
-		this.viewer = viewer;
+		this.viewer = newViewer;
 		IWorkspace oldWorkspace = null;
 		IWorkspace newWorkspace = null;
 
@@ -117,7 +117,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		}
 
 
-		final Collection runnables = new ArrayList();
+		final Collection<Runnable> runnables = new ArrayList<>();
 		processDelta(delta, runnables);
 
 		if (runnables.isEmpty()) {
@@ -143,12 +143,11 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 
 	/**
 	 * Run all of the runnables that are the widget updates
-	 * @param runnables
 	 */
-	private void runUpdates(Collection runnables) {
-		Iterator runnableIterator = runnables.iterator();
+	private void runUpdates(Collection<Runnable> runnables) {
+		Iterator<Runnable> runnableIterator = runnables.iterator();
 		while(runnableIterator.hasNext()){
-			((Runnable)runnableIterator.next()).run();
+			runnableIterator.next().run();
 		}
 
 	}
@@ -156,7 +155,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 	/**
 	 * Process a resource delta. Add any runnables
 	 */
-	private void processDelta(IResourceDelta delta, Collection runnables) {
+	private void processDelta(IResourceDelta delta, Collection<Runnable> runnables) {
 		//he widget may have been destroyed
 		// by the time this is run. Check for this and do nothing if so.
 		Control ctrl = viewer.getControl();
@@ -301,7 +300,6 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 	}
 	/**
 	 * Return a runnable for refreshing a resource.
-	 * @param resource
 	 * @return Runnable
 	 */
 	private Runnable getRefreshRunnable(final IResource resource) {
@@ -310,7 +308,6 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 
 		/**
 		 * Return a runnable for refreshing a resource.
-		 * @param resource
 		 * @return Runnable
 		 */
 		private Runnable getUpdateRunnable(final IResource resource) {

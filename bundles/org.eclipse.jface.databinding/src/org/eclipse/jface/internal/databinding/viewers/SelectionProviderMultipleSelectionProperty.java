@@ -33,7 +33,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * @param <E> type of the elements in the list
  *
  * @since 3.3
- *
  */
 public class SelectionProviderMultipleSelectionProperty<S extends ISelectionProvider, E>
 		extends ViewerListProperty<S, E> {

@@ -65,16 +65,10 @@ public class ResourceDragAndDropEditor {
 			}
 		}
 
-		/**
-		 *
-		 */
 		public void doLoad() {
 			String resourcePreference = getStoredValue(false);
 			updateState(resourcePreference);
 		}
-		/**
-		 * @param value
-		 */
 		private void updateState(String value) {
 			for (int i = 0; i < labels.length; i++) {
 				if (value.equals(buttons[i].getData()))
@@ -82,9 +76,6 @@ public class ResourceDragAndDropEditor {
 			}
 		}
 
-		/**
-		 *
-		 */
 		public void loadDefault() {
 			String value = getStoredValue(true);
 			updateState(value);
@@ -113,17 +104,11 @@ public class ResourceDragAndDropEditor {
 			return values[0];
 		}
 
-		/**
-		 *
-		 */
 		public void store() {
 			IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 			store.putValue(preferenceKey, getSelection());
 		}
 
-		/**
-		 * @param enableLinking
-		 */
 		public void setEnabled(boolean enableLinking) {
 			group.setEnabled(enableLinking);
 			for (int i = 0; i < labels.length; i++) {

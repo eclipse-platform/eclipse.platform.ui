@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A snippet to demonstrate a dialog with image buttons.
- *
  */
 public class Snippet060DialogWithURLImageButtons {
 	private ImageRegistry registry;

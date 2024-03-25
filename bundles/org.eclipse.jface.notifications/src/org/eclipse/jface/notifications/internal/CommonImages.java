@@ -63,7 +63,6 @@ public class CommonImages {
 	/**
 	 * Lazily initializes image map.
 	 *
-	 * @param imageDescriptor
 	 * @return Image
 	 */
 	public static Image getImage(ImageDescriptor imageDescriptor) {

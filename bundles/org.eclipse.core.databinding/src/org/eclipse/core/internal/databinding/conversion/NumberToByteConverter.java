@@ -25,11 +25,6 @@ import java.text.Format;
  * @since 1.0
  */
 public class NumberToByteConverter extends NumberToNumberConverter<Byte> {
-	/**
-	 * @param numberFormat
-	 * @param fromType
-	 * @param primitive
-	 */
 	public NumberToByteConverter(Format numberFormat, Class<?> fromType, boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Byte.TYPE : Byte.class);
 	}

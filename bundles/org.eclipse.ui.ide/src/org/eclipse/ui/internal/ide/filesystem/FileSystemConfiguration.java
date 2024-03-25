@@ -21,7 +21,6 @@ import org.eclipse.ui.ide.fileSystem.FileSystemContributor;
  * defined by
  *
  * @since 3.2
- *
  */
 public class FileSystemConfiguration {
 
@@ -35,9 +34,6 @@ public class FileSystemConfiguration {
 	/**
 	 * Create a new FileSystemConfiguration with the defined
 	 * contributor and userLabel for the supplied scheme.
-	 * @param name
-	 * @param declaredContributor
-	 * @param fileSystem
 	 */
 	public FileSystemConfiguration(String name, FileSystemContributor declaredContributor, String fileSystem) {
 		label = name;

@@ -15,8 +15,8 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
+import jakarta.inject.Inject;
 import java.util.List;
-import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -28,7 +28,6 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
  * <code>E4Workbench.FORCED_PERSPECTIVE_ID</code>.
  *
  * Might evaluate more keys in the future
- *
  */
 public class CommandLineOptionModelProcessor {
 	@Inject
@@ -40,7 +39,6 @@ public class CommandLineOptionModelProcessor {
 	@Inject
 	private EModelService modelService;
 
-	@SuppressWarnings("javadoc")
 	public void process() {
 		selectForcedPerspective();
 	}

@@ -28,9 +28,6 @@ public class NumberToDoubleValidator extends NumberToNumberValidator {
 	private static final Double MIN = Double.valueOf(Double.MIN_VALUE);
 	private static final Double MAX = Double.valueOf(Double.MAX_VALUE);
 
-	/**
-	 * @param converter
-	 */
 	public NumberToDoubleValidator(NumberToDoubleConverter converter) {
 		super(converter, MIN, MAX);
 	}

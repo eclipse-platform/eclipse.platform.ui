@@ -17,9 +17,6 @@ package org.eclipse.ui.internal.ide.addons;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -43,6 +40,9 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
+
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 
 /**
  * Model add-on for automatic save of dirty editors.
@@ -151,9 +151,6 @@ public class SaveAllDirtyPartsAddon {
 
 	private long autoSaveInterval;
 
-	/**
-	 * @param autoSave
-	 */
 	@Inject
 	@Optional
 	public void setAutoSave(
@@ -167,9 +164,6 @@ public class SaveAllDirtyPartsAddon {
 		}
 	}
 
-	/**
-	 * @param newInterval
-	 */
 	@Inject
 	@Optional
 	public void autoSaveIntervalChanged(

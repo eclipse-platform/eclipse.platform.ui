@@ -28,7 +28,6 @@ import org.eclipse.ui.wizards.IWizardCategory;
  * Wizard page class from which an export wizard is selected.
  *
  * @since 3.2
- *
  */
 public class ExportPage extends ImportExportPage {
 	private static final String STORE_SELECTED_EXPORT_WIZARD_ID = DIALOG_SETTING_SECTION_NAME
@@ -41,9 +40,6 @@ public class ExportPage extends ImportExportPage {
 
 	/**
 	 * Constructor for export wizard selection page.
-	 *
-	 * @param aWorkbench
-	 * @param currentSelection
 	 */
 	public ExportPage(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
 		super(aWorkbench, currentSelection);

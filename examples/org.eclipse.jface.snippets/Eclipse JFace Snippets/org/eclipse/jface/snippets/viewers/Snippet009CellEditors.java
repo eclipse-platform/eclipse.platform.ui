@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Edit cell values in a table
- *
  */
 public class Snippet009CellEditors {
 	public static class MyModel {
@@ -96,9 +95,6 @@ public class Snippet009CellEditors {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display ();
 		Shell shell = new Shell(display);

@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * TableViewer: Hide full selection
- *
  */
 public class Snippet007FullSelection {
 
@@ -87,9 +86,6 @@ public class Snippet007FullSelection {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display ();
 		Shell shell = new Shell(display);

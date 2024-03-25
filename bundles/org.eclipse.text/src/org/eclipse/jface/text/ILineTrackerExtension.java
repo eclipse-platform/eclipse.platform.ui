@@ -1,0 +1,46 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.jface.text;
+
+/**
+ * Extension interface for {@link org.eclipse.jface.text.ILineTracker}. Adds the
+ * concept of rewrite sessions. A rewrite session is a sequence of replace
+ * operations that form a semantic unit.
+ *
+ * @since 3.1
+ */
+public interface ILineTrackerExtension {
+
+	/**
+	 * Tells the line tracker that a rewrite session started. A rewrite session
+	 * is a sequence of replace operations that form a semantic unit. The line
+	 * tracker is allowed to use that information for internal optimization.
+	 *
+	 * @param session the rewrite session
+	 * @throws IllegalStateException in case there is already an active rewrite
+	 *             session
+	 */
+	void startRewriteSession(DocumentRewriteSession session) throws IllegalStateException;
+
+	/**
+	 * Tells the line tracker that the rewrite session has finished. This method
+	 * is only called when <code>startRewriteSession</code> has been called
+	 * before. The text resulting from the rewrite session is passed to the line
+	 * tracker.
+	 *
+	 * @param session the rewrite session
+	 * @param text the text with which to re-initialize the line tracker
+	 */
+	void stopRewriteSession(DocumentRewriteSession session, String text);
+}

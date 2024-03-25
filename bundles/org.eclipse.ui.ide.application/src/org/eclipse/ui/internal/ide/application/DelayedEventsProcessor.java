@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2021 IBM Corporation and others.
+ * Copyright (c) 2010, 2021, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
  *                       at a specific line/col
  *     Nitin Dahyabhai - Bug 567708 - Support for MultiPageEditorParts
  *                       containing a TextEditor page
+ *     James Yuzawa    - 'Open Directory' action shows existing projects in
+ *                       Project Explorer
  ******************************************************************************/
 
 package org.eclipse.ui.internal.ide.application;
@@ -25,11 +27,18 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.common.CommandException;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -38,14 +47,20 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
+import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.urischeme.IUriSchemeProcessor;
 import org.osgi.framework.Bundle;
 
@@ -126,7 +141,6 @@ public class DelayedEventsProcessor implements Listener {
 	 *
 	 * @param display the display to run the asynchronous operation.
 	 * @param event   the url to open is contained in <code>event.text</code>.
-	 *
 	 */
 	private static void openUrl(Display display, Event event) {
 		display.asyncExec(() -> {
@@ -183,90 +197,119 @@ public class DelayedEventsProcessor implements Listener {
 				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				if (window == null)
 					return;
-				// System.err.println(System.currentTimeMillis());
 				FileLocationDetails details = FileLocationDetails.resolve(initialPath);
 				if (details == null || !details.fileInfo.exists()) {
 					String msg = NLS.bind(IDEWorkbenchMessages.OpenDelayedFileAction_message_fileNotFound, initialPath);
 					MessageDialog.open(MessageDialog.ERROR, window.getShell(),
 							IDEWorkbenchMessages.OpenDelayedFileAction_title, msg, SWT.SHEET);
-				} else if (details.fileInfo.isDirectory()) {
-					SmartImportWizard wizard = new SmartImportWizard();
-					wizard.setInitialImportSource(new File(details.fileStore.toURI()));
-					WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
-					dialog.setBlockOnOpen(false);
-					dialog.open();
-				} else {
-					IWorkbenchPage page = window.getActivePage();
-					if (page == null) {
-						String msg = NLS.bind(IDEWorkbenchMessages.OpenDelayedFileAction_message_noWindow,
-								details.path);
-						MessageDialog.open(MessageDialog.ERROR, window.getShell(),
-								IDEWorkbenchMessages.OpenDelayedFileAction_title, msg, SWT.SHEET);
-					}
-					try {
-						IEditorPart openEditor = IDE.openInternalEditorOnFileStore(page, details.fileStore);
-						Shell shell = window.getShell();
-						if (shell != null) {
-							if (shell.getMinimized())
-								shell.setMinimized(false);
-							shell.forceActive();
-						}
-
-						if (details.line >= 1) {
-							try {
+					return;
+				}
+				IWorkbenchPage page = window.getActivePage();
+				if (page == null) {
+					String msg = NLS.bind(IDEWorkbenchMessages.OpenDelayedFileAction_message_noWindow,
+							details.path);
+					MessageDialog.open(MessageDialog.ERROR, window.getShell(),
+							IDEWorkbenchMessages.OpenDelayedFileAction_title, msg, SWT.SHEET);
+					return;
+				}
+				Shell shell = window.getShell();
+				if (shell != null) {
+					if (shell.getMinimized())
+						shell.setMinimized(false);
+					shell.forceActive();
+				}
+				try {
+					if (details.fileInfo.isDirectory()) {
+						// Open a directory
+						File directory = new File(details.fileStore.toURI());
+						for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+							IPath location = project.getLocation();
+							if (location != null && directory.equals(location.toFile())) {
 								/*
-								 * Do things with reflection to avoid having to rely on the text editor
-								 * plug-ins.
+								 * The directory is the root of an existing project.
+								 * Select in Project Explorer.
+								 * If open, then refresh, else open.
 								 */
-								Bundle textEditorBundle = Platform.getBundle(TEXTEDITOR_BUNDLE_NAME);
-								if (textEditorBundle != null) {
-									Class<?> textEditorClass = textEditorBundle.loadClass(TEXTEDITOR_CLASS_NAME);
-									if (textEditorClass != null) {
-										Object textEditor = invoke(openEditor, "getAdapter", //$NON-NLS-1$
-												new Class[] { Class.class }, new Object[] { textEditorClass });
-										if (textEditor != null) {
-											openEditor = (IEditorPart) textEditor;
-										}
+								IViewPart view = page.showView(ProjectExplorer.VIEW_ID);
+								if (view instanceof ISetSelectionTarget setSelectionTarget) {
+									setSelectionTarget.selectReveal(new StructuredSelection(project));
+									ICommandService commandService = view.getViewSite().getService(ICommandService.class);
+									Command command = commandService.getCommand(project.isOpen() ?
+										IWorkbenchCommandConstants.FILE_REFRESH :
+										IWorkbenchCommandConstants.PROJECT_OPEN_PROJECT);
+									if (command != null && command.isHandled() && command.isEnabled()) {
+										command.executeWithChecks(new ExecutionEvent());
 									}
 								}
-
-								Object documentProvider = invoke(openEditor, "getDocumentProvider"); //$NON-NLS-1$
-
-								Object editorInput = invoke(openEditor, "getEditorInput"); //$NON-NLS-1$
-
-								Object document = invoke(documentProvider, "getDocument", new Class[] { Object.class }, //$NON-NLS-1$
-										new Object[] { editorInput });
-
-								int numberOfLines = (Integer) invoke(document, "getNumberOfLines"); //$NON-NLS-1$
-								if (details.line > numberOfLines) {
-									details.line = numberOfLines;
-								}
-								int lineLength = (Integer) invoke(document, "getLineLength", new Class[] { int.class }, //$NON-NLS-1$
-										new Object[] { details.line - 1 });
-								if (details.column > lineLength) {
-									details.column = lineLength;
-								}
-								if (details.column < 1) {
-									details.column = 1;
-								}
-								int offset = (Integer) invoke(document, "getLineOffset", new Class[] { int.class }, //$NON-NLS-1$
-										new Object[] { (details.line - 1) });
-								offset += (details.column - 1);
-
-								invoke(openEditor, "selectAndReveal", new Class[] { int.class, int.class }, //$NON-NLS-1$
-										new Object[] { offset, 0 });
-							} catch (Exception e) {
-								// Ignore (not an ITextEditor nor adaptable to one).
+								return;
 							}
 						}
-					} catch (PartInitException e) {
-						String msg = NLS.bind(IDEWorkbenchMessages.OpenDelayedFileAction_message_errorOnOpen,
-								details.fileStore.getName());
-						CoreException eLog = new PartInitException(e.getMessage());
-						IDEWorkbenchPlugin.log(msg, new Status(IStatus.ERROR, IDEApplication.PLUGIN_ID, msg, eLog));
-						MessageDialog.open(MessageDialog.ERROR, window.getShell(),
-								IDEWorkbenchMessages.OpenDelayedFileAction_title, msg, SWT.SHEET);
+						// Fall back to import
+						SmartImportWizard wizard = new SmartImportWizard();
+						wizard.setInitialImportSource(directory);
+						WizardDialog dialog = new WizardDialog(shell, wizard);
+						dialog.setBlockOnOpen(false);
+						dialog.open();
+					} else {
+						// Open a file
+						IEditorPart openEditor = IDE.openInternalEditorOnFileStore(page, details.fileStore);
+						if (details.line < 1) {
+							// There is no need to jump to a line
+							return;
+						}
+						try {
+							/*
+							 * Do things with reflection to avoid having to rely on the text editor
+							 * plug-ins.
+							 */
+							Bundle textEditorBundle = Platform.getBundle(TEXTEDITOR_BUNDLE_NAME);
+							if (textEditorBundle != null) {
+								Class<?> textEditorClass = textEditorBundle.loadClass(TEXTEDITOR_CLASS_NAME);
+								if (textEditorClass != null) {
+									Object textEditor = invoke(openEditor, "getAdapter", //$NON-NLS-1$
+											new Class[] { Class.class }, new Object[] { textEditorClass });
+									if (textEditor != null) {
+										openEditor = (IEditorPart) textEditor;
+									}
+								}
+							}
+
+							Object documentProvider = invoke(openEditor, "getDocumentProvider"); //$NON-NLS-1$
+
+							Object editorInput = invoke(openEditor, "getEditorInput"); //$NON-NLS-1$
+
+							Object document = invoke(documentProvider, "getDocument", new Class[] { Object.class }, //$NON-NLS-1$
+									new Object[] { editorInput });
+
+							int numberOfLines = (Integer) invoke(document, "getNumberOfLines"); //$NON-NLS-1$
+							if (details.line > numberOfLines) {
+								details.line = numberOfLines;
+							}
+							int lineLength = (Integer) invoke(document, "getLineLength", new Class[] { int.class }, //$NON-NLS-1$
+									new Object[] { details.line - 1 });
+							if (details.column > lineLength) {
+								details.column = lineLength;
+							}
+							if (details.column < 1) {
+								details.column = 1;
+							}
+							int offset = (Integer) invoke(document, "getLineOffset", new Class[] { int.class }, //$NON-NLS-1$
+									new Object[] { (details.line - 1) });
+							offset += (details.column - 1);
+
+							invoke(openEditor, "selectAndReveal", new Class[] { int.class, int.class }, //$NON-NLS-1$
+									new Object[] { offset, 0 });
+						} catch (Exception e) {
+							// Ignore (not an ITextEditor nor adaptable to one).
+						}
 					}
+				} catch (CommandException | PartInitException e) {
+					String msg = NLS.bind(IDEWorkbenchMessages.OpenDelayedFileAction_message_errorOnOpen,
+							details.fileStore.getName());
+					WorkbenchException eLog = new WorkbenchException(e.getMessage());
+					IDEWorkbenchPlugin.log(msg, new Status(IStatus.ERROR, IDEApplication.PLUGIN_ID, msg, eLog));
+					MessageDialog.open(MessageDialog.ERROR, window.getShell(),
+							IDEWorkbenchMessages.OpenDelayedFileAction_title, msg, SWT.SHEET);
 				}
 			}
 

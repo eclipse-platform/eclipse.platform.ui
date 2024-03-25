@@ -383,7 +383,6 @@ public abstract class ContributionManager implements IContributionManager {
 	 *
 	 * @param item
 	 *            the item to be added
-	 *
 	 */
 	protected void itemAdded(IContributionItem item) {
 		item.setParent(this);

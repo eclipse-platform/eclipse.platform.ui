@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.Assert;
  * @since 3.1
  */
 public class LazySortedCollection {
-	private final int MIN_CAPACITY = 8;
+	private static final int MIN_CAPACITY = 8;
 	private Object[] contents = new Object[MIN_CAPACITY];
 	private int[] leftSubTree = new int[MIN_CAPACITY];
 	private int[] rightSubTree = new int[MIN_CAPACITY];
@@ -125,7 +125,6 @@ public class LazySortedCollection {
 
 		/**
 		 * Redirects this edge to a new node
-		 * @param newNode
 		 * @since 3.1
 		 */
 		private void setTarget(int newNode) {
@@ -361,7 +360,6 @@ public class LazySortedCollection {
 	 * lazy removal, this will force the node to be removed immediately. Returns
 	 * the new subTree.
 	 *
-	 * @param subTree
 	 * @return the replacement node (this may be different from subTree if the subtree
 	 * was replaced during the removal)
 	 * @since 3.1
@@ -419,8 +417,6 @@ public class LazySortedCollection {
 
 	/**
 	 * Adjusts the capacity of the array.
-	 *
-	 * @param newCapacity
 	 */
 	private final void setArraySize(int newCapacity) {
 		Object[] newContents = new Object[newCapacity];
@@ -452,7 +448,6 @@ public class LazySortedCollection {
 	 * Creates a new node with the given value. Returns the index of the newly
 	 * created node.
 	 *
-	 * @param value
 	 * @return the index of the newly created node
 	 * @since 3.1
 	 */
@@ -497,7 +492,6 @@ public class LazySortedCollection {
 	/**
 	 * Returns the current tree index for the given object.
 	 *
-	 * @param value
 	 * @return the current tree index
 	 * @since 3.1
 	 */
@@ -533,8 +527,6 @@ public class LazySortedCollection {
 	 * causes a change in the number of elements in the parent tree, the changes are
 	 * propogated toward the root.
 	 *
-	 * @param nodeToReplace
-	 * @param replacementNode
 	 * @since 3.1
 	 */
 	private void replaceNode(int nodeToReplace, int replacementNode) {
@@ -575,7 +567,6 @@ public class LazySortedCollection {
 	/**
 	 * Recomputes the tree size for the given node.
 	 *
-	 * @param node
 	 * @since 3.1
 	 */
 	private void recomputeTreeSize(int node) {
@@ -590,8 +581,6 @@ public class LazySortedCollection {
 
 	/**
 	 *
-	 * @param toRecompute
-	 * @param whereToStop
 	 * @since 3.1
 	 */
 	private void forceRecomputeTreeSize(int toRecompute, int whereToStop) {
@@ -604,7 +593,6 @@ public class LazySortedCollection {
 
 	/**
 	 * Destroy the node at the given index in the tree
-	 * @param nodeToDestroy
 	 * @since 3.1
 	 */
 	private void destroyNode(int nodeToDestroy) {
@@ -976,7 +964,6 @@ public class LazySortedCollection {
 	/**
 	 * Prunes the given subtree (and all child nodes, sorted or unsorted).
 	 *
-	 * @param subTree
 	 * @since 3.1
 	 */
 	private final void removeSubTree(int subTree) {
@@ -1008,7 +995,6 @@ public class LazySortedCollection {
 	 * Schedules the node for removal. If the node can be removed in constant time,
 	 * it is removed immediately.
 	 *
-	 * @param subTree
 	 * @return the replacement node
 	 * @since 3.1
 	 */
@@ -1039,7 +1025,6 @@ public class LazySortedCollection {
 	 * Removes the given subtree, replacing it with one of its children.
 	 * Returns the new root of the subtree
 	 *
-	 * @param subTree
 	 * @return the index of the new root
 	 * @since 3.1
 	 */
@@ -1375,9 +1360,7 @@ public class LazySortedCollection {
 	/**
 	 * Fills in the available space in the given array with all children of the given node.
 	 *
-	 * @param result
 	 * @param resultIdx index in the result array where we will begin filling in children
-	 * @param node
 	 * @return the number of children added to the array
 	 * @since 3.1
 	 */

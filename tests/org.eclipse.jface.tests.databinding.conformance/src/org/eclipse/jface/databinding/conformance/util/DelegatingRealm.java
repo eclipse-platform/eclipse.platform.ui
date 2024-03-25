@@ -24,7 +24,7 @@ import org.eclipse.core.databinding.observable.Realm;
  * @since 3.2
  */
 public class DelegatingRealm extends CurrentRealm {
-	private Realm realm;
+	private final Realm realm;
 
 	public DelegatingRealm(Realm realm) {
 		this.realm = realm;

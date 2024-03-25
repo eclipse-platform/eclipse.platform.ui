@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.e4.ui.css.swt;singleton:=true
-Bundle-Version: 0.14.700.qualifier
+Bundle-Version: 0.15.400.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -16,7 +16,10 @@ Export-Package: org.eclipse.e4.ui.css.swt;x-friends:="org.eclipse.ui.workbench",
  org.eclipse.e4.ui.css.swt.dom.html;x-internal:=true,
  org.eclipse.e4.ui.css.swt.dom.preference;x-internal:=true,
  org.eclipse.e4.ui.css.swt.engine;x-friends:="org.eclipse.e4.ui.css.swt.theme,org.eclipse.e4.ui.workbench.swt",
- org.eclipse.e4.ui.css.swt.helpers;x-friends:="org.eclipse.ui.views.properties.tabbed,org.eclipse.e4.ui.css.swt.theme",
+ org.eclipse.e4.ui.css.swt.helpers;x-friends:="
+  org.eclipse.ui.views.properties.tabbed,
+  org.eclipse.e4.ui.workbench.swt,
+  org.eclipse.e4.ui.css.swt.theme",
  org.eclipse.e4.ui.css.swt.properties;x-friends:="org.eclipse.ui.workbench,org.eclipse.ui.views.properties.tabbed,org.eclipse.ui.forms",
  org.eclipse.e4.ui.css.swt.properties.converters;x-internal:=true,
  org.eclipse.e4.ui.css.swt.properties.css2;x-internal:=true,
@@ -29,9 +32,9 @@ Export-Package: org.eclipse.e4.ui.css.swt;x-friends:="org.eclipse.ui.workbench",
  org.eclipse.e4.ui.internal.css.swt.definition;x-friends:="org.eclipse.ui.workbench"
 Require-Bundle: org.eclipse.e4.ui.css.core;bundle-version="0.12.200",
  org.eclipse.swt;bundle-version="[3.106.0,4.0.0)",
- org.w3c.css.sac;bundle-version="1.3.0",
- org.eclipse.core.runtime;bundle-version="[3.6.0,4.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+ org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)"
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.jface.resource
+Import-Package: org.eclipse.jface.resource,
+ org.w3c.css.sac;version="1.3.0"
 Automatic-Module-Name: org.eclipse.e4.ui.css.swt

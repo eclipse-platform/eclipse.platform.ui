@@ -54,4 +54,14 @@ public class TestUnitWidgetFactory extends AbstractFactoryTest {
 
 		assertEquals(data, testLabel.getData());
 	}
+
+	@Test
+	public void setsDataWithKey() {
+		String data1 = "data1";
+		String data2 = "data2";
+		Label testLabel = LabelFactory.newLabel(SWT.NONE).data("id1", data1).data("id2", data2).create(shell);
+
+		assertEquals(data1, testLabel.getData("id1"));
+		assertEquals(data2, testLabel.getData("id2"));
+	}
 }

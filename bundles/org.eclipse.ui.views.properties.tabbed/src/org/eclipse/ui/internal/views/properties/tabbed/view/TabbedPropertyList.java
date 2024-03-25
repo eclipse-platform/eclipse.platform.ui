@@ -239,9 +239,6 @@ public class TabbedPropertyList
 		 * image width should not be more than 16 pixels. The caller is
 		 * responsible for loading the image appropriately and managing it's
 		 * resources.
-		 *
-		 * @param index
-		 * @param image
 		 */
 		public void showDynamicImage(int index, Image image) {
 			if (index >= 0 && index < dynamicImages.length) {
@@ -256,8 +253,6 @@ public class TabbedPropertyList
 		 * Hide the dynamic image at specified index in dynamicImages array. The
 		 * caller is responsible for managing image resources and disposing it
 		 * appropriately.
-		 *
-		 * @param index
 		 */
 		public void hideDynamicImage(int index) {
 			if (index >= 0 && index < dynamicImages.length) {
@@ -272,8 +267,6 @@ public class TabbedPropertyList
 		 * Sets color to be used for drawing tab label text. The caller is
 		 * responsible for managing the color's resources and disposing it
 		 * appropriately after setDefaultTextColor() is later invoked.
-		 *
-		 * @param textColor
 		 */
 		public void setTextColor(Color textColor) {
 			if (textColor != null && !this.textColor.equals(textColor)) {
@@ -656,8 +649,7 @@ public class TabbedPropertyList
 	 * Calculate the number of tabs that will fit in the tab list composite.
 	 */
 	protected void computeTabsThatFitInComposite() {
-		tabsThatFitInComposite = Math
-			.round((getSize().y - 22) / getTabHeight());
+		tabsThatFitInComposite = (getSize().y - 22) / getTabHeight();
 		if (tabsThatFitInComposite <= 0) {
 			tabsThatFitInComposite = 1;
 		}
@@ -727,8 +719,6 @@ public class TabbedPropertyList
 	 * images. Individual dynamic images are displayed/removed from a tab by
 	 * using the showDynamicImage() and hideDynamicImage() methods on the tab's
 	 * ListElement object.
-	 *
-	 * @param tabToDynamicImageCountMap
 	 */
 	public void setDynamicImageCount(Map<ITabItem, Integer> tabToDynamicImageCountMap) {
 		this.tabToDynamicImageCountMap = tabToDynamicImageCountMap;
@@ -736,8 +726,6 @@ public class TabbedPropertyList
 
 	/**
 	 * Sets the new list elements.
-	 *
-	 * @param children
 	 */
 	public void setElements(Object[] children) {
 		if (elements != ELEMENTS_EMPTY) {

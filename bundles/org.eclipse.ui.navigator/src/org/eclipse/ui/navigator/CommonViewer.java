@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -268,8 +268,8 @@ public class CommonViewer extends TreeViewer {
 	 */
 	@Override
 	public void setSorter(ViewerSorter sorter) {
-		if (sorter != null && sorter instanceof CommonViewerSorter) {
-			((CommonViewerSorter) sorter).setContentService(contentService);
+		if (sorter != null && sorter instanceof CommonViewerSorter commonSorter) {
+			commonSorter.setContentService(contentService);
 		}
 
 		super.setSorter(sorter);
@@ -356,9 +356,7 @@ public class CommonViewer extends TreeViewer {
 	@Override
 	public void setSelection(ISelection selection, boolean reveal) {
 
-		if(selection instanceof IStructuredSelection) {
-			IStructuredSelection sSelection = (IStructuredSelection) selection;
-
+		if (selection instanceof IStructuredSelection sSelection) {
 			INavigatorPipelineService pipeDream = contentService
 					.getPipelineService();
 
@@ -398,7 +396,6 @@ public class CommonViewer extends TreeViewer {
 	 *
 	 * @param item the item in the tree to update
 	 * @since 3.4
-	 *
 	 */
 	public void doUpdateItem(Widget item) {
 		doUpdateItem(item, item.getData(), true);
@@ -410,8 +407,8 @@ public class CommonViewer extends TreeViewer {
 	@Override
 	protected void mapElement(Object element, Widget item) {
 		super.mapElement(element, item);
-		if (_mapper != null && item instanceof Item) {
-			_mapper.addToMap(element, (Item) item);
+		if (_mapper != null && item instanceof Item it) {
+			_mapper.addToMap(element, it);
 		}
 	}
 
@@ -420,8 +417,8 @@ public class CommonViewer extends TreeViewer {
 	 */
 	@Override
 	protected void unmapElement(Object element, Widget item) {
-		if (_mapper != null && item instanceof Item) {
-			_mapper.removeFromMap(element, (Item) item);
+		if (_mapper != null && item instanceof Item it) {
+			_mapper.removeFromMap(element, it);
 		}
 		super.unmapElement(element, item);
 	}

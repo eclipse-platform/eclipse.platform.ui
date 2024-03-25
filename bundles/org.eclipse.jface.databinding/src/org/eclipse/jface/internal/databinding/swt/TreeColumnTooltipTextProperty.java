@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * @since 3.3
- *
  */
 public class TreeColumnTooltipTextProperty extends WidgetStringValueProperty<TreeColumn> {
 	@Override

@@ -14,6 +14,8 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.CellEditor;
@@ -26,10 +28,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.junit.Test;
 
 /**
  * @since 3.3
- *
  */
 public class Bug201002TreeViewerTest extends ViewerTestCase {
 	public static class MyModel {
@@ -55,13 +57,6 @@ public class Bug201002TreeViewerTest extends ViewerTestCase {
 
 			return rv;
 		}
-	}
-	/**
-	 * @param name
-	 */
-	public Bug201002TreeViewerTest(String name) {
-		super(name);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -158,6 +153,7 @@ public class Bug201002TreeViewerTest extends ViewerTestCase {
 		return (TreeViewer) fViewer;
 	}
 
+	@Test
 	public void testBug201002() {
 		getTreeViewer().getTree().setTopItem(
 				getTreeViewer().getTree().getItem(0));
@@ -169,10 +165,7 @@ public class Bug201002TreeViewerTest extends ViewerTestCase {
 
 		}
 
-		assertEquals(true,
-				getTreeViewer().getTree().getTopItem() != getTreeViewer()
-						.getTree().getItem(0));
+		assertTrue(getTreeViewer().getTree().getTopItem() != getTreeViewer().getTree().getItem(0));
 	}
-
 
 }

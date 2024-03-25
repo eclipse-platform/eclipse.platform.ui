@@ -52,8 +52,6 @@ public class SWTDelayedObservableValueDecorator<T> extends SWTObservableValueDec
 	 * once there have been no value changes in the observable for
 	 * <code>delay</code> milliseconds.
 	 *
-	 * @param decorated
-	 * @param widget
 	 * @throws IllegalArgumentException
 	 *             if <code>updateEventType</code> is an incorrect type.
 	 */

@@ -15,20 +15,20 @@
 
 package org.eclipse.e4.ui.workbench.swt.util;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -149,9 +149,6 @@ public class BindingProcessingAddon {
 		}
 	}
 
-	/**
-	 * @param bindingTable
-	 */
 	private void defineBindingTable(MBindingTable bindingTable) {
 		Assert.isNotNull(
 				bindingTable.getBindingContext(),
@@ -169,10 +166,6 @@ public class BindingProcessingAddon {
 		}
 	}
 
-	/**
-	 * @param bindingTable
-	 * @param binding
-	 */
 	private void defineBinding(BindingTable bindingTable, Context bindingContext, MKeyBinding binding) {
 		Binding keyBinding = createBinding(bindingContext,
 				binding.getCommand(), binding.getParameters(),
@@ -198,7 +191,7 @@ public class BindingProcessingAddon {
 		}
 
 		if (cmdModel == null) {
-			Platform.getLog(getClass()).error("binding with no command: " + binding); //$NON-NLS-1$
+			ILog.of(getClass()).error("binding with no command: " + binding); //$NON-NLS-1$
 			return null;
 		}
 		Map<String, Object> parameters = null;
@@ -268,7 +261,7 @@ public class BindingProcessingAddon {
 		final Context bindingContext = contextManager.getContext(bt.getBindingContext().getElementId());
 		BindingTable table = bindingTables.getTable(bindingContext.getId());
 		if (table == null) {
-			Platform.getLog(getClass()).error("Trying to create \'" + binding //$NON-NLS-1$
+			ILog.of(getClass()).error("Trying to create \'" + binding //$NON-NLS-1$
 					+ "\' without binding table " + bindingContext.getId()); //$NON-NLS-1$
 			return;
 		}

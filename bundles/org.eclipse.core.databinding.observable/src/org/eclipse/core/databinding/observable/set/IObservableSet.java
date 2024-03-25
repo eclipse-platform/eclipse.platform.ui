@@ -45,7 +45,6 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
  * @see ObservableSet
  *
  * @since 1.0
- *
  */
 public interface IObservableSet<E> extends Set<E>, IObservableCollection<E> {
 

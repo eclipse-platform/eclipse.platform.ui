@@ -21,11 +21,6 @@ public class StringUtils {
 	/**
 	 * Replace <b>oldString</b> occurrences with <b>newString</b> occurrences of
 	 * the String <b>line</b> and return the result.
-	 *
-	 * @param line
-	 * @param oldString
-	 * @param newString
-	 * @return
 	 */
 	public static final String replace(String line, String oldString,
 			String newString) {
@@ -52,9 +47,6 @@ public class StringUtils {
 
 	/**
 	 * Return true if String value is null or empty.
-	 *
-	 * @param value
-	 * @return
 	 */
 	public static boolean isEmpty(String value) {
 		return (value == null || value.length() < 1);
@@ -64,16 +56,14 @@ public class StringUtils {
 	// -----------------------------------------------------------------------
 	/**
 	 * <p>
-	 * Capitalizes all the whitespace separated words in a String. Only the
-	 * first letter of each word is changed. To convert the rest of each word to
-	 * lowercase at the same time, use {@link #capitalizeFully(String)}.
+	 * Capitalizes all the whitespace separated words in a String. Only the first
+	 * letter of each word is changed.
 	 * </p>
 	 *
 	 * <p>
 	 * Whitespace is defined by {@link Character#isWhitespace(char)}. A
-	 * <code>null</code> input String returns <code>null</code>.
-	 * Capitalization uses the unicode title case, normally equivalent to upper
-	 * case.
+	 * <code>null</code> input String returns <code>null</code>. Capitalization uses
+	 * the unicode title case, normally equivalent to upper case.
 	 * </p>
 	 *
 	 * <pre>
@@ -82,11 +72,8 @@ public class StringUtils {
 	 * WordUtils.capitalize(&quot;i am FINE&quot;) = &quot;I Am FINE&quot;
 	 * </pre>
 	 *
-	 * @param str
-	 *            the String to capitalize, may be null
+	 * @param str the String to capitalize, may be null
 	 * @return capitalized String, <code>null</code> if null String input
-	 * @see #uncapitalize(String)
-	 * @see #capitalizeFully(String)
 	 */
 	public static String capitalize(String str) {
 		return capitalize(str, null);
@@ -95,20 +82,18 @@ public class StringUtils {
 	/**
 	 * <p>
 	 * Capitalizes all the delimiter separated words in a String. Only the first
-	 * letter of each word is changed. To convert the rest of each word to
-	 * lowercase at the same time, use {@link #capitalizeFully(String, char[])}.
+	 * letter of each word is changed.
 	 * </p>
 	 *
 	 * <p>
-	 * The delimiters represent a set of characters understood to separate
-	 * words. The first string character and the first non-delimiter character
-	 * after a delimiter will be capitalized.
+	 * The delimiters represent a set of characters understood to separate words.
+	 * The first string character and the first non-delimiter character after a
+	 * delimiter will be capitalized.
 	 * </p>
 	 *
 	 * <p>
-	 * A <code>null</code> input String returns <code>null</code>.
-	 * Capitalization uses the unicode title case, normally equivalent to upper
-	 * case.
+	 * A <code>null</code> input String returns <code>null</code>. Capitalization
+	 * uses the unicode title case, normally equivalent to upper case.
 	 * </p>
 	 *
 	 * <pre>
@@ -119,14 +104,10 @@ public class StringUtils {
 	 * WordUtils.capitalize(&quot;i aM.fine&quot;, {'.'}) = &quot;I aM.Fine&quot;
 	 * </pre>
 	 *
-	 * @param str
-	 *            the String to capitalize, may be null
-	 * @param delimiters
-	 *            set of characters to determine capitalization, null means
-	 *            whitespace
+	 * @param str        the String to capitalize, may be null
+	 * @param delimiters set of characters to determine capitalization, null means
+	 *                   whitespace
 	 * @return capitalized String, <code>null</code> if null String input
-	 * @see #uncapitalize(String)
-	 * @see #capitalizeFully(String)
 	 * @since 2.1
 	 */
 	public static String capitalize(String str, char[] delimiters) {

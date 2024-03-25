@@ -70,7 +70,7 @@ public class Snippet001NestedSelectionWithCombo {
 
 	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
@@ -132,7 +132,7 @@ public class Snippet001NestedSelectionWithCombo {
 	/** The GUI view. */
 	static class View {
 		// The model to bind
-		private ArrayList<Person> people = new ArrayList<>();
+		private final ArrayList<Person> people = new ArrayList<>();
 		{
 			people.add(new Person("Wile E. Coyote", "Tucson"));
 			people.add(new Person("Road Runner", "Lost Horse"));
@@ -140,7 +140,7 @@ public class Snippet001NestedSelectionWithCombo {
 		}
 
 		// Choice of cities for the Combo
-		private ArrayList<String> cities = new ArrayList<>();
+		private final ArrayList<String> cities = new ArrayList<>();
 		{
 			cities.add("Tucson");
 			cities.add("AcmeTown");

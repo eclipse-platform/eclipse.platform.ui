@@ -22,7 +22,6 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 3.4
- *
  */
 public class ContributionApplication implements IApplication {
 

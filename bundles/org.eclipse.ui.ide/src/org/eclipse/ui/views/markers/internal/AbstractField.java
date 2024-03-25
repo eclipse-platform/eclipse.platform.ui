@@ -16,7 +16,6 @@
 /**
  * AbstractField is the abstract superclass for fields.
  * @since 3.2
- *
  */
 public abstract class AbstractField implements IField {
 
@@ -29,7 +28,6 @@ public abstract class AbstractField implements IField {
 
 	/**
 	 * Set whether or not the receiver is showing.
-	 * @param showing
 	 */
 	@Override
 	public void setShowing(boolean showing){

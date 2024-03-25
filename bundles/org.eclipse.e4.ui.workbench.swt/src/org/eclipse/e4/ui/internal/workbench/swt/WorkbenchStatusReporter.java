@@ -15,7 +15,7 @@
 
 package org.eclipse.e4.ui.internal.workbench.swt;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -29,9 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.BundleContext;
 
-/**
- *
- */
 public class WorkbenchStatusReporter extends StatusReporter {
 
 	@Inject

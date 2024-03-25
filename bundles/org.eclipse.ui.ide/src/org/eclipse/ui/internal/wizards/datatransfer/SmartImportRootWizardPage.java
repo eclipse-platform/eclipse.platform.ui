@@ -107,7 +107,6 @@ import org.osgi.framework.FrameworkUtil;
  * user a basic choice of how to import (import raw, infer sub- projects...)
  *
  * @since 3.12
- *
  */
 public class SmartImportRootWizardPage extends WizardPage {
 
@@ -363,9 +362,6 @@ public class SmartImportRootWizardPage extends WizardPage {
 		this.workingSetsGroup = new WorkingSetGroup(workingSetComposite, wsSel, workingSetIds);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createInputSelectionOptions(Composite parent) {
 		Label rootDirectoryLabel = new Label(parent, SWT.NONE);
 		rootDirectoryLabel.setText(DataTransferMessages.SmartImportWizardPage_selectRootDirectory);
@@ -539,9 +535,6 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 	}
 
-	/**
-	 * @param res
-	 */
 	private Composite createProposalsGroup(Composite parent) {
 		Composite res = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(res);
@@ -562,8 +555,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 		tree.setContentProvider(new ITreeContentProvider() {
 			@Override
 			public Object[] getElements(Object inputElement) {
-				Map<File, ?> potentialProjects = (Map<File, ?>) inputElement;
-				return potentialProjects.keySet().toArray(new File[potentialProjects.size()]);
+				return ((Map<File, ?>) inputElement).keySet().toArray(File[]::new);
 			}
 
 			@Override
@@ -766,8 +758,6 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 	/**
 	 * Sets the initial source to import.
-	 *
-	 * @param directoryOrArchive
 	 */
 	public void setInitialImportRoot(File directoryOrArchive) {
 		this.selection = directoryOrArchive;
@@ -803,9 +793,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 				selectionSummary.setText(NLS.bind(DataTransferMessages.SmartImportProposals_selectionSummary,
 						directoriesToImport.size(), 1));
 			} else {
-				Set<File> excludedDirectories = new HashSet(((Map<File, ?>) this.tree.getInput()).keySet());
-				for (Object item : this.directoriesToImport) {
-					File directory = (File) item;
+				Set<File> excludedDirectories = new HashSet<>(((Map<File, ?>) this.tree.getInput()).keySet());
+				for (File directory : this.directoriesToImport) {
 					excludedDirectories.remove(directory);
 				}
 				getWizard().getImportJob().setDirectoriesToImport(directoriesToImport);

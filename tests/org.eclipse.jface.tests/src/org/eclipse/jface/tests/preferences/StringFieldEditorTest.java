@@ -16,28 +16,30 @@
 
 package org.eclipse.jface.tests.preferences;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class StringFieldEditorTest extends TestCase {
+public class StringFieldEditorTest {
 
 	private Shell shell;
 	private StringFieldEditor stringFieldEditor;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		shell = new Shell();
 
 		stringFieldEditor = new StringFieldEditor("name", "label", shell);
 	}
 
+	@Test
 	public void testSetLabelText() {
 		stringFieldEditor.setLabelText("label text");
 		assertEquals("label text", stringFieldEditor.getLabelText());
@@ -46,6 +48,7 @@ public class StringFieldEditorTest extends TestCase {
 		assertEquals("label text", stringFieldEditor.getLabelText());
 	}
 
+	@Test
 	public void testLoad() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		stringFieldEditor.setPreferenceName("name");
@@ -61,6 +64,7 @@ public class StringFieldEditorTest extends TestCase {
 		assertEquals(stringFieldEditor.getStringValue(), "bar");
 	}
 
+	@Test
 	public void testLoadDefault() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		stringFieldEditor.setPreferenceName("name");
@@ -72,6 +76,7 @@ public class StringFieldEditorTest extends TestCase {
 		assertEquals(stringFieldEditor.getStringValue(), "foo");
 	}
 
+	@Test
 	public void testSetValueInWidget() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		stringFieldEditor.setPreferenceName("name");
@@ -86,6 +91,7 @@ public class StringFieldEditorTest extends TestCase {
 		assertEquals(stringFieldEditor.getStringValue(), "bar");
 	}
 
+	@Test
 	public void testSetValueInEditor() {
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		stringFieldEditor.setPreferenceName("name");
@@ -101,6 +107,7 @@ public class StringFieldEditorTest extends TestCase {
 		assertEquals(stringFieldEditor.getStringValue(), "bar");
 	}
 
+	@Test
 	public void testBug289599() {
 		PreferenceStore store = new PreferenceStore();
 		store.setDefault("foo", "bar");
@@ -124,10 +131,4 @@ public class StringFieldEditorTest extends TestCase {
 		assertEquals("bar", store.getString("foo"));
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
 }
-

@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablesSource;
 
@@ -99,7 +99,6 @@ import org.eclipse.ui.ISaveablesSource;
  * @since 3.2
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- *
  */
 public interface INavigatorContentService {
 
@@ -216,7 +215,6 @@ public interface INavigatorContentService {
 	 *         this content service.
 	 * @see INavigatorContentService For more information on what <i>active</i>
 	 *      means.
-	 *
 	 */
 	boolean isActive(String anExtensionId);
 
@@ -321,13 +319,11 @@ public interface INavigatorContentService {
 	/**
 	 * The root content providers are recalculated by this method. The attached
 	 * viewer is also refreshed as a result of this method.
-	 *
 	 */
 	void update();
 
 	/**
 	 * Release any acquired resources and instantiated content extensions.
-	 *
 	 */
 	void dispose();
 
@@ -383,14 +379,13 @@ public interface INavigatorContentService {
 	INavigatorFilterService getFilterService();
 
 	/**
-	 * The sorter service provides the appropriate sorter based on the current
-	 * items being sorted. By default, the CommonViewer uses
-	 * {@link CommonViewerSorter} which delegates to this service. Clients do
-	 * not need to provide their own {@link ViewerSorter} unless they wish to
-	 * override this functionality.
+	 * The sorter service provides the appropriate sorter based on the current items
+	 * being sorted. By default, the CommonViewer uses {@link CommonViewerSorter}
+	 * which delegates to this service. Clients do not need to provide their own
+	 * {@link ViewerComparator} unless they wish to override this functionality.
 	 *
 	 * @return An {@link INavigatorSorterService} that can provide
-	 *         {@link ViewerSorter} based on the context of the parent.
+	 *         {@link ViewerComparator} based on the context of the parent.
 	 */
 	INavigatorSorterService getSorterService();
 

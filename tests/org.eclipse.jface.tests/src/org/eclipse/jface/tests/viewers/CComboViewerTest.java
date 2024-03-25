@@ -18,14 +18,12 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Composite;
+import org.junit.Ignore;
 
 /**
  * @since 3.0
  */
 public class CComboViewerTest extends StructuredViewerTest {
-	public CComboViewerTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -48,14 +46,8 @@ public class CComboViewerTest extends StructuredViewerTest {
 		return list.getItem(at);
 	}
 
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(CComboViewerTest.class);
-	}
-
-	/**
-	 * TODO: Determine if this test is applicable to ComboViewer
-	 */
 	@Override
+	@Ignore("TODO: Determine if this test is applicable to ComboViewer")
 	public void testInsertChild() {
 
 	}

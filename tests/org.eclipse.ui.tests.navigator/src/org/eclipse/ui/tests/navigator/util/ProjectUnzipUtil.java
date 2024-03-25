@@ -14,11 +14,10 @@
 package org.eclipse.ui.tests.navigator.util;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -33,14 +32,13 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 public class ProjectUnzipUtil {
 
-	private IPath zipLocation;
-	private String[] projectNames;
+	private final IPath zipLocation;
+	private final String[] projectNames;
 	private IPath rootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 	private static final String META_PROJECT_NAME = ".project"; //$NON-NLS-1$
 
@@ -58,7 +56,7 @@ public class ProjectUnzipUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return new Path(url.getPath());
+		return IPath.fromOSString(url.getPath());
 	}
 
 	public boolean createProjects() {
@@ -108,7 +106,9 @@ public class ProjectUnzipUtil {
 							parentFile.mkdirs();
 						if (!aFile.exists())
 							aFile.createNewFile();
-						copy(zipFile.getInputStream(entry), new FileOutputStream(aFile));
+						try (InputStream in = zipFile.getInputStream(entry)) {
+							Files.write(aFile.toPath(), in.readAllBytes());
+						}
 						if (entry.getTime() > 0)
 							aFile.setLastModified(entry.getTime());
 					}
@@ -124,20 +124,6 @@ public class ProjectUnzipUtil {
 		return rootLocation.append(name);
 	}
 
-	public static void copy(InputStream in, OutputStream out) throws IOException {
-		byte[] buffer = new byte[1024];
-		try {
-			int n = in.read(buffer);
-			while (n > 0) {
-				out.write(buffer, 0, n);
-				n = in.read(buffer);
-			}
-		} finally {
-			in.close();
-			out.close();
-		}
-	}
-
 	public void setRootLocation(IPath rootLocation) {
 		this.rootLocation = rootLocation;
 	}
@@ -145,7 +131,7 @@ public class ProjectUnzipUtil {
 	private void buildProjects() throws IOException, CoreException {
 		for (String projectName : projectNames) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IPath projectPath = new Path("/" + projectName + "/" + META_PROJECT_NAME); //$NON-NLS-1$//$NON-NLS-2$
+			IPath projectPath = IPath.fromOSString("/" + projectName + "/" + META_PROJECT_NAME); //$NON-NLS-1$//$NON-NLS-2$
 			IPath path = rootLocation.append(projectPath);
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 			IProjectDescription description = workspace.loadProjectDescription(path);

@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.util.ArrayList;
-import javax.inject.Inject;
-import javax.inject.Named;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -144,9 +144,6 @@ public final class WorkbenchLogger extends Logger {
 		}
 	}
 
-	/**
-	 * @param log
-	 */
 	@Inject
 	public void setFrameworkLog(FrameworkLog log) {
 		this.log = log;

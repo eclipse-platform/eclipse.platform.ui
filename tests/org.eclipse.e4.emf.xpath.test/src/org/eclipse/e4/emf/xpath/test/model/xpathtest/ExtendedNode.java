@@ -14,10 +14,10 @@ package org.eclipse.e4.emf.xpath.test.model.xpathtest;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode#getName <em>Name</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage#getExtendedNode()
  * @model

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Tom Schindl and others.
+ * Copyright (c) 2007, 2023 Tom Schindl and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -39,13 +39,12 @@ import org.eclipse.swt.widgets.Table;
  * for 3.3 and above please use the new EditingSupport class
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet034CellEditorPerRow {
 	private class MyEditingSupport extends EditingSupport {
-		private CellEditor textEditor;
+		private final CellEditor textEditor;
 
-		private CellEditor dropDownEditor;
+		private final CellEditor dropDownEditor;
 
 		public MyEditingSupport(TableViewer viewer) {
 			super(viewer);
@@ -76,8 +75,8 @@ public class Snippet034CellEditorPerRow {
 
 		@Override
 		protected Object getValue(Object element) {
-			if( element instanceof MyModel2 ) {
-				return Integer.valueOf(((MyModel) element).counter);
+			if (element instanceof MyModel2 mm2) {
+				return Integer.valueOf(mm2.counter);
 			} else {
 				return ((MyModel) element).counter + "";
 			}
@@ -152,9 +151,6 @@ public class Snippet034CellEditorPerRow {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);

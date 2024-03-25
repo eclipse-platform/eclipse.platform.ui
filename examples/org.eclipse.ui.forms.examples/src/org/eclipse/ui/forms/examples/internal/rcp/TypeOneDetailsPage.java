@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,10 +46,11 @@ public class TypeOneDetailsPage implements IDetailsPage {
 	private Button [] choices;
 	private Button flag;
 	private Text text;
-	private static final String RTEXT_DATA =
-			"<form><p>An example of a free-form text that should be "+
-			"wrapped below the section with widgets.</p>"+
-			"<p>It can contain simple tags like <a>links</a> and <b>bold text</b>.</p></form>";
+	private static final String RTEXT_DATA = """
+			<form>
+				<p>An example of a free-form text that should be wrapped below the section with widgets.</p>
+				<p>It can contain simple tags like <a>links</a> and <b>bold text</b>.</p>
+			</form>""";
 
 	public TypeOneDetailsPage() {
 	}

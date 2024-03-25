@@ -14,35 +14,31 @@
 
 package org.eclipse.jface.tests.dialogs;
 
+import static org.junit.Assert.assertEquals;
+
 import java.lang.reflect.Field;
 
 import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test case to assert proper styles have been set for ProgressIndicator.
  *
  * @since 3.4
- *
  */
-public class ProgressIndicatorStyleTest extends TestCase {
+public class ProgressIndicatorStyleTest {
 
 	protected ProgressIndicator progress;
 	protected ProgressBar deter, indeter;
 	protected int style;
 
-	public ProgressIndicatorStyleTest(String name) {
-		super(name);
-
-	}
-
 	/**
 	 * Test the indicator styles.
 	 */
+	@Test
 	public void testProgressIndicator() {
 		style = SWT.SMOOTH;
 		verifyIndicator();

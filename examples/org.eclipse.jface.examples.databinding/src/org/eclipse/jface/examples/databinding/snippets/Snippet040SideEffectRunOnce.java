@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * This snippet shows how to use the
- * {@link ISideEffect#runOnce(java.util.function.Supplier, java.util.function.Consumer)}
+ * {@link ISideEffect#create(java.util.function.Supplier, java.util.function.Consumer)}
  * method to react properly, when an observable is changed inside an async
  * action, e.g., a Job.
  */

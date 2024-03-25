@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,22 +13,21 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ICheckable;
+import org.junit.Test;
 
 public abstract class StructuredItemViewerTest extends StructuredViewerTest {
 
-	public StructuredItemViewerTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testCheckElement() {
 
-		if (fViewer instanceof ICheckable) {
+		if (fViewer instanceof ICheckable ctv) {
 			TestElement first = fRootElement.getFirstChild();
 			TestElement firstfirst = first.getFirstChild();
 
-			ICheckable ctv = (ICheckable) fViewer;
 			ctv.setChecked(first, true);
 			assertTrue(ctv.getChecked(first));
 

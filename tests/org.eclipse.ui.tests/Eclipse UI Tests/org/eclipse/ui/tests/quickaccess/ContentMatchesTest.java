@@ -18,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -66,7 +65,7 @@ public class ContentMatchesTest {
 		text.setText("whitespace");
 		final Table table = quickAccessContents.getTable();
 		assertTrue(DisplayHelper.waitForCondition(table.getDisplay(), TIMEOUT, () -> getAllEntries(table).stream()
-				.filter(x -> x.contains("Text Editors")).collect(Collectors.toList()).isEmpty()));
+				.filter(x -> x.contains("Text Editors")).toList().isEmpty()));
 	}
 
 	@Test
@@ -75,7 +74,7 @@ public class ContentMatchesTest {
 		text.setText("text white");
 		final Table table = quickAccessContents.getTable();
 		assertTrue(DisplayHelper.waitForCondition(table.getDisplay(), TIMEOUT, () -> getAllEntries(table).stream()
-				.filter(x -> x.contains("Text Editors")).collect(Collectors.toList()).isEmpty()));
+				.filter(x -> x.contains("Text Editors")).toList().isEmpty()));
 	}
 
 	@Test
@@ -86,7 +85,7 @@ public class ContentMatchesTest {
 		assertTrue(DisplayHelper.waitForCondition(table.getDisplay(), TIMEOUT,
 				() -> getAllEntries(table).stream()
 						.filter(x -> x.contains("Rename the selected resource and notify LTK participants."))
-						.collect(Collectors.toList()).isEmpty()));
+						.toList().isEmpty()));
 	}
 
 	static List<String> getAllEntries(Table table) {
@@ -98,7 +97,7 @@ public class ContentMatchesTest {
 				res.append(" | ");
 			}
 			return res.toString();
-		}).collect(Collectors.toList());
+		}).toList();
 	}
 
 }

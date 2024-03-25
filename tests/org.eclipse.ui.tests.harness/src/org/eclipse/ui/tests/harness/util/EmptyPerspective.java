@@ -46,7 +46,7 @@ public class EmptyPerspective implements IPerspectiveFactory {
 	/**
 	 * Sets the descriptor for the perspective last opened using this factory.
 	 *
-	 * @param persp the descriptor for the perspective last opened using this factory, or <code>null</code>
+	 * @param perspId the descriptor for the perspective last opened using this factory, or <code>null</code>
 	 */
 	public static void setLastPerspective(String perspId) {
 		LastPerspective = perspId;
@@ -70,8 +70,6 @@ public class EmptyPerspective implements IPerspectiveFactory {
 	 * This method is only called when a new perspective is created.  If
 	 * an old perspective is restored from a persistence file then
 	 * this method is not called.
-	 *
-	 * @param factory the factory used to add views to the perspective
 	 */
 	@Override
 	public void createInitialLayout(IPageLayout layout) {

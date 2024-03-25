@@ -48,7 +48,6 @@ import org.junit.rules.TestWatcher;
 
 /**
  * @since 3.11
- *
  */
 public class ZoomAndPreferencesFontTest {
 	@Rule

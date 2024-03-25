@@ -29,7 +29,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * based file structures.
  *
  * @since 3.2
- *
  */
 public class FileStoreStructureProvider implements IImportStructureProvider {
 
@@ -45,14 +44,12 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 					new NullProgressMonitor()));
 		} catch (CoreException exception) {
 			logException(exception);
-			return new ArrayList();
+			return new ArrayList<>();
 		}
 	}
 
 	/**
 	 * Log the exception.
-	 *
-	 * @param exception
 	 */
 	private void logException(CoreException exception) {
 		IDEWorkbenchPlugin.log(exception.getLocalizedMessage(), exception);

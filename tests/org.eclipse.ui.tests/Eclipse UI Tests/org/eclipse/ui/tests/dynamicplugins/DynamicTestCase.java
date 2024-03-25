@@ -47,9 +47,6 @@ public abstract class DynamicTestCase extends UITestCase implements
 
 	private ReferenceQueue<IExtensionDelta> queue;
 
-	/**
-	 * @param testName
-	 */
 	public DynamicTestCase(String testName) {
 		super(testName);
 	}
@@ -150,7 +147,6 @@ public abstract class DynamicTestCase extends UITestCase implements
 	 * If <code>getMarkerClass()</code> returns <code>null</code> then this method
 	 * will always succeed.
 	 *
-	 * @throws Exception
 	 * @since 3.1
 	 */
 	@Test
@@ -275,7 +271,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 	/**
 	 * Set whether the bundle REMOVED event has been recieved.
 	 *
-	 * @param added
+	 * @param removed
 	 *            whether the bundle REMOVED event has been recieved
 	 */
 	protected final void setRemovedEventPropagated(boolean removed) {

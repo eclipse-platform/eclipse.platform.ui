@@ -52,7 +52,6 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
  * </p>
  *
  * @since 3.2
- *
  */
 public final class PipelinedViewerUpdate {
 

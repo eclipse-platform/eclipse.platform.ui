@@ -40,7 +40,6 @@ import org.osgi.framework.FrameworkUtil;
 
 /**
  * @since 3.6
- *
  */
 public class SpyHandler extends AbstractHandler {
 
@@ -106,11 +105,6 @@ public class SpyHandler extends AbstractHandler {
 		doShowTooltip(control, offset, contributionInfo);
 	}
 
-	/**
-	 * @param control
-	 * @param offset
-	 * @param contributionInfo
-	 */
 	protected void doShowTooltip(Control control, Point offset, final ContributionInfo contributionInfo) {
 		ToolTip toolTip = new ToolTip(control, ToolTip.NO_RECREATE, true) {
 

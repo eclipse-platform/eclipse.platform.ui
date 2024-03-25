@@ -94,13 +94,13 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 
 	private static final FullDecoratorDefinition[] EMPTY_FULL_DEF = new FullDecoratorDefinition[0];
 
-	private final String PREFERENCE_SEPARATOR = ","; //$NON-NLS-1$
+	private static final String PREFERENCE_SEPARATOR = ","; //$NON-NLS-1$
 
-	private final String VALUE_SEPARATOR = ":"; //$NON-NLS-1$
+	private static final String VALUE_SEPARATOR = ":"; //$NON-NLS-1$
 
-	private final String P_TRUE = "true"; //$NON-NLS-1$
+	private static final String P_TRUE = "true"; //$NON-NLS-1$
 
-	private final String P_FALSE = "false"; //$NON-NLS-1$
+	private static final String P_FALSE = "false"; //$NON-NLS-1$
 
 	private LocalResourceManager resourceManager;
 
@@ -109,7 +109,6 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	 * result of calls to {@link IDecoratorManager#getLabelDecorator()}
 	 *
 	 * @since 3.4
-	 *
 	 */
 	private static class ManagedWorkbenchLabelDecorator extends LabelDecorator
 			implements ILabelDecorator, IDelayedLabelDecorator, IColorDecorator, IFontDecorator {
@@ -119,8 +118,6 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 
 		/**
 		 * Create a new instance of the receiver that supports decoratorManager
-		 *
-		 * @param decoratorManager
 		 */
 		public ManagedWorkbenchLabelDecorator(DecoratorManager decoratorManager) {
 			this.decoratorManager = decoratorManager;
@@ -401,9 +398,6 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	/**
 	 * Decorate the text in the receiver using the context.
 	 *
-	 * @param text
-	 * @param element
-	 * @param context
 	 * @return String
 	 * @see LabelDecorator#decorateText(String, Object, IDecorationContext)
 	 */
@@ -457,10 +451,6 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	 * Decorate the image within the context. Allocate any new images in
 	 * localResourceManager
 	 *
-	 * @param image
-	 * @param element
-	 * @param context
-	 * @param localResourceManager
 	 * @return Image
 	 * @see LabelDecorator#decorateImage(Image, Object, IDecorationContext)
 	 */
@@ -517,7 +507,6 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	 * Get the resource adapted object for the supplied element. Return
 	 * <code>null</code>. if there isn't one.
 	 *
-	 * @param element
 	 * @return Object or <code>null</code>.
 	 */
 	private Object getResourceAdapter(Object element) {
@@ -542,9 +531,6 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	 * property called property name. Check for an adapted resource if checkAdapted
 	 * is true.
 	 *
-	 * @param element
-	 * @param property
-	 * @param checkAdapted
 	 * @return boolean <code>true</code> if there is a label property for element or
 	 *         its adapted value
 	 */

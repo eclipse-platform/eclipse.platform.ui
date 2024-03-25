@@ -38,7 +38,7 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class StaticTest extends UITestCase {
-	private IActivityManager activityManager;
+	private final IActivityManager activityManager;
 
 	private List<String> categoryIds;
 
@@ -55,7 +55,6 @@ public class StaticTest extends UITestCase {
 
 	/**
 	 * Populate the id arrays.
-	 *
 	 */
 	private void populateIds() {
 		int index = 0;
@@ -77,7 +76,6 @@ public class StaticTest extends UITestCase {
 
 	/**
 	 * Test the activity manager's content.
-	 *
 	 */
 	@Test
 	public void testActivityManager() {
@@ -102,7 +100,6 @@ public class StaticTest extends UITestCase {
 
 	/**
 	 * Test an activitie's content.
-	 *
 	 */
 	@Test
 	public void testActivity() {
@@ -145,7 +142,6 @@ public class StaticTest extends UITestCase {
 
 	/**
 	 * Test a category's content.
-	 *
 	 */
 	@Test
 	public void testCategory() {

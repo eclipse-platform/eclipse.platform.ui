@@ -29,7 +29,6 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
  * @param <T> type of the value of the property
  *
  * @since 3.3
- *
  */
 public class AnonymousPojoValueProperty<S, T> extends DelegatingValueProperty<S, T> {
 	private final String propertyName;

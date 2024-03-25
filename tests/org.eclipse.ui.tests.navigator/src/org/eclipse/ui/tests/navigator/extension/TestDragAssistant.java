@@ -18,8 +18,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant;
 
-/**
- */
 public class TestDragAssistant extends ResourceDragAdapterAssistant {
 
 	public static DragSourceEvent _finishedEvent;

@@ -16,8 +16,8 @@ package org.eclipse.e4.ui.progress.internal;
 
 import java.util.Arrays;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -99,7 +99,6 @@ public class ProgressManagerUtil {
 	/**
 	 * Return a status for the exception.
 	 *
-	 * @param exception
 	 * @return IStatus
 	 */
 	static IStatus exceptionStatus(Throwable exception) {
@@ -110,12 +109,10 @@ public class ProgressManagerUtil {
 
 	/**
 	 * Log the exception for debugging.
-	 *
-	 * @param exception
 	 */
 	static void logException(Throwable exception) {
 		IStatus status = Status.error(exception.getMessage() == null ? "" : exception.getMessage(), exception); //$NON-NLS-1$
-		Platform.getLog(ProgressManagerUtil.class).log(status);
+		ILog.of(ProgressManagerUtil.class).log(status);
 	}
 
 	// /**
@@ -161,8 +158,6 @@ public class ProgressManagerUtil {
 	 * center of the original string with an ellipsis ("..."). Override if you
 	 * need a different strategy.
 	 *
-	 * @param textValue
-	 * @param control
 	 * @return String
 	 */
 
@@ -204,7 +199,6 @@ public class ProgressManagerUtil {
 	 * Find the second index of a whitespace. Return the first index if there
 	 * isn't one or 0 if there is no space at all.
 	 *
-	 * @param textValue
 	 * @param gc
 	 *            The GC to test max length
 	 * @param maxWidth

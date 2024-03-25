@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.properties.tabbed.css;
 
-import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
@@ -20,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
 import org.w3c.dom.css.CSSValue;
 
-public class TabbedPropertyListCssPropertyHandler extends AbstractCSSPropertySWTHandler implements ICSSPropertyHandler {
+public class TabbedPropertyListCssPropertyHandler extends AbstractCSSPropertySWTHandler {
 
 	private static final String TAB_AREA_BACKGROUND_COLOR = "swt-tabAreaBackground-color"; //$NON-NLS-1$
 	private static final String TAB_BACKGROUND_COLOR = "swt-tabBackground-color"; //$NON-NLS-1$

@@ -23,19 +23,12 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.3
- *
  */
 public class TextTextProperty extends WidgetStringValueProperty<Text> {
-	/**
-	 *
-	 */
 	public TextTextProperty() {
 		this(null);
 	}
 
-	/**
-	 * @param events
-	 */
 	public TextTextProperty(int[] events) {
 		super(checkEvents(events), staleEvents(events));
 	}

@@ -14,6 +14,11 @@
 
 package org.eclipse.ui.tests.commands;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.commands.AbstractHandlerWithState;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -23,13 +28,15 @@ import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.jface.commands.PersistentState;
 import org.eclipse.jface.menus.TextState;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.handlers.RegistryRadioState;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.harness.util.UITestCase;
-import org.junit.Ignore;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -40,12 +47,8 @@ import org.junit.runners.JUnit4;
  * @since 3.2
  */
 @RunWith(JUnit4.class)
-@Ignore("functionality broken since e4 transition because org.eclipse.e4.core.commands.internal.HandlerServiceHandler does not implement org.eclipse.core.commands.IObjectWithState.")
-public class StateTest extends UITestCase {
+public class StateTest {
 
-	/**
-	 *
-	 */
 	private static final String TEXT_HELLO = "hello";
 
 	private static final class ObjectStateHandler extends
@@ -122,18 +125,10 @@ public class StateTest extends UITestCase {
 	 */
 	private IHandlerActivation handlerActivation;
 
-	/**
-	 * Constructor for <code>StateTest</code>.
-	 *
-	 * @param name
-	 *            The name of the test
-	 */
-	public StateTest(String name) {
-		super(name);
-	}
+	private final IWorkbench fWorkbench = PlatformUI.getWorkbench();
 
-	@Override
-	protected final void doSetUp() {
+	@Before
+	public final void doSetUp() {
 		// Reset the object state to the initial object.
 		final ICommandService commandService = fWorkbench
 				.getService(ICommandService.class);
@@ -146,10 +141,18 @@ public class StateTest extends UITestCase {
 		final IHandlerService handlerService = fWorkbench
 				.getService(IHandlerService.class);
 		handlerActivation = handlerService.activateHandler(COMMAND_ID, handler);
+		// side effect: force handler association in
+		// org.eclipse.e4.core.commands.internal.HandlerServiceHandler
+		// This is done by org.eclipse.ui.menus.CommandContributionItem.isEnabled() and
+		// org.eclipse.e4.ui.workbench.renderers.swt.ToolItemUpdater
+		// during normal operation
+		// See org.eclipse.ui.tests.commands.WorkbenchStateTest for an integration test
+		// that does not rely on explicit polling
+		assertTrue(command.isHandled());
 	}
 
-	@Override
-	protected final void doTearDown() {
+	@After
+	public final void doTearDown() {
 		// Unregister the object state handler.
 		final IHandlerService handlerService = fWorkbench
 				.getService(IHandlerService.class);

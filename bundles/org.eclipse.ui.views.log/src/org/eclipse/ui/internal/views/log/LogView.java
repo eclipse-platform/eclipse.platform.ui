@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -85,6 +84,8 @@ public class LogView extends ViewPart implements LogListener {
 	protected static final String P_COLUMN_2 = "column3"; //$NON-NLS-1$
 	protected static final String P_COLUMN_3 = "column4"; //$NON-NLS-1$
 	public static final String P_ACTIVATE = "activate"; //$NON-NLS-1$
+	public static final String P_ACTIVATE_WARN = "activateWarn"; //$NON-NLS-1$
+	public static final String P_ACTIVATE_ERRROR = "activateError"; //$NON-NLS-1$
 	public static final String P_SHOW_FILTER_TEXT = "show_filter_text"; //$NON-NLS-1$
 	public static final String P_ORDER_TYPE = "orderType"; //$NON-NLS-1$
 	public static final String P_ORDER_VALUE = "orderValue"; //$NON-NLS-1$
@@ -112,12 +113,12 @@ public class LogView extends ViewPart implements LogListener {
 
 	private ServiceTracker<LogReaderService, LogReaderService> logReaderServiceTracker;
 
-	private List<AbstractEntry> elements;
+	private final List<AbstractEntry> elements;
 	private Map<Object, Group> groups;
 	private LogSession currentSession;
 
-	private List<LogEntry> batchedEntries;
-	private boolean batchEntries;
+	private final List<LogEntry> batchedEntries;
+	private volatile boolean batchEntries;
 
 	private Clipboard fClipboard;
 
@@ -132,7 +133,7 @@ public class LogView extends ViewPart implements LogListener {
 	private Text fTextLabel;
 	private Shell fTextShell;
 
-	private boolean fFirstEvent = true;
+	private volatile boolean fFirstEvent = true;
 
 	private TreeColumn fColumn1;
 	private TreeColumn fColumn2;
@@ -148,6 +149,8 @@ public class LogView extends ViewPart implements LogListener {
 	private Action fReadLogAction;
 	private Action fCopyAction;
 	private Action fActivateViewAction;
+	private Action fActivateViewWarnAction;
+	private Action fActivateViewErrorAction;
 	private Action fOpenLogAction;
 	private Action fExportLogAction;
 	private Action fExportLogEntryAction;
@@ -245,10 +248,11 @@ public class LogView extends ViewPart implements LogListener {
 
 				if (part.equals(LogView.this)) {
 					if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_SHOW)) {
-						if (!batchedEntries.isEmpty()) {
-							pushBatchedEntries();
+						synchronized (batchedEntries) {
+							if (!batchedEntries.isEmpty()) {
+								pushBatchedEntries();
+							}
 						}
-
 						batchEntries = false;
 					} else if (changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE)) {
 						batchEntries = true;
@@ -311,8 +315,14 @@ public class LogView extends ViewPart implements LogListener {
 		mgr.add(createFilterAction());
 		mgr.add(new Separator());
 
-		fActivateViewAction = createActivateViewAction();
+		fActivateViewAction = createActivateViewAction(Messages.LogView_activate, P_ACTIVATE);
 		mgr.add(fActivateViewAction);
+		fActivateViewWarnAction = createActivateViewAction(Messages.LogView_activateWarn, P_ACTIVATE_WARN);
+		mgr.add(fActivateViewWarnAction);
+		fActivateViewErrorAction = createActivateViewAction(Messages.LogView_activateError, P_ACTIVATE_ERRROR);
+		mgr.add(fActivateViewErrorAction);
+		mgr.add(new Separator());
+
 		if (fFilteredTree.getFilterControl() != null)
 			mgr.add(createShowTextFilter());
 
@@ -349,14 +359,29 @@ public class LogView extends ViewPart implements LogListener {
 		fTree.setMenu(menu);
 	}
 
-	private Action createActivateViewAction() {
-		Action action = new Action(Messages.LogView_activate) { //
+	private Action createActivateViewAction(String msg, String key) {
+		Action action = new Action(msg) {
 			@Override
 			public void run() {
-				fMemento.putString(P_ACTIVATE, isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (isChecked()) {
+					// on disabling one disable the others:
+					if (P_ACTIVATE.equals(key)) {
+						fActivateViewWarnAction.setChecked(false);
+						fActivateViewErrorAction.setChecked(false);
+					} else if (P_ACTIVATE_WARN.equals(key)) {
+						fActivateViewAction.setChecked(false);
+						fActivateViewErrorAction.setChecked(false);
+					} else if (P_ACTIVATE_ERRROR.equals(key)) {
+						fActivateViewAction.setChecked(false);
+						fActivateViewWarnAction.setChecked(false);
+					}
+				}
+				fMemento.putString(P_ACTIVATE, Boolean.toString(fActivateViewAction.isChecked()));
+				fMemento.putString(P_ACTIVATE_WARN, Boolean.toString(fActivateViewWarnAction.isChecked()));
+				fMemento.putString(P_ACTIVATE_ERRROR, Boolean.toString(fActivateViewErrorAction.isChecked()));
 			}
 		};
-		action.setChecked(fMemento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
+		action.setChecked(Boolean.parseBoolean(fMemento.getString(key)));
 		return action;
 	}
 
@@ -708,7 +733,7 @@ public class LogView extends ViewPart implements LogListener {
 			return;
 		}
 
-		File file = new Path(path).toFile();
+		File file = IPath.fromOSString(path).toFile();
 		if (file.exists()) {
 			handleImportPath(path);
 		} else {
@@ -746,7 +771,7 @@ public class LogView extends ViewPart implements LogListener {
 		} finally {
 			fReadLogAction.setText(Messages.LogView_readLog_reload);
 			fReadLogAction.setToolTipText(Messages.LogView_readLog_reload);
-			asyncRefresh(false);
+			asyncRefresh();
 			resetDialogButtons();
 		}
 	}
@@ -760,7 +785,7 @@ public class LogView extends ViewPart implements LogListener {
 		if (path != null) {
 			if (path.indexOf('.') == -1 && !path.endsWith(".log")) //$NON-NLS-1$
 				path += ".log"; //$NON-NLS-1$
-			File outputFile = new Path(path).toFile();
+			File outputFile = IPath.fromOSString(path).toFile();
 			fDirectory = outputFile.getParent();
 			if (outputFile.exists()) {
 				String message = NLS.bind(Messages.LogView_confirmOverwrite_message, outputFile.toString());
@@ -835,12 +860,14 @@ public class LogView extends ViewPart implements LogListener {
 
 	public void handleClear() {
 		BusyIndicator.showWhile(fTree.getDisplay(), () -> {
-			elements.clear();
-			groups.clear();
-			if (currentSession != null) {
-				currentSession.removeAllChildren();
+			synchronized (elements) {
+				elements.clear();
+				groups.clear();
+				if (currentSession != null) {
+					currentSession.removeAllChildren();
+				}
 			}
-			asyncRefresh(false);
+			asyncRefresh();
 			resetDialogButtons();
 		});
 	}
@@ -860,7 +887,7 @@ public class LogView extends ViewPart implements LogListener {
 		} finally {
 			fReadLogAction.setText(Messages.LogView_readLog_restore);
 			fReadLogAction.setToolTipText(Messages.LogView_readLog_restore);
-			asyncRefresh(false);
+			asyncRefresh();
 			resetDialogButtons();
 		}
 	}
@@ -889,13 +916,15 @@ public class LogView extends ViewPart implements LogListener {
 	}
 
 	private void updateLogViewer(List<LogEntry> entries) {
-		elements.clear();
-		groups.clear();
-		group(entries);
-		limitEntriesCount();
+		OptionalInt maxSeverity = entries.stream().mapToInt(LogEntry::getSeverity).max();
+		synchronized (elements) {
+			elements.clear();
+			groups.clear();
+			group(entries);
+			limitEntriesCount();
+		}
 		setContentDescription(getTitleSummary());
-
-		asyncRefresh(false);
+		maxSeverity.ifPresent(this::asyncRefreshAndActivate);
 	}
 
 	private Display getDisplay() {
@@ -1083,24 +1112,35 @@ public class LogView extends ViewPart implements LogListener {
 		if (batchEntries) {
 			// create LogEntry immediately to don't loose IStatus creation date.
 			LogEntry entry = betterInput != null ? createLogEntry(betterInput) : createLogEntry(input);
-			batchedEntries.add(entry);
+			synchronized (batchedEntries) {
+				batchedEntries.add(entry);
+			}
 			return;
 		}
+		boolean shouldReadLog;
+		synchronized (batchedEntries) {
+			shouldReadLog = fFirstEvent || (currentSession == null);
+			if (shouldReadLog) {
+				fFirstEvent = false;
+			}
+		}
 
-		if (fFirstEvent || (currentSession == null)) {
+		if (shouldReadLog) {
 			readLogFile();
-			asyncRefresh(true);
-			fFirstEvent = false;
 		} else {
 			LogEntry entry = betterInput != null ? createLogEntry(betterInput) : createLogEntry(input);
 
-			if (!batchedEntries.isEmpty()) {
+			boolean useBatchedEntries;
+			synchronized (batchedEntries) {
+				useBatchedEntries = !batchedEntries.isEmpty();
 				// batch new entry as well, to have only one asyncRefresh()
-				batchedEntries.add(entry);
-				pushBatchedEntries();
-			} else {
+				if (useBatchedEntries) {
+					batchedEntries.add(entry);
+					pushBatchedEntries();
+				}
+			}
+			if (!useBatchedEntries) {
 				pushEntry(entry);
-				asyncRefresh(true);
 			}
 		}
 	}
@@ -1112,14 +1152,16 @@ public class LogView extends ViewPart implements LogListener {
 		Job job = new Job(Messages.LogView_AddingBatchedEvents) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				for (int i = 0; i < batchedEntries.size(); i++) {
-					if (!monitor.isCanceled()) {
-						LogEntry entry = batchedEntries.get(i);
-						pushEntry(entry);
-						batchedEntries.remove(i);
+				synchronized (batchedEntries) {
+					Iterator<LogEntry> iterator = batchedEntries.iterator();
+					while (iterator.hasNext()) {
+						if (!monitor.isCanceled()) {
+							LogEntry entry = iterator.next();
+							pushEntry(entry);
+							iterator.remove();
+						}
 					}
 				}
-				asyncRefresh(true);
 				return Status.OK_STATUS;
 			}
 		};
@@ -1134,21 +1176,13 @@ public class LogView extends ViewPart implements LogListener {
 	private LogEntry createLogEntry(org.osgi.service.log.LogEntry input) {
 		// create a status from OSGi LogEntry
 		LogLevel logLevel = input.getLogLevel();
-		int severity;
-		switch (logLevel) {
-		case ERROR:
-			severity = IStatus.ERROR;
-			break;
-		case WARN:
-			severity = IStatus.WARNING;
-			break;
-		case INFO:
-			severity = IStatus.INFO;
-			break;
-		case DEBUG:
-		default:
-			severity = IStatus.OK;
-		}
+		int severity = switch (logLevel) {
+		case ERROR -> IStatus.ERROR;
+		case WARN -> IStatus.WARNING;
+		case INFO -> IStatus.INFO;
+		case DEBUG -> IStatus.OK;
+		default -> IStatus.OK;
+		};
 		IStatus status = new Status(severity, input.getBundle().getSymbolicName(), input.getMessage(),
 				input.getException());
 		return createLogEntry(status);
@@ -1168,12 +1202,14 @@ public class LogView extends ViewPart implements LogListener {
 		return logEntry;
 	}
 
-	private synchronized void pushEntry(LogEntry entry) {
-		if (LogReader.isLogged(entry, fMemento)) {
-			group(Collections.singletonList(entry));
-			limitEntriesCount();
+	private void pushEntry(LogEntry entry) {
+		synchronized (elements) {
+			if (LogReader.isLogged(entry, fMemento)) {
+				group(Collections.singletonList(entry));
+				limitEntriesCount();
+			}
 		}
-		asyncRefresh(true);
+		asyncRefreshAndActivate(entry.getSeverity());
 	}
 
 	private Throttler createMutualRefresh(Display display) {
@@ -1212,27 +1248,39 @@ public class LogView extends ViewPart implements LogListener {
 		});
 	}
 
-	private void asyncRefresh(final boolean activate) {
-		if (fTree.isDisposed())
-			return;
-		mutualRefresh.throttledExec();
-		if (activate && fActivateViewAction.isChecked()) {
+	private void asyncRefreshAndActivate(int severity) {
+		asyncRefresh();
+		if ((fActivateViewAction.isChecked()) || (severity >= IStatus.WARNING && fActivateViewWarnAction.isChecked())
+				|| (severity >= IStatus.ERROR && fActivateViewErrorAction.isChecked())) {
 			mutualActivate.throttledExec();
 		}
 	}
 
+	private void asyncRefresh() {
+		mutualRefresh.throttledExec();
+	}
+
 	@Override
 	public void setFocus() {
-		if (!isDisposed()) {
-			if (fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue()) {
-				Text filterControl = fFilteredTree.getFilterControl();
-				if (filterControl != null && !filterControl.isDisposed()) {
-					filterControl.setFocus();
+		if (isDisposed()) {
+			return;
+		}
+		if (fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue()) {
+			Text filterControl = fFilteredTree.getFilterControl();
+			if (filterControl != null && !filterControl.isDisposed()) {
+				if (!filterControl.setFocus()) {
+					setFocusToParentComposite();
 				}
-			} else if (!fFilteredTree.isDisposed()) {
-				fFilteredTree.setFocus();
+			}
+		} else if (!fFilteredTree.isDisposed()) {
+			if (!fFilteredTree.setFocus()) {
+				setFocusToParentComposite();
 			}
 		}
+	}
+
+	private void setFocusToParentComposite() {
+		fFilteredTree.getParent().setFocus();
 	}
 
 	private void handleSelectionChanged(IStructuredSelection selection) {
@@ -1361,7 +1409,9 @@ public class LogView extends ViewPart implements LogListener {
 		this.fMemento.putInteger(P_COLUMN_1, getColumnWidth(fColumn1, 300));
 		this.fMemento.putInteger(P_COLUMN_2, getColumnWidth(fColumn2, 150));
 		this.fMemento.putInteger(P_COLUMN_3, getColumnWidth(fColumn3, 150));
-		this.fMemento.putString(P_ACTIVATE, fActivateViewAction.isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		this.fMemento.putString(P_ACTIVATE, Boolean.toString(fActivateViewAction.isChecked()));
+		this.fMemento.putString(P_ACTIVATE_WARN, Boolean.toString(fActivateViewWarnAction.isChecked()));
+		this.fMemento.putString(P_ACTIVATE_ERRROR, Boolean.toString(fActivateViewErrorAction.isChecked()));
 		memento.putMemento(this.fMemento);
 		writeSettings();
 	}
@@ -1558,6 +1608,7 @@ public class LogView extends ViewPart implements LogListener {
 					date2 = ((LogSession) e2).getDate() == null ? 0 : ((LogSession) e2).getDate().getTime();
 				}
 				if (date1 == date2) {
+					// XXX: this breaks stable sort, as elements is mutable
 					int result = elements.indexOf(e2) - elements.indexOf(e1);
 					if (DATE_ORDER == DESCENDING)
 						result *= DESCENDING;
@@ -1653,6 +1704,8 @@ public class LogView extends ViewPart implements LogListener {
 							// i.e. latest log message first, therefore index(e2)-index(e1)
 							result = indexOf(children, e2) - indexOf(children, e1);
 						} else {
+							// XXX: this breaks stable sort, as elements is
+							// mutable
 							result = elements.indexOf(e1) - elements.indexOf(e2);
 						}
 						if (DATE_ORDER == DESCENDING)
@@ -1710,6 +1763,10 @@ public class LogView extends ViewPart implements LogListener {
 		fMemento.putInteger(P_COLUMN_2, getColumnWidthPreference(instancePrefs, defaultPrefs, P_COLUMN_2, 150));
 		fMemento.putInteger(P_COLUMN_3, getColumnWidthPreference(instancePrefs, defaultPrefs, P_COLUMN_3, 150));
 		fMemento.putBoolean(P_ACTIVATE, instancePrefs.getBoolean(P_ACTIVATE, defaultPrefs.getBoolean(P_ACTIVATE, true)));
+		fMemento.putBoolean(P_ACTIVATE_WARN,
+				instancePrefs.getBoolean(P_ACTIVATE_WARN, defaultPrefs.getBoolean(P_ACTIVATE_WARN, true)));
+		fMemento.putBoolean(P_ACTIVATE_ERRROR,
+				instancePrefs.getBoolean(P_ACTIVATE_ERRROR, defaultPrefs.getBoolean(P_ACTIVATE_ERRROR, true)));
 		fMemento.putInteger(P_ORDER_VALUE, instancePrefs.getInt(P_ORDER_VALUE, defaultPrefs.getInt(P_ORDER_VALUE, DESCENDING)));
 		fMemento.putInteger(P_ORDER_TYPE, instancePrefs.getInt(P_ORDER_TYPE, defaultPrefs.getInt(P_ORDER_TYPE, LogView.DATE)));
 		fMemento.putBoolean(P_SHOW_FILTER_TEXT, instancePrefs.getBoolean(P_SHOW_FILTER_TEXT, defaultPrefs.getBoolean(P_SHOW_FILTER_TEXT, true)));
@@ -1736,10 +1793,6 @@ public class LogView extends ViewPart implements LogListener {
 	 * <li>There is no preference for the given key</li>
 	 * <li>The returned preference value is too small, making the columns invisible by width.</li>
 	 * </ul>
-	 * @param instancePrefs
-	 * @param defaultPrefs
-	 * @param key
-	 * @param defaultwidth
 	 * @return the stored width for the a column described by the given key or the default width
 	 *
 	 * @since 3.6
@@ -1775,6 +1828,8 @@ public class LogView extends ViewPart implements LogListener {
 		instancePrefs.putInt(P_COLUMN_2, fMemento.getInteger(P_COLUMN_2).intValue());
 		instancePrefs.putInt(P_COLUMN_3, fMemento.getInteger(P_COLUMN_3).intValue());
 		instancePrefs.putBoolean(P_ACTIVATE, fMemento.getBoolean(P_ACTIVATE).booleanValue());
+		instancePrefs.putBoolean(P_ACTIVATE_WARN, fMemento.getBoolean(P_ACTIVATE_WARN).booleanValue());
+		instancePrefs.putBoolean(P_ACTIVATE_ERRROR, fMemento.getBoolean(P_ACTIVATE_ERRROR).booleanValue());
 		instancePrefs.putInt(P_ORDER_VALUE, fMemento.getInteger(P_ORDER_VALUE).intValue());
 		instancePrefs.putInt(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
 		instancePrefs.putBoolean(P_SHOW_FILTER_TEXT, fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue());
@@ -1840,9 +1895,6 @@ public class LogView extends ViewPart implements LogListener {
 		return (fInputFile.equals(Platform.getLogFileLocation().toFile()));
 	}
 
-	/**
-	 *
-	 */
 	public void setPlatformLog() {
 		setLogFile(Platform.getLogFileLocation().toFile());
 	}

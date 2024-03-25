@@ -31,7 +31,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * </p>
  *
  * @since 3.4
- *
  */
 public class InfoAboutHandler extends AbstractHandler {
 
@@ -40,7 +39,6 @@ public class InfoAboutHandler extends AbstractHandler {
 	 * contribution. The handler is active when the InfoView part is active.
 	 *
 	 * @since 3.4
-	 *
 	 */
 	private final class InfoAboutDialog extends Dialog {
 		private InfoAboutDialog(Shell parentShell) {

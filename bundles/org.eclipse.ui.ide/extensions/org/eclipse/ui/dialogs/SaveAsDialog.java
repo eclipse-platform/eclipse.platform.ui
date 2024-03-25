@@ -297,9 +297,9 @@ public class SaveAsDialog extends TitleAreaDialog {
 			}
 		}
 
-		IStatus result = workspace.validateName(resourceName, IResource.FILE);
-		if (!result.isOK()) {
-			setErrorMessage(result.getMessage());
+		IStatus resultStatus = workspace.validateName(resourceName, IResource.FILE);
+		if (!resultStatus.isOK()) {
+			setErrorMessage(resultStatus.getMessage());
 			return false;
 		}
 

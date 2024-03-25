@@ -53,7 +53,6 @@ import org.eclipse.swt.widgets.Composite;
  * </p>
  *
  * @since 3.25
- *
  */
 public final class BrowserFactory extends AbstractCompositeFactory<BrowserFactory, Browser> {
 
@@ -65,7 +64,6 @@ public final class BrowserFactory extends AbstractCompositeFactory<BrowserFactor
 	 * Creates a new BrowserFactory with the given style. Refer to
 	 * {@link Browser#Browser(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new BrowserFactory instance
 	 */
 	public static BrowserFactory newBrowser(int style) {

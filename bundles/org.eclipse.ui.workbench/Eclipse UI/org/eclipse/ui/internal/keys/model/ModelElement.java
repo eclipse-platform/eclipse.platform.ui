@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.keys.model;
 
 /**
  * @since 3.4
- *
  */
 public class ModelElement {
 
@@ -108,7 +107,7 @@ public class ModelElement {
 	}
 
 	/**
-	 * @param context The context to set.
+	 * @param o The context to set.
 	 */
 	public void setModelObject(Object o) {
 		Object old = this.modelObject;

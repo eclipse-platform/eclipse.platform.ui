@@ -59,7 +59,7 @@ public class Snippet019TreeViewerWithListFactory {
 	private Text beanText;
 	private DataBindingContext m_bindingContext;
 
-	private Bean input = createBean("input");
+	private final Bean input = createBean("input");
 	private IObservableValue<Bean> clipboard;
 
 	/**

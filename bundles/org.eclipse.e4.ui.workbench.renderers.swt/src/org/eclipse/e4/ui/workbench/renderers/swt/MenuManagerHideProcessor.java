@@ -16,12 +16,12 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -68,10 +68,6 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 	/**
 	 * Process dynamic menu contributions provided by
 	 * {@link MDynamicMenuContribution} application model elements
-	 *
-	 * @param menu
-	 * @param menuModel
-	 *
 	 */
 	private void processDynamicElements(final MenuManager menuManager, Menu menu, final MMenu menuModel) {
 		// We need to make a copy of the dynamic items which need to be removed

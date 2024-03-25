@@ -21,7 +21,6 @@ import org.eclipse.swt.graphics.Image;
  * that support IDecorationContext.
  * @see IDecorationContext
  * @since 3.2
- *
  */
 public abstract class LabelDecorator implements ILabelDecorator {
 

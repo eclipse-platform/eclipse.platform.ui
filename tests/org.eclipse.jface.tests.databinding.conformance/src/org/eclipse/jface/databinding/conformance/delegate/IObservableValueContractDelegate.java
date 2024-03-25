@@ -44,7 +44,6 @@ public interface IObservableValueContractDelegate extends
 	/**
 	 * Returns the expected type of the observable.
 	 *
-	 * @param observable
 	 * @return type
 	 */
 	public Object getValueType(IObservableValue<?> observable);
@@ -52,7 +51,6 @@ public interface IObservableValueContractDelegate extends
 	/**
 	 * Returns a valid value that is not the current value of the observable.
 	 *
-	 * @param observable
 	 * @return value
 	 */
 	public Object createValue(IObservableValue<?> observable);

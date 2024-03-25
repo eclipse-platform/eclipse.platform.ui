@@ -35,7 +35,6 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
  * MarkerTypeFieldFilter is the field filter for filtering on types.
  *
  * @since 3.4
- *
  */
 public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 
@@ -161,8 +160,6 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 
 	/**
 	 * Set the content generator that is being configured.
-	 *
-	 * @param generator
 	 */
 	void setContentGenerator(MarkerContentGenerator generator) {
 		contentGenerator = generator;

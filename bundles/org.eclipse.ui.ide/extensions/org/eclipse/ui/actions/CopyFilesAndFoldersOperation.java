@@ -48,7 +48,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -494,7 +493,6 @@ public class CopyFilesAndFoldersOperation {
 	 * "C:\foo\bar\file.txt" to "VAR\file.txt" granted that the relativeVariable
 	 * is "VAR" and points to "C:\foo\bar\").
 	 *
-	 * @param locationURI
 	 * @return an URI that was made relative to a variable
 	 */
 	private URI createRelativePath(URI locationURI, IResource resource) {
@@ -701,7 +699,6 @@ public class CopyFilesAndFoldersOperation {
 	 * Build the collection of fileStores that map to fileNames. If any of them
 	 * cannot be found then match then return <code>null</code>.
 	 *
-	 * @param uris
 	 * @return IFileStore[]
 	 */
 	private IFileStore[] buildFileStores(URI[] uris) {
@@ -837,7 +834,6 @@ public class CopyFilesAndFoldersOperation {
 	 * Build the collection of fileStores that map to fileNames. If any of them
 	 * cannot be found then match then return null.
 	 *
-	 * @param fileNames
 	 * @return IFileStore[]
 	 */
 	private IFileStore[] buildFileStores(final String[] fileNames) {
@@ -855,8 +851,6 @@ public class CopyFilesAndFoldersOperation {
 
 	/**
 	 * Report that a file info could not be found.
-	 *
-	 * @param fileName
 	 */
 	private void reportFileInfoNotFound(final String fileName) {
 
@@ -892,8 +886,8 @@ public class CopyFilesAndFoldersOperation {
 		if (fork) {
 			WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 				@Override
-				public void execute(IProgressMonitor monitor) {
-					copyFileStores(stores, destinationPath, monitor);
+				public void execute(IProgressMonitor operationMonitor) {
+					copyFileStores(stores, destinationPath, operationMonitor);
 				}
 			};
 			try {
@@ -1485,7 +1479,7 @@ public class CopyFilesAndFoldersOperation {
 									sourceResource.getName());
 				}
 				// is the source a parent of the destination?
-				if (new Path(sourceLocation.toString()).isPrefixOf(new Path(
+				if (IPath.fromOSString(sourceLocation.toString()).isPrefixOf(IPath.fromOSString(
 						destinationLocation.toString()))) {
 					return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationDescendentError;
 				}

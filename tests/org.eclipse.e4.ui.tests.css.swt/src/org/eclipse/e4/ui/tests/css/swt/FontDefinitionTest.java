@@ -14,11 +14,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -31,15 +31,13 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.themes.FontDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.FrameworkUtil;
 
 public class FontDefinitionTest extends CSSSWTTestCase {
 
-
-
 	@Test
-	public void testFontDefinition() {
+	void testFontDefinition() {
 		//given
 		engine = createEngine(
 				"FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic;font-weight: bold;}",
@@ -64,7 +62,7 @@ public class FontDefinitionTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testFontDefinitionWhenNameCategoryIdAndDescriptionOverridden() {
+	void testFontDefinitionWhenNameCategoryIdAndDescriptionOverridden() {
 		// given
 		engine = createEngine(
 				"FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic; font-weight: bold;"
@@ -90,7 +88,7 @@ public class FontDefinitionTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testFontDefinitionWhenDefinitionStylesheetNotFound() {
+	void testFontDefinitionWhenDefinitionStylesheetNotFound() {
 		//given
 		engine = createEngine(
 				"FontDefinition#org-eclipse-jface-bannerfont {font-family: 'Times';font-size: 12;font-style: italic;}",
@@ -109,7 +107,7 @@ public class FontDefinitionTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testWidgetWithFontDefinitionAsFontFamily() {
+	void testWidgetWithFontDefinitionAsFontFamily() {
 		//given
 		registerFontProviderWith("org.eclipse.jface.bannerfont", new FontData("Times", 12, SWT.ITALIC));
 

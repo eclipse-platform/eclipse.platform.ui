@@ -39,7 +39,6 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * Implements NodePointerFactory for JavaBeans.
- *
  */
 public class EObjectPointerFactory implements NodePointerFactory {
 

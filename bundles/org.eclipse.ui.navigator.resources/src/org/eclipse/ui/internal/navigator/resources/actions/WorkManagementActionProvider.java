@@ -29,7 +29,6 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
  * Supports Add Task and Add Bookmark actions.
  *
  * @since 3.2
- *
  */
 public class WorkManagementActionProvider extends CommonActionProvider {
 

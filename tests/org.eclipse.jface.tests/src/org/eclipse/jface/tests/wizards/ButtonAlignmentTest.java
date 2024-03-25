@@ -15,39 +15,37 @@
 
 package org.eclipse.jface.tests.wizards;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ButtonAlignmentTest extends TestCase {
+public class ButtonAlignmentTest {
 
 	private TheTestWizard wizard;
 	private TheTestWizardDialog dialog;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		// ensure we've initialized a display for this thread
 		Display.getDefault();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (dialog != null && dialog.getShell() != null
 				&& !dialog.getShell().isDisposed()) {
 			dialog.close();
 		}
-		super.tearDown();
 	}
 
-	public ButtonAlignmentTest() {
-		super("ButtonAlignmentTest");
-	}
-
+	@Test
 	public void testButtonAlignment() {
 		wizard = new TheTestWizard();
 		dialog = new TheTestWizardDialog(null, wizard);
@@ -85,6 +83,7 @@ public class ButtonAlignmentTest extends TestCase {
 				"Cancel button's alignment is off", dialog.getCancelButton(), children[cancelIndex]); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testButtonAlignmentWithoutBackNextButtons() {
 		wizard = new TheTestWizard() {
 			@Override
@@ -116,6 +115,7 @@ public class ButtonAlignmentTest extends TestCase {
 				"Cancel button's alignment is off", dialog.getCancelButton(), children[cancelIndex]); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug270174() {
 		wizard = new TheTestWizard() {
 			@Override

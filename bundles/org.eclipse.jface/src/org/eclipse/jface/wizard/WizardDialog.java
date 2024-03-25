@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,7 +32,9 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
@@ -329,7 +331,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * {@inheritDoc}
 	 *
 	 * @see #setModal(boolean)
-	 *
 	 */
 	@Override
 	public void setShellStyle(int newShellStyle) {
@@ -396,7 +397,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 			Display d = getShell().getDisplay();
 			setDisplayCursor(d.getSystemCursor(SWT.CURSOR_WAIT));
 
-			if (useCustomProgressMonitorPart) {
+			if (useCustomProgressMonitorPart && cancelButton != null) {
 				cancelButton.removeSelectionListener(cancelListener);
 				// Set the arrow cursor to the cancel component.
 				cancelButton.setCursor(d.getSystemCursor(SWT.CURSOR_ARROW));
@@ -408,7 +409,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 				savedState.put(FOCUS_CONTROL, focusControl);
 			}
 			// Activate cancel behavior.
-			if (needsProgressMonitor) {
+			if (needsProgressMonitor && progressMonitorPart != null) {
 				if (enableCancelButton || useCustomProgressMonitorPart) {
 					progressMonitorPart.attachToCancelComponent(cancelButton);
 				}
@@ -725,7 +726,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	/**
 	 * Creates the container that holds all pages.
 	 *
-	 * @param parent
 	 * @return Composite
 	 */
 	private Composite createPageContainer(Composite parent) {
@@ -748,6 +748,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 			if (page.getControl() != null) {
 				page.getControl().setVisible(false);
 			}
+		}
+		Point minWizardSize = wizard.getMinimumWizardSize();
+		if (minWizardSize != null) {
+			getShell().setMinimumSize(minWizardSize);
 		}
 	}
 
@@ -922,7 +926,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * Notifies page changing listeners and returns result of page changing
 	 * processing to the sender.
 	 *
-	 * @param eventType
 	 * @return <code>true</code> if page changing listener completes
 	 *         successfully, <code>false</code> otherwise
 	 */
@@ -1010,7 +1013,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * restored after the long-running operation completes executing. Any
 	 * attempt to change the UI state of the wizard in the long-running
 	 * operation will be nullified when original UI state is restored.
-	 *
 	 */
 	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
@@ -1226,8 +1228,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 
 	/**
 	 * Update the receiver for the new page.
-	 *
-	 * @param page
 	 */
 	private void updateForPage(IWizardPage page) {
 		// ensure this page belongs to the current wizard
@@ -1293,14 +1293,14 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 */
 	private void stopped(Map<String, Object> savedState) {
 		if (getShell() != null && !getShell().isDisposed()) {
-			if (wizard.needsProgressMonitor()) {
+			if (wizard.needsProgressMonitor() && progressMonitorPart != null) {
 				progressMonitorPart.setVisible(false);
 				progressMonitorPart.removeFromCancelComponent(cancelButton);
 			}
 
 			restoreUIState(savedState);
 			setDisplayCursor(null);
-			if (useCustomProgressMonitorPart) {
+			if (useCustomProgressMonitorPart && cancelButton != null) {
 				cancelButton.addSelectionListener(cancelListener);
 				cancelButton.setCursor(null);
 			}
@@ -1567,5 +1567,15 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 				}
 			});
 		}
+	}
+
+	@Override
+	protected IDialogSettings getDialogBoundsSettings() {
+		String name = getWizard().getClass().getSimpleName() + ".dialogBounds"; //$NON-NLS-1$
+		IDialogSettings dialogSettings = getWizard().getDialogSettings();
+		if (dialogSettings == null) {
+			return null;
+		}
+		return DialogSettings.getOrCreateSection(dialogSettings, name);
 	}
 }

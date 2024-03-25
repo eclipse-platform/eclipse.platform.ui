@@ -155,8 +155,6 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	 * </pre>
 	 *
 	 * All we have to do to emulate stack overflow is to create a working set based on this IMemento.
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testWorkingSetCycle() throws Throwable {
@@ -190,7 +188,6 @@ public class IAggregateWorkingSetTest extends UITestCase {
 
 	/**
 	 * Tests cleanup of the cycle from an aggregate working set.
-	 * @throws Throwable
 	 */
 	@Test
 	public void testCycleCleanup() throws Throwable {
@@ -403,10 +400,9 @@ public class IAggregateWorkingSetTest extends UITestCase {
 				// simply resolve the working set before the manager creates
 				// another one
 				Object ws = event.getNewValue();
-				if (!(ws instanceof AggregateWorkingSet)) {
+				if (!(ws instanceof AggregateWorkingSet aws)) {
 					return;
 				}
-				AggregateWorkingSet aws = (AggregateWorkingSet) ws;
 				IMemento m = readField(AbstractWorkingSet.class, "workingSetMemento", IMemento.class, aws);
 				IWorkingSet[] sets = aws.getComponents();
 				if (m != null) {

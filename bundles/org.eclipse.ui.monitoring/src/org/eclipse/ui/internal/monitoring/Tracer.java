@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014 Google Inc.
+ * Copyright (C) 2014, 2023 Google Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,8 +18,9 @@ package org.eclipse.ui.internal.monitoring;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -30,10 +31,9 @@ import org.eclipse.core.runtime.Platform;
  *      >Eclipse Wiki: FAQ How do I use the platform debug tracing facility?</a>
  */
 public class Tracer {
-	private static final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
-	private final Date date = new Date();
+	private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS").withZone(ZoneId.systemDefault()); //$NON-NLS-1$
 	private final String prefix;
-	private final PrintStream out = System.out;
+	private static final PrintStream out = System.out;
 
 	/**
 	 * Returns {@code true} if the debug option is set, but only if the platform is running in debug
@@ -90,7 +90,6 @@ public class Tracer {
 	}
 
 	private String getTimestamp() {
-		date.setTime(System.currentTimeMillis());
-		return timeFormatter.format(date);
+		return timeFormatter.format(Instant.now());
 	}
 }

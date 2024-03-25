@@ -168,17 +168,19 @@ public class SWTEventHelper {
 	// Returns true if it worked
 	public static boolean performDnD(Widget startItem, Widget dropItem) {
 
-		Control startControl = null;
+		Control startControl;
 
 		Rectangle boundsStart = null, boundsEnd = null;
 
-		if (startItem instanceof TreeItem) {
-			startControl = ((TreeItem) startItem).getParent();
+		if (startItem instanceof TreeItem t) {
+			startControl = t.getParent();
 			boundsStart = Display.getCurrent().map(startControl, null,
 					((TreeItem)startItem).getBounds());
-		} else if (startItem instanceof Control) {
-			startControl = (Control) startItem;
+		} else if (startItem instanceof Control c) {
+			startControl = c;
 			boundsStart = Display.getCurrent().map(startControl, null, startControl.getBounds());
+		} else {
+			throw new RuntimeException(startItem.getClass().getName());
 		}
 
 		if (dropItem instanceof TreeItem) {

@@ -31,9 +31,6 @@ import org.eclipse.core.runtime.Status;
 public class StringToDateValidator implements IValidator<String> {
 	private final StringToDateConverter converter;
 
-	/**
-	 * @param converter
-	 */
 	public StringToDateValidator(StringToDateConverter converter) {
 		this.converter = converter;
 	}

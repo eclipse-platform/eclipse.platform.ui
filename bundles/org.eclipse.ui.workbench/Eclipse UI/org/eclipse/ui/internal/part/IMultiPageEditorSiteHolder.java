@@ -18,7 +18,6 @@ import org.eclipse.ui.part.MultiPageEditorSite;
 
 /**
  * @since 3.4
- *
  */
 public interface IMultiPageEditorSiteHolder {
 	MultiPageEditorSite getSite();

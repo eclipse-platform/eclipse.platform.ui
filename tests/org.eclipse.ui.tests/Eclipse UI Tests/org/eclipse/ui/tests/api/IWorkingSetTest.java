@@ -303,12 +303,12 @@ public class IWorkingSetTest extends UITestCase {
 				.setElements(new IAdaptable[] { new BadElementFactory.BadElementInstance() });
 		IMemento m = XMLMemento.createWriteRoot("ws");
 		fWorkingSet.saveState(m);
-		BadElementFactory.fail = true;
+		BadElementFactory.shouldFailOnCreateElement = true;
 		IWorkingSet copy = new WorkingSet(fWorkingSet.getName(), fWorkingSet.getId(), m) {};
 		try {
-			assertFalse(BadElementFactory.failAttempted);
+			assertFalse(BadElementFactory.elementCreationAttemptedWhileShouldFail);
 			IAdaptable [] elements = copy.getElements();
-			assertTrue(BadElementFactory.failAttempted);
+			assertTrue(BadElementFactory.elementCreationAttemptedWhileShouldFail);
 			assertEquals("Element array should be empty", 0, elements.length);
 		}
 		catch (RuntimeException e) {
@@ -325,11 +325,11 @@ public class IWorkingSetTest extends UITestCase {
 		fWorkingSet
 				.setElements(new IAdaptable[] { new BadElementFactory.BadElementInstance() });
 		IMemento m = XMLMemento.createWriteRoot("ws");
-		BadElementFactory.BadElementInstance.fail = true;
-		assertFalse(BadElementFactory.BadElementInstance.failAttempted);
+		BadElementFactory.BadElementInstance.shouldSaveFail = true;
+		assertFalse(BadElementFactory.BadElementInstance.saveAttemptedWhileShouldFail);
 		try {
 			fWorkingSet.saveState(m);
-			assertTrue(BadElementFactory.BadElementInstance.failAttempted);
+			assertTrue(BadElementFactory.BadElementInstance.saveAttemptedWhileShouldFail);
 		} catch (RuntimeException e) {
 			fail("Error saving elements for broken persistable", e);
 		}

@@ -41,7 +41,6 @@ public class EncodingTestCase extends UITestCase {
 	/**
 	 * Test that the workbench encodings are all valid. The
 	 * suite includes an invalid one.
-	 *
 	 */
 	@Test
 	public void testWorkbenchEncodings() {

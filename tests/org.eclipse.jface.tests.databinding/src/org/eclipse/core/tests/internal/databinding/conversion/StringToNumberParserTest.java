@@ -17,7 +17,7 @@ package org.eclipse.core.tests.internal.databinding.conversion;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.text.NumberFormat;
 
@@ -38,36 +38,28 @@ public class StringToNumberParserTest {
 	}
 
 	@Test
-	public void testParseNonStringThrowsIllegalArgumentException()
-			throws Exception {
-		try {
-			StringToNumberParser.parse(Integer.valueOf(0), integerFormat, false);
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+	public void testParseNonStringThrowsIllegalArgumentException() {
+		assertThrows(IllegalArgumentException.class,
+				() -> StringToNumberParser.parse(Integer.valueOf(0), integerFormat, false));
 	}
 
 	@Test
-	public void testEmptyStringReturnsNullIfNotPrimitive() throws Exception {
-		ParseResult result = StringToNumberParser.parse("",
-				integerFormat, false);
+	public void testEmptyStringReturnsNullIfNotPrimitive() {
+		ParseResult result = StringToNumberParser.parse("", integerFormat, false);
 		assertNull(result.getNumber());
 	}
 
 	@Test
-	public void testReturnsParsePositionWhenValueCannotBeParsed()
-			throws Exception {
-		ParseResult result = StringToNumberParser.parse("adsf",
-				integerFormat, false);
+	public void testReturnsParsePositionWhenValueCannotBeParsed() {
+		ParseResult result = StringToNumberParser.parse("adsf", integerFormat, false);
 		assertNotNull(result.getPosition());
 		assertNull(result.getNumber());
 	}
 
 	@Test
-	public void testReturnsNumberWhenSuccessfullyParsed() throws Exception {
+	public void testReturnsNumberWhenSuccessfullyParsed() {
 		Integer number = Integer.valueOf(5);
-		ParseResult result = StringToNumberParser.parse(integerFormat
-				.format(number.longValue()), integerFormat, false);
+		ParseResult result = StringToNumberParser.parse(integerFormat.format(number.longValue()), integerFormat, false);
 		assertNull(result.getPosition());
 		assertEquals(number.intValue(), result.getNumber().intValue());
 	}

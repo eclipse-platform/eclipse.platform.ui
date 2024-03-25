@@ -231,7 +231,6 @@ public class RadioState extends ToggleState {
 	 * @param identifier
 	 *            The identifier of the radio group for this state; may be
 	 *            <code>null</code> if the identifier is being cleared.
-	 *
 	 */
 	public final void setRadioGroupIdentifier(final String identifier) {
 		if (identifier == null) {

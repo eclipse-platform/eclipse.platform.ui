@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.part.ISetSelectionTarget;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,7 +78,7 @@ public class DuplicateMenuItemTest extends AbstractNavigatorTest {
 	}
 
 	private void checkSelection(IStructuredSelection selection) {
-		navigator.selectReveal(selection);
+		((ISetSelectionTarget) navigator).selectReveal(selection);
 		checkWorkbenchMenu();
 	}
 

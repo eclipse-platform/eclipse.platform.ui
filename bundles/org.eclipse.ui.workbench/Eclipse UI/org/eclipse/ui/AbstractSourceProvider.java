@@ -15,7 +15,7 @@
 package org.eclipse.ui;
 
 import java.util.Map;
-import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.commands.internal.util.Tracing;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.services.IServiceLocator;

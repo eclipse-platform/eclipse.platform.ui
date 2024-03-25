@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * Example usage of none mandatory interfaces of ITableFontProvider and
  * ITableColorProvider
- *
  */
 public class Snippet013TableViewerNoMandatoryLabelProvider {
 
@@ -123,9 +122,6 @@ public class Snippet013TableViewerNoMandatoryLabelProvider {
 		return elements;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

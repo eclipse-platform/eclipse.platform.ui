@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderNoChildren;
@@ -76,7 +76,7 @@ public class PipelineTest extends NavigatorTestBase {
 				.getData()).getAdapter(IProject.class);
 		assertEquals(_project, adaptedProject);
 
-		IFolder sourceFolder = _project.getFolder(new Path("src"));
+		IFolder sourceFolder = _project.getFolder(IPath.fromOSString("src"));
 		_viewer.add(_project, sourceFolder);
 
 		TreeItem[] projectChildren = rootItems[_projectInd].getItems();

@@ -16,7 +16,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -149,10 +149,6 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/**
-	 * @param part
-	 * @param description
-	 */
 	public static void setDescription(MPart part, String description) {
 		if (!(part.getWidget() instanceof Composite))
 			return;

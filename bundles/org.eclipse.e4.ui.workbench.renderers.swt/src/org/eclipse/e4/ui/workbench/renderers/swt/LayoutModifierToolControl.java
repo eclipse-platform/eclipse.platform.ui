@@ -14,7 +14,7 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -24,9 +24,13 @@ import org.eclipse.swt.widgets.Composite;
  * This is a specialized tool control used by the TrimBarLayout to modify the
  * layout mechanisms.
  */
+/*
+ * class is referenced by
+ * org.eclipse.ui.ide.application/LegacyIDE_fragment.e4xmi
+ */
 public class LayoutModifierToolControl {
 	@PostConstruct
-	void createWidget(Composite parent, MToolControl tc) {
+	void createWidget(Composite parent, @SuppressWarnings("unused") MToolControl tc) {
 		Composite comp = new Composite(parent, SWT.NONE) {
 			@Override
 			public Point computeSize(int wHint, int hHint, boolean flushCache) {

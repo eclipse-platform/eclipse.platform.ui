@@ -56,7 +56,7 @@ public class TextSelectionActionExpressionTest extends UITestCase {
 	public void testAnyTextAction() throws Throwable {
 		// Setup.
 		ExtendedTextEditor editor = showTextEditor("anyText.exttxt");
-		MenuManager mgr = getActionMenuManager(editor);
+		MenuManager mgr = getActionMenuManager();
 
 		// Test empty selection.
 		selectAndUpdateMenu(editor, "", mgr);
@@ -84,7 +84,7 @@ public class TextSelectionActionExpressionTest extends UITestCase {
 	public void testEmptyTextAction() throws Throwable {
 		// Setup.
 		ExtendedTextEditor editor = showTextEditor("emptyText.exttxt");
-		MenuManager mgr = getActionMenuManager(editor);
+		MenuManager mgr = getActionMenuManager();
 
 		// Test empty selection.
 		selectAndUpdateMenu(editor, "", mgr);
@@ -112,7 +112,7 @@ public class TextSelectionActionExpressionTest extends UITestCase {
 	public void testHelloTextAction() throws Throwable {
 		// Setup.
 		ExtendedTextEditor editor = showTextEditor("helloText.exttxt");
-		MenuManager mgr = getActionMenuManager(editor);
+		MenuManager mgr = getActionMenuManager();
 
 		// Test empty selection.
 		selectAndUpdateMenu(editor, "", mgr);
@@ -163,17 +163,15 @@ public class TextSelectionActionExpressionTest extends UITestCase {
 	/**
 	 * Returns the menu manager containing the actions.
 	 */
-	private MenuManager getActionMenuManager(ExtendedTextEditor editor)
-			throws Throwable {
-		fPage
-				.showActionSet("org.eclipse.ui.tests.internal.TextSelectionActions");
+	private MenuManager getActionMenuManager() throws Throwable {
+		fPage.showActionSet("org.eclipse.ui.tests.internal.TextSelectionActions");
 		WorkbenchWindow win = (WorkbenchWindow) fWindow;
 		IContributionItem item = win.getMenuBarManager().find(
 				"org.eclipse.ui.tests.internal.TextSelectionMenu");
 		while (item instanceof SubContributionItem) {
 			item = ((SubContributionItem) item).getInnerItem();
-			if (item instanceof MenuManager) {
-				return (MenuManager) item;
+			if (item instanceof MenuManager mm) {
+				return mm;
 			}
 		}
 		fail("Unable to find menu manager");

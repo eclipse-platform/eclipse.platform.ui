@@ -31,9 +31,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class HideTrimBarsHandler extends AbstractHandler {
 
-	/**
-	 *
-	 */
 	private static final String INITIAL_TRIM_VISIBILIY = "initialTrimVisibilityValue"; //$NON-NLS-1$
 	private static final String WINDOWS_WITH_MINIMIZED_TRIMBARS = "windowsWithMinimizedTrimbars"; //$NON-NLS-1$
 

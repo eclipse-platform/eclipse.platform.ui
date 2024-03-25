@@ -76,10 +76,6 @@ public final class ThemeElementHelper {
 		}
 	}
 
-	/**
-	 * @param definitions
-	 * @return
-	 */
 	private static FontDefinition[] addDefaulted(FontDefinition[] definitions) {
 		IThemeRegistry registry = WorkbenchPlugin.getDefault().getThemeRegistry();
 		FontDefinition[] allDefs = registry.getFonts();
@@ -226,10 +222,6 @@ public final class ThemeElementHelper {
 		return (FontDefinition[]) set.toArray(new FontDefinition[set.size()]);
 	}
 
-	/**
-	 * @param definitions
-	 * @return
-	 */
 	private static ColorDefinition[] addDefaulted(ColorDefinition[] definitions) {
 		IThemeRegistry registry = WorkbenchPlugin.getDefault().getThemeRegistry();
 		ColorDefinition[] allDefs = registry.getColors();
@@ -238,11 +230,6 @@ public final class ThemeElementHelper {
 		return (ColorDefinition[]) set.toArray(new ColorDefinition[set.size()]);
 	}
 
-	/**
-	 * @param definitions
-	 * @param allDefs
-	 * @return
-	 */
 	private static SortedSet addDefaulted(IHierarchalThemeElementDefinition[] definitions,
 			IHierarchalThemeElementDefinition[] allDefs) {
 		SortedSet set = new TreeSet(IThemeRegistry.ID_COMPARATOR);
@@ -313,11 +300,6 @@ public final class ThemeElementHelper {
 		}
 	}
 
-	/**
-	 * @param theme
-	 * @param id
-	 * @return
-	 */
 	public static String createPreferenceKey(ITheme theme, String id) {
 		String themeId = theme.getId();
 		if (themeId.equals(IThemeManager.DEFAULT_THEME)) {
@@ -330,27 +312,6 @@ public final class ThemeElementHelper {
 	public static String createPreferenceKey(org.eclipse.e4.ui.css.swt.theme.ITheme cssTheme, ITheme theme, String id) {
 		String cssThemePrefix = cssTheme != null ? cssTheme.getId() + '.' : ""; //$NON-NLS-1$
 		return cssThemePrefix + createPreferenceKey(theme, id);
-	}
-
-	/**
-	 * @param theme
-	 * @param property
-	 * @return
-	 */
-	public static String[] splitPropertyName(Theme theme, String property) {
-		IThemeDescriptor[] descriptors = WorkbenchPlugin.getDefault().getThemeRegistry().getThemes();
-		for (IThemeDescriptor themeDescriptor : descriptors) {
-			String id = themeDescriptor.getId();
-			if (property.startsWith(id + '.')) { // the property starts with
-													// a known theme ID -
-													// extract and return it and
-													// the remaining property
-				return new String[] { property.substring(0, id.length()), property.substring(id.length() + 1) };
-			}
-		}
-
-		// default is simply return the default theme ID and the raw property
-		return new String[] { IThemeManager.DEFAULT_THEME, property };
 	}
 
 	/**

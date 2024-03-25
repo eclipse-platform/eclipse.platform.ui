@@ -35,7 +35,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * {@link MarkerSupportView}
  *
  * @since 3.4
- *
  */
 public abstract class MarkerViewHandler extends AbstractHandler {
 

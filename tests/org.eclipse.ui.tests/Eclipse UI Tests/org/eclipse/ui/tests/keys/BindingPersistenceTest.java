@@ -54,7 +54,7 @@ import org.junit.Test;
  */
 public final class BindingPersistenceTest {
 
-	private final String EMACS_SCHEME_ID = "org.eclipse.ui.emacsAcceleratorConfiguration";
+	private static final String EMACS_SCHEME_ID = "org.eclipse.ui.emacsAcceleratorConfiguration";
 	private ICommandService commandService;
 	private IBindingService bindingService;
 

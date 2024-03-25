@@ -202,7 +202,6 @@ public class PopupDialog extends Window {
 
 	/**
 	 * Shell style appropriate for a simple hover popup that cannot get focus.
-	 *
 	 */
 	public static final int HOVER_SHELLSTYLE = SWT.NO_FOCUS | SWT.ON_TOP | SWT.TOOL;
 
@@ -254,9 +253,6 @@ public class PopupDialog extends Window {
 	 */
 	public static final String POPUP_IMG_MENU_DISABLED = "popup_menu_image_diabled"; //$NON-NLS-1$
 
-	/**
-	 *
-	 */
 	private static GridLayoutFactory popupLayoutFactory;
 	private static GridLayoutFactory getPopupLayout() {
 		if (popupLayoutFactory == null) {
@@ -964,7 +960,6 @@ public class PopupDialog extends Window {
 	 *
 	 * @param text
 	 *            the text to be shown when the info area is displayed.
-	 *
 	 */
 	protected void setInfoText(String text) {
 		infoText = text;
@@ -980,7 +975,6 @@ public class PopupDialog extends Window {
 	 *
 	 * @param text
 	 *            the text to be shown when the title area is displayed.
-	 *
 	 */
 	protected void setTitleText(String text) {
 		titleText = text;
@@ -1519,7 +1513,6 @@ public class PopupDialog extends Window {
 
 	/**
 	 * The dialog is being disposed. Dispose of any resources allocated.
-	 *
 	 */
 	private void handleDispose() {
 		if (infoFont != null && !infoFont.isDisposed()) {

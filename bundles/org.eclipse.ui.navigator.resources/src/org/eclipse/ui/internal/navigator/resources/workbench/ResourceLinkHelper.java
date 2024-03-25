@@ -29,7 +29,6 @@ import org.eclipse.ui.part.FileEditorInput;
  * Links IFileEditorInput to IFiles, and vice versa.
  *
  * @since 3.2
- *
  */
 public class ResourceLinkHelper implements ILinkHelper {
 

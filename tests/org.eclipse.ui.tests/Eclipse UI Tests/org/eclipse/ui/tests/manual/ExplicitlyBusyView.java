@@ -29,12 +29,11 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * @since 3.3
- *
  */
 public class ExplicitlyBusyView extends ViewPart {
 
 	private IWorkbenchSiteProgressService progressService;
-	private Object family = new Object();
+	private final Object family = new Object();
 	private int counter;
 
 	class SomeJob extends Job {

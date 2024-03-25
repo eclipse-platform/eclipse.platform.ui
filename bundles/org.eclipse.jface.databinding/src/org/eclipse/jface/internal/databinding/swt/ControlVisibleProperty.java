@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Control;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class ControlVisibleProperty<S extends Control> extends VisibleProperty<S> {
 	@Override

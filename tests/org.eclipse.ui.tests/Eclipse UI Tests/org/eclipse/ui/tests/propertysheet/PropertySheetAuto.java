@@ -222,7 +222,7 @@ public class PropertySheetAuto extends UITestCase {
 
 	private Car[] cars;
 
-	private Random random = new Random();
+	private final Random random = new Random();
 
 	private static final int NUMBER_OF_CARS = 10;
 

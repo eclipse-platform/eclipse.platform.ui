@@ -39,7 +39,6 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
 /**
  *
  * @since 3.5
- *
  */
 public class QuickAccessEntry {
 	boolean firstInCategory;
@@ -129,10 +128,10 @@ public class QuickAccessEntry {
 		if (imageDescriptor == null) {
 			return null;
 		}
-		Image image = (Image) resourceManager.find(imageDescriptor);
+		Image image = resourceManager.find(imageDescriptor);
 		if (image == null) {
 			try {
-				image = resourceManager.createImage(imageDescriptor);
+				image = resourceManager.create(imageDescriptor);
 			} catch (DeviceResourceException e) {
 				WorkbenchPlugin.log(e);
 			}
@@ -257,9 +256,6 @@ public class QuickAccessEntry {
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	public void erase(Event event) {
 		// We are only custom drawing the foreground.
 		event.detail &= ~SWT.FOREGROUND;

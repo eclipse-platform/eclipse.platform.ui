@@ -15,6 +15,8 @@
 package org.eclipse.ui.menus;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -494,6 +496,9 @@ public class CommandContributionItem extends ContributionItem {
 		MenuItem item = (MenuItem) widget;
 
 		String text = label;
+
+		text = legacyActionLabelSupport(text);
+
 		if (text == null) {
 			if (command != null) {
 				try {
@@ -535,11 +540,20 @@ public class CommandContributionItem extends ContributionItem {
 		}
 	}
 
+	private String legacyActionLabelSupport(String text) {
+		return Optional.of(command).map(ParameterizedCommand::getCommand).map(Command::getHandler)
+				.map(IHandler::getHandlerLabel).filter(Objects::nonNull)
+				.orElse(text);
+	}
+
 	private void updateToolItem() {
 		ToolItem item = (ToolItem) widget;
 
 		String text = label;
-		String tooltip = label;
+
+		text = legacyActionLabelSupport(text);
+
+		String tooltip = text;
 
 		if (text == null) {
 			if (command != null) {
@@ -579,6 +593,8 @@ public class CommandContributionItem extends ContributionItem {
 		Button item = (Button) widget;
 
 		String text = label;
+		text = legacyActionLabelSupport(text);
+
 		if (text == null) {
 			if (command != null) {
 				try {
@@ -855,10 +871,10 @@ public class CommandContributionItem extends ContributionItem {
 			MenuItem item = (MenuItem) widget;
 			LocalResourceManager m = new LocalResourceManager(JFaceResources.getResources());
 			try {
-				item.setImage(icon == null ? null : m.createImage(icon));
+				item.setImage(icon == null ? null : m.create(icon));
 			} catch (DeviceResourceException e) {
 				icon = ImageDescriptor.getMissingImageDescriptor();
-				item.setImage(m.createImage(icon));
+				item.setImage(m.create(icon));
 				// as we replaced the failed icon, log the message once.
 				StatusManager.getManager()
 						.handle(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, "Failed to load image", e)); //$NON-NLS-1$
@@ -868,9 +884,9 @@ public class CommandContributionItem extends ContributionItem {
 		} else if (widget instanceof ToolItem) {
 			ToolItem item = (ToolItem) widget;
 			LocalResourceManager m = new LocalResourceManager(JFaceResources.getResources());
-			item.setDisabledImage(disabledIcon == null ? null : m.createImage(disabledIcon));
-			item.setHotImage(hoverIcon == null ? null : m.createImage(hoverIcon));
-			item.setImage(icon == null ? null : m.createImage(icon));
+			item.setDisabledImage(disabledIcon == null ? null : m.create(disabledIcon));
+			item.setHotImage(hoverIcon == null ? null : m.create(hoverIcon));
+			item.setImage(icon == null ? null : m.create(icon));
 			disposeOldImages();
 			localResourceManager = m;
 		}

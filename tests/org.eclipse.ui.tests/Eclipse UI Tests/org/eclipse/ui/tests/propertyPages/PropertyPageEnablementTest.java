@@ -25,7 +25,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.2
- *
  */
 @RunWith(JUnit4.class)
 public class PropertyPageEnablementTest extends AbstractNavigatorTest {
@@ -45,7 +44,6 @@ public class PropertyPageEnablementTest extends AbstractNavigatorTest {
 
 	/**
 	 * Test the AND condition property page which should only work for files.
-	 *
 	 */
 	@Test
 	public void testAndPage() {
@@ -77,7 +75,6 @@ public class PropertyPageEnablementTest extends AbstractNavigatorTest {
 	/**
 	 * Test the OR condition property page which should only work for files and
 	 * folders.
-	 *
 	 */
 	@Test
 	public void testOrPage() {
@@ -112,7 +109,6 @@ public class PropertyPageEnablementTest extends AbstractNavigatorTest {
 
 	/**
 	 * Test the instance of property page which should only work for projects.
-	 *
 	 */
 	@Test
 	public void testInstanceOfPage() {

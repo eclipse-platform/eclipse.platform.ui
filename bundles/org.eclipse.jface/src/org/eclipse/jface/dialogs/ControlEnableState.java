@@ -48,9 +48,6 @@ public class ControlEnableState {
 
 		/**
 		 * Create a new instance of the receiver.
-		 *
-		 * @param item
-		 * @param state
 		 */
 		public ItemState(Control item, boolean state) {
 			this.item = item;
@@ -59,7 +56,6 @@ public class ControlEnableState {
 
 		/**
 		 * Restore the enabled state to the original value.
-		 *
 		 */
 		public void restore() {
 			if (item == null || item.isDisposed()) {

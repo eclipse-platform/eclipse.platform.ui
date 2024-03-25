@@ -42,7 +42,6 @@ import org.junit.Test;
 
 /**
  * @since 3.4
- *
  */
 public class ContributedServiceTest {
 
@@ -95,7 +94,7 @@ public class ContributedServiceTest {
 	}
 
 	private static class TempLevelFactory extends AbstractServiceFactory {
-		private int level;
+		private final int level;
 
 		public TempLevelFactory(int l) {
 			level = l;
@@ -124,8 +123,8 @@ public class ContributedServiceTest {
 
 		assertEquals(3, LevelServiceFactory.instancesCreated);
 
-		if (locator instanceof IDisposable) {
-			((IDisposable) locator).dispose();
+		if (locator instanceof IDisposable disposable) {
+			disposable.dispose();
 		}
 
 		locator = lc.createServiceLocator(parent, null, () -> {
@@ -135,8 +134,8 @@ public class ContributedServiceTest {
 		assertEquals(3, l.getLevel());
 
 		assertEquals(4, LevelServiceFactory.instancesCreated);
-		if (locator instanceof IDisposable) {
-			((IDisposable) locator).dispose();
+		if (locator instanceof IDisposable disposable) {
+			disposable.dispose();
 		}
 
 		locator = lc.createServiceLocator(parent, new TempLevelFactory(8), () -> {
@@ -146,8 +145,8 @@ public class ContributedServiceTest {
 		assertEquals(8, l.getLevel());
 
 		assertEquals(4, LevelServiceFactory.instancesCreated);
-		if (locator instanceof IDisposable) {
-			((IDisposable) locator).dispose();
+		if (locator instanceof IDisposable disposable) {
+			disposable.dispose();
 		}
 	}
 

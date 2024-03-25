@@ -29,16 +29,11 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
  * Provides a delegate implementation of {@link ICommonViewerWorkbenchSite}.
  *
  * @since 3.2
- *
  */
 public class CommonViewerSiteIViewSiteDelegate implements ICommonViewerWorkbenchSite {
 
 	private IViewSite viewSite;
 
-	/**
-	 *
-	 * @param aViewSite
-	 */
 	public CommonViewerSiteIViewSiteDelegate(IViewSite aViewSite) {
 		viewSite = aViewSite;
 	}

@@ -78,7 +78,7 @@ public class FormFonts {
 	public Font getBoldFont(Display display, Font font) {
 		checkHashMaps();
 		BoldFontDescriptor desc = new BoldFontDescriptor(font);
-		Font result = manager.getResourceManager(display).createFont(desc);
+		Font result = manager.getResourceManager(display).create(desc);
 		descriptors.put(result, desc);
 		return result;
 	}
@@ -88,7 +88,7 @@ public class FormFonts {
 		BoldFontDescriptor desc = descriptors.get(boldFont);
 		if (desc != null) {
 			LocalResourceManager resourceManager = manager.getResourceManager(display);
-			resourceManager.destroyFont(desc);
+			resourceManager.destroy(desc);
 			if (resourceManager.find(desc) == null) {
 				descriptors.remove(boldFont);
 				validateHashMaps();

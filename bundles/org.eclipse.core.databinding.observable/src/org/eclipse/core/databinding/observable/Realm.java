@@ -107,7 +107,11 @@ public abstract class Realm {
 	 */
 	protected static Realm setDefault(Realm realm) {
 		Realm oldValue = getDefault();
-		defaultRealm.set(realm);
+		if (realm == null) {
+			defaultRealm.remove();
+		} else {
+			defaultRealm.set(realm);
+		}
 		return oldValue;
 	}
 
@@ -240,9 +244,6 @@ public abstract class Realm {
 
 	}
 
-	/**
-	 *
-	 */
 	private void ensureWorkerThreadIsRunning() {
 		if (workerThread == null) {
 			workerThread = new Thread() {

@@ -92,9 +92,10 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 	public void setHorizontal(boolean newHorizontal) {
 		boolean oldHorizontal = horizontal;
 		horizontal = newHorizontal;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.GENERIC_TILE__HORIZONTAL, oldHorizontal,
 					horizontal));
+		}
 	}
 
 	/**
@@ -168,8 +169,9 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (horizontal: "); //$NON-NLS-1$

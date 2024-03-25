@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.swt.internal.gtk;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.swt.internal.gtk.OS;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.event.EventHandler;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 
 @SuppressWarnings("restriction")
 public class DarkThemeProcessor {

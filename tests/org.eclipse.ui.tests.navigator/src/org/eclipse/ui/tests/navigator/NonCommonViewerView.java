@@ -23,9 +23,6 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorContentServiceFactory;
 import org.eclipse.ui.part.ViewPart;
 
-/**
- *
- */
 public class NonCommonViewerView extends ViewPart {
 
 	private TreeViewer _viewer;

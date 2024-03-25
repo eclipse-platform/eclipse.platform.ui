@@ -35,7 +35,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.Dialog;
@@ -81,7 +80,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * UI to edit the location of the linked resources contained in a project.
  * @since 3.5
- *
  */
 public class LinkedResourceEditor {
 
@@ -96,9 +94,6 @@ public class LinkedResourceEditor {
 	// used to compute layout sizes
 	private FontMetrics fontMetrics;
 
-	/**
-	 *
-	 */
 	public LinkedResourceEditor() {
 		absoluteImg = IDEWorkbenchPlugin.getIDEImageDescriptor(
 				"obj16/warning.png").createImage(); //$NON-NLS-1$
@@ -112,9 +107,6 @@ public class LinkedResourceEditor {
 		ABSOLUTE = IDEWorkbenchMessages.LinkedResourceEditor_absolute;
 	}
 
-	/**
-	 * @param project
-	 */
 	public void setProject(IProject project) {
 		fProject = project;
 	}
@@ -162,8 +154,6 @@ public class LinkedResourceEditor {
 	}
 
 	/**
-	 * @param parent
-	 * @param text
 	 * @return the new button
 	 */
 	private Button createButton(Composite parent, String text) {
@@ -285,9 +275,6 @@ public class LinkedResourceEditor {
 		gc.dispose();
 	}
 
-	/**
-	 *
-	*/
 	public void dispose() {
 		fixedImg.dispose();
 		brokenImg.dispose();
@@ -601,11 +588,6 @@ public class LinkedResourceEditor {
 				IDEWorkbenchMessages.LinkedResourceEditor_convertRelativePathLocations);
 	}
 
-	/**
-	 * @param res
-	 * @param location
-	 * @throws CoreException
-	 */
 	private void setLinkLocation(IResource res, IPath location) throws CoreException {
 		if (res.getType() == IResource.FILE)
 			((IFile)res).createLink(location, IResource.REPLACE,
@@ -615,10 +597,6 @@ public class LinkedResourceEditor {
 					new NullProgressMonitor());
 	}
 
-	/**
-	 * @param selectedResources
-	 * @param report
-	 */
 	private void reportResult(IResource[] selectedResources,
 			ArrayList<String> report, String title) {
 		StringBuilder message = new StringBuilder();
@@ -665,16 +643,12 @@ public class LinkedResourceEditor {
 	}
 
 	private IPath convertToProperCase(IPath path) {
-		if (Platform.getOS().equals(Platform.OS_WIN32))
-			return Path.fromPortableString(path.toPortableString()
-					.toLowerCase());
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			return IPath.fromPortableString(path.toPortableString().toLowerCase());
+		}
 		return path;
 	}
 
-	/**
-	 * @param resources
-	 * @param selectedResources
-	 */
 	private void convertToRelative(ArrayList<IResource> resources,
 			IResource[] selectedResources) {
 		ArrayList<String> report = new ArrayList<>();
@@ -715,7 +689,7 @@ public class LinkedResourceEditor {
 			int variable = -1;
 			for (int i = 0; i < variables.length; i++) {
 				IPath resolvePath = URIUtil.toPath(res.getPathVariableManager().resolveURI(
-						URIUtil.toURI(Path.fromOSString(variables[i]))));
+						URIUtil.toURI(IPath.fromOSString(variables[i]))));
 				if (resolvePath
 						.isPrefixOf(convertToProperCase(location))) {
 					int count = location
@@ -727,7 +701,7 @@ public class LinkedResourceEditor {
 				}
 			}
 			if (variable != -1) {
-				IPath newLocation = Path.fromOSString(variables[variable])
+				IPath newLocation = IPath.fromOSString(variables[variable])
 						.append(location.removeFirstSegments(maxCount));
 				try {
 					setLinkLocation(res, newLocation);
@@ -793,8 +767,8 @@ public class LinkedResourceEditor {
 					IPath location = res.getLocation();
 					int commonCount = location
 							.matchingFirstSegments(commonPath);
-					IPath newLocation = Path.fromOSString(variableName).append(
-							location.removeFirstSegments(commonCount));
+					IPath newLocation = IPath.fromOSString(variableName)
+							.append(location.removeFirstSegments(commonCount));
 					try {
 						setLinkLocation(res, newLocation);
 						report
@@ -845,8 +819,7 @@ public class LinkedResourceEditor {
 			}
 			IPath location = res.getLocation();
 			int commonCount = location.matchingFirstSegments(commonPath);
-			IPath newLocation = Path.fromOSString(variableName).append(
-					location.removeFirstSegments(commonCount));
+			IPath newLocation = IPath.fromOSString(variableName).append(location.removeFirstSegments(commonCount));
 			try {
 				setLinkLocation(res, newLocation);
 				report
@@ -914,7 +887,7 @@ public class LinkedResourceEditor {
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
-		location = Path.fromOSString(dialog.getVariableValue());
+		location = IPath.fromOSString(dialog.getVariableValue());
 		try {
 			setLinkLocation(resource, location);
 		} catch (Exception e) {
@@ -981,15 +954,6 @@ public class LinkedResourceEditor {
 		return true;
 	}
 
-	/**
-	 * @param enableLinking
-	 */
-	public void setEnabled(boolean enableLinking) {
-	}
-
-	/**
-	 *
-	 */
 	public void reloadContent() {
 		refreshContent();
 		fTree.refresh();

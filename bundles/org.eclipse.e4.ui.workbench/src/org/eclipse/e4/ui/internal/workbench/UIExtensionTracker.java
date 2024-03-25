@@ -28,10 +28,6 @@ public class UIExtensionTracker extends ExtensionTracker {
 	private Executor executor;
 	private ILog log;
 
-	/**
-	 * @param executor
-	 * @param log
-	 */
 	public UIExtensionTracker(Executor executor, ILog log) {
 		this.executor = executor;
 		this.log = log;

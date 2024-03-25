@@ -21,7 +21,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Test to see if pinning is available.
- *
  */
 public class ReuseEditorTester extends PropertyTester {
 

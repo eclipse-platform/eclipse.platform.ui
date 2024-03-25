@@ -59,7 +59,7 @@ public class Snippet034ComboViewerAndEnum {
 	enum Gender {
 		MALE("Male"), FEMALE("Female"), UNKNOWN("Unknown"), OTHER("Other");
 
-		private String displayName;
+		private final String displayName;
 
 		private Gender(String displayName) {
 			this.displayName = displayName;
@@ -82,7 +82,7 @@ public class Snippet034ComboViewerAndEnum {
 	static class Person {
 		private String name;
 		private Gender gender;
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public Person(String name, Gender gender) {
 			this.name = name;
@@ -121,7 +121,7 @@ public class Snippet034ComboViewerAndEnum {
 
 	/** The GUI view. */
 	static class View {
-		private Person viewModel;
+		private final Person viewModel;
 		private Text name;
 		private ComboViewer gender;
 		private Label genderText;

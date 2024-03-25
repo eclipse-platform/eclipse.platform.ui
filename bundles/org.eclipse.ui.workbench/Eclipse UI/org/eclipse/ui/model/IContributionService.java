@@ -20,7 +20,6 @@ package org.eclipse.ui.model;
  * the Workbench.
  *
  * @since 3.4
- *
  */
 public interface IContributionService {
 

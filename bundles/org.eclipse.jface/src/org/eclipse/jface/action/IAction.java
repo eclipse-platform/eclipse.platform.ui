@@ -16,6 +16,7 @@ package org.eclipse.jface.action;
 import org.eclipse.core.commands.IHandlerAttributes;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.pde.api.tools.annotations.NoImplement;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
 
@@ -42,8 +43,8 @@ import org.eclipse.swt.widgets.Event;
  * </p>
  *
  * @see Action
- * @noimplement This interface is not intended to be implemented by clients.
  */
+@NoImplement
 public interface IAction {
 
 	/**

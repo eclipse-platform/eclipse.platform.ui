@@ -16,8 +16,6 @@ package org.eclipse.e4.ui.internal.di;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.internal.extensions.EventObjectSupplier;
@@ -30,6 +28,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.event.EventAdmin;
 import org.osgi.service.event.EventHandler;
+
+import jakarta.inject.Inject;
 
 @Component(service = { ExtendedObjectSupplier.class, EventHandler.class }, property = {
 		"dependency.injection.annotation=org.eclipse.e4.ui.di.UIEventTopic",

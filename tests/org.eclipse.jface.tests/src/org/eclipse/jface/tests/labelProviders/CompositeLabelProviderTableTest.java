@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.IViewerLabelProvider;
@@ -26,18 +28,18 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.junit.Test;
 
 /**
- * CompositeLabelProviderTableTest tests a table that is a {@link IViewerLabelProvider},
- * {@link IColorProvider}, {@link org.eclipse.jface.viewers.IColorProvider},
- * {@link IFontProvider}
- * @since 3.3
+ * CompositeLabelProviderTableTest tests a table that is a
+ * {@link IViewerLabelProvider}, {@link IColorProvider},
+ * {@link org.eclipse.jface.viewers.IColorProvider}, {@link IFontProvider}
  *
+ * @since 3.3
  */
 public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest {
 
-	class MyLabelProvider extends LabelProvider implements IColorProvider,
-			IViewerLabelProvider, IFontProvider {
+	class MyLabelProvider extends LabelProvider implements IColorProvider, IViewerLabelProvider, IFontProvider {
 		@Override
 		public Color getForeground(Object element) {
 			return foreground;
@@ -59,15 +61,6 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 		}
 	}
 
-	/**
-	 * Create a new instance of the recevier.
-	 *
-	 * @param name
-	 */
-	public CompositeLabelProviderTableTest(String name) {
-		super(name);
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 
@@ -80,18 +73,16 @@ public class CompositeLabelProviderTableTest extends CompositeLabelProviderTest 
 	}
 
 	/**
-	 * Test that all of the colours and fonts from the label provider are
-	 * applied.
+	 * Test that all of the colours and fonts from the label provider are applied.
 	 */
+	@Test
 	public void testColorsAndFonts() {
 		Table table = (Table) fViewer.getControl();
 		TableItem item = table.getItem(0);
 
-		assertTrue("Background was not set", item.getBackground(0).equals(
-				background));
-		assertTrue("Foreground was not set", item.getForeground(0).equals(
-				foreground));
-		assertTrue("Font was not set", item.getFont(0).equals(font));
+		assertEquals("Background was not set", item.getBackground(0), background);
+		assertEquals("Foreground was not set", item.getForeground(0), foreground);
+		assertEquals("Font was not set", item.getFont(0), font);
 
 	}
 

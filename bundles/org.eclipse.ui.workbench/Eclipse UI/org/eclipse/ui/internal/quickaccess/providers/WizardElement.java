@@ -24,7 +24,6 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * @since 3.3
- *
  */
 public class WizardElement extends QuickAccessElement {
 

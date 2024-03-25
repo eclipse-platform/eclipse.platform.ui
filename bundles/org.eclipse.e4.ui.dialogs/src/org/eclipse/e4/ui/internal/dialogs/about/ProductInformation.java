@@ -20,7 +20,6 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Encapsulates product information from product file.
- *
  */
 public final class ProductInformation {
 	private final IProduct product;

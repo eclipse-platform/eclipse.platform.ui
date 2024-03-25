@@ -16,6 +16,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
@@ -30,6 +35,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.junit.Test;
 
 public abstract class StructuredViewerTest extends ViewerTestCase {
 	public static class TestLabelFilter extends ViewerFilter {
@@ -105,10 +111,6 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		}
 	}
 
-	public StructuredViewerTest(String name) {
-		super(name);
-	}
-
 	protected void bulkChange(TestModelChange eventToFire) {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement newElement = first.getContainer().basicAddChild();
@@ -140,6 +142,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				+ TestLabelProvider.fgSuffix;
 	}
 
+	@Test
 	public void testClearSelection() {
 		TestElement first = fRootElement.getFirstChild();
 		StructuredSelection selection = new StructuredSelection(first);
@@ -149,6 +152,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertTrue(result.isEmpty());
 	}
 
+	@Test
 	public void testDeleteChild() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement first2 = first.getFirstChild();
@@ -156,6 +160,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertNull("first child is not visible", fViewer.testFindItem(first2));
 	}
 
+	@Test
 	public void testDeleteInput() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement firstfirst = first.getFirstChild();
@@ -166,6 +171,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				.testFindItem(firstfirst));
 	}
 
+	@Test
 	public void testDeleteSibling() {
 		TestElement first = fRootElement.getFirstChild();
 		assertNotNull("first child is visible", fViewer.testFindItem(first));
@@ -177,6 +183,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 	 * Tests to ensure that the viewer is properly diposed.  Includes:
 	 *     removal of filters
 	 */
+	@Test
 	public void testDispose() {
 		assertEquals(0, fViewer.getFilters().length);
 		fViewer.addFilter(new ViewerFilter() {
@@ -191,6 +198,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertEquals(0, fViewer.getFilters().length);
 	}
 
+	@Test
 	public void testFilter() {
 		ViewerFilter filter = new TestLabelFilter();
 		fViewer.addFilter(filter);
@@ -200,10 +208,10 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 
 	}
 
+	@Test
 	public void testSetFilters() {
 		ViewerFilter filter = new TestLabelFilter();
 		fViewer.setFilters(filter, new TestLabelFilter2());
-//    	System.err.println("Item: " + getItemCount() );
 		assertEquals("2 filters count", 1, getItemCount());
 
 		fViewer.setFilters(filter);
@@ -213,6 +221,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertEquals("unfiltered count", 10, getItemCount());
 	}
 
+	@Test
 	public void testSetAndGetData() {
 
 		//get with no data
@@ -313,6 +322,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertEquals("get after remove", null, fViewer.getData("epsilon"));
 	}
 
+	@Test
 	public void testInsertChild() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement newElement = first.addChild(TestModelChange.INSERT);
@@ -320,6 +330,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				.testFindItem(newElement));
 	}
 
+	@Test
 	public void testInsertSibling() {
 		TestElement newElement = fRootElement.addChild(TestModelChange.INSERT);
 		processEvents();
@@ -334,6 +345,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				.testFindItem(newElement));
 	}
 
+	@Test
 	public void testInsertSiblingReveal() {
 		TestElement newElement = fRootElement.addChild(TestModelChange.INSERT
 				| TestModelChange.REVEAL);
@@ -341,6 +353,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				.testFindItem(newElement));
 	}
 
+	@Test
 	public void testInsertSiblings() {
 		TestElement[] newElements = fRootElement
 				.addChildren(TestModelChange.INSERT);
@@ -358,6 +371,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		}
 	}
 
+	@Test
 	public void testInsertSiblingSelectExpanded() {
 		TestElement newElement = fRootElement.addChild(TestModelChange.INSERT
 				| TestModelChange.REVEAL | TestModelChange.SELECT);
@@ -374,6 +388,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertSelectionEquals("new element is selected", newElement);
 	}
 
+	@Test
 	public void testInsertSiblingWithFilterFiltered() {
 		fViewer.addFilter(new TestLabelFilter());
 		TestElement newElement = new TestElement(fModel, fRootElement);
@@ -386,6 +401,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertEquals(5, getItemCount());
 	}
 
+	@Test
 	public void testInsertSiblingWithFilterNotFiltered() {
 		fViewer.addFilter(new TestLabelFilter());
 		TestElement newElement = new TestElement(fModel, fRootElement);
@@ -398,6 +414,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertEquals(6, getItemCount());
 	}
 
+	@Test
 	public void testInsertSiblingWithSorter() {
 		fViewer.setComparator(new TestLabelComparator());
 		TestElement newElement = new TestElement(fModel, fRootElement);
@@ -410,6 +427,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertSelectionEquals("new element is selected", newElement);
 	}
 
+	@Test
 	public void testLabelProvider() {
 		fViewer.setLabelProvider(getTestLabelProvider());
 		TestElement first = fRootElement.getFirstChild();
@@ -424,6 +442,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		return new TestLabelProvider();
 	}
 
+	@Test
 	public void testLabelProviderStateChange() {
 		TestLabelProvider provider = new TestLabelProvider();
 		fViewer.setLabelProvider(provider);
@@ -433,6 +452,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertEquals("rendered label", newLabel, getItemText(0));
 	}
 
+	@Test
 	public void testRename() {
 		TestElement first = fRootElement.getFirstChild();
 		String newLabel = first.getLabel() + " changed";
@@ -441,6 +461,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				getItemText(0));
 	}
 
+	@Test
 	public void testRenameWithFilter() {
 		fViewer.addFilter(new TestLabelFilter());
 		TestElement first = fRootElement.getFirstChild();
@@ -453,6 +474,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				.testFindItem(first));
 	}
 
+	@Test
 	public void testRenameWithLabelProvider() {
 		if (fViewer instanceof TableViewer) {
 			return;
@@ -464,6 +486,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertEquals("rendered label", newLabel, getItemText(0));
 	}
 
+	@Test
 	public void testRenameWithSorter() {
 		fViewer.setComparator(new TestLabelComparator());
 		TestElement first = fRootElement.getFirstChild();
@@ -472,6 +495,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertEquals("sorted first", newElementLabel, getItemText(0));
 	}
 
+	@Test
 	public void testSetInput() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement firstfirst = first.getFirstChild();
@@ -490,6 +514,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 				.testFindItem(firstfirst));
 	}
 
+	@Test
 	public void testSetSelection() {
 		TestElement first = fRootElement.getFirstChild();
 		StructuredSelection selection = new StructuredSelection(first);
@@ -499,11 +524,13 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertEquals(first, result.getFirstElement());
 	}
 
+	@Test
 	public void testSomeChildrenChanged() {
 		bulkChange(new TestModelChange(TestModelChange.STRUCTURE_CHANGE,
 				fRootElement));
 	}
 
+	@Test
 	public void testSorter() {
 		TestElement first = fRootElement.getFirstChild();
 		TestElement last = fRootElement.getLastChild();
@@ -522,6 +549,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 		assertEquals("unsorted", lastLabel, getItemText(size - 1));
 	}
 
+	@Test
 	public void testWorldChanged() {
 		bulkChange(new TestModelChange(TestModelChange.STRUCTURE_CHANGE, null));
 	}

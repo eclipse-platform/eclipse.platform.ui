@@ -26,7 +26,6 @@ package org.eclipse.ui.intro;
  * user requesting it.
  *
  * @since 3.3
- *
  */
 public abstract class IntroContentDetector {
 

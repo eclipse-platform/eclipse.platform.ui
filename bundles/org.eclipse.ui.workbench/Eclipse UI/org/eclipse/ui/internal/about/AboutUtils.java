@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -47,7 +48,6 @@ public class AboutUtils {
 	/**
 	 * Scan the contents of the about text
 	 *
-	 * @param aboutText
 	 * @return AboutItem
 	 */
 	public static AboutItem scan(String aboutText) {
@@ -109,15 +109,15 @@ public class AboutUtils {
 	 * to a resource within a bundle, then a temp copy of the file will be extracted
 	 * and opened.
 	 *
-	 * @see Platform#asLocalURL(URL)
+	 * @see FileLocator#toFileURL(URL)
 	 *
 	 * @param url The target url to be displayed, null will be safely ignored
 	 * @return true if the url was successfully displayed and false otherwise
 	 */
-	public static boolean openBrowser(Shell shell, URL url) {
+	public static boolean openBrowser(@SuppressWarnings("unused") Shell shell, URL url) {
 		if (url != null) {
 			try {
-				url = Platform.asLocalURL(url);
+				url = FileLocator.toFileURL(url);
 			} catch (IOException e) {
 				return false;
 			}
@@ -223,30 +223,17 @@ public class AboutUtils {
 		}
 		path = path.append(ERROR_LOG_COPY_FILENAME);
 		File copy = path.toFile();
-		FileReader in = null;
-		FileWriter out = null;
-		try {
-			in = new FileReader(file);
+		try (FileReader in = new FileReader(file)) {
 			// don't append data, overwrite what was there
-			out = new FileWriter(copy);
-			char buffer[] = new char[4096];
-			int count;
-			while ((count = in.read(buffer, 0, buffer.length)) > 0) {
-				out.write(buffer, 0, count);
+			try (FileWriter out = new FileWriter(copy)) {
+				char buffer[] = new char[4096];
+				int count;
+				while ((count = in.read(buffer, 0, buffer.length)) > 0) {
+					out.write(buffer, 0, count);
+				}
 			}
 		} catch (IOException e) {
 			return null;
-		} finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-				if (out != null) {
-					out.close();
-				}
-			} catch (IOException e) {
-				return null;
-			}
 		}
 		return copy;
 

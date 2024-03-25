@@ -15,6 +15,9 @@
 
 package org.eclipse.jface.tests.wizards;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
@@ -23,29 +26,28 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class WizardProgressMonitorTest extends TestCase {
+public class WizardProgressMonitorTest {
 
 	private ProgressMonitoringWizardDialog dialog;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		// initialize a display
 		Display.getDefault();
 		dialog = new ProgressMonitoringWizardDialog(new TheTestWizard());
 		dialog.setBlockOnOpen(false);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();
 		}
 		dialog = null;
-		super.tearDown();
 	}
 
 	/**
@@ -54,9 +56,8 @@ public class WizardProgressMonitorTest extends TestCase {
 	 * IRunnableWithProgress) method. If they are not cleared in between runs, they
 	 * end up spilling over to the successive call and causes flickering of text in
 	 * the label.
-	 *
-	 * @throws Exception
 	 */
+	@Test
 	public void testProgressLabelsClearedBug271530() throws Exception {
 		// make up some random task names
 		final String[] taskNames = { "Task A", "Task B" }; //$NON-NLS-1$ //$NON-NLS-2$
@@ -164,9 +165,8 @@ public class WizardProgressMonitorTest extends TestCase {
 	 * #getProgressMonitorPart method and returns a monitor without the stop button
 	 * will fail gracefully. That is, the runnable will run as expected. See
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887#c57
-	 *
-	 * @throws Exception
 	 */
+	@Test
 	public void testProgressMonitorWithoutStopButtonBug287887() throws Exception {
 		// make up some random task names
 		final String[] taskNames = { "Task A", "Task B" }; //$NON-NLS-1$ //$NON-NLS-2$

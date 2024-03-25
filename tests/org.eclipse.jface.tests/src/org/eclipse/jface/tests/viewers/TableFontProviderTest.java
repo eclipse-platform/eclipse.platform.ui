@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,8 @@
  *******************************************************************************/
 
 package org.eclipse.jface.tests.viewers;
+
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.tests.viewers.TableViewerTest.TableTestLabelProvider;
@@ -31,6 +33,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * The TableFontProviderTest is a test suite designed to test
@@ -42,17 +46,9 @@ public class TableFontProviderTest extends StructuredViewerTest {
 	Font font2;
 
 	/**
-	 * Create a new instance of the receiver
-	 *
-	 * @param name
-	 */
-	public TableFontProviderTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * Test the general font provider.
 	 */
+	@Test
 	public void testFontProvider() {
 		TableViewer viewer = (TableViewer) fViewer;
 
@@ -71,8 +67,8 @@ public class TableFontProviderTest extends StructuredViewerTest {
 
 	/**
 	 * Test that the fonts are being set.
-	 *
 	 */
+	@Test
 	public void testTableItemsFontProvider() {
 		TableViewer viewer = (TableViewer) fViewer;
 
@@ -89,21 +85,13 @@ public class TableFontProviderTest extends StructuredViewerTest {
 
 	}
 
+	@Before
 	@Override
 	public void setUp() {
 		super.setUp();
 		font1 = JFaceResources.getFont(JFaceResources.BANNER_FONT);
 		font2 = JFaceResources.getFont(JFaceResources.HEADER_FONT);
 
-	}
-
-	/**
-	 * Run as a stand alone test
-	 *
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(TableFontProviderTest.class);
 	}
 
 	@Override
@@ -150,9 +138,9 @@ public class TableFontProviderTest extends StructuredViewerTest {
 		FontData[] font1Data = font1.getFontData();
 		FontData[] font2Data = font2.getFontData();
 
-		assertTrue("Mismatched sizes", font1Data.length == font2Data.length);
+		assertEquals("Mismatched sizes", font1Data.length, font2Data.length);
 		for (int a = 0; a < font2Data.length; a++) {
-			assertTrue("Mismatched fontData", font1Data[a].equals(font2Data[a]));
+			assertEquals("Mismatched fontData", font1Data[a], font2Data[a]);
 		}
 
 	}

@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -48,6 +50,8 @@ import org.eclipse.swt.widgets.Display;
 	 * The display.
 	 */
 	private Display display;
+	private static final boolean LOG_BEGIN_TASK = Boolean
+			.getBoolean("AccumulatingProgressMonitor.logBeginTaskViolations"); //$NON-NLS-1$
 
 	/**
 	 * The collector, or <code>null</code> if none.
@@ -55,6 +59,9 @@ import org.eclipse.swt.widgets.Display;
 	private Collector collector;
 
 	private String currentTask = ""; //$NON-NLS-1$
+
+	private volatile boolean taskStarted;
+	private volatile Exception taskStartedStack;
 
 	private class Collector implements Runnable {
 		private String taskName;
@@ -67,11 +74,6 @@ import org.eclipse.swt.widgets.Display;
 
 		/**
 		 * Create a new collector.
-		 *
-		 * @param taskName
-		 * @param subTask
-		 * @param work
-		 * @param monitor
 		 */
 		public Collector(String taskName, String subTask, double work,
 				IProgressMonitor monitor) {
@@ -83,8 +85,6 @@ import org.eclipse.swt.widgets.Display;
 
 		/**
 		 * Set the task name
-		 *
-		 * @param name
 		 */
 		public void setTaskName(String name) {
 			this.taskName = name;
@@ -92,7 +92,6 @@ import org.eclipse.swt.widgets.Display;
 
 		/**
 		 * Add worked to the work.
-		 * @param workedIncrement
 		 */
 		public void worked(double workedIncrement) {
 			this.worked = this.worked + workedIncrement;
@@ -100,7 +99,6 @@ import org.eclipse.swt.widgets.Display;
 
 		/**
 		 * Set the subTask name.
-		 * @param subTaskName
 		 */
 		public void subTask(String subTaskName) {
 			this.subTask = subTaskName;
@@ -140,6 +138,20 @@ import org.eclipse.swt.widgets.Display;
 
 	@Override
 	public void beginTask(final String name, final int totalWork) {
+		if (taskStarted) {
+			if (LOG_BEGIN_TASK) {
+				Exception e = new IllegalStateException(
+						"beginTask should only be called once per instance. At least call done() before further invocations", //$NON-NLS-1$
+						taskStartedStack);
+				Policy.getLog().log(Status.warning(e.getLocalizedMessage(), e));
+			}
+			done(); // workaround client error
+		}
+		if (LOG_BEGIN_TASK) {
+			taskStartedStack = new IllegalStateException(
+					"beginTask(" + name + ", " + totalWork + ") was called here previously"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		taskStarted = true;
 		synchronized (this) {
 			collector = null;
 		}
@@ -152,8 +164,6 @@ import org.eclipse.swt.widgets.Display;
 	/**
 	 * Clears the collector object used to accumulate work and subtask calls if
 	 * it matches the given one.
-	 *
-	 * @param collectorToClear
 	 */
 	private synchronized void clearCollector(Collector collectorToClear) {
 		// Check if the accumulator is still using the given collector.
@@ -165,9 +175,6 @@ import org.eclipse.swt.widgets.Display;
 
 	/**
 	 * Creates a collector object to accumulate work and subtask calls.
-	 *
-	 * @param subTask
-	 * @param work
 	 */
 	private void createCollector(String taskName, String subTask, double work) {
 		collector = new Collector(taskName, subTask, work,
@@ -177,6 +184,14 @@ import org.eclipse.swt.widgets.Display;
 
 	@Override
 	public void done() {
+		if (!taskStarted) {
+			// ignore call to done() if beginTask() was not called!
+			// Otherwise an otherwise already started delegate would be finished
+			// see https://github.com/eclipse-jdt/eclipse.jdt.ui/issues/61
+			return;
+		}
+		taskStarted = false;
+		taskStartedStack = null;
 		synchronized (this) {
 			collector = null;
 		}

@@ -27,7 +27,6 @@ import org.eclipse.core.databinding.property.set.ISetProperty;
  * @param <E> type of the elements in the set
  *
  * @since 3.3
- *
  */
 public class AnonymousPojoSetProperty<S, E> extends DelegatingSetProperty<S, E> {
 	private final String propertyName;

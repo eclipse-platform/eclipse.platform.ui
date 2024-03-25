@@ -38,7 +38,7 @@ import org.junit.Test;
  */
 public class EventLoopMonitorThreadTests {
 	/* NOTE: All time-related values in this class are in milliseconds. */
-	private static final long MAX_TIMEOUT_MS = 1 * 1000; // 1 second
+	private static final long MAX_TIMEOUT_MS = 3 * 1000; // 3 seconds
 	private static final int FREEZE_THRESHOLD_MS = 100;
 	private static final int SAMPLE_INTERVAL_MS = FREEZE_THRESHOLD_MS * 2 / 3;
 	public static final int FORCE_DEADLOCK_LOG_TIME_MS = 10 * 60 * 1000; // == 10 minutes
@@ -79,27 +79,22 @@ public class EventLoopMonitorThreadTests {
 		 */
 		@Override
 		protected void sleepForMillis(long nanoseconds) {
-			synchronized (sleepLock) {
-				++numSleeps;
-				sleepLock.notifyAll();
-			}
+			monitorThreadControl.pauseThreadAndWaitForResume();
 		}
 	}
 
 	private MockEventLoopMonitorThread monitoringThread;
 	private MockUiFreezeEventLogger logger;
 	private List<UiFreezeEvent> loggedEvents;
-	private static Object sleepLock;
-	private static long numSleeps;
-	private static volatile long timestamp;
+	private static ThreadControl monitorThreadControl;
+	private static long timestamp;
 
 	@Before
 	public void setUp() {
 		MonitoringPlugin.getPreferenceStore().setValue(PreferenceConstants.MONITORING_ENABLED, false);
 		logger = new MockUiFreezeEventLogger();
 		loggedEvents = logger.getLoggedEvents();
-		sleepLock = new Object();
-		numSleeps = 0;
+		monitorThreadControl = new ThreadControl(MAX_TIMEOUT_MS);
 		timestamp = 1;
 	}
 
@@ -135,7 +130,9 @@ public class EventLoopMonitorThreadTests {
 	private void shutdownMonitoringThread() throws Exception {
 		sendEvent(SWT.PostExternalEventDispatch);
 		sendEvent(SWT.PostEvent);
+		monitorThreadControl.waitUntilThreadIsPaused();
 		monitoringThread.shutdown();
+		monitorThreadControl.resumeThread();
 		monitoringThread.join();
 	}
 
@@ -150,19 +147,14 @@ public class EventLoopMonitorThreadTests {
 	 * Runs the current thread for a specified amount of time in milliseconds.
 	 */
 	private static void runForTime(long millis) throws Exception {
-		synchronized (sleepLock) {
-			while (millis > 0) {
-				long next = Math.min(millis, SAMPLE_INTERVAL_MS);
-				timestamp += next;
+		while (millis > 0) {
+			monitorThreadControl.waitUntilThreadIsPaused();
 
-				long sleeps = numSleeps;
-				long endTime = System.currentTimeMillis() + MAX_TIMEOUT_MS;
-				do {
-					sleepLock.wait(MAX_TIMEOUT_MS);
-				} while (sleeps == numSleeps && endTime - System.currentTimeMillis() > 0);
+			long next = Math.min(millis, SAMPLE_INTERVAL_MS);
+			timestamp += next;
+			millis -= next;
 
-				millis -= next;
-			}
+			monitorThreadControl.resumeThread();
 		}
 	}
 
@@ -174,9 +166,13 @@ public class EventLoopMonitorThreadTests {
 	}
 
 	private void sendEvent(int eventType) {
+		monitorThreadControl.waitUntilThreadIsPaused();
+
 		Event event = new Event();
 		event.type = eventType;
 		monitoringThread.handleEvent(event);
+
+		monitorThreadControl.resumeThread();
 	}
 
 	/**
@@ -200,22 +196,18 @@ public class EventLoopMonitorThreadTests {
 		sendEvent(SWT.PreEvent);
 
 		// Cycle a few events
-		synchronized (sleepLock) {
-			for (int i = 0; i < 3; ++i) {
-				sendEvent(SWT.PreEvent);
-				runForCycles(1);
-				sendEvent(SWT.PostEvent);
-			}
+		for (int i = 0; i < 3; ++i) {
+			sendEvent(SWT.PreEvent);
+			runForCycles(1);
+			sendEvent(SWT.PostEvent);
 		}
 
 		// Test going one beyond the MAX_STACK_TRACES count to see that the count is decimated.
 		int eventLength = MAX_STACK_TRACES + 2;
-		synchronized (sleepLock) {
-			sendEvent(SWT.PreEvent);
-			runForCycles(eventLength);
-			sendEvent(SWT.PostEvent);
-			runForCycles(3);
-		}
+		sendEvent(SWT.PreEvent);
+		runForCycles(eventLength);
+		sendEvent(SWT.PostEvent);
+		runForCycles(3);
 
 		UiFreezeEvent event = loggedEvents.get(0);
 		assertNotNull("A freeze event was not automatically published", event);
@@ -224,12 +216,10 @@ public class EventLoopMonitorThreadTests {
 
 		// Decimation slows down the sampling rate by a factor of 2, so test the resampling reduction.
 		eventLength = MAX_STACK_TRACES + (MIN_MAX_STACK_TRACE_DELTA - 1) * 2;
-		synchronized (sleepLock) {
-			sendEvent(SWT.PreEvent);
-			runForCycles(eventLength);
-			sendEvent(SWT.PostEvent);
-			runForCycles(3);
-		}
+		sendEvent(SWT.PreEvent);
+		runForCycles(eventLength);
+		sendEvent(SWT.PostEvent);
+		runForCycles(3);
 
 		event = loggedEvents.get(1);
 		assertNotNull("A freeze event was not automatically published", event);
@@ -239,12 +229,10 @@ public class EventLoopMonitorThreadTests {
 		// Test the resampling reduction after two decimations.
 		eventLength =
 				MAX_STACK_TRACES + (MIN_MAX_STACK_TRACE_DELTA) * 2 + (MIN_MAX_STACK_TRACE_DELTA - 2) * 4;
-		synchronized (sleepLock) {
-			sendEvent(SWT.PreEvent);
-			runForCycles(eventLength);
-			sendEvent(SWT.PostEvent);
-			runForCycles(3);
-		}
+		sendEvent(SWT.PreEvent);
+		runForCycles(eventLength);
+		sendEvent(SWT.PostEvent);
+		runForCycles(3);
 
 		event = loggedEvents.get(2);
 		assertNotNull("A freeze event was not automatically published", event);
@@ -259,34 +247,32 @@ public class EventLoopMonitorThreadTests {
 		long maxDeadlock = FORCE_DEADLOCK_LOG_TIME_MS;
 		sendEvent(SWT.PreEvent);
 
-		synchronized (sleepLock) {
-			// Cycle a few events to make sure the monitoring event thread is running.
-			for (int i = 0; i < 3; ++i) {
-				sendEvent(SWT.PreEvent);
-				runForCycles(1);
-				sendEvent(SWT.PostEvent);
-			}
-			long startTime = timestamp;
-
-			// Wait for the end of the event to propagate to the deadlock tracker.
+		// Cycle a few events to make sure the monitoring event thread is running.
+		for (int i = 0; i < 3; ++i) {
+			sendEvent(SWT.PreEvent);
 			runForCycles(1);
-
-			long remaining = maxDeadlock - (timestamp - startTime);
-			runForTime(remaining - 1);
-			assertTrue("No deadlock should get logged before its time", loggedEvents.isEmpty());
-
-			// March time forward to trigger the possible deadlock logging.
-			runForCycles(4);
-
-			assertEquals("Incorrect number of events was logged", 1, loggedEvents.size());
-			UiFreezeEvent event = loggedEvents.get(0);
-			assertTrue("Possible deadlock logging should have a valid number of stack traces",
-					event.getStackTraceSamples().length >= MIN_STACK_TRACES);
-
-			// Extending the UI freeze shouldn't log any more events.
-			runForTime(maxDeadlock * 2);
-			runForCycles(3);
+			sendEvent(SWT.PostEvent);
 		}
+		long startTime = timestamp;
+
+		// Wait for the end of the event to propagate to the deadlock tracker.
+		runForCycles(1);
+
+		long remaining = maxDeadlock - (timestamp - startTime);
+		runForTime(remaining - 1);
+		assertTrue("No deadlock should get logged before its time", loggedEvents.isEmpty());
+
+		// March time forward to trigger the possible deadlock logging.
+		runForCycles(4);
+
+		assertEquals("Incorrect number of events was logged", 1, loggedEvents.size());
+		UiFreezeEvent event = loggedEvents.get(0);
+		assertTrue("Possible deadlock logging should have a valid number of stack traces",
+				event.getStackTraceSamples().length >= MIN_STACK_TRACES);
+
+		// Extending the UI freeze shouldn't log any more events.
+		runForTime(maxDeadlock * 2);
+		runForCycles(3);
 
 		assertEquals("No more deadlock events should get logged", 1, loggedEvents.size());
 	}
@@ -297,19 +283,17 @@ public class EventLoopMonitorThreadTests {
 		monitoringThread.start();
 		sendEvent(SWT.PreEvent);
 
-		synchronized (sleepLock) {
-			// Cycle a few events to make sure the monitoring event thread is running.
-			for (int i = 0; i < 3; ++i) {
-				sendEvent(SWT.PreEvent);
-				runForCycles(1);
-				sendEvent(SWT.PostEvent);
-			}
-			sendEvent(SWT.PreExternalEventDispatch);
-
-			// Wait for the end of the event to propagate to the deadlock tracker.
-			runForTime(FORCE_DEADLOCK_LOG_TIME_MS * 2);
-			runForCycles(3);
+		// Cycle a few events to make sure the monitoring event thread is running.
+		for (int i = 0; i < 3; ++i) {
+			sendEvent(SWT.PreEvent);
+			runForCycles(1);
+			sendEvent(SWT.PostEvent);
 		}
+		sendEvent(SWT.PreExternalEventDispatch);
+
+		// Wait for the end of the event to propagate to the deadlock tracker.
+		runForTime(FORCE_DEADLOCK_LOG_TIME_MS * 2);
+		runForCycles(3);
 
 		assertTrue("No deadlock events should get logged", loggedEvents.isEmpty());
 	}
@@ -321,12 +305,10 @@ public class EventLoopMonitorThreadTests {
 		monitoringThread.start();
 
 		// One level deep
-		synchronized (sleepLock) {
-			sendEvent(SWT.PreExternalEventDispatch);
-			runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
-			sendEvent(SWT.PostExternalEventDispatch);
-			runForCycles(3);
-		}
+		sendEvent(SWT.PreExternalEventDispatch);
+		runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
+		sendEvent(SWT.PostExternalEventDispatch);
+		runForCycles(3);
 
 		assertTrue("Sleeping should not trigger a freeze event", loggedEvents.isEmpty());
 	}
@@ -340,14 +322,12 @@ public class EventLoopMonitorThreadTests {
 		long freezeDuration;
 
 		// One level deep
-		synchronized (sleepLock) {
-			sendEvent(SWT.PreEvent); // level 1
-			eventStartTime = timestamp;
-			runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
-			freezeDuration = timestamp - eventStartTime;
-			sendEvent(SWT.PostEvent);
-			runForCycles(3);
-		}
+		sendEvent(SWT.PreEvent); // level 1
+		eventStartTime = timestamp;
+		runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
+		freezeDuration = timestamp - eventStartTime;
+		sendEvent(SWT.PostEvent);
+		runForCycles(3);
 
 		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
 		UiFreezeEvent event = loggedEvents.get(0);
@@ -369,17 +349,15 @@ public class EventLoopMonitorThreadTests {
 		long freezeDuration;
 
 		// Two levels deep
-		synchronized (sleepLock) {
-			sendEvent(SWT.PreEvent); // level 1
-			runForCycles(1);
-			sendEvent(SWT.PreEvent); // level 2
-			eventStartTime = timestamp;
-			runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
-			freezeDuration = timestamp - eventStartTime;
-			sendEvent(SWT.PostEvent);
-			sendEvent(SWT.PostEvent);
-			runForCycles(3);
-		}
+		sendEvent(SWT.PreEvent); // level 1
+		runForCycles(1);
+		sendEvent(SWT.PreEvent); // level 2
+		eventStartTime = timestamp;
+		runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
+		freezeDuration = timestamp - eventStartTime;
+		sendEvent(SWT.PostEvent);
+		sendEvent(SWT.PostEvent);
+		runForCycles(3);
 
 		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
 		UiFreezeEvent event = loggedEvents.get(0);
@@ -401,20 +379,18 @@ public class EventLoopMonitorThreadTests {
 		long freezeDuration;
 
 		// Three levels deep
-		synchronized (sleepLock) {
-			sendEvent(SWT.PreEvent); // level 1
-			runForCycles(1);
-			sendEvent(SWT.PreEvent); // level 2
-			runForCycles(1);
-			sendEvent(SWT.PreEvent); // level 3
-			eventStartTime = timestamp;
-			runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
-			freezeDuration = timestamp - eventStartTime;
-			sendEvent(SWT.PostEvent);
-			sendEvent(SWT.PostEvent);
-			sendEvent(SWT.PostEvent);
-			runForCycles(3);
-		}
+		sendEvent(SWT.PreEvent); // level 1
+		runForCycles(1);
+		sendEvent(SWT.PreEvent); // level 2
+		runForCycles(1);
+		sendEvent(SWT.PreEvent); // level 3
+		eventStartTime = timestamp;
+		runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
+		freezeDuration = timestamp - eventStartTime;
+		sendEvent(SWT.PostEvent);
+		sendEvent(SWT.PostEvent);
+		sendEvent(SWT.PostEvent);
+		runForCycles(3);
 
 		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
 		UiFreezeEvent event = loggedEvents.get(0);
@@ -437,21 +413,19 @@ public class EventLoopMonitorThreadTests {
 
 		// Exceed the threshold after the thread is started in the middle of an event, then end
 		// the event and validate that no freeze event was logged.
-		synchronized (sleepLock) {
+		sendEvent(SWT.PreEvent);
+		// Initially the outer thread is invoking nested events that are responsive.
+		for (int i = 0; i < 4; i++) {
+			runForCycles(1);
 			sendEvent(SWT.PreEvent);
-			// Initially the outer thread is invoking nested events that are responsive.
-			for (int i = 0; i < 4; i++) {
-				runForCycles(1);
-				sendEvent(SWT.PreEvent);
-				sendEvent(SWT.PostEvent);
-			}
-
-			eventResumeTime = timestamp;
-			runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
 			sendEvent(SWT.PostEvent);
-			freezeDuration = timestamp - eventResumeTime;
-			runForCycles(3);
 		}
+
+		eventResumeTime = timestamp;
+		runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
+		sendEvent(SWT.PostEvent);
+		freezeDuration = timestamp - eventResumeTime;
+		runForCycles(3);
 
 		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
 		UiFreezeEvent event = loggedEvents.get(0);
@@ -474,30 +448,28 @@ public class EventLoopMonitorThreadTests {
 
 		// Exceed the threshold after the thread is started in the middle of an event, then end
 		// the event and validate that no freeze event was logged.
-		synchronized (sleepLock) {
+		sendEvent(SWT.PreEvent);
+		// Initially the outer thread is invoking nested events that are responsive.
+		for (int i = 0; i < 3; i++) {
+			runForCycles(1);
 			sendEvent(SWT.PreEvent);
-			// Initially the outer thread is invoking nested events that are responsive.
-			for (int i = 0; i < 3; i++) {
-				runForCycles(1);
-				sendEvent(SWT.PreEvent);
-				sendEvent(SWT.PostEvent);
-			}
-
-			// This is the nested event UI freeze
-			eventResumeTime = timestamp;
-			runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
-			freezeDuration = timestamp - eventResumeTime;
-
-			// Before exiting the outer thread is invoking nested events that are responsive.
-			for (int i = 0; i < 3; i++) {
-				sendEvent(SWT.PreEvent);
-				sendEvent(SWT.PostEvent);
-				runForCycles(1);
-			}
-
 			sendEvent(SWT.PostEvent);
-			runForCycles(3);
 		}
+
+		// This is the nested event UI freeze
+		eventResumeTime = timestamp;
+		runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
+		freezeDuration = timestamp - eventResumeTime;
+
+		// Before exiting the outer thread is invoking nested events that are responsive.
+		for (int i = 0; i < 3; i++) {
+			sendEvent(SWT.PreEvent);
+			sendEvent(SWT.PostEvent);
+			runForCycles(1);
+		}
+
+		sendEvent(SWT.PostEvent);
+		runForCycles(3);
 
 		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
 		UiFreezeEvent event = loggedEvents.get(0);
@@ -518,31 +490,29 @@ public class EventLoopMonitorThreadTests {
 
 		// Exceed the threshold after the thread is started in the middle of an event, then end
 		// the event and validate that no freeze event was logged.
-		synchronized (sleepLock) {
+		sendEvent(SWT.PreEvent);
+		// Initially the outer thread is invoking nested events that are responsive.
+		for (int i = 0; i < 3; i++) {
+			runForCycles(1);
 			sendEvent(SWT.PreEvent);
-			// Initially the outer thread is invoking nested events that are responsive.
-			for (int i = 0; i < 3; i++) {
-				runForCycles(1);
-				sendEvent(SWT.PreEvent);
-				sendEvent(SWT.PostEvent);
-			}
-
-			// Nested events
-			for (int i = 0; i < freezeDurationFactor; ++i) {
-				runForCycles(1);
-				sendEvent(SWT.PreExternalEventDispatch);
-				sendEvent(SWT.PostExternalEventDispatch);
-			}
-
-			// Before exiting the outer thread is invoking nested events that are responsive.
-			for (int i = 0; i < 3; i++) {
-				sendEvent(SWT.PreEvent);
-				sendEvent(SWT.PostEvent);
-				runForCycles(1);
-			}
 			sendEvent(SWT.PostEvent);
-			runForCycles(3);
 		}
+
+		// Nested events
+		for (int i = 0; i < freezeDurationFactor; ++i) {
+			runForCycles(1);
+			sendEvent(SWT.PreExternalEventDispatch);
+			sendEvent(SWT.PostExternalEventDispatch);
+		}
+
+		// Before exiting the outer thread is invoking nested events that are responsive.
+		for (int i = 0; i < 3; i++) {
+			sendEvent(SWT.PreEvent);
+			sendEvent(SWT.PostEvent);
+			runForCycles(1);
+		}
+		sendEvent(SWT.PostEvent);
+		runForCycles(3);
 
 		assertTrue("A freeze event should not be published during an external event dispatch",
 				loggedEvents.isEmpty());
@@ -556,28 +526,24 @@ public class EventLoopMonitorThreadTests {
 		long eventStartTime;
 		long eventDuration;
 
-		synchronized (sleepLock) {
-			sendEvent(SWT.PreEvent);
-			sendEvent(SWT.PreExternalEventDispatch);
-			runForTime(FREEZE_THRESHOLD_MS);
-			sendEvent(SWT.PostExternalEventDispatch);
-			eventStartTime = timestamp;
-			runForCycles(3);
-		}
+		sendEvent(SWT.PreEvent);
+		sendEvent(SWT.PreExternalEventDispatch);
+		runForTime(FREEZE_THRESHOLD_MS);
+		sendEvent(SWT.PostExternalEventDispatch);
+		eventStartTime = timestamp;
+		runForCycles(3);
 
 		assertTrue("A freeze event shold not be published during an external event dispatch",
 				loggedEvents.isEmpty());
 
 		// Let a long time elapse between the last PostExternalEventDispatch and the next
 		// PreExternalEventDispatch.
-		synchronized (sleepLock) {
-			runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
-			eventDuration = timestamp - eventStartTime;
-			sendEvent(SWT.PreExternalEventDispatch);
-			sendEvent(SWT.PostExternalEventDispatch);
-			sendEvent(SWT.PostEvent);
-			runForCycles(3);
-		}
+		runForTime(FREEZE_THRESHOLD_MS * freezeDurationFactor);
+		eventDuration = timestamp - eventStartTime;
+		sendEvent(SWT.PreExternalEventDispatch);
+		sendEvent(SWT.PostExternalEventDispatch);
+		sendEvent(SWT.PostEvent);
+		runForCycles(3);
 
 		assertEquals("Incorrect number of freeze events was logged", 1, loggedEvents.size());
 		UiFreezeEvent event = loggedEvents.get(0);

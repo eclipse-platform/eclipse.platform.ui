@@ -14,17 +14,18 @@
 
 package org.eclipse.jface.tests.layout;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Rectangle;
+import org.junit.Test;
 
 /**
  * @since 3.3
- *
  */
-public class GeometryTest extends TestCase {
+public class GeometryTest {
 
+	@Test
 	public void testNewGeometryMethods() {
 		// Test the new Geometry methods
 		Rectangle margins = Geometry.createDiffRectangle(0, 10, 40, 80);
@@ -35,8 +36,7 @@ public class GeometryTest extends TestCase {
 
 		assertEquals(expectedResult, expandedRectangle);
 
-		Rectangle difference = Geometry.subtract(expandedRectangle,
-				testRectangle);
+		Rectangle difference = Geometry.subtract(expandedRectangle, testRectangle);
 
 		assertEquals(margins, difference);
 

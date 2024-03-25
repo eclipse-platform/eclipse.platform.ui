@@ -14,7 +14,7 @@ package org.eclipse.ui.tests.navigator.util;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 public class TestWorkspace {
 	public static final String TEST_PROJECT_NAME= "Test"; //$NON-NLS-1$
@@ -27,9 +27,12 @@ public class TestWorkspace {
 
 
 	public static void init() {
-		initProject(new ProjectUnzipUtil(new Path(TEST_TESTDATA), new String[]{TEST_PROJECT_NAME}), TEST_PROJECT_NAME);
-		initProject(new ProjectUnzipUtil(new Path(TEST_P1), new String[]{P1_PROJECT_NAME}), P1_PROJECT_NAME);
-		initProject(new ProjectUnzipUtil(new Path(TEST_P2), new String[]{P2_PROJECT_NAME}), P2_PROJECT_NAME);
+		initProject(new ProjectUnzipUtil(IPath.fromOSString(TEST_TESTDATA), new String[] { TEST_PROJECT_NAME }),
+				TEST_PROJECT_NAME);
+		initProject(new ProjectUnzipUtil(IPath.fromOSString(TEST_P1), new String[] { P1_PROJECT_NAME }),
+				P1_PROJECT_NAME);
+		initProject(new ProjectUnzipUtil(IPath.fromOSString(TEST_P2), new String[] { P2_PROJECT_NAME }),
+				P2_PROJECT_NAME);
 	}
 
 	public static void initProject(ProjectUnzipUtil util, String projectName) {

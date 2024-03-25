@@ -71,7 +71,6 @@ public class PreferenceLinkArea extends Object {
 	/**
 	 * Get the preference node with pageId.
 	 *
-	 * @param pageId
 	 * @return IPreferenceNode
 	 */
 	private IPreferenceNode getPreferenceNode(String pageId) {

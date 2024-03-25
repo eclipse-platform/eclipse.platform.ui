@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * A snippet to demonstrate the usage of the {@link AbstractSelectionDialog}.
- *
  */
 public class Snippet070GenericSelectionDialog {
 
@@ -101,7 +100,7 @@ public class Snippet070GenericSelectionDialog {
 		 */
 		private static final int LIST_HEIGHT = 10;
 
-		private Collection<Model> models;
+		private final Collection<Model> models;
 
 		/**
 		 * List to display the resolutions.
@@ -118,7 +117,6 @@ public class Snippet070GenericSelectionDialog {
 		 *            the parent shell
 		 * @param models
 		 *            the models to display
-		 * @param initialSelection
 		 * @param shellTitle
 		 *            shell title
 		 * @param shellMessage

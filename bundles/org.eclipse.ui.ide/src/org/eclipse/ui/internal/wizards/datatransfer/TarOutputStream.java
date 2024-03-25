@@ -63,8 +63,6 @@ public class TarOutputStream extends FilterOutputStream {
 	/**
 	 * Close the current entry in the tar file.  Must be called
 	 * after each entry is completed.
-	 *
-	 * @throws IOException
 	 */
 	public void closeEntry() throws IOException {
 		byte[] data = new byte[512];
@@ -79,7 +77,6 @@ public class TarOutputStream extends FilterOutputStream {
 	 *  The checksum of a tar file header is simply the sum of the bytes in
 	 *  the header.
 	 *
-	 * @param header
 	 * @return checksum
 	 */
 	private long headerChecksum(byte[] header) {
@@ -94,7 +91,6 @@ public class TarOutputStream extends FilterOutputStream {
 	 * Adds an entry for a new file in the tar archive.
 	 *
 	 * @param e TarEntry describing the file
-	 * @throws IOException
 	 */
 	public void putNextEntry(TarEntry e) throws IOException {
 		byte[] header = new byte[512];

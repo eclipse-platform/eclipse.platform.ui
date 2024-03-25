@@ -26,7 +26,6 @@ import org.eclipse.core.commands.common.CommandException;
  * </p>
  *
  * @since 3.1
- *
  */
 public final class ParameterValuesException extends CommandException {
 

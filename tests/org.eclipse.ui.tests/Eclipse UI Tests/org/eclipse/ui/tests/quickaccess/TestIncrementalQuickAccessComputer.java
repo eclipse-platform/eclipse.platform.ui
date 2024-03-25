@@ -22,7 +22,7 @@ public class TestIncrementalQuickAccessComputer implements IQuickAccessComputerE
 
 	public static final class EchoQuickAccessElement extends QuickAccessElement {
 
-		private String query;
+		private final String query;
 
 		public EchoQuickAccessElement(String query) {
 			this.query = query;

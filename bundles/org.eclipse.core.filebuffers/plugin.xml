@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension-point id="documentCreation" name="%documentCreationPoint" schema="schema/documentCreation.exsd"/>
+   <extension-point id="documentSetup" name="%documentSetupPoint" schema="schema/documentSetup.exsd"/>
+   <extension-point id="annotationModelCreation" name="%annotationModelCreationPoint" schema="schema/annotationModelCreation.exsd"/>
+
+</plugin>

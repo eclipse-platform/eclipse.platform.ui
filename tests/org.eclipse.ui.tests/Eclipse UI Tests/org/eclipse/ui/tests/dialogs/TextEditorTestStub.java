@@ -17,12 +17,11 @@ package org.eclipse.ui.tests.dialogs;
  * FOR USE BY TESTS ONLY!
  * <p>
  * Stub class that provides access to classes visible to the package
- * <code>org.eclipse.ui.texteditor</code>.  For the purpose of
- * testing.
+ * <code>org.eclipse.ui.texteditor</code>. For the purpose of testing.
  * </p>
- * @private
+ *
+ * @noreference
  */
-
 public class TextEditorTestStub {
 	//Prevent instantiation
 	private TextEditorTestStub() {

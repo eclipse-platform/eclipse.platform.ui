@@ -87,8 +87,7 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
 		IEditorPart part = getEditor(newPageIndex);
-		if (part instanceof TextEditor) {
-			TextEditor editor = (TextEditor) part;
+		if (part instanceof TextEditor editor) {
 			IDocumentProvider provider = editor.getDocumentProvider();
 			IDocument doc = provider.getDocument(getEditorInput());
 			FindReplaceDocumentAdapter find = new FindReplaceDocumentAdapter(
@@ -119,7 +118,6 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 
 	/**
 	 * Add a page with a composite for testing.
-	 *
 	 */
 	public void addLastPage() {
 		lastPage = new Composite(getContainer(), SWT.NONE);
@@ -130,7 +128,6 @@ public class MultiVariablePageEditor extends MultiPageEditorPart {
 
 	/**
 	 * remove the last page for testing.
-	 *
 	 */
 	public void removeLastPage() {
 		if (getPageCount() > 0) {

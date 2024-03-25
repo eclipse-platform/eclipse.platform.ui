@@ -426,7 +426,6 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Create a new header which is labelled by headerLabel.
 	 *
-	 * @param parent
 	 * @return Label the label of the header
 	 */
 	private Label createHeader(Composite parent) {
@@ -459,7 +458,6 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	/**
 	 * Create the labels for the list and the progress. Return the list label.
 	 *
-	 * @param parent
 	 * @return Label
 	 */
 	private Label createLabels(Composite parent) {
@@ -1368,7 +1366,6 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * <code>RefreshJob</code>.
 	 *
 	 * @see FilteredItemsSelectionDialog.RefreshJob
-	 *
 	 */
 	private class RefreshCacheJob extends Job {
 
@@ -1709,7 +1706,6 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * It is used by <code>RefreshProgressMessageJob</code> to refresh progress
 	 * message. State of this monitor illustrates state of filtering or cache
 	 * refreshing process.
-	 *
 	 */
 	private class GranualProgressMonitor extends ProgressMonitorWrapper {
 
@@ -1901,9 +1897,6 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		/**
 		 * Main method for the job.
-		 *
-		 * @param monitor
-		 * @throws CoreException
 		 */
 		private void internalRun(GranualProgressMonitor monitor) throws CoreException {
 			try {

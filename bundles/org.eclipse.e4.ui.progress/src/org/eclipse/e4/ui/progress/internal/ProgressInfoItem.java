@@ -63,7 +63,6 @@ import org.osgi.framework.FrameworkUtil;
  * ProgressInfoItem is the item used to show jobs.
  *
  * @since 3.1
- *
  */
 public class ProgressInfoItem extends Composite {
 
@@ -281,7 +280,6 @@ public class ProgressInfoItem extends Composite {
 
 	/**
 	 * Set the layout of the widgets for the no progress case.
-	 *
 	 */
 	private void setLayoutsForNoProgress() {
 
@@ -304,7 +302,6 @@ public class ProgressInfoItem extends Composite {
 
 	/**
 	 * Cancel or remove the receiver.
-	 *
 	 */
 	protected void cancelOrRemove() {
 
@@ -428,7 +425,6 @@ public class ProgressInfoItem extends Composite {
 	 *
 	 * @param job
 	 *            the completed Job
-	 * @param withTime
 	 * @return String
 	 */
 	String getJobInfoFinishedString(Job job, boolean withTime) {
@@ -459,7 +455,6 @@ public class ProgressInfoItem extends Composite {
 
 	/**
 	 * Refresh the contents of the receiver.
-	 *
 	 */
 	void refresh() {
 
@@ -645,7 +640,6 @@ public class ProgressInfoItem extends Composite {
 	/**
 	 * Set the images in the toolbar based on whether the receiver is finished
 	 * or not. Also update tooltips if required.
-	 *
 	 */
 	private void updateToolBarValues() {
 		if (isCompleted()) {
@@ -675,8 +669,6 @@ public class ProgressInfoItem extends Composite {
 
 	/**
 	 * Create the progress bar and apply any style bits from style.
-	 *
-	 * @param style
 	 */
 	void createProgressBar(int style) {
 
@@ -712,8 +704,6 @@ public class ProgressInfoItem extends Composite {
 
 	/**
 	 * Set the text of the link to the taskString.
-	 *
-	 * @param taskString
 	 */
 	void setLinkText(Job linkJob, String taskString, int index) {
 
@@ -820,7 +810,6 @@ public class ProgressInfoItem extends Composite {
 	 *
 	 * @param trigger
 	 *            {@link Object} or <code>null</code>
-	 * @param link
 	 */
 	private void updateTrigger(Object trigger, Link link) {
 		if (link.isDisposed()) {
@@ -839,9 +828,6 @@ public class ProgressInfoItem extends Composite {
 
 	/**
 	 * Update the text in the link
-	 *
-	 * @param taskString
-	 * @param link
 	 */
 	private void updateText(String taskString, Link link) {
 		taskString = Dialog.shortenText(taskString, link);
@@ -880,8 +866,6 @@ public class ProgressInfoItem extends Composite {
 
 	/**
 	 * Set the foreground of all widgets to the supplied color.
-	 *
-	 * @param color
 	 */
 	private void setAllForegrounds(Color color) {
 		setForeground(color);
@@ -896,8 +880,6 @@ public class ProgressInfoItem extends Composite {
 
 	/**
 	 * Set the background of all widgets to the supplied color.
-	 *
-	 * @param color
 	 */
 	private void setAllBackgrounds(Color color) {
 		setBackground(color);
@@ -914,7 +896,6 @@ public class ProgressInfoItem extends Composite {
 
 	/**
 	 * Set the focus to the button.
-	 *
 	 */
 	void setButtonFocus() {
 		actionBar.setFocus();
@@ -936,8 +917,6 @@ public class ProgressInfoItem extends Composite {
 
 	/**
 	 * Set the listener for index changes.
-	 *
-	 * @param indexListener
 	 */
 	void setIndexListener(IndexListener indexListener) {
 		this.indexListener = indexListener;
@@ -955,9 +934,6 @@ public class ProgressInfoItem extends Composite {
 	/**
 	 * Set whether or not the receiver is being displayed based on the top and
 	 * bottom of the currently visible area.
-	 *
-	 * @param top
-	 * @param bottom
 	 */
 	void setDisplayed(int top, int bottom) {
 		int itemTop = getLocation().y;
@@ -968,8 +944,6 @@ public class ProgressInfoItem extends Composite {
 
 	/**
 	 * Set whether or not the receiver is being displayed
-	 *
-	 * @param displayed
 	 */
 	private void setDisplayed(boolean displayed) {
 		// See if this element has been turned off

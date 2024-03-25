@@ -17,7 +17,9 @@ package org.eclipse.ui.tests.decorators;
  * Decorator used to test an unadaptaed contribution
  */
 public class TestUnadaptableDecoratorContributor extends TestAdaptableDecoratorContributor {
+	@SuppressWarnings("hiding")
 	public static final String SUFFIX = "ICommon.2";
+	@SuppressWarnings("hiding")
 	public static final String ID = "org.eclipse.ui.tests.decorators.generalAdaptabilityOff";
 	public TestUnadaptableDecoratorContributor() {
 		setSuffix(SUFFIX);

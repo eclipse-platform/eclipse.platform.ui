@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,7 +29,6 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.2
- *
  */
 public abstract class ViewerComparatorTest extends ViewerTestCase {
 	protected String UI = "UI";
@@ -86,8 +85,6 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 
 		/**
 		 * Fires a model changed event to all listeners.
-		 *
-		 * @param change
 		 */
 		public void fireModelChanged(ComparatorModelChange change) {
 			for (IComparatorModelListener listener : fListeners) {
@@ -119,10 +116,10 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 	protected static class TeamModelLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
-			if (element instanceof Team) {
-				return ((Team) element).name;
-			} else if (element instanceof TeamMember) {
-				return ((TeamMember) element).name;
+			if (element instanceof Team team) {
+				return team.name;
+			} else if (element instanceof TeamMember member) {
+				return member.name;
 			}
 			return element.toString();
 		}
@@ -134,8 +131,8 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 	protected class TeamModelContentProvider implements IComparatorModelListener, IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof Team) {
-				return ((Team) inputElement).members;
+			if (inputElement instanceof Team team) {
+				return team.members;
 			}
 			return new Object[0];
 		}
@@ -187,18 +184,18 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 		}
 
 		protected void doInsert(ComparatorModelChange change) {
-			if (fViewer instanceof ListViewer) {
+			if (fViewer instanceof ListViewer viewer) {
 				if (change.getParent() != null && change.getParent().equals(fViewer.getInput())) {
-					((ListViewer) fViewer).add((Object[]) change.getChildren());
+					viewer.add((Object[]) change.getChildren());
 				}
-			} else if (fViewer instanceof TableViewer) {
+			} else if (fViewer instanceof TableViewer viewer) {
 				if (change.getParent() != null && change.getParent().equals(fViewer.getInput())) {
-					((TableViewer) fViewer).add(change.getChildren());
+					viewer.add(change.getChildren());
 				}
-			} else if (fViewer instanceof AbstractTreeViewer) {
-				((AbstractTreeViewer) fViewer).add(change.getParent(), (Object[]) change.getChildren());
-			} else if (fViewer instanceof ComboViewer) {
-				((ComboViewer) fViewer).add((Object[]) change.getChildren());
+			} else if (fViewer instanceof AbstractTreeViewer viewer) {
+				viewer.add(change.getParent(), (Object[]) change.getChildren());
+			} else if (fViewer instanceof ComboViewer viewer) {
+				viewer.add((Object[]) change.getChildren());
 			} else {
 				Assert.isTrue(false, "Unknown kind of viewer");
 			}
@@ -209,14 +206,14 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 		}
 
 		protected void doRemove(ComparatorModelChange change) {
-			if (fViewer instanceof ListViewer) {
-				((ListViewer) fViewer).remove((Object[]) change.getChildren());
-			} else if (fViewer instanceof TableViewer) {
-				((TableViewer) fViewer).remove(change.getChildren());
-			} else if (fViewer instanceof AbstractTreeViewer) {
-				((AbstractTreeViewer) fViewer).remove((Object[]) change.getChildren());
-			} else if (fViewer instanceof ComboViewer) {
-				((ComboViewer) fViewer).remove((Object[]) change.getChildren());
+			if (fViewer instanceof ListViewer viewer) {
+				viewer.remove((Object[]) change.getChildren());
+			} else if (fViewer instanceof TableViewer viewer) {
+				viewer.remove(change.getChildren());
+			} else if (fViewer instanceof AbstractTreeViewer viewer) {
+				viewer.remove((Object[]) change.getChildren());
+			} else if (fViewer instanceof ComboViewer viewer) {
+				viewer.remove((Object[]) change.getChildren());
 			} else {
 				Assert.isTrue(false, "Unknown kind of viewer");
 			}
@@ -226,10 +223,6 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 			fViewer.refresh(change.getParent());
 		}
 
-	}
-
-	public ViewerComparatorTest(String name) {
-		super(name);
 	}
 
 }

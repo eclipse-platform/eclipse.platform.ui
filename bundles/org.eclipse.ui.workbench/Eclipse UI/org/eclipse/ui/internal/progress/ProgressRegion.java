@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -212,7 +212,6 @@ public class ProgressRegion {
 	/**
 	 * Answer true if the side is a horizonal one
 	 *
-	 * @param dropSide
 	 * @return <code>true</code> if the side is horizontal
 	 */
 	private boolean isHorizontal() {

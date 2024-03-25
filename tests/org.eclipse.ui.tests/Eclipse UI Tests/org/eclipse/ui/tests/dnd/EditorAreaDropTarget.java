@@ -21,10 +21,6 @@ import org.eclipse.swt.graphics.Point;
 public class EditorAreaDropTarget extends WorkbenchWindowDropTarget {
 	int side;
 
-	/**
-	 * @param window
-	 * @param side
-	 */
 	public EditorAreaDropTarget(IWorkbenchWindowProvider provider, int side) {
 		super(provider);
 		this.side = side;
@@ -37,7 +33,7 @@ public class EditorAreaDropTarget extends WorkbenchWindowDropTarget {
 
 	@Override
 	public Point getLocation() {
-		return DragOperations.getPointInEditorArea(getPage(), side);
+		return DragOperations.getPointInEditorArea();
 	}
 
 }

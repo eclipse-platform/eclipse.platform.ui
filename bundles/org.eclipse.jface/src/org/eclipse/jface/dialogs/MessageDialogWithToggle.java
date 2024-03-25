@@ -400,7 +400,6 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * The mapping for custom buttons and ids
 	 *
 	 * Allows clients to override the default label and id mapping
-	 *
 	 */
 	private LinkedHashMap<String, Integer> buttonLabelToIdMap;
 
@@ -439,7 +438,6 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 *            the default message
 	 * @param toggleState
 	 *            the initial state for the toggle
-	 *
 	 */
 	public MessageDialogWithToggle(Shell parentShell, String dialogTitle,
 			Image image, String message, int dialogImageType,

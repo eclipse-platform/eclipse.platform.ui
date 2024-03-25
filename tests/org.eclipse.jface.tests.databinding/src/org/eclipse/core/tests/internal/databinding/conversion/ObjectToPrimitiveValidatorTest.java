@@ -24,7 +24,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class ObjectToPrimitiveValidatorTest {
 
@@ -37,8 +36,7 @@ public class ObjectToPrimitiveValidatorTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidator#isValid(java.lang.Object)}.
+	 * Test method for {@link ObjectToPrimitiveValidator#validate(Object)}.
 	 */
 	@Test
 	public void testIsValid() {

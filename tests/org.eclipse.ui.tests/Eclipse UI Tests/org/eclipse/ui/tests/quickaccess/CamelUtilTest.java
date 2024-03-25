@@ -62,10 +62,6 @@ public class CamelUtilTest {
 		assertArrayEquals(new int[][] {{8,8},{12,12},{19,19},{26,26},{31,31}}, CamelUtil.getCamelCaseIndices("Editors ApplAction.java - mail/src", 1, 5));
 	}
 
-	/**
-	 * @param is
-	 * @param camelCaseIndices
-	 */
 	private void assertArrayEquals(int[][] is, int[][] camelCaseIndices) {
 		assertEquals(is.length, camelCaseIndices.length);
 		for (int i = 0; i < is.length; i++) {

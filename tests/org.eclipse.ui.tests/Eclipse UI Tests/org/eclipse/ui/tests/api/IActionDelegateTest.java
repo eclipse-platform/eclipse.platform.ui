@@ -77,7 +77,7 @@ public abstract class IActionDelegateTest extends UITestCase {
 	 * Returns the last mock action delegate which was created.
 	 */
 	protected MockActionDelegate getDelegate() throws Throwable {
-		MockActionDelegate delegate = MockActionDelegate.lastDelegate;
+		MockActionDelegate delegate = MockActionDelegate.lastMockActionDelegate;
 		assertNotNull(delegate);
 		return delegate;
 	}
@@ -93,14 +93,14 @@ public abstract class IActionDelegateTest extends UITestCase {
 	/**
 	 * Adds and runs the action delegate.  Subclasses should override.
 	 *
-	 * @param obj the object returned from createActionWidget.
+	 * @param widget the object returned from createActionWidget.
 	 */
 	protected abstract void runAction(Object widget) throws Throwable;
 
 	/**
 	 * Fires a selection from the source.  Subclasses should override.
 	 *
-	 * @param obj the object returned from createActionWidget.
+	 * @param widget the object returned from createActionWidget.
 	 */
 	protected abstract void fireSelection(Object widget) throws Throwable;
 }

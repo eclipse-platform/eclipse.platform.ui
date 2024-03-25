@@ -37,7 +37,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.3
- *
  */
 public class CommandElement extends QuickAccessElement {
 

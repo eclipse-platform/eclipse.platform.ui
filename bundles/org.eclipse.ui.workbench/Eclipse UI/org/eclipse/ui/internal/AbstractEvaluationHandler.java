@@ -47,9 +47,6 @@ public abstract class AbstractEvaluationHandler extends AbstractEnabledHandler {
 
 	protected abstract Expression getEnabledWhenExpression();
 
-	/**
-	 * @return
-	 */
 	private IPropertyChangeListener getEnablementListener() {
 		if (enablementListener == null) {
 			enablementListener = event -> {

@@ -39,7 +39,7 @@ import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
 public class EditorWidgetFactory extends TestWidgetFactory {
 
 	private String editorId;
-	private String filename;
+	private final String filename;
 	private IWorkbenchWindow window;
 	private Composite ctrl;
 

@@ -34,7 +34,6 @@ import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog.DisplayIte
  * whose action sets are unavailable.
  *
  * @since 3.5
- *
  */
 class GrayOutUnavailableLabelProvider extends TreeManager.TreeItemLabelProvider implements IColorProvider {
 	private Display display;

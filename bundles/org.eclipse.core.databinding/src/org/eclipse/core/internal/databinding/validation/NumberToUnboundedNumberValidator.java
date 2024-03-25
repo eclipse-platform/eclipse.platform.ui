@@ -25,9 +25,6 @@ import org.eclipse.core.internal.databinding.conversion.NumberToNumberConverter;
  * @since 1.0
  */
 public class NumberToUnboundedNumberValidator extends NumberToNumberValidator {
-	/**
-	 * @param converter
-	 */
 	public NumberToUnboundedNumberValidator(NumberToNumberConverter<?> converter) {
 		super(converter, null, null);
 	}

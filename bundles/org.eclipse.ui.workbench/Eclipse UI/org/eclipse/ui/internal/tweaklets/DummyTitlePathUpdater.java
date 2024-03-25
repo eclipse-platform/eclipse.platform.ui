@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.7
- *
  */
 public class DummyTitlePathUpdater extends TitlePathUpdater {
 

@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.Assert;
  * specify a content proposal using simple constructors.
  *
  * @since 3.6
- *
  */
 public class ContentProposal implements IContentProposal {
 	private static final String EMPTY = ""; //$NON-NLS-1$

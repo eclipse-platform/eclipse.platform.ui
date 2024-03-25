@@ -32,6 +32,7 @@ import org.junit.runners.Suite;
 	UIMessageDialogs.class,
 	UIErrorDialogs.class,
 	UIFilteredResourcesSelectionDialog.class,
+		ResourcePathCopyTest.class,
 })
 public class UIInteractiveSuite {
 

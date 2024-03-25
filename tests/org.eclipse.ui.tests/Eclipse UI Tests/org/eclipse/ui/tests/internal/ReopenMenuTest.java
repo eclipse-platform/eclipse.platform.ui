@@ -22,7 +22,6 @@ import org.junit.Test;
 
 /**
  * @since 3.4
- *
  */
 public class ReopenMenuTest {
 	private static class TextInfo {
@@ -42,7 +41,7 @@ public class ReopenMenuTest {
 		}
 	}
 
-	private TextInfo[] data = {
+	private final TextInfo[] data = {
 			new TextInfo(
 					1,
 					"ReopenMenuTest.java",

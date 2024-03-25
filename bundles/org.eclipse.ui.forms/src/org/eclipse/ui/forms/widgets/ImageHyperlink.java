@@ -228,7 +228,6 @@ public class ImageHyperlink extends Hyperlink {
 	 * Sets the image to show when link is activated.
 	 *
 	 * @param activeImage image to set
-	 *
 	 */
 	public void setActiveImage(Image activeImage) {
 		this.activeImage = activeImage;

@@ -29,9 +29,6 @@ public class StringToCharacterValidator implements IValidator<Object> {
 
 	private final StringToCharacterConverter converter;
 
-	/**
-	 * @param converter
-	 */
 	public StringToCharacterValidator(StringToCharacterConverter converter) {
 		this.converter = converter;
 	}

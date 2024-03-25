@@ -618,8 +618,6 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 
 	/**
 	 * Set the checked state of the visible items and their children to state.
-	 * @param state
-	 * @param items
 	 * @deprecated
 	 * @see #setAllChecked(boolean)
 	 */

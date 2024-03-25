@@ -35,16 +35,11 @@ import org.eclipse.core.databinding.property.value.ValueProperty;
  * @param <T> type of the value of the property
  *
  * @since 3.3
- *
  */
 public class BeanValuePropertyDecorator<S, T> extends ValueProperty<S, T> implements IBeanValueProperty<S, T> {
 	private final IValueProperty<S, T> delegate;
 	private final PropertyDescriptor propertyDescriptor;
 
-	/**
-	 * @param delegate
-	 * @param propertyDescriptor
-	 */
 	public BeanValuePropertyDecorator(IValueProperty<S, T> delegate, PropertyDescriptor propertyDescriptor) {
 		this.delegate = delegate;
 		this.propertyDescriptor = propertyDescriptor;

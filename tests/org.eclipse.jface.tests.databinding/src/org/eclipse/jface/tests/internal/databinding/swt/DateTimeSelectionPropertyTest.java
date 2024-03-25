@@ -15,8 +15,6 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
-import static org.junit.Assert.fail;
-
 import org.eclipse.jface.internal.databinding.swt.DateTimeSelectionProperty;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
@@ -26,7 +24,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class DateTimeSelectionPropertyTest extends AbstractSWTTestCase {
 	DateTime dateTime;
@@ -42,10 +39,8 @@ public class DateTimeSelectionPropertyTest extends AbstractSWTTestCase {
 
 	@Test
 	public void testSetValue_NullNotThrowingNullPointerException() {
-		try {
-			property.setValue(dateTime, null);
-		} catch (NullPointerException notExpected) {
-			fail("No NPE should be thrown, because a null value should cause the method to return silently");
-		}
+		// No NPE should be thrown, because a null value should cause the method to
+		// return silently
+		property.setValue(dateTime, null);
 	}
 }

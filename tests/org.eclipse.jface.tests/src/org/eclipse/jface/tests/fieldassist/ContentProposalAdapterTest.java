@@ -75,8 +75,6 @@ public class ContentProposalAdapterTest {
 	 *
 	 * Tests whether no proposal popup was opened if TAB was pressed within
 	 * activation delay.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testBug520372AutoActivationDelayTab() throws Exception {
@@ -94,8 +92,6 @@ public class ContentProposalAdapterTest {
 	 *
 	 * Tests whether no proposal popup was opened if CR was pressed within
 	 * activation delay.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testBug520372AutoActivationDelayCR() throws Exception {
@@ -113,8 +109,6 @@ public class ContentProposalAdapterTest {
 	 *
 	 * Tests whether no proposal popup was opened if ESC was pressed within
 	 * activation delay.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testBug520372AutoActivationDelayESC() throws Exception {

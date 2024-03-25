@@ -20,15 +20,12 @@ import org.eclipse.test.performance.Dimension;
  * ShrinkingTreeTest is a test to see how long it takes to refresh a tree that goes
  * from a large item count to a smaller one.
  * @since 3.3
- *
  */
 public class ShrinkingTreeTest extends TreeTest {
 
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param testName
 	 */
 	public ShrinkingTreeTest(String testName) {
 		super(testName);
@@ -60,9 +57,6 @@ public class ShrinkingTreeTest extends TreeTest {
 
 	/**
 	 * Run the test for one of the fast insertions.
-	 *
-	 * @param count
-	 * @throws CoreException
 	 */
 	private void testRefresh(final int smallSize, final int largeSize)
 			throws CoreException {

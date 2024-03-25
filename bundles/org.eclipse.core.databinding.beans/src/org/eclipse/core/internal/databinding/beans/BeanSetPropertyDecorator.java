@@ -34,16 +34,11 @@ import org.eclipse.core.databinding.property.set.SetProperty;
  * @param <E> type of the elements in the set
  *
  * @since 3.3
- *
  */
 public class BeanSetPropertyDecorator<S, E> extends SetProperty<S, E> implements IBeanSetProperty<S, E> {
 	private final ISetProperty<S, E> delegate;
 	private final PropertyDescriptor propertyDescriptor;
 
-	/**
-	 * @param delegate
-	 * @param propertyDescriptor
-	 */
 	public BeanSetPropertyDecorator(ISetProperty<S, E> delegate,
 			PropertyDescriptor propertyDescriptor) {
 		this.delegate = delegate;

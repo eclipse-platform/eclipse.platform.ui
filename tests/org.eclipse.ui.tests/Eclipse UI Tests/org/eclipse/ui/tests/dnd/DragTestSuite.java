@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -58,7 +58,7 @@ public class DragTestSuite extends AutoTestSuite {
 	}
 
 	public DragTestSuite() {
-		super(Platform.find(TestPlugin.getDefault().getBundle(), new Path("data/dragtests.xml")));
+		super(Platform.find(TestPlugin.getDefault().getBundle(), IPath.fromOSString("data/dragtests.xml")));
 
 		String resNav = IPageLayout.ID_PROJECT_EXPLORER;
 		String probView = IPageLayout.ID_PROBLEM_VIEW;
@@ -113,8 +113,6 @@ public class DragTestSuite extends AutoTestSuite {
 	 * the remainder of the view dragging code). We need to drag each kind of maximized view
 	 * to something that couldn't be seen while the view is maximized -- like the editor area).
 	 *
-	 * @param dragSource
-	 * @return
 	 * @since 3.1
 	 */
 	private TestDropLocation[] getMaximizedViewDropTargets(IWorkbenchWindowProvider originatingWindow) {
@@ -134,8 +132,6 @@ public class DragTestSuite extends AutoTestSuite {
 	/**
 	 * Return all drop targets that only apply to views, given the window being dragged from.
 	 *
-	 * @param provider
-	 * @return
 	 * @since 3.1
 	 */
 	private TestDropLocation[] getViewDropTargets(IWorkbenchWindowProvider dragSource) {
@@ -179,8 +175,6 @@ public class DragTestSuite extends AutoTestSuite {
 	/**
 	 * Return all drop targets that apply to detached windows, given the window being dragged from.
 	 *
-	 * @param provider
-	 * @return
 	 * @since 3.1
 	 */
 	private TestDropLocation[] getDetachedWindowDropTargets(IWorkbenchWindowProvider dragSource) {

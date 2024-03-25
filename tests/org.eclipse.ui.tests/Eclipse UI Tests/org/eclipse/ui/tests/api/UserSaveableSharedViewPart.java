@@ -27,6 +27,7 @@ public class UserSaveableSharedViewPart extends MockViewPart implements
 	/**
 	 * The shared ID.
 	 */
+	@SuppressWarnings("hiding")
 	public static String ID = "org.eclipse.ui.tests.api.UserSaveableSharedViewPart";
 
 	public static class SharedModel {

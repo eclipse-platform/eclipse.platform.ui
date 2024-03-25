@@ -69,7 +69,6 @@ import org.eclipse.ui.internal.navigator.extensions.SkeletonActionProvider;
  * retargetable actions for each selection could change, based on who contributed the items.
  *
  * @since 3.2
- *
  */
 public final class NavigatorActionService extends ActionGroup implements IMementoAware {
 
@@ -210,9 +209,6 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 		return WorkbenchActivityHelper.filterItem(piCont);
 	}
 
-	/**
-	 * @param aMenu
-	 */
 	private void addCommonActionProviderMenu(final IMenuManager aMenu) {
 		final CommonActionProviderDescriptor[] providerDescriptors = CommonActionDescriptorManager
 				.getInstance().findRelevantActionDescriptors(contentService, getContext());

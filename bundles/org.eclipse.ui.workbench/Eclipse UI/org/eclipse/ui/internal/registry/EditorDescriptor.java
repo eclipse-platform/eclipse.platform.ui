@@ -99,9 +99,6 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 	/**
 	 * Create a new instance of an editor descriptor. Limited to internal framework
 	 * calls.
-	 *
-	 * @param element
-	 * @param id2
 	 */
 	/* package */ EditorDescriptor(String id2, IConfigurationElement element) {
 		setID(id2);
@@ -558,9 +555,8 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 	 * Sets the open mode of this editor descriptor.
 	 *
 	 * @param mode the open mode
-	 *
-	 * @issue this method is public as a temporary fix for bug 47600
 	 */
+	// TODO this method is public as a temporary fix for bug 47600
 	public void setOpenMode(int mode) {
 		openMode = mode;
 	}
@@ -575,8 +571,6 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 
 	/**
 	 * Set the receivers program.
-	 *
-	 * @param newProgram
 	 */
 	/* package */void setProgram(Program newProgram) {
 

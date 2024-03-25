@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -58,7 +58,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	/* Import */
 	@Test
 	public void testImportNoCategoryProvided(){
-		IWizardCategory otherCategory = importRoot.findCategory(new Path(
+		IWizardCategory otherCategory = importRoot.findCategory(IPath.fromOSString(
 				WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY));
 		if (otherCategory != null){
 			IWizardDescriptor wizardDesc =
@@ -73,7 +73,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 
 	@Test
 	public void testImportCategoryDoesNotExist(){
-		IWizardCategory otherCategory = importRoot.findCategory(new Path(
+		IWizardCategory otherCategory = importRoot.findCategory(IPath.fromOSString(
 				WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY));
 		if (otherCategory != null){
 			IWizardDescriptor wizardDesc =
@@ -89,7 +89,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	@Test
 	public void testImportAddToNewCategory(){
 		IWizardCategory newCategory = importRoot.findCategory(
-				new Path(WIZARD_IMPORT_NEW_CATEGORY));
+				IPath.fromOSString(WIZARD_IMPORT_NEW_CATEGORY));
 		if (newCategory != null){
 			IWizardDescriptor wizardDesc =
 				newCategory.findWizard(WIZARD_ID_IMPORT_NEW_CATEGORY);
@@ -104,7 +104,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	@Test
 	public void testImportAddToParentedCategory(){
 		IWizardCategory newCategory = importRoot.findCategory(
-				new Path(WIZARD_IMPORT_NEW_PARENTED_CATEGORY));
+				IPath.fromOSString(WIZARD_IMPORT_NEW_PARENTED_CATEGORY));
 		if (newCategory != null){
 			IWizardDescriptor wizardDesc =
 				newCategory.findWizard(WIZARD_ID_IMPORT_PARENTED_CATEGORY);
@@ -119,7 +119,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	@Test
 	public void testImportDuplicateCategory(){
 		IWizardCategory newCategory = importRoot.findCategory(
-				new Path(WIZARD_IMPORT_DUPLICATE_CATEGORY));
+				IPath.fromOSString(WIZARD_IMPORT_DUPLICATE_CATEGORY));
 		if (newCategory != null){
 			IWizardDescriptor wizardDesc =
 				newCategory.findWizard(WIZARD_ID_IMPORT_DUPLICATE_CATEGORY);
@@ -134,7 +134,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	@Test
 	public void testImportUsingExportCategory(){
 		IWizardCategory category = importRoot.findCategory(
-				new Path(WIZARD_EXPORT_NEW_CATEGORY));
+				IPath.fromOSString(WIZARD_EXPORT_NEW_CATEGORY));
 		assertTrue(
 				"Import wizards should not have category named " + WIZARD_EXPORT_NEW_CATEGORY,
 				category == null);
@@ -143,7 +143,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	/* Export */
 	@Test
 	public void testExportNoCategoryProvided(){
-		IWizardCategory otherCategory = exportRoot.findCategory(new Path(
+		IWizardCategory otherCategory = exportRoot.findCategory(IPath.fromOSString(
 				WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY));
 		if (otherCategory != null){
 			IWizardDescriptor wizardDesc =
@@ -158,7 +158,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 
 	@Test
 	public void testExportCategoryDoesNotExist(){
-		IWizardCategory otherCategory = exportRoot.findCategory(new Path(
+		IWizardCategory otherCategory = exportRoot.findCategory(IPath.fromOSString(
 				WizardsRegistryReader.UNCATEGORIZED_WIZARD_CATEGORY));
 		if (otherCategory != null){
 			IWizardDescriptor wizardDesc =
@@ -174,7 +174,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	@Test
 	public void testExportAddToNewCategory(){
 		IWizardCategory newCategory = exportRoot.findCategory(
-				new Path(WIZARD_EXPORT_NEW_CATEGORY));
+				IPath.fromOSString(WIZARD_EXPORT_NEW_CATEGORY));
 		if (newCategory != null){
 			IWizardDescriptor wizardDesc =
 				newCategory.findWizard(WIZARD_ID_EXPORT_NEW_CATEGORY);
@@ -189,7 +189,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	@Test
 	public void testExportAddToParentedCategory(){
 		IWizardCategory newCategory = exportRoot.findCategory(
-				new Path(WIZARD_EXPORT_NEW_PARENTED_CATEGORY));
+				IPath.fromOSString(WIZARD_EXPORT_NEW_PARENTED_CATEGORY));
 		if (newCategory != null){
 			IWizardDescriptor wizardDesc =
 				newCategory.findWizard(WIZARD_ID_EXPORT_PARENTED_CATEGORY);
@@ -204,7 +204,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	@Test
 	public void testExportDuplicateCategory(){
 		IWizardCategory newCategory = exportRoot.findCategory(
-				new Path(WIZARD_EXPORT_DUPLICATE_CATEGORY));
+				IPath.fromOSString(WIZARD_EXPORT_DUPLICATE_CATEGORY));
 		if (newCategory != null){
 			IWizardDescriptor wizardDesc =
 				newCategory.findWizard(WIZARD_ID_EXPORT_DUPLICATE_CATEGORY);
@@ -219,7 +219,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	@Test
 	public void testExportUsingImportCategory(){
 		IWizardCategory category = exportRoot.findCategory(
-				new Path(WIZARD_IMPORT_NEW_CATEGORY));
+				IPath.fromOSString(WIZARD_IMPORT_NEW_CATEGORY));
 		assertTrue(
 				"Export wizards should not have category named " + WIZARD_IMPORT_NEW_CATEGORY,
 				category == null);

@@ -45,7 +45,7 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
 		File folder = (File) element;
 		String[] children = folder.list();
 		int childrenLength = children == null ? 0 : children.length;
-		List result = new ArrayList(childrenLength);
+		List<File> result = new ArrayList<>(childrenLength);
 
 		for (int i = 0; i < childrenLength; i++) {
 			result.add(new File(folder, children[i]));

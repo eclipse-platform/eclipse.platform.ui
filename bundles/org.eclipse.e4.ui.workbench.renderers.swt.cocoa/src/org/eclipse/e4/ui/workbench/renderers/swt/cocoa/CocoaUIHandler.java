@@ -16,13 +16,13 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt.cocoa;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Provider;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

@@ -192,9 +192,10 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__LABEL, oldLabel,
 					label));
+		}
 	}
 
 	/**
@@ -218,9 +219,10 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__ICON_URI, oldIconURI,
 					iconURI));
+		}
 	}
 
 	/**
@@ -244,9 +246,10 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__TOOLTIP, oldTooltip,
 					tooltip));
+		}
 	}
 
 	/**
@@ -288,9 +291,10 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	public void setMnemonics(String newMnemonics) {
 		String oldMnemonics = mnemonics;
 		mnemonics = newMnemonics;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__MNEMONICS, oldMnemonics,
 					mnemonics));
+		}
 	}
 
 	/**
@@ -534,8 +538,9 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$

@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.themes;
 
 import java.util.Hashtable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.swt.graphics.RGB;
@@ -155,8 +154,7 @@ public class RGBContrastFactory implements IColorFactory, IExecutableExtension {
 	 *      java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-			throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		if (data instanceof Hashtable) {
 			Hashtable table = (Hashtable) data;
 			fg = (String) table.get("foreground"); //$NON-NLS-1$

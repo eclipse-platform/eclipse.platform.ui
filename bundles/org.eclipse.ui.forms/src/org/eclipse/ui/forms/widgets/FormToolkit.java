@@ -253,7 +253,6 @@ public class FormToolkit {
 	 * <p>
 	 * Clients that call this method must call {@link #dispose()} when they
 	 * are finished using the toolkit.
-	 *
 	 */
 	public FormToolkit(Display display) {
 		this(new FormColors(display));

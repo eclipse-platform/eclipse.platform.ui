@@ -30,9 +30,6 @@ public final class SkeletonLabelProvider implements ICommonLabelProvider {
 	 */
 	public static final SkeletonLabelProvider INSTANCE = new SkeletonLabelProvider();
 
-	/**
-	 *
-	 */
 	private SkeletonLabelProvider() {
 		super();
 	}

@@ -89,10 +89,6 @@ package org.eclipse.jface.viewers.deferred;
 		int start = 0;
 		int length = 0;
 
-		/**
-		 * @param s
-		 * @param l
-		 */
 		public Range(int s, int l) {
 			start = s;
 			length = l;
@@ -147,8 +143,6 @@ package org.eclipse.jface.viewers.deferred;
 	/**
 	 * Marks the given object as dirty. Will cause it to be cleared
 	 * in the table.
-	 *
-	 * @param toFlush
 	 */
 	public void clear(Object toFlush) {
 		synchronized(this) {
@@ -166,8 +160,6 @@ package org.eclipse.jface.viewers.deferred;
 
 	/**
 	 * Sets the size of the table. Called from a background thread.
-	 *
-	 * @param newTotal
 	 */
 	public void setTotalItems(int newTotal) {
 		synchronized (this) {

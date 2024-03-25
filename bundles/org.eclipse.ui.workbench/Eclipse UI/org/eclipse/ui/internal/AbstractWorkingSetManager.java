@@ -779,9 +779,6 @@ public abstract class AbstractWorkingSetManager extends EventManager
 
 	/**
 	 * Save the state to the state file.
-	 *
-	 * @param stateFile
-	 * @throws IOException
 	 */
 	public void saveState(File stateFile) throws IOException {
 		XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET_MANAGER);
@@ -818,7 +815,6 @@ public abstract class AbstractWorkingSetManager extends EventManager
 	/**
 	 * Remove the element adapter from the manager and dispose of it.
 	 *
-	 * @param elementAdapter
 	 * @since 3.3
 	 */
 	private void removeElementAdapter(final IWorkingSetElementAdapter elementAdapter) {
@@ -838,7 +834,6 @@ public abstract class AbstractWorkingSetManager extends EventManager
 	/**
 	 * Remove the updater from the manager and dispose of it.
 	 *
-	 * @param updater
 	 * @since 3.3
 	 */
 	private void removeUpdater(final IWorkingSetUpdater updater) {

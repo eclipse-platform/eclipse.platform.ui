@@ -19,12 +19,8 @@ import org.eclipse.swt.widgets.List;
 
 /**
  * @since 3.3
- *
  */
 public class ListSelectionProperty extends WidgetStringValueProperty<List> {
-	/**
-	 *
-	 */
 	public ListSelectionProperty() {
 		super(SWT.Selection);
 	}

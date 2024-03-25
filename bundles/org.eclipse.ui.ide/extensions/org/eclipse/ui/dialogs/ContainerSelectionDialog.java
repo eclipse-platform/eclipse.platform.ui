@@ -54,9 +54,6 @@ import org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ContainerSelectionDialog extends SelectionDialog {
-	/**
-	 *
-	 */
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	// the widget group;
@@ -151,7 +148,7 @@ public class ContainerSelectionDialog extends SelectionDialog {
 	@Override
 	protected void okPressed() {
 
-		List chosenContainerPathList = new ArrayList();
+		List<IPath> chosenContainerPathList = new ArrayList<>();
 		IPath returnValue = group.getContainerFullPath();
 		if (returnValue != null) {
 			chosenContainerPathList.add(returnValue);

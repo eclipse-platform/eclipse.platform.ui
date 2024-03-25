@@ -52,7 +52,6 @@ import org.osgi.framework.Bundle;
 
 /**
  * @since 3.3
- *
  */
 public class BundleSigningInfo {
 
@@ -118,9 +117,6 @@ public class BundleSigningInfo {
 		return composite;
 	}
 
-	/**
-	 *
-	 */
 	private void startJobs() {
 		if (!isOpen())
 			return;
@@ -201,9 +197,6 @@ public class BundleSigningInfo {
 		signerJob.schedule();
 	}
 
-	/**
-	 *
-	 */
 	private boolean isOpen() {
 		return certificate != null && !certificate.isDisposed();
 	}
@@ -214,7 +207,7 @@ public class BundleSigningInfo {
 			if (!(e instanceof X509Certificate)) {
 				continue;
 			}
-			Properties cert = parseCert(((X509Certificate) e).getSubjectDN().getName());
+			Properties cert = parseCert(((X509Certificate) e).getSubjectX500Principal().getName());
 			if (cert != null)
 				certs.add(cert);
 		}
@@ -222,10 +215,6 @@ public class BundleSigningInfo {
 
 	}
 
-	/**
-	 * @param certString
-	 * @return
-	 */
 	private Properties parseCert(String certString) {
 		StringTokenizer toker = new StringTokenizer(certString, ","); //$NON-NLS-1$
 		Properties cert = new Properties();

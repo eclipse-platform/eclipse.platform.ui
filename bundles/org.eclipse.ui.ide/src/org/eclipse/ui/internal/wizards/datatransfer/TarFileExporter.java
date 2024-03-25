@@ -77,8 +77,6 @@ public class TarFileExporter implements IFileExporter {
 	/**
 	 *	Write the contents of the file to the tar archive.
 	 *
-	 *	@param entry
-	 *	@param contents
 	 *  @exception java.io.IOException
 	 *  @exception org.eclipse.core.runtime.CoreException
 	 */
@@ -88,18 +86,13 @@ public class TarFileExporter implements IFileExporter {
 			throw new FileNotFoundException(contents.getFullPath().toOSString());
 		}
 
-		InputStream contentStream = contents.getContents(false);
-		entry.setSize(EFS.getStore(location).fetchInfo().getLength());
-		outputStream.putNextEntry(entry);
-		try {
+		try (InputStream contentStream = contents.getContents(false)) {
+			entry.setSize(EFS.getStore(location).fetchInfo().getLength());
+			outputStream.putNextEntry(entry);
 			int n;
 			byte[] readBuffer = new byte[4096];
 			while ((n = contentStream.read(readBuffer)) > 0) {
 				outputStream.write(readBuffer, 0, n);
-			}
-		} finally {
-			if (contentStream != null) {
-				contentStream.close();
 			}
 		}
 

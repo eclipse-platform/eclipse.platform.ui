@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.TableColumn;
  * blocking the UI
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet045TableViewerFillFromBackgroundThread {
 	private static int COUNTER = 0;
@@ -154,9 +153,6 @@ public class Snippet045TableViewerFillFromBackgroundThread {
 		timer.scheduleAtFixedRate(task, 3000, 1000);
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

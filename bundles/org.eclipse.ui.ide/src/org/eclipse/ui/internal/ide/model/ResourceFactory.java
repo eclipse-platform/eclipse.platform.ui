@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
@@ -77,7 +77,7 @@ public class ResourceFactory implements IElementFactory, IPersistableElement {
 		if (type == null) {
 			// Old format memento. Create an IResource using findMember.
 			// Will return null for resources in closed projects.
-			res = root.findMember(new Path(fileName));
+			res = root.findMember(IPath.fromOSString(fileName));
 		} else {
 			int resourceType = Integer.parseInt(type);
 
@@ -86,9 +86,9 @@ public class ResourceFactory implements IElementFactory, IPersistableElement {
 			} else if (resourceType == IResource.PROJECT) {
 				res = root.getProject(fileName);
 			} else if (resourceType == IResource.FOLDER) {
-				res = root.getFolder(new Path(fileName));
+				res = root.getFolder(IPath.fromOSString(fileName));
 			} else if (resourceType == IResource.FILE) {
-				res = root.getFile(new Path(fileName));
+				res = root.getFile(IPath.fromOSString(fileName));
 			}
 		}
 		return res;

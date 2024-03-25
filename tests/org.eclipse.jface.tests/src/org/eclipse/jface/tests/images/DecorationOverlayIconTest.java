@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.images;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -23,13 +27,12 @@ import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
 import org.junit.Before;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @since 3.13
  */
-public class DecorationOverlayIconTest extends TestCase {
+public class DecorationOverlayIconTest {
 
 	private ImageDescriptor baseDescriptor1;
 	private Image baseImage1;
@@ -38,7 +41,6 @@ public class DecorationOverlayIconTest extends TestCase {
 	private ImageDescriptor overlayDescriptor1;
 	private ImageDescriptor overlayDescriptor2;
 
-	@Override
 	@Before
 	public void setUp() {
 		ImageRegistry imageRegistry = JFaceResources.getImageRegistry();
@@ -56,6 +58,7 @@ public class DecorationOverlayIconTest extends TestCase {
 		assertNotNull(overlayDescriptor2);
 	}
 
+	@Test
 	public void testEqualsAndHashCode() {
 		// same base and overlay
 		DecorationOverlayIcon icon1 = new DecorationOverlayIcon(baseImage1,
@@ -97,7 +100,7 @@ public class DecorationOverlayIconTest extends TestCase {
 	}
 
 	private static class SimpleImageDescriptor extends ImageDescriptor {
-		private String pretendFileName;
+		private final String pretendFileName;
 
 		public SimpleImageDescriptor(String pretendFileName) {
 			this.pretendFileName = pretendFileName;
@@ -135,6 +138,7 @@ public class DecorationOverlayIconTest extends TestCase {
 
 	}
 
+	@Test
 	public void testEqualsAndHashCode2() {
 		// what is true about the underlying image descriptors should be true about
 		// the DecorationOverlayIcon too.

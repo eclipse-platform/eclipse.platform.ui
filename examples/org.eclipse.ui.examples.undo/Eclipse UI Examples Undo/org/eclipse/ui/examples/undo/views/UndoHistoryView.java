@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -83,7 +83,7 @@ public class UndoHistoryView extends ViewPart implements
 
 	private Action refreshListAction;
 
-	private IOperationHistory history = OperationHistoryFactory
+	private final IOperationHistory history = OperationHistoryFactory
 			.getOperationHistory();
 
 	private IUndoContext fContext = IOperationHistory.GLOBAL_UNDO_CONTEXT;
@@ -167,8 +167,8 @@ public class UndoHistoryView extends ViewPart implements
 
 		@Override
 		public String getText(Object obj) {
-			if (!showDebug && obj instanceof IUndoableOperation) {
-				return ((IUndoableOperation)obj).getLabel();
+			if (!showDebug && obj instanceof IUndoableOperation operation) {
+				return operation.getLabel();
 			}
 			return obj.toString();
 		}
@@ -385,7 +385,7 @@ public class UndoHistoryView extends ViewPart implements
 				StringBuilder buf = new StringBuilder(operation.getLabel());
 				buf.append("\n");
 				buf.append("Enabled=");	//$NON-NLS-1$
-				buf.append(Boolean.valueOf(operation.canUndo()).toString());
+				buf.append(Boolean.toString(operation.canUndo()));
 				buf.append("\n");
 				buf.append(operation.getClass().toString());
 				showMessage(buf.toString());

@@ -675,6 +675,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_type;
 	public static String ResourceInfo_location;
 	public static String ResourceInfo_location_button_tooltip;
+	public static String ResourceInfo_path_button_tooltip;
 	public static String ResourceInfo_resolvedLocation;
 	public static String ResourceInfo_size;
 	public static String ResourceInfo_bytes;
@@ -1013,11 +1014,18 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ChooseWorkspaceDialog_defaultProductName;
 	public static String ChooseWorkspaceDialog_workspaceEntryLabel;
 	public static String ChooseWorkspaceDialog_browseLabel;
+	public static String ChooseWorkspaceDialog_browseTooltip;
 	public static String ChooseWorkspaceDialog_launchLabel;
 	public static String ChooseWorkspaceDialog_directoryBrowserTitle;
 	public static String ChooseWorkspaceDialog_directoryBrowserMessage;
 	public static String ChooseWorkspaceDialog_removeWorkspaceSelection;
 	public static String ChooseWorkspaceDialog_recentWorkspaces;
+
+	public static String ChooseWorkspaceDialog_ResolvedAbsolutePath;
+
+	public static String ChooseWorkspaceDialog_TildeNonExpandedWarning;
+	public static String ChooseWorkspaceDialog_InvalidPathWarning;
+	public static String ChooseWorkspaceDialog_NotWriteablePathWarning;
 	public static String ChooseWorkspaceDialog_useDefaultMessage;
 
 	public static String ChooseWorkspaceWithSettingsDialog_SettingsGroupName;

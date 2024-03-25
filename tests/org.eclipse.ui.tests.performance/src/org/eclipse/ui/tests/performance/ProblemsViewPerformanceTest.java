@@ -33,18 +33,15 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
  * The ProblemsViewPerformanceTest is a test of population of the problems view.
  *
  * @since 3.2
- *
  */
 public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 
-	private String EMPTY_PERSPECTIVE_ID = "org.eclipse.ui.tests.harness.util.EmptyPerspective";
+	private final String EMPTY_PERSPECTIVE_ID = "org.eclipse.ui.tests.harness.util.EmptyPerspective";
 
-	private String PROBLEMS_VIEW_ID = "org.eclipse.ui.tests.performance.problemsView";
+	private final String PROBLEMS_VIEW_ID = "org.eclipse.ui.tests.performance.problemsView";
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param testName
 	 */
 	public ProblemsViewPerformanceTest(String testName) {
 		super(testName);

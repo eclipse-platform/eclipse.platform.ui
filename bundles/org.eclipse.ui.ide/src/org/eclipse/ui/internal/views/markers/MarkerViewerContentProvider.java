@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.Viewer;
  * The ContentProvider to the TreeViewer used in Markers View.
  *
  * @since 3.6
- *
  */
 class MarkerViewerContentProvider implements ITreeContentProvider {
 
@@ -29,9 +28,6 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 	private Object input;
 	private final ExtendedMarkersView markersView;
 
-	/**
-	 * @param extendedMarkersView
-	 */
 	public MarkerViewerContentProvider(ExtendedMarkersView extendedMarkersView) {
 		this.markersView = extendedMarkersView;
 	}
@@ -49,10 +45,11 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		MarkerSupportItem[] children = ((MarkerSupportItem) parentElement)
-				.getChildren();
-
-		return getLimitedChildren(children);
+		if (parentElement instanceof MarkerSupportItem markerItem) {
+			MarkerSupportItem[] children = markerItem.getChildren();
+			return getLimitedChildren(children);
+		}
+		return new Object[0];
 	}
 
 	@Override
@@ -64,7 +61,6 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 	/**
 	 * Get the children limited by the marker limits.
 	 *
-	 * @param children
 	 * @return Object[]
 	 */
 	private Object[] getLimitedChildren(Object[] children) {
@@ -82,7 +78,10 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object getParent(Object element) {
-		Object parent = ((MarkerSupportItem) element).getParent();
+		Object parent = null;
+		if (element instanceof MarkerSupportItem markerItem) {
+			parent = markerItem.getParent();
+		}
 		if (parent == null)
 			return input;
 		return parent;
@@ -90,6 +89,6 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
-		return ((MarkerSupportItem) element).getChildren().length > 0;
+		return element instanceof MarkerSupportItem markerItem ? markerItem.getChildren().length > 0 : false;
 	}
 }

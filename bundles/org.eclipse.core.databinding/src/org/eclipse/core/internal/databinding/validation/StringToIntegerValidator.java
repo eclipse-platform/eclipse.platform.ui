@@ -27,9 +27,6 @@ public class StringToIntegerValidator extends AbstractStringToNumberValidator {
 	private static final Integer MIN = Integer.valueOf(Integer.MIN_VALUE);
 	private static final Integer MAX = Integer.valueOf(Integer.MAX_VALUE);
 
-	/**
-	 * @param converter
-	 */
 	public StringToIntegerValidator(NumberFormatConverter<?, ?> converter) {
 		super(converter, MIN, MAX);
 	}

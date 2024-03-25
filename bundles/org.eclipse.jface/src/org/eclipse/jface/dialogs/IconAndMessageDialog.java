@@ -134,9 +134,6 @@ public abstract class IconAndMessageDialog extends Dialog {
 	/**
 	 * Add an accessible listener to the label if it can be inferred from the
 	 * image.
-	 *
-	 * @param label
-	 * @param image
 	 */
 	private void addAccessibleListeners(Label label, final Image image) {
 		label.getAccessible().addAccessibleListener(new AccessibleAdapter() {

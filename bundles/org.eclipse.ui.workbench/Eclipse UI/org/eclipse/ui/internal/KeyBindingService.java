@@ -370,10 +370,6 @@ public final class KeyBindingService implements INestableKeyBindingService {
 		}
 	}
 
-	/**
-	 * @param cs
-	 * @param scopes
-	 */
 	private void addParents(EContextService cs, String[] scopes) {
 		for (String id : scopes) {
 			try {

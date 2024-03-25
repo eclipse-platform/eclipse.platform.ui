@@ -43,19 +43,9 @@ public class ArchiveFileManipulations {
 			return false;
 		}
 
-		TarFile tarFile = null;
-		try {
-			tarFile = new TarFile(fileName);
+		try (TarFile tarFile = new TarFile(fileName)) {
 		} catch (TarException | IOException ioException) {
 			return false;
-		} finally {
-			if (tarFile != null) {
-				try {
-					tarFile.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 
 		return true;
@@ -74,22 +64,12 @@ public class ArchiveFileManipulations {
 			return false;
 		}
 
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(fileName);
+		try (ZipFile zipFile = new ZipFile(fileName)) {
+			return true;
 		} catch (IOException ioException) {
 			return false;
-		} finally {
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 
-		return true;
 	}
 
 	/**
@@ -100,6 +80,7 @@ public class ArchiveFileManipulations {
 	 * @param shell
 	 *            The shell to display any possible Dialogs in
 	 */
+	@SuppressWarnings("resource")
 	public static void closeStructureProvider(ILeveledImportStructureProvider structureProvider, Shell shell) {
 		if (structureProvider instanceof ZipLeveledStructureProvider) {
 			closeZipFile(((ZipLeveledStructureProvider) structureProvider).getZipFile(), shell);

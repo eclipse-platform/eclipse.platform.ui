@@ -30,24 +30,14 @@ public class EditMaskParseException extends RuntimeException {
 		super();
 	}
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
 	public EditMaskParseException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	/**
-	 * @param message
-	 */
 	public EditMaskParseException(String message) {
 		super(message);
 	}
 
-	/**
-	 * @param cause
-	 */
 	public EditMaskParseException(Throwable cause) {
 		super(cause);
 	}

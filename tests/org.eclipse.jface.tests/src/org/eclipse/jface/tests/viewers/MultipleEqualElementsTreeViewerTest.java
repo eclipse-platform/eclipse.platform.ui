@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,6 +29,7 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
+import org.junit.Test;
 
 /**
  * Tests TreeViewer's support for multiple equal elements ().
@@ -61,10 +67,6 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 	private TreePath treePath_1_2;
 
 	private TreePath treePath_2;
-
-	public MultipleEqualElementsTreeViewerTest(String name) {
-		super(name);
-	}
 
 	public TreeViewer getTreeViewer() {
 		return (TreeViewer) fViewer;
@@ -106,6 +108,7 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		fModel = fRootElement.getModel();
 	}
 
+	@Test
 	public void testElementMap() {
 		getTreeViewer().expandToLevel(element_1, AbstractTreeViewer.ALL_LEVELS);
 		getTreeViewer().expandToLevel(element_2, AbstractTreeViewer.ALL_LEVELS);
@@ -115,6 +118,7 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		assertEquals(4, getTreeViewer().testFindItems(element_2_1_2).length);
 	}
 
+	@Test
 	public void testSelection() {
 		getTreeViewer().expandToLevel(element_1, AbstractTreeViewer.ALL_LEVELS);
 		getTreeViewer().expandToLevel(element_2, AbstractTreeViewer.ALL_LEVELS);
@@ -141,6 +145,7 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		assertMatchingPath(treePath_2_21_212, getTreeViewer().getTree().getSelection()[0]);
 	}
 
+	@Test
 	public void testExpansion() {
 		getTreeViewer().expandToLevel(treePath_1_21_212, 1);
 		assertEqualsArray("element expansion", new Object[] { element_1, element_2_1 },
@@ -163,6 +168,7 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		assertNull(item);
 	}
 
+	@Test
 	public void testUpdate() {
 		// materialize
 		getTreeViewer().setExpandedTreePaths(new TreePath[] { treePath_1_2_21, treePath_2_21 });
@@ -178,6 +184,7 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		}
 	}
 
+	@Test
 	public void testAddWithoutMaterialize() {
 		TestElement newElement = element_2.addChild(TestModelChange.INSERT);
 		getTreeViewer().setExpandedTreePaths(new TreePath[] { treePath_1_2_21, treePath_2_21 });
@@ -185,6 +192,7 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		assertEquals(2, items.length);
 	}
 
+	@Test
 	public void testAddAfterMaterialize() {
 		// materialize before adding
 		getTreeViewer().setExpandedTreePaths(new TreePath[] { treePath_1_2_21, treePath_2_21 });
@@ -194,6 +202,7 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		assertEquals(2, items.length);
 	}
 
+	@Test
 	public void testRemoveWithParentAfterMaterialize() {
 		// materialize
 		getTreeViewer().expandToLevel(element_1, AbstractTreeViewer.ALL_LEVELS);
@@ -205,6 +214,7 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 		assertEquals(2, getTreeViewer().testFindItems(element_2_1_2).length);
 	}
 
+	@Test
 	public void testRemoveWithParentBeforeMaterialize() {
 		element_2.basicDeleteChild(element_2_1);
 		getTreeViewer().remove(element_2, new Object[] { element_2_1 });

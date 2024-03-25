@@ -21,7 +21,6 @@ import org.eclipse.ui.IMemento;
 /**
  * A MarkerFieldFilter is a filter on a particular marker field.
  * @since 3.4
- *
  */
 public abstract class MarkerFieldFilter {
 

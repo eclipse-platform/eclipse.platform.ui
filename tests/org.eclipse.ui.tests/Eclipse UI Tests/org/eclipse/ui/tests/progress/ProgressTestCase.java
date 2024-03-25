@@ -23,22 +23,17 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.progress.ProgressView;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * @since 3.6
- *
  */
 public abstract class ProgressTestCase extends UITestCase {
 
 	protected ProgressView progressView;
 	protected IWorkbenchWindow window;
 
-	/**
-	 * @param testName
-	 */
 	public ProgressTestCase(String testName) {
 		super(testName);
 	}
@@ -51,8 +46,6 @@ public abstract class ProgressTestCase extends UITestCase {
 
 	/**
 	 * Opens the ProgresView on the specified page and process the UI events.
-	 *
-	 * @throws PartInitException
 	 */
 	public void openProgressView() throws Exception {
 		progressView = (ProgressView) openView(IPageLayout.ID_PROGRESS_VIEW);

@@ -14,6 +14,8 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -25,19 +27,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class TableViewerComparatorTest extends ViewerComparatorTest {
-
-	/**
-	 * @param name
-	 */
-	public TableViewerComparatorTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -66,12 +61,14 @@ public class TableViewerComparatorTest extends ViewerComparatorTest {
 		return viewer;
 	}
 
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testViewerSorter() {
 		fViewer.setSorter(new ViewerSorter());
 		assertSortedResult(TEAM1_SORTED);
 	}
 
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testViewerSorterInsertElement() {
 		fViewer.setSorter(new ViewerSorter());
@@ -79,11 +76,13 @@ public class TableViewerComparatorTest extends ViewerComparatorTest {
 		assertSortedResult(TEAM1_SORTED_WITH_INSERT);
 	}
 
+	@Test
 	public void testViewerComparator() {
 		fViewer.setComparator(new ViewerComparator());
 		assertSortedResult(TEAM1_SORTED);
 	}
 
+	@Test
 	public void testViewerComparatorInsertElement() {
 		fViewer.setComparator(new ViewerComparator());
 		team1.addMember("Duong");
@@ -105,13 +104,6 @@ public class TableViewerComparatorTest extends ViewerComparatorTest {
 
 	protected TableViewer getTableViewer() {
 		return (TableViewer) fViewer;
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(TableViewerComparatorTest.class);
 	}
 
 }

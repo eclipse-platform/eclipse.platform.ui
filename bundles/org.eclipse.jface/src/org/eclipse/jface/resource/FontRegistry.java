@@ -29,6 +29,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.Util;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Font;
@@ -58,8 +59,8 @@ import org.eclipse.swt.widgets.Display;
  * </p>
  *
  * Since 3.0 this class extends ResourceRegistry.
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class FontRegistry extends ResourceRegistry {
 
 	/**

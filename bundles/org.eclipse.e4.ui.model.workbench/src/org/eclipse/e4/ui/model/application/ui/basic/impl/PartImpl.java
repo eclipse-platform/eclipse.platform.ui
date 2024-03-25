@@ -33,7 +33,6 @@ import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
@@ -372,7 +371,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @see #getTrimBars()
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 * @ordered
 	 */
@@ -418,9 +416,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setContributionURI(String newContributionURI) {
 		String oldContributionURI = contributionURI;
 		contributionURI = newContributionURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__CONTRIBUTION_URI,
 					oldContributionURI, contributionURI));
+		}
 	}
 
 	/**
@@ -442,8 +441,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setObject(Object newObject) {
 		Object oldObject = object;
 		object = newObject;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__OBJECT, oldObject, object));
+		}
 	}
 
 	/**
@@ -465,8 +465,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setContext(IEclipseContext newContext) {
 		IEclipseContext oldContext = context;
 		context = newContext;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__CONTEXT, oldContext, context));
+		}
 	}
 
 	/**
@@ -477,7 +478,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, BasicPackageImpl.PART__VARIABLES);
+			variables = new EDataTypeUniqueEList<>(String.class, this, BasicPackageImpl.PART__VARIABLES);
 		}
 		return variables;
 	}
@@ -490,7 +491,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+			properties = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
 					StringToStringMapImpl.class, this, BasicPackageImpl.PART__PROPERTIES);
 		}
 		return properties.map();
@@ -517,8 +518,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__LABEL, oldLabel, label));
+		}
 	}
 
 	/**
@@ -542,9 +544,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__ICON_URI, oldIconURI,
 					iconURI));
+		}
 	}
 
 	/**
@@ -568,8 +571,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__TOOLTIP, oldTooltip, tooltip));
+		}
 	}
 
 	/**
@@ -600,7 +604,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
-			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, BasicPackageImpl.PART__HANDLERS);
+			handlers = new EObjectContainmentEList<>(MHandler.class, this, BasicPackageImpl.PART__HANDLERS);
 		}
 		return handlers;
 	}
@@ -624,8 +628,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setDirty(boolean newDirty) {
 		boolean oldDirty = dirty;
 		dirty = newDirty;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__DIRTY, oldDirty, dirty));
+		}
 	}
 
 	/**
@@ -636,7 +641,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this,
+			bindingContexts = new EObjectResolvingEList<>(MBindingContext.class, this,
 					BasicPackageImpl.PART__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
@@ -650,7 +655,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 	@Override
 	public List<MMenu> getMenus() {
 		if (menus == null) {
-			menus = new EObjectContainmentEList<MMenu>(MMenu.class, this, BasicPackageImpl.PART__MENUS);
+			menus = new EObjectContainmentEList<>(MMenu.class, this, BasicPackageImpl.PART__MENUS);
 		}
 		return menus;
 	}
@@ -676,10 +681,11 @@ public class PartImpl extends UIElementImpl implements MPart {
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
 					BasicPackageImpl.PART__TOOLBAR, oldToolbar, newToolbar);
-			if (msgs == null)
+			if (msgs == null) {
 				msgs = notification;
-			else
+			} else {
 				msgs.add(notification);
+			}
 		}
 		return msgs;
 	}
@@ -693,18 +699,22 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setToolbar(MToolBar newToolbar) {
 		if (newToolbar != toolbar) {
 			NotificationChain msgs = null;
-			if (toolbar != null)
+			if (toolbar != null) {
 				msgs = ((InternalEObject) toolbar).eInverseRemove(this,
 						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART__TOOLBAR, null, msgs);
-			if (newToolbar != null)
+			}
+			if (newToolbar != null) {
 				msgs = ((InternalEObject) newToolbar).eInverseAdd(this,
 						EOPPOSITE_FEATURE_BASE - BasicPackageImpl.PART__TOOLBAR, null, msgs);
+			}
 			msgs = basicSetToolbar(newToolbar, msgs);
-			if (msgs != null)
+			if (msgs != null) {
 				msgs.dispatch();
-		} else if (eNotificationRequired())
+			}
+		} else if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__TOOLBAR, newToolbar,
 					newToolbar));
+		}
 	}
 
 	/**
@@ -726,9 +736,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setCloseable(boolean newCloseable) {
 		boolean oldCloseable = closeable;
 		closeable = newCloseable;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__CLOSEABLE, oldCloseable,
 					closeable));
+		}
 	}
 
 	/**
@@ -750,9 +761,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__DESCRIPTION, oldDescription,
 					description));
+		}
 	}
 
 	/**
@@ -769,13 +781,12 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @since 1.3
-	 * </p>
 	 * @generated
 	 */
 	@Override
 	public List<MTrimBar> getTrimBars() {
 		if (trimBars == null) {
-			trimBars = new EObjectContainmentEList<MTrimBar>(MTrimBar.class, this, BasicPackageImpl.PART__TRIM_BARS);
+			trimBars = new EObjectContainmentEList<>(MTrimBar.class, this, BasicPackageImpl.PART__TRIM_BARS);
 		}
 		return trimBars;
 	}
@@ -839,10 +850,11 @@ public class PartImpl extends UIElementImpl implements MPart {
 		case BasicPackageImpl.PART__VARIABLES:
 			return getVariables();
 		case BasicPackageImpl.PART__PROPERTIES:
-			if (coreType)
+			if (coreType) {
 				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
-			else
+			} else {
 				return getProperties();
+			}
 		case BasicPackageImpl.PART__LABEL:
 			return getLabel();
 		case BasicPackageImpl.PART__ICON_URI:
@@ -1069,12 +1081,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 */
 	@Override
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
-		if (baseClass == MPartSashContainerElement.class) {
-			switch (derivedFeatureID) {
-			default:
-				return -1;
-			}
-		}
 		if (baseClass == MStackElement.class) {
 			switch (derivedFeatureID) {
 			default:
@@ -1159,12 +1165,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 */
 	@Override
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
-		if (baseClass == MPartSashContainerElement.class) {
-			switch (baseFeatureID) {
-			default:
-				return -1;
-			}
-		}
 		if (baseClass == MStackElement.class) {
 			switch (baseFeatureID) {
 			default:
@@ -1265,12 +1265,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return super.eDerivedOperationID(baseOperationID, baseClass);
 			}
 		}
-		if (baseClass == MPartSashContainerElement.class) {
-			switch (baseOperationID) {
-			default:
-				return -1;
-			}
-		}
 		if (baseClass == MStackElement.class) {
 			switch (baseOperationID) {
 			default:
@@ -1345,8 +1339,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (contributionURI: "); //$NON-NLS-1$

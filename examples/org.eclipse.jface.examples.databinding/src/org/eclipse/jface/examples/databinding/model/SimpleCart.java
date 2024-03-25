@@ -18,7 +18,6 @@ import org.eclipse.jface.examples.databinding.ModelObject;
 
 /**
  * @since 3.2
- *
  */
 public class SimpleCart extends ModelObject {
 

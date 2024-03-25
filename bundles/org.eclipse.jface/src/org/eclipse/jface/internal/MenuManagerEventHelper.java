@@ -16,12 +16,14 @@ package org.eclipse.jface.internal;
 
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.pde.api.tools.annotations.NoInstantiate;
+import org.eclipse.pde.api.tools.annotations.NoReference;
 
 /**
  * @since 3.8.100
- * @noinstantiate This class is not intended to be instantiated by clients.
- * @noreference This class is not intended to be referenced by clients.
  */
+@NoInstantiate
+@NoReference
 public final class MenuManagerEventHelper {
 
 	private IMenuListener2 showHelper;
@@ -43,8 +45,6 @@ public final class MenuManagerEventHelper {
 	/**
 	 * Uses IMenuListener2 to do some processing before (menuAboutToShow) and
 	 * after (menuAboutToHide) the SWT.Show event.
-	 *
-	 * @param showHelper
 	 */
 	public void setShowHelper(IMenuListener2 showHelper) {
 		this.showHelper = showHelper;
@@ -60,8 +60,6 @@ public final class MenuManagerEventHelper {
 	/**
 	 * Uses IMenuListener2 to do some processing before (menuAboutToShow) and
 	 * after (menuAboutToHide) the SWT.Hide event.
-	 *
-	 * @param hideHelper
 	 */
 	public void setHideHelper(IMenuListener2 hideHelper) {
 		this.hideHelper = hideHelper;
@@ -76,8 +74,6 @@ public final class MenuManagerEventHelper {
 
 	/**
 	 * Do show pre-processing.
-	 *
-	 * @param manager
 	 */
 	public void showEventPreHelper(MenuManager manager) {
 		if (showHelper != null) {
@@ -87,8 +83,6 @@ public final class MenuManagerEventHelper {
 
 	/**
 	 * Do show post-processing.
-	 *
-	 * @param manager
 	 */
 	public void showEventPostHelper(MenuManager manager) {
 		if (showHelper != null) {
@@ -98,8 +92,6 @@ public final class MenuManagerEventHelper {
 
 	/**
 	 * Do hide pre-processing.
-	 *
-	 * @param manager
 	 */
 	public void hideEventPreHelper(MenuManager manager) {
 		if (hideHelper != null) {
@@ -109,8 +101,6 @@ public final class MenuManagerEventHelper {
 
 	/**
 	 * Do hide post-processing.
-	 *
-	 * @param manager
 	 */
 	public void hideEventPostHelper(MenuManager manager) {
 		if (hideHelper != null) {

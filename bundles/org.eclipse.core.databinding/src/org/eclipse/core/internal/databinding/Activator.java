@@ -28,7 +28,6 @@ import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * @since 3.3
- *
  */
 public class Activator implements BundleActivator {
 	/**

@@ -40,7 +40,6 @@ import org.osgi.framework.Bundle;
  * {@link SmartImportJob} execution.
  *
  * @since 3.12
- *
  */
 public class ProjectConfiguratorExtensionManager {
 
@@ -76,7 +75,6 @@ public class ProjectConfiguratorExtensionManager {
 
 	/**
 	 *
-	 * @param container
 	 * @return The active connectors for given container, order is important: top-priority are 1st
 	 */
 	private List<ProjectConfigurator> getAllActiveProjectConfiguratorsUntyped(Object container) {
@@ -135,7 +133,6 @@ public class ProjectConfiguratorExtensionManager {
 
 	/**
 	 *
-	 * @param container
 	 * @return The active connectors for given container, order is important: top-priority are 1st
 	 */
 	public List<ProjectConfigurator> getAllActiveProjectConfigurators(IContainer container) {
@@ -144,7 +141,6 @@ public class ProjectConfiguratorExtensionManager {
 
 	/**
 	 *
-	 * @param folder
 	 * @return The active connectors for given folder, order is important: top-priority are 1st
 	 */
 	public List<ProjectConfigurator> getAllActiveProjectConfigurators(File folder) {
@@ -181,7 +177,6 @@ public class ProjectConfiguratorExtensionManager {
 
 	/**
 	 *
-	 * @param configurator
 	 * @return the internationalized label for the provided configurator
 	 */
 	public static String getLabel(ProjectConfigurator configurator) {

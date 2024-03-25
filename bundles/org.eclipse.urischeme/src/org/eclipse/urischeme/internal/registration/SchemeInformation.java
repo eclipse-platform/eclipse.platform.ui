@@ -16,7 +16,6 @@ import org.eclipse.urischeme.ISchemeInformation;
 
 /**
  * The pojo for holding information of a scheme w.r.t. the handling eclipse.
- *
  */
 public class SchemeInformation implements ISchemeInformation {
 
@@ -25,7 +24,6 @@ public class SchemeInformation implements ISchemeInformation {
 	private boolean handled;
 	private String handlerInstanceLocation;
 
-	@SuppressWarnings("javadoc")
 	public SchemeInformation(String schemeName, String schemeDescription) {
 		this.name = schemeName;
 		this.description = schemeDescription;
@@ -49,14 +47,11 @@ public class SchemeInformation implements ISchemeInformation {
 	/**
 	 * Sets the handled value to true if scheme is handled by current Eclipse
 	 * installation and false otherwise
-	 *
-	 * @param handled
 	 */
 	public void setHandled(boolean handled) {
 		this.handled = handled;
 	}
 
-	@SuppressWarnings("javadoc")
 	public void setHandlerLocation(String handlerInstanceLocation) {
 		this.handlerInstanceLocation = handlerInstanceLocation;
 	}

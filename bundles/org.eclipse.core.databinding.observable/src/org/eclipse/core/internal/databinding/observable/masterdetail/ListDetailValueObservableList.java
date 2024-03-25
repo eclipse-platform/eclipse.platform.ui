@@ -84,12 +84,6 @@ public class ListDetailValueObservableList<M, E> extends
 		}
 	};
 
-	/**
-	 *
-	 * @param masterList
-	 * @param detailFactory
-	 * @param detailType
-	 */
 	public ListDetailValueObservableList(IObservableList<M> masterList,
 			IObservableFactory<? super M, IObservableValue<E>> detailFactory,
 			Object detailType) {

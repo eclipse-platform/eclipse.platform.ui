@@ -20,15 +20,19 @@
 ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import jakarta.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
+import java.util.Objects;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IStateListener;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
@@ -38,7 +42,6 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
-import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
@@ -54,10 +57,10 @@ import org.eclipse.e4.ui.services.help.EHelpService;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.menus.IMenuStateIds;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
-import org.osgi.service.log.LogService;
 
 public class HandledContributionItem extends AbstractContributionItem {
 	/**
@@ -90,7 +93,6 @@ public class HandledContributionItem extends AbstractContributionItem {
 
 	@Inject
 	@Optional
-	@SuppressWarnings("restriction")
 	private ICommandHelpService commandHelpService;
 
 	private Runnable unreferenceRunnable;
@@ -122,19 +124,15 @@ public class HandledContributionItem extends AbstractContributionItem {
 	}
 
 	/**
-	 * This method seems to be necessary for calls via reflection when called
-	 * with MHandledItem parameter.
+	 * This method seems to be necessary for calls via reflection when called with
+	 * MHandledItem parameter.
 	 *
-	 * @param item
-	 *            The model item
+	 * @param item The model item
 	 */
 	public void setModel(MHandledItem item) {
 		setModel((MItem) item);
 	}
 
-	/**
-	 *
-	 */
 	private void generateCommand() {
 		if (getModel().getCommand() != null && getModel().getWbCommand() == null) {
 			String cmdId = getModel().getCommand().getElementId();
@@ -153,10 +151,8 @@ public class HandledContributionItem extends AbstractContributionItem {
 				WorkbenchSWTActivator.trace(Policy.DEBUG_MENUS_FLAG, "command: " + parmCmd, null); //$NON-NLS-1$
 			}
 			if (parmCmd == null) {
-				logger.error(
-						"Unable to generate the parameterized " + "command with the id \"" + cmdId + "\" with the " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-								+ parameters
-								+ " parameter(s). Model details: " + getModel());//$NON-NLS-1$
+				logger.error("Unable to generate the parameterized " + "command with the id \"" + cmdId + "\" with the " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						+ parameters + " parameter(s). Model details: " + getModel());//$NON-NLS-1$
 				return;
 			}
 
@@ -174,6 +170,8 @@ public class HandledContributionItem extends AbstractContributionItem {
 			} else if (radioState != null) {
 				radioState.addListener(stateListener);
 			}
+
+			parmCmd.getCommand().addCommandListener(event -> Display.getDefault().asyncExec(() -> update()));
 		}
 	}
 
@@ -250,10 +248,11 @@ public class HandledContributionItem extends AbstractContributionItem {
 		String keyBindingText = null;
 		if (parmCmd != null) {
 			if (text == null || text.isEmpty()) {
+				String localizedCommandName = getModel().getCommand().getLocalizedCommandName();
 				try {
-					text = parmCmd.getName(getModel().getCommand().getLocalizedCommandName());
+					text = parmCmd.getName(localizedCommandName);
 				} catch (NotDefinedException e) {
-					Activator.log(LogService.LOG_DEBUG, e.getMessage(), e);
+					ILog.get().warn("not found: " + localizedCommandName, e); //$NON-NLS-1$
 				}
 			}
 			if (bindingService != null) {
@@ -268,8 +267,7 @@ public class HandledContributionItem extends AbstractContributionItem {
 				if (mnemonics != null && !mnemonics.isEmpty()) {
 					int idx = text.indexOf(mnemonics);
 					if (idx != -1) {
-						text = text.substring(0, idx) + '&'
-								+ text.substring(idx);
+						text = text.substring(0, idx) + '&' + text.substring(idx);
 					}
 				}
 			}
@@ -311,6 +309,7 @@ public class HandledContributionItem extends AbstractContributionItem {
 		item.setToolTipText(tooltip);
 		item.setSelection(getModel().isSelected());
 		item.setEnabled(getModel().isEnabled());
+
 	}
 
 	private String getToolTipText(boolean attachKeybinding) {
@@ -320,6 +319,8 @@ public class HandledContributionItem extends AbstractContributionItem {
 			generateCommand();
 			parmCmd = getModel().getWbCommand();
 		}
+
+		text = legacyActionLabelSupport(text, parmCmd);
 
 		if (parmCmd != null && text == null) {
 			try {
@@ -334,6 +335,12 @@ public class HandledContributionItem extends AbstractContributionItem {
 			text = text + " (" + sequence.format() + ')'; //$NON-NLS-1$
 		}
 		return text;
+	}
+
+	private String legacyActionLabelSupport(String text, ParameterizedCommand command) {
+
+		return java.util.Optional.of(command).map(ParameterizedCommand::getCommand).map(Command::getHandler)
+				.map(IHandler::getHandlerLabel).filter(Objects::nonNull).orElse(text);
 	}
 
 	@Override
@@ -392,9 +399,8 @@ public class HandledContributionItem extends AbstractContributionItem {
 	}
 
 	@Override
-	@SuppressWarnings("restriction")
 	protected void handleHelpRequest() {
-		if(helpService==null)
+		if (helpService == null)
 			return;
 		String helpContextId = getModel().getPersistedState().get(EHelpService.HELP_CONTEXT_ID);
 		if (helpContextId != null) {

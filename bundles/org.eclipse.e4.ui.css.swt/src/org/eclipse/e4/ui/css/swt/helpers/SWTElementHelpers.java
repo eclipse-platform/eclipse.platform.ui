@@ -37,9 +37,6 @@ public class SWTElementHelpers {
 
 	/**
 	 * Return the w3c Element linked to the SWT widget.
-	 *
-	 * @param widget
-	 * @return
 	 */
 	public static Element getElement(Widget widget, CSSEngine engine,
 			Class<?> classElement) throws NoSuchMethodException,
@@ -53,9 +50,6 @@ public class SWTElementHelpers {
 
 	/**
 	 * Return the w3c Element linked to the SWT widget.
-	 *
-	 * @param widget
-	 * @return
 	 */
 	public static Element getElement(Widget widget, CSSEngine engine) {
 		try {
@@ -67,9 +61,6 @@ public class SWTElementHelpers {
 
 	/**
 	 * Return the w3c Element linked to the SWT widget.
-	 *
-	 * @param widget
-	 * @return
 	 */
 	public static Element getHTMLElement(Widget widget, CSSEngine engine) {
 		try {
@@ -82,9 +73,6 @@ public class SWTElementHelpers {
 	/**
 	 * Return the SWT Control which is wrapped to the object
 	 * <code>element</code>.
-	 *
-	 * @param element
-	 * @return
 	 */
 	public static Control getControl(Object element) {
 		if (element instanceof Control) {
@@ -101,9 +89,6 @@ public class SWTElementHelpers {
 
 	/**
 	 * Return the SWT Widget which is wrapped to the object <code>element</code>.
-	 *
-	 * @param element
-	 * @return
 	 */
 	public static Widget getWidget(Object element) {
 		if (element instanceof Widget) {

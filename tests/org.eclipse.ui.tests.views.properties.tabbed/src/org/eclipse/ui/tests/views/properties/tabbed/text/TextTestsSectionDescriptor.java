@@ -23,9 +23,9 @@ import org.eclipse.ui.views.properties.tabbed.ISection;
  */
 public class TextTestsSectionDescriptor extends AbstractSectionDescriptor {
 
-	private String word;
+	private final String word;
 
-	private String tabId;
+	private final String tabId;
 
 	public TextTestsSectionDescriptor(String aWord, String aTabId) {
 		super(null);

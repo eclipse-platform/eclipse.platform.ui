@@ -43,7 +43,6 @@ import org.junit.Test;
  * <li>A thread that notify the first job via the UI thread to simulate some UI
  * events after a certain number of UI events have happened</li>
  * </ol>
- *
  */
 public class NoFreezeWhileWaitingForRuleTest {
 
@@ -99,11 +98,6 @@ public class NoFreezeWhileWaitingForRuleTest {
 		assertFalse("Timeout reached, blocking occurred!", ruleMonitor.isCanceled());
 	}
 
-	/**
-	 * @param runnableLatch
-	 * @param display
-	 * @return
-	 */
 	private Thread spinUIEventProducer(CountDownLatch runnableLatch, Display display) {
 		Thread thread = new Thread(() -> {
 			// Stage 1: Wait for the UI-Thread to block...
@@ -145,11 +139,6 @@ public class NoFreezeWhileWaitingForRuleTest {
 		return thread;
 	}
 
-	/**
-	 * @param display
-	 * @return
-	 *
-	 */
 	private CountDownLatch spinUIblockingRunnable(Display display) {
 		CountDownLatch runnableRunning = new CountDownLatch(1);
 		display.asyncExec(() -> {

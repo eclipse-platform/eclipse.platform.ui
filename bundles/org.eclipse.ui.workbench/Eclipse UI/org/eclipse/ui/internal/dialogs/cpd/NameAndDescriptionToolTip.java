@@ -175,12 +175,7 @@ abstract class NameAndDescriptionToolTip extends ToolTip {
 		return textLink;
 	}
 
-	/**
-	 * @param destination
-	 * @param modelElement
-	 */
-	protected void addContent(Composite destination, Object modelElement) {
-	}
+	abstract protected void addContent(Composite destination, Object modelElement);
 
 	static String getDescription(IContributionItem item) {
 		if (item instanceof ActionContributionItem) {

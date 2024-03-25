@@ -112,9 +112,6 @@ public class EditorTests extends DynamicTestCase {
 		}
 	}
 
-	/**
-	 * @param desc
-	 */
 	private void testEditorProperties(IEditorDescriptor desc) {
 		assertNotNull(desc.getId());
 		assertNotNull(desc.getLabel());
@@ -125,9 +122,6 @@ public class EditorTests extends DynamicTestCase {
 		return getFile("someFile");
 	}
 
-	/**
-	 *
-	 */
 	private IFile getFile(String fileName) throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject testProject = workspace.getRoot().getProject(getName());

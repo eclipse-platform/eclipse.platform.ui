@@ -18,11 +18,13 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -192,7 +194,7 @@ public class FormHeading extends Canvas {
 						|| hasMessageRegion())
 					totalFlexWidth -= SPACING;
 				// subtract tool bar
-				if (hasToolBar() && getToolBarAlignment() == SWT.TOP)
+				if (hasToolBar() && getToolBarAlignment() == SWT.TOP && tbsize != null)
 					totalFlexWidth -= tbsize.x + SPACING;
 				flexWidth = totalFlexWidth;
 				if (hasMessageRegion()) {
@@ -290,16 +292,16 @@ public class FormHeading extends Canvas {
 				int xloc = x;
 				int yloc = y + VMARGIN;
 				int row1Height = tsize.y;
-				if (hasMessageRegion())
+				if (hasMessageRegion() && msize != null)
 					row1Height = Math.max(row1Height, msize.y);
-				if (hasToolBar() && getToolBarAlignment() == SWT.TOP)
+				if (hasToolBar() && getToolBarAlignment() == SWT.TOP && tbsize != null)
 					row1Height = Math.max(row1Height, tbsize.y);
 				titleRegion.setBounds(xloc,
 				// yloc + row1Height / 2 - tsize.y / 2,
 						yloc, tsize.x, tsize.y);
 				xloc += tsize.x;
 
-				if (hasMessageRegion()) {
+				if (hasMessageRegion() && msize != null) {
 					xloc += SPACING;
 					int messageOffset = 0;
 					if (tsize.y > 0) {
@@ -340,7 +342,7 @@ public class FormHeading extends Canvas {
 							tbsize.x, tbsize.y);
 					tw = tbsize.x + SPACING;
 				}
-				if (headClient != null) {
+				if (headClient != null && clsize != null) {
 					int carea = width - HMARGIN * 2 - tw;
 					headClient.setBounds(xloc, yloc, carea, clsize.y);
 				}
@@ -387,7 +389,6 @@ public class FormHeading extends Canvas {
 		private IMessage[] messages;
 		private Hyperlink messageHyperlink;
 		private ListenerList<IHyperlinkListener> listeners;
-		private Color fg;
 		private int fontHeight = -1;
 		private int fontBaselineHeight = -1;
 
@@ -571,24 +572,29 @@ public class FormHeading extends Canvas {
 		}
 
 		public void setForeground(Color fg) {
-			this.fg = fg;
 			updateForeground();
 		}
 
 		private void updateForeground() {
 			Color theFg;
+			String cssClassName = null;
+			ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
 
 			switch (messageType) {
 			case IMessageProvider.ERROR:
-				theFg = getDisplay().getSystemColor(SWT.COLOR_RED);
+				theFg = colorRegistry.get("org.eclipse.ui.workbench.FORM_HEADING_ERROR_COLOR"); //$NON-NLS-1$
+				cssClassName = "MPartFormHeaderCLabelError"; //$NON-NLS-1$
 				break;
 			case IMessageProvider.WARNING:
-				theFg = getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW);
+				theFg = colorRegistry.get("org.eclipse.ui.workbench.FORM_HEADING_WARNING_COLOR"); //$NON-NLS-1$
+				cssClassName = "MPartFormHeaderCLabelWarning"; //$NON-NLS-1$
 				break;
 			default:
-				theFg = fg;
+				theFg = colorRegistry.get("org.eclipse.ui.workbench.FORM_HEADING_INFO_COLOR"); //$NON-NLS-1$
+				cssClassName = "MPartFormHeaderCLabelInfo"; //$NON-NLS-1$
 			}
 			getMessageControl().setForeground(theFg);
+			WidgetElement.setCSSClass(getMessageControl(), cssClassName);
 		}
 	}
 

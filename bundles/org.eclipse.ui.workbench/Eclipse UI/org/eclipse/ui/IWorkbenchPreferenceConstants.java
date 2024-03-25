@@ -674,4 +674,35 @@ public interface IWorkbenchPreferenceConstants {
 	 */
 	String RESOURCE_RENAME_MODE_DIALOG = "dialog"; //$NON-NLS-1$
 
+	/**
+	 * Preference for the <i>advised</i> time (in ms) after a closed browser hover
+	 * is to be disposed.
+	 * <p>
+	 * The integer default value for this preference is: <code>-1</code>.
+	 * Non-positive values indicate closed hovers are not disposed automatically.
+	 * </p>
+	 *
+	 * @since 3.129
+	 */
+	String DISPOSE_CLOSED_BROWSER_HOVER_TIMEOUT = "disposeClosedBrowserHoverTimeout"; //$NON-NLS-1$
+
+	/**
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+	 * of a work in progress. There is no guarantee that this API will work or that
+	 * it will remain the same. Please do not use this API without consulting with
+	 * the API development team.
+	 * </p>
+	 *
+	 * This preference specifies the limit for number of children that can be shown
+	 * per parent element without expanding.
+	 * <p>
+	 * This preference is an <code>int</code> value that defines how many child
+	 * elements a parent viewer element can show before workbench will create
+	 * "expand" item that hides all remaining child elements.
+	 * </p>
+	 *
+	 * @since 3.130
+	 */
+	String LARGE_VIEW_LIMIT = "largeViewLimit"; //$NON-NLS-1$
 }

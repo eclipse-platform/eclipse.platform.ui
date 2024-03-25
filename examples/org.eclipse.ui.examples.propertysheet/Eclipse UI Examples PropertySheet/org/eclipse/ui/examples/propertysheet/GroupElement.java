@@ -83,7 +83,7 @@ public class GroupElement extends OrganizationElement {
 	/**
 	 * Creates a new <code>UserElement</code>
 	 *
-	 * @param the name of the user element
+	 * @param name the name of the user element
 	 */
 	public UserElement createUser(String name) {
 		UserElement newUser = new UserElement(name, this);

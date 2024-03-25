@@ -32,7 +32,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class OpenCloseEditorTest extends BasicPerformanceTest {
 
-	private String extension;
+	private final String extension;
 
 	@Parameters
 	public static Collection<Object[]> data() {

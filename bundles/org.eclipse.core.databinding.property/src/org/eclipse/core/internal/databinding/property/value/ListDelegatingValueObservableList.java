@@ -50,7 +50,7 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 	private DelegatingValueProperty<S, E> detailProperty;
 	private DelegatingCache<S, T, E> cache;
 
-	private IListChangeListener<T> masterListener = new IListChangeListener<T>() {
+	private IListChangeListener<T> masterListener = new IListChangeListener<>() {
 		@Override
 		public void handleListChange(ListChangeEvent<? extends T> event) {
 			if (isDisposed())
@@ -84,10 +84,6 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 
 	private IStaleListener staleListener = staleEvent -> fireStale();
 
-	/**
-	 * @param masterList
-	 * @param valueProperty
-	 */
 	public ListDelegatingValueObservableList(IObservableList<T> masterList,
 			DelegatingValueProperty<S, E> valueProperty) {
 		super(masterList.getRealm());

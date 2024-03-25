@@ -54,10 +54,6 @@ public class SupportTray extends DialogTray implements ISelectionChangedListener
 
 	private Map<Object, Object> dialogState;
 
-	/**
-	 * @param dialogState
-	 * @param listener
-	 */
 	public SupportTray(Map<Object, Object> dialogState, Listener listener) {
 		this.closeListener = listener;
 		this.dialogState = dialogState;

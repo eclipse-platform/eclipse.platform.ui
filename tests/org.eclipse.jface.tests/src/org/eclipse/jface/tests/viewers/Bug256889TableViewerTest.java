@@ -24,6 +24,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.junit.Before;
+import org.junit.Test;
 
 public class Bug256889TableViewerTest extends ViewerTestCase {
 
@@ -33,17 +35,9 @@ public class Bug256889TableViewerTest extends ViewerTestCase {
 
 	private int rowcounter = 0;
 
-	private List<String> model = new ArrayList<>();
+	private final List<String> model = new ArrayList<>();
 	private Table table;
 	private TableViewer tableViewer;
-
-	/**
-	 * @param name
-	 */
-	public Bug256889TableViewerTest(String name) {
-		super(name);
-		initModel();
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -117,7 +111,8 @@ public class Bug256889TableViewerTest extends ViewerTestCase {
 		fShell.setSize(300, 1000);
 	}
 
-	private void initModel() {
+	@Before
+	public void initModel() {
 		this.rowcounter = 0;
 		getModel().clear();
 		addElementsToModel();
@@ -153,6 +148,7 @@ public class Bug256889TableViewerTest extends ViewerTestCase {
 		return this.model;
 	}
 
+	@Test
 	public void testBug256889() {
 		table.selectAll();
 		tableViewer.getStructuredSelection();

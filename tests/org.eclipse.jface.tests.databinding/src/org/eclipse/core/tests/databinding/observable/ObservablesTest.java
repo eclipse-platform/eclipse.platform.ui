@@ -14,8 +14,8 @@
 
 package org.eclipse.core.tests.databinding.observable;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +30,7 @@ import org.junit.Test;
 public class ObservablesTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testUnmodifableObservableListExceptions() throws Exception {
-		try {
-			Observables.unmodifiableObservableList(null);
-			fail("IllegalArgumentException should have been thrown.");
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> Observables.unmodifiableObservableList(null));
 	}
 
 	@Test
@@ -45,10 +41,6 @@ public class ObservablesTest extends AbstractDefaultRealmTestCase {
 	}
 
 	private static class ObservableListStub extends ObservableList<Object> {
-		/**
-		 * @param wrappedList
-		 * @param elementType
-		 */
 		protected ObservableListStub(List<Object> wrappedList, Object elementType) {
 			super(wrappedList, elementType);
 		}

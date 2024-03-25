@@ -15,15 +15,9 @@
 package org.eclipse.ui.internal.ide.application.dialogs;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.widgets.LabelFactory;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.dialogs.StartupPreferencePage;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -32,34 +26,26 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 /**
  * Extends the Startup and Shutdown preference page with IDE-specific settings.
  *
- * Note: want IDE settings to appear in main Workbench preference page (via subclassing),
- *   however the superclass, StartupPreferencePage, is internal
+ * Note: want IDE settings to appear in main Workbench preference page (via
+ * subclassing), however the superclass, StartupPreferencePage, is internal
+ *
  * @since 3.0
  */
 public class IDEStartupPreferencePage extends StartupPreferencePage implements IWorkbenchPreferencePage {
 
 	private Button refreshButton;
-
 	private Button showProblemsButton;
-
 	private Button exitPromptButton;
 
 	@Override
-	protected Control createContents(Composite parent) {
-
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
-
-		Composite composite = createComposite(parent);
-
-		createRefreshWorkspaceOnStartupPref(composite);
-		createProblemsViewOnStartupPref(composite);
-		createExitPromptPref(composite);
-
-		LabelFactory.newLabel(SWT.NONE).layoutData(new GridData()).create(composite);
-
-		createEarlyStartupSelection(composite);
-
-		return composite;
+	protected void createExtraContent(Composite composite) {
+		refreshButton = createCheckBox(IDEWorkbenchMessages.StartupPreferencePage_refreshButton,
+				IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP, composite);
+		showProblemsButton = createCheckBox(IDEWorkbenchMessages.StartupPreferencePage_showProblemsButton,
+				IDEInternalPreferences.SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP, composite);
+		exitPromptButton = createCheckBox(IDEWorkbenchMessages.StartupPreferencePage_exitPromptButton,
+				IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, composite);
+		super.createExtraContent(composite);
 	}
 
 	/**
@@ -69,16 +55,12 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements I
 	protected void performDefaults() {
 		IPreferenceStore store = getIDEPreferenceStore();
 
-		refreshButton
-				.setSelection(store
-						.getDefaultBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
+		refreshButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
 
 		showProblemsButton.setSelection(
 				store.getDefaultBoolean(IDEInternalPreferences.SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP));
 
-		exitPromptButton
-				.setSelection(store
-						.getDefaultBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
+		exitPromptButton.setSelection(store.getDefaultBoolean(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
 
 		super.performDefaults();
 	}
@@ -91,50 +73,27 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements I
 		IPreferenceStore store = getIDEPreferenceStore();
 
 		// store the refresh workspace on startup setting
-		store.setValue(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP,
-				refreshButton.getSelection());
+		store.setValue(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
 
 		store.setValue(IDEInternalPreferences.SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP,
 				showProblemsButton.getSelection());
 
 		// store the exit prompt on last window close setting
-		store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW,
-				exitPromptButton.getSelection());
+		store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, exitPromptButton.getSelection());
 
 		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
 
 		return super.performOk();
 	}
 
-	protected void createRefreshWorkspaceOnStartupPref(Composite composite) {
-		refreshButton = new Button(composite, SWT.CHECK);
-		refreshButton.setText(IDEWorkbenchMessages.StartupPreferencePage_refreshButton);
-		refreshButton.setFont(composite.getFont());
-		refreshButton.setSelection(getIDEPreferenceStore().getBoolean(
-				IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP));
-	}
-
-	protected void createProblemsViewOnStartupPref(Composite composite) {
-		showProblemsButton = new Button(composite, SWT.CHECK);
-		showProblemsButton.setText(IDEWorkbenchMessages.StartupPreferencePage_showProblemsButton);
-		showProblemsButton.setFont(composite.getFont());
-		showProblemsButton
-				.setSelection(getIDEPreferenceStore()
-						.getBoolean(IDEInternalPreferences.SHOW_PROBLEMS_VIEW_DECORATIONS_ON_STARTUP));
-	}
-
-	protected void createExitPromptPref(Composite composite) {
-		exitPromptButton = new Button(composite, SWT.CHECK);
-		exitPromptButton.setText(IDEWorkbenchMessages.StartupPreferencePage_exitPromptButton);
-		exitPromptButton.setFont(composite.getFont());
-		exitPromptButton.setSelection(getIDEPreferenceStore().getBoolean(
-				IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW));
+	private Button createCheckBox(String text, String preferenceKey, Composite composite) {
+		return createCheckBox(text, getIDEPreferenceStore().getBoolean(preferenceKey), composite);
 	}
 
 	/**
 	 * Returns the IDE preference store.
 	 */
-	protected IPreferenceStore getIDEPreferenceStore() {
+	private static IPreferenceStore getIDEPreferenceStore() {
 		return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 	}
 }

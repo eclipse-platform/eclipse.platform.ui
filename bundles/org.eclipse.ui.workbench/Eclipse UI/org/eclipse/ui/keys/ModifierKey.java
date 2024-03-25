@@ -36,7 +36,7 @@ import org.eclipse.jface.util.Util;
  * @since 3.0
  * @see org.eclipse.ui.keys.NaturalKey
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2024-03")
 public final class ModifierKey extends Key {
 
 	/**

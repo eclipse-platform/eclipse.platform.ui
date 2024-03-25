@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * @since 3.3
- *
  */
 public class SWTVetoableValueDecorator extends DecoratingVetoableValue<String> implements ISWTObservableValue<String> {
 	private Widget widget;
@@ -42,11 +41,6 @@ public class SWTVetoableValueDecorator extends DecoratingVetoableValue<String> i
 
 	private Listener disposeListener = event -> SWTVetoableValueDecorator.this.dispose();
 
-	/**
-	 * @param widget
-	 * @param property
-	 * @param decorated
-	 */
 	@SuppressWarnings("unchecked")
 	public SWTVetoableValueDecorator(Widget widget,
 			WidgetStringValueProperty<? extends Widget> property, IObservableValue<String> decorated) {

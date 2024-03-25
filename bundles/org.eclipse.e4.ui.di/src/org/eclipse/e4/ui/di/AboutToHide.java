@@ -24,10 +24,13 @@ import java.lang.annotation.Target;
  * Use this annotation to act on to the list of dynamically shown entries within
  * a DynamicMenuContributionItem. Usage in contribution class:
  * <p>
+ * <code>
  * {@literal @}AboutToHide<br>
  * public void aboutToHide(List&lt;MMenuElement&gt; items) { }
+ * </code>
+ * <p>
+ * See {@code org.eclipse.jface.action.IMenuListener2}
  *
- * @see org.eclipse.jface.action.IMenuListener2
  * @since 1.0
  */
 @Documented

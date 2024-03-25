@@ -83,9 +83,6 @@ public class TreeAddTest extends TreeTest {
 
 	/**
 	 * Run the test for one of the fast insertions.
-	 *
-	 * @param count
-	 * @throws CoreException
 	 */
 	protected void doTestAdd(final int increment, final int total,final boolean preSort)
 			throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,11 +10,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - add support for stream() method
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * A selection containing elements.
@@ -57,4 +60,15 @@ public interface IStructuredSelection extends ISelection, Iterable {
 	 * @return the selected elements as a list
 	 */
 	public List toList();
+
+	/**
+	 * Returns the elements in this selection as a <code>Stream</code>.
+	 *
+	 * @return the selected elements as a stream
+	 * @since 3.32
+	 */
+	@SuppressWarnings("unchecked")
+	default Stream<Object> stream() {
+		return StreamSupport.stream(spliterator(), false);
+	}
 }

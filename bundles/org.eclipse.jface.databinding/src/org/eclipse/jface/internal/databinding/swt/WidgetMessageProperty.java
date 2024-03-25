@@ -23,15 +23,11 @@ import org.eclipse.swt.widgets.Widget;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class WidgetMessageProperty<S extends Widget> extends WidgetDelegatingValueProperty<S, String> {
 	private IValueProperty<S, String> text;
 	private IValueProperty<S, String> toolTip;
 
-	/**
-	 *
-	 */
 	public WidgetMessageProperty() {
 		super(String.class);
 	}

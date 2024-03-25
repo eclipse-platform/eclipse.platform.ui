@@ -33,10 +33,6 @@ public class SWTObservableValueDecorator<T> extends DecoratingObservableValue<T>
 		implements ISWTObservableValue<T>, Listener {
 	private Widget widget;
 
-	/**
-	 * @param decorated
-	 * @param widget
-	 */
 	public SWTObservableValueDecorator(IObservableValue<T> decorated, Widget widget) {
 		super(decorated, true);
 		this.widget = widget;

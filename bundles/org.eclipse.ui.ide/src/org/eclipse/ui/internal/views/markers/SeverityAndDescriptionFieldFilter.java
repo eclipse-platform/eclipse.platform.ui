@@ -24,7 +24,6 @@ import org.eclipse.ui.views.markers.MarkerFieldFilter;
  * description field.
  *
  * @since 3.4
- *
  */
 public abstract class SeverityAndDescriptionFieldFilter extends DescriptionFieldFilter {
 
@@ -83,8 +82,6 @@ public abstract class SeverityAndDescriptionFieldFilter extends DescriptionField
 	/**
 	 * Compare the selected severity and the severity of the marker to see if
 	 * they match
-	 *
-	 * @param markerSeverity
 	 */
 	protected boolean checkSeverity(int markerSeverity) {
 		// Convert from the marker to the filter

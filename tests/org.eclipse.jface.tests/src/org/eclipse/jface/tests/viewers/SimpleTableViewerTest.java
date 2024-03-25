@@ -14,6 +14,8 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -28,21 +30,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.tests.harness.util.Mocks;
+import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class SimpleTableViewerTest extends ViewerTestCase {
 
 	private TableViewer tableViewer;
-
-	/**
-	 * @param name
-	 */
-	public SimpleTableViewerTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -51,6 +46,7 @@ public class SimpleTableViewerTest extends ViewerTestCase {
 		return tableViewer;
 	}
 
+	@Test
 	public void testNullLabel() {
 		tableViewer.setLabelProvider(new ITableLabelProvider() {
 
@@ -83,6 +79,7 @@ public class SimpleTableViewerTest extends ViewerTestCase {
 		});
 	}
 
+	@Test
 	public void testLabelProviderListeners() {
 		Table table = tableViewer.getTable();
 		new TableColumn(table, SWT.NONE);
@@ -112,6 +109,7 @@ public class SimpleTableViewerTest extends ViewerTestCase {
 		Mocks.verify(mockLabelProvider);
 	}
 
+	@Test
 	public void testLabelProviderListenersWithColumn() {
 		Table table = tableViewer.getTable();
 		new TableColumn(table, SWT.NONE);
@@ -139,6 +137,7 @@ public class SimpleTableViewerTest extends ViewerTestCase {
 		assertEquals(0, listenerCounter[0]);
 	}
 
+	@Test
 	public void testColumnLabelProviderListeners() {
 		Table table = tableViewer.getTable();
 		new TableColumn(table, SWT.NONE);
@@ -166,6 +165,7 @@ public class SimpleTableViewerTest extends ViewerTestCase {
 		assertEquals(1, disposeCounter[0]);
 	}
 
+	@Test
 	public void testCellLabelProviderDispose() {
 		final int[] disposeCounter = { 0 };
 		tableViewer.setLabelProvider(new ColumnLabelProvider() {

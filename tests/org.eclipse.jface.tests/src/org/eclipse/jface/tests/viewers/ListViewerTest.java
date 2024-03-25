@@ -17,7 +17,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assume.assumeFalse;
 
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ListViewer;
@@ -29,12 +33,9 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.junit.Test;
 
 public class ListViewerTest extends StructuredViewerTest {
-
-	public ListViewerTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -56,10 +57,7 @@ public class ListViewerTest extends StructuredViewerTest {
 		return list.getItem(at);
 	}
 
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(ListViewerTest.class);
-	}
-
+	@Test
 	public void testInsert() {
 		ListViewer v = ((ListViewer)fViewer);
 		TestElement element = new TestElement(fModel, fRootElement);
@@ -84,12 +82,10 @@ public class ListViewerTest extends StructuredViewerTest {
 		v.remove(element1);
 	}
 
+	@Test
 	public void testRevealBug69076() {
-		// TODO remove the Mac OS check when SWT has fixed the bug in List.java
-		// see bug 116105
-		if (Util.isLinux()) {
-			return;
-		}
+		assumeFalse("See bug 116105", Util.isLinux());
+
 		fViewer = null;
 		if (fShell != null) {
 			fShell.dispose();
@@ -120,9 +116,8 @@ public class ListViewerTest extends StructuredViewerTest {
 
 	/**
 	 * Asserts the ability to refresh a List that contains no selection without losing vertically scrolled state.
-	 *
-	 * @throws Exception
 	 */
+	@Test
 	public void testRefreshBug141435() throws Exception {
 		fViewer = null;
 		if (fShell != null) {
@@ -163,6 +158,7 @@ public class ListViewerTest extends StructuredViewerTest {
 		}
 	}
 
+	@Test
 	public void testSelectionRevealBug177619() throws Exception {
 		TestElement model = TestElement.createModel(1, 100);
 		fViewer.setInput(model);
@@ -174,6 +170,7 @@ public class ListViewerTest extends StructuredViewerTest {
 		});
 	}
 
+	@Test
 	public void testSelectionNoRevealBug177619() throws Exception {
 		TestElement model = TestElement.createModel(1, 100);
 		fViewer.setInput(model);

@@ -141,8 +141,6 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	}
 
 	/**
-	 * @param ji
-	 * @param job
 	 * @return <code>true</code> if Action or Command is executed
 	 */
 	private boolean execute(JobInfo ji, Job job) {
@@ -177,9 +175,6 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		return false;
 	}
 
-	/**
-	 * @param ji
-	 */
 	private void removeTopElement(JobInfo ji) {
 		JobTreeElement topElement = ji.getParent();
 		if (topElement == null) {
@@ -220,8 +215,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 				}
 			}
 			if (percentCount > 0) {
-				bar.beginTask(100);
-				bar.worked(percentSum / percentCount); // average
+				bar.setWork(100, percentSum / percentCount); // average
 				AnimationManager.getInstance().setAnimated(true); // reschedule
 			} else {
 				if (jobInfos.length > 0) {
@@ -319,7 +313,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		}
 		top.setLayout(gl);
 
-		bar = new ProgressIndicator(top, flags);		
+		bar = new ProgressIndicator(top, flags);
 		bar.setVisible(false);
 		bar.addMouseListener(mouseListener);
 

@@ -31,7 +31,6 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * This class is not intended to be subclassed by clients.
  *
  * @since 3.3
- *
  */
 abstract class AbstractCopyOrMoveResourcesOperation extends
 		AbstractResourcesOperation {
@@ -63,7 +62,6 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	 *            null paths, and must be the same length as the resources array.
 	 * @param label
 	 *            the label of the operation
-	 *
 	 */
 	AbstractCopyOrMoveResourcesOperation(IResource[] resources,
 			IPath[] destinationPaths, String label) {

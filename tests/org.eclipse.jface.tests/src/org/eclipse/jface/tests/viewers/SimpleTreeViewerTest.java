@@ -15,6 +15,9 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -31,21 +34,14 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class SimpleTreeViewerTest extends ViewerTestCase {
 
 	private TreeViewer treeViewer;
-
-	/**
-	 * @param name
-	 */
-	public SimpleTreeViewerTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -54,12 +50,14 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		return treeViewer;
 	}
 
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testSetTreePathViewerSorterOnNullInput() {
 		treeViewer.setInput(null);
 		treeViewer.setSorter(new TreePathViewerSorter());
 	}
 
+	@Test
 	public void testNullLabel() {
 		treeViewer.setLabelProvider(new ITableLabelProvider() {
 
@@ -104,6 +102,7 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		}
 	}
 
+	@Test
 	public void testBug184441() {
 		MyViewerSorter sorter = new MyViewerSorter();
 		treeViewer.setComparator(sorter);
@@ -118,6 +117,7 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		treeViewer.removeSelectionChangedListener(listener);
 	}
 
+	@Test
 	public void testBug184712() {
 		class TableAndTreeLabelProvider extends LabelProvider implements ITableLabelProvider {
 			@Override
@@ -139,6 +139,7 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		assertEquals("right", treeViewer.getTree().getItem(0).getText());
 	}
 
+	@Test
 	public void test327004() {
 		treeViewer.setInput(null);
 		treeViewer.setContentProvider(new TreeNodeContentProvider());

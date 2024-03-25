@@ -15,21 +15,26 @@
 
 package org.eclipse.ui.tests.commands;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.handlers.RegistryToggleState;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -38,24 +43,17 @@ import org.junit.runners.MethodSorters;
 /**
  * @since 3.5
  * @author Prakash G.R.
- *
  */
 @RunWith(JUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore("broke during e4 transition and still need adjustments")
-public class ToggleStateTest extends UITestCase {
+public class ToggleStateTest {
 
+	private final IWorkbench fWorkbench = PlatformUI.getWorkbench();
 	private ICommandService commandService;
 	private IHandlerService handlerService;
 
-	public ToggleStateTest() {
-		super(ToggleStateTest.class.getName());
-	}
-
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		commandService = fWorkbench.getService(ICommandService.class);
 		handlerService = fWorkbench.getService(IHandlerService.class);
 	}

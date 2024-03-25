@@ -34,10 +34,6 @@ public class CascadingTheme extends EventManager implements ITheme {
 
 	private IPropertyChangeListener listener = this::fire;
 
-	/**
-	 * @param colorRegistry
-	 * @param fontRegistry
-	 */
 	public CascadingTheme(ITheme currentTheme, CascadingColorRegistry colorRegistry,
 			CascadingFontRegistry fontRegistry) {
 		this.currentTheme = currentTheme;
@@ -48,9 +44,6 @@ public class CascadingTheme extends EventManager implements ITheme {
 		colorRegistry.addListener(listener);
 	}
 
-	/**
-	 * @param event
-	 */
 	protected void fire(PropertyChangeEvent event) {
 		for (Object listener : getListeners()) {
 			((IPropertyChangeListener) listener).propertyChange(event);

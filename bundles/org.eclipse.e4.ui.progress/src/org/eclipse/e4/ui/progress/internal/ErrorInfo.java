@@ -36,7 +36,6 @@ public class ErrorInfo extends JobTreeElement {
 	/**
 	 * Create a new instance of the receiver.
 	 *
-	 * @param status
 	 * @param job
 	 *            The Job to create
 	 */

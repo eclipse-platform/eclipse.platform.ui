@@ -76,7 +76,7 @@ public class TrimmedWindowImpl extends WindowImpl implements MTrimmedWindow {
 	@Override
 	public List<MTrimBar> getTrimBars() {
 		if (trimBars == null) {
-			trimBars = new EObjectContainmentEList<MTrimBar>(MTrimBar.class, this,
+			trimBars = new EObjectContainmentEList<>(MTrimBar.class, this,
 					BasicPackageImpl.TRIMMED_WINDOW__TRIM_BARS);
 		}
 		return trimBars;

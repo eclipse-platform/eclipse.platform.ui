@@ -44,7 +44,6 @@ import org.eclipse.ui.navigator.resources.ProjectExplorer;
  * Provides children and parents for IWorkingSets.
  *
  * @since 3.2.1
- *
  */
 public class WorkingSetsContentProvider implements ICommonContentProvider {
 

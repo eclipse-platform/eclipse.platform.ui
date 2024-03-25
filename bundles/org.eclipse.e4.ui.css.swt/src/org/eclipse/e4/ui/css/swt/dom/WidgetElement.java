@@ -29,7 +29,6 @@ import org.w3c.dom.NodeList;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Widget}.
- *
  */
 public class WidgetElement extends ElementAdapter implements NodeList {
 
@@ -119,7 +118,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 	/**
 	 * Convenience method for setting the CSS engine responsible for a display.
 	 *
-	 * @param widget
+	 * @param display
 	 *            SWT display which is styled by an engine
 	 * @param engine
 	 *            Engine to be associated with the display
@@ -144,8 +143,6 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 
 	/**
 	 * Compute local name.
-	 *
-	 * @return
 	 */
 	protected String computeLocalName() {
 		// The localName is simple class name
@@ -164,8 +161,6 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 
 	/**
 	 * Compute namespaceURI.
-	 *
-	 * @return
 	 */
 	protected String computeNamespaceURI() {
 		// The NamespaceURI is package name
@@ -182,7 +177,6 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 
 	/**
 	 * Compute static pseudo instances.
-	 *
 	 */
 	protected void computeStaticPseudoInstances() {
 
@@ -190,8 +184,6 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 
 	/**
 	 * Compute attribute SWT style.
-	 *
-	 * @return
 	 */
 	protected String computeAttributeSWTStyle() {
 		return SWTStyleHelpers.getSWTWidgetStyleAsString(getWidget());

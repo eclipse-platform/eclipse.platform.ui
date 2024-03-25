@@ -125,6 +125,7 @@ public class TabbedPropertyRegistryClassSectionFilter {
 
 		ArrayList<String> classTypes = getClassTypes(inputClass);
 
+		@SuppressWarnings("unchecked")
 		List<String> sectionInputTypes = descriptor.getInputTypes();
 		for (String type : sectionInputTypes) {
 			if (classTypes.contains(type)) {

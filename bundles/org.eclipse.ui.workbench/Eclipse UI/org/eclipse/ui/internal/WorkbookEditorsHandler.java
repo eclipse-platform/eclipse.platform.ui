@@ -20,17 +20,15 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -54,13 +52,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.dialogs.SearchPattern;
 import org.eclipse.ui.dialogs.StyledStringHighlighter;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.themes.ITheme;
 
 /**
  * Shows a list of open editor and parts in the current or last active workbook.
  *
  * @since 3.4
- *
  */
 public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
@@ -145,9 +143,17 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * Example with differing segments:
 	 *
 	 * <pre>
-	 * /project/test1/foo/bar/file -> test1/foo/bar/file
-	 * /project/test2/foo/bar/file -> test2/foo/bar/file
+	 * /project/test1/foo/bar/file -> test1/.../file
+	 * /project/test2/foo/bar/file -> test2/.../file
 	 * /project/file               -> project/file
+	 * </pre>
+	 *
+	 * Example with files in root (Windows):
+	 *
+	 * <pre>
+	 * C:\project\test1\foo\bar\file -> bar\file
+	 * D:\file -> D:\file
+	 * C:\file -> C:\file
 	 * </pre>
 	 *
 	 * @param editorReferences the references for which the display label should be
@@ -156,46 +162,56 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 */
 	private Map<EditorReference, String> generateColumnLabelTexts(List<EditorReference> editorReferences) {
 		Map<EditorReference, String> editorReferenceLabelTexts = new HashMap<>(editorReferences.size());
-		Map<String, List<Entry<EditorReference, IPath>>> collisionsMap = new HashMap<>(editorReferences.size());
-		editorReferences.forEach(editorReference -> {
-			try {
-				IPathEditorInput iPathEditorInput = Adapters.adapt(editorReference.getEditorInput(),
-						IPathEditorInput.class);
-				if (iPathEditorInput != null && iPathEditorInput.getPath() != null) {
-					IPath path = iPathEditorInput.getPath();
+		Map<String, List<EditorReference>> collisionsMap = editorReferences.stream()
+				.collect(Collectors.groupingBy(r -> Util.safeString(r.getTitle())));
 
-					List<Entry<EditorReference, IPath>> referencesWithSameTitle = collisionsMap
-							.get(editorReference.getTitle());
-					if (referencesWithSameTitle == null) {
-						referencesWithSameTitle = new ArrayList<>();
-						collisionsMap.put(editorReference.getTitle(), referencesWithSameTitle);
-					}
-
-					referencesWithSameTitle.add(Map.entry(editorReference, path));
-				} else {
-					// we only detect collisions for IPathEditorInput
-					editorReferenceLabelTexts.put(editorReference, getWorkbenchPartReferenceText(editorReference));
-				}
-			} catch (PartInitException e) {
-				// This should never happen as all the parts are initialized?
-				String message = "Expected parts to be initialized"; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
-				WorkbenchPlugin.log(message, status);
-			}
-		});
-
-		for (List<Entry<EditorReference, IPath>> groupedEditorReferences : collisionsMap.values()) {
-			if (groupedEditorReferences.size() == 1) {
-				EditorReference editorReference = groupedEditorReferences.get(0).getKey();
-				editorReferenceLabelTexts.put(editorReference, getWorkbenchPartReferenceText(editorReference));
+		for (Entry<String, List<EditorReference>> groupedEditorReferences : collisionsMap.entrySet()) {
+			if (groupedEditorReferences.getValue().size() == 1) {
+				groupedEditorReferences.getValue().stream().forEach(editorReference -> editorReferenceLabelTexts
+						.put(editorReference, getWorkbenchPartReferenceText(editorReference)));
 			} else {
-				Set<Integer> differingMaxSegmentsCounter = new HashSet<>();
-				List<Integer> maxMatchingSegmentsList = new ArrayList<>(groupedEditorReferences.size());
-				for (Entry<EditorReference, IPath> entry : groupedEditorReferences) {
+				List<Entry<EditorReference, IPath>> refsToMakeDistinguishableViaPathSegments = new ArrayList<>();
+				for (EditorReference editorReference : groupedEditorReferences.getValue()) {
+					try {
+						// we only detect collisions for IPathEditorInput and only if the name used by
+						// the editor reference is the filename. Otherwise, this would break scenarios
+						// where editors override the name used, e.g. for virtual file systems using
+						// org.eclipse.core.internal.filesystem.FileCache
+						IPathEditorInput iPathEditorInput = Adapters.adapt(editorReference.getEditorInput(),
+								IPathEditorInput.class);
+						IPath path;
+						if (iPathEditorInput != null && (path = iPathEditorInput.getPath()) != null
+								&& groupedEditorReferences.getKey().equals(path.lastSegment())) {
+							refsToMakeDistinguishableViaPathSegments.add(Map.entry(editorReference, path));
+						} else {
+							editorReferenceLabelTexts.put(editorReference,
+									getWorkbenchPartReferenceText(editorReference));
+						}
+					} catch (PartInitException e) {
+						// This should never happen as all the parts are initialized?
+						String message = "Expected parts to be initialized"; //$NON-NLS-1$
+						final IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+						WorkbenchPlugin.log(message, status);
+					}
+				}
+
+				if (refsToMakeDistinguishableViaPathSegments.isEmpty()) {
+					continue;
+				}
+
+				if (allReferencesToSamePath(refsToMakeDistinguishableViaPathSegments)) {
+					refsToMakeDistinguishableViaPathSegments.stream().forEach(
+							e -> editorReferenceLabelTexts.put(e.getKey(), getWorkbenchPartReferenceText(e.getKey())));
+					continue;
+				}
+
+				List<Integer> maxMatchingSegmentsList = new ArrayList<>(
+						refsToMakeDistinguishableViaPathSegments.size());
+				for (Entry<EditorReference, IPath> entry : refsToMakeDistinguishableViaPathSegments) {
 					IPath path = entry.getValue();
 					int maxMatchingSegments = -1;
-					for (int i = 0; i < groupedEditorReferences.size(); i++) {
-						IPath currentPath = groupedEditorReferences.get(i).getValue();
+					for (int i = 0; i < refsToMakeDistinguishableViaPathSegments.size(); i++) {
+						IPath currentPath = refsToMakeDistinguishableViaPathSegments.get(i).getValue();
 						if (currentPath.equals(path)) {
 							continue;
 						}
@@ -203,22 +219,34 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 						maxMatchingSegments = maxMatchingSegments < currentMatchingSegments ? currentMatchingSegments
 								: maxMatchingSegments;
 					}
-					differingMaxSegmentsCounter.add(maxMatchingSegments);
 					maxMatchingSegmentsList.add(maxMatchingSegments);
 				}
 
 				for (int i = 0; i < maxMatchingSegmentsList.size(); i++) {
-					EditorReference editorReference = groupedEditorReferences.get(i).getKey();
+					EditorReference editorReference = refsToMakeDistinguishableViaPathSegments.get(i).getKey();
 					Integer maxMatchingSegment = maxMatchingSegmentsList.get(i);
-					IPath path = groupedEditorReferences.get(i).getValue();
+					IPath path = refsToMakeDistinguishableViaPathSegments.get(i).getValue();
 
-					String labelText = generateLabelText(editorReference, path, maxMatchingSegment,
-							differingMaxSegmentsCounter.size() == 1 && maxMatchingSegment != 0);
+					String labelText = generateLabelText(editorReference, path, maxMatchingSegment);
 					editorReferenceLabelTexts.put(editorReference, labelText);
 				}
 			}
 		}
 		return editorReferenceLabelTexts;
+	}
+
+	/**
+	 * Usually it's not possible to open a file in multiple editors. But when an
+	 * editor gets split (Toggle Split Editor) or cloned (Clone Editor) then
+	 * multiples editor references can point to the same path.
+	 *
+	 * @param groupedEditorReferences the editor references grouped by matching file
+	 *                                name
+	 * @return if all references point to the same path
+	 */
+	private boolean allReferencesToSamePath(List<Entry<EditorReference, IPath>> groupedEditorReferences) {
+		return groupedEditorReferences.stream().map(Entry::getValue)
+				.allMatch(groupedEditorReferences.get(0).getValue()::equals);
 	}
 
 	/**
@@ -231,27 +259,24 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * @param maxMatchingSegment      the maximal amount of sections this reference
 	 *                                shares with a conflicting reference, including
 	 *                                the file itself
-	 * @param omitMaxMatchingSegments if the match matching segments should be
-	 *                                omitted from the label
 	 * @return the final label text for the editor reference
 	 */
 	private String generateLabelText(EditorReference editorReference, IPath path,
-			Integer maxMatchingSegment, boolean omitMaxMatchingSegments) {
+			Integer maxMatchingSegment) {
 		String labelText;
 		java.nio.file.Path npath = path.toFile().toPath();
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			npath = removeWindowsDriveLetter(npath);
-		}
-		if (omitMaxMatchingSegments) {
 			String lastSegment = npath.getFileName().toString();
-			StringBuilder pathSegment = new StringBuilder(getPathSegment(maxMatchingSegment, npath).toString());
-			if (maxMatchingSegment > 1) {
-				pathSegment = pathSegment.append(File.separator).append(OMMITED_PATH_SEGMENTS_SIGNIFIER);
+			StringBuilder prependedSegment = new StringBuilder();
+			if (maxMatchingSegment < npath.getNameCount()) {
+				prependedSegment = prependedSegment.append(getPathSegment(maxMatchingSegment, npath).toString());
+				if (maxMatchingSegment > 1) {
+					prependedSegment = prependedSegment.append(File.separator).append(OMMITED_PATH_SEGMENTS_SIGNIFIER);
+				}
+				prependedSegment = prependedSegment.append(File.separator);
+			} else {
+				prependedSegment = prependedSegment.append(npath.getRoot());
 			}
-			labelText = pathSegment.append(File.separator).append(lastSegment).toString();
-		} else {
-			labelText = npath.subpath(npath.getNameCount() - 1 - maxMatchingSegment, npath.getNameCount()).toString();
-		}
+			labelText = prependedSegment.append(lastSegment).toString();
 		return prependDirtyIndicationIfDirty(editorReference, labelText);
 	}
 
@@ -262,20 +287,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 */
 	private Path getPathSegment(Integer segmentIndex, java.nio.file.Path path) {
 		return path.subpath(path.getNameCount() - 1 - segmentIndex, path.getNameCount() - segmentIndex);
-	}
-
-	/**
-	 * Removed the Windows Drive letter from the Path.
-	 * <br/>
-	 * <br/>
-	 * Example:<br/>
-	 * {@code C:\git\project\file => git\project\file}
-	 * 
-	 * @param path Path to remove the Windows drive letter from
-	 * @return path Path without the Windows drive letter segment
-	 */
-	private java.nio.file.Path removeWindowsDriveLetter(java.nio.file.Path path) {
-		return path.getRoot().relativize(path);
 	}
 
 	/**
@@ -297,7 +308,6 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 * given path (device ids are ignored), comparing in decreasing segment number
 	 * order starting at the last segment.
 	 *
-	 * @param path
 	 * @param anotherPath the other path to compare with
 	 * @return the number of matching segments
 	 */

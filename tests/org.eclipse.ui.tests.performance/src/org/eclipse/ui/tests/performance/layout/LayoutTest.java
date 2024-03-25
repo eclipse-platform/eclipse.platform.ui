@@ -29,17 +29,14 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
  */
 public class LayoutTest extends BasicPerformanceTest {
 
-	private TestWidgetFactory widgetFactory;
+	private final TestWidgetFactory widgetFactory;
 
-	private int xIterations = 100;
+	private final int xIterations = 100;
 
-	private int yIterations = 10;
+	private final int yIterations = 10;
 
-	private boolean flushState;
+	private final boolean flushState;
 
-	/**
-	 * @param testName
-	 */
 	public LayoutTest(TestWidgetFactory widgetFactory, boolean flushState) {
 		super(widgetFactory.getName() + " layout("
 				+ (flushState ? "true" : "false") + ")");

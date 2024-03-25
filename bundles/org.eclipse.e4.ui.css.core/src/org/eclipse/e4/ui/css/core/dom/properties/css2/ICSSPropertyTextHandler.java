@@ -26,12 +26,6 @@ public interface ICSSPropertyTextHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the color of a text.
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	public void applyCSSPropertyColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;
@@ -39,12 +33,6 @@ public interface ICSSPropertyTextHandler extends ICSSPropertyHandler {
 	/**
 	 * Controls the letters in an element. Available values are : none
 	 * capitalize uppercase lowercase
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	public void applyCSSPropertyTextTransform(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;

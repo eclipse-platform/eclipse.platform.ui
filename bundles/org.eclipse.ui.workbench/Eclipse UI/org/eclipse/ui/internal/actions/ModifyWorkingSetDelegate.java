@@ -52,7 +52,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.3
- *
  */
 public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 		implements IExecutableExtension, IActionDelegate2 {
@@ -94,11 +93,6 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 
 		private IAdaptable[] selectedElements;
 
-		/**
-		 * @param set
-		 * @param selectedElements
-		 * @param add
-		 */
 		private ModifyAction(IWorkingSet set, IAdaptable[] selectedElements) {
 			super(set.getLabel(), IAction.AS_CHECK_BOX);
 			this.set = set;
@@ -138,9 +132,6 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 			refreshEnablement();
 		}
 
-		/**
-		 *
-		 */
 		private void refreshEnablement() {
 			selectionChanged(actionProxy, getSelection());
 		}
@@ -148,9 +139,6 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 
 	private IAction actionProxy;
 
-	/**
-	 *
-	 */
 	public ModifyWorkingSetDelegate() {
 	}
 

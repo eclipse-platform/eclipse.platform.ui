@@ -25,7 +25,6 @@ import java.util.Set;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 

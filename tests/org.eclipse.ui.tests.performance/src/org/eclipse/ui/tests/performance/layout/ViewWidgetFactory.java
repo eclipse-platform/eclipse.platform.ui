@@ -35,7 +35,7 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
  */
 public class ViewWidgetFactory extends TestWidgetFactory {
 
-	private String viewId;
+	private final String viewId;
 	private Control ctrl;
 	private IWorkbenchWindow window;
 

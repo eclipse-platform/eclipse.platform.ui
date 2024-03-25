@@ -37,7 +37,6 @@ import org.junit.runners.JUnit4;
  * Tests various sources keyed off the workbench window.
  *
  * @since 3.3
- *
  */
 @RunWith(JUnit4.class)
 @Ignore("Disabled due 544032, see also 485167")

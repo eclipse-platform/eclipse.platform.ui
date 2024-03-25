@@ -99,9 +99,10 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 	public void setMnemonics(String newMnemonics) {
 		String oldMnemonics = mnemonics;
 		mnemonics = newMnemonics;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ITEM__MNEMONICS, oldMnemonics,
 					mnemonics));
+		}
 	}
 
 	/**
@@ -303,8 +304,9 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (mnemonics: "); //$NON-NLS-1$

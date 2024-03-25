@@ -18,7 +18,6 @@ import org.eclipse.swt.custom.CCombo;
 
 /**
  * @since 3.3
- *
  */
 public class CComboEditableProperty extends WidgetBooleanValueProperty<CCombo> {
 	@Override

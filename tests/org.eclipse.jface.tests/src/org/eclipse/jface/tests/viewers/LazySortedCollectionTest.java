@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,31 +14,22 @@
 package org.eclipse.jface.tests.viewers;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 import org.eclipse.jface.viewers.deferred.LazySortedCollection;
+import org.junit.After;
 import org.junit.Assert;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.1
  */
-public class LazySortedCollectionTest extends TestCase {
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(LazySortedCollectionTest.class);
-	}
-
-	public static Test suite() {
-		return new TestSuite(LazySortedCollectionTest.class);
-	}
-
+public class LazySortedCollectionTest {
 	private TestComparator comparator;
 	private TestComparator comparisonComparator;
 
@@ -52,7 +43,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 * Please don't add or remove from this set -- we rely on the exact insertion
 	 * order to get full coverage from the removal tests.
 	 */
-	private String[] se = new String[] { "v00 aaaaaa", "v01 apple", "v02 booger", "v03 car", "v04 dog", "v05 elephant",
+	private final String[] se = new String[] { "v00 aaaaaa", "v01 apple", "v02 booger", "v03 car", "v04 dog", "v05 elephant",
 			"v06 fox", "v07 goose", "v08 hippie", "v09 iguana", "v10 junk", "v11 karma", "v12 lemon", "v13 mongoose",
 			"v14 noodle", "v15 opal", "v16 pumpkin", "v17 quirks", "v18 resteraunt", "v19 soap", "v20 timmy",
 			"v21 ugly", "v22 virus", "v23 wigwam", "v24 xerxes", "v25 yellow", "v26 zero" };
@@ -62,7 +53,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 * set -- we rely on the exact order in order to get full coverage for the
 	 * removal tests.
 	 */
-	private String[] elements = new String[] { se[19], se[7], se[6], se[1], se[20], se[8], se[0], se[23], se[17],
+	private final String[] elements = new String[] { se[19], se[7], se[6], se[1], se[20], se[8], se[0], se[23], se[17],
 			se[18], se[24], se[25], se[10], se[5], se[15], se[16], se[21], se[26], se[22], se[3], se[9], se[4], se[11],
 			se[12], se[13], se[14], se[2] };
 
@@ -72,10 +63,8 @@ public class LazySortedCollectionTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		System.out.println("--- " + getName());
-
+	@Before
+	public void setUp() throws Exception {
 		comparator = new TestComparator();
 		collection = new LazySortedCollection(comparator);
 		// Ensure a predictable tree structure
@@ -85,26 +74,19 @@ public class LazySortedCollectionTest extends TestCase {
 		comparisonCollection = new TreeSet<>(comparisonComparator);
 
 		addAll(elements);
-
-		super.setUp();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		System.out.println("Comparisons required by lazy collection: " + comparator.comparisons);
 		System.out.println("Comparisons required by reference implementation: " + comparisonComparator.comparisons);
 		System.out.println("");
-
-		super.tearDown();
 	}
 
 	/**
 	 * Computes the entries that are expected to lie in the given range. The result
 	 * is sorted.
 	 *
-	 * @param start
-	 * @param length
-	 * @return
 	 * @since 3.1
 	 */
 	private Object[] computeExpectedElementsInRange(int start, int length) {
@@ -164,7 +146,6 @@ public class LazySortedCollectionTest extends TestCase {
 		queryRange(0, elements.length, true);
 	}
 
-	@SuppressWarnings("boxing")
 	private void assertContentsValid() {
 		queryRange(0, comparisonCollection.size(), false);
 		Assert.assertEquals(comparisonCollection.size(), collection.size());
@@ -188,9 +169,6 @@ public class LazySortedCollectionTest extends TestCase {
 	 * if the result was unexpected. Assumes that the "elements" array was initially
 	 * added and that nothing has been added or removed since.
 	 *
-	 * @param start
-	 * @param length
-	 * @param sorted
 	 * @since 3.1
 	 */
 	private Object[] queryRange(int start, int length, boolean sorted) {
@@ -217,13 +195,14 @@ public class LazySortedCollectionTest extends TestCase {
 		return result;
 	}
 
+	@Test
 	public void testComparisonCount() {
-		Assert.assertTrue("additions should not require any comparisons", comparator.comparisons == 0);
+		assertEquals("additions should not require any comparisons", 0, comparator.comparisons);
 
 		queryRange(0, elements.length, false);
 
-		Assert.assertTrue("requesting the complete set of unsorted elements should not require any comparisons",
-				comparator.comparisons == 0);
+		assertEquals("requesting the complete set of unsorted elements should not require any comparisons", 0,
+				comparator.comparisons);
 	}
 
 	/**
@@ -232,6 +211,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testSortAll() {
 		// Test that sorting the entire array works
 		queryRange(0, elements.length, true);
@@ -249,6 +229,7 @@ public class LazySortedCollectionTest extends TestCase {
 	/**
 	 * Tests LazySortedCollection.removeNode(int) when removing a leaf node
 	 */
+	@Test
 	public void testRemoveLeafNode() {
 		forceFullSort();
 		remove(se[9]);
@@ -259,6 +240,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 * Tests LazySortedCollection.removeNode(int) when removing a node with no left
 	 * child
 	 */
+	@Test
 	public void testRemoveNodeWithNoLeftChild() {
 		forceFullSort();
 		remove(se[23]);
@@ -271,6 +253,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveNodeWithNoRightChild() {
 		forceFullSort();
 		remove(se[13]);
@@ -282,6 +265,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveRootNode() {
 		forceFullSort();
 		remove(se[19]);
@@ -295,6 +279,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveWhereSwappedNodeIsntLeaf() {
 		forceFullSort();
 		remove(se[14]);
@@ -308,6 +293,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveWithUnsortedSwap() {
 		// Ensure that we've sorted nodes 13 and 14
 		queryRange(14, 1, true);
@@ -340,6 +326,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveFromUnsorted() {
 		remove(se[10]);
 		assertContentsValid();
@@ -350,6 +337,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveRootFromUnsorted() {
 		remove(se[19]);
 		assertContentsValid();
@@ -360,6 +348,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveUnknown() {
 		remove("some unknown element");
 		assertContentsValid();
@@ -374,6 +363,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemovePreviouslySwappedNode() {
 		queryRange(0, elements.length, true);
 		remove(se[14]);
@@ -389,6 +379,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveFullRange() {
 		removeRange(0, se.length);
 		assertContentsValid();
@@ -399,6 +390,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveFromStart() {
 		removeRange(0, se.length / 2);
 		assertContentsValid();
@@ -409,6 +401,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveFromEnd() {
 		int start = se.length / 2;
 		removeRange(start, se.length - start);
@@ -421,6 +414,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testRemoveIncludingRoot() {
 		removeRange(14, 6);
 		assertContentsValid();
@@ -432,6 +426,7 @@ public class LazySortedCollectionTest extends TestCase {
 	 * Tests moving an entire right subtree, and a left subtree including the tree
 	 * itself
 	 */
+	@Test
 	public void testRemoveRightSubtree() {
 		removeRange(9, 5);
 		assertContentsValid();
@@ -440,6 +435,7 @@ public class LazySortedCollectionTest extends TestCase {
 	/**
 	 * Test boundary conditions: Tests moving an entire left subtree
 	 */
+	@Test
 	public void testRemoveLeftSubtree() {
 		removeRange(3, 4);
 		assertContentsValid();
@@ -449,16 +445,19 @@ public class LazySortedCollectionTest extends TestCase {
 	 * Test boundary conditions: Tests moving an entire left subtree including the
 	 * tree itself
 	 */
+	@Test
 	public void testRemoveRightIncludingRoot() {
 		removeRange(3, 5);
 		assertContentsValid();
 	}
 
+	@Test
 	public void testClear() {
 		clear();
 		assertContentsValid();
 	}
 
+	@Test
 	public void testClearSorted() {
 		forceFullSort();
 		clear();

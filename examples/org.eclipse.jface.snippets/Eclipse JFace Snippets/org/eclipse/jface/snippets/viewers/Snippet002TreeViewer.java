@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.TreeColumn;
 
 /**
  * A simple TreeViewer to demonstrate usage
- *
  */
 
 public class Snippet002TreeViewer {

@@ -33,7 +33,6 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * @since 3.2
- *
  */
 public final class ServiceLocator implements IDisposable, INestable, IServiceLocator {
 	boolean activated = false;
@@ -94,7 +93,6 @@ public final class ServiceLocator implements IDisposable, INestable, IServiceLoc
 	 * @param parent  The parent for this service locator; this value may be
 	 *                <code>null</code>.
 	 * @param factory a local factory that can provide services at this level
-	 * @param owner
 	 */
 	public ServiceLocator(final IServiceLocator parent, AbstractServiceFactory factory, IDisposable owner) {
 		this.parent = parent;
@@ -291,9 +289,6 @@ public final class ServiceLocator implements IDisposable, INestable, IServiceLoc
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean isDisposed() {
 		return disposed;
 	}
@@ -303,7 +298,7 @@ public final class ServiceLocator implements IDisposable, INestable, IServiceLoc
 	 * (because the plug-in containing the AbstractServiceFactory is no longer
 	 * available). Notify the owner of the locator about this.
 	 */
-	public void unregisterServices(String[] serviceNames) {
+	public void unregisterServices() {
 		if (owner != null) {
 			owner.dispose();
 		}

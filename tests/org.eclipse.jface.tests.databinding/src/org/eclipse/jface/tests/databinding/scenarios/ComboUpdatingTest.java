@@ -39,7 +39,7 @@ import org.junit.Test;
  */
 public class ComboUpdatingTest extends ScenariosTestCase {
 
-	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
+	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
 			this);
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {

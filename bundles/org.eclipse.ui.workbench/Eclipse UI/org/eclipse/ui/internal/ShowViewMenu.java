@@ -234,7 +234,6 @@ public class ShowViewMenu extends ContributionItem {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private CommandContributionItemParameter getItem(String viewId) {
 		MApplication application = window.getService(MApplication.class);
 		List<MPartDescriptor> descriptors = application.getDescriptors();
@@ -336,10 +335,6 @@ public class ShowViewMenu extends ContributionItem {
 		actions.remove(viewId);
 	}
 
-	/**
-	 * @param commandService
-	 * @param makeFast
-	 */
 	private ParameterizedCommand getCommand(ICommandService commandService, final boolean makeFast) {
 		Command c = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
 		Parameterization[] parms = null;

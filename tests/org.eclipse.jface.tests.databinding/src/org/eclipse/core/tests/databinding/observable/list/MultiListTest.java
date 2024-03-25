@@ -115,12 +115,6 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 
 	}
 
-	/**
-	 * @param entry
-	 * @param position
-	 * @param addition
-	 * @param element
-	 */
 	private void assertEntry(ListDiffEntry<?> entry, int position,
 			boolean addition, Object element) {
 		assertEquals(element, entry.getElement());

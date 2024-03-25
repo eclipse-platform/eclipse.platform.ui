@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -201,10 +200,10 @@ public abstract class WizardDataTransferPage extends WizardPage implements Liste
 		String text = textField.getText();
 		// Do not make an empty path absolute so as not to confuse with the root
 		if (text.isEmpty()) {
-			return new Path(text);
+			return IPath.fromOSString(text);
 		}
 
-		return (new Path(text)).makeAbsolute();
+		return IPath.fromOSString(text).makeAbsolute();
 	}
 
 	/**
@@ -250,7 +249,7 @@ public abstract class WizardDataTransferPage extends WizardPage implements Liste
 	@Override
 	public String queryOverwrite(String pathString) {
 
-		Path path = new Path(pathString);
+		IPath path = IPath.fromOSString(pathString);
 
 		String messageString;
 		// Break the message up if there is a file name and a directory

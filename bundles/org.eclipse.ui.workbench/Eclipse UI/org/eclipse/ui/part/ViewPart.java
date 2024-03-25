@@ -93,6 +93,9 @@ public abstract class ViewPart extends WorkbenchPart implements IViewPart {
 		return (IViewSite) getSite();
 	}
 
+	/**
+	 * @throws PartInitException may be thrown from overrides
+	 */
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		setSite(site);

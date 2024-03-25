@@ -41,7 +41,7 @@ public class Bug98800Test extends TestCase {
 		return ts;
 	}
 
-	private IWorkbenchPage fPage;
+	private final IWorkbenchPage fPage;
 
 	public Bug98800Test(String testName) {
 		super(testName);
@@ -52,7 +52,6 @@ public class Bug98800Test extends TestCase {
 	/**
 	 * This is the first part of a 3 part tests.  First instantiate a view
 	 * and set a state.
-	 * @throws Throwable
 	 */
 	public void testActivateView() throws Throwable {
 		IViewPart v = fPage.showView(VIEW_WITH_STATE_ID);
@@ -68,8 +67,6 @@ public class Bug98800Test extends TestCase {
 	/**
 	 * The second session doesn't activate the view, so it should not
 	 * be instantiated.
-	 *
-	 * @throws Throwable
 	 */
 	public void testSecondOpening() throws Throwable {
 		IViewReference[] views = fPage.getViewReferences();
@@ -83,7 +80,6 @@ public class Bug98800Test extends TestCase {
 
 	/**
 	 * Activate the view and it's state should re-appear.
-	 * @throws Throwable
 	 */
 	public void testSavedMemento() throws Throwable {
 		IViewPart v = fPage.showView(VIEW_WITH_STATE_ID);

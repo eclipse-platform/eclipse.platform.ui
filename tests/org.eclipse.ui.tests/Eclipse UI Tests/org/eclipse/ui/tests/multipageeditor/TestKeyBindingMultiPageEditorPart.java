@@ -37,7 +37,6 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
 
 	/**
 	 * The page number for this part.
-	 *
 	 */
 	private final int number;
 

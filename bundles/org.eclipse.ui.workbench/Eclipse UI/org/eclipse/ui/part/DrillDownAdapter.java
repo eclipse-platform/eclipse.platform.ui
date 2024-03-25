@@ -148,7 +148,6 @@ public class DrillDownAdapter implements ISelectionChangedListener {
 
 	/**
 	 * Create the actions for navigation.
-	 *
 	 */
 	private void createActions() {
 		// Only do this once.

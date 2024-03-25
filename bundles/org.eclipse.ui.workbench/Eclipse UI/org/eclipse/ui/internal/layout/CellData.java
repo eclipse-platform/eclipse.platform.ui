@@ -144,8 +144,6 @@ public final class CellData {
 	/**
 	 * Creates a new CellData that with properties that are as close as possible to
 	 * the given GridData. This is used for converting GridLayouts into CellLayouts.
-	 *
-	 * @param data
 	 */
 	public CellData(GridData data) {
 		verticalSpan = data.verticalSpan;
@@ -189,8 +187,6 @@ public final class CellData {
 
 	/**
 	 * Copies the given CellData
-	 *
-	 * @param newData
 	 */
 	public CellData(CellData newData) {
 		hintType = newData.hintType;
@@ -361,8 +357,6 @@ public final class CellData {
 	 * Arranges the given control within the given rectangle using the criteria
 	 * described by this CellData.
 	 *
-	 * @param control
-	 * @param cellBounds
 	 * @since 3.0
 	 */
 	public void positionControl(SizeCache cache, Rectangle cellBounds) {
@@ -403,10 +397,6 @@ public final class CellData {
 	 * both known dimensions of the control. This differs from computeSize, which
 	 * takes known dimensions of the <b>cell</b> as arguments.
 	 *
-	 * @param toCompute
-	 * @param controlWidth
-	 * @param controlHeight
-	 * @return
 	 * @since 3.0
 	 */
 	private Point computeControlSize(SizeCache toCompute, int controlWidth, int controlHeight) {
@@ -486,7 +476,6 @@ public final class CellData {
 	 *                  SWT.DEFAULT if the width is not being constrained
 	 * @param overrideH height that should always be returned by the control, or
 	 *                  SWT.DEFAULT if the height is not being constrained
-	 * @return
 	 */
 	private static Point computeOverrideSize(SizeCache control, int wHint, int hHint, int overrideW, int overrideH) {
 		int resultWidth = overrideW;

@@ -34,7 +34,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class ComputedObservableMapTest extends AbstractDefaultRealmTestCase {
 	private IObservableSet<Bean> keySet;
@@ -137,7 +136,7 @@ public class ComputedObservableMapTest extends AbstractDefaultRealmTestCase {
 	}
 
 	static class ComputedObservableMapStub extends ComputedObservableMap<Bean, String> {
-		private PropertyChangeListener listener = evt -> fireSingleChange((Bean) evt.getSource(),
+		private final PropertyChangeListener listener = evt -> fireSingleChange((Bean) evt.getSource(),
 				(String) evt.getOldValue(), (String) evt.getNewValue());
 
 		ComputedObservableMapStub(IObservableSet<Bean> keySet) {

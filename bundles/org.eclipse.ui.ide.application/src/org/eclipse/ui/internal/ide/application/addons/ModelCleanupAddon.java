@@ -25,8 +25,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.services.log.Logger;
@@ -58,6 +56,8 @@ import org.osgi.resource.Namespace;
 import org.osgi.resource.Requirement;
 import org.osgi.resource.Resource;
 import org.osgi.service.event.Event;
+
+import jakarta.inject.Inject;
 
 /**
  * The model-addon searches for model contributions in the runtime application
@@ -110,10 +110,6 @@ public class ModelCleanupAddon {
 		cleanHiddenCompatibilityEditors();
 	}
 
-	/**
-	 * @param app
-	 * @param uiSync
-	 */
 	private void cleanUnavailablePartDescriptors(MApplication app, UISynchronize uiSync) {
 		// make copies of the lists for thread safety
 		List<MPartDescriptor> descriptors = new ArrayList<>(app.getDescriptors());

@@ -58,9 +58,9 @@ import org.junit.runners.Parameterized.Parameters;
 public class LabelProviderTest extends BasicPerformanceTest {
 
 	private static class CountryEntry {
-		private String name;
-		private String cupYear;
-		private String baseName;
+		private final String name;
+		private final String cupYear;
+		private final String baseName;
 
 		// Those are an OS resources and should not be freed
 		private Image image;
@@ -111,7 +111,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 
 	private static class TestCellLabelProvider extends CellLabelProvider implements IStyledLabelProvider, IFontProvider {
 
-		private boolean useColor;
+		private final boolean useColor;
 
 		public TestCellLabelProvider(boolean useColor) {
 			this.useColor = useColor;
@@ -158,8 +158,8 @@ public class LabelProviderTest extends BasicPerformanceTest {
 	private Shell fShell;
 	private StructuredViewer fViewer;
 
-	private boolean styled;
-	private boolean colors;
+	private final boolean styled;
+	private final boolean colors;
 
 	@Parameters
 	public static Collection<Object[]> data() {

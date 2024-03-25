@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Oakland Software Incorporated and others.
+ * Copyright (c) 2009, 2023 Oakland Software Incorporated and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,6 @@ package org.eclipse.ui.tests.navigator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -145,15 +144,10 @@ public class ActionProviderTest extends NavigatorTestBase {
 			DisplayHelper.sleep(10000000);
 
 		assertEquals(4, priorityItems.size());
-		assertTrue(priorityItems.get(0).equals(
-				TEST_ACTION_PROVIDER_PRIORITY + "2"));
-		assertTrue(priorityItems.get(1).equals(
-				TEST_ACTION_PROVIDER_PRIORITY + "4"));
-		assertTrue(priorityItems.get(2).equals(
-				TEST_ACTION_PROVIDER_PRIORITY + "1"));
-		assertTrue(priorityItems.get(3).equals(
-				TEST_ACTION_PROVIDER_PRIORITY + "3"));
-
+		assertEquals(TEST_ACTION_PROVIDER_PRIORITY + "2", priorityItems.get(0));
+		assertEquals(TEST_ACTION_PROVIDER_PRIORITY + "4", priorityItems.get(1));
+		assertEquals(TEST_ACTION_PROVIDER_PRIORITY + "1", priorityItems.get(2));
+		assertEquals(TEST_ACTION_PROVIDER_PRIORITY + "3", priorityItems.get(3));
 	}
 
 }

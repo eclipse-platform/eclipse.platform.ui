@@ -24,11 +24,11 @@ import org.osgi.framework.FrameworkUtil;
 
 @SuppressWarnings("restriction")
 public class CssThemeSwitchAction extends Action {
-	private String themeId;
+	private final String themeId;
 
-	private IThemeEngine themeEngine;
+	private final IThemeEngine themeEngine;
 
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	public CssThemeSwitchAction(String actionId, String text, String iconPath,
 			String themeId, IWorkbenchWindow window) {

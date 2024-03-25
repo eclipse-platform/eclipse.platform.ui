@@ -59,7 +59,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 
 	private List<Object> expandedTreeNodes = new ArrayList<>();
 
-	private Map<Object, List> checkedStateStore = new HashMap(9);
+	private Map<Object, List<Object>> checkedStateStore = new HashMap<>(9);
 
 	private List<Object> whiteCheckedTreeItems = new ArrayList<>();
 
@@ -85,15 +85,6 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 *  Create an instance of this class.  Use this constructor if you wish to specify
 	 *	the width and/or height of the combined widget (to only hardcode one of the
 	 *	sizing dimensions, specify the other dimension's value as -1)
-	 * @param parent
-	 * @param rootObject
-	 * @param treeContentProvider
-	 * @param treeLabelProvider
-	 * @param listContentProvider
-	 * @param listLabelProvider
-	 * @param style
-	 * @param width
-	 * @param height
 	 */
 	public CheckboxTreeAndListGroup(Composite parent, Object rootObject,
 			ITreeContentProvider treeContentProvider,
@@ -109,17 +100,6 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 *  Create an instance of this class.  Use this constructor if you wish to specify
 	 *	the width and/or height of the combined widget (to only hardcode one of the
 	 *	sizing dimensions, specify the other dimension's value as -1)
-	 * @param parent
-	 * @param rootObject
-	 * @param treeContentProvider
-	 * @param treeLabelProvider
-	 * @param treeComparator
-	 * @param listContentProvider
-	 * @param listLabelProvider
-	 * @param listComparator
-	 * @param style
-	 * @param width
-	 * @param height
 	 */
 	public CheckboxTreeAndListGroup(Composite parent, Object rootObject,
 			ITreeContentProvider treeContentProvider,
@@ -393,12 +373,11 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 *	@return java.util.Vector
 	 */
 	public Iterator<?> getAllCheckedListItems() {
-		List result = new ArrayList<>();
-		Iterator listCollectionsEnum = checkedStateStore.values().iterator();
+		List<Object> result = new ArrayList<>();
+		Iterator<List<Object>> listCollectionsEnum = checkedStateStore.values().iterator();
 
 		while (listCollectionsEnum.hasNext()) {
-			Iterator currentCollection = ((List) listCollectionsEnum.next())
-					.iterator();
+			Iterator<Object> currentCollection = listCollectionsEnum.next().iterator();
 			while (currentCollection.hasNext()) {
 				result.add(currentCollection.next());
 			}
@@ -413,7 +392,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 *
 	 *	@return java.util.Vector
 	 */
-	public Set getAllCheckedTreeItems() {
+	public Set<Object> getAllCheckedTreeItems() {
 		return checkedStateStore.keySet();
 	}
 
@@ -458,7 +437,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 			return; // no need to proceed upwards from here
 		}
 
-		checkedStateStore.put(treeElement, new ArrayList());
+		checkedStateStore.put(treeElement, new ArrayList<>());
 		if (determineShouldBeWhiteChecked(treeElement)) {
 			setWhiteChecked(treeElement, true);
 		}
@@ -505,7 +484,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 */
 	protected void listItemChecked(Object listElement, boolean state,
 			boolean updatingFromSelection) {
-		List checkedListItems = checkedStateStore
+		List<Object> checkedListItems = checkedStateStore
 				.get(currentTreeSelection);
 
 		if (state) {
@@ -556,10 +535,10 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 */
 	protected void populateListViewer(final Object treeElement) {
 		listViewer.setInput(treeElement);
-		List listItemsToCheck = checkedStateStore.get(treeElement);
+		List<Object> listItemsToCheck = checkedStateStore.get(treeElement);
 
 		if (listItemsToCheck != null) {
-			Iterator listItemsEnum = listItemsToCheck.iterator();
+			Iterator<Object> listItemsEnum = listItemsToCheck.iterator();
 			while (listItemsEnum.hasNext()) {
 				listViewer.setChecked(listItemsEnum.next(), true);
 			}
@@ -639,7 +618,6 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	/**
 	 * Set the root of the widget to be new Root. Regenerate all of the tables and lists from this
 	 * value.
-	 * @param newRoot
 	 */
 	public void setRoot(Object newRoot) {
 		this.root = newRoot;
@@ -657,7 +635,8 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 		}
 
 		if (state) {
-			List listItemsChecked = new ArrayList(Arrays.asList(listContentProvider.getElements(treeElement)));
+			List<Object> listItemsChecked = new ArrayList<>(
+					Arrays.asList(listContentProvider.getElements(treeElement)));
 			checkedStateStore.put(treeElement, listItemsChecked);
 		} else {
 			checkedStateStore.remove(treeElement);
@@ -799,16 +778,15 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 * @param items Map with keys of Object (the tree element) and values of List (the selected
 	 * list elements).
 	 */
-	public void updateSelections(final Map items) {
-
-		//Potentially long operation - show a busy cursor
+	public void updateSelections(final Map<Object, List<Object>> items) {
+		// Potentially long operation - show a busy cursor
 		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(),
 				() -> {
 					//Update the store before the hierarchy to prevent updating parents before all of the children are done
-					for (Entry<?, List> entry : ((Map<Object, List>) items).entrySet()) {
+					for (Entry<?, List<Object>> entry : items.entrySet()) {
 						Object key1 = entry.getKey();
 						//Replace the items in the checked state store with those from the supplied items
-						List selections = entry.getValue();
+						List<Object> selections = entry.getValue();
 						if (selections.isEmpty()) {
 							//If it is empty remove it from the list
 							checkedStateStore.remove(key1);
@@ -824,7 +802,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 					}
 
 					//Now update hierarchies
-					for (Entry<Object, List> entry : ((Map<Object, List>) items).entrySet()) {
+					for (Entry<Object, List<Object>> entry : items.entrySet()) {
 						Object key2 = entry.getKey();
 						updateHierarchy(key2);
 						if (currentTreeSelection != null

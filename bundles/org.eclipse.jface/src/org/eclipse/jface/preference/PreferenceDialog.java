@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.dialogs.DialogMessageArea;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -86,7 +87,6 @@ import org.eclipse.swt.widgets.Tree;
 public class PreferenceDialog extends TrayDialog implements IPreferencePageContainer, IPageChangeProvider {
 	/**
 	 * Layout for the page container.
-	 *
 	 */
 	private class PageLayout extends Layout {
 		@Override
@@ -1356,7 +1356,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		if(currentPage == null) {
 			return;
 		}
-		messageArea.showTitle(currentPage.getTitle(), currentPage.getImage());
+		messageArea.showTitle(LegacyActionTools.escapeMnemonics(currentPage.getTitle()), currentPage.getImage());
 	}
 
 	/**

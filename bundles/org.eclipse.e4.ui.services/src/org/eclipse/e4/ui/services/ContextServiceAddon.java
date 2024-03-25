@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services;
 
+import jakarta.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.Set;
-import javax.annotation.PostConstruct;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;

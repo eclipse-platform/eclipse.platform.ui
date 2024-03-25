@@ -56,7 +56,6 @@ public abstract class StringToNumberValidatorTestHarness {
 	/**
 	 * Invoked during setup to instantiate the validator.
 	 *
-	 * @param numberFormat
 	 * @return validator
 	 */
 	protected abstract IValidator<Object> setupValidator(NumberFormat numberFormat);

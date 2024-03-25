@@ -47,13 +47,9 @@ import org.eclipse.ui.part.WorkbenchPart;
  * of pages.
  *
  * @since 3.4
- *
  */
 public class CyclePageHandler extends FilteredTableBaseHandler {
 
-	/**
-	 *
-	 */
 	private static final String K_PAGE = "page"; //$NON-NLS-1$
 	/**
 	 * The character limit before text is truncated.
@@ -77,7 +73,7 @@ public class CyclePageHandler extends FilteredTableBaseHandler {
 				if (lrm == null) {
 					lrm = new LocalResourceManager(JFaceResources.getResources());
 				}
-				item.setImage(lrm.createImage(imageDescriptor));
+				item.setImage(lrm.create(imageDescriptor));
 			}
 			item.putData(K_PAGE, viewPage);
 			String name = pageSwitcher.getName(viewPage);

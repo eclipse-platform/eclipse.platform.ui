@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.tests.harness.util.FileUtil;
@@ -196,7 +195,7 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 		openTestWindow().run(true, true, operation);
 
 		try {
-			IPath path = new Path(localDirectory);
+			IPath path = IPath.fromOSString(localDirectory);
 			IResource targetFolder = project.findMember(path.lastSegment());
 
 			assertTrue("Import failed", targetFolder instanceof IContainer);
@@ -249,7 +248,7 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 	 */
 	private void verifyFiles(int folderCount) {
 		try {
-			IPath path = new Path(localDirectory);
+			IPath path = IPath.fromOSString(localDirectory);
 			IResource targetFolder = project.findMember(path.makeRelative());
 
 			assertTrue("Import failed", targetFolder instanceof IContainer);

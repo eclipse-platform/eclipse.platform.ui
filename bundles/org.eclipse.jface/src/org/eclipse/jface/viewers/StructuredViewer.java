@@ -281,7 +281,6 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/**
 	 * The ColorAndFontCollector collects fonts and colors without a
 	 * a color or font provider.
-	 *
 	 */
 	protected class ColorAndFontCollector {
 
@@ -723,7 +722,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * methods on this viewer.
 	 * <p>
 	 * This method was introduced to support multiple equal elements in a viewer
-	 * (@see {@link AbstractTreeViewer}). Multiple equal elements are only
+	 * (see {@link AbstractTreeViewer}). Multiple equal elements are only
 	 * supported if the element map is enabled by calling
 	 * {@link #setUseHashlookup(boolean)} and passing <code>true</code>.
 	 * </p>
@@ -852,8 +851,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			return result;
 		}
 		if (filters != null) {
-			for (Object element : filters) {
-				ViewerFilter f = (ViewerFilter) element;
+			for (ViewerFilter f : filters) {
 				Object[] filteredResult = f.filter(this, parent, result);
 				if (associateListener != null && filteredResult.length != result.length) {
 					notifyFilteredOut(result, filteredResult);
@@ -866,9 +864,6 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Notifies an AssociateListener of the elements that have been filtered out.
-	 *
-	 * @param rawResult
-	 * @param filteredResult
 	 */
 	private void notifyFilteredOut(Object[] rawResult, Object[] filteredResult) {
 		int rawIndex = 0;
@@ -920,7 +915,6 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @deprecated This method is deprecated in 3.3 in favor of {@link ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)}.
 	 * Viewers who are not subclasses of {@link ColumnViewer} should consider using a
 	 * widget relative implementation like {@link ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)}.
-	 *
 	 */
 	@Deprecated
 	protected Item getItem(int x, int y) {
@@ -1415,7 +1409,17 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	@Override
 	public void refresh() {
-		refresh(getRoot());
+		Control control = getControl();
+		if (control != null) {
+			control.setRedraw(false);
+		}
+		try {
+			refresh(getRoot());
+		} finally {
+			if (control != null) {
+				control.setRedraw(true);
+			}
+		}
 	}
 
 	/**

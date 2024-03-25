@@ -80,7 +80,7 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected BasicSwitch<Adapter> modelSwitch = new BasicSwitch<Adapter>() {
+	protected BasicSwitch<Adapter> modelSwitch = new BasicSwitch<>() {
 		@Override
 		public Adapter casePartDescriptor(MPartDescriptor object) {
 			return createPartDescriptorAdapter();

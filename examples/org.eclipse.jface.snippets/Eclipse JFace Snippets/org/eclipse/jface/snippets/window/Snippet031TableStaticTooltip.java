@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.TableColumn;
  * cell
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet031TableStaticTooltip {
 	private static Image[] images;
@@ -92,9 +91,6 @@ public class Snippet031TableStaticTooltip {
 		createToolTipFor(viewer);
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

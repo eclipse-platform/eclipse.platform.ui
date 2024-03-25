@@ -305,10 +305,6 @@ public class SashLayout extends Layout {
 		}
 	}
 
-	/**
-	 * @param node
-	 * @param bounds
-	 */
 	private void setRectangle(MUIElement node, Rectangle bounds) {
 		if (node.getWidget() instanceof Control) {
 			Control ctrl = (Control) node.getWidget();

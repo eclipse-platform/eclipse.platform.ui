@@ -49,7 +49,7 @@ public class Snippet_NoDatabinding {
 
 	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
@@ -97,7 +97,7 @@ public class Snippet_NoDatabinding {
 	 */
 	static class ViewModel {
 		// The model to bind
-		private Person person = new Person();
+		private final Person person = new Person();
 
 		public Person getPerson() {
 			return person;

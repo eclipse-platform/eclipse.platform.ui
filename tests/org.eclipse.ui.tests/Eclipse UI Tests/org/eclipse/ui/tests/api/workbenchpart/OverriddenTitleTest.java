@@ -47,7 +47,7 @@ public class OverriddenTitleTest extends UITestCase {
 
 	boolean contentChangeEvent = false;
 
-	private IPropertyListener propertyListener = (source, propId) -> {
+	private final IPropertyListener propertyListener = (source, propId) -> {
 		switch (propId) {
 		case IWorkbenchPartConstants.PROP_TITLE:
 			titleChangeEvent = true;

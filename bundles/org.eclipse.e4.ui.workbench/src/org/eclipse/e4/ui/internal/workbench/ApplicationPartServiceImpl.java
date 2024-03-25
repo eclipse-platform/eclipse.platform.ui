@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,30 +12,42 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 395825
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 486876
+ *     Christoph Läubrich - make the application service to work in dialog context
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
 
+import jakarta.inject.Inject;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import javax.inject.Inject;
+import java.util.function.Supplier;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.IPartListener;
 
 public class ApplicationPartServiceImpl implements EPartService {
 
+	private static final Supplier<RuntimeException> NO_VALID_PARTSERVICE = () -> new IllegalStateException(
+			"No valid PartService can be aquired from the current context"); //$NON-NLS-1$
+
 	private MApplication application;
 
+	private EModelService modelService;
+
 	@Inject
-	ApplicationPartServiceImpl(MApplication application) {
+	ApplicationPartServiceImpl(MApplication application, EModelService modelService) {
 		this.application = application;
+		this.modelService = modelService;
 	}
 
-	private EPartService getActiveWindowService() {
+	private Optional<EPartService> getActiveWindowService() {
 		IEclipseContext activeWindowContext = application.getContext().getActiveChild();
 		if (activeWindowContext == null) {
 			throw new IllegalStateException("Application does not have an active window"); //$NON-NLS-1$
@@ -45,9 +57,24 @@ public class ApplicationPartServiceImpl implements EPartService {
 			throw new IllegalStateException("Active window context is invalid"); //$NON-NLS-1$
 		}
 		if (activeWindowPartService == this) {
-			throw new IllegalStateException("Application does not have an active window"); //$NON-NLS-1$
+			// in this cas we would run into an infinite recursion, so from the current
+			// active window we can't aquire another part service
+			return Optional.empty();
 		}
-		return activeWindowPartService;
+		return Optional.of(activeWindowPartService);
+	}
+
+	private Optional<EPartService> getActiveWindowService(MPart part) {
+		return getActiveWindowService().or(() -> {
+			IEclipseContext context = part.getContext();
+			if (context != null) {
+				EPartService partService = context.get(EPartService.class);
+				if (partService instanceof PartServiceImpl) {
+					return Optional.of(partService);
+				}
+			}
+			return Optional.empty();
+		});
 	}
 
 	@Override
@@ -64,107 +91,125 @@ public class ApplicationPartServiceImpl implements EPartService {
 
 	@Override
 	public boolean isPartOrPlaceholderInPerspective(String elementId, MPerspective perspective) {
-		return getActiveWindowService().isPartOrPlaceholderInPerspective(elementId, perspective);
+		return getActiveWindowService().orElseThrow(NO_VALID_PARTSERVICE).isPartOrPlaceholderInPerspective(elementId,
+				perspective);
 	}
 
 	@Override
 	public void switchPerspective(MPerspective perspective) {
-		getActiveWindowService().switchPerspective(perspective);
+		getActiveWindowService().ifPresentOrElse(service -> service.switchPerspective(perspective),
+				() -> switchPerspectiveInternal(perspective));
 	}
 
 	@Override
 	public Optional<MPerspective> switchPerspective(String perspectiveId) {
-		return getActiveWindowService().switchPerspective(perspectiveId);
+		Objects.requireNonNull(perspectiveId);
+		Optional<EPartService> windowService = getActiveWindowService();
+		if (windowService.isPresent()) {
+			return windowService.get().switchPerspective(perspectiveId);
+		}
+		List<MPerspective> result = modelService.findElements(application, perspectiveId, MPerspective.class, null);
+		if (!result.isEmpty()) {
+			MPerspective perspective = result.get(0);
+			switchPerspectiveInternal(perspective);
+			return java.util.Optional.of(perspective);
+		}
+		return Optional.empty();
+	}
+
+	private void switchPerspectiveInternal(MPerspective perspective) {
+		perspective.getParent().setSelectedElement(perspective);
+		UIEvents.publishEvent(UIEvents.UILifeCycle.PERSPECTIVE_SWITCHED, perspective);
 	}
 
 	@Override
 	public void activate(MPart part) {
-		getActiveWindowService().activate(part);
+		getActiveWindowService(part).orElseThrow(NO_VALID_PARTSERVICE).activate(part);
 	}
 
 	@Override
 	public void activate(MPart part, boolean requiresFocus) {
-		getActiveWindowService().activate(part, requiresFocus);
+		getActiveWindowService(part).orElseThrow(NO_VALID_PARTSERVICE).activate(part, requiresFocus);
 	}
 
 	@Override
 	public void requestActivation() {
-		getActiveWindowService().requestActivation();
+		getActiveWindowService().orElseThrow(NO_VALID_PARTSERVICE).requestActivation();
 	}
 
 	@Override
 	public void bringToTop(MPart part) {
-		getActiveWindowService().bringToTop(part);
+		getActiveWindowService(part).orElseThrow(NO_VALID_PARTSERVICE).bringToTop(part);
 	}
 
 	@Override
 	public MPart findPart(String id) {
-		return getActiveWindowService().findPart(id);
+		return getActiveWindowService().orElseThrow(NO_VALID_PARTSERVICE).findPart(id);
 	}
 
 	@Override
 	public Collection<MPart> getParts() {
-		return getActiveWindowService().getParts();
+		return getActiveWindowService().orElseThrow(NO_VALID_PARTSERVICE).getParts();
 	}
 
 	@Override
 	public MPart getActivePart() {
-		return getActiveWindowService().getActivePart();
+		return getActiveWindowService().orElseThrow(NO_VALID_PARTSERVICE).getActivePart();
 	}
 
 	@Override
 	public boolean isPartVisible(MPart part) {
-		return getActiveWindowService().isPartVisible(part);
+		return getActiveWindowService(part).orElseThrow(NO_VALID_PARTSERVICE).isPartVisible(part);
 	}
 
 	@Override
 	public MPart createPart(String id) {
-		return getActiveWindowService().createPart(id);
+		return getActiveWindowService().orElseThrow(NO_VALID_PARTSERVICE).createPart(id);
 	}
 
 	@Override
 	public MPlaceholder createSharedPart(String id) {
-		return getActiveWindowService().createSharedPart(id);
+		return getActiveWindowService().orElseThrow(NO_VALID_PARTSERVICE).createSharedPart(id);
 	}
 
 	@Override
 	public MPlaceholder createSharedPart(String id, boolean force) {
-		return getActiveWindowService().createSharedPart(id, force);
+		return getActiveWindowService().orElseThrow(NO_VALID_PARTSERVICE).createSharedPart(id, force);
 	}
 
 	@Override
 	public MPart showPart(String id, PartState partState) {
-		return getActiveWindowService().showPart(id, partState);
+		return getActiveWindowService().orElseThrow(NO_VALID_PARTSERVICE).showPart(id, partState);
 	}
 
 	@Override
 	public MPart showPart(MPart part, PartState partState) {
-		return getActiveWindowService().showPart(part, partState);
+		return getActiveWindowService(part).orElseThrow(NO_VALID_PARTSERVICE).showPart(part, partState);
 	}
 
 	@Override
 	public void hidePart(MPart part) {
-		getActiveWindowService().hidePart(part);
+		getActiveWindowService(part).orElseThrow(NO_VALID_PARTSERVICE).hidePart(part);
 	}
 
 	@Override
 	public void hidePart(MPart part, boolean force) {
-		getActiveWindowService().hidePart(part, force);
+		getActiveWindowService(part).orElseThrow(NO_VALID_PARTSERVICE).hidePart(part, force);
 	}
 
 	@Override
 	public Collection<MPart> getDirtyParts() {
-		return getActiveWindowService().getDirtyParts();
+		return getActiveWindowService().orElseThrow(NO_VALID_PARTSERVICE).getDirtyParts();
 	}
 
 	@Override
 	public boolean savePart(MPart part, boolean confirm) {
-		return getActiveWindowService().savePart(part, confirm);
+		return getActiveWindowService(part).orElseThrow(NO_VALID_PARTSERVICE).savePart(part, confirm);
 	}
 
 	@Override
 	public boolean saveAll(boolean confirm) {
-		return getActiveWindowService().saveAll(confirm);
+		return getActiveWindowService().orElseThrow(NO_VALID_PARTSERVICE).saveAll(confirm);
 	}
 
 }

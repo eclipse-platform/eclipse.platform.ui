@@ -159,6 +159,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 		assertEquals(null, event.getProperty(UIEvents.EventTags.POSITION));
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void testMove() {
 		applicationElement.getTags().addAll(Arrays.asList("0", "1", "2"));

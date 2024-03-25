@@ -102,12 +102,9 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 				clazz = null;
 			}
 
-			children = new EObjectContainmentWithInverseEList<T>(MUIElement.class, this,
+			children = new EObjectContainmentWithInverseEList<>(MUIElement.class, this,
 					UiPackageImpl.ELEMENT_CONTAINER__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
 
-				/**
-				 *
-				 */
 				private static final long serialVersionUID = 1L;
 
 				@Override
@@ -141,9 +138,10 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 			InternalEObject oldSelectedElement = (InternalEObject) selectedElement;
 			selectedElement = (T) eResolveProxy(oldSelectedElement);
 			if (selectedElement != oldSelectedElement) {
-				if (eNotificationRequired())
+				if (eNotificationRequired()) {
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE,
 							UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT, oldSelectedElement, selectedElement));
+				}
 			}
 		}
 		return selectedElement;
@@ -166,9 +164,10 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	private void setSelectedElementGen(T newSelectedElement) {
 		T oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT,
 					oldSelectedElement, selectedElement));
+		}
 	}
 
 	@Override
@@ -230,8 +229,9 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 		case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
 			return getChildren();
 		case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
-			if (resolve)
+			if (resolve) {
 				return getSelectedElement();
+			}
 			return basicGetSelectedElement();
 		default:
 			return super.eGet(featureID, resolve, coreType);

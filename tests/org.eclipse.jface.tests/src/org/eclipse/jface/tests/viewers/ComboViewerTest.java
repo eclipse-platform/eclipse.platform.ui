@@ -17,14 +17,12 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.junit.Ignore;
 
 /**
  * @since 3.0
  */
 public class ComboViewerTest extends StructuredViewerTest {
-	public ComboViewerTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -46,13 +44,7 @@ public class ComboViewerTest extends StructuredViewerTest {
 		return list.getItem(at);
 	}
 
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(ComboViewerTest.class);
-	}
-
-	/**
-	 * TODO: Determine if this test is applicable to ComboViewer
-	 */
+	@Ignore("TODO: Determine if this test is applicable to ComboViewer")
 	@Override
 	public void testInsertChild() {
 

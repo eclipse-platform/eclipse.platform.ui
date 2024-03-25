@@ -77,7 +77,7 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable, IW
 	 * @return the action set
 	 */
 	@Override
-	public IActionSet createActionSet() throws CoreException {
+	public IActionSet createActionSet() {
 		return new PluginActionSet(this);
 	}
 
@@ -121,7 +121,6 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable, IW
 	/**
 	 * Returns this action set's id. This is the value of its <code>"id"</code>
 	 * attribute.
-	 * <p>
 	 *
 	 * @return the action set id
 	 */

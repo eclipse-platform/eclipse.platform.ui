@@ -29,14 +29,12 @@ import org.eclipse.swt.widgets.Text;
  * Test class to show how a non modal wizard can be constructed.
  *
  * @since 3.16
- *
  */
 public class Snippet074ModelesWizard {
 
 	private static int fCounter = 0;
 
 	/**
-	 * @param args
 	 * @since 3.16
 	 */
 	public static void main(String[] args) {

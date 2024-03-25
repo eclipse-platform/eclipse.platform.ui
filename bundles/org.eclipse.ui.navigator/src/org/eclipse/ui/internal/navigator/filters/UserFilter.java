@@ -35,8 +35,6 @@ public class UserFilter {
 
 	/**
 	 * Instantiates a new UserFilter with specified value
-	 * @param regexp
-	 * @param enable
 	 */
 	public UserFilter(String regexp, boolean enable) {
 		this.regexp = regexp;
@@ -78,7 +76,6 @@ public class UserFilter {
 	}
 
 	/**
-	 * @param string
 	 * @return whether the given string matches the filter definition
 	 */
 	public boolean matches(String string) {

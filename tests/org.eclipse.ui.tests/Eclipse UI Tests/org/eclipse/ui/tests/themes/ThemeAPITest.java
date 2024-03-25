@@ -43,117 +43,33 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class ThemeAPITest extends ThemeTest {
 
-	/**
-	 *
-	 */
 	private static final String EXTENDED_THEME3 = "extendedTheme3";
-	/**
-	 *
-	 */
 	private static final String EXTENDED_THEME2 = "extendedTheme2";
-	/**
-	 *
-	 */
 	private static final String EXTENDED_THEME1 = "extendedTheme1";
-	/**
-	 *
-	 */
 	private static final String PLATFORMFONT = "platformfont";
-	/**
-	 *
-	 */
 	private static final String PLATFORMCOLOR = "platformcolor";
-	/**
-	 *
-	 */
 	private static final String NOOVERRIDEFONT = "nooverridefont";
-	/**
-	 *
-	 */
 	private static final String NOVALFONT = "novalfont";
-	/**
-	 *
-	 */
 	private static final String DEFAULTEDFONT3 = "defaultedfont3";
-	/**
-	 *
-	 */
 	private static final String DEFAULTEDFONT2 = "defaultedfont2";
-	/**
-	 *
-	 */
 	private static final String DEFAULTEDFONT = "defaultedfont";
-	/**
-	 *
-	 */
 	private static final String VALFONT = "valfont";
-	/**
-	 *
-	 */
 	private static final String DEFAULTEDCOLOR3 = "defaultedcolor3";
-	/**
-	 *
-	 */
 	private static final String DEFAULTEDCOLOR2 = "adefaultedcolor2";
-	/**
-	 *
-	 */
 	private static final String VALUE2 = "value2";
-	/**
-	 *
-	 */
 	private static final String OVERRIDE1 = "override1";
-	/**
-	 *
-	 */
 	private static final String NOOVERRIDECOLOR = "nooverridecolor";
-	/**
-	 *
-	 */
 	private static final String DEFAULTEDCOLOR = "defaultedcolor";
-	/**
-	 *
-	 */
 	private static final String SWTCOLOR = "swtcolor";
-	/**
-	 *
-	 */
 	private static final String FACTORYCOLOR = "factorycolor";
-	/**
-	 *
-	 */
 	private static final String RGBCOLOR = "rgbcolor";
-	/**
-	 *
-	 */
 	private static final String BOOL1 = "bool1";
-	/**
-	 *
-	 */
 	private static final String BOGUSKEY = "BOGUSKEY";
-	/**
-	 *
-	 */
 	private static final String INT1 = "int1";
-	/**
-	 *
-	 */
 	private static final String DATA2 = "data2";
-	/**
-	 *
-	 */
 	private static final String DATA1 = "data1";
-	/**
-	 *
-	 */
 	private static final String BAD_COLOR1 = "badColor1";
-	/**
-	 *
-	 */
 	private static final String BAD_COLOR2 = "badColor2";
-	/**
-	 *
-	 */
 	private static final String BAD_COLOR3 = "badColor3";
 
 	public ThemeAPITest() {

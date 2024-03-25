@@ -26,6 +26,9 @@ package org.eclipse.ui.internal;
 
 import static java.util.Collections.singletonList;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -48,9 +51,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
+import java.util.function.Predicate;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -91,6 +92,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
+import org.eclipse.e4.ui.workbench.addons.minmax.TrimStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
@@ -872,13 +874,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		final MToolControl minimizedStack = (MToolControl) changedObj;
 
-		// Note: The non-API type TrimStack is not imported to avoid
-		// https://bugs.eclipse.org/435521
-		if (!(minimizedStack.getObject() instanceof org.eclipse.e4.ui.workbench.addons.minmax.TrimStack))
+		if (!(minimizedStack.getObject() instanceof TrimStack))
 			return;
 
-		org.eclipse.e4.ui.workbench.addons.minmax.TrimStack ts = (org.eclipse.e4.ui.workbench.addons.minmax.TrimStack) minimizedStack
-				.getObject();
+		TrimStack ts = (TrimStack) minimizedStack.getObject();
 		if (!(ts.getMinimizedElement() instanceof MPartStack))
 			return;
 
@@ -924,9 +923,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 *
 	 * @param w     the parent window
 	 * @param input the page input
-	 * @throws WorkbenchException
 	 */
-	public WorkbenchPage(WorkbenchWindow w, IAdaptable input) throws WorkbenchException {
+	public WorkbenchPage(WorkbenchWindow w, IAdaptable input) {
 		super();
 		init(w, input);
 	}
@@ -1030,13 +1028,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 			return null;
 		}
 
-		for (IViewReference reference : viewReferences) {
+		for (ViewReference reference : viewReferences) {
 			if (part == reference.getPart(false)) {
 				return ((WorkbenchPartReference) reference).getModel();
 			}
 		}
 
-		for (IEditorReference reference : editorReferences) {
+		for (EditorReference reference : editorReferences) {
 			if (part == reference.getPart(false)) {
 				return ((WorkbenchPartReference) reference).getModel();
 			}
@@ -1549,8 +1547,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	/**
 	 * Enables or disables listener notifications. This is used to delay listener
 	 * notifications until the end of a public method.
-	 *
-	 * @param shouldDefer
 	 */
 	private void deferUpdates(boolean shouldDefer) {
 		if (shouldDefer) {
@@ -2000,7 +1996,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	private void firePropertyChange(String changeId, Object oldValue, Object newValue) {
 
-		UIListenerLogging.logPagePropertyChanged(this, changeId, oldValue, newValue);
+		UIListenerLogging.logPagePropertyChanged(this, changeId, newValue);
 
 		PropertyChangeEvent event = new PropertyChangeEvent(this, changeId, oldValue, newValue);
 
@@ -2810,7 +2806,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	/**
 	 * Extends the perspectives within the given stack with action set contributions
-	 * from the <code>perspectiveExtensions</code> extension point.
+	 * and the onboarding commands from the <code>perspectiveExtensions</code>
+	 * extension point.
 	 *
 	 * @param perspectiveStack the stack that contain the perspectives to be
 	 *                         extended
@@ -2826,13 +2823,18 @@ public class WorkbenchPage implements IWorkbenchPage {
 						desc, this, true);
 
 				PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
-				reader.setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET });
+				reader.setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET,
+						IWorkbenchRegistryConstants.TAG_EDITOR_ONBOARDING_COMMAND,
+						IWorkbenchRegistryConstants.ATT_EDITOR_ONBOARDING_TEXT,
+						IWorkbenchRegistryConstants.ATT_EDITOR_ONBOARDING_IMAGE });
 				reader.extendLayout(null, id, modelLayout);
 
 				addActionSet(perspective, temporary);
+				replaceOnboarding(temporary, perspective);
 			}
 		}
 	}
+
 
 	ArrayList<String> getPerspectiveExtensionActionSets(String id) {
 		IPerspectiveDescriptor desc = getWorkbenchWindow().getWorkbench().getPerspectiveRegistry()
@@ -2851,6 +2853,22 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
+	 * Removes all onboarding information from target and re-adds them from source.
+	 *
+	 * @param source the source to copy onboarding information from
+	 * @param target the target to copy onboarding information to
+	 */
+	private void replaceOnboarding(MPerspective source, MPerspective target) {
+		Predicate<String> isEditorOnboardingTag = tag -> tag.startsWith(ModeledPageLayout.EDITOR_ONBOARDING);
+
+		List<String> targetTags = target.getTags();
+		targetTags.removeIf(isEditorOnboardingTag);
+
+		List<String> sourceTags = source.getTags();
+		sourceTags.stream().filter(isEditorOnboardingTag).forEach(targetTags::add);
+	}
+
+	/**
 	 * Copies action set extensions from the temporary perspective to the other one.
 	 *
 	 * @param perspective the perspective to copy action set contributions to
@@ -2860,7 +2878,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		List<String> tags = perspective.getTags();
 		List<String> extendedTags = temporary.getTags();
 		for (String extendedTag : extendedTags) {
-			if (!tags.contains(extendedTag)) {
+			if (extendedTag.startsWith(ModeledPageLayout.ACTION_SET_TAG) && !tags.contains(extendedTag)) {
 				tags.add(extendedTag);
 			}
 		}
@@ -3785,7 +3803,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * succeeded or not.
 	 *
 	 * @param saveable the saveable part to save
-	 * @param part
 	 * @param confirm  whether the user should be prompted for confirmation of the
 	 *                 save request
 	 * @param closing  whether the part will be closed after the save operation has
@@ -3914,8 +3931,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * contribution but whose contributing bundle is no longer available. In order
 	 * to allow it to behave correctly within the environment (for Close, Reset...)
 	 * we turn it into a 'custom' perspective on its first activation.
-	 *
-	 * @return
 	 */
 	private PerspectiveDescriptor fixOrphanPerspective(MPerspective mperspective) {
 		PerspectiveRegistry reg = (PerspectiveRegistry) PlatformUI.getWorkbench().getPerspectiveRegistry();
@@ -4074,7 +4089,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * @param perspective
 	 * @return never null
 	 */
 	private MPerspective createPerspective(IPerspectiveDescriptor perspective) {
@@ -5479,21 +5493,17 @@ public class WorkbenchPage implements IWorkbenchPage {
 		persp.getTags().addAll(newWizards);
 	}
 
-	/**
-	 *
-	 */
 	public void resetToolBarLayout() {
 		ICoolBarManager2 mgr = (ICoolBarManager2) legacyWindow.getCoolBarManager2();
 		mgr.resetItemOrder();
 	}
 
 	/**
-	 * Call {@link #firePartDeactivated(MPart)} if the passed part is the currently
-	 * active part according to the part service. This method should only be called
-	 * in the case of workbench shutdown, where E4 does not fire deactivate
-	 * listeners on the active part.
-	 *
-	 * @param part
+	 * Fires
+	 * {@link org.eclipse.ui.IPartListener2#partDeactivated(IWorkbenchPartReference)}
+	 * if the passed part is the currently active part according to the part
+	 * service. This method should only be called in the case of workbench shutdown,
+	 * where E4 does not fire deactivate listeners on the active part.
 	 */
 	public void firePartDeactivatedIfActive(MPart part) {
 		if (partService.getActivePart() == part) {

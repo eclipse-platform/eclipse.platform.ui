@@ -23,9 +23,6 @@ public class DynamicStartup implements IStartup {
 
 	public static Throwable history;
 
-	/**
-	 *
-	 */
 	public DynamicStartup() {
 		super();
 	}

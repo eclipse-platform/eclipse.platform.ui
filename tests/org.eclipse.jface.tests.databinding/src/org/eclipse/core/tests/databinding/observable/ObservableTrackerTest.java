@@ -17,8 +17,8 @@ package org.eclipse.core.tests.databinding.observable;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,27 +49,17 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testGetterCalled_ObservableDisposed() throws Exception {
-		try {
-			IObservable observable = new ObservableStub();
-			observable.dispose();
+		IObservable observable = new ObservableStub();
+		observable.dispose();
 
-			ObservableTracker.getterCalled(observable);
-
-			fail("expected AssertionFailedException");
-		} catch (AssertionFailedException expected) {
-		}
+		assertThrows(AssertionFailedException.class, () -> ObservableTracker.getterCalled(observable));
 	}
 
 	@Test
 	public void testGetterCalled_ObservableRealmNotCurrent() throws Exception {
-		try {
-			IObservable observable = new ObservableStub(new CurrentRealm(false));
+		IObservable observable = new ObservableStub(new CurrentRealm(false));
 
-			ObservableTracker.getterCalled(observable);
-
-			fail("expected AssertionFailedException");
-		} catch (AssertionFailedException expected) {
-		}
+		assertThrows(AssertionFailedException.class, () -> ObservableTracker.getterCalled(observable));
 	}
 
 	@Test
@@ -193,11 +183,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testSetIgnore_UnmatchedUnignore() {
-		try {
-			ObservableTracker.setIgnore(false);
-			fail("Expected IllegalStateException");
-		} catch (IllegalStateException expected) {
-		}
+		assertThrows(IllegalStateException.class, () -> ObservableTracker.setIgnore(false));
 	}
 
 	public static class ObservableStub extends AbstractObservable {

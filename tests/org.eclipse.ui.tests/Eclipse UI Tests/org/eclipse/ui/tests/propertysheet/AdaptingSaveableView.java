@@ -31,7 +31,7 @@ public class AdaptingSaveableView extends MockViewPart implements ISaveablePart 
 
 	public static final String ID_ADAPTING_SAVEABLE = AdaptingSaveableView.class.getName();
 
-	private Map<Object, Object> adaptersMap;
+	private final Map<Object, Object> adaptersMap;
 
 	public boolean dirty;
 

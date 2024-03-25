@@ -19,10 +19,10 @@ package org.eclipse.e4.ui.internal.workbench;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.wiring.BundleRevision;
-import org.osgi.service.log.LogService;
 
 /**
  * Collection of URI-related utilities
@@ -86,7 +86,7 @@ public class URIHelper {
 		try {
 			uri = new URI(contributorURI);
 		} catch (URISyntaxException e) {
-			Activator.log(LogService.LOG_ERROR, "Invalid contributor URI: " + contributorURI); //$NON-NLS-1$
+			ILog.get().error("Invalid contributor URI: " + contributorURI); //$NON-NLS-1$
 			return null;
 		}
 		if (!PLATFORM_SCHEMA.equals(uri.getScheme()))
@@ -111,7 +111,7 @@ public class URIHelper {
 	 * @param uri
 	 *            a possible Platform URI
 	 * @return true if the given string is not {@code null} and starts with
-	 *         {@value #PLATFORM_SCHEMA}; false otherwise
+	 *         {@code "platform:/"}; false otherwise
 	 */
 	public static boolean isPlatformURI(String uri) {
 		return uri != null && uri.startsWith(PLATFORM_SCHEMA);
@@ -120,10 +120,9 @@ public class URIHelper {
 	/**
 	 * Helper method which checks if given String represents a Bundleclass URI.
 	 *
-	 * @param uri
-	 *            a possible Bundleclass URI
+	 * @param uri a possible Bundleclass URI
 	 * @return true if the given string is not {@code null} and starts with
-	 *         {@value #BUNDLECLASS_SCHEMA}; false otherwise
+	 *         {@code "bundleclass://"}. false otherwise
 	 */
 	public static boolean isBundleClassUri(String uri) {
 		if (uri != null && uri.startsWith(BUNDLECLASS_SCHEMA)) {

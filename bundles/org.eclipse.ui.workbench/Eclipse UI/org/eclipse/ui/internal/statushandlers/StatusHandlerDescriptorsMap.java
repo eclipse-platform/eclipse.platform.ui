@@ -26,7 +26,7 @@ import java.util.Map;
  */
 class StatusHandlerDescriptorsMap {
 
-	private final String ASTERISK = "*"; //$NON-NLS-1$
+	private static final String ASTERISK = "*"; //$NON-NLS-1$
 
 	private HashMap map;
 
@@ -88,7 +88,6 @@ class StatusHandlerDescriptorsMap {
 	 * Returns status handler descriptors whose prefixes are the most specific for
 	 * given pluginId.
 	 *
-	 * @param pluginId
 	 * @return handler descriptors list
 	 */
 	public List getHandlerDescriptors(String pluginId) {

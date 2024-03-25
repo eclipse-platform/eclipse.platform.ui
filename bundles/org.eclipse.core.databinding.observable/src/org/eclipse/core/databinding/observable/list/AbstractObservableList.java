@@ -80,7 +80,6 @@ public abstract class AbstractObservableList<E> extends AbstractList<E>
 
 	/**
 	 * @param realm the realm; not <code>null</code>
-	 *
 	 */
 	public AbstractObservableList(Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
@@ -89,9 +88,6 @@ public abstract class AbstractObservableList<E> extends AbstractList<E>
 		changeSupport = new PrivateChangeSupport(realm);
 	}
 
-	/**
-	 *
-	 */
 	public AbstractObservableList() {
 		this(Realm.getDefault());
 	}
@@ -196,15 +192,9 @@ public abstract class AbstractObservableList<E> extends AbstractList<E>
 		changeSupport.fireEvent(new StaleEvent(this));
 	}
 
-	/**
-	 *
-	 */
 	protected void firstListenerAdded() {
 	}
 
-	/**
-	 *
-	 */
 	protected void lastListenerRemoved() {
 	}
 
@@ -216,9 +206,6 @@ public abstract class AbstractObservableList<E> extends AbstractList<E>
 		return disposed;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public synchronized void dispose() {
 		if (!disposed) {
@@ -241,9 +228,6 @@ public abstract class AbstractObservableList<E> extends AbstractList<E>
 	 */
 	protected abstract int doGetSize();
 
-	/**
-	 *
-	 */
 	private void getterCalled() {
 		ObservableTracker.getterCalled(this);
 	}

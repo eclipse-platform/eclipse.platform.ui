@@ -18,7 +18,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AllNotificationTests.class })
+@SuiteClasses({ NotificationPopupTest.class })
 public class AllTests {
 
 }

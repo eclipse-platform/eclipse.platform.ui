@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Display;
  * thread in a way that they are only run once.
  *
  * @since 1.1
- *
  */
 public class WorkQueue {
 
@@ -41,9 +40,6 @@ public class WorkQueue {
 		updateScheduled = false;
 	};
 
-	/**
-	 * @param targetDisplay
-	 */
 	public WorkQueue(Display targetDisplay) {
 		d = targetDisplay;
 	}

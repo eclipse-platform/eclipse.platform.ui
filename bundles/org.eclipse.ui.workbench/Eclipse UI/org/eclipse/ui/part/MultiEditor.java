@@ -30,7 +30,6 @@ import org.eclipse.ui.themes.ITheme;
  * A MultiEditor is a composite of editors.
  *
  * This class is intended to be subclassed.
- *
  */
 public abstract class MultiEditor extends AbstractMultiEditor {
 

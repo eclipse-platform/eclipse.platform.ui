@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 3.4
- *
  */
 public class BooleanCellEditor extends CellEditor {
 	private Button button;
@@ -43,17 +42,10 @@ public class BooleanCellEditor extends CellEditor {
 
 	private boolean changeOnActivation;
 
-	/**
-	 * @param parent
-	 */
 	public BooleanCellEditor(Composite parent) {
 		super(parent);
 	}
 
-	/**
-	 * @param parent
-	 * @param style
-	 */
 	public BooleanCellEditor(Composite parent, int style) {
 		super(parent, style);
 	}

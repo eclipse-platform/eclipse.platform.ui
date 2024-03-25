@@ -1,0 +1,19 @@
+# Debugging options for the org.eclipse.jface.text plug-in
+
+# Prints debug information related to AnnotationPainter
+org.eclipse.jface.text/debug/AnnotationPainter= false
+
+# Prints debug information related to AbstractContentAssistSubjectAdapter and its subclasses
+org.eclipse.jface.text/debug/ContentAssistSubjectAdapters= false
+
+# Prints debug information related to RevisionRulerColumn
+org.eclipse.jface.text.source/debug/RevisionRulerColumn= false
+
+# Enables checking of the FastPartitioner's position chache
+org.eclipse.jface.text/debug/FastPartitioner/PositionCache= false
+
+# Prints debug information related to AbstractInformationControlManager and its subclasses
+org.eclipse.jface.text/debug/AbstractInformationControlManager= false
+
+# Enables assertion check for valid offset and length when creating a TextSelection
+org.eclipse.jface.text/assert/TextSelection/validConstructorArguments= false

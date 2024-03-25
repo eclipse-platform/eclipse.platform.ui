@@ -26,9 +26,6 @@ public class TestTreeElement extends TestElement {
 
 	/**
 	 * Create a new instance of the receiver .
-	 *
-	 * @param index
-	 * @param treeParent
 	 */
 	public TestTreeElement(int index, TestTreeElement treeParent) {
 		super();
@@ -52,8 +49,6 @@ public class TestTreeElement extends TestElement {
 
 	/**
 	 * Create count number of children in the receiver.
-	 *
-	 * @param count
 	 */
 	public void createChildren(int count) {
 		children = new TestTreeElement[count];

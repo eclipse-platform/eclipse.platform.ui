@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +21,6 @@ import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
 
-@SuppressWarnings("javadoc")
 public class RegistrationMacOsX implements IOperatingSystemRegistration {
 
 	private static final String PLIST_PATH_SUFFIX = "/Contents/Info.plist"; //$NON-NLS-1$
@@ -118,8 +116,8 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 				.orElse(""); //$NON-NLS-1$
 	}
 
-	private PlistFileWriter getPlistFileWriter(String plistPath) throws IOException {
-		return new PlistFileWriter(fileProvider.newReader(plistPath));
+	private PlistFileWriter getPlistFileWriter(String plistPath) {
+		return new PlistFileWriter(() -> fileProvider.newReader(plistPath));
 	}
 
 	@Override
@@ -132,8 +130,7 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 		processExecutor.execute(LSREGISTER, RECURSIVE, pathToEclipseApp);
 	}
 
-	private void changePlistFile(Collection<IScheme> toAdd, Collection<IScheme> toRemove, String pathToEclipseApp)
-			throws IOException {
+	private void changePlistFile(Collection<IScheme> toAdd, Collection<IScheme> toRemove, String pathToEclipseApp) {
 		String plistPath = pathToEclipseApp + PLIST_PATH_SUFFIX;
 
 		PlistFileWriter writer = getPlistFileWriter(plistPath);
@@ -146,7 +143,7 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 			writer.removeScheme(scheme.getName());
 		}
 
-		writer.writeTo(fileProvider.newWriter(plistPath));
+		writer.writeTo(() -> fileProvider.newWriter(plistPath));
 	}
 
 	/**

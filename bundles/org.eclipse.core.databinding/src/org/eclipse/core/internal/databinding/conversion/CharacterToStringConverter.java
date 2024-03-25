@@ -22,9 +22,6 @@ import org.eclipse.core.databinding.conversion.Converter;
 public class CharacterToStringConverter extends Converter<Object, String> {
 	private final boolean primitive;
 
-	/**
-	 * @param primitive
-	 */
 	private CharacterToStringConverter(boolean primitive) {
 		super(primitive ? Character.TYPE : Character.class, String.class);
 		this.primitive = primitive;
@@ -49,7 +46,6 @@ public class CharacterToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param primitive
 	 * @return converter
 	 */
 	public static CharacterToStringConverter fromCharacter(boolean primitive) {

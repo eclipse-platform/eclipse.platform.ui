@@ -21,7 +21,6 @@ import java.text.MessageFormat;
 
 /**
  * @since 1.0
- *
  */
 public class BindingMessages {
 

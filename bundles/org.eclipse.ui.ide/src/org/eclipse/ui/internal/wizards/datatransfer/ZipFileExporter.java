@@ -67,8 +67,6 @@ public class ZipFileExporter implements IFileExporter {
 	/**
 	 *	Write the contents of the file to the tar archive.
 	 *
-	 *	@param entry
-	 *	@param contents
 	 *  @exception java.io.IOException
 	 *  @exception org.eclipse.core.runtime.CoreException
 	 */
@@ -78,23 +76,17 @@ public class ZipFileExporter implements IFileExporter {
 		// If the contents are being compressed then we get the below for free.
 		if (!useCompression) {
 			entry.setMethod(ZipEntry.STORED);
-			InputStream contentStream = contents.getContents(false);
-			int length = 0;
-			CRC32 checksumCalculator = new CRC32();
-			try {
+			try (InputStream contentStream = contents.getContents(false)) {
+				int length = 0;
+				CRC32 checksumCalculator = new CRC32();
 				int n;
 				while ((n = contentStream.read(readBuffer)) > 0) {
 					checksumCalculator.update(readBuffer, 0, n);
 					length += n;
 				}
-			} finally {
-				if (contentStream != null) {
-					contentStream.close();
-				}
+				entry.setSize(length);
+				entry.setCrc(checksumCalculator.getValue());
 			}
-
-			entry.setSize(length);
-			entry.setCrc(checksumCalculator.getValue());
 		}
 
 		// set the timestamp

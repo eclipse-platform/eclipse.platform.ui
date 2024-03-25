@@ -32,7 +32,6 @@ import org.eclipse.ui.navigator.ICommonViewerMapper;
  * resource is found, this class causes the Viewer to be updated.  If the
  * resource is not found, the notification can be ignored because the object
  * corresponding to the resource is not present in the viewer.
- *
  */
 public class ResourceToItemsMapper implements ICommonViewerMapper {
 

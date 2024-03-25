@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.ISafeRunnableRunner;
@@ -28,10 +31,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
 
-import junit.framework.TestCase;
-
-public abstract class ViewerTestCase extends TestCase {
+public abstract class ViewerTestCase {
 
 	Display fDisplay;
 	protected Shell fShell;
@@ -44,8 +47,8 @@ public abstract class ViewerTestCase extends TestCase {
 	private ILogger oldLogger;
 	private ISafeRunnableRunner oldRunner;
 
-	public ViewerTestCase(String name) {
-		super(name);
+	@Before
+	public void initializeOsDependentStates() {
 		disableTestsBug347491 = Util.isCocoa();
 		eventLoopAdjustmentBug531048 = Util.isGtk();
 	}
@@ -105,7 +108,7 @@ public abstract class ViewerTestCase extends TestCase {
 		}
 	}
 
-	@Override
+	@Before
 	public void setUp() {
 		oldLogger = Policy.getLog();
 		oldRunner = SafeRunnable.getRunner();
@@ -128,8 +131,6 @@ public abstract class ViewerTestCase extends TestCase {
 
 	/**
 	 * Pauses execution of the current thread
-	 *
-	 * @param millis
 	 */
 	protected static void sleep(long millis) {
 		try {
@@ -139,7 +140,7 @@ public abstract class ViewerTestCase extends TestCase {
 		}
 	}
 
-	@Override
+	@After
 	public void tearDown() {
 		Policy.setLog(oldLogger);
 		SafeRunnable.setRunner(oldRunner);

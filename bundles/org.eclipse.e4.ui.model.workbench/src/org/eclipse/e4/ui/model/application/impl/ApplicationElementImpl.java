@@ -157,9 +157,10 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	public void setElementId(String newElementId) {
 		String oldElementId = elementId;
 		elementId = newElementId;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET,
 					ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID, oldElementId, elementId));
+		}
 	}
 
 	/**
@@ -170,7 +171,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	@Override
 	public Map<String, String> getPersistedState() {
 		if (persistedState == null) {
-			persistedState = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+			persistedState = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
 					StringToStringMapImpl.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE);
 		}
 		return persistedState.map();
@@ -184,7 +185,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	@Override
 	public List<String> getTags() {
 		if (tags == null) {
-			tags = new EDataTypeUniqueEList<String>(String.class, this,
+			tags = new EDataTypeUniqueEList<>(String.class, this,
 					ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS);
 		}
 		return tags;
@@ -208,9 +209,10 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	private void setContributorURIGen(String newContributorURI) {
 		String oldContributorURI = contributorURI;
 		contributorURI = newContributorURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET,
 					ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI, oldContributorURI, contributorURI));
+		}
 	}
 
 	@Override
@@ -226,7 +228,7 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	@Override
 	public Map<String, Object> getTransientData() {
 		if (transientData == null) {
-			transientData = new EcoreEMap<String, Object>(ApplicationPackageImpl.Literals.STRING_TO_OBJECT_MAP,
+			transientData = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_OBJECT_MAP,
 					StringToObjectMapImpl.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA);
 		}
 		return transientData.map();
@@ -262,19 +264,21 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 		case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID:
 			return getElementId();
 		case ApplicationPackageImpl.APPLICATION_ELEMENT__PERSISTED_STATE:
-			if (coreType)
+			if (coreType) {
 				return ((EMap.InternalMapView<String, String>) getPersistedState()).eMap();
-			else
+			} else {
 				return getPersistedState();
+			}
 		case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
 			return getTags();
 		case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 			return getContributorURI();
 		case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
-			if (coreType)
+			if (coreType) {
 				return ((EMap.InternalMapView<String, Object>) getTransientData()).eMap();
-			else
+			} else {
 				return getTransientData();
+			}
 		default:
 			return super.eGet(featureID, resolve, coreType);
 		}
@@ -372,8 +376,9 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 	 * @generated
 	 */
 	private String toStringGen() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (elementId: "); //$NON-NLS-1$

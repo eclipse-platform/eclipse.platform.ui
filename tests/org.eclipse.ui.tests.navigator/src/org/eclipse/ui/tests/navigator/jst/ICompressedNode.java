@@ -20,7 +20,6 @@ import org.eclipse.swt.graphics.Image;
  *
  * Provides a simple interface that is used to manipulate the rendering of Java elements to a format
  * that is friendlier for Web Projects.
- *
  */
 public interface ICompressedNode   {
 	/**

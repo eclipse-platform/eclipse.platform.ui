@@ -14,13 +14,13 @@
 
 package org.eclipse.e4.ui.bindings.internal;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.inject.Inject;
-import javax.inject.Named;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
@@ -35,9 +35,6 @@ import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
 
-/**
- *
- */
 public class BindingServiceImpl implements EBindingService {
 
 	static final String USER_TYPE = "user"; //$NON-NLS-1$

@@ -71,6 +71,7 @@ are appended to the initial definition.
             <element ref="showInPart"/>
             <element ref="hiddenMenuItem"/>
             <element ref="hiddenToolBarItem"/>
+            <element ref="editorOnboardingCommand" minOccurs="0" maxOccurs="5"/>
          </choice>
          <attribute name="targetID" use="required">
             <annotation>
@@ -87,6 +88,28 @@ are appended to the initial definition.
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+         <attribute name="editorOnboardingText" type="string">
+            <annotation>
+               <documentation>
+                  The text is shown in the editor area in case no editor is open.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="editorOnboardingImage" type="string">
+            <annotation>
+               <documentation>
+                  The image is shown in the editor area in case no editor is open.
+The image shall be grey and not colored and shall have a size of 250 x 250 px.
+Plus a second image for high resolution with a size of 500 x 500 px and a name like [image_name]@2x.[image_type].
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
          </attribute>
       </complexType>
    </element>
@@ -303,6 +326,27 @@ If this attribute is not used, the view will be moveable, unless the perspective
 
 &lt;strong&gt;WARNING:&lt;/strong&gt; This is considered to be a &apos;Product level&apos; extension and should not be used in consumable plugins without great care.
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="editorOnboardingCommand">
+      <annotation>
+         <documentation>
+            The commands are shown including key binding in the editor area in case no editor is open.
+Up to five commands can be added.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of the command which will be shown in case no editor is open.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

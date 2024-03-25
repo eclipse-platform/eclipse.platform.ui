@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal.themes;
 
 import java.util.Hashtable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.swt.graphics.RGB;
@@ -24,7 +23,6 @@ import org.eclipse.ui.themes.IColorFactory;
 
 /**
  * @since 3.105
- *
  */
 public class RGBBrightnessColorFactory implements IColorFactory, IExecutableExtension {
 
@@ -56,8 +54,7 @@ public class RGBBrightnessColorFactory implements IColorFactory, IExecutableExte
 	 *      java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-			throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		if (data instanceof Hashtable) {
 			Hashtable table = (Hashtable) data;
 			color = (String) table.get("color"); //$NON-NLS-1$

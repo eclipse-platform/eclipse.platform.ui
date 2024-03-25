@@ -22,7 +22,6 @@ import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelPro
  * @param <E> type of the viewer elements that labels are provided for
  *
  * @since 1.1
- *
  */
 public abstract class ListeningLabelProvider<E> extends ViewerLabelProvider {
 

@@ -15,7 +15,8 @@
 package org.eclipse.ui.ide.undo;
 
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.ui.internal.ide.undo.ProjectDescription;
+import org.eclipse.core.resources.undo.snapshot.IResourceSnapshot;
+import org.eclipse.core.resources.undo.snapshot.ResourceSnapshotFactory;
 
 /**
  * A CreateProjectOperation represents an undoable operation for creating a
@@ -40,7 +41,6 @@ public class CreateProjectOperation extends AbstractCreateResourcesOperation {
 	 */
 	public CreateProjectOperation(IProjectDescription projectDescription,
 			String label) {
-		super(new ProjectDescription[] { new ProjectDescription(
-				projectDescription) }, label);
+		super(new IResourceSnapshot<?>[] { ResourceSnapshotFactory.fromProjectDescription(projectDescription) }, label);
 	}
 }

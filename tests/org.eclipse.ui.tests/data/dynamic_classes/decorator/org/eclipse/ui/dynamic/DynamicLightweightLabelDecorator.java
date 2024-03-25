@@ -23,9 +23,6 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 public class DynamicLightweightLabelDecorator implements
 		ILightweightLabelDecorator {
 
-	/**
-	 *
-	 */
 	public DynamicLightweightLabelDecorator() {
 		super();
 	}

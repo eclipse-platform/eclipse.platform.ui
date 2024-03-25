@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2018 IBM Corporation and others.
+ * Copyright (c) 2003, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -74,6 +74,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	private class UpdateActionBarsJob extends UIJob {
 		public UpdateActionBarsJob(String label) {
 			super(label);
+			setUser(false);
 		}
 
 		@Override
@@ -196,7 +197,6 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	/**
 	 * <p>
 	 * Called by {@link CommonNavigator} when the View Part is disposed.
-	 *
 	 */
 	public void dispose() {
 		commonNavigator.getCommonViewer().removeSelectionChangedListener(this);
@@ -250,7 +250,6 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 * @param aMenuManager
 	 *            A popup menu
 	 * @see NavigatorActionService#fillContextMenu(IMenuManager)
-	 *
 	 */
 	protected void fillContextMenu(IMenuManager aMenuManager) {
 		ISelection selection = commonNavigator.getCommonViewer().getSelection();
@@ -297,8 +296,8 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 		Image img = null;
 		if (aSelection != null && !aSelection.isEmpty()
-				&& aSelection instanceof IStructuredSelection) {
-			img = labelProvider.getImage(((IStructuredSelection) aSelection)
+				&& aSelection instanceof IStructuredSelection strSelection) {
+			img = labelProvider.getImage((strSelection)
 					.getFirstElement());
 		}
 

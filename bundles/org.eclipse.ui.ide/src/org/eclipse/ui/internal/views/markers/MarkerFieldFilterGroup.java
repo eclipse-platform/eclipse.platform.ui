@@ -54,7 +54,6 @@ import org.eclipse.ui.views.markers.internal.MarkerType;
  * MarkerFieldFilterGroup is the representation of a grouping of marker filters.
  *
  * @since 3.4
- *
  */
 class MarkerFieldFilterGroup {
 
@@ -64,7 +63,6 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * The attribute values for the scope
-	 *
 	 */
 
 	private static final String ATTRIBUTE_SCOPE = "scope"; //$NON-NLS-1$
@@ -121,9 +119,6 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param configurationElement
-	 * @param markerBuilder
 	 */
 	public MarkerFieldFilterGroup(IConfigurationElement configurationElement, MarkerContentGenerator markerBuilder) {
 		element = configurationElement;
@@ -195,7 +190,6 @@ class MarkerFieldFilterGroup {
 	 * Return the MarkerFieldFilter for field or <code>null</code> if there
 	 * isn't one.
 	 *
-	 * @param field
 	 * @return MarkerFieldFilter
 	 */
 	public MarkerFieldFilter getFilter(MarkerField field) {
@@ -335,7 +329,6 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Return true if the resource is in the working set
-	 * @param resource
 	 * @return boolean
 	 */
 	private boolean isInWorkingSet(IResource resource) {
@@ -389,8 +382,6 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Load the settings from the legacy child.
-	 *
-	 * @param memento
 	 */
 	void legacyLoadSettings(IMemento memento) {
 
@@ -496,8 +487,6 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Populate the clone and return true if successful.
-	 *
-	 * @param clone
 	 */
 	protected boolean populateClone(MarkerFieldFilterGroup clone) {
 		clone.scope = this.scope;
@@ -545,8 +534,6 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Save the settings for the receiver in the memento.
-	 *
-	 * @param memento
 	 */
 	void saveFilterSettings(IMemento memento) {
 		memento.putString(TAG_ENABLED, String.valueOf(enabled));
@@ -613,8 +600,6 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Set the name of the receiver.
-	 *
-	 * @param newName
 	 */
 	public void setName(String newName) {
 		name = newName;
@@ -623,8 +608,6 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Set the scope of the receiver.
-	 *
-	 * @param newScope
 	 */
 	public void setScope(int newScope) {
 		scope = newScope;
@@ -632,8 +615,6 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Set the working set of the receiver.
-	 *
-	 * @param workingSet
 	 */
 	void setWorkingSet(IWorkingSet workingSet) {
 		this.workingSet = workingSet;

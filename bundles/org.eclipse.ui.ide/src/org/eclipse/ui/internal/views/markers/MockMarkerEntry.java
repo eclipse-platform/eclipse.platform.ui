@@ -17,13 +17,7 @@ package org.eclipse.ui.internal.views.markers;
  *	Mock Class needed for testing Sort
  */
 public class MockMarkerEntry extends MarkerEntry{
-	/**
-	 *
-	 */
 	public String name;
-	/**
-	 * @param name
-	 */
 	public MockMarkerEntry(String name) {
 		super(null);
 		this.name=name;

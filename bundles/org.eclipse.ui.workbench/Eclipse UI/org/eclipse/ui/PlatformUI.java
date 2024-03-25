@@ -20,8 +20,10 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.DialogSettingsProviderService;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.services.help.EHelpService;
 import org.eclipse.jface.dialogs.IDialogSettingsProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.Workbench;
@@ -307,5 +309,26 @@ public final class PlatformUI {
 		}
 		bundleContext.ungetService(reference);
 		return Optional.ofNullable(service.getApplication());
+	}
+
+	/**
+	 * Sets the given help id on the given control in a way that works both for
+	 * E3/E4 applications
+	 *
+	 * @param control       the control on which to register the id
+	 * @param helpContextId the id to use when F1 help is invoked
+	 * @since 3.131
+	 */
+	public static void setHelp(Composite control, String helpContextId) {
+		if (control == null || helpContextId == null) {
+			return;
+		}
+		Workbench workbench = Workbench.getInstance();
+		if (workbench == null) {
+			getApplication().map(MApplication::getContext).map(ctx -> ctx.get(EHelpService.class))
+					.ifPresent(helpService -> helpService.setHelp(control, helpContextId));
+		} else {
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(control, helpContextId);
+		}
 	}
 }

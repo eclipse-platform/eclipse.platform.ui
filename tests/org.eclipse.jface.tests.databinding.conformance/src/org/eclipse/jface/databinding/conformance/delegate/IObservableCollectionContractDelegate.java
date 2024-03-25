@@ -48,7 +48,6 @@ public interface IObservableCollectionContractDelegate<E> extends
 	 * <code>collection</code>. This element will be employed to assert the
 	 * addition and removal of elements in the collection.
 	 *
-	 * @param collection
 	 * @return valid element for the collection
 	 */
 	public E createElement(IObservableCollection<E> collection);
@@ -56,7 +55,6 @@ public interface IObservableCollectionContractDelegate<E> extends
 	/**
 	 * Returns the expected type of the elements in the collection.
 	 *
-	 * @param collection
 	 * @return element type
 	 */
 	public Object getElementType(IObservableCollection<E> collection);

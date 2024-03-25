@@ -25,7 +25,6 @@ import org.eclipse.core.databinding.observable.IObservablesListener;
  * @param <V>
  *            type of the values in the map
  * @since 1.0
- *
  */
 @FunctionalInterface
 public interface IMapChangeListener<K, V> extends IObservablesListener {

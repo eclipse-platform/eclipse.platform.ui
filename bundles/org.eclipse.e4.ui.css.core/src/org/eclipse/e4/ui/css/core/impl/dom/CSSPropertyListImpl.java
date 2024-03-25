@@ -53,8 +53,6 @@ public class CSSPropertyListImpl implements CSSPropertyList {
 
 	/**
 	 * Insert {@link CSSProperty} at <code>index</code>.
-	 * @param property
-	 * @param index
 	 */
 	public void insert(CSSProperty property, int index) {
 		if (properties == null) {
@@ -65,7 +63,6 @@ public class CSSPropertyListImpl implements CSSPropertyList {
 
 	/**
 	 * Delete {@link CSSProperty} at <code>index</code>.
-	 * @param index
 	 */
 	public void delete(int index) {
 		if (properties == null) {

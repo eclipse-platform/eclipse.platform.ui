@@ -34,7 +34,6 @@ import org.eclipse.core.databinding.observable.IDiff;
  * @param <V>
  *            the type of mapped values
  * @since 1.1
- *
  */
 public abstract class MapDiff<K, V> implements IDiff {
 	/**

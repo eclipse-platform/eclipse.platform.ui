@@ -86,7 +86,6 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  *
  * This class also takes care of refreshing these links when the user switches
  * the perspective.
- *
  */
 public final class EmptyWorkspaceHelper {
 
@@ -243,6 +242,9 @@ public final class EmptyWorkspaceHelper {
 			return;
 		}
 		IWorkbenchPage page = win.getActivePage();
+		if (page == null) {
+			return;
+		}
 		String[] wizardIds = page.getNewWizardShortcuts();
 		projectWizardActions.clear();
 		for (String wizardId : wizardIds) {
@@ -271,7 +273,7 @@ public final class EmptyWorkspaceHelper {
 			ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 			imageDesc = images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD);
 		}
-		addLabel.setImage(resourceManager.createImage(imageDesc));
+		addLabel.setImage(resourceManager.create(imageDesc));
 
 		Hyperlink addLink = toolkit.createHyperlink(optionsArea, text, SWT.WRAP);
 		addLink.setForeground(linkColor);

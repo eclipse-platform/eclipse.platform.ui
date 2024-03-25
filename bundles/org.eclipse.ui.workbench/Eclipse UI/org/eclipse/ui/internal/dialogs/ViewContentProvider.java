@@ -93,7 +93,6 @@ public class ViewContentProvider implements ITreeContentProvider {
 	 * Determines the categories and views
 	 *
 	 * Views are identified as PartDescriptors which have the tag "View"
-	 *
 	 */
 	private Object[] createChildren(Object element) {
 		if (element instanceof MApplication) {
@@ -105,7 +104,6 @@ public class ViewContentProvider implements ITreeContentProvider {
 	}
 
 	/**
-	 * @param categoryDescription
 	 * @return views with the category tag
 	 */
 	private Set<MPartDescriptor> determineViewsInCategory(String categoryDescription) {
@@ -170,7 +168,6 @@ public class ViewContentProvider implements ITreeContentProvider {
 	 * Evaluates if the view is filtered by an activity. Note that this is only
 	 * possible for E3 views, as activities don't exist in the Eclipse 4.
 	 *
-	 * @param descriptor
 	 * @return result of the check
 	 */
 	private boolean isFilteredByActivity(MPartDescriptor descriptor) {

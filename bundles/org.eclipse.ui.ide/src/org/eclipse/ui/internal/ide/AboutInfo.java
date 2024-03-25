@@ -23,8 +23,8 @@ import java.util.zip.CheckedInputStream;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.BundleGroupProperties;
@@ -141,7 +141,7 @@ public final class AboutInfo {
 		}
 
 		URL url = bundleGroupProperties.getFeatureImageUrl();
-		return url == null ? null : new Path(url.getPath()).lastSegment();
+		return url == null ? null : IPath.fromOSString(url.getPath()).lastSegment();
 	}
 
 	/**
@@ -171,30 +171,13 @@ public final class AboutInfo {
 			return null;
 		}
 
-		InputStream in = null;
-		try {
-			CRC32 checksum = new CRC32();
-			in = new CheckedInputStream(url.openStream(), checksum);
-
+		CRC32 checksum = new CRC32();
+		try (InputStream in = new CheckedInputStream(url.openStream(), checksum)) {
 			// the contents don't matter, the read just needs a place to go
-			byte[] sink = new byte[2048];
-			while (true) {
-				if (in.read(sink) <= 0) {
-					break;
-				}
-			}
-
+			in.readAllBytes();
 			return checksum.getValue();
 		} catch (IOException e) {
 			return null;
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// do nothing
-				}
-			}
 		}
 	}
 

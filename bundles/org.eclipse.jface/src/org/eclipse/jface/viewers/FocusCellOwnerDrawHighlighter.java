@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Listener;
  * cell.
  *
  * @since 3.3
- *
  */
 public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 	private boolean removeNonFocusedSelectionInformation;
@@ -107,9 +106,13 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 
 	private void removeSelectionInformation(Event event, ViewerCell cell) {
 		GC gc = event.gc;
-		gc.setBackground(cell.getViewerRow().getBackground(cell.getColumnIndex()));
+		if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
+			// On GTK, the line is highlighted even though the SELECTED flag is removed. To
+			// fix this issue, the background must be overwridden
+			gc.setBackground(cell.getViewerRow().getBackground(cell.getColumnIndex()));
+			gc.fillRectangle(cell.getBounds());
+		}
 		gc.setForeground(cell.getViewerRow().getForeground(cell.getColumnIndex()));
-		gc.fillRectangle(cell.getBounds());
 		event.detail &= ~SWT.SELECTED;
 	}
 

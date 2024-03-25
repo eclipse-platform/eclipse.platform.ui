@@ -20,7 +20,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.preferences.WorkbenchSettingsTransfer;
@@ -30,7 +29,6 @@ import org.eclipse.ui.internal.preferences.WorkbenchSettingsTransfer;
  * settings.
  *
  * @since 3.3
- *
  */
 public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 
@@ -91,7 +89,6 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	 * Create the parent directories for the workbench layout file and then return
 	 * the File.
 	 *
-	 * @param newWorkspaceRoot
 	 * @return File the new layout file. Return <code>null</code> if the file cannot
 	 *         be created.
 	 */
@@ -114,12 +111,11 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	/**
 	 * Return the workbench settings location for the new root
 	 *
-	 * @param newWorkspaceRoot
 	 * @return IPath or <code>null</code> if it can't be determined.
 	 */
 	@Override
 	protected IPath getNewWorkbenchStateLocation(IPath newWorkspaceRoot) {
-		return newWorkspaceRoot.append(new Path(".metadata/.plugins/org.eclipse.e4.workbench")); //$NON-NLS-1$
+		return newWorkspaceRoot.append(IPath.fromOSString(".metadata/.plugins/org.eclipse.e4.workbench")); //$NON-NLS-1$
 	}
 
 }

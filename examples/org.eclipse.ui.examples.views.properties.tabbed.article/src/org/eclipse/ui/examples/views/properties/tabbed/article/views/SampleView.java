@@ -32,7 +32,6 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
  * Sample view for the example.
  *
  * @author Anthony Hunter
- *
  */
 public class SampleView
 	extends ViewPart

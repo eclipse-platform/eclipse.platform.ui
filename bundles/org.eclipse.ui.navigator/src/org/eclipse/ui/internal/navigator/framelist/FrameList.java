@@ -214,7 +214,6 @@ public class FrameList extends EventManager {
 	 * Sets the current frame to the frame with the given index.
 	 * Fires a <code>P_CURRENT_FRAME</code> property change event
 	 * if the current frame changes.
-	 * @param index
 	 */
 	public void setCurrentIndex(int index) {
 		if (index != -1 && index != current) {

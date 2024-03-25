@@ -17,7 +17,6 @@ import org.eclipse.urischeme.internal.UriSchemeExtensionReader;
 
 /**
  * API for reading available URI schemes from the extension registry
- *
  */
 public interface IUriSchemeExtensionReader {
 

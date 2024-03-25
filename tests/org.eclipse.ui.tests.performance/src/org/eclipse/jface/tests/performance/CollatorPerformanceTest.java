@@ -23,16 +23,12 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 
 /**
  * @since 3.5
- *
  */
 public class CollatorPerformanceTest extends BasicPerformanceTest {
 
 	private static final int ARRAYSIZE=100000;
 	private static String[] fArray;
 
-	/**
-	 * @param testName
-	 */
 	public CollatorPerformanceTest (String testName) {
 		super(testName);
 		generateArray();

@@ -41,8 +41,6 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements IEx
 
 	/**
 	 * Create a new instance of the receiver with the specified seperatorChar
-	 *
-	 * @param separatorChar
 	 */
 	public WorkbenchPreferenceManager(char separatorChar) {
 		super(separatorChar, new WorkbenchPreferenceExpressionNode("")); //$NON-NLS-1$
@@ -62,8 +60,6 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements IEx
 
 	/**
 	 * Add the pages and the groups to the receiver.
-	 *
-	 * @param pageContributions
 	 */
 	public void addPages(Collection pageContributions) {
 

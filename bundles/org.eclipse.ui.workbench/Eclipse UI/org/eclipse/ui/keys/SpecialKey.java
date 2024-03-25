@@ -37,7 +37,7 @@ import org.eclipse.jface.bindings.keys.KeyLookupFactory;
  *             org.eclipse.jface.bindings.keys.KeyLookupFactory
  * @since 3.0
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2024-03")
 public final class SpecialKey extends NaturalKey {
 
 	/**

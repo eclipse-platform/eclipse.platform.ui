@@ -36,18 +36,11 @@ import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
-/**
- *
- */
 public class ScrolledPropertiesBlock extends MasterDetailsBlock {
-	private FormPage page;
+	private final FormPage page;
 	public ScrolledPropertiesBlock(FormPage page) {
 		this.page = page;
 	}
-	/**
-	 * @param id
-	 * @param title
-	 */
 	class MasterContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {

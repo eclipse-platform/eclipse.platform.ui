@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.action;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -22,25 +26,20 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Menu;
+import org.junit.Rule;
+import org.junit.Test;
 
 /**
  * Tests for the MenuManager API.
  *
  * @since 3.1
  */
-public class MenuManagerTest extends JFaceActionTest {
+public class MenuManagerTest {
+	@Rule
+	public JFaceActionRule rule = new JFaceActionRule();
 
 	private int groupMarkerCount = 0;
 	private int separatorCount = 0;
-
-	/**
-	 * Constructs a new test with the given name.
-	 *
-	 * @param name the name of the test
-	 */
-	public MenuManagerTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Tests that a menu with no concrete visible items (that is, ignoring
@@ -48,13 +47,15 @@ public class MenuManagerTest extends JFaceActionTest {
 	 *
 	 * @see MenuManager#isVisible()
 	 */
+
+	@Test
 	public void testMenuWithNoConcreteVisibleItemsIsHidden() {
 		MenuManager menuBarMgr = createMenuBarManager();
 
 		MenuManager fileMenu = createMenuManager("File", "gsgn");
 		menuBarMgr.add(fileMenu);
 		menuBarMgr.updateAll(false);
-		assertEquals(0, getShell().getMenuBar().getItems().length);
+		assertEquals(0, rule.getShell().getMenuBar().getItems().length);
 	}
 
 	/**
@@ -65,6 +66,9 @@ public class MenuManagerTest extends JFaceActionTest {
 	 * @see MenuManager#isVisible()
 	 * @see MenuManager#markDirty()
 	 */
+
+	@Test
+
 	public void testAddingConcreteItemToMenuWithNoConcreteVisibleItems() {
 		MenuManager menuBarMgr = createMenuBarManager();
 
@@ -72,7 +76,7 @@ public class MenuManagerTest extends JFaceActionTest {
 		menuBarMgr.add(fileMenuMgr);
 		menuBarMgr.updateAll(false);
 
-		Menu menuBar = getShell().getMenuBar();
+		Menu menuBar = rule.getShell().getMenuBar();
 		assertEquals(0, menuBar.getItems().length);
 
 		fileMenuMgr.add(createItem('a'));
@@ -89,6 +93,8 @@ public class MenuManagerTest extends JFaceActionTest {
 	 * This is a test case for bug 204788 to ensure that a disposed menu is marked
 	 * as being dirty.
 	 */
+
+	@Test
 	public void testDisposedMenuIsDirty() {
 		MenuManager menuBarMgr = createMenuBarManager();
 
@@ -106,8 +112,10 @@ public class MenuManagerTest extends JFaceActionTest {
 	 * This is a test case for bug 255429 to ensure that a menu manager without any
 	 * text set does not throw an NPE.
 	 */
+
+	@Test
 	public void testEmptyMenuManagerNPE() {
-		Menu menu = new Menu(getShell());
+		Menu menu = new Menu(rule.getShell());
 		MenuManager manager = new MenuManager();
 		manager.fill(menu, -1);
 	}
@@ -155,7 +163,7 @@ public class MenuManagerTest extends JFaceActionTest {
 	}
 
 	protected MenuManager createMenuBarManager() {
-		Decorations shell = getShell();
+		Decorations shell = rule.getShell();
 		MenuManager menuMgr = new MenuManager();
 		Menu menuBar = menuMgr.createMenuBar(shell);
 		shell.setMenuBar(menuBar);

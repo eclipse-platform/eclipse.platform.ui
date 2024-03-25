@@ -218,7 +218,6 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Validate the receiver and update the ok status.
-	 *
 	 */
 	protected void updateOKStatus() {
 		if (!fIsEmpty) {

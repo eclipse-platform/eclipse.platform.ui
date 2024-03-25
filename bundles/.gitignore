@@ -1,2 +1,3 @@
 /.project
 /target/
+*/OSGI-INF/org.eclipse.*.xml

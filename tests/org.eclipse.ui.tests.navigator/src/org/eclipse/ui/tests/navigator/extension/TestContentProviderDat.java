@@ -24,7 +24,7 @@ import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 
 public class TestContentProviderDat implements ITreeContentProvider {
 
-	private TestExtensionTreeData child = new TestExtensionTreeData(null, "Child", null, null);
+	private final TestExtensionTreeData child = new TestExtensionTreeData(null, "Child", null, null);
 
 	@Override
 	public Object[] getChildren(Object parentElement) {

@@ -72,6 +72,8 @@ public class RGBBlendColorFactory implements IColorFactory, IExecutableExtension
 	 * <code>color1</code> and <code>color2</code>, that describe the two colors to
 	 * be blended. These values may either be RGB triples or SWT constants.
 	 *
+	 * @throws CoreException never thrown but API
+	 *
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
 	 *      java.lang.String, java.lang.Object)
 	 */

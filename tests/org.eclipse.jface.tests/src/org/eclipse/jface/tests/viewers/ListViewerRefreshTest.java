@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import java.util.ArrayList;
@@ -30,10 +31,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class ListViewerRefreshTest extends TestCase {
+public class ListViewerRefreshTest {
 	/**
 	 * Used for viewing the UI. Set to 0 if not wanting to see the UI.
 	 */
@@ -47,8 +49,8 @@ public class ListViewerRefreshTest extends TestCase {
 
 	private ArrayList<String> input = null;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		shell = new Shell();
 		shell.setSize(400, 200);
 		shell.setLayout(new FillLayout());
@@ -66,8 +68,8 @@ public class ListViewerRefreshTest extends TestCase {
 		shell.open();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		shell.dispose();
 		shell = null;
 	}
@@ -75,9 +77,8 @@ public class ListViewerRefreshTest extends TestCase {
 	/**
 	 * Asserts the ability to refresh without a selection and preserve the scrolled
 	 * to position.
-	 *
-	 * @throws Exception
 	 */
+	@Test
 	public void testNoSelectionRefresh() throws Exception {
 		shell.setText("Lost Scrolled Position Test"); //$NON-NLS-1$
 		readAndDispatch();
@@ -95,9 +96,8 @@ public class ListViewerRefreshTest extends TestCase {
 	/**
 	 * Asserts the ability to refresh with a selection and preserve the scrolled to
 	 * position.
-	 *
-	 * @throws Exception
 	 */
+	@Test
 	public void testSelectionRefresh() throws Exception {
 		shell.setText("Preserved Scrolled Position Test"); //$NON-NLS-1$
 		readAndDispatch();
@@ -120,9 +120,6 @@ public class ListViewerRefreshTest extends TestCase {
 
 	/**
 	 * Runs the runnable and displays the description.
-	 *
-	 * @param description
-	 * @param runnable
 	 */
 	private void run(String description, Runnable runnable) {
 		runnable.run();

@@ -74,7 +74,6 @@ public final class TreeFactory extends AbstractControlFactory<TreeFactory, Tree>
 	 * Creates a new TreeFactory with the given style. Refer to
 	 * {@link Tree#Tree(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new TreeFactory instance
 	 */
 	public static TreeFactory newTree(int style) {

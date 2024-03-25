@@ -20,7 +20,6 @@ import org.eclipse.ui.internal.views.markers.ExtendedMarkersView;
  * The MarkerSupportView is a view that supports the extensions
  * in the markerSupport extension point.
  * @since 3.4
- *
  */
 public abstract class MarkerSupportView extends ExtendedMarkersView {
 
@@ -32,6 +31,18 @@ public abstract class MarkerSupportView extends ExtendedMarkersView {
 	 */
 	public MarkerSupportView(String contentGeneratorId) {
 		super(contentGeneratorId);
+	}
+
+	/**
+	 * Checks if there is a filter currently enabled.
+	 *
+	 * @since 3.20
+	 *
+	 * @return true if a filter is enabled, false if no filter is enabled.
+	 */
+	@Override
+	public boolean isFilterEnabled() {
+		return super.isFilterEnabled();
 	}
 
 }

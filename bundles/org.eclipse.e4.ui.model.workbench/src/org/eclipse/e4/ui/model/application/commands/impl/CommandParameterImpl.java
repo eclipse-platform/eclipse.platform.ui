@@ -134,9 +134,10 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND_PARAMETER__NAME, oldName,
 					name));
+		}
 	}
 
 	/**
@@ -158,9 +159,10 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	public void setTypeId(String newTypeId) {
 		String oldTypeId = typeId;
 		typeId = newTypeId;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND_PARAMETER__TYPE_ID,
 					oldTypeId, typeId));
+		}
 	}
 
 	/**
@@ -182,9 +184,10 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	public void setOptional(boolean newOptional) {
 		boolean oldOptional = optional;
 		optional = newOptional;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL,
 					oldOptional, optional));
+		}
 	}
 
 	/**
@@ -278,8 +281,9 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: "); //$NON-NLS-1$

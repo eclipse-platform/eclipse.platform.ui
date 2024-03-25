@@ -102,8 +102,6 @@ public class CacheWrapper {
 
 	/**
 	 * Creates a <code>CacheWrapper</code> with the given parent
-	 *
-	 * @param parent
 	 */
 	public CacheWrapper(Composite parent) {
 		proxy = new Composite(parent, SWT.NONE);

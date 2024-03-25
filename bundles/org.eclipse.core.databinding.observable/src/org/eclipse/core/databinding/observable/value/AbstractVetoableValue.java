@@ -32,7 +32,6 @@ import org.eclipse.core.databinding.observable.Realm;
  * @param <T>
  *            the type of value being observed
  * @since 1.0
- *
  */
 public abstract class AbstractVetoableValue<T> extends
 		AbstractObservableValue<T> implements IVetoableValue<T> {

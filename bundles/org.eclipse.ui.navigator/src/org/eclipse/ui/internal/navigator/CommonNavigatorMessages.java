@@ -25,7 +25,6 @@ import org.eclipse.osgi.util.NLS;
  * </p>
  *
  * @since 3.2
- *
  */
 public class CommonNavigatorMessages extends NLS {
 

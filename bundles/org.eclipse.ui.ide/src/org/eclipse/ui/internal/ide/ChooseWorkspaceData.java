@@ -23,7 +23,7 @@ import java.io.Reader;
 import java.net.URL;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -153,7 +153,7 @@ public class ChooseWorkspaceData {
 			return;
 		}
 
-		dir = new Path(dir).toOSString();
+		dir = IPath.fromOSString(dir).toOSString();
 		while (dir.charAt(dir.length() - 1) == File.separatorChar) {
 			dir = dir.substring(0, dir.length() - 1);
 		}
@@ -310,8 +310,10 @@ public class ChooseWorkspaceData {
 			//		</recentWorkspaces>
 			//	</launchWorkspaceData>
 
-			Reader reader = new FileReader(persUrl.getFile());
-			XMLMemento memento = XMLMemento.createReadRoot(reader);
+			XMLMemento memento;
+			try (Reader reader = new FileReader(persUrl.getFile())) {
+				memento = XMLMemento.createReadRoot(reader);
+			}
 			if (memento == null || !compatibleFileProtocol(memento)) {
 				return false;
 			}

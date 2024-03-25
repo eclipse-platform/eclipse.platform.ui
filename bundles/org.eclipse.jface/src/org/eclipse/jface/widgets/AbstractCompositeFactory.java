@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.widgets;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 
@@ -24,18 +25,12 @@ import org.eclipse.swt.widgets.Layout;
  * @param <F> factory
  * @param <C> control
  *
- * @noextend this class is not intended to be subclassed by clients.
- *
  * @since 3.18
- *
  */
+@NoExtend
 public abstract class AbstractCompositeFactory<F extends AbstractCompositeFactory<?, ?>, C extends Composite>
 		extends AbstractControlFactory<F, C> {
 
-	/**
-	 * @param factoryClass
-	 * @param controlCreator
-	 */
 	protected AbstractCompositeFactory(Class<F> factoryClass, WidgetSupplier<C, Composite> controlCreator) {
 		super(factoryClass, controlCreator);
 	}

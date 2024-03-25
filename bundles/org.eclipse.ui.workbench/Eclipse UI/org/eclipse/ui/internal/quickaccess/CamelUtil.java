@@ -21,7 +21,6 @@ import java.util.List;
  * Utility methods for camel case style matching.
  *
  * @since 3.3
- *
  */
 public class CamelUtil {
 

@@ -30,7 +30,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * capability
  *
  * @since 3.3
- *
  */
 public class TableResizePropertyPage extends PropertyPage {
 
@@ -73,9 +72,6 @@ public class TableResizePropertyPage extends PropertyPage {
 
 	}
 
-	/**
-	 * @see PreferencePage#createContents(Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);

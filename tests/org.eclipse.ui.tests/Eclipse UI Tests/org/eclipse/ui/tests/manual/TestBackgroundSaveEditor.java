@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,7 +55,6 @@ import org.eclipse.ui.progress.IJobRunnable;
 
 /**
  * @since 3.3
- *
  */
 public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSource {
 
@@ -182,7 +181,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		}
 	}
 
-	private MySaveable mySaveable;
+	private final MySaveable mySaveable;
 	private Text inputText;
 	private IEditorInput input;
 
@@ -201,7 +200,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 
 
 		createInputGroup(parent, dbc, inputObservable);
-		createOptionsGroup(parent, realm, dbc);
+		createOptionsGroup(parent, dbc);
 		createOutputGroup(parent, dbc, outputObservable);
 
 		GridLayoutFactory.swtDefaults().numColumns(3).equalWidth(true)
@@ -222,8 +221,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		GridLayoutFactory.swtDefaults().generateLayout(outputGroup);
 	}
 
-	private void createOptionsGroup(Composite parent, Realm realm,
-			final DataBindingContext dbc) {
+	private void createOptionsGroup(Composite parent, final DataBindingContext dbc) {
 		Group optionsGroup = new Group(parent, SWT.NONE);
 		optionsGroup.setText("Options");
 
@@ -234,13 +232,6 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 
 		dbc.bindValue(WidgetProperties.buttonSelection().observe(dirtyButton),
 				dirtyObservable, null, null);
-		// IObservableValue inputAndOutputDiffer = new ComputedValue(realm) {
-		// protected Object calculate() {
-		// return Boolean.valueOf(!Util.equals(inputObservable.getValue(),
-		// outputObservable.getValue()));
-		// }
-		// };
-		// dbc.bindValue(dirtyObservable, inputAndOutputDiffer, null);
 
 		Button saveInBackgroundButton = new Button(optionsGroup, SWT.CHECK);
 		new Label(optionsGroup, SWT.NONE)
@@ -263,7 +254,6 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		dbc.bindValue(
 				WidgetProperties.buttonSelection().observe(backgroundExceptionButton),
 				BeanProperties.value("throwExceptionInBackground").observe(data), null, null);
-		;
 
 		new Label(optionsGroup, SWT.NONE).setText("Foreground save time:");
 		Text optionsForegroundTime = new Text(optionsGroup, SWT.BORDER);
@@ -478,7 +468,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		}
 	}
 
-	private Data data = new Data();
+	private final Data data = new Data();
 
 	@Override
 	public Saveable[] getActiveSaveables() {

@@ -14,6 +14,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.pde.api.tools.annotations.NoImplement;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 
@@ -22,8 +23,8 @@ import org.eclipse.swt.graphics.Font;
  *
  * This interface is not meant to be implemented and will be provided to
  * instances of <code>ILightweightLabelDecorator</code>.
- * @noimplement This interface is not intended to be implemented by clients.
  */
+@NoImplement
 public interface IDecoration {
 
 	/**

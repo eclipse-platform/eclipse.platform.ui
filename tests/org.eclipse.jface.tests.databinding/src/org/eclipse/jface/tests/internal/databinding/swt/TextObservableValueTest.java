@@ -18,8 +18,7 @@
 package org.eclipse.jface.tests.internal.databinding.swt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -58,28 +57,16 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testConstructorUpdateEventTypes() {
-		try {
 			WidgetProperties.text(SWT.None);
 			WidgetProperties.text(SWT.FocusOut);
 			WidgetProperties.text(SWT.Modify);
 			WidgetProperties.text(SWT.DefaultSelection);
-			assertTrue(true);
-		} catch (IllegalArgumentException e) {
-			fail();
-		}
 
-		try {
-			WidgetProperties.text(SWT.Verify);
-			fail();
-		} catch (IllegalArgumentException e) {
-			assertTrue(true);
-		}
+			assertThrows(IllegalArgumentException.class, () -> WidgetProperties.text(SWT.Verify));
 	}
 
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=171132
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testGetValueBeforeFocusOutChangeEventsFire() throws Exception {

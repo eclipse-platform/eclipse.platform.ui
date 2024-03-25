@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -33,7 +34,6 @@ import org.eclipse.ui.views.markers.MarkerField;
  * extension point.
  *
  * @since 3.6
- *
  */
 public class ContentGeneratorDescriptor {
 
@@ -52,8 +52,6 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Create a new ContentGeneratorDescriptor
-	 *
-	 * @param element
 	 */
 	public ContentGeneratorDescriptor(IConfigurationElement element) {
 		configurationElement = element;
@@ -61,8 +59,6 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Add the groups defined in the receiver to the collection of groups.
-	 *
-	 * @param groupss
 	 */
 	private void addDefinedGroups(Collection<MarkerGroup> groupss) {
 		// Add the ones in the receiver.
@@ -86,8 +82,6 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Add all of the markerGroups defined in element.
-	 *
-	 * @param groupss
 	 */
 	private void addGroupsFrom(IConfigurationElement element, Collection<MarkerGroup> groupss) {
 		for (IConfigurationElement grouping : element.getChildren(MarkerSupportRegistry.MARKER_GROUPING)) {
@@ -99,7 +93,6 @@ public class ContentGeneratorDescriptor {
 	 * Return whether or not all of {@link MarkerTypesModel} are in the
 	 * selectedTypes.
 	 *
-	 * @param selectedTypes
 	 * @return boolean
 	 */
 	public boolean allTypesSelected(Collection<MarkerType> selectedTypes) {
@@ -142,14 +135,8 @@ public class ContentGeneratorDescriptor {
 			extendedElements.addAll(Arrays.asList(extensionFilters));
 		}
 		if (extendedElements.size() > 0) {
-			IConfigurationElement[] allGroups = new IConfigurationElement[filterGroups.length + extendedElements.size()];
-			System.arraycopy(filterGroups, 0, allGroups, 0, filterGroups.length);
-			Iterator<IConfigurationElement> extras = extendedElements.iterator();
-			int index = filterGroups.length;
-			while (extras.hasNext()) {
-				allGroups[index] = extras.next();
-			}
-			return allGroups;
+			return Stream.concat(Arrays.stream(filterGroups), extendedElements.stream())
+					.toArray(IConfigurationElement[]::new);
 		}
 		return filterGroups;
 	}
@@ -228,7 +215,6 @@ public class ContentGeneratorDescriptor {
 	/**
 	 * Return the type for typeId.
 	 *
-	 * @param typeId
 	 * @return {@link MarkerType} or <code>null</code> if it is not found.
 	 */
 	public MarkerType getType(String typeId) {
@@ -288,8 +274,6 @@ public class ContentGeneratorDescriptor {
 
 	/**
 	 * Remove the element from the generator extensions
-	 *
-	 * @param element
 	 */
 	public void removeExtension(IConfigurationElement element) {
 		generatorExtensions.remove(element);

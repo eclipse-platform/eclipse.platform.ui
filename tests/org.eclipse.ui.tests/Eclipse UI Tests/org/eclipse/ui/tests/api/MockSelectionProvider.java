@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 public class MockSelectionProvider implements ISelectionProvider {
 
-	private List<ISelectionChangedListener> listeners = new ArrayList<>(3);
+	private final List<ISelectionChangedListener> listeners = new ArrayList<>(3);
 
 	/**
 	 * Fires out a selection to all listeners.

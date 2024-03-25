@@ -17,7 +17,7 @@ package org.eclipse.core.tests.databinding.conversion;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
@@ -198,47 +198,29 @@ public class StringToNumberConverterTest {
 	@Test
 	public void testReturnsNullBoxedTypeForEmptyString() throws Exception {
 		StringToNumberConverter<Integer> converter = StringToNumberConverter.toInteger(false);
-		try {
-			assertNull(converter.convert(""));
-		} catch (Exception e) {
-			fail("exception should not have been thrown");
-		}
+		assertNull(converter.convert(""));
 	}
 
 	@Test
 	public void testThrowsIllegalArgumentExceptionIfAskedToConvertNonString() throws Exception {
 		StringToNumberConverter<Integer> converter = StringToNumberConverter.toInteger(false);
-		try {
-			converter.convert(1);
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> converter.convert(1));
 	}
 
 	/**
 	 * Asserts a use case where the integer starts with a valid value but ends
 	 * in an unparsable format.
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testInvalidInteger() throws Exception {
 		StringToNumberConverter<Integer> converter = StringToNumberConverter.toInteger(false);
 
-		try {
-			Object result = converter.convert("1 1 -1");
-			fail("exception should have been thrown, but result was " + result);
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> converter.convert("1 1 -1"));
 	}
 
 	@Test
 	public void testThrowsIllegalArgumentExceptionIfNumberIsOutOfRange() throws Exception {
 		StringToNumberConverter<Integer> converter = StringToNumberConverter.toInteger(false);
-		try {
-			converter.convert(numberFormat.format(Long.MAX_VALUE));
-			fail("exception should have been thrown");
-		} catch (IllegalArgumentException e) {
-		}
+		assertThrows(IllegalArgumentException.class, () -> converter.convert(numberFormat.format(Long.MAX_VALUE)));
 	}
 }

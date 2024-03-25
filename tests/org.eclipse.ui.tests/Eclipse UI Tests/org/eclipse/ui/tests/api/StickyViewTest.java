@@ -49,9 +49,6 @@ public class StickyViewTest extends UITestCase {
 
 	private IWorkbenchPage page;
 
-	/**
-	 * @param testName
-	 */
 	public StickyViewTest() {
 		super(StickyViewTest.class.getSimpleName());
 	}

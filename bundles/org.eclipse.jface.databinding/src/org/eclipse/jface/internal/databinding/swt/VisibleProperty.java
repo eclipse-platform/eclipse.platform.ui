@@ -32,8 +32,6 @@ public abstract class VisibleProperty<S extends Widget> extends WidgetBooleanVal
 	private static final int[] EVENT_TYPES = new int[] { SWT.Show, SWT.Hide };
 	private static final String CACHED_VALUE_KEY = VisibleProperty.class.getName() + ".IS_VISIBLE"; //$NON-NLS-1$
 
-	/**
-	 */
 	public VisibleProperty() {
 		super(EVENT_TYPES);
 	}

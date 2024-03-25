@@ -19,8 +19,8 @@ import java.util.Random;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class SlowElement extends PlatformObject {
-	private String name;
-	private SlowElement parent;
+	private final String name;
+	private final SlowElement parent;
 
 	SlowElement(String name) {
 		this(null, name);

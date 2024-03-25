@@ -72,11 +72,7 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	/**
-	 *
 	 * Enables the RCP application to runwithout a workbench window
-	 *
-	 * @param runWithoutWindow
-	 *
 	 */
 	public RCPTestWorkbenchAdvisor(boolean windowlessApp) {
 		this.windowlessApp = windowlessApp;
@@ -154,9 +150,6 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 	}
 
-	/**
-	 * @param display
-	 */
 	private void setupSyncDisplayThread(final boolean callDisplayAccess, final Display display) {
 		Thread syncThread = new Thread() {
 			@Override
@@ -183,9 +176,6 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 		syncThread.start();
 	}
 
-	/**
-	 * @param display
-	 */
 	private void setupAsyncDisplayThread(final boolean callDisplayAccess, final Display display) {
 		Thread asyncThread = new Thread() {
 			@Override

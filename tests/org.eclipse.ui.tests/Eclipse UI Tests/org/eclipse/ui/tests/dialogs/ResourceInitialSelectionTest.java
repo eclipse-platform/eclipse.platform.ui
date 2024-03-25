@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -343,7 +342,7 @@ public class ResourceInitialSelectionTest extends UITestCase {
 		Table table = (Table) ((Composite) ((Composite) ((Composite) dialog.getShell().getChildren()[0])
 				.getChildren()[0]).getChildren()[0]).getChildren()[3];
 		List<Object> selected = Arrays.stream(table.getSelection()).map(TableItem::getData)
-				.collect(Collectors.toList());
+				.toList();
 		return selected;
 	}
 

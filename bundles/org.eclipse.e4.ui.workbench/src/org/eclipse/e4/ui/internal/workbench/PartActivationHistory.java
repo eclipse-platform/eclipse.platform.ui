@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -54,17 +55,18 @@ class PartActivationHistory {
 
 	void activate(MPart part, boolean activateBranch) {
 		IEclipseContext context = part.getContext();
-		if (activateBranch) {
-			context.activateBranch();
-		} else {
-			IEclipseContext parent = context.getParent();
-			do {
-				context.activate();
-				context = parent;
-				parent = parent.getParent();
-			} while (parent.get(MWindow.class) != null);
+		if (context != null) {
+			if (activateBranch) {
+				context.activateBranch();
+			} else {
+				IEclipseContext parent = context.getParent();
+				do {
+					context.activate();
+					context = parent;
+					parent = parent.getParent();
+				} while (parent.get(MWindow.class) != null);
+			}
 		}
-
 		prepend(part);
 	}
 
@@ -189,6 +191,15 @@ class PartActivationHistory {
 	private MPart findActivationCandidate(Collection<MPart> candidates, MPart currentlyActivePart) {
 		candidates.remove(currentlyActivePart);
 
+		// If there is a composite part in the candidates, remove the child Parts
+		List<MPart> compositeParts = candidates.stream().filter(MCompositePart.class::isInstance).toList();
+		for (MPart compositePart : compositeParts) {
+
+			List<MPart> childParts = modelService.findElements(compositePart, null, MPart.class);
+			childParts.remove(compositePart);
+			candidates.removeAll(childParts);
+		}
+
 		MPlaceholder activePlaceholder = partService.getLocalPlaceholder(currentlyActivePart);
 		for (MPart candidate : candidates) {
 			// make sure it's rendered and visible
@@ -312,7 +323,7 @@ class PartActivationHistory {
 
 		List<MPart> activeCandidates = modelService.findElements(perspective, null, MPart.class,
 				singletonList(EPartService.ACTIVE_ON_CLOSE_TAG));
-		if (activeCandidates.size() > 0) {
+		if (!activeCandidates.isEmpty()) {
 			activeCandidates.get(0).getTags().remove(EPartService.ACTIVE_ON_CLOSE_TAG);
 			MPart candidate = activeCandidates.get(0);
 			if (partService.isInContainer(perspective, candidate)

@@ -33,8 +33,6 @@ public class TestResultFilter {
 
 	/**
 	 * Creates a new filter that accepts the given test result
-	 *
-	 * @param toAccept
 	 */
 	public TestResultFilter(TestResult toAccept) {
 		if (toAccept.getException() != null) {

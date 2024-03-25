@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,91 +55,6 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
  */
 public class ErrorMessagesPage extends FormPage {
 
-	/*
-	private RichMessageToolTipManager richToolTipMessageManager;
-	class RichToolTip extends ToolTip {
-		private IManagedForm mform;
-		private FormText text;
-		private String content;
-
-		public RichToolTip(IManagedForm mform, Control control) {
-			super(control);
-			this.mform = mform;
-			setShift(new Point(10, 10));
-		}
-
-		protected Composite createToolTipContentArea(Event event,
-				Composite parent) {
-			this.text = mform.getToolkit().createFormText(parent, true);
-			configureFormText(mform.getForm().getForm(), text);
-			update();
-			return text;
-		}
-
-		public void update(String content) {
-			if (content == null) {
-				// hide
-				deactivate();
-			} else {
-				activate();
-				this.content = content;
-				update();
-			}
-		}
-
-		private void update() {
-			if (text != null && text.isDisposed())
-				text = null;
-			if (text != null) {
-				if (content != null)
-					text.setText(content, true, false);
-				else
-					text.setText("", false, false);
-			}
-		}
-	}
-
-	class RichMessageToolTipManager implements IMessageToolTipManager {
-		private ArrayList toolTips = new ArrayList();
-		private IManagedForm mform;
-
-		public RichMessageToolTipManager(IManagedForm mform) {
-			this.mform = mform;
-		}
-
-		public void createToolTip(Control control, boolean imageLabel) {
-			ToolTip toolTip = new RichToolTip(mform, control);
-			toolTips.add(toolTip);
-		}
-
-		public void setActive(boolean active) {
-			for (int i = 0; i < toolTips.size(); i++) {
-				RichToolTip toolTip = (RichToolTip) toolTips.get(i);
-				if (active)
-					toolTip.activate();
-				else
-					toolTip.deactivate();
-			}
-		}
-
-		public void update() {
-			IMessage[] messages = mform.getForm().getForm()
-					.getChildrenMessages();
-			String content = mform.getForm().getMessage() == null ? null
-					: createFormTextContent(messages);
-			for (int i = 0; i < toolTips.size(); i++) {
-				RichToolTip toolTip = (RichToolTip) toolTips.get(i);
-				toolTip.update(content);
-			}
-		}
-	}
-
-	*/
-
-	/**
-	 * @param id
-	 * @param title
-	 */
 	public ErrorMessagesPage(FormEditor editor) {
 		super(editor, "messageManager", "Message Manager");
 	}
@@ -185,8 +100,8 @@ public class ErrorMessagesPage extends FormPage {
 				FormText text = toolkit.createFormText(shell, true);
 				configureFormText(form.getForm(), text);
 				// stext.setFormText(text);
-				if (href instanceof IMessage[])
-					text.setText(createFormTextContent((IMessage[]) href),
+				if (href instanceof IMessage[] message)
+					text.setText(createFormTextContent(message),
 							true, false);
 				shell.setLocation(hl);
 				// Point size = shell.computeSize(400, SWT.DEFAULT);

@@ -14,6 +14,9 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.viewers.DecoratingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.DecorationContext;
@@ -23,17 +26,15 @@ import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Most of the setup has been taken from
  * org.eclipse.jface.snippets.viewers.Snippet010OwnerDraw.java
  *
  * @since 3.4
- *
  */
-public class IDecorationContextTest extends TestCase {
+public class IDecorationContextTest {
 
 	private static IDecorationContext getDecorationContext() {
 		return new IDecorationContext() {
@@ -128,10 +129,7 @@ public class IDecorationContextTest extends TestCase {
 						getDecorationContext());
 	}
 
-	public IDecorationContextTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testDefaultContextIsUsed() {
 		// Create a DecoratingStyledCellLabelProvider with a null
 		// decorationContext
@@ -140,6 +138,7 @@ public class IDecorationContextTest extends TestCase {
 
 	}
 
+	@Test
 	public void testSetDecorationContextNull() {
 		DecoratingStyledCellLabelProvider label = getDecoratingStyledCellLabelProvider(false);
 		try {

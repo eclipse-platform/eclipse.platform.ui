@@ -167,7 +167,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 *
 	 * @param ref  the part reference
 	 * @param part the part
-	 * @param page the page it belongs to
 	 */
 	public PartSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref, IConfigurationElement element) {
 		this.model = model;
@@ -555,9 +554,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	/**
 	 * Get an adapter for this type.
-	 *
-	 * @param adapter
-	 * @return
 	 */
 	@Override
 	public final <T> T getAdapter(Class<T> adapter) {

@@ -31,11 +31,11 @@ import org.junit.Test;
  */
 public class ComboBoxPropertyDescriptorTest {
 
-	private String ID = "ID"; //$NON-NLS-1$
+	private final String ID = "ID"; //$NON-NLS-1$
 
-	private String NAME = "NAME"; //$NON-NLS-1$
+	private final String NAME = "NAME"; //$NON-NLS-1$
 
-	private String[] values = { "One", "Two", "Three" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private final String[] values = { "One", "Two", "Three" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	private ComboBoxPropertyDescriptor descriptor;
 

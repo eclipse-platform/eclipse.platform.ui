@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -32,18 +35,19 @@ import org.eclipse.ui.tests.views.properties.tabbed.views.TestsViewContentProvid
 import org.eclipse.ui.views.properties.tabbed.ISection;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabContents;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TabbedPropertySheetPageTest
-	extends TestCase {
+{
 
 	private TestsView testsView;
 
 	private TreeNode[] treeNodes;
 
-	@Override
-	protected void setUp()
-		throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 
 		/**
 		 * Close the existing perspectives.
@@ -80,11 +84,8 @@ public class TabbedPropertySheetPageTest
 		assertEquals(treeNodes.length, 8);
 	}
 
-	@Override
-	protected void tearDown()
-		throws Exception {
-		super.tearDown();
-
+	@After
+	public void tearDown() {
 		/**
 		 * Bug 175070: Make sure the views have finished painting.
 		 */
@@ -113,6 +114,7 @@ public class TabbedPropertySheetPageTest
 	 * When One Information Node is selected, three tabs display. Tests
 	 * typeMapper, labelProvider, propertyCategories, afterTab attributes.
 	 */
+	@Test
 	public void test_tabDisplay() {
 		/**
 		 * select node 0 which is an Information
@@ -142,6 +144,7 @@ public class TabbedPropertySheetPageTest
 	 * When Two Information Node is selected, only two tabs display. Tests
 	 * enablesFor attribute.
 	 */
+	@Test
 	public void test_enablesForFilter() {
 		/**
 		 * select nodes
@@ -166,6 +169,7 @@ public class TabbedPropertySheetPageTest
 	 * When Two Information Node is selected, two section displayed on Name tab.
 	 * Tests filter, afterSection attribute.
 	 */
+	@Test
 	public void test_sectionInformationTwoFilter() {
 		/**
 		 * select nodes
@@ -190,6 +194,7 @@ public class TabbedPropertySheetPageTest
 	 * When Information, Error and Warning Nodes are selected, only the Message
 	 * tab displays. Tests input attribute.
 	 */
+	@Test
 	public void test_selectThreeMessageNodes() {
 		/**
 		 * select nodes
@@ -209,6 +214,7 @@ public class TabbedPropertySheetPageTest
 	/**
 	 * When Information node is selected, the Information tab is widest.
 	 */
+	@Test
 	public void test_widestLabelIndex1() {
 		/**
 		 * select Information node
@@ -242,6 +248,7 @@ public class TabbedPropertySheetPageTest
 	/**
 	 * When Error node is selected, the Message tab is widest.
 	 */
+	@Test
 	public void test_widestLabelIndex2() {
 		/**
 		 * select Error node
@@ -275,6 +282,7 @@ public class TabbedPropertySheetPageTest
 	/**
 	 * When Warning node is selected, the Warning tab is widest.
 	 */
+	@Test
 	public void test_widestLabelIndex3() {
 		/**
 		 * select Warning node
@@ -309,6 +317,7 @@ public class TabbedPropertySheetPageTest
 	 * When File, Folder and Project Nodes are selected, only the Resource tab
 	 * displays. Tests input attribute.
 	 */
+	@Test
 	public void test_selectThreeResourceNodes() {
 		/**
 		 * select nodes
@@ -330,6 +339,7 @@ public class TabbedPropertySheetPageTest
 	 * are not available." banner is displayed. Tests null selection in a
 	 * viewer.
 	 */
+	@Test
 	public void test_noPropertiesAvailable() {
 		TabContents tabContents = testsView.getTabbedPropertySheetPage().getCurrentTab();
 		assertNull(tabContents);

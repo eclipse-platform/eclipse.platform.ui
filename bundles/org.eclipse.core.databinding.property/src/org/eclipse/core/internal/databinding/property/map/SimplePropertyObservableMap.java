@@ -60,11 +60,6 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 	private Map<K, V> cachedMap;
 	private boolean stale;
 
-	/**
-	 * @param realm
-	 * @param source
-	 * @param property
-	 */
 	public SimplePropertyObservableMap(Realm realm, S source, SimpleMapProperty<S, K, V> property) {
 		super(realm);
 		this.source = source;

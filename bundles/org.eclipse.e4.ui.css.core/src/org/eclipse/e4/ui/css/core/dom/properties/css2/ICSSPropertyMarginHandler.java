@@ -29,11 +29,6 @@ public interface ICSSPropertyMarginHandler extends ICSSPropertyHandler {
 	 * A shorthand property for setting all four margins in one declaration.
 	 * Available values are
 	 * {margin-top, margin-right, margin-bottom, margin-left}
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	//TODO support in future values {inherit}
 	public void applyCSSPropertyMargin(Object element, CSSValue value,
@@ -41,12 +36,6 @@ public interface ICSSPropertyMarginHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the top margin. Available values are {length}
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	//TODO support in future values {auto, %, inherit}
 	public void applyCSSPropertyMarginTop(Object element,
@@ -55,12 +44,6 @@ public interface ICSSPropertyMarginHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the right margin. Available values are {length}
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	//TODO support in future values {auto, %, inherit}
 	public void applyCSSPropertyMarginRight(Object element,
@@ -69,12 +52,6 @@ public interface ICSSPropertyMarginHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the bottom margin. Available values are {length}
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	//TODO support in future values {auto, %, inherit}
 	public void applyCSSPropertyMarginBottom(Object element,
@@ -83,12 +60,6 @@ public interface ICSSPropertyMarginHandler extends ICSSPropertyHandler {
 
 	/**
 	 * Sets the left margin. Available values are {length}
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	//TODO support in future values {auto, %, inherit}
 	public void applyCSSPropertyMarginLeft(Object element, CSSValue value,

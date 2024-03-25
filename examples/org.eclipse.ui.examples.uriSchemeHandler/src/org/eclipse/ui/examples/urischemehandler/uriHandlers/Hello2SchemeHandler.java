@@ -20,7 +20,6 @@ import org.eclipse.urischeme.IUriSchemeHandler;
 
 /**
  * URI scheme handler implementation of the <code>hello</code> URI scheme
- *
  */
 public class Hello2SchemeHandler implements IUriSchemeHandler {
 

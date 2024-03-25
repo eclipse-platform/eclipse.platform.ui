@@ -35,7 +35,6 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  * information about the system configuration.
  *
  * @since 3.4
- *
  */
 public final class ConfigurationInfo {
 

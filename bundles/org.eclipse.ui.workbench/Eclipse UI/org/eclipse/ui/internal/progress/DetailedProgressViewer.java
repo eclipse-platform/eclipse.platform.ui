@@ -49,7 +49,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * progress job or jobs that are finished awaiting user input.
  *
  * @since 3.2
- *
  */
 public class DetailedProgressViewer extends AbstractProgressViewer {
 
@@ -377,20 +376,19 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	public void remove(JobTreeElement... elements) {
 
 		Set<JobTreeElement> items = getItems();
-		for (Object element : elements) {
-			JobTreeElement treeElement = (JobTreeElement) element;
+		for (JobTreeElement element : elements) {
 			// Make sure we are not keeping this one
-			if (FinishedJobs.getInstance().isKept(treeElement)) {
+			if (FinishedJobs.getInstance().isKept(element)) {
 				Widget item = doFindItem(element);
 				if (item != null) {
 					((ProgressInfoItem) item).refresh();
 				}
 
 			} else {
-				Widget item = doFindItem(treeElement);
+				Widget item = doFindItem(element);
 				if (item == null) {
 					// Is the parent showing?
-					JobTreeElement parent = treeElement.getParent();
+					JobTreeElement parent = element.getParent();
 					if (parent != null && parent != element)
 						remove(parent);
 				}
@@ -414,7 +412,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	/**
 	 * Cancel the current selection
-	 *
 	 */
 	public void cancelSelection() {
 
@@ -422,7 +419,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	/**
 	 * Set focus on the current selection.
-	 *
 	 */
 	public void setFocus() {
 		Control[] children = control.getChildren();

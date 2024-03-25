@@ -40,10 +40,6 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 	 * @since 3.1
 	 */
 	private static class ActionSetPartAssociation {
-		/**
-		 * @param partId
-		 * @param actionSetId
-		 */
 		public ActionSetPartAssociation(String partId, String actionSetId) {
 			this.partId = partId;
 			this.actionSetId = actionSetId;
@@ -96,8 +92,6 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Adds an action set.
-	 *
-	 * @param desc
 	 */
 	private void addActionSet(ActionSetDescriptor desc) {
 		children.add(desc);
@@ -109,8 +103,6 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Remove the action set.
-	 *
-	 * @param desc
 	 */
 	private void removeActionSet(IActionSetDescriptor desc) {
 		Context actionSetContext = contextService.getContext(desc.getId());
@@ -223,10 +215,6 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 		}
 	}
 
-	/**
-	 * @param tracker
-	 * @param extension
-	 */
 	private void addActionSetPartAssociations(IExtensionTracker tracker, IExtension extension) {
 		for (IConfigurationElement element : extension.getConfigurationElements()) {
 			if (element.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION_SET_PART_ASSOCIATION)) {
@@ -255,10 +243,6 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 		mapPartToActionSets.clear();
 	}
 
-	/**
-	 * @param tracker
-	 * @param extension
-	 */
 	private void addActionSets(IExtensionTracker tracker, IExtension extension) {
 		for (IConfigurationElement element : extension.getConfigurationElements()) {
 			if (element.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION_SET)) {
@@ -289,9 +273,6 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 		}
 	}
 
-	/**
-	 * @param objects
-	 */
 	private void removeActionSetPartAssociations(Object[] objects) {
 		for (Object object : objects) {
 			if (object instanceof ActionSetPartAssociation) {
@@ -312,9 +293,6 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 
 	}
 
-	/**
-	 * @param objects
-	 */
 	private void removeActionSets(Object[] objects) {
 		for (Object object : objects) {
 			if (object instanceof IActionSetDescriptor) {

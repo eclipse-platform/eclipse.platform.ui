@@ -15,6 +15,9 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -23,23 +26,19 @@ import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
-public class TreeSelectionTest extends TestCase {
+public class TreeSelectionTest {
 
-	public TreeSelectionTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testNewWithEmptyTreePath() {
 		assertNotNull(new TreeSelection(new TreePath(new Object[0])));
 	}
 
+	@Test
 	public void testBug1384558() {
 		Object one = new Object();
 		Object two = new Object();
@@ -58,31 +57,37 @@ public class TreeSelectionTest extends TestCase {
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(treeSelection1, treeSelection2);
 	}
 
+	@Test
 	public void testEquals1() {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(new TreeSelection(), new TreeSelection());
 	}
 
+	@Test
 	public void testEquals2() {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(new TreeSelection((TreePath) null),
 				new TreeSelection((TreePath) null));
 	}
 
+	@Test
 	public void testEquals3() {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(new TreeSelection((TreePath[]) null),
 				new TreeSelection((TreePath[]) null));
 	}
 
+	@Test
 	public void testEquals4() {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(new TreeSelection(new TreePath[0]),
 				new TreeSelection(new TreePath[0]));
 	}
 
+	@Test
 	public void testEquals5() {
 		Object one = new Object();
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(new TreeSelection(newTreePath(one)),
 				new TreeSelection(newTreePath(one)));
 	}
 
+	@Test
 	public void testEquals6() {
 		Object one = new Object();
 		Object two = new Object();
@@ -90,6 +95,7 @@ public class TreeSelectionTest extends TestCase {
 				new TreeSelection(newTreePath(two)));
 	}
 
+	@Test
 	public void testEquals7() {
 		Object one = new Object();
 		Object two = new Object();
@@ -98,6 +104,7 @@ public class TreeSelectionTest extends TestCase {
 				new TreeSelection(newTreePath(one, two, three)));
 	}
 
+	@Test
 	public void testEquals8() {
 		Object one = new Object();
 		Object two = new Object();
@@ -105,6 +112,7 @@ public class TreeSelectionTest extends TestCase {
 				new TreeSelection(newTreePath(two, one)));
 	}
 
+	@Test
 	public void testEquals9() {
 		Object one = new Object();
 		Object two = new Object();
@@ -115,6 +123,7 @@ public class TreeSelectionTest extends TestCase {
 				new TreeSelection(newTreePaths(newTreePath(one, two), newTreePath(three, four))));
 	}
 
+	@Test
 	public void testEquals10() {
 		Object one = new Object();
 		Object two = new Object();
@@ -125,25 +134,30 @@ public class TreeSelectionTest extends TestCase {
 				new TreeSelection(newTreePaths(newTreePath(three, four), newTreePath(one, two))));
 	}
 
+	@Test
 	public void testEquals11() {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(new TreeSelection(), new StructuredSelection());
 	}
 
+	@Test
 	public void testEquals12() {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(new TreeSelection((TreePath) null),
 				new StructuredSelection());
 	}
 
+	@Test
 	public void testEquals13() {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(new TreeSelection(newTreePath("element")),
 				new StructuredSelection("element"));
 	}
 
+	@Test
 	public void testEquals14() {
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(new TreeSelection(newTreePath("element 1")),
 				new StructuredSelection("element 2"));
 	}
 
+	@Test
 	public void testEquals15() {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(
 				new TreeSelection(newTreePath("element 1", "element 2")),
@@ -153,6 +167,7 @@ public class TreeSelectionTest extends TestCase {
 				new StructuredSelection(new Object[] { "element 2", }));
 	}
 
+	@Test
 	public void testEquals16() {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(
 				new TreeSelection(
@@ -160,6 +175,7 @@ public class TreeSelectionTest extends TestCase {
 				new StructuredSelection(Arrays.asList("element 2", "element 4")));
 	}
 
+	@Test
 	public void testEquals17() {
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(
 				new TreeSelection(
@@ -167,6 +183,7 @@ public class TreeSelectionTest extends TestCase {
 				new StructuredSelection(Arrays.asList("element 4", "element 2")));
 	}
 
+	@Test
 	public void testEquals18() {
 		doTestEquals18(StructuredSelectionTest.JAVA_LANG_OBJECT_COMPARER);
 		doTestEquals18(StructuredSelectionTest.IDENTITY_COMPARER);
@@ -177,6 +194,7 @@ public class TreeSelectionTest extends TestCase {
 				new StructuredSelection(new ArrayList<>(), comparer));
 	}
 
+	@Test
 	public void testEquals19() {
 		doTestEquals19(StructuredSelectionTest.JAVA_LANG_OBJECT_COMPARER);
 		doTestEquals19(StructuredSelectionTest.IDENTITY_COMPARER);
@@ -188,6 +206,7 @@ public class TreeSelectionTest extends TestCase {
 				new StructuredSelection(Arrays.asList("element 2"), comparer));
 	}
 
+	@Test
 	public void testEquals20() {
 		doTestEquals20(StructuredSelectionTest.JAVA_LANG_OBJECT_COMPARER);
 		doTestEquals20(StructuredSelectionTest.IDENTITY_COMPARER);
@@ -199,6 +218,7 @@ public class TreeSelectionTest extends TestCase {
 				new StructuredSelection(Arrays.asList("element 2", "element 4"), comparer));
 	}
 
+	@Test
 	public void testEquals21() {
 		doTestEquals21(StructuredSelectionTest.JAVA_LANG_OBJECT_COMPARER);
 		doTestEquals21(StructuredSelectionTest.IDENTITY_COMPARER);
@@ -210,6 +230,7 @@ public class TreeSelectionTest extends TestCase {
 				new StructuredSelection(Arrays.asList("element 2"), comparer));
 	}
 
+	@Test
 	public void testEquals22() {
 		doTestEquals22(StructuredSelectionTest.JAVA_LANG_OBJECT_COMPARER);
 		doTestEquals22(StructuredSelectionTest.IDENTITY_COMPARER);
@@ -221,6 +242,7 @@ public class TreeSelectionTest extends TestCase {
 				new StructuredSelection(new ArrayList<>(), comparer));
 	}
 
+	@Test
 	public void testEquals23() {
 		doTestEquals23(StructuredSelectionTest.JAVA_LANG_OBJECT_COMPARER);
 		doTestEquals23(StructuredSelectionTest.IDENTITY_COMPARER);

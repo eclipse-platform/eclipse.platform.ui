@@ -54,7 +54,7 @@ public class FilteredTreeTests extends UITestCase {
 	}
 
 	private abstract class FilteredTreeDialog extends Dialog {
-		private int style;
+		private final int style;
 
 		public FilteredTreeDialog(Shell shell, int treeStyle){
 			super(shell);

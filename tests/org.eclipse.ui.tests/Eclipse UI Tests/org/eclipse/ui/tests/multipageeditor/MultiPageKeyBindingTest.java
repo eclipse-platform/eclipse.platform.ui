@@ -25,9 +25,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -43,6 +40,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.0
  */
+@SuppressWarnings("removal")
 @RunWith(JUnit4.class)
 @Ignore("Focus issues, see Commit c28efd634f53c9de7bb31b756ffc755b8faf0ffe")
 public class MultiPageKeyBindingTest extends UITestCase {
@@ -93,14 +91,5 @@ public class MultiPageKeyBindingTest extends UITestCase {
 		while (display.readAndDispatch()) {
 		}
 		multiPageEditorPart.setPage(1);
-
-		// Check that "Ctrl+Shift+5" is the bound key.
-		IWorkbenchCommandSupport commandSupport = window.getWorkbench()
-				.getCommandSupport();
-		ICommandManager commandManager = commandSupport.getCommandManager();
-		KeySequence expectedKeyBinding = KeySequence
-				.getInstance("Ctrl+Shift+5"); //$NON-NLS-1$
-		String commandId = commandManager.getPerfectMatch(expectedKeyBinding);
-		assertEquals("org.eclipse.ui.tests.TestCommandId", commandId); //$NON-NLS-1$
 	}
 }

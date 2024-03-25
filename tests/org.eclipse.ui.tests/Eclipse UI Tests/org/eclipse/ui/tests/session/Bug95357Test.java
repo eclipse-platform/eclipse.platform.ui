@@ -48,7 +48,6 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
  * from method to method.
  *
  * @since 3.1
- *
  */
 public class Bug95357Test extends TestCase {
 	public static TestSuite suite() {
@@ -74,7 +73,7 @@ public class Bug95357Test extends TestCase {
 
 	private IProject fProject;
 
-	private IWorkbench fWorkbench;
+	private final IWorkbench fWorkbench;
 
 	private String[] itsFilename;
 
@@ -85,9 +84,6 @@ public class Bug95357Test extends TestCase {
 
 	}
 
-	/**
-	 * @param ext
-	 */
 	private void setupFilenames(String ext) {
 		itsFilename = new String[Bug95357Test.FILE_MAX];
 		for (int i = 0; i < Bug95357Test.FILE_MAX; ++i) {
@@ -107,9 +103,6 @@ public class Bug95357Test extends TestCase {
 	 * Multiple editors open - part 1 of 2. This makes sure that there are
 	 * FILE_MAX editors open, and the files have been created. Then the session
 	 * stops.
-	 *
-	 * @throws PartInitException
-	 * @throws CoreException
 	 */
 	private void multipleEditors() throws PartInitException, CoreException {
 		fActivePage.closeAllEditors(false);
@@ -146,9 +139,6 @@ public class Bug95357Test extends TestCase {
 	/**
 	 * Multiple editors in 2 stacks - part 1 of 2. Set up eclipse with FILE_MAX
 	 * editors open in 2 stacks.
-	 *
-	 * @throws PartInitException
-	 * @throws CoreException
 	 */
 	private void multipleStacks() throws PartInitException, CoreException {
 		final String f1 = itsFilename[0];
@@ -195,7 +185,6 @@ public class Bug95357Test extends TestCase {
 	/**
 	 * Multiple editors in 2 stacks - part 2 of 2. 2 of the editors should have
 	 * been instantiated. The rest should still be inactive.
-	 *
 	 */
 	private void multipleStacksOnStartup() {
 		IEditorReference lastFile = null;
@@ -226,8 +215,6 @@ public class Bug95357Test extends TestCase {
 
 	/**
 	 * Test for .txt files and the basic editor. Part 1 of 2
-	 *
-	 * @throws Throwable
 	 */
 	public void testMultipleEditors() throws Throwable {
 		setupFilenames(".txt");
@@ -237,8 +224,6 @@ public class Bug95357Test extends TestCase {
 
 	/**
 	 * Test for .txt files and the basic editor. Part 2 of 2
-	 *
-	 * @throws Throwable
 	 */
 	public void testMultipleEditorsOpen() throws Throwable {
 		setupFilenames(".txt");
@@ -248,8 +233,6 @@ public class Bug95357Test extends TestCase {
 
 	/**
 	 * Test multiple stacks with .txt editor. Part 1 of 2
-	 *
-	 * @throws Throwable
 	 */
 	public void testMultipleStacks() throws Throwable {
 		setupFilenames(".txt");
@@ -258,8 +241,6 @@ public class Bug95357Test extends TestCase {
 
 	/**
 	 * Test multiple stacks with .txt editor. Part 2 of 2
-	 *
-	 * @throws Throwable
 	 */
 	public void testMultipleStacksOnStartup() throws Throwable {
 		setupFilenames(".txt");
@@ -269,8 +250,6 @@ public class Bug95357Test extends TestCase {
 
 	/**
 	 * Test for .session files and the SessionEditorPart editor. Part 1 of 2
-	 *
-	 * @throws Throwable
 	 */
 	public void testMultipleEditorsSession() throws Throwable {
 		setupFilenames(".session");
@@ -281,8 +260,6 @@ public class Bug95357Test extends TestCase {
 
 	/**
 	 * Test for .session files and the SessionEditorPart editor. Part 2 of 2
-	 *
-	 * @throws Throwable
 	 */
 	public void testMultipleEditorsOpenSession() throws Throwable {
 		setupFilenames(".session");
@@ -292,8 +269,6 @@ public class Bug95357Test extends TestCase {
 
 	/**
 	 * Test multiple stacks with .session editor. Part 1 of 2
-	 *
-	 * @throws Throwable
 	 */
 	public void testMultipleStacksSession() throws Throwable {
 		setupFilenames(".session");
@@ -305,8 +280,6 @@ public class Bug95357Test extends TestCase {
 
 	/**
 	 * Test multiple stacks with .session editor. Part 2 of 2
-	 *
-	 * @throws Throwable
 	 */
 	public void testMultipleStacksOnStartupSession() throws Throwable {
 		setupFilenames(".session");

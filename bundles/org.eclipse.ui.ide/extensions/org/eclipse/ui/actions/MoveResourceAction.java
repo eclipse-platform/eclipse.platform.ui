@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -38,6 +39,7 @@ public class MoveResourceAction extends CopyResourceAction {
 	/**
 	 * The id of this action.
 	 */
+	@SuppressWarnings("hiding")
 	public static final String ID = PlatformUI.PLUGIN_ID
 			+ ".MoveResourceAction"; //$NON-NLS-1$
 
@@ -45,7 +47,7 @@ public class MoveResourceAction extends CopyResourceAction {
 	 * Keep a list of destinations so that any required update can be done after the
 	 * move.
 	 */
-	protected List destinations;
+	protected List<IPath> destinations;
 
 	/**
 	 * Creates a new action.
@@ -96,7 +98,7 @@ public class MoveResourceAction extends CopyResourceAction {
 	}
 
 	@Override
-	protected IResource[] getResources(List resourceList) {
+	protected IResource[] getResources(List<? extends IResource> resourceList) {
 		ReadOnlyStateChecker checker = new ReadOnlyStateChecker(getShell(),
 				IDEWorkbenchMessages.MoveResourceAction_title,
 				IDEWorkbenchMessages.MoveResourceAction_checkMoveMessage);
@@ -106,7 +108,7 @@ public class MoveResourceAction extends CopyResourceAction {
 	@Override
 	protected void runOperation(IResource[] resources, IContainer destination) {
 		//Initialize the destinations
-		destinations = new ArrayList();
+		destinations = new ArrayList<>();
 		IResource[] copiedResources = operation.copyResources(resources,
 				destination);
 

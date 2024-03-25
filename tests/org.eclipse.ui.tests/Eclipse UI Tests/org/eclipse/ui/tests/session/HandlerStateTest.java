@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.State;
 import org.eclipse.jface.commands.PersistentState;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * A test to verify the persistence of handler state between sessions.
@@ -63,6 +63,11 @@ public class HandlerStateTest extends TestCase {
 	 */
 	private static final String TRUE_STATE_ID = "TRUE";
 
+	private final IWorkbench workbench = PlatformUI.getWorkbench();
+	private final ICommandService service = workbench.getService(ICommandService.class);
+	private final Command command = service.getCommand(COMMAND_ID);
+
+
 	/**
 	 * Constructs a new instance of <code>HandlerStateTest</code>.
 	 *
@@ -78,10 +83,6 @@ public class HandlerStateTest extends TestCase {
 	 * is changed.
 	 */
 	public final void testInitialHandlerState() {
-		final IWorkbench workbench = PlatformUI.getWorkbench();
-		final ICommandService service = workbench
-				.getService(ICommandService.class);
-		final Command command = service.getCommand(COMMAND_ID);
 		State state;
 		boolean actual;
 
@@ -109,10 +110,6 @@ public class HandlerStateTest extends TestCase {
 	 * Verifies that the handler state is persisted between sessions.
 	 */
 	public final void testModifiedHandlerState() {
-		final IWorkbench workbench = PlatformUI.getWorkbench();
-		final ICommandService service = workbench
-				.getService(ICommandService.class);
-		final Command command = service.getCommand(COMMAND_ID);
 		State state;
 		boolean actual;
 

@@ -38,7 +38,6 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * </p>
  *
  * @since 3.2
- *
  */
 public class UpdateActiveExtensionsOperation extends AbstractOperation {
 

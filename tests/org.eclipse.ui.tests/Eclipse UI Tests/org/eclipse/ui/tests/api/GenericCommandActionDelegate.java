@@ -103,8 +103,8 @@ public class GenericCommandActionDelegate implements
 		String id = config.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 		// save the data until our init(*) call, where we can get
 		// the services.
-		if (data instanceof String) {
-			commandId = (String) data;
+		if (data instanceof String sData) {
+			commandId = sData;
 		} else if (data instanceof Map) {
 			parameterMap = (Map<String, String>) data;
 			if (parameterMap.get(PARM_COMMAND_ID) == null) {

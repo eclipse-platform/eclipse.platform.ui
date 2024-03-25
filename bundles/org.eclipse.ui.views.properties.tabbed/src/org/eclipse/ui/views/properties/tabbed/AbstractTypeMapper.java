@@ -21,6 +21,7 @@ package org.eclipse.ui.views.properties.tabbed;
 public class AbstractTypeMapper
 	implements ITypeMapper {
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Class mapType(Object object) {
 		return object.getClass();

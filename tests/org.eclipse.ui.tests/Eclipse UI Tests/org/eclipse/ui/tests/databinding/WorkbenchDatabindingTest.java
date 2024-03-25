@@ -235,9 +235,9 @@ public class WorkbenchDatabindingTest {
 	}
 
 	/**
-	 * {@link WorkbenchProperties#activeEditorReference} is implemented using
-	 * {@link WorkbenchProperties#activePartReference}, so we only need to verify
-	 * that the conversion works.
+	 * {@link WorkbenchProperties#activePartAsEditorReference()} is implemented
+	 * using {@link WorkbenchProperties#activePartReference()}, so we only need to
+	 * verify that the conversion works.
 	 */
 	@Test
 	public void testActiveEditorReference() {
@@ -262,11 +262,6 @@ public class WorkbenchDatabindingTest {
 		assertEquals(IEditorReference.class, WorkbenchProperties.activePartAsEditorReference().getValueType());
 	}
 
-	/**
-	 * {@link WorkbenchProperties#activeEditorReference} is implemented using
-	 * {@link WorkbenchProperties#activePartReference}, so we only need to verify
-	 * that the conversion works.
-	 */
 	@Test
 	public void testEditorInput() {
 		IEditorPart editor = mock(IEditorPart.class);

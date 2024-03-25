@@ -31,7 +31,6 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
  * @param <E>
  *            type of the elements in the set
  * @since 1.2
- *
  */
 public abstract class DelegatingSetProperty<S, E> extends SetProperty<S, E> {
 	private final Object elementType;

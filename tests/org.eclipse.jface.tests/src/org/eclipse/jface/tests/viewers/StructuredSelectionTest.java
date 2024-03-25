@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,16 +14,19 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class StructuredSelectionTest extends TestCase {
+public class StructuredSelectionTest {
 
 	static final IElementComparer JAVA_LANG_OBJECT_COMPARER = new IElementComparer() {
 		@Override
@@ -51,14 +54,7 @@ public class StructuredSelectionTest extends TestCase {
 		}
 	};
 
-	public StructuredSelectionTest(String name) {
-		super(name);
-	}
-
-	public static void main(String args[]) {
-		junit.textui.TestRunner.run(StructuredSelectionTest.class);
-	}
-
+	@Test
 	public void testEquals() {
 		String element = "A selection";
 		StructuredSelection sel1 = new StructuredSelection(element);
@@ -67,6 +63,7 @@ public class StructuredSelectionTest extends TestCase {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(sel1, sel2);
 	}
 
+	@Test
 	public void testEquals2() {
 		String element1 = "A selection";
 		String element2 = "A selection";
@@ -79,6 +76,7 @@ public class StructuredSelectionTest extends TestCase {
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(sel1, sel3);
 	}
 
+	@Test
 	public void testEquals3() { // two empty selections
 		StructuredSelection empty1 = new StructuredSelection();
 		StructuredSelection empty2 = new StructuredSelection();
@@ -86,6 +84,7 @@ public class StructuredSelectionTest extends TestCase {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(empty1, empty2);
 	}
 
+	@Test
 	public void testEquals4() { // empty selection with non-empty selection
 		StructuredSelection sel = new StructuredSelection("A selection");
 		StructuredSelection empty = new StructuredSelection();
@@ -93,6 +92,7 @@ public class StructuredSelectionTest extends TestCase {
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(sel, empty);
 	}
 
+	@Test
 	public void testEquals5() { // equality is order-dependent
 		List<String> l1 = new ArrayList<>();
 		l1.add("element 1");
@@ -108,6 +108,7 @@ public class StructuredSelectionTest extends TestCase {
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(sel1, sel2);
 	}
 
+	@Test
 	public void testEquals6() { // different selections
 		List<String> l1 = new ArrayList<>();
 		l1.add("element 1");
@@ -127,6 +128,7 @@ public class StructuredSelectionTest extends TestCase {
 	/**
 	 * Empty selections via different constructors. Regression test for bug 40245.
 	 */
+	@Test
 	public void testEquals7() {
 		StructuredSelection empty1 = new StructuredSelection();
 		StructuredSelection empty2 = new StructuredSelection(new Object[0]);
@@ -134,6 +136,7 @@ public class StructuredSelectionTest extends TestCase {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(empty1, empty2);
 	}
 
+	@Test
 	public void testEqualsWithComparer1() {
 		doTestEqualsWithComparer1(JAVA_LANG_OBJECT_COMPARER);
 		doTestEqualsWithComparer1(IDENTITY_COMPARER);
@@ -146,6 +149,7 @@ public class StructuredSelectionTest extends TestCase {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(sel1, sel2);
 	}
 
+	@Test
 	public void testEqualsWithComparer2() {
 		doTestEqualsWithComparer2(JAVA_LANG_OBJECT_COMPARER);
 		doTestEqualsWithComparer2(IDENTITY_COMPARER);
@@ -158,6 +162,7 @@ public class StructuredSelectionTest extends TestCase {
 		EqualsHashCodeContractTestHelper.testExpectedEqualsObjects(sel1, sel2);
 	}
 
+	@Test
 	public void testEqualsWithComparer3() {
 		doTestEqualsWithComparer3(JAVA_LANG_OBJECT_COMPARER);
 		doTestEqualsWithComparer3(IDENTITY_COMPARER);
@@ -170,6 +175,7 @@ public class StructuredSelectionTest extends TestCase {
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(sel1, sel2);
 	}
 
+	@Test
 	public void testEqualsWithComparer4() {
 		doTestEqualsWithComparer4(JAVA_LANG_OBJECT_COMPARER);
 		doTestEqualsWithComparer4(IDENTITY_COMPARER);
@@ -182,6 +188,7 @@ public class StructuredSelectionTest extends TestCase {
 		EqualsHashCodeContractTestHelper.testExpectedNotEqualsObjects(sel1, sel2);
 	}
 
+	@Test
 	public void testEqualsWithComparer5() {
 		doTestEqualsWithComparer5(JAVA_LANG_OBJECT_COMPARER);
 		doTestEqualsWithComparer5(IDENTITY_COMPARER);
@@ -215,14 +222,16 @@ public class StructuredSelectionTest extends TestCase {
 				assertTrue(EQUALS_CONSITENCY_MSG, o1.equals(o2));
 				assertTrue(EQUALS_CONSITENCY_MSG, o2.equals(o1));
 			}
+
+			// For any non-null reference value x, x.equals(null) should return false.
 			assertFalse(NOT_EQUALS_NULL_MSG, o1.equals(null));
 			assertFalse(NOT_EQUALS_NULL_MSG, o2.equals(null));
 
 			// a.equals(b) => a.hashCode() == b.hashCode()
-			assertTrue(EQUALS_IMPLIES_SAME_HASHCODE_MSG, o1.hashCode() == o2.hashCode());
+			assertEquals(EQUALS_IMPLIES_SAME_HASHCODE_MSG, o1.hashCode(), o2.hashCode());
 			for (int i = 0; i < CONSISTENCY_THRESHOLD; i++) {
-				assertTrue(HASHCODE_CONSISTENCY_MSG, o1.hashCode() == o1.hashCode());
-				assertTrue(HASHCODE_CONSISTENCY_MSG, o2.hashCode() == o2.hashCode());
+				assertEquals(HASHCODE_CONSISTENCY_MSG, o1.hashCode(), o1.hashCode());
+				assertEquals(HASHCODE_CONSISTENCY_MSG, o2.hashCode(), o2.hashCode());
 			}
 		}
 

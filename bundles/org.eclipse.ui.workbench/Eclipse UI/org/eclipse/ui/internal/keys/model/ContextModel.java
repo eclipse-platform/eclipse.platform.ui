@@ -27,7 +27,6 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * @since 3.4
- *
  */
 public class ContextModel extends CommonModel {
 	private static final String CONTEXT_ID_ACTION_SETS = "org.eclipse.ui.contexts.actionSet"; //$NON-NLS-1$
@@ -44,9 +43,6 @@ public class ContextModel extends CommonModel {
 		super(kc);
 	}
 
-	/**
-	 * @param locator
-	 */
 	public void init(IServiceLocator locator) {
 		contextService = locator.getService(IContextService.class);
 		contexts = new ArrayList<>();

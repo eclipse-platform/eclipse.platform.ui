@@ -78,7 +78,7 @@ public class MinimizedFileSystemElement extends FileSystemElement {
 
 		List children = provider.getChildren(fileSystemObject);
 		if (children != null) {
-			Iterator childrenEnum = children.iterator();
+			Iterator<?> childrenEnum = children.iterator();
 			while (childrenEnum.hasNext()) {
 				Object child = childrenEnum.next();
 

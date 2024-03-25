@@ -95,7 +95,6 @@ public interface IThemeRegistry {
 		}
 
 		/**
-		 * @param object
 		 * @return <code>String</code> representation of the object.
 		 */
 		private String getCompareString(Object object) {

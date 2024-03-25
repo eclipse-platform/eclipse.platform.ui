@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.jface.dialogs.DialogSettings;
@@ -62,6 +61,18 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class QuickAccessDialogTest {
+
+	private class TestQuickAccessDialog extends QuickAccessDialog {
+
+		public TestQuickAccessDialog(IWorkbenchWindow activeWorkbenchWindow, Command command) {
+			super(activeWorkbenchWindow, command);
+		}
+
+		@Override
+		protected IDialogSettings getDialogSettings() {
+			return dialogSettings;
+		}
+	}
 
 	@Rule
 	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
@@ -98,7 +109,6 @@ public class QuickAccessDialogTest {
 
 	/**
 	 * Tests that the shell opens when the command is activated
-	 * @throws Exception
 	 */
 	@Test
 	public void testOpenByCommand() throws Exception {
@@ -118,17 +128,12 @@ public class QuickAccessDialogTest {
 	 */
 	@Test
 	public void testTextFilter(){
-		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		dialog.open();
 		Text text = dialog.getQuickAccessContents().getFilterText();
 		Table table = dialog.getQuickAccessContents().getTable();
 		assertTrue("Quick access filter should be empty", text.getText().isEmpty());
-		assertTrue("Quick access table should be empty", table.getItemCount() == 0);
+		assertEquals("Quick access table should be empty", 0, table.getItemCount());
 
 		text.setText("T");
 		UITestCase.processEventsUntil(() -> table.getItemCount() > 1, TIMEOUT);
@@ -148,17 +153,12 @@ public class QuickAccessDialogTest {
 
 	@Test
 	public void testContributedElement() {
-		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		dialog.open();
 		final Table table = dialog.getQuickAccessContents().getTable();
 		Text text = dialog.getQuickAccessContents().getFilterText();
 		assertTrue("Quick access filter should be empty", text.getText().isEmpty());
-		assertTrue("Quick access table should be empty", table.getItemCount() == 0);
+		assertEquals("Quick access table should be empty", 0, table.getItemCount());
 
 		text.setText(TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL);
 		assertTrue("Missing contributed element", DisplayHelper.waitForCondition(dialog.getShell().getDisplay(), TIMEOUT, () ->
@@ -168,12 +168,7 @@ public class QuickAccessDialogTest {
 
 	@Test
 	public void testLongRunningComputerDoesntFreezeUI() {
-		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		dialog.open();
 		final Table table = dialog.getQuickAccessContents().getTable();
 		Text text = dialog.getQuickAccessContents().getFilterText();
@@ -187,12 +182,7 @@ public class QuickAccessDialogTest {
 		table.select(0);
 		activateCurrentElement(dialog);
 		duration = System.currentTimeMillis();
-		QuickAccessDialog secondDialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog secondDialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		secondDialog.open();
 		assertTrue(System.currentTimeMillis() - duration < TestLongRunningQuickAccessComputer.DELAY);
 		AtomicLong tick = new AtomicLong(System.currentTimeMillis());
@@ -216,17 +206,12 @@ public class QuickAccessDialogTest {
 	@Test
 	public void testShowAll() throws Exception {
 		// Open the shell
-		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		dialog.open();
 		Text text = dialog.getQuickAccessContents().getFilterText();
 		final Table table = dialog.getQuickAccessContents().getTable();
 		assertTrue("Quick access filter should be empty", text.getText().isEmpty());
-		assertTrue("Quick access table should be empty", table.getItemCount() == 0);
+		assertEquals("Quick access table should be empty", 0, table.getItemCount());
 
 		// Set a filter to get some items
 		text.setText("T");
@@ -274,12 +259,7 @@ public class QuickAccessDialogTest {
 	@Test
 	public void testPreviousChoicesAvailable() {
 		// add one selection to history
-		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		dialog.open();
 		Text text = dialog.getQuickAccessContents().getFilterText();
 		Table firstTable = dialog.getQuickAccessContents().getTable();
@@ -298,12 +278,7 @@ public class QuickAccessDialogTest {
 								.equalsIgnoreCase(activeWorkbenchWindow.getActivePage().getActivePart().getTitle()),
 				TIMEOUT);
 		// then try in a new SearchField
-		QuickAccessDialog secondDialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog secondDialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		secondDialog.open();
 		assertTrue("Missing entry in previous pick",
 				DisplayHelper.waitForCondition(secondDialog.getShell().getDisplay(), TIMEOUT,
@@ -321,12 +296,7 @@ public class QuickAccessDialogTest {
 	@Test
 	public void testPreviousChoicesAvailableForExtension() {
 		// add one selection to history
-		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		dialog.open();
 		Text text = dialog.getQuickAccessContents().getFilterText();
 		text.setText(TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL);
@@ -336,13 +306,7 @@ public class QuickAccessDialogTest {
 		firstTable.select(0);
 		activateCurrentElement(dialog);
 		// then try in a new SearchField
-		QuickAccessDialog secondDialog = new QuickAccessDialog(activeWorkbenchWindow,
-				null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog secondDialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		secondDialog.open();
 		assertTrue("Contributed item not found in previous choices",
 				DisplayHelper.waitForCondition(secondDialog.getShell().getDisplay(), TIMEOUT,
@@ -352,12 +316,7 @@ public class QuickAccessDialogTest {
 
 	@Test
 	public void testPreviousChoicesAvailableForIncrementalExtension() {
-		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		dialog.open();
 		Text text = dialog.getQuickAccessContents().getFilterText();
 		text.setText(TestIncrementalQuickAccessComputer.ENABLEMENT_QUERY);
@@ -370,12 +329,7 @@ public class QuickAccessDialogTest {
 		firstTable.select(0);
 		activateCurrentElement(dialog);
 		// then try in a new SearchField
-		dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		dialog.open();
 		final Table secondTable = dialog.getQuickAccessContents().getTable();
 		assertTrue("Contributed item not found in previous choices",
@@ -387,12 +341,7 @@ public class QuickAccessDialogTest {
 
 	@Test
 	public void testPrefixMatchHavePriority() {
-		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		dialog.open();
 		Text text = dialog.getQuickAccessContents().getFilterText();
 		Table table = dialog.getQuickAccessContents().getTable();
@@ -413,12 +362,7 @@ public class QuickAccessDialogTest {
 		IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), tmpFile.toURI(),
 				"org.eclipse.ui.DefaultTextEditor", true);
 
-		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
-			@Override
-			protected IDialogSettings getDialogSettings() {
-				return dialogSettings;
-			}
-		};
+		QuickAccessDialog dialog = new TestQuickAccessDialog(activeWorkbenchWindow, null);
 		dialog.open();
 		Text text = dialog.getQuickAccessContents().getFilterText();
 		Table table = dialog.getQuickAccessContents().getTable();
@@ -440,7 +384,7 @@ public class QuickAccessDialogTest {
 				res.append(" | ");
 			}
 			return res.toString();
-		}).collect(Collectors.toList());
+		}).toList();
 	}
 
 	private boolean dialogContains(QuickAccessDialog dialog, String substring) {

@@ -39,9 +39,6 @@ public class PropertyPageNode extends WorkbenchPreferenceExtensionNode {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param contributor
-	 * @param element
 	 */
 	public PropertyPageNode(RegistryPageContributor contributor, Object element) {
 		super(contributor.getPageId(), contributor.getConfigurationElement());

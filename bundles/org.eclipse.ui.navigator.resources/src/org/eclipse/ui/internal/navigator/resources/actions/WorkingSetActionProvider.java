@@ -45,7 +45,6 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * @since 3.2
- *
  */
 public class WorkingSetActionProvider extends CommonActionProvider {
 
@@ -77,7 +76,6 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	/**
 	 * Provides a smart listener to monitor changes to the Working Set Manager.
-	 *
 	 */
 	public class WorkingSetManagerListener implements IPropertyChangeListener {
 

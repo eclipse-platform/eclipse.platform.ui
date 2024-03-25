@@ -44,7 +44,6 @@ public class TextContentAssistCommandAdapterTest extends
 	/**
 	 * bug 301196: [FieldAssist] ContentAssistCommandAdapter should provide an activation expression when activating the command handler
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=301196
-	 *
 	 */
 	@Test
 	public void testBug301196CorrectHandlerConflictResolution() throws Exception {

@@ -16,9 +16,6 @@ package org.eclipse.jface.internal.databinding.swt;
 
 import org.eclipse.swt.widgets.Slider;
 
-/**
- *
- */
 public class SliderMinimumProperty extends WidgetIntValueProperty<Slider> {
 	@Override
 	protected int doGetIntValue(Slider source) {

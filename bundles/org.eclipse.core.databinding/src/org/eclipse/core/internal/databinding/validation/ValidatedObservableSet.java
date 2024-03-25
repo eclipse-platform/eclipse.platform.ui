@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.IStatus;
  * @param <E>
  *            The element type.
  * @since 3.3
- *
  */
 public class ValidatedObservableSet<E> extends ObservableSet<E> {
 	private IObservableSet<E> target;
@@ -89,10 +88,6 @@ public class ValidatedObservableSet<E> extends ObservableSet<E> {
 		}
 	};
 
-	/**
-	 * @param target
-	 * @param validationStatus
-	 */
 	public ValidatedObservableSet(final IObservableSet<E> target,
 			final IObservableValue<IStatus> validationStatus) {
 		super(target.getRealm(), new HashSet<>(target), target

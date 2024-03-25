@@ -61,9 +61,6 @@ public abstract class BasicPerformanceTest extends UITestCase {
 		}
 	}
 
-	/**
-	 * @param testName
-	 */
 	public BasicPerformanceTest(String testName, int tagging) {
 		super(testName);
 		tagAsGlobalSummary = ((tagging & GLOBAL) != 0);
@@ -143,10 +140,11 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	}
 
 	/**
-	 * Called from within a test case immediately before the code to measure is
-	 * run. It starts capturing of performance data. Must be followed by a call
-	 * to {@link PerformanceTestCase#stopMeasuring()}before subsequent calls to
-	 * this method or {@link PerformanceTestCase#commitMeasurements()}.
+	 * Called from within a test case immediately before the code to measure is run.
+	 * It starts capturing of performance data. Must be followed by a call to
+	 * {@link org.eclipse.test.performance.PerformanceTestCase#stopMeasuring()}before
+	 * subsequent calls to this method or
+	 * {@link org.eclipse.test.performance.PerformanceTestCase#commitMeasurements()}.
 	 */
 	public void startMeasuring() {
 		tester.startMeasuring();
@@ -221,7 +219,6 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 * Runs the given runnable until either 100 iterations or 4s has elapsed.
 	 * Runs a minimum of 3 times.
 	 *
-	 * @param runnable
 	 * @since 3.1
 	 */
 	public static void exercise(Runnable runnable) throws CoreException {
@@ -232,9 +229,6 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 * Exercises the given runnable until either the given number of iterations
 	 * or the given amount of time has elapsed, whatever occurs first.
 	 *
-	 * @param runnable
-	 * @param maxIterations
-	 * @param maxTime
 	 * @since 3.1
 	 */
 	public static void exercise(Runnable runnable,

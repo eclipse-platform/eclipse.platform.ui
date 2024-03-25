@@ -36,9 +36,6 @@ public final class TabContents {
 
 	private boolean controlsCreated;
 
-	/**
-	 *
-	 */
 	public TabContents() {
 		controlsCreated = false;
 	}

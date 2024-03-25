@@ -41,7 +41,6 @@ public abstract class NumberToNumberValidator implements IValidator<Object> {
 	private final boolean primitive;
 
 	/**
-	 * @param converter
 	 * @param min
 	 *            can be <code>null</code>
 	 * @param max
@@ -91,7 +90,6 @@ public abstract class NumberToNumberValidator implements IValidator<Object> {
 	/**
 	 * Invoked to determine if the value is in range.
 	 *
-	 * @param number
 	 * @return <code>true</code> if in range
 	 */
 	protected abstract boolean inRange(Number number);

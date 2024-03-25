@@ -20,13 +20,14 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.undo.snapshot.IMarkerSnapshot;
+import org.eclipse.core.resources.undo.snapshot.ResourceSnapshotFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.ui.internal.ide.undo.MarkerDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
@@ -40,15 +41,14 @@ import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
  * This class is not intended to be subclassed by clients.
  *
  * @since 3.3
- *
  */
 abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 
-	MarkerDescription[] markerDescriptions;
+	IMarkerSnapshot[] markerDescriptions;
 
 	IMarker[] markers;
 
-	Map[] attributes;
+	Map<String, Object>[] attributes;
 
 	/**
 	 * Create an AbstractMarkersOperation by specifying a combination of markers
@@ -68,8 +68,9 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *            the name used to describe the operation
 	 */
 	AbstractMarkersOperation(IMarker[] markers,
-			MarkerDescription[] markerDescriptions, Map attributes, String name) {
+			IMarkerSnapshot[] markerDescriptions, Map<String, Object> attributes, String name) {
 		super(name);
+		Map<String, Object> typedAttributes = attributes;
 		this.markers = markers;
 		this.attributes = null;
 		// If there is more than one marker, create an array with a copy
@@ -81,12 +82,12 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 			if (markers.length > 1) {
 				this.attributes = new Map[markers.length];
 				for (int i = 0; i < markers.length; i++) {
-					Map copiedAttributes = new HashMap();
-					copiedAttributes.putAll(attributes);
+					Map<String, Object> copiedAttributes = new HashMap<>();
+					copiedAttributes.putAll(typedAttributes);
 					this.attributes[i] = copiedAttributes;
 				}
 			} else {
-				this.attributes = new Map[] { attributes };
+				this.attributes = new Map[] { typedAttributes };
 			}
 		}
 		setMarkerDescriptions(markerDescriptions);
@@ -102,7 +103,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *            the progress monitor to use for the delete
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
-	 *
 	 */
 	protected void deleteMarkers(int work, IProgressMonitor monitor)
 			throws CoreException {
@@ -111,9 +111,9 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 			return;
 		}
 		int markerWork = work / markers.length;
-		markerDescriptions = new MarkerDescription[markers.length];
+		markerDescriptions = new IMarkerSnapshot[markers.length];
 		for (int i = 0; i < markers.length; i++) {
-			markerDescriptions[i] = new MarkerDescription(markers[i]);
+			markerDescriptions[i] = ResourceSnapshotFactory.fromMarker(markers[i]);
 			markers[i].delete();
 			monitor.worked(markerWork);
 		}
@@ -159,7 +159,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *            considered to be a replacement of the previous attributes.
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
-	 *
 	 */
 	protected void updateMarkers(int work, IProgressMonitor monitor,
 			boolean mergeAttributes) throws CoreException {
@@ -171,13 +170,13 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		int markerWork = work / markers.length;
 		for (int i = 0; i < markers.length; i++) {
 			if (mergeAttributes) {
-				Map oldAttributes = markers[i].getAttributes();
+				Map<String, Object> oldAttributes = markers[i].getAttributes();
 				int increment = markerWork / attributes[i].size();
-				Map replacedAttributes = new HashMap();
+				Map<String, Object> replacedAttributes = new HashMap<>();
 
-				for (Iterator iter = attributes[i].keySet().iterator(); iter
+				for (Iterator<String> iter = attributes[i].keySet().iterator(); iter
 						.hasNext();) {
-					String key = (String) iter.next();
+					String key = iter.next();
 					Object val = attributes[i].get(key);
 					markers[i].setAttribute(key, val);
 					replacedAttributes.put(key, oldAttributes.get(key));
@@ -186,7 +185,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 				attributes[i] = replacedAttributes;
 			} else {
 				// replace all of the attributes
-				Map oldAttributes = markers[i].getAttributes();
+				Map<String, Object> oldAttributes = markers[i].getAttributes();
 				markers[i].setAttributes(attributes[i]);
 				attributes[i] = oldAttributes;
 			}
@@ -199,7 +198,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 * @param descriptions
 	 *            the descriptions of markers that can be created.
 	 */
-	protected void setMarkerDescriptions(MarkerDescription[] descriptions) {
+	protected void setMarkerDescriptions(IMarkerSnapshot[] descriptions) {
 		markerDescriptions = descriptions;
 		addUndoContexts();
 		updateTargetResources();
@@ -211,21 +210,21 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 */
 
 	private void updateTargetResources() {
-		IResource[] resources = null;
+		IResource[] newResources = null;
 		if (markers == null) {
 			if (markerDescriptions != null) {
-				resources = new IResource[markerDescriptions.length];
+				newResources = new IResource[markerDescriptions.length];
 				for (int i = 0; i < markerDescriptions.length; i++) {
-					resources[i] = markerDescriptions[i].getResource();
+					newResources[i] = markerDescriptions[i].getResource();
 				}
 			}
 		} else {
-			resources = new IResource[markers.length];
+			newResources = new IResource[markers.length];
 			for (int i = 0; i < markers.length; i++) {
-				resources[i] = markers[i].getResource();
+				newResources[i] = markers[i].getResource();
 			}
 		}
-		setTargetResources(resources);
+		setTargetResources(newResources);
 	}
 
 	/*
@@ -381,7 +380,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *
 	 * @return the status indicating the projected outcome of deleting the
 	 *         markers.
-	 *
 	 */
 	protected IStatus getMarkerDeletionStatus() {
 		if (markersExist()) {
@@ -399,7 +397,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *
 	 * @return the status indicating the projected outcome of creating the
 	 *         markers.
-	 *
 	 */
 	protected IStatus getMarkerCreationStatus() {
 		if (!resourcesExist()) {
@@ -419,7 +416,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *
 	 * @return the status indicating the projected outcome of updating the
 	 *         markers.
-	 *
 	 */
 	protected IStatus getMarkerUpdateStatus() {
 		if (!markersExist()) {

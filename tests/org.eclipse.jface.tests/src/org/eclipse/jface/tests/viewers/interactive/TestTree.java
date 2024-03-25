@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 public class TestTree extends TestBrowser {
 
 	protected TreeViewer fViewer2;
-	private Action fExpandAllAction;
+	private final Action fExpandAllAction;
 
 	public TestTree() {
 		super();

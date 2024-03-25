@@ -32,7 +32,6 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
  * </p>
  *
  * @since 3.2
- *
  */
 public final class NavigatorContentServiceFactory {
 

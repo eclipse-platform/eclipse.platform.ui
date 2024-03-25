@@ -298,7 +298,6 @@ public class BrowserViewer extends Composite {
 	 *
 	 * @param url
 	 *            the URL to be loaded
-	 * @return true if the operation was successful and false otherwise.
 	 * @exception IllegalArgumentException
 	 *                <ul>
 	 *                <li>ERROR_NULL_ARGUMENT - if the url is null</li>
@@ -339,9 +338,6 @@ public class BrowserViewer extends Composite {
 			locationListener.locationChanged(null);
 	}
 
-	/**
-	 *
-	 */
 	private void addBrowserListeners() {
 		if (browser==null) return;
 		// respond to ExternalBrowserInstance StatusTextEvents events by
@@ -403,6 +399,8 @@ public class BrowserViewer extends Composite {
 		});
 
 		browser.addProgressListener(new ProgressListener() {
+			private IProgressMonitor monitor;
+
 			@Override
 			public void changed(ProgressEvent event) {
 					//System.out.println("progress: " + event.current + ", " + event.total); //$NON-NLS-1$ //$NON-NLS-2$
@@ -413,16 +411,21 @@ public class BrowserViewer extends Composite {
 
 				int percentProgress = event.current * 100 / event.total;
 				if (container != null) {
-					IProgressMonitor monitor = container.getActionBars()
-							.getStatusLineManager().getProgressMonitor();
 					if (done) {
-						monitor.done();
+						if (monitor != null) {
+							monitor.done();
+						}
 						progressWorked = 0;
+						monitor = null;
 					} else if (progressWorked == 0) {
+						IStatusLineManager statusLineManager = container.getActionBars().getStatusLineManager();
+						monitor = statusLineManager.getProgressMonitor();
 						monitor.beginTask("", event.total); //$NON-NLS-1$
 						progressWorked = percentProgress;
 					} else {
-						monitor.worked(event.current - progressWorked);
+						if (monitor != null) {
+							monitor.worked(event.current - progressWorked);
+						}
 						progressWorked = event.current;
 					}
 				}
@@ -443,10 +446,9 @@ public class BrowserViewer extends Composite {
 
 			@Override
 			public void completed(ProgressEvent event) {
-				if (container != null) {
-					IProgressMonitor monitor = container.getActionBars()
-							.getStatusLineManager().getProgressMonitor();
+				if (container != null && monitor != null) {
 					monitor.done();
+					progressWorked = 0;
 				}
 				if (showToolbar) {
 					loading = false;
@@ -642,9 +644,6 @@ public class BrowserViewer extends Composite {
 			browser.stop();
 	}
 
-	/**
-	 *
-	 */
 	private boolean navigate(String url) {
 		Trace.trace(Trace.FINER, "Navigate: " + url); //$NON-NLS-1$
 		if (url != null && url.equals(getURL())) {
@@ -739,9 +738,6 @@ public class BrowserViewer extends Composite {
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void dispose(DisposeEvent event) {
 		showToolbar = false;
 
@@ -905,8 +901,10 @@ public class BrowserViewer extends Composite {
 	public void setContainer(IBrowserViewerContainer container) {
 		if (container==null && this.container!=null) {
 			IStatusLineManager manager = this.container.getActionBars().getStatusLineManager();
-			if (manager!=null)
+			if (manager != null) {
 				manager.getProgressMonitor().done();
+			}
+			progressWorked = 0;
 		}
 		this.container = container;
 	}

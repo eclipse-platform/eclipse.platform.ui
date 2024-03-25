@@ -23,9 +23,8 @@ import org.eclipse.ui.IWorkbenchPart;
 public class TestPartListener implements IPartListener {
 	/**
 	 * TestPartListener constructor comment.
-	 *
-	 * @issue seems like garbage - no one using it
 	 */
+	// TODO seems like garbage - no one using it
 	public TestPartListener() {
 		super();
 	}

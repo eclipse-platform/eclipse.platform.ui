@@ -20,7 +20,8 @@ package org.eclipse.ui.tests.dialogs;
  * <code>org.eclipse.ui.views.navigator</code>.  For the purpose of
  * testing.
  * </p>
- * @private
+ *
+ * @noreference
  */
 
 public class NavigatorTestStub {

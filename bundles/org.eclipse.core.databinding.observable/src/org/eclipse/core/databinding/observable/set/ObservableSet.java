@@ -39,7 +39,6 @@ import org.eclipse.core.databinding.observable.Realm;
  *            the type of elements in this collection
  *
  * @since 1.0
- *
  */
 public abstract class ObservableSet<E> extends AbstractObservable implements
 		IObservableSet<E> {

@@ -73,7 +73,7 @@ public class Snippet006TableMultiLineCells {
 
 	private TableViewer viewer;
 
-	private LineEntry[] entries;
+	private final LineEntry[] entries;
 
 	public Snippet006TableMultiLineCells() {
 		String[] lines = new String[] {

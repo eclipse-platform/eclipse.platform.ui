@@ -33,10 +33,6 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 public class BeanObservableListDecorator<E> extends DecoratingObservableList<E> implements IBeanObservable {
 	private PropertyDescriptor propertyDescriptor;
 
-	/**
-	 * @param decorated
-	 * @param propertyDescriptor
-	 */
 	public BeanObservableListDecorator(IObservableList<E> decorated, PropertyDescriptor propertyDescriptor) {
 		super(decorated, true);
 		this.propertyDescriptor = propertyDescriptor;

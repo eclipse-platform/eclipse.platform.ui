@@ -83,7 +83,7 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
  */
 public class WorkbenchActionBuilder extends ActionBarAdvisor {
 
-	private final IWorkbenchWindow window;
+	private final IWorkbenchWindow workbenchWindow;
 
 	// generic actions
 	private IWorkbenchAction closeAction;
@@ -151,10 +151,6 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 	private IWorkbenchAction forwardHistoryAction;
 
 	// generic retarget actions
-	private IWorkbenchAction undoAction;
-
-	private IWorkbenchAction redoAction;
-
 	private IWorkbenchAction quitAction;
 
 	private IWorkbenchAction goIntoAction;
@@ -242,14 +238,14 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 	 */
 	public WorkbenchActionBuilder(IActionBarConfigurer configurer) {
 		super(configurer);
-		window = configurer.getWindowConfigurer().getWindow();
+		workbenchWindow = configurer.getWindowConfigurer().getWindow();
 	}
 
 	/**
 	 * Returns the window to which this action builder is contributing.
 	 */
 	private IWorkbenchWindow getWindow() {
-		return window;
+		return workbenchWindow;
 	}
 
 	/**
@@ -297,7 +293,7 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 					return;
 				}
 				// update the "toggled" state based on the current editor
-				ICommandService commandService = window.getService(ICommandService.class);
+				ICommandService commandService = workbenchWindow.getService(ICommandService.class);
 				commandService.refreshElements(IWorkbenchCommandConstants.WINDOW_PIN_EDITOR, null);
 			}
 
@@ -322,11 +318,11 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		propPrefListener = event -> {
 			if (event.getProperty().equals(
 					IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-				if (window.getShell() != null
-						&& !window.getShell().isDisposed()) {
+				if (workbenchWindow.getShell() != null
+						&& !workbenchWindow.getShell().isDisposed()) {
 					// this property change notification could be from a non-ui thread
-					window.getShell().getDisplay().asyncExec(() -> {
-						if (window.getShell() != null && !window.getShell().isDisposed()) {
+					workbenchWindow.getShell().getDisplay().asyncExec(() -> {
+						if (workbenchWindow.getShell() != null && !workbenchWindow.getShell().isDisposed()) {
 							updatePinActionToolbar();
 						}
 					});
@@ -409,8 +405,8 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		coolBar.add(new GroupMarker(IIDEActionConstants.GROUP_EDIT));
 		IToolBarManager editToolBar = actionBarConfigurer.createToolBarManager();
 		editToolBar.add(new Separator(IWorkbenchActionConstants.EDIT_GROUP));
-		editToolBar.add(undoAction);
-		editToolBar.add(redoAction);
+		editToolBar.add(getUndoItem());
+		editToolBar.add(getRedoItem());
 
 		// Add to the cool bar manager
 		coolBar.add(actionBarConfigurer.createToolBarContributionItem(editToolBar,
@@ -541,8 +537,8 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		MenuManager menu = new MenuManager(IDEWorkbenchMessages.Workbench_edit, IWorkbenchActionConstants.M_EDIT);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_START));
 
-		menu.add(undoAction);
-		menu.add(redoAction);
+		menu.add(getUndoItem());
+		menu.add(getRedoItem());
 		menu.add(new GroupMarker(IWorkbenchActionConstants.UNDO_EXT));
 		menu.add(new Separator());
 
@@ -725,7 +721,7 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 	 */
 	private void addWorkingSetBuildActions(MenuManager menu) {
 		buildWorkingSetMenu = new MenuManager(IDEWorkbenchMessages.Workbench_buildSet);
-		IContributionItem workingSetBuilds = new BuildSetMenu(window,
+		IContributionItem workingSetBuilds = new BuildSetMenu(workbenchWindow,
 				getActionBarConfigurer());
 		buildWorkingSetMenu.add(workingSetBuilds);
 		menu.add(buildWorkingSetMenu);
@@ -829,11 +825,11 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 
 		getActionBarConfigurer().getStatusLineManager().remove(statusLineItem);
 		if (pageListener != null) {
-			window.removePageListener(pageListener);
+			workbenchWindow.removePageListener(pageListener);
 			pageListener = null;
 		}
 		if (partListener != null) {
-			window.getPartService().removePartListener(partListener);
+			workbenchWindow.getPartService().removePartListener(partListener);
 			partListener = null;
 		}
 		if (prefListener != null) {
@@ -888,8 +884,6 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		quickAccessAction = null;
 		backwardHistoryAction = null;
 		forwardHistoryAction = null;
-		undoAction = null;
-		redoAction = null;
 		quitAction = null;
 		goIntoAction = null;
 		backAction = null;
@@ -1012,13 +1006,6 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(getWindow());
 		newWindowAction.setText(IDEWorkbenchMessages.Workbench_openNewWindow);
 		register(newWindowAction);
-
-		undoAction = ActionFactory.UNDO.create(window);
-		register(undoAction);
-
-		redoAction = ActionFactory.REDO.create(window);
-		register(redoAction);
-
 
 		closeAction = ActionFactory.CLOSE.create(window);
 		register(closeAction);
@@ -1369,8 +1356,8 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 			}
 
 			private void updateCommandEnablement(String commandId) {
-				IHandlerService handlerService = window.getService(IHandlerService.class);
-				ICommandService commandService = window.getService(ICommandService.class);
+				IHandlerService handlerService = workbenchWindow.getService(IHandlerService.class);
+				ICommandService commandService = workbenchWindow.getService(ICommandService.class);
 				if (handlerService != null && commandService != null) {
 					Command buildAllCmd = commandService.getCommand(commandId);
 					buildAllCmd.setEnabled(handlerService.getCurrentState());
@@ -1383,7 +1370,7 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		else {
 			// Dispatch the update to be run later in the UI thread.
 			// This helps to reduce flicker if autobuild is being temporarily disabled programmatically.
-			Shell shell = window.getShell();
+			Shell shell = workbenchWindow.getShell();
 			if (shell != null && !shell.isDisposed()) {
 				shell.getDisplay().asyncExec(update);
 			}
@@ -1421,18 +1408,29 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		toolBarManager.markDirty();
 		toolBarManager.update(false);
 		toolBarItem.update(ICoolBarManager.SIZE);
-		window.getShell().getDisplay().asyncExec(() -> {
-			if (window.getShell() != null && !window.getShell().isDisposed()) {
-				ICommandService commandService = window.getService(ICommandService.class);
+		workbenchWindow.getShell().getDisplay().asyncExec(() -> {
+			if (workbenchWindow.getShell() != null && !workbenchWindow.getShell().isDisposed()) {
+				ICommandService commandService = workbenchWindow.getService(ICommandService.class);
 				commandService.refreshElements(IWorkbenchCommandConstants.WINDOW_PIN_EDITOR, null);
 			}
 		});
 	}
 
 	private IContributionItem getPinEditorItem() {
-		return ContributionItemFactory.PIN_EDITOR.create(window);
+		return ContributionItemFactory.PIN_EDITOR.create(workbenchWindow);
 	}
 
+	private IContributionItem getUndoItem() {
+		return getItem(ActionFactory.UNDO.getId(), ActionFactory.UNDO.getCommandId(), ISharedImages.IMG_TOOL_UNDO,
+				ISharedImages.IMG_TOOL_UNDO_DISABLED, WorkbenchMessages.Workbench_undo,
+				WorkbenchMessages.Workbench_undoToolTip);
+	}
+
+	private IContributionItem getRedoItem() {
+		return getItem(ActionFactory.REDO.getId(), ActionFactory.REDO.getCommandId(), ISharedImages.IMG_TOOL_REDO,
+				ISharedImages.IMG_TOOL_REDO_DISABLED, WorkbenchMessages.Workbench_redo,
+				WorkbenchMessages.Workbench_redoToolTip);
+	}
 	private IContributionItem getCutItem() {
 		return getItem(ActionFactory.CUT.getId(), ActionFactory.CUT.getCommandId(), ISharedImages.IMG_TOOL_CUT,
 				ISharedImages.IMG_TOOL_CUT_DISABLED, WorkbenchMessages.Workbench_cut,
@@ -1525,7 +1523,7 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 
 	private IContributionItem getCloseProjectItem() {
 		return getItem(IDEActionFactory.CLOSE_PROJECT.getId(), IDEActionFactory.CLOSE_PROJECT.getCommandId(), null,
-				null, IDEWorkbenchMessages.CloseResourceAction_text, IDEWorkbenchMessages.CloseResourceAction_text);
+				null, IDEWorkbenchMessages.CloseResourceAction_text, IDEWorkbenchMessages.CloseResourceAction_toolTip);
 	}
 
 	private IContributionItem getItem(String actionId, String commandId,

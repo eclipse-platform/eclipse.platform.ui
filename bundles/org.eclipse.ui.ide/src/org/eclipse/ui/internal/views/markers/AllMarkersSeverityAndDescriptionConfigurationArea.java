@@ -29,7 +29,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * area for the all markers view.
  *
  * @since 3.4
- *
  */
 public class AllMarkersSeverityAndDescriptionConfigurationArea extends
 		SeverityAndDescriptionConfigurationArea {
@@ -86,7 +85,6 @@ public class AllMarkersSeverityAndDescriptionConfigurationArea extends
 
 	/**
 	 * Set the value of filteringOnSeverity
-	 * @param filtering
 	 */
 	private void setFilterOnSeverity(boolean filtering) {
 		filterOnSeverity = filtering;

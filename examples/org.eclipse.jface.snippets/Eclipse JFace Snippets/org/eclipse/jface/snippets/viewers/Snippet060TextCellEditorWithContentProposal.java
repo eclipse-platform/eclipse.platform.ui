@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Table;
 
 /**
  * Shows how to attach content assist to a text cell editor.
- *
  */
 public class Snippet060TextCellEditorWithContentProposal {
 	private static class Color {
@@ -124,7 +123,7 @@ public class Snippet060TextCellEditorWithContentProposal {
 	}
 
 	private static class ColorNameEditingSupport extends EditingSupport {
-		private TextCellEditorWithContentProposal cellEditor;
+		private final TextCellEditorWithContentProposal cellEditor;
 
 		public ColorNameEditingSupport(TableViewer viewer) {
 			super(viewer);
@@ -211,9 +210,6 @@ public class Snippet060TextCellEditorWithContentProposal {
 		return new Color[] { new Color("red"), new Color("green") };
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		Display display = new Display();
 

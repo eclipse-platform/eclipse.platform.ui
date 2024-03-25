@@ -25,7 +25,6 @@ import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * @since 3.4
- *
  */
 public class SlaveEvaluationService implements IEvaluationService {
 
@@ -37,9 +36,6 @@ public class SlaveEvaluationService implements IEvaluationService {
 
 	private Collection evaluationReferences = new ArrayList();
 
-	/**
-	 * @param parent
-	 */
 	public SlaveEvaluationService(IEvaluationService parent) {
 		parentService = parent;
 	}

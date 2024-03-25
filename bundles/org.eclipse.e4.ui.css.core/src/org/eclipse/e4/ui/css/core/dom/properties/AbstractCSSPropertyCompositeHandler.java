@@ -23,7 +23,6 @@ import org.w3c.dom.css.CSSValueList;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public abstract class AbstractCSSPropertyCompositeHandler implements
 		ICSSPropertyCompositeHandler {
@@ -31,13 +30,6 @@ public abstract class AbstractCSSPropertyCompositeHandler implements
 	/**
 	 * Apply CSS Property composite and dispatch CSS Property if CSSValue is
 	 * CSSValueList by calling applyCSSProperty for each item of CSSValue.
-	 *
-	 * @param element
-	 * @param property
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	public void applyCSSPropertyComposite(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
@@ -55,12 +47,6 @@ public abstract class AbstractCSSPropertyCompositeHandler implements
 
 	/**
 	 * Apply CSS Property.
-	 *
-	 * @param element
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
 	 */
 	public abstract void applyCSSProperty(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception;

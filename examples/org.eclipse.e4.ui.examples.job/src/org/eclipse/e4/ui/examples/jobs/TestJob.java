@@ -17,10 +17,10 @@ import java.net.URL;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -61,8 +61,6 @@ public class TestJob extends Job {
 	 *            Whether the job should fail
 	 * @param indeterminate
 	 *            Whether the job should report indeterminate progress
-	 * @param rescheduleWait
-	 * @param reschedule
 	 */
 	public TestJob(long duration, boolean lock, boolean failure,
 			boolean indeterminate, boolean reschedule, long rescheduleWait) {
@@ -134,11 +132,9 @@ public class TestJob extends Job {
 		return Status.OK_STATUS;
 	}
 
-	private static ImageDescriptor getImageDescriptor(
-			String relativePath) {
-		URL url = FileLocator.find(Platform
-				.getBundle("org.eclipse.e4.ui.examples.job"), new Path(
-				relativePath), null);
+	private static ImageDescriptor getImageDescriptor(String relativePath) {
+		URL url = FileLocator.find(Platform.getBundle("org.eclipse.e4.ui.examples.job"),
+				IPath.fromOSString(relativePath), null);
 		return ImageDescriptor.createFromURL(url);
 	}
 }

@@ -24,7 +24,6 @@ import org.eclipse.ui.internal.preferences.SettingsTransferRegistryReader;
  * when switching workspaces.
  *
  * @since 3.3
- *
  */
 public abstract class SettingsTransfer {
 

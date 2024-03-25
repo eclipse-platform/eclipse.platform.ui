@@ -30,7 +30,6 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * their behavior from it.
  *
  * @since 3.3
- *
  */
 public class NavigatorExtensionStateService {
 

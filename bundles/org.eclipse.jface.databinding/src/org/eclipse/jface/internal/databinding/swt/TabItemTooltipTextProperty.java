@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.TabItem;
 
 /**
  * @since 3.3
- *
  */
 public class TabItemTooltipTextProperty extends WidgetStringValueProperty<TabItem> {
 	@Override

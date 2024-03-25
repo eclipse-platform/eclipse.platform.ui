@@ -47,7 +47,7 @@ import org.junit.Test;
  */
 public class MutableObservableCollectionContractTest extends
 		ObservableCollectionContractTest {
-	private IObservableCollectionContractDelegate delegate;
+	private final IObservableCollectionContractDelegate delegate;
 
 	private IObservableCollection collection;
 
@@ -246,10 +246,6 @@ public class MutableObservableCollectionContractTest extends
 	 * Asserts that a ChangeEvent is fired once when the provided
 	 * <code>runnable</code> is invoked and the source is the provided
 	 * <code>collection</code>.
-	 *
-	 * @param runnable
-	 * @param methodName
-	 * @param collection
 	 */
 	/* package */void assertChangeEventFired(Runnable runnable,
 			String methodName, IObservableCollection collection) {
@@ -269,11 +265,6 @@ public class MutableObservableCollectionContractTest extends
 	 * Asserts that when the change event is fired for the action contained in
 	 * the <code>runnable</code> the change will have been applied to the
 	 * <code>collection</code>.
-	 *
-	 * @param runnable
-	 * @param methodName
-	 * @param collection
-	 * @param elementNotContained
 	 */
 	/* package */void assertDoesNotContainDuringChangeEvent(Runnable runnable,
 			String methodName, IObservableCollection collection,
@@ -297,11 +288,6 @@ public class MutableObservableCollectionContractTest extends
 	 * Asserts that when the change event is fired for the action contained in
 	 * the <code>runnable</code> the change will have been applied to the
 	 * <code>collection</code>.
-	 *
-	 * @param runnable
-	 * @param methodName
-	 * @param collection
-	 * @param elementContained
 	 */
 	/* package */void assertContainsDuringChangeEvent(Runnable runnable,
 			String methodName, IObservableCollection collection,

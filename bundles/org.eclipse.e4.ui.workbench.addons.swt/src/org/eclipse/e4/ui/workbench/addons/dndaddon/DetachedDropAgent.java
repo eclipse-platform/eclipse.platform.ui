@@ -63,7 +63,7 @@ public class DetachedDropAgent extends DropAgent {
 			dragElement = dragElement.getCurSharedRef();
 		}
 
-		Rectangle rectangle = getRectangle(dragElement, info);
+		Rectangle rectangle = getRectangle(dragElement);
 
 		modelService.detach((MPartSashContainerElement) dragElement, rectangle.x, rectangle.y, rectangle.width,
 				rectangle.height);
@@ -74,8 +74,7 @@ public class DetachedDropAgent extends DropAgent {
 		return true;
 	}
 
-	@Override
-	public Rectangle getRectangle(MUIElement dragElement, DnDInfo info) {
+	public Rectangle getRectangle(MUIElement dragElement) {
 		if (dragElement.getCurSharedRef() != null) {
 			dragElement = dragElement.getCurSharedRef();
 		}
@@ -107,13 +106,12 @@ public class DetachedDropAgent extends DropAgent {
 			return false;
 		}
 
-		manager.frameRect(getRectangle(dragElement, info));
+		manager.frameRect(getRectangle(dragElement));
 		return true;
 	}
 
 	@Override
 	public void dragEnter(MUIElement dragElement, DnDInfo info) {
-		super.dragEnter(dragElement, info);
 		dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND));
 	}
 
@@ -121,7 +119,5 @@ public class DetachedDropAgent extends DropAgent {
 	public void dragLeave(MUIElement dragElement, DnDInfo info) {
 		manager.clearOverlay();
 		dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_NO));
-
-		super.dragLeave(dragElement, info);
 	}
 }

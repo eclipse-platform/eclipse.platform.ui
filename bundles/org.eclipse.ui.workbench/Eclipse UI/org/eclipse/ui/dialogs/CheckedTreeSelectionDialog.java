@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -82,6 +82,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 
 	private int fStyle = SWT.BORDER;
 
+	private final boolean fAllowEmptyTree;
+
 	/**
 	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
 	 *
@@ -97,6 +99,20 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	/**
 	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
 	 *
+	 * @param parent             The shell to parent from.
+	 * @param labelProvider      the label provider to render the entries
+	 * @param contentProvider    the content provider to evaluate the tree structure
+	 * @param allowEmptyTree <code>true</code> if an empty tree can be input, <code>false</code> if an empty tree must be treated as an error
+	 * @since 3.131
+	 */
+	public CheckedTreeSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider,
+			boolean allowEmptyTree) {
+		this(parent, labelProvider, contentProvider, SWT.BORDER, allowEmptyTree);
+	}
+
+	/**
+	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
+	 *
 	 * @param parent          The shell to parent from.
 	 * @param labelProvider   the label provider to render the entries
 	 * @param contentProvider the content provider to evaluate the tree structure
@@ -105,6 +121,23 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	 */
 	public CheckedTreeSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider,
 			int style) {
+		this(parent, labelProvider, contentProvider, style, false);
+	}
+
+	/**
+	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
+	 *
+	 * @param parent          The shell to parent from.
+	 * @param labelProvider   the label provider to render the entries
+	 * @param contentProvider the content provider to evaluate the tree structure
+	 * @param style           the style of the tree
+	 * @param allowEmptyTree  <code>true</code> if an empty tree can be input,
+	 *                        <code>false</code> if an empty tree must be treated as
+	 *                        an error
+	 * @since 3.131
+	 */
+	public CheckedTreeSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider,
+			int style, boolean allowEmptyTree) {
 		super(parent);
 		fLabelProvider = labelProvider;
 		fContentProvider = contentProvider;
@@ -113,6 +146,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 		fContainerMode = false;
 		fExpandedElements = null;
 		fStyle = style;
+		fAllowEmptyTree = allowEmptyTree;
 	}
 
 	/**
@@ -230,7 +264,6 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Validate the receiver and update the status with the result.
-	 *
 	 */
 	protected void updateOKStatus() {
 		if (!fIsEmpty) {
@@ -238,6 +271,11 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 				fCurrStatus = fValidator.validate(fViewer.getCheckedElements());
 				updateStatus(fCurrStatus);
 			} else if (!fCurrStatus.isOK()) {
+				fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
+						null);
+			}
+		} else if (fAllowEmptyTree) {
+			if (!fCurrStatus.isOK()) {
 				fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
 						null);
 			}

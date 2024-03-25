@@ -34,7 +34,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * completed.
  *
  * @since 3.4
- *
  */
 public class MarkCompletedHandler extends MarkerViewHandler {
 

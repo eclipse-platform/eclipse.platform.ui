@@ -38,9 +38,6 @@ public class PerformanceEditorPart extends EditorPart {
 	private Label control;
 	private boolean useOutline = false;
 
-	/**
-	 *
-	 */
 	public PerformanceEditorPart() {
 		super();
 	}

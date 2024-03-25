@@ -14,9 +14,6 @@
 
 package org.eclipse.core.tests.databinding.observable;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.set.SetDiff;
@@ -25,7 +22,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class DiffsTest {
 	/**
@@ -46,18 +42,12 @@ public class DiffsTest {
 			}
 		};
 
-		try {
-			diff.toString();
-			assertTrue(true);
-		} catch (NullPointerException e) {
-			fail("NPE was thrown.");
-		}
+		diff.toString();
 	}
 
 	/**
 	 * Asserts that if the {@link ValueDiff#toString()} implementation doesn't
 	 * throw a NPE if any of its properties are <code>null</code>.
-	 *
 	 */
 	@Test
 	public void test_ValueDiff() {
@@ -73,12 +63,7 @@ public class DiffsTest {
 			}
 		};
 
-		try {
-			diff.toString();
-			assertTrue(true);
-		} catch (NullPointerException e) {
-			fail("NPE was thrown.");
-		}
+		diff.toString();
 	}
 
 }

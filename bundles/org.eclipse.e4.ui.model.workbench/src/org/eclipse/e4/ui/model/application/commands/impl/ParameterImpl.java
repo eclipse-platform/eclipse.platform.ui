@@ -113,8 +113,9 @@ public class ParameterImpl extends ApplicationElementImpl implements MParameter 
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.PARAMETER__NAME, oldName, name));
+		}
 	}
 
 	/**
@@ -136,9 +137,10 @@ public class ParameterImpl extends ApplicationElementImpl implements MParameter 
 	public void setValue(String newValue) {
 		String oldValue = value;
 		value = newValue;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.PARAMETER__VALUE, oldValue,
 					value));
+		}
 	}
 
 	/**
@@ -222,8 +224,9 @@ public class ParameterImpl extends ApplicationElementImpl implements MParameter 
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: "); //$NON-NLS-1$

@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IResource;
@@ -57,23 +58,17 @@ import org.osgi.framework.FrameworkUtil;
  * {@link ProjectConfigurator}
  *
  * @since 3.12
- *
  */
 public class SmartImportWizard extends Wizard implements IImportWizard {
 
 	/**
 	 * Expands an archive onto provided filesystem directory
 	 * @since 3.12
-	 *
 	 */
 	private static final class ExpandArchiveIntoFilesystemOperation implements IRunnableWithProgress {
 		private File archive;
 		private File destination;
 
-		/**
-		 * @param archive
-		 * @param destination
-		 */
 		private ExpandArchiveIntoFilesystemOperation(File archive, File destination) {
 			this.archive = archive;
 			this.destination = destination;
@@ -83,17 +78,7 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, OperationCanceledException {
 			monitor.beginTask(NLS.bind(DataTransferMessages.SmartImportWizardPage_expandingArchive, archive.getName(), destination.getName()),
 					1);
-			TarFile tarFile = null;
-			ZipFile zipFile = null;
-			ILeveledImportStructureProvider importStructureProvider = null;
-			try {
-				if (ArchiveFileManipulations.isTarFile(archive.getAbsolutePath())) {
-					tarFile = new TarFile(archive);
-					importStructureProvider = new TarLeveledStructureProvider(tarFile);
-				} else if (ArchiveFileManipulations.isZipFile(archive.getAbsolutePath())) {
-					zipFile = new ZipFile(archive);
-					importStructureProvider = new ZipLeveledStructureProvider(zipFile);
-				}
+			try (ILeveledImportStructureProvider importStructureProvider = createImportStructureProvider()) {
 				LinkedList<Object> toProcess = new LinkedList<>();
 				toProcess.add(importStructureProvider.getRoot());
 				while (!toProcess.isEmpty()) {
@@ -128,21 +113,18 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 				monitor.done();
 			} catch (Exception ex) {
 				throw new InvocationTargetException(ex);
-			} finally {
-				if (importStructureProvider != null) {
-					importStructureProvider.closeArchive();
-				}
-				if (tarFile != null)
-					try {
-						tarFile.close();
-					} catch (IOException ex) {
-					}
-				if (zipFile != null)
-					try {
-						zipFile.close();
-					} catch (IOException ex) {
-					}
 			}
+		}
+
+		private ILeveledImportStructureProvider createImportStructureProvider()
+				throws TarException, IOException, ZipException {
+			ILeveledImportStructureProvider importStructureProvider = null;
+			if (ArchiveFileManipulations.isTarFile(archive.getAbsolutePath())) {
+				importStructureProvider = new TarLeveledStructureProvider(new TarFile(archive));
+			} else if (ArchiveFileManipulations.isZipFile(archive.getAbsolutePath())) {
+				importStructureProvider = new ZipLeveledStructureProvider(new ZipFile(archive));
+			}
+			return importStructureProvider;
 		}
 	}
 
@@ -157,9 +139,6 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 	 */
 	private File directoryToImport;
 
-	/**
-	 *
-	 */
 	public SmartImportWizard() {
 		super();
 		setNeedsProgressMonitor(true);
@@ -177,8 +156,6 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 
 	/**
 	 * Sets the initial directory or archive to import in workspace.
-	 *
-	 * @param directoryOrArchive
 	 */
 	public void setInitialImportSource(File directoryOrArchive) {
 		this.initialSelection = directoryOrArchive;
@@ -186,8 +163,6 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 
 	/**
 	 * Sets the initial selected working sets for the wizard
-	 *
-	 * @param workingSets
 	 */
 	public void setInitialWorkingSets(Set<IWorkingSet> workingSets) {
 		this.initialWorkingSets = workingSets;

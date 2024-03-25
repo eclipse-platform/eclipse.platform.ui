@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Event;
  * </p>
  *
  * @since 3.3
- *
  */
 public class CellNavigationStrategy {
 	/**

@@ -15,9 +15,9 @@
 
 package org.eclipse.e4.ui.internal.workbench.addons;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -39,9 +39,6 @@ public class HandlerProcessingAddon {
 
 	/**
 	 * Do initial check of handlers and their context upon creation
-	 *
-	 * @param application
-	 * @param modelService
 	 */
 	@PostConstruct
 	public void postConstruct(MApplication application, EModelService modelService) {
@@ -126,10 +123,6 @@ public class HandlerProcessingAddon {
 		}
 	}
 
-	/**
-	 * @param handler
-	 * @param context
-	 */
 	private void processActiveHandler(MHandler handler, IEclipseContext context) {
 		MCommand command = handler.getCommand();
 		if (command == null) {

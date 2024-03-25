@@ -72,12 +72,12 @@ public abstract class UITestCase extends TestCase {
 	 * Rule to close windows opened during the test case, manually called to remain
 	 * compatible with JUnit3
 	 */
-	private CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+	private final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	protected IWorkbench fWorkbench;
 
 	/** Preference helper to restore changed preference values after test run. */
-	private PreferenceMemento prefMemento = new PreferenceMemento();
+	private final PreferenceMemento prefMemento = new PreferenceMemento();
 
 	/**
 	 * Required to preserve the existing logging output when running tests with
@@ -274,8 +274,6 @@ public abstract class UITestCase extends TestCase {
 
 	/**
 	 * Pauses execution of the current thread
-	 *
-	 * @param millis
 	 */
 	protected static void sleep(long millis) {
 		try {
@@ -332,7 +330,7 @@ public abstract class UITestCase extends TestCase {
 	}
 
 	public static class ShellStateListener implements ShellListener {
-		private AtomicBoolean shellIsActive;
+		private final AtomicBoolean shellIsActive;
 
 		public ShellStateListener(AtomicBoolean shellIsActive) {
 			this.shellIsActive = shellIsActive;

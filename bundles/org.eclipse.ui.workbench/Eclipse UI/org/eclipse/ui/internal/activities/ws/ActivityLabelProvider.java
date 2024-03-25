@@ -33,17 +33,12 @@ public class ActivityLabelProvider extends LabelProvider {
 	/**
 	 * Create a new instance of the receiver.
 	 *
-	 * @param activityManager
 	 * @since 3.0
 	 */
 	public ActivityLabelProvider(IActivityManager activityManager) {
 		this.activityManager = activityManager;
 	}
 
-	/**
-	 * @param activity
-	 * @return
-	 */
 	private String getActivityText(IActivity activity) {
 		try {
 			return activity.getName();

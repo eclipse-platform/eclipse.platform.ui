@@ -44,7 +44,6 @@ import org.eclipse.e4.emf.internal.xpath.helper.ValueUtils;
 
 /**
  * Transparent pointer to a collection (array or Collection).
- *
  */
 public class CollectionPointer extends NodePointer {
 	private Object collection;

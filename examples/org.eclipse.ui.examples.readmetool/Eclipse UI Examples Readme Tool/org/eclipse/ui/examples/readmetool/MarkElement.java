@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,15 +31,15 @@ import org.eclipse.ui.views.properties.IPropertySource;
  * can be used to provide navigation and display for that viewer.
  */
 public class MarkElement implements IWorkbenchAdapter, IAdaptable {
-	private String headingName;
+	private final String headingName;
 
-	private IAdaptable parent;
+	private final IAdaptable parent;
 
-	private int offset;
+	private final int offset;
 
 	private int numberOfLines;
 
-	private int length;
+	private final int length;
 
 	private ArrayList<MarkElement> children;
 
@@ -53,8 +53,8 @@ public class MarkElement implements IWorkbenchAdapter, IAdaptable {
 	 */
 	public MarkElement(IAdaptable parent, String heading, int offset, int length) {
 		this.parent = parent;
-		if (parent instanceof MarkElement) {
-			((MarkElement) parent).addChild(this);
+		if (parent instanceof MarkElement markElement) {
+			markElement.addChild(this);
 		}
 		this.headingName = heading;
 		this.offset = offset;

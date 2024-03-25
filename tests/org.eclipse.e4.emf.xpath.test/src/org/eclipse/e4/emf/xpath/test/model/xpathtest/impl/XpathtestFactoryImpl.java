@@ -6,14 +6,18 @@
  */
 package org.eclipse.e4.emf.xpath.test.model.xpathtest.impl;
 
-import org.eclipse.e4.emf.xpath.test.model.xpathtest.*;
-
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Menu;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuElement;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuItem;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Node;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Root;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestFactory;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**
@@ -78,7 +82,8 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public Root createRoot() {
-		return new RootImpl();
+		RootImpl root = new RootImpl();
+		return root;
 	}
 
 	/**
@@ -88,7 +93,8 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public Node createNode() {
-		return new NodeImpl();
+		NodeImpl node = new NodeImpl();
+		return node;
 	}
 
 	/**
@@ -98,7 +104,8 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public ExtendedNode createExtendedNode() {
-		return new ExtendedNodeImpl();
+		ExtendedNodeImpl extendedNode = new ExtendedNodeImpl();
+		return extendedNode;
 	}
 
 	/**
@@ -108,7 +115,8 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public Menu createMenu() {
-		return new MenuImpl();
+		MenuImpl menu = new MenuImpl();
+		return menu;
 	}
 
 	/**
@@ -118,7 +126,8 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public MenuItem createMenuItem() {
-		return new MenuItemImpl();
+		MenuItemImpl menuItem = new MenuItemImpl();
+		return menuItem;
 	}
 
 	/**
@@ -128,7 +137,8 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public MenuElement createMenuElement() {
-		return new MenuElementImpl();
+		MenuElementImpl menuElement = new MenuElementImpl();
+		return menuElement;
 	}
 
 	/**

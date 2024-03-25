@@ -25,7 +25,6 @@ import org.eclipse.urischeme.IUriSchemeProcessor;
 /**
  * Implementation of the API to process URI scheme handling as defined in
  * extension point <code> org.eclipse.core.runtime.uriSchemeHandlers</code>
- *
  */
 public class UriSchemeProcessor implements IUriSchemeProcessor {
 
@@ -39,7 +38,6 @@ public class UriSchemeProcessor implements IUriSchemeProcessor {
 	 *
 	 * @param uriScheme just the uri scheme
 	 * @param uri       the complete uri
-	 * @throws CoreException
 	 */
 	@Override
 	public void handleUri(String uriScheme, String uri) throws CoreException {

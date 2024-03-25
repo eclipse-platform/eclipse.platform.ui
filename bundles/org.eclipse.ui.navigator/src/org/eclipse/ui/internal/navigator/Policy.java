@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * Policy is the class for the debug arguments in the navigator
- *
  */
 public class Policy {
 
@@ -66,7 +65,6 @@ public class Policy {
 	}
 
 	/**
-	 * @param obj
 	 * @return a String
 	 */
 	public static String getObjectString(Object obj) {

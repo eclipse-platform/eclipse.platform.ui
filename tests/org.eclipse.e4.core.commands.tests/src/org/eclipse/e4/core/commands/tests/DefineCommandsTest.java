@@ -17,7 +17,6 @@ package org.eclipse.e4.core.commands.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +60,7 @@ public class DefineCommandsTest {
 	}
 
 	@Test
-	public void testCreateCommands() {
+	public void testCreateCommands() throws NotDefinedException {
 		ECommandService cs = workbenchContext.get(ECommandService.class);
 		assertNotNull(cs);
 		assertNotNull(cs.defineCategory(TEST_CAT1, "CAT1", null));
@@ -71,11 +70,7 @@ public class DefineCommandsTest {
 		assertNotNull("command2", cs.defineCommand(TEST_ID2, "ID2", null, category, null));
 		Command cmd1 = cs.getCommand(TEST_ID1);
 		assertNotNull("get command1", cmd1);
-		try {
-			assertEquals("ID1", cmd1.getName());
-		} catch (NotDefinedException e) {
-			fail(e.getMessage());
-		}
+		assertEquals("ID1", cmd1.getName());
 		assertNotNull("get command2", cs.getCommand(TEST_ID2));
 		assertNotNull("parameterized command", cs.createCommand(TEST_ID1, null));
 	}
@@ -122,7 +117,7 @@ public class DefineCommandsTest {
 
 
 	@Test
-	public void testCreateWithSecondContexts() {
+	public void testCreateWithSecondContexts() throws NotDefinedException {
 		IEclipseContext localContext = workbenchContext.createChild();
 		ECommandService cs = localContext.get(ECommandService.class);
 		assertNotNull(cs);
@@ -134,16 +129,12 @@ public class DefineCommandsTest {
 
 		Command cmd1 = cs.getCommand(TEST_ID1);
 		assertNotNull("get command1", cmd1);
-		try {
-			assertEquals("ID1", cmd1.getName());
-		} catch (NotDefinedException e) {
-			fail(e.getMessage());
-		}
+		assertEquals("ID1", cmd1.getName());
 		assertNotNull("get command2", cs.getCommand(TEST_ID2));
 	}
 
 	@Test
-	public void testCreateWithTwoContexts() {
+	public void testCreateWithTwoContexts() throws NotDefinedException {
 		IEclipseContext localContext = workbenchContext.createChild("Level1");
 		ECommandService cs = localContext.get(ECommandService.class);
 		assertNotNull(cs);
@@ -156,11 +147,7 @@ public class DefineCommandsTest {
 		cs = workbenchContext.get(ECommandService.class);
 		Command cmd1 = cs.getCommand(TEST_ID1);
 		assertNotNull("get command1", cmd1);
-		try {
-			assertEquals("ID1", cmd1.getName());
-		} catch (NotDefinedException e) {
-			fail(e.getMessage());
-		}
+		assertEquals("ID1", cmd1.getName());
 		assertNotNull("get command2", cs.getCommand(TEST_ID2));
 	}
 }

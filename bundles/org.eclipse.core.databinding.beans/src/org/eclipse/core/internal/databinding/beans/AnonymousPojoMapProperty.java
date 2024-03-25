@@ -28,7 +28,6 @@ import org.eclipse.core.databinding.property.map.IMapProperty;
  * @param <V> type of the values in the map
  *
  * @since 3.3
- *
  */
 public class AnonymousPojoMapProperty<S, K, V> extends DelegatingMapProperty<S, K, V> {
 	private final String propertyName;

@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * @since 3.2
- *
  */
 public class TestFilterItemsThatEndIn3 extends ViewerFilter {
 

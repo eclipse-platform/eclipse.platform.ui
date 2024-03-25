@@ -17,7 +17,6 @@ package org.eclipse.jface.tests.performance;
 /**
  * The TestElement is the element used for testing
  * viewers.
- *
  */
 public class TestElement {
 
@@ -25,7 +24,6 @@ public class TestElement {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
 	 */
 	public TestElement() {
 		super();
@@ -33,8 +31,6 @@ public class TestElement {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param index
 	 */
 	public TestElement(int index) {
 		name = TestTreeElement.generateFirstEntry() + index;

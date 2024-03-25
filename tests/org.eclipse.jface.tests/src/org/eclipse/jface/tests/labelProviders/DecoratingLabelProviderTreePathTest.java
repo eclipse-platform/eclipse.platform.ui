@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ITreePathLabelProvider;
@@ -27,19 +29,18 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.junit.Test;
 
 /**
  * DecoratingLabelProviderTreePathTest is the tree path version of the
  * DecoratingLabelProviderTreeTest.
  *
  * @since 3.3
- *
  */
-public class DecoratingLabelProviderTreePathTest extends
-		CompositeLabelProviderTest {
+public class DecoratingLabelProviderTreePathTest extends CompositeLabelProviderTest {
 
-	class TreePathTestLabelProvider extends LabelProvider implements
-			IColorProvider, IFontProvider, ITreePathLabelProvider {
+	class TreePathTestLabelProvider extends LabelProvider
+			implements IColorProvider, IFontProvider, ITreePathLabelProvider {
 		@Override
 		public Color getForeground(Object element) {
 			return foreground;
@@ -61,16 +62,6 @@ public class DecoratingLabelProviderTreePathTest extends
 		}
 	}
 
-	/**
-	 * Create a new instance of the receiver.
-	 *
-	 * @param name
-	 */
-	public DecoratingLabelProviderTreePathTest(String name) {
-		super(name);
-
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 
@@ -87,18 +78,16 @@ public class DecoratingLabelProviderTreePathTest extends
 	}
 
 	/**
-	 * Test that all of the colours and fonts from the label provider are
-	 * applied.
+	 * Test that all of the colours and fonts from the label provider are applied.
 	 */
+	@Test
 	public void testColorsAndFonts() {
 		Tree tree = (Tree) fViewer.getControl();
 		TreeItem item = tree.getItem(0);
 
-		assertTrue("Background was not set", item.getBackground(0).equals(
-				background));
-		assertTrue("Foreground was not set", item.getForeground(0).equals(
-				foreground));
-		assertTrue("Font was not set", item.getFont(0).equals(font));
+		assertEquals("Background was not set", item.getBackground(0), background);
+		assertEquals("Foreground was not set", item.getForeground(0), foreground);
+		assertEquals("Font was not set", item.getFont(0), font);
 
 	}
 }

@@ -150,7 +150,6 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	/**
 	 * Find an adapted element from the receiver.
 	 *
-	 * @param element
 	 * @return the adapted element or <code>null</code> if it could not be found.
 	 */
 	private Object getAdaptedElement(Object element) {
@@ -293,7 +292,6 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 * IStructuredSelection, then return its array otherwise return a 1 element
 	 * Object[] containing the passed in object
 	 *
-	 * @param obj
 	 * @return an object array representing the passed in object
 	 */
 	private Object[] getObjects(Object obj) {
@@ -369,8 +367,6 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 
 	/**
 	 * Add child to the list of children.
-	 *
-	 * @param child
 	 */
 	public void addSubPage(RegistryPageContributor child) {
 		subPages.add(child);
@@ -391,7 +387,6 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	/**
 	 * Get the child with the given id.
 	 *
-	 * @param id
 	 * @return RegistryPageContributor
 	 */
 	public Object getChild(String id) {

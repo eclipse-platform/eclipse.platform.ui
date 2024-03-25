@@ -20,7 +20,6 @@ import org.eclipse.core.commands.ExecutionException;
 /**
  * @since 3.5
  * @author Prakash G.R.
- *
  */
 public class ExceptionThrowingHandler extends AbstractHandler{
 

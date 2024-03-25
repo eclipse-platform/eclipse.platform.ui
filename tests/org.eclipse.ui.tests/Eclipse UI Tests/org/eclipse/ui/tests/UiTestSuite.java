@@ -48,12 +48,14 @@ import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
 import org.eclipse.ui.tests.operations.OperationsTestSuite;
 import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
+import org.eclipse.ui.tests.preferences.ViewerItemsLimitTest;
 import org.eclipse.ui.tests.progress.ProgressTestSuite;
 import org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite;
 import org.eclipse.ui.tests.quickaccess.QuickAccessTestSuite;
 import org.eclipse.ui.tests.releng.PluginActivationTests;
 import org.eclipse.ui.tests.services.ServicesTestSuite;
 import org.eclipse.ui.tests.statushandlers.StatusHandlingTestSuite;
+import org.eclipse.ui.tests.stress.OpenCloseTest;
 import org.eclipse.ui.tests.systeminplaceeditor.OpenSystemInPlaceEditorTest;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
 import org.eclipse.ui.tests.zoom.ZoomTestSuite;
@@ -106,6 +108,8 @@ import org.junit.runners.Suite;
 	OpenSystemInPlaceEditorTest.class,
 	WorkbenchDatabindingTest.class,
 	ChooseWorkspaceDialogTests.class,
+	ViewerItemsLimitTest.class,
+	OpenCloseTest.class
 })
 public class UiTestSuite {
 }

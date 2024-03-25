@@ -21,7 +21,7 @@ import java.util.Optional;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.api.tools.annotations.NoInstantiate;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -30,9 +30,8 @@ import org.osgi.framework.FrameworkUtil;
  * resources in bundles.
  *
  * @since 3.17
- * @noinstantiate This class is not intended to be instantiated by clients.
- *
  */
+@NoInstantiate
 public final class ResourceLocator {
 
 	/**
@@ -55,7 +54,7 @@ public final class ResourceLocator {
 		// Caveat: The resulting URL may contain $nl$ etc., which is not
 		// directly supported by PlatformURLConnection and needs to go through
 		// FileLocator#find(URL), see bug 250432.
-		IPath uriPath = new Path("/plugin").append(bundleSymbolicName).append(filePath); //$NON-NLS-1$
+		IPath uriPath = IPath.fromOSString("/plugin").append(bundleSymbolicName).append(filePath); //$NON-NLS-1$
 		URL url;
 		try {
 			URI uri = new URI("platform", null, uriPath.toString(), null); //$NON-NLS-1$
@@ -93,7 +92,7 @@ public final class ResourceLocator {
 	 *         {@link Optional#empty()}.
 	 */
 	public static Optional<URL> locate(Class<?> classFromBundle, String filePath) {
-		return Optional.ofNullable(FileLocator.find(FrameworkUtil.getBundle(classFromBundle), new Path(filePath)));
+		return Optional.ofNullable(FileLocator.find(FrameworkUtil.getBundle(classFromBundle), IPath.fromOSString(filePath)));
 	}
 
 	/**
@@ -119,10 +118,7 @@ public final class ResourceLocator {
 	 */
 	public static Optional<ImageDescriptor> imageDescriptorFromBundle(String bundleSymbolicName, String imageFilePath) {
 		Optional<URL> locate = locate(bundleSymbolicName, imageFilePath);
-		if (locate.isPresent()) {
-			return Optional.of(ImageDescriptor.createFromURL(locate.get()));
-		}
-		return Optional.empty();
+		return locate.map(ImageDescriptor::createFromURL);
 	}
 
 	/**
@@ -148,10 +144,7 @@ public final class ResourceLocator {
 	 */
 	public static Optional<ImageDescriptor> imageDescriptorFromBundle(Class<?> classFromBundle, String imageFilePath) {
 		Optional<URL> locate = locate(classFromBundle, imageFilePath);
-		if (locate.isPresent()) {
-			return Optional.of(ImageDescriptor.createFromURL(locate.get()));
-		}
-		return Optional.empty();
+		return locate.map(ImageDescriptor::createFromURL);
 	}
 
 }

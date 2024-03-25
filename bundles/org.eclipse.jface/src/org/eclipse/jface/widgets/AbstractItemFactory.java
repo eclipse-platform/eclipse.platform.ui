@@ -13,6 +13,7 @@
 ******************************************************************************/
 package org.eclipse.jface.widgets;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
@@ -26,18 +27,12 @@ import org.eclipse.swt.widgets.Widget;
  * @param <I> item
  * @param <P> parent
  *
- * @noextend this class is not intended to be subclassed by clients.
- *
  * @since 3.18
- *
  */
+@NoExtend
 public abstract class AbstractItemFactory<F extends AbstractItemFactory<?, ?, ?>, I extends Item, P extends Widget>
 		extends AbstractWidgetFactory<F, I, P> {
 
-	/**
-	 * @param factoryClass
-	 * @param itemCreator
-	 */
 	AbstractItemFactory(Class<F> factoryClass, WidgetSupplier<I, P> itemCreator) {
 		super(factoryClass, itemCreator);
 	}

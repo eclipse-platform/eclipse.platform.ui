@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -28,8 +29,8 @@ import org.eclipse.swt.widgets.ToolItem;
  * This class may be instantiated; it is not intended to be
  * subclassed outside the framework.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class Separator extends AbstractGroupMarker {
 	/**
 	 * Creates a separator which does not start a new group.

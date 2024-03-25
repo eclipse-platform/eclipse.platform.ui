@@ -186,7 +186,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		// Warning: code duplicated in CloseResourceAction
-		List sel = getSelectedResources();
+		List<? extends IResource> sel = getSelectedResources();
 		// don't bother looking at delta if selection not applicable
 		if (selectionIsOfType(IResource.PROJECT)) {
 			IResourceDelta delta = event.getDelta();

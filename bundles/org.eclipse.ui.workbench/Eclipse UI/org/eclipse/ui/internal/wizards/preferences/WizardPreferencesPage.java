@@ -21,8 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -57,7 +56,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.dialogs.PatternFilter;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 import org.eclipse.ui.internal.preferences.PreferenceTransferManager;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -109,9 +107,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 
 	protected static final int COMBO_HISTORY_LENGTH = 5;
 
-	/**
-	 * @param pageName
-	 */
 	protected WizardPreferencesPage(String pageName) {
 		super(pageName);
 	}
@@ -191,9 +186,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 		Dialog.applyDialogFont(composite);
 	}
 
-	/**
-	 * @param composite
-	 */
 	protected abstract void createTransferArea(Composite composite);
 
 	/**
@@ -242,9 +234,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 		return transfers;
 	}
 
-	/**
-	 * @param composite
-	 */
 	protected void createTransfersList(Composite composite) {
 
 		transferAllButton = new Button(composite, SWT.CHECK);
@@ -366,13 +355,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 		});
 		deselectAllButton.addSelectionListener(listener);
 		deselectAllButton.setFont(parentFont);
-	}
-
-	/**
-	 * @param bool
-	 */
-	protected void setAllChecked(boolean bool) {
-		transferAllButton.setSelection(false);
 	}
 
 	/**
@@ -590,11 +572,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 			filters = new IPreferenceFilter[transferElements.length];
 			for (int j = 0; j < transferElements.length; j++) {
 				PreferenceTransferElement element = transferElements[j];
-				try {
-					filters[j] = element.getFilter();
-				} catch (CoreException e) {
-					WorkbenchPlugin.log(e.getMessage(), e);
-				}
+				filters[j] = element.getFilter();
 			}
 		} else {
 			filters = new IPreferenceFilter[0];
@@ -614,7 +592,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 	}
 
 	/**
-	 * @param transfers
 	 * @return boolean
 	 */
 	protected abstract boolean transfer(IPreferenceFilter[] transfers);
@@ -896,14 +873,13 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 	 * <code>IOverwriteQuery</code> method asks the user whether the existing
 	 * resource at the given path should be overwritten.
 	 *
-	 * @param pathString
 	 * @return the user's reply: one of <code>"YES"</code>, <code>"NO"</code>,
 	 *         <code>"ALL"</code>, or <code>"CANCEL"</code>
 	 */
 	@Override
 	public String queryOverwrite(String pathString) {
 
-		Path path = new Path(pathString);
+		IPath path = IPath.fromOSString(pathString);
 
 		String messageString;
 		// Break the message up if there is a file name and a directory

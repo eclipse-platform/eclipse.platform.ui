@@ -30,15 +30,11 @@ import org.eclipse.ui.internal.util.Util;
  * </p>
  *
  * @since 3.3
- *
  */
 public class MenuLocationURI {
 
 	private String rawString;
 
-	/**
-	 * @param uriDef
-	 */
 	public MenuLocationURI(String uriDef) {
 		rawString = uriDef;
 	}

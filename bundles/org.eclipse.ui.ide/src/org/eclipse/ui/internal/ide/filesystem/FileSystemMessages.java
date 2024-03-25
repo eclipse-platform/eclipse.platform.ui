@@ -20,7 +20,6 @@ import org.eclipse.osgi.util.NLS;
 /**
  * FileSystemMessages is the class that handles the messages for the
  * filesystem support.
- *
  */
 public class FileSystemMessages extends NLS{
 

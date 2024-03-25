@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
@@ -46,7 +45,7 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
 
 	private FileSystemExporter exporter = new FileSystemExporter();
 
-	private List resourcesToExport;
+	private List<IResource> resourcesToExport;
 
 	private IOverwriteQuery overwriteCallback;
 
@@ -77,7 +76,7 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
 			IOverwriteQuery overwriteImplementor) {
 		super();
 		resource = res;
-		path = new Path(destinationPath);
+		path = IPath.fromOSString(destinationPath);
 		overwriteCallback = overwriteImplementor;
 	}
 
@@ -123,10 +122,10 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
 	 */
 	protected int countSelectedResources() throws CoreException {
 		int result = 0;
-		Iterator resources = resourcesToExport.iterator();
+		Iterator<IResource> resources = resourcesToExport.iterator();
 
 		while (resources.hasNext()) {
-			result += countChildrenOf((IResource) resources.next());
+			result += countChildrenOf(resources.next());
 		}
 
 		return result;
@@ -264,11 +263,11 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
 	 *	resourcesToExport collection
 	 */
 	protected void exportSpecifiedResources() throws InterruptedException {
-		Iterator resources = resourcesToExport.iterator();
+		Iterator<IResource> resources = resourcesToExport.iterator();
 		IPath initPath = (IPath) path.clone();
 
 		while (resources.hasNext()) {
-			IResource currentResource = (IResource) resources.next();
+			IResource currentResource = resources.next();
 			if (!currentResource.isAccessible() || (!resolveLinks && currentResource.isLinked())) {
 				continue;
 			}

@@ -27,7 +27,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 /**
  * Handler for quick access pop-up dialog, showing UI elements such as editors,
  * views, commands.
- *
  */
 public class QuickAccessHandler extends AbstractHandler {
 

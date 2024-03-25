@@ -34,10 +34,6 @@ public class ImageBindingRegistry implements IExtensionChangeHandler {
 	private String tag;
 	private ImageRegistry registry = new ImageRegistry();
 
-	/**
-	 * @param tag
-	 *
-	 */
 	public ImageBindingRegistry(String tag) {
 		super();
 		this.tag = tag;

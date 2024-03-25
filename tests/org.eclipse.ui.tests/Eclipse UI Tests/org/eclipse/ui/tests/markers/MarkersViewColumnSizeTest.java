@@ -27,7 +27,6 @@ import junit.framework.TestSuite;
 
 /**
  * @since 3.4
- *
  */
 @RunWith(JUnit4.class)
 public class MarkersViewColumnSizeTest extends UITestCase {
@@ -43,9 +42,6 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 		super(MarkersViewColumnSizeTest.class.getSimpleName());
 	}
 
-	/**
-	 * @param testName
-	 */
 	public MarkersViewColumnSizeTest(String name) {
 		super(name);
 	}

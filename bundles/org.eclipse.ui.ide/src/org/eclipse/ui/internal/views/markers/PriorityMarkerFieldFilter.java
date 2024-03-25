@@ -24,7 +24,6 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
  * PriorityMarkerFieldFilter is the field filter for priority in markers
  *
  * @since 3.4
- *
  */
 public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 

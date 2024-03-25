@@ -40,7 +40,7 @@ public class ValidatedObservableListTest extends AbstractDefaultRealmTestCase {
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {
-		private Object elementType = new Object();
+		private final Object elementType = new Object();
 
 		@Override
 		public IObservableCollection createObservableCollection(Realm realm,

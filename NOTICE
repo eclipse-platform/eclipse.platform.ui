@@ -21,22 +21,3 @@ of the Eclipse Public License v. 2.0 which is available at
 http://www.eclipse.org/legal/epl-2.0.
 
 SPDX-License-Identifier: EPL-2.0
-
-## Source Code
-
-The project maintains the following source code repositories:
-
-* https://github.com/eclipse-platform/eclipse.platform.common
-* https://github.com/eclipse-platform/eclipse.platform.debug
-* https://github.com/eclipse-platform/eclipse.platform
-* https://github.com/eclipse-platform/eclipse.platform.releng.aggregator
-* https://github.com/eclipse-platform/eclipse.platform.releng.buildtools
-* https://github.com/eclipse-platform/eclipse.platform.releng
-* https://github.com/eclipse-platform/eclipse.platform.resources
-* https://github.com/eclipse-platform/eclipse.platform.swt
-* https://github.com/eclipse-platform/eclipse.platform.swt.binaries
-* https://github.com/eclipse-platform/eclipse.platform.team
-* https://github.com/eclipse-platform/eclipse.platform.text
-* https://github.com/eclipse-platform/eclipse.platform.ua
-* https://github.com/eclipse-platform/eclipse.platform.ui
-* https://github.com/eclipse-platform/eclipse.platform.ui.tools

@@ -1,23 +1,21 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.e4.ui.bindings;singleton:=true
-Bundle-Version: 0.13.100.qualifier
+Bundle-Version: 0.14.400.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
-Import-Package: javax.annotation,
- javax.inject;version="1.0.0",
+Import-Package: jakarta.annotation;version="[2.1.0,3.0.0)",
+ jakarta.inject;version="[2.0.0,3.0.0)",
  org.eclipse.e4.core.commands,
  org.eclipse.e4.core.commands.internal,
  org.eclipse.e4.core.services.log,
  org.eclipse.jface.bindings,
  org.eclipse.jface.bindings.keys,
- org.eclipse.jface.bindings.keys.formatting,
  org.eclipse.jface.dialogs,
- org.eclipse.jface.window,
- org.osgi.framework;version="1.5.0"
+ org.eclipse.jface.window
 Require-Bundle: org.eclipse.swt;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.core.commands;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.e4.core.contexts;bundle-version="1.0.0",
@@ -31,3 +29,4 @@ Export-Package: org.eclipse.e4.ui.bindings;
  org.eclipse.e4.ui.bindings.internal;x-friends:="org.eclipse.e4.ui.workbench,org.eclipse.e4.ui.workbench.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.bindings.keys;x-friends:="org.eclipse.e4.ui.workbench.swt,org.eclipse.ui.workbench"
 Automatic-Module-Name: org.eclipse.e4.ui.bindings
+Service-Component: OSGI-INF/org.eclipse.e4.ui.bindings.internal.BindingServiceCreationFunction.xml

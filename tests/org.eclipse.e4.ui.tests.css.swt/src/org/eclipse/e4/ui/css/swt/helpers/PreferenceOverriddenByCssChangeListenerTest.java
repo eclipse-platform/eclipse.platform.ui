@@ -26,12 +26,12 @@ import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.e4.ui.css.swt.helpers.EclipsePreferencesHelper.PreferenceOverriddenByCssChangeListener;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PreferenceOverriddenByCssChangeListenerTest {
 
 	@Test
-	public void testPreferenceChangeEvent() {
+	void testPreferenceChangeEvent() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
 		preferences.put(PROPS_OVERRIDDEN_BY_CSS_PROP, SEPARATOR + "name" + SEPARATOR);
@@ -49,7 +49,7 @@ public class PreferenceOverriddenByCssChangeListenerTest {
 	}
 
 	@Test
-	public void testPreferenceChangeEventWhenAddPropertyEvent() {
+	void testPreferenceChangeEventWhenAddPropertyEvent() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
 		preferences.put(PROPS_OVERRIDDEN_BY_CSS_PROP, SEPARATOR + "name" + SEPARATOR);
@@ -67,7 +67,7 @@ public class PreferenceOverriddenByCssChangeListenerTest {
 	}
 
 	@Test
-	public void testPreferenceChangeEventWhenRemovePropertyEvent() {
+	void testPreferenceChangeEventWhenRemovePropertyEvent() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
 		preferences.put(PROPS_OVERRIDDEN_BY_CSS_PROP, SEPARATOR + "name" + SEPARATOR);
@@ -85,7 +85,7 @@ public class PreferenceOverriddenByCssChangeListenerTest {
 	}
 
 	@Test
-	public void testPreferenceChangeEventWhenModifyPropertyEventButPropertyIsNotOverriddenByCss() {
+	void testPreferenceChangeEventWhenModifyPropertyEventButPropertyIsNotOverriddenByCss() {
 		// given
 		IEclipsePreferences preferences = new EclipsePreferences();
 

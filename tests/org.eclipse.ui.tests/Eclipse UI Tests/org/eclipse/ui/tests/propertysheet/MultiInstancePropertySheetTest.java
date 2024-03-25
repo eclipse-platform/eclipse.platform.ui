@@ -16,10 +16,6 @@ package org.eclipse.ui.tests.propertysheet;
 
 import java.lang.reflect.Field;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
@@ -77,7 +73,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 * many listeners are notified of events through a SafeRunner, errors caused
 	 * by mishandling of events are not propagated back to our test methods.
 	 */
-	private ILogListener logListener = (status, plugin) -> {
+	private final ILogListener logListener = (status, plugin) -> {
 		// check if it's an error
 		if (status.getSeverity() == IStatus.ERROR) {
 			// retrieve the underlying exception and wrap it if possible
@@ -138,8 +134,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	/**
 	 * The if the registered {@link TestPropertySheetPage} is set as the default
 	 * page of the PropertySheet
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public void testDefaultPage() throws PartInitException {
@@ -151,8 +145,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	/**
 	 * Test if the registered {@link TestPropertySheetPage} is set as the
 	 * default page of the PropertyShecet
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public void testDefaultPageAdapter() throws PartInitException {
@@ -163,8 +155,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	/**
 	 * Test if the PropertySheet allows multiple instances
-	 *
-	 * @throws PartInitException
 	 */
 	@Test
 	public void testAllowsMultiple() throws PartInitException {
@@ -179,8 +169,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	/**
 	 * Test if the PropertySheet follows selection
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testFollowsSelection() throws Throwable {
@@ -201,8 +189,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	/**
 	 * Test if the PropertySheet follows part events
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testFollowsParts() throws Throwable {
@@ -230,8 +216,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	/**
 	 * Test if pinning works in the PropertySheet
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testPinning() throws Throwable {
@@ -268,8 +252,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	/**
 	 * Test if the PropertySheet unpinns if the contributing part is closed
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testUnpinningWhenPinnedPartIsClosed() throws Throwable {
@@ -286,11 +268,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	/**
 	 * Test if the PropertySheet's new handler creates a new instance
-	 *
-	 * @throws NotHandledException
-	 * @throws NotEnabledException
-	 * @throws NotDefinedException
-	 * @throws ExecutionException
 	 */
 	@Test
 	public void testNewPropertySheet() throws Exception {
@@ -344,11 +321,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	/**
 	 * Test if the PropertySheet pins the parent if a second instance is opened
-	 *
-	 * @throws NotHandledException
-	 * @throws NotEnabledException
-	 * @throws NotDefinedException
-	 * @throws ExecutionException
 	 */
 	@Test
 	public void testParentIsPinned() throws Exception {
@@ -360,8 +332,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	/**
 	 * Test if the PropertySheet pins the parent if a second instance is opened
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testPinningWithMultipleInstances() throws Throwable {
@@ -373,8 +343,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 * Tests that pinning a property sheet ensures that the content continues to
 	 * be rendered even if the original target part is not visible and is behind
 	 * another part in the part stack.
-	 *
-	 * @throws CoreException
 	 */
 	@Test
 	public void testBug268676HidingPinnedTargetPart() throws CoreException {
@@ -619,8 +587,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 		IPage currentPage = propertySheet.getCurrentPage();
 		if (standardPage) {
-			if (currentPage instanceof PropertySheetPage) {
-				PropertySheetPage psp = (PropertySheetPage) currentPage;
+			if (currentPage instanceof PropertySheetPage psp) {
 				Field root = PropertySheetPage.class.getDeclaredField("rootEntry");
 				root.setAccessible(true);
 				PropertySheetEntry pse = (PropertySheetEntry) root.get(psp);

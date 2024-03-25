@@ -21,7 +21,6 @@ public interface IDynamicPropertyMap extends IPropertyMap {
 	 * Attaches a property map listener to this map. The listener will be notified
 	 * whenever one of the properties in the map is changed, added, or removed.
 	 *
-	 * @param listener
 	 * @since 3.1
 	 */
 	void addListener(IPropertyMapListener listener);
@@ -32,8 +31,6 @@ public interface IDynamicPropertyMap extends IPropertyMap {
 	 * will add additional IDs to the set of properties being monitored by the given
 	 * listener.
 	 *
-	 * @param listener
-	 * @param propertyIds
 	 * @since 3.1
 	 */
 	void addListener(String[] propertyIds, IPropertyMapListener listener);
@@ -43,7 +40,6 @@ public interface IDynamicPropertyMap extends IPropertyMap {
 	 * be notified whenever one of the properties in the map is changed, added, or
 	 * removed.
 	 *
-	 * @param listener
 	 * @since 3.1
 	 */
 	void removeListener(IPropertyMapListener listener);

@@ -21,23 +21,16 @@ import org.eclipse.jface.bindings.Scheme;
 
 /**
  * @since 3.4
- *
  */
 public class SchemeModel extends CommonModel {
 
 	public static final String PROP_SCHEMES = "schemes"; //$NON-NLS-1$
 	private List<SchemeElement> schemes;
 
-	/**
-	 * @param kc
-	 */
 	public SchemeModel(KeyController kc) {
 		super(kc);
 	}
 
-	/**
-	 * @param bindingManager
-	 */
 	public void init(BindingManager bindingManager) {
 		schemes = new ArrayList<>();
 		for (Scheme definedScheme : bindingManager.getDefinedSchemes()) {

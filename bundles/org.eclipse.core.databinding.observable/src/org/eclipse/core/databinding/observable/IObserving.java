@@ -19,7 +19,6 @@ package org.eclipse.core.databinding.observable;
  * Mixin interface for IObservables that observe other objects.
  *
  * @since 1.0
- *
  */
 @FunctionalInterface
 public interface IObserving {

@@ -81,7 +81,6 @@ public class WizardArchiveFileResourceExportPage1 extends
 
 	/**
 	 *	Create the export options specification widgets.
-	 *
 	 */
 	@Override
 	protected void createOptionsGroupButtons(Group optionsGroup) {
@@ -117,8 +116,6 @@ public class WizardArchiveFileResourceExportPage1 extends
 	/**
 	 * Create the buttons for the group that determine if the entire or
 	 * selected directory structure should be created.
-	 * @param optionsGroup
-	 * @param font
 	 */
 	protected void createFileFormatOptions(Composite optionsGroup, Font font) {
 		// create directory structure radios
@@ -290,7 +287,6 @@ public class WizardArchiveFileResourceExportPage1 extends
 	 *	Answer the suffix that files exported from this wizard should have.
 	 *	If this suffix is a file extension (which is typically the case)
 	 *	then it must include the leading period character.
-	 *
 	 */
 	protected String getOutputSuffix() {
 		if(zipFormatButton.getSelection()) {

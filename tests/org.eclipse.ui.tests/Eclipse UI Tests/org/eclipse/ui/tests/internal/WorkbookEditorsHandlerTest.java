@@ -14,14 +14,13 @@
 
 package org.eclipse.ui.tests.internal;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.widgets.Display;
@@ -35,6 +34,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbookEditorsHandler;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
@@ -91,6 +91,116 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 		assertEquals("Display text should match file name", fileName, handler.tableItemTexts.get(0));
 		assertEquals("Selection should be on current editor if only one editor is open", fileName,
 				handler.tableItemTexts.get(0));
+	}
+
+	@Test
+	public void testSingleFileWithEditorSplit() throws Exception {
+		String fileName = "example.txt";
+		IDE.openEditor(activePage, FileUtil.createFile(fileName, project1), true);
+		ICommandService cmdService = PlatformUI.getWorkbench().getService(ICommandService.class);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+		final Command splitCmd = cmdService.getCommand("org.eclipse.ui.window.splitEditor");
+		splitCmd.executeWithChecks(handlerService.createExecutionEvent(splitCmd, null));
+
+		final Command cmd = cmdService.getCommand("org.eclipse.ui.window.openEditorDropDown");
+		WorkbookEditorsHandlerTestable handler = new WorkbookEditorsHandlerTestable();
+		cmd.setHandler(handler);
+		final ExecutionEvent event = handlerService.createExecutionEvent(cmd, null);
+
+		handler.execute(event);
+
+		assertEquals("Display text should match file name", fileName, handler.tableItemTexts.get(0));
+		assertEquals("Display text should match file name", fileName, handler.tableItemTexts.get(1));
+		assertEquals("Selection should be the editor that was active before the currently active editor", fileName,
+				handler.tableItemTexts.get(1));
+	}
+
+	@Test
+	public void testMultipleFilesWithNameCollisionAndEditorSplit() throws Exception {
+		String fileName = "example.txt";
+		IDE.openEditor(activePage, FileUtil.createFile(fileName, project1), true);
+		IDE.openEditor(activePage, FileUtil.createFile(fileName, project2), true);
+		ICommandService cmdService = PlatformUI.getWorkbench().getService(ICommandService.class);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+		final Command splitCmd = cmdService.getCommand("org.eclipse.ui.window.splitEditor");
+		splitCmd.executeWithChecks(handlerService.createExecutionEvent(splitCmd, null));
+
+		final Command cmd = cmdService.getCommand("org.eclipse.ui.window.openEditorDropDown");
+		WorkbookEditorsHandlerTestable handler = new WorkbookEditorsHandlerTestable();
+		cmd.setHandler(handler);
+		final ExecutionEvent event = handlerService.createExecutionEvent(cmd, null);
+
+		handler.execute(event);
+
+		// Test without verifying order because order after editor split differs between
+		// operating systems right now (only in tests)
+		List<String> tableItemTexts = handler.tableItemTexts;
+		assertTrue("Text should have folder prepended because of name clash (split editor)",
+				tableItemTexts.stream().anyMatch(text -> text.equals(PROJECT_NAME_2 + File.separator + fileName)));
+		assertTrue("Text should have folder prepended because of name clash",
+				tableItemTexts.stream().anyMatch(text -> text.equals(PROJECT_NAME_1 + File.separator + fileName)));
+		long referencesToSplitFile = tableItemTexts.stream()
+				.filter(text -> text.equals(PROJECT_NAME_2 + File.separator + fileName)).count();
+		assertEquals("File in Editor that has been split should show up two times in the popup", 2,
+				referencesToSplitFile);
+		long referencesOtherFile = tableItemTexts.stream()
+				.filter(text -> text.equals(PROJECT_NAME_1 + File.separator + fileName)).count();
+		assertEquals("File in editor that has not been split should show up once in the popup", 1, referencesOtherFile);
+		assertEquals("Popup should contain three editor references", 3, tableItemTexts.size());
+	}
+
+	@Test
+	public void testSingleFileWithEditorClonedTwice() throws Exception {
+		String fileName = "example.txt";
+		IDE.openEditor(activePage, FileUtil.createFile(fileName, project1), true);
+		ICommandService cmdService = PlatformUI.getWorkbench().getService(ICommandService.class);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+		final Command splitCmd = cmdService.getCommand("org.eclipse.ui.window.newEditor");
+		splitCmd.executeWithChecks(handlerService.createExecutionEvent(splitCmd, null));
+		splitCmd.executeWithChecks(handlerService.createExecutionEvent(splitCmd, null));
+
+		final Command cmd = cmdService.getCommand("org.eclipse.ui.window.openEditorDropDown");
+		WorkbookEditorsHandlerTestable handler = new WorkbookEditorsHandlerTestable();
+		cmd.setHandler(handler);
+		final ExecutionEvent event = handlerService.createExecutionEvent(cmd, null);
+
+		handler.execute(event);
+
+		assertEquals("Display text should match file name", fileName, handler.tableItemTexts.get(0));
+		assertEquals("Display text should match file name", fileName, handler.tableItemTexts.get(1));
+		assertEquals("Display text should match file name", fileName, handler.tableItemTexts.get(2));
+		assertEquals("Selection should be the editor that was active before the currently active editor", fileName,
+				handler.tableItemTexts.get(1));
+	}
+
+	@Test
+	public void testFileWithNameConflictWithEditorClonedTwice() throws Exception {
+		String fileName = "example.txt";
+		IDE.openEditor(activePage, FileUtil.createFile(fileName, project1), true);
+		IDE.openEditor(activePage, FileUtil.createFile(fileName, project2), true);
+		ICommandService cmdService = PlatformUI.getWorkbench().getService(ICommandService.class);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+		final Command splitCmd = cmdService.getCommand("org.eclipse.ui.window.newEditor");
+		splitCmd.executeWithChecks(handlerService.createExecutionEvent(splitCmd, null));
+		splitCmd.executeWithChecks(handlerService.createExecutionEvent(splitCmd, null));
+
+		final Command cmd = cmdService.getCommand("org.eclipse.ui.window.openEditorDropDown");
+		WorkbookEditorsHandlerTestable handler = new WorkbookEditorsHandlerTestable();
+		cmd.setHandler(handler);
+		final ExecutionEvent event = handlerService.createExecutionEvent(cmd, null);
+
+		handler.execute(event);
+
+		assertEquals("Display text should match file name", PROJECT_NAME_2 + File.separator + fileName,
+				handler.tableItemTexts.get(0));
+		assertEquals("Display text should match file name", PROJECT_NAME_2 + File.separator + fileName,
+				handler.tableItemTexts.get(1));
+		assertEquals("Display text should match file name", PROJECT_NAME_2 + File.separator + fileName,
+				handler.tableItemTexts.get(2));
+		assertEquals("Display text should match file name", PROJECT_NAME_1 + File.separator + fileName,
+				handler.tableItemTexts.get(3));
+		assertEquals("Selection should be the editor that was active before the currently active editor",
+				PROJECT_NAME_2 + File.separator + fileName, handler.tableItemTexts.get(1));
 	}
 
 	@Test
@@ -211,16 +321,51 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 
 		assertEquals("Text should have parent folder prepended", "bar" + File.separator + fileName,
 				handler.tableItemTexts.get(0));
-		assertEquals("Text should have full folder chain until differing folder prepended",
-				String.join(File.separator, "test2", "foo", "bar", "baz", fileName),
+		assertEquals("Text should have first differing folder and the mark for collapsed matching folders prepended",
+				String.join(File.separator, "test2", "...", fileName),
 				handler.tableItemTexts.get(1));
-		assertEquals("Text should have full folder chain until differing folder prepended",
-				String.join(File.separator, "test1", "foo", "bar", "baz", fileName),
+		assertEquals("Text should have first differing folder and the mark for collapsed matching folders prepended",
+				String.join(File.separator, "test1", "...", fileName),
 				handler.tableItemTexts.get(2));
 		assertEquals("There should only ever be one selected editor", 1, handler.selectionTexts.size());
 		assertEquals("Selection should be the editor that was active before the currently active editor",
-				String.join(File.separator, "test2", "foo", "bar", "baz", fileName),
+				String.join(File.separator, "test2", "...", fileName),
 				handler.tableItemTexts.get(1));
+	}
+
+	@Test
+	public void testTwoFilesWithNameClashButEditorInputNameIsDiffereentThanFileName() throws Exception {
+		String fileName = "example.txt";
+		String editorInputName = "Example";
+		class EditorInputWithCustomName extends FileEditorInput {
+
+			public EditorInputWithCustomName(IFile file) {
+				super(file);
+			}
+
+			@Override
+			public String getName() {
+				return editorInputName;
+			}
+		}
+
+		IFile file1 = FileUtil.createFile(fileName, project1);
+		IFile file2 = FileUtil.createFile(fileName, project2);
+		IDE.openEditor(activePage, new EditorInputWithCustomName(file1),
+				IDE.getEditorDescriptor(file1, true, true).getId(), true);
+		IDE.openEditor(activePage, new EditorInputWithCustomName(file2),
+				IDE.getEditorDescriptor(file2, true, true).getId(), true);
+		ICommandService cmdService = PlatformUI.getWorkbench().getService(ICommandService.class);
+		final Command cmd = cmdService.getCommand("org.eclipse.ui.window.openEditorDropDown");
+		WorkbookEditorsHandlerTestable handler = new WorkbookEditorsHandlerTestable();
+		cmd.setHandler(handler);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+		final ExecutionEvent event = handlerService.createExecutionEvent(cmd, null);
+
+		handler.execute(event);
+
+		assertEquals("Display text should match name of editor input", editorInputName, handler.tableItemTexts.get(0));
+		assertEquals("Display text should match name of editor input", editorInputName, handler.tableItemTexts.get(1));
 	}
 
 	class WorkbookEditorsHandlerTestable extends WorkbookEditorsHandler {
@@ -234,8 +379,8 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 		@Override
 		protected void addKeyListener(Table table, Shell dialog) {
 			super.addKeyListener(table, dialog);
-			tableItemTexts = Arrays.stream(table.getItems()).map(TableItem::getText).collect(toList());
-			selectionTexts = Arrays.stream(table.getSelection()).map(TableItem::getText).collect(toList());
+			tableItemTexts = Arrays.stream(table.getItems()).map(TableItem::getText).toList();
+			selectionTexts = Arrays.stream(table.getSelection()).map(TableItem::getText).toList();
 		}
 
 		/**

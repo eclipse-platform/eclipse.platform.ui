@@ -24,7 +24,6 @@ import org.eclipse.ui.Saveable;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.2
- *
  */
 public interface INavigatorSaveablesService {
 
@@ -48,7 +47,6 @@ public interface INavigatorSaveablesService {
 	 * @param source the source of possible saveables
 	 * @param viewer associated viewer
 	 * @param listener listener to inform about events on saveables of the source
-	 *
 	 */
 	public void init(ISaveablesSource source, StructuredViewer viewer,
 			ISaveablesLifecycleListener listener);

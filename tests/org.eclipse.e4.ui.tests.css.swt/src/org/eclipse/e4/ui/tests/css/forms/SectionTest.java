@@ -14,9 +14,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.forms;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.eclipse.e4.ui.tests.css.swt.CSSSWTTestCase;
 import org.eclipse.swt.SWT;
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.ToggleHyperlink;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SectionTest extends CSSSWTTestCase {
 
@@ -54,7 +54,7 @@ public class SectionTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testSectionColors() {
+	void testSectionColors() {
 		Section section = createTestSection(
 				"Section { swt-titlebar-color: #FF0000;" + "tb-toggle-color: #FF0000; "
 						+ "tb-toggle-hover-color: #00FF00; " + "background-color-gradient-titlebar: #00FF00; "
@@ -76,7 +76,7 @@ public class SectionTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testSectionResetColors() throws Exception {
+	void testSectionResetColors() throws Exception {
 		Section section = createTestSection(
 				"Section { swt-titlebar-color: #FF0000;" + "tb-toggle-color: #FF0000; "
 						+ "tb-toggle-hover-color: #00FF00; " + "background-color-gradient-titlebar: #00FF00; "

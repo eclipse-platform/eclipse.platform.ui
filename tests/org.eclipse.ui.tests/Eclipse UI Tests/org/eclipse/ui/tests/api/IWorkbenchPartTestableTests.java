@@ -36,14 +36,10 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
- *
  */
 @RunWith(JUnit4.class)
 public class IWorkbenchPartTestableTests extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
 	public IWorkbenchPartTestableTests() {
 		super(IWorkbenchPartTestableTests.class.getSimpleName());
 	}
@@ -84,10 +80,6 @@ public class IWorkbenchPartTestableTests extends UITestCase {
 		encounteredControls.clear();
 	}
 
-	/**
-	 * @param parts
-	 * @param encounteredControls
-	 */
 	private void testParts(Object[] parts, Set<Composite> encounteredControls) {
 		for (Object part : parts) {
 			String title = null;

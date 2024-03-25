@@ -150,11 +150,13 @@ public class IActionBarsTest extends UITestCase {
 			MockAction cut = new MockAction();
 			MockAction copy = new MockAction();
 			MockAction undo = new MockAction();
+			MockAction quit = new MockAction();
 
 			// Set actions.
 			bars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, cut);
 			bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copy);
 			bars.setGlobalActionHandler(IWorkbenchActionConstants.UNDO, undo);
+			bars.setGlobalActionHandler(IWorkbenchActionConstants.QUIT, quit);
 			bars.updateActionBars();
 
 			// Run the real workbench actions.
@@ -164,37 +166,46 @@ public class IActionBarsTest extends UITestCase {
 			// anything that has been converted from a RetargetAction in
 			// WorkbenchActionBuilder must be run as a command
 			runMatchingCommand(fWindow, ActionFactory.CUT.getId());
+			runMatchingCommand(fWindow, ActionFactory.UNDO.getId());
 
 			ActionUtil.runActionUsingPath(this, fWindow,
-					IWorkbenchActionConstants.M_EDIT + '/'
-							+ IWorkbenchActionConstants.UNDO);
+					IWorkbenchActionConstants.M_FILE + '/' + IWorkbenchActionConstants.QUIT);
 			assertTrue(cut.hasRun);
 			assertTrue(!copy.hasRun);
 			assertTrue(undo.hasRun);
+			assertTrue(quit.hasRun);
 
 			// Now create a second view and run the actions again.
 			// Our global actions should not be invoked.
-			fPage.showView(MockViewPart.ID2);
-			cut.hasRun = copy.hasRun = undo.hasRun = false;
+			IViewPart part2 = fPage.showView(MockViewPart.ID2);
+
+			// Set again a different MockAction to prevent the actual closing of the IDE
+			// This is necessary as most of available the RetargetActions are converted
+			part2.getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.QUIT,
+					new MockAction());
+
+			cut.hasRun = copy.hasRun = undo.hasRun = quit.hasRun = false;
 			runMatchingCommand(fWindow, ActionFactory.CUT.getId());
+			runMatchingCommand(fWindow, ActionFactory.UNDO.getId());
 			ActionUtil.runActionUsingPath(this, fWindow,
-					IWorkbenchActionConstants.M_EDIT + '/'
-							+ IWorkbenchActionConstants.UNDO);
+					IWorkbenchActionConstants.M_FILE + '/' + IWorkbenchActionConstants.QUIT);
 			assertTrue(!cut.hasRun);
 			assertTrue(!copy.hasRun);
 			assertTrue(!undo.hasRun);
+			assertTrue(!quit.hasRun);
 
 			// Reactivate test view and run actions again.
 			// This time our global actions should be invoked.
 			fPage.activate(part);
-			cut.hasRun = copy.hasRun = undo.hasRun = false;
+			cut.hasRun = copy.hasRun = undo.hasRun = quit.hasRun = false;
 			runMatchingCommand(fWindow, ActionFactory.CUT.getId());
+			runMatchingCommand(fWindow, ActionFactory.UNDO.getId());
 			ActionUtil.runActionUsingPath(this, fWindow,
-					IWorkbenchActionConstants.M_EDIT + '/'
-							+ IWorkbenchActionConstants.UNDO);
+					IWorkbenchActionConstants.M_FILE + '/' + IWorkbenchActionConstants.QUIT);
 			assertTrue(cut.hasRun);
 			assertTrue(!copy.hasRun);
 			assertTrue(undo.hasRun);
+			assertTrue(quit.hasRun);
 		}
 
 	private void runMatchingCommand(IWorkbenchWindow window, String actionId) {

@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.commands.internal.util.Tracing;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.LegacyActionTools;
@@ -206,7 +206,6 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 	/**
 	 * A FilteredTree that provides a combo which is used to organize and display
 	 * elements in the tree according to the selected criteria.
-	 *
 	 */
 	protected static class CategoryFilterTree extends FilteredTree {
 
@@ -214,10 +213,6 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 
 		/**
 		 * Constructor for PatternFilteredTree.
-		 *
-		 * @param parent
-		 * @param treeStyle
-		 * @param filter
 		 */
 		protected CategoryFilterTree(Composite parent, int treeStyle, CategoryPatternFilter filter) {
 			super(parent, treeStyle, filter, true);
@@ -406,7 +401,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 					return null;
 				}
 				try {
-					return localResourceManager.createImage(imageDescriptor);
+					return localResourceManager.create(imageDescriptor);
 				} catch (final DeviceResourceException e) {
 					final String message = "Problem retrieving image for a command '" //$NON-NLS-1$
 							+ commandId + '\'';
@@ -1009,9 +1004,6 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		return treeControls;
 	}
 
-	/**
-	 *
-	 */
 	private void fill() {
 		fSchemeCombo.setInput(keyController.getSchemeModel());
 		fSchemeCombo.setSelection(new StructuredSelection(keyController.getSchemeModel().getSelectedElement()));
@@ -1137,8 +1129,6 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 
 	/**
 	 * Save the state of the receiver.
-	 *
-	 * @param dialogSettings
 	 */
 	public void saveState(IDialogSettings dialogSettings) {
 		if (dialogSettings == null) {

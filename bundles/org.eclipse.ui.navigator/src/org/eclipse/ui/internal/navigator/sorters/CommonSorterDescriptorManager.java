@@ -33,7 +33,6 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 
 /**
  * @since 3.2
- *
  */
 public class CommonSorterDescriptorManager {
 

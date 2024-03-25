@@ -79,7 +79,7 @@ public class Snippet026AnonymousBeanProperties {
 
 	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
@@ -104,7 +104,7 @@ public class Snippet026AnonymousBeanProperties {
 
 	public static class ContactGroup extends AbstractModelObject implements Comparable<ContactGroup> {
 		private String name;
-		private Set<Contact> contacts = new TreeSet<>();
+		private final Set<Contact> contacts = new TreeSet<>();
 
 		ContactGroup(String name) {
 			this.name = name;

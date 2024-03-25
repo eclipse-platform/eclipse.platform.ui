@@ -33,10 +33,6 @@ public class ViewerObservableValueDecorator<T> extends DecoratingObservableValue
 		implements IViewerObservableValue<T>, Listener {
 	private Viewer viewer;
 
-	/**
-	 * @param decorated
-	 * @param viewer
-	 */
 	public ViewerObservableValueDecorator(IObservableValue<T> decorated, Viewer viewer) {
 		super(decorated, true);
 		this.viewer = viewer;

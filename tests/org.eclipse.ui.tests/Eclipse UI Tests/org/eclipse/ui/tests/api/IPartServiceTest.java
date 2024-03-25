@@ -136,13 +136,13 @@ public class IPartServiceTest extends UITestCase {
 		}
 	}
 
-	private IPartListener partListener = new TestPartListener();
+	private final IPartListener partListener = new TestPartListener();
 
-	private IPartListener2 partListener2 = new TestPartListener2();
+	private final IPartListener2 partListener2 = new TestPartListener2();
 
-	private CallHistory history = new CallHistory(partListener);
+	private final CallHistory history = new CallHistory(partListener);
 
-	private CallHistory history2 = new CallHistory(partListener2);
+	private final CallHistory history2 = new CallHistory(partListener2);
 
 	public IPartServiceTest() {
 		super(IPartServiceTest.class.getSimpleName());
@@ -480,8 +480,6 @@ public class IPartServiceTest extends UITestCase {
 	/**
 	 * Tests that both a part hidden and a part closed event are sent when
 	 * a part is closed
-	 *
-	 * @throws Throwable
 	 */
 	@Test
 	public void testPartHiddenBeforeClosing() throws Throwable {

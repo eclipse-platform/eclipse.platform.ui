@@ -46,7 +46,6 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
- *
  */
 @RunWith(JUnit4.class)
 @Ignore("broke during e4 transition and still need adjustments")
@@ -55,9 +54,6 @@ public class ActionDelegateProxyTest {
 	@Rule
 	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
-	/**
-	 *
-	 */
 	private static final String DELEGATE_ACTION_SET_ID = "org.eclipse.ui.tests.delegateActionSet";
 	private static final String INC_COMMAND = "org.eclipse.ui.tests.incMenuHarness";
 	private static final String VIEW_ID = "org.eclipse.ui.tests.api.MenuTestHarness";

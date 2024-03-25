@@ -36,9 +36,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.jface.internal.XmlProcessorFactoryJFace;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,9 +71,8 @@ import org.xml.sax.SAXException;
  * settings.save("c:\\temp\\test\\dialog.xml");
  * </code>
  * </pre>
- * @noextend This class is not intended to be subclassed by clients.
  */
-
+@NoExtend
 public class DialogSettings implements IDialogSettings {
 	// The name of the DialogSettings.
 	private String name;
@@ -260,8 +260,7 @@ public class DialogSettings implements IDialogSettings {
 	public void load(Reader r) {
 		Document document = null;
 		try {
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder();
+			DocumentBuilder parser = XmlProcessorFactoryJFace.createDocumentBuilderWithErrorOnDOCTYPE();
 			//		parser.setProcessNamespace(true);
 			document = parser.parse(new InputSource(r));
 
@@ -436,7 +435,6 @@ public class DialogSettings implements IDialogSettings {
 		/**
 		 * Create a new XMLWriter
 		 * @param output the stream to write the output to
-		 * @throws IOException
 		 */
 		public XMLWriter(OutputStream output) throws IOException {
 			this(new OutputStreamWriter(output, StandardCharsets.UTF_8));
@@ -445,7 +443,6 @@ public class DialogSettings implements IDialogSettings {
 		/**
 		 * Create a new XMLWriter
 		 * @param output the write to used when writing to
-		 * @throws IOException
 		 */
 		public XMLWriter(Writer output) throws IOException {
 			super(output);
@@ -461,7 +458,6 @@ public class DialogSettings implements IDialogSettings {
 		/**
 		 * write the intended end tag
 		 * @param name the name of the tag to end
-		 * @throws IOException
 		 */
 		public void endTag(String name) throws IOException {
 			tab--;
@@ -479,7 +475,6 @@ public class DialogSettings implements IDialogSettings {
 		 * @param name the name of the tag
 		 * @param parameters map of parameters
 		 * @param close should the tag be ended automatically (=&gt; empty tag)
-		 * @throws IOException
 		 */
 		public void printTag(String name, Map<String, String> parameters, boolean close) throws IOException {
 			printTag(name, parameters, true, true, close);
@@ -517,7 +512,6 @@ public class DialogSettings implements IDialogSettings {
 		 * Start the tag
 		 * @param name the name of the tag
 		 * @param parameters map of parameters
-		 * @throws IOException
 		 */
 		public void startTag(String name, Map<String, String> parameters) throws IOException {
 			startTag(name, parameters, true);

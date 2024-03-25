@@ -36,12 +36,10 @@ import org.junit.Test;
  */
 public class CommandSerializationTest {
 
-	private final String showPerspectiveCommandId = "org.eclipse.ui.perspectives.showPerspective";
+	private static final String showPerspectiveCommandId = "org.eclipse.ui.perspectives.showPerspective";
 
 	/**
 	 * Test a serialization of the show perspective command with no parameters.
-	 *
-	 * @throws CommandException
 	 */
 	@Test
 	public void testSerializeShowPerspective() throws CommandException {
@@ -57,8 +55,6 @@ public class CommandSerializationTest {
 
 	/**
 	 * Test a serialization of the show perspective command with a parameter.
-	 *
-	 * @throws CommandException
 	 */
 	@Test
 	public void testSerializeShowResourcePerspective() throws CommandException {
@@ -76,8 +72,6 @@ public class CommandSerializationTest {
 
 	/**
 	 * Test serialization of a command with zero parameters.
-	 *
-	 * @throws CommandException
 	 */
 	@Test
 	public void testZeroParameterCommand() throws CommandException {
@@ -94,8 +88,6 @@ public class CommandSerializationTest {
 
 	/**
 	 * Test serialization of a command with one parameter.
-	 *
-	 * @throws CommandException
 	 */
 	@Test
 	public void testOneParameterCommand() throws CommandException {
@@ -128,8 +120,6 @@ public class CommandSerializationTest {
 
 	/**
 	 * Test serialization of a command with two parameters.
-	 *
-	 * @throws CommandException
 	 */
 	@Test
 	public void testTwoParameterCommand() throws CommandException {
@@ -160,8 +150,6 @@ public class CommandSerializationTest {
 
 	/**
 	 * Test serialization of a command with three parameters.
-	 *
-	 * @throws CommandException
 	 */
 	@Test
 	public void testThreeParameterCommand() throws CommandException {
@@ -198,8 +186,6 @@ public class CommandSerializationTest {
 
 	/**
 	 * Test serialization of a command with names that need UTF-8 encoding.
-	 *
-	 * @throws CommandException
 	 */
 	@Test
 	public void testFunnyNamesCommand() throws CommandException {
@@ -255,7 +241,6 @@ public class CommandSerializationTest {
 	 * @param paramValues
 	 *            parameter values in the serialization (same number and order
 	 *            as paramIds)
-	 * @throws CommandException
 	 */
 	private void testDeserializeAndSerialize(
 			String serializedParameterizedCommand, String commandId,

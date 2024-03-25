@@ -170,7 +170,7 @@ public class BuildUtilities {
 	 * @param projects The projects in which to save editors, or <code>null</code>
 	 * to save editors in all projects.
 	 */
-	public static void saveEditors(Collection projects) {
+	public static void saveEditors(Collection<IProject> projects) {
 		if (!BuildAction.isSaveAllSet()) {
 			return;
 		}

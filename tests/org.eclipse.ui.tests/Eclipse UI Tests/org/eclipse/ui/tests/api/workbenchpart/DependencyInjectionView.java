@@ -19,10 +19,6 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.workbench.IWorkbench;
@@ -34,9 +30,12 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
+
 /**
  * @since 3.4
- *
  */
 public class DependencyInjectionView extends ViewPart {
 

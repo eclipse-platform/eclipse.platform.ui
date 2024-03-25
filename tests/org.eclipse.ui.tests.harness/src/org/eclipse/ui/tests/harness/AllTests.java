@@ -22,7 +22,6 @@ import org.junit.runners.Suite.SuiteClasses;
  * Test the test harness
  *
  * @since 3.3
- *
  */
 
 @RunWith(Suite.class)

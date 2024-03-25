@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.preferences;
 /**
  * Base64 is a helper class for converting byte arrays to and from base 64
  * encoded Strings.
- *
  */
 class Base64 {
 

@@ -42,7 +42,6 @@ import org.eclipse.core.databinding.observable.Realm;
  *            the type of the elements in this list
  *
  * @since 1.0
- *
  */
 public abstract class ObservableList<E> extends AbstractObservable implements
 		IObservableList<E> {

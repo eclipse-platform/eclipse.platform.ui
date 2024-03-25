@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.jface.wizard;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 
@@ -111,6 +112,19 @@ public interface IWizard {
 	 * @return the next page, or <code>null</code> if none
 	 */
 	IWizardPage getNextPage(IWizardPage page);
+
+	/**
+	 * Returns the minimum size of this wizard. The minimum size is calculated using
+	 * the minimum page sizes of all wizard pages. May return {@code null} if none
+	 * of the wizard pages specify a minimum size.
+	 *
+	 * @see IWizardPage#getMinimumPageSize()
+	 * @return the minimum size encoded as {@code new Point(width,height)}
+	 * @since 3.30
+	 */
+	default Point getMinimumWizardSize() {
+		return null;
+	}
 
 	/**
 	 * Returns the wizard page with the given name belonging to this wizard.

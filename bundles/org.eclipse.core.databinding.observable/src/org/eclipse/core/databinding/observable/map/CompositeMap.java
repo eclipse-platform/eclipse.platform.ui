@@ -50,7 +50,6 @@ import org.eclipse.core.runtime.Assert;
  *            the type of the values in this map
  *
  * @since 1.1
- *
  */
 public class CompositeMap<K, I, V> extends ObservableMap<K, V> {
 	// adds that need to go through the second map and thus will be picked up by

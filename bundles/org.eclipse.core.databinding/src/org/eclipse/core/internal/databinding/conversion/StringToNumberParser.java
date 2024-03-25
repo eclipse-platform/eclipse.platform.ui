@@ -44,9 +44,6 @@ public class StringToNumberParser {
 			"getIntegerInstance"); //$NON-NLS-1$
 
 	/**
-	 * @param value
-	 * @param numberFormat
-	 * @param primitive
 	 * @return result
 	 */
 	public static ParseResult parse(Object value, Format numberFormat, boolean primitive) {
@@ -110,8 +107,6 @@ public class StringToNumberParser {
 	/**
 	 * Formats an appropriate message for a parsing error.
 	 *
-	 * @param value
-	 * @param position
 	 * @return message
 	 */
 	public static String createParseErrorMessage(String value,
@@ -133,8 +128,6 @@ public class StringToNumberParser {
 	/**
 	 * Formats an appropriate message for an out of range error.
 	 *
-	 * @param minValue
-	 * @param maxValue
 	 * @param numberFormat
 	 *            when accessed method synchronizes on instance
 	 * @return message
@@ -157,7 +150,6 @@ public class StringToNumberParser {
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a integer.
 	 *
-	 * @param number
 	 * @return <code>true</code> if a valid integer
 	 * @throws IllegalArgumentException
 	 *             if the number type is unsupported
@@ -169,7 +161,6 @@ public class StringToNumberParser {
 	/**
 	 * Validates the range of the provided <code>number</code>.
 	 *
-	 * @param number
 	 * @param bitLength
 	 *            number of bits allowed to be in range
 	 * @return <code>true</code> if in range
@@ -212,7 +203,6 @@ public class StringToNumberParser {
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a long.
 	 *
-	 * @param number
 	 * @return <code>true</code> if in range
 	 * @throws IllegalArgumentException
 	 *             if the number type is unsupported
@@ -225,7 +215,6 @@ public class StringToNumberParser {
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a float.
 	 *
-	 * @param number
 	 * @return <code>true</code> if in range
 	 * @throws IllegalArgumentException
 	 *             if the number type is unsupported
@@ -283,7 +272,6 @@ public class StringToNumberParser {
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a double.
 	 *
-	 * @param number
 	 * @return <code>true</code> if in range
 	 * @throws IllegalArgumentException
 	 *             if the number type is unsupported
@@ -297,7 +285,6 @@ public class StringToNumberParser {
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a short.
 	 *
-	 * @param number
 	 * @return <code>true</code> if in range
 	 */
 	public static boolean inShortRange(Number number) {
@@ -308,7 +295,6 @@ public class StringToNumberParser {
 	 * Returns <code>true</code> if the provided <code>number</code> is in the
 	 * range of a byte.
 	 *
-	 * @param number
 	 * @return <code>true</code> if in range
 	 */
 	public static boolean inByteRange(Number number) {

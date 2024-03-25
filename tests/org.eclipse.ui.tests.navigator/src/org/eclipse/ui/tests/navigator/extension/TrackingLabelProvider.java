@@ -37,7 +37,6 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 
 /**
  * A label provider that keeps track of queries to its methods.
- *
  */
 public class TrackingLabelProvider extends LabelProvider implements
 ICommonLabelProvider, IDescriptionProvider, IColorProvider,

@@ -51,7 +51,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
  *
  * Command command = cs.getCommand(commandId);
  * if (command.isDefined()) {
- *	Map<String, Object> parameters = new HashMap<String, Object>();
+ *	Map&lt;String, Object&gt; parameters = new HashMap&lt;String, Object&gt;();
  *	parameters.put("parm1", "hello, world");
  *	ParameterizedCommand parmCmd = cs.createCommand(commandId, parameters);
  *	if (hs.canExecute(parmCmd)) {

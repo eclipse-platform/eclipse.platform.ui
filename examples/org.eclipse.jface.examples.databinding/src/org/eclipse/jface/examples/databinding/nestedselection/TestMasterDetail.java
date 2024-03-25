@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,12 +52,10 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 1.0
- *
  */
 public class TestMasterDetail {
 	/**
 	 * @since 3.2
-	 *
 	 */
 	private static final class CustomUpdateValueStrategy<S, D> extends UpdateValueStrategy<S, D> {
 		@Override
@@ -65,8 +63,8 @@ public class TestMasterDetail {
 			IStatus result = super.doSet(observableValue, value);
 			if (result.isOK()) {
 				Object changed = observableValue;
-				if (changed instanceof IObserving) {
-					changed = ((IObserving) changed).getObserved();
+				if (changed instanceof IObserving o) {
+					changed = o.getObserved();
 				}
 				System.out.println("changed: " + changed);
 			}
@@ -74,9 +72,6 @@ public class TestMasterDetail {
 		}
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		new TestMasterDetail().run();
 	}
@@ -107,7 +102,6 @@ public class TestMasterDetail {
 
 	/**
 	 * This method initializes table
-	 *
 	 */
 	private void createTable() {
 		GridData gridData = new org.eclipse.swt.layout.GridData();
@@ -130,7 +124,6 @@ public class TestMasterDetail {
 
 	/**
 	 * This method initializes table1
-	 *
 	 */
 	private void createTable1() {
 		GridData gridData5 = new org.eclipse.swt.layout.GridData();

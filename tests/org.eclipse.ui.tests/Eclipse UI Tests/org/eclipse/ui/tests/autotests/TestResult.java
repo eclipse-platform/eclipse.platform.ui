@@ -18,7 +18,7 @@ package org.eclipse.ui.tests.autotests;
  * @since 3.1
  */
 public class TestResult {
-	private String result;
+	private final String result;
 	private Throwable thrownException;
 
 	public TestResult(String expectedResult) {

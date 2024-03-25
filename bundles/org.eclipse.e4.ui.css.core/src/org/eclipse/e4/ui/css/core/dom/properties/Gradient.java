@@ -21,7 +21,6 @@ import org.w3c.dom.css.CSSPrimitiveValue;
 
 /**
  * Generic class to store informations to manage Gradient color.
- *
  */
 public class Gradient {
 

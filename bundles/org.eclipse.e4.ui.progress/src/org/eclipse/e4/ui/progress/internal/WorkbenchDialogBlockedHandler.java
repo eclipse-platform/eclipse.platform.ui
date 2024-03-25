@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.di.annotations.Creatable;
@@ -23,6 +20,9 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.progress.IProgressService;
 import org.eclipse.jface.dialogs.IDialogBlockedHandler;
 import org.eclipse.swt.widgets.Shell;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * The WorkbenchWizardBlockedHandler is the class that implements the blocked

@@ -58,9 +58,6 @@ public class TestVirtualTree extends TestTree {
 		return viewer;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		TestBrowser browser = new TestVirtualTree();
 		if (args.length > 0 && args[0].equals("-twopanes")) {

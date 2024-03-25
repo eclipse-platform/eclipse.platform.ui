@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.Assert;
  * @param <E>
  *            type of the elements in the inner observable list
  * @since 3.2
- *
  */
 public class DetailObservableList<M, E> extends ObservableList<E>implements IObserving {
 
@@ -62,11 +61,6 @@ public class DetailObservableList<M, E> extends ObservableList<E>implements IObs
 
 	private Object detailType;
 
-	/**
-	 * @param factory
-	 * @param outerObservableValue
-	 * @param detailType
-	 */
 	public DetailObservableList(
 			IObservableFactory<? super M, IObservableList<E>> factory,
 			IObservableValue<M> outerObservableValue, Object detailType) {

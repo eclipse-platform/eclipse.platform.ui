@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
 
@@ -37,7 +36,6 @@ import org.eclipse.ui.wizards.datatransfer.ProjectConfigurator;
  * .project)
  *
  * @since 3.12
- *
  */
 public class EclipseProjectConfigurator implements ProjectConfigurator {
 
@@ -56,7 +54,7 @@ public class EclipseProjectConfigurator implements ProjectConfigurator {
 
 	@Override
 	public boolean shouldBeAnEclipseProject(IContainer container, IProgressMonitor monitor) {
-		return container.getFile(new Path(IProjectDescription.DESCRIPTION_FILE_NAME)).exists();
+		return container.getFile(IPath.fromOSString(IProjectDescription.DESCRIPTION_FILE_NAME)).exists();
 	}
 
 	@Override

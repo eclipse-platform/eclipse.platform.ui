@@ -72,7 +72,6 @@ public final class SashFactory extends AbstractControlFactory<SashFactory, Sash>
 	 * Creates a new SashFactory with the given style. Refer to
 	 * {@link Sash#Sash(Composite, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new SashFactory instance
 	 */
 	public static SashFactory newSash(int style) {

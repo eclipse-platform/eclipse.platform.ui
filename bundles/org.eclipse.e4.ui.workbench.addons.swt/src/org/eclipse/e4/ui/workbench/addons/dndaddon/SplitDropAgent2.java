@@ -33,9 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- *
- */
 public class SplitDropAgent2 extends DropAgent {
 	private static final int TOLERANCE = 35;
 
@@ -230,8 +227,6 @@ public class SplitDropAgent2 extends DropAgent {
 
 	@Override
 	public void dragEnter(final MUIElement dragElement, DnDInfo info) {
-		super.dragEnter(dragElement, info);
-
 		where = setRelToInfo(info);
 
 		showFeedback();
@@ -282,8 +277,6 @@ public class SplitDropAgent2 extends DropAgent {
 		relToElement = null;
 
 		reactivatePart(dragElement);
-
-		super.dragLeave(dragElement, info);
 	}
 
 	@Override

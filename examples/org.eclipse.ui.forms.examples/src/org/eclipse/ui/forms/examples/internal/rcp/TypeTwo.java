@@ -25,9 +25,6 @@ public class TypeTwo extends NamedObject {
 	private boolean flag1;
 	private boolean flag2;
 
-	/**
-	 * @param name
-	 */
 	public TypeTwo(String name, boolean flag1, boolean flag2) {
 		super(name);
 		this.flag1 = flag1;

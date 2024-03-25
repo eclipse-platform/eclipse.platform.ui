@@ -49,7 +49,6 @@ import org.eclipse.swt.widgets.Shell;
  * checkbox editors. 3.4 will hopefully provide provide an out-of-the-box fix see bug 198502
  *
  * @author Tom Schindl &lt;tom.schindl@bestsolution.at&gt;
- *
  */
 public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 	public Snippet048TreeViewerTabWithCheckboxFor3_3(final Shell shell) {

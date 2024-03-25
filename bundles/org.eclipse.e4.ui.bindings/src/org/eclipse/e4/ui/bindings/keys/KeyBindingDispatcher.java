@@ -15,13 +15,13 @@
 
 package org.eclipse.e4.ui.bindings.keys;
 
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -524,7 +524,6 @@ public class KeyBindingDispatcher {
 	 * @param keySequence
 	 *            The key sequence to check for a perfect match; must never be
 	 *            <code>null</code>.
-	 * @param context2
 	 * @return <code>true</code> if there is a perfect match; <code>false</code>
 	 *         otherwise.
 	 */
@@ -532,11 +531,6 @@ public class KeyBindingDispatcher {
 		return getExecutableMatches(keySequence, context2).size() == 1;
 	}
 
-	/**
-	 * @param keySequence
-	 * @param context2
-	 * @return
-	 */
 	private Collection<Binding> getExecutableMatches(KeySequence keySequence, IEclipseContext context2) {
 		Binding binding = getBindingService().getPerfectMatch(keySequence);
 		if (binding != null) {
@@ -551,11 +545,6 @@ public class KeyBindingDispatcher {
 		return Collections.emptySet();
 	}
 
-	/**
-	 * @param potentialKeyStrokes
-	 * @param event
-	 * @return
-	 */
 	public boolean press(List<KeyStroke> potentialKeyStrokes, Event event) {
 		KeySequence errorSequence = null;
 		Collection<Binding> errorMatch = null;
@@ -606,6 +595,14 @@ public class KeyBindingDispatcher {
 						errorMatch = errorMatches;
 						if (isTracingEnabled()) {
 							logger.trace("Error matches for key: " + sequenceAfterKeyStroke + ", :" + errorMatches); //$NON-NLS-1$//$NON-NLS-2$
+						}
+
+						if (sequenceBeforeKeyStroke.isEmpty() && keyAssistDialog != null
+								&& keyAssistDialog.isShowingBindings(errorMatches)) {
+							if (isTracingEnabled()) {
+								logger.trace("Key assist dialog is already showing error matches: " + errorMatches); //$NON-NLS-1$
+							}
+							return false;
 						}
 					} else if (isTracingEnabled() && !Character.isLetterOrDigit(event.character)) {
 						logger.trace("No binding for keys: " + sequenceBeforeKeyStroke + " " //$NON-NLS-1$//$NON-NLS-2$

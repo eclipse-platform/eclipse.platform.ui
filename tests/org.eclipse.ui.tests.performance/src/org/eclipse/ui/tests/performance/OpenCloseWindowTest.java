@@ -28,7 +28,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class OpenCloseWindowTest extends BasicPerformanceTest {
 
-	private String id;
+	private final String id;
 
 	@Parameters
 	public static Collection<Object[]> data() {

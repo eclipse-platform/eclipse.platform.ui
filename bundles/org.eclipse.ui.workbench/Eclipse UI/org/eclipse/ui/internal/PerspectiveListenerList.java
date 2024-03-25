@@ -47,11 +47,6 @@ public class PerspectiveListenerList extends EventManager {
 	/**
 	 * Calls a perspective listener with associated performance event
 	 * instrumentation
-	 *
-	 * @param runnable
-	 * @param listener
-	 * @param perspective
-	 * @param description
 	 */
 	private void fireEvent(SafeRunnable runnable, IPerspectiveListener listener, IPerspectiveDescriptor perspective,
 			String description) {

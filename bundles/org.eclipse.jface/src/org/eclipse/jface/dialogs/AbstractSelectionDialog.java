@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Shell;
  *            which declares the type of the elements in the
  *            {@link AbstractSelectionDialog}.
  * @since 3.11
- *
  */
 public abstract class AbstractSelectionDialog<T> extends TrayDialog {
 	// the final collection of selected elements
@@ -220,7 +219,7 @@ public abstract class AbstractSelectionDialog<T> extends TrayDialog {
 		List<T> selected = null;
 		if (selection instanceof IStructuredSelection && target != null) {
 			IStructuredSelection structured = (IStructuredSelection) selection;
-			selected = ((List<?>) structured.toList()).stream().filter(target::isInstance)
+			selected = structured.stream().filter(target::isInstance)
 					.map(target::cast).collect(Collectors.toList());
 		}
 		setResult(selected);

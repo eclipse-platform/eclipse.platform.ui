@@ -19,7 +19,6 @@ import org.eclipse.ui.internal.ide.Policy;
 
 /**
  * FieldCategory is the field for showing categories of markers.
- *
  */
 public class FieldCategory extends AbstractField {
 

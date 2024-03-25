@@ -30,7 +30,6 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  *
  *
  * @since 3.3
- *
  */
 public class SettingsTransferRegistryReader extends RegistryReader {
 

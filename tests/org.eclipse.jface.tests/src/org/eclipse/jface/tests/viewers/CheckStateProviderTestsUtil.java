@@ -65,12 +65,10 @@ public class CheckStateProviderTestsUtil {
 	 * @since 3.5
 	 */
 	public static final class TestCheckStateProvider extends TestMethodsInvokedCheckStateProvider {
-		private int shift;
+		private final int shift;
 
 		/**
 		 * A value from 0 to 2 which will change the checkstate assignments.
-		 *
-		 * @param shift
 		 */
 		public TestCheckStateProvider(int shift) {
 			this.shift = shift;
@@ -114,7 +112,6 @@ public class CheckStateProviderTestsUtil {
 	}
 
 	/**
-	 * @param te
 	 * @return a number between 0 and 3 based on <code>te</code>. Given the same
 	 *         TestElement, this function always returns the same value.
 	 */
@@ -125,7 +122,6 @@ public class CheckStateProviderTestsUtil {
 	}
 
 	/**
-	 * @param te
 	 * @param shift a parameter to change all check states to be different (use to
 	 *              simulate different providers over time)
 	 * @return true iff <code>te</code> should be checked
@@ -135,7 +131,6 @@ public class CheckStateProviderTestsUtil {
 	}
 
 	/**
-	 * @param te
 	 * @param shift a parameter to change all check states to be different (use to
 	 *              simulate different providers over time)
 	 * @return true iff <code>te</code> should be grayed

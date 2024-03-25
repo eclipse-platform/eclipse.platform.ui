@@ -66,7 +66,7 @@ public class BoxView extends ViewPart {
 	/*
 	 * The model, a group of boxes
 	 */
-	private Boxes boxes = new Boxes();
+	private final Boxes boxes = new Boxes();
 
 	/*
 	 * Undo and redo actions
@@ -115,12 +115,12 @@ public class BoxView extends ViewPart {
 	/*
 	 * The position of the first click in a click-drag
 	 */
-	private Point anchorPosition = new Point(-1, -1);
+	private final Point anchorPosition = new Point(-1, -1);
 
 	/*
 	 * A temporary point in a drag or move operation
 	 */
-	private Point tempPosition = new Point(-1, -1);
+	private final Point tempPosition = new Point(-1, -1);
 
 	/*
 	 * The rubber band position (the last recorded temp position)

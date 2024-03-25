@@ -76,8 +76,6 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	 * If object is an IStructuredSelection then attempt to match all the contained
 	 * objects.
 	 *
-	 * @param manager
-	 * @param object
 	 * @return true if contribution took place, false otherwise.
 	 */
 	public boolean contribute(PropertyPageManager manager, Object object) {
@@ -146,7 +144,6 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	/**
 	 * Build the list of nodes to be sorted.
 	 *
-	 * @param nodes
 	 * @return List of CategorizedPageNode
 	 */
 	private List buildNodeList(Collection nodes) {
@@ -215,7 +212,6 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	/**
 	 * Return the contributors for element filters on the enablement.
 	 *
-	 * @param element
 	 * @return Collection of PropertyPageContribution
 	 */
 	public Collection getApplicableContributors(Object element) {
@@ -235,7 +231,6 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	/**
 	 * Get applicable contributors for multiple selection
 	 *
-	 * @param selection
 	 * @return Collection of applicable property page contributors
 	 * @since 3.7
 	 */

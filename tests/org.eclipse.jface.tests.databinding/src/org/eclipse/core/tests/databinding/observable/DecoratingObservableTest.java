@@ -29,7 +29,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class DecoratingObservableTest extends AbstractDefaultRealmTestCase {
 	private IObservable decorated;

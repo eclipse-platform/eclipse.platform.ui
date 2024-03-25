@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 Ovidio Mallo and others.
+ * Copyright (c) 2009, 2023 Ovidio Mallo and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -193,8 +193,7 @@ public class Snippet036ValidationMessageProvider {
 
 		@Override
 		public int getMessageType(ValidationStatusProvider statusProvider) {
-			if (statusProvider instanceof Binding) {
-				Binding binding = (Binding) statusProvider;
+			if (statusProvider instanceof Binding binding) {
 				IStatus status = binding.getValidationStatus().getValue();
 
 				// For required validations, we do not want to display an error

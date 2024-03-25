@@ -33,7 +33,6 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
  * MarkersTestMarkersView is the test suite version of the markers view.
  *
  * @since 3.4
- *
  */
 public class MarkersTestMarkersView extends MarkerSupportView {
 
@@ -48,8 +47,6 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 
 	/**
 	 * Get the current markers for the receiver.
-	 *
-	 * @return
 	 */
 	public IMarker[] getCurrentMarkers() {
 		Method method;
@@ -70,8 +67,6 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 
 	/**
 	 * Add a listener for the end of the update.
-	 *
-	 * @param listener
 	 */
 	public void addUpdateFinishListener(IJobChangeListener listener) {
 		getUpdateJobForListener().addJobChangeListener(listener);
@@ -80,8 +75,6 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 
 	/**
 	 * Return the updateJob.
-	 *
-	 * @return
 	 */
 	private Job getUpdateJobForListener() {
 		Field field;
@@ -98,8 +91,6 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 
 	/**
 	 * Remove a listener for the end of the update.
-	 *
-	 * @param listener
 	 */
 	public void removeUpdateFinishListener(IJobChangeListener listener) {
 		getUpdateJobForListener().addJobChangeListener(listener);
@@ -108,7 +99,6 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 
 	/**
 	 * Set the width of all of the columns.
-	 * @param width
 	 */
 	public void setColumnWidths(int width) {
 		TreeColumn[] treeColumns = tree.getColumns();
@@ -124,10 +114,6 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 		tree = getTreeWidget();
 	}
 
-	/**
-	 * @param size
-	 * @return
-	 */
 	public boolean checkColumnSizes(int size) {
 		TreeColumn[] treeColumns = tree.getColumns();
 

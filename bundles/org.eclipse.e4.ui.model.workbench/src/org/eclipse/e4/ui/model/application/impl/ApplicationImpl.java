@@ -280,7 +280,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MWindow> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MWindow>(MWindow.class, this,
+			children = new EObjectContainmentWithInverseEList<>(MWindow.class, this,
 					ApplicationPackageImpl.APPLICATION__CHILDREN, UiPackageImpl.UI_ELEMENT__PARENT) {
 				private static final long serialVersionUID = 1L;
 
@@ -323,9 +323,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	public void setContext(IEclipseContext newContext) {
 		IEclipseContext oldContext = context;
 		context = newContext;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION__CONTEXT,
 					oldContext, context));
+		}
 	}
 
 	/**
@@ -336,7 +337,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<String> getVariables() {
 		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this,
+			variables = new EDataTypeUniqueEList<>(String.class, this,
 					ApplicationPackageImpl.APPLICATION__VARIABLES);
 		}
 		return variables;
@@ -350,7 +351,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public Map<String, String> getProperties() {
 		if (properties == null) {
-			properties = new EcoreEMap<String, String>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
+			properties = new EcoreEMap<>(ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP,
 					StringToStringMapImpl.class, this, ApplicationPackageImpl.APPLICATION__PROPERTIES);
 		}
 		return properties.map();
@@ -364,7 +365,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
-			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this,
+			handlers = new EObjectContainmentEList<>(MHandler.class, this,
 					ApplicationPackageImpl.APPLICATION__HANDLERS);
 		}
 		return handlers;
@@ -378,7 +379,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MBindingTable> getBindingTables() {
 		if (bindingTables == null) {
-			bindingTables = new EObjectContainmentEList<MBindingTable>(MBindingTable.class, this,
+			bindingTables = new EObjectContainmentEList<>(MBindingTable.class, this,
 					ApplicationPackageImpl.APPLICATION__BINDING_TABLES);
 		}
 		return bindingTables;
@@ -392,7 +393,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MBindingContext> getRootContext() {
 		if (rootContext == null) {
-			rootContext = new EObjectContainmentEList<MBindingContext>(MBindingContext.class, this,
+			rootContext = new EObjectContainmentEList<>(MBindingContext.class, this,
 					ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT);
 		}
 		return rootContext;
@@ -406,7 +407,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MPartDescriptor> getDescriptors() {
 		if (descriptors == null) {
-			descriptors = new EObjectContainmentEList<MPartDescriptor>(MPartDescriptor.class, this,
+			descriptors = new EObjectContainmentEList<>(MPartDescriptor.class, this,
 					ApplicationPackageImpl.APPLICATION__DESCRIPTORS);
 		}
 		return descriptors;
@@ -420,7 +421,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this,
+			bindingContexts = new EObjectResolvingEList<>(MBindingContext.class, this,
 					ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
@@ -434,7 +435,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MMenuContribution> getMenuContributions() {
 		if (menuContributions == null) {
-			menuContributions = new EObjectContainmentEList<MMenuContribution>(MMenuContribution.class, this,
+			menuContributions = new EObjectContainmentEList<>(MMenuContribution.class, this,
 					ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS);
 		}
 		return menuContributions;
@@ -448,7 +449,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MToolBarContribution> getToolBarContributions() {
 		if (toolBarContributions == null) {
-			toolBarContributions = new EObjectContainmentEList<MToolBarContribution>(MToolBarContribution.class, this,
+			toolBarContributions = new EObjectContainmentEList<>(MToolBarContribution.class, this,
 					ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS);
 		}
 		return toolBarContributions;
@@ -462,7 +463,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MTrimContribution> getTrimContributions() {
 		if (trimContributions == null) {
-			trimContributions = new EObjectContainmentEList<MTrimContribution>(MTrimContribution.class, this,
+			trimContributions = new EObjectContainmentEList<>(MTrimContribution.class, this,
 					ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS);
 		}
 		return trimContributions;
@@ -476,7 +477,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MUIElement> getSnippets() {
 		if (snippets == null) {
-			snippets = new EObjectContainmentEList<MUIElement>(MUIElement.class, this,
+			snippets = new EObjectContainmentEList<>(MUIElement.class, this,
 					ApplicationPackageImpl.APPLICATION__SNIPPETS);
 		}
 		return snippets;
@@ -490,7 +491,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MCommand> getCommands() {
 		if (commands == null) {
-			commands = new EObjectContainmentEList<MCommand>(MCommand.class, this,
+			commands = new EObjectContainmentEList<>(MCommand.class, this,
 					ApplicationPackageImpl.APPLICATION__COMMANDS) {
 
 				private static final long serialVersionUID = 1L;
@@ -513,7 +514,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MAddon> getAddons() {
 		if (addons == null) {
-			addons = new EObjectContainmentEList<MAddon>(MAddon.class, this,
+			addons = new EObjectContainmentEList<>(MAddon.class, this,
 					ApplicationPackageImpl.APPLICATION__ADDONS);
 		}
 		return addons;
@@ -527,7 +528,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public List<MCategory> getCategories() {
 		if (categories == null) {
-			categories = new EObjectContainmentEList<MCategory>(MCategory.class, this,
+			categories = new EObjectContainmentEList<>(MCategory.class, this,
 					ApplicationPackageImpl.APPLICATION__CATEGORIES);
 		}
 		return categories;
@@ -542,7 +543,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public MCommand getCommand(final String elementId) {
 		if (elementIdToCommandMap == null) {
-			Map<String, MCommand> result = new HashMap<String, MCommand>();
+			Map<String, MCommand> result = new HashMap<>();
 			for (MCommand command : getCommands()) {
 				MCommand otherCommand = result.put(command.getElementId(), command);
 				if (otherCommand != null) {
@@ -606,10 +607,11 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		case ApplicationPackageImpl.APPLICATION__VARIABLES:
 			return getVariables();
 		case ApplicationPackageImpl.APPLICATION__PROPERTIES:
-			if (coreType)
+			if (coreType) {
 				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
-			else
+			} else {
 				return getProperties();
+			}
 		case ApplicationPackageImpl.APPLICATION__HANDLERS:
 			return getHandlers();
 		case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
@@ -1013,8 +1015,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (context: "); //$NON-NLS-1$

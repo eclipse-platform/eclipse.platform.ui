@@ -21,7 +21,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
@@ -48,8 +48,6 @@ public class FileImageDescriptorTest extends BasicPerformanceTest {
 
 	/**
 	 * Test the time for doing a refresh.
-	 *
-	 * @throws Throwable
 	 */
 	public void testRefresh() throws Throwable {
 
@@ -68,7 +66,7 @@ public class FileImageDescriptorTest extends BasicPerformanceTest {
 				if (localImagePath.indexOf('.') < 0)
 					continue;
 
-				URL[] files = FileLocator.findEntries(bundle, new Path(localImagePath));
+				URL[] files = FileLocator.findEntries(bundle, IPath.fromOSString(localImagePath));
 
 				for (URL file : files) {
 					startMeasuring();

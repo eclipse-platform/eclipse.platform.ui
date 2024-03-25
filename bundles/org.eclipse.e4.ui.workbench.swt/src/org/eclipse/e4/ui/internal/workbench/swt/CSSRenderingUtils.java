@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.dom.ControlElement;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
@@ -130,12 +129,12 @@ public class CSSRenderingUtils {
 
 	private void initDragHandleResource() {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		IPath path = new Path("$ws$/images/dragHandle.png");
+		IPath path = IPath.fromOSString("$ws$/images/dragHandle.png");
 		URL url = FileLocator.find(bundle, path, null);
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		if (desc != null)
 			JFaceResources.getImageRegistry().put(DRAG_HANDLE, desc);
-		path = new Path("$ws$/images/dragHandle-rotated.png");
+		path = IPath.fromOSString("$ws$/images/dragHandle-rotated.png");
 		url = FileLocator.find(bundle, path, null);
 		ImageDescriptor desc_rotated = ImageDescriptor.createFromURL(url);
 		if (desc_rotated != null)
@@ -219,11 +218,6 @@ public class CSSRenderingUtils {
 		return styleDeclarations.getPropertyCSSValue(attributeName);
 	}
 
-	/**
-	 * @param string
-	 * @param string2
-	 * @return
-	 */
 	public Image createImage(Control styleControl, String classId,
 			String attName, Integer[] frameInts) {
 		Image image = null;

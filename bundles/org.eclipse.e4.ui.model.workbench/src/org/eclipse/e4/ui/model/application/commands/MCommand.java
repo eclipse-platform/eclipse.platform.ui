@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.ui.MLocalizable;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MCommand#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MCommand#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MCommand#getCategory <em>Category</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.commands.MCommand#getCommandIconURI <em>Command Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedCommandName <em>Localized Command Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MCommand#getLocalizedDescription <em>Localized Description</em>}</li>
  * </ul>
@@ -146,6 +147,35 @@ public interface MCommand extends MApplicationElement, MLocalizable {
 	 * @generated
 	 */
 	void setCategory(MCategory value);
+
+	/**
+	 * Returns the value of the '<em><b>Command Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <p>
+	 * This field contains a fully qualified URL defining the path to an Image to display
+	 * for this element.
+	 * </p>
+	 * @since 2.4
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Command Icon URI</em>' attribute.
+	 * @see #setCommandIconURI(String)
+	 * @model
+	 * @generated
+	 */
+	String getCommandIconURI();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.commands.MCommand#getCommandIconURI <em>Command Icon URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Command Icon URI</em>' attribute.
+	 * @see #getCommandIconURI()
+	 * @since 2.4
+	 * @generated
+	 */
+	void setCommandIconURI(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Localized Command Name</b></em>' attribute.

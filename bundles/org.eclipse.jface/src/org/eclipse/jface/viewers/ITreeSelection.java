@@ -38,7 +38,6 @@ package org.eclipse.jface.viewers;
  * See bugs 135818 and 133375 for details.
  *
  * @since 3.2
- *
  */
 public interface ITreeSelection extends IStructuredSelection {
 

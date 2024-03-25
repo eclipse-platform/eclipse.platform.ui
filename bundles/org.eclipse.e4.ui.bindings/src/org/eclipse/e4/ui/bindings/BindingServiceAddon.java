@@ -14,7 +14,7 @@
 
 package org.eclipse.e4.ui.bindings;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;

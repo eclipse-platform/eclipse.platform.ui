@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Wellmann - Parameterize DeviceResourceDescriptor with the described resource type
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWTException;
@@ -60,26 +60,30 @@ public abstract class ResourceManager {
 	public abstract Device getDevice();
 
 	/**
-	 * Returns the resource described by the given descriptor. If the resource already
-	 * exists, the reference count is incremented and the exiting resource is returned.
-	 * Otherwise, a new resource is allocated. Every call to this method should have
-	 * a corresponding call to {@link #destroy(DeviceResourceDescriptor)}.
+	 * Returns the resource described by the given descriptor. If the resource
+	 * already exists, the reference count is incremented and the exiting resource
+	 * is returned. Otherwise, a new resource is allocated. Every call to this
+	 * method should have a corresponding call to
+	 * {@link #destroy(DeviceResourceDescriptor)}.
 	 *
-	 * <p>If the resource is intended to live for entire lifetime of the resource manager,
-	 * a subsequent call to {@link #destroy(DeviceResourceDescriptor)} may be omitted and the
-	 * resource will be cleaned up when the resource manager is disposed. This pattern
-	 * is useful for short-lived {@link LocalResourceManager}s, but should never be used
-	 * with the global resource manager since doing so effectively leaks the resource.</p>
+	 * <p>
+	 * If the resource is intended to live for entire lifetime of this
+	 * resource-manager, a subsequent call to
+	 * {@link #destroy(DeviceResourceDescriptor)} may be omitted and the resource
+	 * will be cleaned up when this resource-manager is disposed. This pattern is
+	 * useful for short-lived {@link LocalResourceManager}s, but should never be
+	 * used with the global resource-manager since doing so effectively leaks the
+	 * resource.
+	 * </p>
 	 *
-	 * <p>The resources returned from this method are reference counted and may be shared
-	 * internally with other resource managers. They should never be disposed outside of the
-	 * ResourceManager framework, or it will cause exceptions in other code that shares
-	 * them. For example, never call {@link org.eclipse.swt.graphics.Resource#dispose()}
-	 * on anything returned from this method.</p>
-	 *
-	 * <p>Callers may safely downcast the result to the resource type associated with
-	 * the descriptor. For example, when given an ImageDescriptor, the return
-	 * value of this method will always be an Image.</p>
+	 * <p>
+	 * The resources returned from this method are reference counted and may be
+	 * shared internally with other resource-managers. They should never be disposed
+	 * outside of the ResourceManager framework, or it will cause exceptions in
+	 * other code that shares them. For example, never call
+	 * {@link org.eclipse.swt.graphics.Resource#dispose()} on anything returned from
+	 * this method.
+	 * </p>
 	 *
 	 * @since 3.1
 	 *
@@ -87,7 +91,7 @@ public abstract class ResourceManager {
 	 * @return the newly allocated resource (not null)
 	 * @throws DeviceResourceException if unable to allocate the resource
 	 */
-	public abstract Object create(DeviceResourceDescriptor descriptor);
+	public abstract <R> R create(DeviceResourceDescriptor<R> descriptor);
 
 	/**
 	 * Deallocates a resource previously allocated by {@link #create(DeviceResourceDescriptor)}.
@@ -99,54 +103,46 @@ public abstract class ResourceManager {
 	 *
 	 * @param descriptor identifier for the resource
 	 */
-	public abstract void destroy(DeviceResourceDescriptor descriptor);
+	public abstract <R> void destroy(DeviceResourceDescriptor<R> descriptor);
 
 	/**
-	 * <p>Returns a previously-allocated resource or allocates a new one if none
-	 * exists yet. The resource will remain allocated for at least the lifetime
-	 * of this resource manager. If necessary, the resource will be deallocated
-	 * automatically when the resource manager is disposed.</p>
-	 *
-	 * <p>The resources returned from this method are reference counted and may be shared
-	 * internally with other resource managers. They should never be disposed outside of the
-	 * ResourceManager framework, or it will cause exceptions in other code that shares
-	 * them. For example, never call {@link org.eclipse.swt.graphics.Resource#dispose()}
-	 * on anything returned from this method.</p>
+	 * Returns a previously-allocated resource or allocates a new one if none exists
+	 * yet. The resource will remain allocated for at least the lifetime of this
+	 * resource-manager. If necessary, the resource will be deallocated
+	 * automatically when this resource-manager is disposed.
 	 *
 	 * <p>
-	 * Callers may safely downcast the result to the resource type associated with
-	 * the descriptor. For example, when given an ImageDescriptor, the return
-	 * value of this method may be downcast to Image.
+	 * The resources returned from this method are reference counted and may be
+	 * shared internally with other resource-managers. They should never be disposed
+	 * outside of the ResourceManager framework, or it will cause exceptions in
+	 * other code that shares them. For example, never call
+	 * {@link org.eclipse.swt.graphics.Resource#dispose()} on anything returned from
+	 * this method.
 	 * </p>
 	 *
 	 * <p>
-	 * This method should only be used for resources that should remain
-	 * allocated for the lifetime of the resource manager. To allocate shorter-lived
+	 * This method should only be used for resources that should remain allocated
+	 * for the lifetime of this resource-manager. To allocate shorter-lived
 	 * resources, manage them with <code>create</code>, and <code>destroy</code>
 	 * rather than this method.
 	 * </p>
 	 *
 	 * <p>
-	 * This method should never be called on the global resource manager,
-	 * since all resources will remain allocated for the lifetime of the app and
-	 * will be effectively leaked.
+	 * This method should never be called on the global resource-manager, since all
+	 * resources will remain allocated for the lifetime of the app and will be
+	 * effectively leaked.
 	 * </p>
 	 *
 	 * @param descriptor identifier for the requested resource
-	 * @return the requested resource. Never null.
+	 * @return the requested resource, never null
 	 * @throws DeviceResourceException if the resource does not exist yet and cannot
-	 * be created for any reason.
+	 *                                 be created for any reason.
 	 *
 	 * @since 3.3
 	 */
-	public final Object get(DeviceResourceDescriptor descriptor) {
-		Object result = find(descriptor);
-
-		if (result == null) {
-			result = create(descriptor);
-		}
-
-		return result;
+	public final <R> R get(DeviceResourceDescriptor<R> descriptor) {
+		R cached = find(descriptor);
+		return cached != null ? cached : create(descriptor);
 	}
 
 	/**
@@ -164,15 +160,16 @@ public abstract class ResourceManager {
 	 * @since 3.1
 	 *
 	 * @param descriptor descriptor for the image to create
-	 * @return the Image described by this descriptor (possibly shared by other equivalent
-	 * ImageDescriptors)
+	 * @return the Image described by this descriptor (possibly shared by other
+	 *         equivalent ImageDescriptors)
 	 * @throws DeviceResourceException if unable to allocate the Image
+	 * @deprecated use {@link #create(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final Image createImage(ImageDescriptor descriptor) {
 		// Assertion added to help diagnose client bugs.  See bug #83711 and bug #90454.
 		Assert.isNotNull(descriptor);
-
-		return (Image)create(descriptor);
+		return create(descriptor);
 	}
 
 	/**
@@ -192,12 +189,9 @@ public abstract class ResourceManager {
 		}
 
 		try {
-			return (Image) create(descriptor);
+			return create(descriptor);
 		} catch (DeviceResourceException | SWTException e) {
-			Policy.getLog().log(
-					new Status(IStatus.WARNING, "org.eclipse.jface", 0, //$NON-NLS-1$
-							"The image could not be loaded: " + descriptor, //$NON-NLS-1$
-							e));
+			Policy.getLog().log(Status.warning("The image could not be loaded: " + descriptor, e)); //$NON-NLS-1$
 			return getDefaultImage();
 		}
 	}
@@ -219,7 +213,9 @@ public abstract class ResourceManager {
 	 * @since 3.1
 	 *
 	 * @param descriptor identifier for the image to dispose
+	 * @deprecated use {@link #destroy(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final void destroyImage(ImageDescriptor descriptor) {
 		destroy(descriptor);
 	}
@@ -235,9 +231,11 @@ public abstract class ResourceManager {
 	 * @param descriptor descriptor for the color to create
 	 * @return the Color described by the given ColorDescriptor (not null)
 	 * @throws DeviceResourceException if unable to create the color
+	 * @deprecated use {@link #create(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final Color createColor(ColorDescriptor descriptor) {
-		return (Color)create(descriptor);
+		return create(descriptor);
 	}
 
 	/**
@@ -253,7 +251,7 @@ public abstract class ResourceManager {
 	 * @throws DeviceResourceException if unable to create the color
 	 */
 	public final Color createColor(RGB descriptor) {
-		return createColor(new RGBColorDescriptor(descriptor));
+		return create(new RGBColorDescriptor(descriptor));
 	}
 
 	/**
@@ -264,7 +262,7 @@ public abstract class ResourceManager {
 	 * @param descriptor RGB value of the color to dispose
 	 */
 	public final void destroyColor(RGB descriptor) {
-		destroyColor(new RGBColorDescriptor(descriptor));
+		destroy(new RGBColorDescriptor(descriptor));
 	}
 
 	/**
@@ -274,7 +272,9 @@ public abstract class ResourceManager {
 	 * @since 3.1
 	 *
 	 * @param descriptor identifier for the color to dispose
+	 * @deprecated use {@link #destroy(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final void destroyColor(ColorDescriptor descriptor) {
 		destroy(descriptor);
 	}
@@ -290,9 +290,11 @@ public abstract class ResourceManager {
 	 * @param descriptor description of the font to create
 	 * @return the Font described by the given descriptor
 	 * @throws DeviceResourceException if unable to create the font
+	 * @deprecated use {@link #create(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final Font createFont(FontDescriptor descriptor) {
-		return (Font)create(descriptor);
+		return create(descriptor);
 	}
 
 	/**
@@ -301,7 +303,9 @@ public abstract class ResourceManager {
 	 * @since 3.1
 	 *
 	 * @param descriptor description of the font to destroy
+	 * @deprecated use {@link #destroy(DeviceResourceDescriptor)} instead
 	 */
+	@Deprecated(since = "3.31")
 	public final void destroyFont(FontDescriptor descriptor) {
 		destroy(descriptor);
 	}
@@ -327,7 +331,11 @@ public abstract class ResourceManager {
 			} catch (RuntimeException e) {
 				// Ensure that we propagate an exception, but don't stop notifying
 				// the remaining runnables.
-				foundException = e;
+				if (foundException == null) {
+					foundException = e;
+				} else {
+					foundException.addSuppressed(e);
+				}
 			}
 		}
 
@@ -346,12 +354,12 @@ public abstract class ResourceManager {
 	 * @param descriptor descriptor to find
 	 * @return a previously allocated resource for the given descriptor or null if none.
 	 */
-	public abstract Object find(DeviceResourceDescriptor descriptor);
+	public abstract <R> R find(DeviceResourceDescriptor<R> descriptor);
 
 	/**
-	 * Causes the <code>run()</code> method of the runnable to
-	 * be invoked just before the receiver is disposed. The runnable
-	 * can be subsequently canceled by a call to <code>cancelDisposeExec</code>.
+	 * Causes the <code>run()</code> method of the runnable to be invoked just
+	 * before the receiver is disposed. The runnable can be subsequently canceled by
+	 * a call to {@link #cancelDisposeExec(Runnable)}.
 	 *
 	 * @param r runnable to execute.
 	 */
@@ -366,9 +374,9 @@ public abstract class ResourceManager {
 	}
 
 	/**
-	 * Cancels a runnable that was previously scheduled with <code>disposeExec</code>.
-	 * Has no effect if the given runnable was not previously registered with
-	 * disposeExec.
+	 * Cancels a runnable that was previously scheduled with
+	 * {@link #disposeExec(Runnable)}. Has no effect if the given runnable was not
+	 * previously registered with disposeExec.
 	 *
 	 * @param r runnable to cancel
 	 */

@@ -35,7 +35,6 @@ import org.eclipse.ui.views.markers.MarkerField;
  *
  * @since 3.7
  * @author Hitesh Soliwal
- *
  */
 public class MarkersViewColumnsDialog extends ViewerColumnsDialog<FieldEntry> {
 

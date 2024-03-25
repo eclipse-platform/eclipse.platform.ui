@@ -141,9 +141,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		}
 	}
 
-	/**
-	 * @param ext
-	 */
 	private void loadFontDefinitions(IExtension ext) {
 		ThemeRegistryReader reader = new ThemeRegistryReader();
 		reader.setRegistry((ThemeRegistry) WorkbenchPlugin.getDefault().getThemeRegistry());

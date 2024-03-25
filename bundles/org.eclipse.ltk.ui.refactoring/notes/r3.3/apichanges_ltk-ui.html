@@ -1,0 +1,67 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="IBM">
+  <title>LTK UI API changes</title>
+  <link rel="stylesheet" href="http://dev.eclipse.org/default_style.css"
+ type="text/css">
+</head>
+<body>
+<p>This document lists the API changes that occurred between
+R3.2 and R3.3 and
+how to migrate from the R3.2 API to the R3.3 API.
+</p>
+<table border="0" cellpadding="2" cellspacing="5" width="100%" summary="Breaking API changes">
+  <tbody>
+    <tr>
+      <td align="left" width="72%"> <font size="+3"><b>LTK UI Refactoring -
+Breaking API changes from R3.2 to R3.3</b></font> <br>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      None
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p> </p>
+<table border="0" cellpadding="2" cellspacing="5" width="100%" summary="Non-breaking API changes">
+  <tbody>
+    <tr>
+      <td align="left" width="72%"> <font size="+3"><b>LTK UI Refactoring -
+Non-breaking API changes from R3.2 to R3.3</b></font> <br>
+      </td>
+    </tr>
+     <tr>
+      <td>New API for refactoring history and scripting support in package <code>org.eclipse.ltk.ui.refactoring.history</code>:
+      <ul>
+         <li><code>ISortableRefactoringHistoryControl</code></li>
+      </ul>
+      </td>
+    </tr>
+     <tr>
+      <td>New API for refactoring history and scripting support in package <code>org.eclipse.ltk.ui.refactoring</code>:
+      <ul>
+         <li><code>RefactoringUI#createSortableRefactoringHistoryControl(Composite, RefactoringHistoryControlConfiguration)</code></li>
+      </ul>
+      </td>
+    </tr>
+     <tr>
+      <td>New API for refactoring history and scripting actions in package <code>org.eclipse.ltk.ui.refactoring.actions</code>:
+		<ul>
+		<li><code>ShowRefactoringHistoryAction</code></li>
+		<li><code>ApplyRefactoringScriptAction</code></li>
+		<li><code>CreateRefactoringScriptAction</code></li>
+		</ul>
+      </td>
+    </tr>    
+  </tbody>
+</table>
+<p>
+API changes from 3.1 to 3.2 can be found <a href="../r3.2/apichanges_ltk-ui.html?view=co">here</a>.
+</p>
+</body>
+</html>

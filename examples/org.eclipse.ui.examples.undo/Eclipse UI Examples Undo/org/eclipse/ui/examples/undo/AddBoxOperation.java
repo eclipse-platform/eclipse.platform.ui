@@ -27,11 +27,6 @@ public class AddBoxOperation extends BoxOperation {
 
 	/**
 	 * Create a box
-	 * @param label
-	 * @param context
-	 * @param boxes
-	 * @param box
-	 * @param canvas
 	 */
 	public AddBoxOperation(String label, IUndoContext context, Boxes boxes, Box box, Canvas canvas) {
 		super(label, context, boxes, box, canvas);

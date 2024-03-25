@@ -25,7 +25,7 @@ import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
  *
  * @since 3.1
  */
-public interface ILeveledImportStructureProvider extends IImportStructureProvider {
+public interface ILeveledImportStructureProvider extends IImportStructureProvider, AutoCloseable {
 	/**
 	 * Returns the entry that this importer uses as the root sentinel.
 	 *

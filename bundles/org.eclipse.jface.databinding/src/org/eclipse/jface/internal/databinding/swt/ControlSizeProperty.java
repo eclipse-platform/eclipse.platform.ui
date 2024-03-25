@@ -25,12 +25,8 @@ import org.eclipse.swt.widgets.Control;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class ControlSizeProperty<S extends Control> extends WidgetValueProperty<S, Point> {
-	/**
-	 *
-	 */
 	public ControlSizeProperty() {
 		super(SWT.Resize);
 	}

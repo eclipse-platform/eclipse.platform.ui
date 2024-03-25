@@ -18,7 +18,6 @@ import org.eclipse.ui.part.IPageSite;
 
 /**
  * @since 3.4
- *
  */
 public interface IPageSiteHolder {
 	IPageSite getSite();

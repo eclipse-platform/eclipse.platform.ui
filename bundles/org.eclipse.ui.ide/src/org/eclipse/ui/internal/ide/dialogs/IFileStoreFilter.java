@@ -20,7 +20,6 @@ import org.eclipse.core.filesystem.IFileStore;
  * IFileStoreFilter is an interface that defines a filter on file
  * stores.
  * @since 3.2
- *
  */
 public interface IFileStoreFilter {
 

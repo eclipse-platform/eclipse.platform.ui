@@ -30,7 +30,6 @@ import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 
 /**
  * ProblemFilters are the filters used in the problems view.
- *
  */
 public class ProblemFilter extends MarkerFilter {
 
@@ -185,8 +184,6 @@ public class ProblemFilter extends MarkerFilter {
 
 	/**
 	 * Set the value for if there is a check for containing a phrase.
-	 *
-	 * @param contains
 	 */
 	public void setContains(boolean contains) {
 		this.contains = contains;
@@ -194,8 +191,6 @@ public class ProblemFilter extends MarkerFilter {
 
 	/**
 	 * Set the value for the description.
-	 *
-	 * @param description
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -203,8 +198,6 @@ public class ProblemFilter extends MarkerFilter {
 
 	/**
 	 * Set the value for if there is a check for severity
-	 *
-	 * @param selectBySeverity
 	 */
 	public void setSelectBySeverity(boolean selectBySeverity) {
 		this.selectBySeverity = selectBySeverity;
@@ -212,8 +205,6 @@ public class ProblemFilter extends MarkerFilter {
 
 	/**
 	 * Set the value for the severity to match against.
-	 *
-	 * @param severity
 	 */
 	public void setSeverity(int severity) {
 		this.severity = severity;

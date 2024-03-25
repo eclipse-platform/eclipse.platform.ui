@@ -30,11 +30,10 @@ import org.eclipse.swt.widgets.TableColumn;
  * A simple TableViewer to demonstrate usage of an ILazyContentProvider. You can
  * compare this snippet to the Snippet029VirtualTableViewer to see the small but
  * needed difference.
- *
  */
 public class Snippet030VirtualLazyTableViewer {
 	private static class MyContentProvider implements ILazyContentProvider {
-		private TableViewer viewer;
+		private final TableViewer viewer;
 		private MyModel[] elements;
 
 		public MyContentProvider(TableViewer viewer) {

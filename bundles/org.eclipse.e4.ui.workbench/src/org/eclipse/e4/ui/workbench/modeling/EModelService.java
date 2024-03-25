@@ -225,7 +225,6 @@ public interface EModelService {
 	 * @return The generically typed list of matching elements.
 	 *
 	 * @since 1.8
-	 *
 	 */
 	<T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz);
 
@@ -508,7 +507,6 @@ public interface EModelService {
 	 *
 	 * @param container The container to check
 	 * @return The number of children whose toBeRendered flag is <code>true</code>
-	 *
 	 */
 	int toBeRenderedCount(MElementContainer<?> container);
 

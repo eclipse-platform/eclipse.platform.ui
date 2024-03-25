@@ -33,8 +33,7 @@ public class TextTestsTabDescriptorProvider implements ITabDescriptorProvider {
 	@Override
 	public ITabDescriptor[] getTabDescriptors(IWorkbenchPart part,
 			ISelection selection) {
-		if (selection instanceof ITextSelection) {
-			ITextSelection textSelection = (ITextSelection) selection;
+		if (selection instanceof ITextSelection textSelection) {
 			if (textSelection.getLength() != 0) {
 				List<ITabDescriptor> result = new ArrayList<>();
 				StringTokenizer tokenizer = new StringTokenizer(textSelection

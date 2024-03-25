@@ -37,7 +37,6 @@ import org.w3c.dom.NodeList;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link CTabFolder}.
- *
  */
 public class CTabFolderElement extends CompositeElement implements ChildVisibilityAwareElement {
 	private static final String BACKGROUND_SET_BY_TAB_RENDERER = "bgSetByTabRenderer"; //$NON-NLS-1$
@@ -71,7 +70,6 @@ public class CTabFolderElement extends CompositeElement implements ChildVisibili
 
 	/**
 	 * Compute static pseudo instances.
-	 *
 	 */
 	@Override
 	protected void computeStaticPseudoInstances() {

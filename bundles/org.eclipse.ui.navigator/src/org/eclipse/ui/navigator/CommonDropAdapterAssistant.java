@@ -86,7 +86,6 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
  * @see INavigatorDnDService#findCommonDropAdapterAssistants(Object,
  *      TransferData)
  * @since 3.2
- *
  */
 public abstract class CommonDropAdapterAssistant {
 
@@ -287,7 +286,6 @@ public abstract class CommonDropAdapterAssistant {
 	 * @return the CommonDropAdapter.
 	 *
 	 * @since 3.4
-	 *
 	 */
 	protected CommonDropAdapter getCommonDropAdapter() {
 		return _dropAdapter;

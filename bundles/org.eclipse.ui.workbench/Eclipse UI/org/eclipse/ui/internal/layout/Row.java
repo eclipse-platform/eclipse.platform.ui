@@ -40,8 +40,6 @@ public class Row {
 	/**
 	 * Creates a fixed-size row with the given width (pixels). The preferred sizes
 	 * of child controls are ignored.
-	 *
-	 * @param size
 	 */
 	public Row(int size) {
 		largerThanChildren = false;
@@ -52,8 +50,6 @@ public class Row {
 	/**
 	 * Creates a row that automatically computes its size based on the preferred
 	 * sizes of its children.
-	 *
-	 * @param growing
 	 */
 	public Row(boolean growing) {
 		this.grows = growing;
@@ -66,7 +62,7 @@ public class Row {
 	/**
 	 * Creates a growing row.
 	 *
-	 * @param sizeRatio          determines the size of this row with respect to
+	 * @param size               determines the size of this row with respect to
 	 *                           other growing rows (for example, a row with size =
 	 *                           3 will be 3x as large as a row with size = 1)
 	 * @param largerThanChildren true iff the preferred size of this row should take

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -93,6 +92,9 @@ public class WelcomeParser extends DefaultHandler {
 		public void endDocument() {
 		}
 
+		/**
+		 * @throws SAXException may be thrown by overrides
+		 */
 		@Override
 		public void endElement(String namespaceURI, String localName,
 				String qName) throws SAXException {
@@ -122,6 +124,9 @@ public class WelcomeParser extends DefaultHandler {
 		public void startDocument() {
 		}
 
+		/**
+		 * @throws SAXException may be thrown by overrides
+		 */
 		@Override
 		public void startElement(String namespaceURI, String localName,
 				String qName, Attributes atts) throws SAXException {
@@ -334,13 +339,10 @@ public class WelcomeParser extends DefaultHandler {
 	/**
 	 * Creates a new welcome parser.
 	 */
-	public WelcomeParser() throws ParserConfigurationException, SAXException,
-			FactoryConfigurationError {
-		super();
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		factory.setFeature("http://xml.org/sax/features/namespaces", true); //$NON-NLS-1$
-		parser = factory.newSAXParser();
-
+	public WelcomeParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
+		@SuppressWarnings("restriction")
+		SAXParser p = org.eclipse.core.internal.runtime.XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE(true);
+		parser = p;
 		parser.getXMLReader().setContentHandler(this);
 		parser.getXMLReader().setDTDHandler(this);
 		parser.getXMLReader().setEntityResolver(this);

@@ -84,9 +84,6 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 	private MenuItem copyAction;
 
-	/**
-	 * @param dialogState
-	 */
 	public DefaultDetailsArea(Map<Object, Object> dialogState) {
 		this.dialogState = dialogState;
 		handleOkStatuses = ((Boolean) dialogState.get(IStatusDialogConstants.HANDLE_OK_STATUSES)).booleanValue();

@@ -101,7 +101,6 @@ public class CommandAction extends Action {
 	 *
 	 * @param commandService to get the Command object
 	 * @param commandId      the command id for this action
-	 * @param parameterMap
 	 */
 	private void createCommand(ICommandService commandService, String commandId, Map parameterMap) {
 		Command cmd = commandService.getCommand(commandId);

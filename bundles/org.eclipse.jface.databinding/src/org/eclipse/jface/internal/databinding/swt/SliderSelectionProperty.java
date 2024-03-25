@@ -17,13 +17,7 @@ package org.eclipse.jface.internal.databinding.swt;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Slider;
 
-/**
- *
- */
 public class SliderSelectionProperty extends WidgetIntValueProperty<Slider> {
-	/**
-	 *
-	 */
 	public SliderSelectionProperty() {
 		super(SWT.Selection);
 	}

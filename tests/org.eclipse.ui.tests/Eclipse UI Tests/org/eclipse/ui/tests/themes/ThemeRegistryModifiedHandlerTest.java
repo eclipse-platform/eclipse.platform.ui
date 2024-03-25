@@ -32,7 +32,6 @@ import static org.mockito.Mockito.*;
 
 /**
  * @since 3.5
- *
  */
 public class ThemeRegistryModifiedHandlerTest {
 	@Test

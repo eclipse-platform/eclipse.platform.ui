@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -193,7 +194,7 @@ public class TabbedPropertyRegistry {
 		IStatus status = new Status(IStatus.ERROR, bundle.getSymbolicName(),
 				TabbedPropertyViewStatusCodes.CONTRIBUTOR_ERROR, message,
 				exception);
-		Platform.getLog(bundle).log(status);
+		ILog.of(bundle).log(status);
 	}
 
 	/**
@@ -307,6 +308,7 @@ public class TabbedPropertyRegistry {
 	 * Given a property tab descriptor remove all its section descriptors that
 	 * do not apply to the given input object.
 	 */
+	@SuppressWarnings("unchecked")
 	protected ITabDescriptor adaptDescriptorFor(ITabDescriptor target,
 			IWorkbenchPart part, ISelection selection) {
 		List<ISectionDescriptor> filteredSectionDescriptors = new ArrayList<>();
@@ -389,7 +391,7 @@ public class TabbedPropertyRegistry {
 		Bundle bundle = FrameworkUtil.getBundle(TabbedPropertyRegistry.class);
 		IStatus status = new Status(IStatus.ERROR, bundle.getSymbolicName(),
 				TabbedPropertyViewStatusCodes.NO_TAB_ERROR, message, null);
-		Platform.getLog(bundle).log(status);
+		ILog.of(bundle).log(status);
 	}
 
 	/**
@@ -501,7 +503,7 @@ public class TabbedPropertyRegistry {
 		IStatus status = new Status(IStatus.ERROR, pluginId,
 				TabbedPropertyViewStatusCodes.TAB_ERROR, message, null);
 		Bundle bundle = FrameworkUtil.getBundle(TabbedPropertyRegistry.class);
-		Platform.getLog(bundle).log(status);
+		ILog.of(bundle).log(status);
 	}
 
 	/**

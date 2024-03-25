@@ -20,9 +20,6 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TransferData;
-/**
- *
- */
 public class WebBrowserViewDropAdapter extends DropTargetAdapter {
 	/**
 	 * The view to which this drop support has been added.
@@ -152,8 +149,6 @@ public void dropAccept(DropTargetEvent event) {
 	 * Subclasses must implement this method to define which drops make sense.
 	 * </p>
 	 *
-	 * @param target the object that the mouse is currently hovering over, or
-	 *   <code>null</code> if the mouse is hovering over empty space
 	 * @param operation the current drag operation (copy, move, etc.)
 	 * @param transferType the current transfer type
 	 * @return <code>true</code> if the drop is valid, and <code>false</code>

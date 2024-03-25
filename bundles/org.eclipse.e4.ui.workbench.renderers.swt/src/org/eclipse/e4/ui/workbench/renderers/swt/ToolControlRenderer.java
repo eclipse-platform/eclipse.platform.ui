@@ -16,9 +16,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import jakarta.inject.Inject;
 import java.util.Collections;
 import java.util.List;
-import javax.inject.Inject;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
@@ -75,7 +75,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 	/**
 	 * The state ID for a toggle state understood by the system.
 	 *
-	 * @see RegistryToggleState.STATE_ID
+	 * see org.eclipse.ui.handlers.RegistryToggleState.STATE_ID
 	 */
 	public static final String STATE_ID = "org.eclipse.ui.commands.toggleState"; //$NON-NLS-1$
 
@@ -217,7 +217,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 	@Inject
 	@Optional
 	private void subscribeTopicAppStartup(
-			@UIEventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) Event event) {
+			@SuppressWarnings("unused") @UIEventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) Event event) {
 		List<MToolControl> toolControls = modelService.findElements(
 				application, null, MToolControl.class, null);
 		for (MToolControl toolControl : toolControls) {
@@ -277,8 +277,6 @@ public class ToolControlRenderer extends SWTPartRenderer {
 	 * Removes the IPresentationEngine.HIDDEN_EXPLICITLY from the trimbar
 	 * entries. Having a separate logic for toolbars and toolcontrols would be
 	 * confusing for the user, hence we remove this tag for both these types
-	 *
-	 * @param toolbarModel
 	 */
 	private void removeHiddenTags(MToolControl toolControl) {
 		MWindow mWindow = modelService.getTopLevelWindowFor(toolControl);

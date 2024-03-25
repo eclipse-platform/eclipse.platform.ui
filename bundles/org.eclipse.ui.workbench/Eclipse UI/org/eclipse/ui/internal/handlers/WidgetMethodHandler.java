@@ -134,12 +134,6 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
 
 	/**
 	 * Invoke a runnable on the swing EDT.
-	 *
-	 * @param methodRunnable
-	 * @throws ClassNotFoundException
-	 * @throws NoSuchMethodException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
 	 */
 	protected void swingInvokeLater(Runnable methodRunnable)
 			throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -154,10 +148,6 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
 	 *
 	 * @return Hopefully, the swing focus component, but it can return
 	 *         <code>null</code>.
-	 * @throws ClassNotFoundException
-	 * @throws NoSuchMethodException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
 	 */
 	protected Object getFocusComponent()
 			throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {

@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.content.ITextContentDescriber;
 
 /**
  * This test ContentDescriber added specifically for OpenNavigatorFolderTest.
- *
  */
 
 public final class ContentDescriberForTestsOnly implements ITextContentDescriber {
@@ -98,11 +97,6 @@ public final class ContentDescriberForTestsOnly implements ITextContentDescriber
 		}
 	}
 
-	/**
-	 * @param contents
-	 * @param description
-	 * @throws IOException
-	 */
 	private void calculateSupportedOptions(IContentDescription description) {
 		if (isRelevent(description)) {
 			makeBusy();
@@ -115,10 +109,6 @@ public final class ContentDescriberForTestsOnly implements ITextContentDescriber
 		return IContentDescriber.INDETERMINATE;
 	}
 
-	/**
-	 * @param description
-	 * @return
-	 */
 	private boolean isRelevent(IContentDescription description) {
 		boolean result = false;
 		if (description == null)

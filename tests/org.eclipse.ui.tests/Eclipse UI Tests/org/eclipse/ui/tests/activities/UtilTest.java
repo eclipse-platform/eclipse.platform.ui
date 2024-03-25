@@ -284,9 +284,6 @@ public class UtilTest {
 
 	/**
 	 * Test the activity property tester. Test the isActivityEnabled property
-	 *
-	 * @throws CoreException
-	 *
 	 */
 	@Test
 	public void testPropertyTester1() throws CoreException {
@@ -305,11 +302,6 @@ public class UtilTest {
 		testPropertyTester1(context, activityManager);
 	}
 
-	/**
-	 * @param context
-	 * @param activityManager
-	 * @throws CoreException
-	 */
 	private void testPropertyTester1(EvaluationContext context,
 			IActivityManager activityManager) throws CoreException {
 		boolean result = activityManager
@@ -324,9 +316,6 @@ public class UtilTest {
 
 	/**
 	 * Test the activity property tester. Test the isCategoryEnabled property
-	 *
-	 * @throws CoreException
-	 *
 	 */
 	@Test
 	public void testPropertyTester2() throws CoreException {
@@ -360,7 +349,7 @@ public class UtilTest {
 		public static final String VARIABLE = "arbitraryVariable";
 		public static final String VALUE = "arbitraryValue";
 
-		private Map<String, String> sourceState = new HashMap<>(1);
+		private final Map<String, String> sourceState = new HashMap<>(1);
 
 		public TestSourceProvider() {
 			super();
@@ -526,11 +515,6 @@ public class UtilTest {
 		}
 	}
 
-	/**
-	 * @param context
-	 * @param activityManager
-	 * @throws CoreException
-	 */
 	private void testPropertyTester2(EvaluationContext context,
 			IActivityManager activityManager) throws CoreException {
 		boolean result = WorkbenchActivityHelper.isEnabled(activityManager, ID1);

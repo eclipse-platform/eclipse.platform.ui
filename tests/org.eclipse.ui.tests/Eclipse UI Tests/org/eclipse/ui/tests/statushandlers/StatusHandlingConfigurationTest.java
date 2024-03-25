@@ -27,7 +27,6 @@ import junit.framework.TestSuite;
 
 /**
  * @since 3.5
- *
  */
 public class StatusHandlingConfigurationTest extends TestCase {
 	public static TestSuite suite() {

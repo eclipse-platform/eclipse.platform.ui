@@ -28,7 +28,7 @@ import org.eclipse.ui.part.Page;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  *
- * @see PageBookView
+ * @see org.eclipse.ui.part.PageBookView
  */
 public class ContextPage extends Page {
 	public static final String TEST_CONTEXT_ID = "org.eclipse.ui.tests.contexts.Page";
@@ -75,7 +75,7 @@ public class ContextPage extends Page {
 	/**
 	 * Sets the message to the given string.
 	 *
-	 * @param message
+	 * @param msg
 	 *            the message text
 	 */
 	public void setMessage(String msg) {

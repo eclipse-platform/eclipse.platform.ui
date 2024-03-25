@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.Assert;
  * @param <T>
  *            type of inner observable value
  * @since 1.0
- *
  */
 public class DetailObservableValue<M, T> extends AbstractObservableValue<T>
 		implements IObserving {
@@ -56,11 +55,6 @@ public class DetailObservableValue<M, T> extends AbstractObservableValue<T>
 
 	private IObservableFactory<? super M, IObservableValue<T>> factory;
 
-	/**
-	 * @param outerObservableValue
-	 * @param factory
-	 * @param detailType
-	 */
 	public DetailObservableValue(IObservableValue<M> outerObservableValue,
 			IObservableFactory<? super M, IObservableValue<T>> factory,
 			Object detailType) {

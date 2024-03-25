@@ -42,7 +42,6 @@ import org.eclipse.ui.part.ResourceTransfer;
  *
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
- *
  */
 public class ResourceDragAdapterAssistant extends
 		CommonDragAdapterAssistant {

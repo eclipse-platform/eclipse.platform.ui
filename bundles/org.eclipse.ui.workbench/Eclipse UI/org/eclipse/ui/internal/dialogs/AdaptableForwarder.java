@@ -29,8 +29,6 @@ public class AdaptableForwarder implements IAdaptable {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param element
 	 */
 	public AdaptableForwarder(Object element) {
 		this.element = element;

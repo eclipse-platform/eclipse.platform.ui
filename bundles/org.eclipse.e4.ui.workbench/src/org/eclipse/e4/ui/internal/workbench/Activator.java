@@ -35,16 +35,13 @@ import static org.eclipse.e4.ui.internal.workbench.Policy.TRACE_FLAG;
 
 import java.util.Hashtable;
 import java.util.List;
-import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.osgi.service.debug.DebugTrace;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.BundleTracker;
-import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * BundleActivator to access the required OSGi services.
@@ -58,10 +55,6 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 	private static Activator activator;
 
 	private BundleContext context;
-	private ServiceTracker<Location, Location> locationTracker;
-
-	private ServiceTracker<DebugOptions, DebugOptions> debugTracker;
-	private ServiceTracker<LogService, LogService> logTracker;
 
 	/** Tracks all bundles which are in the state: RESOLVED, STARTING, ACTIVE or STOPPING. */
 	private BundleTracker<List<Bundle>> resolvedBundles;
@@ -112,19 +105,6 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		if (locationTracker != null) {
-			locationTracker.close();
-			locationTracker = null;
-		}
-		if (debugTracker != null) {
-			trace = null;
-			debugTracker.close();
-			debugTracker = null;
-		}
-		if (logTracker != null) {
-			logTracker.close();
-			logTracker = null;
-		}
 		if (resolvedBundles != null) {
 			// the close of the BundleTracker will also remove all entries form the BundleFinder
 			resolvedBundles.close();
@@ -153,54 +133,4 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 	public static void trace(String option, String msg, Throwable error) {
 		activator.getTrace().trace(option, msg, error);
 	}
-
-	public LogService getLogService() {
-		LogService logService = null;
-		if (logTracker != null) {
-			logService = logTracker.getService();
-		} else if (context != null) {
-			logTracker = new ServiceTracker<>(context,
-					LogService.class.getName(), null);
-			logTracker.open();
-			logService = logTracker.getService();
-		}
-		if (logService == null) {
-			throw new IllegalStateException("No LogService is available."); //$NON-NLS-1$
-		}
-		return logService;
-	}
-
-	/**
-	 * @param level
-	 *            one from {@code LogService} constants
-	 * @param message
-	 * @see LogService#LOG_ERROR
-	 * @see LogService#LOG_WARNING
-	 * @see LogService#LOG_INFO
-	 * @see LogService#LOG_DEBUG
-	 */
-	public static void log(int level, String message) {
-		LogService logService = activator.getLogService();
-		if (logService != null) {
-			logService.log(level, message);
-		}
-	}
-
-	/**
-	 * @param level
-	 *            one from {@code LogService} constants
-	 * @param message
-	 * @param exception
-	 * @see LogService#LOG_ERROR
-	 * @see LogService#LOG_WARNING
-	 * @see LogService#LOG_INFO
-	 * @see LogService#LOG_DEBUG
-	 */
-	public static void log(int level, String message, Throwable exception) {
-		LogService logService = activator.getLogService();
-		if (logService != null) {
-			logService.log(level, message, exception);
-		}
-	}
-
 }

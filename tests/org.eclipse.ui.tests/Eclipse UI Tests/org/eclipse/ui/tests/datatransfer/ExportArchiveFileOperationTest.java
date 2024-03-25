@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -433,13 +432,13 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 				}
 			}
 			else{
-				TarFile tarFile = new TarFile(filePath);
-				Enumeration<?> entries = tarFile.entries();
-				while (entries.hasMoreElements()){
-					TarEntry entry = (TarEntry)entries.nextElement();
-					allEntries.add(entry.getName());
+				try (TarFile tarFile = new TarFile(filePath)) {
+					Enumeration<?> entries = tarFile.entries();
+					while (entries.hasMoreElements()) {
+						TarEntry entry = (TarEntry) entries.nextElement();
+						allEntries.add(entry.getName());
+					}
 				}
-				tarFile.close();
 			}
 			if (flattenPaths) {
 				verifyFiles(allEntries);
@@ -456,9 +455,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		int count = 0;
 		Set<String> folderNames = new HashSet<>();
 		List<String> files = new ArrayList<>();
-		Iterator<String> archiveEntries = entries.iterator();
-		while (archiveEntries.hasNext()){
-			String entryName = archiveEntries.next();
+		for (String entryName : entries) {
 			int idx = entryName.lastIndexOf('/');
 			String folderPath = entryName.substring(0, idx);
 			String fileName = entryName.substring(idx+1, entryName.length());
@@ -488,9 +485,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 	}
 
 	private void verifyFiles(List<String> files) {
-		Iterator<String> iter = files.iterator();
-		while (iter.hasNext()){
-			String file = iter.next();
+		for (String file : files) {
 			verifyFile(file);
 		}
 	}
@@ -509,9 +504,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 	}
 
 	private void verifyFolders(Set<String> folderNames) {
-		Iterator<String> folders = folderNames.iterator();
-		while (folders.hasNext()){
-			String folderName = folders.next();
+		for (String folderName : folderNames) {
 			if (".settings".equals(folderName)) {
 				continue;
 			}

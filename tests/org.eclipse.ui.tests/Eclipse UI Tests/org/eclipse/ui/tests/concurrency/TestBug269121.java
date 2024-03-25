@@ -103,6 +103,6 @@ public class TestBug269121 {
 			Display.getCurrent().readAndDispatch();
 		}
 		job.join();
-		assertTrue("Deadlock occurred", statusJob.getResult().isOK());
+		assertTrue("Timeout occurred - possible Deadlock. See logging!", statusJob.getResult().isOK());
 	}
 }

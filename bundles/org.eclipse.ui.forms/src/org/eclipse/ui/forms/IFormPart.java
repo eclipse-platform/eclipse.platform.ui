@@ -40,7 +40,6 @@ package org.eclipse.ui.forms;
  *
  * @see IManagedForm
  * @since 3.0
- *
  */
 public interface IFormPart {
 	/**

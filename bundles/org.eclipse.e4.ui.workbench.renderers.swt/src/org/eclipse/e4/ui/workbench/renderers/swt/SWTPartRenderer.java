@@ -260,11 +260,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 
-	/**
-	 * @param element
-	 * @param image
-	 * @return
-	 */
 	private Image adornImage(MUIElement element, Image image) {
 		if (imageChanged()) {
 			disposeAdornedImage(element);// Need to dispose old image.If image changed

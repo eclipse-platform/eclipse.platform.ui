@@ -23,7 +23,6 @@ package org.eclipse.jface.databinding.viewers;
  * @param <E> type of the elements in the tree
  *
  * @since 1.2
- *
  */
 public abstract class TreeStructureAdvisor<E> {
 

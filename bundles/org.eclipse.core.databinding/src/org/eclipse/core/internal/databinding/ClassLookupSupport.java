@@ -23,7 +23,6 @@ import java.util.Set;
 
 /**
  * @since 1.0
- *
  */
 public class ClassLookupSupport {
 

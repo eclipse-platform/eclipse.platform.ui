@@ -48,7 +48,6 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
  * This is installed by the WorkingSetActionProvider.
  *
  * @since 3.2
- *
  */
 public class WorkingSetRootModeActionGroup extends ActionGroup {
 
@@ -69,8 +68,6 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 		/**
 		 * Construct an Action that represents a toggle-able state between
 		 * Showing top level Working Sets and Projects.
-		 *
-		 * @param toGroupWorkingSets
 		 */
 		public TopLevelContentAction(boolean toGroupWorkingSets) {
 			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
@@ -101,9 +98,6 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	/**
 	 * Create an action group that will listen to the stateModel and update the
 	 * structuredViewer when necessary.
-	 *
-	 * @param aStructuredViewer
-	 * @param aStateModel
 	 */
 	public WorkingSetRootModeActionGroup(StructuredViewer aStructuredViewer,
 			IExtensionStateModel aStateModel) {
@@ -211,8 +205,6 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	/**
 	 * Toggle whether top level working sets should be displayed as a group or
 	 * collapse to just show their contents.
-	 *
-	 * @param showTopLevelWorkingSets
 	 */
 	public void setShowTopLevelWorkingSets(boolean showTopLevelWorkingSets) {
 		if (actions == null)
@@ -235,9 +227,6 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 		}
 	}
 
-	/**
-	 * @param sStateModel
-	 */
 	public void setStateModel(IExtensionStateModel sStateModel) {
 		stateModel = sStateModel;
 	}

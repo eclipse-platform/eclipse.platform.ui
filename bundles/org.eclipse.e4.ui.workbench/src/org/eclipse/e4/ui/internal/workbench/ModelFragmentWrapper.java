@@ -129,4 +129,10 @@ public final class ModelFragmentWrapper {
 	public void setContributorURI(String contributorURI) {
 		this.contributorURI = contributorURI;
 	}
+
+	@Override
+	public String toString() {
+		return "ModelFragmentWrapper [contributorName=" + contributorName + "]"; // $NON-NLS-1$ //$NON-NLS-1$//$NON-NLS-2$
+	}
+
 }

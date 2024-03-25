@@ -25,12 +25,8 @@ import org.eclipse.swt.widgets.Control;
  * @param <S> type of the source object
  *
  * @since 3.3
- *
  */
 public class ControlBoundsProperty<S extends Control> extends WidgetValueProperty<S, Rectangle> {
-	/**
-	 *
-	 */
 	public ControlBoundsProperty() {
 		super(new int[] { SWT.Resize, SWT.Move });
 	}

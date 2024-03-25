@@ -20,7 +20,6 @@ import org.eclipse.ui.forms.widgets.Section;
 
 /**
  * {@link CSSStylableElement} implementation which wrap SWT {@link Section}.
- *
  */
 public class SectionElement extends CompositeElement {
 

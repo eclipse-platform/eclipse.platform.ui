@@ -18,7 +18,9 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -45,38 +47,144 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 /**
  * Abstract test class for the working set wizard tests.
  */
-public abstract class UIWorkingSetWizardsAuto extends UITestCase {
-	protected static final int SIZING_WIZARD_WIDTH = 470;
-
-	protected static final int SIZING_WIZARD_HEIGHT = 550;
-
-	protected static final int SIZING_WIZARD_WIDTH_2 = 500;
-
-	protected static final int SIZING_WIZARD_HEIGHT_2 = 500;
-
+public abstract class UIWorkingSetWizardsAuto<W extends IWizard> extends UITestCase {
 	protected static final String WORKING_SET_NAME_1 = "ws1";
 
 	protected static final String WORKING_SET_NAME_2 = "ws2";
 
-	protected WizardDialog fWizardDialog;
+	private static final int SIZING_WIZARD_WIDTH_2 = 500;
 
-	protected IWizard fWizard;
+	private static final int SIZING_WIZARD_HEIGHT_2 = 500;
 
-	protected IProject p1;
+	private WizardDialog wizardDialog;
 
-	protected IProject p2;
+	private W wizardToTest;
 
-	protected IFile f1;
+	private IProject project1;
 
-	protected IFile f2;
+	private IProject project2;
+
+	private IFile fileInProject2;
 
 	public UIWorkingSetWizardsAuto(String name) {
 		super(name);
 	}
 
+	protected WizardDialog getWizardDialog() {
+		return wizardDialog;
+	}
+
+	protected W getWizard() {
+		return wizardToTest;
+	}
+
+	protected IProject getProject1() {
+		return project1;
+	}
+
+	protected IProject getProject2() {
+		return project2;
+	}
+
+	protected IFile getFileInProject2() {
+		return fileInProject2;
+	}
+
+	@Override
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
+		wizardToTest = createWizardToTest();
+		wizardDialog = createWizardDialog();
+		initializeTestResources();
+	}
+
+	protected abstract W createWizardToTest();
+
+	private WizardDialog createWizardDialog() {
+		Shell parentShell = DialogCheck.getShell();
+		WizardDialog wizardDialog = new WizardDialog(parentShell, getWizard());
+		wizardDialog.create();
+		Shell dialogShell = wizardDialog.getShell();
+		dialogShell.setSize(Math.max(SIZING_WIZARD_WIDTH_2, dialogShell.getSize().x), SIZING_WIZARD_HEIGHT_2);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialogShell, IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
+		return wizardDialog;
+	}
+
+	private void initializeTestResources() throws CoreException {
+		project1 = FileUtil.createProject("TP1");
+		project2 = FileUtil.createProject("TP2");
+		FileUtil.createFile("f1.txt", project1);
+		fileInProject2 = FileUtil.createFile("f2.txt", project2);
+	}
+
+	@Override
+	protected void doTearDown() throws Exception {
+		removeAllWorkingSets();
+		cleanupWorkspace();
+		disposeWizardAndDialog();
+		super.doTearDown();
+	}
+
+	private void removeAllWorkingSets() {
+		IWorkingSetManager workingSetManager = fWorkbench.getWorkingSetManager();
+		IWorkingSet[] workingSets = workingSetManager.getWorkingSets();
+		for (IWorkingSet workingSet : workingSets) {
+			workingSetManager.removeWorkingSet(workingSet);
+		}
+	}
+
+	private void cleanupWorkspace() {
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().delete(true, null);
+		} catch (CoreException e) {
+			TestPlugin.getDefault().getLog().log(e.getStatus());
+			throw createAssertionError(e);
+		} finally {
+			project1 = null;
+			project2 = null;
+			fileInProject2 = null;
+		}
+	}
+
+	private AssertionError createAssertionError(CoreException originalException) {
+		Throwable cause = originalException.getCause();
+		if (cause == null) {
+			IStatus mostSevere = findMostSevere(originalException.getStatus());
+			cause = mostSevere.getException();
+		}
+
+		return new AssertionError(originalException.getMessage(), cause);
+	}
+
+	private IStatus findMostSevere(IStatus status) {
+		if (!status.isMultiStatus()) {
+			return status;
+		}
+
+		IStatus mostSevere = null;
+
+		for (IStatus childStatus : status.getChildren()) {
+			IStatus mostSevereChild = findMostSevere(childStatus);
+			if (mostSevere == null || mostSevereChild.getSeverity() > mostSevere.getSeverity()) {
+				mostSevere = mostSevereChild;
+			}
+		}
+
+		if (mostSevere == null) {
+			mostSevere = status;
+		}
+
+		return mostSevere;
+	}
+
+	private void disposeWizardAndDialog() {
+		wizardDialog = null;
+		wizardToTest.dispose();
+		wizardToTest = null;
+	}
+
 	protected void checkTreeItems() {
-		List<Widget> widgets = getWidgets((Composite) fWizardDialog.getCurrentPage()
-				.getControl(), Tree.class);
+		List<Widget> widgets = getWidgets((Composite) getWizardDialog().getCurrentPage().getControl(), Tree.class);
 		Tree tree = (Tree) widgets.get(0);
 		TreeItem[] treeItems = tree.getItems();
 		for (TreeItem treeItem : treeItems) {
@@ -86,28 +194,6 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 			event.item = treeItem;
 			tree.notifyListeners(SWT.Selection, event);
 		}
-	}
-
-	private void deleteResources() throws CoreException {
-		try {
-			if (p1 != null) {
-				FileUtil.deleteProject(p1);
-			}
-			if (p2 != null) {
-				FileUtil.deleteProject(p2);
-			}
-
-		} catch (CoreException e) {
-			TestPlugin.getDefault().getLog().log(e.getStatus());
-			fail(e.getMessage());
-			throw (e);
-
-		}
-
-	}
-
-	private Shell getShell() {
-		return DialogCheck.getShell();
 	}
 
 	protected List<Widget> getWidgets(Composite composite, Class<?> clazz) {
@@ -125,49 +211,11 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 		return selectedChildren;
 	}
 
-	/**
-	 * <code>fWizard</code> must be initialized by subclasses prior to
-	 * calling this.
-	 */
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-
-		fWizardDialog = new WizardDialog(getShell(), fWizard);
-		fWizardDialog.create();
-		Shell dialogShell = fWizardDialog.getShell();
-		dialogShell.setSize(Math.max(SIZING_WIZARD_WIDTH_2, dialogShell
-				.getSize().x), SIZING_WIZARD_HEIGHT_2);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(fWizardDialog.getShell(),
-				IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
-
-		IWorkingSetManager workingSetManager = fWorkbench
-				.getWorkingSetManager();
-		IWorkingSet[] workingSets = workingSetManager.getWorkingSets();
-		for (IWorkingSet workingSet : workingSets) {
-			workingSetManager.removeWorkingSet(workingSet);
-		}
-		setupResources();
-	}
-
-	private void setupResources() throws CoreException {
-		p1 = FileUtil.createProject("TP1");
-		p2 = FileUtil.createProject("TP2");
-		f1 = FileUtil.createFile("f1.txt", p1);
-		f2 = FileUtil.createFile("f2.txt", p2);
-	}
-
 	protected void setTextWidgetText(String text, IWizardPage page) {
 		List<Widget> widgets = getWidgets((Composite) page.getControl(), Text.class);
 		Text textWidget = (Text) widgets.get(0);
 		textWidget.setText(text);
 		textWidget.notifyListeners(SWT.Modify, new Event());
-	}
-
-	@Override
-	protected void doTearDown() throws Exception {
-		deleteResources();
-		super.doTearDown();
 	}
 
 	protected WorkingSetDescriptor[] getEditableWorkingSetDescriptors() {

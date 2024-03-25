@@ -37,7 +37,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class ComboObservableValueTextTest {
 	private Delegate delegate;

@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * @since 3.3
- *
  */
 public class LabelImageProperty extends WidgetImageValueProperty<Label> {
 	@Override

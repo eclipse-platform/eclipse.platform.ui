@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.Assert;
  * {@link org.eclipse.swt.widgets.Tree}.
  *
  * @since 3.3
- *
  */
 abstract class SWTFocusCellManager {
 
@@ -47,11 +46,6 @@ abstract class SWTFocusCellManager {
 
 	private DisposeListener itemDeletionListener = e -> setFocusCell(null);
 
-	/**
-	 * @param viewer
-	 * @param focusDrawingDelegate
-	 * @param navigationDelegate
-	 */
 	public SWTFocusCellManager(ColumnViewer viewer,
 			FocusCellHighlighter focusDrawingDelegate,
 			CellNavigationStrategy navigationDelegate) {
@@ -191,7 +185,6 @@ abstract class SWTFocusCellManager {
 
 	/**
 	 * @return the cell with the focus
-	 *
 	 */
 	public ViewerCell getFocusCell() {
 		return focusCell;

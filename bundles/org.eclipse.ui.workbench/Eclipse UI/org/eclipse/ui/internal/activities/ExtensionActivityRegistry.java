@@ -41,17 +41,17 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	 */
 	private static final String PREFIX = "UIActivities."; //$NON-NLS-1$
 
-	private List<ActivityRequirementBindingDefinition> activityRequirementBindingDefinitions;
+	private List<ActivityRequirementBindingDefinition> extensionActivityRequirementBindingDefinitions;
 
-	private List<ActivityDefinition> activityDefinitions;
+	private List<ActivityDefinition> extensionActivityDefinitions;
 
-	private List<ActivityPatternBindingDefinition> activityPatternBindingDefinitions;
+	private List<ActivityPatternBindingDefinition> extensionActivityPatternBindingDefinitions;
 
-	private List<CategoryActivityBindingDefinition> categoryActivityBindingDefinitions;
+	private List<CategoryActivityBindingDefinition> extensionCategoryActivityBindingDefinitions;
 
-	private List<CategoryDefinition> categoryDefinitions;
+	private List<CategoryDefinition> extensionCategoryDefinitions;
 
-	private List<String> defaultEnabledActivities;
+	private List<String> extensionDefaultEnabledActivities;
 
 	private IExtensionRegistry extensionRegistry;
 
@@ -96,9 +96,9 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	 *         not found.
 	 */
 	private ActivityDefinition getActivityDefinitionById(String id) {
-		int size = activityDefinitions.size();
+		int size = extensionActivityDefinitions.size();
 		for (int i = 0; i < size; i++) {
-			ActivityDefinition activityDef = activityDefinitions.get(i);
+			ActivityDefinition activityDef = extensionActivityDefinitions.get(i);
 			if (activityDef.getId().equals(id)) {
 				return activityDef;
 			}
@@ -107,40 +107,40 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	}
 
 	private void load() {
-		if (activityRequirementBindingDefinitions == null) {
-			activityRequirementBindingDefinitions = new ArrayList<>();
+		if (extensionActivityRequirementBindingDefinitions == null) {
+			extensionActivityRequirementBindingDefinitions = new ArrayList<>();
 		} else {
-			activityRequirementBindingDefinitions.clear();
+			extensionActivityRequirementBindingDefinitions.clear();
 		}
 
-		if (activityDefinitions == null) {
-			activityDefinitions = new ArrayList<>();
+		if (extensionActivityDefinitions == null) {
+			extensionActivityDefinitions = new ArrayList<>();
 		} else {
-			activityDefinitions.clear();
+			extensionActivityDefinitions.clear();
 		}
 
-		if (activityPatternBindingDefinitions == null) {
-			activityPatternBindingDefinitions = new ArrayList<>();
+		if (extensionActivityPatternBindingDefinitions == null) {
+			extensionActivityPatternBindingDefinitions = new ArrayList<>();
 		} else {
-			activityPatternBindingDefinitions.clear();
+			extensionActivityPatternBindingDefinitions.clear();
 		}
 
-		if (categoryActivityBindingDefinitions == null) {
-			categoryActivityBindingDefinitions = new ArrayList<>();
+		if (extensionCategoryActivityBindingDefinitions == null) {
+			extensionCategoryActivityBindingDefinitions = new ArrayList<>();
 		} else {
-			categoryActivityBindingDefinitions.clear();
+			extensionCategoryActivityBindingDefinitions.clear();
 		}
 
-		if (categoryDefinitions == null) {
-			categoryDefinitions = new ArrayList<>();
+		if (extensionCategoryDefinitions == null) {
+			extensionCategoryDefinitions = new ArrayList<>();
 		} else {
-			categoryDefinitions.clear();
+			extensionCategoryDefinitions.clear();
 		}
 
-		if (defaultEnabledActivities == null) {
-			defaultEnabledActivities = new ArrayList<>();
+		if (extensionDefaultEnabledActivities == null) {
+			extensionDefaultEnabledActivities = new ArrayList<>();
 		} else {
-			defaultEnabledActivities.clear();
+			extensionDefaultEnabledActivities.clear();
 		}
 
 		IConfigurationElement[] configurationElements = extensionRegistry
@@ -175,26 +175,26 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
 		// merge enablement overrides from plugin_customization.ini
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		for (ActivityDefinition activityDef : activityDefinitions) {
+		for (ActivityDefinition activityDef : extensionActivityDefinitions) {
 			String id = activityDef.getId();
 			String preferenceKey = createPreferenceKey(id);
 			if ("".equals(store.getDefaultString(preferenceKey))) //$NON-NLS-1$
 				continue;
 			if (store.getDefaultBoolean(preferenceKey)) {
-				if (!defaultEnabledActivities.contains(id) && activityDef.getEnabledWhen() == null)
-					defaultEnabledActivities.add(id);
+				if (!extensionDefaultEnabledActivities.contains(id) && activityDef.getEnabledWhen() == null)
+					extensionDefaultEnabledActivities.add(id);
 			} else {
-				defaultEnabledActivities.remove(id);
+				extensionDefaultEnabledActivities.remove(id);
 			}
 		}
 
 		// Removal of all defaultEnabledActivites which target to expression
 		// controlled activities.
-		for (int i = 0; i < defaultEnabledActivities.size();) {
-			String id = defaultEnabledActivities.get(i);
+		for (int i = 0; i < extensionDefaultEnabledActivities.size();) {
+			String id = extensionDefaultEnabledActivities.get(i);
 			ActivityDefinition activityDef = getActivityDefinitionById(id);
 			if (activityDef != null && activityDef.getEnabledWhen() != null) {
-				defaultEnabledActivities.remove(i);
+				extensionDefaultEnabledActivities.remove(i);
 				StatusManager.getManager().handle(new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID,
 						"Default enabled activity declarations will be ignored (id: " + id + ")")); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
@@ -203,7 +203,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		}
 
 		// remove all requirement bindings that reference expression-bound activities
-		for (Iterator<ActivityRequirementBindingDefinition> i = activityRequirementBindingDefinitions.iterator(); i
+		for (Iterator<ActivityRequirementBindingDefinition> i = extensionActivityRequirementBindingDefinitions.iterator(); i
 				.hasNext();) {
 			ActivityRequirementBindingDefinition bindingDef = i.next();
 			ActivityDefinition activityDef = getActivityDefinitionById(bindingDef.getRequiredActivityId());
@@ -224,36 +224,36 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
 		boolean activityRegistryChanged = false;
 
-		if (!activityRequirementBindingDefinitions.equals(super.activityRequirementBindingDefinitions)) {
-			super.activityRequirementBindingDefinitions = Collections
-					.unmodifiableList(new ArrayList<>(activityRequirementBindingDefinitions));
+		if (!extensionActivityRequirementBindingDefinitions.equals(super.activityRequirementBindingDefinitions)) {
+			activityRequirementBindingDefinitions = Collections
+					.unmodifiableList(new ArrayList<>(extensionActivityRequirementBindingDefinitions));
 			activityRegistryChanged = true;
 		}
 
-		if (!activityDefinitions.equals(super.activityDefinitions)) {
-			super.activityDefinitions = Collections.unmodifiableList(new ArrayList<>(activityDefinitions));
+		if (!extensionActivityDefinitions.equals(super.activityDefinitions)) {
+			activityDefinitions = Collections.unmodifiableList(new ArrayList<>(extensionActivityDefinitions));
 			activityRegistryChanged = true;
 		}
 
-		if (!activityPatternBindingDefinitions.equals(super.activityPatternBindingDefinitions)) {
-			super.activityPatternBindingDefinitions = Collections
-					.unmodifiableList(new ArrayList<>(activityPatternBindingDefinitions));
+		if (!extensionActivityPatternBindingDefinitions.equals(super.activityPatternBindingDefinitions)) {
+			activityPatternBindingDefinitions = Collections
+					.unmodifiableList(new ArrayList<>(extensionActivityPatternBindingDefinitions));
 			activityRegistryChanged = true;
 		}
 
-		if (!categoryActivityBindingDefinitions.equals(super.categoryActivityBindingDefinitions)) {
-			super.categoryActivityBindingDefinitions = Collections
-					.unmodifiableList(new ArrayList<>(categoryActivityBindingDefinitions));
+		if (!extensionCategoryActivityBindingDefinitions.equals(super.categoryActivityBindingDefinitions)) {
+			categoryActivityBindingDefinitions = Collections
+					.unmodifiableList(new ArrayList<>(extensionCategoryActivityBindingDefinitions));
 			activityRegistryChanged = true;
 		}
 
-		if (!categoryDefinitions.equals(super.categoryDefinitions)) {
-			super.categoryDefinitions = Collections.unmodifiableList(new ArrayList<>(categoryDefinitions));
+		if (!extensionCategoryDefinitions.equals(super.categoryDefinitions)) {
+			categoryDefinitions = Collections.unmodifiableList(new ArrayList<>(extensionCategoryDefinitions));
 			activityRegistryChanged = true;
 		}
 
-		if (!defaultEnabledActivities.equals(super.defaultEnabledActivities)) {
-			super.defaultEnabledActivities = Collections.unmodifiableList(new ArrayList<>(defaultEnabledActivities));
+		if (!extensionDefaultEnabledActivities.equals(super.defaultEnabledActivities)) {
+			defaultEnabledActivities = Collections.unmodifiableList(new ArrayList<>(extensionDefaultEnabledActivities));
 			activityRegistryChanged = true;
 		}
 
@@ -277,7 +277,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 				.readDefaultEnablement(new ConfigurationElementMemento(configurationElement));
 
 		if (enabledActivity != null) {
-			defaultEnabledActivities.add(enabledActivity);
+			extensionDefaultEnabledActivities.add(enabledActivity);
 		}
 
 	}
@@ -288,7 +288,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 						getNamespace(configurationElement));
 
 		if (activityRequirementBindingDefinition != null) {
-			activityRequirementBindingDefinitions.add(activityRequirementBindingDefinition);
+			extensionActivityRequirementBindingDefinitions.add(activityRequirementBindingDefinition);
 		}
 	}
 
@@ -312,7 +312,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 					}
 				}
 			}
-			activityDefinitions.add(activityDefinition);
+			extensionActivityDefinitions.add(activityDefinition);
 		}
 	}
 
@@ -322,7 +322,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 						getNamespace(configurationElement));
 
 		if (activityPatternBindingDefinition != null) {
-			activityPatternBindingDefinitions.add(activityPatternBindingDefinition);
+			extensionActivityPatternBindingDefinitions.add(activityPatternBindingDefinition);
 		}
 	}
 
@@ -332,7 +332,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 						getNamespace(configurationElement));
 
 		if (categoryActivityBindingDefinition != null) {
-			categoryActivityBindingDefinitions.add(categoryActivityBindingDefinition);
+			extensionCategoryActivityBindingDefinitions.add(categoryActivityBindingDefinition);
 		}
 	}
 
@@ -341,7 +341,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 				new ConfigurationElementMemento(configurationElement), getNamespace(configurationElement));
 
 		if (categoryDefinition != null) {
-			categoryDefinitions.add(categoryDefinition);
+			extensionCategoryDefinitions.add(categoryDefinition);
 		}
 	}
 }

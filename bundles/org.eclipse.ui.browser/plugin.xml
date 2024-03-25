@@ -195,26 +195,26 @@
          <location>Applications/Firefox.app</location>
       </browser>
       <browser
-         id="org.eclipse.ui.browser.camino"
-         name="%browserCamino"
+         id="org.eclipse.ui.browser.chrome"
+         name="%browserChrome"
          os="MacOSX"
-         executable="Camino">
-         <location>Applications/Camino.app/Contents/MacOS/Camino</location>
+         executable="Google Chrome">
+         <location>Applications/Google Chrome.app</location>
       </browser>
-<!--      <browser
+      <browser
          id="org.eclipse.ui.browser.safari"
          name="%browserSafari"
          os="MacOSX"
          executable="Safari"
          factoryclass="org.eclipse.ui.internal.browser.macosx.SafariBrowserFactory">
-         <location>Applications/Safari.app/Contents/MacOS/Safari</location>
-      </browser> -->
+         <location>Applications/Safari.app</location>
+      </browser>
       <browser
-         id="org.eclipse.ui.browser.ie"
-         name="%browserInternetExplorer"
+         id="org.eclipse.ui.browser.msedge"
+         name="%browserMicrosoftEdge"
          os="MacOSX"
-         executable="Internet&#0032;Explorer">
-         <location>Applications/Internet Explorer.app/Contents/MacOS/"Internet Explorer"</location>
+         executable="Microsoft Edge">
+         <location>Applications/Microsoft Edge.app</location>
       </browser>
    </extension>
    <extension

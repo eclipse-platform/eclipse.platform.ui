@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Shell;
  * or accessibility.
  */
 public class VerifyDialog extends TitleAreaDialog {
-	private int SIZING_WIDTH = 400;
+	private final int SIZING_WIDTH = 400;
 
 	private static int TEST_TYPE;
 
@@ -51,7 +51,7 @@ public class VerifyDialog extends TitleAreaDialog {
 
 	public static final int TEST_ACCESS = 2;
 
-	private IDialogTestPass _dialogTests[] = new IDialogTestPass[3];
+	private final IDialogTestPass _dialogTests[] = new IDialogTestPass[3];
 
 	private Dialog _testDialog; //the dialog to test
 
@@ -238,7 +238,6 @@ public class VerifyDialog extends TitleAreaDialog {
 	 * Can't open the verification dialog without a specified
 	 * test dialog, this simply returns a failure and prevents
 	 * opening.  Should use open(Dialog) instead.
-	 *
 	 */
 	@Override
 	public int open() {

@@ -58,7 +58,7 @@ public class LogThrottleTest {
 		LogThrottle throttle = new LogThrottle(QUEUE_SIZE, 1);
 
 		// when
-		throttle.log(LogLevel.ERROR.ordinal(), "foo", null);
+		throttle.error("foo", null);
 
 		// then
 		verify(logListener, times(1)).logged(logEntryMatcher(LogLevel.ERROR, "foo"));
@@ -71,7 +71,7 @@ public class LogThrottleTest {
 
 		// when
 		for (int i = 0; i < 5; i++) {
-			throttle.log(LogLevel.ERROR.ordinal(), "foo", null);
+			throttle.error("foo", null);
 		}
 
 		// then
@@ -84,25 +84,25 @@ public class LogThrottleTest {
 	public void test_log_setThrottle() {
 		// given
 		LogThrottle throttle = new LogThrottle(QUEUE_SIZE, 3);
-		
+
 		// when
 		for (int i = 0; i < 5; i++) {
-			throttle.log(LogLevel.ERROR.ordinal(), "foo", null);
+			throttle.error("foo", null);
 		}
-		
+
 		// then
 		verify(logListener, atMost(3)).logged(logEntryMatcher(LogLevel.ERROR, "foo"));
 		verify(logListener, atMost(1))
 		.logged(logEntryMatcher(LogLevel.WARN, "The previous message has been throttled.*"));
-		
+
 		// and
 		throttle.setThrottle(2);
 
 		// when
 		for (int i = 0; i < 5; i++) {
-			throttle.log(LogLevel.ERROR.ordinal(), "bar", null);
+			throttle.error("bar", null);
 		}
-		
+
 		// then
 		verify(logListener, atMost(2)).logged(logEntryMatcher(LogLevel.ERROR, "bar"));
 

@@ -29,7 +29,6 @@ import java.util.List;
 
 	/**
 	 * Create a PropertySheet category with name.
-	 * @param name
 	 */
 	public PropertySheetCategory(String name) {
 		categoryName = name;
@@ -38,7 +37,6 @@ import java.util.List;
 	/**
 	 * Add an <code>IPropertySheetEntry</code> to the list
 	 * of entries in this category.
-	 * @param entry
 	 */
 	public void addEntry(IPropertySheetEntry entry) {
 		entries.add(entry);
@@ -66,7 +64,6 @@ import java.util.List;
 	/**
 	 * Sets if this category should be automatically
 	 * expanded.
-	 * @param autoExpand
 	 */
 	public void setAutoExpand(boolean autoExpand) {
 		shouldAutoExpand = autoExpand;

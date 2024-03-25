@@ -32,34 +32,19 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
  */
 public class SomeMathFunction<K> extends ComputedObservableMap<K, Double> {
 
-	/**
-	 *
-	 */
 	public static final int OP_IDENTITY = 0;
 
-	/**
-	 *
-	 */
 	public static final int OP_MULTIPLY = 1;
 
-	/**
-	 *
-	 */
 	public static final int OP_ROUND = 2;
 
 	private int op = OP_ROUND;
 
-	/**
-	 * @param domain
-	 */
 	public SomeMathFunction(IObservableSet<K> domain) {
 		super(domain);
 		init();
 	}
 
-	/**
-	 * @param operation
-	 */
 	public void setOperation(final int operation) {
 		final int oldOp = this.op;
 		this.op = operation;

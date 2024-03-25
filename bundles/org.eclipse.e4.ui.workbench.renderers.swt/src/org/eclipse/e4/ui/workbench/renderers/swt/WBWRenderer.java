@@ -19,6 +19,8 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import static java.util.Collections.singletonList;
 import static org.eclipse.jface.viewers.LabelProvider.createTextProvider;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,8 +28,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -121,6 +121,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	@Inject
 	Logger logger;
 
+	@SuppressWarnings("hiding")
 	@Inject
 	private IEclipseContext context;
 
@@ -129,6 +130,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	private ThemeDefinitionChangedHandler themeDefinitionChanged;
 
+	@SuppressWarnings("hiding")
 	@Inject
 	private EModelService modelService;
 

@@ -31,7 +31,6 @@ public class BaseWorkbenchContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Creates a new workbench content provider.
-	 *
 	 */
 	public BaseWorkbenchContentProvider() {
 		super();

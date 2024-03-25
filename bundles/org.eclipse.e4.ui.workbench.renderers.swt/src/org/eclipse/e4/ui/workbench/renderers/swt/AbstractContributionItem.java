@@ -14,7 +14,7 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IContextFunction;
@@ -103,16 +103,10 @@ public abstract class AbstractContributionItem extends ContributionItem {
 	 */
 	private boolean logged = false;
 
-	/**
-	 *
-	 */
 	public AbstractContributionItem() {
 		super();
 	}
 
-	/**
-	 * @param id
-	 */
 	public AbstractContributionItem(String id) {
 		super(id);
 	}
@@ -148,10 +142,10 @@ public abstract class AbstractContributionItem extends ContributionItem {
 			ImageDescriptor iconDescriptor = resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
 			if (iconDescriptor != null) {
 				try {
-					image = resourceManager.createImage(iconDescriptor);
+					image = resourceManager.create(iconDescriptor);
 				} catch (DeviceResourceException e) {
 					iconDescriptor = ImageDescriptor.getMissingImageDescriptor();
-					image = resourceManager.createImage(iconDescriptor);
+					image = resourceManager.create(iconDescriptor);
 					// as we replaced the failed icon, log the message once.
 					if (Policy.DEBUG_MENUS) {
 						WorkbenchSWTActivator.trace(Policy.DEBUG_MENUS_FLAG, "failed to create image " + iconURI, e); //$NON-NLS-1$
@@ -401,7 +395,6 @@ public abstract class AbstractContributionItem extends ContributionItem {
 	}
 
 	/**
-	 * @param event
 	 * @return whether the event was a drop down on a toolitem
 	 */
 	protected boolean dropdownEvent(Event event) {
@@ -451,13 +444,9 @@ public abstract class AbstractContributionItem extends ContributionItem {
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	protected abstract void executeItem(Event event);
 
 	/**
-	 * @param event
 	 * @return if the item can be executed
 	 */
 	protected abstract boolean canExecuteItem(Event event);
@@ -484,9 +473,6 @@ public abstract class AbstractContributionItem extends ContributionItem {
 		return menuItemListener;
 	}
 
-	/**
-	 *
-	 */
 	protected void handleHelpRequest() {
 		if (helpService == null)
 			return;
@@ -495,9 +481,6 @@ public abstract class AbstractContributionItem extends ContributionItem {
 			helpService.displayHelp(helpContextId);
 	}
 
-	/**
-	 * @param event
-	 */
 	protected abstract void handleWidgetDispose(Event event);
 
 	protected void updateVisible() {

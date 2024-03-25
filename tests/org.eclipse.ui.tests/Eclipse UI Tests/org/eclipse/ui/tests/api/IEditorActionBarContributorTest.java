@@ -37,7 +37,7 @@ public class IEditorActionBarContributorTest extends UITestCase {
 
 	protected IWorkbenchPage fPage;
 
-	private String EDITOR_ID = "org.eclipse.ui.tests.api.IEditorActionBarContributorTest";
+	private final String EDITOR_ID = "org.eclipse.ui.tests.api.IEditorActionBarContributorTest";
 
 	/**
 	 * Constructor for IEditorPartTest

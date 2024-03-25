@@ -45,7 +45,6 @@ public interface IElementCollector {
 
 	/**
 	 * The element collection is done. Clean up any temporary state.
-	 *
 	 */
 	void done();
 }

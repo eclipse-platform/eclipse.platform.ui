@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta content="text/html; charset=iso-8859-1"
+ http-equiv="Content-Type">
+  <meta content="IBM" name="Author">
+  <title>Templates</title>
+  <meta content="Template Infrastructure package description"
+ name="description">
+</head>
+<body>
+Provides persistence support for templates.
+<h3>Packages</h3>
+<ul>
+  <li><code>org.eclipse.jface.text.templates</code></li>
+  <li><code>org.eclipse.ui.workbench.texteditor.templates</code></li>
+  <li><code>org.eclipse.ui.editors.templates</code></li>
+</ul>
+<h3>Introduction</h3>
+Templates are shortcuts for frequently used fragments of text such as
+code patterns or complex text entities. They may contain variables
+which are only resolved at the time when the template is inserted
+within a context. Together with linked mode, inserting a template can
+create a on-the-fly edit mask within a text viewer.<br>
+<br>
+Templates are specified as text, variables are defined using the <code>${variable}</code>
+notation known from
+Ant, for example. The following snippet shows an example template for
+an instance check in Java:<br>
+<pre>if (${name} instanceof ${type}) {
+&nbsp;&nbsp;&nbsp; ${type} ${new_name} = (${type})${name};
+&nbsp;&nbsp;&nbsp; ${cursor}
+}
+</pre>
+In this template, the variables (<code>name,type, ...</code>) are resolved
+when inserted into java source and changing one variable instance will
+also change the other. When leaving linked mode, the caret is placed at
+the <code>cursor</code> variable.<br>
+<br>
+Template functionality can be added to a custom text editor by offering
+<code>TemplateProposal</code>s as content assist choices, which is
+simplified by using a subclass of <code>TemplateCompletionProcessor</code>. User template management can be
+offered by including a <code>TemplatePreferencePage</code> which uses a <code>TemplateStore</code> and <code>ContextTypeRegistry</code> as the
+underlying model to store templates. The <code>org.eclipse.ui.editors.templates</code>
+extension point can be used to allow other plug-ins to contribute
+templates to an editor. This is accomplished by using the <code>ContributionTemplateStore</code> and <code>ContributionContextTypeRegistry</code>
+subclasses of the above types.<br>
+<br>
+Template variables are resolved by a <code>TemplateVariableResolver.</code> <code>GlobalTemplateVariables</code> offers
+some default variables such as date, user, and selection, but advanced
+features such as resolving to language constructs can be performed in
+subclasses.<br>
+<h4>Classes</h4>
+<ul>
+  <li><code>Template</code> a template consists of name, context
+type identifier, and a pattern.</li>
+  <li><code>TemplateTranslator</code> and <code>TemplateBuffer</code> are used to
+parse the template grammar and don't need to be used usually.</li>
+  <li>A <code>TemplateProposal </code>can be
+offered in content assist, possibly created by a subclass of <code>TemplateCompletionProcessor.</code></li>
+  <li><code>TemplateStore</code> and <code>ContextTypeRegistry</code> manage a
+set of templates within a plug-in and offer ways to store them in the
+preferences or externally in XML streams via a <code>TemplateReaderWriter</code>.<br></li>
+  <li><code>ContributionTemplateStore</code> and <code>ContributionContextTypeRegistry</code>
+add awareness for the  <code>org.eclipse.ui.editors.templates</code>
+extension point.</li>
+  <li><code>TemplatePreferencePage</code> allows
+the user to access the templates within a <code>TemplateStore.</code></li>
+</ul>
+<h4>Example</h4>
+See the Template Editor Example in the <strong>org.eclipse.ui.examples.javaeditor</strong> project.<br>
+</body>
+</html>

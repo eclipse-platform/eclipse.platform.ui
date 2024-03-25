@@ -20,15 +20,11 @@ import org.w3c.dom.css.CSSPrimitiveValue;
  *
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- *
  */
 public class CSS2FontHelper {
 
 	/**
 	 * Return CSS2 font-family. Escape font <code>family</code> with " if need.
-	 *
-	 * @param family
-	 * @return
 	 */
 	public static String getFontFamily(String family) {
 		if (family == null) {
@@ -42,9 +38,6 @@ public class CSS2FontHelper {
 
 	/**
 	 * Return CSS2 font-size of int <code>size</code>.
-	 *
-	 * @param size
-	 * @return
 	 */
 	public static String getFontSize(int size) {
 		return Integer.toString(size);
@@ -52,9 +45,6 @@ public class CSS2FontHelper {
 
 	/**
 	 * Return CSS2 font-style.
-	 *
-	 * @param isItalic
-	 * @return
 	 */
 	public static String getFontStyle(boolean isItalic) {
 		if (isItalic) {
@@ -65,9 +55,6 @@ public class CSS2FontHelper {
 
 	/**
 	 * Return CSS2 font-weight.
-	 *
-	 * @param isBold
-	 * @return
 	 */
 	public static String getFontWeight(boolean isBold) {
 		if (isBold) {
@@ -79,9 +66,6 @@ public class CSS2FontHelper {
 	/**
 	 * Return the CSS Font Property name (font-style, font-weight, font-size,
 	 * font-family) switch the {@link CSSPrimitiveValue} <code>value</code>.
-	 *
-	 * @param value
-	 * @return
 	 */
 	public static String getCSSFontPropertyName(CSSPrimitiveValue value) {
 		short type = value.getPrimitiveType();

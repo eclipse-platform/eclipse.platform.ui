@@ -27,13 +27,9 @@ import org.eclipse.core.databinding.observable.ObservableEvent;
  *            the type of elements in the change event
  *
  * @since 1.0
- *
  */
 public class SetChangeEvent<E> extends ObservableEvent {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 7436547103857482256L;
 	static final Object TYPE = new Object();
 

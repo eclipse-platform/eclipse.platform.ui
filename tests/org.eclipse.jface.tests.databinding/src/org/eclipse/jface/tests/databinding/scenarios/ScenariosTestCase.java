@@ -63,8 +63,7 @@ abstract public class ScenariosTestCase {
 		if (shell != null) {
 			return shell;
 		}
-		Shell result = BindingScenariosTestSuite.getShell();
-		if (result == null || result.isDisposed()) {
+		if (shell == null || shell.isDisposed()) {
 			display = Display.getDefault();
 			if (Display.getDefault() == null) {
 				display = new Display();
@@ -72,12 +71,11 @@ abstract public class ScenariosTestCase {
 			}
 			shell = new Shell(display, SWT.SHELL_TRIM);
 			shell.setLayout(new FillLayout());
-			result = shell;
 		}
-		result.setText(getClass().getSimpleName()); // In the case that the
+		shell.setText(getClass().getSimpleName()); // In the case that the
 													// shell() becomes
 		// visible.
-		return result;
+		return shell;
 	}
 
 	protected void spinEventLoop(int secondsToWaitWithNoEvents) {

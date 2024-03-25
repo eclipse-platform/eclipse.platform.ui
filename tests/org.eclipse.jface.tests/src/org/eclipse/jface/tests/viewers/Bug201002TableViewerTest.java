@@ -27,19 +27,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
+import org.junit.Test;
 
 /**
  * @since 3.3
- *
  */
 public class Bug201002TableViewerTest extends ViewerTestCase {
-
-	/**
-	 * @param name
-	 */
-	public Bug201002TableViewerTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -89,6 +82,7 @@ public class Bug201002TableViewerTest extends ViewerTestCase {
 		return (TableViewer) fViewer;
 	}
 
+	@Test
 	public void testBug201002() {
 		getTableViewer().getTable().setTopIndex(0);
 		waitForTopIndexUpdate(true);

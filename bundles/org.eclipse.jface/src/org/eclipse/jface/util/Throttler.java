@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.jface.util;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.swt.SWTException;
@@ -27,7 +28,11 @@ public class Throttler {
 	private final Runnable timerExec;
 	private final Display display;
 	private final AtomicBoolean scheduled = new AtomicBoolean();
-	private volatile long lastRunNanos;
+	/**
+	 * Timestamp of last execution returned. A value of 0 means the runner was never
+	 * run yet.
+	 **/
+	private volatile long lastRunFinishedNanos;
 	/**
 	 * Initializes a new throttler object that will throttle the execution of
 	 * the given runnable in the {@link Display#getThread() UI thread} of the
@@ -36,15 +41,17 @@ public class Throttler {
 	 * {@link #throttledExec() executed} more often.
 	 *
 	 * @param display
-	 *            the display owning the thread onto which the runnable will be
+	 *            The display owning the thread onto which the runnable will be
 	 *            executed.
 	 * @param minWaitTime
-	 *            the minimum duration between each execution of the given
-	 *            runnable.
+	 *            The minimum duration between each execution of the given
+	 *            runnable (from runnable to return until next run).
 	 * @param runnable
-	 *            the runnable to throttle.
+	 *            The runnable to throttle.
 	 */
 	public Throttler(Display display, Duration minWaitTime, Runnable runnable) {
+		Objects.requireNonNull(runnable);
+		Objects.requireNonNull(display);
 		this.display = display;
 		if (minWaitTime.isNegative()) {
 			throw new IllegalArgumentException("Minimum wait time must be positive"); //$NON-NLS-1$
@@ -54,43 +61,63 @@ public class Throttler {
 					"Minimum wait time in millis must be smaller than " + Integer.MAX_VALUE); //$NON-NLS-1$
 		}
 		int minWaitBetweenRunMillis = (int) minWaitTime.toMillis();
-		Runnable runner = () -> {
+		Runnable runner = () -> { // Always runs in Display Thread
 			scheduled.set(false);
 			runnable.run();
-			lastRunNanos = System.nanoTime();
+			long nanoTime = System.nanoTime();
+			if (nanoTime == 0) {
+				// prevent further 0 values.
+				nanoTime = -1;
+			}
+			lastRunFinishedNanos = nanoTime;
 		};
-		this.timerExec = () -> {
-			long elapsedNanos = System.nanoTime() - lastRunNanos;
+		this.timerExec = () -> { // Always runs in Display Thread
+			long elapsedNanos = System.nanoTime() - lastRunFinishedNanos;
 			long elapsedMillis = elapsedNanos / 1_000_000;
-			if (elapsedMillis > minWaitBetweenRunMillis) {
+			if (lastRunFinishedNanos == 0 || elapsedMillis > minWaitBetweenRunMillis) {
 				// run immediately
 				runner.run();
 			} else if (!display.isDisposed()) {
 				// wait the remaining time
-				long milisDifference = minWaitBetweenRunMillis - elapsedMillis;
-				// milisDifference may be negative, or
-				// milisDifference > Integer.MAX_VALUE (with initial elapsedNanos=0)
-				// => limit to max:
-				int milisToWait = Math.max((int) milisDifference, minWaitBetweenRunMillis);
-				display.timerExec(milisToWait, runner);
+				long millisDifference = minWaitBetweenRunMillis - elapsedMillis;
+				// prevent negative values of millisToWait:
+				int millisToWait = Math.max((int) millisDifference, 0);
+				display.timerExec(millisToWait, runner);
 			} else {
 				// fail - display meanwhile disposed
 				scheduled.set(false);
 			}
 		};
 	}
+
 	/**
-	 * Schedules the wrapped runnable to be run after the configured wait time
-	 * or do nothing if it has already been scheduled but not executed yet.
+	 * Schedules the wrapped Runnable to be run after the configured wait time or do
+	 * nothing if it has already been scheduled but not executed yet. Can be called
+	 * from any Thread. If called from Display Thread it may run the Runnable before
+	 * returning.
 	 */
 	public void throttledExec() {
+		throttledExec(true);
+	}
+
+	/**
+	 * Like {@link #throttledExec()} but if called from Display Thread guaranteed to
+	 * return before Runnable is run
+	 *
+	 * @since 3.34
+	 */
+	public void throttledAsyncExec() {
+		throttledExec(false);
+	}
+
+	private void throttledExec(boolean allowSyncExec) {
 		if (display.isDisposed()) {
 			return;
 		}
 		if (scheduled.compareAndSet(false, true)) {
 			boolean exception = true;
 			try {
-				if (Thread.currentThread() == display.getThread()) {
+				if (allowSyncExec && Thread.currentThread() == display.getThread()) {
 					timerExec.run();
 				} else {
 					display.asyncExec(timerExec);

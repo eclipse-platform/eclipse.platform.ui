@@ -46,11 +46,6 @@ public class SetDetailValueObservableMap<M, E> extends
 	private IStaleListener detailStaleListener = staleEvent -> addStaleDetailObservable(
 			(IObservableValue<?>) staleEvent.getObservable());
 
-	/**
-	 * @param masterKeySet
-	 * @param observableValueFactory
-	 * @param detailValueType
-	 */
 	public SetDetailValueObservableMap(
 			IObservableSet<M> masterKeySet,
 			IObservableFactory<? super M, IObservableValue<E>> observableValueFactory,

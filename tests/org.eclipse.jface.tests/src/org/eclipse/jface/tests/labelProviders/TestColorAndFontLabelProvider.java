@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Display;
  * TestColorAndFontLabelProvider is a simple label provider that uses fonts and
  * colors.
  * @since 3.3
- *
  */
 public class TestColorAndFontLabelProvider extends LabelProvider implements
 		IColorProvider {

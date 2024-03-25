@@ -16,7 +16,6 @@
 
 package org.eclipse.ui.internal;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.Bidi;
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -160,9 +159,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * The workbench plugin ID.
-	 *
-	 * @issue we should just drop this constant and use PlatformUI.PLUGIN_ID instead
 	 */
+	// TODO we should just drop this constant and use PlatformUI.PLUGIN_ID instead
 	public static String PI_WORKBENCH = PlatformUI.PLUGIN_ID;
 
 	/**
@@ -467,7 +465,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Answer the element factory for an id, or <code>null</code>. if not found.
 	 *
-	 * @param targetID
 	 * @return IElementFactory
 	 */
 	public IElementFactory getElementFactory(String targetID) {
@@ -637,8 +634,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Log the throwable.
-	 *
-	 * @param t
 	 */
 	public static void log(Throwable t) {
 		getDefault().getLog().log(getStatus(t));
@@ -659,8 +654,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Create a new error from the message and the throwable.
 	 *
-	 * @param message
-	 * @param t
 	 * @return IStatus
 	 */
 	public static IStatus newError(String message, Throwable t) {
@@ -736,8 +729,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Log the status to the default log.
-	 *
-	 * @param status
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
@@ -949,7 +940,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * Find the orientation in the commandLineArgs. If there is no orientation
 	 * specified return SWT#NONE.
 	 *
-	 * @param commandLineArgs
 	 * @return int
 	 * @see SWT#NONE
 	 * @see SWT#RIGHT_TO_LEFT
@@ -1180,15 +1170,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @param display the display to parent the shell on
 	 *
 	 * @return the splash shell or <code>null</code>
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws NumberFormatException
 	 * @see Display#setData(String, Object)
 	 * @since 3.4
 	 */
 	public static Shell getSplashShell(Display display)
-			throws NumberFormatException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+			throws NumberFormatException, IllegalArgumentException {
 		Shell splashShell = (Shell) display.getData(DATA_SPLASH_SHELL);
 		if (splashShell != null)
 			return splashShell;

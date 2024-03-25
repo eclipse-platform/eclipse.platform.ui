@@ -57,8 +57,6 @@ public class EditorTestHelper {
 
 	public static final String PACKAGE_EXPLORER_VIEW_ID= "org.eclipse.jdt.ui.PackageExplorer"; //$NON-NLS-1$
 
-	public static final String NAVIGATOR_VIEW_ID= "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
-
 	public static final String INTRO_VIEW_ID= "org.eclipse.ui.internal.introview"; //$NON-NLS-1$
 
 	public static void closeEditor(IEditorPart editor) {

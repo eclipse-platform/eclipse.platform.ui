@@ -180,7 +180,6 @@ public abstract class AbstractListViewer extends StructuredViewer {
 	 * Return the text for the element from the labelProvider.
 	 * If it is null then return the empty String.
 	 * @param labelProvider ILabelProvider
-	 * @param element
 	 * @return String. Return the emptyString if the labelProvider
 	 * returns null for the text.
 	 *
@@ -504,7 +503,6 @@ public abstract class AbstractListViewer extends StructuredViewer {
 	 * Returns the index of the given element in listMap, or -1 if the element cannot be found.
 	 * As of 3.3, uses the element comparer if available.
 	 *
-	 * @param element
 	 * @return the index
 	 */
 	int getElementIndex(Object element) {
@@ -521,7 +519,6 @@ public abstract class AbstractListViewer extends StructuredViewer {
 	}
 
 	/**
-	 * @param element
 	 * @return true if listMap contains the given element
 	 *
 	 * @since 3.3

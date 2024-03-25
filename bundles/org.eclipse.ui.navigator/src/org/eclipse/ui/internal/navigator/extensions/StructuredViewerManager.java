@@ -117,7 +117,6 @@ public class StructuredViewerManager {
 	}
 
 	/**
-	 * @param element
 	 * @return the object
 	 */
 	public Object getData(Object element) {
@@ -137,11 +136,6 @@ public class StructuredViewerManager {
 		}
 	}
 
-	/**
-	 *
-	 * @param aViewer
-	 * @param contentService
-	 */
 	public StructuredViewerManager(StructuredViewer aViewer, NavigatorContentService contentService) {
 		super();
 		viewer = aViewer;
@@ -157,22 +151,11 @@ public class StructuredViewerManager {
 		return viewer;
 	}
 
-	/**
-	 *
-	 * @param anOldInput
-	 * @param aNewInput
-	 */
 	public void inputChanged(Object anOldInput, Object aNewInput) {
 		cachedOldInput = anOldInput;
 		cachedNewInput = aNewInput;
 	}
 
-	/**
-	 *
-	 * @param aViewer
-	 * @param anOldInput
-	 * @param aNewInput
-	 */
 	public void inputChanged(Viewer aViewer, Object anOldInput, Object aNewInput) {
 		viewer = (StructuredViewer) aViewer;
 		cachedOldInput = anOldInput;
@@ -181,7 +164,6 @@ public class StructuredViewerManager {
 
 	/**
 	 *
-	 * @param aContentProvider
 	 * @return True if all is well.
 	 */
 	public boolean initialize(final IStructuredContentProvider aContentProvider) {
@@ -198,9 +180,6 @@ public class StructuredViewerManager {
 		return result[0];
 	}
 
-	/**
-	 *
-	 */
 	public void safeRefresh() {
 
 		final Viewer localViewer = viewer;

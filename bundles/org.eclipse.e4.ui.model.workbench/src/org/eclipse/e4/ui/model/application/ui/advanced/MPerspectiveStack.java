@@ -14,7 +14,6 @@
 package org.eclipse.e4.ui.model.application.ui.advanced;
 
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 
@@ -36,6 +35,5 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
  * @model
  * @generated
  */
-public interface MPerspectiveStack
-		extends MUIElement, MGenericStack<MPerspective>, MPartSashContainerElement, MWindowElement {
+public interface MPerspectiveStack extends MGenericStack<MPerspective>, MPartSashContainerElement, MWindowElement {
 } // MPerspectiveStack

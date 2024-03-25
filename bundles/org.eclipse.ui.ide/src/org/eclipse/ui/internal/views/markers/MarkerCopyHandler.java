@@ -28,7 +28,6 @@ import org.eclipse.ui.views.markers.MarkerViewHandler;
  * selected.
  *
  * @since 3.4
- *
  */
 public class MarkerCopyHandler extends MarkerViewHandler {
 
@@ -44,8 +43,6 @@ public class MarkerCopyHandler extends MarkerViewHandler {
 
 	/**
 	 * Set the workbench clipboard for the markers.
-	 *
-	 * @param view
 	 */
 	private void setClipboard(ExtendedMarkersView view) {
 
@@ -66,7 +63,6 @@ public class MarkerCopyHandler extends MarkerViewHandler {
 	 *
 	 * @param view
 	 *            the view being copied
-	 * @param markers
 	 * @return the marker report
 	 */
 	static String createMarkerReport(ExtendedMarkersView view, IMarker[] markers) {

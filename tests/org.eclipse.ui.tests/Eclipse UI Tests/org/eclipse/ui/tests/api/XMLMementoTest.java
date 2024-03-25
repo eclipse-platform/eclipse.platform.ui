@@ -32,7 +32,6 @@ import org.junit.Test;
  * version behaves just like the 3.0.1 version.
  *
  * @since 3.1
- *
  */
 public class XMLMementoTest {
 
@@ -170,8 +169,6 @@ public class XMLMementoTest {
 
 	/**
 	 * Helper method to fill a memento to be checked later by checkMemento.
-	 *
-	 * @param memento
 	 */
 	private void fillMemento(IMemento memento) {
 		memento.putFloat("floatKey", 0.4f);
@@ -187,9 +184,6 @@ public class XMLMementoTest {
 	 * Helper method to check if the values set by fillMemento are still there.
 	 * The boolean parameter is needed because in some cases
 	 * (IMememento#putMemento), the text data gets lost.
-	 *
-	 * @param memento
-	 * @param checkForTextData
 	 */
 	protected void checkMemento(IMemento memento, boolean checkForTextData) {
 		assertEquals(0.4f, memento.getFloat("floatKey").floatValue(), 0.0f);

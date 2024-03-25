@@ -24,10 +24,8 @@ import org.eclipse.ui.PlatformUI;
  * This interface contains constants only; it is not intended to be implemented
  * or extended.
  * </p>
- *
- * @issue this class has been xcloned to org.eclipse.ui.internal.ide package;
- *        remove all IDE-specific constants from here
  */
+// TODO This class has been xcloned to org.eclipse.ui.internal.ide package; remove all IDE-specific constants from here
 public interface IWorkbenchHelpContextIds {
 	String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
 

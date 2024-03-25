@@ -32,9 +32,9 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class EditorSwitchTest extends BasicPerformanceTest {
 
-	private String extension1;
+	private final String extension1;
 
-	private String extension2;
+	private final String extension2;
 
 	@Parameters
 	public static Collection<Object[]> data() {
@@ -43,9 +43,6 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 
 	/**
 	 * Constructor.
-	 *
-	 * @param testName
-	 *            Test's name.
 	 */
 	public EditorSwitchTest(String extension1, String extension2) {
 		super("testEditorSwitch:" + extension1 + "," + extension2);

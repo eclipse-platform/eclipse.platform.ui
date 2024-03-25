@@ -291,17 +291,6 @@
          </property-name>
       </handler>
       <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabItemElement"
-            composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShowCloseHandler">
-         <property-name
-               name="swt-show-close">
-         </property-name>
-             <property-name
-               name="show-close" deprecated="renamed as swt-show-close">
-         </property-name>
-      </handler>
-      <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySimpleSWTHandler">
@@ -352,6 +341,14 @@
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabTextMinimumCharactersSWTHandler">
+         <property-name
+               name="swt-tab-text-minimum-characters">
+         </property-name>
+      </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySingleSWTHandler">
          <property-name
                name="swt-single">
@@ -371,6 +368,14 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedImageVisibleSWTHandler">
          <property-name
                name="swt-unselected-image-visible">
+         </property-name>
+      </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySelectedImageVisibleSWTHandler">
+         <property-name
+               name="swt-selected-image-visible">
          </property-name>
       </handler>
       <handler

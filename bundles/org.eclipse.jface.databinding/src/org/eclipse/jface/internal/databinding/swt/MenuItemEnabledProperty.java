@@ -16,9 +16,6 @@ package org.eclipse.jface.internal.databinding.swt;
 
 import org.eclipse.swt.widgets.MenuItem;
 
-/**
- *
- */
 public class MenuItemEnabledProperty extends WidgetBooleanValueProperty<MenuItem> {
 	@Override
 	protected boolean doGetBooleanValue(MenuItem source) {

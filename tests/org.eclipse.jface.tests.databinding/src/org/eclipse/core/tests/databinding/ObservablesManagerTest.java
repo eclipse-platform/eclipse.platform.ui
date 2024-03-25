@@ -39,7 +39,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 	private DataBindingContext dbc;

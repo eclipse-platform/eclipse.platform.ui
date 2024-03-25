@@ -25,9 +25,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
-/**
- *
- */
 abstract class DragAgent {
 	private static final String DRAG_PLACEHOLDER_ID = "Drag Placerholder"; //$NON-NLS-1$
 	protected MUIElement dragElement;
@@ -47,9 +44,6 @@ abstract class DragAgent {
 	 */
 	public abstract MUIElement getElementToDrag(DnDInfo info);
 
-	/**
-	 *
-	 */
 	public DragAgent(DnDManager manager) {
 		dndManager = manager;
 	}
@@ -80,9 +74,6 @@ abstract class DragAgent {
 
 	/**
 	 * Start a drag operation on the given element.
-	 *
-	 * @param element
-	 *            The element to drag
 	 */
 	public void dragStart(DnDInfo info) {
 		// cache a placeholder where the element started (NOTE: this also prevents the parent from

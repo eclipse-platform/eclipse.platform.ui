@@ -18,7 +18,6 @@ import org.eclipse.core.expressions.PropertyTester;
 
 /**
  * @since 3.4
- *
  */
 public class StaticVarPropertyTester extends PropertyTester {
 	public static boolean result = false;

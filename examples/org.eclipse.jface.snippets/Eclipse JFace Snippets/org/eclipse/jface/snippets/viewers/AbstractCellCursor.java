@@ -30,18 +30,13 @@ import org.eclipse.swt.widgets.Listener;
 
 /**
  * @since 3.3
- *
  */
 public abstract class AbstractCellCursor extends Canvas {
 
 	private ViewerCell[] cells = new ViewerCell[0];
-	private ColumnViewer viewer;
+	private final ColumnViewer viewer;
 	private int activationTime = 0;
 
-	/**
-	 * @param viewer
-	 * @param style
-	 */
 	public AbstractCellCursor(ColumnViewer viewer, int style) {
 		super((Composite) viewer.getControl(), style);
 		this.viewer = viewer;
@@ -97,10 +92,6 @@ public abstract class AbstractCellCursor extends Canvas {
 		};
 	}
 
-	/**
-	 * @param cell
-	 * @param eventTime
-	 */
 	public void setSelection(ViewerCell cell, int eventTime) {
 		this.cells = new ViewerCell[] { cell };
 		setBounds(cell.getBounds());
@@ -145,8 +136,5 @@ public abstract class AbstractCellCursor extends Canvas {
 		return cEvent;
 	}
 
-	/**
-	 * @param event
-	 */
 	protected abstract void paint(Event event);
 }

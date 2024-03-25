@@ -65,10 +65,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public final class ShellFactory extends AbstractCompositeFactory<ShellFactory, Shell> {
 
-	/**
-	 * @param factoryClass
-	 * @param controlCreator
-	 */
 	private ShellFactory(int style) {
 		super(ShellFactory.class, (Composite parent) -> new Shell((Shell) parent, style));
 	}
@@ -76,7 +72,6 @@ public final class ShellFactory extends AbstractCompositeFactory<ShellFactory, S
 	/**
 	 * Creates the shell in the given display.
 	 *
-	 * @param display
 	 * @return the created shell
 	 *
 	 * @since 3.28
@@ -91,7 +86,6 @@ public final class ShellFactory extends AbstractCompositeFactory<ShellFactory, S
 	 * Creates a new ShellFactory with the given style. Refer to
 	 * {@link Shell#Shell(Shell, int)} for possible styles.
 	 *
-	 * @param style
 	 * @return a new ShellFactory instance
 	 */
 	public static ShellFactory newShell(int style) {
@@ -107,7 +101,6 @@ public final class ShellFactory extends AbstractCompositeFactory<ShellFactory, S
 	 * the behavior is platform dependent.
 	 * </p>
 	 *
-	 * @param text
 	 * @return this
 	 *
 	 * @see Shell#setText(String)

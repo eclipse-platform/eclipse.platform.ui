@@ -28,7 +28,6 @@ import org.eclipse.ui.themes.IColorFactory;
  * color as input, analyzing it, and lightening it appropriately.
  *
  * @since 3.3
- *
  */
 public class LightColorFactory implements IColorFactory, IExecutableExtension {
 

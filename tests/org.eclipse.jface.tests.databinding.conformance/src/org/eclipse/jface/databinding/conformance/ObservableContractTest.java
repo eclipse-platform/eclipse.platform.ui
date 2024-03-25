@@ -49,7 +49,7 @@ import org.junit.Test;
 public class ObservableContractTest extends ObservableDelegateTest {
 	private IObservable observable;
 
-	private IObservableContractDelegate delegate;
+	private final IObservableContractDelegate delegate;
 
 	public ObservableContractTest(IObservableContractDelegate delegate) {
 		super(delegate);

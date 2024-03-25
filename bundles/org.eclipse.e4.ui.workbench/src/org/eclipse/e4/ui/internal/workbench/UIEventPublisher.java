@@ -16,7 +16,7 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -38,9 +38,6 @@ public class UIEventPublisher extends EContentAdapter {
 
 	private IEclipseContext context;
 
-	/**
-	 * @param e4Context
-	 */
 	public UIEventPublisher(IEclipseContext e4Context) {
 		this.context = e4Context;
 	}
@@ -146,7 +143,7 @@ public class UIEventPublisher extends EContentAdapter {
 				newValue = notification.getNewValue();
 				break;
 			default:
-				Platform.getLog(getClass()).error(getClass().getName()
+				ILog.of(getClass()).error(getClass().getName()
 						+ ": unhandled EMF Notification code: " //$NON-NLS-1$
 						+ notification.getEventType());
 			}

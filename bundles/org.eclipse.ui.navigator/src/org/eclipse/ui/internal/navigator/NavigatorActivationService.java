@@ -131,7 +131,6 @@ public final class NavigatorActivationService implements
 	 * @param toEnable
 	 *            True indicates the extension should be enabled; False
 	 *            indicates otherwise.
-	 *
 	 */
 	public void setActive(
 			String aNavigatorExtensionId, boolean toEnable) {
@@ -168,7 +167,6 @@ public final class NavigatorActivationService implements
 	 * @param toEnable
 	 *            True indicates the extension should be enabled; False
 	 *            indicates otherwise.
-	 *
 	 */
 	public void setActive(String[] aNavigatorExtensionIds,
 			boolean toEnable) {
@@ -188,7 +186,6 @@ public final class NavigatorActivationService implements
 
 	/**
 	 * Save the activation state for the given viewer.
-	 *
 	 */
 	@Override
 	public void persistExtensionActivations() {

@@ -25,7 +25,6 @@ import org.eclipse.ui.ide.IDE;
 /**
  * MarkerHelpAdapterFactory is the adapter factory for the markerHelp.
  * @since 3.4
- *
  */
 public class MarkerHelpAdapterFactory implements IAdapterFactory {
 

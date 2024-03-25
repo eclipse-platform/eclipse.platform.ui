@@ -76,7 +76,7 @@ public class TestAdapterFactory extends AdapterFactoryImpl {
 	 *
 	 * @generated
 	 */
-	protected TestSwitch<Adapter> modelSwitch = new TestSwitch<Adapter>() {
+	protected TestSwitch<Adapter> modelSwitch = new TestSwitch<>() {
 			@Override
 			public Adapter caseTestHarness(MTestHarness object) {
 				return createTestHarnessAdapter();

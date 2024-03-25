@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -180,8 +179,6 @@ public class WizardFileSystemResourceExportPage1 extends
 	/**
 	 * Create the buttons for the group that determine if the entire or
 	 * selected directory structure should be created.
-	 * @param optionsGroup
-	 * @param font
 	 */
 	protected void createDirectoryStructureOptions(Composite optionsGroup, Font font) {
 		// create directory structure radios
@@ -202,8 +199,6 @@ public class WizardFileSystemResourceExportPage1 extends
 	/**
 	 * Create the button for checking if we should ask if we are going to
 	 * overwrite existing files.
-	 * @param optionsGroup
-	 * @param font
 	 */
 	protected void createOverwriteExisting(Group optionsGroup, Font font) {
 		// overwrite... checkbox
@@ -215,9 +210,6 @@ public class WizardFileSystemResourceExportPage1 extends
 
 	/**
 	 * Create the button for checking if we should export linked files.
-	 *
-	 * @param parent
-	 * @param font
 	 */
 	protected void createResolveLinkedResources(Composite parent, Font font) {
 		// resolve links... checkbox
@@ -457,7 +449,6 @@ public class WizardFileSystemResourceExportPage1 extends
 	/**
 	 *	Set the contents of the receivers destination specification widget to
 	 *	the passed value
-	 *
 	 */
 	protected void setDestinationValue(String value) {
 		destinationNameField.setText(value);
@@ -526,7 +517,7 @@ public class WizardFileSystemResourceExportPage1 extends
 	protected String getConflictingContainerNameFor(String targetDirectory) {
 
 		IPath rootPath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-		IPath testPath = new Path(targetDirectory);
+		IPath testPath = IPath.fromOSString(targetDirectory);
 		// cannot export into workspace root
 		if(testPath.equals(rootPath))
 			return rootPath.lastSegment();
@@ -552,7 +543,7 @@ public class WizardFileSystemResourceExportPage1 extends
 	 */
 	private String getOverlappingProjectName(String targetDirectory){
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IPath testPath = new Path(targetDirectory);
+		IPath testPath = IPath.fromOSString(targetDirectory);
 		IContainer[] containers = root.findContainersForLocation(testPath);
 		if(containers.length > 0){
 			return containers[0].getProject().getName();

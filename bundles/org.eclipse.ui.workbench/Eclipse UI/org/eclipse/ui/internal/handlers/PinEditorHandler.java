@@ -30,7 +30,6 @@ import org.eclipse.ui.menus.UIElement;
 
 /**
  * Replacement for the PinEditorAction.
- *
  */
 public class PinEditorHandler extends AbstractHandler implements IElementUpdater {
 

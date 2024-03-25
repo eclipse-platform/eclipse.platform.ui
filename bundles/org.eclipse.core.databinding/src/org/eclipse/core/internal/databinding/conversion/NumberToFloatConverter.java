@@ -24,11 +24,6 @@ import java.text.Format;
  * @since 1.0
  */
 public class NumberToFloatConverter extends NumberToNumberConverter<Float> {
-	/**
-	 * @param numberFormat
-	 * @param fromType
-	 * @param primitive
-	 */
 	public NumberToFloatConverter(Format numberFormat, Class<?> fromType,
 			boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Float.TYPE : Float.class);

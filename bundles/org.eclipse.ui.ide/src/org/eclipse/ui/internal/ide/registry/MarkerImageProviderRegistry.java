@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -164,7 +164,7 @@ public class MarkerImageProviderRegistry {
 	 * Returns the image descriptor with the given relative path.
 	 */
 	ImageDescriptor getImageDescriptor(Descriptor desc) {
-		URL url = FileLocator.find(desc.pluginBundle, new Path(desc.imagePath));
+		URL url = FileLocator.find(desc.pluginBundle, IPath.fromOSString(desc.imagePath));
 		return ImageDescriptor.createFromURL(url);
 	}
 }

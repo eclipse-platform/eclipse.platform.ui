@@ -43,9 +43,6 @@ import org.eclipse.swt.graphics.Resource;
 import org.junit.Test;
 import org.osgi.service.event.Event;
 
-/**
- *
- */
 public class ThemeDefinitionChangedHandlerTest {
 
 	@Test

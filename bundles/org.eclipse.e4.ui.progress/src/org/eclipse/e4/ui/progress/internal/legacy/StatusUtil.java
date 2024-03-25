@@ -22,8 +22,8 @@ import org.eclipse.e4.ui.progress.internal.ProgressMessages;
 /**
  * Utility class to create status objects.
  *
- * @private - This class is an internal implementation class and should
- * not be referenced or subclassed outside of the workbench
+ * @noreference This class is an internal implementation class and should not be
+ *              referenced or subclassed outside of the workbench
  */
 public class StatusUtil {
 
@@ -46,9 +46,6 @@ public class StatusUtil {
 	 * This method must not be called outside the workbench.
 	 *
 	 * Utility method for creating status.
-	 * @param severity
-	 * @param message
-	 * @param exception
 	 * @return {@link IStatus}
 	 */
 	public static IStatus newStatus(int severity, String message,
@@ -70,9 +67,6 @@ public class StatusUtil {
 	/**
 	 * Returns a localized message describing the given exception. If the given exception does not
 	 * have a localized message, this returns the string "An error occurred".
-	 *
-	 * @param exception
-	 * @return
 	 */
 	public static String getLocalizedMessage(Throwable exception) {
 		String message = exception.getLocalizedMessage();

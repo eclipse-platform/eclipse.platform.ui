@@ -187,7 +187,7 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 				final Entry<?, ?> unwrappedEntry = (Entry<?, ?>) o;
 				final ViewerElementWrapper<?> wrappedKey = new ViewerElementWrapper<>(unwrappedEntry.getKey(),
 						comparer);
-				Entry<Object, Object> wrappedEntry = new Entry<Object, Object>() {
+				Entry<Object, Object> wrappedEntry = new Entry<>() {
 					@Override
 					public Object getKey() {
 						return wrappedKey;

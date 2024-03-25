@@ -38,7 +38,6 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
  * Provides the open and open with menus for IResources.
  *
  * @since 3.2
- *
  */
 public class OpenActionProvider extends CommonActionProvider {
 

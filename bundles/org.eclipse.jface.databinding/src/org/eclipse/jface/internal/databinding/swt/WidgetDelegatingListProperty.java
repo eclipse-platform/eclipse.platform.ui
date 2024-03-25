@@ -20,10 +20,6 @@ import org.eclipse.jface.databinding.swt.ISWTObservableList;
 import org.eclipse.jface.databinding.swt.IWidgetListProperty;
 import org.eclipse.swt.widgets.Widget;
 
-/**
- * @param <S>
- * @param <E>
- */
 public abstract class WidgetDelegatingListProperty<S extends Widget, E> extends DelegatingListProperty<S, E>
 		implements IWidgetListProperty<S, E> {
 	RuntimeException notSupported(Object source) {
@@ -31,9 +27,6 @@ public abstract class WidgetDelegatingListProperty<S extends Widget, E> extends 
 				"Widget [" + source.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
-	/**
-	 * @param elementType
-	 */
 	public WidgetDelegatingListProperty(Object elementType) {
 		super(elementType);
 	}

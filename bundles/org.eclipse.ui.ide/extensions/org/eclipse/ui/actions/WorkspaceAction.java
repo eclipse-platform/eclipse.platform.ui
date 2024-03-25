@@ -138,7 +138,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * instance can be executed multiple times concurrently. This method must
 	 * not access or modify any mutable state on action class.
 	 *
-	 * @param monitor
+	 * @param mon
 	 *            a progress monitor
 	 * @return The result of the execution
 	 */
@@ -368,6 +368,9 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (!super.updateSelection(selection) || selection.isEmpty()) {
 			return false;
+		}
+		if (getSelectedResources().size() > 1) {
+			return true;
 		}
 		for (IResource r : getSelectedResources()) {
 			if (!r.isAccessible()) {

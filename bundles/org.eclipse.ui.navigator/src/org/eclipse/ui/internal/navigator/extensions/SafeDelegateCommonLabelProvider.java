@@ -46,7 +46,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	/**
 	 * @param aLabelProvider
 	 *            A non-null label provider.
-	 *
 	 */
 	public SafeDelegateCommonLabelProvider(ILabelProvider aLabelProvider) {
 		super();
@@ -86,17 +85,11 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		return null;
 	}
 
-	/**
-	 * @param listener
-	 */
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 		delegateLabelProvider.addListener(listener);
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public void dispose() {
 		delegateLabelProvider.dispose();
@@ -154,9 +147,6 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 		return delegateLabelProvider.isLabelProperty(element, property);
 	}
 
-	/**
-	 * @param listener
-	 */
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		delegateLabelProvider.removeListener(listener);

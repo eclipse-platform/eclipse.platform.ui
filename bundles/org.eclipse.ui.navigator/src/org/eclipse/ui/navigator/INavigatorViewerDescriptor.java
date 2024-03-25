@@ -25,7 +25,6 @@ import org.eclipse.jface.action.Separator;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.2
- *
  */
 public interface INavigatorViewerDescriptor {
 
@@ -33,7 +32,6 @@ public interface INavigatorViewerDescriptor {
 	 * {@value} (boolean): True indicates the "Available Extensions" tab in the
 	 * "Filters and Customization" dialog should not be available for the user
 	 * (defaults to <b>false</b>).
-	 *
 	 */
 	String PROP_HIDE_AVAILABLE_EXT_TAB = "org.eclipse.ui.navigator.hideAvailableExtensionsTab"; //$NON-NLS-1$
 

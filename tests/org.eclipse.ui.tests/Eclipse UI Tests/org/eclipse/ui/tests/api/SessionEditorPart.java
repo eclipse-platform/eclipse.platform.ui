@@ -27,7 +27,6 @@ import org.eclipse.ui.part.EditorPart;
 
 /**
  * @since 3.1
- *
  */
 public class SessionEditorPart extends EditorPart {
 
@@ -35,9 +34,6 @@ public class SessionEditorPart extends EditorPart {
 
 	private Composite fMainPanel;
 
-	/**
-	 *
-	 */
 	public SessionEditorPart() {
 		super();
 		// TODO Auto-generated constructor stub

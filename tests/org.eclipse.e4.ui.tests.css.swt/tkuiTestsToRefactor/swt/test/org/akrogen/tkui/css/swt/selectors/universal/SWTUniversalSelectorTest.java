@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Text;
 /**
  * 
  * Selector= * {color:red}
- * 
  */
 public class SWTUniversalSelectorTest {
 

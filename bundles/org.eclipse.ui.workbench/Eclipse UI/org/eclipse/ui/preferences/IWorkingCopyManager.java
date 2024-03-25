@@ -21,7 +21,6 @@ import org.osgi.service.prefs.BackingStoreException;
  * references to shared preference nodes.
  *
  * @since 3.1
- *
  */
 public interface IWorkingCopyManager {
 	/**

@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.workbench.texteditor">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="hyperlinkDetectors" name="Hyperlink Detectors"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to plug in hyperlink detectors.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="hyperlinkDetector" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="hyperlinkDetector">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique id that will be used to identify this hyperlink detector
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a name that allows to identify this hyperlink detector in the UI
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  the translatable description for this hyperlink detector. Currently, this description isn&apos;t displayed anywhere in the UI by the Eclipse SDK.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="targetId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of the hyperlink target which has been registered via &lt;code&gt;org.eclipse.ui.workbench.texteditor.hyperlinkTargets&lt;/code&gt; extension point
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets/target/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully qualified class name implementing the interface &lt;code&gt;org.eclipse.jface.text.hyperlink.IHyperlinkDetector&lt;/code&gt;. Subclass &lt;code&gt;org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector&lt;/code&gt; if you want to access context that is provided by the target.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="activate" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  an attribute that tells whether to activate the contributing plug-in when hyperlink detection takes place in the given target
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="modifierKeys" type="string">
+            <annotation>
+               <documentation>
+                  the modifier keys that need to be pressed for this hyperlink detector to be active. Valid values are: &quot;Alt&quot;, &quot;Ctrl&quot;, &quot;Shift&quot;, &quot;Command&quot;, &quot;M1&quot;, &quot;M2&quot;, &quot;M3&quot;, &quot;M4&quot; and a combination of them separated by &quot;+&quot;. &lt;i&gt;Note that &quot;Shift&quot; by itself is not allowed because &quot;Shift&quot; + left mouse click sets the selection.&lt;/i&gt; If this attribute is not specified then the default modifier keys are used.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a hyperlink detector definition:
+
+&lt;pre&gt;
+&lt;extension
+  point=&quot;org.eclipse.ui.workbench.texteditor.hyperlinkDetectors&quot;&gt;
+  &lt;hyperlinkDetector
+    id=&quot;org.eclipse.example.jdt.internal.debug.ui.JavaHyperlinkDetector&quot;
+    targetId=&quot;org.eclipse.jdt.ui.javaCode&quot;
+    class=&quot;org.eclipse.example.jdt.internal.debug.ui.JavaHyperlinkDetector&quot;
+    name=&quot;%javaHyperlinkDetector&quot;&gt;
+  &lt;/hyperlinkDetector&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.3
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2007, 2008 IBM Corporation and others.&lt;br&gt;
+
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

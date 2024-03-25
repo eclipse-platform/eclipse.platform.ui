@@ -29,7 +29,9 @@ public class BusyIndicator extends Canvas {
 	protected Image[] images = new Image[13];
 	protected Image image;
 
+	/** synchronized access **/
 	protected Thread busyThread;
+	/** synchronized access **/
 	protected boolean stop;
 
 	private static final String URL_BUSY = "$nl$/icons/obj16/busy/"; //$NON-NLS-1$
@@ -92,12 +94,7 @@ public class BusyIndicator extends Canvas {
 						}
 					}
 					if (busyThread == null)
-						Display.getDefault().syncExec(new Thread() {
-							@Override
-							public void run() {
-								setImage(images[0]);
-							}
-						});
+						Display.getDefault().syncExec(() -> setImage(images[0]));
 				} catch (Exception e) {
 					Trace.trace(Trace.WARNING, "Busy error", e); //$NON-NLS-1$
 				}
@@ -110,7 +107,7 @@ public class BusyIndicator extends Canvas {
 	}
 
 	@Override
-	public void dispose() {
+	public synchronized void dispose() {
 		stop = true;
 		busyThread = null;
 		super.dispose();
@@ -128,7 +125,7 @@ public class BusyIndicator extends Canvas {
 	 *
 	 * @return boolean
 	 */
-	public boolean isBusy() {
+	public synchronized boolean isBusy() {
 		return (busyThread != null);
 	}
 

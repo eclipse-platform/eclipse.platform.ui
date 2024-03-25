@@ -77,9 +77,6 @@ public class ActionSetManager {
 		addListener(getContextListener());
 	}
 
-	/**
-	 * @return
-	 */
 	private IPropertyListener getContextListener() {
 		if (contextListener == null) {
 			contextListener = (source, propId) -> {

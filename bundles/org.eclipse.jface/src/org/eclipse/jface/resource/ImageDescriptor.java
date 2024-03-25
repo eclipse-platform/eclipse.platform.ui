@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,7 +59,7 @@ import org.eclipse.swt.widgets.Display;
  *
  * @see org.eclipse.swt.graphics.Image
  */
-public abstract class ImageDescriptor extends DeviceResourceDescriptor {
+public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 
 	/**
 	 * A small red square used to warn that an image cannot be created.
@@ -144,7 +144,6 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 	 *
 	 * @see Image#Image(Device, Image, int)
 	 * @since 3.1
-	 *
 	 */
 	public static ImageDescriptor createWithFlags(ImageDescriptor originalImage, int swtFlags) {
 		return new DerivedImageDescriptor(originalImage, swtFlags);

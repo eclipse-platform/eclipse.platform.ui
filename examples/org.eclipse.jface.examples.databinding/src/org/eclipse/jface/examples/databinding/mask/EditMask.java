@@ -94,7 +94,7 @@ public class EditMask {
 	protected Text text;
 	protected EditMaskParser editMaskParser;
 	private boolean fireChangeOnKeystroke = true;
-	private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 	protected String oldValidRawText = "";
 	protected String oldValidText = "";
@@ -102,9 +102,6 @@ public class EditMask {
 	/**
 	 * Creates an instance that wraps around a text widget and manages its<br>
 	 * formatting.
-	 *
-	 * @param text
-	 * @param editMask
 	 */
 	public EditMask(Text text) {
 		this.text = text;
@@ -271,8 +268,6 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 *
-	 * @param listener
 	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.addPropertyChangeListener(listener);
@@ -280,9 +275,6 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 *
-	 * @param propertyName
-	 * @param listener
 	 */
 	public void addPropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
@@ -291,8 +283,6 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 *
-	 * @param listener
 	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.removePropertyChangeListener(listener);
@@ -300,9 +290,6 @@ public class EditMask {
 
 	/**
 	 * JavaBeans boilerplate code...
-	 *
-	 * @param propertyName
-	 * @param listener
 	 */
 	public void removePropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
@@ -329,7 +316,7 @@ public class EditMask {
 	protected String oldRawText = "";
 	protected boolean replacedSelectedText = false;
 
-	private VerifyListener verifyListener = e -> {
+	private final VerifyListener verifyListener = e -> {
 		// If the edit mask is already full, don't let the user type
 		// any new characters
 		if (editMaskParser.isComplete() && // should eventually be .isFull() to account for optional characters
@@ -357,7 +344,7 @@ public class EditMask {
 		}
 	};
 
-	private Runnable updateTextField = new Runnable() {
+	private final Runnable updateTextField = new Runnable() {
 		@Override
 		public void run() {
 			updating = true;
@@ -430,7 +417,7 @@ public class EditMask {
 		}
 	};
 
-	private FocusListener focusListener = new FocusAdapter() {
+	private final FocusListener focusListener = new FocusAdapter() {
 		@Override
 		public void focusGained(FocusEvent e) {
 			selection = editMaskParser.getFirstIncompleteInputPosition();
@@ -438,7 +425,7 @@ public class EditMask {
 		}
 	};
 
-	private DisposeListener disposeListener = e -> {
+	private final DisposeListener disposeListener = e -> {
 		text.removeVerifyListener(verifyListener);
 		text.removeFocusListener(focusListener);
 		text.removeDisposeListener(this.disposeListener);

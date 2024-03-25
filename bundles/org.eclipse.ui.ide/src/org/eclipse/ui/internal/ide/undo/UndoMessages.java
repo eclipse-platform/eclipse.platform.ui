@@ -61,12 +61,6 @@ public class UndoMessages extends NLS {
 
 	public static String CopyResourcesOperation_NotAllowedDueToDataLoss;
 
-	public static String FileDescription_NewFileProgress;
-	public static String FileDescription_ContentsCouldNotBeRestored;
-	public static String FolderDescription_NewFolderProgress;
-	public static String FolderDescription_SavingUndoInfoProgress;
-
-
 	public static String MarkerOperation_ResourceDoesNotExist;
 	public static String MarkerOperation_MarkerDoesNotExist;
 	public static String MarkerOperation_NotEnoughInfo;

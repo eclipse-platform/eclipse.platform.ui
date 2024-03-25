@@ -36,7 +36,6 @@ public class ConvertedValueProperty<S, T> extends SimpleValueProperty<S, T> {
 	 * Creates a new value property which applies the given converter on the source
 	 * object in order to produce the property's value.
 	 *
-	 * @param valueType
 	 * @param converter converter to apply to the source object.
 	 */
 	public ConvertedValueProperty(Object valueType, Function<? super S, ? extends T> converter) {

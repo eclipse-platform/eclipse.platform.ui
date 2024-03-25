@@ -31,7 +31,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
  * MarkerDescriptionField is the field for showing the description of a marker.
  *
  * @since 3.4
- *
  */
 public class MarkerDescriptionField extends MarkerField {
 
@@ -41,8 +40,6 @@ public class MarkerDescriptionField extends MarkerField {
 
 		/**
 		 * Create a new instance of the receiver.
-		 *
-		 * @param viewer
 		 */
 		public DescriptionEditingSupport(ColumnViewer viewer) {
 			super(viewer);
@@ -112,7 +109,6 @@ public class MarkerDescriptionField extends MarkerField {
 	/**
 	 * Return the collation key for the description.
 	 *
-	 * @param element
 	 * @return CollationKey
 	 */
 	private CollationKey getDescriptionKey(Object element) {

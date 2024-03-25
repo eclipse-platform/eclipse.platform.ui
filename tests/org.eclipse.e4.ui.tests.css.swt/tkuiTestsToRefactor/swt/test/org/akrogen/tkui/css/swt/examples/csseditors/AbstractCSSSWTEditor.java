@@ -61,7 +61,6 @@ import org.w3c.dom.css.CSSValue;
  * 
  * @version 1.0.0
  * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public abstract class AbstractCSSSWTEditor extends AbstractCSSEditor {
 
@@ -167,8 +166,6 @@ public abstract class AbstractCSSSWTEditor extends AbstractCSSEditor {
 
 	/**
 	 * Create Menus File, Options
-	 * 
-	 * @param shell
 	 */
 	protected void createMenus(Shell shell) {
 		Menu menu = new Menu(shell, SWT.BAR);
@@ -181,9 +178,6 @@ public abstract class AbstractCSSSWTEditor extends AbstractCSSEditor {
 
 	/**
 	 * Create Menu item File with sub menu New and Open
-	 * 
-	 * @param menu
-	 * @param shell
 	 */
 	protected void createMenuItemFile(Menu menu, final Shell shell) {
 		MenuItem menuFileHeader = new MenuItem(menu, SWT.CASCADE);
@@ -220,8 +214,6 @@ public abstract class AbstractCSSSWTEditor extends AbstractCSSEditor {
 
 	/**
 	 * Create Menu item Options
-	 * 
-	 * @param menu
 	 */
 	protected void createMenuItemOptions(Menu menu) {
 		MenuItem menuOptionsHeader = new MenuItem(menu, SWT.CASCADE);

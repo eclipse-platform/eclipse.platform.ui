@@ -25,9 +25,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -39,7 +39,6 @@ import org.osgi.service.prefs.Preferences;
 
 /**
  * Loads, caches and stores dialog settings on a per bundle basis.
- *
  */
 public final class DialogSettingsProvider implements IDialogSettingsProvider {
 
@@ -130,7 +129,7 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 		try {
 			url = new URL(fullUrl);
 		} catch (MalformedURLException e) {
-			Platform.getLog(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
+			ILog.of(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
 					"Failed to load dialog settings from: " + fullUrl, e)); //$NON-NLS-1$
 			return Optional.empty();
 		}
@@ -141,7 +140,7 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 			// ignore, it is expected that not every bundle provides product dialog settings
 			return Optional.empty();
 		} catch (IOException e) {
-			Platform.getLog(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
+			ILog.of(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
 					"Failed to load dialog settings from: " + fullUrl, e)); //$NON-NLS-1$
 			return Optional.empty();
 		}
@@ -152,7 +151,7 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 			dialogSettings.load(reader);
 			return Optional.of(dialogSettings);
 		} catch (IOException e) {
-			Platform.getLog(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
+			ILog.of(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
 					"Failed to load dialog settings from: " + url, e)); //$NON-NLS-1$
 		}
 		return Optional.empty();
@@ -179,7 +178,7 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 				dialogSettings.load(readWritePath);
 				return Optional.of(dialogSettings);
 			} catch (IOException e) {
-				Platform.getLog(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
+				ILog.of(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
 						"Failed to load dialog settings from: " + settingsFile, e)); //$NON-NLS-1$
 			}
 		}
@@ -187,7 +186,7 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 	}
 
 	private static Optional<IDialogSettings> loadDefaultDialogSettingsFromBundle(Bundle bundle) {
-		URL dsURL = FileLocator.find(bundle, new Path(FN_DIALOG_SETTINGS));
+		URL dsURL = FileLocator.find(bundle, IPath.fromOSString(FN_DIALOG_SETTINGS));
 		IDialogSettings dialogSettings = null;
 		if (dsURL == null) {
 			// no bundle defaults
@@ -199,7 +198,7 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 			dialogSettings.load(reader);
 			return Optional.of(dialogSettings);
 		} catch (IOException e) {
-			Platform.getLog(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
+			ILog.of(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
 					"Failed to load dialog settings from: " + dsURL, e)); //$NON-NLS-1$
 		}
 		return Optional.empty();
@@ -213,7 +212,7 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 		try {
 			return Platform.getStateLocation(bundle);
 		} catch (IllegalStateException e) {
-			Platform.getLog(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
+			ILog.of(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
 					"Failed to get state location for bundle: " + bundle, e)); //$NON-NLS-1$
 			return null;
 		}
@@ -255,7 +254,7 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 			String readWritePath = path.append(FN_DIALOG_SETTINGS).toOSString();
 			dialogSettings.save(readWritePath);
 		} catch (IOException | IllegalStateException e) {
-			Platform.getLog(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
+			ILog.of(bundle).log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
 					"No state location. Failed to save dialog settings for bundle: " + bundle.getBundleId(), e)); //$NON-NLS-1$
 		}
 	}

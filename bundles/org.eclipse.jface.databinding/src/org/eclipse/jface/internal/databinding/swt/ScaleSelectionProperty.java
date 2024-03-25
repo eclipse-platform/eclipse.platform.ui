@@ -19,12 +19,8 @@ import org.eclipse.swt.widgets.Scale;
 
 /**
  * @since 3.3
- *
  */
 public class ScaleSelectionProperty extends WidgetIntValueProperty<Scale> {
-	/**
-	 *
-	 */
 	public ScaleSelectionProperty() {
 		super(SWT.Selection);
 	}

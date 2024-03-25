@@ -139,7 +139,6 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	/**
 	 * Mark this operation invalid due to some external change. May be used by
 	 * subclasses.
-	 *
 	 */
 	protected void markInvalid() {
 		isValid = false;
@@ -313,7 +312,6 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 *            org.eclipse.swt.widgets.Shell.class
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
-	 *
 	 */
 	protected abstract void doExecute(IProgressMonitor monitor,
 			IAdaptable uiInfo) throws CoreException;
@@ -724,7 +722,6 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 *
 	 * @return the shell specified in the adaptable, or the active shell if no
 	 *         shell has been specified
-	 *
 	 */
 	protected Shell getShell(IAdaptable uiInfo) {
 		Shell shell = Adapters.adapt(uiInfo, Shell.class);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,13 +32,11 @@ public class UserPropertyTester extends PropertyTester {
 			return false;
 		}
 		Person person = (Person) receiver;
-		if (property.equals(IS_ADMIN) && expectedValue instanceof Boolean) {
-			boolean value = ((Boolean) expectedValue).booleanValue();
-			return person.hasAdminRights() == value;
+		if (property.equals(IS_ADMIN) && expectedValue instanceof Boolean value) {
+			return person.hasAdminRights() == value.booleanValue();
 		}
-		if (property.equals(ID) && expectedValue instanceof Integer) {
-			int value = ((Integer) expectedValue).intValue();
-			return person.getId() == value;
+		if (property.equals(ID) && expectedValue instanceof Integer value) {
+			return person.getId() == value.intValue();
 		}
 		return false;
 	}

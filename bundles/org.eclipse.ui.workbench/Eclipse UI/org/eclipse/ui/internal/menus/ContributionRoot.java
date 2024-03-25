@@ -19,14 +19,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.internal.expressions.AlwaysEnabledExpression;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.IContributionRoot;
-import org.eclipse.ui.menus.IMenuService;
 
 /**
  * Default implementation.
@@ -37,14 +34,9 @@ final class ContributionRoot implements IContributionRoot {
 
 	private List<IContributionItem> topLevelItems = new ArrayList<>();
 	private Map<IContributionItem, Expression> itemsToExpressions = new HashMap<>();
-	Set<?> restriction;
-	private ContributionManager mgr;
 	private AbstractContributionFactory factory;
 
-	public ContributionRoot(IMenuService menuService, Set<?> restriction, ContributionManager mgr,
-			AbstractContributionFactory factory) {
-		this.restriction = restriction;
-		this.mgr = mgr;
+	public ContributionRoot(AbstractContributionFactory factory) {
 		this.factory = factory;
 	}
 
@@ -106,12 +98,5 @@ final class ContributionRoot implements IContributionRoot {
 		// menuService.registerVisibleWhen(item, visibleWhen, restriction,
 		// createIdentifierId(item));
 		itemsToExpressions.put(item, visibleWhen);
-	}
-
-	/**
-	 * @return Returns the mgr.
-	 */
-	public ContributionManager getManager() {
-		return mgr;
 	}
 }

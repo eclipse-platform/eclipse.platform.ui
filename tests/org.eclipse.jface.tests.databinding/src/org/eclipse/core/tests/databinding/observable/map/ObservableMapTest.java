@@ -34,7 +34,6 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class ObservableMapTest {
 	ObservableMapStub<Object, Object> map;
@@ -90,9 +89,6 @@ public class ObservableMapTest {
 	}
 
 	static class ObservableMapStub<K, V> extends ObservableMap<K, V> {
-		/**
-		 * @param wrappedMap
-		 */
 		public ObservableMapStub(Map<K, V> wrappedMap) {
 			super(wrappedMap);
 		}

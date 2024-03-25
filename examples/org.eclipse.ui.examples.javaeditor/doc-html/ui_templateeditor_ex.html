@@ -1,0 +1,94 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2005. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" href="../../../book.css" charset="ISO-8859-1" type="text/css">
+   <title>Desktop - Template Editor Example</title>
+</head>
+<body>
+
+<h2>
+<b>Example - Template Editor</b></h2>
+
+<h3>
+Introduction</h3>
+The Template Editor example demonstrates how to add template support to an editor. The example is 
+based on the PDE example editor project that can be created using the new project wizard. The editor 
+is a simple XML editor; it is only for demonstration purposes.
+<p>
+The code for this example is in the <code>org.eclipse.ui.examples.javaeditor</code> plug-in.
+To explore the code it is recommended to import that plug-in into your workspace.
+</p>
+
+<h3>
+<b>Features demonstrated in the template editor</b></h3>
+
+<ul>
+<li>
+creating a template context for an editor</li>
+
+<li>
+setting up a content assist processor that will propose template completions</li>
+
+<li>
+contributing a context type and variable resolvers to an editor via plugin.xml</li>
+
+<li>
+contributing templates to a context type via plugin.xml</li>
+
+<li>
+adding a preference page for handling templates, both contributed and user-added</li>
+
+</ul>
+
+<h3>
+Features not demonstrated</h3>
+
+<ul>
+<li>
+template formatting</li>
+</ul>
+
+<h3>
+Running the example Template editor</h3>
+
+<ol>
+<li>
+Create a project</li>
+
+<li>
+Create a file with the file extension ".xml" in the newly created project.</li>
+
+<li>
+Close the editor that opened automatically</li>
+
+<li>
+Select the new file in the Navigator and from the context menu select <strong>Open With &gt; Template Editor</strong> to
+open the Template example editor .</li>
+</ol>
+
+
+<h3>
+Code organization of the template editor example</h3>
+The example code is organized in three packages:
+<ul>
+<li>
+<code>org.eclipse.ui.examples.templateeditor.editors</code> contains all the editor specific
+classes. See <code>XMLConfiguration</code> to see how the <code>TemplateCompletionProcessor</code>
+is added in the <code>getContentAssistant</code> method.</li>
+
+<li>
+<code>org.eclipse.ui.examples.templateeditor.preferences</code> contains the contributed template
+preference page.</li>
+
+<li>
+<code>org.eclipse.ui.examples.templateeditor.template</code> contains the example context type, the
+completion processor and the variable resolver that is contributed via plugin.xml.</li>
+</ul>
+
+<br>&nbsp;
+
+</body>
+</html>

@@ -87,7 +87,7 @@ public class InternalDialog extends TrayDialog {
 	/**
 	 * This composite holds all components of the dialog.
 	 */
-	private Composite dialogArea;
+	private Composite dialogAreaComposite;
 	/**
 	 * This composite is initially scrolled to the 0 x 0 size. When more than one
 	 * status arrives, listArea is resized and a list is created on it to present
@@ -144,10 +144,6 @@ public class InternalDialog extends TrayDialog {
 
 	private Map<Object, Object> dialogState;
 
-	/**
-	 * @param dialogState
-	 * @param modal
-	 */
 	public InternalDialog(final Map<Object, Object> dialogState, boolean modal) {
 		super(ProgressManagerUtil.getDefaultParent());
 		this.dialogState = dialogState;
@@ -208,8 +204,8 @@ public class InternalDialog extends TrayDialog {
 	protected Control createDialogArea(Composite parent) {
 		createTitleArea(parent);
 		createListArea(parent);
-		dialogArea = parent;
-		Dialog.applyDialogFont(dialogArea);
+		dialogAreaComposite = parent;
+		Dialog.applyDialogFont(dialogAreaComposite);
 		return parent;
 	}
 
@@ -276,7 +272,6 @@ public class InternalDialog extends TrayDialog {
 	 * This function checks if the dialog is modal.
 	 *
 	 * @return true if the dialog is modal, false otherwise
-	 *
 	 */
 	public boolean isModal() {
 		return ((getShellStyle() & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL);
@@ -329,7 +324,7 @@ public class InternalDialog extends TrayDialog {
 	 * Method which should be invoked when new errors become available for display.
 	 */
 	void refresh() {
-		if (dialogArea == null || dialogArea.isDisposed()) {
+		if (dialogAreaComposite == null || dialogAreaComposite.isDisposed()) {
 			return;
 		}
 		updateTitleArea();
@@ -346,7 +341,7 @@ public class InternalDialog extends TrayDialog {
 	}
 
 	void refreshDialogSize() {
-		if (dialogArea == null || dialogArea.isDisposed()) {
+		if (dialogAreaComposite == null || dialogAreaComposite.isDisposed()) {
 			return;
 		}
 		Point newSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -362,23 +357,22 @@ public class InternalDialog extends TrayDialog {
 	 * has been disposed will have no effect.
 	 */
 	private void showDetailsArea() {
-		if (dialogArea != null && !dialogArea.isDisposed()) {
+		if (dialogAreaComposite != null && !dialogAreaComposite.isDisposed()) {
 			if (detailsManager.isOpen()) {
 				detailsManager.close();
-				detailsManager.createDetailsArea(dialogArea, getCurrentStatusAdapter());
+				detailsManager.createDetailsArea(dialogAreaComposite, getCurrentStatusAdapter());
 				dialogState.put(IStatusDialogConstants.DETAILS_OPENED, Boolean.TRUE);
 			} else {
 				toggleDetailsArea();
 				dialogState.put(IStatusDialogConstants.DETAILS_OPENED, Boolean.TRUE);
 			}
-			dialogArea.layout();
+			dialogAreaComposite.layout();
 		}
 	}
 
 	/**
 	 * Toggles the unfolding of the details area. This is triggered by the user
 	 * pressing the details button.
-	 *
 	 */
 	private boolean toggleDetailsArea() {
 		boolean opened = false;
@@ -388,7 +382,7 @@ public class InternalDialog extends TrayDialog {
 			getButton(IDialogConstants.DETAILS_ID).setText(IDialogConstants.SHOW_DETAILS_LABEL);
 			opened = false;
 		} else {
-			detailsManager.createDetailsArea(dialogArea, getCurrentStatusAdapter());
+			detailsManager.createDetailsArea(dialogAreaComposite, getCurrentStatusAdapter());
 			getButton(IDialogConstants.DETAILS_ID).setText(IDialogConstants.HIDE_DETAILS_LABEL);
 			opened = true;
 		}
@@ -417,7 +411,7 @@ public class InternalDialog extends TrayDialog {
 		if ((opened && diffY > 0) || (!opened && diffY < 0)) {
 			getShell().setSize(new Point(windowSize.x, windowSize.y + (diffY)));
 		}
-		dialogArea.layout();
+		dialogAreaComposite.layout();
 		return opened;
 	}
 
@@ -654,9 +648,6 @@ public class InternalDialog extends TrayDialog {
 
 	/**
 	 * Hide the button if hide is <code>true</code>.
-	 *
-	 * @param button
-	 * @param hide
 	 */
 	private void hideButton(Button button, boolean hide) {
 		((GridData) button.getLayoutData()).exclude = hide;

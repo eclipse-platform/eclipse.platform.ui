@@ -32,7 +32,6 @@ import org.eclipse.ui.internal.ProductProperties;
  * windowing system. Useful for debugging and bug reporting/verification.
  *
  * @since 3.4
- *
  */
 public class CopyBuildIdToClipboardHandler extends AbstractHandler {
 

@@ -15,9 +15,6 @@ package org.eclipse.e4.ui.examples.jobs.views;
 
 import java.lang.reflect.InvocationTargetException;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -49,6 +46,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 /**
  * A view that allows a user to create jobs of various types, and interact with
@@ -163,9 +163,6 @@ public class JobsView {
 		}
 	}
 
-	/**
-	 * @see ViewPart#createPartControl(Composite)
-	 */
 	@PostConstruct
 	public void createPartControl(Composite parent) {
 		this.parent = parent;
@@ -182,8 +179,6 @@ public class JobsView {
 
 	/**
 	 * Create all push button parts for the jobs view.
-	 *
-	 * @param parent
 	 */
 	private void createPushButtonGroup(Composite parent) {
 		Composite group = new Composite(parent, SWT.NONE);
@@ -293,7 +288,6 @@ public class JobsView {
 
 	/**
 	 * Test the showInDialog API
-	 *
 	 */
 	protected void showInDialog() {
 
@@ -334,9 +328,6 @@ public class JobsView {
 		Job.getJobManager().sleep(TestJob.FAMILY_TEST_JOB);
 	}
 
-	/**
-	 * @param body
-	 */
 	private void createEntryFieldGroup(Composite body) {
 		// duration
 		Label label = new Label(body, SWT.NONE);
@@ -565,9 +556,6 @@ else
 		}
 	}
 
-	/**
-	 * @see ViewPart#setFocus()
-	 */
 	@Focus
 	public void setFocus() {
 		if (durationField != null && !durationField.isDisposed())

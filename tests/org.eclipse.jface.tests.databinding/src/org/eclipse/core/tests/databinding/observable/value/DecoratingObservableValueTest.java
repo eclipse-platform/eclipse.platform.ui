@@ -25,7 +25,6 @@ import org.eclipse.jface.databinding.conformance.util.TestCollection;
 
 /**
  * @since 3.2
- *
  */
 public class DecoratingObservableValueTest {
 	public static void addConformanceTest(TestCollection suite) {
@@ -33,7 +32,7 @@ public class DecoratingObservableValueTest {
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {
-		private Object valueType = Object.class;
+		private final Object valueType = Object.class;
 
 		@Override
 		public IObservableValue<?> createObservableValue(Realm realm) {

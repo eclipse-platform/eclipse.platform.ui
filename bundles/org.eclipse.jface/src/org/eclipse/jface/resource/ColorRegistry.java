@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -44,8 +45,8 @@ import org.eclipse.swt.widgets.Display;
  * </p>
  *
  * @since 3.0
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class ColorRegistry extends ResourceRegistry {
 
 	/**

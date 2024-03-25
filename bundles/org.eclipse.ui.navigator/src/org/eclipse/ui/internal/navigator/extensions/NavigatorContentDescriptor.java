@@ -358,7 +358,6 @@ public final class NavigatorContentDescriptor implements
 	 * @throws CoreException
 	 *             if an instance of the executable extension could not be
 	 *             created for any reason
-	 *
 	 */
 	public ITreeContentProvider createContentProvider() throws CoreException {
 		if (Policy.DEBUG_EXTENSION_SETUP)

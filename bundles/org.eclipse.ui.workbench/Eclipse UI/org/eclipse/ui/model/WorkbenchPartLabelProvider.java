@@ -64,7 +64,7 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements I
 			Image image = (Image) images.get(imageDesc);
 			if (image == null) {
 				try {
-					image = resourceManager.createImage(imageDesc);
+					image = resourceManager.create(imageDesc);
 					images.put(imageDesc, image);
 				} catch (DeviceResourceException e) {
 					WorkbenchPlugin.log(getClass(), "getImage", e); //$NON-NLS-1$

@@ -19,7 +19,6 @@ import java.util.List;
 
 /**
  * @since 1.0
- *
  */
 public class RenamableItem {
 
@@ -28,7 +27,7 @@ public class RenamableItem {
 	}
 
 	private String name;
-	private List<Listener> listeners = new ArrayList<>();
+	private final List<Listener> listeners = new ArrayList<>();
 
 	public RenamableItem() {
 		name = "RenamableItem"; //$NON-NLS-1$

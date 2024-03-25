@@ -21,6 +21,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IToolTipProvider;
@@ -265,11 +267,6 @@ public class LabelProviderTest extends NavigatorTestBase {
 		assertBefore(queries, 'G', 'C');
 	}
 
-	/**
-	 * @param queries
-	 * @param firstChar
-	 * @param secondChar
-	 */
 	private void assertBefore(String queries, char firstChar, char secondChar) {
 		boolean first = false;
 		final int LEN = queries.length();
@@ -338,15 +335,8 @@ public class LabelProviderTest extends NavigatorTestBase {
 
 		//System.out.println(System.currentTimeMillis() + " after expand");
 
-		// Let the label provider refresh - wait up to 60 seconds
-		for (int i = 0; i < 1200; i++) {
-			rootItems = _viewer.getTree().getItems();
-			//System.out.println("checking text: " + rootItems[0].getText());
-			if (rootItems[0].getBackground(0).equals(TestLabelProviderCyan.instance.backgroundColor))
-				break;
-			//System.out.println(System.currentTimeMillis() + " before sleep " + i);
-			DisplayHelper.sleep(50);
-		}
+		// Let the label provider refresh
+		waitForInitialization(TestLabelProviderCyan.instance);
 
 		//System.out.println(System.currentTimeMillis() + " after sleep");
 
@@ -439,11 +429,24 @@ public class LabelProviderTest extends NavigatorTestBase {
 		_contentService.getActivationService().activateExtensions(
 				new String[] { TEST_CONTENT_EMPTY, COMMON_NAVIGATOR_RESOURCE_EXT }, true);
 
-		TestLabelProvider._throw = true;
-		TestEmptyContentProvider._throw = true;
+		AtomicBoolean labelProviderThrewException = new AtomicBoolean(false);
+		AtomicBoolean contentProviderThrewException = new AtomicBoolean(false);
+
+		TestEmptyContentProvider._runnable = () -> {
+			contentProviderThrewException.set(true);
+			throw new RuntimeException("Throwing... " + LabelProviderTest.class + " threw this exception!");
+
+		};
+		TestLabelProvider._runnable = () -> {
+			labelProviderThrewException.set(true);
+			throw new RuntimeException("Throwing... " + LabelProviderTest.class + " threw this exception!");
+		};
 
 		refreshViewer();
 		// Have to look at the log to see a bunch of stuff thrown
+
+		assertTrue(labelProviderThrewException.get());
+		assertTrue(contentProviderThrewException.get());
 	}
 
 	@Test

@@ -25,7 +25,6 @@ package org.eclipse.core.databinding.observable;
  * @see IObservable#isStale()
  *
  * @since 1.0
- *
  */
 public class StaleEvent extends ObservableEvent {
 
@@ -39,9 +38,6 @@ public class StaleEvent extends ObservableEvent {
 		super(source);
 	}
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 3491012225431471077L;
 
 	static final Object TYPE = new Object();

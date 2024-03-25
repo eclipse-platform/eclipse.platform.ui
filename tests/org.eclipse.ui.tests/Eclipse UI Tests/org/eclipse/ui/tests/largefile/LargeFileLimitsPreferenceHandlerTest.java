@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -61,7 +60,6 @@ import org.junit.runners.JUnit4;
  * Tests for the large file associations preference added for bug 577289.
  *
  * @since 3.5
- *
  */
 @RunWith(JUnit4.class)
 public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
@@ -104,7 +102,7 @@ public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
 		testProject = workspaceRoot.getProject("SomeProject");
 		testProject.create(monitor);
 		testProject.open(monitor);
-		IPath path = new Path("/" + testProject.getName() + "/test_file" + "." + TXT_EXTENSION);
+		IPath path = IPath.fromOSString("/" + testProject.getName() + "/test_file" + "." + TXT_EXTENSION);
 		temporaryFile = workspaceRoot.getFile(path);
 		String content = String.join(System.lineSeparator(), "some line 1", "some line 2");
 		boolean force = true;

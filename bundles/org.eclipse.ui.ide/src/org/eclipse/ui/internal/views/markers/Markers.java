@@ -41,7 +41,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * system, also maintains the categories that markers are grouped into.
  *
  * @since 3.6
- *
  */
 class Markers {
 
@@ -73,7 +72,6 @@ class Markers {
 	 *            the new marker entries
 	 * @param sortAndGroup
 	 *            true sort and group them
-	 * @param monitor
 	 */
 	synchronized boolean updateWithNewMarkers(Collection<MarkerEntry> markerEntries,
 			boolean sortAndGroup, IProgressMonitor monitor) {
@@ -116,8 +114,6 @@ class Markers {
 
 	/**
 	 * Sort the contained marker entries and build categories if required.
-	 *
-	 * @param monitor
 	 */
 	private synchronized boolean sortAndMakeCategories(IProgressMonitor monitor) {
 		boolean initialVal = inChange;
@@ -142,9 +138,6 @@ class Markers {
 		}
 	}
 
-	/**
-	 * @param monitor
-	 */
 	synchronized boolean sortMarkerEntries(IProgressMonitor monitor) {
 		if (monitor.isCanceled()) {
 			return false;
@@ -201,8 +194,6 @@ class Markers {
 
 	/**
 	 * get marker limit to show, if any.
-	 *
-	 * @param available
 	 */
 	private int getShowingLimit(int available) {
 		boolean limitsEnabled = builder.getGenerator().isMarkerLimitsEnabled();
@@ -221,8 +212,6 @@ class Markers {
 	/**
 	 * Sort Markers according to groups, and Group them into categories
 	 *
-	 * @param monitor
-	 * @param newMarkers
 	 * @return MarkerCategory
 	 */
 	private MarkerCategory[] groupIntoCategories(IProgressMonitor monitor, MarkerEntry[] newMarkers) {
@@ -248,11 +237,7 @@ class Markers {
 	 * structures. But the speed benefit is tremendous at a very small price of
 	 * few extra references.
 	 *
-	 * @param entries
-	 * @param group
-	 * @param k
 	 * @return {@link Map}
-	 *
 	 */
 	private Map<MarkerGroupingEntry, Integer> groupMarkerEntries(MarkerEntry[] entries, MarkerGroup group,
 			int k, IProgressMonitor monitor) {
@@ -342,7 +327,6 @@ class Markers {
 	/**
 	 * Return the {@link MarkerItem} that maps to marker.
 	 *
-	 * @param marker
 	 * @return {@link MarkerItem}
 	 */
 	public synchronized MarkerItem getMarkerItem(IMarker marker) {

@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * @since 1.2
- *
  */
 public class BeanPropertyHelper {
 	/**
@@ -142,8 +141,6 @@ public class BeanPropertyHelper {
 	}
 
 	/**
-	 * @param beanClass
-	 * @param propertyName
 	 * @return the PropertyDescriptor for the named property on the given bean
 	 *         class
 	 */
@@ -192,7 +189,6 @@ public class BeanPropertyHelper {
 	 *            defines (hierarchical)
 	 * @param iface
 	 *            The interface to fetch the PropertyDescriptors
-	 * @throws IntrospectionException
 	 */
 	private static void getInterfacePropertyDescriptors(
 			List<PropertyDescriptor> propertyDescriptors, Class<?> iface)
@@ -207,8 +203,6 @@ public class BeanPropertyHelper {
 	}
 
 	/**
-	 * @param observable
-	 * @param propertyName
 	 * @return property descriptor or <code>null</code>
 	 */
 	/* package */public static PropertyDescriptor getValueTypePropertyDescriptor(IObservableValue<?> observable,
@@ -220,7 +214,6 @@ public class BeanPropertyHelper {
 	}
 
 	/**
-	 * @param propertyDescriptor
 	 * @return String description of property descriptor
 	 */
 	public static String propertyName(PropertyDescriptor propertyDescriptor) {
@@ -231,7 +224,6 @@ public class BeanPropertyHelper {
 	}
 
 	/**
-	 * @param beanClass
 	 * @return class name excluding package
 	 */
 	public static String shortClassName(Class<?> beanClass) {

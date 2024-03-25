@@ -27,7 +27,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -95,7 +94,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 	 * Creates a new file zip entry with the specified name.
 	 */
 	protected void createFile(ZipEntry entry) {
-		IPath pathname = new Path(entry.getName());
+		IPath pathname = IPath.fromOSString(entry.getName());
 		ZipEntry parent;
 		if (pathname.segmentCount() == 1) {
 			parent = root;
@@ -141,7 +140,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 			return ((ZipEntry) element).getName();
 		}
 
-		return new Path(((ZipEntry) element).getName()).lastSegment();
+		return IPath.fromOSString(((ZipEntry) element).getName()).lastSegment();
 	}
 
 	/**
@@ -169,7 +168,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 	protected void initialize() {
 		children = new HashMap<>(1000);
 
-		IPath zipFileDirPath = (new Path(zipFile.getName())).removeLastSegments(1);
+		IPath zipFileDirPath = IPath.fromOSString(zipFile.getName()).removeLastSegments(1);
 		String canonicalDestinationDirPath = zipFileDirPath.toString();
 		File zipDestinationDir = new File(zipFileDirPath.toString());
 
@@ -189,7 +188,7 @@ public class ZipFileStructureProvider implements IImportStructureProvider {
 					invalidEntries.add(entry.getName());
 					throw new IOException("Entry is outside of the target dir: " + entry.getName()); //$NON-NLS-1$
 				} else if (!entry.isDirectory()) {
-					IPath path = new Path(entry.getName()).addTrailingSeparator();
+					IPath path = IPath.fromOSString(entry.getName()).addTrailingSeparator();
 					int pathSegmentCount = path.segmentCount();
 
 					for (int i = 1; i < pathSegmentCount; i++) {

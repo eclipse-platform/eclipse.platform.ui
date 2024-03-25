@@ -41,9 +41,9 @@ import java.util.List;
  * </p>
  */
 public class CallHistory {
-	private List<String> methodList;
+	private final List<String> methodList;
 
-	private Class<? extends Object> classType;
+	private final Class<? extends Object> classType;
 
 	/**
 	 * Creates a new call history for an object.

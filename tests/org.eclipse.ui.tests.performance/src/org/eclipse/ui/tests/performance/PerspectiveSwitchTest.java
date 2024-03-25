@@ -37,9 +37,9 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class PerspectiveSwitchTest extends BasicPerformanceTest {
 
-	private String id1;
-	private String id2;
-	private String activeEditor;
+	private final String id1;
+	private final String id2;
+	private final String activeEditor;
 
 	@Parameters
 	public static Collection<Object[]> data() {

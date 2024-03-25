@@ -21,13 +21,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Use this annotation to provide MMenuElements to the list of dynamically shown entries
- * within a DynamicMenuContributionItem. Usage in contribution class:
+ * Use this annotation to provide MMenuElements to the list of dynamically shown
+ * entries within a DynamicMenuContributionItem. Usage in contribution class:
  * <p>
+ * <code>
  * {@literal @}AboutToShow<br>
  * public void aboutToShow(List&lt;MMenuElement&gt; items) { }
+ * </code>
+ * <p>
+ * See {@code org.eclipse.jface.action.IMenuListener}
  *
- * @see org.eclipse.jface.action.IMenuListener
  * @since 1.0
  */
 @Documented

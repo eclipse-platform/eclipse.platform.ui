@@ -44,7 +44,6 @@ import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
  * an {@link ExtendedMarkersView}.
  *
  * @since 3.4
- *
  */
 class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
@@ -68,7 +67,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	// The key for the string we built for display
 	private static final String LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
-	private static final Object CACHED_NULL = new Object();
+	private static final Object CACHED_NULL = new String("CACHED_NULL"); //$NON-NLS-1$
 	private MarkerCategory category;
 	private final Map<String, Object> cache = new ConcurrentHashMap<>();
 	private static Map<String, CollationKey> collationCache = new ConcurrentHashMap<>();
@@ -94,8 +93,6 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param marker
 	 */
 	public MarkerEntry(IMarker marker) {
 		this.marker = marker;
@@ -152,7 +149,6 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * Return the Object that is the marker value for attribute. Return null if
 	 * it is not found.
 	 *
-	 * @param attribute
 	 * @return Object or <code>null</code>
 	 */
 	Object getAttributeValue(String attribute) {
@@ -202,7 +198,6 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	/**
 	 * Get the CollationKey for the string attribute.
 	 *
-	 * @param attribute
 	 * @param defaultValue
 	 *            the defaultValue if the value is not set
 	 * @return CollationKey
@@ -346,8 +341,6 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	/**
 	 * Set the category to markerCategory.
-	 *
-	 * @param markerCategory
 	 */
 	void setCategory(MarkerCategory markerCategory) {
 		category = markerCategory;

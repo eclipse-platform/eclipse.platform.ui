@@ -19,8 +19,8 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 /**
  * A layout that can trigger an problem interaction between
- * {@link org.eclipse.ui.internal.presentations.util.PresentablePartFolder}
- * and {@link org.eclipse.ui.internal.presentations.defaultpresentation.EmptyTabFolder}.
+ * {@code org.eclipse.ui.internal.presentations.util.PresentablePartFolder} and
+ * {@code org.eclipse.ui.internal.presentations.defaultpresentation.EmptyTabFolder}.
  *
  * @since 3.2
  */

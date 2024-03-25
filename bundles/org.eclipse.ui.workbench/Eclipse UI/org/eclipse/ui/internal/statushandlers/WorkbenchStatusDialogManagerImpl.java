@@ -368,7 +368,6 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 * Gets the shell of the managed dialog.
 	 *
 	 * @return Shell or null
-	 *
 	 */
 	public Shell getShell() {
 		if (this.dialog == null)
@@ -485,7 +484,6 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 *
 	 * @return Collection of StatusAdapters
 	 */
-	@SuppressWarnings("unchecked")
 	private Collection<StatusAdapter> getErrors() {
 		return (Collection<StatusAdapter>) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS);
 	}

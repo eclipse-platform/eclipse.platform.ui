@@ -235,8 +235,9 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.ITEM__LABEL, oldLabel, label));
+		}
 	}
 
 	/**
@@ -260,8 +261,9 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	public void setIconURI(String newIconURI) {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.ITEM__ICON_URI, oldIconURI, iconURI));
+		}
 	}
 
 	/**
@@ -285,8 +287,9 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	public void setTooltip(String newTooltip) {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.ITEM__TOOLTIP, oldTooltip, tooltip));
+		}
 	}
 
 	/**
@@ -328,8 +331,9 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	public void setEnabled(boolean newEnabled) {
 		boolean oldEnabled = enabled;
 		enabled = newEnabled;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.ITEM__ENABLED, oldEnabled, enabled));
+		}
 	}
 
 	/**
@@ -351,9 +355,10 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	public void setSelected(boolean newSelected) {
 		boolean oldSelected = selected;
 		selected = newSelected;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.ITEM__SELECTED, oldSelected,
 					selected));
+		}
 	}
 
 	/**
@@ -375,8 +380,9 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	public void setType(ItemType newType) {
 		ItemType oldType = type;
 		type = newType == null ? TYPE_EDEFAULT : newType;
-		if (eNotificationRequired())
+		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.ITEM__TYPE, oldType, type));
+		}
 	}
 
 	/**
@@ -627,8 +633,9 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
+		if (eIsProxy()) {
 			return super.toString();
+		}
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (label: "); //$NON-NLS-1$

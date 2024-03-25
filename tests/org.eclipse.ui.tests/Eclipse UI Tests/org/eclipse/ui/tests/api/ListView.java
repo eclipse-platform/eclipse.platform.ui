@@ -163,8 +163,7 @@ public class ListView extends MockViewPart implements IMenuListener {
 	 */
 	private boolean useStaticMenu() {
 		Object data = getData();
-		if (data instanceof String) {
-			String arg = (String) data;
+		if (data instanceof String arg) {
 			return arg.contains("-staticMenu"); //$NON-NLS-1$
 		}
 		return false;

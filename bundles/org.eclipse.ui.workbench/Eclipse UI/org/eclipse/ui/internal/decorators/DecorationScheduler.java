@@ -178,8 +178,6 @@ public class DecorationScheduler {
 	/**
 	 * Return a new instance of the receiver configured for the supplied
 	 * DecoratorManager.
-	 *
-	 * @param manager
 	 */
 	DecorationScheduler(DecoratorManager manager) {
 		decoratorManager = manager;
@@ -191,8 +189,6 @@ public class DecorationScheduler {
 	 * the result, otherwise queue it for decoration.
 	 *
 	 * @return String
-	 * @param text
-	 * @param element
 	 * @param adaptedElement The adapted value of element. May be null.
 	 * @param context        the decoration context
 	 */
@@ -212,7 +208,6 @@ public class DecorationScheduler {
 	/**
 	 * Queue the element and its adapted value if it has not been already.
 	 *
-	 * @param element
 	 * @param adaptedElement  The adapted value of element. May be null.
 	 * @param forceUpdate     If true then a labelProviderChanged is fired whether
 	 *                        decoration occurred or not.
@@ -255,12 +250,8 @@ public class DecorationScheduler {
 	 * Decorate the supplied image, element and its adapted value.
 	 *
 	 * @return Image
-	 * @param image
-	 * @param element
 	 * @param adaptedElement The adapted value of element. May be null.
 	 * @param context        the decoration context
-	 * @param manager
-	 *
 	 */
 	public Image decorateWithOverlays(Image image, Object element, Object adaptedElement, IDecorationContext context,
 			ResourceManager manager) {
@@ -633,7 +624,6 @@ public class DecorationScheduler {
 	/**
 	 * Return whether or not there is a decoration for this element ready.
 	 *
-	 * @param element
 	 * @param context The decoration context
 	 * @return boolean true if the element is ready.
 	 */
@@ -656,7 +646,6 @@ public class DecorationScheduler {
 	 * decoration and return null, otherwise return the value in the result.
 	 *
 	 * @param element        The Object to be decorated
-	 * @param adaptedElement
 	 * @return Color or <code>null</code> if there is no value or if it is has not
 	 *         been decorated yet.
 	 */
@@ -674,7 +663,6 @@ public class DecorationScheduler {
 	 * return null, otherwise return the value in the result.
 	 *
 	 * @param element        The Object to be decorated
-	 * @param adaptedElement
 	 * @return Font or <code>null</code> if there is no value or if it is has not
 	 *         been decorated yet.
 	 */
@@ -692,7 +680,6 @@ public class DecorationScheduler {
 	 * decoration and return null, otherwise return the value in the result.
 	 *
 	 * @param element        The Object to be decorated
-	 * @param adaptedElement
 	 * @return Color or <code>null</code> if there is no value or if it is has not
 	 *         been decorated yet.
 	 */
@@ -707,8 +694,6 @@ public class DecorationScheduler {
 
 	/**
 	 * A listener has been removed. If we are updating then skip it.
-	 *
-	 * @param listener
 	 */
 	void listenerRemoved(ILabelProviderListener listener) {
 		if (updatesPending()) {// Only keep track of them if there are updates

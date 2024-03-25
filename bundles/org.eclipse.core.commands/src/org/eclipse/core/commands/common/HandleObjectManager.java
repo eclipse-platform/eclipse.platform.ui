@@ -30,24 +30,24 @@ import java.util.Set;
  * Clients may extend.
  * </p>
  *
+ * @param <T> The type of handled objects
+ *
  * @since 3.2
  */
-public abstract class HandleObjectManager extends EventManager {
+public abstract class HandleObjectManager<T extends NamedHandleObject> extends EventManager {
 
 	/**
 	 * The set of handle objects that are defined. This value may be empty, but
 	 * it is never <code>null</code>.
 	 */
-	@SuppressWarnings("rawtypes")
-	protected final Set definedHandleObjects = new HashSet<>();
+	protected final Set<T> definedHandleObjects = new HashSet<>();
 
 	/**
 	 * The map of identifiers (<code>String</code>) to handle objects (
 	 * <code>HandleObject</code>). This collection may be empty, but it is
 	 * never <code>null</code>.
 	 */
-	@SuppressWarnings("rawtypes")
-	protected final Map handleObjectsById = new HashMap<>();
+	protected final Map<String, T> handleObjectsById = new HashMap<>();
 
 	/**
 	 * Verifies that the identifier is valid. Exceptions will be thrown if the
@@ -75,7 +75,7 @@ public abstract class HandleObjectManager extends EventManager {
 	@SuppressWarnings("rawtypes")
 	protected final Set getDefinedHandleObjectIds() {
 		final HashSet<String> definedHandleObjectIds = new HashSet<>(definedHandleObjects.size());
-		final Iterator<NamedHandleObject> handleObjectItr = definedHandleObjects.iterator();
+		final Iterator<T> handleObjectItr = definedHandleObjects.iterator();
 		while (handleObjectItr.hasNext()) {
 			final HandleObject handleObject = handleObjectItr.next();
 			final String id = handleObject.getId();

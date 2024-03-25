@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2020 IBM Corporation and others.
+ * Copyright (c) 2013, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632, 564561
+ *     Ole Osterhagen <ole@osterhagen.info> - Issue 230
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -20,8 +21,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import jakarta.inject.Inject;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -29,11 +32,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -44,9 +48,15 @@ import org.eclipse.e4.ui.services.internal.events.EventBroker;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
 import org.junit.Before;
 import org.junit.Rule;
@@ -141,8 +151,8 @@ public class StackRendererTest {
 	}
 
 	private static class CTabItemStylingMethodsListener implements InvocationHandler {
-		private MPart part;
-		private List<String> methods;
+		private final MPart part;
+		private final List<String> methods;
 
 		public CTabItemStylingMethodsListener(MPart part) {
 			this.part = part;
@@ -158,7 +168,7 @@ public class StackRendererTest {
 		}
 
 		private boolean isTabItemForPart(Object obj) {
-			return obj instanceof CTabItem && part.getLabel().equals(((CTabItem) obj).getText());
+			return obj instanceof CTabItem item && part.getLabel().equals(item.getText());
 		}
 
 		public int getMethodExecutionCount(String methodPattern) {
@@ -397,6 +407,135 @@ public class StackRendererTest {
 
 		assertTrue(toolbar.isVisible());
 		assertNotNull(toolbar.getWidget());
+	}
+
+	@Test
+	public void testOnboardingRenderedWithCorrectSizeForEditorStack() {
+		partStack.getTags().add("EditorStack");
+
+		contextRule.createAndRunWorkbench(window);
+
+		Composite uiContainer = (Composite) ((StackRenderer) partStack.getRenderer()).getUIContainer(partStack);
+		CTabFolder tabFolder = (CTabFolder) ((Composite) uiContainer.getChildren()[0]).getChildren()[0];
+		assertNotNull(tabFolder.getChildren());
+		assertEquals(3, tabFolder.getChildren().length);
+
+		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
+		Rectangle expected = new Rectangle(StackRenderer.ONBOARDING_SPACING, StackRenderer.ONBOARDING_TOP_SPACING,
+				tabFolder.getSize().x - 2 * StackRenderer.ONBOARDING_SPACING,
+				tabFolder.getSize().y - StackRenderer.ONBOARDING_TOP_SPACING - StackRenderer.ONBOARDING_SPACING);
+		assertEquals(expected, outerOnboardingComposite.getBounds());
+		Composite innerOnboardingComposite = (Composite) outerOnboardingComposite.getChildren()[0];
+		assertEquals(2, innerOnboardingComposite.getChildren().length);
+		assertNull(((Label) innerOnboardingComposite.getChildren()[0]).getImage());
+		assertEquals("", ((Label) innerOnboardingComposite.getChildren()[1]).getText());
+	}
+
+	@Test
+	public void testOnboardingNotRenderedForNonEditorStack() {
+		partStack.getTags().add("OtherStack");
+		contextRule.createAndRunWorkbench(window);
+
+		Composite uiContainer = (Composite) ((StackRenderer) partStack.getRenderer()).getUIContainer(partStack);
+		CTabFolder tabFolder = (CTabFolder) ((Composite) uiContainer.getChildren()[0]).getChildren()[0];
+		assertNotNull(tabFolder.getChildren());
+		assertEquals(2, tabFolder.getChildren().length);
+	}
+
+	@Test
+	public void testOnboardingIsFilled() {
+		MPerspective perspective = ems.createModelElement(MPerspective.class);
+		perspective.getTags().add("persp.editorOnboardingText:Onboarding text");
+		perspective.getTags().add("persp.editorOnboardingImageUri:" + PART_ICON);
+		perspective.getTags().add("persp.editorOnboardingCommand:Find Actions$$$STRG+3");
+
+		// "connect" the perspective with the application more or less like in
+		// productive environment
+		MPerspectiveStack perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
+		perspectiveStack.getChildren().add(perspective);
+		window.getChildren().add(perspectiveStack);
+		MPlaceholder placeholder = ems.createModelElement(MPlaceholder.class);
+		placeholder.setRef(partStack);
+		perspective.getChildren().add(placeholder);
+
+		partStack.getTags().add("EditorStack");
+
+		contextRule.createAndRunWorkbench(window);
+
+		HashMap<String, Object> params = new HashMap<>();
+		params.put(UIEvents.EventTags.ELEMENT, perspective);
+
+		context.get(EventBroker.class).send(UIEvents.UILifeCycle.PERSPECTIVE_SWITCHED, params);
+
+		CTabFolder tabFolder = (CTabFolder) partStack.getWidget();
+		assertNotNull(tabFolder.getChildren());
+		assertEquals(3, tabFolder.getChildren().length);
+
+		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
+		Composite innerOnboardingComposite = (Composite) outerOnboardingComposite.getChildren()[0];
+		assertEquals(4, innerOnboardingComposite.getChildren().length);
+		assertNotNull(((Label) innerOnboardingComposite.getChildren()[0]).getImage());
+		assertEquals("Onboarding text", ((Label) innerOnboardingComposite.getChildren()[1]).getText());
+		assertEquals("Find Actions", ((Label) innerOnboardingComposite.getChildren()[2]).getText());
+		assertEquals("STRG+3", ((Label) innerOnboardingComposite.getChildren()[3]).getText());
+	}
+
+	@Test
+	public void testOnboardingIsHiddenWhenEditorOpened() {
+		partStack.getTags().add("EditorStack");
+
+		contextRule.createAndRunWorkbench(window);
+
+		Composite uiContainer = (Composite) ((StackRenderer) partStack.getRenderer()).getUIContainer(partStack);
+		CTabFolder tabFolder = (CTabFolder) ((Composite) uiContainer.getChildren()[0]).getChildren()[0];
+		assertNotNull(tabFolder.getChildren());
+		assertEquals(3, tabFolder.getChildren().length);
+
+		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
+		Rectangle expected = new Rectangle(StackRenderer.ONBOARDING_SPACING, StackRenderer.ONBOARDING_TOP_SPACING,
+				tabFolder.getSize().x - 2 * StackRenderer.ONBOARDING_SPACING,
+				tabFolder.getSize().y - StackRenderer.ONBOARDING_TOP_SPACING - StackRenderer.ONBOARDING_SPACING);
+		assertEquals(expected, outerOnboardingComposite.getBounds());
+
+		MPart part1 = ems.createModelElement(MPart.class);
+		partStack.getChildren().add(part1);
+		partStack.setSelectedElement(part1);
+
+		tabFolder.notifyListeners(SWT.Paint, new Event());
+
+		expected = new Rectangle(StackRenderer.ONBOARDING_SPACING, StackRenderer.ONBOARDING_TOP_SPACING, 0, 0);
+		assertEquals(expected, outerOnboardingComposite.getBounds());
+	}
+
+	/**
+	 * https://github.com/eclipse-platform/eclipse.platform.ui/issues/230
+	 */
+	@Test
+	public void testToolbarIsReparentedToNewCompositeForTopRightOfTabFolder() {
+		MPartStack partStack2 = ems.createModelElement(MPartStack.class);
+		window.getChildren().add(partStack2);
+
+		MPart part = ems.createModelElement(MPart.class);
+		part.setToolbar(ems.createModelElement(MToolBar.class));
+
+		MPlaceholder placeHolder1 = ems.createModelElement(MPlaceholder.class);
+		placeHolder1.setRef(part);
+		partStack.getChildren().add(placeHolder1);
+
+		MPlaceholder placeHolder2 = ems.createModelElement(MPlaceholder.class);
+		placeHolder2.setRef(part);
+		partStack2.getChildren().add(placeHolder2);
+
+		// Ensure that the placeholder for the part is selected. Otherwise it would be
+		// selected by the framework which triggers a selection event. This event would
+		// re-parent the toolbar anyway.
+		partStack2.setSelectedElement(placeHolder2);
+
+		contextRule.createAndRunWorkbench(window);
+
+		CTabFolder tabFolder = (CTabFolder) partStack2.getWidget();
+		Control toolbarControl = (Control) part.getToolbar().getWidget();
+		assertSame(tabFolder.getTopRight(), toolbarControl.getParent());
 	}
 
 	// helper functions

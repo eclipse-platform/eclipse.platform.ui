@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+     <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
+      <renameParticipant
+            class="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant"
+            id="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant"
+            name="%FailingParticipant.name">
+         <enablement>
+           <with variable="element">
+             <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.Element"/>
+           </with>
+         </enablement>
+      </renameParticipant>
+      
+      <renameParticipant
+            class="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant2"
+            id="org.eclipse.ltk.core.refactoring.tests.participants.FailingParticipant2"
+            name="%FailingParticipant2.name">
+         <enablement>
+           <with variable="element">
+             <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.Element"/>
+           </with>
+         </enablement>
+      </renameParticipant>
+      
+      <renameParticipant
+            class="org.eclipse.ltk.core.refactoring.tests.participants.WorkingParticipant"
+            id="org.eclipse.ltk.core.refactoring.tests.participants.WorkingParticipant"
+            name="%WorkingParticipant.name">
+         <enablement>
+           <or>
+             <with variable="element">
+               <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.Element"/>
+             </with>
+             <with variable="element">
+               <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.ElementWorking"/>
+             </with>
+             <with variable="element">
+               <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.ElementWorkingPre"/>
+             </with>
+             <with variable="element">
+               <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.ElementWorkingPreAlways"/>
+             </with>
+           </or>
+         </enablement>
+      </renameParticipant>
+      
+      <renameParticipant
+            class="org.eclipse.ltk.core.refactoring.tests.participants.WorkingParticipantPre"
+            id="org.eclipse.ltk.core.refactoring.tests.participants.WorkingParticipantPre"
+            name="%WorkingParticipantPre.name">
+         <enablement>
+           <or>
+             <with variable="element">
+               <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.ElementWorkingPre"/>
+             </with>
+           </or>
+         </enablement>
+      </renameParticipant>
+      
+      <renameParticipant
+            class="org.eclipse.ltk.core.refactoring.tests.participants.WorkingParticipantPre"
+            id="org.eclipse.ltk.core.refactoring.tests.participants.WorkingParticipantPreAlways"
+            name="%WorkingParticipantPreAlways.name">
+         <enablement>
+           <or>
+             <with variable="element">
+               <instanceof value="org.eclipse.ltk.core.refactoring.tests.participants.ElementWorkingPreAlways"/>
+             </with>
+           </or>
+         </enablement>
+      </renameParticipant>
+   </extension>
+     
+     <extension
+           point="org.eclipse.ltk.core.refactoring.refactoringContributions">
+        <contribution
+              class="org.eclipse.ltk.core.refactoring.tests.history.MockRefactoringContribution"
+              id="org.eclipse.ltk.core.mock"></contribution>
+     </extension>
+</plugin>

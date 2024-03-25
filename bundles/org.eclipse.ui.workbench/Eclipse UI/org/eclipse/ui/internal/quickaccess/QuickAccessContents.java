@@ -141,7 +141,6 @@ public abstract class QuickAccessContents {
 	 * Refreshes the contents of the quick access shell
 	 *
 	 * @param filter The filter text to apply to results
-	 *
 	 */
 	public void updateProposals(String filter) {
 		if (computeProposalsJob != null) {
@@ -212,7 +211,6 @@ public abstract class QuickAccessContents {
 	 *                        empty
 	 * @param showAllMatches  whether the results were constrained by the size of
 	 *                        the dialog
-	 *
 	 */
 	protected abstract void updateFeedback(boolean filterTextEmpty, boolean showAllMatches);
 
@@ -356,7 +354,6 @@ public abstract class QuickAccessContents {
 	 * @param perfectMatch a quick access element that should be given priority or
 	 *                     <code>null</code>
 	 *
-	 * @param aMonitor
 	 * @return the array of lists (one per provider) contains the quick access
 	 *         entries that should be added to the table, possibly empty
 	 */
@@ -714,8 +711,6 @@ public abstract class QuickAccessContents {
 
 	/**
 	 * Sets hint text to be displayed and requests the layout
-	 *
-	 * @param toDisplay
 	 */
 	private void setHintTextToDisplay(boolean toDisplay) {
 		GridData data = (GridData) hintText.getLayoutData();
@@ -743,7 +738,7 @@ public abstract class QuickAccessContents {
 		table = new Table(tableComposite, SWT.SINGLE | SWT.FULL_SELECTION);
 		textLayout = new TextLayout(table.getDisplay());
 		textLayout.setOrientation(defaultOrientation);
-		Font boldFont = resourceManager.createFont(FontDescriptor.createFrom(table.getFont()).setStyle(SWT.BOLD));
+		Font boldFont = resourceManager.create(FontDescriptor.createFrom(table.getFont()).setStyle(SWT.BOLD));
 		textLayout.setFont(table.getFont());
 		textLayout.setText(QuickAccessMessages.QuickAccess_AvailableCategories);
 		int maxProviderWidth = (textLayout.getBounds().width);

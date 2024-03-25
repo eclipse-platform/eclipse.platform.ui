@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -136,9 +136,7 @@ public class Snippet049StyledCellLabelProvider {
 		public void update(ViewerCell cell) {
 			Object element= cell.getElement();
 
-			if (element instanceof File) {
-				File file= (File) element;
-
+			if (element instanceof File file) {
 				// Multi-font support only works in JFace 3.5 and above (specifically, 3.5 M4 and above).
 				// With JFace 3.4, the font information (bold in this example) will be ignored.
 				Styler style= file.isDirectory() ? fBoldStyler: null;

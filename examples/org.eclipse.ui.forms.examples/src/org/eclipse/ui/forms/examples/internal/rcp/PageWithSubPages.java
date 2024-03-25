@@ -22,9 +22,6 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.*;
-/**
- *
- */
 public class PageWithSubPages extends FormPage {
 	private CTabFolder tabFolder;
 	private Text text;
@@ -33,10 +30,8 @@ public class PageWithSubPages extends FormPage {
 		String text;
 		public TextSection(String text) {this.text = text;}
 	}
-	/**
-	 * @param id
-	 * @param title
-	 */
+	
+
 	public PageWithSubPages(FormEditor editor) {
 		super(editor, "composite", "Composite Page");
 	}

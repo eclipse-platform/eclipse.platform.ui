@@ -43,8 +43,6 @@ public class StringToBooleanPrimitiveConverter implements IConverter<String, Boo
 	/**
 	 * Returns a sorted array with all values converted to upper case.
 	 *
-	 * @param delimiter
-	 * @param values
 	 * @return sorted array of values
 	 */
 	private static String[] valuesToSortedArray(String delimiter, String values) {

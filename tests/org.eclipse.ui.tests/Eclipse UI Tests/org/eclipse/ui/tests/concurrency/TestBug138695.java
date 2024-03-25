@@ -23,14 +23,10 @@ import org.junit.Test;
 
 /**
  * @since 3.2
- *
  */
 public class TestBug138695 {
 	static class SampleJob extends UIJob {
 
-		/**
-		 * @param name
-		 */
 		public SampleJob() {
 			super("Sample");
 		}
@@ -63,8 +59,7 @@ public class TestBug138695 {
 
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
-			if (rule instanceof SerialPerObjectRule) {
-				SerialPerObjectRule vup = (SerialPerObjectRule) rule;
+			if (rule instanceof SerialPerObjectRule vup) {
 				return fObject == vup.fObject;
 			}
 			return false;

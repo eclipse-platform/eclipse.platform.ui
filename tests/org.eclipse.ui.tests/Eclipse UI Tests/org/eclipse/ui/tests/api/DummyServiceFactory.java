@@ -20,7 +20,6 @@ import org.eclipse.ui.services.IServiceLocator;
  *
  * @since 3.5
  * @author Prakash G.R.
- *
  */
 public class DummyServiceFactory extends AbstractServiceFactory {
 

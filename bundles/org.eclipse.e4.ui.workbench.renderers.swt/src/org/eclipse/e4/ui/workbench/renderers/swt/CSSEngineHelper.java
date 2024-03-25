@@ -33,9 +33,6 @@ public class CSSEngineHelper {
 	/**
 	 * Create a CSSEngineHelper that can retrieve engine values for a particular
 	 * control.
-	 *
-	 * @param context
-	 * @param control
 	 */
 	public CSSEngineHelper(IEclipseContext context, Control control) {
 		this.context = context;
@@ -54,7 +51,6 @@ public class CSSEngineHelper {
 	 * Return the margin bottom as specified in the stylesheet for this control,
 	 * or the defaultValue if none is specified.
 	 *
-	 * @param defaultValue
 	 * @return the margin in pixels
 	 */
 	public int getMarginBottom(int defaultValue) {
@@ -68,7 +64,6 @@ public class CSSEngineHelper {
 	 * Return the margin top as specified in the stylesheet for this control, or
 	 * the defaultValue if none is specified.
 	 *
-	 * @param defaultValue
 	 * @return the margin in pixels
 	 */
 	public int getMarginTop(int defaultValue) {
@@ -81,7 +76,6 @@ public class CSSEngineHelper {
 	 * Return the margin left as specified in the stylesheet for this control,
 	 * or the defaultValue if none is specified.
 	 *
-	 * @param defaultValue
 	 * @return the margin in pixels
 	 */
 	public int getMarginLeft(int defaultValue) {
@@ -95,7 +89,6 @@ public class CSSEngineHelper {
 	 * Return the margin right as specified in the stylesheet for this control,
 	 * or the defaultValue if none is specified.
 	 *
-	 * @param defaultValue
 	 * @return the margin in pixels
 	 */
 	public int getMarginRight(int defaultValue) {

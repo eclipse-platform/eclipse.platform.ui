@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 QNX Software Systems and others.
+ * Copyright (c) 2015, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,18 +46,19 @@ import org.junit.Test;
 public class ExpandableCompositeTest {
 	private static final int SHORT_CONTROL_WIDTH = 58;
 
-	private int defaultFlags = ExpandableComposite.TWISTIE;
+	private final int defaultFlags = ExpandableComposite.TWISTIE;
 	private static Display display;
 	private Shell shell;
 	private ExpandableCompositeForTest ec;
 	private Rectangle ecbounds;
 	private static String shortText = "Hedgehog";
-	private static String longText = "A hedgehog is any of the spiny mammals of the subfamily Erinaceinae, in the order Erinaceomorpha. " //$NON-NLS-1$
-			+ "There are seventeen species of hedgehog in five genera, found through parts of Europe, Asia, Africa and New Zealand. " //$NON-NLS-1$
-	;
+	private static String longText = """
+			A hedgehog is any of the spiny mammals of the subfamily Erinaceinae, in the order Erinaceomorpha.
+			There are seventeen species of hedgehog in five genera, found through parts of Europe, Asia,
+			Africa and New Zealand. """;
 	private Font font;
 	// change this to true if you want to see test is slow motion
-	private boolean humanWatching = false;
+	private final boolean humanWatching = false;
 
 	private static class ExpandableCompositeForTest extends ExpandableComposite {
 		private Control separator;
@@ -215,7 +216,7 @@ public class ExpandableCompositeTest {
 		ec.setExpanded(true);
 
 		Rectangle bounds2 = update();
-		assertTrue(bounds1.width == bounds2.width);
+		assertEquals(bounds1.width, bounds2.width);
 		assertEquals(bounds1, bounds2);
 
 		createExtendableComposite(shortText, defaultFlags);
@@ -254,7 +255,7 @@ public class ExpandableCompositeTest {
 		createClient(); // add client
 		Rectangle bounds2 = update();
 
-		assertTrue(bounds1.width == bounds2.width);
+		assertEquals(bounds1.width, bounds2.width);
 
 		ec.setExpanded(true); // now it should be bigger
 		Rectangle bounds3 = update();
@@ -287,20 +288,20 @@ public class ExpandableCompositeTest {
 		createTextClient(BIG_W, SMALL_BOX_H);
 		Rectangle bounds2 = update();
 		assertTrue(bounds2.width >= bounds1.width + BIG_W);
-		assertTrue(bounds2.height == bounds1.height);
+		assertEquals(bounds2.height, bounds1.height);
 
 		// text client height more then text height
 		createExtendableComposite(shortText, defaultFlags);
 		createTextClient(BIG_W, BIG_BOX_H);
 		Rectangle bounds3 = update();
-		assertTrue(bounds2.width == bounds3.width);
+		assertEquals(bounds2.width, bounds3.width);
 		assertTrue(bounds3.height >= BIG_BOX_H);
 
 		// text client height more then text height, left alignment
 		createExtendableComposite(shortText, defaultFlags | ExpandableComposite.LEFT_TEXT_CLIENT_ALIGNMENT);
 		createTextClient(BIG_W, BIG_BOX_H);
 		Rectangle bounds3l = update();
-		assertTrue(bounds2.width == bounds3l.width);
+		assertEquals(bounds2.width, bounds3l.width);
 		assertTrue(bounds3l.height >= BIG_BOX_H);
 
 		// no title
@@ -319,14 +320,14 @@ public class ExpandableCompositeTest {
 		createTextClient(BIG_W, SMALL_BOX_H); // text client is small
 		Rectangle bounds5 = update();
 		assertTrue(bounds5.width >= boundsToggle.width + BIG_W);
-		assertTrue(bounds5.height == boundsToggle.height);
+		assertEquals(bounds5.height, boundsToggle.height);
 
 		createExtendableComposite(shortText, ExpandableComposite.TWISTIE | ExpandableComposite.NO_TITLE
 				| ExpandableComposite.LEFT_TEXT_CLIENT_ALIGNMENT);
 		createTextClient(BIG_W, SMALL_BOX_H); // text client is small
 		Rectangle bounds5l = update();
 		assertTrue(bounds5l.width >= boundsToggle.width + BIG_W);
-		assertTrue(bounds5l.height == boundsToggle.height);
+		assertEquals(bounds5l.height, boundsToggle.height);
 
 		createExtendableComposite(shortText, ExpandableComposite.TWISTIE | ExpandableComposite.NO_TITLE);
 		createTextClient(BIG_W, BIG_BOX_H); // text client bigger then font size
@@ -373,7 +374,7 @@ public class ExpandableCompositeTest {
 		update();
 		Rectangle bounds = ec.getBounds();
 		Rectangle sepBounds = ec.getSeparatorControl().getBounds();
-		assertTrue(sepBounds.width == bounds.width);
+		assertEquals(sepBounds.width, bounds.width);
 
 		Rectangle cb = ec.getClient().getBounds();
 		Rectangle db = ec.getDescriptionControl().getBounds();
@@ -386,7 +387,7 @@ public class ExpandableCompositeTest {
 		update();
 		Rectangle bounds = ec.getBounds();
 		Rectangle sepBounds = ec.getSeparatorControl().getBounds();
-		assertTrue(sepBounds.width == bounds.width);
+		assertEquals(sepBounds.width, bounds.width);
 		if (ec.isExpanded() && ec.getClient() != null) {
 			Rectangle cb = ec.getClient().getBounds();
 			assertEquals(bounds.height - cb.height - ec.clientVerticalSpacing, sepBounds.y + sepBounds.height);

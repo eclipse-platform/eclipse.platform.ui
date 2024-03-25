@@ -15,6 +15,8 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.tests.viewers.TableViewerTest.TableTestLabelProvider;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -31,6 +33,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * The TableColorProviderTest is a test suite designed to test
@@ -42,17 +46,9 @@ public class TableColorProviderTest extends StructuredViewerTest {
 	Color green = null;
 
 	/**
-	 * Create a new instance of the receiver
-	 *
-	 * @param name
-	 */
-	public TableColorProviderTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * Test with a standard color provider.
 	 */
+	@Test
 	public void testColorProviderForeground() {
 		TableViewer viewer = (TableViewer) fViewer;
 		ColorViewLabelProvider provider = new ColorViewLabelProvider();
@@ -72,6 +68,7 @@ public class TableColorProviderTest extends StructuredViewerTest {
 	/**
 	 * Test that the backgrounds are being set.
 	 */
+	@Test
 	public void testColorProviderBackground() {
 		TableViewer viewer = (TableViewer) fViewer;
 		ColorViewLabelProvider provider = new ColorViewLabelProvider();
@@ -89,8 +86,8 @@ public class TableColorProviderTest extends StructuredViewerTest {
 
 	/**
 	 * Test that the foregrounds are being set.
-	 *
 	 */
+	@Test
 	public void testTableItemsColorProviderForeground() {
 		TableViewer viewer = (TableViewer) fViewer;
 		TableColorViewLabelProvider provider = new TableColorViewLabelProvider();
@@ -108,8 +105,8 @@ public class TableColorProviderTest extends StructuredViewerTest {
 
 	/**
 	 * Test the table item colours.
-	 *
 	 */
+	@Test
 	public void testTableItemsColorProviderBackground() {
 		TableViewer viewer = (TableViewer) fViewer;
 		TableColorViewLabelProvider provider = new TableColorViewLabelProvider();
@@ -125,20 +122,12 @@ public class TableColorProviderTest extends StructuredViewerTest {
 
 	}
 
+	@Before
 	@Override
 	public void setUp() {
 		super.setUp();
 		red = new Color(Display.getCurrent(), 255, 0, 0);
 		green = new Color(Display.getCurrent(), 0, 255, 0);
-	}
-
-	/**
-	 * Run as a stand alone test
-	 *
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(TableColorProviderTest.class);
 	}
 
 	@Override

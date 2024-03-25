@@ -52,19 +52,19 @@ public class OverrideTestsTabListsContentsManager {
 
 	private ITabItem[] activeTabs;
 
-	private Composite composite;
+	private final Composite composite;
 
-	private IOverrideTestsTabList emptyFolder;
+	private final IOverrideTestsTabList emptyFolder;
 
-	private IOverrideTestsTabList[] folders;
+	private final IOverrideTestsTabList[] folders;
 
 	private boolean processingUpdateTabs;
 
 	private OverrideTestsView sampleView;
 
-	private ISection section;
+	private final ISection section;
 
-	private TabbedPropertySheetPage tabbedPropertySheetPage;
+	private final TabbedPropertySheetPage tabbedPropertySheetPage;
 
 	public OverrideTestsTabListsContentsManager(Composite aComposite,
 			TabbedPropertySheetPage aTabbedPropertySheetPage, ISection aSection) {

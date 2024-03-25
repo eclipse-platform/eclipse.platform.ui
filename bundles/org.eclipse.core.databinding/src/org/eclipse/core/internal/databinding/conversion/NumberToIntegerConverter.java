@@ -25,11 +25,6 @@ import java.text.Format;
  */
 public class NumberToIntegerConverter extends NumberToNumberConverter<Integer> {
 
-	/**
-	 * @param numberFormat
-	 * @param fromType
-	 * @param primitive
-	 */
 	public NumberToIntegerConverter(Format numberFormat, Class<?> fromType, boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Integer.TYPE : Integer.class);
 	}

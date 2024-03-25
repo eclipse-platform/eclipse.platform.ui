@@ -38,7 +38,6 @@ import org.junit.Test;
 
 /**
  * @since 3.103
- *
  */
 public class CommandExecutionTest {
 	static class Pair {
@@ -139,8 +138,6 @@ public class CommandExecutionTest {
 	/**
 	 * Verify that {@link IExecutionListener#preExecute(String, ExecutionEvent)} has
 	 * received an event compatible with {@link HandlerUtil} methods.
-	 *
-	 * @param listener
 	 */
 	private void verifyHandlerUtilAccessDuringPreExecute(EL listener) {
 		assertNotNull("HandlerUtil.getActiveWorkbenchWindow() returned null during ICommandListener.preExecute().",

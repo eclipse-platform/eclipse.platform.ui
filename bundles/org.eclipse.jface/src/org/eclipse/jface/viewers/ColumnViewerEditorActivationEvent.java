@@ -24,12 +24,8 @@ import org.eclipse.swt.events.TraverseEvent;
  * This event is passed on when a cell-editor is going to be activated
  *
  * @since 3.3
- *
  */
 public class ColumnViewerEditorActivationEvent extends EventObject {
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/**

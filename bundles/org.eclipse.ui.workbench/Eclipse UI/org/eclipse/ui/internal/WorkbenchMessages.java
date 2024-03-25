@@ -28,7 +28,6 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Message class for workbench messages. These messages are used throughout the
  * workbench.
- *
  */
 public class WorkbenchMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.messages";//$NON-NLS-1$
@@ -92,7 +91,6 @@ public class WorkbenchMessages extends NLS {
 	public static String SaveAll_toolTip;
 	public static String Workbench_revert;
 	public static String Workbench_revertToolTip;
-	public static String Workbench_missingPropertyMessage;
 	public static String Workbench_move;
 
 	public static String Workbench_moveToolTip;
@@ -463,6 +461,9 @@ public class WorkbenchMessages extends NLS {
 	public static String ViewsPreference_visibleTabs_description;
 	public static String ViewsPreference_enableMRU;
 	public static String ViewsPreference_useColoredLabels;
+	public static String ViewsPreference_viewTabs_icons_and_titles_label;
+	public static String ViewsPreference_showFullTextForViewTabs;
+	public static String ViewsPreference_hideIconsForViewTabs;
 	public static String ToggleFullScreenMode_ActivationPopup_Description;
 	public static String ToggleFullScreenMode_ActivationPopup_Description_NoKeybinding;
 	public static String ToggleFullScreenMode_ActivationPopup_DoNotShowAgain;
@@ -599,6 +600,22 @@ public class WorkbenchMessages extends NLS {
 	public static String CheckedTreeSelectionDialog_select_all;
 	public static String CheckedTreeSelectionDialog_deselect_all;
 
+	public static String WindowsDefenderConfigurator_statusCheck;
+	public static String WindowsDefenderConfigurator_exclusionCheckMessage;
+	public static String WindowsDefenderConfigurator_exclusionInformation;
+	public static String WindowsDefenderConfigurator_scriptShowLabel;
+	public static String WindowsDefenderConfigurator_scriptHideLabel;
+	public static String WindowsDefenderConfigurator_scriptHint;
+	public static String WindowsDefenderConfigurator_performExclusionChoice;
+	public static String WindowsDefenderConfigurator_ignoreThisInstallationChoice;
+	public static String WindowsDefenderConfigurator_ignoreAllChoice;
+	public static String WindowsDefenderConfigurator_detailsAndOptionsLinkText;
+	public static String WindowsDefenderConfigurator_runExclusionFromPreferenceButtonLabel;
+	public static String WindowsDefenderConfigurator_statusInactive;
+	public static String WindowsDefenderConfigurator_statusCheckFailed;
+	public static String WindowsDefenderConfigurator_exclusionFailed;
+	public static String WindowsDefenderConfigurator_exclusionFailed_Protected;
+
 	// ==============================================================================
 	// Editor Framework
 	// ==============================================================================
@@ -730,6 +747,9 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_recentFilesError;
 	public static String WorkbenchPreference_workbenchSaveInterval;
 	public static String WorkbenchPreference_workbenchSaveIntervalError;
+	public static String WorkbenchPreference_largeViewLimit;
+	public static String WorkbenchPreference_largeViewLimitTooltip;
+	public static String WorkbenchPreference_largeViewLimitError;
 	public static String WorkbenchEditorsAction_label;
 	public static String WorkbookEditorsAction_label;
 

@@ -18,6 +18,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,8 +29,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -171,8 +171,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
 	/**
 	 * Deletes a list of perspectives
-	 *
-	 * @param perspToDelete
 	 */
 	public void deletePerspectives(ArrayList<IPerspectiveDescriptor> perspToDelete) {
 		for (IPerspectiveDescriptor descriptor : perspToDelete) {
@@ -304,8 +302,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 *
 	 * The id must encode the original id. id is of the form &lt;originalId&gt;.label
 	 *
-	 * @param label
-	 * @param originalDescriptor
 	 * @return the new id
 	 */
 	private String createNewId(String label, PerspectiveDescriptor originalDescriptor) {

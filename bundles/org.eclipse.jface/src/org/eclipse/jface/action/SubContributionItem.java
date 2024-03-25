@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;
@@ -25,8 +26,8 @@ import org.eclipse.swt.widgets.ToolBar;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
+@NoExtend
 public class SubContributionItem implements IContributionItem {
 	/**
 	 * The visibility of the item.

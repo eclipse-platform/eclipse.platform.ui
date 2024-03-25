@@ -79,10 +79,10 @@ public class PathVariableEditDialog extends SelectionDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		// create composite
-		Composite dialogArea = (Composite) super.createDialogArea(parent);
+		Composite dialogAreaComposite = (Composite) super.createDialogArea(parent);
 
-		pathVariablesGroup.createContents(dialogArea);
-		return dialogArea;
+		pathVariablesGroup.createContents(dialogAreaComposite);
+		return dialogAreaComposite;
 	}
 
 	@Override

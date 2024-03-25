@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IRegistryEventListener;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -302,7 +302,7 @@ final class GenericMApplicationElementFactoryImpl {
 							EClass previousEntry = mapping.put(instanceClass, eClass);
 
 							if (previousEntry != null) {
-								Platform.getLog(getClass()).warn(instanceClass
+								ILog.of(getClass()).warn(instanceClass
 														+ " is mapped to multiple EClasses (" + eClass.getName() + ", " + previousEntry.getName() + ")!"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							}
 						}

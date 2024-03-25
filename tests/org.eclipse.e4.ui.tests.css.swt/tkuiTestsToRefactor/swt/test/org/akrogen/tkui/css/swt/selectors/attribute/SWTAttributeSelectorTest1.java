@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * 
  * Selector= E[foo]  	an E element with a "foo" attribute
- * 
  */
 public class SWTAttributeSelectorTest1 {
 

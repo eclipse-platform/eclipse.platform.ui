@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 QNX Software Systems and others.
+ * Copyright (c) 2015, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,12 +40,13 @@ public class SizeCacheTest {
 	private static Display display;
 	private Shell shell;
 	private static final String SHORT_TEXT = "Hedgehog";
-	private static final String LONG_TEXT = "A hedgehog is any of the spiny mammals of the subfamily Erinaceinae, in the order Erinaceomorpha. " //$NON-NLS-1$
-			+ "There are seventeen species of hedgehog in five genera, found through parts of Europe, Asia, Africa and New Zealand. " //$NON-NLS-1$
-			;
+	private static final String LONG_TEXT = """
+			A hedgehog is any of the spiny mammals of the subfamily Erinaceinae, in the order Erinaceomorpha.
+			There are seventeen species of hedgehog in five genera, found through parts of Europe, Asia,
+			Africa and New Zealand. """;
 	private Font font;
 	// change this to true if you want to see test is slow motion
-	private boolean humanWatching = Boolean.parseBoolean(System.getProperty("junit.human.watching"));
+	private final boolean humanWatching = Boolean.parseBoolean(System.getProperty("junit.human.watching"));
 	private SizeCache sizeCache;
 	private Control control;
 	private Point expectedSize;
@@ -176,9 +177,8 @@ public class SizeCacheTest {
 
 	private Point computeHintOffset() {
 		Point size = new Point(0, 0);
-		if (control instanceof Scrollable) {
+		if (control instanceof Scrollable scrollable) {
 			// For scrollables, subtract off the trim size
-			Scrollable scrollable = (Scrollable) control;
 			Rectangle trim = scrollable.computeTrim(0, 0, 0, 0);
 
 			size.x = trim.width;
@@ -251,8 +251,6 @@ public class SizeCacheTest {
 	/**
 	 * This does automatic test to make sure that cached size of control is the
 	 * same as calculated size with different given hints
-	 *
-	 * @param inner
 	 */
 	private void checkCacheSize(Control inner) {
 		update();

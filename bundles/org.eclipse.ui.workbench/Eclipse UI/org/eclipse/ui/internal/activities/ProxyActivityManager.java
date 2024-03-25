@@ -32,13 +32,7 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 		this.activityManager = activityManager;
 
 		this.activityManager.addActivityManagerListener(activityManagerEvent -> {
-			ActivityManagerEvent proxyActivityManagerEvent = new ActivityManagerEvent(ProxyActivityManager.this,
-					activityManagerEvent.haveDefinedActivityIdsChanged(),
-					activityManagerEvent.haveDefinedCategoryIdsChanged(),
-					activityManagerEvent.haveEnabledActivityIdsChanged(),
-					activityManagerEvent.getPreviouslyDefinedActivityIds(),
-					activityManagerEvent.getPreviouslyDefinedCategoryIds(),
-					activityManagerEvent.getPreviouslyEnabledActivityIds());
+			ActivityManagerEvent proxyActivityManagerEvent = activityManagerEvent.copyFor(ProxyActivityManager.this);
 			fireActivityManagerChanged(proxyActivityManagerEvent);
 		});
 	}
@@ -72,4 +66,5 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 	public IIdentifier getIdentifier(String identifierId) {
 		return activityManager.getIdentifier(identifierId);
 	}
+
 }

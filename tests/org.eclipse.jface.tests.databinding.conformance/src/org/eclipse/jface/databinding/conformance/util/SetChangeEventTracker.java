@@ -52,7 +52,6 @@ public class SetChangeEventTracker implements ISetChangeListener {
 	/**
 	 * Convenience method to register a new listener.
 	 *
-	 * @param observable
 	 * @return tracker
 	 */
 	public static SetChangeEventTracker observe(IObservableSet observable) {

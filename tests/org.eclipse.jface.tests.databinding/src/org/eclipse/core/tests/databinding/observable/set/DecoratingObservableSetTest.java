@@ -31,7 +31,6 @@ import org.eclipse.jface.databinding.conformance.util.TestCollection;
 
 /**
  * @since 3.2
- *
  */
 public class DecoratingObservableSetTest {
 	public static void addConformanceTest(TestCollection suite) {
@@ -39,7 +38,7 @@ public class DecoratingObservableSetTest {
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate<Object> {
-		private Object elementType = Object.class;
+		private final Object elementType = Object.class;
 
 		@Override
 		public IObservableCollection<Object> createObservableCollection(Realm realm,

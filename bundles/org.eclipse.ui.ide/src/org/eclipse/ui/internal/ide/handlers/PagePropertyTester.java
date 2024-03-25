@@ -25,7 +25,6 @@ import org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog;
  * name to an expectedValue.
  *
  * @since 3.4
- *
  */
 public class PagePropertyTester extends PropertyTester {
 

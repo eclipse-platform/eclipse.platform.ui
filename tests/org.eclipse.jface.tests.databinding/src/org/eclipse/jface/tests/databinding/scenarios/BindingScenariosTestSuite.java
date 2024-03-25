@@ -14,16 +14,9 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
-import junit.extensions.TestSetup;
-import junit.framework.JUnit4TestAdapter;
 
 
 /**
@@ -39,32 +32,4 @@ import junit.framework.JUnit4TestAdapter;
 		NewTableScenarios.class, NPETestScenario.class, PropertyScenarios.class, SpinnerControlScenario.class,
 		TableScenarios.class, TextControlScenario.class })
 public class BindingScenariosTestSuite {
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
-
-	private static Shell shell;
-
-	public static junit.framework.Test suite() {
-		return new TestSetup(new JUnit4TestAdapter(BindingScenariosTestSuite.class)) {
-			@Override
-			public void setUp() throws Exception {
-				Display d = Display.getDefault();
-				shell = new Shell(d, SWT.SHELL_TRIM);
-				shell.setLayout(new FillLayout());
-			}
-
-			@Override
-			public void tearDown() throws Exception {
-				shell.close();
-				shell.dispose();
-			}
-		};
-	}
-
-	public static Shell getShell() {
-		return shell;
-	}
-
 }

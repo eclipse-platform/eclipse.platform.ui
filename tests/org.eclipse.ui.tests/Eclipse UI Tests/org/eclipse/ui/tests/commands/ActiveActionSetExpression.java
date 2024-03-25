@@ -23,9 +23,9 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISources;
 
 public class ActiveActionSetExpression extends Expression {
-	private String actionSetId;
+	private final String actionSetId;
 
-	private String[] expressionInfo;
+	private final String[] expressionInfo;
 
 	public ActiveActionSetExpression(String id) {
 		this(id, new String[] { ISources.ACTIVE_ACTION_SETS_NAME });

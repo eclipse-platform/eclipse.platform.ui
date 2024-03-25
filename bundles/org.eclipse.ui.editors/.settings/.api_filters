@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.editors" version="2">
+    <resource path="src/org/eclipse/ui/editors/text/ITextEditorHelpContextIds.java" type="org.eclipse.ui.editors.text.ITextEditorHelpContextIds">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="IAbstractTextEditorHelpContextIds"/>
+                <message_argument value="ITextEditorHelpContextIds"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/texteditor/DefaultMarkerAnnotationAccess.java" type="org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess">
+        <filter id="643842064">
+            <message_arguments>
+                <message_argument value="AnnotationTypeHierarchy"/>
+                <message_argument value="DefaultMarkerAnnotationAccess"/>
+                <message_argument value="getAnnotationTypeHierarchy()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

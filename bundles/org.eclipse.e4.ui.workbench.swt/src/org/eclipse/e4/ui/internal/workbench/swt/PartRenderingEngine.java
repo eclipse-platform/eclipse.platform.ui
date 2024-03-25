@@ -18,6 +18,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.swt;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -28,13 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
@@ -62,7 +63,6 @@ import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.PersistState;
-import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -106,7 +106,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.testing.TestableObject;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
-import org.osgi.service.log.LogService;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -835,9 +834,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return limbo;
 	}
 
-	/**
-	 * @param element
-	 */
 	@Override
 	public void removeGui(final MUIElement element) {
 		// wrap the handling in a SafeRunner so that exceptions do not prevent
@@ -1375,7 +1371,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					cssEngine.parseStyleSheet(stream);
 				}
 			} catch (IOException e) {
-				Activator.log(LogService.LOG_ERROR, e.getMessage(), e);
+				ILog.get().error(e.getMessage(), e);
 			}
 
 			Shell[] shells = display.getShells();
@@ -1385,7 +1381,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					s.reskin(SWT.ALL);
 					cssEngine.applyStyles(s, true);
 				} catch (Exception e) {
-					Activator.log(LogService.LOG_ERROR, e.getMessage(), e);
+					ILog.get().error(e.getMessage(), e);
 				} finally {
 					s.setRedraw(true);
 				}
@@ -1473,7 +1469,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 								bundleIDs.add(nameSpace);
 							}
 						} catch (InvalidRegistryObjectException e) {
-							Activator.log(LogService.LOG_ERROR, e.getMessage(), e);
+							ILog.get().error( e.getMessage(), e);
 						}
 					}
 				}

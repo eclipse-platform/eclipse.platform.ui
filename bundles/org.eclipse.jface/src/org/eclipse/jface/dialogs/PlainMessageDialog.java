@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  *
  * @since 3.23
- *
  */
 public class PlainMessageDialog extends IconAndMessageDialog {
 
@@ -58,7 +57,6 @@ public class PlainMessageDialog extends IconAndMessageDialog {
 	 * (every method returns the same builder instance).
 	 *
 	 * @since 3.23
-	 *
 	 */
 	public static class Builder {
 		private Shell shell;

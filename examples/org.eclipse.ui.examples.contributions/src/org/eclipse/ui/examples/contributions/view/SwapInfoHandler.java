@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,8 +35,7 @@ public class SwapInfoHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		InfoView view = (InfoView) HandlerUtil.getActivePartChecked(event);
 		ISelection sel = HandlerUtil.getCurrentSelection(event);
-		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) sel;
+		if (sel instanceof IStructuredSelection selection) {
 			if (selection.size() != 2) {
 				return null;
 			}

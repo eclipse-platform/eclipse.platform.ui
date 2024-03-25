@@ -33,11 +33,10 @@ public class IntegerConverter extends AbstractParameterValueConverter {
 	@Override
 	public String convertToString(Object parameterValue)
 			throws ParameterValueConversionException {
-		if (!(parameterValue instanceof Integer)) {
+		if (!(parameterValue instanceof Integer val)) {
 			throw new ParameterValueConversionException("Invalid object type: "
 					+ parameterValue);
 		}
-		Integer val = (Integer) parameterValue;
 		return val.toString();
 	}
 }

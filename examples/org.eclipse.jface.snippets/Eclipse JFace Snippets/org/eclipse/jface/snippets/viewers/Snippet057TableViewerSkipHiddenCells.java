@@ -57,7 +57,7 @@ public class Snippet057TableViewerSkipHiddenCells {
 
 	protected abstract static class AbstractEditingSupport extends EditingSupport {
 
-		private TextCellEditor editor;
+		private final TextCellEditor editor;
 
 		public AbstractEditingSupport(TableViewer viewer) {
 			super(viewer);

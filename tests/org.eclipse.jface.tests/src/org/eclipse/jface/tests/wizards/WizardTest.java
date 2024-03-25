@@ -15,6 +15,11 @@
 
 package org.eclipse.jface.tests.wizards;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.IPageChangingListener;
@@ -23,13 +28,11 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class WizardTest extends TestCase {
-	/**
-	 *
-	 */
+public class WizardTest {
 	protected static final int NUM_PAGES = 3;
 
 	static boolean DID_FINISH = false; //accessed from this test AND wizard
@@ -45,21 +48,16 @@ public class WizardTest extends TestCase {
 	boolean pageChanged = false;
 	boolean pageChangingFired = false;
 
-
-	public WizardTest() {
-		super("NewWizardTest");
-	}
-
-
+	@Test
 	public void testEndingWithFinish() {
 		//test page count
 		assertEquals("Wizard has wrong number of pages", NUM_PAGES, wizard.getPageCount());
 
 		//test page name
-		assertEquals("WizardPage.getName() returned wrong name", wizard.page1Name, wizard.page1.getName());
+		assertEquals("WizardPage.getName() returned wrong name", TheTestWizard.page1Name, wizard.page1.getName());
 
 		//test getPage()
-		assertSame("Wizard.getPage() returned wrong page", wizard.getPage(wizard.page1Name), wizard.page1);
+		assertSame("Wizard.getPage() returned wrong page", wizard.getPage(TheTestWizard.page1Name), wizard.page1);
 
 		//test title
 		wizard.setWindowTitle(WIZARD_TITLE);
@@ -80,11 +78,12 @@ public class WizardTest extends TestCase {
 		//test getMessage()
 		assertSame("WizardPage error message should be null", null, wizard.page1.getErrorMessage());
 		wizard.page1.textInputField.setText(TheTestWizardPage.BAD_TEXT_FIELD_CONTENTS);
-		assertEquals("WizardPage error message set correctly", TheTestWizardPage.BAD_TEXT_FIELD_STATUS, wizard.page1.getErrorMessage());
+		assertEquals("WizardPage error message set correctly", TheTestWizardPage.BAD_TEXT_FIELD_STATUS,
+				wizard.page1.getErrorMessage());
 
 		//test page completion
 		wizard.page1.textInputField.setText(TheTestWizardPage.GOOD_TEXT_FIELD_CONTENTS);
-		assertEquals("Page should be completed", true, wizard.page1.canFlipToNextPage());
+		assertTrue("Page should be completed", wizard.page1.canFlipToNextPage());
 		//Setting good value should've cleared the error message
 		assertSame("WizardPage error message should be null", null, wizard.page1.getErrorMessage());
 
@@ -98,65 +97,67 @@ public class WizardTest extends TestCase {
 
 		//test canFinish()
 		wizard.page2.textInputField.setText(TheTestWizardPage.BAD_TEXT_FIELD_CONTENTS);
-		assertEquals("Wizard should not be able to finish", false, wizard.canFinish());
+		assertFalse("Wizard should not be able to finish", wizard.canFinish());
 		wizard.page2.textInputField.setText(TheTestWizardPage.GOOD_TEXT_FIELD_CONTENTS);
-		assertEquals("Wizard should be able to finish", true, wizard.canFinish());
+		assertTrue("Wizard should be able to finish", wizard.canFinish());
 
 		//test simulated Finish button hit
 		//TheTestWizard's performFinish() sets DID_FINISH to true
 		dialog.finishPressed();
-		assertEquals("Wizard didn't perform finish", true, DID_FINISH);
+		assertTrue("Wizard didn't perform finish", DID_FINISH);
 	}
 
+	@Test
 	public void testEndingWithCancel() {
 		assertSame("Wizard not on starting page", wizard.page1, dialog.getCurrentPage());
 
 		//TheTestWizard's performFinish() sets DID_FINISH to true, ensure it was not called
 		wizard.performCancel();
-		assertEquals("Wizard finished but should not have", false, DID_FINISH);
+		assertFalse("Wizard finished but should not have", DID_FINISH);
 
 		dialog.cancelPressed();
-		assertEquals("Wizard performed finished but should not have", false, DID_FINISH);
+		assertFalse("Wizard performed finished but should not have", DID_FINISH);
 	}
 
+	@Test
 	public void testPageChanging() {
 		//initially on first page
 		assertSame("Wizard started on wrong page", wizard.page1, dialog.getCurrentPage());
-		assertEquals("Back button should be disabled on first page", false, dialog.getBackButton().getEnabled());
-		assertEquals("Next button should be enabled on first page", true, dialog.getNextButton().getEnabled());
+		assertFalse("Back button should be disabled on first page", dialog.getBackButton().getEnabled());
+		assertTrue("Next button should be enabled on first page", dialog.getNextButton().getEnabled());
 
 		//move to middle page 2
 		dialog.nextPressed();
 		assertSame("Wizard.nextPressed() set wrong page", wizard.page2, dialog.getCurrentPage());
-		assertEquals("Back button should be enabled on middle page", true, dialog.getBackButton().getEnabled());
-		assertEquals("Next button should be enabled on middle page", true, dialog.getNextButton().getEnabled());
+		assertTrue("Back button should be enabled on middle page", dialog.getBackButton().getEnabled());
+		assertTrue("Next button should be enabled on middle page", dialog.getNextButton().getEnabled());
 
 		//test that can't complete by inserting bad value to be validated
 		wizard.page2.textInputField.setText(TheTestWizardPage.BAD_TEXT_FIELD_CONTENTS);
-		assertEquals("Finish should be disabled when bad field value", false, dialog.getFinishedButton().getEnabled());
-		assertEquals("Cancel should always be enabled", true, dialog.getCancelButton().getEnabled());
+		assertFalse("Finish should be disabled when bad field value", dialog.getFinishedButton().getEnabled());
+		assertTrue("Cancel should always be enabled", dialog.getCancelButton().getEnabled());
 
 		//test that can complete by inserting good value to be validated
 		wizard.page2.textInputField.setText(TheTestWizardPage.GOOD_TEXT_FIELD_CONTENTS);
-		assertEquals("Finish should be enabled when good field value", true, dialog.getFinishedButton().getEnabled());
+		assertTrue("Finish should be enabled when good field value", dialog.getFinishedButton().getEnabled());
 
 		//move to last page 3
 		dialog.nextPressed();
 		assertSame("Wizard.nextPressed() set wrong page", wizard.page3, dialog.getCurrentPage());
-		assertEquals("Back button should be enabled on last page", true, dialog.getBackButton().getEnabled());
-		assertEquals("Next button should be disenabled on last page", false, dialog.getNextButton().getEnabled());
+		assertTrue("Back button should be enabled on last page", dialog.getBackButton().getEnabled());
+		assertFalse("Next button should be disenabled on last page", dialog.getNextButton().getEnabled());
 
 		//move back to page 2
 		dialog.backPressed();
 		assertSame("Wizard.backPressed() set wrong page", wizard.page2, dialog.getCurrentPage());
-		assertEquals("Back button should be enabled on middle page", true, dialog.getBackButton().getEnabled());
-		assertEquals("Next button should be enabled on middle page", true, dialog.getNextButton().getEnabled());
+		assertTrue("Back button should be enabled on middle page", dialog.getBackButton().getEnabled());
+		assertTrue("Next button should be enabled on middle page", dialog.getNextButton().getEnabled());
 
 		//move back to page 1
 		dialog.backPressed();
 		assertSame("Wizard.backPressed() set wrong page", wizard.page1, dialog.getCurrentPage());
-		assertEquals("Back button should be disabled on first page", false, dialog.getBackButton().getEnabled());
-		assertEquals("Next button should be enabled on first page", true, dialog.getNextButton().getEnabled());
+		assertFalse("Back button should be disabled on first page", dialog.getBackButton().getEnabled());
+		assertTrue("Next button should be enabled on first page", dialog.getNextButton().getEnabled());
 
 		//move Next to page 2
 		dialog.buttonPressed(IDialogConstants.NEXT_ID);
@@ -166,6 +167,7 @@ public class WizardTest extends TestCase {
 		assertSame("Wizard.backPressed() set wrong page", wizard.page1, dialog.getCurrentPage());
 	}
 
+	@Test
 	public void testShowPage() {
 		//move to page 3
 		dialog.nextPressed();
@@ -179,9 +181,10 @@ public class WizardTest extends TestCase {
 
 		//TODO Next test fails due to bug #249369
 //		assertEquals("Back button should be disabled on first page", false, dialog.getBackButton().getEnabled());
-		assertEquals("Next button should be enabled on first page", true, dialog.getNextButton().getEnabled());
+		assertTrue("Next button should be enabled on first page", dialog.getNextButton().getEnabled());
 	}
 
+	@Test
 	public void testPageChangeListening() {
 		pageChanged = false;
 		pageChangingFired = false;
@@ -189,18 +192,18 @@ public class WizardTest extends TestCase {
 		IPageChangedListener changedListener = event -> pageChanged = true;
 
 		IPageChangingListener changingListener = event -> {
-			assertEquals("Page should not have changed yet", false, pageChanged);
+			assertFalse("Page should not have changed yet", pageChanged);
 			pageChangingFired = true;
 		};
 
 		//test that listener notifies us of page change
 		dialog.addPageChangedListener(changedListener);
 		dialog.addPageChangingListener(changingListener); //assert is in the listener
-		assertEquals("Page change notified unintentially", false, pageChanged);
+		assertFalse("Page change notified unintentially", pageChanged);
 		//change to page 2
 		dialog.nextPressed();
-		assertEquals("Wasn't notified of page change", true, pageChanged);
-		assertEquals("Wasn't notified of page changing", true, pageChangingFired);
+		assertTrue("Wasn't notified of page change", pageChanged);
+		assertTrue("Wasn't notified of page changing", pageChangingFired);
 
 		dialog.removePageChangingListener(changingListener); //if not removed, its assert will fail on next nextPressed()
 		//change to page 2
@@ -211,10 +214,10 @@ public class WizardTest extends TestCase {
 		dialog.removePageChangedListener(changedListener);
 		//change to page 3
 		dialog.nextPressed();
-		assertEquals("Page change notified unintentially", false, pageChanged);
+		assertFalse("Page change notified unintentially", pageChanged);
 	}
 
-
+	@Test
 	public void testWizardDispose() {
 		wizard.setThrowExceptionOnDispose(true);
 
@@ -233,6 +236,7 @@ public class WizardTest extends TestCase {
 		shell.dispose();
 	}
 
+	@Test
 	public void testWizardPageDispose() {
 		wizard.page2.setThrowExceptionOnDispose(true);
 		final boolean logged[] = new boolean[1];
@@ -251,11 +255,8 @@ public class WizardTest extends TestCase {
 
 	//----------------------------------------------------
 
-
-	@Override
-	protected void setUp() throws Exception {
-		// TODO Auto-generated method stub
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		DID_FINISH = false;
 		color1 = new RGB(255, 0, 0);
 		color2 = new RGB(0, 255, 0);
@@ -263,8 +264,8 @@ public class WizardTest extends TestCase {
 		createWizardDialog();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if(dialog.getShell() != null && ! dialog.getShell().isDisposed()) {
 			dialog.close();
 		}

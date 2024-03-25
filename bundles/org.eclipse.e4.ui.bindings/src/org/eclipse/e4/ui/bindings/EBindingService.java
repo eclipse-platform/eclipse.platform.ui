@@ -19,8 +19,6 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 
-/**
- */
 public interface EBindingService {
 
 	public static final String DIALOG_CONTEXT_ID = "org.eclipse.ui.contexts.dialog"; //$NON-NLS-1$

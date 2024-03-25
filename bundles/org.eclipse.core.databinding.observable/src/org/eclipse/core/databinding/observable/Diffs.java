@@ -35,7 +35,6 @@ import org.eclipse.core.databinding.observable.value.ValueDiff;
 
 /**
  * @since 1.0
- *
  */
 public class Diffs {
 	private static final class UnmodifiableListDiff<E> extends ListDiff<E> {
@@ -339,9 +338,6 @@ public class Diffs {
 	}
 
 	/**
-	 * @param list
-	 * @param object
-	 * @param index
 	 * @return the index, or -1 if not found
 	 */
 	private static <E> int listIndexOf(List<E> list, Object object, int index) {

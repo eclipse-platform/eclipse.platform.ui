@@ -28,10 +28,6 @@ public class TaskInfo extends SubTaskInfo {
 	/**
 	 * Creates a new instance of the receiver with the supplied total work and task
 	 * name.
-	 *
-	 * @param parentJobInfo
-	 * @param infoName
-	 * @param total
 	 */
 	TaskInfo(JobInfo parentJobInfo, String infoName, int total) {
 		super(parentJobInfo, infoName);
@@ -40,8 +36,6 @@ public class TaskInfo extends SubTaskInfo {
 
 	/**
 	 * Adds the work increment to the total.
-	 *
-	 * @param workIncrement
 	 */
 	void addWork(double workIncrement) {
 		// Don't bother if we are indeterminate

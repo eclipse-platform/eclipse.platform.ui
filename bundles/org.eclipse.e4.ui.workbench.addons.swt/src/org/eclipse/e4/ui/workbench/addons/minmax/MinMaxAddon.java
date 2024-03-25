@@ -21,9 +21,9 @@ package org.eclipse.e4.ui.workbench.addons.minmax;
 
 import static java.util.Collections.singletonList;
 
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -64,7 +65,7 @@ import org.osgi.service.event.Event;
  */
 public class MinMaxAddon {
 
-	private static final String DISABLE_MINMAX_ADDON = "DisableMinMaxAddon";
+	private static final String DISABLE_MINMAX_ADDON = "DisableMinMaxAddon"; //$NON-NLS-1$
 
 	private static final String MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG = IPresentationEngine.MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG;
 
@@ -258,8 +259,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles removals from the perspective
-	 *
-	 * @param event
 	 */
 
 	@Inject
@@ -291,7 +290,7 @@ public class MinMaxAddon {
 
 				// gather up any minimized stacks for this perspective...
 				List<MToolControl> toRemove = new ArrayList<>();
-				for (MUIElement child : bar.getChildren()) {
+				for (MTrimElement child : bar.getChildren()) {
 					String trimElementId = child.getElementId();
 					if (child instanceof MToolControl && trimElementId.contains(perspectiveId)) {
 						toRemove.add((MToolControl) child);
@@ -309,8 +308,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles changes of the perspective
-	 *
-	 * @param event
 	 */
 
 	@Inject
@@ -378,8 +375,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles changes in tags
-	 *
-	 * @param event
 	 */
 
 	@Inject
@@ -423,8 +418,6 @@ public class MinMaxAddon {
 	 *
 	 * This keeps trim stacks attached to the correct perspective when a perspective is saved with a
 	 * new name.
-	 *
-	 * @param event
 	 */
 
 	@Inject
@@ -469,8 +462,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles the event that the perspective is saved
-	 *
-	 * @param event
 	 */
 
 	@Inject
@@ -522,8 +513,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles the event that the perspective is reset
-	 *
-	 * @param event
 	 */
 	@Inject
 	@Optional
@@ -546,8 +535,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Handles the event that the perspective is opened
-	 *
-	 * @param event
 	 */
 	@Inject
 	@Optional
@@ -749,7 +736,6 @@ public class MinMaxAddon {
 	}
 
 	/**
-	 * @param element
 	 * @return The list of elements that need to be minimized during a maximize
 	 */
 	private List<MUIElement> getElementsToMinimize(MUIElement element) {
@@ -877,9 +863,6 @@ public class MinMaxAddon {
 
 	/**
 	 * Restore any currently maximized element (except the one we're in the process of maximizing
-	 *
-	 * @param element
-	 * @param win
 	 */
 	private void restoreMaximizedElement(final MUIElement element, MWindow win) {
 		MPerspective elePersp = modelService.getPerspectiveFor(element);
@@ -936,7 +919,6 @@ public class MinMaxAddon {
 
 
 	/**
-	 * @param element
 	 * @return The list of elements that need to be restored by an unzoom
 	 */
 	private List<MUIElement> getElementsToRestore(MUIElement element) {

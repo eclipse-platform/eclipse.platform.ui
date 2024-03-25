@@ -268,7 +268,6 @@ public class WebBrowserUtil {
 	 * Create an external Web browser if the file matches the default (known)
 	 * browsers.
 	 *
-	 * @param file
 	 * @return an external browser working copy
 	 */
 	public static IBrowserDescriptorWorkingCopy createExternalBrowser(File file) {
@@ -295,8 +294,6 @@ public class WebBrowserUtil {
 	/**
 	 * Encodes browser style in the secondary id as id-style
 	 *
-	 * @param browserId
-	 * @param style
 	 * @return secondaryId
 	 */
 	public static String encodeStyle(String browserId, int style) {
@@ -306,7 +303,6 @@ public class WebBrowserUtil {
 	/**
 	 * Decodes secondary id into a browser style.
 	 *
-	 * @param secondaryId
 	 * @return style
 	 */
 	public static int decodeStyle(String secondaryId) {

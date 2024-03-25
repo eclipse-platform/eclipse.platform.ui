@@ -14,13 +14,10 @@
 package org.eclipse.urischeme.internal.registration;
 
 import java.io.BufferedWriter;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -61,14 +58,14 @@ public class PlistFileWriter {
 
 	/**
 	 * Creates an instance of the PlistFileWriter. Throws an
-	 * {@link IllegalStateException} if the given {@link Reader} does not provide
+	 * {@link IllegalStateException} if the supplied {@link Reader} does not provide
 	 * .plist file.
 	 *
-	 * @param reader The file reader of the .plist file
+	 * @param reader The supplier of file reader of the .plist file
 	 *
 	 * @throws IllegalArgumentException if file cannot be understood as .plist file
 	 */
-	public PlistFileWriter(Reader reader) {
+	public PlistFileWriter(IOSupplier<Reader> reader) {
 		this.document = getDom(reader);
 		this.array = getOrCreateBundleUrlTypesAndArray();
 	}
@@ -101,7 +98,6 @@ public class PlistFileWriter {
 	 *
 	 * @see <a href= "https://tools.ietf.org/html/rfc3986#section-3.1">Uniform
 	 *      Resource Identifier (URI): Generic Syntax</a>
-	 *
 	 */
 	public void addScheme(String scheme, String schemeDescription) {
 		// check precondition
@@ -156,7 +152,6 @@ public class PlistFileWriter {
 	 *
 	 * @see <a href=
 	 *      "https://tools.ietf.org/html/rfc3986#section-3.1">https://tools.ietf.org/html/rfc3986#section-3.1</a>
-	 *
 	 */
 	public void removeScheme(String scheme) {
 		Util.assertUriSchemeIsLegal(scheme);
@@ -172,14 +167,18 @@ public class PlistFileWriter {
 		arrayNode.removeChild(dict);
 	}
 
+	@FunctionalInterface
+	public interface IOSupplier<T> {
+		T get() throws IOException;
+	}
+	
 	/**
-	 * Writes the content (xml) of the .plist file to the given {@link Writer}
+	 * Writes the content (xml) of the .plist file to the supplied {@link Writer}
 	 *
-	 * @param writer The Writer to which the xml should be written to, e.g.
-	 *               {@link BufferedWriter}
-	 *
+	 * @param writer The Supplier for a Writer to which the xml should be written
+	 *               to, e.g. {@link BufferedWriter}
 	 */
-	public void writeTo(Writer writer) {
+	public void writeTo(IOSupplier<Writer> writer) {
 		boolean hasDict = false;
 		for (int i = 0; i < array.getChildNodes().getLength(); i++) {
 			Node child = array.getChildNodes().item(i);
@@ -203,34 +202,26 @@ public class PlistFileWriter {
 		transformDocument(writer);
 	}
 
-	private void transformDocument(Writer writer) {
-		try {
+	private void transformDocument(IOSupplier<Writer> supplier) {
+		try (Writer writer = supplier.get()) {
 			DOMSource source = new DOMSource(this.document);
-			TransformerFactory.newInstance().newTransformer().transform(source, new StreamResult(writer));
-		} catch (TransformerException e) {
+			@SuppressWarnings("restriction")
+			TransformerFactory f = org.eclipse.core.internal.runtime.XmlProcessorFactory
+			.createTransformerFactoryWithErrorOnDOCTYPE();
+			f.newTransformer().transform(source, new StreamResult(writer));
+		} catch (TransformerException | IOException e) {
 			throw new IllegalStateException(e);
-		} finally {
-			close(writer);
 		}
 	}
 
-	private Document getDom(Reader reader) {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		try {
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			return builder.parse(new InputSource(reader));
+	private Document getDom(IOSupplier<Reader> supplier) {
+		try (Reader reader = supplier.get()) {
+			@SuppressWarnings("restriction")
+			Document withErrorOnDOCTYPE = org.eclipse.core.internal.runtime.XmlProcessorFactory
+			.parseWithErrorOnDOCTYPE(new InputSource(reader));
+			return withErrorOnDOCTYPE;
 		} catch (ParserConfigurationException | IOException | SAXException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			close(reader);
-		}
-	}
-
-	private void close(Closeable closeable) {
-		try {
-			closeable.close();
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
 		}
 	}
 

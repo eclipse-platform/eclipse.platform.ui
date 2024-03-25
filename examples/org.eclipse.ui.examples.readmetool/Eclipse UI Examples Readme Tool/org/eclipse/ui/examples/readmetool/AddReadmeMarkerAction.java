@@ -20,7 +20,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.ITextSelection;
@@ -34,11 +34,11 @@ import org.osgi.framework.Bundle;
  * Action for creating a readme marker with a specfic id attribute value.
  */
 public class AddReadmeMarkerAction extends Action {
-	private ITextEditor textEditor;
+	private final ITextEditor textEditor;
 
-	private Object[][] customAttributes;
+	private final Object[][] customAttributes;
 
-	private String message;
+	private final String message;
 
 	private static final String MARKER_TYPE = "org.eclipse.ui.examples.readmetool.readmemarker"; //$NON-NLS-1$
 
@@ -91,7 +91,7 @@ public class AddReadmeMarkerAction extends Action {
 			MarkerUtilities.createMarker(getResource(), attributes, MARKER_TYPE);
 		} catch (CoreException x) {
 			Bundle bundle = ReadmePlugin.getDefault().getBundle();
-			Platform.getLog(bundle).log(x.getStatus());
+			ILog.of(bundle).log(x.getStatus());
 
 			Shell shell = textEditor.getSite().getShell();
 			String title = MessageUtil.getString("Add_readme_marker_error_title"); //$NON-NLS-1$
