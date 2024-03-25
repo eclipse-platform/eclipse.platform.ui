@@ -599,6 +599,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		// we want the exclusive offset (right after the last character)
 		int bottomRight= getExclusiveBottomIndexEndOffset();
 		int viewPort= bottomRight - topLeft;
+		if (topLeft < 0 || bottomRight < 0 || viewPort < 0)
+			return;
 
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		Point dimension= fCanvas.getSize();
@@ -712,6 +714,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 		int vOffset= getInclusiveTopIndexStartOffset();
 		int vLength= getExclusiveBottomIndexEndOffset() - vOffset;
+		if (vOffset < 0 || vLength < 0)
+			return;
 
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
