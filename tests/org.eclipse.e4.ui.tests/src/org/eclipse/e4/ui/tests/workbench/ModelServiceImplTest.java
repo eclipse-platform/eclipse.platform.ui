@@ -21,6 +21,7 @@ import static org.mockito.Mockito.never;
 
 import jakarta.inject.Inject;
 import java.util.List;
+import org.eclipse.e4.ui.internal.workbench.PartStackUtil;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -75,7 +76,7 @@ public class ModelServiceImplTest {
 		editorArea.setElementId("org.eclipse.ui.editorss");
 
 		MPartStack editorPartStack = modelService.createModelElement(MPartStack.class);
-		editorPartStack.setElementId("org.eclipse.e4.primaryDataStack");
+		PartStackUtil.initializeAsPrimaryDataStack(editorPartStack);
 
 		editorPartStack.getChildren().add(editor);
 		editorArea.getChildren().add(editorPartStack);

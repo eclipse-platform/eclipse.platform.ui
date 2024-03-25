@@ -22,6 +22,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.eclipse.e4.ui.internal.workbench;
   x-friends:="org.eclipse.e4.ui.workbench.fragment,
+   org.eclipse.e4.ui.workbench.addons.swt,
    org.eclipse.e4.ui.workbench.renderers.swt,
    org.eclipse.e4.ui.workbench.swt,
    org.eclipse.ui.workbench,

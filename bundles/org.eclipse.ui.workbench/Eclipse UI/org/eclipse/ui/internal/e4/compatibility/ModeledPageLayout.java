@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.e4.ui.internal.workbench.PartStackUtil;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -168,9 +169,7 @@ public class ModeledPageLayout implements IPageLayout {
 			// sharedArea.setLabel("Editor Area"); //$NON-NLS-1$
 
 			editorStack = modelService.createModelElement(MPartStack.class);
-			editorStack.getTags().add("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
-			editorStack.getTags().add(EDITOR_STACK_TAG);
-			editorStack.setElementId("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
+			PartStackUtil.initializeAsPrimaryDataStack(editorStack);
 			sharedArea.getChildren().add(editorStack);
 			sharedArea.setElementId(getEditorArea());
 
