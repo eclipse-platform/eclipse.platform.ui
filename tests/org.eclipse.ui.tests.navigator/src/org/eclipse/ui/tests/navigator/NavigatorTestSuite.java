@@ -35,7 +35,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		LabelProviderTest.class, SorterTest.class, ViewerTest.class, CdtTest.class, M12Tests.class,
 		FirstClassM1Tests.class, LinkHelperTest.class, ShowInTest.class, ResourceTransferTest.class,
 		EvaluationCacheTest.class,
-		NestedResourcesTests.class, PathComparatorTest.class, FoldersAsProjectsContributionTest.class
+		NestedResourcesTests.class, PathComparatorTest.class, FoldersAsProjectsContributionTest.class,
+		GoBackForwardsTest.class
 		// DnDTest.class, // DnDTest.testSetDragOperation() fails
 		// PerformanceTest.class // Does not pass on all platforms see bug 264449
 })

@@ -25,6 +25,8 @@ public abstract class NavigationLocation implements INavigationLocation {
 
 	private IEditorInput input;
 
+	private String editorId;
+
 	/**
 	 * Constructs a NavigationLocation with its editor part.
 	 *
@@ -32,6 +34,7 @@ public abstract class NavigationLocation implements INavigationLocation {
 	 */
 	protected NavigationLocation(IEditorPart editorPart) {
 		this.page = editorPart.getSite().getPage();
+		this.editorId = editorPart.getSite().getId();
 		this.input = editorPart.getEditorInput();
 	}
 
@@ -43,13 +46,26 @@ public abstract class NavigationLocation implements INavigationLocation {
 	protected IEditorPart getEditorPart() {
 		if (input == null) {
 			return null;
+		} else if (editorId == null) {
+			return page.findEditor(input);
+		} else {
+			IEditorReference[] editorReferences = page.findEditors(input, editorId,
+					IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
+			if (editorReferences.length > 0) {
+				return editorReferences[0].getEditor(false);
+			}
+			return null;
 		}
-		return page.findEditor(input);
 	}
 
 	@Override
 	public Object getInput() {
 		return input;
+	}
+
+	@Override
+	public String getId() {
+		return editorId;
 	}
 
 	@Override
@@ -64,6 +80,11 @@ public abstract class NavigationLocation implements INavigationLocation {
 	@Override
 	public void setInput(Object input) {
 		this.input = (IEditorInput) input;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.editorId = id;
 	}
 
 	/**
