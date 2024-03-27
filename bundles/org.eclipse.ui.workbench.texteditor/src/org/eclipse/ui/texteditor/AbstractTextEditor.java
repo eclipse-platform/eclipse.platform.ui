@@ -6340,9 +6340,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void editorSaved() {
 		IEditorInput input= getEditorInput();
+		String id = getEditorSite().getId();
 		for (INavigationLocation location2 : getSite().getPage().getNavigationHistory().getLocations()) {
 			if (location2 instanceof TextSelectionNavigationLocation) {
-				if(input.equals(location2.getInput())) {
+				if (input.equals(location2.getInput()) && id.equals(location2.getId())) {
 					TextSelectionNavigationLocation location= (TextSelectionNavigationLocation) location2;
 					location.partSaved(this);
 				}

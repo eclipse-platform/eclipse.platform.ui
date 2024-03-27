@@ -78,6 +78,13 @@ public interface INavigationLocation {
 	Object getInput();
 
 	/**
+	 * Returns the id used for this location.
+	 *
+	 * @return the id for this location
+	 */
+	String getId();
+
+	/**
 	 * Returns the display name for this location. This name is used in the
 	 * navigation history list.
 	 *
@@ -94,6 +101,16 @@ public interface INavigationLocation {
 	 * @param input the editor input.
 	 */
 	void setInput(Object input);
+
+	/**
+	 * Sets the location's id.
+	 * <p>
+	 * Should not be called by clients.
+	 * </p>
+	 *
+	 * @param id the editor id.
+	 */
+	void setId(String id);
 
 	/**
 	 * The message <code>update</code> is sent to the active location before another
