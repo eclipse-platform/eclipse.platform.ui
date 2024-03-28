@@ -2,8 +2,8 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-   <extension-point id="sample" name="sample" schema="schema/sample.exsd"/>  
-   
+   <extension-point id="sample" name="sample" schema="schema/sample.exsd"/>
+
 <!--Startup testing -->
    <extension
          point="org.eclipse.ui.startup">
@@ -14,7 +14,7 @@
 <!-- Utils -->
    <extension
          point="org.eclipse.ui.perspectives">
- 
+
       <perspective
             name="UI Test Drag Test Perspective"
             icon="icons/anything.gif"
@@ -46,12 +46,12 @@
             class="org.eclipse.ui.tests.api.PerspectiveWithMultiViewPlaceholdersAtTopLevel"
             name="UI Test Perspective with Multi View Placeholders At Top Level"
             id="org.eclipse.ui.tests.PerspectiveWithMultiViewPlaceholdersAtTopLevel">
-      </perspective>      
+      </perspective>
       <perspective
             class="org.eclipse.ui.tests.api.PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder"
             name="UI Test Perspective with Multi View Placeholders In Placeholder Folder"
             id="org.eclipse.ui.tests.PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder">
-      </perspective>      
+      </perspective>
       <perspective
             class="org.eclipse.ui.tests.api.PerspectiveWithMultiViewPlaceholdersInFolder"
             name="UI Test Perspective with Multi View Placeholders In Folder"
@@ -60,15 +60,15 @@
       <perspective
             class="org.eclipse.ui.tests.api.PerspectiveViewsBug88345"
             id="org.eclipse.ui.tests.api.PerspectiveViewsBug88345"
-            name="UI Test Perspective for closable view"/>  
+            name="UI Test Perspective for closable view"/>
        <perspective
             class="org.eclipse.ui.tests.api.PerspectiveViewsBug120934"
             id="org.eclipse.ui.tests.api.PerspectiveViewsBug120934"
-            name="UI Test Perspective for presentation NPE"/> 
+            name="UI Test Perspective for presentation NPE"/>
       <perspective
             class="org.eclipse.ui.tests.dnd.StandaloneViewPerspective"
             id="org.eclipse.ui.tests.dnd.StandaloneViewPerspective"
-            name="Standalone View DnD Perspective"/>         
+            name="Standalone View DnD Perspective"/>
       <perspective
             class="org.eclipse.ui.tests.api.PerspectiveViewsBug538199"
             id="org.eclipse.ui.tests.api.PerspectiveViewsBug538199"
@@ -103,7 +103,7 @@
             name="UI Test Perspective for onboarding">
       </perspective>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
@@ -117,7 +117,7 @@
                visible="false">
          </view>
       </perspectiveExtension>
-      
+
       <perspectiveExtension
             targetID="org.eclipse.ui.tests.api.PerspectiveViewsBug538199">
          <view
@@ -138,7 +138,7 @@
          </editorOnboardingCommand>
       </perspectiveExtension>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.views">
 
@@ -153,7 +153,7 @@
        		class="org.eclipse.ui.tests.api.workbenchpart.HeavyResourceView"
        		id="org.eclipse.ui.tests.api.workbenchpart.HeavyResourceView">
       </view>
-      
+
       <view
        		name="ERROR: View that throws PartInitException in init"
        		icon="icons/view.gif"
@@ -192,7 +192,7 @@
       </view>
 
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.views">
 
@@ -336,7 +336,7 @@
             class="org.eclipse.ui.tests.api.workbenchpart.RawIViewPart"
             id="org.eclipse.ui.tests.workbenchpart.RawIViewPart">
       </view>
-            
+
       <view
             name="StickyViewRight1"
             icon="icons/view.gif"
@@ -352,9 +352,9 @@
       <view
             class="org.eclipse.jface.tests.viewers.interactive.ConcurrentTableTestView"
             name="Concurrent Table Test View"
-            id="org.eclipse.ui.tests.concurrentTableTest"/>      
-      
-      
+            id="org.eclipse.ui.tests.concurrentTableTest"/>
+
+
       <stickyView
             id="org.eclipse.ui.tests.api.StickyViewRight1"
             location="RIGHT"
@@ -388,7 +388,7 @@
             id="org.eclipse.ui.tests.api.StickyViewLeft2"
             location="LEFT">
       </stickyView>
-      
+
       <view
             name="StickyViewTop1"
             icon="icons/view.gif"
@@ -408,8 +408,8 @@
       <stickyView
             id="org.eclipse.ui.tests.api.StickyViewTop2"
             location="TOP">
-      </stickyView>      
-      
+      </stickyView>
+
       <view
             name="StickyViewBottom1"
             icon="icons/view.gif"
@@ -694,21 +694,21 @@
             name="ERROR: Exception in dispose"
             id="org.eclipse.ui.tests.api.workbenchpart.EditorWithDisposeException"
             extensions="test"/>
- 
+
 	   <editor
             class="org.eclipse.ui.tests.api.MockEditorPart"
             icon="platform:/plugin/org.eclipse.ui/icons/full/obj16/font.png"
             default="true"
             name="Plugin Icon Test 1"
             id="org.eclipse.ui.tests.IconTestEditor1"
-            extensions="icontest1"/>            
+            extensions="icontest1"/>
        <editor
             class="org.eclipse.ui.tests.api.MockEditorPart"
             icon="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/class_obj.png"
             default="true"
             name="Plugin Icon Test 2"
             id="org.eclipse.ui.tests.IconTestEditor2"
-            extensions="icontest2"/>                      
+            extensions="icontest2"/>
        <editor
             class="org.eclipse.ui.tests.api.MockEditorPart"
             icon="bad"
@@ -730,7 +730,7 @@
              filenames="content-type1.blah"
              icon="icons/anything.gif"
              id="org.eclipse.ui.tests.contentType1Editor-fallback"
-             name="org.eclipse.ui.tests.contentType1Editor-fallback"/>       
+             name="org.eclipse.ui.tests.contentType1Editor-fallback"/>
       <editor
             name="Mock Matching Editor 1"
             icon="icons/mockeditorpart1.gif"
@@ -796,7 +796,7 @@
             icon="icons/binary_co.gif"
             id="org.eclipse.ui.tests.multieditor.TestEditor"
             name="%Editors.TestEditor"/>
-      <!-- the order of the following is very important.  We want to ensure that the 
+      <!-- the order of the following is very important.  We want to ensure that the
       default editor gets pushed to the front of the list. -->
       <editor
             class="org.eclipse.ui.tests.api.MockEditorPart"
@@ -894,7 +894,7 @@
                menubarPath="additions"
                id="org.eclipse.ui.tests.api.MockWindowAction">
          </action>
-      </actionSet>      
+      </actionSet>
       <actionSet
       		label="Hostile Action Set"
       		id="org.eclipse.ui.tests.actionSets.brokenActionSet"
@@ -1166,7 +1166,7 @@
                id="resource action">
          </action>
       </objectContribution>
-         
+
       <!-- ObjectContributionTest: This is the content-type-based object contribution -->
       <objectContribution
             adaptable="true"
@@ -1188,16 +1188,16 @@
                id="org.eclipse.ui.tests.testObjectStateContentType">
          </action>
       </objectContribution>
-      
+
    </extension>
-   
+
    <extension
    		point="org.eclipse.core.runtime.contentTypes">
-   		
+
       	<!-- ObjectContributionTest: This is the content-type-based object contribution -->
-		<content-type 
+		<content-type
 			id="testObjectStateContentType"
-			name="Tests top-level element recognition" 	
+			name="Tests top-level element recognition"
 			base-type="org.eclipse.core.runtime.xml"
 			priority="high">
 			<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
@@ -1268,7 +1268,7 @@
            priority="normal">
      </content-type>
    </extension>
-   		
+
    <extension
          point="org.eclipse.ui.actionSets">
 <!-- ActionSetExpressionTest -->
@@ -1522,7 +1522,7 @@
          </action>
       </actionSet>
    </extension>
-   
+
    <!-- Bug 125011.  There's no good way to test this programmatically, so the
    test is simply to start up Eclipse and check whether the "label" attribute
    will affect the tooltip text. -->
@@ -1540,8 +1540,8 @@
                class="org.eclipse.ui.tests.api.MockActionDelegate" />
       </actionSet>
    </extension>
-   
-   <!-- Bug 122674.  To verify this bug, simply start Eclipse with this plug-in. 
+
+   <!-- Bug 122674.  To verify this bug, simply start Eclipse with this plug-in.
    -->
    <extension
          point="org.eclipse.ui.actionSets">
@@ -1737,7 +1737,7 @@
                id="oc13">
          </action>
       </objectContribution>
-   </extension> 
+   </extension>
    <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
             namespace="org.eclipse.ui.tests.api.testing"
@@ -1862,7 +1862,7 @@
             label="Font Decorator"
             class="org.eclipse.ui.tests.decorators.FontDecorator"
             id="org.eclipse.ui.tests.fontDecorator"/>
-            
+
       <decorator
             lightweight="true"
             adaptable="true"
@@ -1939,7 +1939,7 @@
             </objectClass>
          </enablement>
       </decorator>
-      
+
    </extension>
 <!-- Working set tests -->
    <extension
@@ -2017,7 +2017,7 @@
             id="org.eclipse.ui.tests.contexts.ViewPart"
             name="View Part Context"
             parentId="org.eclipse.ui.contexts.window"/>
-      <context 
+      <context
             id="org.eclipse.ui.tests.contexts.WorkbenchWindow"
             name="WorkbenchWindow Part Context"
             parentId="org.eclipse.ui.contexts.window"/>
@@ -2228,7 +2228,7 @@
             activityId="org.eclipse.ui.tests.filter1.enabled"
             pattern="org/filter">
       </activityPatternBinding>
-      
+
       <!-- Expression variable controlled activity -->
       <activity
             id="org.eclipse.ui.tests.filter2.enabled"
@@ -2246,24 +2246,24 @@
             activityId="org.eclipse.ui.tests.filter2.enabled"
             pattern="org/filter2">
       </activityPatternBinding>
-      
+
       <!-- This enabledWhen activity is always enabled.
       	   The expression result is obviously always true.
-      	   Without the the "no-update" lock with 
+      	   Without the the "no-update" lock with
       	   <code>addingEvaluationListener</code> in MutableActivityManager this
       	   would leed to an endless loop. Because the change in enablement from
       	   false to true would leed to an update of the activity which adds
-      	   the activity evaluation listener which itself calls indirect an 
+      	   the activity evaluation listener which itself calls indirect an
       	   update of the activity: endless loop build finished.
-      	   
-      	   If this were variable dependent, the first result would've been 
-      	   false, so no update would've been called before the evaluation 
-      	   listener could've been fully installed. And in later updates of 
+
+      	   If this were variable dependent, the first result would've been
+      	   false, so no update would've been called before the evaluation
+      	   listener could've been fully installed. And in later updates of
       	   the activity the evaluation listener would've been already installed,
       	   so the entrance to the endless loop would not be entered.
-      	   
+
       	   (There is no corresponding test code in the UtilTest Unit Test for
-      	   this.)      	   
+      	   this.)
        -->
       <activity
             id="org.eclipse.ui.tests.filter3.enabled"
@@ -2273,8 +2273,8 @@
                   value="java.lang.Object">
             </instanceof>
          </enabledWhen>
-      </activity>  
-      
+      </activity>
+
       <activityPatternBinding
             activityId="org.eclipse.activity3"
             pattern="org.eclipse.pattern1">
@@ -2345,7 +2345,7 @@
       <categoryActivityBinding
             activityId="problemFilterTestActivity"
             categoryId="problemCategory"/>
-      <defaultEnablement id="problemFilterTestActivity"/>      
+      <defaultEnablement id="problemFilterTestActivity"/>
       <activity
             description="NonRegular Expression"
             id="org.eclipse.activityNonRegExp"
@@ -2356,7 +2356,7 @@
             isEqualityPattern="true"
             pattern="org.eclipse.ui.tests.activity{No{Reg(Exp[^d]">
       </activityPatternBinding>
-      
+
       <!-- Expression should be never true, so it tests if it is an instance
       		of java.lang.Double -->
       <activity
@@ -2395,7 +2395,7 @@
             description="ConventionalActivityControllingExpressionActivity"
             id="org.eclipse.ui.tests.filter6.enabled"
             name="ConventionalActivityControllingExpressionActivity">
-      </activity>         
+      </activity>
    </extension>
 
   <extension
@@ -2415,23 +2415,23 @@
                value="Sans-regular-10"
                id="valfont">
          </fontOverride>
-         
+
       </theme>
    </extension>
    <extension
          point="org.eclipse.ui.themes">
-      <theme      		
+      <theme
             id="extendedTheme1">
          <data
                name="d1"
                value="not honoured">
-         </data>            
-            
+         </data>
+
          <data
                name="d2"
                value="d2">
-         </data>  
-         
+         </data>
+
          <colorOverride
                value="COLOR_RED"
                id="swtcolor">
@@ -2441,36 +2441,36 @@
                value="COLOR_RED"
                id="rgbcolor">
          </colorOverride>
-         
+
          <fontOverride
                value="not honoured"
                id="valfont">
          </fontOverride>
-         
+
          <fontOverride
                value="Sans-regular-10"
                id="novalfont">
          </fontOverride>
-         
-         
-                          
+
+
+
       </theme>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.themes">
-      <theme      		
+      <theme
             id="extendedTheme1">
       </theme>
    </extension>
    <extension
          point="org.eclipse.ui.themes">
-      <theme      		
+      <theme
       		name="Extended Theme 2"
             id="extendedTheme2">
       </theme>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.themes">
       <theme
@@ -2480,12 +2480,12 @@
    </extension>
    <extension
          point="org.eclipse.ui.themes">
-      <theme 
-	        name="not honoured"     		
+      <theme
+	        name="not honoured"
             id="extendedTheme3">
       </theme>
-   </extension>  
-   
+   </extension>
+
    <extension
          point="org.eclipse.ui.themes">
       <theme
@@ -2544,7 +2544,7 @@
       <colorDefinition
             label="not honoured"
             value="not honoured"
-            id="rgbcolor">            
+            id="rgbcolor">
       </colorDefinition>
       <colorDefinition
             label="swtcolor"
@@ -2599,12 +2599,12 @@
             label="badColor2"
             value="0,0, 1"
             id="badColor2">
-      </colorDefinition>    
+      </colorDefinition>
       <colorDefinition
             label="badColor3"
             value="0,0, 1x"
             id="badColor3">
-      </colorDefinition>  
+      </colorDefinition>
       <fontDefinition
             label="novalfont"
             id="novalfont">
@@ -2618,7 +2618,7 @@
             label="not honoured"
             value="not honoured"
             id="valfont">
-      </fontDefinition>      
+      </fontDefinition>
       <fontDefinition
             label="platformfont"
             value="Sans-bold-15"
@@ -2654,7 +2654,7 @@
             id="nooverridecolor">
       </colorDefinition>
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.acceleratorScopes">
          <acceleratorScope
@@ -2667,7 +2667,7 @@
          	description="A test for the deprecated accelerator scope support"
          	parentScope="org.eclipse.ui.tests.acceleratorScopes.test1" />
    </extension>
-   
+
    <extension
          point="org.eclipse.ui.commands">
          <scope
@@ -2763,7 +2763,7 @@
                   optional="true"/>
          </command>
    </extension>
-   
+
    <!-- handler state -->
    <extension
          point="org.eclipse.ui.commands">
@@ -2836,7 +2836,7 @@
            </command>
         </menuContribution>
     </extension>
-   
+
    <!-- for bug 125792 -->
    <extension
          point="org.eclipse.ui.commands">
@@ -2860,7 +2860,7 @@
                optional="true"/>
       </command>
    </extension>
-   
+
    <!-- bug 102666 -->
    <extension
          point="org.eclipse.ui.commands">
@@ -2876,11 +2876,11 @@
    	     <activeWhen>
                <count value="1" />
          </activeWhen>
-      </handler>      
+      </handler>
    </extension>
-   	  
-   
-   
+
+
+
 	<!--malformed activity definitions -->
    <extension
          name="Actvities for PersistanceTest"
@@ -2889,29 +2889,29 @@
             id="org.eclipse.ui.PT.A1"/>
       <activity
             name="org.eclipse.ui.tests.activity3"
-            id="org.eclipse.ui.PT.A2"/>   
+            id="org.eclipse.ui.PT.A2"/>
       <activity
             name="org.eclipse.ui.PT.A3"/>
-                     
+
       <category
             id="org.eclipse.ui.PT.C1"/>
       <category
             name="org.eclipse.ui.tests.category2"
-            id="org.eclipse.ui.PT.C2"/>            
+            id="org.eclipse.ui.PT.C2"/>
       <category
             name="org.eclipse.ui.PT.C3"/>
-            
+
       <activityPatternBinding
             activityId="org.eclipse.ui.PT.A2"/>
-            
+
       <activityRequirementBinding
-            activityId="org.eclipse.ui.PT.A2"/> 
-            
+            activityId="org.eclipse.ui.PT.A2"/>
+
       <categoryActivityBinding
       		categoryId="org.eclipse.ui.PT.C2" />
-      		           
+
    </extension>
-  
+
    <!-- part of test for bug 75118 -->
    <extension
          point="org.eclipse.ui.newWizards">
@@ -2924,7 +2924,7 @@
       <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
       <primaryWizard id="org.eclipse.ui.wizards.new.project"/>
    </extension>
-   
+
    <extension
    		point="org.eclipse.ui.importWizards">
       <category
@@ -2935,52 +2935,52 @@
             name="Test Import Parented Category"
             parentCategory="org.eclipse.ui.Basic"
             id="org.eclipse.ui.tests.TestImportParented">
-      </category>    
-      <category
-            name="Test Import Duplicate Category"
-            id="org.eclipse.ui.tests.TestImportDup">
       </category>
       <category
             name="Test Import Duplicate Category"
             id="org.eclipse.ui.tests.TestImportDup">
       </category>
-              
+      <category
+            name="Test Import Duplicate Category"
+            id="org.eclipse.ui.tests.TestImportDup">
+      </category>
+
       <wizard
             name="Test Import Wizard No Category"
             class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
             id="org.eclipse.ui.tests.import.NoCategory">
-      </wizard>  
+      </wizard>
       <wizard
             name="Test Import Category Not Valid"
             class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
             category="org.eclipse.ui.InvalidCategory"
             id="org.eclipse.ui.tests.import.InvalidCategory">
-      </wizard>  
+      </wizard>
       <wizard
             name="Test Import Add To New Category"
             class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
             category="org.eclipse.ui.tests.TestImport"
             id="org.eclipse.ui.tests.import.NewCategory">
-      </wizard> 
+      </wizard>
       <wizard
             name="Test Import Add To Parented Category"
             class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
             category="org.eclipse.ui.Basic/org.eclipse.ui.tests.TestImportParented"
             id="org.eclipse.ui.tests.import.NewParentedCategory">
-      </wizard>       
+      </wizard>
       <wizard
             name="Test Import Duplicate Category"
             class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
             category="org.eclipse.ui.tests.TestImportDup"
             id="org.eclipse.ui.tests.import.DuplicateCategory">
-      </wizard> 
+      </wizard>
       <wizard
             name="Test Import Using Export Category"
             class="org.eclipse.ui.tests.datatransfer.TestImportWizard"
             category="org.eclipse.ui.tests.TestExport"
             id="org.eclipse.ui.tests.import.UsingExportCategory">
-      </wizard>       
-                                
+      </wizard>
+
    	</extension>
 
    <extension
@@ -3001,37 +3001,37 @@
       <category
             name="Test Export Duplicate Category"
             id="org.eclipse.ui.tests.TestExportDup">
-      </category>      
- 
+      </category>
+
       <wizard
             name="Test Export Wizard No Category"
             class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
             id="org.eclipse.ui.tests.export.NoCategory">
-      </wizard>      
+      </wizard>
       <wizard
             name="Test Export Category Not Valid"
             class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
             category="org.eclipse.ui.InvalidCategory"
             id="org.eclipse.ui.tests.export.InvalidCategory">
-      </wizard>   
+      </wizard>
       <wizard
             name="Test Export Add To New Category"
             class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
             category="org.eclipse.ui.tests.TestExport"
             id="org.eclipse.ui.tests.export.NewCategory">
-      </wizard> 
+      </wizard>
       <wizard
             name="Test Export Add To Parented Category"
             class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
             category="org.eclipse.ui.Basic/org.eclipse.ui.tests.TestExportParented"
             id="org.eclipse.ui.tests.export.NewParentedCategory">
-      </wizard>  
+      </wizard>
       <wizard
             name="Test Export Duplicate Category"
             class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
             category="org.eclipse.ui.tests.TestExportDup"
             id="org.eclipse.ui.tests.export.DuplicateCategory">
-      </wizard>        
+      </wizard>
       <wizard
             name="Test Export Using Import Category"
             class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
@@ -3042,18 +3042,18 @@
             class="org.eclipse.ui.tests.statushandlers.FaultyExportWizard"
             id="org.eclipse.ui.tests.statushandlers.FaultyExportWizard"
             name="FaultyExportWizard">
-      </wizard>  
-                             
+      </wizard>
+
    	</extension>
-   	   
+
     <extension
          point="org.eclipse.ui.encodings">
       <encoding name="Blorf"/>
       <encoding name=""/>
    </extension>
-   
+
     <!-- ObjectContributionTests -->
-    
+
     <extension
           point="org.eclipse.core.runtime.adapters">
        <factory
@@ -3082,7 +3082,7 @@
           <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
        </factory>
     </extension>
-    
+
     <extension
          point="org.eclipse.ui.popupMenus">
          <objectContribution
@@ -3164,7 +3164,7 @@
          </action>
       </objectContribution>
  	</extension>
- 	
+
   	<extension
          point="org.eclipse.ui.views">
         <view
@@ -3174,9 +3174,21 @@
               name="Resource Mapping Test"/>
         <category
               id="org.eclipse.ui.tests.resourceTests"
-              name="Resource Tests"/>                              
+              name="Resource Tests"/>
+        <view
+              class="org.eclipse.ui.tests.RemoveScopeButtonsTestView"
+              id="org.eclipse.ui.tests.removeScopeButtonsTestView"
+              name="RemoveScopeButtonsTestView"
+              restorable="true">
+        </view>
+        <view
+              class="org.eclipse.ui.tests.NoScopeConfigTestView"
+              id="org.eclipse.ui.tests.noScopeConfigTestView"
+              name="NoScopeConfigView"
+              restorable="true">
+        </view>
 
-	</extension>    
+	</extension>
 
     <!-- Preference Transfer examples -->
    <extension
@@ -3302,7 +3314,7 @@
             id="org.eclipse.activity1"/>
       <categoryImageBinding
             icon="icons/anything.gif"
-            id="org.eclipse.category1"/>   
+            id="org.eclipse.category1"/>
    </extension>
    <extension
          id="org.eclipse.ui.tests.multieditor.ASPA"
@@ -3355,7 +3367,7 @@
             name="On MarkerType">
          <selectedType markerId="org.eclipse.ui.tests.categoryTestMarker"/>
       </problemFilter>
-     
+
        <markerTypeCategory name="Test Markers">
          <markerTypeReference id="org.eclipse.ui.tests.categoryTestMarker"/>
          <markerTypeReference id="org.eclipse.ui.tests.testmarker"/>
@@ -3406,6 +3418,21 @@
                 values="org.eclipse.ui.tests.markers.FIXMEParameters">
           </markerFieldConfiguration>
        </markerContentGeneratorExtension>
+       <markerContentGenerator
+             id="org.eclipse.ui.tests.removeScopeButtonsContentGenerator"
+             name="removeScopeButtonsContentGenerator">
+          <markerScopeAreaConfiguration
+                onAny="true"
+                onAnyInTheSameContainer="false"
+                onSelectedAndChildren="true"
+                onSelectedOnly="false"
+                onWorkingSet="false">
+          </markerScopeAreaConfiguration>
+       </markerContentGenerator>
+       <markerContentGenerator
+             id="org.eclipse.ui.tests.noScopeConfigContentGenerator"
+             name="noScopeConfigContentGenerator">
+       </markerContentGenerator>
    </extension>
    <extension
          id="categoryTestMarker"
@@ -3497,7 +3524,7 @@
             class="org.eclipse.ui.tests.preferences.TestPreferenceInitializer">
       </initializer>
    </extension>
-  
+
    <extension
          id="menusX1"
          point="org.eclipse.ui.menus">
@@ -3626,7 +3653,7 @@
             </dynamic>
          </menu>
       </menuContribution>
-      
+
       <menuContribution
             locationURI="menu:MenuTest.toolbar.DropItem">
             <command
@@ -3634,7 +3661,7 @@
                   label="Dropdown Item">
             </command>
       </menuContribution>
-      
+
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.tests.api.MenuTestHarness">
          <command
@@ -3924,7 +3951,7 @@
             id="org.eclipse.ui.tests.statushandlers.FreeStatusHandler">
       </statusHandler>
    </extension>
-<!-- Sample invalid extension ! (illegal child) --> 
+<!-- Sample invalid extension ! (illegal child) -->
    <extension
          point="org.eclipse.ui.tests.sample">
       	<invalid
@@ -4115,7 +4142,7 @@
       <menuContribution
             class="org.eclipse.ui.tests.menus.DeclaredProgrammaticFactory"
             locationURI="menu:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests?after=org.eclipse.ui.tests.menus.iconsToolbarOnly">
-      
+
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests">
@@ -4142,19 +4169,19 @@
                   style="push">
             </command>
       </menuContribution>
-      
+
       <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
             <command
                   commandId="org.eclipse.ui.tests.menus.iconsAll"
                   style="push">
             </command>
-      </menuContribution>      
-      
+      </menuContribution>
+
    </extension>
-   
+
    <!-- END OF org.eclipse.ui.menus extension point test contributions -->
-   
+
    <extension
          point="org.eclipse.ui.commands">
       <command
@@ -4184,7 +4211,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
-      <viewContribution 
+      <viewContribution
             id="org.eclipse.ui.tests.viewContribution.harness"
             targetID="org.eclipse.ui.tests.api.MenuTestHarness">
          <action
@@ -4198,7 +4225,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
-      <editorContribution 
+      <editorContribution
             id="org.eclipse.ui.tests.editorContribution"
             targetID="org.eclipse.ui.DefaultTextEditor">
          <action
@@ -4283,7 +4310,7 @@
          <service
                serviceClass="org.eclipse.ui.tests.api.DummyService"></service>
       </serviceFactory>
-   </extension> 
+   </extension>
    <extension
          point="org.eclipse.ui.commands">
       <command
@@ -4331,7 +4358,7 @@
             </count>
          </enabledWhen>
       </handler>
-   </extension>   
+   </extension>
    <extension
          point="org.eclipse.ui.elementFactories">
       <factory
@@ -4359,7 +4386,7 @@
             type="java.lang.Object">
       </propertyTester>
    </extension>
-   
+
    <!-- bindings for the platform tests -->
    <extension
          point="org.eclipse.ui.bindings">
@@ -4437,7 +4464,7 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M2+M3+1">
       </key>
-   </extension>   
+   </extension>
       <extension
          id="menu.dynamic.contribution"
          point="org.eclipse.ui.menus">
@@ -4602,7 +4629,7 @@
          </menu>
       </menuContribution>
    </extension>
-   
+
    <extension point="org.eclipse.e4.ui.css.swt.theme">
    		<theme basestylesheeturi="css/mock.css" id="org.eclipse.e4.ui.css.theme.mock" label="mock"/>
    </extension>

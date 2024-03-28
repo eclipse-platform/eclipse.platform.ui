@@ -96,7 +96,7 @@ public class FiltersConfigurationDialog extends TrayDialog {
 	private Button limitButton;
 	private Text limitText;
 
-	private GroupFilterConfigurationArea scopeArea = new ScopeArea();
+	private GroupFilterConfigurationArea scopeArea;
 	private ScrolledForm form;
 
 	private Collection<FilterConfigurationArea> configAreas;
@@ -403,6 +403,8 @@ public class FiltersConfigurationDialog extends TrayDialog {
 		form.getBody().setLayout(new GridLayout());
 
 		configAreas = generator.createFilterConfigurationFields();
+
+		scopeArea = generator.createScopeArea();
 
 		createFieldArea(toolkit, form, scopeArea, true);
 		Iterator<FilterConfigurationArea> areas = configAreas.iterator();

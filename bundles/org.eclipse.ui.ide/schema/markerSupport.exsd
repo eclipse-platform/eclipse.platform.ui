@@ -25,14 +25,13 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -42,7 +41,7 @@
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+
                </documentation>
             </annotation>
          </attribute>
@@ -70,7 +69,7 @@
          <attribute name="scope">
             <annotation>
                <documentation>
-                  The scope of the filter. One of 
+                  The scope of the filter. One of
 ON_ANY: any item in the workbench
 ON_SELECTED_ONLY: on the currently selected item
 ON_SELECTED_AND_CHILDREN: on the currently selected item and its children
@@ -89,7 +88,6 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                   </enumeration>
                </restriction>
             </simpleType>
-            
          </attribute>
          <attribute name="onDescription" type="string">
             <annotation>
@@ -239,7 +237,7 @@ It is generally recommended that a markerAttributeGrouping is defined as a child
    <element name="markerGrouping">
       <annotation>
          <documentation>
-            A markerGrouping is a definition of a grouping criterea for the marker views that support it . 
+            A markerGrouping is a definition of a grouping criterea for the marker views that support it .
 
 Top level markerGroupings are assumed to belong to the problems content generator.
 
@@ -358,6 +356,7 @@ This attribute is optional if this is defined as a child element of a markerGrou
             <element ref="markerTypeReference" minOccurs="1" maxOccurs="unbounded"/>
             <element ref="markerFieldConfiguration" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerGrouping" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerScopeAreaConfiguration" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -514,8 +513,8 @@ This attribute is optional if this is defined as a child element of a markerGrou
          <attribute name="scope">
             <annotation>
                <documentation>
-                  The scope of the grouping 
-One of 
+                  The scope of the grouping
+One of
 ON_ANY: any item in the workbench
 ON_SELECTED_ONLY: on the currently selected item
 ON_SELECTED_AND_CHILDREN: on the currently selected item and its children
@@ -577,6 +576,51 @@ If this value is not set the value is ON_ANY
       </complexType>
    </element>
 
+   <element name="markerScopeAreaConfiguration">
+      <annotation>
+         <documentation>
+            markerScopeAreaConfiguration is an optional definition. It allows radio button options, available in the scope area of the filter dialog to be removed if they are not used. If the element is not present all radio button options will exist in the scope area.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="onAny" type="boolean">
+            <annotation>
+               <documentation>
+                  Used to specify whether the option to limit scope to any element is present. If this value is not specified it is assumed to be false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="onAnyInTheSameContainer" type="boolean">
+            <annotation>
+               <documentation>
+                  Used to specify whether the option to limit scope to any element in the same container is present. If this value is not specified it is assumed to be false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="onSelectedAndChildren" type="boolean">
+            <annotation>
+               <documentation>
+                  Used to specify whether the option to limit scope to the selected element and its children is present. If this value is not specified it is assumed to be false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="onSelectedOnly" type="boolean">
+            <annotation>
+               <documentation>
+                  Used to specify whether the option to limit scope to the selected element only is present.If this value is not specified it is assumed to be false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="onWorkingSet" type="boolean">
+            <annotation>
+               <documentation>
+                  Used to specify whether the option to limit scope to a selected working set is present. If this value is not specified it is assumed to be false.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appinfo>
          <meta.section type="since"/>
@@ -631,7 +675,7 @@ If this value is not set the value is ON_ANY
 
 This program and the accompanying materials are made
 available under the terms of the Eclipse Public License 2.0 which accompanies
-this distribution, and is available at &lt;a 
+this distribution, and is available at &lt;a
 href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
 
 SPDX-License-Identifier: EPL-2.0

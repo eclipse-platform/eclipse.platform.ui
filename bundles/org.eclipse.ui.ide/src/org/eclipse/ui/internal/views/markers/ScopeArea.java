@@ -14,11 +14,16 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import static org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup.ON_ANY;
+import static org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER;
+import static org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN;
+import static org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup.ON_SELECTED_ONLY;
+import static org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup.ON_WORKING_SET;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,7 +36,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.views.markers.MarkerFieldFilter;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
-
 /**
  * ScopeArea is the filter configuration area that handles the scope of the
  * filter.
@@ -40,7 +44,37 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 class ScopeArea extends GroupFilterConfigurationArea {
 
+	/**
+	 * Constant for any element button availability.
+	 */
+	static final int BUTTON_ON_ANY = 1;
+
+	/**
+	 * Constant for any element in same container button availability.
+	 */
+	static final int BUTTON_ON_ANY_IN_SAME_CONTAINER = 1 << 1;
+
+	/**
+	 * Constant for selected element and children button availability.
+	 */
+	static final int BUTTON_ON_SELECTED_AND_CHILDREN = 1 << 2;
+	/**
+	 * Constant for any selected element only button availability.
+	 */
+	static final int BUTTON_ON_SELECTED_ONLY = 1 << 3;
+	/**
+	 * Constant for on working set button availability.
+	 */
+	static final int BUTTON_ON_WORKING_SET = 1 << 4;
+
+	/**
+	 * Constant for all buttons availability.
+	 */
+	static final int ALL_BUTTONS_ENABLED = BUTTON_ON_ANY | BUTTON_ON_ANY_IN_SAME_CONTAINER
+			| BUTTON_ON_SELECTED_AND_CHILDREN | BUTTON_ON_SELECTED_ONLY | BUTTON_ON_WORKING_SET;
+
 	private Button[] buttons;
+	private int buttonVisibleOptions = ALL_BUTTONS_ENABLED;
 	int scope;
 	private WorkingSetArea workingSetArea;
 
@@ -65,15 +99,6 @@ class ScopeArea extends GroupFilterConfigurationArea {
 			GridData data = new GridData(GridData.FILL_HORIZONTAL);
 			button.setLayoutData(data);
 
-			// Composite composite = new Composite(parent, SWT.NONE);
-			// composite.setFont(parent.getFont());
-			// GridLayout layout = new GridLayout();
-			// Button radio = new Button(parent, SWT.RADIO);
-			// layout.marginWidth = radio.computeSize(SWT.DEFAULT,
-			// SWT.DEFAULT).x;
-			// layout.marginHeight = 0;
-			// radio.dispose();
-			// composite.setLayout(layout);
 			selectButton = new Button(parent, SWT.PUSH);
 			selectButton.setText(MarkerMessages.filtersDialog_workingSetSelect);
 
@@ -188,15 +213,20 @@ class ScopeArea extends GroupFilterConfigurationArea {
 
 	/**
 	 * Create a new instance of the receiver.
+	 *
+	 * @param buttonVisibleOptions
 	 */
-	public ScopeArea() {
+	public ScopeArea(int buttonVisibleOptions) {
 		super();
+		this.buttonVisibleOptions = buttonVisibleOptions;
 	}
 
 	@Override
 	public void applyToGroup(MarkerFieldFilterGroup group) {
 		group.setScope(scope);
-		group.setWorkingSet(workingSetArea.getWorkingSet());
+		if (workingSetArea != null) {
+			group.setWorkingSet(workingSetArea.getWorkingSet());
+		}
 
 	}
 
@@ -205,20 +235,30 @@ class ScopeArea extends GroupFilterConfigurationArea {
 
 		buttons = new Button[5];
 
-		buttons[MarkerFieldFilterGroup.ON_ANY] = createRadioButton(parent,
-				MarkerMessages.filtersDialog_anyResource,
-				MarkerFieldFilterGroup.ON_ANY);
-		buttons[MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER] = createRadioButton(
-				parent, MarkerMessages.filtersDialog_anyResourceInSameProject,
-				MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER);
-		buttons[MarkerFieldFilterGroup.ON_SELECTED_ONLY] = createRadioButton(
-				parent, MarkerMessages.filtersDialog_selectedResource,
-				MarkerFieldFilterGroup.ON_SELECTED_ONLY);
-		buttons[MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN] = createRadioButton(
-				parent, MarkerMessages.filtersDialog_selectedAndChildren,
-				MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN);
-		workingSetArea = new WorkingSetArea(parent);
-		buttons[MarkerFieldFilterGroup.ON_WORKING_SET] = workingSetArea.getRadioButton();
+		if ((buttonVisibleOptions & BUTTON_ON_ANY) != 0) {
+			buttons[ON_ANY] = createRadioButton(parent, MarkerMessages.filtersDialog_anyResource, ON_ANY);
+		}
+
+		if ((buttonVisibleOptions & BUTTON_ON_ANY_IN_SAME_CONTAINER) != 0) {
+			buttons[ON_ANY_IN_SAME_CONTAINER] = createRadioButton(parent,
+					MarkerMessages.filtersDialog_anyResourceInSameProject, ON_ANY_IN_SAME_CONTAINER);
+		}
+
+		if ((buttonVisibleOptions & BUTTON_ON_SELECTED_ONLY) != 0) {
+
+			buttons[ON_SELECTED_ONLY] = createRadioButton(parent, MarkerMessages.filtersDialog_selectedResource,
+					ON_SELECTED_ONLY);
+		}
+
+		if ((buttonVisibleOptions & BUTTON_ON_SELECTED_AND_CHILDREN) != 0) {
+			buttons[ON_SELECTED_AND_CHILDREN] = createRadioButton(parent,
+					MarkerMessages.filtersDialog_selectedAndChildren, ON_SELECTED_AND_CHILDREN);
+		}
+
+		if ((buttonVisibleOptions & BUTTON_ON_WORKING_SET) != 0) {
+			workingSetArea = new WorkingSetArea(parent);
+			buttons[ON_WORKING_SET] = workingSetArea.getRadioButton();
+		}
 	}
 
 	/**
@@ -258,10 +298,18 @@ class ScopeArea extends GroupFilterConfigurationArea {
 
 	@Override
 	public void initializeFromGroup(MarkerFieldFilterGroup group) {
-		buttons[scope].setSelection(false);
+		if (buttons[scope] != null)
+			buttons[scope].setSelection(false);
+
 		scope = group.getScope();
+
+		if (buttons[scope] == null)
+			throw new IllegalArgumentException("Requested scope button not available for configuration."); //$NON-NLS-1$
+
 		buttons[scope].setSelection(true);
-		workingSetArea.setWorkingSet(group.getWorkingSet());
+
+		if (workingSetArea != null)
+			workingSetArea.setWorkingSet(group.getWorkingSet());
 	}
 
 	@Override
