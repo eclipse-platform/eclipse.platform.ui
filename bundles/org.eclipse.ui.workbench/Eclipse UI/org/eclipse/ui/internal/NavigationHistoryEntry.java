@@ -65,7 +65,8 @@ public class NavigationHistoryEntry {
 	void restoreLocation() {
 		if (editorInfo.editorInput != null && editorInfo.editorID != null) {
 			try {
-				IEditorPart editor = page.openEditor(editorInfo.editorInput, editorInfo.editorID, true);
+				IEditorPart editor = page.openEditor(editorInfo.editorInput, editorInfo.editorID, true,
+						IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
 				if (location == null) {
 					if (editor instanceof INavigationLocationProvider) {
 						location = ((INavigationLocationProvider) editor).createEmptyNavigationLocation();
@@ -75,6 +76,7 @@ public class NavigationHistoryEntry {
 				if (location != null) {
 					if (locationMemento != null) {
 						location.setInput(editorInfo.editorInput);
+						location.setId(editorInfo.editorID);
 						location.restoreState(locationMemento);
 						locationMemento = null;
 					}
