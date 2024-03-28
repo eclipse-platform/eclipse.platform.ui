@@ -72,6 +72,26 @@ public class MarkerSupportInternalUtilities {
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
 	/**
+	 * The application attribute from a configuration element.
+	 */
+	public static final String APPLICATION = "application"; //$NON-NLS-1$
+
+	/**
+	 * The sub type only attribute value from the application attribute.
+	 */
+	public static final String SUB_TYPES_ONLY = "subTypesOnly"; //$NON-NLS-1$
+
+	/**
+	 * The type only attribute value from the application attribute.
+	 */
+	public static final String TYPE_ONLY = "typeOnly"; //$NON-NLS-1$
+
+	/**
+	 * The type and subtype attribute value from the application attribute.
+	 */
+	public static final String TYPE_AND_SUBTYPE = "typeAndSubTypes"; //$NON-NLS-1$
+
+	/**
 	 * The name attribute name from a configuration element.
 	 */
 	public static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
