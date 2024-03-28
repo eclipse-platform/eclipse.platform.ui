@@ -223,7 +223,7 @@ public class ShowKeysUI implements IDisposable {
 
 			Color color = JFaceResources.getColorRegistry().get(POPUP_COLOR_BG);
 			newShell.setBackground(color);
-			newShell.setAlpha(170);
+			newShell.setAlpha(130);
 		}
 
 		@Override
