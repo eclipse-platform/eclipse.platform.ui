@@ -256,21 +256,28 @@ public abstract class TrayDialog extends Dialog {
 	protected Control createHelpControl(Composite parent) {
 		Image helpImage = JFaceResources.getImage(DLG_IMG_HELP);
 		if (helpImage != null) {
-			return createHelpImageButton(parent, helpImage);
+			return createHelpImageButton(parent, helpImage, SWT.CHECK);
 		}
 		return createHelpLink(parent);
 	}
 
-	/*
-	 * Creates a button with a help image. This is only used if there
-	 * is an image available.
+	/**
+	 *
+	 * Creates a button with a help image. This is only used if there is an image
+	 * available.
+	 *
+	 * @param parent : the parent composite
+	 * @param image  : the help image
+	 * @param style  : the button style
+	 * @return toolbar with help item
+	 * @since 3.27
 	 */
-	private ToolBar createHelpImageButton(Composite parent, Image image) {
+	protected ToolBar createHelpImageButton(Composite parent, Image image, int style) {
 		ToolBar toolBar = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
 		((GridLayout) parent.getLayout()).numColumns++;
 		toolBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		toolBar.setCursor(parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
-		fHelpButton = new ToolItem(toolBar, SWT.CHECK);
+		fHelpButton = new ToolItem(toolBar, style);
 		fHelpButton.setImage(image);
 		fHelpButton.setToolTipText(JFaceResources.getString("helpToolTip")); //$NON-NLS-1$
 		fHelpButton.addSelectionListener(widgetSelectedAdapter(e -> helpPressed()));
@@ -346,15 +353,17 @@ public abstract class TrayDialog extends Dialog {
 		return tray;
 	}
 
-	/*
-	 * Called when the help control is invoked. This emulates the keyboard
-	 * context help behavior (e.g. F1 on Windows). It traverses the widget
-	 * tree upward until it finds a widget that has a help listener on it,
-	 * then invokes a help event on that widget.
-	 * If the help tray is already open, it closes it and doesn't invoke
-	 * any help listener.
+	/**
+	 * Called when the help control is invoked. This emulates the keyboard context
+	 * help behavior (e.g. F1 on Windows). It traverses the widget tree upward until
+	 * it finds a widget that has a help listener on it, then invokes a help event
+	 * on that widget. If the help tray is already open, it closes it and doesn't
+	 * invoke any help listener.
+	 *
+	 * @since 3.27
 	 */
-	private void helpPressed() {
+
+	protected void helpPressed() {
 		if (fHelpButton != null && fHelpButton.getSelection()) {
 			DialogTray tray = getTray();
 			if (tray != null) {

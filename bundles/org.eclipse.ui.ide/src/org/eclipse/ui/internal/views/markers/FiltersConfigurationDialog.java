@@ -44,6 +44,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -63,6 +64,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.FilterConfigurationArea;
+import org.eclipse.ui.views.markers.IFilterHelpHandler;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.osgi.framework.FrameworkUtil;
 
@@ -106,6 +108,7 @@ public class FiltersConfigurationDialog extends TrayDialog {
 	private Group configComposite;
 	private Composite compositeLimits;
 
+	private IFilterHelpHandler filterHelpHandler;
 	/**
 	 * Create a new instance of the receiver on builder.
 	 */
@@ -114,7 +117,11 @@ public class FiltersConfigurationDialog extends TrayDialog {
 		filterGroups = makeWorkingCopy(generator.getAllFilters());
 		this.generator = generator;
 		andFilters = false;
-		setHelpAvailable(false);
+
+		if (generator.isHelpConfigured())
+			filterHelpHandler = generator.getHelpHandler();
+		else
+			setHelpAvailable(false);
 	}
 
 	/**
@@ -761,4 +768,19 @@ public class FiltersConfigurationDialog extends TrayDialog {
 		setEnabled(enabled, form);
 	}
 
+	@Override
+	protected Control createHelpControl(Composite parent) {
+		Image helpImage = JFaceResources.getImage(DLG_IMG_HELP);
+		int style = generator.getHelpStyle();
+		return createHelpImageButton(parent, helpImage, style);
+	}
+
+	@Override
+	protected void helpPressed() {
+		if (filterHelpHandler == null) {
+			super.helpPressed();
+		} else {
+			filterHelpHandler.handleHelpClick();
+		}
+	}
 }

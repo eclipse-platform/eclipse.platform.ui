@@ -358,6 +358,7 @@ This attribute is optional if this is defined as a child element of a markerGrou
             <element ref="markerTypeReference" minOccurs="1" maxOccurs="unbounded"/>
             <element ref="markerFieldConfiguration" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerGrouping" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerFilterHelp" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -577,6 +578,36 @@ If this value is not set the value is ON_ANY
       </complexType>
    </element>
 
+   <element name="markerFilterHelp">
+      <complexType>
+         <attribute name="filterHelpClass" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.views.markers.IFilterHelpHandler"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="helpButtonStyle" use="default" value="check">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="none">
+                  </enumeration>
+                  <enumeration value="check">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+   
    <annotation>
       <appinfo>
          <meta.section type="since"/>

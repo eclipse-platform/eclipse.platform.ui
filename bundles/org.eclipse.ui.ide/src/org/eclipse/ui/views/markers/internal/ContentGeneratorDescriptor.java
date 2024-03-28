@@ -37,6 +37,7 @@ import org.eclipse.ui.views.markers.MarkerField;
  */
 public class ContentGeneratorDescriptor {
 
+	private static final String MARKER_FILTER_HELP = "markerFilterHelp"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_DEFAULT_MARKER_GROUPING = "defaultMarkerGrouping"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
 	private static final String ELEMENT_MARKER_FIELD_CONFIGURATION = "markerFieldConfiguration"; //$NON-NLS-1$;
@@ -139,6 +140,17 @@ public class ContentGeneratorDescriptor {
 					.toArray(IConfigurationElement[]::new);
 		}
 		return filterGroups;
+	}
+
+	/**
+	 * If there is help associated with the Filter dialog then get the
+	 * configuration.
+	 *
+	 * @return the help configuration or null if none is configured.
+	 */
+	public IConfigurationElement getHelpReference() {
+		IConfigurationElement[] helpElement = configurationElement.getChildren(MARKER_FILTER_HELP);
+		return helpElement.length > 0 ? helpElement[0] : null;
 	}
 
 	/**

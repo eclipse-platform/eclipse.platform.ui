@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.WorkbenchException;
@@ -44,6 +45,7 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.FilterConfigurationArea;
+import org.eclipse.ui.views.markers.IFilterHelpHandler;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.internal.ContentGeneratorDescriptor;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
@@ -70,7 +72,10 @@ public class MarkerContentGenerator {
 	private static final String TAG_AND = "andFilters"; //$NON-NLS-1$
 	private static final String TAG_MARKER_LIMIT = "markerLimit"; //$NON-NLS-1$
 	private static final String TAG_MARKER_LIMIT_ENABLED = "markerLimitEnabled"; //$NON-NLS-1$
-
+	private static final String MARKER_FILTER_CLASS = "filterHelpClass"; //$NON-NLS-1$
+	private static final String HELP_BUTTON_STYLE = "helpButtonStyle"; //$NON-NLS-1$
+	private static final String HELP_BUTTON_STYLE_NONE = "none"; //$NON-NLS-1$
+	private static final String HELP_BUTTON_STYLE_CHECK = "check"; //$NON-NLS-1$
 	/*Use this to indicate filter change rather than a null*/
 	private final Collection<MarkerFieldFilterGroup> FILTERS_CHANGED = Collections.emptySet();
 
@@ -434,6 +439,62 @@ public class MarkerContentGenerator {
 		return filterList;
 	}
 
+	/**
+	 * Checks if there is help configured for the filter dialog
+	 *
+	 * @return true if help is configured or else false.
+	 */
+	public boolean isHelpConfigured() {
+		IConfigurationElement helpElement = generatorDescriptor.getHelpReference();
+		return helpElement != null;
+	}
+
+	/**
+	 * Gets the help handler or null if there is none configured.
+	 *
+	 * @return the help handler
+	 */
+	public IFilterHelpHandler getHelpHandler() {
+
+		IConfigurationElement helpElement = generatorDescriptor.getHelpReference();
+
+		if (helpElement != null) {
+			try {
+				if (helpElement.getAttribute(MARKER_FILTER_CLASS) == null)
+					return null;
+
+				Object helpHandler = IDEWorkbenchPlugin.createExtension(helpElement, MARKER_FILTER_CLASS);
+				return (IFilterHelpHandler) helpHandler;
+			} catch (CoreException e) {
+				IDEWorkbenchPlugin.getDefault().getLog().log(Util.errorStatus(e));
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the help button style
+	 *
+	 * @return the style in string format
+	 */
+	public int getHelpStyle() {
+		IConfigurationElement helpElement = generatorDescriptor.getHelpReference();
+
+		String style = helpElement != null ? helpElement.getAttribute(HELP_BUTTON_STYLE) : null;
+
+		int actionStyle = SWT.CHECK;
+
+		switch (style) {
+		case HELP_BUTTON_STYLE_NONE:
+			actionStyle = SWT.None;
+			break;
+		case HELP_BUTTON_STYLE_CHECK:
+		default:
+			actionStyle = SWT.CHECK;
+			break;
+		}
+		return actionStyle;
+	}
 
 	private void loadLimitSettings(IMemento memento) {
 		if (memento == null) {
