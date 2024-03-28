@@ -49,13 +49,6 @@ public class WorkbenchViewerSetup {
 			int itemsLimit = getItemsLimit();
 			registeredViewers.values().forEach(v -> {
 				v.setDisplayIncrementally(itemsLimit);
-				Object input = v.getInput();
-				if (input != null) {
-					v.setInput(null);
-					v.setInput(input);
-				} else {
-					v.refresh();
-				}
 			});
 		}
 	};
