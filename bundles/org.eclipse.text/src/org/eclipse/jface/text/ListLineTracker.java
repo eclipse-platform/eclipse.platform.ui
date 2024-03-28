@@ -174,8 +174,10 @@ abstract class ListLineTracker implements ILineTracker {
 	public final IRegion getLineInformation(int line) throws BadLocationException {
 		int lines= fLines.size();
 
-		if (line < 0 || line > lines)
-			throw new BadLocationException();
+		if (line > lines)
+			throw new BadLocationException("line > lines: " + line + " > " + lines);  //$NON-NLS-1$//$NON-NLS-2$
+		if (line < 0)
+			throw new BadLocationException("line < 0: " +line);  //$NON-NLS-1$
 
 		if (lines == 0)
 			return new Line(0, 0);
