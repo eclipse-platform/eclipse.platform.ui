@@ -244,6 +244,7 @@
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
             class="org.eclipse.ui.internal.genericeditor.compare.CompareViewerCreator"
+            linkedEditor="org.eclipse.ui.genericeditor.GenericEditor"
             id="org.eclipse.ui.genericeditor.compareViewer">
       </viewer>
    </extension>

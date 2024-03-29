@@ -24,6 +24,7 @@ public class Messages extends NLS {
 
 	public static String GotoMatchingBracket_error_noMatchingBracket;
 	public static String GotoMatchingBracket_error_bracketOutsideSelectedElement;
+	public static String GenericEditorMergeViewer_title;
 
 	static {
 		// initialize resource bundle

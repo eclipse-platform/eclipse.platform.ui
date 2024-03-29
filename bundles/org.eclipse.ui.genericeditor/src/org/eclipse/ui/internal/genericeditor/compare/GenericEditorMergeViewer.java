@@ -25,15 +25,18 @@ import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextViewerConfiguration;
 import org.eclipse.ui.internal.genericeditor.GenericEditorPlugin;
+import org.eclipse.ui.internal.genericeditor.Messages;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 public class GenericEditorMergeViewer extends TextMergeViewer {
 
 	private final Set<IContentType> fallbackContentTypes = new LinkedHashSet<>();
+	private String title;
 
 	public GenericEditorMergeViewer(Composite parent, CompareConfiguration configuration) {
 		super(parent, configuration);
@@ -60,13 +63,22 @@ public class GenericEditorMergeViewer extends TextMergeViewer {
 
 	@Override
 	protected void configureTextViewer(TextViewer textViewer) {
-		if (textViewer.getDocument() != null && textViewer instanceof ISourceViewer) {
+		if (textViewer.getDocument() != null && textViewer instanceof ISourceViewer sourceViewer) {
 			ExtensionBasedTextViewerConfiguration configuration = new ExtensionBasedTextViewerConfiguration(null,
 					new ChainedPreferenceStore(new IPreferenceStore[] { EditorsUI.getPreferenceStore(),
 							GenericEditorPlugin.getDefault().getPreferenceStore() }));
 			configuration.setFallbackContentTypes(fallbackContentTypes);
-			((ISourceViewer) textViewer).configure(configuration);
+			sourceViewer.configure(configuration);
+			Set<IContentType> contentTypes = configuration.getContentTypes(sourceViewer.getDocument());
+			if (!contentTypes.isEmpty()) {
+				IContentType contentType = contentTypes.iterator().next();
+				title = NLS.bind(Messages.GenericEditorMergeViewer_title, contentType.getName());
+			}
 		}
 	}
 
+	@Override
+	public String getTitle() {
+		return title != null ? title : super.getTitle();
+	}
 }
