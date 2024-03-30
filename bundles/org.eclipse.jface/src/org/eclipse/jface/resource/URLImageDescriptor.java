@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
@@ -267,8 +269,12 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 				url = platformURL;
 			}
 			URL locatedURL = FileLocator.toFileURL(url);
-			if (FILE_PROTOCOL.equalsIgnoreCase(locatedURL.getProtocol()))
-				return IPath.fromOSString(locatedURL.getPath()).toOSString();
+			if (FILE_PROTOCOL.equalsIgnoreCase(locatedURL.getProtocol())) {
+				String filePath = IPath.fromOSString(locatedURL.getPath()).toOSString();
+				if (Files.exists(Path.of(filePath))) {
+					return filePath;
+				}
+			}
 			return null;
 		} catch (IOException e) {
 			if (logIOException) {
