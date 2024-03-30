@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Adapters;
@@ -29,9 +30,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageFileNameProvider;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class UrlImageDescriptorTest {
+
+	@Rule
+	public TemporaryFolder tempFolder = new TemporaryFolder();
 
 	/**
 	 * Test that individually created images of a given descriptor are not equal
@@ -110,6 +116,24 @@ public class UrlImageDescriptorTest {
 		String imagePath200 = fileNameProvider.getImagePath(200);
 		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the @2x path", imagePath200);
 		assertEquals(IPath.fromOSString(imagePath200).lastSegment(), "zoomIn@2x.png");
+		String imagePath150 = fileNameProvider.getImagePath(150);
+		assertNull("URLImageDescriptor's ImageFileNameProvider does return a @1.5x path", imagePath150);
+	}
+
+	@Test
+	public void testImageFileNameProviderGetxName_forFileURL() throws IOException {
+		URL imageFileURL = tempFolder.newFile("image.png").toURI().toURL();
+		tempFolder.newFile("image@2x.png");
+		ImageDescriptor descriptor = ImageDescriptor.createFromURL(imageFileURL);
+
+		ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
+		assertNotNull("URLImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
+		String imagePath100 = fileNameProvider.getImagePath(100);
+		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 100% path", imagePath100);
+		assertEquals(IPath.fromOSString(imagePath100).lastSegment(), "image.png");
+		String imagePath200 = fileNameProvider.getImagePath(200);
+		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the @2x path", imagePath200);
+		assertEquals(IPath.fromOSString(imagePath200).lastSegment(), "image@2x.png");
 		String imagePath150 = fileNameProvider.getImagePath(150);
 		assertNull("URLImageDescriptor's ImageFileNameProvider does return a @1.5x path", imagePath150);
 	}
