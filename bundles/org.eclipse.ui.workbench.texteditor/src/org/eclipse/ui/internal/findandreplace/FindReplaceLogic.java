@@ -114,16 +114,19 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		status = null;
 	}
 
+	@Override
+	public boolean isWholeWordSearchAvailable(String findString) {
+		return !isRegExSearchAvailableAndActive() && isWord(findString);
+	}
+
 	/**
-	 * Returns <code>true</code> if searching should be restricted to entire words,
-	 * <code>false</code> if not. This is the case if the respective checkbox is
-	 * turned on, regex is off, and the checkbox is enabled, i.e. the current find
-	 * string is an entire word.
+	 * Tests whether each character in the given string is a letter.
 	 *
-	 * @return <code>true</code> if the search is restricted to whole words
+	 * @param str the string to check
+	 * @return <code>true</code> if the given string is a word
 	 */
-	private boolean isWholeWordSearchAvailableAndActive() {
-		return isActive(SearchOptions.WHOLE_WORD) && !isRegExSearchAvailableAndActive();
+	private static boolean isWord(String str) {
+		return str != null && !str.isEmpty() && str.chars().allMatch(Character::isJavaIdentifierPart);
 	}
 
 	@Override
@@ -495,13 +498,18 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	@Override
 	public int findAndSelect(int offset, String findString) {
-		if (target instanceof IFindReplaceTargetExtension3)
-			return ((IFindReplaceTargetExtension3) target).findAndSelect(offset, findString,
-					isActive(SearchOptions.FORWARD),
-					isActive(SearchOptions.CASE_SENSITIVE), isWholeWordSearchAvailableAndActive(), isActive(SearchOptions.REGEX));
-		return target.findAndSelect(offset, findString, isActive(SearchOptions.FORWARD),
-				isActive(SearchOptions.CASE_SENSITIVE),
-				isWholeWordSearchAvailableAndActive());
+		boolean wholeWordSearch = isActive(SearchOptions.WHOLE_WORD) && isWholeWordSearchAvailable(findString);
+		boolean forwardSearch = isActive(SearchOptions.FORWARD);
+		boolean caseSensitiveSearch = isActive(SearchOptions.CASE_SENSITIVE);
+		boolean regexSearch = isActive(SearchOptions.REGEX);
+
+		if (target instanceof IFindReplaceTargetExtension3 regexSupportingTarget) {
+			return (regexSupportingTarget).findAndSelect(offset, findString,
+					forwardSearch, caseSensitiveSearch,
+					wholeWordSearch, regexSearch);
+		}
+		return target.findAndSelect(offset, findString, forwardSearch,
+				caseSensitiveSearch, wholeWordSearch);
 	}
 
 	/**
