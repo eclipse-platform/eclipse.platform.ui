@@ -36,7 +36,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -90,6 +92,9 @@ import org.osgi.service.prefs.BackingStoreException;
  * applies to the overall appearance, hence the name.
  */
 public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+
+	private static final String PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
+
 	private static final String E4_THEME_EXTENSION_POINT = "org.eclipse.e4.ui.css.swt.theme"; //$NON-NLS-1$
 
 	/** The workbench theme engine; may be {@code null} if no engine */
@@ -194,8 +199,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	protected void createShowFullTextForViewTabs(Composite composite) {
-		IEclipsePreferences prefs = getSwtRendererPreferences();
-		boolean actualValue = prefs.getBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS,
+		boolean actualValue = getSwtRendererPreference(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS,
 				CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT);
 		createLabel(composite, ""); //$NON-NLS-1$
 		createLabel(composite, WorkbenchMessages.ViewsPreference_viewTabs_icons_and_titles_label);
@@ -204,11 +208,15 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	protected void createHideIconsForViewTabs(Composite composite) {
-		IEclipsePreferences prefs = getSwtRendererPreferences();
-		boolean actualValue = prefs.getBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS,
+		boolean actualValue = getSwtRendererPreference(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS,
 				CTabRendering.HIDE_ICONS_FOR_VIEW_TABS_DEFAULT);
 		hideIconsForViewTabs = createCheckButton(composite, WorkbenchMessages.ViewsPreference_hideIconsForViewTabs,
 				actualValue);
+	}
+
+	private boolean getSwtRendererPreference(String prefName, boolean defaultValue) {
+		return Platform.getPreferencesService().getBoolean(PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT,
+				prefName, defaultValue, null);
 	}
 
 	/**
@@ -287,17 +295,15 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	protected void createUseRoundTabs(Composite composite) {
-		IEclipsePreferences prefs = getSwtRendererPreferences();
-		boolean enabled = prefs.getBoolean(CTabRendering.USE_ROUND_TABS, CTabRendering.USE_ROUND_TABS_DEFAULT);
+		boolean enabled = getSwtRendererPreference(CTabRendering.USE_ROUND_TABS, CTabRendering.USE_ROUND_TABS_DEFAULT);
 		useRoundTabs = createCheckButton(composite, WorkbenchMessages.ViewsPreference_useRoundTabs, enabled);
 	}
 
 	protected void createEnableMruPref(Composite composite) {
 		createLabel(composite, ""); //$NON-NLS-1$
 		createLabel(composite, WorkbenchMessages.ViewsPreference_visibleTabs_description);
-		IEclipsePreferences prefs = getSwtRendererPreferences();
-		boolean defaultValue = getDefaultMRUValue();
-		boolean actualValue = prefs.getBoolean(StackRenderer.MRU_KEY, defaultValue);
+		boolean defaultValue = getSwtRendererPreference(StackRenderer.MRU_KEY_DEFAULT, StackRenderer.MRU_DEFAULT);
+		boolean actualValue = getSwtRendererPreference(StackRenderer.MRU_KEY, defaultValue);
 		enableMru = createCheckButton(composite, WorkbenchMessages.ViewsPreference_enableMRU, actualValue);
 	}
 
@@ -316,7 +322,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public boolean performOk() {
-		IEclipsePreferences prefs = getSwtRendererPreferences();
+		IEclipsePreferences prefs = InstanceScope.INSTANCE
+				.getNode(PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
 		if (engine != null) {
 			ITheme theme = getSelectedTheme();
 			if (theme != null) {
@@ -379,14 +386,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 	}
 
-	private IEclipsePreferences getSwtRendererPreferences() {
-		return InstanceScope.INSTANCE.getNode("org.eclipse.e4.ui.workbench.renderers.swt"); //$NON-NLS-1$
-	}
-
-	private boolean getDefaultMRUValue() {
-		return getSwtRendererPreferences().getBoolean(StackRenderer.MRU_KEY_DEFAULT, StackRenderer.MRU_DEFAULT);
-	}
-
 	private void setColorsAndFontsTheme(ColorsAndFontsTheme theme) {
 		org.eclipse.ui.themes.ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
 		if (theme != null && !currentTheme.getId().equals(theme.getId())) {
@@ -396,6 +395,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	protected void performDefaults() {
+		IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE
+				.getNode(PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
 		if (engine != null) {
 			setColorsAndFontsTheme(currentColorsAndFontsTheme);
 
@@ -403,14 +404,18 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			if (engine.getActiveTheme() != null) {
 				themeIdCombo.setSelection(new StructuredSelection(engine.getActiveTheme()));
 			}
-			hideIconsForViewTabs.setSelection(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS_DEFAULT);
-			showFullTextForViewTabs.setSelection(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT);
+			hideIconsForViewTabs.setSelection(defaultPrefs.getBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS,
+					CTabRendering.HIDE_ICONS_FOR_VIEW_TABS_DEFAULT));
+			showFullTextForViewTabs.setSelection(defaultPrefs.getBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS,
+					CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT));
+			showFullTextForViewTabs.notifyListeners(SWT.Selection, null);
 		}
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 
-		useRoundTabs.setSelection(CTabRendering.USE_ROUND_TABS_DEFAULT);
-		enableMru.setSelection(getDefaultMRUValue());
+		useRoundTabs.setSelection(
+				defaultPrefs.getBoolean(CTabRendering.USE_ROUND_TABS, CTabRendering.USE_ROUND_TABS_DEFAULT));
+		enableMru.setSelection(defaultPrefs.getBoolean(StackRenderer.MRU_KEY_DEFAULT, StackRenderer.MRU_DEFAULT));
 		super.performDefaults();
 	}
 
