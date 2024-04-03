@@ -3406,6 +3406,9 @@
                 values="org.eclipse.ui.tests.markers.FIXMEParameters">
           </markerFieldConfiguration>
        </markerContentGeneratorExtension>
+        <markerContentGenerator
+             id="org.eclipse.ui.tests.filterHelpContentGenerator">
+       </markerContentGenerator>
    </extension>
    <extension
          id="categoryTestMarker"
@@ -3916,6 +3919,11 @@
             name="Dependency Injection View"
             restorable="true">
       </view>
+      <view
+            class="org.eclipse.ui.tests.FilterHelpTestView"
+            id="org.eclipse.ui.tests.filterHelpTestView"
+            name="Marker Filter Help View">
+      </view>      
    </extension>
    <extension
          point="org.eclipse.ui.statusHandlers">

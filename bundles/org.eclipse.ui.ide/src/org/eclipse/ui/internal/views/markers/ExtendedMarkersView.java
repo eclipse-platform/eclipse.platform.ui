@@ -1103,12 +1103,17 @@ public class ExtendedMarkersView extends ViewPart {
 								id)));
 	}
 
+	protected FiltersConfigurationDialog createFilterConfigurationDialog(MarkerContentGenerator gen) {
+		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(getSite().getWorkbenchWindow().getShell(),
+				gen);
+		return dialog;
+	}
+
 	/**
 	 * Open the filters dialog for the receiver.
 	 */
 	void openFiltersDialog() {
-		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
-				getSite().getWorkbenchWindow().getShell(), generator);
+		FiltersConfigurationDialog dialog = createFilterConfigurationDialog(generator);
 		if (dialog.open() == Window.OK) {
 			generator.updateFilters(dialog.getFilters(), dialog.andFilters());
 		}
