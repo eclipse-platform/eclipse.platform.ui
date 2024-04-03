@@ -166,4 +166,14 @@ public interface IFindReplaceLogic {
 	 */
 	public IFindReplaceTarget getTarget();
 
+	/**
+	 * Returns <code>true</code> if searching can be restricted to entire words,
+	 * <code>false</code> if not. Searching for whole words requires the given find
+	 * string to be an entire word and the regex search option to be disabled.
+	 *
+	 * @param findString the string that is currently being searched for.
+	 * @return <code>true</code> if the search can be restricted to whole words
+	 */
+	public boolean isWholeWordSearchAvailable(String findString);
+
 }

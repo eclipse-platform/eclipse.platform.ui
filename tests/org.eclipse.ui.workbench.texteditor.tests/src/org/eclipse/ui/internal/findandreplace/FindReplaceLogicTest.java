@@ -452,6 +452,28 @@ public class FindReplaceLogicTest {
 		assertThat(textViewer.getTextWidget().getText(), is("lie1\nine2\nine3"));
 	}
 
+	@Test
+	public void testWholeWordSearchAvailable() {
+		TextViewer textViewer= setupTextViewer("line1\nline2\nline3");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+
+		assertThat(findReplaceLogic.isWholeWordSearchAvailable("oneword"), is(true));
+		assertThat(findReplaceLogic.isWholeWordSearchAvailable("stilläoneäword"), is(true));
+		assertThat(findReplaceLogic.isWholeWordSearchAvailable("two.words"), is(false));
+		assertThat(findReplaceLogic.isWholeWordSearchAvailable("two words"), is(false));
+		assertThat(findReplaceLogic.isWholeWordSearchAvailable("oneword"), is(true));
+		assertThat(findReplaceLogic.isWholeWordSearchAvailable("twöwords"), is(true));
+
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		assertThat(findReplaceLogic.isWholeWordSearchAvailable("oneword"), is(false));
+		assertThat(findReplaceLogic.isWholeWordSearchAvailable("stilläoneöword"), is(false));
+		assertThat(findReplaceLogic.isWholeWordSearchAvailable("two.words"), is(false));
+		assertThat(findReplaceLogic.isWholeWordSearchAvailable("two words"), is(false));
+
+		assertThat(findReplaceLogic.isWholeWordSearchAvailable(""), is(false));
+	}
+
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {
 		assertThat(findReplaceLogic.getStatus(), instanceOf(NoStatus.class));
 	}
