@@ -98,7 +98,8 @@ public class FindReplaceDialogTest {
 
 		private Runnable closeOperation;
 
-		DialogAccess(Accessor findReplaceDialogAccessor) {
+
+		DialogAccess(Accessor findReplaceDialogAccessor, boolean checkInitialConfiguration) {
 			findReplaceLogic= (FindReplaceLogic) findReplaceDialogAccessor.get("findReplaceLogic");
 			findCombo= (Combo) findReplaceDialogAccessor.get("fFindField");
 			forwardRadioButton= (Button) findReplaceDialogAccessor.get("fForwardRadioButton");
@@ -111,7 +112,9 @@ public class FindReplaceDialogTest {
 			replaceFindButton= (Button) findReplaceDialogAccessor.get("fReplaceFindButton");
 			shellRetriever= () -> ((Shell) findReplaceDialogAccessor.get("fActiveShell"));
 			closeOperation= () -> findReplaceDialogAccessor.invoke("close", null);
-			assertInitialConfiguration();
+			if (checkInitialConfiguration) {
+				assertInitialConfiguration();
+			}
 		}
 
 		void restoreInitialConfiguration() {
@@ -148,9 +151,13 @@ public class FindReplaceDialogTest {
 			assertFalse(regExCheckBox.getSelection());
 		}
 
-		void close() {
+		void closeAndRestore() {
 			restoreInitialConfiguration();
 			assertInitialConfiguration();
+			close();
+		}
+
+		void close() {
 			closeOperation.run();
 		}
 
@@ -171,7 +178,7 @@ public class FindReplaceDialogTest {
 		Shell shell= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		Accessor dialogAccessor= new Accessor("org.eclipse.ui.texteditor.FindReplaceDialog", getClass().getClassLoader(), new Object[] { shell });
 		dialogAccessor.invoke("create", null);
-		dialog= new DialogAccess(dialogAccessor);
+		dialog= new DialogAccess(dialogAccessor, true);
 	}
 
 	private void openTextViewerAndFindReplaceDialog() {
@@ -190,6 +197,10 @@ public class FindReplaceDialogTest {
 	}
 
 	private void openFindReplaceDialogForTextViewer() {
+		openFindReplaceDialogForTextViewer(true);
+	}
+
+	private void openFindReplaceDialogForTextViewer(boolean checkInitialConfiguration) {
 		Accessor fFindReplaceAction;
 		fFindReplaceAction= new Accessor("org.eclipse.ui.texteditor.FindReplaceAction", getClass().getClassLoader(),
 				new Class[] { ResourceBundle.class, String.class, Shell.class, IFindReplaceTarget.class },
@@ -203,13 +214,13 @@ public class FindReplaceDialogTest {
 		Accessor fFindReplaceDialogStubAccessor= new Accessor(fFindReplaceDialogStub, "org.eclipse.ui.texteditor.FindReplaceAction$FindReplaceDialogStub", getClass().getClassLoader());
 
 		Accessor dialogAccessor= new Accessor(fFindReplaceDialogStubAccessor.invoke("getDialog", null), "org.eclipse.ui.texteditor.FindReplaceDialog", getClass().getClassLoader());
-		dialog= new DialogAccess(dialogAccessor);
+		dialog= new DialogAccess(dialogAccessor, checkInitialConfiguration);
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		if (dialog != null) {
-			dialog.close();
+			dialog.closeAndRestore();
 			dialog= null;
 		}
 
@@ -268,10 +279,11 @@ public class FindReplaceDialogTest {
 		simulateEnterInFindInputField(false);
 		dialog.ensureHasFocusOnGTK();
 
-		if (Util.isMac())
+		if (Util.isMac()) {
 			/* On the Mac, checkboxes only take focus if "Full Keyboard Access" is enabled in the System Preferences.
 			 * Let's not assume that someone pressed Ctrl+F7 on every test machine... */
 			return;
+		}
 
 		assertTrue(dialog.findCombo.isFocusControl());
 
@@ -412,6 +424,48 @@ public class FindReplaceDialogTest {
 		runEventQueue();
 		assertTrue(dialog.wholeWordCheckBox.getSelection());
 		assertFalse(dialog.wholeWordCheckBox.getEnabled());
+	}
+
+	@Test
+	public void testIncrementalSearchOnlyEnabledWhenAllowed() {
+		openTextViewer("text text text");
+		openFindReplaceDialogForTextViewer();
+
+		dialog.incrementalCheckBox.setSelection(true);
+		select(dialog.regExCheckBox);
+		runEventQueue();
+		assertTrue(dialog.incrementalCheckBox.getSelection());
+		assertFalse(dialog.incrementalCheckBox.getEnabled());
+	}
+
+	/*
+	 * Test for https://github.com/eclipse-platform/eclipse.platform.ui/pull/1805#pullrequestreview-1993772378
+	 */
+	@Test
+	public void testIncrementalSearchOptionRecoveredCorrectly() {
+		openTextViewer("text text text");
+		openFindReplaceDialogForTextViewer();
+
+		select(dialog.incrementalCheckBox);
+		assertTrue(dialog.incrementalCheckBox.getSelection());
+		assertTrue(dialog.incrementalCheckBox.getEnabled());
+
+		dialog.close();
+		openFindReplaceDialogForTextViewer(false);
+
+		assertTrue(dialog.incrementalCheckBox.getSelection());
+		assertTrue(dialog.incrementalCheckBox.getEnabled());
+
+		select(dialog.incrementalCheckBox);
+		select(dialog.regExCheckBox);
+		assertTrue(dialog.incrementalCheckBox.getSelection());
+		assertFalse(dialog.incrementalCheckBox.getEnabled());
+
+		dialog.close();
+		openFindReplaceDialogForTextViewer(false);
+
+		assertTrue(dialog.incrementalCheckBox.getSelection());
+		assertFalse(dialog.incrementalCheckBox.getEnabled());
 	}
 
 	private static void select(Button button) {

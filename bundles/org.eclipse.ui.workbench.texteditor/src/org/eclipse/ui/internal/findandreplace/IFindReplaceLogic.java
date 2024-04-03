@@ -67,6 +67,12 @@ public interface IFindReplaceLogic {
 	public boolean isRegExSearchAvailableAndActive();
 
 	/**
+	 * {@return whether incremental search may be performed by the
+	 * find/replace-logic based on the currently active options}
+	 */
+	public boolean isIncrementalSearchAvailable();
+
+	/**
 	 * Updates the search result after the Text was Modified. Used in combination
 	 * with <code>setIncrementalSearch(true)</code>. This method specifically allows
 	 * for "search-as-you-type"

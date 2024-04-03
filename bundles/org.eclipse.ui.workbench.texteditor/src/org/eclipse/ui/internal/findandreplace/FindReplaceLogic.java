@@ -115,10 +115,14 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	}
 
 	@Override
+	public boolean isIncrementalSearchAvailable() {
+		return !isRegExSearchAvailableAndActive();
+	}
+
+	@Override
 	public boolean isWholeWordSearchAvailable(String findString) {
 		return !isRegExSearchAvailableAndActive() && isWord(findString);
 	}
-
 	/**
 	 * Tests whether each character in the given string is a letter.
 	 *
@@ -686,7 +690,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	public void performIncrementalSearch(String searchString) {
 		resetStatus();
 
-		if (isActive(SearchOptions.INCREMENTAL) && !isRegExSearchAvailableAndActive()) {
+		if (isActive(SearchOptions.INCREMENTAL) && isIncrementalSearchAvailable()) {
 			if (searchString.equals("") && target != null) { //$NON-NLS-1$
 				// empty selection at base location
 				int offset = incrementalBaseLocation.x;

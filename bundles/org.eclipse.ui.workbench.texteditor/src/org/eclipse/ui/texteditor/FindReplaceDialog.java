@@ -725,11 +725,11 @@ class FindReplaceDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean newState = fIsRegExCheckBox.getSelection();
-				fIncrementalCheckBox.setEnabled(!newState);
 				setupFindReplaceLogic();
 				storeSettings();
 				updateButtonState();
 				setContentAssistsEnablement(newState);
+				fIncrementalCheckBox.setEnabled(findReplaceLogic.isIncrementalSearchAvailable());
 			}
 		});
 		storeButtonWithMnemonicInMap(fIsRegExCheckBox);
@@ -740,7 +740,7 @@ class FindReplaceDialog extends Dialog {
 				updateButtonState();
 			}
 		});
-		fIncrementalCheckBox.setEnabled(!findReplaceLogic.isRegExSearchAvailableAndActive());
+		fIncrementalCheckBox.setEnabled(findReplaceLogic.isIncrementalSearchAvailable());
 		return panel;
 	}
 
@@ -1165,7 +1165,7 @@ class FindReplaceDialog extends Dialog {
 		}
 
 		if (okToUse(fIncrementalCheckBox)) {
-			fIncrementalCheckBox.setEnabled(!findReplaceLogic.isRegExSearchAvailableAndActive());
+			fIncrementalCheckBox.setEnabled(findReplaceLogic.isIncrementalSearchAvailable());
 		}
 
 		if (okToUse(fReplaceLabel)) {
@@ -1264,8 +1264,7 @@ class FindReplaceDialog extends Dialog {
 		activateInFindReplaceLogicIf(SearchOptions.CASE_SENSITIVE, fCaseCheckBox.getSelection());
 		activateInFindReplaceLogicIf(SearchOptions.REGEX, fIsRegExCheckBox.getSelection());
 		activateInFindReplaceLogicIf(SearchOptions.WHOLE_WORD, fWholeWordCheckBox.getSelection());
-		activateInFindReplaceLogicIf(SearchOptions.INCREMENTAL,
-				fIncrementalCheckBox.getEnabled() && fIncrementalCheckBox.getSelection());
+		activateInFindReplaceLogicIf(SearchOptions.INCREMENTAL, fIncrementalCheckBox.getSelection());
 	}
 
 	/**
