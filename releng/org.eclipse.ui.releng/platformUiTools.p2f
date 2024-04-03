@@ -99,7 +99,7 @@
     </iu>
     <iu id='org.eclipse.eclemma.feature.feature.group' name='EclEmma Java Code Coverage' version='0.0.0'>
         <repositories size='1'>
-            <repository location='https://download.eclipse.org/releases/latest/'/>
+            <repository location='https://download.eclipse.org/eclemma/updates-master/'/>
         </repositories>
     </iu>
     <iu id='org.apache.commons.compress' name='Apache Commons Compress Plug-in' version='0.0.0'>
