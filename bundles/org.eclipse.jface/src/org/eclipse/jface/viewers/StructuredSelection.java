@@ -68,9 +68,17 @@ public class StructuredSelection implements IStructuredSelection {
 	 * @param elements an array of elements
 	 */
 	public StructuredSelection(Object[] elements) {
+		this(elements, true);
+	}
+
+	StructuredSelection(Object[] elements, boolean copy) {
 		Assert.isNotNull(elements);
-		this.elements = new Object[elements.length];
-		System.arraycopy(elements, 0, this.elements, 0, elements.length);
+		if (copy) {
+			this.elements = new Object[elements.length];
+			System.arraycopy(elements, 0, this.elements, 0, elements.length);
+		} else {
+			this.elements = elements;
+		}
 		this.comparer = null;
 	}
 

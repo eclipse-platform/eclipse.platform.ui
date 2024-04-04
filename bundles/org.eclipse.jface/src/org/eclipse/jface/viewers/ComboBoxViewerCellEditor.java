@@ -173,11 +173,7 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 	protected void doSetValue(Object value) {
 		Assert.isTrue(viewer != null);
 		selectedValue = value;
-		if (value == null) {
-			viewer.setSelection(StructuredSelection.EMPTY);
-		} else {
-			viewer.setSelection(new StructuredSelection(value));
-		}
+		viewer.setSelection(IStructuredSelection.ofNullable(value));
 	}
 
 	/**

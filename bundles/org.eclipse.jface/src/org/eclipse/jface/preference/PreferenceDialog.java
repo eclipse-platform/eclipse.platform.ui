@@ -47,7 +47,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -953,7 +952,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		if (lastSuccessfulNode == null) {
 			return;
 		}
-		getTreeViewer().setSelection(new StructuredSelection(lastSuccessfulNode));
+		getTreeViewer().setSelection(IStructuredSelection.of(lastSuccessfulNode));
 		currentPage.setVisible(true);
 	}
 
@@ -987,7 +986,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 			}
 		}
 		if (node != null) {
-			getTreeViewer().setSelection(new StructuredSelection(node), true);
+			getTreeViewer().setSelection(IStructuredSelection.of(node), true);
 			// Keep focus in tree. See bugs 2692, 2621, and 6775.
 			getTreeViewer().getControl().setFocus();
 		}
