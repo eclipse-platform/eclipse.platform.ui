@@ -121,6 +121,7 @@ public class MarkerTypeTests {
 		return generator;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Collection<MarkerType> getMarkerTypes(MarkerContentGenerator generator) {
 		Collection<MarkerType> selectedTypesCollection = null;
 		try {
