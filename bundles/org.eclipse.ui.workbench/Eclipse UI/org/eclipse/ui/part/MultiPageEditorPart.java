@@ -334,13 +334,13 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		// done
 		if (getActivePage() == -1) {
 			setActivePage(0);
-			IEditorPart part = getEditor(0);
-			if (part != null) {
-				final IServiceLocator serviceLocator = part.getEditorSite();
-				if (serviceLocator instanceof INestable) {
-					activeServiceLocator = (INestable) serviceLocator;
-					activeServiceLocator.activate();
-				}
+		}
+		IEditorPart part = getEditor(getActivePage());
+		if (part != null) {
+			final IServiceLocator serviceLocator = part.getEditorSite();
+			if (serviceLocator instanceof INestable) {
+				activeServiceLocator = (INestable) serviceLocator;
+				activeServiceLocator.activate();
 			}
 		}
 		initializePageSwitching();
