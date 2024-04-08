@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
@@ -40,6 +41,16 @@ public class GenericEditorMergeViewer extends TextMergeViewer {
 
 	public GenericEditorMergeViewer(Composite parent, CompareConfiguration configuration) {
 		super(parent, configuration);
+		if (configuration != null) {
+			Object id = configuration.getProperty(CompareConfiguration.CONTENT_TYPE);
+			if (id instanceof String contentTypeId) {
+				IContentType contentType = Platform.getContentTypeManager().getContentType(contentTypeId);
+				while (contentType != null) {
+					fallbackContentTypes.add(contentType);
+					contentType = contentType.getBaseType();
+				}
+			}
+		}
 	}
 
 	@Override
@@ -48,8 +59,10 @@ public class GenericEditorMergeViewer extends TextMergeViewer {
 		res.addTextInputListener(new ITextInputListener() {
 			@Override
 			public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
-				fallbackContentTypes
-						.addAll(new ExtensionBasedTextViewerConfiguration(null, null).getContentTypes(newInput));
+				if (fallbackContentTypes.isEmpty()) {
+					fallbackContentTypes
+							.addAll(new ExtensionBasedTextViewerConfiguration(null, null).getContentTypes(newInput));
+				}
 				configureTextViewer(res);
 			}
 
