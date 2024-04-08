@@ -19,6 +19,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -138,7 +141,27 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 				}
 			}
 		}
-		return this.resolvedContentTypes.isEmpty() ? fallbackContentTypes : resolvedContentTypes;
+		// Try to guess content type based on the content itself, if we don't
+		// have neither a resource, nor file name and no fallback contentTypes
+		if (documentParam != null && this.resolvedContentTypes.isEmpty() && this.fallbackContentTypes.isEmpty()) {
+			String content = documentParam.get();
+			if (content != null && !content.isBlank()) {
+				try (InputStream is = new ByteArrayInputStream(content.getBytes())) {
+					IContentType type = Platform.getContentTypeManager().findContentTypeFor(is, null);
+					while (type != null) {
+						this.resolvedContentTypes.add(type);
+						type = type.getBaseType();
+					}
+				} catch (IOException e) {
+					// silently ignore
+				}
+			}
+		}
+
+		if (this.resolvedContentTypes.isEmpty()) {
+			this.resolvedContentTypes.addAll(this.fallbackContentTypes);
+		}
+		return this.resolvedContentTypes;
 	}
 
 	private static ITextFileBuffer getCurrentBuffer(IDocument document) {
@@ -317,12 +340,17 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 				editor, getContentTypes(sourceViewer.getDocument()));
 
 		InformationPresenter presenter = new InformationPresenter(new CompositeInformationControlCreator(hovers));
-		// By default the InformationPresented is set to take the focus when visible,
-		// which makes the Browser to overtake all the focus/mouse etc. control over the
+		// By default the InformationPresented is set to take the focus when
+		// visible,
+		// which makes the Browser to overtake all the focus/mouse etc. control
+		// over the
 		// 'org.eclipse.jface.text.information.InformationPresenter.Closer`.
-		// As we want to make t possible to close the information presenter by clicking
-		// outside of the information control or resizing the editor etc. - we need to
-		// disable such focus overtake by calling `takesFocusWhenVisible(false)` on the
+		// As we want to make t possible to close the information presenter by
+		// clicking
+		// outside of the information control or resizing the editor etc. - we
+		// need to
+		// disable such focus overtake by calling `takesFocusWhenVisible(false)`
+		// on the
 		// presenter.
 		//
 		presenter.takesFocusWhenVisible(false);
@@ -414,8 +442,8 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	}
 
 	/**
-	 * Set content-types that will be considered is no content-type can be deduced
-	 * from the document (eg document is not backed by a FileBuffer)
+	 * Set content-types that will be considered is no content-type can be
+	 * deduced from the document (eg document is not backed by a FileBuffer)
 	 */
 	public void setFallbackContentTypes(Set<IContentType> contentTypes) {
 		this.fallbackContentTypes = (contentTypes == null ? Set.of() : contentTypes);
