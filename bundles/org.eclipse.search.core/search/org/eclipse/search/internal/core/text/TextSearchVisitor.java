@@ -472,8 +472,9 @@ public class TextSearchVisitor {
 	private List<TextSearchMatchAccess> locateMatches(IFile file, CharSequence searchInput, Matcher matcher, IProgressMonitor monitor) throws CoreException {
 		List<TextSearchMatchAccess> occurences= null;
 		matcher.reset(searchInput);
-		int k= 0;
-		while (matcher.find()) {
+		// Check for cancellation before calling matcher.find() since that call
+		// can be very expensive
+		while (!monitor.isCanceled() && matcher.find()) {
 			if (occurences == null) {
 				occurences= new ArrayList<>();
 			}
@@ -487,10 +488,6 @@ public class TextSearchVisitor {
 				if (!res) {
 					return occurences; // no further reporting requested
 				}
-			}
-			// Periodically check for cancellation and quit working on the current file if the job has been cancelled.
-			if (k++ % 20 == 0 && monitor.isCanceled()) {
-				break;
 			}
 		}
 		if (occurences == null) {
