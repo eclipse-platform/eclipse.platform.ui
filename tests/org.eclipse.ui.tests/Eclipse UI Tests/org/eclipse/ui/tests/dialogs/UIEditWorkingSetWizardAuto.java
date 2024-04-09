@@ -13,10 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
-import java.util.List;
+import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
 
+import java.util.List;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Composite;
@@ -56,6 +60,29 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto<WorkingS
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 		return registry.getDefaultWorkingSetPage();
 	}
+
+	/**
+	 * Blocks the calling thread until autobuild completes.
+	 */
+	private static void waitForBuild() {
+		((Workspace) getWorkspace()).getBuildManager().waitForAutoBuild();
+	}
+
+	/**
+	 * Enables or disables workspace autobuild. Waits for the build to be finished,
+	 * even if the autobuild value did not change and a previous build is still
+	 * running.
+	 */
+	private static void setAutoBuilding(boolean enabled) throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		if (workspace.isAutoBuilding() != enabled) {
+			IWorkspaceDescription description = workspace.getDescription();
+			description.setAutoBuilding(enabled);
+			workspace.setDescription(description);
+		}
+		waitForBuild();
+	}
+
 
 	@Test
 	public void testEditPage() throws Throwable {
@@ -119,4 +146,17 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto<WorkingS
 
 		DialogCheck.assertDialogTexts(getWizardDialog());
 	}
+
+	@Override
+	public void doSetUp() throws Exception {
+		super.doSetUp();
+		setAutoBuilding(false);
+	}
+
+	@Override
+	public void doTearDown() throws Exception {
+		super.doTearDown();
+		ResourcesPlugin.getWorkspace().setDescription(Workspace.defaultWorkspaceDescription());
+	}
+
 }
