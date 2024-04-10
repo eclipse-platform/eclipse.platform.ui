@@ -28,10 +28,8 @@ public final class PartStackUtil {
 	 * @param partStack the part stack to make the primary data stack
 	 */
 	public static void initializeAsPrimaryDataStack(MPartStack partStack) {
+		makeEditorStack(partStack);
 		partStack.getTags().add(PRIMARY_DATA_STACK_ID);
-		if (!partStack.getTags().contains(EDITOR_STACK_TAG)) {
-			partStack.getTags().add(EDITOR_STACK_TAG);
-		}
 		partStack.setElementId(PRIMARY_DATA_STACK_ID);
 	}
 
@@ -42,4 +40,26 @@ public final class PartStackUtil {
 	public static boolean isPrimaryDataStack(MApplicationElement element) {
 		return element instanceof MPartStack && PRIMARY_DATA_STACK_ID.equals(element.getElementId());
 	}
+
+	/**
+	 * @param element the element to check for being an editor stack
+	 * @return whether the given element is marked as an editor stack
+	 */
+	public static boolean isEditorStack(MApplicationElement element) {
+		return element instanceof MPartStack && element.getTags().contains(EDITOR_STACK_TAG);
+	}
+
+	/**
+	 * Marks the given part stack as an editor stack. In consequence calling
+	 * {{@link #isEditorStack(MApplicationElement)} for the element will return
+	 * {@code true}.
+	 *
+	 * @param partStack the part stack to mark as an editor stack
+	 */
+	public static void makeEditorStack(MPartStack partStack) {
+		if (!partStack.getTags().contains(EDITOR_STACK_TAG)) {
+			partStack.getTags().add(EDITOR_STACK_TAG);
+		}
+	}
+
 }

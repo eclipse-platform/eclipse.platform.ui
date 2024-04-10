@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.PartStackUtil;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
@@ -411,7 +412,7 @@ public class StackRendererTest {
 
 	@Test
 	public void testOnboardingRenderedWithCorrectSizeForEditorStack() {
-		partStack.getTags().add("EditorStack");
+		PartStackUtil.makeEditorStack(partStack);
 
 		contextRule.createAndRunWorkbench(window);
 
@@ -445,7 +446,7 @@ public class StackRendererTest {
 	@Test
 	public void testOnboardingIsFilled() {
 		MPerspective perspective = createPerspective();
-		partStack.getTags().add("EditorStack");
+		PartStackUtil.makeEditorStack(partStack);
 
 		contextRule.createAndRunWorkbench(window);
 		switchToPerspective(perspective);
@@ -500,13 +501,13 @@ public class StackRendererTest {
 	@Test
 	public void testOnboardingIsFilledForEveryEditorStack() {
 		MPerspective perspective = createPerspective();
-		partStack.getTags().add("EditorStack");
+		PartStackUtil.makeEditorStack(partStack);
 
 		contextRule.createAndRunWorkbench(window);
 
 		// Create second editor stack
 		MPartStack secondPartStack = ems.createModelElement(MPartStack.class);
-		secondPartStack.getTags().add("EditorStack");
+		PartStackUtil.makeEditorStack(secondPartStack);
 		MPlaceholder placeholder = ems.createModelElement(MPlaceholder.class);
 		placeholder.setRef(secondPartStack);
 		perspective.getChildren().add(placeholder);
@@ -520,7 +521,7 @@ public class StackRendererTest {
 
 	@Test
 	public void testOnboardingIsHiddenWhenEditorOpened() {
-		partStack.getTags().add("EditorStack");
+		PartStackUtil.makeEditorStack(partStack);
 
 		contextRule.createAndRunWorkbench(window);
 

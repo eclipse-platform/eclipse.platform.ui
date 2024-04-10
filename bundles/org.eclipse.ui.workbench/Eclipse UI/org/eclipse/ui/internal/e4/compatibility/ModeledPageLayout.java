@@ -74,7 +74,6 @@ public class ModeledPageLayout implements IPageLayout {
 	public static final String PERSP_SHORTCUT_TAG = "persp.perspSC:"; //$NON-NLS-1$
 	public static final String SHOW_IN_PART_TAG = "persp.showIn:"; //$NON-NLS-1$
 	public static final String SHOW_VIEW_TAG = "persp.viewSC:"; //$NON-NLS-1$
-	public static final String EDITOR_STACK_TAG = "EditorStack"; //$NON-NLS-1$
 	public static final String HIDDEN_MENU_PREFIX = "persp.hideMenuSC:"; //$NON-NLS-1$
 	public static final String HIDDEN_TOOLBAR_PREFIX = "persp.hideToolbarSC:"; //$NON-NLS-1$
 	public static final String HIDDEN_ACTIONSET_PREFIX = "persp.hideActionSetSC:"; //$NON-NLS-1$
