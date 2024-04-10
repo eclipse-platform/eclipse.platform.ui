@@ -43,6 +43,7 @@ import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
+import org.eclipse.e4.ui.internal.workbench.PartStackUtil;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -127,8 +128,6 @@ public class StackRenderer extends LazyStackRenderer {
 	private static final String ONBOARDING_COMPOSITE = "EditorStack.OnboardingComposite"; //$NON-NLS-1$
 	private static final String ONBOARDING_IMAGE = "EditorStack.OnboardingImage"; //$NON-NLS-1$
 	private static final String ONBOARDING_TEXT = "EditorStack.OnboardingText"; //$NON-NLS-1$
-
-	private static final String EDITOR_STACK_ID = "EditorStack"; //$NON-NLS-1$
 
 	/**
 	 * Id of a a control.
@@ -703,7 +702,7 @@ public class StackRenderer extends LazyStackRenderer {
 		int location = modelService.getElementLocation(element);
 		boolean isInSharedArea = (location & EModelService.IN_SHARED_AREA) != 0;
 		if (isInSharedArea) {
-			pStack.getTags().add(EDITOR_STACK_ID);
+			PartStackUtil.makeEditorStack(pStack);
 		}
 
 		Composite parentComposite = (Composite) parent;
@@ -717,7 +716,7 @@ public class StackRenderer extends LazyStackRenderer {
 		int styleOverride = getStyleOverride(pStack);
 		int style = styleOverride == -1 ? SWT.BORDER : styleOverride;
 		CTabFolder tabFolder = new CTabFolder(parentComposite, style);
-		if (pStack.getTags().contains("EditorStack")) { //$NON-NLS-1$
+		if (PartStackUtil.isEditorStack(element)) {
 			createOnboardingControls(tabFolder);
 			initializeOnboardingInformationInEditorStack(tabFolder);
 		}
@@ -1926,7 +1925,8 @@ public class StackRenderer extends LazyStackRenderer {
 		Predicate<Object> tabFolders = CTabFolder.class::isInstance;
 		Function<Object, CTabFolder> toTabFolder = CTabFolder.class::cast;
 
-		List<MPartStack> elements = modelService.findElements(perspective, null, MPartStack.class, List.of(EDITOR_STACK_ID));
+		List<MPartStack> elements = modelService.findElements(perspective, null, MPartStack.class,
+				List.of(PartStackUtil.EDITOR_STACK_TAG));
 		return elements.stream().map(MUIElement::getWidget).filter(tabFolders).map(toTabFolder);
 	}
 
