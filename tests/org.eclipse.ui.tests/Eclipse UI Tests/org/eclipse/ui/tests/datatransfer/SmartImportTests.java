@@ -150,10 +150,7 @@ public class SmartImportTests extends UITestCase {
 			final Button okButton = getFinishButton(dialog.buttonBar);
 			assertNotNull(okButton);
 			processEventsUntil(() -> okButton.isEnabled(), -1);
-			wizard.performFinish();
-			waitForJobs(100, 1000); // give the job framework time to schedule the job
-			wizard.getImportJob().join();
-			waitForJobs(100, 5000); // give some time for asynchronous workspace jobs to complete
+			finishWizard(wizard);
 		} finally {
 			if (!dialog.getShell().isDisposed()) {
 				dialog.close();
@@ -442,10 +439,7 @@ public class SmartImportTests extends UITestCase {
 			combo.notifyListeners(SWT.Selection, e);
 			processEvents();
 			processEventsUntil(() -> okButton.isEnabled(), -1);
-			wizard.performFinish();
-			waitForJobs(100, 1000); // give the job framework time to schedule the job
-			wizard.getImportJob().join();
-			waitForJobs(100, 5000); // give some time for asynchronous workspace jobs to complete
+			finishWizard(wizard);
 			assertEquals("WorkingSet2 should be selected", Collections.singleton(workingSet2),
 					page.getSelectedWorkingSets());
 			assertEquals("Projects were not added to working set", 1, workingSet2.getElements().length);
@@ -457,6 +451,11 @@ public class SmartImportTests extends UITestCase {
 			workingSetManager.removeWorkingSet(workingSet);
 			workingSetManager.removeWorkingSet(workingSet2);
 		}
+	}
+
+	private void finishWizard(SmartImportWizard wizard) throws InterruptedException {
+		wizard.performFinish();
+		wizard.getCurrentImportJob().join();
 	}
 
 	/**
