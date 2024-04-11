@@ -757,6 +757,9 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 				Item[] mi = getMenuItems();
 
 				for (Item element : mi) {
+					if (element.isDisposed()) {
+						continue;
+					}
 					Object data = element.getData();
 
 					if (data == null || !clean.contains(data)) {
@@ -776,7 +779,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 					IContributionItem dest;
 
 					// get corresponding item in SWT widget
-					if (srcIx < mi.length) {
+					if (srcIx < mi.length && !mi[srcIx].isDisposed()) {
 						dest = (IContributionItem) mi[srcIx].getData();
 					} else {
 						dest = null;
@@ -819,28 +822,36 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 
 				// remove any old menu items not accounted for
 				for (; srcIx < mi.length; srcIx++) {
-					mi[srcIx].dispose();
+					Item item = mi[srcIx];
+					if (!item.isDisposed()) {
+						item.dispose();
+					}
 				}
 
 				mi = getMenuItems();
 
 				// Remove double Separator
 				for (int i = 1; i < mi.length; i++) {
-					if (mi[i].getData() instanceof Separator && mi[i - 1].getData() instanceof Separator) {
-						mi[i - 1].dispose();
+					Item item = mi[i];
+					Item previousItem = mi[i - 1];
+					if (!item.isDisposed() && isSeparator(item.getData()) && !previousItem.isDisposed()
+							&& isSeparator(previousItem.getData())) {
+						previousItem.dispose();
 					}
 				}
 
 				mi = getMenuItems();
 				if (mi.length > 0) {
 					// Remove leading Separator if present
-					if (mi[0].getData() instanceof Separator) {
-						mi[0].dispose();
+					Item firstItem = mi[0];
+					if (!firstItem.isDisposed() && isSeparator(firstItem.getData())) {
+						firstItem.dispose();
 					}
 
 					// Remove trailing Separator if present
-					if (mi[mi.length - 1].getData() instanceof Separator) {
-						mi[mi.length - 1].dispose();
+					Item lastItem = mi[mi.length - 1];
+					if (!lastItem.isDisposed() && isSeparator(lastItem.getData())) {
+						lastItem.dispose();
 					}
 				}
 
@@ -858,6 +869,16 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 				}
 			}
 		}
+	}
+
+	private boolean isSeparator(Object object) {
+		if (object instanceof Separator) {
+			return true;
+		}
+		if (object instanceof IContributionItem item && item.isSeparator()) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

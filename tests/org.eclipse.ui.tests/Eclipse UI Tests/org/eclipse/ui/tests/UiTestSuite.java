@@ -42,6 +42,7 @@ import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
 import org.eclipse.ui.tests.leaks.LeaksTestSuite;
+import org.eclipse.ui.tests.menus.DoubleSeparatorTest;
 import org.eclipse.ui.tests.menus.MenusTestSuite;
 import org.eclipse.ui.tests.multieditor.MultiEditorTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
@@ -109,7 +110,8 @@ import org.junit.runners.Suite;
 	WorkbenchDatabindingTest.class,
 	ChooseWorkspaceDialogTests.class,
 	ViewerItemsLimitTest.class,
-	OpenCloseTest.class
+	OpenCloseTest.class,
+	DoubleSeparatorTest.class
 })
 public class UiTestSuite {
 }
