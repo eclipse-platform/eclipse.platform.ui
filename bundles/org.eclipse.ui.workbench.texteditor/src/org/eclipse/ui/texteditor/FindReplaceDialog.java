@@ -733,7 +733,7 @@ class FindReplaceDialog extends Dialog {
 			}
 		});
 		storeButtonWithMnemonicInMap(fIsRegExCheckBox);
-		fWholeWordCheckBox.setEnabled(!findReplaceLogic.isRegExSearchAvailableAndActive());
+		fWholeWordCheckBox.setEnabled(findReplaceLogic.isWholeWordSearchAvailable(getFindString()));
 		fWholeWordCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1065,7 +1065,7 @@ class FindReplaceDialog extends Dialog {
 			boolean isSelectionGoodForReplace = selectionString != "" //$NON-NLS-1$
 					|| !isRegExSearchAvailableAndActive;
 
-			fWholeWordCheckBox.setEnabled(isWord(str) && !isRegExSearchAvailableAndActive);
+			fWholeWordCheckBox.setEnabled(findReplaceLogic.isWholeWordSearchAvailable(getFindString()));
 			fFindNextButton.setEnabled(enable && isFindStringSet);
 			fSelectAllButton.setEnabled(enable && isFindStringSet && (target instanceof IFindReplaceTargetExtension4));
 			fReplaceSelectionButton.setEnabled(
@@ -1076,23 +1076,6 @@ class FindReplaceDialog extends Dialog {
 		}
 	}
 
-	/**
-	 * Tests whether each character in the given string is a letter.
-	 *
-	 * @param str the string to check
-	 * @return <code>true</code> if the given string is a word
-	 * @since 3.0
-	 */
-	private boolean isWord(String str) {
-		if (str == null || str.isEmpty())
-			return false;
-
-		for (int i = 0; i < str.length(); i++) {
-			if (!Character.isJavaIdentifierPart(str.charAt(i)))
-				return false;
-		}
-		return true;
-	}
 
 	/**
 	 * Updates the given combo with the given content.
@@ -1178,7 +1161,7 @@ class FindReplaceDialog extends Dialog {
 		}
 
 		if (okToUse(fWholeWordCheckBox)) {
-			fWholeWordCheckBox.setEnabled(!findReplaceLogic.isRegExSearchAvailableAndActive());
+			fWholeWordCheckBox.setEnabled(findReplaceLogic.isWholeWordSearchAvailable(getFindString()));
 		}
 
 		if (okToUse(fIncrementalCheckBox)) {
@@ -1280,8 +1263,7 @@ class FindReplaceDialog extends Dialog {
 		activateInFindReplaceLogicIf(SearchOptions.FORWARD, fForwardRadioButton.getSelection());
 		activateInFindReplaceLogicIf(SearchOptions.CASE_SENSITIVE, fCaseCheckBox.getSelection());
 		activateInFindReplaceLogicIf(SearchOptions.REGEX, fIsRegExCheckBox.getSelection());
-		activateInFindReplaceLogicIf(SearchOptions.WHOLE_WORD,
-				fWholeWordCheckBox.getEnabled() && fWholeWordCheckBox.getSelection());
+		activateInFindReplaceLogicIf(SearchOptions.WHOLE_WORD, fWholeWordCheckBox.getSelection());
 		activateInFindReplaceLogicIf(SearchOptions.INCREMENTAL,
 				fIncrementalCheckBox.getEnabled() && fIncrementalCheckBox.getSelection());
 	}

@@ -392,6 +392,28 @@ public class FindReplaceDialogTest {
 		assertEquals(4, (target.getSelection()).y);
 	}
 
+	@Test
+	public void testActivateWholeWordsAndSearchForTwoWords() {
+		openTextViewer("text text text");
+		openFindReplaceDialogForTextViewer();
+
+		dialog.wholeWordCheckBox.setSelection(true);
+
+		dialog.findCombo.setText("text text");
+		assertTrue(dialog.wholeWordCheckBox.getSelection());
+		assertFalse(dialog.wholeWordCheckBox.getEnabled());
+
+		dialog.findCombo.setText("text");
+		assertTrue(dialog.wholeWordCheckBox.getSelection());
+		assertTrue(dialog.wholeWordCheckBox.getEnabled());
+
+		dialog.regExCheckBox.setSelection(true);
+		dialog.regExCheckBox.notifyListeners(SWT.Selection, null);
+		runEventQueue();
+		assertTrue(dialog.wholeWordCheckBox.getSelection());
+		assertFalse(dialog.wholeWordCheckBox.getEnabled());
+	}
+
 	private static void select(Button button) {
 		button.setSelection(true);
 		button.notifyListeners(SWT.Selection, null);
