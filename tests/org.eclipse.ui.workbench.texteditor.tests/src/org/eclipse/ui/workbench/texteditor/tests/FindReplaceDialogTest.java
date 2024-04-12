@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -98,6 +100,8 @@ public class FindReplaceDialogTest {
 
 		private Runnable closeOperation;
 
+		public Button replaceAllButton;
+
 
 		DialogAccess(Accessor findReplaceDialogAccessor, boolean checkInitialConfiguration) {
 			findReplaceLogic= (FindReplaceLogic) findReplaceDialogAccessor.get("findReplaceLogic");
@@ -110,6 +114,7 @@ public class FindReplaceDialogTest {
 			incrementalCheckBox= (Button) findReplaceDialogAccessor.get("fIncrementalCheckBox");
 			regExCheckBox= (Button) findReplaceDialogAccessor.get("fIsRegExCheckBox");
 			replaceFindButton= (Button) findReplaceDialogAccessor.get("fReplaceFindButton");
+			replaceAllButton= (Button) findReplaceDialogAccessor.get("fReplaceAllButton");
 			shellRetriever= () -> ((Shell) findReplaceDialogAccessor.get("fActiveShell"));
 			closeOperation= () -> findReplaceDialogAccessor.invoke("close", null);
 			if (checkInitialConfiguration) {
@@ -424,6 +429,19 @@ public class FindReplaceDialogTest {
 		runEventQueue();
 		assertTrue(dialog.wholeWordCheckBox.getSelection());
 		assertFalse(dialog.wholeWordCheckBox.getEnabled());
+	}
+
+	@Test
+	public void testActivateDialogWithSelectionActive() {
+		openTextViewer("text" + System.lineSeparator() + "text" + System.lineSeparator() + "text");
+		fTextViewer.setSelectedRange(4 + System.lineSeparator().length(), 8 + System.lineSeparator().length());
+		openFindReplaceDialogForTextViewer(false);
+
+		assertFalse(dialog.globalRadioButton.getSelection());
+		dialog.findCombo.setText("text");
+		select(dialog.replaceAllButton);
+
+		assertThat(fTextViewer.getDocument().get(), is("text" + System.lineSeparator() + System.lineSeparator()));
 	}
 
 	@Test

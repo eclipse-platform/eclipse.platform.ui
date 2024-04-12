@@ -946,6 +946,7 @@ class FindReplaceDialog extends Dialog {
 		} else {
 			fGlobalRadioButton.setSelection(false);
 			fSelectedRangeRadioButton.setSelection(true);
+			findReplaceLogic.deactivate(SearchOptions.GLOBAL);
 		}
 	}
 
