@@ -47,6 +47,7 @@ import org.eclipse.jface.internal.text.revisions.Colors;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.Util;
 
 
 /**
@@ -283,7 +284,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		// - https://bugs.eclipse.org/bugs/show_bug.cgi?id=23980 : platform specific shell resize behavior
 		String platform= SWT.getPlatform();
 		final boolean isWin= platform.equals("win32"); //$NON-NLS-1$
-		if (!isWin && !platform.equals("gtk")) //$NON-NLS-1$
+		if (!isWin && !Util.isGtk()) 
 			return;
 
 		final Canvas resizer= new Canvas(bars, SWT.NONE);
