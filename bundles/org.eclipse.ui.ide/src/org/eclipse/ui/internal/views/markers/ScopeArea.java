@@ -18,7 +18,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,10 +37,10 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  *
  * @since 3.4
  */
-class ScopeArea extends GroupFilterConfigurationArea {
+public class ScopeArea extends GroupFilterConfigurationArea {
 
-	private Button[] buttons;
-	int scope;
+	protected Button[] buttons;
+	protected int scope;
 	private WorkingSetArea workingSetArea;
 
 	private class WorkingSetArea {

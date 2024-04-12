@@ -3409,6 +3409,9 @@
         <markerContentGenerator
              id="org.eclipse.ui.tests.filterHelpContentGenerator">
        </markerContentGenerator>
+        <markerContentGenerator
+             id="org.eclipse.ui.tests.customScopeContentGenerator">
+       </markerContentGenerator>       
    </extension>
    <extension
          id="categoryTestMarker"
@@ -3923,7 +3926,12 @@
             class="org.eclipse.ui.tests.FilterHelpTestView"
             id="org.eclipse.ui.tests.filterHelpTestView"
             name="Marker Filter Help View">
-      </view>      
+      </view>
+      <view
+            class="org.eclipse.ui.tests.ScopeAreaTestView"
+            id="org.eclipse.ui.tests.customScopeTestView"
+            name="Custom Scope Area View">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.statusHandlers">
