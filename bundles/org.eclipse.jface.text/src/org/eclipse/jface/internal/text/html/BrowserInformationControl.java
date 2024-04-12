@@ -367,7 +367,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		 * Avoids flickering when replacing hovers, especially on Vista in ON_CLICK mode.
 		 * Causes flickering on GTK. Carbon does not care.
 		 */
-		if ("win32".equals(SWT.getPlatform())) //$NON-NLS-1$
+		if (Util.isWin32()) 
 			shell.moveAbove(null);
 
 		super.setVisible(true);
