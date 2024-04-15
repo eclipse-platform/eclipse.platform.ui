@@ -96,7 +96,7 @@ public class FiltersConfigurationDialog extends TrayDialog {
 	private Button limitButton;
 	private Text limitText;
 
-	private GroupFilterConfigurationArea scopeArea = new ScopeArea();
+	private GroupFilterConfigurationArea scopeArea = createScopeArea();
 	private ScrolledForm form;
 
 	private Collection<FilterConfigurationArea> configAreas;
@@ -174,6 +174,15 @@ public class FiltersConfigurationDialog extends TrayDialog {
 		initUI();
 
 		return container;
+	}
+
+	/**
+	 * Create a new ScopeArea for the receiver.
+	 *
+	 * @return ScopeArea
+	 */
+	protected ScopeArea createScopeArea() {
+		return new ScopeArea();
 	}
 
 	private void initUI() {

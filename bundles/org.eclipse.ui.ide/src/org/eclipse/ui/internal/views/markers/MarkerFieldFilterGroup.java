@@ -55,7 +55,7 @@ import org.eclipse.ui.views.markers.internal.MarkerType;
  *
  * @since 3.4
  */
-class MarkerFieldFilterGroup {
+public class MarkerFieldFilterGroup {
 
 	private static final String ATTRIBUTE_ON_ANY_IN_SAME_CONTAINER = "ON_ANY_IN_SAME_CONTAINER";//$NON-NLS-1$
 	private static final String ATTRIBUTE_ON_SELECTED_AND_CHILDREN = "ON_SELECTED_AND_CHILDREN";//$NON-NLS-1$
@@ -73,25 +73,25 @@ class MarkerFieldFilterGroup {
 	/**
 	 * Constant for any element.
 	 */
-	static final int ON_ANY = 0;
+	public static final int ON_ANY = 0;
 
 	/**
 	 * Constant for any element in same container.
 	 */
-	static final int ON_ANY_IN_SAME_CONTAINER = 3;
+	public static final int ON_ANY_IN_SAME_CONTAINER = 3;
 
 	/**
 	 * Constant for selected element and children.
 	 */
-	static final int ON_SELECTED_AND_CHILDREN = 2;
+	public static final int ON_SELECTED_AND_CHILDREN = 2;
 	/**
 	 * Constant for any selected element only.
 	 */
-	static final int ON_SELECTED_ONLY = 1;
+	public static final int ON_SELECTED_ONLY = 1;
 	/**
 	 * Constant for on working set.
 	 */
-	static final int ON_WORKING_SET = 4;
+	public static final int ON_WORKING_SET = 4;
 
 	static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
 	private static final String TAG_SCOPE = "scope"; //$NON-NLS-1$
@@ -274,7 +274,6 @@ class MarkerFieldFilterGroup {
 	 * @see #ON_SELECTED_ONLY
 	 * @see #ON_WORKING_SET
 	 */
-	@SuppressWarnings("javadoc")
 	public int getScope() {
 		return scope;
 	}

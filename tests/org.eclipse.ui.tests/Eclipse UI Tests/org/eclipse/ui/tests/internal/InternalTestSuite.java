@@ -28,6 +28,7 @@ import org.eclipse.ui.tests.markers.MarkerTesterTest;
 import org.eclipse.ui.tests.markers.MarkerViewTests;
 import org.eclipse.ui.tests.markers.MarkerViewUtilTest;
 import org.eclipse.ui.tests.markers.ResourceMappingMarkersTest;
+import org.eclipse.ui.tests.markers.ScopeAreaTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -66,5 +67,6 @@ import org.junit.runners.Suite;
 	Bug549139Test.class,
 	LargeFileLimitsPreferenceHandlerTest.class,
 	WorkbookEditorsHandlerTest.class,
+	ScopeAreaTest.class,
 })
 public class InternalTestSuite {}
