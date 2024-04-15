@@ -37,9 +37,6 @@ public class FilterHelpTestView extends MarkerSupportView {
 
 	static boolean showHelp = false;
 
-	/**
-	 * @param contentGeneratorId
-	 */
 	public FilterHelpTestView() {
 		super(CONTENT_GEN_ID);
 	}
