@@ -4,3 +4,4 @@ Bug 429184 - [Metadata] comparator errors in most recent I-builds
 Bug 509973 - Comparator errors in I20170105-0320
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1659
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1979
