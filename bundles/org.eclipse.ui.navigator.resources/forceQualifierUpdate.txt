@@ -3,3 +3,4 @@ Bug 403352 - Update all parent versions to match our build stream
 Bug 530021 - Unsigned bundles in platform UI in I20170119-0110
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1659
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1979
