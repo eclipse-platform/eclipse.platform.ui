@@ -22,6 +22,13 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,10 +36,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextViewer;
 
@@ -42,6 +51,8 @@ import org.eclipse.ui.internal.findandreplace.status.FindStatus.StatusCode;
 import org.eclipse.ui.internal.findandreplace.status.InvalidRegExStatus;
 import org.eclipse.ui.internal.findandreplace.status.NoStatus;
 import org.eclipse.ui.internal.findandreplace.status.ReplaceAllStatus;
+
+import org.eclipse.ui.texteditor.IFindReplaceTargetExtension2;
 
 
 public class FindReplaceLogicTest {
@@ -316,7 +327,7 @@ public class FindReplaceLogicTest {
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
 		findReplaceLogic.activate(SearchOptions.FORWARD);
 
-		boolean status = findReplaceLogic.performReplaceAndFind("<replace>", " ");
+		boolean status= findReplaceLogic.performReplaceAndFind("<replace>", " ");
 		assertThat(status, is(true));
 		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!"));
 		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("<replace>"));
@@ -587,6 +598,35 @@ public class FindReplaceLogicTest {
 		expectStatusEmpty(findReplaceLogic);
 		assertThat(findReplaceLogic.getTarget().getSelection().x, not(is(0)));
 		assertThat(findReplaceLogic.getTarget().getSelection().x, not(is(textViewer.getDocument().get().length() - LINE_STRING_LENGTH)));
+	}
+
+	/**
+	 * The TextViewer implementation of IFindReplaceLogic is misleading and not adhering to the
+	 * Interface: IFindReplaceTargetExtension3#replaceSelection will NOT replace the selection if
+	 * nothing was previously found. This does not generally have to be the case and thus we mock a
+	 * target that is setup like this:
+	 *
+	 * The text contained is {@code ~SELECTEDTEXT~abcd} with ~ marking the boundaries of the
+	 * selection. We perform a search for "NOTFOUND" first - the selection stays put since the
+	 * string was not found. At this point, we do not want to perform
+	 * {@code replaceSelection("NOTFOUND")} since an implementation adhering to the specification of
+	 * the function would just overwrite the current selection.
+	 */
+	@Test
+	public void onlySelectAndReplacesIfFindSuccessfulOnCustomTarget() {
+		IFindReplaceTarget mockedTarget= Mockito.mock(IFindReplaceTarget.class, withSettings().extraInterfaces(IFindReplaceTargetExtension3.class, IFindReplaceTargetExtension2.class));
+
+		when(mockedTarget.getSelectionText()).thenReturn("SELECTEDTEXT");
+		when(mockedTarget.getSelection()).thenReturn(new Point(0, "SELECTEDTEXT".length()));
+		when(mockedTarget.isEditable()).thenReturn(true);
+		when(mockedTarget.findAndSelect(anyInt(), anyString(), anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(-1);
+		when(((IFindReplaceTargetExtension2) mockedTarget).validateTargetState()).thenReturn(true);
+
+		IFindReplaceLogic findReplaceLogic= new FindReplaceLogic();
+		findReplaceLogic.updateTarget(mockedTarget, true);
+		findReplaceLogic.performSelectAndReplace("NOTFOUND", "");
+
+		verify((IFindReplaceTargetExtension3) mockedTarget, never()).replaceSelection(anyString(), anyBoolean());
 	}
 
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {

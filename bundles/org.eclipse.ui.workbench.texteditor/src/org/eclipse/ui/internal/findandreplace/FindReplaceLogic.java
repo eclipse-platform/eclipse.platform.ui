@@ -352,7 +352,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		if (findString != null && !findString.isEmpty()) {
 
 			try {
-				somethingFound = findNext(findString, isActive(SearchOptions.FORWARD));
+				somethingFound = findNext(findString);
 			} catch (PatternSyntaxException ex) {
 				status = new InvalidRegExStatus(ex);
 			} catch (IllegalStateException ex) {
@@ -510,12 +510,11 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 * options.
 	 *
 	 * @param findString             the string to search for
-	 * @param forwardSearch          the direction of the search
 	 * @return <code>true</code> if the search string can be found using the given
 	 *         options
 	 *
 	 */
-	private boolean findNext(String findString, boolean forwardSearch) {
+	private boolean findNext(String findString) {
 
 		if (target == null) {
 			return false;
@@ -529,7 +528,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		}
 
 		int findReplacePosition = r.x;
-		if (forwardSearch) {
+		if (isActive(SearchOptions.FORWARD)) {
 			findReplacePosition += r.y;
 		}
 
@@ -542,7 +541,8 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 			return false;
 		}
 
-		if (forwardSearch && index >= findReplacePosition || !forwardSearch && index <= findReplacePosition) {
+		if (isActive(SearchOptions.FORWARD) && index >= findReplacePosition
+				|| !isActive(SearchOptions.FORWARD) && index <= findReplacePosition) {
 			statusLineMessage(""); //$NON-NLS-1$
 		}
 
@@ -565,7 +565,10 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		if (!isFindStringSelected(findString)) {
 			performSearch(findString);
 		}
-		return replaceSelection(replaceString);
+		if (getStatus().wasSuccessful()) {
+			return replaceSelection(replaceString);
+		}
+		return false;
 	}
 
 	private boolean isFindStringSelected(String findString) {
