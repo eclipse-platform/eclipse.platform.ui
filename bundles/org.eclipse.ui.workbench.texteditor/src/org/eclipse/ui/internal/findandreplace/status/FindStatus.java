@@ -42,9 +42,7 @@ public class FindStatus implements IFindReplaceStatus {
 
 	@Override
 	public boolean wasSuccessful() {
-		// Also report StatusCode.WRAPPED as unsuccessful, because it implicitly
-		// includes NO_MATCH, as before wrapping no further match was found
-		return false;
+		return messageCode == StatusCode.WRAPPED;
 	}
 
 }
