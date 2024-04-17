@@ -26,6 +26,16 @@ public class Messages extends NLS {
 	public static String GotoMatchingBracket_error_bracketOutsideSelectedElement;
 	public static String GenericEditorMergeViewer_title;
 
+	public static String ContentAssistant;
+	public static String ContentAssistant_autoActivation;
+	public static String ContentAssistant_autoActivation_Tooltip;
+	public static String ContentAssistant_autoActivationDelay;
+	public static String ContentAssistant_autoActivationDelay_Tooltip;
+	public static String ContentAssistant_autoActivationOnType;
+	public static String ContentAssistant_autoActivationOnType_Tooltip;
+	public static String ContentAssistant_autoActivationDelay_InvalidInput;
+	public static String ContentAssistant_autoActivationDelay_EmptyInput;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
