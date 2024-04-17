@@ -276,4 +276,13 @@
             label="%genericEditorStrategy">
       </strategy>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.ui.preferencePages.GeneralTextEditor"
+            class="org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPreferencePage"
+            id="org.eclipse.ui.genericeditor.GenericTextEditor"
+            name="%PreferencePages.GenericTextEditors">
+      </page>
+   </extension>
 </plugin>

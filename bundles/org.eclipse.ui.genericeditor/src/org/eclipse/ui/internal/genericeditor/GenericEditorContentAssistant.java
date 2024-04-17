@@ -28,6 +28,8 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPreferenceConstants;
 
@@ -43,11 +45,12 @@ import org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPreference
  * 
  * @author christoph
  */
-public class GenericEditorContentAssistant extends ContentAssistant {
+public class GenericEditorContentAssistant extends ContentAssistant implements IPropertyChangeListener {
 	private static final DefaultContentAssistProcessor DEFAULT_CONTENT_ASSIST_PROCESSOR = new DefaultContentAssistProcessor();
 	private ContentTypeRelatedExtensionTracker<IContentAssistProcessor> contentAssistProcessorTracker;
 	private Set<IContentType> types;
 	private List<IContentAssistProcessor> processors;
+	private final IPreferenceStore preferenceStore;
 
 	/**
 	 * Creates a new GenericEditorContentAssistant instance for the given content
@@ -90,20 +93,17 @@ public class GenericEditorContentAssistant extends ContentAssistant {
 		this.contentAssistProcessorTracker = contentAssistProcessorTracker;
 		this.processors = Objects.requireNonNullElseGet(processors, () -> Collections.emptyList());
 		this.types = types;
+		this.preferenceStore = preferenceStore;
 
 		setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
 		setProposalPopupOrientation(IContentAssistant.PROPOSAL_REMOVE);
 		enableColoredLabels(true);
 		if (preferenceStore != null) {
-			enableAutoActivation(
-					preferenceStore.getBoolean(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION));
-			setAutoActivationDelay(
-					preferenceStore.getInt(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY));
-			enableAutoActivateCompletionOnType(preferenceStore
-					.getBoolean(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_ON_TYPE));
+			updateAutoActivationPreferences();
+			preferenceStore.addPropertyChangeListener(this);
 		} else {
 			enableAutoActivation(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_DEFAULT);
-			setAutoActivationDelay(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY_DEFUALT);
+			setAutoActivationDelay(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY_DEFAULT);
 			enableAutoActivateCompletionOnType(
 					GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_ON_TYPE_DEFAULT);
 		}
@@ -150,9 +150,21 @@ public class GenericEditorContentAssistant extends ContentAssistant {
 		}
 	}
 
+	private void updateAutoActivationPreferences() {
+		enableAutoActivation(
+				preferenceStore.getBoolean(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION));
+		setAutoActivationDelay(
+				preferenceStore.getInt(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY));
+		enableAutoActivateCompletionOnType(
+				preferenceStore.getBoolean(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_ON_TYPE));
+	}
+
 	@Override
 	public void uninstall() {
 		contentAssistProcessorTracker.stopTracking();
+		if (preferenceStore != null) {
+			preferenceStore.removePropertyChangeListener(this);
+		}
 		super.uninstall();
 	}
 
@@ -174,5 +186,10 @@ public class GenericEditorContentAssistant extends ContentAssistant {
 			}
 		});
 		contentAssistProcessorTracker.startTracking();
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		updateAutoActivationPreferences();
 	}
 }

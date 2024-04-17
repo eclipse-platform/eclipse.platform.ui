@@ -101,7 +101,7 @@ public class GenericEditorPreferenceConstants {
 	 * @since 1.3
 	 */
 	public final static String CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY = "contentAssistant.autoActivationDelay"; //$NON-NLS-1$
-	public final static int CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY_DEFUALT = 10;
+	public final static int CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY_DEFAULT = 10;
 
 	/**
 	 * A named preference that controls whether auto activation on typing is enabled
@@ -138,7 +138,7 @@ public class GenericEditorPreferenceConstants {
 		store.setDefault(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION,
 				CONTENT_ASSISTANT_AUTO_ACTIVATION_DEFAULT);
 		store.setDefault(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY,
-				CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY_DEFUALT);
+				CONTENT_ASSISTANT_AUTO_ACTIVATION_DELAY_DEFAULT);
 		store.setDefault(GenericEditorPreferenceConstants.CONTENT_ASSISTANT_AUTO_ACTIVATION_ON_TYPE,
 				CONTENT_ASSISTANT_AUTO_ACTIVATION_ON_TYPE_DEFAULT);
 		// Colors that are set by the current theme
