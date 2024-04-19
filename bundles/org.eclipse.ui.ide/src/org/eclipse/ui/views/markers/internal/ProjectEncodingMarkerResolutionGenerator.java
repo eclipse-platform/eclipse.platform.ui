@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ResourceLocator;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -81,8 +82,9 @@ public class ProjectEncodingMarkerResolutionGenerator implements IMarkerResoluti
 
 		private ExplicitEncodingResolution(String encoding) {
 			this.charset = encoding;
+			ResourceManager resources = IDEWorkbenchPlugin.getDefault().getResourceManager();
 			ResourceLocator.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
-					"$nl$/icons/full/elcl16/selected_mode.png").ifPresent(d -> image = d.createImage()); //$NON-NLS-1$
+					"$nl$/icons/full/elcl16/selected_mode.png").ifPresent(d -> image = resources.create(d)); //$NON-NLS-1$
 		}
 
 		@Override
