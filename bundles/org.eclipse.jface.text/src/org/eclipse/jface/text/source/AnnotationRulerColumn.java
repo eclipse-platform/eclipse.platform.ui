@@ -712,6 +712,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 		int vOffset= getInclusiveTopIndexStartOffset();
 		int vLength= getExclusiveBottomIndexEndOffset() - vOffset;
+		if (vOffset < 0 || vLength < 0)
+			return;
 
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);

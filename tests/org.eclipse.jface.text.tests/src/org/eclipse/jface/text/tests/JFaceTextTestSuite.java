@@ -31,6 +31,7 @@ import org.eclipse.jface.text.tests.rules.DefaultPartitionerZeroLengthTest;
 import org.eclipse.jface.text.tests.rules.FastPartitionerTest;
 import org.eclipse.jface.text.tests.rules.ScannerColumnTest;
 import org.eclipse.jface.text.tests.rules.WordRuleTest;
+import org.eclipse.jface.text.tests.source.AnnotationRulerColumnTest;
 import org.eclipse.jface.text.tests.source.LineNumberRulerColumnTest;
 import org.eclipse.jface.text.tests.source.inlined.AnnotationOnTabTest;
 import org.eclipse.jface.text.tests.source.inlined.LineContentBoundsDrawingTest;
@@ -44,6 +45,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+		AnnotationRulerColumnTest.class,
 		LineNumberRulerColumnTest.class,
 		HTML2TextReaderTest.class,
 		TextHoverPopupTest.class,
