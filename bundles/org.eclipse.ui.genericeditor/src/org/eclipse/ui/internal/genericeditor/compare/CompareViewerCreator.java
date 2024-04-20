@@ -9,6 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
+ * - Ole Osterhagen - Issue #1879
  * - Mickael Istria (Red Hat Inc.)
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor.compare;
@@ -20,8 +21,10 @@ import org.eclipse.swt.widgets.Composite;
 
 public class CompareViewerCreator implements IViewerCreator {
 
-	@Override public Viewer createViewer(Composite parent, CompareConfiguration compareConfiguration) {
-		return new GenericEditorMergeViewer(parent, compareConfiguration);
+	@Override
+	public Viewer createViewer(Composite parent, CompareConfiguration compareConfiguration) {
+		return compareConfiguration != null ? new GenericEditorMergeViewer(parent, compareConfiguration)
+				: new GenericEditorViewer(parent);
 	}
 
 }
