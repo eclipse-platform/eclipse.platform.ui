@@ -20,6 +20,7 @@ import java.util.HashMap;
 import org.osgi.framework.FrameworkUtil;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -38,6 +39,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -307,7 +309,8 @@ class FindReplaceDialog extends Dialog {
 				new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						findReplaceLogic.performSelectAll(getFindString(), fActiveShell.getDisplay());
+						BusyIndicator.showWhile(fActiveShell != null ? fActiveShell.getDisplay() : Display.getCurrent(),
+								() -> findReplaceLogic.performSelectAll(getFindString()));
 						writeSelection();
 						updateButtonState();
 						updateFindAndReplaceHistory();
@@ -351,8 +354,8 @@ class FindReplaceDialog extends Dialog {
 				new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						findReplaceLogic.performReplaceAll(getFindString(), getReplaceString(),
-								fActiveShell.getDisplay());
+						BusyIndicator.showWhile(fActiveShell != null ? fActiveShell.getDisplay() : Display.getCurrent(),
+								() -> findReplaceLogic.performReplaceAll(getFindString(), getReplaceString()));
 						writeSelection();
 						updateButtonState();
 						updateFindAndReplaceHistory();

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace;
 
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.text.IFindReplaceTarget;
 
 import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
@@ -93,21 +91,15 @@ public interface IFindReplaceLogic {
 	 *
 	 * @param findString    The string that will be replaced
 	 * @param replaceString The string that will replace the findString
-	 * @param display       the display on which the busy feedback should be
-	 *                      displayed. If the display is null, the Display for the
-	 *                      current thread will be used. If there is no Display for
-	 *                      the current thread,the runnable code will be executed
-	 *                      and no busy feedback will be displayed.y
 	 */
-	public void performReplaceAll(String findString, String replaceString, Display display);
+	public void performReplaceAll(String findString, String replaceString);
 
 	/**
 	 * Selects all occurrences of findString.
 	 *
 	 * @param findString The String to find and select
-	 * @param display    The UI's Display The UI's Display
 	 */
-	public void performSelectAll(String findString, Display display);
+	public void performSelectAll(String findString);
 
 	/**
 	 * Locates the user's findString in the target
