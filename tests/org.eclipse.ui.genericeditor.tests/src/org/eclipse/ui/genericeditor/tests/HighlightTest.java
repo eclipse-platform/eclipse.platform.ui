@@ -24,6 +24,8 @@ import org.junit.Test;
 
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.core.resources.IStorage;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -31,6 +33,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
+import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
@@ -50,6 +53,26 @@ public class HighlightTest extends AbstratGenericEditorTest {
 	@Test
 	public void testCustomHighlightReconciler() throws Exception {
 		createAndOpenFile("bar.txt", "bar 'bar'");
+
+		checkHighlightForCaretOffset(0, "'bar'", 1);
+	}
+
+	@Test
+	public void testCustomHighlightReconcilerForFileFromHistory() throws Exception {
+		createAndOpenFile("bar.txt", "bar 'bar'", () -> new FileEditorInput(file) {
+			@Override
+			public String getName() {
+				// append a revision number
+				return super.getName() + " 61e418fdac6";
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public <T> T getAdapter(Class<T> adapter) {
+				// adapt to IStorage as in FileRevisionEditorInput
+				return adapter == IStorage.class ? (T) getStorage() : super.getAdapter(adapter);
+			}
+		});
 
 		checkHighlightForCaretOffset(0, "'bar'", 1);
 	}
