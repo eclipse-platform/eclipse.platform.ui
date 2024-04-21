@@ -879,29 +879,40 @@ public class TextViewer extends Viewer implements
 		@Override
 		public Point getLineSelection() {
 			Point point= TextViewer.this.getSelectedRange();
+			int originalSelectionBeginIndex= point.x;
+			int originalSelectionLength= point.y;
 
 			try {
 				IDocument document= TextViewer.this.getDocument();
 
-				// beginning of line
-				int line= document.getLineOfOffset(point.x);
-				int offset= document.getLineOffset(line);
+				int firstSelectedLineNumber= document.getLineOfOffset(originalSelectionBeginIndex);
+				int firstSelectedLineBeginIndex= document.getLineOffset(firstSelectedLineNumber);
 
-				// end of line
-				IRegion lastLineInfo= document.getLineInformationOfOffset(point.x + point.y);
-				int lastLine= document.getLineOfOffset(point.x + point.y);
-				int length;
-				if (lastLineInfo.getOffset() == point.x + point.y && lastLine > 0)
-					length= document.getLineOffset(lastLine - 1) + document.getLineLength(lastLine - 1)	- offset;
-				else
-					length= lastLineInfo.getOffset() + lastLineInfo.getLength() - offset;
+				int lastSelectedLineNumber= calculateLastSelectedLineNumber(document, originalSelectionBeginIndex, originalSelectionLength);
+				int lastSelectedLineEndIndex= document.getLineOffset(lastSelectedLineNumber) + document.getLineLength(lastSelectedLineNumber);
+				int lineSelectionLength= lastSelectedLineEndIndex - firstSelectedLineBeginIndex;
 
-				return new Point(offset, length);
-
+				return new Point(firstSelectedLineBeginIndex, lineSelectionLength);
 			} catch (BadLocationException e) {
 				// should not happen
-				return new Point(point.x, 0);
+				return new Point(originalSelectionBeginIndex, 0);
 			}
+		}
+
+		/**
+		 * Returns the last line in the given selection range. If the selection ends at the
+		 * beginning of a new line and has a length > 0 (i.e., starts in a preceding line), the line
+		 * at which the selection ends is excluded.
+		 */
+		private static int calculateLastSelectedLineNumber(IDocument document, int selectionBeginIndex, int selectionLength) throws BadLocationException {
+			int selectionEndIndex= selectionBeginIndex + selectionLength;
+			int lastSelectedLineNumber= document.getLineOfOffset(selectionEndIndex);
+			int lastSelectedLineBeginIndex= document.getLineOffset(lastSelectedLineNumber);
+			boolean selectionEndsAtBeginningOfNewLine= lastSelectedLineBeginIndex == selectionEndIndex;
+			if (selectionEndsAtBeginningOfNewLine && selectionLength > 0) {
+				lastSelectedLineNumber--;
+			}
+			return lastSelectedLineNumber;
 		}
 
 		@Override
