@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.internal.findandreplace;
 
+import static java.lang.System.lineSeparator;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -150,8 +151,8 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.performReplaceAll("[", "");
 		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
-		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + System.lineSeparator()
-				+ "[" + System.lineSeparator()
+		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + lineSeparator()
+				+ "[" + lineSeparator()
 				+ "^");
 
 	}
@@ -173,8 +174,8 @@ public class FindReplaceLogicTest {
 
 		findReplaceLogic.performReplaceAll("[", "");
 		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
-		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + System.lineSeparator()
-				+ "[" + System.lineSeparator()
+		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + lineSeparator()
+				+ "[" + lineSeparator()
 				+ "^");
 	}
 
@@ -430,27 +431,103 @@ public class FindReplaceLogicTest {
 	}
 
 	@Test
-	public void testSelectInSearchScope() {
-		TextViewer textViewer= setupTextViewer("line1\nline2\nline3");
+	public void testSelectInSearchScope_withZeroLengthSelection() {
+		String originalContents= "line1" + lineSeparator() + "line2" + lineSeparator() + "line3";
+		TextViewer textViewer= setupTextViewer(originalContents);
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
-		textViewer.setSelection(new TextSelection(6, 11));
+
+		int lineLength= ("line1" + lineSeparator()).length();
+		textViewer.setSelection(new TextSelection(lineLength + 1, 0));
 		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
 		findReplaceLogic.performReplaceAll("l", "");
-		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
 
-		findReplaceLogic.activate(SearchOptions.GLOBAL);
-		textViewer.setSelection(new TextSelection(0, 5));
-		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
-
-		findReplaceLogic.performReplaceAll("n", "");
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
+		assertThat(textViewer.getTextWidget().getText(), is("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3"));
+	}
 
-		assertThat(textViewer.getTextWidget().getText(), is("lie1\nine2\nine3"));
+	@Test
+	public void testSelectInSearchScope_withZeroLengthSelectionAtBeginningOfLine() {
+		String originalContents= "line1" + lineSeparator() + "line2" + lineSeparator() + "line3";
+		TextViewer textViewer= setupTextViewer(originalContents);
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+
+		int lineLength= ("line1" + lineSeparator()).length();
+		textViewer.setSelection(new TextSelection(lineLength, 0));
+		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
+		findReplaceLogic.performReplaceAll("l", "");
+
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
+		assertThat(textViewer.getTextWidget().getText(), is("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3"));
+	}
+
+	@Test
+	public void testSelectInSearchScope_withSingleLineelection() {
+		String originalContents= "line1" + lineSeparator() + "line2" + lineSeparator() + "line3";
+		TextViewer textViewer= setupTextViewer(originalContents);
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+
+		int lineLength= ("line1" + lineSeparator()).length();
+		textViewer.setSelection(new TextSelection(lineLength + 1, 3));
+		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
+		findReplaceLogic.performReplaceAll("l", "");
+
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
+		assertThat(textViewer.getTextWidget().getText(), is("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3"));
+	}
+
+	@Test
+	public void testSelectInSearchScope_withMultiLineSelection() {
+		String originalContents= "line1" + lineSeparator() + "line2" + lineSeparator() + "line3";
+		TextViewer textViewer= setupTextViewer(originalContents);
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+
+		int beginningOfSecondLine= originalContents.indexOf("l", 1);
+		textViewer.setSelection(new TextSelection(beginningOfSecondLine, originalContents.substring(beginningOfSecondLine).length()));
+		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
+		findReplaceLogic.performReplaceAll("l", "");
+
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
+		assertThat(textViewer.getTextWidget().getText(), is("line1" + lineSeparator() + "ine2" + lineSeparator() + "ine3"));
+	}
+
+	@Test
+	public void testSelectInSearchScope_withSelectionEndingAtBeginningOfLine() {
+		String originalContents= "line1" + lineSeparator() + "line2" + lineSeparator() + "line3";
+		TextViewer textViewer= setupTextViewer(originalContents);
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+
+		int beginningOfSecondLine= originalContents.indexOf("l", 1);
+		int lineLength= ("line1" + lineSeparator()).length();
+		textViewer.setSelection(new TextSelection(beginningOfSecondLine, lineLength));
+		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
+		findReplaceLogic.performReplaceAll("l", "");
+
+		// Selection ending at beginning of new line should not include that line in search scope
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
+		assertThat(textViewer.getTextWidget().getText(), is("line1" + lineSeparator() + "ine2" + lineSeparator() + "line3"));
+	}
+
+	@Test
+	public void testSelectInSearchScope_changeScope() {
+		String originalContents= "line1" + lineSeparator() + "line2" + lineSeparator() + "line3";
+		TextViewer textViewer= setupTextViewer(originalContents);
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+
+		textViewer.setSelection(new TextSelection(8, 10));
+		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
+		findReplaceLogic.activate(SearchOptions.GLOBAL);
+		textViewer.setSelection(new TextSelection(0, 2));
+		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
+		findReplaceLogic.performReplaceAll("l", "");
+
+		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
+		assertThat(textViewer.getTextWidget().getText(), is("ine1" + lineSeparator() + "line2" + lineSeparator() + "line3"));
 	}
 
 	@Test
 	public void testWholeWordSearchAvailable() {
-		TextViewer textViewer= setupTextViewer("line1\nline2\nline3");
+		String originalContents= "line1" + lineSeparator() + "line2" + lineSeparator() + "line3";
+		TextViewer textViewer= setupTextViewer(originalContents);
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
 
 		assertThat(findReplaceLogic.isWholeWordSearchAvailable("oneword"), is(true));
