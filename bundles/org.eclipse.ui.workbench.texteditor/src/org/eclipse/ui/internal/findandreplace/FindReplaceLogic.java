@@ -21,9 +21,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
@@ -219,27 +217,12 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	}
 
 	@Override
-	public void performReplaceAll(String findString, String replaceString, Display display) {
+	public void performReplaceAll(String findString, String replaceString) {
 		resetStatus();
 
-		int replaceCount = 0;
-
 		if (findString != null && !findString.isEmpty()) {
-
-			class ReplaceAllRunnable implements Runnable {
-				public int numberOfOccurrences;
-
-				@Override
-				public void run() {
-					numberOfOccurrences = replaceAll(findString, replaceString == null ? "" : replaceString); //$NON-NLS-1$
-				}
-			}
-
 			try {
-				ReplaceAllRunnable runnable = new ReplaceAllRunnable();
-				BusyIndicator.showWhile(display, runnable);
-				replaceCount = runnable.numberOfOccurrences;
-
+				int replaceCount = replaceAll(findString, replaceString == null ? "" : replaceString); //$NON-NLS-1$
 				if (replaceCount != 0) {
 					if (replaceCount == 1) { // not plural
 						statusLineMessage(FindReplaceMessages.FindReplace_Status_replacement_label);
@@ -264,27 +247,12 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	}
 
 	@Override
-	public void performSelectAll(String findString, Display display) {
+	public void performSelectAll(String findString) {
 		resetStatus();
 
-		int selectCount = 0;
-
 		if (findString != null && !findString.isEmpty()) {
-
-			class SelectAllRunnable implements Runnable {
-				public int numberOfOccurrences;
-
-				@Override
-				public void run() {
-					numberOfOccurrences = selectAll(findString);
-				}
-			}
-
 			try {
-				SelectAllRunnable runnable = new SelectAllRunnable();
-				BusyIndicator.showWhile(display, runnable);
-				selectCount = runnable.numberOfOccurrences;
-
+				int selectCount = selectAll(findString);
 				if (selectCount != 0) {
 					if (selectCount == 1) { // not plural
 						statusLineMessage(FindReplaceMessages.FindReplace_Status_selection_label);

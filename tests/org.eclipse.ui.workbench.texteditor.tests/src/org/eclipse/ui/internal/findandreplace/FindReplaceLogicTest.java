@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.Document;
@@ -98,31 +97,30 @@ public class FindReplaceLogicTest {
 	 *            operates
 	 */
 	private void performReplaceAllBaseTestcases(IFindReplaceLogic findReplaceLogic, TextViewer textViewer) {
-		Display display= parentShell.getDisplay();
 		textViewer.setDocument(new Document("aaaa"));
 
-		findReplaceLogic.performReplaceAll("a", "b", display);
+		findReplaceLogic.performReplaceAll("a", "b");
 		assertThat(textViewer.getDocument().get(), equalTo("bbbb"));
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 4);
 
-		findReplaceLogic.performReplaceAll("b", "aa", display);
+		findReplaceLogic.performReplaceAll("b", "aa");
 		assertThat(textViewer.getDocument().get(), equalTo("aaaaaaaa"));
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 4);
 
-		findReplaceLogic.performReplaceAll("b", "c", display);
+		findReplaceLogic.performReplaceAll("b", "c");
 		assertThat(textViewer.getDocument().get(), equalTo("aaaaaaaa"));
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 
-		findReplaceLogic.performReplaceAll("aaaaaaaa", "d", display); // https://github.com/eclipse-platform/eclipse.platform.ui/issues/1203
+		findReplaceLogic.performReplaceAll("aaaaaaaa", "d"); // https://github.com/eclipse-platform/eclipse.platform.ui/issues/1203
 		assertThat(textViewer.getDocument().get(), equalTo("d"));
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 
-		findReplaceLogic.performReplaceAll("d", null, display);
+		findReplaceLogic.performReplaceAll("d", null);
 		assertThat(textViewer.getDocument().get(), equalTo(""));
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 
 		textViewer.getDocument().set("f");
-		findReplaceLogic.performReplaceAll("f", "", display);
+		findReplaceLogic.performReplaceAll("f", "");
 		assertThat(textViewer.getDocument().get(), equalTo(""));
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 
@@ -131,7 +129,7 @@ public class FindReplaceLogicTest {
 		Mockito.when(mockFindReplaceTarget.isEditable()).thenReturn(false);
 
 		findReplaceLogic.updateTarget(mockFindReplaceTarget, false);
-		findReplaceLogic.performReplaceAll("a", "b", display);
+		findReplaceLogic.performReplaceAll("a", "b");
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 	}
 
@@ -142,15 +140,15 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.REGEX);
 		findReplaceLogic.activate(SearchOptions.FORWARD);
 
-		findReplaceLogic.performReplaceAll(".+\\@.+\\.com", "", parentShell.getDisplay());
+		findReplaceLogic.performReplaceAll(".+\\@.+\\.com", "");
 		assertThat(textViewer.getDocument().get(), equalTo(" looks.almost@like_an_email"));
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 
-		findReplaceLogic.performReplaceAll("( looks.)|(like_)", "", parentShell.getDisplay());
+		findReplaceLogic.performReplaceAll("( looks.)|(like_)", "");
 		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
 
-		findReplaceLogic.performReplaceAll("[", "", parentShell.getDisplay());
+		findReplaceLogic.performReplaceAll("[", "");
 		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
 		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + System.lineSeparator()
 				+ "[" + System.lineSeparator()
@@ -165,15 +163,15 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.REGEX);
 		findReplaceLogic.activate(SearchOptions.FORWARD);
 
-		findReplaceLogic.performReplaceAll(".+\\@.+\\.com", "", parentShell.getDisplay());
+		findReplaceLogic.performReplaceAll(".+\\@.+\\.com", "");
 		assertThat(textViewer.getDocument().get(), equalTo(" looks.almost@like_an_email"));
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 
-		findReplaceLogic.performReplaceAll("( looks.)|(like_)", "", parentShell.getDisplay());
+		findReplaceLogic.performReplaceAll("( looks.)|(like_)", "");
 		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
 
-		findReplaceLogic.performReplaceAll("[", "", parentShell.getDisplay());
+		findReplaceLogic.performReplaceAll("[", "");
 		assertThat(textViewer.getDocument().get(), equalTo("almost@an_email"));
 		expectStatusIsMessageWithString(findReplaceLogic, "Unclosed character class near index 0" + System.lineSeparator()
 				+ "[" + System.lineSeparator()
@@ -364,15 +362,15 @@ public class FindReplaceLogicTest {
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
 		findReplaceLogic.activate(SearchOptions.FORWARD);
 
-		findReplaceLogic.performSelectAll("c", parentShell.getDisplay());
+		findReplaceLogic.performSelectAll("c");
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 
-		findReplaceLogic.performSelectAll("b", parentShell.getDisplay());
+		findReplaceLogic.performSelectAll("b");
 		expectStatusIsFindAllWithCount(findReplaceLogic, 4);
 		// I don't have access to getAllSelectionPoints or similar (not yet implemented), so I cannot really test for correct behavior
 		// related to https://github.com/eclipse-platform/eclipse.platform.ui/issues/1047
 
-		findReplaceLogic.performSelectAll("AbAbAbAb", parentShell.getDisplay());
+		findReplaceLogic.performSelectAll("AbAbAbAb");
 		expectStatusIsFindAllWithCount(findReplaceLogic, 1);
 	}
 
@@ -383,13 +381,13 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.FORWARD);
 		findReplaceLogic.activate(SearchOptions.REGEX);
 
-		findReplaceLogic.performSelectAll("c.*", parentShell.getDisplay());
+		findReplaceLogic.performSelectAll("c.*");
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 
-		findReplaceLogic.performSelectAll("(Ab)*", parentShell.getDisplay());
+		findReplaceLogic.performSelectAll("(Ab)*");
 		expectStatusIsFindAllWithCount(findReplaceLogic, 1);
 
-		findReplaceLogic.performSelectAll("Ab(Ab)+Ab(Ab)+(Ab)+", parentShell.getDisplay());
+		findReplaceLogic.performSelectAll("Ab(Ab)+Ab(Ab)+(Ab)+");
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 	}
 
@@ -400,12 +398,12 @@ public class FindReplaceLogicTest {
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
 		findReplaceLogic.deactivate(SearchOptions.FORWARD);
 
-		findReplaceLogic.performSelectAll("b", parentShell.getDisplay());
+		findReplaceLogic.performSelectAll("b");
 		expectStatusIsFindAllWithCount(findReplaceLogic, 4);
 		// I don't have access to getAllSelectionPoints or similar (not yet implemented), so I cannot really test for correct behavior
 		// related to https://github.com/eclipse-platform/eclipse.platform.ui/issues/1047
 
-		findReplaceLogic.performSelectAll("AbAbAbAb", parentShell.getDisplay());
+		findReplaceLogic.performSelectAll("AbAbAbAb");
 		expectStatusIsFindAllWithCount(findReplaceLogic, 1);
 	}
 
@@ -414,7 +412,7 @@ public class FindReplaceLogicTest {
 		TextViewer textViewer= setupTextViewer("Ab Ab");
 		textViewer.setEditable(false);
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
-		findReplaceLogic.performSelectAll("Ab", Display.getCurrent());
+		findReplaceLogic.performSelectAll("Ab");
 		expectStatusIsFindAllWithCount(findReplaceLogic, 2);
 	}
 
@@ -437,14 +435,14 @@ public class FindReplaceLogicTest {
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
 		textViewer.setSelection(new TextSelection(6, 11));
 		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
-		findReplaceLogic.performReplaceAll("l", "", Display.getCurrent());
+		findReplaceLogic.performReplaceAll("l", "");
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 2);
 
 		findReplaceLogic.activate(SearchOptions.GLOBAL);
 		textViewer.setSelection(new TextSelection(0, 5));
 		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
 
-		findReplaceLogic.performReplaceAll("n", "", Display.getCurrent());
+		findReplaceLogic.performReplaceAll("n", "");
 		expectStatusIsReplaceAllWithCount(findReplaceLogic, 1);
 
 		assertThat(textViewer.getTextWidget().getText(), is("lie1\nine2\nine3"));
