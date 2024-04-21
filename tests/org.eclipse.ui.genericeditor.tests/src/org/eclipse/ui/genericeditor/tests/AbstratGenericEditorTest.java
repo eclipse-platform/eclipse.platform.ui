@@ -15,6 +15,7 @@ package org.eclipse.ui.genericeditor.tests;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Supplier;
 
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +30,7 @@ import org.eclipse.text.tests.Accessor;
 
 import org.eclipse.jface.text.source.SourceViewer;
 
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
@@ -79,11 +81,22 @@ public class AbstratGenericEditorTest {
 	 * @since 1.1
 	 */
 	protected void createAndOpenFile(String name, String contents) throws Exception {
+		createAndOpenFile(name, contents, () -> new FileEditorInput(file));
+	}
+
+	/**
+	 * Creates a new file in the project, opens it, and associate that file with the test state
+	 * @param name name of the file in the project
+	 * @param contents content of the file
+	 * @param inputCreator creates the input for the editor
+	 * @throws Exception ex
+	 */
+	protected void createAndOpenFile(String name, String contents, Supplier<? extends IEditorInput> inputCreator) throws Exception {
 		this.file = project.getFile(name);
 		this.file.create(new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8)), true, null);
 		this.file.setCharset(StandardCharsets.UTF_8.name(), null);
 		this.editor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage().openEditor(new FileEditorInput(this.file), "org.eclipse.ui.genericeditor.GenericEditor");
+				.getActivePage().openEditor(inputCreator.get(), "org.eclipse.ui.genericeditor.GenericEditor");
 		UITestCase.processEvents();
 	}
 

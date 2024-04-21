@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -75,6 +77,7 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.Reconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.genericeditor.folding.DefaultFoldingReconciler;
@@ -174,7 +177,8 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 	private String getCurrentFileName(IDocument documentParam) {
 		String fileName = null;
 		if (this.editor != null) {
-			fileName = editor.getEditorInput().getName();
+			IEditorInput editorInput = editor.getEditorInput();
+			fileName = Adapters.of(editorInput, IStorage.class).map(IStorage::getName).orElseGet(editorInput::getName);
 		}
 		if (fileName == null) {
 			ITextFileBuffer buffer = getCurrentBuffer(documentParam);
