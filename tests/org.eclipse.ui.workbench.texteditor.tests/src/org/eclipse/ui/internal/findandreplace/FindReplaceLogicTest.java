@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -75,7 +74,6 @@ public class FindReplaceLogicTest {
 	}
 
 	@Test
-	@Ignore("https://github.com/eclipse-platform/eclipse.platform.ui/issues/1203")
 	public void testPerformReplaceAllBackwards() {
 		TextViewer textViewer= setupTextViewer("");
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
