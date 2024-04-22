@@ -16,9 +16,9 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.commands.IParameterValues;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.views.IViewDescriptor;
 
 /**
@@ -34,6 +34,9 @@ public final class ViewParameterValues implements IParameterValues {
 
 		final IViewDescriptor[] views = PlatformUI.getWorkbench().getViewRegistry().getViews();
 		for (final IViewDescriptor view : views) {
+			if (WorkbenchActivityHelper.filterItem(view)) {
+				continue;
+			}
 			values.put(view.getLabel(), view.getId());
 		}
 

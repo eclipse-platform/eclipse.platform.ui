@@ -16,10 +16,10 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.commands.IParameterValues;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Provides the parameter values for the show perspective command.
@@ -35,6 +35,9 @@ public final class PerspectiveParameterValues implements IParameterValues {
 		final IPerspectiveDescriptor[] perspectives = PlatformUI.getWorkbench().getPerspectiveRegistry()
 				.getPerspectives();
 		for (final IPerspectiveDescriptor perspective : perspectives) {
+			if (WorkbenchActivityHelper.filterItem(perspective)) {
+				continue;
+			}
 			values.put(perspective.getLabel(), perspective.getId());
 		}
 
