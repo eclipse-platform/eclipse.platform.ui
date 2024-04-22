@@ -94,6 +94,8 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 	 * they will persist into the next invocation of this wizard page
 	 */
 	protected void saveWidgetValues() {
+		// For dynamic menu
+		DynamicMenuSelection.getInstance().addItems(newResourcePage.getSelectedElement().getId());
 		newResourcePage.saveWidgetValues();
 	}
 
