@@ -47,6 +47,7 @@ public class ImportTestUtils {
 
 	public static class TestBuilder extends IncrementalProjectBuilder {
 
+		static AtomicInteger instantiationCount = new AtomicInteger(0);
 		static AtomicInteger cleanBuildCallCount = new AtomicInteger(0);
 		static AtomicInteger autoBuildCallCount = new AtomicInteger(0);
 		static AtomicInteger fullBuildCallCount = new AtomicInteger(0);
@@ -54,6 +55,7 @@ public class ImportTestUtils {
 
 		public TestBuilder() {
 			resetCallCount();
+			instantiationCount.incrementAndGet();
 		}
 
 		@Override
@@ -82,27 +84,12 @@ public class ImportTestUtils {
 			autoBuildCallCount.set(0);
 			fullBuildCallCount.set(0);
 			otherBuildTriggerTypes.clear();
-		}
-
-		static void assertAutoBuildWasDone() {
-			assertEquals("Expected no clean build triggers", 0, cleanBuildCallCount.get());
-			assertEquals("Expected 1 auto-build trigger", 1, autoBuildCallCount.get());
-			assertEquals("Expected no full build triggers", 0, fullBuildCallCount.get());
-			assertEquals("Expected only clean and auto-build triggers", Collections.EMPTY_LIST, otherBuildTriggerTypes);
+			instantiationCount.set(0);
 		}
 
 		static void assertFullBuildWasDone() {
-			assertEquals("Expected no clean build triggers", 0, cleanBuildCallCount.get());
-			assertEquals("Expected 1 full-build trigger", 1, fullBuildCallCount.get());
-			assertEquals("Expected no auto-build triggers", 0, autoBuildCallCount.get());
-			assertEquals("Expected only clean and auto-build triggers", Collections.EMPTY_LIST, otherBuildTriggerTypes);
-		}
-
-		static void assertNoBuildWasDone() {
-			assertEquals("Expected no clean build triggers", 0, cleanBuildCallCount.get());
-			assertEquals("Expected no full-build triggers", 0, fullBuildCallCount.get());
-			assertEquals("Expected no auto-build triggers", 0, autoBuildCallCount.get());
-			assertEquals("Expected no build triggers", Collections.EMPTY_LIST, otherBuildTriggerTypes);
+			assertEquals("This builder wasn't part of the building process", 1, instantiationCount.get());
+			assertEquals("Full build triggers", 1, fullBuildCallCount.get());
 		}
 	}
 
