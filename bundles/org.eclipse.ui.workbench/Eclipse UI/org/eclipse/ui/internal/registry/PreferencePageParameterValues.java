@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -68,6 +69,9 @@ public final class PreferencePageParameterValues implements IParameterValues {
 			final String namePrefix) {
 
 		for (final IPreferenceNode preferenceNode : preferenceNodes) {
+			if (WorkbenchActivityHelper.filterItem(preferenceNode)) {
+				continue;
+			}
 			final String name;
 			if (namePrefix == null) {
 				name = preferenceNode.getLabelText();

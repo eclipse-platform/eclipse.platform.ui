@@ -24,11 +24,19 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -36,6 +44,7 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
 import org.eclipse.ui.internal.quickaccess.QuickAccessProvider;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
 
 /**
@@ -60,8 +69,11 @@ public class CommandProvider extends QuickAccessProvider {
 
 	private boolean allCommandsRetrieved;
 
+	Map<String, String> idToFqn;
+
 	public CommandProvider() {
 		idToCommand = Collections.synchronizedMap(new HashMap<>());
+		idToFqn = Collections.synchronizedMap(new HashMap<>());
 	}
 
 	@Override
@@ -82,6 +94,12 @@ public class CommandProvider extends QuickAccessProvider {
 			if (commandService == null) {
 				return null;
 			}
+
+			// initialize all the workbench commands to fqn.
+			if (idToFqn.isEmpty()) {
+				parseWorkbenchCommands();
+			}
+
 			Collection<String> commandIds = commandService.getDefinedCommandIds();
 			for (String commandId : commandIds) {
 				retrieveCommand(commandId);
@@ -90,6 +108,27 @@ public class CommandProvider extends QuickAccessProvider {
 		}
 		synchronized (idToCommand) {
 			return idToCommand.values().stream().toArray(QuickAccessElement[]::new);
+		}
+	}
+
+	/**
+	 * Query all the commands contributions on the workbench and fill idToFqn map.
+	 * FQN = plug-in id/command id
+	 */
+	private void parseWorkbenchCommands() {
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IExtensionPoint point = registry.getExtensionPoint(IWorkbenchRegistryConstants.EXTENSION_COMMANDS);
+		IExtension[] extensions = point.getExtensions();
+		for (IExtension extension : extensions) {
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			for (IConfigurationElement element : elements) {
+				if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(element.getName())) {
+					String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+					// plugin-id/command-id.
+					String qualifiedName = element.getContributor().getName() + "/" + id; //$NON-NLS-1$
+					idToFqn.put(id, qualifiedName);
+				}
+			}
 		}
 	}
 
@@ -105,6 +144,9 @@ public class CommandProvider extends QuickAccessProvider {
 				try {
 					Collection<ParameterizedCommand> combinations = ParameterizedCommand.generateCombinations(command);
 					for (ParameterizedCommand pc : combinations) {
+						if (excludeWithActivitySupport(pc)) {
+							continue;
+						}
 						String id = pc.serialize();
 						synchronized (idToCommand) {
 							idToCommand.put(id, new CommandElement(pc, id, this));
@@ -115,6 +157,43 @@ public class CommandProvider extends QuickAccessProvider {
 				}
 			}
 		}
+	}
+
+	private boolean excludeWithActivitySupport(ParameterizedCommand pc) {
+		if (!WorkbenchActivityHelper.isFiltering()) {
+			return false;
+		}
+
+		// fetch qualified name: plugin-id/command-id.
+		String commandId = getQualifiedCommandId(pc.getCommand());
+
+		if (commandId == null) {
+			return false;
+		}
+
+		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+		IIdentifier identifier = workbenchActivitySupport.getActivityManager().getIdentifier(commandId);
+		return !identifier.isEnabled();
+	}
+
+	/**
+	 * Returns the qualified name for the given command id. That is Plgin-contributr
+	 * id/command id. This is useful in asking asking activity support if the
+	 * command is is enabled or not.
+	 *
+	 * @param command
+	 * @return returns the qualified command id. i.e. contributor plug-in/command
+	 *         id. It may return null.
+	 */
+	private String getQualifiedCommandId(Command command) {
+		String cmdId = command.getId();
+		// This is an auto generated command for Actions. They have qualified path
+		// already. i.e. bundle-id/command-id
+		if (cmdId.startsWith(IWorkbenchRegistryConstants.AUTOGENERATED_PREFIX)) {
+			return cmdId.substring(IWorkbenchRegistryConstants.AUTOGENERATED_PREFIX.length());
+		}
+
+		return idToFqn.get(cmdId);
 	}
 
 	@Override
