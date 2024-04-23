@@ -110,7 +110,7 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 	}
 
 	static class ComputedListStub<E> extends ComputedList<E> {
-		List<E> nextComputation = new ArrayList<E>();
+		List<E> nextComputation = new ArrayList<>();
 		ObservableStub dependency;
 
 		ComputedListStub() {
@@ -125,7 +125,7 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 		@Override
 		protected List<E> calculate() {
 			ObservableTracker.getterCalled(dependency);
-			return new ArrayList<E>(nextComputation);
+			return new ArrayList<>(nextComputation);
 		}
 	}
 

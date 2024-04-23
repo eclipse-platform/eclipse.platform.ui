@@ -187,7 +187,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testStatusesFromEveryPhaseAreReturned() throws Exception {
-		UpdateValueStrategy<Object, String> strategy = new UpdateValueStrategy<Object, String>() {
+		UpdateValueStrategy<Object, String> strategy = new UpdateValueStrategy<>() {
 			@Override
 			protected IStatus doSet(IObservableValue<? super String> observableValue, String value) {
 				super.doSet(observableValue, value);
@@ -423,7 +423,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	private <F, T> IConverter<F, T> loggingConverter(final List<String> log, final String message) {
-		return new Converter<F, T>(null, null) {
+		return new Converter<>(null, null) {
 			@SuppressWarnings("unchecked")
 			@Override
 			public T convert(F fromObject) {

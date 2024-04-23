@@ -219,7 +219,7 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 	class EntrySet extends AbstractSet<Map.Entry<K, V>> {
 		@Override
 		public Iterator<Map.Entry<K, V>> iterator() {
-			return new Iterator<Map.Entry<K, V>>() {
+			return new Iterator<>() {
 				Iterator<Map.Entry<K, I>> it = masterMap.entrySet().iterator();
 
 				@Override

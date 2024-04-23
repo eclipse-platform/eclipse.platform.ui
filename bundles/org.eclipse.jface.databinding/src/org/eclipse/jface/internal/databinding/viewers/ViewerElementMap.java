@@ -92,7 +92,7 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 	@Override
 	public Set<Entry<K, V>> entrySet() {
 		final Set<Entry<ViewerElementWrapper<K>, V>> wrappedEntrySet = wrappedMap.entrySet();
-		return new Set<Entry<K, V>>() {
+		return new Set<>() {
 			@Override
 			public boolean add(Entry<K, V> o) {
 				throw new UnsupportedOperationException();
@@ -132,7 +132,7 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 			@Override
 			public Iterator<Entry<K, V>> iterator() {
 				final Iterator<Entry<ViewerElementWrapper<K>, V>> wrappedIterator = wrappedEntrySet.iterator();
-				return new Iterator<Entry<K, V>>() {
+				return new Iterator<>() {
 					@Override
 					public boolean hasNext() {
 						return wrappedIterator.hasNext();
@@ -141,7 +141,7 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 					@Override
 					public Entry<K, V> next() {
 						final Entry<ViewerElementWrapper<K>, V> wrappedEntry = wrappedIterator.next();
-						return new Entry<K, V>() {
+						return new Entry<>() {
 							@Override
 							public K getKey() {
 								return wrappedEntry.getKey().unwrap();
@@ -302,7 +302,7 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 	@Override
 	public Set<K> keySet() {
 		final Set<ViewerElementWrapper<K>> wrappedKeySet = wrappedMap.keySet();
-		return new Set<K>() {
+		return new Set<>() {
 			@Override
 			public boolean add(Object o) {
 				throw new UnsupportedOperationException();
@@ -339,7 +339,7 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 			@Override
 			public Iterator<K> iterator() {
 				final Iterator<ViewerElementWrapper<K>> wrappedIterator = wrappedKeySet.iterator();
-				return new Iterator<K>() {
+				return new Iterator<>() {
 					@Override
 					public boolean hasNext() {
 						return wrappedIterator.hasNext();

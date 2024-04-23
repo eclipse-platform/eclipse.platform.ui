@@ -50,7 +50,7 @@ public class IdentityMapTest {
 		map = new IdentityMap<>();
 		key = new Object();
 		value = new Object();
-		entry = new Map.Entry<Object, Object>() {
+		entry = new Map.Entry<>() {
 			@Override
 			public Object getKey() {
 				return key;

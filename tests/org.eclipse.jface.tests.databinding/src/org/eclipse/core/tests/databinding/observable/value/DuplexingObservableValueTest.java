@@ -44,7 +44,7 @@ public class DuplexingObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testValueType_InheritFromTargetList() throws Exception {
-		observable = new DuplexingObservableValue<String>(list) {
+		observable = new DuplexingObservableValue<>(list) {
 			@Override
 			protected String coalesceElements(Collection<String> elements) {
 				return null;
@@ -57,7 +57,7 @@ public class DuplexingObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testValueType_ProvidedInConstructor() throws Exception {
-		observable = new DuplexingObservableValue<String>(list, Object.class) {
+		observable = new DuplexingObservableValue<>(list, Object.class) {
 			@Override
 			protected String coalesceElements(Collection<String> elements) {
 				return null;

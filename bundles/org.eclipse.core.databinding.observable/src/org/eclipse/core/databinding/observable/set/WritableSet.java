@@ -60,7 +60,7 @@ public class WritableSet<E> extends ObservableSet<E> {
 	 *            can be <code>null</code>
 	 */
 	public WritableSet(Collection<? extends E> c, Object elementType) {
-		this(Realm.getDefault(), new HashSet<E>(c), elementType);
+		this(Realm.getDefault(), new HashSet<>(c), elementType);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class WritableSet<E> extends ObservableSet<E> {
 	 * @param realm the realm
 	 */
 	public WritableSet(Realm realm) {
-		this(realm, new HashSet<E>(), null);
+		this(realm, new HashSet<>(), null);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class WritableSet<E> extends ObservableSet<E> {
 	 *            can be <code>null</code>
 	 */
 	public WritableSet(Realm realm, Collection<? extends E> c, Object elementType) {
-		super(realm, new HashSet<E>(c), elementType);
+		super(realm, new HashSet<>(c), elementType);
 		this.elementType = elementType;
 	}
 

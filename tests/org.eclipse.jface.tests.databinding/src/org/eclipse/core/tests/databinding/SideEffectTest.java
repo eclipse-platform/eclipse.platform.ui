@@ -269,7 +269,7 @@ public class SideEffectTest extends AbstractDefaultRealmTestCase {
 	public void testConsumeOnceDoesntPassNullToConsumer() throws Exception {
 		AtomicBoolean consumerHasRun = new AtomicBoolean();
 		WritableValue<Object> makesThingsDirty = new WritableValue<>(null, null);
-		ComputedValue<Object> value = new ComputedValue<Object>() {
+		ComputedValue<Object> value = new ComputedValue<>() {
 			@Override
 			protected Object calculate() {
 				makesThingsDirty.getValue();
@@ -294,7 +294,7 @@ public class SideEffectTest extends AbstractDefaultRealmTestCase {
 		AtomicInteger numberOfRuns = new AtomicInteger();
 		WritableValue<Object> makesThingsDirty = new WritableValue<>(null, null);
 		WritableValue<Object> returnValue = new WritableValue<>(null, null);
-		ComputedValue<Object> value = new ComputedValue<Object>() {
+		ComputedValue<Object> value = new ComputedValue<>() {
 			@Override
 			protected Object calculate() {
 				makesThingsDirty.getValue();

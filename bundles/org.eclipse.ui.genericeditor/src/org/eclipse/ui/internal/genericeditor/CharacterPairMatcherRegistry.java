@@ -64,7 +64,7 @@ public class CharacterPairMatcherRegistry {
 		}
 		return this.extensions.values().stream().filter(ext -> contentTypes.contains(ext.targetContentType))
 				.filter(ext -> ext.matches(sourceViewer, editor))
-				.sorted(new ContentTypeSpecializationComparator<ICharacterPairMatcher>())
+				.sorted(new ContentTypeSpecializationComparator<>())
 				.map(GenericContentTypeRelatedExtension<ICharacterPairMatcher>::createDelegate)
 				.collect(Collectors.toList());
 	}
@@ -77,7 +77,7 @@ public class CharacterPairMatcherRegistry {
 			if (!this.extensions.containsKey(extension)) {
 				try {
 					this.extensions.put(extension,
-							new GenericContentTypeRelatedExtension<ICharacterPairMatcher>(extension));
+							new GenericContentTypeRelatedExtension<>(extension));
 				} catch (Exception ex) {
 					GenericEditorPlugin.getDefault().getLog()
 							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));

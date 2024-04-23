@@ -331,7 +331,7 @@ public class MapDetailValueObservableMap<K, M, E> extends
 		@Override
 		public Iterator<Map.Entry<K, E>> iterator() {
 			final Iterator<K> keyIterator = keySet().iterator();
-			return new Iterator<Map.Entry<K, E>>() {
+			return new Iterator<>() {
 
 				@Override
 				public boolean hasNext() {

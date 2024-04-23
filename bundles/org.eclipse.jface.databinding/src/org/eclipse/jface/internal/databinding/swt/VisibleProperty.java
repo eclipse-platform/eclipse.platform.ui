@@ -46,7 +46,7 @@ public abstract class VisibleProperty<S extends Widget> extends WidgetBooleanVal
 
 	@Override
 	public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, ValueDiff<? extends Boolean>> listener) {
-		return new WidgetListener<S, ValueDiff<? extends Boolean>>(this, listener, EVENT_TYPES, null) {
+		return new WidgetListener<>(this, listener, EVENT_TYPES, null) {
 			@Override
 			public void handleEvent(Event event) {
 				event.widget.setData(CACHED_VALUE_KEY, event.type == SWT.Show);

@@ -148,7 +148,7 @@ public class DecoratingObservableList<E> extends
 	public ListIterator<E> listIterator(int index) {
 		getterCalled();
 		final ListIterator<E> iterator = decorated.listIterator(index);
-		return new ListIterator<E>() {
+		return new ListIterator<>() {
 
 			@Override
 			public void add(E o) {

@@ -58,7 +58,7 @@ public class TextDoubleClickStrategyRegistry {
 		}
 		return this.extensions.values().stream().filter(ext -> contentTypes.contains(ext.targetContentType))
 				.filter(ext -> ext.matches(sourceViewer, editor))
-				.sorted(new ContentTypeSpecializationComparator<ITextDoubleClickStrategy>()).findFirst()
+				.sorted(new ContentTypeSpecializationComparator<>()).findFirst()
 				.map(GenericContentTypeRelatedExtension<ITextDoubleClickStrategy>::createDelegate);
 	}
 
@@ -70,7 +70,7 @@ public class TextDoubleClickStrategyRegistry {
 			if (!this.extensions.containsKey(extension)) {
 				try {
 					this.extensions.put(extension,
-							new GenericContentTypeRelatedExtension<ITextDoubleClickStrategy>(extension));
+							new GenericContentTypeRelatedExtension<>(extension));
 				} catch (Exception ex) {
 					GenericEditorPlugin.getDefault().getLog()
 							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));

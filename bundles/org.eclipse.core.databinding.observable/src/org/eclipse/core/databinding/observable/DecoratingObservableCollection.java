@@ -81,7 +81,7 @@ public class DecoratingObservableCollection<E> extends DecoratingObservable impl
 	public Iterator<E> iterator() {
 		getterCalled();
 		final Iterator<E> decoratedIterator = decorated.iterator();
-		return new Iterator<E>() {
+		return new Iterator<>() {
 			@Override
 			public void remove() {
 				decoratedIterator.remove();

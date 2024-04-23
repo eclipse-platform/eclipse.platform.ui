@@ -106,7 +106,7 @@ public abstract class ComputedValue<T> extends AbstractObservableValue<T> {
 	 */
 	public static <T> IObservableValue<T> create(Supplier<T> supplier) {
 		Objects.requireNonNull(supplier);
-		return new ComputedValue<T>() {
+		return new ComputedValue<>() {
 			@Override
 			protected T calculate() {
 				return supplier.get();

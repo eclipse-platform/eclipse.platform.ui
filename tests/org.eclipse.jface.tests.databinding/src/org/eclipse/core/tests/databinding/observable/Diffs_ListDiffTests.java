@@ -33,7 +33,7 @@ import org.junit.Test;
 public class Diffs_ListDiffTests {
 	@Test
 	public void testListDiffEntryToStringDoesNotThrowNPEForNullListDiffEntry() {
-		ListDiffEntry<?> entry = new ListDiffEntry<Object>() {
+		ListDiffEntry<?> entry = new ListDiffEntry<>() {
 			@Override
 			public Object getElement() {
 				return null;
@@ -55,7 +55,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testListDiffToStringDoesNotThrowNPEForNullListDiff() {
-		ListDiff<?> diff = new ListDiff<Object>() {
+		ListDiff<?> diff = new ListDiff<>() {
 			@Override
 			public ListDiffEntry<Object>[] getDifferences() {
 				return null;
@@ -67,7 +67,7 @@ public class Diffs_ListDiffTests {
 
 	@Test
 	public void testListDiffToStringDoesNotThrowNPEForNullListDiffEntry() {
-		ListDiff<?> diff = new ListDiff<Object>() {
+		ListDiff<?> diff = new ListDiff<>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public ListDiffEntry<Object>[] getDifferences() {
@@ -272,7 +272,7 @@ public class Diffs_ListDiffTests {
 		ListDiff<?> diff = Diffs.computeListDiff(oldList, newList);
 
 		final List<Object> list = new ArrayList<>(oldList);
-		diff.accept(new ListDiffVisitor<Object>() {
+		ListDiffVisitor<Object> listDiffVisitor = new ListDiffVisitor<>() {
 			@Override
 			public void handleAdd(int index, Object element) {
 				list.add(index, element);
@@ -287,7 +287,8 @@ public class Diffs_ListDiffTests {
 			public void handleReplace(int index, Object oldElement, Object newElement) {
 				assertEquals(oldElement, list.set(index, newElement));
 			}
-		});
+		};
+		diff.accept(listDiffVisitor);
 
 		assertEquals("Applying diff to old list should make it equal to new list", newList, list);
 	}

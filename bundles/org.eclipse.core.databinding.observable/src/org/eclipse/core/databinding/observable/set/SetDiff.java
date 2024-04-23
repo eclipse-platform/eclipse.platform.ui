@@ -94,7 +94,7 @@ public abstract class SetDiff<E> implements IDiff {
 
 		@Override
 		public Iterator<E> iterator() {
-			return new Iterator<E>() {
+			return new Iterator<>() {
 				Iterator<E> orig = original.iterator();
 				Iterator<E> add = diff.getAdditions().iterator();
 

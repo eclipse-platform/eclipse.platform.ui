@@ -75,7 +75,7 @@ public class ValidationStatusMap extends ObservableMap<Binding, IStatus> {
 		removeElementChangeListener();
 		final Map<Binding, IStatus> oldMap = wrappedMap;
 		// lazy computation of diff
-		MapDiff<Binding, IStatus> mapDiff = new MapDiff<Binding, IStatus>() {
+		MapDiff<Binding, IStatus> mapDiff = new MapDiff<>() {
 			private MapDiff<Binding, IStatus> cachedDiff = null;
 
 			private void ensureCached() {

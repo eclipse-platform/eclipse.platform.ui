@@ -55,7 +55,7 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 	class EntrySet extends AbstractSet<Map.Entry<K, V>> {
 		@Override
 		public Iterator<Map.Entry<K, V>> iterator() {
-			return new Iterator<Map.Entry<K, V>>() {
+			return new Iterator<>() {
 				final Iterator<K> it = masterSet.iterator();
 
 				@Override
@@ -134,7 +134,7 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 		}
 	}
 
-	private ISetChangeListener<K> masterListener = new ISetChangeListener<K>() {
+	private ISetChangeListener<K> masterListener = new ISetChangeListener<>() {
 		@Override
 		public void handleSetChange(SetChangeEvent<? extends K> event) {
 			if (isDisposed())
@@ -173,7 +173,7 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 		super(keySet.getRealm());
 		this.masterSet = keySet;
 		this.detailProperty = valueProperty;
-		this.cache = new DelegatingCache<S, K, V>(getRealm(), valueProperty) {
+		this.cache = new DelegatingCache<>(getRealm(), valueProperty) {
 			@Override
 			void handleValueChange(K masterElement, V oldValue, V newValue) {
 				fireMapChange(Diffs.createMapDiffSingleChange(masterElement,

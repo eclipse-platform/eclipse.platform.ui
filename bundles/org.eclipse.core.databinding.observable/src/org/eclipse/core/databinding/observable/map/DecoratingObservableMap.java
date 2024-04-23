@@ -181,7 +181,7 @@ public class DecoratingObservableMap<K, V> extends DecoratingObservable
 		@Override
 		public Iterator<E> iterator() {
 			final Iterator<E> iterator = collection.iterator();
-			return new Iterator<E>() {
+			return new Iterator<>() {
 				@Override
 				public boolean hasNext() {
 					getterCalled();

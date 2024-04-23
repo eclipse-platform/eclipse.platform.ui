@@ -100,7 +100,7 @@ public class IdentitySet<E> implements Set<E> {
 	public Iterator<E> iterator() {
 		final Iterator<IdentityWrapper<E>> wrappedIterator = wrappedSet
 				.iterator();
-		return new Iterator<E>() {
+		return new Iterator<>() {
 			@Override
 			public boolean hasNext() {
 				return wrappedIterator.hasNext();

@@ -65,7 +65,7 @@ public class PresentationReconcilerRegistry {
 		return this.extensions.values().stream()
 			.filter(ext -> contentTypes.contains(ext.targetContentType))
 			.filter(ext -> ext.matches(sourceViewer, editor))
-			.sorted(new ContentTypeSpecializationComparator<IPresentationReconciler>())
+			.sorted(new ContentTypeSpecializationComparator<>())
 			.map(GenericContentTypeRelatedExtension<IPresentationReconciler>::createDelegate)
 			.collect(Collectors.toList());
 	}
@@ -76,7 +76,7 @@ public class PresentationReconcilerRegistry {
 			toRemoveExtensions.remove(extension);
 			if (!this.extensions.containsKey(extension)) {
 				try {
-					this.extensions.put(extension, new GenericContentTypeRelatedExtension<IPresentationReconciler>(extension));
+					this.extensions.put(extension, new GenericContentTypeRelatedExtension<>(extension));
 				} catch (Exception ex) {
 					GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
 				}

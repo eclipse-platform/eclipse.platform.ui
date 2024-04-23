@@ -201,7 +201,7 @@ public class WritableListTest {
 	@Test
 	public void testCollectionConstructorsCopy_2() {
 		List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c"));
-		WritableList<String> wlist = new WritableList<String>(new CurrentRealm(true), (Collection<String>) list,
+		WritableList<String> wlist = new WritableList<>(new CurrentRealm(true), (Collection<String>) list,
 				Object.class);
 		wlist.remove(1);
 		assertEquals(3, list.size());

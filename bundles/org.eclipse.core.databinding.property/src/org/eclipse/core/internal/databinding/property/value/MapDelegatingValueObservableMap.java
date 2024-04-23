@@ -57,7 +57,7 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 	class EntrySet extends AbstractSet<Map.Entry<K, V>> {
 		@Override
 		public Iterator<Map.Entry<K, V>> iterator() {
-			return new Iterator<Map.Entry<K, V>>() {
+			return new Iterator<>() {
 				Iterator<Map.Entry<K, I>> it = masterMap.entrySet().iterator();
 
 				@Override
@@ -141,7 +141,7 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 		}
 	}
 
-	private IMapChangeListener<K, I> masterListener = new IMapChangeListener<K, I>() {
+	private IMapChangeListener<K, I> masterListener = new IMapChangeListener<>() {
 		@Override
 		public void handleMapChange(final MapChangeEvent<? extends K, ? extends I> event) {
 			if (isDisposed())
@@ -203,7 +203,7 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 		super(map.getRealm());
 		this.masterMap = map;
 		this.detailProperty = valueProperty;
-		this.cache = new DelegatingCache<S, I, V>(getRealm(), valueProperty) {
+		this.cache = new DelegatingCache<>(getRealm(), valueProperty) {
 			@Override
 			void handleValueChange(I masterElement, V oldValue, V newValue) {
 				fireMapChange(keysFor(masterElement), oldValue, newValue);

@@ -56,7 +56,7 @@ public class QuickAssistProcessorRegistry {
 		return this.extensions.values().stream()
 				.filter(ext -> contentTypes.contains(ext.targetContentType))
 				.filter(ext -> ext.matches(sourceViewer, editor))
-				.sorted(new ContentTypeSpecializationComparator<IQuickAssistProcessor>())
+				.sorted(new ContentTypeSpecializationComparator<>())
 				.map(GenericContentTypeRelatedExtension<IQuickAssistProcessor>::createDelegate)
 				.collect(Collectors.toList());
 	}
@@ -69,7 +69,7 @@ public class QuickAssistProcessorRegistry {
 			if (!this.extensions.containsKey(extension)) {
 				try {
 					this.extensions.put(extension,
-							new GenericContentTypeRelatedExtension<IQuickAssistProcessor>(extension));
+							new GenericContentTypeRelatedExtension<>(extension));
 				} catch (Exception ex) {
 					GenericEditorPlugin.getDefault().getLog()
 							.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));

@@ -211,7 +211,7 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 	@Override
 	public Iterator<E> iterator() {
 		getterCalled();
-		return new Iterator<E>() {
+		return new Iterator<>() {
 			int expectedModCount = simplePropertyModCount;
 			List<E> list = new ArrayList<>(getList());
 			ListIterator<E> iterator = list.listIterator();
@@ -307,7 +307,7 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 	@Override
 	public ListIterator<E> listIterator(final int index) {
 		getterCalled();
-		return new ListIterator<E>() {
+		return new ListIterator<>() {
 			int expectedModCount = simplePropertyModCount;
 			List<E> list = new ArrayList<>(getList());
 			ListIterator<E> iterator = list.listIterator(index);

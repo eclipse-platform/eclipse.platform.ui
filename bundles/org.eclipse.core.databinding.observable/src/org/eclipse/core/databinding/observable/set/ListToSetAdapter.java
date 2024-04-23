@@ -65,7 +65,7 @@ public class ListToSetAdapter<E> extends ObservableSet<E> {
 	 * @param list the list to adapt
 	 */
 	public ListToSetAdapter(IObservableList<E> list) {
-		super(list.getRealm(), new HashSet<E>(), list.getElementType());
+		super(list.getRealm(), new HashSet<>(), list.getElementType());
 		this.list = list;
 		wrappedSet.addAll(list);
 		this.list.addListChangeListener(listener);

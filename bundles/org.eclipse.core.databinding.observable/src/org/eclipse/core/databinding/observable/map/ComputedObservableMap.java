@@ -86,7 +86,7 @@ public abstract class ComputedObservableMap<K, V> extends AbstractObservableMap<
 		@Override
 		public Iterator<Map.Entry<K, V>> iterator() {
 			final Iterator<K> keyIterator = keySet.iterator();
-			return new Iterator<Map.Entry<K, V>>() {
+			return new Iterator<>() {
 
 				@Override
 				public boolean hasNext() {
@@ -96,7 +96,7 @@ public abstract class ComputedObservableMap<K, V> extends AbstractObservableMap<
 				@Override
 				public Map.Entry<K, V> next() {
 					final K key = keyIterator.next();
-					return new Map.Entry<K, V>() {
+					return new Map.Entry<>() {
 
 						@Override
 						public K getKey() {

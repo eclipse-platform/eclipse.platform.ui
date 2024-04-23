@@ -60,7 +60,7 @@ public class WritableList<E> extends ObservableList<E> {
 	 *            the observable's realm
 	 */
 	public WritableList(Realm realm) {
-		this(realm, new ArrayList<E>(), null);
+		this(realm, new ArrayList<>(), null);
 	}
 
 	/**
