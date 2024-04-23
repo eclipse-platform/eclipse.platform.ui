@@ -795,8 +795,8 @@ public class ModelAssembler {
 					EStructuralFeature feature = featureIterator.feature();
 
 					MApplicationElement el = null;
-					if (importObject instanceof MApplicationElement) {
-						el = importMaps.get((MApplicationElement) importObject);
+					if (importObject instanceof MApplicationElement applicationElement) {
+						el = importMaps.get(applicationElement);
 
 						if (el == null) {
 							log(LogLevel.WARN, "Could not resolve import for {}", //$NON-NLS-1$

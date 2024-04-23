@@ -58,7 +58,6 @@ public class CTabItemTest extends CSSSWTTestCase {
 		// Add some delay to allow asynchronous events to come in, but don't get trapped in an endless Display#sleep().
 		for (int i = 0; i < 3; i++) {
 			while (display.readAndDispatch()) {
-				;
 			}
 			try {
 				Thread.sleep(10);

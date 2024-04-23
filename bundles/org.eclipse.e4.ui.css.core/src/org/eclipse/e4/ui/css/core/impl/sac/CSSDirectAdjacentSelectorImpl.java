@@ -59,7 +59,6 @@ public class CSSDirectAdjacentSelectorImpl extends AbstractSiblingSelector {
 		}
 
 		while ((n = n.getPreviousSibling()) != null && n.getNodeType() != Node.ELEMENT_NODE) {
-			;
 		}
 
 		if (n == null) {
@@ -79,7 +78,6 @@ public class CSSDirectAdjacentSelectorImpl extends AbstractSiblingSelector {
 			return false;
 		}
 		while ((n = n.getPreviousSibling()) != null && n.getNodeType() != Node.ELEMENT_NODE) {
-			;
 		}
 
 		if (n == null) {

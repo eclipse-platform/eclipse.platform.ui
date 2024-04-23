@@ -40,7 +40,7 @@ public class WorkbenchTest {
 				IActivityManager activityManager = workbench.getActivitySupport().getActivityManager();
 				activityManager.addActivityManagerListener(activityListener);
 				workbench.close();
-			};
+			}
 		};
 
 		runWorkbench(closeAfterStartupAdvisor);

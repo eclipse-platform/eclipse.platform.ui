@@ -109,7 +109,7 @@ public class DnDTest extends NavigatorTestBase {
 			fail("Should not throw an exception");
 		}
 
-		Control end = (Control) editorPart.getAdapter(Control.class);
+		Control end = editorPart.getAdapter(Control.class);
 
 		TreeItem[] items = _viewer.getTree().getItems();
 
@@ -146,7 +146,7 @@ public class DnDTest extends NavigatorTestBase {
 			fail("Should not throw an exception");
 		}
 
-		Control end = (Control) editorPart.getAdapter(Control.class);
+		Control end = editorPart.getAdapter(Control.class);
 
 		TreeItem[] items = _viewer.getTree().getItems();
 
