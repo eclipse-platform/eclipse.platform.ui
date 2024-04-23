@@ -413,7 +413,7 @@ public class RadioGroup {
 	 */
 	public int getSelectionIndex () {
 		for (int i = 0; i < buttons.length; i++) {
-			if (buttons[i].getSelection() == true) {
+			if (buttons[i].getSelection()) {
 				return i;
 			}
 		}

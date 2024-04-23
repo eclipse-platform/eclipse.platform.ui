@@ -210,7 +210,7 @@ public class NavigatorSiteEditor implements INavigatorSiteEditor {
 		// text widget to lose focus and trigger this method).
 		Runnable editRunnable = () -> {
 			disposeTextWidget();
-			if (newText.length() > 0 && newText.equals(text) == false) {
+			if (newText.length() > 0 && !newText.equals(text)) {
 				text = newText;
 				runnable.run();
 			}

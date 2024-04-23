@@ -462,7 +462,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
 		IStatus[] status = multiStatus.getChildren();
 		for (int i = 0; i < status.length; i++) {
-			if (status[i].isOK() == false) {
+			if (!status[i].isOK()) {
 				errorTable.add(status[i]);
 				filteredFiles.add(files[i].getFullPath());
 			}

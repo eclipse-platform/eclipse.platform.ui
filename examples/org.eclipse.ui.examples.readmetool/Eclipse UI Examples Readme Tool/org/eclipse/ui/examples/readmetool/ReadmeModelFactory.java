@@ -119,7 +119,7 @@ public class ReadmeModelFactory {
 	 * @return an element collection representing the table of contents
 	 */
 	private MarkElement[] getToc(IFile file) {
-		if (registryLoaded == false)
+		if (!registryLoaded)
 			loadParser();
 		return parser.parse(file);
 	}

@@ -62,7 +62,7 @@ public class TabbedPropertyRegistryClassSectionFilter {
 			ISelection selection) {
 
 		if (selection instanceof IStructuredSelection &&
-				selection.isEmpty() == false) {
+				!selection.isEmpty()) {
 
 			if (descriptor.getEnablesFor() != ISectionDescriptor.ENABLES_FOR_ANY &&
 					((IStructuredSelection) selection).size() != descriptor
@@ -79,7 +79,7 @@ public class TabbedPropertyRegistryClassSectionFilter {
 			if (filter != null) {
 				for (Object object : (IStructuredSelection) selection) {
 
-					if (filter.select(object) == false) {
+					if (!filter.select(object)) {
 						/**
 						 * filter fails so section does not apply to the
 						 * selection, do not display section.
@@ -105,7 +105,7 @@ public class TabbedPropertyRegistryClassSectionFilter {
 				if (effectiveTypes.add(remapType)) {
 
 					// the effective types of the selection
-					if (appliesToEffectiveType(descriptor, remapType) == false) {
+					if (!appliesToEffectiveType(descriptor, remapType)) {
 						return false;
 					}
 				}

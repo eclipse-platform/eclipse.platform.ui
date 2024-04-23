@@ -331,7 +331,7 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
 	private void handleChevron(SelectionEvent event) {
 		CoolItem item = (CoolItem) event.widget;
 		Control control = item.getControl();
-		if ((control instanceof ToolBar) == false) {
+		if (!(control instanceof ToolBar)) {
 			return;
 		}
 		CoolBar coolBar = item.getParent();

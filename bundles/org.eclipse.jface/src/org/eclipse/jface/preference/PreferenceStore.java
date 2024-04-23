@@ -606,7 +606,6 @@ public class PreferenceStore extends EventManager implements
 	 */
 	private void setValue(Properties p, String name, boolean value) {
 		Assert.isTrue(p != null);
-		p.put(name, value == true ? IPreferenceStore.TRUE
-				: IPreferenceStore.FALSE);
+		p.put(name, value ? IPreferenceStore.TRUE : IPreferenceStore.FALSE);
 	}
 }

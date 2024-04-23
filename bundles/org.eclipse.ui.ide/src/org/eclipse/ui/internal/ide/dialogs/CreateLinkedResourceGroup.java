@@ -407,7 +407,7 @@ public class CreateLinkedResourceGroup {
 	 * Disposes the group's widgets.
 	 */
 	public void dispose() {
-		if (groupComposite != null && groupComposite.isDisposed() == false) {
+		if (groupComposite != null && !groupComposite.isDisposed()) {
 			groupComposite.dispose();
 		}
 	}
@@ -654,7 +654,7 @@ public class CreateLinkedResourceGroup {
 	 */
 	public void setLinkTarget(String target) {
 		linkTarget = target;
-		if (linkTargetField != null && linkTargetField.isDisposed() == false) {
+		if (linkTargetField != null && !linkTargetField.isDisposed()) {
 			linkTargetField.setText(target);
 		}
 	}

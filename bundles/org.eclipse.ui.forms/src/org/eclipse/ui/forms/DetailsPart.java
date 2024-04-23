@@ -220,7 +220,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 			for (Object obj : currentSelection) {
 				if (key == null)
 					key = getKey(obj);
-				else if (getKey(obj).equals(key) == false) {
+				else if (!getKey(obj).equals(key)) {
 					key = null;
 					break;
 				}

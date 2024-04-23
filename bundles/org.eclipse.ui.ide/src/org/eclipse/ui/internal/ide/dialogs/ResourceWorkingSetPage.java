@@ -172,7 +172,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
 				final Object element = event.getElement();
-				if (tree.getGrayed(element) == false) {
+				if (!tree.getGrayed(element)) {
 					BusyIndicator.showWhile(getShell().getDisplay(),
 							() -> setSubtreeChecked((IContainer) element, tree.getChecked(element), false));
 				}
@@ -369,9 +369,9 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 					setSubtreeChecked(container, true, true);
 				}
 				IResource resource = Adapters.adapt(item, IResource.class);
-				if (resource != null && resource.isAccessible() == false) {
+				if (resource != null && !resource.isAccessible()) {
 					IProject project = resource.getProject();
-					if (tree.getChecked(project) == false) {
+					if (!tree.getChecked(project)) {
 						tree.setGrayChecked(project, true);
 					}
 				} else {
@@ -413,8 +413,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 */
 	private void setSubtreeChecked(IContainer container, boolean state, boolean checkExpandedState) {
 		// checked state is set lazily on expand, don't set it if container is collapsed
-		if (container.isAccessible() == false
-				|| (tree.getExpandedState(container) == false && state && checkExpandedState)) {
+		if (!container.isAccessible() || (!tree.getExpandedState(container) && state && checkExpandedState)) {
 			return;
 		}
 		IResource[] members = null;
@@ -480,7 +479,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		String infoMessage = null;
 		String newText = text.getText();
 
-		if (newText.equals(newText.trim()) == false) {
+		if (!newText.equals(newText.trim())) {
 			errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameWhitespace;
 		}
 		if (newText.isEmpty()) {
@@ -492,7 +491,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameMustNotBeEmpty;
 		}
 		firstCheck = false;
-		if (errorMessage == null && (workingSet == null || newText.equals(workingSet.getName()) == false)) {
+		if (errorMessage == null && (workingSet == null || !newText.equals(workingSet.getName()))) {
 			for (IWorkingSet set : PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets()) {
 				if (newText.equals(set.getName())) {
 					errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_workingSetExists;

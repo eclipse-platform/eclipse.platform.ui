@@ -78,7 +78,7 @@ public final class Util {
 	 *         <code>false</code>
 	 */
 	public static final int compare(final boolean left, final boolean right) {
-		return left == false ? (right == true ? -1 : 0) : (right == true ? 0 : 1);
+		return !left ? (right ? -1 : 0) : (right ? 0 : 1);
 	}
 
 	/**

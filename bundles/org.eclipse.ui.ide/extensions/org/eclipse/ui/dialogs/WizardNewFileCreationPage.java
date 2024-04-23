@@ -164,7 +164,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	protected void createAdvancedControls(Composite parent) {
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 
-		if (preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING) == false) {
+		if (!preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {
 			linkedResourceParent = new Composite(parent, SWT.NONE);
 			linkedResourceParent.setFont(parent.getFont());
 			linkedResourceParent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

@@ -852,7 +852,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		boolean shouldImportTopLevelFoldersRecursively = selectionGroup.isEveryItemChecked() &&
 													!createTopLevelFolderCheckbox.getSelection() &&
 													(createLinksInWorkspaceButton != null && createLinksInWorkspaceButton.getSelection()) &&
-													(createVirtualFoldersButton != null && createVirtualFoldersButton.getSelection() == false);
+													(createVirtualFoldersButton != null && !createVirtualFoldersButton.getSelection());
 
 		File sourceDirectory = getSourceDirectory();
 		if (createTopLevelFolderCheckbox.getSelection() && sourceDirectory.getParentFile() != null)
@@ -1258,7 +1258,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 				setErrorMessage(DataTransferMessages.FileImport_cannotImportFilesUnderAVirtualFolder);
 				return false;
 			}
-			if (createLinksInWorkspaceButton == null || createLinksInWorkspaceButton.getSelection() == false) {
+			if (createLinksInWorkspaceButton == null || !createLinksInWorkspaceButton.getSelection()) {
 				setMessage(null);
 				setErrorMessage(DataTransferMessages.FileImport_haveToCreateLinksUnderAVirtualFolder);
 				return false;

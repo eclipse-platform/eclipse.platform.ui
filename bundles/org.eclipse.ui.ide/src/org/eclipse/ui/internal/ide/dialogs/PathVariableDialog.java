@@ -581,7 +581,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		}
 		// only set the message here if it is not going to be set in
 		// validateVariableValue to avoid flashing.
-		if (allowFinish == false) {
+		if (!allowFinish) {
 			setMessage(validationMessage, validationStatus);
 		}
 		return allowFinish;

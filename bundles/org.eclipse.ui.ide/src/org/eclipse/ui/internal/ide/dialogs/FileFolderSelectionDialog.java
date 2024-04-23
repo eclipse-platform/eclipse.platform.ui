@@ -87,7 +87,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 		 */
 		public FileContentProvider(final boolean showFiles) {
 			fileFilter = file -> {
-				if (!file.fetchInfo().isDirectory() && showFiles == false) {
+				if (!file.fetchInfo().isDirectory() && !showFiles) {
 					return false;
 				}
 				return true;
@@ -177,15 +177,14 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 			int nSelected = selection.length;
 			String pluginId = IDEWorkbenchPlugin.IDE_WORKBENCH;
 
-			if (nSelected == 0 || (nSelected > 1 && multiSelect == false)) {
+			if (nSelected == 0 || (nSelected > 1 && !multiSelect)) {
 				return new Status(IStatus.ERROR, pluginId, IStatus.ERROR,
 						IDEResourceInfoUtils.EMPTY_STRING, null);
 			}
 			for (Object currentSelection : selection) {
 				if (currentSelection instanceof IFileStore) {
 					IFileStore file = (IFileStore) currentSelection;
-					if (acceptFolders == false
-							&& file.fetchInfo().isDirectory()) {
+					if (!acceptFolders && file.fetchInfo().isDirectory()) {
 						return new Status(IStatus.ERROR, pluginId,
 								IStatus.ERROR,
 								IDEResourceInfoUtils.EMPTY_STRING, null);

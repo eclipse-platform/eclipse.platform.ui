@@ -383,7 +383,7 @@ public class UserElement extends OrganizationElement {
 		if (propKey.equals(P_ID_EMAIL))
 			return getEmailAddress();
 		if (propKey.equals(P_ID_COOP))
-			return getCoop().equals(Boolean.TRUE) ? P_VALUE_TRUE
+			return getCoop() ? P_VALUE_TRUE
 					: P_VALUE_FALSE;
 		if (propKey.equals(P_ID_BDAY))
 			return getBirthday();

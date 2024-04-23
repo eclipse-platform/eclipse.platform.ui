@@ -39,7 +39,7 @@ public class ResourceFilterDecorator implements ILightweightLabelDecorator {
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 
-		if (element instanceof IContainer == false) {
+		if (!(element instanceof IContainer)) {
 			return;
 		}
 		IContainer container = (IContainer) element;

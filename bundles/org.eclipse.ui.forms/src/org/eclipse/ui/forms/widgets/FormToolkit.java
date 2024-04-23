@@ -773,7 +773,7 @@ public class FormToolkit {
 		}
 		isDisposed = true;
 		boldFontHolder.dispose();
-		if (colors.isShared() == false) {
+		if (!colors.isShared()) {
 			colors.dispose();
 			colors = null;
 		}

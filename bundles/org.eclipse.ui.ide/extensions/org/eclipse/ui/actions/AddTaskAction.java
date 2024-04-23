@@ -93,7 +93,7 @@ public class AddTaskAction extends SelectionListenerAction {
 
 		if (resource != null && resource instanceof IProject) {
 			IProject project = (IProject) resource;
-			if (project.isOpen() == false) {
+			if (!project.isOpen()) {
 				resource = null;
 			}
 		}

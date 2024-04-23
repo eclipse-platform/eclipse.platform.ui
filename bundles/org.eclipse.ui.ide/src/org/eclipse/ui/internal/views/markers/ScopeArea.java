@@ -104,7 +104,7 @@ public class ScopeArea extends GroupFilterConfigurationArea {
 						} else {
 							setWorkingSet(null);
 						}
-						if (getSelection() == false) {
+						if (!getSelection()) {
 							setSelection(true);
 						}
 					}

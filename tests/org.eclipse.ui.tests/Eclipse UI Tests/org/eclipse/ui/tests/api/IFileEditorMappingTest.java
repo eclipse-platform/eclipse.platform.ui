@@ -65,7 +65,7 @@ public class IFileEditorMappingTest {
 
 		for (IFileEditorMapping fMapping : fMappings) {
 			editors = fMapping.getEditors();
-			assertTrue(ArrayUtil.checkNotNull(editors) == true);
+			assertTrue(ArrayUtil.checkNotNull(editors));
 		}
 	}
 

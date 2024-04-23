@@ -311,7 +311,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			rowHeights[i] = 0;
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
-				if (td.isItemData == false) {
+				if (!td.isItemData) {
 					continue;
 				}
 				Control child = children[td.childIndex];
@@ -651,7 +651,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			int rowHeight = 0;
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
-				if (td.isItemData == false) {
+				if (!td.isItemData) {
 					continue;
 				}
 				Control child = children[td.childIndex];
@@ -765,8 +765,9 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		for (TableWrapData[] row : grid) {
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
-				if (td.isItemData == false)
+				if (!td.isItemData) {
 					continue;
+				}
 
 				if (td.colspan>1) {
 					// we will not do controls with multiple column span
@@ -798,8 +799,9 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		for (TableWrapData[] row : grid) {
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
-				if (td.isItemData == false || td.colspan==1)
+				if (!td.isItemData || td.colspan == 1) {
 					continue;
+				}
 
 				SizeCache childCache = cache.getCache(td.childIndex);
 				int width = max?childCache.computeMaximumWidth():childCache.computeMinimumWidth();

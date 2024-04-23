@@ -194,7 +194,7 @@ public class WizardNewLinkPage extends WizardPage {
 	 *         not to create a link.
 	 */
 	public String getLinkTarget() {
-		if (createLink && linkTargetField != null && linkTargetField.isDisposed() == false) {
+		if (createLink && linkTargetField != null && !linkTargetField.isDisposed()) {
 			return linkTargetField.getText();
 		}
 		return null;
@@ -278,7 +278,7 @@ public class WizardNewLinkPage extends WizardPage {
 	 */
 	public void setLinkTarget(String target) {
 		initialLinkTarget = target;
-		if (linkTargetField != null && linkTargetField.isDisposed() == false) {
+		if (linkTargetField != null && !linkTargetField.isDisposed()) {
 			linkTargetField.setText(target);
 		}
 	}
@@ -319,7 +319,7 @@ public class WizardNewLinkPage extends WizardPage {
 			valid = false;
 		} else {
 			IPath path = IPath.fromOSString("");//$NON-NLS-1$
-			if (path.isValidPath(linkTargetName) == false) {
+			if (!path.isValidPath(linkTargetName)) {
 				setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetInvalid);
 				valid = false;
 			}
@@ -349,7 +349,7 @@ public class WizardNewLinkPage extends WizardPage {
 				} else {
 					IStatus locationStatus = workspace.validateLinkLocation(container, IPath.fromOSString(linkTargetName));
 
-					if (locationStatus.isOK() == false) {
+					if (!locationStatus.isOK()) {
 						setErrorMessage(IDEWorkbenchMessages.WizardNewLinkPage_linkTargetLocationInvalid);
 						valid = false;
 					} else {

@@ -94,7 +94,7 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 
-		if (element instanceof IResource == false) {
+		if (!(element instanceof IResource)) {
 			return;
 		}
 		IResource resource = (IResource) element;

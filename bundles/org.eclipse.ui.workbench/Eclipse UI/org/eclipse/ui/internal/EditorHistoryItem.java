@@ -174,7 +174,7 @@ public class EditorHistoryItem {
 			return result;
 		}
 		IAdaptable adaptable = factory.createElement(persistableMemento);
-		if (adaptable == null || (adaptable instanceof IEditorInput) == false) {
+		if (adaptable == null || !(adaptable instanceof IEditorInput)) {
 			return result;
 		}
 		input = (IEditorInput) adaptable;

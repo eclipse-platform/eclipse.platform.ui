@@ -1434,7 +1434,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	 */
 	@Override
 	public void setVisible(final boolean visible) {
-		if (visible == true) {
+		if (visible) {
 			Map<String, Set<Context>> contextsByName = new HashMap<>();
 
 			for (Iterator<String> iterator = contextService.getDefinedContextIds().iterator(); iterator.hasNext();) {

@@ -347,7 +347,7 @@ public class QuickFixPage extends WizardPage {
 		});
 
 		markersTable.addCheckStateListener(event -> {
-			if (event.getChecked() == true) {
+			if (event.getChecked()) {
 				setPageComplete(true);
 			} else {
 				setPageComplete(markersTable.getCheckedElements().length > 0);

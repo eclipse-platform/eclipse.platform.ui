@@ -370,7 +370,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		for (IWorkingSet editedWorkingSet : getEditedWorkingSets().keySet()) {
 			IWorkingSet originalWorkingSet = getEditedWorkingSets().get(editedWorkingSet);
 
-			if (editedWorkingSet.getName().equals(originalWorkingSet.getName()) == false) {
+			if (!editedWorkingSet.getName().equals(originalWorkingSet.getName())) {
 				editedWorkingSet.setName(originalWorkingSet.getName());
 			}
 			if (!Arrays.equals(editedWorkingSet.getElements(), originalWorkingSet.getElements())) {

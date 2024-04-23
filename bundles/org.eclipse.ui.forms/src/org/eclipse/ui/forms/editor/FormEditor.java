@@ -467,7 +467,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 				&& oldPageIndex != newPageIndex) {
 			// Check the old page
 			IFormPage oldFormPage = (IFormPage) pages.get(oldPageIndex);
-			if (oldFormPage.canLeaveThePage() == false) {
+			if (!oldFormPage.canLeaveThePage()) {
 				setActivePage(oldPageIndex);
 				return;
 			}
@@ -660,7 +660,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 		}
 		if (page instanceof IFormPage) {
 			IFormPage fpage = (IFormPage) page;
-			if (fpage.isEditor() == false)
+			if (!fpage.isEditor())
 				fpage.init(getEditorSite(), getEditorInput());
 		}
 	}

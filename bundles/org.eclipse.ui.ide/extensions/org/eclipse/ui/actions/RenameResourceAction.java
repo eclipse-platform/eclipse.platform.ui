@@ -524,7 +524,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	 *            the resource to move.
 	 */
 	private void saveChangesAndDispose(IResource resource) {
-		if (saving == true) {
+		if (saving) {
 			return;
 		}
 

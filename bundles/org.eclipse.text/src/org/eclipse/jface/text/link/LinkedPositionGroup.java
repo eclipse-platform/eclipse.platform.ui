@@ -304,7 +304,7 @@ public class LinkedPositionGroup {
 		Assert.isTrue(!fIsSealed);
 		fIsSealed= true;
 
-		if (fHasCustomIteration == false && !fPositions.isEmpty()) {
+		if (!fHasCustomIteration && !fPositions.isEmpty()) {
 			fPositions.get(0).setSequenceNumber(0);
 		}
 	}
