@@ -240,7 +240,7 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 	@Override
 	public Iterator<T> iterator() {
 		getterCalled();
-		return new Iterator<T>() {
+		return new Iterator<>() {
 			Iterator<M> it = masterList.iterator();
 
 			@Override
@@ -327,7 +327,7 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 	@Override
 	public ListIterator<T> listIterator(final int index) {
 		getterCalled();
-		return new ListIterator<T>() {
+		return new ListIterator<>() {
 			ListIterator<M> it = masterList.listIterator(index);
 			M lastMasterElement;
 			T lastElement;

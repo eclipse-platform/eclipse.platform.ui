@@ -176,7 +176,7 @@ public class SimplePropertyObservableSet<S, E> extends AbstractObservableSet<E>
 	@Override
 	public Iterator<E> iterator() {
 		getterCalled();
-		return new Iterator<E>() {
+		return new Iterator<>() {
 			int expectedModCount = modCount;
 			Set<E> set = new HashSet<>(getSet());
 			Iterator<E> iterator = set.iterator();

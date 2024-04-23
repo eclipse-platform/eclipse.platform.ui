@@ -44,7 +44,7 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		@SuppressWarnings("unchecked")
-		WritableList<Object>[] lists = new WritableList[] { new WritableList<Object>(), new WritableList<Object>() };
+		WritableList<Object>[] lists = new WritableList[] { new WritableList<>(), new WritableList<>() };
 		multiList = new MultiListStub(Realm.getDefault(), lists);
 	}
 
@@ -140,8 +140,8 @@ public class MultiListTest extends AbstractDefaultRealmTestCase {
 		public IObservableCollection<Object> createObservableCollection(Realm realm,
 				int elementCount) {
 			@SuppressWarnings("unchecked")
-			WritableList<Object>[] subLists = new WritableList[] { new WritableList<Object>(realm),
-					new WritableList<Object>(realm) };
+			WritableList<Object>[] subLists = new WritableList[] { new WritableList<>(realm),
+					new WritableList<>(realm) };
 			final MultiListStub list = new MultiListStub(realm, subLists);
 			for (int i = 0; i < elementCount; i++)
 				list.subLists[0].add(createElement(list));

@@ -61,7 +61,7 @@ public abstract class DuplexingObservableValue<T> extends AbstractObservableValu
 	 */
 	public static <T> DuplexingObservableValue<T> withDefaults(
 			IObservableList<T> target, final T emptyValue, final T multiValue) {
-		return new DuplexingObservableValue<T>(target) {
+		return new DuplexingObservableValue<>(target) {
 			@Override
 			protected T coalesceElements(Collection<T> elements) {
 				if (elements.isEmpty())

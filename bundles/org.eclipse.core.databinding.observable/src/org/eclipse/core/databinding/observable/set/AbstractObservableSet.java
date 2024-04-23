@@ -110,7 +110,7 @@ public abstract class AbstractObservableSet<E> extends AbstractObservable
 	public Iterator<E> iterator() {
 		getterCalled();
 		final Iterator<E> wrappedIterator = getWrappedSet().iterator();
-		return new Iterator<E>() {
+		return new Iterator<>() {
 
 			@Override
 			public void remove() {

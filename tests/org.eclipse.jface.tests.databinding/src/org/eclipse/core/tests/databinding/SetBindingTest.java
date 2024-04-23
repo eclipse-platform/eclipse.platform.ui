@@ -131,7 +131,7 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testErrorDuringRemoveIsLogged() {
-		IObservableSet<String> target = new WritableSet<String>() {
+		IObservableSet<String> target = new WritableSet<>() {
 			@Override
 			public boolean remove(Object elem) {
 				throw new IllegalArgumentException();

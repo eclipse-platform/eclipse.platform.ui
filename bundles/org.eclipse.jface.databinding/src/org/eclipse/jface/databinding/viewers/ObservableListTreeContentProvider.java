@@ -120,7 +120,7 @@ public class ObservableListTreeContentProvider<E> implements ITreeContentProvide
 				if (suspendRedraw[0])
 					viewer.getControl().setRedraw(false);
 				try {
-					event.diff.accept(new ListDiffVisitor<Object>() {
+					ListDiffVisitor<Object> viewerUpdateVisitor = new ListDiffVisitor<>() {
 						@Override
 						public void handleAdd(int index, Object child) {
 							viewerUpdater.insert(parentElement, child, index);
@@ -144,7 +144,8 @@ public class ObservableListTreeContentProvider<E> implements ITreeContentProvide
 							viewerUpdater.move(parentElement, child, oldIndex,
 									newIndex);
 						}
-					});
+					};
+					event.diff.accept(viewerUpdateVisitor);
 				} finally {
 					if (suspendRedraw[0])
 						viewer.getControl().setRedraw(true);

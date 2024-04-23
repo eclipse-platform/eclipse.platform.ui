@@ -461,7 +461,7 @@ public class Observables {
 	 */
 	public static <E> IObservableSet<E> staticObservableSet(Realm realm,
 			Set<E> set, Object elementType) {
-		return new ObservableSet<E>(realm, set, elementType) {
+		return new ObservableSet<>(realm, set, elementType) {
 			@Override
 			public synchronized void addChangeListener(IChangeListener listener) {
 			}
@@ -619,7 +619,7 @@ public class Observables {
 	 */
 	public static <E> IObservableList<E> staticObservableList(Realm realm,
 			List<E> list, Object elementType) {
-		return new ObservableList<E>(realm, list, elementType) {
+		return new ObservableList<>(realm, list, elementType) {
 			@Override
 			public synchronized void addChangeListener(IChangeListener listener) {
 			}

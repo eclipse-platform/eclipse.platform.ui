@@ -75,7 +75,7 @@ public class IdentityObservableSet<E> extends AbstractObservableSet<E> {
 	public Iterator<E> iterator() {
 		getterCalled();
 		final Iterator<E> wrappedIterator = wrappedSet.iterator();
-		return new Iterator<E>() {
+		return new Iterator<>() {
 			E last;
 
 			@Override

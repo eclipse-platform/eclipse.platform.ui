@@ -69,7 +69,7 @@ public interface IConverter<F, T> {
 	 * @since 1.6
 	 */
 	public static <F, T> IConverter<F, T> create(Object fromType, Object toType, Function<F, T> conversion) {
-		return new IConverter<F, T>() {
+		return new IConverter<>() {
 			@Override
 			public Object getFromType() {
 				return fromType;

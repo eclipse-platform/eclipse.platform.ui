@@ -141,7 +141,7 @@ public class DifferentRealmsBindingTest {
 	@Test
 	public void testBindComputedListToWritableListInDifferentRealm() {
 		final IObservableValue<String> modelValue = new WritableValue<>(mainThread);
-		final IObservableList<String> model = new ComputedList<String>(mainThread) {
+		final IObservableList<String> model = new ComputedList<>(mainThread) {
 			@Override
 			protected List<String> calculate() {
 				return Collections.singletonList(modelValue.getValue());
@@ -160,7 +160,7 @@ public class DifferentRealmsBindingTest {
 	@Test
 	public void testBindComputedSetToWritableSetInDifferentRealm() {
 		final IObservableValue<String> modelValue = new WritableValue<>(mainThread);
-		final IObservableSet<String> model = new ComputedSet<String>(mainThread) {
+		final IObservableSet<String> model = new ComputedSet<>(mainThread) {
 			@Override
 			protected Set<String> calculate() {
 				return Collections.singleton(modelValue.getValue());
@@ -179,7 +179,7 @@ public class DifferentRealmsBindingTest {
 	@Test
 	public void testBindComputedValueToWritableValueInDifferentRealm() {
 		final IObservableValue<String> modelValue = new WritableValue<>(mainThread);
-		final IObservableValue<String> model = new ComputedValue<String>(mainThread) {
+		final IObservableValue<String> model = new ComputedValue<>(mainThread) {
 			@Override
 			protected String calculate() {
 				return modelValue.getValue();

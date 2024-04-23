@@ -39,7 +39,7 @@ class ValueBinding<M, T> extends Binding {
 
 	private boolean updatingTarget;
 	private boolean updatingModel;
-	private IValueChangeListener<T> targetChangeListener = new IValueChangeListener<T>() {
+	private IValueChangeListener<T> targetChangeListener = new IValueChangeListener<>() {
 		@Override
 		public void handleValueChange(ValueChangeEvent<? extends T> event) {
 			if (!updatingTarget && !Util.equals(event.diff.getOldValue(), event.diff.getNewValue())) {

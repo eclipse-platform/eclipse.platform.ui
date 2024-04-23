@@ -104,7 +104,7 @@ public abstract class ComputedList<E> extends AbstractObservableList<E> {
 	 */
 	public static <E> IObservableList<E> create(Supplier<List<E>> supplier) {
 		Objects.requireNonNull(supplier);
-		return new ComputedList<E>() {
+		return new ComputedList<>() {
 			@Override
 			protected List<E> calculate() {
 				return supplier.get();

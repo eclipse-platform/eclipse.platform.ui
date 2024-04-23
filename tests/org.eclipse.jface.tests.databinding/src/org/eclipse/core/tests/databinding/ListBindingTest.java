@@ -129,7 +129,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testAddValidationStatusContainsMultipleStatuses() throws Exception {
-		UpdateListStrategy<String, String> strategy = new UpdateListStrategy<String, String>() {
+		UpdateListStrategy<String, String> strategy = new UpdateListStrategy<>() {
 			@Override
 			protected IStatus doAdd(IObservableList<? super String> observableList, String element, int index) {
 				super.doAdd(observableList, element, index);
@@ -163,7 +163,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		List<String> items = Arrays.asList(new String[] { "1", "2" });
 		model.addAll(items);
 
-		UpdateListStrategy<String, String> strategy = new UpdateListStrategy<String, String>() {
+		UpdateListStrategy<String, String> strategy = new UpdateListStrategy<>() {
 			int count;
 			@Override
 			protected IStatus doRemove(IObservableList<? super String> observableList, int index) {
@@ -249,7 +249,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testErrorDuringRemove() {
-		IObservableList<String> target = new WritableList<String>() {
+		IObservableList<String> target = new WritableList<>() {
 			@Override
 			public String remove(int index) {
 				throw new IllegalArgumentException();
@@ -279,7 +279,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testErrorDuringMove() {
-		IObservableList<String> target = new WritableList<String>() {
+		IObservableList<String> target = new WritableList<>() {
 			@Override
 			public String move(int index, int index2) {
 				throw new IllegalArgumentException();
@@ -309,7 +309,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testErrorDuringReplace() {
-		IObservableList<String> target = new WritableList<String>() {
+		IObservableList<String> target = new WritableList<>() {
 			@Override
 			public String set(int index, String element) {
 				throw new IllegalArgumentException();

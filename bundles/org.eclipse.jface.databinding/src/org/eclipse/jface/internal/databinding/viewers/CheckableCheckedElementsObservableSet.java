@@ -182,7 +182,7 @@ public class CheckableCheckedElementsObservableSet<E> extends AbstractObservable
 	public Iterator<E> iterator() {
 		getterCalled();
 		final Iterator<E> wrappedIterator = wrappedSet.iterator();
-		return new Iterator<E>() {
+		return new Iterator<>() {
 			private E last = null;
 
 			@Override

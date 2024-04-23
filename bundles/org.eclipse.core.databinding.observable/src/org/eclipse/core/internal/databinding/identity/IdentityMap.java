@@ -85,7 +85,7 @@ public class IdentityMap<K, V> implements Map<K, V> {
 	public Set<Map.Entry<K, V>> entrySet() {
 		final Set<Map.Entry<IdentityWrapper<K>, V>> wrappedEntrySet = wrappedMap
 				.entrySet();
-		return new Set<Map.Entry<K, V>>() {
+		return new Set<>() {
 			@Override
 			public boolean add(Map.Entry<K, V> o) {
 				throw new UnsupportedOperationException();
@@ -125,7 +125,7 @@ public class IdentityMap<K, V> implements Map<K, V> {
 			@Override
 			public Iterator<Map.Entry<K, V>> iterator() {
 				final Iterator<Map.Entry<IdentityWrapper<K>, V>> wrappedIterator = wrappedEntrySet.iterator();
-				return new Iterator<Map.Entry<K, V>>() {
+				return new Iterator<>() {
 					@Override
 					public boolean hasNext() {
 						return wrappedIterator.hasNext();
@@ -135,7 +135,7 @@ public class IdentityMap<K, V> implements Map<K, V> {
 					public Map.Entry<K, V> next() {
 						final Map.Entry<IdentityWrapper<K>, V> wrappedEntry = wrappedIterator
 								.next();
-						return new Map.Entry<K, V>() {
+						return new Map.Entry<>() {
 							@Override
 							public K getKey() {
 								return wrappedEntry.getKey().unwrap();
@@ -298,7 +298,7 @@ public class IdentityMap<K, V> implements Map<K, V> {
 	@Override
 	public Set<K> keySet() {
 		final Set<IdentityWrapper<K>> wrappedKeySet = wrappedMap.keySet();
-		return new Set<K>() {
+		return new Set<>() {
 			@Override
 			public boolean add(K o) {
 				throw new UnsupportedOperationException();
@@ -336,7 +336,7 @@ public class IdentityMap<K, V> implements Map<K, V> {
 			public Iterator<K> iterator() {
 				final Iterator<IdentityWrapper<K>> wrappedIterator = wrappedKeySet
 						.iterator();
-				return new Iterator<K>() {
+				return new Iterator<>() {
 					@Override
 					public boolean hasNext() {
 						return wrappedIterator.hasNext();

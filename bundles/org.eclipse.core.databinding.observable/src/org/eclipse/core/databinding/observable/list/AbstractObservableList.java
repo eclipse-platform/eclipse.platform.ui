@@ -248,7 +248,7 @@ public abstract class AbstractObservableList<E> extends AbstractList<E>
 	public Iterator<E> iterator() {
 		getterCalled();
 		final Iterator<E> wrappedIterator = super.iterator();
-		return new Iterator<E>() {
+		return new Iterator<>() {
 			@Override
 			public void remove() {
 				wrappedIterator.remove();

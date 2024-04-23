@@ -118,7 +118,7 @@ public abstract class ObservableList<E> extends AbstractObservable implements
 	public Iterator<E> iterator() {
 		getterCalled();
 		final Iterator<E> wrappedIterator = wrappedList.iterator();
-		return new Iterator<E>() {
+		return new Iterator<>() {
 
 			@Override
 			public void remove() {
@@ -205,7 +205,7 @@ public abstract class ObservableList<E> extends AbstractObservable implements
 	public ListIterator<E> listIterator(int index) {
 		getterCalled();
 		final ListIterator<E> wrappedIterator = wrappedList.listIterator(index);
-		return new ListIterator<E>() {
+		return new ListIterator<>() {
 
 			@Override
 			public int nextIndex() {
@@ -260,7 +260,7 @@ public abstract class ObservableList<E> extends AbstractObservable implements
 		if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
 			throw new IndexOutOfBoundsException();
 		}
-		return new AbstractObservableList<E>(getRealm()) {
+		return new AbstractObservableList<>(getRealm()) {
 
 			@Override
 			public Object getElementType() {

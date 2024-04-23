@@ -44,7 +44,7 @@ public class HandlerServiceHandler extends AbstractHandlerWithState {
 
 	protected final String commandId;
 	// Remove state from currentStateHandler when it goes out of scope
-	protected WeakReference<IObjectWithState> currentStateHandler = new WeakReference<IObjectWithState>(null);
+	protected WeakReference<IObjectWithState> currentStateHandler = new WeakReference<>(null);
 
 	public HandlerServiceHandler(String commandId) {
 		this.commandId = commandId;

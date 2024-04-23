@@ -38,7 +38,7 @@ import org.junit.Test;
 public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testValueType() throws Exception {
-		ComputedValue<Integer> cv = new ComputedValue<Integer>(Integer.TYPE) {
+		ComputedValue<Integer> cv = new ComputedValue<>(Integer.TYPE) {
 			@Override
 			protected Integer calculate() {
 				return Integer.valueOf(42);
@@ -46,7 +46,7 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 		};
 		assertEquals("value type should be the type that was set", Integer.TYPE, cv.getValueType());
 
-		cv = new ComputedValue<Integer>() {
+		cv = new ComputedValue<>() {
 			@Override
 			protected Integer calculate() {
 				// TODO Auto-generated method stub
@@ -59,7 +59,7 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void test_getValue() throws Exception {
-		ComputedValue<Integer> cv = new ComputedValue<Integer>() {
+		ComputedValue<Integer> cv = new ComputedValue<>() {
 			@Override
 			protected Integer calculate() {
 				return Integer.valueOf(42);
@@ -72,7 +72,7 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 	public void testDependencyValueChange() throws Exception {
 		final WritableValue<Integer> value = new WritableValue<>(Integer.valueOf(42), Integer.TYPE);
 
-		ComputedValue<Integer> cv = new ComputedValue<Integer>() {
+		ComputedValue<Integer> cv = new ComputedValue<>() {
 			@Override
 			protected Integer calculate() {
 				return value.getValue();
@@ -110,7 +110,7 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 	public void testHookAndUnhookDependantObservables() throws Exception {
 		final List<WritableValue<Integer>> values = new ArrayList<>();
 
-		ComputedValue<Integer> cv = new ComputedValue<Integer>() {
+		ComputedValue<Integer> cv = new ComputedValue<>() {
 			@Override
 			protected Integer calculate() {
 				int sum = 0;
@@ -149,7 +149,7 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testSetValueUnsupportedOperationException() throws Exception {
-		ComputedValue<Object> cv = new ComputedValue<Object>() {
+		ComputedValue<Object> cv = new ComputedValue<>() {
 			@Override
 			protected Object calculate() {
 				return null;

@@ -89,7 +89,7 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 		super(masterList.getRealm());
 		this.masterList = masterList;
 		this.detailProperty = valueProperty;
-		this.cache = new DelegatingCache<S, T, E>(getRealm(), valueProperty) {
+		this.cache = new DelegatingCache<>(getRealm(), valueProperty) {
 			@Override
 			void handleValueChange(T masterElement, E oldValue, E newValue) {
 				fireListChange(indicesOf(masterElement), oldValue, newValue);
@@ -154,7 +154,7 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 	@Override
 	public Iterator<E> iterator() {
 		getterCalled();
-		return new Iterator<E>() {
+		return new Iterator<>() {
 			Iterator<T> it = masterList.iterator();
 
 			@Override
@@ -239,7 +239,7 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 	@Override
 	public ListIterator<E> listIterator(final int index) {
 		getterCalled();
-		return new ListIterator<E>() {
+		return new ListIterator<>() {
 			ListIterator<T> it = masterList.listIterator(index);
 			T lastMasterElement;
 			E lastElement;

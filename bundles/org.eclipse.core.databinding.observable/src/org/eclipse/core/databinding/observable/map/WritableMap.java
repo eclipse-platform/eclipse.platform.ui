@@ -84,7 +84,7 @@ public class WritableMap<K, V> extends ObservableMap<K, V> {
 	 * @since 1.2
 	 */
 	public WritableMap(Realm realm, Object keyType, Object valueType) {
-		super(realm, new HashMap<K, V>());
+		super(realm, new HashMap<>());
 		this.keyType = keyType;
 		this.valueType = valueType;
 	}

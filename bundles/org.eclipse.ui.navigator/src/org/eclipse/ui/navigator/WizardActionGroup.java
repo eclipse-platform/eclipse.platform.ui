@@ -260,7 +260,7 @@ public final class WizardActionGroup extends ActionGroup {
 							descriptor.getMenuGroupId() : CommonWizardDescriptor.DEFAULT_MENU_GROUP_ID;
 			sortedWizards = groups.get(menuGroupId);
 			if(sortedWizards == null) {
-				groups.put(descriptor.getMenuGroupId(), sortedWizards = new TreeSet<IAction>(ActionComparator.INSTANCE));
+				groups.put(descriptor.getMenuGroupId(), sortedWizards = new TreeSet<>(ActionComparator.INSTANCE));
 			}
 			if ((action = getAction(descriptor.getWizardId())) != null) {
 				sortedWizards.add(action);
