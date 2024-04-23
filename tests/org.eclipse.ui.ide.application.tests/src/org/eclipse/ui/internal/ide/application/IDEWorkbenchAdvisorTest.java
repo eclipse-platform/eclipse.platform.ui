@@ -236,7 +236,6 @@ public class IDEWorkbenchAdvisorTest {
 	 */
 	private void dispatchDisplay() {
 		while (display.readAndDispatch()) {
-			;
 		}
 	}
 

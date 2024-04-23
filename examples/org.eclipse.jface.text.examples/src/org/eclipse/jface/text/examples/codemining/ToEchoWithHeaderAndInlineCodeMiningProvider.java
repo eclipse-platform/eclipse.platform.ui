@@ -47,7 +47,7 @@ public class ToEchoWithHeaderAndInlineCodeMiningProvider extends AbstractCodeMin
 						return true;
 					}
 				});
-		};
+		}
 		return CompletableFuture.completedFuture(res);
 	}
 
