@@ -51,7 +51,7 @@ public class GotoResourceAction extends Action {
 		dialog.open();
 		Object[] result = dialog.getResult();
 		if (result == null || result.length == 0
-				|| result[0] instanceof IResource == false) {
+				|| !(result[0] instanceof IResource)) {
 			return;
 		}
 

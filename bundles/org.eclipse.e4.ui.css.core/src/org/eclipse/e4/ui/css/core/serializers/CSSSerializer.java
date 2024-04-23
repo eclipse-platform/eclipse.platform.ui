@@ -128,7 +128,7 @@ public class CSSSerializer {
 	 * Generate start selector.
 	 */
 	protected void startSelector(Writer writer, String selectorName, boolean firstSelector) throws IOException {
-		if (firstSelector == false) {
+		if (!firstSelector) {
 			writer.write("\n\n");
 		}
 		writer.write(selectorName + " {");

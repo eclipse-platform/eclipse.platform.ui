@@ -194,8 +194,8 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 			argument = decodeArguments(arguments);
 			type = getTypeForKey(argument.key, argument.operator);
 			if (type.equals(String.class)) {
-				if (argument.regularExpression == false)
-					stringMatcher = new StringMatcher(argument.pattern, argument.caseSensitive == false, false);
+				if (!argument.regularExpression)
+					stringMatcher = new StringMatcher(argument.pattern, !argument.caseSensitive, false);
 				else
 					regExPattern = Pattern.compile(argument.pattern, argument.caseSensitive ? 0:Pattern.CASE_INSENSITIVE);
 			}

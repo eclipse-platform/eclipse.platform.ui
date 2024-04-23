@@ -77,11 +77,11 @@ final class ActivityPersistanceHelper {
 			// if we're turning an activity off we'll need to create its dependency tree to
 			// ensuure that all dependencies are also disabled.
 			Set<String> set = new HashSet<>(activityManager.getEnabledActivityIds());
-			if (enabled == false) {
+			if (enabled) {
+				set.add(activityId);
+			} else {
 				Set<String> dependencies = buildDependencies(activityManager, activityId);
 				set.removeAll(dependencies);
-			} else {
-				set.add(activityId);
 			}
 			support.setEnabledActivityIds(set);
 		}

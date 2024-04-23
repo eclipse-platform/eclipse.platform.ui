@@ -102,7 +102,7 @@ public class ContextModel extends CommonModel {
 		// Remove undesired contexts
 		for (ContextElement contextElement : contexts) {
 			boolean removeContext = false;
-			if (actionSets == true && contextElement.getId().equalsIgnoreCase(CONTEXT_ID_ACTION_SETS)) {
+			if (actionSets && contextElement.getId().equalsIgnoreCase(CONTEXT_ID_ACTION_SETS)) {
 				removeContext = true;
 			} else {
 				String parentId;
@@ -119,7 +119,7 @@ public class ContextModel extends CommonModel {
 				}
 			}
 
-			if (internal == true && contextElement.getId().contains(CONTEXT_ID_INTERNAL)) {
+			if (internal && contextElement.getId().contains(CONTEXT_ID_INTERNAL)) {
 				removeContext = true;
 			}
 
@@ -138,7 +138,7 @@ public class ContextModel extends CommonModel {
 			ContextElement contextElement = contextIdToFilteredContexts.get(iterator.next());
 
 			try {
-				if (actionSets == false) {
+				if (!actionSets) {
 					if (contextElement.getId().equalsIgnoreCase(CONTEXT_ID_ACTION_SETS)) {
 						restoreContext = true;
 					} else {
@@ -151,7 +151,7 @@ public class ContextModel extends CommonModel {
 			} catch (NotDefinedException e) {
 				// No parentId to check
 			}
-			if (internal == false && contextElement.getId().contains(CONTEXT_ID_INTERNAL)) {
+			if (!internal && contextElement.getId().contains(CONTEXT_ID_INTERNAL)) {
 				restoreContext = true;
 			}
 

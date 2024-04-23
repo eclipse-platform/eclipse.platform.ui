@@ -80,7 +80,7 @@ public final class Util {
 	}
 
 	public static int compare(boolean left, boolean right) {
-		return left == false ? (right == true ? -1 : 0) : 1;
+		return !left ? (right ? -1 : 0) : 1;
 	}
 
 	public static int compare(Comparable left, Comparable right) {

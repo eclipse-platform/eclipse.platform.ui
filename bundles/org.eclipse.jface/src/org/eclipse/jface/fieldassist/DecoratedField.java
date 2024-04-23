@@ -776,7 +776,7 @@ public class DecoratedField {
 			data.label.setImage(decoration.getImage());
 			// If the decoration is being shown, and a hover is active,
 			// update the hover text to display the new description.
-			if (data.label.getVisible() == true && hover != null) {
+			if (data.label.getVisible() && hover != null) {
 				showHoverText(decoration.getDescription(), data.label);
 			}
 		}

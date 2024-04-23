@@ -180,7 +180,7 @@ public class WorkingSetTypePage extends WizardPage {
 	 */
 	private void handleSelectionChanged() {
 		IStructuredSelection selection = typesListViewer.getStructuredSelection();
-		boolean hasSelection = selection != null && selection.isEmpty() == false;
+		boolean hasSelection = selection != null && !selection.isEmpty();
 
 		WorkingSetDescriptor descriptor = getSelectedWorkingSet();
 		setDescription(descriptor == null ? "" : descriptor.getDescription()); //$NON-NLS-1$

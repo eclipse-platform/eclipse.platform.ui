@@ -72,10 +72,10 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	@Test
 	public void testGet_SetEditorAreaVisible() throws Throwable {
 		fActivePage.setEditorAreaVisible(true);
-		assertTrue(fActivePage.isEditorAreaVisible() == true);
+		assertTrue(fActivePage.isEditorAreaVisible());
 
 		fActivePage.setEditorAreaVisible(false);
-		assertTrue(fActivePage.isEditorAreaVisible() == false);
+		assertFalse(fActivePage.isEditorAreaVisible());
 	}
 
 	@Test

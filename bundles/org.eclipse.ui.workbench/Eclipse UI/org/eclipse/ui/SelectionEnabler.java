@@ -255,7 +255,7 @@ public final class SelectionEnabler {
 		Object obj = sel;
 		int count = sel.isEmpty() ? 0 : 1;
 
-		if (verifySelectionCount(count) == false) {
+		if (!verifySelectionCount(count)) {
 			return false;
 		}
 
@@ -270,7 +270,7 @@ public final class SelectionEnabler {
 		}
 		if (obj instanceof IAdaptable) {
 			IAdaptable element = (IAdaptable) obj;
-			if (verifyElement(element) == false) {
+			if (!verifyElement(element)) {
 				return false;
 			}
 		} else {
@@ -285,7 +285,7 @@ public final class SelectionEnabler {
 	 * registry for this action.
 	 */
 	private boolean isEnabledFor(ISelection sel, int count) {
-		if (verifySelectionCount(count) == false) {
+		if (!verifySelectionCount(count)) {
 			return false;
 		}
 
@@ -313,7 +313,7 @@ public final class SelectionEnabler {
 	private boolean isEnabledFor(IStructuredSelection ssel) {
 		int count = ssel.size();
 
-		if (verifySelectionCount(count) == false) {
+		if (!verifySelectionCount(count)) {
 			return false;
 		}
 
@@ -329,7 +329,7 @@ public final class SelectionEnabler {
 		for (Object obj : ssel) {
 			if (obj instanceof IAdaptable) {
 				IAdaptable element = (IAdaptable) obj;
-				if (verifyElement(element) == false) {
+				if (!verifyElement(element)) {
 					return false;
 				}
 			} else {
@@ -475,7 +475,7 @@ public final class SelectionEnabler {
 					break;
 				}
 			}
-			if (match == true) {
+			if (match) {
 				break;
 			}
 			// get the superclass
@@ -493,7 +493,7 @@ public final class SelectionEnabler {
 			return true;
 		}
 		for (SelectionClass sc : classes) {
-			if (verifyClass(element, sc.className) == false) {
+			if (!verifyClass(element, sc.className)) {
 				continue;
 			}
 			if (sc.nameFilter == null) {

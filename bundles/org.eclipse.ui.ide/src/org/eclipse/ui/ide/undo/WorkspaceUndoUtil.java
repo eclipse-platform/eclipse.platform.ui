@@ -353,8 +353,7 @@ public class WorkspaceUndoUtil {
 							iterationProgress.split(1),
 							uiInfo, false);
 					iterationProgress.setWorkRemaining(100);
-					if ((createLinks || createVirtual) && (source.isLinked() == false)
-							&& (source.isVirtual() == false)) {
+					if ((createLinks || createVirtual) && !source.isLinked() && !source.isVirtual()) {
 						IFolder folder = workspaceRoot.getFolder(destinationPath);
 						if (createVirtual) {
 							folder.create(IResource.VIRTUAL, true, iterationProgress.split(1));
@@ -377,8 +376,7 @@ public class WorkspaceUndoUtil {
 			} else {
 				if (existing != null) {
 					// source is a FILE and destination EXISTS
-					if ((createLinks || createVirtual)
-							&& (source.isLinked() == false)) {
+					if ((createLinks || createVirtual) && !source.isLinked()) {
 						// we create a linked file, and overwrite the
 						// destination
 						IResourceSnapshot<? extends IResource>[] deleted = delete(
@@ -440,8 +438,7 @@ public class WorkspaceUndoUtil {
 						parentPath = destination.removeLastSegments(1);
 					}
 					IContainer generatedParent = generateContainers(parentPath);
-					if ((createLinks || createVirtual)
-							&& (source.isLinked() == false)) {
+					if ((createLinks || createVirtual) && !source.isLinked()) {
 						if (source.getType() == IResource.FILE) {
 							IFile file = workspaceRoot.getFile(destinationPath);
 							file.createLink(createRelativePath(

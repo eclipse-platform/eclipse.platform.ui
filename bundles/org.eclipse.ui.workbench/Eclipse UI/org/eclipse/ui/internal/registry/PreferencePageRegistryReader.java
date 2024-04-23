@@ -148,7 +148,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 */
 	@Override
 	protected boolean readElement(IConfigurationElement element) {
-		if (element.getName().equals(TAG_PAGE) == false) {
+		if (!element.getName().equals(TAG_PAGE)) {
 			return false;
 		}
 		WorkbenchPreferenceNode node = createNode(element);

@@ -194,8 +194,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 			for (IResource resource : resourceData) {
 				// make sure all resource data are open projects
 				// can paste open projects regardless of selection
-				if (resource.getType() != IResource.PROJECT
-						|| ((IProject) resource).isOpen() == false) {
+				if (resource.getType() != IResource.PROJECT || !((IProject) resource).isOpen()) {
 					return false;
 				}
 			}

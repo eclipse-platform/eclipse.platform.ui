@@ -181,7 +181,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 * @param statusAdapter the status adapter
 	 */
 	public void addStatusAdapter(final StatusAdapter statusAdapter, final boolean modal) {
-		if (ErrorDialog.AUTOMATED_MODE == true) {
+		if (ErrorDialog.AUTOMATED_MODE) {
 			return;
 		}
 		try {

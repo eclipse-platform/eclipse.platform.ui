@@ -418,12 +418,12 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private static String getBindingUserText(BindingElement bindingElement) {
 		if (bindingElement.getUserDelta().intValue() == Binding.USER) {
-			if (bindingElement.getConflict().equals(Boolean.TRUE)) {
+			if (bindingElement.getConflict()) {
 				return "CU"; //$NON-NLS-1$
 			}
 			return " U"; //$NON-NLS-1$
 		}
-		if (bindingElement.getConflict().equals(Boolean.TRUE)) {
+		if (bindingElement.getConflict()) {
 			return "C "; //$NON-NLS-1$
 		}
 		return " "; //$NON-NLS-1$

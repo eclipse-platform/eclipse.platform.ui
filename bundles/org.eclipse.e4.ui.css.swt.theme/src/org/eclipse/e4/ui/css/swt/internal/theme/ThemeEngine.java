@@ -348,7 +348,7 @@ public class ThemeEngine implements IThemeEngine {
 			if (stylesheetPluginExtensionList != null && stylesheetPluginExtensionList.size() > 0) {
 				s = new ArrayList<>(s);
 				for (String styleSheet : stylesheetPluginExtensionList) {
-					if (s.contains(styleSheet) == false) {
+					if (!s.contains(styleSheet)) {
 						s.add(styleSheet);
 					}
 				}

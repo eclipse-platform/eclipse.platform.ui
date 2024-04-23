@@ -133,7 +133,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 			}
 		}
 
-		if (result == true) {
+		if (result) {
 			actions = currActions;
 
 			if (toolbarMenu != null) {

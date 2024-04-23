@@ -515,7 +515,7 @@ public abstract class AbstractWorkingSetManager extends EventManager
 			WorkbenchPlugin.log("Unable to restore working set - cannot instantiate working set: " + factoryID); //$NON-NLS-1$
 			return null;
 		}
-		if ((adaptable[0] instanceof IWorkingSet) == false) {
+		if (!(adaptable[0] instanceof IWorkingSet)) {
 			WorkbenchPlugin.log("Unable to restore working set - element is not an IWorkingSet: " + factoryID); //$NON-NLS-1$
 			return null;
 		}

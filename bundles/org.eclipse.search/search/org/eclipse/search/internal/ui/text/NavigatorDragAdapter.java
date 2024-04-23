@@ -72,7 +72,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 	public void dragFinished(DragSourceEvent event) {
 		LocalSelectionTransfer.getTransfer().setSelection(null);
 
-		if (event.doit == false) {
+		if (!event.doit) {
 			return;
 		}
 

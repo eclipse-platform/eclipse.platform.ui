@@ -223,7 +223,7 @@ public class DesktopFileWriter {
 	private void assertDesktopEntryPresent(Map<String, String> props) {
 		Iterator<Entry<String, String>> iterator = props.entrySet().iterator();
 		String firstLine = iterator.next().getKey();
-		if ("[Desktop Entry]".equals(firstLine) == false) { //$NON-NLS-1$
+		if (!"[Desktop Entry]".equals(firstLine)) { //$NON-NLS-1$
 			throw new IllegalStateException("File seems not to be a 'desktop' file"); //$NON-NLS-1$
 		}
 	}
