@@ -121,8 +121,8 @@ public class ThirdPage extends FormPage {
 			String desc, int numColumns) {
 		final ScrolledForm form = mform.getForm();
 		FormToolkit toolkit = mform.getToolkit();
-		Section section = toolkit.createSection(form.getBody(), Section.TWISTIE
-				| Section.SHORT_TITLE_BAR | Section.DESCRIPTION | Section.EXPANDED);
+		Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TWISTIE
+				| ExpandableComposite.SHORT_TITLE_BAR | Section.DESCRIPTION | ExpandableComposite.EXPANDED);
 		section.setText(title);
 		section.setDescription(desc);
 		Composite client = toolkit.createComposite(section);

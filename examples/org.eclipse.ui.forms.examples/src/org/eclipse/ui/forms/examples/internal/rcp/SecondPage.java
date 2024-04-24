@@ -61,8 +61,8 @@ public class SecondPage extends FormPage {
 
 	private Section createTableSection(final ScrolledForm form,
 			FormToolkit toolkit, String title, boolean addTextClient) {
-		Section section = toolkit.createSection(form.getBody(), Section.TWISTIE
-				| Section.TITLE_BAR);
+		Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TWISTIE
+				| ExpandableComposite.TITLE_BAR);
 		section.setActiveToggleColor(toolkit.getHyperlinkGroup()
 				.getActiveForeground());
 		section.setToggleColor(toolkit.getColors().getColor(

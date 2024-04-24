@@ -18,7 +18,7 @@ package org.eclipse.e4.ui.tests.css.swt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-import org.eclipse.e4.ui.css.swt.dom.CTabFolderElement;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -304,14 +304,14 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		ToolBar barB = toolBars[1];
 		ToolBar barC = toolBars[2];
 
-		CTabFolderElement.setCSSClass(barA.getParent(), "special");
+		WidgetElement.setCSSClass(barA.getParent(), "special");
 		engine.applyStyles(barA.getShell(), true);
 
 		assertEquals(RED, barA.getBackground().getRGB());
 		assertEquals(GREEN, barB.getBackground().getRGB());
 		assertEquals(BLUE, barC.getBackground().getRGB());
 
-		CTabFolderElement.setCSSClass(barA.getParent(), "extraordinary");
+		WidgetElement.setCSSClass(barA.getParent(), "extraordinary");
 		engine.applyStyles(barA.getShell(), true);
 
 		assertEquals(WHITE, barA.getBackground().getRGB());

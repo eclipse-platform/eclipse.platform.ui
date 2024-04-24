@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.SectionFactory;
 import org.eclipse.ui.forms.widgets.Twistie;
@@ -69,7 +70,7 @@ public class SectionFactoryTest {
 	@Test
 	public void addsSectionExpandListeners() {
 		final ExpansionEvent[] raisedEvents = new ExpansionEvent[1];
-		Section section = SectionFactory.newSection(Section.TWISTIE).onExpanded(e -> raisedEvents[0] = e)
+		Section section = SectionFactory.newSection(ExpandableComposite.TWISTIE).onExpanded(e -> raisedEvents[0] = e)
 				.create(shell);
 		Control twistie = section.getChildren()[0];
 		assertTrue("Expected a twistie", twistie instanceof Twistie);
@@ -81,7 +82,7 @@ public class SectionFactoryTest {
 	@Test
 	public void addsSectionExpandingListener() {
 		final ExpansionEvent[] raisedEvents = new ExpansionEvent[1];
-		Section section = SectionFactory.newSection(Section.TWISTIE).onExpanding(e -> raisedEvents[0] = e)
+		Section section = SectionFactory.newSection(ExpandableComposite.TWISTIE).onExpanding(e -> raisedEvents[0] = e)
 				.create(shell);
 		Control twistie = section.getChildren()[0];
 		assertTrue("Expected a twistie", twistie instanceof Twistie);

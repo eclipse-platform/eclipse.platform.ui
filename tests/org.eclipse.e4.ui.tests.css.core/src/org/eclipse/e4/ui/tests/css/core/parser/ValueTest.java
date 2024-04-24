@@ -130,11 +130,11 @@ public class ValueTest {
 		}
 		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
 				((Measure) list.item(0)).getPrimitiveType());
-		assertEquals(CSSPrimitiveValue.CSS_CUSTOM,
+		assertEquals(CSSValue.CSS_CUSTOM,
 				((Measure) list.item(1)).getPrimitiveType());
 		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
 				((Measure) list.item(2)).getPrimitiveType());
-		assertEquals(CSSPrimitiveValue.CSS_CUSTOM,
+		assertEquals(CSSValue.CSS_CUSTOM,
 				((Measure) list.item(3)).getPrimitiveType());
 		assertEquals(CSSPrimitiveValue.CSS_NUMBER,
 				((Measure) list.item(4)).getPrimitiveType());
