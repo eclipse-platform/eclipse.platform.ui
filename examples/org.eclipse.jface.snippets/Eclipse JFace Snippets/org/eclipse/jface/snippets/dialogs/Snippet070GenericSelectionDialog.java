@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.jface.dialogs.AbstractSelectionDialog;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,6 +26,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.widgets.WidgetFactory;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -49,7 +49,7 @@ public class Snippet070GenericSelectionDialog {
 				"SelectionDialog with generics", "Select one or more of the Model elements");
 
 		int open = genericSelectionDialog.open();
-		if (Dialog.OK == open) {
+		if (Window.OK == open) {
 			Collection<Model> result = genericSelectionDialog.getResult();
 			text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			text.setText(result.stream().map(Object::toString)

@@ -40,6 +40,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -126,7 +127,7 @@ public class ErrorMessagesPage extends FormPage {
 		TableWrapLayout layout = new TableWrapLayout();
 		form.getBody().setLayout(layout);
 		Section section = toolkit.createSection(form.getBody(),
-				Section.TITLE_BAR);
+				ExpandableComposite.TITLE_BAR);
 		section.setText("Local field messages");
 		Composite sbody = toolkit.createComposite(section);
 		section.setClient(sbody);

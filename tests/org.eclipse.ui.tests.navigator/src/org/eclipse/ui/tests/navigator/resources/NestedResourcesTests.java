@@ -19,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.internal.resources.Marker;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -160,7 +159,7 @@ public class NestedResourcesTests {
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
 		}, monitor);
 		assertTrue(DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
-				() -> Marker.SEVERITY_WARNING == labelProvider.getHighestProblemSeverity(parentProject)));
+				() -> IMarker.SEVERITY_WARNING == labelProvider.getHighestProblemSeverity(parentProject)));
 		//
 		root.getWorkspace().run(aMonitor -> {
 			IMarker marker = secondChildProject.createMarker(IMarker.PROBLEM);

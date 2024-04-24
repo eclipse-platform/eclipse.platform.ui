@@ -155,7 +155,7 @@ public class FormView extends ViewPart {
 				form.reflow(true);
 			}
 		});
-		Section section = toolkit.createSection(form.getBody(), Section.DESCRIPTION|Section.TWISTIE|Section.EXPANDED);
+		Section section = toolkit.createSection(form.getBody(), Section.DESCRIPTION|ExpandableComposite.TWISTIE|ExpandableComposite.EXPANDED);
 		td = new TableWrapData(TableWrapData.FILL);
 		td.colspan = 2;
 		section.setLayoutData(td);

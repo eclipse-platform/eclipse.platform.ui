@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -502,7 +503,7 @@ public class NewStylePage extends FormPage {
 
 	private void addToolBar(FormToolkit toolkit, ScrolledForm form, boolean add) {
 		if (add) {
-			Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
+			Action haction = new Action("hor", IAction.AS_RADIO_BUTTON) {
 				@Override
 				public void run() {
 				}
@@ -512,7 +513,7 @@ public class NewStylePage extends FormPage {
 			haction.setImageDescriptor(ExamplesPlugin.getDefault()
 					.getImageRegistry().getDescriptor(
 							ExamplesPlugin.IMG_HORIZONTAL));
-			Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) {
+			Action vaction = new Action("ver", IAction.AS_RADIO_BUTTON) {
 				@Override
 				public void run() {
 				}
@@ -542,7 +543,7 @@ public class NewStylePage extends FormPage {
 
 	private void addMenu(FormToolkit toolkit, ScrolledForm form, boolean add) {
 		if (add) {
-			Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
+			Action haction = new Action("hor", IAction.AS_RADIO_BUTTON) {
 				@Override
 				public void run() {
 				}
@@ -553,7 +554,7 @@ public class NewStylePage extends FormPage {
 			haction.setImageDescriptor(ExamplesPlugin.getDefault()
 					.getImageRegistry().getDescriptor(
 							ExamplesPlugin.IMG_HORIZONTAL));
-			Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) {
+			Action vaction = new Action("ver", IAction.AS_RADIO_BUTTON) {
 				@Override
 				public void run() {
 				}

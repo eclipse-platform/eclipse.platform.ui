@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.ToggleHyperlink;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class SectionTest extends CSSSWTTestCase {
 		Composite compositeToTest = new Composite(shell, SWT.NONE);
 		compositeToTest.setLayout(new FillLayout());
 
-		Section test = new Section(shell, Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
+		Section test = new Section(shell, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | ExpandableComposite.EXPANDED);
 
 		// Apply styles
 		engine.applyStyles(shell, true);

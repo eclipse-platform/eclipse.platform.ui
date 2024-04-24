@@ -108,7 +108,7 @@ public class FreeFormPage extends FormPage {
 		Section section =
 			toolkit.createSection(
 				form.getBody(),
-				Section.TWISTIE | Section.DESCRIPTION);
+				ExpandableComposite.TWISTIE | Section.DESCRIPTION);
 		section.setActiveToggleColor(
 			toolkit.getHyperlinkGroup().getActiveForeground());
 		section.setToggleColor(

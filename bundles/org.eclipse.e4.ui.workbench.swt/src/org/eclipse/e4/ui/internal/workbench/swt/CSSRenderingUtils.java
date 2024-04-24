@@ -232,7 +232,7 @@ public class CSSRenderingUtils {
 			return null;
 		}
 		if (classId != null)
-			ControlElement.setCSSClass(styleControl, classId);
+			WidgetElement.setCSSClass(styleControl, classId);
 
 		CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
 				.getComputedStyle(tempEment, "");
