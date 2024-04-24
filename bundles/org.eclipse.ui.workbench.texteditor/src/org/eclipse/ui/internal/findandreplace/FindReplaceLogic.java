@@ -588,12 +588,11 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		this.isTargetEditable = canEditTarget;
 
 		if (this.target != newTarget) {
-			if (newTarget != null && newTarget instanceof IFindReplaceTargetExtension)
-				((IFindReplaceTargetExtension) newTarget).endSession();
+			if (this.target instanceof IFindReplaceTargetExtension)
+				((IFindReplaceTargetExtension) this.target).endSession();
 
 			this.target = newTarget;
-			if (newTarget != null)
-				isTargetSupportingRegEx = newTarget instanceof IFindReplaceTargetExtension3;
+			isTargetSupportingRegEx = newTarget instanceof IFindReplaceTargetExtension3;
 
 			if (newTarget instanceof IFindReplaceTargetExtension) {
 				((IFindReplaceTargetExtension) newTarget).beginSession();
