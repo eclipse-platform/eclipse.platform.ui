@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.events.DisposeEvent;
@@ -39,25 +38,21 @@ public class WorkbenchViewerSetup {
 
 	static Map<DisposeListener, ColumnViewer> registeredViewers = new ConcurrentHashMap<>();
 
-	static final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			if (!IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT.equals(event.getProperty())) {
-				return;
-			}
-			int itemsLimit = getItemsLimit();
-			registeredViewers.values().forEach(v -> {
-				v.setDisplayIncrementally(itemsLimit);
-				Object input = v.getInput();
-				if (input != null) {
-					v.setInput(null);
-					v.setInput(input);
-				} else {
-					v.refresh();
-				}
-			});
+	static final IPropertyChangeListener propertyChangeListener = event -> {
+		if (!IWorkbenchPreferenceConstants.LARGE_VIEW_LIMIT.equals(event.getProperty())) {
+			return;
 		}
+		int itemsLimit = getItemsLimit();
+		registeredViewers.values().forEach(v -> {
+			v.setDisplayIncrementally(itemsLimit);
+			Object input = v.getInput();
+			if (input != null) {
+				v.setInput(null);
+				v.setInput(input);
+			} else {
+				v.refresh();
+			}
+		});
 	};
 
 	static {

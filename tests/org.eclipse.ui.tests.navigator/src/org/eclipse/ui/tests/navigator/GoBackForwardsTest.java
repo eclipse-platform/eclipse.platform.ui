@@ -178,19 +178,14 @@ public class GoBackForwardsTest extends UITestCase {
 	}
 
 	private Condition currentNavigationHistoryLocationCondition(String editorId, boolean selection) {
-		return new Condition() {
-
-			@Override
-			public boolean compute() {
-				INavigationLocation location = EditorTestHelper.getActiveWorkbenchWindow().getActivePage()
-						.getNavigationHistory().getCurrentLocation();
-				if (location instanceof TextSelectionNavigationLocation) {
-					return editorId.equals(location.getId())
-							&& (!selection || SELECTION_STRING.equals(location.toString()));
-				}
-				return false;
+		return () -> {
+			INavigationLocation location = EditorTestHelper.getActiveWorkbenchWindow().getActivePage()
+					.getNavigationHistory().getCurrentLocation();
+			if (location instanceof TextSelectionNavigationLocation) {
+				return editorId.equals(location.getId())
+						&& (!selection || SELECTION_STRING.equals(location.toString()));
 			}
-
+			return false;
 		};
 	}
 

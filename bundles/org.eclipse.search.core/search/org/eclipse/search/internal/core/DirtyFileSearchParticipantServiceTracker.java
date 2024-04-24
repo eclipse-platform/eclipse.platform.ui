@@ -16,7 +16,6 @@ package org.eclipse.search.internal.core;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,17 +44,14 @@ public class DirtyFileSearchParticipantServiceTracker
 		ServiceReference<DirtyFileProvider>[] allRefs = getServiceReferences();
 		if (allRefs != null && allRefs.length > 0) {
 			List<ServiceReference<DirtyFileProvider>> l = Arrays.asList(allRefs);
-			Collections.sort(l, new Comparator<ServiceReference<DirtyFileProvider>>() {
-				@Override
-				public int compare(ServiceReference<DirtyFileProvider> o1, ServiceReference<DirtyFileProvider> o2) {
-					Object o1Weight = o1.getProperty(PROPERTY_WEIGHT);
-					Object o2Weight = o2.getProperty(PROPERTY_WEIGHT);
-					int o1Val = o1Weight == null ? 0
-							: o1Weight instanceof Integer ? ((Integer) o1Weight).intValue() : 0;
-					int o2Val = o2Weight == null ? 0
-							: o2Weight instanceof Integer ? ((Integer) o2Weight).intValue() : 0;
-					return o2Val - o1Val;
-				}
+			Collections.sort(l, (o1, o2) -> {
+				Object o1Weight = o1.getProperty(PROPERTY_WEIGHT);
+				Object o2Weight = o2.getProperty(PROPERTY_WEIGHT);
+				int o1Val = o1Weight == null ? 0
+						: o1Weight instanceof Integer ? ((Integer) o1Weight).intValue() : 0;
+				int o2Val = o2Weight == null ? 0
+						: o2Weight instanceof Integer ? ((Integer) o2Weight).intValue() : 0;
+				return o2Val - o1Val;
 			});
 			if (l.size() > 0) {
 				return getService(l.get(0));

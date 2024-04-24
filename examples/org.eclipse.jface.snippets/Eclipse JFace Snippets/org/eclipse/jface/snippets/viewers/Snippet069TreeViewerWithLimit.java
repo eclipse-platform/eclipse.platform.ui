@@ -17,11 +17,9 @@ package org.eclipse.jface.snippets.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -199,13 +197,9 @@ public class Snippet069TreeViewerWithLimit {
 		root = createModel();
 		viewer.setInput(root);
 
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (event.getSelection() instanceof TreeSelection) {
-					curSel = ((TreeSelection) event.getSelection()).getFirstElement();
-				}
+		viewer.addSelectionChangedListener(event -> {
+			if (event.getSelection() instanceof TreeSelection) {
+				curSel = ((TreeSelection) event.getSelection()).getFirstElement();
 			}
 		});
 

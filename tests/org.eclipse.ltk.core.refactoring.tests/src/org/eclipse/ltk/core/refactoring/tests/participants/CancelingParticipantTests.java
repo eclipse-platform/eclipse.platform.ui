@@ -133,12 +133,7 @@ public class CancelingParticipantTests {
 
 	@Before
 	public void setUp() {
-		fLogListener= new ILogListener() {
-			@Override
-			public void logging(IStatus status, String plugin) {
-				fLogEntries.add(status);
-			}
-		};
+		fLogListener= (status, plugin) -> fLogEntries.add(status);
 		Platform.addLogListener(fLogListener);
 		fLogEntries= new ArrayList<>();
 	}

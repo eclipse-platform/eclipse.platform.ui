@@ -152,30 +152,26 @@ public class NoFreezeWhileWaitingForRuleTest {
 	private Job spinRuleBlockingJob() throws InterruptedException {
 		CountDownLatch jobStarted = new CountDownLatch(1);
 		long timeout = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(20);
-		Job job = Job.create("Runs until notified", new ICoreRunnable() {
-
-			@Override
-			public void run(IProgressMonitor monitor) {
-				Job.getJobManager().beginRule(rule, ruleMonitor);
-				jobStarted.countDown();
-				try {
-					while (!eventQueueLatch.await(1, TimeUnit.SECONDS)) {
-						if (System.currentTimeMillis() > timeout) {
-							ruleMonitor.setCanceled(true);
-							break;
-						}
-						Thread.yield();
+		ICoreRunnable ruleBlockingRunnable = monitor -> {
+			Job.getJobManager().beginRule(rule, ruleMonitor);
+			jobStarted.countDown();
+			try {
+				while (!eventQueueLatch.await(1, TimeUnit.SECONDS)) {
+					if (System.currentTimeMillis() > timeout) {
+						ruleMonitor.setCanceled(true);
+						break;
 					}
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				} finally {
-					Job.getJobManager().endRule(rule);
+					Thread.yield();
 				}
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			} finally {
+				Job.getJobManager().endRule(rule);
 			}
-		});
+		};
+		Job job = Job.create("Runs until notified", ruleBlockingRunnable);
 		job.schedule();
 		assertTrue("Job was not started", jobStarted.await(10, TimeUnit.SECONDS));
 		return job;
-
 	}
 }

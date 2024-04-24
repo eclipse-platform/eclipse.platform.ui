@@ -1054,21 +1054,18 @@ public class CopyFilesAndFoldersOperation {
 		final String returnValue[] = { "" }; //$NON-NLS-1$
 
 		messageShell.getDisplay().syncExec(() -> {
-			IInputValidator validator = new IInputValidator() {
-				@Override
-				public String isValid(String string) {
-					if (resource.getName().equals(string)) {
-						return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_nameMustBeDifferent;
-					}
-					IStatus status = workspace.validateName(string, resource.getType());
-					if (!status.isOK()) {
-						return status.getMessage();
-					}
-					if (workspace.getRoot().exists(prefix.append(string))) {
-						return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_nameExists;
-					}
-					return null;
+			IInputValidator validator = string -> {
+				if (resource.getName().equals(string)) {
+					return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_nameMustBeDifferent;
 				}
+				IStatus status = workspace.validateName(string, resource.getType());
+				if (!status.isOK()) {
+					return status.getMessage();
+				}
+				if (workspace.getRoot().exists(prefix.append(string))) {
+					return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_nameExists;
+				}
+				return null;
 			};
 
 			final String initial = getAutoNewNameFor(originalName, workspace).lastSegment();
@@ -1330,41 +1327,38 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private void performFileImport(IFileStore[] stores, IContainer target,
 			IProgressMonitor monitor) {
-		IOverwriteQuery query = new IOverwriteQuery() {
-			@Override
-			public String queryOverwrite(String pathString) {
-				if (alwaysOverwrite) {
-					return ALL;
-				}
-
-				final String returnCode[] = { CANCEL };
-				final String msg = NLS.bind(IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteQuestion,
-						pathString);
-				final String[] options = { IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteButtonLabel,
-						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteAllButtonLabel,
-						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_dontOverwriteButtonLabel,
-						IDialogConstants.CANCEL_LABEL };
-				messageShell.getDisplay().syncExec(() -> {
-					MessageDialog dialog = new MessageDialog(messageShell,
-							IDEWorkbenchMessages.CopyFilesAndFoldersOperation_question, null, msg,
-							MessageDialog.QUESTION, 0, options) {
-						@Override
-						protected int getShellStyle() {
-							return super.getShellStyle() | SWT.SHEET;
-						}
-					};
-					dialog.open();
-					int returnVal = dialog.getReturnCode();
-					String[] returnCodes = { YES, ALL, NO, CANCEL };
-					returnCode[0] = returnVal == -1 ? CANCEL : returnCodes[returnVal];
-				});
-				if (returnCode[0] == ALL) {
-					alwaysOverwrite = true;
-				} else if (returnCode[0] == CANCEL) {
-					canceled = true;
-				}
-				return returnCode[0];
+		IOverwriteQuery query = pathString -> {
+			if (alwaysOverwrite) {
+				return IOverwriteQuery.ALL;
 			}
+
+			final String returnCode[] = { IOverwriteQuery.CANCEL };
+			final String msg = NLS.bind(IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteQuestion,
+					pathString);
+			final String[] options = { IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteButtonLabel,
+					IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteAllButtonLabel,
+					IDEWorkbenchMessages.CopyFilesAndFoldersOperation_dontOverwriteButtonLabel,
+					IDialogConstants.CANCEL_LABEL };
+			messageShell.getDisplay().syncExec(() -> {
+				MessageDialog dialog = new MessageDialog(messageShell,
+						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_question, null, msg,
+						MessageDialog.QUESTION, 0, options) {
+					@Override
+					protected int getShellStyle() {
+						return super.getShellStyle() | SWT.SHEET;
+					}
+				};
+				dialog.open();
+				int returnVal = dialog.getReturnCode();
+				String[] returnCodes = { IOverwriteQuery.YES, IOverwriteQuery.ALL, IOverwriteQuery.NO, IOverwriteQuery.CANCEL };
+				returnCode[0] = returnVal == -1 ? IOverwriteQuery.CANCEL : returnCodes[returnVal];
+			});
+			if (returnCode[0] == IOverwriteQuery.ALL) {
+				alwaysOverwrite = true;
+			} else if (returnCode[0] == IOverwriteQuery.CANCEL) {
+				canceled = true;
+			}
+			return returnCode[0];
 		};
 
 		ImportOperation op = new ImportOperation(target.getFullPath(),
