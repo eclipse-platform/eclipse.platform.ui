@@ -172,25 +172,20 @@ public class Snippet047VirtualBigTreeViewer {
 
 	public static void main(String[] args) {
 
-		Thread thread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-
-				try {
-					long last = 0;
-					while (true) {
-						TimeUnit.SECONDS.sleep(1);
-						long current = rendered.get();
-						if (current != last) {
-							last = current;
-							System.out.println("Total render requests: " + current + ", " + updated.get()
-									+ " update elements, " + childcount.get() + " update childcounts");
-						}
+		Thread thread = new Thread(() -> {
+			try {
+				long last = 0;
+				while (true) {
+					TimeUnit.SECONDS.sleep(1);
+					long current = rendered.get();
+					if (current != last) {
+						last = current;
+						System.out.println("Total render requests: " + current + ", " + updated.get()
+								+ " update elements, " + childcount.get() + " update childcounts");
 					}
-				} catch (InterruptedException e) {
-					return;
 				}
+			} catch (InterruptedException e) {
+				return;
 			}
 		});
 		thread.setDaemon(true);

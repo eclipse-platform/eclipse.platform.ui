@@ -29,8 +29,6 @@ import org.junit.Test;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -54,7 +52,6 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.IAnnotationAccess;
-import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
@@ -109,12 +106,7 @@ public class CodeMiningProjectionViewerTest {
 		fViewer.setCodeMiningAnnotationPainter(painter);
 		// projection/folding
 		fViewer.setDocument(new Document(), new ProjectionAnnotationModel());
-		ProjectionSupport projectionSupport = new ProjectionSupport(fViewer, annotationAccess, new ISharedTextColors() {
-			@Override
-			public Color getColor(RGB rgb) {
-				return null;
-			}
-		});
+		ProjectionSupport projectionSupport = new ProjectionSupport(fViewer, annotationAccess, rgb -> null);
 		projectionSupport.install();
 		fViewer.doOperation(ProjectionViewer.TOGGLE);
 	}

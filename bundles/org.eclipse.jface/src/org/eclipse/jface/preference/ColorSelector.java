@@ -27,7 +27,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
@@ -176,30 +175,28 @@ public class ColorSelector extends EventManager {
 		}
 
 		final Display display = fButton.getDisplay();
-
-		fImage = new Image(display, new ImageDataProvider() {
-
-			@Override
-			public ImageData getImageData(int zoom) {
-				Image image = new Image(display, fExtent.x, fExtent.y);
-				GC gc = new GC(image);
-
-				RGB color = getColorValue();
-				gc.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_BORDER));
-				if (color != null) {
-					gc.setBackground(new Color(display, color));
-					gc.fillRectangle(image.getBounds());
-				}
-				gc.setLineWidth(2);
-				gc.drawRectangle(image.getBounds());
-				gc.dispose();
-
-				ImageData data = image.getImageData(zoom);
-				image.dispose();
-				return data;
-			}
-		});
+		fImage = new Image(display, this::getImageData);
 		fButton.setImage(fImage);
+	}
+
+	private ImageData getImageData(int zoom) {
+		final Display display = fButton.getDisplay();
+		Image image = new Image(display, fExtent.x, fExtent.y);
+		GC gc = new GC(image);
+
+		RGB color = getColorValue();
+		gc.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_BORDER));
+		if (color != null) {
+			gc.setBackground(new Color(display, color));
+			gc.fillRectangle(image.getBounds());
+		}
+		gc.setLineWidth(2);
+		gc.drawRectangle(image.getBounds());
+		gc.dispose();
+
+		ImageData data = image.getImageData(zoom);
+		image.dispose();
+		return data;
 	}
 
 	/**
