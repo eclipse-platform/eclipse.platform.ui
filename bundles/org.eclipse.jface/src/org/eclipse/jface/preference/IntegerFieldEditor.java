@@ -130,8 +130,8 @@ public class IntegerFieldEditor extends StringFieldEditor {
 	protected void doStore() {
 		Text text = getTextControl();
 		if (text != null) {
-			Integer i = Integer.valueOf(text.getText());
-			getPreferenceStore().setValue(getPreferenceName(), i.intValue());
+			int i = Integer.parseInt(text.getText());
+			getPreferenceStore().setValue(getPreferenceName(), i);
 		}
 	}
 
