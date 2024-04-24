@@ -103,18 +103,38 @@ public class FilteredTree extends Composite {
 	private static final long SOFT_MAX_EXPAND_TIME = 200;
 
 	/**
+	 * Time delay after which the search is triggered, acting as a debounce
+	 * mechanism.
+	 */
+	private final long refreshJobDelayInMillis;
+
+	/**
+	 * Default time for refresh job delay in ms
+	 */
+	private static final long DEFAULT_REFRESH_TIME = 200;
+
+	/**
 	 * Create a new instance of the receiver.
 	 *
-	 * @param parent
-	 *            the parent <code>Composite</code>
-	 * @param treeStyle
-	 *            the style bits for the <code>Tree</code>
-	 * @param filter
-	 *            the filter to be used
+	 * @param parent           the parent <code>Composite</code>
+	 * @param treeStyle        the style bits for the <code>Tree</code>
+	 * @param filter           the filter to be used
+	 * @param refreshDelayTime refresh delay in ms, the time to expand the tree
+	 *                         after debounce
+	 * @since 1.5
+	 */
+	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter, long refreshDelayTime) {
+		super(parent, SWT.NONE);
+		this.refreshJobDelayInMillis = refreshDelayTime;
+		init(treeStyle, filter);
+	}
+
+	/**
+	 * Calls {@link #FilteredTree(Composite, int, PatternFilter, long)} with a
+	 * default refresh time
 	 */
 	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
-		super(parent, SWT.NONE);
-		init(treeStyle, filter);
+		this(parent, treeStyle, filter, DEFAULT_REFRESH_TIME);
 	}
 
 	/**
@@ -129,6 +149,7 @@ public class FilteredTree extends Composite {
 	 */
 	protected FilteredTree(Composite parent) {
 		super(parent, SWT.NONE);
+		this.refreshJobDelayInMillis = DEFAULT_REFRESH_TIME;
 	}
 
 	/**
@@ -540,7 +561,7 @@ public class FilteredTree extends Composite {
 	 * @since 3.5
 	 */
 	protected long getRefreshJobDelay() {
-		return 200;
+		return refreshJobDelayInMillis;
 	}
 
 	/**
