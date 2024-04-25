@@ -137,6 +137,20 @@ public class StructuredSelectionTest {
 	}
 
 	@Test
+	public void testEqualsFalseWithElementsContainingNull() {
+		StructuredSelection s1 = new StructuredSelection(new Object[] { "element 1", null });
+		StructuredSelection s2 = new StructuredSelection(new Object[] { "element 1", "element 2" });
+		assertFalse(s1.equals(s2));
+	}
+
+	@Test
+	public void testEqualsTrueWithElementsContainingNull() {
+		StructuredSelection s1 = new StructuredSelection(new Object[] { "element 1", null });
+		StructuredSelection s2 = new StructuredSelection(new Object[] { "element 1", null });
+		assertTrue(s1.equals(s2));
+	}
+
+	@Test
 	public void testEqualsWithComparer1() {
 		doTestEqualsWithComparer1(JAVA_LANG_OBJECT_COMPARER);
 		doTestEqualsWithComparer1(IDENTITY_COMPARER);

@@ -146,16 +146,18 @@ public class StructuredSelection implements IStructuredSelection {
 		if (myLen != s2.elements.length) {
 			return false;
 		}
+
 		//element comparison
-		for (int i = 0; i < myLen; i++) {
-			if (useComparer) {
+		if (useComparer) {
+			for (int i = 0; i < myLen; i++) {
 				if (!comparer.equals(elements[i], s2.elements[i])) {
 					return false;
 				}
-			} else if (!elements[i].equals(s2.elements[i])) {
-				return false;
 			}
+		} else {
+			return Arrays.equals(elements, s2.elements);
 		}
+
 		return true;
 	}
 
