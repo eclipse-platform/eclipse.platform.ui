@@ -10,20 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
+import static org.eclipse.ui.workbench.texteditor.tests.FindReplaceTestUtil.runEventQueue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import org.junit.Rule;
-import org.junit.rules.TestName;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -32,8 +29,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.text.tests.Accessor;
-
-import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
@@ -167,19 +162,9 @@ class DialogAccess implements IFindReplaceUIAccess {
 		closeOperation.run();
 	}
 
-	@Rule
-	public TestName name= new TestName();
-
 	@Override
-	public void ensureHasFocusOnGTK() {
-		if (Util.isGtk()) {
-			// Ensure workbench has focus on GTK
-			FindReplaceUITest.runEventQueue();
-			if (shellRetriever.get() == null) {
-				String screenshotPath= ScreenshotTest.takeScreenshot(FindReplaceUITest.class, name.getMethodName(), System.out);
-				fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + screenshotPath);
-			}
-		}
+	public Shell getActiveShell() {
+		return shellRetriever.get();
 	}
 
 	@Override
@@ -197,7 +182,7 @@ class DialogAccess implements IFindReplaceUIAccess {
 			event.stateMask= SWT.SHIFT;
 		}
 		findCombo.traverse(SWT.TRAVERSE_RETURN, event);
-		FindReplaceUITest.runEventQueue();
+		runEventQueue();
 	}
 
 
