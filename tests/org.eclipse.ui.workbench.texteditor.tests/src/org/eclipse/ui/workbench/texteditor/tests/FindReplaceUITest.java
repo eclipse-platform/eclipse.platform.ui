@@ -58,7 +58,6 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 	protected final void initializeTextViewerWithFindReplaceUI(String content) {
 		openTextViewer(content);
 		initializeFindReplaceUIForTextViewer();
-		dialog.assertInitialConfiguration();
 	}
 
 	private void openTextViewer(String content) {
@@ -68,6 +67,12 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 	}
 
 	private void initializeFindReplaceUIForTextViewer() {
+		dialog= openUIFromTextViewer(fTextViewer);
+		dialog.assertInitialConfiguration();
+	}
+
+	private void reopenFindReplaceUIForTextViewer() {
+		dialog.close();
 		dialog= openUIFromTextViewer(fTextViewer);
 	}
 
@@ -254,13 +259,11 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 
 	@Test
 	public void testReplaceAllInSelection() {
-		fTextViewer= new TextViewer(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		fTextViewer.setDocument(new Document("line" + System.lineSeparator() + "line" + System.lineSeparator() + "line"));
+		openTextViewer("line" + System.lineSeparator() + "line" + System.lineSeparator() + "line");
 		fTextViewer.getControl().setFocus();
 		fTextViewer.setSelection(new TextSelection(4 + System.lineSeparator().length(), 8 + System.lineSeparator().length()));
+		initializeFindReplaceUIForTextViewer();
 
-		dialog= openUIFromTextViewer(fTextViewer);
-		dialog.assertInitialConfiguration();
 		dialog.unselect(SearchOptions.GLOBAL);
 		dialog.unselect(SearchOptions.WHOLE_WORD);
 
@@ -324,9 +327,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.assertSelected(SearchOptions.INCREMENTAL);
 		dialog.assertEnabled(SearchOptions.INCREMENTAL);
 
-		dialog.close();
-		initializeFindReplaceUIForTextViewer();
-
+		reopenFindReplaceUIForTextViewer();
 		dialog.assertSelected(SearchOptions.INCREMENTAL);
 		dialog.assertEnabled(SearchOptions.INCREMENTAL);
 
@@ -334,9 +335,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.assertSelected(SearchOptions.INCREMENTAL);
 		dialog.assertDisabled(SearchOptions.INCREMENTAL);
 
-		dialog.close();
-		initializeFindReplaceUIForTextViewer();
-
+		reopenFindReplaceUIForTextViewer();
 		dialog.assertSelected(SearchOptions.INCREMENTAL);
 		dialog.assertDisabled(SearchOptions.INCREMENTAL);
 	}
