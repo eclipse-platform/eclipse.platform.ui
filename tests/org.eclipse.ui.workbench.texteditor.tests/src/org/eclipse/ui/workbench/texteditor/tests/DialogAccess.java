@@ -17,9 +17,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -231,32 +232,6 @@ class DialogAccess implements IFindReplaceUIAccess {
 	}
 
 	@Override
-	public Set<SearchOptions> getEnabledOptions() {
-		HashSet<SearchOptions> ret= new HashSet<>();
-
-		for (SearchOptions option : SearchOptions.values()) {
-			if (getButtonForSearchOption(option).isEnabled()) {
-				ret.add(option);
-			}
-		}
-
-		return ret;
-	}
-
-	@Override
-	public Set<SearchOptions> getSelectedOptions() {
-		Set<SearchOptions> ret= new HashSet<>();
-
-		for (SearchOptions option : SearchOptions.values()) {
-			if (getButtonForSearchOption(option).getSelection()) {
-				ret.add(option);
-			}
-		}
-
-		return ret;
-	}
-
-	@Override
 	public IFindReplaceLogic getFindReplaceLogic() {
 		return findReplaceLogic;
 	}
@@ -340,6 +315,18 @@ class DialogAccess implements IFindReplaceUIAccess {
 	public void assertUnselected(SearchOptions option) {
 		Set<SearchOptions> enabled= getSelectedOptions();
 		assertThat(enabled, not(hasItems(option)));
+	}
+
+	private Set<SearchOptions> getEnabledOptions() {
+		return Arrays.stream(SearchOptions.values())
+				.filter(option -> getButtonForSearchOption(option).isEnabled())
+				.collect(Collectors.toSet());
+	}
+
+	private Set<SearchOptions> getSelectedOptions() {
+		return Arrays.stream(SearchOptions.values())
+				.filter(option -> getButtonForSearchOption(option).getSelection())
+				.collect(Collectors.toSet());
 	}
 
 }

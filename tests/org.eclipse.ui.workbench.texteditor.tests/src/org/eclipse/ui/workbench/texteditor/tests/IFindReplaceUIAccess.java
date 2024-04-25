@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
-import java.util.Set;
-
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -19,9 +17,8 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 
-
 /**
- * Wraps UI-Access for different Find/Replace-UIs
+ * Wraps UI access for different find/replace UIs
  */
 interface IFindReplaceUIAccess {
 
@@ -51,10 +48,6 @@ interface IFindReplaceUIAccess {
 
 	Widget getButtonForSearchOption(SearchOptions option);
 
-	Set<SearchOptions> getEnabledOptions();
-
-	Set<SearchOptions> getSelectedOptions();
-
 	IFindReplaceLogic getFindReplaceLogic();
 
 	void performReplaceAll();
@@ -63,7 +56,7 @@ interface IFindReplaceUIAccess {
 
 	void performReplaceAndFind();
 
-	abstract void assertInitialConfiguration();
+	void assertInitialConfiguration();
 
 	void assertUnselected(SearchOptions option);
 
