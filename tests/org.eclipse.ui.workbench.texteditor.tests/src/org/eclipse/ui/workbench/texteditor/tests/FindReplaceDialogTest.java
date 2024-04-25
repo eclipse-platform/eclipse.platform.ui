@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
+import static org.eclipse.ui.workbench.texteditor.tests.FindReplaceTestUtil.runEventQueue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
@@ -67,7 +68,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		dialog.findCombo.setFocus();
 		dialog.setFindText("line");
 		dialog.simulateEnterInFindInputField(false);
-		dialog.ensureHasFocusOnGTK();
+		ensureHasFocusOnGTK();
 
 		assertTrue(dialog.getFindCombo().isFocusControl());
 
@@ -90,7 +91,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		DialogAccess dialog= getDialog();
 
 		dialog.setFindText("line");
-		dialog.ensureHasFocusOnGTK();
+		ensureHasFocusOnGTK();
 
 		Button wrapCheckBox= dialog.getButtonForSearchOption(SearchOptions.WRAP);
 		wrapCheckBox.setFocus();
@@ -124,7 +125,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		DialogAccess dialog= getDialog();
 
 		dialog.setFindText("line");
-		dialog.ensureHasFocusOnGTK();
+		ensureHasFocusOnGTK();
 		IFindReplaceTarget target= dialog.getTarget();
 
 		dialog.simulateEnterInFindInputField(false);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -28,8 +29,6 @@ interface IFindReplaceUIAccess {
 
 	void close();
 
-	void ensureHasFocusOnGTK();
-
 	void unselect(SearchOptions option);
 
 	void select(SearchOptions option);
@@ -45,6 +44,8 @@ interface IFindReplaceUIAccess {
 	void setFindText(String text);
 
 	void setReplaceText(String text);
+
+	Shell getActiveShell();
 
 	Widget getButtonForSearchOption(SearchOptions option);
 

@@ -13,9 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
+import static org.eclipse.ui.workbench.texteditor.tests.FindReplaceTestUtil.runEventQueue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Rule;
@@ -23,7 +25,8 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -38,20 +41,6 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 	public TestName testName= new TestName();
 
 	private TextViewer fTextViewer;
-
-	static void runEventQueue() {
-		Display display= PlatformUI.getWorkbench().getDisplay();
-		for (int i= 0; i < 10; i++) { // workaround for https://bugs.eclipse.org/323272
-			while (display.readAndDispatch()) {
-				// do nothing
-			}
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// do nothing
-			}
-		}
-	}
 
 	private AccessType dialog;
 
@@ -74,6 +63,16 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 	private void reopenFindReplaceUIForTextViewer() {
 		dialog.close();
 		dialog= openUIFromTextViewer(fTextViewer);
+	}
+
+	protected final void ensureHasFocusOnGTK() {
+		if (Util.isGtk()) {
+			runEventQueue();
+			if (dialog.getActiveShell() == null) {
+				String screenshotPath= ScreenshotTest.takeScreenshot(FindReplaceUITest.class, testName.getMethodName(), System.out);
+				fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + screenshotPath);
+			}
+		}
 	}
 
 	protected abstract AccessType openUIFromTextViewer(TextViewer viewer);
@@ -148,7 +147,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 
 		dialog.select(SearchOptions.INCREMENTAL);
 		dialog.setFindText("line");
-		dialog.ensureHasFocusOnGTK();
+		ensureHasFocusOnGTK();
 		IFindReplaceTarget target= dialog.getTarget();
 
 		assertEquals(0, (target.getSelection()).x);
