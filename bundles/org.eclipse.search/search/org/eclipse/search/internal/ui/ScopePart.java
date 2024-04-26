@@ -244,6 +244,9 @@ public class ScopePart {
 				}
 				// May trigger editor init
 				IEditorPart editor = ref.getEditor(true);
+				if (editor == null) {
+					continue;
+				}
 				resource = editor.getAdapter(IResource.class);
 				if (resource != null) {
 					resources.add(resource);
