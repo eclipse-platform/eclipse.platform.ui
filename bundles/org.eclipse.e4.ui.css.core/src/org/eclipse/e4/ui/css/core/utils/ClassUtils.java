@@ -13,24 +13,17 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.utils;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * Class utils.
  */
 public class ClassUtils {
 
-	private static final Map<Class<?>, String> simpleNames = new ConcurrentHashMap<>();
 	/**
-	 * Return a simple name of Class <code>c</code>. For inner classes, the hyphen
-	 * is used, e.g., for Outer$Inner, the return value is "Outer-Inner"
+	 * @param c the class for what a simple name is to be returned
+	 * @return a simple name of Class <code>c</code>. For inner classes, the hyphen
+	 *         is used, e.g., for Outer$Inner, the return value is "Outer-Inner"
 	 */
 	public static String getSimpleName(Class<?> c) {
-		return simpleNames.computeIfAbsent(c, ClassUtils::computeSimpleName);
-	}
-
-	private static String computeSimpleName(Class<?> c) {
 		String name = c.getName();
 		int index = name.lastIndexOf('.');
 		if (index > 0) {
@@ -42,9 +35,17 @@ public class ClassUtils {
 
 	/**
 	 * Return the package name of Class <code>c</code>.
+	 *
+	 * @param c the class for what a simple name is to be returned
+	 * @return the package name, if this class represents an array type, a primitive
+	 *         type or void, this method returns <code>null</code>.
 	 */
 	public static String getPackageName(Class<?> c) {
-		Package p = c.getPackage();
-		return p == null ? null : p.getName();
+		String name = c.getName();
+		int index = name.lastIndexOf('.');
+		if (index > 0) {
+			return name.substring(0, index).intern();
+		}
+		return null;
 	}
 }
