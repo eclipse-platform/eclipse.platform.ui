@@ -18,6 +18,7 @@ package org.eclipse.jface.tests.viewers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -25,16 +26,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 
 public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 
-	@Rule
-	public TestName testName = new TestName();
-
-	protected int setDataCalls = 0;
+	protected volatile int setDataCalls = 0;
 
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
@@ -48,6 +44,7 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 	@Override
 	public void setUp() {
 		super.setUp();
+		fShell.forceActive();
 		// process events because the content provider uses an asyncExec to set the item
 		// count of the tree
 		processEvents();
@@ -117,7 +114,6 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 	@Ignore("no need to test since virtual trees do not support sorting")
 	@Override
 	public void testInsertSiblingWithSorter() {
-		// no need to test since virtual trees do not support sorting
 	}
 
 	@Ignore("no need to test since virtual trees do not support filtering")
@@ -140,131 +136,76 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 	public void testChildIsNotDuplicatedWhenCompareEquals() {
 	}
 
-	// Temporary overrides for bug 347491:
+	// Temporary overrides for bug 347491
 	@Test
 	@Override
 	public void testRefreshWithAddedChildren() {
-		if (disableTestsBug347491) {
-			return;
-		}
-		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-			return;
-		}
+		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
+		assertTrue("data must have been set", setDataCalls > 0);
 		super.testRefreshWithAddedChildren();
 	}
 
 	@Test
 	@Override
 	public void testDeleteSibling() {
-		if (disableTestsBug347491) {
-			return;
-		}
-		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-			return;
-		}
+		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
+		assertTrue("data must have been set", setDataCalls > 0);
 		super.testDeleteSibling();
 	}
 
 	@Test
 	@Override
-	public void testExpandToLevel() {
-		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-			return;
-		}
-		super.testExpandToLevel();
-	}
-
-	@Test
-	@Override
 	public void testInsertSibling() {
-		if (disableTestsBug347491) {
-			return;
-		}
-		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-			return;
-		}
+		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
+		assertTrue("data must have been set", setDataCalls > 0);
 		super.testInsertSibling();
 	}
 
 	@Test
 	@Override
 	public void testInsertSiblings() {
-		if (disableTestsBug347491) {
-			return;
-		}
-		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-			return;
-		}
+		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
+		assertTrue("data must have been set", setDataCalls > 0);
 		super.testInsertSiblings();
 	}
 
 	@Test
 	@Override
 	public void testSetInput() {
-		if (disableTestsBug347491) {
-			return;
-		}
-		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-			return;
-		}
+		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
+		assertTrue("data must have been set", setDataCalls > 0);
 		super.testSetInput();
 	}
 
 	@Test
 	@Override
 	public void testSomeChildrenChanged() {
-		if (disableTestsBug347491) {
-			return;
-		}
-		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-			return;
-		}
+		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
+		assertTrue("data must have been set", setDataCalls > 0);
 		super.testSomeChildrenChanged();
 	}
 
 	@Test
 	@Override
 	public void testWorldChanged() {
-		if (disableTestsBug347491) {
-			return;
-		}
-		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-			return;
-		}
+		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
+		assertTrue("data must have been set", setDataCalls > 0);
 		super.testWorldChanged();
 	}
 
 	@Test
 	@Override
 	public void testContains() {
-		if (disableTestsBug347491) {
-			return;
-		}
-		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-			return;
-		}
+		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
+		assertTrue("data must have been set", setDataCalls > 0);
 		super.testContains();
 	}
 
 	@Test
 	@Override
 	public void testAutoExpandOnSingleChildThroughEvent() {
-		if (disableTestsBug347491) {
-			return;
-		}
-		if (setDataCalls == 0) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-			return;
-		}
+		assumeFalse("test disabled because of bug 347491", disableTestsBug347491);
+		assertTrue("data must have been set", setDataCalls > 0);
 		super.testAutoExpandOnSingleChildThroughEvent();
 	}
 
