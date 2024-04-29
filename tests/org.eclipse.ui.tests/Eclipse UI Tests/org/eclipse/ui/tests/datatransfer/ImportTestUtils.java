@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.datatransfer;
 
+import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -54,7 +56,6 @@ public class ImportTestUtils {
 		static List<Integer> otherBuildTriggerTypes = new ArrayList<>();
 
 		public TestBuilder() {
-			resetCallCount();
 			instantiationCount.incrementAndGet();
 		}
 
@@ -145,6 +146,16 @@ public class ImportTestUtils {
 			description.setAutoBuilding(autobuildOn);
 			workspace.setDescription(description);
 		}
+		waitForAutoBuild();
+	}
+
+	static void restoreWorkspaceConfiguration() throws CoreException {
+		ResourcesPlugin.getWorkspace().setDescription(Workspace.defaultWorkspaceDescription());
+		waitForAutoBuild();
+	}
+
+	static void waitForAutoBuild() {
+		((Workspace) getWorkspace()).getBuildManager().waitForAutoBuild();
 	}
 
 	static void waitForBuild() throws InterruptedException {
