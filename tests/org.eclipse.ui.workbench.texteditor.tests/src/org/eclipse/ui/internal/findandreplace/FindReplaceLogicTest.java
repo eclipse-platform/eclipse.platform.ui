@@ -629,6 +629,35 @@ public class FindReplaceLogicTest {
 		verify((IFindReplaceTargetExtension3) mockedTarget, never()).replaceSelection(anyString(), anyBoolean());
 	}
 
+	@Test
+	public void testCanReplaceAfterWrap() {
+		TextViewer textViewer= setupTextViewer(LINE_STRING + lineSeparator() + LINE_STRING);
+		textViewer.setSelectedRange(LINE_STRING_LENGTH + lineSeparator().length(), 0);
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.WRAP);
+		findReplaceLogic.performSelectAndReplace(LINE_STRING, "");
+		assertThat(textViewer.getTextWidget().getText(), is(LINE_STRING + lineSeparator()));
+		findReplaceLogic.performSelectAndReplace(LINE_STRING, "");
+		assertThat(textViewer.getTextWidget().getText(), is(lineSeparator()));
+	}
+
+	@Test
+	public void testDontSelectAndReplaceIfFindNotSuccessful() {
+		String setupString= "ABCD" + lineSeparator() + LINE_STRING;
+		TextViewer textViewer= setupTextViewer(setupString);
+		textViewer.setSelectedRange(0, 4);
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.WRAP);
+		findReplaceLogic.performSelectAndReplace("NOTFOUND", "");
+		// ensure nothing was replaced
+		assertThat(textViewer.getTextWidget().getText(), is(setupString));
+		// ensure the selection was not overridden
+		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
+		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+	}
+
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {
 		assertThat(findReplaceLogic.getStatus(), instanceOf(NoStatus.class));
 	}
