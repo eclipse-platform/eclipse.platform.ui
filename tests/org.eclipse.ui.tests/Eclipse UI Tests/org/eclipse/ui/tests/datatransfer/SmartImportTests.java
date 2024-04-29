@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
+import static org.eclipse.ui.tests.datatransfer.ImportTestUtils.restoreWorkspaceConfiguration;
+import static org.eclipse.ui.tests.datatransfer.ImportTestUtils.setWorkspaceAutoBuild;
+
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
 import java.io.File;
@@ -87,6 +90,7 @@ public class SmartImportTests extends UITestCase {
 		super.doSetUp();
 		ImportMeProjectConfigurator.configuredProjects.clear();
 		clearAll();
+		setWorkspaceAutoBuild(true);
 	}
 
 	@Override
@@ -94,6 +98,7 @@ public class SmartImportTests extends UITestCase {
 		ImportMeProjectConfigurator.configuredProjects.clear();
 		try {
 			clearAll();
+			restoreWorkspaceConfiguration();
 		} finally {
 			super.doTearDown();
 		}
