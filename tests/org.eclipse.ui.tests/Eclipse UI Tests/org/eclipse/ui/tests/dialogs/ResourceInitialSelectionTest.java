@@ -382,9 +382,6 @@ public class ResourceInitialSelectionTest extends UITestCase {
 		if (dialog != null) {
 			dialog.close();
 		}
-		if (project != null) {
-			project.delete(true, null);
-		}
 		super.doTearDown();
 	}
 }
