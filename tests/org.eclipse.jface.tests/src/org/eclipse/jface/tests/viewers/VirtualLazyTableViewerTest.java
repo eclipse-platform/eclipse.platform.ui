@@ -50,7 +50,6 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 	public void setUp() {
 		updatedElements = new ArrayList<>();
 		super.setUp();
-		processEvents();
 	}
 
 	@Override

@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,19 +35,16 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 
 /**
  * The TableViewerTest is a test of the SWT#VIRTUAL support in TableViewers,
  */
 public class VirtualTableViewerTest extends TableViewerTest {
 
-	@Rule
-	public TestName testName = new TestName();
+	private static final Duration TABLE_DATA_UPDATE_TIMEOUT = Duration.ofSeconds(5);
 
-	Set<TableItem> visibleItems = new HashSet<>();
+	private Set<TableItem> visibleItems = new HashSet<>();
 
 	/**
 	 * Checks if the virtual tree / table functionality can be tested in the current
@@ -57,13 +55,13 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * automated tests to fail. See
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=118919 .
 	 */
-	protected boolean setDataCalled = false;
+	protected volatile boolean setDataCalled = false;
 
 	@Before
 	@Override
 	public void setUp() {
 		super.setUp();
-		processEvents(); // run events for SetData precondition test
+		waitForDataToBeSet();
 	}
 
 	@Override
@@ -73,7 +71,6 @@ public class VirtualTableViewerTest extends TableViewerTest {
 
 	@Override
 	protected TableViewer createTableViewer(Composite parent) {
-		visibleItems = new HashSet<>();
 		TableViewer viewer = new TableViewer(parent, SWT.VIRTUAL | SWT.MULTI);
 		viewer.setUseHashlookup(true);
 		final Table table = viewer.getTable();
@@ -86,19 +83,23 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	}
 
 	/**
-	 * Checks if update occurred. Updates for virtual items will be skipped if, for
-	 * instance, another window is in the foreground.
-	 *
-	 * @return <code>true</code> if update occurred
+	 * Updates the table, also forcing the containing shell to be active in order to
+	 * process according events.
 	 */
-	protected boolean updateTable() {
+	private void updateTable() {
 		setDataCalled = false;
-		((TableViewer) fViewer).getControl().update();
-		if (setDataCalled) {
-			return true;
+		fViewer.refresh();
+		fViewer.getControl().update();
+		waitForDataToBeSet();
+	}
+
+	private void waitForDataToBeSet() {
+		Duration timeoutEnd = Duration.ofMillis(System.currentTimeMillis()).plus(TABLE_DATA_UPDATE_TIMEOUT);
+		while (!setDataCalled && !timeoutEnd.minusMillis(System.currentTimeMillis()).isNegative()) {
+			fShell.forceActive();
+			processEvents();
 		}
-		System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-		return false;
+		assertTrue("waiting for setting table data timed out", setDataCalled);
 	}
 
 	/**
@@ -132,16 +133,12 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		ViewerFilter filter = new TestLabelFilter();
 		visibleItems = new HashSet<>();
 		fViewer.addFilter(filter);
-		if (!updateTable()) {
-			return;
-		}
+		updateTable();
 		assertEquals("filtered count", 5, getItemCount());
 
 		visibleItems = new HashSet<>();
 		fViewer.removeFilter(filter);
-		if (!updateTable()) {
-			return;
-		}
+		updateTable();
 		assertEquals("unfiltered count", 10, getItemCount());
 	}
 
@@ -151,23 +148,17 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		ViewerFilter filter = new TestLabelFilter();
 		visibleItems = new HashSet<>();
 		fViewer.setFilters(filter, new TestLabelFilter2());
-		if (!updateTable()) {
-			return;
-		}
+		updateTable();
 		assertEquals("2 filters count", 1, getItemCount());
 
 		visibleItems = new HashSet<>();
 		fViewer.setFilters(filter);
-		if (!updateTable()) {
-			return;
-		}
+		updateTable();
 		assertEquals("1 filtered count", 5, getItemCount());
 
 		visibleItems = new HashSet<>();
 		fViewer.setFilters();
-		if (!updateTable()) {
-			return;
-		}
+		updateTable();
 		assertEquals("unfiltered count", 10, getItemCount());
 	}
 
@@ -204,21 +195,13 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	@Test
 	@Override
 	public void testRenameWithFilter() {
-		if (!setDataCalled) {
-			System.err.println("SWT.SetData is not received. Cancelled test " + testName.getMethodName());
-			return;
-		}
 		fViewer.addFilter(new TestLabelFilter());
-		if (!updateTable()) {
-			return;
-		}
 		TestElement first = fRootElement.getFirstChild();
 		first.setLabel("name-1111"); // should disappear
-		((TableViewer) fViewer).getControl().update();
-		assertNull("changed sibling is not visible", fViewer.testFindItem(first));
+		updateTable();
+		assertNull("changed sibling is still visible", fViewer.testFindItem(first));
 		first.setLabel("name-2222"); // should reappear
-		fViewer.refresh();
-		((TableViewer) fViewer).getControl().update();
+		updateTable();
 		assertNotNull("changed sibling is not visible", fViewer.testFindItem(first));
 	}
 
@@ -230,14 +213,10 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	@Test
 	@Override
 	public void testRenameWithSorter() {
-		// Call update to make sure the viewer is in a correct state
-		// At least on MacOSX I get failures without this call
-		((TableViewer) fViewer).getControl().update();
 		fViewer.setComparator(new TestLabelComparator());
 		TestElement first = fRootElement.getFirstChild();
 		first.setLabel("name-9999");
 		String newElementLabel = first.toString();
-		((TableViewer) fViewer).getControl().update();
 		assertEquals("sorted first", newElementLabel, getItemText(0));
 	}
 
@@ -249,15 +228,12 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		String firstLabel = first.toString();
 		String lastLabel = last.toString();
 
-		((TableViewer) fViewer).getControl().update();
 		assertEquals("unsorted", firstLabel, getItemText(0));
 		fViewer.setComparator(new TestLabelComparator());
 
-		((TableViewer) fViewer).getControl().update();
 		assertEquals("reverse sorted", lastLabel, getItemText(0));
 
 		fViewer.setComparator(null);
-		((TableViewer) fViewer).getControl().update();
 		assertEquals("unsorted", firstLabel, getItemText(0));
 	}
 
