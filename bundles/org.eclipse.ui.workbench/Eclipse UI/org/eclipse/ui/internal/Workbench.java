@@ -1477,7 +1477,14 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				windowWhileInit = getActiveWorkbenchWindow();
 
 				if (newWindow) {
-					Point size = result.getWindowConfigurer().getInitialSize();
+					WorkbenchWindowConfigurer windowConfigurer;
+					WorkbenchWindow existingWindow = (WorkbenchWindow) windowWhileInit;
+					if (existingWindow != null) {
+						windowConfigurer = existingWindow.getWindowConfigurer();
+					} else {
+						windowConfigurer = result.getWindowConfigurer();
+					}
+					Point size = windowConfigurer.getInitialSize();
 					window.setWidth(size.x);
 					window.setHeight(size.y);
 
