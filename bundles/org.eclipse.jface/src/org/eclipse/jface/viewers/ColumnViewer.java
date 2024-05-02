@@ -75,6 +75,8 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	private Set<ExpandableNode> expandableNodes;
 
+	private boolean limitChanged;
+
 	// after logging for the first
 	// time
 
@@ -907,17 +909,36 @@ public abstract class ColumnViewer extends StructuredViewer {
 	Object[] getChildrenWithLimitApplied(final Object parent, Item[] visibleChildren) {
 		final int limit = getItemsLimit();
 		final int visibleItemsLength = visibleChildren.length;
-		if (visibleItemsLength < limit || limit <= 0) {
+
+		if (visibleItemsLength == 0) {
+			return null;
+		}
+
+		int modelItemsLenght = visibleItemsLength;
+		// exclude expandable place holder.
+		if (visibleChildren[visibleItemsLength - 1].getData() instanceof ExpandableNode) {
+			modelItemsLenght = visibleItemsLength - 1;
+		}
+
+		// when the viewer limit is incremented/decremented using
+		// setDisplayIncrementally(int incrementSize) we need to use the new limit does
+		// not matter what was already rendered.
+		// setDisplayIncrementally(int incrementSize) sets limitChanged to signal this.
+		// On returning null here viewer will render new limit-ed items.
+		if (modelItemsLenght <= limit || limit <= 0 || limitChanged) {
 			return null;
 		}
 
 		// fetch entire sorted children we need them in any of next cases.
+		boolean oldBusy = isBusy();
+		setBusy(true);
 		setDisplayIncrementally(0);
 		Object[] sortedAll;
 		try {
 			sortedAll = getSortedChildren(parent);
 		} finally {
 			setDisplayIncrementally(limit);
+			setBusy(oldBusy);
 		}
 
 		// model has lost some elements and length is less then visible items.
@@ -1001,7 +1022,42 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * @since 3.31
 	 */
 	public void setDisplayIncrementally(int incrementSize) {
+		if (incrementSize == itemsLimit) {
+			return;
+		}
+
+		int oldLimit = itemsLimit;
 		itemsLimit = incrementSize;
+
+		// if input is not yet set don't do any thing else.
+		// getChildrenWithLimitApplied(final Object parent, Item[] visibleChildren)
+		// tries to reset the viewer limit during that time it sets the busy flag not
+		// the call refresh of viewer.
+		if (isBusy() || getInput() == null) {
+			return;
+		}
+
+		// limit has been reset.
+		if (incrementSize <= 0) {
+			internalRefresh(getRoot());
+			return;
+		}
+
+		// viewer limit has decreased/increased than before. we will shrink/expand to
+		// new limit doesn't matter how much user has expanded before.
+		if (incrementSize < oldLimit || (oldLimit > 0 && incrementSize > oldLimit)) {
+			limitChanged = true;
+			try {
+				internalRefresh(getRoot());
+			} finally {
+				limitChanged = false;
+			}
+			return;
+		}
+
+		// when the viewer limit is set for the first time.
+		internalRefresh(getRoot());
+
 	}
 
 	ExpandableNode createExpandableNode(Object[] result, int startOffSet, int limit) {
