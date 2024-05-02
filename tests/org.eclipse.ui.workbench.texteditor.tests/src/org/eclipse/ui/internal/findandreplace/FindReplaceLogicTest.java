@@ -19,6 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -37,12 +38,17 @@ import org.eclipse.jface.text.TextViewer;
 
 import org.eclipse.ui.internal.findandreplace.status.FindAllStatus;
 import org.eclipse.ui.internal.findandreplace.status.FindStatus;
+import org.eclipse.ui.internal.findandreplace.status.FindStatus.StatusCode;
 import org.eclipse.ui.internal.findandreplace.status.InvalidRegExStatus;
 import org.eclipse.ui.internal.findandreplace.status.NoStatus;
 import org.eclipse.ui.internal.findandreplace.status.ReplaceAllStatus;
 
 
 public class FindReplaceLogicTest {
+	private static final String LINE_STRING= "line";
+
+	private static final int LINE_STRING_LENGTH= LINE_STRING.length();
+
 	Shell parentShell;
 
 	private IFindReplaceLogic setupFindReplaceLogicObject(TextViewer target) {
@@ -545,6 +551,42 @@ public class FindReplaceLogicTest {
 		assertThat(findReplaceLogic.isWholeWordSearchAvailable("two words"), is(false));
 
 		assertThat(findReplaceLogic.isWholeWordSearchAvailable(""), is(false));
+	}
+
+	@Test
+	public void testReplaceInScopeStaysInScope() {
+		TextViewer textViewer= setupTextViewer(LINE_STRING + lineSeparator() + LINE_STRING + lineSeparator() + LINE_STRING);
+		int lineSeparatorLength= lineSeparator().length();
+		textViewer.setSelectedRange(LINE_STRING_LENGTH + lineSeparatorLength, 2 * LINE_STRING_LENGTH + lineSeparatorLength);
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
+		findReplaceLogic.activate(SearchOptions.WRAP);
+		findReplaceLogic.performSelectAndReplace(LINE_STRING, "");
+		assertThat(textViewer.getTextWidget().getText(), is(LINE_STRING + lineSeparator() + lineSeparator() + LINE_STRING));
+		expectStatusEmpty(findReplaceLogic);
+
+		findReplaceLogic.performSelectAndReplace(LINE_STRING, "");
+		assertThat(textViewer.getTextWidget().getText(), is(LINE_STRING + lineSeparator() + lineSeparator()));
+		expectStatusEmpty(findReplaceLogic);
+
+		findReplaceLogic.performSelectAndReplace(LINE_STRING, "");
+		assertThat(textViewer.getTextWidget().getText(), is(LINE_STRING + lineSeparator() + lineSeparator()));
+		expectStatusIsCode(findReplaceLogic, StatusCode.NO_MATCH);
+	}
+
+	@Test
+	public void testSearchInScopeBeginsSearchInScope() {
+		int lineSeparatorLength= lineSeparator().length();
+		TextViewer textViewer= setupTextViewer(LINE_STRING + lineSeparator() + LINE_STRING + lineSeparator() + LINE_STRING);
+		textViewer.setSelectedRange(LINE_STRING_LENGTH + lineSeparatorLength, 2 * LINE_STRING_LENGTH + lineSeparatorLength);
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.deactivate(SearchOptions.GLOBAL);
+		findReplaceLogic.performSearch(LINE_STRING);
+		expectStatusEmpty(findReplaceLogic);
+		assertThat(findReplaceLogic.getTarget().getSelection().x, not(is(0)));
+		assertThat(findReplaceLogic.getTarget().getSelection().x, not(is(textViewer.getDocument().get().length() - LINE_STRING_LENGTH)));
 	}
 
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {
