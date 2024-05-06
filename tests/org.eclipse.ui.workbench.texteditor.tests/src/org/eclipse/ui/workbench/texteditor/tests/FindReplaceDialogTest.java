@@ -14,6 +14,8 @@
 package org.eclipse.ui.workbench.texteditor.tests;
 
 import static org.eclipse.ui.workbench.texteditor.tests.FindReplaceTestUtil.runEventQueue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
@@ -37,7 +39,6 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 
 public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
-
 	@Override
 	public DialogAccess openUIFromTextViewer(TextViewer viewer) {
 		TextViewer textViewer= getTextViewer();
@@ -145,5 +146,88 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		dialog.unselect(SearchOptions.FORWARD);
 		dialog.simulateEnterInFindInputField(true);
 		assertEquals(5, (target.getSelection()).x);
+	}
+
+	@Test
+	public void testReplaceAndFindAfterInitializingFindWithSelectedString() {
+		openTextViewer("text text text");
+		getTextViewer().setSelectedRange(0, 4);
+		initializeFindReplaceUIForTextViewer();
+		DialogAccess dialog= getDialog();
+
+		assertThat(dialog.getFindText(), is("text"));
+
+		IFindReplaceTarget target= dialog.getTarget();
+		assertEquals(0, (target.getSelection()).x);
+		assertEquals(4, (target.getSelection()).y);
+
+		dialog.performReplaceAndFind();
+
+		assertEquals(" text text", getTextViewer().getDocument().get());
+		assertEquals(1, (target.getSelection()).x);
+		assertEquals(4, (target.getSelection()).y);
+	}
+
+	@Test
+	public void testIncrementalSearchOnlyEnabledWhenAllowed() {
+		initializeTextViewerWithFindReplaceUI("text text text");
+		DialogAccess dialog= getDialog();
+
+		dialog.select(SearchOptions.INCREMENTAL);
+		dialog.select(SearchOptions.REGEX);
+
+		dialog.assertSelected(SearchOptions.INCREMENTAL);
+		dialog.assertDisabled(SearchOptions.INCREMENTAL);
+	}
+
+	/*
+	 * Test for https://github.com/eclipse-platform/eclipse.platform.ui/pull/1805#pullrequestreview-1993772378
+	 */
+	@Test
+	public void testIncrementalSearchOptionRecoveredCorrectly() {
+		initializeTextViewerWithFindReplaceUI("text text text");
+		DialogAccess dialog= getDialog();
+
+		dialog.select(SearchOptions.INCREMENTAL);
+		dialog.assertSelected(SearchOptions.INCREMENTAL);
+		dialog.assertEnabled(SearchOptions.INCREMENTAL);
+
+		reopenFindReplaceUIForTextViewer();
+		dialog= getDialog();
+		dialog.assertSelected(SearchOptions.INCREMENTAL);
+		dialog.assertEnabled(SearchOptions.INCREMENTAL);
+
+		dialog.select(SearchOptions.REGEX);
+		dialog.assertSelected(SearchOptions.INCREMENTAL);
+		dialog.assertDisabled(SearchOptions.INCREMENTAL);
+
+		reopenFindReplaceUIForTextViewer();
+		dialog= getDialog();
+		dialog.assertSelected(SearchOptions.INCREMENTAL);
+		dialog.assertDisabled(SearchOptions.INCREMENTAL);
+	}
+
+	@Test
+	public void testFindWithWholeWordEnabledWithMultipleWordsNotIncremental() {
+		initializeTextViewerWithFindReplaceUI("two words two");
+		DialogAccess dialog = getDialog();
+		dialog.setFindText("two");
+		dialog.select(SearchOptions.WHOLE_WORD);
+		dialog.select(SearchOptions.WRAP);
+		IFindReplaceTarget target= dialog.getTarget();
+
+		dialog.simulateEnterInFindInputField(false);
+		assertEquals(0, (target.getSelection()).x);
+		assertEquals(3, (target.getSelection()).y);
+
+		dialog.setFindText("two wo");
+		dialog.assertDisabled(SearchOptions.WHOLE_WORD);
+		dialog.assertSelected(SearchOptions.WHOLE_WORD);
+
+		dialog.simulateEnterInFindInputField(false);
+		assertThat(target.getSelectionText(), is(dialog.getFindText()));
+
+		assertEquals(0, (target.getSelection()).x);
+		assertEquals(dialog.getFindText().length(), (target.getSelection()).y);
 	}
 }
