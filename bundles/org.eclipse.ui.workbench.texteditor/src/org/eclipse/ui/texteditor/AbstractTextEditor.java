@@ -5976,10 +5976,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE_TO_END, true);
 		markAsStateDependentAction(ITextEditorActionConstants.MOVE_LINE_UP, true);
 		markAsStateDependentAction(ITextEditorActionConstants.MOVE_LINE_DOWN, true);
+		markAsStateDependentAction(ITextEditorActionConstants.COPY_LINE_UP, true);
+		markAsStateDependentAction(ITextEditorActionConstants.COPY_LINE_DOWN, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE_TO_BEGINNING, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE_TO_END, true);
-
+		markAsStateDependentAction(ITextEditorActionConstants.JOIN_LINES, true);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT_TAB,'\t', -1, SWT.NONE);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', -1, SWT.SHIFT);
 	}
