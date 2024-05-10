@@ -44,7 +44,13 @@ public class ArrangeWindowHandler extends AbstractWindowHandler {
 		}
 		return isEnabled;
 	}
-
+	/**
+	 * Utilizes the {@code NSApplication} to access the application instance and
+	 * invokes {@code arrangeInFront} to prioritize its window on the desktop <br>
+	 *
+	 * Note : This method is designed for MacOS applications using Cocoa framework
+	 * API's
+	 */
 	@Execute
 	public void execute() {
 		NSApplication app = NSApplication.sharedApplication();
