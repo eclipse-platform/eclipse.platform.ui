@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -178,11 +179,8 @@ public final class FinishedJobs extends EventManager {
 
 	private void removeDuplicates(JobTreeElement info) {
 		synchronized (keptjobinfos) {
-			JobTreeElement[] toBeRemoved = findJobsToRemove(info);
-			if (toBeRemoved != null) {
-				for (JobTreeElement element : toBeRemoved) {
-					remove(element);
-				}
+			for (JobTreeElement element : findJobsToRemove(info)) {
+				remove(element);
 			}
 		}
 	}
@@ -231,35 +229,41 @@ public final class FinishedJobs extends EventManager {
 		}
 	}
 
-	private JobTreeElement[] findJobsToRemove(JobTreeElement info) {
+	private Iterable<JobTreeElement> findJobsToRemove(JobTreeElement info) {
 
-		if (info.isJobInfo()) {
-			Job myJob = ((JobInfo) info).getJob();
+		if (!info.isJobInfo()) {
+			return Collections.emptyList();
+		}
 
-			if (myJob != null) {
+		Job myJob = ((JobInfo) info).getJob();
 
-				Object prop = myJob.getProperty(ProgressManagerUtil.KEEPONE_PROPERTY);
-				if (prop instanceof Boolean && ((Boolean) prop).booleanValue()) {
-					ArrayList<JobTreeElement> found = null;
-					JobTreeElement[] all = getKeptElements();
-					for (JobTreeElement jobTreeElement : all) {
-						if (jobTreeElement != info && jobTreeElement.isJobInfo()) {
-							Job job = ((JobInfo) jobTreeElement).getJob();
-							if (job != null && job != myJob && job.belongsTo(myJob)) {
-								if (found == null) {
-									found = new ArrayList<>();
-								}
-								found.add(jobTreeElement);
-							}
-						}
-					}
-					if (found != null) {
-						return found.toArray(new JobTreeElement[found.size()]);
-					}
+		if (myJob == null) {
+			return Collections.emptyList();
+		}
+
+		if (!(myJob.getProperty(ProgressManagerUtil.KEEPONE_PROPERTY) instanceof Boolean keepOne) || !keepOne) {
+			return Collections.emptyList();
+		}
+
+		ArrayList<JobTreeElement> found = null;
+		JobTreeElement[] all = getKeptElements();
+		for (JobTreeElement jobTreeElement : all) {
+			if (jobTreeElement == info || !jobTreeElement.isJobInfo()) {
+				continue;
+			}
+			Job job = ((JobInfo) jobTreeElement).getJob();
+			if (job != null && job != myJob && job.belongsTo(myJob)) {
+				if (found == null) {
+					found = new ArrayList<>();
 				}
+				found.add(jobTreeElement);
 			}
 		}
-		return null;
+		if (found != null) {
+			return found;
+		}
+
+		return Collections.emptyList();
 	}
 
 	private void checkTasks(JobInfo info) {
@@ -267,17 +271,14 @@ public final class FinishedJobs extends EventManager {
 			Optional<TaskInfo> optional = info.getTaskInfo();
 			if (optional.isPresent()) {
 				TaskInfo tinfo = optional.get();
-				JobTreeElement[] toBeRemoved = null;
 				boolean fire = false;
 				JobInfo element = tinfo.getParent();
 				synchronized (keptjobinfos) {
 					if (element == info && !keptjobinfos.contains(tinfo)) {
-						toBeRemoved = findJobsToRemove(element);
+						Iterable<JobTreeElement> toBeRemoved = findJobsToRemove(element);
 						keptjobinfos.add(tinfo);
 						finishedTime.put(tinfo, Long.valueOf(System.currentTimeMillis()));
-					}
 
-					if (toBeRemoved != null) {
 						for (JobTreeElement jobTreeElement : toBeRemoved) {
 							remove(jobTreeElement);
 						}
