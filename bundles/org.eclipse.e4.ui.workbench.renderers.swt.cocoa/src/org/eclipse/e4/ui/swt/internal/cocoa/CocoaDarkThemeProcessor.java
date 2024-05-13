@@ -51,6 +51,11 @@ public class CocoaDarkThemeProcessor {
 		eventBroker.subscribe(IThemeEngine.Events.THEME_CHANGED, eventHandler);
 	}
 
+	/**
+	 * Unsubscribes the {@code eventHandler} from the {@code eventBroker} to cleanup the resources
+	 *
+	 * Assumption : Both {@code eventHandler} and {@code eventBroker} are initialized and non null
+	 */
 	@PreDestroy
 	public void cleanUp() {
 		eventBroker.unsubscribe(eventHandler);
