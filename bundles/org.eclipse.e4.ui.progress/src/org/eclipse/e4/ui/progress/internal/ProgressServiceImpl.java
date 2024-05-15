@@ -58,7 +58,6 @@ public class ProgressServiceImpl implements IProgressService {
 	ProgressManager progressManager;
 
 	@Inject
-	@Optional
 	FinishedJobs finishedJobs;
 
 	@Inject
