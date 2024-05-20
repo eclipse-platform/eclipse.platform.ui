@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -35,7 +36,7 @@ import org.eclipse.e4.ui.workbench.modeling.IPartListener;
 public class ApplicationPartServiceImpl implements EPartService {
 
 	private static final Supplier<RuntimeException> NO_VALID_PARTSERVICE = () -> new IllegalStateException(
-			"No valid PartService can be aquired from the current context"); //$NON-NLS-1$
+			"No valid PartService can be acquired from the current context"); //$NON-NLS-1$
 
 	private MApplication application;
 
@@ -50,15 +51,17 @@ public class ApplicationPartServiceImpl implements EPartService {
 	private Optional<EPartService> getActiveWindowService() {
 		IEclipseContext activeWindowContext = application.getContext().getActiveChild();
 		if (activeWindowContext == null) {
-			throw new IllegalStateException("Application does not have an active window"); //$NON-NLS-1$
+			// in this case the application has no focus so we can't determine the active
+			// child.
+			return Optional.empty();
 		}
 		EPartService activeWindowPartService = activeWindowContext.get(EPartService.class);
 		if (activeWindowPartService == null) {
 			throw new IllegalStateException("Active window context is invalid"); //$NON-NLS-1$
 		}
 		if (activeWindowPartService == this) {
-			// in this cas we would run into an infinite recursion, so from the current
-			// active window we can't aquire another part service
+			// in this case we would run into an infinite recursion, so from the current
+			// active window we can't acquire another part service
 			return Optional.empty();
 		}
 		return Optional.of(activeWindowPartService);
@@ -68,9 +71,19 @@ public class ApplicationPartServiceImpl implements EPartService {
 		return getActiveWindowService().or(() -> {
 			IEclipseContext context = part.getContext();
 			if (context != null) {
+				// First try the context of the part
 				EPartService partService = context.get(EPartService.class);
 				if (partService instanceof PartServiceImpl) {
 					return Optional.of(partService);
+				}
+				// Otherwise use the context of the contained window
+				MWindow window = modelService.getTopLevelWindowFor(part);
+				if (window != null) {
+					IEclipseContext windowContext = window.getContext();
+					EPartService windowPartService = windowContext.get(EPartService.class);
+					if (windowPartService instanceof PartServiceImpl) {
+						return Optional.of(windowPartService);
+					}
 				}
 			}
 			return Optional.empty();
