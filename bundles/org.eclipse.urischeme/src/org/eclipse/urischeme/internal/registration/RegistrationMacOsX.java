@@ -131,6 +131,9 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 	}
 
 	private void changePlistFile(Collection<IScheme> toAdd, Collection<IScheme> toRemove, String pathToEclipseApp) {
+		if (!supportsRegistration()) {
+			return;
+		}
 		String plistPath = pathToEclipseApp + PLIST_PATH_SUFFIX;
 
 		PlistFileWriter writer = getPlistFileWriter(plistPath);
@@ -185,5 +188,14 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 	@Override
 	public boolean canOverwriteOtherApplicationsRegistration() {
 		return false;
+	}
+
+	@Override
+	public boolean supportsRegistration() {
+		// if the application is signed we cannot register URI schemes because this
+		// would break the signature of the applications
+		// applications with broken signature cannot be executed any more (at least on
+		// newer macOS versions).
+		return !fileProvider.fileExists(getPathToEclipseApp() + "/Contents/_CodeSignature"); //$NON-NLS-1$
 	}
 }

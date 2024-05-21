@@ -125,7 +125,7 @@ public class UriSchemeHandlerPreferencePageTest {
 
 		MessageDialogWrapperSpy spy = (MessageDialogWrapperSpy) page.messageDialogWrapper;
 
-		assertEquals(IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp, spy.title);
+		assertEquals(IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_NotPossible, spy.title);
 
 		String expected = NLS.bind(IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp_Description,
 				OTHER_ECLIPSE_HANDLER_LOCATION, "hello2");
@@ -133,6 +133,22 @@ public class UriSchemeHandlerPreferencePageTest {
 
 		assertScheme(getTableItem(2), false, otherAppSchemeInfo);
 		assertHandlerTextForSelection(page, 2, OTHER_ECLIPSE_HANDLER_LOCATION);
+	}
+
+	@Test
+	public void checkSchemeOnRegistrationNotSupportedGivesWarningAndRevertsClick() throws Exception {
+		this.page.createContents(this.page.getShell());
+		waitForJob();
+		operatingSystemRegistration.supportsRegistration = false;
+
+		clickTableViewerCheckbox(0, true);
+
+		MessageDialogWrapperSpy spy = (MessageDialogWrapperSpy) page.messageDialogWrapper;
+		assertEquals(IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_NotPossible, spy.title);
+		String expected = NLS.bind(IDEWorkbenchMessages.UrlHandlerPreferencePage_RegistrationUnsupported,
+				OTHER_ECLIPSE_HANDLER_LOCATION, "hello");
+		assertEquals(expected, spy.message);
+		assertScheme(getTableItem(0), false, noAppSchemeInfo);
 	}
 
 	@Test
@@ -512,6 +528,7 @@ public class UriSchemeHandlerPreferencePageTest {
 		public Collection<IScheme> removedSchemes = Collections.emptyList();
 		public boolean canOverwriteOtherApplicationsRegistration = false;
 		public String launcherPath = THIS_ECLIPSE_HANDLER_LOCATION;
+		public boolean supportsRegistration = true;
 
 		public OperatingSystemRegistrationMock(List<ISchemeInformation> schemeInformations) {
 			this.schemeInformations = schemeInformations;
@@ -542,6 +559,11 @@ public class UriSchemeHandlerPreferencePageTest {
 		@Override
 		public boolean canOverwriteOtherApplicationsRegistration() {
 			return canOverwriteOtherApplicationsRegistration;
+		}
+
+		@Override
+		public boolean supportsRegistration() {
+			return supportsRegistration;
 		}
 
 	}

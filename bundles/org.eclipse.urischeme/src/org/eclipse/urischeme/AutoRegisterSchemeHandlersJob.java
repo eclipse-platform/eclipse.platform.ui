@@ -79,8 +79,7 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 			return Status.OK_STATUS;
 		}
 
-		IOperatingSystemRegistration osRegistration = testOsRegistration != null ? testOsRegistration
-				: IOperatingSystemRegistration.getInstance();
+		IOperatingSystemRegistration osRegistration = getOsRegistration();
 		try {
 			toProcessSchemes = osRegistration.getSchemesInformation(toProcessSchemes).stream() //
 					.filter(scheme -> !scheme.schemeIsHandledByOther()) //
@@ -103,9 +102,16 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 		return Status.OK_STATUS;
 	}
 
+	private IOperatingSystemRegistration getOsRegistration() {
+		IOperatingSystemRegistration osRegistration = testOsRegistration != null ? testOsRegistration
+				: IOperatingSystemRegistration.getInstance();
+		return osRegistration;
+	}
+
 	@Override
 	public boolean shouldSchedule() {
+		IOperatingSystemRegistration osRegistration = getOsRegistration();
 		return !(alreadyTriggered || Platform.getPreferencesService().getBoolean(UriSchemeExtensionReader.PLUGIN_ID,
-				SKIP_PREFERENCE, false, null));
+				SKIP_PREFERENCE, false, null) || osRegistration.supportsRegistration());
 	}
 }

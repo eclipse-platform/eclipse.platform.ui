@@ -56,6 +56,9 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 
 	@Override
 	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove) throws Exception {
+		if (!supportsRegistration()) {
+			return;
+		}
 		String eclipseLauncher = getEclipseLauncher();
 		if (eclipseLauncher != null) {
 			for (IScheme scheme : toAdd) {
@@ -114,6 +117,11 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 	 */
 	@Override
 	public boolean canOverwriteOtherApplicationsRegistration() {
+		return true;
+	}
+
+	@Override
+	public boolean supportsRegistration() {
 		return true;
 	}
 

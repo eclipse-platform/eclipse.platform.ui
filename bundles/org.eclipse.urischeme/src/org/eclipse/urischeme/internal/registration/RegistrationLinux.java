@@ -57,6 +57,9 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 
 	@Override
 	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove) throws Exception {
+		if (!supportsRegistration()) {
+			return;
+		}
 		String desktopFileName = getDesktopFileName();
 
 		changeDesktopFile(toAdd, toRemove, PATH_TO_LOCAL_SHARE_APPS + desktopFileName);
@@ -179,5 +182,10 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 	@Override
 	public boolean canOverwriteOtherApplicationsRegistration() {
 		return false;
+	}
+
+	@Override
+	public boolean supportsRegistration() {
+		return true;
 	}
 }

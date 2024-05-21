@@ -40,10 +40,13 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 	private final static IScheme helloScheme = new Scheme(HELLO_URI_SCHEME, "helloScheme");
 	private static final String HELLO1_URI_SCHEME = "hello1";
 	private final static IScheme hello1Scheme = new Scheme(HELLO1_URI_SCHEME, "hello1Scheme");
+	private static final boolean SUPPORTS_REGISTRATION = true;
+	private static final boolean DOESNT_SUPPORT_REGISTRATION = false;
 
 	@Test
 	public void noSchemeDoesNothing() throws Exception {
-		AutoRegisterSchemeHandlersJob job = createJob(Collections.emptyList(), "", Collections.emptyList());
+		AutoRegisterSchemeHandlersJob job = createJob(Collections.emptyList(), "", Collections.emptyList(),
+				SUPPORTS_REGISTRATION);
 
 		job.run(new NullProgressMonitor());
 
@@ -57,7 +60,7 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 	@Test
 	public void noNewSchemeDoesNothing() throws Exception {
 		AutoRegisterSchemeHandlersJob job = createJob(Arrays.asList(helloScheme), HELLO_URI_SCHEME,
-				Collections.emptyList());
+				Collections.emptyList(), SUPPORTS_REGISTRATION);
 
 		job.run(new NullProgressMonitor());
 
@@ -78,7 +81,7 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 		List<ISchemeInformation> schemeInfos = Arrays.asList(hello1SchemeInfo);
 
 		AutoRegisterSchemeHandlersJob job = createJob(Arrays.asList(helloScheme, hello1Scheme), HELLO_URI_SCHEME,
-				schemeInfos);
+				schemeInfos, SUPPORTS_REGISTRATION);
 
 		job.run(new NullProgressMonitor());
 
@@ -100,7 +103,7 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 		List<ISchemeInformation> schemeInfos = new ArrayList<>();
 
 		AutoRegisterSchemeHandlersJob job = createJob(Arrays.asList(helloScheme, hello1Scheme), HELLO_URI_SCHEME,
-				schemeInfos);
+				schemeInfos, SUPPORTS_REGISTRATION);
 
 		job.run(new NullProgressMonitor());
 
@@ -120,7 +123,7 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 		List<ISchemeInformation> schemeInfos = Arrays.asList(helloSchemeInfo, hello1SchemeInfo);
 
 		AutoRegisterSchemeHandlersJob job = createJob(Arrays.asList(helloScheme, hello1Scheme),
-				HELLO_URI_SCHEME + "," + HELLO1_URI_SCHEME, schemeInfos);
+				HELLO_URI_SCHEME + "," + HELLO1_URI_SCHEME, schemeInfos, SUPPORTS_REGISTRATION);
 
 		job.run(new NullProgressMonitor());
 
@@ -130,10 +133,17 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 		assertNull("No schemes should be un-registered", osRegistration.removedSchemes);
 	}
 
+	@Test
+	public void registrationOnUnsupportedRegistrationDoesNothing() throws Exception {
+		AutoRegisterSchemeHandlersJob job = createJob(new ArrayList<>(), "dontCare", new ArrayList<>(),
+				DOESNT_SUPPORT_REGISTRATION);
+		assertFalse("Job should not run on OSes that don't support registration", job.shouldSchedule());
+	}
+
 	private AutoRegisterSchemeHandlersJob createJob(Collection<IScheme> installedSchemes,
-			String alreadyProcessedSchemes, List<ISchemeInformation> registedSchemes) {
+			String alreadyProcessedSchemes, List<ISchemeInformation> registeredSchemes, boolean supportsRegistration) {
 		ExtensionReaderStub extensionReader = new ExtensionReaderStub(installedSchemes);
-		osRegistration = new OperatingSystemRegistrationMock(registedSchemes);
+		osRegistration = new OperatingSystemRegistrationMock(registeredSchemes, supportsRegistration);
 		preferenceNode = new PreferenceMock();
 		preferenceNode.currentValue = alreadyProcessedSchemes;
 
@@ -194,29 +204,24 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 	private static final class OperatingSystemRegistrationMock implements IOperatingSystemRegistration {
 
 		private final List<ISchemeInformation> schemeInformations;
-		public Exception schemeInformationReadException = null;
-		public Exception schemeInformationRegisterException = null;
 		public Collection<IScheme> addedSchemes = null;
 		public Collection<IScheme> removedSchemes = null;
+		public boolean supportsRegistration;
 
-		public OperatingSystemRegistrationMock(List<ISchemeInformation> schemeInformations) {
+		public OperatingSystemRegistrationMock(List<ISchemeInformation> schemeInformations,
+				boolean supportsRegistration) {
 			this.schemeInformations = schemeInformations;
+			this.supportsRegistration = supportsRegistration;
 		}
 
 		@Override
 		public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove) throws Exception {
-			if (schemeInformationRegisterException != null) {
-				throw schemeInformationRegisterException;
-			}
 			this.addedSchemes = toAdd;
 			this.removedSchemes = toRemove;
 		}
 
 		@Override
 		public List<ISchemeInformation> getSchemesInformation(Collection<IScheme> schemes) throws Exception {
-			if (schemeInformationReadException != null) {
-				throw schemeInformationReadException;
-			}
 			return schemeInformations;
 		}
 
@@ -228,6 +233,11 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 		@Override
 		public boolean canOverwriteOtherApplicationsRegistration() {
 			return false;
+		}
+
+		@Override
+		public boolean supportsRegistration() {
+			return supportsRegistration;
 		}
 	}
 }

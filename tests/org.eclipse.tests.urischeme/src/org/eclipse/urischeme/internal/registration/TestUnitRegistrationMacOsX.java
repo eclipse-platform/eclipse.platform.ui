@@ -39,6 +39,7 @@ import org.junit.Test;
 public class TestUnitRegistrationMacOsX {
 
 	private static final String OWN_APP_PLIST_PATH = "/Users/myuser/Applications/Eclipse.app/Contents/Info.plist";
+	private static final String PATH_TO_CODE_SIGNATURE = "/Users/myuser/Applications/Eclipse.app/Contents/_CodeSignature";
 	private static final String OTHER_APP_PLIST_PATH = "/Users/myuser/Applications/OtherApp.app/Contents/Info.plist";
 	private static final String OTHER_APP_BUNDLE_PATH = "/Users/myuser/Applications/OtherApp.app";
 
@@ -62,11 +63,13 @@ public class TestUnitRegistrationMacOsX {
 	public void setup() {
 		fileProvider = new FileProviderMock();
 		fileProvider.writer = new StringWriter();
+		fileProvider.fileExistsAnswers.put(PATH_TO_CODE_SIGNATURE, false);
 
 		processStub = new ProcessSpy();
 
 		System.setProperty("eclipse.home.location", "file:/Users/myuser/Applications/Eclipse.app/Contents/Eclipse/");
 		System.setProperty("eclipse.launcher", "/Users/myuser/Applications/Eclipse.app/Contents/MacOS/eclipse");
+
 
 		registration = new RegistrationMacOsX(fileProvider, processStub);
 
@@ -265,6 +268,17 @@ public class TestUnitRegistrationMacOsX {
 		assertEquals("adt", infos.get(0).getName());
 		assertFalse(infos.get(0).isHandled());
 		assertEquals(OTHER_APP_BUNDLE_PATH, infos.get(0).getHandlerInstanceLocation());
+	}
+
+	@Test
+	public void doesSupportRegistrationIfAppIsNotSigned() throws Exception {
+		assertTrue(registration.supportsRegistration());
+	}
+
+	@Test
+	public void doesNotSupportRegistrationIfAppIsSigned() throws Exception {
+		fileProvider.fileExistsAnswers.put(PATH_TO_CODE_SIGNATURE, true);
+		assertFalse(registration.supportsRegistration());
 	}
 
 	private void assertFilePathIs(String filePath) {
