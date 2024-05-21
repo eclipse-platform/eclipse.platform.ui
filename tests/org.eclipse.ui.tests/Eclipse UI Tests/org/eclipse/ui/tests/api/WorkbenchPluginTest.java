@@ -73,8 +73,8 @@ public class WorkbenchPluginTest {
 		TestBarrier2 displayCreationBarrier = new TestBarrier2();
 		new Thread(() -> {
 			Display display = new Display();
-			displayCreationBarrier.setStatus(TestBarrier2.STATUS_DONE);
 			displayReference.set(display);
+			displayCreationBarrier.setStatus(TestBarrier2.STATUS_DONE);
 			while (!display.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
