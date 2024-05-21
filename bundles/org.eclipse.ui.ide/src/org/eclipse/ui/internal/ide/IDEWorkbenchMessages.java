@@ -525,7 +525,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_unsupportedEncoding;
 	public static String WorkbenchPreference_encoding_encodingMessage;
 
-	public static String UriHandlerPreferencePage_Warning_OtherApp;
+	public static String UriHandlerPreferencePage_Warning_NotPossible;
 	public static String UriHandlerPreferencePage_Warning_OtherApp_Description;
 
 	public static String UriHandlerPreferencePage_Warning_OtherApp_Confirmation;
@@ -545,6 +545,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String UrlHandlerPreferencePage_Error_Reading_Scheme;
 	public static String UrlHandlerPreferencePage_Error_Writing_Scheme;
 	public static String UrlHandlerPreferencePage_UnsupportedOperatingSystem;
+	public static String UrlHandlerPreferencePage_RegistrationUnsupported;
 	public static String UrlHandlerPreferencePage_LauncherCannotBeDetermined;
 
 	// ---workspace ---

@@ -83,4 +83,13 @@ public interface IOperatingSystemRegistration {
 	 */
 	boolean canOverwriteOtherApplicationsRegistration();
 
+	/**
+	 * This method returns if the current operating system allows to register uri
+	 * schemes at all.
+	 *
+	 * @return <code>true</code> if the registration of uri schemes is supported -
+	 *         <code>false</code> otherwise.
+	 */
+	boolean supportsRegistration();
+
 }

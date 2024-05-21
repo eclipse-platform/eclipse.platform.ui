@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.ide.application.dialogs;
 
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UriHandlerPreferencePage_Confirm_Handle;
-import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp;
+import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_NotPossible;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp_Confirmation;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp_Confirmation_Description;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UriHandlerPreferencePage_Warning_OtherApp_Description;
@@ -27,6 +27,7 @@ import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPrefere
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_LauncherCannotBeDetermined;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_LoadingText;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_Page_Description;
+import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_RegistrationUnsupported;
 import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.UrlHandlerPreferencePage_UnsupportedOperatingSystem;
 
 import java.util.ArrayList;
@@ -140,6 +141,9 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 			setDataOnTableViewer(Collections.emptyList());
 
 		} else {
+			if (!operatingSystemRegistration.supportsRegistration()) {
+				setErrorMessage(UrlHandlerPreferencePage_RegistrationUnsupported);
+			}
 			setDataOnTableViewer(getLoadingSchemeInformationList());
 			startRegistrationReadingJob();
 		}
@@ -294,6 +298,12 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 
 		private void handleCheckbox(CheckStateChangedEvent event) {
 			UiSchemeInformation schemeInformation = (UiSchemeInformation) event.getElement();
+			if (!operatingSystemRegistration.supportsRegistration()) {
+				messageDialogWrapper.openWarning(getShell(), UriHandlerPreferencePage_Warning_NotPossible,
+						UrlHandlerPreferencePage_RegistrationUnsupported);
+				tableViewer.setChecked(schemeInformation, false);
+				return;
+			}
 			if (event.getChecked() && schemeInformation.information.schemeIsHandledByOther()) {
 				if (operatingSystemRegistration.canOverwriteOtherApplicationsRegistration()) {
 					boolean answer = messageDialogWrapper.openQuestion(getShell(),
@@ -310,7 +320,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 					schemeInformation.checked = false;
 					tableViewer.setChecked(schemeInformation, schemeInformation.checked);
 
-					messageDialogWrapper.openWarning(getShell(), UriHandlerPreferencePage_Warning_OtherApp,
+					messageDialogWrapper.openWarning(getShell(), UriHandlerPreferencePage_Warning_NotPossible,
 							NLS.bind(UriHandlerPreferencePage_Warning_OtherApp_Description,
 									schemeInformation.information.getHandlerInstanceLocation(),
 									schemeInformation.information.getName()));
