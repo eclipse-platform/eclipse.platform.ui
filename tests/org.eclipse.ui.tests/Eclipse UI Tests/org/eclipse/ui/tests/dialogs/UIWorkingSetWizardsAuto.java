@@ -15,9 +15,12 @@ package org.eclipse.ui.tests.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -134,11 +137,24 @@ public abstract class UIWorkingSetWizardsAuto<W extends IWizard> extends UITestC
 	}
 
 	private void cleanupWorkspace() {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		try {
-			ResourcesPlugin.getWorkspace().getRoot().delete(true, null);
+			root.delete(true, null);
 		} catch (CoreException e) {
-			TestPlugin.getDefault().getLog().log(e.getStatus());
-			throw createAssertionError(e);
+			// give it some more time
+			try {
+				TimeUnit.SECONDS.sleep(1);
+			} catch (InterruptedException e1) {
+			}
+			try {
+				root.refreshLocal(IResource.DEPTH_INFINITE, null);
+				if (root.exists()) {
+					root.delete(true, null);
+				}
+			} catch (CoreException e1) {
+				TestPlugin.getDefault().getLog().log(e.getStatus());
+				throw createAssertionError(e);
+			}
 		} finally {
 			project1 = null;
 			project2 = null;
