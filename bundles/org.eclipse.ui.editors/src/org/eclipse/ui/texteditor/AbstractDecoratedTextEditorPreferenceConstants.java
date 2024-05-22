@@ -742,6 +742,20 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static final String EDITOR_HOVER_ENRICH_MODE= AbstractTextEditor.PREFERENCE_HOVER_ENRICH_MODE;
 
 	/**
+	 * A named preference that controls if sticky scrolling should be enabled.
+	 * 
+	 * @since 3.18
+	 */
+	public static final String EDITOR_STICKY_SCROLLING_ENABLED= "stickyScrollingEnabled"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the maximum count of sticky lines.
+	 * 
+	 * @since 3.18
+	 */
+	public static final String EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT= "stickyScrollingMaximumCount"; //$NON-NLS-1$
+
+	/**
 	* Initializes the given preference store with the default values.
 	 *
 	* @param store the preference store to be initialized
@@ -843,6 +857,9 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
 		store.setDefault(EDITOR_HOVER_ENRICH_MODE, 0);
 		store.setDefault(AbstractTextEditor.PREFERENCE_WORD_WRAP_ENABLED, false);
+
+		store.setDefault(EDITOR_STICKY_SCROLLING_ENABLED, false);
+		store.setDefault(EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT, 4);
 
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 

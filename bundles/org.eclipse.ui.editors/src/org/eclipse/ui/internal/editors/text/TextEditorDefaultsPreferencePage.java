@@ -782,6 +782,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_MAX));
 
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT));
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_SPACES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_SPACES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_SPACES));
@@ -996,6 +999,16 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		((Combo) showCodeMiningsControls[1]).addSelectionListener(codeMiningsListener);
 		fMasterSlaveListeners.add(codeMiningsListener);
 
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_stickyScrollingEnabled;
+		Preference stickyScrollingEnabled= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED, label, null);
+		Button stickyScrollingEnabledButton= addCheckBox(appearanceComposite, stickyScrollingEnabled, new BooleanDomain(), 0);
+
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_stickyScrollingMaximumCount;
+		description= TextEditorMessages.TextEditorDefaultsPreferencePage_stickyScrollingMaximumCount;
+		Preference stickyScrollingMaximumCount= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT, label, description);
+		final IntegerDomain stickyScrollingMaximumCountDomain= new IntegerDomain(1, 10);
+		final Control[] stickyScrollingMaximumCountControls= addTextField(appearanceComposite, stickyScrollingMaximumCount, stickyScrollingMaximumCountDomain, 15, 20);
+		createDependency(stickyScrollingEnabledButton, stickyScrollingEnabled, stickyScrollingMaximumCountControls);
 
 		addFiller(appearanceComposite, 2);
 

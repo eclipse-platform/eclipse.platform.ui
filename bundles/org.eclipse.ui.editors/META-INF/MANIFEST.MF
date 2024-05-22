@@ -14,6 +14,7 @@ Export-Package:
  org.eclipse.ui.internal.editors.text;x-internal:=true,
  org.eclipse.ui.internal.editors.text.codemining.annotation;x-internal:=true,
  org.eclipse.ui.internal.texteditor;x-internal:=true,
+ org.eclipse.ui.internal.texteditor.stickyscroll;x-internal:=true,
  org.eclipse.ui.texteditor
 Require-Bundle: 
  org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
