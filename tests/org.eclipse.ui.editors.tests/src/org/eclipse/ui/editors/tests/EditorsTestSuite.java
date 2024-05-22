@@ -19,6 +19,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import org.eclipse.ui.internal.texteditor.stickyscroll.StickyLinesProviderTest;
+import org.eclipse.ui.internal.texteditor.stickyscroll.StickyScrollingControlTest;
+import org.eclipse.ui.internal.texteditor.stickyscroll.StickyScrollingHandlerTest;
+
 /**
  * Test Suite for org.eclipse.ui.editors.
  *
@@ -40,6 +44,10 @@ import org.junit.runners.Suite.SuiteClasses;
 		LargeFileTest.class, CaseActionTest.class,
 		TextMultiCaretNavigationTest.class,
 		TextMultiCaretSelectionCommandsTest.class,
+
+		StickyScrollingControlTest.class,
+		StickyScrollingHandlerTest.class,
+		StickyLinesProviderTest.class,
 })
 public class EditorsTestSuite {
 	// see @SuiteClasses

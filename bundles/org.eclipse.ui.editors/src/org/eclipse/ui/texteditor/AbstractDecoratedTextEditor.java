@@ -148,6 +148,7 @@ import org.eclipse.ui.internal.texteditor.BooleanPreferenceToggleAction;
 import org.eclipse.ui.internal.texteditor.FocusedInformationPresenter;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
+import org.eclipse.ui.internal.texteditor.stickyscroll.StickyScrollingHandler;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.part.FileEditorInput;
@@ -330,6 +331,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.5
 	 */
 	private FocusedInformationPresenter fInformationPresenter;
+	/**
+	 * The handler for sticky scrolling
+	 * 
+	 */
+	private StickyScrollingHandler fStickyScrollingHandler;
 
 	/*
 	 * Workaround for IllegalAccessError thrown because we are accessing
@@ -389,6 +395,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			fInformationPresenter.uninstall();
 			fInformationPresenter= null;
 		}
+
+		if (fStickyScrollingHandler != null) {
+			fStickyScrollingHandler.uninstall();
+			fStickyScrollingHandler= null;
+		}
+
 		super.dispose();
 	}
 
@@ -483,6 +495,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			annotationEx2.setQuickAssistAssistant(viewerEx3.getQuickAssistAssistant());
 
 		createOverviewRulerContextMenu();
+
+		if (isStickyScrollingEnabled()) {
+			fStickyScrollingHandler= new StickyScrollingHandler(getSourceViewer(), getVerticalRuler(), getPreferenceStore());
+		}
+	}
+
+	private boolean isStickyScrollingEnabled() {
+		return getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED);
 	}
 
 	/**
@@ -898,6 +918,24 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 						return;
 					}
 				}
+			}
+
+			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED.equals(property)) {
+				IPreferenceStore store= getPreferenceStore();
+				if (store == null)
+					return;
+
+				if (store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED)) {
+					fStickyScrollingHandler= new StickyScrollingHandler(getSourceViewer(), getVerticalRuler(), store);
+					//fire once
+					fStickyScrollingHandler.viewportChanged(getSourceViewer().getTextWidget().getTopPixel());
+				} else {
+					if (fStickyScrollingHandler != null) {
+						fStickyScrollingHandler.uninstall();
+						fStickyScrollingHandler= null;
+					}
+				}
+				return;
 			}
 
 		} finally {
