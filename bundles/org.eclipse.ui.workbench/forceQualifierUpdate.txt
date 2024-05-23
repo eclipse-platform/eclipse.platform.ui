@@ -15,3 +15,4 @@ Bug 578351 - Lambda generation order is unstable in ecj
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1750
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1923
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/2044
