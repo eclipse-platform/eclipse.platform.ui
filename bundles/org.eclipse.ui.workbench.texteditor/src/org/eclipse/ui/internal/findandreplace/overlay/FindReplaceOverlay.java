@@ -67,6 +67,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
+import org.eclipse.ui.internal.findandreplace.HistoryStore;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 
@@ -104,6 +105,7 @@ public class FindReplaceOverlay extends Dialog {
 	private static final double BIG_WIDTH_RATIO_EDITOR_TO_OVERLAY = 0.7;
 	private static final String MINIMAL_WIDTH_TEXT = "THIS TEXT IS SHORT "; //$NON-NLS-1$
 	private static final String IDEAL_WIDTH_TEXT = "THIS TEXT HAS A REASONABLE LENGTH FOR SEARCHING"; //$NON-NLS-1$
+	private static final int HISTORY_SIZE = 15;
 
 	private final Map<KeyStroke, Runnable> searchKeyStrokeHandlers = new HashMap<>();
 	private final Map<KeyStroke, Runnable> replaceKeyStrokeHandlers = new HashMap<>();
@@ -120,7 +122,7 @@ public class FindReplaceOverlay extends Dialog {
 
 	private Composite searchContainer;
 	private Composite searchBarContainer;
-	private Text searchBar;
+	private HistoryTextWrapper searchBar;
 	private AccessibleToolBar searchTools;
 	private ToolItem searchInSelectionButton;
 	private ToolItem wholeWordSearchButton;
@@ -134,7 +136,7 @@ public class FindReplaceOverlay extends Dialog {
 
 	private Composite replaceContainer;
 	private Composite replaceBarContainer;
-	private Text replaceBar;
+	private HistoryTextWrapper replaceBar;
 	private AccessibleToolBar replaceTools;
 	private ToolItem replaceButton;
 	private ToolItem replaceAllButton;
@@ -151,7 +153,6 @@ public class FindReplaceOverlay extends Dialog {
 		setShellStyle(SWT.MODELESS);
 		setBlockOnOpen(false);
 		targetPart = part;
-
 	}
 
 	@Override
@@ -176,12 +177,14 @@ public class FindReplaceOverlay extends Dialog {
 		BusyIndicator.showWhile(getShell() != null ? getShell().getDisplay() : Display.getCurrent(),
 				() -> findReplaceLogic.performReplaceAll(getFindString(), getReplaceString()));
 		evaluateFindReplaceStatus();
+		replaceBar.storeHistory();
+		searchBar.storeHistory();
 	}
 
 	private void performSelectAll() {
 		BusyIndicator.showWhile(getShell() != null ? getShell().getDisplay() : Display.getCurrent(),
 				() -> findReplaceLogic.performSelectAll(getFindString()));
-		evaluateFindReplaceStatus();
+		searchBar.storeHistory();
 	}
 
 	private void toggleToolItem(ToolItem toolItem) {
@@ -372,6 +375,7 @@ public class FindReplaceOverlay extends Dialog {
 			replaceContainer.setBackground(color);
 			replaceBar.setBackground(color);
 			replaceBarContainer.setBackground(color);
+			replaceTools.setBackground(color);
 			replaceAllButton.setBackground(color);
 			replaceButton.setBackground(color);
 		}
@@ -441,17 +445,19 @@ public class FindReplaceOverlay extends Dialog {
 		textBarForRetrievingTheRightColor.dispose();
 	}
 
+
 	private void createSearchTools() {
 		searchTools = new AccessibleToolBar(searchContainer);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.END, GridData.END).applyTo(searchTools);
+
+		searchTools.createToolItem(SWT.SEPARATOR);
 
 		createCaseSensitiveButton();
 		createRegexSearchButton();
 		createWholeWordsButton();
 		createAreaSearchButton();
 
-		@SuppressWarnings("unused")
-		ToolItem separator = searchTools.createToolItem(SWT.SEPARATOR);
+		searchTools.createToolItem(SWT.SEPARATOR);
 
 		Runnable searchUpOperation = () -> performSearch(false);
 		searchUpButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
@@ -564,6 +570,9 @@ public class FindReplaceOverlay extends Dialog {
 		Color warningColor = JFaceColors.getErrorText(getShell().getDisplay());
 
 		replaceTools = new AccessibleToolBar(replaceContainer);
+
+		replaceTools.createToolItem(SWT.SEPARATOR);
+
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.CENTER, GridData.END).applyTo(replaceTools);
 		replaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE))
@@ -593,7 +602,9 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void createSearchBar() {
-		searchBar = new Text(searchBarContainer, SWT.SINGLE);
+		HistoryStore searchHistory = new HistoryStore(getDialogSettings(), "searchhistory", //$NON-NLS-1$
+				HISTORY_SIZE);
+		searchBar = new HistoryTextWrapper(searchHistory, searchBarContainer, SWT.SINGLE);
 		GridDataFactory.fillDefaults().grab(true, false).align(GridData.FILL, GridData.END).applyTo(searchBar);
 		searchBar.forceFocus();
 		searchBar.selectAll();
@@ -656,7 +667,8 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void createReplaceBar() {
-		replaceBar = new Text(replaceBarContainer, SWT.SINGLE);
+		HistoryStore replaceHistory = new HistoryStore(getDialogSettings(), "replacehistory", HISTORY_SIZE); //$NON-NLS-1$
+		replaceBar = new HistoryTextWrapper(replaceHistory, replaceBarContainer, SWT.SINGLE);
 		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(replaceBar);
 		replaceBar.setMessage(FindReplaceMessages.FindReplaceOverlay_replaceBar_message);
 		replaceBar.addFocusListener(FocusListener.focusLostAdapter(e -> {
@@ -922,6 +934,8 @@ public class FindReplaceOverlay extends Dialog {
 	private void performSingleReplace() {
 		findReplaceLogic.performReplaceAndFind(getFindString(), getReplaceString());
 		evaluateFindReplaceStatus();
+		replaceBar.storeHistory();
+		searchBar.storeHistory();
 	}
 
 	private void performSearch(boolean forward) {
@@ -932,6 +946,7 @@ public class FindReplaceOverlay extends Dialog {
 		activateInFindReplacerIf(SearchOptions.FORWARD, oldForwardSearchSetting);
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 		evaluateFindReplaceStatus();
+		searchBar.storeHistory();
 	}
 
 	private void updateFromTargetSelection() {

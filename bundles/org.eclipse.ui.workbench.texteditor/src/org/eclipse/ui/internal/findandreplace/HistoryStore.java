@@ -109,4 +109,11 @@ public class HistoryStore {
 		settingsManager.put(sectionName, names);
 	}
 
+	public int indexOf(String entry) {
+		return history.indexOf(entry);
+	}
+
+	public int size() {
+		return history.size();
+	}
 }

@@ -34,7 +34,6 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  */
 class FindReplaceOverlayImages {
 	private static final String PREFIX_ELCL = TextEditorPlugin.PLUGIN_ID + ".elcl."; //$NON-NLS-1$
-
 	static final String KEY_CLOSE = PREFIX_ELCL + "close"; //$NON-NLS-1$
 	static final String KEY_FIND_NEXT = PREFIX_ELCL + "select_next"; //$NON-NLS-1$
 	static final String KEY_FIND_PREV = PREFIX_ELCL + "select_prev"; //$NON-NLS-1$
@@ -47,6 +46,7 @@ class FindReplaceOverlayImages {
 	static final String KEY_SEARCH_IN_AREA = PREFIX_ELCL + "search_in_selection"; //$NON-NLS-1$
 	static final String KEY_OPEN_REPLACE_AREA = PREFIX_ELCL + "open_replace"; //$NON-NLS-1$
 	static final String KEY_CLOSE_REPLACE_AREA = PREFIX_ELCL + "close_replace"; //$NON-NLS-1$
+	static final String KEY_OPEN_HISTORY = "open_history"; //$NON-NLS-1$
 
 	/**
 	 * The image registry containing {@link Image images}.
@@ -73,6 +73,7 @@ class FindReplaceOverlayImages {
 		declareRegistryImage(KEY_SEARCH_IN_AREA, ELCL + "search_in_area.png"); //$NON-NLS-1$
 		declareRegistryImage(KEY_OPEN_REPLACE_AREA, ELCL + "open_replace.png"); //$NON-NLS-1$
 		declareRegistryImage(KEY_CLOSE_REPLACE_AREA, ELCL + "close_replace.png"); //$NON-NLS-1$
+		declareRegistryImage(KEY_OPEN_HISTORY, ELCL + "open_history.png"); //$NON-NLS-1$
 	}
 
 	/**
