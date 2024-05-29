@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
@@ -89,7 +88,7 @@ class FindReplaceOverlay extends Dialog {
 	private Composite searchContainer;
 	private Composite searchBarContainer;
 	private Text searchBar;
-	private ToolBar searchTools;
+	private AccessibleToolBar searchTools;
 
 	private ToolItem searchInSelectionButton;
 	private ToolItem wholeWordSearchButton;
@@ -102,7 +101,7 @@ class FindReplaceOverlay extends Dialog {
 	private Composite replaceContainer;
 	private Composite replaceBarContainer;
 	private Text replaceBar;
-	private ToolBar replaceTools;
+	private AccessibleToolBar replaceTools;
 	private ToolItem replaceButton;
 	private ToolItem replaceAllButton;
 
@@ -432,7 +431,7 @@ class FindReplaceOverlay extends Dialog {
 	}
 
 	private void createSearchTools() {
-		searchTools = new ToolBar(searchContainer, SWT.HORIZONTAL);
+		searchTools = new AccessibleToolBar(searchContainer);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.CENTER, GridData.END).applyTo(searchTools);
 
 		createWholeWordsButton();
@@ -441,104 +440,106 @@ class FindReplaceOverlay extends Dialog {
 		createAreaSearchButton();
 
 		@SuppressWarnings("unused")
-		ToolItem separator = new ToolItem(searchTools, SWT.SEPARATOR);
+		ToolItem separator = searchTools.createToolItem(SWT.SEPARATOR);
 
-		searchUpButton = new ToolItem(searchTools, SWT.PUSH);
-		searchUpButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_PREV));
-		searchUpButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_upSearchButton_toolTip);
-		searchUpButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			performSearch(false);
-			evaluateFindReplaceStatus();
-		}));
-		searchDownButton = new ToolItem(searchTools, SWT.PUSH);
+		searchUpButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
+				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_PREV))
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_upSearchButton_toolTip)
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+					performSearch(false);
+					evaluateFindReplaceStatus();
+				})).build();
+		searchDownButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
+				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_NEXT))
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip)
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+					performSearch(true);
+					evaluateFindReplaceStatus();
+				})).build();
 		searchDownButton.setSelection(true); // by default, search down
-		searchDownButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_NEXT));
-		searchDownButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip);
-		searchDownButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			performSearch(true);
-			evaluateFindReplaceStatus();
-		}));
-		searchAllButton = new ToolItem(searchTools, SWT.PUSH);
-		searchAllButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_ALL));
-		searchAllButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_searchAllButton_toolTip);
-		searchAllButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			performSelectAll();
-			evaluateFindReplaceStatus();
-		}));
+
+		searchAllButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
+				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_ALL))
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchAllButton_toolTip)
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+					performSelectAll();
+					evaluateFindReplaceStatus();
+				})).build();
 	}
 
 	private void createAreaSearchButton() {
-		searchInSelectionButton = new ToolItem(searchTools, SWT.CHECK);
-		searchInSelectionButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_IN_AREA));
-		searchInSelectionButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_searchInSelectionButton_toolTip);
+		searchInSelectionButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
+				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_IN_AREA))
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchInSelectionButton_toolTip)
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+					activateInFindReplacerIf(SearchOptions.GLOBAL, !searchInSelectionButton.getSelection());
+					updateIncrementalSearch();
+				})).build();
 		searchInSelectionButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
-		searchInSelectionButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			activateInFindReplacerIf(SearchOptions.GLOBAL, !searchInSelectionButton.getSelection());
-			updateIncrementalSearch();
-		}));
 	}
 
 	private void createRegexSearchButton() {
-		regexSearchButton = new ToolItem(searchTools, SWT.CHECK);
-		regexSearchButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX));
-		regexSearchButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip);
+		regexSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
+				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX))
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+					activateInFindReplacerIf(SearchOptions.REGEX, ((ToolItem) e.widget).getSelection());
+					wholeWordSearchButton.setEnabled(!findReplaceLogic.isActive(SearchOptions.REGEX));
+					updateIncrementalSearch();
+				})).build();
 		regexSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.REGEX));
-		regexSearchButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			activateInFindReplacerIf(SearchOptions.REGEX, ((ToolItem) e.widget).getSelection());
-			wholeWordSearchButton.setEnabled(!findReplaceLogic.isActive(SearchOptions.REGEX));
-			updateIncrementalSearch();
-		}));
 	}
 
 	private void createCaseSensitiveButton() {
-		caseSensitiveSearchButton = new ToolItem(searchTools, SWT.CHECK);
-		caseSensitiveSearchButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CASE_SENSITIVE));
-		caseSensitiveSearchButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_caseSensitiveButton_toolTip);
+		caseSensitiveSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
+				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CASE_SENSITIVE))
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_caseSensitiveButton_toolTip)
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+					activateInFindReplacerIf(SearchOptions.CASE_SENSITIVE, caseSensitiveSearchButton.getSelection());
+					updateIncrementalSearch();
+				})).build();
 		caseSensitiveSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.CASE_SENSITIVE));
-		caseSensitiveSearchButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			activateInFindReplacerIf(SearchOptions.CASE_SENSITIVE, caseSensitiveSearchButton.getSelection());
-			updateIncrementalSearch();
-		}));
 	}
 
 	private void createWholeWordsButton() {
-		wholeWordSearchButton = new ToolItem(searchTools, SWT.CHECK);
-		wholeWordSearchButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_WHOLE_WORD));
-		wholeWordSearchButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip);
+		wholeWordSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
+				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_WHOLE_WORD))
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip)
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+					activateInFindReplacerIf(SearchOptions.WHOLE_WORD, wholeWordSearchButton.getSelection());
+					updateIncrementalSearch();
+				})).build();
 		wholeWordSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
-		wholeWordSearchButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			activateInFindReplacerIf(SearchOptions.WHOLE_WORD, wholeWordSearchButton.getSelection());
-			updateIncrementalSearch();
-		}));
 	}
 
 	private void createReplaceTools() {
 		Color warningColor = JFaceColors.getErrorText(getShell().getDisplay());
 
-		replaceTools = new ToolBar(replaceContainer, SWT.HORIZONTAL);
+		replaceTools = new AccessibleToolBar(replaceContainer);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.CENTER, GridData.END).applyTo(replaceTools);
-		replaceButton = new ToolItem(replaceTools, SWT.PUSH);
-		replaceButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE));
-		replaceButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip);
-		replaceButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			if (getFindString().isEmpty()) {
-				showUserFeedback(warningColor, true);
-				return;
-			}
-			performSingleReplace();
-			evaluateFindReplaceStatus();
-		}));
-		replaceAllButton = new ToolItem(replaceTools, SWT.PUSH);
-		replaceAllButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE_ALL));
-		replaceAllButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceAllButton_toolTip);
-		replaceAllButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			if (getFindString().isEmpty()) {
-				showUserFeedback(warningColor, true);
-				return;
-			}
-			performReplaceAll();
-			evaluateFindReplaceStatus();
-		}));
+		replaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
+				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE))
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip)
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+					if (getFindString().isEmpty()) {
+						showUserFeedback(warningColor, true);
+						return;
+					}
+					performSingleReplace();
+					evaluateFindReplaceStatus();
+				})).build();
+
+		replaceAllButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
+				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE_ALL))
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceAllButton_toolTip)
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+					if (getFindString().isEmpty()) {
+						showUserFeedback(warningColor, true);
+						return;
+					}
+					performReplaceAll();
+					evaluateFindReplaceStatus();
+				})).build();
 	}
 
 	private void createSearchBar() {
