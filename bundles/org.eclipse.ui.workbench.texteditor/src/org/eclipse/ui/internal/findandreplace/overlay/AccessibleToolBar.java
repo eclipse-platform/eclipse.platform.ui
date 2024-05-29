@@ -33,7 +33,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
  * activation behavior, we listen for it manually and send according events if
  * necessary.
  */
-public class AccessibleToolBar extends Composite {
+class AccessibleToolBar extends Composite {
 
 	private List<ToolBar> toolBars = new ArrayList<>();
 

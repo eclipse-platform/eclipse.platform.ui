@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.ToolItem;
 /**
  * Builder for ToolItems for {@link AccessibleToolBar}.
  */
-public class AccessibleToolItemBuilder {
+class AccessibleToolItemBuilder {
 	private final AccessibleToolBar accessibleToolBar;
 	private int styleBits = SWT.NONE;
 	private Image image;

@@ -31,21 +31,24 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 /**
  * Provides Icons for the editor overlay used for performing
  * find/replace-operations.
+ *
+ * @since 3.17
  */
-public class FindReplaceOverlayImages {
+class FindReplaceOverlayImages {
 	private static final String PREFIX_ELCL = TextEditorPlugin.PLUGIN_ID + ".elcl."; //$NON-NLS-1$
 
-	public static final String KEY_FIND_NEXT = PREFIX_ELCL + "select_next"; //$NON-NLS-1$
-	public static final String KEY_FIND_PREV = PREFIX_ELCL + "select_prev"; //$NON-NLS-1$
-	public static final String KEY_FIND_REGEX = PREFIX_ELCL + "regex"; //$NON-NLS-1$
-	public static final String KEY_REPLACE = PREFIX_ELCL + "replace"; //$NON-NLS-1$
-	public static final String KEY_REPLACE_ALL = PREFIX_ELCL + "replace_all"; //$NON-NLS-1$
-	public static final String KEY_WHOLE_WORD = PREFIX_ELCL + "whole_word"; //$NON-NLS-1$
-	public static final String KEY_CASE_SENSITIVE = PREFIX_ELCL + "case_sensitive"; //$NON-NLS-1$
-	public static final String KEY_SEARCH_ALL = PREFIX_ELCL + "search_all"; //$NON-NLS-1$
-	public static final String KEY_SEARCH_IN_AREA = PREFIX_ELCL + "search_in_selection"; //$NON-NLS-1$
-	public static final String KEY_OPEN_REPLACE_AREA = PREFIX_ELCL + "open_replace"; //$NON-NLS-1$
-	public static final String KEY_CLOSE_REPLACE_AREA = PREFIX_ELCL + "close_replace"; //$NON-NLS-1$
+	static final String KEY_FIND_NEXT = PREFIX_ELCL + "select_next"; //$NON-NLS-1$
+	static final String KEY_FIND_PREV = PREFIX_ELCL + "select_prev"; //$NON-NLS-1$
+	static final String KEY_FIND_REGEX = PREFIX_ELCL + "regex"; //$NON-NLS-1$
+	static final String KEY_REPLACE = PREFIX_ELCL + "replace"; //$NON-NLS-1$
+	static final String KEY_REPLACE_ALL = PREFIX_ELCL + "replace_all"; //$NON-NLS-1$
+	static final String KEY_WHOLE_WORD = PREFIX_ELCL + "whole_word"; //$NON-NLS-1$
+	static final String KEY_CASE_SENSITIVE = PREFIX_ELCL + "case_sensitive"; //$NON-NLS-1$
+	static final String KEY_SEARCH_ALL = PREFIX_ELCL + "search_all"; //$NON-NLS-1$
+	static final String KEY_SEARCH_IN_AREA = PREFIX_ELCL + "search_in_selection"; //$NON-NLS-1$
+	static final String KEY_OPEN_REPLACE_AREA = PREFIX_ELCL + "open_replace"; //$NON-NLS-1$
+	static final String KEY_CLOSE_REPLACE_AREA = PREFIX_ELCL + "close_replace"; //$NON-NLS-1$
+	static final String KEY_OPEN_HISTORY = "open_history"; //$NON-NLS-1$
 
 	/**
 	 * The image registry containing {@link Image images}.
@@ -55,6 +58,7 @@ public class FindReplaceOverlayImages {
 	private static String ICONS_PATH = "$nl$/icons/full/"; //$NON-NLS-1$
 
 	private final static String ELCL = ICONS_PATH + "elcl16/"; //$NON-NLS-1$
+
 
 	/**
 	 * Declare all images
@@ -71,6 +75,7 @@ public class FindReplaceOverlayImages {
 		declareRegistryImage(KEY_SEARCH_IN_AREA, ELCL + "search_in_area.png"); //$NON-NLS-1$
 		declareRegistryImage(KEY_OPEN_REPLACE_AREA, ELCL + "open_replace.png"); //$NON-NLS-1$
 		declareRegistryImage(KEY_CLOSE_REPLACE_AREA, ELCL + "close_replace.png"); //$NON-NLS-1$
+		declareRegistryImage(KEY_OPEN_HISTORY, ELCL + "open_history.png"); //$NON-NLS-1$
 	}
 
 	/**

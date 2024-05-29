@@ -45,6 +45,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.core.runtime.Adapters;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -62,6 +64,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
+import org.eclipse.ui.internal.findandreplace.HistoryStore;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 
@@ -90,27 +93,34 @@ public class FindReplaceOverlay extends Dialog {
 
 	private Composite searchContainer;
 	private Composite searchBarContainer;
-	private Text searchBar;
+	private HistoryTextWrapper searchBar;
 	private AccessibleToolBar searchTools;
-
 	private ToolItem searchInSelectionButton;
 	private ToolItem wholeWordSearchButton;
 	private ToolItem caseSensitiveSearchButton;
 	private ToolItem regexSearchButton;
+
+	@SuppressWarnings("unused")
 	private ToolItem searchUpButton;
 	private ToolItem searchDownButton;
+
+	@SuppressWarnings("unused")
 	private ToolItem searchAllButton;
 
 	private Composite replaceContainer;
 	private Composite replaceBarContainer;
-	private Text replaceBar;
+	private HistoryTextWrapper replaceBar;
 	private AccessibleToolBar replaceTools;
+
+	@SuppressWarnings("unused")
 	private ToolItem replaceButton;
+	@SuppressWarnings("unused")
 	private ToolItem replaceAllButton;
 
 	private Color backgroundToUse;
 	private Color normalTextForegroundColor;
 	private boolean positionAtTop = true;
+	private static final int HISTORY_SIZE = 15;
 
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
 		super(parent);
@@ -119,7 +129,6 @@ public class FindReplaceOverlay extends Dialog {
 		setShellStyle(SWT.MODELESS);
 		setBlockOnOpen(false);
 		targetPart = part;
-
 	}
 
 	@Override
@@ -143,11 +152,14 @@ public class FindReplaceOverlay extends Dialog {
 	private void performReplaceAll() {
 		BusyIndicator.showWhile(getShell() != null ? getShell().getDisplay() : Display.getCurrent(),
 				() -> findReplaceLogic.performReplaceAll(getFindString(), getReplaceString()));
+		replaceBar.storeHistory();
+		searchBar.storeHistory();
 	}
 
 	private void performSelectAll() {
 		BusyIndicator.showWhile(getShell() != null ? getShell().getDisplay() : Display.getCurrent(),
 				() -> findReplaceLogic.performSelectAll(getFindString()));
+		searchBar.storeHistory();
 	}
 
 	private KeyListener shortcuts = KeyListener.keyPressedAdapter(e -> {
@@ -350,31 +362,22 @@ public class FindReplaceOverlay extends Dialog {
 
 	private void applyOverlayColors(Color color, boolean tryToColorReplaceBar) {
 		searchTools.setBackground(color);
-		searchInSelectionButton.setBackground(color);
-		wholeWordSearchButton.setBackground(color);
-		regexSearchButton.setBackground(color);
-		caseSensitiveSearchButton.setBackground(color);
-		searchAllButton.setBackground(color);
-		searchUpButton.setBackground(color);
-		searchDownButton.setBackground(color);
-
 		searchBarContainer.setBackground(color);
 		searchBar.setBackground(color);
 		searchContainer.setBackground(color);
 
 		if (replaceBarOpen && tryToColorReplaceBar) {
 			replaceContainer.setBackground(color);
-			replaceBar.setBackground(color);
 			replaceBarContainer.setBackground(color);
-			replaceAllButton.setBackground(color);
-			replaceButton.setBackground(color);
+			replaceTools.setBackground(color);
+			replaceBar.setBackground(color);
 		}
 	}
 
 	private void unbindListeners() {
 		getShell().removeShellListener(overlayDeactivationListener);
 		if (targetPart != null && targetPart instanceof StatusTextEditor textEditor) {
-			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
+			Control targetWidget = Adapters.adapt(textEditor, ITextViewer.class).getTextWidget();
 			if (targetWidget != null) {
 				targetWidget.getShell().removeControlListener(shellMovementListener);
 				targetWidget.removePaintListener(widgetMovementListener);
@@ -386,7 +389,7 @@ public class FindReplaceOverlay extends Dialog {
 	private void bindListeners() {
 		getShell().addShellListener(overlayDeactivationListener);
 		if (targetPart instanceof StatusTextEditor textEditor) {
-			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
+			Control targetWidget = Adapters.adapt(textEditor, ITextViewer.class).getTextWidget();
 
 			targetWidget.getShell().addControlListener(shellMovementListener);
 			targetWidget.addPaintListener(widgetMovementListener);
@@ -433,17 +436,20 @@ public class FindReplaceOverlay extends Dialog {
 		textBarForRetrievingTheRightColor.dispose();
 	}
 
+
 	private void createSearchTools() {
 		searchTools = new AccessibleToolBar(searchContainer);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.CENTER, GridData.END).applyTo(searchTools);
+
+		@SuppressWarnings("unused")
+		ToolItem separator = searchTools.createToolItem(SWT.SEPARATOR);
 
 		createWholeWordsButton();
 		createCaseSensitiveButton();
 		createRegexSearchButton();
 		createAreaSearchButton();
 
-		@SuppressWarnings("unused")
-		ToolItem separator = searchTools.createToolItem(SWT.SEPARATOR);
+		separator = searchTools.createToolItem(SWT.SEPARATOR);
 
 		searchUpButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_PREV))
@@ -519,6 +525,10 @@ public class FindReplaceOverlay extends Dialog {
 		Color warningColor = JFaceColors.getErrorText(getShell().getDisplay());
 
 		replaceTools = new AccessibleToolBar(replaceContainer);
+
+		@SuppressWarnings("unused")
+		ToolItem separator = replaceTools.createToolItem(SWT.SEPARATOR);
+
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.CENTER, GridData.END).applyTo(replaceTools);
 		replaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE))
@@ -546,7 +556,9 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void createSearchBar() {
-		searchBar = new Text(searchBarContainer, SWT.SINGLE);
+		HistoryStore searchHistory = new HistoryStore(getDialogSettings(), "searchhistory", //$NON-NLS-1$
+				HISTORY_SIZE);
+		searchBar = new HistoryTextWrapper(searchHistory, searchBarContainer, SWT.SINGLE);
 		GridDataFactory.fillDefaults().grab(true, false).align(GridData.FILL, GridData.END).applyTo(searchBar);
 		searchBar.forceFocus();
 		searchBar.selectAll();
@@ -591,7 +603,8 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void createReplaceBar() {
-		replaceBar = new Text(replaceBarContainer, SWT.SINGLE);
+		HistoryStore replaceHistory = new HistoryStore(getDialogSettings(), "replacehistory", HISTORY_SIZE); //$NON-NLS-1$
+		replaceBar = new HistoryTextWrapper(replaceHistory, replaceBarContainer, SWT.SINGLE);
 		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(replaceBar);
 		replaceBar.setMessage(FindReplaceMessages.FindReplaceOverlay_replaceBar_message);
 		replaceBar.addFocusListener(FocusListener.focusLostAdapter(e -> {
@@ -782,7 +795,7 @@ public class FindReplaceOverlay extends Dialog {
 		}
 
 		StatusTextEditor textEditor = (StatusTextEditor) targetPart;
-		Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
+		Control targetWidget = Adapters.adapt(textEditor, ITextViewer.class).getTextWidget();
 		if (!okayToUse(targetWidget)) {
 			this.close();
 			return;
@@ -817,6 +830,8 @@ public class FindReplaceOverlay extends Dialog {
 
 	private void performSingleReplace() {
 		findReplaceLogic.performReplaceAndFind(getFindString(), getReplaceString());
+		replaceBar.storeHistory();
+		searchBar.storeHistory();
 	}
 
 	private void performSearch(boolean forward) {
@@ -826,6 +841,7 @@ public class FindReplaceOverlay extends Dialog {
 		findReplaceLogic.performSearch(getFindString());
 		activateInFindReplacerIf(SearchOptions.FORWARD, oldForwardSearchSetting);
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		searchBar.storeHistory();
 	}
 
 	private void updateFromTargetSelection() {
