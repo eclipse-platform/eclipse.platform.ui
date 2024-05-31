@@ -183,6 +183,29 @@ public class PopupDialog extends Window {
 		}
 	}
 
+	private class PinAction extends Action {
+		PinAction() {
+			super(JFaceResources.getString("PopupDialog.pinDialog"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
+			setChecked(pinDialog);
+		}
+
+		@Override
+		public void run() {
+			pinDialog = isChecked();
+		}
+	}
+
+	private class CloseAction extends Action {
+		CloseAction() {
+			super(JFaceResources.getString("PopupDialog.close"), IAction.AS_PUSH_BUTTON); //$NON-NLS-1$
+		}
+
+		@Override
+		public void run() {
+			close();
+		}
+	}
+
 	/**
 	 *
 	 * Remember location action for the dialog.
@@ -341,6 +364,9 @@ public class PopupDialog extends Window {
 	 * shown.
 	 */
 	private boolean persistLocation = false;
+
+	private boolean pinDialog = false;
+
 	/**
 	 * Flag specifying whether to use new 3.4 API instead of the old one.
 	 *
@@ -357,6 +383,8 @@ public class PopupDialog extends Window {
 	 * Text to be shown in an optional info area (at the bottom).
 	 */
 	private String infoText;
+
+	private boolean showPinAction;
 
 	/**
 	 * Constructs a new instance of <code>PopupDialog</code>.
@@ -407,51 +435,103 @@ public class PopupDialog extends Window {
 			boolean showDialogMenu, boolean showPersistActions,
 			String titleText, String infoText) {
 		this(parent, shellStyle, takeFocusOnOpen, persistSize, persistLocation,
-				showDialogMenu, showPersistActions, titleText, infoText, true);
-
+				showDialogMenu, showPersistActions, false, titleText, infoText, true);
 	}
 
 	/**
 	 * Constructs a new instance of <code>PopupDialog</code>.
 	 *
-	 * @param parent
-	 *            The parent shell.
-	 * @param shellStyle
-	 *            The shell style.
-	 * @param takeFocusOnOpen
-	 *            A boolean indicating whether focus should be taken by this
-	 *            popup when it opens.
-	 * @param persistSize
-	 *            A boolean indicating whether the size should be persisted upon
-	 *            close of the dialog. The size can only be persisted if the
-	 *            dialog settings for persisting the bounds are also specified.
-	 *            If a menu action will be provided that allows the user to
-	 *            control this feature and the user hasn't changed that setting,
-	 *            then this flag is used as initial default for the menu.
-	 * @param persistLocation
-	 *            A boolean indicating whether the location should be persisted
-	 *            upon close of the dialog. The location can only be persisted
-	 *            if the dialog settings for persisting the bounds are also
-	 *            specified. If a menu action will be provided that allows the
-	 *            user to control this feature and the user hasn't changed that
-	 *            setting, then this flag is used as initial default for the
-	 *            menu. default for the menu until the user changed it.
-	 * @param showDialogMenu
-	 *            A boolean indicating whether a menu for moving and resizing
-	 *            the popup should be provided.
-	 * @param showPersistActions
-	 *            A boolean indicating whether actions allowing the user to
-	 *            control the persisting of the dialog bounds and location
-	 *            should be shown in the dialog menu. This parameter has no
-	 *            effect if <code>showDialogMenu</code> is <code>false</code>.
-	 * @param titleText
-	 *            Text to be shown in an upper title area, or <code>null</code>
-	 *            if there is no title.
-	 * @param infoText
-	 *            Text to be shown in a lower info area, or <code>null</code>
-	 *            if there is no info area.
-	 * @param use34API
-	 *            <code>true</code> if 3.4 API should be used
+	 * @param parent             The parent shell.
+	 * @param shellStyle         The shell style.
+	 * @param takeFocusOnOpen    A boolean indicating whether focus should be taken
+	 *                           by this popup when it opens.
+	 * @param persistSize        A boolean indicating whether the size should be
+	 *                           persisted upon close of the dialog. The size can
+	 *                           only be persisted if the dialog settings for
+	 *                           persisting the bounds are also specified. If a menu
+	 *                           action will be provided that allows the user to
+	 *                           control this feature and the user hasn't changed
+	 *                           that setting, then this flag is used as initial
+	 *                           default for the menu.
+	 * @param persistLocation    A boolean indicating whether the location should be
+	 *                           persisted upon close of the dialog. The location
+	 *                           can only be persisted if the dialog settings for
+	 *                           persisting the bounds are also specified. If a menu
+	 *                           action will be provided that allows the user to
+	 *                           control this feature and the user hasn't changed
+	 *                           that setting, then this flag is used as initial
+	 *                           default for the menu. default for the menu until
+	 *                           the user changed it.
+	 * @param showDialogMenu     A boolean indicating whether a menu for moving and
+	 *                           resizing the popup should be provided.
+	 * @param showPersistActions A boolean indicating whether actions allowing the
+	 *                           user to control the persisting of the dialog bounds
+	 *                           and location should be shown in the dialog menu.
+	 *                           This parameter has no effect if
+	 *                           <code>showDialogMenu</code> is <code>false</code>.
+	 * @param showPinAction      A boolean indicating whether actions allowing the
+	 *                           user to pin the dialog so it remains visible and
+	 *                           accessible when deactivated should be shown in the
+	 *                           dialog menu. This parameter has no effect if
+	 *                           <code>showDialogMenu</code> is <code>false</code>.
+	 * @param titleText          Text to be shown in an upper title area, or
+	 *                           <code>null</code> if there is no title.
+	 * @param infoText           Text to be shown in a lower info area, or
+	 *                           <code>null</code> if there is no info area.
+	 *
+	 * @see PopupDialog#getDialogSettings()
+	 *
+	 * @since 3.35
+	 */
+	public PopupDialog(Shell parent, int shellStyle, boolean takeFocusOnOpen,
+			boolean persistSize, boolean persistLocation,
+			boolean showDialogMenu, boolean showPersistActions, boolean showPinAction,
+			String titleText, String infoText) {
+		this(parent, shellStyle, takeFocusOnOpen, persistSize, persistLocation,
+				showDialogMenu, showPersistActions, showPinAction, titleText, infoText, true);
+	}
+
+	/**
+	 * Constructs a new instance of <code>PopupDialog</code>.
+	 *
+	 * @param parent             The parent shell.
+	 * @param shellStyle         The shell style.
+	 * @param takeFocusOnOpen    A boolean indicating whether focus should be taken
+	 *                           by this popup when it opens.
+	 * @param persistSize        A boolean indicating whether the size should be
+	 *                           persisted upon close of the dialog. The size can
+	 *                           only be persisted if the dialog settings for
+	 *                           persisting the bounds are also specified. If a menu
+	 *                           action will be provided that allows the user to
+	 *                           control this feature and the user hasn't changed
+	 *                           that setting, then this flag is used as initial
+	 *                           default for the menu.
+	 * @param persistLocation    A boolean indicating whether the location should be
+	 *                           persisted upon close of the dialog. The location
+	 *                           can only be persisted if the dialog settings for
+	 *                           persisting the bounds are also specified. If a menu
+	 *                           action will be provided that allows the user to
+	 *                           control this feature and the user hasn't changed
+	 *                           that setting, then this flag is used as initial
+	 *                           default for the menu. default for the menu until
+	 *                           the user changed it.
+	 * @param showDialogMenu     A boolean indicating whether a menu for moving and
+	 *                           resizing the popup should be provided.
+	 * @param showPersistActions A boolean indicating whether actions allowing the
+	 *                           user to control the persisting of the dialog bounds
+	 *                           and location should be shown in the dialog menu.
+	 *                           This parameter has no effect if
+	 *                           <code>showDialogMenu</code> is <code>false</code>.
+	 * @param showPinAction      A boolean indicating whether actions allowing the
+	 *                           user to pin the dialog so it remains visible and
+	 *                           accessible when deactivated should be shown in the
+	 *                           dialog menu. This parameter has no effect if
+	 *                           <code>showDialogMenu</code> is <code>false</code>.
+	 * @param titleText          Text to be shown in an upper title area, or
+	 *                           <code>null</code> if there is no title.
+	 * @param infoText           Text to be shown in a lower info area, or
+	 *                           <code>null</code> if there is no info area.
+	 * @param use34API           <code>true</code> if 3.4 API should be used
 	 *
 	 * @see PopupDialog#getDialogSettings()
 	 *
@@ -460,6 +540,7 @@ public class PopupDialog extends Window {
 	private PopupDialog(Shell parent, int shellStyle, boolean takeFocusOnOpen,
 			boolean persistSize, boolean persistLocation,
 			boolean showDialogMenu, boolean showPersistActions,
+			boolean showPinAction,
 			String titleText, String infoText, boolean use34API) {
 		super(parent);
 		// Prior to 3.4, we encouraged use of SWT.NO_TRIM and provided a
@@ -477,6 +558,7 @@ public class PopupDialog extends Window {
 		this.takeFocusOnOpen = takeFocusOnOpen;
 		this.showDialogMenu = showDialogMenu;
 		this.showPersistActions = showPersistActions;
+		this.showPinAction = showPinAction;
 		this.titleText = titleText;
 		this.infoText = infoText;
 
@@ -504,7 +586,7 @@ public class PopupDialog extends Window {
 			 * the asyncClose() call is disabled in GTK. See Eclipse Bugs
 			 * 466500 and 113577 for more information.
 			 */
-			if (listenToDeactivate && event.widget == getShell()
+			if (!pinDialog && listenToDeactivate && event.widget == getShell()
 					&& getShell().getShells().length == 0) {
 				if (!Util.isGtk()) {
 					asyncClose();
@@ -538,7 +620,7 @@ public class PopupDialog extends Window {
 		if (parent != null) {
 			if ((getShellStyle() & SWT.ON_TOP) != 0) {
 				parentDeactivateListener = event -> {
-					if (listenToParentDeactivate) {
+					if (!pinDialog && listenToParentDeactivate) {
 						asyncClose();
 					} else {
 						// Our first deactivate, now start listening on the Mac.
@@ -565,7 +647,7 @@ public class PopupDialog extends Window {
 						 * "Show all Instances" and "Show all References" do.
 						 * They all are InspectPopupDialog instances...
 						 */
-						if (event.widget != parent || !listenToDeactivate || parent.isDisposed()) {
+						if (pinDialog || event.widget != parent || !listenToDeactivate || parent.isDisposed()) {
 							return;
 						}
 						parent.removeListener(SWT.Activate, this);
@@ -893,6 +975,10 @@ public class PopupDialog extends Window {
 				dialogMenu.add(new PersistBoundsAction());
 			}
 		}
+		if (this.showPinAction) {
+			dialogMenu.add(new PinAction());
+		}
+		dialogMenu.add(new CloseAction());
 		dialogMenu.add(new Separator("SystemMenuEnd")); //$NON-NLS-1$
 	}
 
@@ -1524,4 +1610,5 @@ public class PopupDialog extends Window {
 		}
 		titleFont = null;
 	}
+
 }
