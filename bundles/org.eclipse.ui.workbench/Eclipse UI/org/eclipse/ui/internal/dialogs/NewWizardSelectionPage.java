@@ -94,6 +94,7 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 	 * they will persist into the next invocation of this wizard page
 	 */
 	protected void saveWidgetValues() {
+		RecentNewWizardSelection.getInstance().addItem(newResourcePage.getSelectedElement().getId());
 		newResourcePage.saveWidgetValues();
 	}
 
