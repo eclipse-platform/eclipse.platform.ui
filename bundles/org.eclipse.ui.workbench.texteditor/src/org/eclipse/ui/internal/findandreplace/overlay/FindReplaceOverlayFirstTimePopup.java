@@ -96,7 +96,6 @@ public class FindReplaceOverlayFirstTimePopup {
 							true)
 					.delay(POPUP_VANISH_TIME.toMillis()).open();
 		}
-
 	}
 
 	private static Control createFirstTimeNotification(Composite composite) {

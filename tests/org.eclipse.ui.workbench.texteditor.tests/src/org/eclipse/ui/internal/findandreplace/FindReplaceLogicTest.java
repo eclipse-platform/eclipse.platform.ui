@@ -662,6 +662,58 @@ public class FindReplaceLogicTest {
 		assertThat(findReplaceLogic.getStatus(), instanceOf(NoStatus.class));
 	}
 
+	/**
+	 * Test for https://github.com/eclipse-platform/eclipse.platform.ui/issues/1914
+	 */
+	@Test
+	public void testActivateRegexInIncrementalIncrementalBaseLocationUpdated() {
+		TextViewer textViewer= setupTextViewer("Test Test Test Test");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
+		findReplaceLogic.performSearch("Test");
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+
+		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
+		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+
+		findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
+		findReplaceLogic.performSearch("Test");
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+
+		assertThat(findReplaceLogic.getTarget().getSelection().x, is(5));
+		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+
+		findReplaceLogic.deactivate(SearchOptions.REGEX);
+		findReplaceLogic.performSearch("Test");
+
+		assertThat(findReplaceLogic.getTarget().getSelection().x, is(10));
+		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+	}
+
+	@Test
+	public void testPerformIncrementalSearch() {
+		TextViewer textViewer= setupTextViewer("Test Test Test Test");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		findReplaceLogic.performSearch("Test");
+		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
+		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+
+		findReplaceLogic.performSearch("Test"); // incremental search is idempotent
+		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
+		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+
+		findReplaceLogic.performSearch(""); // this clears the incremental search, but the "old search" still remains active
+		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
+		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+	}
+
 	private void expectStatusIsCode(IFindReplaceLogic findReplaceLogic, FindStatus.StatusCode code) {
 		assertThat(findReplaceLogic.getStatus(), instanceOf(FindStatus.class));
 		assertThat(((FindStatus) findReplaceLogic.getStatus()).getMessageCode(), equalTo(code));

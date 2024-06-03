@@ -231,4 +231,19 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(dialog.getFindText().length(), (target.getSelection()).y);
 	}
+
+	@Test
+	public void testFindNextDespiteIncrementalEnabled() {
+		initializeTextViewerWithFindReplaceUI("test test test test");
+		DialogAccess dialog= getDialog();
+		dialog.select(SearchOptions.INCREMENTAL);
+
+		dialog.setFindText("test");
+		assertThat(dialog.getTarget().getSelection().x, is(0));
+		assertThat(dialog.getTarget().getSelection().y, is(4));
+
+		dialog.simulateEnterInFindInputField(false);
+		assertThat(dialog.getTarget().getSelection().x, is(5));
+		assertThat(dialog.getTarget().getSelection().y, is(4));
+	}
 }

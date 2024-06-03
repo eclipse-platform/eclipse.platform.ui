@@ -154,13 +154,17 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		dialog.select(SearchOptions.REGEX);
 		dialog.setFindText("text"); // with RegEx enabled, there is no incremental search!
 		dialog.pressSearch(true);
+		assertThat(dialog.getTarget().getSelection().x, is(0));
 		assertThat(dialog.getTarget().getSelection().y, is(4));
 		dialog.pressSearch(true);
 		assertThat(dialog.getTarget().getSelection().x, is("text ".length()));
+		assertThat(dialog.getTarget().getSelection().y, is(4));
 		dialog.pressSearch(true);
 		assertThat(dialog.getTarget().getSelection().x, is("text text ".length()));
+		assertThat(dialog.getTarget().getSelection().y, is(4));
 		dialog.pressSearch(false);
 		assertThat(dialog.getTarget().getSelection().x, is("text ".length()));
+		assertThat(dialog.getTarget().getSelection().y, is(4));
 	}
 
 }
