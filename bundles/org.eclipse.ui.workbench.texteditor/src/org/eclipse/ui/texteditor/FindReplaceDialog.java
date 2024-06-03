@@ -143,7 +143,7 @@ class FindReplaceDialog extends Dialog {
 			}
 
 			findReplaceLogic.performIncrementalSearch(getFindString());
-			evaluateFindReplaceStatus(false);
+			evaluateFindReplaceStatus();
 
 			updateButtonState(!findReplaceLogic.isActive(SearchOptions.INCREMENTAL));
 		}
@@ -1298,16 +1298,10 @@ class FindReplaceDialog extends Dialog {
 		}
 	}
 
-	private void evaluateFindReplaceStatus() {
-		evaluateFindReplaceStatus(true);
-	}
-
 	/**
 	 * Evaluate the status of the FindReplaceLogic object.
-	 *
-	 * @param allowBeep Whether the evaluation should beep on some codes.
 	 */
-	private void evaluateFindReplaceStatus(boolean allowBeep) {
+	private void evaluateFindReplaceStatus() {
 		IFindReplaceStatus status = findReplaceLogic.getStatus();
 
 		String dialogMessage = status.accept(new FindReplaceLogicMessageGenerator());
@@ -1316,23 +1310,6 @@ class FindReplaceDialog extends Dialog {
 			fStatusLabel.setForeground(fReplaceLabel.getForeground());
 		} else {
 			fStatusLabel.setForeground(JFaceColors.getErrorText(fStatusLabel.getDisplay()));
-		}
-
-		if (!status.wasSuccessful()) {
-			tryToBeep(allowBeep);
-		}
-	}
-
-	/**
-	 * Tries beeping using the default beep. Will beep if the shell is currently
-	 * usable.
-	 *
-	 * @param allowBeep Whether or not beeps should be allowed. Suppresses all beeps
-	 *                  if false.
-	 */
-	private void tryToBeep(boolean allowBeep) {
-		if (okToUse(getShell()) && allowBeep) {
-			getShell().getDisplay().beep();
 		}
 	}
 
