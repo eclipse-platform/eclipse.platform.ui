@@ -16,11 +16,13 @@
 package org.eclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
@@ -113,11 +115,13 @@ public class RefreshAction extends WorkspaceAction {
 		if (!project.exists()) {
 			return;
 		}
-		IFileInfo location = IDEResourceInfoUtils.getFileInfo(project.getLocationURI());
+		URI locationURI = project.getLocationURI();
+		IFileInfo location = IDEResourceInfoUtils.getFileInfo(locationURI);
 		if (!location.exists()) {
+			String displayedProjectPath = toDisplayPath(locationURI);
 			String message = NLS.bind(
 					IDEWorkbenchMessages.RefreshAction_locationDeletedMessage,
-					project.getName(), location.toString());
+					project.getName(), displayedProjectPath);
 
 			final MessageDialog dialog = new MessageDialog(getShell(),
 					IDEWorkbenchMessages.RefreshAction_dialogTitle, // dialog
@@ -141,6 +145,11 @@ public class RefreshAction extends WorkspaceAction {
 				project.delete(true, true, null);
 			}
 		}
+	}
+
+	private static String toDisplayPath(URI locationURI) {
+		IFileStore fileStore = IDEResourceInfoUtils.getFileStore(locationURI);
+		return fileStore != null ? fileStore.toString() : locationURI.toString();
 	}
 
 	@Override
