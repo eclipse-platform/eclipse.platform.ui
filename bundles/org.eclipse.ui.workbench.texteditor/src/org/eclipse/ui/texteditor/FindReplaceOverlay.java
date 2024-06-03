@@ -550,11 +550,19 @@ class FindReplaceOverlay extends Dialog {
 
 			@Override
 			public void focusGained(FocusEvent e) {
-				// we want to update the base-location of where we start incremental search
-				// to the currently selected position in the target
-				// when coming back into the dialog
-				findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
+				findReplaceLogic.resetIncrementalBaseLocation();
 				findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+				if (getFindString().isEmpty()) {
+					return;
+				}
+				updateSelectionWithIncrementalSearch();
+			}
+
+			private void updateSelectionWithIncrementalSearch() {
+				boolean foundSearchString = findReplaceLogic.performSearch(getFindString());
+				if (foundSearchString) {
+					searchBar.setSelection(0, getFindString().length());
+				}
 			}
 
 			@Override
@@ -573,7 +581,7 @@ class FindReplaceOverlay extends Dialog {
 		if (findReplaceLogic.getTarget() instanceof IFindReplaceTargetExtension targetExtension) {
 			targetExtension.setSelection(targetExtension.getLineSelection().x, 0);
 		}
-		findReplaceLogic.performIncrementalSearch(getFindString());
+		findReplaceLogic.performSearch(getFindString());
 		evaluateFindReplaceStatus();
 	}
 
@@ -811,8 +819,8 @@ class FindReplaceOverlay extends Dialog {
 		activateInFindReplacerIf(SearchOptions.FORWARD, forward);
 		findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
 		findReplaceLogic.performSearch(getFindString());
-		activateInFindReplacerIf(SearchOptions.FORWARD, oldForwardSearchSetting);
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		activateInFindReplacerIf(SearchOptions.FORWARD, oldForwardSearchSetting);
 	}
 
 	private void initFindStringFromSelection() {
