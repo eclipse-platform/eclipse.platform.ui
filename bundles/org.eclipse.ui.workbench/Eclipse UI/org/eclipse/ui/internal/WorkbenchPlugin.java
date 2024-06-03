@@ -21,7 +21,9 @@ import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -53,6 +55,9 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.dialogs.NewWizard;
+import org.eclipse.ui.internal.dialogs.NewWizard.RecentNewWizardsPreferenceManager;
+import org.eclipse.ui.internal.dialogs.RecentNewWizardSelection;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceManager;
 import org.eclipse.ui.internal.help.CommandHelpServiceImpl;
 import org.eclipse.ui.internal.help.HelpServiceImpl;
@@ -202,6 +207,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	private ICommandHelpService commandHelpService;
 
+	private NewWizard.RecentNewWizardsPreferenceManager recentNewWizardsPreferenceManager;
+
 	/**
 	 * Create an instance of the WorkbenchPlugin. The workbench plugin is
 	 * effectively the "application" for the workbench UI. The entire UI operates as
@@ -210,6 +217,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	public WorkbenchPlugin() {
 		super();
 		inst = this;
+		recentNewWizardsPreferenceManager = new RecentNewWizardsPreferenceManager();
 	}
 
 	/**
@@ -766,6 +774,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			// to be loaded.s
 			if (uiBundle != null)
 				uiBundle.start(Bundle.START_TRANSIENT);
+
+			List<String> recentlyUsedNewWizards = recentNewWizardsPreferenceManager.getMenuShortcutsFromPreferences();
+			recentlyUsedNewWizards.stream().forEach(newPage -> RecentNewWizardSelection.getInstance().addItem(newPage));
+
 		} catch (BundleException e) {
 			WorkbenchPlugin.log("Unable to load UI activator", e); //$NON-NLS-1$
 		}
@@ -1048,6 +1060,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			testableTracker.close();
 			testableTracker = null;
 		}
+		// Store recently used new page shortcuts to preferences
+		Set<String> selectedFromOther = RecentNewWizardSelection.getInstance().getSelectedFromOther();
+		recentNewWizardsPreferenceManager.setMenuShortcutsToPreferences(selectedFromOther);
 		super.stop(context);
 	}
 
