@@ -53,6 +53,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.dialogs.NewWizard;
+import org.eclipse.ui.internal.dialogs.NewWizard.RecentNewWizardsPreferenceManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceManager;
 import org.eclipse.ui.internal.help.CommandHelpServiceImpl;
 import org.eclipse.ui.internal.help.HelpServiceImpl;
@@ -201,6 +203,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private EHelpService helpService;
 
 	private ICommandHelpService commandHelpService;
+
+	private NewWizard.RecentNewWizardsPreferenceManager recentNewWizardsPreferenceManager;
 
 	/**
 	 * Create an instance of the WorkbenchPlugin. The workbench plugin is
@@ -766,6 +770,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			// to be loaded.s
 			if (uiBundle != null)
 				uiBundle.start(Bundle.START_TRANSIENT);
+
+			recentNewWizardsPreferenceManager = new RecentNewWizardsPreferenceManager();
+			recentNewWizardsPreferenceManager.populate();
+
 		} catch (BundleException e) {
 			WorkbenchPlugin.log("Unable to load UI activator", e); //$NON-NLS-1$
 		}
@@ -1048,6 +1056,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			testableTracker.close();
 			testableTracker = null;
 		}
+		// Store recently used new page shortcuts to preferences
+		recentNewWizardsPreferenceManager.shutdown();
 		super.stop(context);
 	}
 

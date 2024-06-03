@@ -689,4 +689,11 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
 		updateDescription(selectedObject);
 	}
+
+	/**
+	 * @return selected element or {@code null}
+	 */
+	public IWizardDescriptor getSelectedElement() {
+		return selectedElement;
+	}
 }

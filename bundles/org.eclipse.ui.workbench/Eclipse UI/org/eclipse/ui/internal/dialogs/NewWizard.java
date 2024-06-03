@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
@@ -169,4 +173,52 @@ public class NewWizard extends Wizard {
 		return super.canFinish();
 	}
 
+	/**
+	 * A <code>RecentNewWizardsPreferenceManager</code> is used to store and fetch
+	 * the most recent new wizards used or created from the "Other" shortcut, which
+	 * is part of the menu manager with New Wizard actions, from preferences.
+	 */
+	public static class RecentNewWizardsPreferenceManager {
+
+		private static final String PLUGIN_ID = "org.eclipse.ui.workbench"; //$NON-NLS-1$
+		private static final String RECENT_NEW_MENU_ITEMS = "recentNewMenuItems"; //$NON-NLS-1$
+		private static final String SEPARATOR = ","; //$NON-NLS-1$
+
+		public List<String> getMenuShortcutsFromPreferences() {
+			IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
+			String preferences = pref.get(RECENT_NEW_MENU_ITEMS, null);
+			if (preferences != null && !preferences.trim().isEmpty()) {
+				return List.of(preferences.split(SEPARATOR));
+			}
+			return List.of();
+		}
+
+		public void setMenuShortcutsToPreferences(Set<String> items) {
+			IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
+			pref.put(RECENT_NEW_MENU_ITEMS, String.join(SEPARATOR, items));
+			try {
+				pref.flush();
+			} catch (org.osgi.service.prefs.BackingStoreException e) {
+				WorkbenchPlugin.log(e);
+			}
+		}
+
+		/**
+		 * populates recently used new wizards into
+		 * <code>RecentNewWizardSelection</code> from preferences.
+		 */
+		public void populate() {
+			getMenuShortcutsFromPreferences().stream()
+					.forEach(newPage -> RecentNewWizardSelection.getInstance().addItem(newPage));
+
+		}
+
+		/**
+		 * stores recently used new wizards to preferences.
+		 */
+		public void shutdown() {
+			Set<String> menuIds = RecentNewWizardSelection.getInstance().getMenuIds();
+			setMenuShortcutsToPreferences(menuIds);
+		}
+	}
 }
