@@ -26,6 +26,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -226,10 +228,17 @@ class FindReplaceOverlay extends Dialog {
 		}
 	};
 
-	private FocusListener overlayFocusListener = FocusListener.focusLostAdapter(e -> {
-			findReplaceLogic.activate(SearchOptions.GLOBAL);
-			searchInSelectionButton.setSelection(false);
-	});
+	private ShellAdapter overlayDeactivationListener = new ShellAdapter() {
+		@Override
+		public void shellActivated(ShellEvent e) {
+			// Do nothing
+		}
+
+		@Override
+		public void shellDeactivated(ShellEvent e) {
+			removeSearchScope();
+		}
+	};
 
 	private PaintListener widgetMovementListener = __ -> positionToPart();
 
@@ -317,7 +326,7 @@ class FindReplaceOverlay extends Dialog {
 		}
 		overlayOpen = true;
 		applyOverlayColors(backgroundToUse, true);
-		initFindStringFromSelection();
+		updateFromTargetSelection();
 
 		getShell().layout();
 		positionToPart();
@@ -361,7 +370,7 @@ class FindReplaceOverlay extends Dialog {
 	}
 
 	private void unbindListeners() {
-		getShell().removeFocusListener(overlayFocusListener);
+		getShell().removeShellListener(overlayDeactivationListener);
 		if (targetPart != null && targetPart instanceof StatusTextEditor textEditor) {
 			Control targetWidget = textEditor.getSourceViewer().getTextWidget();
 			if (targetWidget != null) {
@@ -373,7 +382,7 @@ class FindReplaceOverlay extends Dialog {
 	}
 
 	private void bindListeners() {
-		getShell().addFocusListener(overlayFocusListener);
+		getShell().addShellListener(overlayDeactivationListener);
 		if (targetPart instanceof StatusTextEditor textEditor) {
 			Control targetWidget = textEditor.getSourceViewer().getTextWidget();
 
@@ -815,7 +824,7 @@ class FindReplaceOverlay extends Dialog {
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 	}
 
-	private void initFindStringFromSelection() {
+	private void updateFromTargetSelection() {
 		String initText = findReplaceLogic.getTarget().getSelectionText();
 		if (initText.isEmpty()) {
 			return;
@@ -862,5 +871,10 @@ class FindReplaceOverlay extends Dialog {
 
 	public void setPositionToTop(boolean shouldPositionOverlayOnTop) {
 		positionAtTop = shouldPositionOverlayOnTop;
+	}
+
+	private void removeSearchScope() {
+		findReplaceLogic.activate(SearchOptions.GLOBAL);
+		searchInSelectionButton.setSelection(false);
 	}
 }
