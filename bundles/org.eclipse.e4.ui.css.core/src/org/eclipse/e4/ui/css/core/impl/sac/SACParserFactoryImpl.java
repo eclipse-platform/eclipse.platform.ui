@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.sac;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.e4.ui.css.core.SACConstants;
@@ -49,7 +50,11 @@ public class SACParserFactoryImpl extends SACParserFactory {
 		String classNameParser = parsers.get(name);
 		if (classNameParser != null) {
 			Class<?> classParser = super.getClass().getClassLoader().loadClass(classNameParser);
-			return (Parser) classParser.newInstance();
+			try {
+				return (Parser) classParser.getDeclaredConstructor().newInstance();
+			} catch (InvocationTargetException | NoSuchMethodException e) {
+				throw (InstantiationException) new InstantiationException(classNameParser).initCause(e);
+			}
 		}
 		throw new IllegalAccessException("SAC parser with name=" + name
 				+ " was not registered into SAC parser factory.");
