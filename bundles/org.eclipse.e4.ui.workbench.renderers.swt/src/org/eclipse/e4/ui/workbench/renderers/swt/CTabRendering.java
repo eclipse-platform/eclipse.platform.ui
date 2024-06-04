@@ -1254,14 +1254,15 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		protected Object getFieldValue(Field field) {
 			Object value = null;
 			if (field != null) {
-				boolean accessible = field.isAccessible();
-				try {
-					field.setAccessible(true);
-					value = field.get(instance);
-				} catch (Exception exc) {
-					// do nothing
-				} finally {
-					field.setAccessible(accessible);
+				boolean accessible = field.canAccess(instance);
+				if (field.trySetAccessible()) {
+					try {
+						value = field.get(instance);
+					} catch (Exception ignored) {
+						// do nothing
+					} finally {
+						field.setAccessible(accessible);
+					}
 				}
 			}
 			return value;

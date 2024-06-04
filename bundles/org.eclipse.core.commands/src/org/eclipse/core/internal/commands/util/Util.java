@@ -255,14 +255,16 @@ public final class Util {
 
 		String contextId = null;
 		if (method != null) {
-			boolean accessible = method.isAccessible();
-			method.setAccessible(true);
-			try {
-				contextId = (String) method.invoke(command);
-			} catch (Exception e) {
-				// do nothing
+			boolean accessible = method.canAccess(command);
+			if (method.trySetAccessible()) {
+				try {
+					contextId = (String) method.invoke(command);
+				} catch (Exception ignored) {
+					// do nothing
+				} finally {
+					method.setAccessible(accessible);
+				}
 			}
-			method.setAccessible(accessible);
 		}
 		return contextId;
 	}
