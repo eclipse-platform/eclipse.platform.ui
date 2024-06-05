@@ -316,6 +316,7 @@ public class ResourceInfoPage extends PropertyPage {
 			Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
 			locationTitle.setText(LOCATION_TITLE);
 			gd = new GridData();
+			gd.verticalAlignment = SWT.TOP;
 			locationTitle.setLayoutData(gd);
 
 			locationValue = new Text(basicInfoComposite, SWT.WRAP
@@ -325,6 +326,8 @@ public class ResourceInfoPage extends PropertyPage {
 			locationValue.setText(locationStr);
 			gd = new GridData();
 			gd.horizontalAlignment = GridData.FILL;
+			gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
+			gd.grabExcessHorizontalSpace = true;
 			locationValue.setLayoutData(gd);
 			locationValue.setBackground(locationValue.getDisplay()
 					.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
@@ -360,6 +363,7 @@ public class ResourceInfoPage extends PropertyPage {
 			});
 
 			Button pathCopy = new Button(basicInfoComposite, SWT.PUSH);
+			pathCopy.setLayoutData(gd);
 			pathCopy.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
 			pathCopy.setToolTipText(PATH_BUTTON_TOOLTIP);
 			pathCopy.addSelectionListener(new SelectionAdapter() {
