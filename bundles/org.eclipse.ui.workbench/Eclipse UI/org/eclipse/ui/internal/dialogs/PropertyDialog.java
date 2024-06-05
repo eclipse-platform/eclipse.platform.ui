@@ -17,8 +17,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.Iterator;
 import org.eclipse.core.runtime.Adapters;
-import org.eclipse.jface.dialogs.DialogSettings;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -31,10 +29,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.IContributionService;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.osgi.framework.Bundle;
 
 /**
  * This dialog is created and shown when 'Properties' action is performed while
@@ -184,11 +180,4 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 		return IContributionService.TYPE_PROPERTY;
 	}
 
-	@Override
-	protected IDialogSettings getDialogBoundsSettings() {
-		Bundle bundle = WorkbenchPlugin.getDefault().getBundle();
-		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(bundle).getDialogSettings();
-		String name = getClass().getSimpleName() + ".dialogBounds"; //$NON-NLS-1$
-		return DialogSettings.getOrCreateSection(settings, name);
-	}
 }
