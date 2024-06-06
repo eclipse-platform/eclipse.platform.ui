@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ CamelUtilTest.class, QuickAccessDialogTest.class, ContentMatchesTest.class })
+@Suite.SuiteClasses({ CamelUtilTest.class, QuickAccessDialogTest.class, ContentMatchesTest.class,
+		QuickAccessProvidersTest.class })
 public class QuickAccessTestSuite {
 }

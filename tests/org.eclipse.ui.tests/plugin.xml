@@ -4794,4 +4794,49 @@
           apply="always">
     </fragment>
  </extension>
+ 
+ <!-- Issue 1832 -->
+ <extension
+      point="org.eclipse.ui.commands">
+   <command
+        id="org.eclipse.ui.tests.activitySupportTest.commands.issue1832"
+        name="Issue 1832 Test" />
+ </extension>
+ <extension
+      point="org.eclipse.ui.handlers">
+   <handler
+   	     commandId="org.eclipse.ui.tests.activitySupportTest.commands.issue1832"
+   	     class="org.eclipse.ui.tests.menus.HelloEHandler">
+   </handler>      
+ </extension>
+
+ <extension
+        point="org.eclipse.ui.activities">
+     <activity
+          name="Issue 1832 Test"
+          description="Testing Issue 1832"
+          id="org.eclipse.ui.tests.activitySupportTest.issue1832">
+     </activity>
+     <activityPatternBinding
+          activityId="org.eclipse.ui.tests.activitySupportTest.issue1832"
+          pattern="org\.eclipse\.ui\.tests/org\.eclipse\.ui\.tests\.activitySupportTest\..*">
+     </activityPatternBinding>
+     
+     <activityPatternBinding
+          activityId="org.eclipse.ui.tests.activitySupportTest.issue1832"
+          pattern="org\.eclipse\.ui\.tests/org\.eclipse\.ui\.tests\.markers\.create.*">
+     </activityPatternBinding>
+            
+     <category
+          name="Issue 1832"
+          description="Issue 1832 desc"
+          id="org.eclipse.ui.tests.issue1832">
+     </category>
+      
+     <categoryActivityBinding
+         activityId="org.eclipse.ui.tests.activitySupportTest.issue1832"
+         categoryId="org.eclipse.ui.tests.issue1832">
+     </categoryActivityBinding>
+ </extension>
+
 </plugin>
