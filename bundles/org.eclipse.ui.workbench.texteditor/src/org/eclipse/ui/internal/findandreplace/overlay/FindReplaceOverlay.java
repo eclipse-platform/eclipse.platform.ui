@@ -882,6 +882,15 @@ public class FindReplaceOverlay extends Dialog {
 			getShell().setVisible(false);
 			return;
 		}
+		if (isInvalidTargetShell()) {
+			getShell().getDisplay().syncExec(() -> {
+				close();
+				setParentShell(targetPart.getSite().getShell());
+				open();
+				targetPart.setFocus();
+			});
+			return;
+		}
 		getShell().requestLayout();
 		if (!(targetPart instanceof StatusTextEditor textEditor)) {
 			return;
@@ -900,6 +909,17 @@ public class FindReplaceOverlay extends Dialog {
 		updateVisibility(targetControlBounds, overlayBounds);
 
 		repositionTextSelection();
+	}
+
+	private boolean isInvalidTargetPart() {
+		return targetPart == null || targetPart.getSite() == null || targetPart.getSite().getShell() == null;
+	}
+
+	private boolean isInvalidTargetShell() {
+		if (isInvalidTargetPart()) {
+			return false;
+		}
+		return getShell() == null || !targetPart.getSite().getShell().equals(getShell().getParent());
 	}
 
 	private Rectangle calculateAbsoluteControlBounds(Control control) {
