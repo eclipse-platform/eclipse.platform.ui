@@ -19,6 +19,7 @@ import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceCon
 import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT;
 import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Color;
@@ -26,6 +27,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.Throttler;
 
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -36,6 +38,8 @@ import org.eclipse.jface.text.source.IVerticalRuler;
  * shows them in a {@link StickyScrollingControl} on top of the given source viewer.
  */
 public class StickyScrollingHandler implements IViewportListener {
+
+	private final static int THROTTLER_DELAY= 100;
 
 	private ISourceViewer sourceViewer;
 
@@ -48,6 +52,10 @@ public class StickyScrollingHandler implements IViewportListener {
 	private IPreferenceStore preferenceStore;
 
 	private StickyLinesProvider stickyLinesProvider;
+
+	private Throttler throttler;
+
+	private int verticalOffset;
 
 	/**
 	 * Creates a StickyScrollingHandlerIndentation that will be linked to the given source viewer.
@@ -73,6 +81,7 @@ public class StickyScrollingHandler implements IViewportListener {
 			StickyLinesProvider stickyLinesProvider) {
 		this.sourceViewer= sourceViewer;
 
+		throttler= new Throttler(sourceViewer.getTextWidget().getDisplay(), Duration.ofMillis(THROTTLER_DELAY), this::calculateAndShowStickyLines);
 		this.stickyLinesProvider= stickyLinesProvider;
 
 		StickyScrollingControlSettings settings= loadAndListenForProperties(preferenceStore);
@@ -117,7 +126,15 @@ public class StickyScrollingHandler implements IViewportListener {
 	}
 
 	@Override
-	public void viewportChanged(int verticalOffset) {
+	public void viewportChanged(int newVerticalOffset) {
+		if (this.verticalOffset == newVerticalOffset) {
+			return;
+		}
+		verticalOffset= newVerticalOffset;
+		throttler.throttledExec();
+	}
+
+	private void calculateAndShowStickyLines() {
 		List<StickyLine> stickyLines= stickyLinesProvider.get(verticalOffset, sourceViewer);
 		stickyScrollingControl.setStickyLines(stickyLines);
 	}
@@ -130,6 +147,7 @@ public class StickyScrollingHandler implements IViewportListener {
 		this.sourceViewer.removeViewportListener(this);
 		preferenceStore.removePropertyChangeListener(propertyChangeListener);
 		preferenceStore= null;
+		throttler= null;
 
 		stickyScrollingControl.dispose();
 	}

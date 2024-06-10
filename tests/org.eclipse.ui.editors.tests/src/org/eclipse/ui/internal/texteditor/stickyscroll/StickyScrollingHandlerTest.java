@@ -21,6 +21,8 @@ import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceCon
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -119,6 +121,32 @@ public class StickyScrollingHandlerTest {
 
 		expStickyLineText = "line 10";
 		assertEquals(expStickyLineText, stickyLineText.getText());
+	}
+
+	@Test
+	public void testThrottledExecution() throws InterruptedException {
+		when(linesProvider.get(100, sourceViewer)).thenReturn(List.of(new StickyLine("line 10", 9)));
+
+		stickyScrollingHandler.viewportChanged(100);
+		stickyScrollingHandler.viewportChanged(200);
+		stickyScrollingHandler.viewportChanged(300);
+		stickyScrollingHandler.viewportChanged(400);
+
+		waitInUi(200);
+
+		// Call to lines provider should be throttled
+		verify(linesProvider, times(1)).get(100, sourceViewer);
+		verify(linesProvider, times(0)).get(200, sourceViewer);
+		verify(linesProvider, times(0)).get(300, sourceViewer);
+		verify(linesProvider, times(1)).get(400, sourceViewer);
+	}
+
+	private void waitInUi(int ms) throws InterruptedException {
+		while (shell.getDisplay().readAndDispatch()) {
+		}
+		Thread.sleep(ms);
+		while (shell.getDisplay().readAndDispatch()) {
+		}
 	}
 
 	private IPreferenceStore createPreferenceStore() {
