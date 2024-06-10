@@ -302,8 +302,6 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		Assert.isLegal(workbenchPart != null);
 		fWorkbenchPart= workbenchPart;
 		update();
-
-		hookDialogPreferenceListener();
 	}
 
 	/**
@@ -331,8 +329,6 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		fTarget= target;
 		fShell= shell;
 		update();
-
-		hookDialogPreferenceListener();
 	}
 
 	/**
@@ -354,13 +350,16 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		super(bundle, prefix);
 		fWorkbenchWindow= workbenchWindow;
 		update();
-
-		hookDialogPreferenceListener();
 	}
 
 	private void hookDialogPreferenceListener() {
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(INSTANCE_SCOPE_NODE_NAME);
 		preferences.addPreferenceChangeListener(overlayDialogPreferenceListener);
+	}
+
+	private void removeDialogPreferenceListener() {
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(INSTANCE_SCOPE_NODE_NAME);
+		preferences.removePreferenceChangeListener(overlayDialogPreferenceListener);
 	}
 
 	@Override
@@ -420,12 +419,14 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 				shellToUse = fShell;
 			}
 			overlay = new FindReplaceOverlay(shellToUse, fWorkbenchPart, fTarget);
+			hookDialogPreferenceListener();
 
 			FindReplaceOverlayFirstTimePopup.displayPopupIfNotAlreadyShown(shellToUse);
 		}
 
 		overlay.setPositionToTop(shouldPositionOverlayOnTop());
 		overlay.open();
+		overlay.getShell().addDisposeListener(__ -> removeDialogPreferenceListener());
 	}
 
 	@Override
