@@ -65,8 +65,6 @@ IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-ui-themes { /* pseudo a
 		'org.eclipse.ui.workbench.FORM_HEADING_ERROR_COLOR=255,110,110'
 		'org.eclipse.ui.workbench.FORM_HEADING_WARNING_COLOR=255,200,0'
 		'org.eclipse.ui.workbench.FORM_HEADING_INFO_COLOR=170,170,170'
-		'org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND_NO_FOCUS=240,240,240'
-		'org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND_NO_FOCUS=95,95,95'
 		'ERROR_COLOR=247,68,117'
 		'HYPERLINK_COLOR=111,197,238'
 		'INCOMING_COLOR=31,179,235'

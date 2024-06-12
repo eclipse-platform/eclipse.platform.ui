@@ -25,9 +25,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.JFaceResources;
-
 
 /**
  * Adds owner draw support for tables.
@@ -45,10 +42,6 @@ public class TableOwnerDrawSupport implements Listener {
 
 	public static void install(Table table) {
 		TableOwnerDrawSupport listener= new TableOwnerDrawSupport(table);
-		installListener(table, listener);
-	}
-
-	protected static void installListener(Table table, Listener listener) {
 		table.addListener(SWT.Dispose, listener);
 		table.addListener(SWT.MeasureItem, listener);
 		table.addListener(SWT.EraseItem, listener);
@@ -77,7 +70,7 @@ public class TableOwnerDrawSupport implements Listener {
 		return (StyleRange[])item.getData(STYLED_RANGES_KEY + column);
 	}
 
-	protected TableOwnerDrawSupport(Table table) {
+	private TableOwnerDrawSupport(Table table) {
 		int orientation= table.getStyle() & (SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT);
 		fSharedLayout= new TextLayout(table.getDisplay());
 		fSharedLayout.setOrientation(orientation);
@@ -154,28 +147,7 @@ public class TableOwnerDrawSupport implements Listener {
 		Color oldForeground= gc.getForeground();
 		Color oldBackground= gc.getBackground();
 
-		if (isSelected) {
-			Color background= item.getParent().isFocusControl()
-					? getSelectedRowBackgroundColor()
-					: getSelectedRowBackgroundColorNoFocus();
-			Color foreground= item.getParent().isFocusControl()
-					? getSelectedRowForegroundColor()
-					: getSelectedRowForegroundColorNoFocus();
-
-			if (background == null) {
-				background= item.getDisplay().getSystemColor(
-						SWT.COLOR_LIST_SELECTION);
-			}
-
-			if (foreground == null) {
-				foreground= item.getDisplay().getSystemColor(
-						SWT.COLOR_LIST_SELECTION_TEXT);
-			}
-
-			gc.setBackground(background);
-			gc.setForeground(foreground);
-			gc.fillRectangle(0, event.y, item.getParent().getBounds().width, event.height);
-		} else {
+		if (!isSelected) {
 			Color foreground= item.getForeground(index);
 			gc.setForeground(foreground);
 
@@ -206,54 +178,10 @@ public class TableOwnerDrawSupport implements Listener {
 			gc.drawFocus(focusBounds.x, focusBounds.y, focusBounds.width + fDeltaOfLastMeasure, focusBounds.height);
 		}
 
-		gc.setForeground(oldForeground);
-		gc.setBackground(oldBackground);
-	}
-
-	/**
-	 * The color to use when rendering the background of the selected row when the control has the
-	 * input focus
-	 *
-	 * @return the color or <code>null</code> to use the default
-	 */
-	protected Color getSelectedRowBackgroundColor() {
-		ColorRegistry colorRegistry= JFaceResources.getColorRegistry();
-		return colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND"); //$NON-NLS-1$
-	}
-
-	/**
-	 * The color to use when rendering the foreground (=text) of the selected row when the control
-	 * has the input focus
-	 *
-	 * @return the color or <code>null</code> to use the default
-	 */
-	protected Color getSelectedRowForegroundColor() {
-		ColorRegistry colorRegistry= JFaceResources.getColorRegistry();
-		return colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND"); //$NON-NLS-1$
-	}
-
-	/**
-	 * The color to use when rendering the foreground (=text) of the selected row when the control
-	 * has <b>no</b> input focus
-	 *
-	 * @return the color or <code>null</code> to use the same used when control has focus
-	 * @since 3.4
-	 */
-	protected Color getSelectedRowForegroundColorNoFocus() {
-		ColorRegistry colorRegistry= JFaceResources.getColorRegistry();
-		return colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND_NO_FOCUS"); //$NON-NLS-1$
-	}
-
-	/**
-	 * The color to use when rendering the background of the selected row when the control has
-	 * <b>no</b> input focus
-	 *
-	 * @return the color or <code>null</code> to use the same used when control has focus
-	 * @since 3.4
-	 */
-	protected Color getSelectedRowBackgroundColorNoFocus() {
-		ColorRegistry colorRegistry= JFaceResources.getColorRegistry();
-		return colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND_NO_FOCUS"); //$NON-NLS-1$
+		if (!isSelected) {
+			gc.setForeground(oldForeground);
+			gc.setBackground(oldBackground);
+		}
 	}
 
 	private void widgetDisposed() {

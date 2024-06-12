@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.jface.internal.text.contentassist.CompletionTableDrawSupport;
+import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceColors;
@@ -269,7 +269,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		fIsColoredLabelsSupportEnabled= fContentAssistant.isColoredLabelsSupportEnabled();
 		if (fIsColoredLabelsSupportEnabled)
-			CompletionTableDrawSupport.install(fProposalTable);
+			TableOwnerDrawSupport.install(fProposalTable);
 
 		fProposalTable.setLocation(0, 0);
 		if (fAdditionalInfoController != null)
@@ -572,7 +572,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 					item.setText(displayString);
 					if (fIsColoredLabelsSupportEnabled)
-						CompletionTableDrawSupport.storeStyleRanges(item, 0, styleRanges);
+						TableOwnerDrawSupport.storeStyleRanges(item, 0, styleRanges);
 
 					item.setData(p);
 

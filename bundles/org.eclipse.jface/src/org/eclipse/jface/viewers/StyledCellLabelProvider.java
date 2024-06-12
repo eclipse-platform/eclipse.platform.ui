@@ -263,7 +263,6 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			// info has been set by 'update': announce that we paint ourselves
 			event.detail &= ~SWT.FOREGROUND;
 		}
-		super.erase(event, element);
 	}
 
 	@Override
