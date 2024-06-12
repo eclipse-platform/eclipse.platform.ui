@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -63,11 +64,27 @@ public class ColumnViewerSelectionColorListener implements Listener {
 		GC gc = event.gc;
 		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
 		if (event.widget instanceof Control control && control.isFocusControl()) {
-			gc.setBackground(colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND")); //$NON-NLS-1$
-			gc.setForeground(colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND")); //$NON-NLS-1$
+			Color background = colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND"); //$NON-NLS-1$
+			if (background == null) {
+				background = event.item.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
+			}
+			Color foreground = colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND"); //$NON-NLS-1$
+			if (foreground == null) {
+				foreground = event.item.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
+			}
+			event.gc.setBackground(background);
+			event.gc.setForeground(foreground);
 		} else {
-			gc.setBackground(colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND_NO_FOCUS")); //$NON-NLS-1$
-			gc.setForeground(colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND_NO_FOCUS")); //$NON-NLS-1$
+			Color background = colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND_NO_FOCUS"); //$NON-NLS-1$
+			if (background == null) {
+				background = event.item.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
+			}
+			Color foreground = colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND_NO_FOCUS"); //$NON-NLS-1$
+			if (foreground == null) {
+				foreground = event.item.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
+			}
+			event.gc.setBackground(background);
+			event.gc.setForeground(foreground);
 		}
 
 		int width = event.width;
