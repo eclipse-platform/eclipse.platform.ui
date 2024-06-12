@@ -18,8 +18,6 @@ package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Util;
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -153,8 +151,8 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 	 * @return the color or <code>null</code> to use the default
 	 */
 	protected Color getSelectedCellBackgroundColor(ViewerCell cell) {
-		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
-		return colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND"); //$NON-NLS-1$
+		return removeNonFocusedSelectionInformation ? null
+				: cell.getItem().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
 	}
 
 	/**
@@ -166,8 +164,7 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 	 * @return the color or <code>null</code> to use the default
 	 */
 	protected Color getSelectedCellForegroundColor(ViewerCell cell) {
-		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
-		return colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND"); //$NON-NLS-1$
+		return null;
 	}
 
 	/**
@@ -181,8 +178,7 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 	 * @since 3.4
 	 */
 	protected Color getSelectedCellForegroundColorNoFocus(ViewerCell cell) {
-		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
-		return colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND_NO_FOCUS"); //$NON-NLS-1$
+		return null;
 	}
 
 	/**
@@ -196,8 +192,7 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 	 * @since 3.4
 	 */
 	protected Color getSelectedCellBackgroundColorNoFocus(ViewerCell cell) {
-		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
-		return colorRegistry.get("org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND_NO_FOCUS"); //$NON-NLS-1$
+		return null;
 	}
 
 	/**

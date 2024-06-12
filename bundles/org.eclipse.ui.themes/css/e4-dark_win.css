@@ -135,9 +135,3 @@ ImageBasedFrame,
     color: #DDDDDD;
 }
 
-IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-ui-themes-win { /* pseudo attribute added to allow contributions without replacing this node, see Bug 466075 */
-	preferences:
-		'org.eclipse.ui.workbench.SELECTED_CELL_FOREGROUND=255,255,255'
-		'org.eclipse.ui.workbench.SELECTED_CELL_BACKGROUND=0,100,255'
-}
-
