@@ -85,7 +85,7 @@ public class StickyScrollingHandler implements IViewportListener {
 		this.stickyLinesProvider= stickyLinesProvider;
 
 		StickyScrollingControlSettings settings= loadAndListenForProperties(preferenceStore);
-		stickyScrollingControl= new StickyScrollingControl(sourceViewer, verticalRuler, settings);
+		stickyScrollingControl= new StickyScrollingControl(sourceViewer, verticalRuler, settings, this);
 
 		sourceViewer.addViewportListener(this);
 	}

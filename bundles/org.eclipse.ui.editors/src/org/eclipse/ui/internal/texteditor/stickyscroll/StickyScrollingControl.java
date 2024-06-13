@@ -39,7 +39,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ScrollBar;
 
 import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.jobs.Job;
@@ -98,11 +101,15 @@ public class StickyScrollingControl {
 
 	private final static int BOTTOM_SEPARATOR_SPACING= 2;
 
+	private StickyScrollingHandler stickyScrollingHandler;
+
 	public StickyScrollingControl(ISourceViewer sourceViewer, StickyScrollingControlSettings settings) {
-		this(sourceViewer, null, settings);
+		this(sourceViewer, null, settings, null);
 	}
 
-	public StickyScrollingControl(ISourceViewer sourceViewer, IVerticalRuler verticalRuler, StickyScrollingControlSettings settings) {
+	public StickyScrollingControl(ISourceViewer sourceViewer, IVerticalRuler verticalRuler,
+			StickyScrollingControlSettings settings, StickyScrollingHandler stickyScrollingHandler) {
+		this.stickyScrollingHandler= stickyScrollingHandler;
 		this.stickyLines= new ArrayList<>();
 		this.sourceViewer= sourceViewer;
 		this.verticalRuler= verticalRuler;
@@ -441,6 +448,10 @@ public class StickyScrollingControl {
 				stickyLineText.setLineBackground(0, getNumberStickyLines(), null);
 			}
 		});
+
+		ScrollingDispatchingListener scrollingDispatchingListener= new ScrollingDispatchingListener();
+		canvas.addListener(SWT.MouseHorizontalWheel, scrollingDispatchingListener);
+		canvas.addListener(SWT.MouseVerticalWheel, scrollingDispatchingListener);
 	}
 
 	/**
@@ -479,6 +490,42 @@ public class StickyScrollingControl {
 				ensureSourceViewerLineVisible(line);
 			});
 		}
+	}
 
+	/**
+	 * A mouse wheel listener that is dispatching the scrolling on the sticky lines canvas to the
+	 * source viewer. The calculation of the scrolling steps is copied from
+	 * {@link Composite}#scrollWheel.
+	 */
+	class ScrollingDispatchingListener implements Listener {
+
+		@Override
+		public void handleEvent(Event event) {
+			StyledText textWidget= sourceViewer.getTextWidget();
+
+			ScrollBar bar= event.type == SWT.MouseHorizontalWheel ? textWidget.getHorizontalBar() : textWidget.getVerticalBar();
+			if (bar == null) {
+				return;
+			}
+
+			int deltaY= event.count;
+			if (-1 < deltaY && deltaY < 0) {
+				deltaY= -1;
+			}
+			if (0 < deltaY && deltaY < 1) {
+				deltaY= 1;
+			}
+
+			int pixel= Math.max(0, (int) (0.5f + bar.getSelection() - bar.getIncrement() * deltaY));
+
+			if (event.type == SWT.MouseHorizontalWheel) {
+				sourceViewer.getTextWidget().setHorizontalPixel(pixel);
+			} else {
+				sourceViewer.getTextWidget().setTopPixel(pixel);
+				if (stickyScrollingHandler != null) {
+					stickyScrollingHandler.viewportChanged(pixel);
+				}
+			}
+		}
 	}
 }
