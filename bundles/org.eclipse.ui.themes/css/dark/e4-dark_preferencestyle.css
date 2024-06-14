@@ -50,6 +50,7 @@ IEclipsePreferences#org-eclipse-ui-editors:org-eclipse-ui-themes { /* pseudo att
 		'secondaryIPColor=90,90,90'
 		'spellingIndicationColor=253,170,211'
 		'writeOccurrenceIndicationColor=27,98,145'
+		'org.eclipse.ui.editors.stickyLinesSeparatorColor=81,86,88'
 }
 
 IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-ui-themes { /* pseudo attribute added to allow contributions without replacing this node, see Bug 466075 */

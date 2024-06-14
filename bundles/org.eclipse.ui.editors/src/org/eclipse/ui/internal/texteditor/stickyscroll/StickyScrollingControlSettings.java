@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Color;
  * @param lineNumberColor The color used to display line numbers
  * @param stickyLineHoverColor The color used to display sticky lines while hovering over them
  * @param stickyLineBackgroundColor The color used to display sticky lines back ground color
+ * @param stickyLinesSeparatorColor The color used to display sticky lines separator color
  * @param showLineNumbers Specifies if line numbers should be showed for sticky scrolling
  */
 public record StickyScrollingControlSettings(
@@ -31,5 +32,6 @@ public record StickyScrollingControlSettings(
 		Color lineNumberColor,
 		Color stickyLineHoverColor,
 		Color stickyLineBackgroundColor,
+		Color stickyLinesSeparatorColor,
 		boolean showLineNumbers) {
 }

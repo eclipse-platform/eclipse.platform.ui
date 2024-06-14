@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
@@ -86,6 +85,8 @@ public class StickyScrollingControl {
 	 */
 	private final static int MIN_VISIBLE_EDITOR_LINES_THRESHOLD= 3;
 
+	private static final String DISABLE_CSS= "org.eclipse.e4.ui.css.disabled"; //$NON-NLS-1$
+
 	private List<StickyLine> stickyLines;
 
 	private ISourceViewer sourceViewer;
@@ -106,9 +107,7 @@ public class StickyScrollingControl {
 
 	private StickyScollingCaretListener caretListener;
 
-	private Label bottomSeparator;
-
-	private final static int BOTTOM_SEPARATOR_SPACING= 2;
+	private Composite bottomSeparator;
 
 	private StickyScrollingHandler stickyScrollingHandler;
 
@@ -148,6 +147,7 @@ public class StickyScrollingControl {
 
 		stickyLineNumber.setBackground(newSettings.stickyLineBackgroundColor());
 		stickyLineText.setBackground(newSettings.stickyLineBackgroundColor());
+		bottomSeparator.setBackground(settings.stickyLinesSeparatorColor());
 
 		updateStickyScrollingControls();
 	}
@@ -187,13 +187,11 @@ public class StickyScrollingControl {
 		stickyLineText.setEnabled(false);
 		stickyLineText.setBackground(settings.stickyLineBackgroundColor());
 
-		bottomSeparator= new Label(stickyLinesCanvas, SWT.SEPARATOR | SWT.SHADOW_OUT | SWT.HORIZONTAL);
-		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(bottomSeparator);
+		bottomSeparator= new Composite(stickyLinesCanvas, SWT.NONE);
+		GridDataFactory.fillDefaults().hint(0, 3).grab(true, false).span(2, 1).applyTo(bottomSeparator);
 		bottomSeparator.setEnabled(false);
-
-		bottomSeparator= new Label(stickyLinesCanvas, SWT.SEPARATOR | SWT.SHADOW_OUT | SWT.HORIZONTAL);
-		GridDataFactory.fillDefaults().grab(true, false).indent(0, BOTTOM_SEPARATOR_SPACING).span(2, 1).applyTo(bottomSeparator);
-		bottomSeparator.setEnabled(false);
+		bottomSeparator.setData(DISABLE_CSS, Boolean.TRUE);
+		bottomSeparator.setBackground(settings.stickyLinesSeparatorColor());
 
 		layoutLineNumbers();
 		limitVisibleStickyLinesToTextWidgetHeight(sourceViewer.getTextWidget());
@@ -288,10 +286,10 @@ public class StickyScrollingControl {
 
 	/**
 	 * The line numbers layout is calculated based on the given {@link #verticalRuler}.
-	 * 
+	 *
 	 * If the vertical ruler is an instance of {@link CompositeRuler}, it is tried to align the
 	 * layout with the layout of the {@link LineNumberColumn}.
-	 * 
+	 *
 	 * If the vertical ruler is from another instance, the lines number are align in the center of
 	 * the vertical ruler space.
 	 */
@@ -349,7 +347,7 @@ public class StickyScrollingControl {
 		int numberStickyLines= getNumberStickyLines();
 		int lineHeight= stickyLineText.getLineHeight() * numberStickyLines;
 		int spacingHeight= stickyLineText.getLineSpacing() * (numberStickyLines - 1);
-		int separatorHeight= bottomSeparator.getBounds().height * 2 + BOTTOM_SEPARATOR_SPACING;
+		int separatorHeight= bottomSeparator.getBounds().height;
 
 		int rulerWidth= verticalRuler != null ? verticalRuler.getWidth() : 0;
 		int textWidth= textWidget.getClientArea().width + 1;
@@ -398,7 +396,7 @@ public class StickyScrollingControl {
 
 	/**
 	 * Add several listeners to the source viewer.<br>
-	 * 
+	 *
 	 * textPresentationListener in order to style the sticky lines when the source viewer styling
 	 * has changed.<br>
 	 * <br>

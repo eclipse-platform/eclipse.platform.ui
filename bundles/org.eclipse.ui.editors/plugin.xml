@@ -1113,6 +1113,12 @@
           label="%dummy"
           value="0,0,0">
       </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.ui.editors.stickyLinesSeparatorColor"
+            isEditable="false"
+            label="test"
+            value="232,232,232">
+      </colorDefinition>
 
       <theme
 		  id="org.eclipse.ui.ide.systemDefault">

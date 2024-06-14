@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.stickyscroll;
 
+import static org.eclipse.ui.internal.texteditor.ITextEditorThemeConstants.STICKY_LINES_SEPARATOR_COLOR;
 import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
 import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER;
 import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR;
@@ -23,6 +24,7 @@ import java.time.Duration;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -30,8 +32,11 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.Throttler;
 
 import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
+
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
  * A sticky scrolling handler that retrieves stick lines from the {@link StickyLinesProvider} and
@@ -94,7 +99,8 @@ public class StickyScrollingHandler implements IViewportListener {
 		preferenceStore= store;
 		propertyChangeListener= e -> {
 			if (e.getProperty().equals(EDITOR_TAB_WIDTH) || e.getProperty().equals(EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT)
-					|| e.getProperty().equals(EDITOR_CURRENT_LINE_COLOR) || e.getProperty().equals(EDITOR_LINE_NUMBER_RULER)) {
+					|| e.getProperty().equals(EDITOR_CURRENT_LINE_COLOR) || e.getProperty().equals(EDITOR_LINE_NUMBER_RULER)
+					|| e.getProperty().equals(STICKY_LINES_SEPARATOR_COLOR)) {
 				if (stickyScrollingControl != null && !sourceViewer.getTextWidget().isDisposed()) {
 					StickyScrollingControlSettings settings= loadSettings(preferenceStore);
 					stickyScrollingControl.applySettings(settings);
@@ -121,8 +127,15 @@ public class StickyScrollingHandler implements IViewportListener {
 
 		boolean showLineNumbers= store.getBoolean(EDITOR_LINE_NUMBER_RULER);
 
+		Color stickyLineSeparatorColor= null;
+		if (EditorsPlugin.getDefault() != null) {
+			RGB rgb= PreferenceConverter.getColor(store, STICKY_LINES_SEPARATOR_COLOR);
+			ISharedTextColors sharedTextColors= EditorsPlugin.getDefault().getSharedTextColors();
+			stickyLineSeparatorColor= sharedTextColors.getColor(rgb);
+		}
+
 		return new StickyScrollingControlSettings(stickyScrollingMaxCount,
-				lineNumberColor, stickyLineHoverColor, stickyLineBackgroundColor, showLineNumbers);
+				lineNumberColor, stickyLineHoverColor, stickyLineBackgroundColor, stickyLineSeparatorColor, showLineNumbers);
 	}
 
 	@Override

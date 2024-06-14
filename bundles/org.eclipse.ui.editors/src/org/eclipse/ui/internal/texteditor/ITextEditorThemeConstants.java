@@ -64,4 +64,9 @@ public interface ITextEditorThemeConstants {
 	 */
 	public static final String PREFERENCE_COLOR_FOREGROUND= "org.eclipse.ui.editors.foregroundColor"; //$NON-NLS-1$
 
+	/**
+	 * Theme constant for the color used to render the sticky lines separator.
+	 */
+	public final static String STICKY_LINES_SEPARATOR_COLOR= "org.eclipse.ui.editors.stickyLinesSeparatorColor"; //$NON-NLS-1$
+
 }
