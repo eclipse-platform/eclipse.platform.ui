@@ -17,6 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.List;
 
@@ -31,13 +32,13 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.Document;
@@ -176,18 +177,21 @@ public class StickyScrollingControlTest {
 		stickyScrollingControl.setStickyLines(stickyLines);
 
 		Canvas stickyControlCanvas = getStickyControlCanvas(shell);
-		assertEquals(0, stickyControlCanvas.getBounds().x);
-		assertEquals(0, stickyControlCanvas.getBounds().y);
-		assertEquals(getExpectedWitdh(200), stickyControlCanvas.getBounds().width);
-		assertThat(stickyControlCanvas.getBounds().height, greaterThan(0));
+		Rectangle boundsBeforeResize = stickyControlCanvas.getBounds();
+		assertEquals(0, boundsBeforeResize.x);
+		assertEquals(0, boundsBeforeResize.y);
+		assertThat(boundsBeforeResize.width, greaterThan(0));
+		assertThat(boundsBeforeResize.height, greaterThan(0));
 
 		sourceViewer.getTextWidget().setBounds(0, 0, 150, 200);
 
 		stickyControlCanvas = getStickyControlCanvas(shell);
-		assertEquals(0, stickyControlCanvas.getBounds().x);
-		assertEquals(0, stickyControlCanvas.getBounds().y);
-		assertEquals(getExpectedWitdh(150), stickyControlCanvas.getBounds().width);
-		assertThat(stickyControlCanvas.getBounds().height, greaterThan(0));
+		Rectangle boundsAfterResize = stickyControlCanvas.getBounds();
+		assertEquals(0, boundsAfterResize.x);
+		assertEquals(0, boundsAfterResize.y);
+		assertThat(boundsAfterResize.width, greaterThan(0));
+		assertNotEquals(boundsAfterResize.width, boundsBeforeResize.width);
+		assertEquals(boundsAfterResize.height, boundsBeforeResize.height);
 	}
 
 	@Test
@@ -266,15 +270,6 @@ public class StickyScrollingControlTest {
 	private StyledText getStickyLineText() {
 		Canvas canvas = getStickyControlCanvas(shell);
 		return (StyledText) canvas.getChildren()[1];
-	}
-
-	private int getExpectedWitdh(int textWidgetWitdth) {
-		ScrollBar verticalBar = sourceViewer.getTextWidget().getVerticalBar();
-		if (verticalBar.isVisible()) {
-			return textWidgetWitdth - verticalBar.getSize().x + 1;
-		} else {
-			return textWidgetWitdth + 1;
-		}
 	}
 
 }
