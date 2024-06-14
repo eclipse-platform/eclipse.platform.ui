@@ -51,6 +51,7 @@ public class StickyScrollingControlTest {
 	private Color lineNumberColor;
 	private Color hoverColor;
 	private Color backgroundColor;
+	private Color separatorColor;
 	private StickyScrollingControl stickyScrollingControl;
 	private CompositeRuler ruler;
 
@@ -67,8 +68,9 @@ public class StickyScrollingControlTest {
 		lineNumberColor = new Color(0, 0, 0);
 		hoverColor = new Color(1, 1, 1);
 		backgroundColor = new Color(2, 2, 2);
+		separatorColor = new Color(3, 3, 3);
 		StickyScrollingControlSettings settings = new StickyScrollingControlSettings(5, lineNumberColor, hoverColor,
-				backgroundColor, true);
+				backgroundColor, separatorColor, true);
 		stickyScrollingControl = new StickyScrollingControl(sourceViewer, ruler, settings, null);
 	}
 
@@ -105,6 +107,9 @@ public class StickyScrollingControlTest {
 
 		StyledText stickyLineText = getStickyLineText();
 		assertEquals(backgroundColor, stickyLineText.getBackground());
+
+		Composite stickyLineSeparator = getStickyLineSeparator();
+		assertEquals(separatorColor, stickyLineSeparator.getBackground());
 	}
 
 	@Test
@@ -113,7 +118,7 @@ public class StickyScrollingControlTest {
 		stickyScrollingControl.setStickyLines(stickyLines);
 
 		StickyScrollingControlSettings settings = new StickyScrollingControlSettings(1, lineNumberColor, hoverColor,
-				backgroundColor, true);
+				backgroundColor, separatorColor, true);
 		stickyScrollingControl.applySettings(settings);
 
 		StyledText stickyLineNumber = getStickyLineNumber();
@@ -141,7 +146,7 @@ public class StickyScrollingControlTest {
 	public void testWithoutVeticalRuler() {
 		sourceViewer = new SourceViewer(shell, null, SWT.None);
 		StickyScrollingControlSettings settings = new StickyScrollingControlSettings(5, lineNumberColor, hoverColor,
-				backgroundColor, true);
+				backgroundColor, separatorColor, true);
 		stickyScrollingControl = new StickyScrollingControl(sourceViewer, settings);
 
 		StyledText stickyLineNumber = getStickyLineNumber();
@@ -265,7 +270,9 @@ public class StickyScrollingControlTest {
 	private Canvas getStickyControlCanvas(Composite composite) {
 		for (Control control : composite.getChildren()) {
 			if (control instanceof Canvas canvas) {
-				if (canvas.getChildren().length == 4) {
+				if (canvas.getChildren().length == 3 && canvas.getChildren()[0] instanceof StyledText
+						&& canvas.getChildren()[1] instanceof StyledText
+						&& canvas.getChildren()[2] instanceof Composite) {
 					return canvas;
 				}
 			}
@@ -284,6 +291,11 @@ public class StickyScrollingControlTest {
 	private StyledText getStickyLineText() {
 		Canvas canvas = getStickyControlCanvas(shell);
 		return (StyledText) canvas.getChildren()[1];
+	}
+
+	private Composite getStickyLineSeparator() {
+		Canvas canvas = getStickyControlCanvas(shell);
+		return (Composite) canvas.getChildren()[2];
 	}
 
 }

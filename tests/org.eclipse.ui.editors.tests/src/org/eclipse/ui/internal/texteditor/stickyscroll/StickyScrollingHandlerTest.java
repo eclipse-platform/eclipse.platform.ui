@@ -175,7 +175,9 @@ public class StickyScrollingHandlerTest {
 	private Canvas getStickyControlCanvas(Composite composite) {
 		for (Control control : composite.getChildren()) {
 			if (control instanceof Canvas canvas) {
-				if (canvas.getChildren().length == 4) {
+				if (canvas.getChildren().length == 3 && canvas.getChildren()[0] instanceof StyledText
+						&& canvas.getChildren()[1] instanceof StyledText
+						&& canvas.getChildren()[2] instanceof Composite) {
 					return canvas;
 				}
 			}

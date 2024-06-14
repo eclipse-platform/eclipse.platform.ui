@@ -59,6 +59,10 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 				findRGB(registry,ITextEditorThemeConstants.PRINT_MARGIN_COLOR, new RGB(176, 180 , 185)), fireEvent);
 
 		setDefault(store,
+				ITextEditorThemeConstants.STICKY_LINES_SEPARATOR_COLOR,
+				findRGB(registry, ITextEditorThemeConstants.STICKY_LINES_SEPARATOR_COLOR, new RGB(232, 232, 232)), fireEvent);
+
+		setDefault(store,
 				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR,
 				findRGB(registry, ITextEditorThemeConstants.LINE_NUMBER_RULER_COLOR, new RGB(120, 120, 120)), fireEvent);
 
