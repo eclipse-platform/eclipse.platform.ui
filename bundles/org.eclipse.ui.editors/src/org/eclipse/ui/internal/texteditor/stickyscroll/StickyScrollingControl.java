@@ -217,6 +217,9 @@ public class StickyScrollingControl {
 
 	private void styleStickyLines() {
 		StyledText textWidget= sourceViewer.getTextWidget();
+		if (textWidget == null || textWidget.isDisposed()) {
+			return;
+		}
 
 		List<StyleRange> stickyLinesStyleRanges= new ArrayList<>();
 		int stickyLineTextOffset= 0;
