@@ -629,17 +629,17 @@ class FindReplaceOverlay extends Dialog {
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.BEGINNING, GridData.FILL)
 				.applyTo(replaceToggle);
 		replaceToggle.setToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceToggle_toolTip);
-		replaceToggle.setText("⯈"); //$NON-NLS-1$
+		replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_OPEN_REPLACE_AREA));
 		replaceToggle.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> toggleReplace()));
 	}
 
 	private void toggleReplace() {
 		if (!replaceBarOpen) {
 			createReplaceDialog();
-			replaceToggle.setText("⯅"); //$NON-NLS-1$
+			replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_CLOSE_REPLACE_AREA));
 		} else {
 			hideReplace();
-			replaceToggle.setText("⯈"); //$NON-NLS-1$
+			replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_OPEN_REPLACE_AREA));
 		}
 		replaceToggle.setSelection(false); // We don't want the button to look "locked in", so don't
 											// use it's selectionState

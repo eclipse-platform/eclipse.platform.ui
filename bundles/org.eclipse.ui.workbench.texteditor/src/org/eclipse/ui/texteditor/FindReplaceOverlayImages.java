@@ -53,6 +53,10 @@ class FindReplaceOverlayImages {
 
 	static final String OBJ_SEARCH_IN_AREA = PREFIX_OBJ + "search_in_selection.png"; //$NON-NLS-1$
 
+	static final String OBJ_OPEN_REPLACE_AREA = PREFIX_OBJ + "open_replace.png"; //$NON-NLS-1$
+
+	static final String OBJ_CLOSE_REPLACE_AREA = PREFIX_OBJ + "close_replace.png"; //$NON-NLS-1$
+
 	/**
 	 * The image registry containing {@link Image images}.
 	 */
@@ -75,6 +79,8 @@ class FindReplaceOverlayImages {
 		declareRegistryImage(OBJ_CASE_SENSITIVE, OBJ + "case_sensitive.png"); //$NON-NLS-1$
 		declareRegistryImage(OBJ_SEARCH_ALL, OBJ + "search_all.png"); //$NON-NLS-1$
 		declareRegistryImage(OBJ_SEARCH_IN_AREA, OBJ + "search_in_area.png"); //$NON-NLS-1$
+		declareRegistryImage(OBJ_OPEN_REPLACE_AREA, OBJ + "open_replace.png"); //$NON-NLS-1$
+		declareRegistryImage(OBJ_CLOSE_REPLACE_AREA, OBJ + "close_replace.png"); //$NON-NLS-1$
 	}
 
 	/**
