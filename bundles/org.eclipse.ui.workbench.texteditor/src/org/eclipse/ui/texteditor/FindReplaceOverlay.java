@@ -435,7 +435,7 @@ class FindReplaceOverlay extends Dialog {
 		ToolItem separator = new ToolItem(searchTools, SWT.SEPARATOR);
 
 		searchUpButton = new ToolItem(searchTools, SWT.PUSH);
-		searchUpButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_FIND_PREV));
+		searchUpButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_PREV));
 		searchUpButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_upSearchButton_toolTip);
 		searchUpButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			performSearch(false);
@@ -443,14 +443,14 @@ class FindReplaceOverlay extends Dialog {
 		}));
 		searchDownButton = new ToolItem(searchTools, SWT.PUSH);
 		searchDownButton.setSelection(true); // by default, search down
-		searchDownButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_FIND_NEXT));
+		searchDownButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_NEXT));
 		searchDownButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip);
 		searchDownButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			performSearch(true);
 			evaluateFindReplaceStatus();
 		}));
 		searchAllButton = new ToolItem(searchTools, SWT.PUSH);
-		searchAllButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_SEARCH_ALL));
+		searchAllButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_ALL));
 		searchAllButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_searchAllButton_toolTip);
 		searchAllButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			performSelectAll();
@@ -460,7 +460,7 @@ class FindReplaceOverlay extends Dialog {
 
 	private void createAreaSearchButton() {
 		searchInSelectionButton = new ToolItem(searchTools, SWT.CHECK);
-		searchInSelectionButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_SEARCH_IN_AREA));
+		searchInSelectionButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_IN_AREA));
 		searchInSelectionButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_searchInSelectionButton_toolTip);
 		searchInSelectionButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
 		searchInSelectionButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
@@ -471,7 +471,7 @@ class FindReplaceOverlay extends Dialog {
 
 	private void createRegexSearchButton() {
 		regexSearchButton = new ToolItem(searchTools, SWT.CHECK);
-		regexSearchButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_FIND_REGEX));
+		regexSearchButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX));
 		regexSearchButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip);
 		regexSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.REGEX));
 		regexSearchButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
@@ -483,7 +483,7 @@ class FindReplaceOverlay extends Dialog {
 
 	private void createCaseSensitiveButton() {
 		caseSensitiveSearchButton = new ToolItem(searchTools, SWT.CHECK);
-		caseSensitiveSearchButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_CASE_SENSITIVE));
+		caseSensitiveSearchButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CASE_SENSITIVE));
 		caseSensitiveSearchButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_caseSensitiveButton_toolTip);
 		caseSensitiveSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.CASE_SENSITIVE));
 		caseSensitiveSearchButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
@@ -494,7 +494,7 @@ class FindReplaceOverlay extends Dialog {
 
 	private void createWholeWordsButton() {
 		wholeWordSearchButton = new ToolItem(searchTools, SWT.CHECK);
-		wholeWordSearchButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_WHOLE_WORD));
+		wholeWordSearchButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_WHOLE_WORD));
 		wholeWordSearchButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip);
 		wholeWordSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
 		wholeWordSearchButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
@@ -509,7 +509,7 @@ class FindReplaceOverlay extends Dialog {
 		replaceTools = new ToolBar(replaceContainer, SWT.HORIZONTAL);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.CENTER, GridData.END).applyTo(replaceTools);
 		replaceButton = new ToolItem(replaceTools, SWT.PUSH);
-		replaceButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_REPLACE));
+		replaceButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE));
 		replaceButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip);
 		replaceButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			if (getFindString().isEmpty()) {
@@ -520,7 +520,7 @@ class FindReplaceOverlay extends Dialog {
 			evaluateFindReplaceStatus();
 		}));
 		replaceAllButton = new ToolItem(replaceTools, SWT.PUSH);
-		replaceAllButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_REPLACE_ALL));
+		replaceAllButton.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE_ALL));
 		replaceAllButton.setToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceAllButton_toolTip);
 		replaceAllButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			if (getFindString().isEmpty()) {
@@ -629,17 +629,17 @@ class FindReplaceOverlay extends Dialog {
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.BEGINNING, GridData.FILL)
 				.applyTo(replaceToggle);
 		replaceToggle.setToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceToggle_toolTip);
-		replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_OPEN_REPLACE_AREA));
+		replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_OPEN_REPLACE_AREA));
 		replaceToggle.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> toggleReplace()));
 	}
 
 	private void toggleReplace() {
 		if (!replaceBarOpen) {
 			createReplaceDialog();
-			replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_CLOSE_REPLACE_AREA));
+			replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CLOSE_REPLACE_AREA));
 		} else {
 			hideReplace();
-			replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.OBJ_OPEN_REPLACE_AREA));
+			replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_OPEN_REPLACE_AREA));
 		}
 		replaceToggle.setSelection(false); // We don't want the button to look "locked in", so don't
 											// use it's selectionState
