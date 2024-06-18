@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * This class represents a handler for opening zip files.
@@ -54,6 +55,7 @@ public class OpenZipFileHandler extends AbstractHandler {
 		try {
 			ZipFileTransformer.openZipFile((IFile) element, true);
 		} catch (URISyntaxException | CoreException e) {
+			IDEWorkbenchPlugin.log(e.getMessage(), e);
 			MessageDialog.openError(shell, "Error opening zip file", e.getMessage()); //$NON-NLS-1$
 		}
 		return null;
