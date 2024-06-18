@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -776,6 +776,19 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 			setErrorMessage(result.getMessage());
 			return false;
 		}
+
+	    // Case-sensitive check for file existence
+	    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	    IPath newFilePath = getContainerFullPath().append(getFileName());
+	    IFile newFileHandle = createFileHandle(newFilePath);
+	    IResource[] existingResources = root.findContainersForLocationURI(newFileHandle.getLocationURI());
+	    for (IResource resource : existingResources) {
+	        if (resource.getName().equalsIgnoreCase(newFileHandle.getName()) &&
+	                !resource.getName().equals(newFileHandle.getName())) {
+	            setErrorMessage(NLS.bind(IDEWorkbenchMessages.ResourceGroup_nameExistsDifferentCase, resource.getName()));
+	            return false;
+	        }
+	    }
 
 		IStatus linkedResourceStatus = null;
 		if (valid) {
