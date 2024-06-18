@@ -12,15 +12,17 @@
 
 package org.eclipse.ui.ide.fileSystem.zip;
 
+import java.net.URISyntaxException;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ZipFileTransformer;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * This class represents a handler for closing an opened zip file.
@@ -36,7 +38,6 @@ public class CloseZipFileHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) {
-		Shell shell = HandlerUtil.getActiveShell(event);
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 
 		if (!(selection instanceof IStructuredSelection)) {
@@ -50,9 +51,8 @@ public class CloseZipFileHandler extends AbstractHandler {
 		}
 		try {
 			ZipFileTransformer.closeZipFile((IFolder) element);
-		} catch (Exception e) {
-			MessageDialog.openError(shell, "Error", "Error opening zip file"); //$NON-NLS-1$ //$NON-NLS-2$
-			e.printStackTrace();
+		} catch (CoreException | URISyntaxException e) {
+			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
 		return null;
 	}
