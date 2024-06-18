@@ -777,14 +777,22 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 			return false;
 		}
 
-	    // Case-sensitive check for file existence
+	    // Determine case sensitivity based on the operating system
+	    boolean caseInsensitive = false;
+		String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+		if (osName.contains("win") || (osName.contains("mac") && !osName.contains("x"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	        caseInsensitive = true;
+	    }
+
+	    // Case-sensitive or case-insensitive check for file existence
 	    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 	    IPath newFilePath = getContainerFullPath().append(getFileName());
 	    IFile newFileHandle = createFileHandle(newFilePath);
 	    IResource[] existingResources = root.findContainersForLocationURI(newFileHandle.getLocationURI());
 	    for (IResource resource : existingResources) {
-	        if (resource.getName().equalsIgnoreCase(newFileHandle.getName()) &&
-	                !resource.getName().equals(newFileHandle.getName())) {
+	        if ((caseInsensitive && resource.getName().equalsIgnoreCase(newFileHandle.getName()) &&
+	                !resource.getName().equals(newFileHandle.getName())) ||
+	                (!caseInsensitive && resource.getName().equals(newFileHandle.getName()))) {
 	            setErrorMessage(NLS.bind(IDEWorkbenchMessages.ResourceGroup_nameExistsDifferentCase, resource.getName()));
 	            return false;
 	        }
