@@ -814,6 +814,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceGroup_invalidFilename;
 	public static String ResourceGroup_pathOccupied;
 	public static String ResourceGroup_nameExistsDifferentCase;
+	public static String ResourceGroup_nameValidationError;
 
 	public static String FileSelectionDialog_title;
 	public static String FileSelectionDialog_message;

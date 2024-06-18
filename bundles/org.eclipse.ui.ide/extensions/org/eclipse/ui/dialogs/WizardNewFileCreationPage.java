@@ -777,25 +777,30 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 			return false;
 		}
 
-	    // Determine case sensitivity based on the operating system
-	    boolean caseInsensitive = false;
-		String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-		if (osName.contains("win") || (osName.contains("mac") && !osName.contains("x"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	        caseInsensitive = true;
-	    }
-
-	    // Case-sensitive or case-insensitive check for file existence
-	    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	    // Use workspace and resource APIs to handle file comparison
 	    IPath newFilePath = getContainerFullPath().append(getFileName());
 	    IFile newFileHandle = createFileHandle(newFilePath);
-	    IResource[] existingResources = root.findContainersForLocationURI(newFileHandle.getLocationURI());
-	    for (IResource resource : existingResources) {
-	        if ((caseInsensitive && resource.getName().equalsIgnoreCase(newFileHandle.getName()) &&
-	                !resource.getName().equals(newFileHandle.getName())) ||
-	                (!caseInsensitive && resource.getName().equals(newFileHandle.getName()))) {
-	            setErrorMessage(NLS.bind(IDEWorkbenchMessages.ResourceGroup_nameExistsDifferentCase, resource.getName()));
-	            return false;
+
+	    try {
+	        IContainer parentContainer = newFileHandle.getParent();
+	        IResource[] members = parentContainer.members();
+	        for (IResource member : members) {
+	            if (member.getType() == IResource.FILE) {
+	                IPath memberPath = member.getFullPath();
+	                if (memberPath.equals(newFilePath)) {
+	                    continue; // Skip if it's the same path
+	                }
+
+	                // Check each segment for case differences
+	                if (isCaseDifferent(memberPath, newFilePath)) {
+	                    setErrorMessage(NLS.bind(IDEWorkbenchMessages.ResourceGroup_nameExistsDifferentCase, member.getName()));
+	    	            return false;
+	    	        }
+	    	    }
 	        }
+	    } catch (CoreException e) {
+			setErrorMessage(IDEWorkbenchMessages.ResourceGroup_nameValidationError + e.getMessage());
+	        return false;
 	    }
 
 		IStatus linkedResourceStatus = null;
@@ -831,6 +836,23 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 			valid = false;
 		}
 		return valid;
+	}
+
+	// method to check if two paths have different case in any segment
+	private boolean isCaseDifferent(IPath path1, IPath path2) {
+	    if (path1.segmentCount() != path2.segmentCount()) {
+	        return false;
+	    }
+
+	    for (int i = 0; i < path1.segmentCount(); i++) {
+	        String segment1 = path1.segment(i);
+	        String segment2 = path2.segment(i);
+	        if (segment1.equalsIgnoreCase(segment2) && !segment1.equals(segment2)) {
+	            return true;
+	        }
+	    }
+
+	    return false;
 	}
 
 	private boolean isFilteredByParent() {
