@@ -13,9 +13,6 @@
  */
 package org.eclipse.jface.text.source.inlined;
 
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -26,6 +23,10 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 
 /**
  * {@link IDrawingStrategy} implementation to render {@link AbstractInlinedAnnotation}.
@@ -115,7 +116,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		}
 		int widgetFontHeight = widget.getFont().getFontData()[0].getHeight();
 		int annotationFontHeight = annotationFont.getFontData()[0].getHeight();
-		return annotationFontHeight == widgetFontHeight; 
+		return annotationFontHeight == widgetFontHeight;
 	}
 
 	/**
@@ -201,7 +202,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 */
 	private static void draw(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length,
 			Color color) {
-		if (annotation.isEndOfLine(widgetOffset, textWidget)) {
+		if (annotation.isEmptyLine(widgetOffset, textWidget)) {
 			drawAfterLine(annotation, gc, textWidget, widgetOffset, length, color);
 		} else if (LineContentAnnotation.drawRightToPreviousChar(widgetOffset, textWidget)) {
 			drawAsRightOfPreviousCharacter(annotation, gc, textWidget, widgetOffset, length, color);
