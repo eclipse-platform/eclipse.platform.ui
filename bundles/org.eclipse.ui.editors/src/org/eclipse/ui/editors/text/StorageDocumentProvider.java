@@ -115,7 +115,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 *
 	 * @deprecated use encoding based version instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval= true, since= "2024-09")
 	protected void setDocumentContent(IDocument document, InputStream contentStream) throws CoreException {
 		setDocumentContent(document, contentStream, null);
 	}
@@ -136,12 +136,23 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		}
 		try (contentStream) { // close content stream after read (PDE relies on it)
 			String content= new String(contentStream.readAllBytes(), encoding);
-			document.set(content);
+			setDocumentContent(document, content);
 		} catch (IOException x) {
 			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
 			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		}
+	}
+
+	/**
+	 * Initializes the given document with the given content.
+	 *
+	 * @param document the document to be initialized
+	 * @param content the document content
+	 * @since 3.18
+	 */
+	protected void setDocumentContent(IDocument document, String content) {
+		document.set(content);
 	}
 
 	/**

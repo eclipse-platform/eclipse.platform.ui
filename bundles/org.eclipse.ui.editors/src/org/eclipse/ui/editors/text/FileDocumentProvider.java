@@ -358,10 +358,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput) throws CoreException {
 		if (editorInput instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput) editorInput).getFile();
-			try (InputStream stream= file.getContents(false)) {
-				setDocumentContent(document, stream);
-			} catch (IOException x) {
-			}
+			setDocumentContent(document, file.readString());
 			return true;
 		}
 		return super.setDocumentContent(document, editorInput);
@@ -371,38 +368,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
 		if (editorInput instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput) editorInput).getFile();
-			try (InputStream contentStream= file.getContents(false)) {
-				FileInfo info= (FileInfo)getElementInfo(editorInput);
-				boolean removeBOM= false;
-				if (StandardCharsets.UTF_8.name().equals(encoding)) {
-					if (info != null)
-						removeBOM= info.fBOM != null;
-					else
-						removeBOM= getBOM(editorInput) != null;
-				}
-
-				/*
-				 * XXX:
-				 * This is a workaround for a corresponding bug in Java readers and writer,
-				 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
-				 */
-				if (removeBOM) {
-					int n= 0;
-					do {
-						int bytes= contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
-						if (bytes == -1)
-							throw new IOException();
-						n += bytes;
-					} while (n < IContentDescription.BOM_UTF_8.length);
-				}
-
-				setDocumentContent(document, contentStream, encoding);
-
-			} catch (IOException ex) {
-				String message= (ex.getMessage() != null ? ex.getMessage() : ""); //$NON-NLS-1$
-				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, ex);
-				throw new CoreException(s);
-			}
+			setDocumentContent(document, file.readString());
 			return true;
 		}
 		return super.setDocumentContent(document, editorInput, encoding);
