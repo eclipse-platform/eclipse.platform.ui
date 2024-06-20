@@ -441,7 +441,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 			ITreePathContentProvider tpcp = cp;
 			return tpcp.hasChildren((TreePath) anElementOrPath);
 		}
-		return ((ITreeContentProvider) cp).hasChildren(anElement);
+		return cp.hasChildren(anElement);
 	}
 
 	private boolean pipelineHasChildren(Object anElementOrPath, Object anElement,
@@ -632,8 +632,8 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 
 					if (!isOverridingDescriptorInSet(foundExtension.getDescriptor(), descriptors)) {
 						if (foundExtension.internalGetContentProvider().isTreePath()) {
-							TreePath[] parentTreePaths = ((ITreePathContentProvider) foundExtension
-									.internalGetContentProvider()).getParents(anElement);
+							TreePath[] parentTreePaths = foundExtension
+									.internalGetContentProvider().getParents(anElement);
 
 							for (TreePath parentTreePath : parentTreePaths) {
 

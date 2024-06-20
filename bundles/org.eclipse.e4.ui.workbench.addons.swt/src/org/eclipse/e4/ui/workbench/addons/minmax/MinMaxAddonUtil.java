@@ -347,7 +347,7 @@ public class MinMaxAddonUtil {
 		// null since it's not in the 'children' hierarchy
 		while (parent != null && !(parent instanceof MWindow)) {
 			if (parent.getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG) && parent instanceof MArea) {
-				parent = ((MArea) parent).getCurSharedRef();
+				parent = parent.getCurSharedRef();
 			} else {
 				parent = parent.getParent();
 			}

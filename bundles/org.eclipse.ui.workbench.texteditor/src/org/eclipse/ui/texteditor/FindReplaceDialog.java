@@ -1003,7 +1003,7 @@ class FindReplaceDialog extends Dialog {
 	private void setGridData(Control component, int horizontalAlignment, boolean grabExcessHorizontalSpace,
 			int verticalAlignment, boolean grabExcessVerticalSpace) {
 		GridData gd;
-		if (component instanceof Button && (((Button) component).getStyle() & SWT.PUSH) != 0) {
+		if (component instanceof Button && (component.getStyle() & SWT.PUSH) != 0) {
 			SWTUtil.setButtonDimensionHint((Button) component);
 			gd = (GridData) component.getLayoutData();
 		} else {

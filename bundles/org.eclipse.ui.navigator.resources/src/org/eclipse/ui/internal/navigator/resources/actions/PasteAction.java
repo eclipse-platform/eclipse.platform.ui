@@ -187,7 +187,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 		}
 
 		if (selection.get(0) instanceof IFile) {
-			return ((IFile) selection.get(0)).getParent();
+			return selection.get(0).getParent();
 		}
 		return (IContainer) selection.get(0);
 	}

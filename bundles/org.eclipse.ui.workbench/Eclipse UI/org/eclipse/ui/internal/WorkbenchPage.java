@@ -1030,13 +1030,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		for (ViewReference reference : viewReferences) {
 			if (part == reference.getPart(false)) {
-				return ((WorkbenchPartReference) reference).getModel();
+				return reference.getModel();
 			}
 		}
 
 		for (EditorReference reference : editorReferences) {
 			if (part == reference.getPart(false)) {
-				return ((WorkbenchPartReference) reference).getModel();
+				return reference.getModel();
 			}
 		}
 		return null;

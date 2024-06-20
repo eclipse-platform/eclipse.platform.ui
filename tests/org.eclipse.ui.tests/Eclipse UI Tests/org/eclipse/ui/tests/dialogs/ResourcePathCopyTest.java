@@ -150,7 +150,7 @@ public class ResourcePathCopyTest extends UITestCase {
 			// for getting location value
 			Control control = children[5];
 			// for button click
-			((Button) childElement).notifyListeners(SWT.Selection, new Event());
+			childElement.notifyListeners(SWT.Selection, new Event());
 			assertNotNull(Toolkit.getDefaultToolkit().getSystemClipboard()
 					.getData(DataFlavor.stringFlavor));
 			assertEquals(((Text) control).getText(), Toolkit.getDefaultToolkit()

@@ -172,9 +172,9 @@ public class ConfigureColumns {
 
 		private Image getColumnImage(Item item) {
 			if (item instanceof TableColumn) {
-				return ((TableColumn) item).getImage();
+				return item.getImage();
 			} else if (item instanceof TreeColumn) {
-				return ((TreeColumn) item).getImage();
+				return item.getImage();
 			}
 			return null;
 		}
@@ -301,12 +301,12 @@ public class ConfigureColumns {
 		private String getColumnName(Item item) {
 			String result = ""; //$NON-NLS-1$
 			if (item instanceof TableColumn) {
-				result = ((TableColumn) item).getText();
+				result = item.getText();
 				if (result.trim().isEmpty()) {
 					result = ((TableColumn) item).getToolTipText();
 				}
 			} else if (item instanceof TreeColumn) {
-				result = ((TreeColumn) item).getText();
+				result = item.getText();
 				if (result.trim().isEmpty()) {
 					result = ((TreeColumn) item).getToolTipText();
 				}
