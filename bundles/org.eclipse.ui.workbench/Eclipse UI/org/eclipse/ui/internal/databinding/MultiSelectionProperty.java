@@ -36,9 +36,9 @@ public class MultiSelectionProperty<S extends ISelectionService, E> extends Simp
 	protected List<E> doGetList(S source) {
 		ISelection selection;
 		if (partId != null) {
-			selection = ((ISelectionService) source).getSelection(partId);
+			selection = source.getSelection(partId);
 		} else {
-			selection = ((ISelectionService) source).getSelection();
+			selection = source.getSelection();
 		}
 		if (selection instanceof IStructuredSelection) {
 			List<E> list = ((IStructuredSelection) selection).toList();

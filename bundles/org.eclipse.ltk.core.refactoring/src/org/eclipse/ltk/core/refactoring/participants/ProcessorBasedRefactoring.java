@@ -430,7 +430,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 
 	private void addToTextChangeMap(Change change) {
 		if (change instanceof TextChange) {
-			Object element= ((TextChange) change).getModifiedElement();
+			Object element= change.getModifiedElement();
 			if (element != null) {
 				fTextChangeMap.put(element, (TextChange) change);
 			}

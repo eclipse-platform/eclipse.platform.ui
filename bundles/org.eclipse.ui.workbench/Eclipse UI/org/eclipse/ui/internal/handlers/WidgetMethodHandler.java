@@ -70,7 +70,7 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
 			try {
 				final Control focusControl = Display.getCurrent().getFocusControl();
 				if ((focusControl instanceof Composite)
-						&& ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
+						&& ((focusControl.getStyle() & SWT.EMBEDDED) != 0)) {
 					/*
 					 * Okay. Have a seat. Relax a while. This is going to be a bumpy ride. If it is
 					 * an embedded widget, then it *might* be a Swing widget. At the point where
@@ -210,7 +210,7 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
 		}
 
 		if ((method == null) && (focusControl instanceof Composite)
-				&& ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
+				&& ((focusControl.getStyle() & SWT.EMBEDDED) != 0)) {
 			/*
 			 * We couldn't find the appropriate method on the current focus control. It is
 			 * possible that the current focus control is an embedded SWT composite, which

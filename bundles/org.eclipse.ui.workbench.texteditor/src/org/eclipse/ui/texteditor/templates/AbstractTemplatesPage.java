@@ -1510,7 +1510,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			public void drop(DropTargetEvent event) {
 				if (event.item == null)
 					return;
-				Object object= ((TreeItem) event.item).getData();
+				Object object= event.item.getData();
 				final String contextId;
 				if (object instanceof TemplateContextType)
 					contextId= ((TemplateContextType) object).getId();

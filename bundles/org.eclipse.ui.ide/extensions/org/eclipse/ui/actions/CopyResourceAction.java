@@ -288,7 +288,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
 		if (selectedResources.isEmpty()) {
 			return false;
 		}
-		IContainer firstParent = ((IResource) selectedResources.get(0))
+		IContainer firstParent = selectedResources.get(0)
 				.getParent();
 		if (firstParent == null) {
 			return false;

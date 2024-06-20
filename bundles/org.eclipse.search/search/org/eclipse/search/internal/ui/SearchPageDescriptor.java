@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -336,7 +335,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 
 			IResource resource= ((IAdaptable)element).getAdapter(IResource.class);
 			if (resource != null && resource.getType() == IResource.FILE) {
-				String extension= ((IFile)resource).getFileExtension();
+				String extension= resource.getFileExtension();
 				if (extension != null)
 					score= Math.max(score, getScoreForFileExtension(extension));
 			}

@@ -162,7 +162,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 			IResource firstSelected = selection.get(0);
 			String projectName = null;
 			if (firstSelected instanceof IProject) {
-				projectName = ((IProject) firstSelected).getName();
+				projectName = firstSelected.getName();
 			}
 			message = NLS.bind(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_confirmMsg1, projectName);
 		} else // if more then one project is selected then print there number
