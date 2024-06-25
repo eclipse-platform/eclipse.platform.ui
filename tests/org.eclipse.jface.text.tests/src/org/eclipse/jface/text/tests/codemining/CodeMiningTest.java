@@ -26,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -195,6 +196,62 @@ public class CodeMiningTest {
 	}
 
 	@Test
+	public void testCodeMiningEmptyLine() {
+		fViewer.getDocument().set("\n");
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { new ICodeMiningProvider() {
+			@Override
+			public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+				return CompletableFuture.completedFuture(Collections.singletonList(new StaticContentLineCodeMining(new Position(0, 1), "mining", this)));
+			}
+
+			@Override
+			public void dispose() {
+			}
+		} });
+		StyledText widget= fViewer.getTextWidget();
+		Assert.assertTrue("Code mining is not visible in 1st empty line after line break character", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				try {
+					StyleRange range= widget.getStyleRangeAtOffset(0);
+					return range == null && hasCodeMiningPrintedAfterTextOnLine(fViewer, 0);
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}.waitForCondition(fViewer.getTextWidget().getDisplay(), 1000));
+	}
+
+	@Test
+	public void testCodeMiningEndOfLine() {
+		fViewer.getDocument().set("a\n");
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { new ICodeMiningProvider() {
+			@Override
+			public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+				return CompletableFuture.completedFuture(Collections.singletonList(new StaticContentLineCodeMining(new Position(1, 1), "mining", this)));
+			}
+
+			@Override
+			public void dispose() {
+			}
+		} });
+		StyledText widget= fViewer.getTextWidget();
+		Assert.assertTrue("Code mining is not visible in 1st line after character a before line break character", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				try {
+					StyleRange range= widget.getStyleRangeAtOffset(0);
+					return range != null && range.metrics != null && hasCodeMiningPrintedAfterTextOnLine(fViewer, 0) == false;
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}.waitForCondition(fViewer.getTextWidget().getDisplay(), 1000));
+	}
+
+	@Test
 	public void testCodeMiningMultiLine() {
 		fViewer.getDocument().set("a\nbc");
 		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { new ICodeMiningProvider() {
@@ -225,7 +282,11 @@ public class CodeMiningTest {
 	private static boolean hasCodeMiningPrintedAfterTextOnLine(ITextViewer viewer, int line) throws BadLocationException {
 		StyledText widget = viewer.getTextWidget();
 		IDocument document= viewer.getDocument();
-		Rectangle secondLineBounds = widget.getTextBounds(document.getLineOffset(1), document.getLineOffset(line) + document.getLineLength(line) - 1);
+		int lineLength= document.getLineLength(line) - 1;
+		if (lineLength < 0) {
+			lineLength= 0;
+		}
+		Rectangle secondLineBounds= widget.getTextBounds(document.getLineOffset(line), document.getLineOffset(line) + lineLength);
 		Image image = new Image(widget.getDisplay(), widget.getSize().x, widget.getSize().y);
 		GC gc = new GC(widget);
 		gc.copyArea(image, 0, 0);

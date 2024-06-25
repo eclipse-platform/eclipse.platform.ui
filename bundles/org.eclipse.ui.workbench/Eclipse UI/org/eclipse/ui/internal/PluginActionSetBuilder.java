@@ -619,7 +619,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 				if (item instanceof IToolBarManager) {
 					revokeActionSetFromToolbar((IToolBarManager) item, actionsetId);
 				} else if (item instanceof IToolBarContributionItem) {
-					id = ((IToolBarContributionItem) item).getId();
+					id = item.getId();
 					if (actionsetId.equals(id)) {
 						itemsToRemove.add(item);
 					}

@@ -553,7 +553,7 @@ public class PropertySheetEntry extends EventManager implements IPropertySheetEn
 
 		// Dispose of entries which are no longer needed
 		for (PropertySheetEntry element : entriesToDispose) {
-			((IPropertySheetEntry) element).dispose();
+			element.dispose();
 		}
 	}
 

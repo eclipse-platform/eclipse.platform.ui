@@ -28,9 +28,9 @@ public class SingleSelectionProperty<S extends ISelectionService, T> extends Sim
 	protected T doGetValue(S source) {
 		ISelection selection;
 		if (partId != null) {
-			selection = ((ISelectionService) source).getSelection(partId);
+			selection = source.getSelection(partId);
 		} else {
-			selection = ((ISelectionService) source).getSelection();
+			selection = source.getSelection();
 		}
 		if (selection instanceof IStructuredSelection) {
 			T elem = (T) ((IStructuredSelection) selection).getFirstElement();

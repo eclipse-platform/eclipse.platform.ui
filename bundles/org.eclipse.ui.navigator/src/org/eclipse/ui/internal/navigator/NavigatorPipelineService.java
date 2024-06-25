@@ -25,7 +25,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorPipelineService;
-import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
 import org.eclipse.ui.navigator.PipelinedShapeModification;
 import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 
@@ -79,8 +78,8 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 						SafeRunner.run(new NavigatorSafeRunnable() {
 							@Override
 							public void run() throws Exception {
-								((IPipelinedTreeContentProvider) extension
-										.internalGetContentProvider())
+								extension
+										.internalGetContentProvider()
 										.interceptAdd(anAddModification);
 							}
 
@@ -139,8 +138,8 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 				SafeRunner.run(new NavigatorSafeRunnable() {
 					@Override
 					public void run() throws Exception {
-						((IPipelinedTreeContentProvider) overridingExtension
-								.internalGetContentProvider()).interceptRemove(aRemoveModification);
+						overridingExtension
+								.internalGetContentProvider().interceptRemove(aRemoveModification);
 					}
 
 					@Override
@@ -189,8 +188,8 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 				SafeRunner.run(new NavigatorSafeRunnable() {
 					@Override
 					public void run() throws Exception {
-						intercepted[0] |= ((IPipelinedTreeContentProvider) nceLocal
-								.internalGetContentProvider())
+						intercepted[0] |= nceLocal
+								.internalGetContentProvider()
 								.interceptRefresh(aRefreshSynchronization);
 
 						if (nceLocal.getDescriptor().hasOverridingExtensions())
@@ -242,8 +241,8 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 				SafeRunner.run(new NavigatorSafeRunnable() {
 					@Override
 					public void run() throws Exception {
-						intercepted[0] |= ((IPipelinedTreeContentProvider) nceLocal
-								.internalGetContentProvider())
+						intercepted[0] |= nceLocal
+								.internalGetContentProvider()
 								.interceptUpdate(anUpdateSynchronization);
 
 						if (nceLocal.getDescriptor().hasOverridingExtensions())

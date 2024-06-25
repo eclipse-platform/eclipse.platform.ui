@@ -339,7 +339,7 @@ public class HandledContributionItem extends AbstractContributionItem {
 
 	private String legacyActionLabelSupport(String text, ParameterizedCommand command) {
 
-		return java.util.Optional.of(command).map(ParameterizedCommand::getCommand).map(Command::getHandler)
+		return java.util.Optional.ofNullable(command).map(ParameterizedCommand::getCommand).map(Command::getHandler)
 				.map(IHandler::getHandlerLabel).filter(Objects::nonNull).orElse(text);
 	}
 

@@ -359,7 +359,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 			exportButton.setToolTipText(WorkbenchMessages.Preference_export);
 			exportButton.addListener(SWT.Selection, e -> openExportWizard(parent));
 		} else if (control instanceof Link) {
-			Composite linkParent = ((Link) control).getParent();
+			Composite linkParent = control.getParent();
 			Link importLink = new Link(linkParent, SWT.WRAP | SWT.NO_FOCUS);
 			((GridLayout) parent.getLayout()).numColumns++;
 			importLink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));

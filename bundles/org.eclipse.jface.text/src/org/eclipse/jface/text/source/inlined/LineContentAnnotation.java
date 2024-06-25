@@ -13,17 +13,18 @@
  */
 package org.eclipse.jface.text.source.inlined;
 
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
+
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * Inlined annotation which is drawn in the line content and which takes some place with a given
@@ -162,14 +163,12 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 				textWidget.getLineAtOffset(widgetOffset) == textWidget.getLineAtOffset(widgetOffset - 1);
 	}
 
-	boolean isEndOfLine(int widgetOffset, StyledText text) {
+	boolean isEmptyLine(int widgetOffset, StyledText text) {
 		if (text.getCharCount() <= widgetOffset) { // Assuming widgetOffset >= 0
 			return true;
 		}
 		int line= text.getLineAtOffset(widgetOffset);
-		int startOfLine= text.getOffsetAtLine(line);
-		int offsetInLine= widgetOffset - startOfLine;
-		return offsetInLine >= text.getLine(line).length();
+		String lineStr= text.getLine(line);
+		return lineStr.length() == 0;
 	}
-
 }

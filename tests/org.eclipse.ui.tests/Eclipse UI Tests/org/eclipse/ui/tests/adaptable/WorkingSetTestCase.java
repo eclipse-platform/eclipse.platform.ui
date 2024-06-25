@@ -20,7 +20,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.ui.IResourceActionFilter;
 import org.eclipse.ui.IWorkingSet;
@@ -42,11 +41,11 @@ public class WorkingSetTestCase extends UITestCase {
 	}
 
 	private ResourceMapping getResourceMapping(IWorkingSet set) {
-		return ((IAdaptable) set).getAdapter(ResourceMapping.class);
+		return set.getAdapter(ResourceMapping.class);
 	}
 
 	private IWorkbenchAdapter getWorkbenchAdapter(IWorkingSet set) {
-		return ((IAdaptable) set).getAdapter(IWorkbenchAdapter.class);
+		return set.getAdapter(IWorkbenchAdapter.class);
 	}
 
 	private void assertMatches(ResourceMapping mapping, IResource[] resources) throws CoreException {

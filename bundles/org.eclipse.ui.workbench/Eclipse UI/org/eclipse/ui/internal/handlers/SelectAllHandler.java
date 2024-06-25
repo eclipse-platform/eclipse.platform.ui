@@ -51,7 +51,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
 				final int numParams = methodToExecute.getParameterTypes().length;
 
 				if ((focusControl instanceof Composite)
-						&& ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
+						&& ((focusControl.getStyle() & SWT.EMBEDDED) != 0)) {
 
 					// we only support selectAll for swing components
 					if (numParams != 0) {

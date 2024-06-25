@@ -530,7 +530,7 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 		modelExtension.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, newDiffer);
 
 		if (fDelegate instanceof IChangeRulerColumn)
-			((IChangeRulerColumn) fDelegate).setModel(annotationModel); // picks up the new model attachment
+			fDelegate.setModel(annotationModel); // picks up the new model attachment
 
 		return true;
 	}
@@ -543,7 +543,7 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 	private void installChangeRulerModel(IVerticalRulerColumn column) {
 		if (column instanceof IChangeRulerColumn) {
 			IAnnotationModel model= getAnnotationModelWithDiffer();
-			((IChangeRulerColumn) column).setModel(model);
+			column.setModel(model);
 			if (model != null) {
 				ISourceViewer viewer= fViewer;
 				if (viewer != null && viewer.getAnnotationModel() == null && column.getControl() != null)
@@ -559,7 +559,7 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 	 */
 	private void uninstallChangeRulerModel(IVerticalRulerColumn column) {
 		if (column instanceof IChangeRulerColumn)
-			((IChangeRulerColumn) column).setModel(null);
+			column.setModel(null);
 		IAnnotationModel model= getDiffer();
 		if (model instanceof ILineDifferExtension)
 			((ILineDifferExtension) model).suspend();

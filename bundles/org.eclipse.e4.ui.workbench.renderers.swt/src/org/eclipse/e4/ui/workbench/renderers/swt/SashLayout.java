@@ -163,7 +163,7 @@ public class SashLayout extends Layout {
 
 		Rectangle bounds = composite.getBounds();
 		if (composite instanceof Shell)
-			bounds = ((Shell) composite).getClientArea();
+			bounds = composite.getClientArea();
 		else {
 			bounds.x = 0;
 			bounds.y = 0;

@@ -25,7 +25,6 @@ import org.eclipse.e4.core.services.nls.ILocaleChangeService;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -142,7 +141,7 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 				}
 			}
 
-			((MLocalizable) element).updateLocalization();
+			element.updateLocalization();
 		}
 	}
 
