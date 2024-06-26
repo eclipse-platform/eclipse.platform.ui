@@ -309,6 +309,10 @@ class FindReplaceOverlay extends Dialog {
 
 	@Override
 	public int open() {
+		super.open();
+		if (!okayToUse(getShell())) {
+			return Window.CANCEL;
+		}
 		int returnCode = Window.OK;
 		if (!overlayOpen) {
 			returnCode = super.open();
@@ -763,11 +767,18 @@ class FindReplaceOverlay extends Dialog {
 	}
 
 	private void positionToPart() {
-		getShell().requestLayout();
+		if (isInvalidTargetPart()) {
+			return;
+		}
+		if (isInvalidShell()) {
+			close();
+			return;
+		}
 		if (!(targetPart instanceof StatusTextEditor)) {
 			return;
 		}
 
+		getShell().requestLayout();
 		StatusTextEditor textEditor = (StatusTextEditor) targetPart;
 		Control targetWidget = textEditor.getSourceViewer().getTextWidget();
 		if (!okayToUse(targetWidget)) {
@@ -788,6 +799,17 @@ class FindReplaceOverlay extends Dialog {
 		getShell().layout(true);
 
 		repositionTextSelection();
+	}
+
+	private boolean isInvalidTargetPart() {
+		return targetPart == null || targetPart.getSite() == null || targetPart.getSite().getShell() == null;
+	}
+
+	private boolean isInvalidShell() {
+		if (isInvalidTargetPart()) {
+			return false;
+		}
+		return getShell() == null || !targetPart.getSite().getShell().equals(getShell().getParent());
 	}
 
 	private String getFindString() {
@@ -862,5 +884,9 @@ class FindReplaceOverlay extends Dialog {
 
 	public void setPositionToTop(boolean shouldPositionOverlayOnTop) {
 		positionAtTop = shouldPositionOverlayOnTop;
+	}
+
+	public boolean isOverlayOpen() {
+		return overlayOpen;
 	}
 }

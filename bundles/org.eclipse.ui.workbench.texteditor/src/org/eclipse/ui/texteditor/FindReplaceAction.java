@@ -410,7 +410,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	}
 
 	private void showOverlayInEditor() {
-		if (overlay == null) {
+		if (overlay == null || !overlay.isOverlayOpen()) {
 			Shell shellToUse = null;
 
 			if (fShell == null) {
