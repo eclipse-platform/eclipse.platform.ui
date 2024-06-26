@@ -173,9 +173,10 @@ public class UndoManager2 implements IUndoManager {
 	@Override
 	public void addUndo(String name, Change change) {
 		if (fActiveOperation != null) {
-			UndoableOperation2ChangeAdapter operation= (UndoableOperation2ChangeAdapter)fActiveOperation.getTriggeringOperation();
-			operation.setUndoChange(change);
-			operation.setLabel(name);
+			if (fActiveOperation.getTriggeringOperation() instanceof UndoableOperation2ChangeAdapter operation) {
+				operation.setUndoChange(change);
+				operation.setLabel(name);
+			}
 			fOperationHistory.add(fActiveOperation);
 			fActiveOperation= null;
 		}
