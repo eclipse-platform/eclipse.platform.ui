@@ -295,10 +295,11 @@ public final class TriggeredOperations extends AbstractOperation implements
 	}
 
 	/**
-	 * Return the operation that triggered the other operations in this
-	 * composite.
+	 * Return the operation that triggered the other operations in this composite.
 	 *
-	 * @return the IUndoableOperation that triggered the other children.
+	 * @return the IUndoableOperation that triggered the other children or
+	 *         <code>null</code> if the triggeringOperation was removed
+	 * @see TriggeredOperations#remove(IUndoableOperation)
 	 */
 	public IUndoableOperation getTriggeringOperation() {
 		return triggeringOperation;
