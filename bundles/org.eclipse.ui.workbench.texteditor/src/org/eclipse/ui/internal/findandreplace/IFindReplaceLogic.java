@@ -71,21 +71,6 @@ public interface IFindReplaceLogic {
 	public boolean isIncrementalSearchAvailable();
 
 	/**
-	 * Updates the search result after the Text was Modified. Used in combination
-	 * with <code>setIncrementalSearch(true)</code>. This method specifically allows
-	 * for "search-as-you-type"
-	 *
-	 * "Search-as-you-type" is not compatible with RegEx-search. This will
-	 * initialize the base-location for search (if not initialized already) but will
-	 * not update it, meaning that incrementally searching the same string twice in
-	 * a row will always yield the same result, unless the Base location was
-	 * modified (eg., by performing "find next")
-	 *
-	 * @param searchString the String that is to be searched
-	 */
-	public void performIncrementalSearch(String searchString);
-
-	/**
 	 * Replaces all occurrences of the user's findString with the replace string.
 	 * Indicate to the user the number of replacements that occur.
 	 *
@@ -102,7 +87,11 @@ public interface IFindReplaceLogic {
 	public void performSelectAll(String findString);
 
 	/**
-	 * Locates the user's findString in the target
+	 * Locates the user's findString in the target. If incremental search is
+	 * activated, the search will be performed starting from an incremental search
+	 * position, which can be reset using {@link #resetIncrementalBaseLocation()}.
+	 * If incremental search is activated and RegEx search is activated, nothing
+	 * happens.
 	 *
 	 * @param searchString the String to search for
 	 * @return Whether the string was found in the target
@@ -173,5 +162,11 @@ public interface IFindReplaceLogic {
 	 * @return <code>true</code> if the search can be restricted to whole words
 	 */
 	public boolean isWholeWordSearchAvailable(String findString);
+
+	/**
+	 * Initializes the anchor used as starting point for incremental searching.
+	 * Subsequent incremental searches will start from the current selection.
+	 */
+	void resetIncrementalBaseLocation();
 
 }
