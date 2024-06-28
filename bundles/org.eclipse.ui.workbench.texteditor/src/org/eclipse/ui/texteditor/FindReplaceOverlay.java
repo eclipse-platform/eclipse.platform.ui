@@ -149,19 +149,19 @@ class FindReplaceOverlay extends Dialog {
 
 	private KeyListener shortcuts = KeyListener.keyPressedAdapter(e -> {
 		e.doit = false;
-		if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'F' || e.keyCode == 'f')) {
+		if ((e.stateMask & SWT.MOD1) != 0 && (e.keyCode == 'F' || e.keyCode == 'f')) {
 			close();
-		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'R' || e.keyCode == 'r')) {
+		} else if ((e.stateMask & SWT.MOD1) != 0 && (e.keyCode == 'R' || e.keyCode == 'r')) {
 			if (findReplaceLogic.getTarget().isEditable()) {
 				toggleReplace();
 			}
-		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'W' || e.keyCode == 'w')) {
+		} else if ((e.stateMask & SWT.MOD1) != 0 && (e.keyCode == 'W' || e.keyCode == 'w')) {
 			toggleToolItem(wholeWordSearchButton);
-		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'P' || e.keyCode == 'p')) {
+		} else if ((e.stateMask & SWT.MOD1) != 0 && (e.keyCode == 'P' || e.keyCode == 'p')) {
 			toggleToolItem(regexSearchButton);
-		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'A' || e.keyCode == 'a')) {
+		} else if ((e.stateMask & SWT.MOD1) != 0 && (e.keyCode == 'A' || e.keyCode == 'a')) {
 			toggleToolItem(searchInSelectionButton);
-		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'C' || e.keyCode == 'c')) {
+		} else if ((e.stateMask & SWT.MOD1) != 0 && (e.keyCode == 'C' || e.keyCode == 'c')) {
 			toggleToolItem(caseSensitiveSearchButton);
 		} else if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
 			performEnterAction(e);
@@ -174,7 +174,7 @@ class FindReplaceOverlay extends Dialog {
 
 	private void performEnterAction(KeyEvent e) {
 		boolean isShiftPressed = (e.stateMask & SWT.SHIFT) != 0;
-		boolean isCtrlPressed = (e.stateMask & SWT.CTRL) != 0;
+		boolean isCtrlPressed = (e.stateMask & SWT.MOD1) != 0;
 		if (okayToUse(replaceBar) && replaceBar.isFocusControl()) {
 			if (isCtrlPressed) {
 				performReplaceAllOnEnter();
