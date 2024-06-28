@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.osgi.framework.FrameworkUtil;
 
 import org.eclipse.swt.SWT;
@@ -44,6 +48,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -72,12 +77,37 @@ import org.eclipse.ui.texteditor.StatusTextEditor;
  * @since 3.17
  */
 public class FindReplaceOverlay extends Dialog {
+	private final class KeyboardShortcuts {
+		private static final List<KeyStroke> SEARCH_FORWARD = List.of( //
+				KeyStroke.getInstance(SWT.CR), KeyStroke.getInstance(SWT.KEYPAD_CR));
+		private static final List<KeyStroke> SEARCH_BACKWARD = List.of( //
+				KeyStroke.getInstance(SWT.SHIFT, SWT.CR), KeyStroke.getInstance(SWT.SHIFT, SWT.KEYPAD_CR));
+		private static final List<KeyStroke> SEARCH_ALL = List.of( //
+				KeyStroke.getInstance(SWT.MOD1, SWT.CR), KeyStroke.getInstance(SWT.MOD1, SWT.KEYPAD_CR));
+		private static final List<KeyStroke> OPTION_CASE_SENSITIVE = List.of( //
+				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'C'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'c'));
+		private static final List<KeyStroke> OPTION_WHOLE_WORD = List.of( //
+				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'W'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'w'));
+		private static final List<KeyStroke> OPTION_REGEX = List.of( //
+				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'P'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'p'));
+		private static final List<KeyStroke> OPTION_SEARCH_IN_SELECTION = List.of( //
+				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'A'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'a'));
+		private static final List<KeyStroke> CLOSE = List.of( //
+				KeyStroke.getInstance(SWT.ESC), KeyStroke.getInstance(SWT.MOD1, 'F'),
+				KeyStroke.getInstance(SWT.MOD1, 'f'));
+		private static final List<KeyStroke> TOGGLE_REPLACE = List.of( //
+				KeyStroke.getInstance(SWT.MOD1, 'R'), KeyStroke.getInstance(SWT.MOD1, 'r'));
+	}
 
 	private static final String REPLACE_BAR_OPEN_DIALOG_SETTING = "replaceBarOpen"; //$NON-NLS-1$
 	private static final double WORST_CASE_RATIO_EDITOR_TO_OVERLAY = 0.95;
 	private static final double BIG_WIDTH_RATIO_EDITOR_TO_OVERLAY = 0.7;
 	private static final String MINIMAL_WIDTH_TEXT = "THIS TEXT IS SHORT "; //$NON-NLS-1$
 	private static final String IDEAL_WIDTH_TEXT = "THIS TEXT HAS A REASONABLE LENGTH FOR SEARCHING"; //$NON-NLS-1$
+
+	private final Map<KeyStroke, Runnable> searchKeyStrokeHandlers = new HashMap<>();
+	private final Map<KeyStroke, Runnable> replaceKeyStrokeHandlers = new HashMap<>();
+
 	private FindReplaceLogic findReplaceLogic;
 	private IWorkbenchPart targetPart;
 	private boolean overlayOpen;
@@ -152,47 +182,6 @@ public class FindReplaceOverlay extends Dialog {
 		BusyIndicator.showWhile(getShell() != null ? getShell().getDisplay() : Display.getCurrent(),
 				() -> findReplaceLogic.performSelectAll(getFindString()));
 		evaluateFindReplaceStatus();
-	}
-
-	private KeyListener shortcuts = KeyListener.keyPressedAdapter(e -> {
-		e.doit = false;
-		if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'F' || e.keyCode == 'f')) {
-			close();
-		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'R' || e.keyCode == 'r')) {
-			toggleReplace();
-		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'W' || e.keyCode == 'w')) {
-			toggleToolItem(wholeWordSearchButton);
-		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'P' || e.keyCode == 'p')) {
-			toggleToolItem(regexSearchButton);
-		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'A' || e.keyCode == 'a')) {
-			toggleToolItem(searchInSelectionButton);
-		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'C' || e.keyCode == 'c')) {
-			toggleToolItem(caseSensitiveSearchButton);
-		} else if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
-			performEnterAction(e);
-		} else if (e.keyCode == SWT.ESC) {
-			close();
-		} else {
-			e.doit = true;
-		}
-	});
-
-	private void performEnterAction(KeyEvent e) {
-		boolean isShiftPressed = (e.stateMask & SWT.SHIFT) != 0;
-		boolean isCtrlPressed = (e.stateMask & SWT.CTRL) != 0;
-		if (okayToUse(replaceBar) && replaceBar.isFocusControl()) {
-			if (isCtrlPressed) {
-				performReplaceAll();
-			} else {
-				performSingleReplace();
-			}
-		} else {
-			if (isCtrlPressed) {
-				performSelectAll();
-			} else {
-				performSearch(!isShiftPressed);
-			}
-		}
 	}
 
 	private void toggleToolItem(ToolItem toolItem) {
@@ -464,75 +453,111 @@ public class FindReplaceOverlay extends Dialog {
 		@SuppressWarnings("unused")
 		ToolItem separator = searchTools.createToolItem(SWT.SEPARATOR);
 
+		Runnable searchUpOperation = () -> performSearch(false);
 		searchUpButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_PREV))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_upSearchButton_toolTip)
-				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> performSearch(false))).build();
+				.withToolTipText(withShortcutHint(FindReplaceMessages.FindReplaceOverlay_upSearchButton_toolTip,
+						KeyboardShortcuts.SEARCH_BACKWARD))
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> searchUpOperation.run())).build();
+		KeyboardShortcuts.SEARCH_BACKWARD.forEach(key -> searchKeyStrokeHandlers.put(key, searchUpOperation));
+
+		Runnable searchDownOperation = () -> performSearch(true);
 		searchDownButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_NEXT))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip)
-				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> performSearch(true))).build();
+				.withToolTipText(withShortcutHint(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip,
+						KeyboardShortcuts.SEARCH_FORWARD))
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> searchDownOperation.run())).build();
+		KeyboardShortcuts.SEARCH_FORWARD.forEach(key -> searchKeyStrokeHandlers.put(key, searchDownOperation));
 		searchDownButton.setSelection(true); // by default, search down
 
+		Runnable searchAllOperation = this::performSelectAll;
 		searchAllButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_ALL))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchAllButton_toolTip)
-				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> performSelectAll())).build();
+				.withToolTipText(withShortcutHint(
+						FindReplaceMessages.FindReplaceOverlay_searchAllButton_toolTip, KeyboardShortcuts.SEARCH_ALL))
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> searchAllOperation.run())).build();
+		KeyboardShortcuts.SEARCH_ALL.forEach(key -> searchKeyStrokeHandlers.put(key, searchAllOperation));
+	}
+
+	private String withShortcutHint(String description, List<KeyStroke> shortcuts) {
+		if (shortcuts.isEmpty()) {
+			return description;
+		}
+		return description + " (" + shortcuts.get(0).format() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void createCloseTools() {
 		closeTools = new AccessibleToolBar(searchContainer);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.END, GridData.END).applyTo(closeTools);
 
+		Runnable closeOperation = this::close;
 		closeButton = new AccessibleToolItemBuilder(closeTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CLOSE))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_closeButton_toolTip)
+				.withToolTipText(withShortcutHint(FindReplaceMessages.FindReplaceOverlay_closeButton_toolTip,
+						KeyboardShortcuts.CLOSE))
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> close())).build();
+		KeyboardShortcuts.CLOSE.forEach(key -> {
+			searchKeyStrokeHandlers.put(key, closeOperation);
+			replaceKeyStrokeHandlers.put(key, closeOperation);
+		});
 	}
 
 	private void createAreaSearchButton() {
 		searchInSelectionButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_IN_AREA))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchInSelectionButton_toolTip)
+				.withToolTipText(withShortcutHint(
+						FindReplaceMessages.FindReplaceOverlay_searchInSelectionButton_toolTip,
+								KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION))
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 					activateInFindReplacerIf(SearchOptions.GLOBAL, !searchInSelectionButton.getSelection());
 					updateIncrementalSearch();
 				})).build();
 		searchInSelectionButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
+		KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION
+				.forEach(key -> searchKeyStrokeHandlers.put(key, () -> toggleToolItem(searchInSelectionButton)));
 	}
 
 	private void createRegexSearchButton() {
 		regexSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
+				.withToolTipText(withShortcutHint(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip,
+						KeyboardShortcuts.OPTION_REGEX))
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 					activateInFindReplacerIf(SearchOptions.REGEX, regexSearchButton.getSelection());
 					wholeWordSearchButton.setEnabled(!findReplaceLogic.isActive(SearchOptions.REGEX));
 					updateIncrementalSearch();
 				})).build();
 		regexSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.REGEX));
+		KeyboardShortcuts.OPTION_REGEX
+				.forEach(key -> searchKeyStrokeHandlers.put(key, () -> toggleToolItem(regexSearchButton)));
 	}
 
 	private void createCaseSensitiveButton() {
 		caseSensitiveSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CASE_SENSITIVE))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_caseSensitiveButton_toolTip)
+				.withToolTipText(withShortcutHint(FindReplaceMessages.FindReplaceOverlay_caseSensitiveButton_toolTip,
+						KeyboardShortcuts.OPTION_CASE_SENSITIVE))
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 					activateInFindReplacerIf(SearchOptions.CASE_SENSITIVE, caseSensitiveSearchButton.getSelection());
 					updateIncrementalSearch();
 				})).build();
 		caseSensitiveSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.CASE_SENSITIVE));
+		KeyboardShortcuts.OPTION_CASE_SENSITIVE
+				.forEach(key -> searchKeyStrokeHandlers.put(key, () -> toggleToolItem(caseSensitiveSearchButton)));
 	}
 
 	private void createWholeWordsButton() {
 		wholeWordSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_WHOLE_WORD))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip)
+				.withToolTipText(withShortcutHint(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip,
+						KeyboardShortcuts.OPTION_WHOLE_WORD))
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 					activateInFindReplacerIf(SearchOptions.WHOLE_WORD, wholeWordSearchButton.getSelection());
 					updateIncrementalSearch();
 				})).build();
 		wholeWordSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
+		KeyboardShortcuts.OPTION_WHOLE_WORD
+				.forEach(key -> searchKeyStrokeHandlers.put(key, () -> toggleToolItem(wholeWordSearchButton)));
 	}
 
 	private void createReplaceTools() {
@@ -542,7 +567,8 @@ public class FindReplaceOverlay extends Dialog {
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.CENTER, GridData.END).applyTo(replaceTools);
 		replaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip)
+				.withToolTipText(withShortcutHint(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip,
+						KeyboardShortcuts.SEARCH_FORWARD))
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 					if (getFindString().isEmpty()) {
 						showUserFeedback(warningColor, true);
@@ -550,10 +576,12 @@ public class FindReplaceOverlay extends Dialog {
 					}
 					performSingleReplace();
 				})).build();
+		KeyboardShortcuts.SEARCH_FORWARD.forEach(key -> replaceKeyStrokeHandlers.put(key, this::performSingleReplace));
 
 		replaceAllButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE_ALL))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceAllButton_toolTip)
+				.withToolTipText(withShortcutHint(FindReplaceMessages.FindReplaceOverlay_replaceAllButton_toolTip,
+						KeyboardShortcuts.SEARCH_ALL))
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 					if (getFindString().isEmpty()) {
 						showUserFeedback(warningColor, true);
@@ -561,6 +589,7 @@ public class FindReplaceOverlay extends Dialog {
 					}
 					performReplaceAll();
 				})).build();
+		KeyboardShortcuts.SEARCH_ALL.forEach(key -> replaceKeyStrokeHandlers.put(key, this::performReplaceAll));
 	}
 
 	private void createSearchBar() {
@@ -594,8 +623,26 @@ public class FindReplaceOverlay extends Dialog {
 			}
 
 		});
-		searchBar.addKeyListener(shortcuts);
+		searchBar.addKeyListener(KeyListener.keyPressedAdapter(event -> {
+			KeyStroke actualStroke = extractKeyStroke(event);
+			Runnable handler = searchKeyStrokeHandlers.get(actualStroke);
+			if (handler != null) {
+				handler.run();
+				event.doit = false;
+			}
+		}));
 		searchBar.setMessage(FindReplaceMessages.FindReplaceOverlay_searchBar_message);
+	}
+
+	private KeyStroke extractKeyStroke(KeyEvent e) {
+		char character = e.character;
+		boolean ctrlDown = (e.stateMask & SWT.CTRL) != 0;
+		if (ctrlDown && e.character != e.keyCode && e.character < 0x20 && (e.keyCode & SWT.KEYCODE_BIT) == 0) {
+			character += 0x40;
+		}
+		KeyStroke actualStroke = KeyStroke.getInstance(e.stateMask & (SWT.MOD1 | SWT.SHIFT),
+				character == 0 ? e.keyCode : character);
+		return actualStroke;
 	}
 
 	private void updateIncrementalSearch() {
@@ -616,7 +663,14 @@ public class FindReplaceOverlay extends Dialog {
 			replaceBar.setForeground(normalTextForegroundColor);
 			searchBar.setForeground(normalTextForegroundColor);
 		}));
-		replaceBar.addKeyListener(shortcuts);
+		replaceBar.addKeyListener(KeyListener.keyPressedAdapter(event -> {
+			KeyStroke actualStroke = extractKeyStroke(event);
+			Runnable handler = replaceKeyStrokeHandlers.get(actualStroke);
+			if (handler != null) {
+				handler.run();
+				event.doit = false;
+			}
+		}));
 	}
 
 	private void createFindContainer() {
@@ -657,9 +711,14 @@ public class FindReplaceOverlay extends Dialog {
 		replaceToggle = new Button(container, SWT.FLAT | SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.BEGINNING, GridData.FILL)
 				.applyTo(replaceToggle);
-		replaceToggle.setToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceToggle_toolTip);
+		replaceToggle.setToolTipText(withShortcutHint(FindReplaceMessages.FindReplaceOverlay_replaceToggle_toolTip,
+				KeyboardShortcuts.TOGGLE_REPLACE));
 		replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_OPEN_REPLACE_AREA));
 		replaceToggle.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> toggleReplace()));
+		KeyboardShortcuts.TOGGLE_REPLACE.forEach(key -> {
+			searchKeyStrokeHandlers.put(key, this::toggleReplace);
+			replaceKeyStrokeHandlers.put(key, this::toggleReplace);
+		});
 	}
 
 	private void toggleReplace() {
