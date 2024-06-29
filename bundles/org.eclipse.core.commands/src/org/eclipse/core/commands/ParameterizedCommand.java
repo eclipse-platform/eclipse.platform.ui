@@ -311,7 +311,7 @@ public final class ParameterizedCommand implements Comparable {
 				IParameter parameter = command.getParameter(key);
 				// if the parameter is defined add it to the parameter list
 				if (parameter == null) {
-					return null;
+					continue;
 				}
 				ParameterType parameterType = command.getParameterType(key);
 				if (parameterType == null) {
