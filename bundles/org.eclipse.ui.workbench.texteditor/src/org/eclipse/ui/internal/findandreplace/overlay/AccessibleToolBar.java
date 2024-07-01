@@ -11,7 +11,7 @@
  * Contributors:
  *     Vector Informatik GmbH - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor;
+package org.eclipse.ui.internal.findandreplace.overlay;
 
 import java.util.ArrayList;
 import java.util.List;
