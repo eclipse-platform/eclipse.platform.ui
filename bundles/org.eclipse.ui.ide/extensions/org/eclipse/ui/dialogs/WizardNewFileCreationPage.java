@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -776,6 +776,38 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 			setErrorMessage(result.getMessage());
 			return false;
 		}
+
+	    // Use workspace and resource APIs to handle file comparison
+	    IPath newFilePath = getContainerFullPath().append(getFileName());
+	    IFile newFileHandle = createFileHandle(newFilePath);
+
+	    boolean isLinux = System.getProperty("os.name").toLowerCase().contains("linux");  //$NON-NLS-1$//$NON-NLS-2$
+
+	    try {
+	        IContainer parentContainer = newFileHandle.getParent();
+	        IResource[] members = parentContainer.members();
+	        for (IResource member : members) {
+	            if (member.getType() == IResource.FILE) {
+	                IFile existingFile = (IFile) member;
+	                if (existingFile.getFullPath().equals(newFilePath)) {
+	                    continue; // Skip if it's the same path
+	                }
+
+	                // For Linux, skip case sensitivity check
+	                if (!isLinux) {
+	                    // Compare paths and then check if names are case-differing
+	                    if (existingFile.getFullPath().toString().equalsIgnoreCase(newFilePath.toString()) &&
+	                            !existingFile.getFullPath().toString().equals(newFilePath.toString())) {
+	                        setErrorMessage(NLS.bind(IDEWorkbenchMessages.ResourceGroup_nameExistsDifferentCase, getFileName()));
+	                        return false;
+	                    }
+	                }
+	            }
+	        }
+	    } catch (CoreException e) {
+	        setErrorMessage(IDEWorkbenchMessages.ResourceGroup_nameValidationError + e.getMessage());
+	        return false;
+	    }
 
 		IStatus linkedResourceStatus = null;
 		if (valid) {
