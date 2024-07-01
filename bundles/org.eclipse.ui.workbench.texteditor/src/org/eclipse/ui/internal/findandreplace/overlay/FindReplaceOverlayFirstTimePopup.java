@@ -11,7 +11,7 @@
  * Contributors:
  *     Vector Informatik GmbH - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor;
+package org.eclipse.ui.internal.findandreplace.overlay;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
  * whether the popup was already shown and will only show the Overlay on the
  * first time the popup was shown.
  */
-class FindReplaceOverlayFirstTimePopup {
+public class FindReplaceOverlayFirstTimePopup {
 
 	private FindReplaceOverlayFirstTimePopup() {
 	}
