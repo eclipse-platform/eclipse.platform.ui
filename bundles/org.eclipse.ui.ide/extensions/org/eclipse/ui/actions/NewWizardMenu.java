@@ -11,12 +11,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548428
+ *     Dinesh Palanisamy (ETAS GmbH) - Issue 1530
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -28,6 +33,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
+import org.eclipse.ui.internal.dialogs.DynamicMenuSelection;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -186,7 +192,27 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 			list.add(new ActionContributionItem(newExampleAction));
 			list.add(new Separator());
 		}
+
+		// To add shortcuts from OTHER... wizard regardless of perspective
+		Collection<IContributionItem> otherItems = new LinkedList<>();
+		if (!DynamicMenuSelection.getInstance().getSelectedFromOther().isEmpty()) {
+			for (String selectedItemsFormOthers : DynamicMenuSelection.getInstance().getSelectedFromOther()) {
+				IAction action = getAction(selectedItemsFormOthers);
+				otherItems.add(new ActionContributionItem(action));
+			}
+			dynamicMenuCheck(list, otherItems);
+		}
 		list.add(new ActionContributionItem(getShowDialogAction()));
+	}
+
+	private void dynamicMenuCheck(List<IContributionItem> list, Collection<IContributionItem> otherItems) {
+		Set<IContributionItem> existingShortcutsInPerspective = new HashSet<>(list);
+		for (IContributionItem item : otherItems) {
+			if (!existingShortcutsInPerspective.contains(item)) {
+				list.add(item);
+				existingShortcutsInPerspective.add(item);
+			}
+		}
 	}
 
 	private boolean isNewProjectWizardAction(IAction action) {
