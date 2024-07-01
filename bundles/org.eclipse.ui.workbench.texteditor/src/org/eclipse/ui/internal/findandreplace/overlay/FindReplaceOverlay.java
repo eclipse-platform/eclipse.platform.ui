@@ -221,12 +221,12 @@ public class FindReplaceOverlay extends Dialog {
 	private ControlListener shellMovementListener = new ControlListener() {
 		@Override
 		public void controlMoved(ControlEvent e) {
-			positionToPart();
+			getShell().getDisplay().asyncExec(() -> positionToPart());
 		}
 
 		@Override
 		public void controlResized(ControlEvent e) {
-			positionToPart();
+			getShell().getDisplay().asyncExec(() -> positionToPart());
 		}
 	};
 
