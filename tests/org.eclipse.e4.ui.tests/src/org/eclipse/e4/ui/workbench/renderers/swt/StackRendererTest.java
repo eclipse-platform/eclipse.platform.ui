@@ -59,6 +59,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -86,11 +87,16 @@ public class StackRendererTest {
 	@Before
 	public void setUp() throws Exception {
 		window = ems.createModelElement(MWindow.class);
-		application.getChildren().add(window);
-		application.setSelectedElement(window);
-
 		partStack = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(partStack);
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+	}
+
+	@After
+	public void cleanUp() throws Exception {
+		ems.deleteModelElement(partStack);
+		ems.deleteModelElement(window);
 	}
 
 	@Test
