@@ -11,9 +11,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.workbench.texteditor.tests;
+package org.eclipse.ui.internal.findandreplace;
 
-import static org.eclipse.ui.workbench.texteditor.tests.FindReplaceTestUtil.runEventQueue;
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -34,7 +34,8 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextViewer;
 
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.findandreplace.SearchOptions;
+
+import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
 
 public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess> {
 	@Rule

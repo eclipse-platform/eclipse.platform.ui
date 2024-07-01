@@ -18,6 +18,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogicTest;
+import org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlayTest;
 
 import org.eclipse.ui.workbench.texteditor.tests.minimap.MinimapPageTest;
 import org.eclipse.ui.workbench.texteditor.tests.minimap.MinimapWidgetTest;

@@ -8,20 +8,17 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.ui.workbench.texteditor.tests;
+package org.eclipse.ui.internal.findandreplace;
 
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
 
-import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
-import org.eclipse.ui.internal.findandreplace.SearchOptions;
-
 /**
  * Wraps UI access for different find/replace UIs
  */
-interface IFindReplaceUIAccess {
+public interface IFindReplaceUIAccess {
 
 	IFindReplaceTarget getTarget();
 

@@ -11,7 +11,7 @@
  * Contributors:
  *     Vector Informatik GmbH - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.workbench.texteditor.tests;
+package org.eclipse.ui.internal.findandreplace.overlay;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -28,6 +28,7 @@ import org.eclipse.text.tests.Accessor;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.TextViewer;
 
+import org.eclipse.ui.internal.findandreplace.FindReplaceUITest;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 
 public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
