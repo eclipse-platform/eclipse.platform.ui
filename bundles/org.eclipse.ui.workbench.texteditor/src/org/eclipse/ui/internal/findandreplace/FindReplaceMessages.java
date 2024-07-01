@@ -72,6 +72,8 @@ final public class FindReplaceMessages extends NLS {
 	public static String FindReplaceOverlay_searchBar_message;
 	public static String FindReplaceOverlay_replaceBar_message;
 	public static String FindReplaceOverlay_replaceToggle_toolTip;
+	public static String FindReplaceOverlay_searchHistory_toolTip;
+	public static String FindReplaceOverlay_replaceHistory_toolTip;
 	public static String FindReplaceOverlayFirstTimePopup_FindReplaceOverlayFirstTimePopup_message;
 	public static String FindReplaceOverlayFirstTimePopup_FindReplaceOverlayFirstTimePopup_title;
 }

@@ -109,4 +109,8 @@ public class HistoryStore {
 		settingsManager.put(sectionName, names);
 	}
 
+	public List<String> asList() {
+		return new ArrayList<>(history);
+	}
+
 }
