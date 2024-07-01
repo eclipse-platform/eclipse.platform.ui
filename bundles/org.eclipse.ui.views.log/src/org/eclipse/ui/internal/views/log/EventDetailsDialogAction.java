@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.SelectionProviderAction;
 
@@ -88,6 +89,11 @@ public class EventDetailsDialogAction extends SelectionProviderAction {
 	public void run() {
 		if (propertyDialog != null && propertyDialog.isOpen()) {
 			resetSelection();
+			Shell shell = propertyDialog.getShell();
+			if (shell != null && shell.getMinimized()) {
+				shell.setMinimized(false);
+			}
+
 			return;
 		}
 
