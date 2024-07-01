@@ -11,7 +11,7 @@
  * Contributors:
  *     Vector Informatik GmbH - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor;
+package org.eclipse.ui.internal.findandreplace.overlay;
 
 import java.util.Objects;
 
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.ToolItem;
 /**
  * Builder for ToolItems for {@link AccessibleToolBar}.
  */
-class AccessibleToolItemBuilder {
+public class AccessibleToolItemBuilder {
 	private final AccessibleToolBar accessibleToolBar;
 	private int styleBits = SWT.NONE;
 	private Image image;

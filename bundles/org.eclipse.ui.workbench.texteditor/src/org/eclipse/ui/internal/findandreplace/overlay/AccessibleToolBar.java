@@ -11,7 +11,7 @@
  * Contributors:
  *     Vector Informatik GmbH - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor;
+package org.eclipse.ui.internal.findandreplace.overlay;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
  * activation behavior, we listen for it manually and send according events if
  * necessary.
  */
-class AccessibleToolBar extends Composite {
+public class AccessibleToolBar extends Composite {
 
 	private List<ToolBar> toolBars = new ArrayList<>();
 

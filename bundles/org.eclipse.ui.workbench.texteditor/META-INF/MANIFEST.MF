@@ -11,6 +11,7 @@ Export-Package:
  org.eclipse.ui.contentassist,
  org.eclipse.ui.internal.findandreplace;x-friends:="org.eclipse.ui.workbench.texteditor.tests",
  org.eclipse.ui.internal.findandreplace.status;x-friends:="org.eclipse.ui.workbench.texteditor.tests",
+ org.eclipse.ui.internal.findandreplace.overlay;x-friends:="org.eclipse.ui.workbench.texteditor.tests",
  org.eclipse.ui.internal.texteditor;texteditor=split;mandatory:=texteditor;x-friends:="org.eclipse.ui.editors",
  org.eclipse.ui.internal.texteditor.codemining;x-internal:=true,
  org.eclipse.ui.internal.texteditor.quickdiff;x-internal:=true,
