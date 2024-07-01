@@ -437,9 +437,9 @@ public class FindReplaceOverlay extends Dialog {
 		searchTools = new AccessibleToolBar(searchContainer);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.CENTER, GridData.END).applyTo(searchTools);
 
-		createWholeWordsButton();
 		createCaseSensitiveButton();
 		createRegexSearchButton();
+		createWholeWordsButton();
 		createAreaSearchButton();
 
 		@SuppressWarnings("unused")
