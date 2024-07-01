@@ -11,7 +11,7 @@
  * Contributors:
  *     Vector Informatik GmbH - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor;
+package org.eclipse.ui.internal.findandreplace.overlay;
 
 import org.osgi.framework.FrameworkUtil;
 
@@ -54,6 +54,7 @@ import org.eclipse.jface.window.Window;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import org.eclipse.jface.text.ITextViewer;
 
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
@@ -64,10 +65,12 @@ import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 
+import org.eclipse.ui.texteditor.StatusTextEditor;
+
 /**
  * @since 3.17
  */
-class FindReplaceOverlay extends Dialog {
+public class FindReplaceOverlay extends Dialog {
 
 	private static final String REPLACE_BAR_OPEN_DIALOG_SETTING = "replaceBarOpen"; //$NON-NLS-1$
 	private static final double WORST_CASE_RATIO_EDITOR_TO_OVERLAY = 0.95;
@@ -371,7 +374,7 @@ class FindReplaceOverlay extends Dialog {
 	private void unbindListeners() {
 		getShell().removeShellListener(overlayDeactivationListener);
 		if (targetPart != null && targetPart instanceof StatusTextEditor textEditor) {
-			Control targetWidget = textEditor.getSourceViewer().getTextWidget();
+			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
 			if (targetWidget != null) {
 				targetWidget.getShell().removeControlListener(shellMovementListener);
 				targetWidget.removePaintListener(widgetMovementListener);
@@ -383,7 +386,7 @@ class FindReplaceOverlay extends Dialog {
 	private void bindListeners() {
 		getShell().addShellListener(overlayDeactivationListener);
 		if (targetPart instanceof StatusTextEditor textEditor) {
-			Control targetWidget = textEditor.getSourceViewer().getTextWidget();
+			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
 
 			targetWidget.getShell().addControlListener(shellMovementListener);
 			targetWidget.addPaintListener(widgetMovementListener);
@@ -779,7 +782,7 @@ class FindReplaceOverlay extends Dialog {
 		}
 
 		StatusTextEditor textEditor = (StatusTextEditor) targetPart;
-		Control targetWidget = textEditor.getSourceViewer().getTextWidget();
+		Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
 		if (!okayToUse(targetWidget)) {
 			this.close();
 			return;

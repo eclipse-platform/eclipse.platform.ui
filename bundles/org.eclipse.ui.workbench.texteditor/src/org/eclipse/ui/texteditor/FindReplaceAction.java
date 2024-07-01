@@ -37,6 +37,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlay;
+import org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlayFirstTimePopup;
 
 
 /**
