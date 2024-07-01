@@ -244,21 +244,17 @@ class FindReplaceOverlay extends Dialog {
 	private IPartListener partListener = new IPartListener() {
 		@Override
 		public void partActivated(IWorkbenchPart part) {
-			if (getShell() != null) {
-				getShell().setVisible(isPartCurrentlyDisplayedInPartSash());
-			}
+			getShell().getDisplay().asyncExec(this::adaptToPartActivationChange);
 		}
 
 		@Override
 		public void partDeactivated(IWorkbenchPart part) {
-			// Do nothing
+			getShell().getDisplay().asyncExec(this::adaptToPartActivationChange);
 		}
 
 		@Override
 		public void partBroughtToTop(IWorkbenchPart part) {
-			if (getShell() != null) {
-				getShell().setVisible(isPartCurrentlyDisplayedInPartSash());
-			}
+			getShell().getDisplay().asyncExec(this::adaptToPartActivationChange);
 		}
 
 		@Override
@@ -269,6 +265,35 @@ class FindReplaceOverlay extends Dialog {
 		@Override
 		public void partOpened(IWorkbenchPart part) {
 			// Do nothing
+		}
+
+		private void adaptToPartActivationChange() {
+			if (getShell() == null || targetPart.getSite().getPart() == null) {
+				return;
+			}
+
+			boolean isOverlayVisible = isPartCurrentlyDisplayedInPartSash();
+
+			getShell().setVisible(isOverlayVisible);
+
+			if (isOverlayVisible) {
+				targetPart.getSite().getShell().setActive();
+				targetPart.setFocus();
+				getShell().getDisplay().asyncExec(this::focusTargetWidget);
+			}
+		}
+
+		private void focusTargetWidget() {
+			if (getShell() == null || targetPart.getSite().getPart() == null) {
+				return;
+			}
+			if (!(targetPart instanceof StatusTextEditor)) {
+				return;
+			}
+			StatusTextEditor textEditor = (StatusTextEditor) targetPart;
+			Control targetWidget = textEditor.getSourceViewer().getTextWidget();
+
+			targetWidget.forceFocus();
 		}
 	};
 
