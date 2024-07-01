@@ -176,11 +176,11 @@ public class StickyScrollingControl {
 		stickyLineText.setEnabled(false);
 		stickyLineText.setBackground(settings.stickyLineBackgroundColor());
 
-		bottomSeparator= new Label(stickyLinesCanvas, SWT.SEPARATOR | SWT.SHADOW_OUT | SWT.HORIZONTAL);
+		bottomSeparator= new Label(stickyLinesCanvas, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(bottomSeparator);
 		bottomSeparator.setEnabled(false);
 
-		bottomSeparator= new Label(stickyLinesCanvas, SWT.SEPARATOR | SWT.SHADOW_OUT | SWT.HORIZONTAL);
+		bottomSeparator= new Label(stickyLinesCanvas, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridDataFactory.fillDefaults().grab(true, false).indent(0, BOTTOM_SEPARATOR_SPACING).span(2, 1).applyTo(bottomSeparator);
 		bottomSeparator.setEnabled(false);
 
