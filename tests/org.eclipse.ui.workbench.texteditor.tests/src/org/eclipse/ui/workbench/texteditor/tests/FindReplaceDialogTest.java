@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
-import static org.eclipse.ui.workbench.texteditor.tests.FindReplaceTestUtil.runEventQueue;
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -36,6 +36,7 @@ import org.eclipse.jface.util.Util;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.TextViewer;
 
+import org.eclipse.ui.internal.findandreplace.FindReplaceUITest;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 
 public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {

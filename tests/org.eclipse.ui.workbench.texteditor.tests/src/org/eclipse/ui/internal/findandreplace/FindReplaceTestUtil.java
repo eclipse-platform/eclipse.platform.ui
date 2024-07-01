@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.workbench.texteditor.tests;
+package org.eclipse.ui.internal.findandreplace;
 
 import org.eclipse.swt.widgets.Display;
 
