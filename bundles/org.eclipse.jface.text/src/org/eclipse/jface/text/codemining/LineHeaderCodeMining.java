@@ -16,7 +16,11 @@ package org.eclipse.jface.text.codemining;
 
 import java.util.function.Consumer;
 
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -73,4 +77,22 @@ public abstract class LineHeaderCodeMining extends AbstractCodeMining {
 		super(position, provider, action);
 	}
 
+	@Override
+	public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
+		String title= getLabel() != null ? getLabel() : "no command"; //$NON-NLS-1$
+		String[] lines= title.split("\\r?\\n|\\r"); //$NON-NLS-1$
+		if (lines.length > 1) {
+			Point result= new Point(0, 0);
+			for (String line : lines) {
+				gc.drawString(line, x, y, true);
+				Point ext= gc.stringExtent(line);
+				result.x= Math.max(result.x, ext.x);
+				result.y+= ext.y;
+				y+= result.y + textWidget.getLineSpacing();
+			}
+			return result;
+		} else {
+			return super.draw(gc, textWidget, color, x, y);
+		}
+	}
 }
