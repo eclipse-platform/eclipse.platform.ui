@@ -491,8 +491,8 @@ public class FileCharSequenceProvider {
 	 * get length
 	 */
 	private static String toShortString(IFile file) {
-		try (InputStream contents = file.getContents()) {
-			byte[] content = contents.readNBytes(MAX_BUFFER_LENGTH);
+		try {
+			byte[] content = file.readNBytes(MAX_BUFFER_LENGTH);
 			int length = content.length;
 			if (length >= MAX_BUFFER_LENGTH) {
 				return null;
