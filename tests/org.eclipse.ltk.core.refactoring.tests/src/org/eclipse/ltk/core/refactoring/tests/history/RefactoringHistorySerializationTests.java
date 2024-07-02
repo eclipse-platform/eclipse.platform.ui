@@ -15,12 +15,11 @@ package org.eclipse.ltk.core.refactoring.tests.history;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,42 +48,34 @@ public class RefactoringHistorySerializationTests {
 		for (RefactoringDescriptor descriptor : descriptors) {
 			list.add(new RefactoringDescriptorProxyAdapter(descriptor));
 		}
-		try {
-			ByteArrayInputStream stream= null;
-			if (ioException) {
-				stream= new ByteArrayInputStream(xml.getBytes("utf-8")) {
+		ByteArrayInputStream stream= null;
+		if (ioException) {
+			stream= new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)) {
 
-					@Override
-					public int read(byte[] b) throws IOException {
-						throw new IOException();
-					}
-				};
-			} else
-				stream= new ByteArrayInputStream(xml.getBytes("utf-8"));
-			RefactoringHistory result= RefactoringCore.getHistoryService().readRefactoringHistory(stream, flags);
-			RefactoringDescriptorProxy[] actualProxies= result.getDescriptors();
-			RefactoringDescriptorProxy[] expectedProxies= list.toArray(new RefactoringDescriptorProxy[list.size()]);
-			assertEquals("The number of refactoring descriptors is incorrect.", expectedProxies.length, actualProxies.length);
-			for (int index= 0; index < expectedProxies.length; index++) {
-				RefactoringDescriptor expectedDescriptor= expectedProxies[index].requestDescriptor(null);
-				assertNotNull("Expected refactoring descriptor cannot be resolved.", expectedDescriptor);
-				RefactoringDescriptor actualDescriptor= actualProxies[index].requestDescriptor(null);
-				assertNotNull("Actual refactoring descriptor cannot be resolved.", actualDescriptor);
-				assertEquals("Expected refactoring descriptor is not equal to actual one:", expectedDescriptor.toString(), actualDescriptor.toString());
-			}
-		} catch (UnsupportedEncodingException exception) {
-			fail("Unsupported encoding for ByteArrayOutputStream.");
+				@Override
+				public int read(byte[] b) throws IOException {
+					throw new IOException();
+				}
+			};
+		} else
+			stream= new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+		RefactoringHistory result= RefactoringCore.getHistoryService().readRefactoringHistory(stream, flags);
+		RefactoringDescriptorProxy[] actualProxies= result.getDescriptors();
+		RefactoringDescriptorProxy[] expectedProxies= list.toArray(new RefactoringDescriptorProxy[list.size()]);
+		assertEquals("The number of refactoring descriptors is incorrect.", expectedProxies.length, actualProxies.length);
+		for (int index= 0; index < expectedProxies.length; index++) {
+			RefactoringDescriptor expectedDescriptor= expectedProxies[index].requestDescriptor(null);
+			assertNotNull("Expected refactoring descriptor cannot be resolved.", expectedDescriptor);
+			RefactoringDescriptor actualDescriptor= actualProxies[index].requestDescriptor(null);
+			assertNotNull("Actual refactoring descriptor cannot be resolved.", actualDescriptor);
+			assertEquals("Expected refactoring descriptor is not equal to actual one:", expectedDescriptor.toString(), actualDescriptor.toString());
 		}
 	}
 
 	private static void compareWrittenDescriptor(RefactoringSessionDescriptor descriptor, boolean time, String xml) throws CoreException {
 		ByteArrayOutputStream stream= new ByteArrayOutputStream();
 		RefactoringCore.getHistoryService().writeRefactoringSession(descriptor, stream, time);
-		try {
-			assertEquals("The refactoring descriptor has not been correctly serialized:", convertLineDelimiters(xml), stream.toString("utf-8"));
-		} catch (UnsupportedEncodingException exception) {
-			fail("Unsupported encoding for ByteArrayOutputStream.");
-		}
+		assertEquals("The refactoring descriptor has not been correctly serialized:", convertLineDelimiters(xml), stream.toString(StandardCharsets.UTF_8));
 	}
 
 	private static String concatenate(String[] lines, String delimiter) {
