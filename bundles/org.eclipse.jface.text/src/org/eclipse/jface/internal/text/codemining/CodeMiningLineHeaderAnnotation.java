@@ -66,7 +66,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	 * Code mining annotation constructor.
 	 *
 	 * @param position the position
-	 * @param viewer   the viewer
+	 * @param viewer the viewer
 	 */
 	public CodeMiningLineHeaderAnnotation(Position position, ISourceViewer viewer) {
 		super(position, viewer);
@@ -77,7 +77,24 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 
 	@Override
 	public int getHeight() {
-		return hasAtLeastOneResolvedMiningNotEmpty() ? super.getHeight() : 0;
+		return hasAtLeastOneResolvedMiningNotEmpty() ? getMultilineHeight() : 0;
+	}
+
+	private int getMultilineHeight() {
+		int numLinesOfAllMinings= 0;
+		for (ICodeMining mining : fMinings) {
+			String label= mining.getLabel();
+			if (label == null) {
+				continue;
+			}
+			int numLines= label.split("\\r?\\n|\\r").length; //$NON-NLS-1$
+			if (numLines > 1) {
+				numLinesOfAllMinings= numLines - 1;
+			}
+		}
+		numLinesOfAllMinings++;
+		StyledText styledText= super.getTextWidget();
+		return numLinesOfAllMinings * (styledText.getLineHeight() + styledText.getLineSpacing());
 	}
 
 	/**
@@ -138,6 +155,8 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		int separatorWidth= -1;
 		boolean redrawn= false;
 		fBounds.clear();
+		int singleLineHeight= super.getHeight();
+		int lineSpacing= textWidget.getLineSpacing();
 		for (int i= 0; i < minings.size(); i++) {
 			ICodeMining mining= minings.get(i);
 			// try to get the last resolved mining.
@@ -169,10 +188,17 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 				}
 				x+= separatorWidth;
 			}
-			@SuppressWarnings("null")
-			Point loc= mining.draw(gc, textWidget, color, x, y);
-			fBounds.add(new Rectangle(x, y, loc.x, loc.y));
-			x+= loc.x;
+			Point loc= null;
+			if (mining != null) {
+				loc= mining.draw(gc, textWidget, color, x, y);
+			}
+			if (loc != null) {
+				fBounds.add(new Rectangle(x, y, loc.x, loc.y));
+				x+= loc.x;
+				if (loc.y > singleLineHeight) {
+					y+= loc.y + lineSpacing - singleLineHeight;
+				}
+			}
 			nbDraw++;
 		}
 	}

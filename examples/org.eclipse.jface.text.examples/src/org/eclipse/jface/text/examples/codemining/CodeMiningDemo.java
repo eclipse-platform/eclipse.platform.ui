@@ -69,7 +69,9 @@ public class CodeMiningDemo {
 						+ "class 5\n" //
 						+ "new 5\n" //
 						+ "new 5\n" //
-						+ "new 5\n"),
+						+ "new 5\n" //
+						+ "multiline \n" //
+						+ "multiline \n\n"),
 				new AnnotationModel());
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sourceViewer.getTextWidget());
 		// Add AnnotationPainter (required by CodeMining)
@@ -79,6 +81,7 @@ public class CodeMiningDemo {
 				new ClassReferenceCodeMiningProvider(), //
 				new ClassImplementationsCodeMiningProvider(), //
 				new ToEchoWithHeaderAndInlineCodeMiningProvider("echo"), //
+				new MultilineCodeMiningProvider(), //
 				new EmptyLineCodeMiningProvider(), //
 				new EchoAtEndOfLineCodeMiningProvider(endOfLineString) });
 		// Execute codemining in a reconciler
