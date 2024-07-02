@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.ICodeMining;
+import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.inlined.LineHeaderAnnotation;
 
@@ -66,7 +67,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	 * Code mining annotation constructor.
 	 *
 	 * @param position the position
-	 * @param viewer   the viewer
+	 * @param viewer the viewer
 	 */
 	public CodeMiningLineHeaderAnnotation(Position position, ISourceViewer viewer) {
 		super(position, viewer);
@@ -77,7 +78,20 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 
 	@Override
 	public int getHeight() {
-		return hasAtLeastOneResolvedMiningNotEmpty() ? super.getHeight() : 0;
+		return hasAtLeastOneResolvedMiningNotEmpty() ? getMultilineHeight() : 0;
+	}
+
+	private int getMultilineHeight() {
+		if (fMinings.size() > 1) {
+			return super.getHeight();
+		}
+		String label= fMinings.get(0).getLabel();
+		if (label == null) {
+			return super.getHeight();
+		}
+		int numLines= label.split("\n").length; //$NON-NLS-1$
+		StyledText styledText= super.getTextWidget();
+		return numLines * (styledText.getLineHeight() + styledText.getLineSpacing());
 	}
 
 	/**
@@ -169,10 +183,18 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 				}
 				x+= separatorWidth;
 			}
-			@SuppressWarnings("null")
-			Point loc= mining.draw(gc, textWidget, color, x, y);
-			fBounds.add(new Rectangle(x, y, loc.x, loc.y));
-			x+= loc.x;
+			Point loc= null;
+			if (mining != null) {
+				if (minings.size() == 1 && mining instanceof LineHeaderCodeMining m) {
+					loc= m.drawMultiLine(gc, textWidget, color, x, y);
+				} else {
+					loc= mining.draw(gc, textWidget, color, x, y);
+				}
+			}
+			if (loc != null) {
+				fBounds.add(new Rectangle(x, y, loc.x, loc.y));
+				x+= loc.x;
+			}
 			nbDraw++;
 		}
 	}
