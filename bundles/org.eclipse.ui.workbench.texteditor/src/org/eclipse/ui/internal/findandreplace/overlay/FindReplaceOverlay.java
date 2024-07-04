@@ -74,8 +74,7 @@ public class FindReplaceOverlay extends Dialog {
 	private static final String REPLACE_BAR_OPEN_DIALOG_SETTING = "replaceBarOpen"; //$NON-NLS-1$
 	private static final double WORST_CASE_RATIO_EDITOR_TO_OVERLAY = 0.95;
 	private static final double BIG_WIDTH_RATIO_EDITOR_TO_OVERLAY = 0.7;
-	private static final String MINIMAL_WIDTH_TEXT = "THIS TEXT "; //$NON-NLS-1$
-	private static final String COMPROMISE_WIDTH_TEXT = "THIS TEXT HAS A REASONABLE"; //$NON-NLS-1$
+	private static final String MINIMAL_WIDTH_TEXT = "THIS TEXT IS SHORT "; //$NON-NLS-1$
 	private static final String IDEAL_WIDTH_TEXT = "THIS TEXT HAS A REASONABLE LENGTH FOR SEARCHING"; //$NON-NLS-1$
 	private FindReplaceLogic findReplaceLogic;
 	private IWorkbenchPart targetPart;
@@ -746,37 +745,51 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private int getIdealDialogWidth(Rectangle targetBounds) {
+		int idealOverlayWidth = calculateOverlayWidthWithToolbars(IDEAL_WIDTH_TEXT);
+		int minimumOverlayWidth = Math.min(calculateOverlayWidthWithoutToolbars(MINIMAL_WIDTH_TEXT),
+				(int) (targetBounds.width * WORST_CASE_RATIO_EDITOR_TO_OVERLAY));
+		int maximumOverlayWidth = (int) (targetBounds.width * BIG_WIDTH_RATIO_EDITOR_TO_OVERLAY);
+
+		int overlayWidth = idealOverlayWidth;
+		if (overlayWidth > maximumOverlayWidth) {
+			overlayWidth = maximumOverlayWidth;
+		}
+		if (overlayWidth < minimumOverlayWidth) {
+			overlayWidth = minimumOverlayWidth;
+		}
+
+		return overlayWidth;
+	}
+
+	private void configureDisplayedWidgetsForWidth(int overlayWidth) {
+		int minimumWidthWithToolbars = calculateOverlayWidthWithoutToolbars(IDEAL_WIDTH_TEXT);
+		int minimumWidthWithReplaceToggle = calculateOverlayWidthWithoutToolbars(MINIMAL_WIDTH_TEXT);
+		enableSearchTools(overlayWidth >= minimumWidthWithToolbars);
+		enableReplaceTools(overlayWidth >= minimumWidthWithToolbars);
+		enableReplaceToggle(overlayWidth >= minimumWidthWithReplaceToggle);
+	}
+
+	private int calculateOverlayWidthWithToolbars(String searchInput) {
+		int toolbarWidth = searchTools.getSize().x;
+		return calculateOverlayWidthWithoutToolbars(searchInput) + toolbarWidth;
+	}
+
+	private int calculateOverlayWidthWithoutToolbars(String searchInput) {
 		int replaceToggleWidth = 0;
 		if (okayToUse(replaceToggle)) {
 			replaceToggleWidth = replaceToggle.getBounds().width;
 		}
-		int toolBarWidth = searchTools.getSize().x + closeTools.getSize().x;
+		int closeButtonWidth = closeTools.getSize().x;
+		int searchInputWidth = getTextWidthInSearchBar(searchInput);
+		return replaceToggleWidth + closeButtonWidth + searchInputWidth;
+	}
+
+	private int getTextWidthInSearchBar(String input) {
 		GC gc = new GC(searchBar);
 		gc.setFont(searchBar.getFont());
-		int idealWidth = gc.stringExtent(IDEAL_WIDTH_TEXT).x; // $NON-NLS-1$
-		int idealCompromiseWidth = gc.stringExtent(COMPROMISE_WIDTH_TEXT).x; // $NON-NLS-1$
-		int worstCompromiseWidth = gc.stringExtent(MINIMAL_WIDTH_TEXT).x; // $NON-NLS-1$
+		int textWidth = gc.stringExtent(input).x; // $NON-NLS-1$
 		gc.dispose();
-
-		int newWidth = idealWidth + toolBarWidth + replaceToggleWidth;
-		if (newWidth > targetBounds.width * BIG_WIDTH_RATIO_EDITOR_TO_OVERLAY) {
-			newWidth = (int) (targetBounds.width * BIG_WIDTH_RATIO_EDITOR_TO_OVERLAY);
-			enableSearchTools(true);
-			enableReplaceTools(true);
-			enableReplaceToggle(true);
-		}
-		if (newWidth < idealCompromiseWidth + toolBarWidth) {
-			enableSearchTools(false);
-			enableReplaceTools(false);
-			enableReplaceToggle(true);
-		}
-		if (newWidth < worstCompromiseWidth + toolBarWidth) {
-			newWidth = (int) (targetBounds.width * WORST_CASE_RATIO_EDITOR_TO_OVERLAY);
-			enableReplaceToggle(false);
-			enableSearchTools(false);
-			enableReplaceTools(false);
-		}
-		return newWidth;
+		return textWidth;
 	}
 
 	private Point getNewPosition(Widget targetTextWidget, Point targetOrigin, Rectangle targetBounds,
@@ -830,7 +843,7 @@ public class FindReplaceOverlay extends Dialog {
 		getShell().setSize(new Point(newWidth, newHeight));
 		getShell().setLocation(newPosition);
 		getShell().layout(true);
-
+		configureDisplayedWidgetsForWidth(newWidth);
 		repositionTextSelection();
 	}
 
