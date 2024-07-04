@@ -35,6 +35,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 class FindReplaceOverlayImages {
 	private static final String PREFIX_ELCL = TextEditorPlugin.PLUGIN_ID + ".elcl."; //$NON-NLS-1$
 
+	static final String KEY_CLOSE = PREFIX_ELCL + "close"; //$NON-NLS-1$
 	static final String KEY_FIND_NEXT = PREFIX_ELCL + "select_next"; //$NON-NLS-1$
 	static final String KEY_FIND_PREV = PREFIX_ELCL + "select_prev"; //$NON-NLS-1$
 	static final String KEY_FIND_REGEX = PREFIX_ELCL + "regex"; //$NON-NLS-1$
@@ -60,6 +61,7 @@ class FindReplaceOverlayImages {
 	 * Declare all images
 	 */
 	private static void declareImages() {
+		declareRegistryImage(KEY_CLOSE, ELCL + "close.png"); //$NON-NLS-1$
 		declareRegistryImage(KEY_FIND_NEXT, ELCL + "select_next.png"); //$NON-NLS-1$
 		declareRegistryImage(KEY_FIND_PREV, ELCL + "select_prev.png"); //$NON-NLS-1$
 		declareRegistryImage(KEY_FIND_REGEX, ELCL + "regex.png"); //$NON-NLS-1$
