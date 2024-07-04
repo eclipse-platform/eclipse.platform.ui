@@ -34,7 +34,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGBA;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -92,7 +91,6 @@ public class FindReplaceOverlay extends Dialog {
 	private Composite searchBarContainer;
 	private Text searchBar;
 	private AccessibleToolBar searchTools;
-
 	private ToolItem searchInSelectionButton;
 	private ToolItem wholeWordSearchButton;
 	private ToolItem caseSensitiveSearchButton;
@@ -100,6 +98,8 @@ public class FindReplaceOverlay extends Dialog {
 	private ToolItem searchUpButton;
 	private ToolItem searchDownButton;
 	private ToolItem searchAllButton;
+	private AccessibleToolBar closeTools;
+	private ToolItem closeButton;
 
 	private Composite replaceContainer;
 	private Composite replaceBarContainer;
@@ -378,6 +378,9 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void applyOverlayColors(Color color, boolean tryToColorReplaceBar) {
+		closeTools.setBackground(color);
+		closeButton.setBackground(color);
+
 		searchTools.setBackground(color);
 		searchInSelectionButton.setBackground(color);
 		wholeWordSearchButton.setBackground(color);
@@ -441,6 +444,7 @@ public class FindReplaceOverlay extends Dialog {
 		createFindContainer();
 		createSearchBar();
 		createSearchTools();
+		createCloseTools();
 
 		container.layout();
 
@@ -464,7 +468,7 @@ public class FindReplaceOverlay extends Dialog {
 
 	private void createSearchTools() {
 		searchTools = new AccessibleToolBar(searchContainer);
-		GridDataFactory.fillDefaults().grab(false, true).align(GridData.CENTER, GridData.END).applyTo(searchTools);
+		GridDataFactory.fillDefaults().grab(false, true).align(GridData.END, GridData.END).applyTo(searchTools);
 
 		createCaseSensitiveButton();
 		createRegexSearchButton();
@@ -497,6 +501,16 @@ public class FindReplaceOverlay extends Dialog {
 					performSelectAll();
 					evaluateFindReplaceStatus();
 				})).build();
+	}
+
+	private void createCloseTools() {
+		closeTools = new AccessibleToolBar(searchContainer);
+		GridDataFactory.fillDefaults().grab(false, true).align(GridData.END, GridData.END).applyTo(closeTools);
+
+		closeButton = new AccessibleToolItemBuilder(closeTools).withStyleBits(SWT.PUSH)
+				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CLOSE))
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_closeButton_toolTip)
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> close())).build();
 	}
 
 	private void createAreaSearchButton() {
@@ -633,7 +647,7 @@ public class FindReplaceOverlay extends Dialog {
 	private void createFindContainer() {
 		searchContainer = new Composite(contentGroup, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchContainer);
-		GridLayoutFactory.fillDefaults().numColumns(2).extendedMargins(4, 4, 2, 8).equalWidth(false)
+		GridLayoutFactory.fillDefaults().numColumns(3).extendedMargins(4, 4, 2, 8).equalWidth(false)
 				.applyTo(searchContainer);
 		searchContainer.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 		searchBarContainer = new Composite(searchContainer, SWT.NONE);
@@ -713,12 +727,6 @@ public class FindReplaceOverlay extends Dialog {
 	private void enableSearchTools(boolean enable) {
 		((GridData) searchTools.getLayoutData()).exclude = !enable;
 		searchTools.setVisible(enable);
-
-		if (enable) {
-			((GridLayout) searchTools.getParent().getLayout()).numColumns = 2;
-		} else {
-			((GridLayout) searchTools.getParent().getLayout()).numColumns = 1;
-		}
 	}
 
 	private void enableReplaceToggle(boolean enable) {
@@ -735,12 +743,6 @@ public class FindReplaceOverlay extends Dialog {
 		}
 		((GridData) replaceTools.getLayoutData()).exclude = !enable;
 		replaceTools.setVisible(enable);
-
-		if (enable) {
-			((GridLayout) replaceTools.getParent().getLayout()).numColumns = 2;
-		} else {
-			((GridLayout) replaceTools.getParent().getLayout()).numColumns = 1;
-		}
 	}
 
 	private int getIdealDialogWidth(Rectangle targetBounds) {
@@ -748,7 +750,7 @@ public class FindReplaceOverlay extends Dialog {
 		if (okayToUse(replaceToggle)) {
 			replaceToggleWidth = replaceToggle.getBounds().width;
 		}
-		int toolBarWidth = searchTools.getSize().x;
+		int toolBarWidth = searchTools.getSize().x + closeTools.getSize().x;
 		GC gc = new GC(searchBar);
 		gc.setFont(searchBar.getFont());
 		int idealWidth = gc.stringExtent(IDEAL_WIDTH_TEXT).x; // $NON-NLS-1$
