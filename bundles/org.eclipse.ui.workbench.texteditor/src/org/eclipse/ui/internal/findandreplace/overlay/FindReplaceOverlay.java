@@ -687,7 +687,7 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void createReplaceToggle() {
-		replaceToggle = new Button(container, SWT.PUSH);
+		replaceToggle = new Button(container, SWT.FLAT | SWT.PUSH);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.BEGINNING, GridData.FILL)
 				.applyTo(replaceToggle);
 		replaceToggle.setToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceToggle_toolTip);
