@@ -751,7 +751,7 @@ public class FindReplaceOverlay extends Dialog {
 		replaceTools.setVisible(enable);
 	}
 
-	private int getIdealDialogWidth(Rectangle targetBounds) {
+	private int getIdealOverlayWidth(Rectangle targetBounds) {
 		int idealOverlayWidth = calculateOverlayWidthWithToolbars(IDEAL_WIDTH_TEXT);
 		int minimumOverlayWidth = Math.min(calculateOverlayWidthWithoutToolbars(MINIMAL_WIDTH_TEXT),
 				(int) (targetBounds.width * WORST_CASE_RATIO_EDITOR_TO_OVERLAY));
@@ -799,20 +799,6 @@ public class FindReplaceOverlay extends Dialog {
 		return textWidth;
 	}
 
-	private Point getNewPosition(Widget targetTextWidget, Point targetOrigin, Rectangle targetBounds,
-			Point expectedSize) {
-		Point verticalScrollBarSize = ((Scrollable) targetTextWidget).getVerticalBar().getSize();
-		Point horizontalScrollBarSize = ((Scrollable) targetTextWidget).getHorizontalBar().getSize();
-
-		int newX = targetOrigin.x + targetBounds.width - expectedSize.x - verticalScrollBarSize.x
-				- ((StyledText) targetTextWidget).getRightMargin();
-		int newY = targetOrigin.y;
-		if (!positionAtTop) {
-			newY += targetBounds.height - expectedSize.y - horizontalScrollBarSize.y;
-		}
-		return new Point(newX, newY);
-	}
-
 	/**
 	 * When making the text-bar 100% small and then regrowing it, we want the text
 	 * to start at the first character again.
@@ -828,30 +814,66 @@ public class FindReplaceOverlay extends Dialog {
 
 	private void positionToPart() {
 		getShell().requestLayout();
-		if (!(targetPart instanceof StatusTextEditor)) {
+		if (!(targetPart instanceof StatusTextEditor textEditor)) {
 			return;
 		}
 
-		StatusTextEditor textEditor = (StatusTextEditor) targetPart;
 		Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
 		if (!okayToUse(targetWidget)) {
 			this.close();
 			return;
 		}
 
-		Point targetOrigin = targetWidget.toDisplay(0, 0);
-		Rectangle targetBounds = targetWidget.getBounds();
+		Rectangle targetControlBounds = calculateAbsoluteControlBounds(targetWidget);
+		Rectangle overlayBounds = calculateDesiredOverlayBounds(targetControlBounds);
+		updatePosition(overlayBounds);
+		configureDisplayedWidgetsForWidth(overlayBounds.width);
+		updateVisibility(targetControlBounds, overlayBounds);
 
-		int newWidth = getIdealDialogWidth(targetBounds);
-		int newHeight = container.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-
-		Point newPosition = getNewPosition(targetWidget, targetOrigin, targetBounds, new Point(newWidth, newHeight));
-
-		getShell().setSize(new Point(newWidth, newHeight));
-		getShell().setLocation(newPosition);
-		getShell().layout(true);
-		configureDisplayedWidgetsForWidth(newWidth);
 		repositionTextSelection();
+	}
+
+	private Rectangle calculateAbsoluteControlBounds(Control control) {
+		Rectangle localControlBounds = control.getBounds();
+		int width = localControlBounds.width;
+		int height = localControlBounds.height;
+		if (control instanceof Scrollable scrollable) {
+			width -= scrollable.getVerticalBar().getSize().x;
+			height -= scrollable.getHorizontalBar().getSize().y;
+		}
+		if (control instanceof StyledText styledText) {
+			width -= styledText.getRightMargin();
+		}
+		Point absoluteControlPosition = control.toDisplay(0, 0);
+		return new Rectangle(absoluteControlPosition.x, absoluteControlPosition.y, width, height);
+	}
+
+	private Rectangle calculateDesiredOverlayBounds(Rectangle targetControlBounds) {
+		int width = getIdealOverlayWidth(targetControlBounds);
+		int height = container.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+
+		int x = targetControlBounds.x + targetControlBounds.width - width;
+		int y = targetControlBounds.y;
+		if (!positionAtTop) {
+			y += targetControlBounds.height - height;
+		}
+
+		return new Rectangle(x, y, width, height);
+	}
+
+	private void updatePosition(Rectangle overlayBounds) {
+		getShell().setSize(new Point(overlayBounds.width, overlayBounds.height));
+		getShell().setLocation(new Point(overlayBounds.x, overlayBounds.y));
+		getShell().layout(true);
+	}
+
+	private void updateVisibility(Rectangle targetControlBounds, Rectangle overlayBounds) {
+		if (positionAtTop) {
+			getShell().setVisible(
+					overlayBounds.y + overlayBounds.height <= targetControlBounds.y + targetControlBounds.height);
+		} else {
+			getShell().setVisible(overlayBounds.y >= targetControlBounds.y);
+		}
 	}
 
 	private String getFindString() {
