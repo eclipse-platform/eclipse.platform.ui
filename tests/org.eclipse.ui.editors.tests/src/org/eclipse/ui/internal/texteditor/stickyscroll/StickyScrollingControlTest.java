@@ -17,7 +17,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 
 import java.util.List;
 
@@ -190,7 +189,7 @@ public class StickyScrollingControlTest {
 		assertEquals(0, boundsAfterResize.x);
 		assertEquals(0, boundsAfterResize.y);
 		assertThat(boundsAfterResize.width, greaterThan(0));
-		assertNotEquals(boundsAfterResize.width, boundsBeforeResize.width);
+		assertThat(boundsBeforeResize.width, greaterThan(boundsAfterResize.width));
 		assertEquals(boundsAfterResize.height, boundsBeforeResize.height);
 	}
 

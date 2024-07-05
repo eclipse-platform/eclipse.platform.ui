@@ -184,6 +184,7 @@ public class StickyScrollingControl {
 		GridDataFactory.fillDefaults().grab(true, false).indent(0, BOTTOM_SEPARATOR_SPACING).span(2, 1).applyTo(bottomSeparator);
 		bottomSeparator.setEnabled(false);
 
+		stickyLinesCanvas.pack();
 		stickyLinesCanvas.moveAbove(null);
 	}
 
@@ -268,7 +269,6 @@ public class StickyScrollingControl {
 		layoutLineNumbers();
 
 		stickyLinesCanvas.setVisible(true);
-		stickyLinesCanvas.pack();
 		calculateAndSetStickyLinesCanvasBounds();
 	}
 
