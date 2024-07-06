@@ -292,6 +292,15 @@ public interface IAbstractTextEditorHelpContextIds {
 	String FIND_REPLACE_DIALOG= PREFIX + "find_replace_dialog_context"; //$NON-NLS-1$
 
 	/**
+	 * Help context id for the overlay which may be shown instead of the
+	 * find/replace dialog.
+	 * <code>"org.eclipse.ui.find_replace_overlay_context"</code>
+	 *
+	 * @since 3.17
+	 */
+	String FIND_REPLACE_OVERLAY = PREFIX + "find_replace_overlay_context"; //$NON-NLS-1$
+
+	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.goto_last_edit_position_action_context"</code>
 	 * @since 2.1
