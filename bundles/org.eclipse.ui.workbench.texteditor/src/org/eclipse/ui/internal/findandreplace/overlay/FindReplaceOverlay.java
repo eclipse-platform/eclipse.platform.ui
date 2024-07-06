@@ -302,6 +302,11 @@ public class FindReplaceOverlay extends Dialog {
 			targetWidget.forceFocus();
 		}
 	};
+	private KeyListener closeOnTargetEscapeListener = KeyListener.keyPressedAdapter(c -> {
+		if (c.keyCode == SWT.ESC) {
+			this.close();
+		}
+	});
 
 	private boolean isPartCurrentlyDisplayedInPartSash() {
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -409,6 +414,7 @@ public class FindReplaceOverlay extends Dialog {
 			if (targetWidget != null) {
 				targetWidget.getShell().removeControlListener(shellMovementListener);
 				targetWidget.removePaintListener(widgetMovementListener);
+				targetWidget.removeKeyListener(closeOnTargetEscapeListener);
 				targetPart.getSite().getPage().removePartListener(partListener);
 			}
 		}
@@ -421,6 +427,7 @@ public class FindReplaceOverlay extends Dialog {
 
 			targetWidget.getShell().addControlListener(shellMovementListener);
 			targetWidget.addPaintListener(widgetMovementListener);
+			targetWidget.addKeyListener(closeOnTargetEscapeListener);
 			targetPart.getSite().getPage().addPartListener(partListener);
 		}
 	}
