@@ -831,7 +831,27 @@ public class FindReplaceOverlay extends Dialog {
 		getShell().setLocation(newPosition);
 		getShell().layout(true);
 
+		hideIfTargetWidgetTooShallow();
 		repositionTextSelection();
+	}
+
+	private void hideIfTargetWidgetTooShallow() {
+		StatusTextEditor textEditor = (StatusTextEditor) targetPart;
+		Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
+		int shellHeight = getShell().getBounds().height;
+		int targetHeight = targetWidget.getBounds().height;
+
+		if (((Scrollable) targetWidget).getHorizontalBar() != null) {
+			targetHeight -= ((Scrollable) targetWidget).getHorizontalBar().getSize().y;
+		}
+
+		if (targetHeight < shellHeight) {
+			getShell().setVisible(false);
+		} else {
+			if (isPartCurrentlyDisplayedInPartSash()) {
+				getShell().setVisible(true);
+			}
+		}
 	}
 
 	private String getFindString() {
