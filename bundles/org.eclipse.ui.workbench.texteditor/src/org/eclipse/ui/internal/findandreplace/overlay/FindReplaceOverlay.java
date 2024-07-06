@@ -65,6 +65,7 @@ import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 
+import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
 /**
@@ -414,6 +415,9 @@ public class FindReplaceOverlay extends Dialog {
 
 	@Override
 	public Control createContents(Composite parent) {
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(),
+				IAbstractTextEditorHelpContextIds.FIND_REPLACE_OVERLAY);
+
 		backgroundToUse = new Color(getShell().getDisplay(), new RGBA(0, 0, 0, 0));
 		return createDialog(parent);
 	}
