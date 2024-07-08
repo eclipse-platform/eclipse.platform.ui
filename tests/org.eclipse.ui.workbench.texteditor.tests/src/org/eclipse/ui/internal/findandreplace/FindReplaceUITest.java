@@ -291,6 +291,20 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		assertThat(fTextViewer.getDocument().get(), is("text" + System.lineSeparator() + System.lineSeparator()));
 	}
 
+	private void assertScopeActivationOnTextInput(String input) {
+		openTextViewer(input);
+		fTextViewer.setSelection(new TextSelection(0, fTextViewer.getDocument().toString().length()));
+		initializeFindReplaceUIForTextViewer();
+
+		dialog.assertUnselected(SearchOptions.GLOBAL);
+	}
+
+	@Test
+	public void testSelectionOnOpenSetsScopedMode() {
+		assertScopeActivationOnTextInput("hello\r\nworld\r\nthis\r\nhas_many_lines");
+		assertScopeActivationOnTextInput("hello\nworld");
+	}
+
 	protected AccessType getDialog() {
 		return dialog;
 	}

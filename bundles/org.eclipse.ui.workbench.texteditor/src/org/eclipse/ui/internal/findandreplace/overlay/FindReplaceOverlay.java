@@ -907,7 +907,7 @@ public class FindReplaceOverlay extends Dialog {
 		if (selectionText.isEmpty()) {
 			return;
 		}
-		if (selectionText.contains(System.lineSeparator())) {
+		if (selectionText.contains("\n")) { //$NON-NLS-1$
 			findReplaceLogic.deactivate(SearchOptions.GLOBAL);
 			searchInSelectionButton.setSelection(true);
 		} else {
