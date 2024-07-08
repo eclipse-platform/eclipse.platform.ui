@@ -944,6 +944,7 @@ public class FindReplaceOverlay extends Dialog {
 				selectionText = FindReplaceDocumentAdapter.escapeForRegExPattern(selectionText);
 			}
 			searchBar.setText(selectionText);
+			findReplaceLogic.findAndSelect(findReplaceLogic.getTarget().getSelection().x, searchBar.getText());
 		}
 		searchBar.setSelection(0, searchBar.getText().length());
 	}
