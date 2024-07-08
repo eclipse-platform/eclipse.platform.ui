@@ -17,11 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 
-import java.util.ResourceBundle;
-
 import org.junit.Test;
-
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.text.tests.Accessor;
 
@@ -31,22 +27,16 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.ui.internal.findandreplace.FindReplaceUITest;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 
+import org.eclipse.ui.texteditor.FindReplaceAction;
+
 public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 
 	@Override
 	public OverlayAccess openUIFromTextViewer(TextViewer viewer) {
-		OverlayAccess ret;
-
-		Accessor fFindReplaceAction;
-		fFindReplaceAction= new Accessor("org.eclipse.ui.texteditor.FindReplaceAction", getClass().getClassLoader(),
-				new Class[] { ResourceBundle.class, String.class, Shell.class, IFindReplaceTarget.class },
-				new Object[] { ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"), "Editor.FindReplace.", viewer.getControl().getShell(),
-						getTextViewer().getFindReplaceTarget() });
-		fFindReplaceAction.invoke("showOverlayInEditor", null);
-		Accessor overlayAccessor= new Accessor(fFindReplaceAction.get("overlay"), "org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlay", getClass().getClassLoader());
-
-		ret= new OverlayAccess(overlayAccessor);
-		return ret;
+		Accessor actionAccessor= new Accessor(getFindReplaceAction(), FindReplaceAction.class);
+		actionAccessor.invoke("showOverlayInEditor", null);
+		Accessor overlayAccessor= new Accessor(actionAccessor.get("overlay"), "org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlay", getClass().getClassLoader());
+		return new OverlayAccess(overlayAccessor);
 	}
 
 	@Test
@@ -118,6 +108,7 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		OverlayAccess dialog= getDialog();
 
 		dialog.openReplaceDialog();
+		assertThat(dialog.isReplaceDialogOpen(), is(false));
 		reopenFindReplaceUIForTextViewer();
 		dialog= getDialog();
 		assertThat(dialog.isReplaceDialogOpen(), is(false));

@@ -155,9 +155,7 @@ public class FindReplaceOverlay extends Dialog {
 		if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'F' || e.keyCode == 'f')) {
 			close();
 		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'R' || e.keyCode == 'r')) {
-			if (findReplaceLogic.getTarget().isEditable()) {
-				toggleReplace();
-			}
+			toggleReplace();
 		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'W' || e.keyCode == 'w')) {
 			toggleToolItem(wholeWordSearchButton);
 		} else if ((e.stateMask & SWT.CTRL) != 0 && (e.keyCode == 'P' || e.keyCode == 'p')) {
@@ -377,7 +375,7 @@ public class FindReplaceOverlay extends Dialog {
 
 	private void restoreOverlaySettings() {
 		Boolean shouldOpenReplaceBar = getDialogSettings().getBoolean(REPLACE_BAR_OPEN_DIALOG_SETTING);
-		if (shouldOpenReplaceBar && replaceToggle != null) {
+		if (shouldOpenReplaceBar) {
 			toggleReplace();
 		}
 	}
@@ -678,9 +676,7 @@ public class FindReplaceOverlay extends Dialog {
 		GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(false).margins(2, 2).spacing(2, 0).applyTo(container);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(container);
 
-		if (findReplaceLogic.getTarget().isEditable()) {
-			createReplaceToggle();
-		}
+		createReplaceToggle();
 
 		contentGroup = new Composite(container, SWT.NULL);
 		GridLayoutFactory.fillDefaults().numColumns(1).equalWidth(false).spacing(2, 3).applyTo(contentGroup);
@@ -697,7 +693,7 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void toggleReplace() {
-		if (!replaceBarOpen) {
+		if (!replaceBarOpen && findReplaceLogic.getTarget().isEditable()) {
 			createReplaceDialog();
 			replaceToggle.setImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CLOSE_REPLACE_AREA));
 		} else {
@@ -740,8 +736,9 @@ public class FindReplaceOverlay extends Dialog {
 		if (!okayToUse(replaceToggle)) {
 			return;
 		}
-		((GridData) replaceToggle.getLayoutData()).exclude = !enable;
-		replaceToggle.setVisible(enable);
+		boolean visible = enable && findReplaceLogic.getTarget().isEditable();
+		((GridData) replaceToggle.getLayoutData()).exclude = !visible;
+		replaceToggle.setVisible(visible);
 	}
 
 	private void enableReplaceTools(boolean enable) {
