@@ -291,6 +291,34 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		assertThat(fTextViewer.getDocument().get(), is("text" + System.lineSeparator() + System.lineSeparator()));
 	}
 
+	@Test
+	public void testOptionsRestoredCorrectly() {
+		openTextViewer("text");
+		initializeFindReplaceUIForTextViewer();
+
+		dialog.select(SearchOptions.REGEX);
+		dialog.select(SearchOptions.CASE_SENSITIVE);
+
+		reopenFindReplaceUIForTextViewer();
+
+		dialog.assertSelected(SearchOptions.REGEX);
+		dialog.assertSelected(SearchOptions.CASE_SENSITIVE);
+	}
+
+	@Test
+	public void testWholeWordOptionRestoredCorrectly() {
+		openTextViewer("text");
+		initializeFindReplaceUIForTextViewer();
+
+		dialog.setFindText("text");
+		dialog.select(SearchOptions.WHOLE_WORD);
+
+		dialog.close();
+		fTextViewer.setSelectedRange(0, 4);
+		dialog= openUIFromTextViewer(fTextViewer);
+		dialog.assertSelected(SearchOptions.WHOLE_WORD);
+	}
+
 	protected AccessType getDialog() {
 		return dialog;
 	}
