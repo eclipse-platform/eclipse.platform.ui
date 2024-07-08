@@ -353,6 +353,18 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		assertThat(fTextViewer.getDocument().get(), is("test ;"));
 	}
 
+	@Test
+	public void testReplaceIfSelectedOnStart() {
+		openTextViewer("abcdefg");
+		fTextViewer.setSelection(new TextSelection(2, 2));
+		initializeFindReplaceUIForTextViewer();
+
+		dialog.setReplaceText("aa");
+		dialog.performReplace();
+
+		assertThat(fTextViewer.getDocument().get(), is("abaaefg"));
+	}
+
 	protected AccessType getDialog() {
 		return dialog;
 	}
