@@ -241,6 +241,7 @@ public class FindReplaceOverlay extends Dialog {
 
 		@Override
 		public void shellDeactivated(ShellEvent e) {
+			writeSearchOptions();
 			removeSearchScope();
 		}
 	};
@@ -286,6 +287,7 @@ public class FindReplaceOverlay extends Dialog {
 				targetPart.getSite().getShell().setActive();
 				targetPart.setFocus();
 				getShell().getDisplay().asyncExec(this::focusTargetWidget);
+				readSearchOptions();
 			}
 		}
 
@@ -341,7 +343,8 @@ public class FindReplaceOverlay extends Dialog {
 		if (!overlayOpen) {
 			return true;
 		}
-		storeOverlaySettings();
+		storeReplaceBarSettings();
+		writeSearchOptions();
 
 		findReplaceLogic.activate(SearchOptions.GLOBAL);
 		overlayOpen = false;
@@ -356,8 +359,8 @@ public class FindReplaceOverlay extends Dialog {
 		int returnCode = Window.OK;
 		if (!overlayOpen) {
 			returnCode = super.open();
+			restoreReplaceBarSettings();
 			bindListeners();
-			restoreOverlaySettings();
 		}
 		overlayOpen = true;
 		applyOverlayColors(backgroundToUse, true);
@@ -366,15 +369,16 @@ public class FindReplaceOverlay extends Dialog {
 		getShell().layout();
 		positionToPart();
 
+		readSearchOptions();
 		searchBar.forceFocus();
 		return returnCode;
 	}
 
-	private void storeOverlaySettings() {
+	private void storeReplaceBarSettings() {
 		getDialogSettings().put(REPLACE_BAR_OPEN_DIALOG_SETTING, replaceBarOpen);
 	}
 
-	private void restoreOverlaySettings() {
+	private void restoreReplaceBarSettings() {
 		Boolean shouldOpenReplaceBar = getDialogSettings().getBoolean(REPLACE_BAR_OPEN_DIALOG_SETTING);
 		if (shouldOpenReplaceBar && replaceToggle != null) {
 			toggleReplace();
@@ -524,7 +528,7 @@ public class FindReplaceOverlay extends Dialog {
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_IN_AREA))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchInSelectionButton_toolTip)
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-					activateInFindReplacerIf(SearchOptions.GLOBAL, !searchInSelectionButton.getSelection());
+					activateInFindReplaceLogicIf(SearchOptions.GLOBAL, !searchInSelectionButton.getSelection());
 					updateIncrementalSearch();
 				})).build();
 		searchInSelectionButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
@@ -535,7 +539,7 @@ public class FindReplaceOverlay extends Dialog {
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-					activateInFindReplacerIf(SearchOptions.REGEX, ((ToolItem) e.widget).getSelection());
+					activateInFindReplaceLogicIf(SearchOptions.REGEX, ((ToolItem) e.widget).getSelection());
 					wholeWordSearchButton.setEnabled(!findReplaceLogic.isActive(SearchOptions.REGEX));
 					updateIncrementalSearch();
 				})).build();
@@ -547,7 +551,8 @@ public class FindReplaceOverlay extends Dialog {
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CASE_SENSITIVE))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_caseSensitiveButton_toolTip)
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-					activateInFindReplacerIf(SearchOptions.CASE_SENSITIVE, caseSensitiveSearchButton.getSelection());
+					activateInFindReplaceLogicIf(SearchOptions.CASE_SENSITIVE,
+							caseSensitiveSearchButton.getSelection());
 					updateIncrementalSearch();
 				})).build();
 		caseSensitiveSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.CASE_SENSITIVE));
@@ -558,7 +563,7 @@ public class FindReplaceOverlay extends Dialog {
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_WHOLE_WORD))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip)
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-					activateInFindReplacerIf(SearchOptions.WHOLE_WORD, wholeWordSearchButton.getSelection());
+					activateInFindReplaceLogicIf(SearchOptions.WHOLE_WORD, wholeWordSearchButton.getSelection());
 					updateIncrementalSearch();
 				})).build();
 		wholeWordSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
@@ -894,10 +899,10 @@ public class FindReplaceOverlay extends Dialog {
 
 	private void performSearch(boolean forward) {
 		boolean oldForwardSearchSetting = findReplaceLogic.isActive(SearchOptions.FORWARD);
-		activateInFindReplacerIf(SearchOptions.FORWARD, forward);
+		activateInFindReplaceLogicIf(SearchOptions.FORWARD, forward);
 		findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
 		findReplaceLogic.performSearch(getFindString());
-		activateInFindReplacerIf(SearchOptions.FORWARD, oldForwardSearchSetting);
+		activateInFindReplaceLogicIf(SearchOptions.FORWARD, oldForwardSearchSetting);
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 	}
 
@@ -934,7 +939,7 @@ public class FindReplaceOverlay extends Dialog {
 		}
 	}
 
-	private void activateInFindReplacerIf(SearchOptions option, boolean shouldActivate) {
+	private void activateInFindReplaceLogicIf(SearchOptions option, boolean shouldActivate) {
 		if (shouldActivate) {
 			findReplaceLogic.activate(option);
 		} else {
@@ -953,5 +958,35 @@ public class FindReplaceOverlay extends Dialog {
 	private void removeSearchScope() {
 		findReplaceLogic.activate(SearchOptions.GLOBAL);
 		searchInSelectionButton.setSelection(false);
+	}
+
+	/**
+	 * Initializes itself from the dialog settings with the same state as at the
+	 * previous invocation.
+	 */
+	private void readSearchOptions() {
+		IDialogSettings settings = getDialogSettings();
+		activateInFindReplaceLogicIf(SearchOptions.CASE_SENSITIVE, settings.getBoolean("casesensitive")); //$NON-NLS-1$
+		activateInFindReplaceLogicIf(SearchOptions.WHOLE_WORD, settings.getBoolean("wholeword")); //$NON-NLS-1$
+		activateInFindReplaceLogicIf(SearchOptions.REGEX, settings.getBoolean("isRegEx")); //$NON-NLS-1$
+
+		if (findReplaceLogic.isWholeWordSearchAvailable(getFindString())) {
+			wholeWordSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
+		}
+		regexSearchButton.setSelection(findReplaceLogic.isRegExSearchAvailableAndActive());
+		caseSensitiveSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.CASE_SENSITIVE));
+	}
+
+	/**
+	 * Stores its current configuration in the dialog store.
+	 */
+	private void writeSearchOptions() {
+		IDialogSettings s = getDialogSettings();
+
+		s.put("casesensitive", findReplaceLogic.isActive(SearchOptions.CASE_SENSITIVE)); //$NON-NLS-1$
+		if (findReplaceLogic.isWholeWordSearchAvailable(getFindString())) {
+			s.put("wholeword", findReplaceLogic.isActive(SearchOptions.WHOLE_WORD)); //$NON-NLS-1$
+		}
+		s.put("isRegEx", findReplaceLogic.isActive(SearchOptions.REGEX)); //$NON-NLS-1$
 	}
 }

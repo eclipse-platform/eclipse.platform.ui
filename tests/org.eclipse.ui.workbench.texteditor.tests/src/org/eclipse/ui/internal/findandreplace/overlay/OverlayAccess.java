@@ -96,7 +96,7 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	}
 
 	private void restoreInitialConfiguration() {
-		find.setText("");
+		find.setText("word");
 		select(SearchOptions.GLOBAL);
 		unselect(SearchOptions.REGEX);
 		unselect(SearchOptions.CASE_SENSITIVE);
