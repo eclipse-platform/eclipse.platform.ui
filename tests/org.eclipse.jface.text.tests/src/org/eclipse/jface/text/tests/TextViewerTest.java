@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2019 Google, Inc and others.
+ * Copyright (c) 2014, 2024 Google, Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  * 	   Sergey Prigogin (Google) - initial API and implementation
  * 	   Mickael Istria (Red Hat Inc.) - [Bug 544708] Ctrl+Home
  * 	   Paul Pazderski - [Bug 545530] Test for TextViewer's default IDocumentAdapter implementation.
+ * 	   Latha Patil (ETAS GmbH) - Issue 865 - Test for Surround the selected text with brackets
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
@@ -69,6 +70,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.URLHyperlink;
 import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 /**
@@ -453,5 +455,21 @@ public class TextViewerTest {
 		textViewer.setSelectedRange(113, 15);
 		textSelection= (ITextSelection) textViewer.getSelection();
 		assertEquals(113, textSelection.getOffset());
+	}
+
+	@Test
+	public void testSurroundwithBracketsStrategy() {
+		fShell= new Shell();
+		final SourceViewer sourceViewer= new SourceViewer(fShell, null, SWT.NONE);
+		sourceViewer.configure(new SourceViewerConfiguration());
+		sourceViewer.setDocument(new Document("Test sample to surround the selected text with brackets"));
+		StyledText text= sourceViewer.getTextWidget();
+		text.setText("Test sample to surround the selected text with brackets");
+		text.setSelection(15, 23);
+		assertEquals(23, text.getCaretOffset());
+		assertEquals("surround", text.getSelectionText());
+		text.insert("[");
+		assertEquals("Test sample to [surround] the selected text with brackets", text.getText());
+		assertEquals(24, text.getCaretOffset());
 	}
 }
