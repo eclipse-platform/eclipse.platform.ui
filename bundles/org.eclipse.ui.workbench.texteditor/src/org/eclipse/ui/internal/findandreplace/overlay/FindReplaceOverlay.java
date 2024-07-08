@@ -51,6 +51,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.window.Window;
 
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.ITextViewer;
@@ -902,16 +903,19 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void updateFromTargetSelection() {
-		String initText = findReplaceLogic.getTarget().getSelectionText();
-		if (initText.isEmpty()) {
+		String selectionText = findReplaceLogic.getTarget().getSelectionText();
+		if (selectionText.isEmpty()) {
 			return;
 		}
-		if (initText.contains(System.lineSeparator())) { // $NON-NLS-1$
+		if (selectionText.contains(System.lineSeparator())) {
 			findReplaceLogic.deactivate(SearchOptions.GLOBAL);
 			searchInSelectionButton.setSelection(true);
 		} else {
-			searchBar.setText(initText);
-			searchBar.setSelection(0, initText.length());
+			if (findReplaceLogic.isRegExSearchAvailableAndActive()) {
+				selectionText = FindReplaceDocumentAdapter.escapeForRegExPattern(selectionText);
+			}
+			searchBar.setText(selectionText);
+			searchBar.setSelection(0, selectionText.length());
 		}
 	}
 
