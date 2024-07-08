@@ -111,6 +111,7 @@ public class FindReplaceOverlay extends Dialog {
 	private Color backgroundToUse;
 	private Color normalTextForegroundColor;
 	private boolean positionAtTop = true;
+	private boolean isTargetVisible = true;
 
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
 		super(parent);
@@ -220,14 +221,14 @@ public class FindReplaceOverlay extends Dialog {
 		@Override
 		public void controlMoved(ControlEvent e) {
 			if (getShell() != null) {
-				getShell().getDisplay().asyncExec(() -> positionToPart());
+				getShell().getDisplay().asyncExec(() -> updatePlacementAndVisibility());
 			}
 		}
 
 		@Override
 		public void controlResized(ControlEvent e) {
 			if (getShell() != null) {
-				getShell().getDisplay().asyncExec(() -> positionToPart());
+				getShell().getDisplay().asyncExec(() -> updatePlacementAndVisibility());
 			}
 		}
 	};
@@ -244,7 +245,7 @@ public class FindReplaceOverlay extends Dialog {
 		}
 	};
 
-	private PaintListener widgetMovementListener = __ -> positionToPart();
+	private PaintListener widgetMovementListener = __ -> updatePlacementAndVisibility();
 
 	private IPartListener partListener = new IPartListener() {
 		@Override
@@ -276,12 +277,10 @@ public class FindReplaceOverlay extends Dialog {
 			if (getShell() == null || targetPart.getSite().getPart() == null) {
 				return;
 			}
+			isTargetVisible = isPartCurrentlyDisplayedInPartSash();
+			updatePlacementAndVisibility();
 
-			boolean isOverlayVisible = isPartCurrentlyDisplayedInPartSash();
-
-			getShell().setVisible(isOverlayVisible);
-
-			if (isOverlayVisible) {
+			if (isTargetVisible) {
 				targetPart.getSite().getShell().setActive();
 				targetPart.setFocus();
 				getShell().getDisplay().asyncExec(this::focusTargetWidget);
@@ -363,7 +362,7 @@ public class FindReplaceOverlay extends Dialog {
 		updateFromTargetSelection();
 
 		getShell().layout();
-		positionToPart();
+		updatePlacementAndVisibility();
 
 		searchBar.forceFocus();
 		return returnCode;
@@ -434,11 +433,7 @@ public class FindReplaceOverlay extends Dialog {
 	@Override
 	public Control createContents(Composite parent) {
 		backgroundToUse = new Color(getShell().getDisplay(), new RGBA(0, 0, 0, 0));
-		Control ret = createDialog(parent);
-
-		getShell().layout();
-		positionToPart();
-		return ret;
+		return createDialog(parent);
 	}
 
 	private Control createDialog(final Composite parent) {
@@ -711,7 +706,7 @@ public class FindReplaceOverlay extends Dialog {
 		searchBar.forceFocus();
 		replaceBarOpen = false;
 		replaceContainer.dispose();
-		positionToPart();
+		updatePlacementAndVisibility();
 	}
 
 	private void createReplaceDialog() {
@@ -722,7 +717,7 @@ public class FindReplaceOverlay extends Dialog {
 		createReplaceContainer();
 		createReplaceBar();
 		createReplaceTools();
-		positionToPart();
+		updatePlacementAndVisibility();
 		applyOverlayColors(backgroundToUse, true);
 		replaceBar.forceFocus();
 	}
@@ -810,7 +805,11 @@ public class FindReplaceOverlay extends Dialog {
 		}
 	}
 
-	private void positionToPart() {
+	private void updatePlacementAndVisibility() {
+		if (!isTargetVisible) {
+			getShell().setVisible(false);
+			return;
+		}
 		getShell().requestLayout();
 		if (!(targetPart instanceof StatusTextEditor textEditor)) {
 			return;
