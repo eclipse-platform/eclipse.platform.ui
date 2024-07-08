@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,10 +14,12 @@
  *     Tom Hofmann (Perspectix AG) - bug 297572
  *     Sergey Prigogin (Google) - bug 441448
  *     Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Add CodeMining support in SourceViewer - Bug 527515
+ *     Latha Patil (ETAS GmbH) - Issue 865 - Surround the selected text with brackets on inserting a opening bracket
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -57,6 +59,7 @@ import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerLifecycle;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.SurroundWithBracketsStrategy;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -543,7 +546,12 @@ public class SourceViewer extends TextViewer
 		String[] types= configuration.getConfiguredContentTypes(this);
 		for (String t : types) {
 
-			doSetAutoEditStrategies(configuration.getAutoEditStrategies(this, t), t);
+			IAutoEditStrategy[] autoEditStrategies= configuration.getAutoEditStrategies(this, t);
+			List<IAutoEditStrategy> autoEditStrategiesList= new ArrayList<>(Arrays.asList(autoEditStrategies));
+			autoEditStrategiesList.add(new SurroundWithBracketsStrategy(this));
+			IAutoEditStrategy[] newStrategies= autoEditStrategiesList.toArray(new IAutoEditStrategy[0]);
+
+			doSetAutoEditStrategies(newStrategies, t);
 			setTextDoubleClickStrategy(configuration.getDoubleClickStrategy(this, t), t);
 
 			int[] stateMasks= configuration.getConfiguredTextHoverStateMasks(this, t);
