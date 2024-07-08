@@ -20,14 +20,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
-import java.util.ResourceBundle;
-
 import org.junit.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.text.tests.Accessor;
 
@@ -39,21 +36,18 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.ui.internal.findandreplace.FindReplaceUITest;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 
+import org.eclipse.ui.texteditor.FindReplaceAction;
+
 public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 	@Override
 	public DialogAccess openUIFromTextViewer(TextViewer viewer) {
-		TextViewer textViewer= getTextViewer();
-		Accessor fFindReplaceAction;
+		Accessor findActionAccessor= new Accessor(getFindReplaceAction(), FindReplaceAction.class);
+		findActionAccessor.invoke("showDialog", null);
 
-		fFindReplaceAction= new Accessor("org.eclipse.ui.texteditor.FindReplaceAction", getClass().getClassLoader(),
-				new Class[] { ResourceBundle.class, String.class, Shell.class, IFindReplaceTarget.class },
-				new Object[] { ResourceBundle.getBundle("org.eclipse.ui.texteditor.ConstructedEditorMessages"), "Editor.FindReplace.", textViewer.getControl().getShell(),
-						textViewer.getFindReplaceTarget() });
-		fFindReplaceAction.invoke("run", null);
-
-		Object fFindReplaceDialogStub= fFindReplaceAction.get("fgFindReplaceDialogStub");
-		if (fFindReplaceDialogStub == null)
-			fFindReplaceDialogStub= fFindReplaceAction.get("fgFindReplaceDialogStubShell");
+		Object fFindReplaceDialogStub= findActionAccessor.get("fgFindReplaceDialogStub");
+		if (fFindReplaceDialogStub == null) {
+			fFindReplaceDialogStub= findActionAccessor.get("fgFindReplaceDialogStubShell");
+		}
 		Accessor fFindReplaceDialogStubAccessor= new Accessor(fFindReplaceDialogStub, "org.eclipse.ui.texteditor.FindReplaceAction$FindReplaceDialogStub", getClass().getClassLoader());
 
 		Accessor dialogAccessor= new Accessor(fFindReplaceDialogStubAccessor.invoke("getDialog", null), "org.eclipse.ui.texteditor.FindReplaceDialog", getClass().getClassLoader());
