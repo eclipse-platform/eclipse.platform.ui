@@ -143,11 +143,13 @@ public class FindReplaceOverlay extends Dialog {
 	private void performReplaceAll() {
 		BusyIndicator.showWhile(getShell() != null ? getShell().getDisplay() : Display.getCurrent(),
 				() -> findReplaceLogic.performReplaceAll(getFindString(), getReplaceString()));
+		evaluateFindReplaceStatus();
 	}
 
 	private void performSelectAll() {
 		BusyIndicator.showWhile(getShell() != null ? getShell().getDisplay() : Display.getCurrent(),
 				() -> findReplaceLogic.performSelectAll(getFindString()));
+		evaluateFindReplaceStatus();
 	}
 
 	private KeyListener shortcuts = KeyListener.keyPressedAdapter(e -> {
@@ -178,37 +180,17 @@ public class FindReplaceOverlay extends Dialog {
 		boolean isCtrlPressed = (e.stateMask & SWT.CTRL) != 0;
 		if (okayToUse(replaceBar) && replaceBar.isFocusControl()) {
 			if (isCtrlPressed) {
-				performReplaceAllOnEnter();
+				performReplaceAll();
 			} else {
-				performReplaceOnEnter();
+				performSingleReplace();
 			}
 		} else {
 			if (isCtrlPressed) {
-				performSearchAltOnEnter();
+				performSelectAll();
 			} else {
-				performSearchOnEnter(isShiftPressed);
+				performSearch(!isShiftPressed);
 			}
 		}
-	}
-
-	private void performReplaceAllOnEnter() {
-		performReplaceAll();
-		evaluateFindReplaceStatus();
-	}
-
-	private void performReplaceOnEnter() {
-		performSingleReplace();
-		evaluateFindReplaceStatus();
-	}
-
-	private void performSearchAltOnEnter() {
-		performSelectAll();
-		evaluateFindReplaceStatus();
-	}
-
-	private void performSearchOnEnter(boolean isShiftPressed) {
-		performSearch(!isShiftPressed);
-		evaluateFindReplaceStatus();
 	}
 
 	private void toggleToolItem(ToolItem toolItem) {
@@ -486,26 +468,17 @@ public class FindReplaceOverlay extends Dialog {
 		searchUpButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_PREV))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_upSearchButton_toolTip)
-				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-					performSearch(false);
-					evaluateFindReplaceStatus();
-				})).build();
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> performSearch(false))).build();
 		searchDownButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_NEXT))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip)
-				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-					performSearch(true);
-					evaluateFindReplaceStatus();
-				})).build();
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> performSearch(true))).build();
 		searchDownButton.setSelection(true); // by default, search down
 
 		searchAllButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SEARCH_ALL))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchAllButton_toolTip)
-				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-					performSelectAll();
-					evaluateFindReplaceStatus();
-				})).build();
+				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> performSelectAll())).build();
 	}
 
 	private void createCloseTools() {
@@ -534,7 +507,7 @@ public class FindReplaceOverlay extends Dialog {
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
 				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-					activateInFindReplacerIf(SearchOptions.REGEX, ((ToolItem) e.widget).getSelection());
+					activateInFindReplacerIf(SearchOptions.REGEX, regexSearchButton.getSelection());
 					wholeWordSearchButton.setEnabled(!findReplaceLogic.isActive(SearchOptions.REGEX));
 					updateIncrementalSearch();
 				})).build();
@@ -577,7 +550,6 @@ public class FindReplaceOverlay extends Dialog {
 						return;
 					}
 					performSingleReplace();
-					evaluateFindReplaceStatus();
 				})).build();
 
 		replaceAllButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
@@ -589,7 +561,6 @@ public class FindReplaceOverlay extends Dialog {
 						return;
 					}
 					performReplaceAll();
-					evaluateFindReplaceStatus();
 				})).build();
 	}
 
@@ -888,6 +859,7 @@ public class FindReplaceOverlay extends Dialog {
 
 	private void performSingleReplace() {
 		findReplaceLogic.performReplaceAndFind(getFindString(), getReplaceString());
+		evaluateFindReplaceStatus();
 	}
 
 	private void performSearch(boolean forward) {
@@ -897,6 +869,7 @@ public class FindReplaceOverlay extends Dialog {
 		findReplaceLogic.performSearch(getFindString());
 		activateInFindReplacerIf(SearchOptions.FORWARD, oldForwardSearchSetting);
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		evaluateFindReplaceStatus();
 	}
 
 	private void updateFromTargetSelection() {
