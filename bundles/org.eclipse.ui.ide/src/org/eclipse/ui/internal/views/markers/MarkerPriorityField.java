@@ -101,7 +101,7 @@ public class MarkerPriorityField extends MarkerField {
 	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
 		return Integer.compare(item1.getAttributeValue(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL),
-				item1.getAttributeValue(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL));
+				item2.getAttributeValue(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL));
 	}
 
 	@Override
