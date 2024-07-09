@@ -317,6 +317,20 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		assertScopeActivationOnTextInput("hello\nworld");
 	}
 
+	@Test
+	public void testActivateDialogSelectionActive_withRegExOptionActivated() {
+		openTextViewer("test text.*;");
+		initializeFindReplaceUIForTextViewer();
+		dialog.select(SearchOptions.REGEX);
+		fTextViewer.setSelection(new TextSelection("test ".length(), "text.*".length()));
+		reopenFindReplaceUIForTextViewer();
+		dialog.assertSelected(SearchOptions.REGEX);
+		assertEquals("text\\.\\*", dialog.getFindText());
+
+		dialog.performReplaceAll();
+		assertThat(fTextViewer.getDocument().get(), is("test ;"));
+	}
+
 	protected AccessType getDialog() {
 		return dialog;
 	}
