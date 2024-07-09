@@ -61,6 +61,7 @@ public class StickyScrollingControlTest {
 		shell.setLayout(new FillLayout());
 		ruler = new CompositeRuler();
 		sourceViewer = new SourceViewer(shell, ruler, SWT.V_SCROLL | SWT.H_SCROLL);
+		sourceViewer.setDocument(new Document());
 
 		lineNumberColor = new Color(0, 0, 0);
 		hoverColor = new Color(1, 1, 1);
@@ -126,7 +127,7 @@ public class StickyScrollingControlTest {
 
 	@Test
 	public void testCopyStyleRanges() {
-		sourceViewer.getTextWidget().setText("line 1");
+		sourceViewer.setInput(new Document("line 1"));
 		sourceViewer.getTextWidget().setStyleRange(new StyleRange(0, 6, lineNumberColor, backgroundColor));
 
 		List<StickyLine> stickyLines = List.of(new StickyLine("line 1", 0));
@@ -198,9 +199,8 @@ public class StickyScrollingControlTest {
 		String text = """
 				line 1
 				line 2""";
-		sourceViewer.getTextWidget().setText(text);
+		sourceViewer.setInput(new Document(text));
 		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
-		sourceViewer.setDocument(new Document(text));
 
 		List<StickyLine> stickyLines = List.of(new StickyLine("line 2", 1));
 		stickyScrollingControl.setStickyLines(stickyLines);
@@ -219,7 +219,7 @@ public class StickyScrollingControlTest {
 		String text = """
 				line 1
 				line 2""";
-		sourceViewer.getTextWidget().setText(text);
+		sourceViewer.setInput(new Document(text));
 		sourceViewer.getTextWidget().getVerticalBar().setIncrement(10);
 		assertEquals(0, sourceViewer.getTextWidget().getTopPixel());
 
@@ -236,7 +236,7 @@ public class StickyScrollingControlTest {
 		String text = """
 				line 1
 				line 2""";
-		sourceViewer.getTextWidget().setText(text);
+		sourceViewer.setInput(new Document(text));
 		sourceViewer.getTextWidget().getHorizontalBar().setIncrement(10);
 		assertEquals(0, sourceViewer.getTextWidget().getHorizontalPixel());
 
