@@ -184,6 +184,8 @@ public class StickyScrollingControl {
 		GridDataFactory.fillDefaults().grab(true, false).indent(0, BOTTOM_SEPARATOR_SPACING).span(2, 1).applyTo(bottomSeparator);
 		bottomSeparator.setEnabled(false);
 
+		layoutLineNumbers();
+
 		stickyLinesCanvas.pack();
 		stickyLinesCanvas.moveAbove(null);
 	}
@@ -210,7 +212,7 @@ public class StickyScrollingControl {
 	}
 
 	private String fillLineNumberWithLeadingSpaces(int lineNumber) {
-		int lineCount= sourceViewer.getTextWidget().getLineCount();
+		int lineCount= sourceViewer.getDocument().getNumberOfLines();
 		int lineNumberLength= String.valueOf(lineCount).length();
 		String formatString= "%" + lineNumberLength + "d"; //$NON-NLS-1$ //$NON-NLS-2$
 		return String.format(formatString, lineNumber);
