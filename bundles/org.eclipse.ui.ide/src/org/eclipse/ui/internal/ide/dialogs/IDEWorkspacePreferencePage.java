@@ -93,6 +93,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 	private Button showProductNameInTitle;
 
+	private Button showActiveEditorInfoInTitle;
+
 	private Button autoRefreshButton;
 
 	private Button lightweightRefreshButton;
@@ -260,6 +262,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		boolean isShowPerspective = getIDEPreferenceStore()
 				.getBoolean(IDEInternalPreferences.SHOW_PERSPECTIVE_IN_TITLE);
 		boolean isShowProduct = getIDEPreferenceStore().getBoolean(IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE);
+		boolean isShowActiveEditorInfo = getIDEPreferenceStore().getBoolean(IDEInternalPreferences.SHOW_ACTIVE_EDITOR_INFO_IN_TITLE);
 
 		Composite groupComposite = new Composite(composite, SWT.LEFT);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(groupComposite);
@@ -313,6 +316,10 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		showProductNameInTitle = new Button(grpWindowTitle, SWT.CHECK);
 		showProductNameInTitle.setText(IDEWorkbenchMessages.IDEWorkspacePreference_showProductNameInWindowTitle);
 		showProductNameInTitle.setSelection(isShowProduct);
+
+		showActiveEditorInfoInTitle = new Button(grpWindowTitle, SWT.CHECK);
+		showActiveEditorInfoInTitle.setText(IDEWorkbenchMessages.IDEWorkspacePreference_showActiveEditorInfoInWindowTitle);
+		showActiveEditorInfoInTitle.setSelection(isShowActiveEditorInfo);
 
 		// disable location component if -showlocation forced
 		if (showLocationIsSetOnCommandLine) {
@@ -528,9 +535,12 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		boolean showLocationName = store.getDefaultBoolean(IDEInternalPreferences.SHOW_LOCATION_NAME);
 		boolean showPerspectiveName = store.getDefaultBoolean(IDEInternalPreferences.SHOW_PERSPECTIVE_IN_TITLE);
 		boolean showProductName = store.getDefaultBoolean(IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE);
+		boolean showActiveEditorInfo = store.getDefaultBoolean(IDEInternalPreferences.SHOW_ACTIVE_EDITOR_INFO_IN_TITLE);
 		showLocationNameInTitle.setSelection(showLocationName);
 		showPerspectiveNameInTitle.setSelection(showPerspectiveName);
 		showProductNameInTitle.setSelection(showProductName);
+		this.showActiveEditorInfoInTitle.setSelection(showActiveEditorInfo);
+
 		workspaceName.loadDefault();
 
 		boolean closeUnrelatedProj = store.getDefaultBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS);
@@ -594,6 +604,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		store.setValue(IDEInternalPreferences.SHOW_LOCATION_NAME, showLocationNameInTitle.getSelection());
 		store.setValue(IDEInternalPreferences.SHOW_PERSPECTIVE_IN_TITLE, showPerspectiveNameInTitle.getSelection());
 		store.setValue(IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE, showProductNameInTitle.getSelection());
+		store.setValue(IDEInternalPreferences.SHOW_ACTIVE_EDITOR_INFO_IN_TITLE, showActiveEditorInfoInTitle.getSelection());
 
 		workspaceName.store();
 
