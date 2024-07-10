@@ -570,6 +570,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_showLocationNameInWindowTitle;
 	public static String IDEWorkspacePreference_showPerspectiveNameInWindowTitle;
 	public static String IDEWorkspacePreference_showProductNameInWindowTitle;
+	public static String IDEWorkspacePreference_showActiveEditorInfoInWindowTitle;
 	public static String IDEWorkspacePreference_showLocationSetOnCommandLine;
 	public static String IDEWorkspacePreference_workspaceName;
 	public static String IDEWorkbenchPreference_workbenchSystemExplorer;

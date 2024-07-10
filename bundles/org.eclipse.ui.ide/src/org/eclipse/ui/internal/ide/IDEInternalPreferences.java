@@ -134,6 +134,11 @@ public interface IDEInternalPreferences {
 	String SHOW_PRODUCT_IN_TITLE = "SHOW_PRODUCT_IN_TITLE"; //$NON-NLS-1$
 
 	/**
+	 * Whether to show the active editor information in the window title.
+	 */
+	String SHOW_ACTIVE_EDITOR_INFO_IN_TITLE = "SHOW_ACTIVE_EDITOR_INFO_IN_TITLE"; //$NON-NLS-1$
+
+	/**
 	 * System explore command, used to launch file manager showing selected
 	 * resource.
 	 */

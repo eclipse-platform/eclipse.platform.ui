@@ -358,7 +358,8 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 					|| IDEInternalPreferences.SHOW_LOCATION.equals(property)
 					|| IDEInternalPreferences.SHOW_LOCATION_NAME.equals(property)
 					|| IDEInternalPreferences.SHOW_PERSPECTIVE_IN_TITLE.equals(property)
-					|| IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE.equals(property)) {
+					|| IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE.equals(property)
+					|| IDEInternalPreferences.SHOW_ACTIVE_EDITOR_INFO_IN_TITLE.equals(property)) {
 				// Make sure the title is actually updated by
 				// setting last active page.
 				lastActivePage = null;
@@ -398,9 +399,11 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		}
 
 		// active editor
-		if (currentPage != null) {
-			if (activeEditor != null) {
-				sj.add(activeEditor.getTitleToolTip());
+		if (ps.getBoolean(IDEInternalPreferences.SHOW_ACTIVE_EDITOR_INFO_IN_TITLE)) {
+			if (currentPage != null) {
+				if (activeEditor != null) {
+					sj.add(activeEditor.getTitleToolTip());
+				}
 			}
 		}
 
