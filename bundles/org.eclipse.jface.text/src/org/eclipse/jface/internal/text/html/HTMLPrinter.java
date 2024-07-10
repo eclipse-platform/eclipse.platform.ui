@@ -130,7 +130,7 @@ public class HTMLPrinter {
 	 */
 	@Deprecated
 	public static void insertPageProlog(StringBuffer buffer, int position, RGB fgRGB, RGB bgRGB, String styleSheet) {
-		runOp(buffer, (sb) -> CORE.insertPageProlog(sb, position, fromRGB(fgRGB), fromRGB(fgRGB), styleSheet));
+		runOp(buffer, (sb) -> CORE.insertPageProlog(sb, position, fromRGB(fgRGB), fromRGB(bgRGB), styleSheet));
 	}
 
 	/**
