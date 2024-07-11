@@ -332,11 +332,11 @@ public class FindReplaceOverlay extends Dialog {
 		overlayOpen = true;
 		applyOverlayColors(backgroundToUse, true);
 		updateFromTargetSelection();
+		searchBar.forceFocus();
 
 		getShell().layout();
 		updatePlacementAndVisibility();
 
-		searchBar.forceFocus();
 		return returnCode;
 	}
 
@@ -936,19 +936,16 @@ public class FindReplaceOverlay extends Dialog {
 
 	private void updateFromTargetSelection() {
 		String selectionText = findReplaceLogic.getTarget().getSelectionText();
-		if (selectionText.isEmpty()) {
-			return;
-		}
 		if (selectionText.contains("\n")) { //$NON-NLS-1$
 			findReplaceLogic.deactivate(SearchOptions.GLOBAL);
 			searchInSelectionButton.setSelection(true);
-		} else {
+		} else if (!selectionText.isEmpty()) {
 			if (findReplaceLogic.isRegExSearchAvailableAndActive()) {
 				selectionText = FindReplaceDocumentAdapter.escapeForRegExPattern(selectionText);
 			}
 			searchBar.setText(selectionText);
-			searchBar.setSelection(0, selectionText.length());
 		}
+		searchBar.setSelection(0, searchBar.getText().length());
 	}
 
 	private void evaluateFindReplaceStatus() {

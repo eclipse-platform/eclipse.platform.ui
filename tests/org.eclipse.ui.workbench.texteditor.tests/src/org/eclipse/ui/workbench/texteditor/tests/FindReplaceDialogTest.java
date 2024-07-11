@@ -63,7 +63,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 
 		dialog.findCombo.setFocus();
 		dialog.setFindText("line");
-		dialog.simulateEnterInFindInputField(false);
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
 		ensureHasFocusOnGTK();
 
 		assertTrue(dialog.getFindCombo().isFocusControl());
@@ -71,11 +71,11 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		Button wrapCheckBox= dialog.getButtonForSearchOption(SearchOptions.WRAP);
 		Button globalRadioButton= dialog.getButtonForSearchOption(SearchOptions.GLOBAL);
 		wrapCheckBox.setFocus();
-		dialog.simulateEnterInFindInputField(false);
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
 		assertTrue(wrapCheckBox.isFocusControl());
 
 		globalRadioButton.setFocus();
-		dialog.simulateEnterInFindInputField(false);
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
 		assertTrue(globalRadioButton.isFocusControl());
 	}
 
@@ -124,22 +124,22 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		ensureHasFocusOnGTK();
 		IFindReplaceTarget target= dialog.getTarget();
 
-		dialog.simulateEnterInFindInputField(false);
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
 
-		dialog.simulateEnterInFindInputField(false);
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
 		assertEquals(5, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
 
-		dialog.simulateEnterInFindInputField(true);
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, true);
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
 
 		// This part only makes sense for the FindReplaceDialog since not every UI might have stored
 		// the search direction as a state
 		dialog.unselect(SearchOptions.FORWARD);
-		dialog.simulateEnterInFindInputField(true);
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, true);
 		assertEquals(5, (target.getSelection()).x);
 	}
 
@@ -211,7 +211,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		dialog.select(SearchOptions.WRAP);
 		IFindReplaceTarget target= dialog.getTarget();
 
-		dialog.simulateEnterInFindInputField(false);
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(3, (target.getSelection()).y);
 
@@ -219,7 +219,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		dialog.assertDisabled(SearchOptions.WHOLE_WORD);
 		dialog.assertSelected(SearchOptions.WHOLE_WORD);
 
-		dialog.simulateEnterInFindInputField(false);
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
 		assertThat(target.getSelectionText(), is(dialog.getFindText()));
 
 		assertEquals(0, (target.getSelection()).x);
