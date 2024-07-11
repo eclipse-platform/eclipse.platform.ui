@@ -77,6 +77,15 @@ import org.eclipse.ui.internal.texteditor.LineNumberColumn;
  */
 public class StickyScrollingControl {
 
+	/**
+	 * This threshold represents the minimum number of source lines that must remain visible in the
+	 * editor. If the StickyScrollingControl's size would result in fewer than this number of lines
+	 * being visible, the height of the StickyScrollingControl will be reduced to ensure visibility
+	 * of at least this many lines. Thus, it guarantees a minimum visibility threshold for the
+	 * source content in the editor underneath the StickyScrollingControl.
+	 */
+	private final static int MIN_VISIBLE_EDITOR_LINES_THRESHOLD= 3;
+
 	private List<StickyLine> stickyLines;
 
 	private ISourceViewer sourceViewer;
@@ -102,6 +111,8 @@ public class StickyScrollingControl {
 	private final static int BOTTOM_SEPARATOR_SPACING= 2;
 
 	private StickyScrollingHandler stickyScrollingHandler;
+
+	private int maximumVisibleStickyLines= Integer.MAX_VALUE;
 
 	public StickyScrollingControl(ISourceViewer sourceViewer, StickyScrollingControlSettings settings) {
 		this(sourceViewer, null, settings, null);
@@ -185,6 +196,7 @@ public class StickyScrollingControl {
 		bottomSeparator.setEnabled(false);
 
 		layoutLineNumbers();
+		limitVisibleStickyLinesToTextWidgetHeight(sourceViewer.getTextWidget());
 
 		stickyLinesCanvas.pack();
 		stickyLinesCanvas.moveAbove(null);
@@ -379,7 +391,9 @@ public class StickyScrollingControl {
 	}
 
 	private int getNumberStickyLines() {
-		return Math.min(settings.maxCountStickyLines(), this.stickyLines.size());
+		int numberStickyLines= Math.min(settings.maxCountStickyLines(), this.stickyLines.size());
+		numberStickyLines= Math.min(maximumVisibleStickyLines, numberStickyLines);
+		return numberStickyLines;
 	}
 
 	/**
@@ -412,7 +426,12 @@ public class StickyScrollingControl {
 		controlListener= new ControlListener() {
 			@Override
 			public void controlResized(ControlEvent e) {
+				StyledText textWidget= sourceViewer.getTextWidget();
+				limitVisibleStickyLinesToTextWidgetHeight(textWidget);
 				layoutStickyLines();
+				if (stickyScrollingHandler != null) {
+					stickyScrollingHandler.viewportChanged(textWidget.getTopPixel());
+				}
 			}
 
 			@Override
@@ -421,6 +440,16 @@ public class StickyScrollingControl {
 			}
 		};
 		sourceViewer.getTextWidget().addControlListener(controlListener);
+	}
+
+	private void limitVisibleStickyLinesToTextWidgetHeight(StyledText textWidget) {
+		int lineHeight= textWidget.getLineHeight() + textWidget.getLineSpacing();
+		int textWidgetHeight= textWidget.getBounds().height;
+
+		int visibleLinesInTextWidget= textWidgetHeight / lineHeight;
+
+		maximumVisibleStickyLines= Math.max(0, visibleLinesInTextWidget - MIN_VISIBLE_EDITOR_LINES_THRESHOLD);
+		updateStickyScrollingControls();
 	}
 
 	/**

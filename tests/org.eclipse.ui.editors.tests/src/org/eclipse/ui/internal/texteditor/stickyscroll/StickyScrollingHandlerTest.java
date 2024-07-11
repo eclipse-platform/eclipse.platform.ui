@@ -64,6 +64,7 @@ public class StickyScrollingHandlerTest {
 		ruler = new CompositeRuler();
 		sourceViewer = new SourceViewer(shell, ruler, SWT.None);
 		sourceViewer.setDocument(new Document());
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
 
 		lineNumberColor = new Color(0, 0, 0);
 		hoverColor = new Color(1, 1, 1);
