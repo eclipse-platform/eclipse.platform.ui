@@ -169,23 +169,26 @@ class DialogAccess implements IFindReplaceUIAccess {
 	}
 
 	@Override
-	public void simulateEnterInFindInputField(boolean shiftPressed) {
-		simulateKeyPressInFindInputField(SWT.CR, shiftPressed);
-	}
-
-	@Override
-	public void simulateKeyPressInFindInputField(int keyCode, boolean shiftPressed) {
+	public void simulateKeyboardInteractionInFindInputField(int keyCode, boolean shiftPressed) {
 		final Event event= new Event();
-		event.type= SWT.Traverse;
 		event.detail= SWT.TRAVERSE_RETURN;
-		event.character= (char) keyCode;
+		event.type= SWT.KeyDown;
 		if (shiftPressed) {
 			event.stateMask= SWT.SHIFT;
 		}
+		event.keyCode= keyCode;
 		findCombo.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();
 	}
 
+	@Override
+	public void simulateKeystrokeInFindInputField(char character) {
+		final Event event= new Event();
+		event.type= SWT.KeyDown;
+		event.character= character;
+		findCombo.getDisplay().post(event);
+		runEventQueue();
+	}
 
 	@Override
 	public String getReplaceText() {

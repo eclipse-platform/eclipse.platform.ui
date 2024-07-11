@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -36,7 +37,6 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
-import org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil;
 import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.IFindReplaceUIAccess;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
@@ -142,21 +142,24 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	}
 
 	@Override
-	public void simulateEnterInFindInputField(boolean shiftPressed) {
-		simulateKeyPressInFindInputField(SWT.CR, shiftPressed);
-	}
-
-	@Override
-	public void simulateKeyPressInFindInputField(int keyCode, boolean shiftPressed) {
+	public void simulateKeyboardInteractionInFindInputField(int keyCode, boolean shiftPressed) {
 		final Event event= new Event();
 		event.type= SWT.KeyDown;
-		event.keyCode= keyCode;
 		if (shiftPressed) {
 			event.stateMask= SWT.SHIFT;
 		}
+		event.keyCode= keyCode;
 		find.notifyListeners(SWT.KeyDown, event);
-		find.traverse(SWT.TRAVERSE_RETURN, event);
-		FindReplaceTestUtil.runEventQueue();
+		runEventQueue();
+	}
+
+	@Override
+	public void simulateKeystrokeInFindInputField(char character) {
+		final Event event= new Event();
+		event.type= SWT.KeyDown;
+		event.character= character;
+		find.getDisplay().post(event);
+		runEventQueue();
 	}
 
 	@Override
