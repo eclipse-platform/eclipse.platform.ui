@@ -62,6 +62,7 @@ public class StickyScrollingControlTest {
 		ruler = new CompositeRuler();
 		sourceViewer = new SourceViewer(shell, ruler, SWT.V_SCROLL | SWT.H_SCROLL);
 		sourceViewer.setDocument(new Document());
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
 
 		lineNumberColor = new Color(0, 0, 0);
 		hoverColor = new Color(1, 1, 1);
@@ -116,12 +117,10 @@ public class StickyScrollingControlTest {
 		stickyScrollingControl.applySettings(settings);
 
 		StyledText stickyLineNumber = getStickyLineNumber();
-		String expLineNumber = """
-				10""";
+		String expLineNumber = "10";
 		assertEquals(expLineNumber, stickyLineNumber.getText());
 		StyledText stickyLineText = getStickyLineText();
-		String expStickyLineText = """
-				line 10""";
+		String expStickyLineText = "line 10";
 		assertEquals(expStickyLineText, stickyLineText.getText());
 	}
 
@@ -215,6 +214,7 @@ public class StickyScrollingControlTest {
 
 	@Test
 	public void testVerticalScrollingIsDispatched() {
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 0);
 		Canvas stickyControlCanvas = getStickyControlCanvas(shell);
 		String text = """
 				line 1
@@ -232,6 +232,7 @@ public class StickyScrollingControlTest {
 
 	@Test
 	public void testHorizontalScrollingIsDispatched() {
+		sourceViewer.getTextWidget().setBounds(0, 0, 0, 200);
 		Canvas stickyControlCanvas = getStickyControlCanvas(shell);
 		String text = """
 				line 1
@@ -245,6 +246,20 @@ public class StickyScrollingControlTest {
 		stickyControlCanvas.notifyListeners(SWT.MouseHorizontalWheel, event);
 
 		assertEquals(10, sourceViewer.getTextWidget().getHorizontalPixel());
+	}
+
+	@Test
+	public void limitStickyLinesToTextWidgetHeight() {
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
+		List<StickyLine> stickyLines = List.of(new StickyLine("line 2", 1));
+		stickyScrollingControl.setStickyLines(stickyLines);
+
+		StyledText stickyLineText = getStickyLineText();
+		assertEquals("line 2", stickyLineText.getText());
+
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 20);
+		stickyLineText = getStickyLineText();
+		assertEquals("", stickyLineText.getText());
 	}
 
 	private Canvas getStickyControlCanvas(Composite composite) {
