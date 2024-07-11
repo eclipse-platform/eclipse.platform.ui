@@ -13,12 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.jface.bindings.keys.KeyStroke;
 
 /**
  * Builder for ToolItems for {@link AccessibleToolBar}.
@@ -28,7 +31,8 @@ class AccessibleToolItemBuilder {
 	private int styleBits = SWT.NONE;
 	private Image image;
 	private String toolTipText;
-	private SelectionListener selectionListener;
+	private List<KeyStroke> shortcuts = Collections.emptyList();
+	private Runnable operation;
 
 	public AccessibleToolItemBuilder(AccessibleToolBar accessibleToolBar) {
 		this.accessibleToolBar = Objects.requireNonNull(accessibleToolBar);
@@ -49,26 +53,28 @@ class AccessibleToolItemBuilder {
 		return this;
 	}
 
-	public AccessibleToolItemBuilder withSelectionListener(SelectionListener newSelectionListener) {
-		this.selectionListener = newSelectionListener;
+	public AccessibleToolItemBuilder withShortcuts(List<KeyStroke> newShortcuts) {
+		this.shortcuts = newShortcuts;
+		return this;
+	}
+
+	public AccessibleToolItemBuilder withOperation(Runnable newOperation) {
+		this.operation = newOperation;
 		return this;
 	}
 
 	public ToolItem build() {
-		ToolItem toolItem = accessibleToolBar.createToolItem(styleBits);
-
+		AccessibleToolItem accessibleToolItem = accessibleToolBar.createToolItem(styleBits);
 		if (image != null) {
-			toolItem.setImage(image);
+			accessibleToolItem.setImage(image);
 		}
-
 		if (toolTipText != null) {
-			toolItem.setToolTipText(toolTipText);
+			accessibleToolItem.setToolTipText(toolTipText);
+		}
+		if (operation != null) {
+			accessibleToolItem.setOperation(operation, shortcuts);
 		}
 
-		if (selectionListener != null) {
-			toolItem.addSelectionListener(selectionListener);
-		}
-
-		return toolItem;
+		return accessibleToolItem.getToolItem();
 	}
 }
