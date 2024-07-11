@@ -20,8 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.layout.GridLayoutFactory;
 
@@ -35,11 +34,14 @@ import org.eclipse.jface.layout.GridLayoutFactory;
  */
 class AccessibleToolBar extends Composite {
 
-	private List<ToolBar> toolBars = new ArrayList<>();
+	private final List<AccessibleToolItem> accessibleToolItems = new ArrayList<>();
+
+	private final GridLayout layout;
 
 	public AccessibleToolBar(Composite parent) {
 		super(parent, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(0).spacing(0, 0).margins(0, 0).applyTo(this);
+		this.layout = GridLayoutFactory.fillDefaults().numColumns(0).spacing(0, 0).margins(0, 0).create();
+		this.setLayout(layout);
 	}
 
 	/**
@@ -49,33 +51,26 @@ class AccessibleToolBar extends Composite {
 	 * @param styleBits the StyleBits to apply to the created ToolItem
 	 * @return a newly created ToolItem
 	 */
-	public ToolItem createToolItem(int styleBits) {
-		ToolBar parent = new ToolBar(this, SWT.FLAT | SWT.HORIZONTAL);
-		ToolItem toolItem = new ToolItem(parent, styleBits);
-
-		addToolItemTraverseListener(parent, toolItem);
-
-		((GridLayout) getLayout()).numColumns++;
-
-		toolBars.add(parent);
+	public AccessibleToolItem createToolItem(int styleBits) {
+		AccessibleToolItem toolItem = new AccessibleToolItem(this, styleBits);
+		accessibleToolItems.add(toolItem);
+		layout.numColumns++;
 		return toolItem;
-	}
-
-	private void addToolItemTraverseListener(ToolBar parent, ToolItem result) {
-		parent.addTraverseListener(e -> {
-			if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
-				result.setSelection(!result.getSelection());
-				e.doit = false;
-			}
-		});
 	}
 
 	@Override
 	public void setBackground(Color color) {
 		super.setBackground(color);
-		for (ToolBar bar : toolBars) { // some ToolItems (like SWT.SEPARATOR) don't easily inherit the color from the
-										// parent control.
-			bar.setBackground(color);
+		// some ToolItems (like SWT.SEPARATOR) don't easily inherit the color from the
+		// parent control
+		for (AccessibleToolItem item : accessibleToolItems) {
+			item.setBackground(color);
+		}
+	}
+
+	void registerActionShortcutsAtControl(Control control) {
+		for (AccessibleToolItem item : accessibleToolItems) {
+			item.registerActionShortcutsAtControl(control);
 		}
 	}
 

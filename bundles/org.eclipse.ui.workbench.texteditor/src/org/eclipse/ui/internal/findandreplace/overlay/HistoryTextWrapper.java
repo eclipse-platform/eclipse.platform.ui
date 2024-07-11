@@ -19,7 +19,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -61,7 +60,7 @@ public class HistoryTextWrapper extends Composite {
 		dropDown = new AccessibleToolItemBuilder(tools).withStyleBits(SWT.PUSH)
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_searchHistory_toolTip)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_OPEN_HISTORY))
-				.withSelectionListener(SelectionListener.widgetSelectedAdapter(e -> createHistoryMenuDropdown()))
+				.withOperation(this::createHistoryMenuDropdown)
 				.build();
 
 		listenForKeyboardHistoryNavigation();
