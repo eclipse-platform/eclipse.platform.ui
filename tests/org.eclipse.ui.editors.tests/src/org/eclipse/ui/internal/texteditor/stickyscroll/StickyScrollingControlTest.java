@@ -69,7 +69,7 @@ public class StickyScrollingControlTest {
 		hoverColor = new Color(1, 1, 1);
 		backgroundColor = new Color(2, 2, 2);
 		separatorColor = new Color(3, 3, 3);
-		StickyScrollingControlSettings settings = new StickyScrollingControlSettings(5, lineNumberColor, hoverColor,
+		StickyScrollingControlSettings settings = new StickyScrollingControlSettings(2, lineNumberColor, hoverColor,
 				backgroundColor, separatorColor, true);
 		stickyScrollingControl = new StickyScrollingControl(sourceViewer, ruler, settings, null);
 	}
@@ -143,7 +143,7 @@ public class StickyScrollingControlTest {
 	}
 
 	@Test
-	public void testWithoutVeticalRuler() {
+	public void testWithoutVerticalRuler() {
 		sourceViewer = new SourceViewer(shell, null, SWT.None);
 		StickyScrollingControlSettings settings = new StickyScrollingControlSettings(5, lineNumberColor, hoverColor,
 				backgroundColor, separatorColor, true);
@@ -267,6 +267,77 @@ public class StickyScrollingControlTest {
 		assertEquals("", stickyLineText.getText());
 	}
 
+	@Test
+	public void testListenForCarretAfterKeyDown() {
+		// set height to 10 so that scrolling is needed
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 10);
+		String text = """
+				line 1
+				line 2
+				line 3
+				line 4
+				line 5
+				line 6
+				line 7
+				line 8
+				line 9""";
+		sourceViewer.setInput(new Document(text));
+		assertEquals(0, sourceViewer.getTextWidget().getTopPixel());
+
+		sourceViewer.getTextWidget().notifyListeners(SWT.KeyDown, new Event());
+		sourceViewer.getTextWidget().setCaretOffset(42);
+
+		drainDisplayEventQueue();
+		assertThat(sourceViewer.getTextWidget().getTopPixel(), greaterThan(0));
+	}
+
+	@Test
+	public void testDontListenForCaretWithoutKeyDown() {
+		// set height to 10 so that scrolling is needed
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 10);
+		String text = """
+				line 1
+				line 2
+				line 3
+				line 4
+				line 5
+				line 6
+				line 7
+				line 8
+				line 9""";
+		sourceViewer.setInput(new Document(text));
+		assertEquals(0, sourceViewer.getTextWidget().getTopPixel());
+
+		sourceViewer.getTextWidget().setCaretOffset(42);
+
+		drainDisplayEventQueue();
+		assertEquals(0, sourceViewer.getTextWidget().getTopPixel());
+	}
+
+	@Test
+	public void testDontMoveCaretAtDocumentEnd() {
+		// set height to 10 so that scrolling is needed
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 10);
+		String text = """
+				line 1
+				line 2
+				line 3
+				line 4
+				line 5
+				line 6
+				line 7
+				line 8
+				line 9""";
+		sourceViewer.setInput(new Document(text));
+		assertEquals(0, sourceViewer.getTextWidget().getTopPixel());
+
+		sourceViewer.getTextWidget().notifyListeners(SWT.KeyDown, new Event());
+		sourceViewer.getTextWidget().setCaretOffset(62);
+
+		drainDisplayEventQueue();
+		assertEquals(0, sourceViewer.getTextWidget().getTopPixel());
+	}
+
 	private Canvas getStickyControlCanvas(Composite composite) {
 		for (Control control : composite.getChildren()) {
 			if (control instanceof Canvas canvas) {
@@ -296,6 +367,11 @@ public class StickyScrollingControlTest {
 	private Composite getStickyLineSeparator() {
 		Canvas canvas = getStickyControlCanvas(shell);
 		return (Composite) canvas.getChildren()[2];
+	}
+
+	private void drainDisplayEventQueue() {
+		while (Display.getDefault().readAndDispatch()) {
+		}
 	}
 
 }

@@ -507,7 +507,8 @@ public class StickyScrollingControl {
 
 		@Override
 		public void caretMoved(CaretEvent event) {
-			if (event.caretOffset == 0) {
+			int offsetEndPosition = sourceViewer.getTextWidget().getText().length();
+			if (event.caretOffset == 0 || event.caretOffset == offsetEndPosition) {
 				return;
 			}
 			Display.getDefault().asyncExec(() -> {
