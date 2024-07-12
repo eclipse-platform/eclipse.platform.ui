@@ -280,18 +280,16 @@ public class FindReplaceOverlay extends Dialog {
 
 	private boolean isPartCurrentlyDisplayedInPartSash() {
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-
-		// Check if the targetPart is currently displayed on the active page
-		boolean isPartDisplayed = false;
-
-		if (activePage != null) {
-			IWorkbenchPart activePart = activePage.getActivePart();
-			if (activePart != null && activePart == targetPart) {
-				isPartDisplayed = true;
-			}
+		if (activePage == null) {
+			return false;
 		}
-
-		return isPartDisplayed;
+		IWorkbenchPart activePart = activePage.getActivePart();
+		if (activePart == null) {
+			return false;
+		}
+		IFindReplaceTarget activePartFindReplaceTarget = activePart.getAdapter(IFindReplaceTarget.class);
+		IFindReplaceTarget targetPartFindReplaceTarget = targetPart.getAdapter(IFindReplaceTarget.class);
+		return activePartFindReplaceTarget == targetPartFindReplaceTarget;
 	}
 
 	/**
