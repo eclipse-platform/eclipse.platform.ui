@@ -296,7 +296,7 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * find/replace dialog.
 	 * <code>"org.eclipse.ui.find_replace_overlay_context"</code>
 	 *
-	 * @since 3.17
+	 * @since 3.18
 	 */
 	String FIND_REPLACE_OVERLAY = PREFIX + "find_replace_overlay_context"; //$NON-NLS-1$
 
