@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -570,14 +570,23 @@ public interface ISharedImages {
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated Dropped in favor of {@link #IMG_OBJS_DND_LEFT}. The replacement
+	 *             icon does <b>not</b> require a mask.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_LEFT_SOURCE = "IMG_OBJS_DND_LEFT_SOURCE"; //$NON-NLS-1$
 	/**
 	 * Cursor 'mask' for the left arrow cursor. For cursor construction see:
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated No longer needed with {@link #IMG_OBJS_DND_LEFT}.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_LEFT_MASK = "IMG_OBJS_DND_LEFT_MASK"; //$NON-NLS-1$
 
 	/**
@@ -585,14 +594,23 @@ public interface ISharedImages {
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated Dropped in favor of {@link #IMG_OBJS_DND_RIGHT}. The replacement
+	 *             icon does <b>not</b> require a mask.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_RIGHT_SOURCE = "IMG_OBJS_DND_RIGHT_SOURCE"; //$NON-NLS-1$
 	/**
 	 * Cursor 'mask' for the right arrow cursor. For cursor construction see:
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated No longer needed with {@link #IMG_OBJS_DND_RIGHT}.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_RIGHT_MASK = "IMG_OBJS_DND_RIGHT_MASK"; //$NON-NLS-1$
 
 	/**
@@ -600,14 +618,23 @@ public interface ISharedImages {
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated Dropped in favor of {@link #IMG_OBJS_DND_TOP}. The replacement
+	 *             icon does <b>not</b> require a mask.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_TOP_SOURCE = "IMG_OBJS_DND_TOP_SOURCE"; //$NON-NLS-1$
 	/**
 	 * Cursor 'mask' for the up arrow cursor. For cursor construction see:
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated No longer needed with {@link #IMG_OBJS_DND_TOP}.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_TOP_MASK = "IMG_OBJS_DND_TOP_MASK"; //$NON-NLS-1$
 
 	/**
@@ -615,14 +642,23 @@ public interface ISharedImages {
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated Dropped in favor of {@link #IMG_OBJS_DND_BOTTOM}. The replacement
+	 *             icon does <b>not</b> require a mask.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_BOTTOM_SOURCE = "IMG_OBJS_DND_BOTTOM_SOURCE"; //$NON-NLS-1$
 	/**
 	 * Cursor 'mask' for the down arrow cursor. For cursor construction see:
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated No longer needed with {@link #IMG_OBJS_DND_BOTTOM}.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_BOTTOM_MASK = "IMG_OBJS_DND_BOTTOM_MASK"; //$NON-NLS-1$
 
 	/**
@@ -630,14 +666,23 @@ public interface ISharedImages {
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated Dropped in favor of {@link #IMG_OBJS_DND_INVALID}. The
+	 *             replacement icon does <b>not</b> require a mask.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_INVALID_SOURCE = "IMG_OBJS_DND_INVALID_SOURCE"; //$NON-NLS-1$
 	/**
 	 * Cursor 'mask' for the 'no drop' arrow cursor. For cursor construction see:
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated No longer needed with {@link #IMG_OBJS_DND_INVALID}.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_INVALID_MASK = "IMG_OBJS_DND_INVALID_MASK"; //$NON-NLS-1$
 
 	/**
@@ -645,14 +690,23 @@ public interface ISharedImages {
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated Dropped in favor of {@link #IMG_OBJS_DND_STACK}. The replacement
+	 *             icon does <b>not</b> require a mask.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_STACK_SOURCE = "IMG_OBJS_DND_STACK_SOURCE"; //$NON-NLS-1$
 	/**
 	 * Cursor 'mask' for the 'in stack' arrow cursor. For cursor construction see:
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated No longer needed with {@link #IMG_OBJS_DND_STACK}.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_STACK_MASK = "IMG_OBJS_DND_STACK_MASK"; //$NON-NLS-1$
 
 	/**
@@ -661,7 +715,12 @@ public interface ISharedImages {
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated Dropped in favor of {@link #IMG_OBJS_DND_OFFSCREEN}. The
+	 *             replacement icon does <b>not</b> require a mask.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_OFFSCREEN_SOURCE = "IMG_OBJS_DND_OFFSCREEN_SOURCE"; //$NON-NLS-1$
 	/**
 	 * Cursor 'mask' for the 'off-screen' (detached window) arrow cursor. For cursor
@@ -669,7 +728,11 @@ public interface ISharedImages {
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated No longer needed with {@link #IMG_OBJS_DND_OFFSCREEN}.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_OFFSCREEN_MASK = "IMG_OBJS_DND_OFFSCREEN_MASK"; //$NON-NLS-1$
 
 	/**
@@ -678,15 +741,96 @@ public interface ISharedImages {
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated Dropped in favor of {@link #IMG_OBJS_DND_TOFASTVIEW}. The
+	 *             replacement icon does <b>not</b> require a mask.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_TOFASTVIEW_SOURCE = "IMG_OBJS_DND_TOFASTVIEW_SOURCE"; //$NON-NLS-1$
 	/**
 	 * Cursor 'mask' for the 'fast-view' arrow cursor. For cursor construction see:
 	 *
 	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
 	 * @since 3.5
+	 * @deprecated No longer needed with {@link #IMG_OBJS_DND_TOFASTVIEW}.
+	 * @noreference Marked for deletion since newer versions are available; see
+	 *              https://github.com/eclipse-platform/eclipse.platform.ui/pull/2084
 	 */
+	@Deprecated(forRemoval = true, since = "2024-09")
 	String IMG_OBJS_DND_TOFASTVIEW_MASK = "IMG_OBJS_DND_TOFASTVIEW_MASK"; //$NON-NLS-1$
+
+	// The following set of constants represent the images that are used to
+	// construct cursors for drag and drop operations within the workbench.
+	// The hotspot of those cursors is the center of the image, which needs to be
+	// calculated dynamically w.r.t. the current device zoom:
+	// descriptor = getImageDescriptor(id);
+	// cursor = new Cursor(display, descriptor.getImageData(100), 16, 16);
+	// cursor = new Cursor(display, descriptor.getImageData(200), 32, 32);
+
+	/**
+	 * Identifies the lef arrow cursor. For cursor construction see:
+	 *
+	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
+	 * @since 3.133
+	 */
+	String IMG_OBJS_DND_LEFT = "IMG_OBJS_DND_LEFT"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the right arrow cursor. For cursor construction see:
+	 *
+	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
+	 * @since 3.133
+	 */
+	String IMG_OBJS_DND_RIGHT = "IMG_OBJS_DND_RIGHT"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the top arrow cursor. For cursor construction see:
+	 *
+	 * @see Cursor#Cursor(Device, ImageData, int, int)
+	 * @since 3.133
+	 */
+	String IMG_OBJS_DND_TOP = "IMG_OBJS_DND_TOP"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the bottom arrow cursor. For cursor construction see:
+	 *
+	 * @see Cursor#Cursor(Device, ImageData, int, int)
+	 * @since 3.133
+	 */
+	String IMG_OBJS_DND_BOTTOM = "IMG_OBJS_DND_BOTTOM"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the 'no drop' arrow cursor. For cursor construction see:
+	 *
+	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
+	 * @since 3.133
+	 */
+	String IMG_OBJS_DND_INVALID = "IMG_OBJS_DND_INVALID"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the 'in-stack' arrow cursor. For cursor construction see:
+	 *
+	 * @see Cursor#Cursor(Device, ImageData, int, int)
+	 * @since 3.133
+	 */
+	String IMG_OBJS_DND_STACK = "IMG_OBJS_DND_STACK"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the 'off-screen' arrow cursor. For cursor construction see:
+	 *
+	 * @see Cursor#Cursor(Device, ImageData, int, int)
+	 * @since 3.133
+	 */
+	String IMG_OBJS_DND_OFFSCREEN = "IMG_OBJS_DND_OFFSCREEN"; //$NON-NLS-1$
+
+	/**
+	 * Identifies the 'fast-view' arrow cursor. For cursor construction see:
+	 *
+	 * @see Cursor#Cursor(Device, ImageData, int, int)
+	 * @since 3.133
+	 */
+	String IMG_OBJS_DND_TOFASTVIEW = "IMG_OBJS_DND_TOFASTVIEW"; //$NON-NLS-1$
 
 	/**
 	 * Retrieves the specified image from the workbench plugin's image registry.
