@@ -326,6 +326,7 @@ public class StickyScrollingControl {
 			((GridData) stickyLineNumber.getLayoutData()).widthHint= lineNumberBounds.width;
 			stickyLineNumber.setRightMargin(verticalRuler.getWidth() - lineNumberBounds.x - lineNumberBounds.width);
 		}
+		stickyLinesCanvas.layout();
 	}
 
 	private LineNumberColumn getLineNumberColumn(IVerticalRuler ruler) {
@@ -507,7 +508,7 @@ public class StickyScrollingControl {
 
 		@Override
 		public void caretMoved(CaretEvent event) {
-			int offsetEndPosition = sourceViewer.getTextWidget().getText().length();
+			int offsetEndPosition= sourceViewer.getTextWidget().getText().length();
 			if (event.caretOffset == 0 || event.caretOffset == offsetEndPosition) {
 				return;
 			}
