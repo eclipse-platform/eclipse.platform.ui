@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -110,6 +110,7 @@ public/* final */class WorkbenchImages {
 	 * Declares all the workbench's images, including both "shared" ones and
 	 * internal ones.
 	 */
+	@SuppressWarnings("removal")
 	private static final void declareImages() {
 		// Overlays
 		declareImage(ISharedImages.IMG_DEC_FIELD_ERROR, PATH_OVERLAY + "error_ovr.png", true); //$NON-NLS-1$
@@ -257,22 +258,30 @@ public/* final */class WorkbenchImages {
 		declareImage(ISharedImages.IMG_OBJS_WARN_TSK, PATH_OBJECT + "warn_tsk.png", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_OBJS_INFO_TSK, PATH_OBJECT + "info_tsk.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_OBJS_DND_LEFT_SOURCE, PATH_POINTER + "left_source.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_LEFT_MASK, PATH_POINTER + "left_mask.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_RIGHT_SOURCE, PATH_POINTER + "right_source.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_RIGHT_MASK, PATH_POINTER + "right_mask.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_TOP_SOURCE, PATH_POINTER + "top_source.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_TOP_MASK, PATH_POINTER + "top_mask.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_BOTTOM_SOURCE, PATH_POINTER + "bottom_source.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_BOTTOM_MASK, PATH_POINTER + "bottom_mask.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_INVALID_SOURCE, PATH_POINTER + "invalid_source.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_INVALID_MASK, PATH_POINTER + "invalid_mask.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_STACK_SOURCE, PATH_POINTER + "stack_source.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_STACK_MASK, PATH_POINTER + "stack_mask.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_OFFSCREEN_SOURCE, PATH_POINTER + "offscreen_source.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_OFFSCREEN_MASK, PATH_POINTER + "offscreen_mask.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_SOURCE, PATH_POINTER + "tofastview_source.bmp", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_MASK, PATH_POINTER + "tofastview_mask.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_LEFT_SOURCE, PATH_POINTER + "left_source.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_LEFT_MASK, PATH_POINTER + "left_mask.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_RIGHT_SOURCE, PATH_POINTER + "right_source.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_RIGHT_MASK, PATH_POINTER + "right_mask.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_TOP_SOURCE, PATH_POINTER + "top_source.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_TOP_MASK, PATH_POINTER + "top_mask.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_BOTTOM_SOURCE, PATH_POINTER + "bottom_source.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_BOTTOM_MASK, PATH_POINTER + "bottom_mask.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_INVALID_SOURCE, PATH_POINTER + "invalid_source.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_INVALID_MASK, PATH_POINTER + "invalid_mask.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_STACK_SOURCE, PATH_POINTER + "stack_source.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_STACK_MASK, PATH_POINTER + "stack_mask.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_OFFSCREEN_SOURCE, PATH_POINTER + "offscreen_source.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_OFFSCREEN_MASK, PATH_POINTER + "offscreen_mask.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_SOURCE, PATH_POINTER + "tofastview_source.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_MASK, PATH_POINTER + "tofastview_mask.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_LEFT, PATH_POINTER + "left.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_RIGHT, PATH_POINTER + "right.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_TOP, PATH_POINTER + "top.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_BOTTOM, PATH_POINTER + "bottom.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_INVALID, PATH_POINTER + "invalid.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_STACK, PATH_POINTER + "stack.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_OFFSCREEN, PATH_POINTER + "offscreen.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW, PATH_POINTER + "tofastview.png", true); //$NON-NLS-1$
 
 		// signed jar images
 		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_YES, PATH_OBJECT + "signed_yes_tbl.png", true); //$NON-NLS-1$
