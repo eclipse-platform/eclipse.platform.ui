@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.findandreplace.overlay;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.osgi.framework.FrameworkUtil;
 
@@ -51,6 +52,8 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceColors;
@@ -61,15 +64,16 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.ITextViewer;
 
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.HistoryStore;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
+import org.eclipse.ui.part.MultiPageEditorSite;
 
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.StatusTextEditor;
@@ -108,7 +112,7 @@ public class FindReplaceOverlay extends Dialog {
 	private final Map<KeyStroke, Runnable> replaceKeyStrokeHandlers = new HashMap<>();
 
 	private FindReplaceLogic findReplaceLogic;
-	private IWorkbenchPart targetPart;
+	private final IWorkbenchPart targetPart;
 	private boolean overlayOpen;
 	private boolean replaceBarOpen;
 
@@ -141,7 +145,7 @@ public class FindReplaceOverlay extends Dialog {
 	private Color backgroundToUse;
 	private Color normalTextForegroundColor;
 	private boolean positionAtTop = true;
-	private boolean isTargetVisible = true;
+	private final TargetPartVisibilityHandler targetPartVisibilityHandler;
 
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
 		super(parent);
@@ -150,6 +154,8 @@ public class FindReplaceOverlay extends Dialog {
 		setShellStyle(SWT.MODELESS);
 		setBlockOnOpen(false);
 		targetPart = part;
+		targetPartVisibilityHandler = new TargetPartVisibilityHandler(targetPart, this::getShell, this::close,
+				this::updatePlacementAndVisibility);
 	}
 
 	@Override
@@ -219,80 +225,103 @@ public class FindReplaceOverlay extends Dialog {
 
 	private PaintListener widgetMovementListener = __ -> updatePlacementAndVisibility();
 
-	private IPartListener partListener = new IPartListener() {
-		@Override
-		public void partActivated(IWorkbenchPart part) {
-			getShell().getDisplay().asyncExec(this::adaptToPartActivationChange);
+	private static class TargetPartVisibilityHandler implements IPartListener2, IPageChangedListener {
+		private final IWorkbenchPart targetPart;
+		private final IWorkbenchPart topLevelPart;
+		private final Supplier<Shell> shellProvider;
+		private final Runnable closeCallback;
+		private final Runnable placementUpdateCallback;
+
+		private boolean isTopLevelVisible = true;
+		private boolean isNestedLevelVisible = true;
+
+		TargetPartVisibilityHandler(IWorkbenchPart targetPart, Supplier<Shell> shellProvider, Runnable closeCallback,
+				Runnable placementUpdateCallback) {
+			this.targetPart = targetPart;
+			this.shellProvider = shellProvider;
+			this.closeCallback = closeCallback;
+			this.placementUpdateCallback = placementUpdateCallback;
+			if (targetPart != null && targetPart.getSite() instanceof MultiPageEditorSite multiEditorSite) {
+				topLevelPart = multiEditorSite.getMultiPageEditor();
+			} else {
+				topLevelPart = targetPart;
+			}
 		}
 
 		@Override
-		public void partDeactivated(IWorkbenchPart part) {
-			getShell().getDisplay().asyncExec(this::adaptToPartActivationChange);
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {
+			if (partRef.getPart(false) == topLevelPart && !isTopLevelVisible) {
+				this.isTopLevelVisible = true;
+				shellProvider.get().getDisplay().asyncExec(this::adaptToPartActivationChange);
+			}
 		}
 
 		@Override
-		public void partBroughtToTop(IWorkbenchPart part) {
-			getShell().getDisplay().asyncExec(this::adaptToPartActivationChange);
+		public void partVisible(IWorkbenchPartReference partRef) {
+			if (partRef.getPart(false) == topLevelPart && !isTopLevelVisible) {
+				this.isTopLevelVisible = true;
+				shellProvider.get().getDisplay().asyncExec(this::adaptToPartActivationChange);
+			}
 		}
 
 		@Override
-		public void partClosed(IWorkbenchPart part) {
-			close();
+		public void partHidden(IWorkbenchPartReference partRef) {
+			if (partRef.getPart(false) == topLevelPart && isTopLevelVisible) {
+				this.isTopLevelVisible = false;
+				shellProvider.get().getDisplay().asyncExec(this::adaptToPartActivationChange);
+			}
 		}
 
 		@Override
-		public void partOpened(IWorkbenchPart part) {
-			// Do nothing
+		public void partClosed(IWorkbenchPartReference partRef) {
+			if (partRef.getPart(false) == topLevelPart) {
+				closeCallback.run();
+			}
+		}
+
+		@Override
+		public void pageChanged(PageChangedEvent event) {
+			if (event.getSource() == topLevelPart) {
+				boolean isPageVisible = event.getSelectedPage() == targetPart;
+				if (isNestedLevelVisible != isPageVisible) {
+					this.isNestedLevelVisible = isPageVisible;
+					shellProvider.get().getDisplay().asyncExec(this::adaptToPartActivationChange);
+				}
+			}
 		}
 
 		private void adaptToPartActivationChange() {
-			if (getShell() == null || targetPart.getSite().getPart() == null) {
+			if (shellProvider.get() == null || targetPart.getSite().getPart() == null) {
 				return;
 			}
-			isTargetVisible = isPartCurrentlyDisplayedInPartSash();
-			updatePlacementAndVisibility();
+			placementUpdateCallback.run();
 
-			if (isTargetVisible) {
+			if (!isTargetVisible()) {
 				targetPart.getSite().getShell().setActive();
 				targetPart.setFocus();
-				getShell().getDisplay().asyncExec(this::focusTargetWidget);
+				shellProvider.get().getDisplay().asyncExec(this::focusTargetWidget);
 			}
 		}
 
 		private void focusTargetWidget() {
-			if (getShell() == null || targetPart.getSite().getPart() == null) {
+			if (shellProvider.get() == null || targetPart.getSite().getPart() == null) {
 				return;
 			}
-			if (!(targetPart instanceof StatusTextEditor)) {
-				return;
+			if (targetPart instanceof StatusTextEditor textEditor) {
+				textEditor.getAdapter(ITextViewer.class).getTextWidget().forceFocus();
 			}
-			StatusTextEditor textEditor = (StatusTextEditor) targetPart;
-			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
-
-			targetWidget.forceFocus();
 		}
-	};
+
+		public boolean isTargetVisible() {
+			return isTopLevelVisible && isNestedLevelVisible;
+		}
+	}
+
 	private KeyListener closeOnTargetEscapeListener = KeyListener.keyPressedAdapter(c -> {
 		if (c.keyCode == SWT.ESC) {
 			this.close();
 		}
 	});
-
-	private boolean isPartCurrentlyDisplayedInPartSash() {
-		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-
-		// Check if the targetPart is currently displayed on the active page
-		boolean isPartDisplayed = false;
-
-		if (activePage != null) {
-			IWorkbenchPart activePart = activePage.getActivePart();
-			if (activePart != null && activePart == targetPart) {
-				isPartDisplayed = true;
-			}
-		}
-
-		return isPartDisplayed;
-	}
 
 	/**
 	 * Returns the dialog settings object used to share state between several
@@ -386,7 +415,7 @@ public class FindReplaceOverlay extends Dialog {
 				targetWidget.getShell().removeControlListener(shellMovementListener);
 				targetWidget.removePaintListener(widgetMovementListener);
 				targetWidget.removeKeyListener(closeOnTargetEscapeListener);
-				targetPart.getSite().getPage().removePartListener(partListener);
+				targetPart.getSite().getPage().removePartListener(targetPartVisibilityHandler);
 			}
 		}
 	}
@@ -399,7 +428,7 @@ public class FindReplaceOverlay extends Dialog {
 			targetWidget.getShell().addControlListener(shellMovementListener);
 			targetWidget.addPaintListener(widgetMovementListener);
 			targetWidget.addKeyListener(closeOnTargetEscapeListener);
-			targetPart.getSite().getPage().addPartListener(partListener);
+			targetPart.getSite().getPage().addPartListener(targetPartVisibilityHandler);
 		}
 	}
 
@@ -849,7 +878,7 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void updatePlacementAndVisibility() {
-		if (!isTargetVisible) {
+		if (!targetPartVisibilityHandler.isTargetVisible()) {
 			getShell().setVisible(false);
 			return;
 		}
