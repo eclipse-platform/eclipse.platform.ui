@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Event;
@@ -182,15 +183,6 @@ class DialogAccess implements IFindReplaceUIAccess {
 	}
 
 	@Override
-	public void simulateKeystrokeInFindInputField(char character) {
-		final Event event= new Event();
-		event.type= SWT.KeyDown;
-		event.character= character;
-		findCombo.getDisplay().post(event);
-		runEventQueue();
-	}
-
-	@Override
 	public String getReplaceText() {
 		return replaceCombo.getText();
 	}
@@ -214,6 +206,12 @@ class DialogAccess implements IFindReplaceUIAccess {
 	@Override
 	public String getFindText() {
 		return findCombo.getText();
+	}
+
+	@Override
+	public String getSelectedFindText() {
+		Point selection = findCombo.getSelection();
+		return findCombo.getText().substring(selection.x, selection.y);
 	}
 
 	public Combo getFindCombo() {

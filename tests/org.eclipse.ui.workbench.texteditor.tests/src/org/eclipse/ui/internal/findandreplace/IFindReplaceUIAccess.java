@@ -32,9 +32,9 @@ public interface IFindReplaceUIAccess {
 
 	void simulateKeyboardInteractionInFindInputField(int keyCode, boolean shiftPressed);
 
-	void simulateKeystrokeInFindInputField(char character);
-
 	String getFindText();
+
+	String getSelectedFindText();
 
 	String getReplaceText();
 
