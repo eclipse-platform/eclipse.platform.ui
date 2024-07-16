@@ -74,9 +74,6 @@ import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
-/**
- * @since 3.17
- */
 public class FindReplaceOverlay extends Dialog {
 	private final class KeyboardShortcuts {
 		private static final List<KeyStroke> SEARCH_FORWARD = List.of( //
