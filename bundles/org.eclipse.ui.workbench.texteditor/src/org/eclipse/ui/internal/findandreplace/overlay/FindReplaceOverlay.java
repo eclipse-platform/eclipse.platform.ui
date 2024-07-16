@@ -826,11 +826,13 @@ public class FindReplaceOverlay extends Dialog {
 			return;
 		}
 		if (isInvalidTargetShell()) {
-			getShell().getDisplay().syncExec(() -> {
-				close();
-				setParentShell(targetPart.getSite().getShell());
-				open();
-				targetPart.setFocus();
+			getShell().getDisplay().asyncExec(() -> {
+				if (isInvalidTargetShell()) {
+					close();
+					setParentShell(targetPart.getSite().getShell());
+					open();
+					targetPart.setFocus();
+				}
 			});
 			return;
 		}
