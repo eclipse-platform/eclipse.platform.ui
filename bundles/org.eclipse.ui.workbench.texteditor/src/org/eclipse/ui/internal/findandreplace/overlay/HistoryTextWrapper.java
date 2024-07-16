@@ -112,7 +112,7 @@ public class HistoryTextWrapper extends Composite {
 		offset += navigationOffset;
 		offset = offset % history.size();
 
-		if (offset + navigationOffset < 0) {
+		if (offset < 0) {
 			offset = history.size() - 1;
 		}
 
