@@ -65,6 +65,8 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  */
 public class HoverTest extends AbstratGenericEditorTest {
 
+	private static final int MAXIMUM_HOVER_RETRY_COUNT = 5;
+	
 	@Rule
 	public TestName testName= new TestName();
 
@@ -227,38 +229,43 @@ public class HoverTest extends AbstratGenericEditorTest {
 	}
 
 	private AbstractInformationControlManager triggerCompletionAndRetrieveInformationControlManager() {
-		final int caretLocation= 2;
-		this.editor.selectAndReveal(caretLocation, 0);
-		final StyledText editorTextWidget= (StyledText) this.editor.getAdapter(Control.class);
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation;
-			}
-		}.waitForCondition(editorTextWidget.getDisplay(), 3000);
-		// sending event to trigger hover computation
-		editorTextWidget.getShell().forceActive();
-		editorTextWidget.getShell().setActive();
-		editorTextWidget.getShell().setFocus();
-		editorTextWidget.getShell().getDisplay().wake();
-		Event hoverEvent= new Event();
-		hoverEvent.widget= editorTextWidget;
-		hoverEvent.type= SWT.MouseHover;
-		hoverEvent.x= editorTextWidget.getClientArea().x + 5;
-		hoverEvent.y= editorTextWidget.getClientArea().y + 5;
-		hoverEvent.display= editorTextWidget.getDisplay();
-		hoverEvent.doit= true;
-		editorTextWidget.getDisplay().setCursorLocation(editorTextWidget.toDisplay(hoverEvent.x, hoverEvent.y));
-		editorTextWidget.notifyListeners(SWT.MouseHover, hoverEvent);
+		boolean foundHoverData = false;
+		int attemptNumber = 0;
+		
 		ITextViewer viewer= (ITextViewer) new Accessor(editor, AbstractTextEditor.class).invoke("getSourceViewer", new Object[0]);
 		AbstractInformationControlManager textHoverManager= (AbstractInformationControlManager) new Accessor(viewer, TextViewer.class).get("fTextHoverManager");
-		// retrieving hover content
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return getHoverData(textHoverManager) != null;
-			}
-		}.waitForCondition(hoverEvent.display, 6000);
+		
+		while (!foundHoverData && attemptNumber++ < MAXIMUM_HOVER_RETRY_COUNT) {
+			final int caretLocation= 2;
+			editor.setFocus();
+			this.editor.selectAndReveal(caretLocation, 0);
+			final StyledText editorTextWidget= (StyledText) this.editor.getAdapter(Control.class);
+			new DisplayHelper() {
+				@Override
+				protected boolean condition() {
+					return editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation;
+				}
+			}.waitForCondition(editorTextWidget.getDisplay(), 3000);
+			assertTrue("editor does not have focus", editorTextWidget.isFocusControl());
+			// sending event to trigger hover computation
+			Event hoverEvent= new Event();
+			hoverEvent.widget= editorTextWidget;
+			hoverEvent.type= SWT.MouseHover;
+			hoverEvent.x= editorTextWidget.getClientArea().x + 5;
+			hoverEvent.y= editorTextWidget.getClientArea().y + 5;
+			hoverEvent.display= editorTextWidget.getDisplay();
+			hoverEvent.doit= true;
+			editorTextWidget.getDisplay().setCursorLocation(editorTextWidget.toDisplay(hoverEvent.x, hoverEvent.y));
+			editorTextWidget.notifyListeners(SWT.MouseHover, hoverEvent);
+			// retrieving hover content
+			foundHoverData = new DisplayHelper() {
+				@Override
+				protected boolean condition() {
+					return getHoverData(textHoverManager) != null;
+				}
+			}.waitForCondition(hoverEvent.display, 6000);
+		}
+		assertTrue("hover data not found", foundHoverData);
 		return textHoverManager;
 	}
 }
