@@ -306,23 +306,24 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 	@Test
 	public void testSearchTextSelectedWhenOpeningDialog() {
 		openTextViewer("test");
+
 		fTextViewer.setSelection(new TextSelection(0, 4));
 		initializeFindReplaceUIForTextViewer();
-		assertEquals("test", dialog.getFindText());
 
-		dialog.simulateKeystrokeInFindInputField('w');
-		assertEquals("w", dialog.getFindText());
+		assertEquals("test", dialog.getFindText());
+		assertEquals(dialog.getSelectedFindText(), dialog.getFindText());
 	}
 
 	@Test
 	public void testSearchTextSelectedWhenSwitchingFocusToDialog() {
 		openTextViewer("");
 		initializeFindReplaceUIForTextViewer();
-		dialog.setFindText("text");
-		reopenFindReplaceUIForTextViewer();
 
-		dialog.simulateKeystrokeInFindInputField('w');
-		assertEquals("w", dialog.getFindText());
+		dialog.setFindText("text");
+		initializeFindReplaceUIForTextViewer();
+
+		assertEquals("text", dialog.getFindText());
+		assertEquals(dialog.getSelectedFindText(), dialog.getFindText());
 	}
 
 	private void assertScopeActivationOnTextInput(String input) {

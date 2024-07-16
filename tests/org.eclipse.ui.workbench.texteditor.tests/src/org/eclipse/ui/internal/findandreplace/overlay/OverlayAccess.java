@@ -153,17 +153,13 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	}
 
 	@Override
-	public void simulateKeystrokeInFindInputField(char character) {
-		final Event event= new Event();
-		event.type= SWT.KeyDown;
-		event.character= character;
-		find.getDisplay().post(event);
-		runEventQueue();
+	public String getFindText() {
+		return find.getText();
 	}
 
 	@Override
-	public String getFindText() {
-		return find.getText();
+	public String getSelectedFindText() {
+		return find.getSelectionText();
 	}
 
 	@Override

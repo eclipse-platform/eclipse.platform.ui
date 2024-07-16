@@ -156,6 +156,10 @@ public class HistoryTextWrapper extends Composite {
 		textBar.setSelection(i, j);
 	}
 
+	public String getSelectionText() {
+		return textBar.getSelectionText();
+	}
+
 	@Override
 	public boolean isFocusControl() {
 		return textBar.isFocusControl();
