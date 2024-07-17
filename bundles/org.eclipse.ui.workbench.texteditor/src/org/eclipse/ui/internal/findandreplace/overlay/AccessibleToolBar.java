@@ -40,7 +40,7 @@ class AccessibleToolBar extends Composite {
 
 	public AccessibleToolBar(Composite parent) {
 		super(parent, SWT.NONE);
-		this.layout = GridLayoutFactory.fillDefaults().numColumns(0).spacing(0, 0).margins(0, 0).create();
+		this.layout = GridLayoutFactory.fillDefaults().numColumns(0).spacing(0, 0).margins(1, 1).create();
 		this.setLayout(layout);
 	}
 

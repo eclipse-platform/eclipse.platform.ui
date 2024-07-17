@@ -595,7 +595,7 @@ public class FindReplaceOverlay extends Dialog {
 		HistoryStore searchHistory = new HistoryStore(getDialogSettings(), "searchhistory", //$NON-NLS-1$
 				HISTORY_SIZE);
 		searchBar = new HistoryTextWrapper(searchHistory, searchBarContainer, SWT.SINGLE);
-		GridDataFactory.fillDefaults().grab(true, false).align(GridData.FILL, GridData.END).applyTo(searchBar);
+		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchBar);
 		searchBar.forceFocus();
 		searchBar.selectAll();
 		searchBar.addModifyListener(e -> {
@@ -651,18 +651,18 @@ public class FindReplaceOverlay extends Dialog {
 	private void createFindContainer() {
 		searchContainer = new Composite(contentGroup, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchContainer);
-		GridLayoutFactory.fillDefaults().numColumns(3).extendedMargins(4, 4, 2, 8).equalWidth(false)
+		GridLayoutFactory.fillDefaults().numColumns(3).extendedMargins(4, 4, 3, 5).equalWidth(false)
 				.applyTo(searchContainer);
 		searchContainer.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 		searchBarContainer = new Composite(searchContainer, SWT.NONE);
-		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.END).applyTo(searchBarContainer);
+		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchBarContainer);
 		GridLayoutFactory.fillDefaults().numColumns(1).applyTo(searchBarContainer);
 	}
 
 	private void createReplaceContainer() {
 		replaceContainer = new Composite(contentGroup, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(replaceContainer);
-		GridLayoutFactory.fillDefaults().margins(0, 1).numColumns(2).extendedMargins(4, 4, 2, 8).equalWidth(false)
+		GridLayoutFactory.fillDefaults().margins(0, 1).numColumns(2).extendedMargins(4, 4, 3, 5).equalWidth(false)
 				.applyTo(replaceContainer);
 		replaceContainer.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 		replaceBarContainer = new Composite(replaceContainer, SWT.NONE);
