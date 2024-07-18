@@ -142,7 +142,9 @@ class FindReplaceDialog extends Dialog {
 				return;
 			}
 
-			findReplaceLogic.performIncrementalSearch(getFindString());
+			if (findReplaceLogic.isActive(SearchOptions.INCREMENTAL)) {
+				findReplaceLogic.performSearch(getFindString());
+			}
 			evaluateFindReplaceStatus();
 
 			updateButtonState(!findReplaceLogic.isActive(SearchOptions.INCREMENTAL));
@@ -292,9 +294,12 @@ class FindReplaceDialog extends Dialog {
 						setupFindReplaceLogic();
 						boolean eventRequiresInverseSearchDirection = (e.stateMask & SWT.MODIFIER_MASK) == SWT.SHIFT;
 						boolean forwardSearchActivated = findReplaceLogic.isActive(SearchOptions.FORWARD);
+						boolean incrementalSearchActivated = findReplaceLogic.isActive(SearchOptions.INCREMENTAL);
 						activateInFindReplaceLogicIf(SearchOptions.FORWARD,
 								eventRequiresInverseSearchDirection != forwardSearchActivated);
+						findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
 						boolean somethingFound = findReplaceLogic.performSearch(getFindString());
+						activateInFindReplaceLogicIf(SearchOptions.INCREMENTAL, incrementalSearchActivated);
 						activateInFindReplaceLogicIf(SearchOptions.FORWARD, forwardSearchActivated);
 
 						writeSelection();

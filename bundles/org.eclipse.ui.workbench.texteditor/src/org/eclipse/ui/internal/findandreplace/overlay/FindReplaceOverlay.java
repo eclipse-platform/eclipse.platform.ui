@@ -632,7 +632,7 @@ public class FindReplaceOverlay extends Dialog {
 		if (findReplaceLogic.getTarget() instanceof IFindReplaceTargetExtension targetExtension) {
 			targetExtension.setSelection(targetExtension.getLineSelection().x, 0);
 		}
-		findReplaceLogic.performIncrementalSearch(getFindString());
+		findReplaceLogic.performSearch(getFindString());
 		evaluateFindReplaceStatus();
 	}
 

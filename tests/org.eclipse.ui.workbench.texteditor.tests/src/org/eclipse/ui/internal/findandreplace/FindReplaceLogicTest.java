@@ -667,12 +667,32 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.FORWARD);
 		findReplaceLogic.activate(SearchOptions.WRAP);
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
-		findReplaceLogic.performIncrementalSearch("test");
+		findReplaceLogic.performSearch("test");
 		assertThat(textViewer.getSelectedRange(), is(new Point(0, 4)));
 		textViewer.setSelectedRange(5, 0);
 		findReplaceLogic.resetIncrementalBaseLocation();
-		findReplaceLogic.performIncrementalSearch("test");
+		findReplaceLogic.performSearch("test");
 		assertThat(textViewer.getSelectedRange(), is(new Point(5, 4)));
+	}
+
+	@Test
+	public void testPerformIncrementalSearch() {
+		TextViewer textViewer= setupTextViewer("Test Test Test Test");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		findReplaceLogic.performSearch("Test");
+		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
+		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+
+		findReplaceLogic.performSearch("Test"); // incremental search is idempotent
+		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
+		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+
+		findReplaceLogic.performSearch(""); // this clears the incremental search, but the "old search" still remains active
+		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
+		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
 	}
 
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {
