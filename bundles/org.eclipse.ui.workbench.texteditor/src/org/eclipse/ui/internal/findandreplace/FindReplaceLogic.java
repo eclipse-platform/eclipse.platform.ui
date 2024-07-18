@@ -504,17 +504,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 			return false;
 		}
 
-		Point r = null;
-		if (isActive(SearchOptions.INCREMENTAL)) {
-			r = incrementalBaseLocation;
-		} else {
-			r = target.getSelection();
-		}
-
-		int findReplacePosition = r.x;
-		if (isActive(SearchOptions.FORWARD)) {
-			findReplacePosition += r.y;
-		}
+		int findReplacePosition = calculateFindBeginningOffset();
 
 		int index = findIndex(findString, findReplacePosition);
 
@@ -531,6 +521,22 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		}
 
 		return true;
+	}
+
+	private int calculateFindBeginningOffset() {
+		Point r = null;
+		if (isActive(SearchOptions.INCREMENTAL)) {
+			r = incrementalBaseLocation;
+		} else {
+			r = target.getSelection();
+		}
+
+		int findReplacePosition = r.x;
+		if (isActive(SearchOptions.FORWARD) && !isActive(SearchOptions.INCREMENTAL)
+				|| isActive(SearchOptions.INCREMENTAL) && !isActive(SearchOptions.FORWARD)) {
+			findReplacePosition += r.y;
+		}
+		return findReplacePosition;
 	}
 
 	@Override

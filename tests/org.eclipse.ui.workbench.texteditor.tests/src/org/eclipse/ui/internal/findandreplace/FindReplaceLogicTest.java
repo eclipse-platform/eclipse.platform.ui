@@ -717,9 +717,33 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.deactivate(SearchOptions.REGEX);
 
 		findReplaceLogic.performSearch("Test");
-		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(15, 4)));
+		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(10, 4)));
 		findReplaceLogic.performSearch("Test");
-		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(15, 4)));
+		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(10, 4)));
+	}
+
+	@Test
+	public void testIncrementalSearchNoUpdateIfAlreadyOnWord() {
+		TextViewer textViewer= setupTextViewer("hellohello");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		textViewer.setSelectedRange(0, 4);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		textViewer.setSelectedRange(0, 0);
+		findReplaceLogic.performSearch("hello");
+		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(0, 5)));
+	}
+
+	@Test
+	public void testIncrementalSearchBackwardNoUpdateIfAlreadyOnWord() {
+		TextViewer textViewer= setupTextViewer("hellohello");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.deactivate(SearchOptions.FORWARD);
+		textViewer.setSelectedRange(5, 5);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		textViewer.setSelectedRange(5, 0);
+		findReplaceLogic.performSearch("hello");
+		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(5, 5)));
 	}
 
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {
