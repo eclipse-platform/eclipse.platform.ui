@@ -16,13 +16,26 @@
 
 /* ############################## Eclipse UI properties ############################## */
 
+IEclipsePreferences#org-eclipse-ui-workbench:com-sap-adt-tools-abapsource-ui { 
+	preferences:
+		'com.sap.adt.tools.abapsource.ui.keyword=86,165,228'
+		'com.sap.adt.tools.abapsource.ui.literal=30,181,64'
+		'com.sap.adt.tools.abapsource.ui.literal.number=91,233,254'
+		'com.sap.adt.tools.abapsource.ui.comment=128,128,128' 				/* same as in JDT */
+		'com.sap.adt.tools.abapsource.ui.error=208,0,3'
+		'com.sap.adt.tools.abapsource.ui.default=204,204,204'				/* identifiers: same as normal font color e.g. in project explorer */
+		'com.sap.adt.tools.abapsource.ui.sqlScriptBackground= 95,98,98'		/* just some lighter black */
+		'com.sap.adt.tools.abapsource.ui.abapMethodBackground=20,20,20'		/* same as eclipse default text editor background */
+		'com.sap.adt.tools.abapsource.ui.enhancementPopupSelectedCodeBackground=41,41,41'
+}
+
 
 IEclipsePreferences#org-eclipse-ui-editors:org-eclipse-ui-themes { /* pseudo attribute added to allow contributions without replacing this node, see Bug 466075 */
 	preferences:
 		'AbstractTextEditor.Color.Background.SystemDefault=false'
 		'AbstractTextEditor.Color.SelectionForeground.SystemDefault=false'
 		'AbstractTextEditor.Color.SelectionBackground.SystemDefault=false'
-		'AbstractTextEditor.Color.Background=47,47,47'
+		'AbstractTextEditor.Color.Background=30,31,34'
 		'AbstractTextEditor.Color.Foreground.SystemDefault=false'
 		'AbstractTextEditor.Color.SelectionBackground=33,66,131'
 		'AbstractTextEditor.Color.SelectionForeground=147,161,161'
