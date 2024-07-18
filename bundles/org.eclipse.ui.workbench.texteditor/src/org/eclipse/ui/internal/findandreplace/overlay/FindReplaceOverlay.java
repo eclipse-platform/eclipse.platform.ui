@@ -332,6 +332,9 @@ public class FindReplaceOverlay extends Dialog {
 		if (!overlayOpen) {
 			return true;
 		}
+		if (targetPart != null) {
+			targetPart.setFocus();
+		}
 		storeOverlaySettings();
 
 		findReplaceLogic.activate(SearchOptions.GLOBAL);
