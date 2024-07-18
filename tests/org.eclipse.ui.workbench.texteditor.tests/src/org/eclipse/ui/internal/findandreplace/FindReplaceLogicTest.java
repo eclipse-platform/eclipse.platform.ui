@@ -695,6 +695,33 @@ public class FindReplaceLogicTest {
 		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
 	}
 
+	@Test
+	public void testIncrementBaseLocationWithRegEx() {
+		TextViewer textViewer= setupTextViewer("Test Test Test Test Test");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		findReplaceLogic.performSearch("Test");
+		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(0, 4)));
+
+		findReplaceLogic.activate(SearchOptions.REGEX);
+		findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
+		findReplaceLogic.performSearch("Test");
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(5, 4)));
+		findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
+		findReplaceLogic.performSearch("Test");
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(10, 4)));
+		findReplaceLogic.deactivate(SearchOptions.REGEX);
+
+		findReplaceLogic.performSearch("Test");
+		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(15, 4)));
+		findReplaceLogic.performSearch("Test");
+		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(15, 4)));
+	}
+
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {
 		assertThat(findReplaceLogic.getStatus(), instanceOf(NoStatus.class));
 	}
