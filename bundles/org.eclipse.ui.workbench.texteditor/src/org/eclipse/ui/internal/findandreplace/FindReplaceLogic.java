@@ -325,24 +325,12 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	}
 
 	@Override
-	public boolean performSearch(String searchString) {
-		return performSearch(shouldInitIncrementalBaseLocation(), searchString);
-	}
-
-	/**
-	 * Locates the user's findString in the text of the target.
-	 *
-	 * @param mustInitIncrementalBaseLocation <code>true</code> if base location
-	 *                                        must be initialized
-	 * @param findString                      the String to search for
-	 * @return Whether the string was found in the target
-	 */
-	private boolean performSearch(boolean mustInitIncrementalBaseLocation, String findString) {
-		if (mustInitIncrementalBaseLocation) {
-			resetIncrementalBaseLocation();
-		}
+	public boolean performSearch(String findString) {
 		resetStatus();
 
+		if (isActive(SearchOptions.INCREMENTAL) && !isIncrementalSearchAvailable()) {
+			return false; // Do nothing if search options are not compatible
+		}
 		boolean somethingFound = false;
 
 		if (findString != null && !findString.isEmpty()) {
@@ -650,26 +638,6 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 */
 	private void statusLineMessage(String message) {
 		statusLineMessage(false, message);
-	}
-
-	@Override
-	public void performIncrementalSearch(String searchString) {
-		resetStatus();
-
-		if (isActive(SearchOptions.INCREMENTAL) && isIncrementalSearchAvailable()) {
-			if (searchString.equals("") && target != null) { //$NON-NLS-1$
-				// empty selection at base location
-				int offset = incrementalBaseLocation.x;
-
-				if (isActive(SearchOptions.FORWARD)) {
-					offset = offset + incrementalBaseLocation.y;
-				}
-
-				findAndSelect(offset, ""); //$NON-NLS-1$
-			} else {
-				performSearch(false, searchString);
-			}
-		}
 	}
 
 	@Override
