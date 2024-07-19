@@ -658,6 +658,23 @@ public class FindReplaceLogicTest {
 		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
 	}
 
+	@Test
+	public void testResetIncrementalBaseLocation() {
+		String setupString= "test\ntest\ntest";
+		TextViewer textViewer= setupTextViewer(setupString);
+		textViewer.setSelectedRange(0, 0);
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.WRAP);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		findReplaceLogic.performIncrementalSearch("test");
+		assertThat(textViewer.getSelectedRange(), is(new Point(0, 4)));
+		textViewer.setSelectedRange(5, 0);
+		findReplaceLogic.resetIncrementalBaseLocation();
+		findReplaceLogic.performIncrementalSearch("test");
+		assertThat(textViewer.getSelectedRange(), is(new Point(5, 4)));
+	}
+
 	private void expectStatusEmpty(IFindReplaceLogic findReplaceLogic) {
 		assertThat(findReplaceLogic.getStatus(), instanceOf(NoStatus.class));
 	}

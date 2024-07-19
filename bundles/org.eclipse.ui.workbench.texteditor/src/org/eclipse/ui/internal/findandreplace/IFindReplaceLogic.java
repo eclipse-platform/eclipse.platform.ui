@@ -174,4 +174,26 @@ public interface IFindReplaceLogic {
 	 */
 	public boolean isWholeWordSearchAvailable(String findString);
 
+	/**
+	 * Initializes the anchor used as the starting point for incremental searching.
+	 * Subsequent incremental searches will start from the first letter of the
+	 * currently selected range in the FindReplaceTarget.
+	 *
+	 * <p>
+	 * The "current selection" refers to the range of text that is currently
+	 * highlighted or selected within the FindReplaceTarget. This selection can be
+	 * either a single position (if no range is selected) or a range of text.
+	 *
+	 * <p>
+	 * When handling range selections:
+	 * <ul>
+	 * <li>Forward search operations will use the beginning of the selection as the
+	 * starting point.</li>
+	 * <li>Backward search operations will use the end of the selection as the
+	 * starting point.</li>
+	 * </ul>
+	 * </p>
+	 */
+	void resetIncrementalBaseLocation();
+
 }

@@ -67,7 +67,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		case FORWARD:
 		case INCREMENTAL:
 			if (shouldInitIncrementalBaseLocation()) {
-				initIncrementalBaseLocation();
+				resetIncrementalBaseLocation();
 			}
 			break;
 		// $CASES-OMITTED$
@@ -87,7 +87,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		}
 
 		if (searchOption == SearchOptions.FORWARD && shouldInitIncrementalBaseLocation()) {
-			initIncrementalBaseLocation();
+			resetIncrementalBaseLocation();
 		}
 	}
 
@@ -136,12 +136,8 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		return isActive(SearchOptions.REGEX) && isTargetSupportingRegEx;
 	}
 
-
-	/**
-	 * Initializes the anchor used as starting point for incremental searching.
-	 *
-	 */
-	private void initIncrementalBaseLocation() {
+	@Override
+	public void resetIncrementalBaseLocation() {
 		if (target != null && isActive(SearchOptions.INCREMENTAL) && !isRegExSearchAvailableAndActive()) {
 			incrementalBaseLocation = target.getSelection();
 		} else {
@@ -159,7 +155,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 */
 	private void initializeSearchScope() {
 		if (shouldInitIncrementalBaseLocation()) {
-			initIncrementalBaseLocation();
+			resetIncrementalBaseLocation();
 		}
 
 		if (target == null || !(target instanceof IFindReplaceTargetExtension)) {
@@ -343,7 +339,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 */
 	private boolean performSearch(boolean mustInitIncrementalBaseLocation, String findString) {
 		if (mustInitIncrementalBaseLocation) {
-			initIncrementalBaseLocation();
+			resetIncrementalBaseLocation();
 		}
 		resetStatus();
 
@@ -604,7 +600,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 			}
 		}
 
-		initIncrementalBaseLocation();
+		resetIncrementalBaseLocation();
 	}
 
 	@Override

@@ -614,11 +614,7 @@ public class FindReplaceOverlay extends Dialog {
 
 			@Override
 			public void focusGained(FocusEvent e) {
-				// we want to update the base-location of where we start incremental search
-				// to the currently selected position in the target
-				// when coming back into the dialog
-				findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
-				findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+				findReplaceLogic.resetIncrementalBaseLocation();
 			}
 
 			@Override
