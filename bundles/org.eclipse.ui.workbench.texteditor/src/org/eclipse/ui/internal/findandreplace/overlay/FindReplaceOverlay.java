@@ -53,12 +53,14 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
+import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.ITextViewer;
@@ -67,6 +69,7 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.HistoryStore;
@@ -75,6 +78,7 @@ import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 import org.eclipse.ui.part.MultiPageEditorSite;
 
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
 public class FindReplaceOverlay extends Dialog {
@@ -143,6 +147,7 @@ public class FindReplaceOverlay extends Dialog {
 	private Color normalTextForegroundColor;
 	private boolean positionAtTop = true;
 	private final TargetPartVisibilityHandler targetPartVisibilityHandler;
+	private ContentAssistCommandAdapter contentAssistSearchField, contentAssistReplaceField;
 
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
 		super(parent);
@@ -360,6 +365,7 @@ public class FindReplaceOverlay extends Dialog {
 
 		getShell().layout();
 		updatePlacementAndVisibility();
+		updateContentAssistAvailability();
 
 		return returnCode;
 	}
@@ -543,6 +549,7 @@ public class FindReplaceOverlay extends Dialog {
 					activateInFindReplacerIf(SearchOptions.REGEX, regexSearchButton.getSelection());
 					wholeWordSearchButton.setEnabled(!findReplaceLogic.isActive(SearchOptions.REGEX));
 					updateIncrementalSearch();
+					updateContentAssistAvailability();
 				}).withShortcuts(KeyboardShortcuts.OPTION_REGEX).build();
 		regexSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.REGEX));
 	}
@@ -600,6 +607,14 @@ public class FindReplaceOverlay extends Dialog {
 				}).withShortcuts(KeyboardShortcuts.SEARCH_ALL).build();
 	}
 
+	private ContentAssistCommandAdapter createContentAssistField(HistoryTextWrapper control, boolean isFind) {
+		TextContentAdapter contentAdapter = new TextContentAdapter();
+		FindReplaceDocumentAdapterContentProposalProvider findProposer = new FindReplaceDocumentAdapterContentProposalProvider(
+				isFind);
+		return new ContentAssistCommandAdapter(control.getTextBar(), contentAdapter, findProposer,
+				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new char[0], true);
+	}
+
 	private void createSearchBar() {
 		HistoryStore searchHistory = new HistoryStore(getDialogSettings(), "searchhistory", //$NON-NLS-1$
 				HISTORY_SIZE);
@@ -630,6 +645,7 @@ public class FindReplaceOverlay extends Dialog {
 
 		});
 		searchBar.setMessage(FindReplaceMessages.FindReplaceOverlay_searchBar_message);
+		contentAssistSearchField = createContentAssistField(searchBar, true);
 	}
 
 	private void updateIncrementalSearch() {
@@ -651,6 +667,7 @@ public class FindReplaceOverlay extends Dialog {
 			replaceBar.setForeground(normalTextForegroundColor);
 			searchBar.setForeground(normalTextForegroundColor);
 		}));
+		contentAssistReplaceField = createContentAssistField(replaceBar, false);
 	}
 
 	private void createFindContainer() {
@@ -709,6 +726,7 @@ public class FindReplaceOverlay extends Dialog {
 		}
 		replaceToggle.setSelection(false); // We don't want the button to look "locked in", so don't
 											// use it's selectionState
+		updateContentAssistAvailability();
 	}
 
 	private void hideReplace() {
@@ -716,6 +734,7 @@ public class FindReplaceOverlay extends Dialog {
 			return;
 		}
 		searchBar.forceFocus();
+		contentAssistReplaceField = null;
 		replaceBarOpen = false;
 		replaceContainer.dispose();
 		updatePlacementAndVisibility();
@@ -998,5 +1017,16 @@ public class FindReplaceOverlay extends Dialog {
 	private void removeSearchScope() {
 		findReplaceLogic.activate(SearchOptions.GLOBAL);
 		searchInSelectionButton.setSelection(false);
+	}
+
+	private void setContentAssistsEnablement(boolean enable) {
+		contentAssistSearchField.setEnabled(enable);
+		if (okayToUse(replaceBar)) {
+			contentAssistReplaceField.setEnabled(enable);
+		}
+	}
+
+	private void updateContentAssistAvailability() {
+		setContentAssistsEnablement(findReplaceLogic.isRegExSearchAvailableAndActive());
 	}
 }
