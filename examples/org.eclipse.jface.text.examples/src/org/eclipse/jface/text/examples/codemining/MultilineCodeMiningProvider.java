@@ -47,7 +47,10 @@ public class MultilineCodeMiningProvider extends AbstractCodeMiningProvider {
 				res.add(new LineHeaderCodeMining(line + 1, document, this) {
 					@Override
 					public String getLabel() {
-						return "multiline second line" + lineDelimiter + "multiline third line";
+						return "multiline second line" + lineDelimiter + //
+								"multiline third line" + lineDelimiter + //
+								"multiline fourth line"+ lineDelimiter + //
+								"multiline fifth line";
 					}
 				});
 			} catch (BadLocationException e) {

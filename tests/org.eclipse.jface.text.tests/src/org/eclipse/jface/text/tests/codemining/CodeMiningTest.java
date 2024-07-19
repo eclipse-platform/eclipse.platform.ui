@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.codemining;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -49,6 +50,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.AbstractCodeMiningProvider;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
+import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
@@ -300,6 +302,82 @@ public class CodeMiningTest {
 				}
 			}
 		}.waitForCondition(fViewer.getTextWidget().getDisplay(), 1000));
+	}
+
+	@Test
+	public void testMultiLineHeaderCodeMining() {
+		fViewer.getDocument().set("a\nb\n");
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { new ICodeMiningProvider() {
+			@Override
+			public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+				try {
+					List<ICodeMining> minings= new ArrayList<>();
+					// used as indication when the code minings are finished with drawing - widget.getStyleRangeAtOffset(0).metrics
+					minings.add(new StaticContentLineCodeMining(new Position(1, 1), "mining", this));
+					minings.add(new LineHeaderCodeMining(1, fViewer.getDocument(), this) {
+						@Override
+						public String getLabel() {
+							return "multiline first line\nmultiline second line\nmultiline third line\nmultiline fourth line";
+						}
+					});
+					return CompletableFuture.completedFuture(minings);
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+
+			@Override
+			public void dispose() {
+			}
+		} });
+		StyledText widget= fViewer.getTextWidget();
+		Assert.assertFalse("Code mining is unexpectedly rendered below last line", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				try {
+					return widget.getStyleRangeAtOffset(0) != null && widget.getStyleRangeAtOffset(0).metrics != null && hasCodeMiningPrintedBelowLine(fViewer, 1);
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}.waitForCondition(widget.getDisplay(), 1000));
+	}
+
+	private static boolean hasCodeMiningPrintedBelowLine(ITextViewer viewer, int line) throws BadLocationException {
+		StyledText widget= viewer.getTextWidget();
+		IDocument document= viewer.getDocument();
+		String delim= document.getLineDelimiter(line);
+		int delimLen= 0;
+		if (delim != null) {
+			delimLen= delim.length();
+		}
+		int lineLength= document.getLineLength(line) - delimLen;
+		if (lineLength < 0) {
+			lineLength= 0;
+		}
+		Rectangle lineBounds= widget.getTextBounds(document.getLineOffset(line), document.getLineOffset(line) + lineLength);
+		lineBounds.y= lineBounds.y + lineBounds.height;
+		Image image= new Image(widget.getDisplay(), widget.getSize().x, widget.getSize().y);
+		try {
+			GC gc= new GC(widget);
+			gc.copyArea(image, 0, 0);
+			gc.dispose();
+			ImageData imageData= image.getImageData();
+			for (int x= lineBounds.x + 1; x < image.getBounds().width && x < imageData.width; x++) {
+				for (int y= lineBounds.y; y < imageData.height - 10 /*do not include the border*/; y++) {
+					if (!imageData.palette.getRGB(imageData.getPixel(x, y)).equals(widget.getBackground().getRGB())) {
+						// code mining printed
+						return true;
+					}
+				}
+			}
+
+		} finally {
+			image.dispose();
+		}
+		return false;
 	}
 
 	private static boolean hasCodeMiningPrintedAfterTextOnLine(ITextViewer viewer, int line) throws BadLocationException {

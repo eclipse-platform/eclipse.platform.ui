@@ -88,7 +88,7 @@ public abstract class LineHeaderCodeMining extends AbstractCodeMining {
 				Point ext= gc.stringExtent(line);
 				result.x= Math.max(result.x, ext.x);
 				result.y+= ext.y;
-				y+= result.y + textWidget.getLineSpacing();
+				y+= ext.y + textWidget.getLineSpacing();
 			}
 			return result;
 		} else {
