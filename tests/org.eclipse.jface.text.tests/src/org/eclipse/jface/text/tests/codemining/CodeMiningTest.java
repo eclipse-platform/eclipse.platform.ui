@@ -46,6 +46,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.codemining.AbstractCodeMiningProvider;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
@@ -117,6 +118,28 @@ public class CodeMiningTest {
 
 	@Test
 	public void testCodeMiningFirstLine() {
+		fViewer.getDocument().set("echo");
+		Assert.assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return fViewer.getTextWidget().getLineVerticalIndent(0) > 0;
+			}
+		}.waitForCondition(fViewer.getControl().getDisplay(), 3000));
+	}
+
+	@Test
+	public void testCodeMiningCompletableFutureReturnsNull() {
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] {
+				new AbstractCodeMiningProvider() {
+
+					@Override
+					public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+						return CompletableFuture.supplyAsync(() -> {
+							return null;
+						});
+					}
+				},
+				new DelayedEchoCodeMiningProvider() });
 		fViewer.getDocument().set("echo");
 		Assert.assertTrue(new DisplayHelper() {
 			@Override
