@@ -138,7 +138,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	@Override
 	public void resetIncrementalBaseLocation() {
-		if (target != null && isActive(SearchOptions.INCREMENTAL) && !isRegExSearchAvailableAndActive()) {
+		if (target != null && shouldInitIncrementalBaseLocation()) {
 			incrementalBaseLocation = target.getSelection();
 		} else {
 			incrementalBaseLocation = new Point(0, 0);
@@ -146,7 +146,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	}
 
 	public boolean shouldInitIncrementalBaseLocation() {
-		return isActive(SearchOptions.INCREMENTAL) && !isActive(SearchOptions.REGEX);
+		return isActive(SearchOptions.INCREMENTAL);
 	}
 
 	/**
