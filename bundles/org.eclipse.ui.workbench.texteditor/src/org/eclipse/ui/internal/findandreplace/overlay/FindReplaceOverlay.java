@@ -466,11 +466,17 @@ public class FindReplaceOverlay extends Dialog {
 	 * grab it's color and then immediately dispose of that bar.
 	 */
 	private void retrieveBackgroundColor() {
-		Text textBarForRetrievingTheRightColor = new Text(container, SWT.SINGLE | SWT.SEARCH);
-		container.layout();
-		backgroundToUse = textBarForRetrievingTheRightColor.getBackground();
-		normalTextForegroundColor = textBarForRetrievingTheRightColor.getForeground();
-		textBarForRetrievingTheRightColor.dispose();
+		if (targetPart instanceof StatusTextEditor textEditor) {
+			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
+			backgroundToUse = targetWidget.getBackground();
+			normalTextForegroundColor = targetWidget.getForeground();
+		} else {
+			Text textBarForRetrievingTheRightColor = new Text(container, SWT.SINGLE | SWT.SEARCH);
+			container.layout();
+			backgroundToUse = textBarForRetrievingTheRightColor.getBackground();
+			normalTextForegroundColor = textBarForRetrievingTheRightColor.getForeground();
+			textBarForRetrievingTheRightColor.dispose();
+		}
 	}
 
 
