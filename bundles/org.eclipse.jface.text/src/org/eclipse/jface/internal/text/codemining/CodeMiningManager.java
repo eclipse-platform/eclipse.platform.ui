@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
@@ -194,7 +195,7 @@ public class CodeMiningManager implements Runnable {
 				}))
 				.collect(Collectors.toList());
 		return CompletableFuture.allOf(com.toArray(new CompletableFuture[com.size()])).thenApply(
-				v -> com.stream().map(CompletableFuture::join).flatMap(java.util.Collection::stream).collect(Collectors.toList()));
+				v -> com.stream().map(CompletableFuture::join).filter(Objects::nonNull).flatMap(java.util.Collection::stream).collect(Collectors.toList()));
 	}
 
 	/**
