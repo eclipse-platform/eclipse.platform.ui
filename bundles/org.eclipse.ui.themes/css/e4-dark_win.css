@@ -135,8 +135,6 @@ ImageBasedFrame,
     color: #DDDDDD;
 }
 
-/* Below changes include enhancement to the existing dark theme with ref to other IDEs like IntelliJ, VS Code etc. */
-
 /* Inactive view tabs  */
 .MPartStack {
 	swt-draw-custom-tab-content-background: true;
@@ -194,8 +192,4 @@ CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
 .MPartStack.active .MPart Form Composite Tree
 {
 	background-color: #1E1F22;
-}
-
-.MPart Form AdtFormToolkit-AdtHyperLink{
-	background-color: inherit;
 }
