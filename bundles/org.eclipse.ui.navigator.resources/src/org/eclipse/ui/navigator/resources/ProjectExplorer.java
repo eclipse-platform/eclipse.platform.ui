@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -84,14 +83,6 @@ import org.eclipse.ui.views.WorkbenchViewerSetup;
  */
 @SuppressWarnings("restriction")
 public final class ProjectExplorer extends CommonNavigator implements ISecondarySaveableSource {
-
-	/**
-	 * Number of levels to automatically expand when an element only has a single
-	 * child.
-	 *
-	 * @see AbstractTreeViewer#setAutoExpandOnSingleChildLevels(int)
-	 */
-	private static final int AUTO_EXPAND_ON_SINGLE_CHILD_LEVEL_COUNT = 10;
 
 	/**
 	 * Provides a constant for the standard instance of the Common Navigator.
@@ -173,7 +164,6 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 		if (this.userFilters.stream().anyMatch(UserFilter::isEnabled)) {
 			getCommonViewer().refresh();
 		}
-		getCommonViewer().setAutoExpandOnSingleChildLevels(AUTO_EXPAND_ON_SINGLE_CHILD_LEVEL_COUNT);
 	}
 
 	@Override
