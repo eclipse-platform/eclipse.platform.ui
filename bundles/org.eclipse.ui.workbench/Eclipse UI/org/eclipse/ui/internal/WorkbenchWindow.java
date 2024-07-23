@@ -934,25 +934,31 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 			getShell().setData(this);
 			trackShellActivation();
-			/**
-			 * When SWT zoom changes for primary monitor, prompt user to restart Eclipse to
-			 * apply the changes.
-			 */
-			getShell().addListener(SWT.ZoomChanged, event -> {
-				if (getShell().getDisplay().getPrimaryMonitor().equals(getShell().getMonitor())) {
-					int dialogResponse = MessageDialog.open(MessageDialog.QUESTION, getShell(),
-							WorkbenchMessages.Workbench_zoomChangedTitle,
-							WorkbenchMessages.Workbench_zoomChangedMessage, SWT.NONE,
-							WorkbenchMessages.Workbench_RestartButton, WorkbenchMessages.Workbench_DontRestartButton);
-					if (event.doit && dialogResponse == 0) {
-						getWorkbenchImpl().restart(true);
-					}
-				}
-			});
-
+			addZoomChangeListenerToPromptForRestart();
 		} finally {
 			HandlerServiceImpl.pop();
 		}
+	}
+
+	private void addZoomChangeListenerToPromptForRestart() {
+		getShell().addListener(SWT.ZoomChanged, event -> {
+			/**
+			 * Prompt for restart when an SWT zoom change for the primary monitor occurs,
+			 * only when rescaling at runtime is not activated.
+			 */
+			if (getShell().getDisplay().isRescalingAtRuntime()) {
+				return;
+			}
+			if (getShell().getDisplay().getPrimaryMonitor().equals(getShell().getMonitor())) {
+				int dialogResponse = MessageDialog.open(MessageDialog.QUESTION, getShell(),
+						WorkbenchMessages.Workbench_zoomChangedTitle, WorkbenchMessages.Workbench_zoomChangedMessage,
+						SWT.NONE, WorkbenchMessages.Workbench_RestartButton,
+						WorkbenchMessages.Workbench_DontRestartButton);
+				if (event.doit && dialogResponse == 0) {
+					getWorkbenchImpl().restart(true);
+				}
+			}
+		});
 	}
 
 	@PreDestroy
