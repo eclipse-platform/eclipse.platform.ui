@@ -586,6 +586,9 @@ public class WorkbenchMessages extends NLS {
 	public static String Workbench_NeedsClose_Title;
 	public static String Workbench_NeedsClose_Message;
 
+	public static String Workbench_CantRestart_Title;
+	public static String Workbench_CantRestart_Message;
+
 	public static String ErrorPreferencePage_errorMessage;
 
 	public static String ListSelection_title;

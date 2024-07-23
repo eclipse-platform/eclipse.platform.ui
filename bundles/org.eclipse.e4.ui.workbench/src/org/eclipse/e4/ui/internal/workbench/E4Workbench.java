@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -201,6 +202,12 @@ public class E4Workbench implements IWorkbench {
 
 	@Override
 	public boolean restart() {
+		if (!canRestart()) {
+			String message = "The workbench cannot be restarted. This application was started with the '--launcher.noRestart' argument. Instead of restarting, shut down and start again manually."; //$NON-NLS-1$
+			ILog.get().error(message);
+			return false;
+		}
+
 		this.restart = true;
 		return close();
 	}
@@ -210,6 +217,22 @@ public class E4Workbench implements IWorkbench {
 	 */
 	public boolean isRestart() {
 		return restart;
+	}
+
+	/**
+	 * Returns whether the workbench can be {@link #restart() restarted}.
+	 *
+	 * <p>
+	 * It can not be restarted if the <code>--launcher.noRestart</code> argument is
+	 * given.
+	 * </p>
+	 *
+	 * @return <code>true</code> if the workbench can be restarted.
+	 */
+	public static boolean canRestart() {
+		String commands = System.getProperty("eclipse.commands", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		String NO_RESTART_ARGUMENT = "--launcher.noRestart"; //$NON-NLS-1$
+		return commands.lines().map(String::strip).noneMatch(NO_RESTART_ARGUMENT::equals);
 	}
 
 	/**
