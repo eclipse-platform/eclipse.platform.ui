@@ -111,7 +111,7 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		if (Util.isGtk()) {
 			return "dbus-send --print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:\"${selected_resource_uri}\" string:\"\""; //$NON-NLS-1$
 		} else if (Util.isWindows()) {
-			return "explorer /E,/select=${selected_resource_loc}"; //$NON-NLS-1$
+			return "explorer /E,/select=\"${selected_resource_loc}\""; //$NON-NLS-1$
 		} else if (Util.isMac()) {
 			return "open -R \"${selected_resource_loc}\""; //$NON-NLS-1$
 		}
