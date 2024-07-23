@@ -1404,6 +1404,11 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 */
 	/* package */
 	boolean close(int returnCode, final boolean force) {
+		if (returnCode == PlatformUI.RETURN_RESTART && !E4Workbench.canRestart()) {
+			informNoRestart();
+			return false;
+		}
+
 		this.returnCode = returnCode;
 		final boolean[] ret = new boolean[1];
 		BusyIndicator.showWhile(null, () -> ret[0] = busyClose(force));
@@ -2555,11 +2560,21 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 	@Override
 	public boolean restart() {
+		if (!E4Workbench.canRestart()) {
+			informNoRestart();
+			return false;
+		}
+
 		return close(PlatformUI.RETURN_RESTART, false);
 	}
 
 	@Override
 	public boolean restart(boolean useCurrrentWorkspace) {
+		if (!E4Workbench.canRestart()) {
+			informNoRestart();
+			return false;
+		}
+
 		if (Platform.inDevelopmentMode()) {
 			// In development mode, command line parameters cannot be changed and restart
 			// will always be EXIT_RESTART. Also see setRestartArguments method
@@ -2581,6 +2596,18 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			}
 		}
 		return close(PlatformUI.RETURN_RESTART, false);
+	}
+
+	/**
+	 * Inform the user that the workbench can't be restarted. If the workbench UI is
+	 * not available, this method does nothing.
+	 */
+	private void informNoRestart() {
+		final Display display = getDisplay();
+		if (display != null && !display.isDisposed()) {
+			MessageDialog.openError(null, WorkbenchMessages.Workbench_CantRestart_Title,
+					WorkbenchMessages.Workbench_CantRestart_Message);
+		}
 	}
 
 	/**
