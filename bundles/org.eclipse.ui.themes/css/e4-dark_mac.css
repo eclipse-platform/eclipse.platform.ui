@@ -56,8 +56,8 @@ Button  {
 /* Inactive view tabs  */
 .MPartStack {
 	swt-draw-custom-tab-content-background: true;
-	swt-unselected-hot-tab-color-background: #48484c;
-}
+	swt-unselected-hot-tab-color-background: #161616;
+} 
 
 CTabFolder{
 	swt-selected-tab-highlight: #2b79d7;
