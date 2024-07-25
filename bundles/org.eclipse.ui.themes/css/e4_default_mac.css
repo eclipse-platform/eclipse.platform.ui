@@ -178,6 +178,8 @@ CTabFolder Canvas {
     swt-selected-highlight-top: true;	
 	swt-tab-outline:#eaeaea; 
 	swt-tab-outer-keyline: #eaeaea;
+	swt-draw-custom-tab-content-background: true;
+	swt-unselected-hot-tab-color-background:'#FFFFFF';
 }
 
 #org-eclipse-ui-editorss CTabFolder.active {
