@@ -141,8 +141,11 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 			// Ensure that disposed widgets are unbound form the model
 			Widget swtWidget = (Widget) widget;
 			swtWidget.addDisposeListener(e -> {
-				MUIElement element = (MUIElement) e.widget
-						.getData(OWNING_ME);
+				Widget w = e.widget;
+				if (w.isDisposed()) {
+					return;
+				}
+				MUIElement element = (MUIElement) w.getData(OWNING_ME);
 				if (element != null)
 					unbindWidget(element);
 			});
