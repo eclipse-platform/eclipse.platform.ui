@@ -16,4 +16,10 @@
 			extensions="testfile">
 		</provider>
 	</extension>
+	<extension point="org.eclipse.ui.workbench.texteditor.codeMiningProviders">
+		<codeMiningProvider
+			class="org.eclipse.jface.text.tests.codemining.CodeMiningTestProvider"
+			id="org.eclipse.jface.text.tests.codemining.CodeMiningTestProvider">
+		</codeMiningProvider>
+	</extension>
 </plugin>

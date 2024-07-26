@@ -19,6 +19,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import org.eclipse.jface.text.tests.codemining.CodeMiningTest;
+
 import org.eclipse.ui.internal.texteditor.stickyscroll.StickyLinesProviderTest;
 import org.eclipse.ui.internal.texteditor.stickyscroll.StickyScrollingControlTest;
 import org.eclipse.ui.internal.texteditor.stickyscroll.StickyScrollingHandlerTest;
@@ -48,6 +50,8 @@ import org.eclipse.ui.internal.texteditor.stickyscroll.StickyScrollingHandlerTes
 		StickyScrollingControlTest.class,
 		StickyScrollingHandlerTest.class,
 		StickyLinesProviderTest.class,
+
+		CodeMiningTest.class,
 })
 public class EditorsTestSuite {
 	// see @SuiteClasses

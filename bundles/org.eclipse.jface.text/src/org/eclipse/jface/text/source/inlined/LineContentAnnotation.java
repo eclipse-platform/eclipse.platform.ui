@@ -159,7 +159,7 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	}
 
 	static boolean drawRightToPreviousChar(int widgetOffset, StyledText textWidget) {
-		return widgetOffset > 0 &&
+		return widgetOffset > 0 && widgetOffset < textWidget.getCharCount() &&
 				textWidget.getLineAtOffset(widgetOffset) == textWidget.getLineAtOffset(widgetOffset - 1);
 	}
 
