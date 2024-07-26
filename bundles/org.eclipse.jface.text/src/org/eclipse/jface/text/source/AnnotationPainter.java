@@ -1413,7 +1413,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				int paintStart= Math.max(lineOffset, p.getOffset());
 				String lineDelimiter= document.getLineDelimiter(i);
 				int delimiterLength= lineDelimiter != null ? lineDelimiter.length() : 0;
-				int paintLength= Math.min(lineOffset + document.getLineLength(i) - delimiterLength, p.getOffset() + p.getLength()) - paintStart;
+				int lineLengthWithoutDelimiter= document.getLineLength(i) - delimiterLength;
+				int paintLength= Math.min(lineOffset + lineLengthWithoutDelimiter, p.getOffset() + p.getLength()) - paintStart;
+				if (paintLength == 0 && lineDelimiter != null && lineDelimiter.length() > 0) {
+					// textWidget.redrawRange with length 0 is ignored and no redraw takes place
+					paintLength= lineDelimiter.length();
+				}
 				if (paintLength >= 0 && regionsTouchOrOverlap(paintStart, paintLength, clippingOffset, clippingLength)) {
 					// otherwise inside a line delimiter
 					IRegion widgetRange= getWidgetRange(paintStart, paintLength);
