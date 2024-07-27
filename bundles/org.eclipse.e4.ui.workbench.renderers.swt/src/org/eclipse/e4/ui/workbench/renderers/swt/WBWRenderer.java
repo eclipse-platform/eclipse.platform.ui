@@ -62,12 +62,14 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -446,7 +448,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			@Override
 			public Save promptToSave(MPart dirtyPart) {
 				Shell shell = (Shell) context.get(IServiceConstants.ACTIVE_SHELL);
-				Object[] elements = promptForSave(shell, Collections.singleton(dirtyPart));
+				Object[] elements = promptForSave(shell, List.of(dirtyPart));
 				if (elements == null) {
 					return Save.CANCEL;
 				}
@@ -745,14 +747,36 @@ public class WBWRenderer extends SWTPartRenderer {
 		}
 	}
 
-	private Object[] promptForSave(Shell parentShell,
-			Collection<MPart> saveableParts) {
-		SaveablePartPromptDialog dialog = new SaveablePartPromptDialog(
-				parentShell, saveableParts);
+	private Object[] promptForSave(Shell parentShell, List<MPart> saveableParts) {
+		if (saveableParts.size() == 1) {
+			MPart part = saveableParts.get(0);
+			String[] buttons;
+			buttons = new String[] { SWTRenderersMessages.choosePartsToSave_Button_Save,
+					SWTRenderersMessages.choosePartsToSave_Button_Dont_Save,
+					SWTRenderersMessages.choosePartsToSave_Button_Cancel };
+
+			String message = NLS.bind(SWTRenderersMessages.saveSingleChangesQuestionTitle, part.getLabel());
+			MessageDialog dialog = new MessageDialog(parentShell, SWTRenderersMessages.choosePartsToSaveTitle, null,
+					message, MessageDialog.NONE, 0, buttons) {
+				@Override
+				protected int getShellStyle() {
+					return SWT.CLOSE | SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL | SWT.SHEET
+							| getDefaultOrientation();
+				}
+			};
+			switch (dialog.open()) {
+			case 0:
+				return new Object[] { part };
+			case 1:
+				return new Object[0];
+			default:
+				return null;
+			}
+		}
+		SaveablePartPromptDialog dialog = new SaveablePartPromptDialog(parentShell, saveableParts);
 		if (dialog.open() == Window.CANCEL) {
 			return null;
 		}
-
 		return dialog.getCheckedElements();
 	}
 
