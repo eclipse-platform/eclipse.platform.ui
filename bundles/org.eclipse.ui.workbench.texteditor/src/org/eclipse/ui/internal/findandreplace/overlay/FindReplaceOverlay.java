@@ -195,18 +195,23 @@ public class FindReplaceOverlay extends Dialog {
 	private ControlListener shellMovementListener = new ControlListener() {
 		@Override
 		public void controlMoved(ControlEvent e) {
-			if (getShell() != null) {
-				getShell().getDisplay().asyncExec(() -> updatePlacementAndVisibility());
-			}
+			asyncUpdatePlacementAndVisibility();
 		}
 
 		@Override
 		public void controlResized(ControlEvent e) {
-			if (getShell() != null) {
-				getShell().getDisplay().asyncExec(() -> updatePlacementAndVisibility());
-			}
+			asyncUpdatePlacementAndVisibility();
 		}
 	};
+
+	private PaintListener widgetMovementListener = __ -> asyncUpdatePlacementAndVisibility();
+
+	private void asyncUpdatePlacementAndVisibility() {
+		Shell shell = getShell();
+		if (shell != null) {
+			shell.getDisplay().asyncExec(this::updatePlacementAndVisibility);
+		}
+	}
 
 	private ShellAdapter overlayDeactivationListener = new ShellAdapter() {
 		@Override
@@ -219,8 +224,6 @@ public class FindReplaceOverlay extends Dialog {
 			removeSearchScope();
 		}
 	};
-
-	private PaintListener widgetMovementListener = __ -> updatePlacementAndVisibility();
 
 	private static class TargetPartVisibilityHandler implements IPartListener2, IPageChangedListener {
 		private final IWorkbenchPart targetPart;
@@ -926,11 +929,16 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void updateVisibility(Rectangle targetControlBounds, Rectangle overlayBounds) {
+		boolean shallBeVisible = true;
 		if (positionAtTop) {
-			getShell().setVisible(
-					overlayBounds.y + overlayBounds.height <= targetControlBounds.y + targetControlBounds.height);
+			shallBeVisible = overlayBounds.y + overlayBounds.height <= targetControlBounds.y
+					+ targetControlBounds.height;
 		} else {
-			getShell().setVisible(overlayBounds.y >= targetControlBounds.y);
+			shallBeVisible = overlayBounds.y >= targetControlBounds.y;
+		}
+		Shell shell = getShell();
+		if (shallBeVisible != shell.isVisible()) {
+			shell.setVisible(shallBeVisible);
 		}
 	}
 
