@@ -66,6 +66,10 @@ public class ImageBasedFrame extends Canvas {
 			ImageBasedFrame frame = (ImageBasedFrame) event.widget;
 			frame.setCursor(null);
 		});
+		toWrap.addListener(SWT.ZoomChanged, event -> {
+			toWrap.pack(true);
+			setFramedControlLocation();
+		});
 
 		addMouseMoveListener(e -> {
 			// Compute the display location for the handle
