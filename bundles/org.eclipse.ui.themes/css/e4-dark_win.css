@@ -193,3 +193,7 @@ CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
 {
 	background-color: #1E1F22;
 }
+
+#org-eclipse-e4-ui-compatibility-editor Composite{
+	background-color: #1e1f22;
+}
