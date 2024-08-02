@@ -508,15 +508,15 @@ public class StickyScrollingControl {
 
 		@Override
 		public void caretMoved(CaretEvent event) {
-			int offsetEndPosition= sourceViewer.getTextWidget().getText().length();
+			int offsetEndPosition= sourceViewer.getTextWidget().getCharCount();
 			if (event.caretOffset == 0 || event.caretOffset == offsetEndPosition) {
 				return;
 			}
 			Display.getDefault().asyncExec(() -> {
-				if (!enableCaretListener) {
+				StyledText textWidget= sourceViewer.getTextWidget();
+				if (!enableCaretListener || event.caretOffset > textWidget.getCharCount()) {
 					return;
 				}
-				StyledText textWidget= sourceViewer.getTextWidget();
 				int line= textWidget.getLineAtOffset(event.caretOffset);
 				if (sourceViewer instanceof ITextViewerExtension5 extension) {
 					line= extension.widgetLine2ModelLine(line);
