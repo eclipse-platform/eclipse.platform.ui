@@ -268,7 +268,7 @@ public class StickyScrollingControlTest {
 	}
 
 	@Test
-	public void testListenForCarretAfterKeyDown() {
+	public void testListenForCaretAfterKeyDown() {
 		// set height to 10 so that scrolling is needed
 		sourceViewer.getTextWidget().setBounds(0, 0, 200, 10);
 		String text = """
@@ -315,7 +315,7 @@ public class StickyScrollingControlTest {
 	}
 
 	@Test
-	public void testDontMoveCaretAtDocumentEnd() {
+	public void testDontScrollOnCaretAtDocumentEnd() {
 		// set height to 10 so that scrolling is needed
 		sourceViewer.getTextWidget().setBounds(0, 0, 200, 10);
 		String text = """
@@ -333,6 +333,32 @@ public class StickyScrollingControlTest {
 
 		sourceViewer.getTextWidget().notifyListeners(SWT.KeyDown, new Event());
 		sourceViewer.getTextWidget().setCaretOffset(62);
+
+		drainDisplayEventQueue();
+		assertEquals(0, sourceViewer.getTextWidget().getTopPixel());
+	}
+
+	@Test
+	public void testDontScrollOnCaretWhenDocumentChangedBeforeExecution() {
+		// set height to 10 so that scrolling is needed
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 10);
+		String text = """
+				line 1
+				line 2
+				line 3
+				line 4
+				line 5
+				line 6
+				line 7
+				line 8
+				line 9""";
+		sourceViewer.setInput(new Document(text));
+		assertEquals(0, sourceViewer.getTextWidget().getTopPixel());
+		sourceViewer.getTextWidget().notifyListeners(SWT.KeyDown, new Event());
+		sourceViewer.getTextWidget().setCaretOffset(62);
+
+		// change document before event queue is drained
+		sourceViewer.setInput(new Document("line"));
 
 		drainDisplayEventQueue();
 		assertEquals(0, sourceViewer.getTextWidget().getTopPixel());
