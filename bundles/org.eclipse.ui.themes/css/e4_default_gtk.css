@@ -151,12 +151,16 @@ CTabFolder Canvas {
 .View StyledText[style~='SWT.READ_ONLY'],
 .View Link,
 .View FormText,
-.View Hyperlink
+.View Hyperlink,
+.View Canvas,
+.View FigureCanvas,
+.View Table
 {
 	background-color: #f8f8f8;
 }
 
 .View ToolItem,
+.View PageBook StyledText,
 .View Button{
 	background-color: inherit;
 }

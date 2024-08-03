@@ -103,8 +103,6 @@ CTabFolder Canvas {
 	background-color: #ffffff;
 }
 
-/* Below changes were added to enhance the appearance of Light theme with ref to other IDEs like VS Code,IntelliJ etc. */
-
 .MTrimBar#org-eclipse-ui-main-toolbar {
 	background-color: '#f8f8f8';
 }
@@ -128,12 +126,16 @@ CTabFolder Canvas {
 .View StyledText[style~='SWT.READ_ONLY'],
 .View Link,
 .View FormText,
-.View Hyperlink
+.View Hyperlink,
+.View Canvas,
+.View FigureCanvas,
+.View Table
 {
 	background-color: #f8f8f8;
 }
 
 .View ToolItem,
+.View PageBook StyledText,
 .View Button{
 	background-color: inherit;
 }
