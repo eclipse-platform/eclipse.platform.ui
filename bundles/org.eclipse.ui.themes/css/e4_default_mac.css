@@ -101,8 +101,7 @@ CTabFolder Canvas {
   background-color: rgb(255, 255, 255);
 }
 
-/* Below changes were added to enhance the appearance of Light theme with ref to other IDEs like VS Code,IntelliJ etc. */  
-  
+ 
 .MTrimBar#org-eclipse-ui-trim-status {
 	background-color: '#f8f8f8';
 
@@ -124,12 +123,15 @@ CTabFolder Canvas {
 .View Link,
 .View FormText,
 .View Hyperlink,
-.View AtcProblemsViewWelcomePage StyledText
+.View Canvas,
+.View FigureCanvas,
+.View Table
 {
 	background-color: #f8f8f8;
 }
 
 .View ToolItem,
+.View PageBook StyledText,
 .View Button{
 	background-color: inherit;
 }
@@ -140,12 +142,9 @@ CTabFolder Canvas {
 
 .View Composite PrependingAsteriskFilteredTree,
 .View PrependingAsteriskFilteredTree Text,
-.View LoggingViewFilteredTree,
-.View LoggingViewFilteredTree Text,
 .View Group Text,
 .View Group Combo,
 .View Composite Text,
-.View OSLPackageSetTableComposite Label,
 .View Button[style~='SWT.PUSH']{
 	background-color: #ffffff;
 }
@@ -218,8 +217,7 @@ Composite.MArea{
 .MPart Form Label,
 .MPart Form Text,
 .MPart Form Button,
-.MPart Form Sash,
-.MPart Form AdtFormToolkit-AdtHyperLink
+.MPart Form Sash
 {
 	background-color: '#FFFFFF';
 }
@@ -229,8 +227,7 @@ Composite.MArea{
 .MPartStack.active .MPart Form Label,
 .MPartStack.active .MPart Form Text,
 .MPartStack.active .MPart Form Button,
-.MPartStack.active .MPart Form Sash,
-.MPartStack.active .MPart Form AdtFormToolkit-AdtHyperLink
+.MPartStack.active .MPart Form Sash
 {
 	background-color: '#FFFFFF';
 }
