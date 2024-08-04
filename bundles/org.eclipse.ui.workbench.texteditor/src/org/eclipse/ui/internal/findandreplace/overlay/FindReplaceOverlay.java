@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -899,8 +900,14 @@ public class FindReplaceOverlay extends Dialog {
 		int width = localControlBounds.width;
 		int height = localControlBounds.height;
 		if (control instanceof Scrollable scrollable) {
-			width -= scrollable.getVerticalBar().getSize().x;
-			height -= scrollable.getHorizontalBar().getSize().y;
+			ScrollBar verticalBar = scrollable.getVerticalBar();
+			ScrollBar horizontalBar = scrollable.getHorizontalBar();
+			if (verticalBar != null) {
+				width -= verticalBar.getSize().x;
+			}
+			if (horizontalBar != null) {
+				height -= horizontalBar.getSize().y;
+			}
 		}
 		if (control instanceof StyledText styledText) {
 			width -= styledText.getRightMargin();
