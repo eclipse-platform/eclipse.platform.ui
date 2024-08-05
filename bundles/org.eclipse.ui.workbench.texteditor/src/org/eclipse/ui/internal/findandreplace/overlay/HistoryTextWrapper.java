@@ -99,7 +99,9 @@ public class HistoryTextWrapper extends Composite {
 	}
 
 	private void enableDropDown() {
-		dropDown.setEnabled(true);
+		if (!dropDown.isDisposed()) {
+			dropDown.setEnabled(true);
+		}
 	}
 
 	private void navigateInHistory(int navigationOffset) {
