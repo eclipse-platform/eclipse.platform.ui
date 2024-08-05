@@ -362,6 +362,23 @@
             lightweight="true"
             adaptable="true"
             location="BOTTOM_RIGHT"
+            label="%DecoratorZipFile.label"
+            class="org.eclipse.ui.internal.ide.ZipFileDecorator"
+            state="true"
+            id="org.eclipse.ui.ZipFileDecorator">
+         <description>
+            %DecoratorZipFile.description
+         </description>
+         <enablement>
+            <objectClass
+                  name="org.eclipse.core.resources.IResource">
+            </objectClass>
+         </enablement>
+      </decorator>
+      <decorator
+            lightweight="true"
+            adaptable="true"
+            location="BOTTOM_RIGHT"
             label="%DecoratorLinkedResource.label"
             class="org.eclipse.ui.internal.ide.LinkedResourceDecorator"
             state="true"
