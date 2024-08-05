@@ -128,7 +128,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 * @return <code>true</code> if the given string is a word
 	 */
 	private static boolean isWord(String str) {
-		return str != null && !str.isEmpty() && str.chars().allMatch(Character::isJavaIdentifierPart);
+		return str != null && str.chars().allMatch(Character::isJavaIdentifierPart);
 	}
 
 	@Override

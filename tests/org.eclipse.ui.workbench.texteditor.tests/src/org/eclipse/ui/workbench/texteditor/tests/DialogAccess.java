@@ -268,7 +268,6 @@ class DialogAccess implements IFindReplaceUIAccess {
 
 		String findString= getFindText();
 		if (getEnabledOptions().contains(SearchOptions.WHOLE_WORD)) {
-			assertFalse(findString.isEmpty());
 			assertFalse(findString.contains(" "));
 		}
 	}

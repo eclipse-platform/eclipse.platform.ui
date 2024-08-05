@@ -550,7 +550,7 @@ public class FindReplaceOverlay extends Dialog {
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
 				.withOperation(() -> {
 					activateInFindReplacerIf(SearchOptions.REGEX, regexSearchButton.getSelection());
-					wholeWordSearchButton.setEnabled(!findReplaceLogic.isActive(SearchOptions.REGEX));
+					wholeWordSearchButton.setEnabled(findReplaceLogic.isWholeWordSearchAvailable(getFindString()));
 					updateIncrementalSearch();
 					updateContentAssistAvailability();
 				}).withShortcuts(KeyboardShortcuts.OPTION_REGEX).build();
