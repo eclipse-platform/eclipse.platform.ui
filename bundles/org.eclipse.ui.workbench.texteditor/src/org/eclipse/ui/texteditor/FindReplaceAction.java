@@ -421,13 +421,14 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 				shellToUse = fShell;
 			}
 			overlay = new FindReplaceOverlay(shellToUse, fWorkbenchPart, fTarget);
-			hookDialogPreferenceListener();
 
 			FindReplaceOverlayFirstTimePopup.displayPopupIfNotAlreadyShown(shellToUse);
 		}
 
-		overlay.setPositionToTop(shouldPositionOverlayOnTop());
 		overlay.open();
+		overlay.setPositionToTop(shouldPositionOverlayOnTop());
+
+		hookDialogPreferenceListener();
 		overlay.getShell().addDisposeListener(__ -> removeDialogPreferenceListener());
 	}
 

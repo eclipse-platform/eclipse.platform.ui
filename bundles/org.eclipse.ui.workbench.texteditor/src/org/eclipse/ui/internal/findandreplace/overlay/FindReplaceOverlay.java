@@ -1027,6 +1027,9 @@ public class FindReplaceOverlay extends Dialog {
 
 	public void setPositionToTop(boolean shouldPositionOverlayOnTop) {
 		positionAtTop = shouldPositionOverlayOnTop;
+		if (overlayOpen) {
+			updatePlacementAndVisibility();
+		}
 	}
 
 	private void removeSearchScope() {
