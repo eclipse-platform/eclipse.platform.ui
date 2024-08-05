@@ -2457,19 +2457,6 @@
             </reference>
          </enabledWhen>
       </handler>
-      <handler
-            class="org.eclipse.ui.ide.fileSystem.zip.OpenZipFileHandler"
-            commandId="org.eclipse.ui.navigate.openResource">
-         <activeWhen>
-            <adapt
-                  type="org.eclipse.core.resources.IFile">
-               <test
-                     property="org.eclipse.core.resources.extension"
-                     value="zip">
-               </test>
-            </adapt>
-         </activeWhen>
-      </handler>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
