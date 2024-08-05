@@ -16,8 +16,12 @@ package org.eclipse.ui.internal.findandreplace.overlay;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
+
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.text.tests.Accessor;
 
@@ -30,6 +34,10 @@ import org.eclipse.ui.internal.findandreplace.SearchOptions;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 
 public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
+
+	private static final String INSTANCE_SCOPE_NODE_NAME= "org.eclipse.ui.editors"; //$NON-NLS-1$
+
+	private static final String USE_FIND_REPLACE_OVERLAY= "useFindReplaceOverlay"; //$NON-NLS-1$
 
 	@Override
 	public OverlayAccess openUIFromTextViewer(TextViewer viewer) {
@@ -152,6 +160,20 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		assertThat(dialog.getTarget().getSelection().x, is("text text ".length()));
 		dialog.pressSearch(false);
 		assertThat(dialog.getTarget().getSelection().x, is("text ".length()));
+	}
+
+	@Test
+	public void testDisableOverlayViaPreference() {
+		initializeTextViewerWithFindReplaceUI("");
+		IEclipsePreferences preferences= InstanceScope.INSTANCE.getNode(INSTANCE_SCOPE_NODE_NAME);
+		boolean useOverlayPreference= preferences.getBoolean(USE_FIND_REPLACE_OVERLAY, true);
+		try {
+			preferences.putBoolean(USE_FIND_REPLACE_OVERLAY, false);
+			assertNull("dialog should be closed after changing preference", getDialog().getActiveShell());
+		} finally {
+			preferences.putBoolean(USE_FIND_REPLACE_OVERLAY, useOverlayPreference);
+			reopenFindReplaceUIForTextViewer();
+		}
 	}
 
 }
