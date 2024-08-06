@@ -10,6 +10,8 @@
 package org.eclipse.e4.ui.internal.workbench.swt.handlers;
 
 import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,14 +46,15 @@ public class EclipseCommandURIHandler implements IUriSchemeHandler {
 		ECommandService commandService = context.get(ECommandService.class);
 		EHandlerService eHandlerService = context.get(EHandlerService.class);
 		Command command = commandService.getCommand(commandId);
-		String query = uri.getQuery();
+		String query = uri.getRawQuery();
 		if (query == null) {
 			query = ""; //$NON-NLS-1$
 		}
 		Map<String, String> uriParams = Arrays.stream(query.split("&")) //$NON-NLS-1$
 				.filter(s -> !s.isEmpty()) //
 				.map(param -> param.split("=")) //$NON-NLS-1$
-				.collect(Collectors.toMap(segments -> segments[0], segements -> segements[1]));
+				.collect(Collectors.toMap(segments -> URLDecoder.decode(segments[0], StandardCharsets.UTF_8),
+						segments -> URLDecoder.decode(segments[1], StandardCharsets.UTF_8)));
 		ParameterizedCommand parametrizedCommand = ParameterizedCommand.generateCommand(command, uriParams);
 		// a confirmation dialog is required as invoking arbitrary commands from
 		// external applications is an unsecure operation
