@@ -63,7 +63,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.text.IFindReplaceTarget;
-import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.ITextViewer;
 
 import org.eclipse.ui.IPartListener2;
@@ -630,10 +629,7 @@ public class FindReplaceOverlay extends Dialog {
 			wholeWordSearchButton.setEnabled(findReplaceLogic.isWholeWordSearchAvailable(getFindString()));
 
 			showUserFeedback(normalTextForegroundColor, true);
-			// don't perform incremental search if we are already on the word.
-			if (!getFindString().equals(findReplaceLogic.getTarget().getSelectionText())) {
-				updateIncrementalSearch();
-			}
+			updateIncrementalSearch();
 		});
 		searchBar.addFocusListener(new FocusListener() {
 
@@ -653,11 +649,6 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void updateIncrementalSearch() {
-		// clear the current incrementally searched selection to avoid having an old
-		// selection left when incrementally searching for an invalid string
-		if (findReplaceLogic.getTarget() instanceof IFindReplaceTargetExtension targetExtension) {
-			targetExtension.setSelection(targetExtension.getLineSelection().x, 0);
-		}
 		findReplaceLogic.performSearch(getFindString());
 		evaluateFindReplaceStatus();
 	}
