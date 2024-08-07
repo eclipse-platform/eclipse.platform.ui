@@ -104,7 +104,6 @@ CTabFolder Canvas {
  
 .MTrimBar#org-eclipse-ui-trim-status {
 	background-color: '#f8f8f8';
-
 }
 
 .View Composite,
@@ -114,6 +113,7 @@ CTabFolder Canvas {
 .View Group,
 .View Group Label,
 .View Section,
+.View BusyIndicator,
 .View Text[style~='SWT.READ_ONLY'],
 .View SashForm,
 .View OleFrame,
@@ -130,7 +130,14 @@ CTabFolder Canvas {
 	background-color: #f8f8f8;
 }
 
-.View ToolItem,
+.View TitleRegion{
+	background-color:#f8f8f8;
+}
+
+.MPartStack.active .View TitleRegion{
+	background-color:#f8f8f8;
+}
+
 .View PageBook StyledText,
 .View Button{
 	background-color: inherit;
@@ -210,24 +217,4 @@ Composite.MArea{
 
 .MPart CTabFolder{
 	swt-outer-keyline-color: #ffffff;
-}
-
-.MPart Form Composite,
-.MPart Form Section,
-.MPart Form Label,
-.MPart Form Text,
-.MPart Form Button,
-.MPart Form Sash
-{
-	background-color: '#FFFFFF';
-}
-
-.MPartStack.active .MPart Form Composite,
-.MPartStack.active .MPart Form Section,
-.MPartStack.active .MPart Form Label,
-.MPartStack.active .MPart Form Text,
-.MPartStack.active .MPart Form Button,
-.MPartStack.active .MPart Form Sash
-{
-	background-color: '#FFFFFF';
 }
