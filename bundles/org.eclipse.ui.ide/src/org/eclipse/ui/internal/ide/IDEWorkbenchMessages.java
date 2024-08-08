@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -814,6 +814,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceGroup_emptyName;
 	public static String ResourceGroup_invalidFilename;
 	public static String ResourceGroup_pathOccupied;
+	public static String ResourceGroup_nameExistsDifferentCase;
+	public static String ResourceGroup_nameValidationError;
 
 	public static String FileSelectionDialog_title;
 	public static String FileSelectionDialog_message;
