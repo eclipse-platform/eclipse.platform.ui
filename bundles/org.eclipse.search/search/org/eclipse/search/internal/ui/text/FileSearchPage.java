@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
+import org.eclipse.core.filesystem.ZipFileUtil;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -270,6 +271,10 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	private IFile mostNestedEquivalent(IFile resource) {
 		if (resource == null || resource.getLocationURI() == null) {
+			return resource;
+		}
+
+		if (ZipFileUtil.isInsideOpenZipFile(resource.getLocationURI())) {
 			return resource;
 		}
 		ITextFileBufferManager textFileBufferManager = FileBuffers.getTextFileBufferManager();
