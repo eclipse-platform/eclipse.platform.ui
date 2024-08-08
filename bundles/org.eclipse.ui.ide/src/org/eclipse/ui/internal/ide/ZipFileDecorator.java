@@ -1,89 +1,52 @@
 package org.eclipse.ui.internal.ide;
 
-import java.net.URI;
-import java.util.Optional;
-
-import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.ZipFileUtil;
 import org.eclipse.core.internal.resources.VirtualZipFolder;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ResourceLocator;
-import org.eclipse.jface.viewers.IDecoration;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * @since 3.4
+ * A label decorator that adds a custom icon to virtual ZIP folders.
+ * <p>
+ * This decorator provides a specific icon for objects of type
+ * {@link VirtualZipFolder} to visually differentiate them from other folder
+ * types in the UI. The icon is the same as for a ZIP when its closed and
+ * therefore a file.
+ * </p>
  *
+ * @since 3.4
  */
-public class ZipFileDecorator implements ILightweightLabelDecorator {
+public class ZipFileDecorator extends LabelProvider implements ILabelDecorator {
 
-	private static final Optional<ImageDescriptor> ZIP_FILE;
+	private static final String PLUGIN_ID = IDEWorkbenchPlugin.IDE_WORKBENCH; // $NON-NLS-1$
+	private static final Image CUSTOM_ZIP_FOLDER_ICON = AbstractUIPlugin
+			.imageDescriptorFromPlugin(PLUGIN_ID, "icons/full/obj16/zip_file_open.png").createImage(); //$NON-NLS-1$
 
-	private static final Optional<ImageDescriptor> ZIP_FILE_WARNING;
-
-	static {
-		ZIP_FILE = ResourceLocator.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/ovr16/zipfile_ovr.png"); //$NON-NLS-1$
-		ZIP_FILE_WARNING = ResourceLocator.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/ovr16/zipfile_ovr.png"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(ILabelProviderListener)
-	 */
 	@Override
-	public void addListener(ILabelProviderListener listener) {
+	public Image getImage(Object element) {
+		if (element instanceof VirtualZipFolder) {
+			return CUSTOM_ZIP_FOLDER_ICON;
+		}
+		return super.getImage(element);
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
-		// no resources to dispose
+		CUSTOM_ZIP_FOLDER_ICON.dispose();
+		super.dispose();
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
-	 *      java.lang.String)
-	 */
 	@Override
-	public boolean isLabelProperty(Object element, String property) {
-		return false;
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(ILabelProviderListener)
-	 */
-	@Override
-	public void removeListener(ILabelProviderListener listener) {
-	}
-
-	/**
-	 * Adds the linked resource overlay if the given element is a linked resource.
-	 *
-	 * @param element    element to decorate
-	 * @param decoration The decoration we are adding to
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(Object,
-	 *      IDecoration)
-	 */
-	@Override
-	public void decorate(Object element, IDecoration decoration) {
-		if (element instanceof VirtualZipFolder folder) {
-			URI location = folder.getLocationURI();
-			if (ZipFileUtil.isOpenZipFile(location)) {
-			IFileInfo fileInfo = null;
-			if (location != null) {
-				fileInfo = IDEResourceInfoUtils.getFileInfo(location);
-			}
-			if (fileInfo != null && fileInfo.exists()) {
-				ZIP_FILE.ifPresent(decoration::addOverlay);
-			} else {
-				ZIP_FILE_WARNING.ifPresent(decoration::addOverlay);
-			}
+	public Image decorateImage(Image image, Object element) {
+		if (element instanceof VirtualZipFolder) {
+			return CUSTOM_ZIP_FOLDER_ICON;
 		}
+		return image;
 	}
+
+	@Override
+	public String decorateText(String text, Object element) {
+		return text;
 	}
 }

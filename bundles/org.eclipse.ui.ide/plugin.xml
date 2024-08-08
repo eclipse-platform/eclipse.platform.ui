@@ -359,12 +359,10 @@
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
-            lightweight="true"
             adaptable="true"
-            location="BOTTOM_RIGHT"
+            state="true"
             label="%DecoratorZipFile.label"
             class="org.eclipse.ui.internal.ide.ZipFileDecorator"
-            state="true"
             id="org.eclipse.ui.ZipFileDecorator">
          <description>
             %DecoratorZipFile.description
