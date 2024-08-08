@@ -1500,5 +1500,13 @@
                visible="false">
          </view>
       </perspectiveExtension>
-   </extension>   
+   </extension>
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.codeMiningProviders">
+      <codeMiningProvider
+            class="org.eclipse.ui.internal.texteditor.codemining.ZeroWidthSpaceLineContentCodeMiningProvider"
+            id="org.eclipse.test.codemining.zswpProvider"
+            label="%CodeMining.show.ZWSP">
+      </codeMiningProvider>
+   </extension>
 </plugin>
