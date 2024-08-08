@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.ConfigureColumns;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -63,9 +64,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -426,6 +430,17 @@ public class AboutPluginsPage extends ProductInfoPage {
 		}, parent.getDisplay());
 
 		addCopySupport(vendorInfo.getTable());
+		Menu menu = vendorInfo.getTable().getMenu();
+		MenuItem installRootItem = new MenuItem(menu, SWT.NONE);
+		installRootItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
+		vendorInfo.addSelectionChangedListener(sel -> {
+			IStructuredSelection selection = (IStructuredSelection) sel.getSelection();
+			if (selection.getFirstElement() instanceof AboutBundleData selectedBundle) {
+				String installroot = selectedBundle.getBundle().getLocation();
+				if (installroot != null)
+					installRootItem.setText(JFaceResources.getString(installroot));
+			}
+		});
 	}
 
 	/**
