@@ -202,16 +202,6 @@ CTabFolder Canvas {
 	background-color: #ffffff;
 }
 
-#DebugBreadcrumbItemComposite,
-#DebugBreadcrumbItemDropDownToolBar,
-#DebugBreadcrumbItemDetailComposite,
-#DebugBreadcrumbItemDetailImageComposite,
-#DebugBreadcrumbItemDetailImageLabel,
-#DebugBreadcrumbItemDetailTextComposite,
-#DebugBreadcrumbItemDetailTextLabel {
-	background-color: '#FFFFFF';
-}
-
 Composite.MPartSashContainer{
 	background-color: #f8f8f8;
 }
