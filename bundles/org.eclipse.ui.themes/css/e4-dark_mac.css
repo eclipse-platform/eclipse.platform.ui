@@ -95,16 +95,6 @@ CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
     swt-selected-highlight-top: false;
 }
 
-#DebugBreadcrumbItemComposite,
-#DebugBreadcrumbItemDropDownToolBar,
-#DebugBreadcrumbItemDetailComposite,
-#DebugBreadcrumbItemDetailImageComposite,
-#DebugBreadcrumbItemDetailImageLabel,
-#DebugBreadcrumbItemDetailTextComposite,
-#DebugBreadcrumbItemDetailTextLabel {
-	background-color: '#1E1F22';
-}
-
 .MPart Form Composite,
 .MPart Form Composite Tree,
 .MPartStack.active .MPart Form Composite Tree
