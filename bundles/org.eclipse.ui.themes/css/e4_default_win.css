@@ -129,8 +129,7 @@ CTabFolder Canvas {
 .View FormText,
 .View Hyperlink,
 .View Canvas,
-.View FigureCanvas,
-.View Table
+.View FigureCanvas
 {
 	background-color: #f8f8f8;
 }
@@ -143,13 +142,16 @@ CTabFolder Canvas {
 	background-color:#f8f8f8;
 }
 
-.View PageBook StyledText,
-.View Button{
+.View Button[style~='SWT.CHECK']{
 	background-color: inherit;
 }
 
 .View Toolbar ToolItem{
 	background-color: #eaeaea;
+}
+
+.View TabbedPropertyList{
+	swt-tabBackground-color: #ffffff;
 }
 
 .View Composite PrependingAsteriskFilteredTree,
