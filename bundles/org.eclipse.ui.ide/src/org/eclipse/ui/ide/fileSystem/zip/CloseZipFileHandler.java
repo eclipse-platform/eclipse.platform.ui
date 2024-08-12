@@ -20,7 +20,15 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ZipFileTransformer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
@@ -38,6 +46,7 @@ public class CloseZipFileHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) {
+		Shell shell = HandlerUtil.getActiveShell(event);
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 
 		if (!(selection instanceof IStructuredSelection)) {
@@ -51,9 +60,42 @@ public class CloseZipFileHandler extends AbstractHandler {
 		}
 		try {
 			ZipFileTransformer.closeZipFile((IFolder) element);
+			if (shell != null && !shell.isDisposed()) {
+				shell.getDisplay().asyncExec(() -> {
+					// for all viewers
+					refreshAllViewers();
+
+					// only for active viewer
+//					StructuredViewer viewer = (StructuredViewer) HandlerUtil.getActivePart(event).getSite()
+//							.getSelectionProvider();
+//					if (viewer != null && viewer.getControl() != null && !viewer.getControl().isDisposed()) {
+//						viewer.refresh();
+//					}
+				});
+			}
 		} catch (CoreException | URISyntaxException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
 		return null;
+	}
+
+	public static void refreshAllViewers() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				for (IViewReference viewReference : page.getViewReferences()) {
+					IWorkbenchPart part = viewReference.getPart(false);
+					if (part != null) {
+						ISelectionProvider selectionProvider = part.getSite().getSelectionProvider();
+						if(selectionProvider instanceof StructuredViewer viewer) {
+							if (viewer != null && viewer.getControl() != null && !viewer.getControl().isDisposed()) {
+								viewer.refresh();
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
