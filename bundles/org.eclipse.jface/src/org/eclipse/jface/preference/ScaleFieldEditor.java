@@ -317,6 +317,10 @@ public class ScaleFieldEditor extends FieldEditor {
 		if (scale != null && !scale.isDisposed()) {
 			scale.setMinimum(getMinimum());
 			scale.setMaximum(getMaximum());
+			// Reapplying the minimum to ensure that the scale's value is correctly
+			// adjusted in scenarios where the new minimum exceeds the previous maximum.
+			scale.setMinimum(getMinimum());
+
 			scale.setIncrement(getIncrement());
 			scale.setPageIncrement(getPageIncrement());
 		}

@@ -18,7 +18,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ BooleanFieldEditorTest.class, StringFieldEditorTest.class, IntegerFieldEditorTest.class })
+@Suite.SuiteClasses({ //
+		BooleanFieldEditorTest.class, //
+		StringFieldEditorTest.class, //
+		IntegerFieldEditorTest.class, //
+		ScaleFieldEditorTest.class //
+})
 public class AllPrefsTests {
 
 	public static void main(String[] args) {
