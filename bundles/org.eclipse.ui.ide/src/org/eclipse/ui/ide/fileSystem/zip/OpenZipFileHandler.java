@@ -59,10 +59,9 @@ public class OpenZipFileHandler extends AbstractHandler {
 
 		try {
 			ZipFileTransformer.openZipFile((IFile) element, true);
-			// Update View
+
 			if (shell != null && !shell.isDisposed()) {
 				shell.getDisplay().asyncExec(() -> {
-					// for all viewers
 					refreshAllViewers();
 
 					// only for active viewer
@@ -80,18 +79,17 @@ public class OpenZipFileHandler extends AbstractHandler {
 		return null;
 	}
 
-	public static void refreshAllViewers() {
+	private static void refreshAllViewers() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
-				// Iterate over all views
 				for (IViewReference viewReference : page.getViewReferences()) {
 					IWorkbenchPart part = viewReference.getPart(false);
 					if (part != null) {
 						ISelectionProvider selectionProvider = part.getSite().getSelectionProvider();
 						if (selectionProvider instanceof StructuredViewer viewer) {
-							if (viewer != null && viewer.getControl() != null && !viewer.getControl().isDisposed()) {
+							if (viewer.getControl() != null && !viewer.getControl().isDisposed()) {
 								viewer.refresh();
 							}
 						}
