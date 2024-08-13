@@ -20,6 +20,7 @@ package org.eclipse.ui.actions;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.filesystem.ZipFileUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
@@ -319,7 +320,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	private boolean containsLinkedResource(List<? extends IResource> resources) {
 		for (int i = 0; i < resources.size(); i++) {
 			IResource resource = resources.get(i);
-			if (resource.isLinked()) {
+			if (resource.isLinked() && !ZipFileUtil.isOpenZipFile(resource.getLocationURI())) {
 				return true;
 			}
 		}
@@ -389,7 +390,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		if (resources.size() == 1) {
 			title = IDEWorkbenchMessages.DeleteResourceAction_title1;
 			IResource resource = resources.get(0);
-			if (resource.isLinked()) {
+			if (resource.isLinked() && !ZipFileUtil.isOpenZipFile(resource.getLocationURI())) {
 				msg = NLS
 						.bind(
 								IDEWorkbenchMessages.DeleteResourceAction_confirmLinkedResource1,
