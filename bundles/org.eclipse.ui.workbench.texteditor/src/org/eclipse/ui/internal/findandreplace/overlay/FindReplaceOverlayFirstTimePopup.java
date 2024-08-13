@@ -104,7 +104,7 @@ public class FindReplaceOverlayFirstTimePopup {
 
 		messageBody
 				.setText(FindReplaceMessages.FindReplaceOverlayFirstTimePopup_FindReplaceOverlayFirstTimePopup_message);
-		messageBody.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+		messageBody.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		messageBody.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			disableUseOverlayPreference();
 			composite.getShell().close();
