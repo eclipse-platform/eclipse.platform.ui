@@ -973,6 +973,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ShowInSystemExplorerHandler_commandUnavailable;
 	public static String ShowInSystemExplorerHandler_notDetermineLocation;
 	public static String ShowInSystemExplorerHandler_jobTitle;
+	public static String ShowInSystemExplorerHandler_insideOfZipFile;
 
 	public static String TextAction_selectAll;
 	public static String Cut;
