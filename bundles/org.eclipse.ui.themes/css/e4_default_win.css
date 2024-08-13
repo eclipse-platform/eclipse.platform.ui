@@ -78,14 +78,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR {
 	color: #3b3b3b;
 }
 
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_TEXT_COLOR {
-   color: #3b3b3b;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR {
-   color: #3b3b3b;
-}
-
 .MPartStack {
 	swt-simple: true;
 }
@@ -173,15 +165,19 @@ CTabFolder Canvas {
     swt-selected-highlight-top: false;
 }
 
+CTabItem {
+	color: #3b3b3b;
+}
+
 /* text color and background color of unselected tabs in editor*/
 #org-eclipse-ui-editorss CTabItem{
-	color: '#6A6A6A';
+	color: #3b3b3b;
 	background-color: '#f8f8f8';
 }
 
 /*text color and background color of selected tab in editor */
 #org-eclipse-ui-editorss CTabItem:selected{
-	color: '#3b3b3b';
+	color: '#org-eclipse-ui-workbench-ACTIVE_TAB_TEXT_COLOR';
 	background-color: '#FFFFFF';
 }
 
