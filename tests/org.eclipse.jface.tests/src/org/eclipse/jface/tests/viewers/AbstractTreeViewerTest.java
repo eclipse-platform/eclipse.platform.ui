@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -34,15 +35,6 @@ import org.junit.Test;
 public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 
 	AbstractTreeViewer fTreeViewer;
-
-	protected void assertEqualsArray(String s, Object[] a1, Object[] a2) {
-		int s1 = a1.length;
-		int s2 = a2.length;
-		assertEquals(s, s1, s2);
-		for (int i = 0; i < s1; i++) {
-			assertEquals(s, a1[i], a2[i]);
-		}
-	}
 
 	@Override
 	protected void assertSelectionEquals(String message, TestElement expected) {
@@ -79,7 +71,7 @@ public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 
 		Object[] list2 = fTreeViewer.getExpandedElements();
 
-		assertEqualsArray("old and new expand state are the same", list1, list2);
+		assertArrayEquals("old and new expand state are the same", list1, list2);
 	}
 
 	@Test

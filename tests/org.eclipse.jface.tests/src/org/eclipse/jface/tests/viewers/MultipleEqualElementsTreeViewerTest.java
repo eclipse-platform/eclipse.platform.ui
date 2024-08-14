@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -148,13 +149,13 @@ public class MultipleEqualElementsTreeViewerTest extends TreeViewerTest {
 	@Test
 	public void testExpansion() {
 		getTreeViewer().expandToLevel(treePath_1_21_212, 1);
-		assertEqualsArray("element expansion", new Object[] { element_1, element_2_1 },
+		assertArrayEquals("element expansion", new Object[] { element_1, element_2_1 },
 				getTreeViewer().getExpandedElements());
-		assertEqualsArray("path expansion", new Object[] { treePath_1, treePath_1_21 },
+		assertArrayEquals("path expansion", new Object[] { treePath_1, treePath_1_21 },
 				getTreeViewer().getExpandedTreePaths());
 		getTreeViewer().setExpandedTreePaths(
 				new TreePath[] { treePath_1, treePath_1_2, treePath_1_2_21, treePath_2, treePath_2_21 });
-		assertEqualsArray("path expansion",
+		assertArrayEquals("path expansion",
 				new Object[] { treePath_1, treePath_1_2, treePath_1_2_21, treePath_2, treePath_2_21 },
 				getTreeViewer().getExpandedTreePaths());
 	}

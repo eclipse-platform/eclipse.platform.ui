@@ -14,10 +14,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
@@ -149,10 +145,6 @@ abstract public class ScenariosTestCase {
 		text.notifyListeners(SWT.FocusIn, null);
 		text.setText(string);
 		text.notifyListeners(SWT.FocusOut, null);
-	}
-
-	protected void assertArrayEquals(Object[] expected, Object[] actual) {
-		assertEquals(Arrays.asList(expected), Arrays.asList(actual));
 	}
 
 }
