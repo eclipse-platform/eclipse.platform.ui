@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.InvocationTargetException;
