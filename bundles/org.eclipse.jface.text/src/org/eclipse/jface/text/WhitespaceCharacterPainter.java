@@ -17,6 +17,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -225,7 +228,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		int spaceCharWidth= gc.stringExtent(" ").x; //$NON-NLS-1$
 		boolean spaceCharsAreSameWidth= spaceCharWidth == gc.stringExtent(SPACE_SIGN_STRING).x &&
 				spaceCharWidth == gc.stringExtent(IDEOGRAPHIC_SPACE_SIGN_STRING).x;
-
+		StyleRangeWithMetricsOffsets cache= new StyleRangeWithMetricsOffsets();
 		for (int line= startLine; line <= endLine; line++) {
 			int lineOffset= fTextWidget.getOffsetAtLine(line);
 			// line end offset including line delimiter
@@ -274,7 +277,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			}
 			// draw character range
 			if (endOffset > startOffset) {
-				drawCharRange(gc, startOffset, endOffset, lineOffset, lineEndOffset, spaceCharsAreSameWidth);
+				drawCharRange(gc, startOffset, endOffset, lineOffset, lineEndOffset, spaceCharsAreSameWidth, cache);
 			}
 		}
 	}
@@ -294,7 +297,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @param spaceCharsAreSameWidth whether or not all space chars are same width, if <code>true</code>
 	 *            rendering can be optimized
 	 */
-	private void drawCharRange(GC gc, int startOffset, int endOffset, int lineOffset, int lineEndOffset, boolean spaceCharsAreSameWidth) {
+	private void drawCharRange(GC gc, int startOffset, int endOffset, int lineOffset, int lineEndOffset, boolean spaceCharsAreSameWidth, StyleRangeWithMetricsOffsets cache) {
 		StyledTextContent content= fTextWidget.getContent();
 		String lineText= content.getTextRange(lineOffset, lineEndOffset - lineOffset);
 		int startOffsetInLine= startOffset - lineOffset;
@@ -350,6 +353,9 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 						// for long runs of space if width of space and dot differ, therefore
 						// it can be used only for monospace fonts
 						if (spaceCharsAreSameWidth) {
+							if (cache.contains(fTextWidget, lineOffset + textOffset)) {
+								break;
+							}
 							continue;
 						}
 						break;
@@ -498,4 +504,30 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		gc.drawString(s, pos.x, pos.y + baslineDelta, true);
 	}
 
+	private static class StyleRangeWithMetricsOffsets {
+		private Set<Integer> offsets= null;
+
+		public boolean contains(StyledText st, int offset) {
+			if (offsets == null) {
+				fillSet(st);
+			}
+			if (offsets.contains(offset)) {
+				return true;
+			}
+			return false;
+		}
+
+		private void fillSet(StyledText st) {
+			offsets= new HashSet<>();
+			StyleRange[] ranges= st.getStyleRanges();
+			if (ranges == null) {
+				return;
+			}
+			for (StyleRange range : ranges) {
+				if (range != null && range.metrics != null) {
+					offsets.add(range.start);
+				}
+			}
+		}
+	}
 }
