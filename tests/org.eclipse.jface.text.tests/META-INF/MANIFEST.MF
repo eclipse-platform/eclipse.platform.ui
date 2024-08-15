@@ -26,3 +26,6 @@ Require-Bundle:
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.jface.text.tests
+Import-Package: org.mockito,
+ org.mockito.invocation,
+ org.mockito.stubbing

@@ -80,7 +80,8 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		DefaultTextDoubleClickStrategyTest.class,
 		MultiSelectionTest.class,
 		FindReplaceDocumentAdapterContentProposalProviderTest.class,
-		ProjectionViewerTest.class
+		ProjectionViewerTest.class,
+		TestWhitespaceCharacterPainter.class
 })
 public class JFaceTextTestSuite {
 	// see @SuiteClasses
