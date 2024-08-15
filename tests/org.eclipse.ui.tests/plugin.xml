@@ -3461,7 +3461,58 @@
        </markerContentGenerator>
         <markerContentGenerator
              id="org.eclipse.ui.tests.customScopeContentGenerator">
-       </markerContentGenerator>       
+       </markerContentGenerator>
+        <markerField
+              class="org.eclipse.ui.tests.markers.ProblemKeyMarkerField"
+              id="org.eclipse.ui.tests.markerField.problemKey"
+              name="Problem Key">
+        </markerField>
+        <markerField
+              class="org.eclipse.ui.tests.markers.ProblemKeyMarkerField"
+              id="org.eclipse.ui.tests.markerField.problemKeyV2"
+              name="Problem Key V2">
+        </markerField>
+        <markerContentGenerator
+              id="org.eclipse.ui.tests.additionalProblemMarkerContentGenerator"
+              name="Additional Problem Marker Content Generator">
+           <markerFieldReference
+                 visible="true"
+                 id="org.eclipse.ui.tests.markerField.problemKey">
+           </markerFieldReference>
+           <markerTypeReference
+                 id="org.eclipse.ui.tests.markers.static.analysis.problem">
+           </markerTypeReference>
+           <markerTypeReference
+                 id="org.eclipse.ui.tests.markers.artificial.problem">
+           </markerTypeReference>
+        </markerContentGenerator>
+        <markerContentGeneratorExtension
+              generatorId="org.eclipse.ui.ide.problemsGenerator"
+              id="org.eclipse.ui.tests.additionalProblemMarkerContentGenerator">
+           <markerGrouping
+                 id="org.eclipse.ui.tests.test.extended"
+                 label="Extended Problem Category">
+           </markerGrouping>
+        </markerContentGeneratorExtension>
+        <markerContentGeneratorExtension
+              generatorId="org.eclipse.ui.ide.allMarkersGenerator"
+              id="org.eclipse.ui.tests.additionalProblemMarkerContentGenerator">
+        </markerContentGeneratorExtension>
+        <markerContentGenerator
+              id="org.eclipse.ui.tests.additionalProblemMarkerContentGenerator2"
+              name="Additional Problem Marker Content Generator 2">
+           <markerFieldReference
+                 visible="false"
+                 id="org.eclipse.ui.tests.markerField.problemKeyV2">
+           </markerFieldReference>
+           <markerTypeReference
+                 id="org.eclipse.ui.tests.markers.static.analysis.problem">
+           </markerTypeReference>
+        </markerContentGenerator>
+        <markerContentGeneratorExtension
+              generatorId="org.eclipse.ui.tests.additionalProblemMarkerContentGenerator"
+              id="org.eclipse.ui.tests.additionalProblemMarkerContentGenerator2">
+        </markerContentGeneratorExtension>
    </extension>
    <extension
          id="categoryTestMarker"
@@ -4887,6 +4938,25 @@
          activityId="org.eclipse.ui.tests.activitySupportTest.issue1832"
          categoryId="org.eclipse.ui.tests.issue1832">
      </categoryActivityBinding>
+ </extension>
+ <extension
+       id="markers.static.analysis.problem"
+       name="Static Analysis Test Problem"
+       point="org.eclipse.core.resources.markers">
+    <super
+          type="org.eclipse.core.resources.problemmarker">
+    </super>
+    <persistent
+          value="true">
+    </persistent>
+    <attribute
+          name="problemKey">
+    </attribute>
+ </extension>
+ <extension
+       id="markers.artificial.problem"
+       name="Artificial Test Problem"
+       point="org.eclipse.core.resources.markers">
  </extension>
 
 </plugin>
