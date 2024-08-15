@@ -14,7 +14,11 @@ package org.eclipse.ui.tests.markers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.swt.widgets.Button;
@@ -25,8 +29,13 @@ import org.eclipse.ui.internal.views.markers.ExtendedMarkersView;
 import org.eclipse.ui.internal.views.markers.FiltersConfigurationDialog;
 import org.eclipse.ui.internal.views.markers.MarkerContentGenerator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerSupportView;
+import org.eclipse.ui.views.markers.internal.ContentGeneratorDescriptor;
+import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
+import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
+import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -123,6 +132,70 @@ public class MarkerSupportViewTest extends UITestCase {
 
 		boolean isLimitEnabled = view.isMarkerLimitsEnabled();
 		assertFalse(isLimitEnabled);
+	}
+
+	@Test
+	public void markerContentGeneratorExtensionLoaded() throws Exception {
+		MarkerSupportView view = (MarkerSupportView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getActivePage().showView(PROBLEM_VIEW_ID);
+
+		MarkerContentGenerator generator = getMarkerContentGenerator(view);
+		ContentGeneratorDescriptor descriptor = MarkerSupportRegistry.getInstance()
+				.getContentGenDescriptor(generator.getId());
+
+		assertNotNull(descriptor);
+
+		MarkerField[] allFields = descriptor.getAllFields();
+		List<String> allFieldNames = mapToNames(allFields);
+		String fieldName1 = "Problem Key";
+		String fieldName2 = "Problem Key V2";
+
+		assertTrue(
+				"Expected loading marker field '" + fieldName1
+						+ "' from marker content generator extensions, but got only " + allFieldNames,
+				allFieldNames.contains(fieldName1));
+		assertTrue(
+				"Expected recursively loading marker field '" + fieldName2
+						+ "' from marker content generator extensions, but got only " + allFieldNames,
+				allFieldNames.contains(fieldName2));
+
+		MarkerField[] initiallyVisibleFields = descriptor.getInitialVisible();
+		List<String> initiallyVisibleFieldNames = mapToNames(initiallyVisibleFields);
+
+		assertTrue("Expected marker field '" + fieldName1
+				+ "' from marker content generator extension being visible according to 'visible' attribute in the extension,"
+				+ " but only the following marker fields are visible " + initiallyVisibleFieldNames,
+				initiallyVisibleFieldNames.contains(fieldName1));
+		assertFalse("Expected marker field '" + fieldName2
+				+ "' from marker content generator extension being not visible according to 'visible' attribute in the extension,"
+				+ " but the following marker fields are visible " + initiallyVisibleFieldNames,
+				initiallyVisibleFieldNames.contains(fieldName2));
+
+		String markerTypeId = "org.eclipse.ui.tests.markers.artificial.problem";
+		MarkerType markerTypeFromExtension = descriptor.getType(markerTypeId);
+		List<String> markerTypeIds = descriptor.getMarkerTypes().stream().map(MarkerType::getId)
+				.collect(Collectors.toList());
+
+		assertNotNull("Marker type with id '" + markerTypeId + "' not loaded from marker content generator extension.",
+				markerTypeFromExtension);
+		assertTrue("Expected marker type id '" + markerTypeId + "' being in marker types list, but we have only "
+				+ markerTypeIds, markerTypeIds.contains(markerTypeId));
+
+		Collection<MarkerGroup> groups = descriptor.getMarkerGroups();
+		List<String> groupIds = groups.stream().map(MarkerGroup::getId).collect(Collectors.toList());
+		String groupId = "org.eclipse.ui.tests.test.extended";
+
+		assertTrue("Expected loading group id '" + groupId
+				+ "' from marker content generator extension, but got only the following group ids: " + groupIds,
+				groupIds.contains(groupId));
+	}
+
+	private List<String> mapToNames(MarkerField[] markerFields) {
+		if (markerFields == null || markerFields.length == 0) {
+			return Collections.emptyList();
+		}
+
+		return Arrays.stream(markerFields).map(mf -> mf.getName()).collect(Collectors.toList());
 	}
 
 	public static MarkerContentGenerator getMarkerContentGenerator(MarkerSupportView view) {

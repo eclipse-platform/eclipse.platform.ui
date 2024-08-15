@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -45,8 +46,10 @@ public class ContentGeneratorDescriptor {
 
 	private IConfigurationElement configurationElement;
 	private MarkerField[] allFields;
+	private MarkerField[] allFieldsWithExtensions;
 	private Collection<MarkerType> markerTypes;
 	private MarkerField[] initialVisible;
+	private MarkerField[] initialVisibleWithExtensions;
 	private Collection<MarkerGroup> groups;
 	private Collection<IConfigurationElement> generatorExtensions = new ArrayList<>();
 	private Map<String, MarkerType> allTypesTable;
@@ -79,6 +82,7 @@ public class ContentGeneratorDescriptor {
 	 */
 	public void addExtensions(Collection<IConfigurationElement> extensions) {
 		generatorExtensions = extensions;
+		clearCaches();
 	}
 
 	/**
@@ -97,7 +101,7 @@ public class ContentGeneratorDescriptor {
 	 * @return boolean
 	 */
 	public boolean allTypesSelected(Collection<MarkerType> selectedTypes) {
-		return selectedTypes.containsAll(markerTypes);
+		return selectedTypes.containsAll(getMarkerTypes());
 	}
 
 	/**
@@ -106,7 +110,14 @@ public class ContentGeneratorDescriptor {
 	 * @return {@link MarkerField}[]
 	 */
 	public MarkerField[] getAllFields() {
-		return allFields;
+		if (allFieldsWithExtensions == null) {
+			List<MarkerField> fields = new ArrayList<>();
+			fields.addAll(Arrays.asList(allFields));
+			getExtensionsDescriptorsStream().map(d -> Arrays.asList(d.getAllFields())).flatMap(Collection::stream)
+					.forEach(fields::add);
+			allFieldsWithExtensions = fields.toArray(MarkerField[]::new);
+		}
+		return allFieldsWithExtensions;
 	}
 
 	/**
@@ -157,7 +168,14 @@ public class ContentGeneratorDescriptor {
 	 * @return {@link MarkerField}[]
 	 */
 	public MarkerField[] getInitialVisible() {
-		return initialVisible;
+		if (initialVisibleWithExtensions == null) {
+			List<MarkerField> fields = new ArrayList<>();
+			fields.addAll(Arrays.asList(initialVisible));
+			getExtensionsDescriptorsStream().map(d -> Arrays.asList(d.getInitialVisible())).flatMap(Collection::stream)
+					.forEach(fields::add);
+			initialVisibleWithExtensions = fields.toArray(MarkerField[]::new);
+		}
+		return initialVisibleWithExtensions;
 	}
 
 	/**
@@ -215,6 +233,8 @@ public class ContentGeneratorDescriptor {
 				MarkerType[] types = MarkerTypesModel.getInstance().getType(IMarker.PROBLEM).getAllSubTypes();
 				markerTypes.addAll(Arrays.asList(types));
 			}
+			getExtensionsDescriptorsStream().map(ContentGeneratorDescriptor::getMarkerTypes).flatMap(Collection::stream)
+					.forEach(markerTypes::add);
 		}
 		return markerTypes;
 	}
@@ -247,7 +267,7 @@ public class ContentGeneratorDescriptor {
 		if (allTypesTable == null) {
 			allTypesTable = new HashMap<>();
 
-			Iterator<MarkerType> allIterator = markerTypes.iterator();
+			Iterator<MarkerType> allIterator = getMarkerTypes().iterator();
 			while (allIterator.hasNext()) {
 				MarkerType next = allIterator.next();
 				allTypesTable.put(next.getId(), next);
@@ -294,5 +314,28 @@ public class ContentGeneratorDescriptor {
 	 */
 	public void removeExtension(IConfigurationElement element) {
 		generatorExtensions.remove(element);
+		clearCaches();
 	}
+
+	private void clearCaches() {
+		allFieldsWithExtensions = null;
+		initialVisibleWithExtensions = null;
+		markerTypes = null;
+		groups = null;
+		allTypesTable = null;
+	}
+
+	private Stream<ContentGeneratorDescriptor> getExtensionsDescriptorsStream() {
+		if (generatorExtensions != null) {
+			MarkerSupportRegistry registry = MarkerSupportRegistry.getInstance();
+			return generatorExtensions.stream()
+					.map(extensionConfigElem -> extensionConfigElem
+							.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID))
+					.filter(id -> id != null && !id.isBlank())
+					.map(contentGeneratorId -> registry.getContentGenDescriptor(contentGeneratorId))
+					.filter(generator -> generator != null);
+		}
+		return Stream.empty();
+	}
+
 }
