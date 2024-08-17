@@ -311,11 +311,11 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		// https://learn.microsoft.com/en-us/powershell/module/defender/get-mpcomputerstatus?view=windowsserver2019-ps
 		try {
 			List<String> lines = runPowershell(monitor, "-Command", "(Get-MpComputerStatus).AMRunningMode"); //$NON-NLS-1$ //$NON-NLS-2$
-			String onlyLine = lines.size() == 1 ? lines.get(0) : ""; //$NON-NLS-1$
-			return switch (onlyLine.toLowerCase(Locale.ENGLISH)) {
+			String onlyLine = lines.size() == 1 ? lines.get(0) : "error"; //$NON-NLS-1$
+			return switch (onlyLine.toLowerCase(Locale.ENGLISH).strip()) {
 			// Known values as listed in
 			// https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/microsoft-defender-antivirus-windows#use-powershell-to-check-the-status-of-microsoft-defender-antivirus
-			case "sxs passive mode", "passive mode" -> false; //$NON-NLS-1$ //$NON-NLS-2$
+			case "sxs passive mode", "passive mode", "" -> false; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			case "normal", "edr block mode" -> true; //$NON-NLS-1$//$NON-NLS-2$
 			default -> throw new IOException("Process terminated with unexpected result:\n" + String.join("\n", lines)); //$NON-NLS-1$//$NON-NLS-2$
 			};
