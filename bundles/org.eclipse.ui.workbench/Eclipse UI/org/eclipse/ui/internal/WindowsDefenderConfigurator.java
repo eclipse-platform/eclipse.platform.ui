@@ -302,6 +302,14 @@ public class WindowsDefenderConfigurator implements EventHandler {
 			List<String> result = runPowershell(monitor, "-Command", "(Get-Service 'WinDefend').Status"); //$NON-NLS-1$ //$NON-NLS-2$
 			return result.size() == 1 && "Running".equalsIgnoreCase(result.get(0)); //$NON-NLS-1$
 		} catch (IOException e) {
+			String message = e.getMessage();
+			if (message != null
+					&& message.startsWith("Cannot run program \"" + POWERSHELL_EXE + "\": CreateProcess error=5")) { //$NON-NLS-1$//$NON-NLS-2$
+				// error code 5 means ERROR_ACCESS_DENIED:
+				// https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-
+				// Without permission to launch powershell we can't do anything and stay silent
+				return false;
+			}
 			ILog.get().error("Failed to obtain 'WinDefend' service state", e); //$NON-NLS-1$
 			return false;
 		}
@@ -364,8 +372,10 @@ public class WindowsDefenderConfigurator implements EventHandler {
 				"-ArgumentList", "'-EncodedCommand " + encodedCommand + "'"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
+	private static final String POWERSHELL_EXE = "powershell.exe"; //$NON-NLS-1$
+
 	private static List<String> runPowershell(IProgressMonitor monitor, String... arguments) throws IOException {
-		return runProcess(Stream.concat(Stream.of("powershell.exe"), Arrays.stream(arguments)).toList(), monitor); //$NON-NLS-1$
+		return runProcess(Stream.concat(Stream.of(POWERSHELL_EXE), Arrays.stream(arguments)).toList(), monitor);
 	}
 
 	private static List<String> runProcess(List<String> command, IProgressMonitor monitor) throws IOException {
