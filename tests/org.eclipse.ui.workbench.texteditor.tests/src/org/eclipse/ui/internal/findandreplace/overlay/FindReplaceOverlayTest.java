@@ -20,6 +20,8 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
+import org.eclipse.swt.graphics.Point;
+
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
@@ -88,10 +90,13 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		initializeTextViewerWithFindReplaceUI("alinee\naLinee\nline\nline");
 		OverlayAccess dialog= getDialog();
 		IFindReplaceTarget target= dialog.getTarget();
-
 		dialog.setFindText("Line");
+		assertThat(dialog.getTarget().getSelectionText(), is("line"));
+		assertEquals(new Point(1,4), dialog.getTarget().getSelection());
+
 		dialog.select(SearchOptions.CASE_SENSITIVE);
 		assertThat(dialog.getTarget().getSelectionText(), is("Line"));
+		assertEquals(new Point(8,4), dialog.getTarget().getSelection());
 
 		dialog.unselect(SearchOptions.CASE_SENSITIVE);
 		assertEquals(1, (target.getSelection()).x);
