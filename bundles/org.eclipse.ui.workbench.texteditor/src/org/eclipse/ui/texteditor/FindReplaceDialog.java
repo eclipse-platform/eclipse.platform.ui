@@ -755,18 +755,18 @@ class FindReplaceDialog extends Dialog {
 				storeSettings();
 				updateButtonState();
 				setContentAssistsEnablement(newState);
-				fIncrementalCheckBox.setEnabled(findReplaceLogic.isIncrementalSearchAvailable());
+				fIncrementalCheckBox.setEnabled(findReplaceLogic.isAvailable(SearchOptions.INCREMENTAL));
 			}
 		});
 		storeButtonWithMnemonicInMap(fIsRegExCheckBox);
-		fWholeWordCheckBox.setEnabled(findReplaceLogic.isWholeWordSearchAvailable());
+		fWholeWordCheckBox.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 		fWholeWordCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtonState();
 			}
 		});
-		fIncrementalCheckBox.setEnabled(findReplaceLogic.isIncrementalSearchAvailable());
+		fIncrementalCheckBox.setEnabled(findReplaceLogic.isAvailable(SearchOptions.INCREMENTAL));
 		return panel;
 	}
 
@@ -957,7 +957,7 @@ class FindReplaceDialog extends Dialog {
 		String selection = getCurrentSelection();
 		String searchInput = getFirstLine(selection);
 		boolean isSingleLineInput = searchInput.equals(selection);
-		if (findReplaceLogic.isRegExSearchAvailableAndActive()) {
+		if (findReplaceLogic.isAvailableAndActive(SearchOptions.REGEX)) {
 			searchInput = FindReplaceDocumentAdapter.escapeForRegExPattern(selection);
 		}
 		fFindField.setText(searchInput);
@@ -1088,11 +1088,11 @@ class FindReplaceDialog extends Dialog {
 			boolean isFindStringSet = str != null && !str.isEmpty();
 			String selectionString = enable ? target.getSelection().toString() : ""; //$NON-NLS-1$
 			boolean isTargetEditable = enable ? target.isEditable() : false;
-			boolean isRegExSearchAvailableAndActive = findReplaceLogic.isRegExSearchAvailableAndActive();
+			boolean isRegExSearchAvailableAndActive = findReplaceLogic.isAvailableAndActive(SearchOptions.REGEX);
 			boolean isSelectionGoodForReplace = selectionString != "" //$NON-NLS-1$
 					|| !isRegExSearchAvailableAndActive;
 
-			fWholeWordCheckBox.setEnabled(findReplaceLogic.isWholeWordSearchAvailable());
+			fWholeWordCheckBox.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 			fFindNextButton.setEnabled(enable && isFindStringSet);
 			fSelectAllButton.setEnabled(enable && isFindStringSet && (target instanceof IFindReplaceTargetExtension4));
 			fReplaceSelectionButton.setEnabled(
@@ -1203,11 +1203,11 @@ class FindReplaceDialog extends Dialog {
 		}
 
 		if (okToUse(fWholeWordCheckBox)) {
-			fWholeWordCheckBox.setEnabled(findReplaceLogic.isWholeWordSearchAvailable());
+			fWholeWordCheckBox.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 		}
 
 		if (okToUse(fIncrementalCheckBox)) {
-			fIncrementalCheckBox.setEnabled(findReplaceLogic.isIncrementalSearchAvailable());
+			fIncrementalCheckBox.setEnabled(findReplaceLogic.isAvailable(SearchOptions.INCREMENTAL));
 		}
 
 		if (okToUse(fReplaceLabel)) {
@@ -1222,7 +1222,7 @@ class FindReplaceDialog extends Dialog {
 
 		updateButtonState();
 
-		setContentAssistsEnablement(findReplaceLogic.isRegExSearchAvailableAndActive());
+		setContentAssistsEnablement(findReplaceLogic.isAvailableAndActive(SearchOptions.REGEX));
 	}
 
 	/**

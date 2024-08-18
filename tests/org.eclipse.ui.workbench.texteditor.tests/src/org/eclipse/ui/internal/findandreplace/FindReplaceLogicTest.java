@@ -630,7 +630,7 @@ public class FindReplaceLogicTest {
 
 		Predicate<String> isConsideredWholeWord= string -> {
 			findReplaceLogic.setFindString(string);
-			return findReplaceLogic.isWholeWordSearchAvailable();
+			return findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD);
 		};
 
 		assertTrue(isConsideredWholeWord.test("oneword"));

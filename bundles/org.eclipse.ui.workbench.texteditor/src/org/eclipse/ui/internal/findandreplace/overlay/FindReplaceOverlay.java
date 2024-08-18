@@ -556,7 +556,7 @@ public class FindReplaceOverlay extends Dialog {
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
 				.withOperation(() -> {
 					activateInFindReplacerIf(SearchOptions.REGEX, regexSearchButton.getSelection());
-					wholeWordSearchButton.setEnabled(findReplaceLogic.isWholeWordSearchAvailable());
+					wholeWordSearchButton.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 					updateIncrementalSearch();
 					updateContentAssistAvailability();
 				}).withShortcuts(KeyboardShortcuts.OPTION_REGEX).build();
@@ -632,7 +632,7 @@ public class FindReplaceOverlay extends Dialog {
 		searchBar.forceFocus();
 		searchBar.selectAll();
 		searchBar.addModifyListener(e -> {
-			wholeWordSearchButton.setEnabled(findReplaceLogic.isWholeWordSearchAvailable());
+			wholeWordSearchButton.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 
 			showUserFeedback(normalTextForegroundColor, true);
 			findReplaceLogic.setFindString(searchBar.getText());
@@ -978,7 +978,7 @@ public class FindReplaceOverlay extends Dialog {
 			findReplaceLogic.deactivate(SearchOptions.GLOBAL);
 			searchInSelectionButton.setSelection(true);
 		} else if (!selectionText.isEmpty()) {
-			if (findReplaceLogic.isRegExSearchAvailableAndActive()) {
+			if (findReplaceLogic.isAvailable(SearchOptions.REGEX)) {
 				selectionText = FindReplaceDocumentAdapter.escapeForRegExPattern(selectionText);
 			}
 			searchBar.setText(selectionText);
@@ -1038,6 +1038,6 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void updateContentAssistAvailability() {
-		setContentAssistsEnablement(findReplaceLogic.isRegExSearchAvailableAndActive());
+		setContentAssistsEnablement(findReplaceLogic.isAvailableAndActive(SearchOptions.REGEX));
 	}
 }

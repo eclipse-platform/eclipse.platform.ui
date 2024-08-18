@@ -286,7 +286,7 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		assertEnabled(SearchOptions.GLOBAL);
 		assertEnabled(SearchOptions.REGEX);
 		assertEnabled(SearchOptions.CASE_SENSITIVE);
-		if (getFindText().equals("") || findReplaceLogic.isWholeWordSearchAvailable()) {
+		if (getFindText().equals("") || findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD)) {
 			assertEnabled(SearchOptions.WHOLE_WORD);
 		} else {
 			assertDisabled(SearchOptions.WHOLE_WORD);
