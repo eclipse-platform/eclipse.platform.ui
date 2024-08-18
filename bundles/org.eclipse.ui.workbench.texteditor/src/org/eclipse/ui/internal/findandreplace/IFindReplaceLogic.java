@@ -26,9 +26,14 @@ import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 public interface IFindReplaceLogic {
 
 	/**
-	 * Sets the string to be used for searching in find and replace operations.
+	 * Sets the string to be used for searching in find and replace operations. In
+	 * case the {@link SearchOptions#INCREMENTAL} is active, this also triggers an
+	 * incremental search operation, starting from the current incremental base
+	 * location. This also updates the search status accordingly.
 	 *
 	 * @param findString the find string to use, must not be null
+	 *
+	 * @see #getStatus()
 	 */
 	public void setFindString(String findString);
 
@@ -107,8 +112,6 @@ public interface IFindReplaceLogic {
 	 * Locates the current find string in the target. If incremental search is
 	 * activated, the search will be performed starting from an incremental search
 	 * position, which can be reset using {@link #resetIncrementalBaseLocation()}.
-	 * If incremental search is activated and RegEx search is activated, nothing
-	 * happens.
 	 *
 	 * @return Whether the string was found in the target
 	 */

@@ -322,26 +322,24 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	@Override
 	public boolean performSearch() {
-		return performSearch(true);
+		boolean result = performSearch(false);
+		resetIncrementalBaseLocation();
+		return result;
 	}
 
-	private boolean performSearch(boolean validateSearchOptions) {
+	private boolean performSearch(boolean updateFromIncrementalBaseLocation) {
 		resetStatus();
-
-		if (validateSearchOptions && !isAvailable(SearchOptions.INCREMENTAL) && isActive(SearchOptions.INCREMENTAL)) {
-			return false; // Do nothing if search options are not compatible
+		if (findString.isEmpty()) {
+			return false;
 		}
+
 		boolean somethingFound = false;
-
-		if (findString != null && !findString.isEmpty()) {
-
-			try {
-				somethingFound = findNext();
-			} catch (PatternSyntaxException ex) {
-				status = new InvalidRegExStatus(ex);
-			} catch (IllegalStateException ex) {
-				// we don't keep state in this dialog
-			}
+		try {
+			return somethingFound = findNext(updateFromIncrementalBaseLocation);
+		} catch (PatternSyntaxException ex) {
+			status = new InvalidRegExStatus(ex);
+		} catch (IllegalStateException ex) {
+			// we don't keep state in this dialog
 		}
 		return somethingFound;
 	}
@@ -482,21 +480,13 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		return target.getSelection();
 	}
 
-	/**
-	 * Returns whether the specified search string can be found using the given
-	 * options.
-	 *
-	 * @return <code>true</code> if the search string can be found using the given
-	 *         options
-	 *
-	 */
-	private boolean findNext() {
+	private boolean findNext(boolean updateFromIncrementalBaseLocation) {
 
 		if (target == null) {
 			return false;
 		}
 
-		int findReplacePosition = calculateFindBeginningOffset();
+		int findReplacePosition = calculateFindBeginningOffset(updateFromIncrementalBaseLocation);
 
 		int index = findIndex(findReplacePosition);
 
@@ -515,18 +505,24 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		return true;
 	}
 
-	private int calculateFindBeginningOffset() {
+	private int calculateFindBeginningOffset(boolean updateFromExistingBaseLocation) {
 		Point r = null;
-		if (isActive(SearchOptions.INCREMENTAL)) {
+		if (updateFromExistingBaseLocation) {
 			r = incrementalBaseLocation;
 		} else {
 			r = target.getSelection();
 		}
 
 		int findReplacePosition = r.x;
-		if (isActive(SearchOptions.FORWARD) && !isActive(SearchOptions.INCREMENTAL)
-				|| isActive(SearchOptions.INCREMENTAL) && !isActive(SearchOptions.FORWARD)) {
+		if (!isActive(SearchOptions.FORWARD)) {
 			findReplacePosition += r.y;
+		}
+		if (!updateFromExistingBaseLocation) {
+			if (isActive(SearchOptions.FORWARD)) {
+				findReplacePosition += r.y;
+			} else {
+				findReplacePosition -= r.y;
+			}
 		}
 		return findReplacePosition;
 	}
@@ -535,7 +531,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	public boolean performReplaceAndFind() {
 		resetStatus();
 		if (performSelectAndReplace()) {
-			performSearch(false);
+			performSearch();
 			return true;
 		}
 		return false;
@@ -545,7 +541,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	public boolean performSelectAndReplace() {
 		resetStatus();
 		if (!isFindStringSelected()) {
-			performSearch(false);
+			performSearch();
 		}
 		if (getStatus().wasSuccessful()) {
 			if (!prepareTargetForEditing()) {

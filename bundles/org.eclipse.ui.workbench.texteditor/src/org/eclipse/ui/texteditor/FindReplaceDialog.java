@@ -118,8 +118,7 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Modify listener to update the find logic with the current input and update
-	 * the search result in case of incremental search.
+	 * Modify listener to update the find logic with the current input.
 	 *
 	 * @since 2.0
 	 */
@@ -639,9 +638,6 @@ class FindReplaceDialog extends Dialog {
 		fFindModifyListener = new InputModifyListener(() -> {
 			if (okToUse(fFindField)) {
 				findReplaceLogic.setFindString(fFindField.getText());
-				if (findReplaceLogic.isActive(SearchOptions.INCREMENTAL)) {
-					findReplaceLogic.performSearch();
-				}
 			}
 		});
 		fFindField.addModifyListener(fFindModifyListener);

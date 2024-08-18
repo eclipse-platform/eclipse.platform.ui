@@ -81,7 +81,6 @@ public class FindReplaceLogicTest {
 		return textViewer;
 	}
 
-
 	private void setFindAndReplaceString(IFindReplaceLogic findReplaceLogic, String findString, String replaceString) {
 		findReplaceLogic.setFindString(findString);
 		findReplaceLogic.setReplaceString(replaceString);
@@ -430,7 +429,6 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.REGEX);
 
 		findReplaceLogic.setFindString("text");
-		findReplaceLogic.performSearch();
 		textViewer.setSelectedRange(0, 0);
 
 		findReplaceLogic.setReplaceString("");
@@ -769,25 +767,38 @@ public class FindReplaceLogicTest {
 	}
 
 	@Test
-	public void testPerformIncrementalSearch() {
+	public void testSetFindString_incrementalInactive() {
+		TextViewer textViewer= setupTextViewer("Test Test Test Test");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+
+		assertEquals(new Point(0, 0), findReplaceLogic.getTarget().getSelection());
+		findReplaceLogic.setFindString("Test");
+		assertEquals(new Point(0, 0), findReplaceLogic.getTarget().getSelection());
+	}
+
+	@Test
+	public void testSetFindString_incrementalActive() {
 		TextViewer textViewer= setupTextViewer("Test Test Test Test");
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 		findReplaceLogic.activate(SearchOptions.FORWARD);
+		assertEquals(new Point(0, 0), findReplaceLogic.getTarget().getSelection());
 
 		findReplaceLogic.setFindString("Test");
-		findReplaceLogic.performSearch();
-		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
-		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+		assertEquals(new Point(0, 4), findReplaceLogic.getTarget().getSelection());
 
-		findReplaceLogic.performSearch(); // incremental search is idempotent
-		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
-		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+		findReplaceLogic.setFindString("Test"); // incremental search is idempotent
+		assertEquals(new Point(0, 4), findReplaceLogic.getTarget().getSelection());
 
-		findReplaceLogic.setFindString("");
-		findReplaceLogic.performSearch(); // this clears the incremental search, but the "old search" still remains active
-		assertThat(findReplaceLogic.getTarget().getSelection().x, is(0));
-		assertThat(findReplaceLogic.getTarget().getSelection().y, is(4));
+		findReplaceLogic.setFindString("T");
+		assertEquals(new Point(0, 1), findReplaceLogic.getTarget().getSelection());
+
+		findReplaceLogic.setFindString("Te");
+		assertEquals(new Point(0, 2), findReplaceLogic.getTarget().getSelection());
+
+		findReplaceLogic.setFindString(""); // this clears the incremental search, but the "old search" still remains active
+		assertEquals(new Point(0, 2), findReplaceLogic.getTarget().getSelection());
 	}
 
 	@Test
@@ -798,7 +809,6 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.FORWARD);
 
 		findReplaceLogic.setFindString("Test");
-		findReplaceLogic.performSearch();
 		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(0, 4)));
 
 		findReplaceLogic.activate(SearchOptions.REGEX);
@@ -812,10 +822,10 @@ public class FindReplaceLogicTest {
 		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(10, 4)));
 		findReplaceLogic.deactivate(SearchOptions.REGEX);
 
-		findReplaceLogic.performSearch();
+		findReplaceLogic.setFindString("Test");
 		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(10, 4)));
 		findReplaceLogic.performSearch();
-		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(10, 4)));
+		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(15, 4)));
 	}
 
 	@Test
@@ -827,7 +837,6 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 		textViewer.setSelectedRange(0, 0);
 		findReplaceLogic.setFindString("hello");
-		findReplaceLogic.performSearch();
 		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(0, 5)));
 	}
 
@@ -840,7 +849,6 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 		textViewer.setSelectedRange(5, 0);
 		findReplaceLogic.setFindString("hello");
-		findReplaceLogic.performSearch();
 		assertThat(findReplaceLogic.getTarget().getSelection(), is(new Point(5, 5)));
 	}
 

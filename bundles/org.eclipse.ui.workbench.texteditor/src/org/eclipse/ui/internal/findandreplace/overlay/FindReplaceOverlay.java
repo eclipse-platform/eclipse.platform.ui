@@ -635,7 +635,6 @@ public class FindReplaceOverlay extends Dialog {
 			wholeWordSearchButton.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 
 			showUserFeedback(normalTextForegroundColor, true);
-			findReplaceLogic.setFindString(searchBar.getText());
 			updateIncrementalSearch();
 		});
 		searchBar.addFocusListener(new FocusListener() {
@@ -656,7 +655,7 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void updateIncrementalSearch() {
-		findReplaceLogic.performSearch();
+		findReplaceLogic.setFindString(searchBar.getText());
 		evaluateFindReplaceStatus();
 	}
 
@@ -964,10 +963,8 @@ public class FindReplaceOverlay extends Dialog {
 	private void performSearch(boolean forward) {
 		boolean oldForwardSearchSetting = findReplaceLogic.isActive(SearchOptions.FORWARD);
 		activateInFindReplacerIf(SearchOptions.FORWARD, forward);
-		findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
 		findReplaceLogic.performSearch();
 		activateInFindReplacerIf(SearchOptions.FORWARD, oldForwardSearchSetting);
-		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 		evaluateFindReplaceStatus();
 		searchBar.storeHistory();
 	}
