@@ -180,7 +180,7 @@ public class FindReplaceOverlay extends Dialog {
 
 	private void performReplaceAll() {
 		BusyIndicator.showWhile(getShell() != null ? getShell().getDisplay() : Display.getCurrent(),
-				() -> findReplaceLogic.performReplaceAll(getFindString(), getReplaceString()));
+				findReplaceLogic::performReplaceAll);
 		evaluateFindReplaceStatus();
 		replaceBar.storeHistory();
 		searchBar.storeHistory();
@@ -188,7 +188,7 @@ public class FindReplaceOverlay extends Dialog {
 
 	private void performSelectAll() {
 		BusyIndicator.showWhile(getShell() != null ? getShell().getDisplay() : Display.getCurrent(),
-				() -> findReplaceLogic.performSelectAll(getFindString()));
+				findReplaceLogic::performSelectAll);
 		searchBar.storeHistory();
 	}
 
@@ -556,7 +556,7 @@ public class FindReplaceOverlay extends Dialog {
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
 				.withOperation(() -> {
 					activateInFindReplacerIf(SearchOptions.REGEX, regexSearchButton.getSelection());
-					wholeWordSearchButton.setEnabled(findReplaceLogic.isWholeWordSearchAvailable(getFindString()));
+					wholeWordSearchButton.setEnabled(findReplaceLogic.isWholeWordSearchAvailable());
 					updateIncrementalSearch();
 					updateContentAssistAvailability();
 				}).withShortcuts(KeyboardShortcuts.OPTION_REGEX).build();
@@ -632,9 +632,10 @@ public class FindReplaceOverlay extends Dialog {
 		searchBar.forceFocus();
 		searchBar.selectAll();
 		searchBar.addModifyListener(e -> {
-			wholeWordSearchButton.setEnabled(findReplaceLogic.isWholeWordSearchAvailable(getFindString()));
+			wholeWordSearchButton.setEnabled(findReplaceLogic.isWholeWordSearchAvailable());
 
 			showUserFeedback(normalTextForegroundColor, true);
+			findReplaceLogic.setFindString(searchBar.getText());
 			updateIncrementalSearch();
 		});
 		searchBar.addFocusListener(new FocusListener() {
@@ -655,7 +656,7 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void updateIncrementalSearch() {
-		findReplaceLogic.performSearch(getFindString());
+		findReplaceLogic.performSearch();
 		evaluateFindReplaceStatus();
 	}
 
@@ -664,6 +665,9 @@ public class FindReplaceOverlay extends Dialog {
 		replaceBar = new HistoryTextWrapper(replaceHistory, replaceBarContainer, SWT.SINGLE);
 		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(replaceBar);
 		replaceBar.setMessage(FindReplaceMessages.FindReplaceOverlay_replaceBar_message);
+		replaceBar.addModifyListener(e -> {
+			findReplaceLogic.setReplaceString(replaceBar.getText());
+		});
 		replaceBar.addFocusListener(FocusListener.focusLostAdapter(e -> {
 			replaceBar.setForeground(normalTextForegroundColor);
 			searchBar.setForeground(normalTextForegroundColor);
@@ -950,16 +954,8 @@ public class FindReplaceOverlay extends Dialog {
 		return searchBar.getText();
 	}
 
-	private String getReplaceString() {
-		if (!okayToUse(replaceBar)) {
-			return ""; //$NON-NLS-1$
-		}
-		return replaceBar.getText();
-
-	}
-
 	private void performSingleReplace() {
-		findReplaceLogic.performReplaceAndFind(getFindString(), getReplaceString());
+		findReplaceLogic.performReplaceAndFind();
 		evaluateFindReplaceStatus();
 		replaceBar.storeHistory();
 		searchBar.storeHistory();
@@ -969,7 +965,7 @@ public class FindReplaceOverlay extends Dialog {
 		boolean oldForwardSearchSetting = findReplaceLogic.isActive(SearchOptions.FORWARD);
 		activateInFindReplacerIf(SearchOptions.FORWARD, forward);
 		findReplaceLogic.deactivate(SearchOptions.INCREMENTAL);
-		findReplaceLogic.performSearch(getFindString());
+		findReplaceLogic.performSearch();
 		activateInFindReplacerIf(SearchOptions.FORWARD, oldForwardSearchSetting);
 		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
 		evaluateFindReplaceStatus();
@@ -986,7 +982,7 @@ public class FindReplaceOverlay extends Dialog {
 				selectionText = FindReplaceDocumentAdapter.escapeForRegExPattern(selectionText);
 			}
 			searchBar.setText(selectionText);
-			findReplaceLogic.findAndSelect(findReplaceLogic.getTarget().getSelection().x, searchBar.getText());
+			findReplaceLogic.findAndSelect(findReplaceLogic.getTarget().getSelection().x);
 		}
 		searchBar.setSelection(0, searchBar.getText().length());
 	}
