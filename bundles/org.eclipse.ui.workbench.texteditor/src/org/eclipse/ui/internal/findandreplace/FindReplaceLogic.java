@@ -61,7 +61,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	@Override
 	public void setFindString(String findString) {
 		this.findString = Objects.requireNonNull(findString);
-		if (isIncrementalSearchAvailable() && isActive(SearchOptions.INCREMENTAL)) {
+		if (isAvailableAndActive(SearchOptions.INCREMENTAL)) {
 			performSearch(true);
 		}
 	}
@@ -130,14 +130,28 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	}
 
 	@Override
-	public boolean isIncrementalSearchAvailable() {
-		return !isRegExSearchAvailableAndActive();
+	public boolean isAvailable(SearchOptions searchOption) {
+		switch (searchOption) {
+		case INCREMENTAL:
+			return !isAvailableAndActive(SearchOptions.REGEX);
+		case REGEX:
+			return isTargetSupportingRegEx;
+		case WHOLE_WORD:
+			return !isAvailableAndActive(SearchOptions.REGEX) && isWord(findString);
+		case CASE_SENSITIVE:
+		case FORWARD:
+		case GLOBAL:
+		case WRAP:
+		default:
+			return true;
+		}
 	}
 
 	@Override
-	public boolean isWholeWordSearchAvailable() {
-		return !isRegExSearchAvailableAndActive() && isWord(findString);
+	public boolean isAvailableAndActive(SearchOptions searchOption) {
+		return isAvailable(searchOption) && isActive(searchOption);
 	}
+
 	/**
 	 * Tests whether each character in the given string is a letter.
 	 *
@@ -146,11 +160,6 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 */
 	private static boolean isWord(String str) {
 		return str != null && str.chars().allMatch(Character::isJavaIdentifierPart);
-	}
-
-	@Override
-	public boolean isRegExSearchAvailableAndActive() {
-		return isActive(SearchOptions.REGEX) && isTargetSupportingRegEx;
 	}
 
 	@Override
@@ -185,7 +194,8 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		Point lineSelection = extensionTarget.getLineSelection();
 		scope = new Region(lineSelection.x, lineSelection.y);
 
-		int offset = isActive(SearchOptions.FORWARD) ? scope.getOffset() : scope.getOffset() + scope.getLength();
+		int offset = isAvailableAndActive(SearchOptions.FORWARD) ? scope.getOffset()
+				: scope.getOffset() + scope.getLength();
 
 		extensionTarget.setSelection(offset, 0);
 		extensionTarget.setScope(scope);
@@ -318,7 +328,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	private boolean performSearch(boolean validateSearchOptions) {
 		resetStatus();
 
-		if (validateSearchOptions && (isActive(SearchOptions.INCREMENTAL) && !isIncrementalSearchAvailable())) {
+		if (validateSearchOptions && !isAvailable(SearchOptions.INCREMENTAL) && isActive(SearchOptions.INCREMENTAL)) {
 			return false; // Do nothing if search options are not compatible
 		}
 		boolean somethingFound = false;
@@ -417,7 +427,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 */
 	private int findIndex(int startPosition) {
 		int index = 0;
-		if (isActive(SearchOptions.FORWARD)) {
+		if (isAvailableAndActive(SearchOptions.FORWARD)) {
 			index = findAndSelect(startPosition);
 		} else {
 			index = startPosition == 0 ? -1
@@ -426,7 +436,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 		if (index == -1) {
 
-			if (isActive(SearchOptions.WRAP)) {
+			if (isAvailableAndActive(SearchOptions.WRAP)) {
 				statusLineMessage(FindReplaceMessages.FindReplace_Status_wrapped_label);
 				status = new FindStatus(FindStatus.StatusCode.WRAPPED);
 				index = findAndSelect(-1);
@@ -439,10 +449,10 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	@Override
 	public int findAndSelect(int offset) {
-		boolean wholeWordSearch = isActive(SearchOptions.WHOLE_WORD) && isWholeWordSearchAvailable();
-		boolean forwardSearch = isActive(SearchOptions.FORWARD);
-		boolean caseSensitiveSearch = isActive(SearchOptions.CASE_SENSITIVE);
-		boolean regexSearch = isActive(SearchOptions.REGEX);
+		boolean wholeWordSearch = isAvailableAndActive(SearchOptions.WHOLE_WORD);
+		boolean forwardSearch = isAvailableAndActive(SearchOptions.FORWARD);
+		boolean caseSensitiveSearch = isAvailableAndActive(SearchOptions.CASE_SENSITIVE);
+		boolean regexSearch = isAvailableAndActive(SearchOptions.REGEX);
 
 		if (target instanceof IFindReplaceTargetExtension3 regexSupportingTarget) {
 			return (regexSupportingTarget).findAndSelect(offset, findString,
@@ -464,7 +474,8 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 */
 	private Point replaceSelection() {
 		if (target instanceof IFindReplaceTargetExtension3)
-			((IFindReplaceTargetExtension3) target).replaceSelection(replaceString, isRegExSearchAvailableAndActive());
+			((IFindReplaceTargetExtension3) target).replaceSelection(replaceString,
+					isAvailableAndActive(SearchOptions.REGEX));
 		else
 			target.replaceSelection(replaceString);
 
@@ -553,9 +564,9 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	private boolean isFindStringSelected() {
 		String selectedString = getCurrentSelection();
-		if (isRegExSearchAvailableAndActive()) {
+		if (isAvailableAndActive(SearchOptions.REGEX)) {
 			int patternFlags = 0;
-			if (!isActive(SearchOptions.CASE_SENSITIVE)) {
+			if (!isAvailableAndActive(SearchOptions.CASE_SENSITIVE)) {
 				patternFlags |= Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
 			}
 			Pattern pattern = Pattern.compile(findString, patternFlags);

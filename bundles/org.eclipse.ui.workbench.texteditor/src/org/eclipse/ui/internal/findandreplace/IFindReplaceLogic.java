@@ -60,6 +60,29 @@ public interface IFindReplaceLogic {
 	public boolean isActive(SearchOptions searchOption);
 
 	/**
+	 * Returns whether the given search options is currently available. This
+	 * includes validation of whether the target supports a specific option (such as
+	 * {@link SearchOptions#REGEX}) and the compatibility of search options (such as
+	 * {@link SearchOptions#INCREMENTAL} not being available when
+	 * {@link SearchOptions#REGEX} is active).
+	 *
+	 * @param searchOption the search option to check for availability
+	 *
+	 * @return whether the search option is currently available
+	 */
+	public boolean isAvailable(SearchOptions searchOption);
+
+	/**
+	 * Returns whether the given search options is currently available and active.
+	 * Combines {@link #isActive(SearchOptions)} and
+	 * {@link #isAvailable(SearchOptions)}.
+	 *
+	 * @param searchOption the search option to check
+	 * @return whether the search option is currently available and active
+	 */
+	public boolean isAvailableAndActive(SearchOptions searchOption);
+
+	/**
 	 * Returns the current status of FindReplaceLogic. The Status can inform about
 	 * events such as an error happening, a warning happening (e.g.: the
 	 * search-string wasn't found) and brings a method to retrieve a message that
@@ -68,21 +91,6 @@ public interface IFindReplaceLogic {
 	 * @return FindAndReplaceMessageStatus
 	 */
 	public IFindReplaceStatus getStatus();
-
-	/**
-	 * RegEx-Search is not possible on every target. Hence, even after {code
-	 * activate(SearchOptions.REGEX)}, we need to check, whether we may use
-	 * RegEx-Search.
-	 *
-	 * @return whether RegEx search is currently used
-	 */
-	public boolean isRegExSearchAvailableAndActive();
-
-	/**
-	 * {@return whether incremental search may be performed by the
-	 * find/replace-logic based on the currently active options}
-	 */
-	public boolean isIncrementalSearchAvailable();
 
 	/**
 	 * Replaces all occurrences of the current find string with the replace string.
@@ -155,15 +163,6 @@ public interface IFindReplaceLogic {
 	 * @return the Target that FindReplaceLogic operates on
 	 */
 	public IFindReplaceTarget getTarget();
-
-	/**
-	 * Returns <code>true</code> if searching can be restricted to entire words,
-	 * <code>false</code> if not. Searching for whole words requires the given find
-	 * string to be an entire word and the regex search option to be disabled.
-	 *
-	 * @return <code>true</code> if the search can be restricted to whole words
-	 */
-	public boolean isWholeWordSearchAvailable();
 
 	/**
 	 * Initializes the anchor used as the starting point for incremental searching.
