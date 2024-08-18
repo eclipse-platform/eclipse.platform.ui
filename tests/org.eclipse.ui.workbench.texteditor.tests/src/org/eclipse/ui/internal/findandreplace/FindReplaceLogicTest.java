@@ -351,6 +351,21 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.activate(SearchOptions.FORWARD);
 		findReplaceLogic.activate(SearchOptions.REGEX);
 
+		executeReplaceAndFindRegExTest(textViewer, findReplaceLogic);
+	}
+
+	@Test
+	public void testPerformReplaceAndFindRegEx_incrementalActive() {
+		TextViewer textViewer= setupTextViewer("Hello<replace>World<replace>!<r>!");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		executeReplaceAndFindRegExTest(textViewer, findReplaceLogic);
+	}
+
+	private void executeReplaceAndFindRegExTest(TextViewer textViewer, IFindReplaceLogic findReplaceLogic) {
 		boolean status= findReplaceLogic.performReplaceAndFind("<(\\w*)>", " ");
 		assertTrue(status);
 		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!<r>!"));
@@ -372,6 +387,22 @@ public class FindReplaceLogicTest {
 		assertEquals("Status wasn't correctly returned", false, status);
 		assertEquals("Text shouldn't have been changed", "Hello World ! !", textViewer.getDocument().get());
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+	}
+
+	@Test
+	public void testPerformSearchAndReplaceRegEx_incrementalActive() {
+		TextViewer textViewer= setupTextViewer("some text");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		findReplaceLogic.performSearch("text");
+		textViewer.setSelectedRange(0, 0);
+
+		findReplaceLogic.performSelectAndReplace("text", "");
+
+		assertEquals("some ", textViewer.getDocument().get());
 	}
 
 	@Test
