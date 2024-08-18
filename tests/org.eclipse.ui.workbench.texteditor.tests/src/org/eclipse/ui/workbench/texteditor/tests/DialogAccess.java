@@ -196,6 +196,7 @@ class DialogAccess implements IFindReplaceUIAccess {
 	@Override
 	public void setReplaceText(String text) {
 		replaceCombo.setText(text);
+		replaceCombo.notifyListeners(SWT.Modify, null);
 	}
 
 	@Override
