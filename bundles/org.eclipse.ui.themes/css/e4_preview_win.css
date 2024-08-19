@@ -1,0 +1,213 @@
+/*******************************************************************************
+ * Copyright (c) 2024 SAP SE and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     SAP SE - initial implementation
+ *******************************************************************************/
+
+@import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle_preview.css");
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START {
+	color: #F8F8F8;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END {
+	color: #F8F8F8;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
+	color: #E5E5E5;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR {
+	color: #E5E5E5;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
+	color: #F8F8F8;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END {
+	color: #F8F8F8;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR {
+	color: #E5E5E5;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR {
+	color: #E5E5E5;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START {
+	color: #F8F8F8;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
+	color: #F8F8F8;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_BG_START{
+	color: #f8f8f8;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END {
+	color: #f8f8f8;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_START {
+	color: #F8F8F8;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_END {
+	color: #F8F8F8;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR {
+	color: #3b3b3b;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_TEXT_COLOR {
+   color: #3b3b3b;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR {
+   color: #3b3b3b;
+}
+
+.MPartStack {
+	swt-simple: true;
+}
+
+CTabFolder.MArea {
+	background-color: #f8f8f8;
+	swt-selected-tab-fill: #f8f8f8;
+	swt-unselected-tabs-color: #f8f8f8;
+	swt-outer-keyline-color: #f8f8f8;
+	swt-inner-keyline-color: #f8f8f8;
+	swt-tab-outline: #ffffff;
+}
+
+CTabFolder Canvas {
+	background-color: #ffffff;
+}
+
+.MTrimBar#org-eclipse-ui-main-toolbar {
+	background-color: '#f8f8f8';
+}
+
+.MTrimBar#org-eclipse-ui-trim-status {
+	background-color: '#f8f8f8';
+}
+
+.View Composite,
+.View Composite Tree,
+.View Composite Label,
+.View ToolBar,
+.View Group,
+.View Group Label,
+.View Section,
+.View BusyIndicator,
+.View Text[style~='SWT.READ_ONLY'],
+.View SashForm,
+.View OleFrame,
+.View Browser,
+.View WebSite,
+.View StyledText[style~='SWT.READ_ONLY'],
+.View Link,
+.View FormText,
+.View Hyperlink,
+.View Canvas,
+.View FigureCanvas
+{
+	background-color: #f8f8f8;
+}
+
+.View TitleRegion{
+	background-color:#f8f8f8;
+}
+
+.MPartStack.active .View TitleRegion{
+	background-color:#f8f8f8;
+}
+
+.View Button[style~='SWT.CHECK']{
+	background-color: inherit;
+}
+
+.View Toolbar ToolItem{
+	background-color: #eaeaea;
+}
+
+.View TabbedPropertyList{
+	swt-tabBackground-color: #ffffff;
+}
+
+.View Composite PrependingAsteriskFilteredTree,
+.View PrependingAsteriskFilteredTree Text,
+.View Group Text,
+.View Group Combo,
+.View Composite Text,
+.View Button[style~='SWT.PUSH']{
+	background-color: #ffffff;
+}
+
+.MPartStack{
+	swt-selected-tab-highlight: #2160bb;
+    swt-selected-highlight-top: false;
+}
+
+.MPartStack.active {
+    swt-selected-tab-highlight: #2160bb;
+    swt-selected-highlight-top: false;
+}
+
+/* text color and background color of unselected tabs in editor*/
+#org-eclipse-ui-editorss CTabItem{
+	color: '#6A6A6A';
+	background-color: '#f8f8f8';
+}
+
+/*text color and background color of selected tab in editor */
+#org-eclipse-ui-editorss CTabItem:selected{
+	color: '#3b3b3b';
+	background-color: '#FFFFFF';
+}
+
+#org-eclipse-ui-editorss CTabFolder{
+	swt-selected-tab-fill : '#ffffff';
+	swt-selected-tab-highlight: '#2160bb';
+    swt-selected-highlight-top: true;	
+	swt-tab-outline:#e5e5e5; 
+	swt-tab-outer-keyline: #e5e5e5;
+	swt-draw-custom-tab-content-background: true;
+	swt-unselected-hot-tab-color-background:'#FFFFFF';
+}
+
+#org-eclipse-ui-editorss CTabFolder.active {
+    swt-selected-tab-highlight: '#2160bb';
+    swt-selected-highlight-top: true;
+}
+
+#org-eclipse-e4-ui-compatibility-editor Composite{
+	background-color: #ffffff;
+}
+
+Composite.MPartSashContainer{
+	background-color: #f8f8f8;
+}
+
+Composite.MArea{
+	background-color: #ffffff;
+}
+
+.MPart CTabFolder{
+	swt-outer-keyline-color: #ffffff;
+}
