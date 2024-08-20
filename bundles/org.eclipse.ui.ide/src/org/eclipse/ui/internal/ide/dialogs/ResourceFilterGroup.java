@@ -2772,8 +2772,8 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		setupDescriptionText(null);
 	}
 
-	private String[] timeIntervalPrefixes = {"s", "m", "h", "d"};    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
-	private double[] timeIntervalScale = {60, 60, 24};
+	private static final String[] TIME_INTERVAL_PREFIXES = { "s", "m", "h", "d" }; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
+	private static final long[] TIME_INTERVAL_SCALE = { 60, 60, 24 };
 
 	private String convertToEditableTimeInterval(String string) {
 		if (string.isEmpty())
@@ -2786,22 +2786,22 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		}
 		if (value == 0)
 			return Long.toString(0);
-		for (int i = 0; i < timeIntervalPrefixes.length - 1; i++) {
-			if (value % timeIntervalScale[i] != 0)
-				return Long.toString(value) + timeIntervalPrefixes[i];
-			value /= timeIntervalScale[i];
+		for (int i = 0; i < TIME_INTERVAL_PREFIXES.length - 1; i++) {
+			if (value % TIME_INTERVAL_SCALE[i] != 0)
+				return Long.toString(value) + TIME_INTERVAL_PREFIXES[i];
+			value /= TIME_INTERVAL_SCALE[i];
 		}
-		return Long.toString(value) + timeIntervalPrefixes[timeIntervalPrefixes.length - 1];
+		return Long.toString(value) + TIME_INTERVAL_PREFIXES[TIME_INTERVAL_PREFIXES.length - 1];
 	}
 
 	private String convertFromEditableTimeInterval(String string) {
 		if (string.isEmpty())
 			return string;
-		for (int i = 1; i < timeIntervalPrefixes.length; i++) {
-			if (string.endsWith(timeIntervalPrefixes[i])) {
+		for (int i = 1; i < TIME_INTERVAL_PREFIXES.length; i++) {
+			if (string.endsWith(TIME_INTERVAL_PREFIXES[i])) {
 				long value = Long.parseLong(string.substring(0, string.length() - 1));
 				for (int j = 0; j < i; j++)
-					value *= timeIntervalScale[j];
+					value *= TIME_INTERVAL_SCALE[j];
 				return Long.toString(value);
 			}
 		}
@@ -2810,7 +2810,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	}
 
 
-	private String[] lengthPrefixes = { "", "k", "m", "g" }; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+	private static final String[] METRIC_PREFIXES = { "", "k", "m", "g" }; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 
 	// converts "32768" to "32k"
 	private String convertToEditableLength(String string) {
@@ -2824,23 +2824,23 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		}
 		if (value == 0)
 			return Long.toString(0);
-		for (int i = 0; i < lengthPrefixes.length; i++) {
+		for (int i = 0; i < METRIC_PREFIXES.length; i++) {
 			if (value % 1024 != 0)
-				return Long.toString(value) + lengthPrefixes[i];
-			if ((i + 1) < lengthPrefixes.length)
+				return Long.toString(value) + METRIC_PREFIXES[i];
+			if ((i + 1) < METRIC_PREFIXES.length)
 				value /= 1024;
 		}
-		return Long.toString(value) + lengthPrefixes[lengthPrefixes.length - 1];
+		return Long.toString(value) + METRIC_PREFIXES[METRIC_PREFIXES.length - 1];
 	}
 
 	// converts "32k" to "32768"
 	private String convertFromEditableLength(String string) throws NumberFormatException {
 		if (string.isEmpty())
 			return string;
-		for (int i = 1; i < lengthPrefixes.length; i++) {
-			if (string.endsWith(lengthPrefixes[i])) {
+		for (int i = 1; i < METRIC_PREFIXES.length; i++) {
+			if (string.endsWith(METRIC_PREFIXES[i])) {
 				long value = Long.parseLong(string.substring(0, string.length() - 1));
-				value *= Math.pow(1024, i);
+				value *= 2 << (10 * i - 1);
 				return Long.toString(value);
 			}
 		}

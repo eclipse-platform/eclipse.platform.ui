@@ -357,7 +357,7 @@ public abstract class RefactoringDescriptor implements Comparable<RefactoringDes
 	public final int hashCode() {
 		int code= getDescription().hashCode();
 		if (fTimeStamp >= 0)
-			code+= (17 * fTimeStamp);
+			code+= 17 * Long.hashCode(fTimeStamp);
 		return code;
 	}
 
