@@ -21,16 +21,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ZipFileTransformer;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.fileSystem.zip.ZipFileHandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.ui.editors.text.TextEditor;
@@ -63,33 +57,9 @@ public class ZipFileEditor extends TextEditor {
 	public static void openAndRefresh(IFile file, Shell shell) {
 		try {
 			ZipFileTransformer.openZipFile(file, true);
-			if (shell != null && !shell.isDisposed()) {
-				shell.getDisplay().asyncExec(() -> {
-					refreshAllViewers();
-				});
-			}
+			ZipFileHandlerUtil.refreshAllViewers();
 		} catch (CoreException e) {
 			MessageDialog.openError(shell, "Error opening zip file", e.getMessage()); //$NON-NLS-1$
-		}
-	}
-
-	private static void refreshAllViewers() {
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page= window.getActivePage();
-			if (page != null) {
-				for (IViewReference viewReference : page.getViewReferences()) {
-					IWorkbenchPart part= viewReference.getPart(false);
-					if (part != null) {
-						ISelectionProvider selectionProvider= part.getSite().getSelectionProvider();
-						if (selectionProvider instanceof StructuredViewer viewer) {
-							if (viewer.getControl() != null && !viewer.getControl().isDisposed()) {
-								viewer.refresh();
-							}
-						}
-					}
-				}
-			}
 		}
 	}
 }
