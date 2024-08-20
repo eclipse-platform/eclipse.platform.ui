@@ -108,7 +108,7 @@ public abstract class RefactoringDescriptorProxy extends PlatformObject implemen
 		int code= getDescription().hashCode();
 		final long stamp= getTimeStamp();
 		if (stamp >= 0)
-			code+= (17 * stamp);
+			code+= 17 * Long.hashCode(stamp);
 		return code;
 	}
 
