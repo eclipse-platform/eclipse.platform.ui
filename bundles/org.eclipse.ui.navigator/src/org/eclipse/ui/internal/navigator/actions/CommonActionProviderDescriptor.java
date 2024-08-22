@@ -236,6 +236,7 @@ public class CommonActionProviderDescriptor implements
 				context.setAllowPluginActivation(true);
 				if (NavigatorPlugin.safeEvaluate(enablement, context) != EvaluationResult.TRUE) {
 					isEnabled = false;
+					break;
 				}
 			}
 			if (!isEnabled) {
