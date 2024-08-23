@@ -2252,21 +2252,7 @@
 	                <iterate
 	                      ifEmpty="false">
 	                   <adapt
-	                         type="org.eclipse.core.resources.IFolder">
-	                      <or>
-	                         <test
-	                               property="org.eclipse.core.resources.extension"
-	                               value="zip">
-	                         </test>
-                          <test
-                                property="org.eclipse.core.resources.extension"
-                                value="jar">
-                          </test>
-                          <test
-                                property="org.eclipse.core.resources.extension"
-                                value="war">
-                          </test>
-	                      </or>
+	                         type="org.eclipse.core.internal.resources.VirtualZipFolder">
 	                   </adapt>
 	                </iterate>
 	             </with>
