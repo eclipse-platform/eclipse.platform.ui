@@ -206,7 +206,7 @@ public class TextSearchVisitor {
 				} else {
 					try {
 						charsequence = fileCharSequenceProvider.newCharSequence(file);
-						if (hasBinaryContent(charsequence, file) && !fCollector.reportBinaryFile(file)) {
+						if (!fCollector.reportBinaryFile(file) && hasBinaryContent(charsequence, file)) {
 							return Status.OK_STATUS;
 						}
 						occurences = locateMatches(file, charsequence, matcher, monitor);
