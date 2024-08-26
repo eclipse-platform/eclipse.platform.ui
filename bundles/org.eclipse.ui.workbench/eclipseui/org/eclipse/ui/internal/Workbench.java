@@ -86,6 +86,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.activitysupport.IActivityManagerProxy;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
@@ -245,6 +246,7 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.internal.util.ActivityManagerProxy;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.IBindingService;
@@ -2206,6 +2208,11 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			}
 		});
 		WorkbenchPlugin.getDefault().initializeContext(e4Context);
+
+		BundleContext context = FrameworkUtil.getBundle(Platform.class).getBundleContext();
+		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
+		ActivityManagerProxy service = new ActivityManagerProxy(activitySupport);
+		context.registerService(IActivityManagerProxy.class.getName(), service, null);
 	}
 
 	private ArrayList<MCommand> commandsToRemove = new ArrayList<>();
