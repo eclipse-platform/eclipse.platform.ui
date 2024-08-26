@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.StringJoiner;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -73,6 +74,11 @@ public class StickyScrollingHandlerTest {
 		linesProvider = mock(StickyLinesProvider.class);
 
 		stickyScrollingHandler = new StickyScrollingHandler(sourceViewer, ruler, store, linesProvider);
+	}
+
+	@After
+	public void teardown() {
+		shell.dispose();
 	}
 
 	@Test
@@ -129,13 +135,19 @@ public class StickyScrollingHandlerTest {
 	@Test
 	public void testThrottledExecution() throws InterruptedException {
 		when(linesProvider.get(100, sourceViewer)).thenReturn(List.of(new StickyLine("line 10", 9)));
+		when(linesProvider.get(200, sourceViewer)).thenReturn(List.of(new StickyLine("line 10", 9)));
+		when(linesProvider.get(300, sourceViewer)).thenReturn(List.of(new StickyLine("line 10", 9)));
+		when(linesProvider.get(400, sourceViewer)).thenReturn(List.of(new StickyLine("line 10", 9)));
 
 		stickyScrollingHandler.viewportChanged(100);
+		Thread.sleep(10);
 		stickyScrollingHandler.viewportChanged(200);
+		Thread.sleep(10);
 		stickyScrollingHandler.viewportChanged(300);
+		Thread.sleep(10);
 		stickyScrollingHandler.viewportChanged(400);
 
-		waitInUi(200);
+		waitInUi(300);
 
 		// Call to lines provider should be throttled
 		verify(linesProvider, times(1)).get(100, sourceViewer);
