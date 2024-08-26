@@ -1762,9 +1762,10 @@ public class LogView extends ViewPart implements LogListener {
 		fMemento.putInteger(P_COLUMN_1, getColumnWidthPreference(instancePrefs, defaultPrefs, P_COLUMN_1, 300));
 		fMemento.putInteger(P_COLUMN_2, getColumnWidthPreference(instancePrefs, defaultPrefs, P_COLUMN_2, 150));
 		fMemento.putInteger(P_COLUMN_3, getColumnWidthPreference(instancePrefs, defaultPrefs, P_COLUMN_3, 150));
-		fMemento.putBoolean(P_ACTIVATE, instancePrefs.getBoolean(P_ACTIVATE, defaultPrefs.getBoolean(P_ACTIVATE, true)));
+		fMemento.putBoolean(P_ACTIVATE,
+				instancePrefs.getBoolean(P_ACTIVATE, defaultPrefs.getBoolean(P_ACTIVATE, false)));
 		fMemento.putBoolean(P_ACTIVATE_WARN,
-				instancePrefs.getBoolean(P_ACTIVATE_WARN, defaultPrefs.getBoolean(P_ACTIVATE_WARN, true)));
+				instancePrefs.getBoolean(P_ACTIVATE_WARN, defaultPrefs.getBoolean(P_ACTIVATE_WARN, false)));
 		fMemento.putBoolean(P_ACTIVATE_ERRROR,
 				instancePrefs.getBoolean(P_ACTIVATE_ERRROR, defaultPrefs.getBoolean(P_ACTIVATE_ERRROR, true)));
 		fMemento.putInteger(P_ORDER_VALUE, instancePrefs.getInt(P_ORDER_VALUE, defaultPrefs.getInt(P_ORDER_VALUE, DESCENDING)));
