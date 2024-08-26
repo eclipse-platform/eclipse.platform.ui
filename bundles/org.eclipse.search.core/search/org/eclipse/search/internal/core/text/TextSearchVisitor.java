@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.Job;
@@ -205,8 +204,13 @@ public class TextSearchVisitor {
 					occurences = locateMatches(file, charsequence, matcher, monitor);
 				} else {
 					try {
+						boolean reportTextOnly = !fCollector.reportBinaryFile(file);
+						if (reportTextOnly && hasBinaryContentType(file)) {
+							// fail fast for binary file types without opening the file
+							return Status.OK_STATUS;
+						}
 						charsequence = fileCharSequenceProvider.newCharSequence(file);
-						if (hasBinaryContent(charsequence, file) && !fCollector.reportBinaryFile(file)) {
+						if (reportTextOnly && hasBinaryContent(charsequence)) {
 							return Status.OK_STATUS;
 						}
 						occurences = locateMatches(file, charsequence, matcher, monitor);
@@ -435,21 +439,25 @@ public class TextSearchVisitor {
 		return search(scope.evaluateFilesInScope(fStatus), monitor);
 	}
 
-	private boolean hasBinaryContent(CharSequence seq, IFile file) throws CoreException {
-		if (seq instanceof String) {
-			if (!((String) seq).contains("\0")) { //$NON-NLS-1$
-				// fail fast to avoid file.getContentDescription():
-				return false;
-			}
-		}
-		IContentDescription desc= file.getContentDescription();
-		if (desc != null) {
-			IContentType contentType= desc.getContentType();
-			if (contentType != null && contentType.isKindOf(Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT))) {
-				return false;
-			}
-		}
+	private final IContentType TEXT_TYPE = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 
+	private boolean hasBinaryContentType(IFile file) {
+		IContentType[] contentTypes = Platform.getContentTypeManager().findContentTypesFor(file.getName());
+		for (IContentType contentType : contentTypes) {
+			if (contentType.isKindOf(TEXT_TYPE)) {
+				return false; // is text
+			}
+		}
+		if (contentTypes.length > 0) {
+			return true; // has some not text type
+		}
+		return false; // unknown
+	}
+
+	private boolean hasBinaryContent(CharSequence seq) {
+		if (seq instanceof String s) {
+			return (s.contains("\0")); //$NON-NLS-1$
+		}
 		// avoid calling seq.length() at it runs through the complete file,
 		// thus it would do so for all binary files.
 		try {
