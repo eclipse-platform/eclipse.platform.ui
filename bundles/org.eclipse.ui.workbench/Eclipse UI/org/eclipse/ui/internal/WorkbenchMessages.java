@@ -452,6 +452,7 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_stickyCycleButton;
 	public static String WorkbenchPreference_RunInBackgroundButton;
 	public static String WorkbenchPreference_RunInBackgroundToolTip;
+	public static String WorkbenchPreference_AlignMultiPageEditorTabsOnTopButton;
 
 	// --- Appearance ---
 	public static String ViewsPreferencePage_Theme;

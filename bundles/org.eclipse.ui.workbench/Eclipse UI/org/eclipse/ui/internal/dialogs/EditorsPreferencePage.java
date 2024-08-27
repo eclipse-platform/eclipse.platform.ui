@@ -72,6 +72,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private Button allowInplaceEditor;
 
+	private Button alignMultiPageEditorTabsOnTop;
+
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = createComposite(parent);
@@ -130,6 +132,15 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		setButtonLayoutData(promptWhenStillOpenEditor);
 	}
 
+	protected void createAlignMultiPageEditorTabsOnTop(Composite composite) {
+		alignMultiPageEditorTabsOnTop = new Button(composite, SWT.CHECK);
+		alignMultiPageEditorTabsOnTop
+				.setText(WorkbenchMessages.WorkbenchPreference_AlignMultiPageEditorTabsOnTopButton);
+		alignMultiPageEditorTabsOnTop.setSelection(
+				getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS_ON_TOP));
+		setButtonLayoutData(alignMultiPageEditorTabsOnTop);
+	}
+
 	protected Composite createComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -150,6 +161,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		IPreferenceStore store = getPreferenceStore();
 		allowInplaceEditor.setSelection(
 				!getAPIPreferenceStore().getDefaultBoolean(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE));
+		alignMultiPageEditorTabsOnTop.setSelection(getAPIPreferenceStore()
+				.getDefaultBoolean(IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS_ON_TOP));
 		useIPersistableEditor.setSelection(store.getDefaultBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS));
 		promptWhenStillOpenEditor.setSelection(getAPIPreferenceStore()
 				.getDefaultBoolean(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN));
@@ -163,6 +176,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	@Override
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
+		getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS_ON_TOP,
+				alignMultiPageEditorTabsOnTop.getSelection());
 		getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE,
 				!allowInplaceEditor.getSelection());
 		store.setValue(IPreferenceConstants.USE_IPERSISTABLE_EDITORS, useIPersistableEditor.getSelection());
