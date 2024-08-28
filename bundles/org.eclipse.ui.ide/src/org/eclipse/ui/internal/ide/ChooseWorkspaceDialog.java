@@ -474,9 +474,6 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			}
 			String normalisedPath = path.normalize().toString();
 			String normalisedPathWithSeperator = normalisedPath + File.separator;
-			if (!isWritable(path)) {
-				return NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_NotWriteablePathWarning, normalisedPath);
-			}
 			if (normalisedPathWithSeperator.contains(TILDE)) {
 				return NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_TildeNonExpandedWarning, normalisedPath);
 			}
@@ -484,23 +481,31 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 					&& !workspaceLocation.equalsIgnoreCase(normalisedPathWithSeperator)) {
 				return NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_ResolvedAbsolutePath, normalisedPath);
 			}
+			if (!maybeWritable(path)) {
+				return NLS.bind(IDEWorkbenchMessages.ChooseWorkspaceDialog_NotWriteablePathWarning, normalisedPath);
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}
 
-	/**
-	 * @param path
-	 * @return
-	 */
-	private boolean isWritable(Path path) {
-		if (Files.exists(path)) {
-			return Files.isWritable(path);
+	/** the returned value may be wrong **/
+	private boolean maybeWritable(Path path) {
+		try {
+			if (Files.exists(path)) {
+				// both java.io.File.canWrite() and
+				// java.nio.file.Files.isWritable(Path)
+				// can not be trusted on windows. they may return wrong values.
+				// for example JDK-8282720, JDK-8148211, JDK-8154915
+				return Files.isWritable(path);
+			}
+			Path parent = path.getParent();
+			if (parent == null) {
+				return false;
+			}
+			return maybeWritable(parent);
+		} catch (SecurityException se) {
+			return false;
 		}
-		Path parent = path.getParent();
-		if (parent != null) {
-			return isWritable(parent);
-		}
-		return true;
 	}
 
 	protected Composite createBrowseComposite(Composite parent) {
@@ -545,7 +550,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	 */
 	private boolean isValidPath(String path) {
 		try {
-			return isWritable(new File(path).toPath());
+			Path.of(path);
+			return true;
 		} catch (InvalidPathException e) {
 			return false;
 		}
