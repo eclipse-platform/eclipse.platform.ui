@@ -51,7 +51,6 @@ public class CloseZipFileHandler extends AbstractHandler {
 		}
 		try {
 			ZipFileTransformer.closeZipFile(folder);
-			ZipFileHandlerUtil.refreshAllViewers();
 		} catch (CoreException | URISyntaxException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 			MessageDialog.openError(shell, "Error closing zip file", e.getMessage()); //$NON-NLS-1$

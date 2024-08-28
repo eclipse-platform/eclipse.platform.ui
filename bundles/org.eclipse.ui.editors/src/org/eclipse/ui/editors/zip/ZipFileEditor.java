@@ -24,7 +24,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.ide.fileSystem.zip.ZipFileHandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.ui.editors.text.TextEditor;
@@ -57,7 +56,6 @@ public class ZipFileEditor extends TextEditor {
 	public static void openAndRefresh(IFile file, Shell shell) {
 		try {
 			ZipFileTransformer.openZipFile(file, true);
-			ZipFileHandlerUtil.refreshAllViewers();
 		} catch (CoreException e) {
 			MessageDialog.openError(shell, "Error opening zip file", e.getMessage()); //$NON-NLS-1$
 		}

@@ -49,7 +49,6 @@ public class OpenZipFileHandler extends AbstractHandler {
 		}
 		try {
 			ZipFileTransformer.openZipFile(file, true);
-			ZipFileHandlerUtil.refreshAllViewers();
 		} catch (CoreException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 			MessageDialog.openError(shell, "Error opening zip file", e.getMessage()); //$NON-NLS-1$
