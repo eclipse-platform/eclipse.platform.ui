@@ -625,19 +625,18 @@ public interface IWorkbenchPreferenceConstants {
 	String DISABLE_OPEN_EDITOR_IN_PLACE = "DISABLE_OPEN_EDITOR_IN_PLACE"; //$NON-NLS-1$
 
 	/**
-	 * Workbench preference id for whether the tabs in the multi-page editor is
-	 * displayed on top. Note that tabs will be shown in the top only if this
-	 * preference is <code>true</code>.
+	 * Workbench preference id for the position of the tabs in the multi-page
+	 * editor.
 	 *
-	 * Boolean-valued: <code>true</code> show the tabs on the top, and
-	 * <code>false</code> if shown at the bottom.
+	 * Integer-valued: {@link SWT#TOP} for tabs on the top, and {@link SWT#BOTTOM}
+	 * for tabs at the bottom.
 	 * <p>
-	 * The default value for this preference is: <code>false</code>
+	 * The default value for this preference is: {@link SWT#BOTTOM}
 	 * </p>
 	 *
 	 * @since 3.133
 	 */
-	String ALIGN_MULTI_PAGE_EDITOR_TABS_ON_TOP = "ALIGN_MULTI_PAGE_EDITOR_TABS_ON_TOP"; //$NON-NLS-1$
+	String ALIGN_MULTI_PAGE_EDITOR_TABS = "ALIGN_MULTI_PAGE_EDITOR_TABS"; //$NON-NLS-1$
 
 	/**
 	 * Workbench preference id for indicating the size of the list of most recently
