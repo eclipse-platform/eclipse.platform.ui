@@ -162,7 +162,7 @@ public class Paragraph {
 				computeRowHeights(gc, width, loc, lineHeight, resourceTable);
 			for (ParagraphSegment segment : segments) {
 				boolean doSelect = false;
-				if (selectedLink != null && segment.equals(selectedLink))
+				if (selectedLink instanceof ParagraphSegment sl && segment.equals(sl))
 					doSelect = true;
 				segment.layout(gc, width, loc, resourceTable, doSelect);
 			}
@@ -182,7 +182,7 @@ public class Paragraph {
 			if (!segment.intersects(repaintRegion))
 				continue;
 			boolean doSelect = false;
-			if (selectedLink != null && segment.equals(selectedLink))
+			if (selectedLink instanceof ParagraphSegment sl && segment.equals(sl))
 				doSelect = true;
 			segment.paint(gc, false, resourceTable, doSelect, selData, repaintRegion);
 		}
