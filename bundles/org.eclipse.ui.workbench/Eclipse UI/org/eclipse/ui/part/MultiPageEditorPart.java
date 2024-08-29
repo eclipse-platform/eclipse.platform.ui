@@ -1280,7 +1280,17 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		}
 	}
 
-	private void updateContainer() {
+	/**
+	 * Updates the tab position of the container in the multi-page editor.
+	 *
+	 * <p>
+	 * This method retrieves the current container and sets the tab position based
+	 * on the user preference.
+	 * </p>
+	 *
+	 * @since 3.133
+	 */
+	protected void updateContainer() {
 		Composite container = getContainer();
 		if (container instanceof CTabFolder tabFolder) {
 			tabFolder.setTabPosition(getTabStyle());
