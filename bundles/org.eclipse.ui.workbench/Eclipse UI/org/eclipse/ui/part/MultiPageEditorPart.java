@@ -161,24 +161,24 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	protected MultiPageEditorPart() {
 		super();
 		getAPIPreferenceStore().addPropertyChangeListener(event -> {
-			handlePropertyChange(event);
+			if (isUpdateRequired(event)) {
+				updateContainer();
+			}
 		});
 	}
 
 	/**
-	 * Handles property change events related to editor preferences.
-	 *
-	 * <p>
-	 * This method is invoked when a property change occurs in the preference store.
-	 * </p>
+	 * Determines whether an update is required based on a property change event.
 	 *
 	 * @param event the {@link PropertyChangeEvent} triggered by a change in the
 	 *              preference store
+	 * @since 3.133
 	 */
-	private void handlePropertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS_ON_TOP)) {
-			updateContainer();
+	protected boolean isUpdateRequired(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS)) {
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -290,7 +290,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		// use SWT.FLAT style so that an extra 1 pixel border is not reserved
 		// inside the folder
 		parent.setLayout(new FillLayout());
-		final CTabFolder newContainer = new CTabFolder(parent, getPreferredTabStyle());
+		final CTabFolder newContainer = new CTabFolder(parent, getTabStyle() | SWT.FLAT);
 		newContainer.addSelectionListener(widgetSelectedAdapter(e -> {
 			int newPageIndex = newContainer.indexOf((CTabItem) e.item);
 			pageChange(newPageIndex);
@@ -318,7 +318,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	}
 
 	/**
-	 * Determines the preferred tab style based on user preferences.
+	 * Determines the tab style based on user preferences.
 	 * <p>
 	 * This method retrieves the user preference for aligning multi-page editor tabs
 	 * on top or bottom, and returns the corresponding SWT style constant.
@@ -327,12 +327,10 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @return {@code SWT.TOP} if the user prefers tabs to be aligned on top,
 	 *         {@code SWT.BOTTOM} if the user prefers tabs to be aligned on the
 	 *         bottom.
+	 * @since 3.133
 	 */
-	private int getPreferredTabStyle() {
-		boolean alignTabsOnTop = getAPIPreferenceStore()
-				.getBoolean(IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS_ON_TOP);
-		int style = alignTabsOnTop ? SWT.TOP : SWT.BOTTOM;
-		return style;
+	protected int getTabStyle() {
+		return getAPIPreferenceStore().getInt(IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS);
 	}
 
 	/**
@@ -1285,7 +1283,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	private void updateContainer() {
 		Composite container = getContainer();
 		if (container instanceof CTabFolder tabFolder) {
-			tabFolder.setTabPosition(getPreferredTabStyle());
+			tabFolder.setTabPosition(getTabStyle());
 			tabFolder.requestLayout();
 		}
 	}
