@@ -315,8 +315,8 @@ public class TabbedPropertySheetPage
 		 * The properties view has been activated and the current page is this
 		 * instance of TabbedPropertySheetPage
 		 */
-		boolean thisActivated = part instanceof PropertySheet
-			&& ((PropertySheet) part).getCurrentPage() == this;
+		boolean thisActivated = part instanceof PropertySheet propertySheet
+			&& propertySheet.getCurrentPage() == this;
 
 		/*
 		 * When the active part changes and the part does not provide a
@@ -325,16 +325,15 @@ public class TabbedPropertySheetPage
 		 * of these events since we want to send aboutToBeHidden() and
 		 * aboutToBeShown() when the property sheet is hidden or shown.
 		 */
-		if (!thisActivated && !part.equals(contributor)
+		if (!thisActivated && !(part instanceof ITabbedPropertySheetPageContributor p && p.equals(contributor))
 				&& !part.getSite().getId().equals(contributor.getContributorId())) {
 			/*
 			 * Is the part is a IContributedContentsView for the contributor,
 			 * for example, outline view.
 			 */
 			IContributedContentsView view = Adapters.adapt(part, IContributedContentsView.class);
-			if (view == null
-				|| (view.getContributingPart() != null && !view
-					.getContributingPart().equals(contributor))) {
+			if (!(view.getContributingPart() instanceof ITabbedPropertySheetPageContributor cp
+					&& cp.equals(contributor))) {
 				if (activePropertySheet) {
 					if (currentTab != null) {
 						currentTab.aboutToBeHidden();
