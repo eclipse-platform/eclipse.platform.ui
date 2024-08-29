@@ -6998,7 +6998,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					if (currentDistance < 0)
 						currentDistance= endOfDocument + currentDistance;
 
-					if (currentDistance < distance || currentDistance == distance && p.length < nextAnnotationPosition.length) {
+					if (nextAnnotationPosition == null || currentDistance < distance
+							|| currentDistance == distance && p.length < nextAnnotationPosition.length) {
 						distance= currentDistance;
 						nextAnnotation= a;
 						nextAnnotationPosition= p;
@@ -7008,7 +7009,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					if (currentDistance < 0)
 						currentDistance= endOfDocument + currentDistance;
 
-					if (currentDistance < distance || currentDistance == distance && p.length < nextAnnotationPosition.length) {
+					if (nextAnnotationPosition == null || currentDistance < distance
+							|| currentDistance == distance && p.length < nextAnnotationPosition.length) {
 						distance= currentDistance;
 						nextAnnotation= a;
 						nextAnnotationPosition= p;
