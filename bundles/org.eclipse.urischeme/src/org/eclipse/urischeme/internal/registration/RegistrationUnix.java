@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2018 SAP SE and others.
+ * Copyright (c) 2018, 2025 SAP SE and others.
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +8,7 @@
  *
  * Contributors:
  *     SAP SE - initial version
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.urischeme.internal.registration;
 
@@ -22,7 +24,7 @@ import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
 
-public class RegistrationLinux implements IOperatingSystemRegistration {
+public class RegistrationUnix implements IOperatingSystemRegistration {
 
 	private static final String DEFAULT_PRODUCT_NAME = "Eclipse SDK"; //$NON-NLS-1$
 	private static final String USER_HOME = System.getProperty("user.home"); //$NON-NLS-1$
@@ -39,7 +41,7 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 	private IProcessExecutor processExecutor;
 	private String productName;
 
-	public RegistrationLinux() {
+	public RegistrationUnix() {
 		this(new FileProvider(), new ProcessExecutor(), getProductName());
 	}
 
@@ -49,7 +51,7 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 		return name == null ? DEFAULT_PRODUCT_NAME : name;
 	}
 
-	public RegistrationLinux(IFileProvider fileProvider, IProcessExecutor processExecutor, String productName) {
+	public RegistrationUnix(IFileProvider fileProvider, IProcessExecutor processExecutor, String productName) {
 		this.fileProvider = fileProvider;
 		this.processExecutor = processExecutor;
 		this.productName = productName;
@@ -171,8 +173,8 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 	}
 
 	/**
-	 * Only one application can handle a specific uri scheme on Linux. This
-	 * information is stored de-centrally in the .desktop file and registered in a
+	 * Only one application can handle a specific uri scheme on Unix-based FreeBSD/Linux.
+	 * This information is stored de-centrally in the .desktop file and registered in a
 	 * central database. Registering an uri scheme that is already handled by
 	 * another application would also include changing the other application's
 	 * .desktop file - which can have unknown side effects.

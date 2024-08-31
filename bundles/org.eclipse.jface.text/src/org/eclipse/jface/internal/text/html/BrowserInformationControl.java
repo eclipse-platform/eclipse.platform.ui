@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.jface.internal.text.html;
 
@@ -294,7 +295,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 		String scrollbarStyle= "overflow:scroll;"; //$NON-NLS-1$
 		// workaround for bug 546870, don't use a horizontal scrollbar on Linux as its broken for GTK3 and WebKit
-		if (Util.isLinux()) {
+		if (Util.isLinux() || Util.isFreeBSD()) {
 			scrollbarStyle= "word-wrap:break-word;"; //$NON-NLS-1$
 		}
 		// The default "overflow:auto" would not result in a predictable width for the client area

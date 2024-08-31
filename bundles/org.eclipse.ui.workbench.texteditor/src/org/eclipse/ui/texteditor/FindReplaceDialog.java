@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     SAP SE, christian.georgi@sap.com - Bug 487357: Make find dialog content scrollable
  *     Pierre-Yves B., pyvesdev@gmail.com - Bug 121634: [find/replace] status bar must show the string being searched when "String Not Found"
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -1157,7 +1158,7 @@ class FindReplaceDialog extends Dialog {
 			fFindField.removeModifyListener(fFindModifyListener);
 
 			// XXX: Workaround for Combo bug on Linux (see bug 404202 and bug 410603)
-			if (Util.isLinux()) {
+			if (Util.isLinux() || Util.isFreeBSD()) {
 				fFindModifyListener.ignoreNextEvent();
 			}
 
@@ -1174,7 +1175,7 @@ class FindReplaceDialog extends Dialog {
 			fReplaceField.removeModifyListener(fReplaceModifyListener);
 
 			// XXX: Workaround for Combo bug on Linux (see bug 404202 and bug 410603)
-			if (Util.isLinux()) {
+			if (Util.isLinux() || Util.isFreeBSD()) {
 				fReplaceModifyListener.ignoreNextEvent();
 			}
 

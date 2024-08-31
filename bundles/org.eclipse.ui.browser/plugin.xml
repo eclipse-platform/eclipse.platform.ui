@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-    Copyright (c) 2005, 2015 IBM Corporation and others.
+    Copyright (c) 2005, 2025 IBM Corporation and others.
 
     This program and the accompanying materials
     are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
          IBM Corporation - initial API and implementation
           Martin Oberhuber (Wind River) - [292882] Default Browser on Solaris
           Martin Oberhuber (Wind River) - [293175] Default external web browser not found when running 32-bit Eclipse on 64-bit Ubuntu 9.04
+         Tue Ton - support for FreeBSD
  -->
 
 <plugin>
@@ -94,7 +95,7 @@
       <browser
          id="org.eclipse.ui.browser.firefox"
          name="%browserFirefox"
-         os="linux,aix,hpux,solaris"
+         os="freebsd,linux,aix,hpux,solaris"
          executable="firefox"
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
          <location>
@@ -104,28 +105,28 @@
       <browser
          id="org.eclipse.ui.browser.chrome"
          name="%browserChrome"
-         os="linux,aix,hpux,solaris"
+         os="freebsd,linux,aix,hpux,solaris"
          executable="google-chrome">
          <location>usr/bin/google-chrome</location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.chromium"
          name="%browserChromium"
-         os="linux"
+         os="freebsd,linux"
          executable="chromium-browser">
          <location>usr/bin/chromium-browser</location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.konqueror"
          name="%browserKonqueror"
-         os="linux,aix,hpux,solaris"
+         os="freebsd,linux,aix,hpux,solaris"
          executable="konqueror">
          <location>usr/bin/konqueror</location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.epiphany"
          name="%browserEpiphany"
-         os="linux"
+         os="freebsd,linux"
          executable="epiphany">
          <location>
          	usr/bin/epiphany

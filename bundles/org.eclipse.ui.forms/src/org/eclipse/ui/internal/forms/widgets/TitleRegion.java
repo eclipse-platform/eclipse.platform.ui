@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -210,6 +211,9 @@ public class TitleRegion extends Canvas {
 					int tw = width - HMARGIN * 2 - SPACING * 2;
 					String os = System.getProperty("os.name"); //$NON-NLS-1$
 					if (Constants.OS_LINUX.equalsIgnoreCase(os)) {
+						tw += 1; // See Bug 342610
+					}
+					else if (Constants.OS_FREEBSD.equalsIgnoreCase(os)) {
 						tw += 1; // See Bug 342610
 					}
 					if (bsize != null)

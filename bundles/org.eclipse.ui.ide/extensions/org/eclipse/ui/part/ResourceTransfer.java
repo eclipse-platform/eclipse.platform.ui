@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 205678
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.ui.part;
 
@@ -167,7 +168,7 @@ public class ResourceTransfer extends ByteArrayTransfer {
 			int count = in.readInt();
 			if (count > MAX_RESOURCES_TO_TRANSFER) {
 				String message = "Transfer aborted, too many resources: " + count + "."; //$NON-NLS-1$ //$NON-NLS-2$
-				if (Util.isLinux()) {
+				if (Util.isLinux() || Util.isFreeBSD()) {
 					message += "\nIf you are running in x11vnc environment please consider to switch to vncserver " + //$NON-NLS-1$
 							"+ vncviewer or to run x11vnc without clipboard support " + //$NON-NLS-1$
 							"(use '-noclipboard' and '-nosetclipboard' arguments)."; //$NON-NLS-1$

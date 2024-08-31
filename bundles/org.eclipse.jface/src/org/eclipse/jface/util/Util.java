@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 
 package org.eclipse.jface.util;
@@ -560,6 +561,16 @@ public final class Util {
 	public static boolean isMac() {
 		final String ws = SWT.getPlatform();
 		return WS_CARBON.equals(ws) || WS_COCOA.equals(ws);
+	}
+
+	/**
+	 * Common WS query helper method.
+	 * @return <code>true</code> for FreeBSD platform
+	 * @since 3.5
+	 */
+	public static boolean isFreeBSD() {
+		final String ws = SWT.getPlatform();
+		return WS_GTK.equals(ws);
 	}
 
 	/**

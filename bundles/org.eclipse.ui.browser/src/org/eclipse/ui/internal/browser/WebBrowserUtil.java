@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2019 IBM Corporation and others.
+ * Copyright (c) 2003, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Martin Oberhuber (Wind River) - [292882] Default Browser on Solaris
  *     Tomasz Zarna (Tasktop Technologies) - [429546] External Browser with parameters
  *     Christoph Läubrich - Bug 552773 - Simplify logging in platform code base
+ *     Tue Ton - support for FreeBSD
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
@@ -71,6 +72,18 @@ public class WebBrowserUtil {
 	public static boolean isLinux() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
 		if (os != null && os.toLowerCase().contains("lin")) //$NON-NLS-1$
+			return true;
+		return false;
+	}
+
+	/**
+	 * Returns true if we're running on FreeBSD.
+	 *
+	 * @return boolean
+	 */
+	public static boolean isFreeBSD() {
+		String os = System.getProperty("os.name"); //$NON-NLS-1$
+		if (os != null && os.toLowerCase().contains("freebsd")) //$NON-NLS-1$
 			return true;
 		return false;
 	}
