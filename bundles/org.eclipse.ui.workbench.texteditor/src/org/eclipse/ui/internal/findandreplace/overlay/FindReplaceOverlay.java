@@ -82,18 +82,22 @@ public class FindReplaceOverlay {
 		private static final List<KeyStroke> SEARCH_BACKWARD = List.of( //
 				KeyStroke.getInstance(SWT.SHIFT, SWT.CR), KeyStroke.getInstance(SWT.SHIFT, SWT.KEYPAD_CR));
 		private static final List<KeyStroke> SEARCH_ALL = List.of( //
+				KeyStroke.getInstance(SWT.MOD1, SWT.CR), KeyStroke.getInstance(SWT.MOD1, SWT.KEYPAD_CR),
+				KeyStroke.getInstance(SWT.ALT, 's'));
+		private static final List<KeyStroke> REPLACE_ALL = List.of( //
 				KeyStroke.getInstance(SWT.MOD1, SWT.CR), KeyStroke.getInstance(SWT.MOD1, SWT.KEYPAD_CR));
 		private static final List<KeyStroke> OPTION_CASE_SENSITIVE = List.of( //
-				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'C'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'c'));
+				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'C'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'c'),
+				KeyStroke.getInstance(SWT.ALT, 'c'));
 		private static final List<KeyStroke> OPTION_WHOLE_WORD = List.of( //
 				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'D'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'd'));
 		private static final List<KeyStroke> OPTION_REGEX = List.of( //
 				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'P'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'p'));
 		private static final List<KeyStroke> OPTION_SEARCH_IN_SELECTION = List.of( //
-				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'I'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'i'));
+				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'I'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'i'),
+				KeyStroke.getInstance(SWT.ALT, 'l'));
 		private static final List<KeyStroke> CLOSE = List.of( //
-				KeyStroke.getInstance(SWT.ESC), KeyStroke.getInstance(SWT.MOD1, 'F'),
-				KeyStroke.getInstance(SWT.MOD1, 'f'));
+				KeyStroke.getInstance(SWT.ESC), KeyStroke.getInstance(SWT.MOD1, 'F'));
 		private static final List<KeyStroke> TOGGLE_REPLACE = List.of( //
 				KeyStroke.getInstance(SWT.MOD1, 'R'), KeyStroke.getInstance(SWT.MOD1, 'r'));
 	}
@@ -527,7 +531,7 @@ public class FindReplaceOverlay {
 						return;
 					}
 					performReplaceAll();
-				}).withShortcuts(KeyboardShortcuts.SEARCH_ALL).build();
+				}).withShortcuts(KeyboardShortcuts.REPLACE_ALL).build();
 	}
 
 	private ContentAssistCommandAdapter createContentAssistField(HistoryTextWrapper control, boolean isFind) {

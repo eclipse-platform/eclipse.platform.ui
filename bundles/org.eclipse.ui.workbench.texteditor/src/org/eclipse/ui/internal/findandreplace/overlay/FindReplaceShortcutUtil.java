@@ -36,7 +36,7 @@ public final class FindReplaceShortcutUtil {
 		if (ctrlDown && e.character != e.keyCode && e.character < 0x20 && (e.keyCode & SWT.KEYCODE_BIT) == 0) {
 			character += 0x40;
 		}
-		KeyStroke actualStroke = KeyStroke.getInstance(e.stateMask & (SWT.MOD1 | SWT.SHIFT),
+		KeyStroke actualStroke = KeyStroke.getInstance(e.stateMask & (SWT.MOD1 | SWT.SHIFT | SWT.ALT),
 				character == 0 ? e.keyCode : character);
 		return actualStroke;
 	}
