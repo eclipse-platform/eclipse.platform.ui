@@ -20,6 +20,13 @@ import java.util.function.Supplier;
 
 import org.osgi.framework.FrameworkUtil;
 
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
@@ -37,6 +44,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGBA;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -50,7 +58,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
@@ -68,6 +75,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
@@ -81,7 +89,7 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
-public class FindReplaceOverlay extends Dialog {
+public class FindReplaceOverlay {
 	private final class KeyboardShortcuts {
 		private static final List<KeyStroke> SEARCH_FORWARD = List.of( //
 				KeyStroke.getInstance(SWT.CR), KeyStroke.getInstance(SWT.KEYPAD_CR));
@@ -150,19 +158,10 @@ public class FindReplaceOverlay extends Dialog {
 	private ContentAssistCommandAdapter contentAssistSearchField, contentAssistReplaceField;
 
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
-		super(parent);
 		createFindReplaceLogic(target);
-
-		setShellStyle(SWT.MODELESS);
-		setBlockOnOpen(false);
 		targetPart = part;
 		targetPartVisibilityHandler = new TargetPartVisibilityHandler(targetPart, this::getShell, this::close,
 				this::updatePlacementAndVisibility);
-	}
-
-	@Override
-	protected boolean isResizable() {
-		return false;
 	}
 
 	private void createFindReplaceLogic(IFindReplaceTarget target) {
@@ -207,7 +206,7 @@ public class FindReplaceOverlay extends Dialog {
 	private PaintListener widgetMovementListener = __ -> asyncUpdatePlacementAndVisibility();
 
 	private void asyncUpdatePlacementAndVisibility() {
-		Shell shell = getShell();
+		Composite shell = getShell();
 		if (shell != null) {
 			shell.getDisplay().asyncExec(this::updatePlacementAndVisibility);
 		}
@@ -228,14 +227,15 @@ public class FindReplaceOverlay extends Dialog {
 	private static class TargetPartVisibilityHandler implements IPartListener2, IPageChangedListener {
 		private final IWorkbenchPart targetPart;
 		private final IWorkbenchPart topLevelPart;
-		private final Supplier<Shell> shellProvider;
+		private final Supplier<Composite> shellProvider;
 		private final Runnable closeCallback;
 		private final Runnable placementUpdateCallback;
 
 		private boolean isTopLevelVisible = true;
 		private boolean isNestedLevelVisible = true;
 
-		TargetPartVisibilityHandler(IWorkbenchPart targetPart, Supplier<Shell> shellProvider, Runnable closeCallback,
+		TargetPartVisibilityHandler(IWorkbenchPart targetPart, Supplier<Composite> shellProvider,
+				Runnable closeCallback,
 				Runnable placementUpdateCallback) {
 			this.targetPart = targetPart;
 			this.shellProvider = shellProvider;
@@ -318,9 +318,6 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private KeyListener closeOnTargetEscapeListener = KeyListener.keyPressedAdapter(c -> {
-		if (c.keyCode == SWT.ESC) {
-			this.close();
-		}
 	});
 
 	/**
@@ -335,11 +332,11 @@ public class FindReplaceOverlay extends Dialog {
 		return settings;
 	}
 
-	@Override
 	public boolean close() {
 		if (!overlayOpen) {
 			return true;
 		}
+		overlayPart.dispose();
 		if (targetPart != null) {
 			targetPart.setFocus();
 		}
@@ -350,14 +347,61 @@ public class FindReplaceOverlay extends Dialog {
 		replaceBarOpen = false;
 		unbindListeners();
 		container.dispose();
-		return super.close();
+		return overlayOpen;
 	}
 
-	@Override
+	MPartStack pipStack = null;
+	Composite pipComp = null;
+	Composite overlayPart;
+
+	private void openOverlayPart() {
+		IWorkbenchWindow window = targetPart.getSite().getWorkbenchWindow();
+		MApplication theApp = window.getService(MApplication.class);
+		MWindow win1 = theApp.getChildren().get(0);
+		EPartService ps = win1.getContext().get(EPartService.class);
+		EModelService ms = win1.getContext().get(EModelService.class);
+
+		if (pipStack == null) {
+			// Find the MArea
+			List<MArea> areas = ms.findElements(win1, null, MArea.class, null);
+			if (areas.size() > 0) {
+				MArea area = areas.get(0);
+				List<MPartStack> areaStacks = ms.findElements(area, null, MPartStack.class, null);
+				if (areaStacks.size() == 1) {
+					pipStack = ms.createModelElement(MPartStack.class);
+					Composite areaComp = (Composite) area.getWidget();
+					overlayPart = areaComp;
+					Rectangle ar = areaComp.getBounds();
+
+					pipComp = new Composite(areaComp, SWT.BORDER);
+					pipComp.setSize((ar.width / 2) - 20, (ar.height / 2) - 20);
+					pipComp.setLocation((ar.width / 2) - 25, (ar.height / 2) - 25);
+					pipComp.moveAbove(null);
+					pipComp.setLayout(new FillLayout());
+
+					pipStack.setVisible(true);
+					Control stackCtrl = (Control) pipStack.getWidget();
+					stackCtrl.setParent(pipComp);
+					pipComp.layout(true);
+				}
+			}
+		} else {
+			pipStack.setVisible(true);
+			pipComp.dispose();
+			pipStack = null;
+			pipComp = null;
+		}
+	}
+
+	private Composite getShell() {
+		return overlayPart;
+	}
+
 	public int open() {
 		int returnCode = Window.OK;
 		if (!overlayOpen) {
-			returnCode = super.open();
+			openOverlayPart();
+			createContents(overlayPart);
 			bindListeners();
 			restoreOverlaySettings();
 		}
@@ -366,7 +410,7 @@ public class FindReplaceOverlay extends Dialog {
 		updateFromTargetSelection();
 		searchBar.forceFocus();
 
-		getShell().layout();
+		overlayPart.layout();
 		updatePlacementAndVisibility();
 		updateContentAssistAvailability();
 
@@ -412,7 +456,7 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void unbindListeners() {
-		getShell().removeShellListener(overlayDeactivationListener);
+//		getShell().removeShellListener(overlayDeactivationListener);
 		if (targetPart != null && targetPart instanceof StatusTextEditor textEditor) {
 			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
 			if (targetWidget != null) {
@@ -425,7 +469,7 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void bindListeners() {
-		getShell().addShellListener(overlayDeactivationListener);
+//		getShell().addShellListener(overlayDeactivationListener);
 		if (targetPart instanceof StatusTextEditor textEditor) {
 			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
 
@@ -436,13 +480,14 @@ public class FindReplaceOverlay extends Dialog {
 		}
 	}
 
-	@Override
 	public Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(),
 				IAbstractTextEditorHelpContextIds.FIND_REPLACE_OVERLAY);
 
 		backgroundToUse = new Color(getShell().getDisplay(), new RGBA(0, 0, 0, 0));
-		return createDialog(parent);
+		final Control dialog = createDialog(parent);
+
+		return dialog;
 	}
 
 	private Control createDialog(final Composite parent) {
@@ -458,7 +503,7 @@ public class FindReplaceOverlay extends Dialog {
 
 		container.layout();
 
-		applyDialogFont(container);
+//		applyDialogFont(container);
 		return container;
 	}
 
@@ -488,7 +533,6 @@ public class FindReplaceOverlay extends Dialog {
 		}
 	}
 
-
 	private void createSearchTools() {
 		searchTools = new AccessibleToolBar(searchContainer);
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.END, GridData.END).applyTo(searchTools);
@@ -505,14 +549,12 @@ public class FindReplaceOverlay extends Dialog {
 		searchUpButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_PREV))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_upSearchButton_toolTip)
-				.withOperation(() -> performSearch(false))
-				.withShortcuts(KeyboardShortcuts.SEARCH_BACKWARD).build();
+				.withOperation(() -> performSearch(false)).withShortcuts(KeyboardShortcuts.SEARCH_BACKWARD).build();
 
 		searchDownButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_NEXT))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_downSearchButton_toolTip)
-				.withOperation(() -> performSearch(true))
-				.withShortcuts(KeyboardShortcuts.SEARCH_FORWARD).build();
+				.withOperation(() -> performSearch(true)).withShortcuts(KeyboardShortcuts.SEARCH_FORWARD).build();
 		searchDownButton.setSelection(true); // by default, search down
 
 		searchAllButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.PUSH)
@@ -528,8 +570,7 @@ public class FindReplaceOverlay extends Dialog {
 		closeButton = new AccessibleToolItemBuilder(closeTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_CLOSE))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_closeButton_toolTip) //
-				.withOperation(this::close)
-				.withShortcuts(KeyboardShortcuts.CLOSE).build();
+				.withOperation(this::close).withShortcuts(KeyboardShortcuts.CLOSE).build();
 	}
 
 	private void createAreaSearchButton() {
@@ -539,16 +580,14 @@ public class FindReplaceOverlay extends Dialog {
 				.withOperation(() -> {
 					activateInFindReplacerIf(SearchOptions.GLOBAL, !searchInSelectionButton.getSelection());
 					updateIncrementalSearch();
-				})
-				.withShortcuts(KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION).build();
+				}).withShortcuts(KeyboardShortcuts.OPTION_SEARCH_IN_SELECTION).build();
 		searchInSelectionButton.setSelection(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
 	}
 
 	private void createRegexSearchButton() {
 		regexSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_FIND_REGEX))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip)
-				.withOperation(() -> {
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_regexSearchButton_toolTip).withOperation(() -> {
 					activateInFindReplacerIf(SearchOptions.REGEX, regexSearchButton.getSelection());
 					wholeWordSearchButton.setEnabled(findReplaceLogic.isWholeWordSearchAvailable(getFindString()));
 					updateIncrementalSearch();
@@ -571,8 +610,7 @@ public class FindReplaceOverlay extends Dialog {
 	private void createWholeWordsButton() {
 		wholeWordSearchButton = new AccessibleToolItemBuilder(searchTools).withStyleBits(SWT.CHECK)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_WHOLE_WORD))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip)
-				.withOperation(() -> {
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_wholeWordsButton_toolTip).withOperation(() -> {
 					activateInFindReplacerIf(SearchOptions.WHOLE_WORD, wholeWordSearchButton.getSelection());
 					updateIncrementalSearch();
 				}).withShortcuts(KeyboardShortcuts.OPTION_WHOLE_WORD).build();
@@ -589,8 +627,7 @@ public class FindReplaceOverlay extends Dialog {
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.CENTER, GridData.END).applyTo(replaceTools);
 		replaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip)
-				.withOperation(() -> {
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip).withOperation(() -> {
 					if (getFindString().isEmpty()) {
 						showUserFeedback(warningColor, true);
 						return;
@@ -600,8 +637,7 @@ public class FindReplaceOverlay extends Dialog {
 
 		replaceAllButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE_ALL))
-				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceAllButton_toolTip)
-				.withOperation(() -> {
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceAllButton_toolTip).withOperation(() -> {
 					if (getFindString().isEmpty()) {
 						showUserFeedback(warningColor, true);
 						return;
@@ -840,39 +876,39 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void updatePlacementAndVisibility() {
-		if (!targetPartVisibilityHandler.isTargetVisible()) {
-			getShell().setVisible(false);
-			return;
-		}
-		if (isInvalidTargetShell()) {
-			getShell().getDisplay().asyncExec(() -> {
-				if (isInvalidTargetShell()) {
-					close();
-					setParentShell(targetPart.getSite().getShell());
-					open();
-					targetPart.setFocus();
-				}
-			});
-			return;
-		}
-		getShell().requestLayout();
-		if (!(targetPart instanceof StatusTextEditor textEditor)) {
-			return;
-		}
-
-		Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
-		if (!okayToUse(targetWidget)) {
-			this.close();
-			return;
-		}
-
-		Rectangle targetControlBounds = calculateAbsoluteControlBounds(targetWidget);
-		Rectangle overlayBounds = calculateDesiredOverlayBounds(targetControlBounds);
-		updatePosition(overlayBounds);
-		configureDisplayedWidgetsForWidth(overlayBounds.width);
-		updateVisibility(targetControlBounds, overlayBounds);
-
-		repositionTextSelection();
+//		if (!targetPartVisibilityHandler.isTargetVisible()) {
+//			getShell().setVisible(false);
+//			return;
+//		}
+//		if (isInvalidTargetShell()) {
+//			getShell().getDisplay().asyncExec(() -> {
+//				if (isInvalidTargetShell()) {
+//					close();
+////					setParentShell(targetPart.getSite().getShell());
+//					open();
+//					targetPart.setFocus();
+//				}
+//			});
+//			return;
+//		}
+//		getShell().requestLayout();
+//		if (!(targetPart instanceof StatusTextEditor textEditor)) {
+//			return;
+//		}
+//
+//		Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
+//		if (!okayToUse(targetWidget)) {
+//			this.close();
+//			return;
+//		}
+//
+//		Rectangle targetControlBounds = calculateAbsoluteControlBounds(targetWidget);
+//		Rectangle overlayBounds = calculateDesiredOverlayBounds(targetControlBounds);
+//		updatePosition(overlayBounds);
+//		configureDisplayedWidgetsForWidth(overlayBounds.width);
+//		updateVisibility(targetControlBounds, overlayBounds);
+//
+//		repositionTextSelection();
 	}
 
 	private boolean isInvalidTargetPart() {
@@ -934,9 +970,9 @@ public class FindReplaceOverlay extends Dialog {
 		} else {
 			shallBeVisible = overlayBounds.y >= targetControlBounds.y;
 		}
-		Shell shell = getShell();
-		if (shallBeVisible != shell.isVisible()) {
-			shell.setVisible(shallBeVisible);
+		Composite part = getShell();
+		if (shallBeVisible != part.isVisible()) {
+			part.setVisible(shallBeVisible);
 		}
 	}
 
