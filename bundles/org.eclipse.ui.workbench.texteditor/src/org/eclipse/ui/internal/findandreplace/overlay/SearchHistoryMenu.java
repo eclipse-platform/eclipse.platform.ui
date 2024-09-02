@@ -54,6 +54,7 @@ class SearchHistoryMenu extends Dialog {
 	private int width;
 	private Table table;
 	private TableColumn column;
+	private int selectedIndexInTable = -1;
 
 	public SearchHistoryMenu(Shell parent, HistoryStore history, Consumer<String> historyEntrySelectedCallback) {
 		super(parent);
@@ -92,28 +93,58 @@ class SearchHistoryMenu extends Dialog {
 		return table;
 	}
 
+	private void moveSelectionInTable(int indexShift) {
+		selectedIndexInTable += indexShift;
+		if (selectedIndexInTable < 0) {
+			selectedIndexInTable = table.getItemCount() - 1;
+		} else if (selectedIndexInTable > table.getItemCount() - 1) {
+			selectedIndexInTable = 0;
+		}
+		table.setSelection(selectedIndexInTable);
+		historyEntrySelectedCallback.accept(table.getSelection()[0].getText());
+	}
+
 	private void attachTableListeners() {
+		table.addListener(SWT.MouseMove, event -> {
+			Point point = new Point(event.x, event.y);
+			TableItem item = table.getItem(point);
+			if (item != null) {
+				table.setSelection(item);
+				selectedIndexInTable = table.getSelectionIndex();
+			}
+		});
+		table.addKeyListener(KeyListener.keyPressedAdapter(e -> {
+			if (e.keyCode == SWT.ARROW_DOWN) {
+				moveSelectionInTable(1);
+				e.doit = false;
+			} else if (e.keyCode == SWT.ARROW_UP) {
+				moveSelectionInTable(-1);
+				e.doit = false;
+			} else if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
+				notifyParentOfSelectionInput();
+				close();
+			}
+		}));
 		table.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			TableItem[] selection = table.getSelection();
-			if (selection.length == 0) {
-				historyEntrySelectedCallback.accept(null);
-				return;
-			}
-			String text = selection[0].getText();
-			if (text != null) {
-				historyEntrySelectedCallback.accept(text);
-			}
-			historyEntrySelectedCallback.accept(null);
+			notifyParentOfSelectionInput();
 		}));
 		table.addMouseListener(MouseListener.mouseDownAdapter(e -> {
 			table.notifyListeners(SWT.Selection, null);
 			close();
 		}));
-		table.addKeyListener(KeyListener.keyPressedAdapter(e -> {
-			if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
-				close();
-			}
-		}));
+	}
+
+	private void notifyParentOfSelectionInput() {
+		TableItem[] selection = table.getSelection();
+		if (selection.length == 0) {
+			historyEntrySelectedCallback.accept(null);
+			return;
+		}
+		String text = selection[0].getText();
+		if (text != null) {
+			historyEntrySelectedCallback.accept(text);
+		}
+		historyEntrySelectedCallback.accept(null);
 	}
 
 	private void positionShell() {
