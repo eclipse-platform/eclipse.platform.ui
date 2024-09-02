@@ -80,19 +80,28 @@ import org.eclipse.ui.texteditor.StatusTextEditor;
 public class FindReplaceOverlay extends Dialog {
 	private final class KeyboardShortcuts {
 		private static final List<KeyStroke> SEARCH_FORWARD = List.of( //
-				KeyStroke.getInstance(SWT.CR), KeyStroke.getInstance(SWT.KEYPAD_CR));
+				KeyStroke.getInstance(SWT.CR), KeyStroke.getInstance(SWT.KEYPAD_CR),
+				KeyStroke.getInstance(SWT.ALT, 'n'));
 		private static final List<KeyStroke> SEARCH_BACKWARD = List.of( //
 				KeyStroke.getInstance(SWT.SHIFT, SWT.CR), KeyStroke.getInstance(SWT.SHIFT, SWT.KEYPAD_CR));
 		private static final List<KeyStroke> SEARCH_ALL = List.of( //
-				KeyStroke.getInstance(SWT.MOD1, SWT.CR), KeyStroke.getInstance(SWT.MOD1, SWT.KEYPAD_CR));
+				KeyStroke.getInstance(SWT.MOD1, SWT.CR), KeyStroke.getInstance(SWT.MOD1, SWT.KEYPAD_CR),
+				KeyStroke.getInstance(SWT.ALT, 's'));
+		private static final List<KeyStroke> REPLACE_ALL = List.of( //
+				KeyStroke.getInstance(SWT.MOD1, SWT.CR), KeyStroke.getInstance(SWT.MOD1, SWT.KEYPAD_CR),
+				KeyStroke.getInstance(SWT.ALT, 'a'));
 		private static final List<KeyStroke> OPTION_CASE_SENSITIVE = List.of( //
-				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'C'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'c'));
+				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'C'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'c'),
+				KeyStroke.getInstance(SWT.ALT, 'c'));
 		private static final List<KeyStroke> OPTION_WHOLE_WORD = List.of( //
-				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'W'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'w'));
+				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'W'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'w'),
+				KeyStroke.getInstance(SWT.ALT, 'w'));
 		private static final List<KeyStroke> OPTION_REGEX = List.of( //
-				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'P'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'p'));
+				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'P'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'p'),
+				KeyStroke.getInstance(SWT.ALT, 'X'));
 		private static final List<KeyStroke> OPTION_SEARCH_IN_SELECTION = List.of( //
-				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'A'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'a'));
+				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'A'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'a'),
+				KeyStroke.getInstance(SWT.ALT, 'l'));
 		private static final List<KeyStroke> CLOSE = List.of( //
 				KeyStroke.getInstance(SWT.ESC), KeyStroke.getInstance(SWT.MOD1, 'F'),
 				KeyStroke.getInstance(SWT.MOD1, 'f'));
@@ -597,7 +606,7 @@ public class FindReplaceOverlay extends Dialog {
 						return;
 					}
 					performReplaceAll();
-				}).withShortcuts(KeyboardShortcuts.SEARCH_ALL).build();
+				}).withShortcuts(KeyboardShortcuts.REPLACE_ALL).build();
 	}
 
 	private void createSearchBar() {
