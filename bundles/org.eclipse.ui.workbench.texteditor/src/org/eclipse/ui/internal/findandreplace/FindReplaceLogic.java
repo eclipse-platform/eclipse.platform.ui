@@ -405,16 +405,17 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 * @return the number of selected elements
 	 */
 	private int selectAll(String findString) {
-		List<Point> selections = new ArrayList<>();
+		List<IRegion> selections = new ArrayList<>();
 		executeInForwardMode(() -> {
-			Point currentSeletion = new Point(0, 0);
-			while (findAndSelect(currentSeletion.x + currentSeletion.y, findString) != -1) {
-				currentSeletion = target.getSelection();
-				selections.add(currentSeletion);
-			}
+			final int searchStringLength = findString.length();
+			final int firstIndex = findIndex(findString, 0);
+			int index = firstIndex;
+			do {
+				index = findIndex(findString, index + searchStringLength);
+				selections.add(new Region(index, searchStringLength));
+			} while (index != firstIndex && index != -1);
 			if (target instanceof IFindReplaceTargetExtension4 selectableTarget) {
-				IRegion[] selectedRegions = selections.stream().map(selection -> new Region(selection.x, selection.y))
-						.toArray(IRegion[]::new);
+				IRegion[] selectedRegions = selections.toArray(IRegion[]::new);
 				selectableTarget.setSelection(selectedRegions);
 			}
 		});
