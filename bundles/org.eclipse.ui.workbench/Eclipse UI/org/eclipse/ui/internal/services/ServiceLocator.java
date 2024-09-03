@@ -265,7 +265,8 @@ public final class ServiceLocator implements IDisposable, INestable, IServiceLoc
 		}
 
 		if (!api.isInstance(service)) {
-			throw new IllegalArgumentException("The service does not implement the given interface"); //$NON-NLS-1$
+			throw new IllegalArgumentException(
+					"The service '" + service + "' does not implement the given interface: '" + api.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		if (isDisposed()) {
 			IllegalStateException ex = new IllegalStateException("An attempt was made to register service " + service //$NON-NLS-1$
