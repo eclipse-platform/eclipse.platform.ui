@@ -145,12 +145,15 @@ public class WizardArchiveFileResourceImportPage1 extends
 	 *	and is valid (ie.- proper format)
 	 */
 	private boolean ensureZipSourceIsValid() {
-		ZipFile specifiedFile = getSpecifiedZipSourceFile();
-		if (specifiedFile == null) {
-			setErrorMessage(DataTransferMessages.ZipImport_badFormat);
+		try (ZipFile specifiedFile = getSpecifiedZipSourceFile()) {
+			if (specifiedFile == null) {
+				setErrorMessage(DataTransferMessages.ZipImport_badFormat);
+				return false;
+			}
+			return ArchiveFileManipulations.closeZipFile(specifiedFile, getShell());
+		} catch (IOException closeException) {
 			return false;
 		}
-		return ArchiveFileManipulations.closeZipFile(specifiedFile, getShell());
 	}
 
 	private boolean ensureTarSourceIsValid() {
@@ -403,12 +406,10 @@ public class WizardArchiveFileResourceImportPage1 extends
 		ILeveledImportStructureProvider importStructureProvider = null;
 		if (ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
 			if( ensureTarSourceIsValid()) {
-				TarFile tarFile = getSpecifiedTarSourceFile();
-				importStructureProvider = new TarLeveledStructureProvider(tarFile);
+				importStructureProvider = new TarLeveledStructureProvider(getSpecifiedTarSourceFile());
 			}
 		} else if(ensureZipSourceIsValid()) {
-			ZipFile zipFile = getSpecifiedZipSourceFile();
-			importStructureProvider = new ZipLeveledStructureProvider(zipFile);
+			importStructureProvider = new ZipLeveledStructureProvider(getSpecifiedZipSourceFile());
 		}
 		return importStructureProvider;
 	}

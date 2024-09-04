@@ -32,7 +32,7 @@ import java.util.zip.GZIPInputStream;
  */
 public class TarFile implements AutoCloseable {
 	private final File file;
-	private TarInputStream entryEnumerationStream;
+	private final TarInputStream entryEnumerationStream;
 	private TarEntry curEntry;
 	private TarInputStream entryStream;
 
@@ -52,6 +52,9 @@ public class TarFile implements AutoCloseable {
 			//If it is not compressed we close
 			//the old one and recreate
 			in.close();
+			in = null;
+		}
+		if (in == null) {
 			in = new FileInputStream(file);
 		}
 		try {

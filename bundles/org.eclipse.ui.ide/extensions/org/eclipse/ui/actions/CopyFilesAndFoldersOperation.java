@@ -17,6 +17,8 @@
 package org.eclipse.ui.actions;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -528,7 +530,11 @@ public class CopyFilesAndFoldersOperation {
 			IFile sourceFile = getFile(source);
 
 			if (sourceFile != null) {
-				existingFile.setContents(sourceFile.getContents(), IResource.KEEP_HISTORY, subMonitor.split(1));
+				try (InputStream contents = sourceFile.getContents()) {
+					existingFile.setContents(contents, IResource.KEEP_HISTORY, subMonitor.split(1));
+				} catch (IOException closeException) {
+					// never happens
+				}
 			}
 		}
 	}

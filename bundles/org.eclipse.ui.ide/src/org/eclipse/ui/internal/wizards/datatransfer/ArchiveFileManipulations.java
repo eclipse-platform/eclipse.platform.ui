@@ -82,11 +82,11 @@ public class ArchiveFileManipulations {
 	 */
 	@SuppressWarnings("resource")
 	public static void closeStructureProvider(ILeveledImportStructureProvider structureProvider, Shell shell) {
-		if (structureProvider instanceof ZipLeveledStructureProvider) {
-			closeZipFile(((ZipLeveledStructureProvider) structureProvider).getZipFile(), shell);
+		if (structureProvider instanceof ZipLeveledStructureProvider zsp) {
+			closeZipFile(zsp.getZipFile(), shell);
 		}
-		if (structureProvider instanceof TarLeveledStructureProvider) {
-			closeTarFile(((TarLeveledStructureProvider) structureProvider).getTarFile(), shell);
+		if (structureProvider instanceof TarLeveledStructureProvider tsp) {
+			closeTarFile(tsp.getTarFile(), shell);
 		}
 	}
 
