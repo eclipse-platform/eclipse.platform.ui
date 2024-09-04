@@ -34,9 +34,8 @@ import org.eclipse.core.runtime.CoreException;
  * @since 3.1
  */
 public class TarFileExporter implements IFileExporter {
-	private TarOutputStream outputStream;
-	private GZIPOutputStream gzipOutputStream;
-	private boolean resolveLinks;
+	private final TarOutputStream outputStream;
+	private final boolean resolveLinks;
 
 
 	/**
@@ -52,12 +51,13 @@ public class TarFileExporter implements IFileExporter {
 	 */
 	public TarFileExporter(String filename, boolean compress, boolean resolveLinks) throws IOException {
 		this.resolveLinks = resolveLinks;
+		TarOutputStream tos;
 		if (compress) {
-			gzipOutputStream = new GZIPOutputStream(new FileOutputStream(filename));
-			outputStream = new TarOutputStream(new BufferedOutputStream(gzipOutputStream));
+			tos = new TarOutputStream(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(filename))));
 		} else {
-			outputStream = new TarOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));
+			tos = new TarOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));
 		}
+		outputStream = tos;
 	}
 
 	/**
@@ -69,9 +69,6 @@ public class TarFileExporter implements IFileExporter {
 	@Override
 	public void finished() throws IOException {
 		outputStream.close();
-		if(gzipOutputStream != null) {
-			gzipOutputStream.close();
-		}
 	}
 
 	/**

@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.ui.ide.undo;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -760,7 +762,12 @@ public class WorkspaceUndoUtil {
 				// restored.
 				IResourceSnapshot<IResource> fileDescription = ResourceSnapshotFactory.fromResource(existingFile);
 				// Reset the contents to that of the file being moved
-				existingFile.setContents(file.getContents(), IResource.KEEP_HISTORY, subMonitor.split(1));
+				try (InputStream contents = file.getContents()) {
+					existingFile.setContents(contents, IResource.KEEP_HISTORY, subMonitor.split(1));
+				} catch (IOException closeException) {
+					// never happens
+				}
+
 				fileDescription.recordStateFromHistory(subMonitor.split(1));
 				// Now delete the source file if requested
 				// We don't need to remember anything about it, because

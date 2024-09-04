@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -199,7 +202,11 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 			IFile sourceFile = getFile(source);
 
 			if (sourceFile != null) {
-				existingFile.setContents(sourceFile.getContents(), IResource.KEEP_HISTORY, subMonitor.split(1));
+				try (InputStream contents = sourceFile.getContents()) {
+					existingFile.setContents(contents, IResource.KEEP_HISTORY, subMonitor.split(1));
+				} catch (IOException closeException) {
+					// never happens
+				}
 				delete(sourceFile, subMonitor.split(1));
 			}
 		}
