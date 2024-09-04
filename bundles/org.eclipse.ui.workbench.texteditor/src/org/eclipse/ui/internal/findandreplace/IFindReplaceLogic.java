@@ -181,7 +181,6 @@ public interface IFindReplaceLogic {
 	 * <li>Backward search operations will use the end of the selection as the
 	 * starting point.</li>
 	 * </ul>
-	 * </p>
 	 */
 	void resetIncrementalBaseLocation();
 
