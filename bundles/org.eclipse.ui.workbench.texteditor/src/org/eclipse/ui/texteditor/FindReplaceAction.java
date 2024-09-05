@@ -16,8 +16,11 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
@@ -411,6 +414,8 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		dialog.open();
 	}
 
+	MPartStack pipStack = null;
+	Composite pipComp = null;
 	private void showOverlayInEditor() {
 		if (overlay == null) {
 			Shell shellToUse = null;
@@ -429,7 +434,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		overlay.setPositionToTop(shouldPositionOverlayOnTop());
 
 		hookDialogPreferenceListener();
-		overlay.getShell().addDisposeListener(__ -> removeDialogPreferenceListener());
+//		overlay.getShell().addDisposeListener(__ -> removeDialogPreferenceListener());
 	}
 
 	@Override
