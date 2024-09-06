@@ -21,15 +21,6 @@ import org.eclipse.core.resources.IResource;
 public abstract class PriorityFunction {
 
 	/**
-	 * The highest priority. Any elements in the queue with this priority will be visited before
-	 * any others in the queue. Be warned that assigning this priority to a deeply nested
-	 * element in the tree alone doesn't guarantee it will be visited early on because in
-	 * order to reach the element the parents have to be visited first. If the parent
-	 * has a low priority...
-	 */
-	public static final double PRIORITY_HIGHEST = Double.POSITIVE_INFINITY;
-
-	/**
 	 * Priority indicating something that is moderately more interesting than the default.
 	 * So it should be processed before default stuff but not before "VISIT_FIRST" priority.
 	 */

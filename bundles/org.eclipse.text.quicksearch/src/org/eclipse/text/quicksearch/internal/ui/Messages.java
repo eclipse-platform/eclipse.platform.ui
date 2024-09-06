@@ -42,6 +42,7 @@ public class Messages extends NLS {
 	public static String QuickSearchDialog_listLabel_limit_reached;
 	public static String QuickSearchDialog_caseSensitive_label;
 	public static String QuickSearchDialog_caseInsensitive_label;
+	public static String QuickSearchDialog_notFound;
 	public static String QuickTextSearch_updateMatchesJob;
 	public static String quickAccessMatch;
 
