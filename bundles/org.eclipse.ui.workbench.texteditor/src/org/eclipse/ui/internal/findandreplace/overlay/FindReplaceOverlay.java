@@ -16,7 +16,7 @@ package org.eclipse.ui.internal.findandreplace.overlay;
 import static org.eclipse.ui.internal.findandreplace.overlay.FindReplaceShortcutUtil.registerActionShortcutsAtControl;
 
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 import org.osgi.framework.FrameworkUtil;
 
@@ -156,7 +156,7 @@ public class FindReplaceOverlay extends Dialog {
 		setShellStyle(SWT.MODELESS);
 		setBlockOnOpen(false);
 		targetPart = part;
-		targetPartVisibilityHandler = new TargetPartVisibilityHandler(targetPart, this::getShell, this::close,
+		targetPartVisibilityHandler = new TargetPartVisibilityHandler(targetPart, this::asyncExecIfOpen, this::close,
 				this::updatePlacementAndVisibility);
 	}
 
@@ -195,21 +195,26 @@ public class FindReplaceOverlay extends Dialog {
 	private ControlListener shellMovementListener = new ControlListener() {
 		@Override
 		public void controlMoved(ControlEvent e) {
-			asyncUpdatePlacementAndVisibility();
+			asyncExecIfOpen(FindReplaceOverlay.this::updatePlacementAndVisibility);
 		}
 
 		@Override
 		public void controlResized(ControlEvent e) {
-			asyncUpdatePlacementAndVisibility();
+			asyncExecIfOpen(FindReplaceOverlay.this::updatePlacementAndVisibility);
 		}
 	};
 
-	private PaintListener widgetMovementListener = __ -> asyncUpdatePlacementAndVisibility();
+	private PaintListener widgetMovementListener = __ -> asyncExecIfOpen(
+			FindReplaceOverlay.this::updatePlacementAndVisibility);
 
-	private void asyncUpdatePlacementAndVisibility() {
+	private void asyncExecIfOpen(Runnable operation) {
 		Shell shell = getShell();
 		if (shell != null) {
-			shell.getDisplay().asyncExec(this::updatePlacementAndVisibility);
+			shell.getDisplay().asyncExec(() -> {
+				if (getShell() != null) {
+					operation.run();
+				}
+			});
 		}
 	}
 
@@ -228,17 +233,18 @@ public class FindReplaceOverlay extends Dialog {
 	private static class TargetPartVisibilityHandler implements IPartListener2, IPageChangedListener {
 		private final IWorkbenchPart targetPart;
 		private final IWorkbenchPart topLevelPart;
-		private final Supplier<Shell> shellProvider;
+		private final Consumer<Runnable> asyncExecIfOpen;
 		private final Runnable closeCallback;
 		private final Runnable placementUpdateCallback;
 
 		private boolean isTopLevelVisible = true;
 		private boolean isNestedLevelVisible = true;
 
-		TargetPartVisibilityHandler(IWorkbenchPart targetPart, Supplier<Shell> shellProvider, Runnable closeCallback,
+		TargetPartVisibilityHandler(IWorkbenchPart targetPart, Consumer<Runnable> asyncExecIfOpen,
+				Runnable closeCallback,
 				Runnable placementUpdateCallback) {
 			this.targetPart = targetPart;
-			this.shellProvider = shellProvider;
+			this.asyncExecIfOpen = asyncExecIfOpen;
 			this.closeCallback = closeCallback;
 			this.placementUpdateCallback = placementUpdateCallback;
 			if (targetPart != null && targetPart.getSite() instanceof MultiPageEditorSite multiEditorSite) {
@@ -252,7 +258,7 @@ public class FindReplaceOverlay extends Dialog {
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {
 			if (partRef.getPart(false) == topLevelPart && !isTopLevelVisible) {
 				this.isTopLevelVisible = true;
-				shellProvider.get().getDisplay().asyncExec(this::adaptToPartActivationChange);
+				asyncExecIfOpen.accept(this::adaptToPartActivationChange);
 			}
 		}
 
@@ -260,7 +266,7 @@ public class FindReplaceOverlay extends Dialog {
 		public void partVisible(IWorkbenchPartReference partRef) {
 			if (partRef.getPart(false) == topLevelPart && !isTopLevelVisible) {
 				this.isTopLevelVisible = true;
-				shellProvider.get().getDisplay().asyncExec(this::adaptToPartActivationChange);
+				asyncExecIfOpen.accept(this::adaptToPartActivationChange);
 			}
 		}
 
@@ -268,7 +274,7 @@ public class FindReplaceOverlay extends Dialog {
 		public void partHidden(IWorkbenchPartReference partRef) {
 			if (partRef.getPart(false) == topLevelPart && isTopLevelVisible) {
 				this.isTopLevelVisible = false;
-				shellProvider.get().getDisplay().asyncExec(this::adaptToPartActivationChange);
+				asyncExecIfOpen.accept(this::adaptToPartActivationChange);
 			}
 		}
 
@@ -285,13 +291,13 @@ public class FindReplaceOverlay extends Dialog {
 				boolean isPageVisible = event.getSelectedPage() == targetPart;
 				if (isNestedLevelVisible != isPageVisible) {
 					this.isNestedLevelVisible = isPageVisible;
-					shellProvider.get().getDisplay().asyncExec(this::adaptToPartActivationChange);
+					asyncExecIfOpen.accept(this::adaptToPartActivationChange);
 				}
 			}
 		}
 
 		private void adaptToPartActivationChange() {
-			if (shellProvider.get() == null || targetPart.getSite().getPart() == null) {
+			if (targetPart.getSite().getPart() == null) {
 				return;
 			}
 			placementUpdateCallback.run();
@@ -299,12 +305,12 @@ public class FindReplaceOverlay extends Dialog {
 			if (!isTargetVisible()) {
 				targetPart.getSite().getShell().setActive();
 				targetPart.setFocus();
-				shellProvider.get().getDisplay().asyncExec(this::focusTargetWidget);
+				asyncExecIfOpen.accept(this::focusTargetWidget);
 			}
 		}
 
 		private void focusTargetWidget() {
-			if (shellProvider.get() == null || targetPart.getSite().getPart() == null) {
+			if (targetPart.getSite().getPart() == null) {
 				return;
 			}
 			if (targetPart instanceof StatusTextEditor textEditor) {
@@ -845,7 +851,7 @@ public class FindReplaceOverlay extends Dialog {
 			return;
 		}
 		if (isInvalidTargetShell()) {
-			getShell().getDisplay().asyncExec(() -> {
+			asyncExecIfOpen(() -> {
 				if (isInvalidTargetShell()) {
 					close();
 					setParentShell(targetPart.getSite().getShell());
@@ -883,7 +889,7 @@ public class FindReplaceOverlay extends Dialog {
 		if (isInvalidTargetPart()) {
 			return false;
 		}
-		return getShell() == null || !targetPart.getSite().getShell().equals(getShell().getParent());
+		return !targetPart.getSite().getShell().equals(getShell().getParent());
 	}
 
 	private Rectangle calculateAbsoluteControlBounds(Control control) {
