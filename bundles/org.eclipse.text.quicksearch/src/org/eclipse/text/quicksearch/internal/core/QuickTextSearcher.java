@@ -13,6 +13,9 @@
 package org.eclipse.text.quicksearch.internal.core;
 
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -36,6 +40,7 @@ import org.eclipse.text.quicksearch.internal.util.LightSchedulingRule;
 import org.eclipse.text.quicksearch.internal.util.LineReader;
 
 public class QuickTextSearcher {
+	private static int MAX_BUFFER_LENGTH = 999_999; // read max 1MB bytes => max 2MB chars.
 	private final QuickTextSearchRequestor requestor;
 	private QuickTextQuery query;
 
@@ -155,7 +160,7 @@ public class QuickTextSearcher {
 			if (canceled.getAsBoolean()) {
 				return false;
 			}
-			try (LineReader lr = new LineReader(new InputStreamReader(f.getContents(true), f.getCharset()),
+			try (LineReader lr = new LineReader(getReader(f),
 					maxLineLength)) {
 				String line;
 				int lineIndex = 1;
@@ -179,6 +184,15 @@ public class QuickTextSearcher {
 			return true;
 		}
 
+		private static Reader getReader(IFile f) throws UnsupportedEncodingException, CoreException {
+			String shortString = toShortString(f);
+			if (shortString != null) {
+				return new StringReader(shortString);
+			} else {
+				return new InputStreamReader(f.getContents(true), f.getCharset());
+			}
+		}
+
 		@Override
 		public void resume() {
 			//Only resume if we don't already exceed the maxResult limit.
@@ -188,7 +202,26 @@ public class QuickTextSearcher {
 		}
 
 	}
-
+	/**
+	 * Try to get a content as String. Avoids Streaming.
+	 */
+	private static String toShortString(IFile file) {
+		/**
+		 * Just any number such that the most source files will fit in. And not too
+		 * big to avoid out of memory.
+		 **/
+		try {
+			byte[] content = file.readNBytes(MAX_BUFFER_LENGTH);
+			int length = content.length;
+			if (length >= MAX_BUFFER_LENGTH) {
+				return null;
+			}
+			String charset = file.getCharset();
+			return new String(content, charset);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	/**
 	 * This job updates already found matches when the query is changed.
 	 * Both the walker job and this job share the same scheduling rule so
