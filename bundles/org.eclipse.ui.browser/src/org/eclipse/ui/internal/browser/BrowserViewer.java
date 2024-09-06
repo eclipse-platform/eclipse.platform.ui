@@ -465,7 +465,7 @@ public class BrowserViewer extends Composite {
 					if (!event.top)
 						return;
 					if (combo != null) {
-						if (!"about:blank".equals(event.location)) { //$NON-NLS-1$
+						if (!browser.isLocationForCustomText(event.location)) {
 							combo.setText(event.location);
 							addToHistory(event.location);
 							updateHistory();

@@ -367,8 +367,9 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		 * Avoids flickering when replacing hovers, especially on Vista in ON_CLICK mode.
 		 * Causes flickering on GTK. Carbon does not care.
 		 */
-		if (Util.isWin32()) 
+		if (Util.isWin32()) {
 			shell.moveAbove(null);
+		}
 
 		super.setVisible(true);
 	}
@@ -583,6 +584,20 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	 */
 	public BrowserInformationControlInput getInput() {
 		return fInput;
+	}
+
+	/**
+	 * @param loc the location to be checked
+	 *
+	 * @return Returns whether the given location represents the location to which the this browser
+	 *         control has navigated via calling {@link #setContent(Object)}.
+	 *         <p>
+	 *         It may be used to validate in a location listener whether the changed location
+	 *         belongs to custom content or whether it belongs to some other location to which the
+	 *         user has navigated in the control).
+	 */
+	public boolean isLocationForCustomText(String loc) {
+		return fBrowser.isLocationForCustomText(loc);
 	}
 
 	@Override
