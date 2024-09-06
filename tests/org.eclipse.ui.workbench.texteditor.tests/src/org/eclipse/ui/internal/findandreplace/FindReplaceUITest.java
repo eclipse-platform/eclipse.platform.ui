@@ -81,7 +81,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 	protected final void ensureHasFocusOnGTK() {
 		if (Util.isGtk()) {
 			runEventQueue();
-			if (dialog.getActiveShell() == null) {
+			if (!dialog.hasFocus()) {
 				String screenshotPath= ScreenshotTest.takeScreenshot(FindReplaceUITest.class, testName.getMethodName(), System.out);
 				fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + screenshotPath);
 			}
