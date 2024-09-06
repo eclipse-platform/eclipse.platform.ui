@@ -12,7 +12,14 @@
  *******************************************************************************/
 package org.eclipse.text.quicksearch.internal.core;
 
+import java.util.Collection;
 import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -39,15 +46,7 @@ import org.eclipse.text.quicksearch.internal.ui.QuickSearchActivator;
  */
 public abstract class ResourceWalker extends Job {
 
-	private static class QItem implements Comparable<QItem> {
-		public final double priority;
-		public final IResource resource;
-
-		public QItem(double p, IResource r) {
-			this.priority = p;
-			this.resource = r;
-		}
-
+	private static record QItem(double priority, IResource resource) implements Comparable<QItem> {
 		@Override
 		public int compareTo(QItem other) {
 			return Double.compare(other.priority, this.priority);
@@ -60,27 +59,47 @@ public abstract class ResourceWalker extends Job {
 	}
 
 	protected void init() {
-		queue = new PriorityQueue<>();
-		queue.add(new QItem(0, ResourcesPlugin.getWorkspace().getRoot()));
+		filesToSearch.clear();
+		addRecursive(filesToSearch, new QItem(0, ResourcesPlugin.getWorkspace().getRoot()));
+	}
+
+	private void addRecursive(Collection<QItem> queue, QItem item) {
+		IResource r = item.resource;
+		if (r instanceof IFile) {
+			queue.add(item);
+		} else if (r instanceof IContainer f) {
+			if (f.isAccessible()) {
+				try {
+					for (IResource child : f.members()) {
+						double p = priority(child);
+						if (p != PriorityFunction.PRIORITY_IGNORE) {
+							addRecursive(queue, new QItem(p, child));
+						}
+					}
+				} catch (CoreException e) {
+					QuickSearchActivator.log(e);
+				}
+			}
+		}
 	}
 
 	/**
-	 * Queue of work to do. When all work is done this will be set to null. So it
+	 * Work to do. When all work is done this is empty. So it
 	 * can also be used to determine 'done' status.
 	 */
-	private PriorityQueue<QItem> queue = null;
+	private final Set<QItem> filesToSearch = ConcurrentHashMap.newKeySet();
 
 	/**
 	 * Setting this to true will cause the ResourceWalker to stop walking. If the walker is running
 	 * as a scheduled job, then this Job will terminate. However it is possible to 'resume' the
 	 * later since pending list of workitems will be retained.
 	 */
-	private boolean suspend = false;
+	private volatile boolean suspend = false;
 
 	private PriorityFunction prioritFun = new DefaultPriorityFunction();
 
 	public boolean isDone() {
-		return queue==null;
+		return filesToSearch.isEmpty();
 	}
 
 	/**
@@ -95,7 +114,7 @@ public abstract class ResourceWalker extends Job {
 	 * all pending workitems. The walker cannot be resumed and must be reinitialized.
 	 */
 	public void stop() {
-		this.queue = null;
+		this.filesToSearch.clear();
 		this.suspend = false;
 	}
 
@@ -119,32 +138,42 @@ public abstract class ResourceWalker extends Job {
 
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
-		//TODO: progress reporting?
-		while (!suspend && queue!=null) {
-			if (monitor.isCanceled()) {
-				queue = null;
-			} else {
-				IResource r = getWork();
-				if (r!=null) {
-					if (r instanceof IFile) {
+		int workers = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
+		ExecutorService executorService = Executors.newFixedThreadPool(workers);
+		// copy the filesToSearch, to only remove a file after search completed
+		PriorityQueue<QItem> queue = new PriorityQueue<>();
+		queue.addAll(filesToSearch);
+		for (int worker = 0; worker < workers; worker++) {
+			executorService.submit(() -> {
+				QItem item;
+				while ((item = queue.poll()) != null) {
+					if (monitor.isCanceled() || suspend) {
+						break;
+					} else {
+						IResource r = item.resource;
 						IFile f = (IFile) r;
-						visit(f, monitor);
-					} else if (r instanceof IContainer) {
-						IContainer f = (IContainer) r;
-						if (f.isAccessible()) {
-							try {
-								for (IResource child : f.members()) {
-									enqueue(child);
-								}
-							} catch (CoreException e) {
-								QuickSearchActivator.log(e);
-							}
+						boolean searched = searchIn(f, () -> monitor.isCanceled() || suspend);
+						if (searched) {
+							filesToSearch.remove(item);
 						}
 					}
-				} else {
-					queue = null;
+				}
+			});
+		}
+		try {
+			while (!executorService.awaitTermination(1, TimeUnit.MILLISECONDS)) {
+				executorService.shutdown();
+				if (monitor.isCanceled() || suspend) {
+					queue.clear();
+					executorService.shutdownNow();
 				}
 			}
+		} catch (InterruptedException e) {
+			// ignore
+		}
+		// on suspend keep unsearched files for later
+		if (!suspend) {
+			filesToSearch.clear();
 		}
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
@@ -153,21 +182,7 @@ public abstract class ResourceWalker extends Job {
 		}
 	}
 
-	/**
-	 * Add a resource to the work queue taking account the priority of the resource.
-	 */
-	private void enqueue(IResource child) {
-		PriorityQueue<QItem> q = queue;
-		if (q!=null) {
-			double p = priority(child);
-			if (p==PriorityFunction.PRIORITY_IGNORE) {
-				return;
-			}
-			q.add(new QItem(p, child));
-		}
-	}
-
-	protected abstract void visit(IFile r, IProgressMonitor m);
+	protected abstract boolean searchIn(IFile f, BooleanSupplier canceled);
 
 	/**
 	 * Assigns a priority to a given resource. This priority will affect the order in which
@@ -197,14 +212,4 @@ public abstract class ResourceWalker extends Job {
 		Assert.isNotNull(f, "PriorityFunction should never be null"); //$NON-NLS-1$
 		this.prioritFun = f;
 	}
-
-	private IResource getWork() {
-		PriorityQueue<QItem> q = queue;
-		if (q!=null && !q.isEmpty()) {
-			return q.remove().resource;
-		}
-		return null;
-	}
-
-
 }

@@ -112,7 +112,6 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.FrameworkUtil;
@@ -180,13 +179,20 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		@Override
 		public IStatus runInUIThread(IProgressMonitor mon) {
-			if (!mon.isCanceled() && progressLabel!=null && !progressLabel.isDisposed()) {
-				if (searcher==null || !searcher.isActive()) {
-					progressLabel.setText(EMPTY_STRING);
+			if (!mon.isCanceled() && progressLabel != null && !progressLabel.isDisposed()) {
+				if (searcher == null || !searcher.isActive()) {
+					if (searcher != null && searcher.searchTookMs != 0) {
+						progressLabel.setText(Messages.QuickSearchDialog_notFound);
+					} else {
+						progressLabel.setText(EMPTY_STRING);
+					}
 				} else {
-					progressLabel.setText(NLS.bind(Messages.QuickSearchDialog_searching, currentFileInfo(searcher.getCurrentFile(), animate)));
-					animate = (animate+1)%4;
-					this.schedule(333);
+					progressLabel.setText(NLS.bind(Messages.QuickSearchDialog_searching,
+							currentFileInfo(searcher.getCurrentFile(), animate)));
+					animate = (animate + 1) % 4;
+				}
+				if (searcher != null) {
+					this.schedule(100);
 				}
 			}
 			return Status.OK_STATUS;
@@ -605,7 +611,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		Label listLabel = new Label(labels, SWT.NONE);
 		listLabel
-				.setText(WorkbenchMessages.FilteredItemsSelectionDialog_listLabel);
+				.setText(""); //$NON-NLS-1$
 
 		listLabel.addTraverseListener(e -> {
 			if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
@@ -644,7 +650,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		toolItem.setImage(WorkbenchImages
 				.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
 		toolItem
-				.setToolTipText(WorkbenchMessages.FilteredItemsSelectionDialog_menu);
+				.setToolTipText(""); //$NON-NLS-1$
 		toolItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

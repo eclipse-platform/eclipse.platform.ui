@@ -48,7 +48,7 @@ public class QuickTextQuery {
 
 	private boolean caseInsensitive;
 	private String orgPattern; //Original pattern case preserved even if search is case insensitive.
-	private Pattern pattern;
+	final Pattern pattern;
 
 	/**
 	 * A query that matches anything.
@@ -60,15 +60,11 @@ public class QuickTextQuery {
 	public QuickTextQuery(String substring, boolean caseInsensitive) {
 		this.orgPattern = substring;
 		this.caseInsensitive = caseInsensitive;
-		createMatcher(substring, caseInsensitive);
+		String regex = createRegEx(substring);
+		pattern = Pattern.compile(regex, caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
 	}
 
-	/**
-	 * Compile a pattern string into an RegExp and create a Matcher for that
-	 * regexp. This is so we can 'compile' the pattern once and then keep reusing
-	 * the matcher or compiled pattern.
-	 */
-	private void createMatcher(String patString, boolean caseSensitive) {
+	private String createRegEx(String patString) {
 		StringBuilder segment = new StringBuilder(); //Accumulates text that needs to be 'quoted'
 		StringBuilder regexp = new StringBuilder(); //Accumulates 'compiled' pattern
 		int pos = 0, len = patString.length();
@@ -101,8 +97,7 @@ public class QuickTextQuery {
 		//Don't forget to process that last segment.
 		appendSegment(segment, regexp);
 
-		this.pattern = Pattern.compile(regexp.toString(), caseSensitive? Pattern.CASE_INSENSITIVE : 0);
-//		this.matcher = pattern.matcher("");
+		return regexp.toString();
 	}
 
 	private void appendSegment(StringBuilder segment, StringBuilder regexp) {
@@ -155,25 +150,6 @@ public class QuickTextQuery {
 			pat = pat.toLowerCase();
 		}
 		return pat;
-	}
-
-	/**
-	 * @return whether the LineItem text contains the search pattern.
-	 */
-	public boolean matchItem(LineItem item) {
-		return matchItem(item.getText());
-	}
-
-	/**
-	 * Same as matchItem except only takes the text of the item. This can
-	 * be useful for efficient processing. In particular to avoid creating
-	 * LineItem instances for non-matching lines.
-	 */
-	public boolean matchItem(String item) {
-		//Alternate implementation. This is thread safe without synchronized,
-		// but it creates some garbage.
-		Matcher matcher = pattern.matcher(item); //Creating garbage here
-		return matcher.find();
 	}
 
 	/**
