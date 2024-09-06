@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
@@ -321,8 +322,16 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	}
 
 	@Override
-	public Shell getActiveShell() {
-		return shellRetriever.get();
+	public boolean isShown() {
+		return shellRetriever.get() != null && shellRetriever.get().isVisible();
+	}
+
+	@Override
+	public boolean hasFocus() {
+		Shell overlayShell= shellRetriever.get();
+		Control focusControl= overlayShell.getDisplay().getFocusControl();
+		Shell focusControlShell= focusControl != null ? focusControl.getShell() : null;
+		return focusControlShell == overlayShell;
 	}
 
 }

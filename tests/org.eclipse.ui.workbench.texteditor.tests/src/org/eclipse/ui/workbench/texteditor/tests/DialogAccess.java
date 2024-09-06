@@ -165,8 +165,8 @@ class DialogAccess implements IFindReplaceUIAccess {
 	}
 
 	@Override
-	public Shell getActiveShell() {
-		return shellRetriever.get();
+	public boolean hasFocus() {
+		return shellRetriever.get() != null;
 	}
 
 	@Override
@@ -314,6 +314,11 @@ class DialogAccess implements IFindReplaceUIAccess {
 		return Arrays.stream(SearchOptions.values())
 				.filter(option -> getButtonForSearchOption(option).getSelection())
 				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public boolean isShown() {
+		return shellRetriever.get() != null;
 	}
 
 }

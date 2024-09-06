@@ -16,7 +16,7 @@ package org.eclipse.ui.internal.findandreplace.overlay;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
@@ -174,7 +174,7 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		boolean useOverlayPreference= preferences.getBoolean(USE_FIND_REPLACE_OVERLAY, true);
 		try {
 			preferences.putBoolean(USE_FIND_REPLACE_OVERLAY, false);
-			assertNull("dialog should be closed after changing preference", getDialog().getActiveShell());
+			assertFalse("dialog should be closed after changing preference", getDialog().isShown());
 		} finally {
 			preferences.putBoolean(USE_FIND_REPLACE_OVERLAY, useOverlayPreference);
 			reopenFindReplaceUIForTextViewer();

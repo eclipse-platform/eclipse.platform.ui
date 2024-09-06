@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace;
 
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -25,6 +24,8 @@ public interface IFindReplaceUIAccess {
 	void closeAndRestore();
 
 	void close();
+
+	boolean isShown();
 
 	void unselect(SearchOptions option);
 
@@ -42,7 +43,7 @@ public interface IFindReplaceUIAccess {
 
 	void setReplaceText(String text);
 
-	Shell getActiveShell();
+	boolean hasFocus();
 
 	Widget getButtonForSearchOption(SearchOptions option);
 
