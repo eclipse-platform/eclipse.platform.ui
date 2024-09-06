@@ -15,6 +15,7 @@ package org.eclipse.text.quicksearch.internal.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 
 /**
  * Provides a helper to efficiently split a file into
@@ -30,7 +31,7 @@ public class LineReader implements AutoCloseable{
 	private static final int EXPECTED_LINE_LENGTH = 160;
 	public static final int DEFAULT_MAX_LINE_LENGTH = 1000;
 
-	private BufferedReader input;
+	private Reader input;
 
 	//This simple implementation just wraps a BufferedReader and StringBuilder
 	//to do the buffering and String building.
@@ -43,21 +44,23 @@ public class LineReader implements AutoCloseable{
 
 	public LineReader(Reader reader, int maxLineLength) {
 		input = buffered(reader);
-		MAX_LINE_LENGTH = maxLineLength;
+		this.maxLineLength = maxLineLength;
 	}
 
 
 	private StringBuilder line = new StringBuilder(EXPECTED_LINE_LENGTH);
 
-	private final int MAX_LINE_LENGTH;
+	private final int maxLineLength;
 	private int lineOffset = -1; //Start pos of last line read.
 	private int offset = 0; //position of next char in input.
 	private int mark = 0; //mark offset in underlying stream
 
-	private BufferedReader buffered(Reader reader) {
+	private Reader buffered(Reader reader) {
 		//If already buffered don't wrap it again.
-		if (reader instanceof BufferedReader) {
-			return (BufferedReader) reader;
+		if (reader instanceof StringReader sr) {
+			return sr;
+		} else if (reader instanceof BufferedReader br) {
+			return br;
 		} else {
 			return new BufferedReader(reader);
 		}
@@ -68,24 +71,19 @@ public class LineReader implements AutoCloseable{
 	 */
 	@Override
 	public void close() {
-		BufferedReader toClose = null;
-		synchronized (input) {
-			if (input==null) {
-				return;
-			}
-			toClose = input;
+		Reader toClose = input;
+		try (toClose) {
 			input = null;
-		}
-		try {
-			toClose.close();
-		} catch (IOException e) {
+		} catch (IOException closeException) {
 			//Ignore.
+		} finally {
+			input = null;
 		}
 	}
 
 	public String readLine() throws IOException {
 		lineOffset = offset; //remember start of line
-		int maxOffset = offset + MAX_LINE_LENGTH;
+		int maxOffset = offset + maxLineLength;
 		//Read text until we see either a CR, CR LF or LF.
 		int c = read();
 		if (c==-1) {
@@ -96,7 +94,8 @@ public class LineReader implements AutoCloseable{
 			line.append((char)c);
 			c = read();
 			if (offset>maxOffset) {
-				throw new IOException("Very long lines of text. Minified file?"); //$NON-NLS-1$
+				// Very long lines of text. Minified file?
+				return null;
 			}
 		}
 		//Last char read was some kind of line terminator. But only read first char of it.
