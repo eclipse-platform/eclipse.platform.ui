@@ -655,8 +655,8 @@ public abstract class Window implements IShellProvider {
 	/**
 	 * Returns this window's shell.
 	 *
-	 * @return this window's shell, or <code>null</code> if this window's
-	 *         shell has not been created yet
+	 * @return this window's shell, or <code>null</code> if this window's shell has
+	 *         not been created yet or if this window has been closed
 	 */
 	@Override
 	public Shell getShell() {
