@@ -28,7 +28,6 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
@@ -42,6 +41,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Shell;
@@ -204,7 +204,7 @@ public class FindReplaceOverlay extends Dialog {
 		}
 	};
 
-	private PaintListener widgetMovementListener = __ -> asyncExecIfOpen(
+	private Listener targetRelocationListener = __ -> asyncExecIfOpen(
 			FindReplaceOverlay.this::updatePlacementAndVisibility);
 
 	private void asyncExecIfOpen(Runnable operation) {
@@ -423,7 +423,8 @@ public class FindReplaceOverlay extends Dialog {
 			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
 			if (targetWidget != null) {
 				targetWidget.getShell().removeControlListener(shellMovementListener);
-				targetWidget.removePaintListener(widgetMovementListener);
+				targetWidget.removeListener(SWT.Move, targetRelocationListener);
+				targetWidget.removeListener(SWT.Resize, targetRelocationListener);
 				targetWidget.removeKeyListener(closeOnTargetEscapeListener);
 				targetPart.getSite().getPage().removePartListener(targetPartVisibilityHandler);
 			}
@@ -436,7 +437,8 @@ public class FindReplaceOverlay extends Dialog {
 			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
 
 			targetWidget.getShell().addControlListener(shellMovementListener);
-			targetWidget.addPaintListener(widgetMovementListener);
+			targetWidget.addListener(SWT.Move, targetRelocationListener);
+			targetWidget.addListener(SWT.Resize, targetRelocationListener);
 			targetWidget.addKeyListener(closeOnTargetEscapeListener);
 			targetPart.getSite().getPage().addPartListener(targetPartVisibilityHandler);
 		}
