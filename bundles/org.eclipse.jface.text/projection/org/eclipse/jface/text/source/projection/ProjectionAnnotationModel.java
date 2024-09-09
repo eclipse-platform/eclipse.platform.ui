@@ -149,7 +149,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 
 		boolean expanding= false;
 
-		Iterator<Annotation> iterator= getAnnotationIterator();
+		Iterator<Annotation> iterator= getAnnotationIterator(offset, length, true, true);
 		while (iterator.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
 			if (annotation.isCollapsed()) {
