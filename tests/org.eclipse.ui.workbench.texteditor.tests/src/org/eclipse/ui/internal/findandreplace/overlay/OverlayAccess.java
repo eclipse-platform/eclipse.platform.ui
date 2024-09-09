@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.eclipse.swt.SWT;
@@ -31,13 +30,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 
-import org.eclipse.text.tests.Accessor;
-
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 
 import org.eclipse.ui.internal.findandreplace.IFindReplaceUIAccess;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
+import org.eclipse.ui.internal.findandreplace.WidgetExtractor;
 
 class OverlayAccess implements IFindReplaceUIAccess {
 	private final IFindReplaceTarget findReplaceTarget;
@@ -64,28 +62,33 @@ class OverlayAccess implements IFindReplaceUIAccess {
 
 	private ToolItem replaceAllButton;
 
-	private final Runnable closeOperation;
+	private final FindReplaceOverlay overlay;
 
-	private final Accessor dialogAccessor;
+	private final Shell shell;
 
-	private final Supplier<Shell> shellRetriever;
-
-	OverlayAccess(IFindReplaceTarget findReplaceTarget, Accessor findReplaceOverlayAccessor) {
+	OverlayAccess(IFindReplaceTarget findReplaceTarget, FindReplaceOverlay findReplaceOverlay) {
 		this.findReplaceTarget= findReplaceTarget;
-		dialogAccessor= findReplaceOverlayAccessor;
-		find= (HistoryTextWrapper) findReplaceOverlayAccessor.get("searchBar");
-		replace= (HistoryTextWrapper) findReplaceOverlayAccessor.get("replaceBar");
-		caseSensitive= (ToolItem) findReplaceOverlayAccessor.get("caseSensitiveSearchButton");
-		wholeWord= (ToolItem) findReplaceOverlayAccessor.get("wholeWordSearchButton");
-		regEx= (ToolItem) findReplaceOverlayAccessor.get("regexSearchButton");
-		searchForward= (ToolItem) findReplaceOverlayAccessor.get("searchDownButton");
-		searchBackward= (ToolItem) findReplaceOverlayAccessor.get("searchUpButton");
-		closeOperation= () -> findReplaceOverlayAccessor.invoke("close", null);
-		openReplaceDialog= (Button) findReplaceOverlayAccessor.get("replaceToggle");
-		replaceButton= (ToolItem) findReplaceOverlayAccessor.get("replaceButton");
-		replaceAllButton= (ToolItem) findReplaceOverlayAccessor.get("replaceAllButton");
-		inSelection= (ToolItem) findReplaceOverlayAccessor.get("searchInSelectionButton");
-		shellRetriever= () -> ((Shell) findReplaceOverlayAccessor.invoke("getShell", null));
+		overlay= findReplaceOverlay;
+		shell= overlay.getShell();
+		WidgetExtractor widgetExtractor= new WidgetExtractor(FindReplaceOverlay.ID_DATA_KEY, shell);
+		find= widgetExtractor.findHistoryTextWrapper("searchInput");
+		caseSensitive= widgetExtractor.findToolItem("caseSensitiveSearch");
+		wholeWord= widgetExtractor.findToolItem("wholeWordSearch");
+		regEx= widgetExtractor.findToolItem("regExSearch");
+		inSelection= widgetExtractor.findToolItem("searchInSelection");
+		searchForward= widgetExtractor.findToolItem("searchForward");
+		searchBackward= widgetExtractor.findToolItem("searchBackward");
+		openReplaceDialog= widgetExtractor.findButton("replaceToggle");
+		extractReplaceWidgets();
+	}
+
+	private void extractReplaceWidgets() {
+		if (!isReplaceDialogOpen() && Objects.nonNull(openReplaceDialog)) {
+			WidgetExtractor widgetExtractor= new WidgetExtractor(FindReplaceOverlay.ID_DATA_KEY, shell);
+			replace= widgetExtractor.findHistoryTextWrapper("replaceInput");
+			replaceButton= widgetExtractor.findToolItem("replaceOne");
+			replaceAllButton= widgetExtractor.findToolItem("replaceAll");
+		}
 	}
 
 	private void restoreInitialConfiguration() {
@@ -100,12 +103,12 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	public void closeAndRestore() {
 		restoreInitialConfiguration();
 		assertInitialConfiguration();
-		closeOperation.run();
+		overlay.close();
 	}
 
 	@Override
 	public void close() {
-		closeOperation.run();
+		overlay.close();
 	}
 
 	@Override
@@ -234,15 +237,13 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	}
 
 	public boolean isReplaceDialogOpen() {
-		return dialogAccessor.getBoolean("replaceBarOpen");
+		return replace != null;
 	}
 
 	public void openReplaceDialog() {
 		if (!isReplaceDialogOpen() && Objects.nonNull(openReplaceDialog)) {
 			openReplaceDialog.notifyListeners(SWT.Selection, null);
-			replace= (HistoryTextWrapper) dialogAccessor.get("replaceBar");
-			replaceButton= (ToolItem) dialogAccessor.get("replaceButton");
-			replaceAllButton= (ToolItem) dialogAccessor.get("replaceAllButton");
+			extractReplaceWidgets();
 		}
 	}
 
@@ -309,15 +310,14 @@ class OverlayAccess implements IFindReplaceUIAccess {
 
 	@Override
 	public boolean isShown() {
-		return shellRetriever.get() != null && shellRetriever.get().isVisible();
+		return !shell.isDisposed() && shell.isVisible();
 	}
 
 	@Override
 	public boolean hasFocus() {
-		Shell overlayShell= shellRetriever.get();
-		Control focusControl= overlayShell.getDisplay().getFocusControl();
+		Control focusControl= shell.getDisplay().getFocusControl();
 		Shell focusControlShell= focusControl != null ? focusControl.getShell() : null;
-		return focusControlShell == overlayShell;
+		return focusControlShell == shell;
 	}
 
 }

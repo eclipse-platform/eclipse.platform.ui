@@ -18,81 +18,77 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.text.tests.Accessor;
+import org.eclipse.jface.dialogs.Dialog;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 
 import org.eclipse.ui.internal.findandreplace.IFindReplaceUIAccess;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
+import org.eclipse.ui.internal.findandreplace.WidgetExtractor;
 
 class DialogAccess implements IFindReplaceUIAccess {
 
+	private static final String DATA_ID = "org.eclipse.ui.texteditor.FindReplaceDialog.id";
+
 	private final IFindReplaceTarget findReplaceTarget;
 
-	Combo findCombo;
+	private final Dialog findReplaceDialog;
 
-	Combo replaceCombo;
+	private final Combo findCombo;
 
-	Button forwardRadioButton;
+	private final Combo replaceCombo;
 
-	Button globalRadioButton;
+	private final Button forwardRadioButton;
 
-	Button searchInRangeRadioButton;
+	private final Button globalRadioButton;
 
-	Button caseCheckBox;
+	private final Button searchInRangeRadioButton;
 
-	Button wrapCheckBox;
+	private final Button caseCheckBox;
 
-	Button wholeWordCheckBox;
+	private final Button wrapCheckBox;
 
-	Button incrementalCheckBox;
+	private final Button wholeWordCheckBox;
 
-	Button regExCheckBox;
+	private final Button incrementalCheckBox;
 
-	Button findButton;
+	private final Button regExCheckBox;
 
-	Button replaceButton;
+	private final Button replaceButton;
 
-	Button replaceFindButton;
+	private final Button replaceFindButton;
 
-	Button replaceAllButton;
+	private final Button replaceAllButton;
 
-	private Supplier<Shell> shellRetriever;
-
-	private Runnable closeOperation;
-
-	Accessor dialogAccessor;
-
-	DialogAccess(IFindReplaceTarget findReplaceTarget, Accessor findReplaceDialogAccessor) {
+	DialogAccess(IFindReplaceTarget findReplaceTarget, Dialog findReplaceDialog) {
 		this.findReplaceTarget= findReplaceTarget;
-		dialogAccessor= findReplaceDialogAccessor;
-		findCombo= (Combo) findReplaceDialogAccessor.get("fFindField");
-		replaceCombo= (Combo) findReplaceDialogAccessor.get("fReplaceField");
-		forwardRadioButton= (Button) findReplaceDialogAccessor.get("fForwardRadioButton");
-		globalRadioButton= (Button) findReplaceDialogAccessor.get("fGlobalRadioButton");
-		searchInRangeRadioButton= (Button) findReplaceDialogAccessor.get("fSelectedRangeRadioButton");
-		caseCheckBox= (Button) findReplaceDialogAccessor.get("fCaseCheckBox");
-		wrapCheckBox= (Button) findReplaceDialogAccessor.get("fWrapCheckBox");
-		wholeWordCheckBox= (Button) findReplaceDialogAccessor.get("fWholeWordCheckBox");
-		incrementalCheckBox= (Button) findReplaceDialogAccessor.get("fIncrementalCheckBox");
-		regExCheckBox= (Button) findReplaceDialogAccessor.get("fIsRegExCheckBox");
-		shellRetriever= () -> ((Shell) findReplaceDialogAccessor.get("fActiveShell"));
-		closeOperation= () -> findReplaceDialogAccessor.invoke("close", null);
-		findButton= (Button) findReplaceDialogAccessor.get("fFindNextButton");
-		replaceButton= (Button) findReplaceDialogAccessor.get("fReplaceSelectionButton");
-		replaceFindButton= (Button) findReplaceDialogAccessor.get("fReplaceFindButton");
-		replaceAllButton= (Button) findReplaceDialogAccessor.get("fReplaceAllButton");
+		this.findReplaceDialog= findReplaceDialog;
+		WidgetExtractor widgetExtractor= new WidgetExtractor(DATA_ID, findReplaceDialog.getShell());
+		findCombo= widgetExtractor.findCombo("searchInput");
+		replaceCombo= widgetExtractor.findCombo("replaceInput");
+		forwardRadioButton= widgetExtractor.findButton("searchForward");
+		globalRadioButton= widgetExtractor.findButton("globalSearch");
+		searchInRangeRadioButton= widgetExtractor.findButton("searchInSelection");
+		caseCheckBox= widgetExtractor.findButton("caseSensitiveSearch");
+		wrapCheckBox= widgetExtractor.findButton("wrappedSearch");
+		wholeWordCheckBox= widgetExtractor.findButton("wholeWordSearch");
+		incrementalCheckBox= widgetExtractor.findButton("incrementalSearch");
+		regExCheckBox= widgetExtractor.findButton("regExSearch");
+
+		replaceButton= widgetExtractor.findButton("replaceOne");
+		replaceFindButton= widgetExtractor.findButton("replaceFindOne");
+		replaceAllButton= widgetExtractor.findButton("replaceAll");
 	}
 
 	void restoreInitialConfiguration() {
@@ -153,17 +149,19 @@ class DialogAccess implements IFindReplaceUIAccess {
 	public void closeAndRestore() {
 		restoreInitialConfiguration();
 		assertInitialConfiguration();
-		closeOperation.run();
+		findReplaceDialog.close();
 	}
 
 	@Override
 	public void close() {
-		closeOperation.run();
+		findReplaceDialog.close();
 	}
 
 	@Override
 	public boolean hasFocus() {
-		return shellRetriever.get() != null;
+		Control focusControl= findReplaceDialog.getShell().getDisplay().getFocusControl();
+		Shell focusControlShell= focusControl != null ? focusControl.getShell() : null;
+		return focusControlShell == findReplaceDialog.getShell();
 	}
 
 	@Override
@@ -296,7 +294,7 @@ class DialogAccess implements IFindReplaceUIAccess {
 
 	@Override
 	public boolean isShown() {
-		return shellRetriever.get() != null;
+		return findReplaceDialog.getShell().isVisible();
 	}
 
 }

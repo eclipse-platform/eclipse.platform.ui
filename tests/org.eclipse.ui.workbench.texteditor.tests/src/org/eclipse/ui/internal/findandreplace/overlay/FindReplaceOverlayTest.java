@@ -45,8 +45,8 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 	public OverlayAccess openUIFromTextViewer(TextViewer viewer) {
 		Accessor actionAccessor= new Accessor(getFindReplaceAction(), FindReplaceAction.class);
 		actionAccessor.invoke("showOverlayInEditor", null);
-		Accessor overlayAccessor= new Accessor(actionAccessor.get("overlay"), "org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlay", getClass().getClassLoader());
-		return new OverlayAccess(getFindReplaceTarget(), overlayAccessor);
+		FindReplaceOverlay overlay= (FindReplaceOverlay) actionAccessor.get("overlay");
+		return new OverlayAccess(getFindReplaceTarget(), overlay);
 	}
 
 	@Test

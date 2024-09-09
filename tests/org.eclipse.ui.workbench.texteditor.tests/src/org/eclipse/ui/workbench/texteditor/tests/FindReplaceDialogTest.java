@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Event;
 
 import org.eclipse.text.tests.Accessor;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -50,8 +51,8 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		}
 		Accessor fFindReplaceDialogStubAccessor= new Accessor(fFindReplaceDialogStub, "org.eclipse.ui.texteditor.FindReplaceAction$FindReplaceDialogStub", getClass().getClassLoader());
 
-		Accessor dialogAccessor= new Accessor(fFindReplaceDialogStubAccessor.invoke("getDialog", null), "org.eclipse.ui.texteditor.FindReplaceDialog", getClass().getClassLoader());
-		return new DialogAccess(getFindReplaceTarget(), dialogAccessor);
+		Dialog dialog= (Dialog) fFindReplaceDialogStubAccessor.invoke("getDialog", null);
+		return new DialogAccess(getFindReplaceTarget(), dialog);
 	}
 
 	@Test
@@ -61,7 +62,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		initializeTextViewerWithFindReplaceUI("line\nline\nline");
 		DialogAccess dialog= getDialog();
 
-		dialog.findCombo.setFocus();
+		dialog.getFindCombo().setFocus();
 		dialog.setFindText("line");
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
 		ensureHasFocusOnGTK();
