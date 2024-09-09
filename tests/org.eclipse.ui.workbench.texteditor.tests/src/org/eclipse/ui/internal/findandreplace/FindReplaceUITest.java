@@ -119,7 +119,6 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.assertEnabled(SearchOptions.REGEX);
 		dialog.assertEnabled(SearchOptions.WHOLE_WORD);
 
-		dialog.getFindReplaceLogic().updateTarget(fTextViewer.getFindReplaceTarget(), false);
 		dialog.select(SearchOptions.WHOLE_WORD);
 		dialog.select(SearchOptions.REGEX);
 		dialog.assertEnabled(SearchOptions.REGEX);
@@ -161,7 +160,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.select(SearchOptions.INCREMENTAL);
 		dialog.setFindText("line");
 		ensureHasFocusOnGTK();
-		IFindReplaceTarget target= dialog.getTarget();
+		IFindReplaceTarget target= getFindReplaceTarget();
 
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
@@ -190,7 +189,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.select(SearchOptions.INCREMENTAL);
 
 		dialog.setFindText("lin");
-		IFindReplaceTarget target= dialog.getTarget();
+		IFindReplaceTarget target= getFindReplaceTarget();
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(dialog.getFindText().length(), (target.getSelection()).y);
 
@@ -206,7 +205,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.select(SearchOptions.WHOLE_WORD);
 		dialog.select(SearchOptions.WRAP);
 		dialog.setFindText("two");
-		IFindReplaceTarget target= dialog.getTarget();
+		IFindReplaceTarget target= getFindReplaceTarget();
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(3, (target.getSelection()).y);
 
@@ -227,7 +226,7 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 		dialog.select(SearchOptions.REGEX);
 		dialog.setFindText("(a|bc)");
 
-		IFindReplaceTarget target= dialog.getTarget();
+		IFindReplaceTarget target= getFindReplaceTarget();
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(1, (target.getSelection()).y);
@@ -372,6 +371,10 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 
 	protected TextViewer getTextViewer() {
 		return fTextViewer;
+	}
+
+	protected final IFindReplaceTarget getFindReplaceTarget() {
+		return fTextViewer.getFindReplaceTarget();
 	}
 
 }

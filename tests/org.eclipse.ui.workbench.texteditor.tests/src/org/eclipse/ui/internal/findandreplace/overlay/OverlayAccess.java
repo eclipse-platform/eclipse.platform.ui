@@ -36,45 +36,43 @@ import org.eclipse.text.tests.Accessor;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 
-import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
-import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.IFindReplaceUIAccess;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 
 class OverlayAccess implements IFindReplaceUIAccess {
-	FindReplaceLogic findReplaceLogic;
+	private final IFindReplaceTarget findReplaceTarget;
 
-	HistoryTextWrapper find;
+	private final HistoryTextWrapper find;
 
-	HistoryTextWrapper replace;
+	private final ToolItem inSelection;
 
-	ToolItem inSelection;
+	private final ToolItem caseSensitive;
 
-	ToolItem caseSensitive;
+	private final ToolItem wholeWord;
 
-	ToolItem wholeWord;
+	private final ToolItem regEx;
 
-	ToolItem regEx;
+	private final ToolItem searchForward;
 
-	ToolItem searchForward;
+	private final ToolItem searchBackward;
 
-	ToolItem searchBackward;
+	private final Button openReplaceDialog;
 
-	Button openReplaceDialog;
+	private HistoryTextWrapper replace;
 
-	ToolItem replaceButton;
+	private ToolItem replaceButton;
 
-	ToolItem replaceAllButton;
+	private ToolItem replaceAllButton;
 
-	private Runnable closeOperation;
+	private final Runnable closeOperation;
 
-	Accessor dialogAccessor;
+	private final Accessor dialogAccessor;
 
-	private Supplier<Shell> shellRetriever;
+	private final Supplier<Shell> shellRetriever;
 
-	OverlayAccess(Accessor findReplaceOverlayAccessor) {
+	OverlayAccess(IFindReplaceTarget findReplaceTarget, Accessor findReplaceOverlayAccessor) {
+		this.findReplaceTarget= findReplaceTarget;
 		dialogAccessor= findReplaceOverlayAccessor;
-		findReplaceLogic= (FindReplaceLogic) findReplaceOverlayAccessor.get("findReplaceLogic");
 		find= (HistoryTextWrapper) findReplaceOverlayAccessor.get("searchBar");
 		replace= (HistoryTextWrapper) findReplaceOverlayAccessor.get("replaceBar");
 		caseSensitive= (ToolItem) findReplaceOverlayAccessor.get("caseSensitiveSearchButton");
@@ -88,11 +86,6 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		replaceAllButton= (ToolItem) findReplaceOverlayAccessor.get("replaceAllButton");
 		inSelection= (ToolItem) findReplaceOverlayAccessor.get("searchInSelectionButton");
 		shellRetriever= () -> ((Shell) findReplaceOverlayAccessor.invoke("getShell", null));
-	}
-
-	@Override
-	public IFindReplaceTarget getTarget() {
-		return findReplaceLogic.getTarget();
 	}
 
 	private void restoreInitialConfiguration() {
@@ -229,11 +222,6 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	}
 
 	@Override
-	public IFindReplaceLogic getFindReplaceLogic() {
-		return findReplaceLogic;
-	}
-
-	@Override
 	public void performReplaceAll() {
 		openReplaceDialog();
 		replaceAllButton.notifyListeners(SWT.Selection, null);
@@ -277,25 +265,23 @@ class OverlayAccess implements IFindReplaceUIAccess {
 		assertUnselected(SearchOptions.REGEX);
 		assertUnselected(SearchOptions.WHOLE_WORD);
 		assertUnselected(SearchOptions.CASE_SENSITIVE);
-		if (!doesTextViewerHaveMultiLineSelection(findReplaceLogic.getTarget())) {
+		if (!doesTextViewerHaveMultiLineSelection()) {
 			assertSelected(SearchOptions.GLOBAL);
-			assertTrue(findReplaceLogic.isActive(SearchOptions.GLOBAL));
 		} else {
 			assertUnselected(SearchOptions.GLOBAL);
-			assertFalse(findReplaceLogic.isActive(SearchOptions.GLOBAL));
 		}
 		assertEnabled(SearchOptions.GLOBAL);
 		assertEnabled(SearchOptions.REGEX);
 		assertEnabled(SearchOptions.CASE_SENSITIVE);
-		if (getFindText().equals("") || findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD)) {
+		if (!getFindText().contains(" ")) {
 			assertEnabled(SearchOptions.WHOLE_WORD);
 		} else {
 			assertDisabled(SearchOptions.WHOLE_WORD);
 		}
 	}
 
-	private boolean doesTextViewerHaveMultiLineSelection(IFindReplaceTarget target) {
-		if (target instanceof IFindReplaceTargetExtension scopeProvider) {
+	private boolean doesTextViewerHaveMultiLineSelection() {
+		if (findReplaceTarget instanceof IFindReplaceTargetExtension scopeProvider) {
 			return scopeProvider.getScope() != null; // null is returned for global scope
 		}
 		return false;

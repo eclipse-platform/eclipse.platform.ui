@@ -46,7 +46,7 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		Accessor actionAccessor= new Accessor(getFindReplaceAction(), FindReplaceAction.class);
 		actionAccessor.invoke("showOverlayInEditor", null);
 		Accessor overlayAccessor= new Accessor(actionAccessor.get("overlay"), "org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlay", getClass().getClassLoader());
-		return new OverlayAccess(overlayAccessor);
+		return new OverlayAccess(getFindReplaceTarget(), overlayAccessor);
 	}
 
 	@Test
@@ -55,7 +55,7 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		OverlayAccess dialog= getDialog();
 
 		dialog.setFindText("line");
-		IFindReplaceTarget target= dialog.getTarget();
+		IFindReplaceTarget target= getFindReplaceTarget();
 
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
@@ -89,14 +89,14 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 	public void testIncrementalSearchUpdatesAfterChangingOptions() {
 		initializeTextViewerWithFindReplaceUI("alinee\naLinee\nline\nline");
 		OverlayAccess dialog= getDialog();
-		IFindReplaceTarget target= dialog.getTarget();
+		IFindReplaceTarget target= getFindReplaceTarget();
 		dialog.setFindText("Line");
-		assertThat(dialog.getTarget().getSelectionText(), is("line"));
-		assertEquals(new Point(1,4), dialog.getTarget().getSelection());
+		assertThat(target.getSelectionText(), is("line"));
+		assertEquals(new Point(1, 4), target.getSelection());
 
 		dialog.select(SearchOptions.CASE_SENSITIVE);
-		assertThat(dialog.getTarget().getSelectionText(), is("Line"));
-		assertEquals(new Point(8,4), dialog.getTarget().getSelection());
+		assertThat(target.getSelectionText(), is("Line"));
+		assertEquals(new Point(8, 4), target.getSelection());
 
 		dialog.unselect(SearchOptions.CASE_SENSITIVE);
 		assertEquals(1, (target.getSelection()).x);
@@ -110,7 +110,7 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		dialog.unselect(SearchOptions.WHOLE_WORD);
 		assertEquals(1, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
-		assertThat(dialog.getTarget().getSelectionText(), is("line"));
+		assertThat(target.getSelectionText(), is("line"));
 	}
 
 	@Test
@@ -153,18 +153,19 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 	@Test
 	public void testSearchBackwardsWithRegEx() {
 		initializeTextViewerWithFindReplaceUI("text text text");
+		IFindReplaceTarget target= getFindReplaceTarget();
 
 		OverlayAccess dialog= getDialog();
 		dialog.select(SearchOptions.REGEX);
 		dialog.setFindText("text"); // with RegEx enabled, there is no incremental search!
 		dialog.pressSearch(true);
-		assertThat(dialog.getTarget().getSelection().y, is(4));
+		assertThat(target.getSelection().y, is(4));
 		dialog.pressSearch(true);
-		assertThat(dialog.getTarget().getSelection().x, is("text ".length()));
+		assertThat(target.getSelection().x, is("text ".length()));
 		dialog.pressSearch(true);
-		assertThat(dialog.getTarget().getSelection().x, is("text text ".length()));
+		assertThat(target.getSelection().x, is("text text ".length()));
 		dialog.pressSearch(false);
-		assertThat(dialog.getTarget().getSelection().x, is("text ".length()));
+		assertThat(target.getSelection().x, is("text ".length()));
 	}
 
 	@Test
