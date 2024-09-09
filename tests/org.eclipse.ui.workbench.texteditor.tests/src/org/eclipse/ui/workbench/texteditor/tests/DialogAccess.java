@@ -15,7 +15,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -34,14 +33,12 @@ import org.eclipse.text.tests.Accessor;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 
-import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
-import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.IFindReplaceUIAccess;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 
 class DialogAccess implements IFindReplaceUIAccess {
 
-	FindReplaceLogic findReplaceLogic;
+	private final IFindReplaceTarget findReplaceTarget;
 
 	Combo findCombo;
 
@@ -77,9 +74,9 @@ class DialogAccess implements IFindReplaceUIAccess {
 
 	Accessor dialogAccessor;
 
-	DialogAccess(Accessor findReplaceDialogAccessor) {
+	DialogAccess(IFindReplaceTarget findReplaceTarget, Accessor findReplaceDialogAccessor) {
+		this.findReplaceTarget= findReplaceTarget;
 		dialogAccessor= findReplaceDialogAccessor;
-		findReplaceLogic= (FindReplaceLogic) findReplaceDialogAccessor.get("findReplaceLogic");
 		findCombo= (Combo) findReplaceDialogAccessor.get("fFindField");
 		replaceCombo= (Combo) findReplaceDialogAccessor.get("fReplaceField");
 		forwardRadioButton= (Button) findReplaceDialogAccessor.get("fForwardRadioButton");
@@ -200,11 +197,6 @@ class DialogAccess implements IFindReplaceUIAccess {
 	}
 
 	@Override
-	public IFindReplaceTarget getTarget() {
-		return findReplaceLogic.getTarget();
-	}
-
-	@Override
 	public String getFindText() {
 		return findCombo.getText();
 	}
@@ -217,11 +209,6 @@ class DialogAccess implements IFindReplaceUIAccess {
 
 	public Combo getFindCombo() {
 		return findCombo;
-	}
-
-	@Override
-	public IFindReplaceLogic getFindReplaceLogic() {
-		return findReplaceLogic;
 	}
 
 	@Override
@@ -241,20 +228,11 @@ class DialogAccess implements IFindReplaceUIAccess {
 
 	@Override
 	public void assertInitialConfiguration() {
-		assertTrue(findReplaceLogic.isActive(SearchOptions.FORWARD));
-		assertFalse(findReplaceLogic.isActive(SearchOptions.CASE_SENSITIVE));
-		assertTrue(findReplaceLogic.isActive(SearchOptions.WRAP));
-		assertFalse(findReplaceLogic.isActive(SearchOptions.INCREMENTAL));
-		assertFalse(findReplaceLogic.isActive(SearchOptions.REGEX));
-		assertFalse(findReplaceLogic.isActive(SearchOptions.WHOLE_WORD));
-
 		assertSelected(SearchOptions.FORWARD);
-		if (!doesTextViewerHaveMultiLineSelection(findReplaceLogic.getTarget())) {
+		if (!doesTextViewerHaveMultiLineSelection(findReplaceTarget)) {
 			assertSelected(SearchOptions.GLOBAL);
-			assertTrue(findReplaceLogic.isActive(SearchOptions.GLOBAL));
 		} else {
 			assertUnselected(SearchOptions.GLOBAL);
-			assertFalse(findReplaceLogic.isActive(SearchOptions.GLOBAL));
 		}
 		assertSelected(SearchOptions.WRAP);
 
