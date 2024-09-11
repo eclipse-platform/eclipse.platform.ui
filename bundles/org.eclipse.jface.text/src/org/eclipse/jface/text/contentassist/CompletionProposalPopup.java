@@ -371,9 +371,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 			fFilterOffset= offset;
 
-			if (proposals != null && !proposals.isEmpty())
+			if (proposals != null && !proposals.isEmpty()) {
 				setProposals(proposals, fIsFilteredSubset);
-			else {
+			} else if (fContentAssistant.isShowEmptyList() && !shouldHideOnNoProposals(event, offset)) {
+				setProposals(Collections.emptyList(), false);
+			} else {
 				hide();
 				if (fContentAssistant.isAutoActivation() && offset > 0 && event != null) {
 					try {
@@ -2025,5 +2027,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	void sortProposals(final List<ICompletionProposal> proposals) {
 		proposals.sort(fSorter::compare);
+	}
+
+	private static boolean shouldHideOnNoProposals(DocumentEvent event, int offset) {
+		try {
+			char c= event.getDocument().getChar(offset - 1);
+			return c == ' ';
+		} catch (BadLocationException e) {
+			return true;
+		}
 	}
 }
