@@ -33,6 +33,20 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String CompositeChange_performingChangesTask_name;
 
+	public static String CopyProjectChange_copying;
+
+	public static String CopyProjectChange_error_resource_not_exists;
+
+	public static String CopyProjectChange_Name;
+
+	public static String CopyProjectDescriptor_project_copy_does_not_exist;
+
+	public static String CopyProjectProcessor_description;
+
+	public static String CopyProjectProcessor_error_project_exists;
+
+	public static String CopyProjectProcessor_name;
+
 	public static String CreateChangeOperation_unknown_Refactoring;
 
 	public static String DefaultRefactoringDescriptor_cannot_create_refactoring;
