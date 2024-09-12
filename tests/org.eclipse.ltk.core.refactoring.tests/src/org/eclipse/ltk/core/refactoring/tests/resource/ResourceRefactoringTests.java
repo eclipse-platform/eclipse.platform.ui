@@ -49,6 +49,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.resource.CopyProjectDescriptor;
 import org.eclipse.ltk.core.refactoring.resource.DeleteResourcesDescriptor;
 import org.eclipse.ltk.core.refactoring.resource.MoveRenameResourceDescriptor;
 import org.eclipse.ltk.core.refactoring.resource.MoveResourceChange;
@@ -389,6 +390,33 @@ public class ResourceRefactoringTests {
 			EFS.getLocalFileSystem().getStore(location).delete(EFS.NONE, null);
 			EFS.getLocalFileSystem().getStore(p2Location).delete(EFS.NONE, null);
 		}
+	}
+
+	@Test
+	public void testCopyProjectRefactoring() throws Exception {
+		String content1= "hello";
+
+		IFolder testFolder= fProject.createFolder("test");
+		IFile file1= fProject.createFile(testFolder, "myFile.txt", content1);
+
+		RefactoringContribution contribution= RefactoringCore.getRefactoringContribution(CopyProjectDescriptor.ID);
+		CopyProjectDescriptor descriptor= (CopyProjectDescriptor) contribution.createDescriptor();
+
+		descriptor.setResourcePath(fProject.getProject().getFullPath());
+		descriptor.setNewName("project2");
+		descriptor.setNewLocation(fProject.getProject().getParent().getFullPath());
+
+		Change undoChange= perform(descriptor);
+
+		IProject targetProject= ResourcesPlugin.getWorkspace().getRoot().getProject("project2");
+
+		assertTrue(targetProject.exists());
+
+		assertMoveRename(file1, targetProject.getFolder("test"), "myFile.txt", content1);
+
+		perform(undoChange);
+
+		assertFalse(targetProject.exists());
 	}
 
 	private Change perform(Change change) throws CoreException {
