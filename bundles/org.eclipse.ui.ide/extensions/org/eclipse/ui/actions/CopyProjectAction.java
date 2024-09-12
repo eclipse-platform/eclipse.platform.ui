@@ -41,6 +41,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.actions.LTKLauncher;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 /**
@@ -302,6 +303,10 @@ public class CopyProjectAction extends SelectionListenerAction {
 
 		String newName = (String) destinationPaths[0];
 		URI newLocation = URIUtil.toURI((String) destinationPaths[1]);
+
+		if (LTKLauncher.copyProject(project, newName, URIUtil.toPath(newLocation))) {
+			return;
+		}
 
 		boolean completed = performCopy(project, newName, newLocation);
 

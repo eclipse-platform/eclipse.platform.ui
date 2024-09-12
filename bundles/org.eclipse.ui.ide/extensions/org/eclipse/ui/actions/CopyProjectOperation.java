@@ -36,6 +36,7 @@ import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.actions.LTKLauncher;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 /**
@@ -126,6 +127,10 @@ public class CopyProjectOperation {
 
 		String newName = (String) destinationPaths[0];
 		URI newLocation = URIUtil.toURI((String)destinationPaths[1]);
+
+		if (LTKLauncher.copyProject(project, newName, URIUtil.toPath(newLocation))) {
+			return;
+		}
 
 		boolean completed = performProjectCopy(project, newName, newLocation);
 

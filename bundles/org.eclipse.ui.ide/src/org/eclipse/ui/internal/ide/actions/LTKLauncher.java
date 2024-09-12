@@ -27,7 +27,10 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -44,6 +47,10 @@ public class LTKLauncher {
 	private static final String LTK_RENAME_ID = "org.eclipse.ltk.ui.refactoring.commands.renameResource"; //$NON-NLS-1$
 	private static final String LTK_RENAME_COMMAND_NEWNAME_KEY = "org.eclipse.ltk.ui.refactoring.commands.renameResource.newName.parameter.key"; //$NON-NLS-1$
 	private static final String LTK_CHECK_COMPOSITE_RENAME_PARAMETER_KEY = "org.eclipse.ltk.ui.refactoring.commands.checkCompositeRename.parameter.key"; //$NON-NLS-1$
+	private static final String LTK_COPY_PROJECT_ID = "org.eclipse.ltk.ui.refactoring.commands.copyProject"; //$NON-NLS-1$
+	private static final String LTK_COPY_PROJECT_COMMAND_NEWNAME_KEY = "org.eclipse.ltk.ui.refactoring.commands.copyProject.newName.parameter.key"; //$NON-NLS-1$
+	private static final String LTK_COPY_PROJECT_COMMAND_NEWLOCATION_KEY = "org.eclipse.ltk.ui.refactoring.commands.copyProject.newLocation.parameter.key"; //$NON-NLS-1$
+
 	/**
 	 * Open the LTK delete resources wizard if available.
 	 *
@@ -111,6 +118,13 @@ public class LTKLauncher {
 		Map<String, Object> commandParameters = new HashMap<>();
 		commandParameters.put(LTK_CHECK_COMPOSITE_RENAME_PARAMETER_KEY, true);
 		return runCommand(LTK_RENAME_ID, structuredSelection, commandParameters);
+	}
+
+	public static boolean copyProject(IProject project, String newName, IPath newLocation) {
+		Map<String, Object> commandParameters = new HashMap<>();
+		commandParameters.put(LTK_COPY_PROJECT_COMMAND_NEWNAME_KEY, newName);
+		commandParameters.put(LTK_COPY_PROJECT_COMMAND_NEWLOCATION_KEY, newLocation);
+		return runCommand(LTK_COPY_PROJECT_ID, new StructuredSelection(project), commandParameters);
 	}
 
 	private static boolean runCommand(String commandId, IStructuredSelection selection,
