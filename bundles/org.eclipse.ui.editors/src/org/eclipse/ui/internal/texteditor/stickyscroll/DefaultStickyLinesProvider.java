@@ -24,31 +24,25 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * This class provides sticky lines for the given source code in the source viewer. The
- * implementation is completely based on indentation and therefore should work by default for
- * several languages.
+ * implementation is completely based on indentation and therefore works by default for several
+ * languages.
  */
-public class StickyLinesProvider {
+public class DefaultStickyLinesProvider implements IStickyLinesProvider {
 
-	private final static int IGNORE_INDENTATION= -1;
+	private final static int IGNORE_LINE_INDENTATION= -1;
 
 	private final static String TAB= "\t"; //$NON-NLS-1$
 
-	private int tabWidth= 4;
+	private StickyLinesProperties fProperties;
 
-	/**
-	 * Calculate the sticky lines for the given source code in the source viewer for the given
-	 * vertical offset.
-	 * 
-	 * @param verticalOffset The vertical offset line index of the first visible line
-	 * @param sourceViewer The source viewer containing the source code
-	 * @return A list of sticky lines
-	 */
-	public List<StickyLine> get(int verticalOffset, ISourceViewer sourceViewer) {
-		LinkedList<StickyLine> stickyLines= new LinkedList<>();
-
-		if (verticalOffset == 0) {
-			return stickyLines;
+	@Override
+	public List<StickyLine> getStickyLines(ISourceViewer sourceViewer, StickyLinesProperties properties) {
+		if (sourceViewer.getTopIndex() == 0) {
+			return Collections.emptyList();
 		}
+
+		this.fProperties= properties;
+		LinkedList<StickyLine> stickyLines= new LinkedList<>();
 
 		try {
 			StyledText textWidget= sourceViewer.getTextWidget();
@@ -71,7 +65,7 @@ public class StickyLinesProvider {
 			String line= textWidget.getLine(i);
 			int indentation= getIndentation(line);
 
-			if (indentation == IGNORE_INDENTATION) {
+			if (indentation == IGNORE_LINE_INDENTATION) {
 				continue;
 			}
 
@@ -91,7 +85,7 @@ public class StickyLinesProvider {
 
 			String line= textWidget.getLine(i);
 			int indentation= getIndentation(line);
-			if (indentation == IGNORE_INDENTATION) {
+			if (indentation == IGNORE_LINE_INDENTATION) {
 				continue;
 			}
 
@@ -123,7 +117,7 @@ public class StickyLinesProvider {
 
 	private int getStartIndentation(int startFromLine, StyledText styledText) {
 		int indentation= getIndentation(styledText.getLine(startFromLine));
-		if (indentation != IGNORE_INDENTATION) {
+		if (indentation != IGNORE_LINE_INDENTATION) {
 			return indentation;
 		} else {
 			int nextContentLine= getIndentation(getNextContentLine(startFromLine, styledText));
@@ -154,21 +148,12 @@ public class StickyLinesProvider {
 
 	private int getIndentation(String line) {
 		if (line == null || line.isBlank()) {
-			return IGNORE_INDENTATION;
+			return IGNORE_LINE_INDENTATION;
 		}
-		String tabAsSpaces= String.join("", Collections.nCopies(tabWidth, " ")); //$NON-NLS-1$ //$NON-NLS-2$
+		String tabAsSpaces= String.join("", Collections.nCopies(fProperties.tabWith(), " ")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		line= line.replace(TAB, tabAsSpaces);
 		return line.length() - line.stripLeading().length();
-	}
-
-	/**
-	 * Sets the with in spaces of a tab in the editor.
-	 * 
-	 * @param tabWidth The amount of spaces a tab is using.
-	 */
-	public void setTabWidth(int tabWidth) {
-		this.tabWidth= tabWidth;
 	}
 
 }
