@@ -35,7 +35,7 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 	private IFileProvider fileProvider;
 	private IProcessExecutor processExecutor;
 
-	private String lsRegisterOutput = null;
+	private String[] lsRegisterOutput = null;
 
 	public RegistrationMacOsX() {
 		this(new FileProvider(), new ProcessExecutor());
@@ -75,17 +75,15 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 		return returnList;
 	}
 
-	private String getLsRegisterOutput() throws Exception {
+	private String[] getLsRegisterOutput() throws Exception {
 		if (this.lsRegisterOutput != null) {
 			return this.lsRegisterOutput;
 		}
-		this.lsRegisterOutput = processExecutor.execute(LSREGISTER, DUMP);
+		this.lsRegisterOutput = processExecutor.execute(LSREGISTER, DUMP).split("-".repeat(80) + "\n"); //$NON-NLS-1$//$NON-NLS-2$
 		return this.lsRegisterOutput;
 	}
 
-	private String determineHandlerLocation(String lsRegisterDump, String scheme) {
-
-		String[] lsRegisterEntries = lsRegisterDump.split("-{80}\n"); //$NON-NLS-1$
+	private String determineHandlerLocation(String[] lsRegisterEntries, String scheme) {
 		String keyOfFirstLine;
 		String keyOfSchemeList;
 
