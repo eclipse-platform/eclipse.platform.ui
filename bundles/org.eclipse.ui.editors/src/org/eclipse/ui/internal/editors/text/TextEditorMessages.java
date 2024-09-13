@@ -138,6 +138,7 @@ final class TextEditorMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, TextEditorMessages.class);
 	}
 
+	public static String TextEditorDefaultsPreferencePage_batchReplace;
 	public static String TextEditorDefaultsPreferencePage_carriageReturn;
 	public static String TextEditorDefaultsPreferencePage_transparencyLevel;
 	public static String TextEditorDefaultsPreferencePage_codeMinings_description;

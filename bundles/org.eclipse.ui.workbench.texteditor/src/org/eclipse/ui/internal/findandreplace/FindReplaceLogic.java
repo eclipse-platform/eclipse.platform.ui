@@ -356,6 +356,20 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 			return 0;
 		}
 
+		if (target.canBatchReplace() && target instanceof IFindReplaceTargetExtension selectableTarget) {
+			selectableTarget.setReplaceAllMode(true);
+			try {
+				boolean wholeWordSearch = isAvailableAndActive(SearchOptions.WHOLE_WORD);
+				boolean caseSensitiveSearch = isAvailableAndActive(SearchOptions.CASE_SENSITIVE);
+				boolean regexSearch = isAvailableAndActive(SearchOptions.REGEX);
+				boolean incrementalSearch = !isActive(SearchOptions.GLOBAL);
+
+				return target.batchReplace(findString, replaceString, wholeWordSearch, caseSensitiveSearch,
+						regexSearch, incrementalSearch);
+			} finally {
+				selectableTarget.setReplaceAllMode(false);
+			}
+		}
 		List<Point> replacements = new ArrayList<>();
 		executeInForwardMode(() -> {
 			executeWithReplaceAllEnabled(() -> {

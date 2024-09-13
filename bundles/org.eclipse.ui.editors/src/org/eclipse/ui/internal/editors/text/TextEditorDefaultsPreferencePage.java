@@ -731,6 +731,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE));
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_BATCH_REPLACE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_FIND_REPLACE_OVERLAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_FIND_REPLACE_OVERLAY_AT_BOTTOM));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
@@ -865,6 +866,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Preference lineSpacing= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_SPACING, label, null);
 		IntegerDomain lineSpaceDomain= new IntegerDomain(0, 1000);
 		addTextField(appearanceComposite, lineSpacing, lineSpaceDomain, 15, 0);
+
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_batchReplace;
+		Preference batchReplace= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_BATCH_REPLACE, label, null);
+		addCheckBox(appearanceComposite, batchReplace, new BooleanDomain(), 0);
 
 		label= TextEditorMessages.TextEditorPreferencePage_useFindReplaceOverlay;
 		Preference useFindReplaceOverlay= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_FIND_REPLACE_OVERLAY, label, null);
