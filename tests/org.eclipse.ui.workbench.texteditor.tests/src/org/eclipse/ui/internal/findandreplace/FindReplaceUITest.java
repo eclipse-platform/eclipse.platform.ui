@@ -340,6 +340,18 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 	}
 
 	@Test
+	public void testActivateDialogSelectionActive_withoutRegExOptionActivated() {
+		openTextViewer("test text.*;");
+		initializeFindReplaceUIForTextViewer();
+
+		fTextViewer.setSelection(new TextSelection("test ".length(), "text.*".length()));
+		reopenFindReplaceUIForTextViewer();
+
+		dialog.assertUnselected(SearchOptions.REGEX);
+		assertEquals("text.*", dialog.getFindText());
+	}
+
+	@Test
 	public void testActivateDialogSelectionActive_withRegExOptionActivated() {
 		openTextViewer("test text.*;");
 		initializeFindReplaceUIForTextViewer();
