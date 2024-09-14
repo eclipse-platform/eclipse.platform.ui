@@ -977,7 +977,7 @@ public class FindReplaceOverlay extends Dialog {
 			findReplaceLogic.deactivate(SearchOptions.GLOBAL);
 			searchInSelectionButton.setSelection(true);
 		} else if (!selectionText.isEmpty()) {
-			if (findReplaceLogic.isAvailable(SearchOptions.REGEX)) {
+			if (findReplaceLogic.isAvailableAndActive(SearchOptions.REGEX)) {
 				selectionText = FindReplaceDocumentAdapter.escapeForRegExPattern(selectionText);
 			}
 			searchBar.setText(selectionText);
