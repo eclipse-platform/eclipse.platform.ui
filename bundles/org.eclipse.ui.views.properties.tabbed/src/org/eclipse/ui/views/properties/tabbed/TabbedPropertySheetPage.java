@@ -332,8 +332,8 @@ public class TabbedPropertySheetPage
 			 * for example, outline view.
 			 */
 			IContributedContentsView view = Adapters.adapt(part, IContributedContentsView.class);
-			if (!(view.getContributingPart() instanceof ITabbedPropertySheetPageContributor cp
-					&& cp.equals(contributor))) {
+			if (view == null || (!(view.getContributingPart() instanceof ITabbedPropertySheetPageContributor cp
+					&& cp.equals(contributor)))) {
 				if (activePropertySheet) {
 					if (currentTab != null) {
 						currentTab.aboutToBeHidden();
