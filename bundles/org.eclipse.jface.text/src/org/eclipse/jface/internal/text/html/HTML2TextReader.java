@@ -25,6 +25,8 @@ import java.util.Set;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 
+import org.eclipse.text.readers.SubstitutionReader;
+
 import org.eclipse.jface.text.TextPresentation;
 
 
@@ -34,7 +36,7 @@ import org.eclipse.jface.text.TextPresentation;
  * <p>
  * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
  */
-public class HTML2TextReader extends SubstitutionTextReader {
+public class HTML2TextReader extends SubstitutionReader {
 
 	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 	private static final Map<String, String> fgEntityLookup;
