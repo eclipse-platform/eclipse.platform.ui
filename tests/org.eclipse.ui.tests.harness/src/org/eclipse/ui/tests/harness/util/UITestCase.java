@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.tests.resources.WorkspaceTestRule;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceMemento;
 import org.eclipse.swt.SWT;
@@ -57,6 +58,9 @@ import junit.framework.TestCase;
  * windows when the tearDown method is called.
  */
 public abstract class UITestCase extends TestCase {
+
+	@Rule
+	public WorkspaceTestRule workspaceRule = new WorkspaceTestRule();
 
 	/**
 	 * Returns the workbench page input to use for newly created windows.
