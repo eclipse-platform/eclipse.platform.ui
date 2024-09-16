@@ -17,6 +17,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -41,7 +43,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
 public class StickyScrollingControlTest {
@@ -53,14 +55,14 @@ public class StickyScrollingControlTest {
 	private Color backgroundColor;
 	private Color separatorColor;
 	private StickyScrollingControl stickyScrollingControl;
-	private CompositeRuler ruler;
+	private IVerticalRuler ruler;
 
 	@Before
 	public void setup() {
 		shell = new Shell(Display.getDefault());
 		shell.setSize(200, 200);
 		shell.setLayout(new FillLayout());
-		ruler = new CompositeRuler();
+		ruler = mock(IVerticalRuler.class);
 		sourceViewer = new SourceViewer(shell, ruler, SWT.V_SCROLL | SWT.H_SCROLL);
 		sourceViewer.setDocument(new Document());
 		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
@@ -151,6 +153,23 @@ public class StickyScrollingControlTest {
 
 		StyledText stickyLineNumber = getStickyLineNumber();
 		assertFalse(stickyLineNumber.isVisible());
+	}
+
+	@Test
+	public void testWithoutLineNumber() {
+		when(ruler.getWidth()).thenReturn(20);
+		List<StickyLine> stickyLines = List.of(new StickyLine("line 10", 9), new StickyLine("line 20", 19));
+		stickyScrollingControl.setStickyLines(stickyLines);
+
+		StyledText stickyLineNumber = getStickyLineNumber();
+		assertThat(stickyLineNumber.getLeftMargin(), greaterThan(0));
+
+		StickyScrollingControlSettings settings = new StickyScrollingControlSettings(5, lineNumberColor, hoverColor,
+				backgroundColor, separatorColor, false);
+		stickyScrollingControl.applySettings(settings);
+
+		stickyLineNumber = getStickyLineNumber();
+		assertEquals(0, stickyLineNumber.getLeftMargin());
 	}
 
 	@Test
