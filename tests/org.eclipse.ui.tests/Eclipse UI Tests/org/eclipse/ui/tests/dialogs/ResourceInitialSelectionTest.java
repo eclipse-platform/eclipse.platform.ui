@@ -14,7 +14,6 @@
 package org.eclipse.ui.tests.dialogs;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assume.assumeFalse;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -23,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -31,7 +31,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -288,7 +287,6 @@ public class ResourceInitialSelectionTest extends UITestCase {
 	 */
 	@Test
 	public void testMultiSelectionAndTwoInitialSelectionsWithInitialPattern() {
-		assumeFalse("Test fails on Windows: Bug 559353", Platform.OS_WIN32.equals(Platform.getOS()));
 
 		boolean hasMultiSelection = true;
 		List<IFile> initialSelection = asList(FILES.get("foo.txt"), FILES.get("bar.txt"));
@@ -312,7 +310,6 @@ public class ResourceInitialSelectionTest extends UITestCase {
 	 */
 	@Test
 	public void testMultiSelectionAndTwoInitialFilteredSelections() {
-		assumeFalse("Test fails on Windows: Bug 559353", Platform.OS_WIN32.equals(Platform.getOS()));
 
 		boolean hasMultiSelection = true;
 
@@ -383,7 +380,18 @@ public class ResourceInitialSelectionTest extends UITestCase {
 			dialog.close();
 		}
 		if (project != null) {
-			project.delete(true, null);
+			try {
+				project.delete(true, null);
+			} catch (Exception e) {
+				// try to get a stacktrace which jobs still has project open so that it can not
+				// be deleted:
+				for (Entry<Thread, StackTraceElement[]> entry : Thread.getAllStackTraces().entrySet()) {
+					Exception exception = new Exception("ThreadDump for thread \"" + entry.getKey().getName() + "\"");
+					exception.setStackTrace(entry.getValue());
+					e.addSuppressed(exception);
+				}
+				throw e;
+			}
 		}
 		super.doTearDown();
 	}
