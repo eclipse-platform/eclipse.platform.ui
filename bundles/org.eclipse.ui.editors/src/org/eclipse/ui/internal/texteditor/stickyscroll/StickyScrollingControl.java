@@ -150,6 +150,8 @@ public class StickyScrollingControl {
 		bottomSeparator.setBackground(settings.stickyLinesSeparatorColor());
 
 		updateStickyScrollingControls();
+		styleStickyLines();
+		layoutStickyLines();
 	}
 
 	public void dispose() {
@@ -298,15 +300,12 @@ public class StickyScrollingControl {
 			return;
 		}
 
+		LineNumberColumn lineNumberColumn= getLineNumberColumn(verticalRuler);
 		if (!settings.showLineNumbers()) {
 			stickyLineNumber.setRightMargin(verticalRuler.getWidth());
 			((GridData) stickyLineNumber.getLayoutData()).widthHint= 0;
 			stickyLineNumber.setLeftMargin(0);
-			return;
-		}
-
-		LineNumberColumn lineNumberColumn= getLineNumberColumn(verticalRuler);
-		if (lineNumberColumn == null) {
+		} else if (lineNumberColumn == null) {
 			((GridData) stickyLineNumber.getLayoutData()).widthHint= verticalRuler.getWidth();
 			GC gc= new GC(stickyLinesCanvas);
 			gc.setFont(sourceViewer.getTextWidget().getFont());
