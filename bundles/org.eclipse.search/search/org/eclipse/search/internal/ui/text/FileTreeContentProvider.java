@@ -56,14 +56,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		Object[] children= getChildren(inputElement);
-		int elementLimit= getElementLimit();
-		if (elementLimit != -1 && elementLimit < children.length) {
-			Object[] limitedChildren= new Object[elementLimit];
-			System.arraycopy(children, 0, limitedChildren, 0, elementLimit);
-			return limitedChildren;
-		}
-		return children;
+		return getChildren(inputElement);
 	}
 
 	private int getElementLimit() {
@@ -202,6 +195,14 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		Set<Object> children= fChildrenMap.get(parentElement);
 		if (children == null)
 			return EMPTY_ARR;
+
+		int elementLimit = getElementLimit();
+		if (elementLimit != -1 && elementLimit < children.size()) {
+			Object[] limitedChildren = new Object[elementLimit];
+			System.arraycopy(children.toArray(), 0, limitedChildren, 0, elementLimit);
+			return limitedChildren;
+		}
+
 		return children.toArray();
 	}
 
