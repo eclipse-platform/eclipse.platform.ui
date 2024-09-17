@@ -235,13 +235,17 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		System.out.println("active shell (5): " + shell.getDisplay().getActiveShell());
 
 		System.out.println("Value (should be true): " + value.getValue());
-		Screenshots.takeScreenshot(getClass(), getClass().getSimpleName(), System.out);
+		try {
+			assertTrue(value.getValue());
 
-		assertTrue(value.getValue());
-
-		assertEquals(1, tracker.count);
-		assertFalse(tracker.event.diff.getOldValue());
-		assertTrue(tracker.event.diff.getNewValue());
+			assertEquals(1, tracker.count);
+			assertFalse(tracker.event.diff.getOldValue());
+			assertTrue(tracker.event.diff.getNewValue());
+		} catch (Exception | AssertionError e) {
+			String screenshot = Screenshots.takeScreenshot(getClass(), getClass().getSimpleName(), System.out);
+			e.addSuppressed(new Throwable("Screenshot written to " + screenshot));
+			throw e;
+		}
 	}
 
 	private void processDisplayQueue() {
