@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.jxpath.JXPathNotFoundException;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
@@ -75,6 +76,9 @@ public class ExampleQueriesTestCase {
 		assertNotNull(application);
 		assertSame(RootImpl.class, application.getClass());
 
+		RootImpl rootApplication = xpathContext.getValue("/", RootImpl.class);
+		assertNotNull(rootApplication);
+
 		application = xpathContext.getValue(".");
 		assertNotNull(application);
 		assertSame(RootImpl.class, application.getClass());
@@ -85,13 +89,18 @@ public class ExampleQueriesTestCase {
 		assertNotNull(application);
 		assertSame(RootImpl.class, application.getClass());
 
+		rootApplication = xpathContext.getValue(".[@id='root']", RootImpl.class);
+		assertNotNull(rootApplication);
+
 		assertEquals("element1",xpathContext.getValue("nodes[1]/@id"));
 
 		assertEquals(NodeImpl.class, xpathContext.getValue("//.[@id='element2.2']").getClass());
 		assertEquals(ExtendedNodeImpl.class,xpathContext.getValue("//.[ecore:eClassName(.)='ExtendedNode']").getClass());
 
+		ExtendedNodeImpl extendedNode = xpathContext.getValue("//.[ecore:eClassName(.)='ExtendedNode']",
+				ExtendedNodeImpl.class);
+		assertNotNull(extendedNode);
 	}
-
 
 	@Test
 	public void testMenuQuery() {
@@ -109,8 +118,10 @@ public class ExampleQueriesTestCase {
 		assertSame(MenuImpl.class, i.next().getClass());
 		// EMF model has a loop in it, it just goes back to the top
 		//assertFalse(i.hasNext());
+
+		List<MenuImpl> list = xpathContext.stream("//.[@id='menu.1']", MenuImpl.class).toList();
+		// EMF model has a loop in it, it just goes back to the top
+		assertEquals(26, list.size());
 	}
-
-
 
 }

@@ -21,6 +21,7 @@ import org.apache.commons.jxpath.ClassFunctions;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.NodeSet;
 import org.apache.commons.jxpath.Pointer;
+import org.apache.commons.jxpath.util.TypeUtils;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.emf.ecore.EObject;
 
@@ -84,8 +85,11 @@ public final class JXPathContextImpl implements XPathContext {
 	}
 
 	@Override
-	public Object getValue(String xpath, Class<?> requiredType) {
-		return context.getValue(xpath, requiredType);
+	public <T> T getValue(String xpath, Class<T> requiredType) {
+		Object value = context.getValue(xpath, requiredType);
+		@SuppressWarnings("unchecked")
+		T typedValue = (T) TypeUtils.convert(value, requiredType);
+		return typedValue;
 	}
 
 	@Override

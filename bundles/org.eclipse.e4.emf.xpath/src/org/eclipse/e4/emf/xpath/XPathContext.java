@@ -14,6 +14,12 @@
 package org.eclipse.e4.emf.xpath;
 
 import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import org.apache.commons.jxpath.util.TypeUtils;
 
 /**
  * Context in which the xpath is executed
@@ -42,7 +48,7 @@ public interface XPathContext {
 	 *            required type
 	 * @return Object found
 	 */
-	Object getValue(String xpath, Class<?> requiredType);
+	<T> T getValue(String xpath, Class<T> requiredType);
 
 	/**
 	 * Traverses the xpath and returns an Iterator of all results found for the
@@ -55,4 +61,22 @@ public interface XPathContext {
 	 * @return Iterator&lt;Object&gt;
 	 */
 	<T> Iterator<T> iterate(String xpath);
+
+	/**
+	 * Traverses the xpath and returns an {@link Stream} of all results found for
+	 * the path. If the xpath matches no properties in the graph, the stream will be
+	 * empty.
+	 *
+	 * @param <T>   the expected object type
+	 * @param xpath the xpath expression to iterate
+	 * @param type  the type of elements in the returned stream
+	 * @return a stream of elements matching the specified xpath and of the given
+	 *         type
+	 * @since 0.5
+	 */
+	default <T> Stream<T> stream(String xpath, Class<T> type) {
+		Iterator<?> iterator = iterate(xpath);
+		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)
+				.filter(e -> TypeUtils.canConvert(e, type)).map(e -> TypeUtils.convert(e, type)).map(type::cast);
+	}
 }

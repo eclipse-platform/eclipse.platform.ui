@@ -16,8 +16,6 @@
 package org.eclipse.e4.ui.model.fragment.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
@@ -355,22 +353,14 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	private void mergeXPath(MApplication application, List<MApplicationElement> ret, String xPath) {
 		List<MApplicationElement> targetElements;
 		if ("/".equals(xPath)) {
-			targetElements = Collections.singletonList(application);
+			targetElements = List.of(application);
 		} else {
 			XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
 			XPathContext xpathContext = f.newContext((EObject) application);
-			Iterator<Object> i = xpathContext.iterate(xPath);
-
-			targetElements = new ArrayList<>();
 			try {
-				while (i.hasNext()) {
-					Object obj = i.next();
-					if (obj instanceof MApplicationElement) {
-						MApplicationElement o = (MApplicationElement) obj;
-						targetElements.add(o);
-					}
-				}
+				targetElements = xpathContext.stream(xPath, MApplicationElement.class).toList();
 			} catch (Exception ex) {
+				targetElements = List.of();
 				// custom xpath functions will throw exceptions
 				ex.printStackTrace();
 			}
@@ -378,8 +368,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 		for (MApplicationElement targetElement : targetElements) {
 			EStructuralFeature feature = ((EObject) targetElement).eClass().getEStructuralFeature(getFeaturename());
 			if (feature != null) {
-				List<MApplicationElement> elements;
-				elements = new ArrayList<>();
+				List<MApplicationElement> elements = new ArrayList<>();
 				for (MApplicationElement element : getElements()) {
 					elements.add((MApplicationElement) EcoreUtil.copy((EObject) element));
 				}
