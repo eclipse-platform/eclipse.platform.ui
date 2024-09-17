@@ -44,7 +44,8 @@ public class ScreenshotTest {
 
 	@Test
 	public void testScreenshot() throws Exception {
-		takeScreenshot(ScreenshotTest.class, testName.getMethodName(), System.out);
+		String screenshot= takeScreenshot(ScreenshotTest.class, testName.getMethodName(), System.out);
+		new File(screenshot).delete();
 	}
 
 	@Test
@@ -73,7 +74,7 @@ public class ScreenshotTest {
 		System.out.println("* CTRL up " + display.post(event));
 
 		runEventQueue();
-		takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 2, System.out);
+		String screenshot1= takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 2, System.out);
 
 		event.type= SWT.KeyDown;
 		event.character= SWT.ESC;
@@ -83,7 +84,9 @@ public class ScreenshotTest {
 		System.out.println("* ESC up " + display.post(event));
 
 		runEventQueue();
-		takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 3, System.out);
+		String screenshot2= takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 3, System.out);
+		new File(screenshot1).delete();
+		new File(screenshot2).delete();
 	}
 
 	/**
