@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.search; singleton:=true
 Bundle-Version: 3.16.100.qualifier
+Bundle-Version: 3.17.0.qualifier
 Bundle-Activator: org.eclipse.search.internal.ui.SearchPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
