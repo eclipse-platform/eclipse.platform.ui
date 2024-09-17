@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2024 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,39 +18,34 @@ import org.eclipse.e4.emf.internal.xpath.JXPathContextFactoryImpl;
 /**
  * Factory responsible to create an XPath-Context
  *
- * @param <Type>
- *            the object type the XPath is created for
+ * @param <T> the object type the XPath is created for
  */
-public abstract class XPathContextFactory<Type extends Object> {
+public abstract class XPathContextFactory<T> {
 
 	/**
 	 * Creates a new XPathContext with the specified object as the root node.
 	 *
-	 * @param contextBean
-	 *            Object
+	 * @param contextBean Object
 	 * @return XPathContext
 	 */
-	public abstract XPathContext newContext(Type contextBean);
+	public abstract XPathContext newContext(T contextBean);
 
 	/**
-	 * Creates a new XPathContext with the specified bean as the root node and
-	 * the specified parent context. Variables defined in a parent context can
-	 * be referenced in XPaths passed to the child context.
+	 * Creates a new XPathContext with the specified bean as the root node and the
+	 * specified parent context. Variables defined in a parent context can be
+	 * referenced in XPaths passed to the child context.
 	 *
-	 * @param parentContext
-	 *            parent context
-	 * @param contextBean
-	 *            Object
+	 * @param parentContext parent context
+	 * @param contextBean   Object
 	 * @return XPathContext
 	 */
-	public abstract XPathContext newContext(XPathContext parentContext, Type contextBean);
+	public abstract XPathContext newContext(XPathContext parentContext, T contextBean);
 
 	/**
-	 * @param <Type>
-	 *            the object type the xpath is created for
+	 * @param <T> the object type the xpath is created for
 	 * @return Create a new XPath-Factory
 	 */
-	public static <Type> XPathContextFactory<Type> newInstance() {
+	public static <T> XPathContextFactory<T> newInstance() {
 		return new JXPathContextFactoryImpl<>();
 	}
 }
