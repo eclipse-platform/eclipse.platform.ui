@@ -19,4 +19,11 @@ public interface IFileSearchContentProvider {
 
 	public abstract void clear();
 
+	/**
+	 * @param parentElement
+	 *            parent element or input
+	 * @return number of leaf elements in the tree maintained by the provider
+	 */
+	public abstract int getLeafCount(Object parentElement);
+
 }
