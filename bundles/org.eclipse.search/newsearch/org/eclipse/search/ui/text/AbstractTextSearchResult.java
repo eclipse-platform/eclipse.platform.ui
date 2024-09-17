@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -306,6 +307,19 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			count += element.size();
 		}
 		return count;
+	}
+
+	/**
+	 * @return {@code true} if the result is not empty
+	 * @since 3.17
+	 */
+	public boolean hasMatches() {
+		for (Entry<Object, Set<Match>> entry : fElementsToMatches.entrySet()) {
+			if (!entry.getValue().isEmpty()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

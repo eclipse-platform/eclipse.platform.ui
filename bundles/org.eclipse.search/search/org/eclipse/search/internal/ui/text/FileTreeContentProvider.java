@@ -32,9 +32,11 @@ import java.util.stream.StreamSupport;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchFilter;
@@ -170,17 +172,27 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		if (element instanceof LineElement) {
 			LineElement lineElement= (LineElement) element;
 			IResource resource = lineElement.getParent();
-			if (getMatchCount(resource) > 0) {
+			if (hasMatches(resource)) {
 				return lineElement.hasMatches(fResult);
 			}
 		}
 		return fPage.getDisplayedMatchCount(element) > 0;
 	}
 
+	private boolean hasMatches(IResource element) {
+		if (hasActiveMatchFilters()) {
+			return fPage.getDisplayedMatchCount(element) > 0;
+		} else {
+			return fResult.hasMatches();
+		}
+	}
+
 	private int getMatchCount(Object element) {
-		return fResult.getActiveMatchFilters() != null && fResult.getActiveMatchFilters().length > 0
-				? fPage.getDisplayedMatchCount(element)
-				: fResult.getMatchCount();
+		if (hasActiveMatchFilters()) {
+			return fPage.getDisplayedMatchCount(element);
+		} else {
+			return fResult.getMatchCount();
+		}
 	}
 
 	private void removeFromSiblings(Object element, Object parent) {
@@ -208,7 +220,11 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 
 	@Override
 	public boolean hasChildren(Object element) {
-		return getChildren(element).length > 0;
+		Set<Object> children = fChildrenMap.get(element);
+		if (children == null) {
+			return false;
+		}
+		return !children.isEmpty();
 	}
 
 	static <T> Stream<T> toStream(Enumeration<T> e) {
@@ -244,7 +260,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		Set<LineElement> lineMatches = Collections.emptySet();
 		// if we have active match filters, we should only use non-filtered FileMatch
 		// objects to collect LineElements to update
-		if (fResult.getActiveMatchFilters() != null && fResult.getActiveMatchFilters().length > 0) {
+		if (hasActiveMatchFilters()) {
 			lineMatches = Arrays.stream(updatedElements).filter(LineElement.class::isInstance)
 				// only for distinct files:
 				.map(u -> ((LineElement) u).getParent()).distinct()
@@ -291,6 +307,11 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 				fTreeViewer.refresh();
 			}
 		}
+	}
+
+	private boolean hasActiveMatchFilters() {
+		MatchFilter[] activeMatchFilters = fResult.getActiveMatchFilters();
+		return activeMatchFilters != null && activeMatchFilters.length > 0;
 	}
 
 	@Override
