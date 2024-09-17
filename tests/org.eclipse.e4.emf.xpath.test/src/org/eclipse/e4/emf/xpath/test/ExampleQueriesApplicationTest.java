@@ -85,6 +85,9 @@ public class ExampleQueriesApplicationTest {
 		Object menu = xpathContext.getValue("//mainMenu");
 		assertNotNull(menu);
 		assertTrue(menu instanceof MMenu);
+
+		MMenu mMenu = xpathContext.getValue("//mainMenu", MMenu.class);
+		assertNotNull(mMenu);
 	}
 
 	@Test
