@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
 public class FileTableContentProvider implements IStructuredContentProvider, IFileSearchContentProvider {
@@ -37,15 +38,17 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 		// nothing to do
 	}
 
-	public Object[] getUnfilteredElements(AbstractTextSearchResult searchResult) {
-		int elementLimit = getElementLimit();
-		Object[] elements = searchResult.getElements();
-		if (elementLimit != -1 && elements.length > elementLimit) {
-			Object[] shownElements = new Object[elementLimit];
-			System.arraycopy(elements, 0, shownElements, 0, elementLimit);
-			return shownElements;
+	@Override
+	public int getLeafCount(Object parentElement) {
+		if (!(parentElement instanceof AbstractTextSearchResult searchResult)) {
+			return 0;
 		}
-		return elements;
+		int elementLimit = getElementLimit();
+		int elementsCount = searchResult.getElementsCount();
+		if (elementLimit != -1 && elementsCount > elementLimit) {
+			return elementLimit;
+		}
+		return elementsCount;
 	}
 
 	@Override
