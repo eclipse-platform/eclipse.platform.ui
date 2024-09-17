@@ -89,7 +89,7 @@ public final class JXPathContextImpl implements XPathContext {
 	}
 
 	@Override
-	public <Type> Iterator<Type> iterate(String xpath) {
+	public <T> Iterator<T> iterate(String xpath) {
 		return context.iterate(xpath);
 	}
 

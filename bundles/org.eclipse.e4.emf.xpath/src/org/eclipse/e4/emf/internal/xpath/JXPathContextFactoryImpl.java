@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2024 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,10 +20,9 @@ import org.eclipse.e4.emf.xpath.XPathContextFactory;
 /**
  * Factory creating context using JXPath
  *
- * @param <Type>
- *            the object the XPath is created for
+ * @param <T> the object the XPath is created for
  */
-public class JXPathContextFactoryImpl<Type> extends XPathContextFactory<Type> {
+public class JXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 
 	@Override
 	public XPathContext newContext(XPathContext parentContext, Object contextBean) {
@@ -31,7 +30,7 @@ public class JXPathContextFactoryImpl<Type> extends XPathContextFactory<Type> {
 	}
 
 	@Override
-	public XPathContext newContext(Type contextBean) {
+	public XPathContext newContext(T contextBean) {
 		return new JXPathContextImpl(contextBean);
 	}
 
