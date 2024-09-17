@@ -186,7 +186,7 @@ CTabFolder Canvas {
 }
 
 .MPartStack{
-	swt-selected-tab-highlight: #2160bb;
+	swt-selected-tab-highlight: #A0A0A0;
     swt-selected-highlight-top: false;
 }
 
@@ -209,7 +209,7 @@ CTabFolder Canvas {
 
 #org-eclipse-ui-editorss CTabFolder{
 	swt-selected-tab-fill : '#ffffff';
-	swt-selected-tab-highlight: '#2160bb';
+	swt-selected-tab-highlight: '#A0A0A0';
     swt-selected-highlight-top: true;	
 	swt-tab-outline:#e5e5e5; 
 	swt-tab-outer-keyline: #e5e5e5;
