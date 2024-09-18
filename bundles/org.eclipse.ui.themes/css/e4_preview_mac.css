@@ -71,15 +71,15 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_END {
 }
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR {
-	color: #404040;
+	color: #000000;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_TEXT_COLOR {
-   color: #404040;
+   color: #000000;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR {
-   color: #404040;
+   color: #000000;
 }
 
 .MTrimmedWindow {
@@ -167,13 +167,13 @@ CTabFolder Canvas {
 
 /* text color of unselected tabs in editor*/
 #org-eclipse-ui-editorss CTabItem{
-	color: '#6A6A6A';
+	color: '#000000';
 	background-color: '#f8f8f8';
 }
 
 /*text color and background color of selected tab in editor */
 #org-eclipse-ui-editorss CTabItem:selected{
-	color: '#3b3b3b';
+	color: '#000000';
 	background-color: '#FFFFFF';
 }
 
