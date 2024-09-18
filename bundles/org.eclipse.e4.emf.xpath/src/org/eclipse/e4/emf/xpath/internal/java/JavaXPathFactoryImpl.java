@@ -4,13 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -109,23 +107,17 @@ public class JavaXPathFactoryImpl<T> extends XPathContextFactory<T> {
 		Map<Element, EObject> proxy2object = new HashMap<>();
 		Map<EObject, Element> object2proxy = new HashMap<>();
 
-		Queue<EObject> queue = new ArrayDeque<>();
-		queue.add(contextObject);
 		Element rootElement = createElement(contextObject, proxyDoc, proxyDoc);
 		object2proxy.put(contextObject, rootElement);
 		proxy2object.put(rootElement, contextObject);
 
-		while (!queue.isEmpty()) {
-			EObject parent = queue.remove();
-			Element parentNode = object2proxy.get(parent);
-			List<EObject> eContents = parent.eContents();
-			for (EObject childObject : eContents) {
-				Element childElement = createElement(childObject, parentNode, proxyDoc);
-				proxy2object.put(childElement, childObject);
-				object2proxy.put(childObject, childElement);
-				queue.add(childObject);
-			}
-		}
+		contextObject.eAllContents().forEachRemaining(eObject -> {
+			EObject eParent = eObject.eContainer();
+			Element eParentNode = object2proxy.get(eParent);
+			Element eObjectNode = object2proxy.computeIfAbsent(eObject,
+					(x) -> createElement(eObject, eParentNode, proxyDoc));
+			proxy2object.put(eObjectNode, eObject);
+		});
 		DOMImplementation implementation = proxyDoc.getImplementation();
 		final DOMImplementationLS domImplementation = (DOMImplementationLS) implementation;
 		LSSerializer serial = domImplementation.createLSSerializer();
