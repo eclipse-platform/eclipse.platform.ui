@@ -227,6 +227,7 @@ public class FindReplaceOverlay extends Dialog {
 		@Override
 		public void shellDeactivated(ShellEvent e) {
 			removeSearchScope();
+			searchBar.storeHistory();
 		}
 	};
 
