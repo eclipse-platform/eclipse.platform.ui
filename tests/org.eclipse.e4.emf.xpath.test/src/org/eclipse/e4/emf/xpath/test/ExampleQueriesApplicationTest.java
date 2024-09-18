@@ -18,6 +18,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.JavaXPathFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
@@ -39,12 +42,24 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunWith(Parameterized.class)
 public class ExampleQueriesApplicationTest {
+
+	@Parameters
+	public static Collection<Object> data() {
+		return List.of(EcoreXPathContextFactory.newInstance(), JavaXPathFactory.newInstance());
+	}
+
+	@Parameter
+	public XPathContextFactory<EObject> xpathContextFactory;
 
 	private ResourceSet resourceSet;
 	private XPathContext xpathContext;
-	private XPathContext xpathContext2;
 	private Resource resource;
 
 	@SuppressWarnings("restriction")
@@ -66,11 +81,8 @@ public class ExampleQueriesApplicationTest {
 
 		URI uri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/model/Application.e4xmi", true);
 		resource = resourceSet.getResource(uri, true);
-		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
 		EObject root = resource.getContents().get(0);
-		xpathContext = f.newContext(root);
-		XPathContextFactory<EObject> jf = JavaXPathFactory.newInstance();
-		xpathContext2 = jf.newContext(root);
+		xpathContext = xpathContextFactory.newContext(root);
 	}
 
 	@After
@@ -84,9 +96,6 @@ public class ExampleQueriesApplicationTest {
 	public void testAccessingTheApplication() {
 		Object application = xpathContext.getValue("/");
 		assertThat(application, instanceOf(MApplication.class));
-
-		Object application2 = xpathContext2.getValue("/");
-		assertThat(application2, instanceOf(MApplication.class));
 	}
 
 	@Test
@@ -103,9 +112,6 @@ public class ExampleQueriesApplicationTest {
 	public void testAccessingAllMenus() {
 		Object menuEntries = xpathContext.getValue("//mainMenu/children");
 		assertNotNull(menuEntries);
-
-		Object menuEntries2 = xpathContext2.getValue("//mainMenu/children");
-		assertNotNull(menuEntries2);
 	}
 
 
