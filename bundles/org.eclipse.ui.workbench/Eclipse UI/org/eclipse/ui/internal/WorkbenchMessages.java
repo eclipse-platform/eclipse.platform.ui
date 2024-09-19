@@ -528,6 +528,7 @@ public class WorkbenchMessages extends NLS {
 
 	// --- Workbench -----
 	public static String WorkbenchPreference_openMode;
+	public static String WorkbenchPreference_closeMode;
 	public static String WorkbenchPreference_doubleClick;
 	public static String WorkbenchPreference_singleClick;
 	public static String WorkbenchPreference_singleClick_SelectOnHover;

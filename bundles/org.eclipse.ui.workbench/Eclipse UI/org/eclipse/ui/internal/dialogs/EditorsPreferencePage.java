@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -48,7 +49,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
 public class EditorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private static final int REUSE_INDENT = 20;
 
-	protected Composite editorReuseGroup;
+	protected Group editorReuseGroup;
 
 	private Button reuseEditors;
 
@@ -212,13 +213,14 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	 * preferences.
 	 */
 	protected void createEditorReuseGroup(Composite composite) {
-		editorReuseGroup = new Composite(composite, SWT.LEFT);
+		editorReuseGroup = new Group(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		// Line up with other entries in preference page
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		editorReuseGroup.setLayout(layout);
 		editorReuseGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		editorReuseGroup.setText(WorkbenchMessages.WorkbenchPreference_closeMode);
 
 		reuseEditors = new Button(editorReuseGroup, SWT.CHECK);
 		reuseEditors.setText(WorkbenchMessages.WorkbenchPreference_reuseEditors);
