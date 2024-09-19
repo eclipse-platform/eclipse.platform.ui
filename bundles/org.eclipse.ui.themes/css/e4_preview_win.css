@@ -160,8 +160,8 @@ CTabFolder Canvas {
 }
 
 .MPartStack{
-	swt-selected-tab-highlight: #A0A0A0;
-    swt-selected-highlight-top: false;
+	swt-selected-tab-highlight: #8a8a8a;
+	swt-selected-highlight-top: false;
 }
 
 .MPartStack.active {
@@ -182,13 +182,13 @@ CTabFolder Canvas {
 }
 
 #org-eclipse-ui-editorss CTabFolder{
-	swt-selected-tab-fill : '#ffffff';
-	swt-selected-tab-highlight: '#A0A0A0';
-    swt-selected-highlight-top: true;	
+	swt-selected-tab-fill : #ffffff;
+	swt-selected-tab-highlight: #8a8a8a;
+	swt-selected-highlight-top: true;	
 	swt-tab-outline:#e5e5e5; 
 	swt-tab-outer-keyline: #e5e5e5;
 	swt-draw-custom-tab-content-background: true;
-	swt-unselected-hot-tab-color-background:'#FFFFFF';
+	swt-unselected-hot-tab-color-background:#ffffff;
 }
 
 #org-eclipse-ui-editorss CTabFolder.active {
