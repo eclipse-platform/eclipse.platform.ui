@@ -403,6 +403,9 @@ public abstract class AbstractTableInformationControl {
 			fSearchPattern = null;
 		} else {
 			SearchPattern patternMatcher = new SearchPattern();
+			if (!pattern.startsWith("*")) { //$NON-NLS-1$
+				pattern = "*" + pattern; //$NON-NLS-1$
+			}
 			patternMatcher.setPattern(pattern);
 			fSearchPattern = patternMatcher;
 		}
