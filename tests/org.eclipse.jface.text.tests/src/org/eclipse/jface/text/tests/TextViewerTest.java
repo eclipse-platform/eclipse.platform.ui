@@ -28,6 +28,9 @@ import org.junit.After;
 import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
+
+import org.eclipse.test.Screenshots;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -73,7 +76,9 @@ import org.eclipse.jface.text.tests.util.DisplayHelper;
  */
 public class TextViewerTest {
 
-	@Rule public ScreenshotOnFailureRule screenshotRule = new ScreenshotOnFailureRule();
+	@Rule
+	public TestWatcher screenshotRule= Screenshots.onFailure();
+
 	private Shell fShell;
 
 	@After
