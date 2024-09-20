@@ -58,8 +58,8 @@ CTabFolder {
 }
 
 CTabFolder.active {
-    swt-selected-tab-highlight: rgb(103,145,230);
-    swt-selected-highlight-top: false;
+	swt-selected-tab-highlight: rgb(103,145,230);
+	swt-selected-highlight-top: false;
 }
 
 .MPartStack.active.noFocus > CTabItem:selected {
