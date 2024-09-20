@@ -628,7 +628,7 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void createSearchBar() {
-		HistoryStore searchHistory = new HistoryStore(getDialogSettings(), "searchhistory", //$NON-NLS-1$
+		HistoryStore searchHistory = new HistoryStore(getDialogSettings(), HistoryStore.SEARCH_HISTORY_KEY,
 				HISTORY_SIZE);
 		searchBar = new HistoryTextWrapper(searchHistory, searchBarContainer, SWT.SINGLE);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchBar);
@@ -663,7 +663,8 @@ public class FindReplaceOverlay extends Dialog {
 	}
 
 	private void createReplaceBar() {
-		HistoryStore replaceHistory = new HistoryStore(getDialogSettings(), "replacehistory", HISTORY_SIZE); //$NON-NLS-1$
+		HistoryStore replaceHistory = new HistoryStore(getDialogSettings(), HistoryStore.REPLACE_HISTORY_KEY,
+				HISTORY_SIZE);
 		replaceBar = new HistoryTextWrapper(replaceHistory, replaceBarContainer, SWT.SINGLE);
 		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.END).applyTo(replaceBar);
 		replaceBar.setMessage(FindReplaceMessages.FindReplaceOverlay_replaceBar_message);

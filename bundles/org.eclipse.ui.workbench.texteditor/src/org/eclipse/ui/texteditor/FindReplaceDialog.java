@@ -1246,8 +1246,8 @@ class FindReplaceDialog extends Dialog {
 	 * Sets up the required managers for search history
 	 */
 	private void setupSearchHistory() {
-		findHistory = new HistoryStore(getDialogSettings(), "findhistory", HISTORY_SIZE); //$NON-NLS-1$
-		replaceHistory = new HistoryStore(getDialogSettings(), "replacehistory", HISTORY_SIZE); //$NON-NLS-1$
+		findHistory = new HistoryStore(getDialogSettings(), HistoryStore.SEARCH_HISTORY_KEY, HISTORY_SIZE); // $NON-NLS-1$
+		replaceHistory = new HistoryStore(getDialogSettings(), HistoryStore.REPLACE_HISTORY_KEY, HISTORY_SIZE); // $NON-NLS-1$
 	}
 
 	/**
