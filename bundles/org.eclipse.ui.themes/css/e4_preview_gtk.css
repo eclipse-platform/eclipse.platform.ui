@@ -126,11 +126,11 @@ CTabFolder Canvas {
 }
 
 .MTrimBar#org-eclipse-ui-main-toolbar {
-	background-color: '#f8f8f8';
+	background-color: #f8f8f8;
 }
 
 .MTrimBar#org-eclipse-ui-trim-status {
-	background-color: '#f8f8f8';
+	background-color: #f8f8f8;
 }
 
 .View Composite,
@@ -197,14 +197,14 @@ CTabFolder Canvas {
 
 /* text color and background color of unselected tabs in editor*/
 #org-eclipse-ui-editorss CTabItem{
-	color: '#000000';
-	background-color: '#f8f8f8';
+	color: #000000;
+	background-color: #f8f8f8;
 }
 
 /*text color and background color of selected tab in editor */
 #org-eclipse-ui-editorss CTabItem:selected{
-	color: '#000000';
-	background-color: '#FFFFFF';
+	color: #000000;
+	background-color: #FFFFFF;
 }
 
 #org-eclipse-ui-editorss CTabFolder{
@@ -218,7 +218,7 @@ CTabFolder Canvas {
 }
 
 #org-eclipse-ui-editorss CTabFolder.active {
-	swt-selected-tab-highlight: '#2160bb';
+	swt-selected-tab-highlight: #2160bb;
 	swt-selected-highlight-top: true;
 }
 
