@@ -25,6 +25,9 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
+
+import org.eclipse.test.Screenshots;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -57,7 +60,6 @@ import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.tests.ScreenshotOnFailureRule;
 import org.eclipse.jface.text.tests.TextViewerTest;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
@@ -66,7 +68,8 @@ public class CodeMiningTest {
 	private SourceViewer fViewer;
 	private Shell fShell;
 
-	@Rule public ScreenshotOnFailureRule rule = new ScreenshotOnFailureRule();
+	@Rule
+	public TestWatcher screenshotRule= Screenshots.onFailure();
 
 	@Before
 	public void setUp() {

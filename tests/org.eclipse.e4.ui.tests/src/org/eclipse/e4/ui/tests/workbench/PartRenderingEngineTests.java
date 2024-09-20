@@ -71,6 +71,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+import org.junit.rules.TestWatcher;
 import org.osgi.service.log.LogLevel;
 import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogReaderService;
@@ -2972,6 +2973,9 @@ public class PartRenderingEngineTests {
 		assertFalse(logged);
 	}
 
+	@Rule
+	public TestWatcher screenshotRule = Screenshots.onFailure();
+
 	@Test
 	public void testBug372226() {
 		assumeFalse("Test fails on Mac: Bug 537639", Platform.OS_MACOSX.equals(Platform.getOS()));
@@ -2990,8 +2994,6 @@ public class PartRenderingEngineTests {
 				window.getContext());
 		Control control = (Control) part.getWidget();
 		assertEquals(subShell, control.getParent());
-
-		Screenshots.takeScreenshot(getClass(), testName.getMethodName());
 
 		appContext.get(EPartService.class).activate(part);
 		assertEquals(subShell, control.getParent());
