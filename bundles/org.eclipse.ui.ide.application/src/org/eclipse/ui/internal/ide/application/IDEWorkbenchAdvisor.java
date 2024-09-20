@@ -226,7 +226,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			jfaceComparatorIsSet = true;
 		}
 
-		new AutoRegisterSchemeHandlersJob().schedule();
+		if (!Platform.inDevelopmentMode()) {
+			new AutoRegisterSchemeHandlersJob().schedule();
+		}
 	}
 
 	protected void initResourceTracking() {
