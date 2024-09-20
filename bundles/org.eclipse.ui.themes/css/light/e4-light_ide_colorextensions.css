@@ -126,13 +126,13 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR {
 }
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_TEXT_COLOR {
-    color: '#COLOR_WIDGET_FOREGROUND';
-    category: '#org-eclipse-ui-presentation-default';
-    label: url('platform:/plugin/org.eclipse.ui.themes?message=ACTIVE_TAB_TEXT_COLOR');
+	color: '#COLOR_WIDGET_FOREGROUND';
+	category: '#org-eclipse-ui-presentation-default';
+	label: url('platform:/plugin/org.eclipse.ui.themes?message=ACTIVE_TAB_TEXT_COLOR');
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR {
-    color: '#COLOR_WIDGET_FOREGROUND';
-    category: '#org-eclipse-ui-presentation-default';
-    label: url('platform:/plugin/org.eclipse.ui.themes?message=INACTIVE_TAB_TEXT_COLOR');
+	color: '#COLOR_WIDGET_FOREGROUND';
+	category: '#org-eclipse-ui-presentation-default';
+	label: url('platform:/plugin/org.eclipse.ui.themes?message=INACTIVE_TAB_TEXT_COLOR');
 }

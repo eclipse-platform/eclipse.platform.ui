@@ -20,8 +20,8 @@
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark-drag-styling.css");
 
 .MPartStack.active CTabFolder Canvas {
-    background-color: #262626;
-    color: #CCC;
+	background-color: #262626;
+	color: #CCC;
 }
 
 
@@ -33,7 +33,7 @@ ImageBasedFrame,
 #org-eclipse-ui-StatusLine CLabel,
 #org-eclipse-ui-ProgressBar,
 #org-eclipse-ui-ProgressBar Canvas {
-     color:'#org-eclipse-ui-workbench-DARK_FOREGROUND'; 
+	color:'#org-eclipse-ui-workbench-DARK_FOREGROUND'; 
 }
 
 /* ###################### Global Styles ########################## */
@@ -41,15 +41,15 @@ ImageBasedFrame,
 /* Use unset to set the foreground/background color to null */
 
 Table[swt-lines-visible=true] {
-    background-color: unset;
+	background-color: unset;
 }
 
 Tree[swt-lines-visible=true] {
-    background-color: unset;
+	background-color: unset;
 }
 
 Button  {
-    background-color: unset;
-    color: unset;
+	background-color: unset;
+	color: unset;
 }
 

@@ -21,17 +21,17 @@
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark-drag-styling.css");
 
 CTabFolder Canvas {
-    background-color: #2F2F2F;
-    color: #CCC;
+	background-color: #2F2F2F;
+	color: #CCC;
 }
 
 CTabFolder Scale {
-    background-color: inherit;
+	background-color: inherit;
 }
 
 .MPartStack.active CTabFolder Canvas {
-    background-color: #262626;
-    color: #CCC;
+	background-color: #262626;
+	color: #CCC;
 }
 
 
@@ -43,5 +43,5 @@ ImageBasedFrame,
 #org-eclipse-ui-StatusLine CLabel,
 #org-eclipse-ui-ProgressBar,
 #org-eclipse-ui-ProgressBar Canvas {
-     color:'#org-eclipse-ui-workbench-DARK_FOREGROUND'; 
+	color:'#org-eclipse-ui-workbench-DARK_FOREGROUND'; 
 }

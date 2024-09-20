@@ -93,13 +93,13 @@ CTabFolder.MArea {
 }
 
 CTabFolder {
-  swt-selected-tabs-background: rgb(255, 255, 255);
+	swt-selected-tabs-background: rgb(255, 255, 255);
 }
 
 CTabFolder CTabItem:selected {
-  background-color: rgb(230, 230, 230);
+	background-color: rgb(230, 230, 230);
 }
 
 CTabFolder Canvas {
-  background-color: rgb(255, 255, 255);
+	background-color: rgb(255, 255, 255);
 }
