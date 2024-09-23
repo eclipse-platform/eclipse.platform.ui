@@ -95,9 +95,8 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR {
 }
 
 CTabFolder Canvas {
-	background-color: rgb(255, 255, 255);
+	  background-color: #f8f8f8;
 }
-
  
 .MTrimBar#org-eclipse-ui-trim-status {
 	background-color: #f8f8f8;
