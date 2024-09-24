@@ -3932,6 +3932,11 @@
             id="org.eclipse.ui.tests.customScopeTestView"
             name="Custom Scope Area View">
       </view>
+      <view
+            class="org.eclipse.ui.tests.markers.RedProblemMarkerViewView"
+            id="org.eclipse.ui.tests.LimitAndViewerFilterView"
+            name="Red Problem Marker View">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.statusHandlers">
