@@ -54,6 +54,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	FileTreeContentProvider(FileSearchPage page, AbstractTreeViewer viewer) {
 		fPage= page;
 		fTreeViewer= viewer;
+		fChildrenMap = new HashMap<>();
 	}
 
 	@Override
@@ -216,6 +217,24 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		}
 
 		return children.toArray();
+	}
+
+	@Override
+	public int getLeafCount(Object parentElement) {
+		Object[] children = getChildren(parentElement);
+		if (children.length == 0) {
+			return 0;
+		}
+		int count = 0;
+		for (Object object : children) {
+			boolean leaf = !hasChildren(object);
+			if (leaf) {
+				count++;
+			} else {
+				count += getLeafCount(object);
+			}
+		}
+		return count;
 	}
 
 	@Override

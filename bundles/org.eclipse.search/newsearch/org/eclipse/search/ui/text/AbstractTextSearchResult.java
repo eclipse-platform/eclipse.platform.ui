@@ -352,6 +352,18 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	}
 
 	/**
+	 * Returns a number of all elements that have matches. Note that count of
+	 * all elements that contain matches are returned. The filter state of the
+	 * matches is not relevant.
+	 *
+	 * @return the number of elements in this search result
+	 * @since 3.17
+	 */
+	public int getElementsCount() {
+		return fElementsToMatches.size();
+	}
+
+	/**
 	 * Sets the active match filters for this result. If set to non-null, the match filters will be used to update the filter
 	 * state ({@link Match#isFiltered()} of matches and the {@link AbstractTextSearchViewPage} will only
 	 * show non-filtered matches. If <code>null</code> is set
