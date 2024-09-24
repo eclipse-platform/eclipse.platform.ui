@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
@@ -44,6 +45,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	private final ConcurrentMap<Object, Set<Match>> fElementsToMatches;
 	private final List<ISearchResultListener> fListeners;
 	private final MatchEvent fMatchEvent;
+	private final AtomicInteger matchCount;
 
 	private MatchFilter[] fMatchFilters;
 
@@ -54,7 +56,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		fElementsToMatches= new ConcurrentHashMap<>();
 		fListeners= new ArrayList<>();
 		fMatchEvent= new MatchEvent(this);
-
+		matchCount = new AtomicInteger(0);
 		fMatchFilters= null; // filtering disabled by default
 	}
 
@@ -156,6 +158,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	}
 
 	private boolean didAddMatch(Match match) {
+		matchCount.set(0);
 		updateFilterState(match);
 		return fElementsToMatches.computeIfAbsent(match.getElement(), k -> ConcurrentHashMap.newKeySet()).add(match);
 	}
@@ -178,6 +181,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		fireChange(new RemoveAllEvent(this));
 	}
 	private void doRemoveAll() {
+		matchCount.set(0);
 		fElementsToMatches.clear();
 	}
 
@@ -215,6 +219,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 
 	private boolean didRemoveMatch(Match match) {
+		matchCount.set(0);
 		boolean[] existed = new boolean[1];
 		fElementsToMatches.computeIfPresent(match.getElement(), (f, matches) -> {
 			existed[0] = matches.remove(match);
@@ -302,11 +307,21 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @return total number of matches
 	 */
 	public int getMatchCount() {
-		int count = 0;
-		for (Set<Match> element : fElementsToMatches.values()) {
-			count += element.size();
+		final int oldCount = matchCount.get();
+		if (oldCount != 0) {
+			return oldCount;
 		}
-		return count;
+		// The oldCount is zero here => we have to calculate again
+		int newCount = 0;
+		for (Set<Match> element : fElementsToMatches.values()) {
+			newCount += element.size();
+		}
+		if (matchCount.compareAndSet(0, newCount)) {
+			// Only return if not changed meanwhile
+			return newCount;
+		}
+		// Changed once again, fetch again latest value
+		return getMatchCount();
 	}
 
 	/**
