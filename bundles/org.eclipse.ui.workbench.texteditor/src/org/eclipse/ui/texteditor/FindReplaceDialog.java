@@ -139,12 +139,12 @@ class FindReplaceDialog extends Dialog {
 
 		@Override
 		public void modifyText(ModifyEvent e) {
+			modificationHandler.run();
 			// XXX: Workaround for Combo bug on Linux (see bug 404202 and bug 410603)
 			if (fIgnoreNextEvent) {
 				fIgnoreNextEvent = false;
 				return;
 			}
-			modificationHandler.run();
 			evaluateFindReplaceStatus();
 
 			updateButtonState(!findReplaceLogic.isActive(SearchOptions.INCREMENTAL));
