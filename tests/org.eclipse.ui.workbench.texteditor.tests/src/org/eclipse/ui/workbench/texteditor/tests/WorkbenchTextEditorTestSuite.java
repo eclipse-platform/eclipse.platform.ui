@@ -50,6 +50,7 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 		FindReplaceDialogTest.class,
 		FindReplaceOverlayTest.class,
 		FindReplaceLogicTest.class,
+		FindNextActionTest.class,
 })
 public class WorkbenchTextEditorTestSuite {
 	// see @SuiteClasses
