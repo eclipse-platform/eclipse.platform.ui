@@ -237,9 +237,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	private Image getBlankImage() {
 		if (blankImage==null) {
 			blankImage = new Image(Display.getDefault(), 1, 1);
-//			GC gc = new GC(blankImage);
-//			gc.fillRectangle(0, 0, 16, 16);
-//			gc.dispose();
 		}
 		return blankImage;
 	}
@@ -268,22 +265,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			cell.setImage(getBlankImage());
 			super.update(cell);
 		}
-
-//		public String getToolTipText(Object element) {
-//			LineItem item = (LineItem) element;
-//			if (item!=null) {
-//				return ""+item.getFile().getFullPath();
-//			}
-//			return "";
-//		};
-
-//		public String getText(Object _item) {
-//			if (_item!=null) {
-//				LineItem item = (LineItem) _item;
-//				return item.getFile().getName().toString();
-//			}
-//			return "?";
-//		};
 	};
 
 	private static final String DIALOG_SETTINGS = QuickSearchDialog.class.getName()+".DIALOG_SETTINGS"; //$NON-NLS-1$
@@ -467,7 +448,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		@Override
 		public void run() {
-			//setChecked(!isChecked());
 		}
 
 	}
@@ -489,7 +469,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		@Override
 		public void run() {
-			//setChecked(!isChecked());
 			refreshHeaderLabel();
 			applyFilter(false);
 		}
@@ -505,7 +484,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	public boolean close() {
 		this.progressJob.cancel();
 		this.progressJob = null;
-//		this.refreshProgressMessageJob.cancel();
 		if (showViewHandler != null) {
 			IHandlerService service = PlatformUI
 					.getWorkbench().getService(IHandlerService.class);
@@ -766,7 +744,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		list = new TableViewer(sashForm, (multi ? SWT.MULTI : SWT.SINGLE) |
 				SWT.FULL_SELECTION | SWT.BORDER | SWT.V_SCROLL | SWT.VIRTUAL);
-//		ColumnViewerToolTipSupport.enableFor(list, ToolTip.NO_RECREATE);
 
 		list.getTable().setHeaderVisible(true);
 		list.getTable().setLinesVisible(true);
@@ -781,8 +758,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 					}
 				});
 		list.setContentProvider(contentProvider);
-//		new ScrollListener(list.getTable().getVerticalBar());
-//		new SelectionChangedListener(list);
 
 		TableViewerColumn col = new TableViewerColumn(list, SWT.RIGHT);
 		col.setLabelProvider(LINE_NUMBER_LABEL_PROVIDER);
@@ -1003,47 +978,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		return styledText;
 	}
 
-// Version using sourceviewer
-//	private void refreshDetails() {
-//		if (details!=null && list!=null && !list.getTable().isDisposed()) {
-//			if (documents==null) {
-//				documents = new DocumentFetcher();
-//			}
-//			IStructuredSelection sel = (IStructuredSelection) list.getSelection();
-//			if (sel!=null && !sel.isEmpty()) {
-//				//Not empty selection
-//				LineItem item = (LineItem) sel.getFirstElement();
-//				IDocument document = documents.getDocument(item.getFile());
-//				try {
-//					int line = item.getLineNumber()-1; //in document lines are 0 based. In search 1 based.
-//					int start = document.getLineOffset(Math.max(line-2, 0));
-//					int end = document.getLength();
-//					try {
-//						end = document.getLineOffset(line+3);
-//					} catch (BadLocationException e) {
-//						//Presumably line number is past the end of document.
-//						//ignore.
-//					}
-//					details.setDocument(document, start, end-start);
-//
-//					String visibleText = document.get(start, end-start);
-//					List<TextRange> matches = getQuery().findAll(visibleText);
-//					Region visibleRegion = new Region(start, end-start);
-//					TextPresentation presentation = new TextPresentation(visibleRegion, 20);
-//					presentation.setDefaultStyleRange(new StyleRange(0, document.getLength(), null, null));
-//					for (TextRange m : matches) {
-//						presentation.addStyleRange(new StyleRange(m.start+start, m.len, null, YELLOW));
-//					}
-//					details.changeTextPresentation(presentation, true);
-//
-//					return;
-//				} catch (BadLocationException e) {
-//				}
-//			}
-//			details.setDocument(null);
-//		}
-//	}
-
 	/**
 	 * Handle selection in the items list by updating labels of selected and
 	 * unselected items and refresh the details field using the selection.
@@ -1121,8 +1055,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	 */
 	public void scheduleRefresh() {
 		refreshJob.schedule();
-//		refreshCacheJob.cancelAll();
-//		refreshCacheJob.schedule();
 	}
 
 	/*
@@ -1303,7 +1235,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				applyPathMatcher();
 				refreshWidgets();
 			}
-//			this.list.setInput(input)
 		} else {
 			//The QuickTextSearcher is already active update the query
 			this.searcher.setQuery(newFilter, force);
@@ -1344,9 +1275,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		 */
 		public ContentProvider() {
 			this.items = Collections.synchronizedList(new ArrayList(2048));
-//			this.duplicates = Collections.synchronizedSet(new HashSet(256));
-//			this.lastSortedItems = Collections.synchronizedList(new ArrayList(
-//					2048));
 		}
 
 		public void remove(LineItem match) {
