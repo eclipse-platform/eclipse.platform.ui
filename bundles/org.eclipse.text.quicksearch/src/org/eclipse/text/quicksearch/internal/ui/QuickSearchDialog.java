@@ -112,6 +112,8 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.findandreplace.HistoryStore;
+import org.eclipse.ui.internal.findandreplace.overlay.HistoryTextWrapper;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.FrameworkUtil;
@@ -350,7 +352,8 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	private Label headerLabel;
 
 	private IWorkbenchWindow window;
-	private Text searchIn;
+	private HistoryStore searchInHistory;
+	private HistoryTextWrapper searchIn;
 	private Label listLabel;
 
 	/**
@@ -728,12 +731,14 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		});
 		GridDataFactory.fillDefaults().span(6,1).grab(true, false).applyTo(pattern);
 
+		searchInHistory = new HistoryStore(getDialogSettings(), "searchinhistory", 5); //$NON-NLS-1$
+
 		Composite searchInComposite = createNestedComposite(inputRow, 2, false);
 		GridDataFactory.fillDefaults().span(4,1).grab(true, false).applyTo(searchInComposite);
 		Label searchInLabel = new Label(searchInComposite, SWT.NONE);
 		searchInLabel.setText(Messages.QuickSearchDialog_In);
 		GridDataFactory.swtDefaults().indent(5, 0).applyTo(searchInLabel);
-		searchIn = new Text(searchInComposite, SWT.SINGLE | SWT.BORDER | SWT.ICON_CANCEL);
+		searchIn = new HistoryTextWrapper(searchInHistory, searchInComposite, SWT.SINGLE | SWT.BORDER | SWT.ICON_CANCEL);
 		searchIn.setToolTipText(Messages.QuickSearchDialog_InTooltip);
 		GridDataFactory.fillDefaults().grab(true, false).indent(5, 0).applyTo(searchIn);
 
@@ -786,6 +791,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		pattern.addModifyListener(e -> {
 			applyFilter(false);
+			searchIn.storeHistory();
 		});
 
 		searchIn.addModifyListener(e -> {
