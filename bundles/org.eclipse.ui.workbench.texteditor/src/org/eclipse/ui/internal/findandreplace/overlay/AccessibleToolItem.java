@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.layout.GridDataFactory;
 
 class AccessibleToolItem {
 	private final ToolItem toolItem;
@@ -30,6 +31,7 @@ class AccessibleToolItem {
 
 	AccessibleToolItem(Composite parent, int styleBits) {
 		ToolBar toolbar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL);
+		GridDataFactory.fillDefaults().grab(true, true).align(SWT.CENTER, SWT.CENTER).applyTo(toolbar);
 		toolItem = new ToolItem(toolbar, styleBits);
 		addToolItemTraverseListener(toolbar);
 	}
