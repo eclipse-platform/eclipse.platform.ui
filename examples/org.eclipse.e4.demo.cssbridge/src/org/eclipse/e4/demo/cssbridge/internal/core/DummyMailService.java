@@ -26,7 +26,9 @@ import org.eclipse.e4.demo.cssbridge.model.FolderType;
 import org.eclipse.e4.demo.cssbridge.model.Importance;
 import org.eclipse.e4.demo.cssbridge.model.Mail;
 import org.eclipse.e4.demo.cssbridge.util.MailBuilder;
+import org.osgi.service.component.annotations.Component;
 
+@Component(service = IMailService.class)
 public class DummyMailService implements IMailService {
 	private static final String MAILBOX_NAME = "me@this.com";
 
