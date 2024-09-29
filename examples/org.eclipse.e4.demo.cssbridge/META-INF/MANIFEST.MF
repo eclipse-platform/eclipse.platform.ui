@@ -15,7 +15,7 @@ Export-Package: org.eclipse.e4.demo.cssbridge.core,
  org.eclipse.e4.demo.cssbridge.ui.views,
  org.eclipse.e4.demo.cssbridge.util
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/mailservice.xml
+Service-Component: OSGI-INF/org.eclipse.e4.demo.cssbridge.internal.core.DummyMailService.xml
 Automatic-Module-Name: org.eclipse.e4.demo.cssbridge
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Localization: plugin
