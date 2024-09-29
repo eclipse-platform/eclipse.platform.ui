@@ -32,4 +32,4 @@ Require-Bundle:
  org.eclipse.search.core;bundle-version="[3.16.0,4.0.0)";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.search
-Service-Component: OSGI-INF/*.xml
+Service-Component: OSGI-INF/org.eclipse.search.internal.ui.text.DirtyFileSearchParticipant.xml

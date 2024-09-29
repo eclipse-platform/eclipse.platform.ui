@@ -16,6 +16,8 @@ package org.eclipse.search.internal.ui.text;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -38,6 +40,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.internal.core.text.DirtyFileProvider;
 
+@Component(service = DirtyFileProvider.class, immediate = false, property = { "weight:Integer=100" })
 public class DirtyFileSearchParticipant implements DirtyFileProvider {
 
 	@Override

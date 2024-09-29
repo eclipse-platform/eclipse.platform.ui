@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" immediate="false" name="org.eclipse.search.ui.dirtyEditorSearchParticipant">
-   <implementation class="org.eclipse.search.internal.ui.text.DirtyFileSearchParticipant"/>
-   <service>
-      <provide interface="org.eclipse.search.internal.core.text.DirtyFileProvider"/>
-   </service>
-   <property name="weight" type="Integer" value="100"/>
-</scr:component>

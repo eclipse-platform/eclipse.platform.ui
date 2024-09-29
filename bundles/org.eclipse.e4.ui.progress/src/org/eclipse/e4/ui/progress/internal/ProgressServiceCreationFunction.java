@@ -16,8 +16,13 @@ package org.eclipse.e4.ui.progress.internal;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.progress.IProgressService;
+import org.osgi.service.component.annotations.Component;
 
+@Component(service = IContextFunction.class)
+@IContextFunction.ServiceContextKey(IProgressService.class)
 public class ProgressServiceCreationFunction extends ContextFunction {
 
 	@Override
