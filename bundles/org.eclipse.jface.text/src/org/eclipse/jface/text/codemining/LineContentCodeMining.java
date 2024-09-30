@@ -26,6 +26,8 @@ import org.eclipse.jface.text.Position;
  */
 public abstract class LineContentCodeMining extends AbstractCodeMining {
 
+	private final boolean afterPosition;
+
 	/**
 	 * CodeMining constructor to locate the code mining in a given position.
 	 *
@@ -40,11 +42,51 @@ public abstract class LineContentCodeMining extends AbstractCodeMining {
 	 * CodeMining constructor to locate the code mining in a given position.
 	 *
 	 * @param position the position where the mining must be drawn.
+	 * @param afterPosition if true code mining is treated as suffix code mining where cursor and
+	 *            selection is not including the mining
+	 * @param provider the owner codemining provider which creates this mining.
+	 *
+	 * @since 3.26
+	 */
+	public LineContentCodeMining(Position position, boolean afterPosition, ICodeMiningProvider provider) {
+		this(position, afterPosition, provider, null);
+	}
+
+	/**
+	 * CodeMining constructor to locate the code mining in a given position.
+	 *
+	 * @param position the position where the mining must be drawn.
 	 * @param provider the owner codemining provider which creates this mining.
 	 * @param action the action to execute when mining is clicked and null otherwise.
 	 */
 	public LineContentCodeMining(Position position, ICodeMiningProvider provider, Consumer<MouseEvent> action) {
+		this(position, false, provider, action);
+	}
+
+	/**
+	 * CodeMining constructor to locate the code mining in a given position.
+	 *
+	 * @param position the position where the mining must be drawn.
+	 * @param provider the owner codemining provider which creates this mining.
+	 * @param action the action to execute when mining is clicked and null otherwise.
+	 * @param afterPosition if true code mining is treated as suffix code mining where cursor and
+	 *            selection is not including the mining
+	 *
+	 * @since 3.26
+	 */
+	public LineContentCodeMining(Position position, boolean afterPosition, ICodeMiningProvider provider, Consumer<MouseEvent> action) {
 		super(position, provider, action);
+		this.afterPosition= afterPosition;
+	}
+
+	/**
+	 * indicates if code mining should be rendered after given position; cursor and selection does
+	 * not include the code mining if set to true.
+	 *
+	 * @since 3.26
+	 */
+	public boolean isAfterPosition() {
+		return afterPosition;
 	}
 
 }

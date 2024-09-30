@@ -42,6 +42,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
+import org.eclipse.jface.text.codemining.LineContentCodeMining;
 import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.inlined.AbstractInlinedAnnotation;
@@ -251,12 +252,17 @@ public class CodeMiningManager implements Runnable {
 
 			Position pos= new Position(g.getKey().offset, g.getKey().length);
 			List<ICodeMining> minings= g.getValue();
-			boolean inLineHeader= !minings.isEmpty() ? (minings.get(0) instanceof LineHeaderCodeMining) : true;
+			ICodeMining first= minings.get(0);
+			boolean inLineHeader= !minings.isEmpty() ? (first instanceof LineHeaderCodeMining) : true;
 			// Try to find existing annotation
 			AbstractInlinedAnnotation ann= fInlinedAnnotationSupport.findExistingAnnotation(pos);
 			if (ann == null) {
 				// The annotation doesn't exists, create it.
-				ann= inLineHeader ? new CodeMiningLineHeaderAnnotation(pos, viewer) : new CodeMiningLineContentAnnotation(pos, viewer);
+				boolean afterPosition= false;
+				if (first instanceof LineContentCodeMining m) {
+					afterPosition= m.isAfterPosition();
+				}
+				ann= inLineHeader ? new CodeMiningLineHeaderAnnotation(pos, viewer) : new CodeMiningLineContentAnnotation(pos, viewer, afterPosition);
 			} else if (ann instanceof ICodeMiningAnnotation && ((ICodeMiningAnnotation) ann).isInVisibleLines()) {
 				// annotation is in visible lines
 				annotationsToRedraw.add((ICodeMiningAnnotation) ann);

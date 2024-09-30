@@ -61,6 +61,8 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 	 */
 	private IProgressMonitor fMonitor;
 
+	private final boolean afterPosition;
+
 	/**
 	 * Code mining annotation constructor.
 	 *
@@ -72,6 +74,21 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 		fResolvedMinings= null;
 		fMinings= new ArrayList<>();
 		fBounds= new ArrayList<>();
+		afterPosition= false;
+	}
+
+	/**
+	 * Code mining annotation constructor.
+	 *
+	 * @param position the position
+	 * @param viewer the viewer
+	 */
+	public CodeMiningLineContentAnnotation(Position position, ISourceViewer viewer, boolean afterPosition) {
+		super(position, viewer);
+		fResolvedMinings= null;
+		fMinings= new ArrayList<>();
+		fBounds= new ArrayList<>();
+		this.afterPosition= afterPosition;
 	}
 
 	@Override
@@ -182,5 +199,9 @@ public class CodeMiningLineContentAnnotation extends LineContentAnnotation imple
 	@Override
 	public boolean isInVisibleLines() {
 		return super.isInVisibleLines();
+	}
+
+	public final boolean isAfterPosition() {
+		return afterPosition;
 	}
 }

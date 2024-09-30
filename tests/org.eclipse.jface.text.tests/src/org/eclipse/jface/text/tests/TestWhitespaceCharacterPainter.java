@@ -19,6 +19,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,15 +65,30 @@ public class TestWhitespaceCharacterPainter {
 
 	@Test
 	public void glyphMetricsTakenIntoAccount() throws Exception {
+		verifyDrawStringCalledNTimes("first  \nsecond  \nthird  \n", Arrays.asList(6, 15), 5);
+	}
+
+	@Test
+	public void glyphMetricsAtNewTakenIntoAccount() throws Exception {
+		verifyDrawStringCalledNTimes("first  \nsecond", Arrays.asList(7), 2);
+	}
+
+	@Test
+	public void glyphMetricsAtCarriageReturnTakenIntoAccount() throws Exception {
+		verifyDrawStringCalledNTimes("first  \r\nsecond", Arrays.asList(7), 2);
+	}
+
+	private void verifyDrawStringCalledNTimes(String str, List<Integer> styleRangeOffsets, int times) {
 		SourceViewer sourceViewer= new SourceViewer(shell, null, SWT.V_SCROLL | SWT.BORDER);
-		sourceViewer.setDocument(new Document("first  \nsecond  \nthird  \n"));
+		sourceViewer.setDocument(new Document(str));
 		StyledText textWidget= sourceViewer.getTextWidget();
 		textWidget.setFont(JFaceResources.getTextFont());
 		WhitespaceCharacterPainter whitespaceCharPainter= new WhitespaceCharacterPainter(sourceViewer, true, true, true, true, true, true, true,
 				true, true, true, true, 100);
 		sourceViewer.addPainter(whitespaceCharPainter);
-		textWidget.setStyleRange(createStyleRangeWithMetrics(6));
-		textWidget.setStyleRange(createStyleRangeWithMetrics(15));
+		for (Integer offset : styleRangeOffsets) {
+			textWidget.setStyleRange(createStyleRangeWithMetrics(offset));
+		}
 		Event e= new Event();
 		e.widget= textWidget;
 		PaintEvent ev= new PaintEvent(e);
@@ -83,6 +101,16 @@ public class TestWhitespaceCharacterPainter {
 				GC gc= new GC(shell);
 				gc.setFont(JFaceResources.getTextFont());
 				Point result= gc.stringExtent(invocation.getArgument(0));
+				gc.dispose();
+				return result;
+			}
+		});
+		when(ev.gc.textExtent(anyString())).thenAnswer(new Answer<Point>() {
+			@Override
+			public Point answer(InvocationOnMock invocation) throws Throwable {
+				GC gc= new GC(shell);
+				gc.setFont(JFaceResources.getTextFont());
+				Point result= gc.textExtent(invocation.getArgument(0));
 				gc.dispose();
 				return result;
 			}
@@ -102,7 +130,7 @@ public class TestWhitespaceCharacterPainter {
 		ev.width= 100;
 		ev.height= 100;
 		whitespaceCharPainter.paintControl(ev);
-		verify(ev.gc, times(5)).drawString(anyString(), anyInt(), anyInt(), anyBoolean());
+		verify(ev.gc, times(times)).drawString(anyString(), anyInt(), anyInt(), anyBoolean());
 	}
 
 	private StyleRange createStyleRangeWithMetrics(int start) {

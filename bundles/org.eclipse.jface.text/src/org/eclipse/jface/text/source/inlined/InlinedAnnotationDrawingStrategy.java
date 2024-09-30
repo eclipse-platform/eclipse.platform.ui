@@ -24,6 +24,8 @@ import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
+import org.eclipse.jface.internal.text.codemining.CodeMiningLineContentAnnotation;
+
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
@@ -202,6 +204,12 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 */
 	private static void draw(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length,
 			Color color) {
+		if (annotation instanceof CodeMiningLineContentAnnotation a) {
+			if (a.isAfterPosition()) {
+				drawAsLeftOf1stCharacter(annotation, gc, textWidget, widgetOffset, length, color);
+				return;
+			}
+		}
 		if (annotation.isEmptyLine(widgetOffset, textWidget)) {
 			drawAfterLine(annotation, gc, textWidget, widgetOffset, length, color);
 		} else if (LineContentAnnotation.drawRightToPreviousChar(widgetOffset, textWidget)) {
@@ -254,9 +262,18 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 
 			// Compute the location of the annotation
 			Rectangle bounds= textWidget.getTextBounds(widgetOffset, widgetOffset);
-			int x= bounds.x + (isEndOfLine ? bounds.width * 2 : 0);
-			int y= bounds.y;
 
+			int x;
+			if (isEndOfLine) {
+				// getTextBounds at offset with char '\r' or '\n' returns incorrect x position, use getLocationAtOffset instead
+				x= textWidget.getLocationAtOffset(widgetOffset).x;
+			} else {
+				x= bounds.x;
+			}
+			int y= bounds.y;
+			if (isAfterPosition(annotation)) {
+				isEndOfLine= false;
+			}
 			// When line text has line header annotation, there is a space on the top, adjust the y by using char height
 			y+= bounds.height - textWidget.getLineHeight();
 
@@ -275,14 +292,18 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					// Get size of the character where GlyphMetrics width is added
 					Point charBounds= gc.stringExtent(hostCharacter);
 					int charWidth= charBounds.x;
-
+					if (charWidth == 0 && ("\r".equals(hostCharacter) || "\n".equals(hostCharacter))) { //$NON-NLS-1$ //$NON-NLS-2$
+						// charWidth is 0 for '\r' on font Consolas, but not on other fonts, why?
+						charWidth= gc.stringExtent(" ").x; //$NON-NLS-1$
+					}
 					// FIXME: remove this code when we need not redraw the character (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=531769)
 					// START TO REMOVE
 					annotation.setRedrawnCharacterWidth(charWidth);
 					// END TO REMOVE
 
 					// Annotation takes place, add GlyphMetrics width to the style
-					StyleRange newStyle= annotation.updateStyle(style, gc.getFontMetrics(), textWidget.getData() instanceof ITextViewer viewer ? viewer : annotation.getViewer());
+					StyleRange newStyle= annotation.updateStyle(style, gc.getFontMetrics(), textWidget.getData() instanceof ITextViewer viewer ? viewer : annotation.getViewer(),
+							isAfterPosition(annotation));
 					if (newStyle != null) {
 						textWidget.setStyleRange(newStyle);
 						return;
@@ -328,6 +349,13 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		}
 	}
 
+	private static boolean isAfterPosition(LineContentAnnotation annotation) {
+		if (annotation instanceof CodeMiningLineContentAnnotation a) {
+			return a.isAfterPosition();
+		}
+		return false;
+	}
+
 	protected static void drawAsRightOfPreviousCharacter(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length, Color color) {
 		StyleRange style= null;
 		try {
@@ -365,7 +393,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				// END TO REMOVE
 
 				// Annotation takes place, add GlyphMetrics width to the style
-				StyleRange newStyle= annotation.updateStyle(style, gc.getFontMetrics(), InlinedAnnotationSupport.getSupport(textWidget).getViewer());
+				StyleRange newStyle= annotation.updateStyle(style, gc.getFontMetrics(), InlinedAnnotationSupport.getSupport(textWidget).getViewer(), isAfterPosition(annotation));
 				if (newStyle != null) {
 					textWidget.setStyleRange(newStyle);
 					return;

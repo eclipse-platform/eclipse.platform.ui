@@ -117,13 +117,16 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	 * @return the style to apply with GlyphMetrics width only if needed. It uses widget position,
 	 *         not model position.
 	 */
-	StyleRange updateStyle(StyleRange style, FontMetrics fontMetrics, ITextViewer viewer) {
+	StyleRange updateStyle(StyleRange style, FontMetrics fontMetrics, ITextViewer viewer, boolean afterPosition) {
 		Position widgetPosition= computeWidgetPosition(viewer);
 		if (widgetPosition == null) {
 			return null;
 		}
 		StyledText textWidget = viewer.getTextWidget();
-		boolean usePreviousChar= drawRightToPreviousChar(widgetPosition.getOffset(), textWidget);
+		boolean usePreviousChar= false;
+		if (!afterPosition) {
+			usePreviousChar= drawRightToPreviousChar(widgetPosition.getOffset(), textWidget);
+		}
 		if (width == 0 || getRedrawnCharacterWidth() == 0) {
 			return null;
 		}

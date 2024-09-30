@@ -16,10 +16,12 @@ package org.eclipse.jface.text.examples.codemining;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension2;
+import org.eclipse.jface.text.WhitespaceCharacterPainter;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
@@ -42,6 +44,8 @@ import org.eclipse.swt.widgets.Text;
  */
 public class CodeMiningDemo {
 
+	private static boolean showWhitespaces = false;
+
 	public static void main(String[] args) throws Exception {
 
 		Display display = new Display();
@@ -54,7 +58,13 @@ public class CodeMiningDemo {
 		endOfLineText.setText(endOfLineString.get());
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(endOfLineText);
 
-		ISourceViewer sourceViewer = new SourceViewer(shell, null, SWT.V_SCROLL | SWT.BORDER);
+		SourceViewer sourceViewer = new SourceViewer(shell, null, SWT.V_SCROLL | SWT.BORDER);
+		sourceViewer.getTextWidget().setFont(JFaceResources.getTextFont());
+		if (showWhitespaces) {
+			WhitespaceCharacterPainter whitespaceCharPainter = new WhitespaceCharacterPainter(sourceViewer, true, true,
+					true, true, true, true, true, true, true, true, true, 100);
+			sourceViewer.addPainter(whitespaceCharPainter);
+		}
 		sourceViewer.setDocument(
 				new Document("// Type class & new keyword and see references CodeMining\n"
 						+ "// Name class with a number N to emulate Nms before resolving the references CodeMining\n"
@@ -71,7 +81,8 @@ public class CodeMiningDemo {
 						+ "new 5\n" //
 						+ "new 5\n" //
 						+ "multiline \n" //
-						+ "multiline \n\n"),
+						+ "multiline \n\n" //
+						+ "suffix \n"),
 				new AnnotationModel());
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sourceViewer.getTextWidget());
 		// Add AnnotationPainter (required by CodeMining)
@@ -83,7 +94,8 @@ public class CodeMiningDemo {
 				new ToEchoWithHeaderAndInlineCodeMiningProvider("echo"), //
 				new MultilineCodeMiningProvider(), //
 				new EmptyLineCodeMiningProvider(), //
-				new EchoAtEndOfLineCodeMiningProvider(endOfLineString) });
+				new EchoAtEndOfLineCodeMiningProvider(endOfLineString), //
+				new LineContentCodeMiningAfterPositionProvider() });
 		// Execute codemining in a reconciler
 		MonoReconciler reconciler = new MonoReconciler(new IReconcilingStrategy() {
 
