@@ -42,6 +42,8 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.internal.text.codemining.CodeMiningLineContentAnnotation;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -107,7 +109,7 @@ public class InlinedAnnotationSupport {
 					.forEachRemaining(annotation -> {
 						if (annotation instanceof LineContentAnnotation) {
 							LineContentAnnotation ann= (LineContentAnnotation) annotation;
-							StyleRange style= ann.updateStyle(null, fFontMetrics, fViewer);
+							StyleRange style= ann.updateStyle(null, fFontMetrics, fViewer, isAfterPosition(ann));
 							if (style != null) {
 								if (fViewer instanceof ITextViewerExtension5 projectionViewer) {
 									IRegion annotationRegion= projectionViewer.widgetRange2ModelRange(new Region(style.start, style.length));
@@ -118,6 +120,13 @@ public class InlinedAnnotationSupport {
 							}
 						}
 					});
+		}
+
+		private static boolean isAfterPosition(LineContentAnnotation annotation) {
+			if (annotation instanceof CodeMiningLineContentAnnotation a) {
+				return a.isAfterPosition();
+			}
+			return false;
 		}
 	}
 

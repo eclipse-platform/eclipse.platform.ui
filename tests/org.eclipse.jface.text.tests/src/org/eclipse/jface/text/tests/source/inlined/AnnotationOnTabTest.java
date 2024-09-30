@@ -74,7 +74,7 @@ public class AnnotationOnTabTest {
 		// add annotations
 		int annotationIndex = sourceViewer.getDocument().get().indexOf("annotated");
 		LineContentAnnotation annotation= new LineContentAnnotation(new Position(annotationIndex, 1), sourceViewer);
-		annotation.setText("a"); // single char, so overall annoation is 3 chars, less than default 4 chars
+		annotation.setText("a"); // single char, so overall annotation is 3 chars, less than default 4 chars
 		support.updateAnnotations(Collections.singleton(annotation));
 		fParent.open();
 		Assert.assertTrue(new DisplayHelper() {
@@ -87,6 +87,7 @@ public class AnnotationOnTabTest {
 		int referenceIndex = textWidget.getText().indexOf("reference");
 		Rectangle referenceBounds = textWidget.getTextBounds(referenceIndex, referenceIndex);
 		Rectangle annotatedCharactedBounds = textWidget.getTextBounds(annotationIndex, annotationIndex);
-		Assert.assertTrue("Annotation didn't shift target character to the right, it most likely replaced the tab instead of expanding it", referenceBounds.x < annotatedCharactedBounds.x);
+		Assert.assertTrue("Annotation didn't shift target character to the right, it most likely replaced the tab instead of expanding it",
+				referenceBounds.x + referenceBounds.width < annotatedCharactedBounds.x + annotatedCharactedBounds.width);
 	}
 }

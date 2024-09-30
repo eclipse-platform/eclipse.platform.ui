@@ -17,8 +17,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -405,6 +405,10 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 						break;
 					case '\r':
 						if (fShowCarriageReturn) {
+							if (visibleChar.length() > 0 && cache.contains(fTextWidget, lineOffset + textOffset)) {
+								textOffset--;
+								break;
+							}
 							visibleChar.append(CARRIAGE_RETURN_SIGN);
 						}
 						if (textOffset >= endOffsetInLine - 1 || lineText.charAt(textOffset + 1) != '\n') {
@@ -414,6 +418,10 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 						continue;
 					case '\n':
 						if (fShowLineFeed) {
+							if (visibleChar.length() > 0 && cache.contains(fTextWidget, lineOffset + textOffset)) {
+								textOffset--;
+								break;
+							}
 							visibleChar.append(LINE_FEED_SIGN);
 						}
 						eol= true;
@@ -439,7 +447,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 							fg= styleRange.foreground;
 						}
 					}
-					draw(gc, widgetOffset, visibleChar.toString(), fg);
+					draw(gc, widgetOffset, visibleChar.toString(), fg, cache);
 				}
 				visibleChar.delete(0, visibleChar.length());
 			}
@@ -492,7 +500,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @param s the string to be drawn
 	 * @param fg the foreground color
 	 */
-	private void draw(GC gc, int offset, String s, Color fg) {
+	private void draw(GC gc, int offset, String s, Color fg,StyleRangeWithMetricsOffsets cache) {
 		// Compute baseline delta (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=165640)
 		int baseline= fTextWidget.getBaseline(offset);
 		FontMetrics fontMetrics= gc.getFontMetrics();
@@ -500,32 +508,49 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		int baslineDelta= baseline - fontBaseline;
 
 		Point pos= fTextWidget.getLocationAtOffset(offset);
+		StyleRange styleRange= cache.get(fTextWidget, offset);
+		if (styleRange != null && styleRange.metrics != null) { // code mining at \r or \n character - line break character should be drawn at end of code mining
+			String charBeforeOffset= " "; //$NON-NLS-1$
+			if (offset > 0) {
+				charBeforeOffset= fTextWidget.getText(offset - 1, offset - 1);
+			}
+			Point extCharBeforeOffset= gc.textExtent(charBeforeOffset);
+			pos.x= pos.x + styleRange.metrics.width - extCharBeforeOffset.x;
+		}
 		gc.setForeground(fg);
 		gc.drawString(s, pos.x, pos.y + baslineDelta, true);
 	}
 
 	private static class StyleRangeWithMetricsOffsets {
-		private Set<Integer> offsets= null;
+		private Map<Integer, StyleRange> offsets= null;
 
 		public boolean contains(StyledText st, int offset) {
 			if (offsets == null) {
-				fillSet(st);
+				fillMap(st);
 			}
-			if (offsets.contains(offset)) {
+			if (offsets.containsKey(offset)) {
 				return true;
 			}
 			return false;
 		}
 
-		private void fillSet(StyledText st) {
-			offsets= new HashSet<>();
+		public StyleRange get(StyledText st, int offset) {
+			if (offsets == null) {
+				fillMap(st);
+			}
+			StyleRange styleRange= offsets.get(offset);
+			return styleRange;
+		}
+
+		private void fillMap(StyledText st) {
+			offsets= new HashMap<>();
 			StyleRange[] ranges= st.getStyleRanges();
 			if (ranges == null) {
 				return;
 			}
 			for (StyleRange range : ranges) {
 				if (range != null && range.metrics != null) {
-					offsets.add(range.start);
+					offsets.put(range.start, range);
 				}
 			}
 		}
