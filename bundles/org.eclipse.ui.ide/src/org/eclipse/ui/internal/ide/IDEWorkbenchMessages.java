@@ -1147,6 +1147,12 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_maxSimultaneousBuilds;
 	public static String WorkbenchPreference_maxSimultaneousBuildIntervalError;
 
+	public static String IDEApplication_Ws_Lock_Owner_User;
+	public static String IDEApplication_Ws_Lock_Owner_Host;
+	public static String IDEApplication_Ws_Lock_Owner_Disp;
+	public static String IDEApplication_Ws_Lock_Owner_P_Id;
+	public static String IDEApplication_Ws_Lock_Owner_Message;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, IDEWorkbenchMessages.class);
