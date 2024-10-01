@@ -22,6 +22,11 @@
         <repository location='https://download.eclipse.org/tools/orbit/downloads/drops/R20230531010532/repository'/>
       </repositories>
     </iu>
+    <iu id='javax.inject' name='javax.inject' version='0.0.0'>
+        <repositories size='1'>
+            <repository location='https://download.eclipse.org/tools/orbit/downloads/drops/R20230531010532/repository'/>
+        </repositories>
+    </iu>
     <iu id='assertj-core' name='assertj-core' version='3.21.0'>
       <repositories size='1'>
         <repository location='https://download.eclipse.org/eclipse/updates/I-builds'/>
@@ -95,11 +100,6 @@
     <iu id='org.eclipse.tm4e.language_pack.feature.feature.group' name='TextMate Language Pack' version='0.0.0'>
         <repositories size='1'>
             <repository location='https://download.eclipse.org/tm4e/releases/latest/'/>
-        </repositories>
-    </iu>
-    <iu id='de.jcup.basheditor.feature.group' name='Schell script editor' version='0.0.0'>
-        <repositories size='1'>
-            <repository location='https://de-jcup.github.io/update-site-eclipse-bash-editor/update-site'/>
         </repositories>
     </iu>
     <iu id='zipeditor.feature.group' name='ZipEditor' version='0.0.0'>
