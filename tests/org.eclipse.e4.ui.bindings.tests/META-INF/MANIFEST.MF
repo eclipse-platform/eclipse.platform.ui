@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.e4.ui.bindings.tests
-Bundle-Version: 0.14.200.qualifier
+Bundle-Version: 0.14.300.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: org.eclipse.e4.core.commands,
  org.eclipse.e4.ui.services,
