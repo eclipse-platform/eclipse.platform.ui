@@ -14,16 +14,21 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.List;
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.EvaluationResult;
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ExpressionInfo;
-import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISources;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 /**
  * Closes the active editor.
@@ -33,43 +38,53 @@ import org.eclipse.ui.handlers.HandlerUtil;
  *
  * @since 3.3
  */
-public class CloseEditorHandler extends AbstractEvaluationHandler {
-
-	private Expression enabledWhen;
-
-	public CloseEditorHandler() {
-		registerEnablement();
-	}
+public class CloseEditorHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		IEditorPart part = HandlerUtil.getActiveEditorChecked(event);
-		window.getActivePage().closeEditor(part, true);
+
+		IWorkbenchPart activePart = HandlerUtil.getActivePart(event);
+		if (activePart instanceof IEditorPart) {
+			IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+			window.getActivePage().closeEditor((IEditorPart) activePart, true);
+		} else {
+			// we may have an E4PartWrapper for a part which has been contributed eg. via a
+			// PartDescriptor in a model fragment, and which has been tagged as
+			// representing an Editor
+			if (activePart instanceof E4PartWrapper) {
+				// derive the IEclipseContext & EPartService
+				BundleContext context = FrameworkUtil.getBundle(IWorkbench.class).getBundleContext();
+				ServiceReference<IWorkbench> reference = context.getServiceReference(IWorkbench.class);
+				IEclipseContext eclipseContext = context.getService(reference).getApplication().getContext();
+				EPartService partService = eclipseContext.get(EPartService.class);
+
+				// access the wrapped part => save & close it
+				MPart wrappedPart = ((E4PartWrapper) activePart).wrappedPart;
+				if (wrappedPart != null && partService != null) {
+					// ensure the active part does indeed represent an editor
+					// (and not eg. a view) - checking here is just for extra
+					// redundancy
+					if (representsEditor(wrappedPart)) {
+						if (partService.savePart(wrappedPart, true)) {
+							partService.hidePart(wrappedPart);
+						}
+					}
+				}
+			}
+		}
 
 		return null;
 	}
 
-	@Override
-	protected Expression getEnabledWhenExpression() {
-		if (enabledWhen == null) {
-			enabledWhen = new Expression() {
-				@Override
-				public EvaluationResult evaluate(IEvaluationContext context) {
-					IEditorPart part = InternalHandlerUtil.getActiveEditor(context);
-					if (part != null) {
-						return EvaluationResult.TRUE;
-
-					}
-					return EvaluationResult.FALSE;
-				}
-
-				@Override
-				public void collectExpressionInfo(ExpressionInfo info) {
-					info.addVariableNameAccess(ISources.ACTIVE_EDITOR_NAME);
-				}
-			};
-		}
-		return enabledWhen;
+	/**
+	 * Checks whether the specified part represents an editor instance.
+	 *
+	 * @param part the part to query
+	 * @return true if the specified part represents an editor, false otherwise
+	 */
+	private boolean representsEditor(MPart part) {
+		List<String> partTags = part.getTags();
+		return partTags == null || partTags.isEmpty() ? false
+				: partTags.stream().anyMatch(tag -> Workbench.EDITOR_TAG.equals(tag));
 	}
 }

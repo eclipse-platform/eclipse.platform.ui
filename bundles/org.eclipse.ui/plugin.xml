@@ -2149,6 +2149,13 @@
               properties="isPerspectiveOpen"
               type="org.eclipse.ui.IWorkbenchWindow">
         </propertyTester>
+        <propertyTester
+              class="org.eclipse.ui.internal.PartTaggedAsEditorPropertyTester"
+              id="org.eclipse.ui.isPartTaggedAsEditor"
+              namespace="org.eclipse.ui"
+              properties="isPartTaggedAsEditor"
+              type="org.eclipse.ui.IWorkbenchPart">
+        </propertyTester>
      </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -2207,11 +2214,11 @@
             class="org.eclipse.ui.internal.CloseEditorHandler"
             commandId="org.eclipse.ui.file.close">
          <enabledWhen>
-            <with
-                  variable="activeEditor">
-               <instanceof
-                     value="org.eclipse.ui.IEditorPart">
-               </instanceof>
+            <with variable="activePart">
+				<or>
+					<instanceof value="org.eclipse.ui.IEditorPart" />
+					<test property="org.eclipse.ui.isPartTaggedAsEditor" />
+				</or>
             </with>
          </enabledWhen>
       </handler>
