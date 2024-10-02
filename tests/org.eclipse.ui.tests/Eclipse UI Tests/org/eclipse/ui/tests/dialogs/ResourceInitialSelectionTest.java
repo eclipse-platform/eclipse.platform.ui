@@ -31,12 +31,14 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
+import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
@@ -381,6 +383,8 @@ public class ResourceInitialSelectionTest extends UITestCase {
 		}
 		if (project != null) {
 			try {
+				Job.getJobManager().wakeUp(DecoratorManager.FAMILY_DECORATE);
+				Job.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
 				project.delete(true, null);
 			} catch (Exception e) {
 				// try to get a stacktrace which jobs still has project open so that it can not
