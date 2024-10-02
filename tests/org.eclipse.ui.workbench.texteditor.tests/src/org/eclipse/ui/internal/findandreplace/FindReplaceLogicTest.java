@@ -348,25 +348,71 @@ public class FindReplaceLogicTest {
 	}
 
 	@Test
-	public void testPerformReplaceAndFind() {
+	public void testPerformReplaceAndFind_caseInsensitive() {
 		TextViewer textViewer= setupTextViewer("Hello<replace>World<replace>!");
 		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
 		findReplaceLogic.activate(SearchOptions.FORWARD);
-		setFindAndReplaceString(findReplaceLogic, "<replace>", " ");
+		setFindAndReplaceString(findReplaceLogic, "<Replace>", " ");
 
 		boolean status= findReplaceLogic.performReplaceAndFind();
-		assertThat(status, is(true));
+		assertTrue("replace should have been performed", status);
 		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!"));
 		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("<replace>"));
 		expectStatusEmpty(findReplaceLogic);
 
+		setFindAndReplaceString(findReplaceLogic, "<replace>", " ");
 		status= findReplaceLogic.performReplaceAndFind();
-		assertThat(status, is(true));
+		assertTrue("replace should have been performed", status);
 		assertThat(textViewer.getDocument().get(), equalTo("Hello World !"));
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 
 		status= findReplaceLogic.performReplaceAndFind();
-		assertEquals("Status wasn't correctly returned", false, status);
+		assertFalse("replace should not have been performed", status);
+		assertEquals("Text shouldn't have been changed", "Hello World !", textViewer.getDocument().get());
+		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+	}
+
+	@Test
+	public void testPerformReplaceAndFind_caseSensitive() {
+		TextViewer textViewer= setupTextViewer("Hello<Replace>World<replace>!");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
+		setFindAndReplaceString(findReplaceLogic, "<replace>", " ");
+
+		boolean status= findReplaceLogic.performReplaceAndFind();
+		assertTrue("replace should have been performed", status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello<Replace>World !"));
+		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo(" "));
+
+		status= findReplaceLogic.performReplaceAndFind();
+		assertFalse("replace should not have been performed", status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello<Replace>World !"));
+		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo(" "));
+	}
+
+	@Test
+	public void testPerformReplaceAndFind_caseSensitiveAndIncremental() {
+		TextViewer textViewer= setupTextViewer("Hello<replace>World<replace>!");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.INCREMENTAL);
+		setFindAndReplaceString(findReplaceLogic, "<Replace>", " ");
+
+		boolean status= findReplaceLogic.performReplaceAndFind();
+		assertTrue("replace should have been performed", status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello World<replace>!"));
+		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("<replace>"));
+		expectStatusEmpty(findReplaceLogic);
+
+		setFindAndReplaceString(findReplaceLogic, "<replace>", " ");
+		status= findReplaceLogic.performReplaceAndFind();
+		assertTrue("replace should have been performed", status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello World !"));
+		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+
+		status= findReplaceLogic.performReplaceAndFind();
+		assertFalse("replace should not have been performed", status);
 		assertEquals("Text shouldn't have been changed", "Hello World !", textViewer.getDocument().get());
 		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
 	}
