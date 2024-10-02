@@ -169,11 +169,11 @@ public class IWorkbenchPageTest extends UITestCase {
 	@Override
 	protected void doTearDown() throws Exception {
 		Platform.removeLogListener(openAndHideListener);
+		super.doTearDown();
 		if (proj != null) {
 			FileUtil.deleteProject(proj);
 			proj = null;
 		}
-		super.doTearDown();
 	}
 
 	/**
