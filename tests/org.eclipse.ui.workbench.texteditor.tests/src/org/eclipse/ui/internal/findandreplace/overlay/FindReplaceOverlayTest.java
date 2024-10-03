@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -46,7 +47,9 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 		Accessor actionAccessor= new Accessor(getFindReplaceAction(), FindReplaceAction.class);
 		actionAccessor.invoke("showOverlayInEditor", null);
 		FindReplaceOverlay overlay= (FindReplaceOverlay) actionAccessor.get("overlay");
-		return new OverlayAccess(getFindReplaceTarget(), overlay);
+		OverlayAccess uiAccess= new OverlayAccess(getFindReplaceTarget(), overlay);
+		waitForFocus(uiAccess::hasFocus, testName.getMethodName());
+		return uiAccess;
 	}
 
 	@Test

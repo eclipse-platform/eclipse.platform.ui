@@ -13,9 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace;
 
+import static org.junit.Assert.fail;
+
+import java.util.function.Supplier;
+
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
 
 public final class FindReplaceTestUtil {
 
@@ -33,6 +39,24 @@ public final class FindReplaceTestUtil {
 			} catch (InterruptedException e) {
 				// do nothing
 			}
+		}
+	}
+
+	public static void waitForFocus(Supplier<Boolean> hasFocusValidator, String testName) {
+		int focusAttempts= 0;
+		while (!hasFocusValidator.get() && focusAttempts < 10) {
+			focusAttempts++;
+			PlatformUI.getWorkbench().getDisplay().readAndDispatch();
+			if (!hasFocusValidator.get()) {
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		if (!hasFocusValidator.get()) {
+			String screenshotPath= ScreenshotTest.takeScreenshot(FindReplaceUITest.class, testName, System.out);
+			fail("The find/replace UI did not receive focus. Screenshot: " + screenshotPath);
 		}
 	}
 

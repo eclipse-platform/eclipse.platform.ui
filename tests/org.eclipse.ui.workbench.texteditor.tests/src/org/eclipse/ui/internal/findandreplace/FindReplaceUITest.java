@@ -13,22 +13,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace;
 
-import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.util.ResourceBundle;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
 import org.eclipse.swt.SWT;
-
-import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -36,8 +33,6 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextViewer;
 
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
 
 import org.eclipse.ui.texteditor.FindReplaceAction;
 
@@ -50,6 +45,11 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 	private FindReplaceAction findReplaceAction;
 
 	private AccessType dialog;
+
+	@Before
+	public final void ensureWorkbenchWindowIsActive() {
+		PlatformUI.getWorkbench().getWorkbenchWindows()[0].getShell().forceActive();
+	}
 
 	protected FindReplaceAction getFindReplaceAction() {
 		return findReplaceAction;
@@ -76,16 +76,6 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 	protected void reopenFindReplaceUIForTextViewer() {
 		dialog.close();
 		dialog= openUIFromTextViewer(fTextViewer);
-	}
-
-	protected final void ensureHasFocusOnGTK() {
-		if (Util.isGtk()) {
-			runEventQueue();
-			if (!dialog.hasFocus()) {
-				String screenshotPath= ScreenshotTest.takeScreenshot(FindReplaceUITest.class, testName.getMethodName(), System.out);
-				fail("this test does not work on GTK unless the runtime workbench has focus. Screenshot: " + screenshotPath);
-			}
-		}
 	}
 
 	protected abstract AccessType openUIFromTextViewer(TextViewer viewer);
@@ -159,7 +149,6 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 
 		dialog.select(SearchOptions.INCREMENTAL);
 		dialog.setFindText("line");
-		ensureHasFocusOnGTK();
 		IFindReplaceTarget target= getFindReplaceTarget();
 
 		assertEquals(0, (target.getSelection()).x);
