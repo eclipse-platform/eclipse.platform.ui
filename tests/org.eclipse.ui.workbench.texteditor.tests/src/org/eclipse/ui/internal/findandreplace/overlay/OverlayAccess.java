@@ -102,7 +102,7 @@ class OverlayAccess implements IFindReplaceUIAccess {
 	public void closeAndRestore() {
 		restoreInitialConfiguration();
 		assertInitialConfiguration();
-		overlay.close();
+		close();
 	}
 
 	@Override

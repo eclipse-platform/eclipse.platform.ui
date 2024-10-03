@@ -14,6 +14,7 @@
 package org.eclipse.ui.workbench.texteditor.tests;
 
 import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.runEventQueue;
+import static org.eclipse.ui.internal.findandreplace.FindReplaceTestUtil.waitForFocus;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -52,7 +53,9 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		Accessor fFindReplaceDialogStubAccessor= new Accessor(fFindReplaceDialogStub, "org.eclipse.ui.texteditor.FindReplaceAction$FindReplaceDialogStub", getClass().getClassLoader());
 
 		Dialog dialog= (Dialog) fFindReplaceDialogStubAccessor.invoke("getDialog", null);
-		return new DialogAccess(getFindReplaceTarget(), dialog);
+		DialogAccess uiAccess= new DialogAccess(getFindReplaceTarget(), dialog);
+		waitForFocus(uiAccess::hasFocus, testName.getMethodName());
+		return uiAccess;
 	}
 
 	@Test
@@ -65,8 +68,6 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		dialog.getFindCombo().setFocus();
 		dialog.setFindText("line");
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
-		ensureHasFocusOnGTK();
-
 		assertTrue(dialog.getFindCombo().isFocusControl());
 
 		Button wrapCheckBox= dialog.getButtonForSearchOption(SearchOptions.WRAP);
@@ -86,9 +87,8 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 
 		initializeTextViewerWithFindReplaceUI("");
 		DialogAccess dialog= getDialog();
-
 		dialog.setFindText("line");
-		ensureHasFocusOnGTK();
+		runEventQueue();
 
 		Button wrapCheckBox= dialog.getButtonForSearchOption(SearchOptions.WRAP);
 		wrapCheckBox.setFocus();
@@ -122,7 +122,6 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		DialogAccess dialog= getDialog();
 
 		dialog.setFindText("line");
-		ensureHasFocusOnGTK();
 		IFindReplaceTarget target= getFindReplaceTarget();
 
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
