@@ -147,6 +147,10 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	 */
 	protected boolean expandAll(int offset, int length, boolean fireModelChanged) {
 
+		if (offset < 0 || length < 0) {
+			return false;
+		}
+
 		boolean expanding= false;
 
 		Iterator<Annotation> iterator= getAnnotationIterator(offset, length, true, true);
