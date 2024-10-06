@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.ui.releng</name>
+	<name>org.eclipse.platform.ui.setup</name>
 	<comment></comment>
 	<projects>
 	</projects>
