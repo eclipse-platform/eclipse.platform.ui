@@ -16,7 +16,11 @@ For more information, refer to the [Eclipse Platform project page](https://proje
 
 Contributions are most welcome. There are many ways to contribute, from entering high quality bug reports, to contributing code or documentation changes.
 
-For a complete guide, see the https://github.com/eclipse-platform/.github/blob/main/CONTRIBUTING.md.
+For a complete guide, see the [CONTRIBUTING](https://github.com/eclipse-platform/.github/blob/main/CONTRIBUTING.md) page.
+
+[![Create Eclipse Development Environment for Eclipse Platform UI](https://download.eclipse.org/oomph/www/setups/svg/Eclipse_Platform_UI.svg)](
+https://www.eclipse.org/setups/installer/?url=https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/releng/org.eclipse.ui.releng/platformUIConfiguration.setup&show=true
+"Click to open Eclipse-Installer Auto Launch or drag into your running installer")
 
 
 ## Test Dependencies
@@ -27,10 +31,10 @@ Please install them by installing "Eclipse Test Framework" from the [current rel
 
 ## How to Build on the Command Line
 
-You need Maven 3.8.x installed. After this you can run the build via the following command:
+You need Maven 3.9.x installed. After this you can run the build via the following command:
 
 ```
-mvn clean verify -Pbuild-individual-bundles
+mvn clean verify
 ```
 
 
