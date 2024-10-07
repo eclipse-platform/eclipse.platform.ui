@@ -474,7 +474,7 @@ public class BrowserViewer extends Composite {
 					}
 					if (showToolbar) {
 						// enable auto-refresh button if URL is a file
-						File temp = getFile(browser.getUrl());
+						File temp = getFile(browser.getUrlOptional().get());
 						if (temp != null && temp.exists()) {
 							autoRefresh.setEnabled(true);
 							if (autoRefresh.getSelection()) {
@@ -680,7 +680,7 @@ public class BrowserViewer extends Composite {
 	}
 
 	private void toggleAutoRefresh() {
-		File temp = getFile(browser.getUrl());
+		File temp = getFile(browser.getUrlOptional().orElse(null));
 		if (temp != null && temp.exists() && autoRefresh.getSelection()) {
 			refresh();
 			fileChangedWatchService(temp);
@@ -955,7 +955,7 @@ public class BrowserViewer extends Composite {
 		};
 		browser.addLocationListener(locationListener2);
 
-		File temp = getFile(browser.getUrl());
+		File temp = getFile(browser.getUrlOptional().get());
 		if (temp != null && temp.exists()) {
 			file = temp;
 			timestamp = file.lastModified();
@@ -1005,9 +1005,11 @@ public class BrowserViewer extends Composite {
 						for (WatchEvent<?> event : key.pollEvents()) {
 							final Path changedPath = (Path) event.context();
 							Display.getDefault().asyncExec(() -> {
-								if (browser.getUrl().endsWith(changedPath.toString())) {
-									browser.refresh();
-								}
+								browser.getUrlOptional().ifPresent(url -> {
+									if (url.endsWith(changedPath.toString())) {
+										browser.refresh();
+									}
+								});
 							});
 						}
 						key.reset();
