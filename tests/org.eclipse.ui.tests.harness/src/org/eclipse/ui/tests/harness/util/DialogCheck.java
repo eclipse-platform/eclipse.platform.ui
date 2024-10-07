@@ -104,8 +104,10 @@ public class DialogCheck {
 	public static Shell getShell() {
 		Shell shell = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell();
-		_verifyDialog = new VerifyDialog(shell);
-		_verifyDialog.create();
+		if (_verifyDialog == null) {
+			_verifyDialog = new VerifyDialog(shell);
+			_verifyDialog.create();
+		}
 		return _verifyDialog.getShell();
 	}
 
