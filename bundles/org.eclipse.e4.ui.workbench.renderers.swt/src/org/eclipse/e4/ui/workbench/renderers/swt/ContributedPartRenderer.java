@@ -103,8 +103,10 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 							Object object = part.getObject();
 							if (object != null && isEnabled()) {
 								IPresentationEngine pe = part.getContext().get(IPresentationEngine.class);
-								pe.focusGui(part);
-								return true;
+								if (pe != null) {
+									pe.focusGui(part);
+									return true;
+								}
 							}
 							return super.setFocus();
 						} finally {
