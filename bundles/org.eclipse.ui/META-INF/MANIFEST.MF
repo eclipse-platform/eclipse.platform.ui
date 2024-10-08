@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.ui.internal.UIPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.ui.internal;x-internal:=true
+Export-Package: org.eclipse.ui.internal;x-friends:="org.eclipse.ui.workbench.texteditor,org.eclipse.search"
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.swt;bundle-version="[3.126.0,4.0.0)";visibility:=reexport,
  org.eclipse.jface;bundle-version="[3.34.0,4.0.0)";visibility:=reexport,

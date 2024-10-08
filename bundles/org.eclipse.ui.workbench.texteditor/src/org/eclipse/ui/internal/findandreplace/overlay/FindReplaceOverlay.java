@@ -48,6 +48,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -61,6 +62,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+import org.eclipse.ui.internal.SearchDecoration;
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.HistoryStore;
@@ -140,6 +142,7 @@ public class FindReplaceOverlay {
 	private Color overlayBackgroundColor;
 	private Color normalTextForegroundColor;
 	private boolean positionAtTop = true;
+	private ControlDecoration searchBarDecoration;
 	private ContentAssistCommandAdapter contentAssistSearchField, contentAssistReplaceField;
 
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
@@ -469,6 +472,7 @@ public class FindReplaceOverlay {
 					wholeWordSearchButton.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 					updateIncrementalSearch();
 					updateContentAssistAvailability();
+					decorate();
 				}).withShortcuts(KeyboardShortcuts.OPTION_REGEX).build();
 		regexSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.REGEX));
 	}
@@ -542,6 +546,7 @@ public class FindReplaceOverlay {
 		HistoryStore searchHistory = new HistoryStore(getDialogSettings(), "searchhistory", //$NON-NLS-1$
 				HISTORY_SIZE);
 		searchBar = new HistoryTextWrapper(searchHistory, searchBarContainer, SWT.SINGLE);
+		searchBarDecoration = new ControlDecoration(searchBar, SWT.BOTTOM | SWT.LEFT);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchBar);
 		searchBar.forceFocus();
 		searchBar.selectAll();
@@ -587,6 +592,9 @@ public class FindReplaceOverlay {
 		});
 		searchBar.setMessage(FindReplaceMessages.FindReplaceOverlay_searchBar_message);
 		contentAssistSearchField = createContentAssistField(searchBar, true);
+		searchBar.addModifyListener(Event -> {
+			decorate();
+		});
 	}
 
 	private void updateIncrementalSearch() {
@@ -919,6 +927,14 @@ public class FindReplaceOverlay {
 
 	private void updateContentAssistAvailability() {
 		setContentAssistsEnablement(findReplaceLogic.isAvailableAndActive(SearchOptions.REGEX));
+	}
+
+	private void decorate() {
+		if (regexSearchButton.getSelection()) {
+			SearchDecoration.validateRegex(getFindString(), searchBarDecoration);
+		} else {
+			searchBarDecoration.hide();
+		}
 	}
 
 }
