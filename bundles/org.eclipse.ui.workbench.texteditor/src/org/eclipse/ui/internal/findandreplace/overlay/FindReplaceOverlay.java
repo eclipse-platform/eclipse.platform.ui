@@ -51,6 +51,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -67,6 +68,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+import org.eclipse.ui.internal.SearchDecoration;
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.HistoryStore;
@@ -146,7 +148,12 @@ public class FindReplaceOverlay extends Dialog {
 	private Color normalTextForegroundColor;
 	private boolean positionAtTop = true;
 	private final TargetPartVisibilityHandler targetPartVisibilityHandler;
+
+	private ControlDecoration controldecoration;
+	private SearchDecoration searchDecoration;
+
 	private ContentAssistCommandAdapter contentAssistSearchField, contentAssistReplaceField;
+
 
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
 		super(parent);
@@ -157,6 +164,7 @@ public class FindReplaceOverlay extends Dialog {
 		targetPart = part;
 		targetPartVisibilityHandler = new TargetPartVisibilityHandler(targetPart, this::asyncExecIfOpen, this::close,
 				this::updatePlacementAndVisibility);
+		this.searchDecoration = new SearchDecoration();
 	}
 
 	@Override
@@ -581,6 +589,11 @@ public class FindReplaceOverlay extends Dialog {
 					wholeWordSearchButton.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
 					updateIncrementalSearch();
 					updateContentAssistAvailability();
+					if (!regexSearchButton.getSelection()) {
+						controldecoration.hide();
+					} else {
+						searchDecoration.decorateA(controldecoration, getFindString());
+					}
 				}).withShortcuts(KeyboardShortcuts.OPTION_REGEX).build();
 		regexSearchButton.setSelection(findReplaceLogic.isActive(SearchOptions.REGEX));
 	}
@@ -650,6 +663,7 @@ public class FindReplaceOverlay extends Dialog {
 		HistoryStore searchHistory = new HistoryStore(getDialogSettings(), "searchhistory", //$NON-NLS-1$
 				HISTORY_SIZE);
 		searchBar = new HistoryTextWrapper(searchHistory, searchBarContainer, SWT.SINGLE);
+		controldecoration = new ControlDecoration(searchBar, SWT.BOTTOM | SWT.LEFT);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchBar);
 		searchBar.forceFocus();
 		searchBar.selectAll();
@@ -674,6 +688,8 @@ public class FindReplaceOverlay extends Dialog {
 		});
 		searchBar.setMessage(FindReplaceMessages.FindReplaceOverlay_searchBar_message);
 		contentAssistSearchField = createContentAssistField(searchBar, true);
+
+		decorate();
 	}
 
 	private void updateIncrementalSearch() {
@@ -1061,4 +1077,15 @@ public class FindReplaceOverlay extends Dialog {
 	private void updateContentAssistAvailability() {
 		setContentAssistsEnablement(findReplaceLogic.isAvailableAndActive(SearchOptions.REGEX));
 	}
+
+	public void decorate() {
+		searchBar.addModifyListener(event -> {
+			if (regexSearchButton.getSelection()) {
+				searchDecoration.decorateA(controldecoration, getFindString());
+			} else
+				controldecoration.hide();
+		});
+
+	}
+
 }

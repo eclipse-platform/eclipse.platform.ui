@@ -49,9 +49,9 @@ import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
@@ -64,13 +64,12 @@ import org.eclipse.jface.text.TextUtilities;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+import org.eclipse.ui.internal.SearchDecoration;
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
-import org.eclipse.ui.internal.findandreplace.FindReplaceLogicMessageGenerator;
 import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.HistoryStore;
 import org.eclipse.ui.internal.findandreplace.IFindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
-import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 import org.eclipse.ui.internal.texteditor.SWTUtil;
 
 /**
@@ -147,7 +146,8 @@ class FindReplaceDialog extends Dialog {
 				fIgnoreNextEvent = false;
 				return;
 			}
-			evaluateFindReplaceStatus();
+			modificationHandler.run();
+			decorate();
 
 			updateButtonState(!findReplaceLogic.isActive(SearchOptions.INCREMENTAL));
 		}
@@ -196,6 +196,8 @@ class FindReplaceDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private boolean fGiveFocusToFindField = true;
+	private ControlDecoration fFindFieldDecoration;
+	private SearchDecoration fFindFieldSearchDecoration = new SearchDecoration();
 
 	/**
 	 * Holds the mnemonic/button pairs for all buttons.
@@ -311,7 +313,7 @@ class FindReplaceDialog extends Dialog {
 						writeSelection();
 						updateButtonState(!somethingFound);
 						updateFindHistory();
-						evaluateFindReplaceStatus();
+						decorate();
 					}
 				});
 		setGridData(fFindNextButton, SWT.FILL, true, SWT.FILL, false);
@@ -325,7 +327,7 @@ class FindReplaceDialog extends Dialog {
 						writeSelection();
 						updateButtonState();
 						updateFindAndReplaceHistory();
-						evaluateFindReplaceStatus();
+						decorate();
 					}
 				});
 		setGridData(fSelectAllButton, SWT.FILL, true, SWT.FILL, false);
@@ -342,7 +344,7 @@ class FindReplaceDialog extends Dialog {
 						}
 						updateButtonState();
 						updateFindAndReplaceHistory();
-						evaluateFindReplaceStatus();
+						decorate();
 					}
 				});
 		setGridData(fReplaceFindButton, SWT.FILL, false, SWT.FILL, false);
@@ -356,7 +358,7 @@ class FindReplaceDialog extends Dialog {
 						}
 						updateButtonState();
 						updateFindAndReplaceHistory();
-						evaluateFindReplaceStatus();
+						decorate();
 					}
 				});
 		setGridData(fReplaceSelectionButton, SWT.FILL, false, SWT.FILL, false);
@@ -370,7 +372,7 @@ class FindReplaceDialog extends Dialog {
 						writeSelection();
 						updateButtonState();
 						updateFindAndReplaceHistory();
-						evaluateFindReplaceStatus();
+						decorate();
 					}
 				});
 		setGridData(fReplaceAllButton, SWT.FILL, true, SWT.FILL, false);
@@ -634,6 +636,8 @@ class FindReplaceDialog extends Dialog {
 		FindReplaceDocumentAdapterContentProposalProvider findProposer = new FindReplaceDocumentAdapterContentProposalProvider(
 				true);
 		fFindField = new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
+		fFindFieldDecoration = new ControlDecoration(fFindField, SWT.BOTTOM | SWT.LEFT);
+
 		fContentAssistFindField = new ContentAssistCommandAdapter(fFindField, contentAdapter, findProposer,
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new char[0], true);
 		setGridData(fFindField, SWT.FILL, true, SWT.CENTER, false);
@@ -750,6 +754,11 @@ class FindReplaceDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean newState = fIsRegExCheckBox.getSelection();
+				if (!newState) {
+					fFindFieldDecoration.hide();
+				} else {
+					fFindFieldSearchDecoration.decorateA(fFindFieldDecoration, getFindString());
+				}
 				setupFindReplaceLogic();
 				storeSettings();
 				updateButtonState();
@@ -1050,9 +1059,10 @@ class FindReplaceDialog extends Dialog {
 		if (!(layoutData instanceof GridData))
 			return;
 		GridData gd = (GridData) layoutData;
-		FieldDecoration dec = FieldDecorationRegistry.getDefault()
+
+		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()
 				.getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
-		gd.horizontalIndent = dec.getImage().getBounds().width;
+		gd.horizontalIndent = fieldDecoration.getImage().getBounds().width;
 	}
 
 	/**
@@ -1101,7 +1111,6 @@ class FindReplaceDialog extends Dialog {
 			fReplaceAllButton.setEnabled(enable && isTargetEditable && isFindStringSet);
 		}
 	}
-
 
 	/**
 	 * Updates the given combo with the given content.
@@ -1335,19 +1344,15 @@ class FindReplaceDialog extends Dialog {
 		}
 	}
 
-	/**
-	 * Evaluate the status of the FindReplaceLogic object.
-	 */
-	private void evaluateFindReplaceStatus() {
-		IFindReplaceStatus status = findReplaceLogic.getStatus();
+	public void decorate() {
 
-		String dialogMessage = status.accept(new FindReplaceLogicMessageGenerator());
-		fStatusLabel.setText(dialogMessage);
-		if (status.isInputValid()) {
-			fStatusLabel.setForeground(fReplaceLabel.getForeground());
-		} else {
-			fStatusLabel.setForeground(JFaceColors.getErrorText(fStatusLabel.getDisplay()));
-		}
+		fFindField.addModifyListener(event -> {
+			if (fIsRegExCheckBox.getSelection()) {
+				fFindFieldSearchDecoration.decorateA(fFindFieldDecoration, fFindField.getText());
+			} else {
+				fFindFieldDecoration.hide();
+			}
+		});
 	}
 
 	private String getCurrentSelection() {

@@ -54,7 +54,7 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
-import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
@@ -68,6 +68,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+import org.eclipse.ui.internal.SearchDecoration;
 
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
@@ -140,6 +141,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	 */
 	private String[] fPreviousExtensions;
 	private Label fFileNamePatternDescription;
+	private ControlDecoration fPatternDecoration;
+
 
 
 	private static class SearchPatternData {
@@ -450,6 +453,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 
 	final void updateOKStatus() {
+		fPatternDecoration.hide();
 		boolean regexStatus= validateRegex();
 		getContainer().setPerformActionEnabled(regexStatus);
 	}
@@ -481,22 +485,19 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(result, ISearchHelpContextIds.TEXT_SEARCH_PAGE);
 }
 
-	private boolean validateRegex() {
+private boolean validateRegex() {
+
 		if (fIsRegExCheckbox.getSelection()) {
 			try {
 				PatternConstructor.createPattern(fPattern.getText(), fIsCaseSensitive, true);
 			} catch (PatternSyntaxException e) {
-				String locMessage= e.getLocalizedMessage();
-				int i= 0;
-				while (i < locMessage.length() && "\n\r".indexOf(locMessage.charAt(i)) == -1) { //$NON-NLS-1$
-					i++;
-				}
-				statusMessage(true, locMessage.substring(0, i)); // only take first line
+				SearchDecoration searchDecoration = new SearchDecoration();
+
+				searchDecoration.decorateA(fPatternDecoration, fPattern.getText());
 				return false;
 			}
-			statusMessage(false, ""); //$NON-NLS-1$
 		} else {
-			statusMessage(false, SearchMessages.SearchPage_containingText_hint);
+			fPatternDecoration.hide();
 		}
 		return true;
 	}
@@ -510,8 +511,11 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		label.setFont(group.getFont());
 
+
 		// Pattern combo
 		fPattern= new Combo(group, SWT.SINGLE | SWT.BORDER);
+		fPatternDecoration = new ControlDecoration(fPattern, SWT.BOTTOM | SWT.LEFT);
+
 		// Not done here to prevent page from resizing
 		// fPattern.setItems(getPreviousSearchPatterns());
 		fPattern.addSelectionListener(new SelectionAdapter() {
@@ -561,7 +565,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			public void widgetSelected(SelectionEvent e) {
 				fIsRegExSearch= fIsRegExCheckbox.getSelection();
 				updateOKStatus();
-
 				writeConfiguration();
 				fPatterFieldContentAssist.setEnabled(fIsRegExSearch);
 				fIsWholeWordCheckbox.setEnabled(!fIsRegExSearch);
@@ -858,17 +861,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				extensionsSettings.put(Integer.toString(j++), extension);
 		}
 
-	}
-
-	private void statusMessage(boolean error, String message) {
-		fStatusLabel.setText(message);
-		if (error) {
-			fStatusLabel.setForeground(JFaceColors.getErrorText(fStatusLabel.getDisplay()));
-		}
-		else {
-			// use same color as another label to respect styling
-			fStatusLabel.setForeground(fFileNamePatternDescription.getForeground());
-		}
 	}
 
 }
