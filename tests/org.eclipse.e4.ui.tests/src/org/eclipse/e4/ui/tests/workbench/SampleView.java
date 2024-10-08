@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.tests.model.test.util.TestException;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -57,7 +58,7 @@ public class SampleView {
 
 		parent.addDisposeListener(e -> {
 			if (errorOnWidgetDisposal) {
-				throw new RuntimeException();
+				throw new TestException();
 			}
 		});
 
@@ -154,7 +155,7 @@ public class SampleView {
 		nullParentContext = context.getParent() == null;
 
 		if (errorOnPreDestroy) {
-			throw new RuntimeException();
+			throw new TestException();
 		}
 	}
 

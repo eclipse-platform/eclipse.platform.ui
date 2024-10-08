@@ -18,6 +18,7 @@ import jakarta.inject.Inject;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
+import org.eclipse.e4.ui.tests.model.test.util.TestException;
 
 public class ClientEditor {
 
@@ -43,7 +44,7 @@ public class ClientEditor {
 	void doSave() {
 		saveCalled = true;
 		if (throwException) {
-			throw new RuntimeException();
+			throw new TestException();
 		}
 
 		dirtyable.setDirty(false);
