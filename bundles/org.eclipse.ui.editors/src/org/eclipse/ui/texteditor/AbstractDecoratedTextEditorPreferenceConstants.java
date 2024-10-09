@@ -221,6 +221,19 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 */
 	public final static String EDITOR_LINE_NUMBER_RULER= "lineNumberRuler"; //$NON-NLS-1$
 	
+
+	/**
+	 * A named preference that controls the enablement of batch replace.
+	 * 
+	 * <p>
+	 * The preference value is of type <code>Boolean</code>
+	 * </p>
+	 *
+	 * @since 3.18
+	 */
+	public static final String EDITOR_BATCH_REPLACE = "batchReplaceEnabled"; //$NON-NLS-1$
+
+	
 	/**
 	 * A named preference that controls whether the find/replace overlay is used in place of the
 	 * dialog.
@@ -761,6 +774,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	* @param store the preference store to be initialized
 	*/
 	public static void initializeDefaultValues(IPreferenceStore store) {
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_BATCH_REPLACE, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_FIND_REPLACE_OVERLAY, true);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_FIND_REPLACE_OVERLAY_AT_BOTTOM, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE, false);
