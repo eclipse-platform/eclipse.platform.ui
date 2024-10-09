@@ -419,7 +419,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 		final boolean[] result = new boolean[1];
 		// add a bogus listener that dies unexpectedly
 		IPropertyChangeListener badListener = event -> {
-			throw new RuntimeException();
+			throw new TestException();
 
 		};
 		IPropertyChangeListener goodListener = event -> result[0] = true;
