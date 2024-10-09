@@ -232,14 +232,16 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		editorReuseIndentGroup = new Composite(editorReuseGroup, SWT.LEFT);
 		editorReuseIndentGroup.setLayout(GridLayoutFactory.fillDefaults().create());
 		editorReuseIndentGroup
-				.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+				.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).create());
 
 		editorReuseThresholdGroup = new Composite(editorReuseIndentGroup, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		editorReuseThresholdGroup.setLayout(layout);
+		GridData gridData = GridDataFactory.fillDefaults().grab(true, false).create();
+		gridData.widthHint = 35;
 		editorReuseThresholdGroup
-				.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+				.setLayoutData(gridData);
 
 		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, "", //$NON-NLS-1$
 				editorReuseThresholdGroup);
