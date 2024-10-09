@@ -329,6 +329,9 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 		// Need to run this async to avoid being reentered when processing a selection change
 		viewer.getControl().getShell().getDisplay().asyncExec(() -> {
+			if (viewer.getControl().isDisposed()) {
+				return;
+			}
 			boolean showWorkingSets = true;
 			if (aMemento != null) {
 				Integer showWorkingSetsInt = aMemento
