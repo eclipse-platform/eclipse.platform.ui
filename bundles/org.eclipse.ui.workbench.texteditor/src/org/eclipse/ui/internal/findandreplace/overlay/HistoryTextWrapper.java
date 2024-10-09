@@ -123,8 +123,7 @@ public class HistoryTextWrapper extends Composite {
 
 	public void storeHistory() {
 		String string = textBar.getText();
-		history.remove(string); // ensure findString is now on the newest index of the history
-		history.add(string);
+		history.addOrPushToTop(string);
 	}
 
 	private static boolean okayToUse(final Widget widget) {

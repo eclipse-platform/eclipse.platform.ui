@@ -15,10 +15,6 @@
 
 package org.eclipse.ui.texteditor;
 
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.PatternSyntaxException;
 
@@ -26,6 +22,9 @@ import org.osgi.framework.FrameworkUtil;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -39,6 +38,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.findandreplace.HistoryStore;
+import org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlay;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 
 
@@ -60,10 +61,6 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private IWorkbenchPart fWorkbenchPart;
 	/** The workbench window */
 	private IWorkbenchWindow fWorkbenchWindow;
-	/** The dialog settings to retrieve the last search */
-	private IDialogSettings fDialogSettings;
-	/** The find history as initially given in the dialog settings. */
-	private List<String> fFindHistory= new ArrayList<>();
 	/** The find string as initially given in the dialog settings. */
 	private String fFindString;
 	/** The search direction as initially given in the dialog settings. */
@@ -130,6 +127,10 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		update();
 	}
 
+	private HistoryStore getSearchHistory() {
+		return new HistoryStore(getDialogSettings(), HistoryStore.SEARCH_HISTORY_KEY, 15);
+	}
+
 	/**
 	 * Returns the find string based on the selection or the find history.
 	 * @return the find string
@@ -137,8 +138,8 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private String getFindString() {
 		String fullSelection= fTarget.getSelectionText();
 		String firstLine= getFirstLine(fullSelection);
-		if ((firstLine.isEmpty() || fRegExSearch && fullSelection.equals(fSelection)) && !fFindHistory.isEmpty())
-			return fFindHistory.get(0);
+		if ((firstLine.isEmpty() || fRegExSearch && fullSelection.equals(fSelection)) && !getSearchHistory().isEmpty())
+			return getSearchHistory().get(0);
 		else if (fRegExSearch && !fullSelection.isEmpty())
 			return FindReplaceDocumentAdapter.escapeForRegExPattern(fullSelection);
 		else
@@ -333,6 +334,16 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 	//--------------- configuration handling --------------
 
+	private static final String INSTANCE_SCOPE_NODE_NAME = "org.eclipse.ui.editors"; //$NON-NLS-1$
+
+	private static final String USE_FIND_REPLACE_OVERLAY = "useFindReplaceOverlay"; //$NON-NLS-1$
+
+	private boolean shouldUseOverlay() {
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(INSTANCE_SCOPE_NODE_NAME);
+		boolean overlayPreference = preferences.getBoolean(USE_FIND_REPLACE_OVERLAY, true);
+		return overlayPreference && fWorkbenchPart instanceof StatusTextEditor;
+	}
+
 	/**
 	 * Returns the dialog settings object used to share state
 	 * between several find/replace dialogs.
@@ -340,12 +351,12 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(FindNextAction.class))
+		if (shouldUseOverlay()) {
+			return PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceOverlay.class))
+					.getDialogSettings();
+		}
+		return PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceDialog.class))
 				.getDialogSettings();
-		fDialogSettings= settings.getSection(FindReplaceDialog.class.getName());
-		if (fDialogSettings == null)
-			fDialogSettings= settings.addNewSection(FindReplaceDialog.class.getName());
-		return fDialogSettings;
 	}
 
 	/**
@@ -353,19 +364,13 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * as at the previous invocation.
 	 */
 	private void readConfiguration() {
-		IDialogSettings s= getDialogSettings();
+		IDialogSettings s = getDialogSettings();
 
-		fWrapInit= s.get("wrap") == null || s.getBoolean("wrap"); //$NON-NLS-1$ //$NON-NLS-2$
-		fCaseInit= s.getBoolean("casesensitive"); //$NON-NLS-1$
-		fWholeWordInit= s.getBoolean("wholeword"); //$NON-NLS-1$
-		fRegExSearch= s.getBoolean("isRegEx"); //$NON-NLS-1$
-		fSelection= s.get("selection"); //$NON-NLS-1$
-
-		String[] findHistory= s.getArray("findhistory"); //$NON-NLS-1$
-		if (findHistory != null) {
-			fFindHistory.clear();
-			Collections.addAll(fFindHistory, findHistory);
-		}
+		fWrapInit = s.get("wrap") == null || s.getBoolean("wrap"); //$NON-NLS-1$ //$NON-NLS-2$
+		fCaseInit = s.getBoolean("casesensitive"); //$NON-NLS-1$
+		fWholeWordInit = s.getBoolean("wholeword"); //$NON-NLS-1$
+		fRegExSearch = s.getBoolean("isRegEx"); //$NON-NLS-1$
+		fSelection = s.get("selection"); //$NON-NLS-1$
 	}
 
 	/**
@@ -377,20 +382,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 		IDialogSettings s= getDialogSettings();
 		s.put("selection", fTarget.getSelectionText()); //$NON-NLS-1$
-
-		if (!fFindHistory.isEmpty() && fFindString.equals(fFindHistory.get(0)))
-			return;
-
-		int index= fFindHistory.indexOf(fFindString);
-		if (index != -1)
-			fFindHistory.remove(index);
-		fFindHistory.add(0, fFindString);
-
-		while (fFindHistory.size() > 8)
-			fFindHistory.remove(8);
-		String[] names= new String[fFindHistory.size()];
-		fFindHistory.toArray(names);
-		s.put("findhistory", names); //$NON-NLS-1$
+		getSearchHistory().addOrPushToTop(fFindString);
 	}
 
 	/**
