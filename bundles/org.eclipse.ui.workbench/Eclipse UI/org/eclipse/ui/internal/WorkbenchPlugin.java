@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -53,6 +54,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.dialogs.DynamicMenuSelection;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceManager;
 import org.eclipse.ui.internal.help.CommandHelpServiceImpl;
 import org.eclipse.ui.internal.help.HelpServiceImpl;
@@ -80,6 +82,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.testing.TestableObject;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
+import org.eclipse.ui.workbench.DynamicMenuItem;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -202,6 +205,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	private ICommandHelpService commandHelpService;
 
+	private DynamicMenuItem dynamicMenuItem;
+
 	/**
 	 * Create an instance of the WorkbenchPlugin. The workbench plugin is
 	 * effectively the "application" for the workbench UI. The entire UI operates as
@@ -210,6 +215,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	public WorkbenchPlugin() {
 		super();
 		inst = this;
+		dynamicMenuItem = new DynamicMenuItem();
 	}
 
 	/**
@@ -766,6 +772,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			// to be loaded.s
 			if (uiBundle != null)
 				uiBundle.start(Bundle.START_TRANSIENT);
+
+			// For dynamic menu items
+			Set<String> selectedFromOther = DynamicMenuSelection.getInstance().getSelectedFromOther();
+			selectedFromOther.addAll(dynamicMenuItem.getDynamicMenuItems());
 		} catch (BundleException e) {
 			WorkbenchPlugin.log("Unable to load UI activator", e); //$NON-NLS-1$
 		}
@@ -1048,6 +1058,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			testableTracker.close();
 			testableTracker = null;
 		}
+		// For dynamic menu items
+		Set<String> selectedFromOther = DynamicMenuSelection.getInstance().getSelectedFromOther();
+		dynamicMenuItem.setDynamicMenuItems(selectedFromOther);
 		super.stop(context);
 	}
 
