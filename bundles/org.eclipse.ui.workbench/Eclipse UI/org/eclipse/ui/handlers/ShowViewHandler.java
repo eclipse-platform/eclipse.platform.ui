@@ -19,17 +19,15 @@ import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -78,7 +76,7 @@ public final class ShowViewHandler extends AbstractHandler {
 
 		// let user select one or more
 		if (!(id instanceof String)) {
-			openOther(event, workbenchWindow, app, partService);
+			openOther(workbenchWindow, workbenchWindow.getService(IEclipseContext.class), partService);
 			return null;
 		}
 
@@ -95,14 +93,8 @@ public final class ShowViewHandler extends AbstractHandler {
 	/**
 	 * Opens a view selection dialog, allowing the user to chose a view.
 	 */
-	private static void openOther(ExecutionEvent event, IWorkbenchWindow workbenchWindow, MApplication app,
-			EPartService partService) {
-		Shell shell = HandlerUtil.getActiveShell(event);
-		IEclipseContext ctx = workbenchWindow.getService(IEclipseContext.class);
-		EModelService modelService = workbenchWindow.getService(EModelService.class);
-		MWindow window = workbenchWindow.getService(MWindow.class);
-
-		final ShowViewDialog dialog = new ShowViewDialog(shell, app, window, modelService, partService, ctx);
+	private static void openOther(IWorkbenchWindow workbenchWindow, IEclipseContext ctx, EPartService partService) {
+		var dialog = ContextInjectionFactory.make(ShowViewDialog.class, ctx);
 		dialog.open();
 
 		if (dialog.getReturnCode() == Window.CANCEL) {
