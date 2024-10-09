@@ -334,7 +334,7 @@ public class PerspectiveSwitcher {
 	 * @return true if the event is relevant, false if it can be ignored
 	 */
 	private boolean ignoreEvent(Object changedObj) {
-		if (perspSwitcherToolControl == null || perspSwitcherToolbar.isDisposed()) {
+		if (perspSwitcherToolControl == null || perspSwitcherToolbar == null || perspSwitcherToolbar.isDisposed()) {
 			return true;
 		}
 
