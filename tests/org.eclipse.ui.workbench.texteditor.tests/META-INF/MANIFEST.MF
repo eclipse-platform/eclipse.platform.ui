@@ -18,9 +18,17 @@ Require-Bundle:
  org.eclipse.ui;bundle-version="[3.5.0,4.0.0)",
  org.junit;bundle-version="4.12.0",
  org.eclipse.text.tests;bundle-version="[3.5.0,4.0.0)",
- org.eclipse.core.expressions;bundle-version="[3.5.0,4.0.0)"
+ org.eclipse.core.expressions;bundle-version="[3.5.0,4.0.0)",
+ org.eclipse.swt,
+ org.eclipse.ui.workbench,
+ org.eclipse.core.resources,
+ org.mockito.mockito-core,
+ org.eclipse.core.filebuffers.tests,
+ org.eclipse.ui.editors.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.ui.workbench.texteditor.tests
-Import-Package: org.mockito,
+Import-Package: org.eclipse.ui.editors.text,
+ org.eclipse.ui.ide,
+ org.mockito,
  org.mockito.stubbing;version="5.5.0"
