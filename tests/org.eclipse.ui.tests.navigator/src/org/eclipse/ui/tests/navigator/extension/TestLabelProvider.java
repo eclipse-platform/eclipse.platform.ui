@@ -42,7 +42,7 @@ public abstract class TestLabelProvider extends LabelProvider implements
 
 	public Image image;
 
-	public Font font;
+	public static final Font font = new Font(Display.getDefault(), new FontData());
 
 	private Font boldFont;
 
@@ -170,9 +170,8 @@ public abstract class TestLabelProvider extends LabelProvider implements
 			_runnable.run();
 		boldFont.dispose();
 		boldFont = null;
-
-//		font.dispose();
-//		font = null;
+		// font can not disposed here because the TestLabelProviders are used by its
+		// static instances
 	}
 
 }
