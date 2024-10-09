@@ -115,7 +115,7 @@ public abstract class UITestCase extends TestCase {
 			write(status, 0);
 		} else
 			e.printStackTrace();
-		fail(message + ": " + e);
+		throw new AssertionError(message, e);
 	}
 
 	private static void indent(OutputStream output, int indent) {
