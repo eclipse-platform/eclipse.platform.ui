@@ -72,7 +72,7 @@ public class BadElementFactory implements IElementFactory {
 		public void saveState(IMemento memento) {
 			if (shouldSaveFail) {
 				saveAttemptedWhileShouldFail = true;
-				throw new RuntimeException();
+				throw new TestException();
 			}
 
 		}
@@ -83,7 +83,7 @@ public class BadElementFactory implements IElementFactory {
 	public IAdaptable createElement(IMemento memento) {
 		if (shouldFailOnCreateElement) {
 			elementCreationAttemptedWhileShouldFail = true;
-			throw new RuntimeException();
+			throw new TestException();
 		}
 		return new BadElementInstance();
 	}
