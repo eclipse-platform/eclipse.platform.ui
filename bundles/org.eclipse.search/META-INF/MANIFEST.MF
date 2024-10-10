@@ -17,6 +17,7 @@ Export-Package: org.eclipse.search.internal.ui;x-internal:=true,
  org.eclipse.search2.internal.ui.basic.views;x-internal:=true,
  org.eclipse.search2.internal.ui.text;x-internal:=true,
  org.eclipse.search2.internal.ui.text2;x-internal:=true
+Import-Package: org.eclipse.ui.internal.findandreplace
 Require-Bundle: 
  org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.core.resources;bundle-version="[3.14.0,4.0.0)",
@@ -29,7 +30,8 @@ Require-Bundle:
  org.eclipse.ui.forms;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.ltk.core.refactoring;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.ltk.ui.refactoring;bundle-version="[3.5.0,4.0.0)",
- org.eclipse.search.core;bundle-version="[3.16.0,4.0.0)";visibility:=reexport
+ org.eclipse.search.core;bundle-version="[3.16.0,4.0.0)";visibility:=reexport,
+ org.eclipse.ui.browser;bundle-version="3.8.400"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.search
 Service-Component: OSGI-INF/*.xml

@@ -19,3 +19,5 @@ Require-Bundle:
  org.eclipse.text;bundle-version="3.13.100"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.search.core
+Import-Package: org.eclipse.jface.fieldassist,
+ org.eclipse.swt.graphics
