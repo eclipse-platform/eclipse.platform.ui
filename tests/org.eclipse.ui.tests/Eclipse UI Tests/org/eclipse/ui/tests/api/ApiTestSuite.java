@@ -21,6 +21,7 @@ import org.eclipse.ui.tests.api.workbenchpart.LifecycleViewTest;
 import org.eclipse.ui.tests.api.workbenchpart.OverriddenTitleTest;
 import org.eclipse.ui.tests.api.workbenchpart.RawIViewPartTest;
 import org.eclipse.ui.tests.api.workbenchpart.ViewPartTitleTest;
+import org.eclipse.ui.tests.e4.CloseAllHandlerTest;
 import org.eclipse.ui.tests.ide.api.FileEditorInputTest;
 import org.eclipse.ui.tests.ide.api.IDETest;
 import org.eclipse.ui.tests.ide.api.IDETest2;
@@ -83,7 +84,8 @@ import org.junit.runners.Suite;
 	 SaveablesListTest.class,
 	 PerspectiveExtensionReaderTest.class,
 	 ModeledPageLayoutTest.class,
-	 WorkbenchPluginTest.class
+	 WorkbenchPluginTest.class,
+	 CloseAllHandlerTest.class
 })
 public class ApiTestSuite {
 
