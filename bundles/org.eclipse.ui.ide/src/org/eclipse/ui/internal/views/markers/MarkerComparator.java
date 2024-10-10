@@ -187,7 +187,9 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	 * Save the current sort field in the memento.
 	 */
 	void saveState(IMemento memento) {
-		memento.putString(PRIMARY_SORT_FIELD_TAG, MarkerSupportInternalUtilities.getId(fields[0]));
+		if (fields != null && fields.length > 0) {
+			memento.putString(PRIMARY_SORT_FIELD_TAG, MarkerSupportInternalUtilities.getId(fields[0]));
+		}
 		Iterator<MarkerField> descendingIterator = descendingFields.iterator();
 		while (descendingIterator.hasNext()) {
 			memento.createChild(DESCENDING_FIELDS, (MarkerSupportInternalUtilities.getId(descendingIterator.next())));
