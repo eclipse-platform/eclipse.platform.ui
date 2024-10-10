@@ -46,9 +46,9 @@ public class MarkerViewTests extends UITestCase {
 		IWorkbenchPage page = window.getActivePage();
 
 		try {
-			page.showView(IPageLayout.ID_BOOKMARKS);
-			page.showView(IPageLayout.ID_PROBLEM_VIEW);
-			page.showView(IPageLayout.ID_TASK_LIST);
+			page.hideView(page.showView(IPageLayout.ID_BOOKMARKS));
+			page.hideView(page.showView(IPageLayout.ID_PROBLEM_VIEW));
+			page.hideView(page.showView(IPageLayout.ID_TASK_LIST));
 		} catch (PartInitException e) {
 			assertTrue(e.getLocalizedMessage(), false);
 			return;
