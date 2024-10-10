@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -30,7 +31,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceMemento;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Display;
@@ -75,6 +75,7 @@ public abstract class UITestCase extends TestCase {
 	private final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	protected IWorkbench fWorkbench;
+	private Set<Shell> preExistingShells;
 
 	/** Preference helper to restore changed preference values after test run. */
 	private final PreferenceMemento prefMemento = new PreferenceMemento();
@@ -180,6 +181,7 @@ public abstract class UITestCase extends TestCase {
 		super.setUp();
 		closeTestWindows.before();
 		fWorkbench = PlatformUI.getWorkbench();
+		this.preExistingShells = Set.of(fWorkbench.getDisplay().getShells());
 		String name = runningTest != null ? runningTest : this.getName();
 		trace(TestRunLogUtil.formatTestStartMessage(name));
 		doSetUp();
@@ -212,18 +214,17 @@ public abstract class UITestCase extends TestCase {
 		trace(TestRunLogUtil.formatTestFinishedMessage(name));
 		prefMemento.resetPreferences();
 		doTearDown();
-		fWorkbench = null;
 
-		// Check for modal shell leak.
+		// Check for shell leak.
 		List<String> leakedModalShellTitles = new ArrayList<>();
-		Shell[] shells = PlatformUI.getWorkbench().getDisplay().getShells();
+		Shell[] shells = fWorkbench.getDisplay().getShells();
 		for (Shell shell : shells) {
-			if (!shell.isDisposed() && shell.isVisible()
-					&& (shell.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL)) != 0) {
+			if (!shell.isDisposed() && !preExistingShells.contains(shell)) {
 				leakedModalShellTitles.add(shell.getText());
 				shell.close();
 			}
 		}
+		fWorkbench = null;
 		assertEquals("Test leaked modal shell: [" + String.join(", ", leakedModalShellTitles) + "]", 0,
 				leakedModalShellTitles.size());
 	}
