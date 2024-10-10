@@ -22,8 +22,10 @@ import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceCon
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
@@ -138,7 +140,7 @@ public class StickyScrollingHandler implements IViewportListener {
 
 	private StickyLinesProperties loadStickyLinesProperties(IPreferenceStore store) {
 		int tabWidth= store.getInt(EDITOR_TAB_WIDTH);
-		return new StickyLinesProperties(tabWidth);
+		return new StickyLinesProperties(tabWidth, sourceViewer);
 	}
 
 	@Override
@@ -151,11 +153,50 @@ public class StickyScrollingHandler implements IViewportListener {
 	}
 
 	private void calculateAndShowStickyLines() {
-		List<StickyLine> stickyLines= stickyLinesProvider.getStickyLines(sourceViewer, stickyLinesProperties);
+		List<StickyLine> stickyLines= Collections.emptyList();
+
+		StyledText textWidget= sourceViewer.getTextWidget();
+		int startLine= textWidget.getTopIndex();
+
+		if (startLine > 0) {
+			stickyLines= stickyLinesProvider.getStickyLines(textWidget, startLine, stickyLinesProperties);
+		}
+
 		if (stickyLines == null) {
 			stickyLines= Collections.emptyList();
 		}
+
+		stickyLines= adaptStickyLinesToVisibleArea(stickyLines, startLine);
+
 		stickyScrollingControl.setStickyLines(stickyLines);
+	}
+
+	private List<StickyLine> adaptStickyLinesToVisibleArea(List<StickyLine> stickyLines, int startLine) {
+		if (stickyLines.isEmpty()) {
+			return stickyLines;
+		}
+
+		LinkedList<StickyLine> adaptedStickyLines= new LinkedList<>(stickyLines);
+
+		int firstVisibleLine= startLine + adaptedStickyLines.size();
+		StyledText textWidget= sourceViewer.getTextWidget();
+		int maximumLines= textWidget.getLineCount();
+
+		for (int i= startLine + 1; i <= firstVisibleLine && i < maximumLines; i++) {
+			List<StickyLine> stickyLinesInLineI= stickyLinesProvider.getStickyLines(textWidget, i, stickyLinesProperties);
+
+			if (stickyLinesInLineI.size() > adaptedStickyLines.size()) {
+				adaptedStickyLines= new LinkedList<>(stickyLinesInLineI);
+				firstVisibleLine= startLine + adaptedStickyLines.size();
+			}
+
+			while (stickyLinesInLineI.size() < adaptedStickyLines.size() && i < firstVisibleLine) {
+				adaptedStickyLines.removeLast();
+				firstVisibleLine--;
+			}
+		}
+
+		return adaptedStickyLines;
 	}
 
 	/**
