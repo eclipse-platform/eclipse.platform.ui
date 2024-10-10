@@ -26,6 +26,9 @@ import org.eclipse.jface.dialogs.IDialogSettings;
  * the nodes using the DialogSettings mechanism.
  */
 public class HistoryStore {
+	public static final String SEARCH_HISTORY_KEY = "searchhistory"; //$NON-NLS-1$
+	public static final String REPLACE_HISTORY_KEY = "replacehistory"; //$NON-NLS-1$
+
 	private IDialogSettings settingsManager;
 	private int historySize;
 	private List<String> history;
@@ -44,10 +47,12 @@ public class HistoryStore {
 	}
 
 	public Iterable<String> get() {
+		loadSection(sectionName);
 		return history;
 	}
 
 	public String get(int index) {
+		loadSection(sectionName);
 		return history.get(index);
 	}
 
@@ -68,9 +73,17 @@ public class HistoryStore {
 		if (indexInHistory >= 0) {
 			history.remove(indexInHistory);
 		}
+
+		writeHistory();
+	}
+
+	public void addOrPushToTop(String historyItem) {
+		remove(historyItem);
+		add(historyItem);
 	}
 
 	public boolean isEmpty() {
+		loadSection(sectionName);
 		return history.isEmpty();
 	}
 
@@ -110,10 +123,12 @@ public class HistoryStore {
 	}
 
 	public int indexOf(String entry) {
+		loadSection(sectionName);
 		return history.indexOf(entry);
 	}
 
 	public int size() {
+		loadSection(sectionName);
 		return history.size();
 	}
 }

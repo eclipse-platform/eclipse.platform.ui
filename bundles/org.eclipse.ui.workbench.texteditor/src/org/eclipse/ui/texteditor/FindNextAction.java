@@ -15,30 +15,28 @@
 
 package org.eclipse.ui.texteditor;
 
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.regex.PatternSyntaxException;
 
 import org.osgi.framework.FrameworkUtil;
 
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IFindReplaceTarget;
-import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.text.TextUtilities;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
+import org.eclipse.ui.internal.findandreplace.HistoryStore;
+import org.eclipse.ui.internal.findandreplace.SearchOptions;
+import org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlay;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 
 
@@ -60,10 +58,6 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private IWorkbenchPart fWorkbenchPart;
 	/** The workbench window */
 	private IWorkbenchWindow fWorkbenchWindow;
-	/** The dialog settings to retrieve the last search */
-	private IDialogSettings fDialogSettings;
-	/** The find history as initially given in the dialog settings. */
-	private List<String> fFindHistory= new ArrayList<>();
 	/** The find string as initially given in the dialog settings. */
 	private String fFindString;
 	/** The search direction as initially given in the dialog settings. */
@@ -130,6 +124,10 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		update();
 	}
 
+	private HistoryStore getSearchHistory() {
+		return new HistoryStore(getDialogSettings(), HistoryStore.SEARCH_HISTORY_KEY, 15);
+	}
+
 	/**
 	 * Returns the find string based on the selection or the find history.
 	 * @return the find string
@@ -137,8 +135,8 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private String getFindString() {
 		String fullSelection= fTarget.getSelectionText();
 		String firstLine= getFirstLine(fullSelection);
-		if ((firstLine.isEmpty() || fRegExSearch && fullSelection.equals(fSelection)) && !fFindHistory.isEmpty())
-			return fFindHistory.get(0);
+		if ((firstLine.isEmpty() || fRegExSearch && fullSelection.equals(fSelection)) && !getSearchHistory().isEmpty())
+			return getSearchHistory().get(0);
 		else if (fRegExSearch && !fullSelection.isEmpty())
 			return FindReplaceDocumentAdapter.escapeForRegExPattern(fullSelection);
 		else
@@ -187,41 +185,70 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 	@Override
 	public void run() {
-		if (fTarget != null) {
-			readConfiguration();
-
-			fFindString= getFindString();
-			if (fFindString == null) {
-				statusNotFound();
-				return;
-			}
-
-			boolean wholeWord= fWholeWordInit && !fRegExSearch && isWord(fFindString);
-
-			statusClear();
-			if (!findNext(fFindString, fForward, fCaseInit, fWrapInit, wholeWord, fRegExSearch))
-				statusNotFound();
-
-			writeConfiguration();
+		fFindString= getFindString();
+		if (fFindString == null) {
+			statusNotFound();
+			return;
 		}
+		if (fTarget == null) {
+			return;
+		}
+		statusClear();
+
+		FindReplaceLogic findReplaceLogic = createFindReplaceLogic(fTarget);
+
+		findReplaceLogic.setFindString(fFindString);
+		findReplaceLogic.performSearch();
+		if (!findReplaceLogic.getStatus().wasSuccessful()) {
+			statusNotFound();
+		}
+		writeConfiguration();
 	}
 
-	/**
-	 * Tests whether each character in the given string is a letter.
-	 *
-	 * @param str the string to check
-	 * @return <code>true</code> if the given string is a word
-	 * @since 3.2
-	 */
-	private boolean isWord(String str) {
-		if (str == null || str.isEmpty())
-			return false;
-
-		for (int i= 0; i < str.length(); i++) {
-			if (!Character.isJavaIdentifierPart(str.charAt(i)))
-				return false;
+	private FindReplaceLogic createFindReplaceLogic(IFindReplaceTarget target) {
+		FindReplaceLogic findReplaceLogic = new FindReplaceLogic();
+		boolean isTargetEditable = false;
+		if (target != null) {
+			isTargetEditable = target.isEditable();
 		}
-		return true;
+		findReplaceLogic.updateTarget(target, isTargetEditable);
+		if (fForward) {
+			findReplaceLogic.activate(SearchOptions.FORWARD);
+		}
+
+		if (shouldUseOverlay()) {
+			initializeFindReplaceLogicForOverlay(findReplaceLogic);
+		} else {
+			initializeFindReplaceLogicForDialog(findReplaceLogic);
+		}
+
+		return findReplaceLogic;
+	}
+
+	private void initializeFindReplaceLogicForOverlay(FindReplaceLogic findReplaceLogic) {
+		findReplaceLogic.activate(SearchOptions.WRAP);
+	}
+
+	private void initializeFindReplaceLogicForDialog(FindReplaceLogic findReplaceLogic) {
+		IDialogSettings s = getDialogSettings();
+
+		fWrapInit = s.get("wrap") == null || s.getBoolean("wrap"); //$NON-NLS-1$ //$NON-NLS-2$
+		fCaseInit = s.getBoolean("casesensitive"); //$NON-NLS-1$
+		fWholeWordInit = s.getBoolean("wholeword"); //$NON-NLS-1$
+		fRegExSearch = s.getBoolean("isRegEx"); //$NON-NLS-1$
+
+		if (fCaseInit) {
+			findReplaceLogic.activate(SearchOptions.CASE_SENSITIVE);
+		}
+		if (fWrapInit) {
+			findReplaceLogic.activate(SearchOptions.WRAP);
+		}
+		if (fRegExSearch) {
+			findReplaceLogic.activate(SearchOptions.REGEX);
+		}
+		if (fWholeWordInit && findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD)) {
+			findReplaceLogic.activate(SearchOptions.WHOLE_WORD);
+		}
 	}
 
 	@Override
@@ -238,100 +265,17 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		setEnabled(fTarget != null && fTarget.canPerformFind());
 	}
 
-	/*
-	 * @see FindReplaceDialog#findIndex(String, int, boolean, boolean, boolean, boolean)
-	 * @since 3.0
-	 */
-	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
-
-		if (forwardSearch) {
-			if (wrapSearch) {
-				int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
-				if (index == -1) {
-					beep();
-					index= findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
-				}
-				return index;
-			}
-			return findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
-		}
-
-		// backward
-		if (wrapSearch) {
-			int index= findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
-			if (index == -1) {
-				beep();
-				index= findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
-			}
-			return index;
-		}
-		return findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
-	}
-
-	/**
-	 * Returns whether the specified  search string can be found using the given options.
-	 *
-	 * @param findString the string to search for
-	 * @param forwardSearch the search direction
-	 * @param caseSensitive should the search honor cases
-	 * @param wrapSearch	should the search wrap to the start/end if end/start reached
-	 * @param wholeWord does the find string represent a complete word
-	 * @param regExSearch if <code>true</code> findString represents a regular expression
-	 * @return <code>true</code> if the find string can be found using the given options
-	 * @since 3.0
-	 */
-	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
-
-		Point r= fTarget.getSelection();
-		int findReplacePosition= r.x;
-		if (forwardSearch)
-			findReplacePosition += r.y;
-
-		int index= findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord, regExSearch);
-
-		if (index != -1)
-			return true;
-
-		return false;
-	}
-
-	private void beep() {
-		Shell shell= null;
-		if (fWorkbenchPart != null)
-			shell= fWorkbenchPart.getSite().getShell();
-		else if (fWorkbenchWindow != null)
-			shell= fWorkbenchWindow.getShell();
-
-		if (shell != null && !shell.isDisposed())
-			shell.getDisplay().beep();
-	}
-
-	/**
-	 * Searches for a string starting at the given offset and using the specified search
-	 * directives. If a string has been found it is selected and its start offset is
-	 * returned.
-	 *
-	 * @param offset the offset at which searching starts
-	 * @param findString the string which should be found
-	 * @param forwardSearch the direction of the search
-	 * @param caseSensitive <code>true</code> performs a case sensitive search, <code>false</code> an insensitive search
-	 * @param wholeWord if <code>true</code> only occurrences are reported in which the findString stands as a word by itself
-	 * @param regExSearch if <code>true</code> findString represents a regular expression
-	 * @return the position of the specified string, or -1 if the string has not been found
-	 * @since 3.0
-	 */
-	private int findAndSelect(int offset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
-		if (fTarget instanceof IFindReplaceTargetExtension3) {
-			try {
-				return ((IFindReplaceTargetExtension3)fTarget).findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
-			} catch (PatternSyntaxException ex) {
-				return -1;
-			}
-		}
-		return fTarget.findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord);
-	}
-
 	//--------------- configuration handling --------------
+
+	private static final String INSTANCE_SCOPE_NODE_NAME = "org.eclipse.ui.editors"; //$NON-NLS-1$
+
+	private static final String USE_FIND_REPLACE_OVERLAY = "useFindReplaceOverlay"; //$NON-NLS-1$
+
+	private boolean shouldUseOverlay() {
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(INSTANCE_SCOPE_NODE_NAME);
+		boolean overlayPreference = preferences.getBoolean(USE_FIND_REPLACE_OVERLAY, true);
+		return overlayPreference && fWorkbenchPart instanceof StatusTextEditor;
+	}
 
 	/**
 	 * Returns the dialog settings object used to share state
@@ -340,32 +284,12 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(FindNextAction.class))
-				.getDialogSettings();
-		fDialogSettings= settings.getSection(FindReplaceDialog.class.getName());
-		if (fDialogSettings == null)
-			fDialogSettings= settings.addNewSection(FindReplaceDialog.class.getName());
-		return fDialogSettings;
-	}
-
-	/**
-	 * Initializes itself from the dialog settings with the same state
-	 * as at the previous invocation.
-	 */
-	private void readConfiguration() {
-		IDialogSettings s= getDialogSettings();
-
-		fWrapInit= s.get("wrap") == null || s.getBoolean("wrap"); //$NON-NLS-1$ //$NON-NLS-2$
-		fCaseInit= s.getBoolean("casesensitive"); //$NON-NLS-1$
-		fWholeWordInit= s.getBoolean("wholeword"); //$NON-NLS-1$
-		fRegExSearch= s.getBoolean("isRegEx"); //$NON-NLS-1$
-		fSelection= s.get("selection"); //$NON-NLS-1$
-
-		String[] findHistory= s.getArray("findhistory"); //$NON-NLS-1$
-		if (findHistory != null) {
-			fFindHistory.clear();
-			Collections.addAll(fFindHistory, findHistory);
+		if (shouldUseOverlay()) {
+			return PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceOverlay.class))
+					.getDialogSettings();
 		}
+		return PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceDialog.class))
+				.getDialogSettings();
 	}
 
 	/**
@@ -375,22 +299,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		if (fFindString == null)
 			return;
 
-		IDialogSettings s= getDialogSettings();
-		s.put("selection", fTarget.getSelectionText()); //$NON-NLS-1$
-
-		if (!fFindHistory.isEmpty() && fFindString.equals(fFindHistory.get(0)))
-			return;
-
-		int index= fFindHistory.indexOf(fFindString);
-		if (index != -1)
-			fFindHistory.remove(index);
-		fFindHistory.add(0, fFindString);
-
-		while (fFindHistory.size() > 8)
-			fFindHistory.remove(8);
-		String[] names= new String[fFindHistory.size()];
-		fFindHistory.toArray(names);
-		s.put("findhistory", names); //$NON-NLS-1$
+		getSearchHistory().addOrPushToTop(fFindString);
 	}
 
 	/**
