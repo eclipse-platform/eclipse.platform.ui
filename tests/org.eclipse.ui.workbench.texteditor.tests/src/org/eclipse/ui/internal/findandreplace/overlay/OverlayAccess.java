@@ -24,9 +24,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -63,13 +63,10 @@ class OverlayAccess implements IFindReplaceUIAccess {
 
 	private final FindReplaceOverlay overlay;
 
-	private final Shell shell;
-
 	OverlayAccess(IFindReplaceTarget findReplaceTarget, FindReplaceOverlay findReplaceOverlay) {
 		this.findReplaceTarget= findReplaceTarget;
 		overlay= findReplaceOverlay;
-		shell= overlay.getShell();
-		WidgetExtractor widgetExtractor= new WidgetExtractor(FindReplaceOverlay.ID_DATA_KEY, shell);
+		WidgetExtractor widgetExtractor= new WidgetExtractor(FindReplaceOverlay.ID_DATA_KEY, findReplaceOverlay.getContainerControl());
 		find= widgetExtractor.findHistoryTextWrapper("searchInput");
 		caseSensitive= widgetExtractor.findToolItem("caseSensitiveSearch");
 		wholeWord= widgetExtractor.findToolItem("wholeWordSearch");
@@ -83,11 +80,15 @@ class OverlayAccess implements IFindReplaceUIAccess {
 
 	private void extractReplaceWidgets() {
 		if (!isReplaceDialogOpen() && Objects.nonNull(openReplaceDialog)) {
-			WidgetExtractor widgetExtractor= new WidgetExtractor(FindReplaceOverlay.ID_DATA_KEY, shell);
+			WidgetExtractor widgetExtractor= new WidgetExtractor(FindReplaceOverlay.ID_DATA_KEY, getContainerControl());
 			replace= widgetExtractor.findHistoryTextWrapper("replaceInput");
 			replaceButton= widgetExtractor.findToolItem("replaceOne");
 			replaceAllButton= widgetExtractor.findToolItem("replaceAll");
 		}
+	}
+
+	private Composite getContainerControl() {
+		return overlay.getContainerControl();
 	}
 
 	private void restoreInitialConfiguration() {
@@ -309,14 +310,19 @@ class OverlayAccess implements IFindReplaceUIAccess {
 
 	@Override
 	public boolean isShown() {
-		return !shell.isDisposed() && shell.isVisible();
+		return getContainerControl().isVisible();
 	}
 
 	@Override
 	public boolean hasFocus() {
-		Control focusControl= shell.getDisplay().getFocusControl();
-		Shell focusControlShell= focusControl != null ? focusControl.getShell() : null;
-		return focusControlShell == shell;
+		Control focusControl= getContainerControl().getDisplay().getFocusControl();
+		while (focusControl != null) {
+			if (getContainerControl() == focusControl) {
+				return true;
+			}
+			focusControl= focusControl.getParent();
+		}
+		return false;
 	}
 
 }
