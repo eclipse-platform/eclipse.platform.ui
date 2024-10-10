@@ -56,7 +56,6 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage.ProjectRecord;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.datatransfer.ImportTestUtils.TestBuilder;
-import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.wizards.datatransfer.ExternalProjectImportWizard;
@@ -86,6 +85,8 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 
 	private String zipLocation = null;
 
+	private WizardDialog dialog;
+
 	private boolean originalRefreshSetting;
 
 	public ImportExistingProjectsWizardTest() {
@@ -93,7 +94,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	}
 
 	private Shell getShell() {
-		return DialogCheck.getShell();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 
 	@Override
@@ -109,6 +110,11 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 
 	@Override
 	protected void doTearDown() throws Exception {
+		if (dialog != null) {
+			dialog.close();
+			dialog = null;
+		}
+
 		IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = wsRoot.getProjects();
 		for (int i = projects.length - 1; i >= 0; i--) {
@@ -799,8 +805,6 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			wpip = getExternalImportWizard(null);
 			selectedProjects = wpip.getProjectRecords();
 			assertEquals(0, selectedProjects.length);
-
-
 	}
 
 	@Test
@@ -900,7 +904,6 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		return ImportTestUtils.copyZipLocation(zipLocation, ARCHIVE_HELLOWORLD);
 	}
 
-
 	private WizardProjectsImportPage getNewWizard() {
 		ImportExportWizard wizard = new ImportExportWizard(
 				ImportExportWizard.IMPORT);
@@ -920,7 +923,10 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 
 		Shell shell = getShell();
 
-		WizardDialog dialog = new WizardDialog(shell, wizard);
+		if (dialog != null) {
+			dialog.close();
+		}
+		dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setSize(Math.max(100, dialog.getShell().getSize().x),
 				100);
@@ -1176,7 +1182,10 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		ExternalProjectImportWizard wizard = new ExternalProjectImportWizard(
 				initialPath);
 		wizard.init(getWorkbench(), null);
-		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		if (dialog != null) {
+			dialog.close();
+		}
+		dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 
 		dialog.getShell().setSize(Math.max(100, dialog.getShell().getSize().x),
