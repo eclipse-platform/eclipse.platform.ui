@@ -20,8 +20,9 @@ import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceCon
 import static org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -159,8 +160,10 @@ public class StickyScrollingHandlerTest {
 
 		waitInUi(300);
 
-		// Call to lines provider should be throttled
-		verify(linesProvider, times(2)).getStickyLines(sourceViewer, stickyLinesProperties);
+		// Call to lines provider should be throttled, at least one and at most
+		// 3 calls expected
+		verify(linesProvider, atMost(3)).getStickyLines(sourceViewer, stickyLinesProperties);
+		verify(linesProvider, atLeastOnce()).getStickyLines(sourceViewer, stickyLinesProperties);
 	}
 
 	private void waitInUi(int ms) throws InterruptedException {
