@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Enda O'Brien, Pilz Ireland - PR #144
  ******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -190,9 +191,25 @@ public class ContentGeneratorDescriptor {
 			IConfigurationElement[] markerTypeElements = configurationElement.getChildren(MarkerSupportRegistry.MARKER_TYPE_REFERENCE);
 			for (IConfigurationElement configElement : markerTypeElements) {
 				String elementName = configElement.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
-				MarkerType[] types = MarkerTypesModel.getInstance().getType(elementName).getAllSubTypes();
-				markerTypes.addAll(Arrays.asList(types));
-				markerTypes.add(MarkerTypesModel.getInstance().getType(elementName));
+
+				String application = configElement.getAttribute(MarkerSupportInternalUtilities.APPLICATION) == null
+						? MarkerSupportInternalUtilities.TYPE_AND_SUBTYPE
+						: configElement.getAttribute(MarkerSupportInternalUtilities.APPLICATION);
+
+				switch (application) {
+				case MarkerSupportInternalUtilities.TYPE_ONLY:
+					markerTypes.add(MarkerTypesModel.getInstance().getType(elementName));
+					break;
+				case MarkerSupportInternalUtilities.SUB_TYPES_ONLY:
+					markerTypes.addAll(
+							Arrays.asList(MarkerTypesModel.getInstance().getType(elementName).getAllSubTypes()));
+					break;
+				case MarkerSupportInternalUtilities.TYPE_AND_SUBTYPE:
+				default:
+					markerTypes.addAll(
+							Arrays.asList(MarkerTypesModel.getInstance().getType(elementName).getAllSubTypes()));
+					markerTypes.add(MarkerTypesModel.getInstance().getType(elementName));
+				}
 			}
 			if (markerTypes.isEmpty()) {
 				MarkerType[] types = MarkerTypesModel.getInstance().getType(IMarker.PROBLEM).getAllSubTypes();

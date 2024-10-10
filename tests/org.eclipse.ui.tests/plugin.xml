@@ -190,7 +190,26 @@
        		class="org.eclipse.ui.tests.api.workbenchpart.ViewWithCreateControlsException"
        		id="org.eclipse.ui.tests.api.workbenchpart.ViewWithCreateControlsException">
       </view>
-
+      <view
+            class="org.eclipse.ui.tests.TypeOnlyTestView"
+            id="org.eclipse.ui.tests.typeOnlyTestView"
+            name="TypeOnlyTestView">
+      </view>
+      <view
+            class="org.eclipse.ui.tests.SubTypeOnlyTestView"
+            id="org.eclipse.ui.tests.subTypeOnlyTestView"
+            name="SubTypeOnlyTestView">
+      </view>
+      <view
+            class="org.eclipse.ui.tests.TypeAndSubTypeTestView"
+            id="org.eclipse.ui.tests.typeAndSubTypeTestView"
+            name="TypeAndSubTypeTestView">
+      </view>
+      <view
+            class="org.eclipse.ui.tests.NoApplicationAttribTestView"
+            id="org.eclipse.ui.tests.noApplicationAttribTestView"
+            name="NoApplicationAttribTestView">
+      </view>
    </extension>
    
    <extension
@@ -3408,6 +3427,37 @@
        </markerContentGeneratorExtension>
         <markerContentGenerator
              id="org.eclipse.ui.tests.filterHelpContentGenerator">
+       </markerContentGenerator>
+       <markerContentGenerator
+              id="org.eclipse.ui.tests.typeAndSubTypeTestViewContentGenerator"
+              name="typeAndSubTypeTestViewContentGenerator">
+          <markerTypeReference
+                application="typeAndSubTypes"
+                id="org.eclipse.core.resources.problemmarker">
+          </markerTypeReference>
+       </markerContentGenerator>
+       <markerContentGenerator
+             id="org.eclipse.ui.tests.typeOnlyTestViewContentGenerator"
+             name="typeOnlyTestViewContentGenerator">
+          <markerTypeReference
+                application="typeOnly"
+                id="org.eclipse.core.resources.problemmarker">
+          </markerTypeReference>
+       </markerContentGenerator>
+       <markerContentGenerator
+             id="org.eclipse.ui.tests.subTypeOnlyTestViewContentGenerator"
+             name="subTypeOnlyTestViewContentGenerator">
+          <markerTypeReference
+                application="subTypesOnly"
+                id="org.eclipse.core.resources.problemmarker">
+          </markerTypeReference>
+       </markerContentGenerator>
+       <markerContentGenerator
+             id="org.eclipse.ui.tests.noApplicationAttribTestViewContentGenerator"
+             name="noApplicationAttribTestViewContentGenerator">
+          <markerTypeReference
+                id="org.eclipse.core.resources.problemmarker">
+          </markerTypeReference>
        </markerContentGenerator>
         <markerContentGenerator
              id="org.eclipse.ui.tests.customScopeContentGenerator">
