@@ -91,6 +91,7 @@ public class MarkerViewUtilTest extends UITestCase {
 		boolean visible = page.isPartVisible(part);
 		assertEquals(true, result);
 		assertEquals(true, visible);
+		page.hideView(part);
 
 		result = MarkerViewUtil.showMarkers(page,
 				new IMarker[] { someBookmarkMarker, someProblemMarker, someTaskMarker }, true);
@@ -98,6 +99,7 @@ public class MarkerViewUtilTest extends UITestCase {
 		visible = page.isPartVisible(part);
 		assertEquals(true, result);
 		assertEquals(true, visible);
+		page.hideView(part);
 
 		result = MarkerViewUtil.showMarkers(page,
 				new IMarker[] { someProblemMarker, someTaskMarker, someBookmarkMarker }, true);
@@ -112,5 +114,6 @@ public class MarkerViewUtilTest extends UITestCase {
 		visible = page.isPartVisible(part);
 		assertEquals(true, result);
 		assertEquals(true, visible);
+		page.hideView(part);
 	}
 }
