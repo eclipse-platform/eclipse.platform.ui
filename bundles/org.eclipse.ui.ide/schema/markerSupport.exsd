@@ -192,6 +192,26 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="application">
+            <annotation>
+               <documentation>
+                  The application attribute describes how the reference should be applied.
+                  i.e. Does it refer to type only, type and subtypes or subtypes only.
+                  It is optionally included.
+                  If it is not specified it defaults to typeAndSubTypes.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="subTypesOnly">
+                  </enumeration>
+                  <enumeration value="typeOnly">
+                  </enumeration>
+                  <enumeration value="typeAndSubTypes">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
       </complexType>
    </element>
 
