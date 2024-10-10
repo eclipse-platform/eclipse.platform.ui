@@ -18,12 +18,15 @@ package org.eclipse.ui.internal.dialogs;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.widgets.LabelFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -46,7 +49,6 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * The Editors preference page of the workbench.
  */
 public class EditorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	private static final int REUSE_INDENT = 20;
 
 	protected Composite editorReuseGroup;
 
@@ -213,11 +215,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	 */
 	protected void createEditorReuseGroup(Composite composite) {
 		editorReuseGroup = new Composite(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		// Line up with other entries in preference page
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		editorReuseGroup.setLayout(layout);
+		editorReuseGroup.setLayout(GridLayoutFactory.fillDefaults().numColumns(3).spacing(0, 0).create());
 		editorReuseGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 		reuseEditors = new Button(editorReuseGroup, SWT.CHECK);
@@ -232,20 +230,22 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		}));
 
 		editorReuseIndentGroup = new Composite(editorReuseGroup, SWT.LEFT);
-		GridLayout indentLayout = new GridLayout();
-		indentLayout.marginLeft = REUSE_INDENT;
-		indentLayout.marginWidth = 0;
-		editorReuseIndentGroup.setLayout(indentLayout);
-		editorReuseIndentGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		editorReuseIndentGroup.setLayout(GridLayoutFactory.fillDefaults().create());
+		editorReuseIndentGroup
+				.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).create());
 
 		editorReuseThresholdGroup = new Composite(editorReuseIndentGroup, SWT.LEFT);
-		layout = new GridLayout();
+		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		editorReuseThresholdGroup.setLayout(layout);
-		editorReuseThresholdGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		GridData gridData = GridDataFactory.fillDefaults().grab(true, false).create();
+		gridData.widthHint = 35;
+		editorReuseThresholdGroup
+				.setLayoutData(gridData);
 
-		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS,
-				WorkbenchMessages.WorkbenchPreference_reuseEditorsThreshold, editorReuseThresholdGroup);
+		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, "", //$NON-NLS-1$
+				editorReuseThresholdGroup);
+		reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).dispose();
 
 		reuseEditorsThreshold.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
 		reuseEditorsThreshold.setPage(this);
@@ -258,6 +258,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		reuseEditorsThreshold.getTextControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.setPropertyChangeListener(validityChangeListener);
 
+		LabelFactory.newLabel(SWT.NONE).text(WorkbenchMessages.WorkbenchPreference_reuseEditors_closing)
+				.create(editorReuseGroup);
 	}
 
 	/**

@@ -528,6 +528,7 @@ public class WorkbenchMessages extends NLS {
 
 	// --- Workbench -----
 	public static String WorkbenchPreference_openMode;
+	public static String WorkbenchPreference_closeMode;
 	public static String WorkbenchPreference_doubleClick;
 	public static String WorkbenchPreference_singleClick;
 	public static String WorkbenchPreference_singleClick_SelectOnHover;
@@ -744,7 +745,7 @@ public class WorkbenchMessages extends NLS {
 	// ==============================================================================
 	public static String PinEditorAction_toolTip;
 	public static String WorkbenchPreference_reuseEditors;
-	public static String WorkbenchPreference_reuseEditorsThreshold;
+	public static String WorkbenchPreference_reuseEditors_closing;
 	public static String WorkbenchPreference_reuseEditorsThresholdError;
 	public static String WorkbenchPreference_recentFiles;
 	public static String WorkbenchPreference_recentFilesError;
