@@ -69,7 +69,7 @@ public class CodeMiningTest {
 	private Shell fShell;
 
 	@Rule
-	public TestWatcher screenshotRule= Screenshots.onFailure();
+	public TestWatcher screenshotRule= Screenshots.onFailure(() -> fShell);
 
 	@Before
 	public void setUp() {
@@ -117,7 +117,6 @@ public class CodeMiningTest {
 
 	@After
 	public void tearDown() {
-		fShell.dispose();
 		fViewer = null;
 	}
 
