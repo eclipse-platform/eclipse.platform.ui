@@ -41,6 +41,12 @@ public final class TestRunLogUtil {
 		}
 
 		@Override
+		protected void failed(Throwable e, Description description) {
+			System.out.println(description.getMethodName() + " failed:");
+			e.printStackTrace(System.out);
+		}
+
+		@Override
 		protected void finished(Description description) {
 			System.out.println(formatTestFinishedMessage(description.getMethodName()));
 		}
