@@ -2974,7 +2974,7 @@ public class PartRenderingEngineTests {
 	}
 
 	@Rule
-	public TestWatcher screenshotRule = Screenshots.onFailure();
+	public TestWatcher screenshotRule = Screenshots.onFailure(null);
 
 	@Test
 	public void testBug372226() {
