@@ -71,22 +71,33 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 		if (!(contextBean instanceof EObject rootObject)) {
 			throw new IllegalArgumentException();
 		}
-		// TODO: consider parent-context (may be null). Require the context-bean to be
-		// from the same resource? Then we can also reuse all maps and the XPath object
+		XPath xpath;
+		DOMMapping domMapping;
+		Element rootElement = null;
 
-		DocumentBuilder documentBuilder;
-		try {
-			documentBuilder = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			throw new IllegalStateException(e);
+		if (parentContext != null) {
+			EObjectContext parent = (EObjectContext) parentContext;
+			xpath = parent.xpath;
+			rootElement = parent.domMapping.getElement(contextBean);
+		} else {
+			xpath = XPATH_FACTORY.newXPath();
 		}
-		Document document = documentBuilder.newDocument();
 
-		XPath xpath = XPATH_FACTORY.newXPath();
-		DefaultDOMHandlerImpl domMapping = new DefaultDOMHandlerImpl();
-		Element rootElement = createElement(rootObject, document, domMapping);
-		xpath.setNamespaceContext(createNamespaceContext(rootElement));
+		if (rootElement != null) {
+			domMapping = ((EObjectContext) parentContext).domMapping;
+		} else {
+			DocumentBuilder documentBuilder;
+			try {
+				documentBuilder = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
+			} catch (ParserConfigurationException e) {
+				throw new IllegalStateException(e);
+			}
+			Document document = documentBuilder.newDocument();
 
+			domMapping = new DOMMapping();
+			rootElement = createElement(rootObject, document, domMapping);
+			xpath.setNamespaceContext(createNamespaceContext(rootElement));
+		}
 		return new EObjectContext(rootElement, domMapping, xpath);
 	}
 
@@ -94,9 +105,9 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 
 		private final XPath xpath;
 		private final Element rootElement;
-		private final DefaultDOMHandlerImpl domMapping;
+		private final DOMMapping domMapping;
 
-		private EObjectContext(Element rootElement, DefaultDOMHandlerImpl domMapping, XPath xpath) {
+		private EObjectContext(Element rootElement, DOMMapping domMapping, XPath xpath) {
 			this.rootElement = rootElement;
 			this.domMapping = domMapping;
 			this.xpath = xpath;
@@ -191,7 +202,7 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 		}
 	}
 
-	private static Element createElement(EObject eObject, Document document, DefaultDOMHandlerImpl domMapper) {
+	private static Element createElement(EObject eObject, Document document, DOMMapping domMapper) {
 		new XMLSaveImpl(Map.of(), new XMIHelperImpl(), "UTF-8").save(null, document,
 				Map.of(XMLResource.OPTION_ROOT_OBJECTS, List.of(eObject)), domMapper);
 		return document.getDocumentElement();
@@ -223,6 +234,18 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 				return prefix == null ? Collections.emptyIterator() : List.of(prefix).iterator();
 			}
 		};
+	}
+
+	private static class DOMMapping extends DefaultDOMHandlerImpl {
+
+		public Element getElement(Object object) {
+			for (Map.Entry<Node, Object> entry : nodeToObject.entrySet()) {
+				if (Objects.equals(entry.getValue(), object)) {
+					return (Element) entry.getKey();
+				}
+			}
+			return null;
+		}
 	}
 
 	private static Optional<Object> reconstructReferenceList(EObject first, String xpath, Iterator<Object> iterator) {
