@@ -59,9 +59,14 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 		if (!(contextBean instanceof EObject rootObject)) {
 			throw new IllegalArgumentException();
 		}
-		// TODO: consider parent-context (may be null). Require the context-bean to be
-		// from the same resource? Then we can also reuse all maps and the XPath object
-
+		if (parentContext != null) {
+			EObjectContext parent = ((EObjectContext) parentContext);
+			Element rootElement = parent.object2domProxy.get(contextBean);
+			if (rootElement == null) {
+				throw new IllegalArgumentException("Context bean is not from the same tree its parent context");
+			}
+			return new EObjectContext(rootElement, parent);
+		}
 		DocumentBuilder documentBuilder;
 		try {
 			documentBuilder = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
@@ -86,7 +91,7 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 			domProxy2object.put(proxy, eObject);
 		});
 
-		return new EObjectContext(rootElement, domProxy2object);
+		return new EObjectContext(rootElement, domProxy2object, object2domProxy);
 	}
 
 	private static class EObjectContext implements XPathContext {
@@ -96,12 +101,22 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 		private final XPath xpath;
 		private final Element rootElement;
 		private final Map<Node, EObject> domProxy2object;
+		private final Map<EObject, Element> object2domProxy;
 
-		private EObjectContext(Element rootElement, Map<Node, EObject> domProxy2object) {
+		private EObjectContext(Element rootElement, Map<Node, EObject> domProxy2object,
+				Map<EObject, Element> object2domProxy) {
 			this.rootElement = rootElement;
 			this.domProxy2object = Map.copyOf(domProxy2object);
+			this.object2domProxy = Map.copyOf(object2domProxy);
 			this.xpath = XPATH_FACTORY.newXPath();
 			this.xpath.setXPathFunctionResolver(this::resolveEMFFunctions);
+		}
+
+		private EObjectContext(Element rootElement, EObjectContext parentContext) {
+			this.rootElement = rootElement;
+			this.domProxy2object = Map.copyOf(parentContext.domProxy2object);
+			this.object2domProxy = Map.copyOf(parentContext.object2domProxy);
+			this.xpath = parentContext.xpath;
 		}
 
 		@Override
