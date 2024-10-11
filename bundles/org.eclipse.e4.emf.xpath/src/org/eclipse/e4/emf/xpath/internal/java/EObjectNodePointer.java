@@ -23,6 +23,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.TypeInfo;
 import org.w3c.dom.UserDataHandler;
 
+// TODO Is this still needed?
 public class EObjectNodePointer implements Element {
 
 		private final String name;
