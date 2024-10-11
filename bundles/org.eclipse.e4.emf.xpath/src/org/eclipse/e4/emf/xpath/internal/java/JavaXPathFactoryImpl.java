@@ -68,7 +68,8 @@ public class JavaXPathFactoryImpl<T> extends XPathContextFactory<T> {
 		EObjectContext context;
 
 		try {
-			context = new EObjectContext();
+			// TODO: What about the compatibility with other contexts'
+			context = new EObjectContext((EObjectContext) parentContext);
 		} catch (ParserConfigurationException e) {
 			throw new IllegalStateException(e);
 		}

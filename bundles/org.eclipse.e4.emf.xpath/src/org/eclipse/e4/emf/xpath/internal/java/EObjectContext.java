@@ -36,12 +36,22 @@ import org.w3c.dom.ls.LSSerializer;
 public class EObjectContext implements XPathContext {
 	private final String PROXY_KEY = "EObjectContext.Proxy";
 	private final Map<EObject, Node> proxy2node;
+	private final EObjectContext parentContext;
 	private final Document root;
 	private XMLHelper xml;
 
 	public EObjectContext() throws ParserConfigurationException {
-		proxy2node = new HashMap<>();
-		root = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
+		this(null);
+	}
+
+	public EObjectContext(EObjectContext parentContext) throws ParserConfigurationException {
+		this.proxy2node = new HashMap<>();
+		this.parentContext = parentContext;
+		if (parentContext == null) {
+			this.root = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
+		} else {
+			this.root = parentContext.root;
+		}
 	}
 
 	@Override
@@ -129,7 +139,12 @@ public class EObjectContext implements XPathContext {
 		// TODO What about other types of resources?
 		xml = new XMLHelperImpl((XMLResource) eObject.eResource());
 		Element object = createElement(eObject);
-		root.appendChild(object);
+		if (parentContext == null) {
+			root.appendChild(object);
+		} else {
+			Element parentObject = getNode(eObject.eContainer());
+			parentObject.appendChild(object);
+		}
 		return object;
 	}
 
@@ -141,6 +156,7 @@ public class EObjectContext implements XPathContext {
 	}
 
 	private Element createElement(EObject eObject) {
+		// TODO: Better way to get the "root" QName
 		String qName = "application";
 		if (eObject.eContainingFeature() != null) {
 			qName = xml.getQName(eObject.eContainingFeature());
