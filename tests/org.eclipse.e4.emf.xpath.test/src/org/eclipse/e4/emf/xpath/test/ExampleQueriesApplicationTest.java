@@ -13,8 +13,6 @@
  ******************************************************************************/
 package org.eclipse.e4.emf.xpath.test;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -81,8 +79,7 @@ public class ExampleQueriesApplicationTest {
 
 		URI uri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/model/Application.e4xmi", true);
 		resource = resourceSet.getResource(uri, true);
-		EObject root = resource.getContents().get(0);
-		xpathContext = xpathContextFactory.newContext(root);
+		xpathContext = xpathContextFactory.newContext(resource.getContents().get(0));
 	}
 
 	@After
@@ -95,7 +92,8 @@ public class ExampleQueriesApplicationTest {
 	@Test
 	public void testAccessingTheApplication() {
 		Object application = xpathContext.getValue("/");
-		assertThat(application, instanceOf(MApplication.class));
+		assertNotNull(application);
+		assertTrue(application instanceof MApplication);
 	}
 
 	@Test
