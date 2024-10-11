@@ -239,7 +239,7 @@ public class InternalDialog extends TrayDialog {
 		titleImageLabel.setLayoutData(layoutData);
 
 		GridData messageData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		messageData.widthHint = convertWidthInCharsToPixels(50);
+		messageData.widthHint = convertWidthInCharsToPixels(70);
 		mainMessageLabel = new Label(titleArea, SWT.WRAP);
 		mainMessageLabel.setLayoutData(messageData);
 		// main message set up early, to address bug 222391
@@ -602,7 +602,7 @@ public class InternalDialog extends TrayDialog {
 		// label that wraps
 		singleStatusLabel = new Label(singleStatusParent, SWT.WRAP);
 		GridData labelLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		labelLayoutData.widthHint = convertWidthInCharsToPixels(50);
+		labelLayoutData.widthHint = convertWidthInCharsToPixels(70);
 		singleStatusLabel.setLayoutData(labelLayoutData);
 		// main message set up early, to address bug 222391
 		singleStatusLabel.setText(getLabelProviderWrapper().getColumnText(getCurrentStatusAdapter(), 0));
