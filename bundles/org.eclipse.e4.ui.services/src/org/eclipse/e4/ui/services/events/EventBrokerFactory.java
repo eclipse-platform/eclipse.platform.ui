@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,12 +23,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.event.EventAdmin;
 
-
-
 /**
  * Use this class to obtain an instance of {@link IEventBroker}.
  */
-@Component(service = IContextFunction.class, property = "service.context.key=org.eclipse.e4.core.services.events.IEventBroker")
+@Component(service = IContextFunction.class)
+@IContextFunction.ServiceContextKey(IEventBroker.class)
 public class EventBrokerFactory extends ContextFunction {
 
 	// mandatory static reference to EventAdmin to ensure it is available before
@@ -50,4 +49,3 @@ public class EventBrokerFactory extends ContextFunction {
 		return broker;
 	}
 }
-

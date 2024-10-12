@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,7 +21,8 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.osgi.service.component.annotations.Component;
 
-@Component(service = IContextFunction.class, property = "service.context.key=org.eclipse.e4.core.commands.ECommandService")
+@Component(service = IContextFunction.class )
+@IContextFunction.ServiceContextKey(org.eclipse.e4.core.commands.ECommandService.class)
 public class CommandServiceCreationFunction extends ContextFunction {
 	/**
 	 * A context key (value "rootContext") that identifies the root of this context chain. It does

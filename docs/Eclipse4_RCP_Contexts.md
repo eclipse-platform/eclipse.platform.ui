@@ -194,7 +194,8 @@ These contexts — and the services requested — are bounded by the lifecycle o
 This approach exposes a context function as the implementation of a service defined OSGi Declarative Services. 
 This pattern is used for creating the _IEventBroker_, using the new DS annotations support.
 
-    @Component(service = IContextFunction.class, property = "service.context.key=org.eclipse.e4.core.services.events.IEventBroker")
+    @Component(service = IContextFunction.class)
+    @IContextFunction.ServiceContextKey(org.eclipse.e4.core.services.events.IEventBroker.class)
     public class EventBrokerFactory extends ContextFunction {
         @Override
         public Object compute(IEclipseContext context, String contextKey) {
