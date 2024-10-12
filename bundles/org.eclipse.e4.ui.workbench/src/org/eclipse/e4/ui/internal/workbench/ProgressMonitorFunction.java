@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,8 @@ import org.osgi.service.component.annotations.Component;
  * used near the root of a context tree to provide a reasonable default monitor for cases where more
  * specific contexts have not provided one.
  */
-@Component(service = IContextFunction.class, property = "service.context.key=org.eclipse.core.runtime.IProgressMonitor")
+@Component(service = IContextFunction.class)
+@IContextFunction.ServiceContextKey(org.eclipse.core.runtime.IProgressMonitor.class)
 public class ProgressMonitorFunction extends ContextFunction {
 
 	@Override

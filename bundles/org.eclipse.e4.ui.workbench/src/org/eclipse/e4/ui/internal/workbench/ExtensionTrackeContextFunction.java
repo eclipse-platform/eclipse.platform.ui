@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Christoph Läubrich and others.
+ * Copyright (c) 2022, 2024 Christoph Läubrich and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,10 +27,11 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
+import org.osgi.service.event.propertytypes.EventTopics;
 
-@Component(service = IContextFunction.class, property = {
-		"service.context.key=org.eclipse.core.runtime.dynamichelpers.IExtensionTracker",
-		"event.topics=" + IEclipseContext.TOPIC_DISPOSE })
+@Component(service = IContextFunction.class)
+@IContextFunction.ServiceContextKey(IExtensionTracker.class)
+@EventTopics(IEclipseContext.TOPIC_DISPOSE)
 public class ExtensionTrackeContextFunction extends ContextFunction implements EventHandler {
 
 	@Reference

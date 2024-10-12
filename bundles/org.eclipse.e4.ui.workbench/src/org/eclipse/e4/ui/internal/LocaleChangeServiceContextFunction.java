@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2016 Dirk Fauth and others.
+ * Copyright (c) 2013, 2024 Dirk Fauth and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,13 +24,13 @@ import org.osgi.service.component.annotations.Component;
 /**
  * Context function to provide the LocaleChangeServiceImpl to the application context.
  */
-@Component(service = IContextFunction.class, property = "service.context.key=org.eclipse.e4.core.services.nls.ILocaleChangeService")
+@Component(service = IContextFunction.class)
+@IContextFunction.ServiceContextKey(ILocaleChangeService.class)
 public class LocaleChangeServiceContextFunction extends ContextFunction {
 
 	@Override
 	public Object compute(IEclipseContext context, String contextKey) {
-		ILocaleChangeService lcService = ContextInjectionFactory.make(
-				LocaleChangeServiceImpl.class, context);
+		ILocaleChangeService lcService = ContextInjectionFactory.make(LocaleChangeServiceImpl.class, context);
 
 		// add the new object to the application context
 		MApplication application = context.get(MApplication.class);
