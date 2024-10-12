@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench;singleton:=true
-Bundle-Version: 1.15.500.qualifier
+Bundle-Version: 1.16.0.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -33,7 +33,8 @@ Export-Package: org.eclipse.e4.ui.internal.workbench;
  org.eclipse.e4.ui.internal.workbench.handlers;x-internal:=true,
  org.eclipse.e4.ui.workbench,
  org.eclipse.e4.ui.workbench.lifecycle,
- org.eclipse.e4.ui.workbench.modeling
+ org.eclipse.e4.ui.workbench.modeling,
+ org.eclipse.ui.activitysupport
 Bundle-Activator: org.eclipse.e4.ui.internal.workbench.Activator
 Import-Package: jakarta.annotation;version="[2.1.0,3.0.0)",
  jakarta.inject;version="[2.0.0,3.0.0)",
