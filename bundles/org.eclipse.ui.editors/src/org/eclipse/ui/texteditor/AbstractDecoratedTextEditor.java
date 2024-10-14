@@ -148,6 +148,7 @@ import org.eclipse.ui.internal.texteditor.BooleanPreferenceToggleAction;
 import org.eclipse.ui.internal.texteditor.FocusedInformationPresenter;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
+import org.eclipse.ui.internal.texteditor.stickyscroll.StickyLinesProviderRegistry;
 import org.eclipse.ui.internal.texteditor.stickyscroll.StickyScrollingHandler;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
@@ -162,6 +163,7 @@ import org.eclipse.ui.texteditor.rulers.IContributedRulerColumn;
 import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
 import org.eclipse.ui.texteditor.rulers.RulerColumnPreferenceAdapter;
 import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider;
 
 import org.eclipse.ui.editors.text.DefaultEncodingSupport;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -502,12 +504,18 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		createOverviewRulerContextMenu();
 
 		if (isStickyScrollingEnabled()) {
-			fStickyScrollingHandler= new StickyScrollingHandler(getSourceViewer(), getVerticalRuler(), getPreferenceStore());
+			IStickyLinesProvider stickyLineProvider= getStickyLinesProvider();
+			fStickyScrollingHandler= new StickyScrollingHandler(getSourceViewer(), getVerticalRuler(), getPreferenceStore(), stickyLineProvider, this);
 		}
 	}
 
 	private boolean isStickyScrollingEnabled() {
 		return getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED);
+	}
+
+	private IStickyLinesProvider getStickyLinesProvider() {
+		StickyLinesProviderRegistry stickyLinesProviderRegistry= new StickyLinesProviderRegistry();
+		return stickyLinesProviderRegistry.getProvider(getSourceViewer(), this);
 	}
 
 	/**
@@ -931,7 +939,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					return;
 
 				if (store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED)) {
-					fStickyScrollingHandler= new StickyScrollingHandler(getSourceViewer(), getVerticalRuler(), store);
+					IStickyLinesProvider stickyLineProvider= getStickyLinesProvider();
+					fStickyScrollingHandler= new StickyScrollingHandler(getSourceViewer(), getVerticalRuler(), getPreferenceStore(), stickyLineProvider, this);
 					//fire once
 					fStickyScrollingHandler.viewportChanged(getSourceViewer().getTextWidget().getTopPixel());
 				} else {

@@ -38,8 +38,12 @@ import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.eclipse.ui.internal.texteditor.stickyscroll.IStickyLinesProvider.StickyLinesProperties;
+
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider;
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider.StickyLinesProperties;
 
 /**
  * A sticky scrolling handler that retrieves stick lines from a {@link IStickyLinesProvider} and
@@ -65,17 +69,7 @@ public class StickyScrollingHandler implements IViewportListener {
 
 	private int verticalOffset;
 
-	/**
-	 * Creates a StickyScrollingHandler that will be linked to the given source viewer. The sticky
-	 * lines will be provided by the {@link DefaultStickyLinesProvider}.
-	 * 
-	 * @param sourceViewer The source viewer to link the handler with
-	 * @param verticalRuler The vertical ruler of the source viewer
-	 * @param preferenceStore The preference store
-	 */
-	public StickyScrollingHandler(ISourceViewer sourceViewer, IVerticalRuler verticalRuler, IPreferenceStore preferenceStore) {
-		this(sourceViewer, verticalRuler, preferenceStore, new DefaultStickyLinesProvider());
-	}
+	private IEditorPart editorPart;
 
 	/**
 	 * Creates a StickyScrollingHandler that will be linked to the given source viewer. The sticky
@@ -87,8 +81,9 @@ public class StickyScrollingHandler implements IViewportListener {
 	 * @param stickyLinesProvider The sticky scrolling provider
 	 */
 	public StickyScrollingHandler(ISourceViewer sourceViewer, IVerticalRuler verticalRuler, IPreferenceStore preferenceStore,
-			IStickyLinesProvider stickyLinesProvider) {
+			IStickyLinesProvider stickyLinesProvider, IEditorPart editorPart) {
 		this.sourceViewer= sourceViewer;
+		this.editorPart= editorPart;
 
 		throttler= new Throttler(sourceViewer.getTextWidget().getDisplay(), Duration.ofMillis(THROTTLER_DELAY), this::calculateAndShowStickyLines);
 		this.stickyLinesProvider= stickyLinesProvider;
@@ -137,7 +132,7 @@ public class StickyScrollingHandler implements IViewportListener {
 
 	private StickyLinesProperties loadStickyLinesProperties(IPreferenceStore store) {
 		int tabWidth= store.getInt(EDITOR_TAB_WIDTH);
-		return new StickyLinesProperties(tabWidth);
+		return new StickyLinesProperties(tabWidth, editorPart);
 	}
 
 	@Override
