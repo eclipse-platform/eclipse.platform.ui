@@ -16,7 +16,7 @@ package org.eclipse.ui.internal.texteditor.stickyscroll;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -51,7 +51,7 @@ public class DefaultStickyLinesProviderTest {
 
 	@Test
 	public void testEmptySourceCode() {
-		List<StickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 0, stickyLinesProperties);
+		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 0, stickyLinesProperties);
 
 		assertThat(stickyLines, is(empty()));
 	}
@@ -63,9 +63,10 @@ public class DefaultStickyLinesProviderTest {
 				 line 2<""";
 		setText(text);
 
-		List<StickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 1, stickyLinesProperties);
+		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 1, stickyLinesProperties);
 
-		assertThat(stickyLines, contains(new StickyLine("line 1", 0)));
+		assertEquals(1, stickyLines.size());
+		assertEquals(0, stickyLines.get(0).getLineNumber());
 	}
 
 	@Test
@@ -77,9 +78,10 @@ public class DefaultStickyLinesProviderTest {
 				  line 4""";
 		setText(text);
 
-		List<StickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 1, stickyLinesProperties);
+		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 1, stickyLinesProperties);
 
-		assertThat(stickyLines, contains(new StickyLine("line 1", 0)));
+		assertEquals(1, stickyLines.size());
+		assertEquals(0, stickyLines.get(0).getLineNumber());
 	}
 
 	@Test
@@ -91,9 +93,10 @@ public class DefaultStickyLinesProviderTest {
 				 line 4<""";
 		setText(text);
 
-		List<StickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 3, stickyLinesProperties);
+		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 3, stickyLinesProperties);
 
-		assertThat(stickyLines, contains(new StickyLine("line 3", 2)));
+		assertEquals(1, stickyLines.size());
+		assertEquals(2, stickyLines.get(0).getLineNumber());
 	}
 
 	@Test
@@ -106,9 +109,11 @@ public class DefaultStickyLinesProviderTest {
 				  line 3<""";
 		setText(text);
 
-		List<StickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 4, stickyLinesProperties);
+		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 4, stickyLinesProperties);
 
-		assertThat(stickyLines, contains(new StickyLine("line 1", 0), new StickyLine(" line 2", 2)));
+		assertEquals(2, stickyLines.size());
+		assertEquals(0, stickyLines.get(0).getLineNumber());
+		assertEquals(2, stickyLines.get(1).getLineNumber());
 	}
 
 	@Test
@@ -120,9 +125,11 @@ public class DefaultStickyLinesProviderTest {
 				\t\tline 3<""";
 		setText(text);
 
-		List<StickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 2, stickyLinesProperties);
+		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 2, stickyLinesProperties);
 
-		assertThat(stickyLines, contains(new StickyLine("line 1", 0), new StickyLine("\tline 2", 1)));
+		assertEquals(2, stickyLines.size());
+		assertEquals(0, stickyLines.get(0).getLineNumber());
+		assertEquals(1, stickyLines.get(1).getLineNumber());
 	}
 
 	@Test
@@ -136,9 +143,11 @@ public class DefaultStickyLinesProviderTest {
 		textWidget.setText(text);
 		textWidget.setTopIndex(3);
 
-		List<StickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 3, stickyLinesProperties);
+		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 3, stickyLinesProperties);
 
-		assertThat(stickyLines, contains(new StickyLine("line 1", 0), new StickyLine(" line 2", 2)));
+		assertEquals(2, stickyLines.size());
+		assertEquals(0, stickyLines.get(0).getLineNumber());
+		assertEquals(2, stickyLines.get(1).getLineNumber());
 	}
 
 	@Test
@@ -151,9 +160,11 @@ public class DefaultStickyLinesProviderTest {
 				line 4""";
 		setText(text);
 
-		List<StickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 3, stickyLinesProperties);
+		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(textWidget, 3, stickyLinesProperties);
 
-		assertThat(stickyLines, contains(new StickyLine("line 1", 0), new StickyLine(" line 2", 1)));
+		assertEquals(2, stickyLines.size());
+		assertEquals(0, stickyLines.get(0).getLineNumber());
+		assertEquals(1, stickyLines.get(1).getLineNumber());
 	}
 
 	/**

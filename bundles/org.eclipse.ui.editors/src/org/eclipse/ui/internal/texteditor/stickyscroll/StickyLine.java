@@ -13,13 +13,47 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.stickyscroll;
 
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
+
 /**
- * 
- * A record representing a sticky line containing the text to display, and line number. It serves as
- * an abstraction to represent sticky line for sticky scrolling.
- * 
- * @param text the text of the corresponding sticky line
- * @param lineNumber the specific line number of the sticky line
+ * Default implementation of {@link IStickyLine}. Information about the text and style ranges are
+ * calculated from the given text widget.
  */
-public record StickyLine(String text, int lineNumber) {
+public class StickyLine implements IStickyLine {
+
+	private int lineNumber;
+
+	private String text;
+
+	private StyledText textWidget;
+
+	public StickyLine(int lineNumber, StyledText textWidget) {
+		this.lineNumber= lineNumber;
+		this.textWidget= textWidget;
+	}
+
+	@Override
+	public int getLineNumber() {
+		return this.lineNumber;
+	}
+
+	@Override
+	public String getText() {
+		if (text == null) {
+			text= textWidget.getLine(lineNumber);
+		}
+		return text;
+	}
+
+	@Override
+	public StyleRange[] getStyleRanges() {
+		int offsetAtLine= textWidget.getOffsetAtLine(lineNumber);
+		StyleRange[] styleRanges= textWidget.getStyleRanges(offsetAtLine, getText().length());
+		for (StyleRange styleRange : styleRanges) {
+			styleRange.start= styleRange.start - offsetAtLine;
+		}
+		return styleRanges;
+	}
+
 }
