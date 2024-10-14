@@ -46,6 +46,8 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
+
 public class StickyScrollingControlTest {
 
 	private Shell shell;
