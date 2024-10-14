@@ -153,7 +153,7 @@ public class StickyScrollingHandler implements IViewportListener {
 	}
 
 	private void calculateAndShowStickyLines() {
-		List<StickyLine> stickyLines= Collections.emptyList();
+		List<IStickyLine> stickyLines= Collections.emptyList();
 
 		StyledText textWidget= sourceViewer.getTextWidget();
 		int startLine= textWidget.getTopIndex();
@@ -171,19 +171,19 @@ public class StickyScrollingHandler implements IViewportListener {
 		stickyScrollingControl.setStickyLines(stickyLines);
 	}
 
-	private List<StickyLine> adaptStickyLinesToVisibleArea(List<StickyLine> stickyLines, int startLine) {
+	private List<IStickyLine> adaptStickyLinesToVisibleArea(List<IStickyLine> stickyLines, int startLine) {
 		if (stickyLines.isEmpty()) {
 			return stickyLines;
 		}
 
-		LinkedList<StickyLine> adaptedStickyLines= new LinkedList<>(stickyLines);
+		LinkedList<IStickyLine> adaptedStickyLines= new LinkedList<>(stickyLines);
 
 		int firstVisibleLine= startLine + adaptedStickyLines.size();
 		StyledText textWidget= sourceViewer.getTextWidget();
 		int maximumLines= textWidget.getLineCount();
 
 		for (int i= startLine + 1; i <= firstVisibleLine && i < maximumLines; i++) {
-			List<StickyLine> stickyLinesInLineI= stickyLinesProvider.getStickyLines(textWidget, i, stickyLinesProperties);
+			List<IStickyLine> stickyLinesInLineI= stickyLinesProvider.getStickyLines(textWidget, i, stickyLinesProperties);
 
 			if (stickyLinesInLineI.size() > adaptedStickyLines.size()) {
 				adaptedStickyLines= new LinkedList<>(stickyLinesInLineI);

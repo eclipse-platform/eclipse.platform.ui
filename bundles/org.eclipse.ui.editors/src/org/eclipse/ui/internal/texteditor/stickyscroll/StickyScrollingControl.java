@@ -14,8 +14,6 @@
 package org.eclipse.ui.internal.texteditor.stickyscroll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringJoiner;
@@ -65,7 +63,7 @@ import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 /**
  * This class builds a control that is rendered on top of the given source viewer. The controls
  * shows the sticky lines that are set via {@link #setStickyLines(List)} on top of the source
- * viewer. The {@link StickyLine#lineNumber()} is linked to to corresponding line number in the
+ * viewer. The {@link StickyLine#getLineNumber()} is linked to to corresponding line number in the
  * given source viewer, with index starting at 0.
  * 
  * As part of its responsibilities, the class handles layout arrangement and styling of the sticky
@@ -87,7 +85,7 @@ public class StickyScrollingControl {
 
 	private static final String DISABLE_CSS= "org.eclipse.e4.ui.css.disabled"; //$NON-NLS-1$
 
-	private List<StickyLine> stickyLines;
+	private List<IStickyLine> stickyLines;
 
 	private ISourceViewer sourceViewer;
 
@@ -135,7 +133,7 @@ public class StickyScrollingControl {
 	 * 
 	 * @param stickyLines The sticky lines to show
 	 */
-	public void setStickyLines(List<StickyLine> stickyLines) {
+	public void setStickyLines(List<IStickyLine> stickyLines) {
 		if (!stickyLines.equals(this.stickyLines)) {
 			this.stickyLines= stickyLines;
 			updateStickyScrollingControls();
@@ -206,9 +204,9 @@ public class StickyScrollingControl {
 		StringJoiner stickyLineTextJoiner= new StringJoiner(System.lineSeparator());
 		StringJoiner stickyLineNumberJoiner= new StringJoiner(System.lineSeparator());
 		for (int i= 0; i < getNumberStickyLines(); i++) {
-			StickyLine stickyLine= stickyLines.get(i);
-			stickyLineTextJoiner.add(stickyLine.text());
-			int lineNumber= getSourceViewerLineNumber(stickyLine.lineNumber());
+			IStickyLine stickyLine= stickyLines.get(i);
+			stickyLineTextJoiner.add(stickyLine.getText());
+			int lineNumber= getSourceViewerLineNumber(stickyLine.getLineNumber());
 			stickyLineNumberJoiner.add(fillLineNumberWithLeadingSpaces(lineNumber + 1));
 		}
 
@@ -244,14 +242,19 @@ public class StickyScrollingControl {
 			return;
 		}
 
-		List<StyleRange> stickyLinesStyleRanges= new ArrayList<>();
-		int stickyLineTextOffset= 0;
-		for (int i= 0; i < getNumberStickyLines(); i++) {
-			StickyLine stickyLine= stickyLines.get(i);
-			stickyLinesStyleRanges.addAll(getStickyLineStyleRanges(stickyLine, stickyLineTextOffset));
-			stickyLineTextOffset+= stickyLine.text().length() + System.lineSeparator().length();
+		int stickyLineOffset= 0;
+		for (IStickyLine stickyLine : stickyLines) {
+			StyleRange[] styleRanges= stickyLine.getStyleRanges();
+
+			if (styleRanges != null) {
+				for (StyleRange styleRange : styleRanges) {
+					styleRange.start+= stickyLineOffset;
+					stickyLineText.setStyleRange(styleRange);
+				}
+			}
+
+			stickyLineOffset+= stickyLine.getText().length() + System.lineSeparator().length();
 		}
-		stickyLineText.setStyleRanges(stickyLinesStyleRanges.toArray(StyleRange[]::new));
 
 		stickyLineNumber.setFont(textWidget.getFont());
 		stickyLineNumber.setStyleRange(new StyleRange(0, stickyLineNumber.getText().length(), settings.lineNumberColor(), null));
@@ -261,22 +264,6 @@ public class StickyScrollingControl {
 		stickyLineText.setForeground(textWidget.getForeground());
 		stickyLineText.setLineSpacing(textWidget.getLineSpacing());
 		stickyLineText.setLeftMargin(textWidget.getLeftMargin());
-	}
-
-	private List<StyleRange> getStickyLineStyleRanges(StickyLine stickyLine, int stickyLineTextOffset) {
-		int lineNumber= stickyLine.lineNumber();
-		try {
-			StyledText textWidget= sourceViewer.getTextWidget();
-			int offsetAtLine= textWidget.getOffsetAtLine(lineNumber);
-			StyleRange[] styleRanges= textWidget.getStyleRanges(offsetAtLine, stickyLine.text().length());
-			for (StyleRange styleRange : styleRanges) {
-				styleRange.start= styleRange.start - offsetAtLine + stickyLineTextOffset;
-			}
-			return Arrays.asList(styleRanges);
-		} catch (IllegalArgumentException e) {
-			//Styling could not be copied, skip!
-			return Collections.emptyList();
-		}
 	}
 
 	private void layoutStickyLines() {
@@ -365,12 +352,12 @@ public class StickyScrollingControl {
 
 	private void navigateToClickedLine(MouseEvent event) {
 		int clickedStickyLineIndex= stickyLineText.getLineIndex(event.y);
-		StickyLine clickedStickyLine= stickyLines.get(clickedStickyLineIndex);
+		IStickyLine clickedStickyLine= stickyLines.get(clickedStickyLineIndex);
 
 		try {
-			int offset= sourceViewer.getDocument().getLineOffset(clickedStickyLine.lineNumber());
+			int offset= sourceViewer.getDocument().getLineOffset(clickedStickyLine.getLineNumber());
 			sourceViewer.setSelectedRange(offset, 0);
-			ensureSourceViewerLineVisible(clickedStickyLine.lineNumber());
+			ensureSourceViewerLineVisible(clickedStickyLine.getLineNumber());
 		} catch (BadLocationException e) {
 			//Do not navigate
 		}

@@ -37,6 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Canvas;
@@ -97,7 +98,7 @@ public class StickyScrollingHandlerTest {
 	@Test
 	public void testShowStickyLines() {
 		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 10", 9)));
+				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
 
 		stickyScrollingHandler.viewportChanged(100);
 
@@ -134,7 +135,7 @@ public class StickyScrollingHandlerTest {
 	@Test
 	public void testPreferencesLoaded() {
 		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 10", 9)));
+				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
 
 		stickyScrollingHandler.viewportChanged(100);
 
@@ -145,9 +146,9 @@ public class StickyScrollingHandlerTest {
 	@Test
 	public void testPreferencesUpdated() {
 		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 10", 9), new StickyLine("line 20", 19)));
+				.thenReturn(List.of(new StickyLineStub("line 10", 9), new StickyLineStub("line 20", 19)));
 		when(linesProvider.getStickyLines(textWidget, 2, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 10", 9), new StickyLine("line 20", 19)));
+				.thenReturn(List.of(new StickyLineStub("line 10", 9), new StickyLineStub("line 20", 19)));
 
 		stickyScrollingHandler.viewportChanged(100);
 
@@ -165,13 +166,13 @@ public class StickyScrollingHandlerTest {
 	@Test
 	public void testThrottledExecution() throws InterruptedException {
 		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 10", 9)));
+				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
 		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 10", 9)));
+				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
 		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 10", 9)));
+				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
 		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 10", 9)));
+				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
 
 		stickyScrollingHandler.viewportChanged(100);
 		Thread.sleep(10);
@@ -192,9 +193,9 @@ public class StickyScrollingHandlerTest {
 	@Test
 	public void testRemoveStickyLines() {
 		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 1", 0), new StickyLine("line 2", 1)));
+				.thenReturn(List.of(new StickyLineStub("line 1", 0), new StickyLineStub("line 2", 1)));
 		when(linesProvider.getStickyLines(textWidget, 2, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 3", 2)));
+				.thenReturn(List.of(new StickyLineStub("line 3", 2)));
 
 		stickyScrollingHandler.viewportChanged(100);
 
@@ -206,9 +207,9 @@ public class StickyScrollingHandlerTest {
 	@Test
 	public void testLineUnderStickyLine() {
 		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 1", 0)));
+				.thenReturn(List.of(new StickyLineStub("line 1", 0)));
 		when(linesProvider.getStickyLines(textWidget, 2, stickyLinesProperties))
-				.thenReturn(List.of(new StickyLine("line 1", 0), new StickyLine("line 2", 1)));
+				.thenReturn(List.of(new StickyLineStub("line 1", 0), new StickyLineStub("line 2", 1)));
 
 		stickyScrollingHandler.viewportChanged(100);
 
@@ -267,6 +268,32 @@ public class StickyScrollingHandlerTest {
 		joiner.add(String.valueOf(color.getGreen()));
 		joiner.add(String.valueOf(color.getBlue()));
 		return joiner.toString();
+	}
+
+	private class StickyLineStub implements IStickyLine {
+
+		private final String text;
+		private final int lineNumber;
+
+		public StickyLineStub(String text, int lineNumber) {
+			this.text = text;
+			this.lineNumber = lineNumber;
+		}
+
+		@Override
+		public int getLineNumber() {
+			return lineNumber;
+		}
+
+		@Override
+		public String getText() {
+			return text;
+		}
+
+		@Override
+		public StyleRange[] getStyleRanges() {
+			return null;
+		}
 	}
 
 }
