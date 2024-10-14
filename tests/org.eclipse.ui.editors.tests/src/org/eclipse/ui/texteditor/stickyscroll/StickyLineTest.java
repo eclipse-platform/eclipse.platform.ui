@@ -11,7 +11,7 @@
  * Contributors:
  *     SAP SE - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.texteditor.stickyscroll;
+package org.eclipse.ui.texteditor.stickyscroll;
 
 import static org.junit.Assert.assertEquals;
 

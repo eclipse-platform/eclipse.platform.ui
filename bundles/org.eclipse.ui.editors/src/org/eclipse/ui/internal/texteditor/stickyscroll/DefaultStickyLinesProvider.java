@@ -22,6 +22,10 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.source.ISourceViewer;
 
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider;
+import org.eclipse.ui.texteditor.stickyscroll.StickyLine;
+
 /**
  * This class provides sticky lines for the given source code in the source viewer. The
  * implementation is completely based on indentation and therefore works by default for several
