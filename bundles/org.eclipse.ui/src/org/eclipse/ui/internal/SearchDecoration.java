@@ -19,6 +19,7 @@ import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -41,11 +42,10 @@ public class SearchDecoration {
 	 *                         the validation.
 	 */
 	public static boolean validateRegex(String regex, ControlDecoration targetDecoration) {
-		String errorMessage = getValidationError(regex);
+		String errorMessage = getValidationError(regex, targetDecoration);
 		if (errorMessage.isEmpty()) {
 			targetDecoration.hide();
 			return true;
-
 		}
 
 		Image decorationImage = FieldDecorationRegistry.getDefault()
@@ -62,20 +62,42 @@ public class SearchDecoration {
 	 * @return The appropriate error message if the regex is invalid or an empty
 	 *         string if the regex is valid.
 	 */
-	private static String getValidationError(String regex) {
+	private static String getValidationError(String regex, ControlDecoration targetDecoration) {
+		GC gc = new GC(targetDecoration.getControl());
+
 		try {
 			Pattern.compile(regex);
 			return ""; //$NON-NLS-1$
 		} catch (PatternSyntaxException e) {
-			String message = e.getLocalizedMessage();
+			String description = e.getDescription();
+			int errorIndex = e.getIndex();
+			String pattern = e.getPattern();
 
-			// Only preserve the first line of the original error message.
-			int i = 0;
-			while (i < message.length() && "\n\r".indexOf(message.charAt(i)) == -1) { //$NON-NLS-1$
-				i++;
+			StringBuilder sBuilder = new StringBuilder();
+
+			sBuilder.append(description);
+			if (errorIndex == -1) {
+				return sBuilder.toString();
 			}
 
-			return message.substring(0, i);
+			sBuilder.append(" at index ").append(errorIndex); //$NON-NLS-1$
+			sBuilder.append(System.lineSeparator());
+			sBuilder.append(pattern);
+			sBuilder.append(System.lineSeparator());
+
+			String stringToIndexString = pattern.substring(0, errorIndex);
+			String buildString = ""; //$NON-NLS-1$
+			String thinSpace = "\u2009"; //$NON-NLS-1$
+
+			while (gc.stringExtent(buildString).x < gc.stringExtent(stringToIndexString).x - 2) {
+				buildString += thinSpace; // $NON-NLS-1$
+			}
+			sBuilder.append(buildString);
+
+			sBuilder.append("^"); //$NON-NLS-1$
+			gc.dispose();
+
+			return sBuilder.toString();
 		}
 	}
 
