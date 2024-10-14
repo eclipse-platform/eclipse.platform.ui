@@ -53,7 +53,11 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
-import org.eclipse.ui.internal.texteditor.stickyscroll.IStickyLinesProvider.StickyLinesProperties;
+import org.eclipse.ui.IEditorPart;
+
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider;
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider.StickyLinesProperties;
 
 public class StickyScrollingHandlerTest {
 
@@ -67,6 +71,7 @@ public class StickyScrollingHandlerTest {
 	private StickyScrollingHandler stickyScrollingHandler;
 	private StickyLinesProperties stickyLinesProperties;
 	private StyledText textWidget;
+	private IEditorPart editorPart;
 
 	@Before
 	public void setup() {
@@ -79,6 +84,7 @@ public class StickyScrollingHandlerTest {
 		textWidget = sourceViewer.getTextWidget();
 		textWidget.setText("first 1 \nline 2 \nline 3 \nline 4 \nline 5 \nline 6 \nline 7 \nline 8 \nline 9 \nline 10");
 		textWidget.setTopIndex(1);
+		editorPart = mock(IEditorPart.class);
 
 		lineNumberColor = new Color(0, 0, 0);
 		hoverColor = new Color(1, 1, 1);
@@ -86,8 +92,8 @@ public class StickyScrollingHandlerTest {
 		store = createPreferenceStore();
 		linesProvider = mock(IStickyLinesProvider.class);
 
-		stickyScrollingHandler = new StickyScrollingHandler(sourceViewer, ruler, store, linesProvider);
-		stickyLinesProperties = new StickyLinesProperties(4);
+		stickyScrollingHandler = new StickyScrollingHandler(sourceViewer, ruler, store, linesProvider, editorPart);
+		stickyLinesProperties = new StickyLinesProperties(4, editorPart);
 	}
 
 	@After
