@@ -19,7 +19,9 @@ import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * This class contains methods to validate and decorate search fields.
@@ -41,11 +43,10 @@ public class SearchDecoration {
 	 *                         the validation.
 	 */
 	public static boolean validateRegex(String regex, ControlDecoration targetDecoration) {
-		String errorMessage = getValidationError(regex);
+		String errorMessage = getValidationError(regex, targetDecoration.getControl());
 		if (errorMessage.isEmpty()) {
 			targetDecoration.hide();
 			return true;
-
 		}
 
 		Image decorationImage = FieldDecorationRegistry.getDefault()
@@ -62,21 +63,54 @@ public class SearchDecoration {
 	 * @return The appropriate error message if the regex is invalid or an empty
 	 *         string if the regex is valid.
 	 */
-	private static String getValidationError(String regex) {
+	private static String getValidationError(String regex, Control targetControl) {
 		try {
 			Pattern.compile(regex);
 			return ""; //$NON-NLS-1$
 		} catch (PatternSyntaxException e) {
-			String message = e.getLocalizedMessage();
-
-			// Only preserve the first line of the original error message.
-			int i = 0;
-			while (i < message.length() && "\n\r".indexOf(message.charAt(i)) == -1) { //$NON-NLS-1$
-				i++;
-			}
-
-			return message.substring(0, i);
+			return buildValidationErrorString(e, targetControl);
 		}
+	}
+
+	private static String buildValidationErrorString(PatternSyntaxException e, Control targetControl) {
+		String description = e.getDescription();
+		int errorIndex = e.getIndex();
+
+		if (errorIndex == -1) {
+			return description;
+		}
+
+		GC gc = new GC(targetControl);
+		String pattern = e.getPattern();
+
+		StringBuilder validationErrorMessage = new StringBuilder();
+
+		validationErrorMessage.append(description);
+		validationErrorMessage.append(" at index ").append(errorIndex).append(System.lineSeparator()); //$NON-NLS-1$
+		validationErrorMessage.append(pattern).append(System.lineSeparator());
+
+		String stringToIndexString = pattern.substring(0, errorIndex + 1);
+		String hairSpace = "\u200A"; //$NON-NLS-1$
+		int hairSpaceWidth = gc.stringExtent(hairSpace).x;
+
+		int stringToIndex = gc.stringExtent(stringToIndexString).x;
+		String lastCharacter = stringToIndexString.substring(stringToIndexString.length() - 1);
+
+		int widthLastChar = gc.stringExtent(lastCharacter).x;
+		int upWidth = gc.stringExtent("^").x; //$NON-NLS-1$
+
+		double howFar = stringToIndex - widthLastChar / 2 - upWidth / 2;
+		int currentWidth = 0;
+
+		while (currentWidth < howFar) {
+			currentWidth += hairSpaceWidth;
+			validationErrorMessage.append(hairSpace);
+		}
+
+		validationErrorMessage.append("^"); //$NON-NLS-1$
+		gc.dispose();
+
+		return validationErrorMessage.toString();
 	}
 
 }
