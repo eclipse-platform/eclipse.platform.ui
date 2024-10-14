@@ -72,10 +72,17 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public final static String EDITOR_CURRENT_LINE_COLOR= "currentLineColor"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that holds the color used to render the text editor inline annotation
+	 * 
+	 * @since 3.18
+	 */
+	public final static String EDITOR_INLINE_ANNOTATION_COLOR= "org.eclipse.ui.editors.inlineAnnotationColor"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that holds the number of spaces used per tab in the text editor.
 	 * <p>
-	 * Value is of type <code>int</code>: positive int value specifying the number of
-	 * spaces per tab.
+	 * Value is of type <code>int</code>: positive int value specifying the number of spaces per
+	 * tab.
 	 * </p>
 	 */
 	public final static String EDITOR_TAB_WIDTH= "tabWidth"; //$NON-NLS-1$

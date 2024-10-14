@@ -1119,6 +1119,16 @@
             label="test"
             value="232,232,232">
       </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.editors.inlineAnnotationColor"
+            isEditable="true"
+            label="%TEXT_EDITOR_CODE_MINING_COLOR"
+            value="128,128,128">
+        <description>
+            %TEXT_EDITOR_CODE_MINING_COLOR_DESCRIPTION
+         </description>
+      </colorDefinition>
 
       <theme
 		  id="org.eclipse.ui.ide.systemDefault">
@@ -1160,5 +1170,17 @@
             class="org.eclipse.ui.internal.editors.text.codemining.annotation.AnnotationCodeMiningProvider"
             id="org.eclipse.ui.internal.editors.annotationCodeMiningProvider">
       </codeMiningProvider>
+   </extension>
+   <extension
+         point="org.eclipse.e4.ui.css.swt.theme">
+      <stylesheet
+            uri="css/e4-dark_preferencestyle.css">
+         <themeid
+               refid="org.eclipse.e4.ui.css.theme.e4_dark">
+         </themeid>
+         <themeid
+               refid="com.sap.adt.tools.core.ui.darkthemepoc">
+         </themeid>
+      </stylesheet>
    </extension>
 </plugin>

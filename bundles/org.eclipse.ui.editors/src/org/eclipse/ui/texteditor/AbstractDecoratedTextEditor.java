@@ -197,6 +197,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	private final static String CURRENT_LINE_COLOR= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
 	/**
+	 * Preference key for inline annotation color
+	 */
+	private final static String INLINE_ANNOTATION_COLOR= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_INLINE_ANNOTATION_COLOR;
+	/**
 	 * Preference key for showing print margin ruler.
 	 */
 	private final static String PRINT_MARGIN= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN;
@@ -456,6 +460,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		support.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
 		support.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
+		support.setInlineAnnotationColorPreferenceKey(INLINE_ANNOTATION_COLOR);
 	}
 
 	/*

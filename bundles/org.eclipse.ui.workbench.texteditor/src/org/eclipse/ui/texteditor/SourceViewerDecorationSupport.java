@@ -26,6 +26,8 @@ import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -45,6 +47,7 @@ import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension5;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
+import org.eclipse.jface.text.source.inlined.AbstractInlinedAnnotation;
 
 
 
@@ -210,6 +213,8 @@ public class SourceViewerDecorationSupport {
 	private MatchingCharacterPainter fMatchingCharacterPainter;
 	/** The character painter's pair matcher */
 	private ICharacterPairMatcher fCharacterPairMatcher;
+	/** The inline annotation color key */
+	private String fInlineAnnotationColorKey;
 
 	/** Map with annotation type preference per annotation type */
 	private Map<Object, AnnotationPreference> fAnnotationTypeKeyMap= new LinkedHashMap<>();
@@ -357,6 +362,10 @@ public class SourceViewerDecorationSupport {
 
 		if (fPreferenceStore != null) {
 			fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
+			ColorRegistry registry = JFaceResources.getColorRegistry();
+			if (registry != null) {
+				registry.removeListener(fPropertyChangeListener);
+			}
 			fPropertyChangeListener= null;
 			fPreferenceStore= null;
 		}
@@ -436,6 +445,15 @@ public class SourceViewerDecorationSupport {
 		fMarginPainterEnableKey= enableKey;
 		fMarginPainterColorKey= colorKey;
 		fMarginPainterColumnKey= columnKey;
+	}
+
+	/**
+	 * Set inline annotation color key.
+	 *
+	 * @since 3.18
+	 */
+	public void setInlineAnnotationColorPreferenceKey(String inlineAnnotationColor) {
+		fInlineAnnotationColorKey = inlineAnnotationColor;
 	}
 
 	/**
@@ -610,7 +628,15 @@ public class SourceViewerDecorationSupport {
 				return;
 			}
 		}
-
+		if (fInlineAnnotationColorKey!=null && fInlineAnnotationColorKey.equals(p) && fAnnotationPainter!=null) {
+			ColorRegistry registry = JFaceResources.getColorRegistry();
+			if (registry != null) {
+				Color color = registry.get(fInlineAnnotationColorKey);
+				fAnnotationPainter.setInlineAnnotationColor(color);
+				fAnnotationPainter.setAnnotationTypeColor(AbstractInlinedAnnotation.TYPE, color);
+				fAnnotationPainter.paint(IPainter.CONFIGURATION);
+			}
+		}
 	}
 
 	/**
@@ -863,6 +889,14 @@ public class SourceViewerDecorationSupport {
 		painter.addTextStyleStrategy(AnnotationPreference.STYLE_DASHED_BOX, fgDashedBoxStrategy);
 		painter.addTextStyleStrategy(AnnotationPreference.STYLE_UNDERLINE, fgUnderlineStrategy);
 
+		ColorRegistry registry = JFaceResources.getColorRegistry();
+		if (registry != null) {
+			Color color = registry.get(fInlineAnnotationColorKey);
+			painter.setInlineAnnotationColor(color);
+			if (fPropertyChangeListener != null) {
+				registry.addListener(fPropertyChangeListener);
+			}
+		}
 		return painter;
 	}
 

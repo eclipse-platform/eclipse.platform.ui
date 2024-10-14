@@ -445,6 +445,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private ReusableRegion fReusableRegion= new ReusableRegion();
 
 	/**
+	 * Color used to draw inline annotations.
+	 * @since 3.26
+	 */
+	private Color fInlineAnnotationColor;
+
+	/**
 	 * Creates a new annotation painter for the given source viewer and with the
 	 * given annotation access. The painter is not initialized, i.e. no
 	 * annotation types are configured to be painted.
@@ -1646,5 +1652,19 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 	@Override
 	public void setPositionManager(IPaintPositionManager manager) {
+	}
+
+	/**
+	 * @since 3.26
+	 */
+	public void setInlineAnnotationColor(Color color) {
+		fInlineAnnotationColor= color;
+	}
+
+	/**
+	 * @since 3.26
+	 */
+	public Color getInlineAnnotationColor() {
+		return fInlineAnnotationColor;
 	}
 }
