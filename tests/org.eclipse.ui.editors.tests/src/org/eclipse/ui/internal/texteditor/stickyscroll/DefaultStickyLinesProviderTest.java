@@ -17,6 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 
@@ -35,7 +36,10 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
-import org.eclipse.ui.internal.texteditor.stickyscroll.IStickyLinesProvider.StickyLinesProperties;
+import org.eclipse.ui.IEditorPart;
+
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider.StickyLinesProperties;
 
 public class DefaultStickyLinesProviderTest {
 
@@ -44,6 +48,7 @@ public class DefaultStickyLinesProviderTest {
 	private DefaultStickyLinesProvider stickyLinesProvider;
 	private StyledText textWidget;
 	private StickyLinesProperties stickyLinesProperties;
+	private IEditorPart editorPart;
 
 	@Before
 	public void setup() {
@@ -52,7 +57,8 @@ public class DefaultStickyLinesProviderTest {
 		sourceViewer.setDocument(new Document());
 		stickyLinesProvider = new DefaultStickyLinesProvider();
 		textWidget = sourceViewer.getTextWidget();
-		stickyLinesProperties = new StickyLinesProperties(4);
+		editorPart = mock(IEditorPart.class);
+		stickyLinesProperties = new StickyLinesProperties(4, editorPart);
 	}
 
 	@Test
@@ -125,7 +131,7 @@ public class DefaultStickyLinesProviderTest {
 
 	@Test
 	public void testLinesWithTabs() {
-		stickyLinesProperties = new StickyLinesProperties(2);
+		stickyLinesProperties = new StickyLinesProperties(2, editorPart);
 		String text = """
 				line 1
 				\tline 2
