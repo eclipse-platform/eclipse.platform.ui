@@ -366,7 +366,11 @@ public class InlinedAnnotationSupport {
 		visibleLines= new VisibleLines();
 		text.addMouseListener(fMouseTracker);
 		text.addMouseMoveListener(fMouseTracker);
-		setColor(text.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+		Color c= painter.getInlineAnnotationColor();
+		if (c == null) {
+			c= text.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
+		}
+		setColor(c);
 		GC gc= new GC(viewer.getTextWidget());
 		gc.setFont(viewer.getTextWidget().getFont());
 		fFontMetrics= gc.getFontMetrics();
