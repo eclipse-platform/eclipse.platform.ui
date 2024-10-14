@@ -40,7 +40,10 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.eclipse.ui.internal.texteditor.stickyscroll.IStickyLinesProvider.StickyLinesProperties;
+
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider;
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider.StickyLinesProperties;
 
 /**
  * A sticky scrolling handler that retrieves stick lines from a {@link IStickyLinesProvider} and

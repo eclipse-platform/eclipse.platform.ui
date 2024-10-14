@@ -11,7 +11,7 @@
  * Contributors:
  *     SAP SE - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.texteditor.stickyscroll;
+package org.eclipse.ui.texteditor.stickyscroll;
 
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -19,14 +19,16 @@ import org.eclipse.swt.custom.StyledText;
 /**
  * Default implementation of {@link IStickyLine}. Information about the text and style ranges are
  * calculated from the given text widget.
+ * 
+ * since 3.19
  */
 public class StickyLine implements IStickyLine {
 
-	private int lineNumber;
+	protected int lineNumber;
+
+	protected StyledText textWidget;
 
 	private String text;
-
-	private StyledText textWidget;
 
 	public StickyLine(int lineNumber, StyledText textWidget) {
 		this.lineNumber= lineNumber;

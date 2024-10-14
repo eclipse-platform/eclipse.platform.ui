@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.editors" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.editors" id="stickyLinesProviders" name="Sticky Lines Providers"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register sticky lines providers for editors.
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="stickyLinesProvider" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="stickyLinesProvider">
+      <annotation>
+         <documentation>
+            A sticky lines provider.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="enabledWhen" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A string uniquely identifying this sticky line provider
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified class name implementing the interface &lt;code&gt;org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider&lt;/code&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="enabledWhen">
+      <annotation>
+         <documentation>
+            A core Expression that controls the enabled of the given sticky lines provider
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="0" maxOccurs="1">
+            <element ref="not"/>
+            <element ref="or"/>
+            <element ref="and"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+            <element ref="reference"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.19
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a sticky line provider definition:
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.editors.stickyLinesProviders&quot;&gt;
+      &lt;stickyLinesProvider
+            class=&quot;org.eclipse.ui.internal.texteditor.stickyscroll.DefaultStickyLinesProvider&quot;
+            id=&quot;org.eclipse.ui.editors.stickyLinesProviderExample&quot;
+            label=&quot;Example sticky lines provider registration&quot;&gt;
+         &lt;enabledWhen&gt;
+            &lt;and&gt;
+               &lt;with variable=&quot;editor&quot;&gt;
+                  &lt;instanceof value=&quot;org.example.MyEditorWithStickyScrolling&quot;/&gt;
+               &lt;/with&gt;
+            &lt;/and&gt;
+         &lt;/enabledWhen&gt;
+      &lt;/stickyLinesProvider&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         See the org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider interface and the org.eclipse.ui.editors.stickyLinesProviders extension point. As default implementation for the IStickyLine, see org.eclipse.ui.texteditor.stickyscroll.StickyLine.
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2024 SAP SE.&lt;br&gt;
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+SPDX-License-Identifier: EPL-2.0
+Contributors:
+ SAP SE - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>
