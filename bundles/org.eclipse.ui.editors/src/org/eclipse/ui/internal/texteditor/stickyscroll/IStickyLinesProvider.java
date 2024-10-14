@@ -37,7 +37,7 @@ public interface IStickyLinesProvider {
 	 * @param properties Properties for additional information
 	 * @return The list of sticky lines to show
 	 */
-	public List<StickyLine> getStickyLines(StyledText textWidget, int lineNumber, StickyLinesProperties properties);
+	public List<IStickyLine> getStickyLines(StyledText textWidget, int lineNumber, StickyLinesProperties properties);
 
 	/**
 	 * Additional properties and access in order to calculate the sticky lines.
