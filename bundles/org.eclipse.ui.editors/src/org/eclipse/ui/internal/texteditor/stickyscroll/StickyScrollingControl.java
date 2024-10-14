@@ -60,10 +60,12 @@ import org.eclipse.jface.text.source.IVerticalRulerColumn;
 
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
+
 /**
  * This class builds a control that is rendered on top of the given source viewer. The controls
  * shows the sticky lines that are set via {@link #setStickyLines(List)} on top of the source
- * viewer. The {@link StickyLine#getLineNumber()} is linked to to corresponding line number in the
+ * viewer. The {@link IStickyLine#getLineNumber()} is linked to to corresponding line number in the
  * given source viewer, with index starting at 0.
  * 
  * As part of its responsibilities, the class handles layout arrangement and styling of the sticky
