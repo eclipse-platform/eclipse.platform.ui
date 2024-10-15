@@ -318,7 +318,7 @@ class FindReplaceDialog extends Dialog {
 
 						writeSelection();
 						updateButtonState(!somethingFound);
-						
+
 						updateFindHistory();
 						evaluateFindReplaceStatus();
 					}
@@ -1278,10 +1278,10 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private IDialogSettings getDialogSettings() {
 		IDialogSettings settings = PlatformUI
-				.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceDialog.class)).getDialogSettings();
-		fDialogSettings = settings.getSection(getClass().getName());
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceAction.class)).getDialogSettings();
+		fDialogSettings = settings.getSection(FindReplaceAction.class.getClass().getName());
 		if (fDialogSettings == null)
-			fDialogSettings = settings.addNewSection(getClass().getName());
+			fDialogSettings = settings.addNewSection(FindReplaceAction.class.getClass().getName());
 		return fDialogSettings;
 	}
 

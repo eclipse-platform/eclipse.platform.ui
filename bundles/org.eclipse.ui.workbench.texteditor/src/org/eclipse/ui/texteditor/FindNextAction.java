@@ -340,14 +340,13 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @return the dialog settings to be used
 	 */
 	private IDialogSettings getDialogSettings() {
-		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(FindNextAction.class))
-				.getDialogSettings();
-		fDialogSettings= settings.getSection(FindReplaceDialog.class.getName());
+		IDialogSettings settings = PlatformUI
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceAction.class)).getDialogSettings();
+		fDialogSettings = settings.getSection(FindReplaceAction.class.getClass().getName());
 		if (fDialogSettings == null)
-			fDialogSettings= settings.addNewSection(FindReplaceDialog.class.getName());
+			fDialogSettings = settings.addNewSection(FindReplaceAction.class.getClass().getName());
 		return fDialogSettings;
 	}
-
 	/**
 	 * Initializes itself from the dialog settings with the same state
 	 * as at the previous invocation.

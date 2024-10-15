@@ -28,7 +28,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 public class HistoryStore {
 	private IDialogSettings settingsManager;
 	private int historySize;
-	private List<String> history;
 	private String sectionName;
 
 	/**
@@ -38,56 +37,58 @@ public class HistoryStore {
 	 * @param historySize     how many entries to keep in the history
 	 */
 	public HistoryStore(IDialogSettings settingsManager, String sectionName, int historySize) {
+		if (sectionName == null) {
+			throw new IllegalStateException("No section loaded"); //$NON-NLS-1$
+		}
+
 		this.settingsManager = settingsManager;
 		this.historySize = historySize;
-		loadSection(sectionName);
+		this.sectionName = sectionName;
 	}
 
 	public Iterable<String> get() {
-		return history;
+		return getHistory();
 	}
 
 	public String get(int index) {
-		return history.get(index);
+		return getHistory().get(index);
 	}
 
 
 	public void add(String historyItem) {
-		if (sectionName == null) {
-			throw new IllegalStateException("No section loaded"); //$NON-NLS-1$
-		}
+		List<String> history = getHistory();
 		if (historyItem != null && !historyItem.isEmpty()) {
 			history.add(0, historyItem);
 		}
-
-		writeHistory();
+		write(history);
 	}
 
 	public void remove(String historyItem) {
+		List<String> history = getHistory();
 		int indexInHistory = history.indexOf(historyItem);
 		if (indexInHistory >= 0) {
 			history.remove(indexInHistory);
 		}
+		write(history);
 	}
 
 	public boolean isEmpty() {
-		return history.isEmpty();
+		return getHistory().isEmpty();
 	}
 
-	private void loadSection(String newSectionName) {
-		this.sectionName = newSectionName;
-		history = new ArrayList<>();
-
-		String[] newHistoryEntries = settingsManager.getArray(newSectionName);
-		if (newHistoryEntries != null) {
-			history.addAll(Arrays.asList(newHistoryEntries));
+	private List<String> getHistory() {
+		String[] historyEntries = settingsManager.getArray(sectionName);
+		List<String> result = new ArrayList<>();
+		if (historyEntries != null) {
+			result.addAll(Arrays.asList(historyEntries));
 		}
+		return result;
 	}
 
 	/**
 	 * Writes the given history into the given dialog store.
 	 */
-	private void writeHistory() {
+	private void write(List<String> history) {
 		int itemCount = history.size();
 		Set<String> distinctItems = new HashSet<>(itemCount);
 		for (int i = 0; i < itemCount; i++) {
@@ -110,10 +111,10 @@ public class HistoryStore {
 	}
 
 	public int indexOf(String entry) {
-		return history.indexOf(entry);
+		return getHistory().indexOf(entry);
 	}
 
 	public int size() {
-		return history.size();
+		return getHistory().size();
 	}
 }
