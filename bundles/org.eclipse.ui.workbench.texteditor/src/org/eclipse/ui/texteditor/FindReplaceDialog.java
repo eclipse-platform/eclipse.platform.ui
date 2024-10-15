@@ -1278,7 +1278,7 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private IDialogSettings getDialogSettings() {
 		IDialogSettings settings = PlatformUI
-				.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceDialog.class)).getDialogSettings();
+				.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceAction.class)).getDialogSettings();
 		fDialogSettings = settings.getSection(getClass().getName());
 		if (fDialogSettings == null)
 			fDialogSettings = settings.addNewSection(getClass().getName());
