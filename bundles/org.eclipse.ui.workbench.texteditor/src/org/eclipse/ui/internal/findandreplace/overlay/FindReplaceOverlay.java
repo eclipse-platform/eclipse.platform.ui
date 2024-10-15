@@ -616,7 +616,7 @@ public class FindReplaceOverlay {
 	private void createSearchContainer() {
 		searchContainer = new FixedColorComposite(contentGroup, SWT.NONE, widgetBackgroundColor);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(searchContainer);
-		GridLayoutFactory.fillDefaults().numColumns(3).extendedMargins(4, 4, 3, 5).equalWidth(false)
+		GridLayoutFactory.fillDefaults().numColumns(3).extendedMargins(7, 4, 3, 5).equalWidth(false)
 				.applyTo(searchContainer);
 
 		createSearchBar();
@@ -627,7 +627,7 @@ public class FindReplaceOverlay {
 	private void createReplaceContainer() {
 		replaceContainer = new FixedColorComposite(contentGroup, SWT.NONE, widgetBackgroundColor);
 		GridDataFactory.fillDefaults().grab(true, true).align(GridData.FILL, GridData.FILL).applyTo(replaceContainer);
-		GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(2).extendedMargins(4, 4, 3, 5).equalWidth(false)
+		GridLayoutFactory.fillDefaults().margins(0, 0).numColumns(2).extendedMargins(7, 4, 3, 5).equalWidth(false)
 				.applyTo(replaceContainer);
 
 		createReplaceBar();
