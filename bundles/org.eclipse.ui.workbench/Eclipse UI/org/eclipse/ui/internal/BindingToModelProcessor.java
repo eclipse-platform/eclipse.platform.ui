@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,13 +33,16 @@ import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
+import org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.ui.internal.keys.BindingPersistence;
 import org.eclipse.ui.internal.keys.BindingService;
+import org.osgi.service.component.annotations.Component;
 
-public class BindingToModelProcessor {
+@Component
+public class BindingToModelProcessor implements IModelProcessorContribution {
 
 	private Map<String, MBindingContext> contexts = new HashMap<>();
 	private Map<String, MCommand> commands = new HashMap<>();
