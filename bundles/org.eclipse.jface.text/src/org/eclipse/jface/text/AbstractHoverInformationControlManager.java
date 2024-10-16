@@ -139,6 +139,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 					fDisplay.addFilter(SWT.FocusOut, this);
 
+					fDisplay.addFilter(SWT.FocusIn, this);
 					fDisplay.addFilter(SWT.MouseDown, this);
 					fDisplay.addFilter(SWT.MouseUp, this);
 
@@ -270,6 +271,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 					}
 					break;
 
+				case SWT.FocusIn:
 				case SWT.MouseUp:
 				case SWT.MouseDown:
 					if (!hasInformationControlReplacer())
@@ -282,7 +284,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 							if (!(iControl5.containsControl(control))) {
 								hideInformationControl();
 							} else if (cancelReplacingDelay()) {
-								if (event.type == SWT.MouseUp) {
+								if (event.type == SWT.MouseUp || event.type == SWT.FocusIn) {
 									stop(); // avoid that someone else replaces the info control before the async is exec'd
 									if (infoControl instanceof IDelayedInputChangeProvider) {
 										final IDelayedInputChangeProvider delayedICP= (IDelayedInputChangeProvider) infoControl;
