@@ -1178,9 +1178,6 @@
          <themeid
                refid="org.eclipse.e4.ui.css.theme.e4_dark">
          </themeid>
-         <themeid
-               refid="com.sap.adt.tools.core.ui.darkthemepoc">
-         </themeid>
       </stylesheet>
    </extension>
 </plugin>
