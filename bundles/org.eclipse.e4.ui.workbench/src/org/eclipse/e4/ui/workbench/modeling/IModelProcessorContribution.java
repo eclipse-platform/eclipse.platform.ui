@@ -14,8 +14,11 @@
 
 package org.eclipse.e4.ui.workbench.modeling;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 import java.util.Collections;
 import java.util.List;
+import org.osgi.service.component.annotations.ComponentPropertyType;
 
 /**
  * Service component interface to be able to register model processors via OSGi
@@ -32,7 +35,7 @@ public interface IModelProcessorContribution {
 	/**
 	 * Service property key for specifying the beforeFragment attribute, which
 	 * specifies if the processor has to be invoked before model fragments are
-	 * added. If not specified it defaults to <code>true</code>.
+	 * added. If not specified it defaults to {@code true}.
 	 */
 	String BEFORE_FRAGMENT_PROPERTY_KEY = "beforefragment"; //$NON-NLS-1$
 	/**
@@ -44,11 +47,33 @@ public interface IModelProcessorContribution {
 	 * Component annotation:<br>
 	 * <code>@Component(property = { IModelProcessorContribution.BEFORE_FRAGMENT_PROPERTY_PREFIX + "false" })</code>
 	 * </p>
+	 *
+	 * @deprecated Instead annotate the component with the
+	 *             {@link Beforefragment @Beforefragment(true|false)} component
+	 *             property type
 	 */
+	@Deprecated(forRemoval = true, since = "1.16")
 	String BEFORE_FRAGMENT_PROPERTY_PREFIX = "beforefragment:Boolean="; //$NON-NLS-1$
+
+	/**
+	 * An OSGi service component property type used to specify the value of the
+	 * {@code beforeFragment} attribute , which specifies if the processor has to be
+	 * invoked before model fragments are added. If not specified it defaults to
+	 * {@code true}.
+	 *
+	 * @since 1.16
+	 * @see #BEFORE_FRAGMENT_PROPERTY_KEY
+	 */
+	@ComponentPropertyType
+	@Target(ElementType.TYPE)
+	@interface Beforefragment {
+		boolean value() default true;
+	}
+
 	/**
 	 * Service property key for specifying the apply attribute, which defines in
-	 * which case a processor is run. If not specified it defaults to <i>always</i>.
+	 * which case a processor is run. If not specified it defaults to
+	 * {@code always}.
 	 */
 	String APPLY_PROPERTY_KEY = "apply"; //$NON-NLS-1$
 	/**
@@ -59,8 +84,30 @@ public interface IModelProcessorContribution {
 	 * Component annotation:<br>
 	 * <code>@Component(property = { IModelProcessorContribution.APPLY_PROPERTY_PREFIX + "initial" })</code>
 	 * </p>
+	 *
+	 * @deprecated Instead annotate the component with the {@link Apply @Apply(&lt
+	 *             a-value &gt)} component property type
 	 */
+	@Deprecated(forRemoval = true, since = "1.16")
 	String APPLY_PROPERTY_PREFIX = "apply="; //$NON-NLS-1$
+
+	/**
+	 * An OSGi service component property type used to specify the {@code apply}
+	 * attribute, which defines in which case a processor is run. If not specified
+	 * it defaults to {@code always}.
+	 *
+	 * @since 1.16
+	 * @see #APPLY_PROPERTY_KEY
+	 * @see #APPLY_ALWAYS
+	 * @see #APPLY_INITIAL
+	 *
+	 */
+	@ComponentPropertyType
+	@Target(ElementType.TYPE)
+	@interface Apply {
+		String value() default APPLY_ALWAYS;
+	}
+
 	/**
 	 * Value for the <code>apply</code> attribute. If set the processor is executed
 	 * each time the application is started.
