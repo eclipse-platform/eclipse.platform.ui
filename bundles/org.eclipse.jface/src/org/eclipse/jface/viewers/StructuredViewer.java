@@ -1083,7 +1083,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			// For details, see bug 90161 [Navigator] DefaultSelecting folders shouldn't always expand first one
 			ISelection selection;
 			if (event.item != null && event.item.getData() != null) {
-				selection = new StructuredSelection(event.item.getData());
+				selection = IStructuredSelection.of(event.item.getData());
 			}
 			else {
 				selection = getSelection();
