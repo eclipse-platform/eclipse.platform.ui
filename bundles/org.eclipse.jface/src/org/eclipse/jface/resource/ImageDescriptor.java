@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -205,6 +205,32 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	}
 
 	/**
+	 * Convenient method to create an ImageDescriptor from an URI.
+	 *
+	 * Delegates to {@link ImageDescriptor#createFromURL(URL)}. <em>Important</em>
+	 * This method should only be used when it's guaranteed that the given
+	 * {@link URI} is also a valid {@link URL}, in order to avoid the
+	 * {@link MalformedURLException} thrown by {@link URI#toURL()}.
+	 *
+	 * If the URI is {@code null} or not a valid {@link URL}, then an image from
+	 * {@link #getMissingImageDescriptor()} will be returned.
+	 *
+	 * @param uriIconPath The URI of the image file.
+	 * @return a new image descriptor
+	 *
+	 * @since 3.36
+	 */
+	public static ImageDescriptor createFromURI(URI uriIconPath) {
+		try {
+			return ImageDescriptor.createFromURL(uriIconPath != null ? uriIconPath.toURL() : null);
+		} catch (MalformedURLException e) {
+			// return the missing image placeholder to indicate
+			// the incorrect call without interfering with the user flow
+			return getMissingImageDescriptor();
+		}
+	}
+
+	/**
 	 * Convenient method to create an ImageDescriptor from an URI
 	 *
 	 * Delegates to ImageDescriptor createFromURL
@@ -213,15 +239,11 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 * @return a new image descriptor
 	 *
 	 * @since 3.19
+	 * @deprecated Use {@link #createFromURI(URI)} instead.
 	 */
+	@Deprecated(since = "3.36", forRemoval = true)
 	public ImageDescriptor imageDescriptorFromURI(URI uriIconPath) {
-		try {
-			return ImageDescriptor.createFromURL(new URL(uriIconPath.toString()));
-		} catch (MalformedURLException | NullPointerException e) {
-			// return the missing image placeholder to indicate
-			// the incorrect call without interfering with the user flow
-			return getMissingImageDescriptor();
-		}
+		return createFromURI(uriIconPath);
 	}
 
 	@Override
