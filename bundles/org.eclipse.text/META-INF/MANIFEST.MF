@@ -9,6 +9,7 @@ Export-Package:
  org.eclipse.jface.text; text="split"; mandatory:="text",
  org.eclipse.jface.text.link; text="split"; mandatory:="text",
  org.eclipse.jface.text.projection,
+ org.eclipse.jface.text.internal,
  org.eclipse.jface.text.rules; text="split"; mandatory:="text",
  org.eclipse.jface.text.source; text="split"; mandatory:="text",
  org.eclipse.jface.text.templates; text="split"; mandatory:="text",
