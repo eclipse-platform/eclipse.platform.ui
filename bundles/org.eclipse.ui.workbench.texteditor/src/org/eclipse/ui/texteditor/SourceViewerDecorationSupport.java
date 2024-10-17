@@ -890,7 +890,7 @@ public class SourceViewerDecorationSupport {
 		painter.addTextStyleStrategy(AnnotationPreference.STYLE_UNDERLINE, fgUnderlineStrategy);
 
 		ColorRegistry registry = JFaceResources.getColorRegistry();
-		if (registry != null) {
+		if (registry != null && fInlineAnnotationColorKey != null) {
 			Color color = registry.get(fInlineAnnotationColorKey);
 			painter.setInlineAnnotationColor(color);
 			if (fPropertyChangeListener != null) {
