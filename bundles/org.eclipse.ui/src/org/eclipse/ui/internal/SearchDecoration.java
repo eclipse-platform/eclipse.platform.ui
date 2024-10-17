@@ -14,17 +14,20 @@
 
 package org.eclipse.ui.internal;
 
+
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
 /**
  * This class contains methods to validate and decorate search fields.
  */
 public class SearchDecoration {
+	private static GC gc;
 
 	private SearchDecoration() {
 		// avoid instantiation
@@ -41,6 +44,8 @@ public class SearchDecoration {
 	 *                         the validation.
 	 */
 	public static boolean validateRegex(String regex, ControlDecoration targetDecoration) {
+		gc = new GC(targetDecoration.getControl());
+
 		String errorMessage = getValidationError(regex);
 		if (errorMessage.isEmpty()) {
 			targetDecoration.hide();
@@ -68,14 +73,39 @@ public class SearchDecoration {
 			return ""; //$NON-NLS-1$
 		} catch (PatternSyntaxException e) {
 			String message = e.getLocalizedMessage();
+			StringBuilder sBuilder = new StringBuilder();
 
-			// Only preserve the first line of the original error message.
 			int i = 0;
 			while (i < message.length() && "\n\r".indexOf(message.charAt(i)) == -1) { //$NON-NLS-1$
 				i++;
 			}
+			int j = i + 2;
+			while (j < message.length() && "\n\r".indexOf(message.charAt(j)) == -1) { //$NON-NLS-1$
+				j++;
+			}
 
-			return message.substring(0, i);
+			String firstLine = message.substring(0, i);
+
+			String indexString = firstLine.replaceAll("\\D+", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			int errorIndex = Integer.parseInt(indexString);
+
+			sBuilder.append(firstLine);
+			sBuilder.append(System.lineSeparator());
+
+			String secondLine = message.substring(i + 2, j); // the +2 because of the \n\r
+			sBuilder.append(secondLine);
+			sBuilder.append(System.lineSeparator());
+
+			String subsString = secondLine.substring(0, errorIndex);
+			String string = ""; //$NON-NLS-1$
+
+			while (gc.stringExtent(string).x < gc.stringExtent(subsString).x) {
+				string += " "; //$NON-NLS-1$
+			}
+			sBuilder.append(string);
+
+			sBuilder.append("^"); //$NON-NLS-1$
+			return sBuilder.toString();
 		}
 	}
 
