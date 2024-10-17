@@ -44,15 +44,18 @@ public class HistoryStore {
 	}
 
 	public Iterable<String> get() {
+		loadSection(sectionName);
 		return history;
 	}
 
 	public String get(int index) {
+		loadSection(sectionName);
 		return history.get(index);
 	}
 
 
 	public void add(String historyItem) {
+		loadSection(sectionName);
 		if (sectionName == null) {
 			throw new IllegalStateException("No section loaded"); //$NON-NLS-1$
 		}
@@ -68,6 +71,7 @@ public class HistoryStore {
 		if (indexInHistory >= 0) {
 			history.remove(indexInHistory);
 		}
+		writeHistory();
 	}
 
 	public boolean isEmpty() {
@@ -110,10 +114,12 @@ public class HistoryStore {
 	}
 
 	public int indexOf(String entry) {
+		loadSection(sectionName);
 		return history.indexOf(entry);
 	}
 
 	public int size() {
+		loadSection(sectionName);
 		return history.size();
 	}
 }
