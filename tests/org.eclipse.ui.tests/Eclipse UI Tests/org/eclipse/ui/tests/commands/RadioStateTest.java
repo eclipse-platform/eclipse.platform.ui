@@ -32,14 +32,7 @@ import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IServiceLocator;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- * @since 3.5
- * @author Prakash G.R.
- */
-@RunWith(JUnit4.class)
 public class RadioStateTest {
 
 	private final IWorkbench fWorkbench = PlatformUI.getWorkbench();

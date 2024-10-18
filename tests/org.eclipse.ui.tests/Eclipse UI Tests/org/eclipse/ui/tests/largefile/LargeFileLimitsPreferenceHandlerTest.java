@@ -14,7 +14,14 @@
 
 package org.eclipse.ui.tests.largefile;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -44,7 +51,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.LargeFileLimitsPreferenceHandler;
 import org.eclipse.ui.internal.LargeFileLimitsPreferenceHandler.FileLimit;
@@ -52,17 +58,16 @@ import org.eclipse.ui.internal.LargeFileLimitsPreferenceHandler.LargeFileEditorS
 import org.eclipse.ui.internal.LargeFileLimitsPreferenceHandler.PromptForEditor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests for the large file associations preference added for bug 577289.
  *
  * @since 3.5
  */
-@RunWith(JUnit4.class)
-public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
+public class LargeFileLimitsPreferenceHandlerTest {
 
 	public static final String TEST_EDITOR_ID1 = "org.eclipse.ui.tests.largefile.testeditor1";
 	public static final String TEST_EDITOR_ID2 = "org.eclipse.ui.tests.largefile.testeditor2";
@@ -81,13 +86,11 @@ public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
 	private TestLogListener logListener;
 
 	public LargeFileLimitsPreferenceHandlerTest() {
-		super(LargeFileLimitsPreferenceHandlerTest.class.getSimpleName());
 		monitor = new NullProgressMonitor();
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		createTestFile();
 		testPromptForEditor = new TestPromptForEditor();
 		preferenceHandler = new LargeFileLimitsPreferenceHandler(testPromptForEditor);
@@ -109,18 +112,14 @@ public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
 		temporaryFile.create(new ByteArrayInputStream(content.getBytes()), force, monitor);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		try {
-			Platform.removeLogListener(logListener);
-			setDefaultPreferences();
-			preferenceHandler.dispose();
-			deleteTestFile();
-			boolean save = false;
-			closeAllEditors(save);
-		} finally {
-			super.doTearDown();
-		}
+	@After
+	public void doTearDown() throws Exception {
+		Platform.removeLogListener(logListener);
+		setDefaultPreferences();
+		preferenceHandler.dispose();
+		deleteTestFile();
+		boolean save = false;
+		closeAllEditors(save);
 	}
 
 	private void deleteTestFile() throws CoreException {
@@ -462,7 +461,7 @@ public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
 	}
 
 	private static void waitForJobs() {
-		waitForJobs(250, 2_000);
+		UITestCase.waitForJobs(250, 2_000);
 	}
 
 	private static void setDefaultPreferences() {
@@ -483,7 +482,7 @@ public class LargeFileLimitsPreferenceHandlerTest extends UITestCase {
 	}
 
 	private static void closeAllEditors(boolean save) {
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllEditors(save);
+		getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllEditors(save);
 	}
 
 	private static class TestLogListener implements ILogListener {

@@ -14,6 +14,12 @@
 
 package org.eclipse.ui.tests.contexts;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.eclipse.ui.tests.harness.util.UITestCase.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
@@ -28,8 +34,6 @@ import org.eclipse.ui.tests.api.MockViewPart;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test that the contexts activated through their local services are only in
@@ -37,17 +41,12 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.2
  */
-@RunWith(JUnit4.class)
-public class PartContextTest extends UITestCase {
+public class PartContextTest {
 	public static final String PAGE_VIEW_ID = "org.eclipse.ui.tests.contexts.MockPageView";
 
 	private static final String TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor";
 
 	public static final String WINDOW_CONTEXT_ID = "org.eclipse.ui.tests.contexts.WorkbenchWindow";
-
-	public PartContextTest() {
-		super(PartContextTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testBasicContextActivation() throws Exception {
@@ -106,7 +105,7 @@ public class PartContextTest extends UITestCase {
 		checkActiveContext(globalService, WINDOW_CONTEXT_ID, false);
 
 		IWorkbenchWindow window = openTestWindow();
-		assertTrue(forceActive(window.getShell()));
+		assertTrue(UITestCase.forceActive(window.getShell()));
 
 		IContextService localService = window
 				.getService(IContextService.class);

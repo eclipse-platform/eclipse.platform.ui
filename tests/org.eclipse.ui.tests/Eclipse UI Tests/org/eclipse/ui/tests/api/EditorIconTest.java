@@ -14,17 +14,18 @@
 
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.ImageTests;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests to ensure that various icon scenarios work. These are tested on editors
@@ -33,12 +34,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class EditorIconTest extends UITestCase {
-
-	public EditorIconTest() {
-		super(EditorIconTest.class.getSimpleName());
-	}
+public class EditorIconTest {
 
 	@Test
 	public void testDependantBundleIcon() {
@@ -46,7 +42,7 @@ public class EditorIconTest extends UITestCase {
 		Image i2 = null;
 
 		try {
-			i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
+			i1 = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(
 					"foo.icontest1").getImageDescriptor().createImage();
 			i2 = ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui", "icons/full/obj16/font.png")
 					.orElseThrow(AssertionError::new).createImage();
@@ -67,7 +63,8 @@ public class EditorIconTest extends UITestCase {
 		Image i1 = null;
 		Image i2 = null;
 		try {
-			i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
+			i1 = PlatformUI.getWorkbench().getEditorRegistry()
+					.getDefaultEditor(
 					"foo.icontest2").getImageDescriptor().createImage();
 			i2 = ResourceLocator.imageDescriptorFromBundle(
 					"org.eclipse.jdt.ui", "icons/full/obj16/class_obj.png") // layer breaker!
@@ -90,7 +87,7 @@ public class EditorIconTest extends UITestCase {
 		Image i2 = null;
 
 		try {
-			i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
+			i1 = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(
 					"foo.icontest3").getImageDescriptor().createImage();
 			i2 = ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui", "icons/full/obj16/file_obj.png")
 					.orElseThrow(AssertionError::new).createImage();

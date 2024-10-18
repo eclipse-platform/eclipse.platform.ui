@@ -29,13 +29,10 @@ import org.eclipse.ui.internal.quickaccess.providers.ActionProvider;
 import org.eclipse.ui.internal.quickaccess.providers.CommandProvider;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the quick access providers.
  */
-@RunWith(JUnit4.class)
 public class QuickAccessProvidersTest {
 	private static final String ACTIVITY_ID = "org.eclipse.ui.tests.activitySupportTest.issue1832";
 	private final String COMMAND_ID = "org.eclipse.ui.tests.activitySupportTest.commands.issue1832";

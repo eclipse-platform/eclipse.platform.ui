@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.ide.api;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,31 +25,23 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * More tests for the <code>IDE</code> API and behaviour.
  */
-@RunWith(JUnit4.class)
-public class IDETest2 extends UITestCase {
+public class IDETest2 {
 	private final Set<IFileStore> storesToDelete = new HashSet<>();
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		storesToDelete.forEach(file -> {
 			try {
 				file.delete(EFS.NONE, null);
 			} catch (CoreException e) {
 			}
 		});
-		super.doTearDown();
-	}
-
-	public IDETest2() {
-		super(IDETest2.class.getSimpleName());
 	}
 
 	/**

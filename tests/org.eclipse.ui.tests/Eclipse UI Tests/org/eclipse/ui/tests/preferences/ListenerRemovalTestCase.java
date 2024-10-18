@@ -14,20 +14,19 @@
 
 package org.eclipse.ui.tests.preferences;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  */
-@RunWith(JUnit4.class)
-public class ListenerRemovalTestCase extends UITestCase {
+public class ListenerRemovalTestCase {
 
 	static class TestPropertyListener implements IPropertyChangeListener {
 		boolean listened = false;
@@ -40,10 +39,6 @@ public class ListenerRemovalTestCase extends UITestCase {
 		public void propertyChange(PropertyChangeEvent event) {
 			listened = true;
 		}
-	}
-
-	public ListenerRemovalTestCase() {
-		super(ListenerRemovalTestCase.class.getSimpleName());
 	}
 
 	@Test

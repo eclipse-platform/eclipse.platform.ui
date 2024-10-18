@@ -43,13 +43,10 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test opening and closing of items.
  */
-@RunWith(JUnit4.class)
 public class OpenCloseTest {
 	private static final String ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE = "org.eclipse.jdt.ui.JavaPerspective";
 

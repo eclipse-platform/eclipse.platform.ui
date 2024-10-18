@@ -38,15 +38,12 @@ import org.eclipse.ui.tests.TestPlugin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests various aspects of command state.
  *
  * @since 3.2
  */
-@RunWith(JUnit4.class)
 public class StateTest {
 
 	private static final String TEXT_HELLO = "hello";

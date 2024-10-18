@@ -14,6 +14,11 @@
 
 package org.eclipse.ui.tests.activities;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -25,16 +30,12 @@ import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- * @since 3.3
- */
-@RunWith(JUnit4.class)
-public class MenusTest extends UITestCase {
+public class MenusTest {
 
 	private TestFactory factory;
 	private IWorkbenchWindow window;
@@ -81,22 +82,17 @@ public class MenusTest extends UITestCase {
 		}
 	}
 
-	public MenusTest() {
-		super(MenusTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		window = openTestWindow();
+	@Before
+	public void doSetUp() throws Exception {
+		window = UITestCase.openTestWindow();
 		enabledActivities = window.getWorkbench().getActivitySupport()
 				.getActivityManager().getEnabledActivityIds();
 		service = window.getService(IMenuService.class);
 		assertNotNull(service);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		window.getWorkbench().getActivitySupport().setEnabledActivityIds(
 				enabledActivities);
 		assertEquals(enabledActivities, window.getWorkbench()
@@ -105,7 +101,6 @@ public class MenusTest extends UITestCase {
 		if (factory != null) {
 			service.removeContributionFactory(factory);
 		}
-		super.doTearDown();
 	}
 
 	@Test

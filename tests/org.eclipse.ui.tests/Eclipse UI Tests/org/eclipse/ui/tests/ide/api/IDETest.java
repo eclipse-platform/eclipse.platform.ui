@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.ide.api;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
 import org.eclipse.core.runtime.content.IContentType;
@@ -21,22 +24,16 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IEditorAssociationOverride;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the <code>IDE</code> API and behaviour.
  *
  * @since 3.5
  */
-@RunWith(JUnit4.class)
-public class IDETest extends UITestCase {
-
-	public IDETest() {
-		super(IDETest.class.getSimpleName());
-	}
+public class IDETest {
 
 	static EditorDescriptor descriptor1 = EditorDescriptor.createForProgram("echo");
 	static EditorDescriptor descriptor2 = EditorDescriptor.createForProgram("ps");
@@ -73,16 +70,14 @@ public class IDETest extends UITestCase {
 		}
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		TestOverride.returnNullEntries = true;
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		TestOverride.returnNullEntries = false;
-		super.doTearDown();
 	}
 
 	public static class TestOverride implements IEditorAssociationOverride {

@@ -13,14 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.contexts;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.contexts.NotDefinedException;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * The test case for reading in elements from the extension point. This verifies
@@ -30,16 +31,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class ExtensionTestCase extends UITestCase {
-
-	/**
-	 * Constructs a new instance of <code>ExtensionTestCase</code> with the
-	 * given name.
-	 */
-	public ExtensionTestCase() {
-		super(ExtensionTestCase.class.getSimpleName());
-	}
+public class ExtensionTestCase {
 
 	/**
 	 * Tests that the "org.eclipse.ui.acceleratorScopes" extension point can be
@@ -51,7 +43,7 @@ public class ExtensionTestCase extends UITestCase {
 	 */
 	@Test
 	public final void testAcceleratorScopes() throws NotDefinedException {
-		final IWorkbenchContextSupport contextSupport = fWorkbench
+		final IWorkbenchContextSupport contextSupport = PlatformUI.getWorkbench()
 				.getContextSupport();
 		final IContextManager contextManager = contextSupport
 				.getContextManager();
@@ -90,7 +82,7 @@ public class ExtensionTestCase extends UITestCase {
 	 */
 	@Test
 	public final void testCommandsScopes() throws NotDefinedException {
-		final IWorkbenchContextSupport contextSupport = fWorkbench
+		final IWorkbenchContextSupport contextSupport = PlatformUI.getWorkbench()
 				.getContextSupport();
 		final IContextManager contextManager = contextSupport
 				.getContextManager();
@@ -128,7 +120,7 @@ public class ExtensionTestCase extends UITestCase {
 	 */
 	@Test
 	public final void testContexts() throws NotDefinedException {
-		final IWorkbenchContextSupport contextSupport = fWorkbench
+		final IWorkbenchContextSupport contextSupport = PlatformUI.getWorkbench()
 				.getContextSupport();
 		final IContextManager contextManager = contextSupport
 				.getContextManager();

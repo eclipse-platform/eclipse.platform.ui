@@ -13,40 +13,32 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.adaptable;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the markerImageProviders extension point.
  */
-@RunWith(JUnit4.class)
-public class MarkerImageProviderTest extends UITestCase {
-
-	public MarkerImageProviderTest() {
-		super(MarkerImageProviderTest.class.getSimpleName());
-	}
+public class MarkerImageProviderTest {
 
 	/**
 	 * Tests the static form of the extension, where just a file path is given.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
-	public void testStatic() {
+	public void testStatic() throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IMarker marker = null;
-		try {
-			marker = workspace.getRoot().createMarker(
+		IMarker marker = workspace.getRoot().createMarker(
 					"org.eclipse.ui.tests.testmarker"); //$NON-NLS-1$
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
 		IWorkbenchAdapter adapter = marker.getAdapter(IWorkbenchAdapter.class);
 		ImageDescriptor imageDesc = adapter.getImageDescriptor(marker);
 		assertNotNull(imageDesc);
@@ -54,18 +46,16 @@ public class MarkerImageProviderTest extends UITestCase {
 	}
 
 	/**
-	 * Tests the dynamic form of the extension, where an IMarkerImageProvider class is given.
+	 * Tests the dynamic form of the extension, where an IMarkerImageProvider class
+	 * is given.
+	 *
+	 * @throws CoreException
 	 */
 	@Test
-	public void testDynamic() {
+	public void testDynamic() throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IMarker marker = null;
-		try {
-			marker = workspace.getRoot().createMarker(
+		IMarker marker = workspace.getRoot().createMarker(
 					"org.eclipse.ui.tests.testmarker2"); //$NON-NLS-1$
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
 		IWorkbenchAdapter adapter = marker.getAdapter(IWorkbenchAdapter.class);
 		ImageDescriptor imageDesc = adapter.getImageDescriptor(marker);
 		assertNotNull(imageDesc);

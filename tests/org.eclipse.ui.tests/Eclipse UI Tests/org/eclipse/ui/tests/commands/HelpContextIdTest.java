@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.commands;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -23,20 +25,17 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the new help context identifier support on commands and handlers.
  *
  * @since 3.2
  */
-@RunWith(JUnit4.class)
-public final class HelpContextIdTest extends UITestCase {
+public final class HelpContextIdTest {
 
 	private static final String COMMAND_HELP_ID = "org.eclipse.ui.tests.commandHelp";
 
@@ -45,13 +44,6 @@ public final class HelpContextIdTest extends UITestCase {
 	private static final String HANDLER_HELP_ID = "org.eclipse.ui.tests.handlerHelp";
 
 	private static final String NEW_HELP_ID = "new_help_id";
-
-	/**
-	 * Constructs a new instance of <code>HelpContextIdTest</code>
-	 */
-	public HelpContextIdTest() {
-		super(HelpContextIdTest.class.getSimpleName());
-	}
 
 	/**
 	 * Tests the reading of the help context identifier of the registry, as well
@@ -63,9 +55,9 @@ public final class HelpContextIdTest extends UITestCase {
 	 */
 	@Test
 	public final void testHelpContextId() throws NotDefinedException {
-		final ICommandService commandService = fWorkbench
+		final ICommandService commandService = PlatformUI.getWorkbench()
 				.getService(ICommandService.class);
-		final IHandlerService handlerService = fWorkbench
+		final IHandlerService handlerService = PlatformUI.getWorkbench()
 				.getService(IHandlerService.class);
 		String helpContextId = null;
 
