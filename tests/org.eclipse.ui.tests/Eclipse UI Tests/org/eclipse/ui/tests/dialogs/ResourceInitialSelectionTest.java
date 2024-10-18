@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Emmanuel Chebbi
+ * Copyright (c) 2019, 2024 Emmanuel Chebbi and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,10 @@
 package org.eclipse.ui.tests.dialogs;
 
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,10 +41,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests that FilteredResourcesSelectionDialog selects its initial selection
@@ -51,8 +51,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.14
  */
-@RunWith(JUnit4.class)
-public class ResourceInitialSelectionTest extends UITestCase {
+public class ResourceInitialSelectionTest {
 
 	/** The names of the files created within the test project. */
 	private final static List<String> FILE_NAMES = asList("foo.txt", "bar.txt", "foofoo");
@@ -60,23 +59,13 @@ public class ResourceInitialSelectionTest extends UITestCase {
 	/** The test files stored by name. */
 	private final static Map<String, IFile> FILES = new HashMap<>();
 
-	/** Used to fill created files with an empty content. */
-	private static InputStream stream = new ByteArrayInputStream(new byte[0]);
-
 	private FilteredResourcesSelectionDialog dialog;
 
 	private IProject project;
 
-	/**
-	 * Constructs a new instance of <code>ResourceItemInitialSelectionTest</code>.
-	 */
-	public ResourceInitialSelectionTest() {
-		super(ResourceInitialSelectionTest.class.getSimpleName());
-	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		FILES.clear();
 		createProject();
 	}
@@ -355,7 +344,7 @@ public class ResourceInitialSelectionTest extends UITestCase {
 
 		for (String fileName : FILE_NAMES) {
 			IFile file = project.getFile(fileName);
-			file.create(stream, true, new NullProgressMonitor());
+			file.create(new byte[0], true, false, new NullProgressMonitor());
 			FILES.put(fileName, file);
 		}
 		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
@@ -365,19 +354,13 @@ public class ResourceInitialSelectionTest extends UITestCase {
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
 		for (String fileName : FILE_NAMES) {
-			new DisplayHelper() {
-				@Override
-				protected boolean condition() {
-					return project.getFile(fileName).exists();
-				}
-			}.waitForCondition(shell.getDisplay(), 1000);
-
+			DisplayHelper.waitForCondition(shell.getDisplay(), 1000, () -> project.getFile(fileName).exists());
 			assertTrue("File was not created", project.getFile(fileName).exists());
 		}
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();
 		}
@@ -397,6 +380,5 @@ public class ResourceInitialSelectionTest extends UITestCase {
 				throw e;
 			}
 		}
-		super.doTearDown();
 	}
 }
