@@ -14,6 +14,13 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,6 +31,7 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.keys.model.BindingElement;
 import org.eclipse.ui.internal.keys.model.BindingModel;
@@ -36,17 +44,13 @@ import org.eclipse.ui.internal.keys.model.ModelElement;
 import org.eclipse.ui.internal.keys.model.SchemeElement;
 import org.eclipse.ui.internal.keys.model.SchemeModel;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.4
  */
-@RunWith(JUnit4.class)
-public class KeysPreferenceModelTest extends UITestCase {
+public class KeysPreferenceModelTest {
 
 	private static final String ID_QUICK_SWITCH = "org.eclipse.ui.window.openEditorDropDown";
 	private static final String SCHEME_EMACS_ID = "org.eclipse.ui.emacsAcceleratorConfiguration";
@@ -59,21 +63,15 @@ public class KeysPreferenceModelTest extends UITestCase {
 	private static final String ID_CMD_CONFLICT4 = "org.eclipse.ui.tests.keyModel.conflict4";
 	private static final String ID_CMD_EMACS1 = "org.eclipse.ui.tests.keyModel.emacs1";
 
-	public KeysPreferenceModelTest() {
-		super(KeysPreferenceModelTest.class.getSimpleName());
-	}
-
 	@Test
 	public void testDefaults() throws Exception {
 		KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		ContextModel cm = controller.getContextModel();
 		boolean foundWindow = false;
 		boolean foundDialog = false;
-		Iterator<ContextElement> i = cm.getContexts().iterator();
-		while (i.hasNext()) {
-			ContextElement elem = i.next();
+		for (ContextElement elem : cm.getContexts()) {
 			if (elem.getId().equals(IContextService.CONTEXT_ID_WINDOW)) {
 				foundWindow = true;
 			} else if (elem.getId().equals(IContextService.CONTEXT_ID_DIALOG)) {
@@ -88,9 +86,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		SchemeModel sm = controller.getSchemeModel();
 		boolean foundDefault = false;
-		Iterator<SchemeElement> i2 = sm.getSchemes().iterator();
-		while (i2.hasNext()) {
-			SchemeElement e = i2.next();
+		for (SchemeElement e : sm.getSchemes()) {
 			if (e.getId().equals(
 					IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID)) {
 				foundDefault = true;
@@ -113,7 +109,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testContexts() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		ContextModel cm = controller.getContextModel();
 		ContextElement dialog = cm.getContextIdToElement()
@@ -153,7 +149,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testBindings() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		ContextModel cm = controller.getContextModel();
 		BindingModel bm = controller.getBindingModel();
@@ -201,7 +197,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testBasicConflicts() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		final ConflictModel cf = controller.getConflictModel();
 		final BindingModel bm = controller.getBindingModel();
@@ -260,7 +256,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testConflictSelection() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		final ConflictModel cf = controller.getConflictModel();
 		final BindingModel bm = controller.getBindingModel();
@@ -295,7 +291,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void failsOnCocoatestCreateConflict() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		final ConflictModel cf = controller.getConflictModel();
 		final BindingModel bm = controller.getBindingModel();
@@ -332,7 +328,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void failsOnMacCocoatestConflictRemove() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		final ConflictModel cf = controller.getConflictModel();
 		final BindingModel bm = controller.getBindingModel();
@@ -363,7 +359,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void failsOnMacCocoatestConflictRestore() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		final ConflictModel cf = controller.getConflictModel();
 		final BindingModel bm = controller.getBindingModel();
@@ -397,7 +393,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testUpdateContext() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		final ContextModel cm = controller.getContextModel();
 		final ContextElement dialog = cm
@@ -443,7 +439,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void failsOnWinAndLinuxWith16VMtestUpdateKeySequence() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		final ContextModel cm = controller.getContextModel();
 		final ContextElement dialog = cm
@@ -526,7 +522,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testCreateKeyBinding() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		final ContextModel cm = controller.getContextModel();
 		final ContextElement window = cm
@@ -571,13 +567,11 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testChangeSchemes() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		SchemeModel sm = controller.getSchemeModel();
 		SchemeElement emacsScheme = null;
-		Iterator<SchemeElement> i = sm.getSchemes().iterator();
-		while (i.hasNext()) {
-			SchemeElement e = i.next();
+		for (SchemeElement e : sm.getSchemes()) {
 			if (e.getId().equals(SCHEME_EMACS_ID)) {
 				emacsScheme = e;
 			}
@@ -619,14 +613,12 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testChangeSchemesTwice() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		SchemeModel sm = controller.getSchemeModel();
 		SchemeElement emacsScheme = null;
 		SchemeElement defaultScheme = null;
-		Iterator<SchemeElement> i = sm.getSchemes().iterator();
-		while (i.hasNext()) {
-			SchemeElement e = i.next();
+		for (SchemeElement e : sm.getSchemes()) {
 			if (e.getId().equals(SCHEME_EMACS_ID)) {
 				emacsScheme = e;
 			} else if (e.getId().equals(
@@ -640,9 +632,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		BindingModel bm = controller.getBindingModel();
 		BindingElement quickSwitch = null;
 		int quickCount = 0;
-		Iterator<BindingElement> i2 = bm.getBindings().iterator();
-		while (i2.hasNext()) {
-			BindingElement e = i2.next();
+		for (BindingElement e : bm.getBindings()) {
 			if (e.getId().equals(ID_QUICK_SWITCH)) {
 				quickSwitch = e;
 				quickCount++;
@@ -653,11 +643,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		sm.setSelectedElement(emacsScheme);
 
-		i2 = bm.getBindings().iterator();
 		ArrayList<BindingElement> quick2 = new ArrayList<>();
 		boolean foundOriginal = false;
-		while (i2.hasNext()) {
-			BindingElement e = i2.next();
+		for (BindingElement e : bm.getBindings()) {
 			if (e.getId().equals(ID_QUICK_SWITCH)) {
 				quick2.add(e);
 				if (e == quickSwitch) {
@@ -670,11 +658,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		sm.setSelectedElement(defaultScheme);
 
-		i2 = bm.getBindings().iterator();
 		quick2.clear();
 		foundOriginal = false;
-		while (i2.hasNext()) {
-			BindingElement e = i2.next();
+		for (BindingElement e : bm.getBindings()) {
 			if (e.getId().equals(ID_QUICK_SWITCH)) {
 				quick2.add(e);
 				if (e == quickSwitch) {
@@ -689,14 +675,12 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testSchemesWithNoDefaultBinding() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		final SchemeModel sm = controller.getSchemeModel();
 		SchemeElement emacsScheme = null;
 		SchemeElement defaultScheme = null;
-		Iterator<SchemeElement> i = sm.getSchemes().iterator();
-		while (i.hasNext()) {
-			SchemeElement e = i.next();
+		for (SchemeElement e : sm.getSchemes()) {
 			if (e.getId().equals(SCHEME_EMACS_ID)) {
 				emacsScheme = e;
 			} else if (e.getId().equals(
@@ -726,14 +710,12 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testCopyBinding() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		BindingModel bm = controller.getBindingModel();
 		BindingElement activateEditor = null;
 		ArrayList<BindingElement> activates = new ArrayList<>();
-		Iterator<BindingElement> i = bm.getBindings().iterator();
-		while (i.hasNext()) {
-			BindingElement be = i.next();
+		for (BindingElement be : bm.getBindings()) {
 			if (be.getId().equals(ID_ACTIVATE_EDITOR)) {
 				activates.add(be);
 				if (be.getModelObject() instanceof KeyBinding) {
@@ -747,9 +729,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		bm.setSelectedElement(activateEditor);
 		bm.copy();
 		activates.clear();
-		i = bm.getBindings().iterator();
-		while (i.hasNext()) {
-			BindingElement be = i.next();
+		for (BindingElement be : bm.getBindings()) {
 			if (be.getId().equals(ID_ACTIVATE_EDITOR)) {
 				activates.add(be);
 			}
@@ -760,14 +740,12 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testCopyCommand() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		BindingModel bm = controller.getBindingModel();
 		BindingElement conflict4 = null;
 		ArrayList<BindingElement> activates = new ArrayList<>();
-		Iterator<BindingElement> i = bm.getBindings().iterator();
-		while (i.hasNext()) {
-			BindingElement be = i.next();
+		for (BindingElement be : bm.getBindings()) {
 			if (be.getId().equals(ID_CMD_CONFLICT4)) {
 				activates.add(be);
 				if (be.getModelObject() instanceof ParameterizedCommand) {
@@ -781,9 +759,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		bm.setSelectedElement(conflict4);
 		bm.copy();
 		activates.clear();
-		i = bm.getBindings().iterator();
-		while (i.hasNext()) {
-			BindingElement be = i.next();
+		for (BindingElement be : bm.getBindings()) {
 			if (be.getId().equals(ID_CMD_CONFLICT4)) {
 				activates.add(be);
 			}
@@ -794,7 +770,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testRemoveActiveEditor() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		BindingModel bm = controller.getBindingModel();
 		BindingElement activateEditor = getBindingElement(bm,
@@ -812,7 +788,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testRestoreBinding() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		BindingModel bm = controller.getBindingModel();
 		BindingElement activateEditor = getBindingElement(bm,
@@ -832,9 +808,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertEquals(Integer.valueOf(Binding.USER), activeTwo.getUserDelta());
 
 		ArrayList<BindingElement> activates = new ArrayList<>();
-		Iterator<BindingElement> i = bm.getBindings().iterator();
-		while (i.hasNext()) {
-			BindingElement be = i.next();
+		for (BindingElement be : bm.getBindings()) {
 			if (be.getId().equals(ID_ACTIVATE_EDITOR)) {
 				activates.add(be);
 			}
@@ -844,9 +818,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		bm.restoreBinding(controller.getContextModel());
 
 		activates = new ArrayList<>();
-		i = bm.getBindings().iterator();
-		while (i.hasNext()) {
-			BindingElement be = i.next();
+		for (BindingElement be : bm.getBindings()) {
 			if (be.getId().equals(ID_ACTIVATE_EDITOR)) {
 				activates.add(be);
 				activateEditor = be;
@@ -859,7 +831,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testRestoreCommand() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		final ContextModel cm = controller.getContextModel();
 		final ContextElement window = cm
@@ -890,7 +862,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 	@Test
 	public void testRestoreContext() throws Exception {
 		final KeyController controller = new KeyController();
-		controller.init(getWorkbench());
+		controller.init(PlatformUI.getWorkbench());
 
 		final ContextModel cm = controller.getContextModel();
 		final ContextElement dialog = cm
@@ -930,9 +902,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 	private BindingElement getBindingElement(BindingModel bm, String bindingId) {
 		BindingElement quickAccess = null;
-		Iterator<BindingElement> i = bm.getBindings().iterator();
-		while (i.hasNext()) {
-			BindingElement e = i.next();
+		for (BindingElement e : bm.getBindings()) {
 			if (e.getId().equals(bindingId)) {
 				quickAccess = e;
 			}

@@ -13,30 +13,21 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.encoding;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.WorkbenchEncoding;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * The EncodingTestCase is the suite that tests the 3.1
  * encoding support.
  */
-@RunWith(JUnit4.class)
-public class EncodingTestCase extends UITestCase {
-
-	/**
-	 * Create a new instance of the receiver.
-	 */
-	public EncodingTestCase() {
-		super(EncodingTestCase.class.getSimpleName());
-	}
+public class EncodingTestCase {
 
 	/**
 	 * Test that the workbench encodings are all valid. The
@@ -48,10 +39,10 @@ public class EncodingTestCase extends UITestCase {
 
 		for (String encoding : encodings) {
 			try {
-				Assert.isTrue(Charset.isSupported(encoding), "Unsupported charset " + encoding);
+				assertTrue("Unsupported charset " + encoding, Charset.isSupported(encoding));
 
 			} catch (IllegalCharsetNameException e) {
-				Assert.isTrue(false, "Unsupported charset " + encoding);
+				fail("Unsupported charset " + encoding);
 			}
 		}
 	}

@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.activities;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
@@ -22,7 +27,7 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.tests.harness.util.ImageTests;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -31,15 +36,11 @@ import org.junit.runners.JUnit4;
  * @since 3.1
  */
 @RunWith(JUnit4.class)
-public class ImagesTest extends UITestCase {
+public class ImagesTest {
 
 	private Image defaultImage;
 	private Image image1;
 	private Image image2;
-
-	public ImagesTest() {
-		super(ImagesTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testActivityImages() {
@@ -95,9 +96,8 @@ public class ImagesTest extends UITestCase {
 	}
 
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public void doTearDown() throws Exception {
 		if (defaultImage != null) {
 			defaultImage.dispose();
 		}

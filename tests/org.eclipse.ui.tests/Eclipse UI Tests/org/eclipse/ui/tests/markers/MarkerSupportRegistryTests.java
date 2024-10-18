@@ -14,26 +14,18 @@
 
 package org.eclipse.ui.tests.markers;
 
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * MarkerSupportTests are tests for the markerSupport extension
  * point.
  * @since 3.2
  */
-@RunWith(JUnit4.class)
-public class MarkerSupportRegistryTests extends UITestCase {
-
-	/**
-	 * Create an instance of the receiver.
-	 */
-	public MarkerSupportRegistryTests() {
-		super(MarkerSupportRegistryTests.class.getSimpleName());
-	}
+public class MarkerSupportRegistryTests {
 
 	/**
 	 * Test that the marker categories expected are found.
@@ -51,8 +43,8 @@ public class MarkerSupportRegistryTests extends UITestCase {
 	private void doTestCategory(String string) {
 		String category = MarkerSupportRegistry.getInstance().getCategory(
 				string);
-		assertFalse("No Category for" + string, category == null);
-		assertTrue("Wrong Category for" + string, category.equals("Test Markers"));
+		assertNotNull("No Category for" + string, category);
+		assertEquals("Wrong Category for" + string, "Test Markers", category);
 
 	}
 

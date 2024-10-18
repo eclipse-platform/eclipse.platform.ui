@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.markers;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,29 +27,17 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- *
- * @since 3.5
- * @author Prakash G.R.
- */
-@RunWith(JUnit4.class)
-public class MarkerTesterTest extends UITestCase {
+public class MarkerTesterTest {
 
 	private static final String MARKER_NAMESPACE = "org.eclipse.ui.ide.marker";
 	private IProject project;
 
-	public MarkerTesterTest() {
-		super(MarkerTesterTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject("tests");
 		if (!project.exists()) {
 			project.create(null);
@@ -58,9 +48,8 @@ public class MarkerTesterTest extends UITestCase {
 		}
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public void doTearDown() throws Exception {
 		if (project.exists()) {
 			project.delete(true, null);
 		}

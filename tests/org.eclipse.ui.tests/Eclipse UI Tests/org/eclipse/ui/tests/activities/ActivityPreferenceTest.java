@@ -23,13 +23,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- * @since 3.1
- */
-@RunWith(JUnit4.class)
 public class ActivityPreferenceTest {
 	/**
 	 * Preference prefix - must match the one specified in ActivityPreferenceHelper
