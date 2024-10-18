@@ -407,6 +407,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 						if (fShowCarriageReturn) {
 							if (visibleChar.length() > 0 && cache.contains(fTextWidget, lineOffset + textOffset)) {
 								textOffset--;
+								delta--;
 								break;
 							}
 							visibleChar.append(CARRIAGE_RETURN_SIGN);
@@ -420,6 +421,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 						if (fShowLineFeed) {
 							if (visibleChar.length() > 0 && cache.contains(fTextWidget, lineOffset + textOffset)) {
 								textOffset--;
+								delta--;
 								break;
 							}
 							visibleChar.append(LINE_FEED_SIGN);
