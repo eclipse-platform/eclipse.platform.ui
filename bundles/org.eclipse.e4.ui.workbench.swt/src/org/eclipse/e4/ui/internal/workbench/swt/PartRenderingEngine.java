@@ -1440,6 +1440,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 
 		protected void resetOverriddenPreferences(IEclipsePreferences preferences) {
+			EclipsePreferencesHelper.resetOverriddenDefaults(preferences);
 			for (String name : getOverriddenPropertyNames(preferences)) {
 				preferences.remove(name);
 			}

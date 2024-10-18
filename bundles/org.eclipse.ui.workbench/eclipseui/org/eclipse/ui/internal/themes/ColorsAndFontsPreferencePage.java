@@ -35,8 +35,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -87,6 +89,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.themes.ColorUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.themes.IThemePreview;
@@ -331,9 +334,20 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 		private int usableImageSize = -1;
 
+		private static final int REFRESH_INTERVAL_IN_MS = 300;
+
+		private final Runnable updateControlsAndRefreshTreeRunnable = () -> {
+			if (fontChangeButton == null || fontChangeButton.isDisposed()) {
+				return;
+			}
+			updateControls();
+			tree.getViewer().refresh();
+		};
+
 		private IPropertyChangeListener listener = event -> {
 			if (event.getNewValue() != null) {
 				fireLabelProviderChanged(new LabelProviderChangedEvent(PresentationLabelProvider.this));
+				Display.getDefault().timerExec(REFRESH_INTERVAL_IN_MS, updateControlsAndRefreshTreeRunnable);
 			} else {
 				// Some theme definition element has been modified and we
 				// need to refresh the viewer
@@ -1304,6 +1318,30 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			labelProvider.hookListeners(); // rehook the listeners
 	}
 
+	private RGB getColorTakingPreferenceDefaultValueIntoAccount(ColorDefinition definition) {
+		final RGB valueFromExtension = definition.getValue();
+		IPreferenceStore store = getPreferenceStore();
+		if (store == null) {
+			return valueFromExtension;
+		}
+		String id = definition.getId();
+		if (id == null || id.isBlank()) {
+			return valueFromExtension;
+		}
+		String storeDefault = store.getDefaultString(id);
+		if (storeDefault == null) {
+			return valueFromExtension;
+		}
+		try {
+			RGB defaultRGB = ColorUtil.getColorValue(storeDefault);
+			if (defaultRGB != null && !defaultRGB.equals(valueFromExtension)) {
+				return defaultRGB;
+			}
+		} catch (DataFormatException e) { // silently ignored
+		}
+		return valueFromExtension;
+	}
+
 	/**
 	 * Answers whether the definition is currently set to the default value.
 	 *
@@ -1314,23 +1352,29 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 */
 	private boolean isDefault(ColorDefinition definition) {
 		String id = definition.getId();
-
 		if (colorPreferencesToSet.containsKey(definition)) {
 			if (definition.getValue() != null) { // value-based color
-				if (colorPreferencesToSet.get(definition).equals(definition.getValue()))
+				if (colorPreferencesToSet.get(definition)
+						.equals(getColorTakingPreferenceDefaultValueIntoAccount(definition)))
 					return true;
 			} else if (colorPreferencesToSet.get(definition).equals(getColorAncestorValue(definition)))
 				return true;
 		} else if (colorValuesToSet.containsKey(id)) {
 			if (definition.getValue() != null) { // value-based color
-				if (colorValuesToSet.get(id).equals(definition.getValue()))
+				if (colorValuesToSet.get(id).equals(getColorTakingPreferenceDefaultValueIntoAccount(definition)))
 					return true;
 			} else {
 				if (colorValuesToSet.get(id).equals(getColorAncestorValue(definition)))
 					return true;
 			}
 		} else if (definition.getValue() != null) { // value-based color
-			if (getPreferenceStore().isDefault(createPreferenceKey(definition)))
+			IPreferenceStore store = getPreferenceStore();
+			String defaultString = store.getDefaultString(id);
+			String string = store.getString(id);
+			if (defaultString != null && string != null && defaultString.equals(string)) {
+				return true;
+			}
+			if (store.isDefault(createPreferenceKey(definition)))
 				return true;
 		} else {
 			// a descendant is default if it's the same value as its ancestor
@@ -1516,8 +1560,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	private boolean resetColor(ColorDefinition definition, boolean force) {
 		if (force || !isDefault(definition)) {
 			RGB newRGB;
-			if (definition.getValue() != null)
-				newRGB = definition.getValue();
+			if (definition.getValue() != null) {
+				newRGB = getColorTakingPreferenceDefaultValueIntoAccount(definition);
+			}
 			else
 				newRGB = getColorAncestorValue(definition);
 
