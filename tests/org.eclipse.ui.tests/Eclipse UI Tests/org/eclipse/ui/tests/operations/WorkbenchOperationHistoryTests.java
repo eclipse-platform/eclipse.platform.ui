@@ -14,37 +14,34 @@
 
 package org.eclipse.ui.tests.operations;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the Operations Framework API.
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public class WorkbenchOperationHistoryTests extends UITestCase {
+public class WorkbenchOperationHistoryTests {
 	IUndoContext context, contextA, contextB;
 
 	IOperationHistory history;
 
 	IUndoableOperation op1, op2, op3, op4, op5, op6;
 
-	public WorkbenchOperationHistoryTests() {
-		super(WorkbenchOperationHistoryTests.class.getSimpleName());
-	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		history = PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
 		context = PlatformUI.getWorkbench().getOperationSupport().getUndoContext();
 		contextA = new ObjectUndoContext("A");
@@ -72,10 +69,9 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, true);
-		super.doTearDown();
 	}
 
 	@Test

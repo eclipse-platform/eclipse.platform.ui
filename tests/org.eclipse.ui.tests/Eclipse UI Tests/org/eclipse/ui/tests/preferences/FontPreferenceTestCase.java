@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.preferences;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -28,19 +33,15 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * The FontPreferenceTestCase tests adding fonts to
  * the preference store and what occurs if the values
  * are bogus
  */
-
-@RunWith(JUnit4.class)
-public class FontPreferenceTestCase extends UITestCase {
+public class FontPreferenceTestCase {
 
 	public String BAD_FONT_DEFINITION = "BadFont-regular-10";
 
@@ -50,16 +51,8 @@ public class FontPreferenceTestCase extends UITestCase {
 
 	private IPreferenceStore preferenceStore;
 
-	/**
-	 * Constructor for FontPreferenceTestCase.
-	 */
-	public FontPreferenceTestCase() {
-		super(FontPreferenceTestCase.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		AbstractUIPlugin plugin = WorkbenchPlugin.getDefault();
 		preferenceStore = plugin.getPreferenceStore();
 

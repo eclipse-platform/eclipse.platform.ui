@@ -18,10 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
@@ -32,12 +29,7 @@ import junit.framework.TestSuite;
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public class MultiThreadedOperationsTests extends UITestCase {
-
-	public MultiThreadedOperationsTests() {
-		super(MultiThreadedOperationsTests.class.getSimpleName());
-	}
+public class MultiThreadedOperationsTests {
 
 	@Test
 	public void testOperationsAPIinThreads() {

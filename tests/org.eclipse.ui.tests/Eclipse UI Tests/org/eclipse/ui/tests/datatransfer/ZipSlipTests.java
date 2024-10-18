@@ -25,21 +25,13 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.internal.wizards.datatransfer.ZipLeveledStructureProvider;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-@RunWith(JUnit4.class)
-public class ZipSlipTests extends UITestCase {
-
-	public ZipSlipTests() {
-		super(ZipSlipTests.class.getName());
-	}
+public class ZipSlipTests {
 
 	public static final String ZIPSLIP_FILE = "data/zipSlip.zip"; //$NON-NLS-1$
 

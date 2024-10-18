@@ -16,6 +16,13 @@
 
 package org.eclipse.ui.tests.operations;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -64,10 +71,9 @@ import org.eclipse.ui.ide.undo.MoveProjectOperation;
 import org.eclipse.ui.ide.undo.MoveResourcesOperation;
 import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
 import org.eclipse.ui.internal.operations.AdvancedValidationUserApprover;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the undo of various workspace operations. Uses the following workspace
@@ -88,8 +94,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.3
  */
-@RunWith(JUnit4.class)
-public class WorkspaceOperationsTests extends UITestCase {
+public class WorkspaceOperationsTests {
 
 	IProject testProject, targetProject;
 
@@ -353,13 +358,8 @@ public class WorkspaceOperationsTests extends UITestCase {
 		}
 	}
 
-	public WorkspaceOperationsTests() {
-		super(WorkspaceOperationsTests.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		// Suppress validation UI
 		AdvancedValidationUserApprover.AUTOMATED_MODE = true;
 		// Project
@@ -421,8 +421,8 @@ public class WorkspaceOperationsTests extends UITestCase {
 
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		testProject = (IProject) getWorkspaceRoot().findMember(
 				TEST_PROJECT_NAME);
 		if (testProject != null) {
@@ -459,8 +459,6 @@ public class WorkspaceOperationsTests extends UITestCase {
 		testLinkedFile = null;
 		testFileInSubFolder = null;
 		testFileInProject = null;
-
-		super.doTearDown();
 	}
 
 	private IWorkspace getWorkspace() {

@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.preferences;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -20,22 +24,14 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class ScopedPreferenceStoreTestCase extends UITestCase {
+public class ScopedPreferenceStoreTestCase {
 
 	final String DEFAULT_DEFAULT_STRING = "";
 
-	public ScopedPreferenceStoreTestCase() {
-		super(ScopedPreferenceStoreTestCase.class.getSimpleName());
-	}
-
 	@Test
-	public void testNeedsSaving() {
+	public void testNeedsSaving() throws IOException {
 		IScopeContext context = InstanceScope.INSTANCE;
 		String qualifier = "org.eclipse.ui.tests.preferences";
 		ScopedPreferenceStore store = new ScopedPreferenceStore(context,
@@ -55,11 +51,7 @@ public class ScopedPreferenceStoreTestCase extends UITestCase {
 		assertEquals("1.2", value, store.getString(key));
 
 		// flush
-		try {
-			store.save();
-		} catch (IOException e) {
-			fail("2.99", e);
-		}
+		store.save();
 
 		// do the test
 		assertFalse("3.0", store.needsSaving());

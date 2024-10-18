@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.activities;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -26,18 +28,14 @@ import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.activities.ActivityRequirementBinding;
 import org.eclipse.ui.internal.activities.CategoryActivityBinding;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  *
  * The static test reads activity definitions from the plugin.xml (in
  * org.eclipse.ui.tests) file and valides its content.
  */
-@RunWith(JUnit4.class)
-public class StaticTest extends UITestCase {
+public class StaticTest {
 	private final IActivityManager activityManager;
 
 	private List<String> categoryIds;
@@ -47,7 +45,6 @@ public class StaticTest extends UITestCase {
 	private List<Object> patternActivityIds;
 
 	public StaticTest() {
-		super(StaticTest.class.getSimpleName());
 		activityManager = PlatformUI.getWorkbench().getActivitySupport()
 				.getActivityManager();
 		populateIds();

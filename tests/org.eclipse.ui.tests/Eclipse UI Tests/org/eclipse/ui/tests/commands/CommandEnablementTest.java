@@ -74,13 +74,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  */
-@RunWith(JUnit4.class)
 @Ignore("broke during e4 transition and still need adjustments")
 public class CommandEnablementTest {
 

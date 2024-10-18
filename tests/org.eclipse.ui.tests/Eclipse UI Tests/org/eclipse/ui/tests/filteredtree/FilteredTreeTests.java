@@ -28,13 +28,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class FilteredTreeTests extends UITestCase {
+public class FilteredTreeTests {
 	private FilteredTree fTreeViewer;
 	private TestElement fRootElement;
 	// create an 8000-item Tree
@@ -74,10 +71,6 @@ public class FilteredTreeTests extends UITestCase {
 
 		protected abstract FilteredTree doCreateFilteredTree(Composite comp, int style);
 
-	}
-
-	public FilteredTreeTests() {
-		super(FilteredTreeTests.class.getSimpleName());
 	}
 
 	@Test
@@ -203,9 +196,8 @@ public class FilteredTreeTests extends UITestCase {
 		fTreeViewer.getViewer().setInput(fRootElement);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public void doTearDown() throws Exception {
 		fTreeViewer = null;
 		fRootElement = null;
 	}

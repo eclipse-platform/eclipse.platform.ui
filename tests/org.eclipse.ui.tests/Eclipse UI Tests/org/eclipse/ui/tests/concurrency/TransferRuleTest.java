@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,18 +24,14 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.IThreadListener;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests IJobManger#transferRule in conjunction with ModalContext.run.
  * This also exercises the IThreadListener API to allow the runnable to transfer
  * and obtain the rule owned by the calling thread.
  */
-@RunWith(JUnit4.class)
-public class TransferRuleTest extends UITestCase {
+public class TransferRuleTest {
 	static class TestRule implements ISchedulingRule {
 		@Override
 		public boolean contains(ISchedulingRule rule) {
@@ -88,12 +86,8 @@ public class TransferRuleTest extends UITestCase {
 		}
 	}
 
-	public TransferRuleTest() {
-		super(TransferRuleTest.class.getSimpleName());
-	}
-
 	@Test
-	public void testModalContextTransfer() {
+	public void testModalContextTransfer() throws InvocationTargetException, InterruptedException {
 		ISchedulingRule rule = new TestRule();
 		TestRunnable runnable = new TestRunnable(rule);
 		try {
@@ -101,12 +95,6 @@ public class TransferRuleTest extends UITestCase {
 			Job.getJobManager().beginRule(rule, null);
 			//now execute the runnable using ModalContext - the rule should transfer correctly
 			new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()).run(true, true, runnable);
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-			fail("1.0");
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			fail("1.1");
 		} finally {
 			//must release the rule when finished
 			Job.getJobManager().endRule(rule);

@@ -13,21 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertTrue;
+
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class StartupTest extends UITestCase {
-
-	/**
-	 * Construct an instance.
-	 */
-	public StartupTest() {
-		super(StartupTest.class.getSimpleName());
-	}
+public class StartupTest {
 
 	@Test
 	public void testStartup() {
@@ -36,9 +30,13 @@ public class StartupTest extends UITestCase {
 		assertTrue("Startup - completed before tests", StartupClass.getEarlyStartupCompleted());
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@Before
+	public void doSetUp() {
+		PlatformUI.getWorkbench();
+	}
+
+	@After
+	public void doTearDown() throws Exception {
 		// NOTE:  tearDown will run after each test.  Therefore, we
 		// only want one test in this suite (or the values set when
 		// this plugin started up will be lost).
