@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -212,16 +212,35 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 * @param uriIconPath The URI of the image file.
 	 * @return a new image descriptor
 	 *
-	 * @since 3.19
+	 * @since 3.36
 	 */
-	public ImageDescriptor imageDescriptorFromURI(URI uriIconPath) {
+	public static ImageDescriptor createFromURI(URI uriIconPath) {
+		if (uriIconPath == null) {
+			return getMissingImageDescriptor();
+		}
 		try {
-			return ImageDescriptor.createFromURL(new URL(uriIconPath.toString()));
-		} catch (MalformedURLException | NullPointerException e) {
+			return ImageDescriptor.createFromURL(uriIconPath.toURL());
+		} catch (MalformedURLException e) {
 			// return the missing image placeholder to indicate
 			// the incorrect call without interfering with the user flow
 			return getMissingImageDescriptor();
 		}
+	}
+
+	/**
+	 * Convenient method to create an ImageDescriptor from an URI
+	 *
+	 * Delegates to ImageDescriptor createFromURL
+	 *
+	 * @param uriIconPath The URI of the image file.
+	 * @return a new image descriptor
+	 *
+	 * @since 3.19
+	 * @deprecated Use {@link #createFromURI(URI)} instead.
+	 */
+	@Deprecated(since = "3.36", forRemoval = true)
+	public ImageDescriptor imageDescriptorFromURI(URI uriIconPath) {
+		return createFromURI(uriIconPath);
 	}
 
 	@Override
