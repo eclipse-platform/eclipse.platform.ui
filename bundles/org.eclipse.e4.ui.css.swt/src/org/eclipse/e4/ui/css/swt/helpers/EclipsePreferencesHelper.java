@@ -16,9 +16,11 @@ package org.eclipse.e4.ui.css.swt.helpers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class EclipsePreferencesHelper {
@@ -33,6 +35,8 @@ public class EclipsePreferencesHelper {
 	private static String previousThemeId;
 
 	private static String currentThemeId;
+
+	private static final String PROPS_DEFAULT_VALUE_BEFORE_OVERIDDEN_FROM_CSS = "defaultValueBeforeOverriddenFromCSS";
 
 	public static void appendOverriddenPropertyName(
 			IEclipsePreferences preferences, String name) {
@@ -132,6 +136,48 @@ public class EclipsePreferencesHelper {
 				EclipsePreferencesHelper.removeOverriddenByCssProperty(
 						(IEclipsePreferences) preferences, event.getKey());
 			}
+		}
+	}
+
+	public static void overrideDefault(IEclipsePreferences preferences, String name, String value) {
+		String prefName = preferences.name();
+		if (prefName == null) {
+			return;
+		}
+		IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE.getNode(prefName);
+		if (defaultPrefs == null) {
+			return;
+		}
+		String existing = defaultPrefs.get(name, null);
+		if (existing != null && value != null && existing.equals(value) == false) {
+			defaultPrefs.put(name, value);
+			preferences.put(name + SEPARATOR + PROPS_DEFAULT_VALUE_BEFORE_OVERIDDEN_FROM_CSS, existing);
+		}
+	}
+
+	public static void resetOverriddenDefaults(IEclipsePreferences preferences) {
+		try {
+			String[] keys = preferences.keys();
+			if (keys == null) {
+				return;
+			}
+			for (String key : keys) {
+				if (key != null && key.endsWith(SEPARATOR + PROPS_DEFAULT_VALUE_BEFORE_OVERIDDEN_FROM_CSS)) {
+					String overriddenDefault = preferences.get(key, null);
+					String originKey = key.substring(0,
+							key.lastIndexOf(SEPARATOR + PROPS_DEFAULT_VALUE_BEFORE_OVERIDDEN_FROM_CSS));
+					IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE.getNode(preferences.name());
+					if (defaultPrefs != null) {
+						String currentDefault = defaultPrefs.get(originKey, null);
+						if (overriddenDefault != null && currentDefault != null
+								&& !currentDefault.equals(overriddenDefault)) {
+							defaultPrefs.put(originKey, overriddenDefault);
+						}
+					}
+					preferences.remove(key);
+				}
+			}
+		} catch (BackingStoreException e) { // silently ignored
 		}
 	}
 }
