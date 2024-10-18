@@ -62,6 +62,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		createUseIPersistablePref(composite);
 		createPromptWhenStillOpenPref(composite);
 		createEditorReuseGroup(composite);
+		createAlignMultiPageEditorTabs(composite);
 
 		applyDialogFont(composite);
 
