@@ -34,8 +34,6 @@ import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Testing for https://bugs.eclipse.org/bugs/show_bug.cgi?id=75909 .
@@ -48,7 +46,6 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
 @Ignore
 public class Bug75909Test {
 

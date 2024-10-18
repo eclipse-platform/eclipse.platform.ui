@@ -15,37 +15,34 @@
 
 package org.eclipse.ui.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.text.contentassist.BoldStylerProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.dialogs.StyledStringHighlighter;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class StyledStringHighlighterTest extends UITestCase {
-
-	public StyledStringHighlighterTest() {
-		super(StyledStringHighlighterTest.class.getSimpleName());
-	}
+public class StyledStringHighlighterTest {
 
 	private StyledStringHighlighter cut;
 	private static Font font;
 	private static BoldStylerProvider boldStyler;
 
-	@Override
+	@Before
 	public void doSetUp() {
-		font = new Font(fWorkbench.getDisplay(), "Arial", 14, SWT.BOLD);
+		font = new Font(Display.getDefault(), "Arial", 14, SWT.BOLD);
 		boldStyler = new BoldStylerProvider(font);
 		cut = new StyledStringHighlighter();
 	}
 
-	@Override
-	protected void doTearDown() {
+	@After
+	public void doTearDown() {
 		if (boldStyler != null) {
 			boldStyler.dispose();
 			boldStyler = null;

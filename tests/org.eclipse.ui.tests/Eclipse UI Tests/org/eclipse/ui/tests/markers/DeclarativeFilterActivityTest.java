@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.markers;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,20 +24,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
+/**
+ * The DeclarativeProblemTest is a test of the declarative filters.
+ */
 public class DeclarativeFilterActivityTest extends DeclarativeFilterTest {
 
 	static final String PROBLEM_FILTER_TEST_ACTIVITY = "problemFilterTestActivity";
-
-	/**
-	 * The DeclarativeProblemTest is a test of the declarative filters.
-	 */
-	public DeclarativeFilterActivityTest() {
-		super(DeclarativeFilterActivityTest.class.getSimpleName());
-	}
 
 	/**
 	 * Check that the activities are enabling as expected.

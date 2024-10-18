@@ -13,6 +13,10 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.systeminplaceeditor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -28,10 +32,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 
 /**
@@ -45,16 +46,8 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.4
  */
-@RunWith(JUnit4.class)
 @Ignore
-public class OpenSystemInPlaceEditorTest extends UITestCase {
-
-	/**
-	 * Creates the test object.
-	 */
-	public OpenSystemInPlaceEditorTest() {
-		super(OpenSystemInPlaceEditorTest.class.getSimpleName());
-	}
+public class OpenSystemInPlaceEditorTest {
 
 	public void testWorkspaceFile() throws Exception {
 		if (!PlatformUI.getWorkbench().getEditorRegistry().isSystemInPlaceEditorAvailable("test.doc")) {
@@ -102,10 +95,10 @@ public class OpenSystemInPlaceEditorTest extends UITestCase {
 	private IWorkbenchPage getWorkbenchPage() {
 		IWorkbenchWindow window;
 		try {
-			if (getWorkbench().getWorkbenchWindowCount() == 0) {
-				window = getWorkbench().openWorkbenchWindow(null);
+			if (PlatformUI.getWorkbench().getWorkbenchWindowCount() == 0) {
+				window = PlatformUI.getWorkbench().openWorkbenchWindow(null);
 			} else {
-				window = getWorkbench().getWorkbenchWindows()[0];
+				window = PlatformUI.getWorkbench().getWorkbenchWindows()[0];
 			}
 
 			IWorkbenchPage[] pages = window.getPages();

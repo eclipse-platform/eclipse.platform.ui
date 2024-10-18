@@ -19,40 +19,23 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * MarkerViewTests are the tests for the marker view.
  *
  * @since 3.4
  */
-@RunWith(JUnit4.class)
-public class MarkerViewTests extends UITestCase {
-
-	/**
-	 * Create a new instance of the receiver.
-	 */
-	public MarkerViewTests() {
-		super(MarkerViewTests.class.getSimpleName());
-	}
+public class MarkerViewTests {
 
 	@Test
-	public void testOpenView() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+	public void testOpenView() throws PartInitException {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 
-		try {
-			page.hideView(page.showView(IPageLayout.ID_BOOKMARKS));
-			page.hideView(page.showView(IPageLayout.ID_PROBLEM_VIEW));
-			page.hideView(page.showView(IPageLayout.ID_TASK_LIST));
-		} catch (PartInitException e) {
-			assertTrue(e.getLocalizedMessage(), false);
-			return;
-		}
+		page.hideView(page.showView(IPageLayout.ID_BOOKMARKS));
+		page.hideView(page.showView(IPageLayout.ID_PROBLEM_VIEW));
+		page.hideView(page.showView(IPageLayout.ID_TASK_LIST));
 
 	}
 }

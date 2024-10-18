@@ -14,35 +14,19 @@
 
 package org.eclipse.ui.tests.markers;
 
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.ui.internal.views.markers.MarkerSortUtil;
 import org.eclipse.ui.internal.views.markers.MockMarkerEntry;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- * @since 3.5
- */
-@RunWith(JUnit4.class)
-public class MarkerSortUtilTest extends UITestCase {
+public class MarkerSortUtilTest {
 
 	private static final int ARRAYSIZE = 100000;
-
-	public MarkerSortUtilTest() {
-		super("MarkerSortUtilTest");
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		// TODO Auto-generated method stub
-		super.doSetUp();
-
-	}
 
 	@Test
 	public void testPartialSort() {

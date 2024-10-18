@@ -13,13 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.markers;
 
-import java.util.Iterator;
-
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
-public abstract class DeclarativeFilterTest extends UITestCase {
+public abstract class DeclarativeFilterTest {
 
 	public static final String PROBLEM_TEST_ON_PROBLEM = "problemTest.onProblem";
 
@@ -36,22 +33,13 @@ public abstract class DeclarativeFilterTest extends UITestCase {
 	protected static final String PROBLEM_TEST_ON_ANY_ERROR = "problemTest.onAnyError";
 
 	/**
-	 * Create a new instance of the receiver.
-	 */
-	public DeclarativeFilterTest(String testName) {
-		super(testName);
-	}
-
-	/**
 	 * Get the filter with id.
 	 *
 	 * @return ProblemFilter
 	 */
 	protected ProblemFilter getFilter(String id) {
-		Iterator<ProblemFilter> filters = MarkerSupportRegistry.getInstance()
-				.getRegisteredFilters().iterator();
-		while (filters.hasNext()) {
-			ProblemFilter filter = filters.next();
+		for (ProblemFilter filter : MarkerSupportRegistry.getInstance()
+				.getRegisteredFilters()) {
 			if (filter.getId().equals(id)) {
 				return filter;
 			}

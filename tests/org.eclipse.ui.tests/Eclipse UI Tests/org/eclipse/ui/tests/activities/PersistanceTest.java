@@ -14,89 +14,77 @@
 
 package org.eclipse.ui.tests.activities;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.NotDefinedException;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests that the Persistance class is catching malformed registry entries.
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public class PersistanceTest extends UITestCase {
-
-	public PersistanceTest() {
-		super(PersistanceTest.class.getSimpleName());
-	}
+public class PersistanceTest {
 
 	@Test
-	public void testCategoryPermutations() {
-		try {
-			IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
-			ICategory category = manager.getCategory("org.eclipse.ui.PT.C1"); // should not be defined - missing name
-			assertFalse(category.isDefined());
+	public void testCategoryPermutations() throws NotDefinedException {
+		IActivityManager manager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
+		ICategory category = manager.getCategory("org.eclipse.ui.PT.C1"); // should not be defined - missing name
+		assertFalse(category.isDefined());
 
-			category = manager.getCategory("org.eclipse.ui.PT.C2"); // should be defined - missing desc
-			assertTrue(category.isDefined());
-			assertNotNull(category.getDescription());
+		category = manager.getCategory("org.eclipse.ui.PT.C2"); // should be defined - missing desc
+		assertTrue(category.isDefined());
+		assertNotNull(category.getDescription());
 
-			for (String string : manager.getDefinedCategoryIds()) {
-				if (manager.getCategory(string).getName().equals("org.eclipse.ui.PT.C3")) {
-					fail("Found category that should not be.");
-				}
+		for (String string : manager.getDefinedCategoryIds()) {
+			if (manager.getCategory(string).getName().equals("org.eclipse.ui.PT.C3")) {
+				fail("Found category that should not be.");
 			}
-		}
-		catch (NotDefinedException e) {
-			fail(e.getMessage());
 		}
 	}
 
 	@Test
 	public void testActivityRequirementBindings() {
-		IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
+		IActivityManager manager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 		IActivity activity  = manager.getActivity("org.eclipse.ui.PT.A2");
 		assertTrue(activity.getActivityRequirementBindings().isEmpty());
 	}
 
 	@Test
 	public void testActivityPatternBindings() {
-		IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
+		IActivityManager manager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 		IActivity activity  = manager.getActivity("org.eclipse.ui.PT.A2");
 		assertTrue(activity.getActivityPatternBindings().isEmpty());
 	}
 
 	@Test
 	public void testCategoryActivityBindings() {
-		IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
+		IActivityManager manager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 		ICategory category  = manager.getCategory("org.eclipse.ui.PT.C2");
 		assertTrue(category.getCategoryActivityBindings().isEmpty());
 	}
 
 	@Test
-	public void testActivityPermutations() {
-		try {
-			IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
-			IActivity activity = manager.getActivity("org.eclipse.ui.PT.A1"); // should not be defined - missing name
-			assertFalse(activity.isDefined());
+	public void testActivityPermutations() throws NotDefinedException {
+		IActivityManager manager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
+		IActivity activity = manager.getActivity("org.eclipse.ui.PT.A1"); // should not be defined - missing name
+		assertFalse(activity.isDefined());
 
-			activity = manager.getActivity("org.eclipse.ui.PT.A2"); // should be defined - missing desc
-			assertTrue(activity.isDefined());
-			assertNotNull(activity.getDescription());
+		activity = manager.getActivity("org.eclipse.ui.PT.A2"); // should be defined - missing desc
+		assertTrue(activity.isDefined());
+		assertNotNull(activity.getDescription());
 
-			for (String string : manager.getDefinedActivityIds()) {
-				if (manager.getActivity(string).getName().equals("org.eclipse.ui.PT.A3")) {
-					fail("Found activity that should not be.");
-				}
+		for (String string : manager.getDefinedActivityIds()) {
+			if (manager.getActivity(string).getName().equals("org.eclipse.ui.PT.A3")) {
+				fail("Found activity that should not be.");
 			}
-		}
-		catch (NotDefinedException e) {
-			fail(e.getMessage());
 		}
 	}
 }

@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -31,10 +35,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests that resources are highlighted to match user search input. See Bug
@@ -42,22 +45,12 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.14
  */
-@RunWith(JUnit4.class)
-public class ResourceItemLabelTest extends UITestCase {
-
-	/**
-	 * Constructs a new instance of <code>ResourceItemlLabelTest</code>.
-	 */
-
-	public ResourceItemLabelTest() {
-		super(ResourceItemLabelTest.class.getSimpleName());
-	}
+public class ResourceItemLabelTest {
 
 	private IProject project;
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(getClass().getName() + "_" + System.currentTimeMillis());
 		project.create(new NullProgressMonitor());
@@ -357,14 +350,13 @@ public class ResourceItemLabelTest extends UITestCase {
 		return builder.toString();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();
 		}
 		if (project != null) {
 			project.delete(true, null);
 		}
-		super.doTearDown();
 	}
 }

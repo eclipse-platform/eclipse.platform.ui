@@ -12,13 +12,16 @@
 
 package org.eclipse.ui.tests.markers;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.swt.widgets.Button;
@@ -28,7 +31,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.views.markers.ExtendedMarkersView;
 import org.eclipse.ui.internal.views.markers.FiltersConfigurationDialog;
 import org.eclipse.ui.internal.views.markers.MarkerContentGenerator;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 import org.eclipse.ui.views.markers.internal.ContentGeneratorDescriptor;
@@ -37,15 +39,8 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class MarkerSupportViewTest extends UITestCase {
-
-	public MarkerSupportViewTest() {
-		super(MarkerSupportViewTest.class.getSimpleName());
-	}
+public class MarkerSupportViewTest {
 
 	private static final String PROBLEM_VIEW_ID = "org.eclipse.ui.views.ProblemView";
 
@@ -173,8 +168,7 @@ public class MarkerSupportViewTest extends UITestCase {
 
 		String markerTypeId = "org.eclipse.ui.tests.markers.artificial.problem";
 		MarkerType markerTypeFromExtension = descriptor.getType(markerTypeId);
-		List<String> markerTypeIds = descriptor.getMarkerTypes().stream().map(MarkerType::getId)
-				.collect(Collectors.toList());
+		List<String> markerTypeIds = descriptor.getMarkerTypes().stream().map(MarkerType::getId).toList();
 
 		assertNotNull("Marker type with id '" + markerTypeId + "' not loaded from marker content generator extension.",
 				markerTypeFromExtension);
@@ -182,7 +176,7 @@ public class MarkerSupportViewTest extends UITestCase {
 				+ markerTypeIds, markerTypeIds.contains(markerTypeId));
 
 		Collection<MarkerGroup> groups = descriptor.getMarkerGroups();
-		List<String> groupIds = groups.stream().map(MarkerGroup::getId).collect(Collectors.toList());
+		List<String> groupIds = groups.stream().map(MarkerGroup::getId).toList();
 		String groupId = "org.eclipse.ui.tests.test.extended";
 
 		assertTrue("Expected loading group id '" + groupId
@@ -195,7 +189,7 @@ public class MarkerSupportViewTest extends UITestCase {
 			return Collections.emptyList();
 		}
 
-		return Arrays.stream(markerFields).map(mf -> mf.getName()).collect(Collectors.toList());
+		return Arrays.stream(markerFields).map(mf -> mf.getName()).toList();
 	}
 
 	public static MarkerContentGenerator getMarkerContentGenerator(MarkerSupportView view) {

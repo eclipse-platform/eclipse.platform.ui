@@ -24,18 +24,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class ResourceSelectionFilteringDialogTest extends UITestCase {
-
-	public ResourceSelectionFilteringDialogTest() {
-		super(ResourceSelectionFilteringDialogTest.class.getSimpleName());
-	}
+public class ResourceSelectionFilteringDialogTest {
 
 	private static SeeThroughFilteredResourcesSelectionDialog createDialog() {
 		SeeThroughFilteredResourcesSelectionDialog dialog = new SeeThroughFilteredResourcesSelectionDialog(
@@ -47,9 +41,8 @@ public class ResourceSelectionFilteringDialogTest extends UITestCase {
 
 	private IProject project;
 
-	@Override
+	@Before
 	public void doSetUp() throws Exception {
-		super.doSetUp();
 		project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(getClass().getSimpleName() + System.currentTimeMillis());
 		project.create(null);
@@ -76,9 +69,8 @@ public class ResourceSelectionFilteringDialogTest extends UITestCase {
 		}
 	}
 
-	@Override
+	@After
 	public void doTearDown() throws Exception {
-		super.doTearDown();
 		project.delete(true, null);
 	}
 

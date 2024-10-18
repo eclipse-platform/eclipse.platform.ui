@@ -12,25 +12,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests.markers;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.eclipse.ui.views.markers.internal.MarkerFilter;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
+/**
+ * The DeclarativeFilterActivityTest is a test that the declarative filters are
+ * removed by activities
+ */
 public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
-
-	/**
-	 * The DeclarativeFilterActivityTest is a test that the
-	 * declarative filters are removed by activities
-	 */
-	public DeclarativeFilterDeclarationTest() {
-		super(DeclarativeFilterDeclarationTest.class.getSimpleName());
-	}
 
 	/**
 	 * Test the filter on any error.
