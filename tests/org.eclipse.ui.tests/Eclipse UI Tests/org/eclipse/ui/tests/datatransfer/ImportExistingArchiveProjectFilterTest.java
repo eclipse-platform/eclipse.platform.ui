@@ -14,6 +14,12 @@
 
 package org.eclipse.ui.tests.datatransfer;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -40,7 +46,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
@@ -50,22 +55,16 @@ import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class ImportExistingArchiveProjectFilterTest extends UITestCase {
+public class ImportExistingArchiveProjectFilterTest {
 
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
 	private static final String ARCHIVE_JAVA_PROJECT = "ExcludeFilter_Import";
 
-	public ImportExistingArchiveProjectFilterTest() {
-		super(ImportExistingArchiveProjectFilterTest.class.getName());
-	}
-
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();
 			dialog = null;
@@ -75,7 +74,6 @@ public class ImportExistingArchiveProjectFilterTest extends UITestCase {
 		for (int i = projects.length - 1; i >= 0; i--) {
 			FileUtil.deleteProject(projects[i]);
 		}
-		super.doTearDown();
 	}
 
 	// Testcase for Github Issue
@@ -133,7 +131,7 @@ public class ImportExistingArchiveProjectFilterTest extends UITestCase {
 		// is applied to hide on import
 		TreeViewer treeViewer = projectExplorer.getCommonViewer();
 		projectExplorer.getCommonViewer().expandToLevel(2);
-		processEvents();
+		UITestCase.processEvents();
 
 		// Check Project explorer tree viewer if res folder is present
 
@@ -193,6 +191,6 @@ public class ImportExistingArchiveProjectFilterTest extends UITestCase {
 	}
 
 	private Shell getShell() {
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		return getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 }

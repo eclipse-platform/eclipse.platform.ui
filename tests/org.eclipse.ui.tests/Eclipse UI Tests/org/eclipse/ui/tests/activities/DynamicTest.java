@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.activities;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -28,8 +29,6 @@ import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.ContributorFactoryOSGi;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.IActivityRequirementBinding;
@@ -41,6 +40,7 @@ import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
 import org.eclipse.ui.tests.TestPlugin;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -425,8 +425,8 @@ public class DynamicTest {
 	 * Tests to ensure dynamism with regard to the extension registry.
 	 */
 	@Test
-	public void testDynamicRegistry() {
-		IWorkbenchActivitySupport was = PlatformUI.getWorkbench()
+	public void testDynamicRegistry() throws NotDefinedException {
+		IWorkbenchActivitySupport was = getWorkbench()
 				.getActivitySupport();
 		IActivity activity = was.getActivityManager().getActivity(
 				"dynamic.activity");
@@ -464,18 +464,8 @@ public class DynamicTest {
 
 		// spin the event loop and ensure that the changes come down the pipe.
 		// 20 seconds should be more than enough
-		long endTime = System.currentTimeMillis() + 20000;
-		while (!(registryChanged[0] && registryChanged[1])
-				&& System.currentTimeMillis() < endTime) {
-
-			Display display = PlatformUI.getWorkbench().getDisplay();
-			if (display != null && !display.isDisposed()) {
-				while (display.readAndDispatch()) {
-				}
-			}
-			display.sleep();
-
-		}
+		DisplayHelper.waitForCondition(getWorkbench().getDisplay(), 20000,
+				() -> registryChanged[0] == true && registryChanged[1]);
 
 		assertTrue("Activity Listener not called", registryChanged[0]);
 		assertTrue("Category Listener not called", registryChanged[1]);
@@ -490,11 +480,7 @@ public class DynamicTest {
 				.pattern());
 		assertEquals("dynamic.activity", patternBinding.getActivityId());
 
-		try {
-			assertTrue(activity.isDefaultEnabled());
-		} catch (NotDefinedException e) {
-			fail(e.getMessage());
-		}
+		assertTrue(activity.isDefaultEnabled());
 
 		Set<IActivityRequirementBinding> requirementBindings = activity.getActivityRequirementBindings();
 		assertEquals(1, requirementBindings.size());

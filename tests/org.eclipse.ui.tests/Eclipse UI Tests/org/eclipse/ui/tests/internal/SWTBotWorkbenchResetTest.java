@@ -14,6 +14,11 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -24,21 +29,11 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test for Bug 511729 — Improve robustness to SWTBot.resetWorkbench()
  */
-@RunWith(JUnit4.class)
-public class SWTBotWorkbenchResetTest extends UITestCase {
-
-	/**
-	 * Constructs a new instance of this test case.
-	 */
-	public SWTBotWorkbenchResetTest() {
-		super(SWTBotWorkbenchResetTest.class.getSimpleName());
-	}
+public class SWTBotWorkbenchResetTest {
 
 	/**
 	 * Open a new window, switch to a different perspective such that parts are
@@ -47,7 +42,7 @@ public class SWTBotWorkbenchResetTest extends UITestCase {
 	 */
 	@Test
 	public void testResetWorkbench() throws CoreException {
-		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
+		IWorkbenchWindow window = UITestCase.openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		window.getWorkbench().showPerspective("org.eclipse.ui.tests.api.ViewPerspective", window);
 		processEvents();
 

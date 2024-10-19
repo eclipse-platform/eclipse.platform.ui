@@ -14,6 +14,10 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.eclipse.ui.tests.harness.util.UITestCase.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
 import org.eclipse.core.runtime.Platform;
@@ -23,22 +27,14 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.URLTransfer;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.TextActionHandler;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test for {@link TextActionHandler}.
  *
  * @since 3.5
  */
-@RunWith(JUnit4.class)
-public class TextHandlerTest extends UITestCase {
-
-	public TextHandlerTest() {
-		super(TextHandlerTest.class.getSimpleName());
-	}
+public class TextHandlerTest {
 
 	@Test
 	public void testEditableText() throws Exception {

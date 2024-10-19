@@ -13,6 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.eclipse.ui.tests.harness.util.UITestCase.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
 
@@ -37,10 +45,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.MultiPageEditorPart;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * <p>
@@ -54,8 +61,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.2
  */
-@RunWith(JUnit4.class)
-public class MultiVariablePageTest extends UITestCase {
+public class MultiVariablePageTest {
 
 	private static final String FILE_CONTENTS = "#section01\nsection 1\n#section02\nsection 2\nwith info\n#section03\nLast page\n";
 
@@ -67,9 +73,8 @@ public class MultiVariablePageTest extends UITestCase {
 
 	private int fPostCalled;
 
-	public MultiVariablePageTest() {
-		super(MultiVariablePageTest.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Make sure that setting the active page programmatically calls

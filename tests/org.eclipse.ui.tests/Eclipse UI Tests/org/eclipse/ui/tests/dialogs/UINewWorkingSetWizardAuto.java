@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -25,6 +31,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetNewWizard;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -35,24 +42,17 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the WorkingSetNewWizard.
  * Tests input validation, presence of type page and correct edit page
  * and wizard page texts.
  */
-@RunWith(JUnit4.class)
 public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto<IWorkingSetNewWizard> {
-
-	public UINewWorkingSetWizardAuto() {
-		super(UINewWorkingSetWizardAuto.class.getSimpleName());
-	}
 
 	@Override
 	protected IWorkingSetNewWizard createWizardToTest() {
-		return getWorkbench().getWorkingSetManager().createWorkingSetNewWizard(null);
+		return PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetNewWizard(null);
 	}
 
 	@Test

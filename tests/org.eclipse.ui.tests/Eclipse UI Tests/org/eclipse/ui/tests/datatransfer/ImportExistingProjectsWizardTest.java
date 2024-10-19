@@ -17,8 +17,14 @@
 package org.eclipse.ui.tests.datatransfer;
 
 import static org.eclipse.jface.dialogs.IMessageProvider.WARNING;
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.tests.datatransfer.ImportTestUtils.restoreWorkspaceConfiguration;
 import static org.eclipse.ui.tests.datatransfer.ImportTestUtils.setWorkspaceAutoBuild;
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -48,7 +54,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
@@ -57,8 +62,9 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage.Pro
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.datatransfer.ImportTestUtils.TestBuilder;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.wizards.datatransfer.ExternalProjectImportWizard;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,7 +73,7 @@ import org.junit.runners.MethodSorters;
 
 @RunWith(JUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ImportExistingProjectsWizardTest extends UITestCase {
+public class ImportExistingProjectsWizardTest {
 
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
 	private static final String WS_DATA_LOCATION = "importExistingFromDirTest";
@@ -89,17 +95,12 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 
 	private boolean originalRefreshSetting;
 
-	public ImportExistingProjectsWizardTest() {
-		super(ImportExistingProjectsWizardTest.class.getName());
-	}
-
 	private Shell getShell() {
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		return getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		originalRefreshSetting = ResourcesPlugin.getPlugin()
 				.getPluginPreferences().getBoolean(
 						ResourcesPlugin.PREF_AUTO_REFRESH);
@@ -108,8 +109,8 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		setWorkspaceAutoBuild(true);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		if (dialog != null) {
 			dialog.close();
 			dialog = null;
@@ -143,12 +144,11 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 		ResourcesPlugin.getPlugin().getPluginPreferences().setValue(
 				ResourcesPlugin.PREF_AUTO_REFRESH, originalRefreshSetting);
 		restoreWorkspaceConfiguration();
-		super.doTearDown();
 	}
 
 	private void waitForRefresh() {
 		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
+			getWorkbench().getProgressService().busyCursorWhile(
 					monitor -> Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH,
 							new NullProgressMonitor()));
 		} catch (InvocationTargetException | InterruptedException e) {

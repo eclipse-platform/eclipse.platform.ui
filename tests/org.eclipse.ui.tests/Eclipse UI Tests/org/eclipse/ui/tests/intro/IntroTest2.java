@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.intro;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
@@ -27,23 +30,15 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- * @since 3.0
- */
-@RunWith(JUnit4.class)
-public class IntroTest2 extends UITestCase {
+public class IntroTest2 {
 
 	IWorkbenchWindow window = null;
 
 	private IntroDescriptor oldDesc;
-
-	public IntroTest2() {
-		super(IntroTest2.class.getSimpleName());
-	}
 
 	/**
 	 * Open the intro, change perspective, close the intro
@@ -78,10 +73,8 @@ public class IntroTest2 extends UITestCase {
 
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-
+	@Before
+	public void doSetUp() throws Exception {
 		// these tests rely on the 3.3 behavior for sticky views
 		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
 		preferenceStore.putValue(IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR, "false");
@@ -91,12 +84,11 @@ public class IntroTest2 extends UITestCase {
 				.getDefault().getIntroRegistry().getIntro(
 						"org.eclipse.ui.testintro");
 		Workbench.getInstance().setIntroDescriptor(testDesc);
-		window = openTestWindow();
+		window = UITestCase.openTestWindow();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public void doTearDown() throws Exception {
 		Workbench.getInstance().setIntroDescriptor(oldDesc);
 	}
 }

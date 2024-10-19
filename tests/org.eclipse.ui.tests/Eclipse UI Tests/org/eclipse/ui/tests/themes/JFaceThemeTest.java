@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.themes;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.resource.ColorDescriptor;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
@@ -23,20 +29,13 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the pushing down of current theme changes into JFace.
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
 public class JFaceThemeTest extends ThemeTest {
-
-	public JFaceThemeTest() {
-		super(JFaceThemeTest.class.getSimpleName());
-	}
 
 	private void setAndTest(String themeId, IPropertyChangeListener listener) {
 		JFaceResources.getFontRegistry().addListener(listener);

@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.CoolBarManager;
@@ -37,18 +41,16 @@ import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.api.MockViewPart;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * This class contains tests for the editor action bars
  * implementation.
  */
-@RunWith(JUnit4.class)
 @Ignore
-public class EditorActionBarsTest extends UITestCase {
+public class EditorActionBarsTest {
 
 	protected IWorkbenchWindow fWindow;
 
@@ -56,17 +58,9 @@ public class EditorActionBarsTest extends UITestCase {
 
 	private final String EDITOR_ID = "org.eclipse.ui.tests.internal.EditorActionBarsTest";
 
-	/**
-	 * Constructor for IEditorPartTest
-	 */
-	public EditorActionBarsTest() {
-		super(EditorActionBarsTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		fWindow = openTestWindow();
+	@Before
+	public void doSetUp() throws Exception {
+		fWindow = UITestCase.openTestWindow();
 		fPage = fWindow.getActivePage();
 	}
 

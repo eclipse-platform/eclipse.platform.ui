@@ -13,30 +13,26 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.internal.ErrorEditorPart;
 import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class MultiPageEditorPartTest extends UITestCase {
+public class MultiPageEditorPartTest {
 
-	public MultiPageEditorPartTest() {
-		super(MultiPageEditorPartTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		TestMultiPageEditorThrowingPartInitException.resetSpy();
-		super.doTearDown();
 	}
 
 	@Test
 	public void testDisposalWithoutSuccessfulInitialization() throws Exception {
-		IEditorPart editor = openTestWindow().getActivePage().openEditor(new NullEditorInput(),
+		IEditorPart editor = UITestCase.openTestWindow().getActivePage().openEditor(new NullEditorInput(),
 				"org.eclipse.ui.tests.multipageeditor.TestMultiPageEditorThrowingPartInitException"); //$NON-NLS-1$
 
 		assertTrue(editor instanceof ErrorEditorPart);

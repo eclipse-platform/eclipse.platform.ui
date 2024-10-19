@@ -14,17 +14,21 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.themes;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
+import org.junit.Before;
 
 /**
  * @since 3.0
  */
-public abstract class ThemeTest extends UITestCase {
+public abstract class ThemeTest {
 	private static final String MOCK_CSS_THEME = "org.eclipse.e4.ui.css.theme.mock";
 
 	protected static final String BOGUSID = "BOGUSID";
@@ -57,22 +61,17 @@ public abstract class ThemeTest extends UITestCase {
 
 	protected IThemeManager fManager;
 
-	public ThemeTest(String testName) {
-		super(testName);
-		// TODO Auto-generated constructor stub
-	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		fManager = fWorkbench.getThemeManager();
+	@Before
+	public void doSetUp() throws Exception {
+		fManager = PlatformUI.getWorkbench().getThemeManager();
 		fManager.setCurrentTheme(IThemeManager.DEFAULT_THEME);
 
 		mockCSSTheme();
 	}
 
 	private void mockCSSTheme() {
-		IThemeEngine themeEngine = fWorkbench.getService(IThemeEngine.class);
+		IThemeEngine themeEngine = PlatformUI.getWorkbench().getService(IThemeEngine.class);
 		org.eclipse.e4.ui.css.swt.theme.ITheme currentTheme = themeEngine.getActiveTheme();
 		if (currentTheme != null && !MOCK_CSS_THEME.equals(currentTheme.getId())) {
 			themeEngine.setTheme(MOCK_CSS_THEME, false);

@@ -15,6 +15,10 @@
 package org.eclipse.ui.tests.propertysheet;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -38,10 +42,9 @@ import org.eclipse.ui.views.properties.PropertySheet;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  *  The class implements a test for the workbench's default
@@ -52,9 +55,7 @@ import org.junit.runners.JUnit4;
  * properties and handles the transition to another set of
  * properties.
  */
-
-@RunWith(JUnit4.class)
-public class PropertySheetAuto extends UITestCase {
+public class PropertySheetAuto {
 
 	/**
 	 * This car serves as a simple porperty source.
@@ -234,10 +235,6 @@ public class PropertySheetAuto extends UITestCase {
 	private static final String[] models = new String[] { "Thunderbird",
 			"Deville", "Viper", "320i", "Camry", "Ultima", "Prelude", "V70" };
 
-	public PropertySheetAuto() {
-		super(PropertySheetAuto.class.getSimpleName());
-	}
-
 	/**
 	 * Creates a array of car objects
 	 */
@@ -278,10 +275,9 @@ public class PropertySheetAuto extends UITestCase {
 		return new Car(modelYear, color, manufacturer, model, engineSize);
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		workbenchWindow = openTestWindow();
+	@Before
+	public void doSetUp() throws Exception {
+		workbenchWindow = UITestCase.openTestWindow();
 		activePage = workbenchWindow.getActivePage();
 		processUiEvents();
 	}

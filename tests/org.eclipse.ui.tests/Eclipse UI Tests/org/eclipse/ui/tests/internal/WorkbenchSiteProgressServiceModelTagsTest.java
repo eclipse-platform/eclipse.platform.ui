@@ -14,6 +14,12 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
@@ -26,17 +32,13 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.tests.api.workbenchpart.EmptyView;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
-/**
- * @since 3.5
- */
-@RunWith(JUnit4.class)
-public class WorkbenchSiteProgressServiceModelTagsTest extends UITestCase {
+public class WorkbenchSiteProgressServiceModelTagsTest {
 	private IWorkbenchWindow window;
 
 	private IWorkbenchPage page;
@@ -53,14 +55,9 @@ public class WorkbenchSiteProgressServiceModelTagsTest extends UITestCase {
 
 	private WorkbenchSiteProgressServiceTestable progressService;
 
-	public WorkbenchSiteProgressServiceModelTagsTest() {
-		super(WorkbenchSiteProgressServiceModelTagsTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		window = openTestWindow();
+	@Before
+	public void doSetUp() throws Exception {
+		window = UITestCase.openTestWindow();
 		page = window.getActivePage();
 		view = (EmptyView) page.showView(EmptyView.ID);
 
@@ -79,12 +76,11 @@ public class WorkbenchSiteProgressServiceModelTagsTest extends UITestCase {
 	}
 
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		eventBroker.unsubscribe(eventHandler);
 		eventBroker = null;
 		page.hideView(view);
-		super.doTearDown();
 	}
 
 	@Test

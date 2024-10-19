@@ -14,8 +14,15 @@
 package org.eclipse.ui.tests.dialogs;
 
 import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -29,6 +36,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WorkingSetEditWizard;
@@ -36,20 +44,13 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the WorkingSetEditWizard
  * Tests input validation, presence of correct edit page and
  * wizard page texts.
  */
-@RunWith(JUnit4.class)
 public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto<WorkingSetEditWizard> {
-
-	public UIEditWorkingSetWizardAuto() {
-		super(UIEditWorkingSetWizardAuto.class.getSimpleName());
-	}
 
 	@Override
 	protected WorkingSetEditWizard createWizardToTest() {
@@ -102,7 +103,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto<WorkingS
 		/*
 		 * Test page state with preset page input
 		 */
-		IWorkingSetManager workingSetManager = fWorkbench.getWorkingSetManager();
+		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSet workingSet = workingSetManager.createWorkingSet(WORKING_SET_NAME_1,
 				new IAdaptable[] { getProject1(), getFileInProject2() });
 		getWizard().setSelection(workingSet);

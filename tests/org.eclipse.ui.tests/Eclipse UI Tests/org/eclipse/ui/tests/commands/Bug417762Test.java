@@ -33,9 +33,6 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.junit.Test;
 
-/**
- * @since 3.5
- */
 public class Bug417762Test {
 
 	@Test

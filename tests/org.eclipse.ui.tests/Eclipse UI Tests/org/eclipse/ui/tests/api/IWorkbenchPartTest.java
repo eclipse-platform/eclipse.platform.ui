@@ -13,10 +13,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -24,23 +27,15 @@ import org.junit.Test;
  * interface this test verifies the IWorkbenchPart lifecycle rather
  * than the implementation.
  */
-public abstract class IWorkbenchPartTest extends UITestCase {
+public abstract class IWorkbenchPartTest {
 
 	protected IWorkbenchWindow fWindow;
 
 	protected IWorkbenchPage fPage;
 
-	/**
-	 * Constructor for IActionDelegateTest
-	 */
-	public IWorkbenchPartTest(String testName) {
-		super(testName);
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		fWindow = openTestWindow();
+	@Before
+	public void doSetUp() throws Exception {
+		fWindow = UITestCase.openTestWindow();
 		fPage = fWindow.getActivePage();
 	}
 
