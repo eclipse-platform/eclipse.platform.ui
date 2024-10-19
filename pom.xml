@@ -29,6 +29,7 @@
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
     <tycho.surefire.useUIHarness>true</tycho.surefire.useUIHarness><!--Use UI harness for tests by default -->
     <tycho.surefire.useUIThread>true</tycho.surefire.useUIThread>
+    <failOnJavadocErrors>true</failOnJavadocErrors>
   </properties>
 
   <modules>

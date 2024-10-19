@@ -441,8 +441,6 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	/**
 	 * Write lock owner details onto workspace lock file. Data includes user, host,
 	 * display and current java process id.
-	 *
-	 * @param instanceLoc
 	 */
 	protected void writeWsLockInfo(URL workspaceUrl) {
 		Properties props = new Properties();
