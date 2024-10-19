@@ -36,15 +36,8 @@ import org.eclipse.ui.services.IServiceLocator;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.junit.runners.MethodSorters;
 
-/**
- * @since 3.5
- * @author Prakash G.R.
- */
-@RunWith(JUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ToggleStateTest {
 

@@ -13,33 +13,25 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- * @since 3.5
- */
-@RunWith(JUnit4.class)
-public class ShowViewMenuTest extends UITestCase {
+public class ShowViewMenuTest {
 
 	private IWorkbenchWindow workbenchWindow;
 
-	public ShowViewMenuTest() {
-		super(ShowViewMenuTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		// open a workbench window with the empty perspective, since it defines
 		// no show view shortcuts, it is suitable for the two single show view
 		// action tests
-		workbenchWindow = openTestWindow();
+		workbenchWindow = UITestCase.openTestWindow();
 	}
 
 	/***********************************

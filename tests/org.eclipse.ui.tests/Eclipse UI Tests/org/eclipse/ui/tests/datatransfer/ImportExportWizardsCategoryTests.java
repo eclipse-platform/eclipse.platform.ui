@@ -13,18 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
+import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class ImportExportWizardsCategoryTests extends UITestCase {
+public class ImportExportWizardsCategoryTests {
 
 	private static String WIZARD_ID_IMPORT_NO_CATEGORY = "org.eclipse.ui.tests.import.NoCategory";
 	private static String WIZARD_ID_IMPORT_INVALID_CATEGORY = "org.eclipse.ui.tests.import.InvalidCategory";
@@ -48,7 +48,6 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	IWizardCategory importRoot;
 
 	public ImportExportWizardsCategoryTests() {
-		super(ImportExportWizardsCategoryTests.class.getSimpleName());
 		exportRoot = WorkbenchPlugin.getDefault()
 			.getExportWizardRegistry().getRootCategory();
 		importRoot = WorkbenchPlugin.getDefault()
@@ -68,7 +67,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				wizardDesc != null);
 			return;
 		}
-		assertTrue("Could not find Other category", false);
+		fail("Could not find Other category");
 	}
 
 	@Test
@@ -83,7 +82,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				wizardDesc != null);
 			return;
 		}
-		assertTrue("Could not find Other category", false);
+		fail("Could not find Other category");
 	}
 
 	@Test
@@ -98,7 +97,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				wizardDesc != null);
 			return;
 		}
-		assertTrue("Could not find category named " + WIZARD_IMPORT_NEW_CATEGORY, false);
+		fail("Could not find category named " + WIZARD_IMPORT_NEW_CATEGORY);
 	}
 
 	@Test
@@ -113,7 +112,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				wizardDesc != null);
 			return;
 		}
-		assertTrue("Could not find category named " + WIZARD_IMPORT_NEW_PARENTED_CATEGORY, false);
+		fail("Could not find category named " + WIZARD_IMPORT_NEW_PARENTED_CATEGORY);
 	}
 
 	@Test
@@ -128,7 +127,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				wizardDesc != null);
 			return;
 		}
-		assertTrue("Could not find category named " + WIZARD_IMPORT_DUPLICATE_CATEGORY, false);
+		fail("Could not find category named " + WIZARD_IMPORT_DUPLICATE_CATEGORY);
 	}
 
 	@Test
@@ -153,7 +152,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				wizardDesc != null);
 			return;
 		}
-		assertTrue("Could not find Other category", false);
+		fail("Could not find Other category");
 	}
 
 	@Test
@@ -168,7 +167,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				wizardDesc != null);
 			return;
 		}
-		assertTrue("Could not find Other category", false);
+		fail("Could not find Other category");
 	}
 
 	@Test
@@ -183,7 +182,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				wizardDesc != null);
 			return;
 		}
-		assertTrue("Could not find category named " + WIZARD_EXPORT_NEW_CATEGORY, false);
+		fail("Could not find category named " + WIZARD_EXPORT_NEW_CATEGORY);
 	}
 
 	@Test
@@ -198,7 +197,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				wizardDesc != null);
 			return;
 		}
-		assertTrue("Could not find category named " + WIZARD_EXPORT_NEW_PARENTED_CATEGORY, false);
+		fail("Could not find category named " + WIZARD_EXPORT_NEW_PARENTED_CATEGORY);
 	}
 
 	@Test
@@ -213,7 +212,7 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				wizardDesc != null);
 			return;
 		}
-		assertTrue("Could not find category named " + WIZARD_EXPORT_DUPLICATE_CATEGORY, false);
+		fail("Could not find category named " + WIZARD_EXPORT_DUPLICATE_CATEGORY);
 	}
 
 	@Test
@@ -225,9 +224,8 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				category == null);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public void doTearDown() throws Exception {
 		importRoot = null;
 		exportRoot = null;
 	}
