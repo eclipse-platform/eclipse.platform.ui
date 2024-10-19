@@ -24,9 +24,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,6 +42,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.equinox.app.IApplication;
@@ -86,7 +89,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 	private static final String VERSION_FILENAME = "version.ini"; //$NON-NLS-1$
 
-	private static final String LOCK_INFO_FILENAME = ".lock_info"; //$NON-NLS-1$
+	private static final Path LOCK_INFO_FILE = Path.of(METADATA_FOLDER, ".lock_info"); //$NON-NLS-1$
 
 	private static final String DISPLAY_VAR = "DISPLAY"; //$NON-NLS-1$
 
@@ -404,14 +407,14 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	 */
 	protected String getWorkspaceLockInfo(URL workspaceUrl) {
 		try {
-			File lockFile = getLockInfoFile(workspaceUrl);
-			if (!lockFile.exists()) {
+			Path lockFile = getLockInfoFile(workspaceUrl);
+			if (!Files.exists(lockFile)) {
 				return null;
 			}
 
 			StringBuilder sb = new StringBuilder();
 			Properties props = new Properties();
-			try (FileInputStream is = new FileInputStream(lockFile)) {
+			try (InputStream is = Files.newInputStream(lockFile)) {
 				props.load(is);
 				String prop = props.getProperty(USER);
 				if (prop != null) {
@@ -441,8 +444,6 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	/**
 	 * Write lock owner details onto workspace lock file. Data includes user, host,
 	 * display and current java process id.
-	 *
-	 * @param instanceLoc
 	 */
 	protected void writeWsLockInfo(URL workspaceUrl) {
 		Properties props = new Properties();
@@ -468,7 +469,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			return;
 		}
 
-		try (OutputStream output = new FileOutputStream(createLockInfoFile(workspaceUrl))) {
+		try (OutputStream output = Files.newOutputStream(createLockInfoFile(workspaceUrl))) {
 			props.store(output, null);
 		} catch (Exception e) {
 			IDEWorkbenchPlugin.log("Could not write lock info file", e); //$NON-NLS-1$
@@ -523,9 +524,12 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	 * @param workspaceUrl
 	 * @return .lock_info file.
 	 */
-	private File getLockInfoFile(URL workspaceUrl) {
-		Path lockInfoPath = Path.of(workspaceUrl.getPath(), METADATA_FOLDER, LOCK_INFO_FILENAME);
-		return lockInfoPath.toFile();
+	private static Path getLockInfoFile(URL workspaceUrl) {
+		try {
+			return Path.of(URIUtil.toURI(workspaceUrl)).resolve(LOCK_INFO_FILE);
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	/**
@@ -534,17 +538,12 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	 * @param workspaceUrl
 	 * @return .lock_info file.
 	 */
-	private File createLockInfoFile(URL workspaceUrl) throws Exception {
-		File lockInfoFile = getLockInfoFile(workspaceUrl);
-
-		if (lockInfoFile.exists())
-			return lockInfoFile;
-
-		Path createdPath = Files.createFile(lockInfoFile.toPath());
-		if (createdPath != null) {
-			return createdPath.toFile();
+	private static Path createLockInfoFile(URL workspaceUrl) throws Exception {
+		Path lockInfoFile = getLockInfoFile(workspaceUrl);
+		if (!Files.exists(lockInfoFile)) {
+			Files.createFile(lockInfoFile);
 		}
-		return null;
+		return lockInfoFile;
 	}
 
 	@SuppressWarnings("rawtypes")
