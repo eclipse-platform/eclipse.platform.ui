@@ -85,8 +85,8 @@ public interface IModelProcessorContribution {
 	 * <code>@Component(property = { IModelProcessorContribution.APPLY_PROPERTY_PREFIX + "initial" })</code>
 	 * </p>
 	 *
-	 * @deprecated Instead annotate the component with the {@link Apply @Apply(&lt
-	 *             a-value &gt)} component property type
+	 * @deprecated Instead annotate the component with the {@link Apply @Apply(&lt;
+	 *             a-value &gt;)} component property type
 	 */
 	@Deprecated(forRemoval = true, since = "1.16")
 	String APPLY_PROPERTY_PREFIX = "apply="; //$NON-NLS-1$
