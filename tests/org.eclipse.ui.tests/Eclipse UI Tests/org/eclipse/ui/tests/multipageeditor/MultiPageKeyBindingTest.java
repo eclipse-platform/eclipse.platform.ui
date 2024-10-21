@@ -30,8 +30,6 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests that key bindings are treated correctly in a multi-page editor. This
@@ -41,16 +39,8 @@ import org.junit.runners.JUnit4;
  * @since 3.0
  */
 @SuppressWarnings("removal")
-@RunWith(JUnit4.class)
 @Ignore("Focus issues, see Commit c28efd634f53c9de7bb31b756ffc755b8faf0ffe")
-public class MultiPageKeyBindingTest extends UITestCase {
-
-	/**
-	 * Constructs a new instance of <code>MultiPageKeyBindingTest</code>.
-	 */
-	public MultiPageKeyBindingTest() {
-		super(MultiPageKeyBindingTest.class.getSimpleName());
-	}
+public class MultiPageKeyBindingTest {
 
 	/**
 	 * Tests that the key bindings are updated when the page is switched in a
@@ -67,7 +57,7 @@ public class MultiPageKeyBindingTest extends UITestCase {
 		final String fileName = "A." + extension; //$NON-NLS-1$
 
 		// Open a new test window.
-		IWorkbenchWindow window = openTestWindow();
+		IWorkbenchWindow window = UITestCase.openTestWindow();
 
 		// Create a blurb file.
 		IWorkbenchPage page = window.getActivePage();

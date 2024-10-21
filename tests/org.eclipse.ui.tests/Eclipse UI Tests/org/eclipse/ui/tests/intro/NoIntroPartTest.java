@@ -13,27 +13,22 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.intro;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.api.IWorkbenchPartTest;
 import org.eclipse.ui.tests.api.MockPart;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- * @since 3.0
- */
-@RunWith(JUnit4.class)
 public class NoIntroPartTest extends IWorkbenchPartTest {
 
 	private IntroDescriptor oldDesc;
-
-	public NoIntroPartTest() {
-		super(NoIntroPartTest.class.getSimpleName());
-	}
 
 	@Override
 	protected MockPart openPart(IWorkbenchPage page) throws Throwable {
@@ -58,15 +53,15 @@ public class NoIntroPartTest extends IWorkbenchPartTest {
 	}
 
 	@Override
-	protected void doSetUp() throws Exception {
+	@Before
+	public void doSetUp() throws Exception {
 		super.doSetUp();
 		oldDesc = Workbench.getInstance().getIntroDescriptor();
 		Workbench.getInstance().setIntroDescriptor(null);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public void doTearDown() throws Exception {
 		Workbench.getInstance().setIntroDescriptor(oldDesc);
 	}
 

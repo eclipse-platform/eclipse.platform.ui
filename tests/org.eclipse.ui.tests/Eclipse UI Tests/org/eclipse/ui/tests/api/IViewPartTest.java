@@ -13,29 +13,22 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * This is a test for IViewPart.  Since IViewPart is an
  * interface this test verifies the IViewPart lifecycle rather
  * than the implementation.
  */
-@RunWith(JUnit4.class)
 public class IViewPartTest extends IWorkbenchPartTest {
-
-	/**
-	 * Constructor for IEditorPartTest
-	 */
-	public IViewPartTest() {
-		super(IViewPartTest.class.getSimpleName());
-	}
 
 	/**
 	 * @see IWorkbenchPartTest#openPart(IWorkbenchPage)

@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.intro;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -25,21 +28,13 @@ import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.api.IWorkbenchPartTest;
 import org.eclipse.ui.tests.api.MockPart;
 import org.eclipse.ui.tests.harness.util.CallHistory;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- * @since 3.0
- */
-@RunWith(JUnit4.class)
 public class IntroPartTest extends IWorkbenchPartTest {
 
 	private IntroDescriptor oldDesc;
-
-	public IntroPartTest() {
-		super(IntroPartTest.class.getSimpleName());
-	}
 
 	@Override
 	protected MockPart openPart(IWorkbenchPage page) throws Throwable {
@@ -92,7 +87,8 @@ public class IntroPartTest extends IWorkbenchPartTest {
 	}
 
 	@Override
-	protected void doSetUp() throws Exception {
+	@Before
+	public void doSetUp() throws Exception {
 		super.doSetUp();
 		oldDesc = Workbench.getInstance().getIntroDescriptor();
 		IntroDescriptor testDesc = getIntroDesc();
@@ -104,9 +100,8 @@ public class IntroPartTest extends IWorkbenchPartTest {
 				.getIntroRegistry().getIntro("org.eclipse.ui.testintro");
 	}
 
-	@Override
+	@After
 	protected void doTearDown() throws Exception {
-		super.doTearDown();
 		Workbench.getInstance().setIntroDescriptor(oldDesc);
 	}
 }

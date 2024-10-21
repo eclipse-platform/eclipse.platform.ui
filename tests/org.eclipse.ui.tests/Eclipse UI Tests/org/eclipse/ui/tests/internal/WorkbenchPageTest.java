@@ -13,25 +13,21 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertEquals;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
 @Ignore
-public class WorkbenchPageTest extends UITestCase {
-
-	public WorkbenchPageTest() {
-		super(WorkbenchPageTest.class.getSimpleName());
-	}
+public class WorkbenchPageTest {
 
 	@Test
 	public void test1() {
@@ -88,12 +84,11 @@ public class WorkbenchPageTest extends UITestCase {
 	}
 
 	private WorkbenchPage getWorkbenchPage() {
-		return (WorkbenchPage) fWorkbench.getActiveWorkbenchWindow().getActivePage();
+		return (WorkbenchPage) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public void doTearDown() throws Exception {
 		clearMruPartIds();
 	}
 

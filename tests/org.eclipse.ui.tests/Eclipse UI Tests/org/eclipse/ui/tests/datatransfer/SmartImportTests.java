@@ -16,6 +16,13 @@ package org.eclipse.ui.tests.datatransfer;
 
 import static org.eclipse.ui.tests.datatransfer.ImportTestUtils.restoreWorkspaceConfiguration;
 import static org.eclipse.ui.tests.datatransfer.ImportTestUtils.setWorkspaceAutoBuild;
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEventsUntil;
+import static org.eclipse.ui.tests.harness.util.UITestCase.waitForJobs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
@@ -68,7 +75,8 @@ import org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.datatransfer.contributions.ImportMeProjectConfigurator;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -77,31 +85,22 @@ import org.junit.runners.JUnit4;
  * @since 3.12
  */
 @RunWith(JUnit4.class)
-public class SmartImportTests extends UITestCase {
+public class SmartImportTests {
 
 	private WizardDialog dialog;
 
-	public SmartImportTests() {
-		super(SmartImportTests.class.getName());
-	}
-
-	@Override
+	@Before
 	public void doSetUp() throws Exception {
-		super.doSetUp();
 		ImportMeProjectConfigurator.configuredProjects.clear();
 		clearAll();
 		setWorkspaceAutoBuild(true);
 	}
 
-	@Override
+	@After
 	public void doTearDown() throws Exception {
 		ImportMeProjectConfigurator.configuredProjects.clear();
-		try {
-			clearAll();
-			restoreWorkspaceConfiguration();
-		} finally {
-			super.doTearDown();
-		}
+		clearAll();
+		restoreWorkspaceConfiguration();
 	}
 
 	private void clearAll() throws CoreException, IOException {
@@ -144,7 +143,7 @@ public class SmartImportTests extends UITestCase {
 
 	private void proceedSmartImportWizard(SmartImportWizard wizard, Consumer<SmartImportRootWizardPage> setSettings)
 			throws InterruptedException {
-		WizardDialog dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 		try {
 			dialog.setBlockOnOpen(false);
 			dialog.open();
@@ -231,7 +230,7 @@ public class SmartImportTests extends UITestCase {
 
 		SmartImportWizard wizard = new SmartImportWizard();
 		wizard.setInitialImportSource(file);
-		this.dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+		this.dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 		dialog.setBlockOnOpen(false);
 		dialog.open();
 		processEvents();
@@ -351,7 +350,7 @@ public class SmartImportTests extends UITestCase {
 
 		SmartImportWizard wizard = new SmartImportWizard();
 		wizard.setInitialImportSource(importRoot);
-		this.dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+		this.dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 		dialog.setBlockOnOpen(false);
 		dialog.open();
 		SmartImportRootWizardPage page = (SmartImportRootWizardPage) dialog.getCurrentPage();
@@ -425,7 +424,7 @@ public class SmartImportTests extends UITestCase {
 			SmartImportWizard wizard = new SmartImportWizard();
 			wizard.setInitialImportSource(directoryToImport);
 			wizard.setInitialWorkingSets(Collections.singleton(workingSet));
-			this.dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+			this.dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 			dialog.setBlockOnOpen(false);
 			dialog.open();
 			processEvents();
@@ -484,7 +483,7 @@ public class SmartImportTests extends UITestCase {
 			wizard.setInitialImportSource(File.listRoots()[0]);
 			wizard.getDialogSettings().put("SmartImportRootWizardPage.STORE_HIDE_ALREADY_OPEN", true);
 			wizard.getDialogSettings().put("SmartImportRootWizardPage.STORE_NESTED_PROJECTS", false);
-			this.dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+			this.dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 			dialog.setBlockOnOpen(false);
 			dialog.open();
 			SmartImportRootWizardPage page = (SmartImportRootWizardPage) dialog.getCurrentPage();

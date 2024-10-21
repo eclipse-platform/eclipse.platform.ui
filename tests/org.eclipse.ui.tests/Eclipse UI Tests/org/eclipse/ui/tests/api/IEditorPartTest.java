@@ -13,6 +13,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,22 +37,12 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * This is a test for IEditorPart. Since IEditorPart is an interface this test
  * verifies the IEditorPart lifecycle rather than the implementation.
  */
-@RunWith(JUnit4.class)
 public class IEditorPartTest extends IWorkbenchPartTest {
-
-	/**
-	 * Constructor for IEditorPartTest
-	 */
-	public IEditorPartTest() {
-		super(IEditorPartTest.class.getSimpleName());
-	}
 
 	/**
 	 * @see IWorkbenchPartTest#openPart(IWorkbenchPage)
