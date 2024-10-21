@@ -40,7 +40,7 @@ public class GroupsContribution extends MarkersContribution {
 	}
 
 	@Override
-	protected IContributionItem[] getContributionItems() {
+	public IContributionItem[] getContributionItems() {
 		ExtendedMarkersView view = getView();
 		if (view == null) {
 			return new IContributionItem[0];
