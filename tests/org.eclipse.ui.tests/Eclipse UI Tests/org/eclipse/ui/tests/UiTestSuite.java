@@ -68,6 +68,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	StartupTest.class,
+	OpenCloseTest.class,
 	UIAutomatedSuite.class,
 	ApiTestSuite.class,
 	NavigatorTestSuite.class,
@@ -108,8 +109,7 @@ import org.junit.runners.Suite;
 	OpenSystemInPlaceEditorTest.class,
 	WorkbenchDatabindingTest.class,
 	ChooseWorkspaceDialogTests.class,
-	ViewerItemsLimitTest.class,
-	OpenCloseTest.class
+	ViewerItemsLimitTest.class
 })
 public class UiTestSuite {
 }
