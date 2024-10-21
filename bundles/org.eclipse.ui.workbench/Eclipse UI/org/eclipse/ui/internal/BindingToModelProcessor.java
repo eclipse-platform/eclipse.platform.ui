@@ -41,7 +41,6 @@ import org.eclipse.ui.internal.keys.BindingPersistence;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.condition.Condition;
 
 @Component(service = IModelProcessorContribution.class)
 public class BindingToModelProcessor implements IModelProcessorContribution {
@@ -51,8 +50,15 @@ public class BindingToModelProcessor implements IModelProcessorContribution {
 	private Map<String, MBindingTable> tables = new HashMap<>();
 	private Set<MKeyBinding> keys = new HashSet<>();
 
-	@Reference(target = "(osgi.condition.id=commandAndContext)")
-	Condition commandAndContextCondition;
+	// define dependencies to CommandToModelProcessor and ContextToModelProcessor to
+	// ensure these two IModelProcessorContributions are registered before this
+	// BindingToModelProcessor
+
+	@Reference
+	private CommandToModelProcessor commandToModelProcessor;
+
+	@Reference
+	private ContextToModelProcessor contextToModelProcessor;
 
 	@Execute
 	void process(final MApplication application, IEclipseContext context) {
