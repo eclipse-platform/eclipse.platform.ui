@@ -103,7 +103,6 @@ CTabFolder Canvas {
 }
 
 .View Composite,
-.View Composite Tree,
 .View Composite Label,
 .View ToolBar,
 .View Group,
@@ -193,6 +192,10 @@ CTabFolder Canvas {
 
 #org-eclipse-e4-ui-compatibility-editor Composite{
 	background-color: #ffffff;
+}
+
+#org-eclipse-ui-navigator-ProjectExplorer Tree{
+	background-color: #f8f8f8;
 }
 
 Composite.MPartSashContainer{
