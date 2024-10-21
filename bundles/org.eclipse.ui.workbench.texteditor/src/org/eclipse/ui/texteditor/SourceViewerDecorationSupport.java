@@ -450,7 +450,7 @@ public class SourceViewerDecorationSupport {
 	/**
 	 * Set inline annotation color key.
 	 *
-	 * @since 3.18
+	 * @since 3.19
 	 */
 	public void setInlineAnnotationColorPreferenceKey(String inlineAnnotationColor) {
 		fInlineAnnotationColorKey = inlineAnnotationColor;
