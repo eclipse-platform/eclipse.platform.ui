@@ -275,6 +275,19 @@
             /> 
       </editor>
    </extension>
+   
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+      		default="true"
+      		name="%Editors.ZipFileEditor"
+      		icon="$nl$/icons/full/obj16/zip_file_open.png"
+            class="org.eclipse.ui.editors.zip.ZipFileEditor"
+            id="ZipFileEditor">
+      <contentTypeBinding contentTypeId="zipfile"/>
+      </editor>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
