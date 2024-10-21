@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.editors; singleton:=true
-Bundle-Version: 3.18.100.qualifier
+Bundle-Version: 3.19.0.qualifier
 Bundle-Activator: org.eclipse.ui.internal.editors.text.EditorsPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
@@ -24,7 +24,7 @@ Require-Bundle:
  org.eclipse.ui;bundle-version="[3.204.0,4.0.0)",
  org.eclipse.jface.text;bundle-version="[3.24.0,4.0.0)",
  org.eclipse.ui.workbench;bundle-version="[3.130.0,4.0.0)",
- org.eclipse.ui.workbench.texteditor;bundle-version="[3.17.0,4.0.0)",
+ org.eclipse.ui.workbench.texteditor;bundle-version="[3.19.0,4.0.0)",
  org.eclipse.core.filebuffers;bundle-version="[3.8.0,4.0.0)";visibility:=reexport,
  org.eclipse.core.resources;bundle-version="[3.19.0,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.10.0,2.0.0)",

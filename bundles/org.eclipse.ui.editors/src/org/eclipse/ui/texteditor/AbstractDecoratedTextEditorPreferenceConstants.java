@@ -74,7 +74,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	/**
 	 * A named preference that holds the color used to render the text editor inline annotation
 	 * 
-	 * @since 3.18
+	 * @since 3.19
 	 */
 	public final static String EDITOR_INLINE_ANNOTATION_COLOR= "org.eclipse.ui.editors.inlineAnnotationColor"; //$NON-NLS-1$
 
