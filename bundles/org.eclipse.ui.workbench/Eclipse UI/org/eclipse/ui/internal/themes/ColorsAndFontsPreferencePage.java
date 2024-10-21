@@ -1317,13 +1317,13 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 		if (colorPreferencesToSet.containsKey(definition)) {
 			if (definition.getValue() != null) { // value-based color
-				if (colorPreferencesToSet.get(definition).equals(definition.getValue()))
+				if (colorPreferencesToSet.get(definition).equals(getColorRGB(definition)))
 					return true;
 			} else if (colorPreferencesToSet.get(definition).equals(getColorAncestorValue(definition)))
 				return true;
 		} else if (colorValuesToSet.containsKey(id)) {
 			if (definition.getValue() != null) { // value-based color
-				if (colorValuesToSet.get(id).equals(definition.getValue()))
+				if (colorValuesToSet.get(id).equals(getColorRGB(definition)))
 					return true;
 			} else {
 				if (colorValuesToSet.get(id).equals(getColorAncestorValue(definition)))
@@ -1517,7 +1517,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		if (force || !isDefault(definition)) {
 			RGB newRGB;
 			if (definition.getValue() != null)
-				newRGB = definition.getValue();
+				newRGB = getColorRGB(definition);
 			else
 				newRGB = getColorAncestorValue(definition);
 
@@ -1529,6 +1529,18 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			}
 		}
 		return false;
+	}
+
+	private RGB getColorRGB(ColorDefinition definition) {
+		RGB rgb = definition.getValue();
+		if (currentTheme != null && currentTheme.getColorRegistry() != null && definition.getId() != null) {
+			String colorKey = ThemeElementHelper.createPreferenceKey(currentTheme, definition.getId());
+			RGB themeRgb = currentTheme.getColorRegistry().getRGB(colorKey);
+			if (themeRgb != null) {
+				rgb = themeRgb;
+			}
+		}
+		return rgb;
 	}
 
 	protected boolean resetFont(FontDefinition definition, boolean force) {
