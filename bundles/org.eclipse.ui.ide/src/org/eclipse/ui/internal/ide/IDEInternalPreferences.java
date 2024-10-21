@@ -179,4 +179,9 @@ public interface IDEInternalPreferences {
 	 */
 	String HELP_CONTEXT_AVAILABILITY_CHECK = "helpContextAvailabilityCheck"; //$NON-NLS-1$
 
+	/**
+	 * The default value to use for 'items per group' when using limits in the
+	 * problem view.
+	 */
+	int MARKER_LIMITS_VALUE_DEFAULT = 100;
 }
