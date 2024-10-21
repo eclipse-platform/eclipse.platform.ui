@@ -18,8 +18,10 @@ package org.eclipse.ui.internal.dialogs;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -73,6 +75,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Button promptWhenStillOpenEditor;
 
 	private Button allowInplaceEditor;
+
+	private ComboFieldEditor multiPageEditorTabPositionComboField;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -132,6 +136,23 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		setButtonLayoutData(promptWhenStillOpenEditor);
 	}
 
+	protected void createAlignMultiPageEditorTabs(Composite parent) {
+		Composite comboComposite = new Composite(parent, SWT.NONE);
+		comboComposite.setLayout(GridLayoutFactory.fillDefaults().numColumns(2).create());
+		comboComposite.setLayoutData(GridDataFactory.fillDefaults().create());
+		String name = IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS;
+		String label = WorkbenchMessages.WorkbenchPreference_AlignMultiPageEditorTabs;
+		String[][] namesAndValues = {
+				{ Action.removeMnemonics(WorkbenchMessages.WorkbenchPreference_AlignMultiPageEditorTabs_Top),
+						String.valueOf(SWT.TOP) },
+				{ Action.removeMnemonics(WorkbenchMessages.WorkbenchPreference_AlignMultiPageEditorTabs_Bottom),
+						String.valueOf(SWT.BOTTOM) } };
+		multiPageEditorTabPositionComboField = new ComboFieldEditor(name, label, namesAndValues, comboComposite);
+		multiPageEditorTabPositionComboField.setPreferenceStore(getAPIPreferenceStore());
+		multiPageEditorTabPositionComboField.setPage(this);
+		multiPageEditorTabPositionComboField.load();
+	}
+
 	protected Composite createComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -160,11 +181,13 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.getTextControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		recentFilesEditor.loadDefault();
+		multiPageEditorTabPositionComboField.loadDefault();
 	}
 
 	@Override
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
+		multiPageEditorTabPositionComboField.store();
 		getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE,
 				!allowInplaceEditor.getSelection());
 		store.setValue(IPreferenceConstants.USE_IPERSISTABLE_EDITORS, useIPersistableEditor.getSelection());
