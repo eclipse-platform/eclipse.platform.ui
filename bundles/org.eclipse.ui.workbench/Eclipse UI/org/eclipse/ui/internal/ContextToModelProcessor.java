@@ -33,7 +33,7 @@ import org.osgi.service.component.annotations.Component;
 /**
  * @since 3.5
  */
-@Component
+@Component(service = { IModelProcessorContribution.class, ContextToModelProcessor.class })
 public class ContextToModelProcessor implements IModelProcessorContribution {
 	private Map<String, MBindingContext> contexts = new HashMap<>();
 

@@ -37,7 +37,7 @@ import org.osgi.service.component.annotations.Component;
 /**
  * @since 3.5
  */
-@Component
+@Component(service = { IModelProcessorContribution.class, CommandToModelProcessor.class })
 public class CommandToModelProcessor implements IModelProcessorContribution {
 
 	private Map<String, MCategory> categories = new HashMap<>();
