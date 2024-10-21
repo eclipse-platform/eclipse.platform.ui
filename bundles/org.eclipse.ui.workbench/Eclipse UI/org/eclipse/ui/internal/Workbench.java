@@ -186,6 +186,7 @@ import org.eclipse.ui.Saveable;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activitysupport.IActivityManagerProxy;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.commands.ICommandImageService;
@@ -241,6 +242,7 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.internal.util.ActivityManagerProxy;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.IBindingService;
@@ -2173,6 +2175,11 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			}
 		});
 		WorkbenchPlugin.getDefault().initializeContext(e4Context);
+
+		BundleContext context = FrameworkUtil.getBundle(Platform.class).getBundleContext();
+		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
+		ActivityManagerProxy service = new ActivityManagerProxy(activitySupport);
+		context.registerService(IActivityManagerProxy.class.getName(), service, null);
 	}
 
 	private ArrayList<MCommand> commandsToRemove = new ArrayList<>();
