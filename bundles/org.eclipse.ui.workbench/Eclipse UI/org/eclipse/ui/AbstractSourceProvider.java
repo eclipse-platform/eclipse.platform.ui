@@ -120,4 +120,10 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 	 */
 	public void initialize(final IServiceLocator locator) {
 	}
+
+	/**
+	 * @since 3.132
+	 */
+	public void dummy() {
+	}
 }
