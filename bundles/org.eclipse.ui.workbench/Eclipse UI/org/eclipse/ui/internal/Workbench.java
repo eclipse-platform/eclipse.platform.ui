@@ -37,6 +37,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -281,6 +282,11 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public final class Workbench extends EventManager implements IWorkbench, org.eclipse.e4.ui.workbench.IWorkbench {
 
+	/**
+	 *
+	 */
+	private static final String WORKSPACE_URL = "workspaceUrl"; //$NON-NLS-1$
+
 	public static final String WORKBENCH_AUTO_SAVE_JOB = "Workbench Auto-Save Job"; //$NON-NLS-1$
 
 	private static final String WORKBENCH_AUTO_SAVE_BACKGROUND_JOB = "Workbench Auto-Save Background Job"; //$NON-NLS-1$
@@ -450,7 +456,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 */
 	private Workbench(Display display, final WorkbenchAdvisor advisor, MApplication app, IEclipseContext appContext) {
 		this.advisor = Objects.requireNonNull(advisor);
-		this.display = Objects.requireNonNull(display);
+		this.display = Objects.requireNonNull(display);		this.display.setData(WORKSPACE_URL,
+				Paths.get(URI.create(Platform.getInstanceLocation().getURL().toString())).toString());
 		application = app;
 		e4Context = appContext;
 
