@@ -78,6 +78,9 @@ public class ButtonElement extends ControlElement {
 		if ("checked".equalsIgnoreCase(s)) {
 			return this.isSelected;
 		}
+		if ("selected".equalsIgnoreCase(s)) {
+			return this.isSelected;
+		}
 		return super.isPseudoInstanceOf(s);
 	}
 
