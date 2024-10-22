@@ -208,7 +208,8 @@ public class StickyScrollingControl {
 		for (int i= 0; i < getNumberStickyLines(); i++) {
 			StickyLine stickyLine= stickyLines.get(i);
 			stickyLineTextJoiner.add(stickyLine.text());
-			stickyLineNumberJoiner.add(fillLineNumberWithLeadingSpaces(stickyLine.lineNumber() + 1));
+			int lineNumber= getSourceViewerLineNumber(stickyLine.lineNumber());
+			stickyLineNumberJoiner.add(fillLineNumberWithLeadingSpaces(lineNumber + 1));
 		}
 
 		String newStickyLineText= stickyLineTextJoiner.toString();
@@ -221,6 +222,13 @@ public class StickyScrollingControl {
 			styleStickyLines();
 			layoutStickyLines();
 		}
+	}
+
+	private int getSourceViewerLineNumber(int i) {
+		if (sourceViewer instanceof ITextViewerExtension5 extension) {
+			return extension.widgetLine2ModelLine(i);
+		}
+		return i;
 	}
 
 	private String fillLineNumberWithLeadingSpaces(int lineNumber) {
@@ -257,9 +265,6 @@ public class StickyScrollingControl {
 
 	private List<StyleRange> getStickyLineStyleRanges(StickyLine stickyLine, int stickyLineTextOffset) {
 		int lineNumber= stickyLine.lineNumber();
-		if (sourceViewer instanceof ITextViewerExtension5 extension) {
-			lineNumber= extension.modelLine2WidgetLine(lineNumber);
-		}
 		try {
 			StyledText textWidget= sourceViewer.getTextWidget();
 			int offsetAtLine= textWidget.getOffsetAtLine(lineNumber);
