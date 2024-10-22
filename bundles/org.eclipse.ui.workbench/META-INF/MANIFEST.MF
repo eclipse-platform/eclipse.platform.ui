@@ -136,5 +136,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Capability: osgi.extender;
   filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))"
 Automatic-Module-Name: org.eclipse.ui.workbench
-Service-Component: OSGI-INF/org.eclipse.ui.internal.WindowsDefenderConfigurator.xml,
+Service-Component: OSGI-INF/org.eclipse.ui.internal.BindingToModelProcessor.xml,
+ OSGI-INF/org.eclipse.ui.internal.CommandToModelProcessor.xml,
+ OSGI-INF/org.eclipse.ui.internal.ContextToModelProcessor.xml,
+ OSGI-INF/org.eclipse.ui.internal.WindowsDefenderConfigurator.xml,
  OSGI-INF/org.eclipse.ui.internal.themes.ColorAndFontProviderImpl.xml
