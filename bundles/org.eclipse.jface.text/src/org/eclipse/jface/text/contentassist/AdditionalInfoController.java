@@ -52,7 +52,9 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 * @since 3.2
 	 */
 	private static abstract class Timer {
-		private static final int DELAY_UNTIL_JOB_IS_SCHEDULED= 50;
+		/** delay until additional information is calculated **/
+		private static final int DELAY_UNTIL_JOB_IS_SCHEDULED= 0;
+ 
 
 		/**
 		 * A <code>Task</code> is {@link Task#run() run} when {@link #delay()} milliseconds have
@@ -324,11 +326,12 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 
 		private void schedule(Task task, long current) {
 			fTask= task;
-			long nextWakeup= current + task.delay();
-			if (nextWakeup <= current)
+			long delay= task.delay();
+			if (delay == Long.MAX_VALUE)
+				// sleep until notify
 				fNextWakeup= Long.MAX_VALUE;
 			else
-				fNextWakeup= nextWakeup;
+				fNextWakeup= current + delay;
 		}
 
 		private boolean isExt5(ICompletionProposal p) {
@@ -376,7 +379,11 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 
 		void allowShowing() {
 			fAllowShowing= true;
-			triggerShowing();
+			// triggerShowing() with fCurrentInfo==null would implicitly disallow any later showing
+			if (fCurrentInfo != null) {
+				// only if information is already available:
+				triggerShowing();
+			}
 		}
 	}
 	/**
