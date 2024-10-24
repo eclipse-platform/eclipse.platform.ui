@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.swt;
 
+import java.util.Locale;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
@@ -115,24 +116,61 @@ public class E4Testable extends TestableObject {
 	@Override
 	public void runTest(Runnable testRunnable) {
 		Assert.isNotNull(workbench);
-		display.syncExec(
-				() -> {
-					display.addListener(SWT.Dispose,
-							e -> {
-								// lambda block to allow breakpoint for debugging
-								displayCheck = new Exception("Display is disposed");
-							});
+		display.syncExec(new TestExecutionRunnable(testRunnable));
+	}
 
-					// Run actual test
-					testRunnable.run();
+	private final class TestExecutionRunnable implements Runnable {
+		private final Runnable testRunnable;
 
-					while (display.readAndDispatch()) {
-						// process all pending tasks
-					}
+		private TestExecutionRunnable(Runnable testRunnable) {
+			this.testRunnable = testRunnable;
+		}
 
-					// Display should be still there
-					checkDisplay();
-				});
+		@Override
+		public void run() {
+			display.addListener(SWT.Dispose,
+					e -> {
+						// lambda block to allow breakpoint for debugging
+						displayCheck = new Exception("Display is disposed");
+					});
+
+			try {
+				// Run actual test
+				testRunnable.run();
+			} catch (OutOfMemoryError e) {
+				try {
+					e.printStackTrace(System.out);
+					printMemoryUse();
+				} finally {
+					System.out.println("Calling System.exit() after OutOfMemoryError");
+					System.exit(1);
+				}
+			}
+
+			while (display.readAndDispatch()) {
+				// process all pending tasks
+			}
+
+			// Display should be still there
+			checkDisplay();
+		}
+	}
+
+	private static void printMemoryUse() {
+		System.gc();
+		System.runFinalization();
+		System.gc();
+		System.runFinalization();
+		long max = Runtime.getRuntime().maxMemory();
+		long total = Runtime.getRuntime().totalMemory();
+		long free = Runtime.getRuntime().freeMemory();
+		long used = total - free;
+		System.out.print("\n########### Memory usage reported by JVM ########");
+		System.out.printf(Locale.GERMAN, "%n%,16d bytes max heap", max);
+		System.out.printf(Locale.GERMAN, "%n%,16d bytes heap allocated", total);
+		System.out.printf(Locale.GERMAN, "%n%,16d bytes free heap", free);
+		System.out.printf(Locale.GERMAN, "%n%,16d bytes used heap", used);
+		System.out.println("\n#################################################\n");
 	}
 
 	/**
