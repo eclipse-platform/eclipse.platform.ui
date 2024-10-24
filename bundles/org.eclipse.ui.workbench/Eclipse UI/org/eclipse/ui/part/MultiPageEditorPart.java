@@ -17,6 +17,7 @@ package org.eclipse.ui.part;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
@@ -32,7 +33,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -56,6 +59,7 @@ import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartSite;
@@ -63,6 +67,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -149,10 +154,31 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	private ListenerList<IPageChangedListener> pageChangeListeners = new ListenerList<>(ListenerList.IDENTITY);
 
 	/**
-	 * Creates an empty multi-page editor with no pages.
+	 * Creates an empty multi-page editor with no pages and registers a
+	 * {@link PropertyChangeListener} to listen for changes to the editor's
+	 * preference..
 	 */
 	protected MultiPageEditorPart() {
 		super();
+		getAPIPreferenceStore().addPropertyChangeListener(event -> {
+			if (isUpdateRequired(event)) {
+				updateContainer();
+			}
+		});
+	}
+
+	/**
+	 * Determines whether an update is required based on a property change event.
+	 *
+	 * @param event the {@link PropertyChangeEvent} triggered by a change in the
+	 *              preference store
+	 * @since 3.133
+	 */
+	protected boolean isUpdateRequired(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -264,7 +290,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		// use SWT.FLAT style so that an extra 1 pixel border is not reserved
 		// inside the folder
 		parent.setLayout(new FillLayout());
-		final CTabFolder newContainer = new CTabFolder(parent, SWT.BOTTOM | SWT.FLAT);
+		final CTabFolder newContainer = new CTabFolder(parent, getTabStyle() | SWT.FLAT);
 		newContainer.addSelectionListener(widgetSelectedAdapter(e -> {
 			int newPageIndex = newContainer.indexOf((CTabItem) e.item);
 			pageChange(newPageIndex);
@@ -289,6 +315,29 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			}
 		});
 		return newContainer;
+	}
+
+	/**
+	 * Determines the tab style based on user preferences.
+	 * <p>
+	 * This method retrieves the user preference for aligning multi-page editor tabs
+	 * on top or bottom, and returns the corresponding SWT style constant.
+	 * </p>
+	 *
+	 * @return {@code SWT.TOP} if the user prefers tabs to be aligned on top,
+	 *         {@code SWT.BOTTOM} if the user prefers tabs to be aligned on the
+	 *         bottom.
+	 * @since 3.133
+	 */
+	protected int getTabStyle() {
+		return getAPIPreferenceStore().getInt(IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS);
+	}
+
+	/**
+	 * @since 3.133
+	 */
+	protected IPreferenceStore getAPIPreferenceStore() {
+		return PrefUtil.getAPIPreferenceStore();
 	}
 
 	/**
@@ -1230,4 +1279,23 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			});
 		}
 	}
+
+	/**
+	 * Updates the tab position of the container in the multi-page editor.
+	 *
+	 * <p>
+	 * This method retrieves the current container and sets the tab position based
+	 * on the user preference.
+	 * </p>
+	 *
+	 * @since 3.133
+	 */
+	protected void updateContainer() {
+		Composite container = getContainer();
+		if (container instanceof CTabFolder tabFolder) {
+			tabFolder.setTabPosition(getTabStyle());
+			tabFolder.requestLayout();
+		}
+	}
+
 }
