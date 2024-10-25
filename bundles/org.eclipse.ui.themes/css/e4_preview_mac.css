@@ -103,7 +103,6 @@ CTabFolder Canvas {
 }
 
 .View Composite,
-.View Composite Tree,
 .View Composite Label,
 .View ToolBar,
 .View Group,
@@ -143,6 +142,11 @@ CTabFolder Canvas {
 
 .View TabbedPropertyList{
 	swt-tabBackground-color: #ffffff;
+}
+
+
+.View Composite Tree[swt-lines-visible=false]{
+	background-color: #f8f8f8;
 }
 
 .View Composite PrependingAsteriskFilteredTree,
