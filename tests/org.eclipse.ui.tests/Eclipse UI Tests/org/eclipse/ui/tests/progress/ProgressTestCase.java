@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 IBM Corporation and others.
+ * Copyright (c) 2009, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.progress;
 
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -25,33 +28,31 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.progress.FinishedJobs;
 import org.eclipse.ui.internal.progress.ProgressView;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 
-/**
- * @since 3.6
- */
-public abstract class ProgressTestCase extends UITestCase {
+public abstract class ProgressTestCase {
 
 	protected ProgressView progressView;
 	protected IWorkbenchWindow window;
 
-	public ProgressTestCase(String testName) {
-		super(testName);
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		window = openTestWindow("org.eclipse.ui.resourcePerspective");
+	@Before
+	public void doSetUp() throws Exception {
+		window = UITestCase.openTestWindow("org.eclipse.ui.resourcePerspective");
 
 		// Remove progress info items before running the tests to prevent random
 		// failings
 		FinishedJobs.getInstance().clearAll();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public void doTearDown() throws Exception {
 		// Remove progress info items
 		FinishedJobs.getInstance().clearAll();
 	}

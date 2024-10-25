@@ -14,7 +14,11 @@
 
 package org.eclipse.ui.tests.progress;
 
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEventsUntil;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,29 +37,22 @@ import org.eclipse.ui.internal.progress.ProgressInfoItem;
 import org.eclipse.ui.internal.progress.TaskInfo;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.tests.TestPlugin;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- * @since 3.6
- * @author Prakash G.R.
- */
-@RunWith(JUnit4.class)
 public class ProgressViewTests extends ProgressTestCase {
 
-	public ProgressViewTests() {
-		super(ProgressViewTests.class.getSimpleName());
-	}
-
 	@Override
-	protected void doSetUp() throws Exception {
+	@Before
+	public void doSetUp() throws Exception {
 		super.doSetUp();
 		FinishedJobs.getInstance().clearAll();
 	}
 
 	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		FinishedJobs.getInstance().clearAll();
 		super.doTearDown();
 	}
