@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,14 @@
  ******************************************************************************/
 
 package org.eclipse.ui.tests.progress;
+
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
+import static org.eclipse.ui.tests.harness.util.UITestCase.processEventsUntil;
+import static org.eclipse.ui.tests.harness.util.UITestCase.waitForJobs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +46,7 @@ import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.tests.TestPlugin;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- * @since 3.6
- * @author Prakash G.R. (grprakash@in.ibm.com)
- */
-@RunWith(JUnit4.class)
 public class ProgressContantsTest extends ProgressTestCase {
 
 	/**
@@ -66,10 +67,6 @@ public class ProgressContantsTest extends ProgressTestCase {
 			Class<?> clazz = family instanceof Class ? (Class<?>) family : family.getClass();
 			return DummyFamilyJob.class.equals(clazz);
 		}
-	}
-
-	public ProgressContantsTest() {
-		super(ProgressContantsTest.class.getSimpleName());
 	}
 
 	@Test
