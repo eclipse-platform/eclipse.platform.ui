@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
-import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.Format;
@@ -81,16 +80,6 @@ public class StringToNumberConverterTest {
 		BigInteger result = converter.convert(numberFormat.format(input));
 
 		assertEquals(input, result);
-	}
-
-	Class<?> icuBigDecimal = null;
-	Constructor<?> icuBigDecimalCtr = null;
-	{
-		try {
-			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal");
-			icuBigDecimalCtr = icuBigDecimal.getConstructor(BigInteger.class, int.class);
-		}
-		catch(ClassNotFoundException | NoSuchMethodException e) {}
 	}
 
 	@Test

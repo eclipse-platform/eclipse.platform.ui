@@ -17,7 +17,6 @@ package org.eclipse.core.tests.databinding.conversion;
 
 import static org.junit.Assert.assertEquals;
 
-import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.Format;
@@ -125,16 +124,6 @@ public class NumberToStringConverterTest {
 		NumberToStringConverter converter = NumberToStringConverter.fromBigInteger();
 		String result = converter.convert(input);
 		assertEquals(expected, result);
-	}
-
-	Class<?> icuBigDecimal = null;
-	Constructor<?> icuBigDecimalCtr = null;
-	{
-		try {
-			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal");
-			icuBigDecimalCtr = icuBigDecimal.getConstructor(BigInteger.class, int.class);
-		}
-		catch(ClassNotFoundException | NoSuchMethodException e) {}
 	}
 
 	@Test

@@ -14,7 +14,6 @@
 
 package org.eclipse.core.tests.internal.databinding.conversion;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -152,49 +151,7 @@ public abstract class StringToNumberParserTestHarness {
 		assertFalse("invalid BigDecimal min", assertValid(bigDecimalMin));
 		assertFalse("invalid BigDecimal max", assertValid(bigDecimalMax));
 
-		/**
-		 * The ICU4J plugin's NumberFormat will return it's own BigDecimal
-		 * implementation, com.ibm.icu.math.BigDecimal. The issue this causes is
-		 * that we can't reference this class as it's not part of the
-		 * replacement plugin. So in order to ensure that we handle Number's
-		 * that are not part of the JDK stub a number implemenation and ensure
-		 * that the double representation of this number is used.
-		 */
-		class MyNumber extends Number {
-			double value;
-			int count;
-
-			MyNumber(double value) {
-				this.value = value;
-			}
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public double doubleValue() {
-				count++;
-				return value;
-			}
-
-			@Override
-			public float floatValue() {
-				return 0;
-			}
-
-			@Override
-			public int intValue() {
-				return 0;
-			}
-
-			@Override
-			public long longValue() {
-				return 0;
-			}
-		}
-
-		MyNumber number = new MyNumber(1);
-		assertEquals(0, number.count);
+		Number number = BigDecimal.valueOf((double) 1);
 		assertTrue(StringToNumberParser.inIntegerRange(number));
-		assertTrue("double value retrieved", number.count > 0);
 	}
 }
