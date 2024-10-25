@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
@@ -351,10 +351,10 @@ public class ResourceInitialSelectionTest {
 
 		// Assert files have been properly created
 
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		Display display = PlatformUI.getWorkbench().getDisplay();
 
 		for (String fileName : FILE_NAMES) {
-			DisplayHelper.waitForCondition(shell.getDisplay(), 1000, () -> project.getFile(fileName).exists());
+			DisplayHelper.waitForCondition(display, 1000, () -> project.getFile(fileName).exists());
 			assertTrue("File was not created", project.getFile(fileName).exists());
 		}
 	}
