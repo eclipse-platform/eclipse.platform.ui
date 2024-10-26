@@ -12,6 +12,12 @@
 
 package org.eclipse.ui.tests.e4;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +50,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.CloseAllHandler;
 import org.eclipse.ui.internal.Workbench;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
@@ -102,12 +107,12 @@ public class CloseAllHandlerTest {
 
 		Command closeAllCommand = commandService.getCommand(CLOSE_ALL_EDITORS_COMMAND_ID);
 		final ParameterizedCommand parameterizedCommand = ParameterizedCommand.generateCommand(closeAllCommand,
-				Collections.EMPTY_MAP);
+				Collections.emptyMap());
 
 		// verify the close all editors handler enabledment is false (no editors are
 		// open yet!)
 		boolean canExecute = handlerService.canExecute(parameterizedCommand);
-		Assert.assertFalse(canExecute);
+		assertFalse(canExecute);
 
 		// scenario 1: e4 part descriptor contribution
 		MPartDescriptor partDescriptor = createDummyPartDescriptor();
@@ -119,46 +124,46 @@ public class CloseAllHandlerTest {
 		// verify the close all handler is enabled now (since dummy editor has been
 		// opened)
 		canExecute = handlerService.canExecute(parameterizedCommand);
-		Assert.assertTrue(canExecute);
+		assertTrue(canExecute);
 
 		// close all editors (dummy editor should close!)
 		dummyPart = partService.findPart(DUMMY_E4_PART_ID);
-		Assert.assertNotNull(dummyPart);
+		assertNotNull(dummyPart);
 		handlerService.executeHandler(parameterizedCommand);
 		dummyPart = partService.findPart(DUMMY_E4_PART_ID);
-		Assert.assertNull(dummyPart);
+		assertNull(dummyPart);
 
 		// verify the close all handler is *not* enabled now (since dummy editor has
 		// been closed)
 		canExecute = handlerService.canExecute(parameterizedCommand);
-		Assert.assertFalse(canExecute);
+		assertFalse(canExecute);
 
 		// scenario 2: open a compatibility layer editor
 		IFileEditorInput input = new DummyFileEditorInput();
 		Object activeWindow = applicationContext.getActive(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-		Assert.assertTrue("Active workbench window not found.", activeWindow instanceof IWorkbenchWindow);
+		assertTrue("Active workbench window not found.", activeWindow instanceof IWorkbenchWindow);
 		IWorkbenchWindow window = (IWorkbenchWindow) activeWindow;
 		try {
 			window.getActivePage().openEditor(input, TEST_COMPATIBILITY_LAYER_EDITOR_ID);
 		} catch (PartInitException e) {
-			Assert.fail("Test Compatibility Editor could not be opened.  Further testing cannot complete.");
+			fail("Test Compatibility Editor could not be opened.  Further testing cannot complete.");
 		}
 
 		// verify the close all handler is enabled now (since a dummy compatibility
 		// layer editor has been opened)
 		canExecute = handlerService.canExecute(parameterizedCommand);
-		Assert.assertTrue(canExecute);
+		assertTrue(canExecute);
 
 		IEditorPart compatEditor = window.getActivePage().findEditor(input);
-		Assert.assertNotNull(compatEditor);
+		assertNotNull(compatEditor);
 		handlerService.executeHandler(parameterizedCommand);
 		compatEditor = window.getActivePage().findEditor(input);
-		Assert.assertNull(compatEditor);
+		assertNull(compatEditor);
 
 		// verify the close all handler is *not* enabled now (since compatibility layer
 		// editor has been closed)
 		canExecute = handlerService.canExecute(parameterizedCommand);
-		Assert.assertFalse(canExecute);
+		assertFalse(canExecute);
 
 		// scenario 3:
 		// finally: re-open both the compatibility layer editor *and* the dummy e4 part
@@ -168,33 +173,33 @@ public class CloseAllHandlerTest {
 		try {
 			window.getActivePage().openEditor(input, TEST_COMPATIBILITY_LAYER_EDITOR_ID);
 		} catch (PartInitException e) {
-			Assert.fail("Test Compatibility Editor could not be opened.  Further testing cannot complete.");
+			fail("Test Compatibility Editor could not be opened.  Further testing cannot complete.");
 		}
 		compatEditor = window.getActivePage().findEditor(input);
-		Assert.assertNotNull(compatEditor);
+		assertNotNull(compatEditor);
 		dummyPart = partService.findPart(DUMMY_E4_PART_ID);
-		Assert.assertNotNull(dummyPart);
+		assertNotNull(dummyPart);
 
 		canExecute = handlerService.canExecute(parameterizedCommand);
-		Assert.assertTrue(canExecute);
+		assertTrue(canExecute);
 
 		// close all editors
 		handlerService.executeHandler(parameterizedCommand);
 		canExecute = handlerService.canExecute(parameterizedCommand);
-		Assert.assertFalse(canExecute);
+		assertFalse(canExecute);
 
 		// verify they are all closed
 		compatEditor = window.getActivePage().findEditor(input);
-		Assert.assertNull(compatEditor);
+		assertNull(compatEditor);
 		dummyPart = partService.findPart(DUMMY_E4_PART_ID);
-		Assert.assertNull(dummyPart);
+		assertNull(dummyPart);
 	}
 
 	private MPart createAndOpenE4Part(MPartDescriptor partDescriptor) {
 		Optional<MPartStack> primaryPartStack = findPrimaryConfiguationAreaPartStack(application, modelService);
 
 		if (primaryPartStack.isEmpty()) {
-			Assert.fail("Test cannot proceed as the primary part stack could not be found in the application.");
+			fail("Test cannot proceed as the primary part stack could not be found in the application.");
 		}
 
 		MPart dummyPart = partService.createPart(partDescriptor.getElementId());
@@ -226,10 +231,10 @@ public class CloseAllHandlerTest {
 		if (areaCandidates.size() == 1) {
 			MArea primaryArea = areaCandidates.get(0);
 			for (MPartSashContainerElement element : primaryArea.getChildren()) {
-				if (element instanceof MPartStack) {
-					return Optional.of((MPartStack) element);
-				} else if (element instanceof MPartSashContainer) {
-					return ((MPartSashContainer) element).getChildren().stream().filter(c -> c instanceof MPartStack)
+				if (element instanceof MPartStack partStack) {
+					return Optional.of(partStack);
+				} else if (element instanceof MPartSashContainer sash) {
+					return sash.getChildren().stream().filter(c -> c instanceof MPartStack)
 							.map(c -> (MPartStack) c).findFirst();
 				}
 			}
