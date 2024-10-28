@@ -13,6 +13,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.tests.harness.util.UITestCase.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.jface.action.Action;
@@ -28,20 +35,22 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test the lifecycle of an action delegate.
  */
-@RunWith(JUnit4.class)
-public class IActionBarsTest extends UITestCase {
+public class IActionBarsTest {
 
-	protected IWorkbenchWindow fWindow;
+	private IWorkbenchWindow fWindow;
 
-	protected IWorkbenchPage fPage;
+	private IWorkbenchPage fPage;
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private static class MockAction extends Action {
 		public boolean hasRun = false;
@@ -56,16 +65,9 @@ public class IActionBarsTest extends UITestCase {
 		}
 	}
 
-	/**
-	 * Constructor for IActionDelegateTest
-	 */
-	public IActionBarsTest() {
-		super(IActionBarsTest.class.getSimpleName());
-	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
 	}
@@ -168,7 +170,7 @@ public class IActionBarsTest extends UITestCase {
 			runMatchingCommand(fWindow, ActionFactory.CUT.getId());
 			runMatchingCommand(fWindow, ActionFactory.UNDO.getId());
 
-			ActionUtil.runActionUsingPath(this, fWindow,
+			ActionUtil.runActionUsingPath(fWindow,
 					IWorkbenchActionConstants.M_FILE + '/' + IWorkbenchActionConstants.QUIT);
 			assertTrue(cut.hasRun);
 			assertTrue(!copy.hasRun);
@@ -187,7 +189,7 @@ public class IActionBarsTest extends UITestCase {
 			cut.hasRun = copy.hasRun = undo.hasRun = quit.hasRun = false;
 			runMatchingCommand(fWindow, ActionFactory.CUT.getId());
 			runMatchingCommand(fWindow, ActionFactory.UNDO.getId());
-			ActionUtil.runActionUsingPath(this, fWindow,
+			ActionUtil.runActionUsingPath(fWindow,
 					IWorkbenchActionConstants.M_FILE + '/' + IWorkbenchActionConstants.QUIT);
 			assertTrue(!cut.hasRun);
 			assertTrue(!copy.hasRun);
@@ -200,7 +202,7 @@ public class IActionBarsTest extends UITestCase {
 			cut.hasRun = copy.hasRun = undo.hasRun = quit.hasRun = false;
 			runMatchingCommand(fWindow, ActionFactory.CUT.getId());
 			runMatchingCommand(fWindow, ActionFactory.UNDO.getId());
-			ActionUtil.runActionUsingPath(this, fWindow,
+			ActionUtil.runActionUsingPath(fWindow,
 					IWorkbenchActionConstants.M_FILE + '/' + IWorkbenchActionConstants.QUIT);
 			assertTrue(cut.hasRun);
 			assertTrue(!copy.hasRun);
@@ -219,7 +221,7 @@ public class IActionBarsTest extends UITestCase {
 			// this is not a failure, just a condition to be checked by
 			// the test
 		} catch (Exception e) {
-			fail("Failed to run " + commandId, e);
+			fail("Failed to run " + commandId);
 		}
 	}
 }

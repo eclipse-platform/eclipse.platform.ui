@@ -13,26 +13,19 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the lifecycle for a view action delegate.
  */
-@RunWith(JUnit4.class)
 public class IViewActionDelegateTest extends IActionDelegateTest {
 
 	public static String TEST_VIEW_ID = "org.eclipse.ui.tests.api.IViewActionDelegateTest";
-
-	/**
-	 * Constructor for IWorkbenchWindowActionDelegateTest
-	 */
-	public IViewActionDelegateTest() {
-		super(IViewActionDelegateTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testInit() throws Throwable {
@@ -59,7 +52,7 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 	protected void runAction(Object widget) throws Throwable {
 		MockViewPart view = (MockViewPart) widget;
 		IMenuManager mgr = view.getViewSite().getActionBars().getMenuManager();
-		ActionUtil.runActionWithLabel(this, mgr, "Mock Action");
+		ActionUtil.runActionWithLabel(mgr, "Mock Action");
 	}
 
 	@Override
