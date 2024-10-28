@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertArrayEquals;
+
+import java.util.Arrays;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -24,7 +28,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.WorkingSet;
-import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.IA;
@@ -101,7 +104,7 @@ public class IWorkingSetTest extends UITestCase {
 		IFile f1 = FileUtil.createFile("f1.txt", p1);
 		IAdaptable[] elements = new IAdaptable[] { f1, p1 };
 		fWorkingSet.setElements(elements);
-		assertTrue(ArrayUtil.equals(elements, fWorkingSet.getElements()));
+		assertArrayEquals(elements, fWorkingSet.getElements());
 
 		fWorkingSet.setElements(new IAdaptable[] { f1 });
 		assertEquals(f1, fWorkingSet.getElements()[0]);
@@ -160,17 +163,16 @@ public class IWorkingSetTest extends UITestCase {
 		/*
 		 * check that initially workingSetManager contains "fWorkingSet"
 		 */
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
-				workingSetManager.getWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, workingSetManager.getWorkingSets());
 
 		IWorkingSet wSet = workingSetManager.createWorkingSet(
 				WORKING_SET_NAME_2, new IAdaptable[] {});
 		workingSetManager.addWorkingSet(wSet);
 
 		/* check that workingSetManager contains "fWorkingSet" and wSet */
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet, wSet },
+		assertTrue(Arrays.equals(new IWorkingSet[] { fWorkingSet, wSet },
 				workingSetManager.getWorkingSets())
-				|| ArrayUtil.equals(new IWorkingSet[] { wSet, fWorkingSet },
+				|| Arrays.equals(new IWorkingSet[] { wSet, fWorkingSet },
 						workingSetManager.getWorkingSets()));
 
 		String sameName = fWorkingSet.getName();
@@ -198,8 +200,7 @@ public class IWorkingSetTest extends UITestCase {
 		/*
 		 * check that initially workingSetManager contains "fWorkingSet"
 		 */
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
-				workingSetManager.getWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, workingSetManager.getWorkingSets());
 
 		String sameName = fWorkingSet.getName();
 		IWorkingSet wSet = workingSetManager.createWorkingSet(sameName,

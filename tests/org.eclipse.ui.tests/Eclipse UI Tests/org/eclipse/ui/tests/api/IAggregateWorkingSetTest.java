@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -34,7 +34,6 @@ import org.eclipse.ui.internal.AbstractWorkingSet;
 import org.eclipse.ui.internal.AbstractWorkingSetManager;
 import org.eclipse.ui.internal.AggregateWorkingSet;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -128,9 +127,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 		//</possible client code>
 
 		//unexpected
-		assertTrue(ArrayUtil.equals(
-				new IAdaptable[] {},
-				fWorkingSet.getElements()));
+		assertArrayEquals(new IAdaptable[] {}, fWorkingSet.getElements());
 	}
 
 	/**

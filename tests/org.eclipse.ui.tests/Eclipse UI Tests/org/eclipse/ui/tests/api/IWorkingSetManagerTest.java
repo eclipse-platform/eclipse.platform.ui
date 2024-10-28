@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,10 @@
  *     Tomasz Zarna <tomasz.zarna@tasktop.com> - Bug 37183
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
+
+import static org.junit.Assert.assertArrayEquals;
+
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -161,22 +165,19 @@ public class IWorkingSetManagerTest extends UITestCase {
 	public void testAddRecentWorkingSet() throws Throwable {
 		fWorkingSetManager.addRecentWorkingSet(fWorkingSet);
 		fWorkingSetManager.addWorkingSet(fWorkingSet);
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
-				fWorkingSetManager.getRecentWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, fWorkingSetManager.getRecentWorkingSets());
 
 		IWorkingSet workingSet2 = fWorkingSetManager.createWorkingSet(
 				WORKING_SET_NAME_2, new IAdaptable[] { fWorkspace.getRoot() });
 		fWorkingSetManager.addRecentWorkingSet(workingSet2);
 		fWorkingSetManager.addWorkingSet(workingSet2);
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { workingSet2,
-				fWorkingSet }, fWorkingSetManager.getRecentWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { workingSet2, fWorkingSet }, fWorkingSetManager.getRecentWorkingSets());
 	}
 
 	@Test
 	public void testAddWorkingSet() throws Throwable {
 		fWorkingSetManager.addWorkingSet(fWorkingSet);
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
-				fWorkingSetManager.getWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, fWorkingSetManager.getWorkingSets());
 
 		boolean exceptionThrown = false;
 		try {
@@ -185,8 +186,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 			exceptionThrown = true;
 		}
 		assertTrue(exceptionThrown);
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
-				fWorkingSetManager.getWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, fWorkingSetManager.getWorkingSets());
 	}
 
 	@Test
@@ -194,14 +194,12 @@ public class IWorkingSetManagerTest extends UITestCase {
 		IWorkingSet workingSet2 = fWorkingSetManager.createWorkingSet(
 				WORKING_SET_NAME_2, new IAdaptable[] { fWorkspace.getRoot() });
 		assertEquals(WORKING_SET_NAME_2, workingSet2.getName());
-		assertTrue(ArrayUtil.equals(new IAdaptable[] { fWorkspace.getRoot() },
-				workingSet2.getElements()));
+		assertArrayEquals(new IAdaptable[] { fWorkspace.getRoot() }, workingSet2.getElements());
 
 		workingSet2 = fWorkingSetManager.createWorkingSet("",
 				new IAdaptable[] {});
 		assertEquals("", workingSet2.getName());
-		assertTrue(ArrayUtil.equals(new IAdaptable[] {}, workingSet2
-				.getElements()));
+		assertArrayEquals(new IAdaptable[] {}, workingSet2.getElements());
 	}
 
 	@Test
@@ -213,8 +211,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 		IWorkingSet restoredWorkingSet2 = fWorkingSetManager
 				.createWorkingSet(memento);
 		assertEquals(WORKING_SET_NAME_2, restoredWorkingSet2.getName());
-		assertTrue(ArrayUtil.equals(new IAdaptable[] { fWorkspace.getRoot() },
-				restoredWorkingSet2.getElements()));
+		assertArrayEquals(new IAdaptable[] { fWorkspace.getRoot() }, restoredWorkingSet2.getElements());
 	}
 
 	@Test
@@ -232,19 +229,16 @@ public class IWorkingSetManagerTest extends UITestCase {
 
 		fWorkingSetManager.addRecentWorkingSet(fWorkingSet);
 		fWorkingSetManager.addWorkingSet(fWorkingSet);
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
-				fWorkingSetManager.getRecentWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, fWorkingSetManager.getRecentWorkingSets());
 
 		IWorkingSet workingSet2 = fWorkingSetManager.createWorkingSet(
 				WORKING_SET_NAME_2, new IAdaptable[] { fWorkspace.getRoot() });
 		fWorkingSetManager.addRecentWorkingSet(workingSet2);
 		fWorkingSetManager.addWorkingSet(workingSet2);
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { workingSet2,
-				fWorkingSet }, fWorkingSetManager.getRecentWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { workingSet2, fWorkingSet }, fWorkingSetManager.getRecentWorkingSets());
 
 		fWorkingSetManager.removeWorkingSet(workingSet2);
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
-				fWorkingSetManager.getRecentWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, fWorkingSetManager.getRecentWorkingSets());
 	}
 
 	@Test
@@ -261,12 +255,12 @@ public class IWorkingSetManagerTest extends UITestCase {
 				fWorkingSetManager.addWorkingSet(workingSet);
 				workingSets[9 - i] = workingSet;
 			}
-			assertTrue(ArrayUtil.equals(workingSets, fWorkingSetManager.getRecentWorkingSets()));
+			assertArrayEquals(workingSets, fWorkingSetManager.getRecentWorkingSets());
 
 			fWorkingSetManager.setRecentWorkingSetsLength(7);
 			IWorkingSet[] workingSets7 = new IWorkingSet[7];
 			System.arraycopy(workingSets, 0, workingSets7, 0, 7);
-			assertTrue(ArrayUtil.equals(workingSets7, fWorkingSetManager.getRecentWorkingSets()));
+			assertArrayEquals(workingSets7, fWorkingSetManager.getRecentWorkingSets());
 
 			fWorkingSetManager.setRecentWorkingSetsLength(9);
 			IWorkingSet[] workingSets9 = new IWorkingSet[9];
@@ -280,7 +274,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 				workingSets9[8 - i] = workingSet;
 			}
 
-			assertTrue(ArrayUtil.equals(workingSets9, fWorkingSetManager.getRecentWorkingSets()));
+			assertArrayEquals(workingSets9, fWorkingSetManager.getRecentWorkingSets());
 		} finally {
 			if (oldMRULength > 0) {
 				fWorkingSetManager.setRecentWorkingSetsLength(oldMRULength);
@@ -302,20 +296,17 @@ public class IWorkingSetManagerTest extends UITestCase {
 
 	@Test
 	public void testGetWorkingSets() throws Throwable {
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] {}, fWorkingSetManager
-				.getWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] {}, fWorkingSetManager.getWorkingSets());
 
 		fWorkingSetManager.addWorkingSet(fWorkingSet);
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
-				fWorkingSetManager.getWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, fWorkingSetManager.getWorkingSets());
 
 		try {
 			fWorkingSetManager.addWorkingSet(fWorkingSet);
 			fail("Added the same set twice");
 		} catch (RuntimeException exception) {
 		}
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
-				fWorkingSetManager.getWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, fWorkingSetManager.getWorkingSets());
 
 		IWorkingSet workingSet2 = fWorkingSetManager.createWorkingSet(
 				WORKING_SET_NAME_2, new IAdaptable[] { fWorkspace.getRoot() });
@@ -369,16 +360,14 @@ public class IWorkingSetManagerTest extends UITestCase {
 	@Test
 	public void testRemoveWorkingSet() throws Throwable {
 		fWorkingSetManager.removeWorkingSet(fWorkingSet);
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] {}, fWorkingSetManager
-				.getWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] {}, fWorkingSetManager.getWorkingSets());
 
 		fWorkingSetManager.addWorkingSet(fWorkingSet);
 		IWorkingSet workingSet2 = fWorkingSetManager.createWorkingSet(
 				WORKING_SET_NAME_2, new IAdaptable[] { fWorkspace.getRoot() });
 		fWorkingSetManager.addWorkingSet(workingSet2);
 		fWorkingSetManager.removeWorkingSet(fWorkingSet);
-		assertTrue(ArrayUtil.equals(new IWorkingSet[] { workingSet2 },
-				fWorkingSetManager.getWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { workingSet2 }, fWorkingSetManager.getWorkingSets());
 	}
 
 	@Test
@@ -391,9 +380,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 		String origName=fWorkingSet.getName();
 
 		/* check that workingSetManager contains "fWorkingSet"*/
-		assertTrue(ArrayUtil.equals(
-				new IWorkingSet[] {  fWorkingSet },
-				workingSetManager.getWorkingSets()));
+		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, workingSetManager.getWorkingSets());
 
 		fWorkingSet.setName(" ");
 		assertEquals(" ", fWorkingSet.getName());
@@ -402,7 +389,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 		workingSetManager.removeWorkingSet(fWorkingSet);
 
 		/* check that "fWorkingSet" was removed  after rename*/
-		if(!ArrayUtil.equals(new IWorkingSet[] {},
+		if (!Arrays.equals(new IWorkingSet[] {},
 				workingSetManager.getWorkingSets())){
 			/*Test Failure, report after restoring state*/
 			fWorkingSet.setName(origName);
