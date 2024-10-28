@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
 import org.eclipse.ui.IActionDelegate2;
@@ -20,21 +25,11 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the lifecycle for a window action delegate.
  */
-@RunWith(JUnit4.class)
 public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
-
-	/**
-	 * Constructor for IWorkbenchWindowActionDelegateTest
-	 */
-	public IWorkbenchWindowActionDelegateTest() {
-		super(IWorkbenchWindowActionDelegateTest.class.getSimpleName());
-	}
 
 	@Test
 	@Override
@@ -123,7 +118,7 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 
 	@Override
 	protected void runAction(Object widget) throws Throwable {
-		ActionUtil.runActionWithLabel(this, fWindow, "Mock Action");
+		ActionUtil.runActionWithLabel(fWindow, "Mock Action");
 	}
 
 	@Override

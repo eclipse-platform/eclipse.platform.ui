@@ -13,33 +13,35 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
  * Test the lifecycle of an action delegate.
  */
-public abstract class IActionDelegateTest extends UITestCase {
+public abstract class IActionDelegateTest {
 
 	protected IWorkbenchWindow fWindow;
 
 	protected IWorkbenchPage fPage;
 
-	/**
-	 * Constructor for IActionDelegateTest
-	 */
-	public IActionDelegateTest(String testName) {
-		super(testName);
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		fWindow = openTestWindow();
+	@Before
+	public void doSetUp() throws Exception {
+		fWindow = UITestCase.openTestWindow();
 		fPage = fWindow.getActivePage();
 	}
 

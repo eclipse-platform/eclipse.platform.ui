@@ -23,21 +23,17 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.junit.Assert;
 
-import junit.framework.TestCase;
-
 /**
- * <code>ActionUtil</code> contains methods to run actions
- * in the workbench.
+ * <code>ActionUtil</code> contains methods to run actions in the workbench.
  */
 public class ActionUtil {
 
 	/**
 	 * Runs an action contribution.
 	 *
-	 * @param test the current test case
 	 * @param item an action contribution item
 	 */
-	public static void runAction(TestCase test, IContributionItem item) {
+	public static void runAction(IContributionItem item) {
 		Assert.assertTrue(item instanceof ActionContributionItem);
 		((ActionContributionItem) item).getAction().run();
 	}
@@ -46,18 +42,16 @@ public class ActionUtil {
 	 * Runs the first action found in a menu manager with a
 	 * particular label.
 	 *
-	 * @param test the current test case
 	 * @param mgr the containing menu manager
 	 * @param label the action label
 	 */
-	public static void runActionWithLabel(TestCase test, IMenuManager mgr,
-			String label) {
+	public static void runActionWithLabel(IMenuManager mgr, String label) {
 		IContributionItem[] items = mgr.getItems();
 		for (IContributionItem item : items) {
-			if (item instanceof SubContributionItem)
-				item = ((SubContributionItem) item).getInnerItem();
-			if (item instanceof ActionContributionItem) {
-				IAction action = ((ActionContributionItem) item).getAction();
+			if (item instanceof SubContributionItem subItem)
+				item = subItem.getInnerItem();
+			if (item instanceof ActionContributionItem actionContribItem) {
+				IAction action = actionContribItem.getAction();
 				if (label.equals(action.getText())) {
 					action.run();
 					return;
@@ -71,43 +65,37 @@ public class ActionUtil {
 	 * Runs the first action found in a window with a
 	 * particular label.
 	 *
-	 * @param test the current test case
 	 * @param win the containing window
 	 * @param label the action label
 	 */
-	public static void runActionWithLabel(TestCase test, IWorkbenchWindow win,
-			String label) {
+	public static void runActionWithLabel(IWorkbenchWindow win, String label) {
 		WorkbenchWindow realWin = (WorkbenchWindow) win;
 		IMenuManager mgr = realWin.getMenuBarManager();
-		runActionWithLabel(test, mgr, label);
+		runActionWithLabel(mgr, label);
 	}
 
 	/**
 	 * Runs an action identified by an id path in a
 	 * menu manager.
 	 *
-	 * @param test the current test case
 	 * @param mgr the containing menu manager
 	 */
-	public static void runActionUsingPath(TestCase test, IMenuManager mgr,
-			String idPath) {
+	public static void runActionUsingPath(IMenuManager mgr, String idPath) {
 		IContributionItem item = mgr.findUsingPath(idPath);
 		Assert.assertNotNull(item);
-		runAction(test, item);
+		runAction(item);
 	}
 
 	/**
 	 * Runs an action identified by an id path in a
 	 * window.
 	 *
-	 * @param test the current test case
 	 * @param win the containing window
 	 */
-	public static void runActionUsingPath(TestCase test, IWorkbenchWindow win,
-			String idPath) {
+	public static void runActionUsingPath(IWorkbenchWindow win, String idPath) {
 		WorkbenchWindow realWin = (WorkbenchWindow) win;
 		IMenuManager mgr = realWin.getMenuBarManager();
-		runActionUsingPath(test, mgr, idPath);
+		runActionUsingPath(mgr, idPath);
 	}
 
 	/**
@@ -122,10 +110,10 @@ public class ActionUtil {
 	public static IAction getActionWithLabel(IMenuManager mgr, String label) {
 		IContributionItem[] items = mgr.getItems();
 		for (IContributionItem item : items) {
-			if (item instanceof SubContributionItem)
-				item = ((SubContributionItem) item).getInnerItem();
-			if (item instanceof ActionContributionItem) {
-				IAction action = ((ActionContributionItem) item).getAction();
+			if (item instanceof SubContributionItem subItem)
+				item = subItem.getInnerItem();
+			if (item instanceof ActionContributionItem actionContribItem) {
+				IAction action = actionContribItem.getAction();
 				if (label.equals(action.getText())) {
 					return action;
 				}

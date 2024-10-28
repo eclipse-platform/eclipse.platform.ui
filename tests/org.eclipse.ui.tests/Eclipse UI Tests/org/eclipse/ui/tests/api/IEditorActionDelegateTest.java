@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IMenuManager;
@@ -21,25 +24,15 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the lifecycle for an editor action delegate.
  */
-@RunWith(JUnit4.class)
 public class IEditorActionDelegateTest extends IActionDelegateTest {
 
 	public static String EDITOR_ID = "org.eclipse.ui.tests.api.IEditorActionDelegateTest";
 
 	private MockEditorPart editor;
-
-	/**
-	 * Constructor for IWorkbenchWindowActionDelegateTest
-	 */
-	public IEditorActionDelegateTest() {
-		super(IEditorActionDelegateTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testSetActiveEditor() throws Throwable {
@@ -69,7 +62,7 @@ public class IEditorActionDelegateTest extends IActionDelegateTest {
 		MockEditorActionBarContributor contributor = (MockEditorActionBarContributor) editor
 				.getEditorSite().getActionBarContributor();
 		IMenuManager mgr = contributor.getActionBars().getMenuManager();
-		ActionUtil.runActionWithLabel(this, mgr, "Mock Action");
+		ActionUtil.runActionWithLabel(mgr, "Mock Action");
 	}
 
 	@Override
