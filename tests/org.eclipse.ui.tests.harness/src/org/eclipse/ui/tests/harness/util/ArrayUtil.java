@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -71,21 +71,4 @@ public class ArrayUtil {
 		return false;
 	}
 
-	/**
-	 * Returns whether two arrays are equal.  They must
-	 * have the same size and the same contents.
-	 *
-	 * @param one the first array
-	 * @param two the second array
-	 * @return <code>true</code> if the array are equal,
-	 * 		<code>false</code> otherwise.
-	 */
-	public static boolean equals(Object[] one, Object[] two) {
-		if (one.length != two.length)
-			return false;
-		for (int i = 0; i < one.length; i++)
-			if (one[i] != two[i])
-				return false;
-		return true;
-	}
 }

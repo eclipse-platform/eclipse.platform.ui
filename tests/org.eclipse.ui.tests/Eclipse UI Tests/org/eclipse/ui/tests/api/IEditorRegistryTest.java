@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -123,7 +123,7 @@ public class IEditorRegistryTest {
 			assertEquals(editors[0].getId(), map[1]);
 			editors2 = fReg.getEditors(FileUtil.createFile(map[0], proj)
 					.getName());
-			assertEquals(ArrayUtil.equals(editors, editors2), true);
+			assertArrayEquals(editors, editors2);
 		}
 
 		// there is no matching editor
