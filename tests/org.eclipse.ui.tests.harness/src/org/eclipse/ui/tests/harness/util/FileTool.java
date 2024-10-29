@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,13 +18,10 @@ package org.eclipse.ui.tests.harness.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.io.Writer;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -37,10 +34,6 @@ import org.eclipse.core.runtime.Plugin;
 
 public class FileTool {
 
-	/**
-	 * A buffer.
-	 */
-	private static byte[] buffer = new byte[8192];
 	/**
 	 * Unzips the given zip file to the given destination directory
 	 * extracting only those entries the pass through the given
@@ -64,7 +57,7 @@ public class FileTool {
 				File file = new File(dstDir, changeSeparator(entryName, '/', File.separatorChar));
 				file.getParentFile().mkdirs();
 				try (InputStream src = zipFile.getInputStream(entry); OutputStream dst= new FileOutputStream(file)){
-					transferData(src, dst);
+					src.transferTo(dst);
 				}
 			}
 		} finally {
@@ -99,24 +92,7 @@ public class FileTool {
 	public static void transferData(File source, File destination) throws IOException {
 		destination.getParentFile().mkdirs();
 		try (InputStream is = new FileInputStream(source); OutputStream os = new FileOutputStream(destination)) {
-			transferData(is, os);
-		}
-	}
-	/**
-	 * Copies all bytes in the given source stream to
-	 * the given destination stream. Neither streams
-	 * are closed.
-	 *
-	 * @param source the given source stream
-	 * @param destination the given destination stream
-	 */
-	public static void transferData(InputStream source, OutputStream destination) throws IOException {
-		int bytesRead = 0;
-		while(bytesRead != -1){
-			bytesRead = source.read(buffer, 0, buffer.length);
-			if(bytesRead != -1){
-				destination.write(buffer, 0, bytesRead);
-			}
+			is.transferTo(os);
 		}
 	}
 
@@ -151,12 +127,6 @@ public class FileTool {
 		}
 	}
 
-	public static StringBuilder readToBuilder(String fileName) throws IOException {
-		try (FileReader reader = new FileReader(fileName)) {
-			return readToBuilder(reader);
-		}
-	}
-
 	public static StringBuilder readToBuilder(Reader reader) throws IOException {
 		StringBuilder s = new StringBuilder();
 		try {
@@ -175,9 +145,4 @@ public class FileTool {
 		return s;
 	}
 
-	public static void writeFromBuilder(String fileName, StringBuilder content) throws IOException {
-		try (Writer writer = new FileWriter(fileName)) {
-			writer.write(content.toString());
-		}
-	}
 }
