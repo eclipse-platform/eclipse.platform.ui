@@ -323,7 +323,8 @@ public class WindowsDefenderConfigurator implements EventHandler {
 			return switch (onlyLine.toLowerCase(Locale.ENGLISH).strip()) {
 			// Known values as listed in
 			// https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/microsoft-defender-antivirus-windows#use-powershell-to-check-the-status-of-microsoft-defender-antivirus
-			case "sxs passive mode", "passive mode", "" -> false; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			// "not running" status appears to be undocumented (https://github.com/eclipse-platform/eclipse.platform.ui/issues/2447)
+			case "sxs passive mode", "passive mode", "not running", "" -> false; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			case "normal", "edr block mode" -> true; //$NON-NLS-1$//$NON-NLS-2$
 			default -> throw new IOException("Process terminated with unexpected result:\n" + String.join("\n", lines)); //$NON-NLS-1$//$NON-NLS-2$
 			};
