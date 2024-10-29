@@ -27,4 +27,6 @@ public interface IThemeElementDefinitionOverridable<T> {
 	void setName(String name);
 
 	void setDescription(String description);
+
+	void setEditable(Boolean editable);
 }
