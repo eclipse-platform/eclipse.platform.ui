@@ -45,9 +45,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.CloseAllHandler;
 import org.eclipse.ui.internal.Workbench;
 import org.junit.Before;
@@ -89,12 +89,12 @@ public class CloseAllHandlerTest {
 	 * Tests the enabled when and execution logic within the
 	 * {@link CloseAllHandler}.
 	 *
-	 * Scenario 1: E4 style part contribution which is tagged as representing an
+	 * Scenario 1: compatibility layer type editor is closed via the handler (and
+	 * the enablement of handler is checked).
+	 *
+	 * Scenario 2: E4 style part contribution which is tagged as representing an
 	 * 'editor' is closed via the handler (and the enablement of handler is
 	 * checked).
-	 *
-	 * Scenario 2: compatibility layer type editor is closed via the handler (and
-	 * the enablement of handler is checked).
 	 *
 	 * Scenario 3: a mix of an open compatibility layer type editor *and* an E4
 	 * style part contribution which is tagged as representing an 'editor' are both
@@ -112,6 +112,33 @@ public class CloseAllHandlerTest {
 		// verify the close all editors handler enabledment is false (no editors are
 		// open yet!)
 		boolean canExecute = handlerService.canExecute(parameterizedCommand);
+		assertFalse(canExecute);
+
+		// scenario 2: open a compatibility layer editor
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		assertNotNull("Active workbench window not found.", window);
+
+		IFileEditorInput input = new DummyFileEditorInput();
+		try {
+			window.getActivePage().openEditor(input, TEST_COMPATIBILITY_LAYER_EDITOR_ID);
+		} catch (PartInitException e) {
+			fail("Test Compatibility Editor could not be opened.  Further testing cannot complete.");
+		}
+
+		// verify the close all handler is enabled now (since a dummy compatibility
+		// layer editor has been opened)
+		canExecute = handlerService.canExecute(parameterizedCommand);
+		assertTrue(canExecute);
+
+		IEditorPart compatEditor = window.getActivePage().findEditor(input);
+		assertNotNull(compatEditor);
+		handlerService.executeHandler(parameterizedCommand);
+		compatEditor = window.getActivePage().findEditor(input);
+		assertNull(compatEditor);
+
+		// verify the close all handler is *not* enabled now (since compatibility layer
+		// editor has been closed)
+		canExecute = handlerService.canExecute(parameterizedCommand);
 		assertFalse(canExecute);
 
 		// scenario 1: e4 part descriptor contribution
@@ -135,33 +162,6 @@ public class CloseAllHandlerTest {
 
 		// verify the close all handler is *not* enabled now (since dummy editor has
 		// been closed)
-		canExecute = handlerService.canExecute(parameterizedCommand);
-		assertFalse(canExecute);
-
-		// scenario 2: open a compatibility layer editor
-		IFileEditorInput input = new DummyFileEditorInput();
-		Object activeWindow = applicationContext.getActive(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-		assertTrue("Active workbench window not found.", activeWindow instanceof IWorkbenchWindow);
-		IWorkbenchWindow window = (IWorkbenchWindow) activeWindow;
-		try {
-			window.getActivePage().openEditor(input, TEST_COMPATIBILITY_LAYER_EDITOR_ID);
-		} catch (PartInitException e) {
-			fail("Test Compatibility Editor could not be opened.  Further testing cannot complete.");
-		}
-
-		// verify the close all handler is enabled now (since a dummy compatibility
-		// layer editor has been opened)
-		canExecute = handlerService.canExecute(parameterizedCommand);
-		assertTrue(canExecute);
-
-		IEditorPart compatEditor = window.getActivePage().findEditor(input);
-		assertNotNull(compatEditor);
-		handlerService.executeHandler(parameterizedCommand);
-		compatEditor = window.getActivePage().findEditor(input);
-		assertNull(compatEditor);
-
-		// verify the close all handler is *not* enabled now (since compatibility layer
-		// editor has been closed)
 		canExecute = handlerService.canExecute(parameterizedCommand);
 		assertFalse(canExecute);
 
