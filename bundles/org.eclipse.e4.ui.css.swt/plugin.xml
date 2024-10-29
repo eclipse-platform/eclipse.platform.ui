@@ -494,6 +494,7 @@
        	 <property-name name="category"/>
          <property-name name="label"/>       
          <property-name name="description"/>
+         <property-name name="editable"/>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.definition.FontDefinitionElement"

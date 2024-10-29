@@ -155,4 +155,10 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 			appendState(State.OVERRIDDEN);
 		}
 	}
+
+	@Override
+	public void setEditable(Boolean editable) {
+		isEditable = editable;
+	}
+
 }
