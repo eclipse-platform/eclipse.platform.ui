@@ -114,7 +114,7 @@ public class CloseAllHandlerTest {
 		boolean canExecute = handlerService.canExecute(parameterizedCommand);
 		assertFalse(canExecute);
 
-		// scenario 2: open a compatibility layer editor
+		// scenario 1: open a compatibility layer editor
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		assertNotNull("Active workbench window not found.", window);
 
@@ -141,7 +141,7 @@ public class CloseAllHandlerTest {
 		canExecute = handlerService.canExecute(parameterizedCommand);
 		assertFalse(canExecute);
 
-		// scenario 1: e4 part descriptor contribution
+		// scenario 2: e4 part descriptor contribution
 		MPartDescriptor partDescriptor = createDummyPartDescriptor();
 		application.getDescriptors().add(partDescriptor);
 
