@@ -102,7 +102,7 @@ public class CascadingTheme extends EventManager implements ITheme {
 	}
 
 	@Override
-	public Set keySet() {
+	public Set<String> keySet() {
 		return currentTheme.keySet();
 	}
 
