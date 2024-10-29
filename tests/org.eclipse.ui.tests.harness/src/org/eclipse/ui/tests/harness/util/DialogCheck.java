@@ -15,7 +15,7 @@
 package org.eclipse.ui.tests.harness.util;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -66,7 +66,7 @@ public class DialogCheck {
 			getShell();
 		}
 		if (_verifyDialog.open(dialog) == IDialogConstants.NO_ID) {
-			assertTrue(_verifyDialog.getFailureText(), false);
+			fail(_verifyDialog.getFailureText());
 		}
 	}
 
@@ -117,30 +117,28 @@ public class DialogCheck {
 	private static void verifyCompositeText(Composite composite) {
 		Control children[] = composite.getChildren();
 		for (Control child : children) {
-			if (child instanceof TabFolder) {
-				TabFolder folder = (TabFolder) child;
+			if (child instanceof TabFolder folder) {
 				int numPages = folder.getItemCount();
 				for (int j = 0; j < numPages; j++) {
 					folder.setSelection(j);
 				}
-			} else if (child instanceof CTabFolder) {
-				CTabFolder folder = (CTabFolder) child;
+			} else if (child instanceof CTabFolder folder) {
 				int numPages = folder.getItemCount();
 				for (int j = 0; j < numPages; j++) {
 					folder.setSelection(j);
 				}
 			}
-			else if (child instanceof Button) {
+			else if (child instanceof Button b) {
 				//verify the text if the child is a button
-				verifyButtonText((Button) child);
+				verifyButtonText(b);
 			}
-			else if (child instanceof Label) {
+			else if (child instanceof Label l) {
 				//child is not a button, maybe a label
-				verifyLabelText((Label) child);
+				verifyLabelText(l);
 			}
-			else if (child instanceof Composite) {
+			else if (child instanceof Composite comp) {
 				//child is not a label, make a recursive call if it is a composite
-				verifyCompositeText((Composite) child);
+				verifyCompositeText(comp);
 			}
 		}
 	}
@@ -158,7 +156,7 @@ public class DialogCheck {
 		//if (size.y/preferred.y) == X, then label spans X lines, so divide
 		//the calculated value of preferred.x by X
 		if (preferred.y * size.y > 0) {
-			preferred.y /= countLines(button.getText()); //check for '\n\'
+			preferred.y /= button.getText().lines().count(); // check for '\n\'
 			if (size.y / preferred.y > 1) {
 				preferred.x /= (size.y / preferred.y);
 			}
@@ -170,7 +168,7 @@ public class DialogCheck {
 		if (preferred.x > size.x) {
 			//close the dialog
 			button.getShell().dispose();
-			assertTrue(message, false);
+			fail(message);
 		}
 	}
 
@@ -191,7 +189,7 @@ public class DialogCheck {
 		//if (size.y/preferred.y) == X, then label spans X lines, so divide
 		//the calculated value of preferred.x by X
 		if (preferred.y * size.y > 0) {
-			preferred.y /= countLines(label.getText());
+			preferred.y /= label.getText().lines().count();
 			if (size.y / preferred.y > 1) {
 				preferred.x /= (size.y / preferred.y);
 			}
@@ -202,24 +200,8 @@ public class DialogCheck {
 		if (preferred.x > size.x) {
 			//close the dialog
 			label.getShell().dispose();
-			assertTrue(message, false);
+			fail(message);
 		}
 	}
 
-	/*
-	 * Counts the number of lines in a given String.
-	 * For example, if a string contains one (1) newline character,
-	 * a value of two (2) would be returned.
-	 * @param text The string to look through.
-	 * @return int the number of lines in text.
-	 */
-	private static int countLines(String text) {
-		int newLines = 1;
-		for (int i = 0; i < text.length(); i++) {
-			if (text.charAt(i) == '\n') {
-				newLines++;
-			}
-		}
-		return newLines;
-	}
 }

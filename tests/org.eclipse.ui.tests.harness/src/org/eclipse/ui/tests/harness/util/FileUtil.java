@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,9 +12,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -81,8 +78,8 @@ public class FileUtil {
 			throws CoreException {
 		if (!folder.exists()) {
 			IContainer parent = folder.getParent();
-			if (parent instanceof IFolder) {
-				createFolder((IFolder) parent, force, local, null);
+			if (parent instanceof IFolder f) {
+				createFolder(f, force, local, null);
 			}
 			folder.create(force, local, monitor);
 		}
@@ -98,9 +95,7 @@ public class FileUtil {
 	public static IFile createFile(String name, IProject proj) throws CoreException {
 		IFile file = proj.getFile(name);
 		if (!file.exists()) {
-			String str = " ";
-			InputStream in = new ByteArrayInputStream(str.getBytes());
-			file.create(in, true, null);
+			file.create(" ".getBytes(), IResource.FORCE, null);
 		}
 		return file;
 	}

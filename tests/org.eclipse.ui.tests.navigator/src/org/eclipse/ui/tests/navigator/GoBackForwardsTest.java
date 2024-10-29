@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
 package org.eclipse.ui.tests.navigator;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -31,7 +33,6 @@ import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
-import org.eclipse.ui.tests.harness.util.FileTool;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -70,7 +71,7 @@ public class GoBackForwardsTest extends UITestCase {
 			file = FileUtil.createFile(FILE_NAME, project);
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder.append(FILE_CONTENTS);
-			FileTool.writeFromBuilder(file.getLocation().toOSString(), stringBuilder);
+			Files.writeString(Paths.get(file.getLocation().toOSString()), stringBuilder);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
 			fail("Should not throw an exception");
