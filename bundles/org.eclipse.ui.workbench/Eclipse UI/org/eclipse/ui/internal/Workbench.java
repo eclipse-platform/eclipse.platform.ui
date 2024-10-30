@@ -147,6 +147,7 @@ import org.eclipse.osgi.service.runnable.StartupMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.FontData;
@@ -525,9 +526,10 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			return;
 		}
 		try {
-			URI workspaceLocationURI = workspaceLocation.getURL().toURI();
-			display.setData(EDGE_USER_DATA_FOLDER, Paths.get(workspaceLocationURI).toString());
-		} catch (URISyntaxException e) {
+			URI swtMetadataLocationURI = workspaceLocation
+					.getDataArea(FrameworkUtil.getBundle(Browser.class).getSymbolicName()).toURI();
+			display.setData(EDGE_USER_DATA_FOLDER, Paths.get(swtMetadataLocationURI).toString());
+		} catch (URISyntaxException | IOException e) {
 			WorkbenchPlugin.log("Invalid workspace location to be set for Edge browser.", e); //$NON-NLS-1$
 		}
 	}
