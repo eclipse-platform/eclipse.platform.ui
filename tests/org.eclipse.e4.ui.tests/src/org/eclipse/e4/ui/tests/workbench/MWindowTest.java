@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2023 IBM Corporation and others.
+ * Copyright (c) 2009, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -365,12 +366,9 @@ public class MWindowTest {
 		// the shell's width should have been updated
 		window.setHeight(300);
 
-		while (shell.getDisplay().readAndDispatch()) {
-			// spin the event loop
-		}
-
+		// Give time for change to propagate
+		DisplayHelper.waitForCondition(shell.getDisplay(), 10000, () -> (300 == shell.getBounds().height));
 		assertEquals(shell.getBounds().height, window.getHeight());
-		assertEquals(300, shell.getBounds().height);
 	}
 
 	@Test

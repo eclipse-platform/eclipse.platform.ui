@@ -29,7 +29,8 @@ Require-Bundle: org.eclipse.emf.ecore.xmi;bundle-version="2.4.0",
  org.eclipse.e4.ui.css.swt;bundle-version="0.11.0",
  org.mockito.mockito-core;bundle-version="2.13.0",
  org.eclipse.e4.ui.css.core;bundle-version="0.10.100",
- org.eclipse.test;bundle-version="3.6.200"
+ org.eclipse.test;bundle-version="3.6.200",
+ org.eclipse.ui.tests.harness
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.eclipse.e4.ui.tests.model.test,
  org.eclipse.e4.ui.tests.model.test.impl,
