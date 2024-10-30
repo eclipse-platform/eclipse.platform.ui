@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -56,7 +56,7 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 			view = (ResourceMappingTestView) page
 					.showView("org.eclipse.ui.tests.resourceMappingView");
 		} catch (PartInitException e) {
-			assertTrue(e.getLocalizedMessage(), false);
+			fail(e.getLocalizedMessage());
 			return;
 		}
 
@@ -65,7 +65,7 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 			problemView = (MarkersTestMarkersView) page
 					.showView("org.eclipse.ui.tests.markerTests");
 		} catch (PartInitException e) {
-			assertTrue(e.getLocalizedMessage(), false);
+			fail(e.getLocalizedMessage());
 			return;
 		}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,11 +52,11 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		if (window == null) {
-			assertTrue("Could not get a workbench window", false);
+			fail("Could not get a workbench window");
 		}
 		IWorkbenchPage page = window.getActivePage();
 		if (page == null) {
-			assertTrue("Could not get a workbench page", false);
+			fail("Could not get a workbench page");
 		}
 
 		MarkersTestMarkersView problemView;
@@ -64,7 +64,7 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 			problemView = (MarkersTestMarkersView) page
 					.showView("org.eclipse.ui.tests.markerTests");
 		} catch (PartInitException e) {
-			assertTrue(e.getLocalizedMessage(), false);
+			fail(e.getLocalizedMessage());
 			return;
 		}
 
@@ -77,11 +77,11 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		if (window == null) {
-			assertTrue("Could not get a workbench window", false);
+			fail("Could not get a workbench window");
 		}
 		IWorkbenchPage page = window.getActivePage();
 		if (page == null) {
-			assertTrue("Could not get a workbench page", false);
+			fail("Could not get a workbench page");
 		}
 
 		MarkersTestMarkersView problemView;
@@ -89,7 +89,7 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 			problemView = (MarkersTestMarkersView) page
 					.showView("org.eclipse.ui.tests.markerTests");
 		} catch (PartInitException e) {
-			assertTrue(e.getLocalizedMessage(), false);
+			fail(e.getLocalizedMessage());
 			return;
 		}
 

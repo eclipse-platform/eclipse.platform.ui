@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,17 +31,10 @@ public class DocumentTest {
 
 	private Document fDocument;
 
-	protected void checkPositions(Position[] expected) {
+	protected void checkPositions(Position[] expected) throws BadPositionCategoryException {
 
-		try {
-
-			Position[] actual= fDocument.getPositions(IDocument.DEFAULT_CATEGORY);
-			checkPositions(expected, actual);
-
-		} catch (BadPositionCategoryException x) {
-			assertTrue("BadPositionCategoryException thrown", false);
-		}
-
+		Position[] actual = fDocument.getPositions(IDocument.DEFAULT_CATEGORY);
+		checkPositions(expected, actual);
 	}
 
 	protected void checkPositions(Position[] expected, Position[] actual) {
@@ -55,7 +48,7 @@ public class DocumentTest {
 	}
 
 	@Before
-	public void setUp() {
+	public void setUp() throws BadLocationException {
 
 		fDocument= new Document();
 
@@ -75,19 +68,14 @@ public class DocumentTest {
 
 		fDocument.set(text);
 
-		try {
+		fDocument.addPosition(new Position(0, 20)); // "package TestPackage;"
+		fDocument.addPosition(new Position(21, 15)); // "/*\n* comment\n*/"
+		fDocument.addPosition(new Position(38, 111)); // "public class Class {\n ... }"
+		fDocument.addPosition(new Position(61, 12)); // "// comment1\n"
+		fDocument.addPosition(new Position(75, 27)); // "public void method1() {\n }"
+		fDocument.addPosition(new Position(105, 12)); // "// comment2\n"
+		fDocument.addPosition(new Position(119, 27)); // "public void method2() {\n }"
 
-			fDocument.addPosition(new Position( 0,   20)); // "package TestPackage;"
-			fDocument.addPosition(new Position( 21,  15)); // "/*\n* comment\n*/"
-			fDocument.addPosition(new Position( 38, 111)); // "public class Class {\n ... }"
-			fDocument.addPosition(new Position( 61,  12)); // "// comment1\n"
-			fDocument.addPosition(new Position( 75,  27)); // "public void method1() {\n		}"
-			fDocument.addPosition(new Position(105,  12)); // "// comment2\n"
-			fDocument.addPosition(new Position(119,  27)); // "public void method2() {\n		}"
-
-		} catch (BadLocationException x) {
-			assertTrue("initilization failed", false);
-		}
 	}
 
 	@After
@@ -103,17 +91,11 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testDelete1() {
+	public void testDelete1() throws BadLocationException, BadPositionCategoryException {
 
-		try {
+		fDocument.replace(21, 16, "");
 
-			fDocument.replace(21, 16, "");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		Position[] positions= new Position[] {
+		Position[] positions = {
 			new Position( 0,   20),
 			new Position( 21,  0),
 			new Position( 22, 111),
@@ -127,35 +109,21 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testEditScript1() {
+	public void testEditScript1() throws BadLocationException, BadPositionCategoryException {
 
 		//	1. step
+		fDocument.replace(0, fDocument.getLength(), "");
 
-		try {
-
-			fDocument.replace(0, fDocument.getLength(), "");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		Position[] positions= new Position[] {
-			new Position( 0, 0)
-		};
+		Position[] positions = { new Position(0, 0) };
 
 		checkPositions(positions);
 
 
 		//	2. step
-		try {
 
-			fDocument.replace(0, 0, "\t");
+		fDocument.replace(0, 0, "\t");
 
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		positions= new Position[] {
+		positions = new Position[] {
 			new Position( 1, 0)
 		};
 
@@ -164,25 +132,18 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testFindPositions() {
+	public void testFindPositions() throws BadLocationException, BadPositionCategoryException {
 
-		try {
+		fDocument.addPosition(new Position(21, 13));
+		fDocument.addPosition(new Position(0, 19));
+		fDocument.addPosition(new Position(21, 14));
+		fDocument.addPosition(new Position(21, 16));
+		fDocument.addPosition(new Position(0, 0));
+		fDocument.addPosition(new Position(104, 1));
+		fDocument.addPosition(new Position(120, 1));
+		fDocument.addPosition(new Position(119, 1));
 
-			fDocument.addPosition(new Position( 21,  13));
-			fDocument.addPosition(new Position(  0,  19));
-			fDocument.addPosition(new Position( 21,  14));
-			fDocument.addPosition(new Position( 21,  16));
-			fDocument.addPosition(new Position(  0,   0));
-			fDocument.addPosition(new Position( 104,  1));
-			fDocument.addPosition(new Position( 120,  1));
-			fDocument.addPosition(new Position( 119,  1));
-
-		} catch (BadLocationException x) {
-			assertTrue("initilization failed", false);
-		}
-
-
-		Position[] positions= new Position[] {
+		Position[] positions = {
 			new Position( 0,    0),
 			new Position( 0,   19),
 			new Position( 0,   20),
@@ -205,17 +166,10 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testInsert1() {
+	public void testInsert1() throws BadPositionCategoryException, BadLocationException {
+		fDocument.replace(0, 0, "//comment\n");
 
-		try {
-
-			fDocument.replace(0, 0, "//comment\n");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		Position[] positions= new Position[] {
+		Position[] positions = {
 			new Position( 10,   20),
 			new Position( 31,  15),
 			new Position( 48, 111),
@@ -229,15 +183,9 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testInsert2() {
+	public void testInsert2() throws BadLocationException, BadPositionCategoryException {
 
-		try {
-
-			fDocument.replace(61, 0, "//comment\n");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
+		fDocument.replace(61, 0, "//comment\n");
 
 		Position[] positions= new Position[] {
 			new Position( 0,   20),
@@ -253,17 +201,11 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testInsert3() {
+	public void testInsert3() throws BadLocationException, BadPositionCategoryException {
 
-		try {
+		fDocument.replace(101, 0, "//comment\n");
 
-			fDocument.replace(101, 0, "//comment\n");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		Position[] positions= new Position[] {
+		Position[] positions = {
 			new Position( 0,   20),
 			new Position( 21,  15),
 			new Position( 38, 121),
@@ -277,19 +219,11 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testInsert4() {
+	public void testInsert4() throws BadLocationException, BadPositionCategoryException {
 
-		try {
+		fDocument.replace(20, 0, "// comment");
 
-			fDocument.replace(20, 0, "// comment");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		System.out.print(fDocument.get());
-
-		Position[] positions= new Position[] {
+		Position[] positions = {
 			new Position( 0,   20),
 			new Position( 31,  15),
 			new Position( 48, 111),
@@ -303,17 +237,11 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testReplace1() {
+	public void testReplace1() throws BadLocationException, BadPositionCategoryException {
 
-		try {
+		fDocument.replace(8, 11, "pkg1");
 
-			fDocument.replace(8, 11, "pkg1");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		Position[] positions= new Position[] {
+		Position[] positions = {
 			new Position( 0,   13),
 			new Position( 14,  15),
 			new Position( 31, 111),
@@ -327,17 +255,11 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testReplace2() {
+	public void testReplace2() throws BadLocationException, BadPositionCategoryException {
 
-		try {
+		fDocument.replace(21, 16, "//comment\n");
 
-			fDocument.replace(21, 16, "//comment\n");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		Position[] positions= new Position[] {
+		Position[] positions = {
 			new Position( 0,   20),
 			new Position( 31,   0),
 			new Position( 32, 111),
@@ -351,38 +273,22 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testReplace3() {
+	public void testReplace3() throws BadLocationException {
 
-		Position[] actual= new Position[] {
-			new Position(0, 150),
-		};
+		Position[] actual = { new Position(0, 150), };
 
-		try {
+		fDocument.addPosition(actual[0]);
+		fDocument.replace(0, 150, "xxxxxxxxxx");
 
-			fDocument.addPosition(actual[0]);
-			fDocument.replace(0, 150, "xxxxxxxxxx");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		Position[] expected= new Position[] {
-			new Position(0, 10)
-		};
+		Position[] expected = { new Position(0, 10) };
 
 		checkPositions(expected, actual);
 	}
 
 	@Test
-	public void testReplace4() {
+	public void testReplace4() throws BadLocationException, BadPositionCategoryException {
 
-		try {
-
-			fDocument.replace(19, 1, "xxxxx;");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
+		fDocument.replace(19, 1, "xxxxx;");
 
 		Position[] positions= new Position[] {
 			new Position( 0,   25),
@@ -398,43 +304,27 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testAppend() {
+	public void testAppend() throws BadLocationException {
 
-		Position[] actual= new Position[] {
-			new Position(0, 2),
-		};
+		Position[] actual = { new Position(0, 2), };
 
-		try {
+		fDocument.replace(0, 150, "");
+		fDocument.replace(fDocument.getLength(), 0, "xx");
+		fDocument.addPosition(actual[0]);
+		fDocument.replace(fDocument.getLength(), 0, "xxxxxxxx");
 
-			fDocument.replace(0, 150, "");
-			fDocument.replace(fDocument.getLength(), 0, "xx");
-			fDocument.addPosition(actual[0]);
-			fDocument.replace(fDocument.getLength(), 0, "xxxxxxxx");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		Position[] expected= new Position[] {
-			new Position(0, 2)
-		};
+		Position[] expected = { new Position(0, 2) };
 
 		checkPositions(expected, actual);
 	}
 
 	@Test
-	public void testShiftLeft() {
+	public void testShiftLeft() throws BadLocationException, BadPositionCategoryException {
 
-		try {
+		fDocument.replace(73, 1, "");
+		fDocument.replace(98, 1, "");
 
-			fDocument.replace(73, 1, "");
-			fDocument.replace(98, 1, "");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		Position[] positions= new Position[] {
+		Position[] positions = {
 			new Position(  0,  20),
 			new Position( 21,  15),
 			new Position( 38, 109),
@@ -448,18 +338,12 @@ public class DocumentTest {
 	}
 
 	@Test
-	public void testShiftRight() {
+	public void testShiftRight() throws BadLocationException, BadPositionCategoryException {
 
-		try {
+		fDocument.replace(73, 0, "\t");
+		fDocument.replace(100, 0, "\t");
 
-			fDocument.replace( 73, 0, "\t");
-			fDocument.replace(100, 0, "\t");
-
-		} catch (BadLocationException x) {
-			assertTrue("BadLocationException thrown", false);
-		}
-
-		Position[] positions= new Position[] {
+		Position[] positions = {
 			new Position(  0,  20),
 			new Position( 21,  15),
 			new Position( 38, 113),
