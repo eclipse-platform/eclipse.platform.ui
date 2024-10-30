@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.jface.text.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -76,7 +77,7 @@ public class HTML2TextReaderTest {
 			StyleRange range2= ranges.get(i + 1);
 
 			if (range1.start + range1.length > range2.start) {
-				assertTrue("StyleRanges overlap", false);
+				fail("StyleRanges overlap");
 			}
 		}
 
@@ -108,7 +109,7 @@ public class HTML2TextReaderTest {
 			StyleRange range2= ranges.get(i + 1);
 
 			if (range1.start + range1.length > range2.start) {
-				assertTrue("StyleRanges overlap", false);
+				fail("StyleRanges overlap");
 			}
 		}
 
