@@ -14,8 +14,6 @@
 package org.eclipse.ui.tests.autotests;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +21,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
@@ -44,40 +41,23 @@ public class XmlUtil {
 		try {
 			return read(toRead.openStream());
 		} catch (IOException e) {
-			throw new WorkbenchException(new Status(IStatus.ERROR,
-					TestPlugin.getDefault().getBundle().getSymbolicName(),
-					IStatus.OK, null, e));
-		}
-	}
-
-	public static IMemento read(File toRead) throws WorkbenchException {
-		FileInputStream input;
-		try {
-			input = new FileInputStream(toRead);
-			return read(input);
-		} catch (FileNotFoundException e) {
-			throw new WorkbenchException(new Status(IStatus.ERROR,
-					TestPlugin.getDefault().getBundle().getSymbolicName(),
-					IStatus.OK, null, e));
+			throw new WorkbenchException(Status.error(TestPlugin.getDefault().getBundle().getSymbolicName(), e));
 		}
 	}
 
 	public static void write(File file, XMLMemento data) throws WorkbenchException {
 
-		FileOutputStream output;
 		try {
 			file.getParentFile().mkdirs();
 			file.delete();
 			file.createNewFile();
 
-			output = new FileOutputStream(file);
-			try (OutputStreamWriter writer = new OutputStreamWriter(output)) {
+			try (FileOutputStream output = new FileOutputStream(file);
+					OutputStreamWriter writer = new OutputStreamWriter(output)) {
 				data.save(writer);
 			}
 		} catch (IOException e) {
-			throw new WorkbenchException(new Status(IStatus.ERROR,
-					TestPlugin.getDefault().getBundle().getSymbolicName(),
-					IStatus.OK, e.toString(), e));
+			throw new WorkbenchException(Status.error(TestPlugin.getDefault().getBundle().getSymbolicName(), e));
 		}
 	}
 }

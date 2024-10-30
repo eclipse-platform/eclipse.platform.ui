@@ -116,7 +116,9 @@ public class Bug_262032 {
 			j.join();
 			tb1.waitForStatus(TestBarrier2.STATUS_WAIT_FOR_DONE);
 			assertEquals(Status.OK_STATUS, j.getResult());
-		} catch (InterruptedException e) {fail();}
+		} catch (InterruptedException e) {
+			fail(e.getMessage());
+		}
 	}
 
 }
