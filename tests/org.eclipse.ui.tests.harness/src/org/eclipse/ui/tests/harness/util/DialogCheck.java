@@ -156,7 +156,8 @@ public class DialogCheck {
 		//if (size.y/preferred.y) == X, then label spans X lines, so divide
 		//the calculated value of preferred.x by X
 		if (preferred.y * size.y > 0) {
-			preferred.y /= button.getText().lines().count(); // check for '\n\'
+			String buttonText = button.getText();
+			preferred.y /= buttonText.isEmpty() ? 1 : buttonText.lines().count(); // check for '\n\'
 			if (size.y / preferred.y > 1) {
 				preferred.x /= (size.y / preferred.y);
 			}
