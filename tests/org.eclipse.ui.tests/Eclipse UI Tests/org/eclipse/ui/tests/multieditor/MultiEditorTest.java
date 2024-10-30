@@ -13,6 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multieditor;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.eclipse.ui.tests.harness.util.UITestCase.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,20 +61,15 @@ import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.api.MockEditorPart;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-
-import junit.framework.TestSuite;
 
 /**
  * Test MultiEditor behaviour to highlight some of the broken functionality.
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public class MultiEditorTest extends UITestCase {
+public class MultiEditorTest {
 	private static final String ACTION_TOOLTIP = "MultiEditorActionThing";
 
 	private static final String PROJECT_NAME = "TiledEditorProject";
@@ -108,18 +112,10 @@ public class MultiEditorTest extends UITestCase {
 			"updateGradient", "updateGradient", "updateGradient",
 			"widgetsDisposed", "dispose" };
 
-	public static TestSuite suite() {
-		return new TestSuite(MultiEditorTest.class);
-	}
-
 	/**
 	 * Can catch a MultiEditor unexpect Exception on init.
 	 */
 	private EditorErrorListener fErrorListener;
-
-	public MultiEditorTest() {
-		super(MultiEditorTest.class.getSimpleName());
-	}
 
 	/**
 	 * Test that the test tiled editor can be opened with a basic
@@ -532,7 +528,7 @@ public class MultiEditorTest extends UITestCase {
 			IProject testProject) throws CoreException, IOException {
 		String[] ids = new String[simpleFiles.length];
 		IEditorInput[] inputs = new IEditorInput[simpleFiles.length];
-		IEditorRegistry registry = fWorkbench.getEditorRegistry();
+		IEditorRegistry registry = getWorkbench().getEditorRegistry();
 
 		for (int f = 0; f < simpleFiles.length; ++f) {
 			IFile f1 = createFile(testProject, simpleFiles[f]);
@@ -556,10 +552,9 @@ public class MultiEditorTest extends UITestCase {
 	/**
 	 * Close any editors at the beginner of a test, so the test can be clean.
 	 */
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		IWorkbenchPage page = fWorkbench.getActiveWorkbenchWindow()
+	@Before
+	public void doSetUp() throws Exception {
+		IWorkbenchPage page = getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage();
 		page.closeAllEditors(false);
 

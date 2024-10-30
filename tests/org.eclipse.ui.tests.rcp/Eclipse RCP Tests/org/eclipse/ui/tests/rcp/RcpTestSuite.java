@@ -27,6 +27,4 @@ import org.junit.platform.suite.api.Suite;
 		WorkbenchWindowConfigurerTest.class, ActionBarConfigurerTest.class, IWorkbenchPageTest.class,
 		WorkbenchSaveRestoreStateTest.class, WorkbenchListenerTest.class, WorkbenchTest.class })
 public class RcpTestSuite {
-	public RcpTestSuite() {
-	}
 }

@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -47,10 +47,6 @@ public class TestBug108162 {
 
 	private final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-	public TestBug108162() {
-		super();
-	}
-
 	/**
 	 * Performs the test
 	 */
@@ -61,7 +57,7 @@ public class TestBug108162 {
 			try {
 				dialog.run(true, false, new LockAcquiringOperation());
 				// should not succeed
-				assertTrue("Should not get here", false);
+				fail("Should not get here");
 			} catch (InvocationTargetException | InterruptedException | IllegalStateException e) {
 				// this failure is expected because it tried to fork and block while owning a
 				// lock.
