@@ -616,6 +616,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			fCachedTextWidget= null;
 		});
 
+		fCanvas.addListener(SWT.ZoomChanged, e -> computeIndentations());
+
 		fMouseHandler= new MouseHandler();
 		fCanvas.addMouseListener(fMouseHandler);
 		fCanvas.addMouseMoveListener(fMouseHandler);
