@@ -34,6 +34,16 @@ public class WorkbenchMessages extends NLS {
 
 	public static String ThemingEnabled;
 
+	public static String HiDpiSettingsGroupTitle;
+
+	public static String RescaleAtRuntimeEnabled;
+
+	public static String RescaleAtRuntimeDisclaimer;
+
+	public static String RescaleAtRuntimeSettingChangeWarningTitle;
+
+	public static String RescaleAtRuntimeSettingChangeWarningText;
+
 	public static String ThemeChangeWarningText;
 
 	public static String ThemeChangeWarningTitle;
