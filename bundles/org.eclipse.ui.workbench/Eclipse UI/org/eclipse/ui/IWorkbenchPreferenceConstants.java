@@ -705,4 +705,14 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.130
 	 */
 	String LARGE_VIEW_LIMIT = "largeViewLimit"; //$NON-NLS-1$
+
+	/**
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. Whether the UI adapts to DPI changes at
+	 * runtime. It only effects Windows.
+	 * </p>
+	 *
+	 * @since 3.133
+	 */
+	String RESCALING_AT_RUNTIME = "RESCALING_AT_RUNTIME"; //$NON-NLS-1$
 }
