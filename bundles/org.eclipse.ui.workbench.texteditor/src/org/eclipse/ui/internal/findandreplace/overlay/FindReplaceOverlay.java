@@ -33,6 +33,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -695,9 +696,10 @@ public class FindReplaceOverlay {
 		if (!okayToUse(replaceToggle)) {
 			return;
 		}
-		boolean visible = enable && findReplaceLogic.getTarget().isEditable();
-		((GridData) replaceToggleTools.getLayoutData()).exclude = !visible;
-		replaceToggleTools.setVisible(visible);
+		boolean shouldBeVisible = enable && findReplaceLogic.getTarget().isEditable();
+		((GridLayout) containerControl.getLayout()).numColumns = shouldBeVisible ? 2 : 1;
+		((GridData) replaceToggleTools.getLayoutData()).exclude = !shouldBeVisible;
+		replaceToggleTools.setVisible(shouldBeVisible);
 	}
 
 	private void enableReplaceTools(boolean enable) {
