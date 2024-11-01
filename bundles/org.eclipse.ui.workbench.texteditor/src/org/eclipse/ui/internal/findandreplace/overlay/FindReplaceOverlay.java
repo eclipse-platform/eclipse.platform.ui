@@ -204,7 +204,7 @@ public class FindReplaceOverlay {
 			.controlResizedAdapter(__ -> asyncExecIfOpen(FindReplaceOverlay.this::updatePlacementAndVisibility));
 
 	private void asyncExecIfOpen(Runnable operation) {
-		if (!containerControl.isDisposed() && containerControl.isVisible()) {
+		if (!containerControl.isDisposed()) {
 			containerControl.getDisplay().asyncExec(() -> {
 				if (containerControl != null || containerControl.isDisposed()) {
 					operation.run();
