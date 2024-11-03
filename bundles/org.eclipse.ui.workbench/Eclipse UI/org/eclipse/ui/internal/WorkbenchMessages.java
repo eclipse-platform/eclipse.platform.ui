@@ -34,6 +34,16 @@ public class WorkbenchMessages extends NLS {
 
 	public static String ThemingEnabled;
 
+	public static String HiDpiSettingsGroupTitle;
+
+	public static String RescaleAtRuntimeEnabled;
+
+	public static String RescaleAtRuntimeDisclaimer;
+
+	public static String RescaleAtRuntimeSettingChangeWarningTitle;
+
+	public static String RescaleAtRuntimeSettingChangeWarningText;
+
 	public static String ThemeChangeWarningText;
 
 	public static String ThemeChangeWarningTitle;
@@ -452,6 +462,9 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_stickyCycleButton;
 	public static String WorkbenchPreference_RunInBackgroundButton;
 	public static String WorkbenchPreference_RunInBackgroundToolTip;
+	public static String WorkbenchPreference_AlignMultiPageEditorTabs;
+	public static String WorkbenchPreference_AlignMultiPageEditorTabs_Top;
+	public static String WorkbenchPreference_AlignMultiPageEditorTabs_Bottom;
 
 	// --- Appearance ---
 	public static String ViewsPreferencePage_Theme;

@@ -16,8 +16,8 @@
 package org.eclipse.ui.tests.commands;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
@@ -36,15 +36,12 @@ import org.eclipse.ui.services.IServiceLocator;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.junit.runners.MethodSorters;
 
 /**
  * @since 3.5
  * @author Prakash G.R.
  */
-@RunWith(JUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ToggleStateTest {
 
@@ -61,9 +58,7 @@ public class ToggleStateTest {
 	// Note: this and all other tests are numbered because they must run in a
 	// specific order.
 	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=369660
-	// The old junit3 implementation used a custom suite(). Because junit4 provides
-	// less options on test run order the tests are now numbered and run in method
-	// name order.
+	// Tests are now numbered and run in method name order.
 	@Test
 	public void test01DefaultValues() throws Exception {
 
@@ -85,16 +80,10 @@ public class ToggleStateTest {
 
 	@Test
 	public void test02ExceptionThrown() throws Exception {
-
 		Command command3 = commandService.getCommand("org.eclipse.ui.tests.toggleStateCommand3");
-		try {
-			handlerService.executeCommand(command3.getId(), null);
-			fail("Command3 doesn't have any state. An exception must be thrown from the handler, when trying to change that");
-		} catch (Exception e) {
-			if(!(e instanceof ExecutionException)) {
-				throw e;
-			}
-		}
+		assertThrows(
+				"Command3 doesn't have any state. An exception must be thrown from the handler, when trying to change that",
+				ExecutionException.class, () -> handlerService.executeCommand(command3.getId(), null));
 	}
 
 	static class MyUIElement extends UIElement{

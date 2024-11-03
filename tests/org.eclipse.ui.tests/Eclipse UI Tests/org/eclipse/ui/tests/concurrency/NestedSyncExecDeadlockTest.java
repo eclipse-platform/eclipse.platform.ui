@@ -52,10 +52,6 @@ public class NestedSyncExecDeadlockTest {
 
 	private final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-	public NestedSyncExecDeadlockTest() {
-		super();
-	}
-
 	public void doTest(final long timeToSleep) throws Exception {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
 		dialog.run(true, false, new WorkspaceModifyOperation() {

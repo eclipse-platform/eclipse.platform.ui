@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -139,7 +139,7 @@ public class AnnotationModelExtension2Test {
 		for (Annotation a : actual) {
 			if (!expectedSet.contains(a)) {
 				String message = "Unexpected annotation " + getName(a) + " in result with models [" + getAnnotationModelNames(insideModel, beforeModel, afterModel) + "]";
-				assertTrue(message, false);
+				fail(message);
 			}
 			expectedSet.remove(a);
 		}
@@ -149,7 +149,7 @@ public class AnnotationModelExtension2Test {
 			for (Annotation missing : expectedSet) {
 				message= message + "\n" + getName(missing);
 			}
-			assertTrue(message, false);
+			fail(message);
 		}
 	}
 

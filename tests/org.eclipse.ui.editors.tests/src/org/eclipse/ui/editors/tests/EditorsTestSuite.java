@@ -41,6 +41,7 @@ import org.eclipse.ui.internal.texteditor.stickyscroll.StickyScrollingHandlerTes
 		ZoomTest.class,
 		FileDocumentProviderTest.class,
 		TextFileDocumentProviderTest.class,
+		FindNextActionTest.class,
 		StatusEditorTest.class,
 		TextNavigationTest.class,
 		LargeFileTest.class, CaseActionTest.class,

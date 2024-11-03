@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Remain Software and others.
+ * Copyright (c) 2019, 2024 Remain Software and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,10 @@
  *     Wim Jongman - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.util.function.Predicate;
 
@@ -30,17 +34,17 @@ import org.eclipse.ui.SelectionListenerFactory;
 import org.eclipse.ui.SelectionListenerFactory.ISelectionModel;
 import org.eclipse.ui.SelectionListenerFactory.Predicates;
 import org.eclipse.ui.tests.SelectionProviderView;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the ISelectionService class.
  */
-@RunWith(JUnit4.class)
-public class SelectionListenerFactoryTest extends UITestCase implements ISelectionListener {
+public class SelectionListenerFactoryTest implements ISelectionListener {
 	private static final String KNOCK_KNOCK = "KnockKnock";
 
 	private IWorkbenchWindow fWindow;
@@ -50,15 +54,12 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	private boolean fEventReceived;
 
 	private int fCounter;
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
-	public SelectionListenerFactoryTest() {
-		super(SelectionListenerFactoryTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		fWindow = openTestWindow();
+	@Before
+	public void doSetUp() throws Exception {
+		fWindow = UITestCase.openTestWindow();
 		fPage = fWindow.getActivePage();
 	}
 
@@ -593,12 +594,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	@Test
 	public void testCreateListenerTest() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
-		try {
-			SelectionListenerFactory.createListener(view, m -> true);
-			assertTrue("ClassCastException expected", false);
-		} catch (ClassCastException e) {
-			return;
-		}
+		assertThrows(ClassCastException.class, () -> SelectionListenerFactory.createListener(view, m -> true));
 	}
 
 	/**

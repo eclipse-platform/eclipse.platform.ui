@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
@@ -64,10 +65,6 @@ public class OperationsAPITest {
 
 	int preExec, postExec, preUndo, postUndo, preRedo, postRedo, add, remove, notOK, changed = 0;
 	IOperationHistoryListener listener;
-
-	public OperationsAPITest() {
-		super();
-	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -279,7 +276,7 @@ public class OperationsAPITest {
 			history.openOperation(new TriggeredOperations(op3, history), IOperationHistory.EXECUTE);
 			history.closeOperation(true, true, IOperationHistory.EXECUTE);
 		} catch (IllegalStateException e) {
-			assertTrue("IllegalStateException - trying to open an operation before a close", false);
+			fail("IllegalStateException - trying to open an operation before a close");
 		}
 	}
 
@@ -836,7 +833,7 @@ public class OperationsAPITest {
 		history.undoOperation(op5, null, null);
 		assertTrue("Operation approver should run only once for direct undo", approvalCount[0]== 1);
 		history.redoOperation(op5, null, null);
-		assertTrue("Operation approver should run only once for direct redo", approvalCount[0]== 0);
+		assertTrue("Operation approver should run only once for direct redo", approvalCount[0] == 0);
 
 		// cleanup
 		history.removeOperationApprover(approver);

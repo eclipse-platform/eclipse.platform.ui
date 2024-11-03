@@ -74,10 +74,6 @@ public class TestBug105491 {
 
 	private final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-	public TestBug105491() {
-		super();
-	}
-
 	/**
 	 * Performs the test
 	 */

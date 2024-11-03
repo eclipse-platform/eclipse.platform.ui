@@ -141,7 +141,7 @@ public class SyncExecWhileUIThreadWaitsForLock {
 			}
 			//if we waited too long, fail the test
 			if (System.currentTimeMillis() - waitStart > 60000) {
-				assertTrue("Deadlock occurred", false);
+				fail("Deadlock occurred");
 			}
 		}
 		//if we get here, the test succeeded

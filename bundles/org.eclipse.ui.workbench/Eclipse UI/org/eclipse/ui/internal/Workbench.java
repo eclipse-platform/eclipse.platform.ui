@@ -147,6 +147,7 @@ import org.eclipse.osgi.service.runnable.StartupMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.FontData;
@@ -525,9 +526,10 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			return;
 		}
 		try {
-			URI workspaceLocationURI = workspaceLocation.getURL().toURI();
-			display.setData(EDGE_USER_DATA_FOLDER, Paths.get(workspaceLocationURI).toString());
-		} catch (URISyntaxException e) {
+			URI swtMetadataLocationURI = workspaceLocation
+					.getDataArea(FrameworkUtil.getBundle(Browser.class).getSymbolicName()).toURI();
+			display.setData(EDGE_USER_DATA_FOLDER, Paths.get(swtMetadataLocationURI).toString());
+		} catch (URISyntaxException | IOException e) {
 			WorkbenchPlugin.log("Invalid workspace location to be set for Edge browser.", e); //$NON-NLS-1$
 		}
 	}
@@ -584,7 +586,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				int orientation = store.getInt(IPreferenceConstants.LAYOUT_DIRECTION);
 				Window.setDefaultOrientation(orientation);
 			}
-
+			setRescaleAtRuntimePropertyFromPreference(display);
 			if (obj instanceof E4Application) {
 				E4Application e4app = (E4Application) obj;
 				E4Workbench e4Workbench = e4app.createE4Workbench(getApplicationContext(), display);
@@ -676,6 +678,15 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			}
 		});
 		return returnCode[0];
+	}
+
+	private static void setRescaleAtRuntimePropertyFromPreference(final Display display) {
+		boolean rescaleAtRuntime = PrefUtil.getAPIPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME);
+		if (rescaleAtRuntime) {
+			display.setRescalingAtRuntime(rescaleAtRuntime);
+			System.setProperty("org.eclipse.swt.browser.DefaultType", "edge"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	private static void setSearchContribution(MApplication app, boolean enabled) {

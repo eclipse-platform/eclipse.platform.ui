@@ -14,8 +14,7 @@
 
 package org.eclipse.ui.tests.dnd;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IViewPart;
@@ -23,18 +22,17 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.junit.Before;
+import org.junit.Test;
 
-public class Bug87211Test extends TestCase {
-	public static TestSuite suite() {
-		return new TestSuite(Bug87211Test.class);
-	}
+public class Bug87211Test {
 
 	private WorkbenchPage fPage;
 
 	private IWorkbenchWindow fWindow;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		fWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		fPage = (WorkbenchPage) fWindow.getActivePage();
 	}
@@ -44,6 +42,7 @@ public class Bug87211Test extends TestCase {
 	 * another view on top of it.  The views should still be in their
 	 * separate stacks.
 	 */
+	@Test
 	public void testDragStandaloneView() throws Throwable {
 		fPage.setPerspective(WorkbenchPlugin.getDefault()
 				.getPerspectiveRegistry().findPerspectiveWithId(

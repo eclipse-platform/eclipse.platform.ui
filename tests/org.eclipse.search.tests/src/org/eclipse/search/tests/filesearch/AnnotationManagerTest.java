@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -159,7 +159,6 @@ public class AnnotationManagerTest {
 				IFile file = (IFile) f;
 				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
-				int annotationCount= 0;
 				IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 				for (Iterator<Annotation> annotations= annotationModel.getAnnotationIterator(); annotations.hasNext();) {
 					Annotation annotation= annotations.next();
@@ -169,7 +168,6 @@ public class AnnotationManagerTest {
 						assertTrue(text.equalsIgnoreCase(fQuery2.getSearchString()));
 					}
 				}
-				assertEquals(0, annotationCount);
 			}
 		} finally {
 			SearchPlugin.getActivePage().closeAllEditors(false);
@@ -188,7 +186,6 @@ public class AnnotationManagerTest {
 				IFile file = (IFile) f;
 				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
-				int annotationCount= 0;
 				IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 				for (Iterator<Annotation> annotations= annotationModel.getAnnotationIterator(); annotations.hasNext();) {
 					Annotation annotation= annotations.next();
@@ -198,7 +195,6 @@ public class AnnotationManagerTest {
 						assertTrue(text.equalsIgnoreCase(fQuery1.getSearchString()));
 					}
 				}
-				assertEquals(0, annotationCount);
 			}
 		} finally {
 			SearchPlugin.getActivePage().closeAllEditors(false);

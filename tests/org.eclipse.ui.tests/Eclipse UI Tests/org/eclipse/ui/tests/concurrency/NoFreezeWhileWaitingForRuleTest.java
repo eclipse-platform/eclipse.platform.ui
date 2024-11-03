@@ -93,7 +93,7 @@ public class NoFreezeWhileWaitingForRuleTest {
 			blockingJob.join();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			fail();
+			fail(e.getMessage());
 		}
 		assertFalse("Timeout reached, blocking occurred!", ruleMonitor.isCanceled());
 	}

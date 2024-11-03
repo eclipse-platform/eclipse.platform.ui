@@ -157,7 +157,7 @@ public class SmartImportTests extends UITestCase {
 			processEventsUntil(() -> okButton.isEnabled(), -1);
 			finishWizard(wizard);
 		} finally {
-			if (!dialog.getShell().isDisposed()) {
+			if (dialog.getShell() != null && !dialog.getShell().isDisposed()) {
 				dialog.close();
 			}
 		}
