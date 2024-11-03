@@ -95,6 +95,8 @@ public class ProgressInfoItem extends Composite {
 
 	static String DEFAULT_THEME = "org.eclipse.e4.ui.css.theme.e4_default"; //$NON-NLS-1$
 
+	static String DARK_THEME = "org.eclipse.e4.ui.css.theme.e4_dark"; //$NON-NLS-1$
+
 	JobTreeElement info;
 
 	Label progressLabel;
@@ -1014,7 +1016,7 @@ public class ProgressInfoItem extends Composite {
 		if (engine != null) {
 			ITheme activeTheme = engine.getActiveTheme();
 			if (activeTheme != null) {
-				return !DEFAULT_THEME.equals(activeTheme.getId());
+				return DARK_THEME.equals(activeTheme.getId());
 			}
 		}
 		return false;
