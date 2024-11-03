@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2025 Red Hat Inc. and others.
+ * Copyright (c) 2016, 2026 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,7 +10,8 @@
  *
  * Contributors:
  * - Mickael Istria (Red Hat Inc.)
- *     Stephan Wahlbrink <sw@wahlbrink.eu> - Bug 512251 - Fix IllegalArgumentException in ContextInformationPopup
+ * - Stephan Wahlbrink <sw@wahlbrink.eu> - Bug 512251 - Fix IllegalArgumentException in ContextInformationPopup
+ * - Christian Schima - Bug #2453 - Fix NPEx in BarContentAssistProcessor
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests.contributions;
 
@@ -42,13 +43,14 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
-		if (viewer.getDocument() != null) {
+		final IDocument doc = viewer.getDocument();
+		if (doc != null) {
 			for (int offsetInProposal = Math.min(this.completeString.length(),
-					viewer.getDocument().getLength()); offsetInProposal > 0; offsetInProposal--) {
+					doc.getLength()); offsetInProposal > 0; offsetInProposal--) {
 				String maybeMatchingString = this.completeString.substring(0, offsetInProposal);
 				try {
 					int lastIndex = offset - offsetInProposal + this.completeString.length();
-					if (offset >= offsetInProposal && viewer.getDocument()
+					if (offset >= offsetInProposal && doc
 							.get(offset - offsetInProposal, maybeMatchingString.length()).equals(maybeMatchingString)) {
 						CompletionProposal proposal = new CompletionProposal(
 								this.completeString.substring(offsetInProposal), offset, 0, lastIndex);
@@ -74,7 +76,8 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 
 	/**
 	 * Creates context info "idx= &lt;word index in #PROPOSAL&gt;" at the end of a word.
-	 **/
+	 * 
+	 */
 	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		try {
@@ -103,13 +106,13 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 		return new IContextInformationValidator() {
 			private ITextViewer viewer;
 			private int offset;
-			
+
 			@Override
 			public void install(IContextInformation info, ITextViewer infoViewer, int documentOffset) {
 				this.viewer= infoViewer;
 				this.offset= documentOffset;
 			}
-			
+
 			@Override
 			public boolean isContextInformationValid(int offsetToTest) {
 				try {
@@ -128,5 +131,4 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 	public String getErrorMessage() {
 		return null;
 	}
-
 }
