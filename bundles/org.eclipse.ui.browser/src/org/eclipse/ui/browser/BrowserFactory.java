@@ -31,6 +31,14 @@ public abstract class BrowserFactory {
 	}
 
 	/**
+	 * Implementators of <code>org.eclipse.ui.browser.browsers</code> extension
+	 * points must provide an implementation of this abstract class.
+	 *
+	 * @since 3.8
+	 */
+	public void addedWithoutUpdate() {
+	}
+	/**
 	 * Obtains a new instance of a web browser.
 	 *
 	 * @param id the browser id
