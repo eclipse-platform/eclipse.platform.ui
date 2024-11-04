@@ -26,7 +26,7 @@ public abstract class BrowserFactory {
 	 *    example the required native browser required by browser adapters that
 	 *    it creates is not installed, or <code>true</code> otherwise
 	 */
-	public boolean isAvailable() {
+	public Boolean isAvailable() {
 		return true;
 	}
 
