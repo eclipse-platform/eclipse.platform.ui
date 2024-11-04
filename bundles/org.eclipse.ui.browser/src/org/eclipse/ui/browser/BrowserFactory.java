@@ -30,6 +30,8 @@ public abstract class BrowserFactory {
 		return true;
 	}
 
+	public void addedWithoutUpdate() {
+	}
 	/**
 	 * Obtains a new instance of a web browser.
 	 *
