@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class Snippet002NotificationPopupWithFunctions {
+public class Snippet083NotificationPopupWithFunctions {
 
 	public static void main(String[] args) {
 		Display display = new Display();
