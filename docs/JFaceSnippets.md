@@ -23,6 +23,7 @@ Contents
     *   [2.1 Snippet081 - Notification API](#Snippet081---Notification-API)
     *   [2.2 Snippet083 - Notification Popup with Functions](#Snippet083---Notification-Popup-with-Functions)
     *   [2.3 Snippet084 - Notification Popup with Custom Delay and Fade](#Snippet084---Notification-Popup-with-Custom-Delay-and-Fade)
+    *   [2.4 Snippet085 - Notification popup with user interaction](#Snippet085---Notification-popup-with-user-interaction)
 *   [3 Layout](#Layout)
     *   [3.1 Snippet013 - Grid Layout Factory](#Snippet013---Grid-Layout-Factory)
     *   [3.2 Snippet016 - Table Layout](#Snippet016---Table-Layout)
@@ -140,6 +141,16 @@ Demonstrates the creation of notification popups that include function callbacks
 *   [Snippet084 - Notification Popup with Custom Delay and Fade](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet084NotificationPopupWithCustomDelayAndFade.java)
 
 Shows how to create notification popups with custom delay and fade effects for enhanced visual feedback.
+
+### [Snippet085 - Notification popup with user interaction](https://github.com/vogella/eclipse-jface-snippets/blob/main/src/org/eclipse/jface/snippets/notifications/Snippet085NotificationPopupWithUserInteraction.java)
+
+This snippet demonstrates how to create a `NotificationPopup` that includes user interaction with a button. When the button is clicked, a confirmation dialog is shown.
+
+For the full code, please visit the [GitHub repository](https://github.com/vogella/eclipse-jface-snippets/blob/main/src/org/eclipse/jface/snippets/notifications/Snippet085NotificationPopupWithUserInteraction.java).
+
+ 
+![Snippet085.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Snippet085NotificationPopupWithUserInteraction.png)
+
 
 Layout
 ------
