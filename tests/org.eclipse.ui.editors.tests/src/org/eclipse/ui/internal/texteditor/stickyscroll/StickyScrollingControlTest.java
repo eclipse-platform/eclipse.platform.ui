@@ -183,6 +183,29 @@ public class StickyScrollingControlTest {
 	}
 
 	@Test
+	public void testCopyStyleRangesWithLimitedStickyLines() {
+		settings = new StickyScrollingControlSettings(1, lineNumberColor, hoverColor, backgroundColor, separatorColor,
+				true);
+		stickyScrollingControl.applySettings(settings);
+
+		StyleRange styleRangeLine1 = new StyleRange(0, 1, lineNumberColor, backgroundColor);
+		StyleRange styleRangeLine2 = new StyleRange(0, 2, hoverColor, separatorColor);
+		List<IStickyLine> stickyLines = List.of(//
+				new StickyLineStub("line 1", 0, new StyleRange[] { styleRangeLine1 }),
+				new StickyLineStub("line 2", 0, new StyleRange[] { styleRangeLine2 }));
+		stickyScrollingControl.setStickyLines(stickyLines);
+
+		StyledText stickyLineText = getStickyLineText();
+
+		StyleRange[] styleRanges = stickyLineText.getStyleRanges();
+		assertEquals(1, styleRanges.length);
+		assertEquals(0, styleRanges[0].start);
+		assertEquals(1, styleRanges[0].length);
+		assertEquals(lineNumberColor, styleRanges[0].foreground);
+		assertEquals(backgroundColor, styleRanges[0].background);
+	}
+
+	@Test
 	public void testWithoutVerticalRuler() {
 		sourceViewer = new SourceViewer(shell, null, SWT.None);
 		settings = new StickyScrollingControlSettings(5, lineNumberColor, hoverColor, backgroundColor, separatorColor,

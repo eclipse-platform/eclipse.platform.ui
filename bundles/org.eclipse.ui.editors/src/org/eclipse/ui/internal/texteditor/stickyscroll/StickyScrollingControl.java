@@ -242,20 +242,20 @@ public class StickyScrollingControl {
 			return;
 		}
 
-		int stickyLineOffset= 0;
-		List<StyleRange> styleRanges= new ArrayList<>();
-		for (IStickyLine stickyLine : stickyLines) {
+		List<StyleRange> stickyLinesStyleRanges= new ArrayList<>();
+		int stickyLineTextOffset= 0;
+		for (int i= 0; i < getNumberStickyLines(); i++) {
+			IStickyLine stickyLine= stickyLines.get(i);
 			StyleRange[] ranges= stickyLine.getStyleRanges();
 			if (ranges != null) {
 				for (StyleRange styleRange : ranges) {
-					styleRange.start+= stickyLineOffset;
-					styleRanges.add(styleRange);
+					styleRange.start+= stickyLineTextOffset;
+					stickyLinesStyleRanges.add(styleRange);
 				}
 			}
-
-			stickyLineOffset+= stickyLine.getText().length() + System.lineSeparator().length();
+			stickyLineTextOffset+= stickyLine.getText().length() + System.lineSeparator().length();
 		}
-		stickyLineText.setStyleRanges(styleRanges.toArray(StyleRange[]::new));
+		stickyLineText.setStyleRanges(stickyLinesStyleRanges.toArray(StyleRange[]::new));
 
 		stickyLineNumber.setFont(textWidget.getFont());
 		stickyLineNumber.setStyleRange(new StyleRange(0, stickyLineNumber.getText().length(), settings.lineNumberColor(), null));
