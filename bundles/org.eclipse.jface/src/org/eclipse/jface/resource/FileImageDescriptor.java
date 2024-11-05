@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
+import org.eclipse.jface.resource.URLImageDescriptor.SourceAtZoom;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -39,6 +40,9 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageFileNameProvider;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.internal.DPIUtil.ElementAtZoom;
+import org.eclipse.swt.internal.NativeImageLoader;
 
 /**
  * An image descriptor that loads its image information from a file.
@@ -53,16 +57,16 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (zoom == 100) {
 				return getFilePath(name, logIOException);
 			}
-			String xName = getxName(name, zoom);
+			SourceAtZoom<String> xName = getxName(name, zoom);
 			if (xName != null) {
-				String xResult = getFilePath(xName, logIOException);
+				String xResult = getFilePath(xName.source(), logIOException);
 				if (xResult != null) {
 					return xResult;
 				}
 			}
-			String xPath = getxPath(name, zoom);
+			SourceAtZoom<String> xPath = getxPath(name, zoom);
 			if (xPath != null) {
-				String xResult = getFilePath(xPath, logIOException);
+				String xResult = getFilePath(xPath.source(), logIOException);
 				if (xResult != null) {
 					return xResult;
 				}
@@ -121,12 +125,15 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 * {@link ImageDescriptor#createImage(boolean, Device)} as of version
 	 * 3.4 so that the SWT OS optimized loading can be used.
 	 */
+	@SuppressWarnings("restriction")
 	@Override
 	public ImageData getImageData(int zoom) {
-		InputStream in = getStream(zoom);
-		if (in != null) {
-			try (BufferedInputStream stream = new BufferedInputStream(in)) {
-				return new ImageData(stream);
+		SourceAtZoom<InputStream> inputStreamAtZoom = getStream(zoom);
+		if (inputStreamAtZoom != null) {
+			try (BufferedInputStream stream = new BufferedInputStream(inputStreamAtZoom.source())) {
+				ElementAtZoom<ImageData> imageData = NativeImageLoader
+						.load(new ElementAtZoom<>(stream, inputStreamAtZoom.zoom()), new ImageLoader(), zoom).get(0);
+				return imageData.element();
 			} catch (SWTException e) {
 				if (e.code != SWT.ERROR_INVALID_IMAGE) {
 					throw e;
@@ -147,17 +154,17 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 * @return the buffered stream on the file or <code>null</code> if the
 	 *         file cannot be found
 	 */
-	private InputStream getStream(int zoom) {
+	private SourceAtZoom<InputStream> getStream(int zoom) {
 		if (zoom == 100) {
-			return getStream(name);
+			return getStream(new SourceAtZoom<>(name, 100));
 		}
 
-		InputStream xstream = getStream(getxName(name, zoom));
+		SourceAtZoom<InputStream> xstream = getStream(getxName(name, zoom));
 		if (xstream != null) {
 			return xstream;
 		}
 
-		InputStream xpath = getStream(getxPath(name, zoom));
+		SourceAtZoom<InputStream> xpath = getStream(getxPath(name, zoom));
 		if (xpath != null) {
 			return xpath;
 		}
@@ -173,13 +180,14 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 * @return an {@link InputStream} to read from, or <code>null</code> if fileName
 	 *         does not denotes an existing resource
 	 */
-	private InputStream getStream(String fileName) {
+	private SourceAtZoom<InputStream> getStream(SourceAtZoom<String> fileName) {
 		if (fileName != null) {
+			// TODO DO we need to close these?
 			if (location != null) {
-				return location.getResourceAsStream(fileName);
+				return new SourceAtZoom<>(location.getResourceAsStream(fileName.source()), fileName.zoom());
 			}
 			try {
-				return new FileInputStream(fileName);
+				return new SourceAtZoom<>(new FileInputStream(fileName.source()), fileName.zoom());
 			} catch (FileNotFoundException e) {
 				return null;
 			}
@@ -187,7 +195,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 		return null;
 	}
 
-	static String getxPath(String name, int zoom) {
+	static SourceAtZoom<String> getxPath(String name, int zoom) {
 		Matcher matcher = XPATH_PATTERN.matcher(name);
 		if (matcher.find()) {
 			try {
@@ -197,7 +205,8 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 				int desiredHeight = Math.round((zoom / 100f) * currentHeight);
 				String lead = name.substring(0, matcher.start(1));
 				String tail = name.substring(matcher.end(2));
-				return lead + desiredWidth + "x" + desiredHeight + tail; //$NON-NLS-1$
+				String xPath = lead + desiredWidth + "x" + desiredHeight + tail; //$NON-NLS-1$
+				return new SourceAtZoom<>(xPath, desiredHeight);
 			} catch (RuntimeException e) {
 				// should never happen but if then we can't use the alternative name...
 			}
@@ -205,7 +214,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 		return null;
 	}
 
-	static String getxName(String name, int zoom) {
+	static SourceAtZoom<String> getxName(String name, int zoom) {
 		int dot = name.lastIndexOf('.');
 		if (dot != -1 && (zoom == 150 || zoom == 200)) {
 			String lead = name.substring(0, dot);
@@ -213,8 +222,12 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x_PNG_FOR_GIF && ".gif".equalsIgnoreCase(tail)) { //$NON-NLS-1$
 				tail = ".png"; //$NON-NLS-1$
 			}
-			String x = zoom == 150 ? "@1.5x" : "@2x"; //$NON-NLS-1$ //$NON-NLS-2$
-			return lead + x + tail;
+			String x = "@2x";//$NON-NLS-1$
+			if (zoom == 150) {
+				x = "@1.5x"; //$NON-NLS-1$
+				return new SourceAtZoom<>(lead + x + tail, 150);
+			}
+			return new SourceAtZoom<>(lead + x + tail, 200);
 		}
 		return null;
 	}
