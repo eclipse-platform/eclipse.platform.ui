@@ -157,6 +157,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.svg.SVGRasterizer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
@@ -570,6 +571,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 */
 	public static int createAndRunWorkbench(final Display display, final WorkbenchAdvisor advisor) {
 		final int[] returnCode = new int[1];
+		SVGRasterizer.intializeSVGRasterizer();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
 			boolean showProgress = PrefUtil.getAPIPreferenceStore()
 					.getBoolean(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP);
