@@ -35,10 +35,13 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.ISVGRasterizer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.ImageFileNameProvider;
+import org.eclipse.swt.graphics.SVGRasterizerRegistry;
+import org.eclipse.swt.graphics.SVGUtil;
 
 /**
  * An ImageDescriptor that gets its information from a URL. This class is not
@@ -59,6 +62,16 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		public String getImagePath(int zoom) {
 			URL tempURL = getURL(url);
 			if (tempURL != null) {
+				ISVGRasterizer rasterizer = SVGRasterizerRegistry.getRasterizer();
+				if (rasterizer != null) {
+					try (InputStream in = getStream(tempURL)) {
+						if (SVGUtil.isSVGFile(in)) {
+							return getFilePath(tempURL, false);
+						}
+					} catch (IOException e) {
+						// ignore.
+					}
+				}
 				final boolean logIOException = zoom == 100;
 				if (zoom == 100) {
 					return getFilePath(tempURL, logIOException);
@@ -139,12 +152,24 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	private static ImageData getImageData(String url, int zoom) {
 		URL tempURL = getURL(url);
 		if (tempURL != null) {
+			ISVGRasterizer rasterizer = SVGRasterizerRegistry.getRasterizer();
+			if (rasterizer != null) {
+				try {
+					try (InputStream in = getStream(tempURL)) {
+						if (SVGUtil.isSVGFile(in)) {
+							return getImageData(tempURL, zoom);
+						}
+					}
+				} catch (IOException e) {
+					// ignore.
+				}
+			}
 			if (zoom == 100) {
-				return getImageData(tempURL);
+				return getImageData(tempURL, zoom);
 			}
 			URL xUrl = getxURL(tempURL, zoom);
 			if (xUrl != null) {
-				ImageData xdata = getImageData(xUrl);
+				ImageData xdata = getImageData(xUrl, zoom);
 				if (xdata != null) {
 					return xdata;
 				}
@@ -153,7 +178,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (xpath != null) {
 				URL xPathUrl = getURL(xpath);
 				if (xPathUrl != null) {
-					return getImageData(xPathUrl);
+					return getImageData(xPathUrl, zoom);
 				}
 			}
 		}
@@ -161,10 +186,14 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	}
 
 	private static ImageData getImageData(URL url) {
+		return getImageData(url, 0);
+	}
+
+	private static ImageData getImageData(URL url, int zoom) {
 		ImageData result = null;
 		try (InputStream in = getStream(url)) {
 			if (in != null) {
-				result = new ImageData(in);
+				result = new ImageData(in, zoom);
 			}
 		} catch (SWTException e) {
 			if (e.code != SWT.ERROR_INVALID_IMAGE) {
