@@ -21,8 +21,8 @@ Contents
     *   [1.2 Snippet082 - Color Selector](#Snippet082---Color-Selector)
 *   [2 Notification](#Notification)
     *   [2.1 Snippet081 - Notification API](#Snippet081---Notification-API)
-    *   [2.2 Snippet002 - Notification Popup with Functions](#Snippet002---Notification-Popup-with-Functions)
-    *   [2.3 Snippet004 - Notification Popup with Custom Delay and Fade](#Snippet004---Notification-Popup-with-Custom-Delay-and-Fade)
+    *   [2.2 Snippet083 - Notification Popup with Functions](#Snippet083---Notification-Popup-with-Functions)
+    *   [2.3 Snippet084 - Notification Popup with Custom Delay and Fade](#Snippet084---Notification-Popup-with-Custom-Delay-and-Fade)
 *   [3 Layout](#Layout)
     *   [3.1 Snippet013 - Grid Layout Factory](#Snippet013---Grid-Layout-Factory)
     *   [3.2 Snippet016 - Table Layout](#Snippet016---Table-Layout)
@@ -129,15 +129,15 @@ Demonstrates usage of the non-blocking notification API
   
 ![Snippet081 Shell1.gif](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Snippet081_Shell1.gif)
 
-### [Snippet002 - Notification Popup with Functions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet002NotificationPopupWithFunctions.java)
+### [Snippet083 - Notification Popup with Functions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet083NotificationPopupWithFunctions.java)
 
-*   [Snippet002 - Notification Popup with Functions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet002NotificationPopupWithFunctions.java)
+*   [Snippet083 - Notification Popup with Functions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet083NotificationPopupWithFunctions.java)
 
 Demonstrates the creation of notification popups that include function callbacks for user interactions.
 
-### [Snippet004 - Notification Popup with Custom Delay and Fade](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet004NotificationPopupWithCustomDelayAndFade.java)
+### [Snippet084 - Notification Popup with Custom Delay and Fade](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet084NotificationPopupWithCustomDelayAndFade.java)
 
-*   [Snippet004 - Notification Popup with Custom Delay and Fade](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet004NotificationPopupWithCustomDelayAndFade.java)
+*   [Snippet084 - Notification Popup with Custom Delay and Fade](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.snippets/Eclipse%20JFace%20Snippets/org/eclipse/jface/snippets/notifications/Snippet084NotificationPopupWithCustomDelayAndFade.java)
 
 Shows how to create notification popups with custom delay and fade effects for enhanced visual feedback.
 
