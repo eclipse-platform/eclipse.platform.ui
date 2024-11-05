@@ -139,6 +139,9 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	private static ImageData getImageData(String url, int zoom) {
 		URL tempURL = getURL(url);
 		if (tempURL != null) {
+//			if (tempURL.toString().endsWith(".svg")) { //$NON-NLS-1$
+//				return getImageData(tempURL, zoom);
+//			}
 			if (zoom == 100) {
 				return getImageData(tempURL);
 			}
@@ -176,6 +179,23 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		}
 		return result;
 	}
+
+//	private static ImageData getImageData(URL url, int zoom) {
+//		ImageData result = null;
+//		try (InputStream in = getStream(url)) {
+//			if (in != null) {
+//				result = new ImageData(in, zoom);
+//			}
+//		} catch (SWTException e) {
+//			if (e.code != SWT.ERROR_INVALID_IMAGE) {
+//				throw e;
+//				// fall through otherwise
+//			}
+//		} catch (IOException e) {
+//			Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, e.getLocalizedMessage(), e));
+//		}
+//		return result;
+//	}
 
 	/**
 	 * Returns a stream on the image contents. Returns null if a stream could
