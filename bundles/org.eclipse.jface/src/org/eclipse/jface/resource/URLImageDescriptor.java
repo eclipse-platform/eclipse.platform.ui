@@ -146,11 +146,11 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 				return getImageData(tempURL, zoom);
 			}
 			if (zoom == 100) {
-				return getImageData(tempURL);
+				return getImageData(tempURL, zoom);
 			}
 			URL xUrl = getxURL(tempURL, zoom);
 			if (xUrl != null) {
-				ImageData xdata = getImageData(xUrl);
+				ImageData xdata = getImageData(xUrl, zoom);
 				if (xdata != null) {
 					return xdata;
 				}
@@ -159,7 +159,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (xpath != null) {
 				URL xPathUrl = getURL(xpath);
 				if (xPathUrl != null) {
-					return getImageData(xPathUrl);
+					return getImageData(xPathUrl, zoom);
 				}
 			}
 		}
