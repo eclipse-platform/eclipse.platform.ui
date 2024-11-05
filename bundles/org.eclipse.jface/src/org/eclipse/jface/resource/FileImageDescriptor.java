@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,8 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
-import java.io.BufferedInputStream;
+import static org.eclipse.jface.resource.URLImageDescriptor.loadImageData;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,7 +33,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
@@ -122,20 +122,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 */
 	@Override
 	public ImageData getImageData(int zoom) {
-		InputStream in = getStream(zoom);
-		if (in != null) {
-			try (BufferedInputStream stream = new BufferedInputStream(in)) {
-				return new ImageData(stream);
-			} catch (SWTException e) {
-				if (e.code != SWT.ERROR_INVALID_IMAGE) {
-					throw e;
-					// fall through otherwise
-				}
-			} catch (IOException ioe) {
-				// fall through
-			}
-		}
-		return null;
+		return getImageData(name, zoom);
 	}
 
 	/**
@@ -146,19 +133,20 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 * @return the buffered stream on the file or <code>null</code> if the
 	 *         file cannot be found
 	 */
-	private InputStream getStream(int zoom) {
-		if (zoom == 100) {
-			return getStream(name);
+	@SuppressWarnings("resource")
+	private ImageData getImageData(String name, int zoom) {
+		if (zoom == 100 || URLImageDescriptor.canLoadAtZoom(() -> getStream(name), zoom)) {
+			return loadImageData(getStream(name), 100, zoom);
 		}
 
 		InputStream xstream = getStream(getxName(name, zoom));
 		if (xstream != null) {
-			return xstream;
+			return loadImageData(xstream, zoom, zoom);
 		}
 
 		InputStream xpath = getStream(getxPath(name, zoom));
 		if (xpath != null) {
-			return xpath;
+			return loadImageData(xpath, zoom, zoom);
 		}
 
 		return null;
