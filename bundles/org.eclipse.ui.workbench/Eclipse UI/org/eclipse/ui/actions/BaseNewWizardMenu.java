@@ -163,10 +163,12 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 		}
 	}
 
-	/*
+	/**
 	 * Returns the action for the given wizard id, or null if not found.
+	 *
+	 * @since 3.134
 	 */
-	private IAction getAction(String id) {
+	public IAction getAction(String id) {
 		// Keep a cache, rather than creating a new action each time,
 		// so that image caching in ActionContributionItem works.
 		IAction action = actions.get(id);

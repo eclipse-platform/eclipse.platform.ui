@@ -15,8 +15,12 @@
 package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -28,6 +32,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
+import org.eclipse.ui.internal.dialogs.RecentNewWizardSelection;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -186,9 +191,28 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 			list.add(new ActionContributionItem(newExampleAction));
 			list.add(new Separator());
 		}
+		// To add shortcuts from OTHER... wizard regardless of perspective
+		Collection<IContributionItem> actions = new LinkedList<>();
+		if (!RecentNewWizardSelection.getInstance().getMenuIds().isEmpty()) {
+			for (String selectedItem : RecentNewWizardSelection.getInstance()
+					.getMenuIds()) {
+				IAction action = getAction(selectedItem);
+				actions.add(new ActionContributionItem(action));
+			}
+			subMenuShortcutCheck(list, actions);
+		}
 		list.add(new ActionContributionItem(getShowDialogAction()));
 	}
 
+	private void subMenuShortcutCheck(List<IContributionItem> list, Collection<IContributionItem> otherItems) {
+		Set<IContributionItem> existingShortcutsInPerspective = new HashSet<>(list);
+		for (IContributionItem item : otherItems) {
+			if (!existingShortcutsInPerspective.contains(item)) {
+				list.add(item);
+				existingShortcutsInPerspective.add(item);
+			}
+		}
+	}
 	private boolean isNewProjectWizardAction(IAction action) {
 		if (action instanceof NewWizardShortcutAction) {
 			IWizardDescriptor wizardDescriptor= ((NewWizardShortcutAction) action).getWizardDescriptor();
