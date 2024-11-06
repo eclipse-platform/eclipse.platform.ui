@@ -18,6 +18,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.LocalizationHelper;
@@ -99,6 +100,7 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 	/**
 	 * Constructs a new ShowViewDialog.
 	 */
+	@Inject
 	public ShowViewDialog(Shell shell, MApplication application, MWindow window, EModelService modelService,
 			EPartService partService, IEclipseContext context) {
 		super(shell);
