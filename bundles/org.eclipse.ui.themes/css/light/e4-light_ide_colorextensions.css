@@ -32,7 +32,8 @@ ThemesExtension { color-definition:
 	'#org-eclipse-ui-workbench-ACTIVE_TAB_INNER_KEYLINE_COLOR',
 	'#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR',
 	'#org-eclipse-ui-workbench-ACTIVE_TAB_TEXT_COLOR',
-	'#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR';
+	'#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR',
+	'#org-eclipse-ui-workbench-SECONDARY_BACKGROUND';
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
@@ -93,6 +94,13 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR {
 	color: #B6BCCC;
 	category: '#org-eclipse-ui-presentation-default';
 	label: url('platform:/plugin/org.eclipse.ui.themes?message=ACTIVE_TAB_OUTLINE_COLOR');
+}
+
+ColorDefinition#org-eclipse-ui-workbench-SECONDARY_BACKGROUND {
+	color: #f8f8f8;
+	category: '#org-eclipse-ui-presentation-default';
+	label: url('platform:/plugin/org.eclipse.ui.themes?message=SECONDARY_BACKGROUND');
+	editable: false;
 }
 
 /* Already existing ColorDefinitions overridden for the E4 default theme */
