@@ -527,6 +527,14 @@ public abstract class QuickAccessContents {
 					QuickAccessEntry.MATCH_PERFECT)));
 		}
 		res.addAll(entriesPerProvider.values());
+
+		// if one category provides the same single entry like "previous", we can avoid
+		// showing the duplicate second list
+		if (res.size() >= 2 && res.get(0).size() == 1 && res.get(1).size() == 1
+				&& (res.get(0).get(0).element.equals(res.get(1).get(0).element))) {
+			res.remove(1);
+		}
+
 		return (List<QuickAccessEntry>[]) res.toArray(new List<?>[res.size()]);
 	}
 
