@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,12 +26,15 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
+import org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution;
 import org.eclipse.ui.internal.contexts.ContextPersistence;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @since 3.5
  */
-public class ContextToModelProcessor {
+@Component(service = { IModelProcessorContribution.class, ContextToModelProcessor.class })
+public class ContextToModelProcessor implements IModelProcessorContribution {
 	private Map<String, MBindingContext> contexts = new HashMap<>();
 
 	@Execute
