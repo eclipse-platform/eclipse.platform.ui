@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 vogella GmbH and others.
+ * Copyright (c) 2018, 2024 vogella GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -74,11 +74,11 @@ public class PluginWalkerTest {
 		bundleContext = bundle.getBundleContext();
 		bundlesWithPluginXml = List.of("org.eclipse.e4.ui.css.swt", "org.eclipse.e4.ui.model.workbench",
 				"org.eclipse.e4.ui.workbench.swt", "org.eclipse.ui.forms", "org.eclipse.ui.themes",
-				"org.eclipse.e4.ui.workbench", "org.eclipse.e4.ui.workbench.addons.swt", "org.eclipse.ui.ide",
-				"org.eclipse.e4.ui.css.core", "org.eclipse.ui.workbench", "org.eclipse.ui.navigator.resources",
-				"org.eclipse.ui.navigator", "org.eclipse.ui.views", "org.eclipse.ui.views.properties.tabbed",
-				"org.eclipse.ui", "org.eclipse.ui.browser", "org.eclipse.e4.ui.css.swt.theme",
-				"org.eclipse.ui.ide.application", "org.eclipse.ui.monitoring");
+				"org.eclipse.e4.ui.workbench", "org.eclipse.ui.ide", "org.eclipse.e4.ui.css.core",
+				"org.eclipse.ui.workbench", "org.eclipse.ui.navigator.resources", "org.eclipse.ui.navigator",
+				"org.eclipse.ui.views", "org.eclipse.ui.views.properties.tabbed", "org.eclipse.ui",
+				"org.eclipse.ui.browser", "org.eclipse.e4.ui.css.swt.theme", "org.eclipse.ui.ide.application",
+				"org.eclipse.ui.monitoring");
 	}
 
 	@Test

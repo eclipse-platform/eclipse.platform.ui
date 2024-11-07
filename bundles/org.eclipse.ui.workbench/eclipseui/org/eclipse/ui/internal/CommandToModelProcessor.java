@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,12 +30,15 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution;
 import org.eclipse.ui.internal.commands.CommandPersistence;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @since 3.5
  */
-public class CommandToModelProcessor {
+@Component(service = { IModelProcessorContribution.class, CommandToModelProcessor.class })
+public class CommandToModelProcessor implements IModelProcessorContribution {
 
 	private Map<String, MCategory> categories = new HashMap<>();
 
