@@ -75,7 +75,6 @@ import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -1580,8 +1579,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		fInternalListener= new InternalListener();
 
 		AdditionalInfoController controller= null;
-		if (fInformationControlCreator != null)
-			controller= new AdditionalInfoController(fInformationControlCreator, OpenStrategy.getPostSelectionDelay());
+		if (fInformationControlCreator != null) {
+			/** delay until each additional information is shown **/
+			int delay= 0;		
+			controller= new AdditionalInfoController(fInformationControlCreator, delay);
+		}
 
 		fContextInfoPopup= fContentAssistSubjectControlAdapter.createContextInfoPopup(this);
 		fProposalPopup= fContentAssistSubjectControlAdapter.createCompletionProposalPopup(this, controller, fAsynchronous);
