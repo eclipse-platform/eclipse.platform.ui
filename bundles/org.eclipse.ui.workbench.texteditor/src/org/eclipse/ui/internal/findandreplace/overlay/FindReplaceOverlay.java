@@ -147,6 +147,37 @@ public class FindReplaceOverlay {
 	private ControlDecoration searchBarDecoration;
 	private ContentAssistCommandAdapter contentAssistSearchField, contentAssistReplaceField;
 
+	private FocusListener targetActionActivationHandling = new FocusListener() {
+		@Override
+		public void focusGained(FocusEvent e) {
+			setTextEditorActionsActivated(false);
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			setTextEditorActionsActivated(true);
+		}
+
+		/*
+		 * Adapted from
+		 * org.eclipse.jdt.internal.ui.javaeditor.JavaEditor#setActionsActivated(
+		 * boolean)
+		 */
+		private void setTextEditorActionsActivated(boolean state) {
+			if (!(targetPart instanceof AbstractTextEditor)) {
+				return;
+			}
+			try {
+				Method method = AbstractTextEditor.class.getDeclaredMethod("setActionActivation", boolean.class); //$NON-NLS-1$
+				method.setAccessible(true);
+				method.invoke(targetPart, Boolean.valueOf(state));
+			} catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException | SecurityException | NoSuchMethodException ex) {
+				TextEditorPlugin.getDefault().getLog()
+						.log(Status.error("cannot (de-)activate actions for text editor", ex)); //$NON-NLS-1$
+			}
+		}
+	};
+
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
 		targetPart = part;
 		targetControl = getTargetControl(parent, part);
@@ -561,39 +592,16 @@ public class FindReplaceOverlay {
 			updateIncrementalSearch();
 		});
 		searchBar.addFocusListener(new FocusListener() {
-
 			@Override
 			public void focusGained(FocusEvent e) {
 				findReplaceLogic.resetIncrementalBaseLocation();
-				setTextEditorActionsActivated(false);
 			}
-
 			@Override
 			public void focusLost(FocusEvent e) {
 				showUserFeedback(normalTextForegroundColor, false);
-				setTextEditorActionsActivated(true);
 			}
-
-			/*
-			 * Adapted from
-			 * org.eclipse.jdt.internal.ui.javaeditor.JavaEditor#setActionsActivated(
-			 * boolean)
-			 */
-			private void setTextEditorActionsActivated(boolean state) {
-				if (!(targetPart instanceof AbstractTextEditor)) {
-					return;
-				}
-				try {
-					Method method = AbstractTextEditor.class.getDeclaredMethod("setActionActivation", boolean.class); //$NON-NLS-1$
-					method.setAccessible(true);
-					method.invoke(targetPart, Boolean.valueOf(state));
-				} catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException | SecurityException | NoSuchMethodException ex) {
-					TextEditorPlugin.getDefault().getLog()
-							.log(Status.error("cannot (de-)activate actions for text editor", ex)); //$NON-NLS-1$
-				}
-			}
-
 		});
+		searchBar.addFocusListener(targetActionActivationHandling);
 		searchBar.setMessage(FindReplaceMessages.FindReplaceOverlay_searchBar_message);
 		contentAssistSearchField = createContentAssistField(searchBar, true);
 		searchBar.addModifyListener(Event -> {
@@ -618,6 +626,7 @@ public class FindReplaceOverlay {
 		replaceBar.addModifyListener(e -> {
 			findReplaceLogic.setReplaceString(replaceBar.getText());
 		});
+		replaceBar.addFocusListener(targetActionActivationHandling);
 		replaceBar.addFocusListener(FocusListener.focusLostAdapter(e -> {
 			replaceBar.setForeground(normalTextForegroundColor);
 			searchBar.setForeground(normalTextForegroundColor);
