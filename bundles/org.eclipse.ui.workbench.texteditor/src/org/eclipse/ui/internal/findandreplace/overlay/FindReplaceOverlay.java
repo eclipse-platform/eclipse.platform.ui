@@ -38,6 +38,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Shell;
@@ -217,6 +218,81 @@ public class FindReplaceOverlay {
 		}
 
 	};
+
+	private final CustomFocusOrder customFocusOrder = new CustomFocusOrder();
+
+	private class CustomFocusOrder {
+		private final Listener searchBarToReplaceBar = e -> {
+			if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
+				e.doit = false;
+				replaceBar.forceFocus();
+			}
+		};
+
+		private final Listener replaceBarToSearchBarAndTools = e -> {
+			switch (e.detail) {
+			case SWT.TRAVERSE_TAB_NEXT:
+				e.doit = false;
+				searchBar.getDropDownTool().getFirstControl().forceFocus();
+				break;
+			case SWT.TRAVERSE_TAB_PREVIOUS:
+				e.doit = false;
+				searchBar.getTextBar().forceFocus();
+				break;
+			default:
+				// Proceed as normal
+			}
+		};
+
+		private final Listener searchToolsToReplaceBar = e -> {
+			switch (e.detail) {
+			case SWT.TRAVERSE_TAB_PREVIOUS:
+				e.doit = false;
+				replaceBar.forceFocus();
+				break;
+			default:
+				// Proceed as normal
+			}
+		};
+
+		private final Listener closeToolsToReplaceTools = e -> {
+			switch (e.detail) {
+			case SWT.TRAVERSE_TAB_NEXT:
+				e.doit = false;
+				replaceBar.getDropDownTool().getFirstControl().forceFocus();
+				break;
+			default:
+				// Proceed as normal
+			}
+		};
+
+		private final Listener replaceToolsToCloseTools = e -> {
+			switch (e.detail) {
+			case SWT.TRAVERSE_TAB_PREVIOUS:
+				e.doit = false;
+				closeTools.getFirstControl().forceFocus();
+				break;
+			default:
+				// Proceed as normal
+			}
+		};
+
+		void apply() {
+			searchBar.getTextBar().addListener(SWT.Traverse, searchBarToReplaceBar);
+			replaceBar.getTextBar().addListener(SWT.Traverse, replaceBarToSearchBarAndTools);
+			searchBar.getDropDownTool().getFirstControl().addListener(SWT.Traverse, searchToolsToReplaceBar);
+			closeTools.getFirstControl().addListener(SWT.Traverse, closeToolsToReplaceTools);
+			replaceBar.getDropDownTool().getFirstControl().addListener(SWT.Traverse, replaceToolsToCloseTools);
+		}
+
+		void dispose() {
+			searchBar.getTextBar().removeListener(SWT.Traverse, searchBarToReplaceBar);
+			replaceBar.getTextBar().removeListener(SWT.Traverse, replaceBarToSearchBarAndTools);
+			searchBar.getDropDownTool().getFirstControl().removeListener(SWT.Traverse, searchToolsToReplaceBar);
+			closeTools.getFirstControl().removeListener(SWT.Traverse, closeToolsToReplaceTools);
+			replaceBar.getDropDownTool().getFirstControl().removeListener(SWT.Traverse, replaceToolsToCloseTools);
+		}
+	}
 
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
 		targetPart = part;
@@ -647,6 +723,7 @@ public class FindReplaceOverlay {
 		searchBar.addModifyListener(Event -> {
 			decorate();
 		});
+		searchBar.setTabList(null);
 	}
 
 	private void updateIncrementalSearch() {
@@ -710,6 +787,7 @@ public class FindReplaceOverlay {
 		if (!replaceBarOpen) {
 			return;
 		}
+		customFocusOrder.dispose();
 		searchBar.forceFocus();
 		contentAssistReplaceField = null;
 		replaceBarOpen = false;
@@ -728,6 +806,7 @@ public class FindReplaceOverlay {
 		updatePlacementAndVisibility();
 		assignIDs();
 		replaceBar.forceFocus();
+		customFocusOrder.apply();
 	}
 
 	private void initializeReplaceShortcutHandlers() {
