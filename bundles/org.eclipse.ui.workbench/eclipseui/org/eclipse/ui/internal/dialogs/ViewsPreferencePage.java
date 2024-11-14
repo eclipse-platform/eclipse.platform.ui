@@ -20,6 +20,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import static org.eclipse.jface.viewers.LabelProvider.createTextProvider;
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_COLOR_AND_FONT_ID;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_OS_VERSION;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_THEME_ASSOCIATION;
@@ -71,12 +72,14 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -213,9 +216,12 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		group.setFont(parent.getFont());
 		GridLayout layout = new GridLayout(1, false);
 		group.setLayout(layout);
-		Label infoLabel = new Label(group, SWT.WRAP);
-		infoLabel.setText(WorkbenchMessages.RescaleAtRuntimeDisclaimer);
+		Link infoLabel = new Link(group, SWT.WRAP);
+		infoLabel.setText(WorkbenchMessages.RescaleAtRuntimeDisclaimer + System.lineSeparator() + System.lineSeparator()
+				+ WorkbenchMessages.EdgeBrowserDisclaimer);
 		infoLabel.setLayoutData(GridDataFactory.defaultsFor(infoLabel).create());
+		infoLabel.addSelectionListener(widgetSelectedAdapter(c -> Program.launch(c.text)));
+
 		createLabel(group, ""); //$NON-NLS-1$
 
 		boolean initialStateRescaleAtRuntime = PrefUtil.getAPIPreferenceStore()
