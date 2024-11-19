@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Pluginchecks
 Bundle-SymbolicName: org.eclipse.ui.tests.pluginchecks;singleton:=true
-Bundle-Version: 1.2.300.qualifier
+Bundle-Version: 1.2.400.qualifier
 Automatic-Module-Name: org.eclipse.ui.tests.pluginchecks
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.junit;bundle-version="4.12.0",

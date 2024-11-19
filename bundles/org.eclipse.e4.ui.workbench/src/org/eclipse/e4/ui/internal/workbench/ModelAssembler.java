@@ -19,24 +19,26 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
+import static org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution.APPLY_ALWAYS;
+import static org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution.APPLY_PROPERTY_KEY;
+import static org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution.BEFORE_FRAGMENT_PROPERTY_KEY;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -58,8 +60,6 @@ import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution;
 import org.eclipse.e4.ui.workbench.modeling.IModelProcessorContribution.ModelElement;
 import org.eclipse.emf.common.util.Diagnostic;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -80,7 +80,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
-import org.osgi.service.log.LogLevel;
 import org.osgi.service.log.Logger;
 import org.osgi.service.log.LoggerFactory;
 import org.osgi.util.tracker.BundleTracker;
@@ -101,9 +100,8 @@ public class ModelAssembler {
 		Set<String> containedElementIds = new LinkedHashSet<>();
 	}
 
-	private static class FragmentWrapperElementMapping {
-		ModelFragmentWrapper wrapper;
-		List<MApplicationElement> elements;
+	private static record FragmentWrapperElementMapping(ModelFragmentWrapper wrapper,
+			List<MApplicationElement> elements) {
 	}
 
 	private class ModelFragmentBundleTracker implements BundleTrackerCustomizer<List<FragmentWrapperElementMapping>> {
@@ -116,12 +114,9 @@ public class ModelAssembler {
 				List<ModelFragmentWrapper> wrappers = getModelFragmentWrapperFromBundle(bundle,
 						ModelAssembler.this.initial);
 
-				List<FragmentWrapperElementMapping> mappings = wrappers.stream().map(w -> {
-					FragmentWrapperElementMapping mapping = new FragmentWrapperElementMapping();
-					mapping.wrapper = w;
-					mapping.elements = new ArrayList<>(w.getModelFragment().getElements());
-					return mapping;
-				}).collect(Collectors.toList());
+				List<FragmentWrapperElementMapping> mappings = wrappers.stream()
+						.map(w -> new FragmentWrapperElementMapping(w, List.copyOf(w.getModelFragment().getElements())))
+						.toList();
 
 				// we skip direct processing in case the startup model processing is not done
 				// yet
@@ -147,8 +142,7 @@ public class ModelAssembler {
 					mappings.stream().flatMap(m -> m.elements.stream()).forEach(appElement -> {
 						// TODO implement removal of contributions, e.g. MenuContributions
 
-						if (appElement instanceof MUIElement) {
-							MUIElement element = (MUIElement) appElement;
+						if (appElement instanceof MUIElement element) {
 							element.setToBeRendered(false);
 							if (element.getParent() != null) {
 								element.getParent().getChildren().remove(element);
@@ -165,7 +159,7 @@ public class ModelAssembler {
 						E4XMIResource applicationResource = (E4XMIResource) ((EObject) application).eResource();
 						ResourceSet resourceSet = applicationResource.getResourceSet();
 						if (attrURI == null) {
-							log(LogLevel.WARN, "Unable to find location for the model extension {}", bundleName); //$NON-NLS-1$
+							warn("Unable to find location for the model extension {}", bundleName); //$NON-NLS-1$
 							return;
 						}
 
@@ -179,8 +173,7 @@ public class ModelAssembler {
 								uri = URI.createPlatformPluginURI(path, false);
 							}
 						} catch (RuntimeException e) {
-							log(LogLevel.WARN, "Invalid location {} of model extension {}", attrURI, bundleName, //$NON-NLS-1$
-									e);
+							warn("Invalid location {} of model extension {}", attrURI, bundleName, e); //$NON-NLS-1$
 							return;
 						}
 
@@ -188,8 +181,7 @@ public class ModelAssembler {
 							Resource resource = resourceSet.getResource(uri, true);
 							resource.unload();
 						} catch (RuntimeException e) {
-							log(LogLevel.WARN, "Unable to read model extension from {} of {}", uri, //$NON-NLS-1$
-									bundleName);
+							warn("Unable to read model extension from {} of {}", uri, bundleName); //$NON-NLS-1$
 						}
 					}
 
@@ -210,16 +202,16 @@ public class ModelAssembler {
 	private static final String INITIAL = "initial"; //$NON-NLS-1$
 	private static final String NOTEXISTS = "notexists"; //$NON-NLS-1$
 
-	LoggerFactory factory;
-	Logger logger;
+	private LoggerFactory factory;
+	private Logger logger;
 
-	private AtomicReference<IExtensionRegistry> registry = new AtomicReference<>();
+	private final AtomicReference<IExtensionRegistry> registry = new AtomicReference<>();
 
-	private CopyOnWriteArrayList<ServiceReference<IModelProcessorContribution>> processorContributions = new CopyOnWriteArrayList<>();
+	private final List<ServiceReference<IModelProcessorContribution>> processorContributions = new CopyOnWriteArrayList<>();
 
-	BundleContext bundleContext;
+	private BundleContext bundleContext;
 
-	BundleTracker<List<FragmentWrapperElementMapping>> tracker;
+	private BundleTracker<List<FragmentWrapperElementMapping>> tracker;
 
 	private boolean processModelExecuted = false;
 
@@ -276,8 +268,7 @@ public class ModelAssembler {
 				try {
 					ContextInjectionFactory.invoke(service, PreDestroy.class, context);
 				} catch (Exception e) {
-					log(LogLevel.WARN, "Could not run PreDestroy on processor {}: {}", contrib.getClass().getName(), //$NON-NLS-1$
-							e);
+					warn("Could not run PreDestroy on processor {}: {}", contrib.getClass().getName(), e); //$NON-NLS-1$
 				}
 			});
 		}
@@ -344,14 +335,15 @@ public class ModelAssembler {
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
-				if ("fragment".equals(ce.getName()) && (initial || !INITIAL.equals(ce.getAttribute("apply")))) { //$NON-NLS-1$ //$NON-NLS-2$
+				if ("fragment".equals(ce.getName()) //$NON-NLS-1$
+						&& (initial || !INITIAL.equals(ce.getAttribute(APPLY_PROPERTY_KEY)))) {
 					MModelFragments fragmentsContainer = getFragmentsContainer(ce.getAttribute("uri"), //$NON-NLS-1$
 							ce.getContributor().getName());
 					if (fragmentsContainer == null) {
 						continue;
 					}
 					for (MModelFragment fragment : fragmentsContainer.getFragments()) {
-						boolean checkExist = !initial && NOTEXISTS.equals(ce.getAttribute("apply")); //$NON-NLS-1$
+						boolean checkExist = !initial && NOTEXISTS.equals(ce.getAttribute(APPLY_PROPERTY_KEY));
 						wrappers.add(
 								new ModelFragmentWrapper(fragmentsContainer, fragment, ce.getContributor().getName(),
 										URIHelper.constructPlatformURI(ce.getContributor()), checkExist)); // $NON-NLS-1$
@@ -370,9 +362,8 @@ public class ModelAssembler {
 			// once the initial tracking is done we process the tracked bundles
 			// this is for performance optimization on initial loading to avoid multiple
 			// fragment merge operations
-			List<ModelFragmentWrapper> collect = this.tracker.getTracked().values().stream().flatMap(List::stream)
-					.map(w -> w.wrapper).collect(Collectors.toList());
-			wrappers.addAll(collect);
+			this.tracker.getTracked().values().stream().flatMap(List::stream)
+					.map(FragmentWrapperElementMapping::wrapper).forEach(wrappers::add);
 		}
 
 		processFragmentWrappers(wrappers);
@@ -388,8 +379,7 @@ public class ModelAssembler {
 
 			// check if the value for apply is valid
 			if (!ALWAYS.equals(apply) && !INITIAL.equals(apply) && !NOTEXISTS.equals(apply)) {
-				log(LogLevel.WARN, "Model-Fragment header apply attribute {} is invalid, falling back to always", //$NON-NLS-1$
-						apply);
+				warn("Model-Fragment header apply attribute {} is invalid, falling back to always", apply); //$NON-NLS-1$
 				apply = ALWAYS;
 			}
 
@@ -404,8 +394,7 @@ public class ModelAssembler {
 				}
 			}
 		} else {
-			log(LogLevel.ERROR, "Model-Fragment header value {} in bundle {} is invalid", //$NON-NLS-1$
-					fragmentHeader, bundle.getSymbolicName());
+			error("Model-Fragment header value {} in bundle {} is invalid", fragmentHeader, bundle.getSymbolicName()); //$NON-NLS-1$
 		}
 
 		return wrappers;
@@ -422,11 +411,8 @@ public class ModelAssembler {
 		Map<String, Bucket> parentIdToBuckets = new LinkedHashMap<>();
 		for (ModelFragmentWrapper fragmentWrapper : wrappers) {
 			MModelFragment fragment = fragmentWrapper.getModelFragment();
-			String parentId = MStringModelFragment.class.cast(fragment).getParentElementId();
-			if (!parentIdToBuckets.containsKey(parentId)) {
-				parentIdToBuckets.put(parentId, new Bucket());
-			}
-			Bucket b = parentIdToBuckets.get(parentId);
+			String parentId = ((MStringModelFragment) fragment).getParentElementId();
+			Bucket b = parentIdToBuckets.computeIfAbsent(parentId, id -> new Bucket());
 			if (elementIdToBucket.containsKey(parentId)) {
 				Bucket parentBucket = elementIdToBucket.get(parentId);
 				parentBucket.dependencies.add(b);
@@ -454,16 +440,15 @@ public class ModelAssembler {
 	private List<ModelFragmentWrapper> createUnifiedFragmentList(Map<String, Bucket> elementIdToBucket) {
 		List<ModelFragmentWrapper> fragmentList = new ArrayList<>();
 		Set<String> checkedElementIds = new LinkedHashSet<>();
-		for (Entry<String, Bucket> entry : elementIdToBucket.entrySet()) {
-			if (checkedElementIds.contains(entry.getKey())) {
-				continue;
+		elementIdToBucket.forEach((key, bucket) -> {
+			if (checkedElementIds.contains(key)) {
+				return;
 			}
-			Bucket bucket = entry.getValue();
 			while (bucket.dependentOn != null) {
 				bucket = bucket.dependentOn;
 			}
 			addAllBucketFragmentWrapper(bucket, fragmentList, checkedElementIds);
-		}
+		});
 		return fragmentList;
 	}
 
@@ -513,10 +498,8 @@ public class ModelAssembler {
 		Diagnostic validationResult = Diagnostician.INSTANCE.validate((EObject) fragment);
 		int severity = validationResult.getSeverity();
 		if (severity == Diagnostic.ERROR) {
-			log(LogLevel.ERROR,
-					"Fragment from {} of {} could not be validated and was not merged:  -> Validation result: {}" //$NON-NLS-1$
-							+ fragment,
-					contributorURI, contributorName, validationResult);
+			error("Fragment from {} of {} could not be validated and was not merged:  -> Validation result: {}" //$NON-NLS-1$
+					+ fragment, contributorURI, contributorName, validationResult);
 		}
 
 		List<MApplicationElement> merged = processModelFragment(fragment, contributorURI, checkExist);
@@ -524,8 +507,7 @@ public class ModelAssembler {
 			evalImports = true;
 			addedElements.addAll(merged);
 		} else {
-			log(LogLevel.DEBUG, "Nothing to merge for fragment {} of {}", contributorURI, //$NON-NLS-1$
-					contributorName);
+			debug("Nothing to merge for fragment {} of {}", contributorURI, contributorName); //$NON-NLS-1$
 		}
 		if (evalImports && !fragmentsContainer.getImports().isEmpty()) {
 			resolveImports(fragmentsContainer.getImports(), addedElements);
@@ -536,7 +518,7 @@ public class ModelAssembler {
 		E4XMIResource applicationResource = (E4XMIResource) ((EObject) application).eResource();
 		ResourceSet resourceSet = applicationResource.getResourceSet();
 		if (attrURI == null) {
-			log(LogLevel.WARN, "Unable to find location for the model extension {}", bundleName); //$NON-NLS-1$
+			warn("Unable to find location for the model extension {}", bundleName); //$NON-NLS-1$
 			return null;
 		}
 
@@ -550,7 +532,7 @@ public class ModelAssembler {
 				uri = URI.createPlatformPluginURI(path, false);
 			}
 		} catch (RuntimeException e) {
-			log(LogLevel.WARN, "Invalid location {} of model extension {}", attrURI, bundleName, e); //$NON-NLS-1$
+			warn("Invalid location {} of model extension {}", attrURI, bundleName, e); //$NON-NLS-1$
 			return null;
 		}
 
@@ -558,22 +540,22 @@ public class ModelAssembler {
 		try {
 			resource = resourceSet.getResource(uri, true);
 		} catch (RuntimeException e) {
-			log(LogLevel.WARN, "Unable to read model extension from {} of {}", uri, bundleName); //$NON-NLS-1$
+			warn("Unable to read model extension from {} of {}", uri, bundleName); //$NON-NLS-1$
 			return null;
 		}
 
-		EList<?> contents = resource.getContents();
+		List<?> contents = resource.getContents();
 		if (contents.isEmpty()) {
 			return null;
 		}
 
 		Object extensionRoot = contents.get(0);
 
-		if (!(extensionRoot instanceof MModelFragments)) {
-			log(LogLevel.WARN, "Unable to create model extension {}", bundleName); //$NON-NLS-1$
+		if (!(extensionRoot instanceof MModelFragments modelFragments)) {
+			warn("Unable to create model extension {}", bundleName); //$NON-NLS-1$
 			return null;
 		}
-		return (MModelFragments) extensionRoot;
+		return modelFragments;
 	}
 
 	/**
@@ -613,12 +595,11 @@ public class ModelAssembler {
 			}
 
 			// Remember IDs of subitems
-			TreeIterator<EObject> treeIt = EcoreUtil.getAllContents(o, true);
-			while (treeIt.hasNext()) {
-				EObject eObj = treeIt.next();
+			Iterable<EObject> contents = () -> EcoreUtil.getAllContents(o, true);
+			for (EObject eObj : contents) {
 				r = (E4XMIResource) eObj.eResource();
-				if (contributorURI != null && (eObj instanceof MApplicationElement)) {
-					((MApplicationElement) eObj).setContributorURI(contributorURI);
+				if (contributorURI != null && eObj instanceof MApplicationElement application) {
+					application.setContributorURI(contributorURI);
 				}
 				applicationResource.setID(eObj, r.getInternalId(eObj));
 			}
@@ -643,9 +624,9 @@ public class ModelAssembler {
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
-				boolean parseBoolean = Boolean.parseBoolean(ce.getAttribute("beforefragment")); //$NON-NLS-1$
+				boolean parseBoolean = Boolean.parseBoolean(ce.getAttribute(BEFORE_FRAGMENT_PROPERTY_KEY));
 				if ("processor".equals(ce.getName()) && afterFragments != parseBoolean) { //$NON-NLS-1$
-					if (initial || !INITIAL.equals(ce.getAttribute("apply"))) { //$NON-NLS-1$
+					if (initial || !INITIAL.equals(ce.getAttribute(APPLY_PROPERTY_KEY))) {
 						runProcessor(ce);
 					}
 				}
@@ -653,31 +634,23 @@ public class ModelAssembler {
 		}
 
 		this.processorContributions.stream().filter(sr -> {
-			Dictionary<String, Object> dict = sr.getProperties();
-
-			Object before = dict.get(IModelProcessorContribution.BEFORE_FRAGMENT_PROPERTY_KEY);
+			Object before = sr.getProperty(BEFORE_FRAGMENT_PROPERTY_KEY);
 			boolean beforeFragments = true;
-			if (before instanceof Boolean) {
-				beforeFragments = (Boolean) before;
-			} else if (before instanceof String) {
-				beforeFragments = Boolean.parseBoolean((String) before);
+			if (before instanceof Boolean beforeValue) {
+				beforeFragments = beforeValue;
+			} else if (before instanceof String beforeValue) {
+				beforeFragments = Boolean.parseBoolean(beforeValue);
 			}
 
-			Object applyObject = dict.get(IModelProcessorContribution.APPLY_PROPERTY_KEY);
-			String apply = applyObject instanceof String ? (String) applyObject
-					: IModelProcessorContribution.APPLY_ALWAYS;
-
+			String apply = sr.getProperty(APPLY_PROPERTY_KEY) instanceof String applyValue ? applyValue : APPLY_ALWAYS;
 			// check if the value for apply is valid
 			if (!ALWAYS.equals(apply) && !INITIAL.equals(apply)) {
-				log(LogLevel.WARN,
-						"IModelProcessorContribution apply property value {} is invalid, falling back to always", //$NON-NLS-1$
-						apply);
-				apply = IModelProcessorContribution.APPLY_ALWAYS;
+				warn("IModelProcessorContribution apply property value {} is invalid, falling back to always", apply); //$NON-NLS-1$
+				apply = APPLY_ALWAYS;
 			}
 
-			return ((afterFragments != beforeFragments)
-					&& (initial || IModelProcessorContribution.APPLY_ALWAYS.equals(apply)));
-		}).map(sr -> bundleContext.getService(sr)).forEach(ModelAssembler.this::runProcessor);
+			return afterFragments != beforeFragments && (initial || APPLY_ALWAYS.equals(apply));
+		}).map(bundleContext::getService).forEach(this::runProcessor);
 	}
 
 	private void runProcessor(IConfigurationElement ce) {
@@ -688,7 +661,7 @@ public class ModelAssembler {
 			String id = ceEl.getAttribute("id"); //$NON-NLS-1$
 
 			if (id == null) {
-				log(LogLevel.WARN, "No element id given"); //$NON-NLS-1$
+				warn("No element id given"); //$NON-NLS-1$
 				continue;
 			}
 
@@ -699,7 +672,7 @@ public class ModelAssembler {
 
 			MApplicationElement el = ModelUtils.findElementById(application, id);
 			if (el == null) {
-				log(LogLevel.WARN, "Could not find element with id {}", id); //$NON-NLS-1$
+				warn("Could not find element with id {}", id); //$NON-NLS-1$
 			}
 			localContext.set(key, el);
 		}
@@ -708,14 +681,12 @@ public class ModelAssembler {
 			Object o = factory.create("bundleclass://" + ce.getContributor().getName() + "/" + ce.getAttribute("class"), //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 					context, localContext);
 			if (o == null) {
-				log(LogLevel.WARN, "Unable to create processor {} from {}", //$NON-NLS-1$
-						ce.getAttribute("class"), //$NON-NLS-1$
-						ce.getContributor().getName());
+				warn("Unable to create processor {} from {}", ce.getAttribute("class"), ce.getContributor().getName()); //$NON-NLS-1$//$NON-NLS-2$
 			} else {
 				ContextInjectionFactory.invoke(o, Execute.class, context, localContext, null);
 			}
 		} catch (Exception e) {
-			log(LogLevel.WARN, "Could not run processor: {}", e); //$NON-NLS-1$
+			warn("Could not run processor: {}", e); //$NON-NLS-1$
 		}
 	}
 
@@ -726,7 +697,7 @@ public class ModelAssembler {
 			String id = element.getId();
 
 			if (id == null) {
-				log(LogLevel.WARN, "No element id given"); //$NON-NLS-1$
+				warn("No element id given"); //$NON-NLS-1$
 				continue;
 			}
 
@@ -737,7 +708,7 @@ public class ModelAssembler {
 
 			MApplicationElement el = ModelUtils.findElementById(application, id);
 			if (el == null) {
-				log(LogLevel.WARN, "Could not find element with id {}", id); //$NON-NLS-1$
+				warn("Could not find element with id {}", id); //$NON-NLS-1$
 			}
 			localContext.set(key, el);
 		}
@@ -750,14 +721,13 @@ public class ModelAssembler {
 				o = processor;
 			}
 			if (o == null) {
-				log(LogLevel.WARN, "Unable to create processor {} from {}", //$NON-NLS-1$
-						processor.getProcessorClass().getName(),
+				warn("Unable to create processor {} from {}", processor.getProcessorClass().getName(), //$NON-NLS-1$
 						FrameworkUtil.getBundle(processor.getProcessorClass()).getSymbolicName());
 			} else {
 				ContextInjectionFactory.invoke(o, Execute.class, context, localContext, null);
 			}
 		} catch (Exception e) {
-			log(LogLevel.WARN, "Could not run processor: {}", e); //$NON-NLS-1$
+			warn("Could not run processor: {}", e); //$NON-NLS-1$
 		}
 	}
 
@@ -781,48 +751,42 @@ public class ModelAssembler {
 			importMaps.put(importedElement, realElement);
 		}
 
-		TreeIterator<EObject> it = EcoreUtil.getAllContents(addedElements);
+		Iterable<EObject> contents = () -> EcoreUtil.getAllContents(addedElements);
 		List<Runnable> commands = new ArrayList<>();
-
-		while (it.hasNext()) {
-			EObject o = it.next();
-
-			EContentsEList.FeatureIterator<EObject> featureIterator = (EContentsEList.FeatureIterator<EObject>) o
+		for (EObject target : contents) {
+			EContentsEList.FeatureIterator<EObject> featureIterator = (EContentsEList.FeatureIterator<EObject>) target
 					.eCrossReferences().iterator();
 			while (featureIterator.hasNext()) {
 				EObject importObject = featureIterator.next();
 				if (importObject.eContainmentFeature() == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 					EStructuralFeature feature = featureIterator.feature();
 
-					MApplicationElement el = null;
+					MApplicationElement element;
 					if (importObject instanceof MApplicationElement applicationElement) {
-						el = importMaps.get(applicationElement);
-
-						if (el == null) {
-							log(LogLevel.WARN, "Could not resolve import for {}", //$NON-NLS-1$
-									((MApplicationElement) importObject).getElementId());
+						element = importMaps.get(applicationElement);
+						if (element == null) {
+							warn("Could not resolve import for {}", applicationElement.getElementId()); //$NON-NLS-1$
 						}
+					} else {
+						element = null;
 					}
-
-					final EObject interalTarget = o;
-					final EStructuralFeature internalFeature = feature;
-					final MApplicationElement internalElement = el;
-					final EObject internalImportObject = importObject;
-
 					commands.add(() -> {
-						if (internalFeature.isMany()) {
-							log(LogLevel.ERROR,
-									"Replacing in {}.\n\nFeature={}.\n\nInternalElement={} contributed by {}.\n\nImportObject={}", //$NON-NLS-1$
-									interalTarget, internalFeature.getName(), internalElement.getElementId(),
-									internalElement.getContributorURI(), internalImportObject);
+						if (feature.isMany()) {
+							error("""
+									Replacing in {}.
+									Feature={}.
+									InternalElement={} contributed by {}.
+									ImportObject={}
+									""", target, feature.getName(), element.getElementId(), element.getContributorURI(), //$NON-NLS-1$
+									importObject);
 							@SuppressWarnings("unchecked")
-							List<Object> l = (List<Object>) interalTarget.eGet(internalFeature);
-							int index = l.indexOf(internalImportObject);
+							List<Object> l = (List<Object>) target.eGet(feature);
+							int index = l.indexOf(importObject);
 							if (index >= 0) {
-								l.set(index, internalElement);
+								l.set(index, element);
 							}
 						} else {
-							interalTarget.eSet(internalFeature, internalElement);
+							target.eSet(feature, element);
 						}
 					});
 				}
@@ -834,36 +798,29 @@ public class ModelAssembler {
 		}
 	}
 
-	void log(LogLevel level, String message, Object... args) {
+	private void debug(String message, Object... args) {
+		log(Logger::debug, System.out, message, args);
+	}
+
+	private void warn(String message, Object... args) {
+		log(Logger::warn, System.out, message, args);
+	}
+
+	private void error(String message, Object... args) {
+		log(Logger::error, System.err, message, args);
+	}
+
+	private static interface LogMethod {
+		void invoke(Logger logger, String message, Object... args);
+	}
+
+	private void log(LogMethod logMethod, PrintStream stream, String message, Object... args) {
 		Logger log = this.logger;
 		if (log != null) {
-			switch (level) {
-			case ERROR:
-				log.error(message, args);
-				break;
-			case WARN:
-				log.warn(message, args);
-				break;
-			case INFO:
-				log.info(message, args);
-				break;
-			case DEBUG:
-				log.debug(message, args);
-				break;
-			case AUDIT:
-				log.audit(message, args);
-				break;
-			case TRACE:
-				log.trace(message, args);
-				break;
-			}
+			logMethod.invoke(log, message, args);
 		} else {
 			// fallback if no LogService is available
-			if (LogLevel.ERROR == level) {
-				System.err.println(MessageFormat.format(message, args));
-			} else {
-				System.out.println(MessageFormat.format(message, args));
-			}
+			stream.println(MessageFormat.format(message, args));
 		}
 	}
 

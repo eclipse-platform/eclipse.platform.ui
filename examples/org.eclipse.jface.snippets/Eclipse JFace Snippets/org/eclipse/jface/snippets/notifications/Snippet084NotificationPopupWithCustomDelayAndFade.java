@@ -4,7 +4,7 @@ import org.eclipse.jface.notifications.NotificationPopup;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class Snippet004NotificationPopupWithCustomDelayAndFade {
+public class Snippet084NotificationPopupWithCustomDelayAndFade {
 
 	public static void main(String[] args) {
 		Display display = new Display();

@@ -33,9 +33,9 @@ public class DefaultStickyLinesProvider implements IStickyLinesProvider {
 	private StickyLinesProperties fProperties;
 
 	@Override
-	public List<StickyLine> getStickyLines(StyledText textWidget, int lineNumber, StickyLinesProperties properties) {
+	public List<IStickyLine> getStickyLines(StyledText textWidget, int lineNumber, StickyLinesProperties properties) {
 		this.fProperties= properties;
-		LinkedList<StickyLine> stickyLines= new LinkedList<>();
+		LinkedList<IStickyLine> stickyLines= new LinkedList<>();
 
 		try {
 			int startIndetation= getStartIndentation(lineNumber, textWidget);
@@ -50,7 +50,7 @@ public class DefaultStickyLinesProvider implements IStickyLinesProvider {
 
 				if (indentation < previousIndetation) {
 					previousIndetation= indentation;
-					stickyLines.addFirst(new StickyLine(line, i));
+					stickyLines.addFirst(new StickyLine(i, textWidget));
 				}
 			}
 		} catch (IllegalArgumentException e) {

@@ -172,7 +172,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 *
 	 * @param event the {@link PropertyChangeEvent} triggered by a change in the
 	 *              preference store
-	 * @since 3.133
+	 * @since 3.134
 	 */
 	protected boolean isUpdateRequired(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS)) {
@@ -327,14 +327,14 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * @return {@code SWT.TOP} if the user prefers tabs to be aligned on top,
 	 *         {@code SWT.BOTTOM} if the user prefers tabs to be aligned on the
 	 *         bottom.
-	 * @since 3.133
+	 * @since 3.134
 	 */
 	protected int getTabStyle() {
 		return getAPIPreferenceStore().getInt(IWorkbenchPreferenceConstants.ALIGN_MULTI_PAGE_EDITOR_TABS);
 	}
 
 	/**
-	 * @since 3.133
+	 * @since 3.134
 	 */
 	protected IPreferenceStore getAPIPreferenceStore() {
 		return PrefUtil.getAPIPreferenceStore();
@@ -1288,7 +1288,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 * on the user preference.
 	 * </p>
 	 *
-	 * @since 3.133
+	 * @since 3.134
 	 */
 	protected void updateContainer() {
 		Composite container = getContainer();

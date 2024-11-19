@@ -634,7 +634,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * The default value for this preference is: {@link SWT#BOTTOM}
 	 * </p>
 	 *
-	 * @since 3.133
+	 * @since 3.134
 	 */
 	String ALIGN_MULTI_PAGE_EDITOR_TABS = "ALIGN_MULTI_PAGE_EDITOR_TABS"; //$NON-NLS-1$
 
@@ -726,7 +726,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * runtime. It only effects Windows.
 	 * </p>
 	 *
-	 * @since 3.133
+	 * @since 3.134
 	 */
 	String RESCALING_AT_RUNTIME = "RESCALING_AT_RUNTIME"; //$NON-NLS-1$
 }

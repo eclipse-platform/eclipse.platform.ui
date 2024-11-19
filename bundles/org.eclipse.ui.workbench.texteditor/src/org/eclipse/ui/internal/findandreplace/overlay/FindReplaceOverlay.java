@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.findandreplace.overlay;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.osgi.framework.FrameworkUtil;
@@ -33,6 +34,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -45,6 +47,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -59,6 +62,7 @@ import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextViewer;
 
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
@@ -69,10 +73,12 @@ import org.eclipse.ui.internal.findandreplace.HistoryStore;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
 import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+import org.eclipse.ui.part.MultiPageEditorSite;
 
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
@@ -146,6 +152,72 @@ public class FindReplaceOverlay {
 	private ControlDecoration searchBarDecoration;
 	private ContentAssistCommandAdapter contentAssistSearchField, contentAssistReplaceField;
 
+	private FocusListener targetActionActivationHandling = new FocusListener() {
+		private DeactivateGlobalActionHandlers globalActionHandlerDeaction;
+
+		@Override
+		public void focusGained(FocusEvent e) {
+			setTextEditorActionsActivated(false);
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			setTextEditorActionsActivated(true);
+		}
+
+		/*
+		 * Adapted from
+		 * org.eclipse.jdt.internal.ui.javaeditor.JavaEditor#setActionsActivated(
+		 * boolean)
+		 */
+		private void setTextEditorActionsActivated(boolean state) {
+			if (!(targetPart instanceof AbstractTextEditor)) {
+				return;
+			}
+			if (targetPart.getSite() instanceof MultiPageEditorSite multiEditorSite) {
+				if (!state && globalActionHandlerDeaction == null) {
+					globalActionHandlerDeaction = new DeactivateGlobalActionHandlers(multiEditorSite.getActionBars());
+				} else if (state && globalActionHandlerDeaction != null) {
+					globalActionHandlerDeaction.reactivate();
+					globalActionHandlerDeaction = null;
+				}
+			}
+			try {
+				Method method = AbstractTextEditor.class.getDeclaredMethod("setActionActivation", boolean.class); //$NON-NLS-1$
+				method.setAccessible(true);
+				method.invoke(targetPart, Boolean.valueOf(state));
+			} catch (IllegalArgumentException | ReflectiveOperationException ex) {
+				TextEditorPlugin.getDefault().getLog()
+						.log(Status.error("cannot (de-)activate actions for text editor", ex)); //$NON-NLS-1$
+			}
+		}
+
+		static final class DeactivateGlobalActionHandlers {
+			private final static List<String> ACTIONS = List.of(ITextEditorActionConstants.CUT,
+					ITextEditorActionConstants.COPY, ITextEditorActionConstants.PASTE,
+					ITextEditorActionConstants.DELETE, ITextEditorActionConstants.SELECT_ALL,
+					ITextEditorActionConstants.FIND);
+
+			private final Map<String, IAction> deactivatedActions = new HashMap<>();
+			private final IActionBars actionBars;
+
+			public DeactivateGlobalActionHandlers(IActionBars actionBars) {
+				this.actionBars = actionBars;
+				for (String actionID : ACTIONS) {
+					deactivatedActions.putIfAbsent(actionID, actionBars.getGlobalActionHandler(actionID));
+					actionBars.setGlobalActionHandler(actionID, null);
+				}
+			}
+
+			public void reactivate() {
+				for (String actionID : deactivatedActions.keySet()) {
+					actionBars.setGlobalActionHandler(actionID, deactivatedActions.get(actionID));
+				}
+			}
+		}
+
+	};
+
 	public FindReplaceOverlay(Shell parent, IWorkbenchPart part, IFindReplaceTarget target) {
 		targetPart = part;
 		targetControl = getTargetControl(parent, part);
@@ -203,7 +275,7 @@ public class FindReplaceOverlay {
 			.controlResizedAdapter(__ -> asyncExecIfOpen(FindReplaceOverlay.this::updatePlacementAndVisibility));
 
 	private void asyncExecIfOpen(Runnable operation) {
-		if (!containerControl.isDisposed() && containerControl.isVisible()) {
+		if (!containerControl.isDisposed()) {
 			containerControl.getDisplay().asyncExec(() -> {
 				if (containerControl != null || containerControl.isDisposed()) {
 					operation.run();
@@ -560,39 +632,16 @@ public class FindReplaceOverlay {
 			updateIncrementalSearch();
 		});
 		searchBar.addFocusListener(new FocusListener() {
-
 			@Override
 			public void focusGained(FocusEvent e) {
 				findReplaceLogic.resetIncrementalBaseLocation();
-				setTextEditorActionsActivated(false);
 			}
-
 			@Override
 			public void focusLost(FocusEvent e) {
 				showUserFeedback(normalTextForegroundColor, false);
-				setTextEditorActionsActivated(true);
 			}
-
-			/*
-			 * Adapted from
-			 * org.eclipse.jdt.internal.ui.javaeditor.JavaEditor#setActionsActivated(
-			 * boolean)
-			 */
-			private void setTextEditorActionsActivated(boolean state) {
-				if (!(targetPart instanceof AbstractTextEditor)) {
-					return;
-				}
-				try {
-					Method method = AbstractTextEditor.class.getDeclaredMethod("setActionActivation", boolean.class); //$NON-NLS-1$
-					method.setAccessible(true);
-					method.invoke(targetPart, Boolean.valueOf(state));
-				} catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException | SecurityException | NoSuchMethodException ex) {
-					TextEditorPlugin.getDefault().getLog()
-							.log(Status.error("cannot (de-)activate actions for text editor", ex)); //$NON-NLS-1$
-				}
-			}
-
 		});
+		searchBar.addFocusListener(targetActionActivationHandling);
 		searchBar.setMessage(FindReplaceMessages.FindReplaceOverlay_searchBar_message);
 		contentAssistSearchField = createContentAssistField(searchBar, true);
 		searchBar.addModifyListener(Event -> {
@@ -617,6 +666,7 @@ public class FindReplaceOverlay {
 		replaceBar.addModifyListener(e -> {
 			findReplaceLogic.setReplaceString(replaceBar.getText());
 		});
+		replaceBar.addFocusListener(targetActionActivationHandling);
 		replaceBar.addFocusListener(FocusListener.focusLostAdapter(e -> {
 			replaceBar.setForeground(normalTextForegroundColor);
 			searchBar.setForeground(normalTextForegroundColor);
@@ -695,9 +745,10 @@ public class FindReplaceOverlay {
 		if (!okayToUse(replaceToggle)) {
 			return;
 		}
-		boolean visible = enable && findReplaceLogic.getTarget().isEditable();
-		((GridData) replaceToggleTools.getLayoutData()).exclude = !visible;
-		replaceToggleTools.setVisible(visible);
+		boolean shouldBeVisible = enable && findReplaceLogic.getTarget().isEditable();
+		((GridLayout) containerControl.getLayout()).numColumns = shouldBeVisible ? 2 : 1;
+		((GridData) replaceToggleTools.getLayoutData()).exclude = !shouldBeVisible;
+		replaceToggleTools.setVisible(shouldBeVisible);
 	}
 
 	private void enableReplaceTools(boolean enable) {
