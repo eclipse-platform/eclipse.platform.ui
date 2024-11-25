@@ -1857,9 +1857,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			}
 			createChildren(widget, false);
 			// XXX for performance widget should be expanded after expanding children:
-			if (widget instanceof Item it) {
-				setExpanded(it, true);
-			}
 			if (level == ALL_LEVELS || level > 1) {
 				Item[] children = getChildren(widget);
 				if (children != null) {
@@ -1872,7 +1869,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					}
 				}
 			}
-			// XXX expanding here fails on linux
+			if (widget instanceof Item it) {
+				setExpanded(it, true);
+			}
 		}
 	}
 
