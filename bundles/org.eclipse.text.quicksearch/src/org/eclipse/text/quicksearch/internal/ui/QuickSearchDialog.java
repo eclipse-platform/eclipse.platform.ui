@@ -22,6 +22,7 @@ package org.eclipse.text.quicksearch.internal.ui;
 
 import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
 
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,6 +42,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -83,6 +85,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -369,7 +372,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	private Label headerLabel;
 
 	private IWorkbenchWindow window;
-	private Text searchIn;
+	private Combo searchIn;
 	private Label listLabel;
 
 	/**
@@ -409,16 +412,21 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	 */
 	protected void restoreDialog(IDialogSettings settings) {
 		try {
-			if (initialPatternText==null) {
-				String lastSearch = settings.get(DIALOG_LAST_QUERY);
+			DialogSettings dialogSettings = (DialogSettings) settings;
+
+			if (initialPatternText==null && dialogSettings.getLastFilters() != null) {
+				String lastSearch = dialogSettings.getLastFilters().getFirst();
+
 				if (lastSearch==null) {
 					lastSearch = EMPTY_STRING;
 				}
 				pattern.setText(lastSearch);
 				pattern.selectAll();
 			}
-			if (settings.get(DIALOG_PATH_FILTER)!=null) {
-				String filter = settings.get(DIALOG_PATH_FILTER);
+			if (dialogSettings.getLastFilters() != null) {
+				String filter = dialogSettings.getLastFilters().getFirst();
+
+				searchIn.setItems(searchInStrings(dialogSettings.getLastFilters()));
 				searchIn.setText(filter);
 			}
 
@@ -450,6 +458,14 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			//None of this stuff is critical so shouldn't stop opening dialog if it fails!
 			QuickSearchActivator.log(e);
 		}
+	}
+
+	private String[] searchInStrings (List<String> list) {
+		String[] strings = new String[list.size()];
+		for(int i = 0; i < list.size(); i++) {
+			strings[i] = list.get(i);
+		}
+		return strings;
 	}
 
 	private class ToggleKeepOpenAction extends Action {
@@ -531,9 +547,10 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	 *           settings used to store dialog
 	 */
 	protected void storeDialog(IDialogSettings settings) {
-		String currentSearch = pattern.getText();
-		settings.put(DIALOG_LAST_QUERY, currentSearch);
-		settings.put(DIALOG_PATH_FILTER, searchIn.getText());
+		DialogSettings dialogSettings = (DialogSettings) settings;
+		dialogSettings.inputNewSearchFilter(searchIn.getText());
+		settings.put(DIALOG_LAST_QUERY, pattern.getText());
+
 		if (toggleCaseSensitiveAction!=null) {
 			settings.put(CASE_SENSITIVE, toggleCaseSensitiveAction.isChecked());
 		}
@@ -755,7 +772,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		Label searchInLabel = new Label(searchInComposite, SWT.NONE);
 		searchInLabel.setText(Messages.QuickSearchDialog_In);
 		GridDataFactory.swtDefaults().indent(5, 0).applyTo(searchInLabel);
-		searchIn = new Text(searchInComposite, SWT.SINGLE | SWT.BORDER | SWT.ICON_CANCEL);
+		searchIn = new Combo(searchInComposite, SWT.SINGLE | SWT.BORDER | SWT.ICON_CANCEL);
 		searchIn.setToolTipText(Messages.QuickSearchDialog_InTooltip);
 		GridDataFactory.fillDefaults().grab(true, false).indent(5, 0).applyTo(searchIn);
 
