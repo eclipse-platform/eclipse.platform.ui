@@ -22,6 +22,7 @@ import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.junit.Test;
 
+@SuppressWarnings("removal")
 public class DeprecatedUIDialogsAuto {
 
 	private Shell getShell() {
