@@ -46,6 +46,7 @@ import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@SuppressWarnings("removal")
 public class DeprecatedUIWizardsAuto {
 	private static final int SIZING_WIZARD_WIDTH = 470;
 
