@@ -16,6 +16,7 @@ package org.eclipse.jface.text;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.BiConsumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -68,18 +69,22 @@ public class TextPresentation {
 
 		/** The index of the next style range to be enumerated */
 		protected int fIndex;
+
 		/** The upper bound of the indices of style ranges to be enumerated */
 		protected int fLength;
+
 		/** Indicates whether ranges similar to the default range should be enumerated */
 		protected boolean fSkipDefaults;
+
 		/** The result window */
 		protected IRegion fWindow;
 
 		/**
-		 * <code>skipDefaults</code> tells the enumeration to skip all those style ranges
-		 * which define the same style as the presentation's default style range.
+		 * <code>skipDefaults</code> tells the enumeration to skip all those style ranges which
+		 * define the same style as the presentation's default style range.
 		 *
-		 * @param skipDefaults <code>false</code> if ranges similar to the default range should be enumerated
+		 * @param skipDefaults <code>false</code> if ranges similar to the default range should be
+		 *            enumerated
 		 */
 		protected FilterIterator(boolean skipDefaults) {
 
@@ -133,12 +138,16 @@ public class TextPresentation {
 
 	/** The style information for the range covered by the whole presentation */
 	private StyleRange fDefaultRange;
+
 	/** The member ranges of the presentation */
 	private ArrayList<StyleRange> fRanges;
+
 	/** A clipping region against which the presentation can be clipped when asked for results */
 	private IRegion fResultWindow;
+
 	/**
 	 * The optional extent for this presentation.
+	 *
 	 * @since 3.0
 	 */
 	private IRegion fExtent;
@@ -177,11 +186,10 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Sets the result window for this presentation. When dealing with
-	 * this presentation all ranges which are outside the result window
-	 * are ignored. For example, the size of the presentation is 0
-	 * when there is no range inside the window even if there are ranges
-	 * outside the window. All methods are aware of the result window.
+	 * Sets the result window for this presentation. When dealing with this presentation all ranges
+	 * which are outside the result window are ignored. For example, the size of the presentation is
+	 * 0 when there is no range inside the window even if there are ranges outside the window. All
+	 * methods are aware of the result window.
 	 *
 	 * @param resultWindow the result window
 	 */
@@ -190,9 +198,8 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Set the default style range of this presentation.
-	 * The default style range defines the overall area covered
-	 * by this presentation and its style information.
+	 * Set the default style range of this presentation. The default style range defines the overall
+	 * area covered by this presentation and its style information.
 	 *
 	 * @param range the range describing the default region
 	 */
@@ -201,8 +208,8 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Returns this presentation's default style range. The returned <code>StyleRange</code>
-	 * is relative to the start of the result window.
+	 * Returns this presentation's default style range. The returned <code>StyleRange</code> is
+	 * relative to the start of the result window.
 	 *
 	 * @return this presentation's default style range
 	 */
@@ -210,13 +217,13 @@ public class TextPresentation {
 		StyleRange range= createWindowRelativeRange(fResultWindow, fDefaultRange);
 		if (range == null)
 			return null;
-		return (StyleRange)range.clone();
+		return (StyleRange) range.clone();
 
 	}
 
 	/**
-	 * Add the given range to the presentation. The range must be a
-	 * subrange of the presentation's default range.
+	 * Add the given range to the presentation. The range must be a subrange of the presentation's
+	 * default range.
 	 *
 	 * @param range the range to be added
 	 */
@@ -226,36 +233,38 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Replaces the given range in this presentation. The range must be a
-	 * subrange of the presentation's default range.
+	 * Replaces the given range in this presentation. The range must be a subrange of the
+	 * presentation's default range.
 	 *
 	 * @param range the range to be added
 	 * @since 3.0
 	 */
 	public void replaceStyleRange(StyleRange range) {
-		applyStyleRange(range, false);
+		applyStyleRange(range, this::replaceStyle);
 	}
 
 	/**
-	 * Merges the given range into this presentation. The range must be a
-	 * subrange of the presentation's default range.
+	 * Merges the given range into this presentation. The range must be a subrange of the
+	 * presentation's default range.
 	 *
 	 * @param range the range to be added
 	 * @since 3.0
 	 */
 	public void mergeStyleRange(StyleRange range) {
-		applyStyleRange(range, true);
+		applyStyleRange(range, this::mergeStyle);
 	}
 
 	/**
-	 * Applies the given range to this presentation. The range must be a
-	 * subrange of the presentation's default range.
+	 * Applies the given range to this presentation. The range must be a subrange of the
+	 * presentation's default range.
 	 *
 	 * @param range the range to be added
-	 * @param merge <code>true</code> if the style should be merged instead of replaced
+	 * @param styleRangeApplier method accepting a StyleRange template to be applied and a
+	 *            StyleRange target, the style being applied to. The target may be modified by the
+	 *            method
 	 * @since 3.0
 	 */
-	private void applyStyleRange(StyleRange range, boolean merge) {
+	public void applyStyleRange(StyleRange range, BiConsumer<StyleRange, StyleRange> styleRangeApplier) {
 		if (range.length == 0)
 			return;
 
@@ -272,7 +281,7 @@ public class TextPresentation {
 
 			defaultRange.start= start;
 			defaultRange.length= length;
-			applyStyle(range, defaultRange, merge);
+			styleRangeApplier.accept(range, defaultRange);
 			fRanges.add(defaultRange);
 		} else {
 			IRegion rangeRegion= new Region(start, length);
@@ -284,7 +293,7 @@ public class TextPresentation {
 					defaultRange= range;
 				defaultRange.start= start;
 				defaultRange.length= length;
-				applyStyle(range, defaultRange, merge);
+				styleRangeApplier.accept(range, defaultRange);
 				fRanges.add(defaultRange);
 				return;
 			}
@@ -313,14 +322,15 @@ public class TextPresentation {
 
 					defaultRange.start= start;
 					defaultRange.length= currentStart - start;
-					applyStyle(range, defaultRange, merge);
+					styleRangeApplier.accept(range, defaultRange);
 					fRanges.add(i, defaultRange);
-					i++; last++;
+					i++;
+					last++;
 
 
 					// Apply style to first part of current range
 					current.length= Math.min(end, currentEnd) - currentStart;
-					applyStyle(range, current, merge);
+					styleRangeApplier.accept(range, current);
 				}
 
 				if (start >= currentStart) {
@@ -329,11 +339,12 @@ public class TextPresentation {
 
 					// Apply the style to the rest of the current range and add it
 					if (current.length > 0) {
-						current= (StyleRange)current.clone();
-						i++; last++;
+						current= (StyleRange) current.clone();
+						i++;
+						last++;
 						fRanges.add(i, current);
 					}
-					applyStyle(range, current, merge);
+					styleRangeApplier.accept(range, current);
 					current.start= start;
 					current.length= Math.min(end, currentEnd) - start;
 				}
@@ -342,12 +353,13 @@ public class TextPresentation {
 					// Add rest of current range
 					currentCopy.start= end;
 					currentCopy.length= currentEnd - end;
-					i++; last++;
-					fRanges.add(i,  currentCopy);
+					i++;
+					last++;
+					fRanges.add(i, currentCopy);
 				}
 
 				// Update range
-				range.start=  currentEnd;
+				range.start= currentEnd;
 				range.length= Math.max(end - currentEnd, 0);
 				start= range.start;
 				length= range.length;
@@ -359,55 +371,57 @@ public class TextPresentation {
 					defaultRange= range;
 				defaultRange.start= start;
 				defaultRange.length= end - start;
-				applyStyle(range, defaultRange, merge);
+				styleRangeApplier.accept(range, defaultRange);
 				fRanges.add(last, defaultRange);
 			}
 		}
 	}
 
 	/**
-	 * Replaces the given ranges in this presentation. Each range must be a
-	 * subrange of the presentation's default range. The ranges must be ordered
-	 * by increasing offset and must not overlap (but may be adjacent).
+	 * Replaces the given ranges in this presentation. Each range must be a subrange of the
+	 * presentation's default range. The ranges must be ordered by increasing offset and must not
+	 * overlap (but may be adjacent).
 	 *
 	 * @param ranges the ranges to be added
 	 * @since 3.0
 	 */
 	public void replaceStyleRanges(StyleRange[] ranges) {
-		applyStyleRanges(ranges, false);
+		applyStyleRanges(ranges, this::replaceStyle);
 	}
 
 	/**
-	 * Merges the given ranges into this presentation. Each range must be a
-	 * subrange of the presentation's default range. The ranges must be ordered
-	 * by increasing offset and must not overlap (but may be adjacent).
+	 * Merges the given ranges into this presentation. Each range must be a subrange of the
+	 * presentation's default range. The ranges must be ordered by increasing offset and must not
+	 * overlap (but may be adjacent).
 	 *
 	 * @param ranges the ranges to be added
 	 * @since 3.0
 	 */
 	public void mergeStyleRanges(StyleRange[] ranges) {
-		applyStyleRanges(ranges, true);
+		applyStyleRanges(ranges, this::mergeStyle);
 	}
 
 	/**
-	 * Applies the given ranges to this presentation. Each range must be a
-	 * subrange of the presentation's default range. The ranges must be ordered
-	 * by increasing offset and must not overlap (but may be adjacent).
+	 * Applies the given ranges to this presentation. Each range must be a subrange of the
+	 * presentation's default range. The ranges must be ordered by increasing offset and must not
+	 * overlap (but may be adjacent).
 	 *
 	 * @param ranges the ranges to be added
-	 * @param merge <code>true</code> if the style should be merged instead of replaced
+	 * @param styleRangeApplier method accepting a StyleRange template to be applied and a
+	 *            StyleRange target, the style being applied to. The target may be modified by the
+	 *            method
 	 * @since 3.0
 	 */
-	private void applyStyleRanges(StyleRange[] ranges, boolean merge) {
+	public void applyStyleRanges(StyleRange[] ranges, BiConsumer<StyleRange, StyleRange> styleRangeApplier) {
 		int j= 0;
 		ArrayList<StyleRange> oldRanges= fRanges;
-		ArrayList<StyleRange> newRanges= new ArrayList<>(2*ranges.length + oldRanges.size());
+		ArrayList<StyleRange> newRanges= new ArrayList<>(2 * ranges.length + oldRanges.size());
 		for (StyleRange range : ranges) {
 			fRanges= oldRanges; // for getFirstIndexAfterWindow(...)
 			for (int m= getFirstIndexAfterWindow(new Region(range.start, range.length)); j < m; j++)
 				newRanges.add(oldRanges.get(j));
 			fRanges= newRanges; // for mergeStyleRange(...)
-			applyStyleRange(range, merge);
+			applyStyleRange(range, styleRangeApplier);
 		}
 		for (int m= oldRanges.size(); j < m; j++)
 			newRanges.add(oldRanges.get(j));
@@ -415,65 +429,70 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Applies the template's style to the target.
+	 * Merges the template's style to the target.
 	 *
 	 * @param template the style range to be used as template
 	 * @param target the style range to which to apply the template
-	 * @param merge <code>true</code> if the style should be merged instead of replaced
 	 * @since 3.0
 	 */
-	private void applyStyle(StyleRange template, StyleRange target, boolean merge) {
-		if (merge) {
-			if (template.font != null)
-				target.font= template.font;
-			target.fontStyle|= template.fontStyle;
-
-			if (template.metrics != null)
-				target.metrics= template.metrics;
-
-			if (template.foreground != null || template.underlineStyle == SWT.UNDERLINE_LINK)
-				target.foreground= template.foreground;
-			if (template.background != null)
-				target.background= template.background;
-
-			target.strikeout|= template.strikeout;
-			if (template.strikeoutColor != null)
-				target.strikeoutColor= template.strikeoutColor;
-
-			target.underline|= template.underline;
-			if (template.underlineStyle != SWT.NONE && target.underlineStyle != SWT.UNDERLINE_LINK)
-				target.underlineStyle= template.underlineStyle;
-
-			if (template.underlineColor != null)
-				target.underlineColor= template.underlineColor;
-
-			if (template.borderStyle != SWT.NONE)
-				target.borderStyle= template.borderStyle;
-			if (template.borderColor != null)
-				target.borderColor= template.borderColor;
-
-		} else {
+    private void mergeStyle(StyleRange template, StyleRange target) {
+		if (template.font != null)
 			target.font= template.font;
-			target.fontStyle= template.fontStyle;
+		target.fontStyle|= template.fontStyle;
+
+		if (template.metrics != null)
 			target.metrics= template.metrics;
-			target.foreground= template.foreground;
-			target.background= template.background;
-			target.strikeout= template.strikeout;
-			target.strikeoutColor= template.strikeoutColor;
-			target.underline= template.underline;
-			target.underlineStyle= template.underlineStyle;
-			target.underlineColor= template.underlineColor;
-			target.borderStyle= template.borderStyle;
-			target.borderColor= template.borderColor;
-		}
+
+		if (template.foreground != null || template.underlineStyle == SWT.UNDERLINE_LINK)
+            target.foreground= template.foreground;
+		if (template.background != null)
+            target.background= template.background;
+
+		target.strikeout|= template.strikeout;
+		if (template.strikeoutColor != null)
+            target.strikeoutColor= template.strikeoutColor;
+
+		target.underline|= template.underline;
+		if (template.underlineStyle != SWT.NONE && target.underlineStyle != SWT.UNDERLINE_LINK)
+            target.underlineStyle= template.underlineStyle;
+
+		if (template.underlineColor != null)
+            target.underlineColor= template.underlineColor;
+
+		if (template.borderStyle != SWT.NONE)
+            target.borderStyle= template.borderStyle;
+		if (template.borderColor != null)
+            target.borderColor= template.borderColor;
 	}
 
 	/**
-	 * Checks whether the given range is a subrange of the presentation's
-	 * default style range.
+	 * Replaces the target's style with the template.
+	 *
+	 * @param template the style range to be used as template
+	 * @param target the style range to which to apply the template
+	 * @since 3.0
+	 */
+	private void replaceStyle(StyleRange template, StyleRange target) {
+		target.font= template.font;
+		target.fontStyle= template.fontStyle;
+		target.metrics= template.metrics;
+		target.foreground= template.foreground;
+		target.background= template.background;
+		target.strikeout= template.strikeout;
+		target.strikeoutColor= template.strikeoutColor;
+		target.underline= template.underline;
+		target.underlineStyle= template.underlineStyle;
+		target.underlineColor= template.underlineColor;
+		target.borderStyle= template.borderStyle;
+		target.borderColor= template.borderColor;
+    }
+
+	/**
+	 * Checks whether the given range is a subrange of the presentation's default style range.
 	 *
 	 * @param range the range to be checked
-	 * @exception IllegalArgumentException if range is not a subrange of the presentation's default range
+	 * @exception IllegalArgumentException if range is not a subrange of the presentation's default
+	 *                range
 	 */
 	private void checkConsistency(StyleRange range) {
 
@@ -488,13 +507,12 @@ public class TextPresentation {
 			int defaultEnd= fDefaultRange.start + fDefaultRange.length;
 			int end= range.start + range.length;
 			if (end > defaultEnd)
-				range.length -= (end - defaultEnd);
+				range.length-= (end - defaultEnd);
 		}
 	}
 
 	/**
-	 * Returns the index of the first range which overlaps with the
-	 * specified window.
+	 * Returns the index of the first range which overlaps with the specified window.
 	 *
 	 * @param window the window to be used for searching
 	 * @return the index of the first range overlapping with the window
@@ -517,8 +535,8 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Returns the index of the first range which comes after the specified window and does
-	 * not overlap with this window.
+	 * Returns the index of the first range which comes after the specified window and does not
+	 * overlap with this window.
 	 *
 	 * @param window the window to be used for searching
 	 * @return the index of the first range behind the window and not overlapping with the window
@@ -541,9 +559,8 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Returns a style range which is relative to the specified window and
-	 * appropriately clipped if necessary. The original style range is not
-	 * modified.
+	 * Returns a style range which is relative to the specified window and appropriately clipped if
+	 * necessary. The original style range is not modified.
 	 *
 	 * @param window the reference window
 	 * @param range the absolute range
@@ -560,7 +577,7 @@ public class TextPresentation {
 		int rangeEnd= range.start + range.length;
 		int windowEnd= window.getOffset() + window.getLength();
 		int end= (rangeEnd > windowEnd ? windowEnd : rangeEnd);
-		end -= window.getOffset();
+		end-= window.getOffset();
 
 		StyleRange newRange= (StyleRange) range.clone();
 		newRange.start= start;
@@ -569,8 +586,8 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Returns the region which is relative to the specified window and
-	 * appropriately clipped if necessary.
+	 * Returns the region which is relative to the specified window and appropriately clipped if
+	 * necessary.
 	 *
 	 * @param coverage the absolute coverage
 	 * @return the window relative region based on the absolute coverage
@@ -587,15 +604,14 @@ public class TextPresentation {
 		int rangeEnd= coverage.getOffset() + coverage.getLength();
 		int windowEnd= fResultWindow.getOffset() + fResultWindow.getLength();
 		int end= (rangeEnd > windowEnd ? windowEnd : rangeEnd);
-		end -= fResultWindow.getOffset();
+		end-= fResultWindow.getOffset();
 
 		return new Region(start, end - start);
 	}
 
 	/**
-	 * Returns an iterator which enumerates all style ranged which define a style
-	 * different from the presentation's default style range. The default style range
-	 * is not enumerated.
+	 * Returns an iterator which enumerates all style ranged which define a style different from the
+	 * presentation's default style range. The default style range is not enumerated.
 	 *
 	 * @return a style range iterator
 	 */
@@ -604,9 +620,9 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Returns an iterator which enumerates all style ranges of this presentation
-	 * except the default style range. The returned <code>StyleRange</code>s
-	 * are relative to the start of the presentation's result window.
+	 * Returns an iterator which enumerates all style ranges of this presentation except the default
+	 * style range. The returned <code>StyleRange</code>s are relative to the start of the
+	 * presentation's result window.
 	 *
 	 * @return a style range iterator
 	 */
@@ -615,8 +631,7 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Returns whether this collection contains any style range including
-	 * the default style range.
+	 * Returns whether this collection contains any style range including the default style range.
 	 *
 	 * @return <code>true</code> if there is no style range in this presentation
 	 */
@@ -625,8 +640,7 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Returns the number of style ranges in the presentation not counting the default
-	 * style range.
+	 * Returns the number of style ranges in the presentation not counting the default style range.
 	 *
 	 * @return the number of style ranges in the presentation excluding the default style range
 	 */
@@ -636,8 +650,8 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Returns the style range with the smallest offset ignoring the default style range or null
-	 * if the presentation is empty.
+	 * Returns the style range with the smallest offset ignoring the default style range or null if
+	 * the presentation is empty.
 	 *
 	 * @return the style range with the smallest offset different from the default style range
 	 */
@@ -665,8 +679,7 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Returns the coverage of this presentation as clipped by the presentation's
-	 * result window.
+	 * Returns the coverage of this presentation as clipped by the presentation's result window.
 	 *
 	 * @return the coverage of this presentation
 	 */
@@ -683,12 +696,11 @@ public class TextPresentation {
 		if (first == null || last == null)
 			return null;
 
-		return new Region(first.start, last.start - first. start + last.length);
+		return new Region(first.start, last.start - first.start + last.length);
 	}
 
 	/**
-	 * Returns the extent of this presentation clipped by the
-	 * presentation's result window.
+	 * Returns the extent of this presentation clipped by the presentation's result window.
 	 *
 	 * @return the clipped extent
 	 * @since 3.0
@@ -701,6 +713,7 @@ public class TextPresentation {
 
 	/**
 	 * Clears this presentation by resetting all applied changes.
+	 *
 	 * @since 2.0
 	 */
 	public void clear() {
