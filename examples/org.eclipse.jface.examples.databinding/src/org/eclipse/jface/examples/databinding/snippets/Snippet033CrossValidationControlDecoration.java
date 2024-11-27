@@ -117,7 +117,8 @@ public class Snippet033CrossValidationControlDecoration {
 		private final IObservableValue<LocalDate> end;
 		private final String errorMessage;
 
-		public DateRangeValidator(IObservableValue<LocalDate> start, IObservableValue<LocalDate> end, String errorMessage) {
+		public DateRangeValidator(IObservableValue<LocalDate> start, IObservableValue<LocalDate> end,
+				String errorMessage) {
 			this.start = start;
 			this.end = end;
 			this.errorMessage = errorMessage;

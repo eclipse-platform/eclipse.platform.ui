@@ -108,7 +108,8 @@ public class Snippet014WizardDialog {
 			label.setText("Enter a date:");
 			Text text = new Text(composite, SWT.BORDER);
 
-			bindingContext.bindValue(WidgetProperties.text().observe(text), ((SampleWizard) getWizard()).getModel().dateValue);
+			bindingContext.bindValue(WidgetProperties.text().observe(text),
+					((SampleWizard) getWizard()).getModel().dateValue);
 
 			GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 			setControl(composite);
