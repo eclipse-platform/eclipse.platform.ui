@@ -16,6 +16,7 @@ package org.eclipse.jface.text;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.BiConsumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -233,7 +234,7 @@ public class TextPresentation {
 	 * @since 3.0
 	 */
 	public void replaceStyleRange(StyleRange range) {
-		applyStyleRange(range, false);
+		applyStyleRange(range, this::replaceStyle);
 	}
 
 	/**
@@ -244,7 +245,7 @@ public class TextPresentation {
 	 * @since 3.0
 	 */
 	public void mergeStyleRange(StyleRange range) {
-		applyStyleRange(range, true);
+		applyStyleRange(range, this::mergeStyle);
 	}
 
 	/**
@@ -252,10 +253,12 @@ public class TextPresentation {
 	 * subrange of the presentation's default range.
 	 *
 	 * @param range the range to be added
-	 * @param merge <code>true</code> if the style should be merged instead of replaced
+	 * @param styleRangeApplier method accepting a StyleRange template to be applied and a
+	 *            StyleRange target, the style being applied to. The target may be modified by the
+	 *            method
 	 * @since 3.0
 	 */
-	private void applyStyleRange(StyleRange range, boolean merge) {
+	public void applyStyleRange(StyleRange range, BiConsumer<StyleRange, StyleRange> styleRangeApplier) {
 		if (range.length == 0)
 			return;
 
@@ -272,7 +275,7 @@ public class TextPresentation {
 
 			defaultRange.start= start;
 			defaultRange.length= length;
-			applyStyle(range, defaultRange, merge);
+			styleRangeApplier.accept(range, defaultRange);
 			fRanges.add(defaultRange);
 		} else {
 			IRegion rangeRegion= new Region(start, length);
@@ -284,7 +287,7 @@ public class TextPresentation {
 					defaultRange= range;
 				defaultRange.start= start;
 				defaultRange.length= length;
-				applyStyle(range, defaultRange, merge);
+				styleRangeApplier.accept(range, defaultRange);
 				fRanges.add(defaultRange);
 				return;
 			}
@@ -313,14 +316,14 @@ public class TextPresentation {
 
 					defaultRange.start= start;
 					defaultRange.length= currentStart - start;
-					applyStyle(range, defaultRange, merge);
+					styleRangeApplier.accept(range, defaultRange);
 					fRanges.add(i, defaultRange);
 					i++; last++;
 
 
 					// Apply style to first part of current range
 					current.length= Math.min(end, currentEnd) - currentStart;
-					applyStyle(range, current, merge);
+					styleRangeApplier.accept(range, current);
 				}
 
 				if (start >= currentStart) {
@@ -333,7 +336,7 @@ public class TextPresentation {
 						i++; last++;
 						fRanges.add(i, current);
 					}
-					applyStyle(range, current, merge);
+					styleRangeApplier.accept(range, current);
 					current.start= start;
 					current.length= Math.min(end, currentEnd) - start;
 				}
@@ -359,7 +362,7 @@ public class TextPresentation {
 					defaultRange= range;
 				defaultRange.start= start;
 				defaultRange.length= end - start;
-				applyStyle(range, defaultRange, merge);
+				styleRangeApplier.accept(range, defaultRange);
 				fRanges.add(last, defaultRange);
 			}
 		}
@@ -374,7 +377,7 @@ public class TextPresentation {
 	 * @since 3.0
 	 */
 	public void replaceStyleRanges(StyleRange[] ranges) {
-		applyStyleRanges(ranges, false);
+		applyStyleRanges(ranges, this::replaceStyle);
 	}
 
 	/**
@@ -386,7 +389,7 @@ public class TextPresentation {
 	 * @since 3.0
 	 */
 	public void mergeStyleRanges(StyleRange[] ranges) {
-		applyStyleRanges(ranges, true);
+		applyStyleRanges(ranges, this::mergeStyle);
 	}
 
 	/**
@@ -395,10 +398,12 @@ public class TextPresentation {
 	 * by increasing offset and must not overlap (but may be adjacent).
 	 *
 	 * @param ranges the ranges to be added
-	 * @param merge <code>true</code> if the style should be merged instead of replaced
+	 * @param styleRangeApplier method accepting a StyleRange template to be applied and a
+	 *            StyleRange target, the style being applied to. The target may be modified by the
+	 *            method
 	 * @since 3.0
 	 */
-	private void applyStyleRanges(StyleRange[] ranges, boolean merge) {
+	public void applyStyleRanges(StyleRange[] ranges, BiConsumer<StyleRange, StyleRange> styleRangeApplier) {
 		int j= 0;
 		ArrayList<StyleRange> oldRanges= fRanges;
 		ArrayList<StyleRange> newRanges= new ArrayList<>(2*ranges.length + oldRanges.size());
@@ -407,7 +412,7 @@ public class TextPresentation {
 			for (int m= getFirstIndexAfterWindow(new Region(range.start, range.length)); j < m; j++)
 				newRanges.add(oldRanges.get(j));
 			fRanges= newRanges; // for mergeStyleRange(...)
-			applyStyleRange(range, merge);
+			applyStyleRange(range, styleRangeApplier);
 		}
 		for (int m= oldRanges.size(); j < m; j++)
 			newRanges.add(oldRanges.get(j));
@@ -415,58 +420,63 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Applies the template's style to the target.
+	 * Merges the template's style to the target.
 	 *
 	 * @param template the style range to be used as template
 	 * @param target the style range to which to apply the template
-	 * @param merge <code>true</code> if the style should be merged instead of replaced
 	 * @since 3.0
 	 */
-	private void applyStyle(StyleRange template, StyleRange target, boolean merge) {
-		if (merge) {
-			if (template.font != null)
-				target.font= template.font;
-			target.fontStyle|= template.fontStyle;
-
-			if (template.metrics != null)
-				target.metrics= template.metrics;
-
-			if (template.foreground != null || template.underlineStyle == SWT.UNDERLINE_LINK)
-				target.foreground= template.foreground;
-			if (template.background != null)
-				target.background= template.background;
-
-			target.strikeout|= template.strikeout;
-			if (template.strikeoutColor != null)
-				target.strikeoutColor= template.strikeoutColor;
-
-			target.underline|= template.underline;
-			if (template.underlineStyle != SWT.NONE && target.underlineStyle != SWT.UNDERLINE_LINK)
-				target.underlineStyle= template.underlineStyle;
-
-			if (template.underlineColor != null)
-				target.underlineColor= template.underlineColor;
-
-			if (template.borderStyle != SWT.NONE)
-				target.borderStyle= template.borderStyle;
-			if (template.borderColor != null)
-				target.borderColor= template.borderColor;
-
-		} else {
+    private void mergeStyle(StyleRange template, StyleRange target) {
+		if (template.font != null)
 			target.font= template.font;
-			target.fontStyle= template.fontStyle;
+		target.fontStyle|= template.fontStyle;
+
+		if (template.metrics != null)
 			target.metrics= template.metrics;
-			target.foreground= template.foreground;
-			target.background= template.background;
-			target.strikeout= template.strikeout;
-			target.strikeoutColor= template.strikeoutColor;
-			target.underline= template.underline;
-			target.underlineStyle= template.underlineStyle;
-			target.underlineColor= template.underlineColor;
-			target.borderStyle= template.borderStyle;
-			target.borderColor= template.borderColor;
-		}
+
+		if (template.foreground != null || template.underlineStyle == SWT.UNDERLINE_LINK)
+            target.foreground= template.foreground;
+		if (template.background != null)
+            target.background= template.background;
+
+		target.strikeout|= template.strikeout;
+		if (template.strikeoutColor != null)
+            target.strikeoutColor= template.strikeoutColor;
+
+		target.underline|= template.underline;
+		if (template.underlineStyle != SWT.NONE && target.underlineStyle != SWT.UNDERLINE_LINK)
+            target.underlineStyle= template.underlineStyle;
+
+		if (template.underlineColor != null)
+            target.underlineColor= template.underlineColor;
+
+		if (template.borderStyle != SWT.NONE)
+            target.borderStyle= template.borderStyle;
+		if (template.borderColor != null)
+            target.borderColor= template.borderColor;
 	}
+
+	/**
+	 * Replaces the target's style with the template.
+	 *
+	 * @param template the style range to be used as template
+	 * @param target the style range to which to apply the template
+	 * @since 3.0
+	 */
+	private void replaceStyle(StyleRange template, StyleRange target) {
+		target.font= template.font;
+		target.fontStyle= template.fontStyle;
+		target.metrics= template.metrics;
+		target.foreground= template.foreground;
+		target.background= template.background;
+		target.strikeout= template.strikeout;
+		target.strikeoutColor= template.strikeoutColor;
+		target.underline= template.underline;
+		target.underlineStyle= template.underlineStyle;
+		target.underlineColor= template.underlineColor;
+		target.borderStyle= template.borderStyle;
+		target.borderColor= template.borderColor;
+    }
 
 	/**
 	 * Checks whether the given range is a subrange of the presentation's
