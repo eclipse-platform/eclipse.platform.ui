@@ -81,8 +81,7 @@ public class Account extends ModelObject {
 	}
 
 	public void setExpiryDate(Date expiryDate) {
-		firePropertyChange("expiryDate", this.expiryDate,
-				this.expiryDate = expiryDate);
+		firePropertyChange("expiryDate", this.expiryDate, this.expiryDate = expiryDate);
 	}
 
 }

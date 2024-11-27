@@ -24,21 +24,25 @@ public class Signon extends ModelObject {
 		userId = aUserId;
 		password = aPassword;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String aPassword) {
 		String oldValue = password;
 		password = aPassword;
-		firePropertyChange("password",oldValue,password);
+		firePropertyChange("password", oldValue, password);
 	}
+
 	public String getUserId() {
 		return userId;
 	}
+
 	public void setUserId(String aUserId) {
 		String oldValue = userId;
 		userId = aUserId;
-		firePropertyChange("userId",oldValue,userId);
+		firePropertyChange("userId", oldValue, userId);
 	}
 
 }

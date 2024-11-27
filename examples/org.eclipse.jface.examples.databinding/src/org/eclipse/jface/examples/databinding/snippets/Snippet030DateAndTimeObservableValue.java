@@ -106,10 +106,8 @@ public class Snippet030DateAndTimeObservableValue {
 				new LocalDateTimeObservableValue(WidgetProperties.localDateSelection().observe(date), timeSelection),
 				model);
 
-		bindingContext.bindValue(
-				new LocalDateTimeObservableValue(WidgetProperties.localDateSelection().observe(calendar),
-						timeSelection),
-				model);
+		bindingContext.bindValue(new LocalDateTimeObservableValue(
+				WidgetProperties.localDateSelection().observe(calendar), timeSelection), model);
 
 		syncTime.addListener(SWT.Selection, event -> {
 			Runnable runnable = new Runnable() {

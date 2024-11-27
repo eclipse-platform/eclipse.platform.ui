@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-
 public class SampleData {
 
 	public static Category WINTER_CATEGORY;
@@ -106,8 +105,7 @@ public class SampleData {
 		SUMMER_CATEGORY.addAdventure(BEACH_HOLIDAY);
 
 		RAFTING_HOLIDAY = FACTORY.createAdventure();
-		RAFTING_HOLIDAY
-				.setDescription("White water rafting on the Ottawa river");
+		RAFTING_HOLIDAY.setDescription("White water rafting on the Ottawa river");
 		RAFTING_HOLIDAY.setName("Whitewater");
 		RAFTING_HOLIDAY.setLocation("Ottawa");
 		RAFTING_HOLIDAY.setPrice(8000.52d);
