@@ -134,14 +134,12 @@ public class LabelProviderTest2 {
 		renameButton.setEnabled(false);
 
 		GridLayoutFactory.fillDefaults().generateLayout(buttonBar);
-		GridLayoutFactory.fillDefaults().numColumns(2).margins(
-				LayoutConstants.getMargins()).generateLayout(shell);
+		GridLayoutFactory.fillDefaults().numColumns(2).margins(LayoutConstants.getMargins()).generateLayout(shell);
 	}
 
 	protected void rename(final RenamableItem currentSelection) {
-		InputDialog inputDialog = new InputDialog(
-				shell,
-				"Edit name", "Enter the new item name", currentSelection.getName(), null); //$NON-NLS-1$ //$NON-NLS-2$
+		InputDialog inputDialog = new InputDialog(shell, "Edit name", "Enter the new item name", //$NON-NLS-1$ //$NON-NLS-2$
+				currentSelection.getName(), null);
 		if (Window.OK == inputDialog.open()) {
 			currentSelection.setName(inputDialog.getValue());
 		}

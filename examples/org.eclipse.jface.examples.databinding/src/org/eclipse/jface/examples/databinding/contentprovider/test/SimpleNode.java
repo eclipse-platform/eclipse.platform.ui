@@ -15,7 +15,6 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 
-
 /**
  * This object will be given randomly-generated children
  *
