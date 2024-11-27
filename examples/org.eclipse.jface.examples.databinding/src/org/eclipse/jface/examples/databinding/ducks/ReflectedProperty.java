@@ -27,7 +27,7 @@ public class ReflectedProperty {
 	/**
 	 * Construct a ReflectedProperty on some object, given the property name.
 	 *
-	 * @param object The object
+	 * @param object       The object
 	 * @param propertyName The property name
 	 */
 	public ReflectedProperty(Object object, String propertyName) {
@@ -39,7 +39,7 @@ public class ReflectedProperty {
 				throw new IllegalArgumentException("Cannot find getter for " + propertyName);
 			}
 		}
-		setter = new ReflectedMethod(object, makeSetterName(propertyName), new Class[] {getter.getType()});
+		setter = new ReflectedMethod(object, makeSetterName(propertyName), new Class[] { getter.getType() });
 	}
 
 	private String makeBooleanGetterName(String propertyName) {
@@ -59,8 +59,8 @@ public class ReflectedProperty {
 	}
 
 	/**
-	 * Return the property's type.  This is the same as the type returned by
-	 * the getter.
+	 * Return the property's type. This is the same as the type returned by the
+	 * getter.
 	 *
 	 * @return The property's data type.
 	 */
@@ -78,13 +78,13 @@ public class ReflectedProperty {
 	}
 
 	/**
-	 * Set the property's value.  If the property is read-only, the request
-	 * is ignored.
+	 * Set the property's value. If the property is read-only, the request is
+	 * ignored.
 	 *
 	 * @param newValue The value to set.
 	 */
 	public void set(Object newValue) {
-		setter.invoke(new Object[] {newValue});
+		setter.invoke(new Object[] { newValue });
 	}
 
 	/**

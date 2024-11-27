@@ -40,8 +40,7 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 		}
 	};
 
-	public AggregateObservableValue(IObservableValue<Object>[] observableValues,
-			String delimiter) {
+	public AggregateObservableValue(IObservableValue<Object>[] observableValues, String delimiter) {
 		this.observableValues = observableValues;
 		this.delimiter = delimiter;
 		for (IObservableValue<?> observableValue : observableValues) {
@@ -53,8 +52,7 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 	@Override
 	public void doSetValue(Object value) {
 		Object oldValue = doGetValue();
-		StringTokenizer tokenizer = new StringTokenizer((String) value,
-				delimiter);
+		StringTokenizer tokenizer = new StringTokenizer((String) value, delimiter);
 		try {
 			updating = true;
 			for (IObservableValue<Object> observableValue : observableValues) {
