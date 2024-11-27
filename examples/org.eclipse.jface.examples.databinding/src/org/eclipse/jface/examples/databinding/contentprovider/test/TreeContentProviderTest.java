@@ -92,8 +92,7 @@ public class TreeContentProviderTest {
 			GridLayoutFactory.fillDefaults().generateLayout(buttonBar);
 		}
 
-		GridLayoutFactory.fillDefaults().margins(LayoutConstants.getMargins())
-				.generateLayout(shell);
+		GridLayoutFactory.fillDefaults().margins(LayoutConstants.getMargins()).generateLayout(shell);
 
 		shell.addDisposeListener(e -> dispose());
 	}

@@ -23,10 +23,10 @@ public class Transportation extends ModelObject {
 	public void setArrivalTime(String string) {
 		String oldValue = arrivalTime;
 		arrivalTime = string;
-		firePropertyChange("arrivaltime",oldValue,string);
+		firePropertyChange("arrivaltime", oldValue, string);
 	}
 
-	public String getArrivalTime(){
+	public String getArrivalTime() {
 		return arrivalTime;
 	}
 
@@ -37,7 +37,7 @@ public class Transportation extends ModelObject {
 	public void setPrice(double aPrice) {
 		double oldPrice = price;
 		price = aPrice;
-		firePropertyChange("price",Double.valueOf(oldPrice),Double.valueOf(price));
+		firePropertyChange("price", Double.valueOf(oldPrice), Double.valueOf(price));
 	}
 
 }
