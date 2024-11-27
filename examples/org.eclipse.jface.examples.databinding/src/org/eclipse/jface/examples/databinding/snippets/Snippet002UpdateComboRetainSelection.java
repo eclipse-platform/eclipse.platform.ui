@@ -170,8 +170,8 @@ public class Snippet002UpdateComboRetainSelection {
 			// This demonstrates a problem with Java generics:
 			// It is hard to produce a class object with type List<String>
 			@SuppressWarnings("unchecked")
-			IBeanValueProperty<ViewModel, List<String>> choices = BeanProperties
-					.value(ViewModel.class, "choices", (Class<List<String>>) (Object) List.class);
+			IBeanValueProperty<ViewModel, List<String>> choices = BeanProperties.value(ViewModel.class, "choices",
+					(Class<List<String>>) (Object) List.class);
 
 			IObservableList<String> list = MasterDetailObservables.detailList(choices.observe(viewModel),
 					createListDetailFactory(), String.class);

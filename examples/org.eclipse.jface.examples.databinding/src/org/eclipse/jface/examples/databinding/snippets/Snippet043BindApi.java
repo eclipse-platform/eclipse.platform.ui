@@ -108,8 +108,8 @@ public class Snippet043BindApi {
 		// can get a validation result without blocking the value being updated.
 		Bind.oneWay() //
 				.from(value) //
-				.validateAfterGet(fiveValidator)
-				.defaultConvert() // This triggers default converters in DataBindingContext
+				.validateAfterGet(fiveValidator).defaultConvert() // This triggers default converters in
+																	// DataBindingContext
 				.to(Observables.constantObservableValue(null)) // Dummy value for convert only binding
 				.convertOnly() //
 				.bind(bindingContext);
