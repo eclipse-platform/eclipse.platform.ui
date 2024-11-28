@@ -462,6 +462,12 @@
             id="org.eclipse.ui.ide.themes"
             label="%PreferenceKeywords.Themes"/>
       <keyword
+            id="org.eclipse.ui.ide.icons"
+            label="%PreferenceKeywords.Icons"/>
+      <keyword
+            id="org.eclipse.ui.ide.titles"
+            label="%PreferenceKeywords.Titles"/>
+      <keyword
             id="org.eclipse.ui.ide.textFont"
             label="%PreferenceKeywords.TextFont"/>
       <keyword
@@ -641,7 +647,9 @@
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
          <keywordReference id="org.eclipse.ui.ide.colorlabels"/>
          <keywordReference id="org.eclipse.ui.ide.themes"/>
+         <keywordReference id="org.eclipse.ui.ide.icons"/>
          <keywordReference id="org.eclipse.ui.ide.tabs"/>
+         <keywordReference id="org.eclipse.ui.ide.titles"/>
          <keywordReference id="org.eclipse.ui.ide.apearancepage"/>
       </page>
       <page
