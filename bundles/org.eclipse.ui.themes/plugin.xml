@@ -36,19 +36,37 @@
       <theme
             basestylesheeturi="css/e4_default_gtk.css"
             id="org.eclipse.e4.ui.css.theme.e4_default"
-            label="%theme.light"
+            label="%theme.gtk"
             os="linux">
       </theme>
       <theme
             basestylesheeturi="css/e4_default_mac.css"
             id="org.eclipse.e4.ui.css.theme.e4_default"
-            label="%theme.light"
+            label="%theme.mac"
             os="macosx">
       </theme>
       <theme
             basestylesheeturi="css/e4_default_win.css"
             id="org.eclipse.e4.ui.css.theme.e4_default"
-            label="%theme.light"
+            label="%theme.win"
+            os="win32">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_preview_gtk.css"
+            id="org.eclipse.e4.ui.css.theme.e4_preview"
+            label="%theme.preview.gtk"
+            os="linux">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_preview_mac.css"
+            id="org.eclipse.e4.ui.css.theme.e4_preview"
+            label="%theme.preview.mac"
+            os="macosx">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_preview_win.css"
+            id="org.eclipse.e4.ui.css.theme.e4_preview"
+            label="%theme.preview.win"
             os="win32">
       </theme>
    <theme
