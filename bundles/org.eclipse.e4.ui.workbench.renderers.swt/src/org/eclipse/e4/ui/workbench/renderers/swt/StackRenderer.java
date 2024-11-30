@@ -48,10 +48,8 @@ import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
-import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
@@ -643,10 +641,11 @@ public class StackRenderer extends LazyStackRenderer {
 		case UIEvents.UILabel.LABEL:
 		case UIEvents.UILabel.LOCALIZED_LABEL:
 			String newName = (String) newValue;
-			cti.setText(getLabel(part, newName));
+			cti.setText(getLabel(newName));
 			break;
 		case UIEvents.Dirtyable.DIRTY:
-			cti.setText(getLabel(part, part.getLocalizedLabel()));
+			cti.setText(getLabel(part.getLocalizedLabel()));
+			cti.setShowDirty(part.isDirty());
 			break;
 		case UIEvents.UILabel.ICONURI:
 			changePartTabImage(part, cti);
@@ -676,15 +675,11 @@ public class StackRenderer extends LazyStackRenderer {
 		super.contextDisposed(eventBroker);
 	}
 
-	private String getLabel(MUILabel itemPart, String newName) {
+	private String getLabel(String newName) {
 		if (newName == null) {
 			newName = ""; //$NON-NLS-1$
 		} else {
 			newName = LegacyActionTools.escapeMnemonics(newName);
-		}
-
-		if (itemPart instanceof MDirtyable && ((MDirtyable) itemPart).isDirty()) {
-			newName = '*' + newName;
 		}
 		return newName;
 	}
@@ -976,7 +971,7 @@ public class StackRenderer extends LazyStackRenderer {
 		tabItem = new CTabItem(tabFolder, createFlags, index);
 
 		tabItem.setData(OWNING_ME, element);
-		tabItem.setText(getLabel(part, part.getLocalizedLabel()));
+		tabItem.setText(getLabel(part.getLocalizedLabel()));
 		tabItem.setImage(getImage(part));
 
 		String toolTip = getToolTip(part);
