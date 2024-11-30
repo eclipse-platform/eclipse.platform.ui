@@ -682,7 +682,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			text = new String[2];
 			if (editorRef != null) {
 				if (editorRef.isDirty()) {
-					text[0] = "*" + editorRef.getTitle(); //$NON-NLS-1$
+					text[0] = editorRef.getTitle() + " ●"; //$NON-NLS-1$
 				} else {
 					text[0] = editorRef.getTitle();
 				}

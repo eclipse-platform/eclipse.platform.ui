@@ -72,7 +72,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 		public String getText(Object element) {
 			if (element instanceof MDirtyable
 					&& ((MDirtyable) element).isDirty()) {
-				return "*" + ((MUILabel) element).getLocalizedLabel(); //$NON-NLS-1$
+				return ((MUILabel) element).getLocalizedLabel() + " ●"; //$NON-NLS-1$
 			}
 			return ((MUILabel) element).getLocalizedLabel();
 		}
