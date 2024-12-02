@@ -5,3 +5,4 @@ Bug 514690 - Build failure on I20170403-2000 and I20170404-0245
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1659
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1781
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/2595

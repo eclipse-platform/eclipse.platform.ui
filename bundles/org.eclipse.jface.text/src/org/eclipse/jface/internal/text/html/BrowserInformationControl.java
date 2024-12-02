@@ -332,8 +332,6 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	@Override
 	public void setVisible(boolean visible) {
 		Shell shell= getShell();
-		if (shell.isVisible() == visible)
-			return;
 
 		if (!visible) {
 			super.setVisible(false);
@@ -342,6 +340,8 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 			return;
 		}
 
+		if (shell.isVisible() == visible)
+			return;
 		/*
 		 * The Browser widget flickers when made visible while it is not completely loaded.
 		 * The fix is to delay the call to setVisible until either loading is completed

@@ -505,7 +505,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 
 	@Override
 	public void setVisible(boolean visible) {
-		if (fShell.isVisible() == visible)
+		if (visible && fShell.isVisible() == visible)
 			return;
 
 		fShell.setVisible(visible);
