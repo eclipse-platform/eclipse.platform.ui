@@ -29,7 +29,7 @@ import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
 public class CodeMiningTestProvider extends AbstractCodeMiningProvider {
 	public static int provideHeaderMiningAtLine = -1;
 	public static int provideContentMiningAtOffset = -1;
-
+	public static String lineHeaderMiningText;
 	@Override
 	public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer,
 			IProgressMonitor monitor) {
@@ -42,6 +42,9 @@ public class CodeMiningTestProvider extends AbstractCodeMiningProvider {
 				minings.add(new LineHeaderCodeMining(provideHeaderMiningAtLine, viewer.getDocument(), this) {
 					@Override
 					public String getLabel() {
+						if (lineHeaderMiningText != null) {
+							return lineHeaderMiningText;
+						}
 						return "line header mining";
 					}
 				});
