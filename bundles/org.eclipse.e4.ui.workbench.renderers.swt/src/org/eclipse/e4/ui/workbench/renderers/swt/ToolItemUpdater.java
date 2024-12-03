@@ -55,7 +55,7 @@ public class ToolItemUpdater implements Runnable {
 					if (timestampOfEarliestQueuedUpdate == 0) {
 						timestampOfEarliestQueuedUpdate = System.nanoTime();
 					}
-					if (System.nanoTime() - timestampOfEarliestQueuedUpdate > DELAY * 1_000_000) {
+					if (System.nanoTime() - timestampOfEarliestQueuedUpdate > DELAY * 1_000_000L) {
 						// runnable was not called within the last DELAY milliseconds, do it now.
 						// For scenario: a plugin is forcing that updateContributionItems is called
 						// again and again in less than given DELAY frequency. TimerExec would then
