@@ -87,7 +87,7 @@ public class DeferredTreeContentManager {
 	 * @param site     part site
 	 * @deprecated in 3.4. provider is not used by this class
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	public DeferredTreeContentManager(ITreeContentProvider provider, AbstractTreeViewer viewer,
 			IWorkbenchPartSite site) {
 		this(viewer, site);
@@ -101,7 +101,7 @@ public class DeferredTreeContentManager {
 	 * @param viewer   The tree viewer that the results are added to
 	 * @deprecated in 3.4. provider is not used by this class
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	public DeferredTreeContentManager(ITreeContentProvider provider, AbstractTreeViewer viewer) {
 		this(viewer);
 	}
