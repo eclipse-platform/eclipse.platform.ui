@@ -162,7 +162,6 @@ public abstract class Refactoring extends PlatformObject {
 		if (!result.hasFatalError()) {
 			result.merge(checkFinalConditions(subMon.split(refactoringTickProvider.getCheckFinalConditionsTicks())));
 		}
-		subMon.done();
 		return result;
 	}
 
