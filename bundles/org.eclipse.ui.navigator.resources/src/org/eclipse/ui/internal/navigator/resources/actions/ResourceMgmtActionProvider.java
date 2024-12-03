@@ -113,7 +113,6 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
-		boolean isProjectSelection = true;
 		boolean hasOpenProjects = false;
 		boolean hasClosedProjects = false;
 		boolean hasBuilder = true; // false if any project is closed or does not have builder
@@ -121,13 +120,9 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 		boolean selectionContainsNonProject = projects.size() < selection.size();
 
 		for (IProject project : projects) {
-			if (hasOpenProjects && hasClosedProjects && !hasBuilder && !isProjectSelection) {
+			if (hasOpenProjects && hasClosedProjects && !hasBuilder) {
 				// we've set all booleans of interest; no need to loop any further
 				break;
-			}
-			if (project == null) {
-				isProjectSelection = false;
-				continue;
 			}
 			if (project.isOpen()) {
 				hasOpenProjects = true;
@@ -139,14 +134,12 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 				hasBuilder = false;
 			}
 		}
-
-		if (!selection.isEmpty() && isProjectSelection && !ResourcesPlugin.getWorkspace().isAutoBuilding()
+		if (!selection.isEmpty() && !ResourcesPlugin.getWorkspace().isAutoBuilding()
 				&& hasBuilder) {
 			// Allow manual incremental build only if auto build is off.
 			buildAction.selectionChanged(selection);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, buildAction);
 		}
-
 		// Add the 'refresh' item if ANY selection is either (a) an open project, or (b)
 		// a non-project selection.
 		// Put another way: the 'refresh' item is NOT shown if ALL selections are closed
@@ -155,18 +148,15 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 			refreshAction.selectionChanged(selection);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, refreshAction);
 		}
-
-		if (isProjectSelection) {
-			if (hasClosedProjects) {
-				openProjectAction.selectionChanged(selection);
-				menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, openProjectAction);
-			}
-			if (hasOpenProjects) {
-				closeProjectAction.selectionChanged(selection);
-				menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, closeProjectAction);
-				closeUnrelatedProjectsAction.selectionChanged(selection);
-				menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, closeUnrelatedProjectsAction);
-			}
+		if (hasClosedProjects) {
+			openProjectAction.selectionChanged(selection);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, openProjectAction);
+		}
+		if (hasOpenProjects) {
+			closeProjectAction.selectionChanged(selection);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, closeProjectAction);
+			closeUnrelatedProjectsAction.selectionChanged(selection);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, closeUnrelatedProjectsAction);
 		}
 	}
 
