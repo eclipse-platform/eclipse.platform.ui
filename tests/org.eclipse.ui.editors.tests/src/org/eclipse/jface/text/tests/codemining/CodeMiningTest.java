@@ -13,6 +13,7 @@ package org.eclipse.jface.text.tests.codemining;
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 
 import org.junit.After;
@@ -41,8 +42,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension5;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -98,6 +103,60 @@ public class CodeMiningTest {
 			}
 
 		}, new NullProgressMonitor());
+	}
+
+	@Test
+	public void testInlinedAnnotationSupportIsInLinesReturnsValidResultAfterDocumentChange() throws Exception {
+		IFile file = project.getFile("test.testprojectionviewer");
+		if (file.exists()) {
+			file.delete(true, new NullProgressMonitor());
+		}
+		String source = "first\nsecond\nthird\n";
+		file.create(new ByteArrayInputStream(source.getBytes("UTF-8")), true, new NullProgressMonitor());
+		CodeMiningTestProvider.provideHeaderMiningAtLine = 2;
+		CodeMiningTestProvider.lineHeaderMiningText = "    first line header\n    secone line header\n    third line header";
+		int offset = source.indexOf("second") + "second".length();
+		IEditorPart editor = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
+		drainEventQueue();
+		ISourceViewer viewer = (ISourceViewer) editor.getAdapter(ITextViewer.class);
+		StyledText widget = viewer.getTextWidget();
+
+		var annotationModel = ((ProjectionViewer) viewer).getProjectionAnnotationModel();
+		var deletionsArray = new Annotation[] {};
+		var additions = new HashMap<Annotation, Position>();
+		ProjectionAnnotation annot = new ProjectionAnnotation();
+		additions.put(annot, new Position(0, source.length()));
+		annotationModel.modifyAnnotations(deletionsArray, additions, null);
+
+		Assert.assertTrue("Line header code mining above 3rd line not drawn",
+				waitForCondition(widget.getDisplay(), 2000, new Callable<Boolean>() {
+					@Override
+					public Boolean call() throws Exception {
+						try {
+							return existsPixelWithNonBackgroundColorAtLine(viewer, 2);
+						} catch (BadLocationException e) {
+							e.printStackTrace();
+							return false;
+						}
+					}
+				}));
+
+		IDocument doc = viewer.getDocument();
+		widget.setCaretOffset(offset);
+		doc.replace(offset, 0, "\n        insert text");
+		drainEventQueue();
+		Assert.assertTrue("Line header code mining above 4th line after inserting text not drawn",
+				waitForCondition(widget.getDisplay(), 2000, new Callable<Boolean>() {
+					@Override
+					public Boolean call() throws Exception {
+						try {
+							return existsPixelWithNonBackgroundColorAtLine(viewer, 3);
+						} catch (BadLocationException e) {
+							e.printStackTrace();
+							return false;
+						}
+					}
+				}));
 	}
 
 	@Test
@@ -208,12 +267,17 @@ public class CodeMiningTest {
 			lineLength = 0;
 		}
 		int verticalScroolBarWidth = viewer.getTextWidget().getVerticalBar().getThumbBounds().width;
-		Rectangle lineBounds = widget.getTextBounds(document.getLineOffset(line),
-				document.getLineOffset(line) + lineLength);
+		int lineOffset = document.getLineOffset(line);
+		Rectangle lineBounds = widget.getTextBounds(lineOffset, lineOffset + lineLength);
+		String lineStr = document.get(lineOffset, lineLength);
 		Image image = new Image(widget.getDisplay(), widget.getSize().x, widget.getSize().y);
 		try {
 			GC gc = new GC(widget);
 			gc.copyArea(image, 0, 0);
+			Point textExtent = gc.textExtent(lineStr);
+			if (lineBounds.height - textExtent.y > textExtent.y) {
+				lineBounds.height -= textExtent.y;
+			}
 			gc.dispose();
 			ImageData imageData = image.getImageData();
 			for (int x = lineBounds.x + 1; x < image.getBounds().width - verticalScroolBarWidth
