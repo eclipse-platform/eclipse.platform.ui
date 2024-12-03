@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.stream.Stream;
 import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.jface.viewers.Viewer;
@@ -34,19 +35,8 @@ public class ViewPatternFilter extends PatternFilter {
 
 	@Override
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
-		if (element instanceof String) {
-			return false;
-		}
-
-		String text = null;
-		if (element instanceof MPartDescriptor) {
-			MPartDescriptor desc = (MPartDescriptor) element;
-			text = LocalizationHelper.getLocalized(desc.getLabel(), desc);
-			if (wordMatches(text)) {
-				return true;
-			}
-		}
-
-		return false;
+		return element instanceof MPartDescriptor desc && Stream.of(desc.getLabel(), desc.getCategory()) //
+				.map(text -> LocalizationHelper.getLocalized(text, desc)) //
+				.anyMatch(this::wordMatches);
 	}
 }
