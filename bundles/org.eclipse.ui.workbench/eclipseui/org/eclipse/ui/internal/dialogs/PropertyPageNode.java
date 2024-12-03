@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -58,8 +59,9 @@ public class PropertyPageNode extends WorkbenchPreferenceExtensionNode {
 		} catch (CoreException e) {
 			// Just inform the user about the error. The details are
 			// written to the log by now.
-			IStatus errStatus = StatusUtil.newStatus(e.getStatus(), WorkbenchMessages.PropertyPageNode_errorMessage);
-			StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
+			IStatus errStatus = StatusUtil.newStatus(List.of(e.getStatus()),
+					WorkbenchMessages.PropertyPageNode_errorMessage, null);
+			StatusManager.getManager().handle(errStatus, StatusManager.SHOW | StatusManager.LOG);
 			page = new EmptyPropertyPage();
 		}
 		setPage(page);

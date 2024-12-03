@@ -42,6 +42,8 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 
 	private static final String MESSAGE_QUERY_PARAM = "message";
 
+	private static final String EDITABLE_PROP = "editable";
+
 	private Map<Long, ResourceBundle> bundleToResourceBundles = new WeakHashMap<>();
 
 	@Override
@@ -64,6 +66,10 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 			break;
 		case DESCRIPTION_PROP:
 			definition.setDescription(getLabel(value));
+			break;
+		case EDITABLE_PROP:
+			Boolean editable = (Boolean) engine.convert(value, Boolean.class, null);
+			definition.setEditable(editable);
 			break;
 		default:
 			return false;
