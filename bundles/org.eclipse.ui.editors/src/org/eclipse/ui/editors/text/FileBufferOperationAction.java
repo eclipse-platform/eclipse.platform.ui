@@ -198,20 +198,15 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 	}
 
 	protected final IPath[] generateLocations(IFile[] files, IProgressMonitor progressMonitor) {
-		progressMonitor.beginTask(TextEditorMessages.FileBufferOperationAction_collectionFiles_label, files.length);
-		try {
-			Set<IPath> locations= new HashSet<>();
-			for (IFile file : files) {
-				IPath fullPath = file.getFullPath();
-				if (isAcceptableLocation(fullPath))
-					locations.add(fullPath);
-				progressMonitor.worked(1);
-			}
-			return locations.toArray(new IPath[locations.size()]);
-
-		} finally {
-			progressMonitor.done();
+		SubMonitor subMonitor= SubMonitor.convert(progressMonitor, TextEditorMessages.FileBufferOperationAction_collectionFiles_label, files.length);
+		Set<IPath> locations= new HashSet<>();
+		for (IFile file : files) {
+			IPath fullPath= file.getFullPath();
+			if (isAcceptableLocation(fullPath))
+				locations.add(fullPath);
+			subMonitor.worked(1);
 		}
+		return locations.toArray(new IPath[locations.size()]);
 	}
 
 	/**
