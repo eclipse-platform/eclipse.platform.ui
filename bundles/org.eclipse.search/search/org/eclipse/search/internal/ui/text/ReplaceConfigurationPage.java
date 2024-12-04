@@ -127,8 +127,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 				new char[0],
 				true);
 
-		@SuppressWarnings("unused")
-		Label label = new Label(result, SWT.NONE);
+		new Label(result, SWT.NONE);
 		fReplaceWithRegex= new Button(result, SWT.CHECK);
 		fReplaceWithRegex.setText(SearchMessages.ReplaceConfigurationPage_isRegex_label);
 		fReplaceWithRegex.addSelectionListener(new SelectionAdapter() {
