@@ -87,7 +87,7 @@ public class StickyScrollingHandlerTest {
 		linesProvider = mock(IStickyLinesProvider.class);
 
 		stickyScrollingHandler = new StickyScrollingHandler(sourceViewer, ruler, store, linesProvider);
-		stickyLinesProperties = new StickyLinesProperties(4, sourceViewer);
+		stickyLinesProperties = new StickyLinesProperties(4);
 	}
 
 	@After
@@ -97,7 +97,7 @@ public class StickyScrollingHandlerTest {
 
 	@Test
 	public void testShowStickyLines() {
-		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 1, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
 
 		stickyScrollingHandler.viewportChanged(100);
@@ -134,7 +134,7 @@ public class StickyScrollingHandlerTest {
 
 	@Test
 	public void testPreferencesLoaded() {
-		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 1, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
 
 		stickyScrollingHandler.viewportChanged(100);
@@ -145,9 +145,9 @@ public class StickyScrollingHandlerTest {
 
 	@Test
 	public void testPreferencesUpdated() {
-		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 1, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 10", 9), new StickyLineStub("line 20", 19)));
-		when(linesProvider.getStickyLines(textWidget, 2, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 2, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 10", 9), new StickyLineStub("line 20", 19)));
 
 		stickyScrollingHandler.viewportChanged(100);
@@ -165,13 +165,13 @@ public class StickyScrollingHandlerTest {
 
 	@Test
 	public void testThrottledExecution() throws InterruptedException {
-		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 1, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
-		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 1, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
-		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 1, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
-		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 1, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 10", 9)));
 
 		stickyScrollingHandler.viewportChanged(100);
@@ -186,15 +186,15 @@ public class StickyScrollingHandlerTest {
 
 		// Call to lines provider should be throttled, at least one and at most
 		// 3 calls expected
-		verify(linesProvider, atMost(3)).getStickyLines(textWidget, 1, stickyLinesProperties);
-		verify(linesProvider, atLeastOnce()).getStickyLines(textWidget, 1, stickyLinesProperties);
+		verify(linesProvider, atMost(3)).getStickyLines(sourceViewer, 1, stickyLinesProperties);
+		verify(linesProvider, atLeastOnce()).getStickyLines(sourceViewer, 1, stickyLinesProperties);
 	}
 
 	@Test
 	public void testRemoveStickyLines() {
-		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 1, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 1", 0), new StickyLineStub("line 2", 1)));
-		when(linesProvider.getStickyLines(textWidget, 2, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 2, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 3", 2)));
 
 		stickyScrollingHandler.viewportChanged(100);
@@ -206,9 +206,9 @@ public class StickyScrollingHandlerTest {
 
 	@Test
 	public void testLineUnderStickyLine() {
-		when(linesProvider.getStickyLines(textWidget, 1, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 1, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 1", 0)));
-		when(linesProvider.getStickyLines(textWidget, 2, stickyLinesProperties))
+		when(linesProvider.getStickyLines(sourceViewer, 2, stickyLinesProperties))
 				.thenReturn(List.of(new StickyLineStub("line 1", 0), new StickyLineStub("line 2", 1)));
 
 		stickyScrollingHandler.viewportChanged(100);
