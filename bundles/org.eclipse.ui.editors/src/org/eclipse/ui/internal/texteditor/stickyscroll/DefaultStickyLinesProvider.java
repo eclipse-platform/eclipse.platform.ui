@@ -19,6 +19,9 @@ import java.util.List;
 
 import org.eclipse.swt.custom.StyledText;
 
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.source.ISourceViewer;
+
 /**
  * This class provides sticky lines for the given source code in the source viewer. The
  * implementation is completely based on indentation and therefore works by default for several
@@ -33,14 +36,16 @@ public class DefaultStickyLinesProvider implements IStickyLinesProvider {
 	private StickyLinesProperties fProperties;
 
 	@Override
-	public List<IStickyLine> getStickyLines(StyledText textWidget, int lineNumber, StickyLinesProperties properties) {
+	public List<IStickyLine> getStickyLines(ISourceViewer sourceViewer, int lineNumber, StickyLinesProperties properties) {
 		this.fProperties= properties;
 		LinkedList<IStickyLine> stickyLines= new LinkedList<>();
 
+		StyledText textWidget= sourceViewer.getTextWidget();
+		int textWidgetLineNumber= mapLineNumberToWidget(sourceViewer, lineNumber);
 		try {
-			int startIndetation= getStartIndentation(lineNumber, textWidget);
+			int startIndetation= getStartIndentation(textWidgetLineNumber, textWidget);
 
-			for (int i= lineNumber, previousIndetation= startIndetation; i >= 0; i--) {
+			for (int i= textWidgetLineNumber, previousIndetation= startIndetation; i >= 0; i--) {
 				String line= textWidget.getLine(i);
 				int indentation= getIndentation(line);
 
@@ -50,7 +55,7 @@ public class DefaultStickyLinesProvider implements IStickyLinesProvider {
 
 				if (indentation < previousIndetation) {
 					previousIndetation= indentation;
-					stickyLines.addFirst(new StickyLine(i, textWidget));
+					stickyLines.addFirst(new StickyLine(mapLineNumberToViewer(sourceViewer, i), textWidget));
 				}
 			}
 		} catch (IllegalArgumentException e) {
@@ -99,6 +104,20 @@ public class DefaultStickyLinesProvider implements IStickyLinesProvider {
 
 		line= line.replace(TAB, tabAsSpaces);
 		return line.length() - line.stripLeading().length();
+	}
+
+	private int mapLineNumberToWidget(ISourceViewer sourceViewer, int line) {
+		if (sourceViewer instanceof ITextViewerExtension5 extension) {
+			return extension.modelLine2WidgetLine(line);
+		}
+		return line;
+	}
+
+	private int mapLineNumberToViewer(ISourceViewer sourceViewer, int line) {
+		if (sourceViewer instanceof ITextViewerExtension5 extension) {
+			return extension.widgetLine2ModelLine(line);
+		}
+		return line;
 	}
 
 }

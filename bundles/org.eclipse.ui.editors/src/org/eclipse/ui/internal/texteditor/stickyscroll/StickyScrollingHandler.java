@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
@@ -140,7 +139,7 @@ public class StickyScrollingHandler implements IViewportListener {
 
 	private StickyLinesProperties loadStickyLinesProperties(IPreferenceStore store) {
 		int tabWidth= store.getInt(EDITOR_TAB_WIDTH);
-		return new StickyLinesProperties(tabWidth, sourceViewer);
+		return new StickyLinesProperties(tabWidth);
 	}
 
 	@Override
@@ -155,11 +154,10 @@ public class StickyScrollingHandler implements IViewportListener {
 	private void calculateAndShowStickyLines() {
 		List<IStickyLine> stickyLines= Collections.emptyList();
 
-		StyledText textWidget= sourceViewer.getTextWidget();
-		int startLine= textWidget.getTopIndex();
+		int startLine= sourceViewer.getTopIndex();
 
 		if (startLine > 0) {
-			stickyLines= stickyLinesProvider.getStickyLines(textWidget, startLine, stickyLinesProperties);
+			stickyLines= stickyLinesProvider.getStickyLines(sourceViewer, sourceViewer.getTopIndex(), stickyLinesProperties);
 		}
 
 		if (stickyLines == null) {
@@ -179,11 +177,10 @@ public class StickyScrollingHandler implements IViewportListener {
 		LinkedList<IStickyLine> adaptedStickyLines= new LinkedList<>(stickyLines);
 
 		int firstVisibleLine= startLine + adaptedStickyLines.size();
-		StyledText textWidget= sourceViewer.getTextWidget();
-		int maximumLines= textWidget.getLineCount();
+		int numberOfLines= sourceViewer.getDocument().getNumberOfLines();
 
-		for (int i= startLine + 1; i <= firstVisibleLine && i < maximumLines; i++) {
-			List<IStickyLine> stickyLinesInLineI= stickyLinesProvider.getStickyLines(textWidget, i, stickyLinesProperties);
+		for (int i= startLine + 1; i <= firstVisibleLine && i < numberOfLines; i++) {
+			List<IStickyLine> stickyLinesInLineI= stickyLinesProvider.getStickyLines(sourceViewer, i, stickyLinesProperties);
 
 			if (stickyLinesInLineI.size() > adaptedStickyLines.size()) {
 				adaptedStickyLines= new LinkedList<>(stickyLinesInLineI);

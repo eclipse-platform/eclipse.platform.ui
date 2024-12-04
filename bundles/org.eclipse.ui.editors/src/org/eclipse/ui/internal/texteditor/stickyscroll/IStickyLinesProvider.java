@@ -15,12 +15,10 @@ package org.eclipse.ui.internal.texteditor.stickyscroll;
 
 import java.util.List;
 
-import org.eclipse.swt.custom.StyledText;
-
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
- * A sticky lines provider calculates the sticky lines for a given text widget. The sticky lines
+ * A sticky lines provider calculates the sticky lines for a given source viewer. The sticky lines
  * will be displayed in the top area of the editor.
  * 
  * TODO move to public package and add since 3.19
@@ -28,24 +26,24 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public interface IStickyLinesProvider {
 
 	/**
-	 * Calculate the sticky lines for the source code of the given textWidget. Specific properties,
-	 * such as the <code>tabWidht</code> and the source viewer, can be retrieved from the
+	 * Calculate the sticky lines for the source code of the given sourceViewer. Specific
+	 * properties, such as the <code>tabWidht</code>, can be retrieved from the
 	 * <code>properties</code>.
 	 * 
-	 * @param textWidget The text widget containing the source code
+	 * @param sourceViewer The source viewer containing the source code and gives access to the text
+	 *            widget
 	 * @param lineNumber The line number to calculate the sticky lines for
 	 * @param properties Properties for additional information
 	 * @return The list of sticky lines to show
 	 */
-	public List<IStickyLine> getStickyLines(StyledText textWidget, int lineNumber, StickyLinesProperties properties);
+	public List<IStickyLine> getStickyLines(ISourceViewer sourceViewer, int lineNumber, StickyLinesProperties properties);
 
 	/**
 	 * Additional properties and access in order to calculate the sticky lines.
 	 * 
 	 * @param tabWith The with of a tab
-	 * @param sourceViewer The sourceViewer to access additional information
 	 */
-	record StickyLinesProperties(int tabWith, ISourceViewer sourceViewer) {
+	record StickyLinesProperties(int tabWith) {
 	}
 
 }
