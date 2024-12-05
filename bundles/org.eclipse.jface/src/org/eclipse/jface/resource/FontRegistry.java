@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Policy;
@@ -207,7 +208,7 @@ public class FontRegistry extends ResourceRegistry {
 	 */
 	protected Runnable displayRunnable = this::clearCaches;
 
-	private boolean displayDisposeHooked;
+	private final Set<Display> displayDisposeHooked = ConcurrentHashMap.newKeySet();
 
 	private final boolean cleanOnDisplayDisposal;
 
@@ -492,7 +493,7 @@ public class FontRegistry extends ResourceRegistry {
 		if (display == null) {
 			return null;
 		}
-		if (cleanOnDisplayDisposal && !displayDisposeHooked) {
+		if (cleanOnDisplayDisposal && !displayDisposeHooked.contains(display)) {
 			hookDisplayDispose(display);
 		}
 
@@ -718,7 +719,7 @@ public class FontRegistry extends ResourceRegistry {
 		stringToFontRecord.clear();
 		staleFonts.clear();
 
-		displayDisposeHooked = false;
+		displayDisposeHooked.remove(Display.getCurrent());
 	}
 
 	/**
@@ -736,7 +737,7 @@ public class FontRegistry extends ResourceRegistry {
 	 * Hook a dispose listener on the SWT display.
 	 */
 	private void hookDisplayDispose(Display display) {
-		displayDisposeHooked = true;
+		displayDisposeHooked.add(display);
 		display.disposeExec(displayRunnable);
 	}
 
