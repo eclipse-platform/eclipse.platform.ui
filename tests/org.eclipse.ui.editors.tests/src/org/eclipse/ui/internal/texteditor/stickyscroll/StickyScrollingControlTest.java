@@ -43,8 +43,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
@@ -95,30 +93,6 @@ public class StickyScrollingControlTest {
 
 		StyledText stickyLineNumber = getStickyLineNumber();
 		String expLineNumber = "10" + System.lineSeparator() + "20";
-		assertEquals(expLineNumber, stickyLineNumber.getText());
-		StyledText stickyLineText = getStickyLineText();
-		String expStickyLineText = "line 10" + System.lineSeparator() + "line 20";
-		assertEquals(expStickyLineText, stickyLineText.getText());
-	}
-
-	@Test
-	public void testShowStickyLineTextsWithSourceViewerMapping() {
-		shell.dispose();
-		shell = new Shell(Display.getDefault());
-		shell.setSize(200, 200);
-		shell.setLayout(new FillLayout());
-
-		sourceViewer = new SourceViewerLineMapping(shell, ruler, SWT.V_SCROLL | SWT.H_SCROLL);
-		sourceViewer.setDocument(new Document());
-		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
-
-		stickyScrollingControl = new StickyScrollingControl(sourceViewer, ruler, settings, null);
-
-		List<IStickyLine> stickyLines = List.of(new StickyLineStub("line 10", 9), new StickyLineStub("line 20", 19));
-		stickyScrollingControl.setStickyLines(stickyLines);
-
-		StyledText stickyLineNumber = getStickyLineNumber();
-		String expLineNumber = "52" + System.lineSeparator() + "62";
 		assertEquals(expLineNumber, stickyLineNumber.getText());
 		StyledText stickyLineText = getStickyLineText();
 		String expStickyLineText = "line 10" + System.lineSeparator() + "line 20";
@@ -478,29 +452,6 @@ public class StickyScrollingControlTest {
 	private void drainDisplayEventQueue() {
 		while (Display.getDefault().readAndDispatch()) {
 		}
-	}
-
-	private class SourceViewerLineMapping extends SourceViewer implements ITextViewerExtension5 {
-
-		public SourceViewerLineMapping(Composite parent, IVerticalRuler ruler, int styles) {
-			super(parent, ruler, styles);
-		}
-
-		@Override
-		public IRegion[] getCoveredModelRanges(IRegion modelRange) {
-			return null;
-		}
-
-		@Override
-		public boolean exposeModelRange(IRegion modelRange) {
-			return false;
-		}
-
-		@Override
-		public int widgetLine2ModelLine(int widgetLine) {
-			return widgetLine + 42;
-		}
-
 	}
 
 	private class StickyLineStub implements IStickyLine {

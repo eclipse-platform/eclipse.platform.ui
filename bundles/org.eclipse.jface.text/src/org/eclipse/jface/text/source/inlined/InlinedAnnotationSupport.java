@@ -163,7 +163,9 @@ public class InlinedAnnotationSupport {
 
 		@Override
 		public void documentChanged(DocumentEvent event) {
-			// Do nothing
+			if (endOffset != null && event != null && event.fDocument != null && event.fDocument.getLength() > endOffset) {
+				endOffset= null;
+			}
 		}
 
 		@Override

@@ -46,6 +46,27 @@ ImageBasedFrame,
 	color:'#org-eclipse-ui-workbench-DARK_FOREGROUND'; 
 }
 
+.MPart Form Section,
+.MPart Form Label,
+.MPart Form FormText,
+.MPartStack .MPart Form MasterDetailsBlock-MDSashForm,
+.MPartStack .MPart Form SashForm,
+.MPartStack .MPart Form Sash,
+.MPart Form Button[style~='SWT.CHECK'],
+.MPart Form Button[style~='SWT.RADIO'],
+.MPartStack.active .MPart Form Section,
+.MPartStack.active .MPart Form Label,
+.MPartStack.active .MPart Form FormText,
+.MPartStack.active .MPart Form MasterDetailsBlock-MDSashForm,
+.MPartStack.active .MPart Form SashForm,
+.MPartStack.active .MPart Form Sash,
+.MPartStack.active .MPart Form Button[style~='SWT.CHECK'],
+.MPartStack.active .MPart Form Button[style~='SWT.RADIO']
+{
+	background-color: inherit;
+	color: #f4f7f7;
+}
+
 /* Inactive view tabs  */
 .MPartStack{
 	swt-selected-tab-highlight: #a6a6a6;

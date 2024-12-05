@@ -74,4 +74,9 @@ class AccessibleToolBar extends Composite {
 		}
 	}
 
+	Control getFirstControl() {
+		Control[] children = getChildren();
+		return children.length == 0 ? null : getChildren()[0];
+	}
+
 }

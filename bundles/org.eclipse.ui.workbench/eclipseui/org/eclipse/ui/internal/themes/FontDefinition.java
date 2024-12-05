@@ -138,4 +138,10 @@ public class FontDefinition extends ThemeElementDefinition implements IHierarcha
 			appendState(State.OVERRIDDEN);
 		}
 	}
+
+	@Override
+	public void setEditable(Boolean editable) {
+		isEditable = editable;
+	}
+
 }

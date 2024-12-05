@@ -22,4 +22,14 @@
 			id="org.eclipse.jface.text.tests.codemining.CodeMiningTestProvider">
 		</codeMiningProvider>
 	</extension>
+ <extension
+       point="org.eclipse.ui.editors">
+    <editor
+          class="org.eclipse.jface.text.tests.codemining.TextProjectionTextEditor"
+          default="false"
+          extensions="testprojectionviewer"
+          id="org.eclipse.jface.text.tests.codemining.TestProjectionTextEditor"
+          name="TestProjectionTextEditor">
+    </editor>
+ </extension>
 </plugin>

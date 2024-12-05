@@ -207,4 +207,8 @@ public class HistoryTextWrapper extends Composite {
 		return textBar;
 	}
 
+	AccessibleToolBar getDropDownTool() {
+		return tools;
+	}
+
 }

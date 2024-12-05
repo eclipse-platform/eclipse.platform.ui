@@ -206,7 +206,7 @@ public class StickyScrollingControl {
 		for (int i= 0; i < getNumberStickyLines(); i++) {
 			IStickyLine stickyLine= stickyLines.get(i);
 			stickyLineTextJoiner.add(stickyLine.getText());
-			int lineNumber= getSourceViewerLineNumber(stickyLine.getLineNumber());
+			int lineNumber= stickyLine.getLineNumber();
 			stickyLineNumberJoiner.add(fillLineNumberWithLeadingSpaces(lineNumber + 1));
 		}
 
@@ -220,13 +220,6 @@ public class StickyScrollingControl {
 			styleStickyLines();
 			layoutStickyLines();
 		}
-	}
-
-	private int getSourceViewerLineNumber(int i) {
-		if (sourceViewer instanceof ITextViewerExtension5 extension) {
-			return extension.widgetLine2ModelLine(i);
-		}
-		return i;
 	}
 
 	private String fillLineNumberWithLeadingSpaces(int lineNumber) {
@@ -399,6 +392,8 @@ public class StickyScrollingControl {
 	 * resized/moved.<br>
 	 */
 	private void addSourceViewerListeners() {
+		StyledText textWidget= sourceViewer.getTextWidget();
+
 		if (sourceViewer instanceof ITextViewerExtension4 extension) {
 			textPresentationListener= e -> {
 				Job.create("Update sticky lines styling", (ICoreRunnable) monitor -> { //$NON-NLS-1$
@@ -411,13 +406,12 @@ public class StickyScrollingControl {
 		}
 
 		caretListener= new StickyScollingCaretListener();
-		sourceViewer.getTextWidget().addCaretListener(caretListener);
-		sourceViewer.getTextWidget().addKeyListener(caretListener);
+		textWidget.addCaretListener(caretListener);
+		textWidget.addKeyListener(caretListener);
 
 		controlListener= new ControlListener() {
 			@Override
 			public void controlResized(ControlEvent e) {
-				StyledText textWidget= sourceViewer.getTextWidget();
 				limitVisibleStickyLinesToTextWidgetHeight(textWidget);
 				layoutStickyLines();
 				if (stickyScrollingHandler != null) {
@@ -430,7 +424,7 @@ public class StickyScrollingControl {
 				layoutStickyLines();
 			}
 		};
-		sourceViewer.getTextWidget().addControlListener(controlListener);
+		textWidget.addControlListener(controlListener);
 	}
 
 	private void limitVisibleStickyLinesToTextWidgetHeight(StyledText textWidget) {
