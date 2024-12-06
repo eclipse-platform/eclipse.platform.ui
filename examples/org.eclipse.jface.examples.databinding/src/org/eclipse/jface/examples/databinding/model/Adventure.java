@@ -43,7 +43,7 @@ public class Adventure extends ModelObject {
 		firePropertyChange("name", oldValue, name);
 	}
 
-	public int getMaxNumberOfPeople(){
+	public int getMaxNumberOfPeople() {
 		return maxNumberOfPeople;
 	}
 
@@ -85,8 +85,7 @@ public class Adventure extends ModelObject {
 	public void setPetsAllowed(boolean b) {
 		boolean oldValue = petsAllowed;
 		petsAllowed = b;
-		firePropertyChange("petsAllowed", Boolean.valueOf(oldValue), Boolean.valueOf(
-				petsAllowed));
+		firePropertyChange("petsAllowed", Boolean.valueOf(oldValue), Boolean.valueOf(petsAllowed));
 	}
 
 	public boolean isPetsAllowed() {
