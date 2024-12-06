@@ -20,7 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
- * @since 3.26 This strategy supports surrounding the selected text with similar opening and closing
+ * @since 3.27 This strategy supports surrounding the selected text with similar opening and closing
  *        brackets when the text is selected and an opening bracket is inserted.
  */
 public class SurroundWithBracketsStrategy implements IAutoEditStrategy {
