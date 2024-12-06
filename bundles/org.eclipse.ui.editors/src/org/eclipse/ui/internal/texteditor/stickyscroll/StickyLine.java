@@ -16,21 +16,24 @@ package org.eclipse.ui.internal.texteditor.stickyscroll;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.source.ISourceViewer;
+
 /**
  * Default implementation of {@link IStickyLine}. Information about the text and style ranges are
  * calculated from the given text widget.
  */
 public class StickyLine implements IStickyLine {
 
-	private int lineNumber;
+	protected int lineNumber;
 
-	private String text;
+	protected String text;
 
-	private StyledText textWidget;
+	protected ISourceViewer sourceViewer;
 
-	public StickyLine(int lineNumber, StyledText textWidget) {
+	public StickyLine(int lineNumber, ISourceViewer sourceViewer) {
 		this.lineNumber= lineNumber;
-		this.textWidget= textWidget;
+		this.sourceViewer= sourceViewer;
 	}
 
 	@Override
@@ -41,19 +44,28 @@ public class StickyLine implements IStickyLine {
 	@Override
 	public String getText() {
 		if (text == null) {
-			text= textWidget.getLine(lineNumber);
+			StyledText textWidget= sourceViewer.getTextWidget();
+			text= textWidget.getLine(getWidgetLineNumber());
 		}
 		return text;
 	}
 
 	@Override
 	public StyleRange[] getStyleRanges() {
-		int offsetAtLine= textWidget.getOffsetAtLine(lineNumber);
+		StyledText textWidget= sourceViewer.getTextWidget();
+		int offsetAtLine= textWidget.getOffsetAtLine(getWidgetLineNumber());
 		StyleRange[] styleRanges= textWidget.getStyleRanges(offsetAtLine, getText().length());
 		for (StyleRange styleRange : styleRanges) {
 			styleRange.start= styleRange.start - offsetAtLine;
 		}
 		return styleRanges;
+	}
+
+	private int getWidgetLineNumber() {
+		if (sourceViewer instanceof ITextViewerExtension5 extension) {
+			return extension.modelLine2WidgetLine(lineNumber);
+		}
+		return lineNumber;
 	}
 
 }

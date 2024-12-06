@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -48,6 +49,7 @@ public class DefaultStickyLinesProviderTest {
 	public void setup() {
 		shell = new Shell(Display.getDefault());
 		sourceViewer = new SourceViewer(shell, null, SWT.None);
+		sourceViewer.setDocument(new Document());
 		stickyLinesProvider = new DefaultStickyLinesProvider();
 		textWidget = sourceViewer.getTextWidget();
 		stickyLinesProperties = new StickyLinesProperties(4);
@@ -65,12 +67,13 @@ public class DefaultStickyLinesProviderTest {
 		String text = """
 				line 1
 				 line 2<""";
-		setText(text);
+		textWidget.setText(text);
 
 		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(sourceViewer, 1, stickyLinesProperties);
 
 		assertEquals(1, stickyLines.size());
 		assertEquals(0, stickyLines.get(0).getLineNumber());
+		assertEquals("line 1", stickyLines.get(0).getText());
 	}
 
 	@Test
@@ -80,7 +83,7 @@ public class DefaultStickyLinesProviderTest {
 				 line 2<
 				  line 3
 				  line 4""";
-		setText(text);
+		textWidget.setText(text);
 
 		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(sourceViewer, 1, stickyLinesProperties);
 
@@ -95,7 +98,7 @@ public class DefaultStickyLinesProviderTest {
 				 line 2
 				line 3
 				 line 4<""";
-		setText(text);
+		textWidget.setText(text);
 
 		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(sourceViewer, 3, stickyLinesProperties);
 
@@ -111,7 +114,7 @@ public class DefaultStickyLinesProviderTest {
 				 line 2
 
 				  line 3<""";
-		setText(text);
+		textWidget.setText(text);
 
 		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(sourceViewer, 4, stickyLinesProperties);
 
@@ -127,7 +130,7 @@ public class DefaultStickyLinesProviderTest {
 				line 1
 				\tline 2
 				\t\tline 3<""";
-		setText(text);
+		textWidget.setText(text);
 
 		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(sourceViewer, 2, stickyLinesProperties);
 
@@ -162,7 +165,7 @@ public class DefaultStickyLinesProviderTest {
 				  line 3
 
 				line 4""";
-		setText(text);
+		textWidget.setText(text);
 
 		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(sourceViewer, 3, stickyLinesProperties);
 
@@ -174,12 +177,13 @@ public class DefaultStickyLinesProviderTest {
 	@Test
 	public void testStickyLineWithSourceViewerLineMapping() {
 		sourceViewer = new SourceViewerWithLineMapping(shell, null, SWT.None);
+		sourceViewer.setDocument(new Document());
 		textWidget = sourceViewer.getTextWidget();
 
 		String text = """
 				line 1
 				 line 2<""";
-		setText(text);
+		textWidget.setText(text);
 
 		// Source viewer line 43 that is mapped to line 1 in the text widget
 		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(sourceViewer, 1 + 42, stickyLinesProperties);
@@ -187,14 +191,7 @@ public class DefaultStickyLinesProviderTest {
 		assertEquals(1, stickyLines.size());
 		// Source viewer line 42 that is mapped to line 0 in the text widget
 		assertEquals(0 + 42, stickyLines.get(0).getLineNumber());
-	}
-
-	/**
-	 * Set the text into the text widget and set the top index to the line
-	 * containing the <.
-	 */
-	private void setText(String text) {
-		textWidget.setText(text);
+		assertEquals("line 1", stickyLines.get(0).getText());
 	}
 
 	private class SourceViewerWithLineMapping extends SourceViewer implements ITextViewerExtension5 {
