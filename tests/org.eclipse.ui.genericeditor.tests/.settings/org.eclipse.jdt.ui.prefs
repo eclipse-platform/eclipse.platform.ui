@@ -1,6 +1,6 @@
 eclipse.preferences.version=1
-formatter_profile=_JDT UI Code Style Conventions
-formatter_settings_version=12
+formatter_profile=org.eclipse.jdt.ui.default.eclipse_profile
+formatter_settings_version=23
 org.eclipse.jdt.ui.exception.name=e
 org.eclipse.jdt.ui.gettersetter.use.is=true
 org.eclipse.jdt.ui.ignorelowercasenames=true
