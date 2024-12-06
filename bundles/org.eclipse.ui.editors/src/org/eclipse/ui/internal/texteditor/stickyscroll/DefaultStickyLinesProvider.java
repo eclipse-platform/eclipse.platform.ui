@@ -55,7 +55,7 @@ public class DefaultStickyLinesProvider implements IStickyLinesProvider {
 
 				if (indentation < previousIndetation) {
 					previousIndetation= indentation;
-					stickyLines.addFirst(new StickyLine(mapLineNumberToViewer(sourceViewer, i), textWidget));
+					stickyLines.addFirst(new StickyLine(mapLineNumberToViewer(sourceViewer, i), sourceViewer));
 				}
 			}
 		} catch (IllegalArgumentException e) {
