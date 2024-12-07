@@ -95,6 +95,8 @@ public class ProgressInfoItem extends Composite {
 
 	static String DEFAULT_THEME = "org.eclipse.e4.ui.css.theme.e4_default"; //$NON-NLS-1$
 
+	static String DARK_THEME = "org.eclipse.e4.ui.css.theme.e4_dark"; //$NON-NLS-1$
+
 	JobTreeElement info;
 
 	Label progressLabel;
@@ -150,7 +152,7 @@ public class ProgressInfoItem extends Composite {
 
 	private HandlerChangeTracker tracker;
 
-	private boolean isThemed;
+	private boolean isDarkTheme;
 
 	static {
 		JFaceResources.getImageRegistry().put(STOP_IMAGE_KEY,
@@ -190,7 +192,7 @@ public class ProgressInfoItem extends Composite {
 	public ProgressInfoItem(Composite parent, int style, JobTreeElement progressInfo) {
 		super(parent, style);
 		info = progressInfo;
-		isThemed = getCustomThemeFlag();
+		isDarkTheme = isDarkThemeSelected();
 		setData(info);
 		setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
 		createChildren();
@@ -832,7 +834,7 @@ public class ProgressInfoItem extends Composite {
 			return;
 		}
 
-		if (!isThemed) {
+		if (!isDarkTheme) {
 			if (row % 2 == 0) {
 				setAllBackgrounds(JFaceResources.getColorRegistry().get(DARK_COLOR_KEY));
 			} else {
@@ -1004,17 +1006,16 @@ public class ProgressInfoItem extends Composite {
 			return true;
 		}
 	}
+	
 	/*
-	 * Check if workspace is using a theme. If it is, confirm it is not the default
-	 * theme.
+	 * Check if the current theme of the workspace is a dark theme. If it is, returns true.
 	 */
-
-	private boolean getCustomThemeFlag() {
+	private boolean isDarkThemeSelected() {
 		IThemeEngine engine = PlatformUI.getWorkbench().getService(IThemeEngine.class);
 		if (engine != null) {
 			ITheme activeTheme = engine.getActiveTheme();
 			if (activeTheme != null) {
-				return !DEFAULT_THEME.equals(activeTheme.getId());
+				return DARK_THEME.equals(activeTheme.getId());
 			}
 		}
 		return false;
