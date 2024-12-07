@@ -71,7 +71,7 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putInt(IDEInternalPreferences.PROBLEMS_LIMIT, 100);
 
 		node.putBoolean(IDEInternalPreferences.USE_MARKER_LIMITS, true);
-		node.putInt(IDEInternalPreferences.MARKER_LIMITS_VALUE, 100);
+		node.putInt(IDEInternalPreferences.MARKER_LIMITS_VALUE, IDEInternalPreferences.MARKER_LIMITS_VALUE_DEFAULT);
 
 		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_TYPE, ""); //$NON-NLS-1$
 		node.putBoolean(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE, true);
