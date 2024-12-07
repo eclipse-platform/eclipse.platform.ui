@@ -42,11 +42,15 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
-		for (int offsetInProposal = Math.min(this.completeString.length(), viewer.getDocument().getLength()); offsetInProposal > 0; offsetInProposal--) {
+		final IDocument doc= viewer.getDocument();
+		if (doc == null) {
+			return new ICompletionProposal[0];
+		}
+		for (int offsetInProposal = Math.min(this.completeString.length(), doc.getLength()); offsetInProposal > 0; offsetInProposal--) {
 			String maybeMatchingString = this.completeString.substring(0, offsetInProposal);
 			try {
 				int lastIndex = offset - offsetInProposal + this.completeString.length();
-				if (offset >= offsetInProposal && viewer.getDocument().get(offset - offsetInProposal, maybeMatchingString.length()).equals(maybeMatchingString)) {
+				if (offset >= offsetInProposal && doc.get(offset - offsetInProposal, maybeMatchingString.length()).equals(maybeMatchingString)) {
 					CompletionProposal proposal = new CompletionProposal(this.completeString.substring(offsetInProposal), offset, 0, lastIndex);
 					return new ICompletionProposal[] { proposal };
 				}
@@ -98,13 +102,13 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 		return new IContextInformationValidator() {
 			private ITextViewer viewer;
 			private int offset;
-			
+
 			@Override
 			public void install(IContextInformation info, ITextViewer infoViewer, int documentOffset) {
 				this.viewer= infoViewer;
 				this.offset= documentOffset;
 			}
-			
+
 			@Override
 			public boolean isContextInformationValid(int offsetToTest) {
 				try {
@@ -123,5 +127,4 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 	public String getErrorMessage() {
 		return null;
 	}
-
 }
