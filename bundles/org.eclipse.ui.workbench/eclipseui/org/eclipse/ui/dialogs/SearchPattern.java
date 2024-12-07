@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import org.eclipse.jface.internal.text.TextMatcher;
 import org.eclipse.jface.util.Util;
-import org.eclipse.ui.internal.misc.TextMatcher;
 
 /**
  * A search pattern defines how search results are found.
