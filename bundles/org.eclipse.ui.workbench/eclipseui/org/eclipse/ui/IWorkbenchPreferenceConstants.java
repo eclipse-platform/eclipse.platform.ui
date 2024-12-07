@@ -70,7 +70,7 @@ public interface IWorkbenchPreferenceConstants {
 	 *             perspective. Callers should use IWorkbench.showPerspective
 	 *             methods.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	String ALTERNATE_OPEN_NEW_PERSPECTIVE = "ALTERNATE_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
 	/**
@@ -86,7 +86,7 @@ public interface IWorkbenchPreferenceConstants {
 	 *             perspective. Callers should use IWorkbench.showPerspective
 	 *             methods.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	String SHIFT_OPEN_NEW_PERSPECTIVE = "SHIFT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
 	/**
@@ -107,7 +107,7 @@ public interface IWorkbenchPreferenceConstants {
 	 *             <code>org.eclipse.ui.ide.IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE</code>
 	 *             instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	String PROJECT_OPEN_NEW_PERSPECTIVE = "PROJECT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
 	/**
@@ -161,7 +161,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * @deprecated not used anymore by platform
 	 * @since 3.0
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	String DOCK_PERSPECTIVE_BAR = "DOCK_PERSPECTIVE_BAR"; //$NON-NLS-1$
 
 	/**
@@ -375,7 +375,7 @@ public interface IWorkbenchPreferenceConstants {
 	 *
 	 * @deprecated not supported by the platform anymore
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	String ENABLE_ANIMATIONS = "ENABLE_ANIMATIONS"; //$NON-NLS-1$
 
 	/**
@@ -390,7 +390,7 @@ public interface IWorkbenchPreferenceConstants {
 	 *             when round or square corners are desired.
 	 * @since 3.120
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	String USE_ROUND_TABS = "USE_ROUND_TABS"; //$NON-NLS-1$
 
 	/**
