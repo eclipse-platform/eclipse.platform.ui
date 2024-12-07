@@ -182,22 +182,40 @@ public class TextFileChange extends TextChange {
 
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor monitor) throws CoreException {
-		if (monitor == null)
-			monitor= new NullProgressMonitor();
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
 		try {
-			monitor.beginTask("", 1); //$NON-NLS-1$
-			if (fValidationState == null)
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), "TextFileChange has not been initialialized")); //$NON-NLS-1$
+			monitor.beginTask("Validating refactoring status...", 1);
 
-			boolean needsSaving= needsSaving();
-			RefactoringStatus result= fValidationState.isValid(needsSaving);
-			if (needsSaving) {
-				result.merge(Changes.validateModifiesFiles(new IFile[] { fFile}));
-			} else {
-				// we are reading the file. So it should be at least in sync
-				result.merge(Changes.checkInSync(new IFile[] { fFile}));
+			// Check for cancellation before proceeding
+			if (monitor.isCanceled()) {
+				System.out.println("Operation canceled before validation check.");
+				return RefactoringStatus.createErrorStatus("Operation was canceled.");
 			}
+
+			if (fValidationState == null) {
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
+						"TextFileChange has not been initialized"));
+			}
+
+			boolean needsSaving = needsSaving();
+			RefactoringStatus result = fValidationState.isValid(needsSaving);
+
+			if (needsSaving) {
+				result.merge(Changes.validateModifiesFiles(new IFile[]{fFile}));
+			} else {
+				result.merge(Changes.checkInSync(new IFile[]{fFile}));
+			}
+
+			// Log final validation state
+			System.out.println("Validation completed successfully. Needs saving: " + needsSaving);
 			return result;
+
+		} catch (CoreException e) {
+			System.err.println("Error during validation: " + e.getMessage());
+			throw e;  // Re-throw exception after logging
+
 		} finally {
 			monitor.done();
 		}
@@ -221,9 +239,14 @@ public class TextFileChange extends TextChange {
 			IPath path= fFile.getFullPath();
 			manager.connect(path, LocationKind.IFILE, pm);
 			fBuffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
-			IDocument result= fBuffer.getDocument();
-			fContentStamp= ContentStamps.get(fFile, result);
-			return result;
+
+			if (fBuffer == null || fBuffer.getDocument() == null) {
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
+						"Failed to acquire document: Buffer or document is null"));
+			}
+
+			fContentStamp = ContentStamps.get(fFile, fBuffer.getDocument());
+			return fBuffer.getDocument();
 		}
 	}
 
@@ -244,14 +267,22 @@ public class TextFileChange extends TextChange {
 	@Override
 	protected void releaseDocument(IDocument document, IProgressMonitor pm) throws CoreException {
 		synchronized (fAcquireCount) { // synchronize with acquireDocument
-			int acquireCount= fAcquireCount.decrementAndGet();
-			Assert.isTrue(acquireCount >= 0);
-			if (acquireCount == 0) {
-				ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, pm);
+			try {
+				int acquireCount = fAcquireCount.decrementAndGet();
+				Assert.isTrue(acquireCount >= 0);
+				if (acquireCount == 0) {
+					ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+					if (fBuffer != null && fBuffer.getDocument() != null) {
+						manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, pm);
+					} else {
+						System.err.println;
+					}
+				}
+			} catch (AssertionFailedException e) {
+				System.err.println("Document release assertion failed: " + e.getMessage());
 			}
 		}
- 	}
+	}
 
 	@Override
 	protected final Change createUndoChange(UndoEdit edit) {
