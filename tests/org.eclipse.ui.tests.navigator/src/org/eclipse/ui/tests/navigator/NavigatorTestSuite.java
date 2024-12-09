@@ -24,6 +24,7 @@ import org.eclipse.ui.tests.navigator.jst.JstPipelineTest;
 import org.eclipse.ui.tests.navigator.resources.FoldersAsProjectsContributionTest;
 import org.eclipse.ui.tests.navigator.resources.NestedResourcesTests;
 import org.eclipse.ui.tests.navigator.resources.PathComparatorTest;
+import org.eclipse.ui.tests.navigator.resources.ResourceMgmtActionProviderTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -34,7 +35,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		ProgrammaticOpenTest.class, PipelineTest.class, PipelineChainTest.class, JstPipelineTest.class,
 		LabelProviderTest.class, SorterTest.class, ViewerTest.class, CdtTest.class, M12Tests.class,
 		FirstClassM1Tests.class, LinkHelperTest.class, ShowInTest.class, ResourceTransferTest.class,
-		EvaluationCacheTest.class,
+		EvaluationCacheTest.class, ResourceMgmtActionProviderTests.class,
 		NestedResourcesTests.class, PathComparatorTest.class, FoldersAsProjectsContributionTest.class,
 		GoBackForwardsTest.class
 		// DnDTest.class, // DnDTest.testSetDragOperation() fails
