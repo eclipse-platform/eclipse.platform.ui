@@ -42,7 +42,7 @@ import org.eclipse.search.core.text.TextSearchScope;
 import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.tests.ResourceHelper;
-import org.eclipse.search.tests.SearchTestPlugin;
+import org.eclipse.search.tests.SearchTestUtil;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 
 public class FileSearchTests {
@@ -240,10 +240,10 @@ public class FileSearchTests {
 
 		IWorkbenchPage activePage= SearchPlugin.getActivePage();
 		try {
-			SearchTestPlugin.openTextEditor(activePage, openFile1);
-			SearchTestPlugin.openTextEditor(activePage, openFile2);
-			SearchTestPlugin.openTextEditor(activePage, openFile3);
-			SearchTestPlugin.openTextEditor(activePage, openFile4);
+			SearchTestUtil.openTextEditor(activePage, openFile1);
+			SearchTestUtil.openTextEditor(activePage, openFile2);
+			SearchTestUtil.openTextEditor(activePage, openFile3);
+			SearchTestUtil.openTextEditor(activePage, openFile4);
 
 			long start= System.currentTimeMillis();
 
@@ -339,7 +339,7 @@ public class FileSearchTests {
 		IFile file2= ResourceHelper.createFile(folder, "file2", buf.toString());
 
 		try {
-			SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file2);
+			SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), file2);
 
 			Pattern searchPattern= PatternConstructor.createPattern("hello", false, true);
 

@@ -38,7 +38,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.editors.text.EditorsUI;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.tests.SearchTestPlugin;
+import org.eclipse.search.tests.SearchTestUtil;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
@@ -81,7 +81,7 @@ public class LineAnnotationManagerTest {
 		try {
 			for (Object f : files) {
 				IFile file= (IFile) f;
-				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
+				ITextEditor editor= (ITextEditor)SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				annotationModel.getAnnotationIterator();
 				ArrayList<Position> positions= new ArrayList<>();

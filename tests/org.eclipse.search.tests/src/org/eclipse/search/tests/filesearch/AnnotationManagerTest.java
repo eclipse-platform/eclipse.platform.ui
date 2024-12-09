@@ -43,13 +43,14 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.text.FileMatch;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.internal.ui.text.FileSearchResult;
-import org.eclipse.search.tests.SearchTestPlugin;
+import org.eclipse.search.tests.SearchTestUtil;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
 
 public class AnnotationManagerTest {
@@ -63,7 +64,7 @@ public class AnnotationManagerTest {
 
 	@Before
 	public void setUp() {
-		SearchTestPlugin.ensureWelcomePageClosed();
+		SearchTestUtil.ensureWelcomePageClosed();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		String[] fileNamePattern= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePattern, false);
@@ -89,7 +90,7 @@ public class AnnotationManagerTest {
 		try {
 			for (Object f : files) {
 				IFile file = (IFile) f;
-				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
+				ITextEditor editor= (ITextEditor)SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				annotationModel.getAnnotationIterator();
 				HashSet<Position> positions= new HashSet<>();
@@ -118,7 +119,7 @@ public class AnnotationManagerTest {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchResult result= (FileSearchResult) fQuery1.getSearchResult();
 		IFile file= (IFile) result.getElements()[0];
-		SearchTestPlugin.openTextEditor(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getPages()[0], file);
+		SearchTestUtil.openTextEditor(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getPages()[0], file);
 		result.addMatch(new FileMatch(file));
 	}
 
@@ -132,7 +133,7 @@ public class AnnotationManagerTest {
 		try {
 			for (Object f : files) {
 				IFile file = (IFile) f;
-				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
+				ITextEditor editor= (ITextEditor)SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				int annotationCount= 0;
 				for (Iterator<Annotation> annotations= annotationModel.getAnnotationIterator(); annotations.hasNext();) {
@@ -157,7 +158,7 @@ public class AnnotationManagerTest {
 		try {
 			for (Object f : files) {
 				IFile file = (IFile) f;
-				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
+				ITextEditor editor= (ITextEditor)SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 				for (Iterator<Annotation> annotations= annotationModel.getAnnotationIterator(); annotations.hasNext();) {
@@ -180,11 +181,13 @@ public class AnnotationManagerTest {
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		Object[] files= result.getElements();
 		NewSearchUI.runQueryInForeground(null, fQuery2);
-		SearchTestPlugin.getDefault().getSearchView().showSearchResult(result);
+
+		SearchView activateSearchResultView= (SearchView) NewSearchUI.activateSearchResultView();
+		activateSearchResultView.showSearchResult(result);
 		try {
 			for (Object f : files) {
 				IFile file = (IFile) f;
-				ITextEditor editor= (ITextEditor)SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
+				ITextEditor editor= (ITextEditor)SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), file);
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 				for (Iterator<Annotation> annotations= annotationModel.getAnnotationIterator(); annotations.hasNext();) {
