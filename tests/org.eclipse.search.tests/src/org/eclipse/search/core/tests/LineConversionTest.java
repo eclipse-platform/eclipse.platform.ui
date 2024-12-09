@@ -36,7 +36,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.tests.SearchTestPlugin;
+import org.eclipse.search.tests.SearchTestUtil;
 
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 
@@ -70,7 +70,7 @@ public class LineConversionTest {
 
 	@Test
 	public void testConvertToCharacter() throws Exception {
-		SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), fFile);
+		SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), fFile);
 		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		IDocument doc= fb.getDocument();
 
@@ -97,7 +97,7 @@ public class LineConversionTest {
 
 	@Test
 	public void testBogusLines() throws Exception {
-		SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), fFile);
+		SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), fFile);
 		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		IDocument doc= fb.getDocument();
 
@@ -106,7 +106,7 @@ public class LineConversionTest {
 	}
 
 	public void atestLineOffsets() throws Exception {
-		SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), fFile);
+		SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), fFile);
 		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		IDocument doc= fb.getDocument();
 
