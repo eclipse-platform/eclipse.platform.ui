@@ -25,6 +25,8 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Plugin;
@@ -156,6 +158,18 @@ public class FileTool {
 			return null;
 		}
 	}
+
+
+	public static File getFileInBundle(Bundle bundle, IPath path) {
+		try {
+			URL installURL= bundle.getEntry(path.toString());
+			URL localURL= FileLocator.toFileURL(installURL);
+			return new File(localURL.getFile());
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
 
 	public static File createTempFileInPlugin(Plugin plugin, IPath path) {
 		IPath stateLocation= plugin.getStateLocation();

@@ -23,33 +23,15 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
-import org.eclipse.search.ui.NewSearchUI;
-
-import org.eclipse.search2.internal.ui.SearchView;
-
 
 /**
- * Plugin class for search tests.
+ * Util class for search tests.
  */
-public class SearchTestPlugin extends AbstractUIPlugin {
-	//The shared instance.
-	private static SearchTestPlugin fgPlugin;
+public class SearchTestUtil {
 
-	public SearchTestPlugin() {
-		fgPlugin = this;
-	}
-
-	public static SearchTestPlugin getDefault() {
-		return fgPlugin;
-	}
-
-	public SearchView getSearchView() {
-		return (SearchView) NewSearchUI.activateSearchResultView();
-	}
 
 	public static void ensureWelcomePageClosed() {
 		IWorkbenchWindow activeWorkbenchWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
