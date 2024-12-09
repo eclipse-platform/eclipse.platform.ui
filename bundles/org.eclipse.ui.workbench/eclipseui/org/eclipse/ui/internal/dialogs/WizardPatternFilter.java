@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,8 +15,11 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.wizards.IWizardCategory;
 
 /**
  * A class that handles filtering wizard node items based on a supplied matching
@@ -39,27 +42,21 @@ public class WizardPatternFilter extends PatternFilter {
 
 	@Override
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
-		if (element instanceof WizardCollectionElement) {
-			return false;
-		}
+		return element instanceof WorkbenchWizardElement desc &&
+				Stream.of(getWizardCategories(desc.getCategory()), //
+						Stream.of(desc.getLabel(), desc.getDescription()), //
+						Stream.of(desc.getKeywordLabels())) //
+				// Only works for finite streams
+				.flatMap(Function.identity())
+				.anyMatch(this::wordMatches);
+	}
 
-		if (element instanceof WorkbenchWizardElement) {
-			WorkbenchWizardElement desc = (WorkbenchWizardElement) element;
-			String text = desc.getLabel();
-			if (wordMatches(text)) {
-				return true;
-			}
-			String wizDesc = desc.getDescription();
-			if (wordMatches(wizDesc)) {
-				return true;
-			}
-
-			for (String keywordLabel : desc.getKeywordLabels()) {
-				if (wordMatches(keywordLabel))
-					return true;
-			}
+	private Stream<String> getWizardCategories(IWizardCategory category) {
+		if (category == null) {
+			return Stream.empty();
 		}
-		return false;
+		return Stream.iterate(category, current -> current.getParent() != null, IWizardCategory::getParent)
+				.map(IWizardCategory::getLabel);
 	}
 
 	@Override
