@@ -34,14 +34,14 @@ public class Catalog extends ModelObject {
 		return signons;
 	}
 
-	public void addSignon(Signon aSignon){
+	public void addSignon(Signon aSignon) {
 		signons.add(aSignon);
-		firePropertyChange("signons",null,null);
+		firePropertyChange("signons", null, null);
 	}
 
-	public void removeSignon(Signon aSignon){
+	public void removeSignon(Signon aSignon) {
 		signons.remove(aSignon);
-		firePropertyChange("signons",null,null);
+		firePropertyChange("signons", null, null);
 	}
 
 	public Category[] getCategories() {
@@ -86,7 +86,7 @@ public class Catalog extends ModelObject {
 		return accounts;
 	}
 
-	public Transportation[] getTransporations(){
+	public Transportation[] getTransporations() {
 		return transportations;
 	}
 

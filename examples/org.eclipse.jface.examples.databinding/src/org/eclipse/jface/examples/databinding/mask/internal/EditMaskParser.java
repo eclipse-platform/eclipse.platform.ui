@@ -50,15 +50,13 @@ public class EditMaskParser {
 		int tokenPosition = 0;
 		int inputPosition = 0;
 		while (inputPosition < input.length() && tokenPosition < expectedTokens.length) {
-			while (tokenPosition < expectedTokens.length &&
-					(expectedTokens[tokenPosition].isComplete() ||
-					 expectedTokens[tokenPosition].isReadOnly()))
-			{
+			while (tokenPosition < expectedTokens.length
+					&& (expectedTokens[tokenPosition].isComplete() || expectedTokens[tokenPosition].isReadOnly())) {
 				++tokenPosition;
 			}
 			if (tokenPosition < expectedTokens.length) {
 				while (inputPosition < input.length() && !expectedTokens[tokenPosition].isComplete()) {
-					String inputChar = input.substring(inputPosition, inputPosition+1);
+					String inputChar = input.substring(inputPosition, inputPosition + 1);
 					expectedTokens[tokenPosition].accept(inputChar);
 					++inputPosition;
 				}
@@ -116,14 +114,15 @@ public class EditMaskParser {
 	 * @return The first non-read-only index greater than or equal to startingAt
 	 */
 	public int getNextInputPosition(int startingAt) {
-		while (startingAt < expectedTokens.length-1 && expectedTokens[startingAt].isReadOnly()) {
+		while (startingAt < expectedTokens.length - 1 && expectedTokens[startingAt].isReadOnly()) {
 			++startingAt;
 		}
 		return startingAt;
 	}
 
 	/**
-	 * @return the first input position whose token is not marked as complete.  Returns -1 if all are complete
+	 * @return the first input position whose token is not marked as complete.
+	 *         Returns -1 if all are complete
 	 */
 	public int getFirstIncompleteInputPosition() {
 		for (int position = 0; position < expectedTokens.length; position++) {
