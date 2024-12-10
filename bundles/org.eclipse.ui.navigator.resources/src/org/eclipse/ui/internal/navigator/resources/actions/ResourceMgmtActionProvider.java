@@ -18,7 +18,6 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
@@ -114,20 +113,16 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
-		boolean isProjectSelection = true;
 		boolean hasOpenProjects = false;
 		boolean hasClosedProjects = false;
-		boolean hasBuilder = true; // false if any project is closed or does not
-									// have builder
+		boolean hasBuilder = true; // false if any project is closed or does not have builder
+		List<IProject> projects = selectionToProjects(selection);
+		boolean selectionContainsNonProject = projects.size() < selection.size();
 
-		Iterator<IProject> projects = selectionToProjects(selection).iterator();
-
-		while (projects.hasNext() && (!hasOpenProjects || !hasClosedProjects || hasBuilder || isProjectSelection)) {
-			IProject project = projects.next();
-
-			if (project == null) {
-				isProjectSelection = false;
-				continue;
+		for (IProject project : projects) {
+			if (hasOpenProjects && hasClosedProjects && !hasBuilder) {
+				// we've set all booleans of interest; no need to loop any further
+				break;
 			}
 			if (project.isOpen()) {
 				hasOpenProjects = true;
@@ -139,30 +134,29 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 				hasBuilder = false;
 			}
 		}
-		if (!selection.isEmpty() && isProjectSelection && !ResourcesPlugin.getWorkspace().isAutoBuilding()
+		if (!selection.isEmpty() && !ResourcesPlugin.getWorkspace().isAutoBuilding()
 				&& hasBuilder) {
 			// Allow manual incremental build only if auto build is off.
 			buildAction.selectionChanged(selection);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, buildAction);
 		}
-		// Add the 'refresh' item if any selection is either (a) an open project, or (b)
-               	// a non-project selection (so the 'refresh' item is not shown if all selections
-               	// are closed projects)
-               	if (hasOpenProjects || !isProjectSelection) {
+		// Add the 'refresh' item if ANY selection is either (a) an open project, or (b)
+		// a non-project selection.
+		// Put another way: the 'refresh' item is NOT shown if ALL selections are closed
+		// projects.
+		if (hasOpenProjects || selectionContainsNonProject) {
 			refreshAction.selectionChanged(selection);
 			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, refreshAction);
 		}
-		if (isProjectSelection) {
-			if (hasClosedProjects) {
-				openProjectAction.selectionChanged(selection);
-				menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, openProjectAction);
-			}
-			if (hasOpenProjects) {
-				closeProjectAction.selectionChanged(selection);
-				menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, closeProjectAction);
-				closeUnrelatedProjectsAction.selectionChanged(selection);
-				menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, closeUnrelatedProjectsAction);
-			}
+		if (hasClosedProjects) {
+			openProjectAction.selectionChanged(selection);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, openProjectAction);
+		}
+		if (hasOpenProjects) {
+			closeProjectAction.selectionChanged(selection);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, closeProjectAction);
+			closeUnrelatedProjectsAction.selectionChanged(selection);
+			menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, closeUnrelatedProjectsAction);
 		}
 	}
 
