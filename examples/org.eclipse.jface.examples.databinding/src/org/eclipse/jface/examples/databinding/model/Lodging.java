@@ -27,13 +27,13 @@ public class Lodging extends ModelObject {
 	public void setDescription(String string) {
 		Object oldValue = description;
 		description = string;
-		firePropertyChange("description",oldValue,description);
+		firePropertyChange("description", oldValue, description);
 	}
 
 	public void setName(String string) {
 		Object oldValue = name;
 		name = string;
-		firePropertyChange("name",oldValue,name);
+		firePropertyChange("name", oldValue, name);
 	}
 
 	public String getName() {
