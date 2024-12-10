@@ -176,9 +176,9 @@ CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
     swt-selected-highlight-top: false;
 }
 
-.MPart Form Composite,
-.MPart Form Composite Tree,
-.MPartStack.active .MPart Form Composite Tree
+.Editor Form Composite,
+.Editor Form Composite Tree,
+.MPartStack.active .Editor Form Composite Tree
 {
 	background-color: #1E1F22;
 }
