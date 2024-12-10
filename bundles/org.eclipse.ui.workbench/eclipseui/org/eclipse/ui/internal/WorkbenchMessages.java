@@ -76,6 +76,8 @@ public class WorkbenchMessages extends NLS {
 
 	public static String StatusUtil_errorOccurred;
 
+	public static String EdgeBrowserDisclaimer;
+
 	// ==============================================================================
 	// Workbench Actions
 	// ==============================================================================
