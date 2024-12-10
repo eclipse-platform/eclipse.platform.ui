@@ -20,7 +20,10 @@ import java.io.InputStream;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.osgi.framework.FrameworkUtil;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -76,7 +79,7 @@ public class ResourceHelper {
 					i= MAX_RETRY;
 				} catch (CoreException e) {
 					if (i == MAX_RETRY - 1) {
-						SearchTestPlugin.getDefault().getLog().log(e.getStatus());
+						ILog.get().log(e.getStatus());
 						throw e;
 					}
 					System.gc(); // help windows to really close file locks
@@ -171,7 +174,7 @@ public class ResourceHelper {
 
 	public static IProject createJUnitSourceProject(String projectName) throws CoreException, ZipException, IOException {
 		IProject project= ResourceHelper.createProject(projectName);
-		try (ZipFile zip= new ZipFile(FileTool.getFileInPlugin(SearchTestPlugin.getDefault(), IPath.fromOSString("testresources/junit37-noUI-src.zip")))) { //$NON-NLS-1$
+		try (ZipFile zip= new ZipFile(FileTool.getFileInBundle(FrameworkUtil.getBundle(ResourceHelper.class), IPath.fromOSString("testresources/junit37-noUI-src.zip")))) { //$NON-NLS-1$
 			FileTool.unzip(zip, project.getLocation().toFile());
 		}
 		project.refreshLocal(IResource.DEPTH_INFINITE, null);

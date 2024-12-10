@@ -40,7 +40,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.internal.ui.text.FileSearchResult;
-import org.eclipse.search.tests.SearchTestPlugin;
+import org.eclipse.search.tests.SearchTestUtil;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
@@ -96,7 +96,7 @@ public class PositionTrackerTest {
 	private void checkInsertInsideMatch(FileSearchResult result, IFile file) throws PartInitException, BadLocationException {
 		Match[] matches= result.getMatches(file);
 		try {
-			SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
+			SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), file);
 			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 			Job.getJobManager().beginRule(file, null);
 			IDocument doc= fb.getDocument();
@@ -129,7 +129,7 @@ public class PositionTrackerTest {
 			originalStarts[i]= matches[i].getOffset();
 		}
 		try {
-			SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), file);
+			SearchTestUtil.openTextEditor(SearchPlugin.getActivePage(), file);
 			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 			Job.getJobManager().beginRule(file, null);
 			IDocument doc= fb.getDocument();
