@@ -8,9 +8,15 @@ Bundle-Localization: plugin
 Export-Package: 
  org.eclipse.jface.contentassist,
  org.eclipse.jface.contentassist.images,
- org.eclipse.jface.internal.text;x-internal:=true,
+ org.eclipse.jface.internal.text;x-friends:="org.eclipse.ui.workbench,org.eclipse.e4.ui.dialogs",
  org.eclipse.jface.internal.text.codemining;x-internal:=true,
- org.eclipse.jface.internal.text.html;x-friends:="org.eclipse.ant.ui, org.eclipse.jdt.ui, org.eclipse.ltk.ui.refactoring, org.eclipse.pde.ui, org.eclipse.ui.editors, org.eclipse.xtext.ui",
+ org.eclipse.jface.internal.text.html;
+  x-friends:="org.eclipse.ant.ui,
+   org.eclipse.jdt.ui,
+   org.eclipse.ltk.ui.refactoring,
+   org.eclipse.pde.ui,
+   org.eclipse.ui.editors,
+   org.eclipse.xtext.ui",
  org.eclipse.jface.internal.text.link.contentassist;x-internal:=true,
  org.eclipse.jface.internal.text.revisions;x-internal:=true,
  org.eclipse.jface.internal.text.source;x-internal:=true,

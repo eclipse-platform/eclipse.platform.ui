@@ -8,7 +8,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.ui.internal.misc;
+package org.eclipse.jface.internal.text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
