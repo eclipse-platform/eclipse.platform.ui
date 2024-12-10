@@ -15,6 +15,7 @@
 package org.eclipse.jface.text.source;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
@@ -30,6 +31,7 @@ import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.SurroundWithBracketsStrategy;
 import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -190,7 +192,11 @@ public class SourceViewerConfiguration {
 	 * @since 3.1
 	 */
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
-		return new IAutoEditStrategy[] { getAutoIndentStrategy(sourceViewer, contentType) };
+
+		IAutoEditStrategy[] autoEditStrategies= new IAutoEditStrategy[] { getAutoIndentStrategy(sourceViewer, contentType) };
+		ArrayList<IAutoEditStrategy> autoEditStrategiesList= new ArrayList<>(Arrays.asList(autoEditStrategies));
+		autoEditStrategiesList.add(new SurroundWithBracketsStrategy(sourceViewer));
+		return autoEditStrategiesList.toArray(new IAutoEditStrategy[0]);
 	}
 
 	/**
