@@ -19,7 +19,6 @@
 package org.eclipse.jface.text.source;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -59,7 +58,6 @@ import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerLifecycle;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.SurroundWithBracketsStrategy;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -546,12 +544,7 @@ public class SourceViewer extends TextViewer
 		String[] types= configuration.getConfiguredContentTypes(this);
 		for (String t : types) {
 
-			IAutoEditStrategy[] autoEditStrategies= configuration.getAutoEditStrategies(this, t);
-			List<IAutoEditStrategy> autoEditStrategiesList= new ArrayList<>(Arrays.asList(autoEditStrategies));
-			autoEditStrategiesList.add(new SurroundWithBracketsStrategy(this));
-			IAutoEditStrategy[] newStrategies= autoEditStrategiesList.toArray(new IAutoEditStrategy[0]);
-
-			doSetAutoEditStrategies(newStrategies, t);
+			doSetAutoEditStrategies(configuration.getAutoEditStrategies(this, t), t);
 			setTextDoubleClickStrategy(configuration.getDoubleClickStrategy(this, t), t);
 
 			int[] stateMasks= configuration.getConfiguredTextHoverStateMasks(this, t);
