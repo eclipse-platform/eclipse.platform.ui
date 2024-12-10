@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -39,9 +39,11 @@ import org.eclipse.ui.internal.wizards.datatransfer.TarFile;
 import org.eclipse.ui.internal.wizards.datatransfer.TarLeveledStructureProvider;
 import org.eclipse.ui.internal.wizards.datatransfer.ZipLeveledStructureProvider;
 import org.eclipse.ui.tests.TestPlugin;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class ImportArchiveOperationTest implements IOverwriteQuery {
@@ -63,6 +65,9 @@ public class ImportArchiveOperationTest implements IOverwriteQuery {
 	private URL zipFileURL;
 
 	private URL tarFileURL;
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Override
 	public String queryOverwrite(String pathString) {
