@@ -8,12 +8,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.ui.tests.filteredtree;
+package org.eclipse.jface.text.tests;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.ui.internal.misc.TextMatcher;
+import org.eclipse.jface.internal.text.TextMatcher;
 import org.junit.Test;
 
 /**
