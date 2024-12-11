@@ -588,13 +588,11 @@ public class ThemeEngine implements IThemeEngine {
 			prefThemeId = "org.eclipse.e4.ui.css.theme.e4_classic"; //$NON-NLS-1$
 		}
 
-		boolean flag = true;
 		if (prefThemeId != null) {
 			for (ITheme t : getThemes()) {
 				if (prefThemeId.equals(t.getId())) {
 					setTheme(t, false);
-					flag = false;
-					break;
+					return;
 				}
 			}
 		}
@@ -608,7 +606,7 @@ public class ThemeEngine implements IThemeEngine {
 		boolean disableOSDarkThemeInherit = "true".equalsIgnoreCase(System.getProperty(DISABLE_OS_DARK_THEME_INHERIT));
 		boolean overrideWithDarkTheme = Display.isSystemDarkTheme() && hasDarkTheme && !disableOSDarkThemeInherit;
 		String themeToRestore = overrideWithDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
-		if (themeToRestore != null && flag) {
+		if (themeToRestore != null) {
 			setTheme(themeToRestore, false);
 		}
 	}
