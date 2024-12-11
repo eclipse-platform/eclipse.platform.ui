@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.stress;
 
-import static org.junit.Assert.assertNotNull;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 
@@ -41,8 +42,8 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test opening and closing of items.
@@ -57,7 +58,7 @@ public class OpenCloseTest {
 	private IWorkbenchPage page;
 
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		workbench = PlatformUI.getWorkbench();
 		workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
