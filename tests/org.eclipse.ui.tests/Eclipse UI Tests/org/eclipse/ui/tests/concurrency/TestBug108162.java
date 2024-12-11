@@ -26,7 +26,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.tests.SwtLeakTestWatcher;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 
 /**
  * Tests the following sequence of events:
@@ -38,6 +41,10 @@ import org.junit.Test;
  * This test asserts that the exception is thrown and that deadlock does not occur.
  */
 public class TestBug108162 {
+
+	@Rule
+	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
+
 	static class LockAcquiringOperation extends WorkspaceModifyOperation {
 		@Override
 		public void execute(final IProgressMonitor pm) {
@@ -52,8 +59,9 @@ public class TestBug108162 {
 	 */
 	@Test
 	public void testBug() throws CoreException {
+		Shell shell = new Shell();
 		workspace.run((IWorkspaceRunnable) monitor -> {
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 			try {
 				dialog.run(true, false, new LockAcquiringOperation());
 				// should not succeed
@@ -63,5 +71,6 @@ public class TestBug108162 {
 				// lock.
 			}
 		}, workspace.getRoot(), IResource.NONE, null);
+		shell.close();
 	}
 }

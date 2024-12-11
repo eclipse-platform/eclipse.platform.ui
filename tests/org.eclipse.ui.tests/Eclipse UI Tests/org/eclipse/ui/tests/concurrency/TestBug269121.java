@@ -29,7 +29,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.tests.SwtLeakTestWatcher;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 
 import junit.framework.AssertionFailedError;
 
@@ -56,6 +59,9 @@ import junit.framework.AssertionFailedError;
  */
 public class TestBug269121 {
 
+	@Rule
+	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
+
 	@Test
 	public void testBug() throws InterruptedException,
 			InvocationTargetException {
@@ -73,8 +79,9 @@ public class TestBug269121 {
 				status.set(0, TestBarrier2.STATUS_DONE);
 			}
 		};
+		Shell shell = new Shell();
 		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(
-				new Shell());
+				shell);
 		Job statusJob = new Job("Checking for deadlock") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -104,5 +111,6 @@ public class TestBug269121 {
 		}
 		job.join();
 		assertTrue("Timeout occurred - possible Deadlock. See logging!", statusJob.getResult().isOK());
+		shell.close();
 	}
 }

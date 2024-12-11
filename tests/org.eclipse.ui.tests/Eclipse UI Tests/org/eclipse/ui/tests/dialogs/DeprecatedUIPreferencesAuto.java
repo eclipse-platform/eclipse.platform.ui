@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
+import static org.junit.Assume.assumeNotNull;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -21,10 +23,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.tests.SwtLeakTestWatcher;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 
 public class DeprecatedUIPreferencesAuto {
+
+	@Rule
+	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
 
 	protected Shell getShell() {
 		return DialogCheck.getShell();
@@ -122,23 +130,22 @@ public class DeprecatedUIPreferencesAuto {
 	@Test
 	public void testFieldEditorEnablePref() {
 
-		PreferenceDialogWrapper dialog = null;
 		PreferenceManager manager = WorkbenchPlugin.getDefault().getPreferenceManager();
-		if (manager != null) {
-			dialog = new PreferenceDialogWrapper(getShell(), manager);
-			dialog.create();
+		assumeNotNull(manager);
+		PreferenceDialogWrapper dialog = new PreferenceDialogWrapper(
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), manager);
+		dialog.create();
 
-			for (IPreferenceNode node : manager.getElements(PreferenceManager.PRE_ORDER)) {
-				if (node.getId().equals("org.eclipse.ui.tests.dialogs.EnableTestPreferencePage")) {
-					dialog.showPage(node);
-					EnableTestPreferencePage page = (EnableTestPreferencePage) dialog.getPage(node);
-					page.flipState();
-					page.flipState();
-					break;
-				}
+		for (IPreferenceNode node : manager.getElements(PreferenceManager.PRE_ORDER)) {
+			if (node.getId().equals("org.eclipse.ui.tests.dialogs.EnableTestPreferencePage")) {
+				dialog.showPage(node);
+				EnableTestPreferencePage page = (EnableTestPreferencePage) dialog.getPage(node);
+				page.flipState();
+				page.flipState();
+				break;
 			}
 		}
-
+		dialog.close();
 	}
 
 }

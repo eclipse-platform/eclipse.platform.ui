@@ -39,6 +39,7 @@ import org.eclipse.ui.internal.dialogs.ImportWizard;
 import org.eclipse.ui.internal.dialogs.NewWizard;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
+import org.eclipse.ui.tests.SwtLeakTestWatcher;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
@@ -46,9 +47,14 @@ import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.junit.After;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 
 public class UIWizardsAuto {
+	@Rule
+	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
+
 	private static final int SIZING_WIZARD_WIDTH = 470;
 
 	private static final int SIZING_WIZARD_HEIGHT = 550;
@@ -332,7 +338,8 @@ public class UIWizardsAuto {
 
 		initNewWizard(newWizard);
 
-		WizardDialog dialog = new WizardDialog(getShell(), newWizard);
+		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+				newWizard);
 		dialog.create();
 
 		if(windowTitle == null) {
