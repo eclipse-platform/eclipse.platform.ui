@@ -30,7 +30,9 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -88,6 +90,10 @@ public class DialogSettings implements IDialogSettings {
 	// A Map with all the keys mapped to array of strings.
 	private Map<String, String[]> arrayItems;
 
+	private Deque<String> filterHistory;
+
+	private static final int FILTER_HISTORY_SIZE = 5;
+
 	private static final String TAG_SECTION = "section";//$NON-NLS-1$
 
 	private static final String TAG_NAME = "name";//$NON-NLS-1$
@@ -113,6 +119,7 @@ public class DialogSettings implements IDialogSettings {
 		items = new LinkedHashMap<>();
 		arrayItems = new LinkedHashMap<>();
 		sections = new LinkedHashMap<>();
+		filterHistory = new LinkedList<>();
 	}
 
 	@Override
@@ -362,6 +369,22 @@ public class DialogSettings implements IDialogSettings {
 		} else {
 			items.put(key, value);
 		}
+	}
+
+	public void inputNewSearchFilter(String searchIn) {
+		filterHistory.remove(searchIn);
+		filterHistory.addFirst(searchIn);
+
+		if (filterHistory.size() > FILTER_HISTORY_SIZE) {
+			filterHistory.removeLast();
+		}
+	}
+
+	public Deque<String> getLastFilters() {
+		if (filterHistory.isEmpty()) {
+			return null;
+		}
+		return filterHistory;
 	}
 
 	@Override
