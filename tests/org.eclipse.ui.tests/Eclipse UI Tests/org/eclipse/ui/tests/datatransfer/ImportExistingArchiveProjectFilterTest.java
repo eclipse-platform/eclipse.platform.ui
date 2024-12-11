@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -154,7 +155,7 @@ public class ImportExistingArchiveProjectFilterTest extends UITestCase {
 		if (element instanceof IFolder) {
 			IFolder folder = (IFolder) element;
 			assertFalse(folder.getName().equalsIgnoreCase("res"));
-		} else {
+		} else if (element instanceof IResource) { // to expensive to walk other contributions like whole JRE from JDT
 			Object[] children = contentProvider.getChildren(element);
 			for (Object child : children) {
 				processElementAndChildren(child, contentProvider);
