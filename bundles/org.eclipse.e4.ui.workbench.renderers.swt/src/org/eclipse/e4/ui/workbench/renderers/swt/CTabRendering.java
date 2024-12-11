@@ -616,6 +616,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		}
 
 		if (selectedTabHighlightColor != null) {
+			Color originalBackground = gc.getBackground();
 			gc.setBackground(selectedTabHighlightColor);
 			boolean highlightOnTop = drawTabHighlightOnTop;
 			if (onBottom) {
@@ -627,6 +628,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			int widthAdjustment = cornerSize == SQUARE_CORNER ? 0 : 1;
 			gc.fillRectangle(bounds.x + horizontalOffset, bounds.y + verticalOffset, bounds.width - widthAdjustment,
 					highlightHeight);
+			gc.setBackground(originalBackground);
 		}
 
 		if (backgroundPattern != null) {
