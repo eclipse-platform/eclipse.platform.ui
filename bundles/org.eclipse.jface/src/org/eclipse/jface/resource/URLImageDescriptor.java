@@ -35,13 +35,12 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
-import org.eclipse.swt.graphics.SVGRasterizer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.ImageFileNameProvider;
+import org.eclipse.swt.graphics.SVGRasterizer;
 import org.eclipse.swt.graphics.SVGRasterizerRegistry;
-import org.eclipse.swt.graphics.SVGUtil;
 
 /**
  * An ImageDescriptor that gets its information from a URL. This class is not
@@ -65,7 +64,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 				SVGRasterizer rasterizer = SVGRasterizerRegistry.getRasterizer();
 				if (rasterizer != null) {
 					try (InputStream in = getStream(tempURL)) {
-						if (SVGUtil.isSVGFile(in)) {
+						if (rasterizer.isSVGFile(in)) {
 							return getFilePath(tempURL, false);
 						}
 					} catch (IOException e) {
@@ -154,11 +153,9 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		if (tempURL != null) {
 			SVGRasterizer rasterizer = SVGRasterizerRegistry.getRasterizer();
 			if (rasterizer != null) {
-				try {
-					try (InputStream in = getStream(tempURL)) {
-						if (SVGUtil.isSVGFile(in)) {
-							return getImageData(tempURL, zoom);
-						}
+				try (InputStream in = getStream(tempURL)) {
+					if (rasterizer.isSVGFile(in)) {
+						return getImageData(tempURL, zoom);
 					}
 				} catch (IOException e) {
 					// ignore.
