@@ -41,8 +41,12 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 /**
  * Test opening and closing of items.
@@ -56,6 +60,8 @@ public class OpenCloseTest {
 	private IWorkbench workbench;
 	private IWorkbenchPage page;
 
+	@Rule
+	public TestName testName = new TestName();
 
 	@Before
 	public void setup() {
@@ -76,6 +82,10 @@ public class OpenCloseTest {
 		assertNotNull(page);
 	}
 
+	@After
+	public void teardown() {
+		UITestCase.runGcAndPrintMemoryUse(testName.getMethodName());
+	}
 
 	/**
 	 * Test the opening and closing of a file.
