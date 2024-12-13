@@ -747,9 +747,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 * @return the display
 	 */
 	public static Display createDisplay() {
-		// setup the application name used by SWT to lookup resources on some
-		// platforms
-		String applicationName = WorkbenchPlugin.getDefault().getAppName();
+		// setup the application name used by SWT to lookup resources on some platforms
+		String applicationName = System.getProperty("eclipse.appName", WorkbenchPlugin.getDefault().getAppName()); //$NON-NLS-1$
 		if (applicationName != null) {
 			Display.setAppName(applicationName);
 		}
