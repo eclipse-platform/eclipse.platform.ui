@@ -118,6 +118,14 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 				current.dispose();
 			}
 		}
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T> T getAdapter(Class<T> adapter) {
+			if (CompareConfiguration.class.equals(adapter)) {
+				return (T) fCompareConfiguration;
+			}
+			return super.getAdapter(adapter);
+		}
 	}
 
 	private static class CompareElement implements ITypedElement, IEncodedStreamContentAccessor, IResourceProvider {
