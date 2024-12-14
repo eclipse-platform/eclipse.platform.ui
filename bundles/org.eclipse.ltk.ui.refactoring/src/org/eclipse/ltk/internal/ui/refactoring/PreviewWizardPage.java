@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -43,31 +46,45 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.wizard.IWizardContainer;
 
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.services.IServiceLocator;
 
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.ICompareContainer;
+import org.eclipse.compare.ICompareNavigator;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -461,7 +478,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		fTreeViewer.setContentProvider(createTreeContentProvider());
 		fTreeViewer.setLabelProvider(createTreeLabelProvider());
 		fTreeViewer.setComparator(createTreeComparator());
-		fTreeViewer.addSelectionChangedListener(createSelectionChangedListener());
+		fTreeViewer.addSelectionChangedListener(createSelectionChangedListener(fTreeViewer));
 		fTreeViewer.addCheckStateListener(createCheckStateListener());
 		fTreeViewerPane.setContent(fTreeViewer.getControl());
 		fTreeViewer.getControl().getAccessible().addAccessibleListener(new AccessibleAdapter() {
@@ -596,14 +613,47 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		};
 	}
 
-	private ISelectionChangedListener createSelectionChangedListener() {
+	private ISelectionChangedListener createSelectionChangedListener(ChangeElementTreeViewer treeViewer) {
+		Runnable[] runOnMouseUp=new Runnable[] {null};
+		boolean[] mouseDownPressed = new boolean[] {false};
+		treeViewer.getTree().addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseUp(MouseEvent e) {
+				mouseDownPressed[0] = false;
+				if (runOnMouseUp[0] != null) {
+					runOnMouseUp[0].run();
+					runOnMouseUp[0] = null;
+				}
+			}
+
+			@Override
+			public void mouseDown(MouseEvent e) {
+				mouseDownPressed[0] = true;
+			}
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+			}
+		});
 		return event -> {
 			IStructuredSelection sel= (IStructuredSelection) event.getSelection();
 			if (sel.size() == 1) {
 				PreviewNode newSelection= (PreviewNode)sel.getFirstElement();
 				if (newSelection != fCurrentSelection) {
 					fCurrentSelection= newSelection;
-					showPreview(newSelection);
+					Runnable r = new Runnable() {
+
+						@Override
+						public void run() {
+							showPreview(newSelection);
+						}
+					};
+					if (mouseDownPressed[0]) {
+						runOnMouseUp[0] = r;
+					}else {
+						r.run();
+					}
 				}
 			} else {
 				showPreview(null);
@@ -622,6 +672,13 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 					if (descriptor != null) {
 						newViewer= descriptor.createViewer();
 						newViewer.createControl(fPreviewContainer);
+						IWizardContainer container = getContainer();
+						if (container != null) {
+							if (newViewer.getControl() instanceof IAdaptable adaptable) {
+								CompareConfiguration config = adaptable.getAdapter(CompareConfiguration.class);
+								config.setContainer(new WizardCompareContainer(container));
+							}
+						}
 					} else {
 						newViewer= fNullPreviewer;
 					}
@@ -760,5 +817,71 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	@Override
 	public Change getChange() {
 		return fChange;
+	}
+
+	private static final class WizardCompareContainer implements ICompareContainer {
+
+		private IRunnableContext context;
+
+		public WizardCompareContainer(IRunnableContext context) {
+			this.context=context;
+		}
+
+		@Override
+		public void setStatusMessage(String message) {
+		}
+
+		@Override
+		public void addCompareInputChangeListener(ICompareInput input,
+				ICompareInputChangeListener listener) {
+			input.addCompareInputChangeListener(listener);
+		}
+
+		@Override
+		public void removeCompareInputChangeListener(ICompareInput input,
+				ICompareInputChangeListener listener) {
+			input.removeCompareInputChangeListener(listener);
+		}
+
+		@Override
+		public void registerContextMenu(MenuManager menu,
+				ISelectionProvider selectionProvider) {
+		}
+
+		@Override
+		public IServiceLocator getServiceLocator() {
+			return null;
+		}
+
+		@Override
+		public IActionBars getActionBars() {
+			return null;
+		}
+
+		@Override
+		public void run(boolean fork, boolean cancelable,
+				IRunnableWithProgress runnable)
+				throws InvocationTargetException, InterruptedException {
+			context.run(fork, cancelable, runnable);
+		}
+
+		@Override
+		public ICompareNavigator getNavigator() {
+			return null;
+		}
+
+		@Override
+		public synchronized void runAsynchronously(IRunnableWithProgress runnable) {
+			try {
+				context.run(true, false, runnable);
+			} catch (InvocationTargetException | InterruptedException e) {
+				RefactoringUIPlugin.log(e);
+			}
+		}
+
+		@Override
+		public IWorkbenchPart getWorkbenchPart() {
+			return null;
+		}
 	}
 }
