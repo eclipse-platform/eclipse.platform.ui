@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.internal.text.codemining.CodeMiningLineContentAnnotation;
+import org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.source.Annotation;
@@ -161,7 +162,12 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		}
 		if (gc != null) {
 			// Setting vertical indent first, before computing bounds
-			int height= annotation.getHeight();
+			int height;
+			if (annotation instanceof CodeMiningLineHeaderAnnotation cmlha) {
+				height= cmlha.getHeight(gc);
+			} else {
+				height= annotation.getHeight();
+			}
 			if (height != 0) {
 				if (height != textWidget.getLineVerticalIndent(line)) {
 					if (annotation.oldLine != -1 && annotation.oldLine < textWidget.getLineCount()) {
