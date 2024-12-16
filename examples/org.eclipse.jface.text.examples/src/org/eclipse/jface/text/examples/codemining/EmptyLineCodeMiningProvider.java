@@ -35,7 +35,7 @@ public class EmptyLineCodeMiningProvider extends AbstractCodeMiningProvider {
 					emptyLineHeaders.add(new LineHeaderCodeMining(line, document, this) {
 						@Override
 						public String getLabel() {
-							return "Next line is empty";
+							return "Next line is \nempty";
 						}
 					});
 				}

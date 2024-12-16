@@ -77,24 +77,61 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 
 	@Override
 	public int getHeight() {
-		return hasAtLeastOneResolvedMiningNotEmpty() ? getMultilineHeight() : 0;
+		return hasAtLeastOneResolvedMiningNotEmpty() ? getMultilineHeight(null) : 0;
 	}
 
-	private int getMultilineHeight() {
+	public int getHeight(GC gc) {
+		return hasAtLeastOneResolvedMiningNotEmpty() ? getMultilineHeight(gc) : 0;
+	}
+
+	private int getMultilineHeight(GC gc) {
 		int numLinesOfAllMinings= 0;
-		for (ICodeMining mining : fMinings) {
+		StyledText styledText= super.getTextWidget();
+		boolean ignoreFirstLine= false;
+		int sumLineHeight= 0;
+		for (int i= 0; i < fMinings.size(); i++) {
+			ICodeMining mining= fMinings.get(i);
 			String label= mining.getLabel();
 			if (label == null) {
 				continue;
 			}
-			int numLines= label.split("\\r?\\n|\\r").length; //$NON-NLS-1$
-			if (numLines > 1) {
-				numLinesOfAllMinings= numLines - 1;
+			String[] splitted= label.split("\\r?\\n|\\r"); //$NON-NLS-1$
+			int numLines= splitted.length;
+			if (ignoreFirstLine) {
+				numLines--;
 			}
+			numLinesOfAllMinings+= numLines;
+			if (gc != null) {
+				sumLineHeight= calculateLineHeight(gc, styledText, ignoreFirstLine, sumLineHeight, i, splitted);
+			}
+			ignoreFirstLine= true;
 		}
-		numLinesOfAllMinings++;
-		StyledText styledText= super.getTextWidget();
-		return numLinesOfAllMinings * (styledText.getLineHeight() + styledText.getLineSpacing());
+		if (gc != null) {
+			return sumLineHeight;
+		} else {
+			int lineHeight= styledText.getLineHeight();
+			int result= numLinesOfAllMinings * (lineHeight + styledText.getLineSpacing());
+			return result;
+		}
+	}
+
+	private int calculateLineHeight(GC gc, StyledText styledText, boolean ignoreFirstLine, int sumLineHeight, int miningIndex, String[] splitted) {
+		for (int j= 0; j < splitted.length; j++) {
+			String line= splitted[j];
+			if (j == 0 && ignoreFirstLine) {
+				continue;
+			}
+			if (j == splitted.length - 1 && miningIndex + 1 < fMinings.size()) { // last line, take first line from next mining
+				String nextLabel= fMinings.get(miningIndex + 1).getLabel();
+				if (nextLabel != null) {
+					String firstFromNext= nextLabel.split("\\r?\\n|\\r")[0]; //$NON-NLS-1$
+					line+= firstFromNext;
+				}
+			}
+			Point ext= gc.textExtent(line);
+			sumLineHeight+= ext.y + styledText.getLineSpacing();
+		}
+		return sumLineHeight;
 	}
 
 	/**
