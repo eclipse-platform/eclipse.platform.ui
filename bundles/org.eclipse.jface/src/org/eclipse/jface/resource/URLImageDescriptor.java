@@ -39,6 +39,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.ImageFileNameProvider;
+import org.eclipse.swt.graphics.SVGRasterizer;
+import org.eclipse.swt.graphics.SVGRasterizerRegistry;
 
 /**
  * An ImageDescriptor that gets its information from a URL. This class is not
@@ -59,6 +61,16 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		public String getImagePath(int zoom) {
 			URL tempURL = getURL(url);
 			if (tempURL != null) {
+				SVGRasterizer rasterizer = SVGRasterizerRegistry.getRasterizer();
+				if (rasterizer != null) {
+					try (InputStream in = getStream(tempURL)) {
+						if (rasterizer.isSVGFile(in)) {
+							return getFilePath(tempURL, false);
+						}
+					} catch (IOException e) {
+						// ignore.
+					}
+				}
 				final boolean logIOException = zoom == 100;
 				if (zoom == 100) {
 					return getFilePath(tempURL, logIOException);
@@ -96,6 +108,27 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			return URLImageDescriptor.getImageData(url, zoom);
 		}
 
+		@Override
+		public ImageData getCustomizedImageData(int zoom, int flag) {
+			return URLImageDescriptor.getCustomizedImageData(url, zoom, flag);
+		}
+
+		@Override
+		public boolean supportsRasterizationFlag(int flag) {
+			boolean supportsFlag = flag == SWT.IMAGE_DISABLE || flag == SWT.IMAGE_GRAY || flag == SWT.IMAGE_COPY;
+			URL tempURL = getURL(url);
+			SVGRasterizer rasterizer = SVGRasterizerRegistry.getRasterizer();
+			if (tempURL != null && rasterizer != null) {
+				try (InputStream in = getStream(tempURL)) {
+					if (rasterizer.isSVGFile(in) && supportsFlag) {
+						return true;
+					}
+				} catch (IOException e) {
+					return false;
+				}
+			}
+			return false;
+		}
 	}
 
 	private static long cumulativeTime;
@@ -139,12 +172,22 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	private static ImageData getImageData(String url, int zoom) {
 		URL tempURL = getURL(url);
 		if (tempURL != null) {
+			SVGRasterizer rasterizer = SVGRasterizerRegistry.getRasterizer();
+			if (rasterizer != null) {
+				try (InputStream in = getStream(tempURL)) {
+					if (rasterizer.isSVGFile(in)) {
+						return getImageData(tempURL, zoom);
+					}
+				} catch (IOException e) {
+					// ignore.
+				}
+			}
 			if (zoom == 100) {
-				return getImageData(tempURL);
+				return getImageData(tempURL, zoom);
 			}
 			URL xUrl = getxURL(tempURL, zoom);
 			if (xUrl != null) {
-				ImageData xdata = getImageData(xUrl);
+				ImageData xdata = getImageData(xUrl, zoom);
 				if (xdata != null) {
 					return xdata;
 				}
@@ -153,7 +196,24 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (xpath != null) {
 				URL xPathUrl = getURL(xpath);
 				if (xPathUrl != null) {
-					return getImageData(xPathUrl);
+					return getImageData(xPathUrl, zoom);
+				}
+			}
+		}
+		return null;
+	}
+
+	private static ImageData getCustomizedImageData(String url, int zoom, int flag) {
+		URL tempURL = getURL(url);
+		if (tempURL != null) {
+			SVGRasterizer rasterizer = SVGRasterizerRegistry.getRasterizer();
+			if (rasterizer != null) {
+				try (InputStream in = getStream(tempURL)) {
+					if (rasterizer.isSVGFile(in)) {
+						return getImageData(tempURL, zoom, flag);
+					}
+				} catch (IOException e) {
+					// ignore.
 				}
 			}
 		}
@@ -161,10 +221,18 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	}
 
 	private static ImageData getImageData(URL url) {
+		return getImageData(url, 0, SWT.IMAGE_COPY);
+	}
+
+	private static ImageData getImageData(URL url, int zoom) {
+		return getImageData(url, zoom, SWT.IMAGE_COPY);
+	}
+
+	private static ImageData getImageData(URL url, int zoom, int flag) {
 		ImageData result = null;
 		try (InputStream in = getStream(url)) {
 			if (in != null) {
-				result = new ImageData(in);
+				result = new ImageData(in, zoom, flag);
 			}
 		} catch (SWTException e) {
 			if (e.code != SWT.ERROR_INVALID_IMAGE) {
