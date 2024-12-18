@@ -1250,8 +1250,9 @@ public class LogView extends ViewPart implements LogListener {
 
 	private void asyncRefreshAndActivate(int severity) {
 		asyncRefresh();
-		if ((fActivateViewAction.isChecked()) || (severity >= IStatus.WARNING && fActivateViewWarnAction.isChecked())
-				|| (severity >= IStatus.ERROR && fActivateViewErrorAction.isChecked())) {
+		if ((fActivateViewAction != null && fActivateViewAction.isChecked()) 
+				|| (severity >= IStatus.WARNING && fActivateViewWarnAction != null && fActivateViewWarnAction.isChecked())
+				|| (severity >= IStatus.ERROR && fActivateViewErrorAction != null && fActivateViewErrorAction.isChecked())) {
 			mutualActivate.throttledExec();
 		}
 	}
