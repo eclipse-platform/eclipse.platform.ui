@@ -81,7 +81,8 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		MultiSelectionTest.class,
 		FindReplaceDocumentAdapterContentProposalProviderTest.class,
 		ProjectionViewerTest.class,
-		TestWhitespaceCharacterPainter.class
+		TestWhitespaceCharacterPainter.class,
+		TextMatcherTest.class
 })
 public class JFaceTextTestSuite {
 	// see @SuiteClasses

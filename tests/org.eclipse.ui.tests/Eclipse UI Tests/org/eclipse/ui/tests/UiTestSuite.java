@@ -35,9 +35,9 @@ import org.eclipse.ui.tests.dnd.DragTestSuite;
 import org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite;
 import org.eclipse.ui.tests.encoding.EncodingTestSuite;
 import org.eclipse.ui.tests.fieldassist.FieldAssistTestSuite;
+import org.eclipse.ui.tests.filteredtree.FilteredTableTests;
 import org.eclipse.ui.tests.filteredtree.FilteredTreeTests;
 import org.eclipse.ui.tests.filteredtree.PatternFilterTest;
-import org.eclipse.ui.tests.filteredtree.TextMatcherTest;
 import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
@@ -89,9 +89,9 @@ import org.junit.runners.Suite;
 	CommandsTestSuite.class,
 	ContextsTestSuite.class,
 	ConcurrencyTestSuite.class,
+	FilteredTableTests.class,
 	FilteredTreeTests.class,
 	PatternFilterTest.class,
-	TextMatcherTest.class,
 	StatusHandlingTestSuite.class,
 	MenusTestSuite.class,
 	QuickAccessTestSuite.class,
