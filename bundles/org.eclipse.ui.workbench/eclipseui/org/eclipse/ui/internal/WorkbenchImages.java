@@ -236,7 +236,6 @@ public/* final */class WorkbenchImages {
 		declareImage(ISharedImages.IMG_DEF_VIEW, PATH_EVIEW + "defaultview_misc.png", true); //$NON-NLS-1$
 
 		declareImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW, PATH_ELOCALTOOL + "close_view.png", true); //$NON-NLS-1$
-		declareImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW, PATH_ELOCALTOOL + "pin_view.png", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW, PATH_ELOCALTOOL + "min_view.png", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU, PATH_ELOCALTOOL + "view_menu.png", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_LCL_BUTTON_MENU, PATH_ELOCALTOOL + "button_menu.png", true); //$NON-NLS-1$
