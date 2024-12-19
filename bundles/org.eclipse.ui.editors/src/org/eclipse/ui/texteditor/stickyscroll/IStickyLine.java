@@ -11,12 +11,14 @@
  * Contributors:
  *     SAP SE - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.texteditor.stickyscroll;
+package org.eclipse.ui.texteditor.stickyscroll;
 
 import org.eclipse.swt.custom.StyleRange;
 
 /**
  * Representation of a sticky line.
+ * 
+ * since 3.20
  */
 public interface IStickyLine {
 

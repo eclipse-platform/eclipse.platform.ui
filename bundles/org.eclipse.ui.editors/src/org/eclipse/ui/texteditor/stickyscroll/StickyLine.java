@@ -11,7 +11,7 @@
  * Contributors:
  *     SAP SE - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.texteditor.stickyscroll;
+package org.eclipse.ui.texteditor.stickyscroll;
 
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -20,8 +20,10 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
- * Default implementation of {@link IStickyLine}. Information about the text and style ranges are
- * calculated from the given text widget.
+ * Default implementation of {@link IStickyLine}. Information about the text and
+ * style ranges are calculated from the given text widget.
+ * 
+ * since 3.20
  */
 public class StickyLine implements IStickyLine {
 
@@ -32,8 +34,8 @@ public class StickyLine implements IStickyLine {
 	protected ISourceViewer sourceViewer;
 
 	public StickyLine(int lineNumber, ISourceViewer sourceViewer) {
-		this.lineNumber= lineNumber;
-		this.sourceViewer= sourceViewer;
+		this.lineNumber = lineNumber;
+		this.sourceViewer = sourceViewer;
 	}
 
 	@Override
@@ -44,19 +46,19 @@ public class StickyLine implements IStickyLine {
 	@Override
 	public String getText() {
 		if (text == null) {
-			StyledText textWidget= sourceViewer.getTextWidget();
-			text= textWidget.getLine(getWidgetLineNumber());
+			StyledText textWidget = sourceViewer.getTextWidget();
+			text = textWidget.getLine(getWidgetLineNumber());
 		}
 		return text;
 	}
 
 	@Override
 	public StyleRange[] getStyleRanges() {
-		StyledText textWidget= sourceViewer.getTextWidget();
-		int offsetAtLine= textWidget.getOffsetAtLine(getWidgetLineNumber());
-		StyleRange[] styleRanges= textWidget.getStyleRanges(offsetAtLine, getText().length());
+		StyledText textWidget = sourceViewer.getTextWidget();
+		int offsetAtLine = textWidget.getOffsetAtLine(getWidgetLineNumber());
+		StyleRange[] styleRanges = textWidget.getStyleRanges(offsetAtLine, getText().length());
 		for (StyleRange styleRange : styleRanges) {
-			styleRange.start= styleRange.start - offsetAtLine;
+			styleRange.start = styleRange.start - offsetAtLine;
 		}
 		return styleRanges;
 	}
