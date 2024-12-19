@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -212,6 +213,7 @@ public abstract class UITestCase extends TestCase {
 	public final void tearDown() throws Exception {
 		String name = runningTest != null ? runningTest : this.getName();
 		trace(TestRunLogUtil.formatTestFinishedMessage(name));
+
 		prefMemento.resetPreferences();
 		doTearDown();
 
@@ -227,7 +229,27 @@ public abstract class UITestCase extends TestCase {
 		fWorkbench = null;
 		assertEquals("Test leaked modal shell: [" + String.join(", ", leakedModalShellTitles) + "]", 0,
 				leakedModalShellTitles.size());
+		runGcAndPrintMemoryUse(name);
 	}
+
+	public static void runGcAndPrintMemoryUse(String testName) {
+    	System.gc();
+    	System.runFinalization();
+    	System.gc();
+    	System.runFinalization();
+    	long nax = Runtime.getRuntime().maxMemory();
+    	long total = Runtime.getRuntime().totalMemory();
+		long free = Runtime.getRuntime().freeMemory();
+		long used = total - free;
+		System.out.print("\n#################################################");
+		System.out.print("\n" + testName);
+		System.out.print("\n########### Memory usage reported by JVM ########");
+		System.out.printf(Locale.GERMAN, "%n%,16d bytes max heap", nax);
+		System.out.printf(Locale.GERMAN, "%n%,16d bytes heap allocated", total);
+		System.out.printf(Locale.GERMAN, "%n%,16d bytes free heap", free);
+    	System.out.printf(Locale.GERMAN, "%n%,16d bytes used heap", used);
+    	System.out.println("\n#################################################\n");
+    }
 
 	/**
 	 * Tears down the fixture, for example, close a network connection.
