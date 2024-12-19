@@ -16,9 +16,9 @@ package org.eclipse.e4.ui.dialogs.filteredtree;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.ui.dialogs.textbundles.E4DialogMessages;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.AbstractFilteredStructuredViewer;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -26,12 +26,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -49,14 +45,7 @@ import org.eclipse.swt.widgets.TreeItem;
  *
  * @since 1.2
  */
-public class FilteredTree extends Composite {
-
-	/**
-	 * The filter text widget to be used by this tree. This value may be
-	 * <code>null</code> if there is no filter widget, or if the controls have
-	 * not yet been created.
-	 */
-	private Text filterText;
+public class FilteredTree extends AbstractFilteredStructuredViewer {
 
 	/**
 	 * The viewer for the filtered tree. This value should never be
@@ -65,33 +54,10 @@ public class FilteredTree extends Composite {
 	private TreeViewer treeViewer;
 
 	/**
-	 * The Composite on which the filter controls are created. This is used to
-	 * set the background color of the filter controls to match the surrounding
-	 * controls.
-	 */
-	private Composite filterComposite;
-
-	/**
 	 * The pattern filter for the tree. This value must not be <code>null</code>
 	 * .
 	 */
 	private PatternFilter patternFilter;
-
-	/**
-	 * The text to initially show in the filter text control.
-	 */
-	private String initialText = ""; //$NON-NLS-1$
-
-	/**
-	 * The job used to refresh the tree.
-	 */
-	private Job refreshJob;
-
-	/**
-	 * Whether or not to show the filter controls (text and clear button). The
-	 * default is to show these controls.
-	 */
-	private boolean showFilterControls;
 
 	private Composite treeComposite;
 
@@ -101,12 +67,6 @@ public class FilteredTree extends Composite {
 	 * nodes)
 	 */
 	private static final long SOFT_MAX_EXPAND_TIME = 200;
-
-	/**
-	 * Time delay after which the search is triggered, acting as a debounce
-	 * mechanism.
-	 */
-	private final long refreshJobDelayInMillis;
 
 	/**
 	 * Default time for refresh job delay in ms
@@ -124,8 +84,7 @@ public class FilteredTree extends Composite {
 	 * @since 1.5
 	 */
 	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter, long refreshDelayTime) {
-		super(parent, SWT.NONE);
-		this.refreshJobDelayInMillis = refreshDelayTime;
+		super(parent, SWT.NONE, refreshDelayTime);
 		init(treeStyle, filter);
 	}
 
@@ -148,8 +107,7 @@ public class FilteredTree extends Composite {
 	 * @see #init(int, PatternFilter)
 	 */
 	protected FilteredTree(Composite parent) {
-		super(parent, SWT.NONE);
-		this.refreshJobDelayInMillis = DEFAULT_REFRESH_TIME;
+		super(parent, SWT.NONE, DEFAULT_REFRESH_TIME);
 	}
 
 	/**
@@ -164,36 +122,17 @@ public class FilteredTree extends Composite {
 	 */
 	protected void init(int treeStyle, PatternFilter filter) {
 		patternFilter = filter;
+		init(treeStyle);
 		setShowFilterControls(true);
-		createControl(getParent(), treeStyle);
-		createRefreshJob();
 		setInitialText(E4DialogMessages.FilteredTree_FilterMessage);
-		setFont(getParent().getFont());
 	}
 
 	/**
 	 * Create the filtered tree's controls. Subclasses should override.
 	 */
+	@Override
 	protected void createControl(Composite parent, int treeStyle) {
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		setLayout(layout);
-		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		filterComposite = new Composite(this, SWT.NONE);
-
-		GridLayout filterLayout = new GridLayout();
-		filterLayout.marginHeight = 0;
-		filterLayout.marginWidth = 0;
-		filterComposite.setLayout(filterLayout);
-		filterComposite.setFont(parent.getFont());
-
-		createFilterControls(filterComposite);
-		GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-		filterComposite.setVisible(isShowFilterControls());
-		gridData.exclude = !isShowFilterControls();
-		filterComposite.setLayoutData(gridData);
+		super.createControl(parent, treeStyle);
 
 		treeComposite = new Composite(this, SWT.NONE);
 		GridLayout treeCompositeLayout = new GridLayout();
@@ -205,20 +144,6 @@ public class FilteredTree extends Composite {
 		createTreeControl(treeComposite, treeStyle);
 	}
 
-
-	/**
-	 * Create the filter controls. By default, a text and corresponding tool bar
-	 * button that clears the contents of the text is created. Subclasses may
-	 * override.
-	 *
-	 * @param parent
-	 *            parent <code>Composite</code> of the filter controls
-	 * @return the <code>Composite</code> that contains the filter controls
-	 */
-	protected Composite createFilterControls(Composite parent) {
-		createFilterText(parent);
-		return parent;
-	}
 
 	/**
 	 * Creates and set up the tree and tree viewer. This method calls
@@ -237,7 +162,6 @@ public class FilteredTree extends Composite {
 		treeViewer.setUseHashlookup(true);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		treeViewer.getControl().setLayoutData(data);
-		treeViewer.getControl().addDisposeListener(e -> refreshJob.cancel());
 		if (treeViewer instanceof NotifyingTreeViewer) {
 			patternFilter.setUseCache(true);
 		}
@@ -280,14 +204,6 @@ public class FilteredTree extends Composite {
 	}
 
 	/**
-	 * Create the refresh job for the receiver.
-	 */
-	private void createRefreshJob() {
-		refreshJob = doCreateRefreshJob();
-		refreshJob.setSystem(true);
-	}
-
-	/**
 	 * Creates a workbench job that will refresh the tree based on the current
 	 * filter text. Subclasses may override.
 	 *
@@ -295,6 +211,7 @@ public class FilteredTree extends Composite {
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	protected BasicUIJob doCreateRefreshJob() {
 		return new BasicUIJob("Refresh Filter", getDisplay()) {//$NON-NLS-1$
 			@Override
@@ -396,6 +313,7 @@ public class FilteredTree extends Composite {
 		};
 	}
 
+	@Deprecated(forRemoval = true, since = "2025-03")
 	protected void updateToolbar(boolean visible) {
 		// nothing to do
 	}
@@ -409,8 +327,9 @@ public class FilteredTree extends Composite {
 	 * @param parent
 	 *            <code>Composite</code> of the filter text
 	 */
+	@Override
 	protected void createFilterText(Composite parent) {
-		filterText = doCreateFilterText(parent);
+		super.createFilterText(parent);
 		filterText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
@@ -454,26 +373,6 @@ public class FilteredTree extends Composite {
 			}
 		});
 
-		filterText.addFocusListener(new FocusAdapter() {
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				if (filterText.getText().equals(initialText)) {
-					setFilterText(""); //$NON-NLS-1$
-					textChanged();
-				}
-			}
-		});
-
-		filterText.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				if (filterText.getText().equals(initialText)) {
-					clearText();
-				}
-			}
-		});
-
 		filterText.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -514,11 +413,6 @@ public class FilteredTree extends Composite {
 				}
 			}
 		});
-
-		filterText.addModifyListener(e -> textChanged());
-
-		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		filterText.setLayoutData(gridData);
 	}
 
 	/**
@@ -531,6 +425,7 @@ public class FilteredTree extends Composite {
 	 *
 	 * @since 3.3
 	 */
+	@Override
 	protected Text doCreateFilterText(Composite parent) {
 		return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL | SWT.ICON_SEARCH);
 	}
@@ -542,26 +437,13 @@ public class FilteredTree extends Composite {
 	/**
 	 * Update the receiver after the text has changed.
 	 */
+	@Override
 	protected void textChanged() {
 		narrowingDown = previousFilterText == null
 				|| previousFilterText.equals(E4DialogMessages.FilteredTree_FilterMessage)
 				|| getFilterString().startsWith(previousFilterText);
 		previousFilterText = getFilterString();
-		// cancel currently running job first, to prevent unnecessary redraw
-		refreshJob.cancel();
-		refreshJob.schedule(getRefreshJobDelay());
-	}
-
-	/**
-	 * Return the time delay that should be used when scheduling the filter
-	 * refresh job. Subclasses may override.
-	 *
-	 * @return a time delay in milliseconds before the job should run
-	 *
-	 * @since 3.5
-	 */
-	protected long getRefreshJobDelay() {
-		return refreshJobDelayInMillis;
+		super.textChanged();
 	}
 
 	/**
@@ -579,24 +461,6 @@ public class FilteredTree extends Composite {
 	}
 
 	/**
-	 * Clears the text in the filter text widget.
-	 */
-	protected void clearText() {
-		setFilterText(""); //$NON-NLS-1$
-		textChanged();
-	}
-
-	/**
-	 * Set the text in the filter control.
-	 */
-	protected void setFilterText(String string) {
-		if (filterText != null) {
-			filterText.setText(string);
-			selectAll();
-		}
-	}
-
-	/**
 	 * Returns the pattern filter used by this tree.
 	 *
 	 * @return The pattern filter; never <code>null</code>.
@@ -610,75 +474,9 @@ public class FilteredTree extends Composite {
 	 *
 	 * @return the tree viewer
 	 */
+	@Override
 	public TreeViewer getViewer() {
 		return treeViewer;
-	}
-
-	/**
-	 * Get the filter text for the receiver, if it was created. Otherwise return
-	 * <code>null</code>.
-	 *
-	 * @return the filter Text, or null if it was not created
-	 */
-	public Text getFilterControl() {
-		return filterText;
-	}
-
-	/**
-	 * Convenience method to return the text of the filter control. If the text
-	 * widget is not created, then null is returned.
-	 *
-	 * @return String in the text, or null if the text does not exist
-	 */
-	protected String getFilterString() {
-		return filterText != null ? filterText.getText() : null;
-	}
-
-	/**
-	 * Set the text that will be shown until the first focus. A default value is
-	 * provided, so this method only need be called if overriding the default
-	 * initial text is desired.
-	 *
-	 * @param text
-	 *            initial text to appear in text field
-	 */
-	public void setInitialText(String text) {
-		initialText = text;
-		if (filterText != null) {
-			filterText.setMessage(text);
-			if (filterText.isFocusControl()) {
-				setFilterText(initialText);
-				textChanged();
-			} else {
-				getDisplay().asyncExec(() -> {
-					if (!filterText.isDisposed() && filterText.isFocusControl()) {
-						setFilterText(initialText);
-						textChanged();
-					}
-				});
-			}
-		} else {
-			setFilterText(initialText);
-			textChanged();
-		}
-	}
-
-	/**
-	 * Select all text in the filter text field.
-	 */
-	protected void selectAll() {
-		if (filterText != null) {
-			filterText.selectAll();
-		}
-	}
-
-	/**
-	 * Get the initial text for the receiver.
-	 *
-	 * @return String
-	 */
-	protected String getInitialText() {
-		return initialText;
 	}
 
 	/**
@@ -720,6 +518,7 @@ public class FilteredTree extends Composite {
 		return null;
 	}
 
+	@Override
 	public boolean isShowFilterControls() {
 		return showFilterControls;
 	}
