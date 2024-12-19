@@ -294,15 +294,15 @@ public class WorkbenchWindowConfigurerTest {
 							}};
 					}
 
+					@SuppressWarnings("removal")
 					@Override
-					@SuppressWarnings("deprecation")
 					public Control createEmptyWindowContents(Composite parent) {
 						ensureThread();
 						return super.createEmptyWindowContents(parent);
 					}
 
+					@SuppressWarnings("removal")
 					@Override
-					@SuppressWarnings("deprecation")
 					public void createWindowContents(Shell shell) {
 						ensureThread();
 						super.createWindowContents(shell);
