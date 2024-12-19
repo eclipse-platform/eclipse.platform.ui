@@ -182,7 +182,8 @@ public class Snippet039SideEffectMigration {
 						return Status.OK_STATUS;
 					}), null);
 
-			IObservableList<ValidationStatusProvider> validationStatusProviders = bindingContext.getValidationStatusProviders();
+			IObservableList<ValidationStatusProvider> validationStatusProviders = bindingContext
+					.getValidationStatusProviders();
 			for (ValidationStatusProvider statusProvider : validationStatusProviders) {
 				ControlDecorationSupport.create(statusProvider, SWT.TOP | SWT.LEFT);
 			}
