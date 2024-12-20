@@ -14,11 +14,16 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.activitysupport.IActivityManagerProxy;
 import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * This item currently serves as a placeholder to determine the correct location
@@ -29,12 +34,17 @@ class DynamicContributionContributionItem extends ContributionItem {
 
 	private IMenuListener menuListener = IMenuManager::markDirty;
 
+	private static final String BUNDLE_CLASS_PREFIX = "bundleclass://"; //$NON-NLS-1$
+
+	IActivityManagerProxy activitySupportProxy;
+
 	/**
 	 * Create the item and associated model;
 	 */
 	public DynamicContributionContributionItem(MDynamicMenuContribution item) {
 		super(item.getElementId());
 		model = item;
+		initializeAcivitySupportProxy();
 	}
 
 	@Override
@@ -65,5 +75,35 @@ class DynamicContributionContributionItem extends ContributionItem {
 			menuMgr.addMenuListener(menuListener);
 		}
 		super.setParent(parent);
+	}
+
+	@Override
+	public boolean isVisible() {
+		if (this.activitySupportProxy != null) {
+			// Contribution URI has the scheme bundleclass://. Ex:
+			// bundleclass://org.eclipse.pde.spy.core/org.eclipse.pde.spy.core.SpyProcessor
+			String contributionURI = this.getModel().getContributionURI();
+			if (contributionURI.startsWith(BUNDLE_CLASS_PREFIX)) {
+				return activitySupportProxy
+						.isIdentifierEnabled(contributionURI.substring(BUNDLE_CLASS_PREFIX.length()));
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Initialize the Activity Support proxy from Platform Context
+	 */
+	private void initializeAcivitySupportProxy() {
+		BundleContext context = FrameworkUtil.getBundle(Platform.class).getBundleContext();
+		if (context != null) {
+			ServiceTracker<IActivityManagerProxy, IActivityManagerProxy> tracker = new ServiceTracker<>(context,
+					IActivityManagerProxy.class, null);
+			if (tracker != null) {
+				tracker.open();
+				this.activitySupportProxy = tracker.getService();
+				tracker.close();
+			}
+		}
 	}
 }
