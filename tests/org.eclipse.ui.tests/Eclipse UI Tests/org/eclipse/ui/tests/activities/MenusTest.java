@@ -29,10 +29,12 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class MenusTest {
@@ -41,6 +43,9 @@ public class MenusTest {
 	private IWorkbenchWindow window;
 	private IMenuService service;
 	private Set<String> enabledActivities;
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * @since 3.3
