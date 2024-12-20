@@ -16,7 +16,11 @@ package org.eclipse.e4.emf.xpath.test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
+import org.eclipse.e4.emf.xpath.JavaXPathFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
@@ -36,8 +40,21 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunWith(Parameterized.class)
 public class ExampleQueriesApplicationTest {
+
+	@Parameters
+	public static Collection<Object> data() {
+		return List.of(EcoreXPathContextFactory.newInstance(), JavaXPathFactory.newInstance());
+	}
+
+	@Parameter
+	public XPathContextFactory<EObject> xpathContextFactory;
 
 	private ResourceSet resourceSet;
 	private XPathContext xpathContext;
@@ -62,8 +79,7 @@ public class ExampleQueriesApplicationTest {
 
 		URI uri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/model/Application.e4xmi", true);
 		resource = resourceSet.getResource(uri, true);
-		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
-		xpathContext = f.newContext(resource.getContents().get(0));
+		xpathContext = xpathContextFactory.newContext(resource.getContents().get(0));
 	}
 
 	@After
