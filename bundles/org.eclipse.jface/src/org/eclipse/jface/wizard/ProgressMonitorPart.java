@@ -275,7 +275,7 @@ public class ProgressMonitorPart extends Composite implements
 				}
 			}));
 			final Image stopImage = ImageDescriptor.createFromFile(
-					ProgressMonitorPart.class, "images/stop.png").createImage(getDisplay()); //$NON-NLS-1$
+					ProgressMonitorPart.class, "images/stop.svg").createImage(getDisplay()); //$NON-NLS-1$
 			fToolBar.setCursor(this.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 			fStopButton.setImage(stopImage);
 			fStopButton.addDisposeListener(e -> {

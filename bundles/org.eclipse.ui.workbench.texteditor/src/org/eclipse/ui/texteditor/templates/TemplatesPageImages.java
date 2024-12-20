@@ -42,29 +42,29 @@ class TemplatesPageImages {
 
 	static final String PREFIX_OBJ= TextEditorPlugin.PLUGIN_ID + ".obj."; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_NEW= PREFIX_ELCL + "new_template.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_NEW = PREFIX_ELCL + "new_template.svg"; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_DELETE= PREFIX_ELCL + "delete_template.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_DELETE = PREFIX_ELCL + "delete_template.svg"; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_EDIT= PREFIX_ELCL + "edit_template.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_EDIT = PREFIX_ELCL + "edit_template.svg"; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_INSERT= PREFIX_ELCL + "insert_template.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_INSERT = PREFIX_ELCL + "insert_template.svg"; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_LINK= PREFIX_ELCL + "link_to_editor.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_LINK = PREFIX_ELCL + "link_to_editor.svg"; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_COLLAPSE_ALL= PREFIX_ELCL + "collapseall.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_COLLAPSE_ALL = PREFIX_ELCL + "collapseall.svg"; //$NON-NLS-1$
 
-	public static final String IMG_DLCL_TEMPLATE_DELETE= PREFIX_DLCL + "delete_template.png"; //$NON-NLS-1$
+	public static final String IMG_DLCL_TEMPLATE_DELETE = PREFIX_DLCL + "delete_template.png"; //$NON-NLS-1$
 
-	public static final String IMG_DLCL_TEMPLATE_EDIT= PREFIX_DLCL + "edit_template.png"; //$NON-NLS-1$
+	public static final String IMG_DLCL_TEMPLATE_EDIT = PREFIX_DLCL + "edit_template.png"; //$NON-NLS-1$
 
-	public static final String IMG_DLCL_TEMPLATE_INSERT= PREFIX_DLCL + "insert_template.png"; //$NON-NLS-1$
+	public static final String IMG_DLCL_TEMPLATE_INSERT = PREFIX_DLCL + "insert_template.png"; //$NON-NLS-1$
 
-	public static final String IMG_OBJ_PREVIEW= PREFIX_OBJ + "preview.png"; //$NON-NLS-1$
+	public static final String IMG_OBJ_PREVIEW = PREFIX_OBJ + "preview.svg"; //$NON-NLS-1$
 
-	public static final String IMG_OBJ_CONTEXT= PREFIX_OBJ + "context.png"; //$NON-NLS-1$
+	public static final String IMG_OBJ_CONTEXT = PREFIX_OBJ + "context.svg"; //$NON-NLS-1$
 
-	public static final String IMG_OBJ_TEMPLATE= PREFIX_OBJ + "template_obj.png"; //$NON-NLS-1$
+	public static final String IMG_OBJ_TEMPLATE = PREFIX_OBJ + "template_obj.svg"; //$NON-NLS-1$
 
 	/**
 	 * The image registry containing {@link Image images}.
@@ -86,19 +86,19 @@ class TemplatesPageImages {
 	 */
 	private static void declareImages() {
 		// Ant Editor images
-		declareRegistryImage(IMG_ELCL_TEMPLATE_NEW, ELCL + "new_template.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_ELCL_TEMPLATE_INSERT, ELCL + "insert_template.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_NEW, ELCL + "new_template.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_INSERT, ELCL + "insert_template.svg"); //$NON-NLS-1$
 		declareRegistryImage(IMG_DLCL_TEMPLATE_INSERT, DLCL + "insert_template.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_ELCL_TEMPLATE_DELETE, ELCL + "delete_template.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_DELETE, ELCL + "delete_template.svg"); //$NON-NLS-1$
 		declareRegistryImage(IMG_DLCL_TEMPLATE_DELETE, DLCL + "delete_template.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_ELCL_TEMPLATE_EDIT, ELCL + "edit_template.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_EDIT, ELCL + "edit_template.svg"); //$NON-NLS-1$
 		declareRegistryImage(IMG_DLCL_TEMPLATE_EDIT, DLCL + "edit_template.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_ELCL_TEMPLATE_LINK, ELCL + "link_to_editor.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_ELCL_TEMPLATE_COLLAPSE_ALL, ELCL + "collapseall.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_LINK, ELCL + "link_to_editor.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_COLLAPSE_ALL, ELCL + "collapseall.svg"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OBJ_PREVIEW, OBJ + "preview.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJ_CONTEXT, OBJ + "context.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJ_TEMPLATE, OBJ + "template_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJ_PREVIEW, OBJ + "preview.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJ_CONTEXT, OBJ + "context.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJ_TEMPLATE, OBJ + "template_obj.svg"); //$NON-NLS-1$
 	}
 
 	/**

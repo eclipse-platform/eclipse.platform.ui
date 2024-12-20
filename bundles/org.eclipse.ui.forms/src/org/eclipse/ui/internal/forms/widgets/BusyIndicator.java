@@ -179,7 +179,7 @@ public final class BusyIndicator extends Canvas {
 			imageCache = new Image[IMAGE_COUNT];
 		}
 		if (imageCache[index] == null){
-			ImageDescriptor descriptor = createImageDescriptor("$nl$/icons/progress/ani/" + (index + 1) + ".png"); //$NON-NLS-1$ //$NON-NLS-2$
+			ImageDescriptor descriptor = createImageDescriptor("$nl$/icons/progress/ani/" + (index + 1) + ".svg"); //$NON-NLS-1$ //$NON-NLS-2$
 			imageCache[index] = descriptor.createImage();
 		}
 		return imageCache[index];

@@ -43,7 +43,9 @@ Require-Capability: osgi.extender;
   filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))",
  osgi.service;
   filter:="(objectClass=org.osgi.service.event.EventAdmin)";
-  effective:="active"
+  effective:="active";
+ eclipse.swt;
+  filter:="(image.format=svg)"
 Automatic-Module-Name: org.eclipse.e4.ui.workbench
 Service-Component: OSGI-INF/org.eclipse.e4.ui.internal.LocaleChangeServiceContextFunction.xml,
  OSGI-INF/org.eclipse.e4.ui.internal.workbench.ExtensionTrackeContextFunction.xml,

@@ -239,9 +239,9 @@ public class ProgressAnimationItem extends AnimationItem implements
 			Display display = parent.getDisplay();
 			ImageTools imageTools = ImageTools.getInstance();
 
-			noneImage = imageTools.getImage("progress/progress_none.png", display); //$NON-NLS-1$
-			okImage = imageTools.getImage("progress/progress_ok.png", display); //$NON-NLS-1$
-			errorImage = imageTools.getImage("progress/progress_error.png", display); //$NON-NLS-1$
+			noneImage = imageTools.getImage("progress/progress_none.svg", display); //$NON-NLS-1$
+			okImage = imageTools.getImage("progress/progress_ok.svg", display); //$NON-NLS-1$
+			errorImage = imageTools.getImage("progress/progress_error.svg", display); //$NON-NLS-1$
 		}
 
 		top = new Composite(parent, SWT.NULL);

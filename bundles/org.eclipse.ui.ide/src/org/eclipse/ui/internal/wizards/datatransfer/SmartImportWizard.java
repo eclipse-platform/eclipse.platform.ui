@@ -151,7 +151,7 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 			setDialogSettings(dialogSettings);
 		}
 		setWindowTitle(DataTransferMessages.SmartImportWizardPage_importProjectsInFolderTitle);
-		setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newprj_wiz.png")); //$NON-NLS-1$
+		setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newprj_wiz.svg")); //$NON-NLS-1$
 	}
 
 	/**

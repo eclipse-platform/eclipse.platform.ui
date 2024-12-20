@@ -731,81 +731,90 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC, PATH_ETOOL
-						+ "build_exec.png", false); //$NON-NLS-1$
+						+ "build_exec.svg", //$NON-NLS-1$
+				false);
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC_HOVER,
-				PATH_ETOOL + "build_exec.png", false); //$NON-NLS-1$
+				PATH_ETOOL + "build_exec.svg", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC_DISABLED,
 				PATH_DTOOL + "build_exec.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_SEARCH_SRC, PATH_ETOOL
-						+ "search_src.png", false); //$NON-NLS-1$
+						+ "search_src.svg", //$NON-NLS-1$
+				false);
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_SEARCH_SRC_HOVER,
-				PATH_ETOOL + "search_src.png", false); //$NON-NLS-1$
+				PATH_ETOOL + "search_src.svg", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_SEARCH_SRC_DISABLED,
 				PATH_DTOOL + "search_src.png", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_NEXT_NAV, PATH_ETOOL
-						+ "next_nav.png", false); //$NON-NLS-1$
+						+ "next_nav.svg", //$NON-NLS-1$
+				false);
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PREVIOUS_NAV, PATH_ETOOL
-						+ "prev_nav.png", false); //$NON-NLS-1$
+						+ "prev_nav.svg", //$NON-NLS-1$
+				false);
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_NEWPRJ_WIZ, PATH_WIZBAN
-						+ "newprj_wiz.png", false); //$NON-NLS-1$
+						+ "newprj_wiz.svg", //$NON-NLS-1$
+				false);
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_NEWFOLDER_WIZ,
-				PATH_WIZBAN + "newfolder_wiz.png", false); //$NON-NLS-1$
+				PATH_WIZBAN + "newfolder_wiz.svg", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_NEWFILE_WIZ, PATH_WIZBAN
-						+ "newfile_wiz.png", false); //$NON-NLS-1$
+						+ "newfile_wiz.svg", //$NON-NLS-1$
+				false);
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTDIR_WIZ,
-				PATH_WIZBAN + "importdir_wiz.png", false); //$NON-NLS-1$
+				PATH_WIZBAN + "importdir_wiz.svg", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_IMPORTZIP_WIZ,
-				PATH_WIZBAN + "importzip_wiz.png", false); //$NON-NLS-1$
+				PATH_WIZBAN + "importzip_wiz.svg", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTDIR_WIZ,
-				PATH_WIZBAN + "exportdir_wiz.png", false); //$NON-NLS-1$
+				PATH_WIZBAN + "exportdir_wiz.svg", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_EXPORTZIP_WIZ,
-				PATH_WIZBAN + "exportzip_wiz.png", false); //$NON-NLS-1$
+				PATH_WIZBAN + "exportzip_wiz.svg", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ,
-				PATH_WIZBAN + "workset_wiz.png", false); //$NON-NLS-1$
+				PATH_WIZBAN + "workset_wiz.svg", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_DLGBAN_SAVEAS_DLG, PATH_WIZBAN
-						+ "saveas_wiz.png", false); //$NON-NLS-1$
+						+ "saveas_wiz.svg", //$NON-NLS-1$
+				false);
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG, PATH_WIZBAN
-						+ "quick_fix.png", false); //$NON-NLS-1$
+						+ "quick_fix.svg", //$NON-NLS-1$
+				false);
 
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJ_PROJECT,
-				PATH_OBJECT + "prj_obj.png", true); //$NON-NLS-1$
+				PATH_OBJECT + "prj_obj.svg", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED, PATH_OBJECT
-						+ "cprj_obj.png", true); //$NON-NLS-1$
+						+ "cprj_obj.svg", //$NON-NLS-1$
+				true);
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OPEN_MARKER,
-				PATH_ELOCALTOOL + "gotoobj_tsk.png", true); //$NON-NLS-1$
+				PATH_ELOCALTOOL + "gotoobj_tsk.svg", true); //$NON-NLS-1$
 
 
 		// Quick fix icons
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED,
-				PATH_ELOCALTOOL + "smartmode_co.png", true); //$NON-NLS-1$
+				PATH_ELOCALTOOL + "smartmode_co.svg", true); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_DLCL_QUICK_FIX_DISABLED,
@@ -813,88 +822,96 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_WARNING,
-				PATH_OBJECT + "quickfix_warning_obj.png", true); //$NON-NLS-1$
+				PATH_OBJECT + "quickfix_warning_obj.svg", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_ERROR,
-				PATH_OBJECT + "quickfix_error_obj.png", true); //$NON-NLS-1$
+				PATH_OBJECT + "quickfix_error_obj.svg", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_INFO,
-				PATH_OBJECT + "quickfix_info_obj.png", true); //$NON-NLS-1$
+				PATH_OBJECT + "quickfix_info_obj.svg", true); //$NON-NLS-1$
 
 
 		// task objects
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_HPRIO_TSK,
-		// PATH_OBJECT+"hprio_tsk.png");
+		// PATH_OBJECT+"hprio_tsk.svg");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_MPRIO_TSK,
-		// PATH_OBJECT+"mprio_tsk.png");
+		// PATH_OBJECT+"mprio_tsk.svg");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_LPRIO_TSK,
-		// PATH_OBJECT+"lprio_tsk.png");
+		// PATH_OBJECT+"lprio_tsk.svg");
 
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJS_TASK_TSK,
-				PATH_OBJECT + "taskmrk_tsk.png", true); //$NON-NLS-1$
+				PATH_OBJECT + "taskmrk_tsk.svg", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJS_BKMRK_TSK,
-				PATH_OBJECT + "bkmrk_tsk.png", true); //$NON-NLS-1$
+				PATH_OBJECT + "bkmrk_tsk.svg", true); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_COMPLETE_TSK, PATH_OBJECT
-						+ "complete_tsk.png", true); //$NON-NLS-1$
+						+ "complete_tsk.svg", //$NON-NLS-1$
+				true);
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_INCOMPLETE_TSK, PATH_OBJECT
-						+ "incomplete_tsk.png", true); //$NON-NLS-1$
+						+ "incomplete_tsk.svg", //$NON-NLS-1$
+				true);
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_ITEM, PATH_OBJECT
-						+ "welcome_item.png", true); //$NON-NLS-1$
+						+ "welcome_item.svg", //$NON-NLS-1$
+				true);
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_WELCOME_BANNER, PATH_OBJECT
-						+ "welcome_banner.png", true); //$NON-NLS-1$
+						+ "welcome_banner.svg", //$NON-NLS-1$
+				true);
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_ERROR_PATH, PATH_OBJECT
-						+ "error_tsk.png", true); //$NON-NLS-1$
+						+ "error_tsk.svg", //$NON-NLS-1$
+				true);
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_WARNING_PATH, PATH_OBJECT
-						+ "warn_tsk.png", true); //$NON-NLS-1$
+						+ "warn_tsk.svg", //$NON-NLS-1$
+				true);
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_INFO_PATH, PATH_OBJECT
-						+ "info_tsk.png", true); //$NON-NLS-1$
+						+ "info_tsk.svg", //$NON-NLS-1$
+				true);
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_LCL_FLAT_LAYOUT, PATH_ELOCALTOOL
-						+ "flatLayout.png", true); //$NON-NLS-1$
+						+ "flatLayout.svg", //$NON-NLS-1$
+				true);
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_LCL_HIERARCHICAL_LAYOUT,
-				PATH_ELOCALTOOL + "hierarchicalLayout.png", true); //$NON-NLS-1$
+				PATH_ELOCALTOOL + "hierarchicalLayout.svg", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEM_CATEGORY,
-				PATH_ETOOL + "problem_category.png", true); //$NON-NLS-1$
+				PATH_ETOOL + "problem_category.svg", true); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW,
-				PATH_EVIEW + "problems_view.png", true); //$NON-NLS-1$
+				PATH_EVIEW + "problems_view.svg", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW_ERROR,
-				PATH_EVIEW + "problems_view_error.png", true); //$NON-NLS-1$
+				PATH_EVIEW + "problems_view_error.svg", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW_WARNING,
-				PATH_EVIEW + "problems_view_warning.png", true); //$NON-NLS-1$
+				PATH_EVIEW + "problems_view_warning.svg", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW_INFO,
 				PATH_EVIEW + "problems_view_info.png", true); //$NON-NLS-1$
 
 		// synchronization indicator objects
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_WBET_STAT,
-		// PATH_OVERLAY+"wbet_stat.png");
+		// PATH_OVERLAY+"wbet_stat.svg");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_SBET_STAT,
-		// PATH_OVERLAY+"sbet_stat.png");
+		// PATH_OVERLAY+"sbet_stat.svg");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_CONFLICT_STAT,
-		// PATH_OVERLAY+"conflict_stat.png");
+		// PATH_OVERLAY+"conflict_stat.svg");
 
 		// content locality indicator objects
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_NOTLOCAL_STAT,
-		// PATH_STAT+"notlocal_stat.png");
+		// PATH_STAT+"notlocal_stat.svg");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_LOCAL_STAT,
-		// PATH_STAT+"local_stat.png");
+		// PATH_STAT+"local_stat.svg");
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_FILLLOCAL_STAT,
-		// PATH_STAT+"filllocal_stat.png");
+		// PATH_STAT+"filllocal_stat.svg");
 	}
 
 	/**

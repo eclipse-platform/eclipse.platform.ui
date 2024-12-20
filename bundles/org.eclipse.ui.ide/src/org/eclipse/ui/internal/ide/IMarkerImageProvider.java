@@ -17,30 +17,33 @@ package org.eclipse.ui.internal.ide;
 import org.eclipse.core.resources.IMarker;
 
 /**
- * Clients should implement this interface when creating an
- * extension to define images for marker dynamically.
+ * Clients should implement this interface when creating an extension to define
+ * images for marker dynamically.
  * <p>
- * The name of the class should be specified in the extension contributed
- * to the workbench's maker image provider extension point
- * (named <code>"org.eclipse.ui.makerImageProvider"</code>).
- * For example, the plug-in's XML markup might contain:
+ * The name of the class should be specified in the extension contributed to the
+ * workbench's maker image provider extension point (named
+ * <code>"org.eclipse.ui.makerImageProvider"</code>). For example, the plug-in's
+ * XML markup might contain:
  * </p>
+ *
  * <pre>
  * &lt;extension point="org.eclipse.ui.makerImageProvider"&gt;
  *      &lt;imageprovider
  *		   id="com.example.myplugin.myprofiderID"
  *         makertype="com.example.myMarkerType"
- *         icon="icons/basic/view16/myimage.png"/&gt;
+ *         icon="icons/basic/view16/myimage.svg"/&gt;
  * &lt;/extension&gt;
  * </pre>
  * <p>
  * It can also define the image provider using the tag <code>class</code>
  * instead of icon.
  * </p>
- * Either the image path specified by the tag <code>icon</code> or
- * the path returned from <code>getImagePath</code> will be used
- * to create the image when the following code is executed:
- * <p><code>myMarker.getAdapter(IWorkbenchAdapter).getImageDescriptor(myMarker);</code></p>
+ * Either the image path specified by the tag <code>icon</code> or the path
+ * returned from <code>getImagePath</code> will be used to create the image when
+ * the following code is executed:
+ * <p>
+ * <code>myMarker.getAdapter(IWorkbenchAdapter).getImageDescriptor(myMarker);</code>
+ * </p>
  */
 public interface IMarkerImageProvider {
 	/**

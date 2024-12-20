@@ -244,7 +244,7 @@ public class ProgressView extends ViewPart {
 			}
 		};
 		clearAllAction.setToolTipText(ProgressMessages.NewProgressView_RemoveAllJobsToolTip);
-		ImageDescriptor id = WorkbenchImages.getWorkbenchImageDescriptor("/elcl16/progress_remall.png"); //$NON-NLS-1$
+		ImageDescriptor id = WorkbenchImages.getWorkbenchImageDescriptor("/elcl16/progress_remall.svg"); //$NON-NLS-1$
 		if (id != null) {
 			clearAllAction.setImageDescriptor(id);
 		}
