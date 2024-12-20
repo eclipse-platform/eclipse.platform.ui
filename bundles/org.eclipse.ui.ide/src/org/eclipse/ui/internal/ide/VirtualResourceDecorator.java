@@ -35,7 +35,7 @@ public class VirtualResourceDecorator implements ILightweightLabelDecorator {
 	static {
 		VIRTUAL_FOLDER = ResourceLocator.imageDescriptorFromBundle(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/ovr16/virt_ovr.png"); //$NON-NLS-1$
+				"$nl$/icons/full/ovr16/virt_ovr.svg"); //$NON-NLS-1$
 	}
 
 	/**

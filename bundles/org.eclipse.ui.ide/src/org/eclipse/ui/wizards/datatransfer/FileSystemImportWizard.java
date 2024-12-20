@@ -93,7 +93,7 @@ public class FileSystemImportWizard extends Wizard implements IImportWizard {
 		}
 
 		setWindowTitle(DataTransferMessages.DataTransfer_importTitle);
-		setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importdir_wiz.png"));//$NON-NLS-1$
+		setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importdir_wiz.svg"));//$NON-NLS-1$
 		setNeedsProgressMonitor(true);
 	}
 
