@@ -17,7 +17,6 @@ package org.eclipse.jface.examples.databinding.model;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class SimpleModel {
 	public SimpleModel() {
 		// Add some sample data to our personList...

@@ -75,11 +75,10 @@ public class WorkQueue {
 	/**
 	 * Schedules some work to happen in the UI thread as soon as possible. If
 	 * possible, the work will happen before the next control redraws. The given
-	 * runnable will only be run once. Has no effect if this runnable has
-	 * already been queued for execution.
+	 * runnable will only be run once. Has no effect if this runnable has already
+	 * been queued for execution.
 	 *
-	 * @param work
-	 *            runnable to execute
+	 * @param work runnable to execute
 	 */
 	public void runOnce(Runnable work) {
 		synchronized (pendingWork) {
@@ -99,8 +98,7 @@ public class WorkQueue {
 	 * runOnce, calling asyncExec twice with the same runnable will cause that
 	 * runnable to run twice.
 	 *
-	 * @param work
-	 *            runnable to execute
+	 * @param work runnable to execute
 	 */
 	public void asyncExec(Runnable work) {
 		synchronized (pendingWork) {
@@ -122,11 +120,10 @@ public class WorkQueue {
 	}
 
 	/**
-	 * Cancels a previously-scheduled runnable. Has no effect if the given
-	 * runnable was not previously scheduled or has already executed.
+	 * Cancels a previously-scheduled runnable. Has no effect if the given runnable
+	 * was not previously scheduled or has already executed.
 	 *
-	 * @param toCancel
-	 *            runnable to cancel
+	 * @param toCancel runnable to cancel
 	 */
 	public void cancelExec(Runnable toCancel) {
 		synchronized (pendingWork) {
