@@ -134,7 +134,9 @@ Import-Package: com.ibm.icu.util,
  org.xml.sax
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Capability: osgi.extender;
-  filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))"
+   filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))";
+  eclipse.swt;
+   filter:="(image.format=svg)"
 Automatic-Module-Name: org.eclipse.ui.workbench
 Service-Component: OSGI-INF/org.eclipse.ui.internal.BindingToModelProcessor.xml,
  OSGI-INF/org.eclipse.ui.internal.CommandToModelProcessor.xml,

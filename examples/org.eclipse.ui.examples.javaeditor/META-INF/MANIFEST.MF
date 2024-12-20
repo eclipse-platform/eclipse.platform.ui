@@ -22,3 +22,4 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.ui.examples.javaeditor
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"

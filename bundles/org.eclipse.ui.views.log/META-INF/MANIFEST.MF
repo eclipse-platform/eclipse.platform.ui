@@ -15,3 +15,4 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.internal.views.log;x-friends:="org.eclipse.pde.ui"
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.ui.views.log
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"

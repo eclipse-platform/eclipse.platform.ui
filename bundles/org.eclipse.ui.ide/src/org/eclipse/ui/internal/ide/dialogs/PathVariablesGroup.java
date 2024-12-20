@@ -232,7 +232,7 @@ public class PathVariablesGroup {
 		if (imageUnknown == null) {
 			ResourceLocator.imageDescriptorFromBundle(
 							IDEWorkbenchPlugin.IDE_WORKBENCH,
-					"$nl$/icons/full/obj16/warning.png").ifPresent(d -> imageUnknown = d.createImage()); //$NON-NLS-1$
+					"$nl$/icons/full/obj16/warning.svg").ifPresent(d -> imageUnknown = d.createImage()); //$NON-NLS-1$
 		}
 		initializeDialogUnits(parent);
 		shell = parent.getShell();
