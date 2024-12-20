@@ -89,7 +89,7 @@ public class HTMLPrinter {
 	 * @return the string with escaped characters
 	 *
 	 * @see #convertToHTMLContentWithWhitespace(String) for use in browsers
-	 * @see #addPreFormatted(StringBuilder, String) for rendering with an {@link HTML2TextReader}
+	 * @see #addPreFormatted(StringBuilder, String) for rendering with an HTML2TextReader
 	 */
 	public static String convertToHTMLContent(String content) {
 		return HTMLBuilder.convertToHTMLContent(content);
