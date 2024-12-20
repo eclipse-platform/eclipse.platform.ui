@@ -8,13 +8,13 @@
             allowMultiple="true"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.properties.PropertySheet"
-            icon="$nl$/icons/full/eview16/prop_ps.png"
+            icon="$nl$/icons/full/eview16/prop_ps.svg"
             id="org.eclipse.ui.views.PropertySheet"
             name="%Views.PropertySheet">
       </view>
       <view
             name="%Views.ContentOutline"
-            icon="$nl$/icons/full/eview16/outline_co.png"
+            icon="$nl$/icons/full/eview16/outline_co.svg"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.contentoutline.ContentOutline"
             id="org.eclipse.ui.views.ContentOutline">
@@ -26,7 +26,7 @@
 				locationURI="popup:org.eclipse.ui.menus.showInMenu">
 			<command
 				commandId="org.eclipse.ui.views.properties.NewPropertySheetCommand"
-				icon="platform:/plugin/org.eclipse.ui.views/icons/full/eview16/prop_ps.png"
+				icon="platform:/plugin/org.eclipse.ui.views/icons/full/eview16/prop_ps.svg"
 				label="%Views.PropertySheet"
 				style="push">
 	        </command>
@@ -35,7 +35,7 @@
         locationURI="menu:org.eclipse.ui.views.PropertySheet">
      <command
            commandId="org.eclipse.ui.views.properties.NewPropertySheetCommand"
-           icon="icons/full/elcl16/new.png"
+           icon="icons/full/elcl16/new.svg"
            label="%Views.NewPropertySheet"
            style="push">
      </command>
