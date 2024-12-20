@@ -23,3 +23,4 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.e4.ui.progress
 Service-Component: OSGI-INF/org.eclipse.e4.ui.progress.internal.ProgressServiceCreationFunction.xml
 Automatic-Module-Name: org.eclipse.e4.ui.progress
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"

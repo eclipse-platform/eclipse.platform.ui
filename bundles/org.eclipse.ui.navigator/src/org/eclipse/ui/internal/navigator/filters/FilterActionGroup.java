@@ -141,7 +141,7 @@ public class FilterActionGroup extends ActionGroup implements IMementoAware {
 				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG);
 		if (!hideAvailableCustomizationsDialog) {
 			selectFiltersAction = new SelectFiltersAction(commonViewer, this);
-			String imageFilePath = "icons/full/elcl16/filter_ps.png"; //$NON-NLS-1$
+			String imageFilePath = "icons/full/elcl16/filter_ps.svg"; //$NON-NLS-1$
 			ResourceLocator.imageDescriptorFromBundle(getClass(), imageFilePath).ifPresent(d -> {
 				selectFiltersAction.setImageDescriptor(d);
 				selectFiltersAction.setHoverImageDescriptor(d);
