@@ -77,10 +77,14 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 
 	@Override
 	public int getHeight() {
-		return hasAtLeastOneResolvedMiningNotEmpty() ? getMultilineHeight() : 0;
+		return hasAtLeastOneResolvedMiningNotEmpty() ? getMultilineHeight(null) : 0;
 	}
 
-	private int getMultilineHeight() {
+	public int getHeight(GC gc) {
+		return hasAtLeastOneResolvedMiningNotEmpty() ? getMultilineHeight(gc) : 0;
+	}
+
+	private int getMultilineHeight(GC gc) {
 		int numLinesOfAllMinings= 0;
 		for (ICodeMining mining : fMinings) {
 			String label= mining.getLabel();
@@ -94,7 +98,17 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		}
 		numLinesOfAllMinings++;
 		StyledText styledText= super.getTextWidget();
-		return numLinesOfAllMinings * (styledText.getLineHeight() + styledText.getLineSpacing());
+		int lineHeight;
+		if (gc != null) {
+			// styledText.getLineHeight() returns 14 pixels for font "Consolas" size 9 on windows
+			// gc.textExtent() for italic character "f" returns 15 pixels
+			Point ext= gc.textExtent("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"); //$NON-NLS-1$
+			lineHeight= ext.y;
+		} else {
+			lineHeight= styledText.getLineHeight();
+		}
+		int result= numLinesOfAllMinings * (lineHeight + styledText.getLineSpacing());
+		return result;
 	}
 
 	/**
