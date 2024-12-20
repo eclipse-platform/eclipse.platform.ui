@@ -121,7 +121,7 @@ public class HeapStatus extends Composite {
 		canvas = new Canvas(this, SWT.NONE);
 		canvas.setToolTipText(WorkbenchMessages.HeapStatus_buttonToolTip);
 
-		ImageDescriptor imageDesc = WorkbenchImages.getWorkbenchImageDescriptor("elcl16/trash.png"); //$NON-NLS-1$
+		ImageDescriptor imageDesc = WorkbenchImages.getWorkbenchImageDescriptor("elcl16/trash.svg"); //$NON-NLS-1$
 		Display display = getDisplay();
 		gcImage = imageDesc.createImage();
 		if (gcImage != null) {
