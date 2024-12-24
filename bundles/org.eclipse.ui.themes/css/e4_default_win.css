@@ -165,7 +165,7 @@ CTabFolder Canvas {
 }
 
 .MPartStack{
-	swt-selected-tab-highlight: '#org-eclipse-ui-workbench-SECONDARY_BACKGROUND';
+	swt-selected-tab-highlight: #8a8a8a;
 	swt-selected-highlight-top: false;
 }
 
