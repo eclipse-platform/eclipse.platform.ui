@@ -10,9 +10,12 @@
 
   Contributors:
      Pivotal Inc - Initial API and implementation
+     Jozef Tomek - text viewers extension
 -->
 <?eclipse version="3.4"?>
 <plugin>
+
+   <extension-point id="textViewers" name="%textViewers" schema="schema/textViewers.exsd"/>
 
    <extension point="org.eclipse.ui.commands">
       <category
@@ -116,4 +119,16 @@
       </computer>
    </extension>
 
+   <extension point="org.eclipse.text.quicksearch.textViewers">
+      <viewer
+            class="org.eclipse.text.quicksearch.internal.ui.DefaultSourceViewerCreator"
+            icon="icons/full/obj16/file_obj.png"
+            id="org.eclipse.text.quicksearch.DefaultSourceViewer"
+            label="%defaultSourceViewer"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.core.runtime.text"
+            viewerId="org.eclipse.text.quicksearch.DefaultSourceViewer">
+      </contentTypeBinding>
+</extension> 
+   
 </plugin>

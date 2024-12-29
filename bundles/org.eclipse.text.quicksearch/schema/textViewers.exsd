@@ -1,0 +1,236 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.text.quicksearch" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.text.quicksearch" id="textViewers" name="Search Results Text Viewers"/>
+      </appinfo>
+      <documentation>
+         This extension point allows a plug-in to register text viewers for specific types of content in which quick search matches were found.
+Since viewers don&apos;t have a default constructor, the extension point must implement the factory interface for viewers &lt;samp&gt;org.eclipse.text.quicksearch.ITextViewerCreator&lt;/samp&gt; that then creates viewers wrapped by implementation of &lt;samp&gt;org.eclipse.text.quicksearch.ITextViewerCreator.ITextViewerHandle&lt;/samp&gt; providing methods necessary for presenting quick search results.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="viewer" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contentTypeBinding" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="viewer">
+      <annotation>
+         <appinfo>
+            <meta.element labelAttribute="label" icon="icon"/>
+         </appinfo>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used to reference the viewer
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of a class that implements a factory for the 
+text viewer handle and implements &lt;samp&gt;org.eclipse.text.quicksearch.ITextViewerCreator&lt;/samp&gt;
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.text.quicksearch.ITextViewerCreator"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a relative name of the icon that will be used in the UI to present this viewer.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="extensions" type="string">
+            <annotation>
+               <documentation>
+                  an optional comma separated list of file extensions e.g. &quot;java, html&quot;. If not defined, some &lt;code&gt;contentTypeBinding&lt;/code&gt; must be defined
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable label that will be used in the UI for this viewer.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="linkedEditor" type="string">
+            <annotation>
+               <documentation>
+                  Editor id to consider while searching for a viewer matching a content type. 
+If the specified &quot;linked&quot; editor has content type associations, they will be also considered as possible bindings for this viewer. This is useful in cases where viewer supports same content types as &quot;linked&quot; editor (like in generic editor).
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors/editor/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contentTypeBinding">
+      <annotation>
+         <appinfo>
+            <meta.element labelAttribute="contentTypeId"/>
+         </appinfo>
+         <documentation>
+            A &lt;code&gt;contentTypeBinding&lt;/code&gt; binds a text viewer to a content type. If no binding is defined, &lt;code&gt;viewer&lt;/code&gt; needs to declare &lt;code&gt;extensions&lt;/code&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="contentTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of a content type defined using the &lt;code&gt;org.eclipse.core.contenttype.contentTypes&lt;/code&gt; extension point.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="viewerId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of a text viewer defined using the &lt;code&gt;viewer&lt;/code&gt; element of this extension point (i.e. &lt;code&gt;org.eclipse.text.quicksearch.DefaultSourceViewer&lt;/code&gt;)
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.text.quicksearch.textViewers/viewer/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         1.3
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         The following is an example of a text viewer for text content type:
+&lt;p&gt;
+&lt;pre&gt; 
+&lt;extension point=&quot;org.eclipse.text.quicksearch.textViewers&quot;&gt;
+    &lt;viewer
+        id=&quot;org.eclipse.text.quicksearch.DefaultSourceViewer&quot;
+        class=&quot;org.eclipse.text.quicksearch.internal.ui.DefaultSourceViewerCreator&quot;/&gt;
+    &lt;contentTypeBinding
+        contentTypeId=&quot;org.eclipse.core.runtime.text&quot;
+        sourceViewerId=&quot;org.eclipse.text.quicksearch.DefaultSourceViewer&quot;&gt;
+    &lt;/contentTypeBinding&gt;
+&lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+The following is an example of a text viewer for text content type &amp; content types for which referenced editor is registered:
+&lt;p&gt;
+&lt;pre&gt; 
+&lt;extension point=&quot;org.eclipse.text.quicksearch.textViewers&quot;&gt;
+    &lt;viewer
+        id=&quot;org.eclipse.ui.genericeditor.quicksearch.GenericEditorViewer&quot;
+        class=&quot;org.eclipse.ui.internal.genericeditor.quicksearch.GenericEditorViewerCreator&quot;
+        linkedEditor=&quot;org.eclipse.ui.genericeditor.GenericEditor&quot;/&gt;
+    &lt;contentTypeBinding
+        contentTypeId=&quot;org.eclipse.core.runtime.text&quot;
+        sourceViewerId=&quot;org.eclipse.ui.genericeditor.quicksearch.GenericEditorViewer&quot;&gt;
+    &lt;/contentTypeBinding&gt;
+&lt;/extension&gt;                                                                                  
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiInfo"/>
+      </appinfo>
+      <documentation>
+         The contributed class must implement &lt;code&gt;org.eclipse.text.quicksearch.ITextViewerCreator&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         The Quick Search plugin provides &lt;code&gt;org.eclipse.text.quicksearch.internal.ui.DefaultSourceViewerCreator&lt;/code&gt; supplying default text viewer with no syntax coloring.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2025 Contributors to the Eclipse Foundation&lt;br&gt;
+
+See the NOTICE file(s) distributed with this work for additional
+information regarding copyright ownership.
+
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License 2.0 which is available at
+&lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-2.0.html&lt;/a&gt;
+
+SPDX-License-Identifier: EPL-2.0
+
+Contributors:
+    Jozef Tomek - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>

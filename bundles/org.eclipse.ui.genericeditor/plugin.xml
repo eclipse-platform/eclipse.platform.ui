@@ -14,6 +14,7 @@
       Sopot Cela & Mickael Istria (Red Hat Inc). -initial implementation
       Lucas Bullen (Red Hat Inc.) - Bug 508829, 521382
       Simon Scholz <simon.scholz@vogella.com> - Bug 527830
+      Jozef Tomek - Quick Search text viewers extension
 -->
 <plugin>
    <extension-point id="reconcilers" name="%ExtPoint.reconciliers" schema="schema/reconcilers.exsd"/>
@@ -284,5 +285,18 @@
             id="org.eclipse.ui.genericeditor.GenericTextEditor"
             name="%PreferencePages.GenericTextEditors">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.text.quicksearch.textViewers"> 
+      <viewer
+            class="org.eclipse.ui.internal.genericeditor.quicksearch.GenericEditorViewerCreator"
+            icon="icons/full/obj16/generic_editor.png"
+            id="org.eclipse.ui.genericeditor.quicksearch.GenericEditorViewer"
+            label="%ExtPoint.quicksearchSourceViewer"
+            linkedEditor="org.eclipse.ui.genericeditor.GenericEditor"/> 
+      <contentTypeBinding
+            contentTypeId="org.eclipse.core.runtime.text"
+            viewerId="org.eclipse.ui.genericeditor.quicksearch.GenericEditorViewer">
+      </contentTypeBinding>
    </extension>
 </plugin>
