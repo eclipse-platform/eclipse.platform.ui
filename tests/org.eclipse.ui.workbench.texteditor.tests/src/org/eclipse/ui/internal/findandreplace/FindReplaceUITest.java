@@ -212,17 +212,25 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 	@Test
 	public void testRegExSearch() {
 		initializeTextViewerWithFindReplaceUI("abc");
-		dialog.select(SearchOptions.REGEX);
+		dialog.select(SearchOptions.INCREMENTAL);
 		dialog.setFindText("(a|bc)");
+		dialog.select(SearchOptions.REGEX);
 
 		IFindReplaceTarget target= getFindReplaceTarget();
-		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(1, (target.getSelection()).y);
 
 		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
 		assertEquals(1, (target.getSelection()).x);
 		assertEquals(2, (target.getSelection()).y);
+
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+		assertEquals(0, (target.getSelection()).x);
+		assertEquals(1, (target.getSelection()).y);
+
+		dialog.setFindText("b|c");
+		assertEquals(1, (target.getSelection()).x);
+		assertEquals(1, (target.getSelection()).y);
 	}
 
 	@Test
