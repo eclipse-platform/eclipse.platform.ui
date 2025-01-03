@@ -83,6 +83,12 @@ public class SearchDecoration {
 		GC gc = new GC(targetControl);
 		String pattern = e.getPattern();
 
+		// This happens when the error is in the last (still unwritten) character e.g.
+		// for an "Unescaped trailing backslash"
+		if (errorIndex >= pattern.length()) {
+			pattern += " "; //$NON-NLS-1$
+		}
+
 		StringBuilder validationErrorMessage = new StringBuilder();
 
 		validationErrorMessage.append(description);
