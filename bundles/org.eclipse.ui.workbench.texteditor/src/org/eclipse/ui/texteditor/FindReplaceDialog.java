@@ -589,6 +589,7 @@ class FindReplaceDialog extends Dialog {
 					return;
 				}
 				findReplaceLogic.activate(SearchOptions.GLOBAL);
+				updateFindString();
 			}
 
 			@Override
@@ -608,6 +609,7 @@ class FindReplaceDialog extends Dialog {
 					return;
 				}
 				findReplaceLogic.deactivate(SearchOptions.GLOBAL);
+				updateFindString();
 			}
 
 			@Override
@@ -650,11 +652,7 @@ class FindReplaceDialog extends Dialog {
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new char[0], true);
 		setGridData(fFindField, SWT.FILL, true, SWT.CENTER, false);
 		addDecorationMargin(fFindField);
-		fFindModifyListener = new InputModifyListener(() -> {
-			if (okToUse(fFindField)) {
-				findReplaceLogic.setFindString(fFindField.getText());
-			}
-		});
+		fFindModifyListener = new InputModifyListener(this::updateFindString);
 		fFindField.addModifyListener(fFindModifyListener);
 
 		fReplaceLabel = new Label(panel, SWT.LEFT);
@@ -678,6 +676,12 @@ class FindReplaceDialog extends Dialog {
 		fReplaceField.addModifyListener(listener);
 
 		return panel;
+	}
+
+	private void updateFindString() {
+		if (okToUse(fFindField)) {
+			findReplaceLogic.setFindString(fFindField.getText());
+		}
 	}
 
 	/**
@@ -708,6 +712,7 @@ class FindReplaceDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				setupFindReplaceLogic();
 				storeSettings();
+				updateFindString();
 			}
 
 			@Override
@@ -745,6 +750,7 @@ class FindReplaceDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				setupFindReplaceLogic();
 				storeSettings();
+				updateFindString();
 			}
 
 			@Override
@@ -770,7 +776,7 @@ class FindReplaceDialog extends Dialog {
 				storeSettings();
 				updateButtonState();
 				setContentAssistsEnablement(newState);
-				fIncrementalCheckBox.setEnabled(findReplaceLogic.isAvailable(SearchOptions.INCREMENTAL));
+				updateFindString();
 			}
 		});
 		storeButtonWithMnemonicInMap(fIsRegExCheckBox);
@@ -779,9 +785,9 @@ class FindReplaceDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtonState();
+				updateFindString();
 			}
 		});
-		fIncrementalCheckBox.setEnabled(findReplaceLogic.isAvailable(SearchOptions.INCREMENTAL));
 		return panel;
 	}
 
