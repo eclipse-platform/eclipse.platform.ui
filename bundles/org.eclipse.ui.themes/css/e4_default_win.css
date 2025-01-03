@@ -201,8 +201,10 @@ CTabFolder Canvas {
 	swt-selected-highlight-top: true;
 }
 
-#org-eclipse-e4-ui-compatibility-editor Composite{
-	background-color: #ffffff;
+#org-eclipse-e4-ui-compatibility-editor Composite,
+#org-eclipse-e4-ui-compatibility-editor Composite>*
+{
+	background-color:#ffffff;
 }
 
 Composite.MPartSashContainer{
