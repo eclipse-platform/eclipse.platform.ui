@@ -33,7 +33,7 @@
             class="org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="false"
-            icon="icons/full/obj16/generic_editor.png"
+            icon="icons/full/obj16/generic_editor.svg"
             id="org.eclipse.ui.genericeditor.GenericEditor"
             name="%genericEditor_name">
          <contentTypeBinding

@@ -112,7 +112,7 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_LINK_WITH_EDITOR_ACTION);
 		if (!hideLinkWithEditorAction) {
 			toggleLinkingAction = new LinkEditorAction(commonNavigator, commonViewer, linkHelperService);
-			String imageFilePath = "icons/full/elcl16/synced.png"; //$NON-NLS-1$
+			String imageFilePath = "icons/full/elcl16/synced.svg"; //$NON-NLS-1$
 			ResourceLocator.imageDescriptorFromBundle(getClass(), imageFilePath).ifPresent(d -> {
 				toggleLinkingAction.setImageDescriptor(d);
 				toggleLinkingAction.setHoverImageDescriptor(d);
@@ -125,7 +125,7 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_COLLAPSE_ALL_ACTION);
 		if (!hideCollapseAllAction) {
 			collapseAllAction = new CollapseAllAction(commonViewer);
-			String imageFilePath = "icons/full/elcl16/collapseall.png"; //$NON-NLS-1$
+			String imageFilePath = "icons/full/elcl16/collapseall.svg"; //$NON-NLS-1$
 			ResourceLocator.imageDescriptorFromBundle(getClass(), imageFilePath).ifPresent(d -> {
 				collapseAllAction.setImageDescriptor(d);
 				collapseAllAction.setHoverImageDescriptor(d);
