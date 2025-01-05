@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-SymbolicName: org.eclipse.e4.ui.di
-Bundle-Version: 1.5.400.qualifier
+Bundle-Version: 1.5.500.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Import-Package: jakarta.inject;version="[2.0.0,3.0.0)",
