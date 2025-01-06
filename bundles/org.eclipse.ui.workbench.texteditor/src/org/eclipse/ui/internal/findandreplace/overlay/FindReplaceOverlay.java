@@ -172,7 +172,7 @@ public class FindReplaceOverlay {
 		 * boolean)
 		 */
 		private void setTextEditorActionsActivated(boolean state) {
-			if (!(targetPart instanceof AbstractTextEditor)) {
+			if (!(targetPart instanceof AbstractTextEditor) || targetPart.getSite().getWorkbenchWindow().isClosing()) {
 				return;
 			}
 			if (targetPart.getSite() instanceof MultiPageEditorSite multiEditorSite) {
