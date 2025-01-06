@@ -15,7 +15,12 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -288,6 +293,18 @@ public class FindReplaceDocumentAdapterTest {
 		fDocument.set("foo");
 		regexReplace("(f)oo", "$10", findReplaceDocumentAdapter);
 		assertEquals("f0", fDocument.get());
+	}
+
+	@Test
+	public void testRegexReplace_invalidRegex() throws Exception {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter = new FindReplaceDocumentAdapter(fDocument);
+
+		fDocument.set("foo");
+		assertThrows(PatternSyntaxException.class, () -> regexReplace("foo", "foo\\", findReplaceDocumentAdapter));
+		assertEquals("foo", fDocument.get());
+
+		findReplaceDocumentAdapter.replace("foo" + System.lineSeparator(), true);
+		assertEquals("foo" + System.lineSeparator(), fDocument.get());
 	}
 
 	/*
