@@ -438,6 +438,29 @@ public class FindReplaceLogicTest {
 		executeReplaceAndFindRegExTest(textViewer, findReplaceLogic);
 	}
 
+	@Test
+	public void testPerformReplaceAndFindRegEx_withInvalidEscapeInReplace() {
+		TextViewer textViewer= setupTextViewer("Hello");
+		IFindReplaceLogic findReplaceLogic= setupFindReplaceLogicObject(textViewer);
+		findReplaceLogic.activate(SearchOptions.FORWARD);
+		findReplaceLogic.activate(SearchOptions.REGEX);
+
+		setFindAndReplaceString(findReplaceLogic, "Hello", "Hello\\");
+		boolean status= findReplaceLogic.performReplaceAndFind();
+		assertFalse(status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello"));
+		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("Hello"));
+		assertThat(findReplaceLogic.getStatus(), instanceOf(InvalidRegExStatus.class));
+
+		setFindAndReplaceString(findReplaceLogic, "Hello", "Hello" + System.lineSeparator());
+
+		status= findReplaceLogic.performReplaceAndFind();
+		assertTrue(status);
+		assertThat(textViewer.getDocument().get(), equalTo("Hello" + System.lineSeparator()));
+		assertThat(findReplaceLogic.getTarget().getSelectionText(), equalTo("Hello" + System.lineSeparator()));
+		expectStatusIsCode(findReplaceLogic, FindStatus.StatusCode.NO_MATCH);
+	}
+
 	private void executeReplaceAndFindRegExTest(TextViewer textViewer, IFindReplaceLogic findReplaceLogic) {
 		setFindAndReplaceString(findReplaceLogic, "<(\\w*)>", " ");
 
