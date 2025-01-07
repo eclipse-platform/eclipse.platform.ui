@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.jface.util.Util;
-import org.eclipse.ui.internal.misc.TextMatcher;
 
 /**
  * A search pattern defines how search results are found.
@@ -120,7 +120,7 @@ public class SearchPattern {
 
 	private String initialPattern;
 
-	private TextMatcher stringMatcher;
+	private StringMatcher stringMatcher;
 
 	private static final char START_SYMBOL = '>';
 
@@ -200,7 +200,7 @@ public class SearchPattern {
 		initializePatternAndMatchRule(stringPattern);
 		matchRule = matchRule & this.allowedRules;
 		if (matchRule == RULE_PATTERN_MATCH) {
-			stringMatcher = new TextMatcher(this.stringPattern, true, false);
+			stringMatcher = new StringMatcher(this.stringPattern.trim(), true, false);
 		}
 	}
 
@@ -219,7 +219,7 @@ public class SearchPattern {
 		case RULE_BLANK_MATCH:
 			return true;
 		case RULE_PATTERN_MATCH:
-			return stringMatcher.match(text);
+			return stringMatcher.matchWords(text);
 		case RULE_EXACT_MATCH:
 			return stringPattern.equalsIgnoreCase(text);
 		case RULE_CAMELCASE_MATCH:

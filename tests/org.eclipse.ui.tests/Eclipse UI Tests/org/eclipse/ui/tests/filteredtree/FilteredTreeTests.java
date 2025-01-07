@@ -117,6 +117,12 @@ public class FilteredTreeTests {
 		applyPattern("0-0-0-0 name-*");
 		assertNumberOfTopLevelItems(1);
 
+		applyPattern(" 0-0-0-0 name-*");
+		assertNumberOfTopLevelItems(1);
+
+		applyPattern("0-0-0-0 name-* ");
+		assertNumberOfTopLevelItems(1);
+
 		applyPattern("0-0-0-0 name unknownWord");
 		assertNumberOfTopLevelItems(0);
 
