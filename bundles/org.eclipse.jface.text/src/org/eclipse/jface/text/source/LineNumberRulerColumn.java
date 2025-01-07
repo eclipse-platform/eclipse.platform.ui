@@ -852,6 +852,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 				// use height of text bounding because bounds.width changes on word wrap
 				y+= fCachedTextWidget.getTextBounds(offsetAtLine, offsetEnd).height;
+				y+= fCachedTextWidget.getLineSpacing();
 			}
 		}
 	}
