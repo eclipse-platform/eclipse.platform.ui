@@ -286,7 +286,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		} finally {
 			// Resume the job manager to allow background jobs to run.
 			// The job manager was suspended by the IDEApplication.start method.
-			Job.getJobManager().resume();
+			if (IDEApplication.SUSPEND_JOBMANAGER_DURING_START) {
+				Job.getJobManager().resume();
+			}
 		}
 	}
 

@@ -134,6 +134,13 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	public static final String PLUGIN_ID = "org.eclipse.ui.ide.application"; //$NON-NLS-1$
 
 	/**
+	 * Suspending JobManager can be forced by specify VM property:
+	 * {@code -Dorg.eclipse.ui.suspendJobManagerDuringStart=true}
+	 */
+	static final boolean SUSPEND_JOBMANAGER_DURING_START = Boolean
+			.getBoolean("org.eclipse.ui.suspendJobManagerDuringStart"); //$NON-NLS-1$
+
+	/**
 	 * Creates a new IDE application.
 	 */
 	public IDEApplication() {
@@ -146,7 +153,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 		// is done to reduce resource contention during startup.
 		// The job manager will be resumed by the
 		// IDEWorkbenchAdvisor.postStartup method.
-		Job.getJobManager().suspend();
+		if (SUSPEND_JOBMANAGER_DURING_START) {
+			Job.getJobManager().suspend();
+		}
 
 		Display display = createDisplay();
 		// processor must be created before we start event loop
