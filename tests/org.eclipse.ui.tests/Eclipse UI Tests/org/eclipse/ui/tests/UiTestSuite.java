@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,7 +37,6 @@ import org.eclipse.ui.tests.encoding.EncodingTestSuite;
 import org.eclipse.ui.tests.fieldassist.FieldAssistTestSuite;
 import org.eclipse.ui.tests.filteredtree.FilteredTreeTests;
 import org.eclipse.ui.tests.filteredtree.PatternFilterTest;
-import org.eclipse.ui.tests.filteredtree.TextMatcherTest;
 import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
@@ -91,7 +90,6 @@ import org.junit.runners.Suite;
 	ConcurrencyTestSuite.class,
 	FilteredTreeTests.class,
 	PatternFilterTest.class,
-	TextMatcherTest.class,
 	StatusHandlingTestSuite.class,
 	MenusTestSuite.class,
 	QuickAccessTestSuite.class,

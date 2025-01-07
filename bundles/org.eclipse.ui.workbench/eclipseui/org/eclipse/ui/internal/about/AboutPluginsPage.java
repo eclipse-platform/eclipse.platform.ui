@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.util.ConfigureColumns;
@@ -73,7 +74,6 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.internal.misc.TextMatcher;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -689,14 +689,14 @@ class TableComparator extends ViewerComparator {
 }
 class BundlePatternFilter extends ViewerFilter {
 
-	private TextMatcher matcher;
+	private StringMatcher matcher;
 
 	public void setPattern(String searchPattern) {
 		if (searchPattern == null || searchPattern.isEmpty()) {
 			this.matcher = null;
 		} else {
 			String pattern = "*" + searchPattern + "*"; //$NON-NLS-1$//$NON-NLS-2$
-			this.matcher = new TextMatcher(pattern, true, false);
+			this.matcher = new StringMatcher(pattern, true, false);
 		}
 	}
 
@@ -708,12 +708,12 @@ class BundlePatternFilter extends ViewerFilter {
 
 		if (element instanceof AboutBundleData) {
 			AboutBundleData data = (AboutBundleData) element;
-			return matcher.match(data.getName()) || matcher.match(data.getProviderName())
-					|| matcher.match(data.getId());
+			return matcher.matchWords(data.getName()) || matcher.matchWords(data.getProviderName())
+					|| matcher.matchWords(data.getId());
 		}
 		else if (element instanceof AboutBundleGroupData data) {
-			return matcher.match(data.getName()) || matcher.match(data.getProviderName())
-					|| matcher.match(data.getId());
+			return matcher.matchWords(data.getName()) || matcher.matchWords(data.getProviderName())
+					|| matcher.matchWords(data.getId());
 		}
 		return true;
 	}

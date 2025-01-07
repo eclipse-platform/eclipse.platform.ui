@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -36,7 +37,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.TextMatcher;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -73,16 +73,16 @@ public class FilteredList extends Composite {
 	}
 
 	private class DefaultFilterMatcher implements FilterMatcher {
-		private TextMatcher fMatcher;
+		private StringMatcher fMatcher;
 
 		@Override
 		public void setFilter(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
-			fMatcher = new TextMatcher(pattern + '*', ignoreCase, ignoreWildCards);
+			fMatcher = new StringMatcher(pattern.trim() + '*', ignoreCase, ignoreWildCards);
 		}
 
 		@Override
 		public boolean match(Object element) {
-			return fMatcher.match(fLabelProvider.getText(element));
+			return fMatcher.matchWords(fLabelProvider.getText(element));
 		}
 	}
 
