@@ -41,9 +41,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
-import org.eclipse.core.runtime.ICoreRunnable;
-import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 
@@ -395,12 +392,10 @@ public class StickyScrollingControl {
 		StyledText textWidget= sourceViewer.getTextWidget();
 
 		if (sourceViewer instanceof ITextViewerExtension4 extension) {
-			textPresentationListener= e -> {
-				Job.create("Update sticky lines styling", (ICoreRunnable) monitor -> { //$NON-NLS-1$
-					Display.getDefault().asyncExec(() -> {
-						styleStickyLines();
-					});
-				}).schedule();
+			textPresentationListener = e -> {
+				Display.getDefault().asyncExec(() -> {
+					styleStickyLines();
+				});
 			};
 			extension.addTextPresentationListener(textPresentationListener);
 		}
