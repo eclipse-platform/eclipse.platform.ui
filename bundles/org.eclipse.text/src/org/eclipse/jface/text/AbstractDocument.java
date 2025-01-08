@@ -345,12 +345,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 		List<Position> list= fPositions.get(category);
 		if (list == null)
-			throw new BadPositionCategoryException();
+			throw new BadPositionCategoryException(category);
 		list.add(computeIndexInPositionList(list, position.offset), position);
 
 		List<Position> endPositions= fEndPositions.get(category);
 		if (endPositions == null)
-			throw new BadPositionCategoryException();
+			throw new BadPositionCategoryException(category);
 		endPositions.add(computeIndexInPositionList(endPositions, position.offset + position.length - 1, false), position);
 	}
 
@@ -514,7 +514,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 		List<Position> c= fPositions.get(category);
 		if (c == null)
-			throw new BadPositionCategoryException();
+			throw new BadPositionCategoryException(category);
 
 		return computeIndexInPositionList(c, offset);
 	}
@@ -925,7 +925,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 		List<Position> c= fPositions.get(category);
 		if (c == null)
-			throw new BadPositionCategoryException();
+			throw new BadPositionCategoryException(category);
 
 		Position[] positions= new Position[c.size()];
 		c.toArray(positions);
@@ -980,12 +980,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 		List<Position> c= fPositions.get(category);
 		if (c == null)
-			throw new BadPositionCategoryException();
+			throw new BadPositionCategoryException(category);
 		removeFromPositionsList(c, position, true);
 
 		List<Position> endPositions= fEndPositions.get(category);
 		if (endPositions == null)
-			throw new BadPositionCategoryException();
+			throw new BadPositionCategoryException(category);
 		removeFromPositionsList(endPositions, position, false);
 	}
 
@@ -1043,7 +1043,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			return;
 
 		if ( !containsPositionCategory(category))
-			throw new BadPositionCategoryException();
+			throw new BadPositionCategoryException(category);
 
 		fPositions.remove(category);
 		fEndPositions.remove(category);
@@ -1674,7 +1674,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	private List<Position> getEndingPositions(String category, int offset, int length) throws BadPositionCategoryException {
 		List<Position> positions= fEndPositions.get(category);
 		if (positions == null)
-			throw new BadPositionCategoryException();
+			throw new BadPositionCategoryException(category);
 
 		int indexStart= computeIndexInPositionList(positions, offset, false);
 		int indexEnd= computeIndexInPositionList(positions, offset + length, false);
