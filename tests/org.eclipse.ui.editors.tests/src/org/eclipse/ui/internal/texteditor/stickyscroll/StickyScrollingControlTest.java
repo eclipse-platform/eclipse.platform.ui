@@ -253,6 +253,25 @@ public class StickyScrollingControlTest {
 	}
 
 	@Test
+	public void testDontLayoutOutDatedStickyLinesOnResize() {
+		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
+
+		List<IStickyLine> stickyLines = List.of(new StickyLineStub("line 10", 10));
+		stickyScrollingControl.setStickyLines(stickyLines);
+
+		Canvas stickyControlCanvas = getStickyControlCanvas(shell);
+		Rectangle boundsBeforeResize = stickyControlCanvas.getBounds();
+
+		sourceViewer.getTextWidget().setBounds(0, 0, 150, 200);
+
+		stickyControlCanvas = getStickyControlCanvas(shell);
+		Rectangle boundsAfterResize = stickyControlCanvas.getBounds();
+
+		// No IllegalArgumentException: Index out of bounds
+		assertEquals(boundsAfterResize, boundsBeforeResize);
+	}
+
+	@Test
 	public void testNavigateToStickyLine() {
 		String text = """
 				line 1
