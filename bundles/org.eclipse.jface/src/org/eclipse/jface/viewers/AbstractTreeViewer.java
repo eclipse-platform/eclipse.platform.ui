@@ -25,9 +25,11 @@ package org.eclipse.jface.viewers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.eclipse.core.runtime.Assert;
@@ -1850,6 +1852,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	private void internalConditionalExpandToLevel(Widget widget, int level,
 			Function<Widget, Boolean> shouldChildrenExpand) {
+		internalConditionalExpandToLevel(widget, level, shouldChildrenExpand, new HashSet<>());
+	}
+
+	private void internalConditionalExpandToLevel(Widget widget, int level,
+			Function<Widget, Boolean> shouldChildrenExpand, Set<Object> expanded) {
 		if (level == ALL_LEVELS || level > 0) {
 			Object data = widget.getData();
 			if (widget instanceof Item it && data != null && !isExpandable(it, null, data)) {
@@ -1858,6 +1865,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			createChildren(widget, false);
 			// XXX for performance widget should be expanded after expanding children:
 			if (widget instanceof Item it) {
+				if (data != null && !expanded.add(data)) {
+					return;
+				}
 				setExpanded(it, true);
 			}
 			if (level == ALL_LEVELS || level > 1) {
@@ -1867,7 +1877,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 							: level - 1);
 					for (Item element : children) {
 						if (shouldChildrenExpand.apply(widget).booleanValue()) {
-							internalConditionalExpandToLevel(element, newLevel, shouldChildrenExpand);
+							internalConditionalExpandToLevel(element, newLevel, shouldChildrenExpand, expanded);
 						}
 					}
 				}
