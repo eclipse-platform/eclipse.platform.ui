@@ -132,7 +132,7 @@ Import-Package: com.ibm.icu.util,
  org.osgi.service.event.propertytypes;version="[1.4.0,2.0.0)",
  org.w3c.dom,
  org.xml.sax
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Capability: osgi.extender;
   filter:="(&(osgi.extender=osgi.component)(version>=1.2)(!(version>=2.0)))"
 Automatic-Module-Name: org.eclipse.ui.workbench
