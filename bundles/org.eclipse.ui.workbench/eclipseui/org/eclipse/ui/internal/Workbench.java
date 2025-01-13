@@ -298,6 +298,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 	private static final String EDGE_USER_DATA_FOLDER = "org.eclipse.swt.internal.win32.Edge.userDataFolder"; //$NON-NLS-1$
 
+	private static final String SWT_RESCALE_AT_RUNTIME_PROPERTY = "swt.autoScale.updateOnRuntime"; //$NON-NLS-1$
+
 	private static final class StartupProgressBundleListener implements ServiceListener {
 
 		private final SubMonitor subMonitor;
@@ -586,7 +588,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				int orientation = store.getInt(IPreferenceConstants.LAYOUT_DIRECTION);
 				Window.setDefaultOrientation(orientation);
 			}
-			setRescaleAtRuntimePropertyFromPreference(display);
+			setRescaleAtRuntimePropertyFromPreference();
 			if (obj instanceof E4Application) {
 				E4Application e4app = (E4Application) obj;
 				E4Workbench e4Workbench = e4app.createE4Workbench(getApplicationContext(), display);
@@ -680,12 +682,15 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		return returnCode[0];
 	}
 
-	private static void setRescaleAtRuntimePropertyFromPreference(final Display display) {
-		boolean rescaleAtRuntime = PrefUtil.getAPIPreferenceStore()
-				.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME);
-		if (rescaleAtRuntime) {
-			display.setRescalingAtRuntime(rescaleAtRuntime);
-			System.setProperty("org.eclipse.swt.browser.DefaultType", "edge"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static void setRescaleAtRuntimePropertyFromPreference() {
+		if (System.getProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY) != null) {
+			WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.WARNING, SWT_RESCALE_AT_RUNTIME_PROPERTY
+					+ " is configured (e.g., via the INI), but the according preference should be preferred instead.", //$NON-NLS-1$
+					new RuntimeException()));
+		} else {
+			boolean rescaleAtRuntime = PrefUtil.getAPIPreferenceStore()
+					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME);
+			System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(rescaleAtRuntime));
 		}
 	}
 
