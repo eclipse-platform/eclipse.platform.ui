@@ -269,7 +269,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 *
 	 * @return IWorkbench the workbench for this plug-in
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	public IWorkbench getWorkbench() {
 		return PlatformUI.getWorkbench();
 	}
@@ -297,7 +297,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * @deprecated this is only called if the runtime compatibility layer is
 	 *             present. See {@link #initializeDefaultPluginPreferences}.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		// spec'ed to do nothing
 	}
@@ -322,7 +322,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * @see #initializeDefaultPreferences
 	 * @since 2.0
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	@Override
 	protected void initializeDefaultPluginPreferences() {
 		// N.B. by the time this method is called, the plug-in has a
@@ -372,7 +372,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * @deprecated
 	 * @see PlatformUI#getDialogSettingsProvider(Bundle)
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	protected void loadDialogSettings() {
 		PlatformUI.getDialogSettingsProvider(getBundle()).loadDialogSettings();
 	}
@@ -393,7 +393,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 *             being initialized. The plug-ins preferences are loaded from the
 	 *             file regardless of what this method does.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	protected void loadPreferenceStore() {
 		// do nothing by default
 	}
@@ -424,7 +424,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * @deprecated
 	 * @see IDialogSettingsProvider#saveDialogSettings()
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	protected void saveDialogSettings() {
 		PlatformUI.getDialogSettingsProvider(getBundle()).saveDialogSettings();
 	}
@@ -440,7 +440,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 *             <code>savePluginPreferences</code>, and exists only for backwards
 	 *             compatibility.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	protected void savePreferenceStore() {
 		savePluginPreferences();
 	}
@@ -451,7 +451,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 *
 	 * It is not called anymore as Eclipse 4.6 removed this plug-in.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	@Override
 	public void startup() throws CoreException {
 		// this method no longer does anything
@@ -477,7 +477,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 *             org.eclipse.core.runtime.compatibility plug-in; in contrast, the
 	 *             <code>stop</code> method is always called.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	@Override
 	public void shutdown() throws CoreException {
 		// this method no longer does anything interesting
