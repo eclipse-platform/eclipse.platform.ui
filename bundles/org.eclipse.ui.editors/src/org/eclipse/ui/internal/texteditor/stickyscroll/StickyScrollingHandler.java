@@ -122,9 +122,7 @@ public class StickyScrollingHandler implements IViewportListener {
 		int stickyScrollingMaxCount= store.getInt(EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT);
 
 		Color lineNumberColor= new Color(PreferenceConverter.getColor(store, EDITOR_LINE_NUMBER_RULER_COLOR));
-		sourceViewer.getTextWidget().addDisposeListener(e -> lineNumberColor.dispose());
 		Color stickyLineHoverColor= new Color(PreferenceConverter.getColor(store, EDITOR_CURRENT_LINE_COLOR));
-		sourceViewer.getTextWidget().addDisposeListener(e -> stickyLineHoverColor.dispose());
 		Color stickyLineBackgroundColor= sourceViewer.getTextWidget().getBackground();
 		boolean showLineNumbers= store.getBoolean(EDITOR_LINE_NUMBER_RULER);
 		Color stickyLineSeparatorColor= null;
