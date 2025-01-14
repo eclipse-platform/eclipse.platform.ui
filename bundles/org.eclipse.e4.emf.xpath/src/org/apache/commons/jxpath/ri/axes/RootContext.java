@@ -32,7 +32,6 @@ public class RootContext extends EvalContext {
     private final NodePointer pointer;
     private Object[] registers;
     private int availableRegister = 0;
-    public static final Object UNKNOWN_VALUE = new Object();
     private static final int MAX_REGISTER = 4;
 
     /**
@@ -145,37 +144,6 @@ public class RootContext extends EvalContext {
         return jxpathContext.getFunction(functionName, parameters);
     }
 
-    /**
-     * Gets a registered value.
-     * @param id int
-     * @return Object
-     */
-    public Object getRegisteredValue(final int id) {
-        if (registers == null || id >= MAX_REGISTER || id == -1) {
-            return UNKNOWN_VALUE;
-        }
-        return registers[id];
-    }
-
-    /**
-     * Sets the next registered value.
-     * @param value Object
-     * @return the id that can reclaim value.
-     */
-    public int setRegisteredValue(final Object value) {
-        if (registers == null) {
-            registers = new Object[MAX_REGISTER];
-            for (int i = 0; i < MAX_REGISTER; i++) {
-                registers[i] = UNKNOWN_VALUE;
-            }
-        }
-        if (availableRegister >= MAX_REGISTER) {
-            return -1;
-        }
-        registers[availableRegister] = value;
-        availableRegister++;
-        return availableRegister - 1;
-    }
 
     @Override
     public String toString() {

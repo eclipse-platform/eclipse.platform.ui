@@ -17,10 +17,8 @@
 package org.apache.commons.jxpath;
 
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.jxpath.util.KeyManagerUtils;
@@ -598,23 +596,6 @@ public abstract class JXPathContext {
     }
 
     /**
-     * Sets {@link DecimalFormatSymbols} for a given name. The DecimalFormatSymbols
-     * can be referenced as the third, optional argument in the invocation of
-     * {@code format-number (number,format,decimal-format-name)} function.
-     * By default, JXPath uses the symbols for the current locale.
-     *
-     * @param name the format name or null for default format.
-     * @param symbols DecimalFormatSymbols
-     */
-    public synchronized void setDecimalFormatSymbols(final String name,
-            final DecimalFormatSymbols symbols) {
-        if (decimalFormats == null) {
-            decimalFormats = new HashMap<>();
-        }
-        decimalFormats.put(name, symbols);
-    }
-
-    /**
      * Gets the named DecimalFormatSymbols.
      * @param name key
      * @return DecimalFormatSymbols
@@ -655,59 +636,12 @@ public abstract class JXPathContext {
     }
 
     /**
-     * Compiles the supplied XPath and returns an internal representation
-     * of the path that can then be evaluated.  Use CompiledExpressions
-     * when you need to evaluate the same expression multiple times
-     * and there is a convenient place to cache CompiledExpression
-     * between invocations.
-     * @param xpath to compile
-     * @return CompiledExpression
-     */
-    public static CompiledExpression compile(final String xpath) {
-        if (compilationContext == null) {
-            compilationContext = newContext(null);
-        }
-        return compilationContext.compilePath(xpath);
-    }
-
-    /**
      * Overridden by each concrete implementation of JXPathContext
      * to perform compilation. Is called by {@code compile()}.
      * @param xpath to compile
      * @return CompiledExpression
      */
     protected abstract CompiledExpression compilePath(String xpath);
-
-    /**
-     * Finds the first object that matches the specified XPath. It is equivalent
-     * to {@code getPointer(xpath).getNode()}. Note that this method
-     * produces the same result as {@code getValue()} on object models
-     * like JavaBeans, but a different result for DOM/JDOM etc., because it
-     * returns the Node itself, rather than its textual contents.
-     *
-     * @param xpath the xpath to be evaluated
-     * @return the found object
-     */
-    public Object selectSingleNode(final String xpath) {
-        final Pointer pointer = getPointer(xpath);
-        return pointer == null ? null : pointer.getNode();
-    }
-
-    /**
-     * Finds all nodes that match the specified XPath.
-     *
-     * @param xpath the xpath to be evaluated
-     * @return a list of found objects
-     */
-    public List selectNodes(final String xpath) {
-        final ArrayList list = new ArrayList();
-        final Iterator<Pointer> iterator = iteratePointers(xpath);
-        while (iterator.hasNext()) {
-            final Pointer pointer = iterator.next();
-            list.add(pointer.getNode());
-        }
-        return list;
-    }
 
     /**
      * Evaluates the xpath and returns the resulting object. Primitive
@@ -877,22 +811,6 @@ public abstract class JXPathContext {
             return parentContext.getKeyManager();
         }
         return keyManager;
-    }
-
-    /**
-     * Locates a Node by a key value.
-     * @param key string
-     * @param value string
-     * @return Pointer found
-     */
-    public Pointer getPointerByKey(final String key, final String value) {
-        final KeyManager manager = getKeyManager();
-        if (manager != null) {
-            return manager.getPointerByKey(this, key, value);
-        }
-        throw new JXPathException(
-            "Cannot find an element by key - "
-                + "no KeyManager has been specified");
     }
 
     /**

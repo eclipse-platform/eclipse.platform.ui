@@ -50,16 +50,6 @@ public class BasicNodeSet implements NodeSet {
         }
     }
 
-    /**
-     * Remove a pointer from this NodeSet.
-     * @param pointer to remove
-     */
-    public void remove(final Pointer pointer) {
-        if (pointers.remove(pointer)) {
-            clearCacheLists();
-        }
-    }
-
     @Override
     public synchronized List getPointers() {
         if (readOnlyPointers == null) {

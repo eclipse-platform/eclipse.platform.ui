@@ -122,21 +122,6 @@ public class JXPathContextReferenceImpl extends JXPathContext {
     }
 
     /**
-     * Removes support for additional types of objects.
-     *
-     * @param factory NodePointerFactory to remove
-     * @return true if this implementation contained the specified element
-     * @since 1.4.0
-     */
-    public static boolean removeNodePointerFactory(final NodePointerFactory factory) {
-        synchronized (nodeFactories) {
-            final boolean remove = nodeFactories.remove(factory);
-            nodeFactoryArray = null;
-            return remove;
-        }
-    }
-
-    /**
      * Gets the registered NodePointerFactories.
      * @return NodePointerFactory[]
      */
@@ -149,16 +134,6 @@ public class JXPathContextReferenceImpl extends JXPathContext {
 
     private Pointer rootPointer;
     private Pointer contextPointer;
-
-    /**
-     * Create a new JXPathContextReferenceImpl.
-     * @param parentContext parent context
-     * @param contextBean Object
-     */
-    protected JXPathContextReferenceImpl(final JXPathContext parentContext,
-            final Object contextBean) {
-        this(parentContext, contextBean, null);
-    }
 
     /**
      * Create a new JXPathContextReferenceImpl.

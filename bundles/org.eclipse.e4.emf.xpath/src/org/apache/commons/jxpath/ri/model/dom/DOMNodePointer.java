@@ -70,16 +70,6 @@ public class DOMNodePointer extends NodePointer {
      * Create a new DOMNodePointer.
      * @param node pointed at
      * @param locale Locale
-     */
-    public DOMNodePointer(final Node node, final Locale locale) {
-        super(null, locale);
-        this.node = node;
-    }
-
-    /**
-     * Create a new DOMNodePointer.
-     * @param node pointed at
-     * @param locale Locale
      * @param id string id
      */
     public DOMNodePointer(final Node node, final Locale locale, final String id) {

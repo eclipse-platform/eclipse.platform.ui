@@ -20,8 +20,6 @@ package org.apache.commons.jxpath.ri.parser;
 
 public class XPathParserTokenManager implements XPathParserConstants
 {
-  public  java.io.PrintStream debugStream = System.out;
-  public  void setDebugStream(final java.io.PrintStream ds) { debugStream = ds; }
 private int jjStopStringLiteralDfa_0(final int pos, final long active0, final long active1)
 {
    switch (pos)
@@ -1863,14 +1861,8 @@ null, null, null, null, null, "\157\162", "\141\156\144", "\155\157\144",
 "\154\141\156\147", "\156\165\155\142\145\162", "\163\165\155", "\146\154\157\157\162",
 "\143\145\151\154\151\156\147", "\162\157\165\156\144", "\146\157\162\155\141\164\55\156\165\155\142\145\162",
 null, "\72", "\50", "\51", "\56", "\56\56", "\133", "\135", "\100", "\54", "\52", };
-public static final String[] lexStateNames = {
-   "DEFAULT",
-};
 static final long[] jjtoToken = {
    0xfffffffff817ffc1L, 0x3ffffffL,
-};
-static final long[] jjtoSkip = {
-   0x3eL, 0x0L,
 };
 protected SimpleCharStream input_stream;
 private final int[] jjrounds = new int[13];
@@ -1882,11 +1874,6 @@ public XPathParserTokenManager(final SimpleCharStream stream)
     throw new Error("ERROR: Cannot use a static CharStream class with a non-static lexical analyzer.");
 }
    input_stream = stream;
-}
-public XPathParserTokenManager(final SimpleCharStream stream, final int lexState)
-{
-   this(stream);
-   SwitchTo(lexState);
 }
 public void ReInit(final SimpleCharStream stream)
 {
@@ -1902,18 +1889,6 @@ private void ReInitRounds()
    for (i = 13; i-- > 0;) {
     jjrounds[i] = 0x80000000;
 }
-}
-public void ReInit(final SimpleCharStream stream, final int lexState)
-{
-   ReInit(stream);
-   SwitchTo(lexState);
-}
-public void SwitchTo(final int lexState)
-{
-   if (lexState >= 1 || lexState < 0) {
-    throw new TokenMgrError("Error: Ignoring invalid lexical state : " + lexState + ". State unchanged.", TokenMgrError.INVALID_LEXICAL_STATE);
-}
-curLexState = lexState;
 }
 
 protected Token jjFillToken()

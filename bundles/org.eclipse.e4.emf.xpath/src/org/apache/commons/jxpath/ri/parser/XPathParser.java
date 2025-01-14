@@ -3543,7 +3543,6 @@ specified to disambiguate the grammar:
   public Token token, jj_nt;
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
-  public boolean lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
   final private int[] jj_la1 = new int[39];
@@ -3568,34 +3567,6 @@ specified to disambiguate the grammar:
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
-  public XPathParser(final java.io.InputStream stream) {
-    jj_input_stream = new SimpleCharStream(stream, 1, 1);
-    token_source = new XPathParserTokenManager(jj_input_stream);
-    token = new Token();
-    token.next = jj_nt = token_source.getNextToken();
-    jj_gen = 0;
-    for (int i = 0; i < 39; i++) {
-        jj_la1[i] = -1;
-    }
-    for (int i = 0; i < jj_2_rtns.length; i++) {
-        jj_2_rtns[i] = new JJCalls();
-    }
-  }
-
-  public void ReInit(final java.io.InputStream stream) {
-    jj_input_stream.ReInit(stream, 1, 1);
-    token_source.ReInit(jj_input_stream);
-    token = new Token();
-    token.next = jj_nt = token_source.getNextToken();
-    jj_gen = 0;
-    for (int i = 0; i < 39; i++) {
-        jj_la1[i] = -1;
-    }
-    for (int i = 0; i < jj_2_rtns.length; i++) {
-        jj_2_rtns[i] = new JJCalls();
-    }
-  }
-
   public XPathParser(final java.io.Reader stream) {
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new XPathParserTokenManager(jj_input_stream);
@@ -3613,32 +3584,6 @@ specified to disambiguate the grammar:
   public void ReInit(final java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
-    token = new Token();
-    token.next = jj_nt = token_source.getNextToken();
-    jj_gen = 0;
-    for (int i = 0; i < 39; i++) {
-        jj_la1[i] = -1;
-    }
-    for (int i = 0; i < jj_2_rtns.length; i++) {
-        jj_2_rtns[i] = new JJCalls();
-    }
-  }
-
-  public XPathParser(final XPathParserTokenManager tm) {
-    token_source = tm;
-    token = new Token();
-    token.next = jj_nt = token_source.getNextToken();
-    jj_gen = 0;
-    for (int i = 0; i < 39; i++) {
-        jj_la1[i] = -1;
-    }
-    for (int i = 0; i < jj_2_rtns.length; i++) {
-        jj_2_rtns[i] = new JJCalls();
-    }
-  }
-
-  public void ReInit(final XPathParserTokenManager tm) {
-    token_source = tm;
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
@@ -3723,18 +3668,6 @@ specified to disambiguate the grammar:
     return token;
   }
 
-  final public Token getToken(final int index) {
-    Token t = lookingAhead ? jj_scanpos : token;
-    for (int i = 0; i < index; i++) {
-      if (t.next != null) {
-        t = t.next;
-    } else {
-        t = t.next = token_source.getNextToken();
-    }
-    }
-    return t;
-  }
-
   private final java.util.Vector jj_expentries = new java.util.Vector();
   private int[] jj_expentry;
   private int jj_kind = -1;
@@ -3817,12 +3750,6 @@ specified to disambiguate the grammar:
       exptokseq[i] = (int[])jj_expentries.elementAt(i);
     }
     return new ParseException(token, exptokseq, tokenImage);
-  }
-
-  final public void enable_tracing() {
-  }
-
-  final public void disable_tracing() {
   }
 
   private void jj_rescan_token() {

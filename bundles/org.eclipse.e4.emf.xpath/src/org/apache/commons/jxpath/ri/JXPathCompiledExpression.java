@@ -41,22 +41,6 @@ public class JXPathCompiledExpression implements CompiledExpression {
         this.expression = expression;
     }
 
-    /**
-     * Gets the source expression.
-     * @return String
-     */
-    protected String getXPath() {
-        return xpath;
-    }
-
-    /**
-     * Gets the compiled expression.
-     * @return Expression
-     */
-    protected Expression getExpression() {
-        return expression;
-    }
-
     @Override
     public String toString() {
         return xpath;

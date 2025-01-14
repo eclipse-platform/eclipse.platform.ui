@@ -20,7 +20,6 @@ package org.apache.commons.jxpath.ri.parser;
 
 public interface XPathParserConstants {
 
-  int EOF = 0;
   int SLASH = 6;
   int SLASHSLASH = 7;
   int UNION = 8;
@@ -34,14 +33,7 @@ public interface XPathParserConstants {
   int GTE = 16;
   int VARIABLE = 17;
   int Literal = 18;
-  int Digit = 19;
   int Number = 20;
-  int Letter = 21;
-  int BaseChar = 22;
-  int Ideographic = 23;
-  int CombiningChar = 24;
-  int UnicodeDigit = 25;
-  int Extender = 26;
   int OR = 27;
   int AND = 28;
   int MOD = 29;
@@ -95,8 +87,6 @@ public interface XPathParserConstants {
   int FUNCTION_ROUND = 77;
   int FUNCTION_FORMAT_NUMBER = 78;
   int NCName = 79;
-
-  int DEFAULT = 0;
 
   String[] tokenImage = {
     "<EOF>",

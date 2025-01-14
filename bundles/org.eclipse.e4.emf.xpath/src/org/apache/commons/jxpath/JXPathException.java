@@ -47,18 +47,6 @@ public class JXPathException extends RuntimeException {
     }
 
     /**
-     * Create a new {@code JXPathException} with a
-     * given {@code Throwable} base cause of the error.
-     *
-     * @param e The exception to be encapsulated in a
-     * JXPathException.
-     */
-    public JXPathException(final Throwable e) {
-        super(e.toString());
-        this.exception = e;
-    }
-
-    /**
      * Create a new {@code JXPathException} with the
      * given {@code Exception} base cause and detail message.
      *

@@ -70,11 +70,6 @@ public class ParseException extends Exception {
     specialConstructor = false;
   }
 
-  public ParseException(final String message) {
-    super(message);
-    specialConstructor = false;
-  }
-
   /**
    * This variable determines which constructor was used to create
    * this object and thereby affects the semantics of the

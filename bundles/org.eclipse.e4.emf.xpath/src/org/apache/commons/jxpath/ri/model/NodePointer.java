@@ -24,7 +24,6 @@ import org.apache.commons.jxpath.ExceptionHandler;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.JXPathException;
 import org.apache.commons.jxpath.JXPathNotFoundException;
-import org.apache.commons.jxpath.NodeSet;
 import org.apache.commons.jxpath.Pointer;
 import org.apache.commons.jxpath.ri.Compiler;
 import org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;
@@ -649,31 +648,6 @@ public abstract class NodePointer implements Pointer {
     }
 
     /**
-     * Locates a node by key and value.
-     * @param context owning JXPathContext
-     * @param key key to search for
-     * @param value value to match
-     * @return Pointer found
-     */
-    public Pointer getPointerByKey(
-            final JXPathContext context,
-            final String key,
-            final String value) {
-        return context.getPointerByKey(key, value);
-    }
-
-    /**
-     * Find a NodeSet by key/value.
-     * @param context owning JXPathContext
-     * @param key key to search for
-     * @param value value to match
-     * @return NodeSet found
-     */
-    public NodeSet getNodeSetByKey(final JXPathContext context, final String key, final Object value) {
-        return context.getNodeSetByKey(key, value);
-    }
-
-    /**
      * Returns an XPath that maps to this Pointer.
      * @return String xpath expression
      */
@@ -798,13 +772,6 @@ public abstract class NodePointer implements Pointer {
         }
         final int r = compareNodePointers(p1.parent, depth1 - 1, p2.parent, depth2 - 1);
         return r == 0 ? p1.parent.compareChildNodePointers(p1, p2) : r;
-    }
-
-    /**
-     * Print internal structure of a pointer for debugging
-     */
-    public void printPointerChain() {
-        printDeep(this, "");
     }
 
     /**

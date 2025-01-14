@@ -37,17 +37,6 @@ public class JXPathContextFactoryConfigurationError extends Error {
      }
 
     /**
-     * Create a new {@code JXPathContextFactoryConfigurationError} with
-     * the {@code String } specified as an error message.
-     *
-     * @param msg The error message for the exception.
-     */
-    public JXPathContextFactoryConfigurationError(final String msg) {
-        super(msg);
-        this.exception = null;
-    }
-
-    /**
      * Create a new {@code JXPathContextFactoryConfigurationError} with a
      * given {@code Exception} base cause of the error.
      *
@@ -56,19 +45,6 @@ public class JXPathContextFactoryConfigurationError extends Error {
      */
     public JXPathContextFactoryConfigurationError(final Exception e) {
         super(e.toString());
-        this.exception = e;
-    }
-
-    /**
-     * Create a new {@code JXPathContextFactoryConfigurationError} with the
-     * given {@code Exception} base cause and detail message.
-     *
-     * @param e The exception to be encapsulated in a
-     * JXPathContextFactoryConfigurationError
-     * @param msg The detail message.
-     */
-    public JXPathContextFactoryConfigurationError(final Exception e, final String msg) {
-        super(msg);
         this.exception = e;
     }
 

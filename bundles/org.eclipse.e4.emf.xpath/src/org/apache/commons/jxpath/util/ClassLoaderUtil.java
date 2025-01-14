@@ -84,20 +84,6 @@ public class ClassLoaderUtil {
         return clazz;
     }
 
-    /**
-     * Returns the (initialized) class represented by {@code className}
-     * using the {@code classLoader}.  This implementation supports names
-     * like "{@code java.lang.String[]}" as well as
-     * "{@code [Ljava.lang.String;}".
-     *
-     * @param classLoader  the class loader to use to load the class
-     * @param className  the class name
-     * @return the class represented by {@code className} using the {@code classLoader}
-     * @throws ClassNotFoundException if the class is not found
-     */
-    public static Class getClass(final ClassLoader classLoader, final String className) throws ClassNotFoundException {
-        return getClass(classLoader, className, true);
-    }
 
     /**
      * Returns the (initialized) class represented by {@code className}
