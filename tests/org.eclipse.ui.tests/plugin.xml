@@ -2621,7 +2621,7 @@
       </colorDefinition>    
       <colorDefinition
             label="badColor3"
-            value="0,0, 1x"
+            value="0,0, 1IntentionalBadColor3inorg.eclipse.ui.tests/plugin.xml"
             id="badColor3">
       </colorDefinition>  
       <fontDefinition
