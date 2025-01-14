@@ -69,9 +69,6 @@ public class ZoomTestCase extends UITestCase {
 		page = (WorkbenchPage) window.getActivePage();
 
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-		// Disable animations since they occur concurrently and can interferre
-		// with locating drop targets
-		setPreference(apiStore, IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
 
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
