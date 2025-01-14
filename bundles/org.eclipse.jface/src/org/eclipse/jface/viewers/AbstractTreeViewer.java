@@ -1862,13 +1862,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			}
 			if (level == ALL_LEVELS || level > 1) {
 				Item[] children = getChildren(widget);
-				if (children != null) {
+				if (children != null && shouldChildrenExpand.apply(widget).booleanValue()) {
 					int newLevel = (level == ALL_LEVELS ? ALL_LEVELS
 							: level - 1);
 					for (Item element : children) {
-						if (shouldChildrenExpand.apply(widget).booleanValue()) {
-							internalConditionalExpandToLevel(element, newLevel, shouldChildrenExpand);
-						}
+						internalConditionalExpandToLevel(element, newLevel, shouldChildrenExpand);
 					}
 				}
 			}
