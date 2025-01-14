@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<HTML>
+<HEAD>
+<TITLE>BNF for XPath.jj</TITLE>
+</HEAD>
+<BODY>
+<H1 ALIGN=CENTER>BNF for XPath.jj</H1>
+<H2 ALIGN=CENTER>NON-TERMINALS</H2>
+<TABLE>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod1">NCName</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod2">NCName_Without_CoreFunctions</A> | &lt;NODE&gt; | &lt;TEXT&gt; | &lt;COMMENT&gt; | &lt;PI&gt; | &lt;FUNCTION_LAST&gt; | &lt;FUNCTION_POSITION&gt; | &lt;FUNCTION_COUNT&gt; | &lt;FUNCTION_ID&gt; | &lt;FUNCTION_LOCAL_NAME&gt; | &lt;FUNCTION_NAMESPACE_URI&gt; | &lt;FUNCTION_NAME&gt; | &lt;FUNCTION_STRING&gt; | &lt;FUNCTION_CONCAT&gt; | &lt;FUNCTION_STARTS_WITH&gt; | &lt;FUNCTION_ENDS_WITH&gt; | &lt;FUNCTION_CONTAINS&gt; | &lt;FUNCTION_SUBSTRING_BEFORE&gt; | &lt;FUNCTION_SUBSTRING_AFTER&gt; | &lt;FUNCTION_SUBSTRING&gt; | &lt;FUNCTION_STRING_LENGTH&gt; | &lt;FUNCTION_NORMALIZE_SPACE&gt; | &lt;FUNCTION_TRANSLATE&gt; | &lt;FUNCTION_BOOLEAN&gt; | &lt;FUNCTION_NOT&gt; | &lt;FUNCTION_TRUE&gt; | &lt;FUNCTION_FALSE&gt; | &lt;FUNCTION_NULL&gt; | &lt;FUNCTION_LANG&gt; | &lt;FUNCTION_NUMBER&gt; | &lt;FUNCTION_SUM&gt; | &lt;FUNCTION_FLOOR&gt; | &lt;FUNCTION_CEILING&gt; | &lt;FUNCTION_ROUND&gt; | &lt;FUNCTION_KEY&gt; | &lt;FUNCTION_FORMAT_NUMBER&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod2">NCName_Without_CoreFunctions</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;NCName&gt; | &lt;OR&gt; | &lt;AND&gt; | &lt;MOD&gt; | &lt;DIV&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod3">CoreFunctionName</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;FUNCTION_LAST&gt; | &lt;FUNCTION_POSITION&gt; | &lt;FUNCTION_COUNT&gt; | &lt;FUNCTION_ID&gt; | &lt;FUNCTION_LOCAL_NAME&gt; | &lt;FUNCTION_NAMESPACE_URI&gt; | &lt;FUNCTION_NAME&gt; | &lt;FUNCTION_STRING&gt; | &lt;FUNCTION_CONCAT&gt; | &lt;FUNCTION_STARTS_WITH&gt; | &lt;FUNCTION_ENDS_WITH&gt; | &lt;FUNCTION_CONTAINS&gt; | &lt;FUNCTION_SUBSTRING_BEFORE&gt; | &lt;FUNCTION_SUBSTRING_AFTER&gt; | &lt;FUNCTION_SUBSTRING&gt; | &lt;FUNCTION_STRING_LENGTH&gt; | &lt;FUNCTION_NORMALIZE_SPACE&gt; | &lt;FUNCTION_TRANSLATE&gt; | &lt;FUNCTION_BOOLEAN&gt; | &lt;FUNCTION_NOT&gt; | &lt;FUNCTION_TRUE&gt; | &lt;FUNCTION_FALSE&gt; | &lt;FUNCTION_NULL&gt; | &lt;FUNCTION_LANG&gt; | &lt;FUNCTION_NUMBER&gt; | &lt;FUNCTION_SUM&gt; | &lt;FUNCTION_FLOOR&gt; | &lt;FUNCTION_CEILING&gt; | &lt;FUNCTION_ROUND&gt; | &lt;FUNCTION_KEY&gt; | &lt;FUNCTION_FORMAT_NUMBER&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod4">QName</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod1">NCName</A> ( ":" <A HREF="#prod1">NCName</A> )?</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod5">QName_Without_CoreFunctions</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod1">NCName</A> ":" <A HREF="#prod1">NCName</A> | <A HREF="#prod2">NCName_Without_CoreFunctions</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod6">parseExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod7">Expression</A> &lt;EOF&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod8">LocationPath</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod9">RelativeLocationPath</A> | <A HREF="#prod10">AbsoluteLocationPath</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod10">AbsoluteLocationPath</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( ( <A HREF="#prod11">LocationStep</A> ( <A HREF="#prod11">LocationStep</A> )* ) | &lt;SLASH&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod9">RelativeLocationPath</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod12">NodeTest</A> ( <A HREF="#prod11">LocationStep</A> )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod11">LocationStep</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;SLASH&gt; | &lt;SLASHSLASH&gt; ) <A HREF="#prod12">NodeTest</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod12">NodeTest</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( ( <A HREF="#prod13">AxisSpecifier</A> ( <A HREF="#prod14">NodeType</A> "(" ")" | &lt;PI&gt; "(" &lt;Literal&gt; ")" | <A HREF="#prod15">WildcardName</A> ) | "." | ".." ) ( <A HREF="#prod16">Predicate</A> )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod13">AxisSpecifier</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod17">AxisName</A> | <A HREF="#prod18">AbbreviatedAxisSpecifier</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod17">AxisName</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;AXIS_SELF&gt; | &lt;AXIS_CHILD&gt; | &lt;AXIS_PARENT&gt; | &lt;AXIS_ANCESTOR&gt; | &lt;AXIS_ATTRIBUTE&gt; | &lt;AXIS_NAMESPACE&gt; | &lt;AXIS_PRECEDING&gt; | &lt;AXIS_FOLLOWING&gt; | &lt;AXIS_DESCENDANT&gt; | &lt;AXIS_ANCESTOR_OR_SELF&gt; | &lt;AXIS_FOLLOWING_SIBLING&gt; | &lt;AXIS_PRECEDING_SIBLING&gt; | &lt;AXIS_DESCENDANT_OR_SELF&gt; )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod16">Predicate</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>"[" <A HREF="#prod7">Expression</A> "]"</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod18">AbbreviatedAxisSpecifier</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( "@" )?</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod7">Expression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod19">OrExpr</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod20">PrimaryExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod21">VariableReference</A> | "(" <A HREF="#prod7">Expression</A> ")" | &lt;Literal&gt; | &lt;Number&gt; | <A HREF="#prod22">CoreFunctionCall</A> | <A HREF="#prod23">FunctionCall</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod23">FunctionCall</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod24">FunctionName</A> <A HREF="#prod25">ArgumentList</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod22">CoreFunctionCall</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod3">CoreFunctionName</A> ) <A HREF="#prod25">ArgumentList</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod25">ArgumentList</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>"(" ( <A HREF="#prod26">Argument</A> ( "," <A HREF="#prod26">Argument</A> )* )? ")"</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod26">Argument</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod7">Expression</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod27">UnionExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod28">PathExpr</A> ( &lt;UNION&gt; <A HREF="#prod28">PathExpr</A> )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod28">PathExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod29">FilterExpr</A> | <A HREF="#prod8">LocationPath</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod29">FilterExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod20">PrimaryExpr</A> ( <A HREF="#prod16">Predicate</A> )* ( <A HREF="#prod11">LocationStep</A> )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod19">OrExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod30">AndExpr</A> ( &lt;OR&gt; <A HREF="#prod30">AndExpr</A> )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod30">AndExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod31">EqualityExpr</A> ( &lt;AND&gt; <A HREF="#prod31">EqualityExpr</A> )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod31">EqualityExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod32">RelationalExpr</A> ( ( &lt;EQ&gt; <A HREF="#prod32">RelationalExpr</A> | &lt;NEQ&gt; <A HREF="#prod32">RelationalExpr</A> ) )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod32">RelationalExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod33">AdditiveExpr</A> ( ( &lt;LT&gt; <A HREF="#prod33">AdditiveExpr</A> | &lt;GT&gt; <A HREF="#prod33">AdditiveExpr</A> | &lt;LTE&gt; <A HREF="#prod33">AdditiveExpr</A> | &lt;GTE&gt; <A HREF="#prod33">AdditiveExpr</A> ) )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod33">AdditiveExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod34">SubtractiveExpr</A> ( ( &lt;PLUS&gt; <A HREF="#prod34">SubtractiveExpr</A> ) )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod34">SubtractiveExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod35">MultiplicativeExpr</A> ( &lt;MINUS&gt; <A HREF="#prod35">MultiplicativeExpr</A> )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod35">MultiplicativeExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod36">UnaryExpr</A> ( ( "*" <A HREF="#prod36">UnaryExpr</A> | &lt;DIV&gt; <A HREF="#prod36">UnaryExpr</A> | &lt;MOD&gt; <A HREF="#prod36">UnaryExpr</A> ) )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod36">UnaryExpr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod27">UnionExpr</A> | &lt;MINUS&gt; <A HREF="#prod36">UnaryExpr</A> )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod24">FunctionName</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod5">QName_Without_CoreFunctions</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod21">VariableReference</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;VARIABLE&gt; <A HREF="#prod4">QName</A></TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod15">WildcardName</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( ( "*" | <A HREF="#prod1">NCName</A> ) ( ":" ( "*" | <A HREF="#prod1">NCName</A> ) )? )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod14">NodeType</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;TEXT&gt; | &lt;NODE&gt; | &lt;COMMENT&gt; | &lt;PI&gt; )</TD>
+</TR>
+</TABLE>
+</BODY>
+</HTML>
