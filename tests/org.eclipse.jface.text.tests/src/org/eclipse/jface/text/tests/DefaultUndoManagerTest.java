@@ -23,6 +23,7 @@ import org.eclipse.jface.text.IUndoManager;
  */
 public class DefaultUndoManagerTest extends AbstractUndoManagerTest {
 
+	@SuppressWarnings("removal")
 	@Override
 	protected IUndoManager createUndoManager(int maxUndoLevel) {
 		return new DefaultUndoManager(maxUndoLevel);
