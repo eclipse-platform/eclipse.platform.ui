@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.Converter;
 import org.apache.commons.jxpath.JXPathInvalidAccessException;
 import org.apache.commons.jxpath.JXPathTypeConversionException;
 import org.apache.commons.jxpath.NodeSet;
@@ -141,7 +139,7 @@ public class BasicTypeConverter implements TypeConverter {
         if (object instanceof Pointer) {
             return canConvert(((Pointer) object).getValue(), useType);
         }
-        return ConvertUtils.lookup(useType) != null;
+		return false;
     }
 
     /**
@@ -266,11 +264,6 @@ public class BasicTypeConverter implements TypeConverter {
             if (value != null) {
                 return value;
             }
-        }
-
-        final Converter converter = ConvertUtils.lookup(useType);
-        if (converter != null) {
-            return converter.convert(useType, object);
         }
 
         throw new JXPathTypeConversionException("Cannot convert "

@@ -88,24 +88,6 @@ public class JXPathContextReferenceImpl extends JXPathContext {
             nodeFactories.add(domFactory);
         }
 
-        // JDOM  factory is only registered if JDOM is on the classpath
-        final Object jdomFactory = allocateConditionally(
-                "org.apache.commons.jxpath.ri.model.jdom.JDOMPointerFactory",
-                "org.jdom.Document");
-        if (jdomFactory != null) {
-            nodeFactories.add(jdomFactory);
-        }
-
-        // DynaBean factory is only registered if BeanUtils are on the classpath
-        final Object dynaBeanFactory =
-            allocateConditionally(
-                "org.apache.commons.jxpath.ri.model.dynabeans."
-                    + "DynaBeanPointerFactory",
-                "org.apache.commons.beanutils.DynaBean");
-        if (dynaBeanFactory != null) {
-            nodeFactories.add(dynaBeanFactory);
-        }
-
         nodeFactories.add(new ContainerPointerFactory());
         createNodeFactoryArray();
     }
@@ -119,8 +101,8 @@ public class JXPathContextReferenceImpl extends JXPathContext {
                 (NodePointerFactory[]) nodeFactories.
                     toArray(new NodePointerFactory[nodeFactories.size()]);
             Arrays.sort(nodeFactoryArray, (a, b) -> {
-                final int orderA = ((NodePointerFactory) a).getOrder();
-                final int orderB = ((NodePointerFactory) b).getOrder();
+				final int orderA = a.getOrder();
+				final int orderB = b.getOrder();
                 return orderA - orderB;
             });
         }
