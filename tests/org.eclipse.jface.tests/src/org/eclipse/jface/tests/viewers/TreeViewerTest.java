@@ -16,6 +16,13 @@ package org.eclipse.jface.tests.viewers;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -23,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 import org.junit.Test;
 
 public class TreeViewerTest extends AbstractTreeViewerTest {
@@ -75,6 +83,35 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
 				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild()));
 		assertFalse("Trivial path is expanded further than specified depth ",
 				fTreeViewer.getExpandedState(trivialPathRoot.getFirstChild().getFirstChild()));
+	}
+
+	@Test
+	public void testInternalExpandToLevelRecursive() {
+		// internalExpandToLevel is recursive by contract, so we track all processed
+		// elements in a subtype to validate contractual recursive execution
+		List<Object> recursiveExpandedElements = new ArrayList<>();
+		TreeViewer viewer = new TreeViewer(fShell) {
+			@Override
+			protected void internalExpandToLevel(Widget widget, int level) {
+				if (widget != this.getTree()) {
+					recursiveExpandedElements.add(widget.getData());
+				}
+				super.internalExpandToLevel(widget, level);
+			}
+		};
+		TestElement rootElement = TestElement.createModel(2, 5);
+		viewer.setContentProvider(new TestModelContentProvider());
+		viewer.setInput(rootElement);
+
+		viewer.expandToLevel(AbstractTreeViewer.ALL_LEVELS);
+
+		Queue<TestElement> elements = new ConcurrentLinkedQueue<>(Arrays.asList(rootElement.getChildren()));
+		while (!elements.isEmpty()) {
+			TestElement currentElement = elements.poll();
+			assertTrue("expansion for child was not processed: " + currentElement,
+					recursiveExpandedElements.contains(currentElement));
+			elements.addAll(Arrays.asList(currentElement.getChildren()));
+		}
 	}
 
 }
