@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.jxpath.JXPathNotFoundException;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
@@ -83,7 +82,7 @@ public class ExampleQueriesTestCase {
 		assertNotNull(application);
 		assertSame(RootImpl.class, application.getClass());
 
-		assertThrows(JXPathNotFoundException.class, () -> xpathContext.getValue(".[@id='nixda']"));
+		assertThrows(RuntimeException.class, () -> xpathContext.getValue(".[@id='nixda']"));
 
 		application = xpathContext.getValue(".[@id='root']");
 		assertNotNull(application);

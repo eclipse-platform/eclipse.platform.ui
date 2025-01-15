@@ -29,8 +29,6 @@
  ******************************************************************************/
 package org.eclipse.e4.emf.internal.xpath;
 
-import java.util.Locale;
-
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.JXPathIntrospector;
 import org.apache.commons.jxpath.ri.Compiler;
@@ -50,16 +48,6 @@ public class CollectionPointer extends NodePointer {
 	private NodePointer valuePointer;
 
 	private static final long serialVersionUID = 8620254915563256588L;
-
-	/**
-	 * Create a new CollectionPointer.
-	 * @param collection value
-	 * @param locale Locale
-	 */
-	public CollectionPointer(Object collection, Locale locale) {
-		super(null, locale);
-		this.collection = collection;
-	}
 
 	/**
 	 * Create a new CollectionPointer.

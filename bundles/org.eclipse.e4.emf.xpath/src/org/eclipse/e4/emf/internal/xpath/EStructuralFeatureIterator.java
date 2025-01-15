@@ -94,14 +94,6 @@ public class EStructuralFeatureIterator implements NodeIterator {
 	}
 
 	/**
-	 * Get the property pointer.
-	 * @return NodePointer
-	 */
-	protected NodePointer getPropertyPointer() {
-		return propertyNodePointer;
-	}
-
-	/**
 	 * Reset property iteration.
 	 */
 	public void reset() {
