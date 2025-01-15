@@ -40,13 +40,12 @@ public class PipelineTest extends NavigatorTestBase {
 	@Test
 	public void testNavigatorResourceJava() throws Exception {
 
+		String[] exts = { COMMON_NAVIGATOR_RESOURCE_EXT, COMMON_NAVIGATOR_JAVA_EXT };
 		assertEquals(
 				"There should be no visible extensions for the pipeline viewer.",
 				0, _contentService.getVisibleExtensionIds().length);
 
-		_contentService.bindExtensions(new String[] {
-				COMMON_NAVIGATOR_RESOURCE_EXT, COMMON_NAVIGATOR_JAVA_EXT },
-				false);
+		_contentService.bindExtensions(exts, false);
 
 		// Note this test will fail showing only one if the JDT stuff
 		// is not included in the executing bundles (which it normally is)
@@ -54,9 +53,7 @@ public class PipelineTest extends NavigatorTestBase {
 				"There should be two visible extensions for the pipeline viewer.",
 				2, _contentService.getVisibleExtensionIds().length);
 
-		_contentService.getActivationService().activateExtensions(
-				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
-						COMMON_NAVIGATOR_JAVA_EXT }, true);
+		_contentService.getActivationService().activateExtensions(exts, true);
 
 		refreshViewer();
 
@@ -100,8 +97,7 @@ public class PipelineTest extends NavigatorTestBase {
 
 		boolean found = false;
 		for (int i = 0; i < rootItems.length && !found; i++) {
-			if (rootItems[i].getData() instanceof IProject) {
-				IProject newProjectFromTree = (IProject) rootItems[i].getData();
+			if (rootItems[i].getData() instanceof IProject newProjectFromTree) {
 				if (newProject.equals(newProjectFromTree))
 					found = true;
 			}
@@ -112,12 +108,9 @@ public class PipelineTest extends NavigatorTestBase {
 	// Make sure problems in bad extension points are reported well
 	@Test
 	public void testInterceptAddThrow() throws Exception {
-		_contentService.bindExtensions(new String[] {
-				COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_RESOURCE_OVERRIDE},
-				false);
-		_contentService.getActivationService().activateExtensions(
-				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
-						TEST_CONTENT_RESOURCE_OVERRIDE }, true);
+		String[] exts = { COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_RESOURCE_OVERRIDE };
+		_contentService.bindExtensions(exts, false);
+		_contentService.getActivationService().activateExtensions(exts, true);
 
 		refreshViewer();
 
@@ -137,12 +130,9 @@ public class PipelineTest extends NavigatorTestBase {
 
 	private void testHasNoChildrenOverride(boolean hasChildren) throws Exception {
 		TestContentProviderNoChildren._hasChildrenTrue = hasChildren;
-		_contentService.bindExtensions(new String[] {
-				COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_NO_CHILDREN},
-				false);
-		_contentService.getActivationService().activateExtensions(
-				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
-						TEST_CONTENT_NO_CHILDREN }, true);
+		String[] exts = { COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_NO_CHILDREN };
+		_contentService.bindExtensions(exts, false);
+		_contentService.getActivationService().activateExtensions(exts, true);
 
 		refreshViewer();
 

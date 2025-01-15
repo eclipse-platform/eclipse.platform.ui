@@ -58,17 +58,15 @@ public class JstPipelineTest extends NavigatorTestBase {
 	 */
 	@Test
 	public void testJstPipeline() throws Exception {
-
-		_contentService.bindExtensions(
-				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT, COMMON_NAVIGATOR_JAVA_EXT, TEST_CONTENT_JST }, false);
+		String[] exts = { COMMON_NAVIGATOR_RESOURCE_EXT, COMMON_NAVIGATOR_JAVA_EXT, TEST_CONTENT_JST };
+		_contentService.bindExtensions(exts, false);
 
 		// Note this test will fail showing only one if the JDT stuff
 		// is not included in the executing bundles (which it normally is)
 		assertEquals("There should be 3 visible extensions for the pipeline viewer.", 3,
 				_contentService.getVisibleExtensionIds().length);
 
-		_contentService.getActivationService().activateExtensions(
-				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT, COMMON_NAVIGATOR_JAVA_EXT, TEST_CONTENT_JST }, true);
+		_contentService.getActivationService().activateExtensions(exts, true);
 
 		refreshViewer();
 
