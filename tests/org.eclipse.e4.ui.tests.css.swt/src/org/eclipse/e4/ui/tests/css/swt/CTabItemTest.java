@@ -250,9 +250,11 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder2 = createFolder(folder.getShell());
 
 		WidgetElement.setCSSClass(folder2, "editorStack");
-		engine = createEngine("CTabItem { font-size: 10 }" + "CTabItem:selected { font-size: 14; font-weight: bold }"
-				+ "CTabFolder.editorStack CTabItem { font-size: 11; }"
-				+ "CTabFolder.editorStack CTabItem:selected { font-size: 13; font-style: italic }", folder.getDisplay());
+		engine = createEngine("""
+			CTabItem { font-size: 10 }\
+			CTabItem:selected { font-size: 14; font-weight: bold }\
+			CTabFolder.editorStack CTabItem { font-size: 11; }\
+			CTabFolder.editorStack CTabItem:selected { font-size: 13; font-style: italic }""", folder.getDisplay());
 		engine.applyStyles(folder.getShell(), true);
 
 		folder.getShell().open();
@@ -305,10 +307,11 @@ public class CTabItemTest extends CSSSWTTestCase {
 
 		WidgetElement.setCSSClass(folder2, "editorStack");
 		engine = createEngine(
-				"CTabItem { font-size: 10 }"
-						+ "CTabItem:selected { font-size: 14; font-weight: bold }"
-						+ "CTabFolder.editorStack CTabItem { font-size: 11; }"
-						+ "CTabFolder.editorStack CTabItem:selected { font-size: 13; font-weight: normal; font-style: italic }",
+				"""
+					CTabItem { font-size: 10 }\
+					CTabItem:selected { font-size: 14; font-weight: bold }\
+					CTabFolder.editorStack CTabItem { font-size: 11; }\
+					CTabFolder.editorStack CTabItem:selected { font-size: 13; font-weight: normal; font-style: italic }""",
 						folder.getDisplay());
 		engine.applyStyles(folder.getShell(), true);
 
@@ -361,8 +364,10 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder2 = createFolder(folder.getShell());
 
 		WidgetElement.setCSSClass(folder2, "editorStack");
-		engine = createEngine("CTabItem { show-close: false }" + "CTabItem:selected { show-close: true }"
-				+ "CTabFolder.editorStack CTabItem { show-close: true }", folder.getDisplay());
+		engine = createEngine("""
+			CTabItem { show-close: false }\
+			CTabItem:selected { show-close: true }\
+			CTabFolder.editorStack CTabItem { show-close: true }""", folder.getDisplay());
 		engine.applyStyles(folder.getShell(), true);
 
 		folder.getShell().open();
@@ -400,9 +405,11 @@ public class CTabItemTest extends CSSSWTTestCase {
 		CTabFolder folder2 = createFolder(folder.getShell());
 
 		WidgetElement.setCSSClass(folder2, "viewStack");
-		engine = createEngine("CTabItem { show-close: false }" + "CTabItem:selected { show-close: true }"
-				+ "CTabFolder.viewStack CTabItem { show-close: false }"
-				+ "CTabFolder.viewStack CTabItem.selected { show-close: true }", folder.getDisplay());
+		engine = createEngine("""
+			CTabItem { show-close: false }\
+			CTabItem:selected { show-close: true }\
+			CTabFolder.viewStack CTabItem { show-close: false }\
+			CTabFolder.viewStack CTabItem.selected { show-close: true }""", folder.getDisplay());
 		engine.applyStyles(folder.getShell(), true);
 
 		folder.getShell().open();

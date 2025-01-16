@@ -57,9 +57,13 @@ public class SectionTest extends CSSSWTTestCase {
 	@Test
 	void testSectionColors() {
 		Section section = createTestSection(
-				"Section { swt-titlebar-color: #FF0000;" + "tb-toggle-color: #FF0000; "
-						+ "tb-toggle-hover-color: #00FF00; " + "background-color-gradient-titlebar: #00FF00; "
-						+ "background-color-titlebar: #0000FF; " + "border-color-titlebar: #00FF00}");
+				"""
+					Section { swt-titlebar-color: #FF0000;\
+					tb-toggle-color: #FF0000; \
+					tb-toggle-hover-color: #00FF00; \
+					background-color-gradient-titlebar: #00FF00; \
+					background-color-titlebar: #0000FF; \
+					border-color-titlebar: #00FF00}""");
 		assertNotNull(section.getTitleBarForeground());
 		assertEquals(RED, section.getTitleBarForeground().getRGB());
 		assertNotNull(section.getTitleBarBackground());
@@ -79,9 +83,13 @@ public class SectionTest extends CSSSWTTestCase {
 	@Test
 	void testSectionResetColors() throws Exception {
 		Section section = createTestSection(
-				"Section { swt-titlebar-color: #FF0000;" + "tb-toggle-color: #FF0000; "
-						+ "tb-toggle-hover-color: #00FF00; " + "background-color-gradient-titlebar: #00FF00; "
-						+ "background-color-titlebar: #0000FF; " + "border-color-titlebar: #00FF00}");
+				"""
+					Section { swt-titlebar-color: #FF0000;\
+					tb-toggle-color: #FF0000; \
+					tb-toggle-hover-color: #00FF00; \
+					background-color-gradient-titlebar: #00FF00; \
+					background-color-titlebar: #0000FF; \
+					border-color-titlebar: #00FF00}""");
 
 		engine.reset();
 
