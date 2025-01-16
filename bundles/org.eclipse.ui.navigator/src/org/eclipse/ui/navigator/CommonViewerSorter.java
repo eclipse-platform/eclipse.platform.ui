@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,7 @@ import java.util.Set;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreePathViewerSorter;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
@@ -99,15 +99,15 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 			return -1;
 		}
 
-		ViewerSorter sorter = null;
+		ViewerComparator sorter = null;
 
 		// shortcut if contributed by same source
 		if (sourceOfLvalue == sourceOfRvalue) {
-			sorter = sorterService.findSorter(sourceOfLvalue, parent, e1, e2);
+			sorter = sorterService.findComparator(sourceOfLvalue, parent, e1, e2);
 		} else {
 			// findSorter returns the sorter specified at the source or if it has a higher priority a sortOnly sorter that is registered for the parent
-			ViewerSorter lSorter = findApplicableSorter(sourceOfLvalue, parent, e1, e2);
-			ViewerSorter rSorter = findApplicableSorter(sourceOfRvalue, parent, e1, e2);
+			ViewerComparator lSorter = findApplicableSorter(sourceOfLvalue, parent, e1, e2);
+			ViewerComparator rSorter = findApplicableSorter(sourceOfRvalue, parent, e1, e2);
 			sorter = rSorter;
 
 			if (rSorter == null || (lSorter != null && sourceOfLvalue.getSequenceNumber() < sourceOfRvalue.getSequenceNumber())) {
@@ -126,10 +126,10 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		return categoryDelta;
 	}
 
-	private ViewerSorter findApplicableSorter(INavigatorContentDescriptor descriptor, Object parent,
+	private ViewerComparator findApplicableSorter(INavigatorContentDescriptor descriptor, Object parent,
 			Object e1,
 			Object e2) {
-		ViewerSorter sorter = sorterService.findSorter(descriptor, parent, e1, e2);
+		ViewerComparator sorter = sorterService.findComparator(descriptor, parent, e1, e2);
 		if (!descriptor.isSortOnly()) { // for compatibility
 			if (!(descriptor.isTriggerPoint(e1) && descriptor.isTriggerPoint(e2))) {
 				return null;
@@ -155,7 +155,7 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		INavigatorContentDescriptor contentDesc = getSource(element);
 		if (parentPath.getSegmentCount() == 0)
 			return false;
-		ViewerSorter sorter = sorterService.findSorter(contentDesc, parentPath.getLastSegment(), element, null);
+		ViewerComparator sorter = sorterService.findComparator(contentDesc, parentPath.getLastSegment(), element, null);
 		if (sorter != null)
 			return sorter.isSorterProperty(element, property);
 		return false;
