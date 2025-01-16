@@ -67,9 +67,10 @@ public class InheritTest extends CSSSWTTestCase {
 	@Test
 	void testBackgroundInherit() throws Exception {
 		Label labelToTest = createTestLabel(
-				"Label { background-color: #00FF00; }\n"
-						+ "Composite { background-color: #FF0000; } \n"
-						+ "Composite Label { background-color: inherit; color: #0000FF; }",
+				"""
+					Label { background-color: #00FF00; }
+					Composite { background-color: #FF0000; }\s
+					Composite Label { background-color: inherit; color: #0000FF; }""",
 						false);
 		assertEquals(BLUE, labelToTest.getForeground().getRGB());
 		assertEquals(RED, labelToTest.getBackground().getRGB());
