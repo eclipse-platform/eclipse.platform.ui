@@ -426,7 +426,11 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			}
 
 			// Retrieve the last locations where the user searched (works across restarts)
-			filterHistory.addAll(List.of(settings.getArray(FILTER_HISTORY)));
+			String[] array = settings.getArray(FILTER_HISTORY);
+			if (array != null) {
+				filterHistory.addAll(List.of(array));
+			}
+
 			if (!filterHistory.isEmpty()) {
 				String filter = filterHistory.getFirst();
 
