@@ -81,6 +81,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -687,8 +688,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 					+ " is configured (e.g., via the INI), but the according preference should be preferred instead." //$NON-NLS-1$
 			));
 		} else {
-			boolean rescaleAtRuntime = PrefUtil.getAPIPreferenceStore()
-					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME);
+			boolean rescaleAtRuntime = ConfigurationScope.INSTANCE.getNode(WorkbenchPlugin.PI_WORKBENCH)
+					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, false);
 			System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(rescaleAtRuntime));
 		}
 	}
