@@ -90,17 +90,16 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 
 	/**
 	 *
-	 * @return An instance of the ViewerSorter defined by the extension. Callers
-	 *         of this method are responsible for managing the instantiated
-	 *         filter.
+	 * @return An instance of the ViewerComparator defined by the extension. Callers
+	 *         of this method are responsible for managing the instantiated filter.
 	 */
-	public ViewerSorter createSorter() {
-		final ViewerSorter[] sorter = new ViewerSorter[1];
+	public ViewerComparator createComparator() {
+		final ViewerComparator[] sorter = new ViewerComparator[1];
 
 		SafeRunner.run(new NavigatorSafeRunnable(element) {
 			@Override
 			public void run() throws Exception {
-				sorter[0] = createSorterInstance();
+				sorter[0] = createComparatorInstance();
 			}
 		});
 		if (sorter[0] != null)
@@ -108,13 +107,10 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 		return SkeletonViewerSorter.INSTANCE;
 	}
 
-	private ViewerSorter createSorterInstance() throws CoreException {
+	private ViewerComparator createComparatorInstance() throws CoreException {
 		Object contributed = element.createExecutableExtension(ATT_CLASS);
-		if (contributed instanceof ViewerSorter) {
-			return (ViewerSorter) contributed;
-		}
-		if (contributed instanceof ViewerComparator) {
-			return new WrappedViewerComparator((ViewerComparator) contributed);
+		if (contributed instanceof ViewerComparator comparator) {
+			return comparator;
 		}
 		throw new ClassCastException("Class contributed by " + element.getNamespaceIdentifier() + //$NON-NLS-1$
 				" to " + INavigatorContentExtPtConstants.TAG_NAVIGATOR_CONTENT + //$NON-NLS-1$

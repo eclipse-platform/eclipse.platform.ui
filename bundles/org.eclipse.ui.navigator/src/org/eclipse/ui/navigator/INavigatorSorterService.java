@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.ui.navigator;
 
 import java.util.Map;
 
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
@@ -31,7 +32,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
  * </p>
  *
  * @see INavigatorContentService#getSorterService()
- * @see ViewerSorter
+ * @see ViewerComparator
  *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -44,46 +45,74 @@ public interface INavigatorSorterService {
 	 * associated {@link INavigatorContentService} and whose <b>parentExpression</b>
 	 * matches the given parent.
 	 *
-	 * @param aParent
-	 *            An element from the tree
+	 * @param aParent An element from the tree
 	 * @return An applicable ViewerSorter or simple {@link ViewerSorter} if no
 	 *         sorter is found.
+	 * @deprecated Use {@link #findComparatorForParent(Object)} instead
 	 */
+	@Deprecated(since = "2025-03", forRemoval = true)
 	ViewerSorter findSorterForParent(Object aParent);
+
+	/**
+	 * Return a {@link ViewerComparator} from an extension which is visible to the
+	 * associated {@link INavigatorContentService} and whose <b>parentExpression</b>
+	 * matches the given parent.
+	 *
+	 * @param aParent An element from the tree
+	 * @return An applicable ViewerComparator or simple {@link ViewerComparator} if
+	 *         no sorter is found.
+	 * @since 3.13
+	 */
+	ViewerComparator findComparatorForParent(Object aParent);
 
 	/**
 	 * Return a {@link ViewerSorter} from an extension which is visible to the
 	 * associated {@link INavigatorContentService} and whose <b>parentExpression</b>
 	 * matches the given parent.
 	 *
-	 * @param source
-	 *            The source of the element.
-	 * @param parent
-	 *            An element from the tree
-	 * @param lvalue
-	 *            An element from the tree
-	 * @param rvalue
-	 *            An element from the tree
+	 * @param source The source of the element.
+	 * @param parent An element from the tree
+	 * @param lvalue An element from the tree
+	 * @param rvalue An element from the tree
 	 * @return An applicable ViewerSorter or simple {@link ViewerSorter} if no
 	 *         sorter is found.
+	 * @deprecated Use
+	 *             {@link #findComparator(INavigatorContentDescriptor, Object, Object, Object)}
+	 *             instead.
 	 */
+	@Deprecated(since = "2025-03", forRemoval = true)
 	ViewerSorter findSorter(INavigatorContentDescriptor source, Object parent,
 			Object lvalue, Object rvalue);
+
+	/**
+	 * Return a {@link ViewerComparator} from an extension which is visible to the
+	 * associated {@link INavigatorContentService} and whose <b>parentExpression</b>
+	 * matches the given parent.
+	 *
+	 * @param source The source of the element.
+	 * @param parent An element from the tree
+	 * @param lvalue An element from the tree
+	 * @param rvalue An element from the tree
+	 * @return An applicable ViewerComparator or simple {@link ViewerComparator} if
+	 *         no sorter is found.
+	 * @since 3.13
+	 */
+	ViewerComparator findComparator(INavigatorContentDescriptor source, Object parent, Object lvalue,
+			Object rvalue);
 
 	/**
 	 * Find and return all viewer sorters associated with the given descriptor.
 	 *
 	 * <p>
-	 * The <i>commonSorter</i> element is not required to have an id, so in
-	 * some cases, an auto-generated id, using the content extension id as a
-	 * base, is generated to ensure the map is properly filled with all
-	 * available sorters. No guarantees are given as to the order or consistency
-	 * of these generated ids between invocations.
+	 * The <i>commonSorter</i> element is not required to have an id, so in some
+	 * cases, an auto-generated id, using the content extension id as a base, is
+	 * generated to ensure the map is properly filled with all available sorters. No
+	 * guarantees are given as to the order or consistency of these generated ids
+	 * between invocations.
 	 * </p>
 	 *
-	 * @param theSource
-	 *            A descriptor that identifies a particular content extension
-	 * @return A Map[String sorterDescriptorId, ViewerSorter instance] where the
+	 * @param theSource A descriptor that identifies a particular content extension
+	 * @return A Map[String sorterDescriptorId, ViewerComparator instance] where the
 	 *         key is the id defined in the extension and the value is the
 	 *         instantiated sorter.
 	 *
@@ -92,6 +121,6 @@ public interface INavigatorSorterService {
 	 * @see INavigatorContentExtension#getDescriptor()
 	 * @since 3.3
 	 */
-	public Map findAvailableSorters(INavigatorContentDescriptor theSource);
+	public Map<String, ViewerComparator> findAvailableSorters(INavigatorContentDescriptor theSource);
 
 }

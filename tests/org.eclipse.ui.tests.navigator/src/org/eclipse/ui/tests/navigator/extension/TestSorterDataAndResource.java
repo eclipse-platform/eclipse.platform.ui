@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Oakland Software Incorporated and others.
+ * Copyright (c) 2009, 2025 Oakland Software Incorporated and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,9 +17,9 @@ import java.text.Collator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
-public class TestSorterDataAndResource extends ViewerSorter {
+public class TestSorterDataAndResource extends ViewerComparator {
 
 	public boolean _forward = true;
 
