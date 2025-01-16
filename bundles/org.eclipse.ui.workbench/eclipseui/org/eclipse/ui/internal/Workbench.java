@@ -588,6 +588,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				int orientation = store.getInt(IPreferenceConstants.LAYOUT_DIRECTION);
 				Window.setDefaultOrientation(orientation);
 			}
+			setRescaleAtRuntimePropertyFromPreference();
 			if (obj instanceof E4Application) {
 				E4Application e4app = (E4Application) obj;
 				E4Workbench e4Workbench = e4app.createE4Workbench(getApplicationContext(), display);
@@ -756,8 +757,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		if (applicationName != null) {
 			Display.setAppName(applicationName);
 		}
-
-		setRescaleAtRuntimePropertyFromPreference();
 
 		// create the display
 		Display newDisplay = Display.getCurrent();
