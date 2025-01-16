@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -21,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Predicate;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -28,6 +30,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -114,4 +117,47 @@ public class TreeViewerTest extends AbstractTreeViewerTest {
 		}
 	}
 
+	@Test
+	public void testExpandOnlyArbitraryChild() {
+
+		TestElement modelRoot = TestElement.createModel(3, 5);
+
+		// select an arbitrary child to be expanded
+		TestElement childToBeExpanded = modelRoot.getChildAt(modelRoot.getChildCount() - 1);
+
+		TreeViewer viewer = new TreeViewer(fShell) {
+			@Override
+			protected Predicate<Item> createShouldItemExpand() {
+				// Expand only "childToBeExpanded"
+				return it -> {
+					if (!(it.getData() instanceof TestElement)) {
+						throw new RuntimeException("Data: " + it.getData());
+					}
+
+					return it.getData() instanceof TestElement d && d.equals(childToBeExpanded);
+				};
+			}
+		};
+
+		viewer.setContentProvider(new TestModelContentProvider());
+		viewer.setInput(modelRoot);
+
+		// Even when expanding all elements, the provided predicate will take precedence
+		viewer.expandToLevel(AbstractTreeViewer.ALL_LEVELS);
+
+		Queue<TestElement> elements = new ConcurrentLinkedQueue<>(Arrays.asList(modelRoot.getChildren()));
+		while (!elements.isEmpty()) {
+			TestElement currentElement = elements.poll();
+
+			boolean shouldExpand = currentElement.equals(childToBeExpanded);
+
+			assertEquals("The expanded state of the element " + currentElement + " is wrong", shouldExpand,
+					viewer.getExpandedState(currentElement));
+			elements.addAll(Arrays.asList(currentElement.getChildren()));
+		}
+
+		// Double check that the desired element is there and that it was expanded
+		assertTrue("The element " + childToBeExpanded + " should have been expanded",
+				viewer.getExpandedState(childToBeExpanded));
+	}
 }

@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -139,6 +140,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	private boolean isTreePathContentProvider = false;
 
+	private Predicate<Item> shouldItemExpand;
+
 	/**
 	 * Safe runnable used to update an item.
 	 */
@@ -166,6 +169,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected AbstractTreeViewer() {
 		// do nothing
+		this.shouldItemExpand = createShouldItemExpand();
 	}
 
 	/**
@@ -1162,6 +1166,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				control.setRedraw(false);
 			}
 			Widget w = internalExpand(elementOrTreePath, true);
+			shouldItemExpand = createShouldItemExpand();
 			if (w != null) {
 				internalExpandToLevel(w, level);
 			}
@@ -1170,6 +1175,17 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				control.setRedraw(true);
 			}
 		}
+	}
+
+	/**
+	 * @return the predicate. It should return {@code true} if the received
+	 *         {@code Item} should be expanded when expanding the whole tree and
+	 *         {@code false} otherwise.
+	 *
+	 * @since 3.36
+	 */
+	protected Predicate<Item> createShouldItemExpand() {
+		return w -> true;
 	}
 
 	/**
@@ -1856,6 +1872,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			createChildren(widget, false);
 			// XXX for performance widget should be expanded after expanding children:
 			if (widget instanceof Item it) {
+				if (!shouldItemExpand.test(it)) {
+					return;
+				}
 				setExpanded(it, true);
 			}
 			if (level == ALL_LEVELS || level > 1) {
