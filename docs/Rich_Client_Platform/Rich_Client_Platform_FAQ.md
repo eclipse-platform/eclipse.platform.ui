@@ -4,8 +4,8 @@ Rich Client Platform/FAQ
 The following are **Frequently Asked Questions** (**FAQs**) about the Eclipse Rich Client Platform. 
 For relevant tutorials, help topics, newsgroups, examples, and other resources, see the main [RCP page](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform.md).
 
-For general Eclipse FAQs, which address many RCP issues, see [The Official Eclipse FAQs](https://wiki.eclipse.org/The_Official_Eclipse_FAQs). 
-For Eclipse 4, see the [Eclipse 4 RCP FAQ](/Eclipse4/RCP/FAQ "Eclipse4/RCP/FAQ").
+or general Eclipse FAQs, which address many RCP issues, see [The Official Eclipse FAQs](https://wiki.eclipse.org/The_Official_Eclipse_FAQs).  
+For Eclipse 4, see the [Eclipse 4 RCP FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_FAQ.md).
 
 Contents
 --------
