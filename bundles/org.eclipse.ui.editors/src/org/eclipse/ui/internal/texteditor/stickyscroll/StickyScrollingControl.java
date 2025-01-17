@@ -440,7 +440,7 @@ public class StickyScrollingControl {
 			int lastStickyLineNumber = stickyLines.get(stickyLines.size() - 1).getLineNumber();
 			return lastStickyLineNumber > textWidget.getLineCount();
 		}
-		return true;
+		return false;
 	}
 
 	private void limitVisibleStickyLinesToTextWidgetHeight(StyledText textWidget) {
