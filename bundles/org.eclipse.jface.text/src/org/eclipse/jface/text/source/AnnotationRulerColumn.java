@@ -266,6 +266,13 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			fCachedTextWidget= null;
 		});
 
+		fCanvas.addListener(SWT.ZoomChanged, e -> {
+			if (fBuffer != null) {
+				fBuffer.dispose();
+				fBuffer= null;
+			}
+		});
+
 		fMouseListener= new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent event) {
@@ -517,24 +524,28 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 				fBuffer= null;
 			}
 		}
-		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-
-		GC gc= new GC(fBuffer);
-		gc.setFont(fCachedTextWidget.getFont());
-		try {
-			gc.setBackground(fCanvas.getBackground());
-			gc.fillRectangle(0, 0, size.x, size.y);
-
-			if (fCachedTextViewer instanceof ITextViewerExtension5)
-				doPaint1(gc);
-			else
-				doPaint(gc);
-		} finally {
-			gc.dispose();
+		if (fBuffer == null) {
+			fBuffer= new Image(fCanvas.getDisplay(), this::doPaint, size.x, size.y);
+		} else {
+			GC gc= new GC(fBuffer);
+			try {
+				doPaint(gc, size.x, size.y);
+			} finally {
+				gc.dispose();
+			}
 		}
-
 		dest.drawImage(fBuffer, 0, 0);
+	}
+
+	private void doPaint(GC gc, int width, int height) {
+		gc.setFont(fCachedTextWidget.getFont());
+		gc.setBackground(fCanvas.getBackground());
+		gc.fillRectangle(0, 0, width, height);
+
+		if (fCachedTextViewer instanceof ITextViewerExtension5)
+			doPaint1(gc);
+		else
+			doPaint(gc);
 	}
 
 	/**
