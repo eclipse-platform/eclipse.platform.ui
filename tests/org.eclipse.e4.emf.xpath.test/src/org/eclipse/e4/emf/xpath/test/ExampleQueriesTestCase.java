@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2025 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,9 @@
  ******************************************************************************/
 package org.eclipse.e4.emf.xpath.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -27,11 +27,11 @@ import org.apache.commons.jxpath.JXPathNotFoundException;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Menu;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Node;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Root;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
-import org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.ExtendedNodeImpl;
-import org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.MenuImpl;
-import org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.NodeImpl;
-import org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.RootImpl;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -73,53 +73,48 @@ public class ExampleQueriesTestCase {
 	public void testSimpleQuery() {
 
 		Object application = xpathContext.getValue("/");
-		assertNotNull(application);
-		assertSame(RootImpl.class, application.getClass());
+		assertThat(application).isInstanceOf(Root.class);
 
-		RootImpl rootApplication = xpathContext.getValue("/", RootImpl.class);
+		Root rootApplication = xpathContext.getValue("/", Root.class);
 		assertNotNull(rootApplication);
 
 		application = xpathContext.getValue(".");
-		assertNotNull(application);
-		assertSame(RootImpl.class, application.getClass());
+		assertThat(application).isInstanceOf(Root.class);
 
 		assertThrows(JXPathNotFoundException.class, () -> xpathContext.getValue(".[@id='nixda']"));
 
 		application = xpathContext.getValue(".[@id='root']");
-		assertNotNull(application);
-		assertSame(RootImpl.class, application.getClass());
+		assertThat(application).isInstanceOf(Root.class);
 
-		rootApplication = xpathContext.getValue(".[@id='root']", RootImpl.class);
+		rootApplication = xpathContext.getValue(".[@id='root']", Root.class);
 		assertNotNull(rootApplication);
 
-		assertEquals("element1",xpathContext.getValue("nodes[1]/@id"));
+		assertEquals("element1", xpathContext.getValue("nodes[1]/@id"));
 
-		assertEquals(NodeImpl.class, xpathContext.getValue("//.[@id='element2.2']").getClass());
-		assertEquals(ExtendedNodeImpl.class,xpathContext.getValue("//.[ecore:eClassName(.)='ExtendedNode']").getClass());
+		assertThat(xpathContext.getValue("//.[@id='element2.2']")).isInstanceOf(Node.class);
+		assertThat(xpathContext.getValue("//.[ecore:eClassName(.)='ExtendedNode']")).isInstanceOf(ExtendedNode.class);
 
-		ExtendedNodeImpl extendedNode = xpathContext.getValue("//.[ecore:eClassName(.)='ExtendedNode']",
-				ExtendedNodeImpl.class);
-		assertNotNull(extendedNode);
+		assertNotNull(xpathContext.getValue("//.[ecore:eClassName(.)='ExtendedNode']", ExtendedNode.class));
 	}
 
 	@Test
 	public void testMenuQuery() {
 		Object application = xpathContext.getValue("/");
-		assertNotNull(application);
-		assertSame(RootImpl.class, application.getClass());
+		assertThat(application).isInstanceOf(Root.class);
 
 		Object node = xpathContext.getValue("//.[@id='menuContainer.1']/menus[@id='menu.1']");
 		assertNotNull(node);
+		assertTrue(node instanceof Menu);
 
-		Iterator<Object> i  = xpathContext.iterate("//.[@id='menu.1']");
+		Iterator<Object> i = xpathContext.iterate("//.[@id='menu.1']");
 		assertTrue(i.hasNext());
-		assertSame(NodeImpl.class, i.next().getClass());
+		assertThat(i.next()).isInstanceOf(Node.class);
 		assertTrue(i.hasNext());
-		assertSame(MenuImpl.class, i.next().getClass());
+		assertThat(i.next()).isInstanceOf(Menu.class);
 		// EMF model has a loop in it, it just goes back to the top
-		//assertFalse(i.hasNext());
+		// assertFalse(i.hasNext());
 
-		List<MenuImpl> list = xpathContext.stream("//.[@id='menu.1']", MenuImpl.class).toList();
+		List<Menu> list = xpathContext.stream("//.[@id='menu.1']", Menu.class).toList();
 		// EMF model has a loop in it, it just goes back to the top
 		assertEquals(26, list.size());
 	}
