@@ -188,6 +188,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.VerticalRuler;
 
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -5212,10 +5213,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Sets this editor's actions into activated (default) or deactived state.
 	 * <p>
-	 * XXX: This is called by the Java editor for its breadcrumb feature. We
-	 * don't want to make this risky method API because the Java editor
-	 * breadcrumb might become a Platform UI feature during 3.5 and hence we can
-	 * then delete this workaround.
+	 * XXX: This is called by the Java editor for its breadcrumb feature. We don't
+	 * want to make this risky method API because the Java editor breadcrumb might
+	 * become a Platform UI feature during 3.5 and hence we can then delete this
+	 * workaround.
+	 * </p>
+	 * <p>
+	 * This is also called reflectively by
+	 * org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlay.targetActionActivationHandling.new
+	 * FocusListener() {...}.setTextEditorActionsActivated(boolean).
 	 * </p>
 	 *
 	 * @param state <code>true</code> if activated
@@ -5230,9 +5236,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				if (action != null)
 					fActivationCodeTrigger.registerActionForKeyActivation(action);
 			}
-			getEditorSite().getActionBarContributor().setActiveEditor(this);
+			setActiveEditor(this);
 		} else {
-			getEditorSite().getActionBarContributor().setActiveEditor(null);
+			setActiveEditor(null);
 			Iterator<IAction> iter= fActions.values().iterator();
 			while (iter.hasNext()) {
 				IAction action= iter.next();
@@ -5240,6 +5246,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					fActivationCodeTrigger.unregisterActionFromKeyActivation(action);
 			}
 			fActivationCodeTrigger.uninstall();
+		}
+	}
+
+	private void setActiveEditor(IEditorPart targetEditor) {
+		IEditorSite editorSite = getEditorSite();
+		IEditorActionBarContributor actionBarContributor = editorSite.getActionBarContributor();
+		// Handle that MultiPageEditorSite.getActionBarContributor() returns null.
+		if (actionBarContributor == null) {
+			if (editorSite instanceof MultiPageEditorSite multiPageEditorSite) {
+				actionBarContributor = multiPageEditorSite.getMultiPageEditor().getEditorSite()
+						.getActionBarContributor();
+			}
+		}
+		if (actionBarContributor != null) {
+			actionBarContributor.setActiveEditor(targetEditor);
 		}
 	}
 
