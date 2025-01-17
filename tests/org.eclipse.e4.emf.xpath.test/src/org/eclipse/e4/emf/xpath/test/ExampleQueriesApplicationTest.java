@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 vogella GmbH and others.
+ * Copyright (c) 2018, 2025 vogella GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,8 @@
  ******************************************************************************/
 package org.eclipse.e4.emf.xpath.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
@@ -46,7 +46,6 @@ public class ExampleQueriesApplicationTest {
 	@SuppressWarnings("restriction")
 	@Before
 	public void setUp() {
-
 		resourceSet = new ResourceSetImpl();
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 				.put(Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
@@ -76,15 +75,13 @@ public class ExampleQueriesApplicationTest {
 	@Test
 	public void testAccessingTheApplication() {
 		Object application = xpathContext.getValue("/");
-		assertNotNull(application);
-		assertTrue(application instanceof MApplication);
+		assertThat(application).isInstanceOf(MApplication.class);
 	}
 
 	@Test
 	public void testAccessingTheMainMenu() {
 		Object menu = xpathContext.getValue("//mainMenu");
-		assertNotNull(menu);
-		assertTrue(menu instanceof MMenu);
+		assertThat(menu).isInstanceOf(MMenu.class);
 
 		MMenu mMenu = xpathContext.getValue("//mainMenu", MMenu.class);
 		assertNotNull(mMenu);
@@ -95,6 +92,5 @@ public class ExampleQueriesApplicationTest {
 		Object menuEntries = xpathContext.getValue("//mainMenu/children");
 		assertNotNull(menuEntries);
 	}
-
 
 }
