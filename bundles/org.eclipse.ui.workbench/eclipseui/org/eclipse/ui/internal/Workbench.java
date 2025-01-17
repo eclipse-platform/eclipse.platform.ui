@@ -29,6 +29,7 @@ package org.eclipse.ui.internal;
 import com.ibm.icu.util.ULocale;
 import com.ibm.icu.util.ULocale.Category;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +38,6 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -529,10 +529,10 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			return;
 		}
 		try {
-			URI swtMetadataLocationURI = workspaceLocation
-					.getDataArea(FrameworkUtil.getBundle(Browser.class).getSymbolicName()).toURI();
-			display.setData(EDGE_USER_DATA_FOLDER, Paths.get(swtMetadataLocationURI).toString());
-		} catch (URISyntaxException | IOException e) {
+			URL swtMetadataLocationURL = workspaceLocation
+					.getDataArea(FrameworkUtil.getBundle(Browser.class).getSymbolicName());
+			display.setData(EDGE_USER_DATA_FOLDER, new File(swtMetadataLocationURL.getFile()).toString());
+		} catch (IOException e) {
 			WorkbenchPlugin.log("Invalid workspace location to be set for Edge browser.", e); //$NON-NLS-1$
 		}
 	}
