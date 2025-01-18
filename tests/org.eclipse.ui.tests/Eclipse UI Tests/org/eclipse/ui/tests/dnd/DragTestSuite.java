@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2021 IBM Corporation and others.
+ * Copyright (c) 2004, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -58,7 +58,7 @@ public class DragTestSuite extends AutoTestSuite {
 	}
 
 	public DragTestSuite() {
-		super(Platform.find(TestPlugin.getDefault().getBundle(), IPath.fromOSString("data/dragtests.xml")));
+		super(FileLocator.find(TestPlugin.getDefault().getBundle(), IPath.fromOSString("data/dragtests.xml")));
 
 		String resNav = IPageLayout.ID_PROJECT_EXPLORER;
 		String probView = IPageLayout.ID_PROBLEM_VIEW;
