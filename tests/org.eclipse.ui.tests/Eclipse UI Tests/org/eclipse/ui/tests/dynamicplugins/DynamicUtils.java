@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,7 @@ package org.eclipse.ui.tests.dynamicplugins;
 import java.io.IOException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.ui.tests.TestPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
@@ -32,7 +32,7 @@ public class DynamicUtils {
 					"TestPlugin default reference is null");
 		}
 		String pluginLocation = null;
-		URL dataURL = Platform.resolve(plugin.getBundle().getEntry(pluginName));
+		URL dataURL = FileLocator.resolve(plugin.getBundle().getEntry(pluginName));
 		pluginLocation = "reference:" + dataURL.toExternalForm();
 		return TestInstallUtil.installBundle(pluginLocation);
 	}
