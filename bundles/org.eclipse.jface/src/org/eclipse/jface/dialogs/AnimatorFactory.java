@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.2
  * @deprecated as of 3.3, this class is no longer used.
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2025-03")
 public class AnimatorFactory {
 	/**
 	 * Creates a new ControlAnimator for use by JFace in animating
