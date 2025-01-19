@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,8 +37,6 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.jface.text.TypedRegion;
 
-
-
 /**
  * A standard implementation of a document partitioner. It uses a partition
  * token scanner to scan the document and to determine the document's
@@ -53,7 +51,7 @@ import org.eclipse.jface.text.TypedRegion;
  * @since 3.14
  * @deprecated As of 3.1, replaced by {@link org.eclipse.jface.text.rules.FastPartitioner} instead
  */
-@Deprecated
+@Deprecated(forRemoval= true, since="2025-03")
 public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IDocumentPartitionerExtension2, IDocumentPartitionerExtension3 {
 
 	/**

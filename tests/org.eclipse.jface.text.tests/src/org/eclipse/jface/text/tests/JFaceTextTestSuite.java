@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,9 +26,8 @@ import org.eclipse.jface.text.tests.contentassist.FilteringAsyncContentAssistTes
 import org.eclipse.jface.text.tests.contentassist.IncrementalAsyncContentAssistTests;
 import org.eclipse.jface.text.tests.reconciler.AbstractReconcilerTest;
 import org.eclipse.jface.text.tests.reconciler.FastAbstractReconcilerTest;
-import org.eclipse.jface.text.tests.rules.DefaultPartitionerTest;
-import org.eclipse.jface.text.tests.rules.DefaultPartitionerZeroLengthTest;
 import org.eclipse.jface.text.tests.rules.FastPartitionerTest;
+import org.eclipse.jface.text.tests.rules.FastPartitionerZeroLengthTest;
 import org.eclipse.jface.text.tests.rules.ScannerColumnTest;
 import org.eclipse.jface.text.tests.rules.WordRuleTest;
 import org.eclipse.jface.text.tests.source.AnnotationRulerColumnTest;
@@ -64,8 +63,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		AbstractReconcilerTest.class,
 		FastAbstractReconcilerTest.class,
 
-		DefaultPartitionerTest.class,
-		DefaultPartitionerZeroLengthTest.class,
+		FastPartitionerZeroLengthTest.class,
 		FastPartitionerTest.class,
 		ScannerColumnTest.class,
 		WordRuleTest.class,
