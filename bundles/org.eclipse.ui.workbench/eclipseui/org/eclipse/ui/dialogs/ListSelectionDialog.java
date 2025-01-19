@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -99,10 +99,7 @@ public class ListSelectionDialog extends SelectionDialog {
 	 * @param labelProvider   the label provider for displaying model elements
 	 * @param message         the message to be displayed at the top of this dialog,
 	 *                        or <code>null</code> to display a default message
-	 * @deprecated since 3.123; use {@link #of(Object)} instead:
-	 *             {@code ListSelectionDialog.of(input).contentProvider(contentProvider).labelProvider(labelProvider).message(message).create(parentShell)}
 	 */
-	@Deprecated
 	public ListSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider,
 			ILabelProvider labelProvider, String message) {
 		this(parentShell, input, contentProvider, labelProvider, message, null, null, true, null);
