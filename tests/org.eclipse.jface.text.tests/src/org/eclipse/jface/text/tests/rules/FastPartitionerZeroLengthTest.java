@@ -34,7 +34,7 @@ import org.eclipse.jface.text.rules.Token;
 /**
  * @since 3.0
  */
-public class DefaultPartitionerZeroLengthTest {
+public class FastPartitionerZeroLengthTest {
 
 	private static final String COMMENT= "comment";
 	private static final String DEFAULT= IDocument.DEFAULT_CONTENT_TYPE;
