@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -211,7 +211,7 @@ public class Policy {
 	 * @since 3.2
 	 * @deprecated this is no longer in use as of 3.3
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	public static void setAnimatorFactory(AnimatorFactory factory) {
 		animatorFactory = factory;
 	}
@@ -224,7 +224,7 @@ public class Policy {
 	 * @since 3.2
 	 * @deprecated this is no longer in use as of 3.3
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03")
 	public static AnimatorFactory getAnimatorFactory() {
 		if (animatorFactory == null)
 			animatorFactory = new AnimatorFactory();
