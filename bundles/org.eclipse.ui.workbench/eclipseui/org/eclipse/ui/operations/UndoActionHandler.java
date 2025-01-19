@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -44,9 +43,9 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 	 */
 	public UndoActionHandler(IWorkbenchPartSite site, IUndoContext context) {
 		super(site, context);
-		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
+		setImageDescriptor(ISharedImages.get().getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
 		setDisabledImageDescriptor(
-				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_DISABLED));
+				ISharedImages.get().getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_DISABLED));
 		setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 	}
 

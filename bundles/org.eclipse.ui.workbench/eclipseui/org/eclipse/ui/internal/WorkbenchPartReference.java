@@ -329,7 +329,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	@Override
 	public final Image getTitleImage() {
 		if (isDisposed()) {
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEF_VIEW);
+			return ISharedImages.get().getImage(ISharedImages.IMG_DEF_VIEW);
 		}
 
 		WorkbenchWindow wbw = (WorkbenchWindow) PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -341,7 +341,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 			}
 		}
 
-		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEF_VIEW);
+		return wbw.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEF_VIEW);
 	}
 
 	/* package */ void fireVisibilityChange() {

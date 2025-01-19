@@ -93,7 +93,7 @@ public abstract class ProductInfoPage extends InstallationPage implements IShell
 		MenuItem copyItem = new MenuItem(menu, SWT.NONE);
 		copyItem.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> handler.copySelection(table)));
 		copyItem.setText(JFaceResources.getString("copy")); //$NON-NLS-1$
-		copyItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
+		copyItem.setImage(ISharedImages.get().getImage(ISharedImages.IMG_TOOL_COPY));
 
 		table.setMenu(menu);
 
