@@ -24,6 +24,7 @@ import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SelectionEnabler;
@@ -169,7 +170,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter
 			}
 			imageDescriptor = ResourceLocator
 					.imageDescriptorFromBundle(configurationElement.getNamespaceIdentifier(), iconName)
-					.orElse(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(iconName));
+					.orElse(ISharedImages.get().getImageDescriptor(iconName));
 		}
 		return imageDescriptor;
 	}

@@ -43,7 +43,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -168,7 +167,7 @@ public abstract class WorkbenchPart extends EventManager
 	 * @return the default image
 	 */
 	protected Image getDefaultImage() {
-		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEF_VIEW);
+		return ISharedImages.get().getImage(ISharedImages.IMG_DEF_VIEW);
 	}
 
 	@Override
@@ -233,7 +232,7 @@ public abstract class WorkbenchPart extends EventManager
 		}
 		imageDescriptor = ResourceLocator.imageDescriptorFromBundle(configElement.getContributor().getName(), strIcon);
 		if (!imageDescriptor.isPresent()) {
-			ImageDescriptor shared = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(strIcon);
+			ImageDescriptor shared = ISharedImages.get().getImageDescriptor(strIcon);
 			imageDescriptor = Optional.ofNullable(shared);
 		}
 		imageDescriptor.ifPresent(d -> titleImage = JFaceResources.getResources().createImageWithDefault(d));

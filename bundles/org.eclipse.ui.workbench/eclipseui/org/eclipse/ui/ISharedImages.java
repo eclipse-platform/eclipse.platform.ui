@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A registry for common images used by the workbench which may be useful to
@@ -855,4 +856,12 @@ public interface ISharedImages {
 	 * @return the image descriptor, or <code>null</code> if not found
 	 */
 	ImageDescriptor getImageDescriptor(String symbolicName);
+
+	/**
+	 * @since 3.135
+	 * @return the default {@link ISharedImages} instance
+	 */
+	static ISharedImages get() {
+		return WorkbenchPlugin.getDefault().getSharedImages();
+	}
 }

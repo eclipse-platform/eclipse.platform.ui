@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -166,7 +165,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
 		homeAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_ETOOL_HOME_NAV));
 
 		// Back.
-		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+		ISharedImages images = ISharedImages.get();
 		backAction = new Action(WorkbenchMessages.GoBack_text) {
 			@Override
 			public void run() {

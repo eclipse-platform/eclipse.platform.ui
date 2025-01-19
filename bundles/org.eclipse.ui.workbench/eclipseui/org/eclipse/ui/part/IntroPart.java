@@ -32,7 +32,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.intro.IIntroPart;
@@ -151,7 +150,7 @@ public abstract class IntroPart extends EventManager implements IIntroPart, IExe
 	 * @return the default image
 	 */
 	protected Image getDefaultImage() {
-		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEF_VIEW);
+		return ISharedImages.get().getImage(ISharedImages.IMG_DEF_VIEW);
 	}
 
 	@Override
