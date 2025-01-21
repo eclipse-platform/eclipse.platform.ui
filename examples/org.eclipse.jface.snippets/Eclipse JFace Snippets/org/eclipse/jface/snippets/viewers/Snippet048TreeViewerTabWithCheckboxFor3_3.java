@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 Tom Schindl and others.
+ * Copyright (c) 2006, 2025 Tom Schindl and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -191,7 +191,7 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 				ViewerCell cell = mgr.getFocusCell();
 
 				try {
-					Method m = ColumnViewerEditor.class.getDeclaredMethod("processTraverseEvent", new Class[] {int.class,ViewerRow.class,TraverseEvent.class});
+					Method m = ColumnViewerEditor.class.getDeclaredMethod("processTraverseEvent", int.class,ViewerRow.class,TraverseEvent.class);
 					m.setAccessible(true);
 					m.invoke(editor, Integer.valueOf(cell.getColumnIndex()), cell.getViewerRow(), e);
 				} catch (SecurityException | NoSuchMethodException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e1) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -422,12 +422,11 @@ import org.eclipse.core.runtime.Status;
 		return converterMap;
 	}
 
-	private static final Class<?>[] integerClasses = new Class[] { byte.class,
-			Byte.class, short.class, Short.class, int.class, Integer.class,
-			long.class, Long.class, BigInteger.class };
+	private static final Class<?>[] integerClasses = { byte.class, Byte.class, short.class, Short.class, int.class,
+			Integer.class, long.class, Long.class, BigInteger.class };
 
-	private static final Class<?>[] floatClasses = new Class[] { float.class,
-			Float.class, double.class, Double.class, BigDecimal.class };
+	private static final Class<?>[] floatClasses = { float.class, Float.class, double.class, Double.class,
+			BigDecimal.class };
 
 	/**
 	 * Registers converters to boxed and unboxed types from a list of from

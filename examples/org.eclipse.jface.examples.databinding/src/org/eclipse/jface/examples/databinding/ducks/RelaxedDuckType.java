@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2015 db4objects Inc.  http://www.db4o.com
+ * Copyright (C) 2005, 2025 db4objects Inc.  http://www.db4o.com
  *
  *
  * This program and the accompanying materials
@@ -38,7 +38,7 @@ public class RelaxedDuckType extends DuckType implements InvocationHandler {
 				new RelaxedDuckType(object));
 	}
 
-	public static boolean includes(Object object, String method, Class<?>[] args) {
+	public static boolean includes(Object object, String method, Class<?>... args) {
 		try {
 			object.getClass().getMethod(method, args);
 		} catch (NoSuchMethodException e) {
