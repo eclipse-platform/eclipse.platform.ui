@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2015 db4objects Inc.  http://www.db4o.com
+ * Copyright (C) 2005, 2025 db4objects Inc.  http://www.db4o.com
  *
  *
  * This program and the accompanying materials
@@ -35,7 +35,7 @@ public class ReflectedMethod {
 	 * @param methodName The name of the method.
 	 * @param paramTypes The method's parameter types.
 	 */
-	public ReflectedMethod(Object subject, String methodName, Class<?>[] paramTypes) {
+	public ReflectedMethod(Object subject, String methodName, Class<?>... paramTypes) {
 		this.subject = subject;
 		method = null;
 		try {
@@ -62,7 +62,7 @@ public class ReflectedMethod {
 	 * @return any return value or null if there was no return value or an error
 	 *         occured.
 	 */
-	public Object invoke(Object[] params) {
+	public Object invoke(Object... params) {
 		if (method == null)
 			return null;
 		try {

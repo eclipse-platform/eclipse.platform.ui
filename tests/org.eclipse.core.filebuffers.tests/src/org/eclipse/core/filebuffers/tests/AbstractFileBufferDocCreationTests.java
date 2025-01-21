@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Symbian Software Systems, IBM Corporation and others.
+ * Copyright (c) 2008, 2025 Symbian Software Systems, IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -44,32 +44,32 @@ public abstract class AbstractFileBufferDocCreationTests {
 
 	@Test
 	public void testCreateDocumentPartipants_FileExt() {
-		assertParticipantsInvoked("anything.111foo", new Class[] {TestDSP1.class, TestDSP3.class});
+		assertParticipantsInvoked("anything.111foo", TestDSP1.class, TestDSP3.class);
 	}
 
 	@Test
 	public void testCreateDocumentPartipants_Name() {
-		assertParticipantsInvoked("111fooname", new Class[] {TestDSP2.class, TestDSP3.class});
+		assertParticipantsInvoked("111fooname", TestDSP2.class, TestDSP3.class);
 	}
 
 	@Test
 	public void testCreateDocumentPartipants_FileExt_Name() {
-		assertParticipantsInvoked("111fooname.111foo", new Class[] {TestDSP1.class, TestDSP2.class, TestDSP3.class});
+		assertParticipantsInvoked("111fooname.111foo", TestDSP1.class, TestDSP2.class, TestDSP3.class);
 	}
 
 	@Test
 	public void testCreateDocumentPartipants_FileExt_Extension() {
-		assertParticipantsInvoked("anything.222foo", new Class[] {TestDSP4.class, TestDSP6.class});
+		assertParticipantsInvoked("anything.222foo", TestDSP4.class, TestDSP6.class);
 	}
 
 	@Test
 	public void testCreateDocumentPartipants_Name_Extension() {
-		assertParticipantsInvoked("222fooname", new Class[] {TestDSP5.class, TestDSP6.class});
+		assertParticipantsInvoked("222fooname", TestDSP5.class, TestDSP6.class);
 	}
 
 	@Test
 	public void testCreateDocumentPartipants_FileExt_Name_Extension() {
-		assertParticipantsInvoked("222fooname.222foo", new Class[] {TestDSP4.class, TestDSP5.class, TestDSP6.class});
+		assertParticipantsInvoked("222fooname.222foo", TestDSP4.class, TestDSP5.class, TestDSP6.class);
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public abstract class AbstractFileBufferDocCreationTests {
 
 	/* Utilities */
 
-	private void assertParticipantsInvoked(String path, Class<?>[] expectedDSPsArray) {
+	private void assertParticipantsInvoked(String path, Class<?>... expectedDSPsArray) {
 		LocationKind[] lks= getSupportLocationKinds();
 		for (LocationKind lk : lks) {
 			IDocument document= fManager.createEmptyDocument(IPath.fromOSString(path), lk);

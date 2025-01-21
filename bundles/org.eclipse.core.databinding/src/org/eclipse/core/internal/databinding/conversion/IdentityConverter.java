@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2015 db4objects Inc.  http://www.db4o.com  and others.
+ * Copyright (C) 2005, 2025 db4objects Inc.  http://www.db4o.com  and others.
  *
  *
  * This program and the accompanying materials
@@ -37,7 +37,7 @@ public class IdentityConverter implements IConverter<Object, Object> {
 		this.toType = toType;
 	}
 
-	private Class<?>[][] primitiveMap = new Class[][] {
+	private Class<?>[][] primitiveMap = {
 			{ Integer.TYPE, Integer.class }, { Short.TYPE, Short.class },
 			{ Long.TYPE, Long.class }, { Double.TYPE, Double.class },
 			{ Byte.TYPE, Byte.class }, { Float.TYPE, Float.class },

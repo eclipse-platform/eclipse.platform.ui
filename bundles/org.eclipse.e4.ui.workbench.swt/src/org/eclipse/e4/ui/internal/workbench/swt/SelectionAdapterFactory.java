@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,7 +40,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 	/**
 	 * The classes we can adapt to.
 	 */
-	private static final Class<?>[] CLASSES = new Class[] { IIterable.class, ICountable.class };
+	private static final Class<?>[] CLASSES = { IIterable.class, ICountable.class };
 
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {

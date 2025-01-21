@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 The Pampered Chef and others.
+ * Copyright (c) 2006, 2025 The Pampered Chef and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,14 +32,14 @@ public class ReflectedProperty {
 	 */
 	public ReflectedProperty(Object object, String propertyName) {
 		this.propertyName = propertyName;
-		getter = new ReflectedMethod(object, makeGetterName(propertyName), new Class[] {});
+		getter = new ReflectedMethod(object, makeGetterName(propertyName));
 		if (!getter.exists()) {
-			getter = new ReflectedMethod(object, makeBooleanGetterName(propertyName), new Class[] {});
+			getter = new ReflectedMethod(object, makeBooleanGetterName(propertyName));
 			if (!getter.exists()) {
 				throw new IllegalArgumentException("Cannot find getter for " + propertyName);
 			}
 		}
-		setter = new ReflectedMethod(object, makeSetterName(propertyName), new Class[] { getter.getType() });
+		setter = new ReflectedMethod(object, makeSetterName(propertyName), getter.getType());
 	}
 
 	private String makeBooleanGetterName(String propertyName) {
