@@ -42,6 +42,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.core.runtime.Platform.OS;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -687,24 +689,25 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 
 		if (fBuffer == null) {
-			fBuffer= newFullBufferImage(size);
+			newFullBufferImage(visibleLines, size);
 		} else {
 			doPaint(visibleLines, size);
 		}
 		dest.drawImage(fBuffer, 0, 0);
 	}
 
-	private Image newFullBufferImage(Point size) {
-		ImageGcDrawer imageGcDrawer= (gc, imageWidth, imageHeight) -> {
-			ILineRange lines= JFaceTextUtil.getVisibleModelLines(fCachedTextViewer);
-			if (lines == null) {
-				return;
-			}
-			// We redraw everything; paint directly into the buffer
-			initializeGC(gc, 0, 0, imageWidth, imageHeight);
-			doPaint(gc, lines);
-		};
-		return new Image(fCanvas.getDisplay(), imageGcDrawer, size.x, size.y);
+	private void newFullBufferImage(ILineRange visibleLines, Point size) {
+		if (OS.isLinux()) {
+			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
+			doPaint(visibleLines, size);
+		} else {
+			ImageGcDrawer imageGcDrawer= (gc, imageWidth, imageHeight) -> {
+				// We redraw everything; paint directly into the buffer
+				initializeGC(gc, 0, 0, imageWidth, imageHeight);
+				doPaint(gc, visibleLines);
+			};
+			fBuffer= new Image(fCanvas.getDisplay(), imageGcDrawer, size.x, size.y);
+		}
 	}
 
 	private void doPaint(ILineRange visibleLines, Point size) {
