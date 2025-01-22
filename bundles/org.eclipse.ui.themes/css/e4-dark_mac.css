@@ -104,3 +104,9 @@ Button  {
 {
 	background-color: #1E1F22;
 }
+
+#org-eclipse-e4-ui-compatibility-editor Canvas,
+#org-eclipse-e4-ui-compatibility-editor Canvas > *
+{
+	background-color: #1E1F22;
+}
