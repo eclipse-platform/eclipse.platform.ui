@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.core.filebuffers.tests;singleton:=true
-Bundle-Version: 3.13.400.qualifier
+Bundle-Version: 3.13.500.qualifier
 Bundle-Activator: org.eclipse.core.filebuffers.tests.FileBuffersTestPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Plugin.providerName
