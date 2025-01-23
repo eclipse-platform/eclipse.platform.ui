@@ -71,6 +71,8 @@ class DialogAccess implements IFindReplaceUIAccess {
 
 	private final Button replaceAllButton;
 
+	private final Button findNextButton;
+
 	DialogAccess(IFindReplaceTarget findReplaceTarget, Dialog findReplaceDialog) {
 		this.findReplaceTarget= findReplaceTarget;
 		this.findReplaceDialog= findReplaceDialog;
@@ -89,6 +91,7 @@ class DialogAccess implements IFindReplaceUIAccess {
 		replaceButton= widgetExtractor.findButton("replaceOne");
 		replaceFindButton= widgetExtractor.findButton("replaceFindOne");
 		replaceAllButton= widgetExtractor.findButton("replaceAll");
+		findNextButton= widgetExtractor.findButton("findNext");
 	}
 
 	void restoreInitialConfiguration() {
@@ -205,6 +208,10 @@ class DialogAccess implements IFindReplaceUIAccess {
 		return findCombo.getText().substring(selection.x, selection.y);
 	}
 
+	public Button getReplaceButton() {
+		return replaceButton;
+	}
+
 	public Combo getFindCombo() {
 		return findCombo;
 	}
@@ -217,6 +224,10 @@ class DialogAccess implements IFindReplaceUIAccess {
 	@Override
 	public void performReplace() {
 		replaceButton.notifyListeners(SWT.Selection, null);
+	}
+
+	public void performFindNext() {
+		findNextButton.notifyListeners(SWT.Selection, null);
 	}
 
 	@Override

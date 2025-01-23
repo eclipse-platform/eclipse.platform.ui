@@ -1361,7 +1361,7 @@ class FindReplaceDialog extends Dialog {
 	private void decorate() {
 		if (fIsRegExCheckBox.getSelection()) {
 			regexOk = SearchDecoration.validateRegex(fFindField.getText(), fFindFieldDecoration);
-			updateButtonState(regexOk);
+			updateButtonState(!regexOk);
 
 		} else {
 			fFindFieldDecoration.hide();
@@ -1406,6 +1406,7 @@ class FindReplaceDialog extends Dialog {
 		fReplaceSelectionButton.setData(ID_DATA_KEY, "replaceOne");
 		fReplaceFindButton.setData(ID_DATA_KEY, "replaceFindOne");
 		fReplaceAllButton.setData(ID_DATA_KEY, "replaceAll");
+		fFindNextButton.setData(ID_DATA_KEY, "findNext");
 	}
 
 }
