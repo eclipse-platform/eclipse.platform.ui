@@ -1,0 +1,16 @@
+name: Check Bundle Dependencies Version Range
+concurrency: 
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 0 * * *'
+
+jobs:
+  check-dependencies:
+    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/checkDependencies.yml@master
+    with:
+      author: Eclipse Platform Bot <platform-bot@eclipse.org>
+    secrets:
+      token: ${{ secrets.PLATFORM_BOT_PAT }}
