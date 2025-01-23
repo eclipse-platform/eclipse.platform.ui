@@ -222,4 +222,17 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		assertEquals(2, (target.getSelection()).y);
 	}
 
+	@Test
+	public void testReplaceButtonEnabledWithRegexSearched() {
+		initializeTextViewerWithFindReplaceUI("one two three");
+
+		DialogAccess dialog= getDialog();
+		dialog.setFindText("two");
+		dialog.select(SearchOptions.REGEX);
+		dialog.setReplaceText("two2");
+		dialog.performFindNext();
+
+		assertTrue(dialog.getReplaceButton().isEnabled());
+	}
+
 }
