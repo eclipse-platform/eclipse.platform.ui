@@ -235,17 +235,27 @@ public class QuickFixPage extends WizardPage {
 			 */
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				int relevanceMarker1 = (e1 instanceof IMarkerResolutionRelevance)
-						? ((IMarkerResolutionRelevance) e1).getRelevanceForResolution()
-						: 0;
-				int relevanceMarker2 = (e2 instanceof IMarkerResolutionRelevance)
-						? ((IMarkerResolutionRelevance) e2).getRelevanceForResolution()
-						: 0;
-				int c = Integer.compare(relevanceMarker1, relevanceMarker2);
+				int relevanceMarker1 = getRelevance(e1);
+				int relevanceMarker2 = getRelevance(e2);
+				int c = Integer.compare(relevanceMarker2, relevanceMarker1);
 				if (c != 0) {
 					return c;
 				}
-				return ((IMarkerResolution) e1).getLabel().compareTo(((IMarkerResolution) e2).getLabel());
+				return getLabel(e1).compareTo(getLabel(e2));
+			}
+
+			private static String getLabel(Object object) {
+				if (object instanceof IMarkerResolution resolution) {
+					return resolution.getLabel();
+				}
+				return ""; //$NON-NLS-1$
+			}
+
+			private static int getRelevance(Object object) {
+				if (object instanceof IMarkerResolutionRelevance relevance) {
+					return relevance.getRelevanceForResolution();
+				}
+				return 0;
 			}
 		});
 
