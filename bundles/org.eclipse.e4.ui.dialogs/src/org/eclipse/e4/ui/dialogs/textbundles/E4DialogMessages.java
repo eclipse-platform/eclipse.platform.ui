@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 vogella GmbH and others.
+ * Copyright (c) 2014, 2025 vogella GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,8 @@ import org.eclipse.osgi.util.NLS;
 public class E4DialogMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.e4.ui.dialogs.textbundles.messages";//$NON-NLS-1$
 
+	public static String FilteredTable_AccessibleListenerFiltered;
+	public static String FilteredTable_FilterMessage;
 	public static String FilteredTree_AccessibleListenerClearButton;
 	public static String FilteredTree_ClearToolTip;
 	public static String FilteredTree_FilterMessage;
