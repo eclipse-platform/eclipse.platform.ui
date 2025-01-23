@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -217,6 +217,9 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 		operation.setCreateLeadupStructure(false);
 		openTestWindow().run(true, true, operation);
 
+		// overwrite successful?
+		IStatus status = operation.getStatus();
+		assertTrue(status.toString(), status.isOK());
 		// +1 for .settings
 		verifyFolders(directoryNames.length + 1);
 	}

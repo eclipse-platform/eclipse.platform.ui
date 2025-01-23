@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -84,7 +84,7 @@ public class FileSystemExporter {
 		if (sourceLocation != null) {
 			// local file, preserve attributes
 			Files.copy(sourceLocation.toFile().toPath(), destinationPath.toFile().toPath(),
-					StandardCopyOption.COPY_ATTRIBUTES, LinkOption.NOFOLLOW_LINKS);
+					StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES, LinkOption.NOFOLLOW_LINKS);
 		} else {
 			// virtual file system, transfer stream
 			try (InputStream is = new BufferedInputStream(file.getContents(false))) {
