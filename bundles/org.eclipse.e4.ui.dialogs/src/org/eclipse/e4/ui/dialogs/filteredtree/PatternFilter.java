@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -274,11 +274,12 @@ public class PatternFilter extends ViewerFilter {
 	 *         text
 	 */
 	protected boolean isParentMatch(Viewer viewer, Object element) {
-		Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
-				.getContentProvider()).getChildren(element);
+		if (viewer instanceof AbstractTreeViewer
+				&& ((AbstractTreeViewer) viewer).getContentProvider() instanceof ITreeContentProvider) {
+			Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer).getContentProvider())
+					.getChildren(element);
 
-		if ((children != null) && (children.length > 0)) {
-			return isAnyVisible(viewer, element, children);
+			return children != null && children.length > 0 && isAnyVisible(viewer, element, children);
 		}
 		return false;
 	}
