@@ -42,8 +42,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.core.runtime.Platform.OS;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -697,17 +695,12 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	}
 
 	private void newFullBufferImage(ILineRange visibleLines, Point size) {
-		if (OS.isLinux()) {
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-			doPaint(visibleLines, size);
-		} else {
-			ImageGcDrawer imageGcDrawer= (gc, imageWidth, imageHeight) -> {
-				// We redraw everything; paint directly into the buffer
-				initializeGC(gc, 0, 0, imageWidth, imageHeight);
-				doPaint(gc, visibleLines);
-			};
-			fBuffer= new Image(fCanvas.getDisplay(), imageGcDrawer, size.x, size.y);
-		}
+		ImageGcDrawer imageGcDrawer= (gc, imageWidth, imageHeight) -> {
+			// We redraw everything; paint directly into the buffer
+			initializeGC(gc, 0, 0, imageWidth, imageHeight);
+			doPaint(gc, visibleLines);
+		};
+		fBuffer= new Image(fCanvas.getDisplay(), imageGcDrawer, size.x, size.y);
 	}
 
 	private void doPaint(ILineRange visibleLines, Point size) {
