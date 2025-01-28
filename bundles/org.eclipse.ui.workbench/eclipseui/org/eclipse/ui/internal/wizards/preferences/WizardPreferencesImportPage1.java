@@ -25,6 +25,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 
@@ -50,6 +52,12 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 	 */
 	public WizardPreferencesImportPage1() {
 		this("preferencesImportPage1");//$NON-NLS-1$
+	}
+
+	@Override
+	public void createControl(Composite composite) {
+		super.createControl(composite);
+		PlatformUI.setHelp(composite, IWorkbenchHelpContextIds.PREFERENCES_IMPORT_WIZARD_PAGE);
 	}
 
 	@Override
