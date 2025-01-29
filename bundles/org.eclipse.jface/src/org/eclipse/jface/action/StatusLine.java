@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -81,6 +81,9 @@ import org.eclipse.swt.widgets.ToolItem;
 
 	/** name of the task */
 	protected volatile String fTaskName;
+
+	/** name of the task without sub-tasks */
+	protected volatile String fBaseTaskName;
 
 	/** is the task is cancled */
 	protected volatile boolean fIsCanceled;
@@ -580,6 +583,7 @@ import org.eclipse.swt.widgets.ToolItem;
 		boolean changed = !Objects.equals(fTaskName, s);
 		if (changed) {
 			fTaskName = s;
+			fBaseTaskName = s;
 			updateMessageLabel();
 		}
 	}
@@ -650,9 +654,13 @@ import org.eclipse.swt.widgets.ToolItem;
 		if (fTaskName == null || fTaskName.isEmpty()) {
 			text = newName;
 		} else {
-			text = JFaceResources.format("Set_SubTask", fTaskName, newName);//$NON-NLS-1$
+			text = JFaceResources.format("Set_SubTask", fBaseTaskName, newName);//$NON-NLS-1$
 		}
-		setMessage(text);
+		boolean changed = !Objects.equals(fTaskName, text);
+		if (changed) {
+			fTaskName = text;
+			updateMessageLabel();
+		}
 	}
 
 	/**
