@@ -10,7 +10,7 @@
 * Contributors: Feilim Breatnach, Pilz Ireland
 *******************************************************************************/
 
-package org.eclipse.e4.ui.examples.dummyeditor;
+package org.eclipse.e4.ui.examples.e4editor;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +29,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 
 public class OpenEditorHandler {
 
-	public static final String DUMMY_EDITOR_DESCRIPTOR_ID = "org.eclipse.e4.ui.examples.dummyeditor.partdescriptor.dummyeditor";
+	public static final String DUMMY_EDITOR_DESCRIPTOR_ID = "org.eclipse.e4.ui.examples.e4editor.partdescriptor.e4editor";
 
 	@Execute
 	public void execute(EModelService modelService, MApplication application, EPartService partService) {
