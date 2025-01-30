@@ -28,34 +28,31 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 
 public class OpenEditorHandler {
-	
+
 	public static final String DUMMY_EDITOR_DESCRIPTOR_ID = "org.eclipse.e4.ui.examples.dummyeditor.partdescriptor.dummyeditor";
-	
+
 	@Execute
 	public void execute(EModelService modelService, MApplication application, EPartService partService) {
 		Predicate<MPart> isEditorAlreadyOpenFilter = part -> DUMMY_EDITOR_DESCRIPTOR_ID.equals(part.getElementId());
-		Optional<MPart> alreadyOpenMatchingPart = partService.getParts().stream().filter(isEditorAlreadyOpenFilter).findFirst();
+		Optional<MPart> alreadyOpenMatchingPart = partService.getParts().stream().filter(isEditorAlreadyOpenFilter)
+				.findFirst();
 
 		MPart dummyPart = alreadyOpenMatchingPart.orElse(partService.createPart(DUMMY_EDITOR_DESCRIPTOR_ID));
-		if (alreadyOpenMatchingPart.isEmpty())
-		{
+		if (alreadyOpenMatchingPart.isEmpty()) {
 			dummyPart = partService.createPart(DUMMY_EDITOR_DESCRIPTOR_ID);
-			
-			// not entirely necessary: but for consistency let's place our dummy editor 
+
+			// not entirely necessary: but for consistency let's place our dummy editor
 			// where editor instances appear
 			Optional<MPartStack> primaryDataStack = findPrimaryConfiguationAreaPartStack(application, modelService);
-	        if (primaryDataStack.isPresent())
-	        {
-	           primaryDataStack.get().getChildren().add(dummyPart);
-	        }
-		}
-		else
-		{
+			if (primaryDataStack.isPresent()) {
+				primaryDataStack.get().getChildren().add(dummyPart);
+			}
+		} else {
 			dummyPart = alreadyOpenMatchingPart.get();
 		}
 
 		partService.showPart(DUMMY_EDITOR_DESCRIPTOR_ID, PartState.ACTIVATE);
-	    partService.bringToTop(dummyPart);
+		partService.bringToTop(dummyPart);
 	}
 
 	private Optional<MPartStack> findPrimaryConfiguationAreaPartStack(MApplication application,
