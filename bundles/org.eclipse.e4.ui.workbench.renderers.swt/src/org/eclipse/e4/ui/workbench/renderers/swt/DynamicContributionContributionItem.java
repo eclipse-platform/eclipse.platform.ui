@@ -14,6 +14,7 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
@@ -29,12 +30,15 @@ class DynamicContributionContributionItem extends ContributionItem {
 
 	private IMenuListener menuListener = IMenuManager::markDirty;
 
+	private IContributionFactory factory;
+
 	/**
 	 * Create the item and associated model;
 	 */
-	public DynamicContributionContributionItem(MDynamicMenuContribution item) {
+	public DynamicContributionContributionItem(MDynamicMenuContribution item, IContributionFactory factory) {
 		super(item.getElementId());
 		model = item;
+		this.factory = factory;
 	}
 
 	@Override
@@ -52,6 +56,14 @@ class DynamicContributionContributionItem extends ContributionItem {
 	 */
 	public MDynamicMenuContribution getModel() {
 		return model;
+	}
+
+	@Override
+	public boolean isVisible() {
+		if (factory.isEnabled(model.getContributionURI())) {
+			return super.isVisible();
+		}
+		return false;
 	}
 
 	@Override

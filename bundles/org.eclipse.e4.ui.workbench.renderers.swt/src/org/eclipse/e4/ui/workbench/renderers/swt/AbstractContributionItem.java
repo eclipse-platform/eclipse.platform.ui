@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.RenderedElementUtil;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -84,6 +85,9 @@ public abstract class AbstractContributionItem extends ContributionItem {
 	@Optional
 	protected EHelpService helpService;
 
+	@Inject
+	protected IContributionFactory contributionFactory;
+
 	protected Widget widget;
 	protected Listener menuItemListener;
 	protected LocalResourceManager localResourceManager;
@@ -124,6 +128,15 @@ public abstract class AbstractContributionItem extends ContributionItem {
 		} else if (widget instanceof ToolItem) {
 			updateToolItem();
 		}
+	}
+
+	@Override
+	public boolean isVisible() {
+		String contributorURI = modelItem.getContributorURI();
+		if (contributorURI == null || contributionFactory.isEnabled(contributorURI)) {
+			return super.isVisible();
+		}
+		return false;
 	}
 
 	protected abstract void updateMenuItem();
