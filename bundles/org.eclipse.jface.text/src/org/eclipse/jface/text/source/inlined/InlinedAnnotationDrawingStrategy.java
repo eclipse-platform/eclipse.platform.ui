@@ -198,9 +198,17 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			annotation.draw(gc, textWidget, offset, length, color, x, y);
 		} else if (textWidget.getLineVerticalIndent(line) > 0) {
 			// Here vertical indent is done, the redraw of the full line width is done to avoid annotation clipping
-			Rectangle bounds= textWidget.getTextBounds(offset, offset);
 			Rectangle client= textWidget.getClientArea();
-			textWidget.redraw(0, bounds.y, client.width, bounds.height, false);
+			int y, height;
+			if (offset < charCount) {
+				Rectangle bounds= textWidget.getTextBounds(offset, offset);
+				y= bounds.y;
+				height= bounds.height;
+			} else {
+				y= 0;
+				height= client.height;
+			}
+			textWidget.redraw(0, y, client.width, height, false);
 		} else {
 			if (offset >= charCount) {
 				if (charCount > 0) {

@@ -23,11 +23,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.core.runtime.Assert;
@@ -262,7 +264,17 @@ public class CodeMiningManager implements Runnable {
 				if (first instanceof LineContentCodeMining m) {
 					afterPosition= m.isAfterPosition();
 				}
-				ann= inLineHeader ? new CodeMiningLineHeaderAnnotation(pos, viewer) : new CodeMiningLineContentAnnotation(pos, viewer, afterPosition);
+				Consumer<MouseEvent> mouseHover= null;
+				Consumer<MouseEvent> mouseOut= null;
+				Consumer<MouseEvent> mouseMove= null;
+				if (first != null) {
+					mouseHover= first.getMouseHover();
+					mouseOut= first.getMouseOut();
+					mouseMove= first.getMouseMove();
+				}
+				ann= inLineHeader
+						? new CodeMiningLineHeaderAnnotation(pos, viewer, mouseHover, mouseOut, mouseMove)
+						: new CodeMiningLineContentAnnotation(pos, viewer, afterPosition, mouseHover, mouseOut, mouseMove);
 			} else if (ann instanceof ICodeMiningAnnotation && ((ICodeMiningAnnotation) ann).isInVisibleLines()) {
 				// annotation is in visible lines
 				annotationsToRedraw.add((ICodeMiningAnnotation) ann);
