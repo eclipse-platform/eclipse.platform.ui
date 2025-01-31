@@ -256,7 +256,7 @@ public class StickyScrollingControlTest {
 	public void testDontLayoutOutDatedStickyLinesOnResize() {
 		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
 
-		List<IStickyLine> stickyLines = List.of(new StickyLineStub("line 10", 10));
+		List<IStickyLine> stickyLines = List.of(new StickyLineStub("line 1", 1));
 		stickyScrollingControl.setStickyLines(stickyLines);
 
 		Canvas stickyControlCanvas = getStickyControlCanvas(shell);
@@ -329,6 +329,7 @@ public class StickyScrollingControlTest {
 	@Test
 	public void testLimitStickyLinesToTextWidgetHeight() {
 		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
+		sourceViewer.getTextWidget().setText("line1\nline2");
 		List<IStickyLine> stickyLines = List.of(new StickyLineStub("line 2", 1));
 		stickyScrollingControl.setStickyLines(stickyLines);
 
