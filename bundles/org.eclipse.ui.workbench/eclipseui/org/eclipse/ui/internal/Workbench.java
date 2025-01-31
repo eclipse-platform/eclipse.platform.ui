@@ -457,6 +457,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 *                specializes this workbench instance
 	 * @since 3.0
 	 */
+	@SuppressWarnings("restriction")
 	private Workbench(Display display, final WorkbenchAdvisor advisor, MApplication app, IEclipseContext appContext) {
 		this.advisor = Objects.requireNonNull(advisor);
 		this.display = Objects.requireNonNull(display);
@@ -492,6 +493,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				advisor.eventLoopException(exception);
 			}
 		});
+		appContext.set(org.eclipse.e4.core.services.contributions.IContributionFactory.class,
+				new WorkbenchContributionFactory(this));
 
 		// for dynamic UI [This seems to be for everything that isn't handled by
 		// some
