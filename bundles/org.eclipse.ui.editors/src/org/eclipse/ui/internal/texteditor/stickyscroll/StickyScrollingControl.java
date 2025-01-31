@@ -441,7 +441,7 @@ public class StickyScrollingControl {
 	private boolean areStickyLinesOutDated(StyledText textWidget) {
 		if (stickyLines.size() > 0) {
 			int lastStickyLineNumber = stickyLines.get(stickyLines.size() - 1).getLineNumber();
-			return lastStickyLineNumber > textWidget.getLineCount();
+			return lastStickyLineNumber >= textWidget.getLineCount();
 		}
 		return false;
 	}

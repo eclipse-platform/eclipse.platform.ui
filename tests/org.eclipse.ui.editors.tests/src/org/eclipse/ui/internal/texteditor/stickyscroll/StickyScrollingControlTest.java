@@ -256,7 +256,7 @@ public class StickyScrollingControlTest {
 	public void testDontLayoutOutDatedStickyLinesOnResize() {
 		sourceViewer.getTextWidget().setBounds(0, 0, 200, 200);
 
-		List<IStickyLine> stickyLines = List.of(new StickyLineStub("line 10", 10));
+		List<IStickyLine> stickyLines = List.of(new StickyLineStub("line 1", 1));
 		stickyScrollingControl.setStickyLines(stickyLines);
 
 		Canvas stickyControlCanvas = getStickyControlCanvas(shell);
