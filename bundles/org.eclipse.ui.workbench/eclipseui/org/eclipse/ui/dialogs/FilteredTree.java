@@ -430,10 +430,15 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 						int treeHeight = getViewer().getTree().getBounds().height;
 						int numVisibleItems = treeHeight / getViewer().getTree().getItemHeight();
 						long stopTime = SOFT_MAX_EXPAND_TIME + System.currentTimeMillis();
+
+						updateToolbar(true);
+
 						if (items.length > 0
 								&& recursiveExpand(items, monitor, stopTime, new int[] { numVisibleItems })) {
 							return Status.CANCEL_STATUS;
 						}
+					} else {
+						updateToolbar(false);
 					}
 				} finally {
 					// done updating the tree - set redraw back to true
@@ -488,9 +493,7 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 	 * override.
 	 *
 	 * @param visible boolean
-	 * @deprecated As of 4.13 not used anymore
 	 */
-	@Deprecated(since = "2025-03", forRemoval = true)
 	protected void updateToolbar(boolean visible) {
 		// nothing to do
 	}
