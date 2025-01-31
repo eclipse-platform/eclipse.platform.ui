@@ -100,9 +100,10 @@ public class StickyLineTest {
 		textWidget.setText("line1\nline2\nline3");
 
 		StickyLine stickyLineOutOfBound = new StickyLine(10, sourceViewer);
-		StyleRange[] styleRanges = stickyLineOutOfBound.getStyleRanges();
+		assertNull(stickyLineOutOfBound.getStyleRanges());
 
-		assertNull(styleRanges);
+		stickyLineOutOfBound = new StickyLine(3, sourceViewer);
+		assertNull(stickyLineOutOfBound.getStyleRanges());
 	}
 
 	@Test
