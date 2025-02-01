@@ -23,6 +23,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -39,6 +41,11 @@ import org.eclipse.ui.views.IViewRegistry;
  */
 public class ViewProvider extends QuickAccessProvider {
 
+	/**
+	 * URI of any view on the platform has this prefix. ex:
+	 * bundleclass://org.eclipse.pde.spy.bundle/org.eclipse.pde.spy.bundle.BundleSpyPart
+	 */
+	private static final String BUNDLE_CLASS_SCHEME = "bundleclass://"; //$NON-NLS-1$
 	private MApplication application;
 	private MWindow window;
 	private Map<String, QuickAccessElement> idToElement = new HashMap<>();
@@ -69,6 +76,7 @@ public class ViewProvider extends QuickAccessProvider {
 		}
 
 		if (idToElement.isEmpty()) {
+			IActivityManager activityManager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 			for (MPartDescriptor descriptor : application.getDescriptors()) {
 				String uri = descriptor.getContributionURI();
 				if (uri != null) {
@@ -85,7 +93,15 @@ public class ViewProvider extends QuickAccessProvider {
 								idToElement.put(element.getId(), element);
 							}
 						} else {
-							idToElement.put(id, element);
+							if (uri.startsWith(BUNDLE_CLASS_SCHEME)) {
+								String viewQualUri = uri.substring(BUNDLE_CLASS_SCHEME.length());
+								IIdentifier identifier = activityManager.getIdentifier(viewQualUri);
+								if (identifier.isEnabled()) {
+									idToElement.put(element.getId(), element);
+								}
+							} else {
+								idToElement.put(element.getId(), element);
+							}
 						}
 					}
 				}
