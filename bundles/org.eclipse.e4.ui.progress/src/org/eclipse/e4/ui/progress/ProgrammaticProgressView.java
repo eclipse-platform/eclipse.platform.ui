@@ -44,7 +44,7 @@ import jakarta.inject.Inject;
  */
 public class ProgrammaticProgressView {
 
-	private static final String CLEAR_ALL_ICON_URI = "platform:/plugin/org.eclipse.e4.ui.progress/icons/full/elcl16/progress_remall.png"; //$NON-NLS-1$
+	private static final String CLEAR_ALL_ICON_URI = "platform:/plugin/org.eclipse.e4.ui.progress/icons/full/elcl16/progress_remall.svg"; //$NON-NLS-1$
 
 	DetailedProgressViewer viewer;
 

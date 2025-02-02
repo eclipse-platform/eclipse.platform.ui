@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 8.4666659 8.4666659"
+   version="1.1"
+   id="svg5"
+   shape-rendering="crispEdges"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <g
+     id="layer2">
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 0,0 H 8.4666659 V 8.4666659 H 0 Z"
+       id="path856" />
+  </g>
+  <g
+     id="layer1">
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.073351;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 2.3812498,5.8208328 h 3.7041663 l 4e-7,0.2645833 H 2.3812498 Z"
+       id="path140-3" />
+    <g
+       id="g7156">
+      <path
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.103734;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 2.3812498,2.3812498 h 3.7041663 l 4e-7,0.5291666 H 2.3812498 Z"
+         id="path140" />
+      <path
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.073351;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 2.6458331,2.3812498 v 3.7041663 l -0.2645833,4e-7 V 2.3812498 Z"
+         id="path140-3-6" />
+      <path
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.073351;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 3.439583,2.3812498 v 3.7041663 l -0.2645833,4e-7 V 2.3812498 Z"
+         id="path140-3-6-7" />
+      <path
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.073351;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 6.0854161,2.3812498 v 3.7041663 l -0.2645833,4e-7 V 2.3812498 Z"
+         id="path140-3-6-7-5" />
+    </g>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 4.7624996,3.1749997 v 0.7937499 h 0.7937499 v 0.79375 H 4.7624996 V 5.5562495 L 3.439583,4.3656246 Z"
+       id="path146" />
+  </g>
+</svg>

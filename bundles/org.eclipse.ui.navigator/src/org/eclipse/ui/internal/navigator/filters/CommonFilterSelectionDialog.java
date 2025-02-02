@@ -48,8 +48,8 @@ import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
  */
 public class CommonFilterSelectionDialog extends TrayDialog {
 
-	private static final String FILTER_ICON = "icons/full/elcl16/filter_ps.png"; //$NON-NLS-1$
-	private static final String CONTENT_ICON = "icons/full/elcl16/content.png"; //$NON-NLS-1$
+	private static final String FILTER_ICON = "icons/full/elcl16/filter_ps.svg"; //$NON-NLS-1$
+	private static final String CONTENT_ICON = "icons/full/elcl16/content.svg"; //$NON-NLS-1$
 
 	private static final int TAB_WIDTH_IN_DLUS = 300;
 
