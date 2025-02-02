@@ -25,7 +25,7 @@
 
       <wizard
             name="%ImportWizards.Preferences"
-            icon="$nl$/icons/full/obj16/importpref_obj.png"
+            icon="$nl$/icons/full/obj16/importpref_obj.svg"
             id="org.eclipse.ui.wizards.import.Preferences"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.ExtensionFactory:preferencesImportWizard">
@@ -38,7 +38,7 @@
       </wizard>
       <wizard
             name="%ImportWizards.FileSystem"
-            icon="$nl$/icons/full/etool16/importdir_wiz.png"
+            icon="$nl$/icons/full/etool16/importdir_wiz.svg"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.datatransfer.FileSystemImportWizard"
             id="org.eclipse.ui.wizards.import.FileSystem">
@@ -51,7 +51,7 @@
       </wizard>
       <wizard
             name="%ImportWizards.ExternalProject"
-            icon="$nl$/icons/full/etool16/newprj_wiz.png"
+            icon="$nl$/icons/full/etool16/newprj_wiz.svg"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.datatransfer.ExternalProjectImportWizard"
             id="org.eclipse.ui.wizards.import.ExternalProject">
@@ -64,7 +64,7 @@
       </wizard>
       <wizard
             name="%ImportWizards.ZipFile"
-            icon="$nl$/icons/full/etool16/importzip_wiz.png"
+            icon="$nl$/icons/full/etool16/importzip_wiz.svg"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.datatransfer.ZipFileImportWizard"
             id="org.eclipse.ui.wizards.import.ZipFile">
@@ -89,7 +89,7 @@
 
       <wizard
             name="%ExportWizards.Preferences"
-            icon="icons/full/obj16/exportpref_obj.png"
+            icon="icons/full/obj16/exportpref_obj.svg"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.ExtensionFactory:preferencesExportWizard"
             id="org.eclipse.ui.wizards.export.Preferences">
@@ -102,7 +102,7 @@
       </wizard>
       <wizard
             name="%ExportWizards.FileSystem"
-            icon="icons/full/etool16/exportdir_wiz.png"
+            icon="icons/full/etool16/exportdir_wiz.svg"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.datatransfer.FileSystemExportWizard"
             id="org.eclipse.ui.wizards.export.FileSystem">
@@ -118,7 +118,7 @@
       </wizard>
       <wizard
             name="%ExportWizards.ZipFile"
-            icon="icons/full/etool16/exportzip_wiz.png"
+            icon="icons/full/etool16/exportzip_wiz.svg"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.datatransfer.ZipFileExportWizard"
             id="org.eclipse.ui.wizards.export.ZipFile">
@@ -140,12 +140,12 @@
          point="org.eclipse.ui.ide.markerImageProviders">
       <imageprovider
             markertype="org.eclipse.core.resources.bookmark"
-            icon="icons/full/obj16/bkmrk_tsk.png"
+            icon="icons/full/obj16/bkmrk_tsk.svg"
             id="org.eclipse.ui.bookmarkProvider">
       </imageprovider>
       <imageprovider
             markertype="org.eclipse.core.resources.taskmarker"
-            icon="icons/full/eview16/tasks_tsk.png"
+            icon="icons/full/eview16/tasks_tsk.svg"
             id="org.eclipse.ui.taskMarkerProvider">
       </imageprovider>
       <imageprovider
@@ -166,7 +166,7 @@
       </category>
       <wizard
             name="%NewWizards.project"
-            icon="$nl$/icons/full/etool16/newprj_wiz.png"
+            icon="$nl$/icons/full/etool16/newprj_wiz.svg"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard"
             project="true"
@@ -177,7 +177,7 @@
       </wizard>
       <wizard
             name="%NewWizards.folder"
-            icon="$nl$/icons/full/etool16/newfolder_wiz.png"
+            icon="$nl$/icons/full/etool16/newfolder_wiz.svg"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard"
             id="org.eclipse.ui.wizards.new.folder">
@@ -193,7 +193,7 @@
       </wizard>
       <wizard
             name="%NewWizards.file"
-            icon="$nl$/icons/full/etool16/newfile_wiz.png"
+            icon="$nl$/icons/full/etool16/newfile_wiz.svg"
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard"
             id="org.eclipse.ui.wizards.new.file">
@@ -209,7 +209,7 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%Editors.WelcomeEditor"
-            icon="$nl$/icons/full/obj16/welcome_editor.png"
+            icon="$nl$/icons/full/obj16/welcome_editor.svg"
             class="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"
             contributorClass="org.eclipse.ui.internal.ide.dialogs.WelcomeEditorActionContributor"
             id="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor">
@@ -243,7 +243,7 @@
       <workingSet
             description="%WorkingSets.resource.desc"
             elementAdapterClass="org.eclipse.ui.BasicWorkingSetElementAdapter:org.eclipse.core.resources.IResource;adapt=true"
-            icon="$nl$/icons/full/obj16/workset.png"
+            icon="$nl$/icons/full/obj16/workset.svg"
             id="org.eclipse.ui.resourceWorkingSetPage"
             name="%WorkingSets.resource"
             pageClass="org.eclipse.ui.internal.ide.dialogs.ResourceWorkingSetPage"
@@ -260,7 +260,7 @@
          <action
                definitionId="org.eclipse.ui.navigate.goToResource"
                label="%GoToResourceAction.label"
-               icon="$nl$/icons/full/elcl16/gotoobj_tsk.png"
+               icon="$nl$/icons/full/elcl16/gotoobj_tsk.svg"
                menubarPath="navigate/goTo/"
                retarget="true"
                id="goToResource">
@@ -294,7 +294,7 @@
             <action
                 class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:false"
                 definitionId="org.eclipse.ui.navigate.removeFromWorkingSet"
-                icon="$nl$/icons/full/elcl16/removefromworkset.png"
+                icon="$nl$/icons/full/elcl16/removefromworkset.svg"
                 id="removeFromWorkingSet"
                 label="%RemoveFromWorkingSetAction.label"
                 menubarPath="edit/additions"
@@ -310,7 +310,7 @@
             <action
                 class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:true"
                 definitionId="org.eclipse.ui.navigate.addToWorkingSet"
-                icon="$nl$/icons/full/elcl16/addtoworkset.png"
+                icon="$nl$/icons/full/elcl16/addtoworkset.svg"
                 id="addToWorkingSet"
                 label="%AddToWorkingSetAction.label"
                 menubarPath="edit/additions"
@@ -332,7 +332,7 @@
          <action
                class="org.eclipse.ui.internal.actions.SelectWorkingSetsAction"
                definitionId="org.eclipse.ui.navigate.selectWorkingSets"
-               icon="$nl$/icons/full/elcl16/workingsets.png"
+               icon="$nl$/icons/full/elcl16/workingsets.svg"
                id="selectWorkingSets"
                label="%SelectWorkingSetsAction.label"
                menubarPath="window/additions"
@@ -727,7 +727,7 @@
          point="org.eclipse.ui.views">
       <view
             name="%Views.Progress"
-            icon="$nl$/icons/full/eview16/pview.png"
+            icon="$nl$/icons/full/eview16/pview.svg"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.progress.ProgressView"
             id="org.eclipse.ui.views.ProgressView">
@@ -736,7 +736,7 @@
             allowMultiple="true"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.views.markers.BookmarksView"
-            icon="$nl$/icons/full/eview16/bkmrk_nav.png"
+            icon="$nl$/icons/full/eview16/bkmrk_nav.svg"
             id="org.eclipse.ui.views.BookmarkView"
             name="%Views.Bookmark">
       </view>
@@ -744,7 +744,7 @@
             allowMultiple="true"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.views.markers.TasksView"
-            icon="$nl$/icons/full/eview16/tasks_tsk.png"
+            icon="$nl$/icons/full/eview16/tasks_tsk.svg"
             id="org.eclipse.ui.views.TaskList"
             name="%Views.Task">
       </view>
@@ -752,7 +752,7 @@
             allowMultiple="true"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.views.markers.ProblemsView"
-            icon="$nl$/icons/full/eview16/problems_view.png"
+            icon="$nl$/icons/full/eview16/problems_view.svg"
             id="org.eclipse.ui.views.ProblemView"
             name="%Views.Problem">
       </view>
@@ -760,7 +760,7 @@
             allowMultiple="true"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.views.markers.AllMarkersView"
-            icon="$nl$/icons/full/eview16/problems_view.png"
+            icon="$nl$/icons/full/eview16/problems_view.svg"
             id="org.eclipse.ui.views.AllMarkersView"
             name="%Views.AllMarkers">
       </view>
@@ -1104,7 +1104,7 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.ui.navigate.goToResource"
-            icon="$nl$/icons/full/elcl16/gotoobj_tsk.png" />
+            icon="$nl$/icons/full/elcl16/gotoobj_tsk.svg" />
    </extension>
 
    <extension
@@ -1279,7 +1279,7 @@
          point="org.eclipse.ui.preferenceTransfer">
        <transfer
             id="org.eclipse.ui.ide.transfer.keys"
-            icon="/icons/full/obj16/keyspref_obj.png"
+            icon="/icons/full/obj16/keyspref_obj.svg"
             name="%KeysPreference.Name">
             <mapping scope="instance">
                 <entry node="org.eclipse.ui.workbench">
@@ -1294,7 +1294,7 @@
             </description>
        </transfer>
        <transfer
-             icon="$nl$/icons/full/eview16/problems_view.png"
+             icon="$nl$/icons/full/eview16/problems_view.svg"
              id="org.eclipse.ui.ide.problemFilters"
              name="%PreferenceTransfer.ProblemsConfigurations">
           <mapping
@@ -1311,7 +1311,7 @@
           </description>
        </transfer>
        <transfer
-             icon="$nl$/icons/full/eview16/tasks_tsk.png"
+             icon="$nl$/icons/full/eview16/tasks_tsk.svg"
              id="org.eclipse.ui.ide.taskFilters"
              name="%PreferenceTransfer.TasksConfigurations">
           <mapping
@@ -1328,7 +1328,7 @@
           </description>
        </transfer>
         <transfer
-              icon="$nl$/icons/full/eview16/problems_view.png"
+              icon="$nl$/icons/full/eview16/problems_view.svg"
               id="org.eclipse.ui.ide.allMarkersFilters"
               name="%PreferenceTransfer.AllMarkersConfigurations">
           <mapping
@@ -1568,7 +1568,7 @@
             class="org.eclipse.ui.internal.views.markers.MarkerCompletionField"
             filterClass="org.eclipse.ui.internal.views.markers.CompletionFieldFilter"
             filterConfigurationClass="org.eclipse.ui.internal.views.markers.CompletionConfigurationArea"
-            icon="$nl$/icons/full/obj16/header_complete.png"
+            icon="$nl$/icons/full/obj16/header_complete.svg"
             id="org.eclipse.ui.ide.completionField"
             name="%Field.Completion">
       </markerField>
@@ -1576,7 +1576,7 @@
             class="org.eclipse.ui.internal.views.markers.MarkerPriorityField"
             filterClass="org.eclipse.ui.internal.views.markers.PriorityMarkerFieldFilter"
             filterConfigurationClass="org.eclipse.ui.internal.views.markers.PriorityConfigurationArea"
-            icon="icons/full/obj16/header_priority.png"
+            icon="icons/full/obj16/header_priority.svg"
             id="org.eclipse.ui.ide.priorityField"
             name="%Field.Priority">
       </markerField>
@@ -1819,7 +1819,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.ide.markers.copyMarkerResourceQualifiedName"
-                  icon="icons/full/elcl16/cpyqual_menu.png"
+                  icon="icons/full/elcl16/cpyqual_menu.svg"
                   label="%command.copyMarkerResourceQualifiedName.label"
                   mnemonic="%command.copyMarkerResourceQualifiedName.mnemonic"
                   style="push">
@@ -2003,7 +2003,7 @@
          </command>
          <command
                commandId="org.eclipse.ui.ide.configureFilters"
-               icon="platform:/plugin/org.eclipse.ui.ide/icons/full/elcl16/filter_ps.png"
+               icon="platform:/plugin/org.eclipse.ui.ide/icons/full/elcl16/filter_ps.svg"
                mnemonic="%command.configureFilters.mnemonic"
                style="push">
          </command>
@@ -2188,7 +2188,7 @@
              commandId="org.eclipse.ui.ide.showInSystemExplorer"
              label="%command.showInSystemExplorer.menu.name"
              mnemonic="%command.showInSystemExplorer.menu.mnemonic"
-             icon="$nl$/icons/full/elcl16/gotoobj_tsk.png"
+             icon="$nl$/icons/full/elcl16/gotoobj_tsk.svg"
              style="push">
           <visibleWhen
                 checkEnabled="false">
@@ -2657,7 +2657,7 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.e4.ui.importer.openDirectory"
-            icon="$nl$/icons/full/etool16/importdir_wiz.png">
+            icon="$nl$/icons/full/etool16/importdir_wiz.svg">
       </image>
    </extension>
 
@@ -2686,7 +2686,7 @@
       <wizard
             category="org.eclipse.ui.Basic"
             class="org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard"
-            icon="$nl$/icons/full/etool16/importdir_wiz.png"
+            icon="$nl$/icons/full/etool16/importdir_wiz.svg"
             id="org.eclipse.e4.ui.importer.wizard"
             name="%importProjectsFromFolderWizard_name">
          <description>

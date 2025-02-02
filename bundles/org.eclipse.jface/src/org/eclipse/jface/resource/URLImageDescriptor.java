@@ -59,6 +59,9 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		public String getImagePath(int zoom) {
 			URL tempURL = getURL(url);
 			if (tempURL != null) {
+				if (tempURL.toString().endsWith(".svg")) { //$NON-NLS-1$
+					return getFilePath(tempURL, false);
+				}
 				final boolean logIOException = zoom == 100;
 				if (zoom == 100) {
 					return getFilePath(tempURL, logIOException);
@@ -96,6 +99,22 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			return URLImageDescriptor.getImageData(url, zoom);
 		}
 
+		@Override
+		public ImageData getCustomizedImageData(int zoom, int flag) {
+			return URLImageDescriptor.getCustomizedImageData(url, zoom, flag);
+		}
+
+		@Override
+		public boolean supportsRasterizationFlag(int flag) {
+			boolean supportsFlag = flag == SWT.IMAGE_DISABLE || flag == SWT.IMAGE_GRAY || flag == SWT.IMAGE_COPY;
+			URL tempURL = getURL(url);
+			if (tempURL != null) {
+				if (tempURL.toString().endsWith(".svg") && supportsFlag) { //$NON-NLS-1$
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 
 	private static long cumulativeTime;
@@ -139,12 +158,15 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	private static ImageData getImageData(String url, int zoom) {
 		URL tempURL = getURL(url);
 		if (tempURL != null) {
+			if (tempURL.toString().endsWith(".svg")) { //$NON-NLS-1$
+				return getImageData(tempURL, zoom);
+			}
 			if (zoom == 100) {
-				return getImageData(tempURL);
+				return getImageData(tempURL, zoom);
 			}
 			URL xUrl = getxURL(tempURL, zoom);
 			if (xUrl != null) {
-				ImageData xdata = getImageData(xUrl);
+				ImageData xdata = getImageData(xUrl, zoom);
 				if (xdata != null) {
 					return xdata;
 				}
@@ -153,18 +175,38 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (xpath != null) {
 				URL xPathUrl = getURL(xpath);
 				if (xPathUrl != null) {
-					return getImageData(xPathUrl);
+					return getImageData(xPathUrl, zoom);
 				}
 			}
 		}
 		return null;
 	}
 
+	private static ImageData getCustomizedImageData(String url, int zoom, int flag) {
+		URL tempURL = getURL(url);
+		if (tempURL != null) {
+			try (InputStream in = getStream(tempURL)) {
+				return getImageData(tempURL, zoom, flag);
+			} catch (IOException e) {
+				// ignore.
+			}
+		}
+		return null;
+	}
+
 	private static ImageData getImageData(URL url) {
+		return getImageData(url, 0, SWT.IMAGE_COPY);
+	}
+
+	private static ImageData getImageData(URL url, int zoom) {
+		return getImageData(url, zoom, SWT.IMAGE_COPY);
+	}
+
+	private static ImageData getImageData(URL url, int zoom, int flag) {
 		ImageData result = null;
 		try (InputStream in = getStream(url)) {
 			if (in != null) {
-				result = new ImageData(in);
+				result = new ImageData(in, zoom, flag);
 			}
 		} catch (SWTException e) {
 			if (e.code != SWT.ERROR_INVALID_IMAGE) {
