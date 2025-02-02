@@ -45,6 +45,6 @@ public class ShowInActionProvider extends CommonActionProvider {
 				? bindingService
 						.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU)
 				: ""; //$NON-NLS-1$
-		return WorkbenchNavigatorMessages.ShowInActionProvider_showInAction_label + '\t' + keyBinding;
+		return WorkbenchNavigatorMessages.ShowInActionProvider_showInAction_label + (keyBinding != null ? "\t" + keyBinding : ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
