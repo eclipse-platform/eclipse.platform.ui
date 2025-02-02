@@ -55,7 +55,7 @@ public class StickyLine implements IStickyLine {
 		StyledText textWidget= sourceViewer.getTextWidget();
 		int widgetLineNumber = getWidgetLineNumber();
 
-		if (widgetLineNumber > textWidget.getLineCount()) {
+		if (widgetLineNumber >= textWidget.getLineCount()) {
 			return null;
 		}
 
