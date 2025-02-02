@@ -126,7 +126,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 		InputStream in = getStream(zoom);
 		if (in != null) {
 			try (BufferedInputStream stream = new BufferedInputStream(in)) {
-				return new ImageData(stream);
+				return new ImageData(stream, zoom);
 			} catch (SWTException e) {
 				if (e.code != SWT.ERROR_INVALID_IMAGE) {
 					throw e;
