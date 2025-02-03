@@ -290,7 +290,7 @@ public class InlinedAnnotationSupport {
 			update(e);
 			if (oldAnnotation != null) {
 				if (oldAnnotation.equals(fAnnotation)) {
-					// Same annotations which was hovered, do nothing.
+					fAnnotation.onMouseMove(e);
 					return;
 				} else {
 					oldAnnotation.onMouseOut(e);

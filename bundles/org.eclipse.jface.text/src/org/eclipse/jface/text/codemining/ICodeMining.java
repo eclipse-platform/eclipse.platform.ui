@@ -16,6 +16,7 @@ package org.eclipse.jface.text.codemining;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
@@ -114,6 +115,43 @@ public interface ICodeMining {
 	 * @return the action to execute when mining is clicked and null otherwise.
 	 */
 	Consumer<MouseEvent> getAction();
+
+	/**
+	 * Returns a consumer which is called when mouse is hovered over the code mining. If set, the
+	 * implementor needs to take care of setting the cursor if wanted.
+	 *
+	 * @since 3.28
+	 */
+	default Consumer<MouseEvent> getMouseHover() {
+		return e -> {
+			if (e.widget instanceof StyledText st) {
+				st.setCursor(st.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+			}
+		};
+	}
+
+	/**
+	 * Returns a consumer which is called when mouse is moved out of code mining. If set, the
+	 * implementor needs to take care of resetting the cursor.
+	 *
+	 * @since 3.28
+	 */
+	default Consumer<MouseEvent> getMouseOut() {
+		return e -> {
+			if (e.widget instanceof StyledText st) {
+				st.setCursor(null);
+			}
+		};
+	}
+
+	/**
+	 * Returns a consumer which is called when mouse is moved inside the code mining.
+	 *
+	 * @since 3.28
+	 */
+	default Consumer<MouseEvent> getMouseMove() {
+		return null;
+	}
 
 	/**
 	 * Dispose the mining. Typically shuts down or cancels all related asynchronous operations.

@@ -69,7 +69,22 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	 * @param viewer the viewer
 	 */
 	public CodeMiningLineHeaderAnnotation(Position position, ISourceViewer viewer) {
-		super(position, viewer);
+		this(position, viewer, null, null, null);
+	}
+
+	/**
+	 * Code mining annotation constructor.
+	 *
+	 * @param position the position
+	 * @param viewer the viewer
+	 * @param onMouseHover the consumer to be called on mouse hover. If set, the implementor needs
+	 *            to take care of setting the cursor if wanted.
+	 * @param onMouseOut the consumer to be called on mouse out. If set, the implementor needs to
+	 *            take care of resetting the cursor.
+	 * @param onMouseMove the consumer to be called on mouse move
+	 */
+	public CodeMiningLineHeaderAnnotation(Position position, ISourceViewer viewer, Consumer<MouseEvent> onMouseHover, Consumer<MouseEvent> onMouseOut, Consumer<MouseEvent> onMouseMove) {
+		super(position, viewer, onMouseHover, onMouseOut, onMouseMove);
 		fResolvedMinings= null;
 		fMinings= new ArrayList<>();
 		fBounds= new ArrayList<>();

@@ -62,15 +62,40 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 
 	int fY;
 
+	private final Consumer<MouseEvent> onMouseHover;
+
+	private final Consumer<MouseEvent> onMouseOut;
+
+	private final Consumer<MouseEvent> onMouseMove;
+
 	/**
 	 * Inlined annotation constructor.
 	 *
 	 * @param position the position where the annotation must be drawn.
-	 * @param viewer   the {@link ISourceViewer} where the annotation must be drawn.
+	 * @param viewer the {@link ISourceViewer} where the annotation must be drawn.
 	 */
 	protected AbstractInlinedAnnotation(Position position, ISourceViewer viewer) {
+		this(position, viewer, null, null, null);
+	}
+
+	/**
+	 * Inlined annotation constructor.
+	 *
+	 * @param position the position where the annotation must be drawn.
+	 * @param viewer the {@link ISourceViewer} where the annotation must be drawn.
+	 * @param onMouseHover the consumer to be called on mouse hover. If set, the implementor needs
+	 *            to take care of setting the cursor if wanted.
+	 * @param onMouseOut the consumer to be called on mouse out. If set, the implementor needs to
+	 *            take care of resetting the cursor.
+	 * @param onMouseMove the consumer to be called on mouse move
+	 * @since 3.28
+	 */
+	protected AbstractInlinedAnnotation(Position position, ISourceViewer viewer, Consumer<MouseEvent> onMouseHover, Consumer<MouseEvent> onMouseOut, Consumer<MouseEvent> onMouseMove) {
 		super(TYPE, false, ""); //$NON-NLS-1$
 		this.position= position;
+		this.onMouseHover= onMouseHover;
+		this.onMouseOut= onMouseOut;
+		this.onMouseMove= onMouseMove;
 	}
 
 	/**
@@ -165,8 +190,24 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 * @param e the mouse event
 	 */
 	public void onMouseHover(MouseEvent e) {
-		StyledText styledText= (StyledText) e.widget;
-		styledText.setCursor(styledText.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+		if (onMouseHover != null) {
+			onMouseHover.accept(e);
+		} else {
+			StyledText styledText= (StyledText) e.widget;
+			styledText.setCursor(styledText.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+		}
+	}
+
+	/**
+	 * Called when mouse moved in the inlined annotation.
+	 *
+	 * @param e the mouse event
+	 * @since 3.28
+	 */
+	public void onMouseMove(MouseEvent e) {
+		if (onMouseMove != null) {
+			onMouseMove.accept(e);
+		}
 	}
 
 	/**
@@ -175,8 +216,12 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 * @param e the mouse event
 	 */
 	public void onMouseOut(MouseEvent e) {
-		StyledText styledText= (StyledText) e.widget;
-		styledText.setCursor(null);
+		if (onMouseOut != null) {
+			onMouseOut.accept(e);
+		} else {
+			StyledText styledText= (StyledText) e.widget;
+			styledText.setCursor(null);
+		}
 	}
 
 	/**

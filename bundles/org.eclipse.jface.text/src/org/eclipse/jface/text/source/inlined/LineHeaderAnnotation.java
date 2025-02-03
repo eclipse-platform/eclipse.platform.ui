@@ -13,7 +13,10 @@
  */
 package org.eclipse.jface.text.source.inlined;
 
+import java.util.function.Consumer;
+
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
 
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -34,7 +37,23 @@ public class LineHeaderAnnotation extends AbstractInlinedAnnotation {
 	 * @param viewer the {@link ISourceViewer} where the annotation must be drawn.
 	 */
 	public LineHeaderAnnotation(Position position, ISourceViewer viewer) {
-		super(position, viewer);
+		this(position, viewer, null, null, null);
+	}
+
+	/**
+	 * Line header annotation constructor.
+	 *
+	 * @param position the position where the annotation must be drawn.
+	 * @param viewer the {@link ISourceViewer} where the annotation must be drawn.
+	 * @param onMouseHover the consumer to be called on mouse hover. If set, the implementor needs
+	 *            to take care of setting the cursor if wanted.
+	 * @param onMouseOut the consumer to be called on mouse out. If set, the implementor needs to
+	 *            take care of resetting the cursor.
+	 * @param onMouseMove the consumer to be called on mouse move
+	 * @since 3.28
+	 */
+	public LineHeaderAnnotation(Position position, ISourceViewer viewer, Consumer<MouseEvent> onMouseHover, Consumer<MouseEvent> onMouseOut, Consumer<MouseEvent> onMouseMove) {
+		super(position, viewer, onMouseHover, onMouseOut, onMouseMove);
 		oldLine= -1;
 	}
 
