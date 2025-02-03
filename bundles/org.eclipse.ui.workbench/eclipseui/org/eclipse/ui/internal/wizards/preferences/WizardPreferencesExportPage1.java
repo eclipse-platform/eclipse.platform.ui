@@ -59,7 +59,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage {
 	@Override
 	public void createControl(Composite composite) {
 		super.createControl(composite);
-		PlatformUI.setHelp(composite, IWorkbenchHelpContextIds.PREFERENCES_IMPORT_WIZARD_PAGE);
+		PlatformUI.setHelp(composite, IWorkbenchHelpContextIds.PREFERENCES_EXPORT_WIZARD_PAGE);
 	}
 
 	protected String getOutputSuffix() {
