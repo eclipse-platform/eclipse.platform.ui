@@ -11,7 +11,7 @@
  * Contributors:
  *     SAP SE - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.texteditor.stickyscroll;
+package org.eclipse.ui.texteditor.stickyscroll;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -100,9 +100,10 @@ public class StickyLineTest {
 		textWidget.setText("line1\nline2\nline3");
 
 		StickyLine stickyLineOutOfBound = new StickyLine(10, sourceViewer);
-		StyleRange[] styleRanges = stickyLineOutOfBound.getStyleRanges();
+		assertNull(stickyLineOutOfBound.getStyleRanges());
 
-		assertNull(styleRanges);
+		stickyLineOutOfBound = new StickyLine(3, sourceViewer);
+		assertNull(stickyLineOutOfBound.getStyleRanges());
 	}
 
 	@Test
