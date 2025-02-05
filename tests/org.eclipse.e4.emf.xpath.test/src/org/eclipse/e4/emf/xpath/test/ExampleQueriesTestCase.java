@@ -16,7 +16,9 @@ package org.eclipse.e4.emf.xpath.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -47,6 +49,7 @@ public class ExampleQueriesTestCase {
 	private ResourceSet resourceSet;
 	private XPathContext xpathContext;
 	private Resource resource;
+	private XPathContextFactory<EObject> xpathContextFactory;
 
 	@Before
 	public void setUp() {
@@ -58,13 +61,14 @@ public class ExampleQueriesTestCase {
 		resourceSet.getPackageRegistry().put(XpathtestPackage.eNS_URI, XpathtestPackage.eINSTANCE);
 		URI uri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/model/Test.xmi", true);
 		resource = resourceSet.getResource(uri, true);
-		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
-		xpathContext = f.newContext(resource.getContents().get(0));
+		xpathContextFactory = EcoreXPathContextFactory.newInstance();
+		xpathContext = xpathContextFactory.newContext(resource.getContents().get(0));
 	}
 
 	@After
 	public void tearDown() {
 		xpathContext = null;
+		xpathContextFactory = null;
 		resource.unload();
 		resourceSet.getResources().remove(resource);
 	}
@@ -82,6 +86,7 @@ public class ExampleQueriesTestCase {
 		assertThat(application).isInstanceOf(Root.class);
 
 		assertThrows(JXPathNotFoundException.class, () -> xpathContext.getValue(".[@id='nixda']"));
+		assertFalse(xpathContext.iterate(".[@id='nixda']").hasNext());
 
 		application = xpathContext.getValue(".[@id='root']");
 		assertThat(application).isInstanceOf(Root.class);
@@ -95,6 +100,8 @@ public class ExampleQueriesTestCase {
 		assertThat(xpathContext.getValue("//.[ecore:eClassName(.)='ExtendedNode']")).isInstanceOf(ExtendedNode.class);
 
 		assertNotNull(xpathContext.getValue("//.[ecore:eClassName(.)='ExtendedNode']", ExtendedNode.class));
+
+		assertEquals(rootApplication, xpathContext.getValue("."));
 	}
 
 	@Test
@@ -119,4 +126,15 @@ public class ExampleQueriesTestCase {
 		assertEquals(26, list.size());
 	}
 
+	@Test
+	public void testRelative() {
+		EObject context = resource.getContents().get(0);
+		List<EObject> eContents = context.eContents();
+		EObject firstElement = eContents.get(0);
+		XPathContext nestedXpathContext = xpathContextFactory.newContext(xpathContext, firstElement);
+
+		List<Node> dotList = nestedXpathContext.stream(".", Node.class).toList();
+		assertEquals(1, dotList.size());
+		assertSame(firstElement, dotList.get(0));
+	}
 }
