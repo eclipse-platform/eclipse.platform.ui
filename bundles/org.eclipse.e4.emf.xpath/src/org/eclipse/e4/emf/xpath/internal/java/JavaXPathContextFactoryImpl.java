@@ -14,18 +14,27 @@
 
 package org.eclipse.e4.emf.xpath.internal.java;
 
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -36,18 +45,22 @@ import javax.xml.xpath.XPathNodes;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathNotFoundException;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.xmi.XMLResource;
+import org.eclipse.emf.ecore.xmi.impl.DefaultDOMHandlerImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
+
+	private static final boolean DEBUG = false;
 
 	@Override
 	public XPathContext newContext(T contextBean) {
@@ -59,39 +72,30 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 		if (!(contextBean instanceof EObject rootObject)) {
 			throw new IllegalArgumentException();
 		}
+
 		if (parentContext != null) {
 			EObjectContext parent = ((EObjectContext) parentContext);
-			Element rootElement = parent.object2domProxy.get(contextBean);
+			Element rootElement = parent.domMapper.getElement(contextBean);
 			if (rootElement == null) {
 				throw new IllegalArgumentException("Context bean is not from the same tree its parent context");
 			}
-			return new EObjectContext(rootElement, parent);
+			return new EObjectContext(rootElement, parent.xpath.getNamespaceContext(), parent.domMapper);
 		}
+
 		DocumentBuilder documentBuilder;
 		try {
 			documentBuilder = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 			throw new IllegalStateException(e);
 		}
-		Document proxyDoc = documentBuilder.newDocument();
 
-		Map<Node, EObject> domProxy2object = new HashMap<>();
-		Map<EObject, Element> object2domProxy = new HashMap<>();
-		// The xpath '/' actually referes to the document but it's also expected to
-		// match the root application
-		domProxy2object.put(proxyDoc, rootObject);
-
-		Element rootElement = createElement(rootObject, proxyDoc);
-		object2domProxy.put(rootObject, rootElement);
-		domProxy2object.put(rootElement, rootObject);
-
-		rootObject.eAllContents().forEachRemaining(eObject -> {
-			Element parent = object2domProxy.get(eObject.eContainer());
-			Element proxy = object2domProxy.computeIfAbsent(eObject, o -> createElement(o, parent));
-			domProxy2object.put(proxy, eObject);
-		});
-
-		return new EObjectContext(rootElement, domProxy2object, object2domProxy);
+		Document document = documentBuilder.newDocument();
+		DOMMapping domHandler = new DOMMapping();
+		Element rootElement = createElement(rootObject, document, domHandler);
+		if (DEBUG) {
+			dump(document);
+		}
+		return new EObjectContext(rootElement, createNamespaceContext(rootElement), domHandler);
 	}
 
 	private static class EObjectContext implements XPathContext {
@@ -100,23 +104,14 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 
 		private final XPath xpath;
 		private final Element rootElement;
-		private final Map<Node, EObject> domProxy2object;
-		private final Map<EObject, Element> object2domProxy;
+		private final DOMMapping domMapper;
 
-		private EObjectContext(Element rootElement, Map<Node, EObject> domProxy2object,
-				Map<EObject, Element> object2domProxy) {
+		private EObjectContext(Element rootElement, NamespaceContext namespaceContext, DOMMapping domMapper) {
 			this.rootElement = rootElement;
-			this.domProxy2object = Map.copyOf(domProxy2object);
-			this.object2domProxy = Map.copyOf(object2domProxy);
+			this.domMapper = domMapper;
 			this.xpath = XPATH_FACTORY.newXPath();
+			this.xpath.setNamespaceContext(namespaceContext);
 			this.xpath.setXPathFunctionResolver(this::resolveEMFFunctions);
-		}
-
-		private EObjectContext(Element rootElement, EObjectContext parentContext) {
-			this.rootElement = rootElement;
-			this.domProxy2object = Map.copyOf(parentContext.domProxy2object);
-			this.object2domProxy = Map.copyOf(parentContext.object2domProxy);
-			this.xpath = parentContext.xpath;
 		}
 
 		@Override
@@ -128,8 +123,6 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 				type = resultType;
 			}
 
-			// Fix the different root and allow .[predicate] and ..[predicate] which is
-			// actually not permitted in XPath-1
 			String pathEnhanced = path;
 			if (path.equals("/")) {
 				pathEnhanced = "/" + rootElement.getTagName();
@@ -138,7 +131,11 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 				// match the root object
 				pathEnhanced = "/" + rootElement.getTagName() + path;
 			}
+
+			// Fix the different root and allow .[predicate] and ..[predicate] which is
+			// actually not permitted in XPath-1
 			pathEnhanced = pathEnhanced.replace("..[", "parent::node()[").replace(".[", "self::node()[");
+
 			Object result;
 			try {
 				result = xpath.evaluateExpression(pathEnhanced, rootElement, type);
@@ -153,7 +150,7 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 			}
 			return StreamSupport.stream(pathNodes.spliterator(), false).map(node -> {
 				if (node instanceof Element || node instanceof Document) {
-					return domProxy2object.get(node);
+					return (EObject) domMapper.getValue(node);
 				} else if (node instanceof Attr attribute) {
 					return attribute.getValue();
 				}
@@ -179,11 +176,12 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 		}
 
 		private XPathFunction resolveEMFFunctions(QName functionName, int arity) {
-			if (arity == 1 && "ecore".equals(functionName.getNamespaceURI())
+			if (arity == 1 && EcorePackage.eNS_URI.equals(functionName.getNamespaceURI())
 					&& "eClassName".equals(functionName.getLocalPart())) {
 				return args -> {
 					Node item = getSingleNodeArgument(args);
-					return EObjectContext.this.domProxy2object.get(item).eClass().getName();
+					EObject eObject = (EObject) EObjectContext.this.domMapper.getValue(item);
+					return eObject == null ? null : eObject.eClass().getName();
 				};
 			}
 			return null;
@@ -200,37 +198,75 @@ public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 			}
 			throw new XPathFunctionException("Not a single node list: " + args);
 		}
-
 	}
 
-	private static Element createElement(EObject eObject, Node parent) {
-		EStructuralFeature containingFeature = eObject.eContainingFeature();
-		EStructuralFeature containmentFeature = eObject.eContainmentFeature();
-		String className = eObject.eClass().getName();
-		String qName = containingFeature != null ? containingFeature.getName() : className;
+	private static Element createElement(EObject eObject, Document document, DOMMapping domMapper) {
+		new XMLSaveImpl(Map.of(), new XMIHelperImpl(), "UTF-8").save(null, document,
+				Map.of(XMLResource.OPTION_ROOT_OBJECTS, List.of(eObject)), domMapper);
+		return document.getDocumentElement();
+	}
 
-		Document document = parent instanceof Document documentParent ? documentParent : parent.getOwnerDocument();
-		Element element = document.createElement(qName);
-		EClass eClass = eObject.eClass();
-		for (EAttribute attribute : eClass.getEAllAttributes()) {
-			// TODO: or check how lists could be serialized as attributes? CSV? With
-			// leading/trailing square-bracket?
-			if (!attribute.isMany() && attribute.getEAttributeType().isSerializable() && eObject.eIsSet(attribute)) {
-				Object value = eObject.eGet(attribute);
-				try {
-					String stringValue = EcoreUtil.convertToString(attribute.getEAttributeType(), value);
-					element.setAttribute(attribute.getName(), stringValue);
-				} catch (Exception e) {
-					// TODO: avoid the occurrence of exceptions
+	private static NamespaceContext createNamespaceContext(Element element) {
+		element.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns:ecore", EcorePackage.eNS_URI);
+		return new NamespaceContext() {
+			final Map<String, String> xmlnsPrefixMap = new HashMap<>();
+			final Map<String, String> xmlnsPrefixMapInverse = new HashMap<>();
+
+			{
+				NamedNodeMap attributes = element.getAttributes();
+				for (int i = 0, length = attributes.getLength(); i < length; ++i) {
+					Attr attribute = (Attr) attributes.item(i);
+					if ("xmlns".equals(attribute.getPrefix())) {
+						String prefix = attribute.getLocalName();
+						String namespace = attribute.getValue();
+						xmlnsPrefixMap.put(prefix, namespace);
+						xmlnsPrefixMapInverse.put(namespace, prefix);
+					}
 				}
 			}
-		}
-		// TODO: set the xsi:type? This requires to declare the EPackage nsURI as xml
-		// namespace initially, but it's unsure to me if that's even necessary.
-//		String name = eClass.getName();
-//		childElement.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:type", name);
 
-		parent.appendChild(element);
-		return element;
+			@Override
+			public String getNamespaceURI(String prefix) {
+				return xmlnsPrefixMap.get(prefix);
+			}
+
+			@Override
+			public String getPrefix(String namespaceURI) {
+				return xmlnsPrefixMapInverse.get(namespaceURI);
+			}
+
+			@Override
+			public Iterator<String> getPrefixes(String namespaceURI) {
+				String prefix = getPrefix(namespaceURI);
+				List<String> list = prefix == null ? List.of() : List.of(prefix);
+				return list.iterator();
+			}
+		};
+	}
+
+	private static class DOMMapping extends DefaultDOMHandlerImpl {
+		public Element getElement(Object object) {
+			for (Entry<Node, Object> entry : nodeToObject.entrySet()) {
+				if (Objects.equals(entry.getValue(), object)) {
+					return (Element) entry.getKey();
+				}
+			}
+			return null;
+		}
+	}
+
+	private static void dump(Document document) {
+		try {
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			StringWriter out = new StringWriter();
+			transformer.transform(new DOMSource(document), new StreamResult(out));
+			out.close();
+			System.out.print(out);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 }

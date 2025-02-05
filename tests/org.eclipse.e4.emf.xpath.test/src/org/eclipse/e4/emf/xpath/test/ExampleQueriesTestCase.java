@@ -32,6 +32,8 @@ import org.eclipse.e4.emf.xpath.test.model.xpathtest.Menu;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.Node;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.Root;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -47,6 +49,7 @@ public class ExampleQueriesTestCase {
 	private ResourceSet resourceSet;
 	private XPathContext xpathContext;
 	private Resource resource;
+	private XPathContextFactory<EObject> xpathContextFactory;
 
 	@Before
 	public void setUp() {
@@ -58,13 +61,14 @@ public class ExampleQueriesTestCase {
 		resourceSet.getPackageRegistry().put(XpathtestPackage.eNS_URI, XpathtestPackage.eINSTANCE);
 		URI uri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/model/Test.xmi", true);
 		resource = resourceSet.getResource(uri, true);
-		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
-		xpathContext = f.newContext(resource.getContents().get(0));
+		xpathContextFactory = EcoreXPathContextFactory.newInstance();
+		xpathContext = xpathContextFactory.newContext(resource.getContents().get(0));
 	}
 
 	@After
 	public void tearDown() {
 		xpathContext = null;
+		xpathContextFactory = null;
 		resource.unload();
 		resourceSet.getResources().remove(resource);
 	}
@@ -94,7 +98,7 @@ public class ExampleQueriesTestCase {
 		assertThat(xpathContext.getValue("//.[@id='element2.2']")).isInstanceOf(Node.class);
 		assertThat(xpathContext.getValue("//.[ecore:eClassName(.)='ExtendedNode']")).isInstanceOf(ExtendedNode.class);
 
-		assertNotNull(xpathContext.getValue("//.[ecore:eClassName(.)='ExtendedNode']", ExtendedNode.class));
+		assertEquals(rootApplication, xpathContext.getValue("."));
 	}
 
 	@Test
@@ -111,12 +115,30 @@ public class ExampleQueriesTestCase {
 		assertThat(i.next()).isInstanceOf(Node.class);
 		assertTrue(i.hasNext());
 		assertThat(i.next()).isInstanceOf(Menu.class);
-		// EMF model has a loop in it, it just goes back to the top
-		// assertFalse(i.hasNext());
+
+		int expectedCount = 0;
+		for (TreeIterator<EObject> eAllContents = ((Root) application).eAllContents(); eAllContents.hasNext();) {
+			EObject eObject = eAllContents.next();
+			if (eObject instanceof Menu menu && "menu.1".equals(menu.getId())) {
+				++expectedCount;
+			}
+		}
 
 		List<Menu> list = xpathContext.stream("//.[@id='menu.1']", Menu.class).toList();
-		// EMF model has a loop in it, it just goes back to the top
-		assertEquals(1, list.size());// TODO: check this difference
+		assertEquals(expectedCount, list.size());
 	}
 
+	@Test
+	public void testRelative() {
+		EObject context = resource.getContents().get(0);
+		EList<EObject> eContents = context.eContents();
+		EObject firstElement = eContents.get(0);
+		XPathContext nestedXpathContext = xpathContextFactory.newContext(xpathContext, firstElement);
+
+		List<Node> dotList = nestedXpathContext.stream(".", Node.class).toList();
+		assertEquals(List.of(firstElement), dotList);
+
+		List<Node> followingSiblingsList = nestedXpathContext.stream("following-sibling::*", Node.class).toList();
+		assertEquals(eContents.subList(1, eContents.size()), followingSiblingsList);
+	}
 }
