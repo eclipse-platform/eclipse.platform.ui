@@ -21,7 +21,9 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -67,14 +69,15 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	private static final String FIND_REPLACE_OVERLAY_AT_BOTTOM = "findReplaceOverlayAtBottom"; //$NON-NLS-1$
 
 	private boolean shouldUseOverlay() {
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(INSTANCE_SCOPE_NODE_NAME);
-		boolean overlayPreference = preferences.getBoolean(USE_FIND_REPLACE_OVERLAY, true);
+		IPreferencesService preferences = Platform.getPreferencesService();
+		boolean overlayPreference = preferences.getBoolean(INSTANCE_SCOPE_NODE_NAME, USE_FIND_REPLACE_OVERLAY, true, null);
 		return overlayPreference && fWorkbenchPart instanceof StatusTextEditor;
 	}
 
 	private static boolean shouldPositionOverlayOnTop() {
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(INSTANCE_SCOPE_NODE_NAME);
-		return !preferences.getBoolean(FIND_REPLACE_OVERLAY_AT_BOTTOM, false);
+		IPreferencesService preferences = Platform.getPreferencesService();
+		boolean atBottom = preferences.getBoolean(INSTANCE_SCOPE_NODE_NAME, FIND_REPLACE_OVERLAY_AT_BOTTOM, false, null);
+		return !atBottom;
 	}
 
 	private IPreferenceChangeListener overlayDialogPreferenceListener = new IPreferenceChangeListener() {
