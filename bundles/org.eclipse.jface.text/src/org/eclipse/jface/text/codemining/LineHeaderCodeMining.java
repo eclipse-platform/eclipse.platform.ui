@@ -14,6 +14,7 @@
  */
 package org.eclipse.jface.text.codemining;
 
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.custom.StyledText;
@@ -79,7 +80,17 @@ public abstract class LineHeaderCodeMining extends AbstractCodeMining {
 
 	@Override
 	public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
-		String title= getLabel() != null ? getLabel() : "no command"; //$NON-NLS-1$
+		return draw(getLabel(), gc, textWidget, x, y, new Callable<Point>() {
+
+			@Override
+			public Point call() throws Exception {
+				return LineHeaderCodeMining.super.draw(gc, textWidget, color, x, y);
+			}
+		});
+	}
+
+	static Point draw(String label, GC gc, StyledText textWidget, int x, int y, Callable<Point> superDrawCallable) {
+		String title= label != null ? label : "no command"; //$NON-NLS-1$
 		String[] lines= title.split("\\r?\\n|\\r"); //$NON-NLS-1$
 		if (lines.length > 1) {
 			Point result= new Point(0, 0);
@@ -92,7 +103,11 @@ public abstract class LineHeaderCodeMining extends AbstractCodeMining {
 			}
 			return result;
 		} else {
-			return super.draw(gc, textWidget, color, x, y);
+			try {
+				return superDrawCallable.call();
+			} catch (Exception e) {
+				return null;
+			}
 		}
 	}
 }
