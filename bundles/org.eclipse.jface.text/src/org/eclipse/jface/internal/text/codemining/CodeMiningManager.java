@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.codemining.DocumentFooterCodeMining;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.codemining.LineContentCodeMining;
@@ -273,7 +274,7 @@ public class CodeMiningManager implements Runnable {
 					mouseMove= first.getMouseMove();
 				}
 				ann= inLineHeader
-						? new CodeMiningLineHeaderAnnotation(pos, viewer, mouseHover, mouseOut, mouseMove)
+						? new CodeMiningLineHeaderAnnotation(pos, viewer, mouseHover, mouseOut, mouseMove, first instanceof DocumentFooterCodeMining)
 						: new CodeMiningLineContentAnnotation(pos, viewer, afterPosition, mouseHover, mouseOut, mouseMove);
 			} else if (ann instanceof ICodeMiningAnnotation && ((ICodeMiningAnnotation) ann).isInVisibleLines()) {
 				// annotation is in visible lines
