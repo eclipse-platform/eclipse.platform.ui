@@ -19,8 +19,6 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.jxpath.util.TypeUtils;
-
 /**
  * Context in which the xpath is executed
  *
@@ -77,6 +75,6 @@ public interface XPathContext {
 	default <T> Stream<T> stream(String xpath, Class<T> type) {
 		Iterator<?> iterator = iterate(xpath);
 		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)
-				.filter(e -> TypeUtils.canConvert(e, type)).map(e -> TypeUtils.convert(e, type)).map(type::cast);
+				.filter(type::isInstance).map(type::cast);
 	}
 }
