@@ -14,12 +14,16 @@
 package org.eclipse.e4.emf.xpath.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import java.util.List;
 
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -28,6 +32,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -41,7 +47,9 @@ public class ExampleQueriesApplicationTest {
 
 	private ResourceSet resourceSet;
 	private XPathContext xpathContext;
+	private XPathContext xpathChildContext;
 	private Resource resource;
+	private Resource childResource;
 
 	@SuppressWarnings("restriction")
 	@Before
@@ -63,6 +71,9 @@ public class ExampleQueriesApplicationTest {
 		resource = resourceSet.getResource(uri, true);
 		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
 		xpathContext = f.newContext(resource.getContents().get(0));
+		URI childUri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/model/fragment.e4xmi", true);
+		childResource = resourceSet.getResource(childUri, true);
+		xpathChildContext = f.newContext(xpathContext, childResource.getContents().get(0));
 	}
 
 	@After
@@ -70,6 +81,9 @@ public class ExampleQueriesApplicationTest {
 		xpathContext = null;
 		resource.unload();
 		resourceSet.getResources().remove(resource);
+		xpathChildContext = null;
+		childResource.unload();
+		resourceSet.getResources().remove(childResource);
 	}
 
 	@Test
@@ -80,17 +94,48 @@ public class ExampleQueriesApplicationTest {
 
 	@Test
 	public void testAccessingTheMainMenu() {
-		Object menu = xpathContext.getValue("//mainMenu");
-		assertThat(menu).isInstanceOf(MMenu.class);
+		assertThat(xpathContext.getValue("//mainMenu")).isInstanceOf(MMenu.class);
+		assertNotNull(xpathContext.getValue("//mainMenu", MMenu.class));
 
-		MMenu mMenu = xpathContext.getValue("//mainMenu", MMenu.class);
-		assertNotNull(mMenu);
+		assertNotNull(xpathContext.getValue("/children/mainMenu", MMenu.class));
+		assertThat(xpathContext.getValue("/children/mainMenu")).isInstanceOf(MMenu.class);
 	}
 
 	@Test
 	public void testAccessingAllMenus() {
 		Object menuEntries = xpathContext.getValue("//mainMenu/children");
-		assertNotNull(menuEntries);
+		assertThat(menuEntries).isInstanceOf(List.class);
+		List<?> list = (List<?>) menuEntries;
+		assertEquals(2, list.size());
+		assertThat(list).allMatch(MMenu.class::isInstance, "Is instanceof of MMenu") //
+				.anyMatch(e -> "File".equals(((MMenu) e).getLabel()))
+				.anyMatch(e -> "Help".equals(((MMenu) e).getLabel()));
 	}
 
+	@Test
+	public void testAccessingTheModelFragments() {
+		Object modelFragments = xpathChildContext.getValue("/");
+		assertThat(modelFragments).isInstanceOf(MModelFragments.class);
+	}
+
+	@Test
+	public void testAccessingTheStringModelFragment() {
+		Object modelFragment = xpathChildContext.getValue("//fragments[1]");
+		assertThat(modelFragment).isInstanceOf(MStringModelFragment.class);
+
+		MStringModelFragment mModelFragment = xpathChildContext.getValue("//fragments[1]", MStringModelFragment.class);
+		assertNotNull(mModelFragment);
+
+		Object modelFragment2 = xpathChildContext.getValue("/fragments[1]");
+		assertThat(modelFragment2).isInstanceOf(MStringModelFragment.class);
+	}
+
+	@Test
+	public void testAccessingTheAddons() {
+		Object addon = xpathChildContext.getValue("//elements[1]");
+		assertThat(addon).isInstanceOf(MAddon.class);
+
+		MAddon mAddon = xpathChildContext.getValue("//elements[1]", MAddon.class);
+		assertNotNull(mAddon);
+	}
 }
