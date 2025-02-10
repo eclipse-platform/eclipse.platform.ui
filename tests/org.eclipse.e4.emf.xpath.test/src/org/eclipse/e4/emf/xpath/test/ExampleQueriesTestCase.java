@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathNotFoundException;
@@ -44,6 +43,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings({ "deprecation", "removal" })
 public class ExampleQueriesTestCase {
 
 	private ResourceSet resourceSet;
@@ -61,7 +61,7 @@ public class ExampleQueriesTestCase {
 		resourceSet.getPackageRegistry().put(XpathtestPackage.eNS_URI, XpathtestPackage.eINSTANCE);
 		URI uri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/model/Test.xmi", true);
 		resource = resourceSet.getResource(uri, true);
-		xpathContextFactory = EcoreXPathContextFactory.newInstance();
+		xpathContextFactory = XPathContextFactory.newInstance();
 		xpathContext = xpathContextFactory.newContext(resource.getContents().get(0));
 	}
 

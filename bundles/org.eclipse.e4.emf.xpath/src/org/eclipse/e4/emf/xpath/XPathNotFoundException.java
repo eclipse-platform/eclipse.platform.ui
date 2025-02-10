@@ -20,6 +20,7 @@ package org.eclipse.e4.emf.xpath;
  *
  * @since 0.6
  */
+@Deprecated(forRemoval = true, since = "2025-03 (removal in 2027-03 or later)")
 public class XPathNotFoundException extends IllegalArgumentException {
 	private static final long serialVersionUID = -4174244860692153739L;
 

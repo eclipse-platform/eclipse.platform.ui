@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * @since 1.0
  */
+@Deprecated(forRemoval = true, since = "2025-03 (removal in 2027-03 or later)")
 public class EcoreXPathContextFactory {
 
 	/**

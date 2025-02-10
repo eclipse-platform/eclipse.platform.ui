@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
-Bundle-SymbolicName: org.eclipse.e4.emf.xpath
+Bundle-SymbolicName: org.eclipse.e4.emf.xpath;deprecated:="This bundle is deprecated since 2025-03 (removal in 2027-03 or later)"
 Bundle-Version: 0.6.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.35.0",
