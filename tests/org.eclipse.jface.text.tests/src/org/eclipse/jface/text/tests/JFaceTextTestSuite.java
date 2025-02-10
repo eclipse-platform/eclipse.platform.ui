@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import org.eclipse.jface.text.tests.codemining.CodeMiningLineHeaderAnnotationTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningProjectionViewerTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningTest;
 import org.eclipse.jface.text.tests.contentassist.AsyncContentAssistTest;
@@ -72,6 +73,7 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		LineContentBoundsDrawingTest.class,
 		AnnotationOnTabTest.class,
 		CodeMiningTest.class,
+		CodeMiningLineHeaderAnnotationTest.class,
 		CodeMiningProjectionViewerTest.class,
 
 		TabsToSpacesConverterTest.class,

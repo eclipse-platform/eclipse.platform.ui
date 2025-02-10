@@ -121,6 +121,9 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 			}
 			ignoreFirstLine= true;
 		}
+		if (sumLineHeight == 0) {
+			return super.getHeight();
+		}
 		if (gc != null) {
 			return sumLineHeight;
 		} else {
