@@ -166,7 +166,11 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			// Setting vertical indent first, before computing bounds
 			int height;
 			if (annotation instanceof CodeMiningLineHeaderAnnotation cmlha) {
-				height= cmlha.getHeight(gc);
+				if (cmlha.isDocumentFooterCodeMining()) {
+					height= 0;
+				} else {
+					height= cmlha.getHeight(gc);
+				}
 			} else {
 				height= annotation.getHeight();
 			}
@@ -188,9 +192,24 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				x= bounds.x;
 				y= bounds.y;
 			} else {
-				Point locAtOff= textWidget.getLocationAtOffset(offset);
-				x= locAtOff.x;
-				y= locAtOff.y - height;
+				if (annotation instanceof CodeMiningLineHeaderAnnotation cmlha && cmlha.isDocumentFooterCodeMining()) {
+					int lineAtOffset= textWidget.getLineAtOffset(offset);
+					int offsetAtBeginningOfLine= textWidget.getOffsetAtLine(lineAtOffset);
+					if (offsetAtBeginningOfLine >= charCount) {
+						Point locAtOff= textWidget.getLocationAtOffset(offsetAtBeginningOfLine);
+						x= locAtOff.x;
+						y= locAtOff.y;
+					} else {
+						Rectangle bounds= textWidget.getTextBounds(offsetAtBeginningOfLine, offsetAtBeginningOfLine);
+						int lineSpacing= textWidget.getLineSpacing();
+						x= bounds.x;
+						y= bounds.y + bounds.height + lineSpacing;
+					}
+				} else {
+					Point locAtOff= textWidget.getLocationAtOffset(offset);
+					x= locAtOff.x;
+					y= locAtOff.y - height;
+				}
 			}
 			// Draw the line header annotation
 			gc.setBackground(textWidget.getBackground());

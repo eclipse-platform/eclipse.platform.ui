@@ -63,6 +63,12 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	private IProgressMonitor fMonitor;
 
 	/**
+	 * Indicates whether the code mining line annotation should be rendered at the very end of the
+	 * document
+	 */
+	private final boolean isDocumentFooterCodeMining;
+
+	/**
 	 * Code mining annotation constructor.
 	 *
 	 * @param position the position
@@ -84,10 +90,29 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	 * @param onMouseMove the consumer to be called on mouse move
 	 */
 	public CodeMiningLineHeaderAnnotation(Position position, ISourceViewer viewer, Consumer<MouseEvent> onMouseHover, Consumer<MouseEvent> onMouseOut, Consumer<MouseEvent> onMouseMove) {
+		this(position, viewer, onMouseHover, onMouseOut, onMouseMove, false);
+	}
+
+	/**
+	 * Code mining annotation constructor.
+	 *
+	 * @param position the position
+	 * @param viewer the viewer
+	 * @param onMouseHover the consumer to be called on mouse hover. If set, the implementor needs
+	 *            to take care of setting the cursor if wanted.
+	 * @param onMouseOut the consumer to be called on mouse out. If set, the implementor needs to
+	 *            take care of resetting the cursor.
+	 * @param onMouseMove the consumer to be called on mouse move
+	 * @param isDocumentFooterCodeMining <code>true</code> if the annotation is at the beginning of
+	 *            the last line
+	 */
+	public CodeMiningLineHeaderAnnotation(Position position, ISourceViewer viewer, Consumer<MouseEvent> onMouseHover, Consumer<MouseEvent> onMouseOut, Consumer<MouseEvent> onMouseMove,
+			boolean isDocumentFooterCodeMining) {
 		super(position, viewer, onMouseHover, onMouseOut, onMouseMove);
 		fResolvedMinings= null;
 		fMinings= new ArrayList<>();
 		fBounds= new ArrayList<>();
+		this.isDocumentFooterCodeMining= isDocumentFooterCodeMining;
 	}
 
 	@Override
@@ -281,5 +306,9 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	@Override
 	public boolean isInVisibleLines() {
 		return super.isInVisibleLines();
+	}
+
+	public boolean isDocumentFooterCodeMining() {
+		return isDocumentFooterCodeMining;
 	}
 }
