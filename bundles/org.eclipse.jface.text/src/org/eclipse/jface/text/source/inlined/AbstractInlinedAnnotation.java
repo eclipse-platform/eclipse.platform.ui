@@ -21,6 +21,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 
+import org.eclipse.jface.internal.text.codemining.CodeMiningManager;
+
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
@@ -158,6 +160,9 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 				if (viewer instanceof ITextViewerExtension5) {
 					// adjust offset according folded content
 					offset= ((ITextViewerExtension5) viewer).modelOffset2WidgetOffset(offset);
+				}
+				if (CodeMiningManager.DEBUG_RENDER) {
+					System.out.println("AbstractInlinedAnnotation.redraw()"); //$NON-NLS-1$
 				}
 				InlinedAnnotationDrawingStrategy.draw(this, null, text, offset, pos.getLength(), null);
 			} catch (RuntimeException e) {
