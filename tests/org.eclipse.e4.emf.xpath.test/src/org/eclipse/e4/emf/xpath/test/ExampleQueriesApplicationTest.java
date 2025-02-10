@@ -19,7 +19,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
-import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
@@ -43,6 +42,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings({ "deprecation", "removal" })
 public class ExampleQueriesApplicationTest {
 
 	private ResourceSet resourceSet;
@@ -69,11 +69,11 @@ public class ExampleQueriesApplicationTest {
 
 		URI uri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/model/Application.e4xmi", true);
 		resource = resourceSet.getResource(uri, true);
-		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
+		XPathContextFactory<EObject> f = XPathContextFactory.newInstance();
 		xpathContext = f.newContext(resource.getContents().get(0));
 		URI childUri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/model/fragment.e4xmi", true);
 		childResource = resourceSet.getResource(childUri, true);
-		xpathChildContext = f.newContext(xpathContext, childResource.getContents().get(0));
+		xpathChildContext = f.newContext(childResource.getContents().get(0));
 	}
 
 	@After

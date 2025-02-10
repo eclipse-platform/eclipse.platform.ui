@@ -57,6 +57,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+@SuppressWarnings({ "deprecation", "removal" })
 public class JavaXPathContextFactoryImpl<T> extends XPathContextFactory<T> {
 
 	private static final XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
