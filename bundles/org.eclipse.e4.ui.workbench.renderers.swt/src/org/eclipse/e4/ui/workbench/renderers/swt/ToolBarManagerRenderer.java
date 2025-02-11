@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2020 IBM Corporation and others.
+ * Copyright (c) 2009, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -429,11 +429,15 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			IEclipseContext parentContext = getContextForParent(element);
 
 			CSSRenderingUtils cssUtils = parentContext.get(CSSRenderingUtils.class);
-			if (cssUtils != null) {
+			if (cssUtils != null && !newTB.isDisposed()) {
 				MUIElement modelElement = (MUIElement) newTB.getData(AbstractPartRenderer.OWNING_ME);
 				boolean draggable = ((modelElement != null) && (modelElement.getTags().contains(IPresentationEngine.DRAGGABLE)));
 				renderedCtrl = cssUtils.frameMeIfPossible(newTB, null, vertical, draggable);
 			}
+		}
+
+		if (renderedCtrl != null && renderedCtrl.isDisposed()) {
+			return null;
 		}
 
 		return renderedCtrl;

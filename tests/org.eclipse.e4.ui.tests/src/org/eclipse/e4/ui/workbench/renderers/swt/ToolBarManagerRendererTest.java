@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2020 Rolf Theunissen and others.
+ * Copyright (c) 2019, 2025 Rolf Theunissen and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,23 +21,31 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import jakarta.inject.Inject;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.swt.SWTException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.osgi.service.event.EventHandler;
 
 public class ToolBarManagerRendererTest {
 
@@ -50,6 +58,10 @@ public class ToolBarManagerRendererTest {
 	@Inject
 	private MApplication application;
 
+	@Inject
+	private IEventBroker eventBroker;
+
+	private String toolBarId;
 	private MToolBar toolBar;
 	private MTrimmedWindow window;
 
@@ -61,7 +73,9 @@ public class ToolBarManagerRendererTest {
 		MTrimBar trimBar = ems.createModelElement(MTrimBar.class);
 		window.getTrimBars().add(trimBar);
 
+		toolBarId = "ToolBarManagerRendererTest.toolBar";
 		toolBar = ems.createModelElement(MToolBar.class);
+		toolBar.setElementId(toolBarId);
 		trimBar.getChildren().add(toolBar);
 	}
 
@@ -117,6 +131,42 @@ public class ToolBarManagerRendererTest {
 
 		assertEquals(1, tbm.getSize());
 		assertTrue(tbm.getItems()[0].isVisible());
+	}
+
+	@Test
+	public void testMToolBarContribution_toBeRendered() {
+		List<String> errors = new ArrayList<>();
+
+		EventHandler eventHandler = event -> {
+			if (UIEvents.isADD(event)) {
+				MToolBar toolbar = (MToolBar) event.getProperty(UIEvents.EventTags.ELEMENT);
+				toolbar.setToBeRendered(false);
+			}
+		};
+
+		ILogListener logListener = (status, plugin) -> {
+			if (status.getException() instanceof SWTException) {
+				errors.add(plugin + ":" + status);
+			}
+		};
+
+		try {
+			Platform.addLogListener(logListener);
+			eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, eventHandler);
+
+			MToolBarContribution toolContribution = ems.createModelElement(MToolBarContribution.class);
+			toolContribution.setParentId(toolBarId);
+			toolContribution.getChildren().add(ems.createModelElement(MDirectToolItem.class));
+			application.getToolBarContributions().add(toolContribution);
+
+			contextRule.createAndRunWorkbench(window);
+
+			assertNull(toolBar.getRenderer());
+			assertTrue("Error(s) occurred while rendering toolbar: " + errors, errors.isEmpty());
+		} finally {
+			eventBroker.unsubscribe(eventHandler);
+			Platform.removeLogListener(logListener);
+		}
 	}
 
 	@Test
