@@ -27,12 +27,14 @@ import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.model.ModelXPathEvaluator;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -432,6 +434,11 @@ public class ModelServiceImpl implements EModelService {
 		LinkedHashSet<T> elements = new LinkedHashSet<>();
 		findElementsRecursive(searchRoot, clazz, matcher, elements, searchFlags);
 		return new ArrayList<>(elements);
+	}
+
+	@Override
+	public <T> Stream<T> findMatchingElements(MApplicationElement searchRoot, String xPath, Class<T> clazz) {
+		return ModelXPathEvaluator.findMatchingElements(searchRoot, xPath, clazz);
 	}
 
 	private <T> Iterable<T> findPerspectiveElements(MUIElement searchRoot, String id,

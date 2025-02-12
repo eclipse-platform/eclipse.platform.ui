@@ -18,9 +18,8 @@ package org.eclipse.e4.ui.model.fragment.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
-import org.eclipse.e4.emf.xpath.XPathContext;
-import org.eclipse.e4.emf.xpath.XPathContextFactory;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.e4.ui.model.ModelXPathEvaluator;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
@@ -282,10 +281,10 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 			return FEATURENAME_EDEFAULT == null ? featurename != null : !FEATURENAME_EDEFAULT.equals(featurename);
 		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID:
 			return PARENT_ELEMENT_ID_EDEFAULT == null ? parentElementId != null
-					: !PARENT_ELEMENT_ID_EDEFAULT.equals(parentElementId);
+			: !PARENT_ELEMENT_ID_EDEFAULT.equals(parentElementId);
 		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
 			return POSITION_IN_LIST_EDEFAULT == null ? positionInList != null
-					: !POSITION_IN_LIST_EDEFAULT.equals(positionInList);
+			: !POSITION_IN_LIST_EDEFAULT.equals(positionInList);
 		default:
 			return super.eIsSet(featureID);
 		}
@@ -355,14 +354,13 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 		if ("/".equals(xPath)) {
 			targetElements = List.of(application);
 		} else {
-			XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
-			XPathContext xpathContext = f.newContext((EObject) application);
 			try {
-				targetElements = xpathContext.stream(xPath, MApplicationElement.class).toList();
+				targetElements = ModelXPathEvaluator.findMatchingElements(application, xPath, MApplicationElement.class)
+						.toList();
 			} catch (Exception ex) {
 				targetElements = List.of();
 				// custom xpath functions will throw exceptions
-				ex.printStackTrace();
+				ILog.get().error("Failed to evaluate xpath: " + xPath, ex); //$NON-NLS-1$
 			}
 		}
 		for (MApplicationElement targetElement : targetElements) {
