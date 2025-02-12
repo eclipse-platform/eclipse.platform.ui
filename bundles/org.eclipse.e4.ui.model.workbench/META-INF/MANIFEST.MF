@@ -6,7 +6,11 @@ Bundle-Version: 2.4.400.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Export-Package: org.eclipse.e4.ui.model;x-friends:="org.eclipse.e4.ui.workbench,org.eclipse.e4.ui.workbench.swt,org.eclipse.ui.workbench",
+Export-Package: org.eclipse.e4.ui.model;
+  x-friends:="org.eclipse.e4.ui.workbench,
+   org.eclipse.e4.ui.workbench.swt,
+   org.eclipse.ui.workbench,
+   org.eclipse.e4.tools.emf.ui",
  org.eclipse.e4.ui.model.application,
  org.eclipse.e4.ui.model.application.commands,
  org.eclipse.e4.ui.model.application.commands.impl;
