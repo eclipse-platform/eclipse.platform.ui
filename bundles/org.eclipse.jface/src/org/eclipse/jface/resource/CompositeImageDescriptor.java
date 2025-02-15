@@ -450,7 +450,7 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 		// Currently only support integer zoom levels, because getZoomedImageData(..)
 		// suffers from Bug 97506: [HiDPI] ImageData.scaledTo() should use a
 		// better interpolation method.
-		return zoom > 0 && zoom % 100 == 0;
+		return true;
 	}
 
 	private ImageData getZoomedImageData(ImageDataProvider srcProvider) {
