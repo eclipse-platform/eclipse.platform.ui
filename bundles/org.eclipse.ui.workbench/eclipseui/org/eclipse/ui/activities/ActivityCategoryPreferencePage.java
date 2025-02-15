@@ -131,7 +131,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 		public CategoryLabelProvider(boolean decorate) {
 			this.decorate = decorate;
 			lockDescriptor = ResourceLocator.imageDescriptorFromBundle(PlatformUI.PLUGIN_ID,
-					"icons/full/ovr16/lock_ovr.png"); //$NON-NLS-1$
+					"icons/full/ovr16/lock_ovr.svg"); //$NON-NLS-1$
 		}
 
 		@Override
