@@ -373,15 +373,11 @@ import org.eclipse.swt.widgets.ToolItem;
 	}
 
 	private void inUIThread(Runnable r) {
-		if (Display.getCurrent() != null) {
-			r.run();
-		} else {
-			getDisplay().asyncExec(() -> {
-				if (!isDisposed()) {
-					r.run();
-				}
-			});
-		}
+		getDisplay().execute(() -> {
+			if (!isDisposed()) {
+				r.run();
+			}
+		});
 	}
 
 	/**
@@ -584,7 +580,7 @@ import org.eclipse.swt.widgets.ToolItem;
 		if (changed) {
 			fTaskName = s;
 			fBaseTaskName = s;
-			updateMessageLabel();
+			inUIThread(this::updateMessageLabel);
 		}
 	}
 
@@ -659,7 +655,7 @@ import org.eclipse.swt.widgets.ToolItem;
 		boolean changed = !Objects.equals(fTaskName, text);
 		if (changed) {
 			fTaskName = text;
-			updateMessageLabel();
+			inUIThread(this::updateMessageLabel);
 		}
 	}
 
