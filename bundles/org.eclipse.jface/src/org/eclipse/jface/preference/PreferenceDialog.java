@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
@@ -816,8 +815,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 					} catch (IOException e) {
 						String message = JFaceResources.format("PreferenceDialog.saveErrorMessage", page.getTitle(), //$NON-NLS-1$
 								e.getMessage());
-						Policy.getStatusHandler().show(
-								new Status(IStatus.ERROR, Policy.JFACE, message, e),
+						Policy.getStatusHandler().show(Status.error(message, e),
 								JFaceResources.getString("PreferenceDialog.saveErrorTitle")); //$NON-NLS-1$
 
 					}
@@ -932,15 +930,11 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 			public void handleException(Throwable e) {
 				errorOccurred = true;
 
-				Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, 0, e.toString(), e));
+				Policy.getLog().log(Status.error(e.toString(), e));
 
 				clearSelectedNode();
 				String message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
-
-				Policy.getStatusHandler().show(
-						new Status(IStatus.ERROR, Policy.JFACE, message, e),
-						JFaceResources.getString("Error")); //$NON-NLS-1$
-
+				Policy.getStatusHandler().show(Status.error(message, e), JFaceResources.getString("Error")); //$NON-NLS-1$
 			}
 		});
 	}

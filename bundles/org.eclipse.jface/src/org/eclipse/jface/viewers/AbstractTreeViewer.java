@@ -30,7 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
@@ -1510,9 +1509,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				if (old != null) {
 					String message = "Sibling elements in viewer must not be equal:\n  " //$NON-NLS-1$
 							+ old + ",\n  " + element + ",\n  parent: " + parent; //$NON-NLS-1$ //$NON-NLS-2$
-					Policy.getLog().log(
-							new Status(IStatus.WARNING, Policy.JFACE, message,
-									new RuntimeException()));
+					Policy.getLog().log(Status.warning(message));
 					return;
 				}
 			}

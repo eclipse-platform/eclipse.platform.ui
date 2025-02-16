@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
@@ -172,7 +171,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 				// fall through otherwise
 			}
 		} catch (IOException e) {
-			Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, e.getLocalizedMessage(), e));
+			Policy.getLog().log(Status.error(e.getLocalizedMessage(), e));
 		}
 		return result;
 	}
@@ -204,8 +203,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			if (InternalPolicy.DEBUG_LOG_URL_IMAGE_DESCRIPTOR_MISSING_2x) {
 				String path = url.getPath();
 				if (path.endsWith("@2x.png") || path.endsWith("@1.5x.png")) { //$NON-NLS-1$ //$NON-NLS-2$
-					String message = "High-resolution image missing: " + url; //$NON-NLS-1$
-					Policy.getLog().log(new Status(IStatus.WARNING, Policy.JFACE, message, e));
+					Policy.getLog().log(Status.warning("High-resolution image missing: " + url, e)); //$NON-NLS-1$
 				}
 			}
 			return null;
@@ -244,7 +242,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 				}
 				return new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
 			} catch (MalformedURLException e) {
-				Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, e.getLocalizedMessage(), e));
+				Policy.getLog().log(Status.error(e.getLocalizedMessage(), e));
 			}
 		}
 		return null;
@@ -282,8 +280,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			} else if (InternalPolicy.DEBUG_LOG_URL_IMAGE_DESCRIPTOR_MISSING_2x) {
 				String path = url.getPath();
 				if (path.endsWith("@2x.png") || path.endsWith("@1.5x.png")) { //$NON-NLS-1$ //$NON-NLS-2$
-					String message = "High-resolution image missing: " + url; //$NON-NLS-1$
-					Policy.getLog().log(new Status(IStatus.WARNING, Policy.JFACE, message, e));
+					Policy.getLog().log(Status.warning("High-resolution image missing: " + url, e)); //$NON-NLS-1$
 				}
 			}
 			return null;
@@ -363,7 +360,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		try {
 			result = new URL(urlString);
 		} catch (MalformedURLException e) {
-			Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, e.getLocalizedMessage(), e));
+			Policy.getLog().log(Status.error(e.getLocalizedMessage(), e));
 		}
 		return result;
 	}

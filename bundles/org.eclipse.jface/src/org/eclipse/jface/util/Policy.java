@@ -259,10 +259,7 @@ public class Policy {
 	 * @since 3.4
 	 */
 	public static void logException(Exception exception) {
-		getLog().log(
-				new Status(IStatus.ERROR, JFACE, exception
-						.getLocalizedMessage(), exception));
-
+		getLog().log(Status.error(exception.getLocalizedMessage(), exception));
 	}
 
 }

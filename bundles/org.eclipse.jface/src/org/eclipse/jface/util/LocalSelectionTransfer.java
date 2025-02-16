@@ -14,7 +14,6 @@
 package org.eclipse.jface.util;
 
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
@@ -129,11 +128,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 	public Object nativeToJava(TransferData transferData) {
 		Object result = super.nativeToJava(transferData);
 		if (result != null && isInvalidNativeType(result)) {
-			Policy.getLog().log(new Status(
-							IStatus.ERROR,
-							Policy.JFACE,
-							IStatus.ERROR,
-							JFaceResources.getString("LocalSelectionTransfer.errorMessage"), null)); //$NON-NLS-1$
+			Policy.getLog().log(Status.error(JFaceResources.getString("LocalSelectionTransfer.errorMessage"))); //$NON-NLS-1$
 		}
 		return selection;
 	}

@@ -655,9 +655,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 						} catch (IOException e) {
 							// we should not get this
 						}
-						conflicts.add(new Status(IStatus.WARNING,
-								"org.eclipse.jface", //$NON-NLS-1$
-								sw.toString()));
+						conflicts.add(Status.warning(sw.toString()));
 					}
 					if (DEBUG) {
 						Tracing.printTrace("BINDINGS", //$NON-NLS-1$
@@ -861,9 +859,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 					bindingErrors.add(context.getId());
 
 					// now log like you've never logged before!
-					Status status = new Status(IStatus.ERROR, Policy.JFACE, IStatus.OK,
-							"Undefined context while filtering dialog/window contexts", e); //$NON-NLS-1$
-					Policy.getLog().log(status);
+					Policy.getLog().log(Status.error("Undefined context while filtering dialog/window contexts", e)); //$NON-NLS-1$
 				}
 			}
 		}
@@ -1568,10 +1564,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 			try {
 				schemeId = getScheme(schemeId).getParentId();
 			} catch (final NotDefinedException e) {
-				Policy.getLog().log(
-						new Status(IStatus.ERROR, Policy.JFACE, IStatus.OK,
-								"Failed ascending scheme parents", //$NON-NLS-1$
-								e));
+				Policy.getLog().log(Status.error("Failed ascending scheme parents", e)); //$NON-NLS-1$
 				return new String[0];
 			}
 		}

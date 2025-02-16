@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
@@ -548,9 +547,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 				if (old != null) {
 					String message = "Sibling elements in viewer must not be equal:\n  " //$NON-NLS-1$
 							+ old + ",\n  " + element; //$NON-NLS-1$
-					Policy.getLog().log(
-							new Status(IStatus.WARNING, Policy.JFACE, message,
-									new RuntimeException()));
+					Policy.getLog().log(Status.warning(message));
 					return;
 				}
 			}

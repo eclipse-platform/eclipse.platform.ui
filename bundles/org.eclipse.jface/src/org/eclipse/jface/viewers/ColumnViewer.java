@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
@@ -757,9 +756,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 					message += " This is only logged once per viewer instance," + //$NON-NLS-1$
 							" but similar calls will still be ignored."; //$NON-NLS-1$
 				}
-				Policy.getLog().log(
-						new Status(IStatus.WARNING, Policy.JFACE, message,
-								new RuntimeException()));
+				Policy.getLog().log(Status.warning(message));
 			}
 			return true;
 		}

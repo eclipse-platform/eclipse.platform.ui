@@ -58,8 +58,7 @@ public abstract class StatusDialog extends TrayDialog {
 	 */
 	public StatusDialog(Shell parent) {
 		super(parent);
-		fLastStatus = new Status(IStatus.OK, Policy.JFACE, IStatus.OK,
-				Util.ZERO_LENGTH_STRING, null);
+		fLastStatus = new Status(IStatus.OK, Policy.JFACE, Util.ZERO_LENGTH_STRING);
 	}
 
 	/**

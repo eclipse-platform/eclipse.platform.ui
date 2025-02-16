@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
@@ -194,8 +193,8 @@ public class ModalContext {
 								throw new RuntimeException(t);
 							}
 						}
-						Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE,
-								"Unhandled event loop exception during blocked modal context.", t)); //$NON-NLS-1$
+						Policy.getLog()
+								.log(Status.error("Unhandled event loop exception during blocked modal context.", t)); //$NON-NLS-1$
 					}
 				}
 			} else {

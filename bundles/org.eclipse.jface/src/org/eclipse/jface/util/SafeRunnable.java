@@ -16,7 +16,6 @@
 package org.eclipse.jface.util;
 
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
@@ -63,9 +62,7 @@ public abstract class SafeRunnable implements ISafeRunnable {
 		if (message == null)
 			message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
 
-		Policy.getStatusHandler().show(
-				new Status(IStatus.ERROR, Policy.JFACE, message, e),
-				JFaceResources.getString("SafeRunnable.errorMessage")); //$NON-NLS-1$
+		Policy.getStatusHandler().show(Status.error(message, e), JFaceResources.getString("SafeRunnable.errorMessage")); //$NON-NLS-1$
 	}
 
 	/**
@@ -135,11 +132,7 @@ public abstract class SafeRunnable implements ISafeRunnable {
 			private void handleException(ISafeRunnable code, Throwable e) {
 				if (!(e instanceof OperationCanceledException)) {
 					try {
-						Policy.getLog()
-								.log(
-										new Status(IStatus.ERROR, Policy.JFACE,
-												IStatus.ERROR,
-												"Exception occurred", e)); //$NON-NLS-1$
+						Policy.getLog().log(Status.error("Exception occurred", e)); //$NON-NLS-1$
 					} catch (Exception ex) {
 						e.printStackTrace();
 					}
