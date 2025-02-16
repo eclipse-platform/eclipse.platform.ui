@@ -882,8 +882,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 			try {
 				createdWizard.dispose();
 			} catch (Exception e) {
-				Status status = new Status(IStatus.ERROR, Policy.JFACE, IStatus.ERROR, e.getMessage(), e);
-				Policy.getLog().log(status);
+				Policy.getLog().log(Status.error(e.getMessage(), e));
 			}
 			// Remove this dialog as a parent from the managed wizard.
 			// Note that we do this after calling dispose as the wizard or

@@ -33,7 +33,6 @@ import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.BindingManager;
@@ -358,14 +357,10 @@ public final class ExternalActionManager {
 				if (!command.isDefined()
 						&& (!loggedCommandIds.contains(commandId))) {
 					// The command is not yet defined, so we should log this.
-					final String message = MessageFormat.format(Util
-							.translateString(RESOURCE_BUNDLE,
-									"undefinedCommand.WarningMessage", null), //$NON-NLS-1$
+					String message = MessageFormat.format(
+							Util.translateString(RESOURCE_BUNDLE, "undefinedCommand.WarningMessage", null), //$NON-NLS-1$
 							command.getId());
-					IStatus status = new Status(IStatus.ERROR,
-							"org.eclipse.jface", //$NON-NLS-1$
-							0, message, new Exception());
-					Policy.getLog().log(status);
+					Policy.getLog().log(Status.error(message));
 
 					// And remember this item so we don't log it again.
 					loggedCommandIds.add(commandId);

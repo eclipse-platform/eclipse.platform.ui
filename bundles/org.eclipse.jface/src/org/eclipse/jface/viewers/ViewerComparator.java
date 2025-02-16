@@ -19,7 +19,6 @@ package org.eclipse.jface.viewers;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.Policy;
 
@@ -223,7 +222,7 @@ public class ViewerComparator {
 				labels.append(getLabel(viewer, element));
 			}
 			msg += labels;
-			Policy.getLog().log(new Status(IStatus.ERROR, "org.eclipse.jface", msg)); //$NON-NLS-1$
+			Policy.getLog().log(Status.error(msg));
 			throw e;
 		}
 	}

@@ -420,11 +420,7 @@ public abstract class Dialog extends Window {
 	protected Dialog(Shell parentShell) {
 		this(new SameShellProvider(parentShell));
 		if (parentShell == null && Policy.DEBUG_DIALOG_NO_PARENT) {
-			Policy.getLog().log(
-					new Status(IStatus.INFO, Policy.JFACE, IStatus.INFO, this
-							.getClass()
-							+ " created with no shell",//$NON-NLS-1$
-							new Exception()));
+			Policy.getLog().log(Status.info(this.getClass() + " created with no shell")); //$NON-NLS-1$
 		}
 	}
 
