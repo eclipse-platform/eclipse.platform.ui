@@ -20,9 +20,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.Trigger;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -130,9 +133,15 @@ public class BindingTable {
 	private Map<TriggerSequence, ArrayList<Binding>> bindingsByPrefix = new HashMap<>();
 	private Map<TriggerSequence, ArrayList<Binding>> conflicts = new HashMap<>();
 	private Map<TriggerSequence, ArrayList<Binding>> orderedBindingsByTrigger = new HashMap<>();
+	private final Map<Binding, Boolean> activeBindings = new HashMap<>();
 
-	public BindingTable(Context context) {
+	private IContributionFactory contributionFactory;
+
+	private MApplication application;
+
+	public BindingTable(Context context, MApplication application) {
 		tableId = context;
+		this.application = application;
 	}
 
 	public Context getTableId() {
@@ -254,6 +263,7 @@ public class BindingTable {
 				evaluateOrderedBindings(binding.getTriggerSequence(), null);
 			}
 		}
+		activeBindings.remove(binding);
 	}
 
 	private void evaluateOrderedBindings(TriggerSequence sequence, Binding binding) {
@@ -309,13 +319,21 @@ public class BindingTable {
 	}
 
 	public Binding getPerfectMatch(TriggerSequence trigger) {
-		return bindingsByTrigger.get(trigger);
+		Binding binding = bindingsByTrigger.get(trigger);
+		if (isActive(binding)) {
+			return binding;
+		}
+		return null;
 	}
 
 	public Binding getBestSequenceFor(ParameterizedCommand command) {
 		ArrayList<Binding> sequences = bindingsByCommand.get(command);
-		if (sequences != null && sequences.size() > 0) {
-			return sequences.get(0);
+		if (sequences != null) {
+			for (Binding binding : sequences) {
+				if (isActive(binding)) {
+					return binding;
+				}
+			}
 		}
 		return null;
 	}
@@ -323,20 +341,54 @@ public class BindingTable {
 	@SuppressWarnings("unchecked")
 	public Collection<Binding> getSequencesFor(ParameterizedCommand command) {
 		ArrayList<Binding> triggers = bindingsByCommand.get(command);
-		return (Collection<Binding>) (triggers == null ? Collections.emptyList() : triggers.clone());
+		return (Collection<Binding>) (triggers == null ? Collections.emptyList() : getActive(triggers));
 	}
 
 	public Collection<Binding> getPartialMatches(TriggerSequence sequence) {
-		return bindingsByPrefix.get(sequence);
+		return getActive(bindingsByPrefix.get(sequence));
 	}
 
 	public boolean isPartialMatch(TriggerSequence seq) {
 		ArrayList<Binding> values = bindingsByPrefix.get(seq);
-		return values != null && !values.isEmpty();
+		return values != null && !getActive(values).isEmpty();
 	}
 
 	public Collection<Binding> getBindings() {
-		return Collections.unmodifiableCollection(bindings);
+		return Collections.unmodifiableCollection(getActive(bindings));
 	}
 
+	List<Binding> getActive(List<Binding> bindings) {
+		return bindings == null ? null : bindings.stream().filter(b -> isActive(b)).toList();
+	}
+
+	private boolean isActive(final Binding binding) {
+		if (binding == null) {
+			return false;
+		}
+		Boolean cachedValue = activeBindings.get(binding);
+		if (cachedValue != null) {
+			return cachedValue;
+		}
+		ParameterizedCommand command = binding.getParameterizedCommand();
+		if (command == null) {
+			// Binding without command is "unbound", so can't be active
+			// We don't cache in case command will be added in preferences
+			return false;
+		}
+		String identifierId = command.getId();
+		if (contributionFactory == null) {
+			contributionFactory = application.getContext().get(IContributionFactory.class);
+		}
+		if (contributionFactory == null) {
+			// Something went wrong, let assume binding is active
+			return true;
+		}
+		boolean currentValue = contributionFactory.isEnabled(identifierId);
+		activeBindings.put(binding, currentValue);
+		return currentValue;
+	}
+
+	public void activitiesChanged() {
+		activeBindings.clear();
+	}
 }

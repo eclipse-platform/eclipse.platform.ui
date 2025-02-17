@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.bindings.tests;
 
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.osgi.framework.FrameworkUtil;
+import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 
 public class TestUtil {
 
@@ -24,9 +23,7 @@ public class TestUtil {
 	public static IEclipseContext getGlobalContext() {
 		if (appContext == null) {
 			synchronized (TestUtil.class) {
-				IEclipseContext serviceContext = EclipseContextFactory
-						.getServiceContext(FrameworkUtil.getBundle(TestUtil.class).getBundleContext());
-				appContext = serviceContext.createChild();
+				appContext = E4Application.createDefaultContext();
 			}
 		}
 

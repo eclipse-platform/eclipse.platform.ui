@@ -38,6 +38,7 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.jface.bindings.Binding;
@@ -94,6 +95,7 @@ public class KeyDispatcherTest {
 	private CallHandler twoStrokeHandler;
 	private KeyBindingDispatcher dispatcher;
 	private Listener listener;
+	private MApplication application;
 
 	private void defineCommands(IEclipseContext context) {
 		ECommandService cs = workbenchContext
@@ -135,6 +137,7 @@ public class KeyDispatcherTest {
 		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
 		ContextInjectionFactory.make(ContextServiceAddon.class, workbenchContext);
 		ContextInjectionFactory.make(BindingServiceAddon.class, workbenchContext);
+		application = globalContext.get(MApplication.class);
 		defineContexts(workbenchContext);
 		defineBindingTables(workbenchContext);
 		defineCommands(workbenchContext);
@@ -161,9 +164,9 @@ public class KeyDispatcherTest {
 	private void defineBindingTables(IEclipseContext context) {
 		BindingTableManager btm = context.get(BindingTableManager.class);
 		ContextManager cm = context.get(ContextManager.class);
-		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG_AND_WINDOW)));
-		btm.addTable(new BindingTable(cm.getContext(ID_WINDOW)));
-		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG)));
+		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG_AND_WINDOW), application));
+		btm.addTable(new BindingTable(cm.getContext(ID_WINDOW), application));
+		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG), application));
 	}
 
 	@After

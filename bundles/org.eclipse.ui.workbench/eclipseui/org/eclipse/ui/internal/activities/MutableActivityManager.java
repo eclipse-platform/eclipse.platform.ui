@@ -34,6 +34,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobFunction;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityEvent;
@@ -105,6 +107,8 @@ public final class MutableActivityManager extends AbstractActivityManager
 
 	private Map<ActivityDefinition, IEvaluationReference> refsByActivityDefinition = new HashMap<>();
 
+	private IEventBroker eventBroker;
+
 	/**
 	 * Create a new instance of this class using the platform extension registry.
 	 */
@@ -129,6 +133,8 @@ public final class MutableActivityManager extends AbstractActivityManager
 		this.activityRegistry.addActivityRegistryListener(activityRegistryListener);
 
 		readRegistry(true);
+
+		eventBroker = PlatformUI.getWorkbench().getService(IEventBroker.class);
 	}
 
 	@Override
@@ -848,6 +854,15 @@ public final class MutableActivityManager extends AbstractActivityManager
 			deferredIdentifierJob.setSystem(true);
 		}
 		return deferredIdentifierJob;
+	}
+
+	@Override
+	protected void fireActivityManagerChanged(ActivityManagerEvent activityManagerEvent) {
+		super.fireActivityManagerChanged(activityManagerEvent);
+		if (eventBroker != null) {
+			PlatformUI.getWorkbench().getDisplay()
+					.asyncExec(() -> eventBroker.send(UIEvents.UILifeCycle.ACTIVITIES_CHANGED, null));
+		}
 	}
 
 }

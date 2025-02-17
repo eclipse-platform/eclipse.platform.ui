@@ -348,6 +348,13 @@ public class UIEvents {
 		 */
 		String THEME_DEFINITION_CHANGED = TOPIC + TOPIC_SEP
 				+ "themeDefinitionChanged"; //$NON-NLS-1$
+
+		/**
+		 * Sent when activities changed (activity enabled/disabled)
+		 *
+		 * @since 1.18
+		 */
+		String ACTIVITIES_CHANGED = TOPIC + TOPIC_SEP + "activitiesChanged"; //$NON-NLS-1$
 	}
 
 	/**

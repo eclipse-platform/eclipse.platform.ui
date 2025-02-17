@@ -93,6 +93,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.dialogs.FilteredTree;
@@ -202,6 +203,12 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 	private ICommandService commandService;
 
 	private IWorkbench fWorkbench;
+
+	/**
+	 * The workbench's activity manager. This activity manager is used to see if
+	 * certain commands should be filtered from the user interface.
+	 */
+	private IActivityManager activityManager;
 
 	/**
 	 * A FilteredTree that provides a combo which is used to organize and display
@@ -472,7 +479,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 
 		IDialogSettings settings = getDialogSettings();
 
-		fPatternFilter = new CategoryPatternFilter(true, commandService.getCategory(null));
+		fPatternFilter = new CategoryPatternFilter(true, commandService.getCategory(null), activityManager);
 		if (settings.get(TAG_FILTER_UNCAT) != null) {
 			fPatternFilter.filterCategories(settings.getBoolean(TAG_FILTER_UNCAT));
 		}
@@ -854,7 +861,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	private void createTree(Composite parent) {
-		fPatternFilter = new CategoryPatternFilter(true, fDefaultCategory);
+		fPatternFilter = new CategoryPatternFilter(true, fDefaultCategory, activityManager);
 		fPatternFilter.filterCategories(true);
 
 		GridData gridData;
@@ -1089,6 +1096,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		fBindingService = workbench.getService(IBindingService.class);
 
 		commandImageService = workbench.getService(ICommandImageService.class);
+		activityManager = workbench.getActivitySupport().getActivityManager();
 	}
 
 	@Override
