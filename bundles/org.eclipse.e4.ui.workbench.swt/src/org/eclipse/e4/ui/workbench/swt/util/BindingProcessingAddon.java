@@ -158,7 +158,7 @@ public class BindingProcessingAddon {
 		final Context bindingContext = contextManager.getContext(bindingTable.getBindingContext().getElementId());
 		BindingTable table = bindingTables.getTable(bindingTable.getBindingContext().getElementId());
 		if (table == null) {
-			table = new BindingTable(bindingContext);
+			table = new BindingTable(bindingContext, application);
 			bindingTables.addTable(table);
 		}
 		for (MKeyBinding binding : bindingTable.getBindings()) {
@@ -290,7 +290,7 @@ public class BindingProcessingAddon {
 				if (newObj instanceof MBindingTable) {
 					MBindingTable bt = (MBindingTable) newObj;
 					final Context bindingContext = contextManager.getContext(bt.getBindingContext().getElementId());
-					final BindingTable table = new BindingTable(bindingContext);
+					final BindingTable table = new BindingTable(bindingContext, application);
 					bindingTables.addTable(table);
 					List<MKeyBinding> bindings = bt.getBindings();
 					for (MKeyBinding binding : bindings) {
@@ -436,6 +436,12 @@ public class BindingProcessingAddon {
 		}
 
 		activateContexts(elementObj);
+	}
+
+	@Inject
+	@Optional
+	private void subscribeActivitiesChangedTopic(@UIEventTopic(UIEvents.UILifeCycle.ACTIVITIES_CHANGED) Event event) {
+		bindingTables.activitiesChanged();
 	}
 
 }

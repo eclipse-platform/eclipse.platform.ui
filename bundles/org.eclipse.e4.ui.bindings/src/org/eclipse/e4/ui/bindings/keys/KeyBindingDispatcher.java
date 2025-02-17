@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -33,6 +34,7 @@ import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.KeyAssistDialog;
@@ -63,7 +65,13 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class KeyBindingDispatcher {
 
-	private KeyAssistDialog keyAssistDialog = null;
+	private KeyAssistDialog keyAssistDialog;
+
+	private IContributionFactory contributionFactory;
+
+	public KeyBindingDispatcher() {
+		super();
+	}
 
 	/**
 	 * A display filter for handling key bindings. This filter can either be enabled or disabled. If
@@ -279,6 +287,10 @@ public class KeyBindingDispatcher {
 
 		// Reset the key binding state (close window, clear status line, etc.)
 		resetState(false);
+
+		if (!isActive(parameterizedCommand)) {
+			throw new NotEnabledException("Command should have been disabled via activity: " + parameterizedCommand); //$NON-NLS-1$
+		}
 
 		final EHandlerService handlerService = getHandlerService();
 		final Command command = parameterizedCommand.getCommand();
@@ -620,6 +632,12 @@ public class KeyBindingDispatcher {
 		return !sequenceBeforeKeyStroke.isEmpty();
 	}
 
+	private boolean isActive(final ParameterizedCommand command) {
+		String identifierId = command.getId();
+		boolean enabled = contributionFactory.isEnabled(identifierId);
+		return enabled;
+	}
+
 	/**
 	 * <p>
 	 * Actually performs the processing of the key event by interacting with the
@@ -687,6 +705,7 @@ public class KeyBindingDispatcher {
 	@Inject
 	public void setContext(IEclipseContext context) {
 		this.context = context;
+		contributionFactory = context.get(IContributionFactory.class);
 	}
 
 	/**

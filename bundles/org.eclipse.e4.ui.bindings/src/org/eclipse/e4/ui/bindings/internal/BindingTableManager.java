@@ -257,4 +257,13 @@ public class BindingTableManager {
 		}
 		return 0;
 	}
+
+	public void activitiesChanged() {
+		for (Context ctx : definedTables.getContexts()) {
+			BindingTable table = getTable(ctx.getId());
+			if (table != null) {
+				table.activitiesChanged();
+			}
+		}
+	}
 }

@@ -37,6 +37,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.bindings.internal.ContextSet;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
@@ -90,35 +91,35 @@ public class BindingTableTests {
 	static CommandManager commandManager = null;
 	static ContextManager contextManager = null;
 	static IEclipseContext workbenchContext;
+	private MApplication application;
 
 	@Before
 	public void setUp() throws Exception {
-		if (loadedBindings == null) {
-			IEclipseContext globalContext = TestUtil.getGlobalContext();
-			workbenchContext = globalContext.createChild("workbenchContext");
-			loadedBindings = new ArrayList<>();
-			contextManager = new ContextManager();
-			ContextSet.setComparator(new ContextSet.CComp(contextManager));
-			for (int i = 0; i < CONTEXTS.length; i += 3) {
-				Context context = contextManager.getContext(CONTEXTS[i]);
-				context.define(CONTEXTS[i + 1], null, CONTEXTS[i + 2]);
-			}
+		IEclipseContext globalContext = TestUtil.getGlobalContext();
+		workbenchContext = globalContext.createChild("workbenchContext");
+		application = globalContext.get(MApplication.class);
+		loadedBindings = new ArrayList<>();
+		contextManager = new ContextManager();
+		ContextSet.setComparator(new ContextSet.CComp(contextManager));
+		for (int i = 0; i < CONTEXTS.length; i += 3) {
+			Context context = contextManager.getContext(CONTEXTS[i]);
+			context.define(CONTEXTS[i + 1], null, CONTEXTS[i + 2]);
+		}
 
-			commandManager = new CommandManager();
-			Category category = commandManager.getCategory("bogus");
-			category.define("Bogus", null);
-			for (int i = 0; i < COMMANDS.length; i += 2) {
-				Command cmd = commandManager.getCommand(COMMANDS[i]);
-				cmd.define(COMMANDS[i + 1], null, category);
-			}
-			for (int i = 0; i < BINDINGS.length; i += 3) {
-				KeySequence seq = KeySequence.getInstance(BINDINGS[i + 1]);
-				Command cmd = commandManager.getCommand(BINDINGS[i]);
-				loadedBindings.add(new KeyBinding(seq,
-						new ParameterizedCommand(cmd, null),
-						"org.eclipse.ui.defaultAcceleratorConfiguration",
-						BINDINGS[i + 2], null, null, null, Binding.SYSTEM));
-			}
+		commandManager = new CommandManager();
+		Category category = commandManager.getCategory("bogus");
+		category.define("Bogus", null);
+		for (int i = 0; i < COMMANDS.length; i += 2) {
+			Command cmd = commandManager.getCommand(COMMANDS[i]);
+			cmd.define(COMMANDS[i + 1], null, category);
+		}
+		for (int i = 0; i < BINDINGS.length; i += 3) {
+			KeySequence seq = KeySequence.getInstance(BINDINGS[i + 1]);
+			Command cmd = commandManager.getCommand(BINDINGS[i]);
+			loadedBindings.add(new KeyBinding(seq,
+					new ParameterizedCommand(cmd, null),
+					"org.eclipse.ui.defaultAcceleratorConfiguration",
+					BINDINGS[i + 2], null, null, null, Binding.SYSTEM));
 		}
 	}
 
@@ -137,11 +138,11 @@ public class BindingTableTests {
 
 		Collection<Binding> sequences = table.getSequencesFor(about.getParameterizedCommand());
 		assertEquals(1, sequences.size());
-		assertEquals(aboutSeq, ((ArrayList<Binding>) sequences).get(0).getTriggerSequence());
+		assertEquals(aboutSeq, ((List<Binding>) sequences).get(0).getTriggerSequence());
 
 		Collection<Binding> partialMatches = table.getPartialMatches(prefix);
 		assertEquals(1, partialMatches.size());
-		assertEquals(about, ((ArrayList<Binding>) partialMatches).get(0));
+		assertEquals(about, ((List<Binding>) partialMatches).get(0));
 	}
 
 	@Test
@@ -368,7 +369,7 @@ public class BindingTableTests {
 
 	private BindingTable loadTable(String contextId) {
 		Context context = contextManager.getContext(contextId);
-		BindingTable table = new BindingTable(context);
+		BindingTable table = new BindingTable(context, application);
 		for (Binding b : loadedBindings) {
 			if (context.getId().equals(b.getContextId())) {
 				table.addBinding(b);
