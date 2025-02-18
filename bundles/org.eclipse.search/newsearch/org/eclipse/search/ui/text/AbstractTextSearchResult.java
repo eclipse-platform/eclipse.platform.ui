@@ -44,7 +44,6 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 	private final ConcurrentMap<Object, Set<Match>> fElementsToMatches;
 	private final List<ISearchResultListener> fListeners;
-	private final MatchEvent fMatchEvent;
 	private final AtomicInteger matchCount;
 
 	private MatchFilter[] fMatchFilters;
@@ -55,7 +54,6 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	protected AbstractTextSearchResult() {
 		fElementsToMatches= new ConcurrentHashMap<>();
 		fListeners= new ArrayList<>();
-		fMatchEvent= new MatchEvent(this);
 		matchCount = new AtomicInteger(0);
 		fMatchFilters= null; // filtering disabled by default
 	}
@@ -145,12 +143,14 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	}
 
 	private MatchEvent getSearchResultEvent(Match match, int eventKind) {
+		MatchEvent fMatchEvent = new MatchEvent(this);
 		fMatchEvent.setKind(eventKind);
 		fMatchEvent.setMatch(match);
 		return fMatchEvent;
 	}
 
 	private MatchEvent getSearchResultEvent(Collection<Match> matches, int eventKind) {
+		MatchEvent fMatchEvent = new MatchEvent(this);
 		fMatchEvent.setKind(eventKind);
 		Match[] matchArray= matches.toArray(new Match[matches.size()]);
 		fMatchEvent.setMatches(matchArray);
