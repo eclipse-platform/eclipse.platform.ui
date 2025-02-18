@@ -18,13 +18,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.search.ui.ISearchResult;
@@ -53,7 +52,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 */
 	protected AbstractTextSearchResult() {
 		fElementsToMatches= new ConcurrentHashMap<>();
-		fListeners= new ArrayList<>();
+		fListeners = new CopyOnWriteArrayList<>();
 		matchCount = new AtomicInteger(0);
 		fMatchFilters= null; // filtering disabled by default
 	}
@@ -233,16 +232,12 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 	@Override
 	public void addListener(ISearchResultListener l) {
-		synchronized (fListeners) {
-			fListeners.add(l);
-		}
+		fListeners.add(l);
 	}
 
 	@Override
 	public void removeListener(ISearchResultListener l) {
-		synchronized (fListeners) {
-			fListeners.remove(l);
-		}
+		fListeners.remove(l);
 	}
 
 	/**
@@ -254,13 +249,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @see ISearchResultListener
 	 */
 	protected void fireChange(SearchResultEvent e) {
-		HashSet<ISearchResultListener> copiedListeners= new HashSet<>();
-		synchronized (fListeners) {
-			copiedListeners.addAll(fListeners);
-		}
-		Iterator<ISearchResultListener> listeners= copiedListeners.iterator();
-		while (listeners.hasNext()) {
-			listeners.next().searchResultChanged(e);
+		for (ISearchResultListener listener : fListeners) {
+			listener.searchResultChanged(e);
 		}
 	}
 
@@ -276,7 +266,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 				}
 			}
 		}
-		Match[] allChanges= changed.toArray(new Match[changed.size()]);
+		Match[] allChanges = changed.toArray(Match[]::new);
 		fireChange(new FilterUpdateEvent(this, allChanges, getActiveMatchFilters()));
 	}
 
