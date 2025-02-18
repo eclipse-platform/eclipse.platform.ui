@@ -24,10 +24,9 @@ import org.eclipse.search.ui.SearchResultEvent;
  * @since 3.0
  */
 public class MatchEvent extends SearchResultEvent {
-	private static final long serialVersionUID = 6009335074727417445L;
+	private static final long serialVersionUID = 6009335074727417446L;
 	private int fKind;
 	private Match[] fMatches;
-	private Match[] fMatchContainer = new Match[1];
 	/**
 	 * Constant for a matches being added.
 	 *
@@ -68,8 +67,6 @@ public class MatchEvent extends SearchResultEvent {
 	public Match[] getMatches() {
 		if (fMatches != null)
 			return fMatches;
-		else if (fMatchContainer[0] != null)
-			return fMatchContainer;
 		else
 			return fgEmtpyMatches;
 	}
@@ -88,8 +85,9 @@ public class MatchEvent extends SearchResultEvent {
 	 * @param match the match to set
 	 */
 	protected void setMatch(Match match) {
-		fMatchContainer[0] = match;
-		fMatches = null;
+		Match[] matches = new Match[1];
+		matches[0] = match;
+		fMatches = matches;
 	}
 
 	/**
@@ -98,7 +96,6 @@ public class MatchEvent extends SearchResultEvent {
 	 * @param matches the matches to set
 	 */
 	protected void setMatches(Match[] matches) {
-		fMatchContainer[0] = null;
 		fMatches = matches;
 	}
 }
