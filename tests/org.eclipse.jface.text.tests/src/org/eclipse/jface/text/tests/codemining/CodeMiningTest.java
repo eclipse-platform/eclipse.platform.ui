@@ -52,6 +52,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.AbstractCodeMiningProvider;
+import org.eclipse.jface.text.codemining.DocumentFooterCodeMining;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
@@ -290,6 +291,82 @@ public class CodeMiningTest {
 	}
 
 	@Test
+	public void testDocumentFooterCodeMining() throws Exception {
+		String source= "first\nsecond";
+		fViewer.getDocument().set(source);
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { new ICodeMiningProvider() {
+			@Override
+			public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+				List<ICodeMining> minings= new ArrayList<>();
+				minings.add(new DocumentFooterCodeMining(viewer.getDocument(), this, null) {
+					@Override
+					public String getLabel() {
+						return "multiline first line\nmultiline second line";
+					}
+				});
+				return CompletableFuture.completedFuture(minings);
+			}
+
+			@Override
+			public void dispose() {
+			}
+		} });
+		Assert.assertTrue("Code mining is not visible at end of document", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				try {
+					boolean res= hasCodeMiningPrintedBelowLine(fViewer, 1);
+					if (!res) {
+						fViewer.getTextWidget().redraw();
+					}
+					return res;
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}.waitForCondition(fViewer.getTextWidget().getDisplay(), 10_000));
+	}
+
+	@Test
+	public void testDocumentFooterCodeMiningEmptyDocument() throws Exception {
+		String source= "";
+		fViewer.getDocument().set(source);
+		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { new ICodeMiningProvider() {
+			@Override
+			public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(ITextViewer viewer, IProgressMonitor monitor) {
+				List<ICodeMining> minings= new ArrayList<>();
+				minings.add(new DocumentFooterCodeMining(viewer.getDocument(), this, null) {
+					@Override
+					public String getLabel() {
+						return "multiline first line\nmultiline second line";
+					}
+				});
+				return CompletableFuture.completedFuture(minings);
+			}
+
+			@Override
+			public void dispose() {
+			}
+		} });
+		Assert.assertTrue("Code mining is not visible at end of document", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				try {
+					boolean res= hasCodeMiningPrintedBelowLine(fViewer, 0);
+					if (!res) {
+						fViewer.getTextWidget().redraw();
+					}
+					return res;
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}.waitForCondition(fViewer.getTextWidget().getDisplay(), 10_000));
+	}
+
+	@Test
 	public void testCodeMiningAtEndOfDocumentWithEmptyLine() throws Exception {
 		String source= "first\nsecond\n";
 		fViewer.getDocument().set(source);
@@ -425,16 +502,27 @@ public class CodeMiningTest {
 		if (lineLength < 0) {
 			lineLength= 0;
 		}
-		Rectangle lineBounds= widget.getTextBounds(document.getLineOffset(line), document.getLineOffset(line) + lineLength);
-		lineBounds.y= lineBounds.y + lineBounds.height;
+		int lineOffset= document.getLineOffset(line);
+		int startx, starty;
+		if (lineOffset + lineLength >= widget.getCharCount()) {
+			Point loc= widget.getLocationAtOffset(lineOffset);
+			startx= loc.x;
+			starty= loc.y + widget.getLineHeight(lineOffset);
+		} else {
+			Rectangle lineBounds= widget.getTextBounds(lineOffset, lineOffset + lineLength);
+			lineBounds.y= lineBounds.y + lineBounds.height;
+			startx= lineBounds.x;
+			starty= lineBounds.y;
+		}
+
 		Image image= new Image(widget.getDisplay(), widget.getSize().x, widget.getSize().y);
 		try {
 			GC gc= new GC(widget);
 			gc.copyArea(image, 0, 0);
 			gc.dispose();
 			ImageData imageData= image.getImageData();
-			for (int x= lineBounds.x + 1; x < image.getBounds().width && x < imageData.width; x++) {
-				for (int y= lineBounds.y; y < imageData.height - 10 /*do not include the border*/; y++) {
+			for (int x= startx + 1; x < image.getBounds().width && x < imageData.width; x++) {
+				for (int y= starty; y < imageData.height - 10 /*do not include the border*/; y++) {
 					if (!imageData.palette.getRGB(imageData.getPixel(x, y)).equals(widget.getBackground().getRGB())) {
 						// code mining printed
 						return true;
