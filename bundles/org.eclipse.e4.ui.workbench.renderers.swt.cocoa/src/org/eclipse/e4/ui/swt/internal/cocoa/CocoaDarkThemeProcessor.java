@@ -39,12 +39,11 @@ public class CocoaDarkThemeProcessor {
 				return;
 			}
 			ITheme theme = (ITheme) event.getProperty("theme"); //$NON-NLS-1$
-			final boolean isDark = theme.getId().contains("dark"); //$NON-NLS-1$
 			Display display = (Display) event.getProperty(IThemeEngine.Events.DEVICE);
 
 			// not using UISynchronize as this is specific to SWT/Mac
 			// scenarios
-			display.asyncExec(() -> OS.setTheme(isDark));
+			display.asyncExec(() -> OS.setTheme(theme.isDark()));
 		};
 		// using the IEventBroker explicitly because the @EventTopic annotation
 		// is unpredictable with processors within the debugger
@@ -52,9 +51,11 @@ public class CocoaDarkThemeProcessor {
 	}
 
 	/**
-	 * Unsubscribes the {@code eventHandler} from the {@code eventBroker} to cleanup the resources
+	 * Unsubscribes the {@code eventHandler} from the {@code eventBroker} to cleanup
+	 * the resources
 	 *
-	 * Assumption : Both {@code eventHandler} and {@code eventBroker} are initialized and non null
+	 * Assumption : Both {@code eventHandler} and {@code eventBroker} are
+	 * initialized and non null
 	 */
 	@PreDestroy
 	public void cleanUp() {
