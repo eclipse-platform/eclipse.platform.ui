@@ -13,11 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.StringTokenizer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -33,11 +37,11 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 public class NewWizard extends Wizard {
 	private static final String CATEGORY_SEPARATOR = "/"; //$NON-NLS-1$
 
-	private String categoryId = null;
+	private String categoryId;
 
 	private NewWizardSelectionPage mainPage;
 
-	private boolean projectsOnly = false;
+	private boolean projectsOnly;
 
 	private IStructuredSelection selection;
 
@@ -50,6 +54,10 @@ public class NewWizard extends Wizard {
 	public void addPages() {
 		IWizardCategory root = WorkbenchPlugin.getDefault().getNewWizardRegistry().getRootCategory();
 		IWizardDescriptor[] primary = WorkbenchPlugin.getDefault().getNewWizardRegistry().getPrimaryWizards();
+
+		// Filter the wizards that are disabled by activity support. Issue 2809
+		Collection<IWizardDescriptor> filteredWizards = WorkbenchActivityHelper.filterCollection(List.of(primary),
+				new HashSet<>());
 
 		if (categoryId != null) {
 			IWizardCategory categories = root;
@@ -65,7 +73,8 @@ public class NewWizard extends Wizard {
 			}
 		}
 
-		mainPage = new NewWizardSelectionPage(workbench, selection, root, primary, projectsOnly);
+		mainPage = new NewWizardSelectionPage(workbench, selection, root,
+				filteredWizards.toArray(IWizardDescriptor[]::new), projectsOnly);
 		addPage(mainPage);
 	}
 
