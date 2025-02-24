@@ -116,6 +116,7 @@ import org.eclipse.text.quicksearch.internal.core.QuickTextQuery.TextRange;
 import org.eclipse.text.quicksearch.internal.core.pathmatch.ResourceMatchers;
 import org.eclipse.text.quicksearch.internal.util.DocumentFetcher;
 import org.eclipse.ui.ActiveShellExpression;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -1006,13 +1007,13 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		viewersParentLayout = new StackLayout();
 		viewersParent.setLayout(viewersParentLayout);
 
-		replaceViewer(QuickSearchActivator.getDefault().getDefaultViewer());
+		replaceViewer(QuickSearchActivator.getDefault().getDefaultViewer(), null);
 		Assert.isNotNull(currentViewerWrapper, "Default source viewer initialization failed"); //$NON-NLS-1$
 
 		list.addSelectionChangedListener(event -> refreshDetails());
 	}
 
-	private TextViewerWrapper replaceViewer(IViewerDescriptor descriptor) {
+	private TextViewerWrapper replaceViewer(IViewerDescriptor descriptor, IFile file) {
 		if (descriptor == null) {
 			// should never happen
 			descriptor = QuickSearchActivator.getDefault().getDefaultViewer();
@@ -1028,7 +1029,11 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		currentViewerWrapper.showInViewersParent();
 
 		viewerSelectionLabel.setText(currentViewerWrapper.descriptor.getLabel());
-		viewerSelectionLabel.setImage(currentViewerWrapper.descriptor.getIcon());
+		if (file == null) {
+			viewerSelectionLabel.setImage(ISharedImages.get().getImage(ISharedImages.IMG_OBJ_FILE));
+		} else {
+			viewerSelectionLabel.setImage(QuickSearchActivator.getDefault().getImage(file));
+		}
 		viewerSelectionLabel.getParent().layout();
 
 		return currentViewerWrapper;
@@ -1090,7 +1095,8 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	}
 
 	private void refreshDetails() {
-		if (currentViewerWrapper!=null && list!=null && !list.getTable().isDisposed()) {
+		IFile file = null;
+		if (list!=null && !list.getTable().isDisposed()) {
 			if (documents==null) {
 				documents = new DocumentFetcher();
 			}
@@ -1098,7 +1104,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			if (sel!=null && !sel.isEmpty()) {
 				//Not empty selection
 				LineItem item = (LineItem) sel.getFirstElement();
-				var file = item.getFile();
+				file = item.getFile();
 				IDocument document = documents.getDocument(file);
 				if (document!=null) {
 					viewersSelectionToolBar.setVisible(true);
@@ -1109,16 +1115,16 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 							selectedDescr = currentDescriptors.getFirst();
 							SELECTED_VIEWERS.remove(file);
 						}
-						replaceViewer(selectedDescr);
+						replaceViewer(selectedDescr, file);
 					}
 					showInViewer(item, file, document);
 					return;
 				}
 			}
-			//empty selection or some error:
-			replaceViewer(QuickSearchActivator.getDefault().getDefaultViewer()).setInput(null, null, null);
-			viewersSelectionToolBar.setVisible(false);
 		}
+		//empty selection or some error:
+		replaceViewer(QuickSearchActivator.getDefault().getDefaultViewer(), file).setInput(null, null, null);
+		viewersSelectionToolBar.setVisible(false);
 	}
 
 	private void showInViewer(LineItem item, IFile file, IDocument document) {
@@ -1638,7 +1644,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				var file = item.getFile();
 				applySelection(file);
 
-				replaceViewer(descriptor);
+				replaceViewer(descriptor, file);
 
 				var document = lastDocument;
 				lastDocument = null; // to force setInput()

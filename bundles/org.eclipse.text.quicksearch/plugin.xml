@@ -122,7 +122,6 @@
    <extension point="org.eclipse.text.quicksearch.textViewers">
       <viewer
             class="org.eclipse.text.quicksearch.internal.ui.DefaultSourceViewerCreator"
-            icon="icons/full/obj16/file_obj.png"
             id="org.eclipse.text.quicksearch.DefaultSourceViewer"
             label="%defaultSourceViewer"/>
       <contentTypeBinding

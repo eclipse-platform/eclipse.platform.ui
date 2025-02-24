@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.text.quicksearch.internal.ui;
 
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.text.quicksearch.ITextViewerCreator;
 
 interface IViewerDescriptor {
@@ -34,5 +33,4 @@ interface IViewerDescriptor {
 	 */
 	String getLabel();
 
-	Image getIcon();
 }

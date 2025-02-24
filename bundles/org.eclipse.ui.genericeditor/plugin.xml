@@ -290,7 +290,6 @@
          point="org.eclipse.text.quicksearch.textViewers"> 
       <viewer
             class="org.eclipse.ui.internal.genericeditor.quicksearch.GenericEditorViewerCreator"
-            icon="icons/full/obj16/generic_editor.png"
             id="org.eclipse.ui.genericeditor.quicksearch.GenericEditorViewer"
             label="%ExtPoint.quicksearchSourceViewer"
             linkedEditor="org.eclipse.ui.genericeditor.GenericEditor"/> 

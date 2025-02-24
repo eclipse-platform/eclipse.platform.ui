@@ -16,8 +16,10 @@ package org.eclipse.text.quicksearch.internal.ui;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -26,8 +28,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
@@ -37,10 +41,12 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.text.quicksearch.internal.core.preferences.QuickSearchPreferences;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -62,6 +68,8 @@ public class QuickSearchActivator extends AbstractUIPlugin {
 	private static final String DEFAULT_CREATOR_CLASS = DefaultSourceViewerCreator.class.getName();
 
 	private final ExtensionsRegistry<ViewerDescriptor> fTextViewersRegistry = new ExtensionsRegistry<>();
+	private final Map<ImageDescriptor, Image> fgImages= new Hashtable<>(10);
+	private final List<Image> fgDisposeOnShutdownImages= new ArrayList<>();
 
 	// Lazy initialized
 	private QuickSearchPreferences prefs = null;
@@ -94,7 +102,11 @@ public class QuickSearchActivator extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
-		QuickSearchPluginImages.dispose();
+		for (Image img : fgDisposeOnShutdownImages) {
+			if (!img.isDisposed()) {
+				img.dispose();
+			}
+		}
 		super.stop(context);
 	}
 
@@ -303,6 +315,45 @@ public class QuickSearchActivator extends AbstractUIPlugin {
 		} else {
 			stream.collect(Collectors.toCollection(() -> result));
 		}
+	}
+
+	/**
+	 * Returns a shared image for the given adaptable.
+	 * This convenience method queries the given adaptable
+	 * for its <code>IWorkbenchAdapter.getImageDescriptor</code>, which it
+	 * uses to create an image if it does not already have one.
+	 * <p>
+	 * Note: Images returned from this method will be automatically disposed
+	 * of when this plug-in shuts down. Callers must not dispose of these
+	 * images themselves.
+	 * </p>
+	 *
+	 * @param adaptable the adaptable for which to find an image
+	 * @return an image
+	 */
+	public Image getImage(IAdaptable adaptable) {
+		if (adaptable != null) {
+			IWorkbenchAdapter o= Adapters.adapt(adaptable, IWorkbenchAdapter.class);
+			if (o == null) {
+				return null;
+			}
+			ImageDescriptor id= o.getImageDescriptor(adaptable);
+			if (id != null) {
+				Image image= fgImages.get(id);
+				if (image == null) {
+					image= id.createImage();
+					try {
+						fgImages.put(id, image);
+					} catch (NullPointerException e) {
+						// NeedWork
+					}
+					fgDisposeOnShutdownImages.add(image);
+
+				}
+				return image;
+			}
+		}
+		return null;
 	}
 
 }
