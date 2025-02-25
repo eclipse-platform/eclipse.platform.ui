@@ -136,18 +136,14 @@ public final class RulerColumnDescriptor {
 		}
 
 		IConfigurationElement[] placements= element.getChildren(PLACEMENT);
-		switch (placements.length) {
-			case 0:
-				fRulerColumnPlacement= new RulerColumnPlacement();
-				break;
-			case 1:
-				fRulerColumnPlacement= new RulerColumnPlacement(placements[0]);
-				break;
-			default:
+		fRulerColumnPlacement = switch (placements.length) {
+			case 0 -> new RulerColumnPlacement();
+			case 1 -> new RulerColumnPlacement(placements[0]);
+			default -> {
 				helper.fail(RulerColumnMessages.RulerColumnDescriptor_invalid_placement_msg);
-				fRulerColumnPlacement= null; // dummy
-				break;
-		}
+				yield null; // dummy
+			}
+		};
 
 		Assert.isTrue(fTarget != null);
 		Assert.isTrue(fRulerColumnPlacement != null);

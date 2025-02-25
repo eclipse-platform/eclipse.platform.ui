@@ -78,18 +78,16 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		}
 
 		switch (searchOption) {
-		case GLOBAL:
-			unsetSearchScope();
-			break;
-		case FORWARD:
-		case INCREMENTAL:
-			if (shouldInitIncrementalBaseLocation()) {
-				resetIncrementalBaseLocation();
+			case GLOBAL -> unsetSearchScope();
+			case FORWARD, INCREMENTAL -> {
+				if (shouldInitIncrementalBaseLocation()) {
+					resetIncrementalBaseLocation();
+				}
 			}
-			break;
-		// $CASES-OMITTED$
-		default:
-			break;
+			// $CASES-OMITTED$
+			default -> {
+				// No action needed; keeping an explicit default for clarity
+			}
 		}
 	}
 
@@ -131,19 +129,12 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	@Override
 	public boolean isAvailable(SearchOptions searchOption) {
-		switch (searchOption) {
-		case REGEX:
-			return isTargetSupportingRegEx;
-		case WHOLE_WORD:
-			return !isAvailableAndActive(SearchOptions.REGEX) && isWord(findString);
-		case INCREMENTAL:
-		case CASE_SENSITIVE:
-		case FORWARD:
-		case GLOBAL:
-		case WRAP:
-		default:
-			return true;
-		}
+		return switch (searchOption) {
+			case REGEX -> isTargetSupportingRegEx;
+			case WHOLE_WORD -> !isAvailableAndActive(SearchOptions.REGEX) && isWord(findString);
+			case INCREMENTAL, CASE_SENSITIVE, FORWARD, GLOBAL, WRAP -> true;
+			default -> true;
+		};
 	}
 
 	@Override

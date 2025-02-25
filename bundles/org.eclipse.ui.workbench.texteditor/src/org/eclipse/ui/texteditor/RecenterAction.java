@@ -80,20 +80,12 @@ public class RecenterAction extends TextEditorAction {
 		}
 		fPrevOffset= caretOffset;
 
-		int line= 0;
-		switch (fDestPos) {
-			case RECENTER_MIDDLE:
-				line= Math.max(0, (caretLine - rowsPerScreen / 2));
-				break;
-			case RECENTER_TOP:
-				line= caretLine;
-				break;
-			case RECENTER_BOTTOM:
-				line= Math.max(0, caretLine - rowsPerScreen + 1);
-				break;
-			default:
-				break;
-		}
+		int line = switch (fDestPos) {
+			case RECENTER_MIDDLE -> Math.max(0, (caretLine - rowsPerScreen / 2));
+			case RECENTER_TOP -> caretLine;
+			case RECENTER_BOTTOM -> Math.max(0, caretLine - rowsPerScreen + 1);
+			default -> 0;
+		};
 		st.setTopIndex(line);
 	}
 }

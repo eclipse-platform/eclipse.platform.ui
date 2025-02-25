@@ -265,46 +265,39 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 		int resultOffset= 0;
 		int resultLength= 0;
 
-		switch  (type) {
-			case DeleteLineAction.WHOLE:
-				resultOffset= document.getLineOffset(line);
-				int endLine= selection.getEndLine();
-				resultLength= document.getLineOffset(endLine) + document.getLineLength(endLine) - resultOffset;
+		switch (type) {
+			case DeleteLineAction.WHOLE -> {
+				resultOffset = document.getLineOffset(line);
+				int endLine = selection.getEndLine();
+				resultLength = document.getLineOffset(endLine) + document.getLineLength(endLine) - resultOffset;
 				if (resultLength == 0 && line > 0) {
 					// Selection is on the last empty line of the editor. Delete
 					// delimiter of the previous line to effectively remove it.
-					String previousLineDelimiter= document.getLineDelimiter(line - 1);
+					String previousLineDelimiter = document.getLineDelimiter(line - 1);
 					if (previousLineDelimiter != null) {
-						resultOffset-= previousLineDelimiter.length();
-						resultLength= previousLineDelimiter.length();
+						resultOffset -= previousLineDelimiter.length();
+						resultLength = previousLineDelimiter.length();
 					}
 				}
-				break;
-
-		case DeleteLineAction.TO_BEGINNING:
-			resultOffset= document.getLineOffset(line);
-			resultLength= offset - resultOffset;
-			break;
-
-		case DeleteLineAction.TO_END:
-			resultOffset= offset;
-
-			IRegion lineRegion= document.getLineInformation(line);
-			int end= lineRegion.getOffset() + lineRegion.getLength();
-
-			if (offset == end) {
-				String lineDelimiter= document.getLineDelimiter(line);
-				resultLength= lineDelimiter == null ? 0 : lineDelimiter.length();
-
-			} else {
-				resultLength= end - resultOffset;
 			}
-			break;
+			case DeleteLineAction.TO_BEGINNING -> {
+				resultOffset = document.getLineOffset(line);
+				resultLength = offset - resultOffset;
+			}
+			case DeleteLineAction.TO_END -> {
+				resultOffset = offset;
+				IRegion lineRegion = document.getLineInformation(line);
+				int end = lineRegion.getOffset() + lineRegion.getLength();
 
-		default:
-			throw new IllegalArgumentException();
+				if (offset == end) {
+					String lineDelimiter = document.getLineDelimiter(line);
+					resultLength = lineDelimiter == null ? 0 : lineDelimiter.length();
+				} else {
+					resultLength = end - resultOffset;
+				}
+			}
+			default -> throw new IllegalArgumentException();
 		}
-
 		return clipToVisibleRegion(resultOffset, resultOffset + resultLength);
 	}
 

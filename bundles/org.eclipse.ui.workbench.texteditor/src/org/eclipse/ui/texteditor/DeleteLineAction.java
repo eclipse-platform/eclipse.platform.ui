@@ -118,17 +118,15 @@ public class DeleteLineAction extends TextEditorAction {
 	 * @since 3.5
 	 */
 	private static String getPrefix(int type, boolean copyToClipboard) {
-		switch (type) {
-			case WHOLE:
-				return copyToClipboard ? "Editor.CutLine." : "Editor.DeleteLine."; //$NON-NLS-1$ //$NON-NLS-2$
-			case TO_BEGINNING:
-				return copyToClipboard ? "Editor.CutLineToBeginning." : "Editor.DeleteLineToBeginning."; //$NON-NLS-1$ //$NON-NLS-2$
-			case TO_END:
-				return copyToClipboard ? "Editor.CutLineToEnd." : "Editor.DeleteLineToEnd."; //$NON-NLS-1$ //$NON-NLS-2$
-			default:
+		return switch (type) {
+			case WHOLE -> copyToClipboard ? "Editor.CutLine." : "Editor.DeleteLine."; //$NON-NLS-1$ //$NON-NLS-2$
+			case TO_BEGINNING -> copyToClipboard ? "Editor.CutLineToBeginning." : "Editor.DeleteLineToBeginning."; //$NON-NLS-1$ //$NON-NLS-2$
+			case TO_END -> copyToClipboard ? "Editor.CutLineToEnd." : "Editor.DeleteLineToEnd."; //$NON-NLS-1$ //$NON-NLS-2$
+			default -> {
 				Assert.isLegal(false);
-				return ""; //$NON-NLS-1$
-		}
+				yield ""; //$NON-NLS-1$
+			}
+		};
 	}
 
 	/**
