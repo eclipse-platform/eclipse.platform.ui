@@ -423,7 +423,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 		@Override
 		public void run() {
-			doUpdateItem(widget, element, fullMap);
+			if (!widget.isDisposed()) {
+				doUpdateItem(widget, element, fullMap);
+			}
 		}
 	}
 
