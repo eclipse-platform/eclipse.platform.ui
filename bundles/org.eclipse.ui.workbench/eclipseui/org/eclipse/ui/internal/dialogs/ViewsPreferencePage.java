@@ -107,7 +107,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private ControlDecoration themeComboDecorator;
 	private ITheme currentTheme;
 	private String defaultTheme;
-	private Composite themeDependentComp;
 
 	private Button useRoundTabs;
 	private Button enableMru;
@@ -132,6 +131,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.VIEWS_PREFERENCE_PAGE);
 
 		Composite comp = new Composite(parent, SWT.NONE);
+		GridLayout mainLayout = new GridLayout();
+		comp.setLayout(mainLayout);
 
 		createEnableTheming(comp);
 
@@ -141,14 +142,12 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			GridLayout layout = new GridLayout(1, false);
 			layout.horizontalSpacing = 10;
 			comp.setLayout(layout);
-			createThemeIndependentComposits(comp);
+			createThemeIndependentComposite(comp);
 			createHiDPISettingsGroup(comp);
 			return comp;
 		}
 
 		createThemeDependentComposite(comp);
-		updateThemingEnablement();
-
 		createThemeIndependentComposite(comp);
 		createHiDPISettingsGroup(comp);
 
@@ -190,7 +189,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	private void createThemeDependentComposite(Composite parent) {
-		themeDependentComp = new Composite(parent, SWT.NONE);
+		Composite themeDependentComp = new Composite(parent, SWT.NONE);
 		GridLayout dependentLayout = new GridLayout(2, false);
 		dependentLayout.horizontalSpacing = 10;
 		themeDependentComp.setLayout(dependentLayout);
@@ -205,9 +204,11 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createShowFullTextForViewTabs(themeDependentComp);
 		createHideIconsForViewTabs(themeDependentComp);
 		createTabDependency(showFullTextForViewTabs, hideIconsForViewTabs);
+
+		updateThemingEnablement(themeDependentComp);
 	}
 
-	private void createThemeIndependentComposits(Composite comp) {
+	private void createThemeIndependentComposite(Composite comp) {
 		createUseRoundTabs(comp);
 		createColoredLabelsPref(comp);
 		createEnableMruPref(comp);
@@ -244,7 +245,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	 * @param showFullTextForViewTabs
 	 * @param hideIconsForViewTabs
 	 */
-	private void createDependency(Button parent, Button dependent) {
+	private void createTabDependency(Button parent, Button dependent) {
 		GridData gridData = new GridData();
 		gridData.horizontalIndent = 20;
 		dependent.setLayoutData(gridData);
@@ -267,7 +268,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		parent.addSelectionListener(listener);
 	}
 
-	private void updateThemingEnablement() {
+	private void updateThemingEnablement(Composite themeDependentComp) {
 		themingEnabled.setSelection(getSwtRendererPreference(PartRenderingEngine.ENABLED_THEME_KEY,
 				PartRenderingEngine.ENABLED_THEME_KEY_DEFAULT));
 
