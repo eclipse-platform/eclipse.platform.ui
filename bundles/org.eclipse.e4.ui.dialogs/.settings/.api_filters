@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.ui.dialogs" version="2">
+    <resource path="src/org/eclipse/e4/ui/dialogs/filteredtree/FilteredTable.java" type="org.eclipse.e4.ui.dialogs.filteredtree.FilteredTable$NotifyingTableViewer">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="TableViewer"/>
+                <message_argument value="NotifyingTableViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

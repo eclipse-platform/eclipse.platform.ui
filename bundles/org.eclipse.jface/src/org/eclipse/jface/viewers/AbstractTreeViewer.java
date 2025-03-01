@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -1833,23 +1832,22 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
-	 * Recursively, conditionally expands the subtree rooted at the given widget to
-	 * the given level. Takes the {@code shouldChildrenExpand} predicate that
-	 * defines for a given widget if it shall be expanded.
+	 * Recursively expands the subtree rooted at the given widget to the given level
+	 * based on the {@code childExpansionFunction} function being executed for a
+	 * child to be (potentially conditionally) expanded.
 	 * <p>
 	 * Note that the default implementation of this method does not call
 	 * {@code setRedraw}.
 	 * </p>
 	 *
-	 * @param widget               the widget
-	 * @param level                non-negative level, or {@code ALL_LEVELS} to
-	 *                             expand all levels of the tree
-	 * @param shouldChildrenExpand predicate that defines for a given widget if it
-	 *                             should be expanded.
-	 * @since 3.32
+	 * @param widget                    the widget
+	 * @param level                     non-negative level, or {@code ALL_LEVELS} to
+	 *                                  expand all levels of the tree
+	 * @param childrenExpansionFunction function to be called on a child to be
+	 *                                  expanded
 	 */
-	private void internalConditionalExpandToLevel(Widget widget, int level,
-			Function<Widget, Boolean> shouldChildrenExpand) {
+	private void internalCustomizedExpandToLevel(Widget widget, int level,
+			CustomChildrenExpansionFunction childrenExpansionFunction) {
 		if (level == ALL_LEVELS || level > 0) {
 			Object data = widget.getData();
 			if (widget instanceof Item it && data != null && !isExpandable(it, null, data)) {
@@ -1861,19 +1859,16 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				setExpanded(it, true);
 			}
 			if (level == ALL_LEVELS || level > 1) {
-				Item[] children = getChildren(widget);
-				if (children != null) {
-					int newLevel = (level == ALL_LEVELS ? ALL_LEVELS
-							: level - 1);
-					for (Item element : children) {
-						if (shouldChildrenExpand.apply(widget).booleanValue()) {
-							internalConditionalExpandToLevel(element, newLevel, shouldChildrenExpand);
-						}
-					}
-				}
+				int newLevel = (level == ALL_LEVELS ? ALL_LEVELS : level - 1);
+				childrenExpansionFunction.expandChildren(widget, newLevel);
 			}
 			// XXX expanding here fails on linux
 		}
+	}
+
+	@FunctionalInterface
+	private interface CustomChildrenExpansionFunction {
+		void expandChildren(Widget parent, int previousLevel);
 	}
 
 	/**
@@ -1889,7 +1884,14 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *               levels of the tree
 	 */
 	protected void internalExpandToLevel(Widget widget, int level) {
-		internalConditionalExpandToLevel(widget, level, w -> Boolean.TRUE);
+		internalCustomizedExpandToLevel(widget, level, (parent, newLevel) -> {
+			Item[] children = getChildren(parent);
+			if (children != null) {
+				for (Item child : children) {
+					internalExpandToLevel(child, newLevel);
+				}
+			}
+		});
 	}
 
 	/**
@@ -2534,13 +2536,21 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			@Override
 			public void treeExpanded(TreeExpansionEvent e) {
 				Widget item = doFindItem(e.getElement());
-
-				internalConditionalExpandToLevel(item, autoExpandOnSingleChildLevels,
-						w -> Boolean.valueOf(doesWidgetHaveExactlyOneChild(w)));
+				internalCustomizedExpandToLevel(item, autoExpandOnSingleChildLevels, singleChildExpansionFunction);
 			}
 		};
 		addTreeListener(autoExpandOnSingleChildListener);
 	}
+
+	private CustomChildrenExpansionFunction singleChildExpansionFunction = (widget, newLevel) -> {
+		Item[] children = getChildren(widget);
+		boolean hasExactlyOneChild = children != null && children.length == 1;
+		if (hasExactlyOneChild) {
+			for (Item child : children) {
+				internalCustomizedExpandToLevel(child, newLevel, this.singleChildExpansionFunction);
+			}
+		}
+	};
 
 	private void removeAutoExpandOnSingleChildListener() {
 		if (autoExpandOnSingleChildListener != null) {
@@ -2704,8 +2714,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		Widget item = internalGetWidgetToSelect(elementOrTreePath);
 
 		if (autoExpandOnSingleChildLevels != NO_EXPAND && expanded) {
-			internalConditionalExpandToLevel(item, autoExpandOnSingleChildLevels,
-					w -> Boolean.valueOf(doesWidgetHaveExactlyOneChild(w)));
+			internalCustomizedExpandToLevel(item, autoExpandOnSingleChildLevels, singleChildExpansionFunction);
 		}
 	}
 
@@ -3535,10 +3544,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 
 		return selection;
-	}
-
-	private boolean doesWidgetHaveExactlyOneChild(Widget w) {
-		return getChildren(w).length == 1;
 	}
 
 }

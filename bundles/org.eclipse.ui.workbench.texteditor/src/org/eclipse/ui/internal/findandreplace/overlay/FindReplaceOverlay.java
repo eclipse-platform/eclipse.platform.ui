@@ -72,7 +72,6 @@ import org.eclipse.ui.internal.findandreplace.FindReplaceLogic;
 import org.eclipse.ui.internal.findandreplace.FindReplaceMessages;
 import org.eclipse.ui.internal.findandreplace.HistoryStore;
 import org.eclipse.ui.internal.findandreplace.SearchOptions;
-import org.eclipse.ui.internal.findandreplace.status.IFindReplaceStatus;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.part.MultiPageEditorSite;
 
@@ -149,6 +148,8 @@ public class FindReplaceOverlay {
 	private Color widgetBackgroundColor;
 	private Color overlayBackgroundColor;
 	private Color normalTextForegroundColor;
+	private Color errorTextForegroundColor;
+
 	private boolean positionAtTop = true;
 	private ControlDecoration searchBarDecoration;
 	private ContentAssistCommandAdapter contentAssistSearchField, contentAssistReplaceField;
@@ -172,7 +173,7 @@ public class FindReplaceOverlay {
 		 * boolean)
 		 */
 		private void setTextEditorActionsActivated(boolean state) {
-			if (!(targetPart instanceof AbstractTextEditor)) {
+			if (!(targetPart instanceof AbstractTextEditor) || targetPart.getSite().getWorkbenchWindow().isClosing()) {
 				return;
 			}
 			if (targetPart.getSite() instanceof MultiPageEditorSite multiEditorSite) {
@@ -336,7 +337,7 @@ public class FindReplaceOverlay {
 	private void performReplaceAll() {
 		BusyIndicator.showWhile(containerControl.getShell() != null ? containerControl.getShell().getDisplay() : Display.getCurrent(),
 				findReplaceLogic::performReplaceAll);
-		evaluateFindReplaceStatus();
+		evaluateStatusAfterReplace();
 		replaceBar.storeHistory();
 		searchBar.storeHistory();
 	}
@@ -460,7 +461,7 @@ public class FindReplaceOverlay {
 		if (insertedInTargetParent()) {
 			parent = parent.getParent();
 		}
-		retrieveBackgroundColor();
+		retrieveColors();
 		createMainContainer(parent);
 		initializeSearchShortcutHandlers();
 
@@ -479,7 +480,7 @@ public class FindReplaceOverlay {
 	 * would otherwise inherit non-fitting custom colors from the containing
 	 * StyledText.
 	 */
-	private void retrieveBackgroundColor() {
+	private void retrieveColors() {
 		if (targetPart instanceof StatusTextEditor textEditor) {
 			Control targetWidget = textEditor.getAdapter(ITextViewer.class).getTextWidget();
 			widgetBackgroundColor = targetWidget.getBackground();
@@ -492,6 +493,7 @@ public class FindReplaceOverlay {
 			textBarForRetrievingTheRightColor.dispose();
 		}
 		overlayBackgroundColor = retrieveDefaultCompositeBackground();
+		errorTextForegroundColor = JFaceColors.getErrorText(targetControl.getShell().getDisplay());
 	}
 
 	private Color retrieveDefaultCompositeBackground() {
@@ -652,8 +654,6 @@ public class FindReplaceOverlay {
 	}
 
 	private void createReplaceTools() {
-		Color warningColor = JFaceColors.getErrorText(containerControl.getShell().getDisplay());
-
 		replaceTools = new AccessibleToolBar(replaceContainer);
 
 		replaceTools.createToolItem(SWT.SEPARATOR);
@@ -664,7 +664,7 @@ public class FindReplaceOverlay {
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip)
 				.withOperation(() -> {
 					if (getFindString().isEmpty()) {
-						showUserFeedback(warningColor, true);
+						applyErrorColor(replaceBar);
 						return;
 					}
 					performSingleReplace();
@@ -675,7 +675,7 @@ public class FindReplaceOverlay {
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceAllButton_toolTip)
 				.withOperation(() -> {
 					if (getFindString().isEmpty()) {
-						showUserFeedback(warningColor, true);
+						applyErrorColor(replaceBar);
 						return;
 					}
 					performReplaceAll();
@@ -703,9 +703,8 @@ public class FindReplaceOverlay {
 		searchBar.selectAll();
 		searchBar.addModifyListener(e -> {
 			wholeWordSearchButton.setEnabled(findReplaceLogic.isAvailable(SearchOptions.WHOLE_WORD));
-
-			showUserFeedback(normalTextForegroundColor, true);
 			updateIncrementalSearch();
+			decorate();
 		});
 		searchBar.addFocusListener(new FocusListener() {
 			@Override
@@ -714,21 +713,18 @@ public class FindReplaceOverlay {
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
-				showUserFeedback(normalTextForegroundColor, false);
+				resetErrorColoring();
 			}
 		});
 		searchBar.addFocusListener(targetActionActivationHandling);
 		searchBar.setMessage(FindReplaceMessages.FindReplaceOverlay_searchBar_message);
 		contentAssistSearchField = createContentAssistField(searchBar, true);
-		searchBar.addModifyListener(Event -> {
-			decorate();
-		});
 		searchBar.setTabList(null);
 	}
 
 	private void updateIncrementalSearch() {
 		findReplaceLogic.setFindString(searchBar.getText());
-		evaluateFindReplaceStatus();
+		evaluateStatusAfterFind();
 	}
 
 	private void createReplaceBar() {
@@ -742,12 +738,10 @@ public class FindReplaceOverlay {
 		replaceBar.setMessage(FindReplaceMessages.FindReplaceOverlay_replaceBar_message);
 		replaceBar.addModifyListener(e -> {
 			findReplaceLogic.setReplaceString(replaceBar.getText());
+			resetErrorColoring();
 		});
 		replaceBar.addFocusListener(targetActionActivationHandling);
-		replaceBar.addFocusListener(FocusListener.focusLostAdapter(e -> {
-			replaceBar.setForeground(normalTextForegroundColor);
-			searchBar.setForeground(normalTextForegroundColor);
-		}));
+		replaceBar.addFocusListener(FocusListener.focusLostAdapter(e -> resetErrorColoring()));
 		contentAssistReplaceField = createContentAssistField(replaceBar, false);
 	}
 
@@ -978,8 +972,13 @@ public class FindReplaceOverlay {
 	}
 
 	private void performSingleReplace() {
-		findReplaceLogic.performReplaceAndFind();
-		evaluateFindReplaceStatus();
+		if (findReplaceLogic.performSelectAndReplace()) {
+			findReplaceLogic.performSearch();
+			evaluateStatusAfterFind();
+		} else {
+			evaluateStatusAfterReplace();
+		}
+
 		replaceBar.storeHistory();
 		searchBar.storeHistory();
 	}
@@ -989,7 +988,7 @@ public class FindReplaceOverlay {
 		activateInFindReplacerIf(SearchOptions.FORWARD, forward);
 		findReplaceLogic.performSearch();
 		activateInFindReplacerIf(SearchOptions.FORWARD, oldForwardSearchSetting);
-		evaluateFindReplaceStatus();
+		evaluateStatusAfterFind();
 		searchBar.storeHistory();
 	}
 
@@ -1008,22 +1007,28 @@ public class FindReplaceOverlay {
 		searchBar.setSelection(0, searchBar.getText().length());
 	}
 
-	private void evaluateFindReplaceStatus() {
-		Color warningColor = JFaceColors.getErrorText(containerControl.getShell().getDisplay());
-		IFindReplaceStatus status = findReplaceLogic.getStatus();
-
-		if (!status.wasSuccessful()) {
-			boolean colorReplaceBar = okayToUse(replaceBar) && replaceBar.isFocusControl();
-			showUserFeedback(warningColor, colorReplaceBar);
-		} else {
-			showUserFeedback(normalTextForegroundColor, false);
+	private void evaluateStatusAfterFind() {
+		resetErrorColoring();
+		if (!findReplaceLogic.getStatus().wasSuccessful()) {
+			applyErrorColor(searchBar);
 		}
 	}
 
-	private void showUserFeedback(Color feedbackColor, boolean colorReplaceBar) {
-		searchBar.setForeground(feedbackColor);
-		if (colorReplaceBar && okayToUse(replaceBar)) {
-			replaceBar.setForeground(feedbackColor);
+	private void evaluateStatusAfterReplace() {
+		resetErrorColoring();
+		if (!findReplaceLogic.getStatus().wasSuccessful()) {
+			applyErrorColor(replaceBar);
+		}
+	}
+
+	private void applyErrorColor(HistoryTextWrapper inputField) {
+		inputField.setForeground(errorTextForegroundColor);
+	}
+
+	private void resetErrorColoring() {
+		searchBar.setForeground(normalTextForegroundColor);
+		if (okayToUse(replaceBar)) {
+			replaceBar.setForeground(normalTextForegroundColor);
 		}
 	}
 

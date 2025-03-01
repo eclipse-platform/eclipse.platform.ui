@@ -41,9 +41,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
-import org.eclipse.core.runtime.ICoreRunnable;
-import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 
@@ -395,12 +392,13 @@ public class StickyScrollingControl {
 		StyledText textWidget= sourceViewer.getTextWidget();
 
 		if (sourceViewer instanceof ITextViewerExtension4 extension) {
-			textPresentationListener= e -> {
-				Job.create("Update sticky lines styling", (ICoreRunnable) monitor -> { //$NON-NLS-1$
-					Display.getDefault().asyncExec(() -> {
-						styleStickyLines();
-					});
-				}).schedule();
+			textPresentationListener = e -> {
+				Display.getDefault().asyncExec(() -> {
+					if (textWidget.isDisposed() || areStickyLinesOutDated(textWidget)) {
+						return;
+					}
+					styleStickyLines();
+				});
 			};
 			extension.addTextPresentationListener(textPresentationListener);
 		}
@@ -412,6 +410,9 @@ public class StickyScrollingControl {
 		controlListener= new ControlListener() {
 			@Override
 			public void controlResized(ControlEvent e) {
+				if (areStickyLinesOutDated(textWidget)) {
+					return;
+				}
 				limitVisibleStickyLinesToTextWidgetHeight(textWidget);
 				layoutStickyLines();
 				if (stickyScrollingHandler != null) {
@@ -425,6 +426,24 @@ public class StickyScrollingControl {
 			}
 		};
 		textWidget.addControlListener(controlListener);
+	}
+
+	/**
+	 * Checks if the sticky lines are out dated. Specifically, it verifies that the
+	 * line number of the last sticky line does not exceed the total line count of
+	 * the source viewer.
+	 * 
+	 * This situation can occur, for example, when an editor is opened via the
+	 * search view and "reuse editor" is enabled. In such cases, the text in the
+	 * source viewer is replaced, but the out dated sticky lines associated with the
+	 * previous source code remain in the first call.
+	 */
+	private boolean areStickyLinesOutDated(StyledText textWidget) {
+		if (stickyLines.size() > 0) {
+			int lastStickyLineNumber = stickyLines.get(stickyLines.size() - 1).getLineNumber();
+			return lastStickyLineNumber >= textWidget.getLineCount();
+		}
+		return false;
 	}
 
 	private void limitVisibleStickyLinesToTextWidgetHeight(StyledText textWidget) {

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_6pcn8N7gEe-4ibwCH2r47g">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_Bzi3IN7hEe-4ibwCH2r47g" featurename="menuContributions" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="menu:MenuContribution" xmi:id="_JtwUoN7hEe-4ibwCH2r47g" elementId="org.eclipse.e4.ui.examples.e4editor.menucontribution.0" positionInParent="after=additions" parentId="window">
+      <children xsi:type="menu:HandledMenuItem" xmi:id="_XMBQkN7hEe-4ibwCH2r47g" elementId="org.eclipse.e4.ui.examples.e4editor.handledmenuitem.opene4editor" label="Open E4 Editor" command="_e-OBkN7hEe-4ibwCH2r47g"/>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_c1D8sN7hEe-4ibwCH2r47g" featurename="commands" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Command" xmi:id="_e-OBkN7hEe-4ibwCH2r47g" elementId="org.eclipse.e4.ui.examples.e4editor.command.opene4editor" commandName="Open E4 Editor"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="__zpxEN7iEe-4ibwCH2r47g" featurename="handlers" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Handler" xmi:id="_DRaRYN7jEe-4ibwCH2r47g" elementId="org.eclipse.e4.ui.examples.e4editor.handler.0" contributionURI="bundleclass://org.eclipse.e4.ui.examples.e4editor/org.eclipse.e4.ui.examples.e4editor.OpenEditorHandler" command="_e-OBkN7hEe-4ibwCH2r47g"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_WJS9YN7jEe-4ibwCH2r47g" featurename="descriptors" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_YIdYwN7jEe-4ibwCH2r47g" elementId="org.eclipse.e4.ui.examples.e4editor.partdescriptor.e4editor" label="E4 Editor" closeable="true" contributionURI="bundleclass://org.eclipse.e4.ui.examples.e4editor/org.eclipse.e4.ui.examples.e4editor.E4Editor">
+      <tags>Editor</tags>
+      <tags>removeOnHide</tags>
+    </elements>
+  </fragments>
+</fragment:ModelFragments>

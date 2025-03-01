@@ -68,8 +68,7 @@ public class AsynchronousTestSet extends ObservableSet<Object> {
 		super(new HashSet<>(), Object.class);
 		display = Display.getCurrent();
 		if (display == null) {
-			throw new IllegalStateException(
-					"This object can only be created in the UI thread"); //$NON-NLS-1$
+			throw new IllegalStateException("This object can only be created in the UI thread"); //$NON-NLS-1$
 		}
 		recompute();
 	}

@@ -36,9 +36,9 @@ public class SurroundWithBracketsStrategy implements IAutoEditStrategy {
 
 	@Override
 	public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
-		if (bracketsMap.containsKey(command.text)) {
+		if (command.text != null && bracketsMap.containsKey(command.text)) {
 			try {
-				ITextSelection selection= (ITextSelection) sourceViewer.getSelectionProvider().getSelection();
+				ITextSelection selection= command.fSelection;
 				if (selection != null && selection.getLength() > 0) {
 					String selectedText= document.get(selection.getOffset(), selection.getLength());
 					String closingBracket= bracketsMap.get(command.text);
@@ -51,12 +51,7 @@ public class SurroundWithBracketsStrategy implements IAutoEditStrategy {
 					command.shiftsCaret= false;
 
 					// Run this in a UI thread asynchronously to ensure the selection is updated correctly
-					sourceViewer.getTextWidget().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							sourceViewer.setSelectedRange(command.offset + 1, selectedText.length());
-						}
-					});
+					sourceViewer.getTextWidget().getDisplay().asyncExec(() -> sourceViewer.setSelectedRange(command.offset + 1, selectedText.length()));
 				}
 			} catch (BadLocationException e) {
 				SWT.error(SWT.ERROR_INVALID_ARGUMENT);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2024 BestSolution.at and others.
+ * Copyright (c) 2010, 2025 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,13 +13,17 @@
  ******************************************************************************/
 package org.eclipse.e4.emf.xpath;
 
-import org.eclipse.e4.emf.internal.xpath.JXPathContextFactoryImpl;
+import org.eclipse.e4.emf.xpath.internal.java.JavaXPathContextFactoryImpl;
 
 /**
  * Factory responsible to create an XPath-Context
  *
  * @param <T> the object type the XPath is created for
+ * @deprecated To query an E4-model use
+ *             {@code org.eclipse.e4.ui.workbench.modeling.EModelService#findMatchingElements(org.eclipse.e4.ui.model.application.MApplicationElement, String, Class)}
+ *             instead.
  */
+@Deprecated(forRemoval = true, since = "2025-03 (removal in 2027-03 or later)")
 public abstract class XPathContextFactory<T> {
 
 	/**
@@ -38,14 +42,19 @@ public abstract class XPathContextFactory<T> {
 	 * @param parentContext parent context
 	 * @param contextBean   Object
 	 * @return XPathContext
+	 * @deprecated The parent-context does not provide any real value. Just use
+	 *             {@link #newContext(Object)}
 	 */
 	public abstract XPathContext newContext(XPathContext parentContext, T contextBean);
 
 	/**
+	 * Creates a new {@code XPathContextFactory<EObject>} that's suitable to query
+	 * the E4-model.
+	 *
 	 * @param <T> the object type the xpath is created for
 	 * @return Create a new XPath-Factory
 	 */
 	public static <T> XPathContextFactory<T> newInstance() {
-		return new JXPathContextFactoryImpl<>();
+		return new JavaXPathContextFactoryImpl<>();
 	}
 }

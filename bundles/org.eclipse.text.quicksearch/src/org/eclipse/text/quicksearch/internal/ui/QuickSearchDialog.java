@@ -25,6 +25,8 @@ import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -83,6 +85,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -296,13 +299,17 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	private static final String DIALOG_SASH_WEIGHTS = "SASH_WEIGHTS"; //$NON-NLS-1$
 
 	private static final String DIALOG_LAST_QUERY = "LAST_QUERY"; //$NON-NLS-1$
-	private static final String DIALOG_PATH_FILTER = "PATH_FILTER"; //$NON-NLS-1$
 	private static final String CASE_SENSITIVE = "CASE_SENSITIVE"; //$NON-NLS-1$
 	private static final boolean CASE_SENSITIVE_DEFAULT = true;
 
 	private static final String KEEP_OPEN = "KEEP_OPEN"; //$NON-NLS-1$
 	private static final boolean KEEP_OPEN_DEFAULT = false;
 
+	private final Deque<String> filterHistory = new LinkedList<>();
+
+	private static final int FILTER_HISTORY_SIZE = 5;
+
+	private static final String FILTER_HISTORY = "FILTER_HISTORY"; //$NON-NLS-1$
 	/**
 	 * Represents an empty selection in the pattern input field (used only for
 	 * initial pattern).
@@ -369,7 +376,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	private Label headerLabel;
 
 	private IWorkbenchWindow window;
-	private Text searchIn;
+	private Combo searchIn;
 	private Label listLabel;
 
 	/**
@@ -417,8 +424,20 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				pattern.setText(lastSearch);
 				pattern.selectAll();
 			}
-			if (settings.get(DIALOG_PATH_FILTER)!=null) {
-				String filter = settings.get(DIALOG_PATH_FILTER);
+
+			// Retrieve the last locations where the user searched (works across restarts)
+			String[] array = settings.getArray(FILTER_HISTORY);
+			if (array != null) {
+				filterHistory.addAll(List.of(array));
+			}
+
+			if (!filterHistory.isEmpty()) {
+				String filter = filterHistory.getFirst();
+
+				// Filter out blanks
+				filterHistory.removeIf(String::isBlank);
+
+				searchIn.setItems(filterHistory.toArray(String[]::new));
 				searchIn.setText(filter);
 			}
 
@@ -449,6 +468,15 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		} catch (Throwable e) {
 			//None of this stuff is critical so shouldn't stop opening dialog if it fails!
 			QuickSearchActivator.log(e);
+		}
+	}
+
+	private void inputNewSearchFilter(String searchIn) {
+		filterHistory.remove(searchIn);
+		filterHistory.addFirst(searchIn);
+
+		if (filterHistory.size() > FILTER_HISTORY_SIZE) {
+			filterHistory.removeLast();
 		}
 	}
 
@@ -533,7 +561,10 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	protected void storeDialog(IDialogSettings settings) {
 		String currentSearch = pattern.getText();
 		settings.put(DIALOG_LAST_QUERY, currentSearch);
-		settings.put(DIALOG_PATH_FILTER, searchIn.getText());
+
+		inputNewSearchFilter(searchIn.getText());
+		settings.put(FILTER_HISTORY, filterHistory.toArray(String[]::new));
+
 		if (toggleCaseSensitiveAction!=null) {
 			settings.put(CASE_SENSITIVE, toggleCaseSensitiveAction.isChecked());
 		}
@@ -755,7 +786,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		Label searchInLabel = new Label(searchInComposite, SWT.NONE);
 		searchInLabel.setText(Messages.QuickSearchDialog_In);
 		GridDataFactory.swtDefaults().indent(5, 0).applyTo(searchInLabel);
-		searchIn = new Text(searchInComposite, SWT.SINGLE | SWT.BORDER | SWT.ICON_CANCEL);
+		searchIn = new Combo(searchInComposite, SWT.SINGLE | SWT.BORDER | SWT.ICON_CANCEL);
 		searchIn.setToolTipText(Messages.QuickSearchDialog_InTooltip);
 		GridDataFactory.fillDefaults().grab(true, false).indent(5, 0).applyTo(searchIn);
 

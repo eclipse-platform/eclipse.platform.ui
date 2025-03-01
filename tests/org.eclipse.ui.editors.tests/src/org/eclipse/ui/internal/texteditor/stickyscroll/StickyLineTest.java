@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.texteditor.stickyscroll;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.After;
 import org.junit.Before;
@@ -92,6 +93,17 @@ public class StickyLineTest {
 		assertEquals(1, styleRanges[0].length);
 		assertEquals(2, styleRanges[1].start);
 		assertEquals(2, styleRanges[1].length);
+	}
+
+	@Test
+	public void testGetStyleRangesIgnoresOutOfBoundLines() {
+		textWidget.setText("line1\nline2\nline3");
+
+		StickyLine stickyLineOutOfBound = new StickyLine(10, sourceViewer);
+		assertNull(stickyLineOutOfBound.getStyleRanges());
+
+		stickyLineOutOfBound = new StickyLine(3, sourceViewer);
+		assertNull(stickyLineOutOfBound.getStyleRanges());
 	}
 
 	@Test

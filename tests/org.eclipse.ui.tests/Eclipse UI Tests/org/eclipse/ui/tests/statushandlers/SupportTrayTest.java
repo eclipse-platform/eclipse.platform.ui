@@ -37,11 +37,16 @@ import org.eclipse.ui.internal.statushandlers.IStatusDialogConstants;
 import org.eclipse.ui.internal.statushandlers.StackTraceSupportArea;
 import org.eclipse.ui.internal.statushandlers.SupportTray;
 import org.eclipse.ui.statushandlers.StatusAdapter;
+import org.eclipse.ui.tests.SwtLeakTestWatcher;
 import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 
 public class SupportTrayTest {
 
+	@Rule
+	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
 
 	@After
 	public void tearDown() throws Exception {
@@ -100,9 +105,10 @@ public class SupportTrayTest {
 
 		assertNotNull(st.providesSupport(sa));
 
+		Shell shell = new Shell();
 		TrayDialog td = null;
 		try {
-			td = new TrayDialog(new Shell()) {
+			td = new TrayDialog(shell) {
 			};
 			td.setBlockOnOpen(false);
 			td.open();
@@ -111,6 +117,7 @@ public class SupportTrayTest {
 			if (td != null) {
 				td.close();
 			}
+			shell.close();
 		}
 
 		assertEquals(Status.OK_STATUS, _status[0]);
@@ -138,8 +145,9 @@ public class SupportTrayTest {
 	@Test
 	public void testSelfClosure(){
 		final TrayDialog td[] = new TrayDialog[] { null };
+		Shell shell = new Shell();
 		try {
-			td[0] = new TrayDialog(new Shell()) {
+			td[0] = new TrayDialog(shell) {
 			};
 			Map<Object, Object> dialogState = new HashMap<>();
 			dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, new StatusAdapter(Status.OK_STATUS));
@@ -151,6 +159,7 @@ public class SupportTrayTest {
 			if (td != null) {
 				td[0].close();
 			}
+			shell.close();
 		}
 	}
 

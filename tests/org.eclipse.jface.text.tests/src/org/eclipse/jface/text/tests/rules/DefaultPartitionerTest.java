@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005,2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 
+@Deprecated
 public class DefaultPartitionerTest extends FastPartitionerTest {
 	@Override
 	protected IDocumentPartitioner createPartitioner(IPartitionTokenScanner scanner) {

@@ -72,7 +72,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * @deprecated As of 3.2, replaced by {@link TextViewerUndoManager}
  * @noextend This class is not intended to be subclassed by clients.
  */
-@Deprecated
+@Deprecated(forRemoval= true, since= "2025-03")
 public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 	/**

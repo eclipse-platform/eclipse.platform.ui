@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: DummyEditor
+Bundle-SymbolicName: org.eclipse.e4.ui.examples.e4editor;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.swt,
+ org.eclipse.jface,
+ org.eclipse.e4.core.contexts;bundle-version="1.13.0",
+ org.eclipse.e4.core.di;bundle-version="1.9.500",
+ org.eclipse.e4.ui.workbench;bundle-version="1.16.0",
+ org.eclipse.e4.ui.model.workbench;bundle-version="2.4.400",
+ jakarta.annotation-api,
+ org.eclipse.ui.workbench;bundle-version="3.133.100"
+Automatic-Module-Name: org.eclipse.e4.ui.examples.dummyeditor
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Model-Fragment: fragment.e4xmi

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -67,7 +67,7 @@ public class EditorIconTest {
 					.getDefaultEditor(
 					"foo.icontest2").getImageDescriptor().createImage();
 			i2 = ResourceLocator.imageDescriptorFromBundle(
-					"org.eclipse.jdt.ui", "icons/full/obj16/class_obj.png") // layer breaker!
+					"org.eclipse.debug.ui", "icons/full/obj16/file_obj.png") // layer breaker!
 					.orElseThrow(AssertionError::new).createImage();
 			ImageTests.assertEquals(i1, i2);
 		}

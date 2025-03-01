@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 The Pampered Chef and others.
+ * Copyright (c) 2006, 2025 The Pampered Chef and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,19 +27,19 @@ public class ReflectedProperty {
 	/**
 	 * Construct a ReflectedProperty on some object, given the property name.
 	 *
-	 * @param object The object
+	 * @param object       The object
 	 * @param propertyName The property name
 	 */
 	public ReflectedProperty(Object object, String propertyName) {
 		this.propertyName = propertyName;
-		getter = new ReflectedMethod(object, makeGetterName(propertyName), new Class[] {});
+		getter = new ReflectedMethod(object, makeGetterName(propertyName));
 		if (!getter.exists()) {
-			getter = new ReflectedMethod(object, makeBooleanGetterName(propertyName), new Class[] {});
+			getter = new ReflectedMethod(object, makeBooleanGetterName(propertyName));
 			if (!getter.exists()) {
 				throw new IllegalArgumentException("Cannot find getter for " + propertyName);
 			}
 		}
-		setter = new ReflectedMethod(object, makeSetterName(propertyName), new Class[] {getter.getType()});
+		setter = new ReflectedMethod(object, makeSetterName(propertyName), getter.getType());
 	}
 
 	private String makeBooleanGetterName(String propertyName) {
@@ -59,8 +59,8 @@ public class ReflectedProperty {
 	}
 
 	/**
-	 * Return the property's type.  This is the same as the type returned by
-	 * the getter.
+	 * Return the property's type. This is the same as the type returned by the
+	 * getter.
 	 *
 	 * @return The property's data type.
 	 */
@@ -78,13 +78,13 @@ public class ReflectedProperty {
 	}
 
 	/**
-	 * Set the property's value.  If the property is read-only, the request
-	 * is ignored.
+	 * Set the property's value. If the property is read-only, the request is
+	 * ignored.
 	 *
 	 * @param newValue The value to set.
 	 */
 	public void set(Object newValue) {
-		setter.invoke(new Object[] {newValue});
+		setter.invoke(new Object[] { newValue });
 	}
 
 	/**

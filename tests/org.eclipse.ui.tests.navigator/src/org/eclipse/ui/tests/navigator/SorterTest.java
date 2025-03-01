@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2023 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2025 Oakland Software Incorporated and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,7 +29,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.sorters.CommonSorterDescriptor.WrappedViewerComparator;
@@ -131,7 +130,7 @@ public class SorterTest extends NavigatorTestBase {
 
 		// Make it sort backwards so we can tell
 		TestSorterResource sorter = (TestSorterResource) _contentService
-			.getSorterService().findSorter(desc, _project, null, null);
+				.getSorterService().findComparator(desc, _project, null, null);
 		sorter._forward = false;
 
 		_contentService.bindExtensions(
@@ -258,7 +257,7 @@ public class SorterTest extends NavigatorTestBase {
 
 		// Make it sort backwards so we can tell
 		TestSorterDataAndResource sorter = (TestSorterDataAndResource) _contentService
-				.getSorterService().findSorter(desc, _project, null, null);
+				.getSorterService().findComparator(desc, _project, null, null);
 		sorter._forward = false;
 
 		_viewer.setExpandedState(_project,	true);
@@ -326,20 +325,20 @@ public class SorterTest extends NavigatorTestBase {
 
 		INavigatorContentDescriptor desc = _contentService.getContentDescriptorById(TEST_CONTENT_COMPARATOR_MODEL);
 
-		ViewerComparator sorter = _contentService.getSorterService().findSorter(desc, _project, null, null);
-		assertNotNull(sorter);
-		WrappedViewerComparator wrapper = (WrappedViewerComparator) sorter;
-		TestComparatorData original = (TestComparatorData) wrapper.getWrappedComparator();
+		TestComparatorData comparator = (TestComparatorData) _contentService.getSorterService().findComparator(desc,
+				_project, null, null);
+		assertNotNull(comparator);
+		WrappedViewerComparator wrapper = new WrappedViewerComparator(comparator);
 		Object[] dataArray = new Object[items.length];
 
 		for (int i = 0; i < items.length; i++) {
 			TreeItem treeItem = items[i];
 			Object data = treeItem.getData();
 			dataArray[i] = data;
-			assertEquals(original.category(data), wrapper.category(data));
-			assertEquals(original.isSorterProperty(data, "true"), wrapper.isSorterProperty(data, "true"));
-			assertEquals(original.isSorterProperty(data, "false"), wrapper.isSorterProperty(data, "false"));
-			assertEquals(original.compare(_viewer, data, items[0].getData()),
+			assertEquals(comparator.category(data), wrapper.category(data));
+			assertEquals(comparator.isSorterProperty(data, "true"), wrapper.isSorterProperty(data, "true"));
+			assertEquals(comparator.isSorterProperty(data, "false"), wrapper.isSorterProperty(data, "false"));
+			assertEquals(comparator.compare(_viewer, data, items[0].getData()),
 					wrapper.compare(_viewer, data, items[0].getData()));
 			assertEquals(false, wrapper.isSorterProperty(data, "false"));
 			assertEquals(true, wrapper.isSorterProperty(data, "true"));
@@ -347,8 +346,8 @@ public class SorterTest extends NavigatorTestBase {
 
 		Object[] copy1 = Arrays.copyOf(dataArray, dataArray.length);
 		Object[] copy2 = Arrays.copyOf(dataArray, dataArray.length);
-		original._forward = !original._forward;
-		original.sort(_viewer, copy1);
+		comparator._forward = !comparator._forward;
+		comparator.sort(_viewer, copy1);
 		wrapper.sort(_viewer, copy2);
 		assertArrayEquals(copy1, copy2);
 
@@ -423,7 +422,7 @@ public class SorterTest extends NavigatorTestBase {
 				.getContentDescriptorById(TEST_CONTENT_SORTER_RESOURCE);
 
 		TestSorterResource sorter = (TestSorterResource) _contentService
-				.getSorterService().findSorter(desc, _p2, null, null);
+				.getSorterService().findComparator(desc, _p2, null, null);
 		sorter._forward = false;
 
 		IStructuredSelection sel;

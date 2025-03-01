@@ -132,12 +132,11 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	@Override
 	public boolean isAvailable(SearchOptions searchOption) {
 		switch (searchOption) {
-		case INCREMENTAL:
-			return !isAvailableAndActive(SearchOptions.REGEX);
 		case REGEX:
 			return isTargetSupportingRegEx;
 		case WHOLE_WORD:
 			return !isAvailableAndActive(SearchOptions.REGEX) && isWord(findString);
+		case INCREMENTAL:
 		case CASE_SENSITIVE:
 		case FORWARD:
 		case GLOBAL:

@@ -192,7 +192,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 				commonViewer.addFilter(visibleFilter);
 			}
 
-			commonViewer.setSorter(new CommonViewerSorter());
+			commonViewer.setComparator(new CommonViewerSorter());
 
 			/*
 			 * make sure input is set after sorters and filters to avoid unnecessary

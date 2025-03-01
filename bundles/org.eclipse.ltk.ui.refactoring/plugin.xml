@@ -136,7 +136,7 @@
             categoryId="org.eclipse.ltk.ui.category.refactoring"
             defaultHandler="org.eclipse.ltk.internal.ui.refactoring.actions.CopyProjectHandler"
             id="org.eclipse.ltk.ui.refactoring.commands.copyProject"
-            name="Copy Project LTK">
+            name="%copyProject.name">
          <commandParameter
                id="org.eclipse.ltk.ui.refactoring.commands.copyProject.newName.parameter.key"
                name="%copyProject.commandParameter.newName"

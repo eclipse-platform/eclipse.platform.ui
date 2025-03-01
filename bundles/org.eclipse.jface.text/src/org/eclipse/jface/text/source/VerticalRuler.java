@@ -159,6 +159,13 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 			fTextViewer= null;
 		});
 
+		fCanvas.addListener(SWT.ZoomChanged, e -> {
+			if (fBuffer != null) {
+				fBuffer.dispose();
+				fBuffer= null;
+			}
+		});
+
 		fCanvas.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent event) {
@@ -223,25 +230,29 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 				fBuffer= null;
 			}
 		}
-		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
 
-		GC gc= new GC(fBuffer);
-		gc.setFont(fTextViewer.getTextWidget().getFont());
-		try {
-			gc.setBackground(fCanvas.getBackground());
-			gc.fillRectangle(0, 0, size.x, size.y);
-
-			if (fTextViewer instanceof ITextViewerExtension5)
-				doPaint1(gc);
-			else
-				doPaint(gc);
-
-		} finally {
-			gc.dispose();
+		if (fBuffer == null) {
+			fBuffer= new Image(fCanvas.getDisplay(), this::doPaint, size.x, size.y);
+		} else {
+			GC gc= new GC(fBuffer);
+			try {
+				doPaint(gc, size.x, size.y);
+			} finally {
+				gc.dispose();
+			}
 		}
-
 		dest.drawImage(fBuffer, 0, 0);
+	}
+
+	private void doPaint(GC gc, int width, int height) {
+		gc.setFont(fTextViewer.getTextWidget().getFont());
+		gc.setBackground(fCanvas.getBackground());
+		gc.fillRectangle(0, 0, width, height);
+
+		if (fTextViewer instanceof ITextViewerExtension5)
+			doPaint1(gc);
+		else
+			doPaint(gc);
 	}
 
 	/**

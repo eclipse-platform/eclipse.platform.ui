@@ -91,14 +91,13 @@ public class StructuredContentProviderTest {
 	private WritableValue<Integer> currentFunction;
 
 	/**
-	 * mathFunction is the transformation. It can multiply by 2, round down to
-	 * the nearest integer, or do nothing (identity)
+	 * mathFunction is the transformation. It can multiply by 2, round down to the
+	 * nearest integer, or do nothing (identity)
 	 */
 	private SomeMathFunction<Double> mathFunction;
 
 	/**
-	 * Set of Doubles. Holds the result of applying mathFunction to the
-	 * inputSet.
+	 * Set of Doubles. Holds the result of applying mathFunction to the inputSet.
 	 */
 	private MappedSet outputSet;
 
@@ -120,9 +119,7 @@ public class StructuredContentProviderTest {
 		// Initialize shell
 		final Label someDoubles = new Label(shell, SWT.NONE);
 		someDoubles.setText("A list of random Doubles"); //$NON-NLS-1$
-		someDoubles.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL
-						| GridData.VERTICAL_ALIGN_FILL));
+		someDoubles.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
 
 		Control addRemoveComposite = createInputControl(shell, inputSet);
 
@@ -146,8 +143,7 @@ public class StructuredContentProviderTest {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		operation.setLayout(layout);
-		operation.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_FILL));
+		operation.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
 
 		Control outputControl = createOutputComposite(shell);
 		GridData outputData = new GridData(GridData.FILL_BOTH);
@@ -169,8 +165,7 @@ public class StructuredContentProviderTest {
 						+ " doubles is " + sum); //$NON-NLS-1$
 			}
 		};
-		sumLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_FILL));
+		sumLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
 
 		GridLayout shellLayout = new GridLayout();
 		layout.numColumns = 1;
@@ -227,16 +222,12 @@ public class StructuredContentProviderTest {
 	 * Creates a radio button in the given parent composite. When selected, the
 	 * button will change the given SettableValue to the given value.
 	 *
-	 * @param parent
-	 *            parent composite
-	 * @param model
-	 *            SettableValue that will hold the value of the
-	 *            currently-selected radio button
-	 * @param string
-	 *            text to appear in the radio button
-	 * @param value
-	 *            value of this radio button (SettableValue will hold this value
-	 *            when the radio button is selected)
+	 * @param parent parent composite
+	 * @param model  SettableValue that will hold the value of the
+	 *               currently-selected radio button
+	 * @param string text to appear in the radio button
+	 * @param value  value of this radio button (SettableValue will hold this value
+	 *               when the radio button is selected)
 	 */
 	private void createRadioButton(Composite parent, final WritableValue<Integer> model, String string,
 			final int value) {
@@ -255,13 +246,11 @@ public class StructuredContentProviderTest {
 				button.setSelection(model.getValue().equals(value));
 			}
 		};
-		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_FILL));
+		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
 	}
 
 	private Control createOutputComposite(Composite parent) {
-		ListViewer listOfInts = new ListViewer(parent, SWT.BORDER
-				| SWT.V_SCROLL | SWT.H_SCROLL);
+		ListViewer listOfInts = new ListViewer(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 
 		listOfInts.setContentProvider(new ObservableSetContentProvider<>());
 		listOfInts.setLabelProvider(new ViewerLabelProvider());
@@ -273,25 +262,20 @@ public class StructuredContentProviderTest {
 	 * Creates and returns a control that will allow the user to add and remove
 	 * Doubles from the given input set.
 	 *
-	 * @param parent
-	 *            parent control
-	 * @param inputSet
-	 *            input set
-	 * @return a newly created SWT control that displays Doubles from the input
-	 *         set and allows the user to add and remove entries
+	 * @param parent   parent control
+	 * @param inputSet input set
+	 * @return a newly created SWT control that displays Doubles from the input set
+	 *         and allows the user to add and remove entries
 	 */
-	private Control createInputControl(Composite parent,
-			final WritableSet<Double> inputSet) {
+	private Control createInputControl(Composite parent, final WritableSet<Double> inputSet) {
 		Composite addRemoveComposite = new Composite(parent, SWT.NONE);
-		ListViewer listOfInts = new ListViewer(addRemoveComposite,
-				SWT.BORDER);
+		ListViewer listOfInts = new ListViewer(addRemoveComposite, SWT.BORDER);
 
 		listOfInts.setContentProvider(new ObservableSetContentProvider<>());
 		listOfInts.setLabelProvider(new ViewerLabelProvider());
 		listOfInts.setInput(inputSet);
 
-		final IObservableValue<Double> selectedInt = ViewerProperties.singleSelection(Double.class)
-				.observe(listOfInts);
+		final IObservableValue<Double> selectedInt = ViewerProperties.singleSelection(Double.class).observe(listOfInts);
 
 		GridData listData = new GridData(GridData.FILL_BOTH);
 		listData.minimumHeight = 1;
@@ -310,8 +294,7 @@ public class StructuredContentProviderTest {
 				super.widgetSelected(e);
 			}
 		});
-		add.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_FILL));
+		add.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
 
 		final Button remove = new Button(buttonBar, SWT.PUSH);
 		remove.setText("Remove"); //$NON-NLS-1$
@@ -347,15 +330,12 @@ public class StructuredContentProviderTest {
 				super.widgetSelected(e);
 			}
 		});
-		remove.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL
-						| GridData.VERTICAL_ALIGN_FILL));
+		remove.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
 
 		GridLayout buttonLayout = new GridLayout();
 		buttonLayout.numColumns = 1;
 		buttonBar.setLayout(buttonLayout); // End button bar
-		buttonBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_BEGINNING));
+		buttonBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING));
 
 		GridLayout addRemoveLayout = new GridLayout();
 		addRemoveLayout.numColumns = 2;

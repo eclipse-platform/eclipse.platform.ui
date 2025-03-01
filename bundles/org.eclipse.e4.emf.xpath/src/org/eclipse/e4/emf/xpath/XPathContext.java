@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2024 BestSolution.at and others.
+ * Copyright (c) 2010, 2025 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,13 +19,15 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.jxpath.util.TypeUtils;
-
 /**
  * Context in which the xpath is executed
  *
  * @since 1.0
+ * @deprecated To query an E4-model use
+ *             {@code org.eclipse.e4.ui.workbench.modeling.EModelService#findMatchingElements(org.eclipse.e4.ui.model.application.MApplicationElement, String, Class)}
+ *             instead.
  */
+@Deprecated(forRemoval = true, since = "2025-03 (removal in 2027-03 or later)")
 public interface XPathContext {
 
 	/**
@@ -77,6 +79,6 @@ public interface XPathContext {
 	default <T> Stream<T> stream(String xpath, Class<T> type) {
 		Iterator<?> iterator = iterate(xpath);
 		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false)
-				.filter(e -> TypeUtils.canConvert(e, type)).map(e -> TypeUtils.convert(e, type)).map(type::cast);
+				.filter(type::isInstance).map(type::cast);
 	}
 }

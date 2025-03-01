@@ -53,6 +53,12 @@ public class StickyLine implements IStickyLine {
 	@Override
 	public StyleRange[] getStyleRanges() {
 		StyledText textWidget= sourceViewer.getTextWidget();
+		int widgetLineNumber = getWidgetLineNumber();
+
+		if (widgetLineNumber >= textWidget.getLineCount()) {
+			return null;
+		}
+
 		int offsetAtLine= textWidget.getOffsetAtLine(getWidgetLineNumber());
 		StyleRange[] styleRanges= textWidget.getStyleRanges(offsetAtLine, getText().length());
 		for (StyleRange styleRange : styleRanges) {

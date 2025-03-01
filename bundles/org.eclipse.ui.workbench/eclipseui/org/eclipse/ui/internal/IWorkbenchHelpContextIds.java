@@ -249,5 +249,10 @@ public interface IWorkbenchHelpContextIds {
 	String WORKING_SET_EDIT_WIZARD = PREFIX + "working_set_edit_wizard_context"; //$NON-NLS-1$
 
 	String CAPABILITY_PREFERENCE_PAGE = PREFIX + "capabilities_preference_page_context"; //$NON-NLS-1$
+
 	String TOGGLE_COOLBAR_ACTION = PREFIX + "toggle_coolbar_action"; //$NON-NLS-1$
+
+	String PREFERENCES_IMPORT_WIZARD_PAGE = PREFIX + "preferences_import_wizard_page"; //$NON-NLS-1$
+
+	String PREFERENCES_EXPORT_WIZARD_PAGE = PREFIX + "preferences_export_wizard_page"; //$NON-NLS-1$
 }

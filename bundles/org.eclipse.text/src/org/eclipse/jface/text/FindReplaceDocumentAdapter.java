@@ -188,9 +188,6 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			}
 		}
 
-		// Set state
-		fFindReplaceState= operationCode;
-
 		if (operationCode == REPLACE || operationCode == REPLACE_FIND_NEXT) {
 			if (regExSearch) {
 				Pattern pattern= fFindReplaceMatcher.pattern();
@@ -199,7 +196,10 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					replaceText= interpretReplaceEscapes(replaceText, prevMatch);
 					Matcher replaceTextMatcher= pattern.matcher(prevMatch);
 					replaceText= replaceTextMatcher.replaceFirst(replaceText);
-				} catch (IndexOutOfBoundsException ex) {
+				} catch (IndexOutOfBoundsException | IllegalArgumentException ex) {
+					// These exceptions are thrown by Matcher#replaceFirst(), capturing information about
+					// invalid regular expression patterns, such as unfinished character escape sequences
+					// at the end of the pattern
 					throw new PatternSyntaxException(ex.getLocalizedMessage(), replaceText, -1);
 				}
 			}
@@ -214,12 +214,13 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			}
 
 			fDocument.replace(offset, length, replaceText);
-
+			fFindReplaceState= operationCode;
+			
 			if (operationCode == REPLACE) {
 				return new Region(offset, replaceText.length());
 			}
 		}
-
+		
 		if (operationCode != REPLACE) {
 			try {
 				if (forwardSearch) {
@@ -230,8 +231,11 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					else
 						found= fFindReplaceMatcher.find();
 
-					if (operationCode == REPLACE_FIND_NEXT)
+					if (operationCode == REPLACE_FIND_NEXT) {
 						fFindReplaceState= FIND_NEXT;
+					} else {
+						fFindReplaceState= operationCode;
+					}
 
 					if (found && !fFindReplaceMatcher.group().isEmpty())
 						return new Region(fFindReplaceMatcher.start(), fFindReplaceMatcher.group().length());
@@ -247,6 +251,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					found= fFindReplaceMatcher.find(index + 1);
 				}
 				fFindReplaceMatchOffset= index;
+				fFindReplaceState= operationCode;
 				if (index > -1) {
 					// must set matcher to correct position
 					fFindReplaceMatcher.find(index);

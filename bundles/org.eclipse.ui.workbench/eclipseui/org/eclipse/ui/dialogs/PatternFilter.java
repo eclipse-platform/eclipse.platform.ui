@@ -17,13 +17,13 @@ package org.eclipse.ui.dialogs;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.ui.internal.misc.TextMatcher;
 
 /**
  * A filter used in conjunction with <code>FilteredTree</code>. In order to
@@ -57,7 +57,7 @@ public class PatternFilter extends ViewerFilter {
 	/**
 	 * The string pattern matcher used for this pattern filter.
 	 */
-	private TextMatcher matcher;
+	private StringMatcher matcher;
 
 	private boolean useEarlyReturnIfMatcherIsNull = true;
 
@@ -173,7 +173,7 @@ public class PatternFilter extends ViewerFilter {
 			if (includeLeadingWildcard) {
 				pattern = "*" + pattern; //$NON-NLS-1$
 			}
-			matcher = new TextMatcher(pattern, true, false);
+			matcher = new StringMatcher(pattern.trim(), true, false);
 		}
 	}
 
@@ -197,7 +197,7 @@ public class PatternFilter extends ViewerFilter {
 		if (matcher == null) {
 			return true;
 		}
-		return matcher.match(string);
+		return matcher.matchWords(string);
 	}
 
 	/**
@@ -289,7 +289,7 @@ public class PatternFilter extends ViewerFilter {
 		}
 
 		// Otherwise check if any of the words of the text matches
-		String[] words = TextMatcher.getWords(text);
+		String[] words = StringMatcher.getWords(text);
 		for (String word : words) {
 			if (!match(word)) {
 				return false;

@@ -17,6 +17,7 @@
 package org.eclipse.e4.ui.workbench.modeling;
 
 import java.util.List;
+import java.util.stream.Stream;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
@@ -278,6 +279,22 @@ public interface EModelService {
 	 */
 	<T> List<T> findElements(MApplicationElement searchRoot, Class<T> clazz,
 			int searchFlags, Selector matcher);
+
+	/**
+	 * Returns a stream of any elements that are matched by the specified
+	 * {@code XPath} expression relative to the given {@code searchRoot}.
+	 *
+	 * @param <T>        The generic type of the returned stream
+	 * @param searchRoot The element relative to which the {@code XPath} expression
+	 *                   is evaluated. This element must be non-null.
+	 * @param xPath      the {@code XPath (XML Path Language)} expression matched
+	 *                   against the root
+	 * @param clazz      The type of element to be searched for.
+	 * @return The stream of matching elements.
+	 *
+	 * @since 1.17
+	 */
+	<T> Stream<T> findMatchingElements(MApplicationElement searchRoot, String xPath, Class<T> clazz);
 
 	/**
 	 * Returns the first element, recursively searching under the specified search

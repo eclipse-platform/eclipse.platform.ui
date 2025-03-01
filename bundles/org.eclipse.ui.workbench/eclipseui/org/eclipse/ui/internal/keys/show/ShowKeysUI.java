@@ -87,6 +87,9 @@ public class ShowKeysUI implements IDisposable {
 		try {
 			ICommandService cmdService = this.serviceLocator.getService(ICommandService.class);
 			Command command = cmdService.getCommand(commandId);
+			if (!command.isHandled() || !command.isEnabled()) {
+				return;
+			}
 			String name = command.getName();
 			if (description == null) {
 				description = command.getDescription();

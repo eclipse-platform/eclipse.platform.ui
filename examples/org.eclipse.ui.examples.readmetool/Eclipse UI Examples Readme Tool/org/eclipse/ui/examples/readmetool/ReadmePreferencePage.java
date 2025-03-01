@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.examples.readmetool;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -31,6 +32,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * This class implements a sample preference page that is added to the
@@ -287,7 +289,10 @@ public class ReadmePreferencePage extends PreferencePage
 	@Override
 	public boolean performOk() {
 		storeValues();
-		ReadmePlugin.getDefault().savePluginPreferences();
+		try {
+			InstanceScope.INSTANCE.getNode(ReadmePlugin.PLUGIN_ID).flush();
+		} catch (BackingStoreException e) {
+		}
 		return true;
 	}
 

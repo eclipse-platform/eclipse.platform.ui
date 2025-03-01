@@ -163,18 +163,6 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		assertEquals(4, (target.getSelection()).y);
 	}
 
-	@Test
-	public void testIncrementalSearchOnlyEnabledWhenAllowed() {
-		initializeTextViewerWithFindReplaceUI("text text text");
-		DialogAccess dialog= getDialog();
-
-		dialog.select(SearchOptions.INCREMENTAL);
-		dialog.select(SearchOptions.REGEX);
-
-		dialog.assertSelected(SearchOptions.INCREMENTAL);
-		dialog.assertDisabled(SearchOptions.INCREMENTAL);
-	}
-
 	/*
 	 * Test for https://github.com/eclipse-platform/eclipse.platform.ui/pull/1805#pullrequestreview-1993772378
 	 */
@@ -191,15 +179,6 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		dialog= getDialog();
 		dialog.assertSelected(SearchOptions.INCREMENTAL);
 		dialog.assertEnabled(SearchOptions.INCREMENTAL);
-
-		dialog.select(SearchOptions.REGEX);
-		dialog.assertSelected(SearchOptions.INCREMENTAL);
-		dialog.assertDisabled(SearchOptions.INCREMENTAL);
-
-		reopenFindReplaceUIForTextViewer();
-		dialog= getDialog();
-		dialog.assertSelected(SearchOptions.INCREMENTAL);
-		dialog.assertDisabled(SearchOptions.INCREMENTAL);
 	}
 
 	@Test
@@ -225,4 +204,35 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(dialog.getFindText().length(), (target.getSelection()).y);
 	}
+
+	@Test
+	public void testRegExSearch_nonIncremental() {
+		initializeTextViewerWithFindReplaceUI("abc");
+		DialogAccess dialog= getDialog();
+		dialog.setFindText("(a|bc)");
+		dialog.select(SearchOptions.REGEX);
+
+		IFindReplaceTarget target= getFindReplaceTarget();
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+		assertEquals(0, (target.getSelection()).x);
+		assertEquals(1, (target.getSelection()).y);
+
+		dialog.simulateKeyboardInteractionInFindInputField(SWT.CR, false);
+		assertEquals(1, (target.getSelection()).x);
+		assertEquals(2, (target.getSelection()).y);
+	}
+
+	@Test
+	public void testReplaceButtonEnabledWithRegexSearched() {
+		initializeTextViewerWithFindReplaceUI("one two three");
+
+		DialogAccess dialog= getDialog();
+		dialog.setFindText("two");
+		dialog.select(SearchOptions.REGEX);
+		dialog.setReplaceText("two2");
+		dialog.performFindNext();
+
+		assertTrue(dialog.getReplaceButton().isEnabled());
+	}
+
 }

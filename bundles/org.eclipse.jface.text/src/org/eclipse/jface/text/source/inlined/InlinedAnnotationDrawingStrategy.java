@@ -25,8 +25,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.internal.text.codemining.CodeMiningLineContentAnnotation;
+import org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation;
 
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 
@@ -98,7 +100,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		if (annotationFont == null) {
 			annotationFont = createInlineAnnotationFont(textWidget);
 			textWidget.setData(INLINE_ANNOTATION_FONT, annotationFont);
-			textWidget.addDisposeListener(e -> ((Font)textWidget.getData(INLINE_ANNOTATION_FONT)).dispose());
+			textWidget.addDisposeListener(e -> ((Font) textWidget.getData(INLINE_ANNOTATION_FONT)).dispose());
 		}
 		return annotationFont;
 	}
@@ -153,7 +155,8 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	private static void draw(LineHeaderAnnotation annotation, GC gc, StyledText textWidget, int offset, int length,
 			Color color) {
 		int line= textWidget.getLineAtOffset(offset);
-		if (isDeleted(annotation)) {
+		int charCount= textWidget.getCharCount();
+		if (isDeleted(annotation, charCount)) {
 			// When annotation is deleted, update metrics to null to remove extra spaces of the line header annotation.
 			if (textWidget.getLineVerticalIndent(line) > 0)
 				textWidget.setLineVerticalIndent(line, 0);
@@ -161,7 +164,12 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		}
 		if (gc != null) {
 			// Setting vertical indent first, before computing bounds
-			int height= annotation.getHeight();
+			int height;
+			if (annotation instanceof CodeMiningLineHeaderAnnotation cmlha) {
+				height= cmlha.getHeight(gc);
+			} else {
+				height= annotation.getHeight();
+			}
 			if (height != 0) {
 				if (height != textWidget.getLineVerticalIndent(line)) {
 					if (annotation.oldLine != -1 && annotation.oldLine < textWidget.getLineCount()) {
@@ -174,20 +182,44 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				textWidget.setLineVerticalIndent(line, 0);
 			}
 			// Compute the location of the annotation
-			Rectangle bounds= textWidget.getTextBounds(offset, offset);
-			int x= bounds.x;
-			int y= bounds.y;
+			int x, y;
+			if (offset < charCount) {
+				Rectangle bounds= textWidget.getTextBounds(offset, offset);
+				x= bounds.x;
+				y= bounds.y;
+			} else {
+				Point locAtOff= textWidget.getLocationAtOffset(offset);
+				x= locAtOff.x;
+				y= locAtOff.y - height;
+			}
 			// Draw the line header annotation
 			gc.setBackground(textWidget.getBackground());
 			annotation.setLocation(x, y);
 			annotation.draw(gc, textWidget, offset, length, color, x, y);
 		} else if (textWidget.getLineVerticalIndent(line) > 0) {
 			// Here vertical indent is done, the redraw of the full line width is done to avoid annotation clipping
-			Rectangle bounds= textWidget.getTextBounds(offset, offset);
 			Rectangle client= textWidget.getClientArea();
-			textWidget.redraw(0, bounds.y, client.width, bounds.height, false);
+			int y, height;
+			if (offset < charCount) {
+				Rectangle bounds= textWidget.getTextBounds(offset, offset);
+				y= bounds.y;
+				height= bounds.height;
+			} else {
+				y= 0;
+				height= client.height;
+			}
+			textWidget.redraw(0, y, client.width, height, false);
 		} else {
-			textWidget.redrawRange(offset, length, true);
+			if (offset >= charCount) {
+				if (charCount > 0) {
+					textWidget.redrawRange(charCount - 1, 1, true);
+				} else {
+					Rectangle client= textWidget.getClientArea();
+					textWidget.redraw(0, 0, client.width, client.height, false);
+				}
+			} else {
+				textWidget.redrawRange(offset, length, true);
+			}
 		}
 	}
 
@@ -206,7 +238,11 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			Color color) {
 		if (annotation instanceof CodeMiningLineContentAnnotation a) {
 			if (a.isAfterPosition()) {
-				drawAsLeftOf1stCharacter(annotation, gc, textWidget, widgetOffset, length, color);
+				if (widgetOffset < textWidget.getCharCount()) {
+					drawAsLeftOf1stCharacter(annotation, gc, textWidget, widgetOffset, length, color);
+				} else {
+					drawAtEndOfDocumentInFirstColumn(annotation, gc, textWidget, widgetOffset, length, color);
+				}
 				return;
 			}
 		}
@@ -220,7 +256,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	}
 
 	private static void drawAfterLine(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length, Color color) {
-		if (isDeleted(annotation)) {
+		if (isDeleted(annotation, textWidget.getCharCount())) {
 			return;
 		}
 		if (gc != null) {
@@ -241,6 +277,35 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		}
 	}
 
+	private static void drawAtEndOfDocumentInFirstColumn(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length, Color color) {
+		if (isDeleted(annotation, textWidget.getCharCount())) {
+			return;
+		}
+		if (gc != null) {
+			Point locAtOff= textWidget.getLocationAtOffset(widgetOffset);
+			int x= locAtOff.x;
+			int y= locAtOff.y;
+			annotation.setLocation(x, y);
+			annotation.draw(gc, textWidget, widgetOffset, length, color, x, y);
+			int width= annotation.getWidth();
+			if (width != 0) {
+				if (!gc.getClipping().contains(x, y)) {
+					Rectangle client= textWidget.getClientArea();
+					int height= textWidget.getLineHeight();
+					textWidget.redraw(x, y, client.width, height, false);
+				}
+			}
+		} else {
+			int charCount= textWidget.getCharCount();
+			if (charCount > 0) {
+				textWidget.redrawRange(charCount - 1, 1, true);
+			} else {
+				Rectangle client= textWidget.getClientArea();
+				textWidget.redraw(0, 0, client.width, client.height, false);
+			}
+		}
+	}
+
 	protected static void drawAsLeftOf1stCharacter(LineContentAnnotation annotation, GC gc, StyledText textWidget, int widgetOffset, int length, Color color) {
 		StyleRange style= null;
 		try {
@@ -248,7 +313,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		} catch (Exception e) {
 			return;
 		}
-		if (isDeleted(annotation)) {
+		if (isDeleted(annotation, textWidget.getCharCount())) {
 			// When annotation is deleted, update metrics to null to remove extra spaces of the line content annotation.
 			if (style != null && style.metrics != null) {
 				style.metrics= null;
@@ -363,7 +428,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		} catch (Exception e) {
 			return;
 		}
-		if (isDeleted(annotation)) {
+		if (isDeleted(annotation, textWidget.getCharCount())) {
 			// When annotation is deleted, update metrics to null to remove extra spaces of the line content annotation.
 			if (style != null && style.metrics != null) {
 				style.metrics= null;
@@ -443,7 +508,17 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 	 * @param annotation the inlined annotation to check
 	 * @return <code>true</code> if inlined annotation is deleted and <code>false</code> otherwise.
 	 */
-	private static boolean isDeleted(AbstractInlinedAnnotation annotation) {
-		return annotation.isMarkedDeleted() || annotation.getPosition().isDeleted() || annotation.getPosition().getLength() == 0;
+	private static boolean isDeleted(AbstractInlinedAnnotation annotation,int maxOffset) {
+		if (annotation.isMarkedDeleted()) {
+			return true;
+		}
+		Position pos= annotation.getPosition();
+		if (pos.isDeleted()) {
+			return true;
+		}
+		if (pos.getLength() == 0 && pos.getOffset() < maxOffset) {
+			return true;
+		}
+		return false;
 	}
 }

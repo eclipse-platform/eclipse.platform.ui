@@ -60,8 +60,7 @@ public class Snippet042SideEffectAggregateValidationStatus {
 		IValidator<String> validator = textValue -> "5".equals(textValue) ? Status.OK_STATUS
 				: ValidationStatus.error("The value was '" + value + "', not '5'");
 		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(text), value,
-				new UpdateValueStrategy<Object, String>().setAfterConvertValidator(validator),
-				null);
+				new UpdateValueStrategy<Object, String>().setAfterConvertValidator(validator), null);
 
 		// Track the max severity of all bindings
 		AggregateValidationStatus validationStatus = new AggregateValidationStatus(bindingContext.getBindings(),

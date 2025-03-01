@@ -15,13 +15,12 @@ package org.eclipse.jface.viewers.deferred;
 
 import java.util.Comparator;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.AcceptAllFilter;
 import org.eclipse.jface.viewers.IFilter;
-import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 
 /**
  * Contains the algorithm for performing background sorting and filtering in a virtual
@@ -123,10 +122,6 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 
 	private IProgressMonitor sortingProgressMonitor = new NullProgressMonitor();
 	private Thread sortThread = null;
-
-	private volatile FastProgressReporter sortMon = new FastProgressReporter();
-
-	private volatile Range range = new Range(0,0);
 
 	/**
 	 * Creates a new background content provider
@@ -307,42 +302,35 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 				break;
 			}
 
-			try {
-				ConcurrentTableUpdator.Range updateRange = updator.getVisibleRange();
-				sortMon = new FastProgressReporter();
-				range = updateRange;
-				int sortStart = updateRange.start;
-				int sortLength = updateRange.length;
+			ConcurrentTableUpdator.Range updateRange = updator.getVisibleRange();
+			int sortStart = updateRange.start;
+			int sortLength = updateRange.length;
 
-				if (limit != -1) {
-					collection.retainFirst(limit, sortMon);
-				}
+			if (limit != -1) {
+				collection.retainFirst(limit);
+			}
 
-				sortLength = Math.min(sortLength, totalElements - sortStart);
-				sortLength = Math.max(sortLength, 0);
+			sortLength = Math.min(sortLength, totalElements - sortStart);
+			sortLength = Math.max(sortLength, 0);
 
-				Object[] objectsOfInterest = new Object[sortLength];
+			Object[] objectsOfInterest = new Object[sortLength];
 
-				collection.getRange(objectsOfInterest, sortStart, true, sortMon);
+			collection.getRange(objectsOfInterest, sortStart, true);
 
-				// Send the new elements to the table
-				for (int i = 0; i < sortLength; i++) {
-					Object object = objectsOfInterest[i];
-					updator.replace(object, sortStart + i);
-				}
+			// Send the new elements to the table
+			for (int i = 0; i < sortLength; i++) {
+				Object object = objectsOfInterest[i];
+				updator.replace(object, sortStart + i);
+			}
 
-				objectsOfInterest = new Object[collection.size()];
+			objectsOfInterest = new Object[collection.size()];
 
-				collection.getFirst(objectsOfInterest, true, sortMon);
+			collection.getFirst(objectsOfInterest, true);
 
-				// Send the new elements to the table
-				for (int i = 0; i < totalElements; i++) {
-					Object object = objectsOfInterest[i];
-					updator.replace(object, i);
-				}
-
-			} catch (InterruptedException e) {
-				continue;
+			// Send the new elements to the table
+			for (int i = 0; i < totalElements; i++) {
+				Object object = objectsOfInterest[i];
+				updator.replace(object, i);
 			}
 
 			dirty = false;
@@ -371,7 +359,6 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 	public void setSortOrder(Comparator sorter) {
 		Assert.isNotNull(sorter);
 		this.sortOrder = sorter;
-		sortMon.cancel();
 		refresh();
 	}
 
@@ -383,7 +370,6 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 	public void setFilter(IFilter toSet) {
 		Assert.isNotNull(toSet);
 		this.filter = toSet;
-		sortMon.cancel();
 		refresh();
 	}
 
@@ -417,13 +403,6 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 	 */
 	public void checkVisibleRange(int includeIndex) {
 		updator.checkVisibleRange(includeIndex);
-		ConcurrentTableUpdator.Range newRange = updator.getVisibleRange();
-		ConcurrentTableUpdator.Range oldRange = range;
-
-		// If we're in the middle of processing an invalid range, cancel the sort
-		if (newRange.start != oldRange.start || newRange.length != oldRange.length) {
-			sortMon.cancel();
-		}
 	}
 
 	/**
@@ -475,7 +454,6 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 	 */
 	private void makeDirty() {
 		synchronized (lock) {
-			sortMon.cancel();
 			// request sorting
 			sortScheduled = true;
 			if (!sortThreadStarted) {
@@ -495,7 +473,6 @@ import org.eclipse.jface.viewers.deferred.ConcurrentTableUpdator.Range;
 	 * ways.
 	 */
 	private void cancelSortJob() {
-		sortMon.cancel();
 		sortingProgressMonitor.setCanceled(true);
 	}
 

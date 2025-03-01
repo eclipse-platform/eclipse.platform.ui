@@ -588,27 +588,39 @@ public class ThemeEngine implements IThemeEngine {
 			prefThemeId = "org.eclipse.e4.ui.css.theme.e4_classic"; //$NON-NLS-1$
 		}
 
-		boolean flag = true;
+		// use theme from preferences if it exists
 		if (prefThemeId != null) {
 			for (ITheme t : getThemes()) {
 				if (prefThemeId.equals(t.getId())) {
 					setTheme(t, false);
-					flag = false;
-					break;
+					return;
 				}
 			}
 		}
 
-		/*
-		 * Any Platform: if the system has Dark appearance set and Eclipse is using the
-		 * default settings, then start Eclipse in Dark theme. Check that there is a
-		 * dark theme present. Can be disabled using a system property.
-		 */
 		boolean hasDarkTheme = getThemes().stream().anyMatch(t -> t.getId().startsWith(E4_DARK_THEME_ID));
-		boolean disableOSDarkThemeInherit = "true".equalsIgnoreCase(System.getProperty(DISABLE_OS_DARK_THEME_INHERIT));
-		boolean overrideWithDarkTheme = Display.isSystemDarkTheme() && hasDarkTheme && !disableOSDarkThemeInherit;
+		boolean overrideWithDarkTheme = false;
+		if (hasDarkTheme) {
+			if (prefThemeId != null) {
+				/*
+				 * The user had previously selected a theme which is not available anymore. In
+				 * this case want to fall back to respect whether that previous choice was dark
+				 * or not. https://github.com/eclipse-platform/eclipse.platform.ui/issues/2776
+				 */
+				overrideWithDarkTheme = prefThemeId.contains("dark");
+			} else {
+				/*
+				 * No previous theme selection in preferences. In this case check if the system
+				 * has dark appearance set and let Eclipse inherit that. Can be disabled using a
+				 * system property.
+				 */
+				overrideWithDarkTheme = Display.isSystemDarkTheme()
+						&& !"true".equalsIgnoreCase(System.getProperty(DISABLE_OS_DARK_THEME_INHERIT));
+			}
+		}
+
 		String themeToRestore = overrideWithDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
-		if (themeToRestore != null && flag) {
+		if (themeToRestore != null) {
 			setTheme(themeToRestore, false);
 		}
 	}

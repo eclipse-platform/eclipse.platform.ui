@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -903,10 +903,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 			updateActionSets();
 
-			IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-			boolean enableAnimations = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
-			preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
-
 			// Hack!! don't show the intro if there's more than one open
 			// perspective
 			List<MPerspective> persps = modelService.findElements(model, null, MPerspective.class, null);
@@ -929,8 +925,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 			getWindowAdvisor().postWindowCreate();
 			getWindowAdvisor().openIntro();
-
-			preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, enableAnimations);
 
 			getShell().setData(this);
 			trackShellActivation();

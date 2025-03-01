@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.e4.ui.css.swt.theme;singleton:=true
-Bundle-Version: 0.14.400.qualifier
+Bundle-Version: 0.14.500.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -14,7 +14,7 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.e4.ui.css.swt.internal.theme;x-internal:=true,
  org.eclipse.e4.ui.css.swt.theme;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.e4.ui.workbench.swt,org.eclipse.ui.workbench"
 Import-Package: org.eclipse.osgi.service.datalocation;version="1.3.0",
- org.osgi.framework;version="[1.5.0,2.0.0)",
+ org.osgi.framework;version="[1.6.0,2)",
  org.osgi.service.event;version="[1.3.0,2.0.0)",
  org.w3c.css.sac;version="1.3.0"
 Require-Capability: osgi.extender;

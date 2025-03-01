@@ -99,11 +99,11 @@ public class NewWizardAction extends Action implements ActionFactory.IWorkbenchA
 		this.workbenchWindow = window;
 		tracker = new PerspectiveTracker(window, this);
 		// @issues should be IDE-specific images
-		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+		ISharedImages images = window.getWorkbench().getSharedImages();
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 		setToolTipText(WorkbenchMessages.NewWizardAction_toolTip);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.NEW_ACTION);
+		window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.NEW_ACTION);
 	}
 
 	/**

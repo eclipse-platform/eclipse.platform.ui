@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,7 +40,7 @@ public class CommonSorterDescriptorManager {
 
 	private static final CommonSorterDescriptor[] NO_SORTER_DESCRIPTORS = new CommonSorterDescriptor[0];
 
-	private final Map<INavigatorContentDescriptor, Set> sortersMap = new HashMap<>();
+	private final Map<INavigatorContentDescriptor, Set<CommonSorterDescriptor>> sortersMap = new HashMap<>();
 
 	/**
 	 *

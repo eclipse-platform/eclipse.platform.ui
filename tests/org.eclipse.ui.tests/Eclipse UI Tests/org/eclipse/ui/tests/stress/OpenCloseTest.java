@@ -40,15 +40,17 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
  * Test opening and closing of items.
  */
 public class OpenCloseTest {
-	private static final String ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE = "org.eclipse.jdt.ui.JavaPerspective";
+	private static final String ORG_ECLIPSE_RESOURCE_PERSPECTIVE = "org.eclipse.ui.resourcePerspective";
 
 	private static final int numIterations = 10;
 
@@ -56,6 +58,8 @@ public class OpenCloseTest {
 	private IWorkbench workbench;
 	private IWorkbenchPage page;
 
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Before
 	public void setup() {
@@ -67,7 +71,7 @@ public class OpenCloseTest {
 		}
 
 		try {
-			PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE, workbenchWindow);
+			PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_RESOURCE_PERSPECTIVE, workbenchWindow);
 		} catch (WorkbenchException e) {
 			e.printStackTrace();
 		}
@@ -101,7 +105,7 @@ public class OpenCloseTest {
 	 */
 	@Test
 	public void testOpenCloseWorkbenchWindow() throws WorkbenchException {
-		IWorkbenchWindow secondWorkbenchWindow = null;
+		IWorkbenchWindow secondWorkbenchWindow;
 		for (int index = 0; index < numIterations; index++) {
 			secondWorkbenchWindow = PlatformUI.getWorkbench()
 					.openWorkbenchWindow(ResourcesPlugin.getWorkspace().getRoot());
@@ -119,7 +123,7 @@ public class OpenCloseTest {
 
 		HashMap<String, String> parameters = new HashMap<>();
 		parameters.put(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE_PARM_ID,
-				ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE);
+				ORG_ECLIPSE_RESOURCE_PERSPECTIVE);
 
 		ParameterizedCommand pCommand = ParameterizedCommand.generateCommand(command, parameters);
 
@@ -127,7 +131,7 @@ public class OpenCloseTest {
 
 		for (int index = 0; index < numIterations; index++) {
 			try {
-				PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE, workbenchWindow);
+				PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_RESOURCE_PERSPECTIVE, workbenchWindow);
 				try {
 					handlerService.executeCommand(pCommand, null);
 				} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e1) {
@@ -143,8 +147,8 @@ public class OpenCloseTest {
 	 */
 	@Test
 	public void testOpenCloseView() throws WorkbenchException {
-		IViewPart consoleView = null;
-		IWorkbenchPage page = PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE,
+		IViewPart consoleView;
+		IWorkbenchPage page = PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_RESOURCE_PERSPECTIVE,
 				workbenchWindow);
 		for (int index = 0; index < numIterations; index++) {
 			consoleView = page.showView(IPageLayout.ID_MINIMAP_VIEW);
@@ -157,7 +161,7 @@ public class OpenCloseTest {
 	 */
 	@Test
 	public void testOpenCloseIntro() {
-		IIntroPart introPart = null;
+		IIntroPart introPart;
 		for (int index = 0; index < numIterations; index++) {
 			introPart = PlatformUI.getWorkbench().getIntroManager().showIntro(workbenchWindow, false);
 			PlatformUI.getWorkbench().getIntroManager().closeIntro(introPart);

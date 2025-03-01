@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,12 +21,12 @@ import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelP
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  * @since 3.2
  */
-public class WorkingSetSorter extends ViewerSorter {
+public class WorkingSetSorter extends ViewerComparator {
 
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
@@ -36,15 +36,14 @@ public class WorkingSetSorter extends ViewerSorter {
 		} else if (e2 == WorkingSetsContentProvider.OTHERS_WORKING_SET) {
 			return -1;
 		}
-		if(viewer instanceof StructuredViewer) {
-			ILabelProvider labelProvider = (ILabelProvider) ((StructuredViewer) viewer).getLabelProvider();
+		if (viewer instanceof StructuredViewer sViewer) {
+			ILabelProvider labelProvider = (ILabelProvider) sViewer.getLabelProvider();
 
-			if (labelProvider instanceof DecoratingStyledCellLabelProvider) {
+			if (labelProvider instanceof DecoratingStyledCellLabelProvider dprov) {
 				// Bug 512637: use the real label provider to avoid unstable
 				// sort behavior if the decoration is running while sorting.
 				// decorations are usually visual aids to the user and
 				// shouldn't be used in ordering.
-				DecoratingStyledCellLabelProvider dprov = (DecoratingStyledCellLabelProvider) labelProvider;
 				IStyledLabelProvider styledLabelProvider = dprov.getStyledStringProvider();
 				String text1 = styledLabelProvider.getStyledText(e1).getString();
 				String text2 = styledLabelProvider.getStyledText(e2).getString();
@@ -54,12 +53,11 @@ public class WorkingSetSorter extends ViewerSorter {
 				return -1;
 			}
 
-			if (labelProvider instanceof DecoratingLabelProvider) {
+			if (labelProvider instanceof DecoratingLabelProvider dprov) {
 				// Bug 364735: use the real label provider to avoid unstable
 				// sort behavior if the decoration is running while sorting.
 				// decorations are usually visual aids to the user and
 				// shouldn't be used in ordering.
-				DecoratingLabelProvider dprov = (DecoratingLabelProvider) labelProvider;
 				labelProvider = dprov.getLabelProvider();
 			}
 

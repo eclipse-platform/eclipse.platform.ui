@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2025 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,9 +13,7 @@
  ******************************************************************************/
 package org.eclipse.e4.emf.xpath;
 
-import org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;
-import org.eclipse.e4.emf.internal.xpath.EObjectPointerFactory;
-import org.eclipse.e4.emf.internal.xpath.JXPathContextFactoryImpl;
+import org.eclipse.e4.emf.xpath.internal.java.JavaXPathContextFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -23,11 +21,8 @@ import org.eclipse.emf.ecore.EObject;
  *
  * @since 1.0
  */
-public class EcoreXPathContextFactory{
-
-	static {
-		JXPathContextReferenceImpl.addNodePointerFactory(new EObjectPointerFactory());
-	}
+@Deprecated(forRemoval = true, since = "2025-03 (removal in 2027-03 or later)")
+public class EcoreXPathContextFactory {
 
 	/**
 	 * Create a new factory
@@ -35,7 +30,7 @@ public class EcoreXPathContextFactory{
 	 * @return the factory
 	 */
 	public static XPathContextFactory<EObject> newInstance() {
-		return new JXPathContextFactoryImpl<>();
+		return new JavaXPathContextFactoryImpl<>();
 	}
 
 }

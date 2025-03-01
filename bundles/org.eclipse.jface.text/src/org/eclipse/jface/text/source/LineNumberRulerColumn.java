@@ -34,6 +34,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
@@ -616,7 +617,13 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			fCachedTextWidget= null;
 		});
 
-		fCanvas.addListener(SWT.ZoomChanged, e -> computeIndentations());
+		fCanvas.addListener(SWT.ZoomChanged, e -> {
+			computeIndentations();
+			if (fBuffer != null) {
+				fBuffer.dispose();
+				fBuffer= null;
+			}
+		});
 
 		fMouseHandler= new MouseHandler();
 		fCanvas.addMouseListener(fMouseHandler);
@@ -679,10 +686,24 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			return;
 		}
 
-		boolean bufferStillValid = fBuffer != null;
 		if (fBuffer == null) {
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
+			newFullBufferImage(visibleLines, size);
+		} else {
+			doPaint(visibleLines, size);
 		}
+		dest.drawImage(fBuffer, 0, 0);
+	}
+
+	private void newFullBufferImage(ILineRange visibleLines, Point size) {
+		ImageGcDrawer imageGcDrawer= (gc, imageWidth, imageHeight) -> {
+			// We redraw everything; paint directly into the buffer
+			initializeGC(gc, 0, 0, imageWidth, imageHeight);
+			doPaint(gc, visibleLines);
+		};
+		fBuffer= new Image(fCanvas.getDisplay(), imageGcDrawer, size.x, size.y);
+	}
+
+	private void doPaint(ILineRange visibleLines, Point size) {
 		GC bufferGC= new GC(fBuffer);
 		Image newBuffer= null;
 		try {
@@ -696,7 +717,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			int bottomWidgetLine= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, bottomModelLine);
 			boolean atEnd= bottomWidgetLine + 1 >= fCachedTextWidget.getLineCount();
 			int height= size.y;
-			if (dy != 0 && !atEnd && bufferStillValid && fLastTopPixel >= 0 && numberOfLines > 1 && numberOfLines == fLastNumberOfLines) {
+			if (dy != 0 && !atEnd && fLastTopPixel >= 0 && numberOfLines > 1 && numberOfLines == fLastNumberOfLines) {
 				int bottomPixel= fCachedTextWidget.getLinePixel(bottomWidgetLine + 1);
 				if (dy > 0 && bottomPixel < size.y) {
 					// Can occur on GTK with static scrollbars; see bug 551320.
@@ -745,16 +766,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			fLastBottomModelLine= bottomModelLine;
 			fLastHeight= height;
 			if (dy != 0) {
-				// Some rulers may paint outside the line region. Let them paint in a new image,
-				// the copy the wanted bits.
-				newBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-				GC localGC= new GC(newBuffer);
-				try {
-					initializeGC(localGC, 0, bufferY, size.x, bufferH);
-					doPaint(localGC, visibleLines);
-				} finally {
-					localGC.dispose();
-				}
+				newBuffer= newBufferImage(size, bufferY, bufferH, visibleLines);
 				bufferGC.drawImage(newBuffer, 0, bufferY, size.x, bufferH, 0, bufferY, size.x, bufferH);
 				if (dy > 0 && bufferY + bufferH < size.y) {
 					// Scrolled down in the text, but didn't use the full height of the Canvas: clear
@@ -774,7 +786,16 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				newBuffer.dispose();
 			}
 		}
-		dest.drawImage(fBuffer, 0, 0);
+	}
+
+	private Image newBufferImage(Point size, int bufferY, int bufferH, final ILineRange visibleLines) {
+		ImageGcDrawer imageGcDrawer= (localGC, imageWidth, imageHeight) -> {
+			// Some rulers may paint outside the line region. Let them paint in a new image,
+			// the copy the wanted bits.
+			initializeGC(localGC, 0, bufferY, imageWidth, bufferH);
+			doPaint(localGC, visibleLines);
+		};
+		return new Image(fCanvas.getDisplay(), imageGcDrawer, size.x, size.y);
 	}
 
 	private void initializeGC(GC gc, int x, int y, int width, int height) {
@@ -852,6 +873,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 				// use height of text bounding because bounds.width changes on word wrap
 				y+= fCachedTextWidget.getTextBounds(offsetAtLine, offsetEnd).height;
+				y+= fCachedTextWidget.getLineSpacing();
 			}
 		}
 	}

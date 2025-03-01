@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.VisibilityAssistant.VisibilityListener;
@@ -37,7 +38,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	private final NavigatorContentService contentService;
 
 	/* A map of (CommonSorterDescriptor, ViewerSorter)-pairs */
-	private final Map<CommonSorterDescriptor, ViewerSorter> sorters = new HashMap<>();
+	private final Map<CommonSorterDescriptor, ViewerComparator> sorters = new HashMap<>();
 
 	private INavigatorContentDescriptor[] sortOnlyDescriptors;
 
@@ -66,70 +67,94 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	}
 
 	@Override
+	@Deprecated(forRemoval = true, since = "2025-03")
 	public ViewerSorter findSorterForParent(Object aParent) {
 
-		CommonSorterDescriptor[] descriptors = CommonSorterDescriptorManager
-				.getInstance().findApplicableSorters(contentService, aParent);
-		if (descriptors.length > 0) {
-			return getSorter(descriptors[0]);
+		ViewerComparator comparator = findComparatorForParent(aParent);
+		if (comparator != null) {
+			return new CommonSorterDescriptor.WrappedViewerComparator(comparator);
 		}
 		return SkeletonViewerSorter.INSTANCE;
 	}
 
-	private ViewerSorter getSorter(CommonSorterDescriptor descriptor) {
-		ViewerSorter sorter = null;
+	@Override
+	public ViewerComparator findComparatorForParent(Object aParent) {
+
+		CommonSorterDescriptor[] descriptors = CommonSorterDescriptorManager.getInstance()
+				.findApplicableSorters(contentService, aParent);
+		if (descriptors.length > 0) {
+			return getComparator(descriptors[0]);
+		}
+		return SkeletonViewerSorter.INSTANCE;
+	}
+
+
+	private ViewerComparator getComparator(CommonSorterDescriptor descriptor) {
+		ViewerComparator sorter = null;
 		synchronized (sorters) {
 			sorter = sorters.get(descriptor);
 			if (sorter == null) {
-				sorters.put(descriptor, sorter = descriptor.createSorter());
+				sorters.put(descriptor, sorter = descriptor.createComparator());
 			}
 		}
 		return sorter;
 	}
 
 	@Override
+	@Deprecated(forRemoval = true, since = "2025-03")
 	public synchronized ViewerSorter findSorter(INavigatorContentDescriptor source,
 			Object parent, Object lvalue, Object rvalue) {
 
-		CommonSorterDescriptorManager dm = CommonSorterDescriptorManager
-				.getInstance();
+		ViewerComparator comparator = findComparator(source, parent, lvalue, rvalue);
+		if (comparator != null) {
+			return new CommonSorterDescriptor.WrappedViewerComparator(comparator);
+		}
+		return null;
+	}
+
+	@Override
+	public synchronized ViewerComparator findComparator(INavigatorContentDescriptor source, Object parent,
+			Object lvalue,
+			Object rvalue) {
+
+		CommonSorterDescriptorManager dm = CommonSorterDescriptorManager.getInstance();
 		CommonSorterDescriptor[] descriptors;
 
 		INavigatorContentDescriptor lookupDesc;
 		for (int i = 0; i < sortOnlyDescriptors.length; i++) {
 			lookupDesc = sortOnlyDescriptors[i];
-			if (source!= null && source.getSequenceNumber() < lookupDesc.getSequenceNumber()) {
+			if (source != null && source.getSequenceNumber() < lookupDesc.getSequenceNumber()) {
 				lookupDesc = source;
 				source = null;
 				i--;
 			}
-			descriptors = dm. findApplicableSorters(contentService, lookupDesc, parent);
+			descriptors = dm.findApplicableSorters(contentService, lookupDesc, parent);
 			if (descriptors.length > 0) {
-				return getSorter(descriptors[0]);
+				return getComparator(descriptors[0]);
 			}
 		}
 
 		if (source != null) {
-			descriptors = dm. findApplicableSorters(contentService, source, parent);
+			descriptors = dm.findApplicableSorters(contentService, source, parent);
 			if (descriptors.length > 0) {
-				return getSorter(descriptors[0]);
+				return getComparator(descriptors[0]);
 			}
 		}
 		return null;
 	}
 
 	@Override
-	public Map findAvailableSorters(INavigatorContentDescriptor theSource) {
+	public Map<String, ViewerComparator> findAvailableSorters(INavigatorContentDescriptor theSource) {
 
 		CommonSorterDescriptor[] descriptors = CommonSorterDescriptorManager.getInstance().findApplicableSorters(theSource);
-		Map<String, ViewerSorter> sorters = new HashMap<>();
+		Map<String, ViewerComparator> sorters = new HashMap<>();
 
 		int count = 0;
 		for (CommonSorterDescriptor descriptor : descriptors) {
 			if(descriptor.getId() != null && descriptor.getId().length() > 0)
-				sorters.put(descriptor.getId(), getSorter(descriptor));
+				sorters.put(descriptor.getId(), getComparator(descriptor));
 			else
-				sorters.put(theSource.getId()+".sorter."+ (++count), getSorter(descriptor)); //$NON-NLS-1$
+				sorters.put(theSource.getId() + ".sorter." + (++count), getComparator(descriptor)); //$NON-NLS-1$
 		}
 		return sorters;
 	}

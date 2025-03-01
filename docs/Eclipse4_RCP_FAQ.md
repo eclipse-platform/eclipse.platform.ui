@@ -39,7 +39,7 @@ Contents
     *   [4.9 What is the difference between IEclipseContext#set and IEclipseContext#modify?](#what-is-the-difference-between-ieclipsecontextset-and-ieclipsecontextmodify)
     *   [4.10 Why aren't my _@EventTopic_ or _@UIEventTopic_ methods being called?](#why-arent-my-eventtopic-or-uieventtopic-methods-being-called)
 *   [5 Commands and Handlers](#Commands-and-Handlers)
-    *   [5.1 Why aren't my handler fields being re-injected?](#Why-aren.27t-my-handler-fields-being-re-injected)
+    *   [5.1 Why aren't my handler fields being re-injected?](#why-arent-my-handler-fields-being-re-injected)
     *   [5.2 Why is my parameterized handler not triggered?](#Why-is-my-parameterized-handler-not-triggered)
     *   [5.3 Why does org.eclipse.core.commands.Command's isEnabled() and getHandler() not work?](#why-does-orgeclipsecorecommandscommands-isenabled-and-gethandler-not-work)
 *   [6 UI](#UI)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -43,7 +43,7 @@ public class FileEditorInputAdapterFactory implements IAdapterFactory {
 	}
 
 	/** The list of provided adapters. */
-	private static final Class<?>[] ADAPTER_LIST= new Class[] { ILocationProvider.class };
+	private static final Class<?>[] ADAPTER_LIST = { ILocationProvider.class };
 
 	/** The provided location provider */
 	private ILocationProvider fLocationProvider= new LocationProvider();

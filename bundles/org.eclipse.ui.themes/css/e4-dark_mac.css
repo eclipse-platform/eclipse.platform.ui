@@ -66,6 +66,21 @@ Button  {
     swt-selected-highlight-top: false;
 }
 
+.MPartStack CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
+    /* Set the styles for the bottom inner tabs (Bug 430051): */
+    swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+    swt-unselected-hot-tab-color-background: #161616;/*  Bug 465711 */
+    swt-selected-tab-highlight: #a6a6a6;
+    swt-selected-highlight-top: true;
+}
+.MPartStack.active CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
+    /* Set the styles for the bottom inner tabs (Bug 430051): */
+    swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+    swt-unselected-hot-tab-color-background: #161616;/*  Bug 465711 */
+    swt-selected-tab-highlight: #2b97d7;
+    swt-selected-highlight-top: true;
+}
+
 /*text color of selected tab in editor */
 #org-eclipse-ui-editorss CTabItem:selected{
 	color: '#FFFFFF';
@@ -73,7 +88,6 @@ Button  {
 
 #org-eclipse-ui-editorss CTabFolder{
  	swt-selected-tab-fill : '#1E1F22';
-	swt-selected-tab-highlight: '#a6a6a6';
     swt-selected-highlight-top: true;
     swt-draw-custom-tab-content-background: true;
 	swt-unselected-hot-tab-color-background:#161616;	
@@ -84,20 +98,15 @@ Button  {
     swt-selected-highlight-top: true;
 }
 
-CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
-    /* Set the styles for the bottom inner tabs (Bug 430051): */
-    swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-    swt-selected-tab-fill: #1E1F22;
-    swt-unselected-tabs-color: #48484c;
-    swt-unselected-hot-tab-color-background: #2f2f2f;
-    swt-selected-tab-highlight: #2b79d7;
-    swt-selected-highlight-top: false;
-}
-
-.MPart Form Composite,
-.MPart Form Composite Tree,
-.MPartStack.active .MPart Form Composite Tree
+.Editor Form Composite,
+.Editor Form Composite Tree,
+.MPartStack.active .Editor Form Composite Tree
 {
 	background-color: #1E1F22;
 }
 
+#org-eclipse-e4-ui-compatibility-editor Canvas,
+#org-eclipse-e4-ui-compatibility-editor Canvas > *
+{
+	background-color: #1E1F22;
+}

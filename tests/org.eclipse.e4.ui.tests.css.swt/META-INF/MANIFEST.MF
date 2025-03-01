@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.e4.ui.tests.css.swt; singleton:=true
-Bundle-Version: 0.12.700.qualifier
+Bundle-Version: 0.12.800.qualifier
 Require-Bundle: org.eclipse.e4.ui.css.core,
  org.eclipse.e4.ui.css.swt,
  org.eclipse.e4.ui.css.swt.theme;bundle-version="0.9.1",

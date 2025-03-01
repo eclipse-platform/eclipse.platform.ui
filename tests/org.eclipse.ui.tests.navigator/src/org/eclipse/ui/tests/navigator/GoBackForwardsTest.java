@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,27 +57,21 @@ public class GoBackForwardsTest extends UITestCase {
 	private static final String FILE_CONTENTS = "public class GoBackForwardsTestFile {\n"
 			+ "    public static void main(String[] args) {\n" + "        System.out.println(\"Hello world!\");\n"
 			+ "    }\n" + "}";
-	private static final String JAVA_EDITOR_ID = "org.eclipse.jdt.ui.CompilationUnitEditor";
-	private static final String TEXT_EDITOR_ID = "org.eclipse.ui.genericeditor.GenericEditor";
+	private static final String GENERIC_EDITOR_ID = "org.eclipse.ui.genericeditor.GenericEditor";
+	private static final String TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor";
 	private static final String SELECTION_STRING = "Selection<offset: 10, length: 5>";
 
 	private IProject project;
 	private IFile file;
 
 	@Override
-	public void doSetUp() {
-		try {
-			project = FileUtil.createProject(PROJECT_NAME);
-			file = FileUtil.createFile(FILE_NAME, project);
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append(FILE_CONTENTS);
-			Files.writeString(Paths.get(file.getLocation().toOSString()), stringBuilder);
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		} catch (CoreException e) {
-			fail("Should not throw an exception");
-		} catch (IOException e) {
-			fail("Should not throw an exception");
-		}
+	public void doSetUp() throws CoreException, IOException {
+		project = FileUtil.createProject(PROJECT_NAME);
+		file = FileUtil.createFile(FILE_NAME, project);
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(FILE_CONTENTS);
+		Files.writeString(Paths.get(file.getLocation().toOSString()), stringBuilder);
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
 
 	}
 
@@ -88,22 +82,22 @@ public class GoBackForwardsTest extends UITestCase {
 
 		processEvents();
 
-		Condition javaEditorNoSelection = currentNavigationHistoryLocationCondition(JAVA_EDITOR_ID, false);
-		Condition javaEditorSelection = currentNavigationHistoryLocationCondition(JAVA_EDITOR_ID, true);
+		Condition genericEditorNoSelection = currentNavigationHistoryLocationCondition(GENERIC_EDITOR_ID, false);
+		Condition genericEditorSelection = currentNavigationHistoryLocationCondition(GENERIC_EDITOR_ID, true);
 		Condition textEditorNoSelection = currentNavigationHistoryLocationCondition(TEXT_EDITOR_ID, false);
 		Condition textEditorSelection = currentNavigationHistoryLocationCondition(TEXT_EDITOR_ID, true);
 
 		FileEditorInput editorInput = new FileEditorInput(file);
 
-		openJavaEditor(editorInput);
+		openGenericEditor(editorInput);
 
-		if (!processEventsUntil(javaEditorNoSelection, 1000)) {
+		if (!processEventsUntil(genericEditorNoSelection, 1000)) {
 			fail("Timeout during navigation." + getStateDetails());
 		}
 
-		selectInJavaEditor(editorInput);
+		selectInGenericEditor(editorInput);
 
-		if (!processEventsUntil(javaEditorSelection, 1000)) {
+		if (!processEventsUntil(genericEditorSelection, 1000)) {
 			fail("Timeout during navigation." + getStateDetails());
 		}
 
@@ -119,9 +113,9 @@ public class GoBackForwardsTest extends UITestCase {
 			fail("Timeout during navigation." + getStateDetails());
 		}
 
-		openJavaEditor(editorInput);
+		openGenericEditor(editorInput);
 
-		if (!processEventsUntil(javaEditorSelection, 1000)) {
+		if (!processEventsUntil(genericEditorSelection, 1000)) {
 			fail("Timeout during navigation." + getStateDetails());
 		}
 
@@ -131,11 +125,11 @@ public class GoBackForwardsTest extends UITestCase {
 			fail("Timeout during navigation." + getStateDetails());
 		}
 
-		// Navigate backward from text editor to java editor
-		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), javaEditorSelection);
+		// Navigate backward from text editor to editor
+		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), genericEditorSelection);
 		Assert.assertEquals(
 				"Failed to correctly navigate backward from text editor to java editor." + getStateDetails(),
-				JAVA_EDITOR_ID, getActiveEditorId());
+				GENERIC_EDITOR_ID, getActiveEditorId());
 
 		// Navigate backward from java editor to text editor
 		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), textEditorSelection);
@@ -150,16 +144,16 @@ public class GoBackForwardsTest extends UITestCase {
 				TEXT_EDITOR_ID, getActiveEditorId());
 
 		// Navigate backward from java editor to java editor
-		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), javaEditorSelection);
-		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), javaEditorNoSelection);
+		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), genericEditorSelection);
+		goBackward(EditorTestHelper.getActiveWorkbenchWindow(), genericEditorNoSelection);
 		Assert.assertEquals(
 				"Failed to correctly navigate backward from java editor to java editor." + getStateDetails(),
-				JAVA_EDITOR_ID, getActiveEditorId());
+				GENERIC_EDITOR_ID, getActiveEditorId());
 
 		// Navigate forward from java editor to java editor
-		goForward(EditorTestHelper.getActiveWorkbenchWindow(), javaEditorSelection);
+		goForward(EditorTestHelper.getActiveWorkbenchWindow(), genericEditorSelection);
 		Assert.assertEquals("Failed to correctly navigate forward from java editor to java editor." + getStateDetails(),
-				JAVA_EDITOR_ID, getActiveEditorId());
+				GENERIC_EDITOR_ID, getActiveEditorId());
 
 		// Navigate forward from text editor to text editor
 		goForward(EditorTestHelper.getActiveWorkbenchWindow(), textEditorNoSelection);
@@ -168,9 +162,9 @@ public class GoBackForwardsTest extends UITestCase {
 				TEXT_EDITOR_ID, getActiveEditorId());
 
 		// Navigate forward from text editor to java editor
-		goForward(EditorTestHelper.getActiveWorkbenchWindow(), javaEditorSelection);
+		goForward(EditorTestHelper.getActiveWorkbenchWindow(), genericEditorSelection);
 		Assert.assertEquals("Failed to correctly navigate forward from text editor to java editor." + getStateDetails(),
-				JAVA_EDITOR_ID, getActiveEditorId());
+				GENERIC_EDITOR_ID, getActiveEditorId());
 
 		// Navigate forward from java editor to text editor
 		goForward(EditorTestHelper.getActiveWorkbenchWindow(), textEditorSelection);
@@ -190,19 +184,19 @@ public class GoBackForwardsTest extends UITestCase {
 		};
 	}
 
-	private void openJavaEditor(IEditorInput editorInput) {
+	private void openGenericEditor(IEditorInput editorInput) {
 		try {
-			EditorTestHelper.getActivePage().openEditor(editorInput, JAVA_EDITOR_ID, true,
+			EditorTestHelper.getActivePage().openEditor(editorInput, GENERIC_EDITOR_ID, true,
 					IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
 		} catch (PartInitException e) {
 			fail("Should not throw an exception");
 		}
 	}
 
-	private void selectInJavaEditor(IEditorInput editorInput) {
+	private void selectInGenericEditor(IEditorInput editorInput) {
 		try {
 			AbstractTextEditor editor = (AbstractTextEditor) EditorTestHelper.getActivePage().openEditor(editorInput,
-					JAVA_EDITOR_ID, true, IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
+					GENERIC_EDITOR_ID, true, IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
 			editor.selectAndReveal(10, 5);
 		} catch (PartInitException e) {
 			fail("Should not throw an exception");

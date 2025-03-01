@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Iconpack
+Bundle-SymbolicName: org.eclipse.ui.examples.iconpack
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Eclipse.org
+Automatic-Module-Name: org.eclipse.ui.examples.iconpack
+Equinox-Transformer: /transform.txt
+Require-Capability: osgi.extender;filter:="(osgi.extender=equinox.transforms.hook)"

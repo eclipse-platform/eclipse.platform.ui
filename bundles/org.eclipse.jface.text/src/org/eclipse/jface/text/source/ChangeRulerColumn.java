@@ -199,6 +199,13 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 			fCachedTextWidget= null;
 		});
 
+		fCanvas.addListener(SWT.ZoomChanged, e -> {
+			if (fBuffer != null) {
+				fBuffer.dispose();
+				fBuffer= null;
+			}
+		});
+
 		fCanvas.addMouseListener(fMouseHandler);
 		fCanvas.addMouseMoveListener(fMouseHandler);
 
@@ -249,19 +256,15 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 				fBuffer= null;
 			}
 		}
-		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-
-		GC gc= new GC(fBuffer);
-		gc.setFont(fCanvas.getFont());
-
-		try {
-			gc.setBackground(getBackground());
-			gc.fillRectangle(0, 0, size.x, size.y);
-
-			doPaint(gc);
-		} finally {
-			gc.dispose();
+		if (fBuffer == null) {
+			fBuffer= new Image(fCanvas.getDisplay(), this::doPaint, size.x, size.y);
+		} else {
+			GC gc= new GC(fBuffer);
+			try {
+				doPaint(gc, size.x, size.y);
+			} finally {
+				gc.dispose();
+			}
 		}
 
 		dest.drawImage(fBuffer, 0, 0);
@@ -289,6 +292,14 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	 */
 	protected final boolean isViewerCompletelyShown() {
 		return JFaceTextUtil.isShowingEntireContents(fCachedTextWidget);
+	}
+
+	private void doPaint(GC gc, int width, int height) {
+		gc.setFont(fCanvas.getFont());
+		gc.setBackground(getBackground());
+		gc.fillRectangle(0, 0, width, height);
+
+		doPaint(gc);
 	}
 
 	/**

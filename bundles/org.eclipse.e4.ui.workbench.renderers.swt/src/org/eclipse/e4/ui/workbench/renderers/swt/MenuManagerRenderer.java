@@ -45,6 +45,7 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
@@ -783,7 +784,8 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			return;
 		}
 		itemModel.setRenderer(this);
-		DynamicContributionContributionItem ci = new DynamicContributionContributionItem(itemModel);
+		DynamicContributionContributionItem ci = new DynamicContributionContributionItem(itemModel,
+				application.getContext().get(IContributionFactory.class));
 		addToManager(menuManager, itemModel, ci);
 		linkModelToContribution(itemModel, ci);
 	}

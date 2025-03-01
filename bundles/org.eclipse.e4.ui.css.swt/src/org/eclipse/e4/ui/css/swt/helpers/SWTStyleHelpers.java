@@ -756,7 +756,7 @@ public class SWTStyleHelpers {
 			}
 		} catch (Exception e) {
 		}
-		return swtStyles.length() == 0 ? "" : swtStyles.toString();
+		return swtStyles.length() == 0 ? "" : swtStyles.toString().intern();
 	}
 
 	/**

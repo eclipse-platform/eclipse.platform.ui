@@ -24,6 +24,11 @@ public class StaticContentLineCodeMining extends LineContentCodeMining {
 		setLabel(message);
 	}
 
+	public StaticContentLineCodeMining(Position position, boolean afterPosition, String message, ICodeMiningProvider provider) {
+		super(position, afterPosition, provider);
+		setLabel(message);
+	}
+
 	public StaticContentLineCodeMining(int i, char c, ICodeMiningProvider repeatLettersCodeMiningProvider) {
 		super(new Position(i, 1), repeatLettersCodeMiningProvider);
 		setLabel(Character.toString(c));

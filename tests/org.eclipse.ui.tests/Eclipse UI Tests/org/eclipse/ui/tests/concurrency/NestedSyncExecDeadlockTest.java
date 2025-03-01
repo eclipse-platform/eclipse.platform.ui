@@ -29,15 +29,21 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.tests.SwtLeakTestWatcher;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 
 /**
  * This is a regression test for a case where a recursive attempt to syncExec
  * from within code that owns a lock would cause deadlock. See bug 76378 for details.
  */
 public class NestedSyncExecDeadlockTest {
+
+	@Rule
+	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
 
 	private static class ResourceListener implements IResourceChangeListener {
 		@Override
@@ -53,7 +59,8 @@ public class NestedSyncExecDeadlockTest {
 	private final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 	public void doTest(final long timeToSleep) throws Exception {
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
+		Shell shell = new Shell();
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 		dialog.run(true, false, new WorkspaceModifyOperation() {
 			@Override
 			public void execute(final IProgressMonitor pm) {
@@ -77,6 +84,7 @@ public class NestedSyncExecDeadlockTest {
 				});
 			}
 		});
+		shell.close();
 	}
 
 	@Before

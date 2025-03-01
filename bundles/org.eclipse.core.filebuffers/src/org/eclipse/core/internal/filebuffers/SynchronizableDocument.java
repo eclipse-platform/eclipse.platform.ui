@@ -13,10 +13,14 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocumentExtension4;
@@ -37,6 +41,97 @@ import org.eclipse.jface.text.Position;
 public class SynchronizableDocument extends Document implements ISynchronizable {
 
 	private Object fLockObject;
+
+	@Override
+	protected void updateDocumentStructures(DocumentEvent event) {
+		Object lockObject= getLockObject();
+		if (lockObject == null) {
+			super.updateDocumentStructures(event);
+			return;
+		}
+		synchronized (lockObject) {
+			super.updateDocumentStructures(event);
+		}
+	}
+
+	@Override
+	public void removePositionCategory(String category) throws BadPositionCategoryException {
+		Object lockObject= getLockObject();
+		if (lockObject == null) {
+			super.removePositionCategory(category);
+			return;
+		}
+		synchronized (lockObject) {
+			super.removePositionCategory(category);
+		}
+	}
+
+	@Override
+	public String[] getPositionCategories() {
+		Object lockObject= getLockObject();
+		if (lockObject == null) {
+			return super.getPositionCategories();
+		}
+		synchronized (lockObject) {
+			return super.getPositionCategories();
+		}
+	}
+
+	@Override
+	protected Map<String, List<Position>> getDocumentManagedPositions() {
+		Object lockObject= getLockObject();
+		if (lockObject == null) {
+			return super.getDocumentManagedPositions();
+		}
+		synchronized (lockObject) {
+			return super.getDocumentManagedPositions();
+		}
+	}
+
+	@Override
+	public boolean containsPositionCategory(String category) {
+		Object lockObject= getLockObject();
+		if (lockObject == null) {
+			return super.containsPositionCategory(category);
+		}
+		synchronized (lockObject) {
+			return super.containsPositionCategory(category);
+		}
+	}
+
+	@Override
+	public boolean containsPosition(String category, int offset, int length) {
+		Object lockObject= getLockObject();
+		if (lockObject == null) {
+			return super.containsPosition(category, offset, length);
+		}
+		synchronized (lockObject) {
+			return super.containsPosition(category, offset, length);
+		}
+	}
+
+	@Override
+	public int computeIndexInCategory(String category, int offset) throws BadLocationException, BadPositionCategoryException {
+		Object lockObject= getLockObject();
+		if (lockObject == null) {
+			return super.computeIndexInCategory(category, offset);
+		}
+		synchronized (lockObject) {
+			return super.computeIndexInCategory(category, offset);
+		}
+	}
+
+	@Override
+	public void addPositionCategory(String category) {
+		Object lockObject= getLockObject();
+		if (lockObject == null) {
+			super.addPositionCategory(category);
+			return;
+		}
+		synchronized (lockObject) {
+			super.addPositionCategory(category);
+		}
+	}
 
 	@Override
 	public synchronized void setLockObject(Object lockObject) {

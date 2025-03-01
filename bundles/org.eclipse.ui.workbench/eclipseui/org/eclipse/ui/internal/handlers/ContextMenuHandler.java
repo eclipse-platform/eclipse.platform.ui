@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -27,11 +26,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public class ContextMenuHandler extends AbstractHandler {
-	/**
-	 * @throws ExecutionException {@inheritDoc}
-	 */
 	@Override
-	public Object execute(ExecutionEvent exEvent) throws ExecutionException {
+	public Object execute(ExecutionEvent exEvent) {
 		Shell shell = HandlerUtil.getActiveShell(exEvent);
 		Display display = shell == null ? Display.getCurrent() : shell.getDisplay();
 		Control focusControl = display.getFocusControl();

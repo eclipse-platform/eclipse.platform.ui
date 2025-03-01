@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2015 db4objects Inc.  http://www.db4o.com
+ * Copyright (C) 2005, 2025 db4objects Inc.  http://www.db4o.com
  *
  *
  * This program and the accompanying materials
@@ -17,9 +17,9 @@ package org.eclipse.jface.examples.databinding.ducks;
 import java.lang.reflect.Method;
 
 /**
- * ReflectedMethod.  Encapsulates a method that may or may not exist on
- * some receiver.  Invocation policy is that if the method can be invoked,
- * it is.  On failure, returns null.
+ * ReflectedMethod. Encapsulates a method that may or may not exist on some
+ * receiver. Invocation policy is that if the method can be invoked, it is. On
+ * failure, returns null.
  *
  * @author djo
  */
@@ -29,13 +29,13 @@ public class ReflectedMethod {
 	private Method method;
 
 	/**
-	 * Constructor ReflectedMethod.  Create a ReflectedMethod object.
+	 * Constructor ReflectedMethod. Create a ReflectedMethod object.
 	 *
-	 * @param subject The object on which the method lives.
+	 * @param subject    The object on which the method lives.
 	 * @param methodName The name of the method.
 	 * @param paramTypes The method's parameter types.
 	 */
-	public ReflectedMethod(Object subject, String methodName, Class<?>[] paramTypes) {
+	public ReflectedMethod(Object subject, String methodName, Class<?>... paramTypes) {
 		this.subject = subject;
 		method = null;
 		try {
@@ -46,8 +46,7 @@ public class ReflectedMethod {
 	}
 
 	/**
-	 * Method exists.  Returns true if the underlying method exists, false
-	 * otherwise.
+	 * Method exists. Returns true if the underlying method exists, false otherwise.
 	 *
 	 * @return true if the underlying method exists, false otherwise.
 	 */
@@ -56,14 +55,14 @@ public class ReflectedMethod {
 	}
 
 	/**
-	 * Method invoke.  If possible, invoke the encapsulated method with the
-	 * specified parameters.
+	 * Method invoke. If possible, invoke the encapsulated method with the specified
+	 * parameters.
 	 *
 	 * @param params An Object[] containing the parameters to pass.
-	 * @return any return value or null if there was no return value or an
-	 * error occured.
+	 * @return any return value or null if there was no return value or an error
+	 *         occured.
 	 */
-	public Object invoke(Object[] params) {
+	public Object invoke(Object... params) {
 		if (method == null)
 			return null;
 		try {
@@ -77,7 +76,7 @@ public class ReflectedMethod {
 	}
 
 	/**
-	 * Method getType.  Returns the return type of the method.
+	 * Method getType. Returns the return type of the method.
 	 *
 	 * @return The return type or null if none.
 	 */
@@ -85,5 +84,3 @@ public class ReflectedMethod {
 		return method.getReturnType();
 	}
 }
-
-

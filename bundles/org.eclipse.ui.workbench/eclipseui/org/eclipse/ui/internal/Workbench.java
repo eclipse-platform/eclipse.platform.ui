@@ -29,6 +29,7 @@ package org.eclipse.ui.internal;
 import com.ibm.icu.util.ULocale;
 import com.ibm.icu.util.ULocale.Category;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +38,6 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -81,6 +81,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -298,6 +299,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 	private static final String EDGE_USER_DATA_FOLDER = "org.eclipse.swt.internal.win32.Edge.userDataFolder"; //$NON-NLS-1$
 
+	private static final String SWT_RESCALE_AT_RUNTIME_PROPERTY = "swt.autoScale.updateOnRuntime"; //$NON-NLS-1$
+
 	private static final class StartupProgressBundleListener implements ServiceListener {
 
 		private final SubMonitor subMonitor;
@@ -454,6 +457,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 *                specializes this workbench instance
 	 * @since 3.0
 	 */
+	@SuppressWarnings("restriction")
 	private Workbench(Display display, final WorkbenchAdvisor advisor, MApplication app, IEclipseContext appContext) {
 		this.advisor = Objects.requireNonNull(advisor);
 		this.display = Objects.requireNonNull(display);
@@ -489,6 +493,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				advisor.eventLoopException(exception);
 			}
 		});
+		appContext.set(org.eclipse.e4.core.services.contributions.IContributionFactory.class,
+				new WorkbenchContributionFactory(this));
 
 		// for dynamic UI [This seems to be for everything that isn't handled by
 		// some
@@ -526,10 +532,10 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			return;
 		}
 		try {
-			URI swtMetadataLocationURI = workspaceLocation
-					.getDataArea(FrameworkUtil.getBundle(Browser.class).getSymbolicName()).toURI();
-			display.setData(EDGE_USER_DATA_FOLDER, Paths.get(swtMetadataLocationURI).toString());
-		} catch (URISyntaxException | IOException e) {
+			URL swtMetadataLocationURL = workspaceLocation
+					.getDataArea(FrameworkUtil.getBundle(Browser.class).getSymbolicName());
+			display.setData(EDGE_USER_DATA_FOLDER, new File(swtMetadataLocationURL.getFile()).toString());
+		} catch (IOException e) {
 			WorkbenchPlugin.log("Invalid workspace location to be set for Edge browser.", e); //$NON-NLS-1$
 		}
 	}
@@ -586,7 +592,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				int orientation = store.getInt(IPreferenceConstants.LAYOUT_DIRECTION);
 				Window.setDefaultOrientation(orientation);
 			}
-			setRescaleAtRuntimePropertyFromPreference(display);
 			if (obj instanceof E4Application) {
 				E4Application e4app = (E4Application) obj;
 				E4Workbench e4Workbench = e4app.createE4Workbench(getApplicationContext(), display);
@@ -680,12 +685,15 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		return returnCode[0];
 	}
 
-	private static void setRescaleAtRuntimePropertyFromPreference(final Display display) {
-		boolean rescaleAtRuntime = PrefUtil.getAPIPreferenceStore()
-				.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME);
-		if (rescaleAtRuntime) {
-			display.setRescalingAtRuntime(rescaleAtRuntime);
-			System.setProperty("org.eclipse.swt.browser.DefaultType", "edge"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static void setRescaleAtRuntimePropertyFromPreference() {
+		if (System.getProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY) != null) {
+			WorkbenchPlugin.log(Status.warning(SWT_RESCALE_AT_RUNTIME_PROPERTY
+					+ " is configured (e.g., via the INI), but the according preference should be preferred instead." //$NON-NLS-1$
+			));
+		} else {
+			boolean rescaleAtRuntime = ConfigurationScope.INSTANCE.getNode(WorkbenchPlugin.PI_WORKBENCH)
+					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, false);
+			System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(rescaleAtRuntime));
 		}
 	}
 
@@ -747,12 +755,13 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 * @return the display
 	 */
 	public static Display createDisplay() {
-		// setup the application name used by SWT to lookup resources on some
-		// platforms
-		String applicationName = WorkbenchPlugin.getDefault().getAppName();
+		// setup the application name used by SWT to lookup resources on some platforms
+		String applicationName = System.getProperty("eclipse.appName", WorkbenchPlugin.getDefault().getAppName()); //$NON-NLS-1$
 		if (applicationName != null) {
 			Display.setAppName(applicationName);
 		}
+
+		setRescaleAtRuntimePropertyFromPreference();
 
 		// create the display
 		Display newDisplay = Display.getCurrent();

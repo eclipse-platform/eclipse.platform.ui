@@ -64,40 +64,42 @@ public class GlobalTemplateVariablesDateTest  {
 
 	@Test
 	public void testOneParameter() throws Exception {
-		TemplateBuffer buffer= fTranslator.translate("This format ${d:date('dd MMM YYYY')} and not ${p:date('YYYY-MM-dd')}");
+		TemplateBuffer buffer = fTranslator
+				.translate("This format ${d:date('dd MMM yyyy')} and not ${p:date('yyyy-MM-dd')}");
 		fType.resolve(buffer, fContext);
 
 		StringBuilder expected= new StringBuilder();
 		expected.append("This format ");
-		expected.append(new SimpleDateFormat("dd MMM YYYY").format(new java.util.Date()));
+		expected.append(new SimpleDateFormat("dd MMM yyyy").format(new java.util.Date()));
 		expected.append(" and not ");
-		expected.append(new SimpleDateFormat("YYYY-MM-dd").format(new java.util.Date()));
+		expected.append(new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()));
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
 
 	@Test
 	public void testSimpleLocale() throws Exception {
-		TemplateBuffer buffer= fTranslator.translate("From ${d:date('dd MMM YYYY', 'fr')} to ${d}");
+		TemplateBuffer buffer = fTranslator.translate("From ${d:date('dd MMM yyyy', 'fr')} to ${d}");
 		fType.resolve(buffer, fContext);
 
 		StringBuilder expected= new StringBuilder();
 		expected.append("From ");
-		expected.append(new SimpleDateFormat("dd MMM YYYY", Locale.FRENCH).format(new java.util.Date()));
+		expected.append(new SimpleDateFormat("dd MMM yyyy", Locale.FRENCH).format(new java.util.Date()));
 		expected.append(" to ");
-		expected.append(new SimpleDateFormat("dd MMM YYYY", Locale.FRENCH).format(new java.util.Date()));
+		expected.append(new SimpleDateFormat("dd MMM yyyy", Locale.FRENCH).format(new java.util.Date()));
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
 
 	@Test
 	public void testComplexLocale() throws Exception {
-		TemplateBuffer buffer= fTranslator.translate("France ${d:date('EEEE dd MMMM YYYY', 'fr_FR')} and Germany ${p:date('EEEE dd. MMMM YYYY', 'de_DE')}");
+		TemplateBuffer buffer = fTranslator.translate(
+				"France ${d:date('EEEE dd MMMM yyyy', 'fr_FR')} and Germany ${p:date('EEEE dd. MMMM yyyy', 'de_DE')}");
 		fType.resolve(buffer, fContext);
 
 		StringBuilder expected= new StringBuilder();
 		expected.append("France ");
-		expected.append(new SimpleDateFormat("EEEE dd MMMM YYYY", Locale.FRANCE).format(new java.util.Date()));
+		expected.append(new SimpleDateFormat("EEEE dd MMMM yyyy", Locale.FRANCE).format(new java.util.Date()));
 		expected.append(" and Germany ");
-		expected.append(new SimpleDateFormat("EEEE dd. MMMM YYYY", Locale.GERMANY).format(new java.util.Date()));
+		expected.append(new SimpleDateFormat("EEEE dd. MMMM yyyy", Locale.GERMANY).format(new java.util.Date()));
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
 
@@ -115,13 +117,20 @@ public class GlobalTemplateVariablesDateTest  {
 
 	@Test
 	public void testInvalidLocale() throws Exception {
-		TemplateBuffer buffer= fTranslator.translate("Today is ${d:date('YYYY-MM-dd', 'this_invalid_locale')}!");
+		@SuppressWarnings("deprecation")
+		java.util.Date problemDate = new java.util.Date(2024 - 1900, 12 - 1, 29);
+		assertEquals("2024-12-29",
+				new SimpleDateFormat("yyyy-MM-dd", Locale.GERMAN)
+						.format(problemDate).toString());
+		assertEquals("2025-12-29", new SimpleDateFormat("YYYY-MM-dd", Locale.GERMAN)
+				.format(problemDate).toString());
+		TemplateBuffer buffer = fTranslator.translate("Today is ${d:date('yyyy-MM-dd', 'this_invalid_locale')}!");
 		fType.resolve(buffer, fContext);
 
 		StringBuilder expected= new StringBuilder();
 		expected.append("Today is ");
 		expected.append(
-				new SimpleDateFormat("YYYY-MM-dd", new Locale("this_invalid_locale")).format(new java.util.Date()));
+				new SimpleDateFormat("yyyy-MM-dd", new Locale("this_invalid_locale")).format(new java.util.Date()));
 		expected.append("!");
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}

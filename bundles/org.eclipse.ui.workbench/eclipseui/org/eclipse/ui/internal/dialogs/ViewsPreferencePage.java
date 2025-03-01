@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Platform.OS;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -183,8 +184,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		infoLabel.setLayoutData(GridDataFactory.defaultsFor(infoLabel).create());
 		createLabel(group, ""); //$NON-NLS-1$
 
-		boolean initialStateRescaleAtRuntime = PrefUtil.getAPIPreferenceStore()
-				.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME);
+		boolean initialStateRescaleAtRuntime = ConfigurationScope.INSTANCE.getNode(WorkbenchPlugin.PI_WORKBENCH)
+				.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, false);
 		rescaleAtRuntime = createCheckButton(group, WorkbenchMessages.RescaleAtRuntimeEnabled, initialStateRescaleAtRuntime);
 	}
 
@@ -383,10 +384,17 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		boolean isRescaleAtRuntimeChanged = false;
 		if (rescaleAtRuntime != null) {
-			boolean initialStateRescaleAtRuntime = PrefUtil.getAPIPreferenceStore()
-					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME);
+			IEclipsePreferences configurationScopeNode = ConfigurationScope.INSTANCE
+					.getNode(WorkbenchPlugin.PI_WORKBENCH);
+			boolean initialStateRescaleAtRuntime = configurationScopeNode
+					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, false);
 			isRescaleAtRuntimeChanged = initialStateRescaleAtRuntime != rescaleAtRuntime.getSelection();
-			apiStore.setValue(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, rescaleAtRuntime.getSelection());
+			configurationScopeNode.putBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME,
+					rescaleAtRuntime.getSelection());
+			try {
+				configurationScopeNode.flush();
+			} catch (BackingStoreException e) {
+			}
 		}
 
 		prefs.putBoolean(CTabRendering.USE_ROUND_TABS, useRoundTabs.getSelection());

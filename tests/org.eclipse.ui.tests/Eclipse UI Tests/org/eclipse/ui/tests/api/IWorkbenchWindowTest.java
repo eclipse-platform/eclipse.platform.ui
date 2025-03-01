@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,11 +14,15 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -196,5 +200,34 @@ public class IWorkbenchWindowTest extends UITestCase {
 		for (String id : ids) {
 			assertEquals(fWin.isApplicationMenu(id), false);
 		}
+	}
+
+	@Test
+	public void testRunJobInStatusLine() throws Throwable {
+		fWin.run(false, false, monitor -> {
+			monitor.beginTask("Task", 1);
+			assertStatusText("Task");
+		});
+		assertStatusText("");
+	}
+
+	@Test
+	public void testRunJobInStatusLineWithSubtasks() throws Throwable{
+		fWin.run(false, false, monitor -> {
+			monitor.beginTask("Task", 1);
+			assertStatusText("Task");
+			monitor.subTask("SubTask");
+			assertStatusText("Task: SubTask");
+			monitor.subTask("OtherSubTask");
+			assertStatusText("Task: OtherSubTask");
+		});
+		assertStatusText("");
+	}
+
+	private void assertStatusText(String text) {
+		StatusLineManager statusManager = ((WorkbenchWindow) fWin).getStatusLineManager();
+		Composite statusLine = (Composite) statusManager.getControl();
+		CLabel statusLabel = (CLabel) statusLine.getChildren()[0];
+		assertEquals("Status line was not updated.", text, statusLabel.getText());
 	}
 }

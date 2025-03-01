@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2015 db4objects Inc.  http://www.db4o.com
+ * Copyright (C) 2005, 2025 db4objects Inc.  http://www.db4o.com
  *
  *
  * This program and the accompanying materials
@@ -21,24 +21,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * RelaxedDuckType. Implements Duck Typing for Java.  ("If it walks like a duck,
- * quacks like a duck, it...").  Essentially allows programs to treat
- * objects from separate hierarchies as if they were designed with common
- * interfaces as long as they adhere to common naming conventions.
+ * RelaxedDuckType. Implements Duck Typing for Java. ("If it walks like a duck,
+ * quacks like a duck, it..."). Essentially allows programs to treat objects
+ * from separate hierarchies as if they were designed with common interfaces as
+ * long as they adhere to common naming conventions.
  * <p>
- * This version is the relaxed DuckType.  If a method in the interface is
- * not present on the underlying object, the proxy simply returns null.
+ * This version is the relaxed DuckType. If a method in the interface is not
+ * present on the underlying object, the proxy simply returns null.
  *
  * @author djo
  */
 public class RelaxedDuckType extends DuckType implements InvocationHandler {
 
 	public static Object implement(Class<?> interfaceToImplement, Object object) {
-		return Proxy.newProxyInstance(interfaceToImplement.getClassLoader(),
-				new Class[] {interfaceToImplement}, new RelaxedDuckType(object));
+		return Proxy.newProxyInstance(interfaceToImplement.getClassLoader(), new Class[] { interfaceToImplement },
+				new RelaxedDuckType(object));
 	}
 
-	public static boolean includes(Object object, String method, Class<?>[] args) {
+	public static boolean includes(Object object, String method, Class<?>... args) {
 		try {
 			object.getClass().getMethod(method, args);
 		} catch (NoSuchMethodException e) {

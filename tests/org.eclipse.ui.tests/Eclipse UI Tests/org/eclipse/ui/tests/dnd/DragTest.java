@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -164,10 +164,6 @@ public class DragTest extends UITestCaseWithResult {
 			file1 = FileUtil.createFile("DragTest1.txt", project); //$NON-NLS-1$
 			file2 = FileUtil.createFile("DragTest2.txt", project); //$NON-NLS-1$
 			file3 = FileUtil.createFile("DragTest3.txt", project); //$NON-NLS-1$
-
-			// Disable animations since they occur concurrently and can interferre
-			// with locating drop targets
-			setPreference(PrefUtil.getAPIPreferenceStore(), IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
 		}
 
 		page.resetPerspective();

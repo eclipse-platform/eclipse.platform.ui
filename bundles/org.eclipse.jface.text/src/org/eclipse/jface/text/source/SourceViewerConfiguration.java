@@ -30,6 +30,7 @@ import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.SurroundWithBracketsStrategy;
 import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -190,7 +191,7 @@ public class SourceViewerConfiguration {
 	 * @since 3.1
 	 */
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
-		return new IAutoEditStrategy[] { getAutoIndentStrategy(sourceViewer, contentType) };
+		return new IAutoEditStrategy[] { getAutoIndentStrategy(sourceViewer, contentType), new SurroundWithBracketsStrategy(sourceViewer) };
 	}
 
 	/**

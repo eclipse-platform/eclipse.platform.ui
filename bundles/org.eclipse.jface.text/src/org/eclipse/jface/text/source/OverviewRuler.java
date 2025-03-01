@@ -597,6 +597,13 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			fTextViewer= null;
 		});
 
+		fCanvas.addListener(SWT.ZoomChanged, e -> {
+			if (fBuffer != null) {
+				fBuffer.dispose();
+				fBuffer= null;
+			}
+		});
+
 		fCanvas.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent event) {
@@ -676,23 +683,27 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 				fBuffer= null;
 			}
 		}
-		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-
-		GC gc= new GC(fBuffer);
-		try {
-			gc.setBackground(fCanvas.getBackground());
-			gc.fillRectangle(0, 0, size.x, size.y);
-
-			cacheAnnotations();
-
-			doPaint(gc);
-
-		} finally {
-			gc.dispose();
+		if (fBuffer == null) {
+			fBuffer= new Image(fCanvas.getDisplay(), this::doPaint, size.x, size.y);
+		} else {
+			GC gc= new GC(fBuffer);
+			try {
+				doPaint(gc, size.x, size.y);
+			} finally {
+				gc.dispose();
+			}
 		}
 
 		dest.drawImage(fBuffer, 0, 0);
+	}
+
+	private void doPaint(GC gc, int width, int height) {
+		gc.setBackground(fCanvas.getBackground());
+		gc.fillRectangle(0, 0, width, height);
+
+		cacheAnnotations();
+
+		doPaint(gc);
 	}
 
 	private void cacheAnnotations() {

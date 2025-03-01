@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.DisposeEvent;
@@ -263,16 +264,32 @@ public class CommonViewer extends TreeViewer {
 	 * Sets this viewer's sorter and triggers refiltering and resorting of this
 	 * viewer's element. Passing <code>null</code> turns sorting off.
 	 *
-	 * @param sorter
-	 *            a viewer sorter, or <code>null</code> if none
+	 * @param sorter a viewer sorter, or <code>null</code> if none
+	 * @deprecated Use {@link #setComparator(ViewerComparator)} instead.
 	 */
 	@Override
+	@Deprecated(forRemoval = true, since = "2025-03")
 	public void setSorter(ViewerSorter sorter) {
 		if (sorter != null && sorter instanceof CommonViewerSorter commonSorter) {
 			commonSorter.setContentService(contentService);
 		}
 
 		super.setSorter(sorter);
+	}
+
+	/**
+	 * Sets this viewer's sorter and triggers refiltering and resorting of this
+	 * viewer's element. Passing <code>null</code> turns sorting off.
+	 *
+	 * @param comparator a viewer sorter, or <code>null</code> if none
+	 */
+	@Override
+	public void setComparator(ViewerComparator comparator) {
+		if (comparator != null && comparator instanceof CommonViewerSorter commonSorter) {
+			commonSorter.setContentService(contentService);
+		}
+
+		super.setComparator(comparator);
 	}
 
 	/**

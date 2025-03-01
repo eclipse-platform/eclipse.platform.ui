@@ -35,10 +35,12 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.ExportWizard;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.eclipse.ui.tests.SwtLeakTestWatcher;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
 
 /**
  * Tests whether the errors in wizards are handled properly
@@ -46,6 +48,8 @@ import org.junit.Test;
  * @since 3.3
  */
 public class WizardsStatusHandlingTestCase {
+	@Rule
+	public TestWatcher swtLeakTestWatcher = new SwtLeakTestWatcher();
 
 	private static int SEVERITY = IStatus.ERROR;
 
@@ -75,7 +79,7 @@ public class WizardsStatusHandlingTestCase {
 	}
 
 	private Shell getShell() {
-		return DialogCheck.getShell();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 
 	private IWorkbench getWorkbench() {

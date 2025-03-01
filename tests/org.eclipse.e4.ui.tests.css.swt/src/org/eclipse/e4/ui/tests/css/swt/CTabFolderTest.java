@@ -295,10 +295,11 @@ public class CTabFolderTest extends CSSSWTTestCase {
 	@Test
 	void testTopRightAsDescendentChild() {
 		ToolBar[] toolBars = createTestToolBars(
-				"CTabFolder.special ToolBar { background: #FF0000}\n" +
-						"CTabFolder ToolBar { background: #00FF00}\n" +
-						"CTabFolder.extraordinary ToolBar { background: #FFFFFF}\n" +
-				"ToolBar { background: #0000FF}");
+				"""
+					CTabFolder.special ToolBar { background: #FF0000}
+					CTabFolder ToolBar { background: #00FF00}
+					CTabFolder.extraordinary ToolBar { background: #FFFFFF}
+					ToolBar { background: #0000FF}""");
 
 		ToolBar barA = toolBars[0];
 		ToolBar barB = toolBars[1];
