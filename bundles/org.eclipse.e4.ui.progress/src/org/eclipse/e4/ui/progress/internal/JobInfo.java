@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2020 IBM Corporation and others.
+ * Copyright (c) 2003, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.ui.progress.IProgressConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
@@ -374,7 +375,16 @@ public class JobInfo extends JobTreeElement {
 
 	@Override
 	public boolean isCancellable() {
-		return super.isCancellable();
+		return super.isCancellable() || isJobCancellable();
+	}
+
+	private boolean isJobCancellable() {
+		Boolean cancellable = (Boolean) job.getProperty(IProgressConstants.CANCELLABLE);
+		// cancellable by default
+		if (cancellable == null) {
+			return true;
+		}
+		return cancellable;
 	}
 
 	@Override

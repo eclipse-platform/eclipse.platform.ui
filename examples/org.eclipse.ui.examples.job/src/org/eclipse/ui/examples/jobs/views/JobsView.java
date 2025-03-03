@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2019 IBM Corporation and others.
+ * Copyright (c) 2004, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,6 +45,7 @@ import org.eclipse.ui.examples.jobs.TestJobRule;
 import org.eclipse.ui.examples.jobs.UITestJob;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
@@ -59,6 +60,7 @@ public class JobsView extends ViewPart {
 	private Text quantityField, delayField, rescheduleDelay;
 	private Button schedulingRuleField;
 	private Button noPromptField;
+	private Button cancellableField;
 
 	protected void busyCursorWhile() {
 		try {
@@ -95,6 +97,7 @@ public class JobsView extends ViewPart {
 		boolean keepOne = keepOneField.getSelection();
 		boolean gotoAction = gotoActionField.getSelection();
 		boolean schedulingRule = schedulingRuleField.getSelection();
+		boolean cancellable = cancellableField.getSelection();
 
 		int groupIncrement = IProgressMonitor.UNKNOWN;
 		IProgressMonitor group = new NullProgressMonitor();
@@ -119,6 +122,8 @@ public class JobsView extends ViewPart {
 				result = new TestJob(duration, lock, failure, unknown,
 						reschedule, rescheduleWait);
 
+			result.setProperty(IProgressConstants2.CANCELLABLE, Boolean
+					.valueOf(cancellable));
 			result.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean
 					.valueOf(keep));
 			result.setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean
@@ -427,6 +432,13 @@ public class JobsView extends ViewPart {
 		noPromptField.setText("No Prompt"); //$NON-NLS-1$
 		noPromptField.setToolTipText("Set the IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY to true"); //$NON-NLS-1$
 		noPromptField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		// cancellable
+		cancellableField = new Button(group, SWT.CHECK);
+		cancellableField.setText("Cancellable"); //$NON-NLS-1$
+		cancellableField.setToolTipText("Whether the job can be cancelled by the user"); //$NON-NLS-1$
+		cancellableField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		cancellableField.setSelection(true);
 	}
 
 	protected void doRun(long duration, IProgressMonitor monitor) {

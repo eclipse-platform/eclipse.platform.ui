@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -636,6 +636,15 @@ public class ProgressInfoItem extends Composite {
 			actionButton.setDisabledImage(JFaceResources.getImage(DISABLED_STOP_IMAGE_KEY));
 
 		}
+
+		for (JobInfo jobInfo : getJobInfos()) {
+			// Hide cancel button if job not cancellable
+			if (!jobInfo.isCancellable()) {
+				actionBar.setVisible(false);
+				return;
+			}
+		}
+		actionBar.setVisible(true);
 
 		for (JobInfo jobInfo : getJobInfos()) {
 			// Only disable if there is an unresponsive operation

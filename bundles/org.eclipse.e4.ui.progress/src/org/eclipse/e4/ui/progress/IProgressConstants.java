@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -165,4 +165,15 @@ public interface IProgressConstants {
 			PROPERTY_PREFIX, "inTaskBarIcon"); //$NON-NLS-1$
 
 	public static final String RUN_IN_BACKGROUND = "RUN_IN_BACKGROUND"; //$NON-NLS-1$
+
+	/**
+	 * This property provides a hint to the progress UI to hide the "Cancel" button,
+	 * effectively making the job uncancellable by the user.
+	 * <p>
+	 * The property must be of type {@code Boolean}.
+	 * </p>
+	 *
+	 * @since 0.4.700
+	 */
+	QualifiedName CANCELLABLE = new QualifiedName(PROPERTY_PREFIX, "cancellable"); //$NON-NLS-1$
 }

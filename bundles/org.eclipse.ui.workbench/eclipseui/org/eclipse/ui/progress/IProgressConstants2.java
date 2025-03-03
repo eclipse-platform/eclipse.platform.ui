@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2020 IBM Corporation and others.
+ * Copyright (c) 2010, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,4 +60,15 @@ public interface IProgressConstants2 extends IProgressConstants {
 	 * </p>
 	 */
 	QualifiedName SHOW_IN_TASKBAR_ICON_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "inTaskBarIcon"); //$NON-NLS-1$
+
+	/**
+	 * This property provides a hint to the progress UI to hide the "Cancel" button,
+	 * effectively making the job uncancellable by the user.
+	 * <p>
+	 * The property must be of type {@code Boolean}.
+	 * </p>
+	 *
+	 * @since 3.135
+	 */
+	QualifiedName CANCELLABLE = new QualifiedName(IProgressConstants.PROPERTY_PREFIX, "cancellable"); //$NON-NLS-1$
 }

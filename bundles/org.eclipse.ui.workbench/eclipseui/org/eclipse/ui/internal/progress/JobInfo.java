@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2020 IBM Corporation and others.
+ * Copyright (c) 2003, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.progress.IProgressConstants2;
 
 /**
  * JobInfo is the class that keeps track of the tree structure for objects that
@@ -317,7 +318,16 @@ public class JobInfo extends JobTreeElement {
 
 	@Override
 	public boolean isCancellable() {
-		return super.isCancellable();
+		return super.isCancellable() || isJobCancellable();
+	}
+
+	private boolean isJobCancellable() {
+		Boolean cancellable = (Boolean) job.getProperty(IProgressConstants2.CANCELLABLE);
+		// cancellable by default
+		if (cancellable == null) {
+			return true;
+		}
+		return cancellable;
 	}
 
 	@Override
