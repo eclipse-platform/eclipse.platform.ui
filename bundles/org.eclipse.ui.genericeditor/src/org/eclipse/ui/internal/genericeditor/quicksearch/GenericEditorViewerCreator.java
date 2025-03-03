@@ -57,11 +57,14 @@ public class GenericEditorViewerCreator implements ITextViewerCreator {
 		private boolean fDoCollectStyles;
 		private TextPresentation fMergedStylesPresentation;
 
-		private boolean fScheduleMatchRangesPresentation = true;
-
 		public GenericEditorSourceViewerHandle(Composite parent) {
 			super(new SourceViewerConfigurer<>(GenericEditorViewer::new), parent);
 			fSourceViewer.addTextPresentationListener(this);
+			parent.addDisposeListener(e -> {
+				fMatchRanges = null;
+				fMergedStylesPresentation = null;
+				fSourceViewer.removeTextPresentationListener(this);
+			});
 		}
 
 		/*
@@ -72,34 +75,11 @@ public class GenericEditorViewerCreator implements ITextViewerCreator {
 		@Override
 		public void applyTextPresentation(TextPresentation textPresentation) {
 			if (fDoCollectStyles) {
-				StyleRange[] ranges = new StyleRange[textPresentation.getDenumerableRanges()];
-				int i = 0;
+				applyMatchStyles(textPresentation, true);
 				for (Iterator<StyleRange> iter = textPresentation.getAllStyleRangeIterator(); iter.hasNext();) {
-					ranges[i++] = iter.next();
+					fMergedStylesPresentation.mergeStyleRange((StyleRange) iter.next().clone());
 				}
-				mergeStylesToTextPresentation(fMergedStylesPresentation, ranges);
 			}
-			if (fScheduleMatchRangesPresentation) {
-				fScheduleMatchRangesPresentation = false;
-				fSourceViewer.getTextWidget().getDisplay().asyncExec(() -> applyMatchRangesTextPresentation());
-			}
-		}
-
-		private void mergeStylesToTextPresentation(TextPresentation textPresentation, StyleRange[] styleRanges) {
-			if (styleRanges != null && styleRanges.length > 0) {
-				// mergeStyleRanges() modifies passed ranges so we need to clone
-				var ranges = new StyleRange[styleRanges.length];
-				for (int i = 0; i < ranges.length; i++) {
-					ranges[i] = (StyleRange) styleRanges[i].clone();
-				}
-				textPresentation.mergeStyleRanges(ranges);
-			}
-		}
-
-		private void applyMatchRangesTextPresentation() {
-			applyMatchesStyles();
-			fScheduleMatchRangesPresentation = true;
-
 		}
 
 		@Override
@@ -117,11 +97,9 @@ public class GenericEditorViewerCreator implements ITextViewerCreator {
 				super.focusMatch(visibleRegion, revealedRange, matchLine, matchRange);
 			} else {
 				fDoCollectStyles = false;
-				fScheduleMatchRangesPresentation = false; // temporary disable scheduling match ranges presentation
 				super.focusMatch(visibleRegion, revealedRange, matchLine, matchRange);
 				// now apply collected styles
 				fSourceViewer.changeTextPresentation(fMergedStylesPresentation, false);
-				applyMatchRangesTextPresentation(); // also enables scheduling match ranges presentation
 				fDoCollectStyles = true;
 			}
 		}
@@ -131,12 +109,6 @@ public class GenericEditorViewerCreator implements ITextViewerCreator {
 
 		public GenericEditorViewer(Composite parent, CompositeRuler verticalRuler, int styles) {
 			super(parent, verticalRuler, styles);
-		}
-
-		@Override
-		public void refresh() {
-			System.out.println("LALALALALALAL"); //$NON-NLS-1$
-			// empty implementation
 		}
 
 		@Override

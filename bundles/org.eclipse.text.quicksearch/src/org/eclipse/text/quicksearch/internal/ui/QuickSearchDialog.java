@@ -1123,6 +1123,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			}
 		}
 		//empty selection or some error:
+		lastDocument = null;
 		replaceViewer(QuickSearchActivator.getDefault().getDefaultViewer(), file).setInput(null, null, null);
 		viewersSelectionToolBar.setVisible(false);
 	}

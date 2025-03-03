@@ -14,7 +14,6 @@
  *     Jozef Tomek - initial API and implementation
  *******************************************************************************/
 package org.eclipse.text.quicksearch.internal.ui;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.text.quicksearch.ITextViewerCreator;
@@ -31,13 +30,7 @@ public class DefaultSourceViewerCreator implements ITextViewerCreator {
 
 	@Override
 	public ITextViewerHandle createTextViewer(Composite parent) {
-		return new SourceViewerHandle<>(new SourceViewerConfigurer<>(SourceViewer::new), parent) {
-			@Override
-			public void focusMatch(IRegion visibleRegion, IRegion revealedRange, int matchLine, IRegion matchRange) {
-				super.focusMatch(visibleRegion, revealedRange, matchLine, matchRange);
-				applyMatchesStyles();
-			}
-		};
+		return new SourceViewerHandle<>(new SourceViewerConfigurer<>(SourceViewer::new), parent);
 	}
 
 }

@@ -26,6 +26,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
@@ -58,17 +59,35 @@ import org.eclipse.text.quicksearch.internal.ui.QuickSearchActivator;
  * <li>highlighting whole line by using {@link FixedLineHighlighter} (if a viewer provides one)
  * </ul>
  * <p>
- * This class uses {@link SourceViewerConfigurer} that does viewer creation and setup necessary for
+ * This class uses {@link ISourceViewerConfigurer} that does viewer creation and setup necessary for
  * aforementioned aspects.
  *
- * @since 1.3
+ * @since 1.4
  */
 public class SourceViewerHandle<T extends SourceViewer> implements ITextViewerHandle {
 
+	/**
+	 * Source viewer created by {@link ISourceViewerConfigurer}.
+	 */
 	protected final T fSourceViewer;
+	/**
+	 * Optional change ruler column provided by {@link ISourceViewerConfigurer}.
+	 */
 	protected final IChangeRulerColumn fChangeRulerColumn;
+	/**
+	 * Optional fixed line change annotation model for {@link #fChangeRulerColumn} in case it is provided.
+	 */
 	protected final FixedLineChangedAnnotationModel fFixedLineChangeModel;
+	/**
+	 * Optional fixed line highlighter provided by {@link ISourceViewerConfigurer}.
+	 */
 	protected final FixedLineHighlighter fMatchLineHighlighter;
+	/**
+	 * Highlighting styles for all matches in the input document previously passed to
+	 * {@link #setViewerInput(IDocument, StyleRange[], IFile) setViewerInput()}. Styles can be subsequently applied to
+	 * source viewer's text widget using {@link #applyMatchesStyles()} (called from default implementation of
+	 * {@link #focusMatch(IRegion, IRegion, int, IRegion) focusMatch()}) or {@link #applyMatchStyles(TextPresentation)}.
+	 */
 	protected StyleRange[] fMatchRanges = null;
 
 	/**
@@ -109,6 +128,17 @@ public class SourceViewerHandle<T extends SourceViewer> implements ITextViewerHa
 		fSourceViewer.setInput(document);
 	}
 
+	/**
+	 * Called from {@link #setViewerInput(IDocument, StyleRange[], IFile) setViewerInput()} to remember highlighting
+	 * styles for all matches in the input document. Styles can be subsequently applied to source viewer's text widget
+	 * using {@link #applyMatchesStyles()} (called from default implementation of
+	 * {@link #focusMatch(IRegion, IRegion, int, IRegion) focusMatch()}) or {@link #applyMatchStyles(TextPresentation)}.
+	 * @param allMatchesStyles common text styles to apply in order to highlight all found matches in the document file
+	 * the file contents of which is the document
+	 */
+	protected void setMatchesStyles(StyleRange[] allMatchesStyles) {
+	}
+
 	@Override
 	public void focusMatch(IRegion visibleRegion, IRegion revealedRange, int matchLine, IRegion matchRange) {
 		// limit content of the document that we can scroll to
@@ -134,13 +164,14 @@ public class SourceViewerHandle<T extends SourceViewer> implements ITextViewerHa
 			fFixedLineChangeModel.selectedMatchLine = matchLine;
 			fChangeRulerColumn.redraw();
 		}
-
+		applyMatchesStyles();
 	}
 
 	/**
 	 * Applies all matches highlighting styles previously passed to
-	 * {@link #setViewerInput(IDocument, StyleRange[], IFile) setViewerInput()} method considering projection of
-	 * model (document) ranges to source viewer's text widget ranges.
+	 * {@link #setViewerInput(IDocument, StyleRange[], IFile) setViewerInput()} method to source viewer's text widget
+	 * considering projection of model (document) ranges to text widget ranges. Styles are set using
+	 * {@link StyledText#setStyleRange(StyleRange)} thus replacing existing styles in the range.
 	 *
 	 * @see #setViewerInput(IDocument, StyleRange[], IFile)
 	 */
@@ -164,6 +195,39 @@ public class SourceViewerHandle<T extends SourceViewer> implements ITextViewerHa
 			return result;
 		}
 		return null;
+	}
+
+	/**
+	 * Applies all matches highlighting styles previously passed to
+	 * {@link #setViewerInput(IDocument, StyleRange[], IFile) setViewerInput()} method to <code>presentation</code>
+	 * considering presentation's extent. Styles either replace ({@link TextPresentation#replaceStyleRange(StyleRange)})
+	 * or are merged ({@link TextPresentation#mergeStyleRange(StyleRange)}) with text presentation's styles in the
+	 * particular ranges depending on <code>mergeStyles</code> parameter.
+	 *
+	 * @param mergeStyles <code>true</code> if the styles should be merged, <code>false</code> if they should replace
+	 * text presentation styles in the same ranges
+	 * @see #setViewerInput(IDocument, StyleRange[], IFile)
+	 */
+	protected void applyMatchStyles(TextPresentation presentation, boolean mergeStyles) {
+		if (fMatchRanges == null || fMatchRanges.length == 0) {
+			return;
+		}
+		var extent = presentation.getExtent();
+		int extentStart = extent.getOffset();
+		var tmpPresentation = new TextPresentation(fMatchRanges.length);
+		for (StyleRange styleRange : fMatchRanges) {
+			tmpPresentation.addStyleRange((StyleRange) styleRange.clone());
+		}
+		tmpPresentation.setResultWindow(extent);
+		for (Iterator<StyleRange> iter = tmpPresentation.getAllStyleRangeIterator(); iter.hasNext();) {
+			var style = iter.next();
+			style.start += extentStart;
+			if (mergeStyles) {
+			presentation.mergeStyleRange(style);
+			} else {
+				presentation.replaceStyleRange(style);
+			}
+		}
 	}
 
 	/**

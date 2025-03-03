@@ -53,8 +53,8 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
 /**
- * Implementation of source viewer factory for {@link SourceViewerHandle} that creates and does necessary setup of source viewer so that
- * it provides common aspects of quicksearch text viewers:
+ * Implementation of source viewer factory for {@link SourceViewerHandle} that creates and does necessary setup of
+ * source viewer so that it provides common aspects of quicksearch text viewers:
  * <ul>
  * <li>vertical ruler with line numbers supporting selected match line number highlighting
  * <li>selected match line highlighting

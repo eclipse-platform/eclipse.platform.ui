@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
  * quicksearch matches within content of their containing document.
  *
  * @see ITextViewerHandle
- * @since 1.3
+ * @since 1.4
  */
 public interface ITextViewerCreator {
 
