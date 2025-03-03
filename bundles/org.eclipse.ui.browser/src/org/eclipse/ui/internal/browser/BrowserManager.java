@@ -158,7 +158,7 @@ public class BrowserManager extends Observable {
 
 			StringWriter writer = new StringWriter();
 			memento.save(writer);
-			String xmlString = writer.getBuffer().toString();
+			String xmlString = new StringBuilder(writer.toString()).toString();
 			IScopeContext instanceScope = InstanceScope.INSTANCE;
 			IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
 			prefs.put("browsers", xmlString); //$NON-NLS-1$

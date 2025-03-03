@@ -415,7 +415,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		StringWriter writer = new StringWriter();
 		try {
 			memento.save(writer);
-			settings.put(HISTORY_SETTINGS, writer.getBuffer().toString());
+			settings.put(HISTORY_SETTINGS, new StringBuilder(writer.getBuffer().toString()).toString());
 		} catch (IOException e) {
 			// Simply don't store the settings
 			StatusManager.getManager().handle(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,

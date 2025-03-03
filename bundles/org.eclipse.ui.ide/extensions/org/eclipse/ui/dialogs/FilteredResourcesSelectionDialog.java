@@ -281,7 +281,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		StringWriter writer = new StringWriter();
 		try {
 			memento.save(writer);
-			settings.put(WORKINGS_SET_SETTINGS, writer.getBuffer().toString());
+			settings.put(WORKINGS_SET_SETTINGS, new StringBuilder(writer.getBuffer().toString()).toString());
 		} catch (IOException e) {
 			StatusManager.getManager()
 					.handle(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, "", e)); //$NON-NLS-1$
