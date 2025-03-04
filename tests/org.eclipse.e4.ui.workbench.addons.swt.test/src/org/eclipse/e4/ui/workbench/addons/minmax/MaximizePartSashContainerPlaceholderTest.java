@@ -1,12 +1,9 @@
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -42,48 +39,23 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-@RunWith(Parameterized.class)
 public class MaximizePartSashContainerPlaceholderTest {
-
-	@Parameters(name = "org.eclipse.ui.editorss: {0}")
-	public static Collection<Object[]> data() {
-		final List<Object[]> data = new ArrayList<>();
-		// useCorrectPlaceholderId
-		data.add(new Object[] { true });
-		data.add(new Object[] { false });
-
-		return data;
-	}
 
 	private MPartStack partStackMain;
 	private MPlaceholder placeholderMain;
 
-	private boolean useCorrectPlaceholderId;
 	private Shell shell;
 
-	public MaximizePartSashContainerPlaceholderTest(boolean useCorrectPlaceholderId) {
-		this.useCorrectPlaceholderId = useCorrectPlaceholderId;
-
-	}
-
-	@Before
-	public void before() {
-		prepareApplicationModel();
-	}
-
-	@After
+	@AfterEach
 	public void tearDown() {
 		shell.dispose();
 	}
 
-	private void prepareApplicationModel() {
+	private void prepareApplicationModel(boolean useCorrectPlaceholderId) {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 
@@ -198,12 +170,14 @@ public class MaximizePartSashContainerPlaceholderTest {
 
 	}
 
-	@Test
-	public void testMainPlaceholderMax() {
+	@ParameterizedTest
+	@ValueSource(booleans = { true, false })
+	public void testMainPlaceholderMax(boolean useCorrectPlaceholderId) {
+		prepareApplicationModel(useCorrectPlaceholderId);
+
 		placeholderMain.getTags().add(IPresentationEngine.MAXIMIZED);
 
 		assertTrue(partStackMain.getTags().contains(
 				IPresentationEngine.MINIMIZED_BY_ZOOM));
 	}
-
 }

@@ -1,13 +1,11 @@
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -45,76 +43,29 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class MaximizeBugTest {
 
-	@Parameters(name = "org.eclipse.ui.editorss: {0} - subwindowPerspective: {1} - maximizeMainFirst: {2} - addSubwindowToPerspective:{3}")
-	public static Collection<Object[]> data() {
-		final List<Object[]> data = new ArrayList<>();
-		// useCorrectPlaceholderId,usePerspektiveInSubWindow,maximizeMainFirst,addSubwindowToPerspective
-		// working
-		data.add(new Object[] { true, true, true, true });
-		data.add(new Object[] { true, true, false, true });
-		data.add(new Object[] { true, false, true, true });
-		data.add(new Object[] { true, false, false, true });
-
-		data.add(new Object[] { true, true, true, false });
-		data.add(new Object[] { true, true, false, false });
-		// not working
-		data.add(new Object[] { true, false, true, false });
-		data.add(new Object[] { true, false, false, false });
-
-		// Extremely evil
-		// data.add(new Object[] { false, true,true,true });
-		// data.add(new Object[] { false, true,false,true });
-		// data.add(new Object[] { false, false,true,true });
-		// data.add(new Object[] { false, false,false,true });
-		// data.add(new Object[] { false, true,true,false });
-		// data.add(new Object[] { false, true,false,false });
-		// data.add(new Object[] { false, false,true,false });
-		// data.add(new Object[] { false, false,false,false });
-
-		return data;
-	}
+	private static final int USE_CORRECT_PLACEHOLDER_ID = 0;
+	private static final int USE_PERSPECTIVE_IN_SUBWINDOW = 1;
+	private static final int MAXIMIZE_MAIN_FIRST = 2;
+	private static final int ADD_SUBWINDOW_TO_PERSPECTIVE = 3;
 
 	private MPartStack partStackMain;
 	private MPlaceholder placeholderMain;
 
 	private MPartStack partStackSub;
 	private MPlaceholder placeholderSub;
-	private boolean useCorrectPlaceholderId;
-	private boolean usePerspektiveInSubWindow;
-	private boolean maximizeMainFirst;
-	private boolean addSubwindowToPerspective;
 	private Shell shell;
 	private MTrimmedWindow windowSub;
 	private IEclipseContext appContext;
 	private IPresentationEngine renderer;
 	private MTrimmedWindow window;
 
-	public MaximizeBugTest(boolean useCorrectPlaceholderId,
-			boolean usePerspektiveInSubWindow, boolean maximizeMainFirst,
-			boolean addSubwindowToPerspective) {
-		this.useCorrectPlaceholderId = useCorrectPlaceholderId;
-		this.usePerspektiveInSubWindow = usePerspektiveInSubWindow;
-		this.maximizeMainFirst = maximizeMainFirst;
-		this.addSubwindowToPerspective = addSubwindowToPerspective;
-
-	}
-
-	@Before
-	public void before() {
-		prepareApplicationModel();
-	}
-
-	@After
+	@AfterEach
 	public void tearDown() {
 		renderer.removeGui(window);
 		renderer.stop();
@@ -122,7 +73,9 @@ public class MaximizeBugTest {
 		appContext.dispose();
 	}
 
-	private void prepareApplicationModel() {
+	private void prepareApplicationModel(boolean useCorrectPlaceholderId, boolean usePerspektiveInSubWindow,
+			boolean addSubwindowToPerspective) {
+
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 
@@ -286,8 +239,12 @@ public class MaximizeBugTest {
 		shell = (Shell) renderer.createGui(window);
 	}
 
-	@Test
-	public void testMainPlaceholderMax() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPlaceholderMax(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
 		placeholderMain.getTags().add(IPresentationEngine.MAXIMIZED);
 
 		assertTrue(partStackMain.getTags().contains(
@@ -304,8 +261,12 @@ public class MaximizeBugTest {
 				IPresentationEngine.MAXIMIZED));
 	}
 
-	@Test
-	public void testMainPartStackMax() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPartStackMax(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
 		partStackMain.getTags().add(IPresentationEngine.MAXIMIZED);
 
 		assertTrue(placeholderMain.getTags().contains(
@@ -322,8 +283,12 @@ public class MaximizeBugTest {
 				IPresentationEngine.MAXIMIZED));
 	}
 
-	@Test
-	public void testSubPlaceholderMax() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testSubPlaceholderMax(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
 		placeholderSub.getTags().add(IPresentationEngine.MAXIMIZED);
 
 		assertTrue(partStackSub.getTags().contains(
@@ -340,8 +305,12 @@ public class MaximizeBugTest {
 				IPresentationEngine.MAXIMIZED));
 	}
 
-	@Test
-	public void testSubPartStackMax() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testSubPartStackMax(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
 		partStackSub.getTags().add(IPresentationEngine.MAXIMIZED);
 
 		assertTrue(placeholderSub.getTags().contains(
@@ -358,8 +327,12 @@ public class MaximizeBugTest {
 				IPresentationEngine.MAXIMIZED));
 	}
 
-	@Test
-	public void testMainPlaceholderMaxThenUnzoom() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPlaceholderMaxThenUnzoom(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
 		placeholderMain.getTags().add(IPresentationEngine.MAXIMIZED);
 
 		assertTrue(partStackMain.getTags().contains(
@@ -393,8 +366,12 @@ public class MaximizeBugTest {
 				IPresentationEngine.MAXIMIZED));
 	}
 
-	@Test
-	public void testMainPartStackMaxThenUnzoom() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPartStackMaxThenUnzoom(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
 		partStackMain.getTags().add(IPresentationEngine.MAXIMIZED);
 
 		assertTrue(placeholderMain.getTags().contains(
@@ -427,8 +404,12 @@ public class MaximizeBugTest {
 				IPresentationEngine.MAXIMIZED));
 	}
 
-	@Test
-	public void testSubPlaceholderMaxThenUnzoom() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testSubPlaceholderMaxThenUnzoom(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
 		placeholderSub.getTags().add(IPresentationEngine.MAXIMIZED);
 
 		assertTrue(partStackSub.getTags().contains(
@@ -461,8 +442,12 @@ public class MaximizeBugTest {
 				IPresentationEngine.MAXIMIZED));
 	}
 
-	@Test
-	public void testSubPartStackMaxThenUnzoom() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testSubPartStackMaxThenUnzoom(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
 		partStackSub.getTags().add(IPresentationEngine.MAXIMIZED);
 
 		assertTrue(placeholderSub.getTags().contains(
@@ -495,9 +480,13 @@ public class MaximizeBugTest {
 				IPresentationEngine.MAXIMIZED));
 	}
 
-	@Test
-	public void testMainPlaceholderMaxSubPlaceholderMax() {
-		if (maximizeMainFirst) {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPlaceholderMaxSubPlaceholderMax(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			placeholderMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			placeholderSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -512,9 +501,13 @@ public class MaximizeBugTest {
 
 	}
 
-	@Test
-	public void testMainPlaceholderMaxSubPartStackMax() {
-		if (maximizeMainFirst) {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPlaceholderMaxSubPartStackMax(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			placeholderMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			partStackSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -529,10 +522,13 @@ public class MaximizeBugTest {
 
 	}
 
-	@Test
-	public void testMainPartStackMaxSubPlaceholderMax() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPartStackMaxSubPlaceholderMax(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
 
-		if (maximizeMainFirst) {
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			partStackMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			placeholderSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -547,10 +543,13 @@ public class MaximizeBugTest {
 
 	}
 
-	@Test
-	public void testMainPartStackMaxSubPartStackMax() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPartStackMaxSubPartStackMax(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
 
-		if (maximizeMainFirst) {
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			partStackMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			partStackSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -565,10 +564,13 @@ public class MaximizeBugTest {
 
 	}
 
-	@Test
-	public void testMainPlaceholderMaxSubPlaceholderMaxUnzoomMain() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPlaceholderMaxSubPlaceholderMaxUnzoomMain(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
 
-		if (maximizeMainFirst) {
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			placeholderMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			placeholderSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -602,10 +604,13 @@ public class MaximizeBugTest {
 
 	}
 
-	@Test
-	public void testMainPlaceholderMaxSubPartStackMaxUnzoomMain() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPlaceholderMaxSubPartStackMaxUnzoomMain(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
 
-		if (maximizeMainFirst) {
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			placeholderMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			partStackSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -639,10 +644,13 @@ public class MaximizeBugTest {
 
 	}
 
-	@Test
-	public void testMainPartStackMaxSubPlaceholderMaxUnzoomMain() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPartStackMaxSubPlaceholderMaxUnzoomMain(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
 
-		if (maximizeMainFirst) {
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			partStackMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			placeholderSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -675,10 +683,13 @@ public class MaximizeBugTest {
 
 	}
 
-	@Test
-	public void testMainPartStackMaxSubPartStackMaxUnzoomMain() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPartStackMaxSubPartStackMaxUnzoomMain(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
 
-		if (maximizeMainFirst) {
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			partStackMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			partStackSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -710,10 +721,13 @@ public class MaximizeBugTest {
 
 	}
 
-	@Test
-	public void testMainPlaceholderMaxSubPlaceholderMaxUnzoomSub() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPlaceholderMaxSubPlaceholderMaxUnzoomSub(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
 
-		if (maximizeMainFirst) {
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			placeholderMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			placeholderSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -747,10 +761,13 @@ public class MaximizeBugTest {
 
 	}
 
-	@Test
-	public void testMainPlaceholderMaxSubPartStackMaxUnzoomSub() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPlaceholderMaxSubPartStackMaxUnzoomSub(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
 
-		if (maximizeMainFirst) {
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			placeholderMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			partStackSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -784,10 +801,13 @@ public class MaximizeBugTest {
 
 	}
 
-	@Test
-	public void testMainPartStackMaxSubPlaceholderMaxUnzoomSub() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPartStackMaxSubPlaceholderMaxUnzoomSub(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
 
-		if (maximizeMainFirst) {
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			partStackMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			placeholderSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -820,10 +840,13 @@ public class MaximizeBugTest {
 
 	}
 
-	@Test
-	public void testMainPartStackMaxSubPartStackMaxUnzoomSub() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testMainPartStackMaxSubPartStackMaxUnzoomSub(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
 
-		if (maximizeMainFirst) {
+		if (parameters[MAXIMIZE_MAIN_FIRST]) {
 			partStackMain.getTags().add(IPresentationEngine.MAXIMIZED);
 			partStackSub.getTags().add(IPresentationEngine.MAXIMIZED);
 		} else {
@@ -862,8 +885,12 @@ public class MaximizeBugTest {
 				IPresentationEngine.MINIMIZED));
 	}
 
-	@Test
-	public void testSubWindowWithSubWindowMaximizeStack() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testSubWindowWithSubWindowMaximizeStack(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
 		MUIElement[] subWindowElements = prepareSubWindow();
 
 		partStackSub.getTags().add(IPresentationEngine.MAXIMIZED);
@@ -879,8 +906,12 @@ public class MaximizeBugTest {
 		}
 	}
 
-	@Test
-	public void testSubWindowWithSubWindowMaximizePlaceholder() {
+	@ParameterizedTest
+	@MethodSource("createTestParameters")
+	public void testSubWindowWithSubWindowMaximizePlaceholder(boolean[] parameters) {
+		prepareApplicationModel(parameters[USE_CORRECT_PLACEHOLDER_ID], parameters[USE_PERSPECTIVE_IN_SUBWINDOW],
+				parameters[ADD_SUBWINDOW_TO_PERSPECTIVE]);
+
 		MUIElement[] subWindowElements = prepareSubWindow();
 
 		placeholderSub.getTags().add(IPresentationEngine.MAXIMIZED);
@@ -928,5 +959,39 @@ public class MaximizeBugTest {
 		subSubWindow.getSharedElements().add(areaSubSub);
 		windowSub.getWindows().add(subSubWindow);
 		return new MUIElement[] { partStackSubSub, placeholderSubSub };
+	}
+
+	/**
+	 * All parameterized test methods receive their parameters from this static
+	 * method.<br />
+	 * <br />
+	 * The {@code boolean} arrays returned consist of
+	 * <li>use correct placeholder id for editor</li>
+	 * <li>use sub-window perspective</li>
+	 * <li>maximize main first</li>
+	 * <li>add sub-window to perspective</li>
+	 *
+	 * @return a stream of boolean[]
+	 */
+	static Stream<boolean[]> createTestParameters() {
+		return Stream.of( //
+				new boolean[] { true, true, true, true }, //
+				new boolean[] { true, true, false, true }, //
+				new boolean[] { true, false, true, true }, //
+				new boolean[] { true, false, false, true }, //
+				new boolean[] { true, true, true, false }, //
+				new boolean[] { true, true, false, false }, //
+				new boolean[] { true, false, true, false }, //
+				new boolean[] { true, false, false, false } //
+				// Extremely evil
+				// new boolean[] { false, true, true, true }, //
+				// new boolean[] { false, true, false, true }, //
+				// new boolean[] { false, false, true, true }, //
+				// new boolean[] { false, false, false, true }, //
+				// new boolean[] { false, true, true, false }, //
+				// new boolean[] { false, true, false, false }, //
+				// new boolean[] { false, false, true, false }, //
+				// new boolean[] { false, false, false, false } //
+		);
 	}
 }
