@@ -1,7 +1,7 @@
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,9 +41,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MaximizableChildrenTag {
 
@@ -57,12 +57,12 @@ public class MaximizableChildrenTag {
 	private MTrimmedWindow window;
 	private IEclipseContext appContext;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		prepareApplicationModel();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		renderer.removeGui(window);
 		renderer.stop();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2024 Vector Informatik GmbH and others.
+ * Copyright (c) 2024, 2025 Vector Informatik GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.addons.cleanupaddon;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.function.Supplier;
 
-import org.eclipse.core.runtime.Platform.OS;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.UISynchronize;
@@ -56,9 +55,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 public class CleanupAddonTest {
 	private static final Duration TIMEOUT = Duration.ofSeconds(30);
@@ -74,12 +75,12 @@ public class CleanupAddonTest {
 	private MTrimmedWindow window;
 	private IEclipseContext appContext;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		prepareApplicationModel();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		renderer.removeGui(window);
 		renderer.stop();
@@ -188,12 +189,10 @@ public class CleanupAddonTest {
 		shell = (Shell) renderer.createGui(window);
 	}
 
+	@DisabledOnOs(value = { OS.MAC }, //
+			disabledReason = "not working reliably on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/1784")
 	@Test
 	public void testRemovingPrimaryDataStackTransfersToRemainingStack() {
-		assumeFalse(
-				"not working reliably on Mac, see https://github.com/eclipse-platform/eclipse.platform.ui/issues/1784",
-				OS.isMac());
-
 		PartStackUtil.initializeAsPrimaryDataStack(partStack1);
 		assertTrue(PartStackUtil.isPrimaryDataStack(partStack1));
 		assertFalse(PartStackUtil.isPrimaryDataStack(partStack2));
@@ -218,5 +217,4 @@ public class CleanupAddonTest {
 			Display.getCurrent().readAndDispatch();
 		}
 	}
-
 }
