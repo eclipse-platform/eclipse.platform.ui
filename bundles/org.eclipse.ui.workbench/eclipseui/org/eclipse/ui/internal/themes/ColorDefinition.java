@@ -14,11 +14,11 @@
 package org.eclipse.ui.internal.themes;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorDefinitionOverridable;
 import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.themes.ColorUtil;
 
@@ -111,8 +111,8 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 				parsedValue = ColorUtil.getColorValue(rawValue);
 			} catch (DataFormatException e) {
 				parsedValue = DEFAULT_COLOR_VALUE;
-				IStatus status = StatusUtil.newStatus(IStatus.WARNING,
-						"Could not parse value for theme color " + getId(), e); //$NON-NLS-1$
+				IStatus status = Status
+						.warning("Could not parse value for theme color " + getId() + ":  \"" + rawValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				StatusManager.getManager().handle(status, StatusManager.LOG);
 			}
 		}
