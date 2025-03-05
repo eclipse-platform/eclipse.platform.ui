@@ -820,8 +820,14 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 					if (splashShell == null)
 						return;
-					if (background != null)
+					if (background != null) {
 						splashShell.setBackgroundImage(background);
+						Rectangle imageBounds = background.getBounds();
+						Rectangle shellBounds = splashShell.getBounds();
+						if (imageBounds.width > shellBounds.width || imageBounds.height > shellBounds.height) {
+							splashShell.setSize(imageBounds.width, imageBounds.height);
+						}
+					}
 				}
 
 				Dictionary<String, Object> properties = new Hashtable<>();
