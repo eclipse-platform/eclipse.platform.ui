@@ -37,6 +37,7 @@ import org.eclipse.e4.ui.bindings.BindingServiceAddon;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.jface.bindings.Binding;
@@ -64,6 +65,7 @@ public class BindingLookupTest {
 	private static final String TEST_ID2 = "test.id2";
 
 	private IEclipseContext workbenchContext;
+	private MApplication application;
 
 	private void defineCommands(IEclipseContext context) {
 		ECommandService cs = workbenchContext.get(ECommandService.class);
@@ -79,7 +81,7 @@ public class BindingLookupTest {
 		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
 		ContextInjectionFactory.make(ContextServiceAddon.class, workbenchContext);
 		ContextInjectionFactory.make(BindingServiceAddon.class, workbenchContext);
-
+		application = globalContext.get(MApplication.class);
 		defineCommands(workbenchContext);
 		defineContexts(workbenchContext);
 		defineBindingTables(workbenchContext);
@@ -100,9 +102,9 @@ public class BindingLookupTest {
 	private void defineBindingTables(IEclipseContext context) {
 		BindingTableManager btm = context.get(BindingTableManager.class);
 		ContextManager cm = context.get(ContextManager.class);
-		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG_AND_WINDOW)));
-		btm.addTable(new BindingTable(cm.getContext(ID_WINDOW)));
-		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG)));
+		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG_AND_WINDOW), application));
+		btm.addTable(new BindingTable(cm.getContext(ID_WINDOW), application));
+		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG), application));
 	}
 
 	@After
