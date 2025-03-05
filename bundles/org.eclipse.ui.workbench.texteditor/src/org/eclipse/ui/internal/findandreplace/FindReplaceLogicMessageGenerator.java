@@ -41,22 +41,12 @@ public class FindReplaceLogicMessageGenerator implements IFindReplaceStatusVisit
 	@Override
 	public String visit(FindStatus status) {
 		FindStatus.StatusCode messageCode = status.getMessageCode();
-		String message;
-		switch (messageCode) {
-		case NO_MATCH:
-			message = FindReplaceMessages.FindReplace_Status_noMatch_label;
-			break;
-		case WRAPPED:
-			message = FindReplaceMessages.FindReplace_Status_wrapped_label;
-			break;
-		case READONLY:
-			message = FindReplaceMessages.FindReplaceDialog_read_only;
-			break;
-		default:
-			message = ""; //$NON-NLS-1$
-		}
-
-		return message;
+		return switch (messageCode) {
+			case NO_MATCH -> FindReplaceMessages.FindReplace_Status_noMatch_label;
+			case WRAPPED -> FindReplaceMessages.FindReplace_Status_wrapped_label;
+			case READONLY -> FindReplaceMessages.FindReplaceDialog_read_only;
+			default -> ""; //$NON-NLS-1$
+		};
 	}
 
 	@Override
