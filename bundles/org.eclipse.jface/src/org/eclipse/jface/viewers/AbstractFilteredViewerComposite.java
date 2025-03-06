@@ -84,6 +84,7 @@ public abstract class AbstractFilteredViewerComposite<T extends ViewerFilter> ex
 	 */
 	public AbstractFilteredViewerComposite(Composite parent, int style, long refreshJobDelayInMillis) {
 		super(parent, style);
+		this.parent = parent;
 		this.refreshJobDelayInMillis = refreshJobDelayInMillis;
 	}
 

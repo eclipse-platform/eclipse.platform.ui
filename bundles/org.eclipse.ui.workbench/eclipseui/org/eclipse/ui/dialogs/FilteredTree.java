@@ -135,7 +135,6 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 	 */
 	public FilteredTree(Composite parent, boolean useNewLook, boolean useFastHashLookup) {
 		super(parent, SWT.NONE, DEFAULT_REFRESH_TIME);
-		this.parent = parent;
 		if (treeViewer != null) {
 			treeViewer.setUseHashlookup(useFastHashLookup);
 		}
@@ -180,7 +179,6 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter, boolean useNewLook,
 			boolean useFastHashLookup, long refreshJobDelayInMillis) {
 		super(parent, SWT.NONE, refreshJobDelayInMillis);
-		this.parent = parent;
 		init(treeStyle, filter);
 		if (treeViewer != null) {
 			treeViewer.setUseHashlookup(useFastHashLookup);
@@ -211,7 +209,6 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 	@Deprecated
 	protected FilteredTree(Composite parent) {
 		super(parent, SWT.NONE, DEFAULT_REFRESH_TIME);
-		this.parent = parent;
 	}
 
 	/**
