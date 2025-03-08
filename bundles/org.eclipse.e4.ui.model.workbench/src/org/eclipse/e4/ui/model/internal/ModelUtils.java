@@ -198,6 +198,7 @@ public class ModelUtils {
 					list.add(element);
 				} else {
 					list.add(index, element);
+					index++;
 				}
 			}
 		}
