@@ -78,6 +78,12 @@ public class CodeMiningManager implements Runnable {
 	private IProgressMonitor fMonitor;
 
 	/**
+	 * Debug option for rendering code minings.
+	 */
+	public static final boolean DEBUG_RENDER= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text/debug/CodeMining/render")); //$NON-NLS-1$ //$NON-NLS-2$
+
+
+	/**
 	 * Constructor of codemining manager with the given arguments.
 	 *
 	 * @param viewer                   the source viewer
@@ -245,6 +251,11 @@ public class CodeMiningManager implements Runnable {
 			// done.
 			return;
 		}
+
+		if (DEBUG_RENDER) {
+			System.out.println("CodeMiningManager.renderCodeMinings() start"); //$NON-NLS-1$
+		}
+
 		Set<ICodeMiningAnnotation> annotationsToRedraw= new HashSet<>();
 		Set<AbstractInlinedAnnotation> currentAnnotations= new HashSet<>();
 		// Loop for grouped code minings
@@ -287,6 +298,10 @@ public class CodeMiningManager implements Runnable {
 		fInlinedAnnotationSupport.updateAnnotations(currentAnnotations);
 		// redraw the existing codemining annotations since their content can change
 		annotationsToRedraw.stream().forEach(ICodeMiningAnnotation::redraw);
+
+		if (DEBUG_RENDER) {
+			System.out.println("renderCodeMinings end of " + annotationsToRedraw.size() + " mining annotations"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	/**
