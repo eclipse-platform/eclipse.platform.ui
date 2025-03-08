@@ -186,7 +186,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			if (url != null)
 				setTitleToolTip(url.getFile());
 
-			imageDescriptor = ImageResourceManager.getImageDescriptor("$nl$/icons/obj16/" + "internal_browser.png"); //$NON-NLS-1$ //$NON-NLS-2$
+			imageDescriptor = ImageResourceManager.getImageDescriptor("$nl$/icons/obj16/" + "internal_browser.svg"); //$NON-NLS-1$ //$NON-NLS-2$
 			//addResourceListener(file);
 		} else if (input instanceof WebBrowserEditorInput) {
 			WebBrowserEditorInput wbei = (WebBrowserEditorInput) input;
