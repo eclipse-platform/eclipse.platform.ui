@@ -79,7 +79,7 @@ public class ImportExistingArchiveProjectFilterTest extends UITestCase {
 		super.doTearDown();
 	}
 
-	// Testcase for Github Issue
+	// Testcase for GitHub Issue
 	// https://github.com/eclipse-platform/eclipse.platform.ui/issues/748
 	@Test
 	public void testFolderVisibilityPostZipProjectImport()
