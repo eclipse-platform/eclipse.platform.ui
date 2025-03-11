@@ -20,7 +20,7 @@ You can ask questions on the [Eclipse JFace newsgroup](http://www.eclipse.org/ne
 
 ### How do I report a bug?
 
-Create an issue on [Github](https://github.com/eclipse-platform/eclipse.platform.ui/issues).
+Create an issue on [GitHub](https://github.com/eclipse-platform/eclipse.platform.ui/issues).
 
 ### Where can I find examples of how to use data binding?
 
