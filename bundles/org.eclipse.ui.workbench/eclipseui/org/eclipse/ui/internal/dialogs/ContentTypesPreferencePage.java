@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 IBM Corporation and others.
+ * Copyright (c) 2005, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -352,10 +353,40 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 		editorAssociationsViewer = new TableViewer(composite);
 		editorAssociationsViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		editorAssociationsViewer.setContentProvider((IStructuredContentProvider) arg0 -> {
-			if (arg0 instanceof IContentType) {
-				return editorRegistry.getEditors(null, (IContentType) arg0);
+			if (!(arg0 instanceof IContentType)) {
+				return new Object[0];
 			}
-			return new Object[0];
+
+			List<IEditorDescriptor> editorList = new ArrayList<>(
+					Arrays.asList(editorRegistry.getEditors(null, (IContentType) arg0)));
+
+			IEditorDescriptor genericEditor = null;
+			int index = -1;
+			for (int i = 0; i < editorList.size(); i++) {
+				if ("org.eclipse.ui.genericeditor.GenericEditor".equals(editorList.get(i).getId())) { //$NON-NLS-1$
+					genericEditor = editorList.get(i);
+					index = i;
+					break;
+				}
+			}
+
+			if (genericEditor != null) {
+				IContentType defaultContentType = (IContentType) editorAssociationsViewer.getInput();
+				IPreferenceStore defaultStore = WorkbenchPlugin.getDefault().getPreferenceStore();
+				String defaultKey = IPreferenceConstants.DEFAULT_EDITOR_FOR_CONTENT_TYPE + defaultContentType.getId();
+
+				if (!genericEditor.getId().equals(defaultStore.getString(defaultKey))) {
+					defaultStore.setValue(defaultKey, genericEditor.getId());
+				}
+
+				if (index > 0) {
+					editorList.remove(index);
+					editorList.add(0, genericEditor);
+				}
+			}
+
+			editorAssociationsViewer.refresh();
+			return editorList.toArray(new IEditorDescriptor[0]);
 		});
 		editorAssociationsViewer.setLabelProvider(
 				createTextImageProvider(element -> {
