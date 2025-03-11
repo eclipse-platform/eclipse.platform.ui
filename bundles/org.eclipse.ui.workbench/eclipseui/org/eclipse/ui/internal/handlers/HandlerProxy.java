@@ -278,7 +278,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 		}
 
 		if (loadException != null)
-			throw new ExecutionException("Exception occured when loading the handler", loadException); //$NON-NLS-1$
+			throw new ExecutionException("Exception occurred when loading the handler", loadException); //$NON-NLS-1$
 
 		return null;
 	}

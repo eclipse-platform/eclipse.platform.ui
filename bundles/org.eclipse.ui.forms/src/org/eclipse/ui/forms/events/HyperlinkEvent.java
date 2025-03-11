@@ -63,7 +63,7 @@ public final class HyperlinkEvent extends TypedEvent {
 	}
 	/**
 	 * Returns the value of the keyboard state mask present when
-	 * the event occured, or SWT.NULL for no modifiers.
+	 * the event occurred, or SWT.NULL for no modifiers.
 	 * @return the keyboard state mask or <code>SWT.NULL</code>.
 	 */
 	public int getStateMask() {

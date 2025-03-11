@@ -250,7 +250,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 	protected abstract IBaseLabelProvider internalGetLabelProvider() throws CoreException;
 
 	/**
-	 * A CoreException has occured. Inform the user and disable the receiver.
+	 * A CoreException has occurred. Inform the user and disable the receiver.
 	 */
 
 	protected void handleCoreException(CoreException exception) {
@@ -261,7 +261,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 	}
 
 	/**
-	 * A crash has occured. Disable the receiver without notification.
+	 * A crash has occurred. Disable the receiver without notification.
 	 */
 	public void crashDisable() {
 		this.enabled = false;

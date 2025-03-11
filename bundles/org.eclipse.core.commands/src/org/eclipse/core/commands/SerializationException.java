@@ -16,7 +16,7 @@ package org.eclipse.core.commands;
 import org.eclipse.core.commands.common.CommandException;
 
 /**
- * Signals that an exception occured while serializing a
+ * Signals that an exception occurred while serializing a
  * {@link ParameterizedCommand} to a string or deserializing a String to a
  * {@link ParameterizedCommand}.
  * <p>

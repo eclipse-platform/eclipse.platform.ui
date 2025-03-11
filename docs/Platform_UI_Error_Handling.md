@@ -371,11 +371,11 @@ The basic idea is that even unexperienced user should be able to understand what
 *   Job reported an error. Display message informing which job, and primary message.
 
 
-*   Multiple errors occured. On the list should be displayed job name or primary message of the status. In the title primary message should appear for jobs and secondary for statuses.
+*   Multiple errors occurred. On the list should be displayed job name or primary message of the status. In the title primary message should appear for jobs and secondary for statuses.
 
 ![Manystatuses.jpg](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Manystatuses.jpg)
 
-*   One stastus has been reported and support is available.
+*   One status has been reported and support is available.
 
 after pressing bug icon:
 

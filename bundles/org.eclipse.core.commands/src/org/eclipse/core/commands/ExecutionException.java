@@ -16,7 +16,7 @@ package org.eclipse.core.commands;
 import org.eclipse.core.commands.common.CommandException;
 
 /**
- * Signals that an exception occured during the execution of a command.
+ * Signals that an exception occurred during the execution of a command.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>

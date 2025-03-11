@@ -14,7 +14,7 @@
 package org.eclipse.core.commands.common;
 
 /**
- * Signals that an exception occured within the command architecture.
+ * Signals that an exception occurred within the command architecture.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>

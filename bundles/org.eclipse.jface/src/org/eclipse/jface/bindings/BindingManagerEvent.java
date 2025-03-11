@@ -91,7 +91,7 @@ public final class BindingManagerEvent extends AbstractBitSetEvent {
 	 * @param previousTriggersByParameterizedCommand
 	 *            The map of triggers (<code>TriggerSequence</code>) by
 	 *            fully-parameterized command (<code>ParameterizedCommand</code>)
-	 *            before the change occured. This map may be <code>null</code>
+	 *            before the change occurred. This map may be <code>null</code>
 	 *            or empty.
 	 * @param activeSchemeChanged
 	 *            true, iff the active scheme changed.

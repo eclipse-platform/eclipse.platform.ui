@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * A checked exception indicating a recoverable error occured internal to the
+ * A checked exception indicating a recoverable error occurred internal to the
  * workbench. The status provides a further description of the problem.
  * <p>
  * This exception class is not intended to be subclassed by clients.
