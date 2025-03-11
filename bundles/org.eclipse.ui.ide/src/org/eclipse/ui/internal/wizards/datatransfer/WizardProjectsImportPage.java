@@ -1373,7 +1373,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			// location for this workspace
 			URI locationURI = record.description.getLocationURI();
 			// if location is null, project already exists in this location or
-			// some error condition occured.
+			// some error condition occurred.
 			if (locationURI != null) {
 				// validate the location of the project being copied
 				IStatus result = ResourcesPlugin.getWorkspace().validateProjectLocationURI(project,

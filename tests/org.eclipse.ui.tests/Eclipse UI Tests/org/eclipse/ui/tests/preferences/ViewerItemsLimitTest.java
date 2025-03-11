@@ -281,7 +281,7 @@ public class ViewerItemsLimitTest extends UITestCase {
 		for (int i = 0; i < numberOfMarkers; i++) {
 			Map<String, Object> attributes = new HashMap<>();
 			attributes.put(IMarker.SEVERITY, Integer.valueOf(IMarker.SEVERITY_ERROR));
-			attributes.put(IMarker.MESSAGE, i + " project error has occured");
+			attributes.put(IMarker.MESSAGE, i + " project error has occurred");
 			attributes.put(IMarker.LOCATION, project.getFullPath().toOSString());
 			project.createMarker(IMarker.PROBLEM, attributes);
 		}
@@ -298,12 +298,12 @@ public class ViewerItemsLimitTest extends UITestCase {
 		processEventsUntil(() -> getFirstItem(commonViewer).getItems().length > VIEW_LIMIT_3, 30_000);
 		TreeItem firstItem = getFirstItem(commonViewer);
 		assertLimitedItems(VIEW_LIMIT_3, numberOfMarkers, firstItem.getItems());
-		assertEquals("0 project error has occured", firstItem.getItems()[0].getText());
+		assertEquals("0 project error has occurred", firstItem.getItems()[0].getText());
 
 		// create one more marker which will appear at first location of error markers.
 		Map<String, Object> attributes = new HashMap<>();
 		attributes.put(IMarker.SEVERITY, Integer.valueOf(IMarker.SEVERITY_ERROR));
-		attributes.put(IMarker.MESSAGE, "01 project error has occured");
+		attributes.put(IMarker.MESSAGE, "01 project error has occurred");
 		attributes.put(IMarker.LOCATION, project.getFullPath().toOSString());
 		IMarker errorMarker = project.createMarker(IMarker.PROBLEM, attributes);
 		numberOfMarkers++;
@@ -311,12 +311,12 @@ public class ViewerItemsLimitTest extends UITestCase {
 
 		firstItem = getFirstItem(commonViewer);
 		assertLimitedItems(VIEW_LIMIT_3, numberOfMarkers, getFirstItem(commonViewer).getItems());
-		assertEquals("01 project error has occured", getFirstItem(commonViewer).getItems()[0].getText());
+		assertEquals("01 project error has occurred", getFirstItem(commonViewer).getItems()[0].getText());
 
 		// create one more marker which will appear inside expandable node.
 		attributes = new HashMap<>();
 		attributes.put(IMarker.SEVERITY, Integer.valueOf(IMarker.SEVERITY_ERROR));
-		attributes.put(IMarker.MESSAGE, "30 project error has occured");
+		attributes.put(IMarker.MESSAGE, "30 project error has occurred");
 		attributes.put(IMarker.LOCATION, project.getFullPath().toOSString());
 		errorMarker = project.createMarker(IMarker.PROBLEM, attributes);
 		numberOfMarkers++;
@@ -333,7 +333,7 @@ public class ViewerItemsLimitTest extends UITestCase {
 
 		firstItem = getFirstItem(commonViewer);
 		assertLimitedItems(VIEW_LIMIT_DOUBLE, numberOfMarkers, firstItem.getItems());
-		assertEquals("30 project error has occured", firstItem.getItems()[4].getText());
+		assertEquals("30 project error has occurred", firstItem.getItems()[4].getText());
 
 		errorMarker.delete();
 		numberOfMarkers--;
@@ -341,7 +341,7 @@ public class ViewerItemsLimitTest extends UITestCase {
 
 		firstItem = getFirstItem(commonViewer);
 		assertLimitedItems(VIEW_LIMIT_DOUBLE, numberOfMarkers, firstItem.getItems());
-		assertEquals("3 project error has occured", firstItem.getItems()[4].getText());
+		assertEquals("3 project error has occurred", firstItem.getItems()[4].getText());
 
 		setNewViewerLimit(DEFAULT_VIEW_LIMIT);
 

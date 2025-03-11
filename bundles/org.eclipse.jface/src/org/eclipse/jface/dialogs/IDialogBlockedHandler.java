@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * The IDialogBlockedHandler is the handler used by JFace to provide extra
- * information when a blocking has occured. There is one static instance of this
+ * information when a blocking has occurred. There is one static instance of this
  * class used by WizardDialog and ModalContext.
  *
  * @see org.eclipse.core.runtime.IProgressMonitor#clearBlocked()
@@ -36,7 +36,7 @@ public interface IDialogBlockedHandler {
 	public void clearBlocked();
 
 	/**
-	 * A blockage has occured. Show the blockage and
+	 * A blockage has occurred. Show the blockage and
 	 * forward any actions to blockingMonitor.
 	 * <b>NOTE:</b> This will open any blocked notification immediately
 	 * even if there is a modal shell open.
@@ -55,7 +55,7 @@ public interface IDialogBlockedHandler {
 			IStatus blockingStatus, String blockedName);
 
 	/**
-	 * A blockage has occured. Show the blockage when there is
+	 * A blockage has occurred. Show the blockage when there is
 	 * no longer any modal shells in the UI and forward any actions
 	 * to blockingMonitor.
 	 *

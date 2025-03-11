@@ -313,7 +313,7 @@ class LockJob extends WorkspaceJob {
 			while (!stopFlag.get()) {
 				try {
 					if (System.currentTimeMillis() > stopTime) {
-						FileDocumentProviderTest.logError("Tiemout occured while waiting on test to finish",
+						FileDocumentProviderTest.logError("Timeout occurred while waiting on test to finish",
 								new IllegalStateException());
 						stoppedByTest.set(true);
 						return Status.CANCEL_STATUS;
@@ -414,7 +414,7 @@ class LockJob2 extends Job {
 			while (!stopFlag.get()) {
 				try {
 					if (System.currentTimeMillis() > stopTime) {
-						FileDocumentProviderTest.logError("Tiemout occured while waiting on test to finish",
+						FileDocumentProviderTest.logError("Timeout occurred while waiting on test to finish",
 								new IllegalStateException());
 						stoppedByTest.set(true);
 						return Status.CANCEL_STATUS;

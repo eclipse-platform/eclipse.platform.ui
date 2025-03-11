@@ -397,10 +397,10 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			try {
 				pm.run(true, true, r);
 			} catch (InvocationTargetException ex) {
-				Trace.trace(Trace.SEVERE, "Invocation Exception occured running monitor: " //$NON-NLS-1$
+				Trace.trace(Trace.SEVERE, "Invocation Exception occurred running monitor: " //$NON-NLS-1$
 						+ ex);
 			} catch (InterruptedException ex) {
-				Trace.trace(Trace.SEVERE, "Interrupted exception occured running monitor: " //$NON-NLS-1$
+				Trace.trace(Trace.SEVERE, "Interrupted exception occurred running monitor: " //$NON-NLS-1$
 						+ ex);
 				return;
 			}

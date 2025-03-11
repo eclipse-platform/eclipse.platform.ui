@@ -312,7 +312,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	}
 
 	/**
-	 * Displays an error message when a CoreException occured.
+	 * Displays an error message when a CoreException occurred.
 	 *
 	 * @param exception the CoreException
 	 * @param shell     parent shell for the message box

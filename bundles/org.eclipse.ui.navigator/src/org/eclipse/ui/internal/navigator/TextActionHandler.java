@@ -365,7 +365,7 @@ public class TextActionHandler {
 
 		// We really want a selection listener but it is not supported so we
 		// use a key listener and a mouse listener to know when selection changes
-		// may have occured
+		// may have occurred
 		textControl.addKeyListener(keyAdapter);
 		textControl.addMouseListener(mouseAdapter);
 

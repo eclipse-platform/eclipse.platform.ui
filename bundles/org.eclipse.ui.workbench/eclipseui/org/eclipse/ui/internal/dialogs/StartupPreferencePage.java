@@ -129,7 +129,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 							}
 						} catch (CoreException ex) {
 							ErrorDialog.openError(shell, "Windows Defender exclusion check failed", //$NON-NLS-1$
-									"An unexpected error occured while running the Windows Defender exclusion check.", //$NON-NLS-1$
+									"An unexpected error occurred while running the Windows Defender exclusion check.", //$NON-NLS-1$
 									ex.getStatus());
 							WorkbenchPlugin.log("Error while running the Windows Defender exclusion check", ex); //$NON-NLS-1$
 						}

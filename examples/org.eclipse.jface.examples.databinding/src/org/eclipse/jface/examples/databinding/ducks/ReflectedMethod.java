@@ -60,7 +60,7 @@ public class ReflectedMethod {
 	 *
 	 * @param params An Object[] containing the parameters to pass.
 	 * @return any return value or null if there was no return value or an error
-	 *         occured.
+	 *         occurred.
 	 */
 	public Object invoke(Object... params) {
 		if (method == null)
