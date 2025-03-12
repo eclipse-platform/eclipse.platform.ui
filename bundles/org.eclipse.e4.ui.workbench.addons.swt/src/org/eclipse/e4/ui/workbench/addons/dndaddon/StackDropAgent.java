@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -260,13 +261,19 @@ public class StackDropAgent extends DropAgent {
 		// Note 3: currently if we drag/drop parts, it looks like for editor parts we
 		// always drop PartImpl instances, for views we drop PartStackImpl or
 		// PlaceholderImpl instances. So one could use this for the check below too.
+		// Note 4: b/c of parts allowing multiple instances with the same element id
+		// it is necessary to also test for the instance type of the children of the
+		// drop stack. If an instance is of type MPlaceholder and the element id is
+		// equal to the drag element's element id the placeholder is removed.
 		MStackElement viewWithSameId = null;
 		if (elementIndex == -1 && !dragElement.getTags().contains("Editor")) { //$NON-NLS-1$
 			for (MStackElement stackElement : dropChildren) {
-				String id = stackElement.getElementId();
-				if (id != null && id.equals(dragElement.getElementId())) {
-					viewWithSameId = stackElement;
-					break;
+				if (stackElement instanceof MPlaceholder placeholder) {
+					String id = placeholder.getElementId();
+					if (id != null && id.equals(dragElement.getElementId())) {
+						viewWithSameId = placeholder;
+						break;
+					}
 				}
 			}
 		}
