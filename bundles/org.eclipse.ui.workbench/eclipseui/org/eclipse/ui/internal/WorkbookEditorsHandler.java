@@ -83,6 +83,11 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	private static final String DIRTY_PREFIX = "*"; //$NON-NLS-1$
 
 	/**
+	 * Prefix used to mark Editors that are dirty (unsaved changes).
+	 */
+	private static final String DIRTY_INDICATOR = " ●"; //$NON-NLS-1$
+
+	/**
 	 * Used to signify that matching path segments have been omitted from modified
 	 * file paths.
 	 */
@@ -298,7 +303,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 	 */
 	private String prependDirtyIndicationIfDirty(EditorReference editorReference, String labelText) {
 		if (editorReference.isDirty()) {
-			return DIRTY_PREFIX + labelText;
+			return labelText + DIRTY_INDICATOR; // DIRTY_PREFIX + labelText;
 		}
 		return labelText;
 	}

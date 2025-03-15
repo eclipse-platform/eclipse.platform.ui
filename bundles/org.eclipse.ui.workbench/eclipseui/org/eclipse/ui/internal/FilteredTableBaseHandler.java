@@ -815,7 +815,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	/** Returns the text for the given {@link WorkbenchPartReference} */
 	protected String getWorkbenchPartReferenceText(WorkbenchPartReference ref) {
 		if (ref.isDirty()) {
-			return "*" + ref.getTitle(); //$NON-NLS-1$
+			return ref.getTitle() + " ●"; //$NON-NLS-1$
 		}
 		return ref.getTitle();
 	}
