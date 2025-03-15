@@ -121,6 +121,7 @@ public class ThemeEngine implements IThemeEngine {
 						String id = ce.getAttribute("id");
 						String os = ce.getAttribute("os");
 						String version = ce.getAttribute("os_version");
+						String isDarkTheme = ce.getAttribute("isDarkTheme");
 
 						/*
 						 * Code to support e4 dark theme on Mac 10.13 and older. For e4 dark theme on
@@ -154,7 +155,8 @@ public class ThemeEngine implements IThemeEngine {
 							basestylesheeturi = "platform:/plugin/" + ce.getContributor().getName() + "/"
 									+ basestylesheeturi;
 						}
-						registerTheme(themeId, label, basestylesheeturi, version);
+
+						registerTheme(themeId, label, basestylesheeturi, version, isDarkTheme);
 
 						//check for modified files
 						if (modifiedFiles != null) {
@@ -250,11 +252,11 @@ public class ThemeEngine implements IThemeEngine {
 	@Override
 	public synchronized ITheme registerTheme(String id, String label, String basestylesheetURI)
 			throws IllegalArgumentException {
-		return  registerTheme(id, label, basestylesheetURI, "");
+		return registerTheme(id, label, basestylesheetURI, "", "");
 	}
 
 	public synchronized ITheme registerTheme(String id, String label,
-			String basestylesheetURI, String osVersion) throws IllegalArgumentException {
+			String basestylesheetURI, String osVersion, String isDark) throws IllegalArgumentException {
 		for (Theme t : themes) {
 			if (t.getId().equals(id)) {
 				throw new IllegalArgumentException("A theme with the id '" + id
@@ -264,6 +266,9 @@ public class ThemeEngine implements IThemeEngine {
 		Theme theme = new Theme(id, label);
 		if (osVersion != "") {
 			theme.setOsVersion(osVersion);
+		}
+		if (isDark != "") {
+			theme.setIsDark(isDark);
 		}
 		themes.add(theme);
 		registerStyle(id, basestylesheetURI, false);
@@ -598,7 +603,7 @@ public class ThemeEngine implements IThemeEngine {
 			}
 		}
 
-		boolean hasDarkTheme = getThemes().stream().anyMatch(t -> t.getId().startsWith(E4_DARK_THEME_ID));
+		boolean hasDarkTheme = getThemes().stream().anyMatch(t -> t.isDark());
 		boolean overrideWithDarkTheme = false;
 		if (hasDarkTheme) {
 			if (prefThemeId != null) {
