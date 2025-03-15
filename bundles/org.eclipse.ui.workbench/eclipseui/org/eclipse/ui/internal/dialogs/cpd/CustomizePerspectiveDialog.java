@@ -158,10 +158,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * Flag showing that we have initialized all legacy action sets for given window
 	 */
 	private static final String ALL_SETS_INITIALIZED = "ALL_SETS_INITIALIZED"; //$NON-NLS-1$
-	private static final String TOOLBAR_ICON = "$nl$/icons/full/obj16/toolbar.png"; //$NON-NLS-1$
-	private static final String SUBMENU_ICON = "$nl$/icons/full/obj16/submenu.png"; //$NON-NLS-1$
-	private static final String MENU_ICON = "$nl$/icons/full/obj16/menu.png"; //$NON-NLS-1$
-	private static final String WARNING_ICON = "$nl$/icons/full/obj16/warn_tsk.png"; //$NON-NLS-1$
+	private static final String TOOLBAR_ICON = "$nl$/icons/full/obj16/toolbar.svg"; //$NON-NLS-1$
+	private static final String SUBMENU_ICON = "$nl$/icons/full/obj16/submenu.svg"; //$NON-NLS-1$
+	private static final String MENU_ICON = "$nl$/icons/full/obj16/menu.svg"; //$NON-NLS-1$
+	private static final String WARNING_ICON = "$nl$/icons/full/obj16/warn_tsk.svg"; //$NON-NLS-1$
 
 	private static final String SHORTCUT_CONTRIBUTION_ITEM_ID_OPEN_PERSPECTIVE = "openPerspective"; //$NON-NLS-1$
 	private static final String SHORTCUT_CONTRIBUTION_ITEM_ID_SHOW_VIEW = "showView"; //$NON-NLS-1$
