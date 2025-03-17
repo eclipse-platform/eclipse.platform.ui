@@ -192,6 +192,10 @@ public class PartServiceImpl implements EPartService {
 
 	private boolean constructed = false;
 
+	private boolean switchingPerspective = false;
+
+	private boolean focusingActivePart = false;
+
 	@Inject
 	public PartServiceImpl(MApplication application, @Optional MWindow window) {
 		// no need to track changes:
@@ -604,6 +608,15 @@ public class PartServiceImpl implements EPartService {
 
 	@Override
 	public void switchPerspective(MPerspective perspective) {
+		try {
+			switchingPerspective = true;
+			switchPerspectiveInternal(perspective);
+		} finally {
+			switchingPerspective = false;
+		}
+	}
+
+	private void switchPerspectiveInternal(MPerspective perspective) {
 		Assert.isNotNull(perspective);
 		MWindow window = getWindow();
 		if (window != null && isInContainer(window, perspective)) {
@@ -687,6 +700,11 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private void activate(MPart part, boolean requiresFocus, boolean activateBranch) {
+		if (focusingActivePart) {
+			Activator.trace(Policy.DEBUG_FOCUS_FLAG,
+					"Active part is being focused on perspective switch: " + activePart, null);//$NON-NLS-1$
+			return;
+		}
 		if (part == null) {
 			if (constructed && activePart != null) {
 				if (Policy.DEBUG_FOCUS) {
@@ -727,12 +745,23 @@ public class PartServiceImpl implements EPartService {
 		IEclipseContext windowContext = window.getContext();
 		// check if the active part has changed or if we are no longer the active window
 		if (windowContext.getParent().getActiveChild() == windowContext && part == activePart) {
-			// insert it in the beginning of the activation history, it may not have been inserted
-			// pending when this service was instantiated
-			partActivationHistory.prepend(part);
-			UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
-			if (Policy.DEBUG_FOCUS) {
-				Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Trying to activate already active part: " + part, null);//$NON-NLS-1$
+			if (!focusingActivePart) {
+				// insert it in the beginning of the activation history, it may not have been
+				// inserted
+				// pending when this service was instantiated
+				partActivationHistory.prepend(part);
+				if (switchingPerspective && requiresFocus) {
+					focusingActivePart = true;
+					try {
+						focusPart(part);
+					} finally {
+						focusingActivePart = false;
+					}
+				}
+				UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
+				if (Policy.DEBUG_FOCUS) {
+					Activator.trace(Policy.DEBUG_FOCUS_FLAG, "Trying to activate already active part: " + part, null);//$NON-NLS-1$
+				}
 			}
 			return;
 		}
@@ -1510,7 +1539,7 @@ public class PartServiceImpl implements EPartService {
 		return outerContainer;
 	}
 
-	private static void focusPart(MPart part) {
+	private void focusPart(MPart part) {
 		IEclipseContext context = part.getContext();
 		if (context != null) {
 			IPresentationEngine pe = context.get(IPresentationEngine.class);
