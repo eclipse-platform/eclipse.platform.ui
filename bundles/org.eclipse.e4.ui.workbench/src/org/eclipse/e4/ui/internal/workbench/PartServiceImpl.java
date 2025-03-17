@@ -767,11 +767,7 @@ public class PartServiceImpl implements EPartService {
 			partActivationHistory.activate(part, activateBranch);
 
 			if (requiresFocus) {
-				IEclipseContext context = part.getContext();
-				if (context != null) {
-					IPresentationEngine pe = context.get(IPresentationEngine.class);
-					pe.focusGui(part);
-				}
+				focusPart(part);
 			}
 
 			// store the activation time to sort the parts in MRU order
@@ -1512,5 +1508,13 @@ public class PartServiceImpl implements EPartService {
 			}
 		}
 		return outerContainer;
+	}
+
+	private static void focusPart(MPart part) {
+		IEclipseContext context = part.getContext();
+		if (context != null) {
+			IPresentationEngine pe = context.get(IPresentationEngine.class);
+			pe.focusGui(part);
+		}
 	}
 }
