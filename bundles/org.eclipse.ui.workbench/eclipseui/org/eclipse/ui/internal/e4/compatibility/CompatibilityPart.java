@@ -21,6 +21,8 @@ package org.eclipse.ui.internal.e4.compatibility;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
+import java.util.List;
+import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -487,10 +489,16 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 		if (part != null) {
 			builder.append("partId="); //$NON-NLS-1$
 			builder.append(part.getElementId());
-			builder.append(", properties="); //$NON-NLS-1$
-			builder.append(part.getProperties());
-			builder.append(", tags="); //$NON-NLS-1$
-			builder.append(part.getTags());
+			Map<String, String> properties = part.getProperties();
+			if (properties != null && !properties.isEmpty()) {
+				builder.append(", properties="); //$NON-NLS-1$
+				builder.append(properties);
+			}
+			List<String> tags = part.getTags();
+			if (tags != null && !tags.isEmpty()) {
+				builder.append(", tags="); //$NON-NLS-1$
+				builder.append(tags);
+			}
 		}
 		if (wrapped != null) {
 			builder.append(", wrapped="); //$NON-NLS-1$
@@ -500,10 +508,14 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 			builder.append(", legacyPart="); //$NON-NLS-1$
 			builder.append(legacyPart.getClass());
 		}
-		builder.append(", beingDisposed="); //$NON-NLS-1$
-		builder.append(beingDisposed);
-		builder.append(", alreadyDisposed="); //$NON-NLS-1$
-		builder.append(alreadyDisposed);
+		if (beingDisposed) {
+			builder.append(", beingDisposed="); //$NON-NLS-1$
+			builder.append(beingDisposed);
+		}
+		if (alreadyDisposed) {
+			builder.append(", alreadyDisposed="); //$NON-NLS-1$
+			builder.append(alreadyDisposed);
+		}
 		builder.append("]"); //$NON-NLS-1$
 		return builder.toString();
 	}

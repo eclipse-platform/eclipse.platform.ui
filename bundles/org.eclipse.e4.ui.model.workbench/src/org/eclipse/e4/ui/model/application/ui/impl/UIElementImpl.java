@@ -862,18 +862,26 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (widget: "); //$NON-NLS-1$
 		result.append(widget);
-		result.append(", renderer: "); //$NON-NLS-1$
-		result.append(renderer);
-		result.append(", toBeRendered: "); //$NON-NLS-1$
-		result.append(toBeRendered);
-		result.append(", onTop: "); //$NON-NLS-1$
-		result.append(onTop);
-		result.append(", visible: "); //$NON-NLS-1$
-		result.append(visible);
-		result.append(", containerData: "); //$NON-NLS-1$
-		result.append(containerData);
-		result.append(", accessibilityPhrase: "); //$NON-NLS-1$
-		result.append(accessibilityPhrase);
+		if (toBeRendered) {
+			result.append(", toBeRendered: "); //$NON-NLS-1$
+			result.append(toBeRendered);
+		}
+		if (onTop) {
+			result.append(", onTop: "); //$NON-NLS-1$
+			result.append(onTop);
+		}
+		if (visible) {
+			result.append(", visible: "); //$NON-NLS-1$
+			result.append(visible);
+		}
+		if (containerData != null) {
+			result.append(", containerData: "); //$NON-NLS-1$
+			result.append(containerData);
+		}
+		if (accessibilityPhrase != null) {
+			result.append(", accessibilityPhrase: "); //$NON-NLS-1$
+			result.append(accessibilityPhrase);
+		}
 		result.append(')');
 		return result.toString();
 	}
