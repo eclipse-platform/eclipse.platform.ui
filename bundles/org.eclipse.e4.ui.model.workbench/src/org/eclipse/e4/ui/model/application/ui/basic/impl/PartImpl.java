@@ -1350,20 +1350,34 @@ public class PartImpl extends UIElementImpl implements MPart {
 		result.append(object);
 		result.append(", context: "); //$NON-NLS-1$
 		result.append(context);
-		result.append(", variables: "); //$NON-NLS-1$
-		result.append(variables);
-		result.append(", label: "); //$NON-NLS-1$
-		result.append(label);
-		result.append(", iconURI: "); //$NON-NLS-1$
-		result.append(iconURI);
-		result.append(", tooltip: "); //$NON-NLS-1$
-		result.append(tooltip);
-		result.append(", dirty: "); //$NON-NLS-1$
-		result.append(dirty);
-		result.append(", closeable: "); //$NON-NLS-1$
-		result.append(closeable);
-		result.append(", description: "); //$NON-NLS-1$
-		result.append(description);
+		if (variables != null && !variables.isEmpty()) {
+			result.append(", variables: "); //$NON-NLS-1$
+			result.append(variables);
+		}
+		if (label != null) {
+			result.append(", label: "); //$NON-NLS-1$
+			result.append(label);
+		}
+		if (iconURI != null) {
+			result.append(", iconURI: "); //$NON-NLS-1$
+			result.append(iconURI);
+		}
+		if (tooltip != null && !tooltip.isBlank()) {
+			result.append(", tooltip: "); //$NON-NLS-1$
+			result.append(tooltip);
+		}
+		if (dirty) {
+			result.append(", dirty: "); //$NON-NLS-1$
+			result.append(dirty);
+		}
+		if (closeable) {
+			result.append(", closeable: "); //$NON-NLS-1$
+			result.append(closeable);
+		}
+		if (description != null) {
+			result.append(", description: "); //$NON-NLS-1$
+			result.append(description);
+		}
 		result.append(')');
 		return result.toString();
 	}
