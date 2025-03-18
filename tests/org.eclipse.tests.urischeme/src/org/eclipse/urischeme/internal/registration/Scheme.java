@@ -20,11 +20,11 @@ import org.eclipse.urischeme.IScheme;
 public class Scheme implements IScheme {
 
 	private final String name;
-	private final String desription;
+	private final String description;
 
-	public Scheme(String name, String desription) {
+	public Scheme(String name, String description) {
 		this.name = name;
-		this.desription = desription;
+		this.description = description;
 
 	}
 
@@ -35,7 +35,7 @@ public class Scheme implements IScheme {
 
 	@Override
 	public String getDescription() {
-		return desription;
+		return description;
 	}
 
 	@Override
@@ -44,12 +44,12 @@ public class Scheme implements IScheme {
 			return false;
 		}
 		Scheme other = (Scheme) o;
-		return Objects.equals(this.name, other.name) && Objects.equals(this.desription, other.desription);
+		return Objects.equals(this.name, other.name) && Objects.equals(this.description, other.description);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, desription);
+		return Objects.hash(name, description);
 	}
 
 	@Override
@@ -61,9 +61,9 @@ public class Scheme implements IScheme {
 			builder.append(name);
 			builder.append(", ");
 		}
-		if (desription != null) {
-			builder.append("desription=");
-			builder.append(desription);
+		if (description != null) {
+			builder.append("description=");
+			builder.append(description);
 		}
 		builder.append("]");
 		return builder.toString();
