@@ -35,8 +35,10 @@ public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 
 	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
-		int c = Integer.compare(MarkerSupportInternalUtilities.getSeverity(item1),
-				MarkerSupportInternalUtilities.getSeverity(item2));
+		// Higher values of severity have higher importance and should be sorted first,
+		// so we invert comparison order for severity
+		int c = Integer.compare(MarkerSupportInternalUtilities.getSeverity(item2),
+				MarkerSupportInternalUtilities.getSeverity(item1));
 		if (c != 0) {
 			return c;
 		}
