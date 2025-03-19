@@ -46,7 +46,9 @@ public class MarkerSeverityField extends MarkerField {
 
 	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
-		return Integer.compare(MarkerSupportInternalUtilities.getSeverity(item1),
-				MarkerSupportInternalUtilities.getSeverity(item2));
+		// Higher values of severity have higher importance and should be sorted first,
+		// so we invert comparison order for severity
+		return Integer.compare(MarkerSupportInternalUtilities.getSeverity(item2),
+				MarkerSupportInternalUtilities.getSeverity(item1));
 	}
 }
