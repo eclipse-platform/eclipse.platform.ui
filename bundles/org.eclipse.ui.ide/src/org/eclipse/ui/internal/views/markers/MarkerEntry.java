@@ -410,4 +410,31 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		MarkerEntry other = (MarkerEntry) obj;
 		return Objects.equals(marker, other.marker);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("MarkerEntry ["); //$NON-NLS-1$
+		if (category != null) {
+			builder.append("category="); //$NON-NLS-1$
+			builder.append(category);
+			builder.append(", "); //$NON-NLS-1$
+		}
+		if (marker != null) {
+			builder.append(marker);
+			builder.append(", "); //$NON-NLS-1$
+		}
+		if (markerType != null) {
+			builder.append("markerType="); //$NON-NLS-1$
+			builder.append(markerType);
+			builder.append(", "); //$NON-NLS-1$
+		}
+		if (markerTypeName != null) {
+			builder.append("markerTypeName="); //$NON-NLS-1$
+			builder.append(markerTypeName);
+		}
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
+	}
+
 }
