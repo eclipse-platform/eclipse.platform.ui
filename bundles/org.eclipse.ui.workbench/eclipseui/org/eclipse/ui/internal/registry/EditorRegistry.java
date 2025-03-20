@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1358,6 +1358,13 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		String key = IPreferenceConstants.DEFAULT_EDITOR_FOR_CONTENT_TYPE + contentType.getId();
 		String defaultEditorId = store.getString(key);
 		IEditorDescriptor descriptor = null;
+		if (defaultEditorId.isEmpty() && contentType.getId().contentEquals("org.eclipse.core.runtime.text")) { //$NON-NLS-1$
+			IEditorDescriptor genericEditor = descriptors.stream()
+					.filter(e -> "org.eclipse.ui.genericeditor.GenericEditor".equals(e.getId())) //$NON-NLS-1$
+					.findFirst().orElse(null);
+			store.setValue(key, genericEditor.getId());
+			return genericEditor;
+		}
 		if (defaultEditorId != null && !defaultEditorId.isBlank()) {
 			descriptor = descriptors.stream().filter(d -> defaultEditorId.equals(d.getId())).findFirst().orElse(null);
 		}
