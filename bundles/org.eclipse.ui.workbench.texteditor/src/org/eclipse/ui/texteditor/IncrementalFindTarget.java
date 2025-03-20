@@ -434,64 +434,46 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 		fSearching= true;
 		if (event.character == 0) {
-
 			switch (event.keyCode) {
-
-			// ALT, CTRL, ARROW_LEFT, ARROW_RIGHT == leave
-			case SWT.ARROW_LEFT:
-			case SWT.ARROW_RIGHT:
-			case SWT.HOME:
-			case SWT.END:
-			case SWT.PAGE_DOWN:
-			case SWT.PAGE_UP:
-				leave();
-				break;
-
-			case SWT.ARROW_DOWN:
-				saveState();
-				setDirection(true);
-				repeatSearch(fForward);
-				event.doit= false;
-				break;
-
-			case SWT.ARROW_UP:
-				saveState();
-				setDirection(false);
-				repeatSearch(fForward);
-				event.doit= false;
-				break;
+				// ALT, CTRL, ARROW_LEFT, ARROW_RIGHT == leave
+				case SWT.ARROW_LEFT, SWT.ARROW_RIGHT, SWT.HOME, SWT.END, SWT.PAGE_DOWN, SWT.PAGE_UP -> leave();
+				case SWT.ARROW_DOWN -> {
+					saveState();
+					setDirection(true);
+					repeatSearch(fForward);
+					event.doit = false;
+				}
+				case SWT.ARROW_UP -> {
+					saveState();
+					setDirection(false);
+					repeatSearch(fForward);
+					event.doit = false;
+				}
 			}
-
 		// event.character != 0
 		} else {
-
 			switch (event.character) {
-
-			// ESC, CR = quit
-			case 0x1B:
-			case 0x0D:
-				leave();
-				event.doit= false;
-				break;
-
-			// backspace	and delete
-			case 0x08:
-			case 0x7F:
-				restoreState();
-				event.doit= false;
-				break;
-
-			default:
-				int stateMask= event.stateMask;
-				if (stateMask == 0
-						|| stateMask == SWT.SHIFT
-						|| !Util.isMac() && stateMask == (SWT.ALT | SWT.CTRL) // AltGr (see bug 43049)
-						|| Util.isMac() && (stateMask == (SWT.ALT | SWT.SHIFT) || stateMask == SWT.ALT) ) { // special chars on Mac (bug 272994)
-					saveState();
-					addCharSearch(event.character);
-					event.doit= false;
+				// ESC, CR = quit
+				case 0x1B, 0x0D -> {
+					leave();
+					event.doit = false;
 				}
-				break;
+				// backspace	and delete
+				case 0x08, 0x7F -> {
+					restoreState();
+					event.doit = false;
+				}
+				default -> {
+					int stateMask = event.stateMask;
+					if (stateMask == 0
+							|| stateMask == SWT.SHIFT
+							|| !Util.isMac() && stateMask == (SWT.ALT | SWT.CTRL) // AltGr (see bug 43049)
+							|| Util.isMac() && (stateMask == (SWT.ALT | SWT.SHIFT) || stateMask == SWT.ALT) ) { // special chars on Mac (bug 272994)
+						saveState();
+						addCharSearch(event.character);
+						event.doit = false;
+					}
+				}
 			}
 		}
 		updateStatus();

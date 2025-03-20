@@ -309,23 +309,18 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		}
 
 		private String getTemplateColumnText(TemplatePersistenceData data, int columnIndex) {
-			switch (columnIndex) {
-			case 0:
-				return data.getTemplate().getName();
-			case 1:
-				return data.getTemplate().getDescription();
-			default:
-				return ""; //$NON-NLS-1$
-			}
+			return switch (columnIndex) {
+				case 0 -> data.getTemplate().getName();
+				case 1 -> data.getTemplate().getDescription();
+				default -> ""; //$NON-NLS-1$
+			};
 		}
 
 		private String getContextColumnText(TemplateContextType contextType, int columnIndex) {
-			switch (columnIndex) {
-			case 0:
-				return contextType.getName();
-			default:
-				return ""; //$NON-NLS-1$
-			}
+			return switch (columnIndex) {
+				case 0 -> contextType.getName();
+				default-> ""; //$NON-NLS-1$
+			};
 		}
 	}
 
