@@ -39,8 +39,7 @@ public class DarkThemeProcessor {
 				return;
 			}
 			ITheme theme = (ITheme) event.getProperty("theme");
-			boolean isDark = theme.getId().contains("dark"); //$NON-NLS-1$
-			OS.setTheme (isDark);
+			OS.setTheme (theme.isDark());
 		};
 		// using the IEventBroker explicitly because the @EventTopic annotation
 		// is unpredictable with processors within the debugger
