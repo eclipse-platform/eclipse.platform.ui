@@ -53,6 +53,7 @@ final public class FindReplaceMessages extends NLS {
 	public static String FindReplace_WholeWordCheckBox_label;
 	public static String FindReplace_IncrementalCheckBox_label;
 	public static String FindReplace_RegExCheckbox_label;
+	public static String FindReplaceOverlay_skipReplaceButton_toolTip;
 	public static String FindReplace_FindNextButton_label;
 	public static String FindReplace_ReplaceFindButton_label;
 	public static String FindReplace_ReplaceSelectionButton_label;
