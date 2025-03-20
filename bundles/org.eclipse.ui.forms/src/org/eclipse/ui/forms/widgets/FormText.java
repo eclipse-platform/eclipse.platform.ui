@@ -1564,7 +1564,7 @@ public class FormText extends Canvas {
 			bg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			fg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		}
-		GC textGC = new GC(textBuffer, gc.getStyle());
+		GC textGC = new GC(textBuffer);
 		textGC.setForeground(fg);
 		textGC.setBackground(bg);
 		textGC.setFont(getFont());
