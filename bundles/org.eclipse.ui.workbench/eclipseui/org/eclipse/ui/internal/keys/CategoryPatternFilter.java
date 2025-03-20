@@ -19,6 +19,8 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.internal.keys.model.BindingElement;
 
@@ -26,8 +28,11 @@ class CategoryPatternFilter extends PatternFilter {
 	private boolean filterCategories;
 	final Category uncategorized;
 
-	public CategoryPatternFilter(boolean filterCategories, Category c) {
+	private IActivityManager activityManager;
+
+	public CategoryPatternFilter(boolean filterCategories, Category c, IActivityManager activityManager) {
 		uncategorized = c;
+		this.activityManager = activityManager;
 		filterCategories(filterCategories);
 	}
 
@@ -55,8 +60,18 @@ class CategoryPatternFilter extends PatternFilter {
 			} catch (NotDefinedException e) {
 				return false;
 			}
+			if (!isActive(cmd)) {
+				return false;
+			}
 		}
 		return super.isLeafMatch(viewer, element);
+	}
+
+	private boolean isActive(final ParameterizedCommand command) {
+		String identifierId = command.getId();
+		IIdentifier identifier = activityManager.getIdentifier(identifierId);
+		boolean enabled = identifier.isEnabled();
+		return enabled;
 	}
 
 	private ParameterizedCommand getCommand(Object element) {
