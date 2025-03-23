@@ -99,7 +99,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
@@ -891,36 +890,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		});
 
 		list.addDoubleClickListener(event -> handleDoubleClick());
-
-		list.getTable().addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-
-				if (e.keyCode == SWT.ARROW_UP && (e.stateMask & SWT.SHIFT) == 0
-						&& (e.stateMask & SWT.CTRL) == 0) {
-					StructuredSelection selection = (StructuredSelection) list
-							.getSelection();
-
-					if (selection.size() == 1) {
-						Object element = selection.getFirstElement();
-						if (element.equals(list.getElementAt(0))) {
-							pattern.setFocus();
-						}
-						list.getTable().notifyListeners(SWT.Selection,
-								new Event());
-
-					}
-				}
-
-				if (e.keyCode == SWT.ARROW_DOWN
-						&& (e.stateMask & SWT.SHIFT) != 0
-						&& (e.stateMask & SWT.CTRL) != 0) {
-
-					list.getTable().notifyListeners(SWT.Selection, new Event());
-				}
-
-			}
-		});
 
 		createDetailsArea(sashForm);
 		sashForm.setWeights(new int[] {5,2});

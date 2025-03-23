@@ -15,29 +15,21 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor.quicksearch;
 
-import java.util.Iterator;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextPresentationListener;
-import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.text.quicksearch.ITextViewerCreator;
+import org.eclipse.text.quicksearch.ReconcilingAwareSourceViewerHandle;
 import org.eclipse.text.quicksearch.SourceViewerConfigurer;
-import org.eclipse.text.quicksearch.SourceViewerHandle;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextViewerConfiguration;
 import org.eclipse.ui.internal.genericeditor.GenericEditorPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 /**
- * Creates quicksearch text viewer handles that use
- * {@link GenericEditorViewer2}.
+ * Creates quicksearch text viewer handles that use {@link GenericEditorViewer}.
  */
 public class GenericEditorViewerCreator implements ITextViewerCreator {
 
@@ -46,62 +38,10 @@ public class GenericEditorViewerCreator implements ITextViewerCreator {
 		return new GenericEditorSourceViewerHandle(parent);
 	}
 
-	private class GenericEditorSourceViewerHandle extends SourceViewerHandle<GenericEditorViewer>
-			implements ITextPresentationListener {
-		private boolean fNewDocumentReconciliation;
-
-		// after focusing on other match in the same document, not all reconciliations
-		// are performed again (e.g. LSP reconciliation is done only after setting new
-		// input document), so we collect all applied styles to be able to set them
-		// after other match focus manually
-		private boolean fDoCollectStyles;
-		private TextPresentation fMergedStylesPresentation;
+	private class GenericEditorSourceViewerHandle extends ReconcilingAwareSourceViewerHandle<GenericEditorViewer> {
 
 		public GenericEditorSourceViewerHandle(Composite parent) {
-			super(new SourceViewerConfigurer<>(GenericEditorViewer::new), parent);
-			fSourceViewer.addTextPresentationListener(this);
-			parent.addDisposeListener(e -> {
-				fMatchRanges = null;
-				fMergedStylesPresentation = null;
-				fSourceViewer.removeTextPresentationListener(this);
-			});
-		}
-
-		/*
-		 * triggered variable number of times by a) tm4e code (possibly after setInput()
-		 * and/or focusMatch() -> fSourceViewer.setVisibleRegion() ), b) lsp4e code
-		 * (zero or more times after setInput() only)
-		 */
-		@Override
-		public void applyTextPresentation(TextPresentation textPresentation) {
-			if (fDoCollectStyles) {
-				applyMatchStyles(textPresentation, true);
-				for (Iterator<StyleRange> iter = textPresentation.getAllStyleRangeIterator(); iter.hasNext();) {
-					fMergedStylesPresentation.mergeStyleRange((StyleRange) iter.next().clone());
-				}
-			}
-		}
-
-		@Override
-		public void setViewerInput(IDocument document, StyleRange[] matchRangers, IFile file) {
-			fNewDocumentReconciliation = true;
-			fMergedStylesPresentation = new TextPresentation(1024);
-			super.setViewerInput(document, matchRangers, file);
-		}
-
-		@Override
-		public void focusMatch(IRegion visibleRegion, IRegion revealedRange, int matchLine, IRegion matchRange) {
-			if (fNewDocumentReconciliation) {
-				fNewDocumentReconciliation = false;
-				fDoCollectStyles = true;
-				super.focusMatch(visibleRegion, revealedRange, matchLine, matchRange);
-			} else {
-				fDoCollectStyles = false;
-				super.focusMatch(visibleRegion, revealedRange, matchLine, matchRange);
-				// now apply collected styles
-				fSourceViewer.changeTextPresentation(fMergedStylesPresentation, false);
-				fDoCollectStyles = true;
-			}
+			super(new SourceViewerConfigurer<>(GenericEditorViewer::new), parent, false, false);
 		}
 	}
 

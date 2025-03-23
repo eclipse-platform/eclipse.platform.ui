@@ -164,7 +164,16 @@ public class SourceViewerHandle<T extends SourceViewer> implements ITextViewerHa
 			fFixedLineChangeModel.selectedMatchLine = matchLine;
 			fChangeRulerColumn.redraw();
 		}
+		postFocusMatch();
+	}
+
+	/**
+	 * Called at the end of {@link #focusMatch(IRegion, IRegion, int, IRegion) focusMatch()} execution. Applies matches styles via
+	 * {@link #applyMatchesStyles()} by default.
+	 */
+	protected void postFocusMatch() {
 		applyMatchesStyles();
+
 	}
 
 	/**
@@ -180,8 +189,9 @@ public class SourceViewerHandle<T extends SourceViewer> implements ITextViewerHa
 			return;
 		}
 		for (StyleRange styleRange : fMatchRanges) {
-			if (modelRange2WidgetStyleRange(styleRange) instanceof StyleRange range) {
-				fSourceViewer.getTextWidget().setStyleRange(range);
+			styleRange = modelRange2WidgetStyleRange(styleRange);
+			if (styleRange != null) {
+				fSourceViewer.getTextWidget().setStyleRange(styleRange);
 			}
 		}
 	}
@@ -195,39 +205,6 @@ public class SourceViewerHandle<T extends SourceViewer> implements ITextViewerHa
 			return result;
 		}
 		return null;
-	}
-
-	/**
-	 * Applies all matches highlighting styles previously passed to
-	 * {@link #setViewerInput(IDocument, StyleRange[], IFile) setViewerInput()} method to <code>presentation</code>
-	 * considering presentation's extent. Styles either replace ({@link TextPresentation#replaceStyleRange(StyleRange)})
-	 * or are merged ({@link TextPresentation#mergeStyleRange(StyleRange)}) with text presentation's styles in the
-	 * particular ranges depending on <code>mergeStyles</code> parameter.
-	 *
-	 * @param mergeStyles <code>true</code> if the styles should be merged, <code>false</code> if they should replace
-	 * text presentation styles in the same ranges
-	 * @see #setViewerInput(IDocument, StyleRange[], IFile)
-	 */
-	protected void applyMatchStyles(TextPresentation presentation, boolean mergeStyles) {
-		if (fMatchRanges == null || fMatchRanges.length == 0) {
-			return;
-		}
-		var extent = presentation.getExtent();
-		int extentStart = extent.getOffset();
-		var tmpPresentation = new TextPresentation(fMatchRanges.length);
-		for (StyleRange styleRange : fMatchRanges) {
-			tmpPresentation.addStyleRange((StyleRange) styleRange.clone());
-		}
-		tmpPresentation.setResultWindow(extent);
-		for (Iterator<StyleRange> iter = tmpPresentation.getAllStyleRangeIterator(); iter.hasNext();) {
-			var style = iter.next();
-			style.start += extentStart;
-			if (mergeStyles) {
-			presentation.mergeStyleRange(style);
-			} else {
-				presentation.replaceStyleRange(style);
-			}
-		}
 	}
 
 	/**
