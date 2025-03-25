@@ -34,6 +34,7 @@ import org.eclipse.ui.keys.NaturalKey;
  */
 public class CompactKeyFormatter extends NativeKeyFormatter {
 
+	@SuppressWarnings("removal")
 	@Override
 	public String format(KeySequence keySequence) {
 		StringBuilder stringBuffer = new StringBuilder();
@@ -67,6 +68,7 @@ public class CompactKeyFormatter extends NativeKeyFormatter {
 		return stringBuffer.toString();
 	}
 
+	@SuppressWarnings("removal")
 	public String formatKeyStrokes(Set<ModifierKey> modifierKeys, List<?> naturalKeys) {
 		StringBuilder stringBuffer = new StringBuilder();
 		String keyDelimiter = getKeyDelimiter();

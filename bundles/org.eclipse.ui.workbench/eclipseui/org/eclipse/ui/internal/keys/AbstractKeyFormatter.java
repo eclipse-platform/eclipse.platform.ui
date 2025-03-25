@@ -35,6 +35,7 @@ import org.eclipse.ui.keys.NaturalKey;
  *
  * @since 3.0
  */
+@SuppressWarnings("removal")
 public abstract class AbstractKeyFormatter implements IKeyFormatter {
 
 	/**
