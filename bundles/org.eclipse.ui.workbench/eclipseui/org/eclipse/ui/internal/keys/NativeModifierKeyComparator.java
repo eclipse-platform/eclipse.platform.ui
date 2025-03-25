@@ -25,6 +25,7 @@ import org.eclipse.ui.keys.ModifierKey;
  *
  * @since 3.0
  */
+@SuppressWarnings("removal")
 class NativeModifierKeyComparator implements Comparator<ModifierKey> {
 
 	/**

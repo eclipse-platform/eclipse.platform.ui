@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
 import java.util.ResourceBundle;
-
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.Key;
 import org.eclipse.ui.keys.KeySequence;
@@ -50,6 +49,7 @@ public class EmacsKeyFormatter extends AbstractKeyFormatter {
 	 * @param key The key to format; must not be <code>null</code>.
 	 * @return The key formatted as a string; should not be <code>null</code>.
 	 */
+	@SuppressWarnings("removal")
 	@Override
 	public String format(Key key) {
 		if (key instanceof ModifierKey) {
@@ -62,11 +62,13 @@ public class EmacsKeyFormatter extends AbstractKeyFormatter {
 		return super.format(key).toLowerCase();
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	protected String getKeyDelimiter() {
 		return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY, KeyStroke.KEY_DELIMITER, false, false);
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	protected String getKeyStrokeDelimiter() {
 		return Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY, KeySequence.KEY_STROKE_DELIMITER, false,
