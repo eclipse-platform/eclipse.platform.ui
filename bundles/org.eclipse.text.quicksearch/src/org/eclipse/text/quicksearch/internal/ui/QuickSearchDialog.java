@@ -80,6 +80,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -239,7 +240,8 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	private Image getBlankImage() {
 		if (blankImage==null) {
-			blankImage = new Image(Display.getDefault(), 1, 1);
+			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {};
+			blankImage = new Image(Display.getDefault(), imageGcDrawer, 1, 1);
 //			GC gc = new GC(blankImage);
 //			gc.fillRectangle(0, 0, 16, 16);
 //			gc.dispose();

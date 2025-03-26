@@ -46,8 +46,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -326,11 +326,11 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	 * between white and black, looks good both in Classic and in Dark Theme
 	 */
 	private Image createSeparatorBgImage() {
-		Image backgroundImage = new Image(Display.getDefault(), 1, 1);
-		GC gc = new GC(backgroundImage);
-		gc.setBackground(new Color(dialog.getDisplay(), 127, 127, 127));
-		gc.fillRectangle(0, 0, 1, 1);
-		gc.dispose();
+		final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
+			gc.setBackground(new Color(dialog.getDisplay(), 127, 127, 127));
+			gc.fillRectangle(0, 0, width, height);
+		};
+		Image backgroundImage = new Image(Display.getDefault(), imageGcDrawer, 1, 1);
 		return backgroundImage;
 	}
 
