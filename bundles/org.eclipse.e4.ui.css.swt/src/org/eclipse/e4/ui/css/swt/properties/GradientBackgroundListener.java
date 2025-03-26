@@ -37,6 +37,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -149,23 +150,23 @@ public class GradientBackgroundListener implements Listener {
 			boolean verticalGradient = grad.getVerticalGradient();
 			int x = verticalGradient? 2 : size.x;
 			int y = verticalGradient ? size.y : 2;
-			gradientImage = new Image(control.getDisplay(), x, y);
-			GC gc = new GC(gradientImage);
-			List<Color> colors = new ArrayList<>();
-			for (Object rgbObj : grad.getRGBs()) {
-				if (rgbObj instanceof RGBA) {
-					RGBA rgba = (RGBA) rgbObj;
-					Color color = new Color(control.getDisplay(), rgba);
-					colors.add(color);
-				} else if (rgbObj instanceof RGB) {
-					RGB rgb = (RGB) rgbObj;
-					Color color = new Color(control.getDisplay(), rgb);
-					colors.add(color);
+			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
+				List<Color> colors = new ArrayList<>();
+				for (Object rgbObj : grad.getRGBs()) {
+					if (rgbObj instanceof RGBA) {
+						RGBA rgba = (RGBA) rgbObj;
+						Color color = new Color(control.getDisplay(), rgba);
+						colors.add(color);
+					} else if (rgbObj instanceof RGB) {
+						RGB rgb = (RGB) rgbObj;
+						Color color = new Color(control.getDisplay(), rgb);
+						colors.add(color);
+					}
 				}
-			}
-			fillGradient(gc, new Rectangle(0, 0, x, y), colors,
-					CSSSWTColorHelper.getPercents(grad), grad.getVerticalGradient());
-			gc.dispose();
+				fillGradient(gc, new Rectangle(0, 0, width, height), colors, CSSSWTColorHelper.getPercents(grad),
+						grad.getVerticalGradient());
+			};
+			gradientImage = new Image(control.getDisplay(), imageGcDrawer, x, y);
 		}
 		if (gradientImage != null) {
 			control.setBackgroundImage(gradientImage);

@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
@@ -113,16 +114,19 @@ public class FormImages {
 
 		@Override
 		public Image createImage(boolean returnMissingImageOnError,	Device device) {
-			Image image = new Image(device, 1, fLength);
 			Color color1 = new Color(device, fRGBs[0]);
 			Color color2 = new Color(device, fRGBs[1]);
+			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
+				gc.setBackground(color1);
+				gc.fillRectangle(0, 0, width, height);
+				gc.setForeground(color2);
+				gc.setBackground(color1);
+				gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
+			};
+			Image image = new Image(device, imageGcDrawer, 1, fLength);
 			image.setBackground(color1);
 			GC gc = new GC(image);
-			gc.setBackground(color1);
-			gc.fillRectangle(0, 0, 1, fLength);
-			gc.setForeground(color2);
-			gc.setBackground(color1);
-			gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
+
 			gc.dispose();
 			return image;
 		}
@@ -181,15 +185,15 @@ public class FormImages {
 		public Image createImage(boolean returnMissingImageOnError,	Device device) {
 			int width = fVertical ? 1 : fLength;
 			int height = fVertical ? fLength : 1;
-			Image gradient = new Image(device, Math.max(width, 1), Math
+			final ImageGcDrawer imageGcDrawer = (gc, iWidth, iHeight) -> {
+				Color[] colors = new Color[fRGBs.length];
+				for (int i = 0; i < colors.length; i++)
+					colors[i] = new Color(device, fRGBs[i]);
+				Color bg = fBgRGB == null ? null : new Color(device, fBgRGB);
+				drawTextGradient(gc, iWidth, iHeight, colors, fPercents, fVertical, bg);
+			};
+			Image gradient = new Image(device, imageGcDrawer, Math.max(width, 1), Math
 					.max(height, 1));
-			GC gc = new GC(gradient);
-			Color[] colors = new Color[fRGBs.length];
-			for (int i = 0; i < colors.length; i++)
-				colors[i] = new Color(device, fRGBs[i]);
-			Color bg = fBgRGB == null ? null : new Color(device, fBgRGB);
-			drawTextGradient(gc, width, height, colors, fPercents, fVertical, bg);
-			gc.dispose();
 			return gradient;
 		}
 
@@ -275,16 +279,16 @@ public class FormImages {
 
 		@Override
 		public Image createImage(boolean returnMissingImageOnError, Device device) {
-			Image image = new Image(device, 1, fLength);
 			Color originalBgColor = new Color(device, fRGBs[0]);
 			Color color1 = new Color(device, fRGBs[1]);
+			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
+				gc.setBackground(color1);
+				gc.fillRectangle(0, fMarginHeight + 2, width, fTheight - fMarginHeight - 3);
+				gc.setBackground(originalBgColor);
+				gc.fillRectangle(0, fTheight - fMarginHeight - 4, 1, 4);
+			};
+			Image image = new Image(device, imageGcDrawer, 1, fLength);
 			image.setBackground(originalBgColor);
-			GC gc = new GC(image);
-			gc.setBackground(color1);
-			gc.fillRectangle(0, fMarginHeight + 2, 1, fTheight - fMarginHeight - 3);
-			gc.setBackground(originalBgColor);
-			gc.fillRectangle(0, fTheight - fMarginHeight - 4, 1, 4);
-			gc.dispose();
 			return image;
 		}
 	}
@@ -299,17 +303,17 @@ public class FormImages {
 
 		@Override
 		public Image createImage(boolean returnMissingImageOnError, Device device) {
-			Image image = new Image(device, 1, fLength);
 			Color color1 = new Color(device, fRGBs[0]);
 			Color color2 = new Color(device, fRGBs[1]);
+			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
+				gc.setBackground(color1);
+				gc.fillRectangle(0, 0, width, width);
+				gc.setForeground(color2);
+				gc.setBackground(color1);
+				gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
+			};
+			Image image = new Image(device, imageGcDrawer, 1, fLength);
 			image.setBackground(color1);
-			GC gc = new GC(image);
-			gc.setBackground(color1);
-			gc.fillRectangle(0, 0, 1, fLength);
-			gc.setForeground(color2);
-			gc.setBackground(color1);
-			gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
-			gc.dispose();
 
 			return image;
 		}
