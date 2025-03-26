@@ -325,27 +325,21 @@ public class Section extends ExpandableComposite {
 		if (bounds.width == 0 || bounds.height == 0) {
 			return;
 		}
+		boolean hasTitleBar = (getExpansionStyle() & TITLE_BAR) != 0;
+		int theight = 5;
+		int gradientheight = 0;
+		int tvmargin = IGAP;
 
-		if ((getExpansionStyle() & TITLE_BAR) != 0) {
+		bg = (titleColors != null) ? titleColors.getOrDefault(COLOR_BG, getBackground()) : getBackground();
+		fg = (titleColors != null) ? getTitleBarForeground() : getForeground();
+		border = (titleColors != null) ? titleColors.getOrDefault(COLOR_BORDER, fg) : fg;
+
+		if (hasTitleBar) {
 			buffer = new Image(getDisplay(), bounds.width, bounds.height);
 			buffer.setBackground(getBackground());
 			gc = new GC(buffer);
-		}
-		if (titleColors != null) {
-			bg = titleColors.get(COLOR_BG);
-			fg = getTitleBarForeground();
-			border = titleColors.get(COLOR_BORDER);
-		}
-		if (bg == null)
-			bg = getBackground();
-		if (fg == null)
-			fg = getForeground();
-		if (border == null)
-			border = fg;
-		int theight = 0;
-		int gradientheight = 0;
-		int tvmargin = IGAP;
-		if ((getExpansionStyle() & TITLE_BAR) != 0) {
+
+			// calculate height
 			Point tsize = null;
 			Point tcsize = null;
 			if (toggle != null)
@@ -363,10 +357,8 @@ public class Section extends ExpandableComposite {
 			gradientheight = Math.max(gradientheight, size.y);
 			theight += tvmargin + tvmargin;
 			gradientheight += tvmargin + tvmargin;
-		} else {
-			theight = 5;
-		}
-		if ((getExpansionStyle() & TITLE_BAR) != 0) {
+
+			// Background
 			if (getBackgroundImage() == null)
 				updateHeaderImage(bg, bounds, gradientheight, theight);
 			gc.setBackground(getBackground());
@@ -379,45 +371,31 @@ public class Section extends ExpandableComposite {
 				gc.fillRectangle(bounds.x + bounds.width - marginWidth, 0,
 						marginWidth, theight);
 			}
-		} else if (isExpanded()) {
-			gc.setForeground(bg);
 			gc.setBackground(getBackground());
-			gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
-					- marginWidth - marginWidth, theight, true);
-		}
-		gc.setBackground(getBackground());
-		FormUtil.setAntialias(gc, SWT.ON);
-		// repair the upper left corner
-		gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,
-				marginHeight + 2, marginWidth + 2, marginHeight });
-		// repair the upper right corner
-		gc.fillPolygon(new int[] { bounds.width - marginWidth - 3,
-				marginHeight, bounds.width - marginWidth, marginHeight,
-				bounds.width - marginWidth, marginHeight + 3 });
-		gc.setForeground(border);
-		if (isExpanded() || (getExpansionStyle() & TITLE_BAR) != 0) {
+			FormUtil.setAntialias(gc, SWT.ON);
+			// repair the upper left corner
+			gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,
+					marginHeight + 2, marginWidth + 2, marginHeight });
+			// repair the upper right corner
+			gc.fillPolygon(new int[] { bounds.width - marginWidth - 3,
+					marginHeight, bounds.width - marginWidth, marginHeight,
+					bounds.width - marginWidth, marginHeight + 3 });
+			gc.setForeground(border);
+			
+			// Draw Lines
 			// top left curve
-			gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
-					marginHeight);
+			gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2, marginHeight);
 			// top edge
-			gc.drawLine(marginWidth + 2, marginHeight, bounds.width
-					- marginWidth - 3, marginHeight);
+			gc.drawLine(marginWidth + 2, marginHeight, bounds.width - marginWidth - 3, marginHeight);
 			// top right curve
-			gc.drawLine(bounds.width - marginWidth - 3, marginHeight,
-					bounds.width - marginWidth - 1, marginHeight + 2);
-		} else {
-			// collapsed short title bar
-			// top edge
-			gc.drawLine(marginWidth, marginHeight, bounds.width - 1,
-					marginHeight);
-		}
-		if ((getExpansionStyle() & TITLE_BAR) != 0 || isExpanded()) {
+			gc.drawLine(bounds.width - marginWidth - 3, marginHeight, bounds.width - marginWidth - 1, marginHeight + 2);
+
+			// Expand conditions
 			// left vertical edge gradient
 			gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1, theight + 2, true);
 			// right vertical edge gradient
 			gc.fillGradientRectangle(bounds.width - marginWidth - 1, marginHeight + 2, 1, theight + 2, true);
-		}
-		if ((getExpansionStyle() & TITLE_BAR) != 0) {
+			
 			// New in 3.3 - edge treatment
 			gc.setForeground(getBackground());
 			gc.drawPolyline(new int[] { marginWidth + 1, marginHeight + gradientheight + 4, marginWidth + 1,
@@ -425,14 +403,39 @@ public class Section extends ExpandableComposite {
 					bounds.width - marginWidth - 3, marginHeight + 1, bounds.width - marginWidth - 3, marginHeight + 2,
 					bounds.width - marginWidth - 2, marginHeight + 2, bounds.width - marginWidth - 2,
 					marginHeight + gradientheight + 4 });
+
+		} else if (isExpanded()) {
+			gc.setForeground(bg);
+			gc.setBackground(getBackground());
+			gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width
+					- marginWidth - marginWidth, theight, true);
+			// left vertical edge gradient
+			gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1, theight + 2, true);
+			// right vertical edge gradient
+			gc.fillGradientRectangle(bounds.width - marginWidth - 1, marginHeight + 2, 1, theight + 2, true);
+		} else {
+			gc.setBackground(getBackground());
+			FormUtil.setAntialias(gc, SWT.ON);
+			// repair the upper left corner
+			gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,
+					marginHeight + 2, marginWidth + 2, marginHeight });
+			// repair the upper right corner
+			gc.fillPolygon(new int[] { bounds.width - marginWidth - 3,
+					marginHeight, bounds.width - marginWidth, marginHeight,
+					bounds.width - marginWidth, marginHeight + 3 });
+			gc.setForeground(border);
+			// collapsed short title bar
+			// top edge
+			gc.drawLine(marginWidth, marginHeight, bounds.width - 1,
+					marginHeight);
 		}
+
 		if (buffer != null) {
 			gc.dispose();
 			e.gc.drawImage(buffer, 0, 0);
 			buffer.dispose();
 		}
 	}
-
 	private void updateHeaderImage(Color bg, Rectangle bounds, int theight, int realtheight) {
 		Color gradient = getTitleBarGradientBackground() != null ? getTitleBarGradientBackground() : getBackground();
 		Image image = FormImages.getInstance().getSectionGradientImage(gradient, bg, realtheight,
