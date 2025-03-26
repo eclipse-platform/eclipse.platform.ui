@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.menus;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
@@ -45,6 +46,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	private final IServiceLocator locator;
 	private boolean alreadyFailed;
 	private ContributionItem loadedDynamicContribution;
+	private IContributionFactory factory;
 
 	/**
 	 * Creates a DynamicMenuContributionItem
@@ -58,6 +60,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 
 		this.locator = locator;
 		this.dynamicAddition = dynamicAddition;
+		this.factory = locator.getService(IContributionFactory.class);
 	}
 
 	@Override
@@ -128,6 +131,9 @@ public class DynamicMenuContributionItem extends ContributionItem {
 			} catch (RuntimeException e) {
 				reportErrorForContribution(loadedDynamicContribution, e);
 			}
+		}
+		if (factory != null && !factory.isEnabled(getId())) {
+			return false;
 		}
 		return super.isVisible();
 	}

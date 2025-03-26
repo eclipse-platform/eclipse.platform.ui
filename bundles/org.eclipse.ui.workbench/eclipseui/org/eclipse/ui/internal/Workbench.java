@@ -457,7 +457,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 *                specializes this workbench instance
 	 * @since 3.0
 	 */
-	@SuppressWarnings("restriction")
 	private Workbench(Display display, final WorkbenchAdvisor advisor, MApplication app, IEclipseContext appContext) {
 		this.advisor = Objects.requireNonNull(advisor);
 		this.display = Objects.requireNonNull(display);

@@ -25,7 +25,6 @@ import org.osgi.framework.Bundle;
  * from the {@link Workbench} services.
  *
  */
-@SuppressWarnings("restriction")
 class WorkbenchContributionFactory implements IContributionFactory {
 
 	private static final String BUNDLE_CLASS_PREFIX = "bundleclass://"; //$NON-NLS-1$
@@ -58,8 +57,11 @@ class WorkbenchContributionFactory implements IContributionFactory {
 
 	@Override
 	public boolean isEnabled(String uriString) {
-		if (uriString != null && uriString.startsWith(BUNDLE_CLASS_PREFIX)) {
-			String identifierId = uriString.substring(BUNDLE_CLASS_PREFIX.length());
+		if (uriString != null) {
+			String identifierId = uriString;
+			if (uriString.startsWith(BUNDLE_CLASS_PREFIX)) {
+				identifierId = uriString.substring(BUNDLE_CLASS_PREFIX.length());
+			}
 			if (activitySupport == null) {
 				activitySupport = context.get(IWorkbenchActivitySupport.class);
 			}
