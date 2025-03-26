@@ -32,6 +32,7 @@ import org.eclipse.ui.keys.SpecialKey;
  *
  * @since 3.0
  */
+@SuppressWarnings("removal")
 public class NativeKeyFormatter extends AbstractKeyFormatter {
 
 	/**
