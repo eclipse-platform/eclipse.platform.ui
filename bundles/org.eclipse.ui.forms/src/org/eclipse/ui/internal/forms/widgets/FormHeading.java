@@ -38,6 +38,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
@@ -852,38 +853,35 @@ public class FormHeading extends Canvas {
 		if (carea.width == 0 || carea.height == 0) {
 			return;
 		}
-		Image buffer = new Image(getDisplay(), carea.width, carea.height);
-		buffer.setBackground(getBackground());
-		GC igc = new GC(buffer);
-		igc.setBackground(getBackground());
-		igc.fillRectangle(0, 0, carea.width, carea.height);
-		if (getBackgroundImage() != null) {
-			if (gradientInfo != null)
-				drawBackground(igc, carea.x, carea.y, carea.width, carea.height);
-			else {
-				Image bgImage = getBackgroundImage();
-				Rectangle ibounds = bgImage.getBounds();
-				drawBackground(igc, carea.x, carea.y, ibounds.width,
-						ibounds.height);
+		final ImageGcDrawer imageGcDrawer = (igc, width, height) -> {
+			igc.setBackground(getBackground());
+			igc.fillRectangle(0, 0, width, height);
+			if (getBackgroundImage() != null) {
+				if (gradientInfo != null)
+					drawBackground(igc, carea.x, carea.y, width, height);
+				else {
+					Image bgImage = getBackgroundImage();
+					Rectangle ibounds = bgImage.getBounds();
+					drawBackground(igc, carea.x, carea.y, ibounds.width, ibounds.height);
+				}
 			}
-		}
 
-		if (isSeparatorVisible()) {
-			// bg separator
-			if (hasColor(IFormColors.H_BOTTOM_KEYLINE1))
-				igc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE1));
-			else
-				igc.setForeground(getBackground());
-			igc.drawLine(carea.x, carea.height - 2, carea.x + carea.width - 1,
-					carea.height - 2);
-			if (hasColor(IFormColors.H_BOTTOM_KEYLINE2))
-				igc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE2));
-			else
-				igc.setForeground(getForeground());
-			igc.drawLine(carea.x, carea.height - 1, carea.x + carea.width - 1,
-					carea.height - 1);
-		}
-		igc.dispose();
+			if (isSeparatorVisible()) {
+				// bg separator
+				if (hasColor(IFormColors.H_BOTTOM_KEYLINE1))
+					igc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE1));
+				else
+					igc.setForeground(getBackground());
+				igc.drawLine(carea.x, height - 2, carea.x + width - 1, height - 2);
+				if (hasColor(IFormColors.H_BOTTOM_KEYLINE2))
+					igc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE2));
+				else
+					igc.setForeground(getForeground());
+				igc.drawLine(carea.x, height - 1, carea.x + width - 1, height - 1);
+			}
+		};
+		Image buffer = new Image(getDisplay(), imageGcDrawer, carea.width, carea.height);
+		buffer.setBackground(getBackground());
 		gc.drawImage(buffer, carea.x, carea.y);
 		buffer.dispose();
 	}
@@ -908,12 +906,12 @@ public class FormHeading extends Canvas {
 			gradientImage = FormImages.getInstance().getGradient(gradientInfo.gradientColors, gradientInfo.percents,
 					gradientInfo.vertical ? rect.height : rect.width, gradientInfo.vertical, getColor(COLOR_BASE_BG), getDisplay());
 		} else if (backgroundImage != null && !isBackgroundImageTiled()) {
-			gradientImage = new Image(getDisplay(), Math.max(rect.width, 1),
+			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
+				gc.drawImage(backgroundImage, 0, 0);
+			};
+			gradientImage = new Image(getDisplay(), imageGcDrawer, Math.max(rect.width, 1),
 					Math.max(rect.height, 1));
 			gradientImage.setBackground(getBackground());
-			GC gc = new GC(gradientImage);
-			gc.drawImage(backgroundImage, 0, 0);
-			gc.dispose();
 		}
 		if (oldGradientImage != null) {
 			FormImages.getInstance().markFinished(oldGradientImage, getDisplay());
