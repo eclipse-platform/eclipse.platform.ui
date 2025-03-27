@@ -501,12 +501,12 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 					.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 
 			Optional<ImageDescriptor> linkOverlay = ResourceLocator
-					.imageDescriptorFromBundle(WizardNewFolderMainPage.class, "$nl$/icons/full/ovr16/link_ovr.png"); //$NON-NLS-1$
+					.imageDescriptorFromBundle(WizardNewFolderMainPage.class, "$nl$/icons/full/ovr16/link_ovr.svg"); //$NON-NLS-1$
 			CompositeImageDescriptor linkedFolderDescriptor = new DecorationOverlayIcon(folderDescriptor,
 					linkOverlay.orElse(null), IDecoration.BOTTOM_RIGHT);
 
 			Optional<ImageDescriptor> virtualOverlay = ResourceLocator
-					.imageDescriptorFromBundle(WizardNewFolderMainPage.class, "$nl$/icons/full/ovr16/virt_ovr.png"); //$NON-NLS-1$
+					.imageDescriptorFromBundle(WizardNewFolderMainPage.class, "$nl$/icons/full/ovr16/virt_ovr.svg"); //$NON-NLS-1$
 			CompositeImageDescriptor virtualFolderDescriptor = new DecorationOverlayIcon(folderDescriptor,
 					virtualOverlay.orElse(null), IDecoration.BOTTOM_RIGHT);
 
