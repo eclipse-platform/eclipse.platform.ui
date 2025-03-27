@@ -17,59 +17,68 @@
  * Simon Muschel <smuschel@gmx.de> - bug 258493
  * Kris De Volder Copied and modified from org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog
  *                to create QuickSearchDialog
+ * Jozef Tomek - text viewers extension
  *******************************************************************************/
 package org.eclipse.text.quicksearch.internal.ui;
-
-import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.search.internal.ui.text.EditorOpener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -82,6 +91,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -89,7 +99,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
@@ -97,14 +106,16 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.text.quicksearch.ITextViewerCreator.ITextViewerHandle;
 import org.eclipse.text.quicksearch.internal.core.LineItem;
 import org.eclipse.text.quicksearch.internal.core.QuickTextQuery;
-import org.eclipse.text.quicksearch.internal.core.QuickTextQuery.TextRange;
 import org.eclipse.text.quicksearch.internal.core.QuickTextSearchRequestor;
 import org.eclipse.text.quicksearch.internal.core.QuickTextSearcher;
+import org.eclipse.text.quicksearch.internal.core.QuickTextQuery.TextRange;
 import org.eclipse.text.quicksearch.internal.core.pathmatch.ResourceMatchers;
 import org.eclipse.text.quicksearch.internal.util.DocumentFetcher;
 import org.eclipse.ui.ActiveShellExpression;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -332,15 +343,13 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	private TableViewer list;
 
-	private MenuManager menuManager;
+	private MenuManager viewMenuManager;
 
 	private MenuManager contextMenuManager;
 
 	private boolean multi;
 
-	private ToolBar toolBar;
-
-	private ToolItem toolItem;
+	private ToolBar viewMenuToolBar;
 
 	private Label progressLabel;
 
@@ -359,8 +368,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	private QuickTextSearcher searcher;
 
-	private StyledText details;
-
 	private DocumentFetcher documents;
 
 
@@ -378,6 +385,18 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	private IWorkbenchWindow window;
 	private Combo searchIn;
 	private Label listLabel;
+
+	private IDocument lastDocument;
+	private Composite viewersParent;
+	private StackLayout viewersParentLayout;
+	private final Map<IViewerDescriptor, TextViewerWrapper> viewerWrappers = new IdentityHashMap<>();
+	private TextViewerWrapper currentViewerWrapper;
+	private static final Map<IFile, IViewerDescriptor> SELECTED_VIEWERS = new HashMap<>();
+
+	private List<IViewerDescriptor> currentDescriptors = Collections.emptyList();
+	private CLabel viewerSelectionLabel;
+	private MenuManager viewersSelectionMenuManager;
+	private ToolBar viewersSelectionToolBar;
 
 	/**
 	 * Creates a new instance of the class.
@@ -541,10 +560,12 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			showViewHandler.getHandler().dispose();
 			showViewHandler = null;
 		}
-		if (menuManager != null)
-			menuManager.dispose();
+		if (viewMenuManager != null)
+			viewMenuManager.dispose();
 		if (contextMenuManager != null)
 			contextMenuManager.dispose();
+		if (viewersSelectionMenuManager != null)
+			viewersSelectionMenuManager.dispose();
 		storeDialog(getDialogSettings());
 		if (searcher!=null) {
 			searcher.cancel();
@@ -664,14 +685,14 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	}
 
 	private void createViewMenu(Composite parent) {
-		toolBar = new ToolBar(parent, SWT.FLAT);
-		toolItem = new ToolItem(toolBar, SWT.PUSH, 0);
+		viewMenuToolBar = new ToolBar(parent, SWT.FLAT);
+		ToolItem toolItem = new ToolItem(viewMenuToolBar, SWT.PUSH, 0);
 
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.END;
-		toolBar.setLayoutData(data);
+		viewMenuToolBar.setLayoutData(data);
 
-		toolBar.addMouseListener(new MouseAdapter() {
+		viewMenuToolBar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				showViewMenu();
@@ -689,9 +710,9 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			}
 		});
 
-		menuManager = new MenuManager();
+		viewMenuManager = new MenuManager();
 
-		fillViewMenu(menuManager);
+		fillViewMenu(viewMenuManager);
 
 		IHandlerService service = PlatformUI.getWorkbench()
 				.getService(IHandlerService.class);
@@ -722,10 +743,10 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	}
 
 	private void showViewMenu() {
-		Menu menu = menuManager.createContextMenu(getShell());
-		Rectangle bounds = toolItem.getBounds();
+		Menu menu = viewMenuManager.createContextMenu(getShell());
+		Rectangle bounds = viewMenuToolBar.getItem(0).getBounds();
 		Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
-		topLeft = toolBar.toDisplay(topLeft);
+		topLeft = viewMenuToolBar.toDisplay(topLeft);
 		menu.setLocation(topLeft.x, topLeft.y);
 		menu.setVisible(true);
 	}
@@ -870,36 +891,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		list.addDoubleClickListener(event -> handleDoubleClick());
 
-		list.getTable().addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-
-				if (e.keyCode == SWT.ARROW_UP && (e.stateMask & SWT.SHIFT) == 0
-						&& (e.stateMask & SWT.CTRL) == 0) {
-					StructuredSelection selection = (StructuredSelection) list
-							.getSelection();
-
-					if (selection.size() == 1) {
-						Object element = selection.getFirstElement();
-						if (element.equals(list.getElementAt(0))) {
-							pattern.setFocus();
-						}
-						list.getTable().notifyListeners(SWT.Selection,
-								new Event());
-
-					}
-				}
-
-				if (e.keyCode == SWT.ARROW_DOWN
-						&& (e.stateMask & SWT.SHIFT) != 0
-						&& (e.stateMask & SWT.CTRL) != 0) {
-
-					list.getTable().notifyListeners(SWT.Selection, new Event());
-				}
-
-			}
-		});
-
 		createDetailsArea(sashForm);
 		sashForm.setWeights(new int[] {5,2});
 
@@ -946,77 +937,208 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			blankImage.dispose();
 			blankImage = null;
 		}
+		if (documents != null) {
+			documents.destroy();
+		}
 	}
 
 	private void createDetailsArea(Composite parent) {
-		details = new StyledText(parent, SWT.MULTI+SWT.READ_ONLY+SWT.BORDER+SWT.H_SCROLL+SWT.V_SCROLL);
-		details.setFont(JFaceResources.getFont(TEXT_FONT));
+		Composite detailsComposite = new Composite(parent, SWT.NONE);
+		detailsComposite.setLayout(GridLayoutFactory.fillDefaults().equalWidth(true).spacing(0, 0).create());
 
-		list.addSelectionChangedListener(event -> refreshDetails());
-		details.addControlListener(new ControlAdapter() {
+		final Composite toolbarComposite = new Composite(detailsComposite, SWT.NONE);
+		toolbarComposite.setLayoutData(GridDataFactory.fillDefaults().hint(SWT.DEFAULT, 24).grab(true, false).create());
+		toolbarComposite.setLayout(RowLayoutFactory.fillDefaults().create());
+
+		viewerSelectionLabel = new CLabel(toolbarComposite, SWT.NONE);
+
+		viewersSelectionToolBar = new ToolBar(toolbarComposite, SWT.FLAT);
+		final ToolItem toolItem = new ToolItem(viewersSelectionToolBar, SWT.PUSH, 0);
+		toolItem.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
+		toolItem.setToolTipText(QuickSearchMessages.QuickSearchDialog_switchButtonTooltip);
+		toolItem.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void controlResized(ControlEvent e) {
-				refreshDetails();
+			public void widgetSelected(SelectionEvent e) {
+				showViewersSelectionMenu();
 			}
 		});
+		viewersSelectionToolBar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				showViewersSelectionMenu();
+			}
+		});
+
+		viewersSelectionMenuManager = new MenuManager();
+
+		viewersParent = new Composite(detailsComposite, SWT.NONE);
+		viewersParent.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
+		viewersParentLayout = new StackLayout();
+		viewersParent.setLayout(viewersParentLayout);
+
+		replaceViewer(QuickSearchActivator.getDefault().getDefaultViewer(), null);
+		Assert.isNotNull(currentViewerWrapper, "Default source viewer initialization failed"); //$NON-NLS-1$
+
+		list.addSelectionChangedListener(event -> refreshDetails());
 	}
 
+	private TextViewerWrapper replaceViewer(IViewerDescriptor descriptor, IFile file) {
+		if (descriptor == null) {
+			// should never happen
+			descriptor = QuickSearchActivator.getDefault().getDefaultViewer();
+		}
+		if (currentViewerWrapper != null && currentViewerWrapper.descriptor == descriptor) {
+			return currentViewerWrapper;
+		}
+		var wrapper = wrapViewer(descriptor);
+		if (currentViewerWrapper != null && wrapper != null) {
+			wrapper.viewerParent.setSize(currentViewerWrapper.viewerParent.getSize());
+		}
+		currentViewerWrapper = wrapper;
+		currentViewerWrapper.showInViewersParent();
 
-	// Dumber version just using the a 'raw' StyledText widget.
+		viewerSelectionLabel.setText(currentViewerWrapper.descriptor.getLabel());
+		if (file == null) {
+			viewerSelectionLabel.setImage(ISharedImages.get().getImage(ISharedImages.IMG_OBJ_FILE));
+		} else {
+			viewerSelectionLabel.setImage(QuickSearchActivator.getDefault().getImage(file));
+		}
+		viewerSelectionLabel.getParent().layout();
+
+		return currentViewerWrapper;
+	}
+
+	private void showViewersSelectionMenu() {
+		viewersSelectionMenuManager.removeAll();
+
+		// add default viewer option
+		LineItem item = (LineItem) ((IStructuredSelection) list.getSelection()).getFirstElement();
+		var defaultDescriptor = currentDescriptors.getFirst();
+		var defaultViewerItem = new DefaultViewerSelectionAction(defaultDescriptor, item);
+		viewersSelectionMenuManager.add(defaultViewerItem);
+		viewersSelectionMenuManager.add(new Separator());
+
+		// add options for all contributed viewers
+		viewersSelectionMenuManager.add(new GroupMarker("viewers")); //$NON-NLS-1$ // TODO
+		for (IViewerDescriptor viewerDescriptor : currentDescriptors) {
+			viewersSelectionMenuManager.add(
+					new ViewerSelectionAction(viewerDescriptor.getLabel(), viewerDescriptor, item));
+		}
+
+		Menu menu = viewersSelectionMenuManager.createContextMenu(getShell());
+
+		Rectangle bounds = viewersSelectionToolBar.getItem(0).getBounds();
+		Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
+		topLeft = viewersSelectionToolBar.toDisplay(topLeft);
+		menu.setLocation(topLeft.x, topLeft.y);
+		menu.setVisible(true);
+	}
+
+	private TextViewerWrapper wrapViewer(IViewerDescriptor descriptor) {
+		TextViewerWrapper wrapper = viewerWrappers.get(descriptor);
+		if (wrapper == null) {
+			Composite viewerParent = new Composite(viewersParent, SWT.NONE);
+			viewerParent.setLayout(new FillLayout());
+			// ask descriptor to create extension's creator and creator to provide handle for text viewer
+			if (descriptor.getViewerCreator().createTextViewer(viewerParent) instanceof ITextViewerHandle handle) {
+				var wrp = wrapper = new TextViewerWrapper(descriptor, handle, viewerParent);
+				viewerWrappers.put(descriptor, wrapper);
+				viewerParent.addControlListener(new ControlAdapter() {
+					@Override
+					public void controlResized(ControlEvent e) {
+						if (currentViewerWrapper == wrp && !currentViewerWrapper.shouldIgnoreResize.get()) {
+							LineItem item = (LineItem) ((IStructuredSelection) list.getSelection()).getFirstElement();
+							if (item != null) {
+								showInViewer(item, item.getFile(), lastDocument);
+							}
+						}
+					}
+				});
+			} else  { // viewer descriptor failed to provide source viewer creator, we return null
+				viewerParent.dispose();
+			}
+		} // else we're re-using viewer that was already initialized
+		return wrapper != null
+				? wrapper
+				: viewerWrappers.get(QuickSearchActivator.getDefault().getDefaultViewer()); // always expected non NULL
+	}
+
 	private void refreshDetails() {
-		if (details!=null && list!=null && !list.getTable().isDisposed()) {
+		IFile file = null;
+		if (list!=null && !list.getTable().isDisposed()) {
 			if (documents==null) {
 				documents = new DocumentFetcher();
 			}
 			IStructuredSelection sel = (IStructuredSelection) list.getSelection();
-			if (sel==null || sel.isEmpty()) {
-				details.setText(EMPTY_STRING);
-			} else {
+			if (sel!=null && !sel.isEmpty()) {
 				//Not empty selection
-				final int context = 100; // number of lines before and after match to include in preview
-				int numLines = computeLines();
-				if (numLines > 0) {
-					LineItem item = (LineItem) sel.getFirstElement();
-					IDocument document = documents.getDocument(item.getFile());
-					if (document!=null) {
-						try {
-							int line = item.getLineNumber()-1; //in document lines are 0 based. In search 1 based.
-							int contextStartLine = Math.max(line-(numLines-1)/2 - context, 0);
-							int start = document.getLineOffset(contextStartLine);
-							int end = document.getLength();
-							try {
-								IRegion lineInfo = document.getLineInformation(line + numLines/2 + context);
-								end = lineInfo.getOffset() + lineInfo.getLength();
-							} catch (BadLocationException e) {
-								//Presumably line number is past the end of document.
-								//ignore.
-							}
-
-							StyledString styledString = highlightMatches(document.get(start, end-start));
-							details.setText(styledString.getString());
-							details.setStyleRanges(styledString.getStyleRanges());
-							details.setTopIndex(Math.max(line - contextStartLine - numLines/2, 0));
-							return;
-						} catch (BadLocationException e) {
+				LineItem item = (LineItem) sel.getFirstElement();
+				file = item.getFile();
+				IDocument document = documents.getDocument(file);
+				if (document!=null) {
+					viewersSelectionToolBar.setVisible(true);
+					if (document != lastDocument) {
+						currentDescriptors = QuickSearchActivator.getDefault().getViewers(file);
+						var selectedDescr = SELECTED_VIEWERS.get(file);
+						if (selectedDescr == null || !currentDescriptors.contains(selectedDescr)) {
+							selectedDescr = currentDescriptors.getFirst();
+							SELECTED_VIEWERS.remove(file);
 						}
+						replaceViewer(selectedDescr, file);
 					}
+					showInViewer(item, file, document);
+					return;
 				}
 			}
-			//empty selection or some error:
-			details.setText(EMPTY_STRING);
 		}
+		//empty selection or some error:
+		lastDocument = null;
+		replaceViewer(QuickSearchActivator.getDefault().getDefaultViewer(), file).setInput(null, null, null);
+		viewersSelectionToolBar.setVisible(false);
 	}
 
-	/**
-	 * Computes how many lines of text can be displayed in the details section.
-	 */
-	private int computeLines() {
-		if (details!=null && !details.isDisposed()) {
-			int lineHeight = details.getLineHeight();
-			int areaHeight = details.getClientArea().height;
-			return (areaHeight + lineHeight - 1) / lineHeight;
+	private void showInViewer(LineItem item, IFile file, IDocument document) {
+		int numLines = currentViewerWrapper.handle.getVisibleLines();
+		try {
+			final int context = 100; // number of lines before and after match to include in preview
+			int line = item.getLineNumber()-1; //in document lines are 0 based. In search 1 based.
+			int contextStartLine = Math.max(line-(numLines-1)/2 - context, 0);
+			int start = document.getLineOffset(contextStartLine);
+			int displayedEndLine = line + numLines/2;
+			int end = document.getLength();
+			if (displayedEndLine + context <= document.getNumberOfLines()) {
+				try {
+					IRegion lineInfo = document.getLineInformation(displayedEndLine + context);
+					end = lineInfo.getOffset() + lineInfo.getLength();
+				} catch (BadLocationException e) {
+					//Presumably line number is past the end of document.
+					//ignore.
+				}
+			}
+			int contextLenght = end-start;
+
+			if (document != lastDocument) {
+				// some matches may fall out of visible region, but we still prepare & pass ranges for all
+				StyledString styledString = highlightMatches(document.get());
+				var ranges = styledString.getStyleRanges();
+				lastDocument = document;
+				currentViewerWrapper.setInput(document, ranges, file);
+			}
+
+			var visibleRange = new Region(start, contextLenght);
+
+			IRegion rangeEndLineInfo = document.getLineInformation(Math.min(displayedEndLine, document.getNumberOfLines() - 1));
+			int rangeStart = document.getLineOffset(Math.max(line - numLines/2, 0));
+			int rangeEnd = rangeEndLineInfo.getOffset() + rangeEndLineInfo.getLength();
+			var revealedRange = new Region(rangeStart, rangeEnd - rangeStart);
+
+			var targetLineFirstMatch = getQuery().findFirst(document.get(item.getOffset(), contextLenght - (item.getOffset() - start)));
+			int targetLineFirstMatchStart = item.getOffset() + targetLineFirstMatch.getOffset();
+			var matchRange = new Region(targetLineFirstMatchStart, targetLineFirstMatch.getLength());
+
+			currentViewerWrapper.handle.focusMatch(visibleRange, revealedRange, line, matchRange);
+		} catch (BadLocationException e) {
 		}
-		return 0;
 	}
 
 	/**
@@ -1033,47 +1155,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		}
 		return styledText;
 	}
-
-// Version using sourceviewer
-//	private void refreshDetails() {
-//		if (details!=null && list!=null && !list.getTable().isDisposed()) {
-//			if (documents==null) {
-//				documents = new DocumentFetcher();
-//			}
-//			IStructuredSelection sel = (IStructuredSelection) list.getSelection();
-//			if (sel!=null && !sel.isEmpty()) {
-//				//Not empty selection
-//				LineItem item = (LineItem) sel.getFirstElement();
-//				IDocument document = documents.getDocument(item.getFile());
-//				try {
-//					int line = item.getLineNumber()-1; //in document lines are 0 based. In search 1 based.
-//					int start = document.getLineOffset(Math.max(line-2, 0));
-//					int end = document.getLength();
-//					try {
-//						end = document.getLineOffset(line+3);
-//					} catch (BadLocationException e) {
-//						//Presumably line number is past the end of document.
-//						//ignore.
-//					}
-//					details.setDocument(document, start, end-start);
-//
-//					String visibleText = document.get(start, end-start);
-//					List<TextRange> matches = getQuery().findAll(visibleText);
-//					Region visibleRegion = new Region(start, end-start);
-//					TextPresentation presentation = new TextPresentation(visibleRegion, 20);
-//					presentation.setDefaultStyleRange(new StyleRange(0, document.getLength(), null, null));
-//					for (TextRange m : matches) {
-//						presentation.addStyleRange(new StyleRange(m.start+start, m.len, null, YELLOW));
-//					}
-//					details.changeTextPresentation(presentation, true);
-//
-//					return;
-//				} catch (BadLocationException e) {
-//				}
-//			}
-//			details.setDocument(null);
-//		}
-//	}
 
 	/**
 	 * Handle selection in the items list by updating labels of selected and
@@ -1471,4 +1552,94 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		return searcher.getQuery();
 	}
 
+	private class TextViewerWrapper {
+
+		final IViewerDescriptor descriptor;
+		final ITextViewerHandle handle;
+		final Composite viewerParent;
+		final AtomicBoolean shouldIgnoreResize = new AtomicBoolean();
+
+		public TextViewerWrapper(IViewerDescriptor descriptor, ITextViewerHandle handle, Composite viewerParent) {
+			this.descriptor = descriptor;
+			this.handle = handle;
+			this.viewerParent = viewerParent;
+		}
+
+		void setInput(IDocument input, StyleRange[] ranges, IFile file) {
+			// setting document triggers resize of the text widget that is OK to ignore
+			var wasInCall = shouldIgnoreResize.getAndSet(true);
+			try {
+				handle.setViewerInput(input, ranges, file);
+			} finally {
+				if (!wasInCall) {
+					shouldIgnoreResize.set(false);
+				}
+			}
+		}
+
+		void showInViewersParent() {
+			// layout() of parent triggers resize of the text widget that is OK to ignore
+			var wasInCall = shouldIgnoreResize.getAndSet(true);
+			try {
+				viewersParentLayout.topControl = viewerParent;
+				viewersParent.layout();
+			} finally {
+				if (!wasInCall) {
+					shouldIgnoreResize.set(false);
+				}
+			}
+		}
+	}
+
+	private class ViewerSelectionAction extends Action {
+
+		final IViewerDescriptor descriptor;
+
+		public ViewerSelectionAction(String text, IViewerDescriptor descriptor, LineItem selectedItem) {
+			super(text, IAction.AS_RADIO_BUTTON);
+			this.descriptor = descriptor;
+			setChecked(createAsChecked(selectedItem));
+		}
+
+		boolean createAsChecked(LineItem selectedItem) {
+			return currentViewerWrapper.descriptor == descriptor
+					&& selectedItem != null
+					&& SELECTED_VIEWERS.get(selectedItem.getFile()) == descriptor;
+		}
+
+		@Override
+		public void run() {
+			if (isChecked()) {
+				LineItem item = (LineItem) ((IStructuredSelection) list.getSelection()).getFirstElement();
+				var file = item.getFile();
+				applySelection(file);
+
+				replaceViewer(descriptor, file);
+
+				var document = lastDocument;
+				lastDocument = null; // to force setInput()
+				showInViewer(item, file, document);
+			}
+		}
+
+		void applySelection(IFile file) {
+			SELECTED_VIEWERS.put(file, descriptor);
+		}
+	}
+
+	private class DefaultViewerSelectionAction extends ViewerSelectionAction {
+		public DefaultViewerSelectionAction(IViewerDescriptor descriptor, LineItem selectedItem) {
+			super(QuickSearchMessages.QuickSearchDialog_defaultViewer, descriptor, selectedItem);
+		}
+
+		@Override
+		boolean createAsChecked(LineItem selectedItem) {
+			return selectedItem == null || !SELECTED_VIEWERS.containsKey(selectedItem.getFile());
+		}
+
+		@Override
+		void applySelection(IFile file) {
+			SELECTED_VIEWERS.remove(file);
+		}
+	}
 }
