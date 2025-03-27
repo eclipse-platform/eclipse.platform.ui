@@ -122,6 +122,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	public static final String ENABLED_THEME_KEY = "themeEnabled";
 
+	/**
+	 * Default default value for "enable theming" behavior.
+	 */
+	public static final boolean ENABLED_THEME_KEY_DEFAULT = true;
+
 	private String factoryUrl;
 
 	IRendererFactory curFactory = null;
