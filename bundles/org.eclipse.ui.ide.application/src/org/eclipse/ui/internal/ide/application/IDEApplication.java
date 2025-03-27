@@ -123,6 +123,13 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	private static final int RETRY_LOAD = 0;
 
 	/**
+	 * Return value when the user wants to cancel launch since workspace already
+	 * occupied
+	 */
+	private static final int CANCEL_LAUNCH = 2;
+	private static final int CANCEL_LAUNCH_DEFAULT = -1;
+
+	/**
 	 * A special return code that will be recognized by the PDE launcher and used to
 	 * show an error dialog if the workspace is locked.
 	 */
@@ -374,8 +381,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 			MessageDialog dialog = new MessageDialog(null, IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
 					null, NLS.bind(IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage, workspaceUrl.getFile()),
-					MessageDialog.ERROR, 1, IDEWorkbenchMessages.IDEApplication_workspaceInUse_Retry,
-					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Choose) {
+					MessageDialog.ERROR, 2, IDEWorkbenchMessages.IDEApplication_workspaceInUse_Retry,
+					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Choose,
+					IDEWorkbenchMessages.IDEApplication_workspaceInUse_Cancel) {
 				@Override
 				protected Control createCustomArea(Composite parent) {
 					if (lockInfo == null || lockInfo.isBlank()) {
@@ -393,6 +401,11 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 			};
 			// the return value influences the next loop's iteration
 			returnValue = dialog.open();
+
+			if (returnValue == CANCEL_LAUNCH || returnValue == CANCEL_LAUNCH_DEFAULT) {
+				return EXIT_OK;
+			}
+			
 			// Remember the locked workspace as recent workspace
 			launchData.writePersistedData();
 		}

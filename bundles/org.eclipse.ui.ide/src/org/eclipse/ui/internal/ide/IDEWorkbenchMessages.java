@@ -1043,6 +1043,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEApplication_workspaceInUseMessage;
 	public static String IDEApplication_workspaceInUse_Choose;
 	public static String IDEApplication_workspaceInUse_Retry;
+	public static String IDEApplication_workspaceInUse_Cancel;
 	public static String IDEApplication_workspaceEmptyTitle;
 	public static String IDEApplication_workspaceEmptyMessage;
 	public static String IDEApplication_workspaceInvalidTitle;
