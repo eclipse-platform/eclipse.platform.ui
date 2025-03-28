@@ -55,7 +55,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.Util;
@@ -214,13 +213,9 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		group.setFont(parent.getFont());
 		GridLayout layout = new GridLayout(1, false);
 		group.setLayout(layout);
-		Label infoLabel = new Label(group, SWT.WRAP);
-		infoLabel.setText(WorkbenchMessages.RescaleAtRuntimeDisclaimer);
-		infoLabel.setLayoutData(GridDataFactory.defaultsFor(infoLabel).create());
-		createLabel(group, ""); //$NON-NLS-1$
 
 		boolean initialStateRescaleAtRuntime = ConfigurationScope.INSTANCE.getNode(WorkbenchPlugin.PI_WORKBENCH)
-				.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, false);
+				.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
 		rescaleAtRuntime = createCheckButton(group, WorkbenchMessages.RescaleAtRuntimeEnabled, initialStateRescaleAtRuntime);
 	}
 
