@@ -218,21 +218,29 @@ class DialogAccess implements IFindReplaceUIAccess {
 
 	@Override
 	public void performReplaceAll() {
-		replaceAllButton.notifyListeners(SWT.Selection, null);
+		if (replaceAllButton.getEnabled()) {
+			replaceAllButton.notifyListeners(SWT.Selection, null);
+		}
 	}
 
 	@Override
 	public void performReplace() {
-		replaceButton.notifyListeners(SWT.Selection, null);
+		if (replaceButton.getEnabled()) {
+			replaceButton.notifyListeners(SWT.Selection, null);
+		}
 	}
 
 	public void performFindNext() {
-		findNextButton.notifyListeners(SWT.Selection, null);
+		if (findNextButton.getEnabled()) {
+			findNextButton.notifyListeners(SWT.Selection, null);
+		}
 	}
 
 	@Override
 	public void performReplaceAndFind() {
-		replaceFindButton.notifyListeners(SWT.Selection, null);
+		if (replaceFindButton.getEnabled()) {
+			replaceFindButton.notifyListeners(SWT.Selection, null);
+		}
 	}
 
 	@Override

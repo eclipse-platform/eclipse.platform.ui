@@ -154,8 +154,6 @@ class FindReplaceDialog extends Dialog {
 			fFindField.addModifyListener(event -> {
 				decorate();
 			});
-
-			updateButtonState(!findReplaceLogic.isActive(SearchOptions.INCREMENTAL));
 		}
 	}
 
@@ -629,9 +627,6 @@ class FindReplaceDialog extends Dialog {
 	 * @return the input panel
 	 */
 	private Composite createInputPanel(Composite parent) {
-
-		ModifyListener listener = e -> updateButtonState();
-
 		Composite panel = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -652,7 +647,10 @@ class FindReplaceDialog extends Dialog {
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new char[0], true);
 		setGridData(fFindField, SWT.FILL, true, SWT.CENTER, false);
 		addDecorationMargin(fFindField);
-		fFindModifyListener = new InputModifyListener(this::updateFindString);
+		fFindModifyListener = new InputModifyListener(() -> {
+			updateFindString();
+			updateButtonState(!findReplaceLogic.isActive(SearchOptions.INCREMENTAL));
+		});
 		fFindField.addModifyListener(fFindModifyListener);
 
 		fReplaceLabel = new Label(panel, SWT.LEFT);
@@ -671,9 +669,9 @@ class FindReplaceDialog extends Dialog {
 			if (okToUse(fReplaceField)) {
 				findReplaceLogic.setReplaceString(fReplaceField.getText());
 			}
+			updateButtonState();
 		});
 		fReplaceField.addModifyListener(fReplaceModifyListener);
-		fReplaceField.addModifyListener(listener);
 
 		return panel;
 	}
