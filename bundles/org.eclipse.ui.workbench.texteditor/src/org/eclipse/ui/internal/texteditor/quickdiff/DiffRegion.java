@@ -62,22 +62,20 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 	public String getType() {
 		// we return unknown for unchanged regions to avoid
 		// them getting displayed.
-		switch (getChangeType()) {
-			case CHANGED:
+		return switch (getChangeType()) {
+			case CHANGED -> {
 				int r= fDifference.rightLength();
 				int l= fDifference.leftLength();
 				int c= Math.min(r, l);
 				if (c == 0 && r - l < 0)
-					return "org.eclipse.ui.workbench.texteditor.quickdiffDeletion"; //$NON-NLS-1$
+					yield "org.eclipse.ui.workbench.texteditor.quickdiffDeletion"; //$NON-NLS-1$
 				else
-					return "org.eclipse.ui.workbench.texteditor.quickdiffChange"; //$NON-NLS-1$
-			case ADDED:
-				return "org.eclipse.ui.workbench.texteditor.quickdiffAddition"; //$NON-NLS-1$
-			case UNCHANGED:
-				return "org.eclipse.ui.workbench.texteditor.quickdiffUnchanged"; //$NON-NLS-1$
-			default:
-				return TYPE_UNKNOWN;
-		}
+					yield "org.eclipse.ui.workbench.texteditor.quickdiffChange"; //$NON-NLS-1$
+			}
+			case ADDED -> "org.eclipse.ui.workbench.texteditor.quickdiffAddition"; //$NON-NLS-1$
+			case UNCHANGED -> "org.eclipse.ui.workbench.texteditor.quickdiffUnchanged"; //$NON-NLS-1$
+			default -> TYPE_UNKNOWN;
+		};
 	}
 
 	@Override
