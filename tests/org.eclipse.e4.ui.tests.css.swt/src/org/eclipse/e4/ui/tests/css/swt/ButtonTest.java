@@ -24,8 +24,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class ButtonTest extends CSSSWTTestCase {
@@ -45,7 +45,7 @@ public class ButtonTest extends CSSSWTTestCase {
 		buttonToTest.setText("Some button text");
 
 		// Apply styles
-		engine.applyStyles(shell, true);
+		engine.applyStyles(buttonToTest, true);
 
 		shell.pack();
 		return buttonToTest;
@@ -95,14 +95,13 @@ public class ButtonTest extends CSSSWTTestCase {
 		assertEquals(SWT.ITALIC, fontData.getStyle());
 	}
 
-	@Disabled
 	@Test
 	void testSelectedPseudo() {
 		Button buttonToTest = createTestButton("Button { color: #FF0000; }\n" + "Button:selected { color: #0000FF; }",
 				SWT.CHECK);
 		assertEquals(RED, buttonToTest.getForeground().getRGB());
 		buttonToTest.setSelection(true);
-		engine.applyStyles(buttonToTest.getShell(), true);
+		buttonToTest.notifyListeners(SWT.Selection, new Event());
 		assertEquals(BLUE, buttonToTest.getForeground().getRGB());
 	}
 
