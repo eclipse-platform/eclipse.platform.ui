@@ -702,7 +702,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			));
 		} else {
 			boolean rescaleAtRuntime = ConfigurationScope.INSTANCE.getNode(WorkbenchPlugin.PI_WORKBENCH)
-					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, false);
+					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
 			System.setProperty(SWT_RESCALE_AT_RUNTIME_PROPERTY, Boolean.toString(rescaleAtRuntime));
 		}
 	}
