@@ -236,6 +236,8 @@ public abstract class FindReplaceUITest<AccessType extends IFindReplaceUIAccess>
 	@Test
 	public void testSimpleReplace() {
 		initializeTextViewerWithFindReplaceUI("ABCD ABCD ABCD");
+		dialog.select(SearchOptions.INCREMENTAL);
+
 		dialog.setFindText("ABCD");
 		dialog.setReplaceText("abcd");
 		dialog.performReplace();
