@@ -722,11 +722,10 @@ public interface IWorkbenchPreferenceConstants {
 
 	/**
 	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. Whether the UI adapts to DPI changes at
-	 * runtime. It only effects Windows.
+	 * Whether the UI adapts to DPI changes at runtime. It only affects Windows.
 	 * </p>
 	 *
 	 * @since 3.134
 	 */
-	String RESCALING_AT_RUNTIME = "RESCALING_AT_RUNTIME"; //$NON-NLS-1$
+	String RESCALING_AT_RUNTIME = "monitorSpecificScaling"; //$NON-NLS-1$
 }

@@ -55,7 +55,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.Util;
@@ -76,7 +75,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -140,7 +138,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			layout.horizontalSpacing = 10;
 			comp.setLayout(layout);
 			createThemeIndependentComposits(comp);
-			createHiDPISettingsGroup(comp);
+			createRescaleAtRuntimeCheckButton(comp);
 			return comp;
 		}
 
@@ -186,7 +184,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createHideIconsForViewTabs(comp);
 		createDependency(showFullTextForViewTabs, hideIconsForViewTabs);
 
-		createHiDPISettingsGroup(comp);
+		createRescaleAtRuntimeCheckButton(comp);
 
 		if (currentTheme != null) {
 			String colorsAndFontsThemeId = getColorAndFontThemeIdByThemeId(currentTheme.getId());
@@ -200,28 +198,17 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		return comp;
 	}
 
-	private void createHiDPISettingsGroup(Composite parent) {
+	private void createRescaleAtRuntimeCheckButton(Composite parent) {
 		if (!OS.isWindows()) {
 			return;
 		}
 		createLabel(parent, ""); //$NON-NLS-1$
-		Group group = new Group(parent, SWT.LEFT);
-		group.setText(WorkbenchMessages.HiDpiSettingsGroupTitle);
-
-		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gridData.horizontalSpan = ((GridLayout) parent.getLayout()).numColumns;
-		group.setLayoutData(gridData);
-		group.setFont(parent.getFont());
-		GridLayout layout = new GridLayout(1, false);
-		group.setLayout(layout);
-		Label infoLabel = new Label(group, SWT.WRAP);
-		infoLabel.setText(WorkbenchMessages.RescaleAtRuntimeDisclaimer);
-		infoLabel.setLayoutData(GridDataFactory.defaultsFor(infoLabel).create());
-		createLabel(group, ""); //$NON-NLS-1$
 
 		boolean initialStateRescaleAtRuntime = ConfigurationScope.INSTANCE.getNode(WorkbenchPlugin.PI_WORKBENCH)
-				.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, false);
-		rescaleAtRuntime = createCheckButton(group, WorkbenchMessages.RescaleAtRuntimeEnabled, initialStateRescaleAtRuntime);
+				.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
+		rescaleAtRuntime = createCheckButton(parent, WorkbenchMessages.RescaleAtRuntimeEnabled,
+				initialStateRescaleAtRuntime);
+		rescaleAtRuntime.setToolTipText(WorkbenchMessages.RescaleAtRuntimeDescription);
 	}
 
 	private void createThemeIndependentComposits(Composite comp) {
@@ -377,7 +364,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			IEclipsePreferences configurationScopeNode = ConfigurationScope.INSTANCE
 					.getNode(WorkbenchPlugin.PI_WORKBENCH);
 			boolean initialStateRescaleAtRuntime = configurationScopeNode
-					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, false);
+					.getBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME, true);
 			isRescaleAtRuntimeChanged = initialStateRescaleAtRuntime != rescaleAtRuntime.getSelection();
 			configurationScopeNode.putBoolean(IWorkbenchPreferenceConstants.RESCALING_AT_RUNTIME,
 					rescaleAtRuntime.getSelection());

@@ -36,9 +36,9 @@ public class WorkbenchMessages extends NLS {
 
 	public static String HiDpiSettingsGroupTitle;
 
-	public static String RescaleAtRuntimeEnabled;
+	public static String RescaleAtRuntimeDescription;
 
-	public static String RescaleAtRuntimeDisclaimer;
+	public static String RescaleAtRuntimeEnabled;
 
 	public static String RescaleAtRuntimeSettingChangeWarningTitle;
 
