@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionException;
@@ -157,6 +158,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
@@ -315,7 +317,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		@Override
 		public void serviceChanged(ServiceEvent event) {
 			subMonitor.setWorkRemaining(5).worked(1);
-			spinEventQueueToUpdateSplash(displayForStartupListener);
+			AUTOSCALE_ADAPTATION
+					.runWithOriginalAutoScale(() -> spinEventQueueToUpdateSplash(displayForStartupListener));
 		}
 	}
 
@@ -350,6 +353,11 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 * The splash handler.
 	 */
 	private static AbstractSplashHandler splash;
+
+	/**
+	 * Helper to adapt auto-scaling for the splash screen
+	 */
+	private static final AutoscaleAdaptation AUTOSCALE_ADAPTATION = new AutoscaleAdaptation();
 
 	/**
 	 * The display used for all UI interactions with this workbench.
@@ -627,9 +635,9 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 						properties);
 
 				// listener for updating the splash screen
-				ServiceListener serviceListener = null;
+				AtomicReference<ServiceListener> serviceListener = new AtomicReference<>();
 				createSplash = WorkbenchPlugin.isSplashHandleSpecified();
-				if (createSplash) {
+				Runnable splashCreation = () -> {
 
 					// prime the splash nice and early
 					workbench.createSplashWrapper();
@@ -649,11 +657,12 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 					if (handler != null && showProgress) {
 						IProgressMonitor progressMonitor = SubMonitor.convert(handler.getBundleProgressMonitor());
-						serviceListener = new Workbench.StartupProgressBundleListener(progressMonitor, display);
-						WorkbenchPlugin.getDefault().getBundleContext().addServiceListener(serviceListener);
+						serviceListener.set(new Workbench.StartupProgressBundleListener(progressMonitor, display));
+						WorkbenchPlugin.getDefault().getBundleContext().addServiceListener(serviceListener.get());
 					}
+				};
 
-				}
+				AUTOSCALE_ADAPTATION.runWithOriginalAutoScale(splashCreation);
 
 				setSearchContribution(appModel, true);
 				// run the legacy workbench once
@@ -662,7 +671,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				if (returnCode[0] == PlatformUI.RETURN_OK) {
 					// run the e4 event loop and instantiate ... well, stuff
 					if (serviceListener != null) {
-						WorkbenchPlugin.getDefault().getBundleContext().removeServiceListener(serviceListener);
+						WorkbenchPlugin.getDefault().getBundleContext().removeServiceListener(serviceListener.get());
 					}
 					e4Workbench.createAndRunUI(e4Workbench.getApplication());
 				}
@@ -3648,5 +3657,32 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 	protected String createId() {
 		return UUID.randomUUID().toString();
+	}
+
+	private static class AutoscaleAdaptation {
+		private final String initialAutoScaleValue;
+
+		public AutoscaleAdaptation() {
+			initialAutoScaleValue = getAutoScaleValue();
+		}
+
+		public void runWithOriginalAutoScale(Runnable runnable) {
+			String currentAutoScaleValue = getAutoScaleValue();
+			setAutoScaleValue(initialAutoScaleValue);
+			try {
+				runnable.run();
+			} finally {
+				setAutoScaleValue(currentAutoScaleValue);
+			}
+		}
+
+		private String getAutoScaleValue() {
+			return DPIUtil.getAutoScaleValue();
+		}
+
+		private void setAutoScaleValue(String value) {
+			DPIUtil.setAutoScaleValue(value);
+		}
+
 	}
 }
