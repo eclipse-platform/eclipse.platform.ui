@@ -376,7 +376,7 @@ public class BindingTable {
 			return false;
 		}
 		String identifierId = command.getId();
-		if (contributionFactory == null) {
+		if (contributionFactory == null && application != null) {
 			contributionFactory = application.getContext().get(IContributionFactory.class);
 		}
 		if (contributionFactory == null) {
