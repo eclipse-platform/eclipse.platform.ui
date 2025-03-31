@@ -107,6 +107,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private ControlDecoration themeComboDecorator;
 	private ITheme currentTheme;
 	private String defaultTheme;
+
 	private Button useRoundTabs;
 	private Button enableMru;
 	private Button useColoredLabels;
@@ -130,8 +131,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.VIEWS_PREFERENCE_PAGE);
 
 		Composite comp = new Composite(parent, SWT.NONE);
+		GridLayout mainLayout = new GridLayout();
+		comp.setLayout(mainLayout);
 
-		themingEnabled = createCheckButton(comp, WorkbenchMessages.ThemingEnabled, engine != null);
+		createEnableTheming(comp);
 
 		// if started with "-cssTheme none", CSS settings should be disabled
 		// but other appearance settings should be *not* disabled
@@ -139,55 +142,16 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			GridLayout layout = new GridLayout(1, false);
 			layout.horizontalSpacing = 10;
 			comp.setLayout(layout);
-			createThemeIndependentComposits(comp);
+			createThemeIndependentComposite(comp);
 			createHiDPISettingsGroup(comp);
 			return comp;
 		}
 
-		GridLayout layout = new GridLayout(2, false);
-		layout.horizontalSpacing = 10;
-		comp.setLayout(layout);
-
-		new Label(comp, SWT.NONE).setText(WorkbenchMessages.ViewsPreferencePage_Theme);
-		highContrastMode = parent.getDisplay().getHighContrast();
-
-		themeIdCombo = new ComboViewer(comp, SWT.READ_ONLY);
-		themeIdCombo.setLabelProvider(createTextProvider(element -> ((ITheme) element).getLabel()));
-		themeIdCombo.setContentProvider(ArrayContentProvider.getInstance());
-		themeIdCombo.setInput(getCSSThemes(highContrastMode));
-		themeIdCombo.getCombo().setEnabled(!highContrastMode);
-		themeIdCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.currentTheme = engine.getActiveTheme();
-		if (this.currentTheme != null) {
-			themeIdCombo.setSelection(new StructuredSelection(currentTheme));
-		}
-		themeComboDecorator = new ControlDecoration(themeIdCombo.getCombo(), SWT.TOP | SWT.LEFT);
-		themeIdCombo.addSelectionChangedListener(event -> {
-			ITheme selection = getSelectedTheme();
-			if (!selection.equals(currentTheme)) {
-				themeComboDecorator.setDescriptionText(WorkbenchMessages.ThemeChangeWarningText);
-				Image decorationImage = FieldDecorationRegistry.getDefault()
-						.getFieldDecoration(FieldDecorationRegistry.DEC_WARNING).getImage();
-				themeComboDecorator.setImage(decorationImage);
-				themeComboDecorator.show();
-			} else {
-				themeComboDecorator.hide();
-			}
-			selectColorsAndFontsTheme(getColorAndFontThemeIdByThemeId(selection.getId()));
-		});
-
-		currentColorsAndFontsTheme = getCurrentColorsAndFontsTheme();
-		createColorsAndFontsThemeCombo(comp);
-
-		createThemeIndependentComposits(comp);
-
-		// Theme dependent controls for Tab icons and titles in view areas
-		createShowFullTextForViewTabs(comp);
-		createHideIconsForViewTabs(comp);
-		createDependency(showFullTextForViewTabs, hideIconsForViewTabs);
-
+		createThemeDependentComposite(comp);
+		createThemeIndependentComposite(comp);
 		createHiDPISettingsGroup(comp);
 
+		currentColorsAndFontsTheme = getCurrentColorsAndFontsTheme();
 		if (currentTheme != null) {
 			String colorsAndFontsThemeId = getColorAndFontThemeIdByThemeId(currentTheme.getId());
 			if (colorsAndFontsThemeId != null && !currentColorsAndFontsTheme.getId().equals(colorsAndFontsThemeId)) {
@@ -224,10 +188,36 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		rescaleAtRuntime = createCheckButton(group, WorkbenchMessages.RescaleAtRuntimeEnabled, initialStateRescaleAtRuntime);
 	}
 
-	private void createThemeIndependentComposits(Composite comp) {
+	private void createThemeDependentComposite(Composite parent) {
+		Composite themeDependentComp = new Composite(parent, SWT.NONE);
+		GridLayout dependentLayout = new GridLayout(2, false);
+		dependentLayout.horizontalSpacing = 10;
+		themeDependentComp.setLayout(dependentLayout);
+		GridData dependentData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		themeDependentComp.setLayoutData(dependentData);
+
+		// Theme dependent controls for themes and color and fonts drop-down selections
+		createThemeIdCombo(themeDependentComp);
+		createColorsAndFontsThemeCombo(themeDependentComp);
+
+		// Theme dependent controls for Tab icons and titles in view areas
+		createShowFullTextForViewTabs(themeDependentComp);
+		createHideIconsForViewTabs(themeDependentComp);
+		createTabDependency(showFullTextForViewTabs, hideIconsForViewTabs);
+
+		updateThemingEnablement(themeDependentComp);
+	}
+
+	private void createThemeIndependentComposite(Composite comp) {
 		createUseRoundTabs(comp);
 		createColoredLabelsPref(comp);
 		createEnableMruPref(comp);
+	}
+
+	protected void createEnableTheming(Composite composite) {
+		boolean actualValue = getSwtRendererPreference(PartRenderingEngine.ENABLED_THEME_KEY,
+				PartRenderingEngine.ENABLED_THEME_KEY_DEFAULT);
+		themingEnabled = createCheckButton(composite, WorkbenchMessages.ThemingEnabled, actualValue);
 	}
 
 	protected void createShowFullTextForViewTabs(Composite composite) {
@@ -255,7 +245,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	 * @param showFullTextForViewTabs
 	 * @param hideIconsForViewTabs
 	 */
-	private void createDependency(Button parent, Button dependent) {
+	private void createTabDependency(Button parent, Button dependent) {
 		GridData gridData = new GridData();
 		gridData.horizontalIndent = 20;
 		dependent.setLayoutData(gridData);
@@ -276,6 +266,27 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 		};
 		parent.addSelectionListener(listener);
+	}
+
+	private void updateThemingEnablement(Composite themeDependentComp) {
+		themingEnabled.setSelection(getSwtRendererPreference(PartRenderingEngine.ENABLED_THEME_KEY,
+				PartRenderingEngine.ENABLED_THEME_KEY_DEFAULT));
+
+		SelectionListener listener = new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean isThemingEnabled = themingEnabled.getSelection();
+				themeDependentComp.setVisible(isThemingEnabled);
+				GridData gridData = ((GridData) themeDependentComp.getLayoutData());
+				gridData.exclude = !isThemingEnabled;
+				themeDependentComp.getParent().layout();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		};
+		themingEnabled.addSelectionListener(listener);
 	}
 
 	private List<ITheme> getCSSThemes(boolean highContrastMode) {
@@ -462,6 +473,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 
+		themingEnabled.setSelection(defaultPrefs.getBoolean(PartRenderingEngine.ENABLED_THEME_KEY,
+				PartRenderingEngine.ENABLED_THEME_KEY_DEFAULT));
 		useRoundTabs.setSelection(
 				defaultPrefs.getBoolean(CTabRendering.USE_ROUND_TABS, CTabRendering.USE_ROUND_TABS_DEFAULT));
 		enableMru.setSelection(defaultPrefs.getBoolean(StackRenderer.MRU_KEY_DEFAULT, StackRenderer.MRU_DEFAULT));
@@ -479,6 +492,41 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 
 		return super.performCancel();
+	}
+
+	private void createThemeIdCombo(Composite composite) {
+		new Label(composite, SWT.NONE).setText(WorkbenchMessages.ViewsPreferencePage_Theme);
+		highContrastMode = composite.getDisplay().getHighContrast();
+
+		themeIdCombo = new ComboViewer(composite, SWT.READ_ONLY);
+		themeIdCombo.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((ITheme) element).getLabel();
+			}
+		});
+		themeIdCombo.setContentProvider(ArrayContentProvider.getInstance());
+		themeIdCombo.setInput(getCSSThemes(highContrastMode));
+		themeIdCombo.getCombo().setEnabled(!highContrastMode);
+		themeIdCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.currentTheme = engine.getActiveTheme();
+		if (this.currentTheme != null) {
+			themeIdCombo.setSelection(new StructuredSelection(currentTheme));
+		}
+		themeComboDecorator = new ControlDecoration(themeIdCombo.getCombo(), SWT.TOP | SWT.LEFT);
+		themeIdCombo.addSelectionChangedListener(event -> {
+			ITheme selection = getSelectedTheme();
+			if (!selection.equals(currentTheme)) {
+				themeComboDecorator.setDescriptionText(WorkbenchMessages.ThemeChangeWarningText);
+				Image decorationImage = FieldDecorationRegistry.getDefault()
+						.getFieldDecoration(FieldDecorationRegistry.DEC_WARNING).getImage();
+				themeComboDecorator.setImage(decorationImage);
+				themeComboDecorator.show();
+			} else {
+				themeComboDecorator.hide();
+			}
+			selectColorsAndFontsTheme(getColorAndFontThemeIdByThemeId(selection.getId()));
+		});
 	}
 
 	private void createColorsAndFontsThemeCombo(Composite composite) {
