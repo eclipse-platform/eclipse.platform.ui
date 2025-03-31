@@ -565,6 +565,10 @@
             id="org.eclipse.ui.ide.workspace.build"
             label="%PreferenceKeywords.Workspace.Build">
       </keyword>
+      <keyword
+            label="%PreferenceKeywords.HiDPI"
+            id="org.eclipse.ui.ide.hidpi">
+      </keyword>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -651,6 +655,7 @@
          <keywordReference id="org.eclipse.ui.ide.tabs"/>
          <keywordReference id="org.eclipse.ui.ide.titles"/>
          <keywordReference id="org.eclipse.ui.ide.apearancepage"/>
+         <keywordReference id="org.eclipse.ui.ide.hidpi"/>
       </page>
       <page
             name="%PreferencePages.ColorsAndFonts"
