@@ -90,6 +90,21 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	 */
 	public static final boolean SHOW_FULL_TEXT_FOR_VIEW_TABS_DEFAULT = false;
 
+	/**
+	 * A named preference for setting CTabFolder's to be rendered with dirty
+	 * indicator overlay on close button
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (render
+	 * CTabFolder's with icons)
+	 * </p>
+	 */
+	public static final String SHOW_DIRTY_INDICATOR_ON_TABS = "SHOW_DIRTY_INDICATOR_ON_TABS"; //$NON-NLS-1$
+
+	/**
+	 * Default value for "dirty indicator" preference for tabs
+	 */
+	public static final boolean SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT = false;
+
 	private static int MIN_VIEW_CHARS = 1;
 	private static int MAX_VIEW_CHARS = Integer.MAX_VALUE;
 
@@ -616,6 +631,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		}
 
 		if (selectedTabHighlightColor != null) {
+			Color originalBackground = gc.getBackground();
 			gc.setBackground(selectedTabHighlightColor);
 			boolean highlightOnTop = drawTabHighlightOnTop;
 			if (onBottom) {
@@ -627,6 +643,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			int widthAdjustment = cornerSize == SQUARE_CORNER ? 0 : 1;
 			gc.fillRectangle(bounds.x + horizontalOffset, bounds.y + verticalOffset, bounds.width - widthAdjustment,
 					highlightHeight);
+			gc.setBackground(originalBackground);
 		}
 
 		if (backgroundPattern != null) {

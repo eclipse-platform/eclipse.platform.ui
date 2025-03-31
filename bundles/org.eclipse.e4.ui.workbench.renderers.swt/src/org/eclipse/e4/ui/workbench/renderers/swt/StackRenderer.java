@@ -647,6 +647,7 @@ public class StackRenderer extends LazyStackRenderer {
 			break;
 		case UIEvents.Dirtyable.DIRTY:
 			cti.setText(getLabel(part, part.getLocalizedLabel()));
+			cti.setShowDirty(part.isDirty() && getShowDirtyIndicatorForTabsFromPreferences());
 			break;
 		case UIEvents.UILabel.ICONURI:
 			changePartTabImage(part, cti);
@@ -683,7 +684,8 @@ public class StackRenderer extends LazyStackRenderer {
 			newName = LegacyActionTools.escapeMnemonics(newName);
 		}
 
-		if (itemPart instanceof MDirtyable && ((MDirtyable) itemPart).isDirty()) {
+		if (itemPart instanceof MDirtyable && ((MDirtyable) itemPart).isDirty()
+				&& !getShowDirtyIndicatorForTabsFromPreferences()) {
 			newName = '*' + newName;
 		}
 		return newName;
@@ -820,6 +822,11 @@ public class StackRenderer extends LazyStackRenderer {
 	private boolean getMRUValueFromPreferences() {
 		boolean initialMRUValue = preferences.getBoolean(MRU_KEY_DEFAULT, MRU_DEFAULT);
 		return preferences.getBoolean(MRU_KEY, initialMRUValue);
+	}
+
+	private boolean getShowDirtyIndicatorForTabsFromPreferences() {
+		return preferences.getBoolean(CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS,
+				CTabRendering.SHOW_DIRTY_INDICATOR_ON_TABS_DEFAULT);
 	}
 
 	private void updateMRUValue(CTabFolder tabFolder) {
