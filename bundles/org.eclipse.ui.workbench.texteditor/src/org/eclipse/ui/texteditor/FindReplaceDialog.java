@@ -148,12 +148,7 @@ class FindReplaceDialog extends Dialog {
 			// XXX: Workaround for Combo bug on Linux (see bug 404202 and bug 410603)
 			if (fIgnoreNextEvent) {
 				fIgnoreNextEvent = false;
-				return;
 			}
-			modificationHandler.run();
-			fFindField.addModifyListener(event -> {
-				decorate();
-			});
 		}
 	}
 
@@ -650,6 +645,7 @@ class FindReplaceDialog extends Dialog {
 		fFindModifyListener = new InputModifyListener(() -> {
 			updateFindString();
 			updateButtonState(!findReplaceLogic.isActive(SearchOptions.INCREMENTAL));
+			decorate();
 		});
 		fFindField.addModifyListener(fFindModifyListener);
 
