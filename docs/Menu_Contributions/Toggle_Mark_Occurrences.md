@@ -150,10 +150,10 @@ The above XML can be done using the menus API:
         final IMenuService menuService = (IMenuService) PlatformUI
                 .getWorkbench().getService(IMenuService.class);
         final ImageDescriptor markOccurDesc = AbstractUIPlugin
-                .imageDescriptorFromPlugin("org.eclise.ui.tests",
+                .imageDescriptorFromPlugin("org.eclipse.ui.tests",
                         "icons/full/etool16/mark_occurrences.gif");
         final ImageDescriptor disabledMarkOccurDesc = AbstractUIPlugin
-                .imageDescriptorFromPlugin("org.eclise.ui.tests",
+                .imageDescriptorFromPlugin("org.eclipse.ui.tests",
                         "icons/full/dtool16/mark_occurrences.gif");
     
         AbstractContributionFactory contribution = new AbstractContributionFactory(

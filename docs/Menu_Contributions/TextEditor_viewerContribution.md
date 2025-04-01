@@ -49,7 +49,7 @@ Programmatically do this, you would have to go through the IMenuService.
                     .getWorkbench().getService(IMenuService.class);
          
             final ImageDescriptor scrambleIcon = AbstractUIPlugin
-                    .imageDescriptorFromPlugin("org.eclise.ui.tests",
+                    .imageDescriptorFromPlugin("org.eclipse.ui.tests",
                             "icons/full/eobj16/scramble.gif");
             AbstractContributionFactory factory = new AbstractContributionFactory(
                     "popup:#TextEditorContext?after=additions") {

@@ -170,7 +170,7 @@ public class MenuBuilder {
 				"org.eclipse.jdt.ui.SearchActionSet");
 
 		final ImageDescriptor searchIcon = ResourceLocator
-				.imageDescriptorFromBundle("org.eclise.ui.tests", "icons/full/obj16/jsearch_obj.gif").orElse(null);
+				.imageDescriptorFromBundle("org.eclipse.ui.tests", "icons/full/obj16/jsearch_obj.gif").orElse(null);
 		AbstractContributionFactory factory = new AbstractContributionFactory(
 				"menu:org.eclipse.search.menu?after=dialogGroup",
 				TestPlugin.PLUGIN_ID) {
@@ -282,9 +282,9 @@ public class MenuBuilder {
 		final ObjectClassExpression ifileExpression = new ObjectClassExpression();
 
 		final ImageDescriptor postIcon = ResourceLocator
-				.imageDescriptorFromBundle("org.eclise.ui.tests", "icons/full/elcl16/post_wiki.gif").orElse(null);
+				.imageDescriptorFromBundle("org.eclipse.ui.tests", "icons/full/elcl16/post_wiki.gif").orElse(null);
 		final ImageDescriptor loadIcon = ResourceLocator
-				.imageDescriptorFromBundle("org.eclise.ui.tests", "icons/full/elcl16/load_wiki.gif").orElse(null);
+				.imageDescriptorFromBundle("org.eclipse.ui.tests", "icons/full/elcl16/load_wiki.gif").orElse(null);
 		AbstractContributionFactory factory = new AbstractContributionFactory(
 				"popup:org.eclipse.ui.menus.popup.any?after=additions",
 				TestPlugin.PLUGIN_ID) {
@@ -314,7 +314,7 @@ public class MenuBuilder {
 				.getWorkbench().getService(IMenuService.class);
 
 		final ImageDescriptor scrambleIcon = ResourceLocator
-				.imageDescriptorFromBundle("org.eclise.ui.tests", "icons/full/eobj16/scramble.gif").orElse(null);
+				.imageDescriptorFromBundle("org.eclipse.ui.tests", "icons/full/eobj16/scramble.gif").orElse(null);
 		AbstractContributionFactory factory = new AbstractContributionFactory(
 				"popup:#TextEditorContext?after=additions",
 				TestPlugin.PLUGIN_ID) {

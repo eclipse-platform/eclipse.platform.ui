@@ -288,7 +288,7 @@ Then another plugin can contribute to the search menu:
                    "org.eclipse.jdt.ui.SearchActionSet");
     
            final ImageDescriptor searchIcon = AbstractUIPlugin
-                   .imageDescriptorFromPlugin("org.eclise.ui.tests",
+                   .imageDescriptorFromPlugin("org.eclipse.ui.tests",
                            "icons/full/obj16/jsearch_obj.gif");
            AbstractContributionFactory factory = new AbstractContributionFactory(
                    "menu:org.eclipse.search.menu?after=dialogGroup") {
