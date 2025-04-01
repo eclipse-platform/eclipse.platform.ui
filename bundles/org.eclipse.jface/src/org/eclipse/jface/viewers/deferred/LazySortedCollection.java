@@ -521,7 +521,7 @@ public class LazySortedCollection {
 	/**
 	 * Redirects any pointers from the original to the replacement. If the replacement
 	 * causes a change in the number of elements in the parent tree, the changes are
-	 * propogated toward the root.
+	 * propagated toward the root.
 	 *
 	 * @since 3.1
 	 */

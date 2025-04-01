@@ -78,7 +78,7 @@ public abstract class ContentViewer extends Viewer {
 			Control control = getControl();
 			if (control == null || control.isDisposed()) {
 				if (logWhenDisposed) {
-					String message = "Ignored labelProviderChanged notification because control is diposed." + //$NON-NLS-1$
+					String message = "Ignored labelProviderChanged notification because control is disposed." + //$NON-NLS-1$
 							" This indicates a potential memory leak."; //$NON-NLS-1$
 					if (!InternalPolicy.DEBUG_LOG_LABEL_PROVIDER_NOTIFICATIONS_WHEN_DISPOSED) {
 						// stop logging after the first

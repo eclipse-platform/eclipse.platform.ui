@@ -522,7 +522,7 @@ Usually, when creating a model-side observable, you call a method like BeansObse
 
 When the selected person changes, you could dispose the observable (and the binding) for the previously selected person and create new ones for the newly selected person, but there is a better way. By creating a _detail observable_, you can keep the same observable and binding and what you would have done manually is done for you by the framework automatically.
 
-To create a detail observable, first create an observable for the current selection (this is sometimes called the _master observable_), for example through ViewersObservables.observeSingleSelection(). Then, call BeansObservables.observeDetailValue(selectionObservable, "name", String.class) to create the detail observable for the currently selected person's name attibute.
+To create a detail observable, first create an observable for the current selection (this is sometimes called the _master observable_), for example through ViewersObservables.observeSingleSelection(). Then, call BeansObservables.observeDetailValue(selectionObservable, "name", String.class) to create the detail observable for the currently selected person's name attribute.
 
 For an example snippet, see the [Master Detail snippet](#Snippets).
 
@@ -676,7 +676,7 @@ Since the tests are JUnit3 tests you can integrate them into your tests in stand
 
  
 
-When subclassing, because of single inheritance, you will will have to create multiple implementations to test the mutable and immutable use cases (e.g. there would need to be a ButtonMutableObservableValueTest as well to test the mutable cases). The rest of the implementation should be straightforward. The only thing we ask is that you don't depend upon API other than the constructors. Tests are public because JUnit requires them to be, not because we want to commit to them as API. Over time we would like to have the opportunity to rename, add, remove, or optimize the test methods to ensure that we're getting the best coverage as possible. Because of the issues outlined above the preferred method is creating a JUnit suite.
+When subclassing, because of single inheritance, you will have to create multiple implementations to test the mutable and immutable use cases (e.g. there would need to be a ButtonMutableObservableValueTest as well to test the mutable cases). The rest of the implementation should be straightforward. The only thing we ask is that you don't depend upon API other than the constructors. Tests are public because JUnit requires them to be, not because we want to commit to them as API. Over time we would like to have the opportunity to rename, add, remove, or optimize the test methods to ensure that we're getting the best coverage as possible. Because of the issues outlined above the preferred method is creating a JUnit suite.
 
 #### JUnit suite()
 

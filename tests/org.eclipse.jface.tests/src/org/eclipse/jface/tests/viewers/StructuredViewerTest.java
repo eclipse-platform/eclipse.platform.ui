@@ -180,7 +180,7 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 	}
 
 	/**
-	 * Tests to ensure that the viewer is properly diposed.  Includes:
+	 * Tests to ensure that the viewer is properly disposed.  Includes:
 	 *     removal of filters
 	 */
 	@Test
