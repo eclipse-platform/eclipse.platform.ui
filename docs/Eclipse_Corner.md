@@ -697,7 +697,7 @@ How to Internationalize your Eclipse Plug-In
 This article is a roadmap for writing Eclipse plug-ins destined for the international market. We'll begin with a brief review of the motivations and technical challenges of internationalization, followed by step-by-step instructions of how to internationalize your Eclipse plug-in.
 
 *   [How to Internationalize your Eclipse Plug-In](http://www.eclipse.org/articles/Article-Internationalization/how2I18n.html)
-*   [Ukranian Translation](http://softdroid.net/how2I18n-ua)
+*   [Ukrainian Translation](http://softdroid.net/how2I18n-ua)
 
   
 
@@ -1053,7 +1053,7 @@ Development environments have become very complex. As a result, providing users 
 BIRT Extension Mechanism, Part 1: Custom Report Items
 -----------------------------------------------------
 
-This article introduces the extension mechanism of BIRT report model, engine and designer, and shows how to create custom custom report items step-by-step.
+This article introduces the extension mechanism of BIRT report model, engine and designer, and shows how to create custom report items step-by-step.
 
 *   [BIRT Extension Mechanism, Part 1: Custom Report Items](http://www.eclipse.org/articles/article.php?file=Article-BIRT-ExtensionTutorial1/index.html)
 

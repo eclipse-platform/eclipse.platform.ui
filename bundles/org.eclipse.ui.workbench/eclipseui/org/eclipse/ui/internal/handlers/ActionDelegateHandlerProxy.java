@@ -166,7 +166,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 	 * @param element               The configuration element from which the real
 	 *                              class can be loaded at run-time; must not be
 	 *                              <code>null</code>.
-	 * @param delegateAttributeName The name of the attibute or element containing
+	 * @param delegateAttributeName The name of the attribute or element containing
 	 *                              the action delegate; must not be
 	 *                              <code>null</code>.
 	 * @param actionId              The identifier of the underlying action; may be

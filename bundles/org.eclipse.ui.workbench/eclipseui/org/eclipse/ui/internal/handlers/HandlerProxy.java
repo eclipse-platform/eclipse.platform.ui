@@ -127,7 +127,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 	 * @param configurationElement The configuration element from which the real
 	 *                             class can be loaded at run-time; must not be
 	 *                             <code>null</code>.
-	 * @param handlerAttributeName The name of the attibute or element containing
+	 * @param handlerAttributeName The name of the attribute or element containing
 	 *                             the handler executable extension; must not be
 	 *                             <code>null</code>.
 	 */
@@ -247,7 +247,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 	}
 
 	/**
-	 * Passes the dipose on to the proxied handler, if it has been loaded.
+	 * Passes the dispose on to the proxied handler, if it has been loaded.
 	 */
 	@Override
 	public void dispose() {
@@ -390,7 +390,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 	}
 
 	/**
-	 * Retrives the ConfigurationElement attribute according to the
+	 * Retrieves the ConfigurationElement attribute according to the
 	 * <code>handlerAttributeName</code>.
 	 *
 	 * @return the handlerAttributeName value, may be <code>null</code>.

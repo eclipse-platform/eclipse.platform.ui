@@ -40,7 +40,7 @@ public class MultiPageEditorPartTest extends UITestCase {
 				"org.eclipse.ui.tests.multipageeditor.TestMultiPageEditorThrowingPartInitException"); //$NON-NLS-1$
 
 		assertTrue(editor instanceof ErrorEditorPart);
-		assertTrue("The editor should have been diposed by CompatibilityPart",
+		assertTrue("The editor should have been disposed by CompatibilityPart",
 				TestMultiPageEditorThrowingPartInitException.disposeCalled);
 		assertNull("No exception should have been thrown while disposing",
 				TestMultiPageEditorThrowingPartInitException.exceptionWhileDisposing);

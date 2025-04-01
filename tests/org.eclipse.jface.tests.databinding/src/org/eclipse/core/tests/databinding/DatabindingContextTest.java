@@ -70,7 +70,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 		assertFalse(binding.isDisposed());
 		dbc.dispose();
-		assertTrue("binding should be diposed when dbc is disposed", binding
+		assertTrue("binding should be disposed when dbc is disposed", binding
 				.isDisposed());
 	}
 

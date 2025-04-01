@@ -24,7 +24,7 @@ Contents
         *   [3.4.4 Another Expression Alternative: Specify Context at Extension Level](#Another-Expression-Alternative-Specify-Context-at-Extension-Level)
 *   [4 Updating the menu and toolbar appearance](#Updating-the-menu-and-toolbar-appearance)
     *   [4.1 UIElements represent each UI visible instance of a command](#UIElements-represent-each-UI-visible-instance-of-a-command)
-    *   [4.2 State associated with the command is propogated to UI visible elements](#State-associated-with-the-command-is-propogated-to-UI-visible-elements)
+    *   [4.2 State associated with the command is propagated to UI visible elements](#State-associated-with-the-command-is-propagated-to-UI-visible-elements)
 
 
 Placement and visibility
@@ -389,7 +389,7 @@ When the toggle handler runs, it can request that any UI elements have their app
             .getService(ICommandService.class);
     service.refreshElements(IJavaEditorActionDefinitionIds.TOGGLE_MARK_OCCURRENCES, null);
 
-State associated with the command is propogated to UI visible elements
+State associated with the command is propagated to UI visible elements
 ----------------------------------------------------------------------
 
 First define the toggle mark occurrences command. 
