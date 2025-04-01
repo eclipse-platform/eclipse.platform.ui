@@ -72,10 +72,10 @@ Here is a similar example programmatically.
                   "org.eclipse.core.resources.IFile");
        
          final ImageDescriptor postIcon = AbstractUIPlugin
-                  .imageDescriptorFromPlugin("org.eclise.ui.tests",
+                  .imageDescriptorFromPlugin("org.eclipse.ui.tests",
                            "icons/full/elcl16/post_wiki.gif");
          final ImageDescriptor loadIcon = AbstractUIPlugin
-                  .imageDescriptorFromPlugin("org.eclise.ui.tests",
+                  .imageDescriptorFromPlugin("org.eclipse.ui.tests",
                            "icons/full/elcl16/load_wiki.gif");
          AbstractContributionFactory factory = new AbstractContributionFactory(
                   "popup:org.eclipse.ui.popup.any?after=additions") {

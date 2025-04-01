@@ -18,7 +18,7 @@ import org.junit.runners.Suite;
 
 /**
  * The suite of tests related to the "org.eclipse.ui.contexts" extension point,
- * and the "org.eclise.ui.contexts" Java API. This includes tests dealing with
+ * and the "org.eclipse.ui.contexts" Java API. This includes tests dealing with
  * other extension points or elements in other extension points that have been
  * deprecated to be replaced by this one.
  *
