@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.ide.application;singleton:=true
-Bundle-Version: 1.5.600.qualifier
+Bundle-Version: 1.5.700.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.21.0,4.0.0)",
@@ -28,3 +28,4 @@ Import-Package: jakarta.inject;version="[2.0.0,3.0.0)",
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.ui.ide.application
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
