@@ -162,7 +162,7 @@ public class HistoryTracker<T> {
 				 * history contains [10,20,30] and vicinity threshold defined as distance 2,
 				 * then you insert the following series: 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
 				 * even if each insert overwrote the prior, you still could end up with dataset
-				 * [20, 20, 30]. By not breaking here we prevent that state from occuring, but
+				 * [20, 20, 30]. By not breaking here we prevent that state from occurring, but
 				 * at some computation cost. Therefore if cost (performance) ever a problem, we
 				 * could just accept that occasional suboptimal history state for better
 				 * performance

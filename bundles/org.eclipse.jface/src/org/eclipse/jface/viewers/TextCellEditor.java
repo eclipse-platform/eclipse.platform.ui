@@ -148,7 +148,7 @@ public class TextCellEditor extends CellEditor {
 			// hook key pressed - see PR 14201
 			@Override
 			public void keyPressed(KeyEvent e) {
-				keyReleaseOccured(e);
+				keyReleaseOccurred(e);
 
 				// as a result of processing the above call, clients may have
 				// disposed this cell editor
@@ -237,7 +237,7 @@ public class TextCellEditor extends CellEditor {
 	 *
 	 * @param e the SWT modify event
 	 */
-	protected void editOccured(ModifyEvent e) {
+	protected void editOccurred(ModifyEvent e) {
 		String value = text.getText();
 		if (value == null) {
 			value = "";//$NON-NLS-1$
@@ -268,7 +268,7 @@ public class TextCellEditor extends CellEditor {
 	 */
 	private ModifyListener getModifyListener() {
 		if (modifyListener == null) {
-			modifyListener = this::editOccured;
+			modifyListener = this::editOccurred;
 		}
 		return modifyListener;
 	}
@@ -282,7 +282,7 @@ public class TextCellEditor extends CellEditor {
 	 * @since 3.0
 	 */
 	protected void handleDefaultSelection(SelectionEvent event) {
-		// same with enter-key handling code in keyReleaseOccured(e);
+		// same with enter-key handling code in keyReleaseOccurred(e);
 		fireApplyEditorValue();
 		deactivate();
 	}
@@ -385,7 +385,7 @@ public class TextCellEditor extends CellEditor {
 	 * @param keyEvent the key event
 	 */
 	@Override
-	protected void keyReleaseOccured(KeyEvent keyEvent) {
+	protected void keyReleaseOccurred(KeyEvent keyEvent) {
 		if (keyEvent.character == '\r') { // Return key
 			// Enter is handled in handleDefaultSelection.
 			// Do not apply the editor value in response to an Enter key event
@@ -398,12 +398,12 @@ public class TextCellEditor extends CellEditor {
 			if (text != null && !text.isDisposed()
 					&& (text.getStyle() & SWT.MULTI) != 0) {
 				if ((keyEvent.stateMask & SWT.CTRL) != 0) {
-					super.keyReleaseOccured(keyEvent);
+					super.keyReleaseOccurred(keyEvent);
 				}
 			}
 			return;
 		}
-		super.keyReleaseOccured(keyEvent);
+		super.keyReleaseOccurred(keyEvent);
 	}
 
 	/**

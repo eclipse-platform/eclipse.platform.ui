@@ -55,7 +55,7 @@
 			<groupMarker name="dialogGroup"/>           <!-- to be used by clients      -->
 			<separator name="fileSearchContextMenuActionsGroup"/> <!-- to be used by clients      -->
 	     	<separator name="contextMenuActionsGroup"/> <!-- to be used by clients -->
-	     	<separator name="occurencesActionsGroup"/> <!-- to be used by clients -->
+	     	<separator name="occurrencesActionsGroup"/> <!-- to be used by clients -->
 	     	<separator name="extraSearchGroup"/> <!-- to be used by clients -->
 	  	</menu>
             

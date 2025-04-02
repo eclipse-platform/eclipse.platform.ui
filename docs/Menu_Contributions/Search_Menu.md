@@ -106,7 +106,7 @@ We'll assume that the Search menu is globally defined elsewhere by the org.eclip
                <separator name="fileSearchContextMenuActionsGroup"
                           visible="true" />
                <separator name="contextMenuActionsGroup" visible="true" />
-               <separator name="occurencesActionsGroup" visible="true" />
+               <separator name="occurrencesActionsGroup" visible="true" />
                <separator name="extraSearchGroup" visible="true" />
             </menu>
          </menuContribution>
@@ -198,7 +198,7 @@ Then the JDT plugin would contribute the menu items to search, where the menuCon
                </visibleWhen>
             </menu>
          </menuContribution>
-         <menuContribution locationURI="menu:org.eclipse.search.menu?after=occurencesActionsGroup">
+         <menuContribution locationURI="menu:org.eclipse.search.menu?after=occurrencesActionsGroup">
             <command commandId="org.eclipse.jdt.ui.edit.text.java.search.occurrences.in.file.quickMenu"
                      label="%occurrencesSubMenu.label">
                <visibleWhen>
@@ -255,7 +255,7 @@ The API can be used to contribute to the main menu bar:
                    search.add(new GroupMarker("dialogGroup"));
                    search.add(new Separator("fileSearchContextMenuActionsGroup"));
                    search.add(new Separator("contextMenuActionsGroup"));
-                   search.add(new Separator("occurencesActionsGroup"));
+                   search.add(new Separator("occurrencesActionsGroup"));
                    search.add(new Separator("extraSearchGroup"));
     
                    additions.add(search);

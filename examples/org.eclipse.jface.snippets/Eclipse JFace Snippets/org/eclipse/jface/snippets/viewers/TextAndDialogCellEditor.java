@@ -66,7 +66,7 @@ public class TextAndDialogCellEditor extends DialogCellEditor {
 		textField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent event) {
-				keyReleaseOccured(event);
+				keyReleaseOccurred(event);
 			}
 		});
 
@@ -74,12 +74,12 @@ public class TextAndDialogCellEditor extends DialogCellEditor {
 	}
 
 	@Override
-	protected void keyReleaseOccured(KeyEvent keyEvent) {
+	protected void keyReleaseOccurred(KeyEvent keyEvent) {
 		if (keyEvent.keyCode == SWT.CR || keyEvent.keyCode == SWT.KEYPAD_CR) {
 			// Enter key
 			setValueToModel();
 		}
-		super.keyReleaseOccured(keyEvent);
+		super.keyReleaseOccurred(keyEvent);
 	}
 
 	protected void setValueToModel() {

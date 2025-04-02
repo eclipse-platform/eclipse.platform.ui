@@ -754,7 +754,7 @@ public class InternalDialog extends TrayDialog {
 		if (statusListViewer != null && !statusListViewer.getControl().isDisposed()) {
 			statusListViewer.refresh();
 			if (statusListViewer.getTable().getItemCount() > 1) {
-				getShell().setText(WorkbenchMessages.WorkbenchStatusDialog_MultipleProblemsHaveOccured);
+				getShell().setText(WorkbenchMessages.WorkbenchStatusDialog_MultipleProblemsHaveOccurred);
 			} else {
 				getShell().setText(getString(IStatusDialogConstants.TITLE));
 			}

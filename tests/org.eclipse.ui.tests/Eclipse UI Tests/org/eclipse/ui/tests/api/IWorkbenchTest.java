@@ -162,14 +162,14 @@ public class IWorkbenchTest extends UITestCase {
 		}
 
 		// open a window with invalid perspective. WorkbenchException is expected.
-		boolean exceptionOccured = false;
+		boolean exceptionOccurred = false;
 		try {
 			win = fWorkbench.openWorkbenchWindow("afdasfdasf", getPageInput());
 		} catch (WorkbenchException ex) {
-			exceptionOccured = true;
+			exceptionOccurred = true;
 		}
 
-		assertEquals(exceptionOccured, true);
+		assertEquals(exceptionOccurred, true);
 	}
 
 	/**

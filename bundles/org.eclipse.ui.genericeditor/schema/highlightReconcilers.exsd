@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.genericeditor" id="highlightReconcilers" name="Highlight reconcilers"/>
       </appinfo>
       <documentation>
-         This extension point is used to contribute highlight reconcilers for controlling the highlighting on a file with a given content type. Reconcilers attached to this extension point that listen to the preference &quot;org.eclipse.ui.genericeditor.togglehighlight&quot; will be toggled with the &quot;Toggle Mark Occurences&quot; button.
+         This extension point is used to contribute highlight reconcilers for controlling the highlighting on a file with a given content type. Reconcilers attached to this extension point that listen to the preference &quot;org.eclipse.ui.genericeditor.togglehighlight&quot; will be toggled with the &quot;Toggle Mark Occurrences&quot; button.
       </documentation>
    </annotation>
 

@@ -113,7 +113,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 	}
 
 	/**
-	 * Read and dispatch while updates are occuring
+	 * Read and dispatch while updates are occurring
 	 */
 	private void dispatchDuringUpdates(DecoratorTestPart view) {
 		view.readAndDispatchForUpdates();

@@ -28,7 +28,7 @@ IEclipsePreferences#org-eclipse-ui-editors:org-eclipse-ui-themes { /* pseudo att
 		'AbstractTextEditor.Color.SelectionForeground=147,161,161'
 		'AbstractTextEditor.Color.Foreground=204,204,204'
 		'AbstractTextEditor.Color.FindScope=30,120,155'
-		'asOccurencesIndicationColor=72,72,72'
+		'asOccurrencesIndicationColor=72,72,72'
 		'breakpointIndicationColor=51,119,193'
 		'currentIPColor=90,90,90'
 		'currentLineColor=55,55,55'
