@@ -12,6 +12,9 @@
  *     IBM Corporation - initial API and implementation
  *     Yves YANG <yves.yang@soyatec.com> -
  *     		Initial Fix for Bug 138078 [Preferences] Preferences Store for i18n support
+ *     Patrick Aigner -
+ *     		upstream fix created by Sebastian Zarnekow <Sebastian.Zarnekow@gmail.com>
+ *     		Fix for Bug 239033 [Preferences] ScopedPreferenceStore causes memory leak
  *******************************************************************************/
 package org.eclipse.ui.preferences;
 
@@ -24,11 +27,9 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -51,7 +52,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * @see org.eclipse.core.runtime.preferences
  * @since 3.1
  */
-public class ScopedPreferenceStore extends EventManager implements IPreferenceStore, IPersistentPreferenceStore {
+public class ScopedPreferenceStore extends EventManager implements IPersistentPreferenceStore {
 
 	/**
 	 * The storeContext is the context where values will stored with the setValue
@@ -76,6 +77,12 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 	 * the property change listeners on the preference store.
 	 */
 	IEclipsePreferences.IPreferenceChangeListener preferencesListener;
+
+	/**
+	 * The listener on the IEclipsePreferences that the {@link #preferencesListener}
+	 * is registered to new preference nodes in the underlying store.
+	 */
+	private IEclipsePreferences.INodeChangeListener nodeChangeListener;
 
 	/**
 	 * The default context is the context where getDefault and setDefault methods
@@ -123,30 +130,46 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 		storeContext = context;
 		this.nodeQualifier = qualifier;
 		this.defaultQualifier = qualifier;
+	}
 
-		((IEclipsePreferences) getStorePreferences().parent()).addNodeChangeListener(getNodeChangeListener());
+	// Fix is here and in disposeNodeChangeListener. Look for callees accordingly.
+	/**
+	 * Initialize the node change listener.
+	 */
+	private void initializeNodeChangeListener() {
+		if (nodeChangeListener == null) {
+			nodeChangeListener = new IEclipsePreferences.INodeChangeListener() {
+				@Override
+				public void added(NodeChangeEvent event) {
+					if (nodeQualifier.equals(event.getChild().name()) && isListenerAttached()) {
+						getStorePreferences().addPreferenceChangeListener(preferencesListener);
+					}
+				}
+
+				@Override
+				public void removed(NodeChangeEvent event) {
+					// Do nothing as there are no events from removed node
+				}
+			};
+			((IEclipsePreferences) getStorePreferences().parent()).addNodeChangeListener(nodeChangeListener);
+		}
 	}
 
 	/**
-	 * Return a node change listener that adds a removes the receiver when nodes
-	 * change.
-	 *
-	 * @return INodeChangeListener
+	 * Dispose the node change listener.
 	 */
-	private INodeChangeListener getNodeChangeListener() {
-		return new IEclipsePreferences.INodeChangeListener() {
-			@Override
-			public void added(NodeChangeEvent event) {
-				if (nodeQualifier.equals(event.getChild().name()) && isListenerAttached()) {
-					getStorePreferences().addPreferenceChangeListener(preferencesListener);
-				}
+	private void disposeNodeChangeListener() {
+		if (nodeChangeListener != null) {
+			IEclipsePreferences preferences = getStorePreferences();
+			if (preferences == null) {
+				return;
 			}
-
-			@Override
-			public void removed(NodeChangeEvent event) {
-				// Do nothing as there are no events from removed node
-			}
-		};
+			IEclipsePreferences parent = (IEclipsePreferences) preferences.parent();
+			if (parent == null)
+				return;
+			parent.removeNodeChangeListener(nodeChangeListener);
+			nodeChangeListener = null;
+		}
 	}
 
 	/**
@@ -224,8 +247,9 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		initializePreferencesListener();// Create the preferences listener if it
-		// does not exist
+		// Create the preference listeners if they do not exist
+		initializeNodeChangeListener();
+		initializePreferencesListener();
 		addListenerObject(listener);
 	}
 
@@ -465,6 +489,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 		removeListenerObject(listener);
 		if (!isListenerAttached()) {
 			disposePreferenceStoreListener();
+			disposeNodeChangeListener();
 		}
 	}
 
