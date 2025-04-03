@@ -20,12 +20,12 @@ import java.util.Objects;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -75,7 +75,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 	 * The listener on the IEclipsePreferences. This is used to forward updates to
 	 * the property change listeners on the preference store.
 	 */
-	IEclipsePreferences.IPreferenceChangeListener preferencesListener;
+	private EclipsePreferencesListener preferencesListener;
 
 	/**
 	 * The default context is the context where getDefault and setDefault methods
@@ -123,30 +123,6 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 		storeContext = context;
 		this.nodeQualifier = qualifier;
 		this.defaultQualifier = qualifier;
-
-		((IEclipsePreferences) getStorePreferences().parent()).addNodeChangeListener(getNodeChangeListener());
-	}
-
-	/**
-	 * Return a node change listener that adds a removes the receiver when nodes
-	 * change.
-	 *
-	 * @return INodeChangeListener
-	 */
-	private INodeChangeListener getNodeChangeListener() {
-		return new IEclipsePreferences.INodeChangeListener() {
-			@Override
-			public void added(NodeChangeEvent event) {
-				if (nodeQualifier.equals(event.getChild().name()) && isListenerAttached()) {
-					getStorePreferences().addPreferenceChangeListener(preferencesListener);
-				}
-			}
-
-			@Override
-			public void removed(NodeChangeEvent event) {
-				// Do nothing as there are no events from removed node
-			}
-		};
 	}
 
 	/**
@@ -154,23 +130,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 	 */
 	private void initializePreferencesListener() {
 		if (preferencesListener == null) {
-			preferencesListener = event -> {
-
-				if (silentRunning) {
-					return;
-				}
-
-				Object oldValue = event.getOldValue();
-				Object newValue = event.getNewValue();
-				String key = event.getKey();
-				if (newValue == null) {
-					newValue = getDefault(key, oldValue);
-				} else if (oldValue == null) {
-					oldValue = getDefault(key, newValue);
-				}
-				firePropertyChangeEvent(event.getKey(), oldValue, newValue);
-			};
-			getStorePreferences().addPreferenceChangeListener(preferencesListener);
+			preferencesListener = new EclipsePreferencesListener(this);
 		}
 
 	}
@@ -646,26 +606,61 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 	 * Dispose the receiver.
 	 */
 	private void disposePreferenceStoreListener() {
-
-		IEclipsePreferences root = (IEclipsePreferences) Platform.getPreferencesService().getRootNode()
-				.node(Plugin.PLUGIN_PREFERENCE_SCOPE);
-		try {
-			if (!(root.nodeExists(nodeQualifier))) {
-				return;
-			}
-		} catch (BackingStoreException e) {
-			return;// No need to report here as the node won't have the
-			// listener
-		}
-
-		IEclipsePreferences preferences = getStorePreferences();
-		if (preferences == null) {
-			return;
-		}
 		if (preferencesListener != null) {
-			preferences.removePreferenceChangeListener(preferencesListener);
+			preferencesListener.dispose();
 			preferencesListener = null;
 		}
+	}
+
+	private static final class EclipsePreferencesListener
+			implements IEclipsePreferences.IPreferenceChangeListener, INodeChangeListener {
+
+		private final ScopedPreferenceStore store;
+		private final IEclipsePreferences preferences;
+		private final IEclipsePreferences parent;
+
+		EclipsePreferencesListener(ScopedPreferenceStore store) {
+			this.store = store;
+			preferences = store.getStorePreferences();
+			preferences.addPreferenceChangeListener(this);
+			parent = (IEclipsePreferences) preferences.parent();
+			parent.addNodeChangeListener(this);
+		}
+
+		void dispose() {
+			parent.removeNodeChangeListener(this);
+			preferences.removePreferenceChangeListener(this);
+		}
+
+		@Override
+		public void preferenceChange(PreferenceChangeEvent event) {
+			if (store.silentRunning) {
+				return;
+			}
+
+			Object oldValue = event.getOldValue();
+			Object newValue = event.getNewValue();
+			String key = event.getKey();
+			if (newValue == null) {
+				newValue = store.getDefault(key, oldValue);
+			} else if (oldValue == null) {
+				oldValue = store.getDefault(key, newValue);
+			}
+			store.firePropertyChangeEvent(event.getKey(), oldValue, newValue);
+		}
+
+		@Override
+		public void added(NodeChangeEvent event) {
+			if (store.nodeQualifier.equals(event.getChild().name())) {
+				store.getStorePreferences().addPreferenceChangeListener(this);
+			}
+		}
+
+		@Override
+		public void removed(NodeChangeEvent event) {
+			// Do nothing as there are no events from removed node
+		}
+
 	}
 
 }
