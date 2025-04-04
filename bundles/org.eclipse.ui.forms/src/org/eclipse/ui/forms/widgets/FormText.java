@@ -48,6 +48,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
@@ -1557,32 +1558,27 @@ public class FormText extends Canvas {
 	}
 
 	private void repaint(GC gc, int x, int y, int width, int height) {
-		Image textBuffer = new Image(getDisplay(), width, height);
-		Color bg = getBackground();
-		Color fg = getForeground();
-		if (!getEnabled()) {
-			bg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-			fg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-		}
-		GC textGC = new GC(textBuffer, gc.getStyle());
-		textGC.setForeground(fg);
-		textGC.setBackground(bg);
-		textGC.setFont(getFont());
-		textGC.fillRectangle(0, 0, width, height);
-		Rectangle repaintRegion = new Rectangle(x, y, width, height);
+		Color bg = getEnabled() ? getBackground() : getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		Color fg = getEnabled() ? getForeground() : getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 
 		Paragraph[] paragraphs = model.getParagraphs();
-		IHyperlinkSegment selectedLink = getSelectedLink();
-		if (getDisplay().getFocusControl() != this)
-			selectedLink = null;
-		for (Paragraph p : paragraphs) {
-			p
-					.paint(textGC, repaintRegion, resourceTable, selectedLink,
-							selData);
-		}
-		if (hasFocus && !model.hasFocusSegments())
-			textGC.drawFocus(x, y, width, height);
-		textGC.dispose();
+		IHyperlinkSegment selectedLink = getDisplay().getFocusControl() != this ? null : getSelectedLink();
+
+		final ImageGcDrawer textDrawer = (textGC, iWidth, iHeight) -> {
+			textGC.setForeground(fg);
+			textGC.setBackground(bg);
+			textGC.setFont(getFont());
+			textGC.fillRectangle(0, 0, iWidth, iHeight);
+			Rectangle repaintRegion = new Rectangle(x, y, iWidth, iHeight);
+			for (Paragraph p : paragraphs) {
+				p.paint(textGC, repaintRegion, resourceTable, selectedLink, selData);
+			}
+			if (hasFocus && !model.hasFocusSegments()) {
+				textGC.drawFocus(x, y, iWidth, iHeight);
+			}
+		};
+		Image textBuffer = new Image(getDisplay(), textDrawer, width, height);
+
 		gc.drawImage(textBuffer, x, y);
 		textBuffer.dispose();
 	}
