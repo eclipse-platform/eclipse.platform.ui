@@ -331,6 +331,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				}
 				assertElementsNotNull(parent, elements);
 			}
+			internalRefresh(parent);
 		}
 	}
 
