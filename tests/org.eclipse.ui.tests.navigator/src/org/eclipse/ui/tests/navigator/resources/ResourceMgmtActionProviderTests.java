@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2024 Dave Carpeneto and others.
+ * Copyright (c) 2025 Dave Carpeneto and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -211,7 +211,7 @@ public final class ResourceMgmtActionProviderTests extends NavigatorTestBase {
 	 */
 	private boolean menuHasContribution(String contribution) {
 		for (IContributionItem thisItem : manager.getItems()) {
-			if (thisItem.getId().equals(contribution)) {
+			if (thisItem.getId() != null && thisItem.getId().equals(contribution)) {
 				return true;
 			}
 		}
