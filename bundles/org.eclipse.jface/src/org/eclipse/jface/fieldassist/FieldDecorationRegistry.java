@@ -109,25 +109,25 @@ public class FieldDecorationRegistry {
 		// Define the images used in the standard decorations.
 		imageRegistry.put(IMG_DEC_FIELD_CONTENT_PROPOSAL, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/contassist_ovr.png"));//$NON-NLS-1$
+						"images/contassist_ovr.svg"));//$NON-NLS-1$
 		imageRegistry.put(IMG_DEC_FIELD_ERROR, ImageDescriptor.createFromFile(
-				FieldDecorationRegistry.class, "images/error_ovr.png"));//$NON-NLS-1$
+				FieldDecorationRegistry.class, "images/error_ovr.svg"));//$NON-NLS-1$
 
 		imageRegistry.put(IMG_DEC_FIELD_WARNING, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/warn_ovr.png"));//$NON-NLS-1$
+						"images/warn_ovr.svg"));//$NON-NLS-1$
 
 		imageRegistry.put(IMG_DEC_FIELD_REQUIRED, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/required_field_cue.png"));//$NON-NLS-1$
+						"images/required_field_cue.svg"));//$NON-NLS-1$
 
 		imageRegistry.put(IMG_DEC_FIELD_ERROR_QUICKFIX, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/errorqf_ovr.png"));//$NON-NLS-1$
+						"images/errorqf_ovr.svg"));//$NON-NLS-1$
 
 		imageRegistry.put(IMG_DEC_FIELD_INFO, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/info_ovr.png"));//$NON-NLS-1$
+						"images/info_ovr.svg"));//$NON-NLS-1$
 
 		// Define the standard decorations. Some do not have standard
 		// descriptions. Use null in these cases.
