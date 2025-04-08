@@ -26,7 +26,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
@@ -104,7 +105,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	public ImageData getImageData(int zoom) {
 		URL tempURL = getURL(url);
 		if (tempURL != null) {
-			if (zoom == 100 || canLoadAtZoom(() -> getStream(tempURL), zoom)) {
+			if (zoom == 100 || canLoadAtZoom(tempURL, zoom)) {
 				return getImageData(tempURL, 100, zoom);
 			}
 			return getZoomedImageSource(tempURL, url, zoom, u -> getImageData(u, zoom, zoom));
@@ -120,7 +121,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 				return xdata;
 			}
 		}
-		String xpath = FileImageDescriptor.getxPath(urlString, zoom);
+		String xpath = getxPath(urlString, zoom);
 		if (xpath != null) {
 			URL xPathUrl = getURL(xpath);
 			if (xPathUrl != null) {
@@ -130,13 +131,8 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		return null;
 	}
 
-	@SuppressWarnings("resource")
 	private static ImageData getImageData(URL url, int fileZoom, int targetZoom) {
-		return loadImageData(getStream(url), fileZoom, targetZoom);
-	}
-
-	static ImageData loadImageData(InputStream stream, int fileZoom, int targetZoom) {
-		try (InputStream in = stream) {
+		try (InputStream in = getStream(url)) {
 			if (in != null) {
 				return loadImageFromStream(new BufferedInputStream(in), fileZoom, targetZoom);
 			}
@@ -158,8 +154,8 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	}
 
 	@SuppressWarnings("restriction")
-	static boolean canLoadAtZoom(Supplier<InputStream> stream, int zoom) {
-		try (InputStream in = stream.get()) {
+	private static boolean canLoadAtZoom(URL url, int zoom) {
+		try (InputStream in = getStream(url)) {
 			if (in != null) {
 				return FileFormat.canLoadAtZoom(new ElementAtZoom<>(in, 100), zoom);
 			}
@@ -223,6 +219,26 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		}
 		return null;
 
+	}
+
+	private static final Pattern XPATH_PATTERN = Pattern.compile("(\\d+)x(\\d+)"); //$NON-NLS-1$
+
+	private static String getxPath(String name, int zoom) {
+		Matcher matcher = XPATH_PATTERN.matcher(name);
+		if (matcher.find()) {
+			try {
+				int currentWidth = Integer.parseInt(matcher.group(1));
+				int desiredWidth = Math.round((zoom / 100f) * currentWidth);
+				int currentHeight = Integer.parseInt(matcher.group(2));
+				int desiredHeight = Math.round((zoom / 100f) * currentHeight);
+				String lead = name.substring(0, matcher.start(1));
+				String tail = name.substring(matcher.end(2));
+				return lead + desiredWidth + "x" + desiredHeight + tail; //$NON-NLS-1$
+			} catch (RuntimeException e) {
+				// should never happen but if then we can't use the alternative name...
+			}
+		}
+		return null;
 	}
 
 	/**
