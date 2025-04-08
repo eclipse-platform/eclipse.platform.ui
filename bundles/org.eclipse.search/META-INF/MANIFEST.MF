@@ -33,3 +33,4 @@ Require-Bundle:
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.search
 Service-Component: OSGI-INF/org.eclipse.search.internal.ui.text.DirtyFileSearchParticipant.xml
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
