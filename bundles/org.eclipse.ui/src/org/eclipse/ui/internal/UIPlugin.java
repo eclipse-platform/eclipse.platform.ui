@@ -42,7 +42,7 @@ public final class UIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the image registry for this plugin.
 	 *
-	 * Where are the images? The images (typically png) are found in the same
+	 * Where are the images? The images (typically SVG) are found in the same
 	 * plugins directory.
 	 *
 	 * Note: The workbench uses the standard JFace ImageRegistry to track its
