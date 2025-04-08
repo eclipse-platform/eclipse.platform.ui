@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,31 +46,11 @@ import org.eclipse.swt.graphics.ImageFileNameProvider;
  */
 class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 
-	private class ImageProvider implements ImageFileNameProvider {
-
-		@Override
-		public String getImagePath(int zoom) {
-			final boolean logIOException = zoom == 100;
-			if (zoom == 100) {
-				return getFilePath(name, logIOException);
-			}
-			String xName = getxName(name, zoom);
-			if (xName != null) {
-				String xResult = getFilePath(xName, logIOException);
-				if (xResult != null) {
-					return xResult;
-				}
-			}
-			String xPath = getxPath(name, zoom);
-			if (xPath != null) {
-				String xResult = getFilePath(xPath, logIOException);
-				if (xResult != null) {
-					return xResult;
-				}
-			}
-			return null;
-		}
-
+	private ImageFileNameProvider createImageFileNameProvider() {
+		return zoom -> {
+			boolean logException = zoom == 100;
+			return getImageSource(name, n -> n, FileImageDescriptor::getxName, n -> getFilePath(n, logException), zoom);
+		};
 	}
 
 	private static final Pattern XPATH_PATTERN = Pattern.compile("(\\d+)x(\\d+)"); //$NON-NLS-1$
@@ -106,10 +88,9 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof FileImageDescriptor)) {
+		if (!(o instanceof FileImageDescriptor other)) {
 			return false;
 		}
-		FileImageDescriptor other = (FileImageDescriptor) o;
 		return Objects.equals(location, other.location) && Objects.equals(name, other.name);
 	}
 
@@ -122,9 +103,9 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 */
 	@Override
 	public ImageData getImageData(int zoom) {
-		InputStream in = getStream(zoom);
-		if (in != null) {
-			try (BufferedInputStream stream = new BufferedInputStream(in)) {
+		InputStream inputStream = getImageSource(name, n -> n, FileImageDescriptor::getxName, this::getStream, zoom);
+		if (inputStream != null) {
+			try (InputStream stream = new BufferedInputStream(inputStream)) {
 				return new ImageData(stream);
 			} catch (SWTException e) {
 				if (e.code != SWT.ERROR_INVALID_IMAGE) {
@@ -139,28 +120,35 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	}
 
 	/**
-	 * Returns a stream on the image contents. Returns null if a stream could
-	 * not be opened.
+	 * Returns a the image contents in the form returned by the given image-source
+	 * factory. Returns null if the content could not be found or accessed
 	 *
 	 * @param zoom the zoom factor
-	 * @return the buffered stream on the file or <code>null</code> if the
-	 *         file cannot be found
+	 * @return the the file content or {@code null} if the file cannot be found
 	 */
-	private InputStream getStream(int zoom) {
-		if (zoom == 100) {
-			return getStream(name);
+	static <E, R> R getImageSource(String root, Function<String, E> elementParser,
+			BiFunction<E, Integer, E> getXElement, Function<E, R> getImageSource, int zoom) {
+		E element = elementParser.apply(root);
+		if (element != null) {
+			if (zoom == 100) {
+				return getImageSource.apply(element);
+			}
+			@SuppressWarnings("boxing")
+			E xName = getXElement.apply(element, zoom);
+			if (xName != null) {
+				R xResult = getImageSource.apply(xName);
+				if (xResult != null) {
+					return xResult;
+				}
+			}
+			String xPath = getxPath(root, zoom);
+			if (xPath != null) {
+				E xPathElement = elementParser.apply(xPath);
+				if (xPathElement != null) {
+					return getImageSource.apply(xPathElement);
+				}
+			}
 		}
-
-		InputStream xstream = getStream(getxName(name, zoom));
-		if (xstream != null) {
-			return xstream;
-		}
-
-		InputStream xpath = getStream(getxPath(name, zoom));
-		if (xpath != null) {
-			return xpath;
-		}
-
 		return null;
 	}
 
@@ -173,20 +161,17 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 *         does not denotes an existing resource
 	 */
 	private InputStream getStream(String fileName) {
-		if (fileName != null) {
-			if (location != null) {
-				return location.getResourceAsStream(fileName);
-			}
-			try {
-				return new FileInputStream(fileName);
-			} catch (FileNotFoundException e) {
-				return null;
-			}
+		if (location != null) {
+			return location.getResourceAsStream(fileName);
 		}
-		return null;
+		try {
+			return new FileInputStream(fileName);
+		} catch (FileNotFoundException e) {
+			return null;
+		}
 	}
 
-	static String getxPath(String name, int zoom) {
+	private static String getxPath(String name, int zoom) {
 		Matcher matcher = XPATH_PATTERN.matcher(name);
 		if (matcher.find()) {
 			try {
@@ -244,7 +229,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 				// We really want a fresh ImageFileNameProvider instance to make
 				// sure the code that uses created images can use equals(),
 				// see Image#equals
-				return new Image(device, new ImageProvider());
+				return new Image(device, createImageFileNameProvider());
 			} catch (SWTException | IllegalArgumentException exception) {
 				// If we fail, fall back to the old 1x implementation.
 			}
@@ -283,7 +268,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 * @param name the file name
 	 * @return {@link String} or <code>null</code> if the file cannot be found
 	 */
-	String getFilePath(String name, boolean logIOException) {
+	private String getFilePath(String name, boolean logIOException) {
 		if (location == null)
 			return IPath.fromOSString(name).toOSString();
 
@@ -317,7 +302,7 @@ class FileImageDescriptor extends ImageDescriptor implements IAdaptable {
 			}
 		}
 		if (adapter == ImageFileNameProvider.class) {
-			return adapter.cast(new ImageProvider());
+			return adapter.cast(createImageFileNameProvider());
 		}
 		return null;
 	}
