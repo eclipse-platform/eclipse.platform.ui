@@ -131,14 +131,14 @@ Commands placed in menus using the &lt;a href=&quot;org_eclipse_ui_menus.html&qu
  point=&quot;org.eclipse.ui.commandImages&quot;&gt;
  &lt;image
   commandId=&quot;org.eclipse.example.ProfileLast&quot;
-  hoverIcon=&quot;icons/full/etool16/profile.png&quot;
-  disabledIcon=&quot;icons/full/dtool16/profile.png&quot;
-  icon=&quot;icons/full/etool16/profile.png&quot; /&gt;
+  hoverIcon=&quot;icons/full/etool16/profile.svg&quot;
+  disabledIcon=&quot;icons/full/dtool16/profile.svg&quot;
+  icon=&quot;icons/full/etool16/profile.svg&quot; /&gt;
  &lt;image
   commandId=&quot;org.eclipse.example.ProfileLast&quot;
-  hoverIcon=&quot;icons/full/etool16/history.png&quot;
-  disabledIcon=&quot;icons/full/dtool16/history.png&quot;
-  icon=&quot;icons/full/etool16/history.png&quot;
+  hoverIcon=&quot;icons/full/etool16/history.svg&quot;
+  disabledIcon=&quot;icons/full/dtool16/history.svg&quot;
+  icon=&quot;icons/full/etool16/history.svg&quot;
   style=&quot;toolbar&quot; /&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
