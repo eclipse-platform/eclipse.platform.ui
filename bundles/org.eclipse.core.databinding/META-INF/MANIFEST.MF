@@ -5,12 +5,12 @@ Bundle-SymbolicName: org.eclipse.core.databinding
 Bundle-Version: 1.13.400.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.core.databinding,
- org.eclipse.core.databinding.bind,
- org.eclipse.core.databinding.bind.steps,
- org.eclipse.core.databinding.conversion;x-internal:=false,
- org.eclipse.core.databinding.conversion.text;x-internal:=false,
- org.eclipse.core.databinding.validation;x-internal:=false,
+Export-Package: org.eclipse.core.databinding;version="1.0.0",
+ org.eclipse.core.databinding.bind;version="1.0.0",
+ org.eclipse.core.databinding.bind.steps;version="1.0.0",
+ org.eclipse.core.databinding.conversion;version="1.0.0",
+ org.eclipse.core.databinding.conversion.text;version="1.0.0",
+ org.eclipse.core.databinding.validation;version="1.0.0",
  org.eclipse.core.internal.databinding;x-friends:="org.eclipse.core.databinding.beans",
  org.eclipse.core.internal.databinding.conversion;x-friends:="org.eclipse.jface.tests.databinding",
  org.eclipse.core.internal.databinding.validation;x-friends:="org.eclipse.jface.tests.databinding"

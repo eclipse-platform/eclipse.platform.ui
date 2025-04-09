@@ -5,8 +5,8 @@ Bundle-SymbolicName: org.eclipse.core.databinding.beans
 Bundle-Version: 1.10.300.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.core.databinding.beans,
- org.eclipse.core.databinding.beans.typed,
+Export-Package: org.eclipse.core.databinding.beans;version="1.0.0",
+ org.eclipse.core.databinding.beans.typed;version="1.0.0",
  org.eclipse.core.internal.databinding.beans;x-internal:=true
 Require-Bundle: org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.databinding.observable;bundle-version="[1.2.0,2.0.0)",

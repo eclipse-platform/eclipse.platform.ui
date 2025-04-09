@@ -5,14 +5,14 @@ Bundle-SymbolicName: org.eclipse.core.databinding.observable
 Bundle-Version: 1.13.300.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.core.databinding.observable,
- org.eclipse.core.databinding.observable.list;x-internal:=false,
- org.eclipse.core.databinding.observable.map,
- org.eclipse.core.databinding.observable.masterdetail,
- org.eclipse.core.databinding.observable.set;x-internal:=false,
- org.eclipse.core.databinding.observable.sideeffect,
- org.eclipse.core.databinding.observable.value;x-internal:=false,
- org.eclipse.core.databinding.util,
+Export-Package: org.eclipse.core.databinding.observable;version="1.0.0",
+ org.eclipse.core.databinding.observable.list;version="1.0.0",
+ org.eclipse.core.databinding.observable.map;version="1.0.0",
+ org.eclipse.core.databinding.observable.masterdetail;version="1.0.0",
+ org.eclipse.core.databinding.observable.set;version="1.0.0",
+ org.eclipse.core.databinding.observable.sideeffect;version="1.0.0",
+ org.eclipse.core.databinding.observable.value;version="1.0.0",
+ org.eclipse.core.databinding.util;version="1.0.0",
  org.eclipse.core.internal.databinding.identity;x-friends:="org.eclipse.core.databinding.property",
  org.eclipse.core.internal.databinding.observable;x-internal:=true,
  org.eclipse.core.internal.databinding.observable.masterdetail;x-friends:="org.eclipse.jface.tests.databinding",
