@@ -5,11 +5,11 @@ Bundle-SymbolicName: org.eclipse.core.databinding.property
 Bundle-Version: 1.10.300.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.core.databinding.property,
- org.eclipse.core.databinding.property.list,
- org.eclipse.core.databinding.property.map,
- org.eclipse.core.databinding.property.set,
- org.eclipse.core.databinding.property.value,
+Export-Package: org.eclipse.core.databinding.property;version="1.0.0",
+ org.eclipse.core.databinding.property.list;version="1.0.0",
+ org.eclipse.core.databinding.property.map;version="1.0.0",
+ org.eclipse.core.databinding.property.set;version="1.0.0",
+ org.eclipse.core.databinding.property.value;version="1.0.0",
  org.eclipse.core.internal.databinding.property;x-internal:=true,
  org.eclipse.core.internal.databinding.property.list;x-internal:=true,
  org.eclipse.core.internal.databinding.property.map;x-internal:=true,
