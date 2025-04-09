@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="11"
+   height="16"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="thin_close_view.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="5.6568543"
+     inkscape:cx="-16.486217"
+     inkscape:cy="-6.5503762"
+     inkscape:document-units="px"
+     inkscape:current-layer="g4794"
+     showgrid="true"
+     inkscape:window-width="1164"
+     inkscape:window-height="982"
+     inkscape:window-x="182"
+     inkscape:window-y="338"
+     inkscape:window-maximized="0"
+     inkscape:snap-global="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3966"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline"
+     transform="translate(0,-1036.3622)">
+    <g
+       style="display:inline"
+       id="layer1-4"
+       inkscape:label="Layer 1"
+       transform="matrix(1,0,0,0.99372502,-3.0082434,5.559686)">
+      <g
+         transform="matrix(0.97551468,0,0,0.97551468,9.2809852,25.497327)"
+         id="g4794"
+         style="display:inline">
+        <path
+           inkscape:connector-curvature="0"
+           style="fill:#000000;fill-opacity:1;stroke:none;display:inline"
+           d="m -5.4050871,1041.337 0,0.6448 2.9471622,2.9657 -2.9471622,2.9658 0,0.6447 1.633753,0 2.4666466,-2.4499 2.4346123,2.4499 1.6657873,0 0,-0.6125 -2.9791966,-2.998 2.9791966,-2.998 0,-0.6125 -1.6657873,0 -2.4346123,2.45 -2.4666466,-2.45 -1.633753,0 z"
+           id="rect6001" />
+      </g>
+    </g>
+  </g>
+</svg>
