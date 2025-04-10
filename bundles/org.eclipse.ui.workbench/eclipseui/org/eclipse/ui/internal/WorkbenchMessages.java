@@ -1005,7 +1005,7 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchStatusDialog_SupportHyperlink;
 	public static String WorkbenchStatusDialog_StatusWithChildren;
 	public static String WorkbenchStatusDialog_SeeDetails;
-	public static String WorkbenchStatusDialog_MultipleProblemsHaveOccured;
+	public static String WorkbenchStatusDialog_MultipleProblemsHaveOccurred;
 	public static String WorkbenchStatusDialog_ProblemOccurred;
 	public static String WorkbenchStatusDialog_ProblemOccurredInJob;
 

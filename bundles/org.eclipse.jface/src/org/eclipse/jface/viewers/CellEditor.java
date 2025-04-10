@@ -692,7 +692,7 @@ public abstract class CellEditor {
 	 * @param keyEvent
 	 *            the key event
 	 */
-	protected void keyReleaseOccured(KeyEvent keyEvent) {
+	protected void keyReleaseOccurred(KeyEvent keyEvent) {
 		if (keyEvent.character == '\u001b') { // Escape character
 			fireCancelEditor();
 		} else if (keyEvent.character == '\r') { // Return key
