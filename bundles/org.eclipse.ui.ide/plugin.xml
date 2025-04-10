@@ -359,6 +359,21 @@
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
+            adaptable="true"
+            state="true"
+            label="%DecoratorZipFile.label"
+            class="org.eclipse.ui.internal.ide.ZipFileDecorator"
+            id="org.eclipse.ui.ZipFileDecorator">
+         <description>
+            %DecoratorZipFile.description
+         </description>
+         <enablement>
+            <objectClass
+                  name="org.eclipse.core.resources.IResource">
+            </objectClass>
+         </enablement>
+      </decorator>
+      <decorator
             lightweight="true"
             adaptable="true"
             location="BOTTOM_RIGHT"
@@ -1102,7 +1117,17 @@
             id="org.eclipse.ui.ide.markers.copyMarkerResourceQualifiedName"
             name="%command.copyMarkerResourceQualifiedName.name"
             defaultHandler="org.eclipse.ui.internal.views.markers.CopyMarkerResourceQualifiedNameHandler">            
-      </command>          
+      </command>
+	   <command
+	          id="org.eclipse.ui.commands.openZipFile"
+	          name="%command.name.openZipFile"
+	          defaultHandler="org.eclipse.ui.ide.fileSystem.zip.OpenZipFileHandler">
+	    </command>
+	    <command
+	          id="org.eclipse.ui.commands.closeZipFile"
+	          name="%command.name.closeZipFile"
+	          defaultHandler="org.eclipse.ui.ide.fileSystem.zip.CloseZipFileHandler">
+	    </command>  
    </extension>
 
    <extension
@@ -2203,6 +2228,50 @@
           </visibleWhen>
          </command>
       </menuContribution>
+	   <menuContribution
+	          allPopups="false"
+	          locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+	       <command
+	             commandId="org.eclipse.ui.commands.openZipFile"
+	             label="%command.name.openZipFile"
+	             style="push">
+	          <visibleWhen
+	                checkEnabled="false">
+	             <with
+	                   variable="activeMenuSelection">
+	                <iterate
+	                      ifEmpty="false">
+	                   <adapt
+	                         type="org.eclipse.core.resources.IFile">
+	                      <or>
+	                         <test
+	                               property="org.eclipse.core.resources.zipFile"
+	                               value="true">
+	                         </test>
+	                      </or>
+	                   </adapt>
+	                </iterate>
+	             </with>
+	          </visibleWhen>
+	       </command>
+	       <command
+	             commandId="org.eclipse.ui.commands.closeZipFile"
+	             label="%command.name.closeZipFile"
+	             style="push">
+	          <visibleWhen
+	                checkEnabled="false">
+	             <with
+	                   variable="activeMenuSelection">
+	                <iterate
+	                      ifEmpty="false">
+	                   <adapt
+	                         type="org.eclipse.core.internal.resources.VirtualZipFolder">
+	                   </adapt>
+	                </iterate>
+	             </with>
+	          </visibleWhen>
+	       </command>
+	       </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -2731,5 +2800,11 @@
             markerType="org.eclipse.core.resources.noExplicitEncoding">
       </markerResolutionGenerator>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.ide.filesystemSupport">
+      <filesystemContributor
+            class="org.eclipse.ui.ide.fileSystem.zip.ZipFileSystemContributor"
+            label="%filesystem.file.zip"
+            scheme="zip"/>
+   </extension>
 </plugin>
