@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -375,7 +376,12 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 			futures.add(CompletableFuture.supplyAsync(() -> {
 				AtomicReference<List<ICompletionProposal>> result= new AtomicReference<>();
 				SafeRunner.run(() -> {
-					ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
+					ICompletionProposal[] proposals;
+					try {
+						proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
+					} catch (CancellationException e) {
+						// no result
+					}
 					if (proposals == null) {
 						result.set(Collections.emptyList());
 					} else {
