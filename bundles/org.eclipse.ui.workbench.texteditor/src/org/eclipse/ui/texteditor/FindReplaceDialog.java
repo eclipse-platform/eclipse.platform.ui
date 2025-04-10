@@ -129,13 +129,15 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private class InputModifyListener implements ModifyListener {
 
-		private Runnable modificationHandler;
+		private final Runnable logicUpdateHandler;
+		private final Runnable uiUpdateHandler;
 
 		// XXX: Workaround for Combo bug on Linux (see bug 404202 and bug 410603)
 		private boolean fIgnoreNextEvent;
 
-		private InputModifyListener(Runnable modificationHandler) {
-			this.modificationHandler = modificationHandler;
+		private InputModifyListener(Runnable logicUpdateHandler, Runnable uiUpdateHandler) {
+			this.logicUpdateHandler = logicUpdateHandler;
+			this.uiUpdateHandler = uiUpdateHandler;
 		}
 
 		private void ignoreNextEvent() {
@@ -144,13 +146,15 @@ class FindReplaceDialog extends Dialog {
 
 		@Override
 		public void modifyText(ModifyEvent e) {
-			modificationHandler.run();
+			// Data in logic needs to updated immediately (i.e., find or replace string)
+			logicUpdateHandler.run();
 			// XXX: Workaround for Combo bug on Linux (see bug 404202 and bug 410603)
+			// UI must only be updated after second event on Linux
 			if (fIgnoreNextEvent) {
 				fIgnoreNextEvent = false;
 				return;
 			}
-			modificationHandler.run();
+			uiUpdateHandler.run();
 		}
 	}
 
@@ -644,8 +648,7 @@ class FindReplaceDialog extends Dialog {
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new char[0], true);
 		setGridData(fFindField, SWT.FILL, true, SWT.CENTER, false);
 		addDecorationMargin(fFindField);
-		fFindModifyListener = new InputModifyListener(() -> {
-			updateFindString();
+		fFindModifyListener = new InputModifyListener(this::updateFindString, () -> {
 			updateButtonState(!findReplaceLogic.isActive(SearchOptions.INCREMENTAL));
 			decorate();
 		});
@@ -663,12 +666,7 @@ class FindReplaceDialog extends Dialog {
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new char[0], true);
 		setGridData(fReplaceField, SWT.FILL, true, SWT.CENTER, false);
 		addDecorationMargin(fReplaceField);
-		fReplaceModifyListener = new InputModifyListener(() -> {
-			if (okToUse(fReplaceField)) {
-				findReplaceLogic.setReplaceString(fReplaceField.getText());
-			}
-			updateButtonState();
-		});
+		fReplaceModifyListener = new InputModifyListener(this::updateReplaceString, this::updateButtonState);
 		fReplaceField.addModifyListener(fReplaceModifyListener);
 
 		return panel;
@@ -677,6 +675,12 @@ class FindReplaceDialog extends Dialog {
 	private void updateFindString() {
 		if (okToUse(fFindField)) {
 			findReplaceLogic.setFindString(fFindField.getText());
+		}
+	}
+
+	private void updateReplaceString() {
+		if (okToUse(fReplaceField)) {
+			findReplaceLogic.setReplaceString(fReplaceField.getText());
 		}
 	}
 
