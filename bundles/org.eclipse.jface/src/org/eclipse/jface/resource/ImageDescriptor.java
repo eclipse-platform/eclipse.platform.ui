@@ -84,7 +84,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 * @return a new image descriptor
 	 */
 	public static ImageDescriptor createFromFile(Class<?> location, String filename) {
-		return new FileImageDescriptor(location, filename);
+		return createFromURL(location.getResource(filename));
 	}
 
 	/**
