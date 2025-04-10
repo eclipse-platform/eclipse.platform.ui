@@ -260,7 +260,7 @@ public final class ContributionsAnalyzer {
 		}
 		boolean ret = false;
 		try {
-			ret = ref.evaluate(eContext) != EvaluationResult.FALSE;
+			ret = ref.evaluate(eContext) == EvaluationResult.TRUE;
 		} catch (Exception e) {
 			if (DEBUG) {
 				trace("isVisible exception", e); //$NON-NLS-1$
