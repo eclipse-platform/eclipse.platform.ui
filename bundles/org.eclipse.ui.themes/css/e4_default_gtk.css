@@ -241,3 +241,8 @@ Composite.MArea{
 .MPart CTabFolder{
 	swt-outer-keyline-color: #ffffff;
 }
+
+ProgressInfoItem,
+ProgressInfoItem > *{
+	background-color:'#org-eclipse-ui-workbench-SECONDARY_BACKGROUND';
+}
