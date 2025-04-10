@@ -94,7 +94,23 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		public ImageData getImageData(int zoom) {
 			return URLImageDescriptor.getImageData(url, zoom);
 		}
+//
+//		@Override
+//		public ImageData getCustomizedImageData(int zoom, int flag) {
+//			return URLImageDescriptor.getCustomizedImageData(url, zoom, flag);
+//		}
 
+//		@Override
+//		public boolean supportsRasterizationFlag(int flag) {
+//			boolean supportsFlag = flag == SWT.IMAGE_DISABLE || flag == SWT.IMAGE_GRAY || flag == SWT.IMAGE_COPY;
+//			URL tempURL = getURL(url);
+//			if (tempURL != null) {
+//				if (tempURL.toString().endsWith(".svg") && supportsFlag) { //$NON-NLS-1$
+//					return true;
+//				}
+//			}
+//			return false;
+//		}
 	}
 
 	private static long cumulativeTime;
@@ -138,6 +154,9 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	private static ImageData getImageData(String url, int zoom) {
 		URL tempURL = getURL(url);
 		if (tempURL != null) {
+//			if (tempURL.toString().endsWith(".svg")) { //$NON-NLS-1$
+//				return getImageData(tempURL, zoom);
+//			}
 			if (zoom == 100) {
 				return getImageData(tempURL);
 			}
@@ -175,6 +194,28 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		}
 		return result;
 	}
+
+//	private static ImageData getImageData(URL url, int zoom, int flag) {
+//		ImageData result = null;
+//		try (InputStream in = getStream(url)) {
+//			if (in != null) {
+//				result = new ImageData(in, zoom, flag);
+//			}
+//		} catch (SWTException e) {
+//			if (e.code != SWT.ERROR_INVALID_IMAGE) {
+//				throw e;
+//				// fall through otherwise
+//			}
+//		} catch (IOException e) {
+//			Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, e.getLocalizedMessage(), e));
+//		}
+//		return result;
+//	}
+//
+//	private static ImageData getCustomizedImageData(String url, int zoom, int flag) {
+//		URL tempURL = getURL(url);
+//		return getImageData(tempURL, zoom, flag);
+//	}
 
 	/**
 	 * Returns a stream on the image contents. Returns null if a stream could
