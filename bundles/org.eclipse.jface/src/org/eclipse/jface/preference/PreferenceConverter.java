@@ -73,39 +73,26 @@ public class PreferenceConverter {
 	private static final String ENTRY_SEPARATOR = ";"; //$NON-NLS-1$
 
 	/**
-	 * The default-default value for <code>FontData[]</code> preferences.
-	 * Read-only.
+	 * The default-default value for <code>FontData</code> preferences. Read-only.
+	 * The value is hard coded to the object created via
+	 * {@link FontData#FontData()}.
 	 *
-	 * @deprecated this is not thread-safe and may contain invalid data at
-	 *             startup. Call {@link #getFontDataArrayDefaultDefault()} from
-	 *             the UI thread instead.
+	 * @deprecated Call {@link #getFontDataArrayDefaultDefault()}} from the UI
+	 *             thread instead.
 	 */
-	@Deprecated
-	public static FontData[] FONTDATA_ARRAY_DEFAULT_DEFAULT;
+	@Deprecated(forRemoval = true, since = "2025-06")
+	public static FontData FONTDATA_DEFAULT_DEFAULT = new FontData();
 
 	/**
-	 * The default-default value for <code>FontData</code> preferences.
-	 * Read-only.
+	 * Contains single {@link #FONTDATA_DEFAULT_DEFAULT} element.
 	 *
-	 * @deprecated this is not thread-safe and may contain invalid data at
-	 *             startup. Call {@link #getFontDataArrayDefaultDefault()}} from
-	 *             the UI thread instead.
+	 * @deprecated Call {@link #getFontDataArrayDefaultDefault()} from the UI thread
+	 *             instead.
 	 */
-	@Deprecated
-	public static FontData FONTDATA_DEFAULT_DEFAULT;
+	@Deprecated(forRemoval = true, since = "2025-06")
+	public static FontData[] FONTDATA_ARRAY_DEFAULT_DEFAULT = new FontData[] { FONTDATA_DEFAULT_DEFAULT };
 
 	private static FontData[] fontDataArrayDefaultDefault;
-
-	static {
-		Display display = Display.getDefault();
-		display.asyncExec(() -> {
-			// Ensure that the deprecated FONTDATA_DEFAULT_DEFAULT and
-			// FONTDATA_ARRAY_DEFAULT values
-			// are initialized as soon as possible
-			FONTDATA_ARRAY_DEFAULT_DEFAULT = getFontDataArrayDefaultDefault();
-			FONTDATA_DEFAULT_DEFAULT = getFontDataArrayDefaultDefault()[0];
-		});
-	}
 
 	/**
 	 * private constructor to prevent instantiation.
