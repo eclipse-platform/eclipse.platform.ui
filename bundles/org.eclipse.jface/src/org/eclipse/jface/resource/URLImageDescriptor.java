@@ -130,12 +130,6 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		return ((URLImageDescriptor) o).url.equals(this.url);
 	}
 
-	@Deprecated
-	@Override
-	public ImageData getImageData() {
-		return getImageData(getURL(url), 100, 100);
-	}
-
 	@Override
 	public ImageData getImageData(int zoom) {
 		return getImageData(url, zoom);
