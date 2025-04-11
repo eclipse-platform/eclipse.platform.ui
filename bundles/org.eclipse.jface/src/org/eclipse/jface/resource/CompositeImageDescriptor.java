@@ -347,15 +347,6 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 		}
 	}
 
-	/**
-	 * @deprecated Use {@link #getImageData(int)} instead.
-	 */
-	@Deprecated
-	@Override
-	public ImageData getImageData() {
-		return getImageData(100);
-	}
-
 	@Override
 	public ImageData getImageData(int zoom) {
 		if (!supportsZoomLevel(zoom)) {

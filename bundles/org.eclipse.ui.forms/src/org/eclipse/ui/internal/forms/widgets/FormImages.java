@@ -108,7 +108,7 @@ public class FormImages {
 		}
 
 		@Override
-		public ImageData getImageData() {
+		public ImageData getImageData(int zoom) {
 			return null;
 		}
 
@@ -177,7 +177,7 @@ public class FormImages {
 		}
 
 		@Override
-		public ImageData getImageData() {
+		public ImageData getImageData(int zoom) {
 			return null;
 		}
 
@@ -273,7 +273,7 @@ public class FormImages {
 		}
 
 		@Override
-		public ImageData getImageData() {
+		public ImageData getImageData(int zoom) {
 			return null;
 		}
 

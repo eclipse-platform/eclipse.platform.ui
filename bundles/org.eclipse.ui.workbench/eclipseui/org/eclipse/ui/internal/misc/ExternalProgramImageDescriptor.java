@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.misc;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.ISharedImages;
@@ -26,7 +25,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
  */
 public class ExternalProgramImageDescriptor extends ImageDescriptor {
 
-	public Program program;
+	private Program program;
 
 	/**
 	 * Creates a new ImageDescriptor. The image is loaded from a file with the given
@@ -41,25 +40,15 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof ExternalProgramImageDescriptor)) {
+		if (!(o instanceof ExternalProgramImageDescriptor other)) {
 			return false;
 		}
-		ExternalProgramImageDescriptor other = (ExternalProgramImageDescriptor) o;
-
 		// See if there is a name - compare it if so and compare the programs if not
 		String otherName = other.program.getName();
 		if (otherName == null) {
 			return other.program.equals(program);
 		}
 		return otherName.equals(program.getName());
-	}
-
-	/**
-	 * Returns an SWT Image that is described by the information in this descriptor.
-	 * Each call returns a new Image.
-	 */
-	public Image getImage() {
-		return createImage();
 	}
 
 	@Override
