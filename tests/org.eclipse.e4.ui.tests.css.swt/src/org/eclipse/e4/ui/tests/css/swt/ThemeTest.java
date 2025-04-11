@@ -57,7 +57,9 @@ public class ThemeTest extends CSSSWTTestCase {
 	@Override
 	@AfterEach
 	public void tearDown() {
-		themeListenerRegistration.unregister();
+		if (themeListenerRegistration != null) {
+			themeListenerRegistration.unregister();
+		}
 		super.tearDown();
 	}
 
@@ -92,6 +94,34 @@ public class ThemeTest extends CSSSWTTestCase {
 		IThemeManager manager = context.getService(themeManagerReference);
 		assertNotNull(manager, "Theme manager service not available");
 		return manager.getEngineForDisplay(display);
+	}
+
+	@Test
+	void settingIsDarkToTrueShoulReportThemeIsDark() {
+		Theme theme = new Theme("IdDoesntCare", "DescriptionDoesntCare");
+		theme.setIsDark("true");
+		assertTrue(theme.isDark(), "Theme should report to be dark");
+	}
+
+	@Test
+	void settingIsDarkToFalseShoulReportThemeIsNotDark() {
+		Theme theme = new Theme("IdDoesntCare", "DescriptionDoesntCare");
+		theme.setIsDark("false");
+		assertFalse(theme.isDark(), "Theme should report to be NOT dark");
+	}
+
+	@Test
+	void settingIsDarkToNullShoulReportThemeIsNotDark() {
+		Theme theme = new Theme("IdDoesntCare", "DescriptionDoesntCare");
+		theme.setIsDark(null);
+		assertFalse(theme.isDark(), "Theme should report to be NOT dark");
+	}
+
+	@Test
+	void settingIsDarkToInvalidValueShoulReportThemeIsNotDark() {
+		Theme theme = new Theme("IdDoesntCare", "DescriptionDoesntCare");
+		theme.setIsDark("invalid");
+		assertFalse(theme.isDark(), "Theme should report to be NOT dark");
 	}
 
 }
