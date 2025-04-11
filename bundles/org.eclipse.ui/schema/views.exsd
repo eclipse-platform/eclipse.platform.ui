@@ -162,10 +162,15 @@ be associated with the view.
          <attribute name="fastViewWidthRatio" type="string">
             <annotation>
                <documentation>
-                  the percentage of the width of the workbench that the view will take up as an active fast view.
+                  &lt;b&gt;deprecated since 2025-06&lt;/b&gt; support for fast views has been discontinued.
+
+The percentage of the width of the workbench that the view will take up as an active fast view.
 This must be defined as a floating point value and lie between 0.05 and 0.95.
 If no value is supplied, a default ratio will be used.
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="allowMultiple" type="boolean">
