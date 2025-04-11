@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Surrogate
+Bundle-SymbolicName: com.sun.jna.surrogate
+Bundle-Version: 1.0.0.qualifier
+Export-Package: com.sun.jna;version="5.8.0",
+ com.sun.jna.platform;version="5.10.0",
+ com.sun.jna.platform.win32;version="5.10.0"
+Bundle-Vendor: SUN
+Require-Bundle: org.eclipse.swt,
+ org.eclipse.jface
+Automatic-Module-Name: com.sun.jna.surrogate
+Bundle-RequiredExecutionEnvironment: JavaSE-21
