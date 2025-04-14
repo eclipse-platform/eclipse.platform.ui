@@ -18,7 +18,7 @@
          point="org.eclipse.ui.views">
       <view
             name="%views.errorLog.name"
-            icon="$nl$/icons/eview16/error_log.png"
+            icon="$nl$/icons/eview16/error_log.svg"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.views.log.LogView"
             id="org.eclipse.pde.runtime.LogView">
