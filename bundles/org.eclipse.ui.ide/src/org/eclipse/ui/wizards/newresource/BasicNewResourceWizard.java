@@ -103,7 +103,7 @@ public abstract class BasicNewResourceWizard extends Wizard implements
 	 * </p>
 	 */
 	protected void initializeDefaultPageImageDescriptor() {
-		ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/new_wiz.png");//$NON-NLS-1$
+		ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/new_wiz.svg");//$NON-NLS-1$
 		setDefaultPageImageDescriptor(desc);
 	}
 

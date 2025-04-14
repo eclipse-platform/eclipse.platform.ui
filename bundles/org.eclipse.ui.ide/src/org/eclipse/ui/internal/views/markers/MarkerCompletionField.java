@@ -81,9 +81,9 @@ public class MarkerCompletionField extends MarkerField {
 		}
 	}
 
-	static final String COMPLETE_IMAGE_PATH = "$nl$/icons/full/obj16/complete_tsk.png"; //$NON-NLS-1$
+	static final String COMPLETE_IMAGE_PATH = "$nl$/icons/full/obj16/complete_tsk.svg"; //$NON-NLS-1$
 
-	static final String INCOMPLETE_IMAGE_PATH = "$nl$/icons/full/obj16/incomplete_tsk.png"; //$NON-NLS-1$
+	static final String INCOMPLETE_IMAGE_PATH = "$nl$/icons/full/obj16/incomplete_tsk.svg"; //$NON-NLS-1$
 	private static final int DONE = 2;
 	private static final int NOT_DONE = 1;
 

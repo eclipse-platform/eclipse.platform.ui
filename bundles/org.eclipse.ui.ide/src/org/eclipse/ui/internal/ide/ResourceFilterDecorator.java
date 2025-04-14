@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
  */
 public class ResourceFilterDecorator implements ILightweightLabelDecorator {
 
-	private static final String IMG_MARKERS_RESOURCE_FILTER_DECORATION_PATH = "ovr16/filterapplied_ovr.png"; //$NON-NLS-1$
+	private static final String IMG_MARKERS_RESOURCE_FILTER_DECORATION_PATH = "ovr16/filterapplied_ovr.svg"; //$NON-NLS-1$
 	ImageDescriptor descriptorImage = null;
 
 	public ResourceFilterDecorator() {

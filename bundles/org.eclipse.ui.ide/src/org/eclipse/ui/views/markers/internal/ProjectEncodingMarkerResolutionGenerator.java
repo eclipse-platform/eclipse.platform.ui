@@ -84,7 +84,7 @@ public class ProjectEncodingMarkerResolutionGenerator implements IMarkerResoluti
 			this.charset = encoding;
 			ResourceManager resources = IDEWorkbenchPlugin.getDefault().getResourceManager();
 			ResourceLocator.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
-					"$nl$/icons/full/elcl16/selected_mode.png").ifPresent(d -> image = resources.create(d)); //$NON-NLS-1$
+					"$nl$/icons/full/elcl16/selected_mode.svg").ifPresent(d -> image = resources.create(d)); //$NON-NLS-1$
 		}
 
 		@Override

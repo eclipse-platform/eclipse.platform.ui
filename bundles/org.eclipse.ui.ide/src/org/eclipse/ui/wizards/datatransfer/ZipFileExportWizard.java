@@ -91,7 +91,7 @@ public class ZipFileExportWizard extends Wizard implements IExportWizard {
 		}
 
 		setWindowTitle(DataTransferMessages.DataTransfer_export);
-		setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportzip_wiz.png"));//$NON-NLS-1$
+		setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportzip_wiz.svg"));//$NON-NLS-1$
 		setNeedsProgressMonitor(true);
 	}
 
