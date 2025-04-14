@@ -7,7 +7,7 @@
       <view
             category="org.eclipse.ui"
             class="org.eclipse.ui.navigator.resources.ProjectExplorer"
-            icon="$nl$/icons/full/eview16/resource_persp.png"
+            icon="$nl$/icons/full/eview16/resource_persp.svg"
             id="org.eclipse.ui.navigator.ProjectExplorer"
             name="%Common_Resource_Navigator"/>
    </extension>
@@ -82,7 +82,7 @@
       <navigatorContent
             name="%resource.extension.name"
             priority="low"
-            icon="$nl$/icons/full/eview16/resource_persp.png"
+            icon="$nl$/icons/full/eview16/resource_persp.svg"
             activeByDefault="true"
 			            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             			labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
@@ -350,7 +350,7 @@
       <navigatorContent
             activeByDefault="true"
             contentProvider="org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider"
-            icon="$nl$/icons/full/obj16/workingsets.png"
+            icon="$nl$/icons/full/obj16/workingsets.svg"
             id="org.eclipse.ui.navigator.resources.workingSets"
             labelProvider="org.eclipse.ui.internal.navigator.workingsets.WorkingSetsLabelProvider"
             name="%workingsets.extension.name"
@@ -443,7 +443,7 @@
             id="org.eclipse.ui.navigator.resources.nested.nestedProjectContentProvider"
             labelProvider="org.eclipse.ui.internal.navigator.resources.nested.NestedProjectsLabelProvider"
             name="%nestedProjects.provider.name"
-            icon="$nl$/icons/full/obj16/nested_projects.png"
+            icon="$nl$/icons/full/obj16/nested_projects.svg"
             priority="higher">
          <enablement>
             <adapt

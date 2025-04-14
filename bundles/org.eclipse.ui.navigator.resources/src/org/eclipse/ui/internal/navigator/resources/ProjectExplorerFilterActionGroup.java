@@ -36,7 +36,7 @@ public class ProjectExplorerFilterActionGroup extends FilterActionGroup {
 
 	public void makeActions() {
 		selectFiltersAction = new SelectFiltersAction(commonViewer, this);
-		String imageFilePath = "icons/full/elcl16/filter_ps.png"; //$NON-NLS-1$
+		String imageFilePath = "icons/full/elcl16/filter_ps.svg"; //$NON-NLS-1$
 		ResourceLocator.imageDescriptorFromBundle(getClass(), imageFilePath).ifPresent(d -> {
 			selectFiltersAction.setImageDescriptor(d);
 			selectFiltersAction.setHoverImageDescriptor(d);
