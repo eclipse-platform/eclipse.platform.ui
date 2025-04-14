@@ -49,7 +49,7 @@ public class WorkingSetsLabelProvider implements ILabelProvider {
 	private Image getWorkingSetImage() {
 		if (workingSetImage == null) {
 			URL iconUrl = FileLocator.find(WorkbenchNavigatorPlugin.getDefault().getBundle(),
-					IPath.fromPortableString("icons/full/obj16/otherprojects_workingsets.png"), //$NON-NLS-1$
+					IPath.fromPortableString("icons/full/obj16/otherprojects_workingsets.svg"), //$NON-NLS-1$
 					Collections.emptyMap());
 			workingSetImage = ImageDescriptor.createFromURL(iconUrl).createImage();
 		}
