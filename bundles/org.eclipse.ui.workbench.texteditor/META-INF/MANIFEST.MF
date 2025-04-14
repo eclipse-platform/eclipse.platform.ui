@@ -36,3 +36,4 @@ Require-Bundle:
  org.eclipse.jface.notifications
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.ui.workbench.texteditor
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
