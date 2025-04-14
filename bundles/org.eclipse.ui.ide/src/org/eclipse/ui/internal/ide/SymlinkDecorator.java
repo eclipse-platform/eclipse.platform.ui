@@ -37,7 +37,7 @@ public class SymlinkDecorator implements ILightweightLabelDecorator {
 	static {
 		SYMLINK = ResourceLocator.imageDescriptorFromBundle(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/ovr16/symlink_ovr.png"); //$NON-NLS-1$
+				"$nl$/icons/full/ovr16/symlink_ovr.svg"); //$NON-NLS-1$
 
 	}
 

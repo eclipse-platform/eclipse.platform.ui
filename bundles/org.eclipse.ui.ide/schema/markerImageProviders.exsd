@@ -103,7 +103,7 @@
          point=&quot;org.eclipse.ui.ide.markerImageProviders&quot;&gt;
       &lt;imageprovider
         markertype=&quot;org.eclipse.core.resources.taskmarker&quot;
-            icon=&quot;taskicon.png&quot;
+            icon=&quot;taskicon.svg&quot;
             id=&quot;myPlugin.declarativeMarkerProvider&quot;&gt;
       &lt;/imageprovider&gt;
       &lt;imageprovider

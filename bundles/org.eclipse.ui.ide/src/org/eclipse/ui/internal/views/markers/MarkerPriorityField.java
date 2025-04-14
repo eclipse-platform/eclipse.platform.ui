@@ -83,9 +83,9 @@ public class MarkerPriorityField extends MarkerField {
 		}
 	}
 
-	static final String HIGH_PRIORITY_IMAGE_PATH = "$nl$/icons/full/obj16/hprio_tsk.png"; //$NON-NLS-1$
+	static final String HIGH_PRIORITY_IMAGE_PATH = "$nl$/icons/full/obj16/hprio_tsk.svg"; //$NON-NLS-1$
 
-	static final String LOW_PRIORITY_IMAGE_PATH = "$nl$/icons/full/obj16/lprio_tsk.png"; //$NON-NLS-1$
+	static final String LOW_PRIORITY_IMAGE_PATH = "$nl$/icons/full/obj16/lprio_tsk.svg"; //$NON-NLS-1$
 
 	private static String[] priorities = new String[] {
 			MarkerMessages.priority_low, MarkerMessages.priority_normal,

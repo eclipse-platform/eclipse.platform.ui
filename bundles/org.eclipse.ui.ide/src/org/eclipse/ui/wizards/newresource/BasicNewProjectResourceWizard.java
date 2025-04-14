@@ -312,7 +312,7 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 	@Override
 	protected void initializeDefaultPageImageDescriptor() {
 		ImageDescriptor desc = IDEWorkbenchPlugin
-				.getIDEImageDescriptor("wizban/newprj_wiz.png");//$NON-NLS-1$
+				.getIDEImageDescriptor("wizban/newprj_wiz.svg");//$NON-NLS-1$
 		setDefaultPageImageDescriptor(desc);
 	}
 

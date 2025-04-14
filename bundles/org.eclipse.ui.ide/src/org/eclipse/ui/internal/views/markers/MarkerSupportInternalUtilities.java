@@ -124,11 +124,11 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * The markers help decoration.
 	 */
-	public static final String IMG_MARKERS_HELP_DECORATION_PATH = "markers/help_small.png"; //$NON-NLS-1$
+	public static final String IMG_MARKERS_HELP_DECORATION_PATH = "markers/help_small.svg"; //$NON-NLS-1$
 	/**
 	 * The markers quick fix decoration.
 	 */
-	public static final String IMG_MARKERS_QUICK_FIX_DECORATION_PATH = "markers/contassist_ovr.png"; //$NON-NLS-1$
+	public static final String IMG_MARKERS_QUICK_FIX_DECORATION_PATH = "markers/contassist_ovr.svg"; //$NON-NLS-1$
 
 	/**
 	 * The string value of the false value for a boolean attribute.

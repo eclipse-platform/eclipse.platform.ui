@@ -96,11 +96,11 @@ public class LinkedResourceEditor {
 
 	public LinkedResourceEditor() {
 		absoluteImg = IDEWorkbenchPlugin.getIDEImageDescriptor(
-				"obj16/warning.png").createImage(); //$NON-NLS-1$
+				"obj16/warning.svg").createImage(); //$NON-NLS-1$
 		brokenImg = IDEWorkbenchPlugin.getIDEImageDescriptor(
-				"obj16/error_tsk.png").createImage(); //$NON-NLS-1$
+				"obj16/error_tsk.svg").createImage(); //$NON-NLS-1$
 		fixedImg = IDEWorkbenchPlugin
-				.getIDEImageDescriptor("obj16/folder.png").createImage(); //$NON-NLS-1$
+				.getIDEImageDescriptor("obj16/folder.svg").createImage(); //$NON-NLS-1$
 
 		FIXED = IDEWorkbenchMessages.LinkedResourceEditor_fixed;
 		BROKEN = IDEWorkbenchMessages.LinkedResourceEditor_broken;

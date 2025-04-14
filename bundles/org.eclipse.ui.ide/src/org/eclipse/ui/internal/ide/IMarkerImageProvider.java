@@ -30,7 +30,7 @@ import org.eclipse.core.resources.IMarker;
  *      &lt;imageprovider
  *		   id="com.example.myplugin.myprofiderID"
  *         makertype="com.example.myMarkerType"
- *         icon="icons/basic/view16/myimage.png"/&gt;
+ *         icon="icons/basic/view16/myimage.svg"/&gt;
  * &lt;/extension&gt;
  * </pre>
  * <p>

@@ -81,7 +81,7 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
 
 	@Override
 	protected void initializeDefaultPageImageDescriptor() {
-		ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newfolder_wiz.png");//$NON-NLS-1$
+		ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newfolder_wiz.svg");//$NON-NLS-1$
 		setDefaultPageImageDescriptor(desc);
 
 	}

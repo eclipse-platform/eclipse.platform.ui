@@ -69,4 +69,4 @@ Import-Package: jakarta.annotation;version="[2.1.0,3.0.0)",
  org.osgi.service.event;version="[1.4.0,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.ui.ide
-
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
