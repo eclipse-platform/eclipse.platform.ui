@@ -236,7 +236,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return ImageResourceManager.getImageDescriptor("$nl$/icons/obj16/" + "internal_browser.png"); //$NON-NLS-1$ //$NON-NLS-2$
+		return ImageResourceManager.getImageDescriptor("$nl$/icons/obj16/" + "internal_browser.svg"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
