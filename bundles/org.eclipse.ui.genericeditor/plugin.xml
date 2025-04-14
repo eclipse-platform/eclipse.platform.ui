@@ -33,7 +33,7 @@
             class="org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
-            icon="icons/full/obj16/generic_editor.png"
+            icon="icons/full/obj16/generic_editor.svg"
             id="org.eclipse.ui.genericeditor.GenericEditor"
             name="%genericEditor_name">
          <contentTypeBinding
@@ -168,7 +168,7 @@
       <image
             commandId="org.eclipse.ui.genericeditor.togglehighlight"
             disabledIcon="icons/full/dtool16/mark_occurrences.png"
-            icon="icons/full/etool16/mark_occurrences.png">
+            icon="icons/full/etool16/mark_occurrences.svg">
       </image>
    </extension>
    <extension point="org.eclipse.ui.editors.annotationTypes">
