@@ -413,7 +413,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 		defaultsAction = new DefaultsAction(viewer, "defaults"); //$NON-NLS-1$
 		defaultsAction.setText(PropertiesMessages.Defaults_text);
 		defaultsAction.setToolTipText(PropertiesMessages.Defaults_toolTip);
-		defaultsAction.setImageDescriptor(createImageDescriptor("elcl16/defaults_ps.png")); //$NON-NLS-1$
+		defaultsAction.setImageDescriptor(createImageDescriptor("elcl16/defaults_ps.svg")); //$NON-NLS-1$
 		defaultsAction.setDisabledImageDescriptor(createImageDescriptor("dlcl16/defaults_ps.png")); //$NON-NLS-1$
 		defaultsAction.setEnabled(false);
 
@@ -421,14 +421,14 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 		filterAction = new FilterAction(viewer, "filter"); //$NON-NLS-1$
 		filterAction.setText(PropertiesMessages.Filter_text);
 		filterAction.setToolTipText(PropertiesMessages.Filter_toolTip);
-		filterAction.setImageDescriptor(createImageDescriptor("elcl16/filter_ps.png")); //$NON-NLS-1$
+		filterAction.setImageDescriptor(createImageDescriptor("elcl16/filter_ps.svg")); //$NON-NLS-1$
 		filterAction.setChecked(false);
 
 		// Show Categories
 		categoriesAction = new CategoriesAction(viewer, "categories"); //$NON-NLS-1$
 		categoriesAction.setText(PropertiesMessages.Categories_text);
 		categoriesAction.setToolTipText(PropertiesMessages.Categories_toolTip);
-		categoriesAction.setImageDescriptor(createImageDescriptor("elcl16/tree_mode.png")); //$NON-NLS-1$
+		categoriesAction.setImageDescriptor(createImageDescriptor("elcl16/tree_mode.svg")); //$NON-NLS-1$
 		categoriesAction.setChecked(true);
 
 		// Columns...
