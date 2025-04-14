@@ -513,36 +513,36 @@
 	<extension point="org.eclipse.ui.commandImages">
 		<image
 			commandId="org.eclipse.ui.edit.text.zoomIn"
-			icon="$nl$/icons/full/etool16/zoomIn.png">
+			icon="$nl$/icons/full/etool16/zoomIn.svg">
 		</image>
 		<image
 			commandId="org.eclipse.ui.edit.text.zoomOut"
-			icon="$nl$/icons/full/etool16/zoomOut.png">
+			icon="$nl$/icons/full/etool16/zoomOut.svg">
 		</image>
   <image
         commandId="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"
         disabledIcon="$nl$/icons/full/dtool16/show_whitespace_chars.png"
-        icon="$nl$/icons/full/etool16/show_whitespace_chars.png">
+        icon="$nl$/icons/full/etool16/show_whitespace_chars.svg">
   </image>
   <image
         commandId="org.eclipse.ui.edit.text.toggleWordWrap"
         disabledIcon="$nl$/icons/full/dtool16/wordwrap.png"
-        icon="$nl$/icons/full/etool16/wordwrap.png">
+        icon="$nl$/icons/full/etool16/wordwrap.svg">
   </image>
   <image
         commandId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
         disabledIcon="$nl$/icons/full/dtool16/block_selection_mode.png"
-        icon="$nl$/icons/full/etool16/block_selection_mode.png">
+        icon="$nl$/icons/full/etool16/block_selection_mode.svg">
   </image>
   <image
         commandId="org.eclipse.ui.edit.text.upperCase"
         disabledIcon="icons/full/dtool16/toUpper.png"
-        icon="icons/full/etool16/toUpper.png">
+        icon="icons/full/etool16/toUpper.svg">
   </image>
   <image
         commandId="org.eclipse.ui.edit.text.lowerCase"
         disabledIcon="icons/full/dtool16/toLower.png"
-        icon="icons/full/etool16/toLower.png">
+        icon="icons/full/etool16/toLower.svg">
   </image>
 	</extension>
    
@@ -1295,7 +1295,7 @@
                id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"
                definitionId="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"
                disabledIcon="$nl$/icons/full/dtool16/segment_edit.png"
-               icon="$nl$/icons/full/etool16/segment_edit.png"
+               icon="$nl$/icons/full/etool16/segment_edit.svg"
                helpContextId="org.eclipse.ui.only_show_selected_element_action_context"
                label="%onlyShowSelectedElement.label"
                retarget="true"
@@ -1306,7 +1306,7 @@
                definitionId="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"
                disabledIcon="$nl$/icons/full/dtool16/show_whitespace_chars.png"
                helpContextId="org.eclipse.ui.show_whitespace_characters_action_context"
-               icon="$nl$/icons/full/etool16/show_whitespace_chars.png"
+               icon="$nl$/icons/full/etool16/show_whitespace_chars.svg"
                id="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"
                label="%showWhitespaceCharacters.label"
                retarget="true"
@@ -1319,7 +1319,7 @@
                definitionId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
                disabledIcon="$nl$/icons/full/dtool16/block_selection_mode.png"
                helpContextId="org.eclipse.ui.block_selection_mode_action_context"
-               icon="$nl$/icons/full/etool16/block_selection_mode.png"
+               icon="$nl$/icons/full/etool16/block_selection_mode.svg"
                id="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
                label="%toggleBlockSelectionMode.label"
                retarget="true"
@@ -1332,7 +1332,7 @@
                definitionId="org.eclipse.ui.edit.text.toggleWordWrap"
                disabledIcon="$nl$/icons/full/dtool16/wordwrap.png"
                helpContextId="org.eclipse.ui.word_wrap_toggle_action_context"
-               icon="$nl$/icons/full/etool16/wordwrap.png"
+               icon="$nl$/icons/full/etool16/wordwrap.svg"
                id="org.eclipse.ui.edit.text.toggleWordWrap"
                label="%toggleWordWrap.label"
                retarget="true"
@@ -1480,7 +1480,7 @@
       <view
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.views.minimap.MinimapView"
-            icon="icons/full/eview16/minimap.png"
+            icon="icons/full/eview16/minimap.svg"
             id="org.eclipse.ui.views.minimap.MinimapView"
             name="%MinimapView.name"
             allowMultiple="false"
