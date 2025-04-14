@@ -27,3 +27,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.ui.genericeditor.tests
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
