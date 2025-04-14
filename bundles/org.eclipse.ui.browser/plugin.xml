@@ -47,7 +47,7 @@
          allowMultiple="true"
          category="org.eclipse.ui"
          class="org.eclipse.ui.internal.browser.WebBrowserView"
-         icon="$nl$/icons/obj16/internal_browser.png"
+         icon="$nl$/icons/obj16/internal_browser.svg"
          id="org.eclipse.ui.browser.view"
          name="%viewWebBrowserTitle"/>
    </extension>
@@ -56,7 +56,7 @@
       <editor
             class="org.eclipse.ui.internal.browser.WebBrowserEditor"
             contributorClass="org.eclipse.ui.internal.browser.WebBrowserEditorActionBarContributor"
-            icon="$nl$/icons/obj16/internal_browser.png"
+            icon="$nl$/icons/obj16/internal_browser.svg"
             id="org.eclipse.ui.browser.editor"
             name="%viewWebBrowserTitle">
          <contentTypeBinding
@@ -65,7 +65,7 @@
       </editor>
       <editor
          extensions="htm,html,shtml"
-         icon="$nl$/icons/obj16/internal_browser.png"
+         icon="$nl$/icons/obj16/internal_browser.svg"
          id="org.eclipse.ui.browser.editorSupport"
          launcher="org.eclipse.ui.internal.browser.BrowserLauncher"
          name="%viewWebBrowserSupportTitle"/>
@@ -82,7 +82,7 @@
         toolbarPath="browser"
         label="%actionSetOpenWebBrowser"
         tooltip="%actionSetOpenWebBrowser"
-        icon="icons/obj16/internal_browser.png"
+        icon="icons/obj16/internal_browser.svg"
         class="org.eclipse.ui.internal.browser.OpenBrowserWorkbenchAction"/>
     </actionSet>
   </extension>
@@ -247,7 +247,7 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.ui.browser.openBrowser"
-            icon="$nl$/icons/obj16/internal_browser.png"/>
+            icon="$nl$/icons/obj16/internal_browser.svg"/>
    </extension>
    <extension
          point="org.eclipse.ui.elementFactories">
