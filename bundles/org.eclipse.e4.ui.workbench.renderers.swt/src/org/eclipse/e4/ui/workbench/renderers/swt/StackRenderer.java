@@ -203,7 +203,7 @@ public class StackRenderer extends LazyStackRenderer {
 	private MPerspective currentPerspectiveForOnboarding;
 
 	private Image viewMenuImage;
-	private String viewMenuURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/elcl16/view_menu.png"; //$NON-NLS-1$
+	private String viewMenuURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/elcl16/view_menu.svg"; //$NON-NLS-1$
 
 	@Inject
 	private IEventBroker eventBroker;

@@ -48,7 +48,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 	private static final String ADORN_ICON_IMAGE_KEY = "previouslyAdorned"; //$NON-NLS-1$
 
-	private String pinURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/ovr16/pinned_ovr.png"; //$NON-NLS-1$
+	private String pinURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/ovr16/pinned_ovr.svg"; //$NON-NLS-1$
 	private Image pinImage;
 
 	private ISWTResourceUtilities resUtils;

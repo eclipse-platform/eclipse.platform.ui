@@ -4,7 +4,7 @@
     <elements xsi:type="application:Addon" xmi:id="_zd72cIQjEeOJOIhruxA5nw" elementId="org.eclipse.e4.demo.contacts.jobs.addon.progressmanager" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ProgressViewAddon"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_8jAhoG_4EeO3G4cNJzljEA" featurename="children" parentElementId="org.eclipse.e4.demo.contacts.partstacks.second" positionInList="first">
-    <elements xsi:type="basic:Part" xmi:id="_j3Yf8G_5EeO3G4cNJzljEA" elementId="org.eclipse.e4.ui.progress.ProgressView" containerData="" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ProgressView" label="E4 Progress" iconURI="platform:/plugin/org.eclipse.e4.ui.progress/icons/full/progress/pview.png" closeable="true">
+    <elements xsi:type="basic:Part" xmi:id="_j3Yf8G_5EeO3G4cNJzljEA" elementId="org.eclipse.e4.ui.progress.ProgressView" containerData="" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.ProgressView" label="E4 Progress" iconURI="platform:/plugin/org.eclipse.e4.ui.progress/icons/full/progress/pviews.svg" closeable="true">
       <tags>View</tags>
       <tags>categoryTag:General</tags>
       <tags>active</tags>
@@ -12,11 +12,11 @@
       <handlers xmi:id="_BYE10HYdEeOGuo0e7MGxvQ" elementId="org.eclipse.e4.ui.views.progress.handler.showPreferences" contributionURI="bundleclass://org.eclipse.e4.ui.progress/org.eclipse.e4.ui.progress.OpenPreferenceDialogHandler" command="_IX1dQHYdEeOGuo0e7MGxvQ"/>
       <menus xmi:id="_rv030HYYEeOGuo0e7MGxvQ" elementId="org.eclipse.e4.ui.views.progress.menu">
         <tags>ViewMenu</tags>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_FgL3gHYZEeOGuo0e7MGxvQ" elementId="org.eclipse.e4.ui.views.progress.handledmenuitem.0" label="Clear All" iconURI="platform:/plugin/org.eclipse.e4.ui.progress/icons/full/elcl16/progress_remall.png" command="_Cf0oMHX1EeOL1rlhtuWd8w"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_FgL3gHYZEeOGuo0e7MGxvQ" elementId="org.eclipse.e4.ui.views.progress.handledmenuitem.0" label="Clear All" iconURI="platform:/plugin/org.eclipse.e4.ui.progress/icons/full/elcl16/progress_remall.svg" command="_Cf0oMHX1EeOL1rlhtuWd8w"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_Qe7jYHYhEeOGuo0e7MGxvQ" elementId="org.eclipse.e4.ui.views.progress.handledmenuitem.1" label="Preferences" command="_IX1dQHYdEeOGuo0e7MGxvQ"/>
       </menus>
       <toolbar xmi:id="_a-JNsHX0EeOL1rlhtuWd8w" elementId="org.eclipse.e4.ui.views.progress.toolbar">
-        <children xsi:type="menu:HandledToolItem" xmi:id="_hTniAHX0EeOL1rlhtuWd8w" elementId="org.eclipse.e4.ui.views.progress.toolbar.clearAll" label="" iconURI="platform:/plugin/org.eclipse.e4.ui.progress/icons/full/elcl16/progress_remall.png" command="_Cf0oMHX1EeOL1rlhtuWd8w"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_hTniAHX0EeOL1rlhtuWd8w" elementId="org.eclipse.e4.ui.views.progress.toolbar.clearAll" label="" iconURI="platform:/plugin/org.eclipse.e4.ui.progress/icons/full/elcl16/progress_remall.svg" command="_Cf0oMHX1EeOL1rlhtuWd8w"/>
       </toolbar>
     </elements>
   </fragments>

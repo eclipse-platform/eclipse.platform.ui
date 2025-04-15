@@ -70,7 +70,7 @@ public class ProgressManager extends ProgressProvider {
 	@Deprecated
 	public static final QualifiedName PROPERTY_IN_DIALOG = IProgressConstants.PROPERTY_IN_DIALOG;
 
-	private static final String ERROR_JOB = "errorstate.png"; //$NON-NLS-1$
+	private static final String ERROR_JOB = "errorstate.svg"; //$NON-NLS-1$
 
 	static final String ERROR_JOB_KEY = "ERROR_JOB"; //$NON-NLS-1$
 
@@ -93,11 +93,11 @@ public class ProgressManager extends ProgressProvider {
 
 	static final String PROGRESS_FOLDER = "progress/"; //$NON-NLS-1$
 
-	private static final String SLEEPING_JOB = "sleeping.png"; //$NON-NLS-1$
+	private static final String SLEEPING_JOB = "sleeping.svg"; //$NON-NLS-1$
 
-	private static final String WAITING_JOB = "waiting.png"; //$NON-NLS-1$
+	private static final String WAITING_JOB = "waiting.svg"; //$NON-NLS-1$
 
-	private static final String BLOCKED_JOB = "lockedstate.png"; //$NON-NLS-1$
+	private static final String BLOCKED_JOB = "lockedstate.svg"; //$NON-NLS-1$
 
 	/**
 	 * The key for the sleeping job icon.

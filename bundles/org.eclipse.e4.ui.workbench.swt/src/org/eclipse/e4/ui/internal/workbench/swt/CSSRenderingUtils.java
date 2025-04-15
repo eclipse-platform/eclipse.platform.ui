@@ -129,12 +129,12 @@ public class CSSRenderingUtils {
 
 	private void initDragHandleResource() {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		IPath path = IPath.fromOSString("$ws$/images/dragHandle.png");
+		IPath path = IPath.fromOSString("$ws$/images/dragHandle.svg");
 		URL url = FileLocator.find(bundle, path, null);
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		if (desc != null)
 			JFaceResources.getImageRegistry().put(DRAG_HANDLE, desc);
-		path = IPath.fromOSString("$ws$/images/dragHandle-rotated.png");
+		path = IPath.fromOSString("$ws$/images/dragHandle-rotated.svg");
 		url = FileLocator.find(bundle, path, null);
 		ImageDescriptor desc_rotated = ImageDescriptor.createFromURL(url);
 		if (desc_rotated != null)
