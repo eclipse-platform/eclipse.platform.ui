@@ -137,13 +137,13 @@ public class ProgressInfoItem extends Composite {
 
 	static {
 		ImageTools.getInstance().putIntoRegistry(STOP_IMAGE_KEY,
-				"elcl16/progress_stop.png");//$NON-NLS-1$
+				"elcl16/progress_stop.svg");//$NON-NLS-1$
 		ImageTools.getInstance().putIntoRegistry(DISABLED_STOP_IMAGE_KEY,
 				"dlcl16/progress_stop.png");//$NON-NLS-1$
 		ImageTools.getInstance().putIntoRegistry(DEFAULT_JOB_KEY,
-				"progress/progress_task.png"); //$NON-NLS-1$
+				"progress/progress_task.svg"); //$NON-NLS-1$
 		ImageTools.getInstance().putIntoRegistry(CLEAR_FINISHED_JOB_KEY,
-				"elcl16/progress_rem.png"); //$NON-NLS-1$
+				"elcl16/progress_rem.svg"); //$NON-NLS-1$
 		ImageTools.getInstance().putIntoRegistry(
 				DISABLED_CLEAR_FINISHED_JOB_KEY, "dlcl16/progress_rem.png"); //$NON-NLS-1$
 
