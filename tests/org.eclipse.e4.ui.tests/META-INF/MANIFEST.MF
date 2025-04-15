@@ -41,4 +41,4 @@ Import-Package: jakarta.annotation,
  org.osgi.service.event
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.e4.ui.tests
-
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"
