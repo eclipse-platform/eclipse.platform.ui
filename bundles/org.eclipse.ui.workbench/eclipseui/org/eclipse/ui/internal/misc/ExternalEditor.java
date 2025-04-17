@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -90,7 +91,7 @@ public class ExternalEditor {
 				URL entry = bundle.getEntry(descriptor.getFileName());
 				if (entry != null) {
 					// this will bring the file local if the plugin is on a server
-					URL localName = Platform.asLocalURL(entry);
+					URL localName = FileLocator.toFileURL(entry);
 					File file = new File(localName.getFile());
 					// Check that it exists before we assert it is valid
 					if (file.exists()) {
