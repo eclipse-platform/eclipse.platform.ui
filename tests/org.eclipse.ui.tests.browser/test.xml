@@ -28,7 +28,6 @@
       <property name="data-dir" value="${wst-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" value="org.eclipse.wst.internet.webbrowser.tests.AllTests" />
-   	<property name="plugin-path" value="${eclipse-home}/plugins/${plugin-name}"/>
     </ant>
   </target>
 
