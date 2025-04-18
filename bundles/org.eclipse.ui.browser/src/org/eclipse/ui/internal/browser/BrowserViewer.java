@@ -782,8 +782,8 @@ public class BrowserViewer extends Composite {
 		ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
 
 		ToolItem go = new ToolItem(toolbar, SWT.NONE);
-		go.setImage(getImage(URL_ELCL, "nav_go.png")); //$NON-NLS-1$
-		go.setHotImage(getImage(URL_CLCL, "nav_go.png")); //$NON-NLS-1$
+		go.setImage(getImage(URL_ELCL, "nav_go.svg")); //$NON-NLS-1$
+		go.setHotImage(getImage(URL_CLCL, "nav_go.svg")); //$NON-NLS-1$
 		go.setDisabledImage(getImage(URL_DLCL, "nav_go.png")); //$NON-NLS-1$
 		go.setToolTipText(Messages.actionWebBrowserGo);
 		go.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> setURL(combo.getText())));
@@ -796,30 +796,30 @@ public class BrowserViewer extends Composite {
 
 		// create back and forward actions
 		back = new ToolItem(toolbar, SWT.NONE);
-		back.setImage(getImage(URL_ELCL, "nav_backward.png")); //$NON-NLS-1$
-		back.setHotImage(getImage(URL_CLCL, "nav_backward.png")); //$NON-NLS-1$
+		back.setImage(getImage(URL_ELCL, "nav_backward.svg")); //$NON-NLS-1$
+		back.setHotImage(getImage(URL_CLCL, "nav_backward.svg")); //$NON-NLS-1$
 		back.setDisabledImage(getImage(URL_DLCL, "nav_backward.png")); //$NON-NLS-1$
 		back.setToolTipText(Messages.actionWebBrowserBack);
 		back.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> back()));
 
 		forward = new ToolItem(toolbar, SWT.NONE);
-		forward.setImage(getImage(URL_ELCL, "nav_forward.png")); //$NON-NLS-1$
-		forward.setHotImage(getImage(URL_CLCL, "nav_forward.png")); //$NON-NLS-1$
+		forward.setImage(getImage(URL_ELCL, "nav_forward.svg")); //$NON-NLS-1$
+		forward.setHotImage(getImage(URL_CLCL, "nav_forward.svg")); //$NON-NLS-1$
 		forward.setDisabledImage(getImage(URL_DLCL, "nav_forward.png")); //$NON-NLS-1$
 		forward.setToolTipText(Messages.actionWebBrowserForward);
 		forward.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> forward()));
 
 		// create refresh, stop, and print actions
 		ToolItem stop = new ToolItem(toolbar, SWT.NONE);
-		stop.setImage(getImage(URL_ELCL, "nav_stop.png")); //$NON-NLS-1$
-		stop.setHotImage(getImage(URL_CLCL, "nav_stop.png")); //$NON-NLS-1$
+		stop.setImage(getImage(URL_ELCL, "nav_stop.svg")); //$NON-NLS-1$
+		stop.setHotImage(getImage(URL_CLCL, "nav_stop.svg")); //$NON-NLS-1$
 		stop.setDisabledImage(getImage(URL_DLCL, "nav_stop.png")); //$NON-NLS-1$
 		stop.setToolTipText(Messages.actionWebBrowserStop);
 		stop.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> stop()));
 
 		ToolItem refresh = new ToolItem(toolbar, SWT.DROP_DOWN);
-		refresh.setImage(getImage(URL_ELCL, "nav_refresh.png")); //$NON-NLS-1$
-		refresh.setHotImage(getImage(URL_CLCL, "nav_refresh.png")); //$NON-NLS-1$
+		refresh.setImage(getImage(URL_ELCL, "nav_refresh.svg")); //$NON-NLS-1$
+		refresh.setHotImage(getImage(URL_CLCL, "nav_refresh.svg")); //$NON-NLS-1$
 		refresh.setDisabledImage(getImage(URL_DLCL, "nav_refresh.png")); //$NON-NLS-1$
 		refresh.setToolTipText(Messages.actionWebBrowserRefresh);
 
