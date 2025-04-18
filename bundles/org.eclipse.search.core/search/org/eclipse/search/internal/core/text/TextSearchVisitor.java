@@ -194,14 +194,14 @@ public class TextSearchVisitor {
 					return Status.OK_STATUS;
 				}
 
-				List<TextSearchMatchAccess> occurences;
+				List<TextSearchMatchAccess> occurrences;
 				CharSequence charsequence;
 
 				IDocument document= getOpenDocument(file, getDocumentsInEditors());
 				if (document != null) {
 					charsequence = new DocumentCharSequence(document);
 					// assume all documents are non-binary
-					occurences = locateMatches(file, charsequence, matcher, monitor);
+					occurrences = locateMatches(file, charsequence, matcher, monitor);
 				} else {
 					try {
 						boolean reportTextOnly = !fCollector.reportBinaryFile(file);
@@ -213,7 +213,7 @@ public class TextSearchVisitor {
 						if (reportTextOnly && hasBinaryContent(charsequence)) {
 							return Status.OK_STATUS;
 						}
-						occurences = locateMatches(file, charsequence, matcher, monitor);
+						occurrences = locateMatches(file, charsequence, matcher, monitor);
 					} catch (FileCharSequenceProvider.FileCharSequenceException e) {
 						if (e.getCause() instanceof RuntimeException runtimeEx) {
 							throw runtimeEx;
@@ -226,8 +226,8 @@ public class TextSearchVisitor {
 				for (IFile duplicateFiles : sameFiles) {
 					// reuse previous result
 					ReusableMatchAccess matchAccess= new ReusableMatchAccess();
-					for (TextSearchMatchAccess occurence : occurences) {
-						matchAccess.initialize(duplicateFiles, occurence.getMatchOffset(), occurence.getMatchLength(),
+					for (TextSearchMatchAccess occurrence : occurrences) {
+						matchAccess.initialize(duplicateFiles, occurrence.getMatchOffset(), occurrence.getMatchLength(),
 								charsequence);
 						boolean goOn= fCollector.acceptPatternMatch(matchAccess);
 						if (!goOn) {
@@ -478,30 +478,30 @@ public class TextSearchVisitor {
 	}
 
 	private List<TextSearchMatchAccess> locateMatches(IFile file, CharSequence searchInput, Matcher matcher, IProgressMonitor monitor) throws CoreException {
-		List<TextSearchMatchAccess> occurences= null;
+		List<TextSearchMatchAccess> occurrences= null;
 		matcher.reset(searchInput);
 		// Check for cancellation before calling matcher.find() since that call
 		// can be very expensive
 		while (!monitor.isCanceled() && matcher.find()) {
-			if (occurences == null) {
-				occurences= new ArrayList<>();
+			if (occurrences == null) {
+				occurrences= new ArrayList<>();
 			}
 			int start= matcher.start();
 			int end= matcher.end();
 			if (end != start) { // don't report 0-length matches
 				ReusableMatchAccess access= new ReusableMatchAccess();
 				access.initialize(file, start, end - start, searchInput);
-				occurences.add(access);
+				occurrences.add(access);
 				boolean res= fCollector.acceptPatternMatch(access);
 				if (!res) {
-					return occurences; // no further reporting requested
+					return occurrences; // no further reporting requested
 				}
 			}
 		}
-		if (occurences == null) {
-			occurences= Collections.emptyList();
+		if (occurrences == null) {
+			occurrences= Collections.emptyList();
 		}
-		return occurences;
+		return occurrences;
 	}
 
 
