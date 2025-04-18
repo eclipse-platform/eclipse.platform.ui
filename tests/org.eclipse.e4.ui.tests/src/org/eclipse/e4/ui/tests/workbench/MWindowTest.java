@@ -391,7 +391,7 @@ public class MWindowTest {
 		assertEquals("Detached should have same image", topShell.getImage(), detachedShell.getImage());
 
 		// now set icon on top-level window; detached window should inherit it
-		window.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.png");
+		window.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.svg");
 		while (topShell.getDisplay().readAndDispatch()) {
 		}
 		assertNotNull("Should have shell image", topShell.getImage());
@@ -405,7 +405,7 @@ public class MWindowTest {
 		assertEquals("Detached should have same image", topShell.getImage(), detachedShell.getImage());
 
 		// turn detached into top-level window; inherited icon should be removed
-		window.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.png");
+		window.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.svg");
 		application.getChildren().add(detachedWindow);
 		while (topShell.getDisplay().readAndDispatch()) {
 		}

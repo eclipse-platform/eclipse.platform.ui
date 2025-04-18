@@ -238,7 +238,7 @@ public class MPartTest {
 		stack.getChildren().add(contributedPart);
 		contributedPart.setLabel(partName);
 		contributedPart.setTooltip(toolTip);
-		contributedPart.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.png");
+		contributedPart.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.svg");
 		contributedPart.setContributionURI(
 				"bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 

@@ -63,8 +63,8 @@ import org.junit.Test;
 
 public class StackRendererTest {
 
-	private static final String PART_DESC_ICON = "platform:/plugin/org.eclipse.e4.ui.tests/icons/pinned_ovr.png";
-	private static final String PART_ICON = "platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.png";
+	private static final String PART_DESC_ICON = "platform:/plugin/org.eclipse.e4.ui.tests/icons/pinned_ovr.svg";
+	private static final String PART_ICON = "platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.svg";
 
 	@Rule
 	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
