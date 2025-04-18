@@ -25,7 +25,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.function.Supplier;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
@@ -52,55 +54,22 @@ import org.eclipse.swt.internal.image.FileFormat;
  */
 class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 
-	private static class URLImageFileNameProvider implements ImageFileNameProvider {
-
-		private final String url;
-
-		public URLImageFileNameProvider(String url) {
-			this.url = url;
-		}
-
-		@Override
-		public String getImagePath(int zoom) {
+	private ImageFileNameProvider createURLImageFileNameProvider() {
+		return zoom -> {
 			URL tempURL = getURL(url);
 			if (tempURL != null) {
 				final boolean logIOException = zoom == 100;
 				if (zoom == 100) {
 					return getFilePath(tempURL, logIOException);
 				}
-				URL xUrl = getxURL(tempURL, zoom);
-				if (xUrl != null) {
-					String xResult = getFilePath(xUrl, logIOException);
-					if (xResult != null) {
-						return xResult;
-					}
-				}
-				String xpath = FileImageDescriptor.getxPath(url, zoom);
-				if (xpath != null) {
-					URL xPathUrl = getURL(xpath);
-					if (xPathUrl != null) {
-						return getFilePath(xPathUrl, logIOException);
-					}
-				}
+				return getZoomedImageSource(tempURL, url, zoom, u -> getFilePath(u, logIOException));
 			}
 			return null;
-		}
-
+		};
 	}
 
-	private static class URLImageDataProvider implements ImageDataProvider {
-
-		private final String url;
-
-		public URLImageDataProvider(String url) {
-			this.url = url;
-		}
-
-		@Override
-		public ImageData getImageData(int zoom) {
-			return URLImageDescriptor.getImageData(url, zoom);
-		}
-
+	private ImageDataProvider createURLImageDataProvider() {
+		return zoom -> getImageData(zoom);
 	}
 
 	private static long cumulativeTime;
@@ -124,10 +93,10 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof URLImageDescriptor)) {
+		if (!(o instanceof URLImageDescriptor other)) {
 			return false;
 		}
-		return ((URLImageDescriptor) o).url.equals(this.url);
+		return other.url.equals(this.url);
 	}
 
 	@Override
@@ -138,35 +107,34 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	private static ImageData getImageData(String url, int zoom) {
 		URL tempURL = getURL(url);
 		if (tempURL != null) {
-			if (zoom == 100 || canLoadAtZoom(() -> getStream(tempURL), zoom)) {
+			if (zoom == 100 || canLoadAtZoom(tempURL, zoom)) {
 				return getImageData(tempURL, 100, zoom);
 			}
-			URL xUrl = getxURL(tempURL, zoom);
-			if (xUrl != null) {
-				ImageData xdata = getImageData(xUrl, zoom, zoom);
-				if (xdata != null) {
-					return xdata;
-				}
+			return getZoomedImageSource(tempURL, url, zoom, u -> getImageData(u, zoom, zoom));
+		}
+		return null;
+	}
+
+	private static <R> R getZoomedImageSource(URL url, String urlString, int zoom, Function<URL, R> getImage) {
+		URL xUrl = getxURL(url, zoom);
+		if (xUrl != null) {
+			R xdata = getImage.apply(xUrl);
+			if (xdata != null) {
+				return xdata;
 			}
-			String xpath = FileImageDescriptor.getxPath(url, zoom);
-			if (xpath != null) {
-				URL xPathUrl = getURL(xpath);
-				if (xPathUrl != null) {
-					return getImageData(xPathUrl, zoom, zoom);
-				}
+		}
+		String xpath = getxPath(urlString, zoom);
+		if (xpath != null) {
+			URL xPathUrl = getURL(xpath);
+			if (xPathUrl != null) {
+				return getImage.apply(xPathUrl);
 			}
 		}
 		return null;
 	}
 
-	@SuppressWarnings("resource")
 	private static ImageData getImageData(URL url, int fileZoom, int targetZoom) {
-		return loadImageData(getStream(url), fileZoom, targetZoom);
-	}
-
-	static ImageData loadImageData(InputStream stream, int fileZoom, int targetZoom) {
-		ImageData result = null;
-		try (InputStream in = stream) {
+		try (InputStream in = getStream(url)) {
 			if (in != null) {
 				return loadImageFromStream(new BufferedInputStream(in), fileZoom, targetZoom);
 			}
@@ -176,9 +144,9 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 				// fall through otherwise
 			}
 		} catch (IOException e) {
-			Policy.getLog().log(Status.error(e.getLocalizedMessage(), e));
+			Policy.logException(e);
 		}
-		return result;
+		return null;
 	}
 
 	@SuppressWarnings("restriction")
@@ -188,38 +156,21 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	}
 
 	@SuppressWarnings("restriction")
-	static boolean canLoadAtZoom(Supplier<InputStream> stream, int zoom) {
-		try (InputStream in = stream.get()) {
+	private static boolean canLoadAtZoom(URL url, int zoom) {
+		try (InputStream in = getStream(url)) {
 			if (in != null) {
 				return FileFormat.canLoadAtZoom(new ElementAtZoom<>(in, 100), zoom);
 			}
 		} catch (IOException e) {
-			Policy.getLog().log(Status.error(e.getLocalizedMessage(), e));
+			Policy.logException(e);
 		}
 		return false;
 	}
 
-	/**
-	 * Returns a stream on the image contents. Returns null if a stream could
-	 * not be opened.
-	 *
-	 * @return the stream for loading the data
-	 */
-	protected InputStream getStream() {
-		return getStream(getURL(url));
-	}
-
 	private static InputStream getStream(URL url) {
-		if (url == null) {
-			return null;
-		}
-
 		try {
 			if (InternalPolicy.OSGI_AVAILABLE) {
-				URL platformURL = FileLocator.find(url);
-				if (platformURL != null) {
-					url = platformURL;
-				}
+				url = resolvePathVariables(url);
 			}
 			return url.openStream();
 		} catch (IOException e) {
@@ -265,11 +216,31 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 				}
 				return new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
 			} catch (MalformedURLException e) {
-				Policy.getLog().log(Status.error(e.getLocalizedMessage(), e));
+				Policy.logException(e);
 			}
 		}
 		return null;
 
+	}
+
+	private static final Pattern XPATH_PATTERN = Pattern.compile("(\\d+)x(\\d+)"); //$NON-NLS-1$
+
+	private static String getxPath(String name, int zoom) {
+		Matcher matcher = XPATH_PATTERN.matcher(name);
+		if (matcher.find()) {
+			try {
+				int currentWidth = Integer.parseInt(matcher.group(1));
+				int desiredWidth = Math.round((zoom / 100f) * currentWidth);
+				int currentHeight = Integer.parseInt(matcher.group(2));
+				int desiredHeight = Math.round((zoom / 100f) * currentHeight);
+				String lead = name.substring(0, matcher.start(1));
+				String tail = name.substring(matcher.end(2));
+				return lead + desiredWidth + "x" + desiredHeight + tail; //$NON-NLS-1$
+			} catch (RuntimeException e) {
+				// should never happen but if then we can't use the alternative name...
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -284,11 +255,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 					return IPath.fromOSString(url.getFile()).toOSString();
 				return null;
 			}
-
-			URL platformURL = FileLocator.find(url);
-			if (platformURL != null) {
-				url = platformURL;
-			}
+			url = resolvePathVariables(url);
 			URL locatedURL = FileLocator.toFileURL(url);
 			if (FILE_PROTOCOL.equalsIgnoreCase(locatedURL.getProtocol())) {
 				String filePath = IPath.fromOSString(locatedURL.getPath()).toOSString();
@@ -310,6 +277,14 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		}
 	}
 
+	private static URL resolvePathVariables(URL url) {
+		URL platformURL = FileLocator.find(url); // Resolve variables within URL's path
+		if (platformURL != null) {
+			url = platformURL;
+		}
+		return url;
+	}
+
 	@Override
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
 		long start = 0;
@@ -323,7 +298,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 						// We really want a fresh ImageFileNameProvider instance to make
 						// sure the code that uses created images can use equals(),
 						// see Image#equals
-						return new Image(device, new URLImageFileNameProvider(url));
+						return new Image(device, createURLImageFileNameProvider());
 					} catch (SWTException | IllegalArgumentException exception) {
 						// If we fail fall back to the slower input stream method.
 					}
@@ -334,7 +309,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 					// We really want a fresh ImageDataProvider instance to make
 					// sure the code that uses created images can use equals(),
 					// see Image#equals
-					image = new Image(device, new URLImageDataProvider(url));
+					image = new Image(device, createURLImageDataProvider());
 				} catch (SWTException e) {
 					if (e.code != SWT.ERROR_INVALID_IMAGE) {
 						throw e;
@@ -383,7 +358,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		try {
 			result = new URL(urlString);
 		} catch (MalformedURLException e) {
-			Policy.getLog().log(Status.error(e.getLocalizedMessage(), e));
+			Policy.logException(e);
 		}
 		return result;
 	}
@@ -394,10 +369,10 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			return adapter.cast(getURL(url));
 		}
 		if (adapter == ImageFileNameProvider.class) {
-			return adapter.cast(new URLImageFileNameProvider(url));
+			return adapter.cast(createURLImageFileNameProvider());
 		}
 		if (adapter == ImageDataProvider.class) {
-			return adapter.cast(new URLImageDataProvider(url));
+			return adapter.cast(createURLImageDataProvider());
 		}
 		return null;
 	}
