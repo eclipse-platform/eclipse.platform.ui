@@ -25,3 +25,4 @@ Bundle-Activator: org.eclipse.ui.internal.genericeditor.GenericEditorPlugin
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.ui.genericeditor
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"

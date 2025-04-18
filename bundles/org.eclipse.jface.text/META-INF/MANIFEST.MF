@@ -40,3 +40,4 @@ Require-Bundle:
 Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.jface.text
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"

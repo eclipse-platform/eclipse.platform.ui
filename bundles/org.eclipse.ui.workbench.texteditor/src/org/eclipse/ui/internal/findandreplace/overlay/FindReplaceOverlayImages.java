@@ -61,19 +61,19 @@ class FindReplaceOverlayImages {
 	 * Declare all images
 	 */
 	private static void declareImages() {
-		declareRegistryImage(KEY_CLOSE, ELCL + "close.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_FIND_NEXT, ELCL + "select_next.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_FIND_PREV, ELCL + "select_prev.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_FIND_REGEX, ELCL + "regex.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_REPLACE_ALL, ELCL + "replace_all.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_REPLACE, ELCL + "replace.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_WHOLE_WORD, ELCL + "whole_word.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_CASE_SENSITIVE, ELCL + "case_sensitive.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_SEARCH_ALL, ELCL + "search_all.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_SEARCH_IN_AREA, ELCL + "search_in_area.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_OPEN_REPLACE_AREA, ELCL + "open_replace.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_CLOSE_REPLACE_AREA, ELCL + "close_replace.png"); //$NON-NLS-1$
-		declareRegistryImage(KEY_OPEN_HISTORY, ELCL + "open_history.png"); //$NON-NLS-1$
+		declareRegistryImage(KEY_CLOSE, ELCL + "close.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_FIND_NEXT, ELCL + "select_next.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_FIND_PREV, ELCL + "select_prev.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_FIND_REGEX, ELCL + "regex.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_REPLACE_ALL, ELCL + "replace_all.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_REPLACE, ELCL + "replace.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_WHOLE_WORD, ELCL + "whole_word.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_CASE_SENSITIVE, ELCL + "case_sensitive.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_SEARCH_ALL, ELCL + "search_all.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_SEARCH_IN_AREA, ELCL + "search_in_area.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_OPEN_REPLACE_AREA, ELCL + "open_replace.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_CLOSE_REPLACE_AREA, ELCL + "close_replace.svg"); //$NON-NLS-1$
+		declareRegistryImage(KEY_OPEN_HISTORY, ELCL + "open_history.svg"); //$NON-NLS-1$
 	}
 
 	/**

@@ -363,7 +363,7 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		};
 		filterAction.setToolTipText(MarkerMessages.configureFiltersCommand_title);// $NON-NLS-1$
-		ImageDescriptor id = IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/filter_ps.png"); //$NON-NLS-1$
+		ImageDescriptor id = IDEWorkbenchPlugin.getIDEImageDescriptor("elcl16/filter_ps.svg"); //$NON-NLS-1$
 		if (id != null) {
 			filterAction.setImageDescriptor(id);
 		}

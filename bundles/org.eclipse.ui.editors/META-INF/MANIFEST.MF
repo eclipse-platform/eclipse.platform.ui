@@ -31,3 +31,4 @@ Require-Bundle:
  org.eclipse.jdt.annotation;bundle-version="2.3";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.ui.editors
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"

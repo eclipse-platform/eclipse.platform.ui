@@ -44,3 +44,4 @@ Import-Package: javax.xml.parsers,
  org.w3c.dom,
  org.xml.sax
 Automatic-Module-Name: org.eclipse.jface
+Require-Capability: eclipse.swt;filter:="(image.format=svg)"

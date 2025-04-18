@@ -49,8 +49,8 @@ public class CommonImages {
 
 	private static final String T_EVIEW = "eview16"; //$NON-NLS-1$
 
-	public static final ImageDescriptor NOTIFICATION_CLOSE = create(T_EVIEW, "notification-close.png"); //$NON-NLS-1$
-	public static final ImageDescriptor NOTIFICATION_CLOSE_HOVER = create(T_EVIEW, "notification-close-active.png"); //$NON-NLS-1$
+	public static final ImageDescriptor NOTIFICATION_CLOSE = create(T_EVIEW, "notification-close.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor NOTIFICATION_CLOSE_HOVER = create(T_EVIEW, "notification-close-active.svg"); //$NON-NLS-1$
 
 	private static ImageDescriptor create(String prefix, String name) {
 		try {
