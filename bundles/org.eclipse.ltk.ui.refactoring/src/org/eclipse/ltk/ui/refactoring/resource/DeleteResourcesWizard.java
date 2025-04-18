@@ -38,6 +38,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import org.eclipse.core.filesystem.ZipFileUtil;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -270,7 +272,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 
 		private boolean containsLinkedResource(IResource[] resources) {
 			for (IResource resource : resources) {
-				if (resource != null && resource.isLinked()) { // paranoia code, can not be null
+				if (resource != null && resource.isLinked() && !ZipFileUtil.isOpenZipFile(resource.getLocationURI())) { // paranoia code, can not be null
 					return true;
 				}
 			}
