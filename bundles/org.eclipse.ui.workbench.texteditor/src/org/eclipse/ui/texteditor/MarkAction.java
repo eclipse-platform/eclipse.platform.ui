@@ -65,17 +65,9 @@ public class MarkAction extends TextEditorAction {
 			return;
 
 		switch (fType) {
-		case SET_MARK:
-			target.setMarkAtCursor(true);
-			break;
-
-		case CLEAR_MARK:
-			target.setMarkAtCursor(false);
-			break;
-
-		case SWAP_MARK:
-			target.swapMarkAndCursor();
-			break;
+			case SET_MARK -> target.setMarkAtCursor(true);
+			case CLEAR_MARK -> target.setMarkAtCursor(false);
+			case SWAP_MARK -> target.swapMarkAndCursor();
 		}
 	}
 }
