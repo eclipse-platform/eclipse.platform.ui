@@ -100,7 +100,7 @@ public class ExternalProjectImportWizard extends Wizard implements
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(DataTransferMessages.DataTransfer_importTitle);
 		setDefaultPageImageDescriptor(
-				IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importproj_wiz.png")); //$NON-NLS-1$
+				IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importproj_wiz.svg")); //$NON-NLS-1$
 		this.currentSelection = selection;
 	}
 
