@@ -68,11 +68,7 @@ public class ProgressInfoItem extends Composite {
 
 	static String STOP_IMAGE_KEY = "org.eclipse.ui.internal.progress.PROGRESS_STOP"; //$NON-NLS-1$
 
-	static String DISABLED_STOP_IMAGE_KEY = "org.eclipse.ui.internal.progress.DISABLED_PROGRESS_STOP"; //$NON-NLS-1$
-
 	static String CLEAR_FINISHED_JOB_KEY = "org.eclipse.ui.internal.progress.CLEAR_FINISHED_JOB"; //$NON-NLS-1$
-
-	static String DISABLED_CLEAR_FINISHED_JOB_KEY = "org.eclipse.ui.internal.progress.DISABLED_CLEAR_FINISHED_JOB"; //$NON-NLS-1$
 
 	static String DEFAULT_JOB_KEY = "org.eclipse.ui.internal.progress.PROGRESS_DEFAULT"; //$NON-NLS-1$
 
@@ -138,14 +134,10 @@ public class ProgressInfoItem extends Composite {
 	static {
 		ImageTools.getInstance().putIntoRegistry(STOP_IMAGE_KEY,
 				"elcl16/progress_stop.svg");//$NON-NLS-1$
-		ImageTools.getInstance().putIntoRegistry(DISABLED_STOP_IMAGE_KEY,
-				"dlcl16/progress_stop.png");//$NON-NLS-1$
 		ImageTools.getInstance().putIntoRegistry(DEFAULT_JOB_KEY,
 				"progress/progress_task.svg"); //$NON-NLS-1$
 		ImageTools.getInstance().putIntoRegistry(CLEAR_FINISHED_JOB_KEY,
 				"elcl16/progress_rem.svg"); //$NON-NLS-1$
-		ImageTools.getInstance().putIntoRegistry(
-				DISABLED_CLEAR_FINISHED_JOB_KEY, "dlcl16/progress_rem.png"); //$NON-NLS-1$
 
 		// Mac has different Gamma value
 		int shift = Util.isMac() ? -25 : -10;
@@ -645,15 +637,10 @@ public class ProgressInfoItem extends Composite {
 		if (isCompleted()) {
 			actionButton.setImage(JFaceResources
 					.getImage(CLEAR_FINISHED_JOB_KEY));
-			actionButton.setDisabledImage(JFaceResources
-					.getImage(DISABLED_CLEAR_FINISHED_JOB_KEY));
 			actionButton
 					.setToolTipText(ProgressMessages.NewProgressView_ClearJobToolTip);
 		} else {
 			actionButton.setImage(JFaceResources.getImage(STOP_IMAGE_KEY));
-			actionButton.setDisabledImage(JFaceResources
-					.getImage(DISABLED_STOP_IMAGE_KEY));
-
 		}
 		JobInfo[] infos = getJobInfos();
 
