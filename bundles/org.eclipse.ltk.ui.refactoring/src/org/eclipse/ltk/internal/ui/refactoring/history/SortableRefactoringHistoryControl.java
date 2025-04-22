@@ -228,12 +228,10 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 			fSortProjects.setToolTipText(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_project);
 			fSortProjects.setDescription(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_project_description);
 			fSortProjects.setImageDescriptor(RefactoringPluginImages.DESC_ELCL_SORT_PROJECT);
-			fSortProjects.setDisabledImageDescriptor(RefactoringPluginImages.DESC_DLCL_SORT_PROJECT);
 			fSortTimestamps.setText(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_date);
 			fSortTimestamps.setToolTipText(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_date);
 			fSortTimestamps.setDescription(RefactoringUIMessages.BrowseRefactoringHistoryControl_sort_date_description);
 			fSortTimestamps.setImageDescriptor(RefactoringPluginImages.DESC_ELCL_SORT_DATE);
-			fSortTimestamps.setDisabledImageDescriptor(RefactoringPluginImages.DESC_DLCL_SORT_DATE);
 			manager.appendToGroup(TOOLBAR_SORT_GROUP, fSortProjects);
 			manager.appendToGroup(TOOLBAR_SORT_GROUP, fSortTimestamps);
 			manager.update(true);

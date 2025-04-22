@@ -219,7 +219,6 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 		public FilterDropDownAction() {
 			setImageDescriptor(RefactoringPluginImages.DESC_ELCL_FILTER);
-			setDisabledImageDescriptor(RefactoringPluginImages.DESC_DLCL_FILTER);
 			setText(RefactoringUIMessages.PreviewWizardPage_filterChanges);
 			setToolTipText(RefactoringUIMessages.PreviewWizardPage_filterChanges);
 			setMenuCreator(this);
