@@ -7,7 +7,5 @@ Export-Package: com.sun.jna;version="5.8.0",
  com.sun.jna.platform;version="5.10.0",
  com.sun.jna.platform.win32;version="5.10.0"
 Bundle-Vendor: SUN
-Require-Bundle: org.eclipse.swt,
- org.eclipse.jface
 Automatic-Module-Name: com.sun.jna.surrogate
 Bundle-RequiredExecutionEnvironment: JavaSE-21
