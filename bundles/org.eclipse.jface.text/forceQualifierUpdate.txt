@@ -7,3 +7,4 @@ https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/16
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1781
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/2044
 https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/2972
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/2995
