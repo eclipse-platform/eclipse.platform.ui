@@ -18,6 +18,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.function.Supplier;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
@@ -26,6 +28,8 @@ import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * An image descriptor is an object that knows how to create
@@ -85,6 +89,21 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 */
 	public static ImageDescriptor createFromFile(Class<?> location, String filename) {
 		return new FileImageDescriptor(location, filename);
+	}
+
+	/**
+	 * Creates and returns a new image descriptor from a plug-in.
+	 *
+	 * @param location to determine the bundle which contains the file
+	 * @param filePath path to the file relative in the bundle
+	 * @return a new image descriptor
+	 * @since 3.32
+	 */
+	public static ImageDescriptor createFromBundle(Class<?> location, String filePath) {
+		Bundle bundle = FrameworkUtil.getBundle(location);
+		URL url = FileLocator.find(bundle, IPath.fromOSString(filePath),
+				null);
+		return ImageDescriptor.createFromURL(url);
 	}
 
 	/**
