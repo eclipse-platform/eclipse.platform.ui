@@ -414,7 +414,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 		defaultsAction.setText(PropertiesMessages.Defaults_text);
 		defaultsAction.setToolTipText(PropertiesMessages.Defaults_toolTip);
 		defaultsAction.setImageDescriptor(createImageDescriptor("elcl16/defaults_ps.svg")); //$NON-NLS-1$
-		defaultsAction.setDisabledImageDescriptor(createImageDescriptor("dlcl16/defaults_ps.png")); //$NON-NLS-1$
 		defaultsAction.setEnabled(false);
 
 		// Show Advanced Properties

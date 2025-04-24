@@ -26,7 +26,6 @@ public final class SharedImages {
 
 	private static final String PATH_OBJ = ICONS_PATH + "obj16/"; //$NON-NLS-1$
 	private static final String PATH_LCL = ICONS_PATH + "elcl16/"; //$NON-NLS-1$
-	private static final String PATH_LCL_DISABLED = ICONS_PATH + "dlcl16/"; //$NON-NLS-1$
 	private static final String PATH_EVENTS = ICONS_PATH + "eview16/"; //$NON-NLS-1$
 
 	/* Event Details */
@@ -34,22 +33,14 @@ public final class SharedImages {
 	public static final String DESC_NEXT_EVENT = PATH_EVENTS + "event_next.svg"; //$NON-NLS-1$
 
 	public static final String DESC_CLEAR = PATH_LCL + "clear.svg"; //$NON-NLS-1$
-	public static final String DESC_CLEAR_DISABLED = PATH_LCL_DISABLED + "clear.png"; //$NON-NLS-1$
 	public static final String DESC_OPEN_CONSOLE = PATH_LCL + "open_console_obj.svg"; //$NON-NLS-1$
 	public static final String DESC_REMOVE_LOG = PATH_LCL + "remove.svg"; //$NON-NLS-1$
-	public static final String DESC_REMOVE_LOG_DISABLED = PATH_LCL_DISABLED + "remove.png"; //$NON-NLS-1$
 	public static final String DESC_EXPORT = PATH_LCL + "export_log.svg"; //$NON-NLS-1$
-	public static final String DESC_EXPORT_DISABLED = PATH_LCL_DISABLED + "export_log.png"; //$NON-NLS-1$
 	public static final String DESC_FILTER = PATH_LCL + "filter_ps.svg"; //$NON-NLS-1$
-	public static final String DESC_FILTER_DISABLED = PATH_LCL_DISABLED + "filter_ps.png"; //$NON-NLS-1$
 	public static final String DESC_IMPORT = PATH_LCL + "import_log.svg"; //$NON-NLS-1$
-	public static final String DESC_IMPORT_DISABLED = PATH_LCL_DISABLED + "import_log.png"; //$NON-NLS-1$
 	public static final String DESC_OPEN_LOG = PATH_LCL + "open_log.svg"; //$NON-NLS-1$
-	public static final String DESC_OPEN_LOG_DISABLED = PATH_LCL_DISABLED + "open_log.png"; //$NON-NLS-1$
 	public static final String DESC_PROPERTIES = PATH_LCL + "properties.svg"; //$NON-NLS-1$
-	public static final String DESC_PROPERTIES_DISABLED = PATH_LCL_DISABLED + "properties.png"; //$NON-NLS-1$
 	public static final String DESC_READ_LOG = PATH_LCL + "restore_log.svg"; //$NON-NLS-1$
-	public static final String DESC_READ_LOG_DISABLED = PATH_LCL_DISABLED + "restore_log.png"; //$NON-NLS-1$
 
 	public static final String DESC_ERROR_ST_OBJ = PATH_OBJ + "error_st_obj.svg"; //$NON-NLS-1$
 	public static final String DESC_ERROR_STACK_OBJ = PATH_OBJ + "error_stack.svg"; //$NON-NLS-1$
