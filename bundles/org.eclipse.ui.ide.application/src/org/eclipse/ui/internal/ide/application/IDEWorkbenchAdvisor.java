@@ -830,13 +830,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 
 		// task objects
-		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_HPRIO_TSK,
-		// PATH_OBJECT+"hprio_tsk.png");
-		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_MPRIO_TSK,
-		// PATH_OBJECT+"mprio_tsk.png");
-		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_LPRIO_TSK,
-		// PATH_OBJECT+"lprio_tsk.png");
-
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJS_TASK_TSK,
 				PATH_OBJECT + "taskmrk_tsk.svg", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OBJS_BKMRK_TSK,
@@ -894,22 +887,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW_INFO,
 				PATH_EVIEW + "problems_view_info.svg", true); //$NON-NLS-1$
-
-		// synchronization indicator objects
-		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_WBET_STAT,
-		// PATH_OVERLAY+"wbet_stat.png");
-		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_SBET_STAT,
-		// PATH_OVERLAY+"sbet_stat.png");
-		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_CONFLICT_STAT,
-		// PATH_OVERLAY+"conflict_stat.png");
-
-		// content locality indicator objects
-		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_NOTLOCAL_STAT,
-		// PATH_STAT+"notlocal_stat.png");
-		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_LOCAL_STAT,
-		// PATH_STAT+"local_stat.png");
-		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_FILLLOCAL_STAT,
-		// PATH_STAT+"filllocal_stat.png");
 	}
 
 	/**
