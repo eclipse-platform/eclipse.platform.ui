@@ -335,21 +335,11 @@ public class WindowsDefenderConfigurator implements EventHandler {
 
 	public static String createAddExclusionsPowershellCommand(String extraSeparator) {
 		List<Path> paths = getExecutablePath();
-		// For detailed explanations about how to read existing exclusions and how to
-		// add new ones see:
+		// For detailed explanations about how to add new exclusions see:
 		// https://learn.microsoft.com/en-us/powershell/module/defender/add-mppreference?view=windowsserver2019-ps
-		// https://learn.microsoft.com/en-us/powershell/module/defender/get-mppreference?view=windowsserver2019-ps
-		//
-		// For .NET's stream API called LINQ see:
-		// https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable
 		String excludedPaths = paths.stream().map(Path::toString).map(p -> '"' + p + '"')
 				.collect(Collectors.joining(',' + extraSeparator));
-		final String exclusionType = "ExclusionProcess"; //$NON-NLS-1$
-		return String.join(';' + extraSeparator, "$exclusions=@(" + extraSeparator + excludedPaths + ')', //$NON-NLS-1$
-				"$existingExclusions=[Collections.Generic.HashSet[String]](Get-MpPreference)." + exclusionType, //$NON-NLS-1$
-				"if($existingExclusions -eq $null) { $existingExclusions = New-Object Collections.Generic.HashSet[String] }", //$NON-NLS-1$
-				"$exclusionsToAdd=[Linq.Enumerable]::ToArray([Linq.Enumerable]::Where($exclusions,[Func[object,bool]]{param($ex)!$existingExclusions.Contains($ex)}))", //$NON-NLS-1$
-				"if($exclusionsToAdd.Length -gt 0){ Add-MpPreference -" + exclusionType + " $exclusionsToAdd }"); //$NON-NLS-1$ //$NON-NLS-2$
+		return "Add-MpPreference -ExclusionProcess " + extraSeparator + excludedPaths; //$NON-NLS-1$
 	}
 
 	private static void excludeDirectoryFromScanning(IProgressMonitor monitor) throws IOException {
