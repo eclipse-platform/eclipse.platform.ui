@@ -393,7 +393,6 @@ public class LogView extends ViewPart implements LogListener {
 			}
 		};
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_CLEAR));
-		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_CLEAR_DISABLED));
 		action.setToolTipText(Messages.LogView_clear_tooltip);
 		action.setText(Messages.LogView_clear);
 		return action;
@@ -419,7 +418,6 @@ public class LogView extends ViewPart implements LogListener {
 		};
 		action.setToolTipText(Messages.LogView_delete_tooltip);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_REMOVE_LOG));
-		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_REMOVE_LOG_DISABLED));
 		action.setEnabled(fInputFile.exists() && fInputFile.equals(Platform.getLogFileLocation().toFile()));
 		return action;
 	}
@@ -433,7 +431,6 @@ public class LogView extends ViewPart implements LogListener {
 		};
 		action.setToolTipText(Messages.LogView_export_tooltip);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_EXPORT));
-		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_EXPORT_DISABLED));
 		action.setEnabled(fInputFile.exists());
 		return action;
 	}
@@ -447,7 +444,6 @@ public class LogView extends ViewPart implements LogListener {
 		};
 		action.setToolTipText(Messages.LogView_exportEntry_tooltip);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_EXPORT));
-		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_EXPORT_DISABLED));
 		action.setEnabled(!fFilteredTree.getViewer().getSelection().isEmpty());
 		return action;
 	}
@@ -461,7 +457,6 @@ public class LogView extends ViewPart implements LogListener {
 		};
 		action.setToolTipText(Messages.LogView_filter);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_FILTER));
-		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_FILTER_DISABLED));
 		return action;
 	}
 
@@ -469,7 +464,6 @@ public class LogView extends ViewPart implements LogListener {
 		Action action = new ImportLogAction(this, Messages.LogView_import, fMemento);
 		action.setToolTipText(Messages.LogView_import_tooltip);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_IMPORT));
-		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_IMPORT_DISABLED));
 		return action;
 	}
 
@@ -497,7 +491,6 @@ public class LogView extends ViewPart implements LogListener {
 		}
 		action.setText(Messages.LogView_view_currentLog);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_OPEN_LOG));
-		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_OPEN_LOG_DISABLED));
 		action.setEnabled(fInputFile.exists());
 		action.setToolTipText(Messages.LogView_view_currentLog_tooltip);
 		return action;
@@ -506,7 +499,6 @@ public class LogView extends ViewPart implements LogListener {
 	private Action createPropertiesAction() {
 		Action action = new EventDetailsDialogAction(this, fTree, fFilteredTree.getViewer(), fMemento);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES));
-		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_PROPERTIES_DISABLED));
 		action.setToolTipText(Messages.LogView_properties_tooltip);
 		action.setEnabled(false);
 		return action;
@@ -522,7 +514,6 @@ public class LogView extends ViewPart implements LogListener {
 		};
 		action.setToolTipText(Messages.LogView_readLog_restore_tooltip);
 		action.setImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_READ_LOG));
-		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_READ_LOG_DISABLED));
 		return action;
 	}
 
