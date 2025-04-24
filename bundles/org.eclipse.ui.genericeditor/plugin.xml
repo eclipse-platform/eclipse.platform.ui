@@ -167,7 +167,6 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.ui.genericeditor.togglehighlight"
-            disabledIcon="icons/full/dtool16/mark_occurrences.png"
             icon="icons/full/etool16/mark_occurrences.svg">
       </image>
    </extension>
