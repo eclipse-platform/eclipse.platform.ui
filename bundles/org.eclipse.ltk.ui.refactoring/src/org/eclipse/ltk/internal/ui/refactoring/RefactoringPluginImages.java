@@ -140,10 +140,6 @@ public class RefactoringPluginImages {
 	//---- Helper methods to access icons on the file system --------------------------------------
 
 	private static void setImageDescriptors(IAction action, String type, String relPath) {
-		ImageDescriptor id= create("d" + type, relPath, false); //$NON-NLS-1$
-		if (id != null)
-			action.setDisabledImageDescriptor(id);
-
 		ImageDescriptor descriptor= create("e" + type, relPath, true); //$NON-NLS-1$
 		action.setImageDescriptor(descriptor);
 	}
