@@ -119,11 +119,6 @@ public class NavigatorUIPluginImages {
 	 *            - The relative path of the icon.
 	 */
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
-		// /*relPath= relPath.substring(NAVIGATORUI_NAME_PREFIX_LENGTH);*/
-		// action.setDisabledImageDescriptor(create("d" + type, relPath));
-		// //$NON-NLS-1$
-		// action.setHoverImageDescriptor(create("c" + type, relPath));
-		// //$NON-NLS-1$
 		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
 	}
 
