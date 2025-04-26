@@ -11,4 +11,4 @@ on:
 
 jobs:
   build:
-    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/mavenBuild.yml@master
+    uses: HannesWell/eclipse.platform.releng.aggregator/.github/workflows/mavenBuild.yml@unify-maven-options

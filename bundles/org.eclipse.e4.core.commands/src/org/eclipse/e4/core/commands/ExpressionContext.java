@@ -26,6 +26,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ExpressionContext implements IEvaluationContext {
+	// Some remark
+
 	/**
 	 * See org.eclipse.e4.ui.services.IServiceConstants.ACTIVE_SELECTION
 	 */

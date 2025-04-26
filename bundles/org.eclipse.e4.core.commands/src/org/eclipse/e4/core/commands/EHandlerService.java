@@ -69,6 +69,9 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  */
 public interface EHandlerService {
 
+//	default void doSomething() {
+//	}
+
 	/**
 	 * Makes the passed <code>handler</code> active for the command with the passed
 	 * <code>commandId</code>.
