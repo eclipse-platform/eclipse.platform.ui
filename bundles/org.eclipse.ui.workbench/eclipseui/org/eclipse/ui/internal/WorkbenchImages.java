@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -71,11 +72,7 @@ public/* final */class WorkbenchImages {
 
 	private static final String PATH_ETOOL = ICONS_PATH + "etool16/"; // Enabled toolbar icons.//$NON-NLS-1$
 
-	private static final String PATH_DTOOL = ICONS_PATH + "dtool16/"; // Disabled toolbar icons.//$NON-NLS-1$
-
 	private static final String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; // Enabled local toolbar icons.//$NON-NLS-1$
-
-	private static final String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; // Disabled local toolbar icons.//$NON-NLS-1$
 
 	private static final String PATH_EVIEW = ICONS_PATH + "eview16/"; // View icons//$NON-NLS-1$
 
@@ -101,9 +98,17 @@ public/* final */class WorkbenchImages {
 	 *               <code>false</code> if this is not a shared image
 	 */
 	private static final void declareImage(String key, String path, boolean shared) {
-		ImageDescriptor desc = ImageDescriptor
-				.createFromURLSupplier(true, () -> BundleUtility.find(PlatformUI.PLUGIN_ID, path));
+		declareImage(key, null, path, shared);
+	}
+
+	private static final void declareImage(String key, String disabledKey, String path, boolean shared) {
+		ImageDescriptor desc = ImageDescriptor.createFromURLSupplier(true,
+				() -> BundleUtility.find(PlatformUI.PLUGIN_ID, path));
 		declareImage(key, desc, shared);
+		if (disabledKey != null) {
+			ImageDescriptor disabledImageDescriptor = ImageDescriptor.createWithFlags(desc, SWT.IMAGE_DISABLE);
+			declareImage(disabledKey, disabledImageDescriptor, shared);
+		}
 	}
 
 	/**
@@ -117,91 +122,90 @@ public/* final */class WorkbenchImages {
 		declareImage(ISharedImages.IMG_DEC_FIELD_WARNING, PATH_OVERLAY + "warning_ovr.svg", true); //$NON-NLS-1$
 
 		// Pinning
-		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR, PATH_ETOOL + "pin_editor.svg", false); //$NON-NLS-1$
-		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED, PATH_DTOOL + "pin_editor.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR,
+				IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED, PATH_ETOOL + "pin_editor.svg", false); //$NON-NLS-1$
 
 		// other toolbar buttons
+		declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT, ISharedImages.IMG_ETOOL_SAVE_EDIT_DISABLED, //
+				PATH_ETOOL + "save_edit.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT, PATH_ETOOL + "save_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT_DISABLED, PATH_DTOOL + "save_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT, ISharedImages.IMG_ETOOL_SAVEAS_EDIT_DISABLED, //
+				PATH_ETOOL + "saveas_edit.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT, PATH_ETOOL + "saveas_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT_DISABLED, PATH_DTOOL + "saveas_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT, ISharedImages.IMG_ETOOL_SAVEALL_EDIT_DISABLED, //
+				PATH_ETOOL + "saveall_edit.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT, PATH_ETOOL + "saveall_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT_DISABLED, PATH_DTOOL + "saveall_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_UNDO, ISharedImages.IMG_TOOL_UNDO_DISABLED, //
+				PATH_ETOOL + "undo_edit.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_TOOL_UNDO, PATH_ETOOL + "undo_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_UNDO_DISABLED, PATH_DTOOL + "undo_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_REDO, ISharedImages.IMG_TOOL_REDO_DISABLED, //
+				PATH_ETOOL + "redo_edit.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_TOOL_REDO, PATH_ETOOL + "redo_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_REDO_DISABLED, PATH_DTOOL + "redo_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_CUT, ISharedImages.IMG_TOOL_CUT_DISABLED, //
+				PATH_ETOOL + "cut_edit.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_TOOL_CUT, PATH_ETOOL + "cut_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_CUT_DISABLED, PATH_DTOOL + "cut_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_COPY, ISharedImages.IMG_TOOL_COPY_DISABLED, //
+				PATH_ETOOL + "copy_edit.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_TOOL_COPY, PATH_ETOOL + "copy_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_COPY_DISABLED, PATH_DTOOL + "copy_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_PASTE, ISharedImages.IMG_TOOL_PASTE_DISABLED, //
+				PATH_ETOOL + "paste_edit.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_TOOL_PASTE, PATH_ETOOL + "paste_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_PASTE_DISABLED, PATH_DTOOL + "paste_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_DELETE, ISharedImages.IMG_TOOL_DELETE_DISABLED, //
+				PATH_ETOOL + "delete_edit.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_TOOL_DELETE, PATH_ETOOL + "delete_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_DELETE_DISABLED, PATH_DTOOL + "delete_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_DELETE, ISharedImages.IMG_ETOOL_DELETE_DISABLED, //
+				PATH_ETOOL + "delete.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_DELETE, PATH_ETOOL + "delete.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_DELETE_DISABLED, PATH_DTOOL + "delete.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_CLEAR, ISharedImages.IMG_ETOOL_CLEAR_DISABLED, //
+				PATH_ETOOL + "clear.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_CLEAR, PATH_ETOOL + "clear.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_CLEAR_DISABLED, PATH_DTOOL + "clear.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD, ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, //
+				PATH_ETOOL + "new_wiz.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD, PATH_ETOOL + "new_wiz.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL + "new_wiz.png", true); //$NON-NLS-1$
-
-		declareImage(ISharedImages.IMG_ETOOL_PRINT_EDIT, PATH_ETOOL + "print_edit.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_PRINT_EDIT_DISABLED, PATH_DTOOL + "print_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_PRINT_EDIT, ISharedImages.IMG_ETOOL_PRINT_EDIT_DISABLED, //
+				PATH_ETOOL + "print_edit.svg", true); //$NON-NLS-1$
 
 		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS, PATH_ETOOL + "help_contents.svg", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_SEARCH, PATH_ETOOL + "help_search.svg", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_TIPS_AND_TRICKS, PATH_ETOOL + "tricks.svg", true); //$NON-NLS-1$
 
-		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW, PATH_ETOOL + "new_fastview.svg", true); //$NON-NLS-1$
-		declareImage(IWorkbenchGraphicConstants.IMG_DTOOL_NEW_FASTVIEW, PATH_DTOOL + "new_fastview.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW,
+				IWorkbenchGraphicConstants.IMG_DTOOL_NEW_FASTVIEW, PATH_ETOOL + "new_fastview.svg", true); //$NON-NLS-1$
 
 		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_RESTORE_TRIMPART, PATH_ETOOL + "fastview_restore.svg", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_EDITOR_TRIMPART, PATH_ETOOL + "editor_area.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_TOOL_FORWARD, PATH_ELOCALTOOL + "forward_nav.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_FORWARD_DISABLED, PATH_DLOCALTOOL + "forward_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_FORWARD, ISharedImages.IMG_TOOL_FORWARD_DISABLED, //
+				PATH_ELOCALTOOL + "forward_nav.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_TOOL_BACK, PATH_ELOCALTOOL + "backward_nav.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_BACK_DISABLED, PATH_DLOCALTOOL + "backward_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_BACK, ISharedImages.IMG_TOOL_BACK_DISABLED, //
+				PATH_ELOCALTOOL + "backward_nav.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_TOOL_UP, PATH_ELOCALTOOL + "up_nav.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_TOOL_UP_DISABLED, PATH_DLOCALTOOL + "up_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_UP, ISharedImages.IMG_TOOL_UP_DISABLED, //
+				PATH_ELOCALTOOL + "up_nav.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_SYNCED, PATH_ELOCALTOOL + "synced.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_SYNCED_DISABLED, PATH_DLOCALTOOL + "synced.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_SYNCED, ISharedImages.IMG_ELCL_SYNCED_DISABLED, //
+				PATH_ELOCALTOOL + "synced.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL, PATH_ELOCALTOOL + "collapseall.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED, PATH_DLOCALTOOL + "collapseall.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL, ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED, //
+				PATH_ELOCALTOOL + "collapseall.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_REMOVE, PATH_ELOCALTOOL + "remove.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_REMOVE_DISABLED, PATH_DLOCALTOOL + "remove.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_REMOVE, ISharedImages.IMG_ELCL_REMOVE_DISABLED, //
+				PATH_ELOCALTOOL + "remove.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_REMOVEALL, PATH_ELOCALTOOL + "removeall.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_REMOVEALL_DISABLED, PATH_DLOCALTOOL + "removeall.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_REMOVEALL, ISharedImages.IMG_ELCL_REMOVEALL_DISABLED, //
+				PATH_ELOCALTOOL + "removeall.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL, PATH_ELOCALTOOL + "collapseall.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED, PATH_DLOCALTOOL + "collapseall.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL, ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED, //
+				PATH_ELOCALTOOL + "collapseall.svg", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_STOP, PATH_ELOCALTOOL + "stop.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_STOP_DISABLED, PATH_DLOCALTOOL + "stop.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_STOP, ISharedImages.IMG_ELCL_STOP_DISABLED, //
+				PATH_ELOCALTOOL + "stop.svg", true); //$NON-NLS-1$
 
 		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE, PATH_EVIEW + "new_persp.svg", false); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_HOME_NAV, PATH_ELOCALTOOL + "home_nav.svg", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_HOME_NAV_DISABLED, PATH_DLOCALTOOL + "home_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_HOME_NAV, ISharedImages.IMG_ETOOL_HOME_NAV_DISABLED, //
+				PATH_ELOCALTOOL + "home_nav.svg", true); //$NON-NLS-1$
 
 		declareImage(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE, PATH_EVIEW + "default_persp.svg", true); //$NON-NLS-1$
 

@@ -248,10 +248,6 @@ public class ProgressView extends ViewPart {
 		if (id != null) {
 			clearAllAction.setImageDescriptor(id);
 		}
-		id = WorkbenchImages.getWorkbenchImageDescriptor("/dlcl16/progress_remall.png"); //$NON-NLS-1$
-		if (id != null) {
-			clearAllAction.setDisabledImageDescriptor(id);
-		}
 	}
 
 	/**
