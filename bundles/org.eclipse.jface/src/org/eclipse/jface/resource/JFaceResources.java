@@ -32,6 +32,7 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.api.tools.annotations.NoExtend;
 import org.eclipse.pde.api.tools.annotations.NoInstantiate;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
@@ -448,13 +449,9 @@ public class JFaceResources {
 		declareImage(
 				bundle,
 				PreferenceDialog.PREF_DLG_TITLE_IMG,
-				ICONS_PATH + "pref_dialog_title.svg", PreferenceDialog.class, "images/pref_dialog_title.svg");//$NON-NLS-1$ //$NON-NLS-2$
-		declareImage(bundle, PopupDialog.POPUP_IMG_MENU, ICONS_PATH
-				+ "popup_menu.svg", PopupDialog.class, "images/popup_menu.svg");//$NON-NLS-1$ //$NON-NLS-2$
-		declareImage(
-				bundle,
-				PopupDialog.POPUP_IMG_MENU_DISABLED,
-				ICONS_PATH + "popup_menu_disabled.svg", PopupDialog.class, "images/popup_menu_disabled.svg");//$NON-NLS-1$ //$NON-NLS-2$
+				ICONS_PATH + "pref_dialog_title.png", PreferenceDialog.class, "images/pref_dialog_title.png");//$NON-NLS-1$ //$NON-NLS-2$
+		declareImage(bundle, PopupDialog.POPUP_IMG_MENU, PopupDialog.POPUP_IMG_MENU_DISABLED,
+				ICONS_PATH + "popup_menu.svg", PopupDialog.class, "images/popup_menu.png");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -478,8 +475,13 @@ public class JFaceResources {
 	 */
 	private static final void declareImage(Object bundle, String key, String path, Class<?> fallback,
 			String fallbackPath) {
+		declareImage(bundle, key, null, path, fallback, fallbackPath);
+	}
 
-		imageRegistry.put(key, ImageDescriptor.createFromURLSupplier(false, () -> {
+	private static final void declareImage(Object bundle, String key, String disabledKey, String path, Class<?> fallback,
+			String fallbackPath) {
+
+		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURLSupplier(false, () -> {
 			if (bundle != null) {
 				URL url = FileLocator.find((Bundle) bundle, IPath.fromOSString(path), null);
 				if (url != null) {
@@ -487,7 +489,13 @@ public class JFaceResources {
 				}
 			}
 			return fallback.getResource(fallbackPath);
-		}));
+		});
+		imageRegistry.put(key, imageDescriptor);
+		if (disabledKey != null) {
+			ImageDescriptor disabledImageDescriptor = ImageDescriptor.createWithFlags(imageDescriptor,
+					SWT.IMAGE_DISABLE);
+			imageRegistry.put(key, disabledImageDescriptor);
+		}
 	}
 
 	/**
