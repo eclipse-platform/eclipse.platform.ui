@@ -702,30 +702,16 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	protected void declareWorkbenchImages() {
 
 		final String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
-		final String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; // Enabled //$NON-NLS-1$
-
-		// toolbar
-		// icons.
-		final String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; // Disabled //$NON-NLS-1$
-		// //$NON-NLS-1$
-		// toolbar
-		// icons.
-		final String PATH_ETOOL = ICONS_PATH + "etool16/"; // Enabled toolbar //$NON-NLS-1$
-		// //$NON-NLS-1$
-		// icons.
-		final String PATH_DTOOL = ICONS_PATH + "dtool16/"; // Disabled toolbar //$NON-NLS-1$
-		// //$NON-NLS-1$
-		// icons.
-		final String PATH_OBJECT = ICONS_PATH + "obj16/"; // Model object //$NON-NLS-1$
-		// //$NON-NLS-1$
-		// icons
-		final String PATH_WIZBAN = ICONS_PATH + "wizban/"; // Wizard //$NON-NLS-1$
-		// //$NON-NLS-1$
-		// icons
-
+		// Local toolbar icons
+		final String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; //$NON-NLS-1$
+		// Toolbar icons
+		final String PATH_ETOOL = ICONS_PATH + "etool16/"; //$NON-NLS-1$
+		// Model objects
+		final String PATH_OBJECT = ICONS_PATH + "obj16/"; //$NON-NLS-1$
+		// Wizard icons
+		final String PATH_WIZBAN = ICONS_PATH + "wizban/"; //$NON-NLS-1$
 		// View icons
 		final String PATH_EVIEW= ICONS_PATH + "eview16/"; //$NON-NLS-1$
-
 
 		Bundle ideBundle = Platform.getBundle(IDEWorkbenchPlugin.IDE_WORKBENCH);
 
@@ -734,20 +720,16 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 						+ "build_exec.svg", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC_HOVER,
-				PATH_ETOOL + "build_exec.svg", false); //$NON-NLS-1$
-		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC_DISABLED,
-				PATH_DTOOL + "build_exec.png", false); //$NON-NLS-1$
+				PATH_ETOOL + "build_exec.svg", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_SEARCH_SRC, PATH_ETOOL
 						+ "search_src.svg", false); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_SEARCH_SRC_HOVER,
-				PATH_ETOOL + "search_src.svg", false); //$NON-NLS-1$
-		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_SEARCH_SRC_DISABLED,
-				PATH_DTOOL + "search_src.png", false); //$NON-NLS-1$
+				PATH_ETOOL + "search_src.svg", false); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_NEXT_NAV, PATH_ETOOL
@@ -812,11 +794,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		// Quick fix icons
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED,
-				PATH_ELOCALTOOL + "smartmode_co.svg", true); //$NON-NLS-1$
-
-		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_DLCL_QUICK_FIX_DISABLED,
-				PATH_DLOCALTOOL + "smartmode_co.png", true); //$NON-NLS-1$
+				PATH_ELOCALTOOL + "smartmode_co.svg", true); //$NON-NLS-1$
 
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_WARNING,
@@ -904,9 +883,18 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	protected void declareWorkbenchImage(Bundle ideBundle, String symbolicName,
 			String path, boolean shared) {
+		declareWorkbenchImage(ideBundle, symbolicName, null, path, shared);
+	}
+
+	private void declareWorkbenchImage(Bundle ideBundle, String symbolicName, String disabledSymbolicName, String path,
+			boolean shared) {
 		URL url = FileLocator.find(ideBundle, IPath.fromOSString(path), null);
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		getWorkbenchConfigurer().declareImage(symbolicName, desc, shared);
+		if (disabledSymbolicName != null) {
+			ImageDescriptor disabledDescriptor = ImageDescriptor.createWithFlags(desc, SWT.IMAGE_DISABLE);
+			getWorkbenchConfigurer().declareImage(disabledSymbolicName, disabledDescriptor, shared);
+		}
 	}
 
 	@Override

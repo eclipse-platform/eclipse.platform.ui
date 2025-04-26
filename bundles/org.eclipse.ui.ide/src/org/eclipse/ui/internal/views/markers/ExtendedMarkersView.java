@@ -367,10 +367,6 @@ public class ExtendedMarkersView extends ViewPart {
 		if (id != null) {
 			filterAction.setImageDescriptor(id);
 		}
-		id = IDEWorkbenchPlugin.getIDEImageDescriptor("/dlcl16/filter_ps.png"); //$NON-NLS-1$
-		if (id != null) {
-			filterAction.setDisabledImageDescriptor(id);
-		}
 	}
 
 	/**

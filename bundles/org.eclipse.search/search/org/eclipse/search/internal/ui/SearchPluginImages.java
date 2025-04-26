@@ -109,8 +109,6 @@ public class SearchPluginImages {
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		relPath= relPath.substring(NAME_PREFIX_LENGTH);
 
-		action.setDisabledImageDescriptor(create("d" + type, relPath, false)); //$NON-NLS-1$
-
 		ImageDescriptor desc= create("e" + type, relPath, true); //$NON-NLS-1$
 		action.setImageDescriptor(desc);
 	}

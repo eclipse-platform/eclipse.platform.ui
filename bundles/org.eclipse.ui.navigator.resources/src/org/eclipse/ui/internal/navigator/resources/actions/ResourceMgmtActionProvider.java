@@ -251,7 +251,6 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 				job.schedule();
 			}
 		};
-		refreshAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.png"));//$NON-NLS-1$
 		refreshAction.setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.svg"));//$NON-NLS-1$
 		refreshAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REFRESH);
 

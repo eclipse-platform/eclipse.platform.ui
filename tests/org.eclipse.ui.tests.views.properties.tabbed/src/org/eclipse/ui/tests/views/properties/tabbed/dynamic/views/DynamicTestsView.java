@@ -161,7 +161,6 @@ public class DynamicTestsView extends ViewPart implements
 		};
 		staticAction.setToolTipText(staticText);
 		staticAction.setImageDescriptor(imageDescriptor);
-		staticAction.setDisabledImageDescriptor(imageDescriptor);
 
 		dynamicSectionsAction = new Action(dynamicSectionsText,
 				IAction.AS_CHECK_BOX) {
@@ -178,7 +177,6 @@ public class DynamicTestsView extends ViewPart implements
 		};
 		dynamicSectionsAction.setToolTipText(dynamicSectionsText);
 		dynamicSectionsAction.setImageDescriptor(imageDescriptor);
-		dynamicSectionsAction.setDisabledImageDescriptor(imageDescriptor);
 
 		dynamicTabsAction = new Action(dynamicTabsText, IAction.AS_CHECK_BOX) {
 			@Override
