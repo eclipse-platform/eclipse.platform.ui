@@ -112,7 +112,6 @@ public class SearchPluginImages {
 		action.setDisabledImageDescriptor(create("d" + type, relPath, false)); //$NON-NLS-1$
 
 		ImageDescriptor desc= create("e" + type, relPath, true); //$NON-NLS-1$
-		action.setHoverImageDescriptor(desc);
 		action.setImageDescriptor(desc);
 	}
 

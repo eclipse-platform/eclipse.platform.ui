@@ -115,7 +115,6 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 			String imageFilePath = "icons/full/elcl16/synced.svg"; //$NON-NLS-1$
 			ResourceLocator.imageDescriptorFromBundle(getClass(), imageFilePath).ifPresent(d -> {
 				toggleLinkingAction.setImageDescriptor(d);
-				toggleLinkingAction.setHoverImageDescriptor(d);
 			});
 			service.activateHandler(toggleLinkingAction.getActionDefinitionId(),
 					new ActionHandler(toggleLinkingAction));
@@ -128,7 +127,6 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 			String imageFilePath = "icons/full/elcl16/collapseall.svg"; //$NON-NLS-1$
 			ResourceLocator.imageDescriptorFromBundle(getClass(), imageFilePath).ifPresent(d -> {
 				collapseAllAction.setImageDescriptor(d);
-				collapseAllAction.setHoverImageDescriptor(d);
 			});
 			collapseAllHandler = new CollapseAllHandler(commonViewer);
 			service.activateHandler(CollapseAllHandler.COMMAND_ID, collapseAllHandler);

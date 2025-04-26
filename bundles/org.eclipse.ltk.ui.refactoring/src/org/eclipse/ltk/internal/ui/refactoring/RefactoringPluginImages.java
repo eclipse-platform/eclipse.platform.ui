@@ -145,7 +145,6 @@ public class RefactoringPluginImages {
 			action.setDisabledImageDescriptor(id);
 
 		ImageDescriptor descriptor= create("e" + type, relPath, true); //$NON-NLS-1$
-		action.setHoverImageDescriptor(descriptor);
 		action.setImageDescriptor(descriptor);
 	}
 
