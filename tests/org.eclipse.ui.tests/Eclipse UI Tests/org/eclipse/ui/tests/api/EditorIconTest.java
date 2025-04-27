@@ -44,7 +44,7 @@ public class EditorIconTest {
 		try {
 			i1 = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(
 					"foo.icontest1").getImageDescriptor().createImage();
-			i2 = ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui", "icons/full/obj16/font.png")
+			i2 = ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui", "icons/full/obj16/font.svg")
 					.orElseThrow(AssertionError::new).createImage();
 			ImageTests.assertEquals(i1, i2);
 		}
@@ -67,7 +67,7 @@ public class EditorIconTest {
 					.getDefaultEditor(
 					"foo.icontest2").getImageDescriptor().createImage();
 			i2 = ResourceLocator.imageDescriptorFromBundle(
-					"org.eclipse.debug.ui", "icons/full/obj16/file_obj.png") // layer breaker!
+					"org.eclipse.debug.ui", "icons/full/obj16/file_obj.svg") // layer breaker!
 					.orElseThrow(AssertionError::new).createImage();
 			ImageTests.assertEquals(i1, i2);
 		}
@@ -89,7 +89,7 @@ public class EditorIconTest {
 		try {
 			i1 = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(
 					"foo.icontest3").getImageDescriptor().createImage();
-			i2 = ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui", "icons/full/obj16/file_obj.png")
+			i2 = ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui", "icons/full/obj16/file_obj.svg")
 					.orElseThrow(AssertionError::new).createImage();
 			ImageTests.assertEquals(i1, i2);
 		}
@@ -109,7 +109,7 @@ public class EditorIconTest {
 	@Test
 	public void testBug395126() {
 		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface",
-				"platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png")
+				"platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.svg")
 				.orElseThrow(AssertionError::new);
 		Image image = null;
 		try {
@@ -145,7 +145,7 @@ public class EditorIconTest {
 	 */
 	@Test
 	public void testBug474072() throws Exception {
-		URL url = FileLocator.find(new URL("platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png"));
+		URL url = FileLocator.find(new URL("platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.svg"));
 		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface", url.toString())
 				.orElseThrow(AssertionError::new);
 		Image image = null;
@@ -164,7 +164,7 @@ public class EditorIconTest {
 	 */
 	@Test
 	public void testBug474072_missing() throws Exception {
-		String url = FileLocator.find(new URL("platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png"))
+		String url = FileLocator.find(new URL("platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.svg"))
 				.toString();
 		url += "does-not-exist";
 		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface", url)
