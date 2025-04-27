@@ -16,9 +16,9 @@ package org.eclipse.jface.resource;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.function.Supplier;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
@@ -92,7 +92,8 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 		URL url;
 		if (location == null) {
 			try {
-				url = Path.of(filename).toUri().toURL();
+				// Use IPath, which can handle illegal path's on Windows like: /C:/data/other
+				url = IPath.fromOSString(filename).toPath().toUri().toURL();
 			} catch (MalformedURLException e) {
 				Policy.logException(e);
 				url = null;

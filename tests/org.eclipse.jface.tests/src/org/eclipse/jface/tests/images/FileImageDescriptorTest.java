@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URL;
@@ -55,7 +54,7 @@ public class FileImageDescriptorTest {
 	 * Test loading the image descriptors.
 	 */
 	@Test
-	public void testFileImageDescriptorWorkbench() {
+	public void testFileImageDescriptorWorkbench() throws IOException {
 
 		Class<?> missing = null;
 		ArrayList<Image> images = new ArrayList<>();
@@ -64,7 +63,6 @@ public class FileImageDescriptorTest {
 		Enumeration<String> bundleEntries = bundle.getEntryPaths(IMAGES_DIRECTORY);
 
 		while (bundleEntries.hasMoreElements()) {
-			ImageDescriptor descriptor;
 			String localImagePath = bundleEntries.nextElement();
 			URL[] files = FileLocator.findEntries(bundle, IPath.fromOSString(localImagePath));
 
@@ -75,12 +73,8 @@ public class FileImageDescriptorTest {
 					continue;
 				}
 
-				try {
-					descriptor = ImageDescriptor.createFromFile(missing, FileLocator.toFileURL(file).getFile());
-				} catch (IOException e) {
-					fail(e.getLocalizedMessage());
-					continue;
-				}
+				ImageDescriptor descriptor = ImageDescriptor.createFromFile(missing,
+						FileLocator.toFileURL(file).getFile());
 
 				Image image = descriptor.createImage();
 				images.add(image);
