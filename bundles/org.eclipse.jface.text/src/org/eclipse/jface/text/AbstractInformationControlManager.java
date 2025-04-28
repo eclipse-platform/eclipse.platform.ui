@@ -1185,8 +1185,8 @@ abstract public class AbstractInformationControlManager {
 			cropToClosestMonitor(controlBounds);
 			location= Geometry.getLocation(controlBounds);
 			size= Geometry.getSize(controlBounds);
-			informationControl.setLocation(location);
 			informationControl.setSize(size.x, size.y);
+			informationControl.setLocation(location);
 
 			showInformationControl(subjectArea);
 		}
