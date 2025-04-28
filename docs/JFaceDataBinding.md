@@ -3,23 +3,6 @@ JFace Data Binding
 
 JFace Data Binding is a multi-threaded set of abstractions that allow for automated validation and synchronization of values between objects. This is commonly used for, but not limited to, the binding of user interface components to model attributes. The core concepts behind the project are [Observables](#Observable) and [Bindings](#Binding). We provide IObservable implementations for SWT, JFace, and JavaBeans but the core is void of references to these in anticipation of implementations for other projects (e.g. EMF, Swing, etc.).
 
-Contents
---------
-
-*   [1 Introduction](#Introduction)
-*   [2 Getting started](#Getting-started)
-*   [3 Snippets](#Snippets)
-*   [4 Observable](#Observable)
-*   [5 Binding](#Binding)
-*   [6 Data Binding Context](#JData-Binding-Context)
-*   [7 Converter](#Converter)
-*   [8 Validators](#Validators)
-*   [9 Realm](#Realm)
-*   [10 TrackedGetter](#TrackedGetter)
-*   [11 Master Detail](#Master-Detail)
-*   [12 Runtime Dependencies](#Runtime-Dependencies)
-*   [13 Conformance Tests](#Conformance-Tests)
-
 # Introduction
 
 Why JFace Data Binding?
@@ -54,7 +37,7 @@ JFace Data Binding from 4000 meters
 
 Traditional object-oriented architectures use the model-view-controller pattern to persist changes in a user interface to a model. This architecture can be visualized as follows:
 
-![Mvc.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Mvc.png)
+![Mvc.png](images/Mvc.png)
 
 This works the following way:
 
@@ -71,7 +54,7 @@ Data binding is a recognition that most of the time, Text widgets are bound to s
 
 In general, the architecture then looks like:
 
-![Binding.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Binding.png)
+![Binding.png](images/Binding.png)
 
 The implementation is simple. The generic controller represents data binding. It listens to changes on both the model and on the GUI view. When a change in a property occurs in the model, it is automatically copied to the GUI. Similarly, when the user changes a value in the GUI, the change is automatically copied back to the model.
 
@@ -92,13 +75,6 @@ For example, if the user changes the SWT Text object, the new String value is va
 
 This page shows you how to create a simple example application using data binding that you can play with.
 
-Contents
---------
-
-*   [1 Setup](#Setup)
-*   [2 Example Code](#Example-Code)
-*   [3 Validation Results](#Validation-Results)
-*   [4 Custom Converters and Validators](#Custom-Converters-and-Validators)
 
 ### Setup
 
@@ -195,7 +171,7 @@ This is a pretty basic model class that conforms to the JavaBeans specification 
 }
 
 This is the standard SWT event loop with one complication - a SWT _Realm_ is created and made the default realm for our application. Think of a Realm as an abstraction of SWT's UI thread. If everything in your application happens in the UI thread, you don't have to deal with Realms in your binding code. 
-For more details on this, see the [FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceDataBindingFAQ.md) or the section that explains in detail what a [Realm](#Realm) is. If you are writing a plug-in for the Eclipse Platform, or a RCP application, you don't have to do this setup yourself - as of Eclipse 3.3, it is already part of the initialization code in **PlatformUI.createAndRunWorkbench()**.
+For more details on this, see the [FAQ](JFaceDataBindingFAQ.md) or the section that explains in detail what a [Realm](#Realm) is. If you are writing a plug-in for the Eclipse Platform, or a RCP application, you don't have to do this setup yourself - as of Eclipse 3.3, it is already part of the initialization code in **PlatformUI.createAndRunWorkbench()**.
 
 ### Validation Results
 
@@ -232,18 +208,6 @@ To configure your own converters and/or validators instead of the default ones, 
 
 Snippets show how common use cases can be implemented using the JFace Data Binding framework. They are typically a single self-contained Java class with a main method. See the bottom of this page for additional instructions on how to get and run the snippets.
 
-Contents
---------
-
-*   [1 Running the Snippets](#Running-the-Snippets)
-    *   [1.1 Basic](#Basic)
-    *   [1.2 WizardPage](#WizardPage)
-    *   [1.3 ComputedValue](#ComputedValue)
-    *   [1.4 Bindings](#Bindings)
-    *   [1.5 Master Detail](#Master-Detail)
-    *   [1.6 SWT](#SWT)
-    *   [1.7 Viewers](#Viewers)
-    *   [1.8 Additional Run Options](#Additional-Run-Options)
 
 Running the Snippets
 --------------------
@@ -343,19 +307,6 @@ Implementation Design Principles
 
 Bindings synchronize the values of 2 [observables](#Observable) in JFace Data Binding. The synchronization process is comprised of phases of validation and conversion. The specific phases available are dependant upon the type of binding.
 
-
-Contents
---------
-
-*   [1 Value Bindings](#Value-Bindings)
-    *   [1.1 Validate After Get](#Validate-After-Get)
-    *   [1.2 Convert](#Convert)
-    *   [1.3 Validate After Convert](#Validate-After-Convert)
-    *   [1.4 Validate Before Set](#Validate-Before-Set)
-    *   [1.5 Set Value](#Set-Value)
-*   [2 List Bindings](#List-Bindings)
-    *   [2.1 Convert](#Convert-2)
-    *   [2.2 Add/Remove](#Add.2FRemove)
 
 Value Bindings
 --------------
@@ -544,14 +495,6 @@ For background and historical information, refer to [bug 153630 comment 9](https
 
 The JFace Data Binding Conformance Suite (TCK) is a suite of tests and other files that allow for asserting the conformance of implementations to the abstractions provided by the library. The conformance tests can be found in the org.eclipse.jface.tests.databinding.conformance project in the Eclipse CVS. The tests are available for public consumption but will not be released as 1.0 until the Eclipse 3.4 release.
 
-Contents
---------
-
-*   [1 Observables](#Observables)
-    *   [1.1 Delegates](#Delegates)
-    *   [1.2 Integration into Tests](#Integration-into-Tests)
-        *   [1.2.1 Subclassing](#Subclassing)
-        *   [1.2.2 JUnit suite()](#JUnit-suite.28.29)
 
 Observables
 -----------

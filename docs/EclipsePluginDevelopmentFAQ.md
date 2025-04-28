@@ -5,62 +5,8 @@ Eclipse Plug-in Development FAQ
 
 This page is a collection of FAQs that is intended to help a developer write Eclipse plug-ins.
 
-This FAQ is intended to be complimentary to the [RCP FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_FAQ.md), the [Eclipse 4 RCP FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_FAQ.md) and the [FAQ](https://wiki.eclipse.org/The_Official_Eclipse_FAQs) pages. 
+This FAQ is intended to be complimentary to the [RCP FAQ](Rich_Client_Platform/Rich_Client_Platform_FAQ.md), the [Eclipse 4 RCP FAQ](Eclipse4_RCP_FAQ.md) and the [FAQ](https://wiki.eclipse.org/The_Official_Eclipse_FAQs) pages. 
 
-Contents
---------
-
-*   [1 General Development](#General-Development)
-    *   [1.1 How do I find a class from Eclipse?](#How-do-I-find-a-class-from-Eclipse)
-    *   [1.2 I see these $NON-NLS-1$ tags all over the place when I'm browsing Eclipse's source code? What do they mean?](#i-see-these-non-nls-1-tags-all-over-the-place-when-im-browsing-eclipses-source-code-what-do-they-mean)
-    *   [1.3 I need help debugging my plug-in...](#I-need-help-debugging-my-plug-in)
-    *   [1.4 I'm using third party jar files and my plug-in is not working](#Im-using-third-party-jar-files-and-my-plug-in-is-not-working)
-    *   [1.5 What is the IAdaptable interface?](#What-is-the-IAdaptable-interface)
-    *   [1.6 How do I read from a file that I've included in my bundle/plug-in?](#How-do-I-read-from-a-file-that-Ive-included-in-my-bundleplug-in)
-    *   [1.7 Where do I find the javadoc for the Eclipse API locally? I don't always want to load stuff up in a browser.](#Where-do-I-find-the-javadoc-for-the-Eclipse-API-locally-I-dont-always-want-to-load-stuff-up-in-a-browser)
-    *   [1.8 A plug-in in my 'Eclipse Application' launch configuration is listed as being "out of sync", what should I do?](#a-plug-in-in-my-eclipse-application-launch-configuration-is-listed-as-being-out-of-sync-what-should-i-do)
-    *   [1.9 How do I include native libraries in my bundle?](#How-do-I-include-native-libraries-in-my-bundle)
-*   [2 User Interface](#User-Interface)
-    *   [2.1 There's a view / editor that I want to model. How do I find out what its source looks like and how it was designed?](#theres-a-view--editor-that-i-want-to-model-how-do-i-find-out-what-its-source-looks-like-and-how-it-was-designed)
-    *   [2.2 There's a preference / property page that I want to model. How do I find out what its source looks like and how it was designed?](#theres-a-preference--property-page-that-i-want-to-model-how-do-i-find-out-what-its-source-looks-like-and-how-it-was-designed)
-    *   [2.3 There's a window / dialog / popup that I want to model. How do I find out what its source looks like and how it was designed?](#theres-a-window--dialog--popup-that-i-want-to-model-how-do-i-find-out-what-its-source-looks-like-and-how-it-was-designed)
-    *   [2.4 There's a wizard page that I want to model. How do I find out what its source looks like and how it was designed?](#Theres-a-wizard-page-that-I-want-to-model-How-do-I-find-out-what-its-source-looks-like-and-how-it-was-designed)
-    *   [2.5 How can I leverage the 'Outline' view?](#how-can-i-leverage-the-outline-view)
-    *   [2.6 How can I show the perspective bar in my RCP application?](#How-can-I-show-the-perspective-bar-in-my-RCP-application)
-    *   [2.7 How do I get the perspective bar to show on the top right corner?](#How-do-I-get-the-perspective-bar-to-show-on-the-top-right-corner)
-    *   [2.8 How do I warn the user that a workbench part that is not currently visible has changed?](#How-do-I-warn-the-user-that-a-workbench-part-that-is-not-currently-visible-has-changed)
-    *   [2.9 How can I make use of the workbench's browser capabilities?](#How-can-I-make-use-of-the-workbenchs-browser-capabilities)
-    *   [2.10 How do I retrieve the id of a preference page?](#How-do-I-retrieve-the-id-of-a-preference-page)
-    *   [2.11 How do I ask my decorator to decorate items?](#How-do-I-ask-my-decorator-to-decorate-items)
-    *   [2.12 How do I get the icon associated with a file or content type?](#How-do-I-get-the-icon-associated-with-a-file-or-content-type)
-    *   [2.13 How do I set the selection of an editor or view?](#How-do-I-set-the-selection-of-an-editor-or-view)
-    *   [2.14 How do I get the selection of an editor or view?](#How-do-I-get-the-selection-of-an-editor-or-view)
-    *   [2.15 How do I get progress feedback in the status bar in my RCP application?](#How-do-I-get-progress-feedback-in-the-status-bar-in-my-RCP-application)
-    *   [2.16 How do I make a New / Import / Export Wizard appear in the context menu of the Project Explorer?](#how-do-i-make-a-new--import--export-wizard-appear-in-the-context-menu-of-the-project-explorer)
-    *   [2.17 How do I show a message dialogue for exceptions and log them?](#How-do-I-show-a-message-dialogue-for-exceptions-and-log-them)
-    *   [2.18 How do I launch a dialogue from a non-ui thread and get a return value](#How-do-I-launch-a-dialogue-from-a-non-ui-thread-and-get-a-return-value)
-    *   [2.19 How do I make a title area dialogue with radio buttons?](#How-do-I-make-a-title-area-dialogue-with-radio-buttons)
-*   [3 Editors](#Editors)
-    *   [3.1 How do I add those rectangles in my source editor like what JDT does for parameter names during code completion?](#How-do-I-add-those-rectangles-in-my-source-editor-like-what-JDT-does-for-parameter-names-during-code-completion)
-    *   [3.2 How do I implement a 'Quick Outline' for my editor?](#How-do-I-implement-a-Quick-Outline-for-my-editor)
-    *   [3.3 How do I get an editor's StyledText widget?](#How-do-I-get-an-editors-StyledText-widget)
-    *   [3.4 How can I get the IDocument from an editor?](#How-can-I-get-the-IDocument-from-an-editor)
-    *   [3.5 How do I get an IFile given an IEditorPart or IEditorInput?](#How-do-I-get-an-IFile-given-an-IEditorPart-or-IEditorInput)
-    *   [3.6 How do I hide the tabs of a MultiPageEditorPart if it only has one page?](#How-do-I-hide-the-tabs-of-a-MultiPageEditorPart-if-it-only-has-one-page)
-    *   [3.7 How do I change the editor that is being opened when a marker has been opened?](#How-do-I-change-the-editor-that-is-being-opened-when-a-marker-has-been-opened)
-    *   [3.8 How can I make my editor respond to a user opening a marker?](#How-can-I-make-my-editor-respond-to-a-user-opening-a-marker)
-    *   [3.9 Why does the workbench keep opening a new editor every time I open a marker?](#Why-does-the-workbench-keep-opening-a-new-editor-every-time-I-open-a-marker)
-    *   [3.10 How should I let my editor know that its syntax colours have changed?](#How-should-I-let-my-editor-know-that-its-syntax-colours-have-changed)
-    *   [3.11 How do I close one/all of my editors upon workbench shutdown so that it won't appear upon workbench restart?](#How-do-I-close-oneall-of-my-editors-upon-workbench-shutdown-so-that-it-wont-appear-upon-workbench-restart)
-    *   [3.12 How do I prevent a particular editor from being restored on the next workbench startup?](#How-do-I-prevent-a-particular-editor-from-being-restored-on-the-next-workbench-startup)
-*   [4 Debug](#Debug)
-    *   [4.1 How do I invoke a process and have its output managed by the 'Console' view?](#How-do-I-invoke-a-process-and-have-its-output-managed-by-the-Console-view)
-    *   [4.2 How do I associate my executed process with its command line counterpart?](#How-do-I-associate-my-executed-process-with-its-command-line-counterpart)
-    *   [4.3 How do I capture the output of my launched application like the 'Console' view?](#How-do-I-capture-the-output-of-my-launched-application-like-the-Console-view)
-    *   [4.4 How do I run Eclipse launch configurations programmatically?](#How-do-I-run-Eclipse-launch-configurations-programmatically)
-*   [5 Release](#Release)
-    *   [5.1 How do I make a p2 repository?](#How-do-I-make-a-p2-repository)
-    *   [5.2 How do I add files to the root of the installation directory?](#How-do-I-add-files-to-the-root-of-the-installation-directory)
 
 General Development
 -------------------
@@ -430,7 +376,7 @@ It is recomended to put this into your activator.
 
 It produces a message box as such:
 
-![OpenErrorPerfPlugin.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/OpenErrorPerfPlugin.png)
+![OpenErrorPerfPlugin.png](images/OpenErrorPerfPlugin.png)
 
 The details show the stack trace.
 

@@ -2,15 +2,6 @@ Menu Contributions/Search Menu
 ==============================
 
 
-Contents
---------
-
-*   [1 Possible Java Search Menu Example](#Possible-Java-Search-Menu-Example)
-    *   [1.1 ActionSet context](#ActionSet-context)
-    *   [1.2 Commands](#Commands)
-    *   [1.3 Menus](#Menus)
-    *   [1.4 Menus API](#Menus-API)
-
 Possible Java Search Menu Example
 =================================
 

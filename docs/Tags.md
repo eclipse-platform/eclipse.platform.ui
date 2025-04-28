@@ -3,7 +3,7 @@ Eclipse4/RCP/Modeled UI/Tags
 
 Most model elements support additional annotations called "tags". In addition to tags, a key/value store can also be defined which is called "persistedState". The tags an persisted state are free-form; the model renderer may interpret certain tags or persisted state to configure how an element is to be rendered. You can also use the tags and persisted state yourself to put information in the model.
 
-![Tagsandstate.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/400px-Tagsandstate.png)
+![Tagsandstate.png](images/400px-Tagsandstate.png)
 
 How did we find these tags
 --------------------------

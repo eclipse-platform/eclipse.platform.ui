@@ -1,13 +1,6 @@
 Menu Contributions/TextEditor viewerContribution
 ================================================
 
-Contents
---------
-
-*   [1 Text editor popup action](#Text-editor-popup-action)
-    *   [1.1 Commands](#Commands)
-    *   [1.2 Menus](#Menus)
-    *   [1.3 Menus API](#Menus-API)
 
 Text editor popup action
 ========================

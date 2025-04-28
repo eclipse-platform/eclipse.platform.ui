@@ -1,20 +1,6 @@
 Platform Command Framework
 ==========================
 
-Contents
---------
-
-*   [1 Eclipse Commands Tutorial](#Eclipse-Commands-Tutorial)
-*   [2 Other Resources](#Other-Resources)
-*   [3 Commands](#Commands)
-    *   [3.1 Executing a command with parameters](#Executing-a-command-with-parameters)
-    *   [3.2 Using an IActionDelegate to execute a command](#Using-an-IActionDelegate-to-execute-a-command)
-        *   [3.2.1 Generic Command Action Delegate](#Generic-Command-Action-Delegate)
-*   [4 Handlers](#Handlers)
-*   [5 KeyBindings](#KeyBindings)
-*   [6 Contexts](#Contexts)
-*   [7 Tracing Option](#Tracing-Option)
-
 
 Eclipse Commands Tutorial
 =========================
@@ -24,9 +10,9 @@ Eclipse Commands Tutorial
 Other Resources
 ===============
 
-[Command Core Expressions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Command_Core_Expressions.md)
+[Command Core Expressions](Command_Core_Expressions.md)
 
-[Platform Expression Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Platform_Expression_Framework.md)
+[Platform Expression Framework](Platform_Expression_Framework.md)
 
 Commands
 ========
@@ -406,7 +392,7 @@ Handlers
 Handlers are managed by the **org.eclipse.ui.handlers** extension point and the IHandlerService. 
 Many Handlers can register for a command. At any give time, either 0 or 1 handlers will be active for the command. 
 A handler's active state and enabled state can be controlled declaratively. 
-See [Command Core Expressions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Command_Core_Expressions.md) for a more complex description of the declarative expressions. 
+See [Command Core Expressions](Command_Core_Expressions.md) for a more complex description of the declarative expressions. 
 Handlers are responsible for interpreting any optional command parameters using the ExecutionEvent parameter.
 
     <extension
@@ -424,9 +410,9 @@ Handlers are responsible for interpreting any optional command parameters using 
         </handler>
     </extension>
 
-Here the handler is checking the activeContexts variable (See [org.eclipse.ui.ISources](http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ISources.html)) and if the "taco" context is active, the handler is active.
+Here the handler is checking the activeContexts variable (See [org.eclipse.ui.ISources](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ISources.html)) and if the "taco" context is active, the handler is active.
 
-The handler itself, **TacoHandler**, must implement IHandler but would usually be derived from the abstract base class [org.eclipse.core.commands.AbstractHandler](http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/commands/AbstractHandler.html).
+The handler itself, **TacoHandler**, must implement IHandler but would usually be derived from the abstract base class [org.eclipse.core.commands.AbstractHandler](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/commands/AbstractHandler.html).
 
 You can create and activate a handler programmatically:
 

@@ -2,17 +2,6 @@
 Eclipse4/RCP/Event Model
 ========================
 
-Contents
---------
-
-*   [1 Introduction](#Introduction)
-*   [2 Getting an IEventBroker](#Getting-an-IEventBroker)
-*   [3 Posting an Event](#Posting-an-Event)
-*   [4 Responding to Events](#Responding-to-Events)
-    *   [4.1 Dependency Injection](#Dependency-Injection)
-    *   [4.2 Subscribing Using IEventBroker](#Subscribing-Using-IEventBroker)
-*   [5 UI Model Events](#UI-Model-Events)
-    *   [5.1 UIEvents Structure](#UIEvents-Structure)
 
 Introduction
 ============
