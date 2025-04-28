@@ -1,53 +1,6 @@
 Eclipse4/RCP/FAQ
 ================
 
-Contents
---------
-
-*   [1 Adopting the Eclipse 4 Application Platform](#Adopting-the-Eclipse-4-Application-Platform)
-    *   [1.1 How do the Eclipse 3.x and 4.x programming models differ?](#how-do-the-eclipse-3x-and-4x-programming-models-differ)
-        *   [1.1.1 Handlers](#Handlers)
-        *   [1.1.2 Parts](#Parts)
-        *   [1.1.3 Lazy Instantiantion](#Lazy-Instantiantion)
-    *   [1.2 How would I accomplish X in Eclipse 4?](#How-would-I-accomplish-X-in-Eclipse-4)
-        *   [1.2.1 Accessing the status line](#Accessing-the-status-line)
-        *   [1.2.2 Associating help context with a control](#Associating-help-context-with-a-control)
-        *   [1.2.3 Handling errors and exceptions](#Handling-errors-and-exceptions)
-        *   [1.2.4 Accessing preference values](#Accessing-preference-values)
-        *   [1.2.5 How to I find ressource leaks in plug-ins](#How-to-find-resource-leaks)
-*   [2 The E4 Model](#The-E4-Model)
-    *   [2.1 What is an _xmi:id_? How is it different from the _elementId_?](#what-is-an-xmiid-how-is-it-different-from-the-elementid)
-    *   [2.2 How do I reference an object defined in another .e4xmi?](#how-do-i-reference-an-object-defined-in-another-e4xmi)
-    *   [2.3 Are identifiers (elementId) supposed to be unique?](#are-identifiers-elementid-supposed-to-be-unique)
-    *   [2.4 How do I use MPlaceholders?](#How-do-I-use-MPlaceholders)
-    *   [2.5 How do I create an MPart from an MPartDescriptor?](#How-do-I-create-an-MPart-from-an-MPartDescriptor)
-*   [3 Problems on Configuration, Start-Up, and Shutdown](#Problems-on-Configuration.2C-Start-Up.2C-and-Shutdown)
-    *   [3.1 Why won't my application start?](#Why-won.27t-my-application-start)
-    *   [3.2 I modified my App.e4xmi/fragment.e4xmi but the changes aren't being loaded. Why?](#i-modified-my-appe4xmifragmente4xmi-but-the-changes-arent-being-loaded-why)
-    *   [3.3 How can I prevent my workbench model from being saved on exit?](#How-can-I-prevent-my-workbench-model-from-being-saved-on-exit)
-*   [4 Dependency Injection & Contexts](#dependency-injection--contexts)
-    *   [4.1 Why aren't my @Inject-able/@PostConstruct methods being injected?](#why-arent-my-inject-ablepostconstruct-methods-being-injected)
-        *   [4.1.1 Cause #1: Mismatched Annotations](#cause-1-mismatched-annotations)
-        *   [4.1.2 Cause #2: Unresolvable Injections](#cause-2-unresolvable-injections)
-    *   [4.2 What services are available for injection?](#What-services-are-available-for-injection)
-    *   [4.3 How can I override a provided object?](#How-can-I-override-a-provided-object)
-    *   [4.4 How do I provide singleton objects?](#How-do-I-provide-singleton-objects)
-    *   [4.5 Why am I getting a new instance of an object?](#Why-am-I-getting-a-new-instance-of-an-object)
-    *   [4.6 Why is my widget/part not displaying? Why am I getting a new Shell?](#Why-is-my-widget.2Fpart-not-displaying-Why-am-I-getting-a-new-Shell)
-    *   [4.7 Why am I being injected with _null_?](#Why-am-I-being-injected-with-null)
-    *   [4.8 Why aren't my parts being injected with my value set from my bundle activator?](#Why-aren.27t-my-parts-being-injected-with-my-value-set-from-my-bundle-activator)
-    *   [4.9 What is the difference between IEclipseContext#set and IEclipseContext#modify?](#what-is-the-difference-between-ieclipsecontextset-and-ieclipsecontextmodify)
-    *   [4.10 Why aren't my _@EventTopic_ or _@UIEventTopic_ methods being called?](#why-arent-my-eventtopic-or-uieventtopic-methods-being-called)
-*   [5 Commands and Handlers](#Commands-and-Handlers)
-    *   [5.1 Why aren't my handler fields being re-injected?](#why-arent-my-handler-fields-being-re-injected)
-    *   [5.2 Why is my parameterized handler not triggered?](#Why-is-my-parameterized-handler-not-triggered)
-    *   [5.3 Why does org.eclipse.core.commands.Command's isEnabled() and getHandler() not work?](#why-does-orgeclipsecorecommandscommands-isenabled-and-gethandler-not-work)
-*   [6 UI](#UI)
-    *   [6.1 How do I enable Drag N Drop (DND) of parts?](#how-do-i-enable-drag-n-drop-dnd-of-parts)
-    *   [6.2 Why are my CSS theming not taking effect?](#Why-are-my-CSS-theming-not-taking-effect)
-    *   [6.3 Why is my part's selection never set as the active selection?](#why-is-my-parts-selection-never-set-as-the-active-selection)
-*   [7 Customizing and Controlling the Platform](#Customizing-and-Controlling-the-Platform)
-    *   [7.1 How do I provide my own prompt-to-save when closing a part?](#How-do-I-provide-my-own-prompt-to-save-when-closing-a-part)
 
 Adopting the Eclipse 4 Application Platform
 -------------------------------------------
@@ -233,7 +186,7 @@ Two approaches to help diagnose such problems:
 
 ### What services are available for injection?
 
-See the [list of provided services](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_EAS_List_of_All_Provided_Services.md)
+See the [list of provided services](Eclipse4_RCP_EAS_List_of_All_Provided_Services.md)
 
 ### How can I override a provided object?
 

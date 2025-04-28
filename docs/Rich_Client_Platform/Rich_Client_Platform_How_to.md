@@ -5,36 +5,6 @@ This page is a checklist to get started in building an Eclipse RCP application. 
 
 This was tested on Eclipse 3.5 (Galileo).
 
-Contents
---------
-
-*   [1 IDE](#IDE)
-*   [2 Target](#Target)
-*   [3 Plug-in](#Plug-in)
-*   [4 View](#View)
-*   [5 Perspective](#Perspective)
-*   [6 Editor](#Editor)
-*   [7 Debug](#Debug)
-*   [8 Command](#Command)
-*   [9 Menu](#Menu)
-*   [10 Popup menu](#Popup-menu)
-*   [11 Toolbar](#Toolbar)
-*   [12 View Toolbar](#View-Toolbar)
-*   [13 Key Binding](#Key-Binding)
-*   [14 Product](#Product)
-*   [15 Feature](#Feature)
-*   [16 Localization](#Localization)
-    *   [16.1 plugin.xml](#plugin.xml)
-    *   [16.2 RCP](#RCP)
-    *   [16.3 Strings](#Strings)
-*   [17 Preferences](#Preferences)
-*   [18 Update](#Update)
-*   [19 Help](#Help)
-*   [20 Build](#Build)
-*   [21 Customization](#Customization)
-*   [22 Status Line](#Status-Line)
-*   [23 Extension Point](#Extension-Point)
-*   [24 Progress](#Progress)
 
 IDE
 ---

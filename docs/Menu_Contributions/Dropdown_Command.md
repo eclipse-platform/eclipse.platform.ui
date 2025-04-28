@@ -3,14 +3,6 @@ Menu Contributions/Dropdown Command
 
 You can create dropdown commands using menu contributions, and then use multiple menu contributions to create the dropdown menu.
 
-Contents
---------
-
-*   [1 Command Definition](#Command-Definition)
-*   [2 Handler](#Handler)
-*   [3 Menu Contribution](#Menu-Contribution)
-    *   [3.1 Toolbar declaration](#Toolbar-declaration)
-    *   [3.2 Dropdown menu declaration](#Dropdown-menu-declaration)
 
 Command Definition
 ------------------

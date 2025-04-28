@@ -1,20 +1,6 @@
 Eclipse 
 ======
 
-Contents
---------
-
-*   [1 Overview](#Overview)
-*   [2 Sample](#Sample)
-*   [3 SWT Mapping](#SWT-Mapping)
-    *   [3.1 Widget: Control](#Widget-Control)
-    *   [3.2 Widget: Button](#Widget-Button)  
-    *   [3.3 Widget: Label](#Widget-Label)
-    *   [3.4 Widget: CTabFolder](#Widget-CTabFolder)
-    *   [3.5 Widget: CTabItem](#Widget-CTabItem)
-    *   [3.6 Widget: CTabFolder with e4Renderer](#Widget-CTabFolder-with-e4Renderer)
-*   [2 Pseudo classes which can be used in CSS to style SWT widgets](#Pseudo-classes-which-can-be-used-in-CSS-to-style-SWT-widgets)
-*   [3 Using CSS in Eclipse 3.6](#Using-CSS-in-Eclipse-36)
 
 Overview
 --------

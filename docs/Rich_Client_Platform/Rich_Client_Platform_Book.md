@@ -1,13 +1,6 @@
 Rich Client Platform/Book
 =========================
 
-Contents
---------
-
-*   [1 Book: Eclipse Rich Client Platform, Third Edition](#book-eclipse-rich-client-platform-third-edition)
-    *   [1.1 More Information](#More-Information)
-*   [2 Book: "Eclipse Rich Client Platform : Designing, Coding, and Packaging Java™ Applications, Second Edition"](#book-eclipse-rich-client-platform-designing-coding-and-packaging-java-applications-second-edition)
-    *   [2.1 More Information](#More-Information-1)
 
 Book: Eclipse Rich Client Platform, Third Edition
 =================================================

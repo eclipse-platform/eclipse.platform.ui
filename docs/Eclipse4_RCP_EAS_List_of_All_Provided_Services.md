@@ -1,36 +1,8 @@
 Eclipse4/RCP/EAS/List of All Provided Services
 ==============================================
 
-This page provides a listing of the services and other data values that can be injected or obtained from a [context](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_Contexts.md).
+This page provides a listing of the services and other data values that can be injected or obtained from a [context](Eclipse4_RCP_Contexts.md).
 
-Contents
---------
-
-*   [1 Application Context](#Application-Context)
-    *   [1.1 Application Parameters](#Application-Parameters)
-    *   [1.2 Services](#Services)
-    *   [1.3 Runtime Data](#Runtime-Data)
-*   [2 Top Level Window Context](#Top-Level-Window-Context)
-    *   [2.1 Model Info](#Model-Info)
-    *   [2.2 Services](#Services-2)
-    *   [2.3 Runtime Data](#Runtime-Data-2)
-*   [3 Part Context](#Part-Context)
-    *   [3.1 Model Info](#Model-Info-2)
-    *   [3.2 Services](#Services-3)
-*   [4 Handler Execution](#Handler-Execution)
-*   [5 Eclipse 3.x Compatibility Layer](#Eclipse-3x-Compatibility-Layer)
-    *   [5.1 Application Context](#Application-Context-2)
-        *   [5.1.1 Application Parameters](#Application-Parameters-2)
-        *   [5.1.2 Model Info](#Model-Info-3)
-        *   [5.1.3 Services](#Services-4)
-        *   [5.1.4 Runtime Data](#Runtime-Data-3)
-    *   [5.2 Top Level Window Context](#Top-Level-Window-Context-2)
-        *   [5.2.1 Model Info](#Model-Info-4)
-        *   [5.2.2 Services](#Services-5)
-        *   [5.2.3 Runtime Data](#Runtime-Data-4)
-    *   [5.3 Part Context](#Part-Context-2)
-        *   [5.3.1 Model Info](#Model-Info-5)
-        *   [5.3.2 Services](#Services-6)
 
 Application Context
 -------------------
