@@ -346,9 +346,7 @@ public class WindowsDefenderConfigurator implements EventHandler {
 				.collect(Collectors.joining(','));
 		return String.join(";",
 				"$pathsToExclude = @(" + excludedPaths + ")",
-				"$existingExclusions = New-Object Collections.Generic.HashSet[String] -ArgumentList @([string[]](Get-MpPreference).ExclusionProcess)",
-				"$pathsToAdd = $pathsToExclude | Where-Object { -not $existingExclusions.Contains($_) }",
-				"if ($pathsToAdd) { Add-MpPreference -ExclusionProcess $pathsToAdd }"
+				"Add-MpPreference -ExclusionProcess $pathsToExclude"
 		);
 	}
 
