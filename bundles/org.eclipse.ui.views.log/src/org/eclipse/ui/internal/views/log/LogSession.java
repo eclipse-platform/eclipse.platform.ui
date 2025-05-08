@@ -15,9 +15,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
+import static org.eclipse.ui.internal.views.log.LogEntry.GREGORIAN_SDF;
+import static org.eclipse.ui.internal.views.log.LogEntry.LOCAL_SDF;
+
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 
 /**
@@ -31,8 +33,10 @@ public class LogSession extends Group {
 	 * @since 3.5
 	 */
 	public static final String SESSION = "!SESSION"; //$NON-NLS-1$
+
 	private String sessionData;
 	private Date date;
+	private String fDateString;
 
 	public LogSession() {
 		super(Messages.LogViewLabelProvider_Session);
@@ -42,11 +46,30 @@ public class LogSession extends Group {
 		return date;
 	}
 
+	/**
+	 * Returns a pretty-print formatting for the date for this entry
+	 * 
+	 * @return the formatted date for this entry
+	 */
+	public String getFormattedDate() {
+		if (fDateString == null) {
+			Date tmpdate = getDate();
+			if (tmpdate != null) {
+				fDateString = LOCAL_SDF.format(tmpdate.toInstant());
+			}
+		}
+		return fDateString;
+	}
+
 	public void setDate(String dateString) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
 		try {
-			date = formatter.parse(dateString);
-		} catch (ParseException e) { // do nothing
+			Date parsed = Date.from(Instant.from(GREGORIAN_SDF.parse(dateString)));
+			if (parsed != null) {
+				this.date = parsed;
+				fDateString = LOCAL_SDF.format(parsed.toInstant());
+			}
+		} catch (Exception e) {
+			// do nothing
 		}
 	}
 
