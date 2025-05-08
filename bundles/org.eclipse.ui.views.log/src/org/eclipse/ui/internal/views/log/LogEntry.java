@@ -31,9 +31,9 @@ public class LogEntry extends AbstractEntry {
 
 	public static final String SPACE = " "; //$NON-NLS-1$
 	public static final String F_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"; //$NON-NLS-1$
-	private static final DateTimeFormatter GREGORIAN_SDF = DateTimeFormatter.ofPattern(F_DATE_FORMAT, Locale.ENGLISH)
+	static final DateTimeFormatter GREGORIAN_SDF = DateTimeFormatter.ofPattern(F_DATE_FORMAT, Locale.ENGLISH)
 			.withZone(ZoneId.systemDefault());
-	private static final DateTimeFormatter LOCAL_SDF = DateTimeFormatter.ofPattern(F_DATE_FORMAT)
+	static final DateTimeFormatter LOCAL_SDF = DateTimeFormatter.ofPattern(F_DATE_FORMAT)
 			.withZone(ZoneId.systemDefault());
 
 	private String pluginId;

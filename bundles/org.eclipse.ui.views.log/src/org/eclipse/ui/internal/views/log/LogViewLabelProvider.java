@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.JFaceResources;
@@ -34,8 +33,6 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 	private Image errorWithStackImage;
 	private Image hierarchicalImage;
 	ArrayList<Object> consumers = new ArrayList<>();
-	private DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-
 	private LogView logView;
 
 	public LogViewLabelProvider(LogView logView) {
@@ -81,7 +78,7 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 			if (session.getDate() == null)
 				return ""; //$NON-NLS-1$
 
-			return dateFormat.format(session.getDate());
+			return session.getFormattedDate();
 		}
 
 		if ((element instanceof Group) && (columnIndex == 0)) {
@@ -106,7 +103,7 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 					if (entry.getPluginId() != null)
 						return entry.getPluginId();
 				case 2 :
-					return dateFormat.format(entry.getDate());
+					return entry.getFormattedDate();
 			}
 		}
 
