@@ -143,6 +143,7 @@ public final class BindingPersistenceTest {
 	}
 
 	@Test
+	@SuppressWarnings("removal")
 	public final void testSinglePlatform() throws Exception {
 		ParameterizedCommand about = new ParameterizedCommand(commandService
 				.getCommand("org.eclipse.ui.help.aboutAction"), null);
@@ -182,6 +183,7 @@ public final class BindingPersistenceTest {
 
 	@Ignore
 	@Test
+	@SuppressWarnings("removal")
 	public final void TODOtestBindingTransform() throws Exception {
 		ParameterizedCommand addWS = new ParameterizedCommand(commandService
 				.getCommand("org.eclipse.ui.navigate.addToWorkingSet"), null);
