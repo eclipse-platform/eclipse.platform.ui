@@ -501,7 +501,7 @@ public final class Util {
 	 * Windowing system constant.
 	 * @since 3.5
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03") // 2025-03 was added later for information purposes
 	public static final String WS_MOTIF = "motif";//$NON-NLS-1$
 
 	/**
@@ -514,14 +514,14 @@ public final class Util {
 	 * Windowing system constant.
 	 * @since 3.5
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03") // 2025-03 was added later for information purposes
 	public static final String WS_PHOTON = "photon";//$NON-NLS-1$
 
 	/**
 	 * Windowing system constant.
 	 * @since 3.5
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03") // 2025-03 was added later for information purposes
 	public static final String WS_CARBON = "carbon";//$NON-NLS-1$
 
 	/**
@@ -534,6 +534,7 @@ public final class Util {
 	 * Windowing system constant.
 	 * @since 3.5
 	 */
+	@Deprecated(forRemoval = true, since = "2025-03") // 2025-03 was added later for information purposes
 	public static final String WS_WPF = "wpf";//$NON-NLS-1$
 
 	/**
@@ -587,7 +588,7 @@ public final class Util {
 	 * @return <code>true</code> for motif platforms
 	 * @since 3.5
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03") // 2025-03 was added later for information purposes
 	public static boolean isMotif() {
 		final String ws = SWT.getPlatform();
 		return WS_MOTIF.equals(ws);
@@ -598,7 +599,7 @@ public final class Util {
 	 * @return <code>true</code> for photon platforms
 	 * @since 3.5
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03") // 2025-03 was added later for information purposes
 	public static boolean isPhoton() {
 		final String ws = SWT.getPlatform();
 		return WS_PHOTON.equals(ws);
@@ -609,7 +610,7 @@ public final class Util {
 	 * @return <code>true</code> for carbon platforms
 	 * @since 3.5
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-03") // 2025-03 was added later for information purposes
 	public static boolean isCarbon() {
 		final String ws = SWT.getPlatform();
 		return WS_CARBON.equals(ws);
@@ -630,6 +631,7 @@ public final class Util {
 	 * @return <code>true</code> for WPF
 	 * @since 3.5
 	 */
+	@Deprecated(forRemoval = true, since = "2025-03") // 2025-03 was added later for information purposes
 	public static boolean isWpf() {
 		final String ws = SWT.getPlatform();
 		return WS_WPF.equals(ws);
