@@ -143,7 +143,7 @@ public class ComboBoxCellEditor extends AbstractComboBoxCellEditor {
 			// hook key pressed - see PR 14201
 			@Override
 			public void keyPressed(KeyEvent e) {
-				keyReleaseOccured(e);
+				keyReleaseOccurred(e);
 			}
 		});
 
@@ -283,7 +283,7 @@ public class ComboBoxCellEditor extends AbstractComboBoxCellEditor {
 	}
 
 	@Override
-	protected void keyReleaseOccured(KeyEvent keyEvent) {
+	protected void keyReleaseOccurred(KeyEvent keyEvent) {
 		if (keyEvent.character == '\u001b') { // Escape character
 			fireCancelEditor();
 		} else if (keyEvent.character == '\t') { // tab key
