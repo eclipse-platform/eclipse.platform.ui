@@ -221,6 +221,20 @@
          version="0.0.0"/>
 
    <plugin
+         id="org.eclipse.equinox.launcher.gtk.freebsd.aarch64"
+         os="freebsd"
+         ws="gtk"
+         arch="aarch64"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.equinox.launcher.gtk.freebsd.x86_64"
+         os="freebsd"
+         ws="gtk"
+         arch="x86_64"
+         version="0.0.0"/>
+
+   <plugin
          id="org.eclipse.equinox.launcher.win32.win32.aarch64"
          os="win32"
          ws="win32"
@@ -276,6 +290,20 @@
    <plugin
          id="org.eclipse.swt.gtk.linux.x86_64"
          os="linux"
+         ws="gtk"
+         arch="x86_64"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.swt.gtk.freebsd.aarch64"
+         os="freebsd"
+         ws="gtk"
+         arch="aarch64"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.swt.gtk.freebsd.x86_64"
+         os="freebsd"
          ws="gtk"
          arch="x86_64"
          version="0.0.0"/>
