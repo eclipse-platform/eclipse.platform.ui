@@ -22,6 +22,8 @@ import java.io.IOException;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.filesystem.ZipFileUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
@@ -84,6 +86,12 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 
 			try {
 				File canonicalPath = getSystemExplorerPath(item);
+
+				if (item instanceof IFile file && ZipFileUtil.isInsideOpenZipFile(file.getLocationURI())) {
+					return statusReporter.newStatus(IStatus.ERROR,
+							logMsgPrefix + IDEWorkbenchMessages.ShowInSystemExplorerHandler_insideOfZipFile, null);
+				}
+
 				if (canonicalPath == null) {
 					return statusReporter.newStatus(IStatus.ERROR, logMsgPrefix
 							+ IDEWorkbenchMessages.ShowInSystemExplorerHandler_notDetermineLocation, null);
