@@ -19,6 +19,7 @@ public class Theme implements ITheme {
 	private String id;
 	private String label;
 	private String osVersion;
+	private String isDark;
 
 	public Theme(String id, String label) {
 		this.id = id;
@@ -44,9 +45,24 @@ public class Theme implements ITheme {
 	}
 
 	@Override
+	public boolean isDark() {
+		if (isDark == null) {
+			// fallback for themes that don't yet set the "isDark" attribute
+			// will be removed in a later release
+			return id.contains("dark");
+		} else {
+			return Boolean.parseBoolean(isDark);
+		}
+	}
+
+	public void setIsDark(String isDark) {
+		this.isDark = isDark;
+	}
+
+	@Override
 	public String toString() {
 		return "Theme [id=" + id + ", label='" + label + "', osVersion="
-				+ osVersion + "]";
+				+ osVersion + " isDark=" + isDark + "]";
 	}
 
 

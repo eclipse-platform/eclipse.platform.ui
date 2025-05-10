@@ -134,6 +134,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="isDarkTheme" type="boolean">
+            <annotation>
+               <documentation>
+                  Set this to true if the theme uses dark background.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
