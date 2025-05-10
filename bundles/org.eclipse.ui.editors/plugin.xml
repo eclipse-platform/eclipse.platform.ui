@@ -20,6 +20,7 @@
    <extension-point id="markerAnnotationSpecification" name="%ExtPoint.markerAnnotationSpecification" schema="schema/markerAnnotationSpecification.exsd"/>
    <extension-point id="annotationTypes" name="%ExtPoint.annotationTypes" schema="schema/annotationTypes.exsd"/>
    <extension-point id="templates" name="%ExtPoint.editorTemplate" schema="schema/templates.exsd"/>
+   <extension-point id="stickyLinesProviders" name="%ExtPoint.stickyLinesProviders" schema="schema/stickyLinesProviders.exsd"/>
 
    <extension point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.ui.internal.editors.text.EditorsPluginPreferenceInitializer"/>
