@@ -103,6 +103,8 @@ public class FindReplaceOverlay {
 				KeyStroke.getInstance(SWT.MOD1, 'f'));
 		private static final List<KeyStroke> TOGGLE_REPLACE = List.of( //
 				KeyStroke.getInstance(SWT.MOD1, 'R'), KeyStroke.getInstance(SWT.MOD1, 'r'));
+		public static final List<KeyStroke> SKIP_REPLACE = List.of( //
+				KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'O'), KeyStroke.getInstance(SWT.MOD1 | SWT.SHIFT, 'o'));
 	}
 
 	public static final String ID_DATA_KEY = "org.eclipse.ui.internal.findreplace.overlay.FindReplaceOverlay.id"; //$NON-NLS-1$
@@ -142,6 +144,7 @@ public class FindReplaceOverlay {
 	private Composite replaceBarContainer;
 	private HistoryTextWrapper replaceBar;
 	private AccessibleToolBar replaceTools;
+	private ToolItem skipReplaceButton;
 	private ToolItem replaceButton;
 	private ToolItem replaceAllButton;
 
@@ -440,6 +443,7 @@ public class FindReplaceOverlay {
 
 		if (replaceBarOpen) {
 			replaceBar.setData(ID_DATA_KEY, "replaceInput");
+			skipReplaceButton.setData(ID_DATA_KEY, "skipReplace");
 			replaceButton.setData(ID_DATA_KEY, "replaceOne");
 			replaceAllButton.setData(ID_DATA_KEY, "replaceAll");
 		}
@@ -659,6 +663,12 @@ public class FindReplaceOverlay {
 		replaceTools.createToolItem(SWT.SEPARATOR);
 
 		GridDataFactory.fillDefaults().grab(false, true).align(GridData.CENTER, GridData.END).applyTo(replaceTools);
+
+		skipReplaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
+				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_SKIP_REPLACE))
+				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_skipReplaceButton_toolTip)
+				.withOperation(() -> performSearch(true)).withShortcuts(KeyboardShortcuts.SKIP_REPLACE).build();
+
 		replaceButton = new AccessibleToolItemBuilder(replaceTools).withStyleBits(SWT.PUSH)
 				.withImage(FindReplaceOverlayImages.get(FindReplaceOverlayImages.KEY_REPLACE))
 				.withToolTipText(FindReplaceMessages.FindReplaceOverlay_replaceButton_toolTip)
