@@ -35,9 +35,6 @@ public class BindingTableManager {
 	@Inject
 	private IEclipseContext eclipseContext;
 
-	@Inject
-	private ContextManager contextManager;
-
 	private ContextSet definedTables = ContextSet.EMPTY;
 
 	private String[] activeSchemeIds;
@@ -239,6 +236,10 @@ public class BindingTableManager {
 	public void setActiveSchemes(String[] activeSchemeIds) {
 		this.activeSchemeIds = activeSchemeIds;
 		BindingTable.BEST_SEQUENCE.setActiveSchemes(activeSchemeIds);
+	}
+
+	public void setActiveSchemes(String[] activeSchemeIds, ContextManager contextManager) {
+		setActiveSchemes(activeSchemeIds);
 		BindingTable.BEST_SEQUENCE.setContextManager(contextManager);
 	}
 
