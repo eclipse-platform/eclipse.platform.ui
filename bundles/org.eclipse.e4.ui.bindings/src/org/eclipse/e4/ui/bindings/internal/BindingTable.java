@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.ui.bindings.internal.ContextSet.CComp;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.Trigger;
@@ -56,6 +58,7 @@ public class BindingTable {
 
 	static class BindingComparator implements Comparator<Binding> {
 		private String[] activeSchemeIds;
+		private ContextManager contextManager;
 
 		public void setActiveSchemes(String[] activeSchemeIds) {
 			this.activeSchemeIds = activeSchemeIds;
@@ -65,11 +68,28 @@ public class BindingTable {
 			return this.activeSchemeIds;
 		}
 
+		public void setContextManager(ContextManager contextManager) {
+			this.contextManager = contextManager;
+		}
+
 		@Override
 		public int compare(Binding o1, Binding o2) {
 			int rc = compareSchemes(activeSchemeIds, o1.getSchemeId(), o2.getSchemeId());
 			if (rc != 0) {
 				return rc;
+			}
+
+			/*
+			 * Check to see which has the deeper context. The deeper context is the one that
+			 * is preferred.
+			 */
+			if (contextManager != null) {
+				CComp cComp = new ContextSet.CComp(contextManager);
+				int contextDepth = cComp.compare(contextManager.getContext(o2.getContextId()),
+						contextManager.getContext(o1.getContextId())); // deeper is better
+				if (contextDepth != 0) {
+					return contextDepth;
+				}
 			}
 
 			/*
