@@ -73,7 +73,7 @@ class FindReplaceOverlayImages {
 		declareRegistryImage(KEY_SEARCH_IN_AREA, ELCL + "search_in_area.svg"); //$NON-NLS-1$
 		declareRegistryImage(KEY_OPEN_REPLACE_AREA, ELCL + "open_replace.svg"); //$NON-NLS-1$
 		declareRegistryImage(KEY_CLOSE_REPLACE_AREA, ELCL + "close_replace.svg"); //$NON-NLS-1$
-		declareRegistryImage(KEY_OPEN_HISTORY, ELCL + "open_history.png"); //$NON-NLS-1$
+		declareRegistryImage(KEY_OPEN_HISTORY, ELCL + "open_history.svg"); //$NON-NLS-1$
 	}
 
 	/**

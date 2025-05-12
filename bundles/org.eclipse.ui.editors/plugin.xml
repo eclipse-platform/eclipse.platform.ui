@@ -538,7 +538,7 @@
                id="org.eclipse.ui.edit.text.gotoNextEditPosition"
                class="org.eclipse.ui.texteditor.GotoNextEditPositionAction"
                definitionId="org.eclipse.ui.edit.text.gotoNextEditPosition"
-               icon="$nl$/icons/full/etool16/next_edit_pos.png"
+               icon="$nl$/icons/full/etool16/next_edit_pos.svg"
                helpContextId="org.eclipse.ui.goto_next_edit_position_action_context"
                label="%goToNextEditPosition.label"
                menubarPath="navigate/"
