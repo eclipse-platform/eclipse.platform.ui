@@ -52,10 +52,6 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.put(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
 				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
-		// Deprecated but kept for backwards compatibility
-		node.put(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
-				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-
 		// Although there is no longer any item on the preference pages
 		// for setting the linking preference, since it is now a per-part
 		// setting, it remains as a preference to allow product overrides of the
