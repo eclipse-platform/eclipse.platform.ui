@@ -316,7 +316,8 @@ public class Section extends ExpandableComposite {
 	@Override
 	protected void onPaint(PaintEvent e) {
 		Color bg = (titleColors != null) ? titleColors.getOrDefault(COLOR_BG, getBackground()) : getBackground();
-		Color fg = (titleColors != null) ? getTitleBarForeground() : getForeground();
+		Color fg = (titleColors != null) ? (getTitleBarForeground() != null
+				? getTitleBarForeground() : getForeground()) : getForeground();
 		Color border = (titleColors != null) ? titleColors.getOrDefault(COLOR_BORDER, fg) : fg;
 
 		GC gc = e.gc;
