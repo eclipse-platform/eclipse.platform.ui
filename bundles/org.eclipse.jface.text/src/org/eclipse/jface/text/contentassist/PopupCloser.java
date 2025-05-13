@@ -109,6 +109,9 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 
 			fDisplay.addFilter(SWT.Deactivate, this);
 			fDisplay.addFilter(SWT.MouseUp, this);
+
+			fDisplay.addFilter(SWT.MouseMove, this);
+			fDisplay.addFilter(SWT.MouseEnter, this);
 		}
 	}
 
@@ -130,6 +133,9 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 
 			fDisplay.removeFilter(SWT.Deactivate, this);
 			fDisplay.removeFilter(SWT.MouseUp, this);
+
+			fDisplay.removeFilter(SWT.MouseMove, this);
+			fDisplay.removeFilter(SWT.MouseEnter, this);
 		}
 	}
 
@@ -206,6 +212,8 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 				}
 				break;
 
+			case SWT.MouseEnter:
+			case SWT.MouseMove:
 			case SWT.MouseUp:
 				if (fAdditionalInfoController == null || fAdditionalInfoController.getInternalAccessor().isReplaceInProgress())
 					break;
@@ -224,7 +232,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 							}
 
 							// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=212392 :
-							control.getShell().getDisplay().asyncExec(() -> fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true));
+							fAdditionalInfoController.getInternalAccessor().replaceInformationControl(event.type == SWT.MouseUp);
 						}
 					}
 				}
