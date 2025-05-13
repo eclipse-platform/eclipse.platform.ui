@@ -191,7 +191,7 @@ public final class EmptyWorkspaceHelper {
 
 		Composite optionsArea = new Composite(infoArea, SWT.NONE);
 		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(optionsArea);
-		GridDataFactory.swtDefaults().indent(5, 0).grab(true, true).applyTo(optionsArea);
+		GridDataFactory.swtDefaults().indent(5, 0).align(SWT.FILL, SWT.CENTER).grab(true, true).applyTo(optionsArea);
 
 		final FormToolkit toolkit = new FormToolkit(emptyArea.getDisplay());
 		emptyArea.addDisposeListener(e -> toolkit.dispose());
@@ -283,7 +283,7 @@ public final class EmptyWorkspaceHelper {
 				action.run();
 			}
 		});
-		GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, false).applyTo(addLink);
+		GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.FILL).grab(true, false).applyTo(addLink);
 	}
 
 	private IAction getAction(IWizardRegistry registry, String id) {
