@@ -188,29 +188,26 @@ public abstract class AbstractContributionItem extends ContributionItem {
 		String iconURI = modelItem.getIconURI() != null ? modelItem.getIconURI() : ""; //$NON-NLS-1$
 		String disabledURI = getDisabledIconURI(modelItem);
 		Object disabledData = item.getData(DISABLED_URI);
-		if (disabledData == null)
-			disabledData = ""; //$NON-NLS-1$
-		if (!iconURI.equals(item.getData(ICON_URI)) || !disabledURI.equals(disabledData)) {
+		boolean enabledIconChanged = !iconURI.equals(item.getData(ICON_URI));
+		boolean disabledIconChanged = disabledData != null && !disabledURI.equals(disabledData);
+		if (enabledIconChanged || disabledIconChanged) {
 			LocalResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
 			Image iconImage = getImage(iconURI, resourceManager);
 			item.setImage(iconImage);
 			item.setData(ICON_URI, iconURI);
-			if (item instanceof ToolItem toolItem) {
-				iconImage = getImage(disabledURI, resourceManager);
-				toolItem.setDisabledImage(iconImage);
-				toolItem.setData(DISABLED_URI, disabledURI);
-			}
+			disabledData = null;
+			item.setData(DISABLED_URI, null);
 			disposeOldImages();
 			localResourceManager = resourceManager;
 		}
-		// if there is no explicit disabled icon and the element becomes disabled,
-		// create it
-		boolean hasExplicitDisabledImage = "".equals(disabledURI); //$NON-NLS-1$
-		if (!modelItem.isEnabled() && !hasExplicitDisabledImage && item instanceof ToolItem toolItem) {
-			if (toolItem.getDisabledImage() == null) {
-				Image iconImage = getDisabledImage(iconURI, localResourceManager);
-				toolItem.setDisabledImage(iconImage);
+		// If item is disabled, create disabled image if not done yet
+		if (!modelItem.isEnabled() && disabledData == null && item instanceof ToolItem toolItem) {
+			Image disabledImage = getImage(disabledURI, localResourceManager);
+			if (disabledImage == null) {
+				disabledImage = getDisabledImage(iconURI, localResourceManager);
 			}
+			toolItem.setDisabledImage(disabledImage);
+			toolItem.setData(DISABLED_URI, disabledURI);
 		}
 	}
 
