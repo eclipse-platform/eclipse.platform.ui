@@ -618,11 +618,13 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		});
 
 		fCanvas.addListener(SWT.ZoomChanged, e -> {
-			computeIndentations();
-			if (fBuffer != null) {
-				fBuffer.dispose();
-				fBuffer= null;
-			}
+			Display.getDefault().asyncExec(() -> {
+				computeIndentations();
+				if (fBuffer != null) {
+					fBuffer.dispose();
+					fBuffer= null;
+				}
+			});
 		});
 
 		fMouseHandler= new MouseHandler();
