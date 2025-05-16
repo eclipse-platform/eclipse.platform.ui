@@ -59,14 +59,14 @@ import org.eclipse.ui.tests.stress.OpenCloseTest;
 import org.eclipse.ui.tests.systeminplaceeditor.OpenSystemInPlaceEditorTest;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
 import org.eclipse.ui.tests.zoom.ZoomTestSuite;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test all areas of the UI.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 	StartupTest.class,
 	UIAutomatedSuite.class,
 	ApiTestSuite.class,
