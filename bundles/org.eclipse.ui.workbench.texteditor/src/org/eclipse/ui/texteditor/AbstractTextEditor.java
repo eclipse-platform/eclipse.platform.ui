@@ -4041,19 +4041,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.4
 	 */
 	private EnrichMode convertEnrichModePreference(int mode) {
-		switch (mode) {
-			case -1:
-				return null;
-			case 0:
-				return EnrichMode.AFTER_DELAY;
-			case 1:
-				return EnrichMode.IMMEDIATELY;
-			case 2:
-				return EnrichMode.ON_CLICK;
-			default:
+		return switch (mode) {
+			case -1 -> null;
+			case 0 -> EnrichMode.AFTER_DELAY;
+			case 1 -> EnrichMode.IMMEDIATELY;
+			case 2 -> EnrichMode.ON_CLICK;
+			default -> {
 				Assert.isLegal(false);
-			return null;
-		}
+				yield null;
+			}
+		};
 	}
 
 	/**
@@ -4537,25 +4534,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		if (property != null) {
 			switch (property) {
-			case PREFERENCE_COLOR_FOREGROUND:
-			case PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT:
-			case PREFERENCE_COLOR_BACKGROUND:
-			case PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT:
-			case PREFERENCE_COLOR_SELECTION_FOREGROUND:
-			case PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT:
-			case PREFERENCE_COLOR_SELECTION_BACKGROUND:
-			case PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT:
-				initializeViewerColors(fSourceViewer);
-				break;
-			case PREFERENCE_COLOR_FIND_SCOPE:
-				initializeFindScopeColor(fSourceViewer);
-				break;
-			case PREFERENCE_USE_CUSTOM_CARETS:
-			case PREFERENCE_WIDE_CARET:
-				updateCaret();
-				break;
-			default:
-				break;
+				case PREFERENCE_COLOR_FOREGROUND,
+					 PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT,
+					 PREFERENCE_COLOR_BACKGROUND,
+					 PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT,
+					 PREFERENCE_COLOR_SELECTION_FOREGROUND,
+					 PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT,
+					 PREFERENCE_COLOR_SELECTION_BACKGROUND,
+					 PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT ->
+					initializeViewerColors(fSourceViewer);
+				case PREFERENCE_COLOR_FIND_SCOPE -> initializeFindScopeColor(fSourceViewer);
+				case PREFERENCE_USE_CUSTOM_CARETS,
+					 PREFERENCE_WIDE_CARET ->
+					updateCaret();
+				default -> {
+					// No action needed
+				}
 			}
 		}
 
@@ -6692,29 +6686,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		IStatusField field= getStatusField(category);
 		if (field != null) {
-
-			String text= null;
-
-			switch (category) {
-			case ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION:
-				text= getCursorPosition();
-				break;
-			case ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE:
-				text= isEditorInputReadOnly() ? fReadOnlyLabel : fWritableLabel;
-				break;
-			case ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE:
-				InsertMode mode= getInsertMode();
-				if (fIsOverwriting)
-					text= fOverwriteModeLabel;
-				else if (INSERT == mode)
-					text= fInsertModeLabel;
-				else if (SMART_INSERT == mode)
-					text= fSmartInsertModeLabel;
-				break;
-			default:
-				break;
-			}
-
+			String text = switch (category) {
+				case ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION ->
+				    getCursorPosition();
+				case ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE ->
+					isEditorInputReadOnly() ? fReadOnlyLabel : fWritableLabel;
+				case ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE -> {
+					InsertMode mode = getInsertMode();
+					if (fIsOverwriting)
+						yield fOverwriteModeLabel;
+					else if (INSERT == mode)
+						yield fInsertModeLabel;
+					else if (SMART_INSERT == mode)
+						yield fSmartInsertModeLabel;
+					else
+						yield null;
+				}
+				default -> null;
+			};
 			field.setText(text == null ? fErrorLabel : text);
 		}
 	}
