@@ -40,12 +40,11 @@ public class DarkThemeProcessor {
 				return;
 			}
 			ITheme theme = (ITheme) event.getProperty("theme");
-			final boolean isDark = theme.getId().contains("dark"); //$NON-NLS-1$
 			Display display = (Display) event.getProperty(IThemeEngine.Events.DEVICE);
 
 			// not using UISynchronize as this is specific to SWT/GTK
 			// scenarios
-			display.asyncExec(() -> OS.setDarkThemePreferred(isDark));
+			display.asyncExec(() -> OS.setDarkThemePreferred(theme.isDark()));
 		};
 		// using the IEventBroker explicitly because the @EventTopic annotation
 		// is unpredictable with processors within the debugger
