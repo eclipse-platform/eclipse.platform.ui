@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.keys.IBindingService;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -53,7 +54,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
 		// Deprecated but kept for backwards compatibility
-		node.put(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
+		node.put(IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE,
 				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
 		// Although there is no longer any item on the preference pages
