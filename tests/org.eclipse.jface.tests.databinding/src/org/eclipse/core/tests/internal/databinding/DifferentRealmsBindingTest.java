@@ -121,21 +121,21 @@ public class DifferentRealmsBindingTest {
 
 		targetRealm.unblock();
 
-		AtomicReference<Exception> exceptionOccured = new AtomicReference<>();
+		AtomicReference<Exception> exceptionOccurred = new AtomicReference<>();
 		Thread t = new Thread() {
 			@Override
 			public void run() {
 				try {
 					dbc.bindSet(target, model);
 				} catch (Exception e) {
-					exceptionOccured.set(e);
+					exceptionOccurred.set(e);
 				}
 			}
 		};
 		t.start();
 		t.join(1000);
 
-		assertNull(exceptionOccured.get());
+		assertNull(exceptionOccurred.get());
 	}
 
 	@Test
