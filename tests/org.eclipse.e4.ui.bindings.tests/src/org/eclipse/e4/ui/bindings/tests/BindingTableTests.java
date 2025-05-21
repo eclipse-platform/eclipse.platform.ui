@@ -15,11 +15,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.bindings.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,8 +41,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("restriction")
 public class BindingTableTests {
@@ -93,7 +93,7 @@ public class BindingTableTests {
 	static IEclipseContext workbenchContext;
 	private MApplication application;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		IEclipseContext globalContext = TestUtil.getGlobalContext();
 		workbenchContext = globalContext.createChild("workbenchContext");
@@ -389,7 +389,7 @@ public class BindingTableTests {
 
 	private void assertContextSet(ContextSet set, String[] contextIds) {
 		List<Context> contexts = set.getContexts();
-		assertEquals(contexts.toString(), contextIds.length, contexts.size());
+		assertEquals(contextIds.length, contexts.size(), contexts.toString());
 		for (int i = 0; i < contextIds.length; i++) {
 			assertEquals(contextIds[i], contexts.get(i).getId());
 		}
