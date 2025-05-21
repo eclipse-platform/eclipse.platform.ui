@@ -14,11 +14,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.bindings.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,9 +38,9 @@ import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("restriction")
 public class BindingLookupTest {
@@ -74,7 +70,7 @@ public class BindingLookupTest {
 		cs.defineCommand(TEST_ID2, "ID2", null, category, null);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		IEclipseContext globalContext = TestUtil.getGlobalContext();
 		workbenchContext = globalContext.createChild("workbenchContext");
@@ -107,7 +103,7 @@ public class BindingLookupTest {
 		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG), application));
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		workbenchContext.dispose();
 		workbenchContext = null;
