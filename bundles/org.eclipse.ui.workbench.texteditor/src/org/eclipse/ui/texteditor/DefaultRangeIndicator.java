@@ -143,8 +143,8 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 		ImageDataProvider imageDataProvider = zoom -> {
 
 			float scaleFactor = (float) ((zoom) / 100.0);
-			int scaled_width = Math.round(width * scaleFactor);
-			int scaled_height = Math.round(height * scaleFactor);
+			int scaledWidth = Math.round(width * scaleFactor);
+			int scaledHeight = Math.round(height * scaleFactor);
 			ImageData imageData = new ImageData(scaled_width, scaled_height,
 					1,
 					createPalette(display, rangeIndicatorColor));
