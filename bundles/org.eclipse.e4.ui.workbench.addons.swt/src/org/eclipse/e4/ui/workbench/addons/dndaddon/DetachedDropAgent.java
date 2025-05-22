@@ -22,6 +22,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.MonitorAwarePoint;
+import org.eclipse.swt.graphics.MonitorAwareRectangle;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -96,6 +98,10 @@ public class DetachedDropAgent extends DropAgent {
 		Point cp = Display.getCurrent().getCursorLocation();
 		curRect.x = cp.x - 15;
 		curRect.y = cp.y - 15;
+		if (cp instanceof MonitorAwarePoint monitorAwareCp) {
+			return new MonitorAwareRectangle(curRect.x, curRect.y, curRect.width, curRect.height,
+					monitorAwareCp.getMonitor());
+		}
 
 		return curRect;
 	}
