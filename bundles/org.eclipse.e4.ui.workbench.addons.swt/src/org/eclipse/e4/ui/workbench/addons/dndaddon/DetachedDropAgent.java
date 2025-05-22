@@ -94,8 +94,9 @@ public class DetachedDropAgent extends DropAgent {
 		}
 
 		Point cp = Display.getCurrent().getCursorLocation();
-		curRect.x = cp.x - 15;
-		curRect.y = cp.y - 15;
+		cp.x -= 15;
+		cp.y -= 15;
+		curRect = Rectangle.of(cp, curRect.width, curRect.height);
 
 		return curRect;
 	}
