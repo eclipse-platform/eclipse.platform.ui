@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -139,16 +140,31 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 		int height= size.y;
 
 
-		ImageData imageData= new ImageData(width, height, 1, createPalette(display, rangeIndicatorColor));
+		ImageDataProvider imageDataProvider = zoom -> {
 
-		for (int y= 0, offset= 1; y < height; y++, offset= (offset + 1) % 2)
-			for (int x= offset; x < width; x += 2)
-				imageData.setPixel(x, y, 1);
+			float scaleFactor = (float) ((zoom) / 100.0);
+			int scaled_width = Math.round(width * scaleFactor);
+			int scaled_height = Math.round(height * scaleFactor);
+			ImageData imageData = new ImageData(scaled_width, scaled_height,
+					1,
+					createPalette(display, rangeIndicatorColor));
+			int blockSize = Math.round(scaleFactor);
+			for (int y = 0; y < scaled_height; y++)
+				for (int x = 0; x < scaled_width; x++) {
+					if (((x / blockSize) + (y / blockSize)) % 2 == 0) {
+						imageData.setPixel(x, y, 1);
+					}
 
-		imageData.transparentPixel= 1;
+				}
+			imageData.transparentPixel = 1;
+			return imageData;
+
+		};
 
 
-		return new Image(display, imageData);
+
+
+		return new Image(display, imageDataProvider);
 	}
 
 	/**
