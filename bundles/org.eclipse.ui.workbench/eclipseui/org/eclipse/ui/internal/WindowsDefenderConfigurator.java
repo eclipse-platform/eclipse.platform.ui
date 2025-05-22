@@ -346,7 +346,6 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		String excludedPaths = paths.stream().map(Path::toString).map(p -> "\"" + p + "\"")
 				.collect(Collectors.joining(',' + extraSeparator));
 		return "Add-MpPreference -ExclusionProcess " + extraSeparator + excludedPaths; //$NON-NLS-1$
-		);
 	}
 
 	private static void excludeDirectoryFromScanning(IProgressMonitor monitor) throws IOException {
