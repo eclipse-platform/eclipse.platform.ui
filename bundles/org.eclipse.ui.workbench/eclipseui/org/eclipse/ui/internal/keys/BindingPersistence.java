@@ -519,6 +519,7 @@ public class BindingPersistence extends PreferencePersistence {
 	 * @param commandService            The command service for the workbench; must
 	 *                                  not be <code>null</code>.
 	 */
+	@SuppressWarnings("removal")
 	private static final void readBindingsFromRegistry(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final BindingManager bindingManager,
 			final CommandManager commandService) {

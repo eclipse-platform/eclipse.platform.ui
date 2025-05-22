@@ -893,9 +893,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			}
 		};
 		fRemoveAction.setImageDescriptor(TemplatesPageImages
-				.getDescriptor(TemplatesPageImages.IMG_DLCL_TEMPLATE_DELETE));
-		fRemoveAction.setImageDescriptor(TemplatesPageImages
 				.getDescriptor(TemplatesPageImages.IMG_ELCL_TEMPLATE_DELETE));
+		fRemoveAction.setDisabledImageDescriptor(TemplatesPageImages
+				.getDescriptor(TemplatesPageImages.IMG_DLCL_TEMPLATE_DELETE));
 		fRemoveAction.setToolTipText(TemplatesMessages.TemplatesPage_remove_tooltip);
 
 		fLinkWithEditorAction= new Action(TemplatesMessages.TemplatesPage_link_to_editor,

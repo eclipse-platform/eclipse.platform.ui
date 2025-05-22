@@ -112,7 +112,7 @@ The supplied image is drawn over the top right corner of the base image.
   &lt;image
     id=&quot;org.eclipse.ui.javaNatureImage&quot;
     natureId=&quot;Resource&quot;
-    icon=&quot;icons/javaNature.png&quot;&gt;
+    icon=&quot;icons/javaNature.svg&quot;&gt;
   &lt;/image&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;

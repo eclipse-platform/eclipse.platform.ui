@@ -5,32 +5,6 @@ Platform UI Error Handling
 
 This proposal is for error messages only. It does not include Log, trace or Application Life Cycle linked to errors in a software application. Yet, this proposal should fit very nicely in above mentioned features.
 
-Contents
---------
-
-*   [1 Use cases](#Use-cases)
-    *   [1.1 Issue to solve](#Issue-to-solve)
-    *   [1.2 See the error](#See-the-error)
-    *   [1.3 What does it mean to me the user?](#What-does-it-mean-to-me-the-user)
-    *   [1.4 What can I do next?](#What-can-I-do-next)
-*   [2 Status manager & Status handlers](#Status-manager--Status-handlers)
-    *   [2.1 Status manager](#Status-manager)
-    *   [2.2 Styles](#Styles)
-    *   [2.3 Status handlers](#Status-handlers)
-    *   [2.4 StatusAdapter](#StatusAdapter)
-    *   [2.5 The facility and Platform](#The-facility-and-Platform)
-*   [3 WorkbenchStatusHandler and IDEWorkbenchStatusHandler](#WorkbenchStatusHandler-and-IDEWorkbenchStatusHandler)
-*   [4 Error Messages: User Interface](#Error-Messages-User-Interface)
-    *   [4.1 Error Messages User Interface Use Cases](#Error-Messages-User-Interface-Use-Cases)
-        *   [4.1.1 Eclipse mapping](#Eclipse-mapping)
-        *   [4.1.2 Use cases](#Use-cases-2)
-    *   [4.2 Main requirements](#Main-requirements)
-    *   [4.3 New StatusDialog](#New-StatusDialog)
-        *   [4.3.1 Overview](#Overview)
-        *   [4.3.2 Use cases](#Use-cases-3)
-        *   [4.3.3 Usage](#Usage)
-        *   [4.3.4 Bugs](#Bugs)
-    *   [4.4 Work plan for 3.4.1 & 3.5](#work-plan-for-341--35)
 
 Use cases
 ---------
@@ -366,24 +340,24 @@ The basic idea is that even unexperienced user should be able to understand what
 
 *   Only one status is reported. Primary message and secondary message should be displayed. Secondary message should have timestamp if one is available.
 
-![Singlestatus2.jpg](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Singlestatus2.jpg)
+![Singlestatus2.jpg](images/Singlestatus2.jpg)
 
 *   Job reported an error. Display message informing which job, and primary message.
 
 
 *   Multiple errors occurred. On the list should be displayed job name or primary message of the status. In the title primary message should appear for jobs and secondary for statuses.
 
-![Manystatuses.jpg](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Manystatuses.jpg)
+![Manystatuses.jpg](images/Manystatuses.jpg)
 
 *   One status has been reported and support is available.
 
 after pressing bug icon:
 
-![Statusdialogwithsupportopened.JPG](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Statusdialogwithsupportopened.JPG)
+![Statusdialogwithsupportopened.JPG](images/Statusdialogwithsupportopened.JPG)
 
 and many statuses. The selected in the list Status is a base for support area.
 
-![Manystatuseswithsupportopened.JPG](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Manystatuseswithsupportopened.JPG)
+![Manystatuseswithsupportopened.JPG](images/Manystatuseswithsupportopened.JPG)
 
 #### Use cases
 

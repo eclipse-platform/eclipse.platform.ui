@@ -5,51 +5,18 @@ Starting point for menu and toolbar placement of commands in 3.3.
 Please contribute comments and suggestions in the discussion area or on [Bug 154130 -KeyBindings- Finish re-work of commands and key bindings](https://bugs.eclipse.org/bugs/show_bug.cgi?id=154130). 
 Here is a page with concrete example cases: [Menu Item Placement Examples](./Menu_Contributions.md)
 
-  
-
-Contents
---------
-
-*   [1 Current Framework](#Current-Framework)
-*   [2 Menus and ToolBars](#Menus-and-ToolBars)
-    *   [2.1 Programmatic Contributions and Delegates](#Programmatic-Contributions-and-Delegates)
-        *   [2.1.1 I*ActionDelegate](#iactiondelegate)
-        *   [2.1.2 IObjectActionDelegate](#IObjectActionDelegate)
-        *   [2.1.3 EditorActionBars](#EditorActionBars)
-        *   [2.1.4 PluginActionBuilder subclasses](#PluginActionBuilder-subclasses)
-    *   [2.2 org.eclipse.ui.actionSets](#orgeclipseuiactionSets)
-    *   [2.3 org.eclipse.ui.editorActions](#orgeclipseuieditorActions)
-    *   [2.4 org.eclipse.ui.viewActions](#orgeclipseuiviewActions)
-    *   [2.5 org.eclipse.ui.popupMenus](#orgeclipseuipopupMenus)
-*   [3 Framework Enhancements for 3.3](#Framework-Enhancements-for-33)
-    *   [3.1 Issues to Address](#Issues-to-Address)
-        *   [3.1.1 Issue 101 - PluginActions disconnected from Handlers](#Issue-101---PluginActions-disconnected-from-Handlers)
-        *   [3.1.2 Issue 102 - Commands implementation of label changing](#Issue-102---Commands-implementation-of-label-changing)
-        *   [3.1.3 Issue 103 - Menu items map to ParameterizedCommands](#Issue-103---Menu-items-map-to-ParameterizedCommands)
-        *   [3.1.4 Issue 104 - Dynamic menus need a good story](#Issue-104---Dynamic-menus-need-a-good-story)
-    *   [3.2 Menu Proposal 1](#Menu-Proposal-1)
-    *   [3.3 Menu Proposal 2](#Menu-Proposal-2)
-        *   [3.3.1 Proposal "A" (Eric's World...;-):](#proposal-a-erics-world-)
-            *   [3.3.1.1 Proposal "A" - item 3 - Dynamic Menu interface](#proposal-a---item-3---dynamic-menu-interface)
-        *   [3.3.2 Menu Proposal 2 UseCases](#Menu-Proposal-2-UseCases)
-            *   [3.3.2.1 Menu Placement Locations](#Menu-Placement-Locations)
-    *   [3.4 Menu Proposal 3](#Menu-Proposal-3)
-*   [4 Historical Information](#Historical-Information)
-    *   [4.1 Original Requirements](#Original-Requirements)
-    *   [4.2 Rational](#Rational)
-
 
 Current Framework
 =================
 
-See [Platform Command Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/PlatformCommandFramework.md)
+See [Platform Command Framework](PlatformCommandFramework.md)
 
 Menus and ToolBars
 ==================
 
 Menu and toolbar placement is managed by 4 extension points, and through programmatic contributions at a number of locations: IActionBars, IViewSite, IEditorSite, EditorActionBarContributor ... more to follow
 
-I'm not sure of an appropriate way to wrap [org.eclipse.ui.IActionDelegate](http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IActionDelegate.html). It is the base class and provides 2 methods to all of the **I*ActionDelegates**.
+I'm not sure of an appropriate way to wrap [org.eclipse.ui.IActionDelegate](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IActionDelegate.html). It is the base class and provides 2 methods to all of the **I*ActionDelegates**.
 
 	public void run(IAction action);
 	public void selectionChanged(IAction action, ISelection selection);
@@ -62,7 +29,7 @@ The current action delegate proxy, ActionDelegateHandlerProxy, creates a bogus I
 
 Of course, there is also IActionDelegate2 :-)
 
-Managing menus through the suggested **org.eclipse.ui.menus** extension maps one menu item to one [org.eclipse.core.commands.ParameterizedCommand](http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/commands/ParameterizedCommand.html). This contains both the command and appropriate parameters needed to execute it.
+Managing menus through the suggested **org.eclipse.ui.menus** extension maps one menu item to one [org.eclipse.core.commands.ParameterizedCommand](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/commands/ParameterizedCommand.html). This contains both the command and appropriate parameters needed to execute it.
 
   
 
@@ -357,7 +324,7 @@ Commands are an abstraction of behaviour, an have a lot in common with Retargeta
 	   </command>
 	</extension>
 
-Currently, command states that have meaning are in [org.eclipse.jface.menus.IMenuStateIds](http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/menus/IMenuStateIds.html) and [org.eclipse.core.commands.INamedHandleStateIds](http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/commands/INamedHandleStateIds.html).
+Currently, command states that have meaning are in [org.eclipse.jface.menus.IMenuStateIds](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/menus/IMenuStateIds.html) and [org.eclipse.core.commands.INamedHandleStateIds](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/commands/INamedHandleStateIds.html).
 
 The NAME state can be updated, and also supports state change notification. Our menu and/or toolbar rendering would have to listen for changes to properties and states associated with commands?
 

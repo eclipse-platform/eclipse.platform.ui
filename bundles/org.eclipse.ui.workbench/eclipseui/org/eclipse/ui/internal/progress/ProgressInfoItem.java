@@ -153,20 +153,21 @@ public class ProgressInfoItem extends Composite {
 	private boolean isThemed;
 
 	static {
-		JFaceResources.getImageRegistry().put(STOP_IMAGE_KEY,
-				WorkbenchImages.getWorkbenchImageDescriptor("elcl16/progress_stop.png"));//$NON-NLS-1$
-
-		JFaceResources.getImageRegistry().put(DISABLED_STOP_IMAGE_KEY,
-				WorkbenchImages.getWorkbenchImageDescriptor("dlcl16/progress_stop.png"));//$NON-NLS-1$
+		ImageDescriptor processStopDescriptor = WorkbenchImages.getWorkbenchImageDescriptor("elcl16/progress_stop.png"); //$NON-NLS-1$
+		JFaceResources.getImageRegistry().put(STOP_IMAGE_KEY, processStopDescriptor);
+		ImageDescriptor disabledProcessStopDescriptor = ImageDescriptor.createWithFlags(processStopDescriptor,
+				SWT.IMAGE_DISABLE);
+		JFaceResources.getImageRegistry().put(DISABLED_STOP_IMAGE_KEY, disabledProcessStopDescriptor);
 
 		JFaceResources.getImageRegistry().put(DEFAULT_JOB_KEY,
 				WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_task.png")); //$NON-NLS-1$
 
-		JFaceResources.getImageRegistry().put(CLEAR_FINISHED_JOB_KEY,
-				WorkbenchImages.getWorkbenchImageDescriptor("elcl16/progress_rem.png")); //$NON-NLS-1$
-
-		JFaceResources.getImageRegistry().put(DISABLED_CLEAR_FINISHED_JOB_KEY,
-				WorkbenchImages.getWorkbenchImageDescriptor("dlcl16/progress_rem.png")); //$NON-NLS-1$
+		ImageDescriptor processRemoveDescriptor = WorkbenchImages
+				.getWorkbenchImageDescriptor("elcl16/progress_rem.png"); //$NON-NLS-1$
+		JFaceResources.getImageRegistry().put(CLEAR_FINISHED_JOB_KEY, processRemoveDescriptor);
+		ImageDescriptor disabledProcessRemoveDescriptor = ImageDescriptor.createWithFlags(processRemoveDescriptor,
+				SWT.IMAGE_DISABLE);
+		JFaceResources.getImageRegistry().put(DISABLED_CLEAR_FINISHED_JOB_KEY, disabledProcessRemoveDescriptor);
 
 		// Mac has different Gamma value
 		int shift = Util.isMac() ? -25 : -10;

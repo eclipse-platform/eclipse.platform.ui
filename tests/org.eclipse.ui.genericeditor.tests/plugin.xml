@@ -271,13 +271,13 @@
           point="org.eclipse.ui.genericeditor.icons">
         <icon
              contentType="org.eclipse.ui.genericeditor.tests.content-type"
-             icon="icons/newfile_wiz.png"/>
+             icon="icons/newfile_wiz.svg"/>
         <icon
              contentType="org.eclipse.ui.genericeditor.tests.specialized-content-type"
-             icon="icons/newfolder_wiz.png"/>
+             icon="icons/newfolder_wiz.svg"/>
         <icon
              contentType="org.eclipse.ui.genericeditor.tests.sub-specialized-content-type"
-             icon="platform:/plugin/org.eclipse.ui.ide/icons/full/etool16/newprj_wiz.png"/>
+             icon="platform:/plugin/org.eclipse.ui.ide/icons/full/etool16/newprj_wiz.svg"/>
     </extension>
     <extension
           point="org.eclipse.ui.genericeditor.quickAssistProcessors">

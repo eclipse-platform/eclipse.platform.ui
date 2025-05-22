@@ -1,14 +1,6 @@
 Menu Contributions/Problems View Example
 ========================================
 
-Contents
---------
-
-*   [1 Add ProblemView menus](#Add-ProblemView-menus)
-    *   [1.1 Commands](#Commands)
-    *   [1.2 Handlers](#Handlers)
-    *   [1.3 Menus](#Menus)
-    *   [1.4 Menus API](#Menus-API)
 
 Add ProblemView menus
 =====================

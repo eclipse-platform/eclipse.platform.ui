@@ -28,6 +28,7 @@ import org.osgi.framework.Bundle;
 class WorkbenchContributionFactory implements IContributionFactory {
 
 	private static final String BUNDLE_CLASS_PREFIX = "bundleclass://"; //$NON-NLS-1$
+	private static final String PLATFORM_PLUGIN_PREFIX = "platform:/plugin/"; //$NON-NLS-1$
 
 	private final IContributionFactory delegate;
 
@@ -61,6 +62,8 @@ class WorkbenchContributionFactory implements IContributionFactory {
 			String identifierId = uriString;
 			if (uriString.startsWith(BUNDLE_CLASS_PREFIX)) {
 				identifierId = uriString.substring(BUNDLE_CLASS_PREFIX.length());
+			} else if (uriString.startsWith(PLATFORM_PLUGIN_PREFIX)) {
+				identifierId = uriString.substring(PLATFORM_PLUGIN_PREFIX.length());
 			}
 			if (activitySupport == null) {
 				activitySupport = context.get(IWorkbenchActivitySupport.class);

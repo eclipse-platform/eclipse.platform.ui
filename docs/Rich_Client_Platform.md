@@ -8,24 +8,8 @@ Applications other than IDEs can be built using a subset of the platform.
 These rich applications are still based on a dynamic plug-in model, and the UI is built using the same toolkits and extension points. 
 The layout and function of the workbench is under fine-grained control of the plug-in developer in this case.
 
-For more details on what is included in the Rich Client Platform, see the [RCP FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_FAQ.md).
+For more details on what is included in the Rich Client Platform, see the [RCP FAQ](Rich_Client_Platform/Rich_Client_Platform_FAQ.md).
 
-Contents
---------
-
-*   [1 Case Studies](#Case-Studies)
-*   [2 FAQs](#FAQs)
-*   [3 Books on Eclipse RCP using 4.x API](#books-on-eclipse-rcp-using-4x-api)
-*   [4 Tutorials for Eclipse RCP with Eclipse 4 API](#Tutorials-for-Eclipse-RCP-with-Eclipse-4-API)
-*   [5 Tutorials covering older API levels](#Tutorials-covering-older-API-levels)
-*   [6 Presentations](#Presentations)
-*   [7 Help Topics](#Help-Topics)
-*   [8 Examples](#Examples)
-*   [9 Text Editor Examples](#Text-Editor-Examples)
-*   [10 Applications](#Applications)
-*   [11 Blogs](#Blogs)
-*   [12 Other Resources](#Other-Resources)
-*   [13 Original Design Documents](#Original-Design-Documents)
 
 Case Studies
 ------------
@@ -36,7 +20,7 @@ More are being added all the time so visit page from time to time to see what's 
 FAQs
 ----
 
-*   The [RCP FAQ](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_FAQ.md)
+*   The [RCP FAQ](Rich_Client_Platform/Rich_Client_Platform_FAQ.md)
 *   The [SWT FAQ](https://www.eclipse.org/swt/faq.php)
 
 Books on Eclipse RCP using 4.x API
@@ -74,7 +58,7 @@ Examples
 
 The usage of SWT and JFace is demonstrated in the following snippets:
 
-*   [SWT Snippets](https://www.eclipse.org/swt/snippets/) and [JFace Snippets](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceSnippets.md).
+*   [SWT Snippets](https://www.eclipse.org/swt/snippets/) and [JFace Snippets](JFaceSnippets.md).
 
 Text Editor Examples
 --------------------
@@ -91,7 +75,7 @@ Applications
 Several applications have been built using the Rich Client Platform.
 
 *   The RCP Catalog section of the [Eclipse Community page](http://eclipse.org/community) lists several apps, including case studies of a few.
-*   NASA/JPL is using Eclipse RCP as the foundation of their next version of Maestro, and more. See the [case study](http://eclipse.org/community/casestudies/NASAfinal.pdf). Jeff Norris from NASA/JPL also wrote a nice foreword to the [RCP Book](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Rich_Client_Platform/Rich_Client_Platform_Book.md).
+*   NASA/JPL is using Eclipse RCP as the foundation of their next version of Maestro, and more. See the [case study](http://eclipse.org/community/casestudies/NASAfinal.pdf). Jeff Norris from NASA/JPL also wrote a nice foreword to the [RCP Book](Rich_Client_Platform/Rich_Client_Platform_Book.md).
 
 Blogs and other Resources
 -------------------------

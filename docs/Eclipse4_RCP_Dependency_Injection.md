@@ -2,35 +2,6 @@ Eclipse4/RCP/Dependency Injection
 =================================
   
 
-Contents
---------
-
-*   [1 Overview](#Overview)
-*   [2 Standard Annotations and Classes](#Standard-Annotations-and-Classes)
-    *   [2.1 @Inject (jakarta.inject)](#inject-jakartainject)
-    *   [2.2 @Named (jakarta.inject)](#named-jakartainject)
-    *   [2.3 @Singleton (jakarta.inject)](#singleton-jakartainject)
-    *   [2.4 Provider (javax.inject)](#provider-javaxinject)
-    *   [2.5 @PostConstruct (jakarta.annotation), @PreDestroy(jakarta.annotation)](#postconstruct-jakartaannotation-predestroyjakartaannotation)
-*   [3 E4AP-specific Annotations](#e4ap-specific-annotations)
-    *   [3.1 @Optional (org.eclipse.e4.core.di.annotations)](#optional-orgeclipsee4corediannotations)
-    *   [3.2 @Active (org.eclipse.e4.core.contexts)](#active-orgeclipsee4corecontexts)
-    *   [3.3 @Preference (org.eclipse.e4.core.di.extensions)](#preference-orgeclipsee4corediextensions)
-    *   [3.4 @Creatable (org.eclipse.e4.core.di.annotations)](#creatable-orgeclipsee4corediannotations)
-    *   [3.5 @CanExecute, @Execute (org.eclipse.e4.core.di.annotations)](#.canexecute-execute-orgeclipsee4corediannotations)
-    *   [3.6 @Focus (org.eclipse.e4.ui.di)](#focus-orgeclipsee4uidi)
-    *   [3.7 @AboutToShow, @AboutToHide (org.eclipse.e4.ui.di)](#abouttoshow-abouttohide-orgeclipsee4uidi)
-    *   [3.8 @GroupUpdates (org.eclipse.e4.core.di.annotations)](#groupupdates-orgeclipsee4corediannotations)
-    *   [3.9 @EventTopic (org.eclipse.e4.core.di.extensions), @UIEventTopic (org.eclipse.e4.ui.di)](#eventtopic-orgeclipsee4corediextensions-uieventtopic-orgeclipsee4uidi)
-*   [4 Advanced Topics](#Advanced-Topics)
-    *   [4.1 Injection Order](#Injection-Order)
-    *   [4.2 Extending the DI Framework](#Extending-the-DI-Framework)
-    *   [4.3 Configuring Bindings](#Configuring-Bindings)
-*   [5 Debugging](#Debugging)
-*   [6 Considerations](#Considerations)
-*   [7 Current Caveats](#Current-Caveats)
-*   [8 Design Decisions](#Design-Decisions)
-
 Overview
 ========
 
@@ -131,7 +102,7 @@ However, if this annotation is specified, then:
 @Active (org.eclipse.e4.core.contexts)
 --------------------------------------
 
-@Active serves a similar purpose to @Named, indicating the the value should be resolved from the [active context](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_Contexts.md).
+@Active serves a similar purpose to @Named, indicating the the value should be resolved from the [active context](Eclipse4_RCP_Contexts.md).
 
 For example, a handler could obtain the active part with:
 
@@ -286,7 +257,7 @@ The setInfo() method will be triggered by a call to IEclipseContext#processWaiti
 
 The @EventTopic and @UIEventTopic annotations tag methods and fields that should be notified on event changes. 
 The @UIEventTopic ensures the event notification is performed in the UI thread. Both the event's DATA object and the actual OSGi Event object (org.osgi.service.event.Event) is available. 
-See the [Events](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Event_Model.md) section for more details about events.
+See the [Events](Event_Model.md) section for more details about events.
 
     @Inject
     public void setSelection(@EventTopic(REFRESH_EVENT) Object data) {
@@ -296,7 +267,7 @@ See the [Events](https://github.com/eclipse-platform/eclipse.platform.ui/blob/ma
 Advanced Topics
 ===============
 
-Injection is performed using the active [context](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_Contexts.md). 
+Injection is performed using the active [context](Eclipse4_RCP_Contexts.md). 
 Changes to values in the context will trigger re-injection.
 
 *   *   Adding, setting, or modifying variables

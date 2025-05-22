@@ -1,14 +1,6 @@
 Menu Contributions/Toggle Mark Occurrences
 ==========================================
 
-Contents
---------
-
-*   [1 Add Toggle Mark Occurrences to main toolbar](#Add-Toggle-Mark-Occurrences-to-main-toolbar)
-    *   [1.1 Commands](#Commands)
-    *   [1.2 Handlers](#Handlers)
-    *   [1.3 Menus](#Menus)
-    *   [1.4 Menus API](#Menus-API)
 
 Add Toggle Mark Occurrences to main toolbar
 ===========================================

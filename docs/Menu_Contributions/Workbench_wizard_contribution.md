@@ -54,5 +54,5 @@ You can add your new/import/export wizards to a menu/toolbar via Command contrib
 
 Would result in:
 
-![Workbench-wizard-commands.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Workbench-wizard-commands.png)
+![Workbench-wizard-commands.png](../images/Workbench-wizard-commands.png)
 

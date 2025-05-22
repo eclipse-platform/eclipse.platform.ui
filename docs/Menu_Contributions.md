@@ -5,27 +5,6 @@ Menu Contributions
 
 Placement examples that describe the proposed new way of placing menu items for **3.3**. Please contribute comments and suggestions in the discussion area or on [Bug 154130 -KeyBindings- Finish re-work of commands and key bindings](https://bugs.eclipse.org/bugs/show_bug.cgi?id=154130).
 
-Contents
---------
-
-*   [1 Placement and visibility](#Placement-and-visibility)
-*   [2 Example Matrix](#Example-Matrix)
-*   [3 Menu XML](#Menu-XML)
-    *   [3.1 Declarative menus - some constraints](#Declarative-menus---some-constraints)
-    *   [3.2 Menu URIs](#Menu-URIs)
-        *   [3.2.1 menu:](#menu)
-        *   [3.2.2 toolbar:](#toolbar)
-        *   [3.2.3 popup:](#popup)
-    *   [3.3 Using Expressions in <visibleWhen/>](#Uusing-expressions-in-visiblewhen)
-    *   [3.4 Ideas that were considered but not implemented](#Ideas-that-were-considered-but-not-implemented)
-        *   [3.4.1 Menu - JSR198](#Menu---JSR198)
-        *   [3.4.2 Menu - XUL](#Menu---XUL)
-        *   [3.4.3 Expression Templates original suggestion](#Expression-Templates-original-suggestion)
-        *   [3.4.4 Another Expression Alternative: Specify Context at Extension Level](#Another-Expression-Alternative-Specify-Context-at-Extension-Level)
-*   [4 Updating the menu and toolbar appearance](#Updating-the-menu-and-toolbar-appearance)
-    *   [4.1 UIElements represent each UI visible instance of a command](#UIElements-represent-each-UI-visible-instance-of-a-command)
-    *   [4.2 State associated with the command is propagated to UI visible elements](#State-associated-with-the-command-is-propagated-to-UI-visible-elements)
-
 
 Placement and visibility
 ========================

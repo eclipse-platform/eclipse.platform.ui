@@ -716,14 +716,14 @@
  
 	   <editor
             class="org.eclipse.ui.tests.api.MockEditorPart"
-            icon="platform:/plugin/org.eclipse.ui/icons/full/obj16/font.png"
+            icon="platform:/plugin/org.eclipse.ui/icons/full/obj16/font.svg"
             default="true"
             name="Plugin Icon Test 1"
             id="org.eclipse.ui.tests.IconTestEditor1"
             extensions="icontest1"/>            
        <editor
             class="org.eclipse.ui.tests.api.MockEditorPart"
-            icon="platform:/plugin/org.eclipse.debug.ui/icons/full/obj16/file_obj.png"
+            icon="platform:/plugin/org.eclipse.debug.ui/icons/full/obj16/file_obj.svg"
             default="true"
             name="Plugin Icon Test 2"
             id="org.eclipse.ui.tests.IconTestEditor2"

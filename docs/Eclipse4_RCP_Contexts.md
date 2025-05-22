@@ -2,30 +2,10 @@ Eclipse4/RCP/Contexts
 =====================
 
 The Eclipse 4 Application Platform manages state and services using a set of _contexts_; this information is used for injection. 
-Contexts are used as the sources for [Dependency Injection](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Eclipse4_RCP_Dependency_Injection.md). 
+Contexts are used as the sources for [Dependency Injection](Eclipse4_RCP_Dependency_Injection.md). 
 In this respect, they are somewhat analogous to _modules_ in Guice. 
 Normally code should not have to use or know about the context.
 
-  
-
-Contents
---------
-
-*   [1 What is a Context?](#What-is-a-Context)
-*   [2 The Use of Contexts in Eclipse 4](#The-Use-of-Contexts-in-Eclipse-4)
-*   [3 Context Variables](#Context-Variables)
-*   [4 Context Chains and the Active Context](#Context-Chains-and-the-Active-Context)
-*   [5 Context Functions](#Context-Functions)
-*   [6 Run And Tracks](#Run-And-Tracks)
-*   [7 Exposing Services and State on an Eclipse Context](#Exposing-Services-and-State-on-an-Eclipse-Context)
-    *   [7.1 Context Functions](#context-functions-1)
-    *   [7.2 OSGi Services](#OSGi-Services)
-    *   [7.3 Context Functions Exposed As OSGi Declarative Services](#Context-Functions-Exposed-As-OSGi-Declarative-Services)
-*   [8 Creating New Contexts](#Creating-New-Contexts)
-*   [9 Advanced Topics](#Advanced-Topics)
-    *   [9.1 How do I access the current context?](#How-do-I-access-the-current-context)
-    *   [9.2 @Active vs ACTIVE_*](#active-vs-active_)
-*   [10 References](#References)
 
 What is a Context?
 ------------------
@@ -36,7 +16,7 @@ A context (a IEclipseContext) is a hierarchical key-value map. The keys are stri
 The Use of Contexts in Eclipse 4
 --------------------------------
 
-![300px-Ui-context-hierarchy.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/300px-Ui-context-hierarchy.png)
+![300px-Ui-context-hierarchy.png](images/300px-Ui-context-hierarchy.png)
 
 
 Eclipse 4 associates contexts to the container elements in the UI
@@ -85,7 +65,7 @@ By declaring a context variable for the master server, if we later decide that w
 Context Chains and the Active Context
 -------------------------------------
 
-![300px-Ui-contexts-active.png](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/300px-Ui-contexts-active.png)
+![300px-Ui-contexts-active.png](images/300px-Ui-contexts-active.png)
 
 The editor is the active leaf
 

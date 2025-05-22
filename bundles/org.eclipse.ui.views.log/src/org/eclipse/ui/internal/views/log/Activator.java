@@ -65,22 +65,14 @@ public class Activator extends AbstractUIPlugin {
 		registerImageDescriptor(registry, SharedImages.DESC_HIERARCHICAL_LAYOUT_OBJ);
 
 		registerImageDescriptor(registry, SharedImages.DESC_CLEAR);
-		registerImageDescriptor(registry, SharedImages.DESC_CLEAR_DISABLED);
 		registerImageDescriptor(registry, SharedImages.DESC_OPEN_CONSOLE);
 		registerImageDescriptor(registry, SharedImages.DESC_REMOVE_LOG);
-		registerImageDescriptor(registry, SharedImages.DESC_REMOVE_LOG_DISABLED);
 		registerImageDescriptor(registry, SharedImages.DESC_EXPORT);
-		registerImageDescriptor(registry, SharedImages.DESC_EXPORT_DISABLED);
 		registerImageDescriptor(registry, SharedImages.DESC_FILTER);
-		registerImageDescriptor(registry, SharedImages.DESC_FILTER_DISABLED);
 		registerImageDescriptor(registry, SharedImages.DESC_IMPORT);
-		registerImageDescriptor(registry, SharedImages.DESC_IMPORT_DISABLED);
 		registerImageDescriptor(registry, SharedImages.DESC_OPEN_LOG);
-		registerImageDescriptor(registry, SharedImages.DESC_OPEN_LOG_DISABLED);
 		registerImageDescriptor(registry, SharedImages.DESC_PROPERTIES);
-		registerImageDescriptor(registry, SharedImages.DESC_PROPERTIES_DISABLED);
 		registerImageDescriptor(registry, SharedImages.DESC_READ_LOG);
-		registerImageDescriptor(registry, SharedImages.DESC_READ_LOG_DISABLED);
 	}
 
 	private void registerImageDescriptor(ImageRegistry registry, String id) {

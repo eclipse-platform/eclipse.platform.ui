@@ -18,6 +18,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.function.Supplier;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
@@ -76,6 +78,9 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	ImageDescriptor(boolean shouldBeCached) {
 		super(shouldBeCached);
 	}
+
+	private static final ImageDescriptor NULL_IMAGE = createFromImageDataProvider(z -> null);
+
 	/**
 	 * Creates and returns a new image descriptor from a file.
 	 *
@@ -84,7 +89,22 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 * @return a new image descriptor
 	 */
 	public static ImageDescriptor createFromFile(Class<?> location, String filename) {
-		return new FileImageDescriptor(location, filename);
+		URL url;
+		if (location == null) {
+			try {
+				// Use IPath, which can handle illegal path's on Windows like: /C:/data/other
+				url = IPath.fromOSString(filename).toPath().toUri().toURL();
+			} catch (MalformedURLException e) {
+				Policy.logException(e);
+				url = null;
+			}
+		} else {
+			url = location.getResource(filename);
+		}
+		if (url == null) {
+			return NULL_IMAGE; // Defer failure to the time when the image is created
+		}
+		return new URLImageDescriptor(url);
 	}
 
 	/**

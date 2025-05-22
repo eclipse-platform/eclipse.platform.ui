@@ -1,18 +1,6 @@
 JFace Data Binding/FAQ
 ======================
 
-Contents
---------
-
-*   [1 Where can I ask a question?](#Where-can-I-ask-a-question)
-*   [2 How do I report a bug?](#How-do-I-report-a-bug)
-*   [3 Where can I find examples of how to use data binding?](#Where-can-I-find-examples-of-how-to-use-data-binding)
-*   [4 Where can I get the plugins?](#Where-can-I-get-the-plugins)
-*   [5 What is a Realm, and do I need to care?](#What-is-a-Realm.2C-and-do-I-need-to-care)
-*   [6 Does Data Binding depend on Eclipse and the OSGi runtime?](#Does-Data-Binding-depend-on-Eclipse-and-the-OSGi-runtime)
-*   [7 Does Data Binding depend on SWT?](#Does-Data-Binding-depend-on-SWT)
-*   [8 How do I run the tests?](#How-do-I-run-the-tests)
-*   [9 Can JFace Data Binding run against older versions of Eclipse?](#Can-JFace-Data-Binding-run-against-older-versions-of-Eclipse)
 
 ### Where can I ask a question?
 
@@ -24,7 +12,7 @@ Create an issue on [GitHub](https://github.com/eclipse-platform/eclipse.platform
 
 ### Where can I find examples of how to use data binding?
 
-Have a look at our collection of [Snippets](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceDataBinding.md#snippets).
+Have a look at our collection of [Snippets](JFaceDataBinding.md#snippets).
 
 
 ### Where can I get the plugins?
@@ -76,7 +64,7 @@ The databinding framework is accessible using Maven with these dependencies:
 
 ### What is a Realm, and do I need to care?
 
-The data binding core plug-in does not depend on SWT but needs to talk about "being on the UI thread" in the abstract. The class Realm is similar to SWT's Display class - you can call Realm.asyncExec(Runnable) to execute code within a realm (read: on the UI thread), but it does not have any UI-specific methods or fields. If your UI is the only source of changes to your model, then everything will happen on the UI thread anyway and you don't have to worry about realms. **Workbench#createAndRunWorkbench** will initialize the default realm to be associated with the SWT UI thread if you are writing an RCP application, or a plug-in for the Eclipse Platform. If you are writing an application that only uses SWT, data binding, and optionally JFace, you will have to provide the realm explicitly, or set up a default realm in your main method. All of our [Snippets](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceDataBinding.md#snippets) do this - they are standalone applications that just use SWT and JFace. For more information, see the wiki page about [Realm](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceDataBinding.md#Realm).
+The data binding core plug-in does not depend on SWT but needs to talk about "being on the UI thread" in the abstract. The class Realm is similar to SWT's Display class - you can call Realm.asyncExec(Runnable) to execute code within a realm (read: on the UI thread), but it does not have any UI-specific methods or fields. If your UI is the only source of changes to your model, then everything will happen on the UI thread anyway and you don't have to worry about realms. **Workbench#createAndRunWorkbench** will initialize the default realm to be associated with the SWT UI thread if you are writing an RCP application, or a plug-in for the Eclipse Platform. If you are writing an application that only uses SWT, data binding, and optionally JFace, you will have to provide the realm explicitly, or set up a default realm in your main method. All of our [Snippets](JFaceDataBinding.md#snippets) do this - they are standalone applications that just use SWT and JFace. For more information, see the wiki page about [Realm](JFaceDataBinding.md#Realm).
 
 ### Does Data Binding depend on Eclipse and the OSGi runtime?
 
@@ -84,7 +72,7 @@ The core Data Binding plug-in only depends on org.eclipse.equinox.common, but no
 
 See [Where can I get the plugins?](#Where-can-I-get-the-plugins) for information about downloading the framework.
 
-See also [JFace Data Binding/Runtime Dependencies](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/JFaceDataBinding.md#runtime-dependencies).
+See also [JFace Data Binding/Runtime Dependencies](JFaceDataBinding.md#runtime-dependencies).
 
 ### Does Data Binding depend on SWT?
 

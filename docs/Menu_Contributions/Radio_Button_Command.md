@@ -1,18 +1,6 @@
 Menu Contributions/Radio Button Command
 =======================================
 
-Contents
---------
-
-*   [1 Eclipse 3.5 or later](#Eclipse-3.5-or-later)
-    *   [1.1 Command Definition](#Command-Definition)
-    *   [1.2 Handler](#Handler)
-    *   [1.3 Menu Contribution](#Menu-Contribution)
-*   [2 Eclipse 3.4 or earlier](#Eclipse-3.4-or-earlier)
-    *   [2.1 Command Definition](#Command-Definition-2)
-    *   [2.2 Handler](#Handler-2)
-    *   [2.3 Menu Contribution](#Menu-Contribution-2)
-    *   [2.4 Initializing the Handler](#Initializing-the-Handler)
 
 Eclipse 3.5 or later
 ====================

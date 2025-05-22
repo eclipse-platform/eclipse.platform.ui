@@ -1,16 +1,6 @@
 Eclipse Event Processing
 ========================
 
-Contents
---------
-
-*   [1 Event Notifications in E4](#Event-Notifications-in-Eclipse)
-*   [2 What is the Problem with the observer pattern?](#what-is-the-problem-with-the-observer-pattern)
-*   [3 Using publish and subscribe](#Using-publish-and-subscribe)
-*   [4 Eclipse-specific design parameters](#Eclipse-specific-design-parameters)
-*   [5 EventAdmin: pros and cons](#EventAdmin-pros-and-cons)
-*   [6 Conclusion](#Conclusion)
-*   [7 References](#References)
 
 Event Notifications in Eclipse
 ------------------------------
@@ -26,7 +16,7 @@ The [observer pattern](http://en.wikipedia.org/wiki/Observer_pattern) pattern)  
 However, two drawbacks became apparent as its usage grew: _forced lifecycle_ and _multiple implementations_.
 
 
-![Observer pattern](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Events_listener.png)
+![Observer pattern](images/Events_listener.png)
 
 I use "_forced lifecycle_" term to describe a situation in which lifecycle of the listener is tied to the lifecycle of the event provider. The listener can't subscribe to the event before event provider is instantiated. On the other end, the listener has to be decommissioned when the event provider is disposed. This seemingly small detail of tying the lifecycles translates into a lot of extra code and, depending on the application, might become a major bug source.
 
@@ -38,7 +28,7 @@ Using publish and subscribe
 Yes. There is a different event processing pattern commonly referred to as the [publish/subscribe](http://en.wikipedia.org/wiki/Publish/subscribe) approach.
 
 
-![Publish/subscribe pattern](https://raw.githubusercontent.com/eclipse-platform/eclipse.platform.ui/master/docs/images/Events_subscribe.png)
+![Publish/subscribe pattern](images/Events_subscribe.png)
 
 
 The main difference is that an intermediary is introduced between the sender and the receiver: events are published to the Event Broker which dispatches them to the listeners subscribed to this event type.

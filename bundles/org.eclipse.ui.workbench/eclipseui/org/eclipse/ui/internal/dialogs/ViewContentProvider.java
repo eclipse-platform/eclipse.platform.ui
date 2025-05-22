@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -173,13 +174,28 @@ public class ViewContentProvider implements ITreeContentProvider {
 	private boolean isFilteredByActivity(MPartDescriptor descriptor) {
 		IViewDescriptor view = viewRegistry.find(descriptor.getElementId());
 
-		// viewRegistry.find(...) already applies a filtering for views disabled via core expressions
+		// viewRegistry.find(...) already applies a filtering for views disabled via
+		// core expressions
 		boolean isFiltered = (view == null) || WorkbenchActivityHelper.filterItem(view);
 
 		// E3 views can be detected by checking whether they use the compatibility layer
 		boolean isE3View = CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(descriptor.getContributionURI());
 
-		// filtering can only be applied to E3 views, as activities don't exist in the Eclipse 4.
-		return isE3View && isFiltered;
+		if (isE3View) {
+			// filtering for E3 contributions is easy
+			return isFiltered;
+		}
+		// Extra checks for filtering of e4 contributions
+		if (view == null) {
+			IContributionFactory contributionFactory = application.getContext().get(IContributionFactory.class);
+			if (contributionFactory != null) {
+				String uriToCheck = descriptor.getContributionURI();
+				if (uriToCheck == null) {
+					uriToCheck = descriptor.getContributorURI();
+				}
+				return !contributionFactory.isEnabled(uriToCheck);
+			}
+		}
+		return false;
 	}
 }

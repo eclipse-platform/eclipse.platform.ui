@@ -130,7 +130,6 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setId(NEXT_CHANGE_ID);
 			setImageDescriptor(CompareUI.DESC_ETOOL_NEXT);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_NEXT);
-			setHoverImageDescriptor(CompareUI.DESC_CTOOL_NEXT);
 			setToolTipText(RefactoringUIMessages.PreviewWizardPage_next_Change);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_CHANGE_ACTION);
 		}
@@ -145,7 +144,6 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setId(PREVIOUS_CHANGE_ID);
 			setImageDescriptor(CompareUI.DESC_ETOOL_PREV);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_PREV);
-			setHoverImageDescriptor(CompareUI.DESC_CTOOL_PREV);
 			setToolTipText(RefactoringUIMessages.PreviewWizardPage_previous_Change);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_CHANGE_ACTION);
 		}

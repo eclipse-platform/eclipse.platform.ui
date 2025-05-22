@@ -14,7 +14,6 @@
 package org.eclipse.jface.tests.widgets;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -27,7 +26,7 @@ public class AbstractFactoryTest {
 
 	@BeforeClass
 	public static void classSetup() {
-		image = new Image(null, new Rectangle(1, 1, 1, 1));
+		image = new Image(null, 1, 1);
 	}
 
 	@Before

@@ -17,6 +17,7 @@ import java.net.URL;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -42,29 +43,29 @@ class TemplatesPageImages {
 
 	static final String PREFIX_OBJ= TextEditorPlugin.PLUGIN_ID + ".obj."; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_NEW= PREFIX_ELCL + "new_template.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_NEW = PREFIX_ELCL + "new_template.svg"; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_DELETE= PREFIX_ELCL + "delete_template.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_DELETE = PREFIX_ELCL + "delete_template.svg"; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_EDIT= PREFIX_ELCL + "edit_template.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_EDIT = PREFIX_ELCL + "edit_template.svg"; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_INSERT= PREFIX_ELCL + "insert_template.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_INSERT = PREFIX_ELCL + "insert_template.svg"; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_LINK= PREFIX_ELCL + "link_to_editor.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_LINK = PREFIX_ELCL + "link_to_editor.svg"; //$NON-NLS-1$
 
-	public static final String IMG_ELCL_TEMPLATE_COLLAPSE_ALL= PREFIX_ELCL + "collapseall.png"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TEMPLATE_COLLAPSE_ALL = PREFIX_ELCL + "collapseall.svg"; //$NON-NLS-1$
 
-	public static final String IMG_DLCL_TEMPLATE_DELETE= PREFIX_DLCL + "delete_template.png"; //$NON-NLS-1$
+	public static final String IMG_DLCL_TEMPLATE_DELETE = PREFIX_DLCL + "delete_template.svg"; //$NON-NLS-1$
 
-	public static final String IMG_DLCL_TEMPLATE_EDIT= PREFIX_DLCL + "edit_template.png"; //$NON-NLS-1$
+	public static final String IMG_DLCL_TEMPLATE_EDIT = PREFIX_DLCL + "edit_template.svg"; //$NON-NLS-1$
 
-	public static final String IMG_DLCL_TEMPLATE_INSERT= PREFIX_DLCL + "insert_template.png"; //$NON-NLS-1$
+	public static final String IMG_DLCL_TEMPLATE_INSERT = PREFIX_DLCL + "insert_template.svg"; //$NON-NLS-1$
 
-	public static final String IMG_OBJ_PREVIEW= PREFIX_OBJ + "preview.png"; //$NON-NLS-1$
+	public static final String IMG_OBJ_PREVIEW = PREFIX_OBJ + "preview.svg"; //$NON-NLS-1$
 
-	public static final String IMG_OBJ_CONTEXT= PREFIX_OBJ + "context.png"; //$NON-NLS-1$
+	public static final String IMG_OBJ_CONTEXT = PREFIX_OBJ + "context.svg"; //$NON-NLS-1$
 
-	public static final String IMG_OBJ_TEMPLATE= PREFIX_OBJ + "template_obj.png"; //$NON-NLS-1$
+	public static final String IMG_OBJ_TEMPLATE = PREFIX_OBJ + "template_obj.svg"; //$NON-NLS-1$
 
 	/**
 	 * The image registry containing {@link Image images}.
@@ -77,8 +78,6 @@ class TemplatesPageImages {
 	// slashes correct
 	private final static String ELCL= ICONS_PATH + "elcl16/"; //$NON-NLS-1$
 
-	private final static String DLCL= ICONS_PATH + "dlcl16/"; //$NON-NLS-1$
-
 	private final static String OBJ= ICONS_PATH + "obj16/"; //$NON-NLS-1$
 
 	/**
@@ -86,19 +85,16 @@ class TemplatesPageImages {
 	 */
 	private static void declareImages() {
 		// Ant Editor images
-		declareRegistryImage(IMG_ELCL_TEMPLATE_NEW, ELCL + "new_template.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_ELCL_TEMPLATE_INSERT, ELCL + "insert_template.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_DLCL_TEMPLATE_INSERT, DLCL + "insert_template.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_ELCL_TEMPLATE_DELETE, ELCL + "delete_template.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_DLCL_TEMPLATE_DELETE, DLCL + "delete_template.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_ELCL_TEMPLATE_EDIT, ELCL + "edit_template.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_DLCL_TEMPLATE_EDIT, DLCL + "edit_template.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_ELCL_TEMPLATE_LINK, ELCL + "link_to_editor.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_ELCL_TEMPLATE_COLLAPSE_ALL, ELCL + "collapseall.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_NEW, ELCL + "new_template.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_INSERT, IMG_DLCL_TEMPLATE_INSERT, ELCL + "insert_template.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_DELETE, IMG_DLCL_TEMPLATE_DELETE, ELCL + "delete_template.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_EDIT, IMG_DLCL_TEMPLATE_EDIT, ELCL + "edit_template.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_LINK, ELCL + "link_to_editor.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_ELCL_TEMPLATE_COLLAPSE_ALL, ELCL + "collapseall.svg"); //$NON-NLS-1$
 
-		declareRegistryImage(IMG_OBJ_PREVIEW, OBJ + "preview.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJ_CONTEXT, OBJ + "context.png"); //$NON-NLS-1$
-		declareRegistryImage(IMG_OBJ_TEMPLATE, OBJ + "template_obj.png"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJ_PREVIEW, OBJ + "preview.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJ_CONTEXT, OBJ + "context.svg"); //$NON-NLS-1$
+		declareRegistryImage(IMG_OBJ_TEMPLATE, OBJ + "template_obj.svg"); //$NON-NLS-1$
 	}
 
 	/**
@@ -109,6 +105,10 @@ class TemplatesPageImages {
 	 *            class is found (i.e. typically the packages directory)
 	 */
 	private final static void declareRegistryImage(String key, String path) {
+		declareRegistryImage(key, null, path);
+	}
+
+	private final static void declareRegistryImage(String key, String disabledKey, String path) {
 		ImageDescriptor desc= ImageDescriptor.getMissingImageDescriptor();
 		Bundle bundle= Platform.getBundle(TextEditorPlugin.PLUGIN_ID);
 		URL url= null;
@@ -117,6 +117,10 @@ class TemplatesPageImages {
 			desc= ImageDescriptor.createFromURL(url);
 		}
 		fgImageRegistry.put(key, desc);
+		if (disabledKey != null) {
+			ImageDescriptor disabledDescriptor = ImageDescriptor.createWithFlags(desc, SWT.IMAGE_DISABLE);
+			fgImageRegistry.put(disabledKey, disabledDescriptor);
+		}
 	}
 
 	/**
@@ -141,7 +145,7 @@ class TemplatesPageImages {
 	 * toolbar ELCL_ Local Disable toolbar DLCL_ Object large OBJL_ Object small OBJS_ View VIEW_
 	 * Product images PROD_ Misc images MISC_
 	 *
-	 * Where are the images? The images (typically pngs) are found in the same location as this
+	 * Where are the images? The images (typically SVGs) are found in the same location as this
 	 * plugin class. This may mean the same package directory as the package holding this class. The
 	 * images are declared using this.getClass() to ensure they are looked up via this plugin class.
 	 *

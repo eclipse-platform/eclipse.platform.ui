@@ -3,25 +3,11 @@ Command Core Expressions
 
 Core expressions are declarative or programmatic expressions based on the org.eclipse.core.expressions plugin.
 
-Contents
---------
-
-*   [1 Expressions and the Command Framework](#Expressions-and-the-Command-Framework)
-*   [2 Variables and the Command Framework](#Variables-and-the-Command-Framework)
-*   [3 Property Testers](#Property-Testers)
-*   [4 Expression examples](#Expression-examples)
-    *   [4.1 Basic IStructuredSelection](#Basic-IStructuredSelection)
-    *   [4.2 Package Explorer IStructuredSelection](#Package-Explorer-IStructuredSelection)
-    *   [4.3 Active editor type](#Active-editor-type)
-    *   [4.4 Complex nested boolean expressions](#Complex-nested-boolean-expressions)
-*   [5 New Core Expressions in 3.3](#New-Core-Expressions-in-33)
-    *   [5.1 count and iterate](#count-and-iterate)
-    *   [5.2 definitions](#definitions)
 
 Expressions and the Command Framework
 =====================================
 
-The [Platform Command Framework](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/PlatformCommandFramework.md) uses [core expressions](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/docs/Platform_Expression_Framework.md) for enabledWhen and activeWhen for handlers, programmatic activation of contexts, and for visibleWhen for menu contributions. 
+The [Platform Command Framework](PlatformCommandFramework.md) uses [core expressions](Platform_Expression_Framework.md) for enabledWhen and activeWhen for handlers, programmatic activation of contexts, and for visibleWhen for menu contributions. 
 The command framework provides the IEvaluationContext that command core expressions are evaluate against.
 
 The IEvaluationContext provides a default variable for evaluations, and a number of named variables. 

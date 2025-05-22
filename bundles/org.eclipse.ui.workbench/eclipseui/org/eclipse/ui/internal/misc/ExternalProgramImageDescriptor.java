@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.misc;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.program.Program;
@@ -23,7 +24,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
  * The external program image descriptor is the descriptor used to handle images
  * that are from a Program.
  */
-public class ExternalProgramImageDescriptor extends ImageDescriptor {
+public class ExternalProgramImageDescriptor extends ImageDescriptor implements IAdaptable {
 
 	private Program program;
 
@@ -72,5 +73,13 @@ public class ExternalProgramImageDescriptor extends ImageDescriptor {
 			return program.hashCode();
 		}
 		return programName.hashCode();
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter == Program.class) {
+			return adapter.cast(program);
+		}
+		return null;
 	}
 }

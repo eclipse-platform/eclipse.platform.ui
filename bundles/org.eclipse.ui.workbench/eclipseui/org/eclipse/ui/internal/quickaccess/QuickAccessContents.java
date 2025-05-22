@@ -272,6 +272,7 @@ public abstract class QuickAccessContents {
 		return showAllMatches;
 	}
 
+	@SuppressWarnings("removal")
 	private void refreshTable(QuickAccessElement perfectMatch, List<QuickAccessEntry>[] entries, String filter) {
 		if (table.isDisposed()) {
 			return;

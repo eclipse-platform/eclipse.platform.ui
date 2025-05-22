@@ -57,7 +57,7 @@ public class MenuHelperTest {
 		assertNotNull(uri);
 		// contribution specifies "IMG_OBJ_FOLDER"
 		assertEquals(
-				"platform:/plugin/org.eclipse.ui/icons/full/obj16/fldr_obj.png",
+				"platform:/plugin/org.eclipse.ui/icons/full/obj16/fldr_obj.svg",
 				uri);
 	}
 }

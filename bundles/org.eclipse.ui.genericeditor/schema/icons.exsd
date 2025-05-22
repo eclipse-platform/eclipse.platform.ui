@@ -99,7 +99,7 @@
  point=&quot;org.eclipse.ui.genericeditor.icons&quot;&gt;
   &lt;icon
   contentType=&quot;org.eclipse.core.runtime.xml&quot;
-  icon=&quot;icons/xml_content.png&quot; /&gt;
+  icon=&quot;icons/xml_content.svg&quot; /&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;pre&gt;
@@ -107,7 +107,7 @@
  point=&quot;org.eclipse.ui.genericeditor.icons&quot;&gt;
   &lt;icon
   contentType=&quot;org.eclipse.core.runtime.text&quot;
-  icon=&quot;platform:/plugin/org.eclipse.ui.test/icons/text_content.png&quot; /&gt;
+  icon=&quot;platform:/plugin/org.eclipse.ui.test/icons/text_content.svg&quot; /&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
       </documentation>

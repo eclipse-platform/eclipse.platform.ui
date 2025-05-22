@@ -381,6 +381,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			WorkbenchPlugin.log("Failed to set SWT renderer preferences", e); //$NON-NLS-1$
 		}
 
+		boolean showRestartDialog = false;
+		String restartDialogTitle = null;
+		String restartDialogMessage = null;
+
 		if (engine != null) {
 			ITheme theme = getSelectedTheme();
 			boolean themeChanged = theme != null && !theme.equals(currentTheme);
@@ -400,15 +404,24 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			colorFontsDecorator.hide();
 
 			if (themeChanged || colorsAndFontsThemeChanged) {
-				showRestartDialog(WorkbenchMessages.ThemeChangeWarningTitle, WorkbenchMessages.ThemeChangeWarningText);
+				showRestartDialog = true;
+				restartDialogTitle = WorkbenchMessages.ThemeChangeWarningTitle;
+				restartDialogMessage = WorkbenchMessages.ThemeChangeWarningText;
 			}
 		}
 		if (themingEnabledChanged) {
-			showRestartDialog(WorkbenchMessages.ThemeChangeWarningTitle, WorkbenchMessages.ThemeChangeWarningText);
+			showRestartDialog = true;
+			restartDialogTitle = WorkbenchMessages.ThemeChangeWarningTitle;
+			restartDialogMessage = WorkbenchMessages.ThemeChangeWarningText;
 		}
 		if (isRescaleAtRuntimeChanged) {
-			showRestartDialog(WorkbenchMessages.RescaleAtRuntimeSettingChangeWarningTitle,
-					WorkbenchMessages.RescaleAtRuntimeSettingChangeWarningText);
+			showRestartDialog = true;
+			restartDialogTitle = WorkbenchMessages.RescaleAtRuntimeSettingChangeWarningTitle;
+			restartDialogMessage = WorkbenchMessages.RescaleAtRuntimeSettingChangeWarningText;
+		}
+
+		if (showRestartDialog) {
+			showRestartDialog(restartDialogTitle, restartDialogMessage);
 		}
 
 		return super.performOk();

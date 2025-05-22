@@ -46,11 +46,11 @@ public class RefactoringPluginImages {
 	public static final ImageDescriptor DESC_WIZBAN_REFACTOR= createUnManaged(T_WIZBAN, "refactor_wiz.svg"); 			//$NON-NLS-1$
 
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_WIZBAN_SHOW_HISTORY= createUnManaged(T_WIZBAN, "show_history_wiz.png"); 			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_SHOW_HISTORY= createUnManaged(T_WIZBAN, "show_history_wiz.svg"); 			//$NON-NLS-1$
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_WIZBAN_APPLY_SCRIPT= createUnManaged(T_WIZBAN, "apply_rescript_wiz.png"); 			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_APPLY_SCRIPT= createUnManaged(T_WIZBAN, "apply_rescript_wiz.svg"); 			//$NON-NLS-1$
 	/** @since 3.2 */
-	public static final ImageDescriptor DESC_WIZBAN_CREATE_SCRIPT= createUnManaged(T_WIZBAN, "create_rescript_wiz.png"); 			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_CREATE_SCRIPT= createUnManaged(T_WIZBAN, "create_rescript_wiz.svg"); 			//$NON-NLS-1$
 
 	public static final String IMG_OBJS_REFACTORING_FATAL= NAME_PREFIX + "fatalerror_obj.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_REFACTORING_ERROR= NAME_PREFIX + "error_obj.svg"; //$NON-NLS-1$
@@ -140,12 +140,7 @@ public class RefactoringPluginImages {
 	//---- Helper methods to access icons on the file system --------------------------------------
 
 	private static void setImageDescriptors(IAction action, String type, String relPath) {
-		ImageDescriptor id= create("d" + type, relPath, false); //$NON-NLS-1$
-		if (id != null)
-			action.setDisabledImageDescriptor(id);
-
 		ImageDescriptor descriptor= create("e" + type, relPath, true); //$NON-NLS-1$
-		action.setHoverImageDescriptor(descriptor);
 		action.setImageDescriptor(descriptor);
 	}
 
