@@ -143,14 +143,14 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 		ImageDataProvider imageDataProvider = zoom -> {
 
 			float scaleFactor = (float) ((zoom) / 100.0);
-			int scaled_width = Math.round(width * scaleFactor);
-			int scaled_height = Math.round(height * scaleFactor);
-			ImageData imageData = new ImageData(scaled_width, scaled_height,
+			int scaledWidth = Math.round(width * scaleFactor);
+			int scaledHeight = Math.round(height * scaleFactor);
+			ImageData imageData = new ImageData(scaledWidth, scaledHeight,
 					1,
 					createPalette(display, rangeIndicatorColor));
 			int blockSize = Math.round(scaleFactor);
-			for (int y = 0; y < scaled_height; y++)
-				for (int x = 0; x < scaled_width; x++) {
+			for (int y = 0; y < scaledHeight; y++)
+				for (int x = 0; x < scaledWidth; x++) {
 					if (((x / blockSize) + (y / blockSize)) % 2 == 0) {
 						imageData.setPixel(x, y, 1);
 					}
