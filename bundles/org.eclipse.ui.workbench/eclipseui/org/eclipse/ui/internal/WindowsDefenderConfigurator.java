@@ -340,13 +340,12 @@ public class WindowsDefenderConfigurator implements EventHandler {
 		// https://learn.microsoft.com/en-us/powershell/module/defender/add-mppreference?view=windowsserver2019-ps
 		// https://learn.microsoft.com/en-us/powershell/module/defender/get-mppreference?view=windowsserver2019-ps
 		//
-		// For .NET's stream API called LINQ see:
-		// https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable
-		String excludedPaths = paths.stream().map(Path::toString).map(p -> "'" + p.replace("'", "''") + "'")
-				.collect(Collectors.joining(','));
-		return String.join(";",
-				"$pathsToExclude = @(" + excludedPaths + ")",
-				"Add-MpPreference -ExclusionProcess $pathsToExclude"
+		// For detailed explanations about how to add new exclusions see:
+		// https://learn.microsoft.com/en-us/powershell/module/defender/add-mppreference?view=windowsserver2019-ps
+
+		String excludedPaths = paths.stream().map(Path::toString).map(p -> "\"" + p + "\"")
+				.collect(Collectors.joining(',' + extraSeparator));
+		return "Add-MpPreference -ExclusionProcess " + extraSeparator + excludedPaths; //$NON-NLS-1$
 		);
 	}
 
