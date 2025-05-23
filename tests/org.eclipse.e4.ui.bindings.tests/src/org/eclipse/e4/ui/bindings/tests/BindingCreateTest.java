@@ -14,9 +14,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.bindings.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,9 +32,6 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 @SuppressWarnings("restriction")
 public class BindingCreateTest {
@@ -48,7 +46,7 @@ public class BindingCreateTest {
 	private TriggerSequence seq, emptySeq;
 	private Map<String,String> emptyAttrs, schemeOnly, schemeAndTypeAttrs;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		IEclipseContext globalContext = TestUtil.getGlobalContext();
 		workbenchContext = globalContext.createChild("workbenchContext");
@@ -78,7 +76,7 @@ public class BindingCreateTest {
 		schemeAndTypeAttrs.put(EBindingService.TYPE_ATTR_TAG, "user");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		workbenchContext.dispose();
 		workbenchContext = null;
