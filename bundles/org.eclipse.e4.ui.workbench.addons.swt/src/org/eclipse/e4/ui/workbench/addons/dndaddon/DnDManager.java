@@ -35,6 +35,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.MonitorAwareRectangle;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.graphics.Resource;
@@ -464,8 +465,13 @@ class DnDManager {
 		Rectangle bounds = null;
 		for (Rectangle fr : frames) {
 			if (fr.width > 6) {
-				Rectangle outerBounds = new Rectangle(fr.x - 3, fr.y - 3, fr.width + 6,
-						fr.height + 6);
+				Rectangle outerBounds;
+				if (fr instanceof MonitorAwareRectangle monitorAwareFr) {
+					outerBounds = new MonitorAwareRectangle(fr.x - 3, fr.y - 3, fr.width + 6, fr.height + 6,
+							monitorAwareFr.getMonitor());
+				} else {
+					outerBounds = new Rectangle(fr.x - 3, fr.y - 3, fr.width + 6, fr.height + 6);
+				}
 				if (bounds == null) {
 					bounds = outerBounds;
 				}
