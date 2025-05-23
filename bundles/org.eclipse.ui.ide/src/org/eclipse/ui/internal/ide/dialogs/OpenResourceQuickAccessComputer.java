@@ -107,7 +107,7 @@ public class OpenResourceQuickAccessComputer implements IQuickAccessComputer, IQ
 
 		@Override
 		public ImageDescriptor getImageDescriptor() {
-			return ImageDescriptor.createFromImageDataProvider(zoom -> fLabelProvider.getImage(fFile).getImageData());
+			return ImageDescriptor.createFromImageDataProvider(fLabelProvider.getImage(fFile)::getImageData);
 		}
 
 		@Override
