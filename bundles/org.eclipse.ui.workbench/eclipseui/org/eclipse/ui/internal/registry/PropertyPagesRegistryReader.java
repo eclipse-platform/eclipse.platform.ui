@@ -193,7 +193,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	}
 
 	/**
-	 * Reads all occurances of propertyPages extension in the registry.
+	 * Reads all occurrences of propertyPages extension in the registry.
 	 *
 	 * @param registry the registry
 	 */

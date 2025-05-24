@@ -70,7 +70,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 				.findPerspectiveWithId(id);
 
 		// Don't fail if we reference an unknown perspective ID. This can be
-		// a normal occurrance since the test suites reference JDT perspectives, which
+		// a normal occurrence since the test suites reference JDT perspectives, which
 		// might not exist.
 		if (perspective1 == null) {
 			System.out.println("Unknown perspective id: " + id);
