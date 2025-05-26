@@ -677,6 +677,10 @@ import org.eclipse.core.runtime.Status;
 
 		@Override
 		public Object convert(Object fromObject) {
+			// Explicit cast necessary due to potential type erasure
+			if (toType instanceof Class<?> clazz) {
+				return clazz.cast(fromObject);
+			}
 			return fromObject;
 		}
 
