@@ -281,7 +281,7 @@ public class FormImagesTest {
 	@Test
 	public void testDisposeUnknown() throws Exception {
 		Display display = Display.getCurrent();
-		Image image = new Image(display, 10, 10);
+		Image image = new Image(display, (gc, width, height) -> {}, 10, 10);
 		getFormImagesInstance().markFinished(image, display);
 		assertTrue("markFinished(...) did not dispose of an unknown image", image.isDisposed());
 		assertNull("descriptors map", getDescriptors(getFormImagesInstance()));
