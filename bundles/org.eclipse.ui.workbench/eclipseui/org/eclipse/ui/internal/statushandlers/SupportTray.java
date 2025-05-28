@@ -31,7 +31,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -66,6 +66,8 @@ public class SupportTray extends DialogTray implements ISelectionChangedListener
 	private boolean hideSupportButtons;
 	private Image normal;
 	private Image hover;
+	private static final int[] closeButtonPolygon = new int[] { 3, 3, 5, 3, 7, 5, 8, 5, 10, 3, 12, 3, 12, 5, 10, 7, 10,
+			8, 12, 10, 12, 12, 10, 12, 8, 10, 7, 10, 5, 12, 3, 12, 3, 10, 5, 8, 5, 7, 3, 5 };
 
 	/**
 	 * This composite occupies the whole space that is available to the support
@@ -142,40 +144,38 @@ public class SupportTray extends DialogTray implements ISelectionChangedListener
 	 */
 	private void createImages() {
 		Display display = Display.getCurrent();
-		int[] shape = new int[] { 3, 3, 5, 3, 7, 5, 8, 5, 10, 3, 12, 3, 12, 5, 10, 7, 10, 8, 12, 10, 12, 12, 10, 12, 8,
-				10, 7, 10, 5, 12, 3, 12, 3, 10, 5, 8, 5, 7, 3, 5 };
 
-		/*
-		 * Use magenta as transparency color since it is used infrequently.
-		 */
+
 		Color border = display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW);
 		Color background = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		Color backgroundHot = new Color(display, new RGB(252, 160, 160));
-		Color transparent = display.getSystemColor(SWT.COLOR_MAGENTA);
+		normal = new Image(display, createCloseButtonDrawer(background, border), 16, 16);
+		hover = new Image(display, createCloseButtonDrawer(backgroundHot, border), 16, 16);
+	}
 
-		PaletteData palette = new PaletteData(
-				new RGB[] { transparent.getRGB(), border.getRGB(), background.getRGB(), backgroundHot.getRGB() });
-		ImageData data = new ImageData(16, 16, 8, palette);
-		data.transparentPixel = 0;
+	private ImageGcDrawer createCloseButtonDrawer(Color fillColor, Color borderColor) {
 
-		normal = new Image(display, data);
-		normal.setBackground(transparent);
-		GC gc = new GC(normal);
-		gc.setBackground(background);
-		gc.fillPolygon(shape);
-		gc.setForeground(border);
-		gc.drawPolygon(shape);
-		gc.dispose();
+		return new ImageGcDrawer() {
+			@Override
+			public void drawOn(GC gc, int width, int height) {
+				gc.setBackground(fillColor);
+				gc.fillPolygon(closeButtonPolygon);
+				gc.setForeground(borderColor);
+				gc.drawPolygon(closeButtonPolygon);
+				gc.dispose();
+			}
 
-		hover = new Image(display, data);
-		hover.setBackground(transparent);
-		gc = new GC(hover);
-		gc.setBackground(backgroundHot);
-		gc.fillPolygon(shape);
-		gc.setForeground(border);
-		gc.drawPolygon(shape);
-		gc.dispose();
+			@Override
+			public void postProcess(ImageData imageData) {
+				// Used to remove opaque background in the image.
+				imageData.transparentPixel = 0;
+			}
 
+			@Override
+			public int getGcStyle() {
+				return SWT.TRANSPARENT;
+			}
+		};
 	}
 
 	/**
