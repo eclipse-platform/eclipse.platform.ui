@@ -673,7 +673,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 						if (container != null) {
 							if (newViewer.getControl() instanceof IAdaptable adaptable) {
 								CompareConfiguration config = adaptable.getAdapter(CompareConfiguration.class);
-								config.setContainer(new WizardCompareContainer(container));
+								if (config != null) {
+									config.setContainer(new WizardCompareContainer(container));
+								}
 							}
 						}
 					} else {
