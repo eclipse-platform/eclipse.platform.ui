@@ -117,7 +117,7 @@ public class ScreenshotTest {
 		GC gc = new GC(display);
 		Rectangle displayBounds= display.getBounds();
 		out.println("Display @ " + displayBounds);
-		final Image image= new Image(display, displayBounds.width, displayBounds.height);
+		final Image image= new Image(display, (iGc, width, height) -> {}, displayBounds.width, displayBounds.height);
 		gc.copyArea(image, 0, 0);
 		gc.dispose();
 
