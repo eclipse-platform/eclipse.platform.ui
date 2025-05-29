@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.ListIterator;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -235,6 +236,11 @@ public class BindingTableManager {
 	public void setActiveSchemes(String[] activeSchemeIds) {
 		this.activeSchemeIds = activeSchemeIds;
 		BindingTable.BEST_SEQUENCE.setActiveSchemes(activeSchemeIds);
+	}
+
+	public void setActiveSchemes(String[] activeSchemeIds, ContextManager contextManager) {
+		setActiveSchemes(activeSchemeIds);
+		BindingTable.BEST_SEQUENCE.setContextManager(contextManager);
 	}
 
 	/*
