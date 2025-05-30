@@ -464,8 +464,7 @@ class DnDManager {
 		Rectangle bounds = null;
 		for (Rectangle fr : frames) {
 			if (fr.width > 6) {
-				Rectangle outerBounds = new Rectangle(fr.x - 3, fr.y - 3, fr.width + 6,
-						fr.height + 6);
+				Rectangle outerBounds = fr.cloneWith(-3, -3, 6, 6);
 				if (bounds == null) {
 					bounds = outerBounds;
 				}
