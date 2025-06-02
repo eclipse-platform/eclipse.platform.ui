@@ -576,8 +576,8 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * relative to the root of the plug-in, and takes into account files coming from
 	 * plug-in fragments. The path may include $arg$ elements. However, the path
 	 * must not have a leading "." or path separator. Clients should use a path like
-	 * "icons/mysample.png" rather than "./icons/mysample.png" or
-	 * "/icons/mysample.png".
+	 * "icons/mysample.svg" rather than "./icons/mysample.svg" or
+	 * "/icons/mysample.svg".
 	 * </p>
 	 *
 	 * @param pluginId      the id of the plug-in containing the image file;

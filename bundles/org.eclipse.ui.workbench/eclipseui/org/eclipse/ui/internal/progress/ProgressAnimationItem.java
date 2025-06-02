@@ -285,9 +285,9 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 
 		if (okImage == null) {
 			Display display = parent.getDisplay();
-			noneImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_none.png").createImage(display); //$NON-NLS-1$
-			okImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_ok.png").createImage(display); //$NON-NLS-1$
-			errorImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_error.png") //$NON-NLS-1$
+			noneImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_none.svg").createImage(display); //$NON-NLS-1$
+			okImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_ok.svg").createImage(display); //$NON-NLS-1$
+			errorImage = WorkbenchImages.getWorkbenchImageDescriptor("progress/progress_error.svg") //$NON-NLS-1$
 					.createImage(display);
 		}
 

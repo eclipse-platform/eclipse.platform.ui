@@ -127,7 +127,7 @@ public/* final */class WorkbenchImages {
 
 		// other toolbar buttons
 		declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT, ISharedImages.IMG_ETOOL_SAVE_EDIT_DISABLED, //
-				PATH_ETOOL + "save_edit.png", true); //$NON-NLS-1$
+				PATH_ETOOL + "save_edit.svg", true); //$NON-NLS-1$
 
 		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT, ISharedImages.IMG_ETOOL_SAVEAS_EDIT_DISABLED, //
 				PATH_ETOOL + "saveas_edit.svg", true); //$NON-NLS-1$
