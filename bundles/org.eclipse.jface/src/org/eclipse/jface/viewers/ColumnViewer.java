@@ -973,12 +973,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
-	 * of a work in progress. There is no guarantee that this API will work or that
-	 * it will remain the same. Please do not use this API without consulting with
-	 * the API development team.
-	 * </p>
 	 * Sets the viewers items limit on direct children at one level.
 	 * <p>
 	 * If the number of direct children will exceed this limit, the viewer will only
@@ -1031,12 +1025,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
-	 * of a work in progress. There is no guarantee that this API will work or that
-	 * it will remain the same. Please do not use this API without consulting with
-	 * the API development team.
-	 * </p>
+	 * Return if it is an instance of ExpandableNode
 	 *
 	 * @param element model object representing a special "expandable" node
 	 * @return return if it is an instance of ExpandableNode
