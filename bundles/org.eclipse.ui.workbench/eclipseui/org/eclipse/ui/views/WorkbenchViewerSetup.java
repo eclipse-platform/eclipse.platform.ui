@@ -26,10 +26,10 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
- * of a work in progress. There is no guarantee that this API will work or that
- * it will remain the same. Please do not use this API without consulting with
- * the API development team.
+ * Configure a {@link ColumnViewer} to show limited items per parent before
+ * showing an ExpandableNode. Limit used is read from preference
+ * {@link IWorkbenchPreferenceConstants#LARGE_VIEW_LIMIT}. Client must call this
+ * before {@link Viewer#setInput(Object)}
  * </p>
  *
  * @since 3.130
@@ -60,13 +60,6 @@ public class WorkbenchViewerSetup {
 	}
 
 	/**
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
-	 * of a work in progress. There is no guarantee that this API will work or that
-	 * it will remain the same. Please do not use this API without consulting with
-	 * the API development team.
-	 * </p>
-	 *
 	 * Returns the current viewer limit set in the {@code General} preference page.
 	 *
 	 * @return {@link IWorkbenchPreferenceConstants#LARGE_VIEW_LIMIT}
@@ -80,13 +73,6 @@ public class WorkbenchViewerSetup {
 	}
 
 	/**
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
-	 * of a work in progress. There is no guarantee that this API will work or that
-	 * it will remain the same. Please do not use this API without consulting with
-	 * the API development team.
-	 * </p>
-	 *
 	 * Configure a {@link ColumnViewer} to show limited items per parent before
 	 * showing an ExpandableNode. Limit used is read from preference
 	 * {@link IWorkbenchPreferenceConstants#LARGE_VIEW_LIMIT}. Client must call this
