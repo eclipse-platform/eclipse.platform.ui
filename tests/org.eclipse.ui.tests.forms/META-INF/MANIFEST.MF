@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Forms Test
 Bundle-SymbolicName: org.eclipse.ui.tests.forms;singleton:=true
-Bundle-Version: 3.10.400.qualifier
+Bundle-Version: 3.10.500.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.test.performance,
