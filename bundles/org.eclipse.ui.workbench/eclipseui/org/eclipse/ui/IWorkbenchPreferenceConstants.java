@@ -701,13 +701,6 @@ public interface IWorkbenchPreferenceConstants {
 	String DISPOSE_CLOSED_BROWSER_HOVER_TIMEOUT = "disposeClosedBrowserHoverTimeout"; //$NON-NLS-1$
 
 	/**
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
-	 * of a work in progress. There is no guarantee that this API will work or that
-	 * it will remain the same. Please do not use this API without consulting with
-	 * the API development team.
-	 * </p>
-	 *
 	 * This preference specifies the limit for number of children that can be shown
 	 * per parent element without expanding.
 	 * <p>

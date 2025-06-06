@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.workbench; singleton:=true
-Bundle-Version: 3.135.100.qualifier
+Bundle-Version: 3.135.200.qualifier
 Bundle-Activator: org.eclipse.ui.internal.WorkbenchPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName

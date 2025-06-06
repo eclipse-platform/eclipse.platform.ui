@@ -29,14 +29,14 @@ final class ImageFactory {
 	private static Map map = new HashMap();
 
 	static {
-		put("blank", "$nl$/icons/full/obj16/blank.png"); //$NON-NLS-1$//$NON-NLS-2$
-		put("change", "$nl$/icons/full/obj16/change_obj.png"); //$NON-NLS-1$//$NON-NLS-2$
+		put("blank", "$nl$/icons/full/obj16/blank.svg"); //$NON-NLS-1$//$NON-NLS-2$
+		put("change", "$nl$/icons/full/obj16/change_obj.svg"); //$NON-NLS-1$//$NON-NLS-2$
 
 		/*
 		 * TODO Remove these images from the registry if they are no longer needed.
 		 */
-		put("minus", "$nl$/icons/full/obj16/delete_obj.png"); //$NON-NLS-1$//$NON-NLS-2$
-		put("plus", "$nl$/icons/full/obj16/add_obj.png"); //$NON-NLS-1$//$NON-NLS-2$
+		put("minus", "$nl$/icons/full/obj16/delete_obj.svg"); //$NON-NLS-1$//$NON-NLS-2$
+		put("plus", "$nl$/icons/full/obj16/add_obj.svg"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	static Image getImage(String key) {
