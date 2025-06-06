@@ -37,6 +37,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.ImageGcDrawer;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
@@ -133,13 +134,17 @@ public class GradientBackgroundListener implements Listener {
 				}
 			}
 
-			BufferedImage image = getBufferedImage(size.x, size.y, colors,
-					CSSSWTColorHelper.getPercents(grad));
-			// long startTime = System.currentTimeMillis();
-			ImageData imagedata = convertToSWT(image);
-			// System.out.println("Conversion took "
-			// + (System.currentTimeMillis() - startTime) + " ms");
-			gradientImage = new Image(control.getDisplay(), imagedata);
+			ImageDataProvider imageDataProvider = zoom -> {
+				float scaleFactor = zoom / 100f;
+				int scaledWidth = Math.round(size.x * scaleFactor);
+				int scaledHeight = Math.round(size.y * scaleFactor);
+				BufferedImage image = getBufferedImage(scaledWidth, scaledHeight, colors,
+						CSSSWTColorHelper.getPercents(grad));
+				ImageData imagedata = convertToSWT(image);
+				return imagedata;
+			};
+
+			gradientImage = new Image(control.getDisplay(), imageDataProvider);
 			radialGradient = true;
 		} else if (oldImage == null || oldImage.isDisposed()
 				|| oldImage.getBounds().height != size.y || radialGradient
