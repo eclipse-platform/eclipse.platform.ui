@@ -92,7 +92,7 @@ public class BindingProcessingAddon {
 				schemes = getSchemeIds(activeScheme.getId());
 			}
 		}
-		bindingTables.setActiveSchemes(schemes);
+		bindingTables.setActiveSchemes(schemes, contextManager);
 		defineBindingTables();
 		activateContexts(application);
 	}
