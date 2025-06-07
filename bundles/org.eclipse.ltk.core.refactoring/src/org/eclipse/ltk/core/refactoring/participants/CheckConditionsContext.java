@@ -22,8 +22,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 
@@ -102,8 +100,7 @@ public class CheckConditionsContext {
 	 * @throws CoreException if an error occurs during condition checking
 	 */
 	public RefactoringStatus check(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
-			pm= new NullProgressMonitor();
+
 		RefactoringStatus result= new RefactoringStatus();
 		mergeResourceOperationAndValidateEdit();
 		List<IConditionChecker> values= new ArrayList<>(fCheckers.values());
@@ -117,13 +114,11 @@ public class CheckConditionsContext {
 				return 1;
 			return 0;
 		});
+
 		SubMonitor sm= SubMonitor.convert(pm, "", values.size()); //$NON-NLS-1$
 		for (IConditionChecker checker : values) {
 			result.merge(checker.check(sm.split(1)));
-			if (pm.isCanceled())
-				throw new OperationCanceledException();
 		}
-		pm.done();
 		return result;
 	}
 
