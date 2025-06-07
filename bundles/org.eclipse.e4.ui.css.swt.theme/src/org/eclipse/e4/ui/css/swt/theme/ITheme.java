@@ -26,4 +26,10 @@ public interface ITheme {
 	 * @return the label
 	 */
 	String getLabel();
+
+	/**
+	 *
+	 * @return does the theme use a dark background color
+	 */
+	boolean isDark();
 }
