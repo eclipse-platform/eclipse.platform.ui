@@ -61,8 +61,9 @@ public class TextMultiCaretNavigationTest {
 
 	@After
 	public void tearDown() {
-		editor.dispose();
+		editor.close(false);
 		file.delete();
+		TestUtil.cleanUp();
 	}
 
 

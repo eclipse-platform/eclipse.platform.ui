@@ -59,6 +59,8 @@ import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
 import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider;
 import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider.StickyLinesProperties;
 
+import org.eclipse.ui.editors.tests.TestUtil;
+
 public class StickyScrollingHandlerTest {
 
 	private Shell shell;
@@ -99,6 +101,7 @@ public class StickyScrollingHandlerTest {
 	@After
 	public void teardown() {
 		shell.dispose();
+		TestUtil.cleanUp();
 	}
 
 	@Test

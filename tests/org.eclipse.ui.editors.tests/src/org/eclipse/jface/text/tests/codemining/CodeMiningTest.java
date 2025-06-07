@@ -55,6 +55,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
+import org.eclipse.ui.editors.tests.TestUtil;
+
 public class CodeMiningTest {
 	private static String PROJECT_NAME = "test_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
@@ -78,6 +80,7 @@ public class CodeMiningTest {
 		drainEventQueue();
 		CodeMiningTestProvider.provideContentMiningAtOffset = -1;
 		CodeMiningTestProvider.provideHeaderMiningAtLine = -1;
+		TestUtil.cleanUp();
 	}
 
 	private static void closeAllEditors() {

@@ -68,6 +68,7 @@ public class StatusEditorTest {
 		window.close();
 		page = null;
 		processEvents();
+		TestUtil.cleanUp();
 	}
 
 	/*
