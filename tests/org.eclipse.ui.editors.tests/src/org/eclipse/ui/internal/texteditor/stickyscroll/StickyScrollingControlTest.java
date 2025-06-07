@@ -48,6 +48,8 @@ import org.eclipse.jface.text.source.SourceViewer;
 
 import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
 
+import org.eclipse.ui.editors.tests.TestUtil;
+
 public class StickyScrollingControlTest {
 
 	private Shell shell;
@@ -86,6 +88,7 @@ public class StickyScrollingControlTest {
 		lineNumberColor.dispose();
 		hoverColor.dispose();
 		backgroundColor.dispose();
+		TestUtil.cleanUp();
 	}
 
 	@Test
@@ -183,13 +186,17 @@ public class StickyScrollingControlTest {
 
 	@Test
 	public void testWithoutVerticalRuler() {
-		sourceViewer = new SourceViewer(shell, null, SWT.None);
-		settings = new StickyScrollingControlSettings(5, lineNumberColor, hoverColor, backgroundColor, separatorColor,
-				true);
-		stickyScrollingControl = new StickyScrollingControl(sourceViewer, settings);
-
-		StyledText stickyLineNumber = getStickyLineNumber();
-		assertFalse(stickyLineNumber.isVisible());
+		SourceViewer sourceViewerWithoutRuler = new SourceViewer(shell, null, SWT.None);
+		StickyScrollingControl stickyScrollingControlWithoutRuler = new StickyScrollingControl(sourceViewerWithoutRuler,
+				new StickyScrollingControlSettings(5, lineNumberColor, hoverColor, backgroundColor, separatorColor,
+						true));
+		try {
+			StyledText stickyLineNumber = getStickyLineNumber();
+			assertFalse(stickyLineNumber.isVisible());
+		} finally {
+			sourceViewerWithoutRuler.getControl().dispose();
+			stickyScrollingControlWithoutRuler.dispose();
+		}
 	}
 
 	@Test

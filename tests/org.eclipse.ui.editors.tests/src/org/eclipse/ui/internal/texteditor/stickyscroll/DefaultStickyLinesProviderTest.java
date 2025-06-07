@@ -21,6 +21,7 @@ import static org.mockito.Mockito.mock;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,6 +42,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
 import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider.StickyLinesProperties;
 
+import org.eclipse.ui.editors.tests.TestUtil;
+
 public class DefaultStickyLinesProviderTest {
 
 	private Shell shell;
@@ -59,6 +62,11 @@ public class DefaultStickyLinesProviderTest {
 		textWidget = sourceViewer.getTextWidget();
 		editorPart = mock(IEditorPart.class);
 		stickyLinesProperties = new StickyLinesProperties(4, editorPart);
+	}
+
+	@After
+	public void teardown() {
+		TestUtil.cleanUp();
 	}
 
 	@Test

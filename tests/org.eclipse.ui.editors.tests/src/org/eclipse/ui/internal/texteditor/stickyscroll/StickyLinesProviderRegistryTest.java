@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,6 +19,8 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider;
+
+import org.eclipse.ui.editors.tests.TestUtil;
 
 public class StickyLinesProviderRegistryTest {
 
@@ -38,6 +41,11 @@ public class StickyLinesProviderRegistryTest {
 				.thenReturn(configurationElement);
 
 		cut = new StickyLinesProviderRegistry(extensionRegistry, e -> stickyLinesProviderDescriptor);
+	}
+
+	@After
+	public void teardown() {
+		TestUtil.cleanUp();
 	}
 
 	@Test
