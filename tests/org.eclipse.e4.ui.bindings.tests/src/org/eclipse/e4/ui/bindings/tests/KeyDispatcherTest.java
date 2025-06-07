@@ -15,9 +15,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.bindings.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,10 +52,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
 @SuppressWarnings("restriction")
 public class KeyDispatcherTest {
@@ -129,7 +127,7 @@ public class KeyDispatcherTest {
 		return bs.createBinding(sequence, command, ID_WINDOW, attrs);
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		display = Display.getDefault();
 		IEclipseContext globalContext = TestUtil.getGlobalContext();
@@ -169,7 +167,7 @@ public class KeyDispatcherTest {
 		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG), application));
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		workbenchContext.dispose();
 		workbenchContext = null;
@@ -236,7 +234,7 @@ public class KeyDispatcherTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void TODOtestKeyDispatcherReset() throws Exception {
 		assertFalse(twoStrokeHandler.q2);
 
