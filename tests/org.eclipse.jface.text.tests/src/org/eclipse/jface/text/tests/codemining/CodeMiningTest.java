@@ -515,7 +515,7 @@ public class CodeMiningTest {
 			starty= lineBounds.y;
 		}
 
-		Image image= new Image(widget.getDisplay(), widget.getSize().x, widget.getSize().y);
+		Image image= new Image(widget.getDisplay(), (gc, width, height) -> {}, widget.getSize().x, widget.getSize().y);
 		try {
 			GC gc= new GC(widget);
 			gc.copyArea(image, 0, 0);
@@ -555,7 +555,7 @@ public class CodeMiningTest {
 		} else {
 			secondLineBounds= widget.getTextBounds(lineOffset, lineOffset + lineLength);
 		}
-		Image image = new Image(widget.getDisplay(), widget.getSize().x, widget.getSize().y);
+		Image image = new Image(widget.getDisplay(), (gc, width, height) -> {}, widget.getSize().x, widget.getSize().y);
 		GC gc = new GC(widget);
 		gc.copyArea(image, 0, 0);
 		gc.dispose();
