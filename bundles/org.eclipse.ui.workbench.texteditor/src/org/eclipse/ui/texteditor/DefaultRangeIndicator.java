@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -135,20 +136,28 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 	 */
 	private static Image createImage(Display display, Point size, Color rangeIndicatorColor) {
 
-		int width= size.x;
-		int height= size.y;
+		int width = size.x;
+		int height = size.y;
 
+		ImageDataProvider imageDataProvider = zoom -> {
+			float scaleFactor = zoom / 100.0f;
+			int scaledWidth = Math.round(width * scaleFactor);
+			int scaledHeight = Math.round(height * scaleFactor);
+			ImageData imageData = new ImageData(scaledWidth, scaledHeight, 1,
+					createPalette(display, rangeIndicatorColor));
+			int blockSize = Math.round(scaleFactor);
+			for (int y = 0; y < scaledHeight; y++) {
+				for (int x = 0; x < scaledWidth; x++) {
+					if (((x / blockSize) + (y / blockSize)) % 2 == 0) {
+						imageData.setPixel(x, y, 1);
+					}
+				}
+			}
+			imageData.transparentPixel = 1;
+			return imageData;
+		};
 
-		ImageData imageData= new ImageData(width, height, 1, createPalette(display, rangeIndicatorColor));
-
-		for (int y= 0, offset= 1; y < height; y++, offset= (offset + 1) % 2)
-			for (int x= offset; x < width; x += 2)
-				imageData.setPixel(x, y, 1);
-
-		imageData.transparentPixel= 1;
-
-
-		return new Image(display, imageData);
+		return new Image(display, imageDataProvider);
 	}
 
 	/**
