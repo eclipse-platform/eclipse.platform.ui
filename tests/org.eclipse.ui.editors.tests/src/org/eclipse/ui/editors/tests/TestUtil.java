@@ -13,31 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import java.util.concurrent.TimeUnit;
-
-import org.junit.Assert;
-
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.jobs.Job;
 
 public class TestUtil {
-	/**
-	 * Call this in the tearDown method of every test to clean up state that can
-	 * otherwise leak through SWT between tests.
-	 */
-	public static void cleanUp() {
-		// Ensure that the Thread.interrupted() flag didn't leak.
-		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
-		// Wait for any outstanding jobs to finish. Protect against deadlock by
-		// terminating the wait after a timeout.
-		boolean timedOut = waitForJobs(0, TimeUnit.MINUTES.toMillis(3));
-		Assert.assertFalse("Some Job did not terminate at the end of the test", timedOut);
-		// Wait for any pending *syncExec calls to finish
-		runEventLoop();
-		// Ensure that the Thread.interrupted() flag didn't leak.
-		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
-	}
 
 	/**
 	 * Process all queued UI events. If called from background thread, does
@@ -90,5 +70,24 @@ public class TestUtil {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * JUnit 4 rule to clean up state that can otherwise leak through SWT between
+	 * tests.
+	 */
+	public static class CleanupRule extends org.junit.rules.ExternalResource {
+		@Override
+		protected void after() {
+			// Ensure that the Thread.interrupted() flag didn't leak.
+			org.junit.Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
+			// Wait for any outstanding jobs to finish. Protect against deadlock by terminating the wait after a timeout.
+			boolean timedOut = waitForJobs(0, java.util.concurrent.TimeUnit.MINUTES.toMillis(3));
+			org.junit.Assert.assertFalse("Some Job did not terminate at the end of the test", timedOut);
+			// Wait for any pending *syncExec calls to finish
+			runEventLoop();
+			// Ensure that the Thread.interrupted() flag didn't leak.
+			org.junit.Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
+		}
 	}
 }

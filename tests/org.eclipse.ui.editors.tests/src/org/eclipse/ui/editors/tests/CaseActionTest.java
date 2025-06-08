@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -50,6 +51,9 @@ public class CaseActionTest {
 	private static IFile file;
 	private AbstractTextEditor editor;
 
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject("test");
@@ -63,7 +67,6 @@ public class CaseActionTest {
 	public static void tearDownAfterClass() throws Exception {
 		file.delete(true, new NullProgressMonitor());
 		project.delete(true, new NullProgressMonitor());
-		TestUtil.cleanUp();
 	}
 
 	@Before

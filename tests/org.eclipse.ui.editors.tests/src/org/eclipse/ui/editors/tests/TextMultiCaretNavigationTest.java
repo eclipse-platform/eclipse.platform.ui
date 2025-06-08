@@ -19,6 +19,7 @@ import java.nio.file.Files;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.custom.StyledText;
@@ -47,6 +48,9 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  */
 public class TextMultiCaretNavigationTest {
 
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
+
 	private static File file;
 	private static AbstractTextEditor editor;
 	private static StyledText widget;
@@ -63,7 +67,6 @@ public class TextMultiCaretNavigationTest {
 	public void tearDown() {
 		editor.close(false);
 		file.delete();
-		TestUtil.cleanUp();
 	}
 
 

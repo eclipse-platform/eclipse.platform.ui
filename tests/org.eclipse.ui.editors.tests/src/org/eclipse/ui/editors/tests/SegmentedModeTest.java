@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.custom.StyledText;
@@ -44,6 +45,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class SegmentedModeTest {
 
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
+
 	private static final String ORIGINAL_CONTENT= "this\nis\nthe\ncontent\nof\nthe\nfile";
 
 	private IFile fFile;
@@ -61,7 +65,6 @@ public class SegmentedModeTest {
 	@After
 	public void tearDown() throws Exception {
 		ResourceHelper.deleteProject("project");
-		TestUtil.cleanUp();
 	}
 
 	/*

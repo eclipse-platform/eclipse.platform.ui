@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -61,6 +62,9 @@ import org.eclipse.ui.editors.text.TextEditor;
  */
 public class EncodingChangeTests {
 
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
+
 	private static final String NON_DEFAULT_ENCODING= "US-ASCII".equals(ResourcesPlugin.getEncoding()) ? "ISO-8859-1" : "US-ASCII";
 	private static final String ORIGINAL_CONTENT= "line1\nline2\nline3";
 
@@ -94,7 +98,6 @@ public class EncodingChangeTests {
 		fEditor= null;
 		fFile= null;
 		ResourceHelper.deleteProject("EncodingChangeTestProject");
-		TestUtil.cleanUp();
 	}
 
 	@Test

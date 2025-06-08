@@ -8,8 +8,8 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -23,6 +23,9 @@ import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider;
 import org.eclipse.ui.editors.tests.TestUtil;
 
 public class StickyLinesProviderRegistryTest {
+
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
 
 	private StickyLinesProviderDescriptor stickyLinesProviderDescriptor;
 	private StickyLinesProviderRegistry cut;
@@ -43,10 +46,6 @@ public class StickyLinesProviderRegistryTest {
 		cut = new StickyLinesProviderRegistry(extensionRegistry, e -> stickyLinesProviderDescriptor);
 	}
 
-	@After
-	public void teardown() {
-		TestUtil.cleanUp();
-	}
 
 	@Test
 	public void testGetDefaultProviderIfNoMatch() {

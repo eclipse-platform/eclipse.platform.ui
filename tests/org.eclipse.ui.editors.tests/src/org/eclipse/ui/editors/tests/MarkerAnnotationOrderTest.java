@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 
@@ -45,6 +46,9 @@ import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.editors.text.EditorsUI;
 
 public class MarkerAnnotationOrderTest {
+
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
 
 	IContributor pointContributor= null;
 
@@ -81,7 +85,6 @@ public class MarkerAnnotationOrderTest {
 				registry.removeExtension(extension, masterToken);
 			}
 		}
-		TestUtil.cleanUp();
 	}
 
 	@Test

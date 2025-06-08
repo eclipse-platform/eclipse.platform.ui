@@ -23,6 +23,7 @@ import java.util.Collections;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.custom.StyledText;
@@ -52,6 +53,10 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  * an editor from this bundle is quite tricky without the IDE and EFS utils.
  */
 public class TextMultiCaretSelectionCommandsTest {
+
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
+
 	private static final String MULTI_SELECTION_DOWN = "org.eclipse.ui.edit.text.select.selectMultiSelectionDown";
 	private static final String ADD_ALL_MATCHES_TO_MULTI_SELECTION = "org.eclipse.ui.edit.text.select.addAllMatchesToMultiSelection";
 	private static final String MULTI_SELECTION_UP = "org.eclipse.ui.edit.text.select.selectMultiSelectionUp";
@@ -87,7 +92,6 @@ public class TextMultiCaretSelectionCommandsTest {
 	public void tearDown() {
 		editor.close(false);
 		file.delete();
-		TestUtil.cleanUp();
 	}
 
 	@Test

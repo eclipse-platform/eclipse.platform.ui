@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.SWT;
@@ -51,6 +52,9 @@ import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
 import org.eclipse.ui.editors.tests.TestUtil;
 
 public class StickyScrollingControlTest {
+
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
 
 	private Shell shell;
 	private SourceViewer sourceViewer;
@@ -88,7 +92,6 @@ public class StickyScrollingControlTest {
 		lineNumberColor.dispose();
 		hoverColor.dispose();
 		backgroundColor.dispose();
-		TestUtil.cleanUp();
 	}
 
 	@Test
