@@ -17,7 +17,10 @@ package org.eclipse.search.tests.filesearch;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -26,7 +29,11 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import org.eclipse.core.runtime.ContributorFactorySimple;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -545,6 +552,70 @@ public class FileSearchTests {
 
 		return collector.getResults();
 
+	}
+
+	@Test
+	public void testBinaryContentTypeWithDescriberSerial() throws Exception {
+		testBinaryContentTypeWithDescriber(new SerialTestResultCollector());
+	}
+
+	@Test
+	public void testBinaryContentTypeWithDescriberParallel() throws Exception {
+		testBinaryContentTypeWithDescriber(new ParallelTestResultCollector());
+	}
+
+	private void testBinaryContentTypeWithDescriber(TestResultCollector collector) throws Exception {
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
+
+		Field field= org.eclipse.core.internal.registry.ExtensionRegistry.class
+				.getDeclaredField("masterToken");
+		field.setAccessible(true);
+		Object masterToken= field.get(registry);
+
+		IContributor contributor= ContributorFactorySimple.createContributor(this);
+
+		try (java.io.InputStream is= new ByteArrayInputStream("""
+				<?xml version="1.0"?>
+				<plugin>
+					<extension point="org.eclipse.core.contenttype.contentTypes">
+					   <content-type
+					         id="org.eclipse.search.tests.binaryFile"
+					         name="Search Test Binary File"
+					         priority="low">
+					      <describer
+					            class="org.eclipse.core.runtime.content.BinarySignatureDescriber"
+					            plugin="org.eclipse.core.contenttype">
+					         <!-- "binary" in ASCII encoding -->
+					         <parameter name="signature" value="62 69 6E 61 72 79"/>
+					      </describer>
+					   </content-type>
+					   <file-association
+					         content-type="org.eclipse.search.tests.binaryFile"
+					         file-patterns="[^.]+"/> <!-- no file extension -->
+					</extension>
+				</plugin>""".getBytes())) {
+			registry.addContribution(is, contributor, false, null, null, masterToken);
+			try (AutoCloseable c= () -> {
+				Arrays.stream(registry.getExtensions(contributor))
+						.forEach(extension -> registry.removeExtension(extension, masterToken));
+			}) {
+
+				IFolder folder= ResourceHelper.createFolder(fProject.getFolder("folder1"));
+				IFile textfile= ResourceHelper.createFile(folder, "textfile", "text hello");
+				IFile binaryfile= ResourceHelper.createFile(folder, "binaryfile", "binary hello");
+
+				Pattern searchPattern= PatternConstructor.createPattern("hello", true, false);
+
+				FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { fProject }, (String[]) null, false);
+				TextSearchEngine.create().search(scope, collector, searchPattern, null);
+
+				TestResult[] results= collector.getResults();
+				assertEquals("Number of total results", 1, results.length);
+
+				assertMatches(results, 1, textfile, "text hello", "hello");
+				assertMatches(results, 0, binaryfile, "binary hello", "hello");
+			}
+		}
 	}
 
 
