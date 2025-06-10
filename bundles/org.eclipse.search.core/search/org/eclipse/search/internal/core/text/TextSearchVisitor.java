@@ -442,7 +442,12 @@ public class TextSearchVisitor {
 	private final IContentType TEXT_TYPE = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 
 	private boolean hasBinaryContentType(IFile file) {
-		IContentType[] contentTypes = Platform.getContentTypeManager().findContentTypesFor(file.getName());
+		IContentType[] contentTypes;
+		try (java.io.InputStream contents = file.getContents()) {
+			contentTypes = Platform.getContentTypeManager().findContentTypesFor(contents, file.getName());
+		} catch (IOException | CoreException e) {
+			return false; // unknown due to failure
+		}
 		for (IContentType contentType : contentTypes) {
 			if (contentType.isKindOf(TEXT_TYPE)) {
 				return false; // is text
