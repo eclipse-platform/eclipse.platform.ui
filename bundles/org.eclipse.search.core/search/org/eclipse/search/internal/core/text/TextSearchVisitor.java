@@ -446,7 +446,8 @@ public class TextSearchVisitor {
 		try (java.io.InputStream contents = file.getContents()) {
 			contentTypes = Platform.getContentTypeManager().findContentTypesFor(contents, file.getName());
 		} catch (IOException | CoreException e) {
-			return false; // unknown due to failure
+			SearchCorePlugin.log(e);
+			contentTypes = Platform.getContentTypeManager().findContentTypesFor(file.getName());
 		}
 		for (IContentType contentType : contentTypes) {
 			if (contentType.isKindOf(TEXT_TYPE)) {
