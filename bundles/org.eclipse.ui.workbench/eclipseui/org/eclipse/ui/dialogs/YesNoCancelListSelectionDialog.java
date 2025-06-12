@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
  *             to subclass the regular ListSelectionDialog, which uses
  *             OK/Cancel, and provide a separate checkbox if necessary.
  */
-@Deprecated(forRemoval = true, since = "2025-06 (removal in 2027-06 or later)")
+@Deprecated(forRemoval = true, since = "2025-09 (removal in 2027-09 or later)")
 public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
 	/**
 	 *
