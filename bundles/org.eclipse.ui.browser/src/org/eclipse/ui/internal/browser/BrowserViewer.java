@@ -234,7 +234,7 @@ public class BrowserViewer extends Composite {
 		// we can use it in this environment
 		//if (WebBrowserUtil.canUseInternalWebBrowser())
 		try {
-			this.browser = new Browser(this, SWT.NONE);
+			this.browser = new Browser(this, getBrowserStyle());
 			this.browser.addLocationListener(LocationListener.changingAdapter(event -> {
 					URI uri = URI.create(event.location);
 					if (!(uri.getScheme().equals("http") || uri.getScheme().equals("https") //$NON-NLS-1$ //$NON-NLS-2$
@@ -273,6 +273,17 @@ public class BrowserViewer extends Composite {
 
 		addBrowserListeners();
 		addDisposeListener(this::dispose);
+	}
+
+	/**
+	 * Returns the style flags to be used for the Browser object. Subclasses can
+	 * override this method to provide custom styles for the Browser. By default,
+	 * this method returns the SWT.NONE style.
+	 *
+	 * @return an integer representing the style flags for the Browser object.
+	 */
+	protected int getBrowserStyle() {
+		return SWT.NONE; // Default style
 	}
 
 	/**

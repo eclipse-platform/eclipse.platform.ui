@@ -13,13 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.browser.internal;
 
+import static org.junit.Assert.assertEquals;
+
 import java.net.URL;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.internal.browser.BrowserViewer;
 import org.eclipse.ui.internal.browser.WebBrowserPreference;
 import org.junit.Test;
 
@@ -67,5 +72,43 @@ public class InternalBrowserViewTestCase {
 		shell.open();
 		Display display = Display.getCurrent();
 		while (!exit[0] && !shell.isDisposed()) if (!display.readAndDispatch()) display.sleep();
+	}
+
+	@Test
+	public void testDefaultBrowserStyle() {
+		class TestBrowserViewer extends BrowserViewer {
+			public TestBrowserViewer(Composite parent, int style) {
+				super(parent, style);
+			}
+
+			@Override
+			protected int getBrowserStyle() {
+				return super.getBrowserStyle();
+			}
+		}
+
+		TestBrowserViewer browserViewer = new TestBrowserViewer(shell, SWT.NONE);
+		int browserStyle = browserViewer.getBrowserStyle();
+		// Assert: Verify the returned style is SWT.NONE
+		assertEquals("The default browser style should be SWT.NONE", SWT.NONE, browserStyle);
+	}
+
+	@Test
+	public void testCustomBrowserStyle() {
+		class CustomBrowserViewer extends BrowserViewer {
+			public CustomBrowserViewer(Composite parent, int style) {
+				super(parent, style);
+			}
+
+			@Override
+			protected int getBrowserStyle() {
+				return SWT.EDGE; // Custom style
+			}
+		}
+
+		CustomBrowserViewer customBrowserViewer = new CustomBrowserViewer(shell, SWT.NONE);
+		int browserStyle = customBrowserViewer.getBrowserStyle();
+		// Assert: Verify the returned style is SWT.EDGE
+		assertEquals("The custom browser style should be SWT.EDGE", SWT.EDGE, browserStyle);
 	}
 }
