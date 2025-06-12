@@ -123,7 +123,7 @@ public class ObservablesManager {
 	 * @param runnable the runnable to execute
 	 * @since 1.2
 	 */
-	@Deprecated(since = "1.11.0")
+	@Deprecated(forRemoval = true, since = "2025-06 (removal in 2027-06 or later)")
 	public void runAndCollect(Runnable runnable) {
 		IObservable[] collected = ObservableTracker.runAndCollect(runnable);
 		for (IObservable observable : collected) {
