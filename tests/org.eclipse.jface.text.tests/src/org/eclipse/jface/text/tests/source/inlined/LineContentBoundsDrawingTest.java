@@ -148,7 +148,7 @@ public class LineContentBoundsDrawingTest {
 	}
 
 	public int getMostRightPaintedPixel(StyledText widget) {
-		Image image = new Image(widget.getDisplay(), widget.getSize().x, widget.getSize().y);
+		Image image = new Image(widget.getDisplay(), (gc, width, height) -> {}, widget.getSize().x, widget.getSize().y);
 		GC gc = new GC(widget);
 		gc.copyArea(image, 0, 0);
 		gc.dispose();
