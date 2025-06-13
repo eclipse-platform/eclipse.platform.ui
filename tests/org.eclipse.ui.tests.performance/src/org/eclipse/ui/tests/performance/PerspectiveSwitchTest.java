@@ -76,7 +76,7 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
 		final IPerspectiveDescriptor perspective2 = registry.findPerspectiveWithId(id2);
 
 		// Don't fail if we reference an unknown perspective ID. This can be
-		// a normal occurrance since the test suites reference JDT perspectives, which
+		// a normal occurrence since the test suites reference JDT perspectives, which
 		// might not exist. Just skip the test.
 		if (perspective1 == null) {
 			System.out.println("Unknown perspective ID: " + id1);
