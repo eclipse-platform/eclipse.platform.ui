@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.workbench" version="2">
+    <resource path="eclipseui/org/eclipse/ui/dialogs/YesNoCancelListSelectionDialog.java" type="org.eclipse.ui.dialogs.YesNoCancelListSelectionDialog">
+        <filter id="576778288">
+            <message_arguments>
+                <message_argument value="ListSelectionDialog"/>
+                <message_argument value="YesNoCancelListSelectionDialog"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
