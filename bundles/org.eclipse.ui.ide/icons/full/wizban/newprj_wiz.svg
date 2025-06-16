@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    inkscape:export-ydpi="90"
    inkscape:export-xdpi="90"
    inkscape:export-filename="/Users/d021678/git/eclipse.jdt.ui/org.eclipse.jdt.ui/icons/full/wizban/newclass_wiz2.png"
    sodipodi:docname="newprj_wiz.svg"
-   inkscape:version="1.0rc1 (09960d6, 2020-04-09)"
+   inkscape:version="1.3 (0e150ed, 2023-07-21)"
    version="1.1"
    id="svg2"
    height="66"
-   width="75">
+   width="75"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs4">
     <linearGradient
@@ -697,9 +697,9 @@
     </linearGradient>
     <filter
        height="2.376"
-       y="-0.688"
+       y="-0.68799998"
        width="1.8256"
-       x="-0.4128"
+       x="-0.41279999"
        id="filter5309"
        style="color-interpolation-filters:sRGB"
        inkscape:collect="always">
@@ -731,10 +731,10 @@
          style="stop-color:#ffffff;stop-opacity:0.369" />
     </linearGradient>
     <filter
-       height="1.2175802"
-       y="-0.10879012"
-       width="1.1259522"
-       x="-0.062976152"
+       height="1.2175803"
+       y="-0.10879013"
+       width="1.1259523"
+       x="-0.062976157"
        id="filter4606"
        style="color-interpolation-filters:sRGB"
        inkscape:collect="always">
@@ -751,30 +751,38 @@
      inkscape:snap-global="true"
      inkscape:guide-bbox="true"
      showguides="true"
-     inkscape:window-maximized="1"
-     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:window-y="25"
      inkscape:window-x="0"
-     inkscape:window-height="1035"
-     inkscape:window-width="1920"
+     inkscape:window-height="1027"
+     inkscape:window-width="1392"
      showgrid="true"
      inkscape:current-layer="layer1"
      inkscape:document-units="px"
-     inkscape:cy="32.999991"
-     inkscape:cx="75"
-     inkscape:zoom="9.2000001"
+     inkscape:cy="60.990982"
+     inkscape:cx="-0.13316808"
+     inkscape:zoom="3.7546534"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0"
      borderopacity="1.0"
      bordercolor="#666666"
      pagecolor="#3e3e3e"
-     id="base">
+     id="base"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        snapvisiblegridlinesonly="true"
        enabled="true"
        visible="true"
        empspacing="5"
        id="grid4112"
-       type="xygrid" />
+       type="xygrid"
+       originx="0"
+       originy="0"
+       spacingy="1"
+       spacingx="1"
+       units="px" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -806,14 +814,6 @@
        id="rect4113-1-0"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
-    <g
-       transform="matrix(0.27903303,0,0,0.27903303,-14.618136,-107.52874)"
-       style="display:inline"
-       id="g11331-3-1-1-7">
-      <g
-         id="g13408-8-2"
-         style="fill:#737986;fill-opacity:1;stroke:#595e68;stroke-opacity:1" />
-    </g>
     <path
        style="display:inline;opacity:0.18399999;fill:url(#linearGradient4970);fill-opacity:1;stroke:none"
        d="M 75,4.0000001e-7 75,66 30.000003,66 C 30.000003,46.1545 47.70944,9.2500004 75,4e-7 Z"
