@@ -16,10 +16,10 @@ package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
 import java.util.ResourceBundle;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.Key;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ModifierKey;
 
 /**
@@ -62,13 +62,11 @@ public class EmacsKeyFormatter extends AbstractKeyFormatter {
 		return super.format(key).toLowerCase();
 	}
 
-	@SuppressWarnings("removal")
 	@Override
 	protected String getKeyDelimiter() {
 		return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY, KeyStroke.KEY_DELIMITER, false, false);
 	}
 
-	@SuppressWarnings("removal")
 	@Override
 	protected String getKeyStrokeDelimiter() {
 		return Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY, KeySequence.KEY_STROKE_DELIMITER, false,
