@@ -232,49 +232,53 @@ public class FindReplaceOverlay {
 
 		private final Listener replaceBarToSearchBarAndTools = e -> {
 			switch (e.detail) {
-			case SWT.TRAVERSE_TAB_NEXT:
-				e.doit = false;
-				searchBar.getDropDownTool().getFirstControl().forceFocus();
-				break;
-			case SWT.TRAVERSE_TAB_PREVIOUS:
-				e.doit = false;
-				searchBar.getTextBar().forceFocus();
-				break;
-			default:
-				// Proceed as normal
+				case SWT.TRAVERSE_TAB_NEXT -> {
+					e.doit = false;
+					searchBar.getDropDownTool().getFirstControl().forceFocus();
+				}
+				case SWT.TRAVERSE_TAB_PREVIOUS -> {
+					e.doit = false;
+					searchBar.getTextBar().forceFocus();
+				}
+				default -> {
+					// Proceed as normal
+				}
 			}
 		};
 
 		private final Listener searchToolsToReplaceBar = e -> {
 			switch (e.detail) {
-			case SWT.TRAVERSE_TAB_PREVIOUS:
-				e.doit = false;
-				replaceBar.forceFocus();
-				break;
-			default:
-				// Proceed as normal
+				case SWT.TRAVERSE_TAB_PREVIOUS -> {
+					e.doit = false;
+					replaceBar.forceFocus();
+				}
+				default -> {
+					// Proceed as normal
+				}
 			}
 		};
 
 		private final Listener closeToolsToReplaceTools = e -> {
 			switch (e.detail) {
-			case SWT.TRAVERSE_TAB_NEXT:
-				e.doit = false;
-				replaceBar.getDropDownTool().getFirstControl().forceFocus();
-				break;
-			default:
-				// Proceed as normal
+				case SWT.TRAVERSE_TAB_NEXT -> {
+					e.doit = false;
+					replaceBar.getDropDownTool().getFirstControl().forceFocus();
+				}
+				default -> {
+					// Proceed as normal
+				}
 			}
 		};
 
 		private final Listener replaceToolsToCloseTools = e -> {
 			switch (e.detail) {
-			case SWT.TRAVERSE_TAB_PREVIOUS:
-				e.doit = false;
-				closeTools.getFirstControl().forceFocus();
-				break;
-			default:
-				// Proceed as normal
+				case SWT.TRAVERSE_TAB_PREVIOUS -> {
+					e.doit = false;
+					closeTools.getFirstControl().forceFocus();
+				}
+				default -> {
+					// Proceed as normal
+				}
 			}
 		};
 
