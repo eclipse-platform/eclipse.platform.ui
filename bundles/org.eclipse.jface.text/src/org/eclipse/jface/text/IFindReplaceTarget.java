@@ -100,4 +100,23 @@ public interface IFindReplaceTarget {
 	 * @param text the substitution text
 	 */
 	void replaceSelection(String text);
+
+	/**
+	 * @return true, if its able to handle batch replacements.
+	 */
+	default boolean canBatchReplace() {
+		return false;
+	}
+
+	/**
+	 * @param findString the string to find.
+	 * @param replaceString the string to replace found occurrences.
+	 * @param wholeWordSearch search for whole words.
+	 * @param caseSensitiveSearch case sensitive search.
+	 * @param regexSearch RegEex search.
+	 * @param incrementalSearch search in selected lines.
+	 */
+	default int batchReplace(String findString, String replaceString, boolean wholeWordSearch, boolean caseSensitiveSearch, boolean regexSearch, boolean incrementalSearch) {
+		return -1;
+	}
 }

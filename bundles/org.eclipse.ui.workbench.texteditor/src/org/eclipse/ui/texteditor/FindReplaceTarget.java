@@ -13,14 +13,22 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.text.IFindReplaceTargetExtension4;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.internal.RegExUtils;
 
 
 /**
@@ -34,7 +42,11 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 	private AbstractTextEditor fEditor;
 	/** The find/replace target */
 	private IFindReplaceTarget fTarget;
-
+	/** The preference instance scope of editors to grab preferences */
+	private static final String UI_EDITORS_INSTANCE_SCOPE_NODE_NAME = "org.eclipse.ui.editors"; //$NON-NLS-1$
+	/** The preference key for batch search and replace */
+	private static final String EDITOR_BATCH_REPLACE = "batchReplaceEnabled"; //$NON-NLS-1$
+	
 	/**
 	 * Creates a new find/replace target.
 	 *
@@ -195,4 +207,53 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 	public boolean validateTargetState() {
 		return fEditor.validateEditorInputState();
 	}
+
+	@Override
+	public boolean canBatchReplace() {
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(UI_EDITORS_INSTANCE_SCOPE_NODE_NAME);
+		if (preferences == null) {
+			return false;
+		}
+		return preferences
+				.getBoolean(EDITOR_BATCH_REPLACE, false);
+	}
+
+	@Override
+	public int batchReplace(String findString, String replaceString, boolean wholeWord, boolean caseSensitive,
+			boolean regExSearch, boolean incrementalSearch) {
+		// Compile the raw pattern early so it can throw an exception if it's not well
+		// formed.
+		// The information in that exception is displayed to the user.
+		if (regExSearch) {
+			Pattern.compile(findString);
+		}
+
+		IDocument document = fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+
+		Pattern pattern = RegExUtils.createRegexSearchPattern(findString, wholeWord, caseSensitive, regExSearch);
+		if (incrementalSearch) {
+			IRegion region = getScope();
+			try {
+				String selectedLines = document.get(region.getOffset(), region.getLength());
+				var count = pattern.split(selectedLines, -1).length - 1;
+				if (count == 0) {
+					return count;
+				}
+				String replacedLines = pattern.matcher(selectedLines).replaceAll(replaceString);
+
+				document.replace(region.getOffset(), region.getLength(), replacedLines);
+
+				return count;
+			} catch (BadLocationException e) {
+				return 0;
+			}
+		}
+
+		String documentContent = document.get();
+		var count = pattern.split(documentContent, -1).length - 1;
+		document.set(pattern.matcher(documentContent).replaceAll(replaceString));
+
+		return count;
+	}
+
 }
