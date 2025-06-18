@@ -153,7 +153,7 @@ public class MenuBuilder {
 				search.add(new GroupMarker("dialogGroup"));
 				search.add(new Separator("fileSearchContextMenuActionsGroup"));
 				search.add(new Separator("contextMenuActionsGroup"));
-				search.add(new Separator("occurencesActionsGroup"));
+				search.add(new Separator("occurrencesActionsGroup"));
 				search.add(new Separator("extraSearchGroup"));
 
 				additions.addContributionItem(search, null);

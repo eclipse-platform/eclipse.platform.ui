@@ -113,7 +113,7 @@ public class TextMultiCaretSelectionCommandsTest {
 	}
 
 	@Test
-	public void testMultiSelectionDown_withSecondIdentifierSelectedIdentifier_addsNextOccurenceToSelection()
+	public void testMultiSelectionDown_withSecondIdentifierSelectedIdentifier_addsNextOccurrenceToSelection()
 			throws Exception {
 		setSelection(new IRegion[] { new Region(8, 6) });
 		assertEquals(14, widget.getCaretOffset());
@@ -237,7 +237,7 @@ public class TextMultiCaretSelectionCommandsTest {
 	}
 
 	@Test
-	public void testAddAllMatches_withSingleSelection_selectsAllOccurences() throws Exception {
+	public void testAddAllMatches_withSingleSelection_selectsAllOccurrences() throws Exception {
 		setSelection(new IRegion[] { new Region(0, 7) });
 		assertEquals(7, widget.getCaretOffset());
 
@@ -249,7 +249,7 @@ public class TextMultiCaretSelectionCommandsTest {
 	}
 
 	@Test
-	public void testAddAllMatches_withDoubleSelectionOfSameText_selectsAllOccurences() throws Exception {
+	public void testAddAllMatches_withDoubleSelectionOfSameText_selectsAllOccurrences() throws Exception {
 		setSelection(new IRegion[] { new Region(0, 7), new Region(L1_LEN, 7) });
 		assertEquals(7, widget.getCaretOffset());
 
@@ -272,7 +272,7 @@ public class TextMultiCaretSelectionCommandsTest {
 	}
 
 	@Test
-	public void testAddAllMatches_withCaretInIdentifier_selectsAllOccurencesOfIdentifier() throws Exception {
+	public void testAddAllMatches_withCaretInIdentifier_selectsAllOccurrencesOfIdentifier() throws Exception {
 		setSelection(new IRegion[] { new Region(2, 0) });
 		assertEquals(2, widget.getCaretOffset());
 
