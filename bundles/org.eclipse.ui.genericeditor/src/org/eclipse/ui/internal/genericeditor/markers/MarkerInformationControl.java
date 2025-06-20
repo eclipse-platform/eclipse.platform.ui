@@ -161,7 +161,10 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 
 	@Override
 	public Point computeSizeHint() {
-		getShell().pack();
+		if (getShell().getChildren().length > 0) {
+			// Do not pack the shell/control if it has no children, as it will size to 2,2
+			getShell().pack();
+		}
 		return getShell().getSize();
 	}
 

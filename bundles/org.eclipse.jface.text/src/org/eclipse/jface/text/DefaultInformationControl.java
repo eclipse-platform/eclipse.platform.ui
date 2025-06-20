@@ -368,6 +368,11 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 
 	@Override
 	public Point computeSizeHint() {
+		if (getShell().getChildren().length == 0) {
+			// no content yet, return default size
+			// computeSize would return 2,2 here
+			return getShell().getSize();
+		}
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=117602
 		int widthHint= SWT.DEFAULT;
 		Point constraints= getSizeConstraints();
