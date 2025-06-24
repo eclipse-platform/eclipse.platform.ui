@@ -175,7 +175,12 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 			Supplier<Point> getDefault) {
 		return controls.values().stream().map(computeSize).reduce(
 				(size1, size2) -> new Point(Math.max(size1.x, size2.x), size1.y + size2.y + layout.verticalSpacing))
-				.orElseGet(getDefault);
+				.map(size -> {
+					var shellSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+					int width = Math.max(size.x, shellSize.x);
+					int height = Math.max(size.y, shellSize.y);
+					return new Point(width, height);
+				}).orElseGet(getDefault);
 	}
 
 }
