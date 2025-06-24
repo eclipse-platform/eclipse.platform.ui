@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2023 IBM Corporation and others.
+ * Copyright (c) 2009, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -2445,7 +2445,7 @@ public class PartRenderingEngineTests {
 		partStackForPartBPartC.setSelectedElement(partB);
 
 		MPart partC = ems.createModelElement(MPart.class);
-		partB.getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
+		partC.getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
 		partStackForPartBPartC.getChildren().add(partC);
 		partStackForPartBPartC.setSelectedElement(partC);
 
