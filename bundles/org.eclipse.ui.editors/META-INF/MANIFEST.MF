@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.editors; singleton:=true
-Bundle-Version: 3.20.0.qualifier
+Bundle-Version: 3.20.100.qualifier
 Bundle-Activator: org.eclipse.ui.internal.editors.text.EditorsPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
