@@ -273,7 +273,7 @@ public class CodeMiningTest {
 		int lineOffset = document.getLineOffset(line);
 		Rectangle lineBounds = widget.getTextBounds(lineOffset, lineOffset + lineLength);
 		String lineStr = document.get(lineOffset, lineLength);
-		Image image = new Image(widget.getDisplay(), widget.getSize().x, widget.getSize().y);
+		Image image = new Image(widget.getDisplay(), (gc, width, height) -> {}, widget.getSize().x, widget.getSize().y);
 		try {
 			GC gc = new GC(widget);
 			gc.copyArea(image, 0, 0);
@@ -306,7 +306,7 @@ public class CodeMiningTest {
 		String lineStr = document.get(lineOffset,
 				document.getLineLength(line) - document.getLineDelimiter(line).length());
 		Rectangle lineBounds = widget.getTextBounds(lineOffset, lineOffset);
-		Image image = new Image(widget.getDisplay(), widget.getSize().x, widget.getSize().y);
+		Image image = new Image(widget.getDisplay(), (gc, width, height) -> {}, widget.getSize().x, widget.getSize().y);
 		try {
 			GC gc = new GC(widget);
 			gc.copyArea(image, 0, 0);
