@@ -679,7 +679,7 @@ import org.eclipse.core.runtime.Status;
 		public Object convert(Object fromObject) {
 			// Explicit cast necessary due to potential type erasure
 			if (toType instanceof Class<?> clazz) {
-				return clazz.cast(fromObject);
+				return (clazz.isPrimitive() ? autoboxed(clazz) : clazz).cast(fromObject);
 			}
 			return fromObject;
 		}
