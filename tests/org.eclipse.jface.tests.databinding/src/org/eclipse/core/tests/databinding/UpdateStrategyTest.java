@@ -30,6 +30,7 @@ import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.conversion.text.NumberToStringConverter;
 import org.eclipse.core.databinding.conversion.text.StringToNumberConverter;
+import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.conversion.DateToStringConverter;
@@ -369,5 +370,28 @@ public class UpdateStrategyTest extends AbstractDefaultRealmTestCase {
 
 		RuntimeException ex = assertThrows(RuntimeException.class, () -> strategy.convert(new HashSet<>()));
 		assertTrue("Type erasure was missed", ex.getCause() instanceof ClassCastException);
+	}
+
+	// https://github.com/eclipse-platform/eclipse.platform.ui/pull/3009#issuecomment-3012956414
+	@Test
+	public void testDefaultConverterWithPrimitiveTypeAsDestinationAndNonClassTypeAsSourceType() {
+		IObservableValue<Boolean> source = new AbstractObservableValue() {
+			@Override
+			public Object getValueType() {
+				return new Object(); // non-class type, happens e.g. in EMF databinding
+			}
+
+			@Override
+			protected Object doGetValue() {
+				return Boolean.TRUE;
+			}
+		};
+		WritableValue<Boolean> destination = WritableValue.withValueType(boolean.class);
+
+		UpdateStrategyStub<Object, Boolean> strategy = new UpdateStrategyStub<>();
+		strategy.fillDefaults(source, destination);
+
+		Boolean result = strategy.convert(source.getValue());
+		assertTrue(result);
 	}
 }
