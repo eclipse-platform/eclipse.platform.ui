@@ -7,10 +7,10 @@ Core expressions are declarative or programmatic expressions based on the org.ec
 Expressions and the Command Framework
 =====================================
 
-The [Platform Command Framework](PlatformCommandFramework.md) uses [core expressions](Platform_Expression_Framework.md) for enabledWhen and activeWhen for handlers, programmatic activation of contexts, and for visibleWhen for menu contributions. 
-The command framework provides the IEvaluationContext that command core expressions are evaluate against.
+The [Platform Command Framework](PlatformCommandFramework.md) uses [core expressions](Platform_Expression_Framework.md) for `enabledWhen` and `activeWhen` for handlers, programmatic activation of contexts, and for `visibleWhen` for menu contributions. 
+The command framework provides the `IEvaluationContext` that command core expressions are evaluate against.
 
-The IEvaluationContext provides a default variable for evaluations, and a number of named variables. 
+The `IEvaluationContext` provides a default variable for evaluations, and a number of named variables. 
 In the command framework, we provide the global selection as a `java.util.Collection` as the default variable. 
 It can either be empty, have one entry (if the ISelection was something like an ITextSelection), or have the contents of an IStructuredSelection.
 
@@ -38,6 +38,7 @@ Some of the variables may not be set, depending on the current application conte
 | activePart | `org.eclipse.ui.IWorkbenchPart` |   The active part, which can be the same as the active editor.   | 3.2 |
 | activePartId | `java.lang.String` |   The ID of the currently active part.   | 3.2 |
 | activeSite | `org.eclipse.ui.IWorkbenchPartSite` |   The site of the currently active part.   | 3.2 |
+| org.eclipse.ui.selection | Object |   The current global selection if the `ESelectionService` is used. It is often used with <test/> elements with `org.eclipse.core.expressions.PropertyTester`, in programmatic core expressions, potentially with <iterate/> and <count/> elements.   | 4.0 |
 | selection | `org.eclipse.jface.viewers.ISelection` |   The current global selection. It is often used with <test/> elements with `org.eclipse.core.expressions.PropertyTester`, in programmatic core expressions, and in **3.3** with <iterate/> and <count/> elements.   | 3.2 |
 | activeMenu | A `java.util.Collection` of `java.lang.String` |   This is the list of IDs of the showing context menu. Examples are like #TextEditorRuler or a part ID. Most commonly used with <iterate/>, <count/>, and <test/> with a combined `org.eclipse.common.expressions.PropertyTester`.   | 3.2 |
 | activeMenuSelection | `org.eclipse.jface.viewers.ISelection` |   This is a selection that is available while a context menu is showing. It is the selection from the selection provider used to register the context menu, usually from `getSite().registerContextMenu(*)`. It is usually the same as the `selection`variable, but not always. This is more for legacy compatibility.   | 3.3 |
