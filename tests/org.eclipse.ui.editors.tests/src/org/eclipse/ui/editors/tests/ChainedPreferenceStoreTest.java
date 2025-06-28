@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -30,6 +30,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 public class ChainedPreferenceStoreTest {
+
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
 
 	private class PropertyChangeListener implements IPropertyChangeListener {
 
@@ -47,10 +50,6 @@ public class ChainedPreferenceStoreTest {
 	private static final String DEFAULT_VALUE= "4";
 	private static final String DEFAULT_DEFAULT_VALUE= "";
 
-	@After
-	public void tearDown() {
-		TestUtil.cleanUp();
-	}
 
 	/**
 	 * [implementation] ChainedPreferenceStore
