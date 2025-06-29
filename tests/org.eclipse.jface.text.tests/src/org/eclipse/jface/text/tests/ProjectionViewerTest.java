@@ -75,4 +75,32 @@ public class ProjectionViewerTest {
 			shell.dispose();
 		}
 	}
+
+	@Test
+	public void testVisibleRegionDoesNotChangeWithProjections() {
+		Shell shell= new Shell();
+		shell.setLayout(new FillLayout());
+		ProjectionViewer viewer= new ProjectionViewer(shell, null, null, false, SWT.NONE);
+		String documentContent= """
+				Hello
+				World
+				123
+				456
+				""";
+		Document document= new Document(documentContent);
+		viewer.setDocument(document, new AnnotationModel());
+		int regionLength= documentContent.indexOf('\n');
+		viewer.setVisibleRegion(0, regionLength);
+		viewer.enableProjection();
+		viewer.getProjectionAnnotationModel().addAnnotation(new ProjectionAnnotation(false), new ProjectionPosition(document));
+		shell.setVisible(true);
+		viewer.getTextOperationTarget().doOperation(ProjectionViewer.COLLAPSE_ALL);
+		viewer.getTextOperationTarget().doOperation(ITextOperationTarget.SELECT_ALL);
+		try {
+			assertEquals(0, viewer.getVisibleRegion().getOffset());//expected 0 but was 6
+			assertEquals(regionLength, viewer.getVisibleRegion().getLength());//expected 5 but was 20
+		} finally {
+			shell.dispose();
+		}
+	}
 }
