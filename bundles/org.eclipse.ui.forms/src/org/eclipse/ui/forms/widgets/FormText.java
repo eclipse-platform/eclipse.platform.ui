@@ -1554,7 +1554,8 @@ public class FormText extends Canvas {
 		ensureBoldFontPresent(getFont());
 		gc.setForeground(getForeground());
 		gc.setBackground(getBackground());
-		repaint(gc, e.x, e.y, e.width, e.height);
+		Point size = getSize();
+		repaint(gc, 0, 0, size.x, size.y);
 	}
 
 	private void repaint(GC gc, int x, int y, int width, int height) {
