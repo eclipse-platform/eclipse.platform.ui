@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.ui.forms;singleton:=true
-Bundle-Version: 3.13.500.qualifier
+Bundle-Version: 3.13.600.qualifier
 Bundle-Vendor: %provider-name
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.forms,
