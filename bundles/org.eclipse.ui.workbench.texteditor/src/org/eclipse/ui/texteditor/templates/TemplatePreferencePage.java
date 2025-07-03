@@ -691,21 +691,18 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			TemplatePersistenceData data = (TemplatePersistenceData) element;
 			Template template= data.getTemplate();
 
-			switch (columnIndex) {
-				case 0:
-					return template.getName();
-				case 1:
-					TemplateContextType type= fContextTypeRegistry.getContextType(template.getContextTypeId());
+			return switch (columnIndex) {
+				case 0 -> template.getName();
+				case 1 -> {
+					TemplateContextType type = fContextTypeRegistry.getContextType(template.getContextTypeId());
 					if (type != null)
-						return type.getName();
-					return template.getContextTypeId();
-				case 2:
-					return template.getDescription();
-				case 3:
-					return template.isAutoInsertable() ? TemplatesMessages.TemplatePreferencePage_on : "";  //$NON-NLS-1$
-				default:
-					return ""; //$NON-NLS-1$
-			}
+						yield type.getName();
+					yield template.getContextTypeId();
+				}
+				case 2 -> template.getDescription();
+				case 3 -> template.isAutoInsertable() ? TemplatesMessages.TemplatePreferencePage_on : ""; //$NON-NLS-1$
+				default -> ""; //$NON-NLS-1$
+			};
 		}
 	}
 
