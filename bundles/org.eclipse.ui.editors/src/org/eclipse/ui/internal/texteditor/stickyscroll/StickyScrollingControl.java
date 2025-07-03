@@ -236,7 +236,8 @@ public class StickyScrollingControl {
 
 		List<StyleRange> stickyLinesStyleRanges= new ArrayList<>();
 		int stickyLineTextOffset= 0;
-		for (int i= 0; i < getNumberStickyLines(); i++) {
+		int stickyLinesCount = getNumberStickyLines();
+		for (int i = 0; i < stickyLinesCount; i++) {
 			IStickyLine stickyLine= stickyLines.get(i);
 			StyleRange[] ranges= stickyLine.getStyleRanges();
 			if (ranges != null) {

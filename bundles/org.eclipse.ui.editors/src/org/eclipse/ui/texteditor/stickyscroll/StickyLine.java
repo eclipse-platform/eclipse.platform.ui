@@ -47,7 +47,11 @@ public class StickyLine implements IStickyLine {
 	public String getText() {
 		if (text == null) {
 			StyledText textWidget = sourceViewer.getTextWidget();
-			text = textWidget.getLine(getWidgetLineNumber());
+			int widgetLineNumber = getWidgetLineNumber();
+			if (widgetLineNumber < 0 || widgetLineNumber >= textWidget.getLineCount()) {
+				return ""; // return empty string if line number is invalid //$NON-NLS-1$
+			}
+			text = textWidget.getLine(widgetLineNumber);
 		}
 		return text;
 	}
