@@ -560,7 +560,7 @@ public final class Util {
 	 */
 	public static boolean isMac() {
 		final String ws = SWT.getPlatform();
-		return WS_CARBON.equals(ws) || WS_COCOA.equals(ws);
+		return WS_COCOA.equals(ws);
 	}
 
 	/**
