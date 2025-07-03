@@ -409,7 +409,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 				getControl().setRedraw(false);
 				// Set the selection at first because in Tree's
 				// the element might not be materialized
-				setSelection(new StructuredSelection(element), true);
+				setSelection(IStructuredSelection.of(element), true);
 
 				Widget item = findItem(element);
 				if (item != null) {
@@ -1068,7 +1068,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 				}
 			}
 			if (found) {
-				return new StructuredSelection(list);
+				return IStructuredSelection.of(list);
 			}
 		}
 		// by default return given selection.
