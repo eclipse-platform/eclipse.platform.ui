@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,6 +33,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.internal.text.SelectionProcessor;
 
@@ -277,6 +280,32 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 
+	/**
+	 * An {@link IDocumentListener} that makes sure that {@link #fVisibleRegionDuringProjection} is
+	 * updated when the document changes and ensures that the collapsed region after the visible
+	 * region is recreated appropriately.
+	 */
+	private final class UpdateDocumentListener implements IDocumentListener {
+		@Override
+		public void documentChanged(DocumentEvent event) {
+			if (fVisibleRegionDuringProjection == null) {
+				return;
+			}
+			int oldLength= event.getLength();
+			int newLength= event.getText().length();
+			int oldVisibleRegionEnd= fVisibleRegionDuringProjection.getOffset() + fVisibleRegionDuringProjection.getLength();
+			if (event.getOffset() < fVisibleRegionDuringProjection.getOffset()) {
+				fVisibleRegionDuringProjection= new Region(fVisibleRegionDuringProjection.getOffset() + newLength - oldLength, fVisibleRegionDuringProjection.getLength());
+			} else if (event.getOffset() + oldLength <= oldVisibleRegionEnd) {
+				fVisibleRegionDuringProjection= new Region(fVisibleRegionDuringProjection.getOffset(), fVisibleRegionDuringProjection.getLength() + newLength - oldLength);
+			}
+		}
+
+		@Override
+		public void documentAboutToBeChanged(DocumentEvent event) {
+		}
+	}
+
 	/** The projection annotation model used by this viewer. */
 	private ProjectionAnnotationModel fProjectionAnnotationModel;
 	/** The annotation model listener */
@@ -297,6 +326,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private IDocument fReplaceVisibleDocumentExecutionTrigger;
 	/** <code>true</code> if projection was on the last time we switched to segmented mode. */
 	private boolean fWasProjectionEnabled;
+	/**
+	 * The region set by {@link #setVisibleRegion(int, int)} during projection or <code>null</code>
+	 * if not in a projection
+	 */
+	private IRegion fVisibleRegionDuringProjection;
 	/** The queue of projection commands used to assess the costs of projection changes. */
 	private ProjectionCommandQueue fCommandQueue;
 	/**
@@ -306,6 +340,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	private int fDeletedLines;
 
+	private UpdateDocumentListener fUpdateDocumentListener;
 
 	/**
 	 * Creates a new projection source viewer.
@@ -318,6 +353,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	public ProjectionViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean showsAnnotationOverview, int styles) {
 		super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
+		fUpdateDocumentListener= new UpdateDocumentListener();
 	}
 
 	/**
@@ -514,6 +550,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			fProjectionAnnotationModel.removeAllAnnotations();
 			fFindReplaceDocumentAdapter= null;
 			fireProjectionDisabled();
+			if (fVisibleRegionDuringProjection != null) {
+				super.setVisibleRegion(fVisibleRegionDuringProjection.getOffset(), fVisibleRegionDuringProjection.getLength());
+				fVisibleRegionDuringProjection= null;
+			}
+			IDocument document= getDocument();
+			if (document != null) {
+				document.removeDocumentListener(fUpdateDocumentListener);
+			}
 		}
 	}
 
@@ -525,6 +569,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			addProjectionAnnotationModel(getVisualAnnotationModel());
 			fFindReplaceDocumentAdapter= null;
 			fireProjectionEnabled();
+			IDocument document= getDocument();
+			if (document == null) {
+				return;
+			}
+			IRegion visibleRegion= getVisibleRegion();
+			if (visibleRegion != null && (visibleRegion.getOffset() != 0 || visibleRegion.getLength() != 0) && visibleRegion.getLength() < document.getLength()) {
+				setVisibleRegion(visibleRegion.getOffset(), visibleRegion.getLength());
+			}
+			document.addDocumentListener(fUpdateDocumentListener);
 		}
 	}
 
@@ -533,6 +586,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		IDocument doc= getDocument();
 		int length= doc == null ? 0 : doc.getLength();
 		if (isProjectionMode()) {
+			if (fVisibleRegionDuringProjection != null) {
+				offset= fVisibleRegionDuringProjection.getOffset();
+				length= fVisibleRegionDuringProjection.getLength();
+			}
 			fProjectionAnnotationModel.expandAll(offset, length);
 		}
 	}
@@ -691,9 +748,75 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 	@Override
 	public void setVisibleRegion(int start, int length) {
-		fWasProjectionEnabled= isProjectionMode();
-		disableProjection();
-		super.setVisibleRegion(start, length);
+		if (!isProjectionMode()) {
+			super.setVisibleRegion(start, length);
+			return;
+		}
+		IDocument document= getDocument();
+		if (document == null) {
+			return;
+		}
+		try {
+			// If the visible region changes, make sure collapsed regions outside of the old visible regions are expanded
+			// and collapse everything outside the new visible region
+			int end= computeEndOfVisibleRegion(start, length, document);
+			expandOutsideCurrentVisibleRegion(document);
+			collapseOutsideOfNewVisibleRegion(start, end, document);
+			fVisibleRegionDuringProjection= new Region(start, end - start - 1);
+		} catch (BadLocationException e) {
+			ILog log= ILog.of(getClass());
+			log.log(new Status(IStatus.WARNING, getClass(), IStatus.OK, null, e));
+		}
+	}
+
+	private void expandOutsideCurrentVisibleRegion(IDocument document) throws BadLocationException {
+		if (fVisibleRegionDuringProjection != null) {
+			expand(0, fVisibleRegionDuringProjection.getOffset(), false, true);
+			int oldEnd= fVisibleRegionDuringProjection.getOffset() + fVisibleRegionDuringProjection.getLength();
+			int length= document.getLength() - oldEnd;
+			if (length > 0) {
+				expand(oldEnd, length, false, true);
+			}
+		}
+	}
+
+	private void collapseOutsideOfNewVisibleRegion(int start, int end, IDocument document) throws BadLocationException {
+		int documentLength= document.getLength();
+		collapse(0, start, true, true);
+
+		int endInvisibleRegionLength= documentLength - end;
+
+		if (isLineBreak(document.getChar(documentLength - 1))) {
+			// if the file ends with an empty line, make sure it is included as well (ensuring the user doesn't accidentially remove parts outside the visible region)
+			endInvisibleRegionLength++;
+		}
+		if (endInvisibleRegionLength > 0) {
+			collapse(end, endInvisibleRegionLength, true, true);
+		}
+	}
+
+	private static int computeEndOfVisibleRegion(int start, int length, IDocument document) throws BadLocationException {
+		int documentLength= document.getLength();
+		int end= start + length + 1;
+		// ensure that trailing whitespace is included
+		// In this case, the line break needs to be included as well
+		boolean visibleRegionEndsWithTrailingWhitespace= end < documentLength && isWhitespaceButNotNewline(document.getChar(end - 1));
+		while (end < documentLength && isWhitespaceButNotNewline(document.getChar(end))) {
+			end++;
+			visibleRegionEndsWithTrailingWhitespace= true;
+		}
+		if (visibleRegionEndsWithTrailingWhitespace && end < documentLength && isLineBreak(document.getChar(end))) {
+			end++;
+		}
+		return end;
+	}
+
+	private static boolean isWhitespaceButNotNewline(char c) {
+		return Character.isWhitespace(c) && !isLineBreak(c);
+	}
+
+	private static boolean isLineBreak(char c) {
+		return c == '\n' || c == '\r';
 	}
 
 	@Override
@@ -719,7 +842,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 	@Override
 	public IRegion getVisibleRegion() {
-		disableProjection();
+		if (fVisibleRegionDuringProjection != null) {
+			return fVisibleRegionDuringProjection;
+		}
 		IRegion visibleRegion= getModelCoverage();
 		if (visibleRegion == null) {
 			visibleRegion= new Region(0, 0);
@@ -730,7 +855,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 	@Override
 	public boolean overlapsWithVisibleRegion(int offset, int length) {
-		disableProjection();
+		if (fVisibleRegionDuringProjection != null) {
+			return TextUtilities.overlaps(fVisibleRegionDuringProjection, new Region(offset, length));
+		}
 		IRegion coverage= getModelCoverage();
 		if (coverage == null) {
 			return false;
@@ -784,10 +911,16 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 *
 	 * @param offset the offset of the range to hide
 	 * @param length the length of the range to hide
-	 * @param fireRedraw <code>true</code> if a redraw request should be issued, <code>false</code> otherwise
+	 * @param fireRedraw <code>true</code> if a redraw request should be issued, <code>false</code>
+	 *            otherwise
+	 * @param performOutsideVisibleRegion <code>true</code> if the range should be collapsed if it
+	 *            overlaps with anything outside of the visible region, <code>false</code> otherwise
 	 * @throws BadLocationException in case the range is invalid
 	 */
-	private void collapse(int offset, int length, boolean fireRedraw) throws BadLocationException {
+	private void collapse(int offset, int length, boolean fireRedraw, boolean performOutsideVisibleRegion) throws BadLocationException {
+		if (!performOutsideVisibleRegion && overlapsWithNonVisibleRegions(offset, length)) {
+			return;
+		}
 		ProjectionDocument projection= null;
 
 		IDocument visibleDocument= getVisibleDocument();
@@ -824,11 +957,16 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 *
 	 * @param offset the offset of the range to be expanded
 	 * @param length the length of the range to be expanded
-	 * @param fireRedraw <code>true</code> if a redraw request should be issued,
-	 *        <code>false</code> otherwise
+	 * @param fireRedraw <code>true</code> if a redraw request should be issued, <code>false</code>
+	 *            otherwise
+	 * @param performOutsideVisibleRegion <code>true</code> if the range should be collapsed if it
+	 *            overlaps with anything outside of the visible region, <code>false</code> otherwise
 	 * @throws BadLocationException in case the range is invalid
 	 */
-	private void expand(int offset, int length, boolean fireRedraw) throws BadLocationException {
+	private void expand(int offset, int length, boolean fireRedraw, boolean performOutsideVisibleRegion) throws BadLocationException {
+		if (!performOutsideVisibleRegion && overlapsWithNonVisibleRegions(offset, length)) {
+			return;
+		}
 		IDocument slave= getVisibleDocument();
 		if (slave instanceof ProjectionDocument projection) {
 			// expand
@@ -852,6 +990,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				internalInvalidateTextPresentation(offset, length);
 			}
 		}
+	}
+
+	private boolean overlapsWithNonVisibleRegions(int offset, int length) {
+		return fVisibleRegionDuringProjection != null
+				&& (offset < fVisibleRegionDuringProjection.getOffset() || offset + length > fVisibleRegionDuringProjection.getOffset() + fVisibleRegionDuringProjection.getLength());
 	}
 
 	/**
@@ -1074,7 +1217,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			if (annotation.isCollapsed()) {
 				Position expanded= event.getPositionOfRemovedAnnotation(annotation);
 				if (expanded != null) {
-					expand(expanded.getOffset(), expanded.getLength(), fireRedraw);
+					expand(expanded.getOffset(), expanded.getLength(), fireRedraw, false);
 				}
 			}
 		}
@@ -1184,11 +1327,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					IRegion[] regions= computeCollapsedRegions(position);
 					if (regions != null) {
 						for (IRegion region : regions) {
-							collapse(region.getOffset(), region.getLength(), fireRedraw);
+							collapse(region.getOffset(), region.getLength(), fireRedraw, false);
 						}
 					}
 				} else {
-					expand(position.getOffset(), position.getLength(), fireRedraw);
+					expand(position.getOffset(), position.getLength(), fireRedraw, false);
 				}
 			}
 		}
