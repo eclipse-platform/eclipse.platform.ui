@@ -15,9 +15,7 @@ package org.eclipse.jface.text.reconciler;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.jface.text.DocumentEvent;
@@ -51,201 +49,6 @@ import org.eclipse.jface.text.ITextViewer;
  * @since 2.0
  */
 abstract public class AbstractReconciler implements IReconciler {
-
-
-	/**
-	 * Background thread for the reconciling activity.
-	 */
-	private class BackgroundThread extends Job {
-
-		/** Has the reconciler been canceled. */
-		private boolean fCanceled= false;
-		/** Has the reconciler been reset. */
-		private boolean fReset= false;
-		/** Some changes need to be processed. */
-		private boolean fIsDirty= false;
-		/** Is a reconciling strategy active. */
-		private boolean fIsActive= false;
-
-		private volatile boolean fIsAlive;
-
-		private boolean started;
-
-		/**
-		 * Creates a new background thread. The thread
-		 * runs with minimal priority.
-		 *
-		 * @param name the thread's name
-		 */
-		public BackgroundThread(String name) {
-			super(name);
-			setPriority(Job.DECORATE);
-			setSystem(true);
-		}
-
-		/**
-		 * Returns whether a reconciling strategy is active right now.
-		 *
-		 * @return <code>true</code> if a activity is active
-		 */
-		public boolean isActive() {
-			return fIsActive;
-		}
-
-		/**
-		 * Returns whether some changes need to be processed.
-		 *
-		 * @return <code>true</code> if changes wait to be processed
-		 * @since 3.0
-		 */
-		public synchronized boolean isDirty() {
-			return fIsDirty;
-		}
-
-		/**
-		 * Cancels the background thread.
-		 */
-		public void doCancel() {
-			fCanceled= true;
-			IProgressMonitor pm= fProgressMonitor;
-			if (pm != null)
-				pm.setCanceled(true);
-			synchronized (fDirtyRegionQueue) {
-				fDirtyRegionQueue.notifyAll();
-			}
-		}
-
-		/**
-		 * Suspends the caller of this method until this background thread has
-		 * emptied the dirty region queue.
-		 */
-		public void suspendCallerWhileDirty() {
-			AbstractReconciler.this.signalWaitForFinish();
-			boolean isDirty;
-			do {
-				synchronized (fDirtyRegionQueue) {
-					isDirty= fDirtyRegionQueue.getSize() > 0;
-					if (isDirty) {
-						try {
-							fDirtyRegionQueue.wait();
-						} catch (InterruptedException x) {
-						}
-					}
-				}
-			} while (isDirty);
-		}
-
-		/**
-		 * Reset the background thread as the text viewer has been changed,
-		 */
-		public void reset() {
-
-			if (fDelay > 0) {
-
-				synchronized (this) {
-					fIsDirty= true;
-					fReset= true;
-				}
-				synchronized (fDirtyRegionQueue) {
-					fDirtyRegionQueue.notifyAll(); // wake up wait(fDelay);
-				}
-
-			} else {
-
-				synchronized (this) {
-					fIsDirty= true;
-				}
-
-				synchronized (fDirtyRegionQueue) {
-					fDirtyRegionQueue.notifyAll();
-				}
-			}
-			synchronized (this) {
-				started= false;
-			}
-			informNotFinished();
-			reconcilerReset();
-		}
-
-		/**
-		 * The background activity. Waits until there is something in the
-		 * queue managing the changes that have been applied to the text viewer.
-		 * Removes the first change from the queue and process it.
-		 * <p>
-		 * Calls {@link AbstractReconciler#initialProcess()} on entrance.
-		 * </p>
-		 */
-		@Override
-		public IStatus run(IProgressMonitor monitor) {
-			fIsAlive= true;
-			delay();
-
-			if (fCanceled)
-				return Status.CANCEL_STATUS;
-
-			initialProcess();
-
-			while (!fCanceled) {
-
-				delay();
-
-				if (fCanceled)
-					break;
-
-				if (!isDirty()) {
-					waitFinish= false; //signalWaitForFinish() was called but nothing todo
-					continue;
-				}
-
-				synchronized (this) {
-					if (fReset) {
-						fReset= false;
-						continue;
-					}
-				}
-
-				DirtyRegion r= null;
-				synchronized (fDirtyRegionQueue) {
-					r= fDirtyRegionQueue.removeNextDirtyRegion();
-				}
-
-				fIsActive= true;
-
-				fProgressMonitor.setCanceled(false);
-
-				process(r);
-
-				synchronized (fDirtyRegionQueue) {
-					if (0 == fDirtyRegionQueue.getSize()) {
-						synchronized (this) {
-							fIsDirty= fProgressMonitor.isCanceled();
-						}
-						fDirtyRegionQueue.notifyAll();
-					}
-				}
-
-				fIsActive= false;
-			}
-			fIsAlive= false;
-			return Status.OK_STATUS;
-		}
-
-		public boolean isAlive() {
-			return fIsAlive;
-		}
-
-		public synchronized void start() {
-			if (!started) {
-				started= true;
-				schedule();
-			}
-		}
-
-		@Override
-		public boolean belongsTo(Object family) {
-			return family == fViewer || AbstractReconciler.class == family;
-		}
-	}
 
 	/**
 	 * Internal document listener and text input listener.
@@ -323,13 +126,14 @@ abstract public class AbstractReconciler implements IReconciler {
 	}
 
 	/** Queue to manage the changes applied to the text viewer. */
-	private DirtyRegionQueue fDirtyRegionQueue;
+	DirtyRegionQueue fDirtyRegionQueue;
 	/** The background thread. */
-	private BackgroundThread fThread;
+	private ReconcilerJob fThread;
 	/** Internal document and text input listener. */
 	private Listener fListener;
+
 	/** The background thread delay. */
-	private int fDelay= 500;
+	int fDelay= 500;
 	/** Signal that the the background thread should not delay. */
 	volatile boolean waitFinish;
 	/** Are there incremental reconciling strategies? */
@@ -476,7 +280,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		synchronized (this) {
 			if (fThread != null)
 				return;
-			fThread= new BackgroundThread(getClass().getName());
+			fThread= new ReconcilerJob(getClass().getName(), this);
 		}
 
 		fDirtyRegionQueue= new DirtyRegionQueue();
@@ -510,7 +314,7 @@ abstract public class AbstractReconciler implements IReconciler {
 
 			synchronized (this) {
 				// http://dev.eclipse.org/bugs/show_bug.cgi?id=19135
-				BackgroundThread bt= fThread;
+				ReconcilerJob bt= fThread;
 				fThread= null;
 				bt.doCancel();
 			}
@@ -579,7 +383,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		}
 	}
 
-	private void informNotFinished() {
+	void informNotFinished() {
 		waitFinish= false;
 		aboutToWork();
 	}
@@ -590,7 +394,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	}
 
 
-	private void delay() {
+	void delay() {
 		synchronized (fDirtyRegionQueue) {
 			if (waitFinish) {
 				return; // do not delay when waiting;
