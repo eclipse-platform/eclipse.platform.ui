@@ -85,6 +85,10 @@ class DirtyRegionQueue {
 		return fDirtyRegions.size();
 	}
 
+	public boolean isEmpty() {
+		return fDirtyRegions.isEmpty();
+	}
+
 	/**
 	 * Throws away all entries in the queue.
 	 */
