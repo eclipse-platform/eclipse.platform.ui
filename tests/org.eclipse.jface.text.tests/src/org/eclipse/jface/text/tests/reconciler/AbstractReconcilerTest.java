@@ -190,7 +190,7 @@ public class AbstractReconcilerTest {
 		fReconciler.install(fViewer);
 
 		fAccessor= new Accessor(fReconciler, AbstractReconciler.class);
-		Object object= fAccessor.get("fThread");
+		Object object= fAccessor.get("fWorker");
 		fAccessor= new Accessor(object, object.getClass());
 	}
 
