@@ -844,7 +844,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		Display display= fCachedTextWidget.getDisplay();
 
 		int firstWidgetLineToDraw= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, visibleLines.getStartLine());
-		int y= fCachedTextWidget.getLinePixel(firstWidgetLineToDraw);
+		float y= fCachedTextWidget.getLinePixelFloat(firstWidgetLineToDraw);
 
 		// add empty lines if line is wrapped
 		boolean isWrapActive= fCachedTextWidget.getWordWrap();
@@ -856,7 +856,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				continue;
 
 			final int offsetAtLine= fCachedTextWidget.getOffsetAtLine(widgetLine);
-			int lineHeight = JFaceTextUtil.computeLineHeight(fCachedTextWidget, widgetLine, widgetLine + 1, 1);
+			float lineHeight= JFaceTextUtil.computeLineHeightFloat(fCachedTextWidget, widgetLine, widgetLine + 1, 1);
 			paintLine(line, y, lineHeight, gc, display);
 
 			// increment y position
@@ -936,7 +936,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @param display the display the drawing occurs on
 	 * @since 3.0
 	 */
-	protected void paintLine(int line, int y, int lineheight, GC gc, Display display) {
+	protected void paintLine(int line, float y, float lineheight, GC gc, Display display) {
 		int widgetLine= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, line);
 
 		String s= createDisplayString(line);
@@ -948,7 +948,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		int indentation= fIndentation[index];
 		int baselineBias= getBaselineBias(gc, widgetLine);
 		int verticalIndent= fCachedTextViewer.getTextWidget().getLineVerticalIndent(widgetLine);
-		gc.drawString(s, indentation, y + baselineBias + verticalIndent, true);
+		gc.drawString(s, new Point.OfFloat(indentation, y + baselineBias + verticalIndent), true);
 	}
 
 	/**
