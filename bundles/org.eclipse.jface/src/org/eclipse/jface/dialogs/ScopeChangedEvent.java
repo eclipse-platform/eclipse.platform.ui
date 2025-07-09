@@ -32,7 +32,7 @@ public class ScopeChangedEvent extends EventObject {
 	/**
 	 * The changed scope.
 	 */
-	protected int scope;
+	private final int scope;
 
 	/**
 	 * Creates a new event for the given source and new scope.
