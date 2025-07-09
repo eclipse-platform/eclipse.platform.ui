@@ -856,6 +856,8 @@ public class SearchDialog extends ExtendedDialogWindow
 
 	@Override
 	public void removeScopeChangedListener(IScopeChangedListener listener) {
-		fScopeChangeListeners.remove(listener);
+		if (fScopeChangeListeners != null) {
+			fScopeChangeListeners.remove(listener);
+		}
 	}
 }
