@@ -715,12 +715,7 @@ public class SearchDialog extends ExtendedDialogWindow
 			// Fires the scope change event
 			final ScopeChangedEvent event = new ScopeChangedEvent(this, getSelectedScope());
 			for (IScopeChangedListener l : fScopeChangeListeners) {
-				SafeRunner.run(new SafeRunnable() {
-					@Override
-					public void run() {
-						l.scopeChanged(event);
-					}
-				});
+				SafeRunner.run(() -> l.scopeChanged(event));
 			}
 		}
 	}
