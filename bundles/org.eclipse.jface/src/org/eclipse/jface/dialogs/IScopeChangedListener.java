@@ -27,5 +27,5 @@ public interface IScopeChangedListener {
 	 *
 	 * @param event event object describing the change
 	 */
-	public void scopeChanged(ScopeChangedEvent event);
+	void scopeChanged(ScopeChangedEvent event);
 }
