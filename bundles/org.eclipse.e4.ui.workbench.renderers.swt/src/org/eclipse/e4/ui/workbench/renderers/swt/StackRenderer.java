@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,6 +87,8 @@ import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -719,6 +721,11 @@ public class StackRenderer extends LazyStackRenderer {
 		if (PartStackUtil.isEditorStack(element)) {
 			createOnboardingControls(tabFolder);
 			initializeOnboardingInformationInEditorStack(tabFolder);
+			int drop = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
+			// Bug: eclipse-platform/eclipse.platform.swt/issues/649
+			Composite dropZone = new Composite(tabFolder, SWT.NONE);// additional Composite/child to support dropping
+			new Label(dropZone, SWT.NONE);
+			new DropTarget(dropZone, drop);
 		}
 		tabFolder.setMRUVisible(getMRUValue());
 
