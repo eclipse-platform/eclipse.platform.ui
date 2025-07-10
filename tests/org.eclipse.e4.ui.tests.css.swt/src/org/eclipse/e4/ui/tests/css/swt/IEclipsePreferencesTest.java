@@ -28,11 +28,13 @@ public class IEclipsePreferencesTest extends CSSSWTTestCase {
 		IEclipsePreferences preferences = new EclipsePreferences(null, "org.eclipse.jdt.ui") {};
 
 		engine = createEngine(
-				"IEclipsePreferences#org-eclipse-jdt-ui{preferences:"
-						+ "'semanticHighlighting.abstractClass.color=128,255,0',"
-						+ "'java_bracket=0,255,255',"
-						+ "'java_bracket_italic=true',"
-						+ "'java_bracket_underline='" + "}", display);
+				"""
+					IEclipsePreferences#org-eclipse-jdt-ui{preferences:\
+					'semanticHighlighting.abstractClass.color=128,255,0',\
+					'java_bracket=0,255,255',\
+					'java_bracket_italic=true',\
+					'java_bracket_underline='\
+					}""", display);
 		// when
 		engine.applyStyles(preferences, false);
 
