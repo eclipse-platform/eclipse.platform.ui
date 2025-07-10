@@ -51,11 +51,6 @@
             label="%theme.light"
             os="win32">
       </theme>
-   <theme
-		basestylesheeturi="css/high-contrast.css"
-        id="org.eclipse.e4.ui.css.theme.high-contrast"
-        label="%theme.high-contrast">
-   </theme>
 
    <themeAssociation
 		themeId="org.eclipse.e4.ui.css.theme.e4_classic"
