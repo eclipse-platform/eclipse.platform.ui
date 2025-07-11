@@ -18,6 +18,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
@@ -80,6 +81,15 @@ public final class JFaceTextUtil {
 	 */
 	public static int computeLineHeight(StyledText textWidget, int startLine, int endLine, int lineCount) {
 		return getLinePixel(textWidget, endLine) - getLinePixel(textWidget, startLine);
+	}
+
+	/**
+	 * @since 3.28
+	 */
+	public static float computeLineHeightFloat(StyledText textWidget, int startLine, int endLine, int lineCount) {
+		int lh= computeLineHeight(textWidget, startLine, endLine, lineCount);
+		int zoom= DPIUtil.getZoomForAutoscaleProperty(textWidget.nativeZoom);
+		return DPIUtil.scaleDown((float) DPIUtil.scaleUp(lh, zoom), zoom);
 	}
 
 	/**
@@ -286,6 +296,13 @@ public final class JFaceTextUtil {
 	 */
 	public static int getLinePixel(StyledText textWidget, int line) {
 		return textWidget.getLinePixel(line);
+	}
+
+	/**
+	 * @since 3.28
+	 */
+	public static float getLinePixelFloat(StyledText textWidget, int line) {
+		return textWidget.getLinePixelFloat(line);
 	}
 
 	/*
