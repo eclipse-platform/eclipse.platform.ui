@@ -22,6 +22,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +32,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
@@ -246,24 +246,16 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	 *
 	 * @return {@link String} or <code>null</code> if the file cannot be found
 	 */
-	private static String getFilePath(URL url, boolean logIOException) {
+	private static String getFilePath(URL url, boolean logException) {
 		try {
 			if (!InternalPolicy.OSGI_AVAILABLE) {
-				if (FILE_PROTOCOL.equalsIgnoreCase(url.getProtocol()))
-					return IPath.fromOSString(url.getFile()).toOSString();
-				return null;
+				return getFilePath(url);
 			}
 			url = resolvePathVariables(url);
 			URL locatedURL = FileLocator.toFileURL(url);
-			if (FILE_PROTOCOL.equalsIgnoreCase(locatedURL.getProtocol())) {
-				String filePath = IPath.fromOSString(locatedURL.getPath()).toOSString();
-				if (Files.exists(Path.of(filePath))) {
-					return filePath;
-				}
-			}
-			return null;
-		} catch (IOException e) {
-			if (logIOException) {
+			return getFilePath(locatedURL);
+		} catch (IOException | URISyntaxException e) {
+			if (logException) {
 				Policy.logException(e);
 			} else if (InternalPolicy.DEBUG_LOG_URL_IMAGE_DESCRIPTOR_MISSING_2x) {
 				String path = url.getPath();
@@ -273,6 +265,16 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			}
 			return null;
 		}
+	}
+
+	private static String getFilePath(URL url) throws URISyntaxException {
+		if (FILE_PROTOCOL.equalsIgnoreCase(url.getProtocol())) {
+			Path filePath = Path.of(url.toURI());
+			if (Files.exists(filePath)) {
+				return filePath.toString();
+			}
+		}
+		return null;
 	}
 
 	private static URL resolvePathVariables(URL url) {
