@@ -249,8 +249,12 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 	private static String getFilePath(URL url, boolean logIOException) {
 		try {
 			if (!InternalPolicy.OSGI_AVAILABLE) {
-				if (FILE_PROTOCOL.equalsIgnoreCase(url.getProtocol()))
-					return IPath.fromOSString(url.getFile()).toOSString();
+				if (FILE_PROTOCOL.equalsIgnoreCase(url.getProtocol())) {
+					String filePath = IPath.fromOSString(url.getFile()).toOSString();
+					if (Files.exists(Path.of(filePath))) {
+						return filePath;
+					}
+				}
 				return null;
 			}
 			url = resolvePathVariables(url);
