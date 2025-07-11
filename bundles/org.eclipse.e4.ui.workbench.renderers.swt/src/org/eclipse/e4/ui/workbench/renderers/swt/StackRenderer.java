@@ -87,6 +87,8 @@ import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -157,6 +159,8 @@ public class StackRenderer extends LazyStackRenderer {
 	 * JFace key for default workbench tab font
 	 */
 	private static final String TAB_FONT_KEY = "org.eclipse.ui.workbench.TAB_TEXT_FONT"; //$NON-NLS-1$
+
+	private static final int DROP_OPERATIONS = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
 
 	@Inject
 	@Preference(nodePath = "org.eclipse.e4.ui.workbench.renderers.swt")
@@ -719,6 +723,8 @@ public class StackRenderer extends LazyStackRenderer {
 		if (PartStackUtil.isEditorStack(element)) {
 			createOnboardingControls(tabFolder);
 			initializeOnboardingInformationInEditorStack(tabFolder);
+			Shell shell = Display.getCurrent().getActiveShell();
+			new DropTarget(shell, DROP_OPERATIONS);
 		}
 		tabFolder.setMRUVisible(getMRUValue());
 
