@@ -22,6 +22,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.custom.CTabFolder;
@@ -51,6 +52,10 @@ import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.TextEditor;
 
 public class StatusEditorTest {
+
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
+
 	private IWorkbenchWindow window;
 	private Display display;
 	private IWorkbenchPage page;
@@ -67,8 +72,6 @@ public class StatusEditorTest {
 	public void after() {
 		window.close();
 		page = null;
-		processEvents();
-		TestUtil.cleanUp();
 	}
 
 	/*
