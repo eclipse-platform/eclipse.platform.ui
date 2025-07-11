@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,7 +60,10 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.IScopeChangeProvider;
+import org.eclipse.jface.dialogs.IScopeChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.dialogs.ScopeChangedEvent;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
@@ -91,7 +94,8 @@ import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchPageScoreComputer;
 
 
-public class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer, IPageChangeProvider {
+public class SearchDialog extends ExtendedDialogWindow
+		implements ISearchPageContainer, IPageChangeProvider, IScopeChangeProvider {
 
 	// Dialog store id constants
 	private static final String DIALOG_NAME= "SearchDialog"; //$NON-NLS-1$
@@ -150,6 +154,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private Button fCustomizeButton;
 	private Button fReplaceButton;
 	private ListenerList<IPageChangedListener> fPageChangeListeners;
+	private ListenerList<IScopeChangedListener> fScopeChangeListeners;
 
 	private final IWorkbenchWindow fWorkbenchWindow;
 	private final ISelection fCurrentSelection;
@@ -706,6 +711,13 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	 */
 	public void notifyScopeSelectionChanged() {
 		setPerformActionEnabled(fLastEnableState);
+		if (fScopeChangeListeners != null && !fScopeChangeListeners.isEmpty()) {
+			// Fires the scope change event
+			final ScopeChangedEvent event = new ScopeChangedEvent(this, getSelectedScope());
+			for (IScopeChangedListener l : fScopeChangeListeners) {
+				SafeRunner.run(() -> l.scopeChanged(event));
+			}
+		}
 	}
 
 	private Control createPageControl(Composite parent, final SearchPageDescriptor descriptor) {
@@ -826,6 +838,21 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 					}
 				});
 			}
+		}
+	}
+
+	@Override
+	public void addScopeChangedListener(IScopeChangedListener listener) {
+		if (fScopeChangeListeners == null) {
+			fScopeChangeListeners = new ListenerList<>();
+		}
+		fScopeChangeListeners.add(listener);
+	}
+
+	@Override
+	public void removeScopeChangedListener(IScopeChangedListener listener) {
+		if (fScopeChangeListeners != null) {
+			fScopeChangeListeners.remove(listener);
 		}
 	}
 }
