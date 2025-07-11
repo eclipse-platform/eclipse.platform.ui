@@ -26,6 +26,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -122,20 +123,35 @@ public class UrlImageDescriptorTest {
 
 	@Test
 	public void testImageFileNameProviderGetxName_forFileURL() throws IOException {
-		URL imageFileURL = tempFolder.newFile("image.png").toURI().toURL();
-		tempFolder.newFile("image@2x.png");
-		ImageDescriptor descriptor = ImageDescriptor.createFromURL(imageFileURL);
+		testImageFileNameProviderGetxName_forFileURL(true);
+	}
 
-		ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
-		assertNotNull("URLImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
-		String imagePath100 = fileNameProvider.getImagePath(100);
-		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 100% path", imagePath100);
-		assertEquals(IPath.fromOSString(imagePath100).lastSegment(), "image.png");
-		String imagePath200 = fileNameProvider.getImagePath(200);
-		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the @2x path", imagePath200);
-		assertEquals(IPath.fromOSString(imagePath200).lastSegment(), "image@2x.png");
-		String imagePath150 = fileNameProvider.getImagePath(150);
-		assertNull("URLImageDescriptor's ImageFileNameProvider does return a @1.5x path", imagePath150);
+	@Test
+	public void testImageFileNameProviderGetxName_forFileURL_noOSGi() throws IOException {
+		testImageFileNameProviderGetxName_forFileURL(false);
+	}
+
+	private void testImageFileNameProviderGetxName_forFileURL(boolean osgiAvailable) throws IOException {
+		boolean oldOsgiAvailable = InternalPolicy.OSGI_AVAILABLE;
+		InternalPolicy.OSGI_AVAILABLE = osgiAvailable;
+		try {
+			URL imageFileURL = tempFolder.newFile("image.png").toURI().toURL();
+			tempFolder.newFile("image@2x.png");
+			ImageDescriptor descriptor = ImageDescriptor.createFromURL(imageFileURL);
+
+			ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
+			assertNotNull("URLImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
+			String imagePath100 = fileNameProvider.getImagePath(100);
+			assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 100% path", imagePath100);
+			assertEquals(IPath.fromOSString(imagePath100).lastSegment(), "image.png");
+			String imagePath200 = fileNameProvider.getImagePath(200);
+			assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the @2x path", imagePath200);
+			assertEquals(IPath.fromOSString(imagePath200).lastSegment(), "image@2x.png");
+			String imagePath150 = fileNameProvider.getImagePath(150);
+			assertNull("URLImageDescriptor's ImageFileNameProvider does return a @1.5x path", imagePath150);
+		} finally {
+			InternalPolicy.OSGI_AVAILABLE = oldOsgiAvailable;
+		}
 	}
 
 	@Test
