@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -152,6 +153,23 @@ public class UrlImageDescriptorTest {
 		} finally {
 			InternalPolicy.OSGI_AVAILABLE = oldOsgiAvailable;
 		}
+	}
+
+	@Test
+	public void testImageFileNameProviderGetxName_forFileURL_WhiteSpace() throws IOException {
+		File imageFolder = tempFolder.newFolder("folder with spaces");
+		File imageFile = new File(imageFolder, "image with spaces.png");
+		imageFile.createNewFile();
+
+		// This is an invalid URL because the whitespace characters are not properly encoded
+		URL imageFileURL = new URL("file", null, imageFile.getPath());
+		ImageDescriptor descriptor = ImageDescriptor.createFromURL(imageFileURL);
+
+		ImageFileNameProvider fileNameProvider = Adapters.adapt(descriptor, ImageFileNameProvider.class);
+		assertNotNull("URLImageDescriptor does not adapt to ImageFileNameProvider", fileNameProvider);
+
+		String imagePath100 = fileNameProvider.getImagePath(100);
+		assertNotNull("URLImageDescriptor ImageFileNameProvider does not return the 100% path", imagePath100);
 	}
 
 	@Test
