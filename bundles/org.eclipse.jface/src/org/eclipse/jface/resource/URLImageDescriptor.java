@@ -19,19 +19,18 @@ package org.eclipse.jface.resource;
 
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
@@ -254,7 +253,7 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 			url = resolvePathVariables(url);
 			URL locatedURL = FileLocator.toFileURL(url);
 			return getFilePath(locatedURL);
-		} catch (IOException | URISyntaxException e) {
+		} catch (IOException e) {
 			if (logException) {
 				Policy.logException(e);
 			} else if (InternalPolicy.DEBUG_LOG_URL_IMAGE_DESCRIPTOR_MISSING_2x) {
@@ -267,11 +266,11 @@ class URLImageDescriptor extends ImageDescriptor implements IAdaptable {
 		}
 	}
 
-	private static String getFilePath(URL url) throws URISyntaxException {
+	private static String getFilePath(URL url) {
 		if (FILE_PROTOCOL.equalsIgnoreCase(url.getProtocol())) {
-			Path filePath = Path.of(url.toURI());
-			if (Files.exists(filePath)) {
-				return filePath.toString();
+			File file = IPath.fromOSString(url.getPath()).toFile();
+			if (file.exists()) {
+				return file.getPath();
 			}
 		}
 		return null;
