@@ -59,9 +59,11 @@ public class CompatibilityEditor extends CompatibilityPart {
 	@Override
 	IWorkbenchPart createPart(WorkbenchPartReference reference) throws PartInitException {
 		IWorkbenchPart part = super.createPart(reference);
-		IEditorInput input = ((EditorReference) reference).getEditorInput();
-		if (input instanceof MultiEditorInput && part instanceof MultiEditor) {
-			createMultiEditorChildren(part, input);
+		if (part instanceof MultiEditor) {
+			IEditorInput input = ((EditorReference) reference).getEditorInput();
+			if (input instanceof MultiEditorInput) {
+				createMultiEditorChildren(part, input);
+			}
 		}
 		return part;
 	}
