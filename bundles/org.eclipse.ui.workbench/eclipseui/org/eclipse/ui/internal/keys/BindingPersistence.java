@@ -519,7 +519,7 @@ public class BindingPersistence extends PreferencePersistence {
 	 * @param commandService            The command service for the workbench; must
 	 *                                  not be <code>null</code>.
 	 */
-	@SuppressWarnings("removal")
+
 	private static final void readBindingsFromRegistry(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount, final BindingManager bindingManager,
 			final CommandManager commandService) {
@@ -608,12 +608,6 @@ public class BindingPersistence extends PreferencePersistence {
 
 			if (Util.WS_COCOA.equals(platform)) {
 				cocoaTempList.add(binding);
-			} else if (Util.WS_CARBON.equals(platform)) {
-				bindings.add(binding);
-				// temp work around ... simply honour the carbon
-				// bindings for cocoa.
-				cocoaTempList.add(new KeyBinding(keySequence, parameterizedCommand, schemeId, contextId, locale,
-						Util.WS_COCOA, null, Binding.SYSTEM));
 			} else {
 				bindings.add(binding);
 			}
