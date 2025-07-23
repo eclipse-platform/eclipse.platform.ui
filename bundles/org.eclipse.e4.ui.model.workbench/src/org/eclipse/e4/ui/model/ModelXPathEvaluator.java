@@ -19,7 +19,8 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 
 public class ModelXPathEvaluator {
 
-	@SuppressWarnings({ "removal" })
+	//testing and fixing CI errors
+	@SuppressWarnings({ "deprecation", "removal" })
 	public static <T> Stream<T> findMatchingElements(MApplicationElement searchRoot, String xPath, Class<T> clazz) {
 		return XPathContextFactory.newInstance().newContext(searchRoot).stream(xPath, clazz);
 	}
