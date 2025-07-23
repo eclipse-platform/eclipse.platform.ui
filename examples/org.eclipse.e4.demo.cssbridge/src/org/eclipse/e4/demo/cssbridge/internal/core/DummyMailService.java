@@ -43,7 +43,6 @@ public class DummyMailService implements IMailService {
 		return mails;
 	}
 
-	@SuppressWarnings("serial")
 	private Map<FolderType, List<Mail>> getFolderTypeToMails() {
 		if (folderTypeToMails == null) {
 			folderTypeToMails = new HashMap<>() {
@@ -56,7 +55,6 @@ public class DummyMailService implements IMailService {
 		return folderTypeToMails;
 	}
 
-	@SuppressWarnings("serial")
 	private List<Mail> createDummyInboxFolderMails() {
 		return new ArrayList<>() {
 			{
@@ -101,7 +99,6 @@ public class DummyMailService implements IMailService {
 		};
 	}
 
-	@SuppressWarnings("serial")
 	private List<Mail> createDummySentFolderMails() {
 		return new ArrayList<>() {
 			{
