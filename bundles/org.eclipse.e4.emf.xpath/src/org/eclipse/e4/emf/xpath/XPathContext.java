@@ -27,7 +27,7 @@ import java.util.stream.StreamSupport;
  *             {@code org.eclipse.e4.ui.workbench.modeling.EModelService#findMatchingElements(org.eclipse.e4.ui.model.application.MApplicationElement, String, Class)}
  *             instead.
  */
-@Deprecated(forRemoval = true, since = "2025-03 (removal in 2027-03 or later)")
+//@Deprecated(forRemoval = true, since = "2025-03 (removal in 2027-03 or later)")
 public interface XPathContext {
 
 	/**
