@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2025 Freescale Semiconductor and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -216,8 +216,8 @@ public class ResourceFilterGroup {
 					addChild(copy);
 				}
 			} catch (CoreException e) {
-				ErrorDialog.openError(shell, NLS.bind(
-						IDEWorkbenchMessages.InternalError, null), e
+				ErrorDialog.openError(shell, IDEWorkbenchMessages.InternalError,
+						e
 						.getLocalizedMessage(), e.getStatus());
 			}
 		}
@@ -442,15 +442,9 @@ public class ResourceFilterGroup {
 				}
 				if (column.equals(FilterTypeUtil.MODE)) {
 					if (element.equals(includeOnlyGroup))
-						cell.setText(NLS
-								.bind(
-										IDEWorkbenchMessages.ResourceFilterPage_includeOnlyColumn,
-										null));
+						cell.setText(IDEWorkbenchMessages.ResourceFilterPage_includeOnlyColumn);
 					else
-						cell.setText(NLS
-							.bind(
-									IDEWorkbenchMessages.ResourceFilterPage_excludeAllColumn,
-									null));
+						cell.setText(IDEWorkbenchMessages.ResourceFilterPage_excludeAllColumn);
 				}
 			}
 			else {
@@ -564,8 +558,7 @@ public class ResourceFilterGroup {
 
 		if (resource == null) {
 			Label label = new Label(parent, SWT.NONE);
-			label.setText(NLS.bind(
-					IDEWorkbenchMessages.ResourceFilterPage_noResource, null));
+			label.setText(IDEWorkbenchMessages.ResourceFilterPage_noResource);
 			label.setFont(font);
 			return label;
 		}
@@ -588,8 +581,7 @@ public class ResourceFilterGroup {
 		composite.setFont(font);
 
 		Label label = new Label(composite, 0);
-		label.setText(NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_title,
-				null));
+		label.setText(IDEWorkbenchMessages.ResourceFilterPage_title);
 		data = new GridData(GridData.FILL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -630,11 +622,7 @@ public class ResourceFilterGroup {
 		filterView.addSelectionChangedListener(event -> refreshEnablement());
 
 		TreeColumn modeColumn = new TreeColumn(filterView.getTree(), 0);
-		modeColumn
-				.setText(NLS
-						.bind(
-								IDEWorkbenchMessages.ResourceFilterPage_columnFilterDescription,
-								null));
+		modeColumn.setText(IDEWorkbenchMessages.ResourceFilterPage_columnFilterDescription);
 		modeColumn.setData(FilterTypeUtil.MODE);
 		modeColumn.setResizable(true);
 		modeColumn.setMoveable(false);
@@ -717,9 +705,7 @@ public class ResourceFilterGroup {
 	class EditFilterAction extends Action {
 
 		public EditFilterAction() {
-			setText(NLS
-					.bind(IDEWorkbenchMessages.ResourceFilterPage_editFilterActionLabel,
-							null));
+			setText(IDEWorkbenchMessages.ResourceFilterPage_editFilterActionLabel);
 		}
 
 		@Override
@@ -743,9 +729,7 @@ public class ResourceFilterGroup {
 	class RemoveFilterAction extends Action {
 
 		public RemoveFilterAction() {
-			setText(NLS
-					.bind(IDEWorkbenchMessages.ResourceFilterPage_removeFilterActionLabel,
-							null));
+			setText(IDEWorkbenchMessages.ResourceFilterPage_removeFilterActionLabel);
 		}
 
 		@Override
@@ -769,11 +753,8 @@ public class ResourceFilterGroup {
 
 		public AddSubFilterAction(boolean createGroupOnly) {
 			this.createGroupOnly = createGroupOnly;
-			setText(NLS
-					.bind(createGroupOnly ?
-							IDEWorkbenchMessages.ResourceFilterPage_addSubFilterGroupActionLabel:
-							IDEWorkbenchMessages.ResourceFilterPage_addSubFilterActionLabel,
-							null));
+			setText(createGroupOnly ? IDEWorkbenchMessages.ResourceFilterPage_addSubFilterGroupActionLabel
+					: IDEWorkbenchMessages.ResourceFilterPage_addSubFilterActionLabel);
 		}
 
 		@Override
@@ -962,8 +943,7 @@ public class ResourceFilterGroup {
 		composite.setFont(parent.getFont());
 
 		addButton = new Button(composite, SWT.PUSH);
-		addButton.setText(NLS.bind(
-				IDEWorkbenchMessages.ResourceFilterPage_addButtonLabel, null));
+		addButton.setText(IDEWorkbenchMessages.ResourceFilterPage_addButtonLabel);
 		data = new GridData(SWT.FILL, SWT.FILL, false, false);
 		addButton.setLayoutData(data);
 		setButtonDimensionHint(addButton);
@@ -975,8 +955,7 @@ public class ResourceFilterGroup {
 		});
 
 		addGroupButton = new Button(composite, SWT.PUSH);
-		addGroupButton.setText(NLS.bind(
-				IDEWorkbenchMessages.ResourceFilterPage_addGroupButtonLabel, null));
+		addGroupButton.setText(IDEWorkbenchMessages.ResourceFilterPage_addGroupButtonLabel);
 		data = new GridData(SWT.FILL, SWT.FILL, false, false);
 		addGroupButton.setLayoutData(data);
 		setButtonDimensionHint(addGroupButton);
@@ -989,8 +968,7 @@ public class ResourceFilterGroup {
 
 
 		editButton = new Button(composite, SWT.PUSH);
-		editButton.setText(NLS.bind(
-				IDEWorkbenchMessages.ResourceFilterPage_editButtonLabel, null));
+		editButton.setText(IDEWorkbenchMessages.ResourceFilterPage_editButtonLabel);
 		data = new GridData(SWT.FILL, SWT.FILL, false, false);
 		editButton.setLayoutData(data);
 		setButtonDimensionHint(editButton);
@@ -1002,11 +980,7 @@ public class ResourceFilterGroup {
 		});
 
 		removeButton = new Button(composite, SWT.PUSH);
-		removeButton
-				.setText(NLS
-						.bind(
-								IDEWorkbenchMessages.ResourceFilterPage_removeButtonLabel,
-								null));
+		removeButton.setText(IDEWorkbenchMessages.ResourceFilterPage_removeButtonLabel);
 		data = new GridData(SWT.FILL, SWT.FILL, false, false);
 		removeButton.setLayoutData(data);
 		setButtonDimensionHint(removeButton);
@@ -1192,9 +1166,8 @@ public class ResourceFilterGroup {
 					}
 				}
 			} catch (CoreException e) {
-				ErrorDialog.openError(shell, NLS.bind(
-						IDEWorkbenchMessages.InternalError, null), e
-						.getLocalizedMessage(), e.getStatus());
+				ErrorDialog.openError(shell, IDEWorkbenchMessages.InternalError,
+						e.getLocalizedMessage(), e.getStatus());
 			}
 		}
 		return true;
@@ -1315,10 +1288,8 @@ class FilterTypeUtil {
 
 	static String[] getModes() {
 		return new String[] {
-				NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_includeOnly,
-						null),
-				NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_excludeAll,
-						null) };
+				IDEWorkbenchMessages.ResourceFilterPage_includeOnly,
+				IDEWorkbenchMessages.ResourceFilterPage_excludeAll };
 	}
 
 	public static void setValue(FilterCopy filter, String property, Object value) {
@@ -1416,12 +1387,8 @@ class FilterTypeUtil {
 
 	static String[] getTargets() {
 		return new String[] {
-				NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_files, null),
-				NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_folders, null),
-				NLS
-						.bind(
-								IDEWorkbenchMessages.ResourceFilterPage_filesAndFolders,
-								null) };
+				IDEWorkbenchMessages.ResourceFilterPage_files, IDEWorkbenchMessages.ResourceFilterPage_folders,
+				IDEWorkbenchMessages.ResourceFilterPage_filesAndFolders };
 	}
 
 	static String[] getFilterNames(boolean groupOnly) {
@@ -1949,9 +1916,8 @@ class FilterEditDialog extends TrayDialog {
 	}
 
 	private void createInheritableArea(Font font, Composite composite) {
-		Composite inheritableComposite = createGroup(font, composite, NLS.bind(
-				IDEWorkbenchMessages.ResourceFilterPage_columnFilterMode,
-				null), false, false, 1);
+		Composite inheritableComposite = createGroup(font, composite,
+				IDEWorkbenchMessages.ResourceFilterPage_columnFilterMode, false, false, 1);
 		GridLayout layout = (GridLayout) inheritableComposite.getLayout();
 		layout.marginBottom = 0;
 		layout.marginTop = 0;
@@ -1966,11 +1932,7 @@ class FilterEditDialog extends TrayDialog {
 		String label;
 		label = IDEWorkbenchMessages.ResourceFilterPage_applyRecursivelyToFolderStructure;
 
-		inherited
-				.setText(NLS
-						.bind(
-								label,
-								resource.getName()));
+		inherited.setText(NLS.bind(label, resource.getName()));
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.horizontalSpan = 1;
 		inherited.setLayoutData(data);
@@ -1988,9 +1950,8 @@ class FilterEditDialog extends TrayDialog {
 
 	private void createModeArea(Font font, Composite composite) {
 		GridData data;
-		Composite modeComposite = createGroup(font, composite, NLS.bind(
-				IDEWorkbenchMessages.ResourceFilterPage_columnFilterMode,
-				null), true, true, 1);
+		Composite modeComposite = createGroup(font, composite, IDEWorkbenchMessages.ResourceFilterPage_columnFilterMode,
+				true, true, 1);
 		String[] modes = FilterTypeUtil.getModes();
 		includeButton = new Button(modeComposite, SWT.RADIO);
 		includeButton.setText(modes[0]);
@@ -2154,7 +2115,7 @@ class FilterEditDialog extends TrayDialog {
 	private void createTargetArea(Font font, Composite composite) {
 		GridData data;
 		Composite targetComposite = createGroup(font, composite,
-				NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_columnFilterTarget, null), false, true, 1);
+				IDEWorkbenchMessages.ResourceFilterPage_columnFilterTarget, false, true, 1);
 
 		String[] targets = FilterTypeUtil.getTargets();
 		filesButton = new Button(targetComposite, SWT.RADIO);
@@ -2456,16 +2417,13 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				description.setText(""); //$NON-NLS-1$
 				if (selectedKeyOperatorType.equals(String.class)) {
 					if (!argumentsRegularExpresion.getSelection())
-						description.setText(NLS.bind(
-								IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_Matcher, null));
+						description.setText(IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_Matcher);
 				}
 				if (selectedKeyOperatorType.equals(Integer.class)) {
 					if (selectedKey.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || selectedKey.equals(FileInfoAttributesMatcher.KEY_CREATED))
-						description.setText(NLS.bind(
-								IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_TimeInterval, null));
+						description.setText(IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_TimeInterval);
 					else
-					description.setText(NLS.bind(
-							IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_FileLength, null));
+						description.setText(IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_FileLength);
 				}
 			}
 			shell.layout(true, true);
@@ -2635,15 +2593,13 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			stringArgumentComposite.setFont(multiArgumentComposite.getFont());
 
 			argumentsCaseSensitive = new Button(stringArgumentComposite, SWT.CHECK);
-			argumentsCaseSensitive.setText(NLS.bind(
-					IDEWorkbenchMessages.ResourceFilterPage_caseSensitive, null));
+			argumentsCaseSensitive.setText(IDEWorkbenchMessages.ResourceFilterPage_caseSensitive);
 			data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 			argumentsCaseSensitive.setLayoutData(data);
 			argumentsCaseSensitive.setFont(multiArgumentComposite.getFont());
 
 			argumentsRegularExpresion = new Button(stringArgumentComposite, SWT.CHECK);
-			argumentsRegularExpresion.setText(NLS.bind(
-					IDEWorkbenchMessages.ResourceFilterPage_regularExpression, null));
+			argumentsRegularExpresion.setText(IDEWorkbenchMessages.ResourceFilterPage_regularExpression);
 			data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 			data.minimumWidth = 100;
 			argumentsRegularExpresion.setLayoutData(data);
@@ -3089,9 +3045,7 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
 	private void createArgumentsArea(Font font, Composite composite) {
 		GridData data;
-		argumentsLabel = addLabel(composite, NLS.bind(
-				IDEWorkbenchMessages.ResourceFilterPage_columnFilterPattern,
-				null));
+		argumentsLabel = addLabel(composite, IDEWorkbenchMessages.ResourceFilterPage_columnFilterPattern);
 		arguments = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		arguments.setLayoutData(data);
