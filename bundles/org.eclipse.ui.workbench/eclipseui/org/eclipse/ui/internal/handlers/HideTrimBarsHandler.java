@@ -31,7 +31,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class HideTrimBarsHandler extends AbstractHandler {
 
-	private static final String INITIAL_TRIM_VISIBILIY = "initialTrimVisibilityValue"; //$NON-NLS-1$
+	private static final String INITIAL_TRIM_VISIBILITY = "initialTrimVisibilityValue"; //$NON-NLS-1$
 	private static final String WINDOWS_WITH_MINIMIZED_TRIMBARS = "windowsWithMinimizedTrimbars"; //$NON-NLS-1$
 
 	@Override
@@ -61,10 +61,10 @@ public class HideTrimBarsHandler extends AbstractHandler {
 		List<MTrimBar> tcList = modelService.findElements(window, null, MTrimBar.class);
 		for (MTrimBar tc : tcList) {
 			boolean visible = true;
-			String initialTrimVisibility = tc.getPersistedState().get(INITIAL_TRIM_VISIBILIY);
+			String initialTrimVisibility = tc.getPersistedState().get(INITIAL_TRIM_VISIBILITY);
 			if (initialTrimVisibility != null && !initialTrimVisibility.isEmpty()) {
 				visible = Boolean.parseBoolean(initialTrimVisibility);
-				tc.getPersistedState().remove(INITIAL_TRIM_VISIBILIY);
+				tc.getPersistedState().remove(INITIAL_TRIM_VISIBILITY);
 			}
 			tc.setVisible(visible);
 		}
@@ -75,7 +75,7 @@ public class HideTrimBarsHandler extends AbstractHandler {
 		for (MTrimBar tc : tcList) {
 			// remember the visibility state in case some trimbars are already
 			// not visible
-			tc.getPersistedState().put(INITIAL_TRIM_VISIBILIY, String.valueOf(tc.isVisible()));
+			tc.getPersistedState().put(INITIAL_TRIM_VISIBILITY, String.valueOf(tc.isVisible()));
 			tc.setVisible(false);
 		}
 	}

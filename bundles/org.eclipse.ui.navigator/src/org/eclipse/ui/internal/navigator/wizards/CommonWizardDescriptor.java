@@ -212,7 +212,7 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants, 
 
 	/**
 	 *
-	 * @return The identifier of the wizard descriptor for visiblity purposes (or null) if none.
+	 * @return The identifier of the wizard descriptor for visibility purposes (or null) if none.
 	 */
 	public String getId() {
 		return id;

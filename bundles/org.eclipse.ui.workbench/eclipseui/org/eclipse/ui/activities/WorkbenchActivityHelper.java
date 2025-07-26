@@ -445,7 +445,7 @@ public final class WorkbenchActivityHelper {
 
 	/**
 	 * Returns whether the given category is partially enabled. A partially enabled
-	 * category is one in which the number of enabled activites is both non-zero and
+	 * category is one in which the number of enabled activities is both non-zero and
 	 * less than the total number of activities in the category.
 	 *
 	 * @param activityManager the activity manager to test against
