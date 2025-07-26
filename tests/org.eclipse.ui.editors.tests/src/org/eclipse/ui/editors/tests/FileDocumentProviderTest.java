@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.widgets.Display;
@@ -72,6 +73,9 @@ import org.eclipse.ui.editors.text.FileDocumentProvider;
  * @since 3.10
  */
 public class FileDocumentProviderTest {
+
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
 
 	private File file;
 	private AtomicBoolean stoppedByTest;
@@ -136,8 +140,6 @@ public class FileDocumentProviderTest {
 			page.closeEditor(editor, false);
 		}
 		ResourceHelper.deleteProject(file.getProject().getName());
-		TestUtil.runEventLoop();
-		TestUtil.cleanUp();
 	}
 
 	@Test

@@ -34,6 +34,7 @@ import java.util.StringJoiner;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.SWT;
@@ -62,6 +63,9 @@ import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider.StickyLinesPr
 import org.eclipse.ui.editors.tests.TestUtil;
 
 public class StickyScrollingHandlerTest {
+
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
 
 	private Shell shell;
 	private SourceViewer sourceViewer;
@@ -101,7 +105,6 @@ public class StickyScrollingHandlerTest {
 	@After
 	public void teardown() {
 		shell.dispose();
-		TestUtil.cleanUp();
 	}
 
 	@Test
