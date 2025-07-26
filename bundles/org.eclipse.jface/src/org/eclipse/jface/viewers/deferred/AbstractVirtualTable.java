@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  *
  * <p>
- * This is package visiblity by design. It would only need to be made public if there was
+ * This is package visibility by design. It would only need to be made public if there was
  * a demand to use the deferred content provider algorithms like
  * <code>BackgroundContentProvider</code> with non-JFace viewers.
  * </p>

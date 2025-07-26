@@ -73,10 +73,10 @@ import org.eclipse.swt.widgets.ToolItem;
 	/** visibility state of the progressbar */
 	protected volatile boolean fProgressIsVisible = false;
 
-	/** visibility state of the cancle button */
+	/** visibility state of the cancel button */
 	protected boolean fCancelButtonIsVisible = false;
 
-	/** enablement state of the cancle button */
+	/** enablement state of the cancel button */
 	protected volatile boolean fCancelEnabled = false;
 
 	/** name of the task */
@@ -85,7 +85,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	/** name of the task without sub-tasks */
 	protected volatile String fBaseTaskName;
 
-	/** is the task is cancled */
+	/** is the task is canceled */
 	protected volatile boolean fIsCanceled;
 
 	/** the start time of the task */
@@ -115,7 +115,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	/** the toolbar */
 	protected volatile ToolBar fToolBar;
 
-	/** the cancle button */
+	/** the cancel button */
 	protected volatile ToolItem fCancelButton;
 
 	/** stop image descriptor */

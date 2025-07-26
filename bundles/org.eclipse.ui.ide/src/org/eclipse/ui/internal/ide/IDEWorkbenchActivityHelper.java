@@ -39,7 +39,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
- * Utility class that manages promotion of activites in response to workspace changes.
+ * Utility class that manages promotion of activities in response to workspace changes.
  *
  * @since 3.0
  */
