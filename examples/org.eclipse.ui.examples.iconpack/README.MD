@@ -34,7 +34,7 @@ what would only match this single bundle. If an icon has to be replaced in multi
 2. Then one needs to find the icon to replace in this case it is `icons/full/etool16/save_edit.png`, as before we could use an exact match or we can use a more
 generic form to possibly match multiple path. In the example we use `icons/.*/save_edit.png`, please note that you even can replace a gif file by a png or whatever
 fileformat fits your needs. The code will still see the old name so this might still be used with care if the caller maybe make decisions based on the extension!
-3. Of course we need our replacement resource that will be used and we put it in as the last instruction as we are using the default replace tranformer that just keeps
+3. Of course we need our replacement resource that will be used and we put it in as the last instruction as we are using the default replace transformer that just keeps
 the provided resource as a replacement for the original.
 
 The full line then looks like this:

@@ -195,7 +195,7 @@ public class Snippet060TextCellEditorWithContentProposal {
 
 		/*
 		 * Without focus highlighter, keyboard events will not be delivered to
-		 * ColumnViewerEditorActivationStragety#isEditorActivationEvent(...) (see above)
+		 * ColumnViewerEditorActivationStrategy#isEditorActivationEvent(...) (see above)
 		 */
 		FocusCellHighlighter focusCellHighlighter = new FocusCellOwnerDrawHighlighter(viewer);
 		TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(viewer, focusCellHighlighter);

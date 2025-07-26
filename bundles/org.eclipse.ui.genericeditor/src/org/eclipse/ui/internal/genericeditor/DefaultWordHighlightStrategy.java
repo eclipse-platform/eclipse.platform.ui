@@ -46,7 +46,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  *
- * This Reconciler Strategy is a default stategy which will be present if no other highlightReconcilers are registered for a given content-type. It splits the text into 'words' (which are defined as
+ * This Reconciler Strategy is a default strategy which will be present if no other highlightReconcilers are registered for a given content-type. It splits the text into 'words' (which are defined as
  * anything in-between non-alphanumeric characters) and searches the document highlighting all like words.
  *
  * E.g. if your file contains "t^he dog in the bog" and you leave your caret at ^ you will get both instances of 'the' highlighted.

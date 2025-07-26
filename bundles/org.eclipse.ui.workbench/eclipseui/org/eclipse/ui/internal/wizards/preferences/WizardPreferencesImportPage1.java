@@ -147,7 +147,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 	}
 
 	/**
-	 * @return <code>true</code> if the transfer was succesful, and
+	 * @return <code>true</code> if the transfer was successful, and
 	 *         <code>false</code> otherwise
 	 */
 	@Override

@@ -80,7 +80,7 @@ public abstract class NumberToNumberConverter<T extends Number> extends Converte
 	/**
 	 * Invoked when the number should converted.
 	 *
-	 * @return number if conversion was successfule, <code>null</code> if the
+	 * @return number if conversion was successful, <code>null</code> if the
 	 *         number was out of range
 	 */
 	protected abstract T doConvert(Number number);

@@ -392,7 +392,7 @@ public class WindowsDefenderConfigurator implements EventHandler {
 			if (process.isAlive()) {
 				process.destroyForcibly();
 				process.descendants().forEach(ProcessHandle::destroyForcibly);
-				throw new IOException("Process timed-out and it was attempted to forcefully termiante it"); //$NON-NLS-1$
+				throw new IOException("Process timed-out and it was attempted to forcefully terminate it"); //$NON-NLS-1$
 			} else if (process.exitValue() != 0) {
 				throw new IOException("Process failed with exit-code " + process.exitValue()); //$NON-NLS-1$
 			}

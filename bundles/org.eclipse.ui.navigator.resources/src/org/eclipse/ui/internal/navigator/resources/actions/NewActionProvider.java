@@ -46,7 +46,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * <ul>
  * <li>a new generic project wizard shortcut action, </li>
  * <li>a separator, </li>
- * <li>a set of context senstive wizard shortcuts (as defined by
+ * <li>a set of context sensitive wizard shortcuts (as defined by
  * <b>org.eclipse.ui.navigator.commonWizard</b>), </li>
  * <li>another separator, </li>
  * <li>a generic examples wizard shortcut action, and finally </li>
@@ -100,10 +100,10 @@ public class NewActionProvider extends CommonActionProvider {
 	 *
 	 * <ul>
 	 * <li>a new generic project wizard shortcut action, </li>
-	 * <li>a set of context senstive wizard shortcuts (as defined by
+	 * <li>a set of context sensitive wizard shortcuts (as defined by
 	 * <b>org.eclipse.ui.navigator.commonWizard</b>) that are marked as project wizards, </li>
 	 * <li>a separator, </li>
-	 * <li>a set of context senstive wizard shortcuts (as defined by
+	 * <li>a set of context sensitive wizard shortcuts (as defined by
 	 * <b>org.eclipse.ui.navigator.commonWizard</b>) that are not marked as project wizards, </li>
 	 * <li>another separator, </li>
 	 * <li>a generic examples wizard shortcut action, and finally </li>

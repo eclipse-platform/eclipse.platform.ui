@@ -256,7 +256,7 @@ It may happen that your radio menu contributions are not initialized the first t
             command.isEnabled();
             return new Status(IStatus.OK,
                 "my.plugin.id",
-                "Init commands workaround performed succesfully");
+                "Init commands workaround performed successfully");
         }
      
     };
