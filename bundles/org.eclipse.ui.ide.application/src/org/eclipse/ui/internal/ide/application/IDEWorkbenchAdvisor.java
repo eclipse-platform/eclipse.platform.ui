@@ -128,7 +128,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private AboutInfo[] welcomePerspectiveInfos = null;
 
 	/**
-	 * Helper for managing activites in response to workspace changes.
+	 * Helper for managing activities in response to workspace changes.
 	 */
 	private IDEWorkbenchActivityHelper activityHelper = null;
 

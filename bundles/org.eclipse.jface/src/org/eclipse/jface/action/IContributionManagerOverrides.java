@@ -79,7 +79,7 @@ public interface IContributionManagerOverrides {
 	public String getText(IContributionItem item);
 
 	/**
-	 * Visiblity override.
+	 * Visibility override.
 	 *
 	 * @param item the contribution item in question
 	 * @return  <ul>
