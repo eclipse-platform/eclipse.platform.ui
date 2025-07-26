@@ -1284,7 +1284,7 @@ public class TextEditTests {
 
 	// Regression test for 108672 [quick fix] Exception when applying Convert to enhanced for loop
 	@Test
-	public void testSourceTranformationMultipleCovers() throws Exception {
+	public void testSourceTransformationMultipleCovers() throws Exception {
 		MoveSourceEdit ms= new MoveSourceEdit(2, 4);
 		MoveTargetEdit mt= new MoveTargetEdit(9, ms);
 		fRoot.addChild(ms);
@@ -1314,7 +1314,7 @@ public class TextEditTests {
 	}
 
 	@Test
-	public void testSourceTranformationSplit1() throws Exception {
+	public void testSourceTransformationSplit1() throws Exception {
 		MoveSourceEdit ms= new MoveSourceEdit(2, 4);
 		MoveTargetEdit mt= new MoveTargetEdit(9, ms);
 		fRoot.addChild(ms);
@@ -1338,7 +1338,7 @@ public class TextEditTests {
 	}
 
 	@Test
-	public void testSourceTranformationSplit2() throws Exception {
+	public void testSourceTransformationSplit2() throws Exception {
 		MoveSourceEdit ms= new MoveSourceEdit(2, 4);
 		MoveTargetEdit mt= new MoveTargetEdit(9, ms);
 		fRoot.addChild(ms);

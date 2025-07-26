@@ -681,7 +681,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * Read the editors defined in the preferences store.
 	 *
 	 * @param editorTable Editor table to store the editor definitions.
-	 * @return true if the table is built succesfully.
+	 * @return true if the table is built successfully.
 	 */
 	private boolean readEditors(Map<String, IEditorDescriptor> editorTable) {
 		// Get the workbench plugin's working directory
@@ -863,7 +863,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * store.
 	 *
 	 * @param editorTable The editor table containing the defined editors.
-	 * @return true if the resources are read succesfully.
+	 * @return true if the resources are read successfully.
 	 */
 	private boolean readResources(Map<String, IEditorDescriptor> editorTable) {
 		// Get the workbench plugin's working directory

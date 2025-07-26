@@ -96,7 +96,7 @@ public class EvaluationServiceTest extends UITestCase {
 	@Test
 	public void testBug334524() throws Exception {
 		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
-		IPerspectiveDescriptor resourecePerspective = registry.findPerspectiveWithId("org.eclipse.ui.resourcePerspective");
+		IPerspectiveDescriptor resourcePerspective = registry.findPerspectiveWithId("org.eclipse.ui.resourcePerspective");
 		IPerspectiveDescriptor javaPerspective = registry.findPerspectiveWithId("org.eclipse.jdt.ui.JavaPerspective");
 		String viewId = "org.eclipse.ui.tests.SelectionProviderView";
 
@@ -104,7 +104,7 @@ public class EvaluationServiceTest extends UITestCase {
 		IWorkbenchPage activePage = window.getActivePage();
 
 		// show view in resource perspective
-		activePage.setPerspective(resourecePerspective);
+		activePage.setPerspective(resourcePerspective);
 		SelectionProviderView view = (SelectionProviderView) activePage.showView(viewId);
 		processEvents();
 
@@ -119,7 +119,7 @@ public class EvaluationServiceTest extends UITestCase {
 		processEvents();
 
 		// switch perspective & check selection
-		activePage.setPerspective(resourecePerspective);
+		activePage.setPerspective(resourcePerspective);
 		processEvents();
 
 		IEvaluationService service = window.getService(IEvaluationService.class);
