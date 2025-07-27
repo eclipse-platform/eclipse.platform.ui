@@ -157,7 +157,7 @@ public abstract class QuickMenuCreator {
 			Rectangle bounds = items[0].getBounds();
 			Rectangle intersect = clientArea.intersection(bounds);
 			if (intersect != null && intersect.height == bounds.height) {
-				return new Point(Math.max(0, bounds.x + getAverageCharWith(tree) * CHAR_INDENT),
+				return new Point(Math.max(0, bounds.x + getAverageCharWidth(tree) * CHAR_INDENT),
 						bounds.y + bounds.height);
 			}
 			return null;
@@ -171,7 +171,7 @@ public abstract class QuickMenuCreator {
 			Point result = findBestLocation(getIncludedPositions(rectangles, clientArea),
 					tree.toControl(cursorLocation));
 			if (result != null) {
-				result.x = result.x + getAverageCharWith(tree) * CHAR_INDENT;
+				result.x = result.x + getAverageCharWidth(tree) * CHAR_INDENT;
 			}
 			return result;
 		}
@@ -198,7 +198,7 @@ public abstract class QuickMenuCreator {
 			Rectangle iBounds = items[0].getImageBounds(0);
 			Rectangle intersect = clientArea.intersection(bounds);
 			if (intersect != null && intersect.height == bounds.height) {
-				return new Point(Math.max(0, bounds.x + iBounds.width + getAverageCharWith(table) * CHAR_INDENT),
+				return new Point(Math.max(0, bounds.x + iBounds.width + getAverageCharWidth(table) * CHAR_INDENT),
 						bounds.y + bounds.height);
 			}
 			return null;
@@ -214,7 +214,7 @@ public abstract class QuickMenuCreator {
 			Point result = findBestLocation(getIncludedPositions(rectangles, clientArea),
 					table.toControl(cursorLocation));
 			if (result != null) {
-				result.x = result.x + iBounds.width + getAverageCharWith(table) * CHAR_INDENT;
+				result.x = result.x + iBounds.width + getAverageCharWidth(table) * CHAR_INDENT;
 			}
 			return result;
 		}
@@ -257,7 +257,7 @@ public abstract class QuickMenuCreator {
 		return result;
 	}
 
-	private int getAverageCharWith(Control control) {
+	private int getAverageCharWidth(Control control) {
 		GC gc = null;
 		try {
 			gc = new GC(control);
