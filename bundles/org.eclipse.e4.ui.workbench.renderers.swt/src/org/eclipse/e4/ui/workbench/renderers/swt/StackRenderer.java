@@ -908,12 +908,21 @@ public class StackRenderer extends LazyStackRenderer {
 		// We need to modify the 'exclude' bit based on if the menuTB is
 		// visible or not
 		RowData rd = (RowData) menuTB.getLayoutData();
+		ToolItem item = menuTB.getItem(0);
 		if (needsMenu) {
-			menuTB.getItem(0).setData(THE_PART_KEY, part);
+			item.setData(THE_PART_KEY, part);
 			rd.exclude = false;
+			String tooltip = viewMenu.getTooltip();
+			if (tooltip == null) {
+				tooltip = viewMenu.getLabel();
+			}
+			if (tooltip == null) {
+				tooltip = SWTRenderersMessages.viewMenu;
+			}
+			item.setToolTipText(tooltip);
 			menuTB.setVisible(true);
 		} else {
-			menuTB.getItem(0).setData(THE_PART_KEY, null);
+			item.setData(THE_PART_KEY, null);
 			rd.exclude = true;
 			menuTB.setVisible(false);
 		}
