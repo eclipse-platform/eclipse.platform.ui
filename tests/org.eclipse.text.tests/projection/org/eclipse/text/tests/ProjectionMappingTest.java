@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -29,7 +29,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.projection.Fragment;
 import org.eclipse.jface.text.projection.ProjectionMapping;
 import org.eclipse.jface.text.projection.Segment;
-
 /**
  * @since 3.0
  */
@@ -107,7 +106,7 @@ public class ProjectionMappingTest {
 		addProjection(70, 30, 10);
 	}
 
-	@Before
+	@BeforeAll
 	public void setUp() {
 		fMasterDocument= new Document();
 		fSlaveDocument= new Document();
@@ -119,7 +118,7 @@ public class ProjectionMappingTest {
 	}
 
 
-	@After
+	@AfterAll
 	public void tearDown() {
 		fMasterDocument= null;
 		fSlaveDocument= null;
@@ -627,7 +626,7 @@ public class ProjectionMappingTest {
 	}
 
 	private void assertRegions(IRegion[] expected, IRegion[] actual) {
-		assertTrue("invalid number of regions", expected.length == actual.length);
+		assertTrue(expected.length == actual.length, "invalid number of regions");
 		for (int i= 0; i < expected.length; i++)
 			assertEquals(expected[i], actual[i]);
 	}

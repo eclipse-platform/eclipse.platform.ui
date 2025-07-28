@@ -14,20 +14,18 @@
 
 package org.eclipse.text.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  *
  * @since 3.0
  */
-@RunWith(Suite.class)
-@SuiteClasses({
-		ProjectionDocumentTest.class,
-		ProjectionMappingTest.class
+@Suite
+@SelectClasses({
+    ProjectionDocumentTest.class,
+    ProjectionMappingTest.class
 })
 public class ProjectionTestSuite {
-	// see @SuiteClasses
+    // This class remains empty
 }

@@ -14,21 +14,19 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import org.eclipse.text.tests.link.LinkTestSuite;
 import org.eclipse.text.tests.templates.TemplatesTestSuite;
-
 
 /**
  * Test Suite for org.eclipse.text.
  *
  * @since 3.0
  */
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 		MultiStringMatcherTest.class,
 		ConfigurableLineTrackerTest.class,
 		LineTrackerTest4.class,
@@ -42,7 +40,8 @@ import org.eclipse.text.tests.templates.TemplatesTestSuite;
 		GapTextTest.class,
 		GapTextStoreTest.class,
 		ChildDocumentTest.class,
-		ProjectionTestSuite.class,
+		ProjectionDocumentTest.class, 
+		ProjectionMappingTest.class,
 		LinkTestSuite.class,
 		CopyOnWriteTextStoreTest.class,
 		TextUtilitiesTest.class,
@@ -51,5 +50,5 @@ import org.eclipse.text.tests.templates.TemplatesTestSuite;
 		TemplatesTestSuite.class
 })
 public class EclipseTextTestSuite {
-	// see @SuiteClasses
+
 }
