@@ -146,8 +146,9 @@ public class PerspectiveSwitcher {
 			for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
 				MPerspective added = (MPerspective) o;
 				// Adding invisible elements is a NO-OP
-				if (!added.isToBeRendered())
+				if (!added.isToBeRendered()) {
 					continue;
+				}
 
 				addPerspectiveItem(added);
 			}
@@ -155,8 +156,9 @@ public class PerspectiveSwitcher {
 			for (Object o : UIEvents.asIterable(event, UIEvents.EventTags.OLD_VALUE)) {
 				MPerspective removed = (MPerspective) o;
 				// Removing invisible elements is a NO-OP
-				if (!removed.isToBeRendered())
+				if (!removed.isToBeRendered()) {
 					continue;
+				}
 
 				removePerspectiveItem(removed);
 			}
@@ -174,8 +176,9 @@ public class PerspectiveSwitcher {
 
 		MPerspective persp = (MPerspective) event.getProperty(UIEvents.EventTags.ELEMENT);
 
-		if (!persp.getParent().isToBeRendered())
+		if (!persp.getParent().isToBeRendered()) {
 			return;
+		}
 
 		if (persp.isToBeRendered()) {
 			addPerspectiveItem(persp);
@@ -224,8 +227,9 @@ public class PerspectiveSwitcher {
 
 		MPerspectiveStack perspStack = (MPerspectiveStack) changedObj;
 
-		if (!perspStack.isToBeRendered())
+		if (!perspStack.isToBeRendered()) {
 			return;
+		}
 
 		MPerspective selElement = perspStack.getSelectedElement();
 		for (ToolItem ti : perspSwitcherToolbar.getItems()) {
@@ -256,8 +260,9 @@ public class PerspectiveSwitcher {
 		int orientation = SWT.HORIZONTAL;
 		if (meParent instanceof MTrimBar) {
 			MTrimBar bar = (MTrimBar) meParent;
-			if (bar.getSide() == SideValue.RIGHT || bar.getSide() == SideValue.LEFT)
+			if (bar.getSide() == SideValue.RIGHT || bar.getSide() == SideValue.LEFT) {
 				orientation = SWT.VERTICAL;
+			}
 		}
 		comp = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
@@ -276,14 +281,15 @@ public class PerspectiveSwitcher {
 			Point p = new Point(e.x, e.y);
 			p = perspSwitcherToolbar.getDisplay().map(null, perspSwitcherToolbar, p);
 			ToolItem item = tb.getItem(p);
-			if (item == null)
+			if (item == null) {
 				E4Util.message("  ToolBar menu"); //$NON-NLS-1$
-			else {
+			} else {
 				MPerspective persp = (MPerspective) item.getData();
-				if (persp == null)
+				if (persp == null) {
 					E4Util.message("  Add button Menu"); //$NON-NLS-1$
-				else
+				} else {
 					openMenuFor(item, persp);
+				}
 			}
 		});
 
@@ -355,8 +361,9 @@ public class PerspectiveSwitcher {
 
 	private void track(MouseEvent e) {
 		// Create and track the feedback overlay
-		if (dragShell == null)
+		if (dragShell == null) {
 			createFeedback();
+		}
 
 		// Move the drag shell
 		Rectangle b = dragItem.getBounds();
@@ -390,8 +397,9 @@ public class PerspectiveSwitcher {
 		bar.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				if (dragItem == null)
+				if (dragItem == null) {
 					return;
+				}
 
 				ToolBar bar = (ToolBar) e.widget;
 				ToolItem curItem = bar.getItem(new Point(e.x, e.y));
@@ -406,12 +414,14 @@ public class PerspectiveSwitcher {
 					int dragPerspIndex = dragPersp.getParent().getChildren().indexOf(dragPersp);
 					MPerspective dropPersp = (MPerspective) curItem.getData();
 					int dropPerspIndex = dropPersp.getParent().getChildren().indexOf(dropPersp);
-					if (!atStart)
+					if (!atStart) {
 						dropPerspIndex++; // We're 'after' the item we're over
+					}
 
-					if (dropPerspIndex > dragPerspIndex)
+					if (dropPerspIndex > dragPerspIndex) {
 						dropPerspIndex--; // Need to account for the removal of
 											// the drag item itself
+					}
 
 					// If it's not a no-op move the perspective
 					if (dropPerspIndex != dragPerspIndex) {
@@ -419,8 +429,9 @@ public class PerspectiveSwitcher {
 						boolean selected = dragPersp == parent.getSelectedElement();
 						parent.getChildren().remove(dragPersp);
 						parent.getChildren().add(dropPerspIndex, dragPersp);
-						if (selected)
+						if (selected) {
 							parent.setSelectedElement(dragPersp);
+						}
 					}
 				}
 
@@ -429,8 +440,9 @@ public class PerspectiveSwitcher {
 				downPos = null;
 				dragging = false;
 				perspSwitcherToolbar.setCursor(null);
-				if (dragShell != null && !dragShell.isDisposed())
+				if (dragShell != null && !dragShell.isDisposed()) {
 					dragShell.dispose();
+				}
 				dragShell = null;
 			}
 
@@ -442,8 +454,9 @@ public class PerspectiveSwitcher {
 
 				// We're only interested if the button went down over a
 				// perspective item
-				if (downItem != null && downItem.getData() instanceof MPerspective)
+				if (downItem != null && downItem.getData() instanceof MPerspective) {
 					dragItem = downItem;
+				}
 			}
 
 			@Override
@@ -475,8 +488,9 @@ public class PerspectiveSwitcher {
 
 	MPerspectiveStack getPerspectiveStack() {
 		List<MPerspectiveStack> psList = modelService.findElements(window, null, MPerspectiveStack.class);
-		if (psList.size() > 0)
+		if (psList.size() > 0) {
 			return psList.get(0);
+		}
 		return null;
 	}
 
@@ -500,8 +514,9 @@ public class PerspectiveSwitcher {
 
 					psItem.addListener(SWT.Dispose, event -> {
 						Image currentImage = psItem.getImage();
-						if (currentImage != null)
+						if (currentImage != null) {
 							currentImage.dispose();
+						}
 					});
 					foundImage = true;
 					psItem.setToolTipText(persp.getLocalizedLabel());
@@ -582,8 +597,9 @@ public class PerspectiveSwitcher {
 		menuItem.setText(WorkbenchMessages.WorkbenchWindow_close);
 		menuItem.addSelectionListener(widgetSelectedAdapter(e -> {
 			MPerspective persp = (MPerspective) menu.getData();
-			if (persp != null)
+			if (persp != null) {
 				closePerspective(persp);
+			}
 		}));
 	}
 
@@ -601,8 +617,9 @@ public class PerspectiveSwitcher {
 		workbenchWindow.getWorkbench().getHelpSystem().setHelp(saveAsMenuItem,
 				IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
 		saveAsMenuItem.addSelectionListener(widgetSelectedAdapter(event -> {
-			if (perspSwitcherToolbar.isDisposed())
+			if (perspSwitcherToolbar.isDisposed()) {
 				return;
+			}
 			IHandlerService handlerService = workbenchWindow.getService(IHandlerService.class);
 			IStatus status = Status.OK_STATUS;
 			try {
@@ -611,8 +628,9 @@ public class PerspectiveSwitcher {
 				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
 			} catch (NotHandledException e) {
 			}
-			if (!status.isOK())
+			if (!status.isOK()) {
 				StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
+			}
 		}));
 	}
 
@@ -623,8 +641,9 @@ public class PerspectiveSwitcher {
 		workbenchWindow.getWorkbench().getHelpSystem().setHelp(resetMenuItem,
 				IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
 		resetMenuItem.addSelectionListener(widgetSelectedAdapter(event -> {
-			if (perspSwitcherToolbar.isDisposed())
+			if (perspSwitcherToolbar.isDisposed()) {
 				return;
+			}
 			IHandlerService handlerService = workbenchWindow.getService(IHandlerService.class);
 			IStatus status = Status.OK_STATUS;
 			try {
@@ -633,8 +652,9 @@ public class PerspectiveSwitcher {
 				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
 			} catch (NotHandledException e) {
 			}
-			if (!status.isOK())
+			if (!status.isOK()) {
 				StatusManager.getManager().handle(status, StatusManager.SHOW | StatusManager.LOG);
+			}
 		}));
 	}
 
@@ -681,10 +701,11 @@ public class PerspectiveSwitcher {
 			if (IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR.equals(propertyChangeEvent.getProperty())) {
 				Object newValue = propertyChangeEvent.getNewValue();
 				boolean showText = true; // default
-				if (newValue instanceof Boolean)
+				if (newValue instanceof Boolean) {
 					showText = ((Boolean) newValue).booleanValue();
-				else if ("false".equals(newValue)) //$NON-NLS-1$
+				} else if ("false".equals(newValue)) { //$NON-NLS-1$
 					showText = false;
+				}
 				changeShowText(showText);
 			}
 		};
@@ -695,10 +716,11 @@ public class PerspectiveSwitcher {
 		ToolItem[] items = perspSwitcherToolbar.getItems();
 		for (ToolItem item : items) {
 			MPerspective persp = (MPerspective) item.getData();
-			if (persp != null)
+			if (persp != null) {
 				if (showText) {
-					if (persp.getLabel() != null)
+					if (persp.getLabel() != null) {
 						item.setText(persp.getLocalizedLabel());
+					}
 					item.setToolTipText(persp.getLocalizedTooltip());
 				} else {
 					Image image = item.getImage();
@@ -707,6 +729,7 @@ public class PerspectiveSwitcher {
 						item.setToolTipText(persp.getLocalizedLabel());
 					}
 				}
+			}
 		}
 
 		// update the size
@@ -734,12 +757,14 @@ public class PerspectiveSwitcher {
 	 * @return the tool item
 	 */
 	protected ToolItem getItemFor(MPerspective persp) {
-		if (perspSwitcherToolbar == null)
+		if (perspSwitcherToolbar == null) {
 			return null;
+		}
 
 		for (ToolItem ti : perspSwitcherToolbar.getItems()) {
-			if (ti.getData() == persp)
+			if (ti.getData() == persp) {
 				return ti;
+			}
 		}
 
 		return null;
@@ -779,14 +804,16 @@ public class PerspectiveSwitcher {
 				ImageDescriptor descriptor = ImageDescriptor.createFromURL(url);
 				if (descriptor == null) {
 					ti.setImage(null);
-				} else
+				} else {
 					ti.setImage(descriptor.createImage());
+				}
 			} catch (IOException e) {
 				ti.setImage(null);
 				logger.warn(e);
 			} finally {
-				if (currentImage != null)
+				if (currentImage != null) {
 					currentImage.dispose();
+				}
 			}
 		}
 	}
