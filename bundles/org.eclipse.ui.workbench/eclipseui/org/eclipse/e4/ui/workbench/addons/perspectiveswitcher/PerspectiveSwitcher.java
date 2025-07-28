@@ -102,6 +102,7 @@ public class PerspectiveSwitcher {
 	 * The ID of the perspective switcher
 	 */
 	public static final String PERSPECTIVE_SWITCHER_ID = "org.eclipse.e4.ui.PerspectiveSwitcher"; //$NON-NLS-1$
+	public static final String NO_MENU = "NoMenu"; //$NON-NLS-1$
 
 	/**
 	 * The event {@link IEventBroker}.
@@ -277,6 +278,9 @@ public class PerspectiveSwitcher {
 		comp.addDisposeListener(e -> dispose());
 
 		perspSwitcherToolbar.addMenuDetectListener(e -> {
+			if (perspSwitcherToolControl.getTags().contains(NO_MENU)) {
+				return;
+			}
 			ToolBar tb = (ToolBar) e.widget;
 			Point p = new Point(e.x, e.y);
 			p = perspSwitcherToolbar.getDisplay().map(null, perspSwitcherToolbar, p);
