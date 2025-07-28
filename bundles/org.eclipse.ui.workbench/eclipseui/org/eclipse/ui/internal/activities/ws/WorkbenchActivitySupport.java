@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -131,15 +132,13 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 											+ workbench.getProgressService().getLongOperationTime();
 
 									// two work units - updating the window bars, and updating view bars
-									monitor.beginTask(ActivityMessages.ManagerTask, 2);
-
-									monitor.subTask(ActivityMessages.ManagerWindowSubTask);
+									SubMonitor subMonitor = SubMonitor.convert(monitor, ActivityMessages.ManagerTask,
+											2);
 
 									// update window managers...
 									updateWindowBars(window);
 									monitor.worked(1);
 
-									monitor.subTask(ActivityMessages.ManagerViewsSubTask);
 									// update all of the (realized) views in all of the pages
 									IWorkbenchPage[] pages = window.getPages();
 									for (IWorkbenchPage page : pages) {
@@ -151,9 +150,8 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 											}
 										}
 									}
-									monitor.worked(1);
+									subMonitor.worked(1);
 
-									monitor.done();
 								}
 
 								/**
