@@ -414,7 +414,10 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 				isEndOfLine= false;
 			}
 			// When line text has line header annotation, there is a space on the top, adjust the y by using char height
-			y+= bounds.height - textWidget.getLineHeight();
+			int verticalDrawingOffset= bounds.height - textWidget.getLineHeight();
+			if (verticalDrawingOffset > 0) {
+				y+= verticalDrawingOffset;
+			}
 
 			// Draw the line content annotation
 			annotation.setLocation(x, y);
@@ -519,7 +522,9 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 
 			// When line text has line header annotation, there is a space on the top, adjust the y by using char height
 			int verticalDrawingOffset= charBounds.height - textWidget.getLineHeight();
-			annotationBounds.y += verticalDrawingOffset;
+			if (verticalDrawingOffset > 0) {
+				annotationBounds.y+= verticalDrawingOffset;
+			}
 
 			// Draw the line content annotation
 			annotation.setLocation(annotationBounds.x, annotationBounds.y);
