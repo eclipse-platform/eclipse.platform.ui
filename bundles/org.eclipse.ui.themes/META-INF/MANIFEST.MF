@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.themes;singleton:=true
-Bundle-Version: 1.2.2800.qualifier
+Bundle-Version: 1.2.2900.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.e4.ui.css.swt.theme
