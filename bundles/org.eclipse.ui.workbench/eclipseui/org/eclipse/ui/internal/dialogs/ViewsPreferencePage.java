@@ -25,11 +25,9 @@ import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_O
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_THEME_ASSOCIATION;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_THEME_ID;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -57,7 +55,6 @@ import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -113,7 +110,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private ControlDecoration colorFontsDecorator;
 	private ColorsAndFontsTheme currentColorsAndFontsTheme;
 	private Map<String, String> themeAssociations;
-	private boolean highContrastMode;
 
 	private Button themingEnabled;
 	private Button rescaleAtRuntime;
@@ -147,13 +143,11 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		comp.setLayout(layout);
 
 		new Label(comp, SWT.NONE).setText(WorkbenchMessages.ViewsPreferencePage_Theme);
-		highContrastMode = parent.getDisplay().getHighContrast();
 
 		themeIdCombo = new ComboViewer(comp, SWT.READ_ONLY);
 		themeIdCombo.setLabelProvider(createTextProvider(element -> ((ITheme) element).getLabel()));
 		themeIdCombo.setContentProvider(ArrayContentProvider.getInstance());
-		themeIdCombo.setInput(getCSSThemes(highContrastMode));
-		themeIdCombo.getCombo().setEnabled(!highContrastMode);
+		themeIdCombo.setInput(engine.getThemes());
 		themeIdCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.currentTheme = engine.getActiveTheme();
 		if (this.currentTheme != null) {
@@ -265,29 +259,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		parent.addSelectionListener(listener);
 	}
 
-	private List<ITheme> getCSSThemes(boolean highContrastMode) {
-		ArrayList<ITheme> themes = new ArrayList<>();
-		for (ITheme theme : engine.getThemes()) {
-			/*
-			 * When we have Win32 OS - when the high contrast mode is enabled on the
-			 * platform, we display the 'high-contrast' special theme only. If not, we don't
-			 * want to mess the themes combo with the theme since it is the special
-			 * variation of the 'classic' one
-			 *
-			 * When we have GTK - we have to display the entire list of the themes since we
-			 * are not able to figure out if the high contrast mode is enabled on the
-			 * platform. The user has to manually select the theme if they need it
-			 */
-			if (!highContrastMode && !Util.isGtk() && theme.getId().equals(E4Application.HIGH_CONTRAST_THEME_ID)) {
-				continue;
-			}
-			themes.add(theme);
-		}
-		Collator collator = Collator.getInstance(Locale.getDefault());
-		themes.sort((ITheme t1, ITheme t2) -> collator.compare(t1.getLabel(), t2.getLabel()));
-		return themes;
-	}
-
 	private void createColoredLabelsPref(Composite composite) {
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
@@ -345,7 +316,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		if (engine != null) {
 			ITheme theme = getSelectedTheme();
 			if (theme != null) {
-				engine.setTheme(getSelectedTheme(), !highContrastMode);
+				engine.setTheme(getSelectedTheme(), true);
 			}
 			prefs.putBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS, hideIconsForViewTabs.getSelection());
 			prefs.putBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS, showFullTextForViewTabs.getSelection());
