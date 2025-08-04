@@ -31,6 +31,7 @@ import org.eclipse.jface.internal.text.codemining.CodeMiningLineHeaderAnnotation
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 
 /**
@@ -79,7 +80,8 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			}
 			InlinedAnnotationSupport support = InlinedAnnotationSupport.getSupport(textWidget);
 			inlinedAnnotation.setSupport(support);
-			if (support.isInVisibleLines(inlinedAnnotation.getPosition().offset) && inlinedAnnotation.isFirstVisibleOffset(widgetOffset, viewer)) {
+			if ((support.isInVisibleLines(inlinedAnnotation.getPosition().offset) || AnnotationPainter.isDeletedCodeMining(annotation))
+					&& inlinedAnnotation.isFirstVisibleOffset(widgetOffset, viewer)) {
 				GCConfig initialGCConfig = GCConfig.fromGC(gc);
 				GCConfig annotationGCConfig = new GCConfig(color, textWidget.getBackground(), getAnnotationFont(textWidget));
 				annotationGCConfig.applyTo(gc);

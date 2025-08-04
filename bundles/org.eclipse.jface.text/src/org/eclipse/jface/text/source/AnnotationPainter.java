@@ -41,6 +41,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.jface.internal.text.codemining.ICodeMiningAnnotation;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPaintPositionManager;
@@ -1425,7 +1427,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					// textWidget.redrawRange with length 0 is ignored and no redraw takes place
 					paintLength= lineDelimiter.length();
 				}
-				if (paintLength >= 0 && regionsTouchOrOverlap(paintStart, paintLength, clippingOffset, clippingLength)) {
+				if ((paintLength >= 0 && regionsTouchOrOverlap(paintStart, paintLength, clippingOffset, clippingLength) || isDeletedCodeMining(annotation))) {
 					// otherwise inside a line delimiter
 					IRegion widgetRange= getWidgetRange(paintStart, paintLength);
 					if (widgetRange != null) {
@@ -1436,6 +1438,13 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 		} catch (BadLocationException x) {
 		}
+	}
+
+	public static boolean isDeletedCodeMining(Annotation annotation) {
+		if (annotation.isMarkedDeleted() && annotation instanceof ICodeMiningAnnotation) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.codemining;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,6 +24,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -106,6 +109,51 @@ public class CodeMiningTest {
 			}
 
 		}, new NullProgressMonitor());
+	}
+
+	@Test
+	public void testClearCodeMiningTextEditorDecorationIfInInvisibleArea() throws Exception {
+		IFile file = project.getFile("test.testprojectionviewer");
+		if (file.exists()) {
+			file.delete(true, new NullProgressMonitor());
+		}
+		StringBuilder b = new StringBuilder();
+		for (int i = 0; i < 100; i++) {
+			b.append("line ").append(i).append("\n");
+		}
+		String source = b.toString();
+		file.create(new ByteArrayInputStream(source.getBytes("UTF-8")), true, new NullProgressMonitor());
+		CodeMiningTestProvider.provideHeaderMiningAtLine = 96;
+		CodeMiningTestProvider.lineHeaderMiningText = "first line header\n    secone line header\n    third line header";
+		int offsetAtLine95 = source.indexOf("95");
+		CodeMiningTestProvider.provideContentMiningAtOffset = offsetAtLine95;
+		IEditorPart editor = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
+		drainEventQueue();
+		ISourceViewer viewer = (ISourceViewer) editor.getAdapter(ITextViewer.class);
+		StyledText styledText = viewer.getTextWidget();
+		viewer.setSelectedRange(offsetAtLine95, 0);
+		viewer.revealRange(offsetAtLine95, 1);
+		drainEventQueue();
+		// assert line vertical height and styleRange is created by rendering
+		// the codeminings
+		assertTrue(styledText.getLineVerticalIndent(CodeMiningTestProvider.provideHeaderMiningAtLine) > 0);
+		StyleRange style = styledText.getStyleRangeAtOffset(offsetAtLine95 - 1);
+		assertTrue(style.metrics.width > 0);
+		// scroll to top so that code minings are not in visible area
+		viewer.setSelectedRange(0, 0);
+		viewer.revealRange(0, 1);
+		// remove code minings and call update
+		CodeMiningTestProvider.provideContentMiningAtOffset = -1;
+		CodeMiningTestProvider.provideHeaderMiningAtLine = -1;
+		((ISourceViewerExtension5) viewer).updateCodeMinings();
+		drainEventQueue();
+		// assert that line vertical height and styleRange was removed after
+		// deleting the codeminings
+		for (int i = 0; i < 100; i++) {
+			assertTrue("line vertical indent not zeri at line index " + i, styledText.getLineVerticalIndent(i) == 0);
+		}
+		style = styledText.getStyleRangeAtOffset(offsetAtLine95 - 1);
+		assertTrue(style == null);
 	}
 
 	@Test
