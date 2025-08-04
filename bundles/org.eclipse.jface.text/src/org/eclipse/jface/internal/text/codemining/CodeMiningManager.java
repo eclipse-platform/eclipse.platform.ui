@@ -47,6 +47,7 @@ import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.codemining.LineContentCodeMining;
 import org.eclipse.jface.text.codemining.LineHeaderCodeMining;
+import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.inlined.AbstractInlinedAnnotation;
 import org.eclipse.jface.text.source.inlined.InlinedAnnotationSupport;
@@ -348,5 +349,15 @@ public class CodeMiningManager implements Runnable {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * returns true if the given annotation is a deleted {@link ICodeMiningAnnotation}
+	 */
+	public static boolean isDeletedCodeMining(Annotation annotation) {
+		if (annotation.isMarkedDeleted() && annotation instanceof ICodeMiningAnnotation) {
+			return true;
+		}
+		return false;
 	}
 }
