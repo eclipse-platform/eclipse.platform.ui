@@ -141,7 +141,9 @@ public class StatusManager {
 
 	private StatusManager() {
 		statusManagerLogListener = new StatusManagerLogListener();
-		Platform.addLogListener(statusManagerLogListener);
+		if (Platform.isRunning()) {
+			Platform.addLogListener(statusManagerLogListener);
+		}
 	}
 
 	private AbstractStatusHandler getStatusHandler() {
