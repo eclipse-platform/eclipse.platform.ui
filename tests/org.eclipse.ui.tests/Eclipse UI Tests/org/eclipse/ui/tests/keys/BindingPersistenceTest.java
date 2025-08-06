@@ -173,7 +173,10 @@ public final class BindingPersistenceTest {
 				}
 			}
 		}
-		if (Util.WS_COCOA.equals(SWT.getPlatform())) {
+		if (Util.WS_CARBON.equals(SWT.getPlatform())
+				|| Util.WS_COCOA.equals(SWT.getPlatform())) {
+			assertEquals(2, numAboutBindings);
+		} else {
 			assertEquals(1, numAboutBindings);
 		}
 	}
