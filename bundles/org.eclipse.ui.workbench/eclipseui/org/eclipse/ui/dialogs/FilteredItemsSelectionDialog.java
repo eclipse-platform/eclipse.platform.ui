@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -2149,8 +2149,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		public ItemsFilter(SearchPattern searchPattern) {
 			patternMatcher = searchPattern;
 			String stringPattern = ""; //$NON-NLS-1$
-			if (pattern != null && !pattern.getText().equals("*")) { //$NON-NLS-1$
-				stringPattern = pattern.getText();
+			if (pattern != null && !getPatternText().equals("*")) { //$NON-NLS-1$
+				stringPattern = getPatternText();
 			}
 			patternMatcher.setPattern(stringPattern);
 		}
@@ -2980,6 +2980,20 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	public Control getPatternControl() {
 		return pattern;
+	}
+
+	/**
+	 * Get the text from pattern control.
+	 *
+	 * @return text from pattern control or empty string if pattern control is null
+	 * @since 3.136
+	 */
+	protected String getPatternText() {
+		String text = ""; //$NON-NLS-1$
+		if (pattern != null) {
+			text = pattern.getText();
+		}
+		return text;
 	}
 
 	/**
