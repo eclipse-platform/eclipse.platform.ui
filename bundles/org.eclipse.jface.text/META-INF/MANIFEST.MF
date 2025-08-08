@@ -40,4 +40,6 @@ Require-Bundle:
 Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.jface.text
+Bundle-Activator: org.eclipse.jface.text.Activator
+Bundle-ActivationPolicy: lazy
 Require-Capability: eclipse.swt;filter:="(image.format=svg)"
