@@ -23,8 +23,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -59,6 +65,29 @@ import org.eclipse.jface.text.TextUtilities;
 class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 	private static final int MAX_WAIT_IN_MS= 50; // TODO make it a preference
+
+	/**
+	 * Designed for CPU intensive tasks, unlimited queue (no task-dropping).
+	 *
+	 */
+	private static final ExecutorService EXECUTOR= new ThreadPoolExecutor(
+			Runtime.getRuntime().availableProcessors(),
+			Runtime.getRuntime().availableProcessors(),
+			3L, TimeUnit.SECONDS,
+			new LinkedBlockingQueue<>(),
+			new ThreadFactory() {
+				AtomicInteger count= new AtomicInteger(1);
+
+				@Override
+				public Thread newThread(Runnable r) {
+					// Name the threads numerically for better debugging.
+					Thread t= new Thread(r, AsyncCompletionProposalPopup.class.getSimpleName() + "-worker-" + count.getAndIncrement()); //$NON-NLS-1$
+
+					// No need to keep the JVM running just because of the completion proposals
+					t.setDaemon(true);
+					return t;
+				}
+			});
 
 	/**
 	 * This is only used and set when populating the dialog is async (ie computation takes more than
@@ -372,7 +401,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		}
 		List<CompletableFuture<List<ICompletionProposal>>> futures = new ArrayList<>(processors.size());
 		for (IContentAssistProcessor processor : processors) {
-			futures.add(CompletableFuture.supplyAsync(() -> {
+			futures.add(submitInterruptible(() -> {
 				AtomicReference<List<ICompletionProposal>> result= new AtomicReference<>();
 				SafeRunner.run(() -> {
 					ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
@@ -389,9 +418,40 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 					return Collections.emptyList();
 				}
 				return proposals;
-			}));
+			}, EXECUTOR));
 		}
 		return futures;
+	}
+
+	/**
+	 * Submit a task in such a way that it actually reacts to cancellation (i.e. calls to
+	 * {@code future.cancel(true)})
+	 *
+	 * @param executor Do not use the common pool here since that one does not cancel (interrupts)
+	 *            worker threads
+	 * @return an interruptible future.
+	 */
+	private static <T> CompletableFuture<T> submitInterruptible(
+			Callable<T> task, ExecutorService executor) {
+
+		CompletableFuture<T> cf= new CompletableFuture<>();
+
+		Future<?> ft= executor.submit(() -> {
+			try {
+				cf.complete(task.call());
+			} catch (Exception e) {
+				cf.completeExceptionally(e);
+			}
+		});
+
+		// make canceling the CF also cancel the FutureTask
+		cf.whenComplete((r, t) -> {
+			if (cf.isCancelled()) {
+				ft.cancel(true); // this actually interrupts
+			}
+		});
+
+		return cf;
 	}
 
 	private String getTokenContentType(int invocationOffset) throws BadLocationException {
