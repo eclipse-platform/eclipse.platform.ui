@@ -44,6 +44,9 @@ public class DocumentProviderRegistryTest {
 	@Rule
 	public TemporaryFolder tmp = new TemporaryFolder();
 
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
+
 	private IFile file;
 
 	@After
@@ -51,7 +54,6 @@ public class DocumentProviderRegistryTest {
 		if (file != null) {
 			ResourceHelper.delete(file.getProject());
 		}
-		TestUtil.cleanUp();
 	}
 
 	@Test
