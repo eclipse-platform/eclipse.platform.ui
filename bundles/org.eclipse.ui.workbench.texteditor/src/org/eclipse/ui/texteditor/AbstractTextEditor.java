@@ -2190,6 +2190,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public static final String PREFERENCE_SHOW_LINE_FEED= "showLineFeed"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls the display of ZWSP (zero-width space)
+	 * characters. The value is used only if the value of
+	 * {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 3.?
+	 */
+	public static final String PREFERENCE_SHOW_ZWSP = "showZwsp"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls the alpha value of whitespace characters. The value is used
 	 * only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
 	 * <p>
