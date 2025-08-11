@@ -26,14 +26,20 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.AbstractCodeMiningProvider;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.source.ISourceViewerExtension5;
 
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
-public class ZeroWidthSpaceLineContentCodeMiningProvider extends AbstractCodeMiningProvider
+/**
+ * A code mining provider that draws zero-width characters (like zero-width
+ * spaces) as line content code minings.
+ * <p>
+ * The code mining is only shown if configured in the preferences.
+ * </p>
+ */
+public class ZeroWidthCharactersLineContentCodeMiningProvider extends AbstractCodeMiningProvider
 		implements IPropertyChangeListener {
 
 	private static final char ZW_SPACE = '\u200b';
@@ -96,7 +102,7 @@ public class ZeroWidthSpaceLineContentCodeMiningProvider extends AbstractCodeMin
 	}
 
 	private ICodeMining createCodeMining(int offset) {
-		return new ZeroWidthSpaceLineContentCodeMining(new Position(offset, 1), this);
+		return new ZeroWidthCharactersLineContentCodeMining(offset, this);
 	}
 
 	private void readShowZwspFromStore() {
