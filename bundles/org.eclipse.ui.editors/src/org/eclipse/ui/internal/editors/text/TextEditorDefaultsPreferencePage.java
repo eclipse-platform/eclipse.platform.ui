@@ -443,7 +443,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_CARRIAGE_RETURN));
 			 overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LINE_FEED));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
-					AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ZWSP));
+					AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ZW_CHARACTERS));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WHITESPACE_CHARACTER_ALPHA_VALUE));
 
 			OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
@@ -568,7 +568,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			ButtonFactory checkboxFactory = WidgetFactory.button(SWT.CHECK)
 					.supplyLayoutData(() -> new GridData(SWT.CENTER, SWT.CENTER, false, false)).enabled(false);
 			checkboxFactory.create(tabularComposite);
-			preference = new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ZWSP, "", null); //$NON-NLS-1$
+			preference = new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ZW_CHARACTERS, "", null); //$NON-NLS-1$
 			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
 			checkboxFactory.create(tabularComposite);
 
@@ -810,7 +810,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_CARRIAGE_RETURN));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LINE_FEED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
-				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ZWSP));
+				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ZW_CHARACTERS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WHITESPACE_CHARACTER_ALPHA_VALUE));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
