@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.texteditor.codemining;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,7 +36,13 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 public class ZeroWidthSpaceLineContentCodeMiningProvider extends AbstractCodeMiningProvider
 		implements IPropertyChangeListener {
 
-	private static final char ZWSP_SIGN = '\u200b';
+	private static final char ZW_SPACE = '\u200b';
+	private static final char ZW_NON_JOINER = '\u200c';
+	private static final char ZW_JOINER = '\u200d';
+	private static final char ZW_NO_BREAK_SPACE = '\ufeff';
+
+	private static final Set<Character> ZW_CHARACTERS = Set.of(ZW_SPACE, ZW_NON_JOINER, ZW_JOINER, ZW_NO_BREAK_SPACE);
+
 	private IPreferenceStore store;
 	private boolean showZwsp = false;
 
@@ -53,7 +60,8 @@ public class ZeroWidthSpaceLineContentCodeMiningProvider extends AbstractCodeMin
 		List<ICodeMining> list = new ArrayList<>();
 		String content = viewer.getDocument().get();
 		for (int i = 0; i < content.length(); i++) {
-			if (content.charAt(i) == ZWSP_SIGN) {
+			boolean isZwCharacter = ZW_CHARACTERS.contains(content.charAt(i));
+			if (isZwCharacter) {
 				list.add(createCodeMining(i));
 			}
 		}
