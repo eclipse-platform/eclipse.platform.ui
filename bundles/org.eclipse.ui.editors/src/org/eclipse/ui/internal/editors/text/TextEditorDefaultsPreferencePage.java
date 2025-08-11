@@ -563,7 +563,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LINE_FEED, "", null); //$NON-NLS-1$
 			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
 
-			WidgetFactory.label(SWT.NONE).text(TextEditorMessages.TextEditorDefaultsPreferencePage_zwsp)
+			WidgetFactory.label(SWT.NONE).text(TextEditorMessages.TextEditorDefaultsPreferencePage_zwcharacters)
 					.layoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false)).create(tabularComposite);
 			ButtonFactory checkboxFactory = WidgetFactory.button(SWT.CHECK)
 					.supplyLayoutData(() -> new GridData(SWT.CENTER, SWT.CENTER, false, false)).enabled(false);
