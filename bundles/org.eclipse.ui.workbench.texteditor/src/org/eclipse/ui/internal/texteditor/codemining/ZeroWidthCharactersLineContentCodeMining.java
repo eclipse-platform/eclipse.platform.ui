@@ -17,12 +17,18 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.codemining.LineContentCodeMining;
 
-class ZeroWidthSpaceLineContentCodeMining extends LineContentCodeMining {
+/**
+ * A code mining that draws zero-width characters (like zero-width spaces) as
+ * line content code minings.
+ *
+ * @see ZeroWidthCharactersLineContentCodeMiningProvider
+ */
+class ZeroWidthCharactersLineContentCodeMining extends LineContentCodeMining {
 
-	private static final String ZWSP_ANNOTATION = "ZWSP"; //$NON-NLS-1$
+	private static final String ZW_CHARACTERS_MINING = "ZWSP"; //$NON-NLS-1$
 
-	ZeroWidthSpaceLineContentCodeMining(Position position, ICodeMiningProvider provider) {
-		super(position, true, provider);
+	public ZeroWidthCharactersLineContentCodeMining(int offset, ICodeMiningProvider provider) {
+		super(new Position(offset, 1), true, provider);
 	}
 
 	@Override
@@ -32,6 +38,6 @@ class ZeroWidthSpaceLineContentCodeMining extends LineContentCodeMining {
 
 	@Override
 	public String getLabel() {
-		return ZWSP_ANNOTATION;
+		return ZW_CHARACTERS_MINING;
 	}
 }
