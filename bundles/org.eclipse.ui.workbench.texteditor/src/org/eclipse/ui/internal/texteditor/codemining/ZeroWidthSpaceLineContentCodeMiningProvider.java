@@ -70,7 +70,7 @@ public class ZeroWidthSpaceLineContentCodeMiningProvider extends AbstractCodeMin
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(AbstractTextEditor.PREFERENCE_SHOW_ZWSP)) {
+		if (event.getProperty().equals(AbstractTextEditor.PREFERENCE_SHOW_ZW_CHARACTERS)) {
 			readShowZwspFromStore();
 			updateCodeMinings();
 		}
@@ -100,6 +100,6 @@ public class ZeroWidthSpaceLineContentCodeMiningProvider extends AbstractCodeMin
 	}
 
 	private void readShowZwspFromStore() {
-		showZwsp = store.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_ZWSP);
+		showZwsp = store.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_ZW_CHARACTERS);
 	}
 }
