@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertThrows;
+
 import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -72,40 +74,27 @@ public final class AcceleratorConfigurationsExtensionDynamicTest extends
 
 	/**
 	 * Tests whether the items defined in the extension point can be added and
-	 * removed dynamically. It tests that the data doesn't exist, and then loads
-	 * the extension. It tests that the data then exists, and unloads the
-	 * extension. It tests that the data then doesn't exist.
+	 * removed dynamically. It tests that the data doesn't exist, and then loads the
+	 * extension. It tests that the data then exists, and unloads the extension. It
+	 * tests that the data then doesn't exist.
+	 *
+	 * @throws NotDefinedException
 	 */
 	@Test
-	public final void testAcceleratorConfigurations() {
+	public final void testAcceleratorConfigurations() throws NotDefinedException {
 		final IBindingService service = getWorkbench().getAdapter(IBindingService.class);
-		NamedHandleObject namedHandleObject;
 
-		namedHandleObject = service.getScheme("monkey");
-		try {
-			namedHandleObject.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
+		NamedHandleObject namedHandleObject1 = service.getScheme("monkey");
+		assertThrows(NotDefinedException.class, () -> namedHandleObject1.getName());
 
 		getBundle();
 
-		namedHandleObject = service.getScheme("monkey");
-		try {
-			assertTrue("Monkey".equals(namedHandleObject.getName()));
-		} catch (final NotDefinedException e) {
-			fail();
-		}
+		NamedHandleObject namedHandleObject2 = service.getScheme("monkey");
+		assertTrue("Monkey".equals(namedHandleObject2.getName()));
 
 		removeBundle();
 
-		namedHandleObject = service.getScheme("monkey");
-		try {
-			namedHandleObject.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
+		NamedHandleObject namedHandleObject3 = service.getScheme("monkey");
+		assertThrows(NotDefinedException.class, () -> namedHandleObject3.getName());
 	}
 }

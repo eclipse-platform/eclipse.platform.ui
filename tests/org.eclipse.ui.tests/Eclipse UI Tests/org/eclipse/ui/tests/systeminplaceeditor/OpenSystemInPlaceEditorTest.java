@@ -15,7 +15,6 @@ package org.eclipse.ui.tests.systeminplaceeditor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -92,24 +91,19 @@ public class OpenSystemInPlaceEditorTest {
 		file.delete();
 	}
 
-	private IWorkbenchPage getWorkbenchPage() {
+	private IWorkbenchPage getWorkbenchPage() throws WorkbenchException {
 		IWorkbenchWindow window;
-		try {
-			if (PlatformUI.getWorkbench().getWorkbenchWindowCount() == 0) {
-				window = PlatformUI.getWorkbench().openWorkbenchWindow(null);
-			} else {
-				window = PlatformUI.getWorkbench().getWorkbenchWindows()[0];
-			}
-
-			IWorkbenchPage[] pages = window.getPages();
-			if (pages.length > 0) {
-				return pages[0];
-			}
-
-			return window.openPage(null);
-		} catch (WorkbenchException ex) {
-			fail();
-			return null;
+		if (PlatformUI.getWorkbench().getWorkbenchWindowCount() == 0) {
+			window = PlatformUI.getWorkbench().openWorkbenchWindow(null);
+		} else {
+			window = PlatformUI.getWorkbench().getWorkbenchWindows()[0];
 		}
+
+		IWorkbenchPage[] pages = window.getPages();
+		if (pages.length > 0) {
+			return pages[0];
+		}
+
+		return window.openPage(null);
 	}
 }

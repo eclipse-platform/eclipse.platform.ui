@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertThrows;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.custom.CLabel;
@@ -175,13 +177,10 @@ public class IWorkbenchWindowTest extends UITestCase {
 		}
 
 		// test openPage() fails
-		try {
-			page = fWin.openPage("*************", ResourcesPlugin.getWorkspace());
-			fail();
-		} catch (WorkbenchException ex) {
-		}
-
-		page.close();
+		assertThrows(WorkbenchException.class, () -> {
+			IWorkbenchPage p = fWin.openPage("*************", ResourcesPlugin.getWorkspace());
+			p.close();
+		});
 	}
 
 	@Test

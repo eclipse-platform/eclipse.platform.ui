@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertThrows;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -72,44 +74,28 @@ public final class HandlersExtensionDynamicTest extends DynamicTestCase {
 
 	/**
 	 * Tests whether the items defined in the extension point can be added and
-	 * removed dynamically. It tests that the data doesn't exist, and then loads
-	 * the extension. It tests that the data then exists, and unloads the
-	 * extension. It tests that the data then doesn't exist.
+	 * removed dynamically. It tests that the data doesn't exist, and then loads the
+	 * extension. It tests that the data then exists, and unloads the extension. It
+	 * tests that the data then doesn't exist.
+	 *
+	 * @throws NotHandledException
+	 * @throws ExecutionException
 	 */
 	@Test
-	public final void testHandlers() {
+	public final void testHandlers() throws ExecutionException, NotHandledException {
 		final ICommandService commandService = getWorkbench().getAdapter(ICommandService.class);
-		Command command;
 
-		command = commandService.getCommand("monkey");
-		try {
-			command.execute(new ExecutionEvent());
-			fail();
-		} catch (final ExecutionException e) {
-			fail();
-		} catch (final NotHandledException e) {
-			assertTrue(true);
-		}
+		Command command1 = commandService.getCommand("monkey");
+		assertThrows(NotHandledException.class, () -> command1.execute(new ExecutionEvent()));
 
 		getBundle();
 
-		command = commandService.getCommand("monkey");
-		try {
-			command.execute(new ExecutionEvent());
-		} catch (final ExecutionException | NotHandledException e) {
-			fail();
-		}
+		Command command2 = commandService.getCommand("monkey");
+		command2.execute(new ExecutionEvent());
 
 		removeBundle();
 
-		command = commandService.getCommand("monkey");
-		try {
-			command.execute(new ExecutionEvent());
-			fail();
-		} catch (final ExecutionException e) {
-			fail();
-		} catch (final NotHandledException e) {
-			assertTrue(true);
-		}
+		Command command3 = commandService.getCommand("monkey");
+		assertThrows(NotHandledException.class, () -> command3.execute(new ExecutionEvent()));
 	}
 }
