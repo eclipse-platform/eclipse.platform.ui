@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertThrows;
+
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
@@ -40,7 +42,7 @@ public class IntroTests extends DynamicTestCase {
 	private static final String INTRO_ID = "org.eclipse.newIntro1.newIntro1";
 	private IntroDescriptor oldDesc;
 	private IWorkbenchWindow window;
-	
+
 
 	public IntroTests() {
 		super(IntroTests.class.getSimpleName());
@@ -87,15 +89,7 @@ public class IntroTests extends DynamicTestCase {
 		removeBundle();
 		assertNull(registry.getIntro(INTRO_ID));
 		assertNull(registry.getIntroForProduct(PRODUCT_ID));
-		try {
-			testIntroProperties(desc);
-			fail();
-		}
-		catch (CoreException e) {
-			fail(e.getMessage());
-		}
-		catch (RuntimeException e) {
-		}
+		assertThrows(RuntimeException.class, () -> testIntroProperties(desc));
 	}
 
 	private void testIntroProperties(IIntroDescriptor desc) throws CoreException {

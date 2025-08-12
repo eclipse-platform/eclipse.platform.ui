@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertThrows;
+
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.wizards.IWizardDescriptor;
@@ -43,13 +45,7 @@ public class NewWizardTests extends DynamicTestCase {
 		testNewWizardProperties(wizard);
 		removeBundle();
 		assertNull(registry.findWizard(WIZARD_ID));
-		try {
-			testNewWizardProperties(wizard);
-			fail();
-		}
-		catch (RuntimeException e) {
-			//no-op
-		}
+		assertThrows(RuntimeException.class, () -> testNewWizardProperties(wizard));
 	}
 
 	private void testNewWizardProperties(IWizardDescriptor wizard) {
