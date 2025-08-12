@@ -15,17 +15,17 @@
 
 package org.eclipse.ui.tests.fieldassist;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Tests for the platform operations support.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	FieldAssistAPITest.class,
-	ComboContentAssistCommandAdapterTest.class,
-	TextContentAssistCommandAdapterTest.class,
+@Suite
+@SelectClasses({ //
+		FieldAssistAPITest.class, //
+		ComboContentAssistCommandAdapterTest.class, //
+		TextContentAssistCommandAdapterTest.class, //
 })
 public class FieldAssistTestSuite {
 }

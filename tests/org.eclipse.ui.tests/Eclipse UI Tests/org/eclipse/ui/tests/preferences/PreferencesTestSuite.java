@@ -15,23 +15,23 @@
 package org.eclipse.ui.tests.preferences;
 
 import org.eclipse.ui.tests.propertyPages.PropertyPageEnablementTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test suite for preferences.
  */
-
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	FontPreferenceTestCase.class,
-	DeprecatedFontPreferenceTestCase.class,
-	ScopedPreferenceStoreTestCase.class,
-	WorkingCopyPreferencesTestCase.class,
-	PropertyPageEnablementTest.class,
-	ListenerRemovalTestCase.class,
-	PreferencesDialogTest.class,
-	ZoomAndPreferencesFontTest.class,
-	DialogSettingsCustomizationTest.class})
+@Suite
+@SelectClasses({ //
+		FontPreferenceTestCase.class, //
+		DeprecatedFontPreferenceTestCase.class, //
+		ScopedPreferenceStoreTestCase.class, //
+		WorkingCopyPreferencesTestCase.class, //
+		PropertyPageEnablementTest.class, //
+		ListenerRemovalTestCase.class, //
+		PreferencesDialogTest.class, //
+		ZoomAndPreferencesFontTest.class, //
+		DialogSettingsCustomizationTest.class //
+})
 public class PreferencesTestSuite {
 }
