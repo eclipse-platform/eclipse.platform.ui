@@ -15,8 +15,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.commands.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +32,9 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.FrameworkUtil;
 
 public class DefineCommandsTest {
@@ -46,7 +46,7 @@ public class DefineCommandsTest {
 
 	private IEclipseContext workbenchContext;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(this.getClass()).getBundleContext());
 		IEclipseContext globalContext = serviceContext.createChild();
@@ -54,7 +54,7 @@ public class DefineCommandsTest {
 		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		workbenchContext.dispose();
 	}
@@ -65,14 +65,14 @@ public class DefineCommandsTest {
 		assertNotNull(cs);
 		assertNotNull(cs.defineCategory(TEST_CAT1, "CAT1", null));
 		Category category = cs.getCategory(TEST_CAT1);
-		assertNotNull("need category", category);
-		assertNotNull("command1", cs.defineCommand(TEST_ID1, "ID1", null, category, null));
-		assertNotNull("command2", cs.defineCommand(TEST_ID2, "ID2", null, category, null));
+		assertNotNull(category, "need category");
+		assertNotNull(cs.defineCommand(TEST_ID1, "ID1", null, category, null), "command1");
+		assertNotNull(cs.defineCommand(TEST_ID2, "ID2", null, category, null), "command2");
 		Command cmd1 = cs.getCommand(TEST_ID1);
-		assertNotNull("get command1", cmd1);
+		assertNotNull(cmd1, "get command1");
 		assertEquals("ID1", cmd1.getName());
-		assertNotNull("get command2", cs.getCommand(TEST_ID2));
-		assertNotNull("parameterized command", cs.createCommand(TEST_ID1, null));
+		assertNotNull(cs.getCommand(TEST_ID2), "get command2");
+		assertNotNull(cs.createCommand(TEST_ID1, null), "parameterized command");
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class DefineCommandsTest {
 		assertNotNull(command);
 		assertNotNull(createdParamizedCommand);
 		Command cmd1 = cs.getCommand(TEST_ID1_WITH_PARAMETERS);
-		assertNotNull("get command1", cmd1);
+		assertNotNull(cmd1, "get command1");
 	}
 
 
@@ -123,14 +123,14 @@ public class DefineCommandsTest {
 		assertNotNull(cs);
 		assertNotNull(cs.defineCategory(TEST_CAT1, "CAT1", null));
 		Category category = cs.getCategory(TEST_CAT1);
-		assertNotNull("need category", category);
-		assertNotNull("command1", cs.defineCommand(TEST_ID1, "ID1", null, category, null));
-		assertNotNull("command2", cs.defineCommand(TEST_ID2, "ID2", null, category, null));
+		assertNotNull(category, "need category");
+		assertNotNull(cs.defineCommand(TEST_ID1, "ID1", null, category, null), "command1");
+		assertNotNull(cs.defineCommand(TEST_ID2, "ID2", null, category, null), "command2");
 
 		Command cmd1 = cs.getCommand(TEST_ID1);
-		assertNotNull("get command1", cmd1);
+		assertNotNull(cmd1, "get command1");
 		assertEquals("ID1", cmd1.getName());
-		assertNotNull("get command2", cs.getCommand(TEST_ID2));
+		assertNotNull(cs.getCommand(TEST_ID2), "get command2");
 	}
 
 	@Test
@@ -140,14 +140,14 @@ public class DefineCommandsTest {
 		assertNotNull(cs);
 		assertNotNull(cs.defineCategory(TEST_CAT1, "CAT1", null));
 		Category category = cs.getCategory(TEST_CAT1);
-		assertNotNull("need category", category);
-		assertNotNull("command1", cs.defineCommand(TEST_ID1, "ID1", null, category, null));
-		assertNotNull("command2", cs.defineCommand(TEST_ID2, "ID2", null, category, null));
+		assertNotNull(category, "need category");
+		assertNotNull(cs.defineCommand(TEST_ID1, "ID1", null, category, null), "command1");
+		assertNotNull(cs.defineCommand(TEST_ID2, "ID2", null, category, null), "command2");
 
 		cs = workbenchContext.get(ECommandService.class);
 		Command cmd1 = cs.getCommand(TEST_ID1);
-		assertNotNull("get command1", cmd1);
+		assertNotNull(cmd1, "get command1");
 		assertEquals("ID1", cmd1.getName());
-		assertNotNull("get command2", cs.getCommand(TEST_ID2));
+		assertNotNull(cs.getCommand(TEST_ID2), "get command2");
 	}
 }
