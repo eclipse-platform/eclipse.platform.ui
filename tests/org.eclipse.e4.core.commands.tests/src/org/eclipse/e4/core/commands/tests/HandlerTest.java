@@ -15,10 +15,10 @@
  ******************************************************************************/
 package org.eclipse.e4.core.commands.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
@@ -36,9 +36,9 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.FrameworkUtil;
 
 import jakarta.inject.Named;
@@ -53,7 +53,7 @@ public class HandlerTest {
 
 	private IEclipseContext workbenchContext;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(this.getClass()).getBundleContext());
 		IEclipseContext globalContext = serviceContext.createChild();
@@ -62,7 +62,7 @@ public class HandlerTest {
 		defineCommands(workbenchContext);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		workbenchContext.dispose();
 	}
