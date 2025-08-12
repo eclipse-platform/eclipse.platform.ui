@@ -14,19 +14,19 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The suite of tests for the FilteredResourcesSelectionDialog.
  *
  * @since 3.14
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	ResourceItemLabelTest.class,
-	ResourceInitialSelectionTest.class,
-	ResourceSelectionFilteringDialogTest.class,
+@Suite
+@SelectClasses({ //
+		ResourceItemLabelTest.class, //
+		ResourceInitialSelectionTest.class, //
+		ResourceSelectionFilteringDialogTest.class, //
 })
 public class FilteredResourcesSelectionDialogTestSuite {
 }

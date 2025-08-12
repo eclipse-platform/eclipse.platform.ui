@@ -30,45 +30,46 @@ import org.eclipse.ui.tests.markers.MarkerViewTests;
 import org.eclipse.ui.tests.markers.MarkerViewUtilTest;
 import org.eclipse.ui.tests.markers.ResourceMappingMarkersTest;
 import org.eclipse.ui.tests.markers.ScopeAreaTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	EditorActionBarsTest.class,
-	ActionSetExpressionTest.class,
-	PopupMenuExpressionTest.class,
-	Bug41931Test.class,
-	Bug75909Test.class,
-	Bug78470Test.class,
-	DeclarativeFilterActivityTest.class,
-	DeclarativeFilterDeclarationTest.class,
-	ResourceMappingMarkersTest.class,
-	MarkerSupportRegistryTests.class,
-	MarkerSupportViewTest.class,
-	MarkerSortUtilTest.class,
-	MarkerViewTests.class,
-	MarkerViewUtilTest.class,
-	MarkerHelpRegistryTest.class,
-	MarkerHelpRegistryReaderTest.class,
-	MarkerQueryTest.class,
-	Bug99858Test.class,
-	WorkbenchWindowSubordinateSourcesTests.class,
-	ReopenMenuTest.class,
-	UtilTest.class,
-	MarkerTesterTest.class,
-	TextHandlerTest.class,
-	PerspectiveSwitcherTest.class,
-	StickyViewManagerTest.class,
-	FileEditorMappingTest.class,
-	WorkbenchSiteProgressServiceModelTagsTest.class,
-	WorkbenchPageTest.class,
-	SaveablesListTest.class,
-	Bug540297WorkbenchPageFindViewTest.class,
-	Bug549139Test.class,
-	LargeFileLimitsPreferenceHandlerTest.class,
-	WorkbookEditorsHandlerTest.class,
-	ScopeAreaTest.class,
-		MarkerTypeTests.class
+@Suite
+@SelectClasses({ //
+		EditorActionBarsTest.class, //
+		ActionSetExpressionTest.class, //
+		PopupMenuExpressionTest.class, //
+		Bug41931Test.class, //
+		Bug75909Test.class, //
+		Bug78470Test.class, //
+		DeclarativeFilterActivityTest.class, //
+		DeclarativeFilterDeclarationTest.class, //
+		ResourceMappingMarkersTest.class, //
+		MarkerSupportRegistryTests.class, //
+		MarkerSupportViewTest.class, // //
+		MarkerSortUtilTest.class, //
+		MarkerViewTests.class, //
+		MarkerViewUtilTest.class, // //
+		MarkerHelpRegistryTest.class, //
+		MarkerHelpRegistryReaderTest.class, //
+		MarkerQueryTest.class, //
+		Bug99858Test.class, //
+		WorkbenchWindowSubordinateSourcesTests.class, //
+		ReopenMenuTest.class, //
+		UtilTest.class, //
+		MarkerTesterTest.class, //
+		TextHandlerTest.class, //
+		PerspectiveSwitcherTest.class, //
+		StickyViewManagerTest.class, //
+		FileEditorMappingTest.class, //
+		WorkbenchSiteProgressServiceModelTagsTest.class, //
+		WorkbenchPageTest.class, //
+		SaveablesListTest.class, //
+		Bug540297WorkbenchPageFindViewTest.class, //
+		Bug549139Test.class, //
+		LargeFileLimitsPreferenceHandlerTest.class, //
+		WorkbookEditorsHandlerTest.class, //
+		ScopeAreaTest.class, //
+		MarkerTypeTests.class //
 })
-public class InternalTestSuite {}
+public class InternalTestSuite {
+}

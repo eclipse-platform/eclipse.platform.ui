@@ -15,19 +15,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.services;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Tests general to services.
+ *
  * @since 3.3
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	EvaluationServiceTest.class,
-	ContributedServiceTest.class,
-	WorkbenchSiteProgressServiceTest.class,
-	EditorSourceTest.class
-	})
+@Suite
+@SelectClasses({ //
+		EvaluationServiceTest.class, //
+		ContributedServiceTest.class, //
+		WorkbenchSiteProgressServiceTest.class, //
+		EditorSourceTest.class //
+})
 public final class ServicesTestSuite {
 }

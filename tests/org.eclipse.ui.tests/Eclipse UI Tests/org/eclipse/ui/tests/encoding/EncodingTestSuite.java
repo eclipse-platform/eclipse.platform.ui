@@ -14,15 +14,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.encoding;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The EncodingTestSuite is the suite for encoding tests.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
- EncodingTestCase.class
+@Suite
+@SelectClasses({ //
+		EncodingTestCase.class //
 })
 public class EncodingTestSuite {
 

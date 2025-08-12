@@ -25,67 +25,67 @@ import org.eclipse.ui.tests.e4.CloseAllHandlerTest;
 import org.eclipse.ui.tests.ide.api.FileEditorInputTest;
 import org.eclipse.ui.tests.ide.api.IDETest;
 import org.eclipse.ui.tests.ide.api.IDETest2;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	 IPageLayoutTest.class,
-	 PlatformUITest.class,
-	 IWorkbenchTest.class,
-	 IWorkbenchWindowTest.class,
-	 IWorkbenchPageTest.class,
-	 IDeprecatedWorkbenchPageTest.class,
-	 IActionFilterTest.class,
-	 IPageListenerTest.class,
-	 IAggregateWorkingSetTest.class,
-	 IPageServiceTest.class,
-	 IPerspectiveRegistryTest.class,
-	 IPerspectiveDescriptorTest.class,
-	 IFileEditorMappingTest.class,
-	 IEditorDescriptorTest.class,
-	 IEditorRegistryTest.class,
-	 IPerspectiveListenerTest.class,
-	 IWorkbenchWindowActionDelegateTest.class,
-	 IViewActionDelegateTest.class,
-	 IViewSiteTest.class,
-	 IEditorSiteTest.class,
-	 IActionBarsTest.class,
-	 IViewPartTest.class,
-	 IEditorPartTest.class,
-	 IEditorActionBarContributorTest.class,
-	 IPartServiceTest.class,
-	 ISelectionServiceTest.class,
-	 SelectionListenerFactoryTest.class,
-	 IWorkingSetTest.class,
-	 IWorkingSetManagerTest.class,
-	 IWorkingSetElementAdapterTests.class,
-	 MockWorkingSetTest.class,
-	 Bug42616Test.class,
-	 StickyViewTest.class,
-	 EditorIconTest.class,
-	 RawIViewPartTest.class,
-	 ViewPartTitleTest.class,
-	 OverriddenTitleTest.class,
-	 UIJobTest.class,
-	 Bug75118Test.class,
-	 FileEditorInputTest.class,
-	 IDETest.class,
-	 IDETest2.class,
-	 IEditorMatchingStrategyTest.class,
-	 XMLMementoTest.class,
-	 IWorkbenchPartTestableTests.class,
-	 ArbitraryPropertyTest.class,
-	 LifecycleViewTest.class,
-	 DependencyInjectionViewTest.class,
-	 Bug407422Test.class,
-	 MultipleWindowsTest.class,
-	 Bug543609Test.class,
-	 SaveablesListTest.class,
-	 PerspectiveExtensionReaderTest.class,
-	 ModeledPageLayoutTest.class,
-	 WorkbenchPluginTest.class,
-	 CloseAllHandlerTest.class
+@Suite
+@SelectClasses({ //
+		IPageLayoutTest.class, //
+		PlatformUITest.class, //
+		IWorkbenchTest.class, //
+		IWorkbenchWindowTest.class, //
+		IWorkbenchPageTest.class, //
+		IDeprecatedWorkbenchPageTest.class, //
+		IActionFilterTest.class, //
+		IPageListenerTest.class, //
+		IAggregateWorkingSetTest.class, //
+		IPageServiceTest.class, //
+		IPerspectiveRegistryTest.class, //
+		IPerspectiveDescriptorTest.class, //
+		IFileEditorMappingTest.class, //
+		IEditorDescriptorTest.class, //
+		IEditorRegistryTest.class, //
+		IPerspectiveListenerTest.class, //
+		IWorkbenchWindowActionDelegateTest.class, //
+		IViewActionDelegateTest.class, //
+		IViewSiteTest.class, //
+		IEditorSiteTest.class, //
+		IActionBarsTest.class, //
+		IViewPartTest.class, //
+		IEditorPartTest.class, //
+		IEditorActionBarContributorTest.class, //
+		IPartServiceTest.class, //
+		ISelectionServiceTest.class, //
+		SelectionListenerFactoryTest.class, //
+		IWorkingSetTest.class, //
+		IWorkingSetManagerTest.class, //
+		IWorkingSetElementAdapterTests.class, //
+		MockWorkingSetTest.class, //
+		Bug42616Test.class, //
+		StickyViewTest.class, //
+		EditorIconTest.class, //
+		RawIViewPartTest.class, //
+		ViewPartTitleTest.class, //
+		OverriddenTitleTest.class, //
+		UIJobTest.class, //
+		Bug75118Test.class, //
+		FileEditorInputTest.class, //
+		IDETest.class, //
+		IDETest2.class, //
+		IEditorMatchingStrategyTest.class, //
+		XMLMementoTest.class, //
+		IWorkbenchPartTestableTests.class, //
+		ArbitraryPropertyTest.class, //
+		LifecycleViewTest.class, //
+		DependencyInjectionViewTest.class, //
+		Bug407422Test.class, //
+		MultipleWindowsTest.class, //
+		Bug543609Test.class, //
+		SaveablesListTest.class, //
+		PerspectiveExtensionReaderTest.class, //
+		ModeledPageLayoutTest.class, //
+		WorkbenchPluginTest.class, //
+		CloseAllHandlerTest.class //
 })
 public class ApiTestSuite {
 

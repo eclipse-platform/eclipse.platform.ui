@@ -14,32 +14,32 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.commands;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Tests for all areas of command support for the platform.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	CommandExecutionTest.class,
-	Bug73756Test.class,
-	Bug125792Test.class,
-	Bug417762Test.class,
-	CommandManagerTest.class,
-	CommandParameterTypeTest.class,
-	CommandSerializationTest.class,
-	HandlerActivationTest.class,
-	CommandCallbackTest.class,
-	CommandActionTest.class,
-	HelpContextIdTest.class,
-	StateTest.class,
-	CommandEnablementTest.class,
-	ActionDelegateProxyTest.class,
-	ToggleStateTest.class,
-	RadioStateTest.class,
-	WorkbenchStateTest.class,
-	E4CommandImageTest.class
+@Suite
+@SelectClasses({ //
+		CommandExecutionTest.class, //
+		Bug73756Test.class, //
+		Bug125792Test.class, //
+		Bug417762Test.class, //
+		CommandManagerTest.class, //
+		CommandParameterTypeTest.class, //
+		CommandSerializationTest.class, //
+		HandlerActivationTest.class, //
+		CommandCallbackTest.class, //
+		CommandActionTest.class, //
+		HelpContextIdTest.class, //
+		StateTest.class, //
+		CommandEnablementTest.class, //
+		ActionDelegateProxyTest.class, //
+		ToggleStateTest.class, //
+		RadioStateTest.class, //
+		WorkbenchStateTest.class, //
+		E4CommandImageTest.class //
 })
 public final class CommandsTestSuite {
 }
