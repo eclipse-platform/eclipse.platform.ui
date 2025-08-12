@@ -13,11 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.quickaccess;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ CamelUtilTest.class, QuickAccessDialogTest.class, ContentMatchesTest.class,
-		QuickAccessProvidersTest.class })
+@Suite
+@SelectClasses({ //
+		CamelUtilTest.class, //
+		QuickAccessDialogTest.class, //
+		ContentMatchesTest.class, //
+		QuickAccessProvidersTest.class //
+})
 public class QuickAccessTestSuite {
 }

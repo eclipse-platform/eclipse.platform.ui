@@ -14,19 +14,19 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	ExceptionDecoratorTestCase.class,
-	DecoratorTestCase.class,
-	LightweightDecoratorTestCase.class,
-	BadIndexDecoratorTestCase.class,
-	DecoratorTreeTest.class,
-	DecoratorTableTest.class,
-	DecoratorAdaptableTests.class,
-	DecoratorCacheTest.class,
+@Suite
+@SelectClasses({ //
+		ExceptionDecoratorTestCase.class, //
+		DecoratorTestCase.class, //
+		LightweightDecoratorTestCase.class, //
+		BadIndexDecoratorTestCase.class, //
+		DecoratorTreeTest.class, //
+		DecoratorTableTest.class, //
+		DecoratorAdaptableTests.class, //
+		DecoratorCacheTest.class, //
 })
 public class DecoratorsTestSuite {
 }
