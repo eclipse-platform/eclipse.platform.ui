@@ -15,7 +15,6 @@ package org.eclipse.ui.tests.concurrency;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -75,7 +74,7 @@ public class NoFreezeWhileWaitingForRuleTest {
 	}
 
 	@Test
-	public void testWaiting() {
+	public void testWaiting() throws InterruptedException {
 		// If you want to see the blocking uncomment the following line:
 		// Job.getJobManager().setProgressProvider(null);
 		Display display = Display.getDefault();
@@ -93,7 +92,7 @@ public class NoFreezeWhileWaitingForRuleTest {
 			blockingJob.join();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			fail(e.getMessage());
+			throw e;
 		}
 		assertFalse("Timeout reached, blocking occurred!", ruleMonitor.isCanceled());
 	}

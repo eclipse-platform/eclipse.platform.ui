@@ -78,22 +78,15 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 		setUpData();
 	}
 
-	private void setUpData(){
-		try{
-			for (String directoryName : directoryNames) {
-				IFolder folder = project.getFolder(directoryName);
-				folder.create(false, true, new NullProgressMonitor());
-				for (String fileName : fileNames) {
-					IFile file = folder.getFile(fileName);
-					String contents =
-						directoryName + ", " + fileName;
-					file.create(new ByteArrayInputStream(contents.getBytes()),
-						true, new NullProgressMonitor());
-				}
+	private void setUpData() throws CoreException {
+		for (String directoryName : directoryNames) {
+			IFolder folder = project.getFolder(directoryName);
+			folder.create(false, true, new NullProgressMonitor());
+			for (String fileName : fileNames) {
+				IFile file = folder.getFile(fileName);
+				String contents = directoryName + ", " + fileName;
+				file.create(new ByteArrayInputStream(contents.getBytes()), true, new NullProgressMonitor());
 			}
-		}
-		catch(Exception e){
-			fail(e.toString());
 		}
 	}
 
@@ -107,10 +100,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 		}
 		try {
 			project.delete(true, true, null);
-		} catch (CoreException e) {
-			fail(e.toString());
-		}
-		finally{
+		} finally {
 			project = null;
 			localDirectory = null;
 		}

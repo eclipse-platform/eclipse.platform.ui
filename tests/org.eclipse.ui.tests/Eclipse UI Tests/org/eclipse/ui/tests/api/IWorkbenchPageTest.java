@@ -1283,11 +1283,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	@Test
 	public void testHideViewWithPart() throws Throwable {
 		// test that nothing bad happens with a null parameter
-		try {
-			fActivePage.hideView((IViewPart) null);
-		} catch (RuntimeException e) {
-			fail(e.getMessage());
-		}
+		fActivePage.hideView((IViewPart) null);
 
 		IViewPart view = fActivePage.showView(MockViewPart.ID3);
 
@@ -1299,11 +1295,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	@Test
 	public void testHideViewWithReference() throws Throwable {
 		// test that nothing bad happens with a null parameter
-		try {
-			fActivePage.hideView((IViewReference) null);
-		} catch (RuntimeException e) {
-			fail(e.getMessage());
-		}
+		fActivePage.hideView((IViewReference) null);
 
 		IViewPart view = fActivePage.showView(MockViewPart.ID4);
 		IViewReference ref = fActivePage.findViewReference(MockViewPart.ID4);
@@ -2133,22 +2125,18 @@ public class IWorkbenchPageTest extends UITestCase {
 	}
 
 	/**
-	 * Test opening a perspective with placeholders for multi instance views.
-	 * The placeholders are added at top level (not in any folder).
+	 * Test opening a perspective with placeholders for multi instance views. The
+	 * placeholders are added at top level (not in any folder).
+	 *
+	 * @throws WorkbenchException
 	 *
 	 * @since 3.1
 	 */
 	@Test
 	@Ignore
-	public void testOpenPerspectiveWithMultiViewPlaceholdersAtTopLevel() {
+	public void testOpenPerspectiveWithMultiViewPlaceholdersAtTopLevel() throws WorkbenchException {
 
-		try {
-			fWin.getWorkbench().showPerspective(
-					PerspectiveWithMultiViewPlaceholdersAtTopLevel.PERSP_ID,
-					fWin);
-		} catch (WorkbenchException e) {
-			fail("Unexpected WorkbenchException: " + e);
-		}
+		fWin.getWorkbench().showPerspective(PerspectiveWithMultiViewPlaceholdersAtTopLevel.PERSP_ID, fWin);
 
 //		ArrayList partIds = facade.getPerspectivePartIds(fActivePage, null);
 		// FIXME: No implementation for facade.getPerspectivePartIds()
@@ -2160,26 +2148,20 @@ public class IWorkbenchPageTest extends UITestCase {
 	}
 
 	/**
-	 * Test opening a perspective with placeholders for multi instance views.
-	 * The placeholders are added in a placeholder folder. This is a regression
-	 * test for bug 72383 [Perspectives] Placeholder folder error with multiple
-	 * instance views
+	 * Test opening a perspective with placeholders for multi instance views. The
+	 * placeholders are added in a placeholder folder. This is a regression test for
+	 * bug 72383 [Perspectives] Placeholder folder error with multiple instance
+	 * views
+	 *
+	 * @throws WorkbenchException
 	 *
 	 * @since 3.1
 	 */
 	@Test
 	@Ignore
-	public void testOpenPerspectiveWithMultiViewPlaceholdersInPlaceholderFolder() {
+	public void testOpenPerspectiveWithMultiViewPlaceholdersInPlaceholderFolder() throws WorkbenchException {
 
-		try {
-			fWin
-					.getWorkbench()
-					.showPerspective(
-							PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder.PERSP_ID,
-							fWin);
-		} catch (WorkbenchException e) {
-			fail("Unexpected WorkbenchException: " + e);
-		}
+		fWin.getWorkbench().showPerspective(PerspectiveWithMultiViewPlaceholdersInPlaceholderFolder.PERSP_ID, fWin);
 
 //		ArrayList partIds = facade.getPerspectivePartIds(fActivePage,"placeholderFolder");
 
@@ -2192,23 +2174,17 @@ public class IWorkbenchPageTest extends UITestCase {
 	}
 
 	/**
-	 * Test opening a perspective with placeholders for multi instance views.
-	 * The placeholders are added at top level (not in any folder).
+	 * Test opening a perspective with placeholders for multi instance views. The
+	 * placeholders are added at top level (not in any folder).
+	 *
+	 * @throws WorkbenchException
 	 *
 	 * @since 3.1
 	 */
 	@Test
 	@Ignore
-	public void testOpenPerspectiveWithMultiViewPlaceholdersInFolder() {
-		try {
-			fWin
-					.getWorkbench()
-					.showPerspective(
-							PerspectiveWithMultiViewPlaceholdersInFolder.PERSP_ID,
-							fWin);
-		} catch (WorkbenchException e) {
-			fail("Unexpected WorkbenchException: " + e);
-		}
+	public void testOpenPerspectiveWithMultiViewPlaceholdersInFolder() throws WorkbenchException {
+		fWin.getWorkbench().showPerspective(PerspectiveWithMultiViewPlaceholdersInFolder.PERSP_ID, fWin);
 
 //		ArrayList partIds = facade.getPerspectivePartIds(fActivePage,"folder");
 
@@ -2570,20 +2546,19 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * Tests that relative view is correctly shown if visible parameter specified.
 	 * See bug 538199 - perspectiveExtension: visible="false" not honored when
 	 * relative view does not exist
+	 *
+	 * @throws WorkbenchException
 	 */
 	@Test
-	public void testRelativeViewVisibility() {
+	public void testRelativeViewVisibility() throws WorkbenchException {
 		processEvents();
 
 		fActivePage.closeAllPerspectives(true, false);
 		IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
 		IPerspectiveDescriptor testPerspective = reg.findPerspectiveWithId(PerspectiveViewsBug538199.ID);
 		fActivePage.setPerspective(testPerspective);
-		try {
-			fWin.getWorkbench().showPerspective(PerspectiveViewsBug538199.ID, fWin);
-		} catch (WorkbenchException e) {
-			fail("Unexpected WorkbenchException: " + e);
-		}
+		fWin.getWorkbench().showPerspective(PerspectiveViewsBug538199.ID, fWin);
+
 		processEvents();
 		IWorkbenchPage activePage = fWin.getActivePage();
 
@@ -2605,12 +2580,14 @@ public class IWorkbenchPageTest extends UITestCase {
 	}
 
 	/**
-	 * Regression test for Bug 76285 [Presentations] Folder tab does not
-	 * indicate current view. Tests that, when switching between perspectives,
-	 * the remembered old part correctly handles multi-view instances.
+	 * Regression test for Bug 76285 [Presentations] Folder tab does not indicate
+	 * current view. Tests that, when switching between perspectives, the remembered
+	 * old part correctly handles multi-view instances.
+	 *
+	 * @throws PartInitException
 	 */
 	@Test
-	public void testBug76285() {
+	public void testBug76285() throws PartInitException {
 		IWorkbenchPage page = fActivePage;
 		IPerspectiveDescriptor originalPersp = page.getPerspective();
 		IPerspectiveDescriptor resourcePersp = PlatformUI.getWorkbench()
@@ -2622,12 +2599,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		int n = 5;
 		IViewPart[] views = new IViewPart[n];
 		for (int i = 0; i < n; ++i) {
-			try {
-				views[i] = page.showView(MockViewPart.IDMULT, Integer
-						.toString(i), IWorkbenchPage.VIEW_CREATE);
-			} catch (PartInitException e) {
-				fail(e.getMessage());
-			}
+			views[i] = page.showView(MockViewPart.IDMULT, Integer.toString(i), IWorkbenchPage.VIEW_CREATE);
 		}
 		assertEquals(5, page.getViews().length);
 		for (int i = 0; i < n; ++i) {

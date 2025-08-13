@@ -14,10 +14,8 @@
 package org.eclipse.ui.tests.encoding;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
 import java.util.List;
 
 import org.eclipse.ui.WorkbenchEncoding;
@@ -38,12 +36,7 @@ public class EncodingTestCase {
 		List<String> encodings = WorkbenchEncoding.getDefinedEncodings();
 
 		for (String encoding : encodings) {
-			try {
-				assertTrue("Unsupported charset " + encoding, Charset.isSupported(encoding));
-
-			} catch (IllegalCharsetNameException e) {
-				fail("Unsupported charset " + encoding);
-			}
+			assertTrue("Unsupported charset " + encoding, Charset.isSupported(encoding));
 		}
 	}
 }

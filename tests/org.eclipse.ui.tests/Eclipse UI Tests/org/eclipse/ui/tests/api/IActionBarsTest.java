@@ -18,10 +18,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -210,7 +211,8 @@ public class IActionBarsTest {
 			assertTrue(quit.hasRun);
 		}
 
-	private void runMatchingCommand(IWorkbenchWindow window, String actionId) {
+		private void runMatchingCommand(IWorkbenchWindow window, String actionId)
+				throws ExecutionException, NotDefinedException {
 		IHandlerService hs = window.getService(IHandlerService.class);
 		IActionCommandMappingService ms = window.getService(IActionCommandMappingService.class);
 		String commandId = ms.getCommandId(actionId);
@@ -220,8 +222,6 @@ public class IActionBarsTest {
 		} catch (NotHandledException | NotEnabledException e) {
 			// this is not a failure, just a condition to be checked by
 			// the test
-		} catch (Exception e) {
-			fail("Failed to run " + commandId);
 		}
 	}
 }

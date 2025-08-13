@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
@@ -272,12 +271,8 @@ public class OperationsAPITest {
 		// IllegalStateException upon trying to open a composite.  If cleanup
 		// after the above exception is done, then we shouldn't get an
 		// IllegalStateException.
-		try {
-			history.openOperation(new TriggeredOperations(op3, history), IOperationHistory.EXECUTE);
-			history.closeOperation(true, true, IOperationHistory.EXECUTE);
-		} catch (IllegalStateException e) {
-			fail("IllegalStateException - trying to open an operation before a close");
-		}
+		history.openOperation(new TriggeredOperations(op3, history), IOperationHistory.EXECUTE);
+		history.closeOperation(true, true, IOperationHistory.EXECUTE);
 	}
 
 	@Test

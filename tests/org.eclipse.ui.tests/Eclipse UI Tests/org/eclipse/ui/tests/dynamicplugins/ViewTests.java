@@ -51,7 +51,7 @@ public class ViewTests extends DynamicTestCase {
 	}
 
 	@Test
-	public void testViewClosure() throws CoreException {
+	public void testViewClosure() throws CoreException, IllegalArgumentException, InterruptedException {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		getBundle();
 
@@ -64,11 +64,7 @@ public class ViewTests extends DynamicTestCase {
 		part = null; //null the reference
 
 		removeBundle();
-		try {
-			LeakTests.checkRef(queue, ref);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		LeakTests.checkRef(queue, ref);
 
 		assertNull(window.getActivePage().findView(VIEW_ID1));
 	}

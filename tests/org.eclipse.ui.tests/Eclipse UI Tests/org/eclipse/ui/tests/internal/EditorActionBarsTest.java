@@ -233,22 +233,14 @@ public class EditorActionBarsTest extends UITestCase {
 		// Test a cool bar with a single separator
 		CoolBarManager coolBarManager = new CoolBarManager();
 		coolBarManager.add(new Separator(CoolBarManager.USER_SEPARATOR));
-		try {
-			coolBarManager.createControl(fWindow.getShell());
-			coolBarManager.update(true);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			fail("Exception updating cool bar with a single separator");
-		}
+		coolBarManager.createControl(fWindow.getShell());
+		coolBarManager.update(true);
 
 		// Test a cool bar with multiple separators
 		CoolBarManager coolBarManager2 = new CoolBarManager();
 		coolBarManager2.add(new Separator(CoolBarManager.USER_SEPARATOR));
-		try {
-			coolBarManager2.createControl(fWindow.getShell());
-			coolBarManager2.update(true);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			fail("Exception updating cool bar with multiple separators");
-		}
+		coolBarManager2.createControl(fWindow.getShell());
+		coolBarManager2.update(true);
 	}
 }
 

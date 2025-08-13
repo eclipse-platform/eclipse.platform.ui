@@ -99,9 +99,11 @@ public class CloseAllHandlerTest {
 	 * Scenario 3: a mix of an open compatibility layer type editor *and* an E4
 	 * style part contribution which is tagged as representing an 'editor' are both
 	 * closed via the handler (and the enablement of handler is checked).
+	 *
+	 * @throws PartInitException
 	 */
 	@Test
-	public void testCloseMixedEditorTypes() {
+	public void testCloseMixedEditorTypes() throws PartInitException {
 		EHandlerService handlerService = application.getContext().get(EHandlerService.class);
 		ECommandService commandService = application.getContext().get(ECommandService.class);
 
@@ -119,11 +121,7 @@ public class CloseAllHandlerTest {
 		assertNotNull("Active workbench window not found.", window);
 
 		IFileEditorInput input = new DummyFileEditorInput();
-		try {
-			window.getActivePage().openEditor(input, TEST_COMPATIBILITY_LAYER_EDITOR_ID);
-		} catch (PartInitException e) {
-			fail("Test Compatibility Editor could not be opened.  Further testing cannot complete.");
-		}
+		window.getActivePage().openEditor(input, TEST_COMPATIBILITY_LAYER_EDITOR_ID);
 
 		// verify the close all handler is enabled now (since a dummy compatibility
 		// layer editor has been opened)
@@ -170,11 +168,8 @@ public class CloseAllHandlerTest {
 		// which represents an editor, and verify they are *both* closed when we invoked
 		// the close all editors handler
 		dummyPart = createAndOpenE4Part(partDescriptor);
-		try {
-			window.getActivePage().openEditor(input, TEST_COMPATIBILITY_LAYER_EDITOR_ID);
-		} catch (PartInitException e) {
-			fail("Test Compatibility Editor could not be opened.  Further testing cannot complete.");
-		}
+		window.getActivePage().openEditor(input, TEST_COMPATIBILITY_LAYER_EDITOR_ID);
+
 		compatEditor = window.getActivePage().findEditor(input);
 		assertNotNull(compatEditor);
 		dummyPart = partService.findPart(DUMMY_E4_PART_ID);

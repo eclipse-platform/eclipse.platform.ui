@@ -54,7 +54,7 @@ public class DecoratorCacheTest extends AbstractNavigatorTest {
 	}
 
 	@Test
-	public void testDecoratorCacheIsDisposed() {
+	public void testDecoratorCacheIsDisposed() throws CoreException {
 
 		Display fDisplay = Display.getCurrent();
 		if (fDisplay == null) {
@@ -66,11 +66,7 @@ public class DecoratorCacheTest extends AbstractNavigatorTest {
 		StructuredViewer fViewer = createViewer(fShell);
 		fViewer.setUseHashlookup(true);
 
-		try {
-			createTestFile();
-		} catch (CoreException e) {
-			fail(e.getLocalizedMessage(), e);
-		}
+		createTestFile();
 		fViewer.setInput(testFile);
 		fShell.open();
 

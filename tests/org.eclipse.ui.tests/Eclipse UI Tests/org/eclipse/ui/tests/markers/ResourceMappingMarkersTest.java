@@ -46,28 +46,15 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 	}
 
 	@Test
-	public void testResourceMappings() {
+	public void testResourceMappings() throws PartInitException {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
-		ResourceMappingTestView view;
+		ResourceMappingTestView view = (ResourceMappingTestView) page
+				.showView("org.eclipse.ui.tests.resourceMappingView");
 
-		try {
-			view = (ResourceMappingTestView) page
-					.showView("org.eclipse.ui.tests.resourceMappingView");
-		} catch (PartInitException e) {
-			fail(e.getLocalizedMessage());
-			return;
-		}
-
-		final MarkersTestMarkersView problemView;
-		try {
-			problemView = (MarkersTestMarkersView) page
-					.showView("org.eclipse.ui.tests.markerTests");
-		} catch (PartInitException e) {
-			fail(e.getLocalizedMessage());
-			return;
-		}
+		final MarkersTestMarkersView problemView = (MarkersTestMarkersView) page
+				.showView("org.eclipse.ui.tests.markerTests");
 
 		IMarker marker=view.addMarkerToFirstProject();
 		assertNotNull("Marker creation failed", marker);

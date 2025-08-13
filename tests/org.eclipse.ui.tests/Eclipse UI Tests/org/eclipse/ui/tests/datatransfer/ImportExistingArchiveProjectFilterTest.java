@@ -124,12 +124,7 @@ public class ImportExistingArchiveProjectFilterTest extends UITestCase {
 		IViewPart navigator = page.showView(IPageLayout.ID_PROJECT_EXPLORER);
 		assertNotNull("failed to open project explorer", navigator);
 
-		ProjectExplorer projectExplorer = null;
-		try {
-			projectExplorer = (ProjectExplorer) navigator;
-		} catch (ClassCastException e) {
-			fail(e.getMessage());
-		}
+		ProjectExplorer projectExplorer = (ProjectExplorer) navigator;
 		// Check project explorer for visibility of res folder for which resource filter
 		// is applied to hide on import
 		TreeViewer treeViewer = projectExplorer.getCommonViewer();
