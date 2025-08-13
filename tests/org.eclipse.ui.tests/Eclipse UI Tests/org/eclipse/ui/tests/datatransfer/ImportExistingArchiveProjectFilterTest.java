@@ -114,9 +114,7 @@ public class ImportExistingArchiveProjectFilterTest extends UITestCase {
 		wpip.createProjects();
 
 		workspaceProjects = root.getProjects();
-		if (workspaceProjects.length != 1) {
-			fail("Incorrect Number of projects imported");
-		}
+		assertEquals("Incorrect Number of projects imported", 1, workspaceProjects.length);
 
 		IWorkbenchPage page = getWorkbench().showPerspective(EmptyPerspective.PERSP_ID,
 				getWorkbench().getActiveWorkbenchWindow());

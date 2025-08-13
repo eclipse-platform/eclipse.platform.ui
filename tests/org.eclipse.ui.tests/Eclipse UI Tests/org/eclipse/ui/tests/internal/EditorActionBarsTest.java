@@ -215,11 +215,9 @@ public class EditorActionBarsTest extends UITestCase {
 			// objects.
 			IContributionItem[] items = manager.getItems();
 			for (IContributionItem item : items) {
-				if (!(item instanceof Separator) && item.isVisible()) {
-					fail("No toolbar for a visible action text \"" + actionText + "\"");
-				}
+				assertTrue("No toolbar for a visible action text \"" + actionText + "\"",
+						item instanceof Separator || !item.isVisible());
 			}
-
 		}
 	}
 

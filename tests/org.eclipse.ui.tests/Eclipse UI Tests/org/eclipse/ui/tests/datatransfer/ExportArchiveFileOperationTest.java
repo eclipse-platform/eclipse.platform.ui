@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -327,9 +328,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 			new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir())
 				.toOSString());
 		localDirectory = destination.getAbsolutePath();
-		if (!destination.mkdirs()) {
-			fail("Could not set up destination directory for " + getName());
-		}
+		assertTrue(destination.mkdirs());
 		setUpData();
 		flattenPaths = false;
 		excludeProjectPath = false;
@@ -344,9 +343,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 			File[] files = root.listFiles();
 			if (files != null){
 				for (File file : files) {
-					if (!file.delete()) {
-						fail("Could not delete " + file.getAbsolutePath());
-					}
+					assertTrue("Could not delete " + file.getAbsolutePath(), file.delete());
 				}
 			}
 			root.delete();
@@ -471,16 +468,13 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 	}
 
 	private void verifyFile(String entryName){
-		for (String fileName : fileNames) {
-			boolean dotProjectFileShouldBePresent = ".project".equals(entryName) && !flattenPaths && !excludeProjectPath;
-			if (fileName.equals(entryName) || dotProjectFileShouldBePresent) {
-				return;
-			}
-		}
 		if (entryName.equals("org.eclipse.core.resources.prefs")) {
 			return;
 		}
-		fail("Could not find file named: " + entryName);
+		assertTrue("Could not find file named: " + entryName, Arrays.stream(fileNames).anyMatch(fileName -> {
+			boolean dotProjectFileShouldBePresent = ".project".equals(entryName) && !flattenPaths && !excludeProjectPath;
+			return fileName.equals(entryName) || dotProjectFileShouldBePresent;
+		}));
 	}
 
 	private void verifyFolders(Set<String> folderNames) {
@@ -489,11 +483,8 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 				continue;
 			}
 			if (!isDirectory(folderName)){
-				if (flattenPaths) {
-					fail(folderName + " is not an expected folder");
-				} else if (!project.getName().equals(folderName)) {
-					fail(folderName + " is not an expected folder");
-				}
+				assertFalse(folderName + " is not an expected folder",
+						flattenPaths || !project.getName().equals(folderName));
 			}
 		}
 	}

@@ -137,9 +137,7 @@ public class IEditorPartTest extends IWorkbenchPartTest {
 		}
 
 		List<IStatus> list = errors.get("org.eclipse.ui.workbench");
-		if (list == null || list.isEmpty()) {
-			fail("No error reported on accessing shell after part disposal");
-		}
+		assertFalse("No error reported on accessing shell after part disposal", list == null || list.isEmpty());
 		assertEquals(1, list.size());
 		Throwable ex = list.get(0).getException();
 		assertTrue("Unexpected exception: " + ex, ex instanceof IllegalStateException);

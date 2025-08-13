@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.InvocationTargetException;
@@ -79,9 +80,7 @@ public class TestBug105491 {
 	 */
 	@Test
 	public void testBug() throws CoreException {
-		if (Thread.interrupted()) {
-			fail("Thread was interrupted at start of test");
-		}
+		assertFalse(Thread.interrupted());
 
 		if (Util.isWindows()) {
 			// unstable on Windows with 2 cores, see bug 543693
@@ -98,8 +97,6 @@ public class TestBug105491 {
 				// ignore
 			}
 		}, workspace.getRoot(), IResource.NONE, null);
-		if (Thread.interrupted()) {
-			fail("Thread was interrupted at end of test");
-		}
+		assertFalse(Thread.interrupted());
 	}
 }

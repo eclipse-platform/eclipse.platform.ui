@@ -13,10 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
-import static org.junit.Assert.fail;
-
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -87,7 +83,7 @@ public class TransferRuleTest {
 	}
 
 	@Test
-	public void testModalContextTransfer() throws InvocationTargetException, InterruptedException {
+	public void testModalContextTransfer() throws Throwable {
 		ISchedulingRule rule = new TestRule();
 		TestRunnable runnable = new TestRunnable(rule);
 		try {
@@ -101,8 +97,7 @@ public class TransferRuleTest {
 		}
 		//check the runnable for errors
 		if (runnable.error != null) {
-			runnable.error.printStackTrace();
-			fail("1.2");
+			throw runnable.error;
 		}
 	}
 }

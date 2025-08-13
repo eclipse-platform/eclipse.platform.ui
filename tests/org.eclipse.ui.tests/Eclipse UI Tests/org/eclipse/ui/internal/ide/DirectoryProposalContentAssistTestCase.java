@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.ide;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -87,9 +86,7 @@ public class DirectoryProposalContentAssistTestCase extends AbstractFieldAssistT
 		Shell[] shells = getFieldAssistWindow().getDisplay().getShells();
 		Optional<Table> tableOptional = Arrays.stream(shells).map(this::retrieveTable)
 				.filter(Objects::nonNull).findFirst();
-		if (!tableOptional.isPresent()) {
-			fail("Couldn't assert pop-up proposal size - pop-up seems closed.");
-		}
+		assertTrue("Couldn't assert pop-up proposal size - pop-up seems closed.", tableOptional.isPresent());
 		TableItem[] proposals = tableOptional.get().getItems();
 
 		assertEquals("Proposal size must be " + size, size, proposals.length);

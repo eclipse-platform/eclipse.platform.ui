@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
@@ -39,6 +40,7 @@ public class ModalContextCrashTest {
 		if (Thread.interrupted()) {
 			fail("Thread was interrupted at end of test");
 		}
+		assertFalse(Thread.interrupted());
 	}
 
 	private static final class CrashingRunnable implements IRunnableWithProgress, IThreadListener {

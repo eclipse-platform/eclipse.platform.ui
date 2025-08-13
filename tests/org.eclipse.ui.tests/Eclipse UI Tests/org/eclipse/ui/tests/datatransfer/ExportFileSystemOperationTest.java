@@ -72,9 +72,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 			new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir())
 				.toOSString());
 		localDirectory = destination.getAbsolutePath();
-		if (!destination.mkdirs()) {
-			fail("Could not set up destination directory for " + getName());
-		}
+		assertTrue(destination.mkdirs());
 		setUpData();
 	}
 
