@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.themes;
 
-import java.util.Arrays;
-
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.themes.ITheme;
@@ -30,30 +28,6 @@ public abstract class ThemeTest extends UITestCase {
 	protected static final String BOGUSID = "BOGUSID";
 
 	protected static final String THEME1 = "theme1";
-
-	public static void assertArrayEquals(Object[] datas, Object[] datas2) {
-		if (!Arrays.equals(datas, datas2)) {
-			String expected = formatArray(datas);
-			String actual = formatArray(datas2);
-			fail("expected:<" + expected + "> but was:<" + actual + ">");
-		}
-	}
-
-	protected static String formatArray(Object[] datas) {
-		StringBuilder buffer = new StringBuilder();
-		if (datas == null) {
-			buffer.append("null");
-		} else {
-			buffer.append('[');
-			for (int i = 0; i < datas.length; i++) {
-				buffer.append(datas[i]);
-				if (i != datas.length - 1) {
-					buffer.append(',');
-				}
-			}
-		}
-		return buffer.toString();
-	}
 
 	protected IThemeManager fManager;
 
