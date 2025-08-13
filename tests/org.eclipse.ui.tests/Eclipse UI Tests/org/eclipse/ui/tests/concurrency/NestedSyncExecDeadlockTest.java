@@ -14,7 +14,7 @@
  **********************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertFalse;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -111,16 +111,12 @@ public class NestedSyncExecDeadlockTest {
 	@Test
 	public void testDeadlock() throws Exception {
 		doTest(1000 * 30); // 30 secs almost always locks
-		if (Thread.interrupted()) {
-			fail("Thread was interrupted at end of test");
-		}
+		assertFalse(Thread.interrupted());
 	}
 
 	@Test
 	public void testOK() throws Exception {
 		doTest(0); // 0 rarely locks
-		if (Thread.interrupted()) {
-			fail("Thread was interrupted at end of test");
-		}
+		assertFalse(Thread.interrupted());
 	}
 }

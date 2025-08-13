@@ -384,21 +384,15 @@ public final class ObjectContributionTest extends UITestCase {
 				String id = contributionItem.getId();
 				if (existance) {
 					boolean removed = commands.remove(id);
-					if (seenCommands.contains(id) && !removed) {
-						fail(name + " item duplicated in the context menu: "
-								+ id);
-					}
+					assertFalse(name + " item duplicated in the context menu: " + id,
+							seenCommands.contains(id) && !removed);
 				} else {
 					assertTrue(
 							name + " item should not be in the context menu",
 							!commands.contains(id));
 				}
 			}
-
-			if (existance && !commands.isEmpty()) {
-				fail(name + " Missing " + commands
-						+ " from context menu.");
-			}
+			assertFalse(name + " Missing " + commands + " from context menu.", existance && !commands.isEmpty());
 		} finally {
 			extender.dispose();
 			contextMenu.dispose();

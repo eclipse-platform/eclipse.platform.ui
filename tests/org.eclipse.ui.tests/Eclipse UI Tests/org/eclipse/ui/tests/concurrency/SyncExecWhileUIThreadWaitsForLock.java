@@ -15,6 +15,7 @@
 package org.eclipse.ui.tests.concurrency;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -86,9 +87,7 @@ public class SyncExecWhileUIThreadWaitsForLock {
 
 	@Test
 	public void testDeadlock() throws Exception {
-		if (Thread.interrupted()) {
-			fail("Thread was interrupted at start of test");
-		}
+		assertFalse(Thread.interrupted());
 		final ILock lock = Job.getJobManager().newLock();
 		final boolean[] blocked = new boolean[] {false};
 		final boolean[] lockAcquired= new boolean[] {false};
@@ -163,9 +162,6 @@ public class SyncExecWhileUIThreadWaitsForLock {
 		assertTrue("Unexpected: " + label, label.startsWith("UI thread"));
 		label = ((LogEntry) children[1]).getMessage();
 		assertTrue("Unexpected: " + label, label.startsWith("SyncExec"));
-		if (Thread.interrupted()) {
-			// TODO: re-enable this check after bug 505920 is fixed
-			// fail("Thread was interrupted at end of test");
-		}
+		assertFalse(Thread.interrupted());
 	}
 }

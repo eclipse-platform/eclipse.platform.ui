@@ -15,9 +15,9 @@
 package org.eclipse.ui.tests.activities;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
@@ -44,9 +44,7 @@ public class PersistanceTest {
 		assertNotNull(category.getDescription());
 
 		for (String string : manager.getDefinedCategoryIds()) {
-			if (manager.getCategory(string).getName().equals("org.eclipse.ui.PT.C3")) {
-				fail("Found category that should not be.");
-			}
+			assertNotEquals("org.eclipse.ui.PT.C3", manager.getCategory(string).getName());
 		}
 	}
 
@@ -82,9 +80,7 @@ public class PersistanceTest {
 		assertNotNull(activity.getDescription());
 
 		for (String string : manager.getDefinedActivityIds()) {
-			if (manager.getActivity(string).getName().equals("org.eclipse.ui.PT.A3")) {
-				fail("Found activity that should not be.");
-			}
+			assertNotEquals("org.eclipse.ui.PT.A3", manager.getActivity(string).getName());
 		}
 	}
 }

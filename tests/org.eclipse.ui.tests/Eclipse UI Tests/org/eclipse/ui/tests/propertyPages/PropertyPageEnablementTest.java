@@ -51,25 +51,8 @@ public class PropertyPageEnablementTest extends AbstractNavigatorTest {
 		Collection<RegistryPageContributor> contributors = PropertyPageContributorManager.getManager()
 				.getApplicableContributors(testFile);
 		assertFalse("Has no file pages", contributors.isEmpty());
-		for (RegistryPageContributor element : contributors) {
-			if (element.getPageId().equals("org.eclipse.ui.tests.and")) {
-				return;
-			}
-		}
-		fail("And property page for file not found");
-
-		contributors = PropertyPageContributorManager.getManager().getApplicableContributors(testFolder);
-		for (RegistryPageContributor element : contributors) {
-			assertFalse("Matching folder for AND", element.getPageId().equals("org.eclipse.ui.tests.and"));
-
-		}
-
-		contributors = PropertyPageContributorManager.getManager().getApplicableContributors(testProject);
-		for (RegistryPageContributor element : contributors) {
-			assertFalse("Matching project for AND", element.getPageId().equals("org.eclipse.ui.tests.and"));
-
-		}
-
+		assertTrue("And property page for file not found",
+				contributors.stream().anyMatch(element -> element.getPageId().equals("org.eclipse.ui.tests.and")));
 	}
 
 	/**

@@ -307,23 +307,8 @@ public class IAggregateWorkingSetTest extends UITestCase {
 			assertNotNull("Unable to save/restore correctly", restoredC);
 			assertNotNull("Unable to save/restore correctly", restoredB);
 
-			IWorkingSet[] componenents1 = wSetB.getComponents();
-			IWorkingSet[] componenents2 = restoredB.getComponents();
-
-			if (componenents1.length != componenents2.length) {
-				assertArrayEquals(nameB + " has lost data in the process of save/restore: " + restoredB,
-						wSetB.getComponents(), restoredB.getComponents());
-			} else {
-				for (int i = 0; i < componenents1.length; i++) {
-					if (!componenents1[i].equals(componenents2[i])) {
-						assertEquals(nameB + " has lost data in the process of save/restore: " + restoredB,
-								componenents1[i].toString(), componenents2[i].toString());
-						fail("equals() and toString() do not match for: " + componenents1[i] + " and "
-								+ componenents2[i]);
-					}
-				}
-			}
-
+			assertArrayEquals(nameB + " has lost data in the process of save/restore: " + restoredB,
+					wSetB.getComponents(), restoredB.getComponents());
 		} finally {
 			// restore
 			IWorkingSet set = manager.getWorkingSet(nameA);
