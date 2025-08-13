@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -32,26 +31,12 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.SWTEventHelper;
 import org.eclipse.ui.tests.navigator.extension.TestDragAssistant;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class DnDTest extends NavigatorTestBase {
 
 	public DnDTest() {
 		_navigatorInstanceId = TEST_VIEWER;
-	}
-
-	@Override
-	@Before
-	public void setUp() {
-		super.setUp();
-	}
-
-	@Override
-	@After
-	public void tearDown() {
-		super.tearDown();
 	}
 
 	@Test
@@ -90,7 +75,7 @@ public class DnDTest extends NavigatorTestBase {
 	// CommonDragAdapterAssistant
 	// to perform clean up after drag has finished
 	@Test
-	public void testResourceDrag() {
+	public void testResourceDrag() throws PartInitException {
 		_viewer.expandToLevel(_p1, 3);
 
 		IFile file = _p1.getFolder("f1").getFile("file1.txt");
@@ -102,12 +87,7 @@ public class DnDTest extends NavigatorTestBase {
 		// used
 		IWorkbenchPage activePage = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();
-		TextEditor editorPart = null;
-		try {
-			editorPart = (TextEditor) IDE.openEditor(activePage, file);
-		} catch (PartInitException e) {
-			fail("Should not throw an exception");
-		}
+		TextEditor editorPart = (TextEditor) IDE.openEditor(activePage, file);
 
 		Control end = editorPart.getAdapter(Control.class);
 
@@ -127,7 +107,7 @@ public class DnDTest extends NavigatorTestBase {
 
 	// bug 264323 [CommonNavigator] CommonDragAdapterAssistant should be allowed to opt out of a drag
 	@Test
-	public void testDragOptOut() {
+	public void testDragOptOut() throws PartInitException {
 		_viewer.expandToLevel(_p1, 3);
 
 		IFile file = _p1.getFolder("f1").getFile("file1.txt");
@@ -139,12 +119,7 @@ public class DnDTest extends NavigatorTestBase {
 		// used
 		IWorkbenchPage activePage = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();
-		TextEditor editorPart = null;
-		try {
-			editorPart = (TextEditor) IDE.openEditor(activePage, file);
-		} catch (PartInitException e) {
-			fail("Should not throw an exception");
-		}
+		TextEditor editorPart = (TextEditor) IDE.openEditor(activePage, file);
 
 		Control end = editorPart.getAdapter(Control.class);
 

@@ -15,6 +15,7 @@ package org.eclipse.ui.tests.navigator;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.navigator.VisibilityAssistant;
 import org.eclipse.ui.internal.navigator.extensions.EvaluationCache;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
@@ -37,7 +38,7 @@ public class EvaluationCacheTest extends NavigatorTestBase {
 	}
 
 	@Override
-	public void setUp() {
+	public void setUp() throws CoreException {
 		super.setUp();
 		INavigatorViewerDescriptor mockViewerDescript = new TestNavigatorViewerDescriptor();
 		INavigatorActivationService mockActivationService = new TestNavigatorActivationService();

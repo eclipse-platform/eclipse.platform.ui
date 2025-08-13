@@ -182,19 +182,16 @@ public class NavigatorTestBase {
 	}
 
 	@Before
-	public void setUp() {
+	public void setUp() throws CoreException {
 
 		if (_navigatorInstanceId == null) {
 			throw new RuntimeException("Set the _navigatorInstanceId in the constructor");
 		}
 
 		// Easier if this is not around when not needed
-		if (!_navigatorInstanceId.equals(ProjectExplorer.VIEW_ID))
-			try {
-				EditorTestHelper.showView(ProjectExplorer.VIEW_ID, false);
-			} catch (PartInitException e) {
-				fail("Should not throw an exception");
-			}
+		if (!_navigatorInstanceId.equals(ProjectExplorer.VIEW_ID)) {
+			EditorTestHelper.showView(ProjectExplorer.VIEW_ID, false);
+		}
 
 		TestContentProviderPipelined.resetTest();
 		TestContentProviderResource.resetTest();
@@ -217,14 +214,10 @@ public class NavigatorTestBase {
 			_expectedChildren.add(_project.getFile(".classpath")); //$NON-NLS-1$
 			_expectedChildren.add(_project.getFile("model.properties")); //$NON-NLS-1$
 
-			try {
-				_p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
-				_p1.open(null);
-				_p2 = ResourcesPlugin.getWorkspace().getRoot().getProject("p2");
-				_p2.open(null);
-			} catch (CoreException e) {
-				fail("Should not throw an exception");
-			}
+			_p1 = ResourcesPlugin.getWorkspace().getRoot().getProject("p1");
+			_p1.open(null);
+			_p2 = ResourcesPlugin.getWorkspace().getRoot().getProject("p2");
+			_p2.open(null);
 
 			_projectCount = 3;
 		}
@@ -270,12 +263,8 @@ public class NavigatorTestBase {
 		fail("The condition '" + description + "' was never met");
 	}
 
-	protected void showNavigator() {
-		try {
-			EditorTestHelper.showView(_navigatorInstanceId, true);
-		} catch (PartInitException e) {
-			fail("Should not throw an exception");
-		}
+	protected void showNavigator() throws PartInitException {
+		EditorTestHelper.showView(_navigatorInstanceId, true);
 
 		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage activePage = activeWindow.getActivePage();
@@ -286,24 +275,16 @@ public class NavigatorTestBase {
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws CoreException {
 		clearAll();
 		// Hide it, we want a new one each time
-		try {
-			EditorTestHelper.showView(_navigatorInstanceId, false);
-		} catch (PartInitException e) {
-			fail("Should not throw an exception");
-		}
+		EditorTestHelper.showView(_navigatorInstanceId, false);
 	}
 
-	protected void clearAll() {
+	protected void clearAll() throws CoreException {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
-			try {
-				FileUtil.delete(project);
-			} catch (CoreException e) {
-				fail("Should not throw an exception");
-			}
+			FileUtil.delete(project);
 		}
 	}
 

@@ -15,7 +15,6 @@ package org.eclipse.ui.tests.navigator.resources;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,7 +81,7 @@ public final class FoldersAsProjectsContributionTest {
 
 	@Test
 	@Ignore
-	public void alreadyAdded() {
+	public void alreadyAdded() throws IOException, CoreException {
 		IProject outer = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.alreadyAdded.outer");
 		IProject inner1 = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.alreadyAdded.inner1");
 		IProject inner2 = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.alreadyAdded.inner2");
@@ -94,8 +93,6 @@ public final class FoldersAsProjectsContributionTest {
 			createProject(root, outer);
 			createProject(new Path(root.getAbsolutePath()).append(inner1.getName()).toFile(), inner1);
 			createProject(new Path(root.getAbsolutePath()).append(inner2.getName()).toFile(), inner2);
-		} catch (CoreException | IOException e) {
-			fail(NLS.bind("Required projects can not be created due to: {0}", e.getMessage()));
 		} finally {
 			Job.getJobManager().endRule(rule);
 		}
@@ -117,7 +114,7 @@ public final class FoldersAsProjectsContributionTest {
 
 	@Test
 	@Ignore
-	public void notYetImported() {
+	public void notYetImported() throws IOException, CoreException {
 		IProject outer = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.notYetImported.outer");
 		IProject inner1 = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject("foldersasprojects.notYetImported.inner1");
@@ -133,8 +130,6 @@ public final class FoldersAsProjectsContributionTest {
 			createProject(new Path(root.getAbsolutePath()).append(inner2.getName()).toFile(), inner2);
 			inner1.delete(false, true, new NullProgressMonitor());
 			inner2.delete(false, true, new NullProgressMonitor());
-		} catch (CoreException | IOException e) {
-			fail(NLS.bind("Required projects can not be created due to: {0}", e.getMessage()));
 		} finally {
 			Job.getJobManager().endRule(rule);
 		}
@@ -152,7 +147,7 @@ public final class FoldersAsProjectsContributionTest {
 	}
 
 	@Test
-	public void ambiguity() {
+	public void ambiguity() throws CoreException, IOException {
 		IProject outer = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.ambiguity.outer");
 		IProject inner1 = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.ambiguity.inner1");
 		IProject inner2 = ResourcesPlugin.getWorkspace().getRoot().getProject("foldersasprojects.ambiguity.inner2");
@@ -165,8 +160,6 @@ public final class FoldersAsProjectsContributionTest {
 			createProject(new Path(root.getAbsolutePath()).append(inner1.getName()).toFile(), inner1);
 			createProject(new Path(root.getAbsolutePath()).append(inner2.getName()).toFile(), inner2);
 			inner1.delete(false, true, new NullProgressMonitor());
-		} catch (CoreException | IOException e) {
-			fail(NLS.bind("Required projects can not be created due to: {0}", e.getMessage()));
 		} finally {
 			Job.getJobManager().endRule(rule);
 		}
@@ -232,25 +225,20 @@ public final class FoldersAsProjectsContributionTest {
 		actual.open(new NullProgressMonitor());
 	}
 
-	private void ensureDescriptionsExist(IProject outer, IProject inner1, IProject inner2) {
+	private void ensureDescriptionsExist(IProject outer, IProject inner1, IProject inner2) throws IOException {
 		ensureFileExists(outer.getFolder(inner1.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME),
 				inner1.getName());
 		ensureFileExists(outer.getFolder(inner2.getName()).getFile(IProjectDescription.DESCRIPTION_FILE_NAME),
 				inner2.getName());
 	}
 
-	private void ensureFileExists(IFile description, String name) {
+	private void ensureFileExists(IFile description, String name) throws IOException {
 		if (description.exists()) {
 			return;
 		}
 		// If project description does not exist after creation (for whatever reason),
 		// create it explicitly with empty content
-		try {
-			Files.createFile(Paths.get(description.getLocationURI()));
-		} catch (IOException e) {
-			fail(String.format("Can't explicitly create project description due to: %s %s", e.getClass().getName(),
-					e.getMessage()));
-		}
+		Files.createFile(Paths.get(description.getLocationURI()));
 		assertTrue(String.format("Project description for %s does not exist", name), description.exists());
 	}
 

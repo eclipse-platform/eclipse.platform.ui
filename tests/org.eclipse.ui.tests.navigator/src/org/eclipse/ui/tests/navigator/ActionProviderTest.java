@@ -17,7 +17,6 @@ package org.eclipse.ui.tests.navigator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +68,7 @@ public class ActionProviderTest extends NavigatorTestBase {
 	}
 
 	@Test
-	public void testOverride() {
+	public void testOverride() throws CoreException {
 		_contentService.bindExtensions(
 				new String[] { TEST_CONTENT_ACTION_PROVIDER }, false);
 		_contentService.getActivationService().activateExtensions(
@@ -79,12 +78,7 @@ public class ActionProviderTest extends NavigatorTestBase {
 
 		refreshViewer();
 
-		IStructuredSelection sel = null;
-		try {
-			sel = new StructuredSelection(((IContainer) _p2.members()[1]).members()[0]);
-		} catch (CoreException e) {
-			fail("Should not throw an exception");
-		}
+		IStructuredSelection sel = new StructuredSelection(((IContainer) _p2.members()[1]).members()[0]);
 		_viewer.setSelection(sel);
 
 		if (SLEEP_LONG)
@@ -112,14 +106,9 @@ public class ActionProviderTest extends NavigatorTestBase {
 	}
 
 	@Test
-	public void testAppearsBefore() {
+	public void testAppearsBefore() throws CoreException {
 
-		IStructuredSelection sel = null;
-		try {
-			sel = new StructuredSelection(((IContainer) _p2.members()[1]).members()[0]);
-		} catch (CoreException e) {
-			fail("Should not throw an exception");
-		}
+		IStructuredSelection sel = new StructuredSelection(((IContainer) _p2.members()[1]).members()[0]);
 		_viewer.setSelection(sel);
 
 		MenuManager mm = new MenuManager();
