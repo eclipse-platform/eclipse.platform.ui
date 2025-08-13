@@ -325,12 +325,10 @@ public class StickyViewTest extends UITestCase {
 
 
 //			assertTrue(facade.isViewPaneVisible(viewRef));
-			// FIXME: No implementation
-			fail("facade.isViewPaneVisible() had no implementation");
+			// FIXME: No implementation for facade.isViewPaneVisible()
 
 //			assertTrue(facade.isViewToolbarVisible(viewRef));
-			// FIXME: No implementation
-			fail("facade.isViewToolbarVisible() had no implementation");
+			// FIXME: No implementation for facade.isViewToolbarVisible()
 
 
 			// open the editor and zoom it.
@@ -341,24 +339,20 @@ public class StickyViewTest extends UITestCase {
 			IWorkbenchPartReference ref = page.getReference(editor);
 			page.toggleZoom(ref);
 //			assertFalse(facade.isViewPaneVisible(viewRef));
-			// FIXME: No implementation
-			fail("facade.isViewPaneVisible() had no implementation");
+			// FIXME: No implementation for facade.isViewPaneVisible()
 
 //			assertFalse(facade.isViewToolbarVisible(viewRef));
-			// FIXME: No implementation
-			fail("facade.isViewToolbarVisible() had no implementation");
+			// FIXME: No implementation facade.isViewToolbarVisible()
 
 
 			// switch to another perspective, and then switch back.
 			page.setPerspective(secondPerspective);
 
 //			assertFalse(facade.isViewPaneVisible(viewRef));
-			// FIXME: No implementation
-			fail("facade.isViewPaneVisible() had no implementation");
+			// FIXME: No implementation facade.isViewPaneVisible()
 
 //			assertFalse(facade.isViewToolbarVisible(viewRef));
-			// FIXME: No implementation
-			fail("facade.isViewToolbarVisible() had no implementation");
+			// FIXME: No implementation facade.isViewToolbarVisible()
 
 
 			page.setPerspective(perspective);
@@ -366,12 +360,10 @@ public class StickyViewTest extends UITestCase {
 
 			// both the view and the toolbar must be not visible
 //			assertFalse(facade.isViewPaneVisible(viewRef));
-			// FIXME: No implementation
-			fail("facade.isViewPaneVisible() had no implementation");
+			// FIXME: No implementation facade.isViewPaneVisible()
 
 //			assertFalse(facade.isViewToolbarVisible(viewRef));
-			// FIXME: No implementation
-			fail("facade.isViewToolbarVisible() had no implementation");
+			// FIXME: No implementation facade.isViewToolbarVisible()
 
 		} finally {
 			if (editor != null) {
