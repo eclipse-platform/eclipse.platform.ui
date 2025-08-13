@@ -16,8 +16,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
-import static org.junit.Assert.fail;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -97,7 +95,6 @@ public class UIDialogs {
 	@Test
 	@Ignore("CustomizePerspectiveDialog not implemented")
 	public void testEditActionSetsDialog() {
-		fail("CustomizePerspectiveDialog not implemented");
 //        Dialog dialog;
 //        Object persp = null;
 //        //Test perspective: use current perspective of test case
@@ -187,7 +184,6 @@ public class UIDialogs {
 	@Test
 	@Ignore("PerspectiveRegistry.getCustomPersp not implemented")
 	public void testLoadNotExistingPerspective() {
-		fail("PerspectiveRegistry.getCustomPersp not implemented");
 //    	final String fakePerspectivID = "fakeperspetive";
 //		PerspectiveRegistry reg = (PerspectiveRegistry) WorkbenchPlugin
 //				.getDefault().getPerspectiveRegistry();

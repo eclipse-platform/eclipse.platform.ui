@@ -2151,8 +2151,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		}
 
 //		ArrayList partIds = facade.getPerspectivePartIds(fActivePage, null);
-		// FIXME: No implementation
-		fail("facade.getPerspectivePartIds() had no implementation");
+		// FIXME: No implementation for facade.getPerspectivePartIds()
 
 //		assertTrue(partIds.contains("*"));
 //		assertTrue(partIds.contains(MockViewPart.IDMULT));
@@ -2184,8 +2183,7 @@ public class IWorkbenchPageTest extends UITestCase {
 
 //		ArrayList partIds = facade.getPerspectivePartIds(fActivePage,"placeholderFolder");
 
-		// FIXME: No implementation
-		fail("facade.getPerspectivePartIds() had no implementation");
+		// FIXME: No implementation for facade.getPerspectivePartIds()
 
 //		assertTrue(partIds.contains("*"));
 //		assertTrue(partIds.contains(MockViewPart.IDMULT));
@@ -2214,8 +2212,7 @@ public class IWorkbenchPageTest extends UITestCase {
 
 //		ArrayList partIds = facade.getPerspectivePartIds(fActivePage,"folder");
 
-		// FIXME: No implementation
-		fail("facade.getPerspectivePartIds() had no implementation");
+		// FIXME: No implementation for facade.getPerspectivePartIds()
 
 //		assertTrue(partIds.contains("*"));
 //		assertTrue(partIds.contains(MockViewPart.IDMULT));
