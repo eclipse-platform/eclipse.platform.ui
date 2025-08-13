@@ -478,7 +478,11 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 						gc.setForeground(textWidget.getSelectionForeground());
 						gc.setBackground(textWidget.getSelectionBackground());
 					}
-					gc.drawString(hostCharacter, redrawnHostCharX, redrawnHostCharY, true);
+					String characterToBeDrawn= hostCharacter;
+					if ("\n".equals(characterToBeDrawn)) { //$NON-NLS-1$
+						characterToBeDrawn= ""; //$NON-NLS-1$
+					}
+					gc.drawString(characterToBeDrawn, redrawnHostCharX, redrawnHostCharY, true);
 				}
 				// END TO REMOVE
 			} else if (style != null && style.metrics != null && style.metrics.width != 0) {
@@ -569,7 +573,11 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					gc.setForeground(textWidget.getSelectionForeground());
 					gc.setBackground(textWidget.getSelectionBackground());
 				}
-				gc.drawString(Character.toString(hostCharacter), charBounds.x, charBounds.y + verticalDrawingOffset, true);
+				String characterToBeDrawn= Character.toString(hostCharacter);
+				if ("\n".equals(characterToBeDrawn)) { //$NON-NLS-1$
+					characterToBeDrawn= ""; //$NON-NLS-1$
+				}
+				gc.drawString(characterToBeDrawn, charBounds.x, charBounds.y + verticalDrawingOffset, true);
 				// END TO REMOVE
 			} else if (style != null && style.metrics != null && style.metrics.width != 0) {
 				// line content annotation had an , reset it
