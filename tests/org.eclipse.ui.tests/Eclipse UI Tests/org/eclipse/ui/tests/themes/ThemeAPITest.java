@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.themes;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.util.List;
 import java.util.Set;
 
