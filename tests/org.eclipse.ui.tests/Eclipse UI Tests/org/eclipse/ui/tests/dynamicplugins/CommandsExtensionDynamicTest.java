@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertThrows;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -82,22 +84,23 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 
 	/**
 	 * Tests whether the items defined in the extension point can be added and
-	 * removed dynamically. It tests that the data doesn't exist, and then loads
-	 * the extension. It tests that the data then exists, and unloads the
-	 * extension. It tests that the data then doesn't exist.
+	 * removed dynamically. It tests that the data doesn't exist, and then loads the
+	 * extension. It tests that the data then exists, and unloads the extension. It
+	 * tests that the data then doesn't exist.
 	 *
-	 * @throws ParseException
-	 *             If "M1+W" can't be parsed by the extension point.
+	 * @throws ParseException      If "M1+W" can't be parsed by the extension point.
+	 * @throws NotDefinedException
+	 * @throws NotHandledException
+	 * @throws ExecutionException
 	 */
 	@Test
-	public final void testCommands() throws ParseException {
+	public final void testCommands()
+			throws ParseException, NotDefinedException, ExecutionException, NotHandledException {
 		final IBindingService bindingService = getWorkbench().getAdapter(IBindingService.class);
 		final ICommandService commandService = getWorkbench().getAdapter(ICommandService.class);
 		final IContextService contextService = getWorkbench().getAdapter(IContextService.class);
 		final TriggerSequence triggerSequence = KeySequence.getInstance("M1+W");
-		NamedHandleObject namedHandleObject;
 		Binding[] bindings;
-		Command command;
 		boolean found;
 
 		assertTrue(!"monkey".equals(bindingService.getActiveScheme().getId()));
@@ -119,49 +122,20 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 			}
 		}
 		assertTrue(!found);
-		namedHandleObject = bindingService.getScheme("monkey");
-		try {
-			namedHandleObject.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
-		namedHandleObject = commandService.getCategory("monkey");
-		try {
-			namedHandleObject.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
-		command = commandService.getCommand("monkey");
-		try {
-			command.execute(new ExecutionEvent());
-			fail();
-		} catch (final ExecutionException e) {
-			fail();
-		} catch (final NotHandledException e) {
-			assertTrue(true);
-		}
-		try {
-			command.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
-		namedHandleObject = contextService.getContext("context");
-		try {
-			namedHandleObject.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
-		namedHandleObject = contextService.getContext("scope");
-		try {
-			namedHandleObject.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
+		NamedHandleObject bindingMonkey1 = bindingService.getScheme("monkey");
+		assertThrows(NotDefinedException.class, () -> bindingMonkey1.getName());
+
+		NamedHandleObject categoryMonkey1 = commandService.getCategory("monkey");
+		assertThrows(NotDefinedException.class, () -> categoryMonkey1.getName());
+
+		Command command1 = commandService.getCommand("monkey");
+		assertThrows(NotHandledException.class, () -> command1.execute(new ExecutionEvent()));
+		assertThrows(NotDefinedException.class, () -> command1.getName());
+
+		NamedHandleObject contextContext1 = contextService.getContext("context");
+		assertThrows(NotDefinedException.class, () -> contextContext1.getName());
+		NamedHandleObject contextScope1 = contextService.getContext("scope");
+		assertThrows(NotDefinedException.class, () -> contextScope1.getName());
 
 		getBundle();
 
@@ -184,41 +158,17 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 			}
 		}
 		assertTrue(found);
-		namedHandleObject = bindingService.getScheme("monkey");
-		try {
-			assertTrue("Monkey".equals(namedHandleObject.getName()));
-		} catch (final NotDefinedException e) {
-			fail();
-		}
-		command = commandService.getCommand("monkey");
-		try {
-			command.execute(new ExecutionEvent());
-		} catch (final ExecutionException | NotHandledException e) {
-			fail();
-		}
-		try {
-			assertEquals("Monkey", command.getName());
-		} catch (final NotDefinedException e) {
-			fail();
-		}
-		namedHandleObject = commandService.getCommand("monkey");
-		try {
-			assertTrue("Monkey".equals(namedHandleObject.getName()));
-		} catch (final NotDefinedException e) {
-			fail();
-		}
-		namedHandleObject = contextService.getContext("context");
-		try {
-			assertTrue("Monkey".equals(namedHandleObject.getName()));
-		} catch (final NotDefinedException e) {
-			fail();
-		}
-		namedHandleObject = contextService.getContext("scope");
-		try {
-			assertTrue("Monkey".equals(namedHandleObject.getName()));
-		} catch (final NotDefinedException e) {
-			fail();
-		}
+		NamedHandleObject bindingMonkey2 = bindingService.getScheme("monkey");
+		assertTrue("Monkey".equals(bindingMonkey2.getName()));
+		Command command2 = commandService.getCommand("monkey");
+		command2.execute(new ExecutionEvent());
+		assertEquals("Monkey", command2.getName());
+		NamedHandleObject commandMonkey2 = commandService.getCommand("monkey");
+		assertTrue("Monkey".equals(commandMonkey2.getName()));
+		NamedHandleObject contextContext2 = contextService.getContext("context");
+		assertTrue("Monkey".equals(contextContext2.getName()));
+		NamedHandleObject contextScope2 = contextService.getContext("scope");
+		assertTrue("Monkey".equals(contextScope2.getName()));
 
 		removeBundle();
 
@@ -241,49 +191,17 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 			}
 		}
 		assertTrue(!found);
-		namedHandleObject = bindingService.getScheme("monkey");
-		try {
-			namedHandleObject.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
-		namedHandleObject = commandService.getCategory("monkey");
-		try {
-			namedHandleObject.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
-		command = commandService.getCommand("monkey");
-		try {
-			command.execute(new ExecutionEvent());
-			fail();
-		} catch (final ExecutionException e) {
-			fail();
-		} catch (final NotHandledException e) {
-			assertTrue(true);
-		}
-		try {
-			command.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
-		namedHandleObject = contextService.getContext("context");
-		try {
-			namedHandleObject.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
-		namedHandleObject = contextService.getContext("scope");
-		try {
-			namedHandleObject.getName();
-			fail();
-		} catch (final NotDefinedException e) {
-			assertTrue(true);
-		}
+		NamedHandleObject bindingMonkey3 = bindingService.getScheme("monkey");
+		assertThrows(NotDefinedException.class, () -> bindingMonkey3.getName());
+		NamedHandleObject commandMonkey3 = commandService.getCommand("monkey");
+		assertThrows(NotDefinedException.class, () -> commandMonkey3.getName());
+		Command command3 = commandService.getCommand("monkey");
+		assertThrows(NotHandledException.class, () -> command3.execute(new ExecutionEvent()));
+		assertThrows(NotDefinedException.class, () -> command3.getName());
+		NamedHandleObject contextContext3 = contextService.getContext("context");
+		assertThrows(NotDefinedException.class, () -> contextContext3.getName());
+		NamedHandleObject contextScope3 = contextService.getContext("scope");
+		assertThrows(NotDefinedException.class, () -> contextScope3.getName());
 	}
 
 	@Test
@@ -295,28 +213,14 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 		// till the handler is loaded, we assume it could be handled
 		// when its time to execute, we load the handler and throw the
 		// ExecutionException
-		try {
-			handlerService.executeCommand(
-					"org.eclipse.ui.tests.command.handlerLoadException", null);
-			fail("An exception should be thrown for this handler");
-		} catch (Exception e) {
-			if (!(e instanceof ExecutionException)) {
-				fail("Unexpected exception while executing command", e);
-			}
-		}
+		assertThrows(ExecutionException.class,
+				() -> handlerService.executeCommand("org.eclipse.ui.tests.command.handlerLoadException", null));
 
 		// afterwards, we know that the handler couldn't be loaded, so it can't
 		// be handled
 		// from now we always throw NotHandledException
-		try {
-			handlerService.executeCommand(
-					"org.eclipse.ui.tests.command.handlerLoadException", null);
-			fail("An exception should be thrown for this handler");
-		} catch (Exception e) {
-			if (!(e instanceof NotHandledException)) {
-				fail("Unexpected exception while executing command", e);
-			}
-		}
+		assertThrows(NotHandledException.class,
+				() -> handlerService.executeCommand("org.eclipse.ui.tests.command.handlerLoadException", null));
 
 		removeBundle();
 	}

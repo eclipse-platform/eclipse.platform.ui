@@ -417,7 +417,7 @@ public class StackRendererTest {
 		Composite uiContainer = (Composite) ((StackRenderer) partStack.getRenderer()).getUIContainer(partStack);
 		CTabFolder tabFolder = (CTabFolder) ((Composite) uiContainer.getChildren()[0]).getChildren()[0];
 		assertNotNull(tabFolder.getChildren());
-		assertEquals(3, tabFolder.getChildren().length);
+		assertEquals(4, tabFolder.getChildren().length);
 
 		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
 		Rectangle expected = new Rectangle(StackRenderer.ONBOARDING_SPACING, StackRenderer.ONBOARDING_TOP_SPACING,
@@ -526,7 +526,7 @@ public class StackRendererTest {
 		Composite uiContainer = (Composite) ((StackRenderer) partStack.getRenderer()).getUIContainer(partStack);
 		CTabFolder tabFolder = (CTabFolder) ((Composite) uiContainer.getChildren()[0]).getChildren()[0];
 		assertNotNull(tabFolder.getChildren());
-		assertEquals(3, tabFolder.getChildren().length);
+		assertEquals(4, tabFolder.getChildren().length);
 
 		Composite outerOnboardingComposite = (Composite) tabFolder.getChildren()[2];
 		Rectangle expected = new Rectangle(StackRenderer.ONBOARDING_SPACING, StackRenderer.ONBOARDING_TOP_SPACING,

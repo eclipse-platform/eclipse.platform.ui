@@ -14,14 +14,13 @@
  *******************************************************************************/
 package org.eclipse.e4.core.commands.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@SuiteClasses({
-	DefineCommandsTest.class,
-	HandlerTest.class })
-
+@Suite
+@SelectClasses({ //
+		DefineCommandsTest.class, //
+		HandlerTest.class, //
+})
 public class CommandTestSuite {
 }

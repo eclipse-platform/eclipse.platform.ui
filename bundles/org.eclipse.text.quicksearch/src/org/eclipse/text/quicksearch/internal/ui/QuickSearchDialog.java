@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,6 +32,7 @@ import static org.eclipse.ui.texteditor.AbstractTextEditor.PREFERENCE_COLOR_FORE
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -402,6 +403,9 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	private IWorkbenchWindow window;
 	private Combo searchIn;
 	private Label listLabel;
+
+	private int sortColumnIndex = -1;
+	private boolean sortDirectionAscending = true;
 
 	/**
 	 * Creates a new instance of the class.
@@ -840,19 +844,45 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 //		new ScrollListener(list.getTable().getVerticalBar());
 //		new SelectionChangedListener(list);
 
+		Table table = list.getTable();
 		TableViewerColumn col = new TableViewerColumn(list, SWT.RIGHT);
+		TableColumn column = col.getColumn();
+		column.setText(Messages.QuickSearchDialog_line);
+		column.setWidth(40);
+		column.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Comparator<LineItem> lineNumberComparator = Comparator.comparingInt(LineItem::getLineNumber);
+				handleColumnSort(table, 0, lineNumberComparator);
+			}
+		});
 		col.setLabelProvider(LINE_NUMBER_LABEL_PROVIDER);
-		col.getColumn().setText(Messages.QuickSearchDialog_line);
-		col.getColumn().setWidth(40);
-		col = new TableViewerColumn(list, SWT.LEFT);
-		col.getColumn().setText(Messages.QuickSearchDialog_text);
-		col.setLabelProvider(LINE_TEXT_LABEL_PROVIDER);
-		col.getColumn().setWidth(400);
-		col = new TableViewerColumn(list, SWT.LEFT);
-		col.getColumn().setText(Messages.QuickSearchDialog_path);
-		col.setLabelProvider(LINE_FILE_LABEL_PROVIDER);
-		col.getColumn().setWidth(150);
 
+		col = new TableViewerColumn(list, SWT.LEFT);
+		column = col.getColumn();
+		column.setText(Messages.QuickSearchDialog_text);
+		column.setWidth(400);
+		column.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Comparator<LineItem> textComparator = Comparator.comparing( LineItem::getText);
+				handleColumnSort(table, 1, textComparator);
+			}
+		});
+		col.setLabelProvider(LINE_TEXT_LABEL_PROVIDER);
+
+		col = new TableViewerColumn(list, SWT.LEFT);
+		column = col.getColumn();
+		column.setText(Messages.QuickSearchDialog_path);
+		column.setWidth(150);
+		column.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Comparator<LineItem> lineItemComparator = Comparator.comparing(item -> item.getFile().getFullPath().toString());
+				handleColumnSort(table, 2, lineItemComparator);
+			}
+		});
+		col.setLabelProvider(LINE_FILE_LABEL_PROVIDER);
 		new TableResizeHelper(list).enableResizing();
 
 		//list.setLabelProvider(getItemsListLabelProvider());
@@ -949,6 +979,21 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		applyFilter(false);
 
 		return dialogArea;
+	}
+
+	private void handleColumnSort(Table table, int columnIndex, Comparator sorter) {
+		if (sortColumnIndex == columnIndex) {
+			sortDirectionAscending = !sortDirectionAscending;
+		} else {
+			sortColumnIndex = columnIndex;
+			sortDirectionAscending = true;
+		}
+		table.setSortColumn(table.getColumn(columnIndex));
+		table.setSortDirection(sortDirectionAscending ? SWT.UP : SWT.DOWN);
+
+		contentProvider.setComparator(sortDirectionAscending ? sorter : sorter.reversed());
+		contentProvider.sortList();
+		refreshWidgets();
 	}
 
 	private Composite createNestedComposite(Composite parent, int numRows, boolean equalRows) {
@@ -1468,7 +1513,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	private class ContentProvider implements IStructuredContentProvider, ILazyContentProvider {
 
 		private List items;
-
+		private Comparator<LineItem> comparator;
 		/**
 		 * Creates new instance of <code>ContentProvider</code>.
 		 */
@@ -1549,6 +1594,25 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 					.size() > index) ? items.get(index) : null,
 					index);
 
+		}
+
+		/**
+		 * Sorts the current search results based on current comparator
+		 */
+		public void sortList() {
+			if (comparator == null) {
+				return;
+			}
+			items.sort(comparator);
+		}
+
+		/**
+		 * Sets a custom comparator for comparing LineItem objects.
+		 *
+		 * @param comparator a <code>Comparator<code> object that defines the custom comparison logic.
+		 */
+		public void setComparator(Comparator<LineItem> comparator) {
+			this.comparator = comparator;
 		}
 
 	}

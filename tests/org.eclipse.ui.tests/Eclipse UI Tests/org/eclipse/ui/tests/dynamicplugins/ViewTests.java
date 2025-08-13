@@ -13,8 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertThrows;
+
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IPageLayout;
@@ -82,13 +85,7 @@ public class ViewTests extends DynamicTestCase {
 		testViewProperties(desc);
 		removeBundle();
 		assertNull(registry.find(VIEW_ID2));
-		try {
-			testViewProperties(desc);
-			fail();
-		}
-		catch (RuntimeException e) {
-			// no-op
-		}
+		assertThrows(RuntimeException.class, () -> testViewProperties(desc));
 	}
 
 	@Test
@@ -103,13 +100,7 @@ public class ViewTests extends DynamicTestCase {
 		testViewProperties(desc);
 		removeBundle();
 		assertNull(registry.find(VIEW_ID1));
-		try {
-			testViewProperties(desc);
-			fail();
-		}
-		catch (RuntimeException e) {
-			// no-op
-		}
+		assertThrows(RuntimeException.class, () -> testViewProperties(desc));
 	}
 
 	@Test
@@ -123,15 +114,15 @@ public class ViewTests extends DynamicTestCase {
 		getBundle();
 
 		descs = registry.getStickyViews();
-		IStickyViewDescriptor desc = null;
+		AtomicReference<IStickyViewDescriptor> desc = new AtomicReference<>();
 		for (IStickyViewDescriptor desc2 : descs) {
 			if (VIEW_ID1.equals(desc2.getId())) {
-				desc = desc2;
+				desc.set(desc2);
 				break;
 			}
 		}
-		assertNotNull(desc);
-		testStickyViewProperties(desc);
+		assertNotNull(desc.get());
+		testStickyViewProperties(desc.get());
 		removeBundle();
 
 		descs = registry.getStickyViews();
@@ -139,13 +130,7 @@ public class ViewTests extends DynamicTestCase {
 			assertFalse(VIEW_ID1.equals(desc2.getId()));
 		}
 
-		try {
-			testStickyViewProperties(desc);
-			fail();
-		}
-		catch (RuntimeException e) {
-			// no-op
-		}
+		assertThrows(RuntimeException.class, () -> testStickyViewProperties(desc.get()));
 	}
 
 	private void testStickyViewProperties(IStickyViewDescriptor desc) {
@@ -175,14 +160,7 @@ public class ViewTests extends DynamicTestCase {
 		removeBundle();
 		assertNull(registry.find(VIEW_ID1));
 		assertNull(registry.findCategory(CATEGORY_ID));
-		try {
-			testCategoryProperties(category);
-			fail();
-		}
-		catch (RuntimeException e) {
-			// no-op
-		}
-
+		assertThrows(RuntimeException.class, () -> testCategoryProperties(category));
 	}
 
 	private void testCategoryProperties(IViewCategory desc) {

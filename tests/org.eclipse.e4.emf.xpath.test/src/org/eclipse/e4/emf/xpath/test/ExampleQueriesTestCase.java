@@ -15,12 +15,12 @@
 package org.eclipse.e4.emf.xpath.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Iterator;
 import java.util.List;
@@ -39,9 +39,9 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({ "deprecation", "removal" })
 public class ExampleQueriesTestCase {
@@ -51,7 +51,7 @@ public class ExampleQueriesTestCase {
 	private Resource resource;
 	private XPathContextFactory<EObject> xpathContextFactory;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		resourceSet = new ResourceSetImpl();
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
@@ -65,7 +65,7 @@ public class ExampleQueriesTestCase {
 		xpathContext = xpathContextFactory.newContext(resource.getContents().get(0));
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		xpathContext = null;
 		xpathContextFactory = null;

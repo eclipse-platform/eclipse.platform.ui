@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertThrows;
+
 import java.io.ByteArrayInputStream;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -104,12 +106,7 @@ public class EditorTests extends DynamicTestCase {
 
 		removeBundle();
 		assertNull(registry.findEditor(EDITOR_ID));
-		try {
-			testEditorProperties(desc);
-			fail();
-		}
-		catch (RuntimeException e) {
-		}
+		assertThrows(RuntimeException.class, () -> testEditorProperties(desc));
 	}
 
 	private void testEditorProperties(IEditorDescriptor desc) {

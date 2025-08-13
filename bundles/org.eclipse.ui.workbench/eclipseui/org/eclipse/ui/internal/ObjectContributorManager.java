@@ -658,7 +658,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	 * collection of objects.
 	 */
 	private List getCommonClasses(List objects, List commonAdapters) {
-		if (objects == null || objects.isEmpty()) {
+		if (objects == null || objects.isEmpty() || !Platform.isRunning()) {
 			return null;
 		}
 

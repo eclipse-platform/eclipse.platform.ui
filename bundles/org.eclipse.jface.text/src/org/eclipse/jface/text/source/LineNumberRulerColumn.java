@@ -624,6 +624,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 					fBuffer.dispose();
 					fBuffer= null;
 				}
+				layout(false);
 			});
 		});
 

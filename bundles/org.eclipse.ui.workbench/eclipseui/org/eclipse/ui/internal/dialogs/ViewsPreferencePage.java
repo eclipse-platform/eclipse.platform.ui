@@ -25,11 +25,9 @@ import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_O
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_THEME_ASSOCIATION;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_THEME_ID;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -57,7 +55,6 @@ import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -129,11 +126,15 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		Composite comp = new Composite(parent, SWT.NONE);
 
-		themingEnabled = createCheckButton(comp, WorkbenchMessages.ThemingEnabled, engine != null);
+		highContrastMode = parent.getDisplay().getHighContrast();
+		// Deactivate theming in high contrast mode
+		themingEnabled = createCheckButton(comp, WorkbenchMessages.ThemingEnabled, isThemingPossible());
+		themingEnabled.setEnabled(!highContrastMode);
 
-		// if started with "-cssTheme none", CSS settings should be disabled
-		// but other appearance settings should be *not* disabled
-		if (engine == null) {
+		// if started with "-cssTheme none" or if high contrast mode is active,
+		// CSS settings should be disabled but other appearance settings should be *not*
+		// disabled
+		if (!isThemingPossible()) {
 			GridLayout layout = new GridLayout(1, false);
 			layout.horizontalSpacing = 10;
 			comp.setLayout(layout);
@@ -147,13 +148,11 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		comp.setLayout(layout);
 
 		new Label(comp, SWT.NONE).setText(WorkbenchMessages.ViewsPreferencePage_Theme);
-		highContrastMode = parent.getDisplay().getHighContrast();
 
 		themeIdCombo = new ComboViewer(comp, SWT.READ_ONLY);
 		themeIdCombo.setLabelProvider(createTextProvider(element -> ((ITheme) element).getLabel()));
 		themeIdCombo.setContentProvider(ArrayContentProvider.getInstance());
-		themeIdCombo.setInput(getCSSThemes(highContrastMode));
-		themeIdCombo.getCombo().setEnabled(!highContrastMode);
+		themeIdCombo.setInput(engine.getThemes());
 		themeIdCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.currentTheme = engine.getActiveTheme();
 		if (this.currentTheme != null) {
@@ -196,6 +195,21 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		Dialog.applyDialogFont(comp);
 		return comp;
+	}
+
+	/**
+	 * @return <code>true</code> if there is a theme engine set (<i>i.e.</i> if the
+	 *         workbench started with the checkbox "enable theming" set to
+	 *         <code>true</code>) and the <i>high contrast mode</i> is
+	 *         <strong>disabled on the OS.
+	 *
+	 * @implNote Currently only Windows is able to tell if <i>high contrast mode</i>
+	 *           is active. Linux and Mac lack this functionality (they always say
+	 *           it is <b>disabled</b>).
+	 *
+	 */
+	private boolean isThemingPossible() {
+		return engine != null && !highContrastMode;
 	}
 
 	private void createRescaleAtRuntimeCheckButton(Composite parent) {
@@ -265,29 +279,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		parent.addSelectionListener(listener);
 	}
 
-	private List<ITheme> getCSSThemes(boolean highContrastMode) {
-		ArrayList<ITheme> themes = new ArrayList<>();
-		for (ITheme theme : engine.getThemes()) {
-			/*
-			 * When we have Win32 OS - when the high contrast mode is enabled on the
-			 * platform, we display the 'high-contrast' special theme only. If not, we don't
-			 * want to mess the themes combo with the theme since it is the special
-			 * variation of the 'classic' one
-			 *
-			 * When we have GTK - we have to display the entire list of the themes since we
-			 * are not able to figure out if the high contrast mode is enabled on the
-			 * platform. The user has to manually select the theme if they need it
-			 */
-			if (!highContrastMode && !Util.isGtk() && theme.getId().equals(E4Application.HIGH_CONTRAST_THEME_ID)) {
-				continue;
-			}
-			themes.add(theme);
-		}
-		Collator collator = Collator.getInstance(Locale.getDefault());
-		themes.sort((ITheme t1, ITheme t2) -> collator.compare(t1.getLabel(), t2.getLabel()));
-		return themes;
-	}
-
 	private void createColoredLabelsPref(Composite composite) {
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
@@ -342,10 +333,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	public boolean performOk() {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE
 				.getNode(PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
-		if (engine != null) {
+		if (isThemingPossible()) {
 			ITheme theme = getSelectedTheme();
 			if (theme != null) {
-				engine.setTheme(getSelectedTheme(), !highContrastMode);
+				engine.setTheme(getSelectedTheme(), true);
 			}
 			prefs.putBoolean(CTabRendering.HIDE_ICONS_FOR_VIEW_TABS, hideIconsForViewTabs.getSelection());
 			prefs.putBoolean(CTabRendering.SHOW_FULL_TEXT_FOR_VIEW_TABS, showFullTextForViewTabs.getSelection());
@@ -355,9 +346,14 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, useColoredLabels.getSelection());
 
 		prefs.putBoolean(StackRenderer.MRU_KEY, enableMru.getSelection());
-		boolean themingEnabledChanged = prefs.getBoolean(PartRenderingEngine.ENABLED_THEME_KEY, true) != themingEnabled
-				.getSelection();
-		prefs.putBoolean(PartRenderingEngine.ENABLED_THEME_KEY, themingEnabled.getSelection());
+		boolean themingEnabledChanged = false;
+		// Only if the setting is modifiable by the user does checking for it (and
+		// storing it) make sense
+		if (themingEnabled.isEnabled()) {
+			themingEnabledChanged = prefs.getBoolean(PartRenderingEngine.ENABLED_THEME_KEY, true) != themingEnabled
+					.getSelection();
+			prefs.putBoolean(PartRenderingEngine.ENABLED_THEME_KEY, themingEnabled.getSelection());
+		}
 
 		boolean isRescaleAtRuntimeChanged = false;
 		if (rescaleAtRuntime != null) {
@@ -385,7 +381,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		String restartDialogTitle = null;
 		String restartDialogMessage = null;
 
-		if (engine != null) {
+		if (isThemingPossible()) {
 			ITheme theme = getSelectedTheme();
 			boolean themeChanged = theme != null && !theme.equals(currentTheme);
 			boolean colorsAndFontsThemeChanged = !PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getId()
@@ -446,7 +442,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	protected void performDefaults() {
 		IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE
 				.getNode(PREF_QUALIFIER_ECLIPSE_E4_UI_WORKBENCH_RENDERERS_SWT);
-		if (engine != null) {
+		if (isThemingPossible()) {
 			setColorsAndFontsTheme(currentColorsAndFontsTheme);
 
 			engine.setTheme(defaultTheme, true);
@@ -470,7 +466,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	@Override
 	public boolean performCancel() {
-		if (engine != null) {
+		if (isThemingPossible()) {
 			setColorsAndFontsTheme(currentColorsAndFontsTheme);
 
 			if (currentTheme != null && !currentTheme.equals(engine.getActiveTheme())) {

@@ -21,7 +21,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -89,13 +88,13 @@ public class IEditorRegistryTest {
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws CoreException {
 		if (proj != null) {
 			try {
 				FileUtil.deleteProject(proj);
 			} catch (CoreException e) {
 				TestPlugin.getDefault().getLog().log(e.getStatus());
-				fail();
+				throw e;
 			}
 		}
 	}
@@ -360,11 +359,7 @@ public class IEditorRegistryTest {
 
 		// removing the listener that is not registered yet should have no
 		// effect
-		try {
-			fReg.removePropertyListener(listener);
-		} catch (Throwable e) {
-			fail();
-		}
+		fReg.removePropertyListener(listener);
 	}
 
 	/**

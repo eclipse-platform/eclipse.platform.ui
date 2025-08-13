@@ -14,8 +14,8 @@
 package org.eclipse.e4.emf.xpath.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -38,9 +38,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings({ "deprecation", "removal" })
 public class ExampleQueriesApplicationTest {
@@ -52,7 +52,7 @@ public class ExampleQueriesApplicationTest {
 	private Resource childResource;
 
 	@SuppressWarnings("restriction")
-	@Before
+	@BeforeEach
 	public void setUp() {
 		resourceSet = new ResourceSetImpl();
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
@@ -76,7 +76,7 @@ public class ExampleQueriesApplicationTest {
 		xpathChildContext = f.newContext(childResource.getContents().get(0));
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		xpathContext = null;
 		resource.unload();

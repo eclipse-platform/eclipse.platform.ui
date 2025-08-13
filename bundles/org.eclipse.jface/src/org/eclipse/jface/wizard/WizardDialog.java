@@ -370,7 +370,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 */
 	public boolean isModal() {
 		return (getShellStyle() & SWT.PRIMARY_MODAL) == SWT.PRIMARY_MODAL
-				|| (getShellStyle() & SWT.PRIMARY_MODAL) == SWT.APPLICATION_MODAL;
+				|| (getShellStyle() & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL;
 	}
 
 	/**
