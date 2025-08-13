@@ -25,7 +25,6 @@ import java.text.DecimalFormat;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -36,8 +35,6 @@ import org.eclipse.ui.navigator.ICommonViewerMapper;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -56,19 +53,7 @@ public class PerformanceTest extends NavigatorTestBase {
 		_initTestData = false;
 	}
 
-	@Override
-	@Before
-	public void setUp() {
-		super.setUp();
-	}
-
-	@Override
-	@After
-	public void tearDown() {
-		super.tearDown();
-	}
-
-	protected void createProjects() {
+	protected void createProjects() throws InterruptedException {
 		Job createJob = new Job("Create projects") {
 
 			@Override
@@ -94,11 +79,7 @@ public class PerformanceTest extends NavigatorTestBase {
 
 		createJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		createJob.schedule();
-		try {
-			createJob.join();
-		} catch (InterruptedException e) {
-			fail("Should not throw an exception");
-		}
+		createJob.join();
 
 		assertEquals(createJob.getResult(), Status.OK_STATUS);
 
@@ -113,7 +94,7 @@ public class PerformanceTest extends NavigatorTestBase {
 		assertEquals(_numProjects, numOfProjects);
 	}
 
-	protected void deleteProjects() {
+	protected void deleteProjects() throws InterruptedException {
 		Job deleteJob = new Job("Delete Projects") {
 
 			@Override
@@ -135,18 +116,14 @@ public class PerformanceTest extends NavigatorTestBase {
 
 		deleteJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		deleteJob.schedule();
-		try {
-			deleteJob.join();
-		} catch (InterruptedException e) {
-			fail("Should not throw an exception");
-		}
+		deleteJob.join();
 
 		assertEquals(deleteJob.getResult(), Status.OK_STATUS);
 
 		DisplayHelper.runEventLoop(Display.getCurrent(), 10);
 	}
 
-	protected void createFiles(final IProject project, final int startNumber)
+	protected void createFiles(final IProject project, final int startNumber) throws InterruptedException
  {
 		Job createJob = new Job("Create Files") {
 
@@ -169,11 +146,8 @@ public class PerformanceTest extends NavigatorTestBase {
 
 		createJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		createJob.schedule();
-		try {
-			createJob.join();
-		} catch (InterruptedException e) {
-			fail("Should not throw an exception");
-		}
+		createJob.join();
+
 		assertEquals(createJob.getResult(), Status.OK_STATUS);
 	}
 
@@ -204,18 +178,14 @@ public class PerformanceTest extends NavigatorTestBase {
 
 	// bug 159828 deleting large number of projects takes too long
 	@Test
-	public void testCreateAndDeleteProjects() {
+	public void testCreateAndDeleteProjects() throws PartInitException, InterruptedException {
 
 		_numProjects = 100;
 
 		createProjects();
 
 		// Hide it
-		try {
-			EditorTestHelper.showView(_navigatorInstanceId, false);
-		} catch (PartInitException e) {
-			fail("Should not throw an exception");
-		}
+		EditorTestHelper.showView(_navigatorInstanceId, false);
 
 		long start = System.currentTimeMillis();
 		deleteProjects();
@@ -281,7 +251,7 @@ public class PerformanceTest extends NavigatorTestBase {
 				+ (System.currentTimeMillis() - start));
 	}
 
-	protected void createFilesForProjects() {
+	protected void createFilesForProjects() throws InterruptedException {
 		for (int i = 0; i < _numProjects; i++) {
 			String name = _df.format(i);
 			IProject p1 = ResourcesPlugin.getWorkspace().getRoot().getProject(
@@ -306,12 +276,7 @@ public class PerformanceTest extends NavigatorTestBase {
 		final IProject p1 = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject("p000");
 
-		try {
-			p1.close(null);
-		} catch (CoreException e) {
-			fail("Should not throw an exception");
-
-		}
+		p1.close(null);
 
 		long start = System.currentTimeMillis();
 		_viewer.setMapper(null);

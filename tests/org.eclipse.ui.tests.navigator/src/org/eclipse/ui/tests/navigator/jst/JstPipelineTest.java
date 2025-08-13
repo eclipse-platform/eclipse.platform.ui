@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -43,7 +44,7 @@ public class JstPipelineTest extends NavigatorTestBase {
 
 	@Override
 	@Before
-	public void setUp() {
+	public void setUp() throws CoreException {
 		super.setUp();
 
 		WebJavaContentProvider.staticInit(_contentService.getContentExtensionById(COMMON_NAVIGATOR_JAVA_EXT)

@@ -48,7 +48,7 @@ public final class ResourceMgmtActionProviderTests extends NavigatorTestBase {
 
 	@Override
 	@Before
-	public void setUp() {
+	public void setUp() throws CoreException {
 		super.setUp();
 		manager = new MenuManager();
 		manager.add(new GroupMarker(ICommonMenuConstants.GROUP_BUILD));
@@ -90,83 +90,71 @@ public final class ResourceMgmtActionProviderTests extends NavigatorTestBase {
 	/**
 	 * Test for 'open project' that doesn't have a builder attached - all but
 	 * 'build' &amp; 'open project' should be enabled
+	 *
+	 * @throws CoreException
 	 */
 	@Test
-	public void testFillContextMenu_openProjectNoBuilderSelection() {
+	public void testFillContextMenu_openProjectNoBuilderSelection() throws CoreException {
 		IProject openProj = ResourcesPlugin.getWorkspace().getRoot().getProject("Test");
 		boolean autoBuildInitialState = ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 
-		try {
-			if (!autoBuildInitialState) {
-				// we want to enable auto-building for this test to guarantee that the 'build'
-				// menu option isn't shown
-				IWorkspaceDescription wsd = ResourcesPlugin.getWorkspace().getDescription();
-				wsd.setAutoBuilding(true);
-				ResourcesPlugin.getWorkspace().setDescription(wsd);
-			}
-			openProj.open(null);
-		} catch (CoreException e) {
-			fail(e.getClass().getSimpleName() + " thrown: " + e.getLocalizedMessage());
+		if (!autoBuildInitialState) {
+			// we want to enable auto-building for this test to guarantee that the 'build'
+			// menu option isn't shown
+			IWorkspaceDescription wsd = ResourcesPlugin.getWorkspace().getDescription();
+			wsd.setAutoBuilding(true);
+			ResourcesPlugin.getWorkspace().setDescription(wsd);
 		}
+		openProj.open(null);
 		ResourceMgmtActionProvider provider = provider(openProj);
 		provider.fillContextMenu(manager);
 		checkMenuHasCorrectContributions(false, true, false, true, true);
 
 		if (!autoBuildInitialState) {
 			// clean-up: reset autobuild since we changed it
-			try {
-				IWorkspaceDescription wsd = ResourcesPlugin.getWorkspace().getDescription();
-				wsd.setAutoBuilding(false);
-				ResourcesPlugin.getWorkspace().setDescription(wsd);
-			} catch (CoreException e) {
-				fail(e.getClass().getSimpleName() + " thrown: " + e.getLocalizedMessage());
-			}
+			IWorkspaceDescription wsd = ResourcesPlugin.getWorkspace().getDescription();
+			wsd.setAutoBuilding(false);
+			ResourcesPlugin.getWorkspace().setDescription(wsd);
 		}
 	}
 
 	/**
 	 * Test for 'open project' that doesn't have a builder attached - only 'open
 	 * project' should be disabled
+	 *
+	 * @throws CoreException
 	 */
 	@Test
-	public void testFillContextMenu_openProjectWithBuilderSelection() {
+	public void testFillContextMenu_openProjectWithBuilderSelection() throws CoreException {
 		IProject openProj = ResourcesPlugin.getWorkspace().getRoot().getProject("Test");
 		IWorkspaceDescription wsd = ResourcesPlugin.getWorkspace().getDescription();
 		boolean autobuildInitialState = wsd.isAutoBuilding();
 		boolean hasNoInitialBuildCommands = false;
 		IProjectDescription desc = null;
-		try {
-			if (autobuildInitialState) {
-				wsd.setAutoBuilding(false);
-				ResourcesPlugin.getWorkspace().setDescription(wsd);
-			}
-			openProj.open(null);
-			desc = openProj.getDescription();
-			if (desc.getBuildSpec().length == 0) {
-				hasNoInitialBuildCommands = true;
-				ICommand cmd = desc.newCommand();
-				desc.setBuildSpec(new ICommand[] { cmd });
-				openProj.setDescription(desc, null);
-			}
-		} catch (CoreException e) {
-			fail(e.getClass().getSimpleName() + " thrown: " + e.getLocalizedMessage());
+		if (autobuildInitialState) {
+			wsd.setAutoBuilding(false);
+			ResourcesPlugin.getWorkspace().setDescription(wsd);
+		}
+		openProj.open(null);
+		desc = openProj.getDescription();
+		if (desc.getBuildSpec().length == 0) {
+			hasNoInitialBuildCommands = true;
+			ICommand cmd = desc.newCommand();
+			desc.setBuildSpec(new ICommand[] { cmd });
+			openProj.setDescription(desc, null);
 		}
 		ResourceMgmtActionProvider provider = provider(openProj);
 		provider.fillContextMenu(manager);
 		checkMenuHasCorrectContributions(true, true, false, true, true);
-		try {
-			// clean-up where needed: reset autobuild if we changed it & remove
-			// the build config if we added it
-			if (autobuildInitialState) {
-				wsd.setAutoBuilding(true);
-				ResourcesPlugin.getWorkspace().setDescription(wsd);
-			}
-			if (desc != null && hasNoInitialBuildCommands) {
-				desc.setBuildSpec(new ICommand[0]);
-				openProj.setDescription(desc, null);
-			}
-		} catch (CoreException e) {
-			fail(e.getClass().getSimpleName() + " thrown: " + e.getLocalizedMessage());
+		// clean-up where needed: reset autobuild if we changed it & remove
+		// the build config if we added it
+		if (autobuildInitialState) {
+			wsd.setAutoBuilding(true);
+			ResourcesPlugin.getWorkspace().setDescription(wsd);
+		}
+		if (desc != null && hasNoInitialBuildCommands) {
+			desc.setBuildSpec(new ICommand[0]);
+			openProj.setDescription(desc, null);
 		}
 	}
 

@@ -14,7 +14,6 @@
 package org.eclipse.ui.tests.navigator;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.util.concurrent.Semaphore;
 
@@ -81,7 +80,7 @@ public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 
 	@Override
 	@Before
-	public void setUp() {
+	public void setUp() throws CoreException {
 		super.setUp();
 
 		_contentService.bindExtensions(new String[] { COMMON_NAVIGATOR_RESOURCE_EXT }, true);
@@ -89,20 +88,10 @@ public class DecorationSchedulerRaceConditionTest extends NavigatorTestBase {
 
 		p1Project = ResourcesPlugin.getWorkspace().getRoot().getProject(TestWorkspace.P1_PROJECT_NAME);
 		p2Project = ResourcesPlugin.getWorkspace().getRoot().getProject(TestWorkspace.P2_PROJECT_NAME);
-		try {
-			p1Project.setSessionProperty(DecorationSchedulerRaceConditionTestDecorator.DECO_PROP, DECORATION_TEXT_1);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			fail("Exception caught: " + e);
-		}
+		p1Project.setSessionProperty(DecorationSchedulerRaceConditionTestDecorator.DECO_PROP, DECORATION_TEXT_1);
 
 		IDecoratorManager manager = PlatformUI.getWorkbench().getDecoratorManager();
-		try {
-			manager.setEnabled("org.eclipse.ui.tests.navigator.bug417255Decorator", true);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			fail("Exception caught: " + e);
-		}
+		manager.setEnabled("org.eclipse.ui.tests.navigator.bug417255Decorator", true);
 
 		waitForP1Decoration.waitForCondition(Display.getCurrent(), TIMEOUT_DECORATOR); // wait for decorator to run
 		DisplayHelper.sleep(Display.getCurrent(), TIMEOUT_UPDATE_JOB); // wait for update job following decoration to
