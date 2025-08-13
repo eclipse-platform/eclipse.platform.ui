@@ -22,6 +22,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -42,6 +44,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationMap;
+import org.eclipse.jface.text.source.inlined.AbstractInlinedAnnotation;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
@@ -705,5 +708,46 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	@Override
 	public void reinitialize(IDocument document) {
 		resetMarkers();
+	}
+
+	private final ThreadLocal<Annotation> currentToBeDeletedAnnotation = new ThreadLocal<>();
+
+	@Override
+	protected void removeAnnotation(Annotation annotation, boolean fireModelChanged) {
+		currentToBeDeletedAnnotation.set(annotation);
+		try {
+			super.removeAnnotation(annotation, fireModelChanged);
+		} finally {
+			currentToBeDeletedAnnotation.remove();
+		}
+	}
+
+	@Override
+	protected void removePosition(IDocument document, Position position) {
+		if (removePositionOfCodeMiningAnnotationDelayedInMainThread(document, position)) {
+			return;
+		}
+		super.removePosition(document, position);
+	}
+
+	private boolean removePositionOfCodeMiningAnnotationDelayedInMainThread(IDocument document, Position position) {
+		Annotation annotation = currentToBeDeletedAnnotation.get();
+		if (annotation == null) {
+			return false;
+		}
+		String type = annotation.getType();
+		if (!AbstractInlinedAnnotation.TYPE.equals(type)) {
+			return false;
+		}
+		IAnnotationMap map = getAnnotationMap();
+		if (map == null) {
+			return false;
+		}
+		Position pos = map.get(annotation);
+		if (pos != null && pos.equals(position)) {
+			Display.getDefault().asyncExec(() -> super.removePosition(document, position));
+			return true;
+		}
+		return false;
 	}
 }
