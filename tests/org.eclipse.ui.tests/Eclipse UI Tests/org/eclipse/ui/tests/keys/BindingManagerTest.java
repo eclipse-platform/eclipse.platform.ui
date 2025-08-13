@@ -19,6 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -132,12 +133,7 @@ public final class BindingManagerTest {
 		contextManager.setActiveContextIds(activeContextIds);
 
 		// Try to add a null binding.
-		try {
-			bindingManager.addBinding(null);
-			fail("It should not be possible to add a null binding");
-		} catch (final NullPointerException e) {
-			// Success.
-		}
+		assertThrows(NullPointerException.class, () -> bindingManager.addBinding(null));
 
 		// Try to add a binding that should become active.
 		final Binding binding = new TestBinding("conflict1", "na", "na", null,
@@ -699,12 +695,7 @@ public final class BindingManagerTest {
 		// SELECT UNDEFINED
 		final String schemeId = "schemeId";
 		final Scheme scheme = bindingManager.getScheme(schemeId);
-		try {
-			bindingManager.setActiveScheme(scheme);
-			fail("Cannot activate an undefined scheme");
-		} catch (final NotDefinedException e) {
-			// Success
-		}
+		assertThrows(NotDefinedException.class, () -> bindingManager.setActiveScheme(scheme));
 
 		// SELECT DEFINED
 		scheme.define("name", "description", null);
@@ -836,12 +827,7 @@ public final class BindingManagerTest {
 		contextManager.setActiveContextIds(activeContextIds);
 
 		// SET TO NULL
-		try {
-			bindingManager.setLocale(null);
-			fail("Cannot set the locale to null");
-		} catch (final NullPointerException e) {
-			// Success
-		}
+		assertThrows(NullPointerException.class, () -> bindingManager.setLocale(null));
 
 		// SET TO SOMETHING
 		final String commandId = "commandId";
@@ -880,12 +866,7 @@ public final class BindingManagerTest {
 		contextManager.setActiveContextIds(activeContextIds);
 
 		// SET TO NULL
-		try {
-			bindingManager.setPlatform(null);
-			fail("Cannot set the platform to null");
-		} catch (final NullPointerException e) {
-			// Success
-		}
+		assertThrows(NullPointerException.class, () -> bindingManager.setPlatform(null));
 
 		// SET TO SOMETHING
 		final String commandId = "commandId";

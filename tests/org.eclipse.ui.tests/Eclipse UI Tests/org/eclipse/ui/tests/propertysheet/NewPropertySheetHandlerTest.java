@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.propertysheet;
 
+import static org.junit.Assert.assertThrows;
+
 import java.util.HashMap;
 
 import org.eclipse.core.commands.Command;
@@ -179,12 +181,7 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	public final void testGetShowInContextWithNoActivePart() {
 		hideAndAssertNoParts();
 
-		try {
-			testNewPropertySheetHandler.getShowInContext(getExecutionEvent());
-		} catch (ExecutionException e) {
-			return;
-		}
-		fail("Expected ExecutionException due to no active part");
+		assertThrows(ExecutionException.class, () -> testNewPropertySheetHandler.getShowInContext(getExecutionEvent()));
 	}
 
 	/**
@@ -193,17 +190,11 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	 * .
 	 */
 	@Test
-	public final void testFindPropertySheetWithoutActivePart()
-			throws PartInitException {
+	public final void testFindPropertySheetWithoutActivePart() {
 		hideAndAssertNoParts();
 
-		try {
-			testNewPropertySheetHandler.findPropertySheet(getExecutionEvent(),
-					new PropertyShowInContext(null, StructuredSelection.EMPTY));
-		} catch (ExecutionException e) {
-			return;
-		}
-		fail("Expected ExecutionException due to no active part");
+		assertThrows(ExecutionException.class, () -> testNewPropertySheetHandler.findPropertySheet(getExecutionEvent(),
+				new PropertyShowInContext(null, StructuredSelection.EMPTY)));
 	}
 
 	/**

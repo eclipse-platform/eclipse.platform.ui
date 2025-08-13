@@ -15,8 +15,8 @@ package org.eclipse.ui.tests.commands;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Map;
 
@@ -293,27 +293,13 @@ public class CommandSerializationTest {
 	private void expectSerializationException(String serializedParameterizedCommand) {
 		ICommandService commandService = getCommandService();
 
-		try {
-			commandService.deserialize(serializedParameterizedCommand);
-			fail("expected SerializationException");
-		} catch (SerializationException ex) {
-			// passed
-		} catch (NotDefinedException ex) {
-			fail("expected SerializationException");
-		}
+		assertThrows(SerializationException.class, () -> commandService.deserialize(serializedParameterizedCommand));
 	}
 
 	private void expectNotDefinedException(String serializedParameterizedCommand) {
 		ICommandService commandService = getCommandService();
 
-		try {
-			commandService.deserialize(serializedParameterizedCommand);
-			fail("expected NotDefinedException");
-		} catch (SerializationException ex) {
-			fail("expected NotDefinedException");
-		} catch (NotDefinedException ex) {
-			// passed
-		}
+		assertThrows(NotDefinedException.class, () -> commandService.deserialize(serializedParameterizedCommand));
 	}
 
 	private ICommandService getCommandService() {

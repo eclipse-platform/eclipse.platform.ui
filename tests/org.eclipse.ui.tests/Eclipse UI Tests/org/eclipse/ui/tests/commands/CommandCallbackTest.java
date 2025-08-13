@@ -15,6 +15,8 @@
 
 package org.eclipse.ui.tests.commands;
 
+import static org.junit.Assert.assertThrows;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -156,16 +158,8 @@ public class CommandCallbackTest extends UITestCase {
 	public void testNoParametersNoCallbacks() throws Exception {
 		ParameterizedCommand pc1 = new ParameterizedCommand(cmd1, null);
 		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null);
-		try {
-			commandService.registerElementForCommand(pc1, null);
-			fail("Callback should not register");
-		} catch (NotDefinedException e) {
-		}
-		try {
-			commandService.registerElementForCommand(pc2, null);
-			fail("Callback 2 should not register");
-		} catch (NotDefinedException e) {
-		}
+		assertThrows(NotDefinedException.class, () -> commandService.registerElementForCommand(pc1, null));
+		assertThrows(NotDefinedException.class, () -> commandService.registerElementForCommand(pc2, null));
 
 		commandService.refreshElements(CMD1_ID + ".1", null);
 		assertEquals(0, cmd1Handler.callbacks);
