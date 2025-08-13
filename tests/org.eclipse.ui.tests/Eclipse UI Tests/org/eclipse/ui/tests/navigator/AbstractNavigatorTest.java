@@ -81,11 +81,7 @@ public abstract class AbstractNavigatorTest extends UITestCase {
 	@Override
 	protected void doTearDown() throws Exception {
 		if (testProject != null) {
-			try {
-				testProject.delete(true, null);
-			} catch (CoreException e) {
-				fail(e.toString());
-			}
+			testProject.delete(true, null);
 			testProject = null;
 			testFolder = null;
 			testFile = null;

@@ -15,7 +15,6 @@
 package org.eclipse.ui.tests.adaptable;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 
@@ -89,11 +88,7 @@ public class AdaptableDecoratorTestCase implements ILabelProviderListener {
 	@After
 	public void doTearDown() throws Exception {
 		if (testProject != null) {
-			try {
-				testProject.delete(true, null);
-			} catch (CoreException e) {
-				fail(e.toString());
-			}
+			testProject.delete(true, null);
 			testProject = null;
 			testFolder = null;
 			testFile = null;

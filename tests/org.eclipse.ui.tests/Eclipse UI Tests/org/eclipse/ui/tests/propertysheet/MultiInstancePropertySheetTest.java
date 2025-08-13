@@ -159,12 +159,8 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	@Test
 	public void testAllowsMultiple() throws PartInitException {
 		activePage.showView(IPageLayout.ID_PROP_SHEET);
-		try {
-			activePage.showView(IPageLayout.ID_PROP_SHEET, "aSecondaryId",
-					IWorkbenchPage.VIEW_ACTIVATE);
-		} catch (PartInitException e) {
-			fail(e.getMessage());
-		}
+		activePage.showView(IPageLayout.ID_PROP_SHEET, "aSecondaryId",
+				IWorkbenchPage.VIEW_ACTIVATE);
 	}
 
 	/**

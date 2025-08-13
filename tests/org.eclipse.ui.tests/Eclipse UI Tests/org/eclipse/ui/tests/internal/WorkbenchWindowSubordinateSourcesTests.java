@@ -55,7 +55,7 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 	}
 
 	@Test
-	public void testIsCoolbarVisible() {
+	public void testIsCoolbarVisible() throws CoreException {
 		IEvaluationService service = window.getService(IEvaluationService.class);
 		IEvaluationContext context = service.getCurrentState();
 
@@ -65,23 +65,14 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 		EqualsExpression test = new EqualsExpression(current ? Boolean.TRUE
 				: Boolean.FALSE);
 		with.add(test);
-
-		try {
-			assertEquals(EvaluationResult.TRUE, with.evaluate(context));
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
+		assertEquals(EvaluationResult.TRUE, with.evaluate(context));
 
 		window.setCoolBarVisible(!current);
-		try {
-			assertEquals(EvaluationResult.FALSE, with.evaluate(context));
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
+		assertEquals(EvaluationResult.FALSE, with.evaluate(context));
 	}
 
 	@Test
-	public void testIsStatusLineVisible() {
+	public void testIsStatusLineVisible() throws CoreException {
 		IEvaluationService service = window.getService(IEvaluationService.class);
 		IEvaluationContext context = service.getCurrentState();
 
@@ -90,23 +81,14 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 		boolean current = window.getStatusLineVisible();
 		EqualsExpression test = new EqualsExpression(current ? Boolean.TRUE : Boolean.FALSE);
 		with.add(test);
-
-		try {
-			assertEquals(EvaluationResult.TRUE, with.evaluate(context));
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
+		assertEquals(EvaluationResult.TRUE, with.evaluate(context));
 
 		window.setStatusLineVisible(!current);
-		try {
-			assertEquals(EvaluationResult.FALSE, with.evaluate(context));
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
+		assertEquals(EvaluationResult.FALSE, with.evaluate(context));
 	}
 
 	@Test
-	public void testIsPerspectiveBarVisible() {
+	public void testIsPerspectiveBarVisible() throws CoreException {
 		IEvaluationService service = window.getService(IEvaluationService.class);
 		IEvaluationContext context = service.getCurrentState();
 
@@ -115,19 +97,10 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 		boolean current = window.getPerspectiveBarVisible();
 		EqualsExpression test = new EqualsExpression(current ? Boolean.TRUE : Boolean.FALSE);
 		with.add(test);
-
-		try {
-			assertEquals(EvaluationResult.TRUE, with.evaluate(context));
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
+		assertEquals(EvaluationResult.TRUE, with.evaluate(context));
 
 		window.setPerspectiveBarVisible(!current);
-		try {
-			assertEquals(EvaluationResult.FALSE, with.evaluate(context));
-		} catch (CoreException e) {
-			fail(e.getMessage());
-		}
+		assertEquals(EvaluationResult.FALSE, with.evaluate(context));
 	}
 
 	private static class PerspectiveL implements IPropertyChangeListener {

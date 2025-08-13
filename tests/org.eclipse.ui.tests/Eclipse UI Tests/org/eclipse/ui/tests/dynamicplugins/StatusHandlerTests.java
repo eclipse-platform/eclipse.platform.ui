@@ -53,9 +53,12 @@ public class StatusHandlerTests extends DynamicTestCase {
 	/**
 	 * Tests to ensure that the status handlers are removed when the plugin is
 	 * unloaded.
+	 *
+	 * @throws InterruptedException
+	 * @throws IllegalArgumentException
 	 */
 	@Test
-	public void testStatusHandlerRemoval() throws CoreException {
+	public void testStatusHandlerRemoval() throws CoreException, IllegalArgumentException, InterruptedException {
 		getBundle();
 
 		StatusHandlerDescriptor statusHandlerDescriptor1 = StatusHandlerRegistry
@@ -79,12 +82,8 @@ public class StatusHandlerTests extends DynamicTestCase {
 
 		removeBundle();
 
-		try {
-			LeakTests.checkRef(queue, ref);
-			LeakTests.checkRef(queue2, ref2);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		LeakTests.checkRef(queue, ref);
+		LeakTests.checkRef(queue2, ref2);
 
 		assertNull(StatusHandlerRegistry.getDefault().getHandlerDescriptor(
 				STATUS_HANDLER_ID1));
@@ -93,9 +92,12 @@ public class StatusHandlerTests extends DynamicTestCase {
 	/**
 	 * Tests to ensure that the status handlers are removed when the plugin is
 	 * unloaded.
+	 *
+	 * @throws InterruptedException
+	 * @throws IllegalArgumentException
 	 */
 	@Test
-	public void testStatusHandlerRemoval2() throws CoreException {
+	public void testStatusHandlerRemoval2() throws CoreException, IllegalArgumentException, InterruptedException {
 		getBundle();
 
 		ReferenceQueue<StatusHandlerDescriptor> queue = new ReferenceQueue<>();
@@ -132,12 +134,8 @@ public class StatusHandlerTests extends DynamicTestCase {
 
 		removeBundle();
 
-		try {
-			LeakTests.checkRef(queue, ref);
-			LeakTests.checkRef(queue2, ref2);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		LeakTests.checkRef(queue, ref);
+		LeakTests.checkRef(queue2, ref2);
 
 		assertNull(StatusHandlerRegistry.getDefault().getHandlerDescriptor(
 				STATUS_HANDLER_ID1));
@@ -146,9 +144,12 @@ public class StatusHandlerTests extends DynamicTestCase {
 	/**
 	 * Tests to ensure that the status handlers are removed when the plugin is
 	 * unloaded. Checks if the default product handlers are handled correctly.
+	 *
+	 * @throws InterruptedException
+	 * @throws IllegalArgumentException
 	 */
 	@Test
-	public void testProductBindingRemoval() throws CoreException {
+	public void testProductBindingRemoval() throws CoreException, IllegalArgumentException, InterruptedException {
 		getBundle();
 
 		ReferenceQueue<StatusHandlerDescriptor> queue = new ReferenceQueue<>();
@@ -173,12 +174,8 @@ public class StatusHandlerTests extends DynamicTestCase {
 
 		removeBundle();
 
-		try {
-			LeakTests.checkRef(queue, ref);
-			LeakTests.checkRef(queue2, ref2);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		LeakTests.checkRef(queue, ref);
+		LeakTests.checkRef(queue2, ref2);
 
 		assertNull(StatusHandlerRegistry.getDefault().getHandlerDescriptor(
 				STATUS_HANDLER_ID1));

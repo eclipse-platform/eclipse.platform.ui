@@ -16,7 +16,6 @@ package org.eclipse.ui.tests.preferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -138,9 +137,11 @@ public class FontPreferenceTestCase {
 	/**
 	 * The test added to assess results of accessing FontRegistry from a non-UI
 	 * thread. See bug 230360.
+	 *
+	 * @throws InterruptedException
 	 */
 	@Test
-	public void testNonUIThreadFontAccess() {
+	public void testNonUIThreadFontAccess() throws InterruptedException {
 		// create a separate font registry to avoid contaminating other tests
 		final FontRegistry fontRegistry = new FontRegistry("org.eclipse.jface.resource.jfacefonts"); //$NON-NLS-1$
 		// pre-calculate the default font; calling it in worker thread will only cause SWTException
@@ -170,8 +171,6 @@ public class FontPreferenceTestCase {
 			job.schedule();
 			job.join();
 			assertTrue(errorLogged[0]);
-		} catch (InterruptedException e) {
-			fail("Worker thread was interrupted in the FontRegistry access test");
 		} finally {
 			Policy.setLog(logger);
 		}

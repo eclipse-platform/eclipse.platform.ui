@@ -65,7 +65,7 @@ public class EditorTests extends DynamicTestCase {
 	}
 
 	@Test
-	public void testEditorClosure() throws CoreException {
+	public void testEditorClosure() throws CoreException, IllegalArgumentException, InterruptedException {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IFile file = getFile();
 		getBundle();
@@ -77,11 +77,7 @@ public class EditorTests extends DynamicTestCase {
 		part = null; //null the reference
 
 		removeBundle();
-		try {
-			LeakTests.checkRef(queue, ref);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		LeakTests.checkRef(queue, ref);
 
 		assertEquals(0, window.getActivePage().getEditors().length);
 	}

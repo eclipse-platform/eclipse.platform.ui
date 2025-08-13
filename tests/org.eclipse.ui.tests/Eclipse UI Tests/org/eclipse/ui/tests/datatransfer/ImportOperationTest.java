@@ -111,10 +111,7 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 			project.delete(true, true, null);
 			File topDirectory = new File(localDirectory);
 			FileSystemHelper.clear(topDirectory);
-		} catch (CoreException e) {
-			fail(e.toString());
-		}
-		finally{
+		} finally {
 			project = null;
 			localDirectory = null;
 		}
@@ -194,21 +191,17 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 		operation.setCreateContainerStructure(false);
 		openTestWindow().run(true, true, operation);
 
-		try {
-			IPath path = IPath.fromOSString(localDirectory);
-			IResource targetFolder = project.findMember(path.lastSegment());
+		IPath path = IPath.fromOSString(localDirectory);
+		IResource targetFolder = project.findMember(path.lastSegment());
 
-			assertTrue("Import failed", targetFolder instanceof IContainer);
+		assertTrue("Import failed", targetFolder instanceof IContainer);
 
-			IResource[] resources = ((IContainer) targetFolder).members();
-			assertEquals("Import failed to import all directories",
-					directoryNames.length, resources.length);
-			for (IResource resource : resources) {
-				assertTrue("Import failed", resource instanceof IContainer);
-				verifyFolder((IContainer) resource);
-			}
-		} catch (CoreException e) {
-			fail(e.toString());
+		IResource[] resources = ((IContainer) targetFolder).members();
+		assertEquals("Import failed to import all directories",
+				directoryNames.length, resources.length);
+		for (IResource resource : resources) {
+			assertTrue("Import failed", resource instanceof IContainer);
+			verifyFolder((IContainer) resource);
 		}
 	}
 
@@ -245,46 +238,38 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 	 * Verifies that all files were imported.
 	 *
 	 * @param folderCount number of folders that were imported
+	 * @throws CoreException
 	 */
-	private void verifyFiles(int folderCount) {
-		try {
-			IPath path = IPath.fromOSString(localDirectory);
-			IResource targetFolder = project.findMember(path.makeRelative());
+	private void verifyFiles(int folderCount) throws CoreException {
+		IPath path = IPath.fromOSString(localDirectory);
+		IResource targetFolder = project.findMember(path.makeRelative());
 
-			assertTrue("Import failed", targetFolder instanceof IContainer);
+		assertTrue("Import failed", targetFolder instanceof IContainer);
 
-			IResource[] resources = ((IContainer) targetFolder).members();
-			assertEquals("Import failed to import all directories",
-					folderCount, resources.length);
-			for (IResource resource : resources) {
-				assertTrue("Import failed", resource instanceof IContainer);
-				verifyFolder((IContainer) resource);
-			}
-		} catch (CoreException e) {
-			fail(e.toString());
+		IResource[] resources = ((IContainer) targetFolder).members();
+		assertEquals("Import failed to import all directories", folderCount, resources.length);
+		for (IResource resource : resources) {
+			assertTrue("Import failed", resource instanceof IContainer);
+			verifyFolder((IContainer) resource);
 		}
 	}
 
 	/**
 	 * Verifies that all files were imported into the specified folder.
+	 *
+	 * @throws CoreException
 	 */
-	private void verifyFolder(IContainer folder) {
-		try {
-			IResource[] files = folder.members();
-			assertEquals("Import failed to import all files", fileNames.length,
-					files.length);
-			for (String fileName : fileNames) {
-				int k;
-				for (k = 0; k < files.length; k++) {
-					if (fileName.equals(files[k].getName())) {
-						break;
-					}
+	private void verifyFolder(IContainer folder) throws CoreException {
+		IResource[] files = folder.members();
+		assertEquals("Import failed to import all files", fileNames.length, files.length);
+		for (String fileName : fileNames) {
+			int k;
+			for (k = 0; k < files.length; k++) {
+				if (fileName.equals(files[k].getName())) {
+					break;
 				}
-				assertTrue("Import failed to import file " + fileName,
-						k < fileNames.length);
 			}
-		} catch (CoreException e) {
-			fail(e.toString());
+			assertTrue("Import failed to import file " + fileName, k < fileNames.length);
 		}
 	}
 }

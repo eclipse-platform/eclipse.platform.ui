@@ -133,13 +133,9 @@ public class UIWizardsAuto {
 	 */
 	@After
 	public void tearDown() throws Exception {
-		try {
-			if (project != null) {
-				project.delete(true, true, null);
-				project = null;
-			}
-		} catch (CoreException e) {
-			fail(e.toString());
+		if (project != null) {
+			project.delete(true, true, null);
+			project = null;
 		}
 	}
 

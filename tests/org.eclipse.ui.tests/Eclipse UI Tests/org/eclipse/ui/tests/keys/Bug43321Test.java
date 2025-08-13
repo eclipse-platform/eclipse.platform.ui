@@ -15,7 +15,6 @@
 package org.eclipse.ui.tests.keys;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -91,10 +90,6 @@ public class Bug43321Test {
 				.getGlobalActionHandler(ActionFactory.COPY.getId());
 		assertTrue("Non-checkbox menu item is checked.", !action.isChecked()); //$NON-NLS-1$
 
-		try {
-			FileUtil.deleteProject(testProject);
-		} catch (CoreException e) {
-			fail(e.toString());
-		}
+		FileUtil.deleteProject(testProject);
 	}
 }

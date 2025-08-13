@@ -48,7 +48,7 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 
 
 	@Test
-	public void testColumnCreate() {
+	public void testColumnCreate() throws PartInitException {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		if (window == null) {
@@ -59,21 +59,14 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 			fail("Could not get a workbench page");
 		}
 
-		MarkersTestMarkersView problemView;
-		try {
-			problemView = (MarkersTestMarkersView) page
-					.showView("org.eclipse.ui.tests.markerTests");
-		} catch (PartInitException e) {
-			fail(e.getLocalizedMessage());
-			return;
-		}
+		MarkersTestMarkersView problemView = (MarkersTestMarkersView) page.showView("org.eclipse.ui.tests.markerTests");
 
 		problemView.setColumnWidths(100);
 
 	}
 
 	@Test
-	public void testColumnRestore() {
+	public void testColumnRestore() throws PartInitException {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		if (window == null) {
@@ -84,14 +77,7 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 			fail("Could not get a workbench page");
 		}
 
-		MarkersTestMarkersView problemView;
-		try {
-			problemView = (MarkersTestMarkersView) page
-					.showView("org.eclipse.ui.tests.markerTests");
-		} catch (PartInitException e) {
-			fail(e.getLocalizedMessage());
-			return;
-		}
+		MarkersTestMarkersView problemView = (MarkersTestMarkersView) page.showView("org.eclipse.ui.tests.markerTests");
 
 		assertTrue("Column sizes not restored", problemView
 				.checkColumnSizes(100));

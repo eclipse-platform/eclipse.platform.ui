@@ -58,12 +58,7 @@ public class NonRestorablePropertySheetTest extends TestCase {
 		assertTrue(part instanceof PropertySheet);
 
 		for (int j = 0; j < 3; j++) {
-			try {
-				page.showView(IPageLayout.ID_PROP_SHEET, "#" + j,
-						IWorkbenchPage.VIEW_ACTIVATE);
-			} catch (PartInitException e) {
-				fail(e.getMessage());
-			}
+			page.showView(IPageLayout.ID_PROP_SHEET, "#" + j, IWorkbenchPage.VIEW_ACTIVATE);
 		}
 		assertTrue(countPropertySheetViews(page) == 4);
 	}

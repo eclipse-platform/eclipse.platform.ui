@@ -15,7 +15,6 @@ package org.eclipse.ui.tests.concurrency;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -49,27 +48,26 @@ public class Bug_262032 {
 	volatile boolean concurrentAccess = false;
 
 	/**
-	 * Threads: UI(+asyncExec), j
-	 * Locks: lock, IDRule
+	 * Threads: UI(+asyncExec), j Locks: lock, IDRule
 	 * <p>
-	 * j holds identity Rule
-	 * ui tries to acquire rule =&gt; block and performs asyncMessages
-	 * asyncExec run and acquire()s lock
-	 * j then attempts to acquire lock.
+	 * j holds identity Rule ui tries to acquire rule =&gt; block and performs
+	 * asyncMessages asyncExec run and acquire()s lock j then attempts to acquire
+	 * lock.
 	 * <p>
-	 * Deadlock manager believes that UI is waiting for IDrule while holding
-	 * lock, and Job holds IDRule while attempting lock.  Scheduling rules
-	 * are never released by the Deadlock detector, so the lock is yielded!
+	 * Deadlock manager believes that UI is waiting for IDrule while holding lock,
+	 * and Job holds IDRule while attempting lock. Scheduling rules are never
+	 * released by the Deadlock detector, so the lock is yielded!
 	 * <p>
-	 * The expectation is that when threads are 'waiting' they're sat
-	 * in the ordered lock acquire which can give the locks safely to whoever
-	 * is deemed to need it.  In this case that's not true as the UI
-	 * is running an async exec.
+	 * The expectation is that when threads are 'waiting' they're sat in the ordered
+	 * lock acquire which can give the locks safely to whoever is deemed to need it.
+	 * In this case that's not true as the UI is running an async exec.
 	 * <p>
 	 * The result is concurrent running in a locked region.
+	 *
+	 * @throws InterruptedException
 	 */
 	@Test
-	public void testBug262032() {
+	public void testBug262032() throws InterruptedException {
 		final ILock lock = Job.getJobManager().newLock();
 		final TestBarrier2 tb1 = new TestBarrier2(-1);
 
@@ -112,13 +110,9 @@ public class Bug_262032 {
 		Job.getJobManager().beginRule(identityRule, null);
 		Job.getJobManager().endRule(identityRule);
 
-		try {
-			j.join();
-			tb1.waitForStatus(TestBarrier2.STATUS_WAIT_FOR_DONE);
-			assertEquals(Status.OK_STATUS, j.getResult());
-		} catch (InterruptedException e) {
-			fail(e.getMessage());
-		}
+		j.join();
+		tb1.waitForStatus(TestBarrier2.STATUS_WAIT_FOR_DONE);
+		assertEquals(Status.OK_STATUS, j.getResult());
 	}
 
 }
