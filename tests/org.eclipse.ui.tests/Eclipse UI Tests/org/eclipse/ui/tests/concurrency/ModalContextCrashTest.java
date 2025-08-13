@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.InvocationTargetException;
@@ -33,13 +34,8 @@ public class ModalContextCrashTest {
 	@Test
 	public void testCrash() throws Exception {
 		IRunnableWithProgress operation = new CrashingRunnable();
-		try{
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(true, false, operation);
-			fail("Should have an invocation target exception");
-		}
-		catch (InvocationTargetException e){
-			//We should get this
-		}
+		assertThrows(InvocationTargetException.class,
+				() -> PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(true, false, operation));
 		if (Thread.interrupted()) {
 			fail("Thread was interrupted at end of test");
 		}

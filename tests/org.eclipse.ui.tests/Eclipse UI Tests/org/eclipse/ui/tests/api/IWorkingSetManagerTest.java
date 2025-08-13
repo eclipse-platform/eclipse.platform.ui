@@ -15,6 +15,7 @@
 package org.eclipse.ui.tests.api;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.util.Arrays;
 
@@ -301,11 +302,8 @@ public class IWorkingSetManagerTest extends UITestCase {
 		fWorkingSetManager.addWorkingSet(fWorkingSet);
 		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, fWorkingSetManager.getWorkingSets());
 
-		try {
-			fWorkingSetManager.addWorkingSet(fWorkingSet);
-			fail("Added the same set twice");
-		} catch (RuntimeException exception) {
-		}
+		assertThrows("added same set twice", RuntimeException.class,
+				() -> fWorkingSetManager.addWorkingSet(fWorkingSet));
 		assertArrayEquals(new IWorkingSet[] { fWorkingSet }, fWorkingSetManager.getWorkingSets());
 
 		IWorkingSet workingSet2 = fWorkingSetManager.createWorkingSet(

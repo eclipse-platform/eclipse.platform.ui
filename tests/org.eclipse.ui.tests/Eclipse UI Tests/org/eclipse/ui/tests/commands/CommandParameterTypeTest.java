@@ -17,8 +17,10 @@ package org.eclipse.ui.tests.commands;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IParameter;
@@ -61,17 +63,8 @@ public class CommandParameterTypeTest {
 	 */
 	@Test
 	public void testSubtractTypeError() {
-		try {
-			// try to pass a Boolean instead of an Integer
-			testSubtract(Integer.valueOf(3), Boolean.FALSE, 3);
-			fail("expected ParameterValueConversionException");
-		}
-		catch (ParameterValueConversionException ex) {
-			// passed
-		}
-		catch (Exception ex) {
-			fail("expected ParameterValueConversionException");
-		}
+		// try to pass a Boolean instead of an Integer
+		assertThrows(ParameterValueConversionException.class, () -> testSubtract(Integer.valueOf(3), Boolean.FALSE, 3));
 	}
 
 	/**
@@ -127,22 +120,14 @@ public class CommandParameterTypeTest {
 		ICommandService commandService = getCommandService();
 		ParameterType type = commandService.getParameterType(TYPE);
 
-		Object converted = null;
+		AtomicReference<Object> converted = new AtomicReference<>();
 		if (expectFail) {
-			try {
-				converted = type.getValueConverter().convertToObject(value);
-				fail("expected ParameterValueConversionException");
-			} catch (ParameterValueConversionException ex) {
-				// passed
-				return;
-			} catch (Exception ex) {
-				fail("expected ParameterValueConversionException");
-			}
+			assertThrows(ParameterValueConversionException.class,
+					() -> converted.set(type.getValueConverter().convertToObject(value)));
 		} else {
-			converted = type.getValueConverter().convertToObject(value);
+			converted.set(type.getValueConverter().convertToObject(value));
+			assertEquals(Integer.valueOf(expected), converted.get());
 		}
-
-		assertEquals(Integer.valueOf(expected), converted);
 	}
 
 	/**
@@ -163,21 +148,14 @@ public class CommandParameterTypeTest {
 		ICommandService commandService = getCommandService();
 		ParameterType type = commandService.getParameterType(TYPE);
 
-		String converted = null;
+		AtomicReference<Object> converted = new AtomicReference<>();
 		if (expectFail) {
-			try {
-				converted = type.getValueConverter().convertToString(value);
-				fail("expected ParameterValueConversionException");
-			} catch (ParameterValueConversionException ex) {
-				// passed
-				return;
-			} catch (Exception ex) {
-				fail("expected ParameterValueConversionException");
-			}
+			assertThrows(ParameterValueConversionException.class,
+					() -> converted.set(type.getValueConverter().convertToString(value)));
 		} else {
-			converted = type.getValueConverter().convertToString(value);
+			converted.set(type.getValueConverter().convertToString(value));
+			assertEquals(expected, converted.get());
 		}
-		assertEquals(expected, converted);
 	}
 
 	/**

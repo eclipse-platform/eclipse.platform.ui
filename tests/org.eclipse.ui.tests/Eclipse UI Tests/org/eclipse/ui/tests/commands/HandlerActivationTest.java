@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.commands;
 
+import static org.junit.Assert.assertThrows;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -240,15 +242,8 @@ public class HandlerActivationTest extends UITestCase {
 
 	@Test
 	public void testExceptionThrowingHandler(){
-
-		try {
-			handlerService.executeCommand("org.eclipse.ui.tests.command.handlerException", null);
-			fail("An exception should be thrown for this handler");
-		} catch (Exception e) {
-			if(!(e instanceof ExecutionException)) {
-				fail("Unexpected exception while executing command", e);
-			}
-		}
+		assertThrows(ExecutionException.class,
+				() -> handlerService.executeCommand("org.eclipse.ui.tests.command.handlerException", null));
 	}
 
 
@@ -419,24 +414,14 @@ public class HandlerActivationTest extends UITestCase {
 				CMD_ID, handler));
 		Command cmd = commandService.getCommand(CMD_ID);
 		ParameterizedCommand pcmd = new ParameterizedCommand(cmd, null);
-		try {
-			handlerService.executeCommand(pcmd, null);
-			fail("this should not be executable");
-		} catch (NotEnabledException e) {
-			// good
-		}
+		assertThrows(NotEnabledException.class, () -> handlerService.executeCommand(pcmd, null));
 		assertFalse(cmd.isEnabled());
 		window.getActivePage().showView(IPageLayout.ID_OUTLINE);
 		IEvaluationContext outlineContext = handlerService.createContextSnapshot(false);
 		handlerService.executeCommand(pcmd, null);
 		assertTrue(cmd.isEnabled());
 
-		try {
-			handlerService.executeCommandInContext(pcmd, null, oldContext);
-			fail("this should not be executable");
-		} catch (NotEnabledException e) {
-			// good
-		}
+		assertThrows(NotEnabledException.class, () -> handlerService.executeCommandInContext(pcmd, null, oldContext));
 
 		assertTrue(cmd.isEnabled());
 		handlerService.executeCommandInContext(pcmd, null, outlineContext);

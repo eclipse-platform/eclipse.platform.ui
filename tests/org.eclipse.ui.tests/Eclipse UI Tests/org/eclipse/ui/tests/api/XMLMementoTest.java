@@ -15,7 +15,7 @@ package org.eclipse.ui.tests.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -51,20 +51,10 @@ public class XMLMementoTest {
 	 */
 	@Test
 	public void testCreateReadRootReaderExceptionCases() {
-		try {
-			XMLMemento.createReadRoot(new StringReader("Invalid format"));
-			fail("should throw WorkbenchException because of invalid format");
-		} catch (WorkbenchException e) {
-			// expected
-		}
-		try {
-			XMLMemento.createReadRoot(new StringReader(
-					"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"));
-			fail("should throw WorkbenchException because there is no element");
-		} catch (WorkbenchException e) {
-			// expected
-		}
-		try {
+		assertThrows(WorkbenchException.class, () -> XMLMemento.createReadRoot(new StringReader("Invalid format")));
+		assertThrows("no exception even though there is noe element", WorkbenchException.class,
+				() -> XMLMemento.createReadRoot(new StringReader("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>")));
+		assertThrows(WorkbenchException.class, () ->
 			XMLMemento.createReadRoot(new Reader() {
 
 				@Override
@@ -77,11 +67,7 @@ public class XMLMementoTest {
 						throws IOException {
 					throw new IOException();
 				}
-			});
-			fail("should throw WorkbenchException because of IOException");
-		} catch (WorkbenchException e) {
-			// expected
-		}
+		}));
 	}
 
 	@Test
@@ -113,29 +99,14 @@ public class XMLMementoTest {
 
 	@Test
 	public void testSpacesInRootAreIllegal() {
-		try {
-			XMLMemento.createWriteRoot("with space");
-			fail("should fail");
-		} catch (Exception e) {
-			// expected
-		}
+		assertThrows(Exception.class, () -> XMLMemento.createWriteRoot("with space"));
 	}
 
 	@Test
 	public void testSpacesInKeysAreIllegal() {
 		XMLMemento memento = XMLMemento.createWriteRoot("foo");
-		try {
-			memento.createChild("with space", "bar");
-			fail("should fail");
-		} catch (Exception e) {
-			// expected
-		}
-		try {
-			memento.putString("with space", "bar");
-			fail("should fail");
-		} catch (Exception e) {
-			// expected
-		}
+		assertThrows(Exception.class, () -> memento.createChild("with space", "bar"));
+		assertThrows(Exception.class, () -> memento.putString("with space", "bar"));
 	}
 
 	@Test
@@ -508,12 +479,7 @@ public class XMLMementoTest {
 
 		for (final String key : illegalKeys) {
 			XMLMemento memento = XMLMemento.createWriteRoot("foo");
-			try {
-				memento.putString(key, "some string");
-				fail("putString with illegal key should fail");
-			} catch (Exception ex) {
-				// expected
-			}
+			assertThrows("should fail with illegal key", Exception.class, () -> memento.putString(key, "some string"));
 		}
 	}
 
