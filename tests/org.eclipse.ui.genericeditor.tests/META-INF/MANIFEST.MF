@@ -17,12 +17,11 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.ui;bundle-version="3.108.0",
  org.eclipse.ui.workbench.texteditor;bundle-version="3.10.0",
  org.eclipse.ui.ide;bundle-version="3.11.0",
- org.eclipse.jface.text.tests;bundle-version="3.11.100",
  org.eclipse.text.tests;bundle-version="3.11.0",
- org.eclipse.ui.workbench.texteditor.tests;bundle-version="3.11.100",
  org.eclipse.ui.editors;bundle-version="3.11.0",
  org.eclipse.core.expressions,
- org.eclipse.ui.tests.harness;bundle-version="1.4.500"
+ org.eclipse.ui.tests.harness;bundle-version="1.4.500",
+ org.eclipse.test
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
 Bundle-ActivationPolicy: lazy

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2025 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,10 +30,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
@@ -134,7 +134,8 @@ public class HighlightTest extends AbstratGenericEditorTest {
 		clearAnnotations();
 
 		editor.selectAndReveal(pos, 0);
-		waitForAnnotations(expectedHighlightCount);
+		DisplayHelper.waitForCondition(Display.getDefault(), 2000,
+				() -> getAnnotationsFromAnnotationModel().size() == expectedHighlightCount);
 
 		List<Annotation> annotations= getAnnotationsFromAnnotationModel();
 
@@ -162,15 +163,6 @@ public class HighlightTest extends AbstratGenericEditorTest {
 		IDocumentProvider dp= editor.getDocumentProvider();
 		IAnnotationModel am= dp.getAnnotationModel(editor.getEditorInput());
 		return am;
-	}
-
-	private void waitForAnnotations(int count) {
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return getAnnotationsFromAnnotationModel().size() == count;
-			}
-		}.waitForCondition(Display.getDefault(), 2000);
 	}
 
 	private List<Annotation> getAnnotationsFromAnnotationModel() {
