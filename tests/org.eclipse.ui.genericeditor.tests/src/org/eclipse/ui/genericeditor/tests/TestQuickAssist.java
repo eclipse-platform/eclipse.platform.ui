@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016-2021 Red Hat Inc. and others
+ * Copyright (c) 2016, 2025 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
+import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -31,9 +32,9 @@ import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.core.resources.IMarker;
 
-import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 import org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.TextOperationAction;
@@ -57,7 +58,7 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 
 	@Test
 	public void testMarkerQuickAssist() throws Exception {
-		DisplayHelper.driveEventQueue(Display.getDefault());
+		runEventLoop(Display.getDefault(), 0);
 		IMarker marker= null;
 		try {
 			marker= this.file.createMarker(IMarker.PROBLEM);
@@ -79,7 +80,7 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 
 	@Test
 	public void testMarkerQuickAssistLineOnly() throws Exception {
-		DisplayHelper.driveEventQueue(Display.getDefault());
+		runEventLoop(Display.getDefault(), 0);
 		IMarker marker= null;
 		try {
 			marker= this.file.createMarker(IMarker.PROBLEM);
@@ -116,12 +117,8 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 	 */
 	private void checkCompletionContent(final Table completionProposalList, String[] proposals) {
 		// should be instantaneous, but happens to go asynchronous on CI so let's allow a wait
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return completionProposalList.getItemCount() >= proposals.length;
-			}
-		}.waitForCondition(completionProposalList.getDisplay(), 200);
+		DisplayHelper.waitForCondition(completionProposalList.getDisplay(), 200,
+				() -> completionProposalList.getItemCount() >= proposals.length);
 		assertEquals(proposals.length, completionProposalList.getItemCount());
 		Set<String> existing= Arrays.stream(completionProposalList.getItems()).map(TableItem::getText).collect(Collectors.toSet());
 		for (String proposal : proposals) {

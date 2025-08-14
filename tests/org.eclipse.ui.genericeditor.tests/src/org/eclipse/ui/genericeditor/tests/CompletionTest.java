@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016-2017 Red Hat Inc. and others
+ * Copyright (c) 2016, 2025 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -68,10 +68,10 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
 import org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -101,7 +101,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		log.addLogListener(listener);
 		createAndOpenFile("Bug570488.txt", "bar 'bar'");
 		openConentAssist(false);
-		DisplayHelper.driveEventQueue(Display.getCurrent());
+		DisplayHelper.runEventLoop(Display.getCurrent(), 0);
 		assertFalse("There are errors in the log", listener.messages.stream().anyMatch(s -> s.matches(IStatus.ERROR)));
 		log.removeLogListener(listener);
 	}
@@ -116,7 +116,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		MockContentAssistProcessor service= new MockContentAssistProcessor();
 		ServiceRegistration<IContentAssistProcessor> registration= bundleContext.registerService(IContentAssistProcessor.class, service,
 				new Hashtable<>(Collections.singletonMap("contentType", "org.eclipse.ui.genericeditor.tests.content-type")));
-		DisplayHelper.driveEventQueue(Display.getCurrent());
+		DisplayHelper.runEventLoop(Display.getCurrent(), 0);
 		editor.selectAndReveal(3, 0);
 		this.completionShell= openConentAssist();
 		final Table completionProposalList= findCompletionSelectionControl(completionShell);

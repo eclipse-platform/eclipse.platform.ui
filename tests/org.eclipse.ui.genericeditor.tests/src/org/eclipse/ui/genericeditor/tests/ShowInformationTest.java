@@ -18,10 +18,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Assume;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+
+import org.eclipse.test.Screenshots;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
@@ -41,11 +43,9 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 import org.eclipse.ui.genericeditor.tests.contributions.AlrightyHoverProvider;
-
-import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 /**
  * @since 1.2
@@ -55,8 +55,8 @@ public class ShowInformationTest extends AbstratGenericEditorTest {
 	@Rule
 	public TestName testName= new TestName();
 
-	@Before
-	public void skipOnNonLinux() {
+	@BeforeClass
+	public static void skipOnNonLinux() {
 		Assume.assumeFalse("This test currently always fail on Windows (bug 505842), skipping", Platform.OS_WIN32.equals(Platform.getOS()));
 		Assume.assumeFalse("This test currently always fail on macOS (bug 505842), skipping", Platform.OS_MACOSX.equals(Platform.getOS()));
 	}
@@ -69,16 +69,14 @@ public class ShowInformationTest extends AbstratGenericEditorTest {
 
 	private Shell getHoverShell(AbstractInformationControlManager manager, boolean failOnError) {
 		AbstractInformationControl[] control= { null };
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				control[0]= (AbstractInformationControl) new Accessor(manager, AbstractInformationControlManager.class).get("fInformationControl");
-				return control[0] != null;
-			}
-		}.waitForCondition(this.editor.getSite().getShell().getDisplay(), 5000);
+		DisplayHelper.waitForCondition(this.editor.getSite().getShell().getDisplay(), 5000, () -> {
+			control[0] = (AbstractInformationControl) new Accessor(manager, AbstractInformationControlManager.class)
+					.get("fInformationControl");
+			return control[0] != null;
+		});
 		if (control[0] == null) {
 			if (failOnError) {
-				ScreenshotTest.takeScreenshot(getClass(), testName.getMethodName(), System.out);
+				Screenshots.takeScreenshot(getClass(), testName.getMethodName());
 				fail();
 			} else {
 				return null;
@@ -86,12 +84,7 @@ public class ShowInformationTest extends AbstratGenericEditorTest {
 		}
 		boolean[] result = {false};
 		Shell shell= (Shell) new Accessor(control[0], AbstractInformationControl.class).get("fShell");
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return (result[0] = shell.isVisible());
-			}
-		}.waitForCondition(control[0].getShell().getDisplay(), 2000);
+		DisplayHelper.waitForCondition(control[0].getShell().getDisplay(), 2000, () -> result[0] = shell.isVisible());
 		if (failOnError) {
 			assertTrue(shell.isVisible());
 		}
@@ -106,20 +99,20 @@ public class ShowInformationTest extends AbstratGenericEditorTest {
 				return res;
 			}
 			String controlLabel= null;
-			if (control instanceof Label) {
-				controlLabel= ((Label) control).getText();
-			} else if (control instanceof Link) {
-				controlLabel= ((Link) control).getText();
-			} else if (control instanceof Text) {
-				controlLabel= ((Text) control).getText();
-			} else if (control instanceof StyledText) {
-				controlLabel= ((StyledText) control).getText();
+			if (control instanceof Label l) {
+				controlLabel= l.getText();
+			} else if (control instanceof Link link) {
+				controlLabel= link.getText();
+			} else if (control instanceof Text text) {
+				controlLabel= text.getText();
+			} else if (control instanceof StyledText styled) {
+				controlLabel= styled.getText();
 			}
 			if (controlLabel != null && controlLabel.contains(label)) {
 				return res;
 			}
-		} else if (control instanceof Composite) {
-			for (Control child : ((Composite) control).getChildren()) {
+		} else if (control instanceof Composite comp) {
+			for (Control child : comp.getChildren()) {
 				T res= findControl(child, controlType, label);
 				if (res != null) {
 					return res;
@@ -137,12 +130,8 @@ public class ShowInformationTest extends AbstratGenericEditorTest {
 		final int caretLocation= 2;
 		this.editor.selectAndReveal(caretLocation, 0);
 		final StyledText editorTextWidget= (StyledText) this.editor.getAdapter(Control.class);
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation;
-			}
-		}.waitForCondition(editorTextWidget.getDisplay(), 3000);
+		DisplayHelper.waitForCondition(editorTextWidget.getDisplay(), 3000,
+				() -> editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation);
 		// sending event to trigger hover computation
 		editorTextWidget.getShell().forceActive();
 		editorTextWidget.getShell().setActive();
@@ -157,12 +146,8 @@ public class ShowInformationTest extends AbstratGenericEditorTest {
 		
 		AbstractInformationControlManager informationControlManager= (AbstractInformationControlManager) new Accessor(viewer, SourceViewer.class).get("fInformationPresenter");
 		// retrieving hover content
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return getShowInformationData(informationControlManager) != null;
-			}
-		}.waitForCondition(editorTextWidget.getDisplay(), 6000);
+		DisplayHelper.waitForCondition(editorTextWidget.getDisplay(), 6000,
+				() -> getShowInformationData(informationControlManager) != null);
 		return informationControlManager;
 	}
 }

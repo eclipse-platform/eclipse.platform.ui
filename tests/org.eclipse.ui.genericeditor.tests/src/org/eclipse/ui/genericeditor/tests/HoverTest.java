@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.junit.Assume;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.test.Screenshots;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IMarker;
@@ -48,15 +48,13 @@ import org.eclipse.jface.text.AbstractInformationControl;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 import org.eclipse.ui.genericeditor.tests.contributions.AlrightyHoverProvider;
 import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
 import org.eclipse.ui.genericeditor.tests.contributions.HelloHoverProvider;
 import org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator;
 import org.eclipse.ui.genericeditor.tests.contributions.WorldHoverProvider;
-
-import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 /**
  * @since 1.0
@@ -68,8 +66,8 @@ public class HoverTest extends AbstratGenericEditorTest {
 	@Rule
 	public TestName testName= new TestName();
 
-	@Before
-	public void skipOnNonLinux() {
+	@BeforeClass
+	public static void skipOnNonLinux() {
 		Assume.assumeFalse("This test currently always fail on Windows (bug 505842), skipping", Platform.OS_WIN32.equals(Platform.getOS()));
 		Assume.assumeFalse("This test currently always fail on macOS (bug 505842), skipping", Platform.OS_MACOSX.equals(Platform.getOS()));
 	}
@@ -146,12 +144,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 			event.type= SWT.Selection;
 			link.notifyListeners(SWT.Selection, event);
 			final IMarker m= marker;
-			new DisplayHelper() {
-				@Override
-				protected boolean condition() {
-					return !m.exists();
-				}
-			}.waitForCondition(event.display, 1000);
+			DisplayHelper.waitForCondition(event.display, 1000, () -> !m.exists());
 			assertFalse(marker.exists());
 		} finally {
 			if (marker != null && marker.exists()) {
@@ -162,28 +155,21 @@ public class HoverTest extends AbstratGenericEditorTest {
 
 	private Shell getHoverShell(AbstractInformationControlManager manager, boolean failOnError) {
 		AbstractInformationControl[] control= { null };
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				control[0]= (AbstractInformationControl) new Accessor(manager, AbstractInformationControlManager.class).get("fInformationControl");
-				return control[0] != null;
-			}
-		}.waitForCondition(this.editor.getSite().getShell().getDisplay(), 5000);
+		DisplayHelper.waitForCondition(this.editor.getSite().getShell().getDisplay(), 5000, () -> {
+			control[0] = (AbstractInformationControl) new Accessor(manager, AbstractInformationControlManager.class)
+					.get("fInformationControl");
+			return control[0] != null;
+		});
 		if (control[0] == null) {
 			if (failOnError) {
-				ScreenshotTest.takeScreenshot(getClass(), testName.getMethodName(), System.out);
+				Screenshots.takeScreenshot(getClass(), testName.getMethodName());
 				fail();
 			} else {
 				return null;
 			}
 		}
 		Shell shell= (Shell) new Accessor(control[0], AbstractInformationControl.class).get("fShell");
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return shell.isVisible();
-			}
-		}.waitForCondition(this.editor.getSite().getShell().getDisplay(), 2000);
+		DisplayHelper.waitForCondition(this.editor.getSite().getShell().getDisplay(), 2000, () -> shell.isVisible());
 		if (failOnError) {
 			assertTrue(shell.isVisible());
 		}
@@ -198,20 +184,20 @@ public class HoverTest extends AbstratGenericEditorTest {
 				return res;
 			}
 			String controlLabel= null;
-			if (control instanceof Label) {
-				controlLabel= ((Label) control).getText();
-			} else if (control instanceof Link) {
-				controlLabel= ((Link) control).getText();
-			} else if (control instanceof Text) {
-				controlLabel= ((Text) control).getText();
-			} else if (control instanceof StyledText) {
-				controlLabel= ((StyledText) control).getText();
+			if (control instanceof Label l) {
+				controlLabel= l.getText();
+			} else if (control instanceof Link link) {
+				controlLabel= link.getText();
+			} else if (control instanceof Text text) {
+				controlLabel= text.getText();
+			} else if (control instanceof StyledText styled) {
+				controlLabel= styled.getText();
 			}
 			if (controlLabel != null && controlLabel.contains(label)) {
 				return res;
 			}
-		} else if (control instanceof Composite) {
-			for (Control child : ((Composite) control).getChildren()) {
+		} else if (control instanceof Composite comp) {
+			for (Control child : comp.getChildren()) {
 				T res= findControl(child, controlType, label);
 				if (res != null) {
 					return res;
@@ -238,12 +224,8 @@ public class HoverTest extends AbstratGenericEditorTest {
 			editor.setFocus();
 			this.editor.selectAndReveal(caretLocation, 0);
 			final StyledText editorTextWidget= (StyledText) this.editor.getAdapter(Control.class);
-			new DisplayHelper() {
-				@Override
-				protected boolean condition() {
-					return editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation;
-				}
-			}.waitForCondition(editorTextWidget.getDisplay(), 3000);
+			DisplayHelper.waitForCondition(editorTextWidget.getDisplay(), 3000, ()->
+					editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation);
 			assertTrue("editor does not have focus", editorTextWidget.isFocusControl());
 			// sending event to trigger hover computation
 			Event hoverEvent= new Event();
@@ -256,12 +238,8 @@ public class HoverTest extends AbstratGenericEditorTest {
 			editorTextWidget.getDisplay().setCursorLocation(editorTextWidget.toDisplay(hoverEvent.x, hoverEvent.y));
 			editorTextWidget.notifyListeners(SWT.MouseHover, hoverEvent);
 			// retrieving hover content
-			foundHoverData = new DisplayHelper() {
-				@Override
-				protected boolean condition() {
-					return getHoverData(textHoverManager) != null;
-				}
-			}.waitForCondition(hoverEvent.display, 6000);
+			foundHoverData = DisplayHelper.waitForCondition(hoverEvent.display, 6000,
+					() -> getHoverData(textHoverManager) != null);
 		}
 		assertTrue("hover data not found", foundHoverData);
 		return textHoverManager;

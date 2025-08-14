@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Avaloq Group AG (http://www.avaloq.com).
+ * Copyright (c) 2022, 2025 Avaloq Group AG (http://www.avaloq.com).
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
+import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
+import static org.eclipse.ui.tests.harness.util.DisplayHelper.waitForCondition;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,14 +25,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import org.eclipse.jface.text.tests.util.DisplayHelper;
-
 import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
 
 public class DoubleClickTest extends AbstratGenericEditorTest {
-	private static final String EDITOR_TEXT= "one two three\n" +
-			"four five six\n" +
-			"seven eight nine";
+	private static final String EDITOR_TEXT= """
+		one two three
+		four five six
+		seven eight nine""";
 
 	@Override
 	protected void createAndOpenFile() throws Exception {
@@ -54,13 +56,10 @@ public class DoubleClickTest extends AbstratGenericEditorTest {
 	private void checkDoubleClickSelectionForCaretOffset(int pos, String expectedSelection) throws Exception {
 		editor.selectAndReveal(pos, 0);
 		final StyledText editorTextWidget= (StyledText) editor.getAdapter(Control.class);
-		DisplayHelper.driveEventQueue(editorTextWidget.getDisplay());
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == pos;
-			}
-		}.waitForCondition(editorTextWidget.getDisplay(), 3000);
+		runEventLoop(editorTextWidget.getDisplay(), 0);
+		waitForCondition(editorTextWidget.getDisplay(), 3000, ()->
+				editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == pos
+		);
 		editorTextWidget.getShell().forceActive();
 		editorTextWidget.getShell().setActive();
 		editorTextWidget.getShell().setFocus();
@@ -72,7 +71,7 @@ public class DoubleClickTest extends AbstratGenericEditorTest {
 	
 	private void doubleClick(StyledText widget, int x, int y) {
 		widget.getDisplay().setCursorLocation(widget.toDisplay(x, y));
-		DisplayHelper.driveEventQueue(widget.getDisplay());
+		runEventLoop(widget.getDisplay(), 0);
 
 		Event mouseDownEvent= new Event();
 		mouseDownEvent.button = 1;
@@ -104,6 +103,6 @@ public class DoubleClickTest extends AbstratGenericEditorTest {
 		for (Listener listener : listeners) {
 			listener.handleEvent(event);
 		}
-		DisplayHelper.driveEventQueue(widget.getDisplay());
+		runEventLoop(widget.getDisplay(), 0);
 	}
 }
