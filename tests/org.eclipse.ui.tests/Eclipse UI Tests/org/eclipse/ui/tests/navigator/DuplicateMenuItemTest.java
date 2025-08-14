@@ -23,24 +23,15 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * The DuplicateMenuItemTest is a class for testing the popups
  * and window menus for the navigator to check for duplicate menu
  * entries.
  */
-@RunWith(JUnit4.class)
 public class DuplicateMenuItemTest extends AbstractNavigatorTest {
-
-	/**
-	 * Constructor for DuplicateMenuItemTest.
-	 */
-	public DuplicateMenuItemTest() {
-		super(DuplicateMenuItemTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testSelection() {
@@ -82,12 +73,8 @@ public class DuplicateMenuItemTest extends AbstractNavigatorTest {
 		checkWorkbenchMenu();
 	}
 
-	/**
-	 * Sets up the hierarchy.
-	 */
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUpHierarchy() throws Exception {
 		createTestFile();
 		showNav();
 	}

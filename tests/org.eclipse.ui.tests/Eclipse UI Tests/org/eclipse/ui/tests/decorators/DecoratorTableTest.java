@@ -19,22 +19,12 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * The DecoratorTableTest is the test for decorating tables.
  */
-@RunWith(JUnit4.class)
 @Ignore("Disabled due to timing issues")
 public class DecoratorTableTest extends DecoratorViewerTest {
-
-	/**
-	 * Create a new instance of the receiver.
-	 */
-	public DecoratorTableTest() {
-		super(DecoratorTableTest.class.getSimpleName());
-	}
 
 	@Override
 	protected void backgroundCheck(IViewPart view) {

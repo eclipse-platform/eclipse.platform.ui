@@ -13,20 +13,21 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @version 1.0
  */
-@RunWith(JUnit4.class)
 public class DecoratorTestCase extends AbstractNavigatorTest implements
 		ILabelProviderListener {
 
@@ -34,19 +35,8 @@ public class DecoratorTestCase extends AbstractNavigatorTest implements
 
 	private boolean updated = false;
 
-	/**
-	 * Constructor for DecoratorTestCase.
-	 */
-	public DecoratorTestCase() {
-		super(DecoratorTestCase.class.getSimpleName());
-	}
-
-	/**
-	 * Sets up the hierarchy.
-	 */
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUpHierarchy() throws Exception {
 		createTestFile();
 		showNav();
 
@@ -69,9 +59,8 @@ public class DecoratorTestCase extends AbstractNavigatorTest implements
 	/**
 	 * Remove the listener.
 	 */
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public void removeListener() throws Exception {
 		getDecoratorManager().removeListener(this);
 	}
 

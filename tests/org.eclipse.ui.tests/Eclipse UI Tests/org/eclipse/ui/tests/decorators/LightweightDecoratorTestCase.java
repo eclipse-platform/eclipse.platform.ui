@@ -14,21 +14,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @version 1.0
  */
-@RunWith(JUnit4.class)
 public class LightweightDecoratorTestCase extends DecoratorEnablementTestCase {
 
-	/**
-	 * Constructor for DecoratorTestCase.
-	 */
-	public LightweightDecoratorTestCase() {
-		super(LightweightDecoratorTestCase.class.getSimpleName());
+	@Override
+	protected String getTestDecoratorId() {
+		return "org.eclipse.ui.tests.decorators.lightweightdecorator";
 	}
 
 	/**

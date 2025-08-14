@@ -13,12 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -31,29 +34,18 @@ public abstract class DecoratorEnablementTestCase extends AbstractNavigatorTest
 
 	protected boolean updated = false;
 
-	/**
-	 * Constructor for DecoratorTestCase.
-	 */
-	public DecoratorEnablementTestCase(String testName) {
-		super(testName);
-	}
+	protected abstract String getTestDecoratorId();
 
-	/**
-	 * Sets up the hierarchy.
-	 */
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUpHierarchy() throws CoreException {
 		createTestFile();
 		showNav();
 
-		WorkbenchPlugin.getDefault().getDecoratorManager().addListener(this);
+		getDecoratorManager().addListener(this);
 
-		DecoratorDefinition[] definitions = WorkbenchPlugin.getDefault()
-				.getDecoratorManager().getAllDecoratorDefinitions();
+		DecoratorDefinition[] definitions = getDecoratorManager().getAllDecoratorDefinitions();
 		for (DecoratorDefinition definition2 : definitions) {
-			if (definition2.getId().equals(
-					"org.eclipse.ui.tests.decorators.lightweightdecorator")) {
+			if (definition2.getId().equals(getTestDecoratorId())) {
 				definition = definition2;
 			}
 		}
@@ -63,15 +55,10 @@ public abstract class DecoratorEnablementTestCase extends AbstractNavigatorTest
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
 	}
 
-	/**
-	 * Remove the listener.
-	 */
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public final void removeListener() throws Exception {
 		getDecoratorManager().removeListener(this);
 	}
-
 
 	/**
 	 * Test enabling the contributor

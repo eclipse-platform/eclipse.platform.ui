@@ -13,39 +13,34 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import static org.junit.Assert.assertFalse;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * @version 	1.0
  */
-@RunWith(JUnit4.class)
 public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase {
 	private final Collection<DecoratorDefinition> problemDecorators = new ArrayList<>();
 
 	private DecoratorDefinition light;
 
-	/**
-	 * Constructor for DecoratorTestCase.
-	 */
-	public ExceptionDecoratorTestCase() {
-		super(ExceptionDecoratorTestCase.class.getSimpleName());
+	@Override
+	protected String getTestDecoratorId() {
+		return "org.eclipse.ui.tests.decorators.lightweightdecorator";
 	}
 
-	/**
-	 * Sets up the hierarchy.
-	 */
-	@Override
-	protected void doSetUp() throws Exception {
+	@Before
+	public void setUpAdditionalDecorators() throws Exception {
 		//reset the static fields so that the decorators will fail
 		HeavyNullImageDecorator.fail = true;
 		HeavyNullTextDecorator.fail = true;
@@ -67,12 +62,10 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase {
 				light = definition2;
 			}
 		}
-		super.doSetUp();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public void tearDown() throws Exception {
 
 		//Need to wait for decoration to end to allow for all
 		//errors to occur
@@ -81,11 +74,7 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase {
 		} catch (OperationCanceledException | InterruptedException e) {
 		}
 
-		//Be sure that the decorators were all disabled on errors.
-		Iterator<DecoratorDefinition> problemIterator = problemDecorators.iterator();
-		while (problemIterator.hasNext()) {
-			DecoratorDefinition next = problemIterator
-					.next();
+		for (DecoratorDefinition next : problemDecorators) {
 			assertFalse("Enabled " + next.getName(), next.isEnabled());
 		}
 
