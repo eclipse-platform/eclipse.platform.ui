@@ -22,7 +22,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -31,8 +30,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceMemento;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
@@ -328,39 +325,6 @@ public abstract class UITestCase extends TestCase {
 		processEvents();
 		waitForJobs(400, 3000);
 		return display.getActiveShell() == shell;
-	}
-
-	public static class ShellStateListener implements ShellListener {
-		private final AtomicBoolean shellIsActive;
-
-		public ShellStateListener(AtomicBoolean shellIsActive) {
-			this.shellIsActive = shellIsActive;
-		}
-
-		@Override
-		public void shellIconified(ShellEvent e) {
-			shellIsActive.set(false);
-		}
-
-		@Override
-		public void shellDeiconified(ShellEvent e) {
-			shellIsActive.set(true);
-		}
-
-		@Override
-		public void shellDeactivated(ShellEvent e) {
-			shellIsActive.set(false);
-		}
-
-		@Override
-		public void shellClosed(ShellEvent e) {
-			shellIsActive.set(false);
-		}
-
-		@Override
-		public void shellActivated(ShellEvent e) {
-			shellIsActive.set(true);
-		}
 	}
 
 	public static interface Condition {

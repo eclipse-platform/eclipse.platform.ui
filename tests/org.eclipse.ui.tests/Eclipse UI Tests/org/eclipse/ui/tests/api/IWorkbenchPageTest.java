@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -3332,4 +3333,38 @@ public class IWorkbenchPageTest extends UITestCase {
 
 		assertEquals(part, stack[0]);
 	}
+
+	private static class ShellStateListener implements ShellListener {
+		private final AtomicBoolean shellIsActive;
+
+		public ShellStateListener(AtomicBoolean shellIsActive) {
+			this.shellIsActive = shellIsActive;
+		}
+
+		@Override
+		public void shellIconified(ShellEvent e) {
+			shellIsActive.set(false);
+		}
+
+		@Override
+		public void shellDeiconified(ShellEvent e) {
+			shellIsActive.set(true);
+		}
+
+		@Override
+		public void shellDeactivated(ShellEvent e) {
+			shellIsActive.set(false);
+		}
+
+		@Override
+		public void shellClosed(ShellEvent e) {
+			shellIsActive.set(false);
+		}
+
+		@Override
+		public void shellActivated(ShellEvent e) {
+			shellIsActive.set(true);
+		}
+	}
+
 }
