@@ -40,6 +40,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -48,12 +49,15 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 
+	@ClassRule
+	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
 	private final String id;
 
-	@Parameters
+	@Parameters(name = "{index}: {0}")
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] { { EmptyPerspective.PERSP_ID2, BasicPerformanceTest.NONE }, {
-				UIPerformanceTestSetup.PERSPECTIVE1,
+				UIPerformanceTestRule.PERSPECTIVE1,
 				BasicPerformanceTest.LOCAL },
 				{ "org.eclipse.ui.resourcePerspective", BasicPerformanceTest.NONE },
 				{ "org.eclipse.jdt.ui.JavaPerspective", BasicPerformanceTest.NONE },
@@ -61,7 +65,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 	}
 
 	public OpenClosePerspectiveTest(String id, int tagging) {
-		super("testOpenClosePerspectives:" + id, tagging);
+		super(tagging);
 		this.id = id;
 	}
 

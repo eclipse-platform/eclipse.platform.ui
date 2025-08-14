@@ -30,7 +30,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
+import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
 
 
 /**
@@ -73,7 +73,7 @@ public class EditorWidgetFactory extends TestWidgetFactory {
 		assertNotNull(activePage);
 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProject testProject = workspace.getRoot().getProject(UIPerformanceTestSetup.PROJECT_NAME);
+		IProject testProject = workspace.getRoot().getProject(UIPerformanceTestRule.PROJECT_NAME);
 		IFile file = testProject.getFile(filename);
 
 		if (editorId == null) {

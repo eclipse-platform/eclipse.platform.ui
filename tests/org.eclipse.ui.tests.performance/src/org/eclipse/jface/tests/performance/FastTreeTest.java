@@ -20,21 +20,14 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.test.performance.Dimension;
+import org.junit.Test;
 
 public class FastTreeTest extends TreeAddTest {
-
-
-	public FastTreeTest(String testName, int tagging) {
-		super(testName, tagging);
-	}
-
-	public FastTreeTest(String testName) {
-		super(testName);
-	}
 
 	/**
 	 * Test addition to the tree one element at a time.
 	 */
+	@Test
 	public void testAddTenTenTimes() throws CoreException {
 
 		doTestAdd(10, TEST_COUNT, false);
@@ -44,6 +37,7 @@ public class FastTreeTest extends TreeAddTest {
 	/**
 	 * Test addition to the tree one element at a time.
 	 */
+	@Test
 	public void testAddFiftyTenTimes() throws CoreException {
 
 		doTestAdd(50, TEST_COUNT, false);
@@ -52,6 +46,7 @@ public class FastTreeTest extends TreeAddTest {
 	/**
 	 * Test addition to the tree one element at a time.
 	 */
+	@Test
 	public void testAddHundredTenTimes() throws CoreException {
 		tagAsSummary("JFace - Add 10000 items 100 at a time TreeViewer 10 times",
 				Dimension.ELAPSED_PROCESS);

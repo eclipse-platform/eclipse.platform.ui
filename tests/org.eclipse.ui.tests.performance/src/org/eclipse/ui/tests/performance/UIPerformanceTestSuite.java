@@ -13,38 +13,29 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test all areas of the UI API.
  */
-public class UIPerformanceTestSuite extends FilteredTestSuite {
+@RunWith(Suite.class)
+@SuiteClasses({ //
+		GenerateIdentifiersTest.class, //
+		WorkbenchPerformanceSuite.class, //
+		OpenClosePerspectiveTest.class, //
+		PerspectiveSwitchTest.class, //
+		OpenCloseWindowTest.class, //
+		OpenCloseViewTest.class, //
+		OpenCloseEditorTest.class, //
+		OpenMultipleEditorTest.class, //
+		EditorSwitchTest.class, //
+		CommandsPerformanceTest.class, //
+		LabelProviderTest.class, //
+		ProgressReportingTest.class, //
+		OpenProjectExplorerFolderTest.class, //
+})
+public class UIPerformanceTestSuite {
 
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new UIPerformanceTestSetup(new UIPerformanceTestSuite());
-	}
-
-	/**
-	 * Construct the test suite.
-	 */
-	public UIPerformanceTestSuite() {
-		super();
-		addTestSuite(GenerateIdentifiersTest.class);
-		addTest(new WorkbenchPerformanceSuite());
-		addTest(new JUnit4TestAdapter(OpenClosePerspectiveTest.class));
-		addTest(new JUnit4TestAdapter(PerspectiveSwitchTest.class));
-		addTest(new JUnit4TestAdapter(OpenCloseWindowTest.class));
-		addTest(new JUnit4TestAdapter(OpenCloseViewTest.class));
-		addTest(new JUnit4TestAdapter(OpenCloseEditorTest.class));
-		addTest(new JUnit4TestAdapter(OpenMultipleEditorTest.class));
-		addTest(new JUnit4TestAdapter(EditorSwitchTest.class));
-		addTestSuite(CommandsPerformanceTest.class);
-		addTest(new JUnit4TestAdapter(LabelProviderTest.class));
-		addTestSuite(ProgressReportingTest.class);
-		addTestSuite(OpenProjectExplorerFolderTest.class);
-	}
 }

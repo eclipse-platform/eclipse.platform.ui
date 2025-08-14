@@ -19,6 +19,7 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Test;
 
 /**
  * ComboViewerRefreshTest is a test of refreshes of difference size in the combo
@@ -31,16 +32,6 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	private RefreshTestContentProvider contentProvider;
 
 	private static int ELEMENT_COUNT;
-
-	public ComboViewerRefreshTest(String testName, int tagging) {
-		super(testName, tagging);
-
-	}
-
-	public ComboViewerRefreshTest(String testName) {
-		super(testName);
-
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Shell shell) {
@@ -55,6 +46,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	/**
 	 * Test the time for doing a refresh.
 	 */
+	@Test
 	public void testRefresh() throws Throwable {
 		ELEMENT_COUNT = 1000;
 		openBrowser();
@@ -73,6 +65,7 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	/**
 	 * Test the time for doing a refresh.
 	 */
+	@Test
 	public void testRefreshSmall() throws Throwable {
 		ELEMENT_COUNT = 50;
 		openBrowser();

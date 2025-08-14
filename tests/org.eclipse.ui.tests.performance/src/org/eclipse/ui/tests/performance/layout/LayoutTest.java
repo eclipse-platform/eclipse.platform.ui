@@ -41,9 +41,6 @@ public class LayoutTest extends BasicPerformanceTest {
 	private final boolean flushState;
 
 	public LayoutTest(TestWidgetFactory widgetFactory, boolean flushState) {
-		super(widgetFactory.getName() + " layout("
-				+ (flushState ? "true" : "false") + ")");
-
 		this.widgetFactory = widgetFactory;
 		this.flushState = flushState;
 	}

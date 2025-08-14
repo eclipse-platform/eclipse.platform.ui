@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,12 +28,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.test.performance.PerformanceTestCase;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
+import org.junit.ClassRule;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 
 
@@ -57,11 +61,16 @@ import org.osgi.framework.Bundle;
  * "sleep" to simulate computations, it only effects Elapsed Time (not CPU
  * Time).
  */
-public class OpenProjectExplorerFolderTest extends PerformanceTestCase {
+public class OpenProjectExplorerFolderTest extends PerformanceTestCaseJunit4 {
+
+	@ClassRule
+	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
 	/*
 	 * performance testcase for bug 106158
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=106158
 	 */
+	@Test
 	public void testOpenNavigatorFolder() {
 		IProject project = createProject("testViewAndContentTypeProject");
 		Bundle bundle = Platform.getBundle("org.eclipse.ui.tests.performance");

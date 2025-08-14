@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -37,19 +38,10 @@ public class FileImageDescriptorTest extends BasicPerformanceTest {
 
 	protected static final String IMAGES_DIRECTORY = "/icons/imagetests";
 
-	public FileImageDescriptorTest(String testName, int tagging) {
-		super(testName, tagging);
-
-	}
-
-	public FileImageDescriptorTest(String testName) {
-		super(testName);
-
-	}
-
 	/**
 	 * Test the time for doing a refresh.
 	 */
+	@Test
 	public void testRefresh() throws Throwable {
 
 		exercise(() -> {

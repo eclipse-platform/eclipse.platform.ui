@@ -22,6 +22,7 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -36,6 +37,9 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class OpenCloseViewTest extends BasicPerformanceTest {
 
+	@ClassRule
+	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
 	@Parameters(name = "{index}: {0}")
 	public static Collection<Object[]> data() {
 		return ViewPerformanceUtil.getAllTestableViewIds().stream().map(
@@ -47,7 +51,7 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
 	private final String viewId;
 
 	public OpenCloseViewTest(String viewId, int tagging) {
-		super("showView:" + viewId, tagging);
+		super(tagging);
 		this.viewId = viewId;
 	}
 
@@ -63,8 +67,6 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
 		processEvents();
 
 		tagIfNecessary("UI - Open/Close " + view1.getTitle(), Dimension.ELAPSED_PROCESS);
-		if ("org.eclipse.ui.views.BookmarkView".equals(viewId))
-			setDegradationComment("The test results are influenced by the test machine setup. See bug 340136.");
 
 		for (int j = 0; j < 100; j++) {
 

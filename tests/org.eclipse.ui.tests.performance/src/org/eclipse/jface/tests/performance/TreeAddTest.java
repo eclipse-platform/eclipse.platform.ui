@@ -20,22 +20,16 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.test.performance.Dimension;
+import org.junit.Test;
 
 public class TreeAddTest extends TreeTest {
 
 	static int TEST_COUNT = 1000;
 
-	public TreeAddTest(String testName, int tagging) {
-		super(testName, tagging);
-	}
-
-	public TreeAddTest(String testName) {
-		super(testName);
-	}
-
 	/**
 	 * Test addition to the tree one element at a time.
 	 */
+	@Test
 	public void testAddOneAtATime() {
 		openBrowser();
 
@@ -59,6 +53,7 @@ public class TreeAddTest extends TreeTest {
 	/**
 	 * Test addition to the tree one element at a time.
 	 */
+	@Test
 	public void testAddTen() throws CoreException {
 
 		doTestAdd(10, TEST_COUNT, false);
@@ -67,6 +62,7 @@ public class TreeAddTest extends TreeTest {
 	/**
 	 * Test addition to the tree one element at a time.
 	 */
+	@Test
 	public void testAddFifty() throws CoreException {
 
 		doTestAdd(50, TEST_COUNT, false);
@@ -75,6 +71,7 @@ public class TreeAddTest extends TreeTest {
 	/**
 	 * Test addition to the tree one element at a time.
 	 */
+	@Test
 	public void testAddHundred() throws CoreException {
 
 		tagIfNecessary("JFace - Add 1000 items in 10 blocks to TreeViewer",
@@ -127,6 +124,7 @@ public class TreeAddTest extends TreeTest {
 	/**
 	 * Test addition to the tree.
 	 */
+	@Test
 	public void testAddThousand() throws CoreException {
 		doTestAdd(1000, 2000, false);
 	}
@@ -134,6 +132,7 @@ public class TreeAddTest extends TreeTest {
 	/**
 	 * Test addition to the tree one element at a time.
 	 */
+	@Test
 	public void testAddTwoThousand() throws CoreException {
 
 		doTestAdd(2000, 4000, false);
@@ -143,6 +142,7 @@ public class TreeAddTest extends TreeTest {
 	/**
 	 * Test addition to the tree with the items presorted.
 	 */
+	@Test
 	public void testAddHundredPreSort() throws CoreException {
 
 		doTestAdd(100, 1000, true);
@@ -151,6 +151,7 @@ public class TreeAddTest extends TreeTest {
 	/**
 	 * Test addition to the tree with the items presorted.
 	 */
+	@Test
 	public void testAddThousandPreSort() throws CoreException {
 		tagAsGlobalSummary("JFace - Add 2000 items in 2 blocks to TreeViewer",
 				Dimension.ELAPSED_PROCESS);

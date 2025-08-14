@@ -24,8 +24,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.function.ThrowingRunnable;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -36,7 +40,7 @@ import org.osgi.framework.FrameworkUtil;
  *
  * @since 3.1
  */
-public abstract class BasicPerformanceTest extends UITestCase {
+public abstract class BasicPerformanceTest extends PerformanceTestCaseJunit4 {
 
 	public static final int NONE = 0;
 
@@ -44,7 +48,8 @@ public abstract class BasicPerformanceTest extends UITestCase {
 
 	public static final int GLOBAL = 2;
 
-	protected PerformanceTester tester;
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private IProject testProject;
 
@@ -52,8 +57,8 @@ public abstract class BasicPerformanceTest extends UITestCase {
 
 	final private boolean tagAsSummary;
 
-	public BasicPerformanceTest(String testName) {
-		this(testName, NONE);
+	public BasicPerformanceTest() {
+		this(NONE);
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
 		BundleContext context = bundle != null ? bundle.getBundleContext() : null;
 		if (context == null) { // most likely run in a wrong launch mode
@@ -62,8 +67,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 		}
 	}
 
-	public BasicPerformanceTest(String testName, int tagging) {
-		super(testName);
+	public BasicPerformanceTest(int tagging) {
 		tagAsGlobalSummary = ((tagging & GLOBAL) != 0);
 		tagAsSummary = ((tagging & LOCAL) != 0);
 	}
@@ -87,93 +91,32 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	}
 
 	@Override
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+		doSetUp();
+	}
+
 	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		tester = new PerformanceTester(this);
 	}
 
 	@Override
+	@After
+	public void tearDown() throws Exception {
+		doTearDown();
+		super.tearDown();
+	}
+
 	protected void doTearDown() throws Exception {
-		super.doTearDown();
-		tester.dispose();
 	}
 
 	protected IProject getProject() {
 		if (testProject == null) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			testProject = workspace.getRoot().getProject(
-					UIPerformanceTestSetup.PROJECT_NAME);
+					UIPerformanceTestRule.PROJECT_NAME);
 		}
 		return testProject;
-	}
-
-	/**
-	 * Asserts default properties of the measurements captured for this test case.
-	 *
-	 * @throws RuntimeException if the properties do not hold
-	 */
-	public void assertPerformance() {
-		tester.assertPerformance();
-	}
-
-	/**
-	 * Asserts that the measurement specified by the given dimension is within a
-	 * certain range with respect to some reference value. If the specified
-	 * dimension isn't available, the call has no effect.
-	 *
-	 * @param dim             the Dimension to check
-	 * @param lowerPercentage a negative number indicating the percentage the
-	 *                        measured value is allowed to be smaller than some
-	 *                        reference value
-	 * @param upperPercentage a positive number indicating the percentage the
-	 *                        measured value is allowed to be greater than some
-	 *                        reference value
-	 * @throws RuntimeException if the properties do not hold
-	 */
-	public void assertPerformanceInRelativeBand(Dimension dim,
-			int lowerPercentage, int upperPercentage) {
-		tester.assertPerformanceInRelativeBand(dim, lowerPercentage,
-				upperPercentage);
-	}
-
-	public void commitMeasurements() {
-		tester.commitMeasurements();
-	}
-
-	/**
-	 * Called from within a test case immediately before the code to measure is run.
-	 * It starts capturing of performance data. Must be followed by a call to
-	 * {@link org.eclipse.test.performance.PerformanceTestCase#stopMeasuring()}before
-	 * subsequent calls to this method or
-	 * {@link org.eclipse.test.performance.PerformanceTestCase#commitMeasurements()}.
-	 */
-	public void startMeasuring() {
-		tester.startMeasuring();
-	}
-
-	public void stopMeasuring() {
-		tester.stopMeasuring();
-	}
-
-	/**
-	 * Mark the scenario of this test case to be included into the global
-	 * performance summary. The summary shows the given dimension of the
-	 * scenario and labels the scenario with the short name.
-	 *
-	 * @param shortName
-	 *            a short (shorter than 40 characters) descritive name of the
-	 *            scenario
-	 * @param dimension
-	 *            the dimension to show in the summary
-	 */
-	public void tagAsGlobalSummary(String shortName, Dimension dimension) {
-		System.out.println("GLOBAL " + shortName);
-		tester.tagAsGlobalSummary(shortName, dimension);
-	}
-
-	public void tagAsSummary(String shortName, Dimension dimension) {
-		System.out.println("LOCAL " + shortName);
-		tester.tagAsSummary(shortName, dimension);
 	}
 
 	public void tagIfNecessary(String shortName, Dimension dimension) {
@@ -255,14 +198,4 @@ public abstract class BasicPerformanceTest extends UITestCase {
 		}
 	}
 
-	/**
-	 * Set the comment for the receiver to string. Note this is added to the
-	 * output as is so you will need to add markup if you need a link.
-	 *
-	 * @param string
-	 *            The comment to write out for the test.
-	 */
-	public void setDegradationComment(String string) {
-		tester.setDegradationComment(string);
-	}
 }

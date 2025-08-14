@@ -46,6 +46,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -58,6 +59,9 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class LabelProviderTest extends BasicPerformanceTest {
+
+	@ClassRule
+	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
 	private static class CountryEntry {
 		private final String name;
@@ -173,7 +177,6 @@ public class LabelProviderTest extends BasicPerformanceTest {
 	 * @param colors Run test with color on or off
 	 */
 	public LabelProviderTest(boolean styled, boolean colors) {
-		super("DecoratingLabelProviderStyled[" + styled + "]Colors[" + colors + "]");
 		this.styled = styled;
 		this.colors = colors;
 	}
