@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -44,7 +44,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 	@Override
 	public DialogAccess openUIFromTextViewer(TextViewer viewer) {
 		Accessor findActionAccessor= new Accessor(getFindReplaceAction(), FindReplaceAction.class);
-		findActionAccessor.invoke("showDialog", null);
+		findActionAccessor.invoke("showDialog");
 
 		Object fFindReplaceDialogStub= findActionAccessor.get("fgFindReplaceDialogStub");
 		if (fFindReplaceDialogStub == null) {
@@ -52,7 +52,7 @@ public class FindReplaceDialogTest extends FindReplaceUITest<DialogAccess> {
 		}
 		Accessor fFindReplaceDialogStubAccessor= new Accessor(fFindReplaceDialogStub, "org.eclipse.ui.texteditor.FindReplaceAction$FindReplaceDialogStub", getClass().getClassLoader());
 
-		Dialog dialog= (Dialog) fFindReplaceDialogStubAccessor.invoke("getDialog", null);
+		Dialog dialog= (Dialog) fFindReplaceDialogStubAccessor.invoke("getDialog");
 		DialogAccess uiAccess= new DialogAccess(getFindReplaceTarget(), dialog);
 		waitForFocus(uiAccess::hasFocus, testName.getMethodName());
 		return uiAccess;

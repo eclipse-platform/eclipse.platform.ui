@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2024 Vector Informatik GmbH and others.
+ * Copyright (c) 2024, 2025 Vector Informatik GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,7 +45,7 @@ public class FindReplaceOverlayTest extends FindReplaceUITest<OverlayAccess> {
 	@Override
 	public OverlayAccess openUIFromTextViewer(TextViewer viewer) {
 		Accessor actionAccessor= new Accessor(getFindReplaceAction(), FindReplaceAction.class);
-		actionAccessor.invoke("showOverlayInEditor", null);
+		actionAccessor.invoke("showOverlayInEditor");
 		FindReplaceOverlay overlay= (FindReplaceOverlay) actionAccessor.get("overlay");
 		OverlayAccess uiAccess= new OverlayAccess(getFindReplaceTarget(), overlay);
 		waitForFocus(uiAccess::hasFocus, testName.getMethodName());

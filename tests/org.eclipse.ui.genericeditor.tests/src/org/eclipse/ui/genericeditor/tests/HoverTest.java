@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Red Hat Inc. and others
+ * Copyright (c) 2016, 2025 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,8 +57,6 @@ import org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerato
 import org.eclipse.ui.genericeditor.tests.contributions.WorldHoverProvider;
 
 import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
-
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * @since 1.0
@@ -232,7 +230,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 		boolean foundHoverData = false;
 		int attemptNumber = 0;
 		
-		ITextViewer viewer= (ITextViewer) new Accessor(editor, AbstractTextEditor.class).invoke("getSourceViewer", new Object[0]);
+		ITextViewer viewer= editor.getAdapter(ITextViewer.class);
 		AbstractInformationControlManager textHoverManager= (AbstractInformationControlManager) new Accessor(viewer, TextViewer.class).get("fTextHoverManager");
 		
 		while (!foundHoverData && attemptNumber++ < MAXIMUM_HOVER_RETRY_COUNT) {

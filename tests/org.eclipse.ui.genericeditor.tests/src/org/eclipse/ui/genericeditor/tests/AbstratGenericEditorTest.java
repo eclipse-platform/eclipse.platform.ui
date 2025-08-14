@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2025 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,10 +26,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.text.tests.Accessor;
-
-import org.eclipse.jface.text.source.SourceViewer;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -37,8 +33,6 @@ import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.UITestCase;
-
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * Closes intro, create {@link #project}, create {@link #file} and open {@link #editor}; and clean up.
@@ -115,11 +109,6 @@ public class AbstratGenericEditorTest {
 			file.delete(true, new NullProgressMonitor());
 			file = null;
 		}
-	}
-
-	protected SourceViewer getSourceViewer() {
-		SourceViewer sourceViewer= (SourceViewer) new Accessor(editor, AbstractTextEditor.class).invoke("getSourceViewer", new Object[0]);
-		return sourceViewer;
 	}
 
 	@After

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -101,7 +101,7 @@ public class GotoLineTest {
 				ITextEditor editor= (ITextEditor) part;
 				IAction action= editor.getAction(ITextEditorActionConstants.GOTO_LINE);
 				Accessor accessor= new Accessor(action, GotoLineAction.class);
-				accessor.invoke("gotoLine", new Class[] {int.class}, new Integer[] {Integer.valueOf(line)});
+				accessor.invoke("gotoLine", new Class[] { int.class }, Integer.valueOf(line));
 				Control control= part.getAdapter(Control.class);
 				if (control instanceof StyledText) {
 					int caretLine= -1;

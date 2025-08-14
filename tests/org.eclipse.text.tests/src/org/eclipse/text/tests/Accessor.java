@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -146,7 +146,7 @@ public class Accessor {
 	 * @param arguments the method arguments which must all be instance of Object
 	 * @return the method return value
 	 */
-	public Object invoke(String methodName, Object[] arguments) {
+	public Object invoke(String methodName, Object... arguments) {
 		return invoke(methodName, getTypes(arguments), arguments);
 	}
 
@@ -158,7 +158,7 @@ public class Accessor {
 	 * @param arguments the method arguments
 	 * @return the method return value
 	 */
-	public Object invoke(String methodName, Class<?>[] types, Object[] arguments) {
+	public Object invoke(String methodName, Class<?>[] types, Object... arguments) {
 		Method method= null;
 		try {
 			method = fClass.getDeclaredMethod(methodName, types);
@@ -281,7 +281,7 @@ public class Accessor {
 		}
 	}
 
-	private static Class<?>[] getTypes(Object[] objects) {
+	private static Class<?>[] getTypes(Object... objects) {
 		if (objects == null)
 			return null;
 

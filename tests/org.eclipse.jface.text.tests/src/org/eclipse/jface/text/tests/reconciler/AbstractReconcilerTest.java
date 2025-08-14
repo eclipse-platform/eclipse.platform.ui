@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -403,17 +403,17 @@ public class AbstractReconcilerTest {
 	}
 
 	boolean isActive() {
-		Object bool= fAccessor.invoke("isActive", null);
+		Object bool= fAccessor.invoke("isActive");
 		return ((Boolean) bool).booleanValue();
 	}
 
 	boolean isCanceled() {
-		Object bool= fAccessor.invoke("isCanceled", null);
+		Object bool= fAccessor.invoke("isCanceled");
 		return ((Boolean)bool).booleanValue();
 	}
 
 	boolean isDirty() {
-		Object bool= fAccessor.invoke("isDirty", null);
+		Object bool= fAccessor.invoke("isDirty");
 		return ((Boolean) bool).booleanValue();
 	}
 

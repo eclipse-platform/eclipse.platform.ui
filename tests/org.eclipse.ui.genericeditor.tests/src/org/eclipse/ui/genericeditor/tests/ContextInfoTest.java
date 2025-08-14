@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Stephan Wahlbrink and others.
+ * Copyright (c) 2017, 2025 Stephan Wahlbrink and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.text.tests.Accessor;
 
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.source.SourceViewer;
 
@@ -95,9 +96,9 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 
 		editor.getAction(ITextEditorActionConstants.DELETE_LINE).run();
 
-		SourceViewer sourceViewer= getSourceViewer();
+		ITextViewer sourceViewer= editor.getAdapter(ITextViewer.class);
 		ContentAssistant assist= (ContentAssistant) new Accessor(sourceViewer, SourceViewer.class).get("fContentAssistant");
-		new Accessor(assist, ContentAssistant.class).invoke("hide", new Object[0]);
+		new Accessor(assist, ContentAssistant.class).invoke("hide");
 	}
 
 
