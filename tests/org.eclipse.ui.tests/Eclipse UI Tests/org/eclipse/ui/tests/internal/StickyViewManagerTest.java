@@ -24,8 +24,10 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -37,14 +39,17 @@ import org.junit.runners.JUnit4;
 @Ignore
 public class StickyViewManagerTest extends UITestCase {
 
+	@Rule
+	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
+
 	public StickyViewManagerTest() {
 		super(StickyViewManagerTest.class.getSimpleName());
 	}
 
 	@Override
 	protected void doSetUp() throws Exception {
-		setPreference(PlatformUI.getPreferenceStore(), IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR,
-				false);
+		preferenceMemento.setPreference(PlatformUI.getPreferenceStore(),
+				IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR, false);
 		super.doSetUp();
 	}
 

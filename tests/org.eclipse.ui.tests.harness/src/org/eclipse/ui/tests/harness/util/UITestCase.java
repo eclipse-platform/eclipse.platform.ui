@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceMemento;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.junit.After;
@@ -49,9 +47,6 @@ public abstract class UITestCase extends TestCase {
 	private final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private Set<Shell> preExistingShells;
-
-	/** Preference helper to restore changed preference values after test run. */
-	private final PreferenceMemento prefMemento = new PreferenceMemento();
 
 	/**
 	 * Required to preserve the existing logging output when running tests with
@@ -133,7 +128,6 @@ public abstract class UITestCase extends TestCase {
 	public final void tearDown() throws Exception {
 		String name = runningTest != null ? runningTest : this.getName();
 		trace(TestRunLogUtil.formatTestFinishedMessage(name));
-		prefMemento.resetPreferences();
 		doTearDown();
 
 		// Check for shell leak.
@@ -174,26 +168,5 @@ public abstract class UITestCase extends TestCase {
 		closeTestWindows.setEnabled(manage);
 	}
 
-	/**
-	 * Change a preference value for this test run. The preference will be reset to
-	 * its value before test started automatically on {@link #tearDown()}.
-	 *
-	 * @param <T>   preference value type. The type must have a corresponding
-	 *              {@link IPreferenceStore} setter.
-	 * @param store preference store to manipulate (must not be <code>null</code>)
-	 * @param name  preference to change
-	 * @param value new preference value
-	 * @throws IllegalArgumentException when setting a type which is not supported
-	 *                                  by {@link IPreferenceStore}
-	 *
-	 * @see IPreferenceStore#setValue(String, double)
-	 * @see IPreferenceStore#setValue(String, float)
-	 * @see IPreferenceStore#setValue(String, int)
-	 * @see IPreferenceStore#setValue(String, long)
-	 * @see IPreferenceStore#setValue(String, boolean)
-	 * @see IPreferenceStore#setValue(String, String)
-	 */
-	protected <T> void setPreference(IPreferenceStore store, String name, T value) {
-		prefMemento.setValue(store, name, value);
-	}
+
 }

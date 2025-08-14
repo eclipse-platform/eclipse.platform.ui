@@ -33,7 +33,9 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
+import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -43,6 +45,9 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class IntroTest extends UITestCase {
+
+	@Rule
+	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
 
 	IWorkbenchWindow window = null;
 
@@ -149,7 +154,8 @@ public class IntroTest extends UITestCase {
 	public void testPerspectiveChange() {
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
-		setPreference(PrefUtil.getAPIPreferenceStore(), IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+		preferenceMemento.setPreference(PrefUtil.getAPIPreferenceStore(),
+				IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 
 		IWorkbench workbench = window.getWorkbench();
 		IIntroPart part = workbench.getIntroManager().showIntro(window, false);
