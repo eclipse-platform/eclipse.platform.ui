@@ -13,24 +13,19 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PartInitException;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the Resource Navigator view.
  */
-@RunWith(JUnit4.class)
 public class NavigatorTest extends AbstractNavigatorTest {
-
-	public NavigatorTest() {
-		super(NavigatorTest.class.getSimpleName());
-	}
 
 	/**
 	 * Tests that the Navigator is initially populated with

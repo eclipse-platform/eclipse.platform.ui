@@ -14,41 +14,16 @@
 
 package org.eclipse.ui.tests.decorators;
 
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.2
  */
-@RunWith(JUnit4.class)
 public class BadIndexDecoratorTestCase extends DecoratorEnablementTestCase {
 
-	public BadIndexDecoratorTestCase() {
-		super(BadIndexDecoratorTestCase.class.getSimpleName());
-	}
-
-	/**
-	 * Sets up the hierarchy.
-	 */
 	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		createTestFile();
-		showNav();
-
-		WorkbenchPlugin.getDefault().getDecoratorManager().addListener(this);
-
-		DecoratorDefinition[] definitions = WorkbenchPlugin.getDefault()
-				.getDecoratorManager().getAllDecoratorDefinitions();
-		for (DecoratorDefinition definition2 : definitions) {
-			if (definition2.getId().equals(
-					"org.eclipse.ui.tests.decorators.badIndexDecorator")) {
-				definition = definition2;
-			}
-		}
+	protected String getTestDecoratorId() {
+		return "org.eclipse.ui.tests.decorators.badIndexDecorator";
 	}
 
 	/**

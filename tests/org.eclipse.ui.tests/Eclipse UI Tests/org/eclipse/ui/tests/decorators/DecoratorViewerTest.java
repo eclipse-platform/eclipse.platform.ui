@@ -25,6 +25,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -32,16 +34,8 @@ import org.junit.Test;
  */
 public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 
-	/**
-	 * Create a new instance of the receiver.
-	 */
-	public DecoratorViewerTest(String testName) {
-		super(testName);
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		createTestFile();
 		ForegroundColorDecorator.setUpColor();
 		BackgroundColorDecorator.setUpColor();
@@ -163,10 +157,8 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 	 */
 	protected abstract void fontCheck(IViewPart view);
 
-	@Override
-	protected void doTearDown() throws Exception {
-
-		super.doTearDown();
+	@After
+	public final void tearDown() throws Exception {
 		IDecoratorManager manager = WorkbenchPlugin.getDefault()
 				.getDecoratorManager();
 		manager.setEnabled(ForegroundColorDecorator.ID, false);

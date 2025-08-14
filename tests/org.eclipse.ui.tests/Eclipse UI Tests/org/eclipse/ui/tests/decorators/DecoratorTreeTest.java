@@ -13,33 +13,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * The DecoratorTreeTest tests the font and color support on
  * tree viewers.
  */
-@RunWith(JUnit4.class)
 @Ignore("Disabled due to timing issues")
 public class DecoratorTreeTest extends DecoratorViewerTest {
-
-	public DecoratorTreeTest() {
-		super(DecoratorTreeTest.class.getSimpleName());
-
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		createTestFile();
-
-	}
 
 	@Override
 	protected void backgroundCheck(IViewPart view) {

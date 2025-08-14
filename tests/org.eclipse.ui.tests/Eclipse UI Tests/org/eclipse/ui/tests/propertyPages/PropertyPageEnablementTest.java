@@ -14,31 +14,24 @@
 
 package org.eclipse.ui.tests.propertyPages;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.RegistryPageContributor;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.2
  */
-@RunWith(JUnit4.class)
 public class PropertyPageEnablementTest extends AbstractNavigatorTest {
 
-	/**
-	 * Create an instance of the receiver.
-	 */
-	public PropertyPageEnablementTest() {
-		super(PropertyPageEnablementTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		createTestFile();
 	}
 

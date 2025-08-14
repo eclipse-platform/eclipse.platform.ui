@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.markers;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -22,26 +25,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
 public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 
-	/**
-	 * Create an instance of the receiver.
-	 */
-	public ResourceMappingMarkersTest() {
-		super(ResourceMappingMarkersTest.class.getSimpleName());
-	}
-
-	/**
-	 * Set up the receiver.
-	 */
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		createTestFile();
 	}
 

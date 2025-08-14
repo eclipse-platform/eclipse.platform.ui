@@ -27,13 +27,18 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.After;
+import org.junit.Rule;
 
 /**
  * The AbstractNavigatorTest is the abstract superclass
  * of tests that use a populated Resource Navigator.
  */
-public abstract class AbstractNavigatorTest extends UITestCase {
+public abstract class AbstractNavigatorTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	protected IProject testProject;
 
@@ -43,11 +48,7 @@ public abstract class AbstractNavigatorTest extends UITestCase {
 
 	protected IViewPart navigator;
 
-	public AbstractNavigatorTest(String testName) {
-		super(testName);
-	}
-
-	protected void createTestProject() throws CoreException {
+	protected final void createTestProject() throws CoreException {
 		if (testProject == null) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			testProject = workspace.getRoot().getProject("TestProject");
@@ -56,7 +57,7 @@ public abstract class AbstractNavigatorTest extends UITestCase {
 		}
 	}
 
-	protected void createTestFolder() throws CoreException {
+	protected final void createTestFolder() throws CoreException {
 		if (testFolder == null) {
 			createTestProject();
 			testFolder = testProject.getFolder("TestFolder");
@@ -64,7 +65,7 @@ public abstract class AbstractNavigatorTest extends UITestCase {
 		}
 	}
 
-	protected void createTestFile() throws CoreException {
+	protected final void createTestFile() throws CoreException {
 		if (testFile == null) {
 			createTestFolder();
 			testFile = testFolder.getFile("Foo.txt");
@@ -80,15 +81,14 @@ public abstract class AbstractNavigatorTest extends UITestCase {
 		navigator = window.getActivePage().showView(IPageLayout.ID_PROJECT_EXPLORER);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void cleanupWorkspace() throws Exception {
 		if (testProject != null) {
 			testProject.delete(true, null);
 			testProject = null;
 			testFolder = null;
 			testFile = null;
 		}
-		super.doTearDown();
 		navigator = null;
 	}
 
