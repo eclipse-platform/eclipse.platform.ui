@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.preferences;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -49,7 +51,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.views.markers.MarkersTreeViewer;
 import org.eclipse.ui.intro.IIntroPart;
@@ -189,7 +190,7 @@ public class ViewerItemsLimitTest extends UITestCase {
 	}
 
 	private IWorkbenchWindow getActiveWindow() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
 		assertNotNull("Should get one window", window);
 		return window;
 	}
@@ -224,7 +225,7 @@ public class ViewerItemsLimitTest extends UITestCase {
 	}
 
 	private static IWorkbench closeIntro() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbench workbench = getWorkbench();
 		IIntroPart introPart = workbench.getIntroManager().getIntro();
 		if (introPart != null) {
 			workbench.getIntroManager().closeIntro(introPart);

@@ -27,8 +27,10 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.AbstractWorkingSet;
 import org.eclipse.ui.internal.AbstractWorkingSetManager;
@@ -47,6 +49,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	static final String AGGREGATE_WORKING_SET_NAME_ = "testaggregatews";
 	static final String WSET_PAGE_ID="org.eclipse.ui.resourceWorkingSetPage";
 	IWorkspace fWorkspace;
+	IWorkbench fWorkbench;
 
 	IWorkingSet[] components;
 	List<IWorkingSet> backup;
@@ -59,11 +62,11 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		IWorkingSetManager workingSetManager = fWorkbench
-		.getWorkingSetManager();
+		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 		backup = Arrays.asList(workingSetManager.getAllWorkingSets());
 
 		fWorkspace = ResourcesPlugin.getWorkspace();
+		fWorkbench = PlatformUI.getWorkbench();
 		components = new IWorkingSet[4];
 		for (int i = 0; i < 4; i++) {
 			components[i] = workingSetManager.createWorkingSet(WORKING_SET_NAME
@@ -89,6 +92,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 				workingSetManager.removeWorkingSet(wset);
 			}
 		}
+		fWorkbench = null;
 		super.doTearDown();
 	}
 

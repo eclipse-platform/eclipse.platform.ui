@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
 

@@ -22,6 +22,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -40,6 +41,8 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class IDeprecatedWorkbenchPageTest extends UITestCase {
 
+	private IWorkbench fWorkbench;
+
 	private IWorkbenchPage fActivePage;
 
 	private IWorkbenchWindow fWin;
@@ -53,6 +56,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
+		fWorkbench = PlatformUI.getWorkbench();
 		fWin = openTestWindow();
 		fActivePage = fWin.getActivePage();
 	}
@@ -64,6 +68,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 			FileUtil.deleteProject(proj);
 			proj = null;
 		}
+		fWorkbench = null;
 	}
 
 	/**

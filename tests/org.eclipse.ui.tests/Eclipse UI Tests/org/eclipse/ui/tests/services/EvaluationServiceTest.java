@@ -15,6 +15,8 @@
 
 package org.eclipse.ui.tests.services;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -45,7 +47,6 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -95,7 +96,7 @@ public class EvaluationServiceTest extends UITestCase {
 
 	@Test
 	public void testBug334524() throws Exception {
-		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
+		IPerspectiveRegistry registry = getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor resourcePerspective = registry.findPerspectiveWithId("org.eclipse.ui.resourcePerspective");
 		IPerspectiveDescriptor javaPerspective = registry.findPerspectiveWithId("org.eclipse.jdt.ui.JavaPerspective");
 		String viewId = "org.eclipse.ui.tests.SelectionProviderView";
@@ -544,8 +545,7 @@ public class EvaluationServiceTest extends UITestCase {
 
 	@Test
 	public void testPlatformProperty() throws Exception {
-		IEvaluationService evaluationService = PlatformUI
-				.getWorkbench().getService(IEvaluationService.class);
+		IEvaluationService evaluationService = getWorkbench().getService(IEvaluationService.class);
 		TestExpression test = new TestExpression("org.eclipse.core.runtime",
 				"bundleState",
 				new Object[] { "org.eclipse.core.expressions" }, "ACTIVE", false);
@@ -561,8 +561,7 @@ public class EvaluationServiceTest extends UITestCase {
 		// this is not added, as the ability to test system properties with
 		// no '.' seems unhelpful
 		System.setProperty("isHere", "true");
-		IEvaluationService evaluationService = PlatformUI
-				.getWorkbench().getService(IEvaluationService.class);
+		IEvaluationService evaluationService = getWorkbench().getService(IEvaluationService.class);
 		TestExpression test = new TestExpression("org.eclipse.core.runtime",
 				"isHere",
 				new Object[] { "true" }, null, false);

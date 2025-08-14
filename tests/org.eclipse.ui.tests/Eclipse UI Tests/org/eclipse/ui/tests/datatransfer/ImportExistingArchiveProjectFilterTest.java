@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.datatransfer;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -41,7 +43,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
@@ -187,6 +188,6 @@ public class ImportExistingArchiveProjectFilterTest extends UITestCase {
 	}
 
 	private Shell getShell() {
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		return getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 }

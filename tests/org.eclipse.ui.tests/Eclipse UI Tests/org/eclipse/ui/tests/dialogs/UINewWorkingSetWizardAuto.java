@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;

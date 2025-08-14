@@ -32,7 +32,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceMemento;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -71,7 +70,6 @@ public abstract class UITestCase extends TestCase {
 	 */
 	private final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
-	protected IWorkbench fWorkbench;
 	private Set<Shell> preExistingShells;
 
 	/** Preference helper to restore changed preference values after test run. */
@@ -177,8 +175,7 @@ public abstract class UITestCase extends TestCase {
 	public final void setUp() throws Exception {
 		super.setUp();
 		closeTestWindows.before();
-		fWorkbench = PlatformUI.getWorkbench();
-		this.preExistingShells = Set.of(fWorkbench.getDisplay().getShells());
+		this.preExistingShells = Set.of(PlatformUI.getWorkbench().getDisplay().getShells());
 		String name = runningTest != null ? runningTest : this.getName();
 		trace(TestRunLogUtil.formatTestStartMessage(name));
 		doSetUp();
@@ -214,14 +211,13 @@ public abstract class UITestCase extends TestCase {
 
 		// Check for shell leak.
 		List<String> leakedModalShellTitles = new ArrayList<>();
-		Shell[] shells = fWorkbench.getDisplay().getShells();
+		Shell[] shells = PlatformUI.getWorkbench().getDisplay().getShells();
 		for (Shell shell : shells) {
 			if (!shell.isDisposed() && !preExistingShells.contains(shell)) {
 				leakedModalShellTitles.add(shell.getText());
 				shell.close();
 			}
 		}
-		fWorkbench = null;
 		assertEquals("Test leaked modal shell: [" + String.join(", ", leakedModalShellTitles) + "]", 0,
 				leakedModalShellTitles.size());
 	}
@@ -445,16 +441,6 @@ public abstract class UITestCase extends TestCase {
 	 */
 	protected void manageWindows(boolean manage) {
 		closeTestWindows.setEnabled(manage);
-	}
-
-	/**
-	 * Returns the workbench.
-	 *
-	 * @return the workbench
-	 * @since 3.1
-	 */
-	protected IWorkbench getWorkbench() {
-		return fWorkbench;
 	}
 
 	/**

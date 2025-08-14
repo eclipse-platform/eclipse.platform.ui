@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.adaptable;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import org.eclipse.core.internal.propertytester.ResourceMappingPropertyTester;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

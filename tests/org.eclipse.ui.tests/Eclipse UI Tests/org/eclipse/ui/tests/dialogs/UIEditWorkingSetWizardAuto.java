@@ -14,8 +14,10 @@
 package org.eclipse.ui.tests.dialogs;
 
 import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 
 import java.util.List;
+
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -102,7 +104,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto<WorkingS
 		/*
 		 * Test page state with preset page input
 		 */
-		IWorkingSetManager workingSetManager = fWorkbench.getWorkingSetManager();
+		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
 		IWorkingSet workingSet = workingSetManager.createWorkingSet(WORKING_SET_NAME_1,
 				new IAdaptable[] { getProject1(), getFileInProject2() });
 		getWizard().setSelection(workingSet);

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.util.Arrays;
@@ -54,8 +55,7 @@ public class IWorkingSetTest extends UITestCase {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		IWorkingSetManager workingSetManager = fWorkbench
-				.getWorkingSetManager();
+		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
 
 		fWorkspace = ResourcesPlugin.getWorkspace();
 		fWorkingSet = workingSetManager.createWorkingSet(WORKING_SET_NAME_1,
@@ -65,8 +65,7 @@ public class IWorkingSetTest extends UITestCase {
 	}
 	@Override
 	protected void doTearDown() throws Exception {
-		IWorkingSetManager workingSetManager = fWorkbench
-		.getWorkingSetManager();
+		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
 		workingSetManager.removeWorkingSet(fWorkingSet);
 		super.doTearDown();
 	}
@@ -157,8 +156,7 @@ public class IWorkingSetTest extends UITestCase {
 	@Test
 	public void testNoDuplicateWorkingSetName() throws Throwable {
 		/* get workingSetManager */
-		IWorkingSetManager workingSetManager = fWorkbench
-				.getWorkingSetManager();
+		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
 
 		/*
 		 * check that initially workingSetManager contains "fWorkingSet"
@@ -195,8 +193,7 @@ public class IWorkingSetTest extends UITestCase {
 	public void testNoDuplicateWorkingSetNamesDifferentLabels()
 			throws Throwable {
 		/* get workingSetManager */
-		IWorkingSetManager workingSetManager = fWorkbench
-				.getWorkingSetManager();
+		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
 		/*
 		 * check that initially workingSetManager contains "fWorkingSet"
 		 */

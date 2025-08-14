@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -89,6 +91,8 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IWorkbenchPageTest extends UITestCase {
 
+	private IWorkbench fWorkbench;
+
 	private IWorkbenchPage fActivePage;
 
 	private IWorkbenchWindow fWin;
@@ -160,6 +164,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
+		fWorkbench = PlatformUI.getWorkbench();
 		fWin = openTestWindow();
 		fActivePage = fWin.getActivePage();
 		logStatus = null;
@@ -175,6 +180,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			FileUtil.deleteProject(proj);
 			proj = null;
 		}
+		fWorkbench = null;
 	}
 
 	/**
@@ -836,7 +842,7 @@ public class IWorkbenchPageTest extends UITestCase {
 
 	@Test
 	public void testSetPerspective() throws Throwable {
-		IPerspectiveDescriptor per = PlatformUI.getWorkbench()
+		IPerspectiveDescriptor per = getWorkbench()
 				.getPerspectiveRegistry().findPerspectiveWithId(
 						EmptyPerspective.PERSP_ID);
 		fActivePage.setPerspective(per);
@@ -1152,7 +1158,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		showViewViaCommand(MockViewPart.ID2);
 
 		Assume.assumeTrue(fWin.getShell().isVisible());
-		Assume.assumeTrue(PlatformUI.getWorkbench().getActiveWorkbenchWindow() == fWin);
+		Assume.assumeTrue(getWorkbench().getActiveWorkbenchWindow() == fWin);
 		Assume.assumeTrue(shellIsActive.get());
 
 		assertNotNull(fActivePage.findView(MockViewPart.ID2));
@@ -1206,7 +1212,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		showViewViaCommand(historyView);
 
 		Assume.assumeTrue(fWin.getShell().isVisible());
-		Assume.assumeTrue(PlatformUI.getWorkbench().getActiveWorkbenchWindow() == fWin);
+		Assume.assumeTrue(getWorkbench().getActiveWorkbenchWindow() == fWin);
 		Assume.assumeTrue(shellIsActive.get());
 
 		assertNotNull(fActivePage.findView(historyView));
@@ -2591,7 +2597,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testBug76285() throws PartInitException {
 		IWorkbenchPage page = fActivePage;
 		IPerspectiveDescriptor originalPersp = page.getPerspective();
-		IPerspectiveDescriptor resourcePersp = PlatformUI.getWorkbench()
+		IPerspectiveDescriptor resourcePersp = getWorkbench()
 				.getPerspectiveRegistry().findPerspectiveWithId(
 						IDE.RESOURCE_PERSPECTIVE_ID);
 		// test requires switching between two different perspectives
