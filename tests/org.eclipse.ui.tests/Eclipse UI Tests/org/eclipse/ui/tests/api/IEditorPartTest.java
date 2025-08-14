@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

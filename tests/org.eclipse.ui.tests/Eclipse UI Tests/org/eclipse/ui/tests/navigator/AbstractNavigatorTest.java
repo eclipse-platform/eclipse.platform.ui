@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+
 import java.io.ByteArrayInputStream;
 
 import org.eclipse.core.resources.IFile;

@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -30,7 +31,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class Bug41931Test {
 	@Test
 	public void testBringToTop() throws CoreException {
 		// Open a window.
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 		// Create a test project.

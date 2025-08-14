@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.Assume.assumeFalse;
 
 import org.eclipse.core.runtime.Platform;

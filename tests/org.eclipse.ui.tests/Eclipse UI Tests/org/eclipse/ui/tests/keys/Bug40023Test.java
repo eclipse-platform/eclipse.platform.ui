@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
@@ -33,7 +34,6 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -90,7 +90,7 @@ public class Bug40023Test {
 	public void testCheckOnCheckbox() throws CoreException, CommandException,
 			FileNotFoundException, IOException, ParseException {
 		// Open a window to run the test.
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		Workbench workbench = (Workbench) window.getWorkbench();
 
 		// Set up a key binding for "Lock Toolbars".

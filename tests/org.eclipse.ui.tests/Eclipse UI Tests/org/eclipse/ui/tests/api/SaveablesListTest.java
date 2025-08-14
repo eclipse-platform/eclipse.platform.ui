@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestPage;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

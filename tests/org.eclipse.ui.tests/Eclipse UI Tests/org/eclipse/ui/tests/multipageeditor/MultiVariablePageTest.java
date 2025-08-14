@@ -14,6 +14,8 @@
 package org.eclipse.ui.tests.multipageeditor;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collection;

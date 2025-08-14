@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
-import static org.eclipse.ui.tests.harness.util.UITestCase.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

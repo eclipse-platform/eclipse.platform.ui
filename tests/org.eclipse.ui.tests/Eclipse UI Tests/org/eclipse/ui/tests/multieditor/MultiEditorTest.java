@@ -14,7 +14,7 @@
 package org.eclipse.ui.tests.multieditor;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
-import static org.eclipse.ui.tests.harness.util.UITestCase.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

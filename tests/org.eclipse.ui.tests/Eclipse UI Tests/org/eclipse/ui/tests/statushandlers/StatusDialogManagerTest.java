@@ -15,6 +15,7 @@
 
 package org.eclipse.ui.tests.statushandlers;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -69,7 +70,6 @@ import org.eclipse.ui.statushandlers.StatusManager.INotificationListener;
 import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
 import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
 import org.eclipse.ui.tests.concurrency.FreezeMonitor;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -608,10 +608,10 @@ public class StatusDialogManagerTest {
 	}
 
 	private void processRemainingUiEvents() {
-		UITestCase.processEvents();
+		processEvents();
 		int count = 0;
 		while (count < 3 && (StatusDialogUtil.getStatusShell() != null)) {
-			UITestCase.processEvents();
+			processEvents();
 			count++;
 		}
 	}
@@ -619,7 +619,7 @@ public class StatusDialogManagerTest {
 	private void assertStatusShellOpen() {
 		int count = 0;
 		while (count < 42 && (StatusDialogUtil.getStatusShell() == null)) {
-			UITestCase.processEvents();
+			processEvents();
 			count++;
 		}
 		assertNotNull("Status shell was not shown!", StatusDialogUtil.getStatusShell());
@@ -1171,7 +1171,7 @@ public class StatusDialogManagerTest {
 			postUnblockingTask();
 
 			// Allow the blocking dialog to be shown
-			UITestCase.processEvents();
+			processEvents();
 			StatusManager.getManager().removeListener(listener);
 		}
 		assertFalse("Job should successfully finish", semaphore.hasQueuedThreads());

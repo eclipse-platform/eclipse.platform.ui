@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.commands;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertThrows;
 
 import java.util.HashMap;

@@ -15,6 +15,8 @@
 
 package org.eclipse.ui.tests.api.workbenchpart;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -28,7 +30,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +46,7 @@ public class DependencyInjectionViewTest {
 
 	@Test
 	public void testDependencyInjectionLifecycle() throws Exception {
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		IWorkbenchPage page = window.getActivePage();
 		IViewPart v = page.showView(DependencyInjectionView.ID);
 		assertTrue(v instanceof DependencyInjectionView);
@@ -72,7 +73,7 @@ public class DependencyInjectionViewTest {
 
 		assertEquals(expectedDisposeCallOrder, view.disposeCallOrder);
 
-		UITestCase.processEvents();
+		processEvents();
 
 
 	}

@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -46,7 +46,7 @@ public class Bug407422Test {
 
 	@Test
 	public void test() throws CoreException {
-		final IWorkbenchWindow window = UITestCase.openTestWindow();
+		final IWorkbenchWindow window = openTestWindow();
 		final IWorkbenchPage page = window.getActivePage();
 		final String EDITOR_ID = "org.eclipse.ui.DefaultTextEditor";
 

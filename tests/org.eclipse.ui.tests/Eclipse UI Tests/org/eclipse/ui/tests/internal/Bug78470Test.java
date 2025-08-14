@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -30,7 +31,6 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
 
 public class Bug78470Test {
@@ -113,7 +113,7 @@ public class Bug78470Test {
 					}
 				});
 		workbench.showPerspective(MyPerspective.ID, activeWorkbenchWindow);
-		UITestCase.processEvents();
+		processEvents();
 		Thread.sleep(2000);
 		assertTrue("view was not made visible", partVisibleExecuted);
 		assertNotNull(activePage.findView(MyViewPart.ID2));

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance.layout;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.getPageInput;
 import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.core.resources.IFile;
@@ -29,7 +30,6 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
 
 
@@ -68,7 +68,7 @@ public class EditorWidgetFactory extends TestWidgetFactory {
 	public void init() throws WorkbenchException {
 
 		// Open an editor in a new window.
-		window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, UITestCase.getPageInput());
+		window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, getPageInput());
 		IWorkbenchPage activePage = window.getActivePage();
 		assertNotNull(activePage);
 

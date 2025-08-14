@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.menus;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+
 import java.util.Collections;
 
 import org.eclipse.core.commands.ExecutionEvent;

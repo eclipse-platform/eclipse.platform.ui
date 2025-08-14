@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 

@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.propertysheet;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+
 import java.lang.reflect.Field;
 
 import org.eclipse.core.resources.IProject;

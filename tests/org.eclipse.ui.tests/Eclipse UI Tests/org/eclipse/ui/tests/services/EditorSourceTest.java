@@ -15,6 +15,9 @@
 
 package org.eclipse.ui.tests.services;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+
 import java.util.Objects;
 
 import org.eclipse.core.expressions.EvaluationResult;

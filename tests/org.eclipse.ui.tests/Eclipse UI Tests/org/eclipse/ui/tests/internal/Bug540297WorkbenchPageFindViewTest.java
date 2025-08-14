@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.swt.SWT;
@@ -27,7 +29,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,7 +76,7 @@ public class Bug540297WorkbenchPageFindViewTest {
 	@Before
 	public void doSetUp() throws Exception {
 		firstWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		secondWindow = UITestCase.openTestWindow();
+		secondWindow = openTestWindow();
 
 		firstWindowActivePage = firstWindow.getActivePage();
 		secondWindowActivePage = secondWindow.getActivePage();
@@ -89,7 +90,7 @@ public class Bug540297WorkbenchPageFindViewTest {
 		prepareWorkbenchPageForTest(firstWindowActivePage);
 		prepareWorkbenchPageForTest(secondWindowActivePage);
 
-		UITestCase.processEvents();
+		processEvents();
 	}
 
 	private void prepareWorkbenchPageForTest(IWorkbenchPage page) {
@@ -112,7 +113,7 @@ public class Bug540297WorkbenchPageFindViewTest {
 		firstWindowActivePage.resetPerspective();
 		firstWindowActivePage.closePerspective(inactivePerspective, false, false);
 		firstWindowActivePage.closePerspective(activePerspective, false, false);
-		UITestCase.processEvents();
+		processEvents();
 	}
 
 	/**
@@ -213,7 +214,7 @@ public class Bug540297WorkbenchPageFindViewTest {
 	private static void setPerspective(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		page.setPerspective(perspective);
 		page.resetPerspective();
-		UITestCase.processEvents();
+		processEvents();
 	}
 
 	private static void showAndHideView(IWorkbenchPage page) throws Exception {
@@ -223,13 +224,13 @@ public class Bug540297WorkbenchPageFindViewTest {
 
 	private static void showView(IWorkbenchPage page) throws Exception {
 		page.showView(MyViewPart.ID);
-		UITestCase.processEvents();
+		processEvents();
 	}
 
 	private static void hideView(IWorkbenchPage page) throws Exception {
 		IViewPart view = page.findView(MyViewPart.ID);
 		page.hideView(view);
-		UITestCase.processEvents();
+		processEvents();
 	}
 
 	private IPerspectiveDescriptor getPerspetiveDescriptor(String perspectiveId) {

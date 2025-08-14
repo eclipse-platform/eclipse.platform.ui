@@ -14,6 +14,9 @@
 package org.eclipse.ui.tests.preferences;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEventsUntil;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.contexts;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.ui.IViewPart;
@@ -24,7 +25,6 @@ import org.eclipse.ui.contexts.EnabledSubmission;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -67,7 +67,7 @@ public final class Bug74990Test {
 			/*
 			 * Open a window with the MockViewPart, and make sure it now enabled.
 			 */
-			final IWorkbenchPage page = UITestCase.openTestWindow().getActivePage();
+			final IWorkbenchPage page = openTestWindow().getActivePage();
 			final IViewPart openedView = page.showView("org.eclipse.ui.tests.api.MockViewPart");
 			page.activate(openedView);
 			while (fWorkbench.getDisplay().readAndDispatch()) {

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -35,7 +36,6 @@ import org.eclipse.ui.SelectionListenerFactory.ISelectionModel;
 import org.eclipse.ui.SelectionListenerFactory.Predicates;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -59,7 +59,7 @@ public class SelectionListenerFactoryTest implements ISelectionListener {
 
 	@Before
 	public void doSetUp() throws Exception {
-		fWindow = UITestCase.openTestWindow();
+		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
 	}
 

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance.layout;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.getPageInput;
 import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.swt.graphics.Point;
@@ -21,7 +22,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 
 
 /**
@@ -44,7 +44,7 @@ public class PerspectiveWidgetFactory extends TestWidgetFactory {
 	@Override
 	public void init() throws WorkbenchException {
 		// open the perspective in a new window
-		window = PlatformUI.getWorkbench().openWorkbenchWindow(perspectiveId, UITestCase.getPageInput());
+		window = PlatformUI.getWorkbench().openWorkbenchWindow(perspectiveId, getPageInput());
 		IWorkbenchPage page = window.getActivePage();
 		assertNotNull(page);
 	}
