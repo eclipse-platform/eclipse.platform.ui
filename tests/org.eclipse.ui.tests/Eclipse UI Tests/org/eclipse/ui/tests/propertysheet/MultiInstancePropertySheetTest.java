@@ -430,7 +430,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 			}
 		}
 
-		processUiEvents();
+		processEvents();
 		// TODO this is required here because the default page is never properly
 		// disposed.
 		testPropertySheetPage.dispose();
@@ -517,7 +517,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 			}
 		}
 
-		processUiEvents();
+		processEvents();
 		// TODO this is required here because the default page is never properly
 		// disposed.
 		testPropertySheetPage.dispose();
@@ -559,7 +559,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 			}
 		}
 
-		processUiEvents();
+		processEvents();
 		// TODO this is required here because the default page is never properly
 		// disposed.
 		testPropertySheetPage.dispose();
@@ -575,7 +575,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		// populate the 'Properties' view
 		contributingView.getSite().getSelectionProvider().setSelection(selection);
 
-		processUiEvents();
+		processEvents();
 
 		// show the 'Properties' view: it should pick up content from the only
 		// one relevant part: view with given id
@@ -605,11 +605,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 					currentPage instanceof PropertySheetPage);
 		}
 
-	}
-
-	private void processUiEvents() {
-		while (fWorkbench.getDisplay().readAndDispatch()) {
-		}
 	}
 
 }

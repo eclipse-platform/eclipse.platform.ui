@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -39,7 +41,7 @@ public class PerspectiveSwitcherTest extends UITestCase {
 	public void testCreatePerspectiveSwithcerInToolbar() {
 		IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
 
-		WorkbenchWindow window = (WorkbenchWindow) fWorkbench.getActiveWorkbenchWindow();
+		WorkbenchWindow window = (WorkbenchWindow) getWorkbench().getActiveWorkbenchWindow();
 		assertNotNull("We should have a perspective bar in the beginning", getPerspectiveSwitcher(window)); //$NON-NLS-1$
 
 		// turn off the 'Open Perspective' item

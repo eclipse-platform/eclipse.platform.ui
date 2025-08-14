@@ -100,7 +100,7 @@ public class MultiPageEditorSelectionTest extends UITestCase {
 		editor.updateSelection();
 
 		PropertySheet propertiewView = (PropertySheet) window.getActivePage().showView(IPageLayout.ID_PROP_SHEET);
-		processUiEvents();
+		processEvents();
 
 		Tree tree = (Tree) propertiewView.getCurrentPage().getControl();
 
@@ -130,8 +130,4 @@ public class MultiPageEditorSelectionTest extends UITestCase {
 		return part;
 	}
 
-	private void processUiEvents() {
-		while (fWorkbench.getDisplay().readAndDispatch()) {
-		}
-	}
 }

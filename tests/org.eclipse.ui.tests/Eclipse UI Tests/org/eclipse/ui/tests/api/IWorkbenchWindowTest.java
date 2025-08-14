@@ -20,9 +20,11 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
@@ -36,6 +38,8 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class IWorkbenchWindowTest extends UITestCase {
 
+	private IWorkbench fWorkbench;
+
 	private IWorkbenchWindow fWin;
 
 	public IWorkbenchWindowTest() {
@@ -45,6 +49,7 @@ public class IWorkbenchWindowTest extends UITestCase {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
+		fWorkbench = PlatformUI.getWorkbench();
 		fWin = openTestWindow();
 	}
 

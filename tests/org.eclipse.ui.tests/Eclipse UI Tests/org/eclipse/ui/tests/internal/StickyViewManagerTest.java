@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -54,8 +56,7 @@ public class StickyViewManagerTest extends UITestCase {
 	@Test
 	public void testMultipleStickyViewAcrossPerspectivesBug280656()
 			throws Exception {
-		IWorkbenchPage page = fWorkbench.getActiveWorkbenchWindow()
-				.getActivePage();
+		IWorkbenchPage page = getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		// show a multi-instance view that has no secondary id
 		page.showView("org.eclipse.ui.tests.api.MockViewPartMultSticky", null,
 				IWorkbenchPage.VIEW_ACTIVATE);
@@ -63,7 +64,7 @@ public class StickyViewManagerTest extends UITestCase {
 		page.showView("org.eclipse.ui.tests.api.MockViewPartMultSticky",
 				"secondary", IWorkbenchPage.VIEW_ACTIVATE);
 
-		IPerspectiveRegistry registry = fWorkbench.getPerspectiveRegistry();
+		IPerspectiveRegistry registry = getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
 
 		for (IPerspectiveDescriptor descriptor : descriptors) {
@@ -88,7 +89,7 @@ public class StickyViewManagerTest extends UITestCase {
 		// first we show the special test views
 		testMultipleStickyViewAcrossPerspectivesBug280656();
 
-		IWorkbenchPage page = fWorkbench.getActiveWorkbenchWindow()
+		IWorkbenchPage page = getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage();
 		IViewReference primaryViewReference = page.findViewReference(
 				"org.eclipse.ui.tests.api.MockViewPartMultSticky", null);
@@ -99,7 +100,7 @@ public class StickyViewManagerTest extends UITestCase {
 		page.hideView(primaryViewReference);
 		page.hideView(secondaryViewReference);
 
-		IPerspectiveRegistry registry = fWorkbench.getPerspectiveRegistry();
+		IPerspectiveRegistry registry = getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
 
 		for (IPerspectiveDescriptor descriptor : descriptors) {
@@ -121,15 +122,14 @@ public class StickyViewManagerTest extends UITestCase {
 	@Test
 	public void testRemovedMultipleStickyViewAcrossPerspectives2()
 			throws Exception {
-		IPerspectiveRegistry registry = fWorkbench.getPerspectiveRegistry();
+		IPerspectiveRegistry registry = getWorkbench().getPerspectiveRegistry();
 		// retrieve two different perspectives
 		IPerspectiveDescriptor resourcePerspectiveDescriptor = registry
 				.findPerspectiveWithId("org.eclipse.ui.resourcePerspective");
 		IPerspectiveDescriptor viewPerspectiveDescriptor = registry
 				.findPerspectiveWithId("org.eclipse.ui.tests.api.ViewPerspective");
 
-		IWorkbenchPage page = fWorkbench.getActiveWorkbenchWindow()
-				.getActivePage();
+		IWorkbenchPage page = getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		page.setPerspective(resourcePerspectiveDescriptor);
 
 		// show some multi-instance sticky view instances

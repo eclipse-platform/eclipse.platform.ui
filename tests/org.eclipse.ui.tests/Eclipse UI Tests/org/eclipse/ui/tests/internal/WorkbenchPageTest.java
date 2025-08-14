@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +90,7 @@ public class WorkbenchPageTest extends UITestCase {
 	}
 
 	private WorkbenchPage getWorkbenchPage() {
-		return (WorkbenchPage) fWorkbench.getActiveWorkbenchWindow().getActivePage();
+		return (WorkbenchPage) getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 
 	@Override

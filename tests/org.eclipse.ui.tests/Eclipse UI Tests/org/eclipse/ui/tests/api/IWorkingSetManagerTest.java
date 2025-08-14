@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -74,7 +75,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		fWorkingSetManager = fWorkbench.getWorkingSetManager();
+		fWorkingSetManager = getWorkbench().getWorkingSetManager();
 		fWorkspace = ResourcesPlugin.getWorkspace();
 		fWorkingSet = fWorkingSetManager.createWorkingSet(WORKING_SET_NAME_1,
 				new IAdaptable[] { fWorkspace.getRoot() });
@@ -371,8 +372,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 	@Test
 	public void testRemoveWorkingSetAfterRename() throws Throwable {
 		/* get workingSetManager */
-		IWorkingSetManager workingSetManager =
-			fWorkbench.getWorkingSetManager();
+		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
 
 		workingSetManager.addWorkingSet(fWorkingSet);
 		String origName=fWorkingSet.getName();

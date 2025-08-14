@@ -28,7 +28,9 @@ import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.commands.IElementUpdater;
@@ -54,6 +56,7 @@ public class CommandCallbackTest extends UITestCase {
 	private static final String CMD1_ID = PREFIX + "cmd1";
 	private static final String CMD2_ID = PREFIX + "cmd2";
 
+	private IWorkbench workbench;
 	private ICommandService commandService;
 	private Command cmd1;
 	private Command cmd2;
@@ -70,12 +73,11 @@ public class CommandCallbackTest extends UITestCase {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		commandService = fWorkbench
-				.getService(ICommandService.class);
+		workbench = PlatformUI.getWorkbench();
+		commandService = workbench.getService(ICommandService.class);
 		cmd1 = commandService.getCommand(CMD1_ID);
 		cmd2 = commandService.getCommand(CMD2_ID);
-		handlerService = fWorkbench
-				.getService(IHandlerService.class);
+		handlerService = workbench.getService(IHandlerService.class);
 		cmd1Handler = new CallbackHandler();
 		cmd1Activation = handlerService.activateHandler(CMD1_ID, cmd1Handler);
 		cmd2Handler = new CallbackHandler();
@@ -92,6 +94,7 @@ public class CommandCallbackTest extends UITestCase {
 			handlerService.deactivateHandler(cmd2Activation);
 			cmd2Activation = null;
 		}
+		workbench = null;
 		super.doTearDown();
 	}
 
@@ -174,9 +177,9 @@ public class CommandCallbackTest extends UITestCase {
 		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null);
 
 		IElementReference cr1 = commandService.registerElementForCommand(pc1,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 		IElementReference cr2 = commandService.registerElementForCommand(pc2,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 
 		try {
 			assertEquals(2, cmd1Handler.callbacks);
@@ -207,9 +210,9 @@ public class CommandCallbackTest extends UITestCase {
 						new Parameterization(parmProt, "http"),
 						new Parameterization(parmHost, "download.eclipse.org") });
 		IElementReference cr1 = commandService.registerElementForCommand(pc1,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 		IElementReference cr2 = commandService.registerElementForCommand(pc2,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 		try {
 
 			assertEquals(2, cmd2Handler.callbacks);
@@ -255,11 +258,11 @@ public class CommandCallbackTest extends UITestCase {
 						new Parameterization(parmProt, "http"),
 						new Parameterization(parmHost, "download.eclipse.org") });
 		IElementReference cr1 = commandService.registerElementForCommand(pc1,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 		IElementReference cr2 = commandService.registerElementForCommand(pc2,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 		IElementReference cr3 = commandService.registerElementForCommand(pc3,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 		try {
 
 			assertEquals(3, cmd2Handler.callbacks);
@@ -317,15 +320,15 @@ public class CommandCallbackTest extends UITestCase {
 				new Parameterization[] { new Parameterization(parmProt, "ftp"),
 						new Parameterization(parmHost, "download.eclipse.org") });
 		IElementReference cr1 = commandService.registerElementForCommand(pc1,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 		IElementReference cr2 = commandService.registerElementForCommand(pc2,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 		IElementReference cr3 = commandService.registerElementForCommand(pc3,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 		IElementReference cr4 = commandService.registerElementForCommand(pc4,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 		IElementReference cr5 = commandService.registerElementForCommand(pc5,
-				new MyElement(fWorkbench));
+				new MyElement(workbench));
 		try {
 			assertEquals(5, cmd2Handler.callbacks);
 			Map<String, String> filter = new HashMap<>();

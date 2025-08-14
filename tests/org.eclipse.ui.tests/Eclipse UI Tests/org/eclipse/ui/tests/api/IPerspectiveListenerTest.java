@@ -15,8 +15,10 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
@@ -28,6 +30,8 @@ import org.junit.runners.JUnit4;
 public class IPerspectiveListenerTest extends UITestCase implements
 		IPerspectiveListener {
 	private int fEvent;
+
+	private IWorkbench fWorkbench;
 
 	private IWorkbenchWindow fWindow;
 
@@ -49,6 +53,7 @@ public class IPerspectiveListenerTest extends UITestCase implements
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		fEvent = NONE;
+		fWorkbench = PlatformUI.getWorkbench();
 		fWindow = openTestWindow();
 		fWindow.addPerspectiveListener(this);
 	}
@@ -56,6 +61,7 @@ public class IPerspectiveListenerTest extends UITestCase implements
 	@Override
 	protected void doTearDown() throws Exception {
 		fWindow.removePerspectiveListener(this);
+		fWorkbench = null;
 		super.doTearDown();
 	}
 

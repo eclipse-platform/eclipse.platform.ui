@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -129,7 +131,7 @@ public abstract class UIWorkingSetWizardsAuto<W extends IWizard> extends UITestC
 	}
 
 	private void removeAllWorkingSets() {
-		IWorkingSetManager workingSetManager = fWorkbench.getWorkingSetManager();
+		IWorkingSetManager workingSetManager = getWorkbench().getWorkingSetManager();
 		IWorkingSet[] workingSets = workingSetManager.getWorkingSets();
 		for (IWorkingSet workingSet : workingSets) {
 			workingSetManager.removeWorkingSet(workingSet);

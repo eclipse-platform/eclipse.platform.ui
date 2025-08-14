@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.themes;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.themes.ITheme;
@@ -39,14 +41,14 @@ public abstract class ThemeTest extends UITestCase {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		fManager = fWorkbench.getThemeManager();
+		fManager = getWorkbench().getThemeManager();
 		fManager.setCurrentTheme(IThemeManager.DEFAULT_THEME);
 
 		mockCSSTheme();
 	}
 
 	private void mockCSSTheme() {
-		IThemeEngine themeEngine = fWorkbench.getService(IThemeEngine.class);
+		IThemeEngine themeEngine = getWorkbench().getService(IThemeEngine.class);
 		org.eclipse.e4.ui.css.swt.theme.ITheme currentTheme = themeEngine.getActiveTheme();
 		if (currentTheme != null && !MOCK_CSS_THEME.equals(currentTheme.getId())) {
 			themeEngine.setTheme(MOCK_CSS_THEME, false);

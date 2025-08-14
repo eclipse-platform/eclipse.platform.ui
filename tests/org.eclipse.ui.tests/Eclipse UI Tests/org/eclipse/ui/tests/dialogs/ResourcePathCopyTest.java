@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.dialogs;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -45,7 +47,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
@@ -107,7 +108,7 @@ public class ResourcePathCopyTest extends UITestCase {
 		assertNotNull("failed to open project explorer", navigator);
 
 		// for project selection
-		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchPage activePage = getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewPart findView = activePage.findView(IPageLayout.ID_PROJECT_EXPLORER);
 		ISelectionProvider selectionProvider = findView.getSite().getSelectionProvider();
 		selectionProvider.setSelection(new StructuredSelection(workspaceProjects));

@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.propertysheet;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.junit.Assert.assertThrows;
 
 import java.util.HashMap;
@@ -155,7 +156,7 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	}
 
 	void hideAndAssertNoParts() {
-		IWorkbenchWindow[] windows = fWorkbench.getWorkbenchWindows();
+		IWorkbenchWindow[] windows = getWorkbench().getWorkbenchWindows();
 		for (IWorkbenchWindow w : windows) {
 			IWorkbenchPage ap = w.getActivePage();
 			hideAndAssertNoParts(ap);

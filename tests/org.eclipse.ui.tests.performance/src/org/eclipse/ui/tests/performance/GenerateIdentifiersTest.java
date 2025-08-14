@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.performance;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import org.eclipse.ui.activities.IActivityManager;
 import org.junit.Test;
 
@@ -30,7 +32,7 @@ public class GenerateIdentifiersTest extends BasicPerformanceTest {
 
 	@Test
 	public void test() throws Throwable {
-		final IActivityManager activityManager = fWorkbench.getActivitySupport().getActivityManager();
+		final IActivityManager activityManager = getWorkbench().getActivitySupport().getActivityManager();
 
 		exercise(() -> {
 			// construct the Identifiers to test

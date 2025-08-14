@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
+
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
@@ -51,57 +53,57 @@ public class IWorkbenchTest extends UITestCase {
 		IWorkbenchWindow win1, win2;
 
 		// Test initial window.
-		win1 = fWorkbench.getActiveWorkbenchWindow();
+		win1 = getWorkbench().getActiveWorkbenchWindow();
 		assertNotNull(win1);
 
 		// Test open window.
 		win1 = openTestWindow();
-		assertEquals(win1, fWorkbench.getActiveWorkbenchWindow());
+		assertEquals(win1, getWorkbench().getActiveWorkbenchWindow());
 
 		// Test open second window.
 		win2 = openTestWindow();
-		assertEquals(win2, fWorkbench.getActiveWorkbenchWindow());
+		assertEquals(win2, getWorkbench().getActiveWorkbenchWindow());
 
 		// Test set focus.
 		win1.getShell().forceFocus();
 		processEvents();
-		assertEquals(win1, fWorkbench.getActiveWorkbenchWindow());
+		assertEquals(win1, getWorkbench().getActiveWorkbenchWindow());
 
 		// Test set focus.
 		win2.getShell().forceFocus();
 		processEvents();
-		assertEquals(win2, fWorkbench.getActiveWorkbenchWindow());
+		assertEquals(win2, getWorkbench().getActiveWorkbenchWindow());
 
 		// Cleanup in tearDown.
 	}
 
 	@Test
 	public void testGetEditorRegistry() throws Throwable {
-		IEditorRegistry reg = fWorkbench.getEditorRegistry();
+		IEditorRegistry reg = getWorkbench().getEditorRegistry();
 		assertNotNull(reg);
 	}
 
 	@Test
 	public void testGetPerspectiveRegistry() throws Throwable {
-		IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
+		IPerspectiveRegistry reg = getWorkbench().getPerspectiveRegistry();
 		assertNotNull(reg);
 	}
 
 	@Test
 	public void testGetPrefereneManager() throws Throwable {
-		PreferenceManager mgr = fWorkbench.getPreferenceManager();
+		PreferenceManager mgr = getWorkbench().getPreferenceManager();
 		assertNotNull(mgr);
 	}
 
 	@Test
 	public void testGetSharedImages() throws Throwable {
-		ISharedImages img = fWorkbench.getSharedImages();
+		ISharedImages img = getWorkbench().getSharedImages();
 		assertNotNull(img);
 	}
 
 	@Test
 	public void testGetWorkingSetManager() throws Throwable {
-		IWorkingSetManager workingSetManager = fWorkbench
+		IWorkingSetManager workingSetManager = getWorkbench()
 				.getWorkingSetManager();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
@@ -110,7 +112,7 @@ public class IWorkbenchTest extends UITestCase {
 		IWorkingSet workingSet = workingSetManager.createWorkingSet("ws1",
 				new IAdaptable[] { workspace.getRoot() });
 		workingSetManager.addWorkingSet(workingSet);
-		workingSetManager = fWorkbench.getWorkingSetManager();
+		workingSetManager = getWorkbench().getWorkingSetManager();
 		assertEquals(1, workingSetManager.getWorkingSets().length);
 		assertEquals(workingSet, workingSetManager.getWorkingSets()[0]);
 
@@ -119,7 +121,7 @@ public class IWorkbenchTest extends UITestCase {
 
 	@Test
 	public void testGetWorkbenchWindows() throws Throwable {
-		IWorkbenchWindow[] wins = fWorkbench.getWorkbenchWindows();
+		IWorkbenchWindow[] wins = getWorkbench().getWorkbenchWindows();
 		assertEquals(ArrayUtil.checkNotNull(wins), true);
 		int oldTotal = wins.length;
 		int num = 3;
@@ -129,7 +131,7 @@ public class IWorkbenchTest extends UITestCase {
 			newWins[i] = openTestWindow();
 		}
 
-		wins = fWorkbench.getWorkbenchWindows();
+		wins = getWorkbench().getWorkbenchWindows();
 		for (int i = 0; i < num; i++) {
 			assertTrue(ArrayUtil.contains(wins, newWins[i]));
 		}
@@ -137,7 +139,7 @@ public class IWorkbenchTest extends UITestCase {
 		assertEquals(wins.length, oldTotal + num);
 
 		closeAllTestWindows();
-		wins = fWorkbench.getWorkbenchWindows();
+		wins = getWorkbench().getWorkbenchWindows();
 		assertEquals(wins.length, oldTotal);
 	}
 
@@ -150,9 +152,9 @@ public class IWorkbenchTest extends UITestCase {
 		// open a window with valid perspective
 		IWorkbenchWindow win = null;
 		try {
-			win = fWorkbench.openWorkbenchWindow(EmptyPerspective.PERSP_ID, getPageInput());
+			win = getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, getPageInput());
 			assertNotNull(win);
-			assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
+			assertEquals(win, getWorkbench().getActiveWorkbenchWindow());
 			assertEquals(EmptyPerspective.PERSP_ID, win.getActivePage()
 					.getPerspective().getId());
 		} finally {
@@ -164,7 +166,7 @@ public class IWorkbenchTest extends UITestCase {
 		// open a window with invalid perspective. WorkbenchException is expected.
 		boolean exceptionOccured = false;
 		try {
-			win = fWorkbench.openWorkbenchWindow("afdasfdasf", getPageInput());
+			win = getWorkbench().openWorkbenchWindow("afdasfdasf", getPageInput());
 		} catch (WorkbenchException ex) {
 			exceptionOccured = true;
 		}
@@ -182,11 +184,11 @@ public class IWorkbenchTest extends UITestCase {
 		IWorkbenchWindow win = null;
 
 		try {
-			win = fWorkbench
+			win = getWorkbench()
 					.openWorkbenchWindow(getPageInput());
 			assertNotNull(win);
-			assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
-			String defaultID = fWorkbench.getPerspectiveRegistry()
+			assertEquals(win, getWorkbench().getActiveWorkbenchWindow());
+			String defaultID = getWorkbench().getPerspectiveRegistry()
 					.getDefaultPerspective();
 			assertEquals(win.getActivePage().getPerspective().getId(),
 					defaultID);
@@ -205,42 +207,38 @@ public class IWorkbenchTest extends UITestCase {
 		//IWorkbenchPage page1, page2;
 		try {
 			/*
-			 * Commented out until test case can be updated to match new
-			 * implementation of single page per window
+			 * Commented out until test case can be updated to match new implementation of
+			 * single page per window
 			 *
-			 // Open test window.
-			 win = fWorkbench.openWorkbenchWindow(ResourcesPlugin.getWorkspace());
-			 assertNotNull(win);
-
-			 // Set platform pref for openPage.
-			 IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-			 store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES,
-			 true);
-
-			 // Call openPage twice with the same input.
-			 // Verify that we get the same page back both times.
-			 page1 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
-			 assertNotNull(page1);
-			 page2 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
-			 assertNotNull(page2);
-			 assertEquals("Pages should be equal", page1, page2);
-
-			 // Reset platform pref for openPage.
-			 store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES,
-			 false);
+			 * // Open test window. win =
+			 * getWorkbench().openWorkbenchWindow(ResourcesPlugin.getWorkspace());
+			 * assertNotNull(win);
+			 *
+			 * // Set platform pref for openPage. IPreferenceStore store =
+			 * WorkbenchPlugin.getDefault().getPreferenceStore();
+			 * store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES, true);
+			 *
+			 * // Call openPage twice with the same input. // Verify that we get the same
+			 * page back both times. page1 =
+			 * getWorkbench().openPage(ResourcesPlugin.getWorkspace());
+			 * assertNotNull(page1); page2 =
+			 * getWorkbench().openPage(ResourcesPlugin.getWorkspace());
+			 * assertNotNull(page2); assertEquals("Pages should be equal", page1, page2);
+			 *
+			 * // Reset platform pref for openPage.
+			 * store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES, false);
 			 */
 			// Call openPage twice with the same input.
 			// Verify that we get two different pages back.
 			/*
-			 * Commented out until Nick has time to update this
-			 * test case to match new implementation of openPage
-			 * otherwise this test always fails.
+			 * Commented out until Nick has time to update this test case to match new
+			 * implementation of openPage otherwise this test always fails.
 			 *
-			 page1 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
-			 assertNotNull(page1);
-			 page2 = fWorkbench.openPage(ResourcesPlugin.getWorkspace());
-			 assertNotNull(page2);
-			 assertTrue("Pages should be not equal", page1 != page2);
+			 * page1 = getWorkbench().openPage(ResourcesPlugin.getWorkspace());
+			 * assertNotNull(page1); page2 =
+			 * getWorkbench().openPage(ResourcesPlugin.getWorkspace());
+			 * assertNotNull(page2); assertTrue("Pages should be not equal", page1 !=
+			 * page2);
 			 */
 		} finally {
 			// Close test window.
@@ -257,40 +255,35 @@ public class IWorkbenchTest extends UITestCase {
 		//IWorkbenchPage page1, page2;
 		try {
 			/*
-			 * Commented out until test case can be updated to match new
-			 * implementation of single page per window
+			 * Commented out until test case can be updated to match new implementation of
+			 * single page per window
 			 *
-			 // Open test window.
-			 win = fWorkbench.openWorkbenchWindow(ResourcesPlugin.getWorkspace());
-			 assertNotNull(win);
-
-			 // Set platform pref for openPage.
-			 IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-			 store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES,
-			 true);
-
-			 // Call openPage twice with the same input.
-			 // Verify that we get the same page back both times.
-			 page1 = fWorkbench.openPage(EmptyPerspective.PERSP_ID,
-			 ResourcesPlugin.getWorkspace(), 0);
-			 assertNotNull(page1);
-			 page2 = fWorkbench.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
-			 ResourcesPlugin.getWorkspace(), 0);
-			 assertNotNull(page2);
-			 assertEquals("Pages should be equal", page1, page2);
-
-			 // Reset platform pref for openPage.
-			 store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES,
-			 false);
-
-			 // Call openPage twice with the same input.
-			 // Verify that we get two different pages back.
-			 page1 = fWorkbench.openPage(EmptyPerspective.PERSP_ID,
-			 ResourcesPlugin.getWorkspace(), 0);
-			 assertNotNull(page1);
-			 page2 = fWorkbench.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
-			 ResourcesPlugin.getWorkspace(), 0);
-			 assertTrue("Pages should be not equal", page1 != page2);
+			 * // Open test window. win =
+			 * getWorkbench().openWorkbenchWindow(ResourcesPlugin.getWorkspace());
+			 * assertNotNull(win);
+			 *
+			 * // Set platform pref for openPage. IPreferenceStore store =
+			 * WorkbenchPlugin.getDefault().getPreferenceStore();
+			 * store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES, true);
+			 *
+			 * // Call openPage twice with the same input. // Verify that we get the same
+			 * page back both times. page1 =
+			 * getWorkbench().openPage(EmptyPerspective.PERSP_ID,
+			 * ResourcesPlugin.getWorkspace(), 0); assertNotNull(page1); page2 =
+			 * getWorkbench().openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+			 * ResourcesPlugin.getWorkspace(), 0); assertNotNull(page2);
+			 * assertEquals("Pages should be equal", page1, page2);
+			 *
+			 * // Reset platform pref for openPage.
+			 * store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES, false);
+			 *
+			 * // Call openPage twice with the same input. // Verify that we get two
+			 * different pages back. page1 =
+			 * getWorkbench().openPage(EmptyPerspective.PERSP_ID,
+			 * ResourcesPlugin.getWorkspace(), 0); assertNotNull(page1); page2 =
+			 * getWorkbench().openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+			 * ResourcesPlugin.getWorkspace(), 0); assertTrue("Pages should be not equal",
+			 * page1 != page2);
 			 */
 		} finally {
 			// Close test window.
