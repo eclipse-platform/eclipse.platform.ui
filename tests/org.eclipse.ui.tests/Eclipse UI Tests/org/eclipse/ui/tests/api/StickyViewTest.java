@@ -35,9 +35,11 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -47,6 +49,9 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class StickyViewTest extends UITestCase {
+
+	@Rule
+	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
 
 	private IWorkbenchWindow window;
 
@@ -277,7 +282,8 @@ public class StickyViewTest extends UITestCase {
 	public void XXXtestPerspectiveViewToolBarVisible() throws Throwable {
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
-		setPreference(PrefUtil.getAPIPreferenceStore(), IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+		preferenceMemento.setPreference(PrefUtil.getAPIPreferenceStore(),
+				IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 
 		IPerspectiveDescriptor perspective = WorkbenchPlugin.getDefault()
 				.getPerspectiveRegistry().findPerspectiveWithId(

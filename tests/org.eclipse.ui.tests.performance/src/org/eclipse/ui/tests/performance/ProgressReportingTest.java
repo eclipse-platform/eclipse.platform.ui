@@ -27,6 +27,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
+import org.junit.Rule;
 
 /**
  * Verifies the performance of progress reporting APIs in various contexts which
@@ -64,6 +66,10 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 	 * results during profiling.
 	 */
 	public static final int MAX_ITERATIONS = 100;
+
+	@Rule
+	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
+
 	private volatile boolean isDone;
 	private Display display;
 
@@ -81,7 +87,8 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 	}
 
 	private void setRunInBackground(boolean newRunInBackgroundSetting) {
-		setPreference(WorkbenchPlugin.getDefault().getPreferenceStore(), IPreferenceConstants.RUN_IN_BACKGROUND,
+		preferenceMemento.setPreference(WorkbenchPlugin.getDefault().getPreferenceStore(),
+				IPreferenceConstants.RUN_IN_BACKGROUND,
 				newRunInBackgroundSetting);
 	}
 

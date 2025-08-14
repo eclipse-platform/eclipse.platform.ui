@@ -36,11 +36,16 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Assert;
+import org.junit.Rule;
 
 public class ZoomTestCase extends UITestCase {
 //    protected static final String view2Id = IPageLayout.ID_OUTLINE;
+
+	@Rule
+	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
 
 	protected WorkbenchWindow window;
 
@@ -74,7 +79,7 @@ public class ZoomTestCase extends UITestCase {
 
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
-		setPreference(apiStore, IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+		preferenceMemento.setPreference(apiStore, IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 
 		try {
 			project = FileUtil.createProject("IEditorPartTest"); //$NON-NLS-1$
