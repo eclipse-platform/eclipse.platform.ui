@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.function.ThrowingRunnable;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -221,7 +222,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *
 	 * @since 3.1
 	 */
-	public static void exercise(Runnable runnable) throws CoreException {
+	public static void exercise(ThrowingRunnable runnable) throws CoreException {
 		exercise(runnable, 3, 100, 4000);
 	}
 
@@ -231,7 +232,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *
 	 * @since 3.1
 	 */
-	public static void exercise(Runnable runnable,
+	public static void exercise(ThrowingRunnable runnable,
 			int minIterations,
 			int maxIterations, int maxTime) throws CoreException {
 		long startTime = System.currentTimeMillis();
@@ -240,7 +241,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 
 			try {
 				runnable.run();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						FrameworkUtil.getBundle(BasicPerformanceTest.class)
 								.getSymbolicName(), IStatus.OK,

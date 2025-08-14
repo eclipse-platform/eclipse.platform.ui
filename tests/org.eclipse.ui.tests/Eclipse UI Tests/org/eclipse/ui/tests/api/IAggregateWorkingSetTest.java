@@ -173,9 +173,6 @@ public class IAggregateWorkingSetTest extends UITestCase {
 			aggregateReloaded = (IAggregateWorkingSet) manager.createWorkingSet(memento);
 			manager.addWorkingSet(aggregateReloaded);
 			aggregateReloaded.getComponents();
-		} catch (StackOverflowError e) {
-			e.printStackTrace();
-			fail("Stack overflow for self-referenced aggregate working set", e);
 		} finally {
 			if (aggregateReloaded != null) {
 				manager.removeWorkingSet(aggregateReloaded);
@@ -230,9 +227,6 @@ public class IAggregateWorkingSetTest extends UITestCase {
 			for (IWorkingSet aggregate2 : aggregates) {
 				assertFalse("testCycle".equals(aggregate2.getName()));
 			}
-		} catch (StackOverflowError e) {
-			e.printStackTrace();
-			fail("Stack overflow for self-referenced aggregate working set", e);
 		} finally {
 			if (aggregateReloaded != null) {
 				manager.removeWorkingSet(aggregateReloaded);
@@ -385,7 +379,13 @@ public class IAggregateWorkingSetTest extends UITestCase {
 				if (!(ws instanceof AggregateWorkingSet aws)) {
 					return;
 				}
-				IMemento m = readField(AbstractWorkingSet.class, "workingSetMemento", IMemento.class, aws);
+				IMemento m;
+				try {
+					m = readField(AbstractWorkingSet.class, "workingSetMemento", IMemento.class, aws);
+				} catch (Exception e) {
+					error.set(e.getMessage());
+					return;
+				}
 				IWorkingSet[] sets = aws.getComponents();
 				if (m != null) {
 					IMemento[] msets = m.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
@@ -442,7 +442,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 		}
 	}
 
-	private IMemento saveAndRemoveWorkingSets(IWorkingSet... sets) {
+	private IMemento saveAndRemoveWorkingSets(IWorkingSet... sets) throws Exception {
 		IMemento managerMemento = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET_MANAGER);
 		IWorkingSetManager manager = fWorkbench.getWorkingSetManager();
@@ -467,7 +467,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 		return managerMemento;
 	}
 
-	private void restoreWorkingSetManager(IMemento managerMemento) {
+	private void restoreWorkingSetManager(IMemento managerMemento) throws Exception {
 		IWorkingSetManager manager = fWorkbench.getWorkingSetManager();
 
 		invokeMethod(AbstractWorkingSetManager.class, "restoreWorkingSetState",
@@ -479,25 +479,16 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	}
 
 	private Object invokeMethod(Class<?> clazz, String methodName, Object instance, Object[] args,
-			Class<?>[] argsClasses) {
-		try {
-			Method method = clazz.getDeclaredMethod(methodName, argsClasses);
-			method.setAccessible(true);
-			return method.invoke(instance, args);
-		} catch (Exception e) {
-			fail("Failure in invoking " + clazz.getName() + methodName, e);
-		}
-		return null;
+			Class<?>[] argsClasses) throws Exception {
+		Method method = clazz.getDeclaredMethod(methodName, argsClasses);
+		method.setAccessible(true);
+		return method.invoke(instance, args);
 	}
 
-	private <T> T readField(Class<?> clazz, String filedName, Class<T> type, Object instance) {
-		try {
-			Field field = clazz.getDeclaredField(filedName);
-			field.setAccessible(true);
-			return type.cast(field.get(instance));
-		} catch (Exception e) {
-			fail("Failure in reading " + clazz.getName() + filedName, e);
-		}
-		return null;
+	private <T> T readField(Class<?> clazz, String filedName, Class<T> type, Object instance)
+			throws Exception {
+		Field field = clazz.getDeclaredField(filedName);
+		field.setAccessible(true);
+		return type.cast(field.get(instance));
 	}
 }
