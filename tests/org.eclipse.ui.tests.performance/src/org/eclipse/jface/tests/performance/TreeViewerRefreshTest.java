@@ -19,6 +19,7 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Test;
 
 
 /**
@@ -29,14 +30,6 @@ public class TreeViewerRefreshTest extends ViewerTest {
 
 	TreeViewer viewer;
 	private RefreshTestTreeContentProvider contentProvider;
-
-	public TreeViewerRefreshTest(String testName, int tagging) {
-		super(testName, tagging);
-	}
-
-	public TreeViewerRefreshTest(String testName) {
-		super(testName);
-	}
 
 	@Override
 	protected StructuredViewer createViewer(Shell shell) {
@@ -50,6 +43,7 @@ public class TreeViewerRefreshTest extends ViewerTest {
 	/**
 	 * Test the time for doing a refresh.
 	 */
+	@Test
 	public void testRefresh() throws Throwable {
 		openBrowser();
 

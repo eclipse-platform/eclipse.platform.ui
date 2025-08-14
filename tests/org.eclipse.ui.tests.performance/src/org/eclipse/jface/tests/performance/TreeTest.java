@@ -29,21 +29,6 @@ public abstract class TreeTest extends ViewerTest {
 
 	TreeViewer viewer;
 
-	/**
-	 * Create a new instance of the receiver.
-	 */
-	public TreeTest(String testName, int tagging) {
-		super(testName, tagging);
-	}
-
-	/**
-	 * Create a new instance of the receiver.
-	 */
-	public TreeTest(String testName) {
-		super(testName);
-	}
-
-
 	@Override
 	protected StructuredViewer createViewer(Shell shell) {
 		viewer = createTreeViewer(shell);

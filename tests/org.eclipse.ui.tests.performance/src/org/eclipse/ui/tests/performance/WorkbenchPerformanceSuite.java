@@ -15,23 +15,14 @@
 package org.eclipse.ui.tests.performance;
 
 import org.eclipse.ui.tests.performance.layout.ResizeTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-class WorkbenchPerformanceSuite extends TestSuite {
-
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new WorkbenchPerformanceSuite();
-	}
-
-	public WorkbenchPerformanceSuite() {
-		addTest(new JUnit4TestAdapter(ResizeTest.class));
-	}
-
+@RunWith(Suite.class)
+@SuiteClasses({ //
+		ResizeTest.class, //
+})
+class WorkbenchPerformanceSuite {
 
 }

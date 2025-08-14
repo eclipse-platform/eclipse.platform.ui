@@ -35,6 +35,8 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.util.Util;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 /**
  * <p>
@@ -47,6 +49,9 @@ import org.eclipse.jface.util.Util;
  * @since 3.1
  */
 public final class CommandsPerformanceTest extends BasicPerformanceTest {
+
+	@ClassRule
+	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
 
 	/**
 	 * <p>
@@ -144,16 +149,6 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * if no test is running.
 	 */
 	private ContextManager contextManager = null;
-
-	/**
-	 * Constructs an instance of <code>CommandsPerformanceTest</code>.
-	 *
-	 * @param name
-	 *            Test's name.
-	 */
-	public CommandsPerformanceTest(final String name) {
-		super(name);
-	}
 
 	/**
 	 * <p>
@@ -369,6 +364,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * @throws ParseException
 	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */
+	@Test
 	public final void testBindingCacheHitHard() throws ParseException {
 		// Constants
 		final int cacheHits = 1000000;
@@ -398,6 +394,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * @throws ParseException
 	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */
+	@Test
 	public final void testBindingCacheHitHardReverse() throws ParseException {
 		// Constants
 		final int cacheHits = 1000000;
@@ -426,6 +423,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * @throws ParseException
 	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */
+	@Test
 	public final void testBindingCacheHitSoft() throws ParseException {
 		// Constants
 		final int cacheHits = 10000;
@@ -465,6 +463,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * @throws ParseException
 	 *             If "CTRL+F" can't be parsed for some strange reason.
 	 */
+	@Test
 	public final void testBindingCacheMissLarge() throws ParseException {
 		// Constants
 		final KeySequence keySequence = KeySequence.getInstance("CTRL+F");

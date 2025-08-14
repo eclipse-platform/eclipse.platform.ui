@@ -27,8 +27,9 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
-import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
+import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
 import org.eclipse.ui.tests.performance.ViewPerformanceUtil;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -43,6 +44,9 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class ResizeTest extends BasicPerformanceTest {
 
+	@ClassRule
+	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
 	private static String RESOURCE_PERSPID = "org.eclipse.ui.resourcePerspective";
 	// Note: to test perspective switching properly, we need perspectives with lots
 	// of associated actions.
@@ -50,7 +54,7 @@ public class ResizeTest extends BasicPerformanceTest {
 	// has a fingerprint test for performance that relies on this not changing.
 	private static final List<String> PERSPECTIVE_IDS = List.of( //
 			EmptyPerspective.PERSP_ID2, //
-			UIPerformanceTestSetup.PERSPECTIVE1, //
+			UIPerformanceTestRule.PERSPECTIVE1, //
 			RESOURCE_PERSPID, //
 			"org.eclipse.jdt.ui.JavaPerspective", //
 			"org.eclipse.debug.ui.DebugPerspective");
@@ -82,7 +86,7 @@ public class ResizeTest extends BasicPerformanceTest {
 	 * Create a new instance of the receiver.
 	 */
 	public ResizeTest(TestWidgetFactory testWidgetFactory, int tagging) {
-		super(testWidgetFactory.getName() + " setSize", tagging);
+		super(tagging);
 		this.widgetFactory = testWidgetFactory;
 	}
 

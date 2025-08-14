@@ -16,6 +16,7 @@ package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +28,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -35,9 +37,12 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class OpenCloseEditorTest extends BasicPerformanceTest {
 
+	@ClassRule
+	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
 	private final String extension;
 
-	@Parameters
+	@Parameters(name = "{index}: {0}")
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] { { "perf_basic", BasicPerformanceTest.NONE },
 				{ "perf_outline", BasicPerformanceTest.NONE }, { "java", BasicPerformanceTest.LOCAL } });
@@ -45,7 +50,7 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
 
 
 	public OpenCloseEditorTest(String extension, int tagging) {
-		super("testOpenAndCloseEditors:" + extension, tagging);
+		super(tagging);
 		this.extension = extension;
 	}
 
@@ -54,7 +59,7 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
 		final IFile file = getProject().getFile("1." + extension);
 		assertTrue(file.exists());
 
-		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
+		IWorkbenchWindow window = openTestWindow(UIPerformanceTestRule.PERSPECTIVE1);
 		final IWorkbenchPage activePage = window.getActivePage();
 
 		exercise(() -> {

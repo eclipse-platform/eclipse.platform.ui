@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
+import org.junit.Test;
 
 /**
  * The TableViewerRefreshTest is a test for refreshing the TableViewer.
@@ -53,14 +54,6 @@ public class TableViewerRefreshTest extends ViewerTest {
 
 	private RefreshTestContentProvider contentProvider;
 
-	public TableViewerRefreshTest(String testName, int tagging) {
-		super(testName, tagging);
-	}
-
-	public TableViewerRefreshTest(String testName) {
-		super(testName);
-	}
-
 	@Override
 	protected StructuredViewer createViewer(Shell shell) {
 		viewer = new TestTableViewer(shell);
@@ -74,6 +67,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 	/**
 	 * Test the time for doing a refresh.
 	 */
+	@Test
 	public void testRefresh() throws Throwable {
 		openBrowser();
 
@@ -92,6 +86,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 	/**
 	 * Test the time for doing a refresh.
 	 */
+	@Test
 	public void testRefreshSorted() throws Throwable {
 		openBrowser();
 		viewer.setComparator(new ViewerComparator());
@@ -111,6 +106,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 	/**
 	 * Test the time for doing a refresh.
 	 */
+	@Test
 	public void testRefreshPreSorted() throws Throwable {
 		openBrowser();
 		final ViewerComparator sorter = new ViewerComparator();
@@ -134,6 +130,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 	/**
 	 * Test the time for doing a refresh.
 	 */
+	@Test
 	public void testUpdate() throws Throwable {
 		openBrowser();
 

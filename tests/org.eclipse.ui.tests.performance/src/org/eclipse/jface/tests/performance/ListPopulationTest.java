@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.junit.Test;
 
 /**
  * The ListPopulationTest is the test for simple
@@ -30,14 +31,6 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 public class ListPopulationTest extends BasicPerformanceTest {
 
 	List list;
-
-	public ListPopulationTest(String testName, int tagging) {
-		super(testName, tagging);
-	}
-
-	public ListPopulationTest(String testName) {
-		super(testName);
-	}
 
 	protected void openBrowser() {
 		Display fDisplay = Display.getCurrent();
@@ -52,26 +45,32 @@ public class ListPopulationTest extends BasicPerformanceTest {
 		// processEvents();
 	}
 
+	@Test
 	public void testSmallAdd() throws Throwable {
 		addBench(100);
 	}
 
+	@Test
 	public void testSmallSetItems() throws Throwable {
 		setItemsBench(100);
 	}
 
+	@Test
 	public void testMediumAdd() throws Throwable {
 		addBench(5000);
 	}
 
+	@Test
 	public void testMediumSetItems() throws Throwable {
 		setItemsBench(5000);
 	}
 
+	@Test
 	public void testLargeAdd() throws Throwable {
 		addBench(50000);
 	}
 
+	@Test
 	public void testLargeSetItems() throws Throwable {
 		setItemsBench(50000);
 	}

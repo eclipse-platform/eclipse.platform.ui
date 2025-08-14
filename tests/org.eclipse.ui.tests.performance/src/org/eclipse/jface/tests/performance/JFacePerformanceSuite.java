@@ -13,38 +13,27 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.performance;
 
-import org.eclipse.ui.tests.performance.FilteredTestSuite;
-import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
-
-import junit.framework.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * The JFacePerformanceSuite are the performance tests for JFace.
  */
-public class JFacePerformanceSuite extends FilteredTestSuite {
-
+@RunWith(Suite.class)
+@SuiteClasses({ //
+		ListViewerRefreshTest.class, //
+		ComboViewerRefreshTest.class, //
+		FastTableViewerRefreshTest.class, //
+		FastTreeTest.class, //
+		TreeAddTest.class, //
+		ProgressMonitorDialogPerformanceTest.class, //
+		ShrinkingTreeTest.class, //
+		CollatorPerformanceTest.class, //
+})
+public class JFacePerformanceSuite {
 	//Specify the minimum number of iterations
 	//and the time to drop down to a lower number
 
 	public static int MAX_TIME = 10000;
-
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new UIPerformanceTestSetup(new JFacePerformanceSuite());
-	}
-
-	public JFacePerformanceSuite() {
-		super();
-		addTestSuite(ListViewerRefreshTest.class);
-		addTestSuite(ComboViewerRefreshTest.class);
-		addTestSuite(FastTableViewerRefreshTest.class);
-		addTestSuite(FastTreeTest.class);
-		addTestSuite(TreeAddTest.class);
-		addTestSuite(ProgressMonitorDialogPerformanceTest.class);
-		addTestSuite(ShrinkingTreeTest.class);
-		addTestSuite(CollatorPerformanceTest.class);
-
-	}
 }

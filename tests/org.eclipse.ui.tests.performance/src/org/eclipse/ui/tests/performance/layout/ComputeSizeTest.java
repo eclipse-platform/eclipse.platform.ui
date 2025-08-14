@@ -35,8 +35,6 @@ public class ComputeSizeTest extends BasicPerformanceTest {
 	private final int yIterations = 10;
 
 	public ComputeSizeTest(TestWidgetFactory widgetFactory) {
-		super(widgetFactory.getName() + " computeSize");
-
 		this.widgetFactory = widgetFactory;
 	}
 

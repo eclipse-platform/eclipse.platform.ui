@@ -16,6 +16,7 @@ package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.tests.performance.parts.PerformanceProblemsView;
 import org.eclipse.ui.texteditor.MarkerUtilities;
+import org.junit.Test;
 
 /**
  * The ProblemsViewPerformanceTest is a test of population of the problems view.
@@ -44,15 +46,9 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 	private final String PROBLEMS_VIEW_ID = "org.eclipse.ui.tests.performance.problemsView";
 
 	/**
-	 * Create a new instance of the receiver.
-	 */
-	public ProblemsViewPerformanceTest(String testName) {
-		super(testName);
-	}
-
-	/**
 	 * Test the population of the problems view.
 	 */
+	@Test
 	public void testPopulation() {
 		IWorkbenchWindow window = openTestWindow(EMPTY_PERSPECTIVE_ID);
 		final IWorkbenchPage page = window.getActivePage();

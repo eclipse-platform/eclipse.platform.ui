@@ -20,23 +20,29 @@ import java.util.Comparator;
 
 import org.eclipse.jface.util.Policy;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 /**
  * @since 3.5
  */
 public class CollatorPerformanceTest extends BasicPerformanceTest {
 
+	@ClassRule
+	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
 	private static final int ARRAYSIZE=100000;
 	private static String[] fArray;
 
-	public CollatorPerformanceTest (String testName) {
-		super(testName);
+	public CollatorPerformanceTest() {
 		generateArray();
 	}
 
 	/**
 	 *  test Collator by sorting the array
 	 */
+	@Test
 	public void testCollator(){
 		Comparator<Object> comparator=Policy.getComparator();
 		for (int i = 0; i < 15; i++) {

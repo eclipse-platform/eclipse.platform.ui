@@ -15,6 +15,7 @@ package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -35,11 +37,14 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class EditorSwitchTest extends BasicPerformanceTest {
 
+	@ClassRule
+	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
 	private final String extension1;
 
 	private final String extension2;
 
-	@Parameters
+	@Parameters(name = "{index}: {0} - {1}")
 	public static Collection<Object[]> data() {
 		return Arrays.asList(new Object[][] { { "perf_outline", "java" }, { "perf_basic", "perf_outline" } });
 	}
@@ -48,7 +53,6 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 	 * Constructor.
 	 */
 	public EditorSwitchTest(String extension1, String extension2) {
-		super("testEditorSwitch:" + extension1 + "," + extension2);
 		this.extension1 = extension1;
 		this.extension2 = extension2;
 	}
@@ -61,7 +65,7 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 
 		// Open both files outside the loop so as not to include
 		// the initial time to open, just switching.
-		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
+		IWorkbenchWindow window = openTestWindow(UIPerformanceTestRule.PERSPECTIVE1);
 		final IWorkbenchPage activePage = window.getActivePage();
 		final IFile file1 = getProject().getFile("1." + extension1);
 		assertTrue(file1.exists());
