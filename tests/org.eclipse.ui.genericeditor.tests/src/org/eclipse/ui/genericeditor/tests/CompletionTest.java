@@ -69,6 +69,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
 import org.eclipse.ui.genericeditor.tests.contributions.LongRunningBarContentAssistProcessor;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
@@ -171,7 +172,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		action.run(); //opens shell
 		Shell shell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay(),expectShell);
-		waitAndDispatch(100); // can dispose shell when focus lost during debugging
+		DisplayHelper.runEventLoop(PlatformUI.getWorkbench().getDisplay(), 100); // can dispose shell when focus lost during debugging
 		return shell;
 	}
 

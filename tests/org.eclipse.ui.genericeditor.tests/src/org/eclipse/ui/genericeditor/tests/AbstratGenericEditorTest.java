@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
+import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
@@ -91,7 +93,7 @@ public class AbstratGenericEditorTest {
 		this.file.setCharset(StandardCharsets.UTF_8.name(), null);
 		this.editor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().openEditor(inputCreator.get(), "org.eclipse.ui.genericeditor.GenericEditor");
-		UITestCase.processEvents();
+		runEventLoop(PlatformUI.getWorkbench().getDisplay(),0);
 	}
 
 	/**
@@ -104,7 +106,7 @@ public class AbstratGenericEditorTest {
 			editor.close(false);
 			editor = null;
 		}
-		UITestCase.processEvents();
+		runEventLoop(PlatformUI.getWorkbench().getDisplay(),0);
 		if (file != null) {
 			file.delete(true, new NullProgressMonitor());
 			file = null;
@@ -123,16 +125,7 @@ public class AbstratGenericEditorTest {
 		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager().getIntro();
 		if (intro != null) {
 			PlatformUI.getWorkbench().getIntroManager().closeIntro(intro);
-			UITestCase.processEvents();
+			runEventLoop(PlatformUI.getWorkbench().getDisplay(),0);
 		}
 	}
-
-	public static void waitAndDispatch(long milliseconds) {
-		long timeout = milliseconds; //ms
-		long start = System.currentTimeMillis();
-		while (start + timeout > System.currentTimeMillis()) {
-			UITestCase.processEvents();
-		}
-	}
-
 }

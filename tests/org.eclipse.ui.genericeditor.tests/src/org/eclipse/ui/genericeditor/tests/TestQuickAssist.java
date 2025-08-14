@@ -15,6 +15,7 @@
 package org.eclipse.ui.genericeditor.tests;
 
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
+import static org.eclipse.ui.tests.harness.util.DisplayHelper.waitForCondition;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -32,9 +33,8 @@ import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.core.resources.IMarker;
 
-
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.genericeditor.tests.contributions.MarkerResolutionGenerator;
-import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.TextOperationAction;
@@ -105,7 +105,7 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		action.run();
 		Shell shell= CompletionTest.findNewShell(beforeShells, editor.getSite().getShell().getDisplay(), true);
-		waitAndDispatch(100);
+		runEventLoop(PlatformUI.getWorkbench().getDisplay(),100);
 		return shell;
 	}
 
@@ -117,7 +117,7 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 	 */
 	private void checkCompletionContent(final Table completionProposalList, String[] proposals) {
 		// should be instantaneous, but happens to go asynchronous on CI so let's allow a wait
-		DisplayHelper.waitForCondition(completionProposalList.getDisplay(), 200,
+		waitForCondition(completionProposalList.getDisplay(), 200,
 				() -> completionProposalList.getItemCount() >= proposals.length);
 		assertEquals(proposals.length, completionProposalList.getItemCount());
 		Set<String> existing= Arrays.stream(completionProposalList.getItems()).map(TableItem::getText).collect(Collectors.toSet());
