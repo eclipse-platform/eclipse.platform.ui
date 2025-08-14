@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.menus;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEventsUntil;
+
 import java.lang.reflect.Field;
 
 import org.eclipse.core.runtime.IStatus;

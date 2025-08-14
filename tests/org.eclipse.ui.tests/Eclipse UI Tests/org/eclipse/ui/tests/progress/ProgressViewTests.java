@@ -14,8 +14,8 @@
 
 package org.eclipse.ui.tests.progress;
 
-import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
-import static org.eclipse.ui.tests.harness.util.UITestCase.processEventsUntil;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEventsUntil;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

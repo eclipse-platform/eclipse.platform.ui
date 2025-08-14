@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -29,7 +30,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Rule;
 import org.junit.Test;
 import org.osgi.service.log.LogListener;
@@ -45,7 +45,7 @@ public class Bug410426Test {
 
 	@Test
 	public void testToolbarContributionFromFactoryVisibility() throws Exception {
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		IMenuService menus = window.getService(IMenuService.class);
 		ToolBarManager manager = new ToolBarManager();
 
@@ -96,7 +96,7 @@ public class Bug410426Test {
 
 	@Test
 	public void testNoClassCastExceptionForMenuManagerToolbarContribution() throws Exception {
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		IMenuService menus = window.getService(IMenuService.class);
 		ToolBarManager manager = new ToolBarManager();
 

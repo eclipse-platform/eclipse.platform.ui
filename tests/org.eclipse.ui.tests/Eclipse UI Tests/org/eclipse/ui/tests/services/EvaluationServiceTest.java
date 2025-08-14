@@ -16,6 +16,10 @@
 package org.eclipse.ui.tests.services;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.forceActive;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

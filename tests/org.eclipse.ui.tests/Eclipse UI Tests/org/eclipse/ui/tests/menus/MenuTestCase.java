@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.menus;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem;
 import org.eclipse.jface.action.IContributionItem;

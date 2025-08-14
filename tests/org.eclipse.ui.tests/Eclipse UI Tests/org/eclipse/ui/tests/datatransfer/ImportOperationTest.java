@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

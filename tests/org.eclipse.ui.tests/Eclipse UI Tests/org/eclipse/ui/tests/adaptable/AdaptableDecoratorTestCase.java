@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.adaptable;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -32,7 +33,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -158,7 +158,7 @@ public class AdaptableDecoratorTestCase implements ILabelProviderListener {
 	 * Shows the Adapted Resource Navigator in a new test window.
 	 */
 	protected void showAdaptedNav() throws PartInitException {
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		window.getActivePage().showView(ADAPTED_NAVIGATOR_ID);
 	}
 

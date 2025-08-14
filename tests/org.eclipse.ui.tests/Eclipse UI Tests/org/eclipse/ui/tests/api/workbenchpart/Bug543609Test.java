@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api.workbenchpart;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.session.ViewWithState;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,7 +36,7 @@ public class Bug543609Test {
 
 	@Before
 	public void doSetUp() throws Exception {
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		fPage = window.getActivePage();
 	}
 

@@ -15,6 +15,7 @@
 
 package org.eclipse.ui.tests.services;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -35,7 +36,6 @@ import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -176,7 +176,7 @@ public class ContributedServiceTest {
 
 	@Test
 	public void testWorkbenchServiceFactory() throws Exception {
-		IWorkbenchWindow window = UITestCase.openTestWindow("org.eclipse.ui.resourcePerspective");
+		IWorkbenchWindow window = openTestWindow("org.eclipse.ui.resourcePerspective");
 		IProgressService progress = window.getService(IProgressService.class);
 		assertNotNull(progress);
 

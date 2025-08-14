@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.activities;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -30,7 +31,6 @@ import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -89,7 +89,7 @@ public class MenusTest {
 
 	@Before
 	public void doSetUp() throws Exception {
-		window = UITestCase.openTestWindow();
+		window = openTestWindow();
 		enabledActivities = window.getWorkbench().getActivitySupport()
 				.getActivityManager().getEnabledActivityIds();
 		service = window.getService(IMenuService.class);

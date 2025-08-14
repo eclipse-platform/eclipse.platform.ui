@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.statushandlers;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -25,7 +27,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * This class parses the structure of the Shell and finds necessary widgets.
@@ -60,7 +61,7 @@ public class StatusDialogUtil {
 	}
 
 	public static Shell getStatusShell(){
-		UITestCase.waitForJobs(100, 1000);
+		waitForJobs(100, 1000);
 		return getStatusShellImmediately();
 	}
 

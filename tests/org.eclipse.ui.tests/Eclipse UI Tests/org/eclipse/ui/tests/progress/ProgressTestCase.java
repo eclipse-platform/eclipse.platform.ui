@@ -14,7 +14,8 @@
 
 package org.eclipse.ui.tests.progress;
 
-import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.concurrent.TimeUnit;
@@ -29,7 +30,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.progress.FinishedJobs;
 import org.eclipse.ui.internal.progress.ProgressView;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -44,7 +44,7 @@ public abstract class ProgressTestCase {
 
 	@Before
 	public void doSetUp() throws Exception {
-		window = UITestCase.openTestWindow("org.eclipse.ui.resourcePerspective");
+		window = openTestWindow("org.eclipse.ui.resourcePerspective");
 
 		// Remove progress info items before running the tests to prevent random
 		// failings

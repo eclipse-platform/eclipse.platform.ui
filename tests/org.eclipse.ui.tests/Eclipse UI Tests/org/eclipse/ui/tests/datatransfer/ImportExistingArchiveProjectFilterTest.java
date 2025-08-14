@@ -15,6 +15,7 @@
 package org.eclipse.ui.tests.datatransfer;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 
 import java.io.IOException;
 import java.net.URL;

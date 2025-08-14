@@ -15,6 +15,8 @@
 
 package org.eclipse.ui.tests.harness.util;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,9 +45,9 @@ public class CloseTestWindowsRule extends ExternalResource {
 	@Override
 	protected void after() {
 		removeWindowListener();
-		UITestCase.processEvents();
+		processEvents();
 		closeAllTestWindows();
-		UITestCase.processEvents();
+		processEvents();
 	}
 
 	/**

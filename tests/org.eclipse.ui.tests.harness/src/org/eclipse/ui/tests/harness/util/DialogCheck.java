@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -83,7 +84,7 @@ public class DialogCheck {
 		dialog.setBlockOnOpen(false);
 		dialog.open();
 		Shell shell = dialog.getShell();
-		UITestCase.processEvents();
+		processEvents();
 		try {
 			verifyCompositeText(shell);
 		} finally {

@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.commands;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -68,7 +69,6 @@ import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -648,7 +648,7 @@ public class CommandEnablementTest {
 	// Related bugs possibly breaking this: 382839, 394336
 	@Test
 	public void testEnablementForLocalContext() throws Exception {
-		UITestCase.openTestWindow("org.eclipse.ui.resourcePerspective");
+		openTestWindow("org.eclipse.ui.resourcePerspective");
 		activation1 = handlerService.activateHandler(CMD1_ID, contextHandler,
 				new ActiveContextExpression(CONTEXT_TEST1,
 						new String[] { ISources.ACTIVE_CONTEXT_NAME }));

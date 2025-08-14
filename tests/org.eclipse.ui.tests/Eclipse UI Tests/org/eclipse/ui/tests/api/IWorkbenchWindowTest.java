@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.closeAllPages;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestPage;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertThrows;
 
 import org.eclipse.core.resources.ResourcesPlugin;

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.statushandlers;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -36,7 +37,6 @@ import org.eclipse.ui.internal.dialogs.ExportWizard;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.tests.SwtLeakTestWatcher;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
@@ -106,14 +106,14 @@ public class WizardsStatusHandlingTestCase {
 
 	@Test
 	public void testWizardWithNoDefaultContructor() throws Exception {
-		UITestCase.processEvents();
+		processEvents();
 
 		final CustomWizardDialog dialog = exportWizard();
 		try {
 			dialog.setBlockOnOpen(false);
 			dialog.open();
 
-			UITestCase.processEvents();
+			processEvents();
 
 			// selecting FaultyExportWizard
 			IWizardPage currenPage = dialog.getCurrentPage();
@@ -126,7 +126,7 @@ public class WizardsStatusHandlingTestCase {
 				if (table.getItem(i).getText().equals(FAULTY_WIZARD_NAME)) {
 					table.select(i);
 					table.notifyListeners(SWT.Selection, new Event());
-					UITestCase.processEvents();
+					processEvents();
 					break;
 				}
 			}
@@ -136,7 +136,7 @@ public class WizardsStatusHandlingTestCase {
 
 			dialog.nextPressed2();
 
-			UITestCase.processEvents();
+			processEvents();
 			assertStatusAdapter(TestStatusHandler.getLastHandledStatusAdapter());
 			assertEquals(TestStatusHandler.getLastHandledStyle(), StatusManager.SHOW);
 		} finally {

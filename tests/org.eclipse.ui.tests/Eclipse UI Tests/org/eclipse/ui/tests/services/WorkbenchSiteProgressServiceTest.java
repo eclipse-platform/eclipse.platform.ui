@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.services;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;

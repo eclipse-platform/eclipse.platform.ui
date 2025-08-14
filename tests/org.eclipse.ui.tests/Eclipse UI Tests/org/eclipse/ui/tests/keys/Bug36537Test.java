@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -49,7 +49,7 @@ public class Bug36537Test {
 	 */
 	@Test
 	public void testForRedundantKeySequenceBindings() {
-		final IWorkbenchWindow window = UITestCase.openTestWindow();
+		final IWorkbenchWindow window = openTestWindow();
 		final IWorkbench workbench = window.getWorkbench();
 		final IBindingService bindingService = workbench.getAdapter(IBindingService.class);
 		final Binding[] bindings = bindingService.getBindings();

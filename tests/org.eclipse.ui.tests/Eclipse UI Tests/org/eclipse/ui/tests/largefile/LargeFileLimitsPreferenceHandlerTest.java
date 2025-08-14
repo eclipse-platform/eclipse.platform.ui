@@ -57,7 +57,7 @@ import org.eclipse.ui.internal.LargeFileLimitsPreferenceHandler.FileLimit;
 import org.eclipse.ui.internal.LargeFileLimitsPreferenceHandler.LargeFileEditorSelectionDialog;
 import org.eclipse.ui.internal.LargeFileLimitsPreferenceHandler.PromptForEditor;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -461,7 +461,7 @@ public class LargeFileLimitsPreferenceHandlerTest {
 	}
 
 	private static void waitForJobs() {
-		UITestCase.waitForJobs(250, 2_000);
+		UITestUtil.waitForJobs(250, 2_000);
 	}
 
 	private static void setDefaultPreferences() {

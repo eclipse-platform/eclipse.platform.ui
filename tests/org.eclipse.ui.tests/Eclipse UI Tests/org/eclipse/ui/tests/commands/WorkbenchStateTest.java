@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.commands;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertSame;
 
 import java.util.Collection;
@@ -35,7 +36,6 @@ import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.RegistryToggleState;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.HandlerWithStateMock;
 import org.junit.After;
 import org.junit.Assert;
@@ -75,7 +75,7 @@ public class WorkbenchStateTest {
 
 	@Before
 	public final void before() {
-		testWindow = UITestCase.openTestWindow();
+		testWindow = openTestWindow();
 		IViewPart view = testWindow.getActivePage().findView(VIEW_ID);
 		Assert.assertNull(view);
 		Assert.assertFalse(

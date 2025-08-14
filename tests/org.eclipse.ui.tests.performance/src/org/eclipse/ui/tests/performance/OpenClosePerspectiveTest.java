@@ -16,6 +16,8 @@
 package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 
 import java.util.Arrays;
 import java.util.Collection;

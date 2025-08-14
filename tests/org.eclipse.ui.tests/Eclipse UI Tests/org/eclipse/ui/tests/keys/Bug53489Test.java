@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -30,7 +31,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.AutomationUtil;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class Bug53489Test {
 	 */
 	@Test
 	public void testDoubleDelete() throws Exception {
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject testProject = workspace.getRoot().getProject("DoubleDeleteestProject"); //$NON-NLS-1$
 		testProject.create(null);

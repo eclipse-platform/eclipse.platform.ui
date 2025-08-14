@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.performance;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.test.performance.Dimension;
 

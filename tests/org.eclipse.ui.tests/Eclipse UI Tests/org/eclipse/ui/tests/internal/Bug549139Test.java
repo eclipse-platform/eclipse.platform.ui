@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
 import static org.junit.Assert.assertNotEquals;
 
 import java.io.ByteArrayInputStream;
@@ -35,7 +36,6 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.CloseResourceAction;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -86,7 +86,7 @@ public class Bug549139Test extends ResourceActionTest {
 			boolean force = true;
 			testProject.delete(force, new NullProgressMonitor());
 		}
-		UITestCase.waitForJobs(0, 30_000);
+		waitForJobs(0, 30_000);
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class Bug549139Test extends ResourceActionTest {
 		closeAction.selectionChanged(selection);
 		closeAction.run();
 		processUIEvents();
-		UITestCase.waitForJobs(0, 30_000);
+		waitForJobs(0, 30_000);
 	}
 
 	/**

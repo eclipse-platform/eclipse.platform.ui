@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertThrows;
 
 import java.lang.ref.ReferenceQueue;

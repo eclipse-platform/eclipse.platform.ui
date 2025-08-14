@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -22,7 +23,6 @@ import java.util.Arrays;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public abstract class IActionDelegateTest {
 
 	@Before
 	public void doSetUp() throws Exception {
-		fWindow = UITestCase.openTestWindow();
+		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
 	}
 

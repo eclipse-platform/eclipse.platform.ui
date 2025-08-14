@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;

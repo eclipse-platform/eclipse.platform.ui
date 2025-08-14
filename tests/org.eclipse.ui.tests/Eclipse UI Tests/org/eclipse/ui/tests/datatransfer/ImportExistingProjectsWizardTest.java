@@ -20,7 +20,7 @@ import static org.eclipse.jface.dialogs.IMessageProvider.WARNING;
 import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.tests.datatransfer.ImportTestUtils.restoreWorkspaceConfiguration;
 import static org.eclipse.ui.tests.datatransfer.ImportTestUtils.setWorkspaceAutoBuild;
-import static org.eclipse.ui.tests.harness.util.UITestCase.processEvents;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

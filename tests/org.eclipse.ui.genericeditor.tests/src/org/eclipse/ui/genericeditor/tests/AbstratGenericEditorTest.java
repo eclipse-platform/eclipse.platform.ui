@@ -14,6 +14,9 @@
 package org.eclipse.ui.genericeditor.tests;
 
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.forceActive;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -34,7 +37,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * Closes intro, create {@link #project}, create {@link #file} and open {@link #editor}; and clean up.
@@ -59,9 +61,9 @@ public class AbstratGenericEditorTest {
 		project.create(null);
 		project.open(null);
 		project.setDefaultCharset(StandardCharsets.UTF_8.name(), null);
-		UITestCase.waitForJobs(100, 5000);
+		waitForJobs(100, 5000);
 		window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		UITestCase.forceActive(window.getShell());
+		forceActive(window.getShell());
 		createAndOpenFile();
 	 }
 
@@ -128,4 +130,13 @@ public class AbstratGenericEditorTest {
 			runEventLoop(PlatformUI.getWorkbench().getDisplay(),0);
 		}
 	}
+
+	public static void waitAndDispatch(long milliseconds) {
+		long timeout = milliseconds; //ms
+		long start = System.currentTimeMillis();
+		while (start + timeout > System.currentTimeMillis()) {
+			processEvents();
+		}
+	}
+
 }

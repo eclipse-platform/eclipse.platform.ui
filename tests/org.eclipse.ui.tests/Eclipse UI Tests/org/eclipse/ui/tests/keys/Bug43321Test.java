@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -36,7 +37,6 @@ import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.junit.Rule;
 import org.junit.Test;
@@ -65,7 +65,7 @@ public class Bug43321Test {
 	@Test
 	public void testNoCheckOnNonCheckbox() throws CommandException,
 			CoreException, ParseException {
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		IProject testProject = FileUtil.createProject("TestProject"); //$NON-NLS-1$
 		IFile textFile = testProject.getFile("A.txt"); //$NON-NLS-1$
 		String contents = "A blurb"; //$NON-NLS-1$

@@ -14,6 +14,7 @@
 
 package org.eclipse.ui.tests.quickaccess;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -26,7 +27,6 @@ import org.eclipse.ui.internal.quickaccess.QuickAccessContents;
 import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -48,7 +48,7 @@ public class ContentMatchesTest {
 
 	@Before
 	public void doSetUp() throws Exception {
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		dialog = new QuickAccessDialog(window, null);
 		quickAccessContents = dialog.getQuickAccessContents();
 		dialog.open();

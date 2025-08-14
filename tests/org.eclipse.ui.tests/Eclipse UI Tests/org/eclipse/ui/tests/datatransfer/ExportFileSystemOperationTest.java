@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URI;

@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.propertysheet;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.util.ArrayList;

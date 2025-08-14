@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.commands;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -37,7 +39,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,7 +58,7 @@ public class ActionDelegateProxyTest {
 
 	@Test
 	public void testViewDelegate() throws Exception {
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		IWorkbenchPage page = window.getActivePage();
 		assertNull(page.findView(VIEW_ID));
 		IViewPart view = page.showView(VIEW_ID);
@@ -87,7 +88,7 @@ public class ActionDelegateProxyTest {
 
 	@Test
 	public void testWWActionDelegate() throws Exception {
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		window.getActivePage().showActionSet(DELEGATE_ACTION_SET_ID);
 		IHandlerService service = window.getService(IHandlerService.class);
 		assertFalse(SimplyGoActionDelegate.executed);
@@ -99,7 +100,7 @@ public class ActionDelegateProxyTest {
 
 	@Test
 	public void testEditorActionDelegate() throws Exception {
-		IWorkbenchWindow window = UITestCase.openTestWindow();
+		IWorkbenchWindow window = openTestWindow();
 		window.getActivePage().closeAllEditors(false);
 		IHandlerService service = window.getService(IHandlerService.class);
 		assertFalse(EditorActionDelegate.executed);
@@ -128,7 +129,7 @@ public class ActionDelegateProxyTest {
 		assertEquals(editor2, EditorActionDelegate.part);
 
 		window.getActivePage().activate(editor1);
-		UITestCase.processEvents();
+		processEvents();
 		service.executeCommand(STAY_COMMAND, null);
 		assertTrue(EditorActionDelegate.executed);
 		assertEquals(editor1, EditorActionDelegate.part);

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.internal.ErrorEditorPart;
 import org.eclipse.ui.internal.part.NullEditorInput;

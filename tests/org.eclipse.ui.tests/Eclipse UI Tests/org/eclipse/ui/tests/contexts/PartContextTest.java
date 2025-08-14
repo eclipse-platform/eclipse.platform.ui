@@ -15,7 +15,7 @@
 package org.eclipse.ui.tests.contexts;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
-import static org.eclipse.ui.tests.harness.util.UITestCase.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -33,7 +33,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockViewPart;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.UITestUtil;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -110,7 +110,7 @@ public class PartContextTest {
 		checkActiveContext(globalService, WINDOW_CONTEXT_ID, false);
 
 		IWorkbenchWindow window = openTestWindow();
-		assertTrue(UITestCase.forceActive(window.getShell()));
+		assertTrue(UITestUtil.forceActive(window.getShell()));
 
 		IContextService localService = window
 				.getService(IContextService.class);

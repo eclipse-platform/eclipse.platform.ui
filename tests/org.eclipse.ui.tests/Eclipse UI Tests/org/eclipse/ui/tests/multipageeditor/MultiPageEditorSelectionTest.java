@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+
 import java.io.ByteArrayInputStream;
 
 import org.eclipse.core.resources.IFile;

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
+import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.OperationCanceledException;

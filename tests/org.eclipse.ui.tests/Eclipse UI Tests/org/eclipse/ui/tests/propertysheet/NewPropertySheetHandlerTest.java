@@ -15,6 +15,7 @@
 package org.eclipse.ui.tests.propertysheet;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.junit.Assert.assertThrows;
 
 import java.util.HashMap;
