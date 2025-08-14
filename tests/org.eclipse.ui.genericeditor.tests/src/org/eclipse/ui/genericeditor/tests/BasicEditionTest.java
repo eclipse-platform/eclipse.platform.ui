@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Red Hat Inc. and others
+ * Copyright (c) 2020, 2025 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
 
 public class BasicEditionTest extends AbstratGenericEditorTest{
 
@@ -25,16 +26,17 @@ public class BasicEditionTest extends AbstratGenericEditorTest{
 
 	@Test
 	public void testNewLineHasIndent() {
-		IDocument doc = getSourceViewer().getDocument();
+		ITextViewer sourceViewer = editor.getAdapter(ITextViewer.class);
+		IDocument doc = sourceViewer.getDocument();
 		// Tab only
 		doc.set("\t");
-		getSourceViewer().setSelectedRange(doc.getLength(), 1);
-		getSourceViewer().getTextWidget().insert("\n");
+		sourceViewer.setSelectedRange(doc.getLength(), 1);
+		sourceViewer.getTextWidget().insert("\n");
 		assertEquals("\t\n\t", doc.get());
 		// Space only
 		doc.set("   ");
-		getSourceViewer().setSelectedRange(doc.getLength(), 1);
-		getSourceViewer().getTextWidget().insert("\n");
+		sourceViewer.setSelectedRange(doc.getLength(), 1);
+		sourceViewer.getTextWidget().insert("\n");
 		assertEquals("   \n   ", doc.get());
 	}
 }

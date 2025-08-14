@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021 Red Hat Inc. and others
+ * Copyright (c) 2021, 2025 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,8 +46,6 @@ import org.eclipse.jface.text.tests.util.DisplayHelper;
 import org.eclipse.ui.genericeditor.tests.contributions.AlrightyHoverProvider;
 
 import org.eclipse.ui.workbench.texteditor.tests.ScreenshotTest;
-
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * @since 1.2
@@ -151,7 +149,7 @@ public class ShowInformationTest extends AbstratGenericEditorTest {
 		editorTextWidget.getShell().setFocus();
 		editorTextWidget.getShell().getDisplay().wake();
 
-		ITextViewer viewer= (ITextViewer) new Accessor(editor, AbstractTextEditor.class).invoke("getSourceViewer", new Object[0]);
+		ITextViewer viewer= editor.getAdapter(ITextViewer.class);
 
 		ITextOperationTarget textOperationTarget = (ITextOperationTarget)viewer;
 		assertTrue(textOperationTarget.canDoOperation(ISourceViewer.INFORMATION));

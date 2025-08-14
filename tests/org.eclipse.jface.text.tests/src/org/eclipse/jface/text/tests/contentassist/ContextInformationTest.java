@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2020 Stephan Wahlbrink and others.
+ * Copyright (c) 2017, 2025 Stephan Wahlbrink and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,7 +87,7 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 		// ITextEditorActionConstants.DELETE_LINE
 		getDocument().set("");
 
-		new Accessor(getContentAssistant(), ContentAssistant.class).invoke("hide", new Object[0]);
+		new Accessor(getContentAssistant(), ContentAssistant.class).invoke("hide");
 	}
 
 	@Test
