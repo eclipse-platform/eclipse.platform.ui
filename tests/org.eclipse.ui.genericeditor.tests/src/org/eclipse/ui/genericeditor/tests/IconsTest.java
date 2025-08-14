@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2019 Lakshminarayana Nekkanti(narayana.nekkanti@gmail.com)
+ * Copyright (c) 2019, 2025 Lakshminarayana Nekkanti(narayana.nekkanti@gmail.com)
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -12,11 +12,13 @@
  ********************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
+import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
 
+import org.junit.After;
 import org.junit.Test;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -33,7 +35,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.eclipse.ui.internal.genericeditor.GenericEditorPlugin;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 
 public class IconsTest extends AbstratGenericEditorTest {
 
@@ -86,11 +87,12 @@ public class IconsTest extends AbstratGenericEditorTest {
 	}
 
 	@Override
+	@After
 	public void tearDown() throws Exception {
 		if (genericEditor != null) {
 			genericEditor.close(false);
 			genericEditor= null;
-			UITestCase.processEvents();
+			runEventLoop(PlatformUI.getWorkbench().getDisplay(),0);
 		}
 		if (testFile != null) {
 			testFile.delete(true, new NullProgressMonitor());
