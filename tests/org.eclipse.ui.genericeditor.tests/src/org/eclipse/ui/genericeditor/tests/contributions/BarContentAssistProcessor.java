@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others.
+ * Copyright (c) 2016, 2025 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,16 +42,21 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
-		for (int offsetInProposal = Math.min(this.completeString.length(), viewer.getDocument().getLength()); offsetInProposal > 0; offsetInProposal--) {
-			String maybeMatchingString = this.completeString.substring(0, offsetInProposal);
-			try {
-				int lastIndex = offset - offsetInProposal + this.completeString.length();
-				if (offset >= offsetInProposal && viewer.getDocument().get(offset - offsetInProposal, maybeMatchingString.length()).equals(maybeMatchingString)) {
-					CompletionProposal proposal = new CompletionProposal(this.completeString.substring(offsetInProposal), offset, 0, lastIndex);
-					return new ICompletionProposal[] { proposal };
+		if (viewer.getDocument() != null) {
+			for (int offsetInProposal = Math.min(this.completeString.length(),
+					viewer.getDocument().getLength()); offsetInProposal > 0; offsetInProposal--) {
+				String maybeMatchingString = this.completeString.substring(0, offsetInProposal);
+				try {
+					int lastIndex = offset - offsetInProposal + this.completeString.length();
+					if (offset >= offsetInProposal && viewer.getDocument()
+							.get(offset - offsetInProposal, maybeMatchingString.length()).equals(maybeMatchingString)) {
+						CompletionProposal proposal = new CompletionProposal(
+								this.completeString.substring(offsetInProposal), offset, 0, lastIndex);
+						return new ICompletionProposal[] { proposal };
+					}
+				} catch (BadLocationException e) {
+					e.printStackTrace();
 				}
-			} catch (BadLocationException e) {
-				e.printStackTrace();
 			}
 		}
 		return new ICompletionProposal[0];
