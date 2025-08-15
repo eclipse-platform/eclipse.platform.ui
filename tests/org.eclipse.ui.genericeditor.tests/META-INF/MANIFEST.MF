@@ -21,7 +21,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.ui.editors;bundle-version="3.11.0",
  org.eclipse.core.expressions,
  org.eclipse.ui.tests.harness;bundle-version="1.4.500",
- org.eclipse.test
+ org.eclipse.test,
+ junit-jupiter-api
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
 Bundle-ActivationPolicy: lazy
