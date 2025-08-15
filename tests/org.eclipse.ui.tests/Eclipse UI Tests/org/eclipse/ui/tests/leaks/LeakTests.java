@@ -285,25 +285,17 @@ public class LeakTests extends UITestCase {
 
 	@Test
 	public void testSimpleWindowLeak() throws Exception {
-		// turn off window management so that we dont have a reference to our
-		// new
-		// window in the listener
-		manageWindows(false);
-		try {
-			ReferenceQueue queue = new ReferenceQueue();
-			IWorkbenchWindow newWindow = openTestWindow();
+		ReferenceQueue queue = new ReferenceQueue();
+		IWorkbenchWindow newWindow = openTestWindow();
 
-			assertNotNull(newWindow);
-			Reference ref = createReference(queue, newWindow);
-			try {
-				newWindow.close();
-				newWindow = null;
-				checkRef(queue, ref);
-			} finally {
-				ref.clear();
-			}
+		assertNotNull(newWindow);
+		Reference ref = createReference(queue, newWindow);
+		try {
+			newWindow.close();
+			newWindow = null;
+			checkRef(queue, ref);
 		} finally {
-			manageWindows(true);
+			ref.clear();
 		}
 	}
 

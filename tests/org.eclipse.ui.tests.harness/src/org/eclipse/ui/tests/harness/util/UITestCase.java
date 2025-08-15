@@ -154,12 +154,4 @@ public abstract class UITestCase extends TestCase {
 		closeTestWindows.after();
 	}
 
-	/**
-	 * Set whether the window listener will manage opening and closing of created windows.
-	 */
-	protected void manageWindows(boolean manage) {
-		closeTestWindows.setEnabled(manage);
-	}
-
-
 }
