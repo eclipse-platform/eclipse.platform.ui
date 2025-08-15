@@ -15,7 +15,6 @@ package org.eclipse.ui.genericeditor.tests;
 
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.forceActive;
-import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
 
 import java.nio.charset.StandardCharsets;
@@ -128,14 +127,6 @@ public class AbstratGenericEditorTest {
 		if (intro != null) {
 			PlatformUI.getWorkbench().getIntroManager().closeIntro(intro);
 			runEventLoop(PlatformUI.getWorkbench().getDisplay(),0);
-		}
-	}
-
-	public static void waitAndDispatch(long milliseconds) {
-		long timeout = milliseconds; //ms
-		long start = System.currentTimeMillis();
-		while (start + timeout > System.currentTimeMillis()) {
-			processEvents();
 		}
 	}
 
