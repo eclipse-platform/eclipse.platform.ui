@@ -16,14 +16,13 @@ package org.eclipse.ui.genericeditor.tests;
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
-
 import org.junit.Test;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -68,7 +67,7 @@ public class ReconcilerTest extends AbstratGenericEditorTest {
 		secondProject.create(null);
 		secondProject.open(null);
 		secondFile= secondProject.getFile("foo.txt");
-		secondFile.create(new ByteArrayInputStream("bar 'bar'".getBytes()), true, null);
+		secondFile.create("bar 'bar'".getBytes(), IResource.FORCE, null);
 		secondEditor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().openEditor(new FileEditorInput(secondFile), "org.eclipse.ui.genericeditor.GenericEditor");
 		performTestOnEditor(ReconcilerStrategyFirst.SEARCH_TERM, editor, ReconcilerStrategyFirst.REPLACEMENT);
@@ -77,7 +76,7 @@ public class ReconcilerTest extends AbstratGenericEditorTest {
 	@Test
 	public void testMultipleReconcilers() throws Exception {
 		secondFile = project.getFile("bar.txt");
-		secondFile.create(new ByteArrayInputStream("".getBytes()), true, null);
+		secondFile.create("".getBytes(), IResource.FORCE, null);
 		secondEditor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().openEditor(new FileEditorInput(secondFile), "org.eclipse.ui.genericeditor.GenericEditor");
 		performTestOnEditor(ReconcilerStrategyFirst.SEARCH_TERM, secondEditor, ReconcilerStrategySecond.REPLACEMENT);
