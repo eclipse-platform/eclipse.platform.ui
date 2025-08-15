@@ -18,7 +18,6 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.forceActive;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
 
-import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
@@ -29,6 +28,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ui.IEditorInput;
@@ -91,7 +91,7 @@ public class AbstratGenericEditorTest {
 	 */
 	protected void createAndOpenFile(String name, String contents, Supplier<? extends IEditorInput> inputCreator) throws Exception {
 		this.file = project.getFile(name);
-		this.file.create(new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8)), true, null);
+		this.file.create(contents.getBytes(StandardCharsets.UTF_8), IResource.FORCE, null);
 		this.file.setCharset(StandardCharsets.UTF_8.name(), null);
 		this.editor = (ExtensionBasedTextEditor) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().openEditor(inputCreator.get(), "org.eclipse.ui.genericeditor.GenericEditor");
