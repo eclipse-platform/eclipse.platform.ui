@@ -812,7 +812,7 @@ public abstract class Window implements IShellProvider {
 
 		//Use the display provided by the shell if possible
 		Display display;
-		if (shell == null) {
+		if (loopShell == null) {
 			display = Display.getCurrent();
 		} else {
 			display = loopShell.getDisplay();
