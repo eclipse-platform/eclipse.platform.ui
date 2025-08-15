@@ -27,3 +27,4 @@ Eclipse-BundleShape: dir
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.ui.genericeditor.tests
 Require-Capability: eclipse.swt;filter:="(image.format=svg)"
+Import-Package: org.junit.platform.suite.api;version="[1.13.0,2.0.0)"
