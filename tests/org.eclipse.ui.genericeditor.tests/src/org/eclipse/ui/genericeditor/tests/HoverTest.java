@@ -170,7 +170,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 				return null;
 			}
 		}
-		Shell shell= (Shell) new Accessor(control[0], AbstractInformationControl.class).get("fShell");
+		Shell shell= control[0].getShell();
 		DisplayHelper.waitForCondition(this.editor.getSite().getShell().getDisplay(), 2000, () -> shell.isVisible());
 		if (failOnError) {
 			assertTrue(shell.isVisible());

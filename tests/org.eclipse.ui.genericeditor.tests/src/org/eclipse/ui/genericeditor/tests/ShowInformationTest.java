@@ -83,7 +83,7 @@ public class ShowInformationTest extends AbstratGenericEditorTest {
 			}
 		}
 		boolean[] result = {false};
-		Shell shell= (Shell) new Accessor(control[0], AbstractInformationControl.class).get("fShell");
+		Shell shell= control[0].getShell();
 		DisplayHelper.waitForCondition(control[0].getShell().getDisplay(), 2000, () -> result[0] = shell.isVisible());
 		if (failOnError) {
 			assertTrue(shell.isVisible());
