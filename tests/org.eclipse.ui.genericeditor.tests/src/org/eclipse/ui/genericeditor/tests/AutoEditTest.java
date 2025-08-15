@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import org.eclipse.swt.custom.StyledText;
@@ -31,7 +32,7 @@ public class AutoEditTest extends AbstratGenericEditorTest {
 		StyledText control= (StyledText) editor.getAdapter(Control.class);
 		control.setText("");
 		// order of auto-edits from most specialized to least specialized
-		Assert.assertEquals("AutoAddedThird!AutoAddedSecond!AutoAddedFirst!", document.get());
+		assertEquals("AutoAddedThird!AutoAddedSecond!AutoAddedFirst!", document.get());
 	}
 
 	@Test
@@ -42,7 +43,7 @@ public class AutoEditTest extends AbstratGenericEditorTest {
 		StyledText control= (StyledText) editor.getAdapter(Control.class);
 		control.setText("");
 		// order of auto-edits from most specialized to least specialized
-		Assert.assertEquals("AutoAddedFirst!", document.get());
+		assertEquals("AutoAddedFirst!", document.get());
 		cleanFileAndEditor();
 
 		EnabledPropertyTester.setEnabled(false);
@@ -51,6 +52,6 @@ public class AutoEditTest extends AbstratGenericEditorTest {
 		control= (StyledText) editor.getAdapter(Control.class);
 		control.setText("");
 		// order of auto-edits from most specialized to least specialized
-		Assert.assertEquals("", document.get());
+		assertEquals("", document.get());
 	}
 }

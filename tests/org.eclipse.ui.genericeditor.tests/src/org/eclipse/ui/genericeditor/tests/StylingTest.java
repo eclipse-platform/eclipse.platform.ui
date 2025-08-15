@@ -14,8 +14,8 @@
 package org.eclipse.ui.genericeditor.tests;
 
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import org.eclipse.swt.custom.StyleRange;
@@ -33,7 +33,7 @@ public class StylingTest extends AbstratGenericEditorTest {
 		StyledText widget = (StyledText) editor.getAdapter(Control.class);
 		StyleRange style= widget.getStyleRangeAtOffset(4);//get the style of first token
 		boolean isRed= style.foreground.getRGB().equals(new RGB(255, 0, 0));//is it Red?
-		Assert.assertTrue("Token is not of expected color", isRed);
+		assertTrue("Token is not of expected color", isRed);
 	}
 
 	@Test
@@ -44,7 +44,7 @@ public class StylingTest extends AbstratGenericEditorTest {
 		StyledText widget = (StyledText) editor.getAdapter(Control.class);
 		StyleRange style= widget.getStyleRangeAtOffset(4);//get the style of first token
 		boolean isBlue= style.foreground.getRGB().equals(new RGB(0, 0, 255));//is it Blue?
-		Assert.assertTrue("Token is not of expected color", isBlue);
+		assertTrue("Token is not of expected color", isBlue);
 		cleanFileAndEditor();
 
 		EnabledPropertyTester.setEnabled(false);

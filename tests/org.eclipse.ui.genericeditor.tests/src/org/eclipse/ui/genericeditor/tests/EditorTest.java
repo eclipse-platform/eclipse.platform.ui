@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import org.eclipse.swt.custom.StyledText;
@@ -33,18 +35,18 @@ public class EditorTest extends AbstratGenericEditorTest{
 	public void testGenericEditorHasWordWrap() throws Exception {
 		this.editor.setFocus();
 		final StyledText editorTextWidget = (StyledText) this.editor.getAdapter(Control.class);
-		Assert.assertFalse(editorTextWidget.getWordWrap());
-		Assert.assertFalse(this.editor.isWordWrapEnabled());
+		assertFalse(editorTextWidget.getWordWrap());
+		assertFalse(this.editor.isWordWrapEnabled());
 		// Toggle word wrap
 		ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command wordWrapCommand = commandService.getCommand(ITextEditorActionDefinitionIds.WORD_WRAP);
-		Assert.assertTrue(wordWrapCommand.isDefined());
-		Assert.assertTrue(wordWrapCommand.isEnabled());
-		Assert.assertTrue(wordWrapCommand.isHandled());
+		assertTrue(wordWrapCommand.isDefined());
+		assertTrue(wordWrapCommand.isEnabled());
+		assertTrue(wordWrapCommand.isHandled());
 		PlatformUI.getWorkbench().getService(IHandlerService.class).executeCommand(wordWrapCommand.getId(), null);
 		//
-		Assert.assertTrue(editorTextWidget.getWordWrap());
-		Assert.assertTrue(this.editor.isWordWrapEnabled());
+		assertTrue(editorTextWidget.getWordWrap());
+		assertTrue(this.editor.isWordWrapEnabled());
 	}
 
 	@Test
@@ -53,24 +55,24 @@ public class EditorTest extends AbstratGenericEditorTest{
 		// Toggle word wrap
 		ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command wordWrapCommand = commandService.getCommand(ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS);
-		Assert.assertTrue(wordWrapCommand.isDefined());
-		Assert.assertTrue(wordWrapCommand.isEnabled());
-		Assert.assertTrue(wordWrapCommand.isHandled());
+		assertTrue(wordWrapCommand.isDefined());
+		assertTrue(wordWrapCommand.isEnabled());
+		assertTrue(wordWrapCommand.isHandled());
 		PlatformUI.getWorkbench().getService(IHandlerService.class).executeCommand(wordWrapCommand.getId(), null);
 	}
 
 	@Test
 	public void testGenericEditorCanUseBlockSelection() throws Exception {
 		this.editor.setFocus();
-		Assert.assertFalse(this.editor.isBlockSelectionModeEnabled());
+		assertFalse(this.editor.isBlockSelectionModeEnabled());
 		// Toggle word wrap
 		ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command wordWrapCommand = commandService.getCommand(ITextEditorActionDefinitionIds.BLOCK_SELECTION_MODE);
-		Assert.assertTrue(wordWrapCommand.isDefined());
-		Assert.assertTrue(wordWrapCommand.isEnabled());
-		Assert.assertTrue(wordWrapCommand.isHandled());
+		assertTrue(wordWrapCommand.isDefined());
+		assertTrue(wordWrapCommand.isEnabled());
+		assertTrue(wordWrapCommand.isHandled());
 		PlatformUI.getWorkbench().getService(IHandlerService.class).executeCommand(wordWrapCommand.getId(), null);
 		//
-		Assert.assertTrue(this.editor.isBlockSelectionModeEnabled());
+		assertTrue(this.editor.isBlockSelectionModeEnabled());
 	}
 }

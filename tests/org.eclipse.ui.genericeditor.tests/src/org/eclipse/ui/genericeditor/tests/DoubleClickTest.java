@@ -14,8 +14,8 @@ package org.eclipse.ui.genericeditor.tests;
 
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.waitForCondition;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import org.eclipse.swt.SWT;
@@ -66,7 +66,7 @@ public class DoubleClickTest extends AbstratGenericEditorTest {
 		editorTextWidget.getShell().getDisplay().wake();
 		Rectangle target = editorTextWidget.getCaret().getBounds();
 		doubleClick(editorTextWidget, target.x + 5, target.y + 5);
-		Assert.assertEquals(expectedSelection, editorTextWidget.getSelectionText());
+		assertEquals(expectedSelection, editorTextWidget.getSelectionText());
 	}
 	
 	private void doubleClick(StyledText widget, int x, int y) {
