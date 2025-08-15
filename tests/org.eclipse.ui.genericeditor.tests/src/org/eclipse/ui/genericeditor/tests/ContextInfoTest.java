@@ -126,11 +126,11 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 		assertTrue(shell.isVisible());
 		Control[] children= shell.getChildren();
 		for (Control child : children) {
-			if (child instanceof Text) {
-				return ((Text) child).getText();
+			if (child instanceof Text text) {
+				return text.getText();
 			}
-			if (child instanceof StyledText) {
-				return ((StyledText) child).getText();
+			if (child instanceof StyledText styled) {
+				return styled.getText();
 			}
 		}
 		return null;
