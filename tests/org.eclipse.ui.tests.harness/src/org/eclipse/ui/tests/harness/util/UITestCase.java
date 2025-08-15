@@ -16,12 +16,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -45,8 +39,6 @@ public abstract class UITestCase extends TestCase {
 	 * compatible with JUnit3
 	 */
 	private final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
-
-	private Set<Shell> preExistingShells;
 
 	/**
 	 * Required to preserve the existing logging output when running tests with
@@ -97,11 +89,9 @@ public abstract class UITestCase extends TestCase {
 	public final void setUp() throws Exception {
 		super.setUp();
 		closeTestWindows.before();
-		this.preExistingShells = Set.of(PlatformUI.getWorkbench().getDisplay().getShells());
 		String name = runningTest != null ? runningTest : this.getName();
 		trace(TestRunLogUtil.formatTestStartMessage(name));
 		doSetUp();
-
 	}
 
 	/**
@@ -129,18 +119,7 @@ public abstract class UITestCase extends TestCase {
 		String name = runningTest != null ? runningTest : this.getName();
 		trace(TestRunLogUtil.formatTestFinishedMessage(name));
 		doTearDown();
-
-		// Check for shell leak.
-		List<String> leakedModalShellTitles = new ArrayList<>();
-		Shell[] shells = PlatformUI.getWorkbench().getDisplay().getShells();
-		for (Shell shell : shells) {
-			if (!shell.isDisposed() && !preExistingShells.contains(shell)) {
-				leakedModalShellTitles.add(shell.getText());
-				shell.close();
-			}
-		}
-		assertEquals("Test leaked modal shell: [" + String.join(", ", leakedModalShellTitles) + "]", 0,
-				leakedModalShellTitles.size());
+		closeTestWindows.after();
 	}
 
 	/**
@@ -151,7 +130,6 @@ public abstract class UITestCase extends TestCase {
 	 * Subclasses may extend.
 	 */
 	protected void doTearDown() throws Exception {
-		closeTestWindows.after();
 	}
 
 }

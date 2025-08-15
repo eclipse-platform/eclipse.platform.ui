@@ -118,6 +118,9 @@ public class OpenCloseTest {
 	 */
 	@Test
 	public void testOpenClosePerspective() {
+		// Reopening the perspective will create a new popup shell that would be
+		// detected as leak
+		closeTestWindows.disableLeakChecks();
 		ICommandService commandService = workbench.getService(ICommandService.class);
 		Command command = commandService.getCommand("org.eclipse.ui.window.closePerspective");
 
@@ -131,11 +134,11 @@ public class OpenCloseTest {
 
 		for (int index = 0; index < numIterations; index++) {
 			try {
-				PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_RESOURCE_PERSPECTIVE, workbenchWindow);
 				try {
 					handlerService.executeCommand(pCommand, null);
 				} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e1) {
 				}
+				PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_RESOURCE_PERSPECTIVE, workbenchWindow);
 			} catch (WorkbenchException e) {
 				e.printStackTrace();
 			}
@@ -148,8 +151,6 @@ public class OpenCloseTest {
 	@Test
 	public void testOpenCloseView() throws WorkbenchException {
 		IViewPart consoleView;
-		IWorkbenchPage page = PlatformUI.getWorkbench().showPerspective(ORG_ECLIPSE_RESOURCE_PERSPECTIVE,
-				workbenchWindow);
 		for (int index = 0; index < numIterations; index++) {
 			consoleView = page.showView(IPageLayout.ID_MINIMAP_VIEW);
 			page.hideView(consoleView);
