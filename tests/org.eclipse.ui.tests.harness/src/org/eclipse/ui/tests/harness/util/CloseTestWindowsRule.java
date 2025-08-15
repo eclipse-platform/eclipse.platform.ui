@@ -70,7 +70,7 @@ public class CloseTestWindowsRule extends ExternalResource {
 	/**
 	 * Close all test windows.
 	 */
-	public void closeAllTestWindows() {
+	private void closeAllTestWindows() {
 		List<IWorkbenchWindow> testWindowsCopy = new ArrayList<>(testWindows);
 		for (IWorkbenchWindow testWindow : testWindowsCopy) {
 			testWindow.close();

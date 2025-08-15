@@ -418,7 +418,7 @@ public class CommandCallbackTest extends UITestCase {
 		try {
 			assertEquals(2, cmd1Handler.callbacks);
 			cmd1Handler.callbacks = 0;
-			closeAllTestWindows();
+			window.close();
 			commandService.refreshElements(CMD1_ID, null);
 			assertEquals(1, cmd1Handler.callbacks);
 		} finally {
