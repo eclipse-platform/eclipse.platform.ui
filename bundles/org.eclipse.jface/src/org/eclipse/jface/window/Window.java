@@ -803,22 +803,20 @@ public abstract class Window implements IShellProvider {
 	}
 
 	/**
-	 * Runs the event loop for the given shell.
+	 * Runs the event loop for shell.
+	 * <p>
+	 * This method assumes that parameter is not null.
+	 * </p>
 	 *
 	 * @param loopShell
-	 *            the shell
+	 * 				the shell
 	 */
-	private void runEventLoop(Shell loopShell) {
+	private static void runEventLoop(Shell loopShell) {
 
-		//Use the display provided by the shell if possible
 		Display display;
-		if (shell == null) {
-			display = Display.getCurrent();
-		} else {
-			display = loopShell.getDisplay();
-		}
+		display = loopShell.getDisplay();
 
-		while (loopShell != null && !loopShell.isDisposed()) {
+		while (!loopShell.isDisposed()) {
 			try {
 				if (!display.readAndDispatch()) {
 					display.sleep();
