@@ -155,13 +155,6 @@ public abstract class UITestCase extends TestCase {
 	}
 
 	/**
-	 * Close all test windows.
-	 */
-	public void closeAllTestWindows() {
-		closeTestWindows.closeAllTestWindows();
-	}
-
-	/**
 	 * Set whether the window listener will manage opening and closing of created windows.
 	 */
 	protected void manageWindows(boolean manage) {

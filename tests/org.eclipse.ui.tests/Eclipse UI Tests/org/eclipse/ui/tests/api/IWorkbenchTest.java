@@ -141,7 +141,9 @@ public class IWorkbenchTest extends UITestCase {
 
 		assertEquals(wins.length, oldTotal + num);
 
-		closeAllTestWindows();
+		for (IWorkbenchWindow window : newWins) {
+			window.close();
+		}
 		wins = getWorkbench().getWorkbenchWindows();
 		assertEquals(wins.length, oldTotal);
 	}
