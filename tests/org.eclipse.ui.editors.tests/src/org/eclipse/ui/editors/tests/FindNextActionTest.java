@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.osgi.framework.FrameworkUtil;
 
@@ -52,6 +53,10 @@ import org.eclipse.ui.texteditor.FindNextAction;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 
 public class FindNextActionTest {
+
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
+
 	private static final String TEST_PROJECT_NAME = "TestProject";
 
 	private static final String BUNDLE_FOR_CONSTRUCTED_KEYS_NAME = "org.eclipse.ui.texteditor.ConstructedEditorMessages";//$NON-NLS-1$
@@ -103,7 +108,6 @@ public class FindNextActionTest {
 		editor = null;
 		project.delete(true, null);
 		project = null;
-		TestUtil.cleanUp();
 	}
 
 	private void resetInitialSearchSettings() {
