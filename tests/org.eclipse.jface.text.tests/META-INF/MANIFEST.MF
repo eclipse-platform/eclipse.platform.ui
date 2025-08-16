@@ -13,8 +13,7 @@ Export-Package:
  org.eclipse.jface.text.tests.rules,
  org.eclipse.jface.text.tests.source,
  org.eclipse.jface.text.tests.source.inlined,
- org.eclipse.jface.text.tests.templates.persistence,
- org.eclipse.jface.text.tests.util
+ org.eclipse.jface.text.tests.templates.persistence
 Require-Bundle: 
  org.eclipse.jface.text;bundle-version="[3.20.0,4.0.0)",
  org.eclipse.jface;bundle-version="[3.5.0,4.0.0)",
@@ -22,6 +21,7 @@ Require-Bundle:
  org.eclipse.text.tests;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui.tests.harness,
  org.eclipse.test;bundle-version="3.6.200"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
