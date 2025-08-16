@@ -42,7 +42,8 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
+
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 
 public class AbstractContentAssistTest {
@@ -65,7 +66,7 @@ public class AbstractContentAssistTest {
 		for (Shell s : shells) {
 			s.dispose();
 		}
-		DisplayHelper.driveEventQueue(Display.getDefault());
+		DisplayHelper.runEventLoop(Display.getDefault(), 0);
 	}
 
 	@After
@@ -207,7 +208,7 @@ public class AbstractContentAssistTest {
 
 
 	protected static void processEvents() {
-		DisplayHelper.driveEventQueue(getDisplay());
+		DisplayHelper.runEventLoop(getDisplay(), 0);
 	}
 
 	private static Display getDisplay() {

@@ -47,7 +47,8 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
+
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class AsyncContentAssistTest {
 
@@ -117,7 +118,7 @@ public class AsyncContentAssistTest {
 		contentAssistant.enablePrefixCompletion(true);
 		contentAssistant.install(viewer);
 		shell.open();
-		DisplayHelper.driveEventQueue(shell.getDisplay());
+		DisplayHelper.runEventLoop(shell.getDisplay(), 0);
 		Display display= shell.getDisplay();
 		final Collection<Shell> beforeShells= AbstractContentAssistTest.getCurrentShells();
 		contentAssistant.showPossibleCompletions();

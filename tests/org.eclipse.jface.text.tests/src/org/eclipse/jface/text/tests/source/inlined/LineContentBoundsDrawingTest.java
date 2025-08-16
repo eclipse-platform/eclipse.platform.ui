@@ -41,7 +41,8 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.inlined.InlinedAnnotationSupport;
 import org.eclipse.jface.text.source.inlined.LineContentAnnotation;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
+
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 /**
  * This test verify that the bounds of the text as returned by StyledText.getTextBounds()
