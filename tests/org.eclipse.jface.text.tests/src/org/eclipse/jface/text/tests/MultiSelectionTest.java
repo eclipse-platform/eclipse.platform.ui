@@ -43,7 +43,8 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.MultiTextSelection;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
+
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class MultiSelectionTest {
 

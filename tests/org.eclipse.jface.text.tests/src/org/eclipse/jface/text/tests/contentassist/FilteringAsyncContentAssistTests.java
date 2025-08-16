@@ -50,7 +50,8 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
+
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 /**
  * Tests for Async completion proposal popup proposals filtering mechanics
@@ -70,7 +71,7 @@ public class FilteringAsyncContentAssistTests {
 		shell = new Shell();
 		shell.setSize(300, 300);
 		shell.open();
-		DisplayHelper.driveEventQueue(shell.getDisplay());
+		DisplayHelper.runEventLoop(shell.getDisplay(), 0);
 
 		viewer = new SourceViewer(shell, null, SWT.NONE);
 		Document document = new Document();

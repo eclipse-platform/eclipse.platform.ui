@@ -35,7 +35,8 @@ import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.inlined.AbstractInlinedAnnotation;
 import org.eclipse.jface.text.source.inlined.InlinedAnnotationSupport;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
+
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class CodeMiningLineHeaderAnnotationTest {
 

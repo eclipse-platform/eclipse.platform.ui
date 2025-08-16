@@ -60,7 +60,8 @@ import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.text.tests.contentassist.BarContentAssistProcessor;
 import org.eclipse.jface.text.tests.source.inlined.LineContentBoundsDrawingTest.AccessAllAnnoations;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
+
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class CodeMiningProjectionViewerTest {
 
@@ -193,7 +194,7 @@ public class CodeMiningProjectionViewerTest {
 		fParent.setSize(200, 4 * fViewer.getTextWidget().getLineHeight());
 		//fParent.pack(true);
 		fParent.open();
-		DisplayHelper.driveEventQueue(fParent.getDisplay());
+		DisplayHelper.runEventLoop(fParent.getDisplay(), 0);
 		// ensure ViewportGuard is initialized
 		fViewer.getControl().notifyListeners(SWT.KeyUp, new Event());
 		fViewer.setSelectedRange(1, 0);
