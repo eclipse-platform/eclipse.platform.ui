@@ -970,6 +970,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		if (!fork || !cancelable) {
 			// Backward compatible code.
 			final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(null);
+			dialog.setOpenOnRun(false);
+			scheduleProgressMonitorJob(dialog);
 			dialog.run(fork, cancelable, runnable);
 			return;
 		}
