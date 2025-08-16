@@ -16,22 +16,31 @@
 package org.eclipse.ui.tests.harness.util;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.junit.rules.ExternalResource;
 
+/**
+ * Rule that close windows opened during the test case and checks for shells
+ * unintentionally leaked from the test case.
+ */
 public class CloseTestWindowsRule extends ExternalResource {
-
-	private boolean enabled = true;
 
 	private final List<IWorkbenchWindow> testWindows;
 
 	private TestWindowListener windowListener;
+
+	private Set<Shell> initialShells;
+
+	private boolean leakChecksDisabled;
 
 	public CloseTestWindowsRule() {
 		testWindows = new ArrayList<>(3);
@@ -40,6 +49,7 @@ public class CloseTestWindowsRule extends ExternalResource {
 	@Override
 	protected void before() throws Exception {
 		addWindowListener();
+		storeInitialShells();
 	}
 
 	@Override
@@ -48,6 +58,7 @@ public class CloseTestWindowsRule extends ExternalResource {
 		processEvents();
 		closeAllTestWindows();
 		processEvents();
+		checkForLeakedShells();
 	}
 
 	/**
@@ -78,11 +89,7 @@ public class CloseTestWindowsRule extends ExternalResource {
 		testWindows.clear();
 	}
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	class TestWindowListener implements IWindowListener {
+	private class TestWindowListener implements IWindowListener {
 		@Override
 		public void windowActivated(IWorkbenchWindow window) {
 			// do nothing
@@ -95,16 +102,36 @@ public class CloseTestWindowsRule extends ExternalResource {
 
 		@Override
 		public void windowClosed(IWorkbenchWindow window) {
-			if (enabled) {
-				testWindows.remove(window);
-			}
+			testWindows.remove(window);
 		}
 
 		@Override
 		public void windowOpened(IWorkbenchWindow window) {
-			if (enabled) {
-				testWindows.add(window);
-			}
+			testWindows.add(window);
 		}
 	}
+
+	private void storeInitialShells() {
+		this.initialShells = Set.of(PlatformUI.getWorkbench().getDisplay().getShells());
+	}
+
+	private void checkForLeakedShells() {
+		List<String> leakedModalShellTitles = new ArrayList<>();
+		Shell[] shells = PlatformUI.getWorkbench().getDisplay().getShells();
+		for (Shell shell : shells) {
+			if (!shell.isDisposed() && !initialShells.contains(shell)) {
+				leakedModalShellTitles.add(shell.getText());
+				shell.close();
+			}
+		}
+		if (!leakChecksDisabled) {
+			assertEquals("Test leaked modal shell: [" + String.join(", ", leakedModalShellTitles) + "]", 0,
+					leakedModalShellTitles.size());
+		}
+	}
+
+	public void disableLeakChecks() {
+		this.leakChecksDisabled = true;
+	}
+
 }
