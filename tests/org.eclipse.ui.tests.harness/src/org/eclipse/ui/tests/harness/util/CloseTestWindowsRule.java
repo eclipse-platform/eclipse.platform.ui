@@ -27,12 +27,20 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.junit.rules.ExternalResource;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 
 /**
- * Rule that close windows opened during the test case and checks for shells
- * unintentionally leaked from the test case.
+ * Rule for UI tests to clean up windows/shells:
+ * <ul>
+ * <li>prints the test name to the log before and after each test case
+ * <li>closes windows opened during the test case
+ * <li>checks for shells unintentionally leaked from the test case
+ * </ul>
  */
 public class CloseTestWindowsRule extends ExternalResource {
+
+	private String testName;
 
 	private final List<IWorkbenchWindow> testWindows;
 
@@ -47,18 +55,36 @@ public class CloseTestWindowsRule extends ExternalResource {
 	}
 
 	@Override
+	public Statement apply(Statement base, Description description) {
+		this.testName = description.getDisplayName();
+		return super.apply(base, description);
+	}
+
+	@Override
 	protected void before() throws Exception {
 		addWindowListener();
 		storeInitialShells();
+		trace(TestRunLogUtil.formatTestStartMessage(testName));
 	}
 
 	@Override
 	protected void after() {
+		trace(TestRunLogUtil.formatTestFinishedMessage(testName));
 		removeWindowListener();
 		processEvents();
 		closeAllTestWindows();
 		processEvents();
 		checkForLeakedShells();
+	}
+
+	/**
+	 * Outputs a trace message to the trace output device, if enabled. By default,
+	 * trace messages are sent to <code>System.out</code>.
+	 *
+	 * @param msg the trace message
+	 */
+	private static void trace(String msg) {
+		System.out.println(msg);
 	}
 
 	/**
@@ -132,6 +158,14 @@ public class CloseTestWindowsRule extends ExternalResource {
 
 	public void disableLeakChecks() {
 		this.leakChecksDisabled = true;
+	}
+
+	/**
+	 * Ability to set the test name if the rule is not used as an ordinary JUnit 4
+	 * rules. Temporarily necessary until JUnit 3 compatibility is dropped.
+	 */
+	void setTestName(String testName) {
+		this.testName = testName;
 	}
 
 }
