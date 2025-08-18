@@ -20,8 +20,8 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -53,7 +53,7 @@ public class AbstratGenericEditorTest {
 	 * Closes intro, create {@link #project}, create {@link #file} and open {@link #editor}
 	 * @throws Exception ex
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		closeIntro();
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject(getClass().getName() + System.currentTimeMillis());
@@ -114,7 +114,7 @@ public class AbstratGenericEditorTest {
 		}
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		cleanFileAndEditor();
 		if (project != null) {

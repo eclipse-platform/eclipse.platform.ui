@@ -36,7 +36,8 @@ import org.eclipse.jface.text.source.inlined.InlinedAnnotationSupport;
 import org.eclipse.jface.text.source.inlined.LineContentAnnotation;
 import org.eclipse.jface.text.tests.source.inlined.LineContentBoundsDrawingTest.AccessAllAnnoations;
 import org.eclipse.jface.text.tests.source.inlined.LineContentBoundsDrawingTest.TestAnnotationPainter;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
+
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class AnnotationOnTabTest {
 

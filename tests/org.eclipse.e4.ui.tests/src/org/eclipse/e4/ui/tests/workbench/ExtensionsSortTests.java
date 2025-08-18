@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 IBM Corporation and others.
+ * Copyright (c) 2014, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,8 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -83,13 +84,16 @@ public class ExtensionsSortTests {
 		assertTrue(intermediateIndex < leafIndex);
 	}
 
-	/** Bundle#installBundle() doesn't like platform:/plugin/-style URLs */
+	/**
+	 * Bundle#installBundle() doesn't like platform:/plugin/-style URLs
+	 */
 	private String toFileURL(String url) throws MalformedURLException,
-			IOException {
-		return FileLocator.toFileURL(new URL(url)).toString();
+			IOException, URISyntaxException {
+		return FileLocator.toFileURL(new URI(url).toURL()).toString();
 	}
 
 	private int indexOf(IExtension[] extensions, String id) {
+
 		for (int i = 0; i < extensions.length; i++) {
 			if (id.equals(extensions[i].getUniqueIdentifier())) {
 				return i;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2024 Google, Inc and others.
+ * Copyright (c) 2014, 2025 Google, Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -71,7 +71,8 @@ import org.eclipse.jface.text.hyperlink.URLHyperlink;
 import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
+
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 /**
  * Basic tests for TextViewer.
@@ -289,7 +290,7 @@ public class TextViewerTest {
 	static void postKeyEvent(Control widget, int keyCode, int stateMask, int type) {
 		Display display= widget.getDisplay();
 		widget.setFocus();
-		DisplayHelper.driveEventQueue(display);
+		DisplayHelper.runEventLoop(display, 0);
 		Event event = new Event();
 		event.widget = widget;
 		event.keyCode = keyCode;
@@ -301,7 +302,7 @@ public class TextViewerTest {
 		for (Listener listener : listeners) {
 			listener.handleEvent(event);
 		}
-		DisplayHelper.driveEventQueue(display);
+		DisplayHelper.runEventLoop(display, 0);
 	}
 
 	public static String generate5000Lines() {

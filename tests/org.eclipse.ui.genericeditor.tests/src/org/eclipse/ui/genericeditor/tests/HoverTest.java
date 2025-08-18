@@ -13,20 +13,19 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collections;
 import java.util.Map;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import org.eclipse.test.Screenshots;
 
@@ -39,8 +38,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IMarker;
 
@@ -61,40 +58,32 @@ import org.eclipse.ui.tests.harness.util.DisplayHelper;
 /**
  * @since 1.0
  */
+@EnabledOnOs(value = OS.LINUX, disabledReason = "This test currently always fail on Windows and MacOS (bug 505842), skipping")
 public class HoverTest extends AbstratGenericEditorTest {
 
 	private static final int MAXIMUM_HOVER_RETRY_COUNT = 5;
 	
-	@Rule
-	public TestName testName= new TestName();
-
-	@BeforeClass
-	public static void skipOnNonLinux() {
-		assumeFalse("This test currently always fail on Windows (bug 505842), skipping", Platform.OS_WIN32.equals(Platform.getOS()));
-		assumeFalse("This test currently always fail on macOS (bug 505842), skipping", Platform.OS_MACOSX.equals(Platform.getOS()));
-	}
-
 	@Test
-	public void testSingleHover() throws Exception {
-		Shell shell= getHoverShell(triggerCompletionAndRetrieveInformationControlManager(), true);
+	public void testSingleHover(TestInfo info) throws Exception {
+		Shell shell= getHoverShell(info, triggerCompletionAndRetrieveInformationControlManager(), true);
 		assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
 		assertNull(findControl(shell, StyledText.class, HelloHoverProvider.LABEL));
 		assertNull(findControl(shell, StyledText.class, WorldHoverProvider.LABEL));
 	}
 
 	@Test
-	public void testEnabledWhenHover() throws Exception {
+	public void testEnabledWhenHover(TestInfo info) throws Exception {
 		cleanFileAndEditor();
 		EnabledPropertyTester.setEnabled(true);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
-		Shell shell= getHoverShell(triggerCompletionAndRetrieveInformationControlManager(), true);
+		Shell shell= getHoverShell(info, triggerCompletionAndRetrieveInformationControlManager(), true);
 		assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
 		assertNull(findControl(shell, StyledText.class, WorldHoverProvider.LABEL));
 
 		cleanFileAndEditor();
 		EnabledPropertyTester.setEnabled(false);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
-		shell= getHoverShell(triggerCompletionAndRetrieveInformationControlManager(), true);
+		shell= getHoverShell(info, triggerCompletionAndRetrieveInformationControlManager(), true);
 		assertNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
 		assertNotNull(findControl(shell, StyledText.class, WorldHoverProvider.LABEL));
 	}
@@ -104,17 +93,17 @@ public class HoverTest extends AbstratGenericEditorTest {
 	 * @since 1.1
 	 */
 	@Test
-	public void testMultipleHover() throws Exception {
+	public void testMultipleHover(TestInfo info) throws Exception {
 		cleanFileAndEditor();
 		createAndOpenFile("bar.txt", "Hi");
-		Shell shell= getHoverShell(triggerCompletionAndRetrieveInformationControlManager(), true);
+		Shell shell= getHoverShell(info, triggerCompletionAndRetrieveInformationControlManager(), true);
 		assertNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
 		assertNotNull(findControl(shell, StyledText.class, WorldHoverProvider.LABEL));
 		assertNotNull(findControl(shell, StyledText.class, HelloHoverProvider.LABEL));
 	}
 
 	@Test
-	public void testProblemHover() throws Exception {
+	public void testProblemHover(TestInfo info) throws Exception {
 		String problemMessage= "Huston...";
 		IMarker marker= null;
 		try {
@@ -127,12 +116,12 @@ public class HoverTest extends AbstratGenericEditorTest {
 			marker.setAttribute(MarkerResolutionGenerator.FIXME, true);
 			AbstractInformationControlManager manager= triggerCompletionAndRetrieveInformationControlManager();
 			Object hoverData= getHoverData(manager);
-			assertTrue(""+hoverData, hoverData instanceof Map);
+			assertTrue(hoverData instanceof Map, ""+hoverData);
 			assertTrue(((Map<?, ?>) hoverData).containsValue(Collections.singletonList(marker)));
 			assertTrue(((Map<?, ?>) hoverData).containsValue(AlrightyHoverProvider.LABEL));
 			assertFalse(((Map<?, ?>) hoverData).containsValue(HelloHoverProvider.LABEL));
 			// check dialog content
-			Shell shell= getHoverShell(manager, true);
+			Shell shell= getHoverShell(info, manager, true);
 			assertNotNull(findControl(shell, Label.class, marker.getAttribute(IMarker.MESSAGE, "NONE")));
 			assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
 			assertNull(findControl(shell, StyledText.class, HelloHoverProvider.LABEL));
@@ -155,7 +144,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 		}
 	}
 
-	private Shell getHoverShell(AbstractInformationControlManager manager, boolean failOnError) {
+	private Shell getHoverShell(TestInfo info, AbstractInformationControlManager manager, boolean failOnError) {
 		AbstractInformationControl[] control= { null };
 		DisplayHelper.waitForCondition(this.editor.getSite().getShell().getDisplay(), 5000, () -> {
 			control[0] = (AbstractInformationControl) new Accessor(manager, AbstractInformationControlManager.class)
@@ -164,7 +153,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 		});
 		if (control[0] == null) {
 			if (failOnError) {
-				Screenshots.takeScreenshot(getClass(), testName.getMethodName());
+				Screenshots.takeScreenshot(getClass(), info.getDisplayName());
 				fail();
 			} else {
 				return null;
@@ -228,7 +217,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 			final StyledText editorTextWidget= (StyledText) this.editor.getAdapter(Control.class);
 			DisplayHelper.waitForCondition(editorTextWidget.getDisplay(), 3000, ()->
 					editorTextWidget.isFocusControl() && editorTextWidget.getSelection().x == caretLocation);
-			assertTrue("editor does not have focus", editorTextWidget.isFocusControl());
+			assertTrue(editorTextWidget.isFocusControl(), "editor does not have focus");
 			// sending event to trigger hover computation
 			Event hoverEvent= new Event();
 			hoverEvent.widget= editorTextWidget;
@@ -243,7 +232,7 @@ public class HoverTest extends AbstratGenericEditorTest {
 			foundHoverData = DisplayHelper.waitForCondition(hoverEvent.display, 6000,
 					() -> getHoverData(textHoverManager) != null);
 		}
-		assertTrue("hover data not found", foundHoverData);
+		assertTrue(foundHoverData, "hover data not found");
 		return textHoverManager;
 	}
 }

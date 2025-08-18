@@ -15,15 +15,15 @@ package org.eclipse.ui.genericeditor.tests;
 
 import static org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor.BAR_CONTENT_ASSIST_PROPOSAL;
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
@@ -62,7 +62,7 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 		action.update();
 		action.run();
 		this.completionShell= findNewShell(beforeShells);
-		assertEquals("idx= 0", getInfoText(this.completionShell));
+		assertEquals(getInfoText(this.completionShell), "idx= 0");
 
 		editor.selectAndReveal(8, 0);
 		runEventLoop(PlatformUI.getWorkbench().getDisplay(),0);
@@ -70,7 +70,7 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 		action.update();
 		action.run();
 		this.completionShell= findNewShell(beforeShells);
-		assertEquals("idx= 1", getInfoText(this.completionShell));
+		assertEquals(getInfoText(this.completionShell), "idx= 1");
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 			runEventLoop(PlatformUI.getWorkbench().getDisplay(),1000);
 		}
 		afterShells= findNewShells(beforeShells);
-		assertEquals("No new shell found", 1, afterShells.length);
+		assertEquals(1, afterShells.length, "No new shell found");
 		return afterShells[0];
 	}
 
@@ -136,7 +136,7 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 		return null;
 	}
 
-	@After
+	@AfterEach
 	public void closeShell() {
 		if (this.completionShell != null && !completionShell.isDisposed()) {
 			completionShell.close();

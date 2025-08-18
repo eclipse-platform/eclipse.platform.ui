@@ -28,7 +28,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.tests.util.DisplayHelper;
+
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class IncrementalAsyncContentAssistTests {
 
@@ -45,7 +46,7 @@ public class IncrementalAsyncContentAssistTests {
 		shell= new Shell();
 		shell.setSize(300, 300);
 		shell.open();
-		DisplayHelper.driveEventQueue(shell.getDisplay());
+		DisplayHelper.runEventLoop(shell.getDisplay(), 0);
 
 		viewer= new SourceViewer(shell, null, SWT.NONE);
 		Document document= new Document();

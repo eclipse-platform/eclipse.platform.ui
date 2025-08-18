@@ -16,15 +16,15 @@ package org.eclipse.ui.genericeditor.tests;
 
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.waitForCondition;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -122,12 +122,12 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 		assertEquals(proposals.length, completionProposalList.getItemCount());
 		Set<String> existing= Arrays.stream(completionProposalList.getItems()).map(TableItem::getText).collect(Collectors.toSet());
 		for (String proposal : proposals) {
-			assertTrue("Missing quick assist proposal '" + proposal + "', found " + existing, existing.contains(proposal)); //$NON-NLS-1$ //$NON-NLS-2$
+			assertTrue(existing.contains(proposal), "Missing quick assist proposal '" + proposal + "', found " + existing); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 
-	@After
+	@AfterEach
 	public void closeShell() {
 		if (this.completionShell != null && !completionShell.isDisposed()) {
 			completionShell.close();

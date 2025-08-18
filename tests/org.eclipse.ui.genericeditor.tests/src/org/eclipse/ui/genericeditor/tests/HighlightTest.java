@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
-import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -73,7 +73,6 @@ public class HighlightTest extends AbstratGenericEditorTest {
 				return adapter == IStorage.class ? (T) getStorage() : super.getAdapter(adapter);
 			}
 		});
-
 		checkHighlightForCaretOffset(0, "'bar'", 1);
 	}
 
@@ -145,9 +144,9 @@ public class HighlightTest extends AbstratGenericEditorTest {
 			Annotation annotation= annotations.get(i);
 			Position position= annotationModel.getPosition(annotation);
 			String highlight= document.get(position.offset, position.length);
-			assertEquals("Wrong highlight " + i + " at position " + position.offset, expectedHighlight, highlight);
+			assertEquals(expectedHighlight, highlight, "Wrong highlight " + i + " at position " + position.offset);
 		}
-		Assert.assertEquals("Wrong number of highlights", expectedHighlightCount, annotations.size());
+		assertEquals(expectedHighlightCount, annotations.size(), "Wrong number of highlights");
 	}
 
 	private void clearAnnotations() {

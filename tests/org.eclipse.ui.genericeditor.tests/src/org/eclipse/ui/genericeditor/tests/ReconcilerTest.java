@@ -14,9 +14,10 @@
 package org.eclipse.ui.genericeditor.tests;
 
 import static org.eclipse.ui.tests.harness.util.DisplayHelper.runEventLoop;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -95,10 +96,11 @@ public class ReconcilerTest extends AbstratGenericEditorTest {
 				return false;
 			}
 		});
-		assertTrue("file was not affected by reconciler", doc.get().contains(expectedText));
+		assertTrue(doc.get().contains(expectedText), "file was not affected by reconciler");
 	}
 
 	@Override
+	@AfterEach
 	public void tearDown() throws Exception {
 		if (secondEditor != null) {
 			secondEditor.close(false);
