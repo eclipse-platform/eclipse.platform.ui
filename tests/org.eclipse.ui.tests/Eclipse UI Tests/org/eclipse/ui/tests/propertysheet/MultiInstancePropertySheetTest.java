@@ -15,6 +15,12 @@
 package org.eclipse.ui.tests.propertysheet;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 
@@ -48,16 +54,17 @@ import org.eclipse.ui.views.properties.PropertySheet;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.eclipse.ui.views.properties.PropertyShowInContext;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.osgi.framework.Bundle;
 
 /**
  * @since 3.4
  */
-@RunWith(JUnit4.class)
 public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
+
+	private PropertySheet propertySheet;
 
 	/**
 	 * TestPropertySheetPage exposes certain members for testability
@@ -90,13 +97,8 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	private IProject project;
 
-	public MultiInstancePropertySheetTest() {
-		super(MultiInstancePropertySheetTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void setUp() throws Exception {
 		testPropertySheetPage = new TestPropertySheetPage();
 		// open the property sheet with the TestPropertySheetPage
 		Platform.getAdapterManager().registerAdapters(testPropertySheetPage,
@@ -113,10 +115,9 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		activePage.resetPerspective();
-		super.doTearDown();
 		// reset the exception to null
 		e = null;
 		// remove our log listener

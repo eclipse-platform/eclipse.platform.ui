@@ -15,6 +15,9 @@
 package org.eclipse.ui.tests.propertysheet;
 
 import static org.eclipse.ui.internal.SaveableHelper.isDirtyStateSupported;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,16 +29,15 @@ import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISecondarySaveableSource;
 import org.eclipse.ui.views.properties.PropertySheet;
 import org.eclipse.ui.views.properties.PropertySheetPage;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  */
-@RunWith(JUnit4.class)
 public class DirtyStatePropertySheetTest extends AbstractPropertySheetTest {
-
+	private PropertySheet propertySheet;
 	private AdaptingSaveableView saveableView;
 	private ISecondarySaveableSource dirtyDisallowed;
 	private ISecondarySaveableSource dirtyAllowed;
@@ -64,13 +66,8 @@ public class DirtyStatePropertySheetTest extends AbstractPropertySheetTest {
 		}
 	}
 
-	public DirtyStatePropertySheetTest() {
-		super(DirtyStatePropertySheetTest.class.getName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void setUp() throws Exception {
 		PropertySheetPerspectiveFactory.applyPerspective(activePage);
 		dirtyDisallowed = new ISecondarySaveableSource() {
 		};
@@ -92,11 +89,10 @@ public class DirtyStatePropertySheetTest extends AbstractPropertySheetTest {
 		assertFalse(propertySheet.isDirtyStateSupported());
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		Platform.getAdapterManager().unregisterAdapters(adapterFactory);
 		activePage.resetPerspective();
-		super.doTearDown();
 	}
 
 	@Test

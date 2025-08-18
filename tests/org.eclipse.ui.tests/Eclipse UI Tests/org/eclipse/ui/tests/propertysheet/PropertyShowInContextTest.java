@@ -14,6 +14,10 @@
 
 package org.eclipse.ui.tests.propertysheet;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IPageLayout;
@@ -22,18 +26,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.views.properties.PropertyShowInContext;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  */
-@RunWith(JUnit4.class)
 public class PropertyShowInContextTest extends AbstractPropertySheetTest {
-
-	public PropertyShowInContextTest() {
-		super(PropertyShowInContextTest.class.getSimpleName());
-	}
 
 	/**
 	 * Test method for
