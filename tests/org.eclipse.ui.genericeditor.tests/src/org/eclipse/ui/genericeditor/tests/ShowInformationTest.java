@@ -13,15 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.genericeditor.tests;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import org.eclipse.test.Screenshots;
 
@@ -32,8 +31,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.text.tests.Accessor;
 
@@ -50,24 +47,16 @@ import org.eclipse.ui.tests.harness.util.DisplayHelper;
 /**
  * @since 1.2
  */
+@EnabledOnOs(value = OS.LINUX, disabledReason = "This test currently always fail on Windows and MacOS (bug 505842), skipping")
 public class ShowInformationTest extends AbstratGenericEditorTest {
 
-	@Rule
-	public TestName testName= new TestName();
-
-	@BeforeClass
-	public static void skipOnNonLinux() {
-		assumeFalse("This test currently always fail on Windows (bug 505842), skipping", Platform.OS_WIN32.equals(Platform.getOS()));
-		assumeFalse("This test currently always fail on macOS (bug 505842), skipping", Platform.OS_MACOSX.equals(Platform.getOS()));
-	}
-
 	@Test
-	public void testInformationControl() throws Exception {
-		Shell shell= getHoverShell(triggerCompletionAndRetrieveInformationControlManager(), true);
+	public void testInformationControl(TestInfo info) throws Exception {
+		Shell shell= getHoverShell(info, triggerCompletionAndRetrieveInformationControlManager(), true);
 		assertNotNull(findControl(shell, StyledText.class, AlrightyHoverProvider.LABEL));
 	}
 
-	private Shell getHoverShell(AbstractInformationControlManager manager, boolean failOnError) {
+	private Shell getHoverShell(TestInfo info, AbstractInformationControlManager manager, boolean failOnError) {
 		AbstractInformationControl[] control= { null };
 		DisplayHelper.waitForCondition(this.editor.getSite().getShell().getDisplay(), 5000, () -> {
 			control[0] = (AbstractInformationControl) new Accessor(manager, AbstractInformationControlManager.class)
@@ -76,7 +65,7 @@ public class ShowInformationTest extends AbstratGenericEditorTest {
 		});
 		if (control[0] == null) {
 			if (failOnError) {
-				Screenshots.takeScreenshot(getClass(), testName.getMethodName());
+				Screenshots.takeScreenshot(getClass(), info.getDisplayName());
 				fail();
 			} else {
 				return null;

@@ -8,7 +8,6 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.genericeditor.tests,
  org.eclipse.ui.genericeditor.tests.contributions
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
- org.junit;bundle-version="4.12.0",
  org.eclipse.jface;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.text;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.ui.genericeditor,
@@ -22,7 +21,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.core.expressions,
  org.eclipse.ui.tests.harness;bundle-version="1.4.500",
  org.eclipse.test,
- junit-jupiter-api
+ junit-jupiter-api,
+ org.hamcrest
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-BundleShape: dir
 Bundle-ActivationPolicy: lazy
