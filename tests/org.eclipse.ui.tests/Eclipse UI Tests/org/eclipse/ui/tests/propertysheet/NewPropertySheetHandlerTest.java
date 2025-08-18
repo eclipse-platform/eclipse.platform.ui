@@ -16,7 +16,13 @@ package org.eclipse.ui.tests.propertysheet;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 
@@ -41,25 +47,18 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.views.properties.PropertySheet;
 import org.eclipse.ui.views.properties.PropertyShowInContext;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  */
-@RunWith(JUnit4.class)
 public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 
 	private TestNewPropertySheetHandler testNewPropertySheetHandler;
 
-	public NewPropertySheetHandlerTest() {
-		super(NewPropertySheetHandlerTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void setUp() throws Exception {
 		testNewPropertySheetHandler = new TestNewPropertySheetHandler();
 	}
 
@@ -207,7 +206,7 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 	@Test
 	public final void testFindPropertySheetWithOtherSheetActive()
 			throws PartInitException, ExecutionException {
-		propertySheet = (PropertySheet) activePage
+		PropertySheet propertySheet = (PropertySheet) activePage
 				.showView(IPageLayout.ID_PROP_SHEET);
 		assertTrue(countPropertySheetViews() == 1);
 

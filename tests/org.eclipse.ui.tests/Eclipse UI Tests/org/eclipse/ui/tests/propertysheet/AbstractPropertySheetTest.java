@@ -25,34 +25,26 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.views.properties.PropertySheet;
+import org.junit.Before;
+import org.junit.Rule;
 
 /**
  * @since 3.4
  */
-public abstract class AbstractPropertySheetTest extends UITestCase {
+public abstract class AbstractPropertySheetTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	private static final String PIN_PROPERTY_SHEET_ACTION_ID_PREFIX = "org.eclipse.ui.views.properties.PinPropertySheetAction";
 	protected IWorkbenchPage activePage;
-	protected PropertySheet propertySheet;
 
-	public AbstractPropertySheetTest(String testName) {
-		super(testName);
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void initializeActivePage() throws Exception {
 		IWorkbenchWindow workbenchWindow = openTestWindow();
 		activePage = workbenchWindow.getActivePage();
-	}
-
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
-		activePage = null;
-		propertySheet = null;
 	}
 
 	/**
