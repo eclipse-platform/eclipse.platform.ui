@@ -66,16 +66,6 @@ public abstract class UITestCase extends TestCase {
 	}
 
 	/**
-	 * Outputs a trace message to the trace output device, if enabled.
-	 * By default, trace messages are sent to <code>System.out</code>.
-	 *
-	 * @param msg the trace message
-	 */
-	protected void trace(String msg) {
-		System.out.println(msg);
-	}
-
-	/**
 	 * Simple implementation of setUp. Subclasses are prevented from overriding this
 	 * method to maintain logging consistency. doSetUp() should be overridden
 	 * instead.
@@ -88,9 +78,9 @@ public abstract class UITestCase extends TestCase {
 	@Override
 	public final void setUp() throws Exception {
 		super.setUp();
-		closeTestWindows.before();
 		String name = runningTest != null ? runningTest : this.getName();
-		trace(TestRunLogUtil.formatTestStartMessage(name));
+		closeTestWindows.setTestName(name);
+		closeTestWindows.before();
 		doSetUp();
 	}
 
@@ -116,8 +106,6 @@ public abstract class UITestCase extends TestCase {
 	@After
 	@Override
 	public final void tearDown() throws Exception {
-		String name = runningTest != null ? runningTest : this.getName();
-		trace(TestRunLogUtil.formatTestFinishedMessage(name));
 		doTearDown();
 		closeTestWindows.after();
 	}
