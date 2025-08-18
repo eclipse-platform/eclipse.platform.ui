@@ -13,7 +13,7 @@
  */
 package org.eclipse.ui.genericeditor.tests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.core.commands.Command;
 
@@ -32,10 +32,10 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
-import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.genericeditor.tests.contributions.EnabledPropertyTester;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 import org.eclipse.ui.editors.text.IFoldingCommandIds;
 
