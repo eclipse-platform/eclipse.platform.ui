@@ -16,6 +16,9 @@ package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.widgets.Composite;
@@ -25,23 +28,17 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test for Bug 511729 — Improve robustness to SWTBot.resetWorkbench()
  */
-@RunWith(JUnit4.class)
-public class SWTBotWorkbenchResetTest extends UITestCase {
+public class SWTBotWorkbenchResetTest {
 
-	/**
-	 * Constructs a new instance of this test case.
-	 */
-	public SWTBotWorkbenchResetTest() {
-		super(SWTBotWorkbenchResetTest.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	/**
 	 * Open a new window, switch to a different perspective such that parts are

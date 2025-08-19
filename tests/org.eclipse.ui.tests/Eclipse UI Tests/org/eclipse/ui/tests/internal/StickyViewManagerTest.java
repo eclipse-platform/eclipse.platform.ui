@@ -15,6 +15,8 @@
 package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -24,33 +26,30 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.6
  */
-@RunWith(JUnit4.class)
 @Ignore
-public class StickyViewManagerTest extends UITestCase {
+public class StickyViewManagerTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	@Rule
 	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
 
-	public StickyViewManagerTest() {
-		super(StickyViewManagerTest.class.getSimpleName());
-	}
 
-	@Override
-	protected void doSetUp() throws Exception {
+	@Before
+	public final void setUp() throws Exception {
 		preferenceMemento.setPreference(PlatformUI.getPreferenceStore(),
 				IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR, false);
-		super.doSetUp();
 	}
 
 	/**

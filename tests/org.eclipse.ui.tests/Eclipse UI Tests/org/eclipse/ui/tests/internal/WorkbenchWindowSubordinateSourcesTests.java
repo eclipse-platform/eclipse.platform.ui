@@ -16,6 +16,7 @@ package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.expressions.EqualsExpression;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -30,29 +31,27 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.services.IEvaluationService;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests various sources keyed off the workbench window.
  *
  * @since 3.3
  */
-@RunWith(JUnit4.class)
 @Ignore("Disabled due 544032, see also 485167")
-public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
+public class WorkbenchWindowSubordinateSourcesTests {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	private WorkbenchWindow window;
 
-	public WorkbenchWindowSubordinateSourcesTests() {
-		super(WorkbenchWindowSubordinateSourcesTests.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
+	@Before
+	public final void setUp() throws Exception {
 		window = (WorkbenchWindow) openTestWindow();
 		processEvents();
 	}

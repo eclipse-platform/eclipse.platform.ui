@@ -13,24 +13,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.api.ListView;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * This class contains tests for action set enablement
  */
-@RunWith(JUnit4.class)
 public class ActionSetExpressionTest extends ActionExpressionTest {
-
-	public ActionSetExpressionTest() {
-		super(ActionSetExpressionTest.class.getSimpleName());
-	}
 
 	/**
 	 * Opens the action set.  Returns the menu manager containing it.

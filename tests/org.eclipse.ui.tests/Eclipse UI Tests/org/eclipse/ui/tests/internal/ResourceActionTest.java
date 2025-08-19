@@ -14,10 +14,6 @@ import org.junit.Before;
  */
 public abstract class ResourceActionTest {
 
-	public ResourceActionTest() {
-		super();
-	}
-
 	@Before
 	public void setUp() throws Exception {
 		AdvancedValidationUserApprover.AUTOMATED_MODE = true;
