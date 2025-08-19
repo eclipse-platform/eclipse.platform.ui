@@ -15,7 +15,10 @@
 package org.eclipse.ui.tests.commands;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,19 +48,23 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests various aspects of command state.
  *
  * @since 3.2
  */
-@RunWith(JUnit4.class)
-public class HandlerActivationTest extends UITestCase {
+public class HandlerActivationTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+
 	static class ActTestHandler extends AbstractHandler {
 		public String contextId;
 
@@ -146,7 +153,6 @@ public class HandlerActivationTest extends UITestCase {
 	 * Constructor for <code>HandlerActivationTest</code>.
 	 */
 	public HandlerActivationTest() {
-		super(HandlerActivationTest.class.getSimpleName());
 		services = PlatformUI.getWorkbench();
 		contextService = services
 				.getService(IContextService.class);
@@ -179,8 +185,8 @@ public class HandlerActivationTest extends UITestCase {
 		makeHandler(handlerId, contextId, expression);
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
+	@Before
+	public final void setUp() throws Exception {
 		for (final String[] contextInfo : CREATE_CONTEXTS) {
 			final Context context = contextService.getContext(contextInfo[0]);
 			if (!context.isDefined()) {
@@ -197,13 +203,12 @@ public class HandlerActivationTest extends UITestCase {
 
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		handlerService.deactivateHandlers(testHandlerActivations.values());
 		testHandlerActivations.clear();
 		contextService.deactivateContexts(testContextActivations.values());
 		testContextActivations.clear();
-		super.doTearDown();
 	}
 
 	private void doTestForBreak() throws ExecutionException,

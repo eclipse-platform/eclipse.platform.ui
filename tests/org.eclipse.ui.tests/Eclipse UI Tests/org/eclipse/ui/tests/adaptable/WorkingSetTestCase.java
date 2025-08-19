@@ -14,6 +14,9 @@
 package org.eclipse.ui.tests.adaptable;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.internal.propertytester.ResourceMappingPropertyTester;
 import org.eclipse.core.resources.IProject;
@@ -27,20 +30,21 @@ import org.eclipse.ui.IResourceActionFilter;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.rules.TestName;
 
 /**
  * Test that Working Sets adapt to resource mappings
  */
-@RunWith(JUnit4.class)
-public class WorkingSetTestCase extends UITestCase {
+public class WorkingSetTestCase {
 
-	public WorkingSetTestCase() {
-		super(WorkingSetTestCase.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+
+	@Rule
+	public final TestName testName = new TestName();
 
 	private ResourceMapping getResourceMapping(IWorkingSet set) {
 		return set.getAdapter(ResourceMapping.class);
@@ -67,7 +71,7 @@ public class WorkingSetTestCase extends UITestCase {
 	}
 
 	private IProject createProject(String name) throws CoreException {
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getName() + name);
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(testName.getMethodName() + name);
 		project.create(null);
 		project.open(IResource.NONE, null);
 		return project;

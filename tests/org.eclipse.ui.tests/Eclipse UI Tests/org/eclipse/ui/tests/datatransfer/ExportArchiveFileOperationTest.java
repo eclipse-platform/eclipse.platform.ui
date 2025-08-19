@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,15 +44,21 @@ import org.eclipse.ui.internal.wizards.datatransfer.ArchiveFileExportOperation;
 import org.eclipse.ui.internal.wizards.datatransfer.TarEntry;
 import org.eclipse.ui.internal.wizards.datatransfer.TarException;
 import org.eclipse.ui.internal.wizards.datatransfer.TarFile;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.rules.TestName;
 
-@RunWith(JUnit4.class)
-public class ExportArchiveFileOperationTest extends UITestCase implements
-		IOverwriteQuery {
+public class ExportArchiveFileOperationTest implements IOverwriteQuery {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+
+	@Rule
+	public final TestName testName = new TestName();
 
 	private static final String FILE_NAME = "test";
 	private static final String ZIP_FILE_EXT = "zip";
@@ -66,10 +75,6 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	private boolean flattenPaths = false;
 	private boolean excludeProjectPath = false;
-
-	public ExportArchiveFileOperationTest() {
-		super(ExportArchiveFileOperationTest.class.getSimpleName());
-	}
 
 	@Override
 	public String queryOverwrite(String pathString) {
@@ -320,10 +325,9 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		project = FileUtil.createProject("Export" + getName());
+	@Before
+	public final void setUp() throws Exception {
+		project = FileUtil.createProject("Export" + testName.getMethodName());
 		File destination =
 			new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir())
 				.toOSString());
@@ -334,9 +338,8 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		excludeProjectPath = false;
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public final void tearDown() throws Exception {
 		// delete exported data
 		File root = new File(localDirectory);
 		if (root.exists()){
