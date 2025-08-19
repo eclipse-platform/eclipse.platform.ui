@@ -34,10 +34,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
@@ -1538,14 +1535,8 @@ public class StackRenderer extends LazyStackRenderer {
 				new MenuItem(menu, SWT.SEPARATOR);
 
 				createMenuItem(menu, SWTRenderersMessages.menuCloseAll, e -> closeSiblingParts(menu, false));
-
-				new MenuItem(menu, SWT.SEPARATOR);
-
 			}
 		}
-
-		createMenuItem(menu, SWTRenderersMessages.splitEditorH, e -> splitEditor(part.getContext(), true));
-		createMenuItem(menu, SWTRenderersMessages.splitEditorV, e -> splitEditor(part.getContext(), false));
 
 		if (isDetachable(part)) {
 			if (closeableElements > 0) {
@@ -1961,13 +1952,5 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 		return Arrays.stream(parent.getChildren()).filter(child -> id.equals(child.getData(ID)))
 				.filter(type::isInstance).map(type::cast).findFirst().orElse(null);
-	}
-
-	private void splitEditor(IEclipseContext ctx, boolean isHorizontal) {
-		ECommandService commandService = ctx.get(ECommandService.class);
-		EHandlerService handlerService = ctx.get(EHandlerService.class);
-		Map<String, String> param = Map.of("Splitter.isHorizontal", String.valueOf(isHorizontal)); //$NON-NLS-1$
-		ParameterizedCommand command = commandService.createCommand("org.eclipse.ui.window.splitEditor", param); //$NON-NLS-1$
-		handlerService.executeHandler(command);
 	}
 }
