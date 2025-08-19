@@ -13,22 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.tests.api.ListView;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * This class contains tests for popup menu visibility
  */
-@RunWith(JUnit4.class)
 public class PopupMenuExpressionTest extends ActionExpressionTest {
-
-	public PopupMenuExpressionTest() {
-		super(PopupMenuExpressionTest.class.getSimpleName());
-	}
 
 	/**
 	 * Returns the menu manager containing the actions.

@@ -38,10 +38,6 @@ import org.junit.Test;
  */
 public class Bug99858Test extends ResourceActionTest {
 
-	public Bug99858Test() {
-		super();
-	}
-
 	/**
 	 * Create a project with some files, close it, and delete it. With the
 	 * changes in runtime to throw a CoreException from IContainer#members(),

@@ -14,6 +14,9 @@
 package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -37,20 +40,22 @@ import org.eclipse.ui.tests.api.MockAction;
 import org.eclipse.ui.tests.api.MockEditorActionBarContributor;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.api.MockViewPart;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * This class contains tests for the editor action bars
  * implementation.
  */
-@RunWith(JUnit4.class)
 @Ignore
-public class EditorActionBarsTest extends UITestCase {
+public class EditorActionBarsTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	protected IWorkbenchWindow fWindow;
 
@@ -58,16 +63,8 @@ public class EditorActionBarsTest extends UITestCase {
 
 	private final String EDITOR_ID = "org.eclipse.ui.tests.internal.EditorActionBarsTest";
 
-	/**
-	 * Constructor for IEditorPartTest
-	 */
-	public EditorActionBarsTest() {
-		super(EditorActionBarsTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
 	}

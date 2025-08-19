@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.internal;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -21,19 +22,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.After;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
 @Ignore
-public class WorkbenchPageTest extends UITestCase {
+public class WorkbenchPageTest {
 
-	public WorkbenchPageTest() {
-		super(WorkbenchPageTest.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	@Test
 	public void test1() {
@@ -93,9 +92,8 @@ public class WorkbenchPageTest extends UITestCase {
 		return (WorkbenchPage) getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public final void tearDown() throws Exception {
 		clearMruPartIds();
 	}
 

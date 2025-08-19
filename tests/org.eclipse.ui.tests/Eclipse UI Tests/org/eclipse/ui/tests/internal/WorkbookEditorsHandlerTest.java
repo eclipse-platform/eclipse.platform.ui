@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -35,16 +38,17 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbookEditorsHandler;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
-public class WorkbookEditorsHandlerTest extends UITestCase {
+public class WorkbookEditorsHandlerTest {
 
-
-	public WorkbookEditorsHandlerTest(String testName) {
-		super(testName);
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	private static final String PROJECT_NAME = "WorkbookEditorsHandlerTest";
 	private static final String PROJECT_NAME_1 = PROJECT_NAME + 1;
@@ -54,16 +58,16 @@ public class WorkbookEditorsHandlerTest extends UITestCase {
 	private IProject project1;
 	private IProject project2;
 
-	@Override
-	public void doSetUp() throws CoreException {
+	@Before
+	public final void setUp() throws CoreException {
 		activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		activePage = activeWindow.getActivePage();
 		project1 = FileUtil.createProject(PROJECT_NAME_1);
 		project2 = FileUtil.createProject(PROJECT_NAME_2);
 	}
 
-	@Override
-	public void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		if (project1 != null) {
 			project1.delete(true, true, null);
 			project1 = null;

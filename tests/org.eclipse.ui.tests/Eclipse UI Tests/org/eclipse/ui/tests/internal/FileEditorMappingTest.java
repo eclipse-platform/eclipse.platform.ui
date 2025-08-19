@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,27 +23,23 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
 @Ignore
-public class FileEditorMappingTest extends UITestCase {
+public class FileEditorMappingTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	private EditorDescriptor textEditor;
 	private EditorDescriptor pdeEditor;
 
-	public FileEditorMappingTest() {
-		super(FileEditorMappingTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-
+	@Before
+	public final void setUp() throws Exception {
 		textEditor = (EditorDescriptor) IDE.getEditorDescriptor("test.txt");
 		pdeEditor = (EditorDescriptor) IDE.getEditorDescriptor("plugin.xml");
 	}

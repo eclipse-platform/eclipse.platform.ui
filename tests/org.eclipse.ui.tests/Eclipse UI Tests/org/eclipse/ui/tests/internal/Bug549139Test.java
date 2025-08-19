@@ -71,10 +71,6 @@ public class Bug549139Test extends ResourceActionTest {
 
 	private IProject testProject;
 
-	public Bug549139Test() {
-		super();
-	}
-
 	@Before
 	public void setUp2() throws Exception {
 		testProject = createTestProject(getName());
