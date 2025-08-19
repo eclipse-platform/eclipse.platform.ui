@@ -14,6 +14,8 @@
 package org.eclipse.ui.tests.datatransfer;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -38,16 +40,22 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.wizards.datatransfer.FileSystemExportOperation;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.internal.VirtualTestFileSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.rules.TestName;
 
-@RunWith(JUnit4.class)
-public class ExportFileSystemOperationTest extends UITestCase implements
-		IOverwriteQuery {
+public class ExportFileSystemOperationTest implements IOverwriteQuery {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
+
+	@Rule
+	public final TestName testName = new TestName();
 
 	private static final String[] directoryNames = { "dir1", "dir2" };
 
@@ -57,19 +65,14 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 
 	private IProject project;
 
-	public ExportFileSystemOperationTest() {
-		super(ExportFileSystemOperationTest.class.getSimpleName());
-	}
-
 	@Override
 	public String queryOverwrite(String pathString) {
 		return "";
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		project = FileUtil.createProject("Export" + getName());
+	@Before
+	public final void setUp() throws Exception {
+		project = FileUtil.createProject("Export" + testName.getMethodName());
 		File destination =
 			new File(FileSystemHelper.getRandomLocation(FileSystemHelper.getTempDir())
 				.toOSString());
@@ -90,9 +93,8 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 		}
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public final void tearDown() throws Exception {
 		// delete exported data
 		File root = new File(localDirectory);
 		if (root.exists()){

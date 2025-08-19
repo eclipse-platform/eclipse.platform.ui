@@ -13,18 +13,22 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
+import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class ImportExportWizardsCategoryTests extends UITestCase {
+public class ImportExportWizardsCategoryTests {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	private static String WIZARD_ID_IMPORT_NO_CATEGORY = "org.eclipse.ui.tests.import.NoCategory";
 	private static String WIZARD_ID_IMPORT_INVALID_CATEGORY = "org.eclipse.ui.tests.import.InvalidCategory";
@@ -48,7 +52,6 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 	IWizardCategory importRoot;
 
 	public ImportExportWizardsCategoryTests() {
-		super(ImportExportWizardsCategoryTests.class.getSimpleName());
 		exportRoot = WorkbenchPlugin.getDefault()
 			.getExportWizardRegistry().getRootCategory();
 		importRoot = WorkbenchPlugin.getDefault()
@@ -225,9 +228,8 @@ public class ImportExportWizardsCategoryTests extends UITestCase {
 				category == null);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public final void tearDown() throws Exception {
 		importRoot = null;
 		exportRoot = null;
 	}

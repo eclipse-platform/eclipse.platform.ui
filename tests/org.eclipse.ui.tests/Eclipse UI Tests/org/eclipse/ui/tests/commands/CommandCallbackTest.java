@@ -16,6 +16,7 @@
 package org.eclipse.ui.tests.commands;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import java.util.HashMap;
@@ -40,16 +41,19 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  */
-@RunWith(JUnit4.class)
-public class CommandCallbackTest extends UITestCase {
+public class CommandCallbackTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindowsRule = new CloseTestWindowsRule();
 
 	private static final String HOST_PARAM_ID = "host";
 	private static final String PROT_PARAM_ID = "protocol";
@@ -67,13 +71,8 @@ public class CommandCallbackTest extends UITestCase {
 	private CallbackHandler cmd1Handler;
 	private CallbackHandler cmd2Handler;
 
-	public CommandCallbackTest() {
-		super(CommandCallbackTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		workbench = PlatformUI.getWorkbench();
 		commandService = workbench.getService(ICommandService.class);
 		cmd1 = commandService.getCommand(CMD1_ID);
@@ -85,8 +84,8 @@ public class CommandCallbackTest extends UITestCase {
 		cmd2Activation = handlerService.activateHandler(CMD2_ID, cmd2Handler);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		if (cmd1Activation != null) {
 			handlerService.deactivateHandler(cmd1Activation);
 			cmd1Activation = null;
@@ -96,7 +95,6 @@ public class CommandCallbackTest extends UITestCase {
 			cmd2Activation = null;
 		}
 		workbench = null;
-		super.doTearDown();
 	}
 
 	private static class CallbackHandler extends AbstractHandler implements
