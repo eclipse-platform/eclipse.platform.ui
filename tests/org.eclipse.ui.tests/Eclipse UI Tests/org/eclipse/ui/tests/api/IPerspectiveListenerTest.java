@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -21,16 +22,19 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class IPerspectiveListenerTest extends UITestCase implements
-		IPerspectiveListener {
+public class IPerspectiveListenerTest implements IPerspectiveListener {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+
 	private int fEvent;
 
 	private IWorkbench fWorkbench;
@@ -47,24 +51,18 @@ public class IPerspectiveListenerTest extends UITestCase implements
 	public static final int NONE = 0x00, OPEN = 0x01, CLOSED = 0x02,
 			ACTIVATED = 0x04, CHANGED = 0x08;
 
-	public IPerspectiveListenerTest() {
-		super(IPerspectiveListenerTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		fEvent = NONE;
 		fWorkbench = PlatformUI.getWorkbench();
 		fWindow = openTestWindow();
 		fWindow.addPerspectiveListener(this);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		fWindow.removePerspectiveListener(this);
 		fWorkbench = null;
-		super.doTearDown();
 	}
 
 	@Test

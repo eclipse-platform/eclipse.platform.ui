@@ -17,7 +17,13 @@ package org.eclipse.ui.tests.api;
 import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
@@ -35,18 +41,20 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.dialogs.WorkingSetConfigurationBlock;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class IWorkingSetManagerTest extends UITestCase {
+public class IWorkingSetManagerTest {
 	static final String WORKING_SET_NAME_1 = "ws1";
 
 	static final String WORKING_SET_NAME_2 = "ws2";
 
 	static final String WORKING_SET_NAME_3 = "ws3";
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	IWorkingSetManager fWorkingSetManager;
 
@@ -69,13 +77,8 @@ public class IWorkingSetManagerTest extends UITestCase {
 		}
 	}
 
-	public IWorkingSetManagerTest() {
-		super(IWorkingSetManagerTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		fWorkingSetManager = getWorkbench().getWorkingSetManager();
 		fWorkspace = ResourcesPlugin.getWorkspace();
 		fWorkingSet = fWorkingSetManager.createWorkingSet(WORKING_SET_NAME_1,

@@ -21,21 +21,20 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class OverriddenTitleTest extends UITestCase {
+public class OverriddenTitleTest {
 
-	public OverriddenTitleTest() {
-		super(OverriddenTitleTest.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	IWorkbenchWindow window;
 
@@ -63,9 +62,8 @@ public class OverriddenTitleTest extends UITestCase {
 		}
 	};
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		window = openTestWindow();
 		page = window.getActivePage();
 		view = (OverriddenTitleView) page
@@ -76,11 +74,10 @@ public class OverriddenTitleTest extends UITestCase {
 		contentChangeEvent = false;
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		view.removePropertyListener(propertyListener);
 		page.hideView(view);
-		super.doTearDown();
 	}
 
 	private static void verifySettings(IWorkbenchPart2 part,

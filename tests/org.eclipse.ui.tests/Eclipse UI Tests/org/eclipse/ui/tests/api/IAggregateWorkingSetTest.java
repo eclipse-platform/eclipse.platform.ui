@@ -16,6 +16,10 @@ package org.eclipse.ui.tests.api;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -38,18 +42,22 @@ import org.eclipse.ui.internal.AbstractWorkingSet;
 import org.eclipse.ui.internal.AbstractWorkingSetManager;
 import org.eclipse.ui.internal.AggregateWorkingSet;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class IAggregateWorkingSetTest extends UITestCase {
+public class IAggregateWorkingSetTest {
 
 	static final String WORKING_SET_NAME = "testws";
 	static final String AGGREGATE_WORKING_SET_NAME_ = "testaggregatews";
 	static final String WSET_PAGE_ID="org.eclipse.ui.resourceWorkingSetPage";
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+
 	IWorkspace fWorkspace;
 	IWorkbench fWorkbench;
 
@@ -57,13 +65,8 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	List<IWorkingSet> backup;
 	IAggregateWorkingSet fWorkingSet;
 
-	public IAggregateWorkingSetTest() {
-		super(IAggregateWorkingSetTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 		backup = Arrays.asList(workingSetManager.getAllWorkingSets());
 
@@ -81,8 +84,9 @@ public class IAggregateWorkingSetTest extends UITestCase {
 
 		workingSetManager.addWorkingSet(fWorkingSet);
 	}
-	@Override
-	protected void doTearDown() throws Exception {
+
+	@After
+	public final void tearDown() throws Exception {
 		IWorkingSetManager workingSetManager = fWorkbench.getWorkingSetManager();
 		workingSetManager.removeWorkingSet(fWorkingSet);
 		for (IWorkingSet component : components) {
@@ -95,7 +99,6 @@ public class IAggregateWorkingSetTest extends UITestCase {
 			}
 		}
 		fWorkbench = null;
-		super.doTearDown();
 	}
 
 	@Test

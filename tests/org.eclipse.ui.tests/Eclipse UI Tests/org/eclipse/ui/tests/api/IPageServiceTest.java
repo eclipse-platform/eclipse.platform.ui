@@ -15,6 +15,9 @@ package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.getPageInput;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -25,19 +28,21 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the IPageService class.
  */
-@RunWith(JUnit4.class)
-public class IPageServiceTest extends UITestCase implements IPageListener,
-		org.eclipse.ui.IPerspectiveListener {
+public class IPageServiceTest implements IPageListener, org.eclipse.ui.IPerspectiveListener {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+
 	private IWorkbenchWindow fWindow;
 
 	private IWorkspace fWorkspace;
@@ -46,13 +51,8 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
 
 	private boolean perspEventReceived;
 
-	public IPageServiceTest() {
-		super(IPageServiceTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fWorkspace = ResourcesPlugin.getWorkspace();
 	}

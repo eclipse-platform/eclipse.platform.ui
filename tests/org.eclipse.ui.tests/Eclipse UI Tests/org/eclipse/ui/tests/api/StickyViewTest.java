@@ -16,6 +16,9 @@ package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -34,21 +37,22 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.IStickyViewDescriptor;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class StickyViewTest extends UITestCase {
+public class StickyViewTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Rule
 	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
@@ -56,10 +60,6 @@ public class StickyViewTest extends UITestCase {
 	private IWorkbenchWindow window;
 
 	private IWorkbenchPage page;
-
-	public StickyViewTest() {
-		super(StickyViewTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testStackPlacementRight() throws PartInitException {
@@ -359,8 +359,8 @@ public class StickyViewTest extends UITestCase {
 		}
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
+	@Before
+	public final void setUp() throws Exception {
 		window = openTestWindow();
 		page = window.getActivePage();
 	}

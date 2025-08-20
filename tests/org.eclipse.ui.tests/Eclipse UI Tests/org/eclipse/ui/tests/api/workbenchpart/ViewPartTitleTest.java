@@ -21,24 +21,23 @@ import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests bug 56822 -- NPE thrown when setTitle(null) is called.
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class ViewPartTitleTest extends UITestCase {
+public class ViewPartTitleTest {
 
-	public ViewPartTitleTest() {
-		super(ViewPartTitleTest.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	IWorkbenchWindow window;
 
@@ -68,9 +67,8 @@ public class ViewPartTitleTest extends UITestCase {
 		}
 	};
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		window = openTestWindow();
 		page = window.getActivePage();
 		String viewId = EmptyView.ID;
@@ -82,11 +80,10 @@ public class ViewPartTitleTest extends UITestCase {
 		contentChangeEvent = false;
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		view.removePropertyListener(propertyListener);
 		page.hideView(view);
-		super.doTearDown();
 	}
 
 	private void verifySettings(IWorkbenchPart2 part, String expectedTitle,

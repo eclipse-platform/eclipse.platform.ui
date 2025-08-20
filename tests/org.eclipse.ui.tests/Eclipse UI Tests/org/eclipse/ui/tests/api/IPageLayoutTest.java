@@ -14,24 +14,22 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
 
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test cases for the <code>IPageLayout</code> API.
  *
  * @since 3.2
  */
-@RunWith(JUnit4.class)
-public class IPageLayoutTest extends UITestCase {
+public class IPageLayoutTest {
 
-	public IPageLayoutTest() {
-		super(IPageLayoutTest.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Test
 	public void testGetDescriptor() {
