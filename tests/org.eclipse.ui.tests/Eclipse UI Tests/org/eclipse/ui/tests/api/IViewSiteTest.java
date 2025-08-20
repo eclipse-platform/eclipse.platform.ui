@@ -13,23 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
 public class IViewSiteTest extends IWorkbenchPartSiteTest {
-
-	/**
-	 * Constructor for IViewPartSiteTest
-	 */
-	public IViewSiteTest() {
-		super(IViewSiteTest.class.getSimpleName());
-	}
 
 	/**
 	 * @see IWorkbenchPartSiteTest#getTestPartName()

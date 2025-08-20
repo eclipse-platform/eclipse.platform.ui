@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IEditorPart;
@@ -22,18 +24,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
 public class IEditorSiteTest extends IWorkbenchPartSiteTest {
-
-	/**
-	 * Constructor for IEditorSiteTest
-	 */
-	public IEditorSiteTest() {
-		super(IEditorSiteTest.class.getSimpleName());
-	}
 
 	/**
 	 * @see IWorkbenchPartSiteTest#getTestPartName()

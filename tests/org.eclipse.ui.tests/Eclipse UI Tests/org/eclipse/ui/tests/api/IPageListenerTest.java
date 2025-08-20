@@ -14,24 +14,29 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the IPageListener class.
  */
-@RunWith(JUnit4.class)
-public class IPageListenerTest extends UITestCase implements IPageListener {
+public class IPageListenerTest implements IPageListener {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+
 	private IWorkbenchWindow fWindow;
 	private IWorkspace fWorkspace;
 
@@ -45,22 +50,16 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
 
 	private IWorkbenchPage pageMask;
 
-	public IPageListenerTest() {
-		super(IPageListenerTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fWorkspace = ResourcesPlugin.getWorkspace();
 		fWindow.addPageListener(this);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		fWindow.removePageListener(this);
-		super.doTearDown();
 	}
 
 	/**

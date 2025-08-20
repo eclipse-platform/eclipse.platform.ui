@@ -22,6 +22,12 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestPage;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -80,22 +86,25 @@ import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.tests.harness.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
+import org.junit.After;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.junit.runners.MethodSorters;
 
-@RunWith(JUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class IWorkbenchPageTest extends UITestCase {
+public class IWorkbenchPageTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private IWorkbench fWorkbench;
 
@@ -163,13 +172,8 @@ public class IWorkbenchPageTest extends UITestCase {
 		}
 	};
 
-	public IWorkbenchPageTest() {
-		super(IWorkbenchPageTest.class.getName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		fWorkbench = PlatformUI.getWorkbench();
 		fWin = openTestWindow();
 		fActivePage = fWin.getActivePage();
@@ -178,10 +182,9 @@ public class IWorkbenchPageTest extends UITestCase {
 		Platform.addLogListener(openAndHideListener);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		Platform.removeLogListener(openAndHideListener);
-		super.doTearDown();
 		if (proj != null) {
 			FileUtil.deleteProject(proj);
 			proj = null;

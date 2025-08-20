@@ -14,11 +14,14 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.CallHistory;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -26,22 +29,17 @@ import org.junit.Test;
  * interface this test verifies the IWorkbenchPart lifecycle rather
  * than the implementation.
  */
-public abstract class IWorkbenchPartTest extends UITestCase {
+public abstract class IWorkbenchPartTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	protected IWorkbenchWindow fWindow;
 
 	protected IWorkbenchPage fPage;
 
-	/**
-	 * Constructor for IActionDelegateTest
-	 */
-	public IWorkbenchPartTest(String testName) {
-		super(testName);
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
 	}

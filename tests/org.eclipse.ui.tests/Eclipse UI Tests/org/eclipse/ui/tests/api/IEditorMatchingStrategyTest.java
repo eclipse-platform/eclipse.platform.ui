@@ -15,31 +15,31 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the <code>IEditorMatchingStrategyTest</code> API and behaviour.
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public class IEditorMatchingStrategyTest extends UITestCase {
+public class IEditorMatchingStrategyTest {
 
 	private static final String MATCHING_EDITOR_ID = "org.eclipse.ui.tests.api.MockMatchingEditorPart1";
 
-	public IEditorMatchingStrategyTest() {
-		super(IEditorMatchingStrategyTest.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Test
 	public void testOpenMatchingEditor() throws Exception {

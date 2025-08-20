@@ -14,6 +14,8 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -21,19 +23,21 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * This is a test for IEditorPart.  Since IEditorPart is an
  * interface this test verifies the IEditorPart lifecycle rather
  * than the implementation.
  */
-@RunWith(JUnit4.class)
-public class IEditorActionBarContributorTest extends UITestCase {
+public class IEditorActionBarContributorTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	protected IWorkbenchWindow fWindow;
 
@@ -41,16 +45,8 @@ public class IEditorActionBarContributorTest extends UITestCase {
 
 	private final String EDITOR_ID = "org.eclipse.ui.tests.api.IEditorActionBarContributorTest";
 
-	/**
-	 * Constructor for IEditorPartTest
-	 */
-	public IEditorActionBarContributorTest() {
-		super(IEditorActionBarContributorTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
 	}

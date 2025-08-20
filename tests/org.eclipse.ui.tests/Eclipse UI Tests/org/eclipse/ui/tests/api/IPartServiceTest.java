@@ -14,6 +14,11 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -33,19 +38,21 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.SlavePartService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CallHistory;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the IPartService, IPartListener and IPartListener2 interfaces.
  */
-@RunWith(JUnit4.class)
-public class IPartServiceTest extends UITestCase {
+public class IPartServiceTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private IWorkbenchWindow fWindow;
 
@@ -146,10 +153,6 @@ public class IPartServiceTest extends UITestCase {
 
 	private final CallHistory history2 = new CallHistory(partListener2);
 
-	public IPartServiceTest() {
-		super(IPartServiceTest.class.getSimpleName());
-	}
-
 	/**
 	 * Clear the event state.
 	 */
@@ -160,9 +163,8 @@ public class IPartServiceTest extends UITestCase {
 		history2.clear();
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
 	}

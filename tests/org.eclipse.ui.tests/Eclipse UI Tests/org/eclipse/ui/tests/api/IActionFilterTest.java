@@ -14,6 +14,9 @@
 package org.eclipse.ui.tests.api;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
@@ -21,10 +24,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test the lifecycle of an action filter.
@@ -42,8 +45,10 @@ import org.junit.runners.JUnit4;
  * 		redTrueAction -&gt; (name = red) (flag = true)
  * </pre>
  */
-@RunWith(JUnit4.class)
-public class IActionFilterTest extends UITestCase {
+public class IActionFilterTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	protected IWorkbenchWindow fWindow;
 
@@ -53,13 +58,8 @@ public class IActionFilterTest extends UITestCase {
 
 	protected String DYNAMIC_MENU_VIEW_ID = "org.eclipse.ui.tests.api.IActionFilterTest2";
 
-	public IActionFilterTest() {
-		super(IActionFilterTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
 	}
