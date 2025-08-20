@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.junit.Test;
@@ -21,10 +24,6 @@ import org.junit.Test;
  * @since 3.1
  */
 public class BrowserTests extends DynamicTestCase {
-
-	public BrowserTests() {
-		super(BrowserTests.class.getSimpleName());
-	}
 
 	@Test
 	public void testBrowserSupport() {

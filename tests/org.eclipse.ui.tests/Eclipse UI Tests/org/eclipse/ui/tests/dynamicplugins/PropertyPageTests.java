@@ -13,26 +13,22 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
-@RunWith(JUnit4.class)
 public class PropertyPageTests extends DynamicTestCase {
 
 	private static final String PROPERTYPAGE = "dynamicPropertyPage1";
-
-	public PropertyPageTests() {
-		super(PropertyPageTests.class.getSimpleName());
-	}
-
 
 	@Test
 	public void testPropertyPageCount() {

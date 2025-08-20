@@ -14,14 +14,13 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests whether the "org.eclipse.ui.acceleratorScopes" extension point can be
@@ -29,17 +28,8 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.1.1
  */
-@RunWith(JUnit4.class)
 public final class AcceleratorScopesExtensionDynamicTest extends
 		DynamicTestCase {
-
-	/**
-	 * Constructs a new instance of
-	 * <code>AcceleratorScopesExtensionDynamicTest</code>.
-	 */
-	public AcceleratorScopesExtensionDynamicTest() {
-		super(AcceleratorScopesExtensionDynamicTest.class.getSimpleName());
-	}
 
 	/**
 	 * Returns the full-qualified identifier of the extension to be tested.

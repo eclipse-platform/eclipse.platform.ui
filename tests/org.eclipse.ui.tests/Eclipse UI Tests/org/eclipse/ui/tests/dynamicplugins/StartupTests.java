@@ -13,24 +13,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.osgi.framework.Bundle;
 
 /**
  * @since 3.1
  */
-@RunWith(JUnit4.class)
 public class StartupTests extends DynamicTestCase {
-
-	public StartupTests() {
-		super(StartupTests.class.getSimpleName());
-	}
 
 	/**
 	 * Tests to ensure that the IStartup implementation in the bundle is run

@@ -13,22 +13,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
-import java.util.Iterator;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test the loading and unloading of the marker support components.
  *
  * @since 3.2
  */
-@RunWith(JUnit4.class)
 public class MarkerSupportTests extends DynamicTestCase {
 
 	public static final String FILTER1 = "filter1";
@@ -42,10 +40,6 @@ public class MarkerSupportTests extends DynamicTestCase {
 	static final String DYNAMIC_PROBLEM_MARKER = "org.eclipse.ui.tests.dynamicTestMarker";
 
 	static final String PROBLEM_MARKER = "org.eclipse.core.resources.problemmarker";
-
-	public MarkerSupportTests() {
-		super(MarkerSupportTests.class.getSimpleName());
-	}
 
 	@Test
 	public void testFilters() {
@@ -105,11 +99,8 @@ public class MarkerSupportTests extends DynamicTestCase {
 	}
 
 	private boolean hasMarkerGroup() {
-		Iterator<MarkerGroup> groups = MarkerSupportRegistry.getInstance()
-		.getMarkerGroups().iterator();
-
-		while (groups.hasNext()) {
-			MarkerGroup element = groups.next();
+		for (MarkerGroup element : MarkerSupportRegistry.getInstance()
+		.getMarkerGroups()) {
 			if(element.getField().getDescription().equals("Dynamic Test Grouping")) {
 				return true;
 			}
@@ -130,10 +121,8 @@ public class MarkerSupportTests extends DynamicTestCase {
 	 * Return whether or not there is a filter for id.
 	 */
 	private boolean hasFilter(String id) {
-		Iterator<ProblemFilter> filters = MarkerSupportRegistry.getInstance()
-				.getRegisteredFilters().iterator();
-		while (filters.hasNext()) {
-			ProblemFilter filter = filters.next();
+		for (ProblemFilter filter : MarkerSupportRegistry.getInstance()
+				.getRegisteredFilters()) {
 			if (id.equals(filter.getId())) {
 				return true;
 			}

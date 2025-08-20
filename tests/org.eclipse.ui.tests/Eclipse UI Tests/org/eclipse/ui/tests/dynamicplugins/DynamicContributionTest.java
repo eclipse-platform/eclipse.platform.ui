@@ -15,6 +15,9 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -22,18 +25,11 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.menus.IMenuService;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  */
-@RunWith(JUnit4.class)
 public class DynamicContributionTest extends DynamicTestCase {
-
-	public DynamicContributionTest() {
-		super(DynamicContributionTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testMenuContribution() throws Exception {

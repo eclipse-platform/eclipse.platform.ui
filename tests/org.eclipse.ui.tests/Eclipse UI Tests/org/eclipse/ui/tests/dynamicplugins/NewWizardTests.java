@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -20,20 +22,13 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.eclipse.ui.wizards.IWizardRegistry;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
-@RunWith(JUnit4.class)
 public class NewWizardTests extends DynamicTestCase {
 
 	private static final String WIZARD_ID = "org.eclipse.newNewWizard1.newNewWizard1";
-
-	public NewWizardTests() {
-		super(NewWizardTests.class.getSimpleName());
-	}
 
 	@Test
 	public void testNewWizardProperties() {

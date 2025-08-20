@@ -14,6 +14,8 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -34,22 +36,15 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
-@RunWith(JUnit4.class)
 public class ObjectContributionTests extends DynamicTestCase {
 
 	private static final String GROUP_ID = "#OC";
 	private static final String OBJECT_ACTION_ID = "org.eclipse.newOC1";
 	private static final String VIEWER_ACTION_ID = "org.eclipse.newOC2";
-
-	public ObjectContributionTests() {
-		super(ObjectContributionTests.class.getSimpleName());
-	}
 
 	@Override
 	protected String getExtensionId() {

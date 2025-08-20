@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -32,8 +34,6 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.keys.IBindingService;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests whether the "org.eclipse.ui.commands" extension point can be added and
@@ -41,15 +41,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.1.1
  */
-@RunWith(JUnit4.class)
 public final class CommandsExtensionDynamicTest extends DynamicTestCase {
-
-	/**
-	 * Constructs a new instance of <code>CommandsExtensionDynamicTest</code>.
-	 */
-	public CommandsExtensionDynamicTest() {
-		super(CommandsExtensionDynamicTest.class.getSimpleName());
-	}
 
 	/**
 	 * Returns the full-qualified identifier of the extension to be tested.

@@ -22,8 +22,6 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests whether the "org.eclipse.ui.handlers" extension point can be added and
@@ -31,15 +29,8 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.1.1
  */
-@RunWith(JUnit4.class)
 public final class HandlersExtensionDynamicTest extends DynamicTestCase {
 
-	/**
-	 * Constructs a new instance of <code>HandlersExtensionDynamicTest</code>.
-	 */
-	public HandlersExtensionDynamicTest() {
-		super(HandlersExtensionDynamicTest.class.getSimpleName());
-	}
 
 	/**
 	 * Returns the full-qualified identifier of the extension to be tested.

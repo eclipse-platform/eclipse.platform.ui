@@ -14,6 +14,8 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
 import java.lang.ref.ReferenceQueue;
@@ -29,25 +31,19 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.leaks.LeakTests;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
-@RunWith(JUnit4.class)
 public class IntroTests extends DynamicTestCase {
 
 	private static final String PRODUCT_ID = "org.eclipse.ui.tests.someProduct";
 	private static final String INTRO_ID = "org.eclipse.newIntro1.newIntro1";
 	private IntroDescriptor oldDesc;
 	private IWorkbenchWindow window;
-
-
-	public IntroTests() {
-		super(IntroTests.class.getSimpleName());
-	}
 
 	@Test
 	public void testIntroClosure() throws IllegalArgumentException, InterruptedException {
@@ -111,16 +107,14 @@ public class IntroTests extends DynamicTestCase {
 		return "data/org.eclipse.newIntro1";
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		oldDesc = Workbench.getInstance().getIntroDescriptor();
 		window = openTestWindow();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public final void restoreIntroDescriptor() throws Exception {
 		Workbench.getInstance().setIntroDescriptor(oldDesc);
 	}
 

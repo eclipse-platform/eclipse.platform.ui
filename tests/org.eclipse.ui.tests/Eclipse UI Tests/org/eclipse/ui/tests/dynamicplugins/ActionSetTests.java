@@ -14,6 +14,11 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -33,22 +38,15 @@ import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.tests.leaks.LeakTests;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests to ensure the addition of new action sets with dynamic plug-ins.
  */
 
-@RunWith(JUnit4.class)
 public class ActionSetTests extends DynamicTestCase {
 
 	private static final String ACTION_SET_ID = "org.eclipse.newActionSet1.newActionSet1";
 	private static final String PART_ID = "org.eclipse.ui.tests.part1";
-
-	public ActionSetTests() {
-		super(ActionSetTests.class.getSimpleName());
-	}
 
 	@Test
 	public void testActionSets() throws Exception {

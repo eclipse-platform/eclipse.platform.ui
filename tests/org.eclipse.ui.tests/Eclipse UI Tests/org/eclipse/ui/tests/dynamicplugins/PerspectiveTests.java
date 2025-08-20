@@ -14,6 +14,10 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -25,21 +29,14 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests to check the addition of a new perspective once the perspective
  * registry is loaded.
  */
-@RunWith(JUnit4.class)
 public class PerspectiveTests extends DynamicTestCase {
 
 	private static final String PERSPECTIVE_ID = "org.eclipse.newPerspective1.newPerspective1";
-
-	public PerspectiveTests() {
-		super(PerspectiveTests.class.getSimpleName());
-	}
 
 	/**
 	 * Tests to ensure that the descriptor is added and removed with bundle

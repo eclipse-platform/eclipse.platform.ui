@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.bindings.Binding;
@@ -26,8 +27,6 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.keys.IBindingService;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests whether the "org.eclipse.ui.bindings" extension point can be added and
@@ -35,15 +34,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.1.1
  */
-@RunWith(JUnit4.class)
 public final class BindingsExtensionDynamicTest extends DynamicTestCase {
-
-	/**
-	 * Constructs a new instance of <code>BindingsExtensionDynamicTest</code>.
-	 */
-	public BindingsExtensionDynamicTest() {
-		super(BindingsExtensionDynamicTest.class.getSimpleName());
-	}
 
 	/**
 	 * Returns the full-qualified identifier of the extension to be tested.
