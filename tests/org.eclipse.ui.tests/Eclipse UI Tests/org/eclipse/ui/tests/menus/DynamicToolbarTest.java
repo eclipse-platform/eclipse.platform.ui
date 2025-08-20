@@ -13,6 +13,8 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
@@ -23,18 +25,11 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.11
  */
-@RunWith(JUnit4.class)
 public class DynamicToolbarTest extends MenuTestCase {
-
-	public DynamicToolbarTest() {
-		super(DynamicToolbarTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testDynamicMenu() throws Exception {

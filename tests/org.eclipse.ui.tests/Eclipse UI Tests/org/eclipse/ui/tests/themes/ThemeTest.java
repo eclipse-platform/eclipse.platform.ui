@@ -15,16 +15,23 @@
 package org.eclipse.ui.tests.themes;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
+import org.junit.Before;
+import org.junit.Rule;
 
 /**
  * @since 3.0
  */
-public abstract class ThemeTest extends UITestCase {
+public abstract class ThemeTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+
 	private static final String MOCK_CSS_THEME = "org.eclipse.e4.ui.css.theme.mock";
 
 	protected static final String BOGUSID = "BOGUSID";
@@ -33,14 +40,8 @@ public abstract class ThemeTest extends UITestCase {
 
 	protected IThemeManager fManager;
 
-	public ThemeTest(String testName) {
-		super(testName);
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		fManager = getWorkbench().getThemeManager();
 		fManager.setCurrentTheme(IThemeManager.DEFAULT_THEME);
 

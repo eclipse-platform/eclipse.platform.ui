@@ -20,6 +20,11 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.forceActive;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.waitForJobs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -62,27 +67,24 @@ import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.tests.commands.ActiveContextExpression;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.junit.Assume;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.junit.runners.MethodSorters;
 
 /**
  * @since 3.3
  */
-@RunWith(JUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class EvaluationServiceTest extends UITestCase {
+public class EvaluationServiceTest {
 	private static final String CHECK_HANDLER_ID = "org.eclipse.ui.tests.services.checkHandler";
 	private static final String CONTEXT_ID1 = "org.eclipse.ui.command.contexts.evaluationService1";
 
-	public EvaluationServiceTest() {
-		super(EvaluationServiceTest.class.getName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private static class MyEval implements IPropertyChangeListener {
 		public volatile int count = 0;

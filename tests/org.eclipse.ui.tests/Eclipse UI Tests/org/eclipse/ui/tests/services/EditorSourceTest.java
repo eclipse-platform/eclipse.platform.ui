@@ -17,6 +17,10 @@ package org.eclipse.ui.tests.services;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Objects;
 
@@ -38,19 +42,20 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.api.MockReusableEditorPart;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  */
-@RunWith(JUnit4.class)
 @Ignore("See bug 436755 and commit 0d6ce84b3d3a588733bdae43224c612239a0a9a7")
-public class EditorSourceTest extends UITestCase {
+public class EditorSourceTest {
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private static class MyEval implements IPropertyChangeListener {
 		public int count = 0;
@@ -92,13 +97,8 @@ public class EditorSourceTest extends UITestCase {
 	private IFile test1;
 	private IFile test2;
 
-	public EditorSourceTest() {
-		super(EditorSourceTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		project = FileUtil.createProject("testActiveEditor");
 		test1 = FileUtil.createFile("test1.mockr1", project);
 		test2 = FileUtil.createFile("test2.mockr1", project);

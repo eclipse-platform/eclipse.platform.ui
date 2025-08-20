@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,11 +49,10 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.api.workbenchpart.EmptyView;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests that object contributions are enabled and shown correctly in pop-up
@@ -61,16 +63,10 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public final class ObjectContributionTest extends UITestCase {
+public final class ObjectContributionTest {
 
-	/**
-	 * Constructs a new instance of <code>ObjectContributionTest</code> with
-	 * the name of the test.
-	 */
-	public ObjectContributionTest() {
-		super(ObjectContributionTest.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Tests whether the content-type object contribution works. This is testing

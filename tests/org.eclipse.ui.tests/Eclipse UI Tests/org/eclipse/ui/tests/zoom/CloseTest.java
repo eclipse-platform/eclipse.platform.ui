@@ -23,9 +23,6 @@ import org.junit.Test;
  * or views (or that have different results).
  */
 public abstract class CloseTest extends ZoomTestCase {
-	public CloseTest(String name) {
-		super(name);
-	}
 
 	public abstract IWorkbenchPart getStackedPart1();
 	public abstract IWorkbenchPart getStackedPart2();

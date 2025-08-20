@@ -15,6 +15,12 @@
 package org.eclipse.ui.tests.themes;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Set;
@@ -34,15 +40,12 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the theme API.
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
 public class ThemeAPITest extends ThemeTest {
 
 	private static final String EXTENDED_THEME3 = "extendedTheme3";
@@ -73,10 +76,6 @@ public class ThemeAPITest extends ThemeTest {
 	private static final String BAD_COLOR1 = "badColor1";
 	private static final String BAD_COLOR2 = "badColor2";
 	private static final String BAD_COLOR3 = "badColor3";
-
-	public ThemeAPITest() {
-		super(ThemeAPITest.class.getSimpleName());
-	}
 
 	private void checkEvents(ThemePropertyListener listener, Object source,
 			Object oldObject, Object newObject) {
