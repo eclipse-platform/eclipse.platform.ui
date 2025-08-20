@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.zoom;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -35,14 +36,18 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockEditorPart;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 
-public class ZoomTestCase extends UITestCase {
+public class ZoomTestCase {
 //    protected static final String view2Id = IPageLayout.ID_OUTLINE;
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Rule
 	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
@@ -64,14 +69,8 @@ public class ZoomTestCase extends UITestCase {
 
 	private IFile file3;
 
-	public ZoomTestCase(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-
+	@Before
+	public final void setUp() throws Exception {
 		window = (WorkbenchWindow) openTestWindow(ZoomPerspectiveFactory.PERSP_ID);
 		page = (WorkbenchPage) window.getActivePage();
 

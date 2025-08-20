@@ -18,9 +18,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class ActivateTest extends ZoomTestCase {
-	public ActivateTest(String name) {
-		super(name);
-	}
 
 	public abstract IWorkbenchPart getStackedPart1();
 	public abstract IWorkbenchPart getStackedPart2();
@@ -68,7 +65,6 @@ public abstract class ActivateTest extends ZoomTestCase {
 	@Ignore
 	public void testActivateOtherStack() {
 		// We allow an editor to be activated *without* unzooming
-		System.out.println("Bogus Test: " + getName());
 //        IWorkbenchPart stacked1 = getStackedPart1();
 //        IWorkbenchPart unstacked = getUnstackedPart();
 //

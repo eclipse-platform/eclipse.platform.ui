@@ -16,6 +16,7 @@ package org.eclipse.ui.tests.menus;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
@@ -25,20 +26,13 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.menus.IMenuService;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  *
  * @since 3.5
  * @author Prakash G.R.
  */
-@RunWith(JUnit4.class)
 public class DynamicMenuTest extends MenuTestCase {
-
-	public DynamicMenuTest() {
-		super(DynamicMenuTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testDynamicMenu() throws Exception {

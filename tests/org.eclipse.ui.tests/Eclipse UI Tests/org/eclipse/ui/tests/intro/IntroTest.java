@@ -14,6 +14,10 @@
 package org.eclipse.ui.tests.intro;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IPageLayout;
@@ -32,19 +36,21 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class IntroTest extends UITestCase {
+public class IntroTest {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Rule
 	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
@@ -52,10 +58,6 @@ public class IntroTest extends UITestCase {
 	IWorkbenchWindow window = null;
 
 	private IntroDescriptor oldDesc;
-
-	public IntroTest() {
-		super(IntroTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testCloseInEmptyPerspective() {
@@ -241,10 +243,8 @@ public class IntroTest extends UITestCase {
 		assertNull(workbench.getIntroManager().getIntro());
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-
+	@Before
+	public final void setUp() throws Exception {
 		// these tests rely on the 3.2 behavior for sticky views
 		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
 		preferenceStore.putValue(IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR, "true");
@@ -257,9 +257,8 @@ public class IntroTest extends UITestCase {
 		window = openTestWindow();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public final void tearDown() throws Exception {
 		Workbench.getInstance().setIntroDescriptor(oldDesc);
 	}
 }

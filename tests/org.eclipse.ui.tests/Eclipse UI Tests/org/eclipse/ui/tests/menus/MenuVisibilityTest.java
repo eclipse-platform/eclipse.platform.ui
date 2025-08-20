@@ -15,6 +15,10 @@
 package org.eclipse.ui.tests.menus;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 
@@ -54,24 +58,23 @@ import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.commands.ActiveContextExpression;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  */
-@RunWith(JUnit4.class)
-public class MenuVisibilityTest extends UITestCase {
+public class MenuVisibilityTest {
 
 	private static final String EXTENSION_ID = "org.eclipse.ui.tests.menusX1";
 	private static final String LOCATION = "menu:foo";
 	private static final String COMMAND_ID = "org.eclipse.ui.tests.commandEnabledVisibility";
 
-	public MenuVisibilityTest() {
-		super(MenuVisibilityTest.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private IContextService contextService;
 	private IMenuService menuService;
@@ -414,10 +417,8 @@ public class MenuVisibilityTest extends UITestCase {
 		parentMenuManager.dispose();
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-
+	@Before
+	public final void setUp() throws Exception {
 		window = openTestWindow();
 		menuService = window.getService(IMenuService.class);
 		contextService = window
@@ -430,8 +431,8 @@ public class MenuVisibilityTest extends UITestCase {
 		}
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		if (activeContext != null) {
 			contextService.deactivateContext(activeContext);
 			activeContext = null;
@@ -439,7 +440,5 @@ public class MenuVisibilityTest extends UITestCase {
 		menuService = null;
 		contextService = null;
 		window = null;
-
-		super.doTearDown();
 	}
 }

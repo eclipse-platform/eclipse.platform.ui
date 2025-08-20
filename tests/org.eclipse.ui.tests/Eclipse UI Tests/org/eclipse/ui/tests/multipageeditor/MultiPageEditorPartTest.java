@@ -14,26 +14,25 @@
 package org.eclipse.ui.tests.multipageeditor;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.internal.ErrorEditorPart;
 import org.eclipse.ui.internal.part.NullEditorInput;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class MultiPageEditorPartTest extends UITestCase {
+public class MultiPageEditorPartTest {
 
-	public MultiPageEditorPartTest() {
-		super(MultiPageEditorPartTest.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		TestMultiPageEditorThrowingPartInitException.resetSpy();
-		super.doTearDown();
 	}
 
 	@Test

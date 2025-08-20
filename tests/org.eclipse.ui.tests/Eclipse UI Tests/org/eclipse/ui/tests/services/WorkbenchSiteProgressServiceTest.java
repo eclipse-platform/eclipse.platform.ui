@@ -16,6 +16,9 @@ package org.eclipse.ui.tests.services;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -35,22 +38,19 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService.SiteUpdateJob;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  * @author Prakash G.R.
  */
-@RunWith(JUnit4.class)
-public class WorkbenchSiteProgressServiceTest extends UITestCase {
+public class WorkbenchSiteProgressServiceTest {
 
-
-	public WorkbenchSiteProgressServiceTest() {
-		super(WorkbenchSiteProgressServiceTest.class.getSimpleName());
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private IWorkbenchPart activePart;
 	private IWorkbenchWindow window;
@@ -61,9 +61,8 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase {
 	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS Z") //$NON-NLS-1$
 			.withZone(ZoneId.systemDefault());
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 		window = openTestWindow("org.eclipse.ui.resourcePerspective");
 		activePart = window.getActivePage().getActivePart();
 		assertNotNull(activePart);

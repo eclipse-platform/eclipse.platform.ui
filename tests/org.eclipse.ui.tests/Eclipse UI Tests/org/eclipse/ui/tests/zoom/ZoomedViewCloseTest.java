@@ -15,18 +15,11 @@ package org.eclipse.ui.tests.zoom;
 
 import org.eclipse.ui.IWorkbenchPart;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
-@RunWith(JUnit4.class)
 public class ZoomedViewCloseTest extends CloseTest {
-
-	public ZoomedViewCloseTest() {
-		super(ZoomedViewCloseTest.class.getSimpleName());
-	}
 
 	@Override
 	public IWorkbenchPart getStackedPart1() {

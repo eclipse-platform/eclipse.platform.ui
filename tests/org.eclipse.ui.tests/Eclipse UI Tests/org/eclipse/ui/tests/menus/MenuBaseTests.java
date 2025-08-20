@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.menus;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
@@ -23,8 +26,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.tests.menus.DeclaredProgrammaticFactory.MyItem;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Performs a number of basic tests for the org.eclipse.ui.menus
@@ -39,7 +40,6 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.3
  */
-@RunWith(JUnit4.class)
 public class MenuBaseTests extends MenuTestCase {
 	String[] expectedIds = {
 			"MenuTest.BasicCmdItem",
@@ -86,10 +86,6 @@ public class MenuBaseTests extends MenuTestCase {
 			"Icons Toolbar Only",
 			"MyItem"
 		};
-
-	public MenuBaseTests() {
-		super(MenuBaseTests.class.getSimpleName());
-	}
 
 	@Test
 	public void testBasicPopulation() throws Exception {

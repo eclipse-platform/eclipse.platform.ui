@@ -15,6 +15,12 @@ package org.eclipse.ui.tests.dialogs;
 
 import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -37,21 +43,16 @@ import org.eclipse.ui.internal.dialogs.WorkingSetEditWizard;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the WorkingSetEditWizard
  * Tests input validation, presence of correct edit page and
  * wizard page texts.
  */
-@RunWith(JUnit4.class)
 public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto<WorkingSetEditWizard> {
-
-	public UIEditWorkingSetWizardAuto() {
-		super(UIEditWorkingSetWizardAuto.class.getSimpleName());
-	}
 
 	@Override
 	protected WorkingSetEditWizard createWizardToTest() {
@@ -149,15 +150,13 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto<WorkingS
 		DialogCheck.assertDialogTexts(getWizardDialog());
 	}
 
-	@Override
-	public void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void disableAutoBuild() throws Exception {
 		setAutoBuilding(false);
 	}
 
-	@Override
-	public void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public final void restoreAutoBuild() throws Exception {
 		ResourcesPlugin.getWorkspace().setDescription(Workspace.defaultWorkspaceDescription());
 	}
 

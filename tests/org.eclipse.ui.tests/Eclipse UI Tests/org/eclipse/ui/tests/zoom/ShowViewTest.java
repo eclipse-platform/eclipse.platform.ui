@@ -14,6 +14,8 @@
 package org.eclipse.ui.tests.zoom;
 
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.ui.IViewPart;
@@ -21,14 +23,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
 public class ShowViewTest extends ZoomTestCase {
-	public ShowViewTest() {
-		super(ShowViewTest.class.getSimpleName());
-	}
 
 	/**
 	 * <p>

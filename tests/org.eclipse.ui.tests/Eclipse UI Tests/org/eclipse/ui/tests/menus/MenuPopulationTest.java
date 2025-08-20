@@ -16,6 +16,12 @@ package org.eclipse.ui.tests.menus;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEventsUntil;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 
@@ -58,15 +64,14 @@ import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.api.workbenchpart.EmptyView;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  */
-@RunWith(JUnit4.class)
 public class MenuPopulationTest extends MenuTestCase {
 	private static final String ICONS_ANYTHING_GIF = "/anything.gif";
 	private static final String ICONS_BINARY_GIF = "/binary_co.gif";
@@ -85,10 +90,6 @@ public class MenuPopulationTest extends MenuTestCase {
 	private static final String ITEM_ID = "my.id";
 	private static final String MENU_LOCATION = "menu:local.menu.test";
 	private Field iconField;
-
-	public MenuPopulationTest() {
-		super(MenuPopulationTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testMenuServicePopupContribution() throws Exception {
@@ -614,9 +615,8 @@ public class MenuPopulationTest extends MenuTestCase {
 		assertEquals("endof.insert", manager.getItems()[3].getId());
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUpContributionFactories() throws Exception {
 		afterOne = new AbstractContributionFactory(
 				"menu:after.menu?after=after.one", "org.eclipse.ui.tests") {
 			@Override
@@ -657,14 +657,13 @@ public class MenuPopulationTest extends MenuTestCase {
 		iconField.setAccessible(true);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void removeContributionsFactories() throws Exception {
 		menuService.removeContributionFactory(afterOne);
 		menuService.removeContributionFactory(beforeOne);
 		menuService.removeContributionFactory(endofOne);
 		usefulContribution.dispose();
 		usefulContribution = null;
-		super.doTearDown();
 	}
 
 	@Test

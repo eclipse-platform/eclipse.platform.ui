@@ -15,14 +15,8 @@ package org.eclipse.ui.tests.zoom;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
 public class OpenEditorTest extends ZoomTestCase {
-	public OpenEditorTest() {
-		super(OpenEditorTest.class.getSimpleName());
-	}
 
 	/**
 	 * <p>Test: Zoom an editor then open an existing editor in the same stack. Do not force activation.</p>

@@ -15,6 +15,10 @@
 package org.eclipse.ui.tests.dialogs;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
@@ -55,23 +59,20 @@ import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage.ProjectRecord;
 import org.eclipse.ui.tests.TestPlugin;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Rule;
 import org.junit.Test;
 
-public class ResourcePathCopyTest extends UITestCase {
+public class ResourcePathCopyTest {
 
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
 	private static final String ARCHIVE_JAVA_PROJECT = "helloworld";
 
-	/**
-	 * @param testName
-	 */
-	public ResourcePathCopyTest(String testName) {
-		super(testName);
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Test
 	public void testPathCopy() throws CoreException, IOException, HeadlessException, UnsupportedFlavorException {

@@ -26,7 +26,10 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 
 /**
  * Base class for tests concerning the 'org.eclipse.ui.menus'
@@ -39,22 +42,20 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.3
  */
-public class MenuTestCase extends UITestCase {
+public class MenuTestCase {
 
 	protected static final String TEST_CONTRIBUTIONS_CACHE_ID = "org.eclipse.ui.tests.IfYouChangeMe.FixTheTests";
 
-	public MenuTestCase(String testName) {
-		super(testName);
-	}
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	protected IContextService contextService;
 	protected IMenuService menuService;
 	protected IWorkbenchWindow window;
 	protected IContextActivation activeContext;
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public final void setUp() throws Exception {
 
 		window = openTestWindow();
 		contextService = window
@@ -69,8 +70,8 @@ public class MenuTestCase extends UITestCase {
 		menuService = window.getService(IMenuService.class);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public final void tearDown() throws Exception {
 		if (activeContext != null) {
 			contextService.deactivateContext(activeContext);
 			activeContext = null;
@@ -78,8 +79,6 @@ public class MenuTestCase extends UITestCase {
 		contextService = null;
 		menuService = null;
 		window = null;
-
-		super.doTearDown();
 	}
 
 	protected static int ALL_OK = -1;

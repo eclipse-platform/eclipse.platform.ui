@@ -28,8 +28,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.ProgressMonitorUtil;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test the accumulating progress monitor wrapper api, which fires received
@@ -39,7 +37,6 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.5
  */
-@RunWith(JUnit4.class)
 public class AccumulatingProgressMonitorTest {
 
 	/*
