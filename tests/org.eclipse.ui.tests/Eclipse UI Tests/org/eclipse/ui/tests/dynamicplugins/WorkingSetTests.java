@@ -15,6 +15,10 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -28,19 +32,12 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.intro.IIntroPart;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.osgi.framework.Bundle;
 
 /**
  * @since 3.3
  */
-@RunWith(JUnit4.class)
 public class WorkingSetTests extends DynamicTestCase {
-
-	public WorkingSetTests() {
-		super(WorkingSetTests.class.getSimpleName());
-	}
 
 	@Override
 	protected String getMarkerClass() {

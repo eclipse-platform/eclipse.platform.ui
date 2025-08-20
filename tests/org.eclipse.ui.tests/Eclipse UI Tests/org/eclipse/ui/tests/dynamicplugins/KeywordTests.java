@@ -13,23 +13,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.KeywordRegistry;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
-@RunWith(JUnit4.class)
 public class KeywordTests extends DynamicTestCase {
 
 	private static final String ID_KEYWORD = "dynamicKeyword1";
-
-	public KeywordTests() {
-		super(KeywordTests.class.getSimpleName());
-	}
 
 	@Test
 	public void testKeywords() {

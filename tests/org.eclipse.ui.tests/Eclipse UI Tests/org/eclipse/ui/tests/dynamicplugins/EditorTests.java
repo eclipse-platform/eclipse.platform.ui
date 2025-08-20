@@ -14,6 +14,10 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
 import java.io.ByteArrayInputStream;
@@ -34,21 +38,19 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.tests.leaks.LeakTests;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.rules.TestName;
 
 /**
  * @since 3.1
  */
-@RunWith(JUnit4.class)
 public class EditorTests extends DynamicTestCase {
 
 	private static final String EDITOR_ID = "org.eclipse.newEditor1.newEditor1";
 
-	public EditorTests() {
-		super(EditorTests.class.getSimpleName());
-	}
+	@Rule
+	public final TestName testName = new TestName();
 
 	@Override
 	protected String getExtensionId() {
@@ -118,7 +120,7 @@ public class EditorTests extends DynamicTestCase {
 
 	private IFile getFile(String fileName) throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProject testProject = workspace.getRoot().getProject(getName());
+		IProject testProject = workspace.getRoot().getProject(testName.getMethodName());
 		testProject.create(null);
 		testProject.open(null);
 

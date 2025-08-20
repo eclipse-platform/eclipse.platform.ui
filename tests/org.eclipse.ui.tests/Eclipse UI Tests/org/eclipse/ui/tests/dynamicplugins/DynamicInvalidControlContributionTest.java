@@ -19,18 +19,11 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.8
  */
-@RunWith(JUnit4.class)
 public class DynamicInvalidControlContributionTest extends DynamicTestCase {
-
-	public DynamicInvalidControlContributionTest() {
-		super(DynamicInvalidControlContributionTest.class.getSimpleName());
-	}
 
 	@Test
 	public void testInvalidControlContribution() throws Exception {

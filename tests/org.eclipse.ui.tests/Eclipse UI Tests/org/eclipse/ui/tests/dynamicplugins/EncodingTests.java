@@ -13,24 +13,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
-@RunWith(JUnit4.class)
 public class EncodingTests extends DynamicTestCase {
 
 	private static final String ENCODING = "Cp1257";
-
-	public EncodingTests() {
-		super(EncodingTests.class.getSimpleName());
-	}
 
 	@Test
 	public void testWorkbenchEncodings() {

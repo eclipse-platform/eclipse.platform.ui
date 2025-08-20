@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.activities.IActivity;
@@ -20,15 +24,8 @@ import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.tests.harness.util.ImageTests;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
 public class ActivitySupportTests extends DynamicTestCase {
-
-	public ActivitySupportTests() {
-		super(ActivitySupportTests.class.getSimpleName());
-	}
 
 	@Override
 	protected String getExtensionId() {

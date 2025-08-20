@@ -14,7 +14,12 @@
 package org.eclipse.ui.tests.dynamicplugins;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -34,22 +39,15 @@ import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests to ensure the addition of new views with dynamic plug-ins.
  */
-@RunWith(JUnit4.class)
 public class ViewTests extends DynamicTestCase {
 
 	private static final String VIEW_ID1 = "org.eclipse.newView1.newView1";
 	private static final String VIEW_ID2 = "org.eclipse.newView1.newView2";
 	private static final String CATEGORY_ID = "org.eclipse.newView1.newCategory1";
-
-	public ViewTests() {
-		super(ViewTests.class.getSimpleName());
-	}
 
 	@Test
 	public void testViewClosure() throws CoreException, IllegalArgumentException, InterruptedException {
