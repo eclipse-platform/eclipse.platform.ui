@@ -15,13 +15,24 @@ package org.eclipse.ui.tests.performance.layout;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
+import org.eclipse.ui.tests.performance.ViewPerformanceUtil;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Measures the time to resize the widget 10 times, including the time required
@@ -29,43 +40,57 @@ import org.eclipse.ui.tests.performance.BasicPerformanceTest;
  *
  * @since 3.1
  */
+@RunWith(Parameterized.class)
 public class ResizeTest extends BasicPerformanceTest {
+
+	private static String RESOURCE_PERSPID = "org.eclipse.ui.resourcePerspective";
+	// Note: to test perspective switching properly, we need perspectives with lots
+	// of associated actions.
+	// NOTE - do not change the order of the IDs below. the PerspectiveSwitchTest
+	// has a fingerprint test for performance that relies on this not changing.
+	private static final List<String> PERSPECTIVE_IDS = List.of( //
+			EmptyPerspective.PERSP_ID2, //
+			UIPerformanceTestSetup.PERSPECTIVE1, //
+			RESOURCE_PERSPID, //
+			"org.eclipse.jdt.ui.JavaPerspective", //
+			"org.eclipse.debug.ui.DebugPerspective");
+
+	// Perspective ID to use for the resize window fingerprint test
+	private static String resizeFingerprintTest = RESOURCE_PERSPID;
+
+	private static final int xIterations = 5;
+
+	private static final int yIterations = 5;
+
+	private static final String tagString = "UI - Workbench Window Resize";
 
 	private final TestWidgetFactory widgetFactory;
 
-	private final int xIterations = 5;
-
-	private final int yIterations = 5;
-
-	private final String tagString;
-
-
-
-	/**
-	 * Create a new instance of the receiver.
-	 */
-	public ResizeTest(TestWidgetFactory factory) {
-		this(factory, NONE, factory.getName() + " setSize");
+	@Parameters(name = "{index}: {0}")
+	public static Collection<Object[]> data() {
+		var configs = new ArrayList<Object[]>();
+		configs.addAll(PERSPECTIVE_IDS.stream()
+				.map(id -> new Object[] { new PerspectiveWidgetFactory(id),
+						id.equals(resizeFingerprintTest) ? BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE })
+				.toList());
+		configs.addAll(ViewPerformanceUtil.getAllTestableViewIds().stream()
+				.map(id -> new Object[] { new ViewWidgetFactory(id), BasicPerformanceTest.NONE }).toList());
+		return configs;
 	}
 
-
-
 	/**
 	 * Create a new instance of the receiver.
 	 */
-	public ResizeTest(TestWidgetFactory factory, int tagging,
-			String tag) {
-		super(factory.getName() + " setSize", tagging);
-		this.tagString = tag;
-		this.widgetFactory = factory;
+	public ResizeTest(TestWidgetFactory testWidgetFactory, int tagging) {
+		super(testWidgetFactory.getName() + " setSize", tagging);
+		this.widgetFactory = testWidgetFactory;
 	}
 
 	/**
 	 * Run the test
 	 */
-	@Override
-	protected void runTest() throws CoreException, WorkbenchException {
-
+	@Test
+	public void test() throws CoreException, WorkbenchException {
 		tagIfNecessary(tagString, Dimension.ELAPSED_PROCESS);
 
 		widgetFactory.init();

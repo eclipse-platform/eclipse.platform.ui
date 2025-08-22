@@ -38,4 +38,9 @@ public abstract class TestWidgetFactory {
 	public abstract void done();
 	public abstract String getName();
 	public abstract Composite getControl() throws CoreException, WorkbenchException;
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

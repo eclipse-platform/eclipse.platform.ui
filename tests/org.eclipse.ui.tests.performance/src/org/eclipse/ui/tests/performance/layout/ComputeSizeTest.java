@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.junit.Test;
 
 /**
  * Measures the performance of a widget's computeSize method
@@ -39,8 +40,8 @@ public class ComputeSizeTest extends BasicPerformanceTest {
 		this.widgetFactory = widgetFactory;
 	}
 
-	@Override
-	protected void runTest() throws CoreException, WorkbenchException {
+	@Test
+	public void test() throws CoreException, WorkbenchException {
 
 		widgetFactory.init();
 		final Composite widget = widgetFactory.getControl();
