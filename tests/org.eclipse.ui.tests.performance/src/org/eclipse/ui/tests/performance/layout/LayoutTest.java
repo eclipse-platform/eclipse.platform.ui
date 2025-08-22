@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.junit.Test;
 
 /**
  * Measures the time required to layout the widget 10 times. Does not include
@@ -50,8 +51,8 @@ public class LayoutTest extends BasicPerformanceTest {
 	/**
 	 * Run the test
 	 */
-	@Override
-	protected void runTest() throws CoreException, WorkbenchException {
+	@Test
+	public void test() throws CoreException, WorkbenchException {
 
 		widgetFactory.init();
 		final Composite widget = widgetFactory.getControl();

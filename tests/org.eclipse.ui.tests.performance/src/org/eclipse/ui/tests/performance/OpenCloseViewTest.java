@@ -16,10 +16,16 @@ package org.eclipse.ui.tests.performance;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 
+import java.util.Collection;
+
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Performance tests for showing views.
@@ -27,7 +33,16 @@ import org.eclipse.ui.IWorkbenchWindow;
  * and a more complex view (Resource Navigator).
  * The views are shown in an empty perspective.
  */
+@RunWith(Parameterized.class)
 public class OpenCloseViewTest extends BasicPerformanceTest {
+
+	@Parameters(name = "{index}: {0}")
+	public static Collection<Object[]> data() {
+		return ViewPerformanceUtil.getAllTestableViewIds().stream().map(
+				id -> new Object[] { id, id.equals(ViewPerformanceUtil.PROJECT_EXPLORER) ? BasicPerformanceTest.GLOBAL
+						: BasicPerformanceTest.NONE })
+				.toList();
+	}
 
 	private final String viewId;
 
@@ -36,8 +51,8 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
 		this.viewId = viewId;
 	}
 
-	@Override
-	protected void runTest() throws Throwable {
+	@Test
+	public void test() throws Throwable {
 		IWorkbenchWindow window = openTestWindow();
 		final IWorkbenchPage page = window.getActivePage();
 

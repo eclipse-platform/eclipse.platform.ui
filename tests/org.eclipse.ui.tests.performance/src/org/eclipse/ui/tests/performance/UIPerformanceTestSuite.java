@@ -38,7 +38,7 @@ public class UIPerformanceTestSuite extends FilteredTestSuite {
 		addTest(new JUnit4TestAdapter(OpenClosePerspectiveTest.class));
 		addTest(new JUnit4TestAdapter(PerspectiveSwitchTest.class));
 		addTest(new JUnit4TestAdapter(OpenCloseWindowTest.class));
-		addTest(new ViewPerformanceSuite());
+		addTest(new JUnit4TestAdapter(OpenCloseViewTest.class));
 		addTest(new JUnit4TestAdapter(OpenCloseEditorTest.class));
 		addTest(new JUnit4TestAdapter(OpenMultipleEditorTest.class));
 		addTest(new JUnit4TestAdapter(EditorSwitchTest.class));

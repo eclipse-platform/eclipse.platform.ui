@@ -14,58 +14,27 @@
 
 package org.eclipse.ui.tests.performance;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.performance.layout.ResizeTest;
-import org.eclipse.ui.tests.performance.layout.ViewWidgetFactory;
 import org.eclipse.ui.views.IViewDescriptor;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * @since 3.1
  */
-public class ViewPerformanceSuite extends TestSuite {
+public final class ViewPerformanceUtil {
 
 	public static final String PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer";
 
-	public static final String BASIC_PATH = "org.eclipse.ui";
+	private static final String BASIC_PATH = "org.eclipse.ui";
 
-	public static final String VIEWS_PATTERN = "org.eclipse.ui.views";
+	private static final String VIEWS_PATTERN = "org.eclipse.ui.views";
 
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new ViewPerformanceSuite();
+	private ViewPerformanceUtil() {
 	}
 
-	public ViewPerformanceSuite() {
-		addOpenCloseTests();
-		addResizeTests();
-	}
-
-	private void addOpenCloseTests() {
-		String[] ids = getAllTestableViewIds();
-
-		for (String id : ids) {
-			addTest(new OpenCloseViewTest(id,
-					id.equals(PROJECT_EXPLORER) ? BasicPerformanceTest.GLOBAL : BasicPerformanceTest.NONE));
-		}
-	}
-
-	private void addResizeTests() {
-		String[] ids = getAllTestableViewIds();
-
-		for (String id : ids) {
-			addTest(new ResizeTest(new ViewWidgetFactory(id)));
-		}
-
-	}
-
-	public static String[] getAllTestableViewIds() {
+	public static Collection<String> getAllTestableViewIds() {
 		HashSet<String> result = new HashSet<>();
 
 		IViewDescriptor[] descriptors = PlatformUI.getWorkbench().getViewRegistry().getViews();
@@ -83,6 +52,6 @@ public class ViewPerformanceSuite extends TestSuite {
 			}
 		}
 
-		return result.toArray(new String[result.size()]);
+		return result;
 	}
 }
