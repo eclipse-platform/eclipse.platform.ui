@@ -24,6 +24,7 @@ import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -294,6 +295,38 @@ public abstract class IconAndMessageDialog extends Dialog {
 
 		return image[0];
 
+	}
+
+	@Override
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		if (shouldRecomputeSizeOnDpiChange()) {
+			shell.addListener(SWT.ZoomChanged, e -> recomputeShellSize(shell));
+		}
+	}
+
+	/**
+	 * Default behavior: recompute size based on current shell keep the maximum
+	 * among the current bounds and the computed bounds
+	 *
+	 */
+	private void recomputeShellSize(Shell shell) {
+		Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
+		Rectangle currentBounds = shell.getBounds();
+		newSize.x = Math.max(currentBounds.width, newSize.x);
+		newSize.y = Math.max(currentBounds.height, newSize.y);
+		shell.setBounds(currentBounds.x, currentBounds.y, newSize.x, newSize.y);
+	}
+
+	/**
+	 * This flag should be set to true if the size of this dialogue has to be
+	 * recomputed on DPI change
+	 *
+	 * @return boolean
+	 * @since 3.38
+	 */
+	public boolean shouldRecomputeSizeOnDpiChange() {
+		return false;
 	}
 
 }
