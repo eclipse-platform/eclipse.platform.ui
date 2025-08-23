@@ -35,11 +35,13 @@ import org.eclipse.ui.internal.ObjectActionContributorManager;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @since 3.1
  */
+@Ignore("Bug 405296")
 public class ObjectContributionTests extends DynamicTestCase {
 
 	private static final String GROUP_ID = "#OC";

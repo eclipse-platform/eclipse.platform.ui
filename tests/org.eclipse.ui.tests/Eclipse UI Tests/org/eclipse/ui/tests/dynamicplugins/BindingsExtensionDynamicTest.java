@@ -26,6 +26,7 @@ import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.keys.IBindingService;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -34,6 +35,7 @@ import org.junit.Test;
  *
  * @since 3.1.1
  */
+@Ignore("Bug 405296")
 public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 
 	/**

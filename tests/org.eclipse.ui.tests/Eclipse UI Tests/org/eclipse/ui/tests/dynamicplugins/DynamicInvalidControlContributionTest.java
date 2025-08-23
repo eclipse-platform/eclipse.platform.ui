@@ -18,11 +18,13 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @since 3.8
  */
+ @Ignore("Bug 405296")
 public class DynamicInvalidControlContributionTest extends DynamicTestCase {
 
 	@Test

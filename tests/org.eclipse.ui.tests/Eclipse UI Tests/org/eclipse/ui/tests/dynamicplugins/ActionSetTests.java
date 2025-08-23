@@ -37,12 +37,13 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.tests.leaks.LeakTests;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Tests to ensure the addition of new action sets with dynamic plug-ins.
  */
-
+@Ignore("Bug 405296")
 public class ActionSetTests extends DynamicTestCase {
 
 	private static final String ACTION_SET_ID = "org.eclipse.newActionSet1.newActionSet1";

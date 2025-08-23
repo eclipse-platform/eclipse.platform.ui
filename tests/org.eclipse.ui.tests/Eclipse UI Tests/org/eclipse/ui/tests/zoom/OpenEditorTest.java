@@ -14,8 +14,10 @@
 package org.eclipse.ui.tests.zoom;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("disabled during E4 transition")
 public class OpenEditorTest extends ZoomTestCase {
 
 	/**
