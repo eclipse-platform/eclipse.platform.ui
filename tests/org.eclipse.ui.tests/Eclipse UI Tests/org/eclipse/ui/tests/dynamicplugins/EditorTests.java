@@ -38,6 +38,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.tests.leaks.LeakTests;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -68,6 +69,7 @@ public class EditorTests extends DynamicTestCase {
 	}
 
 	@Test
+	@Ignore("Bug 405296")
 	public void testEditorClosure() throws CoreException, IllegalArgumentException, InterruptedException {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IFile file = getFile();

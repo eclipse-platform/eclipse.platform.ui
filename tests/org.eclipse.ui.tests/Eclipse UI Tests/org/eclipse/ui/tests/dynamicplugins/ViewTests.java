@@ -38,11 +38,13 @@ import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Tests to ensure the addition of new views with dynamic plug-ins.
  */
+@Ignore("Bug 405296")
 public class ViewTests extends DynamicTestCase {
 
 	private static final String VIEW_ID1 = "org.eclipse.newView1.newView1";

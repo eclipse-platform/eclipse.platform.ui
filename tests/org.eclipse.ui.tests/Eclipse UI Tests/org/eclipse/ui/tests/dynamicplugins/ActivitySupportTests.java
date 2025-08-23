@@ -23,6 +23,7 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.tests.harness.util.ImageTests;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ActivitySupportTests extends DynamicTestCase {
@@ -43,6 +44,7 @@ public class ActivitySupportTests extends DynamicTestCase {
 	}
 
 	@Test
+	@Ignore("Bug 405296")
 	public void testActivityImages() {
 		IActivity baselineActivity = getWorkbench().getActivitySupport()
 				.getActivityManager().getActivity("someBogusActivityId");

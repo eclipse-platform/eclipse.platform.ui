@@ -13,14 +13,12 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.intro;
 
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
  * @since 3.0
  */
-@Ignore
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	IntroPartTest.class,
