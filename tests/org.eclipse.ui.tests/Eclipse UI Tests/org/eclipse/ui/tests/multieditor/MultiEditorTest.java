@@ -62,6 +62,7 @@ import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -153,6 +154,7 @@ public class MultiEditorTest {
 	 * editor.
 	 */
 	@Test
+	@Ignore("deactivated during E4 transition")
 	public void testOpenTestFile() throws Throwable {
 		final String[] simpleFiles = { TEST01_TXT, TEST03_ETEST };
 
@@ -264,6 +266,7 @@ public class MultiEditorTest {
 	 *             on an error
 	 */
 	@Test
+	@Ignore("deactivated during E4 transition")
 	public void testTrackCoolBar() throws Throwable {
 		final String[] simpleFiles = { TEST01_TXT, TEST02_TXT,
 				TEST04_PROPERTIES, BUILD_XML, TEST03_ETEST };

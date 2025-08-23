@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.wizards.IWizardDescriptor;
@@ -39,7 +40,7 @@ public class NewWizardTests extends DynamicTestCase {
 		assertNotNull(wizard);
 		testNewWizardProperties(wizard);
 		removeBundle();
-		assertNull(registry.findWizard(WIZARD_ID));
+		assertThrows(InvalidRegistryObjectException.class, () -> registry.findWizard(WIZARD_ID));
 		assertThrows(RuntimeException.class, () -> testNewWizardProperties(wizard));
 	}
 

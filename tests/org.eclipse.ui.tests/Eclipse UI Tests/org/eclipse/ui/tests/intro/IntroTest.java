@@ -41,6 +41,7 @@ import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -118,6 +119,7 @@ public class IntroTest {
 	}
 
 	@Test
+	@Ignore("disabled during E4 transition")
 	public void testActivateProblemsView() throws Exception {
 		IIntroManager introManager= window.getWorkbench().getIntroManager();
 		IIntroPart part= introManager.showIntro(window, false);
@@ -153,6 +155,7 @@ public class IntroTest {
 	 * that it no longer exists.
 	 */
 	@Test
+	@Ignore("disabled during E4 transition")
 	public void testPerspectiveChange() {
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
@@ -183,6 +186,7 @@ public class IntroTest {
 	 * See IntroTest2.java
 	 */
 	@Test
+	@Ignore("disabled during E4 transition")
 	public void testPerspectiveChangeWith32StickyBehavior() {
 		IWorkbench workbench = window.getWorkbench();
 		IIntroPart part = workbench.getIntroManager().showIntro(window, false);

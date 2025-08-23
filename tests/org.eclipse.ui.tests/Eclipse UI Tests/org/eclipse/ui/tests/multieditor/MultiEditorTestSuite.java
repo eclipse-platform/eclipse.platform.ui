@@ -13,15 +13,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multieditor;
 
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-@Ignore
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	AbstractMultiEditorTest.class,
-	MultiEditorTest.class,
+@Suite.SuiteClasses({ //
+		AbstractMultiEditorTest.class, //
+		MultiEditorTest.class, //
 })
 public class MultiEditorTestSuite {
 }

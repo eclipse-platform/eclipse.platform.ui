@@ -13,46 +13,44 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test suite for dynamic plug-in support.
  */
 @RunWith(Suite.class)
-@Ignore("Bug 405296")
-@Suite.SuiteClasses({
-	StatusHandlerTests.class,
-	AcceleratorConfigurationsExtensionDynamicTest.class,
-	AcceleratorScopesExtensionDynamicTest.class,
-	ActionDefinitionsExtensionDynamicTest.class,
-	ActionSetTests.class,
-	ActivitySupportTests.class,
-	BindingsExtensionDynamicTest.class,
-	BrowserTests.class,
-	CommandsExtensionDynamicTest.class,
-	ContextsExtensionDynamicTest.class,
-	HandlersExtensionDynamicTest.class,
-	PreferencePageTests.class,
-	KeywordTests.class,
-	PropertyPageTests.class,
-	HelpSupportTests.class,
-	EncodingTests.class,
-	DecoratorTests.class,
-	StartupTests.class,
-	EditorTests.class,
-	IntroTests.class,
-	PerspectiveTests.class,
-	ViewTests.class,
-	NewWizardTests.class,
-	ObjectContributionTests.class,
-	WorkingSetTests.class,
-	DynamicSupportTests.class,
-	DynamicContributionTest.class,
-	DynamicInvalidContributionTest.class,
-	DynamicInvalidControlContributionTest.class,
+@SuiteClasses({ //
+		StatusHandlerTests.class, //
+		AcceleratorConfigurationsExtensionDynamicTest.class, //
+		AcceleratorScopesExtensionDynamicTest.class, //
+		ActionDefinitionsExtensionDynamicTest.class, //
+		ActionSetTests.class, //
+		ActivitySupportTests.class, //
+		BindingsExtensionDynamicTest.class, //
+		BrowserTests.class, //
+		CommandsExtensionDynamicTest.class, //
+		ContextsExtensionDynamicTest.class, //
+		HandlersExtensionDynamicTest.class, //
+		PreferencePageTests.class, //
+		KeywordTests.class, //
+		PropertyPageTests.class, //
+		HelpSupportTests.class, //
+		EncodingTests.class, //
+		DecoratorTests.class, //
+		StartupTests.class, //
+		EditorTests.class, //
+		IntroTests.class, //
+		PerspectiveTests.class, //
+		ViewTests.class, //
+		NewWizardTests.class, //
+		ObjectContributionTests.class, //
+		WorkingSetTests.class, //
+		DynamicSupportTests.class, //
+		DynamicContributionTest.class, //
+		DynamicInvalidContributionTest.class, //
+		DynamicInvalidControlContributionTest.class, //
 })
-
 public class DynamicPluginsTestSuite {
 }

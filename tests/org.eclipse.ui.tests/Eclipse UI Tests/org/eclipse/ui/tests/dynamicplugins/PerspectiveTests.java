@@ -28,12 +28,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Tests to check the addition of a new perspective once the perspective
  * registry is loaded.
  */
+@Ignore("Bug 405296")
 public class PerspectiveTests extends DynamicTestCase {
 
 	private static final String PERSPECTIVE_ID = "org.eclipse.newPerspective1.newPerspective1";
