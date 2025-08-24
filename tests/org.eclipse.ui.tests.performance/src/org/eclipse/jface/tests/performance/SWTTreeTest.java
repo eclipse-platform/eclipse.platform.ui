@@ -14,6 +14,7 @@
 package org.eclipse.jface.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
@@ -22,10 +23,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Rule;
 import org.junit.Test;
 
-public class SWTTreeTest extends BasicPerformanceTest {
+public class SWTTreeTest extends PerformanceTestCaseJunit4 {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	Shell browserShell;
 
