@@ -26,11 +26,14 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.performance.parts.PerformanceProblemsView;
 import org.eclipse.ui.texteditor.MarkerUtilities;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -38,7 +41,10 @@ import org.junit.Test;
  *
  * @since 3.2
  */
-public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
+public class ProblemsViewPerformanceTest extends PerformanceTestCaseJunit4 {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private final String EMPTY_PERSPECTIVE_ID = "org.eclipse.ui.tests.harness.util.EmptyPerspective";
 

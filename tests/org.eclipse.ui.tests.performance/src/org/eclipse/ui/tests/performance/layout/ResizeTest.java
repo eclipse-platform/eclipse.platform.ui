@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.performance.layout;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.waitForBackgroundJobs;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,12 +25,14 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
 import org.eclipse.ui.tests.performance.ViewPerformanceUtil;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -42,10 +45,13 @@ import org.junit.runners.Parameterized.Parameters;
  * @since 3.1
  */
 @RunWith(Parameterized.class)
-public class ResizeTest extends BasicPerformanceTest {
+public class ResizeTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private static String RESOURCE_PERSPID = "org.eclipse.ui.resourcePerspective";
 	// Note: to test perspective switching properly, we need perspectives with lots

@@ -35,9 +35,12 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.util.Util;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -50,10 +53,13 @@ import org.junit.Test;
  *
  * @since 3.1
  */
-public final class CommandsPerformanceTest extends BasicPerformanceTest {
+public final class CommandsPerformanceTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * <p>
