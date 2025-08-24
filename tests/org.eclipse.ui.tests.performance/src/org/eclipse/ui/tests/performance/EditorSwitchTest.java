@@ -15,6 +15,7 @@ package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestRule.getTestProject;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -67,9 +68,9 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 		// the initial time to open, just switching.
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestRule.PERSPECTIVE1);
 		final IWorkbenchPage activePage = window.getActivePage();
-		final IFile file1 = getProject().getFile("1." + extension1);
+		final IFile file1 = getTestProject().getFile("1." + extension1);
 		assertTrue(file1.exists());
-		final IFile file2 = getProject().getFile("1." + extension2);
+		final IFile file2 = getTestProject().getFile("1." + extension2);
 		assertTrue(file2.exists());
 		IDE.openEditor(activePage, file1, true);
 		IDE.openEditor(activePage, file2, true);

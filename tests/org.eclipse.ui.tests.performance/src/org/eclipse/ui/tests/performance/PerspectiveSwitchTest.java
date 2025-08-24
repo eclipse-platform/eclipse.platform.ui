@@ -15,6 +15,7 @@ package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestRule.getTestProject;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -106,7 +107,7 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
 
 		// IFile aFile = getProject().getFile("1." +
 		// EditorPerformanceSuite.EDITOR_FILE_EXTENSIONS[0]);
-		IFile aFile = getProject().getFile(activeEditor);
+		IFile aFile = getTestProject().getFile(activeEditor);
 		assertTrue(aFile.exists());
 
 		IDE.openEditor(page, aFile, true);

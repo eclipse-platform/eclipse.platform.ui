@@ -16,6 +16,7 @@ package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestRule.getTestProject;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
 
 	@Test
 	public void test() throws Throwable {
-		final IFile file = getProject().getFile("1." + extension);
+		final IFile file = getTestProject().getFile("1." + extension);
 		assertTrue(file.exists());
 
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestRule.PERSPECTIVE1);

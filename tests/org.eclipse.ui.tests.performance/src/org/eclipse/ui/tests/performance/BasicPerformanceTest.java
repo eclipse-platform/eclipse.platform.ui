@@ -14,9 +14,6 @@
 
 package org.eclipse.ui.tests.performance;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -48,8 +45,6 @@ public abstract class BasicPerformanceTest extends PerformanceTestCaseJunit4 {
 
 	@Rule
 	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
-
-	private IProject testProject;
 
 	final private boolean tagAsGlobalSummary;
 
@@ -86,15 +81,6 @@ public abstract class BasicPerformanceTest extends PerformanceTestCaseJunit4 {
 	 */
 	private boolean shouldLocallyTag() {
 		return tagAsSummary;
-	}
-
-	protected IProject getProject() {
-		if (testProject == null) {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			testProject = workspace.getRoot().getProject(
-					UIPerformanceTestRule.PROJECT_NAME);
-		}
-		return testProject;
 	}
 
 	public void tagIfNecessary(String shortName, Dimension dimension) {

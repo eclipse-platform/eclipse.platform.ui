@@ -17,7 +17,6 @@ import java.io.ByteArrayInputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbench;
@@ -57,16 +56,19 @@ public class UIPerformanceTestRule extends ExternalResource {
 	@Override
 	protected void after() {
 		try {
-			ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME).delete(true, null);
+			getTestProject().delete(true, null);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}
 
+	public static IProject getTestProject() {
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
+	}
+
 	private static void setUpProject() throws CoreException {
 		// Create a java project.
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProject testProject = workspace.getRoot().getProject(PROJECT_NAME);
+		IProject testProject = getTestProject();
 		testProject.create(null);
 		testProject.open(null);
 

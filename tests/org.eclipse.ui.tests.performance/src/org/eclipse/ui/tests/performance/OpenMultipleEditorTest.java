@@ -16,6 +16,7 @@ package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestRule.getTestProject;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,7 +66,7 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
 		startMeasuring();
 
 		for (int i = 0; i < 100; i++) {
-			IFile file = getProject().getFile(i + "." + extension);
+			IFile file = getTestProject().getFile(i + "." + extension);
 			IDE.openEditor(activePage, file, true);
 			processEvents();
 		}
