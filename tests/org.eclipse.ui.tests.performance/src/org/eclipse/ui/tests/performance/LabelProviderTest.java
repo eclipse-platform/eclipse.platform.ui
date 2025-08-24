@@ -46,6 +46,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -244,10 +246,8 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		return viewer;
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-
+	@Before
+	public final void prepareShellUp() throws Exception {
 		Display display = Display.getCurrent();
 		if (display == null)
 			display = new Display();
@@ -266,9 +266,8 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		fShell.open();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@After
+	public final void closeShell() throws Exception {
 		if (fShell != null) {
 			fShell.close();
 			fShell = null;
