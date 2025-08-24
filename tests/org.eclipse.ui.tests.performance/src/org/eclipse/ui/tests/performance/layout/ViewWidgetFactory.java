@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.performance.layout;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.getPageInput;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.waitForBackgroundJobs;
 import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -27,7 +28,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 
 
 /**
@@ -64,7 +64,7 @@ public class ViewWidgetFactory extends TestWidgetFactory {
 
 		IViewPart part = page.showView(viewId, null, IWorkbenchPage.VIEW_ACTIVATE);
 
-		BasicPerformanceTest.waitForBackgroundJobs();
+		waitForBackgroundJobs();
 
 		ctrl = getControl(part);
 

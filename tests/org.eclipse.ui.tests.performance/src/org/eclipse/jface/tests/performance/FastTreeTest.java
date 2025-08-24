@@ -14,6 +14,7 @@
 package org.eclipse.jface.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 
 import java.util.ArrayList;
 import java.util.Collection;

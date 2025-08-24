@@ -15,14 +15,18 @@ package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.waitForBackgroundJobs;
 
 import java.util.Collection;
 
 import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -35,10 +39,13 @@ import org.junit.runners.Parameterized.Parameters;
  * The views are shown in an empty perspective.
  */
 @RunWith(Parameterized.class)
-public class OpenCloseViewTest extends BasicPerformanceTest {
+public class OpenCloseViewTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Parameters(name = "{index}: {0}")
 	public static Collection<Object[]> data() {
