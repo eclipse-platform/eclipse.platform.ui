@@ -27,8 +27,6 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.function.ThrowingRunnable;
 import org.osgi.framework.Bundle;
@@ -88,26 +86,6 @@ public abstract class BasicPerformanceTest extends PerformanceTestCaseJunit4 {
 	 */
 	private boolean shouldLocallyTag() {
 		return tagAsSummary;
-	}
-
-	@Override
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-		doSetUp();
-	}
-
-	protected void doSetUp() throws Exception {
-	}
-
-	@Override
-	@After
-	public void tearDown() throws Exception {
-		doTearDown();
-		super.tearDown();
-	}
-
-	protected void doTearDown() throws Exception {
 	}
 
 	protected IProject getProject() {

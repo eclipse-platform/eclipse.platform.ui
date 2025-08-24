@@ -28,6 +28,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -82,10 +83,9 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 	private volatile boolean isDone;
 	private Display display;
 
-	@Override
-	protected void doSetUp() throws Exception {
+	@Before
+	public final void storeDisplay() throws Exception {
 		this.display = Display.getCurrent();
-		super.doSetUp();
 	}
 
 	private void setRunInBackground(boolean newRunInBackgroundSetting) {

@@ -35,6 +35,8 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.util.Util;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -176,10 +178,8 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 	 * @throws NotDefinedException
 	 *             If something went wrong initializing the active scheme.
 	 */
-	@Override
-	protected final void doSetUp() throws NotDefinedException, Exception {
-		super.doSetUp();
-
+	@Before
+	public final void setUpBindings() throws NotDefinedException, Exception {
 		/*
 		 * The constants to use in creating the various objects. The platform
 		 * locale count must be greater than or equal to the number of deletion
@@ -346,12 +346,11 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 		bindingManager.setBindings(bindings);
 	}
 
-	@Override
-	protected final void doTearDown() throws Exception {
+	@After
+	public final void clearBindings() throws Exception {
 		bindingManager = null;
 		commandManager = null;
 		contextManager = null;
-		super.doTearDown();
 	}
 
 	/**
