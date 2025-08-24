@@ -20,8 +20,10 @@ import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -30,7 +32,10 @@ import org.junit.Test;
  *
  * @since 3.1
  */
-public class LayoutTest extends BasicPerformanceTest {
+public class LayoutTest extends PerformanceTestCaseJunit4 {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private final TestWidgetFactory widgetFactory;
 

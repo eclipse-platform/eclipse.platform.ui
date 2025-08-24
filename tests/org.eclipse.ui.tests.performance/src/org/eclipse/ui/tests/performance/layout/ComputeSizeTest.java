@@ -19,8 +19,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -28,7 +30,10 @@ import org.junit.Test;
  *
  * @since 3.1
  */
-public class ComputeSizeTest extends BasicPerformanceTest {
+public class ComputeSizeTest extends PerformanceTestCaseJunit4 {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private final TestWidgetFactory widgetFactory;
 	private final int xIterations = 10;

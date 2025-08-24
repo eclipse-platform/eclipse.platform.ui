@@ -15,18 +15,25 @@
 package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.PlatformUI.getWorkbench;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
  * @since 3.1
  */
-public class GenerateIdentifiersTest extends BasicPerformanceTest {
+public class GenerateIdentifiersTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private static final int count = 10000;
 

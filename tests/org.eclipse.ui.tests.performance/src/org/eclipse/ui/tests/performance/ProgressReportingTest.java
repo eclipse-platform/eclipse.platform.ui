@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.openTestWindow;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -22,10 +23,12 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.PreferenceMementoRule;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -36,10 +39,13 @@ import org.junit.Test;
  * Verifies the performance of progress reporting APIs in various contexts which
  * offer progress monitoring.
  */
-public class ProgressReportingTest extends BasicPerformanceTest {
+public class ProgressReportingTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Number of iterations to run for the inner loop in these tests. This

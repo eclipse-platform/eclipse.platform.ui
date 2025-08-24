@@ -15,6 +15,7 @@
 package org.eclipse.ui.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,9 +47,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -60,10 +64,13 @@ import org.junit.runners.Parameterized.Parameters;
  * @since 3.5
  */
 @RunWith(Parameterized.class)
-public class LabelProviderTest extends BasicPerformanceTest {
+public class LabelProviderTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private static class CountryEntry {
 		private final String name;
