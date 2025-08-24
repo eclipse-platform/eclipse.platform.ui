@@ -42,16 +42,12 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
 
 	@Parameters(name = "{index}: {0}")
 	public static Collection<Object[]> data() {
-		return ViewPerformanceUtil.getAllTestableViewIds().stream().map(
-				id -> new Object[] { id, id.equals(ViewPerformanceUtil.PROJECT_EXPLORER) ? BasicPerformanceTest.GLOBAL
-						: BasicPerformanceTest.NONE })
-				.toList();
+		return ViewPerformanceUtil.getAllTestableViewIds().stream().map(id -> new Object[] { id }).toList();
 	}
 
 	private final String viewId;
 
-	public OpenCloseViewTest(String viewId, int tagging) {
-		super(tagging);
+	public OpenCloseViewTest(String viewId) {
 		this.viewId = viewId;
 	}
 
@@ -66,7 +62,9 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
 		waitForBackgroundJobs();
 		processEvents();
 
-		tagIfNecessary("UI - Open/Close " + view1.getTitle(), Dimension.ELAPSED_PROCESS);
+		if (viewId.equals(ViewPerformanceUtil.PROJECT_EXPLORER)) {
+			tagAsGlobalSummary("UI - Open/Close " + view1.getTitle(), Dimension.ELAPSED_PROCESS);
+		}
 
 		for (int j = 0; j < 100; j++) {
 

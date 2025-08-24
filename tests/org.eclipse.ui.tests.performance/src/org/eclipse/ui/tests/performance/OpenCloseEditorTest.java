@@ -45,13 +45,11 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
 
 	@Parameters(name = "{index}: {0}")
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { { "perf_basic", BasicPerformanceTest.NONE },
-				{ "perf_outline", BasicPerformanceTest.NONE }, { "java", BasicPerformanceTest.LOCAL } });
+		return Arrays.asList(new Object[][] { { "perf_basic" }, { "perf_outline" }, { "java" } });
 	}
 
 
-	public OpenCloseEditorTest(String extension, int tagging) {
-		super(tagging);
+	public OpenCloseEditorTest(String extension) {
 		this.extension = extension;
 	}
 
@@ -80,7 +78,9 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
 			stopMeasuring();
 		});
 
-		tagIfNecessary("UI - Open/Close Editor", Dimension.ELAPSED_PROCESS);
+		if (extension.equals("java")) {
+			tagAsSummary("UI - Open/Close Editor", Dimension.ELAPSED_PROCESS);
+		}
 		commitMeasurements();
 		assertPerformance();
 	}

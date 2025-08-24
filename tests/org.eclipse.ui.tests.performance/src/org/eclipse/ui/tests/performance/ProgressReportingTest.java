@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -32,7 +31,6 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 
 /**
  * Verifies the performance of progress reporting APIs in various contexts which
@@ -77,9 +75,6 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 	@Rule
 	public final PreferenceMementoRule preferenceMemento = new PreferenceMementoRule();
 
-	@Rule
-	public final TestName testName = new TestName();
-
 	private volatile boolean isDone;
 	private Display display;
 
@@ -100,7 +95,6 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 	 */
 	public void runAsyncTest(Runnable testContent) throws Exception {
 		final Display display = Display.getCurrent();
-		tagIfNecessary(testName.getMethodName(), Dimension.ELAPSED_PROCESS);
 		exercise(() -> {
 			startMeasuring();
 

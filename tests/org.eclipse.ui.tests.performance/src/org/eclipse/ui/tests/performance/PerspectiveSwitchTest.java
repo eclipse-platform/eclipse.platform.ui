@@ -24,7 +24,6 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
@@ -111,8 +110,6 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
 		assertTrue(aFile.exists());
 
 		IDE.openEditor(page, aFile, true);
-
-		tagIfNecessary("UI - Perspective Switch", Dimension.ELAPSED_PROCESS);
 
 		exercise(() -> {
 			processEvents();

@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -62,9 +61,6 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 			fail();
 			return;
 		}
-
-		tagIfNecessary("UI - Problems View population",
-				Dimension.ELAPSED_PROCESS);
 
 		for (int i = 0; i < 100; i++) {
 			createMarkers();

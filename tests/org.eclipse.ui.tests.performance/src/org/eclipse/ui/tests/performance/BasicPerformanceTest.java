@@ -20,14 +20,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.junit.Rule;
 import org.junit.function.ThrowingRunnable;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -37,60 +34,8 @@ import org.osgi.framework.FrameworkUtil;
  */
 public abstract class BasicPerformanceTest extends PerformanceTestCaseJunit4 {
 
-	public static final int NONE = 0;
-
-	public static final int LOCAL = 1;
-
-	public static final int GLOBAL = 2;
-
 	@Rule
 	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
-
-	final private boolean tagAsGlobalSummary;
-
-	final private boolean tagAsSummary;
-
-	public BasicPerformanceTest() {
-		this(NONE);
-		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		BundleContext context = bundle != null ? bundle.getBundleContext() : null;
-		if (context == null) { // most likely run in a wrong launch mode
-			System.err.println("Unable to retrieve bundle context from BasicPerformanceTest; interactive mode is disabled");
-			return;
-		}
-	}
-
-	public BasicPerformanceTest(int tagging) {
-		tagAsGlobalSummary = ((tagging & GLOBAL) != 0);
-		tagAsSummary = ((tagging & LOCAL) != 0);
-	}
-
-	/**
-	 * Answers whether this test should be tagged globally.
-	 *
-	 * @return whether this test should be tagged globally
-	 */
-	private boolean shouldGloballyTag() {
-		return tagAsGlobalSummary;
-	}
-
-	/**
-	 * Answers whether this test should be tagged locally.
-	 *
-	 * @return whether this test should be tagged locally
-	 */
-	private boolean shouldLocallyTag() {
-		return tagAsSummary;
-	}
-
-	public void tagIfNecessary(String shortName, Dimension dimension) {
-		if (shouldGloballyTag()) {
-			tagAsGlobalSummary(shortName, dimension);
-		}
-		if (shouldLocallyTag()) {
-			tagAsSummary(shortName, dimension);
-		}
-	}
 
 	public static void waitForBackgroundJobs() {
 

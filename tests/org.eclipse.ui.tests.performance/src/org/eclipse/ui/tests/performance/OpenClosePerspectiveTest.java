@@ -56,16 +56,12 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 
 	@Parameters(name = "{index}: {0}")
 	public static Collection<Object[]> data() {
-		return Arrays.asList(new Object[][] { { EmptyPerspective.PERSP_ID2, BasicPerformanceTest.NONE }, {
-				UIPerformanceTestRule.PERSPECTIVE1,
-				BasicPerformanceTest.LOCAL },
-				{ "org.eclipse.ui.resourcePerspective", BasicPerformanceTest.NONE },
-				{ "org.eclipse.jdt.ui.JavaPerspective", BasicPerformanceTest.NONE },
-				{ "org.eclipse.debug.ui.DebugPerspective", BasicPerformanceTest.NONE } });
+		return Arrays.asList(new Object[][] { { EmptyPerspective.PERSP_ID2 }, { UIPerformanceTestRule.PERSPECTIVE1 },
+				{ "org.eclipse.ui.resourcePerspective" }, { "org.eclipse.jdt.ui.JavaPerspective" },
+				{ "org.eclipse.debug.ui.DebugPerspective" } });
 	}
 
-	public OpenClosePerspectiveTest(String id, int tagging) {
-		super(tagging);
+	public OpenClosePerspectiveTest(String id) {
 		this.id = id;
 	}
 
@@ -103,7 +99,9 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 			activePage.showView(i);
 		}
 
-		tagIfNecessary("UI - Open/Close " + perspective1.getLabel() + " Perspective", Dimension.ELAPSED_PROCESS);
+		if (id.equals(UIPerformanceTestRule.PERSPECTIVE1)) {
+			tagAsSummary("UI - Open/Close " + perspective1.getLabel() + " Perspective", Dimension.ELAPSED_PROCESS);
+		}
 
 		exercise(() -> {
 			processEvents();
