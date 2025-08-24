@@ -73,10 +73,6 @@ public class TreeAddTest extends TreeTest {
 	 */
 	@Test
 	public void testAddHundred() throws CoreException {
-
-		tagIfNecessary("JFace - Add 1000 items in 10 blocks to TreeViewer",
-				Dimension.ELAPSED_PROCESS);
-
 		doTestAdd(100, TEST_COUNT, false);
 	}
 

@@ -39,14 +39,6 @@ public abstract class ViewerTest extends BasicPerformanceTest {
 	public static int ITERATIONS = 100;
 	public static int MIN_ITERATIONS = 20;
 
-	public ViewerTest(int tagging) {
-		super(tagging);
-	}
-
-	public ViewerTest() {
-		super();
-	}
-
 	protected void openBrowser() {
 		Display display = Display.getCurrent();
 		if (display == null) {

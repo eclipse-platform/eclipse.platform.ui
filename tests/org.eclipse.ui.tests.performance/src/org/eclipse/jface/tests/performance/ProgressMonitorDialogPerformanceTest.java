@@ -20,7 +20,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
 import org.junit.ClassRule;
@@ -39,10 +38,6 @@ public class ProgressMonitorDialogPerformanceTest extends BasicPerformanceTest {
 	 */
 	@Test
 	public void testLongNames() throws Throwable {
-
-		tagIfNecessary("JFace - 10000 element task name in progress dialog",
-				Dimension.ELAPSED_PROCESS);
-
 		Display display = Display.getCurrent();
 		if (display == null) {
 			display = new Display();

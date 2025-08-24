@@ -70,24 +70,25 @@ public class ResizeTest extends BasicPerformanceTest {
 
 	private final TestWidgetFactory widgetFactory;
 
+	private final boolean tagLocal;
+
 	@Parameters(name = "{index}: {0}")
 	public static Collection<Object[]> data() {
 		var configs = new ArrayList<Object[]>();
 		configs.addAll(PERSPECTIVE_IDS.stream()
-				.map(id -> new Object[] { new PerspectiveWidgetFactory(id),
-						id.equals(resizeFingerprintTest) ? BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE })
+				.map(id -> new Object[] { new PerspectiveWidgetFactory(id), id.equals(resizeFingerprintTest) })
 				.toList());
 		configs.addAll(ViewPerformanceUtil.getAllTestableViewIds().stream()
-				.map(id -> new Object[] { new ViewWidgetFactory(id), BasicPerformanceTest.NONE }).toList());
+				.map(id -> new Object[] { new ViewWidgetFactory(id), false }).toList());
 		return configs;
 	}
 
 	/**
 	 * Create a new instance of the receiver.
 	 */
-	public ResizeTest(TestWidgetFactory testWidgetFactory, int tagging) {
-		super(tagging);
+	public ResizeTest(TestWidgetFactory testWidgetFactory, boolean tagLocal) {
 		this.widgetFactory = testWidgetFactory;
+		this.tagLocal = tagLocal;
 	}
 
 	/**
@@ -95,7 +96,9 @@ public class ResizeTest extends BasicPerformanceTest {
 	 */
 	@Test
 	public void test() throws CoreException, WorkbenchException {
-		tagIfNecessary(tagString, Dimension.ELAPSED_PROCESS);
+		if (tagLocal) {
+			tagAsSummary(tagString, Dimension.ELAPSED_PROCESS);
+		}
 
 		widgetFactory.init();
 		final Composite widget = widgetFactory.getControl();

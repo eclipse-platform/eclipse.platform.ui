@@ -20,7 +20,6 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.junit.ClassRule;
@@ -45,14 +44,11 @@ public class OpenCloseWindowTest extends BasicPerformanceTest {
 	}
 
 	public OpenCloseWindowTest(String id) {
-		super(BasicPerformanceTest.NONE);
 		this.id = id;
 	}
 
 	@Test
 	public void test() throws Throwable {
-		tagIfNecessary("UI - Open/Close Window", Dimension.ELAPSED_PROCESS);
-
 		exercise(() -> {
 			processEvents();
 			EditorTestHelper.calmDown(500, 30000, 500);

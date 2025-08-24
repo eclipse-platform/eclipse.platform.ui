@@ -19,7 +19,6 @@ import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.test.performance.Dimension;
 import org.junit.Test;
 
 /**
@@ -46,10 +45,6 @@ public class ListViewerRefreshTest extends ViewerTest {
 	 */
 	@Test
 	public void testRefresh() throws Throwable {
-
-		tagIfNecessary("JFace - Refresh 100 item ListViewer 10 times",
-				Dimension.ELAPSED_PROCESS);
-
 		openBrowser();
 
 		exercise(() -> {

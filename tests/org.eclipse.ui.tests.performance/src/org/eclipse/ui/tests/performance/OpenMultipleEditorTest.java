@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -60,8 +59,6 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
 	public void test() throws Throwable {
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestRule.PERSPECTIVE1);
 		IWorkbenchPage activePage = window.getActivePage();
-
-		tagIfNecessary("UI - Open Multiple Editors",Dimension.ELAPSED_PROCESS);
 
 		startMeasuring();
 
