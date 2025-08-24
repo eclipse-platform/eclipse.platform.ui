@@ -15,6 +15,7 @@
 package org.eclipse.jface.tests.performance;
 
 import static org.eclipse.ui.tests.harness.util.UITestUtil.processEvents;
+import static org.eclipse.ui.tests.performance.UIPerformanceTestUtil.exercise;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,7 +26,9 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -34,7 +37,10 @@ import org.osgi.framework.FrameworkUtil;
  * ComboViewerRefreshTest is a test of refreshes of difference size in the combo
  * viewer.
  */
-public class FileImageDescriptorTest extends BasicPerformanceTest {
+public class FileImageDescriptorTest extends PerformanceTestCaseJunit4 {
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	protected static final String IMAGES_DIRECTORY = "/icons/imagetests";
 

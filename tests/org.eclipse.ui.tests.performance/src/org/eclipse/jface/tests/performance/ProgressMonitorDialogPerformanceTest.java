@@ -20,18 +20,23 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
  * @since 3.3
  */
-public class ProgressMonitorDialogPerformanceTest extends BasicPerformanceTest {
+public class ProgressMonitorDialogPerformanceTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
+
+	@Rule
+	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Test the time for doing a refresh.
