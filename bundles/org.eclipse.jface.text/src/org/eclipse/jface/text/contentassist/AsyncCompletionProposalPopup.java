@@ -25,6 +25,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -69,6 +71,8 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	private Collection<CompletableFuture<?>> toCancelFutures= new LinkedList<>();
 
 	private PopupVisibleTimer fPopupVisibleTimer= new PopupVisibleTimer();
+
+	private ExecutorService completionFuturesExecutor;
 
 	private static final class ComputingProposal implements ICompletionProposal, ICompletionProposalExtension {
 
@@ -341,6 +345,9 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	void cancelFutures() {
 		toCancelFutures.forEach(future -> future.cancel(true));
 		toCancelFutures.clear();
+		if (completionFuturesExecutor != null) {
+			completionFuturesExecutor.shutdownNow();
+		}
 	}
 
 	@Override
@@ -371,6 +378,8 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 			return Collections.emptyList();
 		}
 		List<CompletableFuture<List<ICompletionProposal>>> futures = new ArrayList<>(processors.size());
+		completionFuturesExecutor= Executors.newSingleThreadExecutor();
+
 		for (IContentAssistProcessor processor : processors) {
 			futures.add(CompletableFuture.supplyAsync(() -> {
 				AtomicReference<List<ICompletionProposal>> result= new AtomicReference<>();
@@ -389,7 +398,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 					return Collections.emptyList();
 				}
 				return proposals;
-			}));
+			}, completionFuturesExecutor));
 		}
 		return futures;
 	}
