@@ -51,6 +51,7 @@ import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -1543,9 +1544,12 @@ public class StackRenderer extends LazyStackRenderer {
 
 			}
 		}
+		String partId = part.getElementId();
 
-		createMenuItem(menu, SWTRenderersMessages.splitEditorH, e -> splitEditor(part.getContext(), true));
-		createMenuItem(menu, SWTRenderersMessages.splitEditorV, e -> splitEditor(part.getContext(), false));
+		if (!isDetached(part) && partId != null && (partId.contains("editor") || partId.contains("Split"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			createMenuItem(menu, SWTRenderersMessages.splitEditorH, e -> splitEditor(part.getContext(), true));
+			createMenuItem(menu, SWTRenderersMessages.splitEditorV, e -> splitEditor(part.getContext(), false));
+		}
 
 		if (isDetachable(part)) {
 			if (closeableElements > 0) {
@@ -1970,4 +1974,17 @@ public class StackRenderer extends LazyStackRenderer {
 		ParameterizedCommand command = commandService.createCommand("org.eclipse.ui.window.splitEditor", param); //$NON-NLS-1$
 		handlerService.executeHandler(command);
 	}
+
+	private boolean isDetached(MPart part) {
+		MUIElement current = part;
+		MApplication application = part.getContext().get(MApplication.class);
+		while (current != null) {
+			if (current instanceof MWindow && current != application.getSelectedElement()) {
+				return true;
+			}
+			current = current.getParent();
+		}
+		return false;
+	}
+
 }
