@@ -204,6 +204,8 @@ public class StackRenderer extends LazyStackRenderer {
 	 * this threshold, the image is hidden.
 	 */
 	public static final int ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD = 450;
+	public static final int ONBOARDING_SMALL_IMAGE_MAX_HEIGHT = 250; // "small" cutoff
+	public static final int ONBOARDING_SMALL_IMAGE_REQUIRED_TOTAL = 314; // 256 + 32(top/bot) + 32(extra)
 
 	private MPerspective currentPerspectiveForOnboarding;
 
@@ -794,6 +796,7 @@ public class StackRenderer extends LazyStackRenderer {
 				|| onBoardingImage == null || onBoardingImage.isDisposed()) {
 			return;
 		}
+		int imgH = getImageHeight(onBoardingImage);
 		boolean showComposite = tabFolder.getItemCount() == 0;
 		boolean compositeVisible = onBoarding.isVisible();
 		boolean imageVisible = onBoardingImage.isVisible();
@@ -807,7 +810,15 @@ public class StackRenderer extends LazyStackRenderer {
 			if (!new Point(width, height).equals(onBoarding.getSize())) {
 				onBoarding.setSize(width, height);
 
-				boolean showImage = height > ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD;
+				boolean showImage;
+				if (imgH > 0 && imgH <= ONBOARDING_SMALL_IMAGE_MAX_HEIGHT) {
+					// For small images, require a smaller total height (314 overall)
+					showImage = height >= ONBOARDING_SMALL_IMAGE_REQUIRED_TOTAL
+							- (ONBOARDING_TOP_SPACING + ONBOARDING_SPACING); // 314 - 32 = 282
+				} else {
+					// For larger images, fall back to the original (higher) threshold
+					showImage = height >= ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD; // e.g., 450 content height
+				}
 				if (imageVisible != showImage || showComposite != compositeVisible) {
 					onBoardingImage.setVisible(showImage);
 					((GridData) onBoardingImage.getLayoutData()).exclude = !showImage;
@@ -823,6 +834,23 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 	}
 
+	/**
+	 * Returns the height of the image assigned to the given label.
+	 *
+	 * @param label the Label widget holding the image
+	 * @return the height in pixels, or 0 if the label has no valid image
+	 */
+	private static int getImageHeight(Label label) {
+		if (label == null || label.isDisposed()) {
+			return 0;
+		}
+		Image img = label.getImage();
+		if (img == null || img.isDisposed()) {
+			return 0;
+		}
+		return img.getBounds().height;
+	}
+ 
 	private boolean getMRUValue() {
 		return getMRUValueFromPreferences();
 	}
