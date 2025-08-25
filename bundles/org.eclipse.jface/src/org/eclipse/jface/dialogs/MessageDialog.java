@@ -20,12 +20,15 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -283,6 +286,13 @@ public class MessageDialog extends IconAndMessageDialog {
 		if (titleImage != null) {
 			shell.setImage(titleImage);
 		}
+		shell.addListener(SWT.ZoomChanged, new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				shell.setBounds(shell.getBounds().x, shell.getBounds().y, newSize.x, newSize.y);
+			}
+		});
 	}
 
 	@Override
