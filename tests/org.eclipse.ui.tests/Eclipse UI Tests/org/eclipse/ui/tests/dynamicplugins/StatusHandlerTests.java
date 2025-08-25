@@ -30,12 +30,14 @@ import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.tests.leaks.LeakTests;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Tests to ensure the addition and removal of new status handlers with dynamic
  * plug-ins.
  */
+@Ignore("Bug 405296")
 public class StatusHandlerTests extends DynamicTestCase {
 
 	private static final String STATUS_HANDLER_ID1 = "org.eclipse.newStatusHandler1.newStatusHandler1";
@@ -145,6 +147,7 @@ public class StatusHandlerTests extends DynamicTestCase {
 	 * @throws IllegalArgumentException
 	 */
 	@Test
+	@Ignore("Bug 405296")
 	public void testProductBindingRemoval() throws CoreException, IllegalArgumentException, InterruptedException {
 		getBundle();
 

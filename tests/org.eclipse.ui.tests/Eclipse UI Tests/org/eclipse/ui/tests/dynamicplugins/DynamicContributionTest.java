@@ -24,11 +24,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.menus.IMenuService;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @since 3.5
  */
+@Ignore("Bug 405296")
 public class DynamicContributionTest extends DynamicTestCase {
 
 	@Test

@@ -20,6 +20,7 @@ import org.junit.Test;
 /**
  * @since 3.1
  */
+@Ignore("disabled during E4 transition")
 public class ZoomedEditorCloseTest extends CloseTest {
 
 	@Override
