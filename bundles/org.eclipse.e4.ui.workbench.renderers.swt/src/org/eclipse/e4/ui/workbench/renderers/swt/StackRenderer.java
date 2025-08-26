@@ -24,8 +24,13 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,6 +53,7 @@ import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -69,6 +75,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.LegacyActionTools;
@@ -130,6 +137,10 @@ public class StackRenderer extends LazyStackRenderer {
 	private static final String ONBOARDING_COMPOSITE = "EditorStack.OnboardingComposite"; //$NON-NLS-1$
 	private static final String ONBOARDING_IMAGE = "EditorStack.OnboardingImage"; //$NON-NLS-1$
 	private static final String ONBOARDING_TEXT = "EditorStack.OnboardingText"; //$NON-NLS-1$
+	public static final String TAB_UNIQUE_PATH = "editor.uniquePath"; //$NON-NLS-1$
+	public static final String VIEW_UNIQUE_ID = "view.uniqueID"; //$NON-NLS-1$
+	public static final String EDITOR_TAB = "CompatibilityEditor"; //$NON-NLS-1$
+	public static final String VIEW_TAB = "CompatibilityView"; //$NON-NLS-1$
 
 	/**
 	 * Id of a a control.
@@ -218,6 +229,30 @@ public class StackRenderer extends LazyStackRenderer {
 	private TabStateHandler tabStateHandler;
 
 	private boolean imageChanged;
+
+	/**
+	 * Each time an Editor tab is closed, corresponding entry is checked if already exists
+	 * in the opened list of tabs, if yes it is deleted. If no, it is put on the top of the queue.
+	 */
+	Deque<MUIElement> closedEditorParts = new ArrayDeque<>();
+
+	/**
+	 * Each time an View kind of tab is closed, corresponding entry is checked if already exists
+	 * in the opened list of tabs, if yes it is deleted. If no, it is put on the top of the queue.
+	 */
+	Deque<MUIElement> closedViewParts = new ArrayDeque<>();
+
+	/**
+	 * Each time a View kind of tab is closed, corresponding parent context and view
+	 * ID is stored in a hash map and once the view is reopened its entry is
+	 * removed.
+	 */
+	private final Map<String, IEclipseContext> parentContexts = new HashMap<>();
+
+	/**
+	 * Maximum of last 15 tabs can be reopened one at a time.
+	 */
+	private static final int MAX_CLOSED_PARTS = 15;
 
 	List<CTabItem> getItemsToSet(MPart part) {
 		List<CTabItem> itemsToSet = new ArrayList<>();
@@ -972,6 +1007,26 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		}
 
+		if (part.getContributionURI().contains(EDITOR_TAB)) {
+			if (part != null && !part.getTransientData().containsKey(TAB_UNIQUE_PATH)) {
+				String uniquePath = getToolTip(part);
+				if (uniquePath != null && !uniquePath.isEmpty()) {
+					part.getTransientData().put(TAB_UNIQUE_PATH, uniquePath);
+					if (closedEditorParts.size() > 0)
+						removeEditorDuplicates(closedEditorParts, element, true);
+				}
+			}
+		} else if (part.getContributionURI().contains(VIEW_TAB)) {
+			if (part != null) {
+				String uniqueIdentifier = part.getElementId().toString();
+				if (!part.getTransientData().containsKey(VIEW_UNIQUE_ID)) {
+					part.getTransientData().put(VIEW_UNIQUE_ID, uniqueIdentifier);
+					if (closedViewParts.size() > 0)
+						removeViewDuplicates(closedViewParts, element, true);
+				}
+			}
+		}
+
 		CTabFolder tabFolder = (CTabFolder) stack.getWidget();
 
 		CTabItem tabItem = findItemForPart(element, stack);
@@ -1375,6 +1430,10 @@ public class StackRenderer extends LazyStackRenderer {
 		// ask user to save if necessary and close part if it is not dirty
 		EPartService partService = context.get(EPartService.class);
 		if (partService.savePart(part, true)) {
+			if (!(part.getElementId().contains("introview"))) { //$NON-NLS-1$
+				parentContexts.put(part.getElementId(), parentContext);
+				pushClosedPart(part);
+			}
 			partService.hidePart(part);
 			return true;
 		}
@@ -1497,7 +1556,11 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		final Menu menu = cachedMenu;
-		populateTabMenu(menu, part);
+		if (part.getContributionURI().contains(EDITOR_TAB)) {
+			populateTabMenu(menu, part, closedEditorParts);
+		} else if (part.getContributionURI().contains(VIEW_TAB)) {
+			populateTabMenu(menu, part, closedViewParts);
+		}
 		return menu;
 	}
 
@@ -1507,8 +1570,7 @@ public class StackRenderer extends LazyStackRenderer {
 	 * @param menu the menu to be populated
 	 * @param part the relevant part
 	 */
-	protected void populateTabMenu(final Menu menu, MPart part) {
-
+	protected void populateTabMenu(final Menu menu, MPart part, Deque<MUIElement> queue) {
 		int closeableElements = 0;
 		if (isClosable(part)) {
 			createMenuItem(menu, SWTRenderersMessages.menuClose, e -> closePart(menu));
@@ -1536,6 +1598,12 @@ public class StackRenderer extends LazyStackRenderer {
 
 				createMenuItem(menu, SWTRenderersMessages.menuCloseAll, e -> closeSiblingParts(menu, false));
 			}
+			// Create menu for parts already closed which can be reopened
+			if (queue.size() > 0) {
+				new MenuItem(menu, SWT.SEPARATOR);
+
+				createMenuItem(menu, SWTRenderersMessages.menuReopenClosed, e -> reopenClosedPart(menu));
+			}
 		}
 
 		if (isDetachable(part)) {
@@ -1544,6 +1612,65 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 
 			createMenuItem(menu, SWTRenderersMessages.menuDetach, e -> detachActivePart(menu));
+		}
+	}
+
+	/**
+	 *
+	 * Reopens the most recently closed tab.
+	 */
+	protected void reopenClosedPart(Menu menu) {
+		MUIElement incomingElement = (MPart) menu.getData(STACK_SELECTED_PART);
+		if (incomingElement == null)
+			return;
+
+		MPart part = null;
+		if (incomingElement instanceof MPart) {
+			part = (MPart) incomingElement;
+		} else if (incomingElement instanceof MPlaceholder mPlaceholder) {
+			part = (MPart) mPlaceholder.getRef();
+		}
+
+		MElementContainer<MUIElement> container = getParent(part);
+		if (container == null)
+			return;
+		List<MUIElement> others = container.getChildren();
+
+		if (part.getContributionURI().contains(EDITOR_TAB) && closedEditorParts.size() > 0) {
+			part = (MPart) closedEditorParts.pop();
+			if (removeEditorDuplicates(others, part, false)) {
+				if (closedEditorParts.size() > 0)
+					part = (MPart) closedEditorParts.pop();
+			}
+
+			part.setToBeRendered(true);
+
+			part.setVisible(true);
+
+			container.getChildren().add(part);
+
+			container.setSelectedElement(part);
+
+			createTab(container, part);
+		} else if (part.getContributionURI().contains(VIEW_TAB) && closedViewParts.size() > 0) {
+			MUIElement newElement = closedViewParts.pop();
+
+			IEclipseContext parentContext = parentContexts.get(newElement.getElementId());
+			if (parentContext == null)
+				return;
+
+			EPartService partService = parentContext.get(EPartService.class);
+			if (partService == null)
+				return;
+
+			MPart newpart = partService.findPart(newElement.getElementId());
+			if (newpart != null) { // part still exists, just hidden
+				partService.showPart(newpart, PartState.ACTIVATE);
+			} else { // part is gone, create a new one from descriptor
+				partService.showPart(newElement.getElementId(), PartState.ACTIVATE);
+			}
+			// Remove context from map once restored
+			parentContexts.remove(newElement.getElementId());
 		}
 	}
 
@@ -1580,8 +1707,13 @@ public class StackRenderer extends LazyStackRenderer {
 	 */
 	private void closePart(final Menu menu) {
 		MPart selectedPart = (MPart) menu.getData(STACK_SELECTED_PART);
-		EPartService partService = getContextForParent(selectedPart).get(EPartService.class);
+		IEclipseContext parentContext = getContextForParent(selectedPart);
+		EPartService partService = parentContext.get(EPartService.class);
 		if (partService.savePart(selectedPart, true)) {
+			if (!(selectedPart.getElementId().contains("introview"))) { //$NON-NLS-1$
+				parentContexts.put(selectedPart.getElementId(), parentContext);
+				pushClosedPart(selectedPart);
+			}
 			partService.hidePart(selectedPart);
 		}
 	}
@@ -1724,10 +1856,11 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		}
 
-		EPartService partService = getContextForParent(part).get(EPartService.class);
+		IEclipseContext parentContext = getContextForParent(part);
+		EPartService partService = parentContext.get(EPartService.class);
 		// try using the ISaveHandler first... This gives better control of
 		// dialogs...
-		ISaveHandler saveHandler = getContextForParent(part).get(ISaveHandler.class);
+		ISaveHandler saveHandler = parentContext.get(ISaveHandler.class);
 		if (saveHandler != null) {
 			final List<MPart> toPrompt = new ArrayList<>(others);
 			toPrompt.retainAll(partService.getDirtyParts());
@@ -1743,6 +1876,8 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 
 			for (MPart other : others) {
+				parentContexts.put(other.getElementId(), getContextForParent(other));
+				pushClosedPart(other);
 				partService.hidePart(other);
 			}
 			return;
@@ -1750,9 +1885,119 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// No ISaveHandler, fall back to just using the part service...
 		for (MPart otherPart : others) {
-			if (partService.savePart(otherPart, true))
+			if (partService.savePart(otherPart, true)) {
+				parentContexts.put(otherPart.getElementId(), getContextForParent(otherPart));
+				pushClosedPart(otherPart);
 				partService.hidePart(otherPart);
+			}
 		}
+	}
+
+	private void pushClosedPart(MPart part) {
+		MUIElement toStore = part.getCurSharedRef() != null ? part.getCurSharedRef() : part;
+
+		if (part.getContributionURI().contains(EDITOR_TAB)) {
+			if (closedEditorParts.size() > 0)
+				removeEditorDuplicates(closedEditorParts, toStore, true);
+			closedEditorParts.push(toStore); // Push on top of stack deleting older entries if exist.
+
+			// Limit max number of tabs that can be reopened to 15
+			if (closedEditorParts.size() > MAX_CLOSED_PARTS) {
+				closedEditorParts.removeLast(); // Remove the oldest
+			}
+		} else if (part.getContributionURI().contains(VIEW_TAB)) {
+			if (closedViewParts.size() > 0)
+				removeViewDuplicates(closedViewParts, toStore, true);
+			closedViewParts.push(toStore); // Push on top of stack deleting older entries if exist.
+
+			// Limit max number of tabs that can be reopened to 15
+			if (closedViewParts.size() > MAX_CLOSED_PARTS) {
+				closedViewParts.removeLast(); // Remove the oldest
+			}
+		}
+	}
+
+	private boolean removeEditorDuplicates(Collection<MUIElement> elements, MUIElement incomingPart, boolean delete) {
+		boolean duplicateExists = false;
+		if (!(incomingPart instanceof MPart)) {
+			return false;
+		}
+
+		String newlabel = ((MPart) incomingPart).getLabel();
+		Object newPathObj = incomingPart.getTransientData().get(TAB_UNIQUE_PATH);
+		String newPath = newPathObj != null ? newPathObj.toString() : null;
+
+		Iterator<MUIElement> iterator = elements.iterator();
+		while (iterator.hasNext()) {
+			MPart part = null;
+			MUIElement existing = iterator.next();
+
+			if (existing instanceof MPart)
+				part = (MPart) existing;
+			else if (existing instanceof MPlaceholder mPlaceholder) {
+				part = (MPart) mPlaceholder.getRef();
+			}
+
+			String existingLabel = part.getLabel();
+			Object existingPathObj = existing.getTransientData().get(TAB_UNIQUE_PATH);
+			String existingPath = existingPathObj != null ? existingPathObj.toString() : null;
+			boolean sameLabel = newlabel != null && newlabel.equals(existingLabel);
+			boolean samePath = newPath != null && newPath.equals(existingPath);
+
+			if (sameLabel && samePath) {
+				if (delete) {
+					iterator.remove();
+				}
+				duplicateExists = true;
+			}
+		}
+		return duplicateExists;
+	}
+
+	private boolean removeViewDuplicates(Collection<MUIElement> elements, MUIElement incomingPart, boolean delete) {
+		boolean duplicateViewExists = false;
+		if (!(incomingPart instanceof MPart) || !(incomingPart instanceof MContribution)) {
+			return false;
+		}
+
+		IEclipseContext newParentContext = parentContexts.get(incomingPart.getElementId());
+		String newId = incomingPart.getElementId();
+		String newlabel = ((MPart) incomingPart).getLabel();
+
+		Iterator<MUIElement> iterator = elements.iterator();
+		while (iterator.hasNext()) {
+			MPart part = null;
+			MUIElement existing = iterator.next();
+
+			if (existing instanceof MPart)
+				part = (MPart) existing;
+			else if (existing instanceof MPlaceholder mPlaceholder) {
+				part = (MPart) mPlaceholder.getRef();
+				if (part != null)
+					part.setCurSharedRef((MPlaceholder) existing);
+			}
+
+			IEclipseContext existingParentContext;
+			if (delete) {
+				existingParentContext = parentContexts.get(part.getElementId());
+			} else {
+				existingParentContext = getContextForParent(part);
+			}
+			String existingId = part.getElementId();
+			String existingLabel = part.getLabel();
+
+			boolean sameParentContext = newParentContext != null && newParentContext.equals(existingParentContext);
+			boolean sameId = newId != null && newId.equals(existingId);
+			boolean sameLabel = newlabel != null && newlabel.equals(existingLabel);
+
+			if (sameParentContext && sameId && sameLabel) {
+				if (delete) {
+					iterator.remove();
+				}
+				duplicateViewExists = true;
+			}
+		}
+		return duplicateViewExists;
 	}
 
 	public static MMenu getViewMenu(MPart part) {
