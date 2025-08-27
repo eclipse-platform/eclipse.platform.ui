@@ -14,8 +14,6 @@
 package org.eclipse.ui.tests.zoom;
 
 import org.eclipse.ui.IWorkbenchPart;
-import org.junit.Ignore;
-import org.junit.Test;
 
 /**
  * @since 3.1
@@ -32,24 +30,4 @@ public class ZoomedViewActivateTest extends ActivateTest {
 		return stackedView2;
 	}
 
-	@Override
-	public IWorkbenchPart getUnstackedPart() {
-		return unstackedView;
-	}
-
-	/**
-	 * <p>Test: Zoom a view then activate an editor</p>
-	 * <p>Expected result: page unzooms</p>
-	 */
-	@Test
-	@Ignore
-	public void testActivateEditor() {
-		// We allow an editor to be activated *without* unzooming
-
-//        zoom(stackedView1);
-//        page.activate(editor1);
-//
-//        assertZoomed(null);
-//        assertActive(editor1);
-	}
 }
