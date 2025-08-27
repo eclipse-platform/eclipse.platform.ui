@@ -14,14 +14,12 @@
 package org.eclipse.ui.tests.zoom;
 
 import org.eclipse.ui.IWorkbenchPart;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class ActivateTest extends ZoomTestCase {
 
 	public abstract IWorkbenchPart getStackedPart1();
 	public abstract IWorkbenchPart getStackedPart2();
-	public abstract IWorkbenchPart getUnstackedPart();
 
 	/**
 	 * <p>Test: Zoom a part and activate it</p>
@@ -55,24 +53,6 @@ public abstract class ActivateTest extends ZoomTestCase {
 
 		assertZoomed(stacked2);
 		assertActive(stacked2);
-	}
-
-	/**
-	 * <p>Test: Zoom a view than activate a view in a different stack</p>
-	 * <p>Expected result: page unzooms</p>
-	 */
-	@Test
-	@Ignore
-	public void testActivateOtherStack() {
-		// We allow an editor to be activated *without* unzooming
-//        IWorkbenchPart stacked1 = getStackedPart1();
-//        IWorkbenchPart unstacked = getUnstackedPart();
-//
-//        zoom(stacked1);
-//        page.activate(unstacked);
-//
-//        assertZoomed(null);
-//        assertActive(unstacked);
 	}
 
 	/**
