@@ -1051,7 +1051,13 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 * does nothing.
 	 *
 	 * @since 3.2
+	 *
+	 * @deprecated this method has never been implemented; use
+	 *             {@link #toggleZoom(IWorkbenchPartReference)} to toggle between
+	 *             maximized and non-maximized state instead of explicitly zooming
+	 *             out
 	 */
+	@Deprecated(forRemoval = true, since = "2025-12")
 	void zoomOut();
 
 	/**
