@@ -537,9 +537,9 @@ public class WBWRenderer extends SWTPartRenderer {
 					// But set the maximized tag so that the user can access the current state
 					if (shell.getMaximized()) {
 						me.getTags().add(ShellMaximizedTag);
-					} else {
-						me.getTags().remove(ShellMaximizedTag);
+						return;
 					}
+					me.getTags().remove(ShellMaximizedTag);
 
 					try {
 						ignoreSizeChanges = true;
