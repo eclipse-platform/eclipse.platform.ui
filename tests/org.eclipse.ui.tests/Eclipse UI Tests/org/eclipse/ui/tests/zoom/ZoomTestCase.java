@@ -44,8 +44,6 @@ import org.junit.Before;
 import org.junit.Rule;
 
 public class ZoomTestCase {
-//    protected static final String view2Id = IPageLayout.ID_OUTLINE;
-
 	@Rule
 	public final CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
@@ -65,7 +63,6 @@ public class ZoomTestCase {
 	protected IViewPart stackedView1;
 	protected IViewPart stackedView2;
 	protected IViewPart unstackedView;
-	protected IViewPart fastView;
 
 	private IFile file3;
 
@@ -91,15 +88,12 @@ public class ZoomTestCase {
 					MockEditorPart.ID2);
 			editor3 = page.openEditor(new FileEditorInput(file3),
 					MockEditorPart.ID2);
-
-//            DragOperations
-//        		.drag(editor3, new EditorAreaDropTarget(new ExistingWindowProvider(window), SWT.RIGHT), false);
 		} catch (CoreException e) {
 		}
 
 		stackedView1 = findView(ZoomPerspectiveFactory.STACK1_VIEW1);
 		stackedView2 = findView(ZoomPerspectiveFactory.STACK1_VIEW2);
-//        fastView = findView(ZoomPerspectiveFactory.FASTVIEW1);
+		unstackedView = findView(ZoomPerspectiveFactory.UNSTACKED_VIEW1);
 	}
 
 	// zooms the given part
