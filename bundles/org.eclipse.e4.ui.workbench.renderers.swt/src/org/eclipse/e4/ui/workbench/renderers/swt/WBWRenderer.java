@@ -534,11 +534,8 @@ public class WBWRenderer extends SWTPartRenderer {
 				@Override
 				public void controlResized(ControlEvent e) {
 					// Don't store the maximized size in the model
-					// But set the maximized tag so that the user can access the current state
 					if (shell.getMaximized()) {
-						me.getTags().add(ShellMaximizedTag);
-					} else {
-						me.getTags().remove(ShellMaximizedTag);
+						return;
 					}
 
 					try {
