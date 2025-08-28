@@ -14,6 +14,8 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.widgets;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -24,6 +26,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 
 
@@ -66,9 +69,19 @@ public class ImageBasedFrame extends Canvas {
 			ImageBasedFrame frame = (ImageBasedFrame) event.widget;
 			frame.setCursor(null);
 		});
+
 		toWrap.addListener(SWT.ZoomChanged, event -> {
-			toWrap.pack(true);
-			setFramedControlLocation();
+			final AtomicReference<Listener> scaleOnParentResize = new AtomicReference<>();
+			scaleOnParentResize.set(e -> {
+				if (isDisposed()) {
+					return;
+				}
+				toWrap.pack(true);
+				setFramedControlLocation();
+				parent.layout();
+				parent.removeListener(SWT.Resize, scaleOnParentResize.get());
+			});
+			parent.addListener(SWT.Resize, scaleOnParentResize.get());
 		});
 
 		addMouseMoveListener(e -> {
