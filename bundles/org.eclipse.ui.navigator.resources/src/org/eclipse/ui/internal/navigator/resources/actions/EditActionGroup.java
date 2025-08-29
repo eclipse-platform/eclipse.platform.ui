@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,8 +18,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
@@ -55,11 +57,25 @@ public class EditActionGroup extends ActionGroup {
 
 	@Override
 	public void dispose() {
-		if (clipboard != null) {
-			clipboard.dispose();
-			clipboard = null;
+		Display display = Display.getDefault();
+		if (display != null && !display.isDisposed()) {
+			display.asyncExec(() -> {
+				if (clipboard != null && !clipboard.isDisposed()) {
+					clipboard.dispose();
+					clipboard = null;
+				}
+			});
+		} else {
+			// Avoid disposing UI resources if display is gone
+			if (clipboard != null && !clipboard.isDisposed()) {
+				try {
+					clipboard.dispose();
+					clipboard = null;
+				} catch (SWTException e) {
+					// Log or ignore safely
+				}
+			}
 		}
-		super.dispose();
 	}
 
 	@Override
