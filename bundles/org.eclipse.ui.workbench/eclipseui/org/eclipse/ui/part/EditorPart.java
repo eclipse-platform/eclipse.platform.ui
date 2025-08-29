@@ -291,4 +291,12 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 		Assert.isTrue(site instanceof IEditorSite, "The site for an editor must be an IEditorSite"); //$NON-NLS-1$
 	}
 
+	@Override
+	public void dispose() {
+		if (compatibilityTitleListener != null) {
+			removePropertyListener(compatibilityTitleListener);
+			compatibilityTitleListener = null;
+		}
+		super.dispose();
+	}
 }
