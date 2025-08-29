@@ -153,6 +153,8 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 
 	private ListenerList<IPageChangedListener> pageChangeListeners = new ListenerList<>(ListenerList.IDENTITY);
 
+	private org.eclipse.jface.util.IPropertyChangeListener propertyChangeListenerToUpdateContainer;
+
 	/**
 	 * Creates an empty multi-page editor with no pages and registers a
 	 * {@link PropertyChangeListener} to listen for changes to the editor's
@@ -160,11 +162,12 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 */
 	protected MultiPageEditorPart() {
 		super();
-		getAPIPreferenceStore().addPropertyChangeListener(event -> {
+		propertyChangeListenerToUpdateContainer = event -> {
 			if (isUpdateRequired(event)) {
 				updateContainer();
 			}
-		});
+		};
+		getAPIPreferenceStore().addPropertyChangeListener(propertyChangeListenerToUpdateContainer);
 	}
 
 	/**
@@ -526,6 +529,11 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 */
 	@Override
 	public void dispose() {
+		IPreferenceStore store = getAPIPreferenceStore();
+		if (propertyChangeListenerToUpdateContainer != null) {
+			store.removePropertyChangeListener(propertyChangeListenerToUpdateContainer);
+			propertyChangeListenerToUpdateContainer = null;
+		}
 		if (getSite() != null) {
 			deactivateSite(true, false);
 		}
