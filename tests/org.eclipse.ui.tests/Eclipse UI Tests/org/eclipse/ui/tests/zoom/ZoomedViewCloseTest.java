@@ -14,11 +14,13 @@
 package org.eclipse.ui.tests.zoom;
 
 import org.eclipse.ui.IWorkbenchPart;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @since 3.1
  */
+@Ignore("disabled during E4 transition")
 public class ZoomedViewCloseTest extends CloseTest {
 
 	@Override

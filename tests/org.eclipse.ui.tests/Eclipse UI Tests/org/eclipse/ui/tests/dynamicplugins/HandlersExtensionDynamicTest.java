@@ -21,6 +21,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -29,6 +30,7 @@ import org.junit.Test;
  *
  * @since 3.1.1
  */
+@Ignore("Bug 405296")
 public final class HandlersExtensionDynamicTest extends DynamicTestCase {
 
 

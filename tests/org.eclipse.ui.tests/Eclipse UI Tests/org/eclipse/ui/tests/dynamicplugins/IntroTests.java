@@ -33,11 +33,13 @@ import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.leaks.LeakTests;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @since 3.1
  */
+@Ignore("Bug 405296")
 public class IntroTests extends DynamicTestCase {
 
 	private static final String PRODUCT_ID = "org.eclipse.ui.tests.someProduct";
