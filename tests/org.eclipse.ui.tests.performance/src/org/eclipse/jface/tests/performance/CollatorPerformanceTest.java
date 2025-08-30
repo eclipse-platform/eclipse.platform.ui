@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.jface.util.Policy;
-import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+import org.eclipse.test.performance.PerformanceTestCaseJunit4;
 import org.eclipse.ui.tests.performance.UIPerformanceTestRule;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  * @since 3.5
  */
-public class CollatorPerformanceTest extends BasicPerformanceTest {
+public class CollatorPerformanceTest extends PerformanceTestCaseJunit4 {
 
 	@ClassRule
 	public static final UIPerformanceTestRule uiPerformanceTestRule = new UIPerformanceTestRule();
