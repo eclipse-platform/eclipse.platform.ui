@@ -615,6 +615,9 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		MWindow window = getTopLevelWindowFor(element);
+		if (window == null) {
+			return;
+		}
 		if (window == element) {
 			if (!element.isToBeRendered()) {
 				element.setToBeRendered(true);
