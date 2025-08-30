@@ -1810,22 +1810,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 	}
 
 	/**
-	 * Forces all perspectives on the page to zoom out.
-	 */
-	public void unzoomAllPerspectives() {
-		// TODO compat: we have no min/max behaviour
-	}
-
-	/**
 	 * Cleanup.
 	 */
 	public void dispose() {
 		legacyWindow = null;
 		largeFileLimitsPreferenceHandler.dispose();
-// // Always unzoom
-		// if (isZoomed()) {
-		// zoomOut();
-		// }
 		//
 		// // makeActiveEditor(null);
 		// // makeActive(null);
@@ -4350,7 +4339,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	@Override
 	public void zoomOut() {
-		// TODO compat: what does the zoom do?
+		// to be removed once interface method is removed
 	}
 
 	@Override
