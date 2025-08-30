@@ -47,6 +47,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -420,7 +421,12 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	@PreDestroy
 	void destroy() {
 		if (!alreadyDisposed) {
-			invalidate();
+			Display display = Display.getDefault();
+			if (display != null && !display.isDisposed() && Display.getCurrent() != display) {
+				display.syncExec(this::invalidate);
+			} else {
+				invalidate();
+			}
 		}
 
 		eventBroker.unsubscribe(widgetSetHandler);
