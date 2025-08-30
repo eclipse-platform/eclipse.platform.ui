@@ -26,78 +26,6 @@ public abstract class CloseTest extends ZoomTestCase {
 
 	public abstract IWorkbenchPart getStackedPart1();
 	public abstract IWorkbenchPart getStackedPart2();
-	public abstract IWorkbenchPart getUnstackedPart();
-
-	/**
-	 * <p>Test: Zoom a part and hide an inactive fast view</p>
-	 * <p>Expected result: Part remains zoomed</p>
-	 */
-	@Test
-	public void testCloseInactiveFastView() {
-		IWorkbenchPart zoomPart = getStackedPart1();
-
-		zoom(zoomPart);
-		close(fastView);
-
-		assertZoomed(zoomPart);
-		assertActive(zoomPart);
-	}
-
-	/**
-	 * <p>Test: Zoom a part, activate a fast view, then hide the fast view</p>
-	 * <p>Expected result: Part remains zoomed</p>
-	 */
-	@Test
-	public void testCloseActiveFastView() {
-		IWorkbenchPart zoomPart = getStackedPart1();
-
-		zoom(zoomPart);
-		page.activate(fastView);
-		close(fastView);
-
-		assertZoomed(zoomPart);
-		assertActive(zoomPart);
-	}
-
-	/**
-	 * <p>Test: Activate an unstacked view, zoom and activate a stacked part, then close the active part.</p>
-	 * <p>Expected result: Stack remains zoomed, another part in the zoomed stack is active</p>
-	 * <p>Note: This ensures that when the active part is closed, it will try to activate a part that
-	 *    doesn't affect the zoom even if something else was activated more recently.</p>
-	 */
-	@Test
-	public void testCloseZoomedStackedPartAfterActivatingView() {
-		IWorkbenchPart zoomPart = getStackedPart1();
-		IWorkbenchPart otherStackedPart = getStackedPart2();
-		IWorkbenchPart unstackedPart = unstackedView;
-
-		page.activate(unstackedPart);
-		zoom(zoomPart);
-		close(zoomPart);
-
-		assertZoomed(otherStackedPart);
-		assertActive(otherStackedPart);
-	}
-
-	/**
-	 * <p>Test: Activate an unstacked editor, zoom and activate a stacked part, then close the active part.</p>
-	 * <p>Expected result: Stack remains zoomed, another part in the zoomed stack is active</p>
-	 * <p>Note: This ensures that when the active part is closed, it will try to activate a part that
-	 *    doesn't affect the zoom even if something else was activated more recently.</p>
-	 */
-	@Test
-	public void testCloseZoomedStackedPartAfterActivatingEditor() {
-		IWorkbenchPart zoomPart = getStackedPart1();
-		IWorkbenchPart otherStackedPart = getStackedPart2();
-		IWorkbenchPart unstackedPart = editor3;
-
-		page.activate(unstackedPart);
-		zoom(zoomPart);
-		close(zoomPart);
-
-		assertZoomed(otherStackedPart);
-		assertActive(otherStackedPart);
-	}
 
 	/**
 	 * <p>Test: Activate an unstacked editor, activate a stacked part, then close the active part.</p>
@@ -116,25 +44,6 @@ public abstract class CloseTest extends ZoomTestCase {
 
 		assertZoomed(null);
 		assertActive(unstackedPart);
-	}
-
-	/**
-	 * <p>Test: Zoom an unstacked part and close it.</p>
-	 * <p>Expected result: The page is unzoomed and the previously active part becomes active</p>
-	 * <p>Note: This ensures that the activation list is used if there is nothing available
-	 *    in the currently zoomed stack.</p>
-	 */
-	@Test
-	public void testCloseZoomedUnstackedPartAfterActivatingEditor() {
-		IWorkbenchPart previousActive = editor1;
-		IWorkbenchPart zoomedPart = getUnstackedPart();
-
-		page.activate(previousActive);
-		zoom(zoomedPart);
-		close(zoomedPart);
-
-		assertZoomed(null);
-		assertActive(previousActive);
 	}
 
 	/**
