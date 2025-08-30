@@ -65,6 +65,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.test.Screenshots;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -2469,7 +2470,8 @@ public class PartRenderingEngineTests {
 		assertTrue(" PartStack with children should be rendered", partStackForPartBPartC.isToBeRendered());
 		partService.hidePart(partB);
 		partService.hidePart(partC);
-		contextRule.spinEventLoop();
+		DisplayHelper.waitForCondition(Display.getDefault(), 5_000,
+				() -> partStackForPartBPartC.isToBeRendered() == false);
 		assertFalse(
 				"CleanupAddon should ensure that partStack is not rendered anymore, as all childs have been removed",
 				partStackForPartBPartC.isToBeRendered());
