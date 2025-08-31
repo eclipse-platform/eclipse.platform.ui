@@ -24,12 +24,12 @@ import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.QueryUtil;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.PlatformAdmin;
-import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.about.ISystemSummarySection;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * Writes information about the update configurer into the system summary.
@@ -73,26 +73,24 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 	 * Query OSGi and print out the list of known bundles.
 	 */
 	private void writeBundles(PrintWriter writer) {
-		ServiceCaller.callOnce(getClass(), PlatformAdmin.class, (admin) -> {
-			State state = admin.getState(false);
-			// Since this code is only called in the Help -> About -> Configuration Details case we
-			// won't worry too much about performance here and we will sort the query results
-			// afterwards, but before printing them out.
-			SortedSet<String> sorted = new TreeSet<>();
-			for (BundleDescription bundle : state.getBundles()) {
-				String name = bundle.getName();
-				if (name == null)
-					name = bundle.getLocation();
-				String message = NLS.bind(IDEWorkbenchMessages.ConfigurationLogUpdateSection_bundle, new Object[] {name, bundle.getVersion(), bundle.getLocation()});
-				sorted.add(message);
-			}
-			if (!sorted.isEmpty()) {
-				writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_bundleHeader);
-				writer.println();
-				for (String string : sorted)
-					writer.println(string);
-			}
-		});
+		BundleContext bundleContext = IDEWorkbenchPlugin.getDefault().getBundle().getBundleContext();
+		// Since this code is only called in the Help -> About -> Configuration Details case we
+		// won't worry too much about performance here and we will sort the query results
+		// afterwards, but before printing them out.
+		SortedSet<String> sorted = new TreeSet<>();
+		for (Bundle bundle : bundleContext.getBundles()) {
+			String name = bundle.getSymbolicName();
+			if (name == null)
+				name = bundle.getLocation();
+			String message = NLS.bind(IDEWorkbenchMessages.ConfigurationLogUpdateSection_bundle, new Object[] {name, bundle.getVersion(), bundle.getLocation()});
+			sorted.add(message);
+		}
+		if (!sorted.isEmpty()) {
+			writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_bundleHeader);
+			writer.println();
+			for (String string : sorted)
+				writer.println(string);
+		}
 	}
 
 	@Override
