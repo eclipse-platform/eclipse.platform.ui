@@ -132,5 +132,10 @@
             <repository location='https://download.eclipse.org/eclipse/updates/I-builds'/>
         </repositories>
     </iu>
+    <iu id='org.eclipse.terminal.feature.feature.group' name='Terminal feature' version='0.0.0'>
+        <repositories size='1'>
+            <repository location='https://download.eclipse.org/eclipse/updates/I-builds'/>
+        </repositories>
+    </iu>
   </ius>
 </p2f>
