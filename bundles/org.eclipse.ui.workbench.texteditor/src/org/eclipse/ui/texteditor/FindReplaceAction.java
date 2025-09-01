@@ -23,9 +23,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.jface.dialogs.IPageChangedListener;
@@ -40,7 +40,6 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlay;
-import org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlayFirstTimePopup;
 
 
 /**
@@ -424,8 +423,6 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 				shellToUse = fShell;
 			}
 			overlay = new FindReplaceOverlay(shellToUse, fWorkbenchPart, fTarget);
-
-			FindReplaceOverlayFirstTimePopup.displayPopupIfNotAlreadyShown(shellToUse);
 		}
 
 		overlay.open();
