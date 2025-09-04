@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -403,7 +403,16 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 	}
 
 	private IWorkbenchWindow getActiveWindow() {
-		final Shell newActiveShell = workbench.getDisplay().getActiveShell();
+		Display display = workbench.getDisplay();
+		if (display == null || display.isDisposed()) {
+			return null;
+		}
+
+		final Shell newActiveShell = display.getActiveShell();
+		if (newActiveShell == null || newActiveShell.isDisposed()) {
+			return null;
+		}
+
 		final IContextService contextService = workbench.getService(IContextService.class);
 		if (contextService != null) {
 			final int shellType = contextService.getShellType(newActiveShell);
