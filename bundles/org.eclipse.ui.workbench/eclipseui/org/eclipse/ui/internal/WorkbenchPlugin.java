@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1175,15 +1175,25 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	public static Shell getSplashShell(Display display)
 			throws NumberFormatException, IllegalArgumentException {
+		if (display == null || display.isDisposed()) {
+			return null;
+		}
 		Shell splashShell = (Shell) display.getData(DATA_SPLASH_SHELL);
-		if (splashShell != null)
+		if (splashShell != null) {
+			if (splashShell.isDisposed()) {
+				return null;
+			}
 			return splashShell;
+		}
 
 		String splashHandle = System.getProperty(PROP_SPLASH_HANDLE);
 		if (splashHandle == null) {
 			return null;
 		}
 
+		if (display.isDisposed()) {
+			return null;
+		}
 		splashShell = Shell.internal_new(display, Long.parseLong(splashHandle));
 
 		display.setData(DATA_SPLASH_SHELL, splashShell);
