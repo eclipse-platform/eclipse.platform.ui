@@ -794,6 +794,11 @@ public abstract class Window implements IShellProvider {
 		// open the window
 		shell.open();
 
+		// dialog may have been closed during the open() call, then just return
+		if (shell == null) {
+			return returnCode;
+		}
+
 		// run the event loop if specified
 		if (block) {
 			runEventLoop(shell);
@@ -812,9 +817,7 @@ public abstract class Window implements IShellProvider {
 	 * 				the shell
 	 */
 	private static void runEventLoop(Shell loopShell) {
-
-		Display display;
-		display = loopShell.getDisplay();
+		Display display = loopShell.getDisplay();
 
 		while (!loopShell.isDisposed()) {
 			try {

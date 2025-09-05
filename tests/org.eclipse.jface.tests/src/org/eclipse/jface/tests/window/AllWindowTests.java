@@ -19,7 +19,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ ApplicationWindowTest.class })
+@Suite.SuiteClasses({ //
+		ApplicationWindowTest.class, //
+		WindowTest.class, //
+})
 public class AllWindowTests {
 
 	public static void main(String[] args) {
