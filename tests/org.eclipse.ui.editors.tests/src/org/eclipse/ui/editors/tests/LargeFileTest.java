@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.widgets.Display;
@@ -50,6 +51,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Tests opening large files in a text editor.
  */
 public class LargeFileTest {
+
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
 
 	private IFile fLargeFile;
 
@@ -84,7 +88,6 @@ public class LargeFileTest {
 		ResourceHelper.deleteProject("LargeFileTestProject");
 		fLargeFile= null;
 		preferenceStore.setValue(AbstractTextEditor.PREFERENCE_WORD_WRAP_ENABLED, initialWordWrap);
-		TestUtil.cleanUp();
 	}
 
 	@Test

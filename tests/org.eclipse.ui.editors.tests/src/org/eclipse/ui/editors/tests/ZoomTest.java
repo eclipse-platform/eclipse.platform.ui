@@ -21,6 +21,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.custom.StyledText;
@@ -48,6 +49,9 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  */
 public class ZoomTest {
 
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
+
 	private static IProject project;
 	private static IFile file;
 	private StyledText text;
@@ -67,7 +71,6 @@ public class ZoomTest {
 	public static void tearDownAfterClass() throws Exception {
 		file.delete(true, new NullProgressMonitor());
 		project.delete(true, new NullProgressMonitor());
-		TestUtil.cleanUp();
 	}
 
 	@Before
