@@ -792,7 +792,7 @@ public class StackRenderer extends LazyStackRenderer {
 				|| onBoardingImage == null || onBoardingImage.isDisposed()) {
 			return;
 		}
-		int imgH = getImageHeight(onBoardingImage);
+		int imgHeight = getImageHeight(onBoardingImage);
 		boolean showComposite = tabFolder.getItemCount() == 0;
 		boolean compositeVisible = onBoarding.isVisible();
 		boolean imageVisible = onBoardingImage.isVisible();
