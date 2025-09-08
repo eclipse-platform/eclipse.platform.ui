@@ -805,22 +805,12 @@ public class StackRenderer extends LazyStackRenderer {
 			int height = folderBounds.height - ONBOARDING_TOP_SPACING - ONBOARDING_SPACING;
 			if (!new Point(width, height).equals(onBoarding.getSize())) {
 				onBoarding.setSize(width, height);
-
-				boolean showImage;
-				if (imgH > 0 && imgH <= ONBOARDING_SMALL_IMAGE_MAX_HEIGHT) {
-					// For small images, require a smaller total height (314 overall)
-					showImage = height >= ONBOARDING_SMALL_IMAGE_REQUIRED_TOTAL
-							- (ONBOARDING_TOP_SPACING + ONBOARDING_SPACING); // 314 - 32 = 282
-				} else {
-					// For larger images, fall back to the original (higher) threshold
-					showImage = height >= ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD; // e.g., 450 content height
-				}
+				boolean showImage = shouldShowOnboardingImage(height, imgHeight);
 				if (imageVisible != showImage || showComposite != compositeVisible) {
 					onBoardingImage.setVisible(showImage);
 					((GridData) onBoardingImage.getLayoutData()).exclude = !showImage;
 					onboardingComposite.getParent().layout(true);
 				}
-
 			}
 		} else {
 			if (compositeVisible) {
@@ -828,6 +818,29 @@ public class StackRenderer extends LazyStackRenderer {
 				onBoarding.setSize(0, 0);
 			}
 		}
+	}
+
+	/**
+	 * Checks if the onboarding image should be shown, based on how much vertical
+	 * space is available and the image size.
+	 * <p>
+	 * <ul>
+	 *   <li>Small images: allowed with a lower minimum height.</li>
+	 *   <li>Large images: require the standard higher threshold.</li>
+	 * </ul>
+	 *
+	 * @param contentHeight     available space in pixels
+	 * @param imageHeight       image height in pixels (0 if none)
+	 * @return true if the image should be shown; false otherwise
+	 */
+	private static boolean shouldShowOnboardingImage(int contentHeight, int imageHeight) {
+	    if (imageHeight > 0 && imageHeight <= ONBOARDING_SMALL_IMAGE_MAX_HEIGHT) {
+	        // 314 total minus (top + bottom) = 314 - (30 + 2) = 282
+	        int required = ONBOARDING_SMALL_IMAGE_REQUIRED_TOTAL - (ONBOARDING_TOP_SPACING + ONBOARDING_SPACING);
+	        return contentHeight >= required;
+	    }
+	    // Larger images fall back to the original (higher) threshold
+	    return contentHeight >= ONBOARDING_SHOW_IMAGE_HEIGHT_THRESHOLD;
 	}
 
 	/**
