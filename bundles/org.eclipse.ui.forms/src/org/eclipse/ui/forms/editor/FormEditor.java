@@ -400,7 +400,6 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	 */
 	@Override
 	public void dispose() {
-		super.dispose();
 		for (Object page : pages) {
 			if (page instanceof IFormPage) {
 				IFormPage fpage = (IFormPage) page;
@@ -417,6 +416,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 			toolkit.dispose();
 			toolkit = null;
 		}
+		super.dispose();
 	}
 
 	/**
