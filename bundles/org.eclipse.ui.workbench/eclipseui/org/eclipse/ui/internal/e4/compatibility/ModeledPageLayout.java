@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.PartStackUtil;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
@@ -642,6 +643,10 @@ public class ModeledPageLayout implements IPageLayout {
 		long numberOfOnboardingCommands = perspModel.getTags().stream()
 				.filter(t -> t.startsWith(EDITOR_ONBOARDING_COMMAND)).count();
 		if (numberOfOnboardingCommands >= 5)
+			return;
+
+		IContributionFactory contributionFactory = application.getContext().get(IContributionFactory.class);
+		if (!contributionFactory.isEnabled(commandId))
 			return;
 
 		Predicate<MKeyBinding> commandWithEqualId = b -> Optional.of(b).map(MKeyBinding::getCommand)
