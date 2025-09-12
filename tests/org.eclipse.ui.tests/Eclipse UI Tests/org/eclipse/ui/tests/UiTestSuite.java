@@ -58,56 +58,56 @@ import org.eclipse.ui.tests.stress.OpenCloseTest;
 import org.eclipse.ui.tests.systeminplaceeditor.OpenSystemInPlaceEditorTest;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
 import org.eclipse.ui.tests.zoom.ZoomTestSuite;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test all areas of the UI.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	StartupTest.class,
-	UIAutomatedSuite.class,
-	ApiTestSuite.class,
-	NavigatorTestSuite.class,
-	DecoratorsTestSuite.class,
-	DataTransferTestSuite.class,
-	PreferencesTestSuite.class,
-	KeysTestSuite.class,
-	ActivitiesTestSuite.class,
-	ThemesTestSuite.class,
-	EncodingTestSuite.class,
-	OperationsTestSuite.class,
-	FieldAssistTestSuite.class,
-	ServicesTestSuite.class,
-	PluginActivationTests.class,
-	ProgressTestSuite.class,
-	PropertySheetTestSuite.class,
-	AdaptableTestSuite.class,
-	MultiPageEditorTestSuite.class,
-	CommandsTestSuite.class,
-	ContextsTestSuite.class,
-	ConcurrencyTestSuite.class,
-	FilteredTableTests.class,
-	FilteredTreeTests.class,
-	PatternFilterTest.class,
-	StatusHandlingTestSuite.class,
-	MenusTestSuite.class,
-	QuickAccessTestSuite.class,
-	FilteredResourcesSelectionDialogTestSuite.class,
-	DirectoryProposalContentAssistTestSuite.class,
-	InternalTestSuite.class,
-	LeaksTestSuite.class,
-	StyledStringHighlighterTest.class,
-	ZoomTestSuite.class,
-	DynamicPluginsTestSuite.class,
-	IntroTestSuite.class,
-	MultiEditorTestSuite.class,
-	OpenSystemInPlaceEditorTest.class,
-	WorkbenchDatabindingTest.class,
-	ChooseWorkspaceDialogTests.class,
-	ViewerItemsLimitTest.class,
-	OpenCloseTest.class
+@Suite
+@SelectClasses({ //
+		StartupTest.class, //
+		UIAutomatedSuite.class, //
+		ApiTestSuite.class, //
+		NavigatorTestSuite.class, //
+		DecoratorsTestSuite.class, //
+		DataTransferTestSuite.class, //
+		PreferencesTestSuite.class, //
+		KeysTestSuite.class, //
+		ActivitiesTestSuite.class, //
+		ThemesTestSuite.class, //
+		EncodingTestSuite.class, //
+		OperationsTestSuite.class, //
+		FieldAssistTestSuite.class, //
+		ServicesTestSuite.class, //
+		PluginActivationTests.class, //
+		ProgressTestSuite.class, //
+		PropertySheetTestSuite.class, //
+		AdaptableTestSuite.class, //
+		MultiPageEditorTestSuite.class, //
+		CommandsTestSuite.class, //
+		ContextsTestSuite.class, //
+		ConcurrencyTestSuite.class, //
+		FilteredTableTests.class, //
+		FilteredTreeTests.class, //
+		PatternFilterTest.class, //
+		StatusHandlingTestSuite.class, //
+		MenusTestSuite.class, //
+		QuickAccessTestSuite.class, //
+		FilteredResourcesSelectionDialogTestSuite.class, //
+		DirectoryProposalContentAssistTestSuite.class, //
+		InternalTestSuite.class, //
+		LeaksTestSuite.class, //
+		StyledStringHighlighterTest.class, //
+		ZoomTestSuite.class, //
+		DynamicPluginsTestSuite.class, //
+		IntroTestSuite.class, //
+		MultiEditorTestSuite.class, //
+		OpenSystemInPlaceEditorTest.class, //
+		WorkbenchDatabindingTest.class, //
+		ChooseWorkspaceDialogTests.class, //
+		ViewerItemsLimitTest.class, //
+		OpenCloseTest.class, //
 })
 public class UiTestSuite {
 }
