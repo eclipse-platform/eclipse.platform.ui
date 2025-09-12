@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.stickyscroll;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,8 +33,6 @@ import org.eclipse.ui.texteditor.stickyscroll.StickyLine;
 public class DefaultStickyLinesProvider implements IStickyLinesProvider {
 
 	private final static int IGNORE_LINE_INDENTATION= -1;
-
-	private final static String TAB= "\t"; //$NON-NLS-1$
 
 	private StickyLinesProperties fProperties;
 
@@ -101,13 +98,22 @@ public class DefaultStickyLinesProvider implements IStickyLinesProvider {
 	}
 
 	private int getIndentation(String line) {
-		if (line == null || line.isBlank()) {
-			return IGNORE_LINE_INDENTATION;
+		if (line != null && !line.isBlank()) {
+			int indent = 0;
+			for (int i = 0; i < line.length(); i++) {
+				switch (line.charAt(i)) {
+				case ' ':
+					indent++;
+					continue;
+				case '\t':
+					indent += fProperties.tabWith() - (indent % fProperties.tabWith());
+					continue;
+				default:
+					return indent;
+				}
+			}
 		}
-		String tabAsSpaces= String.join("", Collections.nCopies(fProperties.tabWith(), " ")); //$NON-NLS-1$ //$NON-NLS-2$
-
-		line= line.replace(TAB, tabAsSpaces);
-		return line.length() - line.stripLeading().length();
+		return IGNORE_LINE_INDENTATION;
 	}
 
 	private int mapLineNumberToWidget(ISourceViewer sourceViewer, int line) {
