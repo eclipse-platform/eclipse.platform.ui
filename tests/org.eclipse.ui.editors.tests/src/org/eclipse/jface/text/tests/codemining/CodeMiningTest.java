@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.custom.StyleRange;
@@ -61,6 +62,10 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.editors.tests.TestUtil;
 
 public class CodeMiningTest {
+
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
+
 	private static String PROJECT_NAME = "test_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
 	private static IProject project;
@@ -83,7 +88,6 @@ public class CodeMiningTest {
 		drainEventQueue();
 		CodeMiningTestProvider.provideContentMiningAtOffset = -1;
 		CodeMiningTestProvider.provideHeaderMiningAtLine = -1;
-		TestUtil.cleanUp();
 	}
 
 	private static void closeAllEditors() {
