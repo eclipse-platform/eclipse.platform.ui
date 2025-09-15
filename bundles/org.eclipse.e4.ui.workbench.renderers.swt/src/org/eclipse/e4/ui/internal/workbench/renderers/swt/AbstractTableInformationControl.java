@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.renderers.swt;
 
+import java.util.List;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -33,6 +35,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -40,6 +43,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -48,6 +52,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+
 
 /**
  * @since 3.0
@@ -311,18 +318,25 @@ public abstract class AbstractTableInformationControl {
 	}
 
 	protected Text createFilterText(Composite parent) {
-		fFilterText = new Text(parent, SWT.NONE);
+		Composite c = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		c.setLayout(layout);
+		c.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		GridData data = new GridData();
+		fFilterText = new Text(c, SWT.NONE);
+
+		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		GC gc = new GC(parent);
 		gc.setFont(parent.getFont());
 		FontMetrics fontMetrics = gc.getFontMetrics();
 		gc.dispose();
 
 		data.heightHint = org.eclipse.jface.dialogs.Dialog
-				.convertHeightInCharsToPixels(fontMetrics, 1);
+		        .convertHeightInCharsToPixels(fontMetrics, 1);
 		data.horizontalAlignment = GridData.FILL;
-		data.verticalAlignment = GridData.BEGINNING;
+		data.verticalAlignment = GridData.CENTER;
 		fFilterText.setLayoutData(data);
 
 		fFilterText.addKeyListener(KeyListener.keyPressedAdapter(e -> {
@@ -345,7 +359,34 @@ public abstract class AbstractTableInformationControl {
 			}
 		}));
 
-		// Horizontal separator line
+		ToolBar toolBar = new ToolBar(c, SWT.FLAT | SWT.NO_FOCUS);
+		GridData tbData = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
+		toolBar.setLayoutData(tbData);
+
+
+		ToolItem reverseItem = new ToolItem(toolBar, SWT.PUSH);
+		Image image = new Image(Display.getCurrent(),
+				getClass().getClassLoader().getResourceAsStream("icons/full/elcl16/moveupdown.svg"));//$NON-NLS-1$
+		reverseItem.setImage(image);
+		reverseItem.setToolTipText("Show hidden editors in reverse order"); //$NON-NLS-1$
+		reverseItem.addDisposeListener(e -> {
+			if (image != null && !image.isDisposed()) {
+				image.dispose();
+			}
+		});
+
+		reverseItem.addListener(SWT.Selection, e -> {
+			if (this instanceof BasicPartList) {
+				BasicPartList bpl = (BasicPartList) this;
+				List<MPart> showEditors = bpl.getEditorsReversed();
+				fTableViewer.setComparator(null);
+				fTableViewer.setInput(showEditors);
+				fTableViewer.refresh();
+
+			}
+		});
+
+		// Horizontal separator under the whole bar
 		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
