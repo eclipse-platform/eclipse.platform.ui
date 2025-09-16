@@ -72,9 +72,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	protected static final IContentType TEXT_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 
-	private Map<IPath, AbstractFileBuffer> fFilesBuffers= new HashMap<>();
-	private Map<IFileStore, FileStoreFileBuffer> fFileStoreFileBuffers= new HashMap<>();
-	private List<IFileBufferListener> fFileBufferListeners= new ArrayList<>();
+	private final Map<IPath, AbstractFileBuffer> fFilesBuffers= new HashMap<>();
+	private final Map<IFileStore, FileStoreFileBuffer> fFileStoreFileBuffers= new HashMap<>();
+	private final List<IFileBufferListener> fFileBufferListeners= new ArrayList<>();
 	protected ExtensionsRegistry fRegistry;
 	private ISynchronizationContext fSynchronizationContext;
 
@@ -97,8 +97,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	@Override
 	public void connect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
-		if (locationKind == LocationKind.NORMALIZE)
+		if (locationKind == LocationKind.NORMALIZE) {
 			location= normalizeLocation(location);
+		}
 
 		AbstractFileBuffer fileBuffer= null;
 		synchronized (fFilesBuffers) {
@@ -110,8 +111,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 
 		fileBuffer= createFileBuffer(location, locationKind);
-		if (fileBuffer == null)
+		if (fileBuffer == null) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null));
+		}
 
 		fileBuffer.create(location, monitor);
 
@@ -145,8 +147,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 
 		fileBuffer= createFileBuffer(fileStore);
-		if (fileBuffer == null)
+		if (fileBuffer == null) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null));
+		}
 
 		fileBuffer.create(fileStore, monitor);
 
@@ -187,18 +190,21 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	@Override
 	public void disconnect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
-		if (locationKind == LocationKind.NORMALIZE)
+		if (locationKind == LocationKind.NORMALIZE) {
 			location= normalizeLocation(location);
+		}
 
 		AbstractFileBuffer fileBuffer;
 		synchronized (fFilesBuffers) {
 			fileBuffer= internalGetFileBuffer(location);
-			if (fileBuffer == null)
+			if (fileBuffer == null) {
 				return;
+			}
 
 			fileBuffer.disconnect();
-			if (!fileBuffer.isDisconnected())
+			if (!fileBuffer.isDisconnected()) {
 				return;
+			}
 
 			fFilesBuffers.remove(location);
 		}
@@ -215,12 +221,14 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		AbstractFileBuffer fileBuffer;
 		synchronized (fFileStoreFileBuffers) {
 			fileBuffer= internalGetFileBuffer(fileStore);
-			if (fileBuffer == null)
+			if (fileBuffer == null) {
 				return;
+			}
 
 			fileBuffer.disconnect();
-			if (!fileBuffer.isDisconnected())
+			if (!fileBuffer.isDisconnected()) {
 				return;
+			}
 
 			fFileStoreFileBuffers.remove(fileStore);
 		}
@@ -263,8 +271,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @since 3.3
 	 */
 	protected boolean isTextFileLocation(IFileStore fileStore, boolean strict) {
-		if (fileStore == null)
+		if (fileStore == null) {
 			return false;
+		}
 
 		IContentTypeManager manager= Platform.getContentTypeManager();
 		IFileInfo fileInfo= fileStore.fetchInfo();
@@ -274,8 +283,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				IContentDescription description= manager.getDescriptionFor(is, fileStore.getName(), IContentDescription.ALL);
 				if (description != null) {
 					IContentType type= description.getContentType();
-					if (type != null)
+					if (type != null) {
 						return type.isKindOf(TEXT_CONTENT_TYPE);
+					}
 				}
 			} catch (CoreException | IOException ex) {
 				// ignore: API specification tells return true if content type can't be determined
@@ -287,9 +297,11 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 		IContentType[] contentTypes= manager.findContentTypesFor(fileStore.getName());
 		if (contentTypes != null && contentTypes.length > 0) {
-			for (IContentType contentType : contentTypes)
-				if (contentType.isKindOf(TEXT_CONTENT_TYPE))
+			for (IContentType contentType : contentTypes) {
+				if (contentType.isKindOf(TEXT_CONTENT_TYPE)) {
 					return true;
+				}
+			}
 			return false;
 		}
 		return !strict;
@@ -319,8 +331,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	@Override
 	public IFileBuffer getFileBuffer(IPath location, LocationKind locationKind) {
-		if (locationKind == LocationKind.NORMALIZE)
+		if (locationKind == LocationKind.NORMALIZE) {
 			location= normalizeLocation(location);
+		}
 		return internalGetFileBuffer(location);
 	}
 
@@ -374,11 +387,11 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 		while (iter.hasNext()) {
 			Object buffer= iter.next();
-			if (buffer instanceof ITextFileBuffer) {
-				ITextFileBuffer textFileBuffer= (ITextFileBuffer)buffer;
+			if (buffer instanceof ITextFileBuffer textFileBuffer) {
 				if (textFileBuffer.getDocument() == document) {
-					if (!((AbstractFileBuffer)textFileBuffer).isDisconnected())
+					if (!((AbstractFileBuffer)textFileBuffer).isDisconnected()) {
 						return textFileBuffer;
+					}
 					return null;
 				}
 			}
@@ -388,11 +401,11 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 		while (iter.hasNext()) {
 			Object buffer= iter.next();
-			if (buffer instanceof ITextFileBuffer) {
-				ITextFileBuffer textFileBuffer= (ITextFileBuffer)buffer;
+			if (buffer instanceof ITextFileBuffer textFileBuffer) {
 				if (textFileBuffer.getDocument() == document) {
-					if (!((AbstractFileBuffer)textFileBuffer).isDisconnected())
+					if (!((AbstractFileBuffer)textFileBuffer).isDisconnected()) {
 						return textFileBuffer;
+					}
 				}
 			}
 		}
@@ -435,19 +448,22 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public IDocument createEmptyDocument(final IPath location, final LocationKind locationKind) {
 		IDocument documentFromFactory= createDocumentFromFactory(location, locationKind);
 		final IDocument document;
-		if (documentFromFactory != null)
+		if (documentFromFactory != null) {
 			document= documentFromFactory;
-		else
+		} else {
 			document= new SynchronizableDocument();
+		}
 
-		if (location == null)
+		if (location == null) {
 			return document;
+		}
 
 		// Set the initial line delimiter
 		if (document instanceof IDocumentExtension4) {
 			String initalLineDelimiter= getLineDelimiterPreference(location, locationKind);
-			if (initalLineDelimiter != null)
+			if (initalLineDelimiter != null) {
 				((IDocumentExtension4)document).setInitialLineDelimiter(initalLineDelimiter);
+			}
 		}
 
 		final IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(location, locationKind);
@@ -456,10 +472,11 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				ISafeRunnable runnable= new ISafeRunnable() {
 					@Override
 					public void run() throws Exception {
-						if (participant instanceof IDocumentSetupParticipantExtension)
+						if (participant instanceof IDocumentSetupParticipantExtension) {
 							((IDocumentSetupParticipantExtension)participant).setup(document, location, locationKind);
-						else
+						} else {
 							participant.setup(document);
+						}
 
 						if (document.getDocumentPartitioner() != null) {
 							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
@@ -527,8 +544,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public IAnnotationModel createAnnotationModel(IPath location, LocationKind locationKind) {
 		Assert.isNotNull(location);
 		IAnnotationModelFactory factory= fRegistry.getAnnotationModelFactory(location, locationKind);
-		if (factory != null)
+		if (factory != null) {
 			return factory.createAnnotationModel(location);
+		}
 		return null;
 	}
 
@@ -536,8 +554,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void addFileBufferListener(IFileBufferListener listener) {
 		Assert.isNotNull(listener);
 		synchronized (fFileBufferListeners) {
-			if (!fFileBufferListeners.contains(listener))
+			if (!fFileBufferListeners.contains(listener)) {
 				fFileBufferListeners.add(listener);
+			}
 		}
 	}
 
@@ -567,8 +586,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		location= normalizeLocation(location);
 
 		AbstractFileBuffer fileBuffer= internalGetFileBuffer(location);
-		if (fileBuffer != null)
+		if (fileBuffer != null) {
 			fileBuffer.requestSynchronizationContext();
+		}
 	}
 
 	/**
@@ -583,16 +603,18 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		location= normalizeLocation(location);
 
 		AbstractFileBuffer fileBuffer= internalGetFileBuffer(location);
-		if (fileBuffer != null)
+		if (fileBuffer != null) {
 			fileBuffer.releaseSynchronizationContext();
+		}
 	}
 
 	@Override
 	public void execute(Runnable runnable) {
-		if (fSynchronizationContext != null)
+		if (fSynchronizationContext != null) {
 			fSynchronizationContext.run(runnable);
-		else
+		} else {
 			runnable.run();
+		}
 	}
 
 

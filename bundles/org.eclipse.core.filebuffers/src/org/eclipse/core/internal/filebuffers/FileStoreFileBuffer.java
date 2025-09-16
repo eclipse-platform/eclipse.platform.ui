@@ -60,12 +60,14 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	public void create(IFileStore fileStore, IProgressMonitor monitor) throws CoreException {
 		IFileInfo info= fileStore.fetchInfo();
 		fFileStore= fileStore;
-		if (fLocation == null)
+		if (fLocation == null) {
 			fLocation= URIUtil.toPath(fileStore.toURI());
+		}
 
 		initializeFileBufferContent(monitor);
-		if (info.exists())
+		if (info.exists()) {
 			fSynchronizationStamp= info.getLastModified();
+		}
 
 		addFileBufferContentListeners();
 	}
@@ -79,8 +81,9 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	@Override
 	public void connect() {
 		++ fReferenceCount;
-		if (fReferenceCount == 1)
+		if (fReferenceCount == 1) {
 			connected();
+		}
 	}
 
 	/**
@@ -95,8 +98,9 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	@Override
 	public void disconnect() throws CoreException {
 		--fReferenceCount;
-		if (fReferenceCount <= 0)
+		if (fReferenceCount <= 0) {
 			disconnected();
+		}
 	}
 
 	/**

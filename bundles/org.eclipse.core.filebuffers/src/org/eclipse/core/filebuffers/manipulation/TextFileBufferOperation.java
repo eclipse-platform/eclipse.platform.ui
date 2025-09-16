@@ -68,7 +68,7 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 	protected abstract DocumentRewriteSessionType getDocumentRewriteSessionType();
 
 
-	private String fOperationName;
+	private final String fOperationName;
 	private DocumentRewriteSession fDocumentRewriteSession;
 
 	/**
@@ -88,8 +88,7 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 	@Override
 	public void run(IFileBuffer fileBuffer, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException {
 
-		if (fileBuffer instanceof ITextFileBuffer) {
-			ITextFileBuffer textFileBuffer= (ITextFileBuffer) fileBuffer;
+		if (fileBuffer instanceof ITextFileBuffer textFileBuffer) {
 			IPath path= textFileBuffer.getLocation();
 			String taskName= path == null ? getOperationName() : path.lastSegment();
 			SubMonitor subMonitor= SubMonitor.convert(progressMonitor, taskName, 100);
@@ -109,23 +108,23 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 		Map<String, IDocumentPartitioner> stateData= null;
 
 		IDocument document= fileBuffer.getDocument();
-		if (document instanceof IDocumentExtension4) {
-			IDocumentExtension4 extension= (IDocumentExtension4) document;
+		if (document instanceof IDocumentExtension4 extension) {
 			fDocumentRewriteSession= extension.startRewriteSession(getDocumentRewriteSessionType());
-		} else
+		} else {
 			stateData= TextUtilities.removeDocumentPartitioners(document);
+		}
 
 		return stateData;
 	}
 
 	private void stopRewriteSession(ITextFileBuffer fileBuffer, Map<String, IDocumentPartitioner> stateData) {
 		IDocument document= fileBuffer.getDocument();
-		if (document instanceof IDocumentExtension4) {
-			IDocumentExtension4 extension= (IDocumentExtension4) document;
+		if (document instanceof IDocumentExtension4 extension) {
 			extension.stopRewriteSession(fDocumentRewriteSession);
 			fDocumentRewriteSession= null;
-		} else if (stateData != null)
+		} else if (stateData != null) {
 			TextUtilities.addDocumentPartitioners(document, stateData);
+		}
 	}
 
 	private void applyTextEdit(ITextFileBuffer fileBuffer, MultiTextEditWithProgress textEdit, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException {

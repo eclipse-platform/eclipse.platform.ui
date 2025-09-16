@@ -93,8 +93,9 @@ public final class FileBuffers {
 	 */
 	public static ITextFileBufferManager createTextFileBufferManager()  {
 		Bundle resourcesBundle= Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-		if (resourcesBundle != null)
+		if (resourcesBundle != null) {
 			return new ResourceTextFileBufferManager();
+		}
 		return new TextFileBufferManager();
 	}
 
@@ -120,16 +121,18 @@ public final class FileBuffers {
 	 */
 	public static IFile getWorkspaceFileAtLocation(IPath location, boolean isNormalized) {
 		IPath normalized;
-		if (isNormalized)
+		if (isNormalized) {
 			normalized= location;
-		else
+		} else {
 			normalized= normalizeLocation(location);
+		}
 
 		if (normalized.segmentCount() >= 2) {
 			// @see IContainer#getFile for the required number of segments
 			IFile file= WORKSPACE_ROOT.getFile(normalized);
-			if  (file != null && file.exists())
+			if  (file != null && file.exists()) {
 				return file;
+			}
 		}
 		return null;
 	}
@@ -159,14 +162,16 @@ public final class FileBuffers {
 	 */
 	public static IPath normalizeLocation(IPath pathOrLocation) {
 		// existing workspace resources - this is the 93% case
-		if (WORKSPACE_ROOT.exists(pathOrLocation))
+		if (WORKSPACE_ROOT.exists(pathOrLocation)) {
 			return pathOrLocation.makeAbsolute();
+		}
 
 		IFile file= WORKSPACE_ROOT.getFileForLocation(pathOrLocation);
 		// existing workspace resources referenced by their file system path
 		// files that do not exist (including non-accessible files) do not pass
-		if (file != null && file.exists())
+		if (file != null && file.exists()) {
 			return file.getFullPath();
+		}
 
 		// non-existing resources and external files
 		return pathOrLocation.makeAbsolute();
@@ -184,15 +189,17 @@ public final class FileBuffers {
 	 * @since 3.2
 	 */
 	public static IFileStore getFileStoreAtLocation(IPath location) {
-		if (location == null)
+		if (location == null) {
 			return null;
+		}
 
 		IFile file= getWorkspaceFileAtLocation(location);
 		try {
 			if (file != null) {
 				URI uri= file.getLocationURI();
-				if (uri == null)
+				if (uri == null) {
 					return null;
+				}
 				return EFS.getStore(uri);
 			}
 		} catch (CoreException e) {

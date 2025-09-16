@@ -35,10 +35,11 @@ public class FileBuffersPlugin {
 	public static synchronized ITextFileBufferManager getFileBufferManager() {
 		if (fTextFileBufferManager == null) {
 			Bundle resourcesBundle= Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
-			if (resourcesBundle != null)
+			if (resourcesBundle != null) {
 				fTextFileBufferManager= new ResourceTextFileBufferManager();
-			else
+			} else {
 				fTextFileBufferManager= new TextFileBufferManager();
+			}
 		}
 		return fTextFileBufferManager;
 	}

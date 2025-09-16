@@ -57,16 +57,20 @@ public class RemoveTrailingWhitespaceOperation extends TextFileBufferOperation {
 
 			for (int i= 0; i < lineCount; i++) {
 				IRegion region= document.getLineInformation(i);
-				if (region.getLength() == 0)
+				if (region.getLength() == 0) {
 					continue;
+				}
 
 				int lineStart= region.getOffset();
 				int lineExclusiveEnd= lineStart + region.getLength();
 				int j= lineExclusiveEnd -1;
-				while (j >= lineStart && Character.isWhitespace(document.getChar(j))) --j;
+				while (j >= lineStart && Character.isWhitespace(document.getChar(j))) {
+					--j;
+				}
 				++j;
-				if (j < lineExclusiveEnd)
+				if (j < lineExclusiveEnd) {
 					multiEdit.addChild(new DeleteEdit(j, lineExclusiveEnd - j));
+				}
 				subMonitor.split(1);
 			}
 

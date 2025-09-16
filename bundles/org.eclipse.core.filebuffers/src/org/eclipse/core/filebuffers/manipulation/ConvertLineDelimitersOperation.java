@@ -39,7 +39,7 @@ import org.eclipse.jface.text.IDocument;
  */
 public class ConvertLineDelimitersOperation extends TextFileBufferOperation {
 
-	private String fLineDelimiter;
+	private final String fLineDelimiter;
 
 	/**
 	 * Creates a new line delimiter conversion operation for the given target delimiter.

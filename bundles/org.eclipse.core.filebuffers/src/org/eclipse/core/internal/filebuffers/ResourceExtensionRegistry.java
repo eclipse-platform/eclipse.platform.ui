@@ -49,8 +49,9 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 	protected IContentType[] findContentTypes(IPath location, LocationKind locationKind) {
 		if (locationKind != LocationKind.LOCATION) {
 			IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
-			if (file != null)
+			if (file != null) {
 				return findContentTypes(file);
+			}
 		}
 		return fContentTypeManager.findContentTypesFor(location.lastSegment());
 	}
@@ -68,10 +69,12 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 		if (factory == null) {
 			factory= getDocumentFactory(file.getFullPath().lastSegment());
 		}
-		if (factory == null)
+		if (factory == null) {
 			factory= getDocumentFactory(file.getFileExtension());
-		if (factory == null)
+		}
+		if (factory == null) {
 			factory= getDocumentFactory(WILDCARD);
+		}
 		return factory;
 	}
 
@@ -83,12 +86,15 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 	 */
 	IAnnotationModelFactory getAnnotationModelFactory(IFile file) {
 		IAnnotationModelFactory factory= getAnnotationModelFactory(findContentTypes(file));
-		if (factory == null)
+		if (factory == null) {
 			factory= getAnnotationModelFactory(file.getFullPath().lastSegment());
-		if (factory == null)
+		}
+		if (factory == null) {
 			factory= getAnnotationModelFactory(file.getFileExtension());
-		if (factory == null)
+		}
+		if (factory == null) {
 			factory= getAnnotationModelFactory(WILDCARD);
+		}
 		return factory;
 	}
 
@@ -103,8 +109,9 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 			IContentDescription contentDescription= file.getContentDescription();
 			if (contentDescription != null) {
 				IContentType contentType= contentDescription.getContentType();
-				if (contentType != null)
+				if (contentType != null) {
 					return new IContentType[] {contentType};
+				}
 			}
 		} catch (CoreException x) {
 			// go for the default
@@ -122,20 +129,24 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 		Set<IDocumentSetupParticipant> participants= new HashSet<>();
 
 		List<IDocumentSetupParticipant> p= getDocumentSetupParticipants(findContentTypes(file));
-		if (p != null)
+		if (p != null) {
 			participants.addAll(p);
+		}
 
 		p= getDocumentSetupParticipants(file.getFullPath().lastSegment());
-		if (p != null)
+		if (p != null) {
 			participants.addAll(p);
+		}
 
 		p= getDocumentSetupParticipants(file.getFileExtension());
-		if (p != null)
+		if (p != null) {
 			participants.addAll(p);
+		}
 
 		p= getDocumentSetupParticipants(WILDCARD);
-		if (p != null)
+		if (p != null) {
 			participants.addAll(p);
+		}
 
 		IDocumentSetupParticipant[] result= new IDocumentSetupParticipant[participants.size()];
 		participants.toArray(result);

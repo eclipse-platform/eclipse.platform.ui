@@ -77,8 +77,9 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 					IContentDescription description= file.getContentDescription();
 					if (description != null) {
 						IContentType type= description.getContentType();
-						if (type != null)
+						if (type != null) {
 							return type.isKindOf(TEXT_CONTENT_TYPE);
+						}
 					}
 				} catch (CoreException x) {
 					// ignore: API specification tells return true if content type can't be determined
@@ -87,9 +88,11 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 				IContentTypeManager manager= Platform.getContentTypeManager();
 				IContentType[] contentTypes= manager.findContentTypesFor(file.getName());
 				if (contentTypes != null && contentTypes.length > 0) {
-					for (IContentType contentType : contentTypes)
-						if (contentType.isKindOf(TEXT_CONTENT_TYPE))
+					for (IContentType contentType : contentTypes) {
+						if (contentType.isKindOf(TEXT_CONTENT_TYPE)) {
 							return true;
+						}
+					}
 					return false;
 				}
 			}
@@ -111,32 +114,36 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 
 	@Override
 	protected AbstractFileBuffer createTextFileBuffer(IPath location, LocationKind locationKind) {
-		if (locationKind == LocationKind.IFILE || locationKind == LocationKind.NORMALIZE  && FileBuffers.getWorkspaceFileAtLocation(location, true) != null)
+		if (locationKind == LocationKind.IFILE || locationKind == LocationKind.NORMALIZE  && FileBuffers.getWorkspaceFileAtLocation(location, true) != null) {
 			return new ResourceTextFileBuffer(this);
+		}
 		return new FileStoreTextFileBuffer(this);
 	}
 
 	IAnnotationModel createAnnotationModel(IFile file) {
 		Assert.isNotNull(file);
 		IAnnotationModelFactory factory= ((ResourceExtensionRegistry)fRegistry).getAnnotationModelFactory(file);
-		if (factory != null)
+		if (factory != null) {
 			return factory.createAnnotationModel(file.getFullPath());
+		}
 		return null;
 	}
 
 	public IDocument createEmptyDocument(final IFile file) {
 		IDocument documentFromFactory= createEmptyDocumentFromFactory(file);
 		final IDocument document;
-		if (documentFromFactory != null)
+		if (documentFromFactory != null) {
 			document= documentFromFactory;
-		else
+		} else {
 			document= new SynchronizableDocument();
+		}
 
 		// Set the initial line delimiter
 		if (document instanceof IDocumentExtension4) {
 			String initalLineDelimiter= getLineDelimiterPreference(file);
-			if (initalLineDelimiter != null)
+			if (initalLineDelimiter != null) {
 				((IDocumentExtension4)document).setInitialLineDelimiter(initalLineDelimiter);
+			}
 		}
 
 		final IDocumentSetupParticipant[] participants= ((ResourceExtensionRegistry)fRegistry).getDocumentSetupParticipants(file);
@@ -145,10 +152,11 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 				ISafeRunnable runnable= new ISafeRunnable() {
 					@Override
 					public void run() throws Exception {
-						if (participant instanceof IDocumentSetupParticipantExtension)
+						if (participant instanceof IDocumentSetupParticipantExtension) {
 							((IDocumentSetupParticipantExtension)participant).setup(document, file.getFullPath(), LocationKind.IFILE);
-						else
+						} else {
 							participant.setup(document);
+						}
 
 						if (document.getDocumentPartitioner() != null) {
 							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
@@ -204,8 +212,9 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 			// project preference
 			scopeContext= new IScopeContext[] { new ProjectScope(file.getProject()) };
 			String lineDelimiter= Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
-			if (lineDelimiter != null)
+			if (lineDelimiter != null) {
 				return lineDelimiter;
+			}
 		}
 		// workspace preference
 		scopeContext= new IScopeContext[] { InstanceScope.INSTANCE };
@@ -215,8 +224,9 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 	@Override
 	protected String getLineDelimiterPreference(IPath location, LocationKind locationKind) {
 		IFile file= null;
-		if (locationKind != LocationKind.LOCATION)
+		if (locationKind != LocationKind.LOCATION) {
 			file= FileBuffers.getWorkspaceFileAtLocation(location);
+		}
 		return getLineDelimiterPreference(file);
 	}
 
@@ -239,8 +249,9 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 		ArrayList<IFile> list= new ArrayList<>();
 		for (IFileBuffer fileBuffer : fileBuffers) {
 			IFile file= getWorkspaceFile(fileBuffer);
-			if (file != null)
+			if (file != null) {
 				list.add(file);
+			}
 		}
 		IFile[] files= new IFile[list.size()];
 		list.toArray(files);
@@ -259,8 +270,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 
 	private void validationStateAboutToBeChanged(IFileBuffer[] fileBuffers) {
 		for (IFileBuffer fileBuffer : fileBuffers) {
-			if (fileBuffer instanceof IStateValidationSupport) {
-				IStateValidationSupport support= (IStateValidationSupport) fileBuffer;
+			if (fileBuffer instanceof IStateValidationSupport support) {
 				support.validationStateAboutToBeChanged();
 			}
 		}
@@ -268,8 +278,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 
 	private void validationStateChanged(IFileBuffer[] fileBuffers, boolean validationState, IStatus status) {
 		for (IFileBuffer fileBuffer : fileBuffers) {
-			if (fileBuffer instanceof IStateValidationSupport) {
-				IStateValidationSupport support= (IStateValidationSupport) fileBuffer;
+			if (fileBuffer instanceof IStateValidationSupport support) {
 				support.validationStateChanged(validationState, status);
 			}
 		}
@@ -277,8 +286,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 
 	private void validationStateChangedFailed(IFileBuffer[] fileBuffers) {
 		for (IFileBuffer fileBuffer : fileBuffers) {
-			if (fileBuffer instanceof IStateValidationSupport) {
-				IStateValidationSupport support= (IStateValidationSupport) fileBuffer;
+			if (fileBuffer instanceof IStateValidationSupport support) {
 				support.validationStateChangeFailed();
 			}
 		}
@@ -292,8 +300,9 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 		ArrayList<IResource> list= new ArrayList<>();
 		for (IFileBuffer fileBuffer : fileBuffers) {
 			IResource resource= getWorkspaceFile(fileBuffer);
-			if (resource != null)
+			if (resource != null) {
 				list.add(resource);
+			}
 		}
 		IResource[] resources= new IResource[list.size()];
 		list.toArray(resources);

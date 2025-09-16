@@ -131,8 +131,9 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 		synchronized (fAnnotationModelCreationLock) {
 			if (fAnnotationModel == null && !isDisconnected()) {
 				fAnnotationModel= fManager.createAnnotationModel(getLocationOrName(), LocationKind.LOCATION);
-				if (fAnnotationModel != null)
+				if (fAnnotationModel != null) {
 					fAnnotationModel.connect(fDocument);
+				}
 			}
 		}
 		return fAnnotationModel;
@@ -140,17 +141,18 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 
 	@Override
 	public String getEncoding() {
-		if (!fIsCacheUpdated)
+		if (!fIsCacheUpdated) {
 			cacheEncodingState();
+		}
 		return fEncoding;
 	}
 
 	@Override
 	public void setEncoding(String encoding) {
 		fExplicitEncoding= encoding;
-		if (encoding == null || encoding.equals(fEncoding))
+		if (encoding == null || encoding.equals(fEncoding)) {
 			fIsCacheUpdated= false;
-		else {
+		} else {
 			fEncoding= encoding;
 			fHasBOM= false;
 		}
@@ -159,16 +161,18 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	@Override
 	public IStatus getStatus() {
 		if (!isDisconnected()) {
-			if (fStatus != null)
+			if (fStatus != null) {
 				return fStatus;
+			}
 			return (fDocument == null ? STATUS_ERROR : Status.OK_STATUS);
 		}
 		return STATUS_ERROR;
 	}
 
 	private InputStream getFileContents(IFileStore fileStore) throws CoreException {
-		if (!fFileStore.fetchInfo().exists())
+		if (!fFileStore.fetchInfo().exists()) {
 			return null;
+		}
 
 		return fileStore.openInputStream(EFS.NONE, null);
 	}
@@ -184,8 +188,9 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 					break;
 				}
 				out.write(buffer, 0, bytesRead);
-				if (monitor != null)
+				if (monitor != null) {
 					monitor.worked(1);
+				}
 			}
 		} catch (IOException ex) {
 			String message= (ex.getMessage() != null ? ex.getMessage() : ""); //$NON-NLS-1$
@@ -202,8 +207,9 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 
 	@Override
 	public void revert(IProgressMonitor monitor) throws CoreException {
-		if (isDisconnected())
+		if (isDisconnected()) {
 			return;
+		}
 
 		IDocument original= null;
 		fStatus= null;
@@ -216,14 +222,16 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			fStatus= x.getStatus();
 		}
 
-		if (original == null)
+		if (original == null) {
 			return;
+		}
 
 		String originalContents= original.get();
 		boolean replaceContents= !originalContents.equals(fDocument.get());
 
-		if (!replaceContents && !fCanBeSaved)
+		if (!replaceContents && !fCanBeSaved) {
 			return;
+		}
 
 		fManager.fireStateChanging(this);
 		try {
@@ -239,15 +247,16 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 				addFileBufferContentListeners();
 			}
 
-			if (replaceContents)
+			if (replaceContents) {
 				fManager.fireBufferContentReplaced(this);
+			}
 
 			IFileInfo info= fFileStore.fetchInfo();
-			if (info.exists())
+			if (info.exists()) {
 				fSynchronizationStamp= fFileStore.fetchInfo().getLastModified();
+			}
 
-			if (fAnnotationModel instanceof IPersistableAnnotationModel) {
-				IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
+			if (fAnnotationModel instanceof IPersistableAnnotationModel persistableModel) {
 				try {
 					persistableModel.revert(fDocument);
 				} catch (CoreException x) {
@@ -255,8 +264,9 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 				}
 			}
 
-			if (fireDirtyStateChanged)
+			if (fireDirtyStateChanged) {
 				fManager.fireDirtyStateChanged(this, fCanBeSaved);
+			}
 
 		} catch (RuntimeException x) {
 			fManager.fireStateChangeFailed(this);
@@ -274,15 +284,17 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			if (isDirty()) {
 				try(Reader reader= new DocumentReader(getDocument())) {
 					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(reader, fFileStore.getName(), NO_PROPERTIES);
-					if (desc != null && desc.getContentType() != null)
+					if (desc != null && desc.getContentType() != null) {
 						return desc.getContentType();
+					}
 				}
 			}
 
 			try(InputStream stream= fFileStore.openInputStream(EFS.NONE, null)) {
 				IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFileStore.getName(), NO_PROPERTIES);
-				if (desc != null && desc.getContentType() != null)
+				if (desc != null && desc.getContentType() != null) {
 					return desc.getContentType();
+				}
 				return null;
 			}
 		} catch (IOException x) {
@@ -292,14 +304,16 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 
 	@Override
 	protected void addFileBufferContentListeners() {
-		if (fDocument != null)
+		if (fDocument != null) {
 			fDocument.addDocumentListener(fDocumentListener);
+		}
 	}
 
 	@Override
 	protected void removeFileBufferContentListeners() {
-		if (fDocument != null)
+		if (fDocument != null) {
 			fDocument.removeDocumentListener(fDocumentListener);
+		}
 	}
 
 	@Override
@@ -317,14 +331,16 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	@Override
 	protected void connected() {
 		super.connected();
-		if (fAnnotationModel != null)
+		if (fAnnotationModel != null) {
 			fAnnotationModel.connect(fDocument);
+		}
 	}
 
 	@Override
 	protected void disconnected() {
-		if (fAnnotationModel != null)
+		if (fAnnotationModel != null) {
 			fAnnotationModel.disconnect(fDocument);
+		}
 		super.disconnected();
 	}
 
@@ -334,23 +350,26 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 		fIsCacheUpdated= true;
 
 		try(InputStream stream= getFileContents(fFileStore)) {
-			if (stream == null)
+			if (stream == null) {
 				return;
+			}
 
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFileStore.getName(), options);
 			if (description != null) {
 				fHasBOM= description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
-				if (fEncoding == null)
+				if (fEncoding == null) {
 					fEncoding= description.getCharset();
+				}
 			}
 		} catch (CoreException | IOException e) {
 			// do nothing
 		}
 
 		// Use global default
-		if (fEncoding == null)
+		if (fEncoding == null) {
 			fEncoding= fManager.getDefaultEncoding();
+		}
 
 	}
 
@@ -386,9 +405,9 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 		try {
 			ByteBuffer byteBuffer= encoder.encode(CharBuffer.wrap(fDocument.get()));
 			bytesLength= byteBuffer.limit();
-			if (byteBuffer.hasArray())
+			if (byteBuffer.hasArray()) {
 				bytes= byteBuffer.array();
-			else {
+			} else {
 				bytes= new byte[bytesLength];
 				byteBuffer.get(bytes);
 			}
@@ -402,8 +421,9 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 		IFileInfo fileInfo= fFileStore.fetchInfo();
 		if (fileInfo != null && fileInfo.exists()) {
 
-			if (!overwrite)
+			if (!overwrite) {
 				checkSynchronizationState();
+			}
 
 			InputStream stream= new ByteArrayInputStream(bytes, 0, bytesLength);
 
@@ -412,8 +432,9 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fHasBOM && StandardCharsets.UTF_8.name().equals(encoding))
+			if (fHasBOM && StandardCharsets.UTF_8.name().equals(encoding)) {
 				stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_8), stream);
+			}
 
 
 			// here the file synchronizer should actually be removed and afterwards added again. However,
@@ -422,8 +443,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			// set synchronization stamp to know whether the file synchronizer must become active
 			fSynchronizationStamp= fFileStore.fetchInfo().getLastModified();
 
-			if (fAnnotationModel instanceof IPersistableAnnotationModel) {
-				IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
+			if (fAnnotationModel instanceof IPersistableAnnotationModel persistableModel) {
 				persistableModel.commit(fDocument);
 			}
 
@@ -436,8 +456,9 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 				 * This is a workaround for a corresponding bug in Java readers and writer,
 				 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 				 */
-				if (fHasBOM && StandardCharsets.UTF_8.name().equals(encoding))
+				if (fHasBOM && StandardCharsets.UTF_8.name().equals(encoding)) {
 					out.write(IContentDescription.BOM_UTF_8);
+				}
 
 				out.write(bytes, 0, bytesLength);
 				out.flush();
@@ -455,12 +476,14 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 
 	private String computeEncoding() {
 		// Make sure cache is up to date
-		if (!fIsCacheUpdated)
+		if (!fIsCacheUpdated) {
 			cacheEncodingState();
+		}
 
 		// User-defined encoding has first priority
-		if (fExplicitEncoding != null)
+		if (fExplicitEncoding != null) {
 			return fExplicitEncoding;
+		}
 
 		// Probe content
 		try(Reader reader= new DocumentReader(fDocument)) {
@@ -468,16 +491,18 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFileStore.getName(), options);
 			if (description != null) {
 				String encoding= description.getCharset();
-				if (encoding != null)
+				if (encoding != null) {
 					return encoding;
+				}
 			}
 		} catch (IOException ex) {
 			// Try next strategy
 		}
 
 		// Use file's encoding if the file has a BOM
-		if (fHasBOM)
+		if (fHasBOM) {
 			return fEncoding;
+		}
 
 		// Use global default
 		return fManager.getDefaultEncoding();
