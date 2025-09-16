@@ -64,11 +64,15 @@ public class PatternFilter extends ViewerFilter {
 
 	private boolean useEarlyReturnIfMatcherIsNull = true;
 
+	private final Map<Object, Boolean> visitedElements;
+	private int depth = 0;
+
 	private static Object[] EMPTY = new Object[0];
 
 	private static final Pattern NON_WORD = Pattern.compile("\\W+", Pattern.UNICODE_CHARACTER_CLASS); //$NON-NLS-1$
 
 	public PatternFilter() {
+		this(false);
 	}
 
 	/**
@@ -80,7 +84,21 @@ public class PatternFilter extends ViewerFilter {
 	 * @since 1.1.0
 	 */
 	public PatternFilter(boolean includeLeadingWildcard) {
+		this(includeLeadingWildcard, false);
+	}
+
+	/**
+	 * Constructor to specify the {@code includeLeadingWildcard} flag and to enable
+	 * the cycle-detection.
+	 *
+	 * @param includeLeadingWildcard flag
+	 * @param enableCycleDetection   if {@code true}
+	 *
+	 * @since 1.7
+	 */
+	public PatternFilter(boolean includeLeadingWildcard, boolean enableCycleDetection) {
 		this.includeLeadingWildcard = includeLeadingWildcard;
+		visitedElements = enableCycleDetection ? new HashMap<>() : null;
 	}
 
 	@Override
@@ -256,7 +274,22 @@ public class PatternFilter extends ViewerFilter {
 	 * @return true if the element matches the filter pattern
 	 */
 	public boolean isElementVisible(Viewer viewer, Object element) {
-		return isParentMatch(viewer, element) || isLeafMatch(viewer, element);
+		if (visitedElements != null) {
+			depth++;
+			Boolean isMatch = visitedElements.get(element);
+			if (isMatch == null) {
+				visitedElements.put(element, false); // Set surrogate to prevent stack-overflows
+				isMatch = isParentMatch(viewer, element) || isLeafMatch(viewer, element);
+				visitedElements.put(element, isMatch);
+			}
+			depth--;
+			if (depth == 0) {
+				visitedElements.clear();
+			}
+			return isMatch;
+		} else {
+			return isParentMatch(viewer, element) || isLeafMatch(viewer, element);
+		}
 	}
 
 	/**
