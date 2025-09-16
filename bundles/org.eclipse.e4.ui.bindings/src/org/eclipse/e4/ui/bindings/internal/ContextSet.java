@@ -27,7 +27,7 @@ public class ContextSet {
 	public static ContextSet EMPTY = new ContextSet(Collections.<Context> emptyList());
 
 	public static class CComp implements Comparator<Context> {
-		private ContextManager manager;
+		private final ContextManager manager;
 
 		public CComp(ContextManager manager) {
 			this.manager = manager;
@@ -72,7 +72,7 @@ public class ContextSet {
 		return CONTEXT_COMP;
 	}
 
-	private List<Context> contexts;
+	private final List<Context> contexts;
 
 	public ContextSet(Collection<Context> c) {
 		contexts = new ArrayList<>(c);

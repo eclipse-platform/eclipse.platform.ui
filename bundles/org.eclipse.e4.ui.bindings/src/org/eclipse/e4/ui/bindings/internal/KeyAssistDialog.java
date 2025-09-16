@@ -70,7 +70,7 @@ public class KeyAssistDialog extends PopupDialog {
 	/**
 	 * The ordered list of command identifiers corresponding to the table.
 	 */
-	private List<Binding> bindings = new ArrayList<>();
+	private final List<Binding> bindings = new ArrayList<>();
 
 	/**
 	 * The table containing of the possible completions. This value is <code>null</code> until the
@@ -87,7 +87,7 @@ public class KeyAssistDialog extends PopupDialog {
 	/**
 	 * The key binding listener for the associated workbench.
 	 */
-	private KeyBindingDispatcher workbenchKeyboard;
+	private final KeyBindingDispatcher workbenchKeyboard;
 
 	/**
 	 * A sorted map of conflicts or partial matches to be used when the dialog pops up.
@@ -96,7 +96,7 @@ public class KeyAssistDialog extends PopupDialog {
 	 */
 	private Collection<Binding> matches;
 
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	/**
 	 * Constructs a new instance of <code>KeyAssistDialog</code>. When the dialog is first
