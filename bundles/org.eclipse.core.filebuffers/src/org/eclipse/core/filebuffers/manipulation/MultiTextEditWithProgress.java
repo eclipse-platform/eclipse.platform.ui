@@ -53,8 +53,9 @@ public class MultiTextEditWithProgress extends MultiTextEdit {
 		try {
 
 			int count= getChildrenSize();
-			if ((style & TextEdit.UPDATE_REGIONS) != 0)
+			if ((style & TextEdit.UPDATE_REGIONS) != 0) {
 				count= 2*count;
+			}
 
 			fProgressMonitor.beginTask(fTaskName, count);
 			try {
@@ -70,15 +71,17 @@ public class MultiTextEditWithProgress extends MultiTextEdit {
 
 	@Override
 	protected void childDocumentUpdated() {
-		if (fProgressMonitor.isCanceled())
+		if (fProgressMonitor.isCanceled()) {
 			throw new OperationCanceledException();
+		}
 		fProgressMonitor.worked(1);
 	}
 
 	@Override
 	protected void childRegionUpdated() {
-		if (fProgressMonitor.isCanceled())
+		if (fProgressMonitor.isCanceled()) {
 			throw new OperationCanceledException();
+		}
 		fProgressMonitor.worked(1);
 	}
 }

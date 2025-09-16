@@ -43,7 +43,7 @@ class DocumentReader extends Reader {
 	private static class DocumentCharSequence implements CharSequence {
 
 		/** Document */
-		private IDocument fDocument;
+		private final IDocument fDocument;
 
 		/**
 		 * Initialize with the sequence of characters in the given
@@ -104,7 +104,7 @@ class DocumentReader extends Reader {
 	private volatile CharSequence fCharSequence;
 
 	/** Document length. */
-	private int fLength;
+	private final int fLength;
 
 	/** The current offset. */
 	private int fOffset= 0;
@@ -142,12 +142,14 @@ class DocumentReader extends Reader {
 	 */
 	private void handleDocumentAboutToBeChanged() {
 		IDocument document= fDocument;
-		if (fCharSequence == null || document == null)
+		if (fCharSequence == null || document == null) {
 			return;
+		}
 		String content= document.get();
 		synchronized (this) {
-			if (fCharSequence == null)
+			if (fCharSequence == null) {
 				return;
+			}
 			fCharSequence= content;
 		}
 		releaseDocument();
@@ -157,8 +159,9 @@ class DocumentReader extends Reader {
 	 * Removes the document listener.
 	 */
 	private synchronized void releaseDocument() {
-		if (fDocument != null)
+		if (fDocument != null) {
 			fDocument.removeDocumentListener(fDocumentListener);
+		}
 		fDocument= null;
 		fDocumentListener= null;
 	}
@@ -167,10 +170,12 @@ class DocumentReader extends Reader {
 	public int read(char[] cbuf, int off, int len) throws IOException {
 		int i= 0;
 		try {
-			for (; i < len && fOffset < fLength; i++)
+			for (; i < len && fOffset < fLength; i++) {
 				cbuf[off + i]=  fCharSequence.charAt(fOffset++);
-			if (i > 0)
+			}
+			if (i > 0) {
 				return i;
+			}
 
 			return -1;
 		} catch (NullPointerException x) {

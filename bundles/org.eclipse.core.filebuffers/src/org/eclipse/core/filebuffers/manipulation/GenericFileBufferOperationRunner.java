@@ -139,8 +139,9 @@ public class GenericFileBufferOperationRunner {
 			}
 
 			if (fThrowable != null) {
-				if (fThrowable instanceof CoreException)
+				if (fThrowable instanceof CoreException) {
 					throw (CoreException) fThrowable;
+				}
 				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CONTENT_CHANGE_FAILED, fThrowable.getLocalizedMessage(), fThrowable));
 			}
 
@@ -187,8 +188,9 @@ public class GenericFileBufferOperationRunner {
 	private IFileBuffer[] findSynchronizedFileBuffers(IFileBuffer[] fileBuffers) {
 		ArrayList<IFileBuffer> list= new ArrayList<>();
 		for (IFileBuffer fileBuffer : fileBuffers) {
-			if (fileBuffer.isSynchronizationContextRequested())
+			if (fileBuffer.isSynchronizationContextRequested()) {
 				list.add(fileBuffer);
+			}
 		}
 		return list.toArray(new IFileBuffer[list.size()]);
 	}
@@ -225,8 +227,9 @@ public class GenericFileBufferOperationRunner {
 		ArrayList<IFileBuffer> list= new ArrayList<>();
 		for (IFileBuffer fileBuffer : fileBuffers) {
 			IFileBuffer buffer= fileBuffer;
-			if (!buffer.isDirty())
+			if (!buffer.isDirty()) {
 				list.add(buffer);
+			}
 		}
 		return list.toArray(new IFileBuffer[list.size()]);
 	}
@@ -244,8 +247,9 @@ public class GenericFileBufferOperationRunner {
 		ArrayList<ISchedulingRule> list= new ArrayList<>();
 		for (IFileBuffer fileBuffer : fileBuffers) {
 			ISchedulingRule rule= fileBuffer.computeCommitRule();
-			if (rule != null)
+			if (rule != null) {
 				list.add(rule);
+			}
 		}
 		ISchedulingRule[] rules= new ISchedulingRule[list.size()];
 		list.toArray(rules);

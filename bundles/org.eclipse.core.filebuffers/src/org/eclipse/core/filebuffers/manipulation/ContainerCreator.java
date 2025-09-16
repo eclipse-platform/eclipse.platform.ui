@@ -41,9 +41,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
  */
 public class ContainerCreator {
 
-	private IPath fContainerFullPath;
+	private final IPath fContainerFullPath;
 	private IContainer fContainer;
-	private IWorkspace fWorkspace;
+	private final IWorkspace fWorkspace;
 
 	/**
 	 * Constructs a container creator for the given path
@@ -69,8 +69,9 @@ public class ContainerCreator {
 	public IContainer createContainer(IProgressMonitor progressMonitor) throws CoreException {
 		IWorkspaceRunnable runnable= monitor -> {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, FileBuffersMessages.ContainerCreator_task_creatingContainer, fContainerFullPath.segmentCount());
-			if (fContainer != null)
+			if (fContainer != null) {
 				return;
+			}
 
 			// Does the container exist already?
 			IWorkspaceRoot root= fWorkspace.getRoot();
@@ -113,8 +114,9 @@ public class ContainerCreator {
 		// Get scheduling rule
 		IWorkspaceRoot root= fWorkspace.getRoot();
 		IPath existingParentPath= fContainerFullPath;
-		while (!root.exists(existingParentPath))
+		while (!root.exists(existingParentPath)) {
 			existingParentPath= existingParentPath.removeLastSegments(1);
+		}
 
 		IResource schedulingRule= root.findMember(existingParentPath);
 		fWorkspace.run(runnable, schedulingRule, IWorkspace.AVOID_UPDATE, progressMonitor);
@@ -123,8 +125,9 @@ public class ContainerCreator {
 
 	private IFolder createFolder(IFolder folderHandle, IProgressMonitor monitor) throws CoreException {
 		folderHandle.create(false, true, monitor);
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
+		}
 		return folderHandle;
 	}
 

@@ -124,8 +124,9 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 			@Override
 			public void resourceChanged(IResourceChangeEvent e) {
 				IResourceDelta delta= e.getDelta();
-				if (delta != null)
+				if (delta != null) {
 					delta= delta.findMember(fFile.getFullPath());
+				}
 
 				if (delta != null && fIsInstalled) {
 					SafeFileChange fileChange= null;
@@ -256,8 +257,9 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	@Override
 	public void connect() {
 		++fReferenceCount;
-		if (fReferenceCount == 1)
+		if (fReferenceCount == 1) {
 			connected();
+		}
 	}
 
 	/**
@@ -273,8 +275,9 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	@Override
 	public void disconnect() throws CoreException {
 		--fReferenceCount;
-		if (fReferenceCount <= 0)
+		if (fReferenceCount <= 0) {
 			disconnected();
+		}
 	}
 
 	/**
@@ -327,8 +330,9 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 
 	@Override
 	public void revert(IProgressMonitor monitor) throws CoreException {
-		if (isDisconnected())
+		if (isDisconnected()) {
 			return;
+		}
 
 		if (!fFile.isSynchronized(IResource.DEPTH_INFINITE)) {
 			fCanBeSaved= false;
@@ -378,16 +382,18 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 				if (fFile.isReadOnly()) {
 					IWorkspace workspace= fFile.getWorkspace();
 					fStatus= workspace.validateEdit(new IFile[] { fFile }, computationContext);
-					if (fStatus.isOK())
+					if (fStatus.isOK()) {
 						handleFileContentChanged(false, false);
+					}
 				}
 
 				if (fFile.isDerived(IResource.CHECK_ANCESTORS)) {
 					IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.DERIVED_FILE, FileBuffersMessages.ResourceFileBuffer_warning_fileIsDerived, null);
-					if (fStatus == null || fStatus.isOK())
+					if (fStatus == null || fStatus.isOK()) {
 						fStatus= status;
-					else
+					} else {
 						fStatus= new MultiStatus(FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.STATE_VALIDATION_FAILED, new IStatus[] {fStatus, status}, FileBuffersMessages.ResourceFileBuffer_stateValidationFailed, null);
+					}
 				}
 
 			} catch (RuntimeException x) {
@@ -456,8 +462,9 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 
 	@Override
 	public boolean isSynchronized() {
-		if (fSynchronizationStamp == fFile.getModificationStamp() && fFile.isSynchronized(IResource.DEPTH_ZERO))
+		if (fSynchronizationStamp == fFile.getModificationStamp() && fFile.isSynchronized(IResource.DEPTH_ZERO)) {
 			return true;
+		}
 
 		fSynchronizationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 		return false;

@@ -52,7 +52,7 @@ public class ExtensionsRegistry {
 	private static class ContentTypeAdapter {
 
 		/** The adapted content type. */
-		private IContentType fContentType;
+		private final IContentType fContentType;
 
 		/**
 		 * Creates a new content type adapter for the
@@ -88,17 +88,17 @@ public class ExtensionsRegistry {
 	protected static final String WILDCARD= "*"; //$NON-NLS-1$
 
 	/** The mapping between file attributes and configuration elements describing document factories. */
-	private Map<Object, Set<IConfigurationElement>> fFactoryDescriptors= new HashMap<>();
+	private final Map<Object, Set<IConfigurationElement>> fFactoryDescriptors= new HashMap<>();
 	/** The mapping between configuration elements for document factories and instantiated document factories. */
-	private Map<IConfigurationElement, Object> fFactories= new HashMap<>();
+	private final Map<IConfigurationElement, Object> fFactories= new HashMap<>();
 	/** The mapping between file attributes and configuration elements describing document setup participants. */
-	private Map<Object, Set<IConfigurationElement>> fSetupParticipantDescriptors= new HashMap<>();
+	private final Map<Object, Set<IConfigurationElement>> fSetupParticipantDescriptors= new HashMap<>();
 	/** The mapping between configuration elements for setup participants and instantiated setup participants. */
-	private Map<IConfigurationElement, Object> fSetupParticipants= new HashMap<>();
+	private final Map<IConfigurationElement, Object> fSetupParticipants= new HashMap<>();
 	/** The mapping between file attributes and configuration elements describing annotation model factories. */
-	private Map<Object, Set<IConfigurationElement>> fAnnotationModelFactoryDescriptors= new HashMap<>();
+	private final Map<Object, Set<IConfigurationElement>> fAnnotationModelFactoryDescriptors= new HashMap<>();
 	/** The mapping between configuration elements for annotation model factories */
-	private Map<IConfigurationElement, Object> fAnnotationModelFactories= new HashMap<>();
+	private final Map<IConfigurationElement, Object> fAnnotationModelFactories= new HashMap<>();
 	/** The content type manager. */
 	protected IContentTypeManager fContentTypeManager= Platform.getContentTypeManager();
 
@@ -199,10 +199,11 @@ public class ExtensionsRegistry {
 
 		IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 		for (IConfigurationElement element : elements) {
-			if (isContentTypeId)
+			if (isContentTypeId) {
 				readContentType(childElementName, element, descriptors);
-			else
+			} else {
 				read(childElementName, element, descriptors);
+			}
 		}
 	}
 
@@ -219,8 +220,9 @@ public class ExtensionsRegistry {
 	@SuppressWarnings("unchecked")
 	private <T> T getExtension(IConfigurationElement entry, Map<IConfigurationElement, Object> extensions, Class<T> extensionType) {
 		T extension= (T) extensions.get(entry);
-		if (extension != null)
+		if (extension != null) {
 			return extension;
+		}
 
 		try {
 			extension= (T) entry.createExecutableExtension("class"); //$NON-NLS-1$
@@ -302,8 +304,9 @@ public class ExtensionsRegistry {
 		org.eclipse.core.filebuffers.IDocumentFactory factory= doGetDocumentFactory(contentTypes);
 		while (factory == null) {
 			contentTypes= computeBaseContentTypes(contentTypes);
-			if (contentTypes == null)
+			if (contentTypes == null) {
 				break;
+			}
 			factory= doGetDocumentFactory(contentTypes);
 		}
 		return factory;
@@ -317,16 +320,18 @@ public class ExtensionsRegistry {
 	 */
 	protected List<IDocumentSetupParticipant> getDocumentSetupParticipants(String nameOrExtension) {
 		Set<IConfigurationElement> set= fSetupParticipantDescriptors.get(nameOrExtension);
-		if (set == null)
+		if (set == null) {
 			return null;
+		}
 
 		List<IDocumentSetupParticipant> participants= new ArrayList<>();
 		Iterator<IConfigurationElement> e= set.iterator();
 		while (e.hasNext()) {
 			IConfigurationElement entry= e.next();
 			IDocumentSetupParticipant participant= getExtension(entry, fSetupParticipants, IDocumentSetupParticipant.class);
-			if (participant != null)
+			if (participant != null) {
 				participants.add(participant);
+			}
 		}
 
 		return participants;
@@ -343,8 +348,9 @@ public class ExtensionsRegistry {
 		int i= 0;
 		while (i < contentTypes.length) {
 			Set<IConfigurationElement> set= fSetupParticipantDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
-			if (set != null)
+			if (set != null) {
 				resultSet.addAll(set);
+			}
 		}
 
 		List<IDocumentSetupParticipant> participants= new ArrayList<>();
@@ -352,8 +358,9 @@ public class ExtensionsRegistry {
 		while (e.hasNext()) {
 			IConfigurationElement entry= e.next();
 			IDocumentSetupParticipant participant= getExtension(entry, fSetupParticipants, IDocumentSetupParticipant.class);
-			if (participant != null)
+			if (participant != null) {
 				participants.add(participant);
+			}
 		}
 
 		return participants.isEmpty() ? null : participants;
@@ -371,8 +378,9 @@ public class ExtensionsRegistry {
 		List<IDocumentSetupParticipant> participants= doGetDocumentSetupParticipants(contentTypes);
 		while (participants == null) {
 			contentTypes= computeBaseContentTypes(contentTypes);
-			if (contentTypes == null)
+			if (contentTypes == null) {
 				break;
+			}
 			participants= doGetDocumentSetupParticipants(contentTypes);
 		}
 		return participants;
@@ -410,8 +418,9 @@ public class ExtensionsRegistry {
 		IAnnotationModelFactory factory= doGetAnnotationModelFactory(contentTypes);
 		while (factory == null) {
 			contentTypes= computeBaseContentTypes(contentTypes);
-			if (contentTypes == null)
+			if (contentTypes == null) {
 				break;
+			}
 			factory= doGetAnnotationModelFactory(contentTypes);
 		}
 		return factory;
@@ -457,8 +466,9 @@ public class ExtensionsRegistry {
 		List<IContentType> baseTypes= new ArrayList<>();
 		for (IContentType contentType : contentTypes) {
 			IContentType baseType= contentType.getBaseType();
-			if (baseType != null)
+			if (baseType != null) {
 				baseTypes.add(baseType);
+			}
 		}
 
 		IContentType[] result= null;
@@ -482,12 +492,15 @@ public class ExtensionsRegistry {
 	@Deprecated
 	public org.eclipse.core.filebuffers.IDocumentFactory getDocumentFactory(IPath location, LocationKind locationKind) {
 		org.eclipse.core.filebuffers.IDocumentFactory factory= getDocumentFactory(findContentTypes(location, locationKind));
-		if (factory == null)
+		if (factory == null) {
 			factory= getDocumentFactory(location.lastSegment());
-		if (factory == null)
+		}
+		if (factory == null) {
 			factory= getDocumentFactory(location.getFileExtension());
-		if (factory == null)
+		}
+		if (factory == null) {
 			factory= getDocumentFactory(WILDCARD);
+		}
 		return factory;
 	}
 
@@ -503,20 +516,24 @@ public class ExtensionsRegistry {
 		Set<IDocumentSetupParticipant> participants= new HashSet<>();
 
 		List<IDocumentSetupParticipant> p= getDocumentSetupParticipants(findContentTypes(location, locationKind));
-		if (p != null)
+		if (p != null) {
 			participants.addAll(p);
+		}
 
 		p= getDocumentSetupParticipants(location.lastSegment());
-		if (p != null)
+		if (p != null) {
 			participants.addAll(p);
+		}
 
 		p= getDocumentSetupParticipants(location.getFileExtension());
-		if (p != null)
+		if (p != null) {
 			participants.addAll(p);
+		}
 
 		p= getDocumentSetupParticipants(WILDCARD);
-		if (p != null)
+		if (p != null) {
 			participants.addAll(p);
+		}
 
 		IDocumentSetupParticipant[] result= new IDocumentSetupParticipant[participants.size()];
 		participants.toArray(result);
@@ -533,12 +550,15 @@ public class ExtensionsRegistry {
 	 */
 	public IAnnotationModelFactory getAnnotationModelFactory(IPath location, LocationKind locationKind) {
 		IAnnotationModelFactory factory= getAnnotationModelFactory(findContentTypes(location, locationKind));
-		if (factory == null)
+		if (factory == null) {
 			factory= getAnnotationModelFactory(location.lastSegment());
-		if (factory == null)
+		}
+		if (factory == null) {
 			factory= getAnnotationModelFactory(location.getFileExtension());
-		if (factory == null)
+		}
+		if (factory == null) {
 			factory= getAnnotationModelFactory(WILDCARD);
+		}
 		return factory;
 	}
 

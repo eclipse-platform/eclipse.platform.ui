@@ -127,8 +127,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		synchronized (fAnnotationModelCreationLock) {
 			if (fAnnotationModel == null && !isDisconnected()) {
 				fAnnotationModel= getManager().createAnnotationModel(fFile);
-				if (fAnnotationModel != null)
+				if (fAnnotationModel != null) {
 					fAnnotationModel.connect(fDocument);
+				}
 			}
 		}
 		return fAnnotationModel;
@@ -156,8 +157,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		fBOM= null;
 		try {
 			fFile.setCharset(encoding, null);
-			if (encoding == null)
+			if (encoding == null) {
 				fEncoding= fFile.getCharset();
+			}
 			cacheBOM();
 		} catch (CoreException x) {
 			handleCoreException(x);
@@ -167,8 +169,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	@Override
 	public IStatus getStatus() {
 		if (!isDisconnected()) {
-			if (fStatus != null)
+			if (fStatus != null) {
 				return fStatus;
+			}
 			return (fDocument == null ? STATUS_ERROR : Status.OK_STATUS);
 		}
 		return STATUS_ERROR;
@@ -180,13 +183,15 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			if (isDirty()) {
 				try(Reader reader = new DocumentReader(getDocument())) {
 					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), NO_PROPERTIES);
-					if (desc != null && desc.getContentType() != null)
+					if (desc != null && desc.getContentType() != null) {
 						return desc.getContentType();
+					}
 				}
 			}
 			IContentDescription desc= fFile.getContentDescription();
-			if (desc != null && desc.getContentType() != null)
+			if (desc != null && desc.getContentType() != null) {
 				return desc.getContentType();
+			}
 			return null;
 		} catch (IOException x) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.FileBuffer_error_queryContentDescription, fFile.getFullPath().toOSString()), x));
@@ -195,14 +200,16 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 	@Override
 	protected void addFileBufferContentListeners() {
-		if (fDocument != null)
+		if (fDocument != null) {
 			fDocument.addDocumentListener(fDocumentListener);
+		}
 	}
 
 	@Override
 	protected void removeFileBufferContentListeners() {
-		if (fDocument != null)
+		if (fDocument != null) {
 			fDocument.removeDocumentListener(fDocumentListener);
+		}
 	}
 
 	@Override
@@ -250,15 +257,17 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		fBOM= null;
 
 		IContentDescription description= fFile.getContentDescription();
-		if (description != null)
+		if (description != null) {
 			fBOM= (byte[])description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+		}
 	}
 
 	@Override
 	protected void connected() {
 		super.connected();
-		if (fAnnotationModel != null)
+		if (fAnnotationModel != null) {
 			fAnnotationModel.connect(fDocument);
+		}
 	}
 
 	/*
@@ -271,8 +280,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		} catch (BadPositionCategoryException ex) {
 			// Category is already gone - no problem.
 		}
-		if (fAnnotationModel != null)
+		if (fAnnotationModel != null) {
 			fAnnotationModel.disconnect(fDocument);
+		}
 		fDocument= null;
 		super.dispose();
 	}
@@ -286,8 +296,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 		String encoding= computeEncoding();
 
-		if (fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16.name().equals(encoding))
+		if (fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16.name().equals(encoding)) {
 			encoding= StandardCharsets.UTF_16LE.name();
+		}
 
 		Charset charset;
 		try {
@@ -311,9 +322,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		try {
 			byte[] bytes;
 			ByteBuffer byteBuffer= encoder.encode(CharBuffer.wrap(fDocument.get()));
-			if (byteBuffer.hasArray())
+			if (byteBuffer.hasArray()) {
 				bytes= byteBuffer.array();
-			else {
+			} else {
 				bytes= new byte[byteBuffer.limit()];
 				byteBuffer.get(bytes);
 			}
@@ -330,11 +341,13 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		 * This is a workaround for a corresponding bug in Java readers and writer,
 		 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 		 */
-		if (fBOM == IContentDescription.BOM_UTF_8 && StandardCharsets.UTF_8.name().equals(encoding))
+		if (fBOM == IContentDescription.BOM_UTF_8 && StandardCharsets.UTF_8.name().equals(encoding)) {
 			stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_8), stream);
+		}
 
-		if (fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16LE.name().equals(encoding))
+		if (fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16LE.name().equals(encoding)) {
 			stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_16LE), stream);
+		}
 
 		if (fFile.exists()) {
 
@@ -346,8 +359,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			if (fDocument instanceof IDocumentExtension4 ext4) {
 				fSynchronizationStamp= ext4.getModificationStamp();
 				fFile.revertModificationStamp(fSynchronizationStamp);
-			} else
+			} else {
 				fSynchronizationStamp= fFile.getModificationStamp();
+			}
 
 			if (fAnnotationModel instanceof IPersistableAnnotationModel persistableModel) {
 				persistableModel.commit(fDocument);
@@ -372,8 +386,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 	private String computeEncoding() {
 		// User-defined encoding has first priority
-		if (fExplicitEncoding != null)
+		if (fExplicitEncoding != null) {
 			return fExplicitEncoding;
+		}
 
 		// Probe content
 
@@ -382,16 +397,18 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
 			if (description != null) {
 				String encoding= description.getCharset();
-				if (encoding != null)
+				if (encoding != null) {
 					return encoding;
+				}
 			}
 		} catch (IOException ex) {
 			// try next strategy
 		}
 
 		// Use file's encoding if the file has a BOM
-		if (fBOM != null)
+		if (fBOM != null) {
 			return fEncoding;
+		}
 
 		// Use parent chain
 		try {
@@ -410,10 +427,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	protected void cacheEncodingState() throws CoreException {
 		fExplicitEncoding= fFile.getCharset(false);
-		if (fExplicitEncoding != null)
+		if (fExplicitEncoding != null) {
 			fEncoding= fExplicitEncoding;
-		else
+		} else {
 			fEncoding= fFile.getCharset();
+		}
 		cacheBOM();
 	}
 
@@ -433,31 +451,34 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		String newContent= document.get();
 		boolean replaceContent= updateModificationStamp || !newContent.equals(fDocument.get());
 
-		if (replaceContent)
+		if (replaceContent) {
 			fManager.fireBufferContentAboutToBeReplaced(this);
+		}
 
 		removeFileBufferContentListeners();
 		fSynchronizationStamp= fFile.getModificationStamp();
 		if (replaceContent) {
-			if (fDocument instanceof IDocumentExtension4)
+			if (fDocument instanceof IDocumentExtension4) {
 				((IDocumentExtension4)fDocument).set(newContent, fSynchronizationStamp);
-			else
+			} else {
 				fDocument.set(newContent);
+			}
 		}
 		fCanBeSaved= false;
 		fStatus= status;
 		addFileBufferContentListeners();
 
-		if (replaceContent)
+		if (replaceContent) {
 			fManager.fireBufferContentReplaced(this);
+		}
 
-		if (fAnnotationModel instanceof IPersistableAnnotationModel) {
-			IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
+		if (fAnnotationModel instanceof IPersistableAnnotationModel persistableModel) {
 			try {
-				if (revert)
+				if (revert) {
 					persistableModel.revert(fDocument);
-				else
+				} else {
 					persistableModel.reinitialize(fDocument);
+				}
 			} catch (CoreException x) {
 				fStatus= x.getStatus();
 			}
