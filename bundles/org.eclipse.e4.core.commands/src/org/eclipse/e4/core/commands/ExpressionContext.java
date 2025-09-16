@@ -68,7 +68,7 @@ public class ExpressionContext implements IEvaluationContext {
 	@Override
 	public boolean getAllowPluginActivation() {
 		Object obj = eclipseContext.get(ALLOW_ACTIVATION);
-		return obj instanceof Boolean ? ((Boolean) obj).booleanValue() : false;
+		return obj instanceof Boolean b ? b.booleanValue() : false;
 	}
 
 	@Override
