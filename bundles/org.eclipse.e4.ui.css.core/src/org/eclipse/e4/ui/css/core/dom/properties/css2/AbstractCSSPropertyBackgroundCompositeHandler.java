@@ -59,8 +59,9 @@ public abstract class AbstractCSSPropertyBackgroundCompositeHandler extends
 
 	@Override
 	public String[] getCSSPropertiesNames(String property) {
-		if ("background".equals(property))
+		if ("background".equals(property)) {
 			return BACKROUND_CSSPROPERTIES;
+		}
 		return null;
 	}
 }

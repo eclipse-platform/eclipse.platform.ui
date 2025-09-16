@@ -31,7 +31,7 @@ public class CSSValueConverterConfigColorImpl implements
 	public static final ICSSValueConverterConfig COLOR_RGB_FORMAT_CONFIG = new CSSValueConverterConfigColorImpl(
 			COLOR_RGB_FORMAT);
 
-	private int format;
+	private final int format;
 
 	public CSSValueConverterConfigColorImpl(int format) {
 		this.format = format;

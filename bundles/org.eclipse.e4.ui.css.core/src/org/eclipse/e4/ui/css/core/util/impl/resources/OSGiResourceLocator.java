@@ -23,7 +23,7 @@ import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 
 public class OSGiResourceLocator implements IResourceLocator {
 
-	private String startLocation;
+	private final String startLocation;
 
 	public OSGiResourceLocator(String start) {
 		startLocation = start;

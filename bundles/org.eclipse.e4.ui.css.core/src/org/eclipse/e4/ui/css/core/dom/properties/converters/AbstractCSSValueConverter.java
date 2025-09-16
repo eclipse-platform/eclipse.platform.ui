@@ -23,7 +23,7 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
  */
 public abstract class AbstractCSSValueConverter implements ICSSValueConverter {
 
-	private Object toType;
+	private final Object toType;
 
 	public AbstractCSSValueConverter(Object toType) {
 		this.toType = toType;

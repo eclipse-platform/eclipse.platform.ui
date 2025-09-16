@@ -69,8 +69,9 @@ public abstract class AbstractCSSPropertyBorderCompositeHandler extends
 
 	@Override
 	public String[] getCSSPropertiesNames(String property) {
-		if ("border".equals(property))
+		if ("border".equals(property)) {
 			return BORDER_CSSPROPERTIES;
+		}
 		return null;
 	}
 

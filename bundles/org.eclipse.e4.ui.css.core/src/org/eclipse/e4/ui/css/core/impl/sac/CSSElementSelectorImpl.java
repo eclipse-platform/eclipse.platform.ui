@@ -50,23 +50,26 @@ public class CSSElementSelectorImpl extends AbstractElementSelector {
 	public boolean match(Element e, String pseudoE) {
 		String name = getLocalName();
 		if (name == null) {
-			if (namespaceURI != null)
+			if (namespaceURI != null) {
 				return namespaceURI.equals(e.getNamespaceURI());
-			else
+			} else {
 				return true;
+			}
 		}
 		String eName;
-		if (e.getPrefix() == null)
+		if (e.getPrefix() == null) {
 			eName = e.getNodeName();
-		else
+		} else {
 			eName = e.getLocalName();
+		}
 		// According to CSS 2 section 5.1 element
 		// names in selectors are case-sensitive for XML.
 		if (eName.equals(name)) {
-			if (namespaceURI != null)
+			if (namespaceURI != null) {
 				return namespaceURI.equals(e.getNamespaceURI());
-			else
+			} else {
 				return true;
+			}
 		}
 		return false;
 		// For HTML

@@ -21,11 +21,12 @@ package org.eclipse.e4.ui.css.core.exceptions;
  */
 public class UnsupportedPropertyException extends Exception {
 	private static final long serialVersionUID = 1L;
-	private String property;
+	private final String property;
 
 	public UnsupportedPropertyException(String property) {
-		if (property == null)
+		if (property == null) {
 			throw new IllegalArgumentException();
+		}
 		this.property = property;
 	}
 

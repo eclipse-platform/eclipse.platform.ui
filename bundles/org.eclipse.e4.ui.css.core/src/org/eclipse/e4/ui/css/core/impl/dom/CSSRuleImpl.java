@@ -56,8 +56,9 @@ public abstract class CSSRuleImpl extends AbstractCSSNode implements CSSRule {
 
 	@Override
 	public void setCssText(String cssText) throws DOMException {
-		if(readOnly)
+		if(readOnly) {
 			throw new DOMExceptionImpl(DOMException.NO_MODIFICATION_ALLOWED_ERR, DOMExceptionImpl.NO_MODIFICATION_ALLOWED_ERROR);
+		}
 		// TODO Auto-generated method stub
 		// TODO throws SYNTAX_ERR if cssText is unparsable
 		// TODO throws INVALID_MODIFICATION_ERR: Raised if the specified CSS string value represents a different type of rule than the current one.

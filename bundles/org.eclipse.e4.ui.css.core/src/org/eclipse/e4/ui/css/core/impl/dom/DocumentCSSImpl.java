@@ -102,8 +102,7 @@ public class DocumentCSSImpl implements ExtendedDocumentCSS {
 			int length = ruleList.getLength();
 			for (int i = 0; i < length; i++) {
 				CSSRule rule = ruleList.item(i);
-				if (rule.getType() == CSSRule.STYLE_RULE && rule instanceof ExtendedCSSRule) {
-					ExtendedCSSRule r = (ExtendedCSSRule) rule;
+				if (rule.getType() == CSSRule.STYLE_RULE && rule instanceof ExtendedCSSRule r) {
 					SelectorList selectorList = r.getSelectorList();
 					// Loop for SelectorList
 					int l = selectorList.getLength();

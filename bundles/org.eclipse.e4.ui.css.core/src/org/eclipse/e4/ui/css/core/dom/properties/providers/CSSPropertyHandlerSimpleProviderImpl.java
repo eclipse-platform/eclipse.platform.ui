@@ -227,8 +227,9 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 	 * Merge custom CSS Properties with default CSS properties.
 	 */
 	private void initializeCSSPropertiesIfNeed() {
-		if (isCSSPropertiesInitialized)
+		if (isCSSPropertiesInitialized) {
 			return;
+		}
 		customCSSProperties.putAll(defaultCSSProperties);
 		isCSSPropertiesInitialized = true;
 	}
@@ -244,10 +245,11 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 			String pseudoE) throws Exception {
 		CSSStyleDeclaration defaultStyleDeclaration = stylableElement
 				.getDefaultStyleDeclaration(pseudoE);
-		if (defaultStyleDeclaration != null)
+		if (defaultStyleDeclaration != null) {
 			// default style is already computed for the stylable element ,
 			// return it.
 			return defaultStyleDeclaration;
+		}
 
 		// Default style must be computed.
 		StringBuilder style = null;
@@ -256,8 +258,9 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 			String s = getCSSPropertyStyle(engine, stylableElement,
 					propertyName, pseudoE);
 			if (s != null) {
-				if (style == null)
+				if (style == null) {
 					style = new StringBuilder();
+				}
 				style.append(s);
 			}
 		}

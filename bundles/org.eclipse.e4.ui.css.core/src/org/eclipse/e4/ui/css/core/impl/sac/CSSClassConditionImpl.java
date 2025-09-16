@@ -40,21 +40,25 @@ public class CSSClassConditionImpl extends CSSAttributeConditionImpl {
 	@Override
 	public boolean match(Element e, String pseudoE) {
 		String attr = null;
-		if ((e instanceof CSSStylableElement))
+		if ((e instanceof CSSStylableElement)) {
 			attr = ((CSSStylableElement) e).getCSSClass();
-		else
+		} else {
 			attr = e.getAttribute("class");
-		if (attr == null || attr.length() < 1)
+		}
+		if (attr == null || attr.length() < 1) {
 			return false;
+		}
 		String val = getValue();
 		int attrLen = attr.length();
 		int valLen = val.length();
 		for (int i = attr.indexOf(val); i != -1; i = attr.indexOf(val, i
-				+ valLen))
+				+ valLen)) {
 			if ((i == 0 || Character.isSpaceChar(attr.charAt(i - 1)))
 					&& (i + valLen == attrLen || Character.isSpaceChar(attr
-							.charAt(i + valLen))))
+							.charAt(i + valLen)))) {
 				return true;
+			}
+		}
 
 		return false;
 	}

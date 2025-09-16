@@ -137,8 +137,7 @@ public class ViewCSSImpl implements ViewCSS, ExtendedDocumentCSS.StyleSheetChang
 			int l = selectorList.getLength();
 			for (int j = 0; j < l; j++) {
 				Selector selector = selectorList.item(j);
-				if (selector instanceof ExtendedSelector) {
-					ExtendedSelector extendedSelector = (ExtendedSelector) selector;
+				if (selector instanceof ExtendedSelector extendedSelector) {
 					if (extendedSelector.match(elt, hierarchy, 0, pseudoElt)) {
 						CSSStyleDeclaration style = styleRule.getStyle();
 						int specificity = extendedSelector.getSpecificity();

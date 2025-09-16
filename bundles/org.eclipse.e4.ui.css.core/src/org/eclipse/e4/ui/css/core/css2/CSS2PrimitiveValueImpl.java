@@ -58,8 +58,9 @@ public class CSS2PrimitiveValueImpl implements CSSPrimitiveValue {
 
 	@Override
 	public float getFloatValue(short word0) throws DOMException {
-		if (v != -9999)
+		if (v != -9999) {
 			return v;
+		}
 		return i;
 	}
 
@@ -116,12 +117,15 @@ public class CSS2PrimitiveValueImpl implements CSSPrimitiveValue {
 
 	@Override
 	public String toString() {
-		if (s != null)
+		if (s != null) {
 			return s;
-		if (v != -9999)
+		}
+		if (v != -9999) {
 			return Float.toString(v);
-		if (i != -9999)
+		}
+		if (i != -9999) {
 			return Integer.toString(i);
+		}
 		return super.toString();
 	}
 }
