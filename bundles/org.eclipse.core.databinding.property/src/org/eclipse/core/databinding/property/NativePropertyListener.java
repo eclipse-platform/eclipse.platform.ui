@@ -45,16 +45,18 @@ public abstract class NativePropertyListener<S, D extends IDiff> implements INat
 
 	@Override
 	public final void addTo(S source) {
-		if (source != null)
+		if (source != null) {
 			doAddTo(source);
+		}
 	}
 
 	protected abstract void doAddTo(S source);
 
 	@Override
 	public final void removeFrom(S source) {
-		if (source != null)
+		if (source != null) {
 			doRemoveFrom(source);
+		}
 	}
 
 	protected abstract void doRemoveFrom(S source);

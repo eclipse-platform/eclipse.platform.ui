@@ -72,10 +72,12 @@ public class MapPropertyDetailValuesMap<S, K, V, T> extends MapProperty<S, K, T>
 
 	@Override
 	protected void doUpdateMap(S source, MapDiff<K, T> diff) {
-		if (!diff.getAddedKeys().isEmpty())
+		if (!diff.getAddedKeys().isEmpty()) {
 			throw new UnsupportedOperationException(this + " does not support entry additions"); //$NON-NLS-1$
-		if (!diff.getRemovedKeys().isEmpty())
+		}
+		if (!diff.getRemovedKeys().isEmpty()) {
 			throw new UnsupportedOperationException(this + " does not support entry removals"); //$NON-NLS-1$
+		}
 		Map<K, V> masterMap = masterProperty.getMap(source);
 		for (K key : diff.getChangedKeys()) {
 			V masterValue = masterMap.get(key);

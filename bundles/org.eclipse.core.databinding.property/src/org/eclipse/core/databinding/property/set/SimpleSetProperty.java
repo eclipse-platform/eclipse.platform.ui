@@ -76,8 +76,9 @@ public abstract class SimpleSetProperty<S, E> extends SetProperty<S, E> {
 	 * @since 1.6
 	 */
 	public final void setSet(S source, Set<E> set, SetDiff<E> diff) {
-		if (source != null && !diff.isEmpty())
+		if (source != null && !diff.isEmpty()) {
 			doSetSet(source, set, diff);
+		}
 	}
 
 	/**

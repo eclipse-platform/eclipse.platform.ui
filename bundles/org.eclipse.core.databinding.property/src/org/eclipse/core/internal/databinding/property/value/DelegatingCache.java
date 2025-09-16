@@ -35,8 +35,8 @@ import org.eclipse.core.internal.databinding.identity.IdentityObservableSet;
  * @since 3.3
  */
 abstract class DelegatingCache<S, K extends S, V> {
-	private Realm realm;
-	private DelegatingValueProperty<S, V> detailProperty;
+	private final Realm realm;
+	private final DelegatingValueProperty<S, V> detailProperty;
 	private IObservableSet<K> elements;
 	private Map<IValueProperty<S, V>, DelegateCache> delegateCaches;
 
@@ -66,15 +66,17 @@ abstract class DelegatingCache<S, K extends S, V> {
 			masterElements.add(masterElement);
 			cachedValues.put(masterElement, masterElementValues.get(masterElement));
 
-			if (wasEmpty)
+			if (wasEmpty) {
 				delegateCaches.put(delegate, this);
+			}
 		}
 
 		void remove(Object masterElement) {
 			cachedValues.remove(masterElement);
 			masterElements.remove(masterElement);
-			if (cachedValues.isEmpty())
+			if (cachedValues.isEmpty()) {
 				dispose();
+			}
 		}
 
 		V get(Object masterElement) {
@@ -168,8 +170,9 @@ abstract class DelegatingCache<S, K extends S, V> {
 
 	boolean containsValue(Object value) {
 		for (DelegateCache cache : delegateCaches.values()) {
-			if (cache.containsValue(value))
+			if (cache.containsValue(value)) {
 				return true;
+			}
 		}
 		return false;
 	}

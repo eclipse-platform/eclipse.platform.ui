@@ -53,8 +53,9 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 	private IListChangeListener<T> masterListener = new IListChangeListener<>() {
 		@Override
 		public void handleListChange(ListChangeEvent<? extends T> event) {
-			if (isDisposed())
+			if (isDisposed()) {
 				return;
+			}
 
 			cache.addAll(masterList);
 
@@ -82,7 +83,7 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 		}
 	};
 
-	private IStaleListener staleListener = staleEvent -> fireStale();
+	private final IStaleListener staleListener = staleEvent -> fireStale();
 
 	public ListDelegatingValueObservableList(IObservableList<T> masterList,
 			DelegatingValueProperty<S, E> valueProperty) {
@@ -213,8 +214,9 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 	public <U> U[] toArray(U[] a) {
 		getterCalled();
 		Object[] masterElements = masterList.toArray();
-		if (a.length < masterElements.length)
+		if (a.length < masterElements.length) {
 			a = (U[]) Array.newInstance(a.getClass().getComponentType(), masterElements.length);
+		}
 		for (int i = 0; i < masterElements.length; i++) {
 			a[i] = (U) cache.get(masterElements[i]);
 		}
@@ -300,8 +302,9 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 			@Override
 			public void set(E o) {
 				checkRealm();
-				if (!haveIterated)
+				if (!haveIterated) {
 					throw new IllegalStateException();
+				}
 
 				cache.put(lastMasterElement, o);
 
@@ -314,8 +317,9 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 		List<Integer> indices = new ArrayList<>();
 
 		for (ListIterator<T> it = masterList.listIterator(); it.hasNext();) {
-			if (masterElement == it.next())
+			if (masterElement == it.next()) {
 				indices.add(Integer.valueOf(it.previousIndex()));
+			}
 		}
 
 		int[] result = new int[indices.size()];

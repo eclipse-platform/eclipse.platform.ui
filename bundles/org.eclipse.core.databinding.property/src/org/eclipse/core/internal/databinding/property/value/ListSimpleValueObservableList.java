@@ -97,7 +97,7 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 		}
 	};
 
-	private IStaleListener staleListener = staleEvent -> fireStale();
+	private final IStaleListener staleListener = staleEvent -> fireStale();
 
 	private INativePropertyListener<S> detailListener;
 
@@ -116,8 +116,9 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 					} else if (event.type == SimplePropertyEvent.STALE) {
 						boolean wasStale = !staleElements.isEmpty();
 						staleElements.add(source);
-						if (!wasStale)
+						if (!wasStale) {
 							fireStale();
+						}
 					}
 				});
 			}
@@ -138,15 +139,17 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 		staleElements = new IdentitySet<>();
 		knownMasterElements.addSetChangeListener(event -> {
 			for (M key1 : event.diff.getRemovals()) {
-				if (detailListener != null)
+				if (detailListener != null) {
 					detailListener.removeFrom(key1);
+				}
 				cachedValues.remove(key1);
 				staleElements.remove(key1);
 			}
 			for (M key2 : event.diff.getAdditions()) {
 				cachedValues.put(key2, detailProperty.getValue(key2));
-				if (detailListener != null)
+				if (detailListener != null) {
 					detailListener.addTo(key2);
+				}
 			}
 		});
 		getRealm().exec(() -> {
@@ -219,8 +222,9 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 		getterCalled();
 
 		for (M m : masterList) {
-			if (Objects.equals(detailProperty.getValue(m), o))
+			if (Objects.equals(detailProperty.getValue(m), o)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -301,8 +305,9 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 	public <V> V[] toArray(V[] a) {
 		getterCalled();
 		Object[] masterElements = masterList.toArray();
-		if (a.length < masterElements.length)
+		if (a.length < masterElements.length) {
 			a = (V[]) Array.newInstance(a.getClass().getComponentType(), masterElements.length);
+		}
 		for (int i = 0; i < masterElements.length; i++) {
 			a[i] = (V) detailProperty.getValue((M) masterElements[i]);
 		}
@@ -388,8 +393,9 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 			@Override
 			public void set(T o) {
 				checkRealm();
-				if (!haveIterated)
+				if (!haveIterated) {
 					throw new IllegalStateException();
+				}
 
 				boolean wasUpdating = updating;
 				updating = true;
@@ -423,8 +429,9 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 		List<Integer> indices = new ArrayList<>();
 
 		for (ListIterator<M> it = ListSimpleValueObservableList.this.masterList.listIterator(); it.hasNext();) {
-			if (masterElement == it.next())
+			if (masterElement == it.next()) {
 				indices.add(Integer.valueOf(it.previousIndex()));
+			}
 		}
 
 		int[] result = new int[indices.size()];

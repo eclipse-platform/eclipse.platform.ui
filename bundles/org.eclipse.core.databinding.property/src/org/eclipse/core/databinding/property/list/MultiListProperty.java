@@ -75,8 +75,9 @@ public class MultiListProperty<S, E> extends ListProperty<S, E> {
 	@Override
 	protected List<E> doGetList(S source) {
 		List<E> list = new ArrayList<>();
-		for (IListProperty<S, E> property : properties)
+		for (IListProperty<S, E> property : properties) {
 			list.addAll(property.getList(source));
+		}
 		return list;
 	}
 

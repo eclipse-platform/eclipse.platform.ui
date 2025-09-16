@@ -37,8 +37,8 @@ import org.eclipse.core.databinding.property.value.ValueProperty;
  * @since 1.2
  */
 public class ValuePropertyDetailValue<S, M, T> extends ValueProperty<S, T>implements IValueProperty<S, T> {
-	private IValueProperty<S, M> masterProperty;
-	private IValueProperty<? super M, T> detailProperty;
+	private final IValueProperty<S, M> masterProperty;
+	private final IValueProperty<? super M, T> detailProperty;
 
 	public ValuePropertyDetailValue(IValueProperty<S, M> masterProperty, IValueProperty<? super M, T> detailProperty) {
 		this.masterProperty = masterProperty;

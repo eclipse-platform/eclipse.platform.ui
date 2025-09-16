@@ -98,8 +98,9 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 		public V getValue() {
 			getterCalled();
 
-			if (!masterSet.contains(key))
+			if (!masterSet.contains(key)) {
 				return null;
+			}
 
 			return cache.get(key);
 		}
@@ -108,8 +109,9 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 		public V setValue(V value) {
 			checkRealm();
 
-			if (!masterSet.contains(key))
+			if (!masterSet.contains(key)) {
 				return null;
+			}
 
 			return cache.put(key, value);
 		}
@@ -117,12 +119,15 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 		@Override
 		public boolean equals(Object o) {
 			getterCalled();
-			if (o == this)
+			if (o == this) {
 				return true;
-			if (o == null)
+			}
+			if (o == null) {
 				return false;
-			if (!(o instanceof Map.Entry))
+			}
+			if (!(o instanceof Map.Entry)) {
 				return false;
+			}
 			Map.Entry<?, ?> that = (Map.Entry<?, ?>) o;
 			return Objects.equals(this.getKey(), that.getKey()) && Objects.equals(this.getValue(), that.getValue());
 		}
@@ -137,8 +142,9 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 	private ISetChangeListener<K> masterListener = new ISetChangeListener<>() {
 		@Override
 		public void handleSetChange(SetChangeEvent<? extends K> event) {
-			if (isDisposed())
+			if (isDisposed()) {
 				return;
+			}
 
 			cache.addAll(masterSet);
 
@@ -166,7 +172,7 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 		}
 	};
 
-	private IStaleListener staleListener = staleEvent -> fireStale();
+	private final IStaleListener staleListener = staleEvent -> fireStale();
 
 	public SetDelegatingValueObservableMap(IObservableSet<K> keySet,
 			DelegatingValueProperty<S, V> valueProperty) {
@@ -189,8 +195,9 @@ public class SetDelegatingValueObservableMap<S, K extends S, V> extends Abstract
 	@Override
 	public Set<Map.Entry<K, V>> entrySet() {
 		getterCalled();
-		if (entrySet == null)
+		if (entrySet == null) {
 			entrySet = new EntrySet();
+		}
 		return entrySet;
 	}
 

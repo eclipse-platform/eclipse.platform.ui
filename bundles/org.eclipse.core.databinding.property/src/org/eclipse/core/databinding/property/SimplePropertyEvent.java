@@ -89,12 +89,15 @@ public final class SimplePropertyEvent<S, D extends IDiff> extends EventObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 
 		SimplePropertyEvent<?, ?> that = (SimplePropertyEvent<?, ?>) obj;
 		return Objects.equals(getSource(), that.getSource()) && Objects.equals(this.property, that.property)

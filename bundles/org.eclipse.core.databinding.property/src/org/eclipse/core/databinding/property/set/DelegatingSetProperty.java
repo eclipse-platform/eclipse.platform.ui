@@ -54,11 +54,13 @@ public abstract class DelegatingSetProperty<S, E> extends SetProperty<S, E> {
 	 * @return the property to delegate to for the specified source object.
 	 */
 	protected final ISetProperty<S, E> getDelegate(S source) {
-		if (source == null)
+		if (source == null) {
 			return nullProperty;
+		}
 		ISetProperty<S, E> delegate = doGetDelegate(source);
-		if (delegate == null)
+		if (delegate == null) {
 			delegate = nullProperty;
+		}
 		return delegate;
 	}
 

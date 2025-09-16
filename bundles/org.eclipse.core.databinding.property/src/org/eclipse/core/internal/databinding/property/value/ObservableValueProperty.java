@@ -117,8 +117,9 @@ public class ObservableValueProperty<T> extends SimpleValueProperty<IObservableV
 	@Override
 	public String toString() {
 		String result = "IObservableValue#value"; //$NON-NLS-1$
-		if (valueType != null)
+		if (valueType != null) {
 			result += " <" + valueType + ">"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return result;
 	}
 }

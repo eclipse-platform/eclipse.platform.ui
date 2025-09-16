@@ -57,11 +57,13 @@ public abstract class DelegatingValueProperty<S, T> extends ValueProperty<S, T> 
 	 * @return the property to delegate to for the specified source object.
 	 */
 	public final IValueProperty<S, T> getDelegate(S source) {
-		if (source == null)
+		if (source == null) {
 			return nullProperty;
+		}
 		IValueProperty<S, T> delegate = doGetDelegate(source);
-		if (delegate == null)
+		if (delegate == null) {
 			delegate = nullProperty;
+		}
 		return delegate;
 	}
 

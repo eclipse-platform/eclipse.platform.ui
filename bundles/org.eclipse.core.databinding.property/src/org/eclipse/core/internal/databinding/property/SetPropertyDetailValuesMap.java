@@ -71,10 +71,12 @@ public class SetPropertyDetailValuesMap<S, M, T> extends MapProperty<S, M, T> {
 
 	@Override
 	protected void doUpdateMap(S source, MapDiff<M, T> diff) {
-		if (!diff.getAddedKeys().isEmpty())
+		if (!diff.getAddedKeys().isEmpty()) {
 			throw new UnsupportedOperationException(this + " does not support entry additions"); //$NON-NLS-1$
-		if (!diff.getRemovedKeys().isEmpty())
+		}
+		if (!diff.getRemovedKeys().isEmpty()) {
 			throw new UnsupportedOperationException(this + " does not support entry removals"); //$NON-NLS-1$
+		}
 		for (M key : diff.getChangedKeys()) {
 			T newValue = diff.getNewValue(key);
 			detailProperty.setValue(key, newValue);

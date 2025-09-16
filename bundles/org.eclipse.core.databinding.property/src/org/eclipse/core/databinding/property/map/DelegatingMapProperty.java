@@ -58,11 +58,13 @@ public abstract class DelegatingMapProperty<S, K, V> extends MapProperty<S, K, V
 	 * @return the property to delegate to for the specified source object.
 	 */
 	public final IMapProperty<S, K, V> getDelegate(S source) {
-		if (source == null)
+		if (source == null) {
 			return nullProperty;
+		}
 		IMapProperty<S, K, V> delegate = doGetDelegate(source);
-		if (delegate == null)
+		if (delegate == null) {
 			delegate = nullProperty;
+		}
 		return delegate;
 	}
 

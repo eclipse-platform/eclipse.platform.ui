@@ -87,7 +87,7 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 	}
 
 	class MapEntry implements Map.Entry<K, V> {
-		private K key;
+		private final K key;
 
 		MapEntry(K key) {
 			this.key = key;
@@ -103,8 +103,9 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 		public V getValue() {
 			getterCalled();
 
-			if (!masterMap.containsKey(key))
+			if (!masterMap.containsKey(key)) {
 				return null;
+			}
 
 			I masterValue = masterMap.get(key);
 			return cache.get(masterValue);
@@ -114,8 +115,9 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 		public V setValue(V value) {
 			checkRealm();
 
-			if (!masterMap.containsKey(key))
+			if (!masterMap.containsKey(key)) {
 				return null;
+			}
 
 			I masterValue = masterMap.get(key);
 			return cache.put(masterValue, value);
@@ -124,12 +126,15 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 		@Override
 		public boolean equals(Object o) {
 			getterCalled();
-			if (o == this)
+			if (o == this) {
 				return true;
-			if (o == null)
+			}
+			if (o == null) {
 				return false;
-			if (!(o instanceof Map.Entry))
+			}
+			if (!(o instanceof Map.Entry)) {
 				return false;
+			}
 			Map.Entry<?, ?> that = (Map.Entry<?, ?>) o;
 			return Objects.equals(this.getKey(), that.getKey()) && Objects.equals(this.getValue(), that.getValue());
 		}
@@ -144,8 +149,9 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 	private IMapChangeListener<K, I> masterListener = new IMapChangeListener<>() {
 		@Override
 		public void handleMapChange(final MapChangeEvent<? extends K, ? extends I> event) {
-			if (isDisposed())
+			if (isDisposed()) {
 				return;
+			}
 
 			cache.addAll(masterMap.values());
 
@@ -197,7 +203,7 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 		}
 	};
 
-	private IStaleListener staleListener = staleEvent -> fireStale();
+	private final IStaleListener staleListener = staleEvent -> fireStale();
 
 	public MapDelegatingValueObservableMap(IObservableMap<K, I> map, DelegatingValueProperty<S, V> valueProperty) {
 		super(map.getRealm());
@@ -218,8 +224,9 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 	@Override
 	public Set<Map.Entry<K, V>> entrySet() {
 		getterCalled();
-		if (entrySet == null)
+		if (entrySet == null) {
 			entrySet = new EntrySet();
+		}
 		return entrySet;
 	}
 
@@ -236,8 +243,9 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 
 	@Override
 	public V put(K key, V value) {
-		if (!masterMap.containsKey(key))
+		if (!masterMap.containsKey(key)) {
 			return null;
+		}
 		I masterValue = masterMap.get(key);
 		return cache.put(masterValue, value);
 	}
@@ -299,15 +307,17 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 
 			@Override
 			public V getOldValue(Object key) {
-				if (changedKeys.contains(key))
+				if (changedKeys.contains(key)) {
 					return oldValue;
+				}
 				return null;
 			}
 
 			@Override
 			public V getNewValue(Object key) {
-				if (changedKeys.contains(key))
+				if (changedKeys.contains(key)) {
 					return newValue;
+				}
 				return null;
 			}
 		});

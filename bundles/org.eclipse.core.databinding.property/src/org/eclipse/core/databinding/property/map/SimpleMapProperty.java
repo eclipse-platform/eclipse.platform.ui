@@ -79,8 +79,9 @@ public abstract class SimpleMapProperty<S, K, V> extends MapProperty<S, K, V> {
 	 * @since 1.6
 	 */
 	public final void setMap(S source, Map<K, V> map, MapDiff<K, V> diff) {
-		if (source != null && !diff.isEmpty())
+		if (source != null && !diff.isEmpty()) {
 			doSetMap(source, map, diff);
+		}
 	}
 
 	/**
