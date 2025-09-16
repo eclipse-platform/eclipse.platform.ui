@@ -52,8 +52,9 @@ public abstract class AbstractCSSPropertyFontCompositeHandler extends
 
 	@Override
 	public String[] getCSSPropertiesNames(String property) {
-		if ("font".equals(property))
+		if ("font".equals(property)) {
 			return FONT_CSSPROPERTIES;
+		}
 		return null;
 	}
 }

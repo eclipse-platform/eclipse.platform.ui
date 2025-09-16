@@ -431,8 +431,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			/*
 			 * Style all children recursive.
 			 */
-			NodeList nodes = elt instanceof ChildVisibilityAwareElement
-					? ((ChildVisibilityAwareElement) elt).getVisibleChildNodes()
+			NodeList nodes = elt instanceof ChildVisibilityAwareElement c
+					? c.getVisibleChildNodes()
 							: elt.getChildNodes();
 					if (nodes != null) {
 						processNodeList(nodes, this::applyStyles, applyStylesToChildNodes);
@@ -509,8 +509,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	}
 
 	protected String[] getStaticPseudoInstances(Element element) {
-		if (element instanceof CSSStylableElement) {
-			CSSStylableElement stylableElement = (CSSStylableElement) element;
+		if (element instanceof CSSStylableElement stylableElement) {
 			return stylableElement.getStaticPseudoInstances();
 		}
 		return null;
@@ -617,8 +616,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	public void applyInlineStyle(Object node, boolean applyStylesToChildNodes) {
 		Element elt = getElement(node);
 		if (elt != null) {
-			if (elt instanceof CSSStylableElement) {
-				CSSStylableElement stylableElement = (CSSStylableElement) elt;
+			if (elt instanceof CSSStylableElement stylableElement) {
 				String style = stylableElement.getCSSStyle();
 				if (style != null && style.length() > 0) {
 					try {
@@ -669,8 +667,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		// Initial styles must be computed or applied
 		Element elt = getElement(element);
 		if (elt != null) {
-			if (elt instanceof CSSStylableElement) {
-				CSSStylableElement stylableElement = (CSSStylableElement) elt;
+			if (elt instanceof CSSStylableElement stylableElement) {
 				CSSStyleDeclaration oldDefaultStyleDeclaration = stylableElement.getDefaultStyleDeclaration(pseudoE);
 				CSSStyleDeclaration defaultStyleDeclaration = getDefaultStyleDeclaration(
 						element, newStyle, pseudoE);
@@ -781,8 +778,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				return null;
 			}
 			for (ICSSPropertyHandler handler : handlers) {
-				if (handler instanceof ICSSPropertyCompositeHandler) {
-					ICSSPropertyCompositeHandler compositeHandler = (ICSSPropertyCompositeHandler) handler;
+				if (handler instanceof ICSSPropertyCompositeHandler compositeHandler) {
 					if (compositeHandler.isCSSPropertyComposite(property)) {
 						return compositeHandler.getCSSPropertiesNames(property);
 					}
@@ -925,8 +921,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		if (elt == null) {
 			return false;
 		}
-		if (selector instanceof ExtendedSelector) {
-			ExtendedSelector extendedSelector = (ExtendedSelector) selector;
+		if (selector instanceof ExtendedSelector extendedSelector) {
 			return extendedSelector.match(elt, pseudoElt);
 		} else {
 			// TODO : selector is not batik ExtendedSelector,

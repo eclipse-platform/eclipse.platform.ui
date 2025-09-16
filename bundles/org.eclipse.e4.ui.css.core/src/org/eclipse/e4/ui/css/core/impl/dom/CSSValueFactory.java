@@ -22,8 +22,9 @@ public class CSSValueFactory {
 
 	public static CSSValue newValue(LexicalUnit value) {
 		//if there are more lexical units then it's a list
-		if(value.getNextLexicalUnit() != null)
+		if(value.getNextLexicalUnit() != null) {
 			return new CSSValueListImpl(value);
+		}
 
 		return newPrimitiveValue(value);
 	}

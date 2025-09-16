@@ -31,8 +31,7 @@ public abstract class AbstractCSSPropertyHandlerProvider implements
 			throws Exception {
 		Element elt = engine.getElement(widget);
 		if (elt != null) {
-			if (elt instanceof CSSStylableElement) {
-				CSSStylableElement stylableElement = (CSSStylableElement) elt;
+			if (elt instanceof CSSStylableElement stylableElement) {
 				return getDefaultCSSStyleDeclaration(engine, stylableElement,
 						newStyle, pseudoE);
 			}

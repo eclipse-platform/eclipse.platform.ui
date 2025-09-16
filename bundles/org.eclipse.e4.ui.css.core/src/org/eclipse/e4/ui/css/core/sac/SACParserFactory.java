@@ -35,8 +35,9 @@ public abstract class SACParserFactory extends ParserFactory implements
 	public Parser makeParser() throws ClassNotFoundException,
 			IllegalAccessException, InstantiationException,
 			NullPointerException, ClassCastException {
-		if (preferredParserName != null)
+		if (preferredParserName != null) {
 			return makeParser(preferredParserName);
+		}
 		return super.makeParser();
 	}
 

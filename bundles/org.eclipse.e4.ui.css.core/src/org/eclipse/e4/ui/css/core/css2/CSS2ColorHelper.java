@@ -77,8 +77,7 @@ public class CSS2ColorHelper {
 	 * @return string representation of rgbColor
 	 */
 	public static String getColorStringValue(RGBColor rgbColor, ICSSValueConverterConfig config) {
-		if (config instanceof ICSSValueConverterColorConfig) {
-			ICSSValueConverterColorConfig colorConfig = (ICSSValueConverterColorConfig) config;
+		if (config instanceof ICSSValueConverterColorConfig colorConfig) {
 			switch (colorConfig.getFormat()) {
 			case ICSSValueConverterColorConfig.COLOR_HEXA_FORMAT:
 				return getHexaColorStringValue(rgbColor);

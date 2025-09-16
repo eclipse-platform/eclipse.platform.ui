@@ -112,10 +112,9 @@ public class CSSPseudoClassConditionImpl extends AbstractAttributeCondition {
 			// pseudo instance is filled, it is not valid.
 			return false;
 		}
-		if (!(e instanceof CSSStylableElement)) {
+		if (!(e instanceof CSSStylableElement element)) {
 			return false;
 		}
-		CSSStylableElement element = (CSSStylableElement) e;
 		boolean isPseudoInstanceOf = element.isPseudoInstanceOf(getValue());
 		if (!isPseudoInstanceOf) {
 			return false;

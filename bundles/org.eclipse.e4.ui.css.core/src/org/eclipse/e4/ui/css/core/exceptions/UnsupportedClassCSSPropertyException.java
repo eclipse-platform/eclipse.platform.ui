@@ -25,7 +25,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.providers.CSSPropertyHandlerLaz
  */
 public class UnsupportedClassCSSPropertyException extends Exception {
 	private static final long serialVersionUID = 1L;
-	private Class<?> clazz;
+	private final Class<?> clazz;
 
 	public UnsupportedClassCSSPropertyException(Class<?> clazz) {
 		this.clazz = clazz;
