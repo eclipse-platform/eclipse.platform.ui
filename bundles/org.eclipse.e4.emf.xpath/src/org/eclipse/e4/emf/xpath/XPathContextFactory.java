@@ -45,6 +45,7 @@ public abstract class XPathContextFactory<T> {
 	 * @deprecated The parent-context does not provide any real value. Just use
 	 *             {@link #newContext(Object)}
 	 */
+	@Deprecated
 	public abstract XPathContext newContext(XPathContext parentContext, T contextBean);
 
 	/**
