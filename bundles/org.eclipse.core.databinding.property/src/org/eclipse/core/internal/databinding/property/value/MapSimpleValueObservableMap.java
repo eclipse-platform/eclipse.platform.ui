@@ -70,8 +70,9 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 		public void handleMapChange(final MapChangeEvent<? extends K, ? extends I> event) {
 			if (!isDisposed()) {
 				updateKnownValues();
-				if (!updating)
+				if (!updating) {
 					fireMapChange(convertDiff(event.diff));
+				}
 			}
 		}
 
@@ -121,7 +122,7 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 		}
 	};
 
-	private IStaleListener staleListener = staleEvent -> fireStale();
+	private final IStaleListener staleListener = staleEvent -> fireStale();
 
 	private INativePropertyListener<S> detailListener;
 
@@ -140,8 +141,9 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 					} else if (event.type == SimplePropertyEvent.STALE) {
 						boolean wasStale = !staleMasterValues.isEmpty();
 						staleMasterValues.add(source);
-						if (!wasStale)
+						if (!wasStale) {
 							fireStale();
+						}
 					}
 				});
 			}
@@ -172,15 +174,17 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 		staleMasterValues = new IdentitySet<>();
 		knownMasterValues.addSetChangeListener(event -> {
 			for (I key1 : event.diff.getRemovals()) {
-				if (detailListener != null)
+				if (detailListener != null) {
 					detailListener.removeFrom(key1);
+				}
 				cachedValues.remove(key1);
 				staleMasterValues.remove(key1);
 			}
 			for (I key2 : event.diff.getAdditions()) {
 				cachedValues.put(key2, detailProperty.getValue(key2));
-				if (detailListener != null)
+				if (detailListener != null) {
 					detailListener.addTo(key2);
+				}
 			}
 		});
 
@@ -211,8 +215,9 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 	@Override
 	public Set<Map.Entry<K, V>> entrySet() {
 		getterCalled();
-		if (entrySet == null)
+		if (entrySet == null) {
 			entrySet = new EntrySet();
+		}
 		return entrySet;
 	}
 
@@ -249,7 +254,7 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 	}
 
 	class MapEntry implements Map.Entry<K, V> {
-		private K key;
+		private final K key;
 
 		MapEntry(K key) {
 			this.key = key;
@@ -264,15 +269,17 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 		@Override
 		public V getValue() {
 			getterCalled();
-			if (!masterMap.containsKey(key))
+			if (!masterMap.containsKey(key)) {
 				return null;
+			}
 			return detailProperty.getValue(masterMap.get(key));
 		}
 
 		@Override
 		public V setValue(V value) {
-			if (!masterMap.containsKey(key))
+			if (!masterMap.containsKey(key)) {
 				return null;
+			}
 			I source = masterMap.get(key);
 
 			V oldValue = detailProperty.getValue(source);
@@ -292,12 +299,15 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 		@Override
 		public boolean equals(Object o) {
 			getterCalled();
-			if (o == this)
+			if (o == this) {
 				return true;
-			if (o == null)
+			}
+			if (o == null) {
 				return false;
-			if (!(o instanceof Map.Entry))
+			}
+			if (!(o instanceof Map.Entry)) {
 				return false;
+			}
 			Map.Entry<?, ?> that = (Map.Entry<?, ?>) o;
 			return Objects.equals(this.getKey(), that.getKey()) && Objects.equals(this.getValue(), that.getValue());
 		}
@@ -325,8 +335,9 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 
 	@Override
 	public V put(K key, V value) {
-		if (!masterMap.containsKey(key))
+		if (!masterMap.containsKey(key)) {
 			return null;
+		}
 		I masterValue = masterMap.get(key);
 		V oldValue = detailProperty.getValue(masterValue);
 		detailProperty.setValue(masterValue, value);

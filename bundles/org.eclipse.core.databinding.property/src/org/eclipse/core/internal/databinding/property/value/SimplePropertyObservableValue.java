@@ -72,15 +72,17 @@ public class SimplePropertyObservableValue<S, T> extends AbstractObservableValue
 		getRealm().exec(() -> {
 			cachedValue = property.getValue(source);
 			stale = false;
-			if (listener != null)
+			if (listener != null) {
 				listener.addTo(source);
+			}
 		});
 	}
 
 	@Override
 	protected void lastListenerRemoved() {
-		if (listener != null)
+		if (listener != null) {
 			listener.removeFrom(source);
+		}
 		cachedValue = null;
 		stale = false;
 	}
@@ -107,8 +109,9 @@ public class SimplePropertyObservableValue<S, T> extends AbstractObservableValue
 		if (hasListeners()) {
 			T oldValue = cachedValue;
 			T newValue = cachedValue = property.getValue(source);
-			if (diff == null)
+			if (diff == null) {
 				diff = Diffs.createValueDiff(oldValue, newValue);
+			}
 			if (!Objects.equals(oldValue, newValue) || stale) {
 				stale = false;
 				fireValueChange(Diffs.unmodifiableDiff(diff));
@@ -140,8 +143,9 @@ public class SimplePropertyObservableValue<S, T> extends AbstractObservableValue
 	@Override
 	public synchronized void dispose() {
 		if (!isDisposed()) {
-			if (listener != null)
+			if (listener != null) {
 				listener.removeFrom(source);
+			}
 			source = null;
 			property = null;
 			listener = null;

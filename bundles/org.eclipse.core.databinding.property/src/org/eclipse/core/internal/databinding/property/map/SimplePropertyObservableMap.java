@@ -102,15 +102,17 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 			cachedMap = new HashMap<>(getMap());
 			stale = false;
 
-			if (listener != null)
+			if (listener != null) {
 				listener.addTo(source);
+			}
 		});
 	}
 
 	@Override
 	protected void lastListenerRemoved() {
-		if (listener != null)
+		if (listener != null) {
 			listener.removeFrom(source);
+		}
 
 		cachedMap.clear();
 		cachedMap = null;
@@ -140,7 +142,7 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 		}
 	}
 
-	private EntrySet es = new EntrySet();
+	private final EntrySet es = new EntrySet();
 
 	@Override
 	public Set<Map.Entry<K, V>> entrySet() {
@@ -196,8 +198,9 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 		}
 
 		private void checkForComodification() {
-			if (expectedModCount != modCount)
+			if (expectedModCount != modCount) {
 				throw new ConcurrentModificationException();
+			}
 		}
 	}
 
@@ -234,10 +237,11 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 		V oldValue = map.get(key);
 
 		MapDiff<K, V> diff;
-		if (add)
+		if (add) {
 			diff = Diffs.createMapDiffSingleAdd(key, value);
-		else
+		} else {
 			diff = Diffs.createMapDiffSingleChange(key, oldValue, value);
+		}
 
 		updateMap(map, diff);
 
@@ -276,8 +280,9 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 		checkRealm();
 
 		Map<K, V> map = getMap();
-		if (!map.containsKey(key))
+		if (!map.containsKey(key)) {
 			return null;
+		}
 
 		V oldValue = map.get(key);
 
@@ -295,8 +300,9 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 		getterCalled();
 
 		Map<K, V> map = getMap();
-		if (map.isEmpty())
+		if (map.isEmpty()) {
 			return;
+		}
 
 		MapDiff<K, V> diff = Diffs.createMapDiffRemoveAll(new HashMap<>(map));
 		updateMap(map, diff);
@@ -314,8 +320,9 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 		if (hasListeners()) {
 			Map<K, V> oldMap = cachedMap;
 			Map<K, V> newMap = cachedMap = new HashMap<>(getMap());
-			if (diff == null)
+			if (diff == null) {
 				diff = Diffs.computeMapDiff(oldMap, newMap);
+			}
 			if (!diff.isEmpty() || stale) {
 				stale = false;
 				fireMapChange(diff);
@@ -342,8 +349,9 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 	@Override
 	public synchronized void dispose() {
 		if (!isDisposed()) {
-			if (listener != null)
+			if (listener != null) {
 				listener.removeFrom(source);
+			}
 			property = null;
 			source = null;
 			listener = null;

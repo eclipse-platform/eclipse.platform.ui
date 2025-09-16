@@ -84,15 +84,17 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 			cachedList = new ArrayList<>(getList());
 			stale = false;
 
-			if (listener != null)
+			if (listener != null) {
 				listener.addTo(source);
+			}
 		});
 	}
 
 	@Override
 	protected void lastListenerRemoved() {
-		if (listener != null)
+		if (listener != null) {
 			listener.removeFrom(source);
+		}
 
 		cachedList = null;
 		stale = false;
@@ -201,8 +203,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 
 		List<E> list = getList();
 
-		if (index < 0 || index > list.size())
+		if (index < 0 || index > list.size()) {
 			throw new IndexOutOfBoundsException();
+		}
 
 		ListDiff<E> diff = Diffs.createListDiff(Diffs.createListDiffEntry(index, true, o));
 		updateList(list, diff);
@@ -239,8 +242,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 			public void remove() {
 				checkRealm();
 				checkForComodification();
-				if (lastIndex == -1)
+				if (lastIndex == -1) {
 					throw new IllegalStateException();
+				}
 
 				iterator.remove(); // stay in sync
 				ListDiff<E> diff = Diffs.createListDiff(Diffs.createListDiffEntry(lastIndex, false, lastElement));
@@ -254,8 +258,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 			}
 
 			private void checkForComodification() {
-				if (expectedModCount != simplePropertyModCount)
+				if (expectedModCount != simplePropertyModCount) {
 					throw new ConcurrentModificationException();
+				}
 			}
 		};
 	}
@@ -266,11 +271,13 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 
 		List<E> list = getList();
 		int size = list.size();
-		if (oldIndex < 0 || oldIndex >= size || newIndex < 0 || newIndex >= size)
+		if (oldIndex < 0 || oldIndex >= size || newIndex < 0 || newIndex >= size) {
 			throw new IndexOutOfBoundsException();
+		}
 
-		if (oldIndex == newIndex)
+		if (oldIndex == newIndex) {
 			return list.get(oldIndex);
+		}
 
 		E element = list.get(oldIndex);
 
@@ -288,8 +295,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 		List<E> list = getList();
 
 		int index = list.indexOf(o);
-		if (index == -1)
+		if (index == -1) {
 			return false;
+		}
 
 		@SuppressWarnings("unchecked")
 		// o can only be of type E
@@ -396,8 +404,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 			public void remove() {
 				checkRealm();
 				checkForComodification();
-				if (lastIndex == -1)
+				if (lastIndex == -1) {
 					throw new IllegalStateException();
+				}
 
 				ListDiff<E> diff = Diffs.createListDiff(Diffs.createListDiffEntry(lastIndex, false, lastElement));
 				updateList(list, diff);
@@ -410,8 +419,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 			}
 
 			private void checkForComodification() {
-				if (expectedModCount != simplePropertyModCount)
+				if (expectedModCount != simplePropertyModCount) {
 					throw new ConcurrentModificationException();
+				}
 			}
 		};
 	}
@@ -455,8 +465,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 	public boolean addAll(Collection<? extends E> c) {
 		checkRealm();
 
-		if (c.isEmpty())
+		if (c.isEmpty()) {
 			return false;
+		}
 
 		List<E> list = getList();
 		return addAll(list, list.size(), c);
@@ -466,15 +477,17 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 	public boolean addAll(int index, Collection<? extends E> c) {
 		checkRealm();
 
-		if (c.isEmpty())
+		if (c.isEmpty()) {
 			return false;
+		}
 
 		return addAll(getList(), index, c);
 	}
 
 	private boolean addAll(List<E> list, int index, Collection<? extends E> c) {
-		if (index < 0 || index > list.size())
+		if (index < 0 || index > list.size()) {
 			throw new IndexOutOfBoundsException();
+		}
 
 		List<ListDiffEntry<E>> entries = new ArrayList<>(c.size());
 		int offsetIndex = 0;
@@ -493,12 +506,14 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 	public boolean removeAll(Collection<?> c) {
 		checkRealm();
 
-		if (c.isEmpty())
+		if (c.isEmpty()) {
 			return false;
+		}
 
 		List<E> list = getList();
-		if (list.isEmpty())
+		if (list.isEmpty()) {
 			return false;
+		}
 
 		List<ListDiffEntry<E>> entries = new ArrayList<>();
 		for (ListIterator<E> it = list.listIterator(); it.hasNext();) {
@@ -509,8 +524,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 			}
 		}
 
-		if (entries.isEmpty())
+		if (entries.isEmpty()) {
 			return false;
+		}
 
 		ListDiff<E> diff = Diffs.createListDiff(entries);
 		updateList(list, diff);
@@ -523,8 +539,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 		checkRealm();
 
 		List<E> list = getList();
-		if (list.isEmpty())
+		if (list.isEmpty()) {
 			return false;
+		}
 
 		if (c.isEmpty()) {
 			clear();
@@ -540,8 +557,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 			}
 		}
 
-		if (entries.isEmpty())
+		if (entries.isEmpty()) {
 			return false;
+		}
 
 		ListDiff<E> diff = Diffs.createListDiff(entries);
 		updateList(list, diff);
@@ -554,8 +572,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 		checkRealm();
 
 		List<E> list = getList();
-		if (list.isEmpty())
+		if (list.isEmpty()) {
 			return;
+		}
 
 		List<ListDiffEntry<E>> entries = new ArrayList<>();
 		for (ListIterator<E> it = list.listIterator(list.size()); it.hasPrevious();) {
@@ -573,8 +592,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 		if (hasListeners()) {
 			List<E> oldList = cachedList;
 			List<E> newList = cachedList = new ArrayList<>(getList());
-			if (diff == null)
+			if (diff == null) {
 				diff = Diffs.computeListDiff(oldList, newList);
+			}
 			if (!diff.isEmpty() || stale) {
 				stale = false;
 				fireListChange(diff);
@@ -613,8 +633,9 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 	@Override
 	public synchronized void dispose() {
 		if (!isDisposed()) {
-			if (listener != null)
+			if (listener != null) {
 				listener.removeFrom(source);
+			}
 			property = null;
 			source = null;
 			listener = null;

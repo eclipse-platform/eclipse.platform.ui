@@ -55,11 +55,13 @@ public abstract class DelegatingListProperty<S, E> extends ListProperty<S, E> {
 	 * @return the property to delegate to for the specified source object.
 	 */
 	public final IListProperty<S, E> getDelegate(S source) {
-		if (source == null)
+		if (source == null) {
 			return nullProperty;
+		}
 		IListProperty<S, E> delegate = doGetDelegate(source);
-		if (delegate == null)
+		if (delegate == null) {
 			delegate = nullProperty;
+		}
 		return delegate;
 	}
 

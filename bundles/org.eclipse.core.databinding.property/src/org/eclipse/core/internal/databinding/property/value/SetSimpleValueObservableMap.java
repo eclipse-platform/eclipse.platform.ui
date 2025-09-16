@@ -70,8 +70,9 @@ public class SetSimpleValueObservableMap<S, K extends S, V> extends ComputedObse
 						} else if (event.type == SimplePropertyEvent.STALE) {
 							boolean wasStale = !staleKeys.isEmpty();
 							staleKeys.add(source);
-							if (!wasStale)
+							if (!wasStale) {
 								fireStale();
+							}
 						}
 					});
 				}
@@ -95,16 +96,18 @@ public class SetSimpleValueObservableMap<S, K extends S, V> extends ComputedObse
 	protected void hookListener(K addedKey) {
 		if (cachedValues != null) {
 			cachedValues.put(addedKey, detailProperty.getValue(addedKey));
-			if (listener != null)
+			if (listener != null) {
 				listener.addTo(addedKey);
+			}
 		}
 	}
 
 	@Override
 	protected void unhookListener(K removedKey) {
 		if (cachedValues != null) {
-			if (listener != null)
+			if (listener != null) {
 				listener.removeFrom(removedKey);
+			}
 			cachedValues.remove(removedKey);
 			staleKeys.remove(removedKey);
 		}
