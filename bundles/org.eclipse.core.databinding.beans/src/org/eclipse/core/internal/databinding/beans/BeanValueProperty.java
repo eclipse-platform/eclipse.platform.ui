@@ -68,8 +68,9 @@ public class BeanValueProperty<S, T> extends SimpleValueProperty<S, T> {
 	@Override
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor);
-		if (valueType != null)
+		if (valueType != null) {
 			s += "<" + BeanPropertyHelper.shortClassName(valueType) + ">"; //$NON-NLS-1$//$NON-NLS-2$
+		}
 		return s;
 	}
 }

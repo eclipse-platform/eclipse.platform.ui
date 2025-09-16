@@ -60,8 +60,9 @@ public class BeanMapProperty<S, K, V> extends SimpleMapProperty<S, K, V> {
 
 	@SuppressWarnings("unchecked")
 	private Map<K, V> asMap(Object propertyValue) {
-		if (propertyValue == null)
+		if (propertyValue == null) {
 			return Collections.emptyMap();
+		}
 		return (Map<K, V>) propertyValue;
 	}
 
@@ -89,9 +90,10 @@ public class BeanMapProperty<S, K, V> extends SimpleMapProperty<S, K, V> {
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor) + "{:}"; //$NON-NLS-1$
 
-		if (keyType != null || valueType != null)
+		if (keyType != null || valueType != null) {
 			s += "<" + BeanPropertyHelper.shortClassName(keyType) + ", " //$NON-NLS-1$ //$NON-NLS-2$
 					+ BeanPropertyHelper.shortClassName(valueType) + ">"; //$NON-NLS-1$
+		}
 		return s;
 	}
 }

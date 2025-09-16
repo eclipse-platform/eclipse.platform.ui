@@ -46,8 +46,9 @@ public class PojoValueProperty<S, T> extends SimpleValueProperty<S, T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected T doGetValue(S source) {
-		if (source == null)
+		if (source == null) {
 			return null;
+		}
 		return (T) BeanPropertyHelper.readProperty(source, propertyDescriptor);
 	}
 
@@ -64,8 +65,9 @@ public class PojoValueProperty<S, T> extends SimpleValueProperty<S, T> {
 	@Override
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor);
-		if (valueType != null)
+		if (valueType != null) {
 			s += "<" + BeanPropertyHelper.shortClassName(valueType) + ">"; //$NON-NLS-1$//$NON-NLS-2$
+		}
 		return s;
 	}
 }

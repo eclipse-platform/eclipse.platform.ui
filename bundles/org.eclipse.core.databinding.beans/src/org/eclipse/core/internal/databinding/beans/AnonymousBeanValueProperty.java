@@ -33,7 +33,7 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 public class AnonymousBeanValueProperty<S, T> extends DelegatingValueProperty<S, T> {
 	private final String propertyName;
 
-	private Map<Class<S>, IValueProperty<S, T>> delegates;
+	private final Map<Class<S>, IValueProperty<S, T>> delegates;
 
 	/**
 	 * @param propertyName property name
@@ -53,8 +53,9 @@ public class AnonymousBeanValueProperty<S, T> extends DelegatingValueProperty<S,
 
 	@SuppressWarnings("unchecked")
 	private IValueProperty<S, T> getClassDelegate(Class<S> beanClass) {
-		if (delegates.containsKey(beanClass))
+		if (delegates.containsKey(beanClass)) {
 			return delegates.get(beanClass);
+		}
 
 		IValueProperty<S, T> delegate;
 		try {
@@ -69,8 +70,9 @@ public class AnonymousBeanValueProperty<S, T> extends DelegatingValueProperty<S,
 	@Override
 	public <M extends S> IObservableValue<T> observeDetail(IObservableValue<M> master) {
 		Object valueType = getValueType();
-		if (valueType == null)
+		if (valueType == null) {
 			valueType = inferValueType(master.getValueType());
+		}
 		return MasterDetailObservables.detailValue(master, valueFactory(master
 				.getRealm()), valueType);
 	}
@@ -88,8 +90,9 @@ public class AnonymousBeanValueProperty<S, T> extends DelegatingValueProperty<S,
 	public String toString() {
 		String s = "?." + propertyName; //$NON-NLS-1$
 		Class<?> valueType = (Class<?>) getValueType();
-		if (valueType != null)
+		if (valueType != null) {
 			s += "<" + BeanPropertyHelper.shortClassName(valueType) + ">"; //$NON-NLS-1$//$NON-NLS-2$
+		}
 		return s;
 	}
 }

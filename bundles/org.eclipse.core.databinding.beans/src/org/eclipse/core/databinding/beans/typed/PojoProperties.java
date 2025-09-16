@@ -112,8 +112,9 @@ public class PojoProperties {
 	@SuppressWarnings("unchecked")
 	public static <S, T> IBeanValueProperty<S, T> value(Class<S> beanClass, String propertyName, Class<T> valueType) {
 		String[] propertyNames = split(propertyName);
-		if (propertyNames.length > 1)
+		if (propertyNames.length > 1) {
 			valueType = null;
+		}
 
 		IValueProperty<S, T> property;
 		PropertyDescriptor propertyDescriptor;
@@ -134,8 +135,9 @@ public class PojoProperties {
 	}
 
 	private static String[] split(String propertyName) {
-		if (propertyName.indexOf('.') == -1)
+		if (propertyName.indexOf('.') == -1) {
 			return new String[] { propertyName };
+		}
 		List<String> propertyNames = new ArrayList<>();
 		int index;
 		while ((index = propertyName.indexOf('.')) != -1) {
@@ -161,8 +163,9 @@ public class PojoProperties {
 			String... propertyNames) {
 		@SuppressWarnings("unchecked")
 		IBeanValueProperty<S, T>[] properties = (IBeanValueProperty<S, T>[]) new IBeanValueProperty<?, ?>[propertyNames.length];
-		for (int i = 0; i < properties.length; i++)
+		for (int i = 0; i < properties.length; i++) {
 			properties[i] = value(beanClass, propertyNames[i], null);
+		}
 		return properties;
 	}
 

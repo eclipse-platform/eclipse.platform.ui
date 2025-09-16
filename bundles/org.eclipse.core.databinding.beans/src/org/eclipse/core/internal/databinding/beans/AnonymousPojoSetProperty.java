@@ -31,7 +31,7 @@ import org.eclipse.core.databinding.property.set.ISetProperty;
 public class AnonymousPojoSetProperty<S, E> extends DelegatingSetProperty<S, E> {
 	private final String propertyName;
 
-	private Map<Class<S>, ISetProperty<S, E>> delegates;
+	private final Map<Class<S>, ISetProperty<S, E>> delegates;
 
 	/**
 	 * @param propertyName property name
@@ -47,8 +47,9 @@ public class AnonymousPojoSetProperty<S, E> extends DelegatingSetProperty<S, E> 
 	@Override
 	protected ISetProperty<S, E> doGetDelegate(S source) {
 		Class<S> beanClass = (Class<S>) source.getClass();
-		if (delegates.containsKey(beanClass))
+		if (delegates.containsKey(beanClass)) {
 			return delegates.get(beanClass);
+		}
 
 		ISetProperty<S, E> delegate;
 		try {
@@ -64,8 +65,9 @@ public class AnonymousPojoSetProperty<S, E> extends DelegatingSetProperty<S, E> 
 	public String toString() {
 		String s = "?." + propertyName + "{}"; //$NON-NLS-1$ //$NON-NLS-2$
 		Class<?> elementType = (Class<?>) getElementType();
-		if (elementType != null)
+		if (elementType != null) {
 			s += "<" + BeanPropertyHelper.shortClassName(elementType) + ">"; //$NON-NLS-1$//$NON-NLS-2$
+		}
 		return s;
 	}
 }

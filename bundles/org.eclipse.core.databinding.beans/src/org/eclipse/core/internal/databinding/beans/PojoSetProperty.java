@@ -57,10 +57,12 @@ public class PojoSetProperty<S, E> extends SimpleSetProperty<S, E> {
 
 	@SuppressWarnings("unchecked")
 	private Set<E> asSet(Object propertyValue) {
-		if (propertyValue == null)
+		if (propertyValue == null) {
 			return Collections.emptySet();
-		if (propertyDescriptor.getPropertyType().isArray())
+		}
+		if (propertyDescriptor.getPropertyType().isArray()) {
 			return new HashSet<>(Arrays.asList((E[]) propertyValue));
+		}
 		return (Set<E>) propertyValue;
 	}
 
@@ -92,8 +94,9 @@ public class PojoSetProperty<S, E> extends SimpleSetProperty<S, E> {
 	@Override
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor) + "{}"; //$NON-NLS-1$
-		if (elementType != null)
+		if (elementType != null) {
 			s += "<" + BeanPropertyHelper.shortClassName(elementType) + ">"; //$NON-NLS-1$//$NON-NLS-2$
+		}
 		return s;
 	}
 }

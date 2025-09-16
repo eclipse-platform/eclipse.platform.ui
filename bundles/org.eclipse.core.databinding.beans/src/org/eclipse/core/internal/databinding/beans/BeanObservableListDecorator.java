@@ -47,8 +47,9 @@ public class BeanObservableListDecorator<E> extends DecoratingObservableList<E> 
 	@Override
 	public Object getObserved() {
 		IObservable decorated = getDecorated();
-		if (decorated instanceof IObserving)
+		if (decorated instanceof IObserving) {
 			return ((IObserving) decorated).getObserved();
+		}
 		return null;
 	}
 

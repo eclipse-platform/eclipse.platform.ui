@@ -33,7 +33,7 @@ import org.eclipse.core.databinding.property.map.IMapProperty;
 public class AnonymousBeanMapProperty<S, K, V> extends DelegatingMapProperty<S, K, V> {
 	private final String propertyName;
 
-	private Map<Class<S>, IMapProperty<S, K, V>> delegates;
+	private final Map<Class<S>, IMapProperty<S, K, V>> delegates;
 
 	/**
 	 * @param propertyName property name
@@ -49,8 +49,9 @@ public class AnonymousBeanMapProperty<S, K, V> extends DelegatingMapProperty<S, 
 	@Override
 	protected IMapProperty<S, K, V> doGetDelegate(S source) {
 		Class<S> beanClass = (Class<S>) source.getClass();
-		if (delegates.containsKey(beanClass))
+		if (delegates.containsKey(beanClass)) {
 			return delegates.get(beanClass);
+		}
 
 		IMapProperty<S, K, V> delegate;
 		try {
