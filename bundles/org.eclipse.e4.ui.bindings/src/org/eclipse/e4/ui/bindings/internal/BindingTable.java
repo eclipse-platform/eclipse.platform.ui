@@ -119,8 +119,7 @@ public class BindingTable {
 		private final int countStrokes(final Trigger[] triggers) {
 			int strokeCount = triggers.length;
 			for (final Trigger trigger : triggers) {
-				if (trigger instanceof KeyStroke) {
-					final KeyStroke keyStroke = (KeyStroke) trigger;
+				if (trigger instanceof final KeyStroke keyStroke) {
 					final int modifierKeys = keyStroke.getModifierKeys();
 					final IKeyLookup lookup = KeyLookupFactory.getDefault();
 					if ((modifierKeys & lookup.getAlt()) != 0) {
@@ -146,18 +145,18 @@ public class BindingTable {
 
 	public static final BindingComparator BEST_SEQUENCE = new BindingComparator();
 
-	private Context tableId;
-	private ArrayList<Binding> bindings = new ArrayList<>();
-	private Map<TriggerSequence, Binding> bindingsByTrigger = new HashMap<>();
-	private Map<ParameterizedCommand, ArrayList<Binding>> bindingsByCommand = new HashMap<>();
-	private Map<TriggerSequence, ArrayList<Binding>> bindingsByPrefix = new HashMap<>();
-	private Map<TriggerSequence, ArrayList<Binding>> conflicts = new HashMap<>();
-	private Map<TriggerSequence, ArrayList<Binding>> orderedBindingsByTrigger = new HashMap<>();
+	private final Context tableId;
+	private final ArrayList<Binding> bindings = new ArrayList<>();
+	private final Map<TriggerSequence, Binding> bindingsByTrigger = new HashMap<>();
+	private final Map<ParameterizedCommand, ArrayList<Binding>> bindingsByCommand = new HashMap<>();
+	private final Map<TriggerSequence, ArrayList<Binding>> bindingsByPrefix = new HashMap<>();
+	private final Map<TriggerSequence, ArrayList<Binding>> conflicts = new HashMap<>();
+	private final Map<TriggerSequence, ArrayList<Binding>> orderedBindingsByTrigger = new HashMap<>();
 	private final Map<Binding, Boolean> activeBindings = new HashMap<>();
 
 	private IContributionFactory contributionFactory;
 
-	private MApplication application;
+	private final MApplication application;
 
 	public BindingTable(Context context, MApplication application) {
 		tableId = context;

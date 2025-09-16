@@ -38,7 +38,7 @@ final class OutOfOrderVerifyListener implements VerifyKeyListener {
 	/**
 	 * The listener that will be chained in if the verify event has not been eaten yet.
 	 */
-	private OutOfOrderListener chainedListener;
+	private final OutOfOrderListener chainedListener;
 
 	/**
 	 * Constructs a new instance of <code>OutOfOrderVerifyListener</code> with the listener that

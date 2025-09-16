@@ -331,8 +331,7 @@ public class KeyBindingDispatcher {
 					logger.trace((Throwable) commandException,
 							"Command exception for: " + parameterizedCommand + " in " //$NON-NLS-1$ //$NON-NLS-2$
 									+ describe(context));
-					if (handlerService instanceof HandlerServiceImpl) {
-						HandlerServiceImpl serviceImpl = (HandlerServiceImpl) handlerService;
+					if (handlerService instanceof HandlerServiceImpl serviceImpl) {
 						IEclipseContext serviceContext = serviceImpl.getContext();
 						if (serviceContext != null) {
 							StringBuilder sb = new StringBuilder("\n\tExecution context: "); //$NON-NLS-1$
