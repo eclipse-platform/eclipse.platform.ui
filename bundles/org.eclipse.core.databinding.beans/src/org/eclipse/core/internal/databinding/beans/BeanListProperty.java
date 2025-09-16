@@ -58,10 +58,12 @@ public class BeanListProperty<S, E> extends SimpleListProperty<S, E> {
 
 	@SuppressWarnings("unchecked")
 	private List<E> asList(Object propertyValue) {
-		if (propertyValue == null)
+		if (propertyValue == null) {
 			return Collections.emptyList();
-		if (propertyDescriptor.getPropertyType().isArray())
+		}
+		if (propertyDescriptor.getPropertyType().isArray()) {
 			return Arrays.asList((E[]) propertyValue);
+		}
 		return (List<E>) propertyValue;
 	}
 
@@ -100,8 +102,9 @@ public class BeanListProperty<S, E> extends SimpleListProperty<S, E> {
 	@Override
 	public String toString() {
 		String s = BeanPropertyHelper.propertyName(propertyDescriptor) + "[]"; //$NON-NLS-1$
-		if (elementType != null)
+		if (elementType != null) {
 			s += "<" + BeanPropertyHelper.shortClassName(elementType) + ">"; //$NON-NLS-1$//$NON-NLS-2$
+		}
 		return s;
 	}
 }

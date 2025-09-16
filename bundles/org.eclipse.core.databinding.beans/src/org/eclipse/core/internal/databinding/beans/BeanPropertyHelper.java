@@ -167,8 +167,9 @@ public class BeanPropertyHelper {
 				getInterfacePropertyDescriptors(pds, beanClass);
 				if (pds.size() > 0) {
 					for (PropertyDescriptor descriptor : pds.toArray(new PropertyDescriptor[pds.size()])) {
-						if (descriptor.getName().equals(propertyName))
+						if (descriptor.getName().equals(propertyName)) {
 							return descriptor;
+						}
 					}
 				}
 			} catch (IntrospectionException e) {
@@ -207,9 +208,10 @@ public class BeanPropertyHelper {
 	 */
 	/* package */public static PropertyDescriptor getValueTypePropertyDescriptor(IObservableValue<?> observable,
 			String propertyName) {
-		if (observable.getValueType() != null)
+		if (observable.getValueType() != null) {
 			return getPropertyDescriptor((Class<?>) observable.getValueType(),
 					propertyName);
+		}
 		return null;
 	}
 
@@ -227,12 +229,14 @@ public class BeanPropertyHelper {
 	 * @return class name excluding package
 	 */
 	public static String shortClassName(Class<?> beanClass) {
-		if (beanClass == null)
+		if (beanClass == null) {
 			return "?"; //$NON-NLS-1$
+		}
 		String className = beanClass.getName();
 		int lastDot = className.lastIndexOf('.');
-		if (lastDot != -1)
+		if (lastDot != -1) {
 			className = className.substring(lastDot + 1);
+		}
 		return className;
 	}
 }

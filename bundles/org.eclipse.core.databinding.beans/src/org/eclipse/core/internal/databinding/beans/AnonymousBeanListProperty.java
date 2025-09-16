@@ -30,7 +30,7 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 public class AnonymousBeanListProperty<S, E> extends DelegatingListProperty<S, E> {
 	private final String propertyName;
 
-	private Map<Class<S>, IListProperty<S, E>> delegates;
+	private final Map<Class<S>, IListProperty<S, E>> delegates;
 
 	public AnonymousBeanListProperty(String propertyName, Class<E> elementType) {
 		super(elementType);
@@ -42,8 +42,9 @@ public class AnonymousBeanListProperty<S, E> extends DelegatingListProperty<S, E
 	@Override
 	protected IListProperty<S, E> doGetDelegate(S source) {
 		Class<S> beanClass = (Class<S>) source.getClass();
-		if (delegates.containsKey(beanClass))
+		if (delegates.containsKey(beanClass)) {
 			return delegates.get(beanClass);
+		}
 
 		IListProperty<S, E> delegate;
 		try {
@@ -59,8 +60,9 @@ public class AnonymousBeanListProperty<S, E> extends DelegatingListProperty<S, E
 	public String toString() {
 		String s = "?." + propertyName + "[]"; //$NON-NLS-1$ //$NON-NLS-2$
 		Class<?> elementType = (Class<?>) getElementType();
-		if (elementType != null)
+		if (elementType != null) {
 			s += "<" + BeanPropertyHelper.shortClassName(elementType) + ">"; //$NON-NLS-1$//$NON-NLS-2$
+		}
 		return s;
 	}
 }
