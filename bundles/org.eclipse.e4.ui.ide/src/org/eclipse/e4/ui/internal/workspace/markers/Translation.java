@@ -66,8 +66,7 @@ public final class Translation {
 	public Optional<String> message(IMarker marker) {
 		try {
 			Object attribute = marker.getAttribute(IMarker.MESSAGE);
-			if (attribute instanceof String) {
-				String value = (String) attribute;
+			if (attribute instanceof String value) {
 				return Optional.of(value);
 			}
 		} catch (CoreException e) {
