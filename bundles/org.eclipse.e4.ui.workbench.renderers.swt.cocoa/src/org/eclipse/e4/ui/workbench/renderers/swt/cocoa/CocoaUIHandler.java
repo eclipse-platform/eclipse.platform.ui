@@ -245,8 +245,7 @@ public class CocoaUIHandler {
 			if (engine != null) {
 				engine.removeGui(item);
 			}
-		} else if (item instanceof MHandledMenuItem) {
-			MHandledMenuItem mhmi = (MHandledMenuItem) item;
+		} else if (item instanceof MHandledMenuItem mhmi) {
 			elmtId = mhmi.getCommand() == null ? null : mhmi.getCommand().getElementId();
 			if (elmtId != null && (elmtId.equals(COMMAND_ID_ABOUT) || elmtId.equals(COMMAND_ID_PREFERENCES)
 					|| elmtId.equals(COMMAND_ID_QUIT))) {
@@ -364,8 +363,7 @@ public class CocoaUIHandler {
 		// FIXME: pity this code isn't available through the MMenuItem instance
 		// somehow
 		IEclipseContext lclContext = getContext(item);
-		if (item instanceof MDirectMenuItem) {
-			MDirectMenuItem dmi = (MDirectMenuItem) item;
+		if (item instanceof MDirectMenuItem dmi) {
 			if (dmi.getObject() == null) {
 				IContributionFactory cf = (IContributionFactory) lclContext.get(IContributionFactory.class.getName());
 				dmi.setObject(cf.create(dmi.getContributionURI(), lclContext));
@@ -373,8 +371,7 @@ public class CocoaUIHandler {
 			lclContext.set(MItem.class.getName(), item);
 			ContextInjectionFactory.invoke(dmi.getObject(), Execute.class, lclContext);
 			lclContext.remove(MItem.class.getName());
-		} else if (item instanceof MHandledMenuItem) {
-			MHandledMenuItem hmi = (MHandledMenuItem) item;
+		} else if (item instanceof MHandledMenuItem hmi) {
 			EHandlerService service = (EHandlerService) lclContext.get(EHandlerService.class.getName());
 			ParameterizedCommand cmd = hmi.getWbCommand();
 			if (cmd == null) {
@@ -435,20 +432,20 @@ public class CocoaUIHandler {
 			return null;
 		}
 		for (MMenuElement item : menu.getChildren()) {
-			if (item instanceof MMenuItem) {
-				MMenuItem mmi = (MMenuItem) item;
-				if (mmi.getElementId() != null && mmi.getElementId().equals(actionId))
+			if (item instanceof MMenuItem mmi) {
+				if (mmi.getElementId() != null && mmi.getElementId().equals(actionId)) {
 					return mmi;
-				if (mmi instanceof MHandledMenuItem) {
-					MHandledMenuItem mhmi = (MHandledMenuItem) mmi;
+				}
+				if (mmi instanceof MHandledMenuItem mhmi) {
 					if (mhmi.getCommand() != null && actionId.equals(mhmi.getCommand().getElementId())) {
 						return mmi;
 					}
 				}
 			} else if (item instanceof MMenu) {
 				MMenuItem found = findAction(actionId, (MMenu) item);
-				if (found != null)
+				if (found != null) {
 					return found;
+				}
 			}
 		}
 		return null;
