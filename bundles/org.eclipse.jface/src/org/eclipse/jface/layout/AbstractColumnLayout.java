@@ -254,7 +254,7 @@ public abstract class AbstractColumnLayout extends Layout {
 		int width = Math.max(0, area.width - trim);
 
 		if (width > 1)
-			layoutTableTree(table, width, area, tableWidth < area.width);
+			layoutTableTree(table, width, area, tableWidth > 0 && tableWidth < area.width);
 
 		// For the first time we need to relayout because Scrollbars are not
 		// calculate appropriately
