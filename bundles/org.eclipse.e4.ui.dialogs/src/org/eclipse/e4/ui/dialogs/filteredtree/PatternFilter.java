@@ -42,12 +42,12 @@ public class PatternFilter extends ViewerFilter {
 	/*
 	 * Cache of filtered elements in the tree
 	 */
-	private Map<Object, Object[]> cache = new HashMap<>();
+	private final Map<Object, Object[]> cache = new HashMap<>();
 
 	/*
 	 * Maps parent elements to TRUE or FALSE
 	 */
-	private Map<Object, Boolean> foundAnyCache = new HashMap<>();
+	private final Map<Object, Boolean> foundAnyCache = new HashMap<>();
 
 	private boolean useCache = false;
 

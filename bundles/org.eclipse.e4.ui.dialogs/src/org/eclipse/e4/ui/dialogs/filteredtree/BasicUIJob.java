@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public abstract class BasicUIJob extends Job {
 
-	private Display cachedDisplay;
+	private final Display cachedDisplay;
 
 	/**
 	 * Create a new instance of the receiver with the supplied name. The display
