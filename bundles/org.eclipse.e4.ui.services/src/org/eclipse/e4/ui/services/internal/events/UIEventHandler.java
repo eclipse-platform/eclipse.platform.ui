@@ -32,9 +32,9 @@ public class UIEventHandler implements EventHandler {
 
 	@Override
 	public void handleEvent(final Event event) {
-		if (uiSync == null)
+		if (uiSync == null) {
 			eventHandler.handleEvent(event);
-		else {
+		} else {
 			uiSync.syncExec(() -> eventHandler.handleEvent(event));
 		}
 	}

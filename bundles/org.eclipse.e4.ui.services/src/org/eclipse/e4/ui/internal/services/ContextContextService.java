@@ -27,8 +27,8 @@ public class ContextContextService implements EContextService {
 	static final String LOCAL_CONTEXTS = "localContexts";
 	static final String DEFERRED_UPDATES = "localContexts.updates";
 
-	private IEclipseContext eclipseContext;
-	private ContextManager contextManager;
+	private final IEclipseContext eclipseContext;
+	private final ContextManager contextManager;
 
 	private boolean deferUpdates;
 

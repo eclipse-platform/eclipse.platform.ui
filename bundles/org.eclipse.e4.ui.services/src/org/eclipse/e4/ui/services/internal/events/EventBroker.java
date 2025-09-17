@@ -38,7 +38,7 @@ import org.osgi.service.event.EventHandler;
 public class EventBroker implements IEventBroker {
 
 	// TBD synchronization
-	private Map<EventHandler, Collection<ServiceRegistration<?>>> registrations = new HashMap<>();
+	private final Map<EventHandler, Collection<ServiceRegistration<?>>> registrations = new HashMap<>();
 
 	@Inject
 	@Optional
@@ -139,8 +139,9 @@ public class EventBroker implements IEventBroker {
 	@Override
 	public boolean unsubscribe(EventHandler eventHandler) {
 		Collection<ServiceRegistration<?>> handled = registrations.remove(eventHandler);
-		if (handled == null || handled.isEmpty())
+		if (handled == null || handled.isEmpty()) {
 			return false;
+		}
 		for (ServiceRegistration<?> r : handled) {
 			r.unregister();
 		}
