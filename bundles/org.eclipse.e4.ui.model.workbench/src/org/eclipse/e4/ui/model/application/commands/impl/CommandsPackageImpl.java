@@ -1373,8 +1373,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 
 		// Obtain or create and register package
 		Object registeredCommandsPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		CommandsPackageImpl theCommandsPackage = registeredCommandsPackage instanceof CommandsPackageImpl
-				? (CommandsPackageImpl) registeredCommandsPackage
+		CommandsPackageImpl theCommandsPackage = registeredCommandsPackage instanceof CommandsPackageImpl c
+				? c
 				: new CommandsPackageImpl();
 
 		isInited = true;

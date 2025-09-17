@@ -949,8 +949,8 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 		// Obtain or create and register package
 		Object registeredApplicationPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		ApplicationPackageImpl theApplicationPackage = registeredApplicationPackage instanceof ApplicationPackageImpl
-				? (ApplicationPackageImpl) registeredApplicationPackage
+		ApplicationPackageImpl theApplicationPackage = registeredApplicationPackage instanceof ApplicationPackageImpl a
+				? a
 				: new ApplicationPackageImpl();
 
 		isInited = true;

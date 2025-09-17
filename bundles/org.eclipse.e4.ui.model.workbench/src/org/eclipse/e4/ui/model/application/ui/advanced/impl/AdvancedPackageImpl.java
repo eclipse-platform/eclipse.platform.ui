@@ -1224,8 +1224,8 @@ public class AdvancedPackageImpl extends EPackageImpl {
 
 		// Obtain or create and register package
 		Object registeredAdvancedPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		AdvancedPackageImpl theAdvancedPackage = registeredAdvancedPackage instanceof AdvancedPackageImpl
-				? (AdvancedPackageImpl) registeredAdvancedPackage
+		AdvancedPackageImpl theAdvancedPackage = registeredAdvancedPackage instanceof AdvancedPackageImpl a
+				? a
 				: new AdvancedPackageImpl();
 
 		isInited = true;

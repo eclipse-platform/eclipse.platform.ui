@@ -328,8 +328,8 @@ public class FragmentPackageImpl extends EPackageImpl {
 
 		// Obtain or create and register package
 		Object registeredFragmentPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		FragmentPackageImpl theFragmentPackage = registeredFragmentPackage instanceof FragmentPackageImpl
-				? (FragmentPackageImpl) registeredFragmentPackage
+		FragmentPackageImpl theFragmentPackage = registeredFragmentPackage instanceof FragmentPackageImpl f
+				? f
 				: new FragmentPackageImpl();
 
 		isInited = true;
