@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public final class HyperlinkExtractor {
-	private String aboutProperty;
-	private List<HyperlinkRange> linkRanges;
-	private List<String> links;
+	private final String aboutProperty;
+	private final List<HyperlinkRange> linkRanges;
+	private final List<String> links;
 
 	public HyperlinkExtractor(final String aboutProperty) {
 		this.aboutProperty = aboutProperty;
