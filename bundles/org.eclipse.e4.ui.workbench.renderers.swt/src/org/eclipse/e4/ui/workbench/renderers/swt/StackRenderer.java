@@ -1276,7 +1276,7 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	/**
-	 * Shows a popup dialog with the list of editors availavle in a given
+	 * Shows a popup dialog with the list of editors available in a given
 	 * {@link CTabFolder}. By default the popup origin will be located close to the
 	 * chevron location.
 	 */
@@ -1287,8 +1287,8 @@ public class StackRenderer extends LazyStackRenderer {
 	/**
 	 * Shows a popup dialog with the list of editors available in the given
 	 * CTabFolder. If {@code forceCenter} enabled, the dialog is centered
-	 * horizontally; otherwise, the dialog origin is placed at chevron location. he
-	 * dialog is placed at
+	 * horizontally over the tab folder; otherwise, the dialog is placed at the
+	 * chevron location.
 	 *
 	 * @param forceCenter center the dialog if true
 	 */
