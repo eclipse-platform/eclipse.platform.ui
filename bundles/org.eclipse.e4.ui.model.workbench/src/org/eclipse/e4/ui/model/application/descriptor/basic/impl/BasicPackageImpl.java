@@ -475,8 +475,8 @@ public class BasicPackageImpl extends EPackageImpl {
 
 		// Obtain or create and register package
 		Object registeredBasicPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		BasicPackageImpl theBasicPackage = registeredBasicPackage instanceof BasicPackageImpl
-				? (BasicPackageImpl) registeredBasicPackage
+		BasicPackageImpl theBasicPackage = registeredBasicPackage instanceof BasicPackageImpl b
+				? b
 				: new BasicPackageImpl();
 
 		isInited = true;

@@ -6026,8 +6026,8 @@ public class MenuPackageImpl extends EPackageImpl {
 
 		// Obtain or create and register package
 		Object registeredMenuPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		MenuPackageImpl theMenuPackage = registeredMenuPackage instanceof MenuPackageImpl
-				? (MenuPackageImpl) registeredMenuPackage
+		MenuPackageImpl theMenuPackage = registeredMenuPackage instanceof MenuPackageImpl m
+				? m
 				: new MenuPackageImpl();
 
 		isInited = true;

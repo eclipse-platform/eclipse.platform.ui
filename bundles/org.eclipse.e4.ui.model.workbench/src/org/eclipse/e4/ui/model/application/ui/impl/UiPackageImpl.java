@@ -1932,7 +1932,7 @@ public class UiPackageImpl extends EPackageImpl {
 
 		// Obtain or create and register package
 		Object registeredUiPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		UiPackageImpl theUiPackage = registeredUiPackage instanceof UiPackageImpl ? (UiPackageImpl) registeredUiPackage
+		UiPackageImpl theUiPackage = registeredUiPackage instanceof UiPackageImpl u ? u
 				: new UiPackageImpl();
 
 		isInited = true;
