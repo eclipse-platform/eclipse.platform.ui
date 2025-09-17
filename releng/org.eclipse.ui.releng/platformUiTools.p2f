@@ -117,6 +117,11 @@
             <repository location='https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot-eclipse-nightly/'/>
         </repositories>
     </iu>
+    <iu id='org.eclipse.lsp4e' name='org.eclipse.lsp4e' version='0.0.0'>
+        <repositories size='1'>
+            <repository location='https://download.eclipse.org/lsp4e/releases/latest/'/>
+        </repositories>
+    </iu>
     <iu id='org.eclipse.swt.tools.feature.feature.group' name='SWT Tools' version='0.0.0'>
         <repositories size='1'>
             <repository location='https://download.eclipse.org/eclipse/updates/I-builds'/>
