@@ -33,8 +33,7 @@ public class SWTHTMLElementProvider extends SWTElementProvider {
 
 	@Override
 	public Element getElement(Object element, CSSEngine engine) {
-		if (element instanceof Widget) {
-			Widget widget = (Widget) element;
+		if (element instanceof Widget widget) {
 			return SWTElementHelpers.getHTMLElement(widget, engine);
 		}
 		return null;

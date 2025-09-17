@@ -24,8 +24,7 @@ public class CSSPropertySingleSWTHandler extends AbstractCSSPropertySWTHandler{
 	public void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		boolean isSingle = (Boolean)engine.convert(value, Boolean.class, null);
-		if (control instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder) control;
+		if (control instanceof CTabFolder folder) {
 			folder.setSingle(isSingle);
 		}
 	}
@@ -33,8 +32,7 @@ public class CSSPropertySingleSWTHandler extends AbstractCSSPropertySWTHandler{
 	@Override
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		if (control instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder)control;
+		if (control instanceof CTabFolder folder) {
 			return Boolean.toString( folder.getSingle() );
 		}
 		return null;

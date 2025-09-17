@@ -27,12 +27,11 @@ public class CSSPropertySelectedTabsSWTHandler extends AbstractCSSPropertySWTHan
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (!(control instanceof CTabFolder)) {
+		if (!(control instanceof CTabFolder folder)) {
 			return;
 		}
 		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class, control.getDisplay());
-			CTabFolder folder = ((CTabFolder) control);
 			if (grad.getValues().isEmpty()) {
 				folder.setSelectionBackground(null, null, true);
 				return;

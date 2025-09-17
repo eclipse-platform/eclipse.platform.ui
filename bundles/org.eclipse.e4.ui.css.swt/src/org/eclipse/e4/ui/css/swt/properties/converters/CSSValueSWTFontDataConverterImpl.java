@@ -51,23 +51,19 @@ public class CSSValueSWTFontDataConverterImpl extends AbstractCSSValueConverter 
 			throws Exception {
 		FontData fontData = null;
 		if (context != null) {
-			if (context instanceof Display) {
-				Display display = (Display) context;
+			if (context instanceof Display display) {
 				Font font = display.getSystemFont();
 				fontData = CSSSWTFontHelper.getFirstFontData(font);
 			}
-			if (context instanceof Control) {
-				Control control = (Control) context;
+			if (context instanceof Control control) {
 				Font font = control.getFont();
 				fontData = CSSSWTFontHelper.getFirstFontData(font);
 			}
-			if (context instanceof CTabItem) {
-				CTabItem item = (CTabItem) context;
+			if (context instanceof CTabItem item) {
 				Font font = item.getFont();
 				fontData = CSSSWTFontHelper.getFirstFontData(font);
 			}
-			if (context instanceof Font) {
-				Font font = (Font)context;
+			if (context instanceof Font font) {
 				fontData = CSSSWTFontHelper.getFirstFontData(font);
 			}
 		}
@@ -84,7 +80,7 @@ public class CSSValueSWTFontDataConverterImpl extends AbstractCSSValueConverter 
 	public String convert(Object value, CSSEngine engine, Object context,
 			ICSSValueConverterConfig config) throws Exception {
 		FontData fontData = (FontData) value;
-		String property = (context instanceof String) ? (String) context : "";
+		String property = (context instanceof String s) ? s : "";
 		switch (property) {
 		case "font-family":
 			return CSSSWTFontHelper.getFontFamily(fontData);

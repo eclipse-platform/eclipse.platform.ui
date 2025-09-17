@@ -34,10 +34,9 @@ AbstractCSSPropertySWTHandler {
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (!(control instanceof CTabFolder)) {
+		if (!(control instanceof CTabFolder folder)) {
 			return;
 		}
-		CTabFolder folder = (CTabFolder) control;
 		CTabFolderRenderer renderer = folder.getRenderer();
 		if (!(renderer instanceof ICTabRendering)) {
 			return;

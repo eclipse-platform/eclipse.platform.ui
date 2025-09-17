@@ -45,7 +45,7 @@ public class CSSValueSWTGradientConverterImpl extends AbstractCSSValueConverter 
 	@Override
 	public Object convert(CSSValue value, CSSEngine engine, Object context) throws Exception {
 		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-			Display display = (context instanceof Display) ? (Display) context : null;
+			Display display = (context instanceof Display d) ? d : null;
 			Gradient grad = CSSSWTColorHelper.getGradient((CSSValueList) value, display);
 			List<?> values = grad.getValues();
 			for (int i = 0; i < values.size(); i++) {

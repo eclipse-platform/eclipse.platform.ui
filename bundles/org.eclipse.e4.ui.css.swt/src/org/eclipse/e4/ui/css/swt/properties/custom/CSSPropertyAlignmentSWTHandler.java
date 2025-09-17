@@ -31,8 +31,7 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 	@Override
 	public void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (control instanceof Button) {
-			Button button = (Button)control;
+		if (control instanceof Button button) {
 			switch (value.getCssText().toLowerCase()) {
 			case "left":
 				button.setAlignment(SWT.LEFT);
@@ -62,8 +61,7 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 				break;
 			}
 		}
-		else if (control instanceof Label) {
-			Label label = (Label)control;
+		else if (control instanceof Label label) {
 			switch (value.getCssText().toLowerCase()) {
 			case "left":
 				label.setAlignment(SWT.LEFT);
@@ -92,8 +90,7 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 	@Override
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		if (control instanceof Button) {
-			Button button = (Button)control;
+		if (control instanceof Button button) {
 			switch(button.getAlignment()){
 			case SWT.RIGHT: return "right";  //Note same value as SWT.TRAIL
 			case SWT.LEFT: return "left";  //Note same value as SWT.LEAD
@@ -102,8 +99,7 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 			case SWT.DOWN: return "down";
 			}
 		}
-		else if (control instanceof Label) {
-			Label label = (Label)control;
+		else if (control instanceof Label label) {
 			switch(label.getAlignment()){
 			case SWT.RIGHT: return "right";  //Note same value as SWT.TRAIL
 			case SWT.LEFT: return "left";  //Note same value as SWT.LEAD

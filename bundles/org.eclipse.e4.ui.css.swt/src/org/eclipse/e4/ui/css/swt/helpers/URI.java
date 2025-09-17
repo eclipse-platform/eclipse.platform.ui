@@ -1579,11 +1579,9 @@ public final class URI
 		if (this == object) {
 			return true;
 		}
-		if (!(object instanceof URI)) {
+		if (!(object instanceof URI uri)) {
 			return false;
 		}
-		URI uri = (URI) object;
-
 		return hashCode == uri.hashCode() &&
 			equals(scheme, uri.scheme(), true) &&
 			equals(authority, isHierarchical() ? uri.authority() : uri.opaquePart()) &&

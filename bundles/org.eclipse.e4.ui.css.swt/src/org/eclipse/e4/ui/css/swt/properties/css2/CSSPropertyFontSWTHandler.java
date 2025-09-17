@@ -52,15 +52,12 @@ implements ICSSPropertyHandler2 {
 
 	private static void setFont(Widget widget, Font font) {
 
-		if (widget instanceof CTabItem) {
-			CTabItem item = (CTabItem) widget;
+		if (widget instanceof CTabItem item) {
 			CSSSWTFontHelper.setFont(item, font);
-		} else if (widget instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder) widget;
+		} else if (widget instanceof CTabFolder folder) {
 			CSSSWTFontHelper.setFont(folder, font);
 			updateChildrenFonts(folder, font);
-		} else if (widget instanceof Control) {
-			Control control = (Control)widget;
+		} else if (widget instanceof Control control) {
 			final boolean isLayoutDeferred = (control instanceof Composite) && ((Composite)control).isLayoutDeferred();
 			if (isLayoutDeferred) {
 				control.setRedraw(false);
@@ -394,10 +391,9 @@ implements ICSSPropertyHandler2 {
 
 		@Override
 		public void handleEvent(Event e) {
-			if (e.widget instanceof CTabFolder) {
+			if (e.widget instanceof CTabFolder folder) {
 				Item[] items;
 				Item selection;
-				CTabFolder folder = (CTabFolder) e.widget;
 				selection = folder.getSelection();
 				items = folder.getItems();
 

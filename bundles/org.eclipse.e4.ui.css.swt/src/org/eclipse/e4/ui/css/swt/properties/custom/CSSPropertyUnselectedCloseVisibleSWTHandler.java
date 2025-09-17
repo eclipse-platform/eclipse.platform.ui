@@ -26,8 +26,7 @@ AbstractCSSPropertySWTHandler {
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		boolean isUnselectedClose = (Boolean) engine.convert(value,
 				Boolean.class, null);
-		if (control instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder) control;
+		if (control instanceof CTabFolder folder) {
 			folder.setUnselectedCloseVisible(isUnselectedClose);
 		}
 	}
@@ -35,8 +34,7 @@ AbstractCSSPropertySWTHandler {
 	@Override
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		if (control instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder) control;
+		if (control instanceof CTabFolder folder) {
 			return Boolean.toString(folder.getUnselectedCloseVisible());
 		}
 

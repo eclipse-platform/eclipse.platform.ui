@@ -26,10 +26,9 @@ AbstractCSSPropertySWTHandler {
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE || !(control instanceof Composite)) {
+		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE || !(control instanceof Composite composite)) {
 			return;
 		}
-		Composite composite = (Composite) control;
 		String stringValue = value.getCssText().toLowerCase();
 
 		switch (stringValue) {
@@ -48,8 +47,7 @@ AbstractCSSPropertySWTHandler {
 	@Override
 	protected String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		if (control instanceof Composite) {
-			Composite composite = (Composite) control;
+		if (control instanceof Composite composite) {
 			switch (composite.getBackgroundMode()) {
 			case SWT.INHERIT_DEFAULT:
 				return "default";

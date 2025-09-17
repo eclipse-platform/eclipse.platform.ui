@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Scale;
  */
 public class ScaleElement extends ControlElement {
 
-	private SelectionListener selectionListener = new SelectionAdapter() {
+	private final SelectionListener selectionListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			doApplyStyles();

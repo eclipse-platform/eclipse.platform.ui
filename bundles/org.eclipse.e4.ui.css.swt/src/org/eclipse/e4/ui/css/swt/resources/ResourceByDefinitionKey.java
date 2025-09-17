@@ -14,7 +14,7 @@
 package org.eclipse.e4.ui.css.swt.resources;
 
 public class ResourceByDefinitionKey {
-	private Object key;
+	private final Object key;
 
 	public ResourceByDefinitionKey(Object key) {
 		this.key = key;

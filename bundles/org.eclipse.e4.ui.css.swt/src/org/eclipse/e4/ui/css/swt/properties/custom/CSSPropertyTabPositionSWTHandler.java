@@ -29,12 +29,11 @@ AbstractCSSPropertySWTHandler {
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (!(control instanceof CTabFolder) || value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE
+		if (!(control instanceof CTabFolder tabFolder) || value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE
 				|| ((CSSPrimitiveValue) value).getPrimitiveType() != CSSPrimitiveValue.CSS_IDENT) {
 			return;
 		}
 
-		CTabFolder tabFolder = (CTabFolder) control;
 		String position = ((CSSPrimitiveValue) value).getStringValue();
 		switch (position.toLowerCase()) {
 		case "bottom":
@@ -49,8 +48,7 @@ AbstractCSSPropertySWTHandler {
 	@Override
 	protected String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		if (control instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder)control;
+		if (control instanceof CTabFolder folder) {
 			int position = folder.getTabPosition();
 
 			if (position == SWT.TOP) {

@@ -30,7 +30,7 @@ public class ButtonElement extends ControlElement {
 
 	private boolean isSelected = false;
 
-	private SelectionListener selectionListener = new SelectionAdapter() {
+	private final SelectionListener selectionListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			if (!e.widget.isDisposed()) {
