@@ -32,14 +32,13 @@ public class CSSPropertyTabTextMinimumCharactersSWTHandler extends AbstractCSSPr
 	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (!(control instanceof CTabFolder)) {
+		if (!(control instanceof CTabFolder folder)) {
 			return;
 		}
 
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE
 				&& (((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_NUMBER)) {
 			int minimumCharacters = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-			CTabFolder folder = (CTabFolder) control;
 			folder.setMinimumCharacters(minimumCharacters);
 		}
 	}

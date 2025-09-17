@@ -172,8 +172,7 @@ AbstractCSSPropertyPaddingHandler {
 	private void setPadding(Object element, CSSValue value) {
 		Widget widget = SWTElementHelpers.getWidget(element);
 
-		if (widget instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder) widget;
+		if (widget instanceof CTabFolder folder) {
 			CTabFolderRenderer renderer = folder.getRenderer();
 			if (renderer == null) {
 				return;

@@ -95,15 +95,13 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 				text.setText(newText);
 			}
 		}
-		if (element instanceof Label) {
-			Label label = (Label) element;
+		if (element instanceof Label label) {
 			label
 			.setText(getTextTransform(label.getText(), value,
 					defaultText));
 			return;
 		}
-		if (element instanceof Button) {
-			Button button = (Button) element;
+		if (element instanceof Button button) {
 			button.setText(getTextTransform(button.getText(), value,
 					defaultText));
 			return;

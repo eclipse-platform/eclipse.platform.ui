@@ -25,8 +25,7 @@ public class CSSPropertyMaximizedSWTHandler extends AbstractCSSPropertySWTHandle
 	public void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		boolean isMaximized = (Boolean)engine.convert(value, Boolean.class, null);
-		if (control instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder) control;
+		if (control instanceof CTabFolder folder) {
 			folder.setMaximized(isMaximized);
 		}
 	}
@@ -34,8 +33,7 @@ public class CSSPropertyMaximizedSWTHandler extends AbstractCSSPropertySWTHandle
 	@Override
 	public String retrieveCSSProperty(Control control, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		if (control instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder)control;
+		if (control instanceof CTabFolder folder) {
 			return Boolean.toString( folder.getMaximized() );
 		}
 		return null;

@@ -109,8 +109,7 @@ public class SWTHTMLElement extends WidgetElement {
 
 	protected String computeAttributeType() {
 		Widget widget = getWidget();
-		if (widget instanceof Button) {
-			Button button = (Button) widget;
+		if (widget instanceof Button button) {
 			int style = button.getStyle();
 			if ((style | SWT.RADIO) == style) {
 				return "radio";
@@ -120,8 +119,7 @@ public class SWTHTMLElement extends WidgetElement {
 			}
 			return "button";
 		}
-		if (widget instanceof Text) {
-			Text text = (Text) widget;
+		if (widget instanceof Text text) {
 			if ((text.getStyle() & SWT.PASSWORD) != 0) {
 				return "password";
 			} else if ((text.getStyle() & SWT.MULTI) != 0) {

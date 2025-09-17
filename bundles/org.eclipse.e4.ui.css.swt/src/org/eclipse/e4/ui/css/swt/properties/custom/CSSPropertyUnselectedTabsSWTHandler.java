@@ -34,11 +34,10 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (!(control instanceof CTabFolder)
+		if (!(control instanceof CTabFolder folder)
 				|| !isUnselectedTabsColorProp(property)) {
 			return;
 		}
-		CTabFolder folder = ((CTabFolder) control);
 		CTabFolderRenderer renderer = folder.getRenderer();
 		if (!(renderer instanceof ICTabRendering)) {
 			return;
@@ -116,8 +115,7 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 	}
 
 	private boolean isReskinRequired(Control control) {
-		if (control instanceof Composite) {
-			Composite composite = (Composite) control;
+		if (control instanceof Composite composite) {
 			return composite.isVisible() && composite.getChildren().length > 0;
 		}
 		return false;

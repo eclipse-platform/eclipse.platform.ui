@@ -48,8 +48,7 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 
 	@Override
 	protected void hookNativeWidget(Object widget) {
-		if (widget instanceof Widget) {
-			Widget swtWidget = (Widget) widget;
+		if (widget instanceof Widget swtWidget) {
 			swtWidget.addDisposeListener(disposeListener);
 		}
 	}

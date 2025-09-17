@@ -117,8 +117,7 @@ public class CSSPropertyBackgroundSWTHandler extends AbstractCSSPropertyBackgrou
 				widget.getDisplay());
 		if (widget instanceof CTabFolder && "selected".equals(pseudo)) {
 			((CTabFolder) widget).setSelectionBackground(image);
-		} else if (widget instanceof Button) {
-			Button button = ((Button) widget);
+		} else if (widget instanceof Button button) {
 			// Image oldImage = button.getImage();
 			// if (oldImage != null)
 			// oldImage.dispose();

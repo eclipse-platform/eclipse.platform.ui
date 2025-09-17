@@ -55,7 +55,7 @@ public class GradientBackgroundListener implements Listener {
 	private boolean radialGradient;
 	Image gradientImage;
 
-	private DisposeListener disposeListener = new DisposeListener() {
+	private final DisposeListener disposeListener = new DisposeListener() {
 		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			GradientBackgroundListener.remove(control);
@@ -124,12 +124,10 @@ public class GradientBackgroundListener implements Listener {
 		if (grad.isRadial()) {
 			List<java.awt.Color> colors = new ArrayList<>();
 			for (Object rgbObj : grad.getRGBs()) {
-				if (rgbObj instanceof RGBA) {
-					RGBA rgba = (RGBA) rgbObj;
+				if (rgbObj instanceof RGBA rgba) {
 					java.awt.Color color = new java.awt.Color(rgba.rgb.red, rgba.rgb.green, rgba.rgb.blue, rgba.alpha);
 					colors.add(color);
-				} else if (rgbObj instanceof RGB) {
-					RGB rgb = (RGB) rgbObj;
+				} else if (rgbObj instanceof RGB rgb) {
 					java.awt.Color color = new java.awt.Color(rgb.red, rgb.green, rgb.blue);
 					colors.add(color);
 				}
@@ -153,12 +151,10 @@ public class GradientBackgroundListener implements Listener {
 			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
 				List<Color> colors = new ArrayList<>();
 				for (Object rgbObj : grad.getRGBs()) {
-					if (rgbObj instanceof RGBA) {
-						RGBA rgba = (RGBA) rgbObj;
+					if (rgbObj instanceof RGBA rgba) {
 						Color color = new Color(control.getDisplay(), rgba);
 						colors.add(color);
-					} else if (rgbObj instanceof RGB) {
-						RGB rgb = (RGB) rgbObj;
+					} else if (rgbObj instanceof RGB rgb) {
 						Color color = new Color(control.getDisplay(), rgb);
 						colors.add(color);
 					}

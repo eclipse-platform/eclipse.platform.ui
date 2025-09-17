@@ -23,16 +23,14 @@ public class CSSPropertyMaximizeVisibleSWTHandler extends AbstractCSSPropertySWT
 	@Override
 	public void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine) throws Exception{
 		boolean isMaxVisible = (Boolean) engine.convert(value, Boolean.class, null);
-		if (control instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder) control;
+		if (control instanceof CTabFolder folder) {
 			folder.setMaximizeVisible(isMaxVisible);
 		}
 	}
 
 	@Override
 	public String retrieveCSSProperty(Control control, String property, String pseudo, CSSEngine engine) {
-		if (control instanceof CTabFolder) {
-			CTabFolder folder = (CTabFolder) control;
+		if (control instanceof CTabFolder folder) {
 			return Boolean.toString(folder.getMaximizeVisible());
 		}
 		return null;

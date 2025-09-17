@@ -32,16 +32,14 @@ public class CSSPropertyHeaderHandler implements ICSSPropertyHandler {
 	@Override
 	public boolean applyCSSProperty(Object element, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (!(element instanceof IHeaderCustomizationElement &&  element instanceof ElementAdapter)) {
+		if (!(element instanceof IHeaderCustomizationElement headerCustomizationElement &&  element instanceof ElementAdapter)) {
 			return false;
 		}
-		IHeaderCustomizationElement headerCustomizationElement = (IHeaderCustomizationElement) element;
 		ElementAdapter elementAdapter = (ElementAdapter) element;
 		Object nativeWidget = elementAdapter.getNativeWidget();
-		if (!(nativeWidget instanceof Widget)) {
+		if (!(nativeWidget instanceof Widget widget)) {
 			return false;
 		}
-		Widget widget = (Widget) nativeWidget;
 		return setHeaderColor(property, value, engine, headerCustomizationElement, widget);
 	}
 
