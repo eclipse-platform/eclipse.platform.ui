@@ -32,10 +32,9 @@ public class CSSPropertyHeaderHandler implements ICSSPropertyHandler {
 	@Override
 	public boolean applyCSSProperty(Object element, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (!(element instanceof IHeaderCustomizationElement headerCustomizationElement &&  element instanceof ElementAdapter)) {
+		if (!(element instanceof IHeaderCustomizationElement headerCustomizationElement &&  element instanceof ElementAdapter elementAdapter)) {
 			return false;
 		}
-		ElementAdapter elementAdapter = (ElementAdapter) element;
 		Object nativeWidget = elementAdapter.getNativeWidget();
 		if (!(nativeWidget instanceof Widget widget)) {
 			return false;
