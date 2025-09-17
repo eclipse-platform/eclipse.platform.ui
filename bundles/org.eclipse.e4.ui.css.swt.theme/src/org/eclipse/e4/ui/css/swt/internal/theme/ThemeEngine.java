@@ -324,8 +324,7 @@ public class ThemeEngine implements IThemeEngine {
 	private List<String> getAllStyles(ITheme theme) {
 		String id = theme.getId();
 		String idWithoutVersion = null;
-		if (theme instanceof Theme) {
-			Theme th = (Theme) theme;
+		if (theme instanceof Theme th) {
 			String osVersion = th.getOsVersion();
 			if (osVersion != null && osVersion.length() > 0 && id.endsWith(osVersion)) {
 				idWithoutVersion = id.substring(0, id.length() - osVersion.length());

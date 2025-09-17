@@ -16,8 +16,8 @@ package org.eclipse.e4.ui.css.swt.internal.theme;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 
 public class Theme implements ITheme {
-	private String id;
-	private String label;
+	private final String id;
+	private final String label;
 	private String osVersion;
 
 	public Theme(String id, String label) {
