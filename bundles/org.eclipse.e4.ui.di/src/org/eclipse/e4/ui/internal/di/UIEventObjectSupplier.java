@@ -57,8 +57,9 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 			requestor.resolveArguments(false);
 			removeCurrentEvent(topic);
 			if( uiSync == null ) {
-				if (logger != null)
+				if (logger != null) {
 					logger.log(Level.WARNING, "No realm found to process UI event " + event);
+				}
 				return;
 			} else {
 				uiSync.syncExec(requestor::execute);
@@ -86,8 +87,9 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 
 	@Override
 	protected String getTopic(IObjectDescriptor descriptor) {
-		if (descriptor == null)
+		if (descriptor == null) {
 			return null;
+		}
 		UIEventTopic qualifier = descriptor.getQualifier(UIEventTopic.class);
 		return qualifier.value();
 	}
