@@ -32,10 +32,9 @@ public class MenuService implements EMenuService {
 
 	@Override
 	public boolean registerContextMenu(Object parent, String menuId) {
-		if (!(parent instanceof Control)) {
+		if (!(parent instanceof Control parentControl)) {
 			return false;
 		}
-		Control parentControl = (Control) parent;
 		for (MMenu mmenu : myPart.getMenus()) {
 			if (menuId.equals(mmenu.getElementId())
 					&& mmenu instanceof MPopupMenu) {

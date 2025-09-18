@@ -38,26 +38,32 @@ public class ViewComparator extends ViewerComparator {
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		// place "General" category first
-		if (WorkbenchSWTMessages.ICategory_general.equals(e1))
+		if (WorkbenchSWTMessages.ICategory_general.equals(e1)) {
 			return -1;
-		if (WorkbenchSWTMessages.ICategory_general.equals(e2))
+		}
+		if (WorkbenchSWTMessages.ICategory_general.equals(e2)) {
 			return 1;
+		}
 
 		String str1;
-		if (e1 instanceof MPartDescriptor)
+		if (e1 instanceof MPartDescriptor) {
 			str1 = ((MPartDescriptor) e1).getLocalizedLabel();
-		else
+		} else {
 			str1 = e1.toString();
+		}
 
 		String str2;
-		if (e2 instanceof MPartDescriptor)
+		if (e2 instanceof MPartDescriptor) {
 			str2 = ((MPartDescriptor) e2).getLocalizedLabel();
-		else
+		} else {
 			str2 = e2.toString();
-		if (str1 == null)
+		}
+		if (str1 == null) {
 			str1 = EMPTY_STRING;
-		if (str2 == null)
+		}
+		if (str2 == null) {
 			str2 = EMPTY_STRING;
+		}
 		return getComparator().compare(str1, str2);
 	}
 }

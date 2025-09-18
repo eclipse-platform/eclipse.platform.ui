@@ -77,12 +77,12 @@ public class ShowViewDialog extends Dialog implements
 
 	private Button okButton;
 
-	private MApplication application;
+	private final MApplication application;
 	private MPartDescriptor[] viewDescs = new MPartDescriptor[0];
 
 	private Label descriptionHint;
 
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	/**
 	 * Constructs a new ShowViewDialog.
@@ -295,11 +295,13 @@ public class ShowViewDialog extends Dialog implements
 
 		String[] expandedCategoryIds = settings
 				.getArray(STORE_EXPANDED_CATEGORIES_ID);
-		if (expandedCategoryIds == null)
+		if (expandedCategoryIds == null) {
 			return;
+		}
 
-		if (expandedCategoryIds.length > 0)
+		if (expandedCategoryIds.length > 0) {
 			filteredTree.getViewer().setExpandedElements((Object[]) expandedCategoryIds);
+		}
 
 		String selectedPartId = settings.get(STORE_SELECTED_VIEW_ID);
 		if (selectedPartId != null) {
@@ -326,11 +328,12 @@ public class ShowViewDialog extends Dialog implements
 				.getExpandedElements();
 		String[] expandedCategoryIds = new String[expandedElements.length];
 		for (int i = 0; i < expandedElements.length; ++i) {
-			if (expandedElements[i] instanceof MPartDescriptor)
+			if (expandedElements[i] instanceof MPartDescriptor) {
 				expandedCategoryIds[i] = ((MPartDescriptor) expandedElements[i])
 						.getElementId();
-			else
+			} else {
 				expandedCategoryIds[i] = expandedElements[i].toString();
+			}
 		}
 
 		// Save them for next time.
@@ -408,8 +411,9 @@ public class ShowViewDialog extends Dialog implements
 					String description = ((MPartDescriptor) o).getTooltip();
 					description = LocalizationHelper.getLocalized(description,
 							(MPartDescriptor) o, context);
-					if (description != null && description.length() == 0)
+					if (description != null && description.length() == 0) {
 						description = WorkbenchSWTMessages.ShowView_noDesc;
+					}
 					popUp(description);
 				}
 			}

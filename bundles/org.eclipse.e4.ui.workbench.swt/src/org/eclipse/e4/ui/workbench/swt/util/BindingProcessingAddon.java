@@ -116,9 +116,8 @@ public class BindingProcessingAddon {
 	}
 
 	private void activateContexts(Object me) {
-		if (me instanceof MBindings) {
+		if (me instanceof MBindings container) {
 			MContext contextModel = (MContext) me;
-			MBindings container = (MBindings) me;
 			List<MBindingContext> bindingContexts = container
 					.getBindingContexts();
 			IEclipseContext context = contextModel.getContext();
@@ -287,8 +286,7 @@ public class BindingProcessingAddon {
 
 		if (UIEvents.isADD(event)) {
 			for (Object newObj : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
-				if (newObj instanceof MBindingTable) {
-					MBindingTable bt = (MBindingTable) newObj;
+				if (newObj instanceof MBindingTable bt) {
 					final Context bindingContext = contextManager.getContext(bt.getBindingContext().getElementId());
 					final BindingTable table = new BindingTable(bindingContext, application);
 					bindingTables.addTable(table);
@@ -316,8 +314,7 @@ public class BindingProcessingAddon {
 		// adding a binding
 		if (UIEvents.isADD(event)) {
 			for (Object newObj : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
-				if (newObj instanceof MKeyBinding) {
-					MKeyBinding binding = (MKeyBinding) newObj;
+				if (newObj instanceof MKeyBinding binding) {
 					updateBinding(binding, true, elementObj);
 				}
 			}
@@ -325,8 +322,7 @@ public class BindingProcessingAddon {
 		// removing a binding
 		else if (UIEvents.isREMOVE(event)) {
 			for (Object oldObj : UIEvents.asIterable(event, UIEvents.EventTags.OLD_VALUE)) {
-				if (oldObj instanceof MKeyBinding) {
-					MKeyBinding binding = (MKeyBinding) oldObj;
+				if (oldObj instanceof MKeyBinding binding) {
 					updateBinding(binding, false, elementObj);
 				}
 			}
@@ -337,11 +333,10 @@ public class BindingProcessingAddon {
 	@Optional
 	private void subscribeTopicCommand(@UIEventTopic(UIEvents.KeyBinding.TOPIC_COMMAND) Event event) {
 		Object elementObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (!(elementObj instanceof MKeyBinding)) {
+		if (!(elementObj instanceof MKeyBinding binding)) {
 			return;
 		}
 
-		MKeyBinding binding = (MKeyBinding) elementObj;
 		Object oldObj = event.getProperty(UIEvents.EventTags.OLD_VALUE);
 
 		MKeyBinding oldBinding = (MKeyBinding) EcoreUtil.copy((EObject) binding);
@@ -354,11 +349,10 @@ public class BindingProcessingAddon {
 	@Optional
 	private void subscribeTopicKeySequence(@UIEventTopic(UIEvents.KeySequence.TOPIC_KEYSEQUENCE) Event event) {
 		Object elementObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (!(elementObj instanceof MKeyBinding)) {
+		if (!(elementObj instanceof MKeyBinding binding)) {
 			return;
 		}
 
-		MKeyBinding binding = (MKeyBinding) elementObj;
 		Object oldObj = event.getProperty(UIEvents.EventTags.OLD_VALUE);
 
 		MKeyBinding oldBinding = (MKeyBinding) EcoreUtil.copy((EObject) binding);
@@ -371,11 +365,9 @@ public class BindingProcessingAddon {
 	@Optional
 	private void subscribeTopicParameters(@UIEventTopic(UIEvents.KeyBinding.TOPIC_PARAMETERS) Event event) {
 		Object elementObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (!(elementObj instanceof MKeyBinding)) {
+		if (!(elementObj instanceof MKeyBinding binding)) {
 			return;
 		}
-
-		MKeyBinding binding = (MKeyBinding) elementObj;
 
 		if (UIEvents.isADD(event)) {
 			Object newObj = event.getProperty(UIEvents.EventTags.NEW_VALUE);
@@ -407,11 +399,9 @@ public class BindingProcessingAddon {
 	@Optional
 	private void subscribeAppElemTopicTags(@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
 		Object elementObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (!(elementObj instanceof MKeyBinding)) {
+		if (!(elementObj instanceof MKeyBinding binding)) {
 			return;
 		}
-
-		MKeyBinding binding = (MKeyBinding) elementObj;
 
 		List<String> tags = binding.getTags();
 		// if we added a deleted tag to the MKeyBinding, then

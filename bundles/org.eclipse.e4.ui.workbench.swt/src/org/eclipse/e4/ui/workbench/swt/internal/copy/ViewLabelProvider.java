@@ -50,13 +50,14 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 		IPath path = IPath.fromOSString("$nl$/icons/full/obj16/fldr_obj.svg");
 		URL url = FileLocator.find(bundle, path, null);
 		ImageDescriptor enabledDesc = ImageDescriptor.createFromURL(url);
-		if (enabledDesc != null)
+		if (enabledDesc != null) {
 			JFaceResources.getImageRegistry().put(FOLDER_ICON, enabledDesc);
+		}
 	}
 
-	private Map<String, Image> imageMap = new HashMap<>();
+	private final Map<String, Image> imageMap = new HashMap<>();
 
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	public ViewLabelProvider(IEclipseContext context) {
 		this.context = context;

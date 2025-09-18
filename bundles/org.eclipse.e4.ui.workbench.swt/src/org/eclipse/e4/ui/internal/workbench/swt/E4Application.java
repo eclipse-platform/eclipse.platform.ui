@@ -17,7 +17,7 @@
  *     Terry Parker <tparker@google.com> - Bug 416673
  *     Christian Georgi (SAP)            - Bug 432480
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 478896
- *     Christoph Läubrich - Bug 563459 
+ *     Christoph Läubrich - Bug 563459
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench.swt;
@@ -158,8 +158,9 @@ public class E4Application implements IApplication {
 				// place it off so it's not visible
 				shell.setLocation(0, 10000);
 			}
-			if (!checkInstanceLocation(instanceLocation, shell, workbench.getContext()))
+			if (!checkInstanceLocation(instanceLocation, shell, workbench.getContext())) {
 				return EXIT_OK;
+			}
 
 			// Create and run the UI (if any)
 			workbench.createAndRunUI(workbench.getApplication());
@@ -176,10 +177,12 @@ public class E4Application implements IApplication {
 
 			return EXIT_OK;
 		} finally {
-			if (display != null)
+			if (display != null) {
 				display.dispose();
-			if (instanceLocation != null)
+			}
+			if (instanceLocation != null) {
 				instanceLocation.release();
+			}
 		}
 	}
 
@@ -410,18 +413,21 @@ public class E4Application implements IApplication {
 	 */
 	private Optional<String> getArgValue(String argName, IApplicationContext appContext, boolean singledCmdArgValue) {
 		// Is it in the arg list ?
-		if (argName == null || argName.length() == 0)
+		if (argName == null || argName.length() == 0) {
 			return Optional.empty();
+		}
 
 		if (singledCmdArgValue) {
 			for (String arg : args) {
-				if (("-" + argName).equals(arg))
+				if (("-" + argName).equals(arg)) {
 					return Optional.of("true");
+				}
 			}
 		} else {
 			for (int i = 0; i < args.length; i++) {
-				if (("-" + argName).equals(args[i]) && i + 1 < args.length)
+				if (("-" + argName).equals(args[i]) && i + 1 < args.length) {
 					return Optional.of(args[i + 1]);
+				}
 			}
 		}
 
@@ -737,8 +743,9 @@ public class E4Application implements IApplication {
 	static public void initializeServices(MApplication appModel) {
 		IEclipseContext appContext = appModel.getContext();
 		// make sure we only add trackers once
-		if (appContext.containsKey(CONTEXT_INITIALIZED))
+		if (appContext.containsKey(CONTEXT_INITIALIZED)) {
 			return;
+		}
 		appContext.set(CONTEXT_INITIALIZED, "true");
 		initializeApplicationServices(appContext);
 		List<MWindow> windows = appModel.getChildren();
@@ -748,10 +755,12 @@ public class E4Application implements IApplication {
 		((EObject) appModel).eAdapters().add(new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification notification) {
-				if (notification.getFeatureID(MApplication.class) != UiPackageImpl.ELEMENT_CONTAINER__CHILDREN)
+				if (notification.getFeatureID(MApplication.class) != UiPackageImpl.ELEMENT_CONTAINER__CHILDREN) {
 					return;
-				if (notification.getEventType() != Notification.ADD)
+				}
+				if (notification.getEventType() != Notification.ADD) {
 					return;
+				}
 				MWindow childWindow = (MWindow) notification.getNewValue();
 				initializeWindowServices(childWindow);
 			}
@@ -792,8 +801,9 @@ public class E4Application implements IApplication {
 		((EObject) childWindow).eAdapters().add(new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification notification) {
-				if (notification.getFeatureID(MWindow.class) != BasicPackageImpl.WINDOW__CONTEXT)
+				if (notification.getFeatureID(MWindow.class) != BasicPackageImpl.WINDOW__CONTEXT) {
 					return;
+				}
 				IEclipseContext windowContext = (IEclipseContext) notification.getNewValue();
 				initWindowContext(windowContext);
 			}
@@ -801,8 +811,9 @@ public class E4Application implements IApplication {
 	}
 
 	static private void initWindowContext(IEclipseContext windowContext) {
-		if (windowContext == null)
+		if (windowContext == null) {
 			return;
+		}
 		SelectionAggregator selectionAggregator = ContextInjectionFactory.make(SelectionAggregator.class,
 				windowContext);
 		windowContext.set(SelectionAggregator.class, selectionAggregator);

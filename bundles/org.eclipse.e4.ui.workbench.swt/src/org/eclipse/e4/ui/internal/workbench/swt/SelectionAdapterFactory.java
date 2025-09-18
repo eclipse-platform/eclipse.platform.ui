@@ -61,7 +61,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		if (sel instanceof IStructuredSelection) {
 			return ((IStructuredSelection) sel)::iterator;
 		}
-		final List<Object> list = Arrays.asList(new Object[] { sel });
+		final List<Object> list = Arrays.asList(sel);
 		return list::iterator;
 	}
 
@@ -69,8 +69,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		if (sel.isEmpty()) {
 			return ICOUNT_0;
 		}
-		if (sel instanceof IStructuredSelection) {
-			final IStructuredSelection ss = (IStructuredSelection) sel;
+		if (sel instanceof final IStructuredSelection ss) {
 			return ss::size;
 		}
 		return ICOUNT_1;

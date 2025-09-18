@@ -132,13 +132,15 @@ public class CSSRenderingUtils {
 		IPath path = IPath.fromOSString("$ws$/images/dragHandle.svg");
 		URL url = FileLocator.find(bundle, path, null);
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-		if (desc != null)
+		if (desc != null) {
 			JFaceResources.getImageRegistry().put(DRAG_HANDLE, desc);
+		}
 		path = IPath.fromOSString("$ws$/images/dragHandle-rotated.svg");
 		url = FileLocator.find(bundle, path, null);
 		ImageDescriptor desc_rotated = ImageDescriptor.createFromURL(url);
-		if (desc_rotated != null)
+		if (desc_rotated != null) {
 			JFaceResources.getImageRegistry().put(DRAG_HANDLE_ROTATED, desc_rotated);
+		}
 	}
 
 	private Image rotateImage(Display display, Image image, Integer[] frameInts) {
@@ -153,8 +155,9 @@ public class CSSRenderingUtils {
 			frameInts[3] = tmp;
 		}
 
-		if (rotatedImageMap.get(image) != null)
+		if (rotatedImageMap.get(image) != null) {
 			return rotatedImageMap.get(image);
+		}
 
 		// rotate 90 degrees,,,
 		Rectangle bounds = image.getBounds();
@@ -206,14 +209,16 @@ public class CSSRenderingUtils {
 		}
 
 		// super hack
-		if (className != null)
+		if (className != null) {
 			WidgetElement.setCSSClass(styleControl, className);
+		}
 
 		CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
 				.getComputedStyle(tempEment, ""); //$NON-NLS-1$
 
-		if (styleDeclarations == null)
+		if (styleDeclarations == null) {
 			return null;
+		}
 
 		return styleDeclarations.getPropertyCSSValue(attributeName);
 	}
@@ -231,17 +236,20 @@ public class CSSRenderingUtils {
 		if (tempEment == null) {
 			return null;
 		}
-		if (classId != null)
+		if (classId != null) {
 			WidgetElement.setCSSClass(styleControl, classId);
+		}
 
 		CSSStyleDeclaration styleDeclarations = csseng.getViewCSS()
 				.getComputedStyle(tempEment, "");
-		if (styleDeclarations == null)
+		if (styleDeclarations == null) {
 			return null;
+		}
 
 		CSSValue imagePath = styleDeclarations.getPropertyCSSValue(attName);
-		if (imagePath == null)
+		if (imagePath == null) {
 			return null;
+		}
 
 		if (imagePath.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			// String imageString = ((CSSPrimitiveValue) imagePath)
@@ -255,8 +263,9 @@ public class CSSRenderingUtils {
 							.getPropertyCSSValue("frame-cuts"); //$NON-NLS-1$
 					if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 						CSSValueList valueList = (CSSValueList) value;
-						if (valueList.getLength() != 4)
+						if (valueList.getLength() != 4) {
 							return null;
+						}
 
 						for (int i = 0; i < valueList.getLength(); i++) {
 							CSSValue val = valueList.item(i);
@@ -283,11 +292,10 @@ public class CSSRenderingUtils {
 			ImageBasedFrame imageBasedFrame, final Control toFrame,
 			final String classId, final boolean vertical) {
 		final Listener listener = event -> {
-			if (!(event.widget instanceof ImageBasedFrame)) {
+			if (!(event.widget instanceof ImageBasedFrame frame)) {
 				return;
 			}
 
-			ImageBasedFrame frame = (ImageBasedFrame) event.widget;
 			if (!isImagesRefreshRequired(frame)) {
 				return;
 			}
@@ -315,11 +323,10 @@ public class CSSRenderingUtils {
 	private void addFrameImageDisposedListener(ImageBasedFrame imageBasedFrame,
 			final Control toFrame, final String classId, final boolean vertical) {
 		final Listener listener = event -> {
-			if (!(event.widget instanceof ImageBasedFrame)) {
+			if (!(event.widget instanceof ImageBasedFrame frame)) {
 				return;
 			}
 
-			ImageBasedFrame frame = (ImageBasedFrame) event.widget;
 			if (!isImagesRefreshRequired(frame)) {
 				return;
 			}

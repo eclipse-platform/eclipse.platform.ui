@@ -96,7 +96,7 @@ public class SearchPattern {
 
 	private static final char BLANK = ' ';
 
-	private int allowedRules;
+	private final int allowedRules;
 
 	/**
 	 * Creates a new instance of SearchPattern with the following match rules
@@ -227,12 +227,14 @@ public class SearchPattern {
 	private boolean startsWithIgnoreCase(String text, String prefix) {
 		int textLength = text.length();
 		int prefixLength = prefix.length();
-		if (textLength < prefixLength)
+		if (textLength < prefixLength) {
 			return false;
+		}
 		for (int i = prefixLength - 1; i >= 0; i--) {
 			if (Character.toLowerCase(prefix.charAt(i)) != Character
-					.toLowerCase(text.charAt(i)))
+					.toLowerCase(text.charAt(i))) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -294,10 +296,12 @@ public class SearchPattern {
 	 * @return true if the pattern matches the given name, false otherwise
 	 */
 	private boolean camelCaseMatch(String pattern, String name) {
-		if (pattern == null)
+		if (pattern == null) {
 			return true; // null pattern is equivalent to '*'
-		if (name == null)
+		}
+		if (name == null) {
 			return false; // null name cannot match
+		}
 
 		return camelCaseMatch(pattern, 0, pattern.length(), name, 0, name
 				.length());
@@ -411,19 +415,25 @@ public class SearchPattern {
 	 */
 	private boolean camelCaseMatch(String pattern, int patternStart,
 			int patternEnd, String name, int nameStart, int nameEnd) {
-		if (name == null)
+		if (name == null) {
 			return false; // null name cannot match
-		if (pattern == null)
+		}
+		if (pattern == null) {
 			return true; // null pattern is equivalent to '*'
-		if (patternEnd < 0)
+		}
+		if (patternEnd < 0) {
 			patternEnd = pattern.length();
-		if (nameEnd < 0)
+		}
+		if (nameEnd < 0) {
 			nameEnd = name.length();
+		}
 
-		if (patternEnd <= patternStart)
+		if (patternEnd <= patternStart) {
 			return nameEnd <= nameStart;
-		if (nameEnd <= nameStart)
+		}
+		if (nameEnd <= nameStart) {
 			return false;
+		}
 		// check first pattern char
 		if (name.charAt(nameStart) != pattern.charAt(patternStart)) {
 			// first char must strictly match (upper/lower)
@@ -432,8 +442,9 @@ public class SearchPattern {
 
 		int patternLength = patternEnd;
 
-		if (pattern.charAt(patternEnd - 1) == END_SYMBOL || pattern.charAt(patternEnd - 1) == BLANK )
+		if (pattern.charAt(patternEnd - 1) == END_SYMBOL || pattern.charAt(patternEnd - 1) == BLANK ) {
 			patternLength = patternEnd - 1;
+		}
 
 
 		char patternChar, nameChar;
@@ -452,8 +463,9 @@ public class SearchPattern {
 			}
 
 			if (iName == nameEnd) {
-				if (iPattern == patternLength)
+				if (iPattern == patternLength) {
 					return true;
+				}
 				// We have exhausted name (and not pattern), so it's not a match
 				return false;
 			}
@@ -466,15 +478,17 @@ public class SearchPattern {
 
 			// If characters are not equals, then it's not a match if
 			// patternChar is lowercase
-			if (!isPatternCharAllowed(patternChar))
+			if (!isPatternCharAllowed(patternChar)) {
 				return false;
+			}
 
 			// patternChar is uppercase, so let's find the next uppercase in
 			// name
 			while (true) {
 				if (iName == nameEnd) {
-					if ((iPattern == patternLength) && (patternChar == END_SYMBOL || patternChar == BLANK))
+					if ((iPattern == patternLength) && (patternChar == END_SYMBOL || patternChar == BLANK)) {
 						return true;
+					}
 					return false;
 				}
 
@@ -490,7 +504,9 @@ public class SearchPattern {
 
 				if (Character.isDigit(nameChar)) {
 					// nameChar is digit => break if the digit is current pattern character otherwise consume it
-					if (patternChar == nameChar) break;
+					if (patternChar == nameChar) {
+						break;
+					}
 					iName++;
 				} else if (!isNameCharAllowed(nameChar)) {
 					// nameChar is lowercase

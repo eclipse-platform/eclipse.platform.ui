@@ -47,7 +47,7 @@ public class ShellActivationListener implements Listener {
 	 */
 	private static final String ECLIPSE_CONTEXT_SHELL_CONTEXT = "org.eclipse.e4.ui.shellContext"; //$NON-NLS-1$
 
-	private MApplication application;
+	private final MApplication application;
 
 	ShellActivationListener(MApplication application) {
 		this.application = application;
@@ -55,11 +55,10 @@ public class ShellActivationListener implements Listener {
 
 	@Override
 	public void handleEvent(Event event) {
-		if (!(event.widget instanceof Shell)) {
+		if (!(event.widget instanceof Shell shell)) {
 			return;
 		}
 
-		Shell shell = (Shell) event.widget;
 		Object obj = shell.getData(AbstractPartRenderer.OWNING_ME);
 		if (obj instanceof MWindow) {
 			processWindow(event, shell, (MWindow) obj);
