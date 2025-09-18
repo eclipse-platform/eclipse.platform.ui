@@ -23,9 +23,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
  */
 public class ContributionInfo {
 
-	private String bundleId;
-	private String elementType;
-	private IConfigurationElement configurationElement;
+	private final String bundleId;
+	private final String elementType;
+	private final IConfigurationElement configurationElement;
 
 	/**
 	 * Creates a new instance.

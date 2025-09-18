@@ -357,9 +357,9 @@ public class TimeoutDumpTimer extends TimerTask {
 	}
 
 	private static class StreamForwarder extends Thread {
-		private InputStream fProcessOutput;
+		private final InputStream fProcessOutput;
 
-		private PrintStream fStream;
+		private final PrintStream fStream;
 
 		public StreamForwarder(InputStream processOutput, PrintStream stream) {
 			fProcessOutput = processOutput;
