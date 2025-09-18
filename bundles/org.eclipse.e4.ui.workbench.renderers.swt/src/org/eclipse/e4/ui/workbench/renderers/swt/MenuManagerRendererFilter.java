@@ -97,10 +97,9 @@ public class MenuManagerRendererFilter implements Listener {
 	}
 
 	private void safeHandleEvent(Event event) {
-		if (!(event.widget instanceof Menu)) {
+		if (!(event.widget instanceof final Menu menu)) {
 			return;
 		}
-		final Menu menu = (Menu) event.widget;
 		if ((menu.getStyle() & SWT.BAR) != 0) {
 			// don't process the menu bar, it's not fair :-)
 			return;
@@ -118,12 +117,10 @@ public class MenuManagerRendererFilter implements Listener {
 		Object obj = menu.getData(AbstractPartRenderer.OWNING_ME);
 		if (obj == null) {
 			Object tmp = menu.getData(MenuManager.MANAGER_KEY);
-			if (tmp instanceof MenuManager) {
-				MenuManager tmpManager = (MenuManager) tmp;
+			if (tmp instanceof MenuManager tmpManager) {
 				menuManager = tmpManager;
 				obj = renderer.getMenuModel(tmpManager);
-				if (obj instanceof MPopupMenu) {
-					MPopupMenu popupMenu = (MPopupMenu) obj;
+				if (obj instanceof MPopupMenu popupMenu) {
 					if (popupMenu.getWidget() == null
 							&& menuManager.getMenu() != null) {
 						final MUIElement container = modelService
@@ -153,8 +150,7 @@ public class MenuManagerRendererFilter implements Listener {
 				ContributionsAnalyzer.collectInfo(info,
 						element.getVisibleWhen());
 			}
-			if (recurse && element instanceof MMenu) {
-				MMenu childMenu = (MMenu) element;
+			if (recurse && element instanceof MMenu childMenu) {
 				collectInfo(info, childMenu, renderer, evalContext, false);
 			}
 		}
@@ -177,8 +173,7 @@ public class MenuManagerRendererFilter implements Listener {
 						exprContext);
 			}
 			if (recurseLevel > 0 && element.isVisible()
-					&& element instanceof MMenu) {
-				MMenu childMenu = (MMenu) element;
+					&& element instanceof MMenu childMenu) {
 				MenuManager childManager = renderer.getManager(childMenu);
 				if (childManager != null) {
 					updateElementVisibility(childMenu, renderer, childManager,
@@ -186,13 +181,12 @@ public class MenuManagerRendererFilter implements Listener {
 				}
 			}
 
-			if (updateEnablement && element instanceof MHandledMenuItem) {
+			if (updateEnablement && element instanceof MHandledMenuItem item) {
 				ParameterizedCommand cmd = ((MHandledMenuItem) element)
 						.getWbCommand();
 				EHandlerService handlerService = evalContext
 						.get(EHandlerService.class);
 				if (cmd != null && handlerService != null) {
-					MHandledMenuItem item = (MHandledMenuItem) element;
 					final IEclipseContext staticContext = EclipseContextFactory
 							.create(MMRF_STATIC_CONTEXT);
 					ContributionsAnalyzer.populateModelInterfaces(item,
@@ -206,14 +200,12 @@ public class MenuManagerRendererFilter implements Listener {
 				}
 			} else if (updateEnablement && OpaqueElementUtil.isOpaqueMenuItem(element)) {
 				Object obj = OpaqueElementUtil.getOpaqueItem(element);
-				if (obj instanceof IContributionItem) {
-					IContributionItem ici = (IContributionItem) obj;
+				if (obj instanceof IContributionItem ici) {
 					ici.update();
 					// Update the model to reflect changes
 					((MItem) element).setEnabled(ici.isEnabled());
 				}
-			} else if (updateEnablement && element instanceof MDirectMenuItem) {
-				MDirectMenuItem contrib = (MDirectMenuItem) element;
+			} else if (updateEnablement && element instanceof MDirectMenuItem contrib) {
 				if (contrib.getObject() == null) {
 					IContributionFactory icf = evalContext
 							.get(IContributionFactory.class);

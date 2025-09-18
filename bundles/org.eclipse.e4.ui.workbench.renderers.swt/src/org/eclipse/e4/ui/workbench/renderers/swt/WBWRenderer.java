@@ -211,12 +211,11 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		// Ensure that this event is for a MMenuItem
 		Object objElement = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (!(objElement instanceof MWindow)) {
+		if (!(objElement instanceof MWindow windowModel)) {
 			return;
 		}
 
 		// Is this listener interested ?
-		MWindow windowModel = (MWindow) objElement;
 		if (windowModel.getRenderer() != WBWRenderer.this) {
 			return;
 		}
@@ -246,12 +245,11 @@ public class WBWRenderer extends SWTPartRenderer {
 	private void subscribeTopicVisibleChanged(@UIEventTopic(UIEvents.UIElement.TOPIC_VISIBLE) Event event) {
 		// Ensure that this event is for a MMenuItem
 		Object objElement = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (!(objElement instanceof MWindow)) {
+		if (!(objElement instanceof MWindow windowModel)) {
 			return;
 		}
 
 		// Is this listener interested ?
-		MWindow windowModel = (MWindow) objElement;
 		if (windowModel.getRenderer() != WBWRenderer.this) {
 			return;
 		}
@@ -292,15 +290,13 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		if (UIEvents.isREMOVE(event)) {
 			for (Object removed : UIEvents.asIterable(event, UIEvents.EventTags.OLD_VALUE)) {
-				if (removed instanceof MWindow && ((MWindow) removed).getRenderer() instanceof WBWRenderer) {
-					MWindow window = (MWindow) removed;
+				if (removed instanceof MWindow window && window.getRenderer() instanceof WBWRenderer) {
 					((WBWRenderer) window.getRenderer()).handleParentChange(window);
 				}
 			}
 		} else if (UIEvents.isADD(event)) {
 			for (Object removed : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
-				if (removed instanceof MWindow && ((MWindow) removed).getRenderer() instanceof WBWRenderer) {
-					MWindow window = (MWindow) removed;
+				if (removed instanceof MWindow window && window.getRenderer() instanceof WBWRenderer) {
 					((WBWRenderer) window.getRenderer()).handleParentChange(window);
 				}
 			}
@@ -361,11 +357,9 @@ public class WBWRenderer extends SWTPartRenderer {
 	public Object createWidget(MUIElement element, Object parent) {
 		final Widget newWidget;
 
-		if (!(element instanceof MWindow) || (parent != null && !(parent instanceof Control))) {
+		if (!(element instanceof MWindow wbwModel) || (parent != null && !(parent instanceof Control))) {
 			return null;
 		}
-
-		MWindow wbwModel = (MWindow) element;
 
 		MApplication appModel = wbwModel.getContext().get(MApplication.class);
 		Boolean rtlMode = (Boolean) appModel.getTransientData().get(E4Workbench.RTL_MODE);
@@ -527,9 +521,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		Widget widget = (Widget) me.getWidget();
 
-		if (widget instanceof Shell && me instanceof MWindow) {
-			final Shell shell = (Shell) widget;
-			final MWindow w = (MWindow) me;
+		if (widget instanceof final Shell shell && me instanceof final MWindow w) {
 			shell.addControlListener(new ControlListener() {
 				@Override
 				public void controlResized(ControlEvent e) {
@@ -577,8 +569,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			}));
 			shell.addListener(SWT.Activate, event -> {
 				MUIElement parentME = w.getParent();
-				if (parentME instanceof MApplication) {
-					MApplication app = (MApplication) parentME;
+				if (parentME instanceof MApplication app) {
 					app.setSelectedElement(w);
 					w.getContext().activate();
 				} else if (parentME == null) {
@@ -623,8 +614,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	private void cleanUp(MWindow window) {
 		MUIElement parent = modelService.getContainer(window);
-		if (parent instanceof MApplication) {
-			MApplication application = (MApplication) parent;
+		if (parent instanceof MApplication application) {
 			List<MWindow> children = application.getChildren();
 			if (children.size() > 1) {
 				// not the last window, destroy and remove
@@ -655,10 +645,9 @@ public class WBWRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public void processContents(MElementContainer<MUIElement> me) {
-		if (!(((MUIElement) me) instanceof MWindow)) {
+		if (!(((MUIElement) me) instanceof MWindow wbwModel)) {
 			return;
 		}
-		MWindow wbwModel = (MWindow) ((MUIElement) me);
 		super.processContents(me);
 
 		// Populate the main menu
@@ -675,9 +664,8 @@ public class WBWRenderer extends SWTPartRenderer {
 		}
 
 		// Populate the trim (if any)
-		if (wbwModel instanceof MTrimmedWindow) {
+		if (wbwModel instanceof MTrimmedWindow tWindow) {
 			Shell shell = (Shell) wbwModel.getWidget();
-			MTrimmedWindow tWindow = (MTrimmedWindow) wbwModel;
 			List<MTrimBar> trimBars = new ArrayList<>(
 					tWindow.getTrimBars());
 			for (MTrimBar trimBar : trimBars) {
@@ -794,7 +782,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	class SaveablePartPromptDialog extends Dialog {
 
-		private Collection<MPart> collection;
+		private final Collection<MPart> collection;
 
 		private CheckboxTableViewer tableViewer;
 

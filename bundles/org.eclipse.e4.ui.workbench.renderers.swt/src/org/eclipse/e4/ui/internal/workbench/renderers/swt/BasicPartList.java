@@ -45,7 +45,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 	private class BasicStackListLabelProvider extends ColumnLabelProvider {
 
-		private Font boldFont;
+		private final Font boldFont;
 
 		public BasicStackListLabelProvider() {
 			Font font = Display.getDefault().getSystemFont();
@@ -58,8 +58,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 		@Override
 		public Font getFont(Object element) {
-			if (element instanceof MPart) {
-				MPart part = (MPart) element;
+			if (element instanceof MPart part) {
 				CTabItem item = renderer.findItemForPart(part);
 				if (item != null && !item.isShowing()) {
 					return boldFont;
@@ -118,8 +117,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 			getTableViewer().setComparator(new ViewerComparator() {
 				@Override
 				public int category(Object element) {
-					if (element instanceof MPart) {
-						MPart part = (MPart) element;
+					if (element instanceof MPart part) {
 						CTabItem item = BasicPartList.this.renderer.findItemForPart(part);
 						if (item != null && !item.isShowing()) {
 							return -1;
@@ -186,8 +184,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 		if (selectedElement == null) {
 			selectedElement = getSelectedElement();
 		}
-		if (selectedElement instanceof MPart) {
-			MPart part = (MPart) selectedElement;
+		if (selectedElement instanceof MPart part) {
 			if (partService.savePart(part, true)) {
 				partService.hidePart(part);
 			}

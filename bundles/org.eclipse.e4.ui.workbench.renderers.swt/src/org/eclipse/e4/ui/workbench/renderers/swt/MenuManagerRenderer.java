@@ -100,16 +100,16 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	private static final String NO_LABEL = "UnLabled"; //$NON-NLS-1$
 	public static final String GROUP_MARKER = "org.eclipse.jface.action.GroupMarker.GroupMarker(String)"; //$NON-NLS-1$
 
-	private Map<MMenu, MenuManager> modelToManager = new IdentityHashMap<>();
-	private Map<MenuManager, MMenu> managerToModel = new IdentityHashMap<>();
+	private final Map<MMenu, MenuManager> modelToManager = new IdentityHashMap<>();
+	private final Map<MenuManager, MMenu> managerToModel = new IdentityHashMap<>();
 
-	private Map<MMenuElement, IContributionItem> modelToContribution = new IdentityHashMap<>();
-	private Map<IContributionItem, MMenuElement> contributionToModel = new IdentityHashMap<>();
+	private final Map<MMenuElement, IContributionItem> modelToContribution = new IdentityHashMap<>();
+	private final Map<IContributionItem, MMenuElement> contributionToModel = new IdentityHashMap<>();
 
-	private Map<MMenuElement, ContributionRecord> modelContributionToRecord = new IdentityHashMap<>();
-	private Map<MMenuElement, ArrayList<ContributionRecord>> sharedElementToRecord = new IdentityHashMap<>();
+	private final Map<MMenuElement, ContributionRecord> modelContributionToRecord = new IdentityHashMap<>();
+	private final Map<MMenuElement, ArrayList<ContributionRecord>> sharedElementToRecord = new IdentityHashMap<>();
 
-	private Collection<IContributionManager> mgrToUpdate = new LinkedHashSet<>();
+	private final Collection<IContributionManager> mgrToUpdate = new LinkedHashSet<>();
 
 	@Inject
 	private Logger logger;
@@ -122,11 +122,10 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	private void subscribeSelectionUpdated(@UIEventTopic(UIEvents.Item.TOPIC_SELECTED) Event event) {
 		Object property = event.getProperty(UIEvents.EventTags.ELEMENT);
 		// Ensure that this event is for a MToolItem
-		if (!(property instanceof MMenuItem)) {
+		if (!(property instanceof MMenuItem itemModel)) {
 			return;
 		}
 
-		MMenuItem itemModel = (MMenuItem) property;
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
 			ici.update();
@@ -138,8 +137,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	private void subscribeUIElementTopicToBeRendered(@UIEventTopic(UIEvents.UIElement.TOPIC_TOBERENDERED) Event event) {
 		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 
-		if (element instanceof MMenuItem) {
-			MMenuItem itemModel = (MMenuItem) element;
+		if (element instanceof MMenuItem itemModel) {
 			Object obj = itemModel.getParent();
 			if (!(obj instanceof MMenu)) {
 				return;
@@ -159,14 +157,14 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 					ici.dispose();
 				}
 			}
-		} else if (element instanceof MPart) {
-			MPart part = (MPart) element;
+		} else if (element instanceof MPart part) {
 			boolean tbr = (Boolean) event.getProperty(UIEvents.EventTags.NEW_VALUE);
 			if (!tbr) {
 				List<MMenu> menus = part.getMenus();
 				for (MMenu menu : menus) {
-					if (menu instanceof MPopupMenu)
+					if (menu instanceof MPopupMenu) {
 						unlinkMenu(menu);
+					}
 				}
 			}
 		}
@@ -177,8 +175,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	private void subscribeUIElementTopicVisible(@UIEventTopic(UIEvents.UIElement.TOPIC_VISIBLE) Event event) {
 		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 
-		if (element instanceof MMenu) {
-			MMenu menuModel = (MMenu) element;
+		if (element instanceof MMenu menuModel) {
 			MenuManager manager = getManager(menuModel);
 			if (manager == null) {
 				return;
@@ -203,13 +200,11 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 					}
 				}
 			}
-		} else if (element instanceof MMenuElement) {
-			MMenuElement itemModel = (MMenuElement) element;
+		} else if (element instanceof MMenuElement itemModel) {
 			Object obj = getContribution(itemModel);
-			if (!(obj instanceof ContributionItem)) {
+			if (!(obj instanceof ContributionItem item)) {
 				return;
 			}
-			ContributionItem item = (ContributionItem) obj;
 			item.setVisible(itemModel.isVisible());
 			if (item.getParent() != null) {
 				item.getParent().markDirty();
@@ -238,11 +233,10 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	private void subscribeItemEnabledUpdate(@UIEventTopic(UIEvents.Item.TOPIC_ENABLED) Event event) {
 		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 
-		if (!(element instanceof MMenuItem)) {
+		if (!(element instanceof MMenuItem itemModel)) {
 			return;
 		}
 
-		MMenuItem itemModel = (MMenuItem) element;
 		Object widget = itemModel.getWidget();
 		if (widget instanceof MenuItem) {
 			boolean enabled = (boolean) event.getProperty(UIEvents.EventTags.NEW_VALUE);
@@ -355,10 +349,10 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	@Override
 	public Object createWidget(MUIElement element, Object parent) {
-		if (!(element instanceof MMenu))
+		if (!(element instanceof final MMenu menuModel)) {
 			return null;
+		}
 
-		final MMenu menuModel = (MMenu) element;
 		Menu newMenu = null;
 		MenuManager menuManager = null;
 		boolean menuBar = false;
@@ -451,15 +445,15 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		for (; iterator.hasNext();) {
 			Entry<MMenuElement, ContributionRecord> entry = iterator.next();
 			ContributionRecord record = entry.getValue();
-			if (disposedRecords.contains(record))
+			if (disposedRecords.contains(record)) {
 				iterator.remove();
+			}
 		}
 	}
 
 	public void cleanUpCopy(ContributionRecord record, MMenuElement copy) {
 		modelContributionToRecord.remove(copy);
-		if (copy instanceof MMenu) {
-			MMenu menuCopy = (MMenu) copy;
+		if (copy instanceof MMenu menuCopy) {
 			cleanUp(menuCopy);
 			MenuManager copyManager = getManager(menuCopy);
 			clearModelToManager(menuCopy, copyManager);
@@ -615,8 +609,9 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		// I can either simply stop processing, or we can walk the model
 		// ourselves like the "old" days
 		// EMF gives us null lists if empty
-		if (container == null)
+		if (container == null) {
 			return;
+		}
 
 		// this is in direct violation of good programming
 		MenuManager parentManager = getManager((MMenu) ((Object) container));
@@ -681,23 +676,18 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		} else if (OpaqueElementUtil.isOpaqueMenuItem(childME)) {
 			MMenuItem itemModel = (MMenuItem) childME;
 			processOpaqueItem(menuManager, itemModel);
-		} else if (childME instanceof MHandledMenuItem) {
-			MHandledMenuItem itemModel = (MHandledMenuItem) childME;
+		} else if (childME instanceof MHandledMenuItem itemModel) {
 			processHandledItem(menuManager, itemModel);
-		} else if (childME instanceof MDirectMenuItem) {
-			MDirectMenuItem itemModel = (MDirectMenuItem) childME;
+		} else if (childME instanceof MDirectMenuItem itemModel) {
 			processDirectItem(menuManager, itemModel);
-		} else if (childME instanceof MMenuSeparator) {
-			MMenuSeparator sep = (MMenuSeparator) childME;
+		} else if (childME instanceof MMenuSeparator sep) {
 			processSeparator(menuManager, sep);
 			// } else if (childME instanceof MOpaqueMenu) {
 			// I'm not sure what to do here
 			// so I'll just take it out of the running
-		} else if (childME instanceof MMenu) {
-			MMenu itemModel = (MMenu) childME;
+		} else if (childME instanceof MMenu itemModel) {
 			processMenu(menuManager, itemModel);
-		} else if (childME instanceof MDynamicMenuContribution) {
-			MDynamicMenuContribution itemModel = (MDynamicMenuContribution) childME;
+		} else if (childME instanceof MDynamicMenuContribution itemModel) {
 			processDynamicMenuContribution(menuManager, itemModel);
 		}
 	}
@@ -943,8 +933,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				item = ((SubContributionItem) item).getInnerItem();
 			}
 
-			if (item instanceof MenuManager) {
-				MenuManager childManager = (MenuManager) item;
+			if (item instanceof MenuManager childManager) {
 				MMenu childModel = getMenuModel(childManager);
 				if (childModel == null) {
 					MMenu legacyModel = OpaqueElementUtil.createOpaqueMenu();
@@ -1090,8 +1079,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		removeMenuContributions(menuModel, dump);
 		for (MMenuElement mMenuElement : dump) {
 			IContributionItem ici = getContribution(mMenuElement);
-			if (ici == null && mMenuElement instanceof MMenu) {
-				MMenu menuElement = (MMenu) mMenuElement;
+			if (ici == null && mMenuElement instanceof MMenu menuElement) {
 				ici = getManager(menuElement);
 				clearModelToManager(menuElement, (MenuManager) ici);
 			} else {
@@ -1119,9 +1107,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				//
 				final IContributionItem contributionItem = entry.getValue();
 
-				if (contributionItem instanceof DynamicContributionContributionItem) {
-					final DynamicContributionContributionItem dynamicContributionItem = (DynamicContributionContributionItem) contributionItem;
-
+				if (contributionItem instanceof final DynamicContributionContributionItem dynamicContributionItem) {
 					if ((dynamicContributionItem.getParent() instanceof MenuManager)
 							&& dynamicContributionItem.getParent().equals(menuManager)) {
 						//
@@ -1144,9 +1130,9 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 		List<MMenuElement> children = menu.getChildren();
 		for (MMenuElement child : children) {
-			if (child instanceof MMenu)
+			if (child instanceof MMenu) {
 				unlinkMenu((MMenu) child);
-			else {
+			} else {
 				IContributionItem contribution = getContribution(child);
 				clearModelToContribution(child, contribution);
 			}

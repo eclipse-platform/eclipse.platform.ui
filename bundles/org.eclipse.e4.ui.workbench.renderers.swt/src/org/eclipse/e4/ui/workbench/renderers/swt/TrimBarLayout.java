@@ -54,14 +54,16 @@ public class TrimBarLayout extends Layout {
 			int ctrlMinor = horizontal ? ctrlSize.y : ctrlSize.x;
 
 			major += ctrlMajor;
-			if (ctrlMinor > minor)
+			if (ctrlMinor > minor) {
 				minor = ctrlMinor;
+			}
 
 			sizeMap.put(ctrl, ctrlSize);
 			ctrls.add(ctrl);
 
-			if (isSpacer(ctrl))
+			if (isSpacer(ctrl)) {
 				spacerCount++;
+			}
 		}
 
 		public void mergeSegment(TrimLine segment) {
@@ -69,14 +71,15 @@ public class TrimBarLayout extends Layout {
 			ctrls.addAll(segment.ctrls);
 
 			major += segment.major;
-			if (segment.minor > minor)
+			if (segment.minor > minor) {
 				minor = segment.minor;
+			}
 
 			spacerCount += segment.spacerCount;
 		}
 	}
 
-	private List<TrimLine> lines = new ArrayList<>();
+	private final List<TrimLine> lines = new ArrayList<>();
 
 	/**
 	 * When applied as a tag to a tool control (e.g. LayoutModifierToolControl),
@@ -197,16 +200,19 @@ public class TrimBarLayout extends Layout {
 	 *         TB.
 	 */
 	private boolean hideManagedTB(MTrimElement te) {
-		if (!(te instanceof MToolBar) || !(te.getRenderer() instanceof ToolBarManagerRenderer))
+		if (!(te instanceof MToolBar) || !(te.getRenderer() instanceof ToolBarManagerRenderer)) {
 			return false;
+		}
 
-		if (!(te.getWidget() instanceof Composite))
+		if (!(te.getWidget() instanceof Composite)) {
 			return false;
+		}
 
 		Composite teComp = (Composite) te.getWidget();
 		Control[] kids = teComp.getChildren();
-		if (kids.length != 1 || !(kids[0] instanceof ToolBar))
+		if (kids.length != 1 || !(kids[0] instanceof ToolBar)) {
 			return false;
+		}
 
 		boolean barVisible = ((ToolBar) kids[0]).getItemCount() > 0;
 
@@ -235,20 +241,23 @@ public class TrimBarLayout extends Layout {
 
 		// If we were called directly we need to fill the caches
 		if (lines.isEmpty()) {
-			if (horizontal)
+			if (horizontal) {
 				computeSize(composite, bounds.width, SWT.DEFAULT, true);
-			else
+			} else {
 				computeSize(composite, SWT.DEFAULT, bounds.height, true);
+			}
 		}
-		if (lines.isEmpty())
+		if (lines.isEmpty()) {
 			return;
+		}
 
 		for (TrimLine curLine : lines) {
 			tileLine(curLine, bounds);
-			if (horizontal)
+			if (horizontal) {
 				bounds.y += curLine.minor + wrapSpacing;
-			else
+			} else {
 				bounds.x += curLine.minor + wrapSpacing;
+			}
 		}
 	}
 
@@ -286,10 +295,11 @@ public class TrimBarLayout extends Layout {
 			if (horizontal) {
 				int offset = (curLine.minor - ctrlHeight) / 2;
 				if (!isSpacer(ctrl)) {
-					if (!zeroSize)
+					if (!zeroSize) {
 						ctrl.setBounds(curX, curY + offset, ctrlWidth, ctrlHeight);
-					else
+					} else {
 						ctrl.setBounds(curX, curY, 0, 0);
+					}
 				}
 				curX += ctrlWidth;
 			} else {
@@ -302,16 +312,18 @@ public class TrimBarLayout extends Layout {
 
 	private boolean isSpacer(Control ctrl) {
 		MUIElement element = (MUIElement) ctrl.getData(AbstractPartRenderer.OWNING_ME);
-		if (element != null && element.getTags().contains(SPACER))
+		if (element != null && element.getTags().contains(SPACER)) {
 			return true;
+		}
 
 		return false;
 	}
 
 	private boolean isGlue(Control ctrl) {
 		MUIElement element = (MUIElement) ctrl.getData(AbstractPartRenderer.OWNING_ME);
-		if (element != null && element.getTags().contains(GLUE))
+		if (element != null && element.getTags().contains(GLUE)) {
 			return true;
+		}
 
 		return false;
 	}
@@ -319,8 +331,9 @@ public class TrimBarLayout extends Layout {
 	private boolean isStatusLine(Control ctrl) {
 		MUIElement element = (MUIElement) ctrl.getData(AbstractPartRenderer.OWNING_ME);
 		if (element != null && element.getElementId() != null
-				&& element.getElementId().equals("org.eclipse.ui.StatusLine")) //$NON-NLS-1$
+				&& element.getElementId().equals("org.eclipse.ui.StatusLine")) { //$NON-NLS-1$
 			return true;
+		}
 
 		return false;
 	}
@@ -338,15 +351,18 @@ public class TrimBarLayout extends Layout {
 	 *         TrimBar-Control's bounds.
 	 */
 	public Control ctrlFromPoint(Composite trimComp, Point trimPos) {
-		if (trimComp == null || trimComp.isDisposed() || lines == null || lines.isEmpty())
+		if (trimComp == null || trimComp.isDisposed() || lines == null || lines.isEmpty()) {
 			return null;
+		}
 
 		Control[] kids = trimComp.getChildren();
 		for (Control kid : kids) {
-			if (kid.isDisposed())
+			if (kid.isDisposed()) {
 				continue;
-			if (kid.getBounds().contains(trimPos))
+			}
+			if (kid.getBounds().contains(trimPos)) {
 				return kid;
+			}
 		}
 
 		return null;

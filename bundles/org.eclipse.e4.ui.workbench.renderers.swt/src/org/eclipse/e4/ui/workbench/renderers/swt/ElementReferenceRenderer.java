@@ -55,8 +55,9 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 			renderedMap.put(ref, renderedRefs);
 		}
 
-		if (!renderedRefs.contains(ph))
+		if (!renderedRefs.contains(ph)) {
 			renderedRefs.add(ph);
+		}
 
 		Composite newComp = new Composite((Composite) parent, SWT.NONE);
 		newComp.setLayout(new FillLayout());
@@ -103,8 +104,7 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 		if (refs.isEmpty()) {
 			// Ensure that the image is the 'original' image for this
 			// part. See bug 347471 for details
-			if (refElement instanceof MPart) {
-				MPart thePart = (MPart) refElement;
+			if (refElement instanceof MPart thePart) {
 				String imageURI = thePart.getIconURI();
 				thePart.setIconURI(null);
 				thePart.setIconURI(imageURI);
@@ -120,8 +120,9 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 				// Find another *rendered* ref to pass the part on to
 				for (MPlaceholder aPH : refs) {
 					Composite phComp = (Composite) aPH.getWidget();
-					if (phComp == null || phComp.isDisposed())
+					if (phComp == null || phComp.isDisposed()) {
 						continue;
+					}
 
 					// Reparent the context(s) (if any)
 					IEclipseContext newParentContext = modelService

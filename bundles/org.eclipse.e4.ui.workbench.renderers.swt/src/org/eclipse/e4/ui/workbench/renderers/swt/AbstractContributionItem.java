@@ -181,10 +181,9 @@ public abstract class AbstractContributionItem extends ContributionItem {
 	}
 
 	protected void updateIcons() {
-		if (!(widget instanceof Item)) {
+		if (!(widget instanceof Item item)) {
 			return;
 		}
-		Item item = (Item) widget;
 		String iconURI = modelItem.getIconURI() != null ? modelItem.getIconURI() : ""; //$NON-NLS-1$
 		String disabledURI = getDisabledIconURI(modelItem);
 		Object disabledData = item.getData(DISABLED_URI);
@@ -213,7 +212,7 @@ public abstract class AbstractContributionItem extends ContributionItem {
 
 	private String getDisabledIconURI(MItem toolItem) {
 		Object obj = toolItem.getTransientData().get(IPresentationEngine.DISABLED_ICON_IMAGE_KEY);
-		return obj instanceof String ? (String) obj : ""; //$NON-NLS-1$
+		return obj instanceof String s ? s : ""; //$NON-NLS-1$
 	}
 
 	protected void disposeOldImages() {
@@ -246,8 +245,7 @@ public abstract class AbstractContributionItem extends ContributionItem {
 			IMenuManager menuMgr = (IMenuManager) getParent();
 			menuMgr.removeMenuListener(menuListener);
 		}
-		if (parent instanceof IMenuManager) {
-			IMenuManager menuMgr = (IMenuManager) parent;
+		if (parent instanceof IMenuManager menuMgr) {
 			menuMgr.addMenuListener(menuListener);
 		}
 		super.setParent(parent);
@@ -262,12 +260,13 @@ public abstract class AbstractContributionItem extends ContributionItem {
 			return;
 		}
 		int style = SWT.PUSH;
-		if (modelItem.getType() == ItemType.PUSH)
+		if (modelItem.getType() == ItemType.PUSH) {
 			style = SWT.PUSH;
-		else if (modelItem.getType() == ItemType.CHECK)
+		} else if (modelItem.getType() == ItemType.CHECK) {
 			style = SWT.CHECK;
-		else if (modelItem.getType() == ItemType.RADIO)
+		} else if (modelItem.getType() == ItemType.RADIO) {
 			style = SWT.RADIO;
+		}
 		MenuItem item = null;
 		if (index >= 0) {
 			item = new MenuItem(menu, style, index);
@@ -311,12 +310,13 @@ public abstract class AbstractContributionItem extends ContributionItem {
 			isDropdown = menu != null;
 		}
 		int style = SWT.PUSH;
-		if (isDropdown)
+		if (isDropdown) {
 			style = SWT.DROP_DOWN;
-		else if (modelItem.getType() == ItemType.CHECK)
+		} else if (modelItem.getType() == ItemType.CHECK) {
 			style = SWT.CHECK;
-		else if (modelItem.getType() == ItemType.RADIO)
+		} else if (modelItem.getType() == ItemType.RADIO) {
 			style = SWT.RADIO;
+		}
 		ToolItem item = null;
 		if (index >= 0) {
 			item = new ToolItem(parent, style, index);
@@ -396,8 +396,7 @@ public abstract class AbstractContributionItem extends ContributionItem {
 				obj = ((IContextFunction) obj).compute(lclContext, null);
 				RenderedElementUtil.setContributionManager(mmenu, obj);
 			}
-			if (obj instanceof IMenuCreator) {
-				final IMenuCreator creator = (IMenuCreator) obj;
+			if (obj instanceof final IMenuCreator creator) {
 				final Menu menu = creator.getMenu(toolItem.getParent().getShell());
 				if (menu != null) {
 					toolItem.addDisposeListener(e -> {
@@ -504,11 +503,13 @@ public abstract class AbstractContributionItem extends ContributionItem {
 	}
 
 	protected void handleHelpRequest() {
-		if (helpService == null)
+		if (helpService == null) {
 			return;
+		}
 		String helpContextId = getModel().getPersistedState().get(EHelpService.HELP_CONTEXT_ID);
-		if (helpContextId != null)
+		if (helpContextId != null) {
 			helpService.displayHelp(helpContextId);
+		}
 	}
 
 	protected abstract void handleWidgetDispose(Event event);
@@ -560,12 +561,14 @@ public abstract class AbstractContributionItem extends ContributionItem {
 
 
 	protected void updateItemEnablement() {
-		if (!(modelItem.getWidget() instanceof ToolItem))
+		if (!(modelItem.getWidget() instanceof ToolItem)) {
 			return;
+		}
 
 		ToolItem widget = (ToolItem) modelItem.getWidget();
-		if (widget == null || widget.isDisposed())
+		if (widget == null || widget.isDisposed()) {
 			return;
+		}
 
 		SafeRunner.run(getUpdateRunner());
 	}

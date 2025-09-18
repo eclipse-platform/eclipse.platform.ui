@@ -53,7 +53,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 
 	private MPart partToActivate;
 
-	private Listener activationListener = event -> {
+	private final Listener activationListener = event -> {
 		// we only want to activate the part if the activated widget is
 		// actually bound to a model element
 		MPart part = (MPart) event.widget.getData(OWNING_ME);
@@ -69,12 +69,11 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 
 	@Override
 	public Object createWidget(final MUIElement element, Object parent) {
-		if (!(element instanceof MPart) || !(parent instanceof Composite)) {
+		if (!(element instanceof final MPart part) || !(parent instanceof Composite)) {
 			return null;
 		}
 
 		// retrieve context for this part
-		final MPart part = (MPart) element;
 		IEclipseContext localContext = part.getContext();
 		Widget parentWidget = (Widget) parent;
 		// retrieve existing Composite, e.g., for the e4 compatibility case
@@ -152,16 +151,18 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 	}
 
 	public static void setDescription(MPart part, String description) {
-		if (!(part.getWidget() instanceof Composite))
+		if (!(part.getWidget() instanceof Composite)) {
 			return;
+		}
 
 		Composite c = (Composite) part.getWidget();
 
 		// Do we already have a label?
 		if (c.getChildren().length == 3) {
 			Label label = (Label) c.getChildren()[0];
-			if (description == null)
+			if (description == null) {
 				description = ""; //$NON-NLS-1$
+			}
 			// hide the label if there is no text to show
 			boolean hasText = !description.isEmpty();
 			label.setVisible(hasText);
@@ -261,8 +262,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 
 	@Override
 	public void disposeWidget(MUIElement element) {
-		if (element instanceof MPart) {
-			MPart part = (MPart) element;
+		if (element instanceof MPart part) {
 			MToolBar toolBar = part.getToolbar();
 			if (toolBar != null) {
 				engine.removeGui(toolBar);

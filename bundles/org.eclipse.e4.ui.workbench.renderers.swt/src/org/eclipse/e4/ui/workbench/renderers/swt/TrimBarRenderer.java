@@ -56,10 +56,9 @@ public class TrimBarRenderer extends SWTPartRenderer {
 
 	@Override
 	public Object createWidget(MUIElement element, Object parent) {
-		if (!(element instanceof MTrimBar) || !(parent instanceof Composite))
+		if (!(element instanceof MTrimBar) || !(parent instanceof Composite parentComp)) {
 			return null;
-
-		Composite parentComp = (Composite) parent;
+		}
 
 		Composite trimComposite = null;
 		final MTrimBar trimModel = (MTrimBar) element;
@@ -101,8 +100,9 @@ public class TrimBarRenderer extends SWTPartRenderer {
 
 	@Override
 	public void processContents(MElementContainer<MUIElement> me) {
-		if (!(((MUIElement) me) instanceof MTrimBar))
+		if (!(((MUIElement) me) instanceof MTrimBar)) {
 			return;
+		}
 		super.processContents(me);
 		IEclipseContext ctx = getContext(me);
 		ExpressionContext eContext = new ExpressionContext(ctx);
@@ -179,16 +179,14 @@ public class TrimBarRenderer extends SWTPartRenderer {
 		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
 		for (MTrimElement child : element.getPendingCleanup()) {
 			element.getChildren().remove(child);
-			if (child instanceof ToolBarImpl) {
-				ToolBarImpl tb = (ToolBarImpl) child;
+			if (child instanceof ToolBarImpl tb) {
 				releaseToolbar(rendererFactory, tb);
 			}
 		}
 		element.getPendingCleanup().clear();
 		List<MTrimElement> children = element.getChildren();
 		for (MTrimElement mTrimElement : children) {
-			if (mTrimElement instanceof ToolBarImpl) {
-				ToolBarImpl tb = (ToolBarImpl) mTrimElement;
+			if (mTrimElement instanceof ToolBarImpl tb) {
 				releaseToolbar(rendererFactory, tb);
 			}
 		}
@@ -196,8 +194,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 
 	private void releaseToolbar(IRendererFactory rendererFactory, ToolBarImpl tb) {
 		AbstractPartRenderer apr = rendererFactory.getRenderer(tb, null);
-		if (apr instanceof ToolBarManagerRenderer) {
-			ToolBarManagerRenderer tbmr = (ToolBarManagerRenderer) apr;
+		if (apr instanceof ToolBarManagerRenderer tbmr) {
 			ToolBarManager tbm = tbmr.getManager(tb);
 			tbmr.clearModelToManager(tb, null);
 			if (tbm != null) {

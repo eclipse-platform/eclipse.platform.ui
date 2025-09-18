@@ -45,8 +45,9 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 
 	@Override
 	public Object createWidget(MUIElement element, Object parent) {
-		if (!(element instanceof MPerspectiveStack) || !(parent instanceof Composite))
+		if (!(element instanceof MPerspectiveStack) || !(parent instanceof Composite)) {
 			return null;
+		}
 
 		Composite perspStack = new Composite((Composite) parent, SWT.NONE);
 		IStylingEngine stylingEngine = getContext(element).get(IStylingEngine.class);

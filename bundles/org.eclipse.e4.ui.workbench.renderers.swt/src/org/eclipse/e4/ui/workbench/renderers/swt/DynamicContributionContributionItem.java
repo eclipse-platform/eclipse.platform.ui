@@ -26,11 +26,11 @@ import org.eclipse.jface.action.IMenuManager;
  * of a dynamic menu contribution entry.
  */
 class DynamicContributionContributionItem extends ContributionItem {
-	private MDynamicMenuContribution model;
+	private final MDynamicMenuContribution model;
 
-	private IMenuListener menuListener = IMenuManager::markDirty;
+	private final IMenuListener menuListener = IMenuManager::markDirty;
 
-	private IContributionFactory factory;
+	private final IContributionFactory factory;
 
 	/**
 	 * Create the item and associated model;
@@ -72,8 +72,7 @@ class DynamicContributionContributionItem extends ContributionItem {
 			IMenuManager menuMgr = (IMenuManager) getParent();
 			menuMgr.removeMenuListener(menuListener);
 		}
-		if (parent instanceof IMenuManager) {
-			IMenuManager menuMgr = (IMenuManager) parent;
+		if (parent instanceof IMenuManager menuMgr) {
 			menuMgr.addMenuListener(menuListener);
 		}
 		super.setParent(parent);

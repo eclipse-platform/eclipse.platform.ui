@@ -97,7 +97,7 @@ public class HandledContributionItem extends AbstractContributionItem {
 
 	private Runnable unreferenceRunnable;
 
-	private IStateListener stateListener = (state, oldValue) -> updateState();
+	private final IStateListener stateListener = (state, oldValue) -> updateState();
 
 	private IEclipseContext infoContext;
 
@@ -215,13 +215,12 @@ public class HandledContributionItem extends AbstractContributionItem {
 			return;
 		}
 		Object obj = getModel().getTransientData().get(ItemType.CHECK.toString());
-		if (obj instanceof IContextFunction) {
+		if (obj instanceof IContextFunction func) {
 			IEclipseContext context = getContext(getModel());
 			IEclipseContext staticContext = getStaticContext(null);
 			staticContext.set(MPart.class, context.get(MPart.class));
 			staticContext.set(WW_SUPPORT, context.get(WW_SUPPORT));
 
-			IContextFunction func = (IContextFunction) obj;
 			obj = func.compute(staticContext, null);
 			if (obj != null) {
 				getModel().getTransientData().put(DISPOSABLE, obj);
@@ -257,8 +256,9 @@ public class HandledContributionItem extends AbstractContributionItem {
 			}
 			if (bindingService != null) {
 				TriggerSequence binding = bindingService.getBestSequenceFor(parmCmd);
-				if (binding != null)
+				if (binding != null) {
 					keyBindingText = binding.format();
+				}
 			}
 		}
 		if (text != null) {
@@ -271,10 +271,11 @@ public class HandledContributionItem extends AbstractContributionItem {
 					}
 				}
 			}
-			if (keyBindingText == null)
+			if (keyBindingText == null) {
 				item.setText(text);
-			else
+			} else {
 				item.setText(text + '\t' + keyBindingText);
+			}
 		} else {
 			item.setText(""); //$NON-NLS-1$
 		}
@@ -400,8 +401,9 @@ public class HandledContributionItem extends AbstractContributionItem {
 
 	@Override
 	protected void handleHelpRequest() {
-		if (helpService == null)
+		if (helpService == null) {
 			return;
+		}
 		String helpContextId = getModel().getPersistedState().get(EHelpService.HELP_CONTEXT_ID);
 		if (helpContextId != null) {
 			helpService.displayHelp(helpContextId);

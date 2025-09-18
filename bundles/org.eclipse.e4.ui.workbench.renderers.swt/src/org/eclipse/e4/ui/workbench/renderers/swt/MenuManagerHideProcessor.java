@@ -52,17 +52,17 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 
 	@Override
 	public void menuAboutToShow(IMenuManager manager) {
-		if (!(manager instanceof MenuManager)) {
+		if (!(manager instanceof MenuManager menuManager)) {
 			return;
 		}
-		MenuManager menuManager = (MenuManager) manager;
 		final MMenu menuModel = renderer.getMenuModel(menuManager);
 		final Menu menu = menuManager.getMenu();
 		if (menuModel instanceof MPopupMenu) {
 			hidePopup(menu, (MPopupMenu) menuModel);
 		}
-		if (menuModel != null && menu != null)
+		if (menuModel != null && menu != null) {
 			processDynamicElements((MenuManager) manager, menu, menuModel);
+		}
 	}
 
 	/**
