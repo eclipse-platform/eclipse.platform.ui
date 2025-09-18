@@ -48,7 +48,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	private IUndoableOperation triggeringOperation;
 
-	private IOperationHistory history;
+	private final IOperationHistory history;
 
 	private List<IUndoableOperation> children = new ArrayList<>();
 

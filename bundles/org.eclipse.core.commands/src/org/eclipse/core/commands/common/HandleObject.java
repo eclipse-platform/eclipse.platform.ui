@@ -118,12 +118,11 @@ public abstract class HandleObject extends EventManager implements
 		}
 
 		// Check if they're the same type.
-		if (!(object instanceof HandleObject)) {
+		if (!(object instanceof final HandleObject handle)) {
 			return false;
 		}
 
 		// Check each property in turn.
-		final HandleObject handle= (HandleObject) object;
 		return Objects.equals(id, handle.id)
 				&& (this.getClass() == handle.getClass());
 	}

@@ -54,8 +54,7 @@ public final class CommandManager extends HandleObjectManager<Command>
 		public void notDefined(String commandId, NotDefinedException exception) {
 			if (executionListeners != null) {
 				for (final IExecutionListener object : executionListeners) {
-					if (object instanceof IExecutionListenerWithChecks) {
-						final IExecutionListenerWithChecks listener = (IExecutionListenerWithChecks) object;
+					if (object instanceof final IExecutionListenerWithChecks listener) {
 						listener.notDefined(commandId, exception);
 					}
 				}
@@ -66,8 +65,7 @@ public final class CommandManager extends HandleObjectManager<Command>
 		public void notEnabled(String commandId, NotEnabledException exception) {
 			if (executionListeners != null) {
 				for (final IExecutionListener object : executionListeners) {
-					if (object instanceof IExecutionListenerWithChecks) {
-						final IExecutionListenerWithChecks listener = (IExecutionListenerWithChecks) object;
+					if (object instanceof final IExecutionListenerWithChecks listener) {
 						listener.notEnabled(commandId, exception);
 					}
 				}
@@ -246,7 +244,7 @@ public final class CommandManager extends HandleObjectManager<Command>
 	 */
 	private IExecutionListenerWithChecks executionListener;
 
-	private boolean shouldCommandFireEvents = true;
+	private final boolean shouldCommandFireEvents = true;
 
 	/**
 	 * The collection of execution listeners. This collection is

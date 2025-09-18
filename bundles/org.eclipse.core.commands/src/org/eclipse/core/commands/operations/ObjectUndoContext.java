@@ -27,11 +27,11 @@ import java.util.List;
  */
 public final class ObjectUndoContext extends UndoContext {
 
-	private Object object;
+	private final Object object;
 
-	private String label;
+	private final String label;
 
-	private List<IUndoContext> children = new ArrayList<>();
+	private final List<IUndoContext> children = new ArrayList<>();
 
 	/**
 	 * Construct an operation context that represents the given object.

@@ -127,7 +127,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * a map of undo limits per context
 	 */
-	private Map<IUndoContext, Integer> limits = Collections.synchronizedMap(new HashMap<>());
+	private final Map<IUndoContext, Integer> limits = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * the list of {@link IOperationHistoryListener}s
@@ -137,12 +137,12 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * the list of operations available for redo, LIFO
 	 */
-	private List<IUndoableOperation> redoList = Collections.synchronizedList(new ArrayList<>());
+	private final List<IUndoableOperation> redoList = Collections.synchronizedList(new ArrayList<>());
 
 	/**
 	 * the list of operations available for undo, LIFO
 	 */
-	private List<IUndoableOperation> undoList = Collections.synchronizedList(new ArrayList<>());
+	private final List<IUndoableOperation> undoList = Collections.synchronizedList(new ArrayList<>());
 
 	/**
 	 * a lock that is used to synchronize access between the undo and redo
@@ -807,8 +807,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	private IStatus getExecuteApproval(IUndoableOperation operation, IAdaptable info) {
 
 		for (IOperationApprover tmp : approvers) {
-			if (tmp instanceof IOperationApprover2) {
-				IOperationApprover2 approver = (IOperationApprover2) tmp;
+			if (tmp instanceof IOperationApprover2 approver) {
 				IStatus approval = approver.proceedExecuting(operation, this, info);
 				if (!approval.isOK()) {
 					if (DEBUG_OPERATION_HISTORY_APPROVAL) {
