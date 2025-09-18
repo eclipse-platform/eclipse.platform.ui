@@ -71,7 +71,7 @@ public final class DialogSettingsProvider implements IDialogSettingsProvider {
 	 */
 	private static final String KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL = "default_dialog_settings_rootUrl"; //$NON-NLS-1$
 
-	private Bundle fBundle;
+	private final Bundle fBundle;
 
 	private IDialogSettings fDialogSettings;
 

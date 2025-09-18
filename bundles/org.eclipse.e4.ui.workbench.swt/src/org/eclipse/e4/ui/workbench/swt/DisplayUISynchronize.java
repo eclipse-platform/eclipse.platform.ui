@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public final class DisplayUISynchronize extends UISynchronize {
 
-	private Display display;
+	private final Display display;
 
 	public DisplayUISynchronize(Display display) {
 		this.display = display;

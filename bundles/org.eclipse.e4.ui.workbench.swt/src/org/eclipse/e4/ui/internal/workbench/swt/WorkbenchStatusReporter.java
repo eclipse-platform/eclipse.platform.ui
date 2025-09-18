@@ -93,14 +93,15 @@ public class WorkbenchStatusReporter extends StatusReporter {
 		// TBD this code should really be in IShellProvider which should be
 		// available at the application context level.
 		Shell myShell = null;
-		if (shellProvider != null)
+		if (shellProvider != null) {
 			myShell = shellProvider.getShell();
-		else {
+		} else {
 			IEclipseContext activeLeaf = context.getActiveLeaf();
 			if (activeLeaf != null) {
 				IShellProvider provider = activeLeaf.get(IShellProvider.class);
-				if (provider != null)
+				if (provider != null) {
 					myShell = provider.getShell();
+				}
 			}
 		}
 		if (myShell == null) {

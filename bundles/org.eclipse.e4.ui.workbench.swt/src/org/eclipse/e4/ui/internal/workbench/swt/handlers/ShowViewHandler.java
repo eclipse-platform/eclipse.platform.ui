@@ -43,8 +43,9 @@ public class ShowViewHandler {
 		final ShowViewDialog dialog = new ShowViewDialog(shell, application,
 				context);
 		dialog.open();
-		if (dialog.getReturnCode() != Window.OK)
+		if (dialog.getReturnCode() != Window.OK) {
 			return;
+		}
 
 		for (MPartDescriptor descriptor : dialog.getSelection()) {
 			partService.showPart(descriptor.getElementId(), PartState.ACTIVATE);

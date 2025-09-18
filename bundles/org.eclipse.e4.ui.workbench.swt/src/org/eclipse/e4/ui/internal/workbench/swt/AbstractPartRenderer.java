@@ -91,8 +91,9 @@ public abstract class AbstractPartRenderer {
 		IEclipseContext curContext = getContext(element);
 		if (curContext != null) {
 			EPartService ps = curContext.get(EPartService.class);
-			if (ps != null)
+			if (ps != null) {
 				ps.activate(element, requiresFocus(element));
+			}
 		}
 	}
 
@@ -107,9 +108,9 @@ public abstract class AbstractPartRenderer {
 	}
 
 	public Object getUIContainer(MUIElement element) {
-		if (element.getParent() != null)
+		if (element.getParent() != null) {
 			return element.getParent().getWidget();
-		else {
+		} else {
 			Object value = element.getTransientData().get(IPresentationEngine.RENDERING_PARENT_KEY);
 			if (value != null) {
 				return value;

@@ -35,7 +35,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 	 * Child cache. Map from Object->Object[]. Our hasChildren() method is
 	 * expensive so it's better to cache the results of getChildren().
 	 */
-	private Map<Object, Object[]> childMap = new HashMap<>();
+	private final Map<Object, Object[]> childMap = new HashMap<>();
 
 	private MApplication application;
 
@@ -95,17 +95,18 @@ public class ViewContentProvider implements ITreeContentProvider {
 				String category = null;
 				boolean isView = false;
 				for (String tag : tags) {
-					if (tag.equals("View"))
+					if (tag.equals("View")) {
 						isView = true;
-					else if (tag.startsWith(CATEGORY_TAG)) {
+					} else if (tag.startsWith(CATEGORY_TAG)) {
 						category = tag.substring(CATEGORY_TAG_LENGTH);
 					}
 				}
 				if (isView) {
-					if (category != null)
+					if (category != null) {
 						categoryTags.add(category);
-					else
+					} else {
 						noCategoryDescriptors.add(descriptor);
+					}
 				}
 			}
 
@@ -119,11 +120,13 @@ public class ViewContentProvider implements ITreeContentProvider {
 			for (MPartDescriptor descriptor : descriptors) {
 				List<String> tags = descriptor.getTags();
 				for (String tag : tags) {
-					if (!tag.startsWith(CATEGORY_TAG))
+					if (!tag.startsWith(CATEGORY_TAG)) {
 						continue;
+					}
 					String categoryTag = tag.substring(CATEGORY_TAG_LENGTH);
-					if (element.equals(categoryTag))
+					if (element.equals(categoryTag)) {
 						categoryDescriptors.add(descriptor);
+					}
 				}
 			}
 			return categoryDescriptors.toArray();

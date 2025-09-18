@@ -245,11 +245,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private void subscribeTrimHandler(@EventTopic(UIEvents.TrimmedWindow.TOPIC_TRIMBARS) Event event) {
 
 		Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (!(changedObj instanceof MTrimmedWindow)) {
+		if (!(changedObj instanceof MTrimmedWindow window)) {
 			return;
 		}
 
-		MTrimmedWindow window = (MTrimmedWindow) changedObj;
 		if (window.getWidget() == null) {
 			return;
 		}
@@ -309,8 +308,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (renderIt) {
 					// NOTE: createGui will call 'childAdded' if successful
 					Object w = createGui(added);
-					if (w instanceof Control && !(w instanceof Shell)) {
-						final Control ctrl = (Control) w;
+					if (w instanceof final Control ctrl && !(w instanceof Shell)) {
 						fixZOrder(added);
 						if (!ctrl.isDisposed()) {
 							ctrl.requestLayout();
@@ -548,8 +546,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	public Object safeCreateGui(MUIElement element, Object parentWidget,
 			IEclipseContext parentContext) {
-		if (!element.isToBeRendered())
+		if (!element.isToBeRendered()) {
 			return null;
+		}
 
 		// no creates while processing a remove
 		if (removeRoot != null) {
@@ -558,20 +557,19 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		Object currentWidget = element.getWidget();
 		if (currentWidget != null) {
-			if (currentWidget instanceof Control) {
-				Control control = (Control) currentWidget;
+			if (currentWidget instanceof Control control) {
 				// make sure the control is visible
 				MUIElement elementParent = element.getParent();
 				if (!(element instanceof MPlaceholder)
-						|| !(elementParent instanceof MPartStack))
+						|| !(elementParent instanceof MPartStack)) {
 					control.setVisible(true);
+				}
 
 				if (parentWidget instanceof Composite) {
 					Composite currentParent = control.getParent();
 					if (currentParent != parentWidget) {
 						// check if the original parent was a tab folder
-						if (currentParent instanceof CTabFolder) {
-							CTabFolder folder = (CTabFolder) currentParent;
+						if (currentParent instanceof CTabFolder folder) {
 							// if we used to be the tab folder's top right
 							// control, unset it
 							if (folder.getTopRight() == control) {
@@ -588,8 +586,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 			// Reparent the context (or the kid's context)
 			if (element instanceof MContext) {
 				IEclipseContext ctxt = ((MContext) element).getContext();
-				if (ctxt != null)
+				if (ctxt != null) {
 					ctxt.setParent(parentContext);
+				}
 			} else {
 				List<MContext> childContexts = modelService.findElements(
 						element, null, MContext.class, null);
@@ -598,10 +597,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 					// children
 					MUIElement kid = (MUIElement) c;
 					MUIElement parent = kid.getParent();
-					if (parent == null && kid.getCurSharedRef() != null)
+					if (parent == null && kid.getCurSharedRef() != null) {
 						parent = kid.getCurSharedRef().getParent();
-					if (!(element instanceof MPlaceholder) && parent != element)
+					}
+					if (!(element instanceof MPlaceholder) && parent != element) {
 						continue;
+					}
 
 					if (c.getContext() != null
 							&& c.getContext().getParent() != parentContext) {
@@ -621,8 +622,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			return element.getWidget();
 		}
 
-		if (element instanceof MContext) {
-			MContext ctxt = (MContext) element;
+		if (element instanceof MContext ctxt) {
 			// Assert.isTrue(ctxt.getContext() == null,
 			// "Before rendering Context should be null");
 			if (ctxt.getContext() == null) {
@@ -684,8 +684,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 			}
 		} else // failed to create the widget, dispose its context if necessary
-		if (element instanceof MContext) {
-			MContext ctxt = (MContext) element;
+		if (element instanceof MContext ctxt) {
 			IEclipseContext lclContext = ctxt.getContext();
 			if (lclContext != null) {
 				lclContext.dispose();
@@ -734,8 +733,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 		// Obtain the necessary parent widget
 		Object parent = null;
 		MUIElement parentME = element.getParent();
-		if (parentME == null)
+		if (parentME == null) {
 			parentME = (MUIElement) ((EObject) element).eContainer();
+		}
 		if (parentME != null) {
 			AbstractPartRenderer renderer = getRendererFor(parentME);
 			if (renderer != null) {
@@ -774,7 +774,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			return;
 		}
 
-		Object implementation = element instanceof MContribution ? ((MContribution) element)
+		Object implementation = element instanceof MContribution m ? m
 				.getObject() : null;
 
 		// If there is no class to call @Focus on then revert to the default
@@ -860,8 +860,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	private void safeRemoveGui(MUIElement element) {
-		if (removeRoot == null)
+		if (removeRoot == null) {
 			removeRoot = element;
+		}
 
 		// We call 'hideChild' *before* checking if the actual element
 		// has been rendered in order to pick up cases of 'lazy loading'
@@ -897,27 +898,23 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 			}
 
-			if (element instanceof MPerspective) {
-				MPerspective perspective = (MPerspective) element;
+			if (element instanceof MPerspective perspective) {
 				for (MWindow subWindow : perspective.getWindows()) {
 					removeGui(subWindow);
 				}
-			} else if (element instanceof MWindow) {
-				MWindow window = (MWindow) element;
+			} else if (element instanceof MWindow window) {
 				for (MWindow subWindow : window.getWindows()) {
 					removeGui(subWindow);
 				}
 
-				if (window instanceof MTrimmedWindow) {
-					MTrimmedWindow trimmedWindow = (MTrimmedWindow) window;
+				if (window instanceof MTrimmedWindow trimmedWindow) {
 					for (MUIElement trimBar : trimmedWindow.getTrimBars()) {
 						removeGui(trimBar);
 					}
 				}
 			}
 
-			if (element instanceof MContribution) {
-				MContribution contribution = (MContribution) element;
+			if (element instanceof MContribution contribution) {
 				Object client = contribution.getObject();
 				IEclipseContext parentContext = renderer.getContext(element);
 				if (parentContext != null && client != null) {
@@ -934,8 +931,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			renderer.disposeWidget(element);
 
 			// unset the client object
-			if (element instanceof MContribution) {
-				MContribution contribution = (MContribution) element;
+			if (element instanceof MContribution contribution) {
 				Object client = contribution.getObject();
 				IEclipseContext parentContext = renderer.getContext(element);
 				if (parentContext != null && client != null) {
@@ -956,15 +952,15 @@ public class PartRenderingEngine implements IPresentationEngine {
 			}
 		}
 
-		if (element instanceof MPlaceholder) {
-			MPlaceholder ph = (MPlaceholder) element;
+		if (element instanceof MPlaceholder ph) {
 			if (ph.getRef() != null && ph.getRef().getCurSharedRef() == ph) {
 				ph.getRef().setCurSharedRef(null);
 			}
 		}
 
-		if (removeRoot == element)
+		if (removeRoot == element) {
 			removeRoot = null;
+		}
 	}
 
 	private void clearContext(MContext contextME) {

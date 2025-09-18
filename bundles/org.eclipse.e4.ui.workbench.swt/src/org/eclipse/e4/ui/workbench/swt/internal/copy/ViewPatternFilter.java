@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class ViewPatternFilter extends PatternFilter {
 
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	/**
 	 * Create a new instance of a ViewPatternFilter

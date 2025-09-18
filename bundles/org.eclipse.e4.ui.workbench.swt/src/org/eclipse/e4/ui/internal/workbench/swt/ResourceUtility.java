@@ -42,10 +42,12 @@ public class ResourceUtility implements ISWTResourceUtilities {
 
 	@Override
 	public Image adornImage(Image toAdorn, Image adornment) {
-		if (toAdorn == null)
+		if (toAdorn == null) {
 			return null;
-		if (adornment == null)
+		}
+		if (adornment == null) {
 			return toAdorn;
+		}
 		Rectangle adornmentSize = adornment.getBounds();
 
 		final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
