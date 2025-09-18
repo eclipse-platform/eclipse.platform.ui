@@ -25,7 +25,7 @@ public class ToolItemUpdater implements Runnable {
 
 	private static int DELAY = 100;
 	private long timestampOfEarliestQueuedUpdate = 0;
-	private List<AbstractContributionItem> itemsToCheck = new ArrayList<>();
+	private final List<AbstractContributionItem> itemsToCheck = new ArrayList<>();
 	private final List<AbstractContributionItem> orphanedToolItems = new ArrayList<>();
 	private final Set<AbstractContributionItem> itemsToUpdateLater = new LinkedHashSet<>();
 

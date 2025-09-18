@@ -47,10 +47,10 @@ public class ContributionRecord {
 	static final String STATIC_CONTEXT = "ContributionFactoryContext"; //$NON-NLS-1$
 
 	MMenu menuModel;
-	private MMenuContribution menuContribution;
-	private ArrayList<MMenuElement> generatedElements = new ArrayList<>();
-	private HashSet<MMenuElement> sharedElements = new HashSet<>();
-	private MenuManagerRenderer renderer;
+	private final MMenuContribution menuContribution;
+	private final ArrayList<MMenuElement> generatedElements = new ArrayList<>();
+	private final HashSet<MMenuElement> sharedElements = new HashSet<>();
+	private final MenuManagerRenderer renderer;
 	boolean isVisible = true;
 	private IEclipseContext infoContext;
 	private Runnable factoryDispose;
@@ -174,7 +174,7 @@ public class ContributionRecord {
 		if (expression instanceof MCoreExpression) {
 			Object coreExpression = ((MCoreExpression) expression)
 					.getCoreExpression();
-			return coreExpression instanceof Expression ? (Expression) coreExpression
+			return coreExpression instanceof Expression e ? e
 					: null;
 		}
 		return null;

@@ -89,8 +89,9 @@ public class ToolControlRenderer extends SWTPartRenderer {
 	@Override
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MToolControl)
-				|| !(parent instanceof ToolBar || parent instanceof Composite))
+				|| !(parent instanceof ToolBar || parent instanceof Composite)) {
 			return null;
+		}
 		Composite parentComp = (Composite) parent;
 		MToolControl toolControl = (MToolControl) element;
 
@@ -132,8 +133,9 @@ public class ToolControlRenderer extends SWTPartRenderer {
 		Control[] kids = parentComp.getChildren();
 
 		// No kids means that the trim failed curing creation
-		if (kids.length == 0)
+		if (kids.length == 0) {
 			return null;
+		}
 
 		// The new control is assumed to be the last child created
 		// We could safe this up even more by asserting that the
@@ -149,8 +151,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 		bindWidget(toolControl, newCtrl);
 		boolean vertical = false;
 		MUIElement parentElement = element.getParent();
-		if (parentElement instanceof MTrimBar) {
-			MTrimBar bar = (MTrimBar) parentElement;
+		if (parentElement instanceof MTrimBar bar) {
 			vertical = bar.getSide() == SideValue.LEFT
 					|| bar.getSide() == SideValue.RIGHT;
 		}
@@ -183,10 +184,9 @@ public class ToolControlRenderer extends SWTPartRenderer {
 
 		Object changedObj = event.getProperty(EventTags.ELEMENT);
 
-		if (!(changedObj instanceof MToolControl))
+		if (!(changedObj instanceof final MToolControl changedElement)) {
 			return;
-
-		final MToolControl changedElement = (MToolControl) changedObj;
+		}
 
 		if (UIEvents.isADD(event)) {
 			if (UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE,

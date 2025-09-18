@@ -69,10 +69,9 @@ public class MenuManagerServiceFilter implements Listener {
 	}
 
 	private void safeHandleEvent(Event event) {
-		if (!(event.widget instanceof Menu)) {
+		if (!(event.widget instanceof final Menu menu)) {
 			return;
 		}
-		final Menu menu = (Menu) event.widget;
 		if (event.type == SWT.Dispose) {
 			trace("handleMenu.Dispose", menu, null); //$NON-NLS-1$
 		}

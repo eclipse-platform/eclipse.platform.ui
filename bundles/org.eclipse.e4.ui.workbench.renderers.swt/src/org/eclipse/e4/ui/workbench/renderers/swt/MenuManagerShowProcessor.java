@@ -75,10 +75,9 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 
 	@Override
 	public void menuAboutToShow(IMenuManager manager) {
-		if (!(manager instanceof MenuManager)) {
+		if (!(manager instanceof MenuManager menuManager)) {
 			return;
 		}
-		MenuManager menuManager = (MenuManager) manager;
 		final MMenu menuModel = renderer.getMenuModel(menuManager);
 		final Menu menu = menuManager.getMenu();
 
@@ -90,13 +89,12 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 		}
 		AbstractPartRenderer obj = rendererFactory.getRenderer(menuModel,
 				menu.getParent());
-		if (!(obj instanceof MenuManagerRenderer)) {
+		if (!(obj instanceof MenuManagerRenderer renderer)) {
 			if (Policy.DEBUG_MENUS) {
 				trace("Not the correct renderer: " + obj, menuManager, menuModel); //$NON-NLS-1$
 			}
 			return;
 		}
-		MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
 		if (menuModel.getWidget() == null) {
 			renderer.bindWidget(menuModel, menuManager.getMenu());
 		}
@@ -104,10 +102,9 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 
 	@Override
 	public void menuAboutToHide(IMenuManager manager) {
-		if (!(manager instanceof MenuManager)) {
+		if (!(manager instanceof MenuManager menuManager)) {
 			return;
 		}
-		MenuManager menuManager = (MenuManager) manager;
 		final MMenu menuModel = renderer.getMenuModel(menuManager);
 		if (menuModel != null) {
 			processDynamicElements(menuModel, menuManager);
@@ -130,8 +127,7 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 				new MMenuElement[menuModel.getChildren().size()]);
 		for (MMenuElement currentMenuElement : menuElements) {
 
-			if (currentMenuElement instanceof MDynamicMenuContribution) {
-				MDynamicMenuContribution dmc = (MDynamicMenuContribution) currentMenuElement;
+			if (currentMenuElement instanceof MDynamicMenuContribution dmc) {
 				Object contribution = dmc.getObject();
 				if (contribution == null) {
 					IEclipseContext context = modelService.getContainingContext(menuModel);
@@ -215,8 +211,7 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 				it.remove();
 				// cleanup the renderer
 				IContributionItem ici = renderer.getContribution(mMenuElement);
-				if (ici == null && mMenuElement instanceof MMenu) {
-					MMenu menuElement = (MMenu) mMenuElement;
+				if (ici == null && mMenuElement instanceof MMenu menuElement) {
 					ici = renderer.getManager(menuElement);
 					renderer.clearModelToManager(menuElement, (MenuManager) ici);
 				}

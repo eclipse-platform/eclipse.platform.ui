@@ -47,23 +47,26 @@ public class AreaRenderer extends SWTPartRenderer {
 	@Inject
 	private IEventBroker eventBroker;
 
-	private EventHandler itemUpdater = event -> {
+	private final EventHandler itemUpdater = event -> {
 		// Ensure that this event is for a MArea
-		if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MArea))
+		if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MArea)) {
 			return;
+		}
 
 		MArea areaModel = (MArea) event
 				.getProperty(UIEvents.EventTags.ELEMENT);
 
-		if (!(areaModel.getWidget() instanceof CTabFolder))
+		if (!(areaModel.getWidget() instanceof CTabFolder)) {
 			return;
+		}
 
 		CTabFolder ctf = (CTabFolder) areaModel.getWidget();
 		CTabItem areaItem = ctf.getItem(0);
 
 		// No widget == nothing to update
-		if (areaItem == null)
+		if (areaItem == null) {
 			return;
+		}
 
 		String attName = (String) event
 				.getProperty(UIEvents.EventTags.ATTNAME);
@@ -78,24 +81,27 @@ public class AreaRenderer extends SWTPartRenderer {
 		}
 	};
 
-	private EventHandler widgetListener = new EventHandler() {
+	private final EventHandler widgetListener = new EventHandler() {
 		@Override
 		public void handleEvent(Event event) {
 			final MUIElement changedElement = (MUIElement) event
 					.getProperty(EventTags.ELEMENT);
-			if (!(changedElement instanceof MPartStack))
+			if (!(changedElement instanceof MPartStack)) {
 				return;
+			}
 
 			MArea areaModel = findArea(changedElement);
-			if (areaModel != null)
+			if (areaModel != null) {
 				synchCTFState(areaModel);
+			}
 		}
 
 		private MArea findArea(MUIElement element) {
 			MUIElement parent = element.getParent();
 			while (parent != null) {
-				if (parent instanceof MArea)
+				if (parent instanceof MArea) {
 					return (MArea) parent;
+				}
 				parent = parent.getParent();
 			}
 			return null;
@@ -116,10 +122,9 @@ public class AreaRenderer extends SWTPartRenderer {
 
 	@Override
 	public Object createWidget(final MUIElement element, Object parent) {
-		if (!(element instanceof MArea) || !(parent instanceof Composite))
+		if (!(element instanceof MArea) || !(parent instanceof Composite parentComp)) {
 			return null;
-
-		Composite parentComp = (Composite) parent;
+		}
 
 		Composite areaComp = new Composite(parentComp, SWT.NONE);
 		areaComp.setLayout(new FillLayout());
@@ -129,12 +134,13 @@ public class AreaRenderer extends SWTPartRenderer {
 
 	private void ensureCTF(MArea areaModel, List<MPartStack> stacks) {
 		Object widget = areaModel.getWidget();
-		if (widget instanceof CTabFolder)
+		if (widget instanceof CTabFolder) {
 			return;
-		if (!(widget instanceof Composite))
+		}
+		if (!(widget instanceof Composite curComp)) {
 			return;
+		}
 		// if not assigned to CTabFolder but any other Composite create CTabFolder
-		Composite curComp = (Composite) widget;
 		Composite parentComp = curComp.getParent();
 		CTabFolder ctf = new CTabFolder(parentComp, SWT.BORDER | SWT.SINGLE);
 		// don't paint the split editor area tab highlighted, it looks ugly
@@ -169,12 +175,15 @@ public class AreaRenderer extends SWTPartRenderer {
 		}
 
 		CTabItem cti = new CTabItem(ctf, SWT.NONE);
-		if (areaModel.getLabel() != null)
+		if (areaModel.getLabel() != null) {
 			cti.setText(areaModel.getLocalizedLabel());
-		if (areaModel.getTooltip() != null)
+		}
+		if (areaModel.getTooltip() != null) {
 			cti.setToolTipText(areaModel.getLocalizedTooltip());
-		if (areaModel.getIconURI() != null)
+		}
+		if (areaModel.getIconURI() != null) {
 			cti.setImage(getImage(areaModel));
+		}
 
 		curComp.setParent(ctf);
 		cti.setControl(curComp);
@@ -219,15 +228,17 @@ public class AreaRenderer extends SWTPartRenderer {
 		List<MPartStack> stacks = findDirectStacks(areaModel);
 		int count = 0;
 		for (MPartStack stack : stacks) {
-			if (stack.isToBeRendered())
+			if (stack.isToBeRendered()) {
 				count++;
+			}
 		}
 
 		// If there's more than one stack visible we use a CTF
-		if (count > 1)
+		if (count > 1) {
 			ensureCTF(areaModel, stacks);
-		else
+		} else {
 			ensureComposite(areaModel, stacks);
+		}
 	}
 
 	private List<MPartStack> findDirectStacks(MPartSashContainer root) {
@@ -246,10 +257,10 @@ public class AreaRenderer extends SWTPartRenderer {
 	public Object getUIContainer(MUIElement element) {
 		MUIElement parentElement = element.getParent();
 
-		if (!(parentElement instanceof MArea))
+		if (!(parentElement instanceof MArea areaModel)) {
 			return null;
+		}
 
-		MArea areaModel = (MArea) parentElement;
 		synchCTFState(areaModel);
 
 		if (areaModel.getWidget() instanceof CTabFolder) {

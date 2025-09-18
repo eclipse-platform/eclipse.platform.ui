@@ -64,11 +64,9 @@ public abstract class AbstractTableInformationControl {
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			SearchPattern matcher = getMatcher();
-			if (matcher == null || !(viewer instanceof TableViewer)) {
+			if (matcher == null || !(viewer instanceof TableViewer tableViewer)) {
 				return true;
 			}
-			TableViewer tableViewer = (TableViewer) viewer;
-
 			String matchName = ((ILabelProvider) tableViewer.getLabelProvider())
 					.getText(element);
 
@@ -251,12 +249,14 @@ public abstract class AbstractTableInformationControl {
 				e.doit = true;
 				{
 					int n1 = table.getItemCount();
-					if (n1 == 0)
+					if (n1 == 0) {
 						return;
+					}
 
 					int i1 = table.getSelectionIndex() + 1;
-					if (i1 >= n1)
+					if (i1 >= n1) {
 						i1 = 0;
+					}
 					table.setSelection(i1);
 				}
 				break;
@@ -266,12 +266,14 @@ public abstract class AbstractTableInformationControl {
 				e.doit = true;
 				{
 					int n2 = table.getItemCount();
-					if (n2 == 0)
+					if (n2 == 0) {
 						return;
+					}
 
 					int i2 = table.getSelectionIndex() - 1;
-					if (i2 < 0)
+					if (i2 < 0) {
 						i2 = n2 - 1;
+					}
 					table.setSelection(i2);
 				}
 				break;

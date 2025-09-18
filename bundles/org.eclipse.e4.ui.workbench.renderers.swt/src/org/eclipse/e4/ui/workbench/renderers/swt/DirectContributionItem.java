@@ -162,8 +162,9 @@ public class DirectContributionItem extends AbstractContributionItem {
 	 * @return the execution context
 	 */
 	private IEclipseContext getExecutionContext(IEclipseContext context) {
-		if (context == null)
+		if (context == null) {
 			return null;
+		}
 
 		return context.getActiveLeaf();
 	}

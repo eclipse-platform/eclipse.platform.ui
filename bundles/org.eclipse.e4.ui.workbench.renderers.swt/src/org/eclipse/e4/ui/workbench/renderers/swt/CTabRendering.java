@@ -159,7 +159,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 	int paddingLeft = 0, paddingRight = 0, paddingTop = 0, paddingBottom = 0;
 
-	private CTabFolderWrapper parentWrapper;
+	private final CTabFolderWrapper parentWrapper;
 
 	private Color hotUnselectedTabsColorBackground;
 	private Color selectedTabHighlightColor;
@@ -290,8 +290,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 				// Resetting it before draw the tabs prevents draw issues.
 				gc.setClipping((Rectangle) null);
 				gc.setAdvanced(true);
-				if (bounds.width == 0 || bounds.height == 0)
+				if (bounds.width == 0 || bounds.height == 0) {
 					return;
+				}
 				if ((state & SWT.SELECTED) != 0) {
 					drawSelectedTab(part, gc, bounds);
 					state &= ~SWT.BACKGROUND;
@@ -368,8 +369,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		trim.y = onBottom ? bounds.height - parent.getTabHeight() - 1 - header : -trim.y;
 		draw(PART_BACKGROUND, SWT.NONE, trim, gc);
 
-		if (outerKeylineColor == null)
+		if (outerKeylineColor == null) {
 			outerKeylineColor = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
+		}
 		gc.setForeground(outerKeylineColor);
 
 		if (cornerSize == SQUARE_CORNER) {
@@ -523,8 +525,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	}
 
 	void drawSelectedTab(int itemIndex, GC gc, Rectangle bounds) {
-		if (parent.getSingle() && parent.getItem(itemIndex).isShowing())
+		if (parent.getSingle() && parent.getItem(itemIndex).isShowing()) {
 			return;
+		}
 
 		boolean onBottom = parent.getTabPosition() == SWT.BOTTOM;
 		int header = 0;
@@ -585,8 +588,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 		gc.drawLine(selectionX1, selectionY1, selectionX2, selectionY2);
 
-		if (tabOutlineColor == null)
+		if (tabOutlineColor == null) {
 			tabOutlineColor = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
+		}
 		gc.setForeground(tabOutlineColor);
 
 		Color gradientLineTop = null;
@@ -603,8 +607,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		gc.setClipping((Rectangle) null);
 
 		if (active) {
-			if (outerKeylineColor == null)
+			if (outerKeylineColor == null) {
 				outerKeylineColor = gc.getDevice().getSystemColor(SWT.COLOR_RED);
+			}
 			gc.setForeground(outerKeylineColor);
 			if (cornerSize == SQUARE_CORNER) {
 				gc.drawRectangle(rectShape);
@@ -671,8 +676,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 				int leftIndex = circX;
 				if (itemIndex == 0) {
-					if (parent.getSelectionIndex() != 0)
+					if (parent.getSelectionIndex() != 0) {
 						leftIndex -= 1;
+					}
 					points[index++] = leftIndex - radius;
 					points[index++] = bottomY;
 				} else {
@@ -736,8 +742,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 				System.arraycopy(points, 0, tmpPoints, 0, index);
 				gc.fillPolygon(tmpPoints);
 
-				if (tabOutlineColor == null)
+				if (tabOutlineColor == null) {
 					tabOutlineColor = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
+				}
 				gc.setForeground(tabOutlineColor);
 
 				if (active) {
@@ -781,8 +788,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 				e -= v;
 				v -= 2;
 			}
-			if (x > y)
+			if (x > y) {
 				break;
+			}
 			loopMirror = drawCirclePoint(loopMirror, xC, yC, pointsMirror, y, x, circlePart);
 			// grow?
 			if ((loop + 1) > points.length) {
@@ -897,10 +905,12 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 				for (int k = -kernelMid; k <= kernelMid; k++) {
 					float val = kernel[k + kernelMid];
 					int xcoord = x + k;
-					if (xcoord < 0)
+					if (xcoord < 0) {
 						xcoord = 0;
-					if (xcoord >= width)
+					}
+					if (xcoord >= width) {
 						xcoord = width - 1;
+					}
 					int pixel = inPixels[currentLine + xcoord];
 					// float alp = ((pixel >> 24) & 0xff);
 					a += val * ((pixel >> 24) & 0xff);
@@ -920,10 +930,12 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	}
 
 	private int clamp(int value) {
-		if (value > 255)
+		if (value > 255) {
 			return 255;
-		if (value < 0)
+		}
+		if (value < 0) {
 			return 0;
+		}
 		return value;
 	}
 
@@ -1120,13 +1132,15 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 							gc.fillRectangle(x, y, width, pos);
 						}
 						Color lastColor = colors[colors.length - 1];
-						if (lastColor == null)
+						if (lastColor == null) {
 							lastColor = defaultBackground;
+						}
 						for (int i = percents.length - 1; i >= 0; i--) {
 							gc.setForeground(lastColor);
 							lastColor = colors[i];
-							if (lastColor == null)
+							if (lastColor == null) {
 								lastColor = defaultBackground;
+							}
 							gc.setBackground(lastColor);
 							int percentage = i > 0 ? percents[i] - percents[i - 1] : percents[i];
 							int gradientHeight = percentage * height / 100;
@@ -1135,14 +1149,16 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 						}
 					} else {
 						Color lastColor = colors[0];
-						if (lastColor == null)
+						if (lastColor == null) {
 							lastColor = defaultBackground;
+						}
 						int pos = 0;
 						for (int i = 0; i < percents.length; i++) {
 							gc.setForeground(lastColor);
 							lastColor = colors[i + 1];
-							if (lastColor == null)
+							if (lastColor == null) {
 								lastColor = defaultBackground;
+							}
 							gc.setBackground(lastColor);
 							int percentage = i > 0 ? percents[i] - percents[i - 1] : percents[i];
 							int gradientHeight = percentage * height / 100;
@@ -1158,14 +1174,16 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 					y = 0;
 					height = parent.getSize().y;
 					Color lastColor = colors[0];
-					if (lastColor == null)
+					if (lastColor == null) {
 						lastColor = defaultBackground;
+					}
 					int pos = 0;
 					for (int i = 0; i < percents.length; ++i) {
 						gc.setForeground(lastColor);
 						lastColor = colors[i + 1];
-						if (lastColor == null)
+						if (lastColor == null) {
 							lastColor = defaultBackground;
+						}
 						gc.setBackground(lastColor);
 						int gradientWidth = (percents[i] * width / 100) - pos;
 						gc.fillGradientRectangle(x + pos, y, gradientWidth, height, false);
@@ -1247,7 +1265,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	}
 
 	private static class ReflectionSupport<T> {
-		private T instance;
+		private final T instance;
 
 		public ReflectionSupport(T instance) {
 			this.instance = instance;

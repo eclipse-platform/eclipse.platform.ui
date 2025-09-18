@@ -48,7 +48,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 	private static final String ADORN_ICON_IMAGE_KEY = "previouslyAdorned"; //$NON-NLS-1$
 
-	private String pinURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/ovr16/pinned_ovr.svg"; //$NON-NLS-1$
+	private final String pinURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/ovr16/pinned_ovr.svg"; //$NON-NLS-1$
 	private Image pinImage;
 
 	private ISWTResourceUtilities resUtils;
@@ -56,8 +56,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	@Override
 	public void processContents(MElementContainer<MUIElement> container) {
 		// EMF gives us null lists if empty
-		if (container == null)
+		if (container == null) {
 			return;
+		}
 
 		// Process any contents of the newly created ME
 		List<MUIElement> parts = container.getChildren();
@@ -75,13 +76,15 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 	public void styleElement(MUIElement element, boolean active) {
-		if (!active)
+		if (!active) {
 			element.getTags().remove(CSSConstants.CSS_ACTIVE_CLASS);
-		else
+		} else {
 			element.getTags().add(CSSConstants.CSS_ACTIVE_CLASS);
+		}
 
-		if (element.getWidget() != null)
+		if (element.getWidget() != null) {
 			setCSSInfo(element, element.getWidget());
+		}
 	}
 
 	public void setCSSInfo(MUIElement me, Object widget) {
@@ -91,8 +94,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		}
 
 		//
-		if (widget instanceof Widget) {
-			Widget swtWidget = (Widget) widget;
+		if (widget instanceof Widget swtWidget) {
 			if (swtWidget.isDisposed()) {
 				return;
 			}
@@ -105,8 +107,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		}
 
 		final IStylingEngine engine = ctxt.get(IStylingEngine.class);
-		if (engine == null)
+		if (engine == null) {
 			return;
+		}
 
 		// Put all the tags into the class string
 		EObject eObj = (EObject) me;
@@ -132,22 +135,22 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 	@Override
 	public void bindWidget(MUIElement me, Object widget) {
-		if (widget instanceof Widget) {
+		if (widget instanceof Widget swtWidget) {
 			((Widget) widget).setData(OWNING_ME, me);
 
 			// Set up the CSS Styling parameters; id & class
 			setCSSInfo(me, widget);
 
 			// Ensure that disposed widgets are unbound form the model
-			Widget swtWidget = (Widget) widget;
 			swtWidget.addDisposeListener(e -> {
 				Widget w = e.widget;
 				if (w.isDisposed()) {
 					return;
 				}
 				MUIElement element = (MUIElement) w.getData(OWNING_ME);
-				if (element != null)
+				if (element != null) {
 					unbindWidget(element);
+				}
 			});
 		}
 
@@ -159,8 +162,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		Widget widget = (Widget) me.getWidget();
 		if (widget != null) {
 			me.setWidget(null);
-			if (!widget.isDisposed())
+			if (!widget.isDisposed()) {
 				widget.setData(OWNING_ME, null);
+			}
 		}
 
 		// Clear the factory reference
@@ -220,8 +224,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 	protected Image getImageFromURI(String iconURI) {
-		if (iconURI == null || iconURI.length() == 0)
+		if (iconURI == null || iconURI.length() == 0) {
 			return null;
+		}
 
 		ImageRegistry registry = JFaceResources.getImageRegistry();
 		Image image = registry.get(iconURI);
@@ -249,8 +254,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 	private String getIconURI(MUILabel element) {
-		if (element instanceof MPart) {
-			MPart part = (MPart) element;
+		if (element instanceof MPart part) {
 			String iconURI = part.getIconURI();
 
 			if (iconURI == null) {
@@ -301,8 +305,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 				return curIndex;
 			}
 
-			if (child.getWidget() != null)
+			if (child.getWidget() != null) {
 				curIndex++;
+			}
 		}
 		return -1;
 	}
@@ -342,8 +347,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 	static protected MUIElement getModelElement(Control ctrl) {
-		if (ctrl == null)
+		if (ctrl == null) {
 			return null;
+		}
 
 		MUIElement element = (MUIElement) ctrl
 				.getData(AbstractPartRenderer.OWNING_ME);

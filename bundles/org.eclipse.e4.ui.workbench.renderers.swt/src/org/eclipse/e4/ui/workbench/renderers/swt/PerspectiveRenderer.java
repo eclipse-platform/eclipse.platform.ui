@@ -32,8 +32,9 @@ public class PerspectiveRenderer extends SWTPartRenderer {
 	@Override
 	public Widget createWidget(MUIElement element, Object parent) {
 		if (!(element instanceof MPerspective)
-				|| !(parent instanceof Composite))
+				|| !(parent instanceof Composite)) {
 			return null;
+		}
 
 		Composite perspArea = new Composite((Composite) parent, SWT.NONE);
 		perspArea.setLayout(new FillLayout());
@@ -58,8 +59,9 @@ public class PerspectiveRenderer extends SWTPartRenderer {
 
 	@Override
 	public Object getUIContainer(MUIElement element) {
-		if (!(element instanceof MWindow))
+		if (!(element instanceof MWindow)) {
 			return super.getUIContainer(element);
+		}
 
 		MUIElement persp = modelService.getContainer(element);
 		if (persp.getWidget() instanceof Composite) {

@@ -158,13 +158,14 @@ public class SashLayout extends Layout {
 
 	@Override
 	protected void layout(Composite composite, boolean flushCache) {
-		if (root == null)
+		if (root == null) {
 			return;
+		}
 
 		Rectangle bounds = composite.getBounds();
-		if (composite instanceof Shell)
+		if (composite instanceof Shell) {
 			bounds = composite.getClientArea();
-		else {
+		} else {
 			bounds.x = 0;
 			bounds.y = 0;
 		}
@@ -185,8 +186,9 @@ public class SashLayout extends Layout {
 
 			Rectangle leftRect = getRectangle(sr.left);
 			Rectangle rightRect = getRectangle(sr.right);
-			if (leftRect == null || rightRect == null)
+			if (leftRect == null || rightRect == null) {
 				continue;
+			}
 
 			int leftWeight;
 			int rightWeight;
@@ -196,20 +198,24 @@ public class SashLayout extends Layout {
 				double right = rightRect.x + rightRect.width;
 				double pct = (curX - left) / (right - left);
 				leftWeight = (int) ((totalWeight * pct) + 0.5);
-				if (leftWeight < minSashValue)
+				if (leftWeight < minSashValue) {
 					leftWeight = minSashValue;
-				if (leftWeight > (totalWeight - minSashValue))
+				}
+				if (leftWeight > (totalWeight - minSashValue)) {
 					leftWeight = totalWeight - minSashValue;
+				}
 				rightWeight = totalWeight - leftWeight;
 			} else {
 				double top = leftRect.y;
 				double bottom = rightRect.y + rightRect.height;
 				double pct = (curY - top) / (bottom - top);
 				leftWeight = (int) ((totalWeight * pct) + 0.5);
-				if (leftWeight < minSashValue)
+				if (leftWeight < minSashValue) {
 					leftWeight = minSashValue;
-				if (leftWeight > (totalWeight - minSashValue))
+				}
+				if (leftWeight > (totalWeight - minSashValue)) {
 					leftWeight = totalWeight - minSashValue;
+				}
 				rightWeight = totalWeight - leftWeight;
 			}
 
@@ -223,10 +229,11 @@ public class SashLayout extends Layout {
 	}
 
 	private Rectangle getRectangle(MUIElement element) {
-		if (element.getWidget() instanceof Rectangle)
+		if (element.getWidget() instanceof Rectangle) {
 			return (Rectangle) element.getWidget();
-		else if (element.getWidget() instanceof Control)
+		} else if (element.getWidget() instanceof Control) {
 			return ((Control) (element.getWidget())).getBounds();
+		}
 		return null;
 	}
 
@@ -234,8 +241,9 @@ public class SashLayout extends Layout {
 		List<SashRect> srs = new ArrayList<>();
 		Rectangle target = new Rectangle(x - 5, y - 5, 10, 10);
 		for (SashRect sr : sashes) {
-			if (sr.rect.intersects(target) && !sr.container.getTags().contains(IPresentationEngine.NO_MOVE))
+			if (sr.rect.intersects(target) && !sr.container.getTags().contains(IPresentationEngine.NO_MOVE)) {
 				srs.add(sr);
+			}
 		}
 		return srs;
 	}
@@ -249,20 +257,22 @@ public class SashLayout extends Layout {
 	private int totalWeight(MGenericTile<?> node) {
 		int total = 0;
 		for (MUIElement subNode : node.getChildren()) {
-			if (subNode.isToBeRendered() && subNode.isVisible())
+			if (subNode.isToBeRendered() && subNode.isVisible()) {
 				total += getWeight(subNode);
+			}
 		}
 		return total;
 	}
 
 	private void tileSubNodes(Rectangle bounds, MUIElement node) {
-		if (node != root)
+		if (node != root) {
 			setRectangle(node, bounds);
+		}
 
-		if (!(node instanceof MGenericTile<?>))
+		if (!(node instanceof MGenericTile<?> sashContainer)) {
 			return;
+		}
 
-		MGenericTile<?> sashContainer = (MGenericTile<?>) node;
 		List<MUIElement> visibleChildren = getVisibleChildren(sashContainer);
 		int childCount = visibleChildren.size();
 
@@ -321,8 +331,9 @@ public class SashLayout extends Layout {
 	private List<MUIElement> getVisibleChildren(MGenericTile<?> sashContainer) {
 		List<MUIElement> visKids = new ArrayList<>();
 		for (MUIElement child : sashContainer.getChildren()) {
-			if (child.isToBeRendered() && child.isVisible())
+			if (child.isToBeRendered() && child.isVisible()) {
 				visKids.add(child);
+			}
 		}
 		return visKids;
 	}

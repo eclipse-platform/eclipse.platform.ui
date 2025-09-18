@@ -105,17 +105,17 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public static final String UPDATE_VARS = "ToolBarManagerRenderer.updateVars"; //$NON-NLS-1$
 	private static final String DISPOSE_ADDED = "ToolBarManagerRenderer.disposeAdded"; //$NON-NLS-1$
 
-	private Map<MToolBar, ToolBarManager> modelToManager = new IdentityHashMap<>();
-	private Map<ToolBarManager, MToolBar> managerToModel = new IdentityHashMap<>();
+	private final Map<MToolBar, ToolBarManager> modelToManager = new IdentityHashMap<>();
+	private final Map<ToolBarManager, MToolBar> managerToModel = new IdentityHashMap<>();
 
-	private Map<MToolBarElement, IContributionItem> modelToContribution = new IdentityHashMap<>();
-	private Map<IContributionItem, MToolBarElement> contributionToModel = new IdentityHashMap<>();
+	private final Map<MToolBarElement, IContributionItem> modelToContribution = new IdentityHashMap<>();
+	private final Map<IContributionItem, MToolBarElement> contributionToModel = new IdentityHashMap<>();
 
-	private Map<MToolBarElement, ToolBarContributionRecord> modelContributionToRecord = new IdentityHashMap<>();
+	private final Map<MToolBarElement, ToolBarContributionRecord> modelContributionToRecord = new IdentityHashMap<>();
 
-	private Map<MToolBarElement, ArrayList<ToolBarContributionRecord>> sharedElementToRecord = new IdentityHashMap<>();
+	private final Map<MToolBarElement, ArrayList<ToolBarContributionRecord>> sharedElementToRecord = new IdentityHashMap<>();
 
-	private ToolItemUpdater enablementUpdater = new ToolItemUpdater();
+	private final ToolItemUpdater enablementUpdater = new ToolItemUpdater();
 
 	@Inject
 	private Logger logger;
@@ -288,7 +288,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	private HashSet<String> updateVariables = new HashSet<>();
+	private final HashSet<String> updateVariables = new HashSet<>();
 
 	@Inject
 	@Optional
@@ -389,11 +389,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	@Override
 	public Object createWidget(final MUIElement element, Object parent) {
-		if (!(element instanceof MToolBar) || !(parent instanceof Composite)) {
+		if (!(element instanceof MToolBar) || !(parent instanceof Composite toolbarComposite)) {
 			return null;
 		}
 
-		Composite toolbarComposite = (Composite) parent;
 		// Composite which contains toolbar needs to have a separate class to allow the
 		// CSS engine to target it
 		IStylingEngine engine = getContextForParent(element).get(IStylingEngine.class);
@@ -416,7 +415,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 		Control renderedCtrl = newTB;
 		MUIElement parentElement = element.getParent();
-		if (parentElement instanceof MTrimBar) {
+		if (parentElement instanceof MTrimBar bar) {
 			if (!element.getTags().contains(IPresentationEngine.NO_MOVE)) {
 				element.getTags().add(IPresentationEngine.DRAGGABLE);
 			}
@@ -424,7 +423,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			setCSSInfo(element, newTB);
 
 
-			MTrimBar bar = (MTrimBar) parentElement;
 			boolean vertical = bar.getSide() == SideValue.LEFT || bar.getSide() == SideValue.RIGHT;
 			IEclipseContext parentContext = getContextForParent(element);
 
@@ -597,8 +595,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	private int getOrientation(final MUIElement element) {
 		MUIElement theParent = element.getParent();
-		if (theParent instanceof MTrimBar) {
-			MTrimBar trimContainer = (MTrimBar) theParent;
+		if (theParent instanceof MTrimBar trimContainer) {
 			SideValue side = trimContainer.getSide();
 			if (side.getValue() == SideValue.LEFT_VALUE || side.getValue() == SideValue.RIGHT_VALUE) {
 				return SWT.VERTICAL;
@@ -702,17 +699,13 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		if (OpaqueElementUtil.isOpaqueToolItem(childME)) {
 			MToolItem itemModel = (MToolItem) childME;
 			processOpaqueItem(parentManager, itemModel);
-		} else if (childME instanceof MHandledToolItem) {
-			MHandledToolItem itemModel = (MHandledToolItem) childME;
+		} else if (childME instanceof MHandledToolItem itemModel) {
 			processHandledItem(parentManager, itemModel);
-		} else if (childME instanceof MDirectToolItem) {
-			MDirectToolItem itemModel = (MDirectToolItem) childME;
+		} else if (childME instanceof MDirectToolItem itemModel) {
 			processDirectItem(parentManager, itemModel);
-		} else if (childME instanceof MToolBarSeparator) {
-			MToolBarSeparator itemModel = (MToolBarSeparator) childME;
+		} else if (childME instanceof MToolBarSeparator itemModel) {
 			processSeparator(parentManager, itemModel);
-		} else if (childME instanceof MToolControl) {
-			MToolControl itemModel = (MToolControl) childME;
+		} else if (childME instanceof MToolControl itemModel) {
 			processToolControl(parentManager, itemModel);
 		}
 	}
@@ -955,12 +948,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	@Override
 	public void postProcess(MUIElement element) {
-		if (element instanceof MToolBar) {
-			MToolBar toolbarModel = (MToolBar) element;
+		if (element instanceof MToolBar toolbarModel) {
 			if (toolbarModel.getTransientData().containsKey(POST_PROCESSING_FUNCTION)) {
 				Object obj = toolbarModel.getTransientData().get(POST_PROCESSING_FUNCTION);
-				if (obj instanceof IContextFunction) {
-					IContextFunction func = (IContextFunction) obj;
+				if (obj instanceof IContextFunction func) {
 					final IEclipseContext ctx = getContext(toolbarModel);
 					toolbarModel.getTransientData().put(POST_PROCESSING_DISPOSE, func.compute(ctx, null));
 				}

@@ -57,7 +57,7 @@ import org.osgi.service.event.EventHandler;
  * arbitrarily cause plug-in loading.
  */
 public abstract class LazyStackRenderer extends SWTPartRenderer {
-	private EventHandler lazyLoader = event -> {
+	private final EventHandler lazyLoader = event -> {
 		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 
 		if (!(element instanceof MGenericStack<?>)) {
@@ -187,8 +187,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			// Special case: we also render any placeholder that refers to
 			// an *existing* part, this doesn't break lazy loading since the
 			// part is already there...see bug 378138 for details
-			if (element instanceof MPlaceholder) {
-				MPlaceholder placeholder = (MPlaceholder) element;
+			if (element instanceof MPlaceholder placeholder) {
 				isNotNull(placeholder.getRef(),
 						"Placeholder " + placeholder.getElementId() + " does not point to a valid reference"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (placeholder.getRef().getTags().contains(IPresentationEngine.NO_RESTORE)) {
@@ -233,8 +232,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		}
 
 		// Recursively hide placeholder refs if reference is current
-		if (element instanceof MPlaceholder) {
-			MPlaceholder ph = (MPlaceholder) element;
+		if (element instanceof MPlaceholder ph) {
 			if (ph.getRef() != null && ph.getRef().getCurSharedRef() == ph) {
 				hideElementRecursive(ph.getRef());
 			}
@@ -252,13 +250,11 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			}
 		}
 
-		if (element instanceof MGenericStack<?>) {
+		if (element instanceof MGenericStack<?> container) {
 			// For stacks only the currently selected elements are being hidden
-			MGenericStack<?> container = (MGenericStack<?>) element;
 			MUIElement curSel = container.getSelectedElement();
 			hideElementRecursive(curSel);
-		} else if (element instanceof MElementContainer<?>) {
-			MElementContainer<?> container = (MElementContainer<?>) element;
+		} else if (element instanceof MElementContainer<?> container) {
 			for (MUIElement childElement : container.getChildren()) {
 				hideElementRecursive(childElement);
 			}
@@ -281,9 +277,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			return;
 		}
 
-		if (element instanceof MPartStack && element.getRenderer() instanceof StackRenderer) {
-			MPartStack stackModel = (MPartStack) element;
-
+		if (element instanceof MPartStack stackModel && element.getRenderer() instanceof StackRenderer) {
 			MUIElement curSel = stackModel.getSelectedElement();
 
 			if (curSel != null) {
@@ -291,8 +285,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			}
 		}
 
-		if (element instanceof MPlaceholder) {
-			MPlaceholder ph = (MPlaceholder) element;
+		if (element instanceof MPlaceholder ph) {
 			MUIElement ref = ph.getRef();
 			ref.setCurSharedRef(ph);
 
@@ -343,16 +336,14 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			if (visCount > 0) {
 				element.setVisible(true);
 				Object widget = element.getWidget();
-				if (widget instanceof Shell) {
-					Shell shell = (Shell) widget;
+				if (widget instanceof Shell shell) {
 					layoutShellLater = shell;
 				}
 			}
 		}
 
-		if (element instanceof MGenericStack<?>) {
+		if (element instanceof MGenericStack<?> container) {
 			// For stacks only the currently selected elements are being visible
-			MGenericStack<?> container = (MGenericStack<?>) element;
 			MUIElement curSel = container.getSelectedElement();
 			if (curSel == null && container.getChildren().size() > 0) {
 				curSel = container.getChildren().get(0);
@@ -360,8 +351,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			if (curSel != null) {
 				showElementRecursive(curSel);
 			}
-		} else if (element instanceof MElementContainer<?>) {
-			MElementContainer<?> container = (MElementContainer<?>) element;
+		} else if (element instanceof MElementContainer<?> container) {
 			List<MUIElement> kids = new ArrayList<>(container.getChildren());
 			for (MUIElement childElement : kids) {
 				showElementRecursive(childElement);
