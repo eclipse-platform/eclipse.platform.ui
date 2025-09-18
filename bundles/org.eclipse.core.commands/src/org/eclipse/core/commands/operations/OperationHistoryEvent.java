@@ -144,12 +144,12 @@ public final class OperationHistoryEvent {
 
 	private int code = 0;
 
-	private IOperationHistory history;
+	private final IOperationHistory history;
 
-	private IUndoableOperation operation;
+	private final IUndoableOperation operation;
 
 	/* @since 3.2 */
-	private IStatus status;
+	private final IStatus status;
 
 	/**
 	 * Construct an event for the specified operation history.

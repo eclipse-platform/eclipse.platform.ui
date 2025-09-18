@@ -90,11 +90,10 @@ public final class Parameterization {
 			return true;
 		}
 
-		if (!(object instanceof Parameterization)) {
+		if (!(object instanceof final Parameterization parameterization)) {
 			return false;
 		}
 
-		final Parameterization parameterization = (Parameterization) object;
 		if (!(Objects.equals(this.parameter.getId(), parameterization.parameter.getId()))) {
 			return false;
 		}
