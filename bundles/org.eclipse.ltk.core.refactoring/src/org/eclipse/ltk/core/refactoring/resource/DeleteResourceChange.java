@@ -124,8 +124,9 @@ public class DeleteResourceChange extends ResourceChange {
 
 		IResource resource= getResource();
 		if (resource == null || !resource.exists()) {
-			if (fDeleteContent)
+			if (fDeleteContent) {
 				return null; // see https://bugs.eclipse.org/343584
+			}
 			String message= Messages.format(RefactoringCoreMessages.DeleteResourceChange_error_resource_not_exists, BasicElementLabels.getPathLabel(fResourcePath.makeRelative(), false));
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), message));
 		}

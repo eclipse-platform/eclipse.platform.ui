@@ -32,7 +32,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
  */
 public class NullChange extends Change {
 
-	private String fName;
+	private final String fName;
 
 	/**
 	 * Creates a new <code>NullChange</code> with a default name.

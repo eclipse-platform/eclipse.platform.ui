@@ -118,7 +118,9 @@ public class RefactoringStatusEntry {
 			|| severity == RefactoringStatus.ERROR || severity == RefactoringStatus.FATAL);
 		Assert.isNotNull(msg);
 		Assert.isTrue(code == NO_CODE || code >= 0);
-		if (code != NO_CODE) Assert.isTrue(pluginId != null);
+		if (code != NO_CODE) {
+			Assert.isTrue(pluginId != null);
+		}
 		fMessage= msg;
 		fSeverity= severity;
 		fContext= context;

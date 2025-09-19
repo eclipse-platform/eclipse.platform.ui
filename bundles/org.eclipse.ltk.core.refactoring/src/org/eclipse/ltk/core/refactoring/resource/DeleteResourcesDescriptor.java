@@ -93,8 +93,9 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 	 * @param resourcePath paths of the resources to be deleted
 	 */
 	public void setResourcePaths(IPath[] resourcePath) {
-		if (resourcePath == null)
+		if (resourcePath == null) {
 			throw new IllegalArgumentException();
+		}
 		fResourcePaths= resourcePath;
 	}
 
@@ -105,8 +106,9 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 	 * @param resources IResources to be deleted
 	 */
 	public void setResources(IResource[] resources) {
-		if (resources == null)
+		if (resources == null) {
 			throw new IllegalArgumentException();
+		}
 		IPath[] paths= new IPath[resources.length];
 		for (int i= 0; i < paths.length; i++) {
 			paths[i]= resources[i].getFullPath();

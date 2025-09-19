@@ -70,8 +70,9 @@ public class Resources {
 				result= addOutOfSync(result, resource);
 			}
 		}
-		if (result != null)
+		if (result != null) {
 			return result;
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -107,26 +108,31 @@ public class Resources {
 	public static IStatus makeCommittable(IResource[] resources, Object context) {
 		List<IFile> readOnlyFiles= new ArrayList<>();
 		for (IResource resource : resources) {
-			if (resource.getType() == IResource.FILE &&  isReadOnly(resource))
+			if (resource.getType() == IResource.FILE &&  isReadOnly(resource)) {
 				readOnlyFiles.add((IFile) resource);
+			}
 		}
-		if (readOnlyFiles.isEmpty())
+		if (readOnlyFiles.isEmpty()) {
 			return Status.OK_STATUS;
+		}
 
 		Map<IFile, Long> oldTimeStamps= createModificationStampMap(readOnlyFiles);
 		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(
 			readOnlyFiles.toArray(new IFile[readOnlyFiles.size()]), context);
-		if (!status.isOK())
+		if (!status.isOK()) {
 			return status;
+		}
 
 		IStatus modified= null;
 		Map<IFile, Long> newTimeStamps= createModificationStampMap(readOnlyFiles);
 		for (Entry<IFile, Long> entry : oldTimeStamps.entrySet()) {
-			if (!entry.getValue().equals(newTimeStamps.get(entry.getKey())))
+			if (!entry.getValue().equals(newTimeStamps.get(entry.getKey()))) {
 				modified= addModified(modified, entry.getKey());
+			}
 		}
-		if (modified != null)
+		if (modified != null) {
 			return modified;
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -184,15 +190,17 @@ public class Resources {
 
 	public static boolean isReadOnly(IResource resource) {
 		ResourceAttributes resourceAttributes = resource.getResourceAttributes();
-		if (resourceAttributes == null)  // not supported on this platform for this resource
+		if (resourceAttributes == null) { // not supported on this platform for this resource
 			return false;
+		}
 		return resourceAttributes.isReadOnly();
 	}
 
 	static void setReadOnly(IResource resource, boolean readOnly) {
 		ResourceAttributes resourceAttributes = resource.getResourceAttributes();
-		if (resourceAttributes == null) // not supported on this platform for this resource
+		if (resourceAttributes == null) { // not supported on this platform for this resource
 			return;
+		}
 
 		resourceAttributes.setReadOnly(readOnly);
 		try {

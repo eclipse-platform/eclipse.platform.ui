@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public class RenameRefactoring extends ProcessorBasedRefactoring {
 
-	private RenameProcessor fProcessor;
+	private final RenameProcessor fProcessor;
 
 	/**
 	 * Creates a new rename refactoring with the given rename processor.

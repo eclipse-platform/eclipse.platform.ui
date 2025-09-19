@@ -126,8 +126,9 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 	 * @return the status of the condition checking
 	 */
 	public RefactoringStatus getConditionCheckingStatus() {
-		if (fCreateChangeOperation != null)
+		if (fCreateChangeOperation != null) {
 			return fCreateChangeOperation.getConditionCheckingStatus();
+		}
 		return null;
 	}
 
@@ -227,15 +228,17 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 	 */
 	protected void executeChange(IProgressMonitor pm) throws CoreException {
 		fChangeExecuted= false;
-		if (!fChange.isEnabled())
+		if (!fChange.isEnabled()) {
 			return;
+		}
 		IWorkspaceRunnable runnable= monitor -> {
 			boolean undoInitialized= false;
 			try {
 				SubMonitor subMon= SubMonitor.convert(monitor, 11);
 				fValidationStatus= fChange.isValid(subMon.newChild(1));
-				if (fValidationStatus.hasFatalError())
+				if (fValidationStatus.hasFatalError()) {
 					return;
+				}
 				boolean aboutToPerformChangeCalled= false;
 				try {
 					if (fUndoManager != null) {
@@ -250,8 +253,9 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 				} finally {
 					if (fUndoManager != null) {
 						ResourcesPlugin.getWorkspace().checkpoint(false);
-						if (aboutToPerformChangeCalled)
+						if (aboutToPerformChangeCalled) {
 							fUndoManager.changePerformed(fChange, !fChangeExecutionFailed);
+						}
 					}
 				}
 				fChange.dispose();
@@ -268,8 +272,9 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 					}
 				}
 			} catch (CoreException | RuntimeException e) {
-				if (fUndoManager != null)
+				if (fUndoManager != null) {
 					fUndoManager.flush();
+				}
 				if (fUndoChange != null && undoInitialized) {
 					Change ch= fUndoChange;
 					fUndoChange= null;

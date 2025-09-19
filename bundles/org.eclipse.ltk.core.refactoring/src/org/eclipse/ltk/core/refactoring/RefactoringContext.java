@@ -38,8 +38,9 @@ public class RefactoringContext {
 	 * @throws NullPointerException if refactoring is <code>null</code>.
 	 */
 	public RefactoringContext(Refactoring refactoring) {
-		if (refactoring == null)
+		if (refactoring == null) {
 			throw new NullPointerException();
+		}
 		fRefactoring= refactoring;
 	}
 
@@ -64,8 +65,9 @@ public class RefactoringContext {
 	 * </p>
 	 */
 	public void dispose() {
-		if (fRefactoring == null)
+		if (fRefactoring == null) {
 			throw new IllegalStateException("dispose() called more than once."); //$NON-NLS-1$
+		}
 		fRefactoring= null;
 	}
 }

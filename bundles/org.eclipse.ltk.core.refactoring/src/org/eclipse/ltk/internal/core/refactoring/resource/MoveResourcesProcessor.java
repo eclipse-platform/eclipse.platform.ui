@@ -157,8 +157,9 @@ public class MoveResourcesProcessor extends MoveProcessor {
 	 */
 	public RefactoringStatus validateDestination(IContainer destination) {
 		Assert.isNotNull(destination, "container is null"); //$NON-NLS-1$
-		if (destination instanceof IWorkspaceRoot)
+		if (destination instanceof IWorkspaceRoot) {
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.MoveResourceProcessor_error_invalid_destination);
+		}
 
 		if (!destination.exists()) {
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.MoveResourceProcessor_error_destination_not_exists);
@@ -194,8 +195,9 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		} else {
 			StringBuilder buf= new StringBuilder();
 			for (int i= 0; i < fResourcesToMove.length; i++) {
-				if (i > 0)
+				if (i > 0) {
 					buf.append(", "); //$NON-NLS-1$
+				}
 				buf.append(fResourcesToMove[i].getName());
 			}
 			descriptor.setComment(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_comment, new String[] { buf.toString(), BasicElementLabels.getResourceName(fDestination) }));

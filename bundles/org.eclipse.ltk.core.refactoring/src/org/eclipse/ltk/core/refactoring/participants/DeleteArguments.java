@@ -26,7 +26,7 @@ package org.eclipse.ltk.core.refactoring.participants;
  */
 public class DeleteArguments extends RefactoringArguments {
 
-	private boolean fDeleteProjectContents;
+	private final boolean fDeleteProjectContents;
 
 	/**
 	 * Creates a new delete arguments object (deleteProjectContents is <code>false</code>).

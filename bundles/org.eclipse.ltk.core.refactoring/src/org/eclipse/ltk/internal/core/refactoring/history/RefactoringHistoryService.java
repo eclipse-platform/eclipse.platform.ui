@@ -181,8 +181,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 * @return the singleton instance
 	 */
 	public static RefactoringHistoryService getInstance() {
-		if (fInstance == null)
+		if (fInstance == null) {
 			fInstance= new RefactoringHistoryService();
+		}
 		return fInstance;
 	}
 
@@ -198,8 +199,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isNotNull(project);
 		final IScopeContext[] contexts= new IScopeContext[] { new ProjectScope(project)};
 		final String preference= Platform.getPreferencesService().getString(RefactoringCorePlugin.getPluginId(), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.FALSE.toString(), contexts);
-		if (preference != null)
+		if (preference != null) {
 			return Boolean.parseBoolean(preference);
+		}
 		return false;
 	}
 
@@ -251,8 +253,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						final IFileStore source= history.getChild(name);
 						if (source.fetchInfo(EFS.NONE, subMonitor.newChild(20)).exists()) {
 							IFileStore destination= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
-							if (destination.fetchInfo(EFS.NONE, subMonitor.newChild(20)).exists())
+							if (destination.fetchInfo(EFS.NONE, subMonitor.newChild(20)).exists()) {
 								destination.delete(EFS.NONE, subMonitor.newChild(20));
+							}
 							destination.mkdir(EFS.NONE, subMonitor.newChild(20));
 							source.copy(destination, EFS.OVERWRITE, subMonitor.newChild(20));
 							source.delete(EFS.NONE, subMonitor.newChild(20));
@@ -261,20 +264,22 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						final IFileStore source= EFS.getStore(uri).getChild(NAME_HISTORY_FOLDER);
 						if (source.fetchInfo(EFS.NONE, subMonitor.newChild(20)).exists()) {
 							IFileStore destination= history.getChild(name);
-							if (destination.fetchInfo(EFS.NONE, subMonitor.newChild(20)).exists())
+							if (destination.fetchInfo(EFS.NONE, subMonitor.newChild(20)).exists()) {
 								destination.delete(EFS.NONE, subMonitor.newChild(20));
+							}
 							destination.mkdir(EFS.NONE, subMonitor.newChild(20));
 							source.copy(destination, EFS.OVERWRITE, subMonitor.newChild(20));
 							source.delete(EFS.NONE, subMonitor.newChild(20));
 						}
 					}
 				} finally {
-					if (enable)
+					if (enable) {
 						project.refreshLocal(IResource.DEPTH_INFINITE, subMonitor.newChild(30));
-					else {
+					} else {
 						final IFolder folder= project.getFolder(NAME_HISTORY_FOLDER);
-						if (folder.exists())
+						if (folder.exists()) {
 							folder.refreshLocal(IResource.DEPTH_INFINITE, subMonitor.newChild(30));
+						}
 					}
 				}
 			}
@@ -348,8 +353,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	public void addRefactoringDescriptor(final RefactoringDescriptorProxy proxy, IProgressMonitor monitor) {
 		Assert.isNotNull(proxy);
-		if (monitor == null)
+		if (monitor == null) {
 			monitor= new NullProgressMonitor();
+		}
 		try {
 			fireRefactoringHistoryEvent(proxy, RefactoringHistoryEvent.ADDED);
 		} finally {
@@ -397,8 +403,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			final Map<String, Collection<RefactoringDescriptorProxy>> projects= new HashMap<>();
 			for (RefactoringDescriptorProxy proxy : proxies) {
 				String project= proxy.getProject();
-				if (project == null || "".equals(project)) //$NON-NLS-1$
+				if (project == null || "".equals(project)) { //$NON-NLS-1$
 					project= RefactoringHistoryService.NAME_WORKSPACE_PROJECT;
+				}
 				Collection<RefactoringDescriptorProxy> collection= projects.get(project);
 				if (collection == null) {
 					collection= new ArrayList<>();
@@ -530,10 +537,12 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			fReferenceCount--;
 		}
 		if (fReferenceCount == 0) {
-			if (fOperationListener != null)
+			if (fOperationListener != null) {
 				OperationHistoryFactory.getOperationHistory().removeOperationHistoryListener(fOperationListener);
-			if (fResourceListener != null)
+			}
+			if (fResourceListener != null) {
 				ResourcesPlugin.getWorkspace().removeResourceChangeListener(fResourceListener);
+			}
 			fOperationListener= null;
 		}
 	}
@@ -578,8 +587,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isNotNull(descriptor);
 		try {
 			final Map<String, String> arguments= RefactoringHistoryManager.getArgumentMap(descriptor);
-			if (arguments != null)
+			if (arguments != null) {
 				RefactoringHistoryManager.checkArgumentMap(arguments);
+			}
 		} catch (CoreException exception) {
 			final IStatus status= exception.getStatus();
 			if (status.getCode() == IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR) {
@@ -723,12 +733,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						list.add(d);
 					}
 				}
-			} else
+			} else {
 				list.addAll(Arrays.asList(descriptors));
+			}
 		}
 		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[list.size()];
-		for (int index= 0; index < list.size(); index++)
+		for (int index= 0; index < list.size(); index++) {
 			proxies[index]= new RefactoringDescriptorProxyAdapter(list.get(index));
+		}
 		return new RefactoringHistoryImplementation(proxies);
 	}
 
@@ -760,12 +772,14 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	 */
 	public RefactoringDescriptor requestDescriptor(final RefactoringDescriptorProxy proxy, IProgressMonitor monitor) {
 		Assert.isNotNull(proxy);
-		if (monitor == null)
+		if (monitor == null) {
 			monitor= new NullProgressMonitor();
+		}
 		try {
 			final RefactoringHistoryManager manager= getManager(proxy.getProject());
-			if (manager != null)
+			if (manager != null) {
 				return manager.requestDescriptor(proxy, monitor);
+			}
 		} finally {
 			monitor.done();
 		}
@@ -796,8 +810,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				final RefactoringDescriptor descriptor= proxy.requestDescriptor(subMonitor.newChild(1));
 				if (descriptor != null) {
 					final int current= descriptor.getFlags();
-					if ((current | flags) == current)
+					if ((current | flags) == current) {
 						list.add(descriptor);
+					}
 				}
 			}
 			final RefactoringDescriptor[] descriptors= new RefactoringDescriptor[list.size()];
@@ -835,8 +850,9 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			final IFileStore oldStore= historyStore.getChild(oldName);
 			if (oldStore.fetchInfo(EFS.NONE, subMonitor.newChild(10, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
 				final IFileStore newStore= historyStore.getChild(newName);
-				if (newStore.fetchInfo(EFS.NONE, subMonitor.newChild(10, SubMonitor.SUPPRESS_SUBTASK)).exists())
+				if (newStore.fetchInfo(EFS.NONE, subMonitor.newChild(10, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
 					newStore.delete(EFS.NONE, subMonitor.newChild(20, SubMonitor.SUPPRESS_SUBTASK));
+				}
 				oldStore.move(newStore, EFS.OVERWRITE, subMonitor.newChild(20, SubMonitor.SUPPRESS_SUBTASK));
 			}
 		} catch (CoreException exception) {
@@ -858,14 +874,16 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					if (fromPath != null && toPath != null) {
 						final IResource oldResource= deltas[0].getResource();
 						final IResource newResource= deltas[1].getResource();
-						if (oldResource.getType() == IResource.PROJECT && newResource.getType() == IResource.PROJECT)
+						if (oldResource.getType() == IResource.PROJECT && newResource.getType() == IResource.PROJECT) {
 							moveHistory((IProject) oldResource, (IProject) newResource, new NullProgressMonitor());
+						}
 					} else {
 						if (deltas[0].getKind() == IResourceDelta.ADDED && deltas[1].getKind() == IResourceDelta.REMOVED) {
 							final IResource newResource= deltas[0].getResource();
 							final IResource oldResource= deltas[1].getResource();
-							if (oldResource.getType() == IResource.PROJECT && newResource.getType() == IResource.PROJECT)
+							if (oldResource.getType() == IResource.PROJECT && newResource.getType() == IResource.PROJECT) {
 								moveHistory((IProject) oldResource, (IProject) newResource, new NullProgressMonitor());
+							}
 						}
 					}
 				}
@@ -947,16 +965,19 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				if (project.isAccessible()) {
 					if (hasSharedRefactoringHistory(project)) {
 						final URI uri= project.getLocationURI();
-						if (uri != null)
+						if (uri != null) {
 							return getManager(EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER), name);
-					} else
+						}
+					} else {
 						return getManager(store.getChild(name), name);
+					}
 				}
 			} catch (CoreException exception) {
 				// Do nothing
 			}
-		} else
+		} else {
 			return getManager(store.getChild(NAME_WORKSPACE_PROJECT), null);
+		}
 		return null;
 	}
 

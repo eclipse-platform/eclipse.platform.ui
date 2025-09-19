@@ -48,7 +48,7 @@ import org.eclipse.ltk.internal.core.refactoring.UndoDocumentChange;
  */
 public class DocumentChange extends TextChange {
 
-	private IDocument fDocument;
+	private final IDocument fDocument;
 	private int fLength;
 
 	/**

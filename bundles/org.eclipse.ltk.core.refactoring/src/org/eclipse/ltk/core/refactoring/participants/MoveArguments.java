@@ -28,8 +28,8 @@ import org.eclipse.core.runtime.Assert;
  */
 public class MoveArguments extends RefactoringArguments {
 
-	private Object fDestination;
-	private boolean fUpdateReferences;
+	private final Object fDestination;
+	private final boolean fUpdateReferences;
 
 	/**
 	 * Creates new move arguments.

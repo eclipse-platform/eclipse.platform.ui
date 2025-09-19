@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public class CopyRefactoring extends ProcessorBasedRefactoring {
 
-	private CopyProcessor fProcessor;
+	private final CopyProcessor fProcessor;
 
 	/**
 	 * Creates a new copy refactoring with the given copy processor.

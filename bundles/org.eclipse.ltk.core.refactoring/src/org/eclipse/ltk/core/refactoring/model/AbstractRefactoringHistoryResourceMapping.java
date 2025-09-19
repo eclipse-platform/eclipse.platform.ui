@@ -68,8 +68,7 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof AbstractRefactoringHistoryResourceMapping) {
-			final AbstractRefactoringHistoryResourceMapping mapping= (AbstractRefactoringHistoryResourceMapping) object;
+		if (object instanceof final AbstractRefactoringHistoryResourceMapping mapping) {
 			return mapping.fRefactoringHistory.equals(fRefactoringHistory);
 		}
 		return false;
@@ -87,8 +86,9 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
 		for (RefactoringDescriptorProxy proxie : proxies) {
 			final String name= proxie.getProject();
-			if (name != null && !"".equals(name)) //$NON-NLS-1$
+			if (name != null && !"".equals(name)) { //$NON-NLS-1$
 				set.add(root.getProject(name));
+			}
 		}
 		return set.toArray(new IProject[set.size()]);
 	}
@@ -110,8 +110,9 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 			final ResourceTraversal[] traversals= getTraversals(null, null);
 			if (traversals.length > 0) {
 				final IResource[] resources= traversals[0].getResources();
-				if (resources.length > 0)
+				if (resources.length > 0) {
 					return resources[0];
+				}
 			}
 		} catch (CoreException exception) {
 			RefactoringCorePlugin.log(exception);
@@ -124,8 +125,9 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 		if (fResourceTraversals == null) {
 			final IProject[] projects= getProjects();
 			final ResourceTraversal[] traversals= new ResourceTraversal[projects.length];
-			for (int index= 0; index < projects.length; index++)
+			for (int index= 0; index < projects.length; index++) {
 				traversals[index]= new ResourceTraversal(new IResource[] { projects[index].getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER)}, IResource.DEPTH_INFINITE, IResource.NONE);
+			}
 			fResourceTraversals= traversals;
 		}
 		final ResourceTraversal[] traversals= new ResourceTraversal[fResourceTraversals.length];

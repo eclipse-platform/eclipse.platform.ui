@@ -33,9 +33,9 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class UndoDocumentChange extends Change {
 
-	private String fName;
-	private UndoEdit fUndo;
-	private IDocument fDocument;
+	private final String fName;
+	private final UndoEdit fUndo;
+	private final IDocument fDocument;
 	private int fLength;
 
 	public UndoDocumentChange(String name, IDocument document, UndoEdit undo) {
@@ -61,8 +61,9 @@ public class UndoDocumentChange extends Change {
 
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
+		if (pm == null) {
 			pm= new NullProgressMonitor();
+		}
 		pm.beginTask("", 1); //$NON-NLS-1$
 		RefactoringStatus result= TextChanges.isValid(fDocument, fLength);
 		pm.worked(1);

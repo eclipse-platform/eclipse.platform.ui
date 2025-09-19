@@ -133,8 +133,9 @@ public final class RefactoringSessionTransformer {
 		Assert.isNotNull(description);
 		Assert.isTrue(flags >= RefactoringDescriptor.NONE);
 		try {
-			if (fDocument == null)
+			if (fDocument == null) {
 				fDocument= XmlProcessorFactoryLtk.createDocumentBuilderFactoryWithErrorOnDOCTYPE().newDocumentBuilder().newDocument();
+			}
 		} catch (ParserConfigurationException | FactoryConfigurationError exception) {
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
 		}
@@ -168,10 +169,11 @@ public final class RefactoringSessionTransformer {
 					attribute.setValue(project);
 					fRefactoringArguments.add(attribute);
 				}
-				if (fSession == null)
+				if (fSession == null) {
 					fDocument.appendChild(fRefactoring);
-				else
+				} else {
 					fSession.appendChild(fRefactoring);
+				}
 			} catch (DOMException exception) {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getLocalizedMessage(), null));
 			}
@@ -255,8 +257,9 @@ public final class RefactoringSessionTransformer {
 	 * </p>
 	 */
 	public void endRefactoring() {
-		if (fRefactoring != null && fRefactoringArguments != null)
+		if (fRefactoring != null && fRefactoringArguments != null) {
 			addArguments(fRefactoring, fRefactoringArguments);
+		}
 		fRefactoringArguments= null;
 		fRefactoring= null;
 	}
@@ -269,8 +272,9 @@ public final class RefactoringSessionTransformer {
 	 * </p>
 	 */
 	public void endSession() {
-		if (fSession != null && fSessionArguments != null)
+		if (fSession != null && fSessionArguments != null) {
 			addArguments(fSession, fSessionArguments);
+		}
 		fSessionArguments= null;
 		fSession= null;
 	}

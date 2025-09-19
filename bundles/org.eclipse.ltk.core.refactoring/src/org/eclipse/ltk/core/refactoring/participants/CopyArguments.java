@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public class CopyArguments extends RefactoringArguments {
 
-	private Object fDestination;
+	private final Object fDestination;
 	private final ReorgExecutionLog fLog;
 
 	/**

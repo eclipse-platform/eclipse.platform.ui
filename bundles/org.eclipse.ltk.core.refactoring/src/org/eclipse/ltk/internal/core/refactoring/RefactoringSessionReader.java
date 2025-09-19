@@ -137,13 +137,16 @@ public final class RefactoringSessionReader extends DefaultHandler {
 		try {
 			source.setSystemId("/"); //$NON-NLS-1$
 			createParser(XmlProcessorFactoryLtk.createSAXFactoryWithErrorOnDOCTYPE()).parse(source, this);
-			if (!fSessionFound)
+			if (!fSessionFound) {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringSessionReader_no_session, null));
+			}
 			if (fRefactoringDescriptors != null) {
-				if (fVersion == null || "".equals(fVersion)) //$NON-NLS-1$
+				if (fVersion == null || "".equals(fVersion)) { //$NON-NLS-1$
 					throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.MISSING_REFACTORING_HISTORY_VERSION, RefactoringCoreMessages.RefactoringSessionReader_missing_version_information, null));
-				if (!IRefactoringSerializationConstants.CURRENT_VERSION.equals(fVersion))
+				}
+				if (!IRefactoringSerializationConstants.CURRENT_VERSION.equals(fVersion)) {
 					throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.UNSUPPORTED_REFACTORING_HISTORY_VERSION, RefactoringCoreMessages.RefactoringSessionReader_unsupported_version_information, null));
+				}
 				return new RefactoringSessionDescriptor(fRefactoringDescriptors.toArray(new RefactoringDescriptor[fRefactoringDescriptors.size()]), fVersion, fComment);
 			}
 		} catch (SAXParseException exception) {
@@ -203,8 +206,9 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				} else if (IRefactoringSerializationConstants.ATTRIBUTE_FLAGS.equals(name)) {
 					flags= value;
 				} else if (IRefactoringSerializationConstants.ATTRIBUTE_COMMENT.equals(name)) {
-					if (!"".equals(value)) //$NON-NLS-1$
+					if (!"".equals(value)) { //$NON-NLS-1$
 						comment= value;
+					}
 				} else if (IRefactoringSerializationConstants.ATTRIBUTE_PROJECT.equals(name)) {
 					project= value;
 				} else if (!"".equals(name)) { //$NON-NLS-1$
@@ -242,15 +246,17 @@ public final class RefactoringSessionReader extends DefaultHandler {
 			} catch (NumberFormatException exception) {
 				// Do nothing
 			}
-			if (fRefactoringDescriptors == null)
+			if (fRefactoringDescriptors == null) {
 				fRefactoringDescriptors= new ArrayList<>();
+			}
 			fRefactoringDescriptors.add(descriptor);
 
 		} else if (IRefactoringSerializationConstants.ELEMENT_SESSION.equals(qualifiedName)) {
 			fSessionFound= true;
 			final String version= attributes.getValue(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);
-			if (version != null && !"".equals(version)) //$NON-NLS-1$
+			if (version != null && !"".equals(version)) { //$NON-NLS-1$
 				fVersion= version;
+			}
 			fComment= attributes.getValue(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT);
 		}
 	}

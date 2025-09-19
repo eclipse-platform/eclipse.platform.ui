@@ -65,17 +65,17 @@ public abstract class RefactoringDescriptorProxy extends PlatformObject implemen
 	@Override
 	public int compareTo(RefactoringDescriptorProxy proxy) {
 		long delta= getTimeStamp() - proxy.getTimeStamp();
-		if (delta > 0)
+		if (delta > 0) {
 			return 1;
-		else if (delta < 0)
+		} else if (delta < 0) {
 			return -1;
+		}
 		return 0;
 	}
 
 	@Override
 	public final boolean equals(final Object object) {
-		if (object instanceof RefactoringDescriptorProxy) {
-			final RefactoringDescriptorProxy proxy= (RefactoringDescriptorProxy) object;
+		if (object instanceof final RefactoringDescriptorProxy proxy) {
 			return getTimeStamp() == proxy.getTimeStamp() && getDescription().equals(proxy.getDescription());
 		}
 		return false;
@@ -107,8 +107,9 @@ public abstract class RefactoringDescriptorProxy extends PlatformObject implemen
 	public final int hashCode() {
 		int code= getDescription().hashCode();
 		final long stamp= getTimeStamp();
-		if (stamp >= 0)
+		if (stamp >= 0) {
 			code+= 17 * Long.hashCode(stamp);
+		}
 		return code;
 	}
 

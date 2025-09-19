@@ -55,8 +55,7 @@ public final class MoveRenameResourceRefactoringContribution extends Refactoring
 	public Map<String, String> retrieveArgumentMap(final RefactoringDescriptor descriptor) {
 		HashMap<String, String> map= new HashMap<>();
 
-		if (descriptor instanceof MoveRenameResourceDescriptor) {
-			MoveRenameResourceDescriptor resourceDescriptor= (MoveRenameResourceDescriptor) descriptor;
+		if (descriptor instanceof MoveRenameResourceDescriptor resourceDescriptor) {
 			map.put(ATTRIBUTE_INPUT, ResourceProcessors.resourcePathToHandle(descriptor.getProject(), resourceDescriptor.getResourcePath()));
 			map.put(ATTRIBUTE_NAME, resourceDescriptor.getNewName());
 			IPath destinationPath= resourceDescriptor.getDestinationPath();

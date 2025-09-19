@@ -222,10 +222,11 @@ public abstract class RefactoringDescriptor implements Comparable<RefactoringDes
 	@Override
 	public final int compareTo(final RefactoringDescriptor descriptor) {
 		long delta= fTimeStamp - descriptor.fTimeStamp;
-		if (delta < 0)
+		if (delta < 0) {
 			return -1;
-		else if (delta > 0)
+		} else if (delta > 0) {
 			return +1;
+		}
 		return 0;
 	}
 
@@ -277,15 +278,15 @@ public abstract class RefactoringDescriptor implements Comparable<RefactoringDes
 	 */
 	public RefactoringContext createRefactoringContext(RefactoringStatus status) throws CoreException {
 		Refactoring refactoring= createRefactoring(status);
-		if (refactoring == null)
+		if (refactoring == null) {
 			return null;
+		}
 		return new RefactoringContext(refactoring);
 	}
 
 	@Override
 	public final boolean equals(final Object object) {
-		if (object instanceof RefactoringDescriptor) {
-			final RefactoringDescriptor descriptor= (RefactoringDescriptor) object;
+		if (object instanceof final RefactoringDescriptor descriptor) {
 			return fTimeStamp == descriptor.fTimeStamp && getDescription().equals(descriptor.getDescription());
 		}
 		return false;
@@ -356,8 +357,9 @@ public abstract class RefactoringDescriptor implements Comparable<RefactoringDes
 	@Override
 	public final int hashCode() {
 		int code= getDescription().hashCode();
-		if (fTimeStamp >= 0)
+		if (fTimeStamp >= 0) {
 			code+= 17 * Long.hashCode(fTimeStamp);
+		}
 		return code;
 	}
 
@@ -448,9 +450,9 @@ public abstract class RefactoringDescriptor implements Comparable<RefactoringDes
 		final StringBuilder buffer= new StringBuilder(128);
 
 		buffer.append(getClass().getName());
-		if (ID_UNKNOWN.equals(fRefactoringId))
+		if (ID_UNKNOWN.equals(fRefactoringId)) {
 			buffer.append("[unknown refactoring]"); //$NON-NLS-1$
-		else {
+		} else {
 			buffer.append("[timeStamp="); //$NON-NLS-1$
 			buffer.append(fTimeStamp);
 			buffer.append(",id="); //$NON-NLS-1$

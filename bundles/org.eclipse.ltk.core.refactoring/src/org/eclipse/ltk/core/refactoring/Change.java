@@ -183,8 +183,9 @@ public abstract class Change implements IAdaptable {
 	 * @param parent the parent of this change or <code>null</code>
 	 */
 	/* package */ void setParent(Change parent) {
-		if (parent != null)
+		if (parent != null) {
 			Assert.isTrue(fParent == null);
+		}
 		fParent= parent;
 	}
 
@@ -292,10 +293,12 @@ public abstract class Change implements IAdaptable {
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		T result= Platform.getAdapterManager().getAdapter(this, adapter);
-		if (result != null)
+		if (result != null) {
 			return result;
-		if (fParent != null)
+		}
+		if (fParent != null) {
 			return fParent.getAdapter(adapter);
+		}
 		return null;
 	}
 }

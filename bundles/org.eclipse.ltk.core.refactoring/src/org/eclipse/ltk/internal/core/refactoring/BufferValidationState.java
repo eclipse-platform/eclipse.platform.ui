@@ -42,8 +42,8 @@ public abstract class BufferValidationState {
 	protected final String fEncoding;
 
 	protected static class ModificationStamp {
-		private int fKind;
-		private long fValue;
+		private final int fKind;
+		private final long fValue;
 		public static final int FILE= 1;
 		public static final int DOCUMENT= 2;
 
@@ -102,15 +102,17 @@ public abstract class BufferValidationState {
 			return new RefactoringStatus();
 		}
 		if (!fExisted) {
-			if (fFile.exists())
+			if (fFile.exists()) {
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
 					RefactoringCoreMessages.TextChanges_error_existing,
 					BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
+			}
 		} else {
-			if (!fFile.exists())
+			if (!fFile.exists()) {
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
 					RefactoringCoreMessages.TextChanges_error_not_existing,
 					BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
+			}
 		}
 		if (needsSaving) {
 			if (fFile.isReadOnly()) {
@@ -155,16 +157,18 @@ public abstract class BufferValidationState {
 
 	protected IDocument getDocument() {
 		ITextFileBuffer buffer= getBuffer(fFile);
-		if (buffer == null)
+		if (buffer == null) {
 			return null;
+		}
 		return buffer.getDocument();
 
 	}
 
 	protected static boolean isDirty(IFile file) {
 		ITextFileBuffer buffer= getBuffer(file);
-		if (buffer == null)
+		if (buffer == null) {
 			return false;
+		}
 		return buffer.isDirty();
 	}
 
@@ -215,10 +219,10 @@ class NoStampValidationState extends BufferValidationState {
 		@Override
 		public void bufferCreated(IFileBuffer buffer) {
 			// begin https://bugs.eclipse.org/bugs/show_bug.cgi?id=67821
-			if (buffer.getLocation().equals(fFile.getFullPath()) && buffer instanceof ITextFileBuffer) {
-				ITextFileBuffer textBuffer= (ITextFileBuffer)buffer;
-				if (fDocumentListener == null)
+			if (buffer.getLocation().equals(fFile.getFullPath()) && buffer instanceof ITextFileBuffer textBuffer) {
+				if (fDocumentListener == null) {
 					fDocumentListener= new DocumentChangedListener();
+				}
 				textBuffer.getDocument().addDocumentListener(fDocumentListener);
 			}
 			// end fix https://bugs.eclipse.org/bugs/show_bug.cgi?id=67821
@@ -227,8 +231,7 @@ class NoStampValidationState extends BufferValidationState {
 		public void bufferDisposed(IFileBuffer buffer) {
 			// begin fix https://bugs.eclipse.org/bugs/show_bug.cgi?id=67821
 			if (fDocumentListener != null && buffer.getLocation().equals(fFile.getFullPath())) {
-				if (buffer instanceof ITextFileBuffer) {
-					ITextFileBuffer textBuffer= (ITextFileBuffer)buffer;
+				if (buffer instanceof ITextFileBuffer textBuffer) {
 					textBuffer.getDocument().removeDocumentListener(fDocumentListener);
 					fDocumentListener= null;
 				}
@@ -274,8 +277,9 @@ class NoStampValidationState extends BufferValidationState {
 	@Override
 	public RefactoringStatus isValid(boolean needsSaving, boolean resilientForDerived) throws CoreException {
 		RefactoringStatus result= super.isValid(needsSaving, resilientForDerived);
-		if (result.hasFatalError())
+		if (result.hasFatalError()) {
 			return result;
+		}
 		// If we have initialized the content stamp with the 'null' stamp then we can't compare it with
 		// the current stamp since a change executed later could have set a concrete stamp for the
 		// current content
@@ -317,7 +321,7 @@ class NoStampValidationState extends BufferValidationState {
  */
 class ModificationStampValidationState extends BufferValidationState {
 
-	private ModificationStamp fModificationStamp;
+	private final ModificationStamp fModificationStamp;
 
 	public ModificationStampValidationState(IFile file) {
 		super(file);
@@ -327,8 +331,9 @@ class ModificationStampValidationState extends BufferValidationState {
 	@Override
 	public RefactoringStatus isValid(boolean needsSaving, boolean resilientForDerived) throws CoreException {
 		RefactoringStatus result= super.isValid(needsSaving, resilientForDerived);
-		if (result.hasFatalError())
+		if (result.hasFatalError()) {
 			return result;
+		}
 		ModificationStamp currentStamp= getModificationStamp();
 		// we don't need to check the kind here since the document stamp
 		// and file stamp are in sync for documents implementing

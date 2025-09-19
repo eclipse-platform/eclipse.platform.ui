@@ -83,7 +83,7 @@ public class TextFileChange extends TextChange {
 	private volatile int fSaveMode= KEEP_SAVE_STATE;
 
 	// the mapped text buffer
-	private AtomicInteger fAcquireCount= new AtomicInteger();
+	private final AtomicInteger fAcquireCount= new AtomicInteger();
 
 	private volatile ITextFileBuffer fBuffer;
 
@@ -163,15 +163,17 @@ public class TextFileChange extends TextChange {
 	@Override
 	public Object[] getAffectedObjects() {
 		Object modifiedElement= getModifiedElement();
-		if (modifiedElement == null)
+		if (modifiedElement == null) {
 			return null;
+		}
 		return new Object[] { modifiedElement };
 	}
 
 	@Override
 	public void initializeValidationData(IProgressMonitor monitor) {
-		if (monitor == null)
+		if (monitor == null) {
 			monitor= new NullProgressMonitor();
+		}
 		try {
 			monitor.beginTask("", 1); //$NON-NLS-1$
 			fValidationState= BufferValidationState.create(fFile);
@@ -182,12 +184,14 @@ public class TextFileChange extends TextChange {
 
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor monitor) throws CoreException {
-		if (monitor == null)
+		if (monitor == null) {
 			monitor= new NullProgressMonitor();
+		}
 		try {
 			monitor.beginTask("", 1); //$NON-NLS-1$
-			if (fValidationState == null)
+			if (fValidationState == null) {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), "TextFileChange has not been initialialized")); //$NON-NLS-1$
+			}
 
 			boolean needsSaving= needsSaving();
 			RefactoringStatus result= fValidationState.isValid(needsSaving);

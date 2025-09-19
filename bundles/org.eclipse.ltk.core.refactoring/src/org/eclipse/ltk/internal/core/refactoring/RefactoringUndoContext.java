@@ -26,11 +26,13 @@ public class RefactoringUndoContext implements IUndoContext {
 
 	@Override
 	public boolean matches(IUndoContext context) {
-		if (this == context)
+		if (this == context) {
 			return true;
+		}
 		IUndoContext workspaceContext= ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
-		if (workspaceContext == null)
+		if (workspaceContext == null) {
 			return false;
+		}
 		return workspaceContext.matches(context);
 	}
 }

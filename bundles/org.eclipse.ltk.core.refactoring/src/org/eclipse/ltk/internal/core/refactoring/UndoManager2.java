@@ -50,8 +50,9 @@ public class UndoManager2 implements IUndoManager {
 			if (op instanceof UndoableOperation2ChangeAdapter) {
 				changeOperation= (UndoableOperation2ChangeAdapter)op;
 			}
-			if (changeOperation == null)
+			if (changeOperation == null) {
 				return;
+			}
 			Change change= changeOperation.getChange();
 			switch(event.getEventType()) {
 				case OperationHistoryEvent.ABOUT_TO_EXECUTE:
@@ -95,20 +96,21 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	private static class QueryAdapter implements IAdaptable {
-		private IValidationCheckResultQuery fQuery;
+		private final IValidationCheckResultQuery fQuery;
 		public QueryAdapter(IValidationCheckResultQuery query) {
 			fQuery= query;
 		}
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T> T getAdapter(Class<T> adapter) {
-			if (IValidationCheckResultQuery.class.equals(adapter))
+			if (IValidationCheckResultQuery.class.equals(adapter)) {
 				return (T) fQuery;
+			}
 			return null;
 		}
 	}
 
-	private IOperationHistory fOperationHistory;
+	private final IOperationHistory fOperationHistory;
 	private IOperationHistoryListener fOperationHistoryListener;
 
 	private boolean fIsOpen;
@@ -132,8 +134,9 @@ public class UndoManager2 implements IUndoManager {
 
 	@Override
 	public void removeListener(IUndoManagerListener listener) {
-		if (fListeners == null)
+		if (fListeners == null) {
 			return;
+		}
 		fListeners.remove(listener);
 		if (fListeners.size() == 0) {
 			fOperationHistory.removeOperationHistoryListener(fOperationHistoryListener);
@@ -190,8 +193,9 @@ public class UndoManager2 implements IUndoManager {
 	@Override
 	public String peekUndoName() {
 		IUndoableOperation op= fOperationHistory.getUndoOperation(RefactoringCorePlugin.getUndoContext());
-		if (op == null)
+		if (op == null) {
 			return null;
+		}
 		return op.getLabel();
 	}
 
@@ -199,11 +203,13 @@ public class UndoManager2 implements IUndoManager {
 	public void performUndo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
 		IUndoableOperation undo= fOperationHistory.getUndoOperation(RefactoringCorePlugin.getUndoContext());
 		UndoableOperation2ChangeAdapter changeOperation= getUnwrappedOperation(undo);
-		if (changeOperation == null)
+		if (changeOperation == null) {
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
 				IStatus.ERROR, RefactoringCoreMessages.UndoManager2_no_change, null));
-		if (query == null)
+		}
+		if (query == null) {
 			query= new NullQuery();
+		}
 		try {
 			fOperationHistory.undoOperation(undo, pm, new QueryAdapter(query));
 		} catch (ExecutionException e) {
@@ -219,8 +225,9 @@ public class UndoManager2 implements IUndoManager {
 	@Override
 	public String peekRedoName() {
 		IUndoableOperation op= fOperationHistory.getRedoOperation(RefactoringCorePlugin.getUndoContext());
-		if (op == null)
+		if (op == null) {
 			return null;
+		}
 		return op.getLabel();
 	}
 
@@ -228,11 +235,13 @@ public class UndoManager2 implements IUndoManager {
 	public void performRedo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
 		IUndoableOperation redo= fOperationHistory.getRedoOperation(RefactoringCorePlugin.getUndoContext());
 		UndoableOperation2ChangeAdapter changeOperation= getUnwrappedOperation(redo);
-		if (changeOperation == null)
+		if (changeOperation == null) {
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
 				IStatus.ERROR, RefactoringCoreMessages.UndoManager2_no_change, null));
-		if (query == null)
+		}
+		if (query == null) {
 			query= new NullQuery();
+		}
 		try {
 			fOperationHistory.redoOperation(redo, pm, new QueryAdapter(query));
 		} catch (ExecutionException e) {
@@ -290,8 +299,9 @@ public class UndoManager2 implements IUndoManager {
 	//---- event firing methods -------------------------------------------------
 
 	private void fireAboutToPerformChange(final Change change) {
-		if (fListeners == null)
+		if (fListeners == null) {
 			return;
+		}
 		for (final IUndoManagerListener listener : fListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
@@ -307,8 +317,9 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	private void fireChangePerformed(final Change change) {
-		if (fListeners == null)
+		if (fListeners == null) {
 			return;
+		}
 		for (final IUndoManagerListener listener : fListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
@@ -324,8 +335,9 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	private void fireUndoStackChanged() {
-		if (fListeners == null)
+		if (fListeners == null) {
 			return;
+		}
 		for (final IUndoManagerListener listener : fListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
@@ -341,8 +353,9 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	private void fireRedoStackChanged() {
-		if (fListeners == null)
+		if (fListeners == null) {
 			return;
+		}
 		for (final IUndoManagerListener listener : fListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override

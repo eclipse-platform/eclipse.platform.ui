@@ -108,8 +108,9 @@ public class RefactoringCorePlugin extends Plugin {
 	}
 
 	public static IUndoManager getUndoManager() {
-		if (fgUndoManager == null)
+		if (fgUndoManager == null) {
 			fgUndoManager= createUndoManager();
+		}
 		return fgUndoManager;
 	}
 
@@ -131,12 +132,14 @@ public class RefactoringCorePlugin extends Plugin {
 				((ObjectUndoContext)workspaceContext).removeMatch(fRefactoringUndoContext);
 			}
 		}
-		if (fgUndoManager != null)
+		if (fgUndoManager != null) {
 			fgUndoManager.shutdown();
+		}
 		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		service.disconnect();
-		if (fRefactoringHistoryListener != null)
+		if (fRefactoringHistoryListener != null) {
 			service.removeHistoryListener(fRefactoringHistoryListener);
+		}
 		RefactoringContributionManager.getInstance().disconnect();
 		super.stop(context);
 	}

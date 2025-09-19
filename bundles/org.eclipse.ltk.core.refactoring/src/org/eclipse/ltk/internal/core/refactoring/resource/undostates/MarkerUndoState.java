@@ -33,8 +33,8 @@ public class MarkerUndoState {
 
 	protected IResource resource;
 
-	private String type;
-	private Map<String, Object> attributes;
+	private final String type;
+	private final Map<String, Object> attributes;
 
 	/**
 	 *

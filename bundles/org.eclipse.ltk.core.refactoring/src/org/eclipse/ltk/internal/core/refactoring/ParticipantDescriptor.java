@@ -31,7 +31,7 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
 
 public class ParticipantDescriptor {
 
-	private IConfigurationElement fConfigurationElement;
+	private final IConfigurationElement fConfigurationElement;
 	private boolean fEnabled;
 
 	private static final String ID= "id"; //$NON-NLS-1$
@@ -72,14 +72,17 @@ public class ParticipantDescriptor {
 
 	public boolean matches(IEvaluationContext context, IParticipantDescriptorFilter filter, RefactoringStatus status) throws CoreException {
 		IConfigurationElement[] elements= fConfigurationElement.getChildren(ExpressionTagNames.ENABLEMENT);
-		if (elements.length == 0)
+		if (elements.length == 0) {
 			return false;
+		}
 		Assert.isTrue(elements.length == 1);
 		Expression exp= ExpressionConverter.getDefault().perform(elements[0]);
-		if (!convert(exp.evaluate(context)))
+		if (!convert(exp.evaluate(context))) {
 			return false;
-		if (filter != null && !filter.select(fConfigurationElement, status))
+		}
+		if (filter != null && !filter.select(fConfigurationElement, status)) {
 			return false;
+		}
 
 		return true;
 	}
@@ -98,14 +101,16 @@ public class ParticipantDescriptor {
 
 	public boolean processOnCancel() {
 		String attr= fConfigurationElement.getAttribute(PROCESS_ON_CANCEL);
-		if (attr == null)
+		if (attr == null) {
 			return false;
+		}
 		return Boolean.parseBoolean(attr);
 	}
 
 	private boolean convert(EvaluationResult eval) {
-		if (eval == EvaluationResult.FALSE)
+		if (eval == EvaluationResult.FALSE) {
 			return false;
+		}
 		return true;
 	}
 

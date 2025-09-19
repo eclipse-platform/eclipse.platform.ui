@@ -30,7 +30,7 @@ public class RefactoringTickProvider {
 	 */
 	public final static RefactoringTickProvider DEFAULT= new RefactoringTickProvider(4, 40, 22, 11);
 
-	private int[] fValues;
+	private final int[] fValues;
 
 	private static final int CHECK_INITIAL_CONDITIONS= 0;
 	private static final int CHECK_FINAL_CONDITIONS= 1;

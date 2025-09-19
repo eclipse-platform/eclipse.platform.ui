@@ -55,8 +55,8 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
  */
 public class ValidateEditChecker implements IConditionChecker {
 
-	private Set<IFile> fFiles= new HashSet<>();
-	private Object fContext;
+	private final Set<IFile> fFiles= new HashSet<>();
+	private final Object fContext;
 
 	/**
 	 * The context passed to the validate edit call.
@@ -97,8 +97,9 @@ public class ValidateEditChecker implements IConditionChecker {
 		IResource[] resources= fFiles.toArray(new IResource[fFiles.size()]);
 		RefactoringStatus result= new RefactoringStatus();
 		IStatus status= Resources.checkInSync(resources);
-		if (!status.isOK())
+		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));
+		}
 		status= Resources.makeCommittable(resources, fContext);
 		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));

@@ -239,7 +239,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	private boolean fDirty;
 
 	/** The affected file */
-	private IFile fFile;
+	private final IFile fFile;
 
 	/** The save mode */
 	private int fSaveMode= TextFileChange.KEEP_SAVE_STATE;
@@ -276,8 +276,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 * @throws CoreException if the document could not successfully be acquired
 	 */
 	private IDocument acquireDocument(final IProgressMonitor monitor) throws CoreException {
-		if (fCount > 0)
+		if (fCount > 0) {
 			return fBuffer.getDocument();
+		}
 
 		final ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		final IPath path= fFile.getFullPath();
@@ -335,12 +336,14 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			fCopier= new TextEditCopier(change.getEdit());
 			TextEdit copiedEdit= fCopier.perform();
 			boolean keep= getKeepPreviewEdits();
-			if (keep)
+			if (keep) {
 				flags= flags | TextEdit.UPDATE_REGIONS;
+			}
 			LocalTextEditProcessor result= new LocalTextEditProcessor(document, copiedEdit, flags);
 			result.setExcludes(mapEdits(excludes.toArray(new TextEdit[excludes.size()]), fCopier));
-			if (!keep)
+			if (!keep) {
 				fCopier= null;
+			}
 			return result;
 		} else {
 			LocalTextEditProcessor result= new LocalTextEditProcessor(document, change.getEdit(), flags | TextEdit.UPDATE_REGIONS);
@@ -370,10 +373,11 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			// Cannot happen
 		}
 
-		if (fCachedString != null && fCachedString.equals(currentText))
+		if (fCachedString != null && fCachedString.equals(currentText)) {
 			currentText= fCachedString;
-		else
+		} else {
 			fCachedString= currentText;
+		}
 
 		return new ReplaceEdit(offset, text != null ? text.length() : 0, currentText);
 	}
@@ -427,12 +431,14 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		try {
 			result= acquireDocument(subMon.newChild(1));
 		} finally {
-			if (result != null)
+			if (result != null) {
 				releaseDocument(result, subMon.newChild(1));
+			}
 		}
 		subMon.done();
-		if (result == null)
+		if (result == null) {
 			result= new Document();
+		}
 		return result;
 	}
 
@@ -476,10 +482,11 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 							final TextEdit copiedEdit= fCopier.getCopy(originalEdit);
 
-							if (copiedEdit != null)
+							if (copiedEdit != null) {
 								originalMap.put(copiedEdit, originalEdit);
-							else
+							} else {
 								RefactoringCorePlugin.logErrorMessage("Could not find a copy for the indexed text edit " + originalEdit.toString()); //$NON-NLS-1$
+							}
 						}
 					}
 
@@ -508,8 +515,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 										found= true;
 									}
 								}
-								if (!found)
+								if (!found) {
 									currentGroup[0]= null;
+								}
 
 							} else if (!(edit instanceof MultiTextEdit)) {
 								RefactoringCorePlugin.logErrorMessage("Could not find the original of the copied text edit " + edit.toString()); //$NON-NLS-1$
@@ -570,8 +578,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 					final Position[] positions= event.getDocument().getPositions(COMPOSABLE_POSITION_CATEGORY);
 					for (Position position : positions) {
-						if (position.isDeleted())
+						if (position.isDeleted()) {
 							continue;
+						}
 
 						final int offset= position.getOffset();
 						final int length= position.getLength();
@@ -648,8 +657,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 									// edit
 									position.length= 0;
 									position.setText(edit.getOriginalText());
-								} else
+								} else {
 									RefactoringCorePlugin.logErrorMessage("Dubious undo edit found: " + undo.toString()); //$NON-NLS-1$
+								}
 
 							} else if (length == 0) {
 								position.offset= offset;
@@ -768,8 +778,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			}
 			subMon.done();
 		}
-		if (result == null)
+		if (result == null) {
 			result= new Document();
+		}
 		return result;
 	}
 
@@ -787,8 +798,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 */
 	@Override
 	public final void initializeValidationData(IProgressMonitor monitor) {
-		if (monitor == null)
+		if (monitor == null) {
 			monitor= new NullProgressMonitor();
+		}
 		monitor.beginTask("", 1); //$NON-NLS-1$
 		try {
 			fValidationState= BufferValidationState.create(fFile);
@@ -802,12 +814,14 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 */
 	@Override
 	public final RefactoringStatus isValid(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		if (monitor == null)
+		if (monitor == null) {
 			monitor= new NullProgressMonitor();
+		}
 		monitor.beginTask("", 1); //$NON-NLS-1$
 		try {
-			if (fValidationState == null)
+			if (fValidationState == null) {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), "MultiStateTextFileChange has not been initialialized")); //$NON-NLS-1$
+			}
 
 
 			final ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
@@ -850,8 +864,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			final LinkedList<UndoEdit> undoList= new LinkedList<>();
 			performChanges(document, undoList, false);
 
-			if (needsSaving())
+			if (needsSaving()) {
 				fBuffer.commit(subMon.newChild(1), false);
+			}
 
 			return new MultiStateUndoChange(getName(), fFile, undoList.toArray(new UndoEdit[undoList.size()]), fContentStamp, fSaveMode);
 
@@ -920,18 +935,21 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	private void performChangesInSynchronizationContext(final IDocument document, final LinkedList<UndoEdit> undoList, final boolean preview) throws BadLocationException {
 		DocumentRewriteSession session= null;
 		try {
-			if (document instanceof IDocumentExtension4)
+			if (document instanceof IDocumentExtension4) {
 				session= ((IDocumentExtension4) document).startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
+			}
 
 			for (ComposableBufferChange change : fChanges) {
 				final UndoEdit edit= createTextEditProcessor(change, document, undoList != null ? TextEdit.CREATE_UNDO : TextEdit.NONE, preview).performEdits();
-				if (undoList != null)
+				if (undoList != null) {
 					undoList.addFirst(edit);
+				}
 			}
 
 		} finally {
-			if (session != null)
+			if (session != null) {
 				((IDocumentExtension4) document).stopRewriteSession(session);
+			}
 		}
 	}
 
@@ -947,8 +965,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	private void releaseDocument(final IDocument document, final IProgressMonitor monitor) throws CoreException {
 		Assert.isTrue(fCount > 0);
 
-		if (fCount == 1)
+		if (fCount == 1) {
 			FileBuffers.getTextFileBufferManager().disconnect(fFile.getFullPath(), LocationKind.IFILE, monitor);
+		}
 
 		fCount--;
 	}
@@ -960,8 +979,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	public final void setKeepPreviewEdits(final boolean keep) {
 		super.setKeepPreviewEdits(keep);
 
-		if (!keep)
+		if (!keep) {
 			fCopier= null;
+		}
 	}
 
 	/**

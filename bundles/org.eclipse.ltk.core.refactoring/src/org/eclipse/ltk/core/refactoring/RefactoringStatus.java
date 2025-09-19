@@ -89,7 +89,7 @@ public class RefactoringStatus {
 	/**
 	 * List of refactoring status entries.
 	 */
-	private List<RefactoringStatusEntry> fEntries;
+	private final List<RefactoringStatusEntry> fEntries;
 
 	/**
 	 * The status's severity. The following invariant holds for
@@ -142,8 +142,9 @@ public class RefactoringStatus {
 	public RefactoringStatusEntry[] getEntries(IRefactoringStatusEntryComparator comparator, RefactoringStatusEntry entry) {
 		final List<RefactoringStatusEntry> matches= new ArrayList<>(fEntries.size());
 		for (RefactoringStatusEntry current : fEntries) {
-			if (comparator.compare(current, entry) == 0)
+			if (comparator.compare(current, entry) == 0) {
 				matches.add(current);
+			}
 		}
 		return matches.toArray(new RefactoringStatusEntry[matches.size()]);
 	}
@@ -185,8 +186,9 @@ public class RefactoringStatus {
 	public RefactoringStatusEntry getEntryMatchingCode(String pluginId, int code) {
 		Assert.isTrue(pluginId != null);
 		for (RefactoringStatusEntry entry : fEntries) {
-			if (pluginId.equals(entry.getPluginId()) && entry.getCode() == code)
+			if (pluginId.equals(entry.getPluginId()) && entry.getCode() == code) {
 				return entry;
+			}
 		}
 		return null;
 	}
@@ -203,11 +205,13 @@ public class RefactoringStatus {
 	 */
 	public RefactoringStatusEntry getEntryMatchingSeverity(int severity) {
 		Assert.isTrue(severity >= OK && severity <= FATAL);
-		if (severity > fSeverity)
+		if (severity > fSeverity) {
 			return null;
+		}
 		for (RefactoringStatusEntry entry : fEntries) {
-			if (entry.getSeverity() >= severity)
+			if (entry.getSeverity() >= severity) {
 				return entry;
+			}
 		}
 		return null;
 	}
@@ -222,13 +226,15 @@ public class RefactoringStatus {
 	 * @since 3.1
 	 */
 	public RefactoringStatusEntry getEntryWithHighestSeverity() {
-		if (fEntries == null || fEntries.isEmpty())
+		if (fEntries == null || fEntries.isEmpty()) {
 			return null;
+		}
 		RefactoringStatusEntry result= fEntries.get(0);
 		for (int i= 1; i < fEntries.size(); i++) {
 			RefactoringStatusEntry entry= fEntries.get(i);
-			if (result.getSeverity() < entry.getSeverity())
+			if (result.getSeverity() < entry.getSeverity()) {
 				result= entry;
+			}
 		}
 		return result;
 	}
@@ -244,8 +250,9 @@ public class RefactoringStatus {
 	 */
 	public String getMessageMatchingSeverity(int severity) {
 		RefactoringStatusEntry entry= getEntryMatchingSeverity(severity);
-		if (entry == null)
+		if (entry == null) {
 			return null;
+		}
 		return entry.getMessage();
 	}
 
@@ -396,8 +403,9 @@ public class RefactoringStatus {
 	 * @since 3.2
 	 */
 	public static RefactoringStatus create(IStatus status) {
-		if (status.isOK())
+		if (status.isOK()) {
 			return new RefactoringStatus();
+		}
 
 		if (!status.isMultiStatus()) {
 			switch (status.getSeverity()) {
@@ -434,8 +442,9 @@ public class RefactoringStatus {
 	 * @param other the refactoring status to merge with
 	 */
 	public void merge(RefactoringStatus other) {
-		if (other == null)
+		if (other == null) {
 			return;
+		}
 		fEntries.addAll(other.fEntries);
 		fSeverity= Math.max(fSeverity, other.getSeverity());
 	}
@@ -685,16 +694,21 @@ public class RefactoringStatus {
 	 */
 	/* package */static String getSeverityString(int severity) {
 		Assert.isTrue(severity >= OK && severity <= FATAL);
-		if (severity == RefactoringStatus.OK)
+		if (severity == RefactoringStatus.OK) {
 			return "OK"; //$NON-NLS-1$
-		if (severity == RefactoringStatus.INFO)
+		}
+		if (severity == RefactoringStatus.INFO) {
 			return "INFO"; //$NON-NLS-1$
-		if (severity == RefactoringStatus.WARNING)
+		}
+		if (severity == RefactoringStatus.WARNING) {
 			return "WARNING"; //$NON-NLS-1$
-		if (severity == RefactoringStatus.ERROR)
+		}
+		if (severity == RefactoringStatus.ERROR) {
 			return "ERROR"; //$NON-NLS-1$
-		if (severity == RefactoringStatus.FATAL)
+		}
+		if (severity == RefactoringStatus.FATAL) {
 			return "FATALERROR"; //$NON-NLS-1$
+		}
 		return null;
 	}
 }

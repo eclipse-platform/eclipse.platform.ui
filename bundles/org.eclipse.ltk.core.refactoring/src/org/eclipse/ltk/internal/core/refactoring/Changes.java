@@ -32,8 +32,9 @@ public class Changes {
 	public static RefactoringStatus validateModifiesFiles(IFile[] filesToModify) {
 		RefactoringStatus result= new RefactoringStatus();
 		IStatus status= Resources.checkInSync(filesToModify);
-		if (!status.isOK())
+		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));
+		}
 		status= Resources.makeCommittable(filesToModify, null);
 		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));
@@ -47,22 +48,25 @@ public class Changes {
 	public static RefactoringStatus checkInSync(IFile[] filesToModify) {
 		RefactoringStatus result= new RefactoringStatus();
 		IStatus status= Resources.checkInSync(filesToModify);
-		if (!status.isOK())
+		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));
+		}
 		return result;
 	}
 
 	public static CoreException asCoreException(BadLocationException e) {
 		String message= e.getMessage();
-		if (message == null)
+		if (message == null) {
 			message= "BadLocationException"; //$NON-NLS-1$
+		}
 		return new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.BAD_LOCATION, message, e));
 	}
 
 	public static CoreException asCoreException(MalformedTreeException e) {
 		String message= e.getMessage();
-		if (message == null)
+		if (message == null) {
 			message= "MalformedTreeException"; //$NON-NLS-1$
+		}
 		return new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.BAD_LOCATION, message, e));
 	}
 

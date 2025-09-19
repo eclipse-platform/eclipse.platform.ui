@@ -94,8 +94,9 @@ public class ProcessorBasedRefactoring extends Refactoring {
 
 		@Override
 		protected void internalHandleException(Change change, Throwable e) {
-			if (e instanceof OperationCanceledException)
+			if (e instanceof OperationCanceledException) {
 				return;
+			}
 
 			RefactoringParticipant participant= fParticipantMap.get(change);
 			if (participant != null) {
@@ -124,8 +125,9 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		@Override
 		protected boolean internalProcessOnCancel(Change change) {
 			RefactoringParticipant participant= fParticipantMap.get(change);
-			if (participant == null)
+			if (participant == null) {
 				return false;
+			}
 			return participant.getDescriptor().processOnCancel();
 		}
 	}
@@ -198,8 +200,9 @@ public class ProcessorBasedRefactoring extends Refactoring {
 
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
+		if (pm == null) {
 			pm= new NullProgressMonitor();
+		}
 		try {
 			RefactoringStatus result= new RefactoringStatus();
 			SubMonitor sm=SubMonitor.convert(pm,RefactoringCoreMessages.ProcessorBasedRefactoring_initial_conditions, 10);
@@ -216,8 +219,9 @@ public class ProcessorBasedRefactoring extends Refactoring {
 
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
+		if (pm == null) {
 			pm= new NullProgressMonitor();
+		}
 		try {
 			RefactoringStatus result= new RefactoringStatus();
 			CheckConditionsContext context= createCheckConditionsContext();
@@ -282,8 +286,9 @@ public class ProcessorBasedRefactoring extends Refactoring {
 
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
+		if (pm == null) {
 			pm= new NullProgressMonitor();
+		}
 		try {
 			SubMonitor sm= SubMonitor.convert(pm, RefactoringCoreMessages.ProcessorBasedRefactoring_create_change, fParticipants.size() * 2 + 1);
 			Change processorChange= getProcessor().createChange(sm.split(1));
@@ -308,8 +313,9 @@ public class ProcessorBasedRefactoring extends Refactoring {
 					stats.endRun();
 
 					if (preChange != null) {
-						if (fPreChangeParticipants == null)
+						if (fPreChangeParticipants == null) {
 							fPreChangeParticipants= new ArrayList<>();
+						}
 						fPreChangeParticipants.add(participant);
 						preChanges.add(preChange);
 						participantMap.put(preChange, participant);
@@ -328,8 +334,9 @@ public class ProcessorBasedRefactoring extends Refactoring {
 					disableParticipant(participant, e);
 					throw e;
 				}
-				if (sm.isCanceled())
+				if (sm.isCanceled()) {
 					throw new OperationCanceledException();
+				}
 			}
 
 			fTextChangeMap= null;
@@ -371,8 +378,9 @@ public class ProcessorBasedRefactoring extends Refactoring {
 	 * @since 3.1
 	 */
 	public TextChange getTextChange(Object element) {
-		if (fTextChangeMap == null)
+		if (fTextChangeMap == null) {
 			return null;
+		}
 		return fTextChangeMap.get(element);
 	}
 
@@ -399,8 +407,9 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			return (T) this;
 		}
 		RefactoringProcessor processor= getProcessor();
-		if (clazz.isInstance(processor))
+		if (clazz.isInstance(processor)) {
 			return (T) processor;
+		}
 		return super.getAdapter(clazz);
 	}
 
@@ -436,8 +445,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			}
 			// check if we have a subclass of TextFileChange. If so also put the change
 			// under the file resource into the hash table if possible.
-			if (change instanceof TextFileChange && !change.getClass().equals(TextFileChange.class)) {
-				TextFileChange textFileChange= (TextFileChange) change;
+			if (change instanceof TextFileChange textFileChange && !change.getClass().equals(TextFileChange.class)) {
 				IFile file= textFileChange.getFile();
 				fTextChangeMap.put(file, textFileChange);
 			}

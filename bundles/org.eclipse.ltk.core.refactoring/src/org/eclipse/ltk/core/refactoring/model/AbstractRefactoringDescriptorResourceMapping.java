@@ -66,8 +66,7 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof AbstractRefactoringDescriptorResourceMapping) {
-			final AbstractRefactoringDescriptorResourceMapping mapping= (AbstractRefactoringDescriptorResourceMapping) object;
+		if (object instanceof final AbstractRefactoringDescriptorResourceMapping mapping) {
 			return mapping.fDescriptor.equals(fDescriptor);
 		}
 		return false;
@@ -81,8 +80,9 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 	@Override
 	public final IProject[] getProjects() {
 		final String project= fDescriptor.getProject();
-		if (project != null && !"".equals(project)) //$NON-NLS-1$
+		if (project != null && !"".equals(project)) { //$NON-NLS-1$
 			return new IProject[] { ResourcesPlugin.getWorkspace().getRoot().getProject(project)};
+		}
 		return new IProject[] {};
 	}
 
@@ -97,8 +97,9 @@ public abstract class AbstractRefactoringDescriptorResourceMapping extends Resou
 			final ResourceTraversal[] traversals= getTraversals(null, null);
 			if (traversals.length > 0) {
 				final IResource[] resources= traversals[0].getResources();
-				if (resources.length > 0)
+				if (resources.length > 0) {
 					return resources[0];
+				}
 			}
 		} catch (CoreException exception) {
 			RefactoringCorePlugin.log(exception);

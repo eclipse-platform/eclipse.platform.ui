@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public class MoveRefactoring extends ProcessorBasedRefactoring {
 
-	private MoveProcessor fProcessor;
+	private final MoveProcessor fProcessor;
 
 	/**
 	 * Creates a new move refactoring with the given move processor.

@@ -122,8 +122,9 @@ public final class RefactoringHistoryManager {
 					throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringHistoryManager_empty_argument, null));
 				}
 				for (char character : characters) {
-					if (Character.isWhitespace(character))
+					if (Character.isWhitespace(character)) {
 						throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringHistoryManager_whitespace_argument_key, null));
+					}
 				}
 			} else {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, Messages.format(RefactoringCoreMessages.RefactoringHistoryManager_non_string_argument, entry.getKey()), null));
@@ -158,8 +159,9 @@ public final class RefactoringHistoryManager {
 			final StringBuilder buffer= new StringBuilder(length + 16);
 			for (int index= 0; index < length; index++) {
 				final char character= string.charAt(index);
-				if (DELIMITER_COMPONENT == character)
+				if (DELIMITER_COMPONENT == character) {
 					buffer.append(DELIMITER_COMPONENT);
+				}
 				buffer.append(character);
 			}
 			return buffer.toString();
@@ -177,10 +179,11 @@ public final class RefactoringHistoryManager {
 	public static Map<String, String> getArgumentMap(final RefactoringDescriptor descriptor) {
 		Map<String, String> arguments= null;
 		final RefactoringContribution contribution= RefactoringContributionManager.getInstance().getRefactoringContribution(descriptor.getID());
-		if (contribution != null)
+		if (contribution != null) {
 			arguments= contribution.retrieveArgumentMap(descriptor);
-		else if (descriptor instanceof DefaultRefactoringDescriptor)
+		} else if (descriptor instanceof DefaultRefactoringDescriptor) {
 			arguments= ((DefaultRefactoringDescriptor) descriptor).getArguments();
+		}
 		return arguments;
 	}
 
@@ -219,8 +222,9 @@ public final class RefactoringHistoryManager {
 				} finally {
 					monitor.worked(1);
 				}
-			} else
+			} else {
 				monitor.worked(4);
+			}
 			final IFileStore[] stores= store.childStores(EFS.NONE, subMon.split(2, SubMonitor.SUPPRESS_SUBTASK));
 			final SubMonitor subMonitor= subMon.newChild(12);
 			try {
@@ -265,8 +269,9 @@ public final class RefactoringHistoryManager {
 				if (index > 0) {
 					try {
 						final long stamp= Long.parseLong(line.substring(0, index));
-						if (stamp >= start && stamp <= end)
+						if (stamp >= start && stamp <= end) {
 							list.add(new DefaultRefactoringDescriptorProxy(unescapeString(line.substring(index + 1)), project, stamp));
+						}
 					} catch (NumberFormatException exception) {
 						// Just skip
 					}
@@ -334,8 +339,9 @@ public final class RefactoringHistoryManager {
 		try {
 			final IFileInfo info= store.fetchInfo(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
 			if (info.isDirectory()) {
-				if (RefactoringHistoryService.NAME_HISTORY_FOLDER.equalsIgnoreCase(info.getName()))
+				if (RefactoringHistoryService.NAME_HISTORY_FOLDER.equalsIgnoreCase(info.getName())) {
 					return;
+				}
 				final IFileStore[] stores= store.childStores(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
 				final SubMonitor subMonitor= subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK);
 				try {
@@ -344,8 +350,9 @@ public final class RefactoringHistoryManager {
 						final IFileInfo current= s.fetchInfo(EFS.NONE, subMonitor.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
 						if (current.isDirectory()) {
 							for (char character : s.getName().toCharArray()) {
-								if (Character.isDigit(character))
+								if (Character.isDigit(character)) {
 									return;
+								}
 							}
 						}
 					}
@@ -464,8 +471,9 @@ public final class RefactoringHistoryManager {
 				if (DELIMITER_COMPONENT == character) {
 					if (index < length - 1) {
 						final char escape= string.charAt(index + 1);
-						if (DELIMITER_COMPONENT == escape)
+						if (DELIMITER_COMPONENT == escape) {
 							continue;
+						}
 					}
 				}
 				buffer.append(character);
@@ -809,8 +817,9 @@ public final class RefactoringHistoryManager {
 									}
 								}
 							}
-							if (!found)
+							if (!found) {
 								root.appendChild(document.importNode(list.item(0), true));
+							}
 							writeHistoryEntry(history, document, subMon.newChild(10, SubMonitor.SUPPRESS_SUBTASK), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
 							if (sort) {
 								final Set<RefactoringDescriptorProxy> set= new HashSet<>(64);
@@ -818,8 +827,9 @@ public final class RefactoringHistoryManager {
 										RefactoringCoreMessages.RefactoringHistoryService_updating_history);
 								writeIndexEntry(index, set.toArray(new RefactoringDescriptorProxy[set.size()]), EFS.NONE, subMon.newChild(3, SubMonitor.SUPPRESS_SUBTASK),
 										RefactoringCoreMessages.RefactoringHistoryService_updating_history);
-							} else
+							} else {
 								writeIndexEntry(index, proxies, EFS.APPEND, subMon.newChild(5, SubMonitor.SUPPRESS_SUBTASK), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
+							}
 						}
 					} catch (ParserConfigurationException | IOException | SAXException exception) {
 						throw createCoreException(exception);
@@ -863,8 +873,9 @@ public final class RefactoringHistoryManager {
 	 *             if an error occurs in the parser configuration
 	 */
 	private Document getCachedDocument(final IPath path, final InputStream input) throws SAXException, IOException, ParserConfigurationException {
-		if (path.equals(fCachedPath) && fCachedDocument != null)
+		if (path.equals(fCachedPath) && fCachedDocument != null) {
 			return fCachedDocument;
+		}
 		DocumentBuilder parser= XmlProcessorFactoryLtk.createDocumentBuilderFactoryWithErrorOnDOCTYPE().newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
 		final Document document= parser.parse(new InputSource(input));
@@ -887,8 +898,9 @@ public final class RefactoringHistoryManager {
 	 *             if an error occurs while reading the session
 	 */
 	private RefactoringSessionDescriptor getCachedSession(final IFileStore store, String projectName, final InputStream input) throws CoreException {
-		if (store.equals(fCachedStore) && fCachedDescriptor != null)
+		if (store.equals(fCachedStore) && fCachedDescriptor != null) {
 			return fCachedDescriptor;
+		}
 		final RefactoringSessionDescriptor descriptor;
 		try {
 			descriptor= new RefactoringSessionReader(false, projectName).readSession(new InputSource(input));
@@ -921,11 +933,13 @@ public final class RefactoringHistoryManager {
 			SubMonitor subMon= SubMonitor.convert(monitor, RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 200);
 			final Set<RefactoringDescriptorProxy> set= new HashSet<>();
 			try {
-				if (fHistoryStore.fetchInfo(EFS.NONE, subMon.newChild(20, SubMonitor.SUPPRESS_SUBTASK)).exists())
+				if (fHistoryStore.fetchInfo(EFS.NONE, subMon.newChild(20, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
 					readRefactoringDescriptorProxies(fHistoryStore, fProjectName, set, start, end, subMon.newChild(80), RefactoringCoreMessages.RefactoringHistoryService_retrieving_history);
+				}
 				final IFileStore store= EFS.getLocalFileSystem().getStore(RefactoringCorePlugin.getDefault().getStateLocation()).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER).getChild(RefactoringHistoryService.NAME_WORKSPACE_PROJECT);
-				if (store.fetchInfo(EFS.NONE, subMon.newChild(20, SubMonitor.SUPPRESS_SUBTASK)).exists())
+				if (store.fetchInfo(EFS.NONE, subMon.newChild(20, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
 					readRefactoringDescriptorProxies(store, null, set, start, end, subMon.newChild(80), RefactoringCoreMessages.RefactoringHistoryService_retrieving_history);
+				}
 			} catch (CoreException exception) {
 				RefactoringCorePlugin.log(exception);
 			}
@@ -963,9 +977,9 @@ public final class RefactoringHistoryManager {
 			if (index.fetchInfo(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
 				final Set<RefactoringDescriptorProxy> resultingProxies= new HashSet<>(64);
 				readRefactoringDescriptorProxies(index, null, resultingProxies, 0, Long.MAX_VALUE, subMon.newChild(1), task);
-				if (resultingProxies.size() == proxies.length)
+				if (resultingProxies.size() == proxies.length) {
 					removeIndexTree(folder, subMon.newChild(1), task);
-				else {
+				} else {
 					final IFileStore history= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
 					if (history.fetchInfo(EFS.NONE, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK)).exists()) {
 						InputStream input= null;
@@ -1093,8 +1107,9 @@ public final class RefactoringHistoryManager {
 					RefactoringCorePlugin.log(exception);
 				} finally {
 					try {
-						if (input != null)
+						if (input != null) {
 							input.close();
+						}
 					} catch (IOException exception) {
 						RefactoringCorePlugin.log(exception);
 					}

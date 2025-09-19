@@ -46,10 +46,10 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  */
 public class ParticipantExtensionPoint {
 
-	private String fParticipantID;
+	private final String fParticipantID;
 	private List<ParticipantDescriptor> fParticipants;
-	private Class<?> fParticipantClass;
-	private String fPluginId;
+	private final Class<?> fParticipantClass;
+	private final String fPluginId;
 
 	/**
 	 * Creates a {@link ParticipantExtensionPoint}.
@@ -81,8 +81,9 @@ public class ParticipantExtensionPoint {
 	 * @return an array of participants
 	 */
 	public RefactoringParticipant[] getParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, RefactoringArguments arguments, IParticipantDescriptorFilter filter, String[] affectedNatures, SharableParticipants shared) {
-		if (fParticipants == null)
+		if (fParticipants == null) {
 			init();
+		}
 
 		EvaluationContext evalContext= createEvaluationContext(processor, element, affectedNatures);
 		List<RefactoringParticipant> result= new ArrayList<>();
@@ -103,8 +104,9 @@ public class ParticipantExtensionPoint {
 								if (participant.initialize(processor, element, arguments)) {
 									participant.setDescriptor(descriptor);
 									result.add(participant);
-									if (participant instanceof ISharableParticipant)
+									if (participant instanceof ISharableParticipant) {
 										shared.put(descriptor, participant);
+									}
 								}
 							} else {
 								status.addError(Messages.format(

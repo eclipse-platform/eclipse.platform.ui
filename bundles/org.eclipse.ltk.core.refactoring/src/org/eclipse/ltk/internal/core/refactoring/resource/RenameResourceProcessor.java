@@ -52,7 +52,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
  */
 public class RenameResourceProcessor extends RenameProcessor implements IRenameResourceProcessor{
 
-	private IResource fResource;
+	private final IResource fResource;
 	private String fNewResourceName;
 	private boolean fUpdateReferences;
 	private RenameArguments fRenameArguments; // set after checkFinalConditions
@@ -165,18 +165,22 @@ public class RenameResourceProcessor extends RenameProcessor implements IRenameR
 	public RefactoringStatus validateNewElementName(String newName) {
 		Assert.isNotNull(newName, "new name"); //$NON-NLS-1$
 		IContainer c= fResource.getParent();
-		if (c == null)
+		if (c == null) {
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceProcessor_error_no_parent);
+		}
 
-		if (!c.getFullPath().isValidSegment(newName))
+		if (!c.getFullPath().isValidSegment(newName)) {
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceProcessor_error_invalid_name);
+		}
 
-		if (c.findMember(newName) != null)
+		if (c.findMember(newName) != null) {
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceProcessor_error_resource_already_exists);
+		}
 
 		RefactoringStatus result= RefactoringStatus.create(c.getWorkspace().validateName(newName, fResource.getType()));
-		if (!result.hasFatalError())
+		if (!result.hasFatalError()) {
 			result.merge(RefactoringStatus.create(c.getWorkspace().validatePath(createNewPath(newName), fResource.getType())));
+		}
 		return result;
 	}
 
@@ -228,12 +232,15 @@ public class RenameResourceProcessor extends RenameProcessor implements IRenameR
 
 	@Override
 	public boolean isApplicable() {
-		if (fResource == null)
+		if (fResource == null) {
 			return false;
-		if (!fResource.exists())
+		}
+		if (!fResource.exists()) {
 			return false;
-		if (!fResource.isAccessible())
+		}
+		if (!fResource.isAccessible()) {
 			return false;
+		}
 		return true;
 	}
 

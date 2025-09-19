@@ -56,7 +56,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  */
 public class CheckConditionsContext {
 
-	private Map<Class<? extends IConditionChecker>, IConditionChecker> fCheckers= new HashMap<>();
+	private final Map<Class<? extends IConditionChecker>, IConditionChecker> fCheckers= new HashMap<>();
 
 	/**
 	 * Returns the condition checker of the given type.
@@ -102,8 +102,9 @@ public class CheckConditionsContext {
 	 * @throws CoreException if an error occurs during condition checking
 	 */
 	public RefactoringStatus check(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
+		if (pm == null) {
 			pm= new NullProgressMonitor();
+		}
 		RefactoringStatus result= new RefactoringStatus();
 		mergeResourceOperationAndValidateEdit();
 		List<IConditionChecker> values= new ArrayList<>(fCheckers.values());
@@ -111,17 +112,20 @@ public class CheckConditionsContext {
 			// Note there can only be one ResourceOperationChecker. So it
 			// is save to not test the case that both objects are
 			// ResourceOperationChecker
-			if (o1 instanceof ResourceChangeChecker)
+			if (o1 instanceof ResourceChangeChecker) {
 				return -1;
-			if (o2 instanceof ResourceChangeChecker)
+			}
+			if (o2 instanceof ResourceChangeChecker) {
 				return 1;
+			}
 			return 0;
 		});
 		SubMonitor sm= SubMonitor.convert(pm, "", values.size()); //$NON-NLS-1$
 		for (IConditionChecker checker : values) {
 			result.merge(checker.check(sm.split(1)));
-			if (pm.isCanceled())
+			if (pm.isCanceled()) {
 				throw new OperationCanceledException();
+			}
 		}
 		pm.done();
 		return result;
@@ -129,11 +133,13 @@ public class CheckConditionsContext {
 
 	private void mergeResourceOperationAndValidateEdit() throws CoreException {
 		ValidateEditChecker validateEditChecker= getChecker(ValidateEditChecker.class);
-		if (validateEditChecker == null)
+		if (validateEditChecker == null) {
 			return;
+		}
 		ResourceChangeChecker resourceChangeChecker= getChecker(ResourceChangeChecker.class);
-		if (resourceChangeChecker == null)
+		if (resourceChangeChecker == null) {
 			return;
+		}
 
 		IFile[] changedFiles= resourceChangeChecker.getChangedFiles();
 		validateEditChecker.addFiles(changedFiles);

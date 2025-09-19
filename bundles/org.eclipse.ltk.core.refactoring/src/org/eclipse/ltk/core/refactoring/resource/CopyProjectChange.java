@@ -51,7 +51,7 @@ public class CopyProjectChange extends ResourceChange {
 
 	private ChangeDescriptor fDescriptor;
 
-	private String fNewName;
+	private final String fNewName;
 
 	private IPath fNewLocation;
 
