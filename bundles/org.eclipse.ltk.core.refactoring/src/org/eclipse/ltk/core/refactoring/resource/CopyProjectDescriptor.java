@@ -103,8 +103,9 @@ public class CopyProjectDescriptor extends RefactoringDescriptor {
 	 * @param resourcePath paths of the resources to be deleted
 	 */
 	public void setResourcePath(IPath resourcePath) {
-		if (resourcePath == null)
+		if (resourcePath == null) {
 			throw new IllegalArgumentException();
+		}
 		fSourcePath= resourcePath;
 	}
 
@@ -114,8 +115,9 @@ public class CopyProjectDescriptor extends RefactoringDescriptor {
 	 * @param project {@link IProject} to be copied
 	 */
 	public void setProjectToCopy(IProject project) {
-		if (project == null)
+		if (project == null) {
 			throw new IllegalArgumentException();
+		}
 		setResourcePath(project.getFullPath());
 	}
 

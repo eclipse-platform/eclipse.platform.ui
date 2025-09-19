@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public class DeleteRefactoring extends ProcessorBasedRefactoring {
 
-	private DeleteProcessor fProcessor;
+	private final DeleteProcessor fProcessor;
 
 	/**
 	 * Constructs a new delete refactoring for the given processor.

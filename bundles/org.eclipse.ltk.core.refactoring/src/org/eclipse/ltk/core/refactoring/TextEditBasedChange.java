@@ -118,11 +118,11 @@ public abstract class TextEditBasedChange extends Change {
 	static final TextEditBasedChangeGroup[] ALL_EDITS= new TextEditBasedChangeGroup[0];
 
 	/** The list of change groups */
-	private List<TextEditBasedChangeGroup> fChangeGroups;
+	private final List<TextEditBasedChangeGroup> fChangeGroups;
 	private GroupCategorySet fCombiedGroupCategories;
 
 	/** The name of the change */
-	private String fName;
+	private final String fName;
 
 	/** The text type */
 	private String fTextType;
@@ -364,13 +364,15 @@ public abstract class TextEditBasedChange extends Change {
 	}
 
 	TextEdit[] mapEdits(TextEdit[] edits, TextEditCopier copier) {
-		if (edits == null)
+		if (edits == null) {
 			return null;
+		}
 		final List<TextEdit> result= new ArrayList<>(edits.length);
 		for (TextEdit e : edits) {
 			TextEdit edit= copier.getCopy(e);
-			if (edit != null)
+			if (edit != null) {
 				result.add(edit);
+			}
 		}
 		return result.toArray(new TextEdit[result.size()]);
 	}
@@ -406,8 +408,9 @@ public abstract class TextEditBasedChange extends Change {
 	 *  reseted to the default text type <code>txt</code>.
 	 */
 	public void setTextType(String type) {
-		if (type == null)
+		if (type == null) {
 			type= "txt"; //$NON-NLS-1$
+		}
 		fTextType= type;
 	}
 }

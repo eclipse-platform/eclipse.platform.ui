@@ -56,11 +56,11 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  */
 public class UndoTextFileChange extends Change {
 
-	private String fName;
-	private UndoEdit fUndo;
-	private IFile fFile;
-	private ContentStamp fContentStampToRestore;
-	private int fSaveMode;
+	private final String fName;
+	private final UndoEdit fUndo;
+	private final IFile fFile;
+	private final ContentStamp fContentStampToRestore;
+	private final int fSaveMode;
 
 	private boolean fDirty;
 	private BufferValidationState fValidationState;
@@ -134,15 +134,17 @@ public class UndoTextFileChange extends Change {
 	@Override
 	public Object[] getAffectedObjects() {
 		Object modifiedElement= getModifiedElement();
-		if (modifiedElement == null)
+		if (modifiedElement == null) {
 			return null;
+		}
 		return new Object[] { modifiedElement };
 	}
 
 	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
-		if (pm == null)
+		if (pm == null) {
 			pm= new NullProgressMonitor();
+		}
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
 			fValidationState= BufferValidationState.create(fFile);
@@ -153,12 +155,14 @@ public class UndoTextFileChange extends Change {
 
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
+		if (pm == null) {
 			pm= new NullProgressMonitor();
+		}
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
-			if (fValidationState == null)
+			if (fValidationState == null) {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), "UndoTextFileChange has not been initialialized")); //$NON-NLS-1$
+			}
 
 			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 			fDirty= buffer != null && buffer.isDirty();
@@ -192,23 +196,27 @@ public class UndoTextFileChange extends Change {
 			}
 			return createUndoChange(redo, currentStamp);
 		} catch (BadLocationException e) {
-			if (fValidationState == null || !fValidationState.wasDerived())
+			if (fValidationState == null || !fValidationState.wasDerived()) {
 				throw Changes.asCoreException(e);
-			else
+			} else {
 				return new NullChange();
+			}
 		} catch (MalformedTreeException e) {
-			if (fValidationState == null || !fValidationState.wasDerived())
+			if (fValidationState == null || !fValidationState.wasDerived()) {
 				throw Changes.asCoreException(e);
-			else
+			} else {
 				return new NullChange();
+			}
 		} catch (CoreException e) {
-			if (fValidationState == null || !fValidationState.wasDerived())
+			if (fValidationState == null || !fValidationState.wasDerived()) {
 				throw e;
-			else
+			} else {
 				return new NullChange();
+			}
 		} finally {
-			if (buffer != null)
+			if (buffer != null) {
 				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, subMon.newChild(1));
+			}
 		}
 	}
 

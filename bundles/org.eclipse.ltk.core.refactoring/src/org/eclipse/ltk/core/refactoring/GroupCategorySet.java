@@ -65,19 +65,22 @@ public class GroupCategorySet {
 		// for performance we are using identity here. This is
 		// valid since group categories are value objects and
 		// therefore best used as static final fields.
-		if (one == two)
+		if (one == two) {
 			return one;
-		if (one == NONE)
+		}
+		if (one == NONE) {
 			return two;
-		if (two == NONE)
+		}
+		if (two == NONE) {
 			return one;
+		}
 
 		Set<GroupCategory> combined= new HashSet<>(one.asList());
 		combined.addAll(two.asList());
 		return new GroupCategorySet(combined);
 	}
 
-	private List<GroupCategory> fContent;
+	private final List<GroupCategory> fContent;
 
 	private GroupCategorySet() {
 		fContent= Collections.emptyList();
@@ -139,8 +142,9 @@ public class GroupCategorySet {
 	 */
 	public boolean containsOneCategory(List<GroupCategory> categories) {
 		for (GroupCategory category : categories) {
-			if(contains(category))
+			if(contains(category)) {
 				return true;
+			}
 		}
 		return false;
 	}

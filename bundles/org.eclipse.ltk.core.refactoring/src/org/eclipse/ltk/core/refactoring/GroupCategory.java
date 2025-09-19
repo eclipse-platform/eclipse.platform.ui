@@ -28,9 +28,9 @@ import org.eclipse.core.runtime.Assert;
  */
 public class GroupCategory {
 
-	private String fId;
-	private String fName;
-	private String fDescription;
+	private final String fId;
+	private final String fName;
+	private final String fDescription;
 
 	/**
 	 * Creates a new group category with the given name and
@@ -69,10 +69,12 @@ public class GroupCategory {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null || !getClass().equals(obj.getClass()))
+		}
+		if (obj == null || !getClass().equals(obj.getClass())) {
 			return false;
+		}
 		return fId.equals(((GroupCategory)obj).fId);
 	}
 

@@ -206,8 +206,7 @@ public abstract class RefactoringContribution {
 	 * @see #createDescriptor(String, String, String, String, Map, int)
 	 */
 	public Map<String, String> retrieveArgumentMap(final RefactoringDescriptor descriptor) {
-		if (descriptor instanceof DefaultRefactoringDescriptor) {
-			final DefaultRefactoringDescriptor extended= (DefaultRefactoringDescriptor) descriptor;
+		if (descriptor instanceof final DefaultRefactoringDescriptor extended) {
 			return extended.getArguments();
 		}
 		return Collections.emptyMap();

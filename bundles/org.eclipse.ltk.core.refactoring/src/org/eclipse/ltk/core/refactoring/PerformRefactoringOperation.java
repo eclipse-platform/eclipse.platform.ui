@@ -40,9 +40,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
  */
 public class PerformRefactoringOperation implements IWorkspaceRunnable {
 
-	private int fStyle;
+	private final int fStyle;
 	private RefactoringContext fRefactoringContext;
-	private Refactoring fRefactoring;
+	private final Refactoring fRefactoring;
 
 	private RefactoringStatus fPreconditionStatus;
 	private RefactoringStatus fValidationStatus;
@@ -136,8 +136,9 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 			}
 		} finally {
 			subMon.done();
-			if (fRefactoringContext != null)
+			if (fRefactoringContext != null) {
 				fRefactoringContext.dispose();
+			}
 		}
 	}
 }

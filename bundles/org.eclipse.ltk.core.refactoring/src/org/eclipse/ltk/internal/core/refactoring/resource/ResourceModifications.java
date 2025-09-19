@@ -111,7 +111,7 @@ public class ResourceModifications {
 		}
 	}
 	public static class MoveDescription extends DeltaDescription {
-		private IPath fDestination;
+		private final IPath fDestination;
 		public MoveDescription(IResource resource, IPath destination) {
 			super(resource);
 			fDestination= destination;
@@ -126,7 +126,7 @@ public class ResourceModifications {
 		}
 	}
 	public static class CopyDescription extends DeltaDescription {
-		private IPath fDestination;
+		private final IPath fDestination;
 		public CopyDescription(IResource resource, IPath destination) {
 			super(resource);
 			fDestination= destination;
@@ -160,8 +160,9 @@ public class ResourceModifications {
 	 *  resources to be created
 	 */
 	public void addCreate(IResource create) {
-		if (fCreate == null)
+		if (fCreate == null) {
 			fCreate= new ArrayList<>(2);
+		}
 		fCreate.add(create);
 		if (fIgnoreCount == 0) {
 			internalAdd(new CreateDescription(create));
@@ -175,8 +176,9 @@ public class ResourceModifications {
 	 * @param delete the resource to be deleted
 	 */
 	public void addDelete(IResource delete) {
-		if (fDelete == null)
+		if (fDelete == null) {
 			fDelete= new ArrayList<>(2);
+		}
 		fDelete.add(delete);
 		if (fIgnoreCount == 0) {
 			internalAdd(new DeleteDescription(delete));
@@ -305,8 +307,9 @@ public class ResourceModifications {
 	}
 
 	public void addDelta(DeltaDescription description) {
-		if (fIgnoreCount > 0)
+		if (fIgnoreCount > 0) {
 			return;
+		}
 		internalAdd(description);
 	}
 
@@ -325,19 +328,22 @@ public class ResourceModifications {
 	 * @return whether the resource will exist or not
 	 */
 	public boolean willExist(IResource resource) {
-		if (fDeltaDescriptions == null)
+		if (fDeltaDescriptions == null) {
 			return false;
+		}
 		IPath fullPath= resource.getFullPath();
 		for (DeltaDescription delta : fDeltaDescriptions) {
-			if (fullPath.equals(delta.getDestinationPath()))
+			if (fullPath.equals(delta.getDestinationPath())) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	public void buildDelta(IResourceChangeDescriptionFactory builder) {
-		if (fDeltaDescriptions == null)
+		if (fDeltaDescriptions == null) {
 			return;
+		}
 		for (DeltaDescription deltaDescription : fDeltaDescriptions) {
 			deltaDescription.buildDelta(builder);
 		}
@@ -359,8 +365,9 @@ public class ResourceModifications {
 	}
 
 	private void internalAdd(DeltaDescription description) {
-		if (fDeltaDescriptions == null)
+		if (fDeltaDescriptions == null) {
 			fDeltaDescriptions= new ArrayList<>();
+		}
 		fDeltaDescriptions.add(description);
 	}
 }

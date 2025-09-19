@@ -111,9 +111,11 @@ public final class RefactoringHistorySerializer implements IRefactoringHistoryLi
 		final NullProgressMonitor monitor= new NullProgressMonitor();
 		if (type == RefactoringHistoryEvent.PUSHED || type == RefactoringHistoryEvent.ADDED) {
 			final RefactoringDescriptor descriptor= proxy.requestDescriptor(monitor);
-			if (descriptor != null)
+			if (descriptor != null) {
 				manager.addRefactoringDescriptor(descriptor, type == RefactoringHistoryEvent.ADDED, monitor);
-		} else if (type == RefactoringHistoryEvent.POPPED)
+			}
+		} else if (type == RefactoringHistoryEvent.POPPED) {
 			manager.removeRefactoringDescriptors(new RefactoringDescriptorProxy[] { proxy}, monitor, RefactoringCoreMessages.RefactoringHistoryService_updating_history);
+		}
 	}
 }

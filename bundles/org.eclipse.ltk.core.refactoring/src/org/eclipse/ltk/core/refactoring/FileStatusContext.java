@@ -32,8 +32,8 @@ import org.eclipse.jface.text.IRegion;
  */
 public class FileStatusContext extends RefactoringStatusContext {
 
-	private IFile fFile;
-	private IRegion fSourceRegion;
+	private final IFile fFile;
+	private final IRegion fSourceRegion;
 
 	/**
 	 * Creates an status entry context for the given file and source region.

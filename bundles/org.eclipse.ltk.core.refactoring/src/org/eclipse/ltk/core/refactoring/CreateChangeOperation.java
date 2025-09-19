@@ -51,7 +51,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.UnknownRefactoringDescr
  */
 public class CreateChangeOperation implements IWorkspaceRunnable {
 
-	private Refactoring fRefactoring;
+	private final Refactoring fRefactoring;
 
 	private CheckConditionsOperation fCheckConditionOperation;
 	private int fConditionCheckingFailedSeverity;
@@ -146,8 +146,9 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 					@Override
 					public final ChangeDescriptor getDescriptor() {
 						String name= fChange.getName();
-						if (name.length() == 0)
+						if (name.length() == 0) {
 							name= RefactoringCoreMessages.CreateChangeOperation_unknown_Refactoring;
+						}
 						UnknownRefactoringDescriptor unknownDescriptor= new UnknownRefactoringDescriptor(name);
 						return new RefactoringChangeDescriptor(unknownDescriptor);
 					}
@@ -167,8 +168,9 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 	 * @return the status of the condition checking
 	 */
 	public RefactoringStatus getConditionCheckingStatus() {
-		if (fCheckConditionOperation != null)
+		if (fCheckConditionOperation != null) {
 			return fCheckConditionOperation.getStatus();
+		}
 		return null;
 	}
 
@@ -181,8 +183,9 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 	 * @return the condition checking style
 	 */
 	public int getConditionCheckingStyle() {
-		if (fCheckConditionOperation != null)
+		if (fCheckConditionOperation != null) {
 			return fCheckConditionOperation.getStyle();
+		}
 		return CheckConditionsOperation.NONE;
 	}
 }

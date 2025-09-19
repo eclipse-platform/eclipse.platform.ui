@@ -235,8 +235,9 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 								if (!status.hasFatalError()) {
 									ResourcesPlugin.getWorkspace().run(operation, subMon.newChild(9, SubMonitor.SUPPRESS_SUBTASK));
 									status.merge(operation.getConditionStatus());
-									if (!status.hasFatalError())
+									if (!status.hasFatalError()) {
 										status.merge(operation.getValidationStatus());
+									}
 								}
 							} finally {
 								refactoringPerformed(refactoring, subMon.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
@@ -244,8 +245,9 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 						}
 					} finally {
 						fExecutionStatus.merge(status);
-						if (context != null)
+						if (context != null) {
 							context.dispose();
+						}
 					}
 				}
 			}

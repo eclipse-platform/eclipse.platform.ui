@@ -47,7 +47,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  */
 public class ResourceChangeChecker implements IConditionChecker {
 
-	private IResourceChangeDescriptionFactory fDeltaFactory;
+	private final IResourceChangeDescriptionFactory fDeltaFactory;
 
 	public ResourceChangeChecker() {
 		fDeltaFactory= ResourceChangeValidator.getValidator().createDeltaFactory();
@@ -113,8 +113,9 @@ public class ResourceChangeChecker implements IConditionChecker {
 	}
 
 	private static RefactoringStatus createFrom(IStatus status) {
-		if (status.isOK())
+		if (status.isOK()) {
 			return new RefactoringStatus();
+		}
 
 		if (!status.isMultiStatus()) {
 			switch (status.getSeverity()) {

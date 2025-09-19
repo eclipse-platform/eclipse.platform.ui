@@ -60,11 +60,11 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
  * @since 3.15
  */
 public class CopyProjectProcessor extends CopyProcessor {
-	private IProject fProject;
+	private final IProject fProject;
 
-	private String fNewName;
+	private final String fNewName;
 
-	private IPath fNewLocation;
+	private final IPath fNewLocation;
 
 	/**
 	 * Create a new copy project processor.
@@ -163,8 +163,9 @@ public class CopyProjectProcessor extends CopyProcessor {
 	public boolean isSynchronizedExcludingLinkedResources(IResource resource) throws CoreException {
 		boolean[] result= { true };
 		resource.accept((IResourceVisitor) visitedResource -> {
-			if (!result[0] || visitedResource.isLinked())
+			if (!result[0] || visitedResource.isLinked()) {
 				return false;
+			}
 			if (!visitedResource.isSynchronized(IResource.DEPTH_ZERO)) {
 				result[0]= false;
 				return false;
@@ -187,8 +188,9 @@ public class CopyProjectProcessor extends CopyProcessor {
 	}
 
 	private void checkDirtyFile(RefactoringStatus result, IFile file) {
-		if (!file.exists())
+		if (!file.exists()) {
 			return;
+		}
 		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 		if (buffer != null && buffer.isDirty()) {
 			String message= RefactoringCoreMessages.DeleteResourcesProcessor_warning_unsaved_file;
@@ -246,12 +248,15 @@ public class CopyProjectProcessor extends CopyProcessor {
 
 	@Override
 	public boolean isApplicable() throws CoreException {
-		if (fProject == null)
+		if (fProject == null) {
 			return false;
-		if (!fProject.exists())
+		}
+		if (!fProject.exists()) {
 			return false;
-		if (!fProject.isAccessible())
+		}
+		if (!fProject.isAccessible()) {
 			return false;
+		}
 		return true;
 	}
 

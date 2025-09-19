@@ -44,8 +44,9 @@ public class ResourceProcessors {
 	}
 
 	private static void computeNatures(Set<String> result, Set<IProject> visitedProjects, IProject focus) throws CoreException {
-		if (visitedProjects.contains(focus))
+		if (visitedProjects.contains(focus)) {
 			return;
+		}
 		String[] pns= focus.getDescription().getNatureIds();
 		result.addAll(Arrays.asList(pns));
 		visitedProjects.add(focus);
@@ -57,16 +58,18 @@ public class ResourceProcessors {
 
 	public static IPath handleToResourcePath(final String project, final String handle) {
 		final IPath path= Path.fromPortableString(handle);
-		if (project != null && project.length() > 0 && !path.isAbsolute())
+		if (project != null && project.length() > 0 && !path.isAbsolute()) {
 			return new Path(project).append(path).makeAbsolute();
+		}
 		return path;
 	}
 
 	public static String resourcePathToHandle(final String project, final IPath resourcePath) {
-		if (project != null && project.length() > 0 && resourcePath.segmentCount() != 1)
+		if (project != null && project.length() > 0 && resourcePath.segmentCount() != 1) {
 			if (resourcePath.segment(0).equals(project)) {
 				return resourcePath.removeFirstSegments(1).toPortableString();
 			}
+		}
 		return resourcePath.toPortableString();
 	}
 

@@ -38,8 +38,9 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 	 * @return a hash code value for the array
 	 */
 	private static int hashCode(final Object[] array) {
-		if (array == null)
+		if (array == null) {
 			return 0;
+		}
 		int result= 1;
 		for (Object a : array) {
 			result= 31 * result + (a == null ? 0 : a.hashCode());
@@ -67,15 +68,19 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (this == object)
+		if (this == object) {
 			return true;
-		if (object == null)
+		}
+		if (object == null) {
 			return false;
-		if (getClass() != object.getClass())
+		}
+		if (getClass() != object.getClass()) {
 			return false;
+		}
 		final RefactoringHistoryImplementation other= (RefactoringHistoryImplementation) object;
-		if (!Arrays.equals(getDescriptors(), other.getDescriptors()))
+		if (!Arrays.equals(getDescriptors(), other.getDescriptors())) {
 			return false;
+		}
 		return true;
 	}
 
@@ -90,8 +95,9 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 
 	@Override
 	public RefactoringDescriptorProxy[] getDescriptors() {
-		if (!fSorted && fDescriptorProxies.length > 1)
+		if (!fSorted && fDescriptorProxies.length > 1) {
 			RefactoringHistoryManager.sortRefactoringDescriptorsDescending(fDescriptorProxies);
+		}
 		fSorted= true;
 		final RefactoringDescriptorProxy[] proxies= new RefactoringDescriptorProxy[fDescriptorProxies.length];
 		System.arraycopy(fDescriptorProxies, 0, proxies, 0, fDescriptorProxies.length);

@@ -44,8 +44,8 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  */
 public class CompositeChange extends Change {
 
-	private String fName;
-	private List<Change> fChanges;
+	private final String fName;
+	private final List<Change> fChanges;
 	private boolean fIsSynthetic;
 	private Change fUndoUntilException;
 
@@ -269,8 +269,9 @@ public class CompositeChange extends Change {
 		try {
 			for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext();) {
 				change= iter.next();
-				if (canceled && !internalProcessOnCancel(change))
+				if (canceled && !internalProcessOnCancel(change)) {
 					continue;
+				}
 
 				if (change.isEnabled()) {
 					Change undoChange= null;
@@ -278,8 +279,9 @@ public class CompositeChange extends Change {
 						undoChange= change.perform(sm.split(1));
 					} catch(OperationCanceledException e) {
 						canceled= true;
-						if (!internalContinueOnCancel())
+						if (!internalContinueOnCancel()) {
 							throw e;
+						}
 						undos= null;
 					}
 					if (undos != null) {
@@ -309,8 +311,9 @@ public class CompositeChange extends Change {
 					}
 				});
 			}
-			if (canceled)
+			if (canceled) {
 				throw new OperationCanceledException();
+			}
 			if (undos != null) {
 				Collections.reverse(undos);
 				return createUndoChange(undos.toArray(new Change[undos.size()]));
@@ -460,13 +463,15 @@ public class CompositeChange extends Change {
 
 	@Override
 	public Object[] getAffectedObjects() {
-		if (fChanges.isEmpty())
+		if (fChanges.isEmpty()) {
 			return new Object[0];
+		}
 		List<Object> result= new ArrayList<>();
 		for (Change change : fChanges) {
 			Object[] affectedObjects= change.getAffectedObjects();
-			if (affectedObjects == null)
+			if (affectedObjects == null) {
 				return null;
+			}
 			result.addAll(Arrays.asList(affectedObjects));
 		}
 		return result.toArray();
@@ -486,8 +491,9 @@ public class CompositeChange extends Change {
 	public ChangeDescriptor getDescriptor() {
 		for (Change change : fChanges) {
 			final ChangeDescriptor descriptor= change.getDescriptor();
-			if (descriptor != null)
+			if (descriptor != null) {
 				return descriptor;
+			}
 		}
 		return null;
 	}

@@ -41,8 +41,8 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
  */
 public class CheckConditionsOperation implements IWorkspaceRunnable {
 
-	private Refactoring fRefactoring;
-	private int fStyle;
+	private final Refactoring fRefactoring;
+	private final int fStyle;
 	private RefactoringStatus fStatus;
 
 	/** Flag indicating that no conditions will be checked */
@@ -74,16 +74,18 @@ public class CheckConditionsOperation implements IWorkspaceRunnable {
 
 	@Override
 	public void run(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
+		if (pm == null) {
 			pm= new NullProgressMonitor();
+		}
 		try {
 			fStatus= null;
-			if ((fStyle & ALL_CONDITIONS) == ALL_CONDITIONS)
+			if ((fStyle & ALL_CONDITIONS) == ALL_CONDITIONS) {
 				fStatus= fRefactoring.checkAllConditions(pm);
-			else if ((fStyle & INITIAL_CONDITONS) == INITIAL_CONDITONS)
+			} else if ((fStyle & INITIAL_CONDITONS) == INITIAL_CONDITONS) {
 				fStatus= fRefactoring.checkInitialConditions(pm);
-			else if ((fStyle & FINAL_CONDITIONS) == FINAL_CONDITIONS)
+			} else if ((fStyle & FINAL_CONDITIONS) == FINAL_CONDITIONS) {
 				fStatus= fRefactoring.checkFinalConditions(pm);
+			}
 		} finally {
 			pm.done();
 		}
@@ -123,12 +125,13 @@ public class CheckConditionsOperation implements IWorkspaceRunnable {
 	}
 
 	/* package */ int getTicks(RefactoringTickProvider provider) {
-		if ((fStyle & ALL_CONDITIONS) == ALL_CONDITIONS)
+		if ((fStyle & ALL_CONDITIONS) == ALL_CONDITIONS) {
 			return provider.getCheckAllConditionsTicks();
-		else if ((fStyle & INITIAL_CONDITONS) == INITIAL_CONDITONS)
+		} else if ((fStyle & INITIAL_CONDITONS) == INITIAL_CONDITONS) {
 			return provider.getCheckInitialConditionsTicks();
-		else if ((fStyle & FINAL_CONDITIONS) == FINAL_CONDITIONS)
+		} else if ((fStyle & FINAL_CONDITIONS) == FINAL_CONDITIONS) {
 			return provider.getCheckFinalConditionsTicks();
+		}
 		return 0;
 	}
 }

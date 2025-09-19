@@ -29,9 +29,9 @@ import org.eclipse.ltk.core.refactoring.ContentStamp;
 public class ContentStamps {
 
 	private static class ContentStampImpl extends ContentStamp {
-		private int fKind;
-		private long fValue;
-		private long fFileStamp;
+		private final int fKind;
+		private final long fValue;
+		private final long fFileStamp;
 
 		public static final int FILE= 1;
 		public static final int DOCUMENT= 2;
@@ -64,8 +64,9 @@ public class ContentStamps {
 		}
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof ContentStampImpl))
+			if (!(obj instanceof ContentStampImpl)) {
 				return false;
+			}
 			return ((ContentStampImpl)obj).fValue == fValue;
 		}
 		@Override
@@ -94,29 +95,31 @@ public class ContentStamps {
 	public static ContentStamp get(IFile file, IDocument document) {
 		if (document instanceof IDocumentExtension4) {
 			long stamp= ((IDocumentExtension4)document).getModificationStamp();
-			if (stamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP)
+			if (stamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP) {
 				return NULL_CONTENT_STAMP;
+			}
 			return ContentStampImpl.createDocumentStamp(stamp, file.getModificationStamp());
 		}
 		long stamp= file.getModificationStamp();
-		if (stamp == IResource.NULL_STAMP)
+		if (stamp == IResource.NULL_STAMP) {
 			return NULL_CONTENT_STAMP;
+		}
 		return ContentStampImpl.createFileStamp(stamp);
 	}
 
 	public static void set(IFile file, ContentStamp s) throws CoreException {
-		if (!(s instanceof ContentStampImpl))
+		if (!(s instanceof ContentStampImpl stamp)) {
 			return;
-		ContentStampImpl stamp= (ContentStampImpl)s;
+		}
 		long value= stamp.getFileValue();
 		Assert.isTrue(value != IResource.NULL_STAMP);
 		file.revertModificationStamp(value);
 	}
 
 	public static boolean set(IDocument document, ContentStamp s) throws CoreException {
-		if (!(s instanceof ContentStampImpl))
+		if (!(s instanceof ContentStampImpl stamp)) {
 			return false;
-		ContentStampImpl stamp= (ContentStampImpl)s;
+		}
 		if (document instanceof IDocumentExtension4 && stamp.isDocumentStamp()) {
 			try {
 				((IDocumentExtension4)document).replace(0, 0, "", stamp.getValue()); //$NON-NLS-1$

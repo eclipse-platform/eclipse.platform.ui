@@ -31,7 +31,7 @@ import org.eclipse.text.edits.TextEditGroup;
  */
 public class CategorizedTextEditGroup extends TextEditGroup {
 
-	private GroupCategorySet fGroupCategories;
+	private final GroupCategorySet fGroupCategories;
 
 	/**
 	 * Creates a new text edit group with the given name and group

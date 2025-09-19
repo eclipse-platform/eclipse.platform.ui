@@ -55,8 +55,9 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	 * @return the singleton instance
 	 */
 	public static RefactoringContributionManager getInstance() {
-		if (fInstance == null)
+		if (fInstance == null) {
 			fInstance= new RefactoringContributionManager();
+		}
 		return fInstance;
 	}
 
@@ -108,8 +109,9 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 		Assert.isNotNull(arguments);
 		Assert.isLegal(flags >= RefactoringDescriptor.NONE);
 		final RefactoringContribution contribution= getRefactoringContribution(id);
-		if (contribution != null)
+		if (contribution != null) {
 			return contribution.createDescriptor(id, project, description, comment, arguments, flags);
+		}
 		return new DefaultRefactoringDescriptor(id, project, description, comment, arguments, flags);
 	}
 
@@ -171,19 +173,23 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 						try {
 							final Object implementation= element.createExecutableExtension(ATTRIBUTE_CLASS);
 							if (implementation instanceof RefactoringContribution) {
-								if (fContributionCache.get(attributeId) != null)
+								if (fContributionCache.get(attributeId) != null) {
 									RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_duplicate_warning, new String[] { attributeId, point}));
+								}
 								fContributionCache.put(attributeId, (RefactoringContribution) implementation);
 								fIdCache.put((RefactoringContribution) implementation, attributeId);
-							} else
+							} else {
 								RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_creation_error, new String[] { point, attributeId}));
+							}
 						} catch (CoreException exception) {
 							RefactoringCorePlugin.log(exception);
 						}
-					} else
+					} else {
 						RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_missing_class_attribute, new String[] { point, attributeId, ATTRIBUTE_CLASS}));
-				} else
+					}
+				} else {
 					RefactoringCorePlugin.logErrorMessage(Messages.format(RefactoringCoreMessages.RefactoringCorePlugin_missing_attribute, new String[] { point, ATTRIBUTE_ID}));
+				}
 			}
 		}
 	}

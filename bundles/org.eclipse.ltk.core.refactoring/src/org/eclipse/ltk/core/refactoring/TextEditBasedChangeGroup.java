@@ -36,9 +36,9 @@ import org.eclipse.jface.text.IRegion;
 public class TextEditBasedChangeGroup {
 
 	/** The associated change */
-	private TextEditBasedChange fChange;
+	private final TextEditBasedChange fChange;
 	private boolean fIsEnabled;
-	private TextEditGroup fTextEditGroup;
+	private final TextEditGroup fTextEditGroup;
 
 	/**
 	 * Creates new <code>TextEditBasedChangeGroup</code> for the given <code>

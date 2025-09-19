@@ -27,8 +27,8 @@ import org.eclipse.core.runtime.Assert;
  */
 public class RenameArguments extends RefactoringArguments {
 
-	private String fNewName;
-	private boolean fUpdateReferences;
+	private final String fNewName;
+	private final boolean fUpdateReferences;
 
 	/**
 	 * Creates new rename arguments.

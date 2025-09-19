@@ -193,8 +193,9 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	public boolean isSynchronizedExcludingLinkedResources(IResource resource) throws CoreException {
 		boolean[] result= { true };
 		resource.accept((IResourceVisitor) visitedResource -> {
-			if (!result[0] || visitedResource.isLinked())
+			if (!result[0] || visitedResource.isLinked()) {
 				return false;
+			}
 			if (!visitedResource.isSynchronized(IResource.DEPTH_ZERO)) {
 				result[0]= false;
 				return false;
@@ -206,8 +207,9 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 
 	private void checkDirtyResources(final RefactoringStatus result) throws CoreException {
 		for (IResource resource : fResources) {
-			if (resource instanceof IProject && !((IProject) resource).isOpen())
+			if (resource instanceof IProject && !((IProject) resource).isOpen()) {
 				continue;
+			}
 			resource.accept((IResourceVisitor) visitedResource -> {
 				if (visitedResource instanceof IFile) {
 					checkDirtyFile(result, (IFile)visitedResource);
@@ -218,8 +220,9 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	}
 
 	private void checkDirtyFile(RefactoringStatus result, IFile file) {
-		if (!file.exists())
+		if (!file.exists()) {
 			return;
+		}
 		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 		if (buffer != null && buffer.isDirty()) {
 			String message= RefactoringCoreMessages.DeleteResourcesProcessor_warning_unsaved_file;

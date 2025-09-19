@@ -370,13 +370,15 @@ public abstract class TextChange extends TextEditBasedChange {
 	 */
 	public TextEdit[] getPreviewEdits(TextEdit[] originals) {
 		Assert.isTrue(getKeepPreviewEdits() && fCopier != null && originals != null);
-		if (originals.length == 0)
+		if (originals.length == 0) {
 			return new TextEdit[0];
+		}
 		List<TextEdit> result= new ArrayList<>(originals.length);
 		for (TextEdit original : originals) {
 			TextEdit copy= fCopier.getCopy(original);
-			if (copy != null)
+			if (copy != null) {
 				result.add(copy);
+			}
 		}
 		return result.toArray(new TextEdit[result.size()]);
 	}
@@ -530,8 +532,9 @@ public abstract class TextChange extends TextEditBasedChange {
 	}
 
 	private TextEditProcessor createTextEditProcessor(IDocument document, int flags, boolean preview) {
-		if (fEdit == null)
+		if (fEdit == null) {
 			return new TextEditProcessor(document, new MultiTextEdit(0,0), flags);
+		}
 		List<TextEdit> excludes= new ArrayList<>(0);
 		TextEditBasedChangeGroup[] groups= getChangeGroups();
 		for (TextEditBasedChangeGroup edit : groups) {
@@ -543,14 +546,16 @@ public abstract class TextChange extends TextEditBasedChange {
 			fCopier= new TextEditCopier(fEdit);
 			TextEdit copiedEdit= fCopier.perform();
 			boolean keep= getKeepPreviewEdits();
-			if (keep)
+			if (keep) {
 				flags= flags | TextEdit.UPDATE_REGIONS;
+			}
 			LocalTextEditProcessor result= new LocalTextEditProcessor(document, copiedEdit, flags);
 			result.setExcludes(mapEdits(
 				excludes.toArray(new TextEdit[excludes.size()]),
 				fCopier));
-			if (!keep)
+			if (!keep) {
 				fCopier= null;
+			}
 			return result;
 		} else {
 			LocalTextEditProcessor result= new LocalTextEditProcessor(document, fEdit, flags | TextEdit.UPDATE_REGIONS);
@@ -560,8 +565,9 @@ public abstract class TextChange extends TextEditBasedChange {
 	}
 
 	private TextEditProcessor createTextEditProcessor(IDocument document, int flags, TextEditBasedChangeGroup[] changes) {
-		if (fEdit == null)
+		if (fEdit == null) {
 			return new TextEditProcessor(document, new MultiTextEdit(0,0), flags);
+		}
 		List<TextEdit> includes= new ArrayList<>(0);
 		for (TextEditBasedChangeGroup change : changes) {
 			Assert.isTrue(change.getTextEditChange() == this);
@@ -572,37 +578,42 @@ public abstract class TextChange extends TextEditBasedChange {
 		fCopier= new TextEditCopier(fEdit);
 		TextEdit copiedEdit= fCopier.perform();
 		boolean keep= getKeepPreviewEdits();
-		if (keep)
+		if (keep) {
 			flags= flags | TextEdit.UPDATE_REGIONS;
+		}
 		LocalTextEditProcessor result= new LocalTextEditProcessor(document, copiedEdit, flags);
 		result.setIncludes(mapEdits(
 			includes.toArray(new TextEdit[includes.size()]),
 			fCopier));
-		if (!keep)
+		if (!keep) {
 			fCopier= null;
+		}
 		return result;
 	}
 
 	private IRegion getRegion(TextEditBasedChangeGroup[] changes) {
 		if (changes == ALL_EDITS) {
-			if (fEdit == null)
+			if (fEdit == null) {
 				return null;
+			}
 			return fEdit.getRegion();
 		} else {
 			List<TextEdit> edits= new ArrayList<>();
 			for (TextEditBasedChangeGroup change : changes) {
 				edits.addAll(Arrays.asList(change.getTextEditGroup().getTextEdits()));
 			}
-			if (edits.isEmpty())
+			if (edits.isEmpty()) {
 				return null;
+			}
 			return TextEdit.getCoverage(edits.toArray(new TextEdit[edits.size()]));
 		}
 	}
 
 	private IRegion getNewRegion(TextEditBasedChangeGroup[] changes) {
 		if (changes == ALL_EDITS) {
-			if (fEdit == null)
+			if (fEdit == null) {
 				return null;
+			}
 			return fCopier.getCopy(fEdit).getRegion();
 		} else {
 			List<TextEdit> result= new ArrayList<>();
@@ -610,12 +621,14 @@ public abstract class TextChange extends TextEditBasedChange {
 				TextEdit[] edits= change.getTextEditGroup().getTextEdits();
 				for (TextEdit edit : edits) {
 					TextEdit copy= fCopier.getCopy(edit);
-					if (copy != null)
+					if (copy != null) {
 						result.add(copy);
+					}
 				}
 			}
-			if (result.isEmpty())
+			if (result.isEmpty()) {
 				return null;
+			}
 			return TextEdit.getCoverage(result.toArray(new TextEdit[result.size()]));
 		}
 	}
@@ -624,7 +637,8 @@ public abstract class TextChange extends TextEditBasedChange {
 	public void setKeepPreviewEdits(boolean keep) {
 		super.setKeepPreviewEdits(keep);
 
-		if (!keep)
+		if (!keep) {
 			fCopier= null;
+		}
 	}
 }

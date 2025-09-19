@@ -43,8 +43,7 @@ public class DeleteResourcesRefactoringContribution extends RefactoringContribut
 
 	@Override
 	public Map<String, String> retrieveArgumentMap(RefactoringDescriptor descriptor) {
-		if (descriptor instanceof DeleteResourcesDescriptor) {
-			DeleteResourcesDescriptor deleteDesc= (DeleteResourcesDescriptor) descriptor;
+		if (descriptor instanceof DeleteResourcesDescriptor deleteDesc) {
 			HashMap<String, String> map= new HashMap<>();
 			IPath[] resources= deleteDesc.getResourcePaths();
 			String project= deleteDesc.getProject();

@@ -49,8 +49,7 @@ public final class RenameResourceRefactoringContribution extends RefactoringCont
 	public Map<String, String> retrieveArgumentMap(final RefactoringDescriptor descriptor) {
 		HashMap<String, String> map= new HashMap<>();
 
-		if (descriptor instanceof RenameResourceDescriptor) {
-			RenameResourceDescriptor resourceDescriptor= (RenameResourceDescriptor) descriptor;
+		if (descriptor instanceof RenameResourceDescriptor resourceDescriptor) {
 			map.put(ATTRIBUTE_INPUT, ResourceProcessors.resourcePathToHandle(descriptor.getProject(), resourceDescriptor.getResourcePath()));
 			map.put(ATTRIBUTE_NAME, resourceDescriptor.getNewName());
 			map.put(ATTRIBUTE_UPDATE_REFERENCES, resourceDescriptor.isUpdateReferences() ? "true" : "false"); //$NON-NLS-1$//$NON-NLS-2$

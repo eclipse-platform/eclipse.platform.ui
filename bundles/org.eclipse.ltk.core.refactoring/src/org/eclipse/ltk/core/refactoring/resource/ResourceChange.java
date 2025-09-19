@@ -128,22 +128,27 @@ public abstract class ResourceChange extends Change {
 		IResource resource= getModifiedResource();
 		checkExistence(result, resource);
 		subMonitor.worked(1);
-		if (result.hasFatalError())
+		if (result.hasFatalError()) {
 			return result;
-		if (fValidationMethod == VALIDATE_DEFAULT)
+		}
+		if (fValidationMethod == VALIDATE_DEFAULT) {
 			return result;
+		}
 
 		ValidationState state= new ValidationState(resource);
 		state.checkModificationStamp(result, fModificationStamp);
-		if (result.hasFatalError())
+		if (result.hasFatalError()) {
 			return result;
+		}
 		state.checkSameReadOnly(result, fReadOnly);
-		if (result.hasFatalError())
+		if (result.hasFatalError()) {
 			return result;
+		}
 		if ((fValidationMethod & VALIDATE_NOT_READ_ONLY) != 0) {
 			state.checkReadOnly(result);
-			if (result.hasFatalError())
+			if (result.hasFatalError()) {
 				return result;
+			}
 		}
 		if ((fValidationMethod & SAVE_IF_DIRTY) != 0) {
 			state.saveIfDirty(result, fModificationStamp, subMonitor.newChild(1));
@@ -170,15 +175,18 @@ public abstract class ResourceChange extends Change {
 	 */
 	protected static void checkIfModifiable(RefactoringStatus result, IResource resource, int validationMethod) {
 		checkExistence(result, resource);
-		if (result.hasFatalError())
+		if (result.hasFatalError()) {
 			return;
-		if (validationMethod == VALIDATE_DEFAULT)
+		}
+		if (validationMethod == VALIDATE_DEFAULT) {
 			return;
+		}
 		ValidationState state= new ValidationState(resource);
 		if ((validationMethod & VALIDATE_NOT_READ_ONLY) != 0) {
 			state.checkReadOnly(result);
-			if (result.hasFatalError())
+			if (result.hasFatalError()) {
 				return;
+			}
 		}
 		if ((validationMethod & VALIDATE_NOT_DIRTY) != 0) {
 			state.checkDirty(result);
@@ -205,9 +213,9 @@ public abstract class ResourceChange extends Change {
 	}
 
 	private long getModificationStamp(IResource resource) {
-		if (!(resource instanceof IFile))
+		if (!(resource instanceof IFile file)) {
 			return resource.getModificationStamp();
-		IFile file= (IFile)resource;
+		}
 		ITextFileBuffer buffer= getBuffer(file);
 		if (buffer == null) {
 			return file.getModificationStamp();
@@ -227,7 +235,7 @@ public abstract class ResourceChange extends Change {
 	}
 
 	private static class ValidationState {
-		private IResource fResource;
+		private final IResource fResource;
 		private int fKind;
 		private boolean fDirty;
 		private boolean fReadOnly;

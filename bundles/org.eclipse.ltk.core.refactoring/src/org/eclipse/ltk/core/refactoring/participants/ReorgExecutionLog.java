@@ -31,8 +31,8 @@ import java.util.Map;
  */
 public class ReorgExecutionLog {
 
-	private Map<Object, String> fNewNames;
-	private List<Object> fProcessedElements;
+	private final Map<Object, String> fNewNames;
+	private final List<Object> fProcessedElements;
 	private boolean fCanceled;
 
 	/**

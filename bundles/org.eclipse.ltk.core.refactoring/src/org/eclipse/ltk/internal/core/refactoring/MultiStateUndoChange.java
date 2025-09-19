@@ -58,17 +58,17 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
  */
 public class MultiStateUndoChange extends Change {
 
-	private ContentStamp fContentStampToRestore;
+	private final ContentStamp fContentStampToRestore;
 
 	private boolean fDirty;
 
-	private IFile fFile;
+	private final IFile fFile;
 
-	private String fName;
+	private final String fName;
 
-	private int fSaveMode;
+	private final int fSaveMode;
 
-	private UndoEdit[] fUndos;
+	private final UndoEdit[] fUndos;
 
 	private BufferValidationState fValidationState;
 
@@ -133,8 +133,9 @@ public class MultiStateUndoChange extends Change {
 	@Override
 	public final Object[] getAffectedObjects() {
 		Object modifiedElement= getModifiedElement();
-		if (modifiedElement == null)
+		if (modifiedElement == null) {
 			return null;
+		}
 		return new Object[] { modifiedElement};
 	}
 
@@ -163,8 +164,9 @@ public class MultiStateUndoChange extends Change {
 
 	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
-		if (pm == null)
+		if (pm == null) {
 			pm= new NullProgressMonitor();
+		}
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
 			fValidationState= BufferValidationState.create(fFile);
@@ -175,12 +177,14 @@ public class MultiStateUndoChange extends Change {
 
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
-		if (pm == null)
+		if (pm == null) {
 			pm= new NullProgressMonitor();
+		}
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
-			if (fValidationState == null)
+			if (fValidationState == null) {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), "MultiStateUndoChange has not been initialialized")); //$NON-NLS-1$
+			}
 
 			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 			fDirty= buffer != null && buffer.isDirty();
@@ -196,8 +200,9 @@ public class MultiStateUndoChange extends Change {
 
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		if (fValidationState == null || fValidationState.isValid(needsSaving(), false).hasFatalError())
+		if (fValidationState == null || fValidationState.isValid(needsSaving(), false).hasFatalError()) {
 			return new NullChange();
+		}
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		SubMonitor subMon= SubMonitor.convert(pm, 3);
 		ITextFileBuffer buffer= null;
@@ -227,8 +232,9 @@ public class MultiStateUndoChange extends Change {
 		} catch (BadLocationException e) {
 			throw Changes.asCoreException(e);
 		} finally {
-			if (buffer != null)
+			if (buffer != null) {
 				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, subMon.newChild(1));
+			}
 		}
 	}
 }
