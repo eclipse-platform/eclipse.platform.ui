@@ -57,7 +57,7 @@ public class NotificationPopup extends AbstractNotificationPopup {
 	 */
 	public static class Builder {
 
-		private Display display;
+		private final Display display;
 		private Function<Composite, Control> contentCreator;
 		private Function<Composite, Control> titleCreator;
 		private Long delay;
@@ -204,10 +204,10 @@ public class NotificationPopup extends AbstractNotificationPopup {
 		return new Builder(shell.getDisplay()).shell(shell);
 	}
 
-	private Function<Composite, ? extends Control> contentCreator;
-	private Function<Composite, Control> titleCreator;
-	private boolean hasCloseButton;
-	private Image titleImage;
+	private final Function<Composite, ? extends Control> contentCreator;
+	private final Function<Composite, Control> titleCreator;
+	private final boolean hasCloseButton;
+	private final Image titleImage;
 
 	private NotificationPopup(Builder builder) {
 		super(builder.display);
@@ -237,10 +237,12 @@ public class NotificationPopup extends AbstractNotificationPopup {
 		((GridData) parent.getLayoutData()).heightHint = TITLE_HEIGHT;
 
 		int numColums = 1;
-		if (hasCloseButton)
+		if (hasCloseButton) {
 			numColums++;
-		if (titleImage != null)
+		}
+		if (titleImage != null) {
 			numColums++;
+		}
 		GridLayoutFactory.fillDefaults().numColumns(numColums).applyTo(parent);
 
 		if (titleImage != null) {
