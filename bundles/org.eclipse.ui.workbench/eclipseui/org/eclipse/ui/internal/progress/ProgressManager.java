@@ -967,10 +967,13 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
-		if (!shouldRunInBackground() && (!fork || !cancelable)) {
+		if (!fork || !cancelable) {
 			// Backward compatible code.
 			final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
 					ProgressManagerUtil.getDefaultParent());
+			if (shouldRunInBackground()) {
+				dialog.setOpenOnRun(false);
+			}
 			dialog.run(fork, cancelable, runnable);
 			return;
 		}
