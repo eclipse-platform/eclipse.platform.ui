@@ -33,6 +33,7 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -174,6 +176,27 @@ public abstract class Dialog extends Window {
 	 *@since 3.2
 	 */
 	private static final String DIALOG_FONT_DATA = "DIALOG_FONT_NAME"; //$NON-NLS-1$
+
+	/**
+	 * The dialog settings key name for the monitor x used when the dialog location was stored.
+	 * @since 3.2
+	 */
+	private static final String DIALOG_MONITOR_X = "DIALOG_MONITOR_X"; //$NON-NLS-1$
+	/**
+	 * The dialog settings key name for the monitor y used when the dialog location was stored.
+	 * @since 3.2
+	 */
+	private static final String DIALOG_MONITOR_Y = "DIALOG_MONITOR_Y"; //$NON-NLS-1$
+	/**
+	 * The dialog settings key name for the monitor width used when the dialog location was stored.
+	 * @since 3.2
+	 */
+	private static final String DIALOG_MONITOR_WIDTH = "DIALOG_MONITOR_WIDTH"; //$NON-NLS-1$
+	/**
+	 * The dialog settings key name for the monitor height used when the dialog location was stored.
+	 * @since 3.2
+	 */
+	private static final String DIALOG_MONITOR_HEIGHT = "DIALOG_MONITOR_HEIGHT"; //$NON-NLS-1$
 
 	/**
 	 * A value that can be used for stored dialog width or height that
@@ -1168,6 +1191,13 @@ public abstract class Dialog extends Window {
 			if ((strategy & DIALOG_PERSISTLOCATION) != 0) {
 				settings.put(DIALOG_ORIGIN_X, shellLocation.x);
 				settings.put(DIALOG_ORIGIN_Y, shellLocation.y);
+				
+				Monitor monitor = getMonitorForShell(shell);
+				Rectangle mb = monitor.getBounds();
+				settings.put(DIALOG_MONITOR_X, mb.x);
+				settings.put(DIALOG_MONITOR_Y, mb.y);
+				settings.put(DIALOG_MONITOR_WIDTH, mb.width);
+				settings.put(DIALOG_MONITOR_HEIGHT, mb.height);
 			}
 			if ((strategy & DIALOG_PERSISTSIZE) != 0) {
 				settings.put(DIALOG_WIDTH, shellSize.x);
@@ -1270,6 +1300,18 @@ public abstract class Dialog extends Window {
 						result.x += parentLocation.x;
 						result.y += parentLocation.y;
 					}
+					try {
+						int mx = settings.getInt(DIALOG_MONITOR_X);
+						int my = settings.getInt(DIALOG_MONITOR_Y);
+						int mw = settings.getInt(DIALOG_MONITOR_WIDTH);
+						int mh = settings.getInt(DIALOG_MONITOR_HEIGHT);
+						
+						if (result.x < mx) result.x = mx;
+						if (result.y < my) result.y = my;
+						if (result.x + initialSize.x > mx + mw) result.x = mx + mw - initialSize.x;
+						if (result.y + initialSize.y > my + mh) result.y = my + mh - initialSize.y;
+					} catch (NumberFormatException e) {
+					}
 				} catch (NumberFormatException e) {
 				}
 			}
@@ -1303,4 +1345,23 @@ public abstract class Dialog extends Window {
 	protected boolean isResizable() {
 		return false;
 	}
+
+	/**
+     * Returns the monitor that contains the given shell.
+     * @param shell the shell
+     * @return the monitor containing the shell
+     */
+    private Monitor getMonitorForShell(Shell shell) {
+        Display display = shell.getDisplay();
+        Monitor[] monitors = display.getMonitors();
+        Rectangle shellBounds = shell.getBounds();
+        for (Monitor monitor : monitors) {
+            Rectangle monitorBounds = monitor.getBounds();
+            if (monitorBounds.intersects(shellBounds)) {
+                return monitor;
+            }
+        }
+        // Fallback: return primary monitor
+        return display.getPrimaryMonitor();
+    }
 }
