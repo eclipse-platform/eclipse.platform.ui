@@ -87,8 +87,9 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 							character= fDocument.getChar(offset++);
 						}
 
-						if (moved)
+						if (moved) {
 							offset--;
+						}
 
 					} catch (BadLocationException exception) {
 						// Can not happen
@@ -249,13 +250,15 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 
 			final ITypedRegion[] partitions= TextUtilities.computePartitioning(document, fPartitioning, offset, length, false);
 
-			if (!fType.equals(partitions[0].getType()))
+			if (!fType.equals(partitions[0].getType())) {
 				partitions[0]= TextUtilities.getPartition(document, fPartitioning, partitions[0].getOffset(), false);
+			}
 
 			if (partitions.length > 1) {
 
-				if (!fType.equals(partitions[partitions.length - 1].getType()))
+				if (!fType.equals(partitions[partitions.length - 1].getType())) {
 					partitions[partitions.length - 1]= TextUtilities.getPartition(document, fPartitioning, partitions[partitions.length - 1].getOffset(), false);
+				}
 			}
 
 			String type= null;
@@ -268,8 +271,9 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 				partition= partitions[index];
 				type= partition.getType();
 
-				if (!fType.equals(type))
+				if (!fType.equals(type)) {
 					formatSlave(context, document, partition.getOffset(), partition.getLength(), type);
+				}
 			}
 
 		} catch (BadLocationException exception) {
@@ -315,7 +319,8 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 */
 	public final void setSlaveStrategy(final IFormattingStrategy strategy, final String type) {
 		Assert.isTrue(strategy instanceof IFormattingStrategyExtension);
-		if (!fType.equals(type))
+		if (!fType.equals(type)) {
 			fSlaves.put(type, strategy);
+		}
 	}
 }

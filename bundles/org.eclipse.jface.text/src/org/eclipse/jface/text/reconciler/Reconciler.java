@@ -96,15 +96,15 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 
 		Assert.isNotNull(contentType);
 
-		if (fStrategies == null)
+		if (fStrategies == null) {
 			fStrategies= new HashMap<>();
+		}
 
-		if (strategy == null)
+		if (strategy == null) {
 			fStrategies.remove(contentType);
-		else {
+		} else {
 			fStrategies.put(contentType, strategy);
-			if (strategy instanceof IReconcilingStrategyExtension && getProgressMonitor() != null) {
-				IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) strategy;
+			if (strategy instanceof IReconcilingStrategyExtension extension && getProgressMonitor() != null) {
 				extension.setProgressMonitor(getProgressMonitor());
 			}
 		}
@@ -115,8 +115,9 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 
 		Assert.isNotNull(contentType);
 
-		if (fStrategies == null)
+		if (fStrategies == null) {
 			return null;
+		}
 
 		return fStrategies.get(contentType);
 	}
@@ -135,20 +136,23 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 
 		IRegion region= dirtyRegion;
 
-		if (region == null)
+		if (region == null) {
 			region= new Region(0, getDocument().getLength());
+		}
 
 		ITypedRegion[] regions= computePartitioning(region.getOffset(), region.getLength());
 
 		for (ITypedRegion r : regions) {
 			IReconcilingStrategy s= getReconcilingStrategy(r.getType());
-			if (s == null)
+			if (s == null) {
 				continue;
+			}
 
-			if(dirtyRegion != null)
+			if(dirtyRegion != null) {
 				s.reconcile(dirtyRegion, r);
-			else
+			} else {
 				s.reconcile(r);
+			}
 		}
 	}
 
@@ -200,8 +204,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 			Iterator<IReconcilingStrategy> e= fStrategies.values().iterator();
 			while (e.hasNext()) {
 				IReconcilingStrategy strategy= e.next();
-				if (strategy instanceof IReconcilingStrategyExtension) {
-					IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) strategy;
+				if (strategy instanceof IReconcilingStrategyExtension extension) {
 					extension.setProgressMonitor(monitor);
 				}
 			}
@@ -214,12 +217,12 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 		List<String> contentTypes= new ArrayList<>(regions.length);
 		for (ITypedRegion region : regions) {
 			String contentType= region.getType();
-			if( contentTypes.contains(contentType))
+			if( contentTypes.contains(contentType)) {
 				continue;
+			}
 			contentTypes.add(contentType);
 			IReconcilingStrategy s= getReconcilingStrategy(contentType);
-			if (s instanceof IReconcilingStrategyExtension) {
-				IReconcilingStrategyExtension e= (IReconcilingStrategyExtension) s;
+			if (s instanceof IReconcilingStrategyExtension e) {
 				e.initialReconcile();
 			}
 		}

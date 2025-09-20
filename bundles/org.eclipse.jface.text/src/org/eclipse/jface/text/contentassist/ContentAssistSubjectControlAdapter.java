@@ -81,51 +81,58 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 
 	@Override
 	public int getLineHeight() {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.getLineHeight();
+		}
 
 		return fViewer.getTextWidget().getLineHeight(getCaretOffset());
 	}
 
 	@Override
 	public Control getControl() {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.getControl();
+		}
 		return fViewer.getTextWidget();
 	}
 
 	@Override
 	public Point getLocationAtOffset(int offset) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.getLocationAtOffset(offset);
+		}
 		return fViewer.getTextWidget().getLocationAtOffset(offset);
 	}
 
 	@Override
 	public Point getWidgetSelectionRange() {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.getWidgetSelectionRange();
+		}
 		return fViewer.getTextWidget().getSelectionRange();
 	}
 
 	@Override
 	public Point getSelectedRange() {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.getSelectedRange();
+		}
 		return fViewer.getSelectedRange();
 	}
 
 	@Override
 	public int getCaretOffset() {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.getCaretOffset();
+		}
 		return fViewer.getTextWidget().getCaretOffset();
 	}
 
 	@Override
 	public String getLineDelimiter() {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.getLineDelimiter();
+		}
 		return fViewer.getTextWidget().getLineDelimiter();
 	}
 
@@ -139,24 +146,27 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 
 	@Override
 	public void addKeyListener(KeyListener keyListener) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			fContentAssistSubjectControl.addKeyListener(keyListener);
-		else
+		} else {
 			fViewer.getTextWidget().addKeyListener(keyListener);
+		}
 	}
 
 	@Override
 	public void removeKeyListener(KeyListener keyListener) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			fContentAssistSubjectControl.removeKeyListener(keyListener);
-		else
+		} else {
 			fViewer.getTextWidget().removeKeyListener(keyListener);
+		}
 	}
 
 	@Override
 	public IDocument getDocument() {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.getDocument();
+		}
 		return fViewer.getDocument();
 	}
 
@@ -164,8 +174,7 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	public boolean prependVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.prependVerifyKeyListener(verifyKeyListener);
-		} else if (fViewer instanceof ITextViewerExtension) {
-			ITextViewerExtension e= (ITextViewerExtension) fViewer;
+		} else if (fViewer instanceof ITextViewerExtension e) {
 			e.prependVerifyKeyListener(verifyKeyListener);
 			return true;
 		} else {
@@ -181,10 +190,9 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 
 	@Override
 	public boolean appendVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.appendVerifyKeyListener(verifyKeyListener);
-		else if (fViewer instanceof ITextViewerExtension) {
-			ITextViewerExtension extension= (ITextViewerExtension)fViewer;
+		} else if (fViewer instanceof ITextViewerExtension extension) {
 			extension.appendVerifyKeyListener(verifyKeyListener);
 			return true;
 		} else {
@@ -201,38 +209,41 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		if (fContentAssistSubjectControl != null) {
 			fContentAssistSubjectControl.removeVerifyKeyListener(verifyKeyListener);
-		} else if (fViewer instanceof ITextViewerExtension) {
-			ITextViewerExtension extension= (ITextViewerExtension) fViewer;
+		} else if (fViewer instanceof ITextViewerExtension extension) {
 			extension.removeVerifyKeyListener(verifyKeyListener);
 		} else {
 			StyledText textWidget= fViewer.getTextWidget();
-			if (isValid(textWidget))
+			if (isValid(textWidget)) {
 				textWidget.removeVerifyKeyListener(verifyKeyListener);
+			}
 		}
 	}
 
 	@Override
 	public void setEventConsumer(IEventConsumer eventConsumer) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			fContentAssistSubjectControl.setEventConsumer(eventConsumer);
-		else
+		} else {
 			fViewer.setEventConsumer(eventConsumer);
+		}
 	}
 
 	@Override
 	public void setSelectedRange(int i, int j) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			fContentAssistSubjectControl.setSelectedRange(i, j);
-		else
+		} else {
 			fViewer.setSelectedRange(i, j);
+		}
 	}
 
 	@Override
 	public void revealRange(int i, int j) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			fContentAssistSubjectControl.revealRange(i, j);
-		else
+		} else {
 			fViewer.revealRange(i, j);
+		}
 	}
 
 	/*
@@ -240,8 +251,9 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	 */
 	@Override
 	public boolean supportsVerifyKeyListener() {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.supportsVerifyKeyListener();
+		}
 		return true;
 	}
 
@@ -254,8 +266,9 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
 	Set<IContentAssistProcessor> getContentAssistProcessors(ContentAssistant contentAssistant, int offset) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return contentAssistant.getProcessors(fContentAssistSubjectControl, offset);
+		}
 		return contentAssistant.getProcessors(fViewer, offset);
 	}
 
@@ -271,12 +284,14 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	 */
 	CompletionProposalPopup createCompletionProposalPopup(ContentAssistant contentAssistant, AdditionalInfoController controller, boolean asynchronous) {
 		if (asynchronous) {
-			if (fContentAssistSubjectControl != null)
+			if (fContentAssistSubjectControl != null) {
 				return new AsyncCompletionProposalPopup(contentAssistant, fContentAssistSubjectControl, controller);
+			}
 			return new AsyncCompletionProposalPopup(contentAssistant, fViewer, controller);
 		} else {
-			if (fContentAssistSubjectControl != null)
+			if (fContentAssistSubjectControl != null) {
 				return new CompletionProposalPopup(contentAssistant, fContentAssistSubjectControl, controller);
+			}
 			return new CompletionProposalPopup(contentAssistant, fViewer, controller);
 		}
 	}
@@ -288,8 +303,9 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	 * @return the context info popup or <code>null</code>
 	 */
 	ContextInformationPopup createContextInfoPopup(ContentAssistant contentAssistant) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return new ContextInformationPopup(contentAssistant, fContentAssistSubjectControl);
+		}
 		return new ContextInformationPopup(contentAssistant, fViewer);
 
 	}
@@ -305,8 +321,9 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	 * @return an validator
 	 */
 	public IContextInformationValidator getContextInformationValidator(ContentAssistant contentAssistant, int offset) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return contentAssistant.getContextInformationValidator(fContentAssistSubjectControl, offset);
+		}
 		return contentAssistant.getContextInformationValidator(fViewer, offset);
 	}
 
@@ -320,8 +337,9 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	 * @return a presenter
 	 */
 	public IContextInformationPresenter getContextInformationPresenter(ContentAssistant contentAssistant, int offset) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return contentAssistant.getContextInformationPresenter(fContentAssistSubjectControl, offset);
+		}
 		return contentAssistant.getContextInformationPresenter(fViewer, offset);
 	}
 
@@ -332,10 +350,12 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	 */
 	public void installValidator(ContextFrame frame) {
 		if (fContentAssistSubjectControl != null) {
-			if (frame.fValidator instanceof ISubjectControlContextInformationValidator)
+			if (frame.fValidator instanceof ISubjectControlContextInformationValidator) {
 				((ISubjectControlContextInformationValidator) frame.fValidator).install(frame.fInformation, fContentAssistSubjectControl, frame.fOffset);
-		} else
+			}
+		} else {
 			frame.fValidator.install(frame.fInformation, fViewer, frame.fOffset);
+		}
 	}
 
 	/**
@@ -345,10 +365,12 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	 */
 	public void installContextInformationPresenter(ContextFrame frame) {
 		if (fContentAssistSubjectControl != null) {
-			if (frame.fPresenter instanceof ISubjectControlContextInformationPresenter)
+			if (frame.fPresenter instanceof ISubjectControlContextInformationPresenter) {
 				((ISubjectControlContextInformationPresenter) frame.fValidator).install(frame.fInformation, fContentAssistSubjectControl, frame.fBeginOffset);
-		} else
+			}
+		} else {
 			frame.fPresenter.install(frame.fInformation, fViewer, frame.fBeginOffset);
+		}
 	}
 
 	/**
@@ -362,25 +384,28 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
 	public IContextInformation[] computeContextInformation(ContentAssistant contentAssistant, int offset) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return contentAssistant.computeContextInformation(fContentAssistSubjectControl, offset);
+		}
 		return contentAssistant.computeContextInformation(fViewer, offset);
 	}
 
 	@Override
 	public boolean addSelectionListener(SelectionListener selectionListener) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.addSelectionListener(selectionListener);
+		}
 		fViewer.getTextWidget().addSelectionListener(selectionListener);
 		return true;
 	}
 
 	@Override
 	public void removeSelectionListener(SelectionListener selectionListener) {
-		if (fContentAssistSubjectControl != null)
+		if (fContentAssistSubjectControl != null) {
 			fContentAssistSubjectControl.removeSelectionListener(selectionListener);
-		else
+		} else {
 			fViewer.getTextWidget().removeSelectionListener(selectionListener);
+		}
 	}
 
 }

@@ -334,13 +334,15 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 				maxHeight-= trim.height;
 				maxWidth-= fText.getCaret().getSize().x; // StyledText adds a border at the end of the line for the caret.
 			}
-			if (isResizable())
+			if (isResizable()) {
 				maxHeight= Integer.MAX_VALUE;
+			}
 
-			if (fPresenter instanceof IInformationPresenterExtension)
+			if (fPresenter instanceof IInformationPresenterExtension) {
 				content= ((IInformationPresenterExtension)fPresenter).updatePresentation(fText, content, fPresentation, maxWidth, maxHeight);
-			else
+			} else {
 				content= fPresenter.updatePresentation(getShell().getDisplay(), content, fPresentation, maxWidth, maxHeight);
+			}
 
 			if (content != null) {
 				fText.setText(content);
@@ -358,8 +360,9 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 				Point currentSize= getShell().getSize();
 				getShell().pack(true);
 				Point newSize= getShell().getSize();
-				if (newSize.x > currentSize.x || newSize.y > currentSize.y)
+				if (newSize.x > currentSize.x || newSize.y > currentSize.y) {
 					setSize(currentSize.x, currentSize.y); // restore previous size
+				}
 			}
 		}
 
@@ -376,8 +379,9 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=117602
 		int widthHint= SWT.DEFAULT;
 		Point constraints= getSizeConstraints();
-		if (constraints != null && fText.getWordWrap())
+		if (constraints != null && fText.getWordWrap()) {
 			widthHint= constraints.x;
+		}
 
 		return getShell().computeSize(widthHint, SWT.DEFAULT, true);
 	}

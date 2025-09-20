@@ -133,8 +133,9 @@ public final class Range implements ILineRange, Cloneable {
 	 * @throws LineIndexOutOfBoundsException if <code>start</code> &lt; 0
 	 */
 	public void moveTo(int start) throws LineIndexOutOfBoundsException {
-		if ((start < 0))
+		if ((start < 0)) {
 			throw new LineIndexOutOfBoundsException("Cannot set a negative start: " + start); //$NON-NLS-1$
+		}
 		fStart= start;
 	}
 
@@ -168,8 +169,9 @@ public final class Range implements ILineRange, Cloneable {
 	 */
 	public void setStart(int start) throws LineIndexOutOfBoundsException {
 		int end= end();
-		if (((start < 0) || (start >= end)))
+		if (((start < 0) || (start >= end))) {
 			throw new LineIndexOutOfBoundsException("Cannot set a negative start: " + start); //$NON-NLS-1$
+		}
 		moveTo(start);
 		setEnd(end);
 	}
@@ -191,8 +193,9 @@ public final class Range implements ILineRange, Cloneable {
 	 * @throws LineIndexOutOfBoundsException if <code>length</code> &lt;= 0
 	 */
 	public void setLength(int length) throws LineIndexOutOfBoundsException {
-		if ((length <= 0))
+		if ((length <= 0)) {
 			throw new LineIndexOutOfBoundsException("Cannot set length <= 0: " + length); //$NON-NLS-1$
+		}
 		fLength= length;
 	}
 
@@ -235,8 +238,9 @@ public final class Range implements ILineRange, Cloneable {
 	 * @throws LineIndexOutOfBoundsException if <code>remaining</code>&gt;= {@link #length()} or <code>remaining</code>&lt;= 0
 	 */
 	public Range split(int remaining) throws LineIndexOutOfBoundsException {
-		if ((remaining >= length())) // assert before modification
+		if ((remaining >= length())) { // assert before modification
 			throw new LineIndexOutOfBoundsException("Remaining must be less than length: " + length()); //$NON-NLS-1$
+		}
 
 		int splitLength= length() - remaining;
 		setLength(remaining);
@@ -250,10 +254,12 @@ public final class Range implements ILineRange, Cloneable {
 	 * @return <code>true</code> if <code>range</code> has the same offset and length as the receiver
 	 */
 	public boolean equalRange(ILineRange range) {
-		if (range == this)
+		if (range == this) {
 			return true;
-		if (range == null)
+		}
+		if (range == null) {
 			return false;
+		}
 		return range.getStartLine() == start() && range.getNumberOfLines() == length();
 	}
 
