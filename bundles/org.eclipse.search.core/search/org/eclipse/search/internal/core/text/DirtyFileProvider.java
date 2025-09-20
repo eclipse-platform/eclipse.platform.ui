@@ -23,7 +23,7 @@ public interface DirtyFileProvider {
 	/**
 	 * Discover a list of dirty IFile resources and the current content of those
 	 * resources in the dirty editor
-	 * 
+	 *
 	 * @return A map of dirty resources to contents
 	 */
 	Map<IFile, IDocument> dirtyFiles();
