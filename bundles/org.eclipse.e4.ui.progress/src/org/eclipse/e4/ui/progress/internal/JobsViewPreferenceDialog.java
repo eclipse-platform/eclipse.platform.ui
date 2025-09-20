@@ -33,7 +33,7 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 
 	private BooleanFieldEditor showSystemJob;
 	private BooleanFieldEditor runInBackground;
-	private IPreferenceStore preferenceStore;
+	private final IPreferenceStore preferenceStore;
 
 
 	/**

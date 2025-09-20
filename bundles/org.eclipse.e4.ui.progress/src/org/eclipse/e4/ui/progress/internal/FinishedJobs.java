@@ -61,7 +61,7 @@ public class FinishedJobs extends EventManager {
 
 	private final Set<JobTreeElement> keptjobinfos = new LinkedHashSet<>();
 
-	private HashMap<Object, Long> finishedTime = new HashMap<>();
+	private final HashMap<Object, Long> finishedTime = new HashMap<>();
 
 	private static final JobTreeElement[] EMPTY_INFOS = new JobTreeElement[0];
 

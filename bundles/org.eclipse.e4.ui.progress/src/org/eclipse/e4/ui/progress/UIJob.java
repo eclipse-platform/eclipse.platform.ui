@@ -239,8 +239,7 @@ public abstract class UIJob extends Job {
 
 		// If this was a CoreException, keep the original plugin ID and error
 		// code
-		if (t instanceof CoreException) {
-			CoreException ce = (CoreException) t;
+		if (t instanceof CoreException ce) {
 			pluginId = ce.getStatus().getPlugin();
 			errorCode = ce.getStatus().getCode();
 		}

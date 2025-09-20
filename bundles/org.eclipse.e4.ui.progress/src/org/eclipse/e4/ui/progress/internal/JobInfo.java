@@ -41,9 +41,9 @@ public class JobInfo extends JobTreeElement {
 
 	private TaskInfo taskInfo;
 
-	private ProgressManager progressManager;
+	private final ProgressManager progressManager;
 
-	private FinishedJobs finishedJobs;
+	private final FinishedJobs finishedJobs;
 
 	// Default to no progress
 	private int ticks = -1;
@@ -158,11 +158,9 @@ public class JobInfo extends JobTreeElement {
 
 	@Override
 	public int compareTo(Object other) {
-		if (!(other instanceof JobInfo)) {
+		if (!(other instanceof JobInfo element)) {
 			return super.compareTo(other);
 		}
-		JobInfo element = (JobInfo) other;
-
 		boolean thisCanceled = isCanceled();
 		boolean anotherCanceled = element.isCanceled();
 		if (thisCanceled && !anotherCanceled) {

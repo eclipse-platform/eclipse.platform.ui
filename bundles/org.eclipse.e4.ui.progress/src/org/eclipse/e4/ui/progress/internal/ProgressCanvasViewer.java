@@ -45,11 +45,11 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 	/**
 	 * Font metrics to use for determining pixel sizes.
 	 */
-	private FontMetrics fontMetrics;
+	private final FontMetrics fontMetrics;
 
 	private int numShowItems = 1;
 
-	private int maxCharacterWidth;
+	private final int maxCharacterWidth;
 
 	private int orientation = SWT.HORIZONTAL;
 
@@ -172,8 +172,9 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 					gc.drawString(string, xOffset + (i * fontMetrics.getHeight()), 2, true);
 				}
 			}
-			if (transform != null)
+			if (transform != null) {
 				transform.dispose();
+			}
 		});
 	}
 

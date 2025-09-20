@@ -60,13 +60,13 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
 	private IProgressMonitor wrapperedMonitor;
 
-	private IProgressService progressService;
+	private final IProgressService progressService;
 
-	private ProgressManager progressManager;
+	private final ProgressManager progressManager;
 
-	private ContentProviderFactory contentProviderFactory;
+	private final ContentProviderFactory contentProviderFactory;
 
-	private FinishedJobs finishedJobs;
+	private final FinishedJobs finishedJobs;
 
 	/**
 	 * Cache initial enablement in case the enablement state is set before the
@@ -237,8 +237,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
 	@Override
 	protected void updateForSetBlocked(IStatus reason) {
-		if(alreadyClosed)
+		if(alreadyClosed) {
 			return;
+		}
 
 		super.updateForSetBlocked(reason);
 		enableDetails(true);

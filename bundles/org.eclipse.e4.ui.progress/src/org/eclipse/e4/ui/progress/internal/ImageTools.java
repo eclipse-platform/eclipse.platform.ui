@@ -32,7 +32,7 @@ public class ImageTools {
 
 	protected static ImageTools instance;
 
-	private ImageRegistry imageRegistry = JFaceResources.getImageRegistry();
+	private final ImageRegistry imageRegistry = JFaceResources.getImageRegistry();
 
 	public static ImageTools getInstance() {
 		if (instance == null) {

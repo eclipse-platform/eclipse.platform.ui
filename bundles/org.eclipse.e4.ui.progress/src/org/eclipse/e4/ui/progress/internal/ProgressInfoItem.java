@@ -88,9 +88,9 @@ public class ProgressInfoItem extends Composite {
 
 	private Label jobImageLabel;
 
-	private IProgressService progressService;
+	private final IProgressService progressService;
 
-	private FinishedJobs finishedJobs;
+	private final FinishedJobs finishedJobs;
 
 	static final int MAX_PROGRESS_HEIGHT = 12;
 
@@ -335,8 +335,9 @@ public class ProgressInfoItem extends Composite {
 			image = getResourceManager().createImageWithDefault(descriptor);
 		}
 
-		if (image == null)
+		if (image == null) {
 			image = jobInfo.getDisplayImage();
+		}
 
 		return image;
 	}
@@ -347,9 +348,10 @@ public class ProgressInfoItem extends Composite {
 	 * @return {@link ResourceManager}
 	 */
 	private ResourceManager getResourceManager() {
-		if (resourceManager == null)
+		if (resourceManager == null) {
 			resourceManager = new LocalResourceManager(JFaceResources
 					.getResources());
+		}
 		return resourceManager;
 	}
 
@@ -386,9 +388,10 @@ public class ProgressInfoItem extends Composite {
 		}
 
 		if (jobInfo.isCanceled()) {
-			if (job.getState() == Job.RUNNING)
+			if (job.getState() == Job.RUNNING) {
 				return NLS
 						.bind(ProgressMessages.JobInfo_Cancel_Requested, name);
+			}
 			return NLS.bind(ProgressMessages.JobInfo_Cancelled, name);
 		}
 
@@ -451,8 +454,9 @@ public class ProgressInfoItem extends Composite {
 	void refresh() {
 
 		// Don't refresh if not visible
-		if (isDisposed() || !isShowing)
+		if (isDisposed() || !isShowing) {
 			return;
+		}
 
 		jobImageLabel.setImage(getInfoImage());
 		int percentDone = getPercentDone();
@@ -544,10 +548,11 @@ public class ProgressInfoItem extends Composite {
 				taskEntries.get(i).dispose();
 
 			}
-			if (infos.length > 1)
+			if (infos.length > 1) {
 				taskEntries = taskEntries.subList(0, infos.length - 1);
-			else
+			} else {
 				taskEntries.clear();
+			}
 		}
 
 		updateToolBarValues();
@@ -600,8 +605,9 @@ public class ProgressInfoItem extends Composite {
 		JobInfo[] infos = getJobInfos();
 		for (JobInfo info : infos) {
 			int state = info.getJob().getState();
-			if (state == Job.WAITING || state == Job.RUNNING)
+			if (state == Job.WAITING || state == Job.RUNNING) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -727,8 +733,9 @@ public class ProgressInfoItem extends Composite {
 			link.addListener(SWT.Resize, event -> {
 
 				Object text = link.getData(TEXT_KEY);
-				if (text == null)
+				if (text == null) {
 					return;
+				}
 
 				updateText((String) text, link);
 
@@ -770,10 +777,10 @@ public class ProgressInfoItem extends Composite {
 	 */
 	public void executeTrigger() {
 		Object data = link.getData(TRIGGER_KEY);
-		if (data instanceof IAction) {
-			IAction action = (IAction) data;
-			if (action.isEnabled())
+		if (data instanceof IAction action) {
+			if (action.isEnabled()) {
 				action.run();
+			}
 			updateTrigger(action, link);
 		} else if (data instanceof ParameterizedCommand) {
 			getEHandlerService().executeHandler((ParameterizedCommand) data);
@@ -784,8 +791,9 @@ public class ProgressInfoItem extends Composite {
 		}
 
 		Object text = link.getData(TEXT_KEY);
-		if (text == null)
+		if (text == null) {
 			return;
+		}
 
 		// Refresh the text as enablement might have changed
 		updateText((String) text, link);
@@ -936,15 +944,17 @@ public class ProgressInfoItem extends Composite {
 		// See if this element has been turned off
 		boolean refresh = !isShowing && displayed;
 		isShowing = displayed;
-		if (refresh)
+		if (refresh) {
 			refresh();
+		}
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		if(resourceManager != null)
+		if(resourceManager != null) {
 			resourceManager.dispose();
+		}
 	}
 
 	/**

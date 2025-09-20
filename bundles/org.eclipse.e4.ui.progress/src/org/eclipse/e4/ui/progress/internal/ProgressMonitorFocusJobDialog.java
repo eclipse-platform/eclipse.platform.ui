@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Shell;
 class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	Job job;
 	private boolean showDialog;
-	private ProgressManager progressManager;
+	private final ProgressManager progressManager;
 
 	/**
 	 * Create a new instance of the receiver with progress reported on the job.
@@ -197,9 +197,10 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				if (currentShell == null) {
 					display = Display.getDefault();
 				} else {
-					if (currentShell.isDisposed())// Don't bother if it has
+					if (currentShell.isDisposed()) { // Don't bother if it has
 						// been closed
 						return;
+					}
 					display = currentShell.getDisplay();
 				}
 
@@ -209,8 +210,9 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 						// late
 					}
 					Shell shell = getShell();
-					if (shell != null && shell.isDisposed())
+					if (shell != null && shell.isDisposed()) {
 						return;
+					}
 
 					runnable.run();
 				});

@@ -30,7 +30,7 @@ public abstract class ProgressContentProvider implements
 
 	protected ProgressViewUpdater progressViewUpdater;
 
-	private ProgressManager progressManager;
+	private final ProgressManager progressManager;
 
 	/**
 	 * Create a new instance of the receiver with all of the
