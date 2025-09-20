@@ -204,8 +204,9 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 					updateScheduled.value = scheduleUpdate = true;
 				}
 			}
-			if (scheduleUpdate)
+			if (scheduleUpdate) {
 				updateJob.schedule(100);
+			}
 		}
 	}
 

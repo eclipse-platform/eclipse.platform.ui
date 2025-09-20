@@ -33,9 +33,9 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 
 	private KeptJobsListener keptJobListener;
 
-	private boolean showFinished;
+	private final boolean showFinished;
 
-	private FinishedJobs finishedJobs;
+	private final FinishedJobs finishedJobs;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -128,20 +128,23 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	public Object[] getElements(Object inputElement) {
 		Object[] elements = super.getElements(inputElement);
 
-		if (!showFinished)
+		if (!showFinished) {
 			return elements;
+		}
 
 		JobTreeElement[] kept = finishedJobs.getKeptElements();
 
-		if (kept.length == 0)
+		if (kept.length == 0) {
 			return elements;
+		}
 
 		Set<Object> all = new HashSet<>();
 
 		all.addAll(Arrays.asList(elements));
 		for (JobTreeElement next : kept) {
-			if (next.getParent() != null && all.contains(next.getParent()))
+			if (next.getParent() != null && all.contains(next.getParent())) {
 				continue;
+			}
 			all.add(next);
 
 		}

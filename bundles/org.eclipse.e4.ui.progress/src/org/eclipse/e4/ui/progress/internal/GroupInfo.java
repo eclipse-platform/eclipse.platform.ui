@@ -29,9 +29,9 @@ import org.eclipse.osgi.util.NLS;
 
 class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
-	private List<JobInfo> infos = new ArrayList<>();
+	private final List<JobInfo> infos = new ArrayList<>();
 
-	private Object lock = new Object();
+	private final Object lock = new Object();
 
 	private String taskName = ProgressMessages.SubTaskInfo_UndefinedTaskName;
 
@@ -41,9 +41,9 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 
 	double currentWork;
 
-	private ProgressManager progressManager;
+	private final ProgressManager progressManager;
 
-	private FinishedJobs finishedJobs;
+	private final FinishedJobs finishedJobs;
 
 	public GroupInfo(ProgressManager progressManager, FinishedJobs finishedJobs) {
 		this.progressManager = progressManager;
@@ -126,10 +126,11 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 			}
 		}
 
-		if (finishedJobs.isKept(this))
+		if (finishedJobs.isKept(this)) {
 			progressManager.refreshGroup(this);
-		else
+		} else {
 			progressManager.removeGroup(this);
+		}
 	}
 
 	@Override
@@ -156,10 +157,11 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
 		synchronized (this) {
 			isActive = true;
 		}
-		if (name == null)
+		if (name == null) {
 			taskName = ProgressMessages.SubTaskInfo_UndefinedTaskName;
-		else
+		} else {
 			taskName = name;
+		}
 
 	}
 

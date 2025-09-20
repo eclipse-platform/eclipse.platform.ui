@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Control;
  * The ProgressViewerLabelProvider is the label provider for progress viewers.
  */
 public class ProgressViewerLabelProvider extends LabelProvider {
-	private Control control;
+	private final Control control;
 
 	@Override
 	public String getText(Object element) {

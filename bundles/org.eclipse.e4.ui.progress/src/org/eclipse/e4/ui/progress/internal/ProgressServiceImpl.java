@@ -51,7 +51,7 @@ public class ProgressServiceImpl implements IProgressService {
 
 	private static final String IMAGE_KEY = "org.eclipse.ui.progress.images"; //$NON-NLS-1$
 
-	private Hashtable<Object, String> imageKeyTable = new Hashtable<>();
+	private final Hashtable<Object, String> imageKeyTable = new Hashtable<>();
 
 	@Inject
 	@Optional
@@ -97,12 +97,13 @@ public class ProgressServiceImpl implements IProgressService {
 		IStatus status = runnableWithStatus.getStatus();
 		if (!status.isOK()) {
 			Throwable exception = status.getException();
-			if (exception instanceof InvocationTargetException)
+			if (exception instanceof InvocationTargetException) {
 				throw (InvocationTargetException) exception;
-			else if (exception instanceof InterruptedException)
+			} else if (exception instanceof InterruptedException) {
 				throw (InterruptedException) exception;
-			else // should be OperationCanceledException
+			} else { // should be OperationCanceledException
 				throw new InterruptedException(exception.getMessage());
+			}
 		}
 	}
 
@@ -224,8 +225,9 @@ public class ProgressServiceImpl implements IProgressService {
 		 */
 		private IProgressMonitor getEventLoopMonitor() {
 
-			if (PlatformUI.isWorkbenchStarting())
+			if (PlatformUI.isWorkbenchStarting()) {
 				return new NullProgressMonitor();
+			}
 
 			return new EventLoopProgressMonitor(new NullProgressMonitor()) {
 

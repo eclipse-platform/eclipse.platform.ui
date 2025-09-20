@@ -90,9 +90,9 @@ public class ProgressRegion {
 			@Override
 			public Point computeSize(int wHint, int hHint, boolean changed) {
 				Point size = super.computeSize(wHint, hHint, changed);
-				if (isHorizontal(side))
+				if (isHorizontal(side)) {
 					size.y = TrimUtil.TRIM_DEFAULT_HEIGHT;
-				else {
+				} else {
 					size.x = TrimUtil.TRIM_DEFAULT_HEIGHT;
 				}
 				return size;
@@ -102,8 +102,9 @@ public class ProgressRegion {
 		GridLayout gl = new GridLayout();
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
-		if (isHorizontal(side))
+		if (isHorizontal(side)) {
 			gl.numColumns = 3;
+		}
 		region.setLayout(gl);
 
 		viewer = new ProgressCanvasViewer(region, SWT.NO_FOCUS, 1, 36, isHorizontal(side) ? SWT.HORIZONTAL : SWT.VERTICAL);
@@ -165,8 +166,7 @@ public class ProgressRegion {
 		viewer.addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof JobInfo) {
-					JobInfo info= (JobInfo)element;
+				if (element instanceof JobInfo info) {
 					if (info.isBlocked() || info.getJob().getState() == Job.WAITING) {
 						return false;
 					}
@@ -206,8 +206,9 @@ public class ProgressRegion {
 	public void dock(int dropSide) {
 		int oldSide = side;
 		side = dropSide;
-		if (oldSide == dropSide || (isVertical(oldSide) && isVertical(dropSide)) || (isHorizontal(oldSide) && isHorizontal(dropSide)))
+		if (oldSide == dropSide || (isVertical(oldSide) && isVertical(dropSide)) || (isHorizontal(oldSide) && isHorizontal(dropSide))) {
 			return;
+		}
 		recreate();
 
 	}
@@ -218,8 +219,9 @@ public class ProgressRegion {
 	 * @return <code>true</code> if the side is horizontal
 	 */
 	private boolean isHorizontal(int dropSide) {
-		if (forceHorizontal)
+		if (forceHorizontal) {
 			return true;
+		}
 		return dropSide == SWT.TOP || dropSide == SWT.BOTTOM;
 	}
 
@@ -230,8 +232,9 @@ public class ProgressRegion {
 	 * @return <code>true</code> if the side is horizontal
 	 */
 	private boolean isVertical(int dropSide) {
-		if (forceHorizontal)
+		if (forceHorizontal) {
 			return false;
+		}
 		return dropSide == SWT.LEFT || dropSide == SWT.RIGHT;
 	}
 
@@ -245,8 +248,9 @@ public class ProgressRegion {
 			animationManager.removeItem(animationItem);
 			region.dispose();
 			createContents(parent);
-			if (animating)
+			if (animating) {
 				animationItem.animationStart();
+			}
 		}
 	}
 

@@ -56,17 +56,17 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	private Button cancelSelected;
 
-	private IProgressMonitor blockingMonitor;
+	private final IProgressMonitor blockingMonitor;
 
-	private JobTreeElement blockedElement = new BlockedUIElement();
+	private final JobTreeElement blockedElement = new BlockedUIElement();
 
-	private IProgressService progressService;
+	private final IProgressService progressService;
 
-	private FinishedJobs finishedJobs;
+	private final FinishedJobs finishedJobs;
 
-	private ProgressManager progressManager;
+	private final ProgressManager progressManager;
 
-	private ProgressViewUpdater progressViewUpdater;
+	private final ProgressViewUpdater progressViewUpdater;
 
 	/**
 	 * The BlockedUIElement is the JobTreeElement that represents the blocked
@@ -150,11 +150,12 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		singleton = new BlockedJobsDialog(parentShell, blockedMonitor, reason,
 				progressService, finishedJobs, viewUpdater, progressManager);
 
-		if (taskName == null || taskName.length() == 0)
+		if (taskName == null || taskName.length() == 0) {
 			singleton
 					.setBlockedTaskName(ProgressMessages.BlockedJobsDialog_UserInterfaceTreeElement);
-		else
+		} else {
 			singleton.setBlockedTaskName(taskName);
+		}
 
 		/**
 		 * If there is no parent shell we have not been asked for a parent so we

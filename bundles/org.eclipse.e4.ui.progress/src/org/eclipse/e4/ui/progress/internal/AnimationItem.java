@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Control;
  */
 public abstract class AnimationItem {
 
-	private AnimationManager animationManager;
+	private final AnimationManager animationManager;
 
 	interface IAnimationContainer {
 		/**

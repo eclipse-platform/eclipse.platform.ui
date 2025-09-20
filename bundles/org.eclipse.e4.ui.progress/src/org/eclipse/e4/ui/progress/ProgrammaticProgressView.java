@@ -84,8 +84,9 @@ public class ProgrammaticProgressView {
 		viewer.setInput(progressManager);
 
 		selectionListener = event -> {
-			if (selectionService != null)
+			if (selectionService != null) {
 				selectionService.setSelection(event.getSelection());
+			}
 		};
 		viewer.addSelectionChangedListener(selectionListener);
 
