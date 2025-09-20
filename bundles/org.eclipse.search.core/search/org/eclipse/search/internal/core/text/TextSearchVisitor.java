@@ -171,10 +171,11 @@ public class TextSearchVisitor {
 			while (((sameFiles = fileBatches.poll()) != null) && !fFatalError && !fProgressMonitor.isCanceled()) {
 				IStatus status = processFile(sameFiles, subMonitor.split(1));
 				// Only accumulate interesting status
-				if (!status.isOK())
+				if (!status.isOK()) {
 					multiStatus.add(status);
 				// Group cancellation is propagated to this job's monitor.
 				// Stop processing and return the status for the completed jobs.
+				}
 			}
 			fileCharSequenceProvider= null;
 			synchronized (fLock) {
@@ -299,7 +300,7 @@ public class TextSearchVisitor {
 	private volatile boolean fFatalError; // If true, terminates the search.
 
 	private volatile boolean fIsLightweightAutoRefresh;
-	private DirtyFileProvider fDirtyDiscovery;
+	private final DirtyFileProvider fDirtyDiscovery;
 
 	public TextSearchVisitor(TextSearchRequestor collector, Pattern searchPattern, DirtyFileProvider dirtyDiscovery) {
 		fCollector= collector;
@@ -429,8 +430,9 @@ public class TextSearchVisitor {
 	private Map<IFile, IDocument> findDirtyFiles() {
 		if (fDirtyDiscovery != null) {
 			Map<IFile, IDocument> ret = fDirtyDiscovery.dirtyFiles();
-			if (ret != null)
+			if (ret != null) {
 				return ret;
+			}
 		}
 		return Collections.emptyMap();
 	}
@@ -476,8 +478,9 @@ public class TextSearchVisitor {
 		} catch (IndexOutOfBoundsException e) {
 			// ignored
 		} catch (FileCharSequenceException ex) {
-			if (ex.getCause() instanceof CharConversionException)
+			if (ex.getCause() instanceof CharConversionException) {
 				return true;
+			}
 			throw ex;
 		}
 		return false;

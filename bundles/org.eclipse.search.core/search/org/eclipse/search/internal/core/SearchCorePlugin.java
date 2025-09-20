@@ -78,7 +78,7 @@ public class SearchCorePlugin extends Plugin {
 
 	/**
 	 * Log status to platform log
-	 * 
+	 *
 	 * @param status
 	 *            the status to log
 	 */

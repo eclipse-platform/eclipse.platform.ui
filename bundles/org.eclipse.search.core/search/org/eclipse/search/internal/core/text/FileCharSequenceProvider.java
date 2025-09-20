@@ -59,8 +59,7 @@ public class FileCharSequenceProvider {
 	}
 
 	public void releaseCharSequence(CharSequence seq) throws IOException {
-		if (seq instanceof FileCharSequence) {
-			FileCharSequence curr= (FileCharSequence) seq;
+		if (seq instanceof FileCharSequence curr) {
 			try {
 				curr.close();
 			} finally {
@@ -307,12 +306,13 @@ public class FileCharSequenceProvider {
 				}
 				ok= true;
 			} finally {
-				if (!ok && contents != null)
+				if (!ok && contents != null) {
 					try {
 						contents.close();
 					} catch (IOException ex) {
 						// ignore
 					}
+				}
 			}
 			return contents;
 		}
@@ -515,8 +515,9 @@ public class FileCharSequenceProvider {
 			return false;
 		}
 		for (int i = 0; i < start.length; i++) {
-			if (a[i] != start[i])
+			if (a[i] != start[i]) {
 				return false;
+			}
 		}
 		return true;
 	}

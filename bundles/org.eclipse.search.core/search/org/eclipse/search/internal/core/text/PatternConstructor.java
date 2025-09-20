@@ -63,7 +63,7 @@ public class PatternConstructor {
 			if (isWholeWord && len > 0 && isWordChar(pattern.charAt(len - 1))) {
 				buffer.append("\\b"); //$NON-NLS-1$
 			}
-			pattern= buffer.toString();			
+			pattern= buffer.toString();
 		}
 
 		int regexOptions= Pattern.MULTILINE;
@@ -92,34 +92,39 @@ public class PatternConstructor {
 			switch (ch) {
 				case '[':
 					buf.append(ch);
-					if (! inQuote)
+					if (! inQuote) {
 						inCharGroup++;
+					}
 					break;
 
 				case ']':
 					buf.append(ch);
-					if (! inQuote)
+					if (! inQuote) {
 						inCharGroup--;
+					}
 					break;
 
 				case '{':
 					buf.append(ch);
-					if (! inQuote && inCharGroup == 0)
+					if (! inQuote && inCharGroup == 0) {
 						inBraces++;
+					}
 					break;
 
 				case '}':
 					buf.append(ch);
-					if (! inQuote && inCharGroup == 0)
+					if (! inQuote && inCharGroup == 0) {
 						inBraces--;
+					}
 					break;
 
 				case '\\':
 					if (i + 1 < length) {
 						char ch1= findString.charAt(i + 1);
 						if (inQuote) {
-							if (ch1 == 'E')
+							if (ch1 == 'E') {
 								inQuote= false;
+							}
 							buf.append(ch).append(ch1);
 							i++;
 
@@ -427,8 +432,9 @@ public class PatternConstructor {
 						int parsedInt;
 						try {
 							parsedInt= Integer.parseInt(replaceText.substring(i + 1, i + 3), 16);
-							if (parsedInt < 0)
+							if (parsedInt < 0) {
 								throw new NumberFormatException();
+							}
 						} catch (NumberFormatException e) {
 							String msg= SearchCoreMessages.PatternConstructor_error_hex_escape_sequence;
 							throw new PatternSyntaxException(msg, replaceText, i);
@@ -446,8 +452,9 @@ public class PatternConstructor {
 						int parsedInt;
 						try {
 							parsedInt= Integer.parseInt(replaceText.substring(i + 1, i + 5), 16);
-							if (parsedInt < 0)
+							if (parsedInt < 0) {
 								throw new NumberFormatException();
+							}
 						} catch (NumberFormatException e) {
 							String msg= SearchCoreMessages.PatternConstructor_error_unicode_escape_sequence;
 							throw new PatternSyntaxException(msg, replaceText, i);
@@ -461,14 +468,15 @@ public class PatternConstructor {
 					break;
 
 				case 'C':
-					if(foundText.toUpperCase().equals(foundText)) // is whole match upper-case?
+					if(foundText.toUpperCase().equals(foundText)) { // is whole match upper-case?
 						fRetainCaseMode= RC_UPPER;
-					else if (foundText.toLowerCase().equals(foundText)) // is whole match lower-case?
+					} else if (foundText.toLowerCase().equals(foundText)) { // is whole match lower-case?
 						fRetainCaseMode= RC_LOWER;
-					else if(Character.isUpperCase(foundText.charAt(0))) // is first character upper-case?
+					} else if(Character.isUpperCase(foundText.charAt(0))) { // is first character upper-case?
 						fRetainCaseMode= RC_FIRSTUPPER;
-					else
+					} else {
 						fRetainCaseMode= RC_MIXED;
+					}
 					break;
 
 				default:
@@ -488,15 +496,16 @@ public class PatternConstructor {
 		 * @since 3.4
 		 */
 		private void interpretRetainCase(StringBuilder buf, char ch) {
-			if (fRetainCaseMode == RC_UPPER)
+			if (fRetainCaseMode == RC_UPPER) {
 				buf.append(String.valueOf(ch).toUpperCase());
-			else if (fRetainCaseMode == RC_LOWER)
+			} else if (fRetainCaseMode == RC_LOWER) {
 				buf.append(String.valueOf(ch).toLowerCase());
-			else if (fRetainCaseMode == RC_FIRSTUPPER) {
+			} else if (fRetainCaseMode == RC_FIRSTUPPER) {
 				buf.append(String.valueOf(ch).toUpperCase());
 				fRetainCaseMode= RC_MIXED;
-			} else
+			} else {
 				buf.append(ch);
+			}
 		}
 
 	}

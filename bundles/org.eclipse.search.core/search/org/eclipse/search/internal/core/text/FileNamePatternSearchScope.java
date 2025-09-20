@@ -50,7 +50,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	private final Set<String> fFileNamePatterns;
 	private Matcher fFileNameMatcher;
 
-	private boolean fVisitDerived;
+	private final boolean fVisitDerived;
 
 	private FileNamePatternSearchScope(String description, IResource[] resources, boolean visitDerived) {
 		Assert.isNotNull(description);
