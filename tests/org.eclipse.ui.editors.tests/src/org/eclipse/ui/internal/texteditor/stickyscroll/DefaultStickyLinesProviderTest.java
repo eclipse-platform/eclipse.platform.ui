@@ -138,6 +138,23 @@ public class DefaultStickyLinesProviderTest {
 	}
 
 	@Test
+	public void testIgnoreOtherBlankLines() {
+		String text = """
+				line 1
+				    \t
+				 line 2
+				\f
+				  line 3<""";
+		textWidget.setText(text);
+
+		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(sourceViewer, 4, stickyLinesProperties);
+
+		assertEquals(2, stickyLines.size());
+		assertEquals(0, stickyLines.get(0).getLineNumber());
+		assertEquals(2, stickyLines.get(1).getLineNumber());
+	}
+
+	@Test
 	public void testLinesWithTabs() {
 		stickyLinesProperties = new StickyLinesProperties(2, editorPart);
 		String text = """
@@ -151,6 +168,24 @@ public class DefaultStickyLinesProviderTest {
 		assertEquals(2, stickyLines.size());
 		assertEquals(0, stickyLines.get(0).getLineNumber());
 		assertEquals(1, stickyLines.get(1).getLineNumber());
+	}
+
+	@Test
+	public void testLinesWithTabsAndSpaces() {
+		// tab witdh 4
+		String text = """
+				line 1
+				   \tline 2
+				\t  line 3
+				\t\tline 4<""";
+		textWidget.setText(text);
+
+		List<IStickyLine> stickyLines = stickyLinesProvider.getStickyLines(sourceViewer, 3, stickyLinesProperties);
+
+		assertEquals(3, stickyLines.size());
+		assertEquals(0, stickyLines.get(0).getLineNumber());
+		assertEquals(1, stickyLines.get(1).getLineNumber());
+		assertEquals(2, stickyLines.get(2).getLineNumber());
 	}
 
 	@Test
