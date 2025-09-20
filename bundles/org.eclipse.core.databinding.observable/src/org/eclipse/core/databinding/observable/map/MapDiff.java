@@ -119,12 +119,15 @@ public abstract class MapDiff<K, V> implements IDiff {
 
 		@Override
 		public V get(Object key) {
-			if (diff.getAddedKeys().contains(key))
+			if (diff.getAddedKeys().contains(key)) {
 				return diff.getNewValue(key);
-			if (diff.getChangedKeys().contains(key))
+			}
+			if (diff.getChangedKeys().contains(key)) {
 				return diff.getNewValue(key);
-			if (diff.getRemovedKeys().contains(key))
+			}
+			if (diff.getRemovedKeys().contains(key)) {
 				return null;
+			}
 			return map.get(key);
 		}
 
@@ -171,8 +174,9 @@ public abstract class MapDiff<K, V> implements IDiff {
 
 				@Override
 				public Map.Entry<K, V> next() {
-					if (!findNext())
+					if (!findNext()) {
 						throw new NoSuchElementException();
+					}
 
 					Map.Entry<K, V> myNext = next;
 					haveNext = false;
@@ -181,8 +185,9 @@ public abstract class MapDiff<K, V> implements IDiff {
 				}
 
 				private boolean findNext() {
-					if (haveNext)
+					if (haveNext) {
 						return true;
+					}
 					while (true) {
 						K candidateKey;
 						Map.Entry<K, V> candidateEntry;
@@ -233,8 +238,9 @@ public abstract class MapDiff<K, V> implements IDiff {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof Map.Entry))
+			if (!(obj instanceof Map.Entry)) {
 				return false;
+			}
 			Map.Entry<?, ?> that = (Map.Entry<?, ?>) obj;
 			return Objects.equals(this.getKey(), that.getKey()) && Objects.equals(this.getValue(), that.getValue());
 		}

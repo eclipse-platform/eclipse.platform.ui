@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public class DetailObservableList<M, E> extends ObservableList<E>implements IObserving {
 
-	private boolean updating = false;
+	private final boolean updating = false;
 
 	private IListChangeListener<E> innerChangeListener = event -> {
 		if (!updating) {
@@ -59,7 +59,7 @@ public class DetailObservableList<M, E> extends ObservableList<E>implements IObs
 
 	private IObservableValue<M> outerObservableValue;
 
-	private Object detailType;
+	private final Object detailType;
 
 	public DetailObservableList(
 			IObservableFactory<? super M, IObservableList<E>> factory,
@@ -84,8 +84,9 @@ public class DetailObservableList<M, E> extends ObservableList<E>implements IObs
 	}
 
 	IValueChangeListener<M> outerChangeListener = event -> {
-		if (isDisposed())
+		if (isDisposed()) {
 			return;
+		}
 		ObservableTracker.setIgnore(true);
 		try {
 			List<E> oldList = new ArrayList<>(wrappedList);

@@ -179,14 +179,16 @@ public abstract class ComputedSet<E> extends AbstractObservableSet<E> {
 		@Override
 		public void run() {
 			cachedSet = calculate();
-			if (cachedSet == null)
+			if (cachedSet == null) {
 				cachedSet = Collections.EMPTY_SET;
+			}
 		}
 
 		@Override
 		public void handleStale(StaleEvent event) {
-			if (!dirty)
+			if (!dirty) {
 				makeStale();
+			}
 		}
 
 		@Override
@@ -195,7 +197,7 @@ public abstract class ComputedSet<E> extends AbstractObservableSet<E> {
 		}
 	}
 
-	private PrivateInterface privateInterface = new PrivateInterface();
+	private final PrivateInterface privateInterface = new PrivateInterface();
 
 	private Object elementType;
 
@@ -276,8 +278,9 @@ privateInterface, privateInterface, null);
 				SetDiff<E> delegate;
 
 				private SetDiff<E> getDelegate() {
-					if (delegate == null)
+					if (delegate == null) {
 						delegate = Diffs.computeSetDiff(oldSet, getSet());
+					}
 					return delegate;
 				}
 

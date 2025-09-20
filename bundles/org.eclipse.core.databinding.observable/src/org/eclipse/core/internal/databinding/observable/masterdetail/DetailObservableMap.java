@@ -43,19 +43,20 @@ import org.eclipse.core.runtime.Assert;
  * @since 1.1
  */
 public class DetailObservableMap<M, K, V> extends ObservableMap<K, V>implements IObserving {
-	private boolean updating = false;
+	private final boolean updating = false;
 
 	private IObservableValue<M> master;
 	private IObservableFactory<? super M, IObservableMap<K, V>> detailFactory;
 
 	private IObservableMap<K, V> detailMap;
 
-	private Object detailKeyType;
-	private Object detailValueType;
+	private final Object detailKeyType;
+	private final Object detailValueType;
 
 	private IValueChangeListener<M> masterChangeListener = event -> {
-		if (isDisposed())
+		if (isDisposed()) {
 			return;
+		}
 		ObservableTracker.setIgnore(true);
 		try {
 			Map<K, V> oldMap = new HashMap<>(wrappedMap);

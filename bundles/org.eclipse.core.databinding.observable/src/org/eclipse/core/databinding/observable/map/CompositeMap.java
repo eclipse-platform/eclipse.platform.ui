@@ -54,23 +54,23 @@ import org.eclipse.core.runtime.Assert;
 public class CompositeMap<K, I, V> extends ObservableMap<K, V> {
 	// adds that need to go through the second map and thus will be picked up by
 	// secondMapListener.
-	private Set<I> pendingAdds = new HashSet<>();
+	private final Set<I> pendingAdds = new HashSet<>();
 
 	// Removes that need to go through the second map and thus will be picked up
 	// by secondMapListener. Maps from value being removed to key being removed.
-	private Map<I, K> pendingRemoves = new HashMap<>();
+	private final Map<I, K> pendingRemoves = new HashMap<>();
 
 	// Changes that need to go through the second map and thus will be picked up
 	// by secondMapListener. Maps from old value to new value and new value to
 	// old
 	// value.
-	private Map<I, I> pendingChanges = new HashMap<>();
+	private final Map<I, I> pendingChanges = new HashMap<>();
 
 	private BidiObservableMap<K, I> firstMap;
 	private IObservableMap<I, V> secondMap;
-	private WritableSetPlus<I> rangeSet = new WritableSetPlus<>();
+	private final WritableSetPlus<I> rangeSet = new WritableSetPlus<>();
 
-	private IMapChangeListener<K, I> firstMapListener = event -> {
+	private final IMapChangeListener<K, I> firstMapListener = event -> {
 		MapDiff<? extends K, ? extends I> diff = event.diff;
 		Set<I> rangeSetAdditions = new HashSet<>();
 		Set<I> rangeSetRemovals = new HashSet<>();
@@ -158,7 +158,7 @@ public class CompositeMap<K, I, V> extends ObservableMap<K, V> {
 		}
 	};
 
-	private IMapChangeListener<I, V> secondMapListener = event -> {
+	private final IMapChangeListener<I, V> secondMapListener = event -> {
 		MapDiff<? extends I, ? extends V> diff = event.diff;
 		final Set<K> adds = new HashSet<>();
 		final Set<K> changes = new HashSet<>();

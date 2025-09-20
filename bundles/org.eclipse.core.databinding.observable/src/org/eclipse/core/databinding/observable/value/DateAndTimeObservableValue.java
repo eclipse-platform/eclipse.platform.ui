@@ -104,14 +104,16 @@ public class DateAndTimeObservableValue extends AbstractObservableValue<Date> {
 
 		@Override
 		public void handleChange(ChangeEvent event) {
-			if (!isDisposed() && !updating)
+			if (!isDisposed() && !updating) {
 				notifyIfChanged();
+			}
 		}
 
 		@Override
 		public void handleStale(StaleEvent staleEvent) {
-			if (!isDisposed())
+			if (!isDisposed()) {
 				fireStale();
+			}
 		}
 	}
 
@@ -183,8 +185,9 @@ public class DateAndTimeObservableValue extends AbstractObservableValue<Date> {
 		if (hasListeners()) {
 			Date oldValue = cachedValue;
 			Date newValue = cachedValue = doGetValue();
-			if (!Objects.equals(oldValue, newValue))
+			if (!Objects.equals(oldValue, newValue)) {
 				fireValueChange(Diffs.createValueDiff(oldValue, newValue));
+			}
 		}
 	}
 
@@ -194,8 +197,9 @@ public class DateAndTimeObservableValue extends AbstractObservableValue<Date> {
 	@Override
 	protected Date doGetValue() {
 		Date dateValue = dateObservable.getValue();
-		if (dateValue == null)
+		if (dateValue == null) {
 			return null;
+		}
 
 		Date timeValue = timeObservable.getValue();
 
@@ -206,10 +210,11 @@ public class DateAndTimeObservableValue extends AbstractObservableValue<Date> {
 		int month = cal.get(Calendar.MONTH);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
 
-		if (timeValue == null)
+		if (timeValue == null) {
 			cal.clear();
-		else
+		} else {
 			cal.setTime(timeValue);
+		}
 		int hour = cal.get(Calendar.HOUR_OF_DAY);
 		int minute = cal.get(Calendar.MINUTE);
 		int second = cal.get(Calendar.SECOND);
@@ -230,10 +235,11 @@ public class DateAndTimeObservableValue extends AbstractObservableValue<Date> {
 		Date timeValue;
 
 		Calendar cal = calendar.get();
-		if (combinedDate == null)
+		if (combinedDate == null) {
 			cal.clear();
-		else
+		} else {
 			cal.setTime(combinedDate);
+		}
 
 		int year = cal.get(Calendar.YEAR);
 		int month = cal.get(Calendar.MONTH);
@@ -247,10 +253,11 @@ public class DateAndTimeObservableValue extends AbstractObservableValue<Date> {
 			dateValue = null;
 		} else {
 			dateValue = dateObservable.getValue();
-			if (dateValue == null)
+			if (dateValue == null) {
 				cal.clear();
-			else
+			} else {
 				cal.setTime(dateValue);
+			}
 			cal.set(Calendar.YEAR, year);
 			cal.set(Calendar.MONTH, month);
 			cal.set(Calendar.DAY_OF_MONTH, day);
@@ -258,10 +265,11 @@ public class DateAndTimeObservableValue extends AbstractObservableValue<Date> {
 		}
 
 		timeValue = timeObservable.getValue();
-		if (timeValue == null)
+		if (timeValue == null) {
 			cal.clear();
-		else
+		} else {
 			cal.setTime(timeValue);
+		}
 		cal.set(Calendar.HOUR_OF_DAY, hour);
 		cal.set(Calendar.MINUTE, minute);
 		cal.set(Calendar.SECOND, second);

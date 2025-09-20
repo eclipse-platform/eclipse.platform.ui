@@ -280,8 +280,9 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		getterCalled();
 		int offset = 0;
 		for (IObservableList<E> list : lists) {
-			if (index - offset < list.size())
+			if (index - offset < list.size()) {
 				return list.get(index - offset);
+			}
 			offset += list.size();
 		}
 		throw new IndexOutOfBoundsException("index: " + index + ", size: " //$NON-NLS-1$ //$NON-NLS-2$
@@ -292,8 +293,9 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	public boolean contains(Object o) {
 		getterCalled();
 		for (IObservableList<E> list : lists) {
-			if (list.contains(o))
+			if (list.contains(o)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -301,11 +303,19 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	@Override
 	public boolean equals(Object o) {
 		getterCalled();
-		if (o == this) return true;
-		if (o == null) return false;
-		if (!(o instanceof List)) return false;
+		if (o == this) {
+			return true;
+		}
+		if (o == null) {
+			return false;
+		}
+		if (!(o instanceof List)) {
+			return false;
+		}
 		List<?> that = (List<?>) o;
-		if (doGetSize() != that.size()) return false;
+		if (doGetSize() != that.size()) {
+			return false;
+		}
 
 		int subListIndex = 0;
 		for (IObservableList<E> list : lists) {
@@ -330,8 +340,9 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		int offset = 0;
 		for (IObservableList<E> list : lists) {
 			int index = list.indexOf(o);
-			if (index != -1)
+			if (index != -1) {
 				return offset + index;
+			}
 			offset += list.size();
 		}
 		return -1;
@@ -489,7 +500,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	}
 
 	private final class MultiListItr implements Iterator<E> {
-		private List<Iterator<E>> iters;
+		private final List<Iterator<E>> iters;
 		private int iterIndex = 0;
 
 		private MultiListItr() {
@@ -524,7 +535,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	}
 
 	private final class MultiListListItr implements ListIterator<E> {
-		private List<ListIterator<E>> iters;
+		private final List<ListIterator<E>> iters;
 		private int iterIndex;
 
 		private MultiListListItr(int initialIndex) {

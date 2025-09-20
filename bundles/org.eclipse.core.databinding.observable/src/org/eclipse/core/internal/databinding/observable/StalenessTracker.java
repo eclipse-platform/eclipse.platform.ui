@@ -29,7 +29,7 @@ import org.eclipse.core.internal.databinding.identity.IdentityMap;
  */
 public class StalenessTracker {
 
-	private Map<IObservable, Boolean> staleMap = new IdentityMap<>();
+	private final Map<IObservable, Boolean> staleMap = new IdentityMap<>();
 
 	private int staleCount = 0;
 
@@ -47,7 +47,7 @@ public class StalenessTracker {
 		}
 	}
 
-	private ChildListener childListener = new ChildListener();
+	private final ChildListener childListener = new ChildListener();
 
 	public StalenessTracker(IObservable[] observables,
 			IStalenessConsumer stalenessConsumer) {

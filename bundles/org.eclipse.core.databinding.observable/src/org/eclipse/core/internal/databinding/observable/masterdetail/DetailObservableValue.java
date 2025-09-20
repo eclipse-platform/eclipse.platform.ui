@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.Assert;
 public class DetailObservableValue<M, T> extends AbstractObservableValue<T>
 		implements IObserving {
 
-	private boolean updating = false;
+	private final boolean updating = false;
 
 	private IValueChangeListener<T> innerChangeListener = event -> {
 		if (!updating) {
@@ -49,7 +49,7 @@ public class DetailObservableValue<M, T> extends AbstractObservableValue<T>
 
 	private IObservableValue<T> innerObservableValue;
 
-	private Object detailType;
+	private final Object detailType;
 
 	private IObservableValue<M> outerObservableValue;
 
@@ -78,8 +78,9 @@ public class DetailObservableValue<M, T> extends AbstractObservableValue<T>
 	}
 
 	IValueChangeListener<M> outerChangeListener = event -> {
-		if (isDisposed())
+		if (isDisposed()) {
 			return;
+		}
 		ObservableTracker.setIgnore(true);
 		try {
 			T oldValue = doGetValue();
@@ -133,8 +134,9 @@ public class DetailObservableValue<M, T> extends AbstractObservableValue<T>
 
 	@Override
 	public T doGetValue() {
-		if (innerObservableValue == null)
+		if (innerObservableValue == null) {
 			return null;
+		}
 		ObservableTracker.setIgnore(true);
 		try {
 			return innerObservableValue.getValue();

@@ -305,7 +305,7 @@ public abstract class Realm {
 	static class SyncRunnable implements Runnable {
 		boolean hasRun = false;
 
-		private Runnable runnable;
+		private final Runnable runnable;
 
 		SyncRunnable(Runnable runnable) {
 			this.runnable = runnable;

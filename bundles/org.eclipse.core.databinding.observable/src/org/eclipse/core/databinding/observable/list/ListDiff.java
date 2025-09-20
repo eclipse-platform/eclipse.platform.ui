@@ -146,10 +146,11 @@ public abstract class ListDiff<E> implements IDiff {
 				}
 			}
 
-			if (add)
+			if (add) {
 				visitor.handleAdd(pos, elem);
-			else
+			} else {
 				visitor.handleRemove(pos, elem);
+			}
 		}
 	}
 
@@ -309,8 +310,9 @@ public abstract class ListDiff<E> implements IDiff {
 			buffer.append("{"); //$NON-NLS-1$
 
 			for (int i = 0; i < differences.length; i++) {
-				if (i > 0)
+				if (i > 0) {
 					buffer.append(", "); //$NON-NLS-1$
+				}
 
 				buffer.append("difference[") //$NON-NLS-1$
 						.append(i)

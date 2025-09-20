@@ -94,9 +94,9 @@ public final class SideEffect implements ISideEffect {
 	 * Dependencies which we are currently listening for change events from
 	 */
 	private IObservable[] dependencies;
-	private Realm realm;
+	private final Realm realm;
 
-	private PrivateInterface privateInterface = new PrivateInterface();
+	private final PrivateInterface privateInterface = new PrivateInterface();
 
 	/**
 	 * List of dispose listeners. Null if empty
