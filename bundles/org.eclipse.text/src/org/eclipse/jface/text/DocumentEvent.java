@@ -64,18 +64,20 @@ public class DocumentEvent {
 		Assert.isTrue(offset >= 0);
 		Assert.isTrue(length >= 0);
 
-		if (ASSERT_TEXT_NOT_NULL)
+		if (ASSERT_TEXT_NOT_NULL) {
 			Assert.isNotNull(text);
+		}
 
 		fDocument= doc;
 		fOffset= offset;
 		fLength= length;
 		fText= text;
 
-		if (fDocument instanceof IDocumentExtension4)
+		if (fDocument instanceof IDocumentExtension4) {
 			fModificationStamp= ((IDocumentExtension4)fDocument).getModificationStamp();
-		else
+		} else {
 			fModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
+		}
 	}
 
 	/**

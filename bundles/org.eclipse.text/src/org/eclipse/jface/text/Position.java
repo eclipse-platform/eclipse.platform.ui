@@ -98,8 +98,7 @@ public class Position {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof Position) {
-			Position rp= (Position) other;
+		if (other instanceof Position rp) {
 			return (rp.offset == offset) && (rp.length == length);
 		}
 		return super.equals(other);
@@ -132,8 +131,9 @@ public class Position {
 	 */
 	public boolean includes(int index) {
 
-		if (isDeleted)
+		if (isDeleted) {
 			return false;
+		}
 
 		return (this.offset <= index) && (index < this.offset + length);
 	}
@@ -149,20 +149,23 @@ public class Position {
 	 */
 	public boolean overlapsWith(int rangeOffset, int rangeLength) {
 
-		if (isDeleted)
+		if (isDeleted) {
 			return false;
+		}
 
 		int end= rangeOffset + rangeLength;
 		int thisEnd= this.offset + this.length;
 
 		if (rangeLength > 0) {
-			if (this.length > 0)
+			if (this.length > 0) {
 				return this.offset < end && rangeOffset < thisEnd;
+			}
 			return  rangeOffset <= this.offset && this.offset < end;
 		}
 
-		if (this.length > 0)
+		if (this.length > 0) {
 			return this.offset <= rangeOffset && rangeOffset < thisEnd;
+		}
 		return this.offset == rangeOffset;
 	}
 

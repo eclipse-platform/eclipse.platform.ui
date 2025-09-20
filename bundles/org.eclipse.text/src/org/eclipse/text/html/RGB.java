@@ -70,8 +70,9 @@ public final class RGB implements Serializable {
 public RGB(int red, int green, int blue) {
 	if ((red > 255) || (red < 0) ||
 		(green > 255) || (green < 0) ||
-		(blue > 255) || (blue < 0))
-			throw new IllegalArgumentException("Argument not valid"); //$NON-NLS-1$
+		(blue > 255) || (blue < 0)) {
+		throw new IllegalArgumentException("Argument not valid"); //$NON-NLS-1$
+	}
 	this.red = red;
 	this.green = green;
 	this.blue = blue;
@@ -101,7 +102,9 @@ public RGB(float hue, float saturation, float brightness) {
 	if (saturation == 0) {
 		r = g = b = brightness;
 	} else {
-		if (hue == 360) hue = 0;
+		if (hue == 360) {
+			hue = 0;
+		}
 		hue /= 60;
 		int i = (int)hue;
 		float f = hue - i;
@@ -180,7 +183,9 @@ public float[] getHSB() {
 			}
 		}
 		hue *= 60;
-		if (hue < 0) hue += 360;
+		if (hue < 0) {
+			hue += 360;
+		}
 	}
 	return new float[] {hue, saturation, brightness};
 }
@@ -197,8 +202,12 @@ public float[] getHSB() {
  */
 @Override
 public boolean equals(Object object) {
-	if (object == this) return true;
-	if (!(object instanceof RGB rgb)) return false;
+	if (object == this) {
+		return true;
+	}
+	if (!(object instanceof RGB rgb)) {
+		return false;
+	}
 	return (rgb.red == this.red) && (rgb.green == this.green) && (rgb.blue == this.blue);
 }
 

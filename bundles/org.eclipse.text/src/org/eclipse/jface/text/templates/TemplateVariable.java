@@ -268,8 +268,9 @@ public class TemplateVariable {
 	 */
 	public void setUnambiguous(boolean unambiguous) {
 		fIsUnambiguous= unambiguous;
-		if (unambiguous)
+		if (unambiguous) {
 			setResolved(true);
+		}
 	}
 
 	/**

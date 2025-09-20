@@ -73,7 +73,7 @@ public class PatternRule implements IPredicateRule {
 	 * Line delimiter comparator which orders according to decreasing delimiter length.
 	 * @since 3.1
 	 */
-	private Comparator<char[]> fLineDelimiterComparator= new DecreasingCharArrayLengthComparator();
+	private final Comparator<char[]> fLineDelimiterComparator= new DecreasingCharArrayLengthComparator();
 	/**
 	 * Cached line delimiters.
 	 * @since 3.1
@@ -161,8 +161,9 @@ public class PatternRule implements IPredicateRule {
 	 * @param column the column in which the pattern starts
 	 */
 	public void setColumnConstraint(int column) {
-		if (column < 0)
+		if (column < 0) {
 			column= UNDEFINED;
+		}
 		fColumn= column;
 	}
 
@@ -191,16 +192,18 @@ public class PatternRule implements IPredicateRule {
 
 		if (resume) {
 
-			if (endSequenceDetected(scanner))
+			if (endSequenceDetected(scanner)) {
 				return fToken;
+			}
 
 		} else {
 
 			int c= scanner.read();
 			if (c == fStartSequence[0]) {
 				if (sequenceDetected(scanner, fStartSequence, false)) {
-					if (endSequenceDetected(scanner))
+					if (endSequenceDetected(scanner)) {
 						return fToken;
+					}
 				}
 			}
 		}
@@ -229,8 +232,9 @@ public class PatternRule implements IPredicateRule {
 		if (fLineDelimiters == null || fLineDelimiters.length != count) {
 			fSortedLineDelimiters= new char[count][];
 		} else {
-			while (count > 0 && Arrays.equals(fLineDelimiters[count - 1], originalDelimiters[count - 1]))
+			while (count > 0 && Arrays.equals(fLineDelimiters[count - 1], originalDelimiters[count - 1])) {
 				count--;
+			}
 		}
 		if (count != 0) {
 			fLineDelimiters= originalDelimiters;
@@ -246,31 +250,37 @@ public class PatternRule implements IPredicateRule {
 				if (fEscapeContinuesLine) {
 					c= scanner.read();
 					for (char[] fSortedLineDelimiter : fSortedLineDelimiters) {
-						if (c == fSortedLineDelimiter[0] && sequenceDetected(scanner, fSortedLineDelimiter, fBreaksOnEOF))
+						if (c == fSortedLineDelimiter[0] && sequenceDetected(scanner, fSortedLineDelimiter, fBreaksOnEOF)) {
 							break;
+						}
 					}
-				} else
+				} else {
 					scanner.read();
+				}
 
 			} else if (fEndSequence.length > 0 && c == fEndSequence[0]) {
 				// Check if the specified end sequence has been found.
-				if (sequenceDetected(scanner, fEndSequence, fBreaksOnEOF))
+				if (sequenceDetected(scanner, fEndSequence, fBreaksOnEOF)) {
 					return true;
+				}
 			} else if (fBreaksOnEOL) {
 				// Check for end of line since it can be used to terminate the pattern.
 				for (char[] fSortedLineDelimiter : fSortedLineDelimiters) {
-					if (c == fSortedLineDelimiter[0] && sequenceDetected(scanner, fSortedLineDelimiter, fBreaksOnEOF))
+					if (c == fSortedLineDelimiter[0] && sequenceDetected(scanner, fSortedLineDelimiter, fBreaksOnEOF)) {
 						return true;
+					}
 				}
 			}
 			readCount++;
 		}
 
-		if (fBreaksOnEOF)
+		if (fBreaksOnEOF) {
 			return true;
+		}
 
-		for (; readCount > 0; readCount--)
+		for (; readCount > 0; readCount--) {
 			scanner.unread();
+		}
 
 		return false;
 	}
@@ -295,8 +305,9 @@ public class PatternRule implements IPredicateRule {
 				// Non-matching character detected, rewind the scanner back to the start.
 				// Do not unread the first character.
 				scanner.unread();
-				for (int j= i-1; j > 0; j--)
+				for (int j= i-1; j > 0; j--) {
 					scanner.unread();
+				}
 				return false;
 			}
 		}
@@ -306,13 +317,15 @@ public class PatternRule implements IPredicateRule {
 
 	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
-		if (fColumn == UNDEFINED)
+		if (fColumn == UNDEFINED) {
 			return doEvaluate(scanner, resume);
+		}
 
 		int c= scanner.read();
 		scanner.unread();
-		if (c == fStartSequence[0])
+		if (c == fStartSequence[0]) {
 			return (fColumn == scanner.getColumn() ? doEvaluate(scanner, resume) : Token.UNDEFINED);
+		}
 		return Token.UNDEFINED;
 	}
 

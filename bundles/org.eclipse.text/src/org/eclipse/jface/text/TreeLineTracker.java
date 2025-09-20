@@ -175,13 +175,15 @@ abstract class TreeLineTracker implements ILineTracker {
 	TreeLineTracker(ListLineTracker tracker) {
 		final List<Line> lines= tracker.getLines();
 		final int n= lines.size();
-		if (n == 0)
+		if (n == 0) {
 			return;
+		}
 
 		Line line= lines.get(0);
 		String delim= line.delimiter;
-		if (delim == null)
+		if (delim == null) {
 			delim= NO_DELIM;
+		}
 		int length= line.length;
 		fRoot= new Node(length, delim);
 		Node node= fRoot;
@@ -189,16 +191,20 @@ abstract class TreeLineTracker implements ILineTracker {
 		for (int i= 1; i < n; i++) {
 			line= lines.get(i);
 			delim= line.delimiter;
-			if (delim == null)
+			if (delim == null) {
 				delim= NO_DELIM;
+			}
 			length= line.length;
 			node= insertAfter(node, length, delim);
 		}
 
-		if (node.delimiter != NO_DELIM)
+		if (node.delimiter != NO_DELIM) {
 			insertAfter(node, 0, NO_DELIM);
+		}
 
-		if (ASSERT) checkTree();
+		if (ASSERT) {
+			checkTree();
+		}
 	}
 
 	/**
@@ -228,8 +234,9 @@ abstract class TreeLineTracker implements ILineTracker {
 		int remaining= offset;
 		Node node= fRoot;
 		while (true) {
-			if (node == null)
+			if (node == null) {
 				throw new BadLocationException(Integer.toString(offset));
+			}
 
 			if (remaining < node.offset) {
 				node= node.left;
@@ -264,16 +271,18 @@ abstract class TreeLineTracker implements ILineTracker {
 		int line= 0;
 
 		while (true) {
-			if (node == null)
+			if (node == null) {
 				throw new BadLocationException(Integer.toString(offset));
+			}
 
 			if (remaining < node.offset) {
 				node= node.left;
 			} else {
 				remaining -= node.offset;
 				line+= node.line;
-				if (remaining < node.length	|| remaining == node.length && node.right == null) // last line
+				if (remaining < node.length	|| remaining == node.length && node.right == null) { // last line
 					return  line;
+				}
 
 				remaining -= node.length;
 				line ++;
@@ -298,11 +307,13 @@ abstract class TreeLineTracker implements ILineTracker {
 		Node node= fRoot;
 
 		while (true) {
-			if (node == null)
+			if (node == null) {
 				throw new BadLocationException(Integer.toString(line));
+			}
 
-			if (remaining == node.line)
+			if (remaining == node.line) {
 				break;
+			}
 			if (remaining < node.line) {
 				node= node.left;
 			} else {
@@ -331,11 +342,13 @@ abstract class TreeLineTracker implements ILineTracker {
 		Node node= fRoot;
 
 		while (true) {
-			if (node == null)
+			if (node == null) {
 				throw new BadLocationException(Integer.toString(line));
+			}
 
-			if (remaining == node.line)
+			if (remaining == node.line) {
 				return offset + node.offset;
+			}
 
 			if (remaining < node.line) {
 				node= node.left;
@@ -354,9 +367,13 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @param node the node to rotate around
 	 */
 	private void rotateLeft(Node node) {
-		if (ASSERT) Assert.isNotNull(node);
+		if (ASSERT) {
+			Assert.isNotNull(node);
+		}
 		Node child= node.right;
-		if (ASSERT) Assert.isNotNull(child);
+		if (ASSERT) {
+			Assert.isNotNull(child);
+		}
 		boolean leftChild= node.parent == null || node == node.parent.left;
 
 		// restructure
@@ -379,9 +396,13 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @param node the node to rotate around
 	 */
 	private void rotateRight(Node node) {
-		if (ASSERT) Assert.isNotNull(node);
+		if (ASSERT) {
+			Assert.isNotNull(node);
+		}
 		Node child= node.left;
-		if (ASSERT) Assert.isNotNull(child);
+		if (ASSERT) {
+			Assert.isNotNull(child);
+		}
 		boolean leftChild= node.parent == null || node == node.parent.left;
 
 		setChild(node.parent, child, leftChild);
@@ -408,18 +429,21 @@ abstract class TreeLineTracker implements ILineTracker {
 	 */
 	private void setChild(Node parent, Node child, boolean isLeftChild) {
 		if (parent == null) {
-			if (child == null)
+			if (child == null) {
 				fRoot= new Node(0, NO_DELIM);
-			else
+			} else {
 				fRoot= child;
+			}
 		} else {
-			if (isLeftChild)
+			if (isLeftChild) {
 				parent.left= child;
-			else
+			} else {
 				parent.right= child;
+			}
 		}
-		if (child != null)
+		if (child != null) {
 			child.parent= parent;
+		}
 	}
 
 	/**
@@ -514,10 +538,11 @@ abstract class TreeLineTracker implements ILineTracker {
 		 */
 		Node added= new Node(length, delimiter);
 
-		if (node.right == null)
+		if (node.right == null) {
 			setChild(node, added, false);
-		else
+		} else {
 			setChild(successorDown(node.right), added, true);
+		}
 
 		// parent chain update
 		updateParentChain(added, length, 1);
@@ -535,10 +560,11 @@ abstract class TreeLineTracker implements ILineTracker {
 	private void updateParentBalanceAfterInsertion(Node node) {
 		Node parent= node.parent;
 		while (parent != null) {
-			if (node == parent.left)
+			if (node == parent.left) {
 				parent.balance--;
-			else
+			} else {
 				parent.balance++;
+			}
 
 			switch (parent.balance) {
 				case 1:
@@ -555,8 +581,9 @@ abstract class TreeLineTracker implements ILineTracker {
 				case 0:
 					break;
 				default:
-					if (ASSERT)
+					if (ASSERT) {
 						Assert.isTrue(false);
+					}
 			}
 			return;
 		}
@@ -596,7 +623,9 @@ abstract class TreeLineTracker implements ILineTracker {
 
 	@Override
 	public final void replace(int offset, int length, String text) throws BadLocationException {
-		if (ASSERT) checkTree();
+		if (ASSERT) {
+			checkTree();
+		}
 
 		// Inlined nodeByOffset as we need both node and offset
 		int remaining= offset;
@@ -604,8 +633,9 @@ abstract class TreeLineTracker implements ILineTracker {
 		final int firstNodeOffset;
 
 		while (true) {
-			if (first == null)
+			if (first == null) {
 				throw new BadLocationException(Integer.toString(offset));
+			}
 
 			if (remaining < first.offset) {
 				first= first.left;
@@ -621,22 +651,30 @@ abstract class TreeLineTracker implements ILineTracker {
 			}
 		}
 		// Inline nodeByOffset end
-		if (ASSERT) Assert.isTrue(first != null);
+		if (ASSERT) {
+			Assert.isTrue(first != null);
+		}
 
 		Node last;
-		if (offset + length < firstNodeOffset + first.length)
+		if (offset + length < firstNodeOffset + first.length) {
 			last= first;
-		else
+		} else {
 			last= nodeByOffset(offset + length);
-		if (ASSERT) Assert.isTrue(last != null);
+		}
+		if (ASSERT) {
+			Assert.isTrue(last != null);
+		}
 
 		int firstLineDelta= firstNodeOffset + first.length - offset;
-		if (first == last)
+		if (first == last) {
 			replaceInternal(first, text, length, firstLineDelta);
-		else
+		} else {
 			replaceFromTo(first, last, text, length, firstLineDelta);
+		}
 
-		if (ASSERT) checkTree();
+		if (ASSERT) {
+			checkTree();
+		}
 	}
 
 	/**
@@ -761,7 +799,9 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @param delta the character delta to add to the node's length
 	 */
 	private void updateLength(Node node, int delta) {
-		if (ASSERT) Assert.isTrue(node.length  + delta >= 0);
+		if (ASSERT) {
+			Assert.isTrue(node.length  + delta >= 0);
+		}
 
 		// update the node itself
 		node.length += delta;
@@ -769,17 +809,20 @@ abstract class TreeLineTracker implements ILineTracker {
 		// check deletion
 		final int lineDelta;
 		boolean delete= node.length == 0 && node.delimiter != NO_DELIM;
-		if (delete)
+		if (delete) {
 			lineDelta= -1;
-		else
+		} else {
 			lineDelta= 0;
+		}
 
 		// update parent chain
-		if (delta != 0 || lineDelta != 0)
+		if (delta != 0 || lineDelta != 0) {
 			updateParentChain(node, delta, lineDelta);
+		}
 
-		if (delete)
+		if (delete) {
 			delete(node);
+		}
 	}
 
 	/**
@@ -825,8 +868,12 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @param node the node to delete.
 	 */
 	private void delete(Node node) {
-		if (ASSERT) Assert.isTrue(node != null);
-		if (ASSERT) Assert.isTrue(node.length == 0);
+		if (ASSERT) {
+			Assert.isTrue(node != null);
+		}
+		if (ASSERT) {
+			Assert.isTrue(node.length == 0);
+		}
 
 		Node parent= node.parent;
 		Node toUpdate; // the parent of the node that lost a child
@@ -865,15 +912,25 @@ abstract class TreeLineTracker implements ILineTracker {
 			Node successor= successor(node);
 
 			// successor exists (otherwise node would not have right child, case 1)
-			if (ASSERT) Assert.isNotNull(successor);
+			if (ASSERT) {
+				Assert.isNotNull(successor);
+			}
 			// successor has no left child (a left child would be the real successor of node)
-			if (ASSERT) Assert.isTrue(successor.left == null);
-			if (ASSERT) Assert.isTrue(successor.line == 0);
+			if (ASSERT) {
+				Assert.isTrue(successor.left == null);
+			}
+			if (ASSERT) {
+				Assert.isTrue(successor.line == 0);
+			}
 			// successor is the left child of its parent (otherwise parent would be smaller and
 			// hence the real successor)
-			if (ASSERT) Assert.isTrue(successor == successor.parent.left);
+			if (ASSERT) {
+				Assert.isTrue(successor == successor.parent.left);
+			}
 			// successor is not a child of node (would have been covered by 2a)
-			if (ASSERT) Assert.isTrue(successor.parent != node);
+			if (ASSERT) {
+				Assert.isTrue(successor.parent != node);
+			}
 
 			toUpdate= successor.parent;
 			lostLeftChild= true;
@@ -910,32 +967,37 @@ abstract class TreeLineTracker implements ILineTracker {
 	 */
 	private void updateParentBalanceAfterDeletion(Node node, boolean wasLeftChild) {
 		while (node != null) {
-			if (wasLeftChild)
+			if (wasLeftChild) {
 				node.balance++;
-			else
+			} else {
 				node.balance--;
+			}
 
 			Node parent= node.parent;
-			if (parent != null)
+			if (parent != null) {
 				wasLeftChild= node == parent.left;
+			}
 
 			switch (node.balance) {
 				case 1:
 				case -1:
 					return; // done, no tree change
 				case -2:
-					if (rebalanceAfterDeletionRight(node.left))
+					if (rebalanceAfterDeletionRight(node.left)) {
 						return;
+					}
 					break; // propagate up
 				case 2:
-					if (rebalanceAfterDeletionLeft(node.right))
+					if (rebalanceAfterDeletionLeft(node.right)) {
 						return;
+					}
 					break; // propagate up
 				case 0:
 					break; // propagate up
 				default:
-					if (ASSERT)
+					if (ASSERT) {
 						Assert.isTrue(false);
+					}
 			}
 
 			node= parent;
@@ -963,7 +1025,9 @@ abstract class TreeLineTracker implements ILineTracker {
 			parent.balance= 1;
 			return true;
 		} else {
-			if (ASSERT) Assert.isTrue(false);
+			if (ASSERT) {
+				Assert.isTrue(false);
+			}
 			return true;
 		}
 	}
@@ -989,7 +1053,9 @@ abstract class TreeLineTracker implements ILineTracker {
 			parent.balance= -1;
 			return true;
 		} else {
-			if (ASSERT) Assert.isTrue(false);
+			if (ASSERT) {
+				Assert.isTrue(false);
+			}
 			return true;
 		}
 	}
@@ -1001,8 +1067,9 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @return the successor of <code>node</code>, <code>null</code> if there is none
 	 */
 	private Node successor(Node node) {
-		if (node.right != null)
+		if (node.right != null) {
 			return successorDown(node.right);
+		}
 
 		return successorUp(node);
 	}
@@ -1018,12 +1085,15 @@ abstract class TreeLineTracker implements ILineTracker {
 		Node child= node;
 		Node parent= child.parent;
 		while (parent != null) {
-			if (child == parent.left)
+			if (child == parent.left) {
 				return parent;
+			}
 			child= parent;
 			parent= child.parent;
 		}
-		if (ASSERT) Assert.isTrue(node.delimiter == NO_DELIM);
+		if (ASSERT) {
+			Assert.isTrue(node.delimiter == NO_DELIM);
+		}
 		return null;
 	}
 
@@ -1087,8 +1157,9 @@ abstract class TreeLineTracker implements ILineTracker {
 
 	@Override
 	public final int getNumberOfLines(int offset, int length) throws BadLocationException {
-		if (length == 0)
+		if (length == 0) {
 			return 1;
+		}
 
 		int startLine= lineByOffset(offset);
 		int endLine= lineByOffset(offset + length);
@@ -1120,8 +1191,9 @@ abstract class TreeLineTracker implements ILineTracker {
 		final int lineOffset;
 
 		while (true) {
-			if (node == null)
+			if (node == null) {
 				throw new BadLocationException(Integer.toString(offset));
+			}
 
 			if (remaining < node.offset) {
 				node= node.left;
@@ -1149,8 +1221,9 @@ abstract class TreeLineTracker implements ILineTracker {
 			Node node= fRoot;
 
 			while (true) {
-				if (node == null)
+				if (node == null) {
 					throw new BadLocationException(Integer.toString(line));
+				}
 
 				if (remaining == node.line) {
 					offset += node.offset;
@@ -1180,8 +1253,9 @@ abstract class TreeLineTracker implements ILineTracker {
 				Node node= fRoot;
 
 				while (true) {
-					if (node == null)
+					if (node == null) {
 						throw new BadLocationException(Integer.toString(line));
+					}
 
 					if (remaining == node.line) {
 						offset+= node.offset;
@@ -1197,8 +1271,9 @@ abstract class TreeLineTracker implements ILineTracker {
 				}
 				Node last= node;
 				// Inline nodeByLine end
-				if (last.length > 0)
+				if (last.length > 0) {
 					return new Region(offset + last.length, 0);
+				}
 			}
 			throw x;
 		}
@@ -1273,8 +1348,9 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @return the depth of the given tree, 0 if it is <code>null</code>
 	 */
 	private byte computeDepth(Node root) {
-		if (root == null)
+		if (root == null) {
 			return 0;
+		}
 
 		return (byte) (Math.max(computeDepth(root.left), computeDepth(root.right)) + 1);
 	}
@@ -1301,8 +1377,9 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @return the depth of the tree under <code>node</code>
 	 */
 	private byte checkTreeStructure(Node node) {
-		if (node == null)
+		if (node == null) {
 			return 0;
+		}
 
 		byte leftDepth= checkTreeStructure(node.left);
 		byte rightDepth= checkTreeStructure(node.right);
@@ -1327,8 +1404,9 @@ abstract class TreeLineTracker implements ILineTracker {
 	 *         in <code>node</code>'s subtree
 	 */
 	private int[] checkTreeOffsets(Node node, int[] offLen, Node last) {
-		if (node == last)
+		if (node == last) {
 			return offLen;
+		}
 
 		Assert.isTrue(node.offset == offLen[0]);
 		Assert.isTrue(node.line == offLen[1]);

@@ -56,18 +56,19 @@ public class InclusivePositionUpdater implements IPositionUpdater {
 
 				Position position= positions[i];
 
-				if (position.isDeleted())
+				if (position.isDeleted()) {
 					continue;
+				}
 
 				int offset= position.getOffset();
 				int length= position.getLength();
 				int end= offset + length;
 
-				if (offset > eventOffset + eventOldLength)
+				if (offset > eventOffset + eventOldLength) {
 					// position comes way
 					// after change - shift
 					position.setOffset(offset + deltaLength);
-				else if (end < eventOffset) {
+				} else if (end < eventOffset) {
 					// position comes way before change -
 					// leave alone
 				} else if (offset <= eventOffset && end >= eventOffset + eventOldLength) {

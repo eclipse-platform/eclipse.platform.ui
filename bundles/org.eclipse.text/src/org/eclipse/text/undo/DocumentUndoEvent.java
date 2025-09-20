@@ -61,22 +61,22 @@ public class DocumentUndoEvent {
 	public static final int COMPOUND= 1 << 4;
 
 	/** The changed document. */
-	private IDocument fDocument;
+	private final IDocument fDocument;
 
 	/** The document offset where the change begins. */
-	private int fOffset;
+	private final int fOffset;
 
 	/** Text inserted into the document. */
-	private String fText;
+	private final String fText;
 
 	/** Text replaced in the document. */
-	private String fPreservedText;
+	private final String fPreservedText;
 
 	/** Bit mask of event types describing the event */
-	private int fEventType;
+	private final int fEventType;
 
 	/** The source that triggered this event or <code>null</code> if unknown. */
-	private Object fSource;
+	private final Object fSource;
 
 	/**
 	 * Creates a new document event.

@@ -32,7 +32,7 @@ public class WordPatternRule extends SingleLineRule {
 	/** The word detector used by this rule */
 	protected IWordDetector fDetector;
 	/** The internal buffer used for pattern detection */
-	private StringBuilder fBuffer= new StringBuilder();
+	private final StringBuilder fBuffer= new StringBuilder();
 
 	/**
 	 * Creates a rule for the given starting and ending word
@@ -109,7 +109,8 @@ public class WordPatternRule extends SingleLineRule {
 	 */
 	protected void unreadBuffer(ICharacterScanner scanner) {
 		fBuffer.insert(0, fStartSequence);
-		for (int i= fBuffer.length() - 1; i > 0; i--)
+		for (int i= fBuffer.length() - 1; i > 0; i--) {
 			scanner.unread();
+		}
 	}
 }

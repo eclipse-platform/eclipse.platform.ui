@@ -43,7 +43,7 @@ public class ProjectionDocumentEvent extends SlaveDocumentEvent {
 	public final static Object CONTENT_CHANGE= new Object();
 
 	/** The change type */
-	private Object fChangeType;
+	private final Object fChangeType;
 	/** The offset of the change in the master document */
 	private int fMasterOffset= -1;
 	/** The length of the change in the master document */

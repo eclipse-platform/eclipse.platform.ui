@@ -82,13 +82,13 @@ public class ProjectionDocument extends AbstractDocument {
 
 
 	/** The master document */
-	private IDocument fMasterDocument;
+	private final IDocument fMasterDocument;
 	/** The master document as document extension */
 	private IDocumentExtension fMasterDocumentExtension;
 	/** The fragments' position category */
-	private String fFragmentsCategory;
+	private final String fFragmentsCategory;
 	/** The segment's position category */
-	private String fSegmentsCategory;
+	private final String fSegmentsCategory;
 	/** The document event issued by the master document */
 	private DocumentEvent fMasterEvent;
 	/** The document event to be issued by the projection document */
@@ -102,9 +102,9 @@ public class ProjectionDocument extends AbstractDocument {
 	/** The position updater for the segments */
 	private SegmentUpdater fSegmentUpdater;
 	/** The position updater for the fragments */
-	private FragmentUpdater fFragmentsUpdater;
+	private final FragmentUpdater fFragmentsUpdater;
 	/** The projection mapping */
-	private ProjectionMapping fMapping;
+	private final ProjectionMapping fMapping;
 
 	/**
 	 * Creates a projection document for the given master document.
@@ -115,8 +115,9 @@ public class ProjectionDocument extends AbstractDocument {
 		super();
 
 		fMasterDocument= masterDocument;
-		if (fMasterDocument instanceof IDocumentExtension)
+		if (fMasterDocument instanceof IDocumentExtension) {
 			fMasterDocumentExtension= (IDocumentExtension) fMasterDocument;
+		}
 
 		fSegmentsCategory= SEGMENTS_CATEGORY;
 		fFragmentsCategory= FRAGMENTS_CATEGORY_PREFIX + hashCode();
@@ -284,8 +285,9 @@ public class ProjectionDocument extends AbstractDocument {
 	 *             document
 	 */
 	private void internalAddMasterDocumentRange(int offsetInMaster, int lengthInMaster, DocumentEvent masterDocumentEvent) throws BadLocationException {
-		if (lengthInMaster == 0)
+		if (lengthInMaster == 0) {
 			return;
+		}
 
 		try {
 
@@ -297,21 +299,26 @@ public class ProjectionDocument extends AbstractDocument {
 
 			if (index < fragments.length) {
 				Fragment fragment= (Fragment) fragments[index];
-				if (offsetInMaster == fragment.offset)
-					if (fragment.length == 0) // the fragment does not overlap - it is a zero-length fragment at the same offset
+				if (offsetInMaster == fragment.offset) {
+					if (fragment.length == 0) { // the fragment does not overlap - it is a zero-length fragment at the same offset
 						left= fragment;
-					else
+					} else {
 						throw new IllegalArgumentException("overlaps with existing fragment"); //$NON-NLS-1$
-				if (offsetInMaster + lengthInMaster == fragment.offset)
+					}
+				}
+				if (offsetInMaster + lengthInMaster == fragment.offset) {
 					right= fragment;
+				}
 			}
 
 			if (0 < index && index <= fragments.length) {
 				Fragment fragment= (Fragment) fragments[index - 1];
-				if (fragment.includes(offsetInMaster))
+				if (fragment.includes(offsetInMaster)) {
 					throw new IllegalArgumentException("overlaps with existing fragment"); //$NON-NLS-1$
-				if (fragment.getOffset() + fragment.getLength() == offsetInMaster)
+				}
+				if (fragment.getOffset() + fragment.getLength() == offsetInMaster) {
 					left= fragment;
+				}
 			}
 
 			int offsetInSlave= 0;
@@ -371,8 +378,9 @@ public class ProjectionDocument extends AbstractDocument {
 		Position[] fragments= getFragments();
 		for (Position fragment : fragments) {
 			Fragment f = (Fragment) fragment;
-			if (f.getOffset() <= offsetInMaster && offsetInMaster + lengthInMaster <= f.getOffset() + f.getLength())
+			if (f.getOffset() <= offsetInMaster && offsetInMaster + lengthInMaster <= f.getOffset() + f.getLength()) {
 				return f;
+			}
 		}
 		return null;
 	}
@@ -394,12 +402,14 @@ public class ProjectionDocument extends AbstractDocument {
 		try {
 
 			IRegion imageRegion= fMapping.toExactImageRegion(new Region(offsetInMaster, lengthInMaster));
-			if (imageRegion == null)
+			if (imageRegion == null) {
 				throw new IllegalArgumentException();
+			}
 
 			Fragment fragment= findFragment(offsetInMaster, lengthInMaster);
-			if (fragment == null)
+			if (fragment == null) {
 				throw new IllegalArgumentException();
+			}
 
 			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, imageRegion.getOffset(), imageRegion.getLength(), "", offsetInMaster, lengthInMaster); //$NON-NLS-1$
 			super.fireDocumentAboutToBeChanged(event);
@@ -457,31 +467,36 @@ public class ProjectionDocument extends AbstractDocument {
 
 		IRegion[] fragments= null;
 		IRegion imageRegion= fMapping.toImageRegion(new Region(offsetInMaster, lengthInMaster));
-		if (imageRegion != null)
+		if (imageRegion != null) {
 			fragments= fMapping.toExactOriginRegions(imageRegion);
+		}
 
-		if (fragments == null || fragments.length == 0)
+		if (fragments == null || fragments.length == 0) {
 			return new IRegion[] { new Region(offsetInMaster, lengthInMaster) };
+		}
 
 		List<Region> gaps= new ArrayList<>();
 
 		IRegion region= fragments[0];
-		if (offsetInMaster < region.getOffset())
+		if (offsetInMaster < region.getOffset()) {
 			gaps.add(new Region(offsetInMaster, region.getOffset() - offsetInMaster));
+		}
 
 		for (int i= 0; i < fragments.length - 1; i++) {
 			IRegion left= fragments[i];
 			IRegion right= fragments[i + 1];
 			int leftEnd= left.getOffset() + left.getLength();
-			if (leftEnd < right.getOffset())
+			if (leftEnd < right.getOffset()) {
 				gaps.add(new Region(leftEnd, right.getOffset() - leftEnd));
+			}
 		}
 
 		region= fragments[fragments.length - 1];
 		int leftEnd= region.getOffset() + region.getLength();
 		int rightEnd= offsetInMaster + lengthInMaster;
-		if (leftEnd < rightEnd)
+		if (leftEnd < rightEnd) {
 			gaps.add(new Region(leftEnd, rightEnd - leftEnd));
+		}
 
 		IRegion[] result= new IRegion[gaps.size()];
 		gaps.toArray(result);
@@ -504,29 +519,34 @@ public class ProjectionDocument extends AbstractDocument {
 
 		IRegion[] fragments= null;
 		IRegion imageRegion= fMapping.toImageRegion(new Region(offsetInMaster, lengthInMaster));
-		if (imageRegion != null)
+		if (imageRegion != null) {
 			fragments= fMapping.toExactOriginRegions(imageRegion);
+		}
 
-		if (fragments == null || fragments.length == 0)
+		if (fragments == null || fragments.length == 0) {
 			return new Region(offsetInMaster, lengthInMaster);
+		}
 
 		IRegion region= fragments[0];
-		if (offsetInMaster < region.getOffset())
+		if (offsetInMaster < region.getOffset()) {
 			return new Region(offsetInMaster, region.getOffset() - offsetInMaster);
+		}
 
 		for (int i= 0; i < fragments.length - 1; i++) {
 			IRegion left= fragments[i];
 			IRegion right= fragments[i + 1];
 			int leftEnd= left.getOffset() + left.getLength();
-			if (leftEnd < right.getOffset())
+			if (leftEnd < right.getOffset()) {
 				return new Region(leftEnd, right.getOffset() - leftEnd);
+			}
 		}
 
 		region= fragments[fragments.length - 1];
 		int leftEnd= region.getOffset() + region.getLength();
 		int rightEnd= offsetInMaster + lengthInMaster;
-		if (leftEnd < rightEnd)
+		if (leftEnd < rightEnd) {
 			return new Region(leftEnd, rightEnd - leftEnd);
+		}
 
 		return null;
 	}
@@ -565,12 +585,14 @@ public class ProjectionDocument extends AbstractDocument {
 		 */
 		int limit= Math.max(getFragments().length * 2, 20);
 		while (true) {
-			if (limit-- < 0)
+			if (limit-- < 0) {
 				throw new IllegalArgumentException("safety loop termination"); //$NON-NLS-1$
+			}
 
 			IRegion gap= computeFirstUnprojectedMasterRegion(offsetInMaster, lengthInMaster);
-			if (gap == null)
+			if (gap == null) {
 				return;
+			}
 
 			internalAddMasterDocumentRange(gap.getOffset(), gap.getLength(), masterDocumentEvent);
 		}
@@ -586,8 +608,9 @@ public class ProjectionDocument extends AbstractDocument {
 	 */
 	public void removeMasterDocumentRange(int offsetInMaster, int lengthInMaster) throws BadLocationException {
 		IRegion[] fragments= computeProjectedMasterRegions(offsetInMaster, lengthInMaster);
-		if (fragments == null || fragments.length == 0)
+		if (fragments == null || fragments.length == 0) {
 			return;
+		}
 
 		for (IRegion fragment : fragments) {
 			internalRemoveMasterDocumentRange(fragment.getOffset(), fragment.getLength());
@@ -622,13 +645,15 @@ public class ProjectionDocument extends AbstractDocument {
 	public void replace(int offset, int length, String text) throws BadLocationException {
 		try {
 			fIsUpdating= true;
-			if (fMasterDocumentExtension != null)
+			if (fMasterDocumentExtension != null) {
 				fMasterDocumentExtension.stopPostNotificationProcessing();
+			}
 			super.replace(offset, length, text);
 		} finally {
 			fIsUpdating= false;
-			if (fMasterDocumentExtension != null)
+			if (fMasterDocumentExtension != null) {
 				fMasterDocumentExtension.resumePostNotificationProcessing();
+			}
 		}
 	}
 
@@ -636,15 +661,17 @@ public class ProjectionDocument extends AbstractDocument {
 	public void set(String text) {
 		try {
 			fIsUpdating= true;
-			if (fMasterDocumentExtension != null)
+			if (fMasterDocumentExtension != null) {
 				fMasterDocumentExtension.stopPostNotificationProcessing();
+			}
 
 			super.set(text);
 
 		} finally {
 			fIsUpdating= false;
-			if (fMasterDocumentExtension != null)
+			if (fMasterDocumentExtension != null) {
 				fMasterDocumentExtension.resumePostNotificationProcessing();
+			}
 		}
 	}
 
@@ -659,8 +686,9 @@ public class ProjectionDocument extends AbstractDocument {
 	private ProjectionDocumentEvent normalize(DocumentEvent masterEvent) throws BadLocationException {
 		if (!isUpdating()) {
 			IRegion imageRegion= fMapping.toExactImageRegion(new Region(masterEvent.getOffset(), masterEvent.getLength()));
-			if (imageRegion != null)
+			if (imageRegion != null) {
 				return new ProjectionDocumentEvent(this, imageRegion.getOffset(), imageRegion.getLength(), masterEvent.getText(), masterEvent);
+			}
 			return null;
 		}
 
@@ -715,12 +743,14 @@ public class ProjectionDocument extends AbstractDocument {
 
 			boolean assertNotNull= adaptProjectionToMasterChange(masterEvent);
 			fSlaveEvent= normalize(masterEvent);
-			if (assertNotNull && fSlaveEvent == null)
+			if (assertNotNull && fSlaveEvent == null) {
 				internalError();
+			}
 
 			fMasterEvent= masterEvent;
-			if (fSlaveEvent != null)
+			if (fSlaveEvent != null) {
 				delayedFireDocumentAboutToBeChanged();
+			}
 
 		} catch (BadLocationException e) {
 			internalError();
@@ -743,8 +773,9 @@ public class ProjectionDocument extends AbstractDocument {
 				} catch (BadLocationException e) {
 					internalError();
 				}
-			} else if (ensureWellFormedSegmentation(masterEvent.getOffset()))
+			} else if (ensureWellFormedSegmentation(masterEvent.getOffset())) {
 				fMapping.projectionChanged();
+			}
 		}
 	}
 
@@ -780,13 +811,13 @@ public class ProjectionDocument extends AbstractDocument {
 	}
 
 	private int computeAnchor(DocumentEvent event) {
-		if (event instanceof ProjectionDocumentEvent) {
-			ProjectionDocumentEvent slave= (ProjectionDocumentEvent) event;
+		if (event instanceof ProjectionDocumentEvent slave) {
 			Object changeType= slave.getChangeType();
 			if (ProjectionDocumentEvent.CONTENT_CHANGE == changeType) {
 				DocumentEvent master= slave.getMasterEvent();
-				if (master != null)
+				if (master != null) {
 					return master.getOffset();
+				}
 			} else if (ProjectionDocumentEvent.PROJECTION_CHANGE == changeType) {
 				return slave.getMasterOffset();
 			}
@@ -809,8 +840,9 @@ public class ProjectionDocument extends AbstractDocument {
 				}
 			} else if (i < segments.length - 1) {
 				Segment next= (Segment) segments[i + 1];
-				if (next.isDeleted() || next.getLength() == 0)
+				if (next.isDeleted() || next.getLength() == 0) {
 					continue;
+				}
 				Fragment fragment= segment.fragment;
 				if (fragment.getOffset() + fragment.getLength() == next.fragment.getOffset()) {
 					// join fragments and their corresponding segments
@@ -841,8 +873,9 @@ public class ProjectionDocument extends AbstractDocument {
 
 	@Override
 	public void registerPostNotificationReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
-		if (!isUpdating())
+		if (!isUpdating()) {
 			throw new UnsupportedOperationException();
+		}
 		super.registerPostNotificationReplace(owner, replace);
 	}
 

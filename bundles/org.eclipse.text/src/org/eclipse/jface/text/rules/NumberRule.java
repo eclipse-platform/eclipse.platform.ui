@@ -52,8 +52,9 @@ public class NumberRule implements IRule {
 	 * @param column the column in which the pattern starts
 	 */
 	public void setColumnConstraint(int column) {
-		if (column < 0)
+		if (column < 0) {
 			column= UNDEFINED;
+		}
 		fColumn= column;
 	}
 

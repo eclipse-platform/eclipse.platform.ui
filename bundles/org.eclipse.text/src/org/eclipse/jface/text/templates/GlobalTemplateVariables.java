@@ -72,8 +72,9 @@ public class GlobalTemplateVariables {
 		@Override
 		protected String resolve(TemplateContext context) {
 			String selection= context.getVariable(SELECTION);
-			if (selection == null)
+			if (selection == null) {
 				return ""; //$NON-NLS-1$
+			}
 			return selection;
 		}
 

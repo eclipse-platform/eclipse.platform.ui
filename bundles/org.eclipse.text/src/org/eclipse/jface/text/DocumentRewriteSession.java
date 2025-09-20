@@ -24,7 +24,7 @@ package org.eclipse.jface.text;
  */
 public class DocumentRewriteSession {
 
-	private DocumentRewriteSessionType fSessionType;
+	private final DocumentRewriteSessionType fSessionType;
 
 	/**
 	 * Prohibit package external object creation.

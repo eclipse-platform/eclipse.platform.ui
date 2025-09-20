@@ -269,11 +269,13 @@ public abstract class TextEdit {
 	 *  otherwise <code>false</code> is returned.
 	 */
 	public boolean covers(TextEdit other) {
-		if (getLength() == 0 && !canZeroLengthCover())
+		if (getLength() == 0 && !canZeroLengthCover()) {
 			return false;
+		}
 
-		if (!other.isDefined())
+		if (!other.isDefined()) {
 			return true;
+		}
 
 		int thisOffset= getOffset();
 		int otherOffset= other.getOffset();
@@ -367,12 +369,14 @@ public abstract class TextEdit {
 	 *  is out of range
 	 */
 	public final TextEdit removeChild(int index) {
-		if (fChildren == null)
+		if (fChildren == null) {
 			throw new IndexOutOfBoundsException("Index: " + index + " Size: 0");  //$NON-NLS-1$//$NON-NLS-2$
+		}
 		TextEdit result= fChildren.remove(index);
 		result.internalSetParent(null);
-		if (fChildren.isEmpty())
+		if (fChildren.isEmpty()) {
 			fChildren= null;
+		}
 		return result;
 	}
 
@@ -386,13 +390,15 @@ public abstract class TextEdit {
 	 */
 	public final boolean removeChild(TextEdit child) {
 		Assert.isNotNull(child);
-		if (fChildren == null)
+		if (fChildren == null) {
 			return false;
+		}
 		boolean result= fChildren.remove(child);
 		if (result) {
 			child.internalSetParent(null);
-			if (fChildren.isEmpty())
+			if (fChildren.isEmpty()) {
 				fChildren= null;
+			}
 		}
 		return result;
 	}
@@ -404,8 +410,9 @@ public abstract class TextEdit {
 	 * @return an array of the removed edits
 	 */
 	public final TextEdit[] removeChildren() {
-		if (fChildren == null)
+		if (fChildren == null) {
 			return EMPTY_ARRAY;
+		}
 		int size= fChildren.size();
 		TextEdit[] result= new TextEdit[size];
 		for (int i= 0; i < size; i++) {
@@ -434,8 +441,9 @@ public abstract class TextEdit {
 	 * @return the edit's children
 	 */
 	public final TextEdit[] getChildren() {
-		if (fChildren == null)
+		if (fChildren == null) {
 			return EMPTY_ARRAY;
+		}
 		return fChildren.toArray(new TextEdit[fChildren.size()]);
 	}
 
@@ -445,8 +453,9 @@ public abstract class TextEdit {
 	 * @return the size of the children
 	 */
 	public final int getChildrenSize() {
-		if (fChildren == null)
+		if (fChildren == null) {
 			return 0;
+		}
 		return fChildren.size();
 	}
 
@@ -474,8 +483,9 @@ public abstract class TextEdit {
 				end= Math.max(end, edit.getExclusiveEnd());
 			}
 		}
-		if (edits.length == deleted)
+		if (edits.length == deleted) {
 			return null;
+		}
 
 		return new Region(offset, end - offset);
 	}
@@ -676,8 +686,9 @@ public abstract class TextEdit {
 	 * @param visitor the visitor object
 	 */
 	protected final void acceptChildren(TextEditVisitor visitor) {
-		if (fChildren == null)
+		if (fChildren == null) {
 			return;
+		}
 		Iterator<TextEdit> iterator= fChildren.iterator();
 		while (iterator.hasNext()) {
 			TextEdit curr= iterator.next();
@@ -749,8 +760,9 @@ public abstract class TextEdit {
 	//---- internal state accessors ----------------------------------------------------------
 
 	void internalSetParent(TextEdit parent) {
-		if (parent != null)
+		if (parent != null) {
 			Assert.isTrue(fParent == null);
+		}
 		fParent= parent;
 	}
 
@@ -774,10 +786,12 @@ public abstract class TextEdit {
 
 	void internalAdd(TextEdit child) throws MalformedTreeException {
 		child.aboutToBeAdded(this);
-		if (child.isDeleted())
+		if (child.isDeleted()) {
 			throw new MalformedTreeException(this, child, TextEditMessages.getString("TextEdit.deleted_edit")); //$NON-NLS-1$
-		if (!covers(child))
+		}
+		if (!covers(child)) {
 			throw new MalformedTreeException(this, child, TextEditMessages.getString("TextEdit.range_outside")); //$NON-NLS-1$
+		}
 		if (fChildren == null) {
 			fChildren= new ArrayList<>(2);
 		}
@@ -788,24 +802,28 @@ public abstract class TextEdit {
 
 	private int computeInsertionIndex(TextEdit edit) throws MalformedTreeException {
 		int size= fChildren.size();
-		if (size == 0)
+		if (size == 0) {
 			return 0;
+		}
 		int lastIndex= size - 1;
 		TextEdit last= fChildren.get(lastIndex);
-		if (last.getExclusiveEnd() <= edit.getOffset())
+		if (last.getExclusiveEnd() <= edit.getOffset()) {
 			return size;
+		}
 		try {
 
 			int index= Collections.binarySearch(fChildren, edit, INSERTION_COMPARATOR);
 
-			if (index < 0)
+			if (index < 0) {
 				// edit is not in fChildren
 				return -index - 1;
+			}
 
 			// edit is already in fChildren
 			// make sure that multiple insertion points at the same offset are inserted last.
-			while (index < lastIndex && INSERTION_COMPARATOR.compare(fChildren.get(index), fChildren.get(index + 1)) == 0)
+			while (index < lastIndex && INSERTION_COMPARATOR.compare(fChildren.get(index), fChildren.get(index + 1)) == 0) {
 				index++;
+			}
 
 			return index + 1;
 
@@ -824,8 +842,9 @@ public abstract class TextEdit {
 	 * @param delta the delta of the text replace operation
 	 */
 	void adjustOffset(int delta) {
-		if (isDeleted())
+		if (isDeleted()) {
 			return;
+		}
 		fOffset+= delta;
 		Assert.isTrue(fOffset >= 0);
 	}
@@ -837,8 +856,9 @@ public abstract class TextEdit {
 	 * @param delta the delta of the text replace operation
 	 */
 	void adjustLength(int delta) {
-		if (isDeleted())
+		if (isDeleted()) {
 			return;
+		}
 		fLength+= delta;
 		Assert.isTrue(fLength >= 0);
 	}
@@ -915,11 +935,13 @@ public abstract class TextEdit {
 			}
 		}
 		if (processor.considerEdit(this)) {
-			if (delta != 0)
+			if (delta != 0) {
 				adjustLength(delta);
+			}
 			int r= performDocumentUpdating(document);
-			if (r != 0)
+			if (r != 0) {
 				adjustLength(r);
+			}
 			delta+= r;
 		}
 		return delta;
@@ -968,10 +990,11 @@ public abstract class TextEdit {
 	}
 
 	void performRegionUpdating(int accumulatedDelta, boolean delete) {
-		if (delete)
+		if (delete) {
 			markAsDeleted();
-		else
+		} else {
 			adjustOffset(accumulatedDelta);
+		}
 	}
 
 	abstract boolean deleteChildren();

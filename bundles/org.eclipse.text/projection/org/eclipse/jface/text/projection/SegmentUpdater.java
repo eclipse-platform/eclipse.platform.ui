@@ -65,16 +65,18 @@ class SegmentUpdater extends DefaultPositionUpdater {
 				fPosition= category[i];
 				Assert.isTrue(fPosition instanceof Segment);
 
-				if (i < category.length - 1)
+				if (i < category.length - 1) {
 					fNextSegment= (Segment) category[i + 1];
-				else
+				} else {
 					fNextSegment= null;
+				}
 
 				fOriginalPosition.offset= fPosition.offset;
 				fOriginalPosition.length= fPosition.length;
 
-				if (notDeleted())
+				if (notDeleted()) {
 					adaptToReplace();
+				}
 
 			}
 
@@ -94,8 +96,9 @@ class SegmentUpdater extends DefaultPositionUpdater {
 
 		try {
 
-			if (myEnd < yoursStart)
+			if (myEnd < yoursStart) {
 				return;
+			}
 
 			if (segment.isMarkedForStretch) {
 				Assert.isTrue(fIsProjectionChange);
@@ -108,17 +111,19 @@ class SegmentUpdater extends DefaultPositionUpdater {
 
 			if (fLength <= 0) {
 
-				if (myStart < (yoursStart + (segment.isMarkedForShift ? 0 : 1)))
+				if (myStart < (yoursStart + (segment.isMarkedForShift ? 0 : 1))) {
 					fPosition.length += fReplaceLength;
-				else
+				} else {
 					fPosition.offset += fReplaceLength;
+				}
 
 			} else {
 
-				if (myStart <= yoursStart && fOriginalPosition.offset <= yoursStart)
+				if (myStart <= yoursStart && fOriginalPosition.offset <= yoursStart) {
 					fPosition.length += fReplaceLength;
-				else
+				} else {
 					fPosition.offset += fReplaceLength;
+				}
 			}
 
 		} finally {

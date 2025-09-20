@@ -36,8 +36,8 @@ import org.eclipse.jface.text.IRegion;
  */
 public class TextEditGroup {
 
-	private String fDescription;
-	private List<TextEdit> fEdits;
+	private final String fDescription;
+	private final List<TextEdit> fEdits;
 
 	/**
 	 * Creates a new text edit group with the given name.

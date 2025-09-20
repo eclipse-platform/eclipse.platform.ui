@@ -72,8 +72,9 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		if (rules != null) {
 			fRules= new IRule[rules.length];
 			System.arraycopy(rules, 0, fRules, 0, rules.length);
-		} else
+		} else {
 			fRules= null;
+		}
 	}
 
 	/**
@@ -102,11 +103,13 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 
 		String[] delimiters= fDocument.getLegalLineDelimiters();
 		fDelimiters= new char[delimiters.length][];
-		for (int i= 0; i < delimiters.length; i++)
+		for (int i= 0; i < delimiters.length; i++) {
 			fDelimiters[i]= delimiters[i].toCharArray();
+		}
 
-		if (fDefaultReturnToken == null)
+		if (fDefaultReturnToken == null) {
 			fDefaultReturnToken= new Token(null);
+		}
 	}
 
 	/**
@@ -133,8 +136,9 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 
 	@Override
 	public int getTokenLength() {
-		if (fOffset < fRangeEnd)
+		if (fOffset < fRangeEnd) {
 			return fOffset - getTokenOffset();
+		}
 		return fRangeEnd - getTokenOffset();
 	}
 
@@ -168,13 +172,15 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		if (fRules != null) {
 			for (IRule fRule : fRules) {
 				IToken token= (fRule.evaluate(this));
-				if (!token.isUndefined())
+				if (!token.isUndefined()) {
 					return token;
+				}
 			}
 		}
 
-		if (read() == EOF)
+		if (read() == EOF) {
 			return Token.EOF;
+		}
 		return fDefaultReturnToken;
 	}
 

@@ -45,7 +45,7 @@ public class WordRule implements IRule {
 	/** The table of predefined words and token for this rule. */
 	protected Map<String, IToken> fWords= new HashMap<>();
 	/** Buffer used for pattern detection. */
-	private StringBuilder fBuffer= new StringBuilder();
+	private final StringBuilder fBuffer= new StringBuilder();
 	/**
 	 * Tells whether this rule is case sensitive.
 	 * @since 3.3
@@ -112,8 +112,9 @@ public class WordRule implements IRule {
 		Assert.isNotNull(token);
 
 		// If case-insensitive, convert to lower case before adding to the map
-		if (fIgnoreCase)
+		if (fIgnoreCase) {
 			word= word.toLowerCase();
+		}
 		fWords.put(word, token);
 	}
 
@@ -126,8 +127,9 @@ public class WordRule implements IRule {
 	 * @param column the column in which the pattern starts
 	 */
 	public void setColumnConstraint(int column) {
-		if (column < 0)
+		if (column < 0) {
 			column= UNDEFINED;
+		}
 		fColumn= column;
 	}
 
@@ -146,16 +148,19 @@ public class WordRule implements IRule {
 
 				String buffer= fBuffer.toString();
 				// If case-insensitive, convert to lower case before accessing the map
-				if (fIgnoreCase)
+				if (fIgnoreCase) {
 					buffer= buffer.toLowerCase();
+				}
 
 				IToken token= fWords.get(buffer);
 
-				if (token != null)
+				if (token != null) {
 					return token;
+				}
 
-				if (fDefaultToken.isUndefined())
+				if (fDefaultToken.isUndefined()) {
 					unreadBuffer(scanner);
+				}
 
 				return fDefaultToken;
 			}
@@ -171,8 +176,9 @@ public class WordRule implements IRule {
 	 * @param scanner the scanner to be used
 	 */
 	protected void unreadBuffer(ICharacterScanner scanner) {
-		for (int i= fBuffer.length() - 1; i >= 0; i--)
+		for (int i= fBuffer.length() - 1; i >= 0; i--) {
 			scanner.unread();
+		}
 	}
 
 }

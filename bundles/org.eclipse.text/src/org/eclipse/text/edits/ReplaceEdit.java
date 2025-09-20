@@ -26,7 +26,7 @@ import org.eclipse.jface.text.IDocument;
  */
 public final class ReplaceEdit extends TextEdit {
 
-	private String fText;
+	private final String fText;
 
 	/**
 	 * Constructs a new replace edit.

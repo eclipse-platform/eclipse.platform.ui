@@ -78,8 +78,9 @@ class LinkedModeManager {
 	 */
 	public static boolean hasManager(IDocument[] documents) {
 		for (IDocument document : documents) {
-			if (hasManager(document))
+			if (hasManager(document)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -94,17 +95,19 @@ class LinkedModeManager {
 	 * @return a manager able to cover the requested documents, or <code>null</code> if there is a conflict and <code>force</code> was set to <code>false</code>
 	 */
 	public static LinkedModeManager getLinkedManager(IDocument[] documents, boolean force) {
-		if (documents == null || documents.length == 0)
+		if (documents == null || documents.length == 0) {
 			return null;
+		}
 
 		Set<LinkedModeManager> mgrs= new HashSet<>();
 		LinkedModeManager mgr= null;
 		for (IDocument document : documents) {
 			mgr= fgManagers.get(document);
-			if (mgr != null)
+			if (mgr != null) {
 				mgrs.add(mgr);
+			}
 		}
-		if (mgrs.size() > 1)
+		if (mgrs.size() > 1) {
 			if (force) {
 				for (LinkedModeManager m : mgrs) {
 					m.closeAllEnvironments();
@@ -112,12 +115,15 @@ class LinkedModeManager {
 			} else {
 				return null;
 			}
+		}
 
-		if (mgrs.isEmpty())
+		if (mgrs.isEmpty()) {
 			mgr= new LinkedModeManager();
+		}
 
-		for (IDocument document : documents)
+		for (IDocument document : documents) {
 			fgManagers.put(document, mgr);
+		}
 
 		return mgr;
 	}
@@ -129,13 +135,14 @@ class LinkedModeManager {
 	 */
 	public static void cancelManager(IDocument document) {
 		LinkedModeManager mgr= fgManagers.get(document);
-		if (mgr != null)
+		if (mgr != null) {
 			mgr.closeAllEnvironments();
+		}
 	}
 
 	/** The hierarchy of environments managed by this manager. */
-	private Stack<LinkedModeModel> fEnvironments= new Stack<>();
-	private Listener fListener= new Listener();
+	private final Stack<LinkedModeModel> fEnvironments= new Stack<>();
+	private final Listener fListener= new Listener();
 
 	/**
 	 * Notify the manager about a leaving model.
@@ -144,13 +151,15 @@ class LinkedModeManager {
 	 * @param flags the reason and commands for leaving linked mode
 	 */
 	private void left(LinkedModeModel model, int flags) {
-		if (!fEnvironments.contains(model))
+		if (!fEnvironments.contains(model)) {
 			return;
+		}
 
 		while (!fEnvironments.isEmpty()) {
 			LinkedModeModel env= fEnvironments.pop();
-			if (env == model)
+			if (env == model) {
 				break;
+			}
 			env.exit(ILinkedModeListener.NONE);
 		}
 
@@ -170,8 +179,9 @@ class LinkedModeManager {
 
 	private void removeManager() {
 		for (Iterator<LinkedModeManager> it= fgManagers.values().iterator(); it.hasNext();) {
-			if (it.next() == this)
+			if (it.next() == this) {
 				it.remove();
+			}
 		}
 	}
 
@@ -222,8 +232,9 @@ class LinkedModeManager {
 	 * @return the topmost <code>LinkedModeModel</code>
 	 */
 	public LinkedModeModel getTopEnvironment() {
-		if (fEnvironments.isEmpty())
+		if (fEnvironments.isEmpty()) {
 			return null;
+		}
 		return fEnvironments.peek();
 	}
 }

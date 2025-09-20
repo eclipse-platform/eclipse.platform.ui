@@ -112,8 +112,9 @@ public class TemplateReaderWriter {
 	 */
 	public TemplatePersistenceData readSingle(Reader reader, String id) throws IOException {
 		TemplatePersistenceData[] datas= read(new InputSource(reader), null, id);
-		if (datas.length > 0)
+		if (datas.length > 0) {
 			return datas[0];
+		}
 		return null;
 	}
 
@@ -167,8 +168,9 @@ public class TemplateReaderWriter {
 				Node node= elements.item(i);
 				NamedNodeMap attributes= node.getAttributes();
 
-				if (attributes == null)
+				if (attributes == null) {
 					continue;
+				}
 
 				String id= getStringValue(attributes, ID_ATTRIBUTE, null);
 				if (id != null && ids.contains(id)) {
@@ -180,8 +182,9 @@ public class TemplateReaderWriter {
 					ids.add(id);
 				}
 
-				if (singleId != null && !singleId.equals(id))
+				if (singleId != null && !singleId.equals(id)) {
 					continue;
+				}
 
 				boolean deleted = getBooleanValue(attributes, DELETED_ATTRIBUTE, false);
 
@@ -193,8 +196,9 @@ public class TemplateReaderWriter {
 
 				String context= getStringValue(attributes, CONTEXT_ATTRIBUTE);
 
-				if (name == null || context == null)
+				if (name == null || context == null) {
 					throw new IOException(TextTemplateMessages.getString("TemplateReaderWriter.error.missing_attribute")); //$NON-NLS-1$
+				}
 
 				boolean enabled = getBooleanValue(attributes, ENABLED_ATTRIBUTE, true);
 				boolean autoInsertable= getBooleanValue(attributes, AUTO_INSERTABLE_ATTRIBUTE, true);
@@ -203,8 +207,9 @@ public class TemplateReaderWriter {
 				NodeList children= node.getChildNodes();
 				for (int j= 0; j != children.getLength(); j++) {
 					String value= children.item(j).getNodeValue();
-					if (value != null)
+					if (value != null) {
 						buffer.append(value);
+					}
 				}
 				String pattern= buffer.toString();
 				pattern= translateString(pattern, bundle);
@@ -215,8 +220,9 @@ public class TemplateReaderWriter {
 
 				templates.add(data);
 
-				if (singleId != null && singleId.equals(id))
+				if (singleId != null && singleId.equals(id)) {
 					break;
+				}
 			}
 
 			return templates.toArray(new TemplatePersistenceData[templates.size()]);
@@ -329,8 +335,9 @@ public class TemplateReaderWriter {
 		} catch (ParserConfigurationException e) {
 			Assert.isTrue(false);
 		} catch (TransformerException e) {
-			if (e.getException() instanceof IOException)
+			if (e.getException() instanceof IOException) {
 				throw (IOException) e.getException();
+			}
 			Assert.isTrue(false);
 		}
 	}
@@ -346,28 +353,31 @@ public class TemplateReaderWriter {
 	private static String validateXML(String string) throws IOException {
 		for (int i= 0; i < string.length(); i++) {
 			char ch= string.charAt(i);
-			if (!(ch == 9 || ch == 10 || ch == 13 || ch >= 32))
+			if (!(ch == 9 || ch == 10 || ch == 13 || ch >= 32)) {
 				throw new IOException("Character reference \"&#" + Integer.toString(ch) + "\" is an invalid XML character."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		return string;
 	}
 
 	private boolean getBooleanValue(NamedNodeMap attributes, String attribute, boolean defaultValue) throws SAXException {
 		Node enabledNode= attributes.getNamedItem(attribute);
-		if (enabledNode == null)
+		if (enabledNode == null) {
 			return defaultValue;
-		else if (enabledNode.getNodeValue().equals(Boolean.toString(true)))
+		} else if (enabledNode.getNodeValue().equals(Boolean.toString(true))) {
 			return true;
-		else if (enabledNode.getNodeValue().equals(Boolean.toString(false)))
+		} else if (enabledNode.getNodeValue().equals(Boolean.toString(false))) {
 			return false;
-		else
+		} else {
 			throw new SAXException(TextTemplateMessages.getString("TemplateReaderWriter.error.illegal_boolean_attribute")); //$NON-NLS-1$
+		}
 	}
 
 	private String getStringValue(NamedNodeMap attributes, String name) throws SAXException {
 		String val= getStringValue(attributes, name, null);
-		if (val == null)
+		if (val == null) {
 			throw new SAXException(TextTemplateMessages.getString("TemplateReaderWriter.error.missing_attribute")); //$NON-NLS-1$
+		}
 		return val;
 	}
 
@@ -377,8 +387,9 @@ public class TemplateReaderWriter {
 	}
 
 	private String translateString(String str, ResourceBundle bundle) {
-		if (bundle == null)
+		if (bundle == null) {
 			return str;
+		}
 
 		int idx= str.indexOf('%');
 		if (idx == -1) {

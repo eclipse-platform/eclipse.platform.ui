@@ -91,8 +91,9 @@ public final class MoveTargetEdit extends TextEdit {
 			fSource.setTargetEdit(this);
 			TextEdit parent= getParent();
 			while (parent != null) {
-				if (parent == fSource)
+				if (parent == fSource) {
 					throw new MalformedTreeException(parent, this, TextEditMessages.getString("MoveTargetEdit.wrong_parent")); //$NON-NLS-1$
+				}
 				parent= parent.getParent();
 			}
 		}
@@ -108,8 +109,9 @@ public final class MoveTargetEdit extends TextEdit {
 		if (fSource != null) {
 			MoveTargetEdit target= (MoveTargetEdit)copier.getCopy(this);
 			MoveSourceEdit source= (MoveSourceEdit)copier.getCopy(fSource);
-			if (target != null && source != null)
+			if (target != null && source != null) {
 				target.setSourceEdit(source);
+			}
 		}
 	}
 
@@ -130,10 +132,12 @@ public final class MoveTargetEdit extends TextEdit {
 
 	@Override
 	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
-		if (fSource == null)
+		if (fSource == null) {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveTargetEdit.no_source")); //$NON-NLS-1$
-		if (fSource.getTargetEdit() != this)
+		}
+		if (fSource.getTargetEdit() != this) {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveTargetEdit.different_target")); //$NON-NLS-1$
+		}
 	}
 
 	//---- document updating ----------------------------------------------------------------

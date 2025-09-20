@@ -175,8 +175,9 @@ public class DocumentTemplateContext extends TemplateContext {
 
 	@Override
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
-		if (!canEvaluate(template))
+		if (!canEvaluate(template)) {
 			return null;
+		}
 
 		TemplateTranslator translator= new TemplateTranslator();
 		TemplateBuffer buffer= translator.translate(template);

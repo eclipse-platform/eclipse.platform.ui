@@ -120,16 +120,18 @@ public class LinkedPositionGroup {
 		 * position is already in this group, nothing happens.
 		 */
 		Assert.isNotNull(position);
-		if (fIsSealed)
+		if (fIsSealed) {
 			throw new IllegalStateException("cannot add positions after the group is added to an model"); //$NON-NLS-1$
+		}
 
 		if (!fPositions.contains(position)) {
 			enforceDisjoint(position);
 			checkContent(position);
 			fPositions.add(position);
 			fHasCustomIteration |= position.getSequenceNumber() != LinkedPositionGroup.NO_STOP;
-		} else
+		} else {
 			return; // nothing happens
+		}
 	}
 
 	/**
@@ -158,8 +160,9 @@ public class LinkedPositionGroup {
 	 */
 	private void enforceDisjoint(LinkedPosition position) throws BadLocationException {
 		for (LinkedPosition p : fPositions) {
-			if (p.overlapsWith(position))
+			if (p.overlapsWith(position)) {
 				throw new BadLocationException();
+			}
 		}
 	}
 
@@ -242,18 +245,21 @@ public class LinkedPositionGroup {
 			int eventEnd= event.getOffset() + event.getLength();
 			int lastEnd= fLastRegion.getOffset() + fLastRegion.getLength();
 			int length;
-			if (eventEnd > lastEnd)
+			if (eventEnd > lastEnd) {
 				length= lastEnd - relativeOffset - fLastRegion.getOffset();
-			else
+			} else {
 				length= eventEnd - relativeOffset - fLastRegion.getOffset();
+			}
 
 			String text= event.getText();
-			if (text == null)
+			if (text == null) {
 				text= ""; //$NON-NLS-1$
+			}
 
 			for (LinkedPosition p : fPositions) {
-				if (p == fLastPosition || p.isDeleted())
+				if (p == fLastPosition || p.isDeleted()) {
 					continue; // don't re-update the origin of the change
+				}
 
 				List<ReplaceEdit> edits= map.get(p.getDocument());
 				if (edits == null) {
@@ -341,17 +347,20 @@ public class LinkedPositionGroup {
 			LinkedPosition localFound= null;
 			for (LinkedPosition myPos : fPositions) {
 				if (myPos.includes(pos)) {
-					if (found == null)
+					if (found == null) {
 						found= myPos;
-					else if (found != myPos)
+					} else if (found != myPos) {
 						throw new BadLocationException();
-					if (localFound == null)
+					}
+					if (localFound == null) {
 						localFound= myPos;
+					}
 				}
 			}
 
-			if (localFound != found)
+			if (localFound != found) {
 				throw new BadLocationException();
+			}
 		}
 		return found;
 	}
@@ -364,8 +373,9 @@ public class LinkedPositionGroup {
 	 */
 	LinkedPosition getPosition(LinkedPosition toFind) {
 		for (LinkedPosition p : fPositions) {
-			if (p.includes(toFind))
+			if (p.includes(toFind)) {
 				return p;
+			}
 		}
 		return null;
 	}
@@ -426,8 +436,9 @@ public class LinkedPositionGroup {
 	 */
 	boolean contains(Position position) {
 		for (LinkedPosition p : fPositions) {
-			if (position.equals(p))
+			if (position.equals(p)) {
 				return true;
+			}
 		}
 		return false;
 	}

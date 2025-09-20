@@ -20,9 +20,9 @@ package org.eclipse.jface.text;
 public class Region implements IRegion {
 
 	/** The region offset */
-	private int fOffset;
+	private final int fOffset;
 	/** The region length */
-	private int fLength;
+	private final int fLength;
 
 	/**
 	 * Create a new region.
@@ -47,8 +47,7 @@ public class Region implements IRegion {
 
 	@Override
 	public boolean equals(Object o) {
-	 	if (o instanceof IRegion) {
-	 		IRegion r= (IRegion) o;
+	 	if (o instanceof IRegion r) {
 	 		return r.getOffset() == fOffset && r.getLength() == fLength;
 	 	}
 	 	return false;

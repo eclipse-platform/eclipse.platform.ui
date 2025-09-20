@@ -81,7 +81,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 			return this.offset > -1 && this.length > -1;
 		}
 	}
-	
+
 	/**
 	 * Holder of the active {@link DocumentRewriteSession} with associated list of {@link Request}
 	 * objects.
@@ -89,7 +89,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * On starting new {@link DocumentRewriteSession} or on the end of the active
 	 * {@link DocumentRewriteSession} this object is being replaced by another one.
 	 * <p>
-	 * 
+	 *
 	 * @see AbstractLineTracker#startRewriteSession(DocumentRewriteSession)
 	 * @see AbstractLineTracker#stopRewriteSession(DocumentRewriteSession, String)
 	 */
@@ -107,7 +107,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		 * @since 3.1
 		 */
 		private List<Request> fPendingRequests;
-		
+
 		/**
 		 * @param activeRewriteSession may be null
 		 */
@@ -119,15 +119,15 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 				fPendingRequests = Collections.emptyList();
 			}
 		}
-		
+
 		boolean isSessionActive() {
 			return fActiveRewriteSession != null;
 		}
-		
+
 		boolean setIfActive(String text) {
 			if (isSessionActive()) {
 				synchronized (this) {
-					if (!isSessionActive()) {						
+					if (!isSessionActive()) {
 						return false;
 					}
 					fPendingRequests.clear();
@@ -142,7 +142,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		boolean addIfActive(int offset, int length, String text) {
 			if (isSessionActive()) {
 				synchronized (this) {
-					if (!isSessionActive()) {						
+					if (!isSessionActive()) {
 						return false;
 					}
 					fPendingRequests.add(new Request(offset, length, text));
@@ -152,9 +152,9 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 				return false;
 			}
 		}
-		
+
 		Iterator<Request> flush() {
-			synchronized (this) {				
+			synchronized (this) {
 				fActiveRewriteSession = null;
 				Iterator<Request> requests = fPendingRequests.iterator();
 				fPendingRequests = Collections.emptyList();
@@ -165,7 +165,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		boolean sameSession(DocumentRewriteSession session) {
 			return fActiveRewriteSession == session;
 		}
-		
+
 		@Override
 		public String toString() {
 			StringBuilder builder= new StringBuilder();
@@ -182,7 +182,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 
 	private volatile SessionData sessionData;
 	private final Object sessionLock = new Object();
-	
+
 	/**
 	 * The implementation that this tracker delegates to.
 	 *
@@ -360,16 +360,18 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * @since 3.1
 	 */
 	protected final void flushRewriteSession() throws BadLocationException {
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("AbstractLineTracker: Flushing rewrite session: " + sessionData); //$NON-NLS-1$
+		}
 		synchronized (sessionData) {
 			Iterator<Request> e= sessionData.flush();
 			while (e.hasNext()) {
 				Request request= e.next();
-				if (request.isReplaceRequest())
+				if (request.isReplaceRequest()) {
 					replace(request.offset, request.length, request.text);
-				else
+				} else {
 					set(request.text);
+				}
 			}
 		}
 	}
@@ -381,7 +383,8 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * @since 3.1
 	 */
 	protected final void checkRewriteSession() throws BadLocationException {
-		if (hasActiveRewriteSession())
+		if (hasActiveRewriteSession()) {
 			flushRewriteSession();
+		}
 	}
 }

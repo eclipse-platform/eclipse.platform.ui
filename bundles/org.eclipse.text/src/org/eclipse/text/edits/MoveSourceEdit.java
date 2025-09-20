@@ -80,8 +80,9 @@ public final class MoveSourceEdit extends TextEdit {
 	 */
 	private MoveSourceEdit(MoveSourceEdit other) {
 		super(other);
-		if (other.fModifier != null)
+		if (other.fModifier != null) {
 			fModifier= other.fModifier.copy();
+		}
 	}
 
 	/**
@@ -133,8 +134,9 @@ public final class MoveSourceEdit extends TextEdit {
 		// The source content can be null if the edit wasn't executed
 		// due to an exclusion list of the text edit processor. Return
 		// the empty string which can be moved without any harm.
-		if (fSourceContent == null)
+		if (fSourceContent == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return fSourceContent;
 	}
 
@@ -159,8 +161,9 @@ public final class MoveSourceEdit extends TextEdit {
 		if (fTarget != null) {
 			MoveSourceEdit source= (MoveSourceEdit)copier.getCopy(this);
 			MoveTargetEdit target= (MoveTargetEdit)copier.getCopy(fTarget);
-			if (source != null && target != null)
+			if (source != null && target != null) {
 				source.setTargetEdit(target);
+			}
 		}
 	}
 
@@ -186,8 +189,9 @@ public final class MoveSourceEdit extends TextEdit {
 			if (sourceEdits.size() <= result) {
 				List<TextEdit> list= new ArrayList<>();
 				list.add(this);
-				for (int i= sourceEdits.size(); i < result; i++)
+				for (int i= sourceEdits.size(); i < result; i++) {
 					sourceEdits.add(null);
+				}
 				sourceEdits.add(list);
 			} else {
 				List<TextEdit> list= sourceEdits.get(result);
@@ -203,14 +207,16 @@ public final class MoveSourceEdit extends TextEdit {
 
 	@Override
 	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
-		if (fTarget == null)
+		if (fTarget == null) {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.no_target")); //$NON-NLS-1$
-		if (fTarget.getSourceEdit() != this)
+		}
+		if (fTarget.getSourceEdit() != this) {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.different_source"));  //$NON-NLS-1$
 		/* Causes AST rewrite to fail
 		if (getRoot() != fTarget.getRoot())
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.different_tree")); //$NON-NLS-1$
 		*/
+		}
 	}
 
 	//---- source computation --------------------------------------------------------------
@@ -236,8 +242,9 @@ public final class MoveSourceEdit extends TextEdit {
 				int processingStyle= getStyle(processor);
 				TextEditProcessor subProcessor= TextEditProcessor.createSourceComputationProcessor(subDocument, fSourceRoot, processingStyle);
 				subProcessor.performEdits();
-				if (needsTransformation())
+				if (needsTransformation()) {
 					applyTransformation(subDocument, processingStyle);
+				}
 				fSourceContent= subDocument.get();
 			} else {
 				fSourceContent= document.get(getOffset(), getLength());
@@ -254,8 +261,9 @@ public final class MoveSourceEdit extends TextEdit {
 
 	private int getStyle(TextEditProcessor processor) {
 		// we never need undo while performing local edits.
-		if ((processor.getStyle() & TextEdit.UPDATE_REGIONS) != 0)
+		if ((processor.getStyle() & TextEdit.UPDATE_REGIONS) != 0) {
 			return TextEdit.UPDATE_REGIONS;
+		}
 		return TextEdit.NONE;
 	}
 
@@ -319,8 +327,9 @@ public final class MoveSourceEdit extends TextEdit {
 		for (TextEdit child : children) {
 			// a deleted child remains deleted even if the temporary buffer
 			// gets modified.
-			if (child.isDeleted())
+			if (child.isDeleted()) {
 				continue;
+			}
 			RangeMarker marker= new RangeMarker(child.getOffset(), child.getLength());
 			target.addChild(marker);
 			editMap.put(marker, child);
@@ -368,12 +377,14 @@ public final class MoveSourceEdit extends TextEdit {
 		int length1= op1.getLength();
 		int end1= offset1 + length1 - 1;
 		int offset2= op2.getOffset();
-		if (end1 < offset2)
+		if (end1 < offset2) {
 			return null;
+		}
 		int length2= op2.getLength();
 		int end2= offset2 + length2 - 1;
-		if (end2 < offset1)
+		if (end2 < offset1) {
 			return null;
+		}
 
 		int end= Math.min(end1, end2);
 		if (offset1 < offset2) {
@@ -383,8 +394,9 @@ public final class MoveSourceEdit extends TextEdit {
 	}
 
 	private static ReplaceEdit[] splitEdit(ReplaceEdit edit, IRegion intersect) {
-		if (edit.getOffset() != intersect.getOffset())
+		if (edit.getOffset() != intersect.getOffset()) {
 			return splitIntersectRight(edit, intersect);
+		}
 		return splitIntersectLeft(edit, intersect);
 	}
 

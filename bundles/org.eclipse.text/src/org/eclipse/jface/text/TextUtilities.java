@@ -136,8 +136,9 @@ public class TextUtilities {
 
 		for (int i= 0; i < searchStrings.length; i++) {
 			if (text.endsWith(searchStrings[i])) {
-				if (index == -1 || searchStrings[i].length() > searchStrings[index].length())
+				if (index == -1 || searchStrings[i].length() > searchStrings[index].length()) {
 					index= i;
+				}
 			}
 		}
 
@@ -158,8 +159,9 @@ public class TextUtilities {
 
 		for (int i= 0; i < searchStrings.length; i++) {
 			if (text.startsWith(searchStrings[i])) {
-				if (index == -1 || searchStrings[i].length() > searchStrings[index].length())
+				if (index == -1 || searchStrings[i].length() > searchStrings[index].length()) {
 					index= i;
+				}
 			}
 		}
 
@@ -176,8 +178,9 @@ public class TextUtilities {
 	 */
 	public static int equals(String[] compareStrings, String text) {
 		for (int i= 0; i < compareStrings.length; i++) {
-			if (text.equals(compareStrings[i]))
+			if (text.equals(compareStrings[i])) {
 				return i;
+			}
 		}
 		return -1;
 	}
@@ -194,8 +197,9 @@ public class TextUtilities {
 	 */
 	public static DocumentEvent mergeUnprocessedDocumentEvents(IDocument unprocessedDocument, List<? extends DocumentEvent> documentEvents) throws BadLocationException {
 
-		if (documentEvents.isEmpty())
+		if (documentEvents.isEmpty()) {
 			return null;
+		}
 
 		final Iterator<? extends DocumentEvent> iterator= documentEvents.iterator();
 		final DocumentEvent firstEvent= iterator.next();
@@ -259,8 +263,9 @@ public class TextUtilities {
 	 */
 	public static DocumentEvent mergeProcessedDocumentEvents(List<? extends DocumentEvent> documentEvents) throws BadLocationException {
 
-		if (documentEvents.isEmpty())
+		if (documentEvents.isEmpty()) {
 			return null;
+		}
 
 		final ListIterator<? extends DocumentEvent> iterator= documentEvents.listIterator(documentEvents.size());
 		final DocumentEvent firstEvent= iterator.previous();
@@ -317,8 +322,7 @@ public class TextUtilities {
 	 */
 	public static Map<String, IDocumentPartitioner> removeDocumentPartitioners(IDocument document) {
 		Map<String, IDocumentPartitioner> partitioners= new HashMap<>();
-		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+		if (document instanceof IDocumentExtension3 extension3) {
 			String[] partitionings= extension3.getPartitionings();
 			for (String partitioning : partitionings) {
 				IDocumentPartitioner partitioner= extension3.getDocumentPartitioner(partitioning);
@@ -348,8 +352,7 @@ public class TextUtilities {
 	 * @since 3.0
 	 */
 	public static void addDocumentPartitioners(IDocument document, Map<String, ? extends IDocumentPartitioner> partitioners) {
-		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+		if (document instanceof IDocumentExtension3 extension3) {
 			for (Entry<String, ? extends IDocumentPartitioner> entry : partitioners.entrySet()) {
 				String partitioning= entry.getKey();
 				IDocumentPartitioner partitioner= entry.getValue();
@@ -378,8 +381,7 @@ public class TextUtilities {
 	 * @since 3.0
 	 */
 	public static String getContentType(IDocument document, String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException {
-		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+		if (document instanceof IDocumentExtension3 extension3) {
 			try {
 				return extension3.getContentType(partitioning, offset, preferOpenPartitions);
 			} catch (BadPartitioningException x) {
@@ -405,8 +407,7 @@ public class TextUtilities {
 	 * @since 3.0
 	 */
 	public static ITypedRegion getPartition(IDocument document, String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException {
-		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+		if (document instanceof IDocumentExtension3 extension3) {
 			try {
 				return extension3.getPartition(partitioning, offset, preferOpenPartitions);
 			} catch (BadPartitioningException x) {
@@ -433,8 +434,7 @@ public class TextUtilities {
 	 * @since 3.0
 	 */
 	public static ITypedRegion[] computePartitioning(IDocument document, String partitioning, int offset, int length, boolean includeZeroLengthPartitions) throws BadLocationException {
-		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+		if (document instanceof IDocumentExtension3 extension3) {
 			try {
 				return extension3.computePartitioning(partitioning, offset, length, includeZeroLengthPartitions);
 			} catch (BadPartitioningException x) {
@@ -454,15 +454,13 @@ public class TextUtilities {
 	 * @since 3.0
 	 */
 	public static String[] computePartitionManagingCategories(IDocument document) {
-		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+		if (document instanceof IDocumentExtension3 extension3) {
 			String[] partitionings= extension3.getPartitionings();
 			if (partitionings != null) {
 				Set<String> categories= new HashSet<>();
 				for (String partitioning : partitionings) {
 					IDocumentPartitioner p= extension3.getDocumentPartitioner(partitioning);
-					if (p instanceof IDocumentPartitionerExtension2) {
-						IDocumentPartitionerExtension2 extension2= (IDocumentPartitionerExtension2) p;
+					if (p instanceof IDocumentPartitionerExtension2 extension2) {
 						String[] c= extension2.getManagingPositionCategories();
 						if (c != null) {
 							Collections.addAll(categories, c);
@@ -493,8 +491,9 @@ public class TextUtilities {
 
 		if (document instanceof IDocumentExtension4) {
 			lineDelimiter= ((IDocumentExtension4) document).getDefaultLineDelimiter();
-			if (lineDelimiter != null)
+			if (lineDelimiter != null) {
 				return lineDelimiter;
+			}
 		}
 
 		try {
@@ -503,8 +502,9 @@ public class TextUtilities {
 			// usually impossible for the first line
 		}
 
-		if (lineDelimiter != null)
+		if (lineDelimiter != null) {
 			return lineDelimiter;
+		}
 
 		String sysLineDelimiter= System.lineSeparator();
 		String[] delimiters= document.getLegalLineDelimiters();
@@ -516,8 +516,9 @@ public class TextUtilities {
 			}
 		}
 
-		if (lineDelimiter == null)
+		if (lineDelimiter == null) {
 			lineDelimiter= delimiters[0];
+		}
 
 		return lineDelimiter;
 	}
@@ -533,20 +534,23 @@ public class TextUtilities {
 	 */
 	public static boolean overlaps(IRegion left, IRegion right) {
 
-		if (left == null || right == null)
+		if (left == null || right == null) {
 			return false;
+		}
 
 		int rightEnd= right.getOffset() + right.getLength();
 		int leftEnd= left.getOffset()+ left.getLength();
 
 		if (right.getLength() > 0) {
-			if (left.getLength() > 0)
+			if (left.getLength() > 0) {
 				return left.getOffset() < rightEnd && right.getOffset() < leftEnd;
+			}
 			return  right.getOffset() <= left.getOffset() && left.getOffset() < rightEnd;
 		}
 
-		if (left.getLength() > 0)
+		if (left.getLength() > 0) {
 			return left.getOffset() <= right.getOffset() && right.getOffset() < leftEnd;
+		}
 
 		return left.getOffset() == right.getOffset();
 	}

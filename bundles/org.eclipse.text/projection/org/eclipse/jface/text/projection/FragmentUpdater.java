@@ -64,8 +64,9 @@ class FragmentUpdater extends DefaultPositionUpdater {
 				fOriginalPosition.offset= fPosition.offset;
 				fOriginalPosition.length= fPosition.length;
 
-				if (notDeleted())
+				if (notDeleted()) {
 					adaptToReplace();
+				}
 			}
 
 		} catch (BadPositionCategoryException x) {
@@ -78,22 +79,25 @@ class FragmentUpdater extends DefaultPositionUpdater {
 		int myStart= fPosition.offset;
 		int myEnd= Math.max(myStart, fPosition.offset + fPosition.length - (fIsLast || isAffectingReplace() ? 0 : 1));
 
-		if (myEnd < fOffset)
+		if (myEnd < fOffset) {
 			return;
+		}
 
 		if (fLength <= 0) {
 
-			if (myStart <= fOffset)
+			if (myStart <= fOffset) {
 				fPosition.length += fReplaceLength;
-			else
+			} else {
 				fPosition.offset += fReplaceLength;
+			}
 
 		} else {
 
-			if (myStart <= fOffset && fOriginalPosition.offset <= fOffset)
+			if (myStart <= fOffset && fOriginalPosition.offset <= fOffset) {
 				fPosition.length += fReplaceLength;
-			else
+			} else {
 				fPosition.offset += fReplaceLength;
+			}
 		}
 	}
 
@@ -114,10 +118,12 @@ class FragmentUpdater extends DefaultPositionUpdater {
 
 			if (0 < index) {
 				Position fragment= fragments[index - 1];
-				if (fragment.overlapsWith(event.getOffset(), event.getLength()))
+				if (fragment.overlapsWith(event.getOffset(), event.getLength())) {
 					return true;
-				if (index == fragments.length && fragment.offset + fragment.length == event.getOffset())
+				}
+				if (index == fragments.length && fragment.offset + fragment.length == event.getOffset()) {
 					return true;
+				}
 			}
 
 			if (index < fragments.length) {

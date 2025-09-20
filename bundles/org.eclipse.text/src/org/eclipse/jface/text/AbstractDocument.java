@@ -337,20 +337,24 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	@Override
 	public void addPosition(String category, Position position) throws BadLocationException, BadPositionCategoryException  {
 
-		if ((0 > position.offset) || (0 > position.length) || (position.offset + position.length > getLength()))
+		if ((0 > position.offset) || (0 > position.length) || (position.offset + position.length > getLength())) {
 			throw new BadLocationException();
+		}
 
-		if (category == null)
+		if (category == null) {
 			throw new BadPositionCategoryException();
+		}
 
 		List<Position> list= fPositions.get(category);
-		if (list == null)
+		if (list == null) {
 			throw new BadPositionCategoryException(category);
+		}
 		list.add(computeIndexInPositionList(list, position.offset), position);
 
 		List<Position> endPositions= fEndPositions.get(category);
-		if (endPositions == null)
+		if (endPositions == null) {
 			throw new BadPositionCategoryException(category);
+		}
 		endPositions.add(computeIndexInPositionList(endPositions, position.offset + position.length - 1, false), position);
 	}
 
@@ -365,8 +369,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	@Override
 	public void addPositionCategory(String category) {
 
-		if (category == null)
+		if (category == null) {
 			return;
+		}
 
 		if (!containsPositionCategory(category)) {
 			fPositions.put(category, new ArrayList<>());
@@ -382,23 +387,27 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	@Override
 	public boolean containsPosition(String category, int offset, int length) {
 
-		if (category == null)
+		if (category == null) {
 			return false;
+		}
 
 		List<Position> list= fPositions.get(category);
-		if (list == null)
+		if (list == null) {
 			return false;
+		}
 
 		int size= list.size();
-		if (size == 0)
+		if (size == 0) {
 			return false;
+		}
 
 		int index= computeIndexInPositionList(list, offset);
 		if (index < size) {
 			Position p= list.get(index);
 			while (p != null && p.offset == offset) {
-				if (p.length == length)
+				if (p.length == length) {
 					return true;
+				}
 				++ index;
 				p= (index < size) ? list.get(index) : null;
 			}
@@ -409,8 +418,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	@Override
 	public boolean containsPositionCategory(String category) {
-		if (category != null)
+		if (category != null) {
 			return fPositions.containsKey(category);
+		}
 		return false;
 	}
 
@@ -444,8 +454,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.4
 	 */
 	protected int computeIndexInPositionList(List<? extends Position> positions, int offset, boolean orderedByOffset) {
-		if (positions.isEmpty())
+		if (positions.isEmpty()) {
 			return 0;
+		}
 
 		int left= 0;
 		int right= positions.size() -1;
@@ -459,15 +470,17 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			p= positions.get(mid);
 			int pOffset= getOffset(orderedByOffset, p);
 			if (offset < pOffset) {
-				if (left == mid)
+				if (left == mid) {
 					right= left;
-				else
+				} else {
 					right= mid -1;
+				}
 			} else if (offset > pOffset) {
-				if (right == mid)
+				if (right == mid) {
 					left= right;
-				else
+				} else {
 					left= mid  +1;
+				}
 			} else if (offset == pOffset) {
 				left= right= mid;
 			}
@@ -484,8 +497,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			// entry will become the first of all entries with the same offset
 			do {
 				--pos;
-				if (pos < 0)
+				if (pos < 0) {
 					break;
+				}
 				p= positions.get(pos);
 				pPosition= getOffset(orderedByOffset, p);
 			} while (offset == pPosition);
@@ -501,20 +515,23 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.4
 	 */
 	private int getOffset(boolean orderedByOffset, Position position) {
-		if (orderedByOffset || position.getLength() == 0)
+		if (orderedByOffset || position.getLength() == 0) {
 			return position.getOffset();
+		}
 		return position.getOffset() + position.getLength() - 1;
 	}
 
 	@Override
 	public int computeIndexInCategory(String category, int offset) throws BadLocationException, BadPositionCategoryException {
 
-		if (0 > offset || offset > getLength())
+		if (0 > offset || offset > getLength()) {
 			throw new BadLocationException();
+		}
 
 		List<Position> c= fPositions.get(category);
-		if (c == null)
+		if (c == null) {
 			throw new BadPositionCategoryException(category);
+		}
 
 		return computeIndexInPositionList(c, offset);
 	}
@@ -527,8 +544,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	@Deprecated
 	protected void fireDocumentPartitioningChanged() {
-		if (fDocumentPartitioningListeners == null)
+		if (fDocumentPartitioningListeners == null) {
 			return;
+		}
 
 		for (IDocumentPartitioningListener listener : fDocumentPartitioningListeners) {
 			listener.documentPartitioningChanged(this);
@@ -549,15 +567,17 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	@Deprecated
 	protected void fireDocumentPartitioningChanged(IRegion region) {
-		if (fDocumentPartitioningListeners == null)
+		if (fDocumentPartitioningListeners == null) {
 			return;
+		}
 
 		for (IDocumentPartitioningListener l : fDocumentPartitioningListeners) {
 			try {
-				if (l instanceof IDocumentPartitioningListenerExtension)
+				if (l instanceof IDocumentPartitioningListenerExtension) {
 					((IDocumentPartitioningListenerExtension)l).documentPartitioningChanged(this, region);
-				else
+				} else {
 					l.documentPartitioningChanged(this);
+				}
 			} catch (Exception ex) {
 				log(ex);
 			}
@@ -574,16 +594,15 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.0
 	 */
 	protected void fireDocumentPartitioningChanged(DocumentPartitioningChangedEvent event) {
-		if (fDocumentPartitioningListeners == null)
+		if (fDocumentPartitioningListeners == null) {
 			return;
+		}
 
 		for (IDocumentPartitioningListener l : fDocumentPartitioningListeners) {
 			try {
-				if (l instanceof IDocumentPartitioningListenerExtension2) {
-					IDocumentPartitioningListenerExtension2 extension2= (IDocumentPartitioningListenerExtension2)l;
+				if (l instanceof IDocumentPartitioningListenerExtension2 extension2) {
 					extension2.documentPartitioningChanged(event);
-				} else if (l instanceof IDocumentPartitioningListenerExtension) {
-					IDocumentPartitioningListenerExtension extension= (IDocumentPartitioningListenerExtension)l;
+				} else if (l instanceof IDocumentPartitioningListenerExtension extension) {
 					extension.documentPartitioningChanged(this, event.getCoverage());
 				} else {
 					l.documentPartitioningChanged(this);
@@ -603,17 +622,18 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	protected void fireDocumentAboutToBeChanged(DocumentEvent event) {
 
 		// IDocumentExtension
-		if (fReentranceCount == 0)
+		if (fReentranceCount == 0) {
 			flushPostNotificationChanges();
+		}
 
 		if (fDocumentPartitioners != null) {
 			Iterator<IDocumentPartitioner> e= fDocumentPartitioners.values().iterator();
 			while (e.hasNext()) {
 				IDocumentPartitioner p= e.next();
-				if (p instanceof IDocumentPartitionerExtension3) {
-					IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) p;
-					if (extension.getActiveRewriteSession() != null)
+				if (p instanceof IDocumentPartitionerExtension3 extension) {
+					if (extension.getActiveRewriteSession() != null) {
 						continue;
+					}
 				}
 				try {
 					p.documentAboutToBeChanged(event);
@@ -656,26 +676,28 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 				String partitioning= entry.getKey();
 				IDocumentPartitioner partitioner= entry.getValue();
 
-				if (partitioner instanceof IDocumentPartitionerExtension3) {
-					IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;
-					if (extension.getActiveRewriteSession() != null)
+				if (partitioner instanceof IDocumentPartitionerExtension3 extension) {
+					if (extension.getActiveRewriteSession() != null) {
 						continue;
+					}
 				}
 
-				if (partitioner instanceof IDocumentPartitionerExtension) {
-					IDocumentPartitionerExtension extension= (IDocumentPartitionerExtension) partitioner;
+				if (partitioner instanceof IDocumentPartitionerExtension extension) {
 					IRegion r= extension.documentChanged2(event);
-					if (r != null)
+					if (r != null) {
 						fDocumentPartitioningChangedEvent.setPartitionChange(partitioning, r.getOffset(), r.getLength());
+					}
 				} else {
-					if (partitioner.documentChanged(event))
+					if (partitioner.documentChanged(event)) {
 						fDocumentPartitioningChangedEvent.setPartitionChange(partitioning, 0, event.getDocument().getLength());
+					}
 				}
 			}
 		}
 
-		if (!fPositions.isEmpty())
+		if (!fPositions.isEmpty()) {
 			updatePositions(event);
+		}
 	}
 
 	/**
@@ -723,8 +745,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 		DocumentPartitioningChangedEvent p= fDocumentPartitioningChangedEvent;
 		fDocumentPartitioningChangedEvent= null;
-		if (p != null && !p.isEmpty())
+		if (p != null && !p.isEmpty()) {
 			fireDocumentPartitioningChanged(p);
+		}
 
 		for (IDocumentListener listener : fPrenotifiedDocumentListeners) {
 			try {
@@ -745,8 +768,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		// IDocumentExtension
 		++ fReentranceCount;
 		try {
-			if (fReentranceCount == 1)
+			if (fReentranceCount == 1) {
 				executePostNotificationChanges();
+			}
 		} finally {
 			-- fReentranceCount;
 		}
@@ -762,16 +786,18 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	protected void fireDocumentChanged(DocumentEvent event) {
 		updateDocumentStructures(event);
 
-		if (fStoppedListenerNotification == 0)
+		if (fStoppedListenerNotification == 0) {
 			doFireDocumentChanged(event);
-		else
+		} else {
 			fDeferredDocumentEvent= event;
+		}
 	}
 
 	@Override
 	public char getChar(int pos) throws BadLocationException {
-		if ((0 > pos) || (pos >= getLength()))
+		if ((0 > pos) || (pos >= getLength())) {
 			throw new BadLocationException();
+		}
 		return getStore().get(pos);
 	}
 
@@ -824,11 +850,13 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		} catch (BadLocationException x) {
 		}
 
-		if (lineDelimiter != null)
+		if (lineDelimiter != null) {
 			return lineDelimiter;
+		}
 
-		if (fInitialLineDelimiter != null)
+		if (fInitialLineDelimiter != null) {
 			return fInitialLineDelimiter;
+		}
 
 		String sysLineDelimiter= System.lineSeparator();
 		String[] delimiters= getLegalLineDelimiters();
@@ -840,8 +868,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			}
 		}
 
-		if (lineDelimiter == null)
+		if (lineDelimiter == null) {
 			lineDelimiter= delimiters[0];
+		}
 
 		return lineDelimiter;
 
@@ -920,12 +949,14 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	@Override
 	public Position[] getPositions(String category) throws BadPositionCategoryException {
 
-		if (category == null)
+		if (category == null) {
 			throw new BadPositionCategoryException();
+		}
 
 		List<Position> c= fPositions.get(category);
-		if (c == null)
+		if (c == null) {
 			throw new BadPositionCategoryException(category);
+		}
 
 		Position[] positions= new Position[c.size()];
 		c.toArray(positions);
@@ -936,8 +967,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	public String[] getPositionCategories() {
 		String[] categories= new String[fPositions.size()];
 		Iterator<String> keys= fPositions.keySet().iterator();
-		for (int i= 0; i < categories.length; i++)
+		for (int i= 0; i < categories.length; i++) {
 			categories[i]= keys.next();
+		}
 		return categories;
 	}
 
@@ -954,8 +986,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	@Override
 	public String get(int pos, int length) throws BadLocationException {
 		int myLength= getLength();
-		if ((0 > pos) || (0 > length) || (pos + length > myLength))
+		if ((0 > pos) || (0 > length) || (pos + length > myLength)) {
 			throw new BadLocationException();
+		}
 		return getStore().get(pos, length);
 	}
 
@@ -972,20 +1005,24 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	@Override
 	public void removePosition(String category, Position position) throws BadPositionCategoryException {
 
-		if (position == null)
+		if (position == null) {
 			return;
+		}
 
-		if (category == null)
+		if (category == null) {
 			throw new BadPositionCategoryException();
+		}
 
 		List<Position> c= fPositions.get(category);
-		if (c == null)
+		if (c == null) {
 			throw new BadPositionCategoryException(category);
+		}
 		removeFromPositionsList(c, position, true);
 
 		List<Position> endPositions= fEndPositions.get(category);
-		if (endPositions == null)
+		if (endPositions == null) {
 			throw new BadPositionCategoryException(category);
+		}
 		removeFromPositionsList(endPositions, position, false);
 	}
 
@@ -1039,11 +1076,13 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	@Override
 	public void removePositionCategory(String category) throws BadPositionCategoryException {
 
-		if (category == null)
+		if (category == null) {
 			return;
+		}
 
-		if ( !containsPositionCategory(category))
+		if ( !containsPositionCategory(category)) {
 			throw new BadPositionCategoryException(category);
+		}
 
 		fPositions.remove(category);
 		fEndPositions.remove(category);
@@ -1060,10 +1099,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 
 	private long getNextModificationStamp() {
-		if (fNextModificationStamp == Long.MAX_VALUE || fNextModificationStamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP)
+		if (fNextModificationStamp == Long.MAX_VALUE || fNextModificationStamp == IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP) {
 			fNextModificationStamp= 0;
-		else
+		} else {
 			fNextModificationStamp= fNextModificationStamp + 1;
+		}
 
 		return fNextModificationStamp;
 	}
@@ -1075,8 +1115,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	@Override
 	public void replace(int pos, int length, String text, long modificationStamp) throws BadLocationException {
-		if ((0 > pos) || (0 > length) || (pos + length > getLength()))
+		if ((0 > pos) || (0 > length) || (pos + length > getLength())) {
 			throw new BadLocationException();
+		}
 
 		DocumentEvent e= new DocumentEvent(this, pos, length, text);
 		fireDocumentAboutToBeChanged(e);
@@ -1103,10 +1144,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	@Override
 	public void replace(int pos, int length, String text) throws BadLocationException {
-		if (length == 0 && (text == null || text.isEmpty()))
+		if (length == 0 && (text == null || text.isEmpty())) {
 			replace(pos, length, text, getModificationStamp());
-		else
+		} else {
 			replace(pos, length, text, getNextModificationStamp());
+		}
 	}
 
 	@Override
@@ -1170,8 +1212,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.0
 	 */
 	private FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() {
-		if (fFindReplaceDocumentAdapter == null)
+		if (fFindReplaceDocumentAdapter == null) {
 			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(this);
+		}
 
 		return fFindReplaceDocumentAdapter;
 	}
@@ -1182,8 +1225,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 2.0
 	 */
 	private void flushPostNotificationChanges() {
-		if (fPostNotificationChanges != null)
+		if (fPostNotificationChanges != null) {
 			fPostNotificationChanges.clear();
+		}
 	}
 
 	/**
@@ -1194,8 +1238,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	private void executePostNotificationChanges() {
 
-		if (fStoppedCount > 0)
+		if (fStoppedCount > 0) {
 			return;
+		}
 
 		while (fPostNotificationChanges != null) {
 			List<RegisteredReplace> changes= fPostNotificationChanges;
@@ -1222,8 +1267,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	@Override
 	public void registerPostNotificationReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
 		if (fAcceptPostNotificationReplaces) {
-			if (fPostNotificationChanges == null)
+			if (fPostNotificationChanges == null) {
 				fPostNotificationChanges= new ArrayList<>(1);
+			}
 			fPostNotificationChanges.add(new RegisteredReplace(owner, replace));
 		}
 	}
@@ -1236,8 +1282,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	@Override
 	public void resumePostNotificationProcessing() {
 		-- fStoppedCount;
-		if (fStoppedCount == 0 && fReentranceCount == 0)
+		if (fStoppedCount == 0 && fReentranceCount == 0) {
 			executePostNotificationChanges();
+		}
 	}
 
 	/**
@@ -1297,8 +1344,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	@Override
 	public ITypedRegion[] computePartitioning(String partitioning, int offset, int length, boolean includeZeroLengthPartitions) throws BadLocationException, BadPartitioningException {
-		if ((0 > offset) || (0 > length) || (offset + length > getLength()))
+		if ((0 > offset) || (0 > length) || (offset + length > getLength())) {
 			throw new BadLocationException();
+		}
 
 		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
 
@@ -1308,10 +1356,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		} else if (partitioner != null) {
 			checkStateOfPartitioner(partitioner, partitioning);
 			return partitioner.computePartitioning(offset, length);
-		} else if (DEFAULT_PARTITIONING.equals(partitioning))
+		} else if (DEFAULT_PARTITIONING.equals(partitioning)) {
 			return new TypedRegion[] { new TypedRegion(offset, length, DEFAULT_CONTENT_TYPE) };
-		else
+		} else {
 			throw new BadPartitioningException();
+		}
 	}
 
 	/*
@@ -1320,8 +1369,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	@Override
 	public String getContentType(String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException, BadPartitioningException {
-		if ((0 > offset) || (offset > getLength()))
+		if ((0 > offset) || (offset > getLength())) {
 			throw new BadLocationException();
+		}
 
 		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
 
@@ -1331,10 +1381,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		} else if (partitioner != null) {
 			checkStateOfPartitioner(partitioner, partitioning);
 			return partitioner.getContentType(offset);
-		} else if (DEFAULT_PARTITIONING.equals(partitioning))
+		} else if (DEFAULT_PARTITIONING.equals(partitioning)) {
 			return DEFAULT_CONTENT_TYPE;
-		else
+		} else {
 			throw new BadPartitioningException();
+		}
 	}
 
 	@Override
@@ -1345,10 +1396,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	@Override
 	public String[] getLegalContentTypes(String partitioning) throws BadPartitioningException {
 		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
-		if (partitioner != null)
+		if (partitioner != null) {
 			return partitioner.getLegalContentTypes();
-		if (DEFAULT_PARTITIONING.equals(partitioning))
+		}
+		if (DEFAULT_PARTITIONING.equals(partitioning)) {
 			return new String[] { DEFAULT_CONTENT_TYPE };
+		}
 		throw new BadPartitioningException();
 	}
 
@@ -1358,8 +1411,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	@Override
 	public ITypedRegion getPartition(String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException, BadPartitioningException {
-		if ((0 > offset) || (offset > getLength()))
+		if ((0 > offset) || (offset > getLength())) {
 			throw new BadLocationException();
+		}
 
 		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
 
@@ -1369,16 +1423,18 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		} else if (partitioner != null) {
 			checkStateOfPartitioner(partitioner, partitioning);
 			return partitioner.getPartition(offset);
-		} else if (DEFAULT_PARTITIONING.equals(partitioning))
+		} else if (DEFAULT_PARTITIONING.equals(partitioning)) {
 			return new TypedRegion(0, getLength(), DEFAULT_CONTENT_TYPE);
-		else
+		} else {
 			throw new BadPartitioningException();
+		}
 	}
 
 	@Override
 	public String[] getPartitionings() {
-		if (fDocumentPartitioners == null)
+		if (fDocumentPartitioners == null) {
 			return new String[0];
+		}
 		String[] partitionings= new String[fDocumentPartitioners.size()];
 		fDocumentPartitioners.keySet().toArray(partitionings);
 		return partitionings;
@@ -1389,12 +1445,14 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		if (partitioner == null) {
 			if (fDocumentPartitioners != null) {
 				fDocumentPartitioners.remove(partitioning);
-				if (fDocumentPartitioners.isEmpty())
+				if (fDocumentPartitioners.isEmpty()) {
 					fDocumentPartitioners= null;
+				}
 			}
 		} else {
-			if (fDocumentPartitioners == null)
+			if (fDocumentPartitioners == null) {
 				fDocumentPartitioners= new HashMap<>();
+			}
 			fDocumentPartitioners.put(partitioning, partitioner);
 		}
 		DocumentPartitioningChangedEvent event= new DocumentPartitioningChangedEvent(this);
@@ -1436,28 +1494,30 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	@Override
 	public DocumentRewriteSession startRewriteSession(DocumentRewriteSessionType sessionType) {
 
-		if (getActiveRewriteSession() != null)
+		if (getActiveRewriteSession() != null) {
 			throw new IllegalStateException();
+		}
 
 
 		fDocumentRewriteSession= new DocumentRewriteSession(sessionType);
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("AbstractDocument: Starting rewrite session: " + fDocumentRewriteSession); //$NON-NLS-1$
+		}
 
 		fireRewriteSessionChanged(new DocumentRewriteSessionEvent(this, fDocumentRewriteSession, DocumentRewriteSessionEvent.SESSION_START));
 
 		startRewriteSessionOnPartitioners(fDocumentRewriteSession);
 
 		ILineTracker tracker= getTracker();
-		if (tracker instanceof ILineTrackerExtension) {
-			ILineTrackerExtension extension= (ILineTrackerExtension) tracker;
+		if (tracker instanceof ILineTrackerExtension extension) {
 			extension.startRewriteSession(fDocumentRewriteSession);
 		}
 
-		if (DocumentRewriteSessionType.SEQUENTIAL == sessionType)
+		if (DocumentRewriteSessionType.SEQUENTIAL == sessionType) {
 			startSequentialRewrite(false);
-		else if (DocumentRewriteSessionType.STRICTLY_SEQUENTIAL == sessionType)
+		} else if (DocumentRewriteSessionType.STRICTLY_SEQUENTIAL == sessionType) {
 			startSequentialRewrite(true);
+		}
 
 		return fDocumentRewriteSession;
 	}
@@ -1473,8 +1533,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			Iterator<IDocumentPartitioner> e= fDocumentPartitioners.values().iterator();
 			while (e.hasNext()) {
 				Object partitioner= e.next();
-				if (partitioner instanceof IDocumentPartitionerExtension3) {
-					IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;
+				if (partitioner instanceof IDocumentPartitionerExtension3 extension) {
 					extension.startRewriteSession(session);
 				}
 			}
@@ -1485,16 +1544,17 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	public void stopRewriteSession(DocumentRewriteSession session) {
 		if (fDocumentRewriteSession != null && fDocumentRewriteSession == session) {
 
-			if (DEBUG)
+			if (DEBUG) {
 				System.out.println("AbstractDocument: Stopping rewrite session: " + session); //$NON-NLS-1$
+			}
 
 			DocumentRewriteSessionType sessionType= session.getSessionType();
-			if (DocumentRewriteSessionType.SEQUENTIAL == sessionType || DocumentRewriteSessionType.STRICTLY_SEQUENTIAL == sessionType)
+			if (DocumentRewriteSessionType.SEQUENTIAL == sessionType || DocumentRewriteSessionType.STRICTLY_SEQUENTIAL == sessionType) {
 				stopSequentialRewrite();
+			}
 
 			ILineTracker tracker= getTracker();
-			if (tracker instanceof ILineTrackerExtension) {
-				ILineTrackerExtension extension= (ILineTrackerExtension) tracker;
+			if (tracker instanceof ILineTrackerExtension extension) {
 				extension.stopRewriteSession(session, get());
 			}
 
@@ -1517,22 +1577,23 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			for (Entry<String, IDocumentPartitioner> entry : fDocumentPartitioners.entrySet()) {
 				String partitioning = entry.getKey();
 				IDocumentPartitioner partitioner= entry.getValue();
-				if (partitioner instanceof IDocumentPartitionerExtension3) {
-					IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;
+				if (partitioner instanceof IDocumentPartitionerExtension3 extension) {
 					extension.stopRewriteSession(session);
 					event.setPartitionChange(partitioning, 0, getLength());
 				}
 			}
-			if (!event.isEmpty())
+			if (!event.isEmpty()) {
 				fireDocumentPartitioningChanged(event);
+			}
 		}
 	}
 
 	@Override
 	public void addDocumentRewriteSessionListener(IDocumentRewriteSessionListener listener) {
 		Assert.isNotNull(listener);
-		if (! fDocumentRewriteSessionListeners.contains(listener))
+		if (! fDocumentRewriteSessionListeners.contains(listener)) {
 			fDocumentRewriteSessionListeners.add(listener);
+		}
 	}
 
 	@Override
@@ -1550,16 +1611,17 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.1
 	 */
 	protected final void checkStateOfPartitioner(IDocumentPartitioner partitioner, String partitioning) {
-		if (!(partitioner instanceof IDocumentPartitionerExtension3))
+		if (!(partitioner instanceof IDocumentPartitionerExtension3 extension)) {
 			return;
+		}
 
-		IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;
 		DocumentRewriteSession session= extension.getActiveRewriteSession();
 		if (session != null) {
 			extension.stopRewriteSession(session);
 
-			if (DEBUG)
+			if (DEBUG) {
 				System.out.println("AbstractDocument: Flushing rewrite session for partition type: " + partitioning); //$NON-NLS-1$
+			}
 
 			DocumentPartitioningChangedEvent event= new DocumentPartitioningChangedEvent(this);
 			event.setPartitionChange(partitioning, 0, getLength());
@@ -1651,8 +1713,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	private List<Position> getStartingPositions(String category, int offset, int length) throws BadPositionCategoryException {
 		List<Position> positions= fPositions.get(category);
-		if (positions == null)
+		if (positions == null) {
 			throw new BadPositionCategoryException();
+		}
 
 		int indexStart= computeIndexInPositionList(positions, offset, true);
 		int indexEnd= computeIndexInPositionList(positions, offset + length, true);
@@ -1673,8 +1736,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 */
 	private List<Position> getEndingPositions(String category, int offset, int length) throws BadPositionCategoryException {
 		List<Position> positions= fEndPositions.get(category);
-		if (positions == null)
+		if (positions == null) {
 			throw new BadPositionCategoryException(category);
+		}
 
 		int indexStart= computeIndexInPositionList(positions, offset, false);
 		int indexEnd= computeIndexInPositionList(positions, offset + length, false);

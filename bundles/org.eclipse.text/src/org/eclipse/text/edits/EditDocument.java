@@ -27,7 +27,7 @@ import org.eclipse.jface.text.Position;
 
 class EditDocument implements IDocument {
 
-	private StringBuilder fBuffer;
+	private final StringBuilder fBuffer;
 
 	public EditDocument(String content) {
 		fBuffer= new StringBuilder(content);

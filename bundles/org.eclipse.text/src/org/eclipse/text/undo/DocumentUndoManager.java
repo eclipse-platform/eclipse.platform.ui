@@ -431,7 +431,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	private static class UndoableCompoundTextChange extends UndoableTextChange {
 
 		/** The list of individual changes */
-		private List<UndoableTextChange> fChanges= new ArrayList<>();
+		private final List<UndoableTextChange> fChanges= new ArrayList<>();
 
 		/**
 		 * Creates a new compound text change.
@@ -701,12 +701,12 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	/**
 	 * The undo context for this document undo manager.
 	 */
-	private ObjectUndoContext fUndoContext;
+	private final ObjectUndoContext fUndoContext;
 
 	/**
 	 * The document whose changes are being tracked.
 	 */
-	private IDocument fDocument;
+	private final IDocument fDocument;
 
 	/**
 	 * The currently constructed edit.
@@ -726,7 +726,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	/**
 	 * The operation history being used to store the undo history.
 	 */
-	private IOperationHistory fHistory;
+	private final IOperationHistory fHistory;
 
 	/**
 	 * The operation history listener used for managing undo and redo before and
@@ -768,10 +768,10 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	private boolean fOverwriting= false;
 
 	/** The registered document listeners. */
-	private ListenerList<IDocumentUndoListener> fDocumentUndoListeners;
+	private final ListenerList<IDocumentUndoListener> fDocumentUndoListeners;
 
 	/** The list of clients connected. */
-	private List<Object> fConnected;
+	private final List<Object> fConnected;
 
 	/**
 	 *

@@ -37,22 +37,22 @@ import org.eclipse.jface.text.Position;
 public class AnnotationModelEvent {
 
 	/** The model this event refers to. */
-	private IAnnotationModel fAnnotationModel;
+	private final IAnnotationModel fAnnotationModel;
 	/**
 	 * The added annotations.
 	 * @since 3.0
 	 */
-	private Set<Annotation> fAddedAnnotations= new HashSet<>();
+	private final Set<Annotation> fAddedAnnotations= new HashSet<>();
 	/**
 	 * The removed annotations.
 	 * @since 3.0
 	 */
-	private Map<Annotation, Position> fRemovedAnnotations= new HashMap<>();
+	private final Map<Annotation, Position> fRemovedAnnotations= new HashMap<>();
 	/**
 	 * The changed annotations.
 	 * @since 3.0
 	 */
-	private Set<Annotation> fChangedAnnotations= new HashSet<>();
+	private final Set<Annotation> fChangedAnnotations= new HashSet<>();
 	/**
 	 * Indicates that this event does not contain detailed information.
 	 * @since 3.0
@@ -240,8 +240,7 @@ public class AnnotationModelEvent {
 	 * @since 3.0
 	 */
 	public boolean isValid() {
-		if (fModificationStamp != null && fAnnotationModel instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension extension= (IAnnotationModelExtension) fAnnotationModel;
+		if (fModificationStamp != null && fAnnotationModel instanceof IAnnotationModelExtension extension) {
 			return fModificationStamp == extension.getModificationStamp();
 		}
 		return true;
@@ -254,8 +253,7 @@ public class AnnotationModelEvent {
 	 * @since 3.0
 	 */
 	public void markSealed() {
-		if (fAnnotationModel instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension extension= (IAnnotationModelExtension) fAnnotationModel;
+		if (fAnnotationModel instanceof IAnnotationModelExtension extension) {
 			fModificationStamp= extension.getModificationStamp();
 		}
 	}

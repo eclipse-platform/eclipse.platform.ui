@@ -91,31 +91,36 @@ public class MultiTextEdit extends TextEdit {
 
 	@Override
 	final boolean isDefined() {
-		if (fDefined)
+		if (fDefined) {
 			return true;
+		}
 		return hasChildren();
 	}
 
 	@Override
 	public final int getOffset() {
-		if (fDefined)
+		if (fDefined) {
 			return super.getOffset();
+		}
 
 		List<TextEdit> children= internalGetChildren();
-		if (children == null || children.isEmpty())
+		if (children == null || children.isEmpty()) {
 			return 0;
+		}
 		// the children are already sorted
 		return children.get(0).getOffset();
 	}
 
 	@Override
 	public final int getLength() {
-		if (fDefined)
+		if (fDefined) {
 			return super.getLength();
+		}
 
 		List<TextEdit> children= internalGetChildren();
-		if (children == null || children.isEmpty())
+		if (children == null || children.isEmpty()) {
 			return 0;
+		}
 		// the children are already sorted
 		TextEdit first= children.get(0);
 		TextEdit last= children.get(children.size() - 1);
@@ -124,8 +129,9 @@ public class MultiTextEdit extends TextEdit {
 
 	@Override
 	public final boolean covers(TextEdit other) {
-		if (fDefined)
+		if (fDefined) {
 			return super.covers(other);
+		}
 		// an undefined multiple text edit covers everything
 		return true;
 	}
@@ -151,14 +157,16 @@ public class MultiTextEdit extends TextEdit {
 
 	@Override
 	void adjustOffset(int delta) {
-		if (fDefined)
+		if (fDefined) {
 			super.adjustOffset(delta);
+		}
 	}
 
 	@Override
 	void adjustLength(int delta) {
-		if (fDefined)
+		if (fDefined) {
 			super.adjustLength(delta);
+		}
 	}
 
 	@Override
@@ -183,8 +191,9 @@ public class MultiTextEdit extends TextEdit {
 	}
 
 	void defineRegion(int parentOffset) {
-		if (fDefined)
+		if (fDefined) {
 			return;
+		}
 		if (hasChildren()) {
 			IRegion region= getCoverage(getChildren());
 			internalSetOffset(region.getOffset());
@@ -199,7 +208,8 @@ public class MultiTextEdit extends TextEdit {
 	@Override
 	void internalToString(StringBuilder buffer, int indent) {
 		super.internalToString(buffer, indent);
-		if (! fDefined)
+		if (! fDefined) {
 			buffer.append(" [undefined]"); //$NON-NLS-1$
+		}
 	}
 }

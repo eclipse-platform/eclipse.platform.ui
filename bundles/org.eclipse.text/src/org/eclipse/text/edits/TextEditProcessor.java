@@ -35,9 +35,9 @@ import org.eclipse.jface.text.IDocument;
  */
 public class TextEditProcessor {
 
-	private IDocument fDocument;
-	private TextEdit fRoot;
-	private int fStyle;
+	private final IDocument fDocument;
+	private final TextEdit fRoot;
+	private final int fStyle;
 
 	private boolean fChecked;
 	private MalformedTreeException fException;
@@ -66,8 +66,9 @@ public class TextEditProcessor {
 		Assert.isNotNull(root);
 		fDocument= document;
 		fRoot= root;
-		if (fRoot instanceof MultiTextEdit)
+		if (fRoot instanceof MultiTextEdit) {
 			((MultiTextEdit)fRoot).defineRegion(0);
+		}
 		fStyle= style;
 		if (secondary) {
 			fChecked= true;
@@ -152,8 +153,9 @@ public class TextEditProcessor {
 		if (!fChecked) {
 			fRoot.dispatchCheckIntegrity(this);
 		} else {
-			if (fException != null)
+			if (fException != null) {
 				throw fException;
+			}
 		}
 		return fRoot.dispatchPerformEdits(this);
 	}
@@ -176,13 +178,15 @@ public class TextEditProcessor {
 	void checkIntegrityDo() throws MalformedTreeException {
 		fSourceEdits= new ArrayList<>();
 		fRoot.traverseConsistencyCheck(this, fDocument, fSourceEdits);
-		if (fRoot.getExclusiveEnd() > fDocument.getLength())
+		if (fRoot.getExclusiveEnd() > fDocument.getLength()) {
 			throw new MalformedTreeException(null, fRoot, TextEditMessages.getString("TextEditProcessor.invalid_length")); //$NON-NLS-1$
+		}
 	}
 
 	void checkIntegrityUndo() {
-		if (fRoot.getExclusiveEnd() > fDocument.getLength())
+		if (fRoot.getExclusiveEnd() > fDocument.getLength()) {
 			throw new MalformedTreeException(null, fRoot, TextEditMessages.getString("TextEditProcessor.invalid_length")); //$NON-NLS-1$
+		}
 	}
 
 	//---- execution --------------------------------------------------------------------
@@ -190,8 +194,9 @@ public class TextEditProcessor {
 	UndoEdit executeDo() throws BadLocationException {
 		UndoCollector collector= new UndoCollector(fRoot);
 		try {
-			if (createUndo())
+			if (createUndo()) {
 				collector.connect(fDocument);
+			}
 			computeSources();
 			fRoot.traverseDocumentUpdating(this, fDocument);
 			if (updateRegions()) {
@@ -216,8 +221,9 @@ public class TextEditProcessor {
 	UndoEdit executeUndo() throws BadLocationException {
 		UndoCollector collector= new UndoCollector(fRoot);
 		try {
-			if (createUndo())
+			if (createUndo()) {
 				collector.connect(fDocument);
+			}
 			TextEdit[] edits= fRoot.getChildren();
 			for (int i= edits.length - 1; i >= 0; i--) {
 				edits[i].performDocumentUpdating(fDocument);

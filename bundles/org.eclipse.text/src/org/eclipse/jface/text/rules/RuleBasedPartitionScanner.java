@@ -115,8 +115,9 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 
 		// haven't found any rule for this type of partition
 		fContentType= null;
-		if (resume)
+		if (resume) {
 			fOffset= fPartitionOffset;
+		}
 		return super.nextToken();
 	}
 }

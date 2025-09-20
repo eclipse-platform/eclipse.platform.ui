@@ -69,8 +69,9 @@ public class ConfigurableLineTracker extends AbstractLineTracker {
 			fDelimiterInfo.delimiter= m.getText();
 		} else {
 			int index= text.indexOf(fDelimiters[0], offset);
-			if (index == -1)
+			if (index == -1) {
 				return null;
+			}
 			fDelimiterInfo.delimiterIndex= index;
 			fDelimiterInfo.delimiter= fDelimiters[0];
 		}

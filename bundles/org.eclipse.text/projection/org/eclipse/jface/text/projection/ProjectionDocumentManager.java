@@ -50,7 +50,7 @@ import org.eclipse.jface.text.ISlaveDocumentManagerExtension;
 public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocumentManager, ISlaveDocumentManagerExtension {
 
 	/** Registry for master documents and their projection documents. */
-	private Map<IDocument, List<ProjectionDocument>> fProjectionRegistry= new HashMap<>();
+	private final Map<IDocument, List<ProjectionDocument>> fProjectionRegistry= new HashMap<>();
 
 	/**
 	 * Registers the given projection document for the given master document.
@@ -77,8 +77,9 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 		List<ProjectionDocument> list= fProjectionRegistry.get(master);
 		if (list != null) {
 			list.remove(projection);
-			if (list.isEmpty())
+			if (list.isEmpty()) {
 				fProjectionRegistry.remove(master);
+			}
 		}
 	}
 
@@ -101,8 +102,9 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 	 */
 	private Iterator<ProjectionDocument> getProjectionsIterator(IDocument master) {
 		List<ProjectionDocument> list= fProjectionRegistry.get(master);
-		if (list != null)
+		if (list != null) {
 			return list.iterator();
+		}
 		return null;
 	}
 
@@ -115,15 +117,17 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 	protected void fireDocumentEvent(boolean about, DocumentEvent masterEvent) {
 		IDocument master= masterEvent.getDocument();
 		Iterator<ProjectionDocument> e= getProjectionsIterator(master);
-		if (e == null)
+		if (e == null) {
 			return;
+		}
 
 		while (e.hasNext()) {
 			ProjectionDocument document= e.next();
-			if (about)
+			if (about) {
 				document.masterDocumentAboutToBeChanged(masterEvent);
-			else
+			} else {
 				document.masterDocumentChanged(masterEvent);
+			}
 		}
 	}
 
@@ -139,8 +143,7 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 
 	@Override
 	public IDocumentInformationMapping createMasterSlaveMapping(IDocument slave) {
-		if (slave instanceof ProjectionDocument) {
-			ProjectionDocument projectionDocument= (ProjectionDocument) slave;
+		if (slave instanceof ProjectionDocument projectionDocument) {
 			return projectionDocument.getDocumentInformationMapping();
 		}
 		return null;
@@ -148,8 +151,9 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 
 	@Override
 	public IDocument createSlaveDocument(IDocument master) {
-		if (!hasProjection(master))
+		if (!hasProjection(master)) {
 			master.addDocumentListener(this);
+		}
 		ProjectionDocument slave= createProjectionDocument(master);
 		add(master, slave);
 		return slave;
@@ -167,20 +171,21 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 
 	@Override
 	public void freeSlaveDocument(IDocument slave) {
-		if (slave instanceof ProjectionDocument) {
-			ProjectionDocument projectionDocument= (ProjectionDocument) slave;
+		if (slave instanceof ProjectionDocument projectionDocument) {
 			IDocument master= projectionDocument.getMasterDocument();
 			remove(master, projectionDocument);
 			projectionDocument.dispose();
-			if (!hasProjection(master))
+			if (!hasProjection(master)) {
 				master.removeDocumentListener(this);
+			}
 		}
 	}
 
 	@Override
 	public IDocument getMasterDocument(IDocument slave) {
-		if (slave instanceof ProjectionDocument)
+		if (slave instanceof ProjectionDocument) {
 			return ((ProjectionDocument) slave).getMasterDocument();
+		}
 		return null;
 	}
 
@@ -191,8 +196,9 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 
 	@Override
 	public void setAutoExpandMode(IDocument slave, boolean autoExpanding) {
-		if (slave instanceof ProjectionDocument)
+		if (slave instanceof ProjectionDocument) {
 			((ProjectionDocument) slave).setAutoExpandMode(autoExpanding);
+		}
 	}
 
 	@Override

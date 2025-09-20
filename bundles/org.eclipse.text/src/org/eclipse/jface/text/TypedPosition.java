@@ -25,7 +25,7 @@ package org.eclipse.jface.text;
 public class TypedPosition extends Position {
 
 	/** The type of the region described by this position */
-	private String fType;
+	private final String fType;
 
 	/**
 	 * Creates a position along the given specification.
@@ -60,9 +60,8 @@ public class TypedPosition extends Position {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof TypedPosition) {
+		if (o instanceof TypedPosition p) {
 			if (super.equals(o)) {
-				TypedPosition p= (TypedPosition) o;
 				return (fType == null && p.getType() == null) || fType.equals(p.getType());
 			}
 		}

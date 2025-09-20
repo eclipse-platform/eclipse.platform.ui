@@ -87,10 +87,10 @@ public final class RewriteSessionEditProcessor extends TextEditProcessor {
 	@Override
 	public UndoEdit performEdits() throws MalformedTreeException, BadLocationException {
 		IDocument document= getDocument();
-		if (!(document instanceof IDocumentExtension4))
+		if (!(document instanceof IDocumentExtension4 extension)) {
 			return super.performEdits();
+		}
 
-		IDocumentExtension4 extension= (IDocumentExtension4) document;
 		boolean isLargeEdit= isLargeEdit(getRoot());
 		DocumentRewriteSessionType type= isLargeEdit ? DocumentRewriteSessionType.UNRESTRICTED : DocumentRewriteSessionType.UNRESTRICTED_SMALL;
 
