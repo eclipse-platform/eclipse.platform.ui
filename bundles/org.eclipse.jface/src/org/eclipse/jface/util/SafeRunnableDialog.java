@@ -43,7 +43,7 @@ class SafeRunnableDialog extends ErrorDialog {
 
 	private TableViewer statusListViewer;
 
-	private Collection<IStatus> statuses = new ArrayList<>();
+	private final Collection<IStatus> statuses = new ArrayList<>();
 
 	/**
 	 * Create a new instance of the receiver on a status.
@@ -81,8 +81,9 @@ class SafeRunnableDialog extends ErrorDialog {
 	 */
 	void refresh() {
 
-		if (AUTOMATED_MODE)
+		if (AUTOMATED_MODE) {
 			return;
+		}
 
 		createStatusList((Composite) dialogArea);
 		updateEnablements();
@@ -202,10 +203,12 @@ class SafeRunnableDialog extends ErrorDialog {
 			public int compare(Viewer testViewer, Object e1, Object e2) {
 				String message1 = ((IStatus) e1).getMessage();
 				String message2 = ((IStatus) e2).getMessage();
-				if (message1 == null)
+				if (message1 == null) {
 					return 1;
-				if (message2 == null)
+				}
+				if (message2 == null) {
 					return -1;
+				}
 
 				return message1.compareTo(message2);
 			}

@@ -401,7 +401,7 @@ public final class KeySequenceText {
 	 */
 	private class TraversalFilterManager implements FocusListener {
 		/** The managed filter. We only need one instance. */
-		private TraversalFilter filter = new TraversalFilter();
+		private final TraversalFilter filter = new TraversalFilter();
 
 		private boolean filtering = false;
 

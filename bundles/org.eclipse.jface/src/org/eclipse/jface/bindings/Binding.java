@@ -255,11 +255,10 @@ public abstract class Binding {
 			return true;
 
 		}
-		if (!(object instanceof Binding)) {
+		if (!(object instanceof final Binding binding)) {
 			return false;
 		}
 
-		final Binding binding = (Binding) object;
 		if (!Objects.equals(getParameterizedCommand(), binding
 				.getParameterizedCommand())) {
 			return false;

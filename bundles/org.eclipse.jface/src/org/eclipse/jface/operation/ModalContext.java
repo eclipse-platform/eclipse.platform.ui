@@ -66,7 +66,7 @@ public class ModalContext {
 		/**
 		 * The operation to be run.
 		 */
-		private IRunnableWithProgress runnable;
+		private final IRunnableWithProgress runnable;
 
 		/**
 		 * The exception thrown by the operation starter.
@@ -76,12 +76,12 @@ public class ModalContext {
 		/**
 		 * The progress monitor used for progress and cancellation.
 		 */
-		private IProgressMonitor progressMonitor;
+		private final IProgressMonitor progressMonitor;
 
 		/**
 		 * The display used for event dispatching.
 		 */
-		private Display display;
+		private final Display display;
 
 		/**
 		 * Indicates whether to continue event queue dispatching.
@@ -93,7 +93,7 @@ public class ModalContext {
 		 *
 		 * @since 3.1
 		 */
-		private Thread callingThread;
+		private final Thread callingThread;
 
 		/**
 		 * Creates a new modal context.
@@ -135,8 +135,9 @@ public class ModalContext {
 					Throwable exception = invokeThreadListener(((IThreadListener) runnable), callingThread);
 
 					// Forward it if we don't already have one
-					if (exception != null && throwable == null)
+					if (exception != null && throwable == null) {
 						throwable = exception;
+					}
 				}
 
 				// Make sure that all events in the asynchronous event queue
@@ -367,8 +368,9 @@ public class ModalContext {
 					if (listenerException == null) {
 						t.start();
 						t.block();
-					} else if (t.throwable == null)
+					} else if (t.throwable == null) {
 						t.throwable = listenerException;
+					}
 					Throwable throwable = t.throwable;
 					if (throwable != null) {
 						if (debug

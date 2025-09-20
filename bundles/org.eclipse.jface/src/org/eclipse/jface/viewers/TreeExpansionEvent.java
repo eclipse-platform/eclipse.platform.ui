@@ -32,7 +32,7 @@ public class TreeExpansionEvent extends EventObject {
 	/**
 	 * The element that was expanded or collapsed.
 	 */
-	private Object element;
+	private final Object element;
 
 	/**
 	 * Creates a new event for the given source and element.

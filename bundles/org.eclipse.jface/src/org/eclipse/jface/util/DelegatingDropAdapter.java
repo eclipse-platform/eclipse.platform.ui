@@ -107,7 +107,7 @@ import org.eclipse.swt.dnd.TransferData;
  * @since 3.0
  */
 public class DelegatingDropAdapter implements DropTargetListener {
-	private List<TransferDropTargetListener> listeners = new ArrayList<>();
+	private final List<TransferDropTargetListener> listeners = new ArrayList<>();
 
 	private TransferDropTargetListener currentListener;
 

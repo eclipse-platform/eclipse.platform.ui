@@ -295,8 +295,7 @@ public abstract class TrayDialog extends Dialog {
 	 * Returns whether or not the given layout can support the addition of a tray.
 	 */
 	private boolean isCompatibleLayout(Layout layout) {
-		if (layout != null && layout instanceof GridLayout) {
-			GridLayout grid = (GridLayout)layout;
+		if (layout != null && layout instanceof GridLayout grid) {
 			return !grid.makeColumnsEqualWidth && (grid.horizontalSpacing == 0) &&
 					(grid.marginWidth == 0) && (grid.marginHeight == 0) &&
 					(grid.numColumns == 5);
@@ -375,10 +374,11 @@ public abstract class TrayDialog extends Dialog {
 					c = c.getParent();
 				}
 				if (fHelpButton != null) {
-					if (getTray() != null)
+					if (getTray() != null) {
 						fHelpButton.setSelection(true);
-					else
+					} else {
 						fHelpButton.setSelection(false); // tray with help content was not created, disabled selection
+					}
 				}
 			}
 		} else {

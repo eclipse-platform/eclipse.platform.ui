@@ -203,11 +203,10 @@ public final class KeyStroke extends Trigger {
 
 	@Override
 	public final boolean equals(final Object object) {
-		if (!(object instanceof KeyStroke)) {
+		if (!(object instanceof final KeyStroke keyStroke)) {
 			return false;
 		}
 
-		final KeyStroke keyStroke = (KeyStroke) object;
 		if (modifierKeys != keyStroke.modifierKeys) {
 			return false;
 		}

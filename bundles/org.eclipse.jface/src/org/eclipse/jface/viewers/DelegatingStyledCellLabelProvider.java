@@ -83,7 +83,7 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 		public Image getImage(Object element);
 	}
 
-	private IStyledLabelProvider styledLabelProvider;
+	private final IStyledLabelProvider styledLabelProvider;
 
 	/**
 	 * Creates a {@link DelegatingStyledCellLabelProvider} that delegates the
@@ -95,9 +95,10 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 	 *            images
 	 */
 	public DelegatingStyledCellLabelProvider(IStyledLabelProvider labelProvider) {
-		if (labelProvider == null)
+		if (labelProvider == null) {
 			throw new IllegalArgumentException(
 					"Label provider must not be null"); //$NON-NLS-1$
+		}
 
 		this.styledLabelProvider = labelProvider;
 	}

@@ -83,7 +83,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 	/**
 	 * The title of the dialog.
 	 */
-	private String title;
+	private final String title;
 
 	/**
 	 * The SWT list control that displays the error details.
@@ -183,8 +183,9 @@ public class ErrorDialog extends IconAndMessageDialog {
 
 		ErrorSupportProvider provider = Policy.getErrorSupportProvider();
 
-		if (provider == null)
+		if (provider == null) {
 			return;
+		}
 
 		if(!provider.validFor(status)){
 			return;
@@ -492,8 +493,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 		}
 
 		// Look for a nested core exception
-		if (t instanceof CoreException) {
-			CoreException ce = (CoreException) t;
+		if (t instanceof CoreException ce) {
 			IStatus eStatus = ce.getStatus();
 			// Only print the exception message if it is not contained in the
 			// parent message
@@ -515,8 +515,9 @@ public class ErrorDialog extends IconAndMessageDialog {
 		String line;
 		try {
 			while ((line = reader.readLine()) != null) {
-				if (line.length() > 0)
+				if (line.length() > 0) {
 					lines.add(line);
+				}
 			}
 		} catch (IOException e) {
 			// shouldn't get this
@@ -641,8 +642,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 
 		// Look for a nested core exception
 		Throwable t = buildingStatus.getException();
-		if (t instanceof CoreException) {
-			CoreException ce = (CoreException) t;
+		if (t instanceof CoreException ce) {
 			populateCopyBuffer(ce.getStatus(), buffer, nesting + 1);
 		} else if (t != null) {
 			// Include low-level exception message
@@ -752,8 +752,9 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 */
 	@Override
 	protected int getColumnCount() {
-		if (Policy.getErrorSupportProvider() == null)
+		if (Policy.getErrorSupportProvider() == null) {
 			return 2;
+		}
 		return 3;
 	}
 

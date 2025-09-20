@@ -146,14 +146,12 @@ public class ViewerComparator {
 		} else {
 			IBaseLabelProvider prov = ((ContentViewer) viewer)
 					.getLabelProvider();
-			if (prov instanceof ILabelProvider) {
-				ILabelProvider lprov = (ILabelProvider) prov;
-				if (lprov instanceof DecoratingLabelProvider) {
+			if (prov instanceof ILabelProvider lprov) {
+				if (lprov instanceof DecoratingLabelProvider dprov) {
 					// Bug 364735: use the real label provider to avoid unstable
 					// sort behavior if the decoration is running while sorting.
 					// decorations are usually visual aids to the user and
 					// shouldn't be used in ordering.
-					DecoratingLabelProvider dprov = (DecoratingLabelProvider) lprov;
 					lprov = dprov.getLabelProvider();
 				}
 				name1 = lprov.getText(e1);

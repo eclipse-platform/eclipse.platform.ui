@@ -42,7 +42,7 @@ public class WindowManager {
 	 * List of windows managed by this window manager
 	 * (element type: <code>Window</code>).
 	 */
-	private ArrayList<Window> windows = new ArrayList<>();
+	private final ArrayList<Window> windows = new ArrayList<>();
 
 	/**
 	 * List of window managers who have this window manager

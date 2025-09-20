@@ -166,7 +166,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 *
 	 * @see #setMinimumPageSize(Point)
 	 */
-	private Point minimumPageSize = new Point(400, 400);
+	private final Point minimumPageSize = new Point(400, 400);
 
 	/**
 	 * The OK button.
@@ -181,7 +181,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	/**
 	 * The preference manager.
 	 */
-	private PreferenceManager preferenceManager;
+	private final PreferenceManager preferenceManager;
 
 	/**
 	 * Flag for the presence of the error message.
@@ -202,7 +202,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 */
 	private TreeViewer treeViewer;
 
-	private ListenerList<IPageChangedListener> pageChangedListeners = new ListenerList<>();
+	private final ListenerList<IPageChangedListener> pageChangedListeners = new ListenerList<>();
 
 	/**
 	 *  Composite with a FormLayout to contain the title area
@@ -259,8 +259,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 						}
 					}
 				});
-				if (!cancelOK[0])
+				if (!cancelOK[0]) {
 					return;
+				}
 			}
 		}
 
@@ -703,8 +704,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 			}
 
 			private void openDialogHelp() {
-				if (pageContainer == null)
+				if (pageContainer == null) {
 					return;
+				}
 				for(Control currentControl = pageContainer; currentControl != null; currentControl = currentControl.getParent()) {
 					if (currentControl.isListening(SWT.Help)) {
 						currentControl.notifyListeners(SWT.Help, new Event());

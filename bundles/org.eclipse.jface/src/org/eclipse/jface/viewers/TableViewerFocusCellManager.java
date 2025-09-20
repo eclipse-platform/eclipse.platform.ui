@@ -81,8 +81,9 @@ public class TableViewerFocusCellManager extends SWTFocusCellManager {
 
 			Rectangle clientArea = table.getClientArea();
 			for (int i = 0; i < table.getColumnCount(); i++) {
-				if (aViewerRow.getWidth(i) > 0 && columnInVisibleArea(clientArea,aViewerRow,i))
+				if (aViewerRow.getWidth(i) > 0 && columnInVisibleArea(clientArea,aViewerRow,i)) {
 					return aViewerRow.getCell(i);
+				}
 				}
 			}
 

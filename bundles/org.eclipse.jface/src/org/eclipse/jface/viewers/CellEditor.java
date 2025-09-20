@@ -49,13 +49,13 @@ public abstract class CellEditor {
 	 * List of cell editor listeners (element type:
 	 * <code>ICellEditorListener</code>).
 	 */
-	private ListenerList<ICellEditorListener> listeners = new ListenerList<>();
+	private final ListenerList<ICellEditorListener> listeners = new ListenerList<>();
 
 	/**
 	 * List of cell editor property change listeners (element type:
 	 * <code>IPropertyChangeListener</code>).
 	 */
-	private ListenerList<IPropertyChangeListener> propertyChangeListeners = new ListenerList<>();
+	private final ListenerList<IPropertyChangeListener> propertyChangeListeners = new ListenerList<>();
 
 	/**
 	 * Indicates whether this cell editor's current value is valid.

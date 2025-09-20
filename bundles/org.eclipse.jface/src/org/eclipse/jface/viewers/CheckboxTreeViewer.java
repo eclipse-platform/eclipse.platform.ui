@@ -49,7 +49,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	/**
 	 * List of check state listeners (element type: <code>ICheckStateListener</code>).
 	 */
-	private ListenerList<ICheckStateListener> checkStateListeners = new ListenerList<>();
+	private final ListenerList<ICheckStateListener> checkStateListeners = new ListenerList<>();
 
 	/**
 	 * Provides the desired state of the check boxes.
@@ -140,10 +140,9 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 			Widget widget) {
 		Item[] items = getChildren(widget);
 		for (Item item : items) {
-			if (item instanceof TreeItem) {
+			if (item instanceof TreeItem ti) {
 				Object data = item.getData();
 				if (data != null) {
-					TreeItem ti = (TreeItem) item;
 					ti.setChecked(checked.containsKey(data));
 					ti.setGrayed(grayed.containsKey(data));
 				}
@@ -184,10 +183,9 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 			Widget widget) {
 		Item[] items = getChildren(widget);
 		for (Item item : items) {
-			if (item instanceof TreeItem) {
+			if (item instanceof TreeItem ti) {
 				Object data = item.getData();
 				if (data != null) {
-					TreeItem ti = (TreeItem) item;
 					if (ti.getChecked()) {
 						checked.put(data, data);
 					}
@@ -440,8 +438,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 		Item[] items = getChildren(item);
 		if (items != null) {
 			for (Item child : items) {
-				if (child.getData() != null && (child instanceof TreeItem)) {
-					TreeItem treeItem = (TreeItem) child;
+				if (child.getData() != null && (child instanceof TreeItem treeItem)) {
 					treeItem.setChecked(state);
 					setCheckedChildren(treeItem, state);
 				}
@@ -506,8 +503,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	public boolean setGrayChecked(Object element, boolean state) {
 		Assert.isNotNull(element);
 		Widget widget = internalExpand(element, false);
-		if (widget instanceof TreeItem) {
-			TreeItem item = (TreeItem) widget;
+		if (widget instanceof TreeItem item) {
 			item.setChecked(state);
 			item.setGrayed(state);
 			return true;
@@ -556,8 +552,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	public boolean setParentsGrayed(Object element, boolean state) {
 		Assert.isNotNull(element);
 		Widget widget = internalExpand(element, false);
-		if (widget instanceof TreeItem) {
-			TreeItem item = (TreeItem) widget;
+		if (widget instanceof TreeItem item) {
 			item.setGrayed(state);
 			item = item.getParentItem();
 			while (item != null) {
@@ -585,8 +580,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	 */
 	public boolean setSubtreeChecked(Object element, boolean state) {
 		Widget widget = internalExpand(element, false);
-		if (widget instanceof TreeItem) {
-			TreeItem item = (TreeItem) widget;
+		if (widget instanceof TreeItem item) {
 			item.setChecked(state);
 			setCheckedChildren(item, state);
 			return true;

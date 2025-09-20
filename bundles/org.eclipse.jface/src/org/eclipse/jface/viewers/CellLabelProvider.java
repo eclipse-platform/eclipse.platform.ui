@@ -56,10 +56,12 @@ public abstract class CellLabelProvider extends BaseLabelProvider implements ITo
 
 		if (!noColumnTreeViewer
 				&& (labelProvider instanceof ITableLabelProvider
-						|| labelProvider instanceof ITableColorProvider || labelProvider instanceof ITableFontProvider))
+						|| labelProvider instanceof ITableColorProvider || labelProvider instanceof ITableFontProvider)) {
 			return new TableColumnViewerLabelProvider(labelProvider);
-		if (labelProvider instanceof CellLabelProvider)
+		}
+		if (labelProvider instanceof CellLabelProvider) {
 			return (CellLabelProvider) labelProvider;
+		}
 		return new WrappedViewerLabelProvider(labelProvider);
 
 	}

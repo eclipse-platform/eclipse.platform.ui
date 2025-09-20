@@ -39,7 +39,7 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	static class OwnerDrawListener implements Listener {
 		Set<ViewerColumn> enabledColumns = new HashSet<>();
 		int enabledGlobally = 0;
-		private ColumnViewer viewer;
+		private final ColumnViewer viewer;
 
 		OwnerDrawListener(ColumnViewer viewer) {
 			this.viewer = viewer;
@@ -50,9 +50,8 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 			ViewerColumn column = viewer.getViewerColumn(event.index);
 			if (column != null && (enabledGlobally > 0 || enabledColumns.contains(column))) {
 				CellLabelProvider provider = column.getLabelProvider();
-				if (provider instanceof OwnerDrawLabelProvider) {
+				if (provider instanceof OwnerDrawLabelProvider ownerDrawProvider) {
 					Object element = event.item.getData();
-					OwnerDrawLabelProvider ownerDrawProvider = (OwnerDrawLabelProvider) provider;
 					switch (event.type) {
 					case SWT.MeasureItem:
 						ownerDrawProvider.measure(event, element);

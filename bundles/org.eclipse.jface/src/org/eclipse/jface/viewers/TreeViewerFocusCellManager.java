@@ -127,8 +127,9 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 
 			Rectangle clientArea = tree.getClientArea();
 			for (int i = 0; i < tree.getColumnCount(); i++) {
-				if (aViewerRow.getWidth(i) > 0 && columnInVisibleArea(clientArea,aViewerRow,i))
+				if (aViewerRow.getWidth(i) > 0 && columnInVisibleArea(clientArea,aViewerRow,i)) {
 					return aViewerRow.getCell(i);
+				}
 			}
 		}
 

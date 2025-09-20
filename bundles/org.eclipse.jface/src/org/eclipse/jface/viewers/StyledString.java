@@ -97,7 +97,7 @@ public class StyledString implements CharSequence {
 	}
 
 	private static final StyleRange[] EMPTY = new StyleRange[0];
-	private StringBuilder fBuffer;
+	private final StringBuilder fBuffer;
 	private StyleRunList fStyleRuns;
 
 	/**
@@ -280,8 +280,9 @@ public class StyledString implements CharSequence {
 	 * @return returns a reference to this object
 	 */
 	public StyledString append(String string, Styler styler) {
-		if (string.isEmpty())
+		if (string.isEmpty()) {
 			return this;
+		}
 
 		int offset = fBuffer.length(); // the length before appending
 		fBuffer.append(string);
@@ -303,8 +304,9 @@ public class StyledString implements CharSequence {
 	 * @return returns a reference to this object
 	 */
 	public StyledString append(char[] chars, Styler styler) {
-		if (chars.length == 0)
+		if (chars.length == 0) {
 			return this;
+		}
 
 		int offset = fBuffer.length(); // the length before appending
 		fBuffer.append(chars);
@@ -507,8 +509,9 @@ public class StyledString implements CharSequence {
 	}
 
 	private List<StyleRun> getStyleRuns() {
-		if (fStyleRuns == null)
+		if (fStyleRuns == null) {
 			fStyleRuns = new StyleRunList();
+		}
 		return fStyleRuns;
 	}
 

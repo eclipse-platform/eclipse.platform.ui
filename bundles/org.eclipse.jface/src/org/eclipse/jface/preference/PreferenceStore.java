@@ -50,13 +50,13 @@ public class PreferenceStore extends EventManager implements
 	 * The mapping from preference name to preference value (represented as
 	 * strings).
 	 */
-	private Properties properties;
+	private final Properties properties;
 
 	/**
 	 * The mapping from preference name to default preference value (represented
 	 * as strings); <code>null</code> if none.
 	 */
-	private Properties defaultProperties;
+	private final Properties defaultProperties;
 
 	/**
 	 * Indicates whether a value as been changed by <code>setToDefault</code>
@@ -488,8 +488,9 @@ public class PreferenceStore extends EventManager implements
 
 	@Override
 	public void setToDefault(String name) {
-		if (!properties.containsKey(name))
+		if (!properties.containsKey(name)) {
 			return;
+		}
 		Object oldValue = properties.get(name);
 		properties.remove(name);
 		dirty = true;

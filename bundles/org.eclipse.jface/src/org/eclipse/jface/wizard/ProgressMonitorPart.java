@@ -151,9 +151,9 @@ public class ProgressMonitorPart extends Composite implements
 	 * @see #ProgressMonitorPart(Composite, Layout, boolean)
 	 */
 	public void attachToCancelComponent(Control cancelComponent) {
-		if (fHasStopButton)
+		if (fHasStopButton) {
 			setCancelEnabled(true);
-		else {
+		} else {
 			fCancelComponent = cancelComponent;
 			fCancelComponent.addListener(SWT.Selection, fCancelListener);
 		}
@@ -187,8 +187,9 @@ public class ProgressMonitorPart extends Composite implements
 			fProgressIndicator.sendRemainingWork();
 			fProgressIndicator.done();
 		}
-		if (fToolBar != null && !fToolBar.isDisposed())
+		if (fToolBar != null && !fToolBar.isDisposed()) {
 			fToolBar.setVisible(false);
+		}
 	}
 
 	/**
@@ -231,12 +232,14 @@ public class ProgressMonitorPart extends Composite implements
 			layout = l;
 		}
 		int numColumns = 1;
-		if (fHasStopButton)
+		if (fHasStopButton) {
 			numColumns++;
+		}
 		setLayout(layout);
 
-		if (layout instanceof GridLayout)
+		if (layout instanceof GridLayout) {
 			((GridLayout)layout).numColumns = numColumns;
+		}
 
 		fLabel = new Label(this, SWT.LEFT);
 		fLabel.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, numColumns, 1));
@@ -379,8 +382,9 @@ public class ProgressMonitorPart extends Composite implements
 		boolean hasSubtask= fSubTaskName != null && fSubTaskName.length() > 0;
 
 		if (hasTask) {
-			if (hasSubtask)
+			if (hasSubtask) {
 				return escapeMetaCharacters(JFaceResources.format("Set_SubTask", fTaskName, fSubTaskName));//$NON-NLS-1$
+			}
 				return escapeMetaCharacters(fTaskName);
 
 		} else if (hasSubtask) {
@@ -411,8 +415,9 @@ public class ProgressMonitorPart extends Composite implements
 	private void setCancelEnabled(boolean enabled) {
 		if (fStopButton != null && !fStopButton.isDisposed()) {
 			fStopButton.setEnabled(enabled);
-			if (enabled)
+			if (enabled) {
 				fToolBar.setFocus();
+			}
 		}
 	}
 }

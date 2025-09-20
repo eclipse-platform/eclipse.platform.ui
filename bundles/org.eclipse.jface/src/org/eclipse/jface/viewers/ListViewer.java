@@ -46,7 +46,7 @@ public class ListViewer extends AbstractListViewer {
 	/**
 	 * This viewer's list control.
 	 */
-	private org.eclipse.swt.widgets.List list;
+	private final org.eclipse.swt.widgets.List list;
 
 	/**
 	 * Creates a list viewer on a newly-created list control under the given parent.

@@ -189,7 +189,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 	 */
 	private Map activeBindingsByParameterizedCommand = null;
 
-	private Set triggerConflicts = new HashSet();
+	private final Set triggerConflicts = new HashSet();
 
 	/**
 	 * The scheme that is currently active. An active scheme is the one that is
@@ -215,7 +215,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 	/**
 	 * A cache of context IDs that weren't defined.
 	 */
-	private Set bindingErrors = new HashSet();
+	private final Set bindingErrors = new HashSet();
 
 	/**
 	 * The array of all bindings currently handled by this manager. This array
@@ -230,7 +230,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 	 * may be empty, but it is never <code>null</code>. This is a map of
 	 * <code>CachedBindingSet</code> to <code>CachedBindingSet</code>.
 	 */
-	private Map cachedBindings = new HashMap();
+	private final Map cachedBindings = new HashMap();
 
 	/**
 	 * The command manager for this binding manager. This manager is only needed
@@ -576,8 +576,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 				matches.add(binding);
 				possibleBindings.put(trigger, matches);
 
-			} else if (existingMatch instanceof Collection) {
-				final Collection matches = (Collection) existingMatch;
+			} else if (existingMatch instanceof final Collection matches) {
 				matches.add(binding);
 
 			} else {
@@ -627,8 +626,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 				}
 
 			} else // We are building the flat map of trigger to commands.
-			if (match instanceof Binding) {
-				final Binding binding = (Binding) match;
+			if (match instanceof final Binding binding) {
 				bindingsByTrigger.put(trigger, binding);
 				addReverseLookup(triggersByCommandId, binding
 						.getParameterizedCommand(), trigger);
@@ -707,8 +705,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 	private final int countStrokes(final Trigger[] triggers) {
 		int strokeCount = triggers.length;
 		for (final Trigger trigger : triggers) {
-			if (trigger instanceof KeyStroke) {
-				final KeyStroke keyStroke = (KeyStroke) trigger;
+			if (trigger instanceof final KeyStroke keyStroke) {
 				final int modifierKeys = keyStroke.getModifierKeys();
 				final IKeyLookup lookup = KeyLookupFactory.getDefault();
 				if ((modifierKeys & lookup.getAlt()) != 0) {
@@ -1120,8 +1117,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 			final ParameterizedCommand parameterizedCommand) {
 		final Object object = getActiveBindingsDisregardingContextByParameterizedCommand()
 				.get(parameterizedCommand);
-		if (object instanceof Collection) {
-			final Collection collection = (Collection) object;
+		if (object instanceof final Collection collection) {
 			return (TriggerSequence[]) collection
 					.toArray(new TriggerSequence[collection.size()]);
 		}
@@ -1151,8 +1147,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 			final ParameterizedCommand parameterizedCommand) {
 		final Object object = getActiveBindingsByParameterizedCommand().get(
 				parameterizedCommand);
-		if (object instanceof Collection) {
-			final Collection collection = (Collection) object;
+		if (object instanceof final Collection collection) {
 			return (TriggerSequence[]) collection
 					.toArray(new TriggerSequence[collection.size()]);
 		}
@@ -1905,8 +1900,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 					collection.add(currentValue);
 					collection.add(binding);
 					deletions.put(sequence, collection);
-				} else if (currentValue instanceof Collection) {
-					final Collection collection = (Collection) currentValue;
+				} else if (currentValue instanceof final Collection collection) {
 					collection.add(binding);
 				} else {
 					deletions.put(sequence, binding);
@@ -1933,8 +1927,7 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 						deletedCount++;
 					}
 
-				} else if (deletion instanceof Collection) {
-					final Collection collection = (Collection) deletion;
+				} else if (deletion instanceof final Collection collection) {
 					final Iterator iterator = collection.iterator();
 					while (iterator.hasNext()) {
 						final Object deletionBinding = iterator.next();
@@ -2183,8 +2176,9 @@ public final class BindingManager extends HandleObjectManager<Scheme>
 	 * @since 3.5
 	 */
 	public Map getCurrentConflicts() {
-		if (currentConflicts == null)
+		if (currentConflicts == null) {
 			return Collections.EMPTY_MAP;
+		}
 		return Collections.unmodifiableMap(currentConflicts);
 	}
 

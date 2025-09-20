@@ -287,8 +287,7 @@ public final class ExternalActionManager {
 				final Trigger[] triggers = triggerSequence.getTriggers();
 				if (triggers.length == 1) {
 					final Trigger trigger = triggers[0];
-					if (trigger instanceof KeyStroke) {
-						final KeyStroke keyStroke = (KeyStroke) trigger;
+					if (trigger instanceof final KeyStroke keyStroke) {
 						final int accelerator = SWTKeySupport
 								.convertKeyStrokeToAccelerator(keyStroke);
 						return Integer.valueOf(accelerator);
@@ -398,8 +397,7 @@ public final class ExternalActionManager {
 					bindingManager.removeBindingManagerListener(this);
 					bindingManagerListenerAttached = false;
 				}
-			} else if (existing instanceof ListenerList) {
-				ListenerList existingList = (ListenerList) existing;
+			} else if (existing instanceof ListenerList existingList) {
 				existingList.remove(listener);
 				if (existingList.size() == 1) {
 					registeredListeners.put(commandId, existingList.getListeners()[0]);

@@ -27,8 +27,8 @@ import org.eclipse.swt.widgets.Control;
  */
 public class AutoCompleteField {
 
-	private SimpleContentProposalProvider proposalProvider;
-	private ContentProposalAdapter adapter;
+	private final SimpleContentProposalProvider proposalProvider;
+	private final ContentProposalAdapter adapter;
 
 	/**
 	 * Construct an AutoComplete field on the specified control, whose

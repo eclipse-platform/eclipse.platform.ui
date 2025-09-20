@@ -78,8 +78,9 @@ public class TreeColumnViewerLabelProvider extends
 	@Override
 	public void setProviders(Object provider) {
 		super.setProviders(provider);
-		if (provider instanceof ITreePathLabelProvider)
+		if (provider instanceof ITreePathLabelProvider) {
 			treePathProvider = (ITreePathLabelProvider) provider;
+		}
 	}
 
 	/**

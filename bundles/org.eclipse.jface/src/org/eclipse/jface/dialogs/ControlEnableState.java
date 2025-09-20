@@ -33,7 +33,7 @@ public class ControlEnableState {
 	/**
 	 * List of saved states (element type: <code>ItemState</code>).
 	 */
-	private List<ItemState> states;
+	private final List<ItemState> states;
 
 	/**
 	 * Internal class for recording the enable/disable state of a single
@@ -132,8 +132,7 @@ public class ControlEnableState {
 		if ((exceptions != null && exceptions.contains(control))) {
 			return;
 		}
-		if (control instanceof Composite) {
-			Composite c = (Composite) control;
+		if (control instanceof Composite c) {
 			Control[] children = c.getChildren();
 			for (Control element : children) {
 				readStateForAndDisable(element);

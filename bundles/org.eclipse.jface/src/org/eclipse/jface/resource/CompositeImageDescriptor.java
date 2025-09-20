@@ -273,12 +273,16 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 			srcMask = src.getTransparencyMask ();
 			if (src.depth == 32) {
 				alphaMask = ~(srcPalette.redMask | srcPalette.greenMask | srcPalette.blueMask);
-				while (alphaMask != 0 && ((alphaMask >>> alphaShift) & 1) == 0) alphaShift++;
+				while (alphaMask != 0 && ((alphaMask >>> alphaShift) & 1) == 0) {
+					alphaShift++;
+				}
 			}
 		}
 		for (int srcY = 0, dstY = srcY + autoScaleUp(oy); srcY < src.height; srcY++, dstY++) {
 			for (int srcX = 0, dstX = srcX + autoScaleUp(ox); srcX < src.width; srcX++, dstX++) {
-				if (!(0 <= dstX && dstX < dst.width && 0 <= dstY && dstY < dst.height)) continue;
+				if (!(0 <= dstX && dstX < dst.width && 0 <= dstY && dstY < dst.height)) {
+					continue;
+				}
 				int srcPixel = src.getPixel(srcX, srcY);
 				int srcAlpha = 255;
 				if (src.maskData != null) {
@@ -287,15 +291,21 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 						if (srcAlpha == 0) {
 							srcAlpha = srcMask.getPixel(srcX, srcY) != 0 ? 255 : 0;
 						}
-					} else if (srcMask.getPixel(srcX, srcY) == 0) srcAlpha = 0;
+					} else if (srcMask.getPixel(srcX, srcY) == 0) {
+						srcAlpha = 0;
+					}
 				} else if (src.transparentPixel != -1) {
-					if (src.transparentPixel == srcPixel) srcAlpha = 0;
+					if (src.transparentPixel == srcPixel) {
+						srcAlpha = 0;
+					}
 				} else if (src.alpha != -1) {
 					srcAlpha = src.alpha;
 				} else if (src.alphaData != null) {
 					srcAlpha = src.getAlpha(srcX, srcY);
 				}
-				if (srcAlpha == 0) continue;
+				if (srcAlpha == 0) {
+					continue;
+				}
 				int srcRed, srcGreen, srcBlue;
 				if (srcPalette.isDirect) {
 					srcRed = srcPixel & srcPalette.redMask;
@@ -374,11 +384,13 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 				/* Full alpha channel transparency */
 				return imageData;
 			}
-			if (!transparency && alpha == 0) transparency = true;
+			if (!transparency && alpha == 0) {
+				transparency = true;
+			}
 		}
 		if (transparency) {
 			/* Reduce to 1-bit alpha channel transparency */
-			PaletteData palette = new PaletteData(new RGB[]{new RGB(0, 0, 0), new RGB(255, 255, 255)});
+			PaletteData palette = new PaletteData(new RGB(0, 0, 0), new RGB(255, 255, 255));
 			ImageData mask = new ImageData(imageData.width, imageData.height, 1, palette);
 			for (int y = 0; y < mask.height; y++) {
 				for (int x = 0; x < mask.width; x++) {

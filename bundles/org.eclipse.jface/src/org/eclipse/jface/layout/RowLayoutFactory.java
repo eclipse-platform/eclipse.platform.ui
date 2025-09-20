@@ -34,7 +34,7 @@ public final class RowLayoutFactory {
 	/**
 	 * Template layout. The factory will create copies of this layout.
 	 */
-	private RowLayout layout;
+	private final RowLayout layout;
 
 	/**
 	 * Creates a new RowLayoutFactory that will create copies of the given

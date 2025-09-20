@@ -77,7 +77,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
 	/**
 	 * The layout style; either <code>FLAT</code> or <code>GRID</code>.
 	 */
-	private int style;
+	private final int style;
 
 	/**
 	 * The first invalid field editor, or <code>null</code>

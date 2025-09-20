@@ -49,11 +49,11 @@ public class ColorSelector extends EventManager {
 	 */
 	public static final String PROP_COLORCHANGE = "colorValue"; //$NON-NLS-1$
 
-	private Button fButton;
+	private final Button fButton;
 
 	private RGB fColorValue;
 
-	private Point fExtent;
+	private final Point fExtent;
 
 	private Image fImage;
 
