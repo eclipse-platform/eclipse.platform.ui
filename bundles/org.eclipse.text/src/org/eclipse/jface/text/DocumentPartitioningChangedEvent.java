@@ -103,8 +103,9 @@ public class DocumentPartitioningChangedEvent {
 	 * @return the coverage of this event
 	 */
 	public IRegion getCoverage() {
-		if (fMap.isEmpty())
+		if (fMap.isEmpty()) {
 			return new Region(0, 0);
+		}
 
 		int offset= -1;
 		int endOffset= -1;
@@ -112,12 +113,14 @@ public class DocumentPartitioningChangedEvent {
 		while (e.hasNext()) {
 			IRegion r= e.next();
 
-			if (offset < 0 || r.getOffset() < offset)
+			if (offset < 0 || r.getOffset() < offset) {
 				offset= r.getOffset();
+			}
 
 			int end= r.getOffset() + r.getLength();
-			if (end > endOffset)
+			if (end > endOffset) {
 				endOffset= end;
+			}
 		}
 
 		return new Region(offset, endOffset - offset);

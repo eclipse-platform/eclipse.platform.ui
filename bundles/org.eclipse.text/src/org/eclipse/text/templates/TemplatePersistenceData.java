@@ -199,10 +199,9 @@ public class TemplatePersistenceData {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof TemplatePersistenceData)) {
+		if (!(obj instanceof TemplatePersistenceData other)) {
 			return false;
 		}
-		TemplatePersistenceData other= (TemplatePersistenceData) obj;
 		return Objects.equals(uniqueIdForEquals, other.getUniqueIdForEquals());
 	}
 

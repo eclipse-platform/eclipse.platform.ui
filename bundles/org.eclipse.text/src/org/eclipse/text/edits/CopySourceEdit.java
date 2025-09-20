@@ -57,8 +57,9 @@ public final class CopySourceEdit extends TextEdit {
 			return copier.fResult;
 		}
 		private void manageCopy(TextEdit copy) {
-			if (fResult == null)
+			if (fResult == null) {
 				fResult= copy;
+			}
 			if (fCurrentParent != null) {
 				fCurrentParent.addChild(copy);
 			}
@@ -123,8 +124,9 @@ public final class CopySourceEdit extends TextEdit {
 	 */
 	private CopySourceEdit(CopySourceEdit other) {
 		super(other);
-		if (other.fModifier != null)
+		if (other.fModifier != null) {
 			fModifier= other.fModifier.copy();
+		}
 	}
 
 	/**
@@ -192,8 +194,9 @@ public final class CopySourceEdit extends TextEdit {
 		// The source content can be null if the edit wasn't executed
 		// due to an exclusion list of the text edit processor. Return
 		// the empty string which can be moved without any harm.
-		if (fSourceContent == null)
+		if (fSourceContent == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return fSourceContent;
 	}
 
@@ -206,8 +209,9 @@ public final class CopySourceEdit extends TextEdit {
 		if (fTarget != null) {
 			CopySourceEdit source= (CopySourceEdit)copier.getCopy(this);
 			CopyTargetEdit target= (CopyTargetEdit)copier.getCopy(fTarget);
-			if (source != null && target != null)
+			if (source != null && target != null) {
 				source.setTargetEdit(target);
+			}
 		}
 	}
 
@@ -223,8 +227,9 @@ public final class CopySourceEdit extends TextEdit {
 			if (sourceEdits.size() <= result) {
 				List<TextEdit> list= new ArrayList<>();
 				list.add(this);
-				for (int i= sourceEdits.size(); i < result; i++)
+				for (int i= sourceEdits.size(); i < result; i++) {
 					sourceEdits.add(null);
+				}
 				sourceEdits.add(list);
 			} else {
 				List<TextEdit> list= sourceEdits.get(result);
@@ -240,14 +245,16 @@ public final class CopySourceEdit extends TextEdit {
 
 	@Override
 	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
-		if (fTarget == null)
+		if (fTarget == null) {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.no_target")); //$NON-NLS-1$
-		if (fTarget.getSourceEdit() != this)
+		}
+		if (fTarget.getSourceEdit() != this) {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.different_source")); //$NON-NLS-1$
 		/* causes ASTRewrite to fail
 		if (getRoot() != fTarget.getRoot())
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.different_tree")); //$NON-NLS-1$
 		*/
+		}
 	}
 
 	//---- source computation -------------------------------------------------------
@@ -272,8 +279,9 @@ public final class CopySourceEdit extends TextEdit {
 				EditDocument subDocument= new EditDocument(fSourceContent);
 				TextEditProcessor subProcessor= TextEditProcessor.createSourceComputationProcessor(subDocument, fSourceRoot, TextEdit.NONE);
 				subProcessor.performEdits();
-				if (needsTransformation())
+				if (needsTransformation()) {
 					applyTransformation(subDocument);
+				}
 				fSourceContent= subDocument.get();
 				fSourceRoot= null;
 			} else {

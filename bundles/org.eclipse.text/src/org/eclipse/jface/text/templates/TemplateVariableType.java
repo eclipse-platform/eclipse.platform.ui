@@ -66,8 +66,7 @@ public final class TemplateVariableType {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof TemplateVariableType) {
-			TemplateVariableType other= (TemplateVariableType) obj;
+		if (obj instanceof TemplateVariableType other) {
 			return other.fName.equals(fName) && other.fParams.equals(fParams);
 		}
 		return false;

@@ -23,7 +23,7 @@ import org.eclipse.jface.text.IDocument;
  * A buffered rule based scanner. The buffer always contains a section
  * of a fixed size of the document to be scanned. Completely adheres to
  * the contract of <code>RuleBasedScanner</code>.
- * 
+ *
  * @since 3.14
  */
 public class BufferedRuleBasedScanner extends RuleBasedScanner {
@@ -83,8 +83,9 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 
 		fStart= offset;
 		fEnd= fStart + fBufferSize;
-		if (fEnd > fDocumentLength)
+		if (fEnd > fDocumentLength) {
 			fEnd= fDocumentLength;
+		}
 
 		try {
 
@@ -112,10 +113,11 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 			return EOF;
 		}
 
-		if (fOffset == fEnd)
+		if (fOffset == fEnd) {
 			shiftBuffer(fEnd);
-		else if (fOffset < fStart || fEnd < fOffset)
+		} else if (fOffset < fStart || fEnd < fOffset) {
 			shiftBuffer(fOffset);
+		}
 
 		return fBuffer[fOffset++ - fStart];
 	}
@@ -123,8 +125,9 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 	@Override
 	public void unread() {
 
-		if (fOffset == fStart)
+		if (fOffset == fStart) {
 			shiftBuffer(Math.max(0, fStart - (fBufferSize / 2)));
+		}
 
 		--fOffset;
 		fColumn= UNDEFINED;

@@ -32,7 +32,7 @@ public class MalformedTreeException extends RuntimeException {
 	private static final long serialVersionUID= 1L;
 
 	private TextEdit fParent;
-	private TextEdit fChild;
+	private final TextEdit fChild;
 
 	/**
 	 * Constructs a new malformed tree exception.

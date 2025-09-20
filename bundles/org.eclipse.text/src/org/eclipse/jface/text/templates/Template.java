@@ -192,12 +192,13 @@ public class Template {
 
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof Template))
+		if (!(o instanceof Template t)) {
 			return false;
+		}
 
-		Template t= (Template) o;
-		if (t == this)
+		if (t == this) {
 			return true;
+		}
 
 		return t.fName.equals(fName)
 				&& t.fPattern.equals(fPattern)

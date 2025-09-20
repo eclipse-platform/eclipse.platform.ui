@@ -30,8 +30,8 @@ import org.eclipse.core.runtime.Assert;
  */
 public final class TextEditCopier {
 
-	private TextEdit fEdit;
-	private Map<TextEdit, TextEdit> fCopies;
+	private final TextEdit fEdit;
+	private final Map<TextEdit, TextEdit> fCopies;
 
 	/**
 	 * Constructs a new <code>TextEditCopier</code> for the

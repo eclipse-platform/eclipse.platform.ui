@@ -99,8 +99,9 @@ public class TemplateVariableResolver {
 	 */
 	protected String[] resolveAll(TemplateContext context) {
 		String binding= resolve(context);
-		if (binding == null)
+		if (binding == null) {
 			return new String[0];
+		}
 		return new String[] { binding };
 	}
 
@@ -115,12 +116,14 @@ public class TemplateVariableResolver {
 	 */
 	public void resolve(TemplateVariable variable, TemplateContext context) {
 		String[] bindings= resolveAll(context);
-		if (bindings.length != 0)
+		if (bindings.length != 0) {
 			variable.setValues(bindings);
-		if (bindings.length > 1)
+		}
+		if (bindings.length > 1) {
 			variable.setUnambiguous(false);
-		else
+		} else {
 			variable.setUnambiguous(isUnambiguous(context));
+		}
 		variable.setResolved(true);
 	}
 

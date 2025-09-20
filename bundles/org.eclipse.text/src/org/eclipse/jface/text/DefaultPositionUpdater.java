@@ -102,13 +102,15 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 
 		int yoursStart= fOffset;
 
-		if (myEnd < yoursStart)
+		if (myEnd < yoursStart) {
 			return;
+		}
 
-		if (myStart < yoursStart)
+		if (myStart < yoursStart) {
 			fPosition.length += fReplaceLength;
-		else
+		} else {
 			fPosition.offset += fReplaceLength;
+		}
 	}
 
 	/**
@@ -124,21 +126,23 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 		int yoursEnd=   fOffset + fLength -1;
 		yoursEnd= Math.max(yoursStart, yoursEnd);
 
-		if (myEnd < yoursStart)
+		if (myEnd < yoursStart) {
 			return;
+		}
 
 		if (myStart <= yoursStart) {
 
-			if (yoursEnd <= myEnd)
+			if (yoursEnd <= myEnd) {
 				fPosition.length -= fLength;
-			else
+			} else {
 				fPosition.length -= (myEnd - yoursStart +1);
+			}
 
 		} else if (yoursStart < myStart) {
 
-			if (yoursEnd < myStart)
+			if (yoursEnd < myStart) {
 				fPosition.offset -= fLength;
-			else {
+			} else {
 				fPosition.offset -= (myStart - yoursStart);
 				fPosition.length -= (yoursEnd - myStart +1);
 			}
@@ -146,11 +150,13 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 		}
 
 		// validate position to allowed values
-		if (fPosition.offset < 0)
+		if (fPosition.offset < 0) {
 			fPosition.offset= 0;
+		}
 
-		if (fPosition.length < 0)
+		if (fPosition.length < 0) {
 			fPosition.length= 0;
+		}
 	}
 
 	/**
@@ -169,11 +175,13 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 
 		} else {
 
-			if (fLength >  0)
+			if (fLength >  0) {
 				adaptToRemove();
+			}
 
-			if (fReplaceLength > 0)
+			if (fReplaceLength > 0) {
 				adaptToInsert();
+			}
 		}
 	}
 
@@ -219,8 +227,9 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 				fOriginalPosition.offset= fPosition.offset;
 				fOriginalPosition.length= fPosition.length;
 
-				if (notDeleted())
+				if (notDeleted()) {
 					adaptToReplace();
+				}
 			}
 
 		} catch (BadPositionCategoryException x) {

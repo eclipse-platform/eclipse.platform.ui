@@ -43,15 +43,15 @@ public class HTMLBuilder {
 	private RGB fgColor;
 	private RGB linkColor;
 	private RGB alinkColor;
-	
+
 	public HTMLBuilder() {
 		this(DEFAULT_BG_COLOR_RGB, DEFAULT_FG_COLOR_RGB, DEFAULT_LINK_COLOR_RGB, DEFAULT_ACTIVE_LINK_COLOR_RGB);
 	}
-	
+
 	public HTMLBuilder(RGB bg, RGB fg, RGB link, RGB alink) {
 		setColors(bg, fg, link, alink);
 	}
-	
+
 	public void setColors(RGB bg, RGB fg, RGB link, RGB alink) {
 		this.bgColor = bg != null ? bg : DEFAULT_BG_COLOR_RGB;
 		this.fgColor = fg != null ? fg : DEFAULT_FG_COLOR_RGB;
@@ -64,8 +64,9 @@ public class HTMLBuilder {
 		int previous= 0;
 		int current= text.indexOf(c, previous);
 
-		if (current == -1)
+		if (current == -1) {
 			return text;
+		}
 
 		StringBuilder buffer= new StringBuilder();
 		while (current > -1) {
@@ -140,10 +141,12 @@ public class HTMLBuilder {
 	 * @param styleSheet Stylesheet
 	 */
 	public void insertPageProlog(StringBuilder buffer, int position, RGB fgRGB, RGB bgRGB, String styleSheet) {
-		if (fgRGB == null)
+		if (fgRGB == null) {
 			fgRGB= this.fgColor;
-		if (bgRGB == null)
+		}
+		if (bgRGB == null) {
 			bgRGB= this.bgColor;
+		}
 
 		StringBuilder pageProlog= new StringBuilder(300);
 
@@ -194,8 +197,9 @@ public class HTMLBuilder {
 	 */
 	private void appendAsHexString(StringBuilder buffer, int intValue) {
 		String hexValue= Integer.toHexString(intValue);
-		if (hexValue.length() == 1)
+		if (hexValue.length() == 1) {
 			buffer.append('0');
+		}
 		buffer.append(hexValue);
 	}
 
@@ -206,8 +210,9 @@ public class HTMLBuilder {
 	 *
 	 */
 	public void insertStyles(StringBuilder buffer, String[] styles) {
-		if (styles == null || styles.length == 0)
+		if (styles == null || styles.length == 0) {
 			return;
+		}
 
 		StringBuilder styleBuf= new StringBuilder(10 * styles.length);
 		for (String style : styles) {
@@ -242,8 +247,9 @@ public class HTMLBuilder {
 	 *
 	 */
 	private void appendStyleSheet(StringBuilder buffer, String styleSheet, RGB fgRGB, RGB bgRGB) {
-		if (styleSheet == null)
+		if (styleSheet == null) {
 			return;
+		}
 
 		// workaround for https://bugs.eclipse.org/318243
 		StringBuilder fg= new StringBuilder();
@@ -273,8 +279,9 @@ public class HTMLBuilder {
 	 *
 	 */
 	private static void appendStyleSheetURL(StringBuilder buffer, URL styleSheetURL) {
-		if (styleSheetURL == null)
+		if (styleSheetURL == null) {
 			return;
+		}
 
 		buffer.append("<head>"); //$NON-NLS-1$
 
@@ -425,8 +432,9 @@ public class HTMLBuilder {
 	 *
 	 */
 	public void addParagraph(StringBuilder buffer, Reader paragraphReader) {
-		if (paragraphReader != null)
+		if (paragraphReader != null) {
 			addParagraph(buffer, read(paragraphReader));
+		}
 	}
 
 	/**

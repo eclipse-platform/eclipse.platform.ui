@@ -119,12 +119,14 @@ public class LinkedModeModel {
 	 *         <code>null</code>
 	 */
 	public static LinkedModeModel getModel(IDocument document, int offset) {
-		if (!hasInstalledModel(document))
+		if (!hasInstalledModel(document)) {
 			return null;
+		}
 
 		LinkedModeManager mgr= LinkedModeManager.getLinkedManager(new IDocument[] {document}, false);
-		if (mgr != null)
+		if (mgr != null) {
 			return mgr.getTopEnvironment();
+		}
 		return null;
 	}
 
@@ -135,7 +137,7 @@ public class LinkedModeModel {
 	private class Replace implements IReplace {
 
 		/** The edition to apply on a document. */
-		private TextEdit fEdit;
+		private final TextEdit fEdit;
 
 		/**
 		 * Creates a new instance.
@@ -182,8 +184,9 @@ public class LinkedModeModel {
 		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			// don't react on changes executed by the parent model
-			if (fParentEnvironment != null && fParentEnvironment.isChanging())
+			if (fParentEnvironment != null && fParentEnvironment.isChanging()) {
 				return;
+			}
 
 			for (LinkedPositionGroup group : fGroups) {
 				if (!group.isLegalEvent(event)) {
@@ -207,8 +210,9 @@ public class LinkedModeModel {
 			fExit= false;
 
 			// don't react on changes executed by the parent model
-			if (fParentEnvironment != null && fParentEnvironment.isChanging())
+			if (fParentEnvironment != null && fParentEnvironment.isChanging()) {
 				return;
+			}
 
 			// collect all results
 			Map<IDocument, TextEdit> result= null;
@@ -219,8 +223,9 @@ public class LinkedModeModel {
 					LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION);
 					return;
 				}
-				if (map != null)
+				if (map != null) {
 					result= map;
+				}
 			}
 
 			if (result != null) {
@@ -279,7 +284,7 @@ public class LinkedModeModel {
 	 * The sequence of document positions as we are going to iterate through
 	 * them.
 	 */
-	private List<LinkedPosition> fPositionSequence= new ArrayList<>();
+	private final List<LinkedPosition> fPositionSequence= new ArrayList<>();
 
 	/**
 	 * Whether we are in the process of editing documents (set by <code>Replace</code>,
@@ -313,8 +318,9 @@ public class LinkedModeModel {
 	 * @param flags the exit flags as defined in {@link ILinkedModeListener}
 	 */
 	public void exit(int flags) {
-		if (!fIsActive)
+		if (!fIsActive) {
 			return;
+		}
 
 		fIsActive= false;
 
@@ -339,8 +345,9 @@ public class LinkedModeModel {
 		}
 
 
-		if (fParentEnvironment != null)
+		if (fParentEnvironment != null) {
 			fParentEnvironment.resume(flags);
+		}
 	}
 
 	/**
@@ -404,13 +411,16 @@ public class LinkedModeModel {
 	 *         model is already sealed
 	 */
 	public void addGroup(LinkedPositionGroup group) throws BadLocationException {
-		if (group == null)
+		if (group == null) {
 			throw new IllegalArgumentException("group may not be null"); //$NON-NLS-1$
-		if (fIsSealed)
+		}
+		if (fIsSealed) {
 			throw new IllegalStateException("model is already installed"); //$NON-NLS-1$
-		if (fGroups.contains(group))
+		}
+		if (fGroups.contains(group)) {
 			// nothing happens
 			return;
+		}
 
 		enforceDisjoint(group);
 		group.seal();
@@ -438,8 +448,9 @@ public class LinkedModeModel {
 	 *         were not valid positions on their respective documents
 	 */
 	public void forceInstall() throws BadLocationException {
-		if (!install(true))
+		if (!install(true)) {
 			Assert.isTrue(false);
+		}
 	}
 
 	/**
@@ -479,28 +490,33 @@ public class LinkedModeModel {
 	 *         were not valid positions on their respective documents
 	 */
 	private boolean install(boolean force) throws BadLocationException {
-		if (fIsSealed)
+		if (fIsSealed) {
 			throw new IllegalStateException("model is already installed"); //$NON-NLS-1$
+		}
 		enforceNotEmpty();
 
 		IDocument[] documents= getDocuments();
 		LinkedModeManager manager= LinkedModeManager.getLinkedManager(documents, force);
 		// if we force creation, we require a valid manager
 		Assert.isTrue(!(force && manager == null));
-		if (manager == null)
+		if (manager == null) {
 			return false;
+		}
 
-		if (!manager.nestEnvironment(this, force))
-			if (force)
+		if (!manager.nestEnvironment(this, force)) {
+			if (force) {
 				Assert.isTrue(false);
-			else
+			} else {
 				return false;
+			}
+		}
 
 		// we set up successfully. After this point, exit has to be called to
 		// remove registered listeners...
 		fIsSealed= true;
-		if (fParentEnvironment != null)
+		if (fParentEnvironment != null) {
 			fParentEnvironment.suspend();
+		}
 
 		// register positions
 		try {
@@ -521,13 +537,15 @@ public class LinkedModeModel {
 	 */
 	private void enforceNotEmpty() {
 		boolean hasPosition= false;
-		for (LinkedPositionGroup linkedPositionGroup : fGroups)
+		for (LinkedPositionGroup linkedPositionGroup : fGroups) {
 			if (!linkedPositionGroup.isEmpty()) {
 				hasPosition= true;
 				break;
 			}
-		if (!hasPosition)
+		}
+		if (!hasPosition) {
 			throw new IllegalStateException("must specify at least one linked position"); //$NON-NLS-1$
+		}
 
 	}
 
@@ -581,10 +599,11 @@ public class LinkedModeModel {
 			for (LinkedPositionGroup pg : model.fGroups) {
 				LinkedPosition pos;
 				pos= pg.adopt(group);
-				if (pos != null && fParentPosition != null && fParentPosition != pos)
+				if (pos != null && fParentPosition != null && fParentPosition != pos) {
 					return false; // group does not fit into one parent position, which is illegal
-				else if (fParentPosition == null && pos != null)
+				} else if (fParentPosition == null && pos != null) {
 					fParentPosition= pos;
+				}
 			}
 		} catch (BadLocationException e) {
 			return false;
@@ -633,8 +652,9 @@ public class LinkedModeModel {
 	 */
 	public void addLinkingListener(ILinkedModeListener listener) {
 		Assert.isNotNull(listener);
-		if (!fListeners.contains(listener))
+		if (!fListeners.contains(listener)) {
 			fListeners.add(listener);
+		}
 	}
 
 	/**
@@ -665,8 +685,9 @@ public class LinkedModeModel {
 		LinkedPosition position= null;
 		for (LinkedPositionGroup group : fGroups) {
 			position= group.getPosition(toFind);
-			if (position != null)
+			if (position != null) {
 				break;
+			}
 		}
 		return position;
 	}
@@ -730,10 +751,11 @@ public class LinkedModeModel {
 	 */
 	public boolean anyPositionContains(int offset) {
 		for (LinkedPositionGroup group : fGroups) {
-			if (group.contains(offset))
+			if (group.contains(offset)) {
 				// take the first hit - exclusion is guaranteed by enforcing
 				// disjointness when adding positions
 				return true;
+			}
 		}
 		return false;
 	}
@@ -757,8 +779,9 @@ public class LinkedModeModel {
 	 */
 	public LinkedPositionGroup getGroupForPosition(Position position) {
 		for (LinkedPositionGroup group : fGroups) {
-			if (group.contains(position))
+			if (group.contains(position)) {
 				return group;
+			}
 		}
 		return null;
 	}

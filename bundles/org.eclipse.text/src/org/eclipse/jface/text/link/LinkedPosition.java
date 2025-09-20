@@ -31,7 +31,7 @@ import org.eclipse.jface.text.Position;
 public class LinkedPosition extends Position {
 
 	/** The document this position belongs to. */
-	private IDocument fDocument;
+	private final IDocument fDocument;
 	private int fSequenceNumber;
 
 	/**
@@ -70,8 +70,7 @@ public class LinkedPosition extends Position {
 
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof LinkedPosition) {
-			LinkedPosition p= (LinkedPosition) other;
+		if (other instanceof LinkedPosition p) {
 			return p.offset == offset && p.length == length && p.fDocument == fDocument;
 		}
 		return false;

@@ -43,7 +43,7 @@ class AnnotationMap implements IAnnotationMap {
 	private final Object fInternalLockObject= new Object();
 
 	/** The map holding the annotations */
-	private Map<Annotation, Position> fInternalMap;
+	private final Map<Annotation, Position> fInternalMap;
 
 	/**
 	 * Creates a new annotation map with the given capacity.
@@ -61,8 +61,9 @@ class AnnotationMap implements IAnnotationMap {
 
 	@Override
 	public synchronized Object getLockObject() {
-		if (fLockObject == null)
+		if (fLockObject == null) {
 			return fInternalLockObject;
+		}
 		return fLockObject;
 	}
 

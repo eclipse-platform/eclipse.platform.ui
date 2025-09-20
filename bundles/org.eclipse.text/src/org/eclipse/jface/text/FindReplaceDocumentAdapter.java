@@ -58,7 +58,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	/**
 	 * The adapted document.
 	 */
-	private IDocument fDocument;
+	private final IDocument fDocument;
 
 	/**
 	 * State for findReplace.
@@ -109,10 +109,12 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 		Assert.isTrue(!(regExSearch && wholeWord));
 
 		// Adjust offset to special meaning of -1
-		if (startOffset == -1 && forwardSearch)
+		if (startOffset == -1 && forwardSearch) {
 			startOffset= 0;
-		if (startOffset == -1 && !forwardSearch)
+		}
+		if (startOffset == -1 && !forwardSearch) {
 			startOffset= length() - 1;
+		}
 
 		return findReplace(FIND_FIRST, startOffset, findString, null, forwardSearch, caseSensitive, wholeWord, regExSearch);
 	}
@@ -146,18 +148,21 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 		Assert.isTrue(!(regExSearch && wholeWord));
 
 		// Validate state
-		if ((operationCode == REPLACE || operationCode == REPLACE_FIND_NEXT) && (fFindReplaceState != FIND_FIRST && fFindReplaceState != FIND_NEXT))
+		if ((operationCode == REPLACE || operationCode == REPLACE_FIND_NEXT) && (fFindReplaceState != FIND_FIRST && fFindReplaceState != FIND_NEXT)) {
 			throw new IllegalStateException("illegal findReplace state: cannot replace without preceding find"); //$NON-NLS-1$
+		}
 
 		if (operationCode == FIND_FIRST) {
 			// Reset
 
-			if (findString == null || findString.isEmpty())
+			if (findString == null || findString.isEmpty()) {
 				return null;
+			}
 
 			// Validate start offset
-			if (startOffset < 0 || startOffset > length())
+			if (startOffset < 0 || startOffset > length()) {
 				throw new BadLocationException();
+			}
 
 			int patternFlags= 0;
 
@@ -166,14 +171,17 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				findString= substituteLinebreak(findString);
 			}
 
-			if (!caseSensitive)
+			if (!caseSensitive) {
 				patternFlags |= Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
+			}
 
-			if (!regExSearch)
+			if (!regExSearch) {
 				findString= asRegPattern(findString);
+			}
 
-			if (wholeWord)
+			if (wholeWord) {
 				findString= "\\b" + findString + "\\b"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
 
 			fFindReplaceMatchOffset= startOffset;
 			if (fFindReplaceMatcher != null && fFindReplaceMatcher.pattern().pattern().equals(findString) && fFindReplaceMatcher.pattern().flags() == patternFlags) {
@@ -215,21 +223,22 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 
 			fDocument.replace(offset, length, replaceText);
 			fFindReplaceState= operationCode;
-			
+
 			if (operationCode == REPLACE) {
 				return new Region(offset, replaceText.length());
 			}
 		}
-		
+
 		if (operationCode != REPLACE) {
 			try {
 				if (forwardSearch) {
 
 					boolean found= false;
-					if (operationCode == FIND_FIRST)
+					if (operationCode == FIND_FIRST) {
 						found= fFindReplaceMatcher.find(startOffset);
-					else
+					} else {
 						found= fFindReplaceMatcher.find();
+					}
 
 					if (operationCode == REPLACE_FIND_NEXT) {
 						fFindReplaceState= FIND_NEXT;
@@ -237,8 +246,9 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 						fFindReplaceState= operationCode;
 					}
 
-					if (found && !fFindReplaceMatcher.group().isEmpty())
+					if (found && !fFindReplaceMatcher.group().isEmpty()) {
 						return new Region(fFindReplaceMatcher.start(), fFindReplaceMatcher.group().length());
+					}
 					return null;
 				}
 				// backward search
@@ -287,34 +297,39 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			switch (ch) {
 				case '[':
 					buf.append(ch);
-					if (! inQuote)
+					if (! inQuote) {
 						inCharGroup++;
+					}
 					break;
 
 				case ']':
 					buf.append(ch);
-					if (! inQuote)
+					if (! inQuote) {
 						inCharGroup--;
+					}
 					break;
 
 				case '{':
 					buf.append(ch);
-					if (! inQuote && inCharGroup == 0)
+					if (! inQuote && inCharGroup == 0) {
 						inBraces++;
+					}
 					break;
 
 				case '}':
 					buf.append(ch);
-					if (! inQuote && inCharGroup == 0)
+					if (! inQuote && inCharGroup == 0) {
 						inBraces--;
+					}
 					break;
 
 				case '\\':
 					if (i + 1 < length) {
 						char ch1= findString.charAt(i + 1);
 						if (inQuote) {
-							if (ch1 == 'E')
+							if (ch1 == 'E') {
 								inQuote= false;
+							}
 							buf.append(ch).append(ch1);
 							i++;
 
@@ -356,15 +371,16 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * @since 3.4
 	 */
 	private void interpretRetainCase(StringBuilder buf, char ch) {
-		if (fRetainCaseMode == RC_UPPER)
+		if (fRetainCaseMode == RC_UPPER) {
 			buf.append(String.valueOf(ch).toUpperCase());
-		else if (fRetainCaseMode == RC_LOWER)
+		} else if (fRetainCaseMode == RC_LOWER) {
 			buf.append(String.valueOf(ch).toLowerCase());
-		else if (fRetainCaseMode == RC_FIRSTUPPER) {
+		} else if (fRetainCaseMode == RC_FIRSTUPPER) {
 			buf.append(String.valueOf(ch).toUpperCase());
 			fRetainCaseMode= RC_MIXED;
-		} else
+		} else {
 			buf.append(ch);
+		}
 	}
 
 	/**
@@ -509,8 +525,9 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					int parsedInt;
 					try {
 						parsedInt= Integer.parseInt(replaceText.substring(i + 1, i + 3), 16);
-						if (parsedInt < 0)
+						if (parsedInt < 0) {
 							throw new NumberFormatException();
+						}
 					} catch (NumberFormatException e) {
 						String msg= TextMessages.getFormattedString("FindReplaceDocumentAdapter.illegalHexEscape", replaceText.substring(i - 1, i + 3)); //$NON-NLS-1$
 						throw new PatternSyntaxException(msg, replaceText, i);
@@ -528,8 +545,9 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					int parsedInt;
 					try {
 						parsedInt= Integer.parseInt(replaceText.substring(i + 1, i + 5), 16);
-						if (parsedInt < 0)
+						if (parsedInt < 0) {
 							throw new NumberFormatException();
+						}
 					} catch (NumberFormatException e) {
 						String msg= TextMessages.getFormattedString("FindReplaceDocumentAdapter.illegalUnicodeEscape", replaceText.substring(i - 1, i + 5)); //$NON-NLS-1$
 						throw new PatternSyntaxException(msg, replaceText, i);
@@ -543,14 +561,15 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				break;
 
 			case 'C':
-				if(foundText.toUpperCase().equals(foundText)) // is whole match upper-case?
+				if(foundText.toUpperCase().equals(foundText)) { // is whole match upper-case?
 					fRetainCaseMode= RC_UPPER;
-				else if (foundText.toLowerCase().equals(foundText)) // is whole match lower-case?
+				} else if (foundText.toLowerCase().equals(foundText)) { // is whole match lower-case?
 					fRetainCaseMode= RC_LOWER;
-				else if(Character.isUpperCase(foundText.charAt(0))) // is first character upper-case?
+				} else if(Character.isUpperCase(foundText.charAt(0))) { // is first character upper-case?
 					fRetainCaseMode= RC_FIRSTUPPER;
-				else
+				} else {
 					fRetainCaseMode= RC_MIXED;
+				}
 				break;
 
 			default:
@@ -588,8 +607,9 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			}
 			out.append(ch);
 		}
-		if (quoting)
+		if (quoting) {
 			out.append("\\E"); //$NON-NLS-1$
+		}
 
 		return out.toString();
 	}
@@ -676,8 +696,9 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					break;
 
 				case '\r':
-					if (i + 1 < length && string.charAt(i + 1) == '\n')
+					if (i + 1 < length && string.charAt(i + 1) == '\n') {
 						i++;
+					}
 					//$FALL-THROUGH$
 				case '\n':
 					pattern.append("\\R"); //$NON-NLS-1$
@@ -699,8 +720,9 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					if (0 <= ch && ch < 0x20) {
 						pattern.append("\\x"); //$NON-NLS-1$
 						String hexString= Integer.toHexString(ch).toUpperCase();
-						if (hexString.length() == 1)
+						if (hexString.length() == 1) {
 							pattern.append('0');
+						}
 						pattern.append(hexString);
 					} else {
 						pattern.append(ch);

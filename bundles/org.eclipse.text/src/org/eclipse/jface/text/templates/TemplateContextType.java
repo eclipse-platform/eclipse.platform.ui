@@ -239,14 +239,16 @@ public class TemplateContextType {
 		for (int i= 0; i != variables.length; i++) {
 			TemplateVariable variable= variables[i];
 
-			if (!variable.isResolved())
+			if (!variable.isResolved()) {
 				resolve(variable, context);
+			}
 
 			String value= variable.getDefaultValue();
 			int[] offsets= variable.getOffsets();
 			// update buffer to reflect new value
-			for (int k= 0; k != offsets.length; k++)
+			for (int k= 0; k != offsets.length; k++) {
 				edits.add(new ReplaceEdit(offsets[k], variable.getInitialLength(), value));
+			}
 
 		}
 
@@ -271,8 +273,9 @@ public class TemplateContextType {
 	public void resolve(TemplateVariable variable, TemplateContext context) {
 		String type= variable.getType();
 		TemplateVariableResolver resolver= fResolvers.get(type);
-		if (resolver == null)
+		if (resolver == null) {
 			resolver= new TemplateVariableResolver(type, ""); //$NON-NLS-1$
+		}
 		resolver.resolve(variable, context);
 	}
 
@@ -280,8 +283,9 @@ public class TemplateContextType {
 		List<RangeMarker> positions= new ArrayList<>(5);
 		for (int i= 0; i != variables.length; i++) {
 			int[] offsets= variables[i].getOffsets();
-			for (int j= 0; j != offsets.length; j++)
+			for (int j= 0; j != offsets.length; j++) {
 				positions.add(new RangeMarker(offsets[j], 0));
+			}
 		}
 
 		return positions;
@@ -294,8 +298,9 @@ public class TemplateContextType {
 			TemplateVariable variable= variables[i];
 
 			int[] offsets= new int[variable.getOffsets().length];
-			for (int j= 0; j != offsets.length; j++)
+			for (int j= 0; j != offsets.length; j++) {
 				offsets[j]= iterator.next().getOffset();
+			}
 
 		 	variable.setOffsets(offsets);
 		}

@@ -85,7 +85,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	 * The position category for managing partitioning information.
 	 * @since 3.0
 	 */
-	private String fPositionCategory;
+	private final String fPositionCategory;
 
 
 	/**
@@ -197,17 +197,19 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	 */
 	private void rememberRegion(int offset, int length) {
 		// remember start offset
-		if (fStartOffset == -1)
+		if (fStartOffset == -1) {
 			fStartOffset= offset;
-		else if (offset < fStartOffset)
+		} else if (offset < fStartOffset) {
 			fStartOffset= offset;
+		}
 
 		// remember end offset
 		int endOffset= offset + length;
-		if (fEndOffset == -1)
+		if (fEndOffset == -1) {
 			fEndOffset= endOffset;
-		else if (endOffset > fEndOffset)
+		} else if (endOffset > fEndOffset) {
 			fEndOffset= endOffset;
+		}
 	}
 
 	/**
@@ -226,8 +228,9 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	 */
 	private IRegion createRegion() {
 		if (fDeleteOffset == -1) {
-			if (fStartOffset == -1 || fEndOffset == -1)
+			if (fStartOffset == -1 || fEndOffset == -1) {
 				return null;
+			}
 			return new Region(fStartOffset, fEndOffset - fStartOffset);
 		} else if (fStartOffset == -1 || fEndOffset == -1) {
 			return new Region(fDeleteOffset, 0);
@@ -261,8 +264,9 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 				Position p= null;
 				do {
 					--first;
-					if (first < 0)
+					if (first < 0) {
 						break;
+					}
 
 					p= category[first];
 
@@ -320,13 +324,15 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 						d.removePosition(fPositionCategory, p);
 						++ first;
 
-					} else
+					} else {
 						break;
+					}
 				}
 
 				// if position already exists we are done
-				if (d.containsPosition(fPositionCategory, start, length))
+				if (d.containsPosition(fPositionCategory, start, length)) {
 					return createRegion();
+				}
 
 				// insert the new type position
 				try {
@@ -380,16 +386,19 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 			int index= fDocument.computeIndexInCategory(fPositionCategory, offset);
 			Position[] category= fDocument.getPositions(fPositionCategory);
 
-			if (category.length == 0)
+			if (category.length == 0) {
 				return null;
-
-			if (index < category.length) {
-				if (offset == category[index].offset)
-					return (TypedPosition) category[index];
 			}
 
-			if (index > 0)
+			if (index < category.length) {
+				if (offset == category[index].offset) {
+					return (TypedPosition) category[index];
+				}
+			}
+
+			if (index > 0) {
 				index--;
+			}
 
 			return (TypedPosition) category[index];
 
@@ -408,8 +417,9 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	public String getContentType(int offset) {
 
 		TypedPosition p= findClosestPosition(offset);
-		if (p != null && p.includes(offset))
+		if (p != null && p.includes(offset)) {
 			return p.getType();
+		}
 
 		return IDocument.DEFAULT_CONTENT_TYPE;
 	}
@@ -424,8 +434,9 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 
 			Position[] category = fDocument.getPositions(fPositionCategory);
 
-			if (category == null || category.length == 0)
+			if (category == null || category.length == 0) {
 				return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
+			}
 
 			int index= fDocument.computeIndexInCategory(fPositionCategory, offset);
 
@@ -433,23 +444,27 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 
 				TypedPosition next= (TypedPosition) category[index];
 
-				if (offset == next.offset)
+				if (offset == next.offset) {
 					return new TypedRegion(next.getOffset(), next.getLength(), next.getType());
+				}
 
-				if (index == 0)
+				if (index == 0) {
 					return new TypedRegion(0, next.offset, IDocument.DEFAULT_CONTENT_TYPE);
+				}
 
 				TypedPosition previous= (TypedPosition) category[index - 1];
-				if (previous.includes(offset))
+				if (previous.includes(offset)) {
 					return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
+				}
 
 				int endOffset= previous.getOffset() + previous.getLength();
 				return new TypedRegion(endOffset, next.getOffset() - endOffset, IDocument.DEFAULT_CONTENT_TYPE);
 			}
 
 			TypedPosition previous= (TypedPosition) category[category.length - 1];
-			if (previous.includes(offset))
+			if (previous.includes(offset)) {
 				return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
+			}
 
 			int endOffset= previous.getOffset() + previous.getLength();
 			return new TypedRegion(endOffset, fDocument.getLength() - endOffset, IDocument.DEFAULT_CONTENT_TYPE);
@@ -486,8 +501,9 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	protected boolean isSupportedContentType(String contentType) {
 		if (contentType != null) {
 			for (String fLegalContentType : fLegalContentTypes) {
-				if (fLegalContentType.equals(contentType))
+				if (fLegalContentType.equals(contentType)) {
 					return true;
+				}
 			}
 		}
 
@@ -504,8 +520,9 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	 */
 	protected String getTokenContentType(IToken token) {
 		Object data= token.getData();
-		if (data instanceof String)
+		if (data instanceof String) {
 			return (String) data;
+		}
 		return null;
 	}
 
@@ -523,8 +540,9 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 			if (region.getOffset() == offset && !region.getType().equals(IDocument.DEFAULT_CONTENT_TYPE)) {
 				if (offset > 0) {
 					region= getPartition(offset - 1);
-					if (region.getType().equals(IDocument.DEFAULT_CONTENT_TYPE))
+					if (region.getType().equals(IDocument.DEFAULT_CONTENT_TYPE)) {
 						return region;
+					}
 				}
 				return new TypedRegion(offset, 0, IDocument.DEFAULT_CONTENT_TYPE);
 			}
@@ -577,8 +595,9 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 				}
 			}
 
-			if (list.isEmpty())
+			if (list.isEmpty()) {
 				list.add(new TypedRegion(offset, length, IDocument.DEFAULT_CONTENT_TYPE));
+			}
 
 		} catch (BadPositionCategoryException x) {
 		}

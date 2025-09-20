@@ -43,13 +43,13 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 	private static final int RIGHT= +1;
 
 	/** The master document */
-	private IDocument fMasterDocument;
+	private final IDocument fMasterDocument;
 	/** The position category used to manage the projection fragments inside the master document */
-	private String fFragmentsCategory;
+	private final String fFragmentsCategory;
 	/** The projection document */
-	private IDocument fSlaveDocument;
+	private final IDocument fSlaveDocument;
 	/** The position category to manage the projection segments inside the slave document. */
-	private String fSegmentsCategory;
+	private final String fSegmentsCategory;
 	/** Cached segments */
 	private Position[] fCachedSegments;
 	/** Cached fragments */
@@ -103,21 +103,25 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 	private int findSegmentIndex(int offset) throws BadLocationException {
 		Position[] segments= getSegments();
 		if (segments.length == 0) {
-			if (offset > 0)
+			if (offset > 0) {
 				throw new BadLocationException();
+			}
 			return -1;
 		}
 
 		try {
 			int index= fSlaveDocument.computeIndexInCategory(fSegmentsCategory, offset);
-			if (index == segments.length && offset > exclusiveEnd(segments[index-1]))
+			if (index == segments.length && offset > exclusiveEnd(segments[index-1])) {
 				throw new BadLocationException();
+			}
 
-			if (index < segments.length && offset == segments[index].offset)
+			if (index < segments.length && offset == segments[index].offset) {
 				return index;
+			}
 
-			if (index > 0)
+			if (index > 0) {
 				index--;
+			}
 
 			return index;
 
@@ -172,23 +176,27 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		try {
 
 			Position[] fragments= getFragments();
-			if (fragments.length == 0)
+			if (fragments.length == 0) {
 				return -1;
+			}
 
 			int index= fMasterDocument.computeIndexInCategory(fFragmentsCategory, offset);
 
-			if (index < fragments.length && offset == fragments[index].offset)
+			if (index < fragments.length && offset == fragments[index].offset) {
 				return index;
+			}
 
-			if (0 < index && index <= fragments.length && fragments[index - 1].includes(offset))
+			if (0 < index && index <= fragments.length && fragments[index - 1].includes(offset)) {
 				return index - 1;
+			}
 
 			switch (extensionDirection) {
 				case LEFT:
 					return index - 1;
 				case RIGHT:
-					if (index < fragments.length)
+					if (index < fragments.length) {
 						return index;
+					}
 			}
 
 			return -1;
@@ -206,8 +214,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		if (index == -1) {
 			if (fragments.length > 0) {
 				Fragment last= (Fragment) fragments[fragments.length - 1];
-				if (exclusiveEnd(last) == offset)
+				if (exclusiveEnd(last) == offset) {
 					return last;
+				}
 			}
 			return null;
 		}
@@ -242,12 +251,14 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 				Position[] allFragments= getFragments();
 				if (allFragments.length > 0) {
 					// before the first
-					if (exclusiveEnd(originRegion) <= allFragments[0].getOffset())
+					if (exclusiveEnd(originRegion) <= allFragments[0].getOffset()) {
 						return new Region(0, 0);
+					}
 					// after last
 					Position last= allFragments[allFragments.length - 1];
-					if (originRegion.getOffset() >= exclusiveEnd(last))
+					if (originRegion.getOffset() >= exclusiveEnd(last)) {
 						return new Region(exclusiveEnd(((Fragment) last).segment), 0);
+					}
 				}
 				return new Region(0, 0);
 			}
@@ -294,18 +305,21 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 	 */
 	private Fragment[] findFragments(IRegion originRegion, boolean exact, boolean takeClosestImage) throws BadLocationException {
 		Position[] fragments= getFragments();
-		if (fragments.length == 0)
+		if (fragments.length == 0) {
 			return null;
+		}
 
 		checkOriginRegion(originRegion);
 
 		int startFragmentIdx= findFragmentIndex(originRegion.getOffset(), exact ? NONE : RIGHT);
-		if (startFragmentIdx == -1)
+		if (startFragmentIdx == -1) {
 			return null;
+		}
 
 		int endFragmentIdx= findFragmentIndex(inclusiveEnd(originRegion), exact ? NONE : LEFT);
-		if (!takeClosestImage && startFragmentIdx > endFragmentIdx || endFragmentIdx == -1)
+		if (!takeClosestImage && startFragmentIdx > endFragmentIdx || endFragmentIdx == -1) {
 			return null;
+		}
 
 		Fragment[] result= {(Fragment) fragments[startFragmentIdx], (Fragment) fragments[endFragmentIdx]};
 		return result;
@@ -354,8 +368,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 	private IRegion getIntersectingRegion(IRegion left, IRegion right) {
 		int offset= Math.max(left.getOffset(), right.getOffset());
 		int exclusiveEndOffset= Math.min(exclusiveEnd(left), exclusiveEnd(right));
-		if (exclusiveEndOffset < offset)
+		if (exclusiveEndOffset < offset) {
 			return null;
+		}
 		return new Region(offset, exclusiveEndOffset - offset);
 	}
 
@@ -385,8 +400,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		if (imageLength == 0) {
 			if (imageOffset == 0) {
 				Position[] fragments= getFragments();
-				if (fragments.length == 0 || (fragments.length == 1 && fragments[0].getOffset() == 0 && fragments[0].getLength() == 0))
+				if (fragments.length == 0 || (fragments.length == 1 && fragments[0].getOffset() == 0 && fragments[0].getLength() == 0)) {
 					return new Region(0, fMasterDocument.getLength());
+				}
 			}
 			return new Region(toOriginOffset(imageOffset), 0);
 		}
@@ -404,8 +420,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		IRegion originRegion= toOriginRegion(imageRegion);
 
 		int originStartLine= fMasterDocument.getLineOfOffset(originRegion.getOffset());
-		if (originRegion.getLength() == 0)
+		if (originRegion.getLength() == 0) {
 			return new Region(originStartLine, 1);
+		}
 
 		int originEndLine= fMasterDocument.getLineOfOffset(inclusiveEnd(originRegion));
 		return new Region(originStartLine, (originEndLine + 1) - originStartLine);
@@ -448,19 +465,22 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		IRegion imageRegion= toImageRegion(originRegion);
 		if (imageRegion == null) {
 			int imageOffset= toImageOffset(originRegion.getOffset());
-			if (imageOffset > -1)
+			if (imageOffset > -1) {
 				imageRegion= new Region(imageOffset, 0);
-			else
+			} else {
 				return -1;
+			}
 		}
 
 		int startLine= fSlaveDocument.getLineOfOffset(imageRegion.getOffset());
-		if (imageRegion.getLength() == 0)
+		if (imageRegion.getLength() == 0) {
 			return startLine;
+		}
 
 		int endLine= fSlaveDocument.getLineOfOffset(imageRegion.getOffset() + imageRegion.getLength());
-		if (endLine != startLine)
+		if (endLine != startLine) {
 			throw new IllegalStateException("startLine (" + startLine + ") does not match endLine (" + endLine + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 
 		return startLine;
 	}
@@ -470,12 +490,14 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		try {
 
 			int imageLine= toImageLine(originLine);
-			if (imageLine > -1)
+			if (imageLine > -1) {
 				return imageLine;
+			}
 
 			Position[] fragments= getFragments();
-			if (fragments.length == 0)
+			if (fragments.length == 0) {
 				return -1;
+			}
 
 			IRegion originLineRegion= fMasterDocument.getLineInformation(originLine);
 			int index= fMasterDocument.computeIndexInCategory(fFragmentsCategory, originLineRegion.getOffset());
@@ -486,10 +508,11 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 				Fragment right= (Fragment) fragments[index];
 				int rightDistance= right.getOffset() - (exclusiveEnd(originLineRegion));
 
-				if (leftDistance <= rightDistance)
+				if (leftDistance <= rightDistance) {
 					originLine= fMasterDocument.getLineOfOffset(left.getOffset() + Math.max(left.getLength() - 1, 0));
-				else
+				} else {
 					originLine= fMasterDocument.getLineOfOffset(right.getOffset());
+				}
 
 			} else if (index == 0) {
 				Fragment right= (Fragment) fragments[index];
@@ -510,8 +533,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 	@Override
 	public IRegion[] toExactOriginRegions(IRegion imageRegion) throws BadLocationException {
 
-		if (imageRegion.getLength() == 0)
+		if (imageRegion.getLength() == 0) {
 			return new IRegion[] { new Region(toOriginOffset(imageRegion.getOffset()), 0) };
+		}
 
 		int endOffset= exclusiveEnd(imageRegion);
 		Position[] segments= getSegments();
@@ -524,8 +548,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		// first
 		result[0]= createOriginStartRegion((Segment) segments[firstIndex], imageRegion.getOffset() - segments[firstIndex].getOffset());
 		// middles
-		for (int i= 1; i < resultLength - 1; i++)
+		for (int i= 1; i < resultLength - 1; i++) {
 			result[i]= createOriginRegion((Segment) segments[firstIndex + i]);
+		}
 		// last
 		Segment last= (Segment) segments[lastIndex];
 		int segmentEndOffset= exclusiveEnd(last);
@@ -536,10 +561,11 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		} else {
 			// merge first and last
 			IRegion intersection= getIntersectingRegion(result[0], lastRegion);
-			if (intersection == null)
+			if (intersection == null) {
 				result= new IRegion[0];
-			else
+			} else {
 				result[0]= intersection;
+			}
 		}
 
 		return result;
@@ -569,8 +595,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		int firstIndex= findFragmentIndex(offset, RIGHT);
 		int lastIndex= findFragmentIndex(endOffset - 1, LEFT);
 
-		if (firstIndex == -1 || firstIndex > lastIndex)
+		if (firstIndex == -1 || firstIndex > lastIndex) {
 			return null;
+		}
 
 		int resultLength= lastIndex - firstIndex + 1;
 		IRegion[] result= new IRegion[resultLength];
@@ -578,8 +605,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		// first
 		result[0]= createImageStartRegion((Fragment) fragments[firstIndex], offset - fragments[firstIndex].getOffset());
 		// middles
-		for (int i= 1; i < resultLength - 1; i++)
+		for (int i= 1; i < resultLength - 1; i++) {
 			result[i]= createImageRegion((Fragment) fragments[firstIndex + i]);
+		}
 		// last
 		Fragment last= (Fragment) fragments[lastIndex];
 		int fragmentEndOffset= exclusiveEnd(last);
@@ -590,8 +618,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		} else {
 			// merge first and last
 			IRegion intersection= getIntersectingRegion(result[0], lastRegion);
-			if (intersection == null)
+			if (intersection == null) {
 				return null;
+			}
 			result[0]= intersection;
 		}
 
@@ -614,8 +643,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		int firstIndex= findFragmentIndex(originOffset, RIGHT);
 		int lastIndex= findFragmentIndex(endOffset - 1, LEFT);
 
-		if (firstIndex == -1 || firstIndex > lastIndex)
+		if (firstIndex == -1 || firstIndex > lastIndex) {
 			return null;
+		}
 
 		int resultLength= lastIndex - firstIndex + 1;
 		IRegion[] result= new IRegion[resultLength];
@@ -623,8 +653,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		// first
 		result[0]= createOriginStartRegion((Fragment) fragments[firstIndex], originOffset - fragments[firstIndex].getOffset());
 		// middles
-		for (int i= 1; i < resultLength - 1; i++)
+		for (int i= 1; i < resultLength - 1; i++) {
 			result[i]= createOriginRegion((Fragment) fragments[firstIndex + i]);
+		}
 		// last
 		Fragment last= (Fragment) fragments[lastIndex];
 		int fragmentEndOffset= exclusiveEnd(last);
@@ -635,8 +666,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		} else {
 			// merge first and last
 			IRegion intersection= getIntersectingRegion(result[0], lastRegion);
-			if (intersection == null)
+			if (intersection == null) {
 				return null;
+			}
 			result[0]= intersection;
 		}
 
@@ -647,18 +679,21 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		int offset= originRegion.getOffset();
 		int endOffset= inclusiveEnd(originRegion);
 		int max= fMasterDocument.getLength();
-		if (offset < 0 || offset > max || endOffset < 0 || endOffset > max)
+		if (offset < 0 || offset > max || endOffset < 0 || endOffset > max) {
 			throw new BadLocationException();
+		}
 	}
 
 	private final void checkOriginOffset(int originOffset) throws BadLocationException {
-		if (originOffset < 0 || originOffset > fMasterDocument.getLength())
+		if (originOffset < 0 || originOffset > fMasterDocument.getLength()) {
 			throw new BadLocationException();
+		}
 	}
 
 	private final void checkImageOffset(int imageOffset) throws BadLocationException {
-		if (imageOffset < 0 || imageOffset > getImageLength())
+		if (imageOffset < 0 || imageOffset > getImageLength()) {
 			throw new BadLocationException();
+		}
 	}
 
 	private final int exclusiveEnd(Position position) {
@@ -671,8 +706,9 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 
 	private final int inclusiveEnd(IRegion region) {
 		int length= region.getLength();
-		if (length == 0)
+		if (length == 0) {
 			return region.getOffset();
+		}
 		return region.getOffset() + length - 1;
 	}
 

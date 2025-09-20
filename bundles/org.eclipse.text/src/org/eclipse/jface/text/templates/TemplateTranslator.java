@@ -126,12 +126,15 @@ public class TemplateTranslator {
 		}
 
 		void mergeType(TemplateVariableType type) throws TemplateException {
-			if (type == null)
+			if (type == null) {
 				return;
-			if (fType == null)
+			}
+			if (fType == null) {
 				fType= type;
-			if (!type.equals(fType))
+			}
+			if (!type.equals(fType)) {
 				fail(TextTemplateMessages.getFormattedString("TemplateTranslator.error.incompatible.type", fName)); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -260,11 +263,13 @@ public class TemplateTranslator {
 	}
 
 	private TemplateVariableType createType(String typeName, String paramString) {
-		if (typeName == null)
+		if (typeName == null) {
 			return null;
+		}
 
-		if (paramString == null)
+		if (paramString == null) {
 			return new TemplateVariableType(typeName);
+		}
 
 		final Matcher matcher= PARAM_PATTERN.matcher(paramString);
 		List<String> params= new ArrayList<>(5);
@@ -335,7 +340,7 @@ public class TemplateTranslator {
 			 * Call the deprecated version of createVariable. When not overridden, it will delegate
 			 * to the new version using fCurrentType.
 			 */
-			TemplateVariable var= createVariable(type.getName(), desc.fName, offsets);
+			TemplateVariable var= createVariable(fCurrentType, desc.fName, offsets);
 			result[idx]= var;
 		}
 		fCurrentType= null; // avoid dangling reference

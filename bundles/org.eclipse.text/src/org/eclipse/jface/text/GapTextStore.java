@@ -143,21 +143,24 @@ public class GapTextStore implements ITextStore {
 
 	@Override
 	public final char get(int offset) {
-		if (offset < fGapStart)
+		if (offset < fGapStart) {
 			return fContent[offset];
+		}
 
 		return fContent[offset + gapSize()];
 	}
 
 	@Override
 	public final String get(int offset, int length) {
-		if (fGapStart <= offset)
+		if (fGapStart <= offset) {
 			return new String(fContent, offset + gapSize() , length);
+		}
 
 		final int end= offset + length;
 
-		if (end <= fGapStart)
+		if (end <= fGapStart) {
 			return new String(fContent, offset, length);
+		}
 
 		StringBuilder buf= new StringBuilder(length); // see Bug 113871
 		buf.append(fContent, offset, fGapStart - offset);
@@ -188,8 +191,9 @@ public class GapTextStore implements ITextStore {
 		} else {
 			int textLength= text.length();
 			adjustGap(offset, length, textLength);
-			if (textLength != 0)
+			if (textLength != 0) {
 				text.getChars(0, textLength, fContent, offset);
+			}
 		}
 	}
 
@@ -211,10 +215,11 @@ public class GapTextStore implements ITextStore {
 		final int newGapStart= offset + add;
 		final int newGapEnd;
 
-		if (reuseArray)
+		if (reuseArray) {
 			newGapEnd= moveGap(offset, remove, oldGapSize, newGapSize, newGapStart);
-		else
+		} else {
 			newGapEnd= reallocate(offset, remove, oldGapSize, newGapSize, newGapStart);
+		}
 
 		fGapStart= newGapStart;
 		fGapEnd= newGapEnd;
@@ -339,8 +344,9 @@ public class GapTextStore implements ITextStore {
 	 * @since 3.3
 	 */
 	private void arrayCopy(int srcPos, char[] dest, int destPos, int length) {
-		if (length != 0)
+		if (length != 0) {
 			System.arraycopy(fContent, srcPos, dest, destPos, length);
+		}
 	}
 
 	/**

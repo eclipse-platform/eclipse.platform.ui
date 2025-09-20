@@ -24,7 +24,7 @@ import org.eclipse.jface.text.IDocumentListener;
 class UndoCollector implements IDocumentListener {
 
 	protected UndoEdit undo;
-	private int fOffset;
+	private final int fOffset;
 	private int fLength;
 
 	/**
@@ -77,10 +77,11 @@ class UndoCollector implements IDocumentListener {
 		 * String instance in all edits, instead of using the unique String
 		 * returned from IDocument.get(int, int).
 		 */
-		if (fLastCurrentText != null && fLastCurrentText.equals(currentText))
+		if (fLastCurrentText != null && fLastCurrentText.equals(currentText)) {
 			currentText= fLastCurrentText;
-		else
+		} else {
 			fLastCurrentText= currentText;
+		}
 
 		String newText= event.getText();
 		undo.add(new ReplaceEdit(offset, newText != null ? newText.length() : 0, currentText));

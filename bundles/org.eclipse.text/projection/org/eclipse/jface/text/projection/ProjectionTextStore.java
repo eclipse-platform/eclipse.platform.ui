@@ -61,11 +61,11 @@ class ProjectionTextStore implements ITextStore {
 	}
 
 	/** The master document */
-	private IDocument fMasterDocument;
+	private final IDocument fMasterDocument;
 	/** The document information mapping */
-	private IMinimalMapping fMapping;
+	private final IMinimalMapping fMapping;
 	/** Internal region used for querying the mapping. */
-	private ReusableRegion fReusableRegion= new ReusableRegion();
+	private final ReusableRegion fReusableRegion= new ReusableRegion();
 
 
 	/**
@@ -84,8 +84,9 @@ class ProjectionTextStore implements ITextStore {
 	public void set(String contents) {
 
 		IRegion masterRegion= fMapping.getCoverage();
-		if (masterRegion == null)
+		if (masterRegion == null) {
 			throw new IllegalStateException();
+		}
 
 		try {
 			fMasterDocument.replace(masterRegion.getOffset(), masterRegion.getLength(), contents);

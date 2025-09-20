@@ -21,7 +21,7 @@ package org.eclipse.jface.text;
 public class SlaveDocumentEvent extends DocumentEvent {
 
 	/** The master document event */
-	private DocumentEvent fMasterEvent;
+	private final DocumentEvent fMasterEvent;
 
 	/**
 	 * Creates a new slave document event.

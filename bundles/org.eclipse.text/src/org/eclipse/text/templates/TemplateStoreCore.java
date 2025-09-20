@@ -41,12 +41,12 @@ public class TemplateStoreCore {
 	/** The stored templates. */
 	private final List<TemplatePersistenceData> fTemplates= new ArrayList<>();
 	/** The preference store. */
-	private IEclipsePreferences fPreferenceStore;
+	private final IEclipsePreferences fPreferenceStore;
 	/**
 	 * The key into <code>fPreferenceStore</code> the value of which holds custom templates
 	 * encoded as XML.
 	 */
-	private String fKey;
+	private final String fKey;
 	/**
 	 * The context type registry, or <code>null</code> if all templates regardless
 	 * of context type should be loaded.
@@ -125,12 +125,13 @@ public class TemplateStoreCore {
 				 * save operation, and clients may trigger reloading by listening to preference store
 				 * updates.
 				 */
-				if (!fIgnorePreferenceStoreChanges && fKey.equals(event.getKey()))
+				if (!fIgnorePreferenceStoreChanges && fKey.equals(event.getKey())) {
 					try {
 						load();
 					} catch (IOException x) {
 						handleException(x);
 					}
+				}
 			};
 			fPreferenceStore.addPreferenceChangeListener(fPropertyListener);
 		}
@@ -183,8 +184,9 @@ public class TemplateStoreCore {
 			// check if the added template is not a duplicate id
 			String id= data.getId();
 			for (TemplatePersistenceData persistenceData : fTemplates) {
-				if (persistenceData.getId() != null && persistenceData.getId().equals(id))
+				if (persistenceData.getId() != null && persistenceData.getId().equals(id)) {
 					return;
+				}
 			}
 			fTemplates.add(data);
 		}
@@ -198,8 +200,9 @@ public class TemplateStoreCore {
 	public void save() throws IOException {
 		ArrayList<TemplatePersistenceData> custom= new ArrayList<>();
 		for (TemplatePersistenceData data : fTemplates) {
-			if (data.isCustom() && !(data.isUserAdded() && data.isDeleted())) // don't save deleted user-added templates
+			if (data.isCustom() && !(data.isUserAdded() && data.isDeleted())) { // don't save deleted user-added templates
 				custom.add(data);
+			}
 		}
 
 		StringWriter output= new StringWriter();
@@ -223,8 +226,9 @@ public class TemplateStoreCore {
 	 */
 	public void add(TemplatePersistenceData data) {
 
-		if (!validateTemplate(data.getTemplate()))
+		if (!validateTemplate(data.getTemplate())) {
 			return;
+		}
 
 		if (data.isUserAdded()) {
 			fTemplates.add(data);
@@ -252,10 +256,11 @@ public class TemplateStoreCore {
 	 * @param data the template to remove
 	 */
 	public void delete(TemplatePersistenceData data) {
-		if (data.isUserAdded())
+		if (data.isUserAdded()) {
 			fTemplates.remove(data);
-		else
+		} else {
 			data.setDeleted(true);
+		}
 	}
 
 	/**
@@ -263,8 +268,9 @@ public class TemplateStoreCore {
 	 */
 	public void restoreDeleted() {
 		for (TemplatePersistenceData data : fTemplates) {
-			if (data.isDeleted())
+			if (data.isDeleted()) {
 				data.setDeleted(false);
+			}
 		}
 	}
 
@@ -276,8 +282,9 @@ public class TemplateStoreCore {
 	 */
 	public void restoreDefaults(boolean doSave) {
 		String oldValue= null;
-		if (!doSave)
+		if (!doSave) {
 			oldValue= fPreferenceStore.get(fKey, null);
+		}
 
 		try {
 			fIgnorePreferenceStoreChanges= true;
@@ -332,8 +339,9 @@ public class TemplateStoreCore {
 	public Template[] getTemplates(String contextTypeId) {
 		List<Template> templates= new ArrayList<>();
 		for (TemplatePersistenceData data : fTemplates) {
-			if (data.isEnabled() && !data.isDeleted() && (contextTypeId == null || contextTypeId.equals(data.getTemplate().getContextTypeId())))
+			if (data.isEnabled() && !data.isDeleted() && (contextTypeId == null || contextTypeId.equals(data.getTemplate().getContextTypeId()))) {
 				templates.add(data.getTemplate());
+			}
 		}
 
 		return templates.toArray(new Template[templates.size()]);
@@ -363,8 +371,9 @@ public class TemplateStoreCore {
 			Template template= data.getTemplate();
 			if (data.isEnabled() && !data.isDeleted()
 					&& (contextTypeId == null || contextTypeId.equals(template.getContextTypeId()))
-					&& name.equals(template.getName()))
+					&& name.equals(template.getName())) {
 				return template;
+			}
 		}
 
 		return null;
@@ -379,8 +388,9 @@ public class TemplateStoreCore {
 	 */
 	public Template findTemplateById(String id) {
 		TemplatePersistenceData data= getTemplateData(id);
-		if (data != null && !data.isDeleted())
+		if (data != null && !data.isDeleted()) {
 			return data.getTemplate();
+		}
 
 		return null;
 	}
@@ -394,8 +404,9 @@ public class TemplateStoreCore {
 	public TemplatePersistenceData[] getTemplateData(boolean includeDeleted) {
 		List<TemplatePersistenceData> datas= new ArrayList<>();
 		for (TemplatePersistenceData data : fTemplates) {
-			if (includeDeleted || !data.isDeleted())
+			if (includeDeleted || !data.isDeleted()) {
 				datas.add(data);
+			}
 		}
 
 		return datas.toArray(new TemplatePersistenceData[datas.size()]);
@@ -412,8 +423,9 @@ public class TemplateStoreCore {
 	public TemplatePersistenceData getTemplateData(String id) {
 		Assert.isNotNull(id);
 		for (TemplatePersistenceData data : fTemplates) {
-			if (id.equals(data.getId()))
+			if (id.equals(data.getId())) {
 				return data;
+			}
 		}
 
 		return null;
@@ -444,12 +456,13 @@ public class TemplateStoreCore {
 	private boolean validateTemplate(Template template) {
 		String contextTypeId= template.getContextTypeId();
 		if (contextExists(contextTypeId)) {
-			if (fRegistry != null)
+			if (fRegistry != null) {
 				try {
 					fRegistry.getContextType(contextTypeId).validate(template.getPattern());
 				} catch (TemplateException e) {
 					return false;
 				}
+			}
 			return true;
 		}
 

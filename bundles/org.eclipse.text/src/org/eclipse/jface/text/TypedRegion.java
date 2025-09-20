@@ -21,7 +21,7 @@ package org.eclipse.jface.text;
 public class TypedRegion extends Region implements ITypedRegion {
 
 	/** The region's type */
-	private String fType;
+	private final String fType;
 
 	/**
 	 * Creates a typed region based on the given specification.
@@ -42,8 +42,7 @@ public class TypedRegion extends Region implements ITypedRegion {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof TypedRegion) {
-			TypedRegion r= (TypedRegion) o;
+		if (o instanceof TypedRegion r) {
 			return super.equals(r) && ((fType == null && r.getType() == null) || fType.equals(r.getType()));
 		}
 		return false;

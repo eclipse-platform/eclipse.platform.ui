@@ -44,7 +44,7 @@ public final class DocumentUndoManagerRegistry {
 			undoManager= new DocumentUndoManager(document);
 		}
 		private int count;
-		private IDocumentUndoManager undoManager;
+		private final IDocumentUndoManager undoManager;
 	}
 
 	private static Map<IDocument, Record> fgFactory= new HashMap<>();
@@ -82,8 +82,9 @@ public final class DocumentUndoManagerRegistry {
 		Assert.isNotNull(document);
 		Record record= fgFactory.get(document);
 		record.count--;
-		if (record.count == 0)
+		if (record.count == 0) {
 			fgFactory.remove(document);
+		}
 
 	}
 
@@ -103,8 +104,9 @@ public final class DocumentUndoManagerRegistry {
 	public static synchronized IDocumentUndoManager getDocumentUndoManager(IDocument document) {
 		Assert.isNotNull(document);
 		Record record= fgFactory.get(document);
-		if (record == null)
+		if (record == null) {
 			return null;
+		}
 		return record.undoManager;
 	}
 

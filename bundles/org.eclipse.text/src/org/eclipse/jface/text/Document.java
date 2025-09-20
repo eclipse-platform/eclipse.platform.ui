@@ -70,8 +70,9 @@ public class Document extends AbstractDocument {
 
 	@Override
 	public boolean isLineInformationRepairNeeded(int offset, int length, String text) throws BadLocationException {
-		if ((0 > offset) || (0 > length) || (offset + length > getLength()))
+		if ((0 > offset) || (0 > length) || (offset + length > getLength())) {
 			throw new BadLocationException();
+		}
 
 		return isLineInformationRepairNeeded(text) || isLineInformationRepairNeeded(get(offset, length));
 	}
@@ -84,20 +85,24 @@ public class Document extends AbstractDocument {
 	 * @since 3.4
 	 */
 	private boolean isLineInformationRepairNeeded(String text) {
-		if (text == null)
+		if (text == null) {
 			return false;
+		}
 
 		int length= text.length();
-		if (length == 0)
+		if (length == 0) {
 			return false;
+		}
 
 		int rIndex= text.indexOf('\r');
 		int nIndex= text.indexOf('\n');
-		if (rIndex == -1 && nIndex == -1)
+		if (rIndex == -1 && nIndex == -1) {
 			return false;
+		}
 
-		if (rIndex > 0 && rIndex < length-1 && nIndex > 1 && rIndex < length-2)
+		if (rIndex > 0 && rIndex < length-1 && nIndex > 1 && rIndex < length-2) {
 			return false;
+		}
 
 		String defaultLD= null;
 		try {
@@ -106,18 +111,22 @@ public class Document extends AbstractDocument {
 			return true;
 		}
 
-		if (defaultLD == null)
+		if (defaultLD == null) {
 			return false;
+		}
 
 		defaultLD= getDefaultLineDelimiter();
 
 		if (defaultLD.length() == 1) {
-			if (rIndex != -1 && !"\r".equals(defaultLD)) //$NON-NLS-1$
+			if (rIndex != -1 && !"\r".equals(defaultLD)) { //$NON-NLS-1$
 				return true;
-			if (nIndex != -1 && !"\n".equals(defaultLD)) //$NON-NLS-1$
+			}
+			if (nIndex != -1 && !"\n".equals(defaultLD)) { //$NON-NLS-1$
 				return true;
-		} else if (defaultLD.length() == 2)
+			}
+		} else if (defaultLD.length() == 2) {
 			return rIndex == -1 || nIndex - rIndex != 1;
+		}
 
 		return false;
 	}

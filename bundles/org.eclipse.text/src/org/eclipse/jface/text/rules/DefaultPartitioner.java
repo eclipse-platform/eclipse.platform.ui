@@ -82,7 +82,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 * The position category this partitioner uses to store the document's partitioning information.
 	 * @since 3.0
 	 */
-	private String fPositionCategory;
+	private final String fPositionCategory;
 	/**
 	 * The active document rewrite session.
 	 * @since 3.1
@@ -127,16 +127,18 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		fDocument.addPositionCategory(fPositionCategory);
 
 		fIsInitialized= false;
-		if (!delayInitialization)
+		if (!delayInitialization) {
 			checkInitialization();
+		}
 	}
 
 	/*
 	 * @since 3.1
 	 */
 	protected final void checkInitialization() {
-		if (!fIsInitialized)
+		if (!fIsInitialized) {
 			initialize();
+		}
 	}
 
 	/**
@@ -211,17 +213,19 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 */
 	private void rememberRegion(int offset, int length) {
 		// remember start offset
-		if (fStartOffset == -1)
+		if (fStartOffset == -1) {
 			fStartOffset= offset;
-		else if (offset < fStartOffset)
+		} else if (offset < fStartOffset) {
 			fStartOffset= offset;
+		}
 
 		// remember end offset
 		int endOffset= offset + length;
-		if (fEndOffset == -1)
+		if (fEndOffset == -1) {
 			fEndOffset= endOffset;
-		else if (endOffset > fEndOffset)
+		} else if (endOffset > fEndOffset) {
 			fEndOffset= endOffset;
+		}
 	}
 
 	/**
@@ -241,8 +245,9 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 */
 	private IRegion createRegion() {
 		if (fDeleteOffset == -1) {
-			if (fStartOffset == -1 || fEndOffset == -1)
+			if (fStartOffset == -1 || fEndOffset == -1) {
 				return null;
+			}
 			return new Region(fStartOffset, fEndOffset - fStartOffset);
 		} else if (fStartOffset == -1 || fEndOffset == -1) {
 			return new Region(fDeleteOffset, 0);
@@ -256,8 +261,9 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	@Override
 	public IRegion documentChanged2(DocumentEvent e) {
 
-		if (!fIsInitialized)
+		if (!fIsInitialized) {
 			return null;
+		}
 
 		try {
 
@@ -275,8 +281,9 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 				if (partition.includes(reparseStart)) {
 					partitionStart= partition.getOffset();
 					contentType= partition.getType();
-					if (e.getOffset() == partition.getOffset() + partition.getLength())
+					if (e.getOffset() == partition.getOffset() + partition.getLength()) {
 						reparseStart= partitionStart;
+					}
 					-- first;
 				} else if (reparseStart == e.getOffset() && reparseStart == partition.getOffset() + partition.getLength()) {
 					partitionStart= partition.getOffset();
@@ -330,15 +337,17 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 						d.removePosition(fPositionCategory, p);
 						++ first;
 
-					} else
+					} else {
 						break;
+					}
 				}
 
 				// if position already exists and we have scanned at least the
 				// area covered by the event, we are done
 				if (d.containsPosition(fPositionCategory, start, length)) {
-					if (lastScannedPosition >= e.getOffset() + newLength)
+					if (lastScannedPosition >= e.getOffset() + newLength) {
 						return createRegion();
+					}
 					++ first;
 				} else {
 					// insert the new type position
@@ -395,16 +404,19 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 			int index= fDocument.computeIndexInCategory(fPositionCategory, offset);
 			Position[] category= fDocument.getPositions(fPositionCategory);
 
-			if (category.length == 0)
+			if (category.length == 0) {
 				return null;
-
-			if (index < category.length) {
-				if (offset == category[index].offset)
-					return (TypedPosition) category[index];
 			}
 
-			if (index > 0)
+			if (index < category.length) {
+				if (offset == category[index].offset) {
+					return (TypedPosition) category[index];
+				}
+			}
+
+			if (index > 0) {
 				index--;
+			}
 
 			return (TypedPosition) category[index];
 
@@ -421,8 +433,9 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		checkInitialization();
 
 		TypedPosition p= findClosestPosition(offset);
-		if (p != null && p.includes(offset))
+		if (p != null && p.includes(offset)) {
 			return p.getType();
+		}
 
 		return IDocument.DEFAULT_CONTENT_TYPE;
 	}
@@ -435,8 +448,9 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 			Position[] category = fDocument.getPositions(fPositionCategory);
 
-			if (category == null || category.length == 0)
+			if (category == null || category.length == 0) {
 				return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
+			}
 
 			int index= fDocument.computeIndexInCategory(fPositionCategory, offset);
 
@@ -444,23 +458,27 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 				TypedPosition next= (TypedPosition) category[index];
 
-				if (offset == next.offset)
+				if (offset == next.offset) {
 					return new TypedRegion(next.getOffset(), next.getLength(), next.getType());
+				}
 
-				if (index == 0)
+				if (index == 0) {
 					return new TypedRegion(0, next.offset, IDocument.DEFAULT_CONTENT_TYPE);
+				}
 
 				TypedPosition previous= (TypedPosition) category[index - 1];
-				if (previous.includes(offset))
+				if (previous.includes(offset)) {
 					return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
+				}
 
 				int endOffset= previous.getOffset() + previous.getLength();
 				return new TypedRegion(endOffset, next.getOffset() - endOffset, IDocument.DEFAULT_CONTENT_TYPE);
 			}
 
 			TypedPosition previous= (TypedPosition) category[category.length - 1];
-			if (previous.includes(offset))
+			if (previous.includes(offset)) {
 				return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
+			}
 
 			int endOffset= previous.getOffset() + previous.getLength();
 			return new TypedRegion(endOffset, fDocument.getLength() - endOffset, IDocument.DEFAULT_CONTENT_TYPE);
@@ -491,8 +509,9 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	protected boolean isSupportedContentType(String contentType) {
 		if (contentType != null) {
 			for (String fLegalContentType : fLegalContentTypes) {
-				if (fLegalContentType.equals(contentType))
+				if (fLegalContentType.equals(contentType)) {
 					return true;
+				}
 			}
 		}
 
@@ -509,8 +528,9 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	 */
 	protected String getTokenContentType(IToken token) {
 		Object data= token.getData();
-		if (data instanceof String)
+		if (data instanceof String) {
 			return (String) data;
+		}
 		return null;
 	}
 
@@ -528,8 +548,9 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 			if (region.getOffset() == offset && !region.getType().equals(IDocument.DEFAULT_CONTENT_TYPE)) {
 				if (offset > 0) {
 					region= getPartition(offset - 1);
-					if (region.getType().equals(IDocument.DEFAULT_CONTENT_TYPE))
+					if (region.getType().equals(IDocument.DEFAULT_CONTENT_TYPE)) {
 						return region;
+					}
 				}
 				return new TypedRegion(offset, 0, IDocument.DEFAULT_CONTENT_TYPE);
 			}
@@ -589,8 +610,9 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 				}
 			}
 
-			if (list.isEmpty())
+			if (list.isEmpty()) {
 				list.add(new TypedRegion(offset, length, IDocument.DEFAULT_CONTENT_TYPE));
+			}
 
 		} catch (BadPositionCategoryException x) {
 		}
@@ -627,10 +649,11 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		while (j - i > 1) {
 			int k= (i + j) >> 1;
 			Position p= positions[k];
-			if (p.getOffset() + p.getLength() > offset)
+			if (p.getOffset() + p.getLength() > offset) {
 				j= k;
-			else
+			} else {
 				i= k;
+			}
 		}
 		return j;
 	}
@@ -649,25 +672,28 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		while (j - i > 1) {
 			int k= (i + j) >> 1;
 			Position p= positions[k];
-			if (p.getOffset() >= offset)
+			if (p.getOffset() >= offset) {
 				j= k;
-			else
+			} else {
 				i= k;
+			}
 		}
 		return j;
 	}
 
 	@Override
 	public void startRewriteSession(DocumentRewriteSession session) throws IllegalStateException {
-		if (fActiveRewriteSession != null)
+		if (fActiveRewriteSession != null) {
 			throw new IllegalStateException();
+		}
 		fActiveRewriteSession= session;
 	}
 
 	@Override
 	public void stopRewriteSession(DocumentRewriteSession session) {
-		if (fActiveRewriteSession == session)
+		if (fActiveRewriteSession == session) {
 			flushRewriteSession();
+		}
 	}
 
 	@Override

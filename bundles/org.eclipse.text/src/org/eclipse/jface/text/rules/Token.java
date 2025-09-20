@@ -56,7 +56,7 @@ public class Token implements IToken {
 	public static final IToken OTHER= new Token(T_OTHER);
 
 	/** The type of this token */
-	private int fType;
+	private final int fType;
 	/** The data associated with this token */
 	private Object fData;
 
