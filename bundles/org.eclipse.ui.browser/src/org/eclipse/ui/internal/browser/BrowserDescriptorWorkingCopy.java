@@ -28,8 +28,9 @@ public class BrowserDescriptorWorkingCopy extends BrowserDescriptor implements I
 
 	@Override
 	public void setName(String name) {
-		if (name == null)
+		if (name == null) {
 			throw new IllegalArgumentException();
+		}
 		this.name = name;
 	}
 

@@ -36,14 +36,15 @@ public class BrowserManager extends Observable {
 	protected List<IBrowserDescriptor> browsers;
 	protected IBrowserDescriptor currentBrowser;
 
-	private IPreferenceChangeListener pcl;
+	private final IPreferenceChangeListener pcl;
 	protected boolean ignorePreferenceChanges = false;
 
 	protected static BrowserManager instance;
 
 	public static BrowserManager getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new BrowserManager();
+		}
 		return instance;
 	}
 
@@ -66,8 +67,9 @@ public class BrowserManager extends Observable {
 	}
 
 	protected static void safeDispose() {
-		if (instance == null)
+		if (instance == null) {
 			return;
+		}
 		instance.dispose();
 	}
 
@@ -82,8 +84,9 @@ public class BrowserManager extends Observable {
 	}
 
 	public List<IBrowserDescriptor> getWebBrowsers() {
-		if (browsers == null)
+		if (browsers == null) {
 			loadBrowsers();
+		}
 		return new ArrayList<>(browsers);
 	}
 
@@ -101,8 +104,9 @@ public class BrowserManager extends Observable {
 				IMemento memento = XMLMemento.createReadRoot(reader);
 
 				IMemento system = memento.getChild("system"); //$NON-NLS-1$
-				if (system != null && WebBrowserUtil.canUseSystemBrowser())
+				if (system != null && WebBrowserUtil.canUseSystemBrowser()) {
 					browsers.add(new SystemBrowserDescriptor());
+				}
 
 				IMemento[] children = memento.getChildren("external"); //$NON-NLS-1$
 				int size = children.length;
@@ -131,8 +135,9 @@ public class BrowserManager extends Observable {
 			saveBrowsers();
 		}
 
-		if (currentBrowser == null && browsers.size() > 0)
+		if (currentBrowser == null && browsers.size() > 0) {
 			currentBrowser = browsers.get(0);
+		}
 		setChanged();
 		notifyObservers();
 	}
@@ -145,8 +150,7 @@ public class BrowserManager extends Observable {
 			Iterator<IBrowserDescriptor> iterator = browsers.iterator();
 			while (iterator.hasNext()) {
 				Object obj = iterator.next();
-				if (obj instanceof BrowserDescriptor) {
-					BrowserDescriptor browser = (BrowserDescriptor) obj;
+				if (obj instanceof BrowserDescriptor browser) {
 					IMemento child = memento.createChild("external"); //$NON-NLS-1$
 					browser.save(child);
 				} else if (obj instanceof SystemBrowserDescriptor) {
@@ -194,49 +198,59 @@ public class BrowserManager extends Observable {
 
 		// by default, if internal is there, that is current, else set the first
 		// external one
-		if (!browsers.isEmpty() && currentBrowser == null)
+		if (!browsers.isEmpty() && currentBrowser == null) {
 			currentBrowser = browsers.get(0);
+		}
 	}
 
 	protected void addBrowser(IBrowserDescriptor browser) {
-		if (browsers == null)
+		if (browsers == null) {
 			loadBrowsers();
-		if (!browsers.contains(browser))
+		}
+		if (!browsers.contains(browser)) {
 			browsers.add(browser);
-		if (browsers.size() == 1)
+		}
+		if (browsers.size() == 1) {
 			setCurrentWebBrowser(browser);
+		}
 	}
 
 	protected void removeWebBrowser(IBrowserDescriptor browser) {
-		if (browsers == null)
+		if (browsers == null) {
 			loadBrowsers();
+		}
 		browsers.remove(browser);
 
 		if (currentBrowser == null || currentBrowser.equals(browser)) {
 			currentBrowser = null;
-			if (browsers.size() > 0)
+			if (browsers.size() > 0) {
 				currentBrowser = browsers.get(0);
+			}
 		}
 	}
 
 	public IBrowserDescriptor getCurrentWebBrowser() {
-		if (browsers == null)
+		if (browsers == null) {
 			loadBrowsers();
+		}
 
-		if (currentBrowser == null && browsers.size() > 0)
+		if (currentBrowser == null && browsers.size() > 0) {
 			return browsers.get(0);
+		}
 
 		return currentBrowser;
 	}
 
 	public void setCurrentWebBrowser(IBrowserDescriptor wb) {
-		if (wb == null)
+		if (wb == null) {
 			throw new IllegalArgumentException();
+		}
 
-		if (browsers.contains(wb))
+		if (browsers.contains(wb)) {
 			currentBrowser = wb;
-		else
+		} else {
 			throw new IllegalArgumentException();
+		}
 		saveBrowsers();
 	}
 

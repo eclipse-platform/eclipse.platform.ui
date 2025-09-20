@@ -67,10 +67,11 @@ public class BrowserDescriptorDialog extends Dialog {
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 
-		if (isEdit)
+		if (isEdit) {
 			shell.setText(Messages.editExternalBrowser);
-		else
+		} else {
 			shell.setText(Messages.createBrowser);
+		}
 	}
 
 	protected Text createText(Composite comp, String txt, final StringModifyListener listener, boolean multiLine) {
@@ -91,8 +92,9 @@ public class BrowserDescriptorDialog extends Dialog {
 			});
 		}
 		// final Text text = SWTUtil.createMultilineText(comp, style);
-		if (txt != null)
+		if (txt != null) {
 			text.setText(txt);
+		}
 
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.widthHint = 450;
@@ -104,8 +106,9 @@ public class BrowserDescriptorDialog extends Dialog {
 		}
 
 		text.setLayoutData(data);
-		if (listener != null)
+		if (listener != null) {
 			text.addModifyListener(e -> listener.valueChanged(text.getText()));
+		}
 		return text;
 	}
 
@@ -145,8 +148,9 @@ public class BrowserDescriptorDialog extends Dialog {
 			dialog.setFileName(fname);
 			fname = dialog.open();
 
-			if (fname != null)
+			if (fname != null) {
 				browserLocationTextfield.setText(fname);
+			}
 		}));
 
 		SWTUtil.createLabel(composite, Messages.parameters).setFont(font);
@@ -184,11 +188,13 @@ public class BrowserDescriptorDialog extends Dialog {
 	}
 
 	private void setOKButtonEnabled(boolean curIsEnabled) {
-		if (okButton == null)
+		if (okButton == null) {
 			okButton = getButton(IDialogConstants.OK_ID);
+		}
 
-		if (okButton != null)
+		if (okButton != null) {
 			okButton.setEnabled(curIsEnabled);
+		}
 	}
 
 	@Override
@@ -202,12 +208,14 @@ public class BrowserDescriptorDialog extends Dialog {
 		boolean valid = true;
 
 		String name = browserNameTextfield.getText();
-		if (name == null || name.trim().length() < 1)
+		if (name == null || name.trim().length() < 1) {
 			valid = false;
+		}
 
 		String location = browserLocationTextfield.getText();
-		if (location == null || location.trim().length() < 1)
+		if (location == null || location.trim().length() < 1) {
 			valid = false;
+		}
 
 		setOKButtonEnabled(valid);
 	}

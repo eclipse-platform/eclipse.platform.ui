@@ -56,15 +56,18 @@ public class WebBrowserView extends ViewPart implements
 
 	@Override
 	public void dispose() {
-		if (viewer!=null)
+		if (viewer!=null) {
 			viewer.setContainer(null);
-		if (listener != null)
+		}
+		if (listener != null) {
 			removeSelectionListener();
+		}
 	}
 
 	public void setURL(String url) {
-		if (viewer != null)
+		if (viewer != null) {
 			viewer.setURL(url);
+		}
 	}
 
 	@Override
@@ -100,8 +103,9 @@ public class WebBrowserView extends ViewPart implements
 	}
 
 	public void addSelectionListener() {
-		if (listener != null)
+		if (listener != null) {
 			return;
+		}
 
 		listener = (part, selection) -> onSelectionChange(selection);
 		getSite().getWorkbenchWindow().getSelectionService()
@@ -109,13 +113,14 @@ public class WebBrowserView extends ViewPart implements
 	}
 
 	private void onSelectionChange(ISelection selection) {
-		if (!(selection instanceof IStructuredSelection))
+		if (!(selection instanceof IStructuredSelection sel)) {
 			return;
-		IStructuredSelection sel = (IStructuredSelection) selection;
+		}
 		Object obj = sel.getFirstElement();
 		URL url = getURLFrom(obj);
-		if (url != null)
+		if (url != null) {
 			setURL(url.toExternalForm());
+		}
 	}
 
 	private URL getURLFrom(Object adapt) {
@@ -123,19 +128,21 @@ public class WebBrowserView extends ViewPart implements
 		IPath path = Adapters.adapt(adapt, IPath.class);
 		if (path != null) {
 			File file = path.toFile();
-			if (file.exists() && isWebFile(file.getName()))
+			if (file.exists() && isWebFile(file.getName())) {
 				try {
 					return file.toURI().toURL();
 				} catch (MalformedURLException e) {
 					return null;
 				}
+			}
 		}
 		return Adapters.adapt(adapt, URL.class);
 	}
 
 	public void removeSelectionListener() {
-		if (listener == null)
+		if (listener == null) {
 			return;
+		}
 		getSite().getWorkbenchWindow().getSelectionService()
 				.removePostSelectionListener(listener);
 		listener = null;

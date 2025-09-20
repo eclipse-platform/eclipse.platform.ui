@@ -58,8 +58,9 @@ public class WebBrowserUtil {
 	 */
 	public static boolean isWindows() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		if (os != null && os.toLowerCase().contains("win")) //$NON-NLS-1$
+		if (os != null && os.toLowerCase().contains("win")) { //$NON-NLS-1$
 			return true;
+		}
 		return false;
 	}
 
@@ -70,8 +71,9 @@ public class WebBrowserUtil {
 	 */
 	public static boolean isLinux() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		if (os != null && os.toLowerCase().contains("lin")) //$NON-NLS-1$
+		if (os != null && os.toLowerCase().contains("lin")) { //$NON-NLS-1$
 			return true;
+		}
 		return false;
 	}
 
@@ -83,8 +85,9 @@ public class WebBrowserUtil {
 	 */
 	public static void openError(final String message) {
 		Display d = Display.getCurrent();
-		if (d == null)
+		if (d == null) {
 			d = Display.getDefault();
+		}
 		d.asyncExec(() -> MessageDialog.openError(null, Messages.errorDialogTitle, message));
 	}
 
@@ -96,8 +99,9 @@ public class WebBrowserUtil {
 	 */
 	public static void openMessage(final String message) {
 		Display d = Display.getCurrent();
-		if (d == null)
+		if (d == null) {
 			d = Display.getDefault();
+		}
 
 		d.asyncExec(() -> MessageDialog.openInformation(null, Messages.searchingTaskName, message));
 	}
@@ -120,8 +124,9 @@ public class WebBrowserUtil {
 	 */
 	public static boolean canUseInternalWebBrowser() {
 		// if we have already figured this out, don't do it again.
-		if (isInternalBrowserOperational != null)
+		if (isInternalBrowserOperational != null) {
 			return isInternalBrowserOperational.booleanValue();
+		}
 
 		// check for the class
 		try {
@@ -145,8 +150,9 @@ public class WebBrowserUtil {
 			isInternalBrowserOperational = Boolean.FALSE;
 			return false;
 		} finally {
-			if (shell != null)
+			if (shell != null) {
 				shell.dispose();
+			}
 		}
 	}
 
@@ -160,8 +166,9 @@ public class WebBrowserUtil {
 				.getWebBrowsers().iterator();
 		while (iterator.hasNext()) {
 			IBrowserDescriptor wb = iterator.next();
-			if (wb != null && wb.getLocation() != null)
+			if (wb != null && wb.getLocation() != null) {
 				paths.add(wb.getLocation().toLowerCase());
+			}
 		}
 		return paths;
 	}
@@ -251,14 +258,16 @@ public class WebBrowserUtil {
 	}
 
 	private static File[] getUsableDrives(File[] roots) {
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
 			return roots;
+		}
 		ArrayList<File> list = new ArrayList<>();
 		for (File root : roots) {
 			String path = root.getAbsolutePath();
 			if (path != null
-					&& (path.toLowerCase().startsWith("a:") || path.toLowerCase().startsWith("b:"))) //$NON-NLS-1$ //$NON-NLS-2$
+					&& (path.toLowerCase().startsWith("a:") || path.toLowerCase().startsWith("b:"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
+			}
 			list.add(root);
 		}
 		return list.toArray(new File[list.size()]);
@@ -271,8 +280,9 @@ public class WebBrowserUtil {
 	 * @return an external browser working copy
 	 */
 	public static IBrowserDescriptorWorkingCopy createExternalBrowser(File file) {
-		if (file == null || !file.isFile())
+		if (file == null || !file.isFile()) {
 			return null;
+		}
 
 		String executable = file.getName();
 		IBrowserExt[] browsers = WebBrowserUIPlugin.getBrowsers();
@@ -339,16 +349,18 @@ public class WebBrowserUtil {
 		if (url == null) {
 			url = ""; //$NON-NLS-1$
 		}
-		if (params == null)
+		if (params == null) {
 			params = ""; //$NON-NLS-1$
+		}
 
 		int urlIndex = params.indexOf(IBrowserDescriptor.URL_PARAMETER);
 		if (urlIndex >= 0) {
 			params = params.substring(0, urlIndex) + url
 					+ params.substring(urlIndex + IBrowserDescriptor.URL_PARAMETER.length());
 		} else {
-			if (params.length() != 0 && !params.endsWith(" ")) //$NON-NLS-1$
+			if (params.length() != 0 && !params.endsWith(" ")) { //$NON-NLS-1$
 				params += " "; //$NON-NLS-1$
+			}
 			params += url;
 		}
 		return params;
@@ -361,8 +373,9 @@ public class WebBrowserUtil {
 	private static String[] tokenize(String string) {
 		StringTokenizer tokenizer = new StringTokenizer(string);
 		String[] tokens = new String[tokenizer.countTokens()];
-		for (int i = 0; tokenizer.hasMoreTokens(); i++)
+		for (int i = 0; tokenizer.hasMoreTokens(); i++) {
 			tokens[i] = tokenizer.nextToken();
+		}
 		return tokens;
 	}
 }

@@ -24,7 +24,7 @@ public class WebBrowserViewDropAdapter extends DropTargetAdapter {
 	/**
 	 * The view to which this drop support has been added.
 	 */
-	private BrowserViewer view;
+	private final BrowserViewer view;
 
 	/**
 	 * The current operation.
@@ -48,14 +48,16 @@ public class WebBrowserViewDropAdapter extends DropTargetAdapter {
 	 */
 	private void doDropValidation(DropTargetEvent event) {
 		//update last valid operation
-		if (event.detail != DND.DROP_NONE)
+		if (event.detail != DND.DROP_NONE) {
 			lastValidOperation = event.detail;
+		}
 
 		//valid drop and set event detail accordingly
-		if (validateDrop(event.detail, event.currentDataType))
+		if (validateDrop(event.detail, event.currentDataType)) {
 			currentOperation = lastValidOperation;
-		else
+		} else {
 			currentOperation = DND.DROP_NONE;
+		}
 
 		event.detail = currentOperation;
 	}
@@ -92,8 +94,9 @@ public void dragOver(DropTargetEvent event) {
 	@Override
 public void drop(DropTargetEvent event) {
 		//perform the drop behaviour
-		if (!performDrop(event.data))
+		if (!performDrop(event.data)) {
 			event.detail = DND.DROP_NONE;
+		}
 
 		currentOperation = event.detail;
 	}
@@ -104,14 +107,16 @@ public void drop(DropTargetEvent event) {
 	 */
 	@Override
 public void dropAccept(DropTargetEvent event) {
-		if (!validateDrop(event.detail, event.currentDataType))
+		if (!validateDrop(event.detail, event.currentDataType)) {
 			event.detail = DND.DROP_NONE;
+		}
 	}
 
 	@Override
 	public void dragEnter(DropTargetEvent event) {
-		if (event.detail == DND.DROP_DEFAULT)
+		if (event.detail == DND.DROP_DEFAULT) {
 			event.detail = DND.DROP_COPY;
+		}
 
 		doDropValidation(event);
 	}
@@ -127,10 +132,10 @@ public void dropAccept(DropTargetEvent event) {
 	 *   <code>false</code> otherwise
 	 */
 	protected boolean performDrop(Object data) {
-		if (data instanceof String[]) {
-			String[] s = (String[]) data;
-			if (s.length == 0)
+		if (data instanceof String[] s) {
+			if (s.length == 0) {
 				return true;
+			}
 			File f = new File(s[0]);
 			try {
 				view.setURL(f.toURI().toURL().toExternalForm());
@@ -155,12 +160,13 @@ public void dropAccept(DropTargetEvent event) {
 	 *   otherwise
 	 */
 	protected boolean validateDrop(int operation, TransferData transferType) {
-		if (FileTransfer.getInstance().isSupportedType(transferType))
+		if (FileTransfer.getInstance().isSupportedType(transferType)) {
 			return true;
 		/*if (ResourceTransfer.getInstance().isSupportedType(transferType))
 			return true;
 		if (LocalSelectionTransfer.getInstance().isSupportedType(transferType))
 			return true;*/
+		}
 
 		return false;
 	}

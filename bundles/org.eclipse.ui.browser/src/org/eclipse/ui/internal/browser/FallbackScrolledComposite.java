@@ -53,8 +53,9 @@ public abstract class FallbackScrolledComposite extends ScrolledComposite {
 	@Override
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		if (getContent() != null)
+		if (getContent() != null) {
 			getContent().setForeground(fg);
+		}
 	}
 
 	/**
@@ -66,8 +67,9 @@ public abstract class FallbackScrolledComposite extends ScrolledComposite {
 	@Override
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		if (getContent() != null)
+		if (getContent() != null) {
 			getContent().setBackground(bg);
+		}
 	}
 
 	/**
@@ -77,8 +79,9 @@ public abstract class FallbackScrolledComposite extends ScrolledComposite {
 	@Override
 	public void setFont(Font font) {
 		super.setFont(font);
-		if (getContent() != null)
+		if (getContent() != null) {
 			getContent().setFont(font);
+		}
 	}
 
 	/**
@@ -99,8 +102,9 @@ public abstract class FallbackScrolledComposite extends ScrolledComposite {
 	 */
 	@Override
 	public boolean setFocus() {
-		if (getContent() != null)
+		if (getContent() != null) {
 			return getContent().setFocus();
+		}
 		return super.setFocus();
 	}
 
@@ -115,8 +119,9 @@ public abstract class FallbackScrolledComposite extends ScrolledComposite {
 	public void reflow(boolean flushCache) {
 		Composite c = (Composite) getContent();
 		Rectangle clientArea = getClientArea();
-		if (c == null)
+		if (c == null) {
 			return;
+		}
 
 		Point newSize = c
 				.computeSize(clientArea.width, SWT.DEFAULT, flushCache);

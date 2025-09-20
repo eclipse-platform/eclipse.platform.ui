@@ -189,11 +189,13 @@ public class BrowserViewer extends Composite {
 	public BrowserViewer(Composite parent, int style) {
 		super(parent, SWT.NONE);
 
-		if ((style & LOCATION_BAR) != 0)
+		if ((style & LOCATION_BAR) != 0) {
 			showURLbar = true;
+		}
 
-		if ((style & BUTTON_BAR) != 0)
+		if ((style & BUTTON_BAR) != 0) {
 			showToolbar = true;
+		}
 
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -211,11 +213,13 @@ public class BrowserViewer extends Composite {
 			toolbarComp.setLayout(new ToolbarLayout());
 			toolbarComp.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 
-			if (showToolbar)
+			if (showToolbar) {
 				createToolbar(toolbarComp);
+			}
 
-			if (showURLbar)
+			if (showURLbar) {
 				createLocationBar(toolbarComp);
+			}
 
 			if (showToolbar || showURLbar) {
 				busy = new BusyIndicator(toolbarComp, SWT.NONE);
@@ -238,15 +242,16 @@ public class BrowserViewer extends Composite {
 			this.browser.addLocationListener(LocationListener.changingAdapter(event -> {
 					URI uri = URI.create(event.location);
 					if (!(uri.getScheme().equals("http") || uri.getScheme().equals("https") //$NON-NLS-1$ //$NON-NLS-2$
-							|| uri.getScheme().equals("file"))) //$NON-NLS-1$
+							|| uri.getScheme().equals("file"))) { //$NON-NLS-1$
 						try {
-							if (IUriSchemeProcessor.INSTANCE.canHandle(uri)) {
-								IUriSchemeProcessor.INSTANCE.handleUri(uri);
-								event.doit = false;
-							}
-						} catch (CoreException e) {
-							WebBrowserUIPlugin.logError(e.getMessage(), e);
+						if (IUriSchemeProcessor.INSTANCE.canHandle(uri)) {
+						IUriSchemeProcessor.INSTANCE.handleUri(uri);
+						event.doit = false;
 						}
+						} catch (CoreException e) {
+						WebBrowserUIPlugin.logError(e.getMessage(), e);
+						}
+					}
 
 				}));
 		}
@@ -258,18 +263,20 @@ public class BrowserViewer extends Composite {
 			text = new BrowserText(this, this, e);
 		}
 
-		if (showURLbar)
+		if (showURLbar) {
 			updateHistory();
-		if (showToolbar)
+		}
+		if (showToolbar) {
 			updateBackNextBusy();
+		}
 
 		if (browser!=null) {
 			browser.setLayoutData(new GridData(GridData.FILL_BOTH));
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(browser,
 					ContextIds.WEB_BROWSER);
-		}
-		else
+		} else {
 			text.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		}
 
 		addBrowserListeners();
 		addDisposeListener(this::dispose);
@@ -324,20 +331,25 @@ public class BrowserViewer extends Composite {
 			busy.setBusy(loading);
 		}
 
-		if (backNextListener != null)
+		if (backNextListener != null) {
 			backNextListener.updateBackNextBusy();
+		}
 	}
 
 	protected void updateLocation() {
-		if (locationListener != null)
+		if (locationListener != null) {
 			locationListener.historyChanged(null);
+		}
 
-		if (locationListener != null)
+		if (locationListener != null) {
 			locationListener.locationChanged(null);
+		}
 	}
 
 	private void addBrowserListeners() {
-		if (browser==null) return;
+		if (browser==null) {
+			return;
+		}
 		// respond to ExternalBrowserInstance StatusTextEvents events by
 		// updating the status line
 		browser.addStatusTextListener(event -> {
@@ -358,15 +370,19 @@ public class BrowserViewer extends Composite {
 			shell2.setLayout(new FillLayout());
 			shell2.setText(Messages.viewWebBrowserTitle);
 			shell2.setImage(getShell().getImage());
-			if (event.location != null)
+			if (event.location != null) {
 				shell2.setLocation(event.location);
-			if (event.size != null)
+			}
+			if (event.size != null) {
 				shell2.setSize(event.size);
+			}
 			int style = 0;
-			if (showURLbar)
+			if (showURLbar) {
 				style += LOCATION_BAR;
-			if (showToolbar)
+			}
+			if (showToolbar) {
 				style += BUTTON_BAR;
+			}
 			BrowserViewer browser2 = new BrowserViewer(shell2, style);
 			browser2.newWindow = true;
 			event.browser = browser2.browser;
@@ -378,10 +394,12 @@ public class BrowserViewer extends Composite {
 				Browser browser2 = (Browser) e.widget;
 				if (browser2.getParent().getParent() instanceof Shell) {
 					Shell shell = (Shell) browser2.getParent().getParent();
-					if (e.location != null)
+					if (e.location != null) {
 						shell.setLocation(e.location);
-					if (e.size != null)
+					}
+					if (e.size != null) {
 						shell.setSize(shell.computeSize(e.size.x, e.size.y));
+					}
 					shell.open();
 				}
 			}
@@ -390,10 +408,11 @@ public class BrowserViewer extends Composite {
 		browser.addCloseWindowListener(event -> {
 			// if shell is not null, it must be a secondary popup window,
 			// else its an editor window
-			if (newWindow)
+			if (newWindow) {
 				getShell().dispose();
-			else
+			} else {
 				container.close();
+			}
 		});
 
 		browser.addProgressListener(new ProgressListener() {
@@ -402,8 +421,9 @@ public class BrowserViewer extends Composite {
 			@Override
 			public void changed(ProgressEvent event) {
 					//System.out.println("progress: " + event.current + ", " + event.total); //$NON-NLS-1$ //$NON-NLS-2$
-				if (event.total == 0)
+				if (event.total == 0) {
 					return;
+				}
 
 				boolean done = (event.current == event.total);
 
@@ -429,12 +449,13 @@ public class BrowserViewer extends Composite {
 				}
 
 				if (showToolbar) {
-					if (!busy.isBusy() && !done)
+					if (!busy.isBusy() && !done) {
 						loading = true;
-					else if (busy.isBusy() && done) // once the progress hits
+					} else if (busy.isBusy() && done) { // once the progress hits
 						// 100 percent, done, set
 						// busy to false
 						loading = false;
+					}
 
 					//System.out.println("loading: " + loading); //$NON-NLS-1$
 					updateBackNextBusy();
@@ -460,8 +481,9 @@ public class BrowserViewer extends Composite {
 			browser.addLocationListener(new LocationAdapter() {
 				@Override
 				public void changed(LocationEvent event) {
-					if (!event.top)
+					if (!event.top) {
 						return;
+					}
 					if (combo != null) {
 						if (!"about:blank".equals(event.location)) { //$NON-NLS-1$
 							combo.setText(event.location);
@@ -501,8 +523,9 @@ public class BrowserViewer extends Composite {
 		 * @param listener java.beans.PropertyChangeListener
 		 */
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
-			if (propertyListeners == null)
+			if (propertyListeners == null) {
 				propertyListeners = new ArrayList<>();
+			}
 			propertyListeners.add(listener);
 		}
 
@@ -512,16 +535,18 @@ public class BrowserViewer extends Composite {
 		 * @param listener java.beans.PropertyChangeListener
 		 */
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
-			if (propertyListeners != null)
+			if (propertyListeners != null) {
 				propertyListeners.remove(listener);
+			}
 		}
 
 		/**
 		 * Fire a property change event.
 		 */
 		protected void firePropertyChangeEvent(String propertyName, Object oldValue, Object newValue) {
-			if (propertyListeners == null)
+			if (propertyListeners == null) {
 				return;
+			}
 
 			PropertyChangeEvent event = new PropertyChangeEvent(this, propertyName, oldValue, newValue);
 			//Trace.trace("Firing: " + event + " " + oldValue);
@@ -530,12 +555,13 @@ public class BrowserViewer extends Composite {
 				PropertyChangeListener[] pcl = new PropertyChangeListener[size];
 				propertyListeners.toArray(pcl);
 
-				for (int i = 0; i < size; i++)
+				for (int i = 0; i < size; i++) {
 					try {
 						pcl[i].propertyChange(event);
 					} catch (Exception e) {
 						// ignore
 					}
+				}
 			} catch (Exception e) {
 				// ignore
 			}
@@ -557,8 +583,9 @@ public class BrowserViewer extends Composite {
 	 * @see #back
 	 */
 	public boolean forward() {
-		if (browser==null)
+		if (browser==null) {
 			return false;
+		}
 		return browser.forward();
 	}
 
@@ -578,8 +605,9 @@ public class BrowserViewer extends Composite {
 	 * @see #forward
 	 */
 	public boolean back() {
-		if (browser==null)
+		if (browser==null) {
 			return false;
+		}
 		return browser.back();
 	}
 
@@ -599,8 +627,9 @@ public class BrowserViewer extends Composite {
 	 * @see #back
 	 */
 	public boolean isBackEnabled() {
-		if (browser==null)
+		if (browser==null) {
 			return false;
+		}
 		return browser.isBackEnabled();
 	}
 
@@ -620,8 +649,9 @@ public class BrowserViewer extends Composite {
 	 * @see #forward
 	 */
 	public boolean isForwardEnabled() {
-		if (browser==null)
+		if (browser==null) {
 			return false;
+		}
 		return browser.isForwardEnabled();
 	}
 
@@ -638,8 +668,9 @@ public class BrowserViewer extends Composite {
 	 *                </ul>
 	 */
 	public void stop() {
-		if (browser!=null)
+		if (browser!=null) {
 			browser.stop();
+		}
 	}
 
 	private boolean navigate(String url) {
@@ -648,8 +679,9 @@ public class BrowserViewer extends Composite {
 			refresh();
 			return true;
 		}
-		if (browser!=null)
+		if (browser!=null) {
 			return browser.setUrl(url, null, new String[] {"Cache-Control: no-cache"}); //$NON-NLS-1$
+		}
 		return text.setUrl(url);
 	}
 
@@ -666,10 +698,11 @@ public class BrowserViewer extends Composite {
 	 *                </ul>
 	 */
 	public void refresh() {
-		if (browser!=null)
+		if (browser!=null) {
 			browser.refresh();
-		else
+		} else {
 			text.refresh();
+		}
 		try {
 			Thread.sleep(50);
 		} catch (Exception e) {
@@ -698,10 +731,11 @@ public class BrowserViewer extends Composite {
 			return;
 		}
 
-		if ("eclipse".equalsIgnoreCase(url)) //$NON-NLS-1$
+		if ("eclipse".equalsIgnoreCase(url)) { //$NON-NLS-1$
 			url = "http://www.eclipse.org"; //$NON-NLS-1$
-		else if ("wtp".equalsIgnoreCase(url)) //$NON-NLS-1$
+		} else if ("wtp".equalsIgnoreCase(url)) { //$NON-NLS-1$
 			url = "http://www.eclipse.org/webtools/"; //$NON-NLS-1$
+		}
 
 		if (browse) {
 			navigate(url);
@@ -712,8 +746,9 @@ public class BrowserViewer extends Composite {
 	}
 
 	protected void addToHistory(String url) {
-		if (history == null)
+		if (history == null) {
 			history = WebBrowserPreference.getInternalWebBrowserHistory();
+		}
 		int found = -1;
 		int size = history.size();
 		for (int i = 0; i < size; i++) {
@@ -725,8 +760,9 @@ public class BrowserViewer extends Composite {
 		}
 
 		if (found == -1) {
-			if (size >= MAX_HISTORY)
+			if (size >= MAX_HISTORY) {
 				history.remove(size - 1);
+			}
 			history.add(0, url);
 			WebBrowserPreference.setInternalWebBrowserHistory(history);
 		} else if (found != 0) {
@@ -739,14 +775,16 @@ public class BrowserViewer extends Composite {
 	private void dispose(DisposeEvent event) {
 		showToolbar = false;
 
-		if (busy != null)
+		if (busy != null) {
 			busy.dispose();
+		}
 		busy = null;
 
 		browser = null;
 		text = null;
-		if (clipboard!=null)
+		if (clipboard!=null) {
 			clipboard.dispose();
+		}
 		clipboard=null;
 
 		if (watcher != null) {
@@ -849,8 +887,9 @@ public class BrowserViewer extends Composite {
 	 * @see #setURL(String)
 	 */
 	public String getURL() {
-		if (browser!=null)
+		if (browser!=null) {
 			return browser.getUrl();
+		}
 		return text.getUrl();
 	}
 
@@ -868,12 +907,14 @@ public class BrowserViewer extends Composite {
 	 * Update the history list to the global/shared copy.
 	 */
 	protected void updateHistory() {
-		if (combo == null || combo.isDisposed())
+		if (combo == null || combo.isDisposed()) {
 			return;
+		}
 
 		String temp = combo.getText();
-		if (history == null)
+		if (history == null) {
 			history = WebBrowserPreference.getInternalWebBrowserHistory();
+		}
 
 		String[] historyList = new String[history.size()];
 		history.toArray(historyList);
@@ -904,8 +945,9 @@ public class BrowserViewer extends Composite {
 	protected Object syncObject = new Object();
 
 	protected void addSynchronizationListener() {
-		if (fileListenerThread != null)
+		if (fileListenerThread != null) {
 			return;
+		}
 
 		fileListenerThread = new Thread("Browser file synchronization") { //$NON-NLS-1$
 			@Override
@@ -937,8 +979,9 @@ public class BrowserViewer extends Composite {
 						file = temp;
 						timestamp = file.lastModified();
 					}
-				} else
+				} else {
 					file = null;
+				}
 			}
 		};
 		browser.addLocationListener(locationListener2);
@@ -952,17 +995,20 @@ public class BrowserViewer extends Composite {
 	}
 
 	protected static File getFile(String location) {
-		if (location == null)
+		if (location == null) {
 			return null;
-		if (location.startsWith("file:/")) //$NON-NLS-1$
+		}
+		if (location.startsWith("file:/")) { //$NON-NLS-1$
 			location = location.substring(6);
+		}
 
 		return new File(location);
 	}
 
 	protected void removeSynchronizationListener() {
-		if (fileListenerThread == null)
+		if (fileListenerThread == null) {
 			return;
+		}
 
 		fileListenerThread = null;
 		browser.removeLocationListener(locationListener2);
