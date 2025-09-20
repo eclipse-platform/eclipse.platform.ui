@@ -47,12 +47,11 @@ public class StringToNumberParser {
 	 * @return result
 	 */
 	public static ParseResult parse(Object value, Format numberFormat, boolean primitive) {
-		if (!(value instanceof String)) {
+		if (!(value instanceof String source)) {
 			throw new IllegalArgumentException(
 					"Value to convert is not a String"); //$NON-NLS-1$
 		}
 
-		String source = (String) value;
 		ParseResult result = new ParseResult();
 		if (!primitive && source.trim().isEmpty()) {
 			return result;

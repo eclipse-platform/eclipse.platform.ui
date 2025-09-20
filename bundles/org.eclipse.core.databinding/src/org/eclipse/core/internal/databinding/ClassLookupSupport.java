@@ -43,14 +43,16 @@ public class ClassLookupSupport {
 		List<Class<?>> classes = null;
 		// cache reference to lookup to protect against concurrent flush
 		HashMap<Class<?>, List<Class<?>>> lookup = classSearchOrderLookup;
-		if (lookup != null)
+		if (lookup != null) {
 			classes = lookup.get(type);
+		}
 		// compute class order only if it hasn't been cached before
 		if (classes == null) {
 			classes = new ArrayList<>();
 			computeClassOrder(type, classes);
-			if (lookup == null)
+			if (lookup == null) {
 				classSearchOrderLookup = lookup = new HashMap<>();
+			}
 			lookup.put(type, classes);
 		}
 		return classes.toArray(Class[]::new);
@@ -86,8 +88,9 @@ public class ClassLookupSupport {
 				newInterfaces.add(interfaze);
 			}
 		}
-		for (Class<?> interfaze : newInterfaces)
+		for (Class<?> interfaze : newInterfaces) {
 			computeInterfaceOrder(interfaze.getInterfaces(), classes, seen);
+		}
 	}
 
 }

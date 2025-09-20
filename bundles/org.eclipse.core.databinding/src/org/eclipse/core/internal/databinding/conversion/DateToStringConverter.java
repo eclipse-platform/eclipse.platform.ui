@@ -27,8 +27,9 @@ import org.eclipse.core.databinding.conversion.IConverter;
 public class DateToStringConverter extends DateConversionSupport implements IConverter<Date, String> {
 	@Override
 	public String convert(Date source) {
-		if (source != null)
+		if (source != null) {
 			return format(source);
+		}
 		return ""; //$NON-NLS-1$
 	}
 

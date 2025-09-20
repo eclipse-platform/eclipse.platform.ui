@@ -30,9 +30,9 @@ import org.eclipse.core.databinding.conversion.Converter;
  * @since 1.0
  */
 public abstract class NumberToNumberConverter<T extends Number> extends Converter<Object, T> {
-	private Format numberFormat;
+	private final Format numberFormat;
 
-	private boolean primitive;
+	private final boolean primitive;
 
 	private String outOfRangeMessage;
 
@@ -54,12 +54,11 @@ public abstract class NumberToNumberConverter<T extends Number> extends Converte
 			return null;
 		}
 
-		if (!(fromObject instanceof Number)) {
+		if (!(fromObject instanceof Number number)) {
 			throw new IllegalArgumentException(
 					"Parameter 'fromObject' must be of type Number."); //$NON-NLS-1$
 		}
 
-		Number number = (Number) fromObject;
 		T result = doConvert(number);
 
 		if (result != null) {

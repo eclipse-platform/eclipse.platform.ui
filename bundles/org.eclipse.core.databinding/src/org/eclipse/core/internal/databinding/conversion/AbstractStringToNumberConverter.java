@@ -31,11 +31,11 @@ import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
  * @param <T> The type to which values are converted.
  */
 public class AbstractStringToNumberConverter<T extends Number> extends NumberFormatConverter<Object, T> {
-	private Class<?> toType;
+	private final Class<?> toType;
 	/**
 	 * NumberFormat instance to use for conversion. Access must be synchronized.
 	 */
-	private Format numberFormat;
+	private final Format numberFormat;
 
 	/**
 	 * Minimum possible value for the type. Can be <code>null</code> as
@@ -177,23 +177,24 @@ public class AbstractStringToNumberConverter<T extends Number> extends NumberFor
 			}
 		} else if (BigInteger.class.equals(boxedType)) {
 			Number n = result.getNumber();
-			if(n instanceof Long)
+			if(n instanceof Long) {
 				return (T) BigInteger.valueOf(n.longValue());
-			else if(n instanceof BigInteger)
+			} else if(n instanceof BigInteger) {
 				return (T) n;
-			else if(n instanceof BigDecimal)
+			} else if(n instanceof BigDecimal) {
 				return (T) ((BigDecimal) n).toBigInteger();
-			else
+			} else {
 				return (T) BigDecimal.valueOf(n.doubleValue()).toBigInteger();
+			}
 		} else if (BigDecimal.class.equals(boxedType)) {
 			Number n = result.getNumber();
-			if(n instanceof Long)
+			if(n instanceof Long) {
 				return (T) BigDecimal.valueOf(n.longValue());
-			else if(n instanceof BigInteger)
+			} else if(n instanceof BigInteger) {
 				return (T) new BigDecimal((BigInteger) n);
-			else if(n instanceof BigDecimal)
+			} else if(n instanceof BigDecimal) {
 				return (T) n;
-			else if(icuBigDecimal != null && icuBigDecimal.isInstance(n)) {
+			} else if(icuBigDecimal != null && icuBigDecimal.isInstance(n)) {
 				try {
 					// Get ICU BigDecimal value and use to construct java.math.BigDecimal
 					int scale = ((Integer) icuBigDecimalScale.invoke(n)).intValue();
@@ -206,8 +207,9 @@ public class AbstractStringToNumberConverter<T extends Number> extends NumberFor
 				}
 			} else if(n instanceof Double) {
 				BigDecimal bd = BigDecimal.valueOf(n.doubleValue());
-				if (bd.scale() == 0)
+				if (bd.scale() == 0) {
 					return (T) bd;
+				}
 				throw new IllegalArgumentException("Non-integral Double value returned from NumberFormat " + //$NON-NLS-1$
 						"which cannot be accurately stored in a BigDecimal due to lost precision. " + //$NON-NLS-1$
 						"Consider using ICU4J or Java 5 which can properly format and parse these types."); //$NON-NLS-1$

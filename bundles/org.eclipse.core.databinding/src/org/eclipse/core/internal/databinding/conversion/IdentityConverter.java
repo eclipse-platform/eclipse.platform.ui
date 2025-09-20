@@ -23,9 +23,9 @@ import org.eclipse.core.databinding.conversion.IConverter;
  */
 public class IdentityConverter implements IConverter<Object, Object> {
 
-	private Class<?> fromType;
+	private final Class<?> fromType;
 
-	private Class<?> toType;
+	private final Class<?> toType;
 
 	public IdentityConverter(Class<?> type) {
 		this.fromType = type;
@@ -37,7 +37,7 @@ public class IdentityConverter implements IConverter<Object, Object> {
 		this.toType = toType;
 	}
 
-	private Class<?>[][] primitiveMap = {
+	private final Class<?>[][] primitiveMap = {
 			{ Integer.TYPE, Integer.class }, { Short.TYPE, Short.class },
 			{ Long.TYPE, Long.class }, { Double.TYPE, Double.class },
 			{ Byte.TYPE, Byte.class }, { Float.TYPE, Float.class },

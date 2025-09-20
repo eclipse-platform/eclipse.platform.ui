@@ -160,7 +160,7 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 		}
 	}
 
-	private DependencyListener dependencyListener = new DependencyListener();
+	private final DependencyListener dependencyListener = new DependencyListener();
 
 	/**
 	 * Constructs a MultiValidator on the default realm.
@@ -247,8 +247,9 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 			public void run() {
 				try {
 					validationResult = validate();
-					if (validationResult == null)
+					if (validationResult == null) {
 						validationResult = ValidationStatus.ok();
+					}
 				} catch (RuntimeException e) {
 					// Usually an NPE as dependencies are init'ed
 					validationResult = ValidationStatus

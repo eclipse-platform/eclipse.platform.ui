@@ -27,8 +27,8 @@ import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
  */
 public class StringToByteConverter extends NumberFormatConverter<Object, Byte> {
 	private String outOfRangeMessage;
-	private Format numberFormat;
-	private boolean primitive;
+	private final Format numberFormat;
+	private final boolean primitive;
 
 	private StringToByteConverter(Format numberFormat, Class<?> toType) {
 		super(String.class, toType, numberFormat);

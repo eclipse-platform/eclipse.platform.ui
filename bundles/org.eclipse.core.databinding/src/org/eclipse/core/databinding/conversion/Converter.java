@@ -28,8 +28,8 @@ package org.eclipse.core.databinding.conversion;
  */
 public abstract class Converter<F, T> implements IConverter<F, T> {
 
-	private Object fromType;
-	private Object toType;
+	private final Object fromType;
+	private final Object toType;
 
 	/**
 	 * @param fromType type of source values

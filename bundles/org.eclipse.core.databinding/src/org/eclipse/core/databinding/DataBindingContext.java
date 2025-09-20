@@ -107,7 +107,7 @@ public class DataBindingContext {
 
 	private IObservableMap<Binding, IStatus> validationStatusMap;
 
-	private Realm validationRealm;
+	private final Realm validationRealm;
 
 	/**
 	 * Creates a data binding context, using the current default realm for the
@@ -358,12 +358,14 @@ public class DataBindingContext {
 			IObservableSet<M> modelObservableSet,
 			UpdateSetStrategy<? super T, ? extends M> targetToModel,
 			UpdateSetStrategy<? super M, ? extends T> modelToTarget) {
-		if (targetToModel == null)
+		if (targetToModel == null) {
 			targetToModel = createTargetToModelUpdateSetStrategy(
 					targetObservableSet, modelObservableSet);
-		if (modelToTarget == null)
+		}
+		if (modelToTarget == null) {
 			modelToTarget = createModelToTargetUpdateSetStrategy(
 					modelObservableSet, targetObservableSet);
+		}
 		targetToModel.fillDefaults(targetObservableSet, modelObservableSet);
 		modelToTarget.fillDefaults(modelObservableSet, targetObservableSet);
 		SetBinding<? super M, ? extends T> result = new SetBinding<>(targetObservableSet,

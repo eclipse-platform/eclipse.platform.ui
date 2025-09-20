@@ -82,22 +82,23 @@ import org.eclipse.core.runtime.Status;
 	private static Map<Pair, Object> converterMap;
 
 	private static Class<?> autoboxed(Class<?> clazz) {
-		if (clazz == Float.TYPE)
+		if (clazz == Float.TYPE) {
 			return Float.class;
-		else if (clazz == Double.TYPE)
+		} else if (clazz == Double.TYPE) {
 			return Double.class;
-		else if (clazz == Short.TYPE)
+		} else if (clazz == Short.TYPE) {
 			return Short.class;
-		else if (clazz == Integer.TYPE)
+		} else if (clazz == Integer.TYPE) {
 			return Integer.class;
-		else if (clazz == Long.TYPE)
+		} else if (clazz == Long.TYPE) {
 			return Long.class;
-		else if (clazz == Byte.TYPE)
+		} else if (clazz == Byte.TYPE) {
 			return Byte.class;
-		else if (clazz == Boolean.TYPE)
+		} else if (clazz == Boolean.TYPE) {
 			return Boolean.class;
-		else if (clazz == Character.TYPE)
+		} else if (clazz == Character.TYPE) {
 			return Character.class;
+		}
 		return clazz;
 	}
 
@@ -154,8 +155,7 @@ import org.eclipse.core.runtime.Status;
 			Object converterOrClassname = converterMap.get(key);
 			if (converterOrClassname instanceof IConverter) {
 				return (IConverter<?, ?>) converterOrClassname;
-			} else if (converterOrClassname instanceof String) {
-				String classname = (String) converterOrClassname;
+			} else if (converterOrClassname instanceof String classname) {
 				Class<?> converterClass;
 				try {
 					converterClass = Class.forName(classname);

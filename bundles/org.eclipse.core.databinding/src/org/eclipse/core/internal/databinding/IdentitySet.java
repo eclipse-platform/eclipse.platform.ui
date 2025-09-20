@@ -85,9 +85,11 @@ public class IdentitySet<E> implements Set<E> {
 
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		for (Object element : c)
-			if (!wrappedSet.contains(IdentityWrapper.wrap(element)))
+		for (Object element : c) {
+			if (!wrappedSet.contains(IdentityWrapper.wrap(element))) {
 				return false;
+			}
+		}
 		return true;
 	}
 
@@ -125,8 +127,9 @@ public class IdentitySet<E> implements Set<E> {
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		boolean changed = false;
-		for (Object element : c)
+		for (Object element : c) {
 			changed |= remove(element);
+		}
 		return changed;
 	}
 
@@ -178,10 +181,12 @@ public class IdentitySet<E> implements Set<E> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (!(obj instanceof Set))
+		}
+		if (!(obj instanceof Set)) {
 			return false;
+		}
 		Set<?> that = (Set<?>) obj;
 		return size() == that.size() && containsAll(that);
 	}
