@@ -25,7 +25,7 @@ import org.eclipse.ui.browser.IWebBrowser;
 public class BrowserExt implements IBrowserExt {
 	private static final String ATTR_FACTORY_CLASS = "factoryclass"; //$NON-NLS-1$
 
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
 	private BrowserFactory delegate;
 
@@ -50,8 +50,9 @@ public class BrowserExt implements IBrowserExt {
 	@Override
 	public String getName() {
 		String label = element.getAttribute("name"); //$NON-NLS-1$
-		if (label == null)
+		if (label == null) {
 			return "n/a"; //$NON-NLS-1$
+		}
 		return label;
 	}
 
@@ -68,8 +69,9 @@ public class BrowserExt implements IBrowserExt {
 	@Override
 	public String getOS() {
 		String os = element.getAttribute("os"); //$NON-NLS-1$
-		if (os == null)
+		if (os == null) {
 			os = ""; //$NON-NLS-1$
+		}
 		return os;
 	}
 
@@ -92,8 +94,9 @@ public class BrowserExt implements IBrowserExt {
 	protected BrowserFactory getDelegate() {
 		if (delegate == null) {
 			if (element.getAttribute(ATTR_FACTORY_CLASS) == null
-					|| element.getAttribute(ATTR_FACTORY_CLASS).isEmpty())
+					|| element.getAttribute(ATTR_FACTORY_CLASS).isEmpty()) {
 				return null;
+			}
 
 			try {
 				delegate = (BrowserFactory) element
@@ -118,8 +121,9 @@ public class BrowserExt implements IBrowserExt {
 	@Override
 	public boolean isAvailable() {
 		if (delegate == null && (element.getAttribute(ATTR_FACTORY_CLASS) == null
-				|| element.getAttribute(ATTR_FACTORY_CLASS).isEmpty()))
+				|| element.getAttribute(ATTR_FACTORY_CLASS).isEmpty())) {
 			return true;
+		}
 
 		try {
 			return getDelegate().isAvailable();

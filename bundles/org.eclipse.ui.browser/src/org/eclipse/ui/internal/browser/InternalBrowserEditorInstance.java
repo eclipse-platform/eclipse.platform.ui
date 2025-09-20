@@ -38,11 +38,13 @@ public class InternalBrowserEditorInstance extends InternalBrowserInstance {
 
 		IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = null;
-		if (workbenchWindow != null)
+		if (workbenchWindow != null) {
 			page = workbenchWindow.getActivePage();
+		}
 
-		if (page == null)
+		if (page == null) {
 			throw new PartInitException(Messages.errorCouldNotLaunchInternalWebBrowser);
+		}
 
 		if (editor != null) {
 			editor.init(editor.getEditorSite(), input);
