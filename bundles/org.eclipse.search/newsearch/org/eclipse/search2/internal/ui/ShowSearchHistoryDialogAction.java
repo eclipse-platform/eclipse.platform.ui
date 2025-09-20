@@ -30,7 +30,7 @@ import org.eclipse.search.ui.NewSearchUI;
  * This action will retarget to the active view.
  */
 class ShowSearchHistoryDialogAction extends Action {
-	private SearchView fSearchView;
+	private final SearchView fSearchView;
 
 
 	/*

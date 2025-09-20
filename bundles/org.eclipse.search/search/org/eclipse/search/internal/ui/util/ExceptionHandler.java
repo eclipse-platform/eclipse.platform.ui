@@ -140,10 +140,11 @@ public class ExceptionHandler {
 			msg.write(message);
 			msg.write("\n\n"); //$NON-NLS-1$
 		}
-		if (exceptionMessage == null || exceptionMessage.isEmpty())
+		if (exceptionMessage == null || exceptionMessage.isEmpty()) {
 			msg.write(SearchMessages.ExceptionDialog_seeErrorLogMessage);
-		else
+		} else {
 			msg.write(exceptionMessage);
+		}
 		MessageDialog.openError(shell, title, msg.toString());
 	}
 }

@@ -47,8 +47,8 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private final Object[] EMPTY_ARR= new Object[0];
 
 	private AbstractTextSearchResult fResult;
-	private FileSearchPage fPage;
-	private AbstractTreeViewer fTreeViewer;
+	private final FileSearchPage fPage;
+	private final AbstractTreeViewer fTreeViewer;
 	private Map<Object, Set<Object>> fChildrenMap;
 
 	FileTreeContentProvider(FileSearchPage page, AbstractTreeViewer viewer) {
@@ -104,19 +104,22 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		Object parent= getParent(child);
 		while (parent != null) {
 			if (insertChild(parent, child)) {
-				if (refreshViewer)
+				if (refreshViewer) {
 					fTreeViewer.add(parent, child);
+				}
 			} else {
-				if (refreshViewer)
+				if (refreshViewer) {
 					fTreeViewer.update(parent, null);
+				}
 				return;
 			}
 			child= parent;
 			parent= getParent(child);
 		}
 		if (insertChild(fResult, child)) {
-			if (refreshViewer)
+			if (refreshViewer) {
 				fTreeViewer.add(fResult, child);
+			}
 		}
 	}
 
@@ -147,8 +150,9 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		// precondition here:  fResult.getMatchCount(child) <= 0
 
 		if (hasChildren(element)) {
-			if (refreshViewer)
+			if (refreshViewer) {
 				fTreeViewer.refresh(element);
+			}
 		} else {
 			if (!hasMatches(element)) {
 				fChildrenMap.remove(element);
@@ -158,8 +162,9 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 					remove(parent, refreshViewer);
 				} else {
 					removeFromSiblings(element, fResult);
-					if (refreshViewer)
+					if (refreshViewer) {
 						fTreeViewer.refresh();
+					}
 				}
 			} else {
 				if (refreshViewer) {
@@ -170,8 +175,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	}
 
 	private boolean hasMatches(Object element) {
-		if (element instanceof LineElement) {
-			LineElement lineElement= (LineElement) element;
+		if (element instanceof LineElement lineElement) {
 			IResource resource = lineElement.getParent();
 			if (hasMatches(resource)) {
 				return lineElement.hasMatches(fResult);
@@ -206,8 +210,9 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		Set<Object> children= fChildrenMap.get(parentElement);
-		if (children == null)
+		if (children == null) {
 			return EMPTY_ARR;
+		}
 
 		int elementLimit = getElementLimit();
 		if (elementLimit != -1 && elementLimit < children.size()) {
@@ -297,7 +302,7 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		}
 		try {
 			for (Object updatedElement : updatedElements) {
-				if (!(updatedElement instanceof LineElement)) {
+				if (!(updatedElement instanceof LineElement lineElement)) {
 					// change events to elements are reported in file search.
 					// ask the page to determine if element is filtered.
 					if (getMatchCount(updatedElement) > 0) {
@@ -308,7 +313,6 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 				} else {
 					// change events to line elements are reported in text
 					// search
-					LineElement lineElement = (LineElement) updatedElement;
 					boolean hasMatches = lineMatches.contains(lineElement);
 					if (hasMatches) {
 						if (singleElement && hasChild(lineElement.getParent(), lineElement)) {
@@ -341,18 +345,17 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 
 	@Override
 	public Object getParent(Object element) {
-		if (element instanceof IProject)
+		if (element instanceof IProject) {
 			return null;
-		if (element instanceof IResource) {
-			IResource resource = (IResource) element;
+		}
+		if (element instanceof IResource resource) {
 			return resource.getParent();
 		}
 		if (element instanceof LineElement) {
 			return ((LineElement) element).getParent();
 		}
 
-		if (element instanceof FileMatch) {
-			FileMatch match= (FileMatch) element;
+		if (element instanceof FileMatch match) {
 			return match.getLineElement();
 		}
 		return null;

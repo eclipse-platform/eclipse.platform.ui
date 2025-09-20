@@ -42,8 +42,9 @@ public class EditorOpener {
 	private IEditorReference fReusedEditor;
 
 	public IEditorPart open(IWorkbenchPage wbPage, IFile file, boolean activate) throws PartInitException {
-		if (NewSearchUI.reuseEditor())
+		if (NewSearchUI.reuseEditor()) {
 			return showWithReuse(file, wbPage, getEditorID(file), activate);
+		}
 		return showWithoutReuse(file, wbPage, getEditorID(file), activate);
 	}
 
@@ -63,8 +64,7 @@ public class EditorOpener {
 			editor= showWithoutReuse(file, wbPage, editorId, activate);
 		}
 
-		if (editor instanceof ITextEditor) {
-			ITextEditor textEditor= (ITextEditor) editor;
+		if (editor instanceof ITextEditor textEditor) {
 			textEditor.selectAndReveal(offset, length);
 		} else if (editor != null) {
 			showWithMarker(editor, file, offset, length);
@@ -79,9 +79,10 @@ public class EditorOpener {
 
 	private String getEditorID(IFile file) throws PartInitException {
 		IEditorDescriptor desc = IDE.getEditorDescriptor(file, true, true);
-		if (desc == null)
+		if (desc == null) {
 			return PlatformUI.getWorkbench().getEditorRegistry().findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)
 					.getId();
+		}
 		return desc.getId();
 	}
 
@@ -139,12 +140,13 @@ public class EditorOpener {
 		} catch (CoreException e) {
 			throw new PartInitException(SearchMessages.FileSearchPage_error_marker, e);
 		} finally {
-			if (marker != null)
+			if (marker != null) {
 				try {
 					marker.delete();
 				} catch (CoreException e) {
 					// ignore
 				}
+			}
 		}
 	}
 

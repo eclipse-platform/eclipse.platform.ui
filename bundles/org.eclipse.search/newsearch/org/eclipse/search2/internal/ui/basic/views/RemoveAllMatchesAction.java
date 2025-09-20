@@ -34,7 +34,8 @@ public class RemoveAllMatchesAction extends Action {
 	@Override
 	public void run() {
 		AbstractTextSearchResult search= fPage.getInput();
-		if (search != null)
+		if (search != null) {
 			search.removeAll();
+		}
 	}
 }

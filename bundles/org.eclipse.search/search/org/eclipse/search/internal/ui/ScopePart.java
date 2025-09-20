@@ -74,7 +74,7 @@ public class ScopePart {
 	private static final String STORE_LRU_WORKING_SET_NAME= "lastUsedWorkingSetName"; //$NON-NLS-1$
 	private static final String STORE_LRU_WORKING_SET_NAMES= "lastUsedWorkingSetNames"; //$NON-NLS-1$
 
-	private IDialogSettings fSettingsStore;
+	private final IDialogSettings fSettingsStore;
 	private Group fPart;
 
 	// Scope radio buttons
@@ -85,20 +85,20 @@ public class ScopePart {
 	private Button fUseOpenedEditors;
 
 	private int fScope;
-	private boolean fCanSearchEnclosingProjects;
-	private boolean fCanSearchOpenedEditors;
+	private final boolean fCanSearchEnclosingProjects;
+	private final boolean fCanSearchOpenedEditors;
 	private Text fWorkingSetText;
 	private IWorkingSet[] fWorkingSets;
 
 	// Reference to its search page container (can be null)
-	private SearchDialog fSearchDialog;
+	private final SearchDialog fSearchDialog;
 
 	private boolean fActiveEditorCanProvideScopeSelection;
 
 	/**
 	 * Returns a new scope part with workspace as initial scope. The part is not
 	 * yet created.
-	 * 
+	 *
 	 * @param searchDialog
 	 *            The parent container
 	 * @param searchEnclosingProjects
@@ -125,7 +125,7 @@ public class ScopePart {
 		} catch (NumberFormatException ex) {
 			scope= ISearchPageContainer.WORKSPACE_SCOPE;
 		}
-		if (scope != ISearchPageContainer.WORKING_SET_SCOPE 
+		if (scope != ISearchPageContainer.WORKING_SET_SCOPE
 				&& scope != ISearchPageContainer.SELECTION_SCOPE
 				&& scope != ISearchPageContainer.SELECTED_PROJECTS_SCOPE
 				&& scope != ISearchPageContainer.OPENED_EDITORS_SCOPE
@@ -185,8 +185,9 @@ public class ScopePart {
 	}
 
 	public static List<IResource> selectedResourcesFromContainer(ISearchPageContainer container) {
-		if (container == null)
+		if (container == null) {
 			return Collections.emptyList();
+		}
 		ISelection selection = container.getSelection();
 		List<IResource> resources = new ArrayList<>();
 		if (!(selection instanceof IStructuredSelection) || selection.isEmpty()) {
@@ -198,8 +199,7 @@ public class ScopePart {
 		Iterator<?> iter = ((IStructuredSelection) selection).iterator();
 		while (iter.hasNext()) {
 			Object curr = iter.next();
-			if (curr instanceof IWorkingSet) {
-				IWorkingSet workingSet = (IWorkingSet) curr;
+			if (curr instanceof IWorkingSet workingSet) {
 				if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
 					continue;
 				}
@@ -212,8 +212,9 @@ public class ScopePart {
 				}
 			} else if (curr instanceof LineElement) {
 				IResource resource = ((LineElement) curr).getParent();
-				if (resource != null && resource.isAccessible())
+				if (resource != null && resource.isAccessible()) {
 					resources.add(resource);
+				}
 			} else if (curr instanceof IAdaptable) {
 				IResource resource = ((IAdaptable) curr).getAdapter(IResource.class);
 				if (resource != null && resource.isAccessible()) {
@@ -267,23 +268,27 @@ public class ScopePart {
 	private String getSelectedResurcesButtonText() {
 		int size = selectedResourcesFromContainer(fSearchDialog).size();
 		if (size == 1) {
-			if (fSearchDialog.getActiveEditor() != null)
+			if (fSearchDialog.getActiveEditor() != null) {
 				return SearchMessages.ScopePart_selectedResourcesScope_text_editor;
+			}
 			return NLS.bind(SearchMessages.ScopePart_selectedResourcesScope_text_singular,
 					fSearchDialog.getWorkbenchWindow().getActivePage().getActivePart().getTitle());
 		}
-		if (size > 1)
+		if (size > 1) {
 			return NLS.bind(SearchMessages.ScopePart_selectedResourcesScope_text_plural, Integer.valueOf(size),
 					fSearchDialog.getWorkbenchWindow().getActivePage().getActivePart().getTitle());
+		}
 		return SearchMessages.ScopePart_selectedResourcesScope_text;
 	}
 
 	private String getEnclosingProjectsButtonText() {
 		int size = fSearchDialog.getEnclosingProjectNames().length;
-		if (size == 1)
+		if (size == 1) {
 			return SearchMessages.ScopePart_enclosingProjectsScope_text_singular;
-		if (size > 1)
+		}
+		if (size > 1) {
 			return NLS.bind(SearchMessages.ScopePart_enclosingProjectsScope_text_plural, Integer.valueOf(size));
+		}
 		return SearchMessages.ScopePart_enclosingProjectsScope_text;
 	}
 
@@ -364,8 +369,9 @@ public class ScopePart {
 	 * 			- if there is no working set selected
 	 */
 	public IWorkingSet[] getSelectedWorkingSets() {
-		if (getSelectedScope() == ISearchPageContainer.WORKING_SET_SCOPE)
+		if (getSelectedScope() == ISearchPageContainer.WORKING_SET_SCOPE) {
 			return fWorkingSets;
+		}
 		return null;
 	}
 
@@ -383,16 +389,19 @@ public class ScopePart {
 		for (IWorkingSet workingSet2 : workingSets) {
 			String name= workingSet2.getName();
 			IWorkingSet workingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
-			if (workingSet != null)
+			if (workingSet != null) {
 				existingWorkingSets.add(workingSet);
+			}
 		}
-		if (!existingWorkingSets.isEmpty())
+		if (!existingWorkingSets.isEmpty()) {
 			fWorkingSets= existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
+		}
 
 		saveState();
 
-		if (fWorkingSetText != null)
+		if (fWorkingSetText != null) {
 			fWorkingSetText.setText(toString(fWorkingSets));
+		}
 	}
 
 	/**
@@ -450,8 +459,9 @@ public class ScopePart {
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 8;
 		fUseProject.setLayoutData(gd);
-		if (!fCanSearchEnclosingProjects)
+		if (!fCanSearchEnclosingProjects) {
 			fUseProject.setVisible(false);
+		}
 
 		fUseOpenedEditors = new Button(fPart, SWT.RADIO);
 		fUseOpenedEditors.setData(Integer.valueOf(ISearchPageContainer.OPENED_EDITORS_SCOPE));
@@ -509,8 +519,9 @@ public class ScopePart {
 		setSelectedScope(fScope);
 
 		// Set initial working set
-		if (fWorkingSets != null)
+		if (fWorkingSets != null) {
 			fWorkingSetText.setText(toString(fWorkingSets));
+		}
 
 		return fPart;
 	}
@@ -529,10 +540,10 @@ public class ScopePart {
 
 	private void handleScopeChanged(SelectionEvent e) {
 		Object source= e.getSource();
-		if (source instanceof Button) {
-			Button button= (Button) source;
-			if (button.getSelection())
+		if (source instanceof Button button) {
+			if (button.getSelection()) {
 				setSelectedScope(((Integer) button.getData()).intValue());
+			}
 		}
 	}
 
@@ -540,8 +551,9 @@ public class ScopePart {
 		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSetSelectionDialog dialog= workingSetManager.createWorkingSetSelectionDialog(fUseSelection.getShell(), true);
 
-		if (fWorkingSets != null)
+		if (fWorkingSets != null) {
 			dialog.setSelection(fWorkingSets);
+		}
 		if (dialog.open() == Window.OK) {
 			Object[] result= dialog.getSelection();
 			if (result.length > 0) {
@@ -550,8 +562,9 @@ public class ScopePart {
 			}
 			fWorkingSetText.setText(""); //$NON-NLS-1$
 			fWorkingSets= null;
-			if (fScope == ISearchPageContainer.WORKING_SET_SCOPE)
+			if (fScope == ISearchPageContainer.WORKING_SET_SCOPE) {
 				setSelectedScope(ISearchPageContainer.WORKSPACE_SCOPE);
+			}
 			return false;
 		}
 		if (fWorkingSets != null) {
@@ -559,8 +572,9 @@ public class ScopePart {
 			int i= 0;
 			while (i < fWorkingSets.length) {
 				IWorkingSet workingSet= fWorkingSets[i];
-				if (!workingSet.isAggregateWorkingSet() && workingSetManager.getWorkingSet(workingSet.getName()) == null)
+				if (!workingSet.isAggregateWorkingSet() && workingSetManager.getWorkingSet(workingSet.getName()) == null) {
 					break;
+				}
 				i++;
 			}
 			if (i < fWorkingSets.length) {
@@ -573,8 +587,9 @@ public class ScopePart {
 	}
 
 	void setVisible(boolean state) {
-		if (state)
+		if (state) {
 			fPart.layout();
+		}
 		fPart.setVisible(state);
 	}
 
@@ -585,9 +600,9 @@ public class ScopePart {
 			boolean firstFound= false;
 			for (IWorkingSet workingSet : workingSets) {
 				String workingSetName= workingSet.getLabel();
-				if (firstFound)
+				if (firstFound) {
 					result= Messages.format(SearchMessages.ScopePart_workingSetConcatenation, new String[] { result, workingSetName });
-				else {
+				} else {
 					result= workingSetName;
 					firstFound= true;
 				}

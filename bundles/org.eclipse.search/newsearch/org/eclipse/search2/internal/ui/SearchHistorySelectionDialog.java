@@ -68,7 +68,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	private static final int REMOVE_ID= IDialogConstants.CLIENT_ID+1;
 	private static final int WIDTH_IN_CHARACTERS= 55;
 
-	private List<ISearchResult> fInput;
+	private final List<ISearchResult> fInput;
 	private final List<ISearchResult> fRemovedEntries;
 
 	private TableViewer fViewer;
@@ -193,8 +193,9 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		public Image getImage(Object element) {
 
 			ImageDescriptor imageDescriptor= ((ISearchResult)element).getImageDescriptor();
-			if (imageDescriptor == null)
+			if (imageDescriptor == null) {
 				return null;
+			}
 
 			Image image= imageDescriptor.createImage();
 			fImages.add(image);
@@ -205,8 +206,9 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		@Override
 		public void dispose() {
 			Iterator<Image> iter= fImages.iterator();
-			while (iter.hasNext())
+			while (iter.hasNext()) {
 				iter.next().dispose();
+			}
 
 			fImages= null;
 		}
@@ -270,8 +272,9 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		super.create();
 
 		List<?> initialSelection= getInitialElementSelections();
-		if (initialSelection != null)
+		if (initialSelection != null) {
 			fViewer.setSelection(new StructuredSelection(initialSelection));
+		}
 
 		validateDialogState();
 	}
@@ -405,8 +408,9 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	protected void okPressed() {
 		// Build a list of selected children.
 		ISelection selection= fViewer.getSelection();
-		if (selection instanceof IStructuredSelection)
+		if (selection instanceof IStructuredSelection) {
 			setResult(fViewer.getStructuredSelection().toList());
+		}
 
 		// remove queries
 		for (ISearchResult result : fRemovedEntries) {

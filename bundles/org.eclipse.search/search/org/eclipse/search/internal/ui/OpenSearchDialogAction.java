@@ -66,8 +66,9 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 	}
 
 	private IWorkbenchWindow getWorkbenchWindow() {
-		if (fWindow == null)
+		if (fWindow == null) {
 			fWindow= SearchPlugin.getActiveWorkbenchWindow();
+		}
 		return fWindow;
 	}
 

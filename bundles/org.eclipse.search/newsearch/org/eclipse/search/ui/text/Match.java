@@ -134,8 +134,9 @@ public class Match {
 	 * @return either UNIT_LINE or UNIT_CHARACTER;
 	 */
 	public int getBaseUnit() {
-		if ((fFlags & UNIT_LINE) != 0)
+		if ((fFlags & UNIT_LINE) != 0) {
 			return UNIT_LINE;
+		}
 		return UNIT_CHARACTER;
 	}
 

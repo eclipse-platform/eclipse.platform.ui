@@ -210,15 +210,12 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 		List<IResource> resources = new ArrayList<>();
 
 		ISelection selection = selectionProvider.getSelection();
-		if (!(selection instanceof IStructuredSelection) || selection.isEmpty()) {
+		if (!(selection instanceof IStructuredSelection structuredSelection) || selection.isEmpty()) {
 			return null;
 		}
-		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-
 		// loop through list and look for matching items
 		for (Object obj : structuredSelection) {
-			if (obj instanceof IResource) {
-				IResource res = (IResource) obj;
+			if (obj instanceof IResource res) {
 				if ((res.getType() & resourceTypes) == res.getType()) {
 					resources.add(res);
 				}

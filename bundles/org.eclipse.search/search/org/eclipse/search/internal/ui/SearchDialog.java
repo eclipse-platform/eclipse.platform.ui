@@ -105,8 +105,9 @@ public class SearchDialog extends ExtendedDialogWindow
 	private class TabFolderLayout extends Layout {
 		@Override
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
-			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
+			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 				return new Point(wHint, hHint);
+			}
 
 			int x= 0;
 			int y= 0;
@@ -121,10 +122,12 @@ public class SearchDialog extends ExtendedDialogWindow
 			x= Math.max(x, minSize.x);
 			y= Math.max(y, minSize.y);
 
-			if (wHint != SWT.DEFAULT)
+			if (wHint != SWT.DEFAULT) {
 				x= wHint;
-			if (hHint != SWT.DEFAULT)
+			}
+			if (hHint != SWT.DEFAULT) {
 				y= hHint;
+			}
 			return new Point(x, y);
 		}
 		@Override
@@ -147,7 +150,7 @@ public class SearchDialog extends ExtendedDialogWindow
 	private String fInitialPageId;
 	private int fCurrentIndex;
 
-	private List<SearchPageDescriptor> fDescriptors;
+	private final List<SearchPageDescriptor> fDescriptors;
 	private Point fMinSize;
 	private ScopePart[] fScopeParts;
 	private boolean fLastEnableState;
@@ -206,8 +209,7 @@ public class SearchDialog extends ExtendedDialogWindow
 			HashSet<String> res= new HashSet<>();
 			for (Iterator<?> iter= ((IStructuredSelection) selection).iterator(); iter.hasNext();) {
 				Object curr= iter.next();
-				if (curr instanceof IWorkingSet) {
-					IWorkingSet workingSet= (IWorkingSet) curr;
+				if (curr instanceof IWorkingSet workingSet) {
 					if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
 						IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 						for (IProject proj : projects) {
@@ -271,16 +273,19 @@ public class SearchDialog extends ExtendedDialogWindow
 
 	public IEditorPart getActiveEditor() {
 		IWorkbenchPage activePage= fWorkbenchWindow.getActivePage();
-		if (activePage == null)
+		if (activePage == null) {
 			return null;
+		}
 
 		IWorkbenchPart activePart= activePage.getActivePart();
-		if (activePart == null)
+		if (activePart == null) {
 			return null;
+		}
 
 		IEditorPart activeEditor= activePage.getActiveEditor();
-		if (activeEditor == activePart )
+		if (activeEditor == activePart ) {
 			return activeEditor;
+		}
 
 		return null;
 	}
@@ -306,19 +311,22 @@ public class SearchDialog extends ExtendedDialogWindow
 		ILabelProvider labelProvider= new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof SearchPageDescriptor)
+				if (element instanceof SearchPageDescriptor) {
 					return LegacyActionTools.removeMnemonics(((SearchPageDescriptor)element).getLabel());
+				}
 				return null;
 			}
 			@Override
 			public Image getImage(Object element) {
 				if (element instanceof SearchPageDescriptor) {
 					ImageDescriptor imageDesc= ((SearchPageDescriptor)element).getImage();
-					if (imageDesc == null)
+					if (imageDesc == null) {
 						return null;
+					}
 					Image image= imageDesc.createImage();
-					if (image != null)
+					if (image != null) {
 						createdImages.add(image);
+					}
 					return image;
 				}
 				return null;
@@ -365,8 +373,9 @@ public class SearchDialog extends ExtendedDialogWindow
 	private List<SearchPageDescriptor> filterByActivities(List<SearchPageDescriptor> input) {
 		ArrayList<SearchPageDescriptor> filteredList= new ArrayList<>(input.size());
 		for (SearchPageDescriptor descriptor : input) {
-			if (!WorkbenchActivityHelper.filterItem(descriptor))
+			if (!WorkbenchActivityHelper.filterItem(descriptor)) {
 				filteredList.add(descriptor);
+			}
 
 		}
 		return filteredList;
@@ -376,8 +385,9 @@ public class SearchDialog extends ExtendedDialogWindow
 		Iterator<Image> iter= images.iterator();
 		while (iter.hasNext()) {
 			Image image= iter.next();
-			if (image != null && !image.isDisposed())
+			if (image != null && !image.isDisposed()) {
 				image.dispose();
+			}
 		}
 	}
 
@@ -411,20 +421,23 @@ public class SearchDialog extends ExtendedDialogWindow
 
 		for (int i= 0; i < numPages; i++) {
 			SearchPageDescriptor descriptor= getDescriptorAt(i);
-			if (WorkbenchActivityHelper.filterItem(descriptor))
+			if (WorkbenchActivityHelper.filterItem(descriptor)) {
 				continue;
+			}
 
 			final CTabItem item = new CTabItem(folder, SWT.NONE);
 			item.setData("descriptor", descriptor); //$NON-NLS-1$
 			item.setText(descriptor.getLabel());
 			item.addDisposeListener(e -> {
 				item.setData("descriptor", null); //$NON-NLS-1$
-				if (item.getImage() != null)
+				if (item.getImage() != null) {
 					item.getImage().dispose();
+				}
 			});
 			ImageDescriptor imageDesc= descriptor.getImage();
-			if (imageDesc != null)
+			if (imageDesc != null) {
 				item.setImage(imageDesc.createImage());
+			}
 
 			if (i == fCurrentIndex) {
 				Control pageControl= createPageControl(folder, descriptor);
@@ -514,18 +527,21 @@ public class SearchDialog extends ExtendedDialogWindow
 	}
 
 	private Point getMinSize() {
-		if (fMinSize != null)
+		if (fMinSize != null) {
 			return fMinSize;
+		}
 
 		int x= 0;
 		int y= 0;
 		int length= fDescriptors.size();
 		for (int i= 0; i < length; i++) {
 			Point size= getDescriptorAt(i).getPreferredSize();
-			if (size.x != SWT.DEFAULT)
+			if (size.x != SWT.DEFAULT) {
 				x= Math.max(x, size.x);
-			if (size.y != SWT.DEFAULT)
+			}
+			if (size.y != SWT.DEFAULT) {
 				y= Math.max(y, size.y);
+			}
 		}
 
 		fMinSize= new Point(x, y);
@@ -562,8 +578,9 @@ public class SearchDialog extends ExtendedDialogWindow
 		if (fCurrentPage != null) {
 			fCurrentPage.setVisible(true);
 			Control pageControl= fCurrentPage.getControl();
-			if (pageControl instanceof Composite)
+			if (pageControl instanceof Composite) {
 				((Composite)pageControl).layout(false, true);
+			}
 		}
 		fReplaceButton.setVisible(fCurrentPage instanceof IReplacePage);
 		notifyPageChanged();
@@ -572,19 +589,22 @@ public class SearchDialog extends ExtendedDialogWindow
 	private int getPreferredPageIndex() {
 		Object element= null;
 		ISelection selection= getSelection();
-		if (selection instanceof IStructuredSelection)
+		if (selection instanceof IStructuredSelection) {
 			element= ((IStructuredSelection) selection).getFirstElement();
+		}
 
-		if (element == null)
+		if (element == null) {
 			element= getActiveEditorInput();
+		}
 
 		int result= 0;
 		int level= ISearchPageScoreComputer.LOWEST;
 		int size= fDescriptors.size();
 		for (int i= 0; i < size; i++) {
 			SearchPageDescriptor descriptor= fDescriptors.get(i);
-			if (fInitialPageId != null && fInitialPageId.equals(descriptor.getId()))
+			if (fInitialPageId != null && fInitialPageId.equals(descriptor.getId())) {
 				return i;
+			}
 
 			int newLevel= descriptor.computeScore(element);
 			if (newLevel > level) {
@@ -608,9 +628,10 @@ public class SearchDialog extends ExtendedDialogWindow
 	 */
 	@Override
 	public int getSelectedScope() {
-		if (fScopeParts[fCurrentIndex] == null)
+		if (fScopeParts[fCurrentIndex] == null) {
 			// safe code - should not happen
 			return ISearchPageContainer.WORKSPACE_SCOPE;
+		}
 
 		return fScopeParts[fCurrentIndex].getSelectedScope();
 	}
@@ -620,9 +641,10 @@ public class SearchDialog extends ExtendedDialogWindow
 	 */
 	@Override
 	public IWorkingSet[] getSelectedWorkingSets() {
-		if (fScopeParts[fCurrentIndex] == null)
+		if (fScopeParts[fCurrentIndex] == null) {
 			// safe code - should not happen
 			return null;
+		}
 
 		return fScopeParts[fCurrentIndex].getSelectedWorkingSets();
 	}
@@ -645,8 +667,9 @@ public class SearchDialog extends ExtendedDialogWindow
 	 */
 	@Override
 	public void setSelectedScope(int scope) {
-		if (fScopeParts[fCurrentIndex] != null)
+		if (fScopeParts[fCurrentIndex] != null) {
 			fScopeParts[fCurrentIndex].setSelectedScope(scope);
+		}
 	}
 
 	/*
@@ -655,23 +678,26 @@ public class SearchDialog extends ExtendedDialogWindow
 	 */
 	@Override
 	public void setActiveEditorCanProvideScopeSelection(boolean state) {
-		if (fScopeParts[fCurrentIndex] != null)
+		if (fScopeParts[fCurrentIndex] != null) {
 			fScopeParts[fCurrentIndex].setActiveEditorCanProvideScopeSelection(state);
+		}
 	}
 
 	@Override
 	public IEditorInput getActiveEditorInput() {
 		IEditorPart editor= getActiveEditor();
-		if (editor == null)
+		if (editor == null) {
 			return null;
+		}
 
 		// Handle multi-page editors
 		if (editor instanceof MultiPageEditorPart) {
 			Object page= ((MultiPageEditorPart)editor).getSelectedPage();
-			if (page instanceof IEditorPart)
+			if (page instanceof IEditorPart) {
 				editor= (IEditorPart)page;
-			else
+			} else {
 				return null;
+			}
 		}
 
 		return editor.getEditorInput();
@@ -690,8 +716,9 @@ public class SearchDialog extends ExtendedDialogWindow
 	 */
 	@Override
 	public void setSelectedWorkingSets(IWorkingSet[] workingSets) {
-		if (fScopeParts[fCurrentIndex] != null)
+		if (fScopeParts[fCurrentIndex] != null) {
 			fScopeParts[fCurrentIndex].setSelectedWorkingSets(workingSets);
+		}
 	}
 
 	/*
@@ -782,15 +809,18 @@ public class SearchDialog extends ExtendedDialogWindow
 	}
 
 	private void resizeDialogIfNeeded(Point oldSize, Point newSize) {
-		if (oldSize == null || newSize == null)
+		if (oldSize == null || newSize == null) {
 			return;
+		}
 			Shell shell= getShell();
 		Point shellSize= shell.getSize();
 		if (mustResize(oldSize, newSize)) {
-			if (newSize.x > oldSize.x)
+			if (newSize.x > oldSize.x) {
 				shellSize.x+= (newSize.x-oldSize.x);
-			if (newSize.y > oldSize.y)
+			}
+			if (newSize.y > oldSize.y) {
 				shellSize.y+= (newSize.y-oldSize.y);
+			}
 			shell.setSize(shellSize);
 					shell.layout(true);
 		}

@@ -118,8 +118,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @param match the match to add
 	 */
 	public void addMatch(Match match) {
-		if (didAddMatch(match))
+		if (didAddMatch(match)) {
 			fireChange(getSearchResultEvent(match, MatchEvent.ADDED));
+		}
 	}
 
 	/**
@@ -137,8 +138,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 				reallyAdded.add(match);
 			}
 		}
-		if (!reallyAdded.isEmpty())
+		if (!reallyAdded.isEmpty()) {
 			fireChange(getSearchResultEvent(reallyAdded, MatchEvent.ADDED));
+		}
 	}
 
 	private MatchEvent getSearchResultEvent(Match match, int eventKind) {
@@ -164,8 +166,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 	private static int compare(Match match2, Match match1) {
 		int diff= match2.getOffset()-match1.getOffset();
-		if (diff != 0)
+		if (diff != 0) {
 			return diff;
+		}
 		return match2.getLength()-match1.getLength();
 	}
 
@@ -193,8 +196,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @param match the match to remove
 	 */
 	public void removeMatch(Match match) {
-		if (didRemoveMatch(match))
+		if (didRemoveMatch(match)) {
 			fireChange(getSearchResultEvent(match, MatchEvent.REMOVED));
+		}
 	}
 
 	/**
@@ -209,11 +213,13 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	public void removeMatches(Match[] matches) {
 		Collection<Match> existing= new ArrayList<>();
 		for (Match match : matches) {
-			if (didRemoveMatch(match))
+			if (didRemoveMatch(match)) {
 				existing.add(match); // no duplicate matches at this point
+			}
 		}
-		if (!existing.isEmpty())
+		if (!existing.isEmpty()) {
 			fireChange(getSearchResultEvent(existing, MatchEvent.REMOVED));
+		}
 	}
 
 
@@ -340,8 +346,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			return 0;
 		}
 		Set<Match> matches = fElementsToMatches.get(element);
-		if (matches != null)
+		if (matches != null) {
 			return matches.size();
+		}
 		return 0;
 	}
 

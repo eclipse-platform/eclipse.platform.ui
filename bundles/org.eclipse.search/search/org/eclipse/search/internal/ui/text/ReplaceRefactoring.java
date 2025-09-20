@@ -90,7 +90,7 @@ public class ReplaceRefactoring extends Refactoring {
 		private MatchGroup[] fMatchGroups;
 		private Match[] fMatches;
 
-		private Map<URI, ArrayList<FileMatch>> fIgnoredMatches;
+		private final Map<URI, ArrayList<FileMatch>> fIgnoredMatches;
 		private final FileSearchResult fResult;
 		private final boolean fIsRemove;
 
@@ -133,16 +133,18 @@ public class ReplaceRefactoring extends Refactoring {
 						FileMatch match= curr.match;
 						matches.add(match);
 
-						if (fIgnoredMatches == null)
+						if (fIgnoredMatches == null) {
 							continue;
+						}
 
 						// Add matches that we removed before starting the refactoring
 						IFile file= match.getFile();
 						URI uri= file.getLocationURI();
 						if (uri != null) {
 							ArrayList<FileMatch> ignoredMatches= fIgnoredMatches.get(uri);
-							if (ignoredMatches != null)
+							if (ignoredMatches != null) {
 								matches.addAll(ignoredMatches);
+							}
 						}
 					}
 				}
@@ -236,16 +238,14 @@ public class ReplaceRefactoring extends Refactoring {
 
 	private void collectMatches(Object object, SubMonitor progress) throws CoreException {
 		progress.checkCanceled();
-		if (object instanceof LineElement) {
-			LineElement lineElement= (LineElement) object;
+		if (object instanceof LineElement lineElement) {
 			FileMatch[] matches= lineElement.getMatches(fResult);
 			for (FileMatch fileMatch : matches) {
 				if (isMatchToBeIncluded(fileMatch)) {
 					getBucket(fileMatch.getFile()).add(fileMatch);
 				}
 			}
-		} else if (object instanceof IContainer) {
-			IContainer container= (IContainer) object;
+		} else if (object instanceof IContainer container) {
 			IResource[] members= container.members();
 			for (IResource member : members) {
 				collectMatches(member, progress);
@@ -353,7 +353,7 @@ public class ReplaceRefactoring extends Refactoring {
 		Collection<IFile> allFilesSet= fMatches.keySet();
 		IFile[] allFiles= allFilesSet.toArray(new IFile[allFilesSet.size()]);
 		Arrays.sort(allFiles, new Comparator<IFile>() {
-			private Collator fCollator= Collator.getInstance();
+			private final Collator fCollator= Collator.getInstance();
 			@Override
 			public int compare(IFile o1, IFile o2) {
 				String p1= o1.getFullPath().toString();
@@ -411,8 +411,9 @@ public class ReplaceRefactoring extends Refactoring {
 		ArrayList<IFile> readOnly= new ArrayList<>();
 		for (IFile file : filesToBeChanged) {
 			pm.checkCanceled();
-			if (file.isReadOnly())
+			if (file.isReadOnly()) {
 				readOnly.add(file);
+			}
 		}
 		IFile[] readOnlyFiles= readOnly.toArray(new IFile[readOnly.size()]);
 

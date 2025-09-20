@@ -18,26 +18,29 @@ package org.eclipse.search2.internal.ui.basic.views;
 import org.eclipse.jface.viewers.TableViewer;
 
 public class TableViewerNavigator implements INavigate {
-	private TableViewer fViewer;
+	private final TableViewer fViewer;
 	public TableViewerNavigator(TableViewer viewer) {
 		fViewer = viewer;
 	}
 	@Override
 	public void navigateNext(boolean forward) {
 		int itemCount = fViewer.getTable().getItemCount();
-		if (itemCount == 0)
+		if (itemCount == 0) {
 			return;
+		}
 		int[] selection = fViewer.getTable().getSelectionIndices();
 		int nextIndex = 0;
 		if (selection.length > 0) {
 			if (forward) {
 				nextIndex = selection[selection.length - 1] + 1;
-				if (nextIndex >= itemCount)
+				if (nextIndex >= itemCount) {
 					nextIndex = 0;
+				}
 			} else {
 				nextIndex = selection[0] - 1;
-				if (nextIndex < 0)
+				if (nextIndex < 0) {
 					nextIndex = itemCount - 1;
+				}
 			}
 		}
 		fViewer.getTable().setSelection(nextIndex);

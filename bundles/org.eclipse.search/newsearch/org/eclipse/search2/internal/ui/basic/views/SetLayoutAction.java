@@ -20,8 +20,8 @@ import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
 public class SetLayoutAction extends Action {
 
-	private AbstractTextSearchViewPage fPage;
-	private int fLayout;
+	private final AbstractTextSearchViewPage fPage;
+	private final int fLayout;
 
 	public SetLayoutAction(AbstractTextSearchViewPage page, String label, String tooltip, int layout) {
 		super(label,  IAction.AS_RADIO_BUTTON);

@@ -37,7 +37,7 @@ import org.eclipse.search.ui.text.MatchFilter;
 public class FileSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
 	private final Match[] EMPTY_ARR= new Match[0];
 
-	private FileSearchQuery fQuery;
+	private final FileSearchQuery fQuery;
 
 	public FileSearchResult(FileSearchQuery job) {
 		fQuery= job;
@@ -117,8 +117,9 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 
 	private static MatchFilter findMatchFilter(String id) {
 		for (MatchFilter matchFilter : ALL_MATCH_FILTERS) {
-			if (matchFilter.getID().equals(id))
+			if (matchFilter.getID().equals(id)) {
 				return matchFilter;
+			}
 		}
 		return null;
 	}
@@ -130,16 +131,16 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 
 	@Override
 	public IFile getFile(Object element) {
-		if (element instanceof IFile)
+		if (element instanceof IFile) {
 			return (IFile)element;
+		}
 		return null;
 	}
 
 	@Override
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		IEditorInput ei= editor.getEditorInput();
-		if (ei instanceof IFileEditorInput) {
-			IFileEditorInput fi= (IFileEditorInput) ei;
+		if (ei instanceof IFileEditorInput fi) {
 			return match.getElement().equals(fi.getFile());
 		}
 		return false;
@@ -148,8 +149,7 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		IEditorInput ei= editor.getEditorInput();
-		if (ei instanceof IFileEditorInput) {
-			IFileEditorInput fi= (IFileEditorInput) ei;
+		if (ei instanceof IFileEditorInput fi) {
 			return getMatches(fi.getFile());
 		}
 		return EMPTY_ARR;

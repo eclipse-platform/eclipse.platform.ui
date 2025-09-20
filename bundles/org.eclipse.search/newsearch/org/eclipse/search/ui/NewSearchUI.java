@@ -71,13 +71,14 @@ public class NewSearchUI {
 		if (query == null) {
 			throw new IllegalArgumentException("query must not be null"); //$NON-NLS-1$
 		}
-		if (query.canRunInBackground())
+		if (query.canRunInBackground()) {
 			runQueryInBackground(query);
-		else {
+		} else {
 			IStatus status= runQueryInForeground(null, query);
 			if (status != null) {
-				if (!status.isOK())
+				if (!status.isOK()) {
 					SearchPlugin.log(status);
+				}
 				if (status.getSeverity() == IStatus.ERROR) {
 					ErrorDialog.openError(SearchPlugin.getActiveWorkbenchShell(), SearchMessages.NewSearchUI_error_title, SearchMessages.NewSearchUI_error_label, status);
 				}
@@ -131,10 +132,11 @@ public class NewSearchUI {
 		if (query == null) {
 			throw new IllegalArgumentException("query must not be null"); //$NON-NLS-1$
 		}
-		if (query.canRunInBackground())
+		if (query.canRunInBackground()) {
 			InternalSearchUI.getInstance().runSearchInBackground(query, view);
-		else
+		} else {
 			throw new IllegalArgumentException("Query can not be run in background"); //$NON-NLS-1$
+		}
 	}
 
 	/**

@@ -130,8 +130,8 @@ public final class FileTextSearchScope extends TextSearchScope {
 	private final ThreadLocal<Matcher> fPositiveFileNameMatcher;
 	private final ThreadLocal<Matcher> fNegativeFileNameMatcher;
 
-	private boolean fVisitDerived;
-	private IWorkingSet[] fWorkingSets;
+	private final boolean fVisitDerived;
+	private final IWorkingSet[] fWorkingSets;
 
 	private FileTextSearchScope(String description, IResource[] resources, IWorkingSet[] workingSets, String[] fileNamePatterns, boolean visitDerived) {
 		fDescription= description;

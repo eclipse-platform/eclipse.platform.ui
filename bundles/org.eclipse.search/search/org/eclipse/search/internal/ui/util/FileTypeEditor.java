@@ -62,16 +62,18 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 	@Override
 	public void widgetDisposed(DisposeEvent event) {
 		Widget widget= event.widget;
-		if (widget == fTextField)
+		if (widget == fTextField) {
 			fTextField= null;
-		else if (widget	== fBrowseButton)
+		} else if (widget	== fBrowseButton) {
 			fBrowseButton= null;
+		}
 	}
 
 	@Override
 	public void widgetSelected(SelectionEvent event) {
-		if (event.widget == fBrowseButton)
+		if (event.widget == fBrowseButton) {
 			handleBrowseButton();
+		}
 	}
 
 	public String[] getFileTypes() {

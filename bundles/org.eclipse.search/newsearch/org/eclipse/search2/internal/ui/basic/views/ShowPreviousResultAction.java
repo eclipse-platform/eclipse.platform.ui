@@ -22,7 +22,7 @@ import org.eclipse.search2.internal.ui.SearchMessages;
 
 public class ShowPreviousResultAction extends Action {
 
-	private AbstractTextSearchViewPage fPage;
+	private final AbstractTextSearchViewPage fPage;
 
 	public ShowPreviousResultAction(AbstractTextSearchViewPage page) {
 		super(SearchMessages.ShowPreviousResultAction_label);

@@ -38,7 +38,7 @@ class SorterDescriptor {
 	private final static String LABEL_ATTRIBUTE= "label"; //$NON-NLS-1$
 	private final static String TOOLTIP_ATTRIBUTE= "tooltip"; //$NON-NLS-1$
 
-	private IConfigurationElement fElement;
+	private final IConfigurationElement fElement;
 
 	/**
 	 * Creates a new sorter node with the given configuration element.
@@ -81,8 +81,9 @@ class SorterDescriptor {
 	 */
 	public ImageDescriptor getImage() {
 		String imageName= fElement.getAttribute(ICON_ATTRIBUTE);
-		if (imageName == null)
+		if (imageName == null) {
 			return null;
+		}
 		Bundle bundle = Platform.getBundle(fElement.getContributor().getName());
 		return SearchPluginImages.createImageDescriptor(bundle, IPath.fromOSString(imageName), true);
 	}

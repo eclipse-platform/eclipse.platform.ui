@@ -154,46 +154,38 @@ abstract public class RetrieverAction extends Action {
 
 	final protected String extractSearchTextFromWidget(Control control) {
 		String sel= null;
-		if (control instanceof Combo) {
-			Combo combo= (Combo) control;
+		if (control instanceof Combo combo) {
 			sel= combo.getText();
 			Point selection= combo.getSelection();
 			sel= sel.substring(selection.x, selection.y);
 		}
-		if (control instanceof CCombo) {
-			CCombo combo= (CCombo) control;
+		if (control instanceof CCombo combo) {
 			sel= combo.getText();
 			Point selection= combo.getSelection();
 			sel= sel.substring(selection.x, selection.y);
 		}
-		else if (control instanceof Text) {
-			Text text= (Text) control;
+		else if (control instanceof Text text) {
 			sel= text.getSelectionText();
 		}
-		else if (control instanceof FormText) {
-			FormText text= (FormText) control;
+		else if (control instanceof FormText text) {
 			sel= text.getSelectionText();
 		}
-		else if (control instanceof StyledText) {
-			StyledText text= (StyledText) control;
+		else if (control instanceof StyledText text) {
 			sel= text.getSelectionText();
 		}
-		else if (control instanceof Tree) {
-			Tree tree= (Tree) control;
+		else if (control instanceof Tree tree) {
 			TreeItem[] s= tree.getSelection();
 			if (s.length > 0) {
 				sel= s[0].getText();
 			}
 		}
-		else if (control instanceof Table) {
-			Table tree= (Table) control;
+		else if (control instanceof Table tree) {
 			TableItem[] s= tree.getSelection();
 			if (s.length > 0) {
 				sel= s[0].getText();
 			}
 		}
-		else if (control instanceof List) {
-			List list= (List) control;
+		else if (control instanceof List list) {
 			String[] s= list.getSelection();
 			if (s.length > 0) {
 				sel= s[0];
@@ -223,8 +215,7 @@ abstract public class RetrieverAction extends Action {
 		if (editor instanceof ITextEditor) {
 			return (ITextEditor) editor;
 		} else
-			if (editor instanceof FormEditor) {
-				FormEditor me= (FormEditor) editor;
+			if (editor instanceof FormEditor me) {
 				editor= me.getActiveEditor();
 				if (editor instanceof ITextEditor) {
 					return (ITextEditor) editor;
@@ -317,8 +308,9 @@ abstract public class RetrieverAction extends Action {
 			}
 			if (searchFor == null) {
 				Control focus= page.getWorkbenchWindow().getShell().getDisplay().getFocusControl();
-				if (focus != null)
+				if (focus != null) {
 					searchFor= extractSearchTextFromWidget(focus);
+				}
 			}
 		}
 		return searchFor == null ? "" : searchFor; //$NON-NLS-1$

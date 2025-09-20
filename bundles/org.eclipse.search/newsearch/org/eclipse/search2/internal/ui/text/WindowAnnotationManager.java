@@ -27,10 +27,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
 public class WindowAnnotationManager {
-	private IWorkbenchWindow fWindow;
+	private final IWorkbenchWindow fWindow;
 	private Map<IEditorPart, EditorAnnotationManager> fAnnotationManagers;
-	private IPartListener2 fPartListener;
-	private ArrayList<AbstractTextSearchResult> fSearchResults;
+	private final IPartListener2 fPartListener;
+	private final ArrayList<AbstractTextSearchResult> fSearchResults;
 
 	public WindowAnnotationManager(IWorkbenchWindow window) {
 		fWindow = window;
@@ -83,8 +83,9 @@ public class WindowAnnotationManager {
 	}
 
 	private void startHighlighting(IEditorPart editor) {
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 		EditorAnnotationManager mgr= fAnnotationManagers.get(editor);
 		if (mgr == null) {
 			mgr= new EditorAnnotationManager(editor);
@@ -94,8 +95,9 @@ public class WindowAnnotationManager {
 	}
 
 	private void updateHighlighting(IEditorPart editor) {
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 		EditorAnnotationManager mgr= fAnnotationManagers.get(editor);
 		if (mgr != null) {
 			mgr.doEditorInputChanged();
@@ -117,11 +119,13 @@ public class WindowAnnotationManager {
 	}
 
 	private void stopHighlighting(IEditorPart editor) {
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 		EditorAnnotationManager mgr= fAnnotationManagers.remove(editor);
-		if (mgr != null)
+		if (mgr != null) {
 			mgr.dispose();
+		}
 	}
 
 	private IEditorPart getEditor(IWorkbenchPartReference partRef) {

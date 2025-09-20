@@ -105,7 +105,7 @@ public interface ISearchPageContainer {
 	 * Sets the selected scope of this search page container. The scope is
 	 * WORKSPACE_SCOPE, SELECTED_PROJECTS_SCOPE, SELECTION_SCOPE,
 	 * OPENED_EDITORS_SCOPE or WORKING_SET_SCOPE.
-	 * 
+	 *
 	 * @param scope
 	 *            the newly selected scope
 	 *

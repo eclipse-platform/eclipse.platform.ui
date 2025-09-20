@@ -20,7 +20,7 @@ import org.eclipse.search.ui.ISearchResult;
 
 public class CancelSearchAction extends Action {
 
-	private SearchView fView;
+	private final SearchView fView;
 
 	public CancelSearchAction(SearchView view) {
 		super(SearchMessages.CancelSearchAction_label);

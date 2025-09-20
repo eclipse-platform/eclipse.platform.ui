@@ -65,10 +65,11 @@ public class MatchEvent extends SearchResultEvent {
 	 * @return the matches this event is about
 	 */
 	public Match[] getMatches() {
-		if (fMatches != null)
+		if (fMatches != null) {
 			return fMatches;
-		else
+		} else {
 			return fgEmtpyMatches;
+		}
 	}
 
 	/**
