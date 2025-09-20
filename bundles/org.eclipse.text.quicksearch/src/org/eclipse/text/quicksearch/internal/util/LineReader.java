@@ -48,7 +48,7 @@ public class LineReader implements AutoCloseable{
 	}
 
 
-	private StringBuilder line = new StringBuilder(EXPECTED_LINE_LENGTH);
+	private final StringBuilder line = new StringBuilder(EXPECTED_LINE_LENGTH);
 
 	private final int maxLineLength;
 	private int lineOffset = -1; //Start pos of last line read.

@@ -36,7 +36,7 @@ public class QuickSearchPreferences {
 	public static final String MAX_RESULTS = "QuickTextSearcher.MAX_RESULTS"; //$NON-NLS-1$
 	private static boolean initializedDefaults;
 
-	private IPreferenceStore store;
+	private final IPreferenceStore store;
 
 	public QuickSearchPreferences(IPreferenceStore preferenceStore) {
 		this.store = preferenceStore;

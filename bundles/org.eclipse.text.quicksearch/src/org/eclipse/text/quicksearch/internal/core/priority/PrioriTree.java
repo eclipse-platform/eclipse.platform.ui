@@ -59,7 +59,7 @@ public class PrioriTree extends DefaultPriorityFunction {
 	 * <p>
 	 * Level is used to easily check whether a node lookup returned an exact matching node or an ancestor.
 	 */
-	private int level;
+	private final int level;
 
 	/**
 	 * Priority assigned to any path lookup that ends here.

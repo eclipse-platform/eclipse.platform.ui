@@ -80,18 +80,22 @@ public class LineItem {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		LineItem other = (LineItem) obj;
 		if (!Objects.equals(f, other.f)) {
 			return false;
 		}
-		if (lineNumber != other.lineNumber)
+		if (lineNumber != other.lineNumber) {
 			return false;
+		}
 		return true;
 	}
 
