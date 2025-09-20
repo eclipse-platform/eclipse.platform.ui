@@ -76,10 +76,11 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 		if (position.getOffset() > -1 && position.getLength() > -1) {
 			try {
 				int captionOffset;
-				if (position instanceof IProjectionPosition)
+				if (position instanceof IProjectionPosition) {
 					captionOffset= ((IProjectionPosition) position).computeCaptionOffset(document);
-				else
+				} else {
 					captionOffset= 0;
+				}
 				int startLine= document.getLineOfOffset(position.getOffset() + captionOffset);
 				return line == startLine;
 			} catch (BadLocationException x) {
@@ -91,11 +92,9 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 	private String getProjectionTextAtLine(ISourceViewer viewer, int line, int numberOfLines) {
 
 		IAnnotationModel model= null;
-		if (viewer instanceof ISourceViewerExtension2) {
-			ISourceViewerExtension2 viewerExtension= (ISourceViewerExtension2) viewer;
+		if (viewer instanceof ISourceViewerExtension2 viewerExtension) {
 			IAnnotationModel visual= viewerExtension.getVisualAnnotationModel();
-			if (visual instanceof IAnnotationModelExtension) {
-				IAnnotationModelExtension modelExtension= (IAnnotationModelExtension) visual;
+			if (visual instanceof IAnnotationModelExtension modelExtension) {
 				model= modelExtension.getAnnotationModel(ProjectionSupport.PROJECTION);
 			}
 		}
@@ -106,15 +105,18 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 				Iterator<Annotation> e= model.getAnnotationIterator();
 				while (e.hasNext()) {
 					ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
-					if (!annotation.isCollapsed())
+					if (!annotation.isCollapsed()) {
 						continue;
+					}
 
 					Position position= model.getPosition(annotation);
-					if (position == null)
+					if (position == null) {
 						continue;
+					}
 
-					if (isCaptionLine(position, document, line))
+					if (isCaptionLine(position, document, line)) {
 						return getText(document, position.getOffset(), position.getLength(), numberOfLines);
+					}
 
 				}
 			} catch (BadLocationException x) {

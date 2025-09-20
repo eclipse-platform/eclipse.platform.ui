@@ -89,10 +89,11 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 
 		try {
 			fIsReplacing= true;
-			if (! fDelayedInformationSet)
+			if (! fDelayedInformationSet) {
 				fReplacableInformation= information;
-			else
+			} else {
 				takeFocus= true; // delayed input has been set, so the original info control must have been focused
+			}
 			fContentBounds= contentBounds;
 			fReplaceableArea= subjectArea;
 
@@ -117,8 +118,9 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 			return;
 		}
 
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("InformationControlReplacer: no active replaceable"); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -136,10 +138,11 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 		// Caveat: some IInformationControls fail unless setSizeConstraints(..) is called with concrete values
 		informationControl.setSizeConstraints(controlBounds.width, controlBounds.height);
 
-		if (informationControl instanceof IInformationControlExtension2)
+		if (informationControl instanceof IInformationControlExtension2) {
 			((IInformationControlExtension2) informationControl).setInput(information);
-		else
+		} else {
 			informationControl.setInformation(information.toString());
+		}
 
 		// need to recompute the bounds because trim might have changed based on input
 		controlBounds= computeBoundsFromContent(informationControl, fContentBounds);
@@ -153,8 +156,7 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 	private Rectangle computeBoundsFromContent(IInformationControl informationControl, Rectangle controlBounds) {
 		Rectangle result= Geometry.copy(controlBounds);
 
-		if (informationControl instanceof IInformationControlExtension3) {
-			IInformationControlExtension3 iControl3= (IInformationControlExtension3) informationControl;
+		if (informationControl instanceof IInformationControlExtension3 iControl3) {
 			Rectangle trim= iControl3.computeTrim();
 			result= Geometry.add(result, trim);
 

@@ -100,19 +100,22 @@ public final class JFaceTextUtil {
 		int bottom= widget.getLineIndex(lastPixel);
 
 		// bottom is the first line - no more checking
-		if (bottom == 0)
+		if (bottom == 0) {
 			return bottom;
+		}
 
 		int pixel= widget.getLinePixel(bottom);
 		// bottom starts on or before the client area start - bottom is the only visible line
-		if (pixel <= 0)
+		if (pixel <= 0) {
 			return bottom;
+		}
 
 		int height= computeLineHeight(widget, bottom);
 
 		// bottom is not showing entirely - use the previous line
-		if (pixel + height - 1 > lastPixel)
+		if (pixel + height - 1 > lastPixel) {
 			return bottom - 1;
+		}
 
 		// bottom is fully visible and its last line is exactly the last pixel
 		return bottom;
@@ -129,8 +132,9 @@ public final class JFaceTextUtil {
 		int top= widget.getTopIndex();
 		int pixels= widget.getLinePixel(top);
 
-		if (pixels > 0)
+		if (pixels > 0) {
 			top--;
+		}
 
 		return top;
 	}
@@ -199,8 +203,9 @@ public final class JFaceTextUtil {
 	public static ILineRange getVisibleModelLines(ITextViewer viewer) {
 		int top= getPartialTopIndex(viewer);
 		int bottom= getPartialBottomIndex(viewer);
-		if (top == -1 || bottom == -1)
+		if (top == -1 || bottom == -1) {
 			return null;
+		}
 		return new LineRange(top, bottom - top + 1);
 	}
 
@@ -216,15 +221,15 @@ public final class JFaceTextUtil {
 	 */
 	public static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
 		int modelLine;
-		if (viewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+		if (viewer instanceof ITextViewerExtension5 extension) {
 			modelLine= extension.widgetLine2ModelLine(widgetLine);
 		} else {
 			try {
 				IRegion r= viewer.getVisibleRegion();
 				IDocument d= viewer.getDocument();
-				if (d == null)
+				if (d == null) {
 					return -1;
+				}
 				modelLine= widgetLine + d.getLineOfOffset(r.getOffset());
 			} catch (BadLocationException x) {
 				modelLine= widgetLine;
@@ -245,21 +250,22 @@ public final class JFaceTextUtil {
 	 */
 	public static int modelLineToWidgetLine(ITextViewer viewer, final int modelLine) {
 		int widgetLine;
-		if (viewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+		if (viewer instanceof ITextViewerExtension5 extension) {
 			widgetLine= extension.modelLine2WidgetLine(modelLine);
 		} else {
 			IRegion region= viewer.getVisibleRegion();
 			IDocument document= viewer.getDocument();
-			if (document == null)
+			if (document == null) {
 				return -1;
+			}
 			try {
 				int visibleStartLine= document.getLineOfOffset(region.getOffset());
 				int visibleEndLine= document.getLineOfOffset(region.getOffset() + region.getLength());
-				if (modelLine < visibleStartLine || modelLine > visibleEndLine)
+				if (modelLine < visibleStartLine || modelLine > visibleEndLine) {
 					widgetLine= -1;
-				else
-				widgetLine= modelLine - visibleStartLine;
+				} else {
+					widgetLine= modelLine - visibleStartLine;
+				}
 			} catch (BadLocationException x) {
 				// ignore and return -1
 				widgetLine= -1;
@@ -343,9 +349,9 @@ public final class JFaceTextUtil {
 
 		StyledText styledText= textViewer.getTextWidget();
 		Rectangle bounds;
-		if (end > 0 && start < end)
+		if (end > 0 && start < end) {
 			bounds= styledText.getTextBounds(start, end - 1);
-		else {
+		} else {
 			Point loc= styledText.getLocationAtOffset(start);
 			bounds= new Rectangle(loc.x, loc.y, getAverageCharWidth(textViewer.getTextWidget()),
 					computeLineHeight(styledText, styledText.getLineAtOffset(start)));
@@ -365,16 +371,16 @@ public final class JFaceTextUtil {
 	 * @since 3.4
 	 */
 	private static IRegion modelRange2WidgetRange(IRegion region, ITextViewer textViewer) {
-		if (textViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) textViewer;
+		if (textViewer instanceof ITextViewerExtension5 extension) {
 			return extension.modelRange2WidgetRange(region);
 		}
 
 		IRegion visibleRegion= textViewer.getVisibleRegion();
 		int start= region.getOffset() - visibleRegion.getOffset();
 		int end= start + region.getLength();
-		if (end > visibleRegion.getLength())
+		if (end > visibleRegion.getLength()) {
 			end= visibleRegion.getLength();
+		}
 
 		return new Region(start, end - start);
 	}
@@ -451,8 +457,7 @@ public final class JFaceTextUtil {
 				widgetOffset--;
 			}
 
-			if (viewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5)viewer;
+			if (viewer instanceof ITextViewerExtension5 extension) {
 				return extension.widgetOffset2ModelOffset(widgetOffset);
 			}
 

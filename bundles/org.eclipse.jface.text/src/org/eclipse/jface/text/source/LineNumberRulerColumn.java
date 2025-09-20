@@ -70,8 +70,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		public void textChanged(TextEvent event) {
 
 			boolean fCachedRedrawState= event.getViewerRedrawState();
-			if (!fCachedRedrawState)
+			if (!fCachedRedrawState) {
 				return;
+			}
 
 			if (updateNumberOfDigits()) {
 				computeIndentations();
@@ -145,10 +146,10 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				IDocument document= fCachedTextViewer.getDocument();
 				int lineNumber= fParentRuler.getLineOfLastMouseButtonActivity();
 				final StyledText textWidget= fCachedTextViewer.getTextWidget();
-				if (textWidget != null && !textWidget.isFocusControl())
+				if (textWidget != null && !textWidget.isFocusControl()) {
 					textWidget.setFocus();
-				if (expandExistingSelection && fCachedTextViewer instanceof ITextViewerExtension5 && textWidget != null) {
-					ITextViewerExtension5 extension5= ((ITextViewerExtension5)fCachedTextViewer);
+				}
+				if (expandExistingSelection && fCachedTextViewer instanceof ITextViewerExtension5 extension5 && textWidget != null) {
 					// Find model cursor position
 					int widgetCaret= textWidget.getCaretOffset();
 					int modelCaret= extension5.widgetOffset2ModelOffset(widgetCaret);
@@ -206,9 +207,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 				int offset;
 
-				if (relativePosition.x < 0)
+				if (relativePosition.x < 0) {
 					offset= lineInfo.getOffset();
-				else {
+				} else {
 					int widgetOffset= fCachedTextWidget.getOffsetAtPoint(relativePosition);
 					if (widgetOffset != -1) {
 						Point p= fCachedTextWidget.getLocationAtOffset(widgetOffset);
@@ -217,8 +218,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 						}
 
 						// Convert to model offset
-						if (fCachedTextViewer instanceof ITextViewerExtension5) {
-							ITextViewerExtension5 extension= (ITextViewerExtension5)fCachedTextViewer;
+						if (fCachedTextViewer instanceof ITextViewerExtension5 extension) {
 							offset= extension.widgetOffset2ModelOffset(widgetOffset);
 						} else {
 							offset= widgetOffset + fCachedTextViewer.getVisibleRegion().getOffset();
@@ -228,27 +228,29 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 						// Convert to widget offset
 						int lineEndWidgetOffset;
-						if (fCachedTextViewer instanceof ITextViewerExtension5) {
-							ITextViewerExtension5 extension= (ITextViewerExtension5)fCachedTextViewer;
+						if (fCachedTextViewer instanceof ITextViewerExtension5 extension) {
 							lineEndWidgetOffset= extension.modelOffset2WidgetOffset(lineEndOffset);
-						} else
+						} else {
 							lineEndWidgetOffset= lineEndOffset - fCachedTextViewer.getVisibleRegion().getOffset();
+						}
 
 						Point p= fCachedTextWidget.getLocationAtOffset(lineEndWidgetOffset);
-						if (p.x < relativePosition.x)
+						if (p.x < relativePosition.x) {
 							offset= lineEndOffset;
-						else
+						} else {
 							offset= lineInfo.getOffset();
+						}
 					}
 				}
 
 				int start= Math.min(fStartLineOffset, offset);
 				int end= Math.max(fStartLineOffset, offset);
 
-				if (lineNumber < fStartLineNumber)
+				if (lineNumber < fStartLineNumber) {
 					fCachedTextViewer.setSelectedRange(end, start - end);
-				else
+				} else {
 					fCachedTextViewer.setSelectedRange(start, end - start);
+				}
 
 			} catch (BadLocationException x) {
 			}
@@ -291,8 +293,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 */
 		private void autoScroll(int direction) {
 
-			if (fAutoScrollDirection == direction)
+			if (fAutoScrollDirection == direction) {
 				return;
+			}
 
 			final int TIMER_INTERVAL= 5;
 			final Display display= fCanvas.getDisplay();
@@ -363,7 +366,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	/** The drawable for double buffering */
 	private Image fBuffer;
 	/** The internal listener */
-	private ITextListener fInternalListener= new InternalListener();
+	private final ITextListener fInternalListener= new InternalListener();
 	/** The font of this column */
 	private Font fFont;
 	/** The indentation cache */
@@ -390,7 +393,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * Redraw runnable lock
 	 * @since 3.0
 	 */
-	private Object fRunnableLock= new Object();
+	private final Object fRunnableLock= new Object();
 	/**
 	 * Redraw runnable state
 	 * @since 3.0
@@ -400,7 +403,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * Redraw runnable
 	 * @since 3.0
 	 */
-	private Runnable fRunnable= () -> {
+	private final Runnable fRunnable= () -> {
 		synchronized (fRunnableLock) {
 			fIsRunnablePosted= false;
 		}
@@ -414,7 +417,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 *
 	 * @since 3.13
 	 */
-	private Consumer<StyledText> lineHeightChangeHandler= t -> postRedraw();
+	private final Consumer<StyledText> lineHeightChangeHandler= t -> postRedraw();
 
 	/**
 	 * Constructs a new vertical ruler column.
@@ -448,8 +451,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 */
 	public void setBackground(Color background) {
 		fBackground= background;
-		if (fCanvas != null && !fCanvas.isDisposed())
+		if (fCanvas != null && !fCanvas.isDisposed()) {
 			fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
+		}
 	}
 
 	/**
@@ -459,8 +463,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @return the System background color for list widgets
 	 */
 	protected Color getBackground(Display display) {
-		if (fBackground == null)
+		if (fBackground == null) {
 			return display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		}
 		return fBackground;
 	}
 
@@ -487,8 +492,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.0
 	 */
 	protected boolean updateNumberOfDigits() {
-		if (fCachedTextViewer == null)
+		if (fCachedTextViewer == null) {
 			return false;
+		}
 
 		int digits= computeNumberOfDigits();
 
@@ -530,11 +536,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 
 		fRelayoutRequired= false;
-		if (fCachedTextViewer instanceof ITextViewerExtension) {
-			ITextViewerExtension extension= (ITextViewerExtension) fCachedTextViewer;
+		if (fCachedTextViewer instanceof ITextViewerExtension extension) {
 			Control control= extension.getControl();
-			if (control instanceof Composite && !control.isDisposed()) {
-				Composite composite= (Composite) control;
+			if (control instanceof Composite composite && !control.isDisposed()) {
 				composite.layout(true);
 			}
 		}
@@ -545,8 +549,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * <code>fIndentation</code>.
 	 */
 	protected void computeIndentations() {
-		if (fCanvas == null || fCanvas.isDisposed())
+		if (fCanvas == null || fCanvas.isDisposed()) {
 			return;
+		}
 
 		GC gc= new GC(fCanvas);
 		try {
@@ -596,9 +601,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			@Override
 			public void addMouseListener(MouseListener listener) {
 				// see bug 40889, bug 230073 and AnnotationRulerColumn#isPropagatingMouseListener()
-				if (listener == fMouseHandler)
+				if (listener == fMouseHandler) {
 					super.addMouseListener(listener);
-				else {
+				} else {
 					addTypedListener(listener, SWT.MouseDoubleClick);
 				}
 			}
@@ -607,8 +612,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fCanvas.setForeground(fForeground);
 
 		fCanvas.addPaintListener(event -> {
-			if (fCachedTextViewer != null)
+			if (fCachedTextViewer != null) {
 				doubleBufferPaint(event.gc);
+			}
 		});
 
 		fCanvas.addDisposeListener(e -> {
@@ -636,12 +642,14 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fCachedTextViewer.addTextListener(fInternalListener);
 
 		if (fFont == null) {
-			if (!fCachedTextWidget.isDisposed())
+			if (!fCachedTextWidget.isDisposed()) {
 				fFont= fCachedTextWidget.getFont();
+			}
 		}
 
-		if (fFont != null)
+		if (fFont != null) {
 			fCanvas.setFont(fFont);
+		}
 
 		updateNumberOfDigits();
 		computeIndentations();
@@ -853,8 +861,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		int lastLine= end(visibleLines);
 		for (int line= visibleLines.getStartLine(); line < lastLine; line++) {
 			int widgetLine= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, line);
-			if (widgetLine == -1)
+			if (widgetLine == -1) {
 				continue;
+			}
 
 			final int offsetAtLine= fCachedTextWidget.getOffsetAtLine(widgetLine);
 			int lineHeight = JFaceTextUtil.computeLineHeight(fCachedTextWidget, widgetLine, widgetLine + 1, 1);
@@ -865,14 +874,16 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				y+= lineHeight;
 			} else {
 				int charCount= fCachedTextWidget.getCharCount();
-				if (offsetAtLine == charCount)
+				if (offsetAtLine == charCount) {
 					continue;
+				}
 
 				// end of wrapped line
 				final int offsetEnd= offsetAtLine + fCachedTextWidget.getLine(widgetLine).length();
 
-				if (offsetEnd == charCount)
+				if (offsetEnd == charCount) {
 					continue;
+				}
 
 				// use height of text bounding because bounds.width changes on word wrap
 				y+= fCachedTextWidget.getTextBounds(offsetAtLine, offsetEnd).height;
@@ -962,8 +973,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			Display d= fCanvas.getDisplay();
 			if (d != null) {
 				synchronized (fRunnableLock) {
-					if (fIsRunnablePosted)
+					if (fIsRunnablePosted) {
 						return;
+					}
 					fIsRunnablePosted= true;
 				}
 				d.asyncExec(fRunnable);
@@ -1027,8 +1039,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.10
 	 */
 	void handleMouseScrolled(MouseEvent e) {
-		if (fCachedTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
+		if (fCachedTextViewer instanceof ITextViewerExtension5 extension) {
 			StyledText textWidget= fCachedTextViewer.getTextWidget();
 			int topIndex= textWidget.getTopIndex();
 			int newTopIndex= Math.max(0, topIndex - e.count);

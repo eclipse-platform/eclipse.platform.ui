@@ -60,11 +60,11 @@ public final class ContextInformation implements IContextInformation {
 
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof IContextInformation) {
-			IContextInformation contextInformation= (IContextInformation) object;
+		if (object instanceof IContextInformation contextInformation) {
 			boolean equals= fInformationDisplayString.equalsIgnoreCase(contextInformation.getInformationDisplayString());
-			if (fContextDisplayString != null)
+			if (fContextDisplayString != null) {
 				equals= equals && fContextDisplayString.equalsIgnoreCase(contextInformation.getContextDisplayString());
+			}
 			return equals;
 		}
 		return false;
@@ -88,8 +88,9 @@ public final class ContextInformation implements IContextInformation {
 
 	@Override
 	public String getContextDisplayString() {
-		if (fContextDisplayString != null)
+		if (fContextDisplayString != null) {
 			return fContextDisplayString;
+		}
 		return fInformationDisplayString;
 	}
 }

@@ -107,8 +107,7 @@ public class InlinedAnnotationSupport {
 			((IAnnotationModelExtension2) annotationModel)
 					.getAnnotationIterator(region.getOffset(), region.getLength(), true, true)
 					.forEachRemaining(annotation -> {
-						if (annotation instanceof LineContentAnnotation) {
-							LineContentAnnotation ann= (LineContentAnnotation) annotation;
+						if (annotation instanceof LineContentAnnotation ann) {
 							StyleRange style= ann.updateStyle(null, fFontMetrics, fViewer, isAfterPosition(ann));
 							if (style != null) {
 								if (fViewer instanceof ITextViewerExtension5 projectionViewer) {
@@ -510,8 +509,9 @@ public class InlinedAnnotationSupport {
 	private Object getLockObject(IAnnotationModel annotationModel) {
 		if (annotationModel instanceof ISynchronizable) {
 			Object lock= ((ISynchronizable) annotationModel).getLockObject();
-			if (lock != null)
+			if (lock != null) {
 				return lock;
+			}
 		}
 		return annotationModel;
 	}
@@ -522,16 +522,18 @@ public class InlinedAnnotationSupport {
 	private void removeInlinedAnnotations() {
 
 		IAnnotationModel annotationModel= fViewer.getAnnotationModel();
-		if (annotationModel == null || fInlinedAnnotations == null)
+		if (annotationModel == null || fInlinedAnnotations == null) {
 			return;
+		}
 
 		synchronized (getLockObject(annotationModel)) {
 			if (annotationModel instanceof IAnnotationModelExtension) {
 				((IAnnotationModelExtension) annotationModel).replaceAnnotations(
 						fInlinedAnnotations.toArray(new Annotation[fInlinedAnnotations.size()]), null);
 			} else {
-				for (AbstractInlinedAnnotation annotation : fInlinedAnnotations)
+				for (AbstractInlinedAnnotation annotation : fInlinedAnnotations) {
 					annotationModel.removeAnnotation(annotation);
+				}
 			}
 			fInlinedAnnotations= null;
 		}
@@ -591,16 +593,19 @@ public class InlinedAnnotationSupport {
 		Device device= styledText.getDisplay();
 		switch (style) {
 			case SWT.BOLD:
-				if (boldFont != null)
+				if (boldFont != null) {
 					return boldFont;
+				}
 				return boldFont= new Font(device, getFontData(style));
 			case SWT.ITALIC:
-				if (italicFont != null)
+				if (italicFont != null) {
 					return italicFont;
+				}
 				return italicFont= new Font(device, getFontData(style));
 			case SWT.BOLD | SWT.ITALIC:
-				if (boldItalicFont != null)
+				if (boldItalicFont != null) {
 					return boldItalicFont;
+				}
 				return boldItalicFont= new Font(device, getFontData(style));
 			default:
 				return regularFont;
@@ -625,12 +630,15 @@ public class InlinedAnnotationSupport {
 	 * Dispose the font.
 	 */
 	void disposeFont() {
-		if (boldFont != null)
+		if (boldFont != null) {
 			boldFont.dispose();
-		if (italicFont != null)
+		}
+		if (italicFont != null) {
 			italicFont.dispose();
-		if (boldItalicFont != null)
+		}
+		if (boldItalicFont != null) {
 			boldItalicFont.dispose();
+		}
 		boldFont= italicFont= boldItalicFont= null;
 	}
 

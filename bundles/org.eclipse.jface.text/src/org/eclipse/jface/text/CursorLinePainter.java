@@ -45,9 +45,9 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 	private IPaintPositionManager fPositionManager;
 
 	/** Keeps track of the line to be painted */
-	private Position fCurrentLine= new Position(0, 0);
+	private final Position fCurrentLine= new Position(0, 0);
 	/** Keeps track of the line to be cleared */
-	private Position fLastLine= new Position(0, 0);
+	private final Position fLastLine= new Position(0, 0);
 	/** Keeps track of the line number of the last painted line */
 	private int fLastLineNumber= -1;
 	/** Indicates whether this painter is active */
@@ -81,8 +81,9 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 			int caret= textWidget.getCaretOffset();
 			int length= event.lineText.length();
 
-			if (event.lineOffset <= caret && caret <= event.lineOffset + length && !hasMultiLineSelection(textWidget))
+			if (event.lineOffset <= caret && caret <= event.lineOffset + length && !hasMultiLineSelection(textWidget)) {
 				event.lineBackground= fHighlightColor;
+			}
 		}
 	}
 
@@ -113,10 +114,11 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 				}
 
 				fCurrentLine.offset= document.getLineOffset(lineNumber);
-				if (lineNumber == document.getNumberOfLines() - 1)
+				if (lineNumber == document.getNumberOfLines() - 1) {
 					fCurrentLine.length= document.getLength() - fCurrentLine.offset;
-				else
+				} else {
 					fCurrentLine.length= document.getLineOffset(lineNumber + 1) - fCurrentLine.offset;
+				}
 
 				fLastLineNumber= lineNumber;
 				return true;
@@ -137,8 +139,7 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 	 */
 	private int getModelCaret() {
 		int widgetCaret= fViewer.getTextWidget().getCaretOffset();
-		if (fViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
+		if (fViewer instanceof ITextViewerExtension5 extension) {
 			return extension.widgetOffset2ModelOffset(widgetCaret);
 		}
 		IRegion visible= fViewer.getVisibleRegion();
@@ -153,23 +154,25 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 	private void drawHighlightLine(Position position) {
 
 		// if the position that is about to be drawn was deleted then we can't
-		if (position.isDeleted())
+		if (position.isDeleted()) {
 			return;
+		}
 
 		int widgetOffset= 0;
-		if (fViewer instanceof ITextViewerExtension5) {
+		if (fViewer instanceof ITextViewerExtension5 extension) {
 
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
 			widgetOffset= extension.modelOffset2WidgetOffset(position.getOffset());
-			if (widgetOffset == -1)
+			if (widgetOffset == -1) {
 				return;
+			}
 
 		} else {
 
 			IRegion visible= fViewer.getVisibleRegion();
 			widgetOffset= position.getOffset() - visible.getOffset();
-			if (widgetOffset < 0 || visible.getLength() < widgetOffset )
+			if (widgetOffset < 0 || visible.getLength() < widgetOffset ) {
 				return;
+			}
 		}
 
 		StyledText textWidget= fViewer.getTextWidget();
@@ -204,13 +207,15 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 			/* on turning off the feature one has to paint the currently
 			 * highlighted line with the standard background color
 			 */
-			if (redraw)
+			if (redraw) {
 				drawHighlightLine(fCurrentLine);
+			}
 
 			fViewer.getTextWidget().removeLineBackgroundListener(this);
 
-			if (fPositionManager != null)
+			if (fPositionManager != null) {
 				fPositionManager.unmanagePosition(fCurrentLine);
+			}
 
 			fLastLineNumber= -1;
 			fCurrentLine.offset= 0;

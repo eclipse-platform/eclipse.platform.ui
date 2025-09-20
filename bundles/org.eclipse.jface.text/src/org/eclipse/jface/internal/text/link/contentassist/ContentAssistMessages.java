@@ -78,8 +78,9 @@ class ContentAssistMessages {
 		} catch (MissingResourceException e) {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
-		if (arg == null)
+		if (arg == null) {
 			arg= ""; //$NON-NLS-1$
+		}
 		return MessageFormat.format(format, arg);
 	}
 }

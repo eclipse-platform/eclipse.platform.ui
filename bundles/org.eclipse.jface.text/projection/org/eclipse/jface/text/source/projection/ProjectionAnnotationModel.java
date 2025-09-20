@@ -48,8 +48,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	 * @param annotation the annotation
 	 */
 	public void collapse(Annotation annotation) {
-		if (annotation instanceof ProjectionAnnotation) {
-			ProjectionAnnotation projection= (ProjectionAnnotation) annotation;
+		if (annotation instanceof ProjectionAnnotation projection) {
 			if (!projection.isCollapsed()) {
 				projection.markCollapsed();
 				modifyAnnotation(projection, true);
@@ -64,8 +63,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	 * @param annotation the annotation
 	 */
 	public void expand(Annotation annotation) {
-		if (annotation instanceof ProjectionAnnotation) {
-			ProjectionAnnotation projection= (ProjectionAnnotation) annotation;
+		if (annotation instanceof ProjectionAnnotation projection) {
 			if (projection.isCollapsed()) {
 				projection.markExpanded();
 				modifyAnnotation(projection, true);
@@ -80,13 +78,12 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	 * @param annotation the annotation
 	 */
 	public void toggleExpansionState(Annotation annotation) {
-		if (annotation instanceof ProjectionAnnotation) {
-			ProjectionAnnotation projection= (ProjectionAnnotation) annotation;
-
-			if (projection.isCollapsed())
+		if (annotation instanceof ProjectionAnnotation projection) {
+			if (projection.isCollapsed()) {
 				projection.markExpanded();
-			else
+			} else {
 				projection.markCollapsed();
+			}
 
 			modifyAnnotation(projection, true);
 		}
@@ -129,8 +126,9 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 			}
 		}
 
-		if (collapsing)
+		if (collapsing) {
 			fireModelChanged();
+		}
 
 		return collapsing;
 	}
@@ -166,8 +164,9 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 			}
 		}
 
-		if (expanding && fireModelChanged)
+		if (expanding && fireModelChanged) {
 			fireModelChanged();
+		}
 
 		return expanding;
 	}

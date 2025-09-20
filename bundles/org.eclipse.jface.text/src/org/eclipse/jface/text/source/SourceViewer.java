@@ -124,8 +124,9 @@ public class SourceViewer extends TextViewer
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			Control[] children= composite.getChildren();
 			Point s= children[children.length - 1].computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-			if (fVerticalRuler != null && fIsVerticalRulerVisible)
+			if (fVerticalRuler != null && fIsVerticalRulerVisible) {
 				s.x += fVerticalRuler.getWidth() + fGap;
+			}
 			return s;
 		}
 
@@ -136,8 +137,9 @@ public class SourceViewer extends TextViewer
 			Rectangle trim= textWidget.computeTrim(0, 0, 0, 0);
 			int topTrim= - trim.y;
 			int scrollbarHeight= trim.height - topTrim; // horizontal scroll bar is only under the client area
-			if ((textWidget.getScrollbarsMode() & SWT.SCROLLBAR_OVERLAY) != 0)
+			if ((textWidget.getScrollbarsMode() & SWT.SCROLLBAR_OVERLAY) != 0) {
 				scrollbarHeight= 0;
+			}
 
 			int x= clArea.x;
 			int width= clArea.width;
@@ -155,11 +157,13 @@ public class SourceViewer extends TextViewer
 				final Control verticalRulerControl= fVerticalRuler.getControl();
 				int oldWidth= verticalRulerControl.getBounds().width;
 				int rulerHeight= clArea.height - topTrim;
-				if (hScrollVisible)
+				if (hScrollVisible) {
 					rulerHeight-= scrollbarHeight;
+				}
 				verticalRulerControl.setBounds(clArea.x, clArea.y + topTrim, verticalRulerWidth, rulerHeight);
-				if (flushCache && getVisualAnnotationModel() != null && oldWidth == verticalRulerWidth)
+				if (flushCache && getVisualAnnotationModel() != null && oldWidth == verticalRulerWidth) {
 					verticalRulerControl.redraw();
+				}
 
 				x += verticalRulerWidth + fGap;
 				width -= verticalRulerWidth + fGap;
@@ -168,8 +172,9 @@ public class SourceViewer extends TextViewer
 			textWidget.setBounds(x, clArea.y, width, clArea.height);
 
 			if (overviewRulerWidth != -1) {
-				if (scrollbarHeight <= 0)
+				if (scrollbarHeight <= 0) {
 					scrollbarHeight= overviewRulerWidth;
+				}
 
 				int bottomOffset= clArea.y + clArea.height - scrollbarHeight;
 				int[] arrowHeights= getVerticalScrollArrowHeights(textWidget, bottomOffset);
@@ -209,8 +214,9 @@ public class SourceViewer extends TextViewer
 		 */
 		private int[] getVerticalScrollArrowHeights(StyledText textWidget, int bottomOffset) {
 			ScrollBar verticalBar= textWidget.getVerticalBar();
-			if (verticalBar == null || !verticalBar.getVisible())
+			if (verticalBar == null || !verticalBar.getVisible()) {
 				return new int[] { 0, 0 };
+			}
 
 			int[] arrowHeights= computeScrollArrowHeights(textWidget, bottomOffset);
 			if (arrowHeights[0] > 0 || arrowHeights[1] > 0) {
@@ -445,10 +451,12 @@ public class SourceViewer extends TextViewer
 
 		super.createControl(parent, styles);
 
-		if (fVerticalRuler != null)
+		if (fVerticalRuler != null) {
 			fVerticalRuler.createControl(fComposite, this);
-		if (fOverviewRuler != null)
+		}
+		if (fOverviewRuler != null) {
 			fOverviewRuler.createControl(fComposite, this);
+		}
 	}
 
 	/**
@@ -464,8 +472,9 @@ public class SourceViewer extends TextViewer
 
 	@Override
 	public Control getControl() {
-		if (fComposite != null)
+		if (fComposite != null) {
 			return fComposite;
+		}
 		return super.getControl();
 	}
 
@@ -490,25 +499,29 @@ public class SourceViewer extends TextViewer
 	@Override
 	public void configure(SourceViewerConfiguration configuration) {
 
-		if (getTextWidget() == null)
+		if (getTextWidget() == null) {
 			return;
+		}
 
 		setDocumentPartitioning(configuration.getConfiguredDocumentPartitioning(this));
 
 		// install content type independent plug-ins
 		fPresentationReconciler= configuration.getPresentationReconciler(this);
-		if (fPresentationReconciler != null)
+		if (fPresentationReconciler != null) {
 			fPresentationReconciler.install(this);
+		}
 
 		fReconciler= configuration.getReconciler(this);
-		if (fReconciler != null)
+		if (fReconciler != null) {
 			fReconciler.install(this);
+		}
 
 		fContentAssistant= configuration.getContentAssistant(this);
 		if (fContentAssistant != null) {
 			fContentAssistant.install(this);
-			if (fContentAssistant instanceof IContentAssistantExtension2 && fContentAssistant instanceof IContentAssistantExtension4)
+			if (fContentAssistant instanceof IContentAssistantExtension2 && fContentAssistant instanceof IContentAssistantExtension4) {
 				fContentAssistantFacade= new ContentAssistantFacade(fContentAssistant);
+			}
 			fContentAssistantInstalled= true;
 		}
 
@@ -521,8 +534,9 @@ public class SourceViewer extends TextViewer
 		fContentFormatter= configuration.getContentFormatter(this);
 
 		fInformationPresenter= configuration.getInformationPresenter(this);
-		if (fInformationPresenter != null)
+		if (fInformationPresenter != null) {
 			fInformationPresenter.install(this);
+		}
 
 		setUndoManager(configuration.getUndoManager(this));
 
@@ -557,12 +571,14 @@ public class SourceViewer extends TextViewer
 			}
 
 			String[] prefixes= configuration.getIndentPrefixes(this, t);
-			if (prefixes != null && prefixes.length > 0)
+			if (prefixes != null && prefixes.length > 0) {
 				setIndentPrefixes(prefixes, t);
+			}
 
 			prefixes= configuration.getDefaultPrefixes(this, t);
-			if (prefixes != null && prefixes.length > 0)
+			if (prefixes != null && prefixes.length > 0) {
 				setDefaultPrefixes(prefixes, t);
+			}
 		}
 		setCodeMiningProviders(configuration.getCodeMiningProviders(this));
 		installTextViewer();
@@ -605,10 +621,12 @@ public class SourceViewer extends TextViewer
 	@Override
 	public void setHoverEnrichMode(EnrichMode mode) {
 		super.setHoverEnrichMode(mode);
-		if (fVerticalRulerHoveringController != null)
+		if (fVerticalRulerHoveringController != null) {
 			fVerticalRulerHoveringController.getInternalAccessor().setHoverEnrichMode(mode);
-		if (fOverviewRulerHoveringController != null)
+		}
+		if (fOverviewRulerHoveringController != null) {
 			fOverviewRulerHoveringController.getInternalAccessor().setHoverEnrichMode(mode);
+		}
 	}
 
 	@Override
@@ -653,11 +671,13 @@ public class SourceViewer extends TextViewer
 	 */
 	protected void disposeVisualAnnotationModel() {
 		if (fVisualAnnotationModel != null) {
-			if (getDocument() != null)
+			if (getDocument() != null) {
 				fVisualAnnotationModel.disconnect(getDocument());
+			}
 
-			if ( fVisualAnnotationModel instanceof IAnnotationModelExtension)
+			if ( fVisualAnnotationModel instanceof IAnnotationModelExtension) {
 				((IAnnotationModelExtension)fVisualAnnotationModel).removeAnnotationModel(MODEL_ANNOTATION_MODEL);
+			}
 
 			fVisualAnnotationModel= null;
 		}
@@ -671,30 +691,31 @@ public class SourceViewer extends TextViewer
 			fVisualAnnotationModel= createVisualAnnotationModel(annotationModel);
 
 			// Make sure the visual model uses the same lock as the underlying model
-			if (annotationModel instanceof ISynchronizable && fVisualAnnotationModel instanceof ISynchronizable) {
-				ISynchronizable sync= (ISynchronizable)fVisualAnnotationModel;
+			if (annotationModel instanceof ISynchronizable && fVisualAnnotationModel instanceof ISynchronizable sync) {
 				sync.setLockObject(((ISynchronizable)annotationModel).getLockObject());
 			}
 
 			fVisualAnnotationModel.connect(document);
 		}
 
-		if (modelRangeOffset == -1 && modelRangeLength == -1)
+		if (modelRangeOffset == -1 && modelRangeLength == -1) {
 			super.setDocument(document);
-		else
+		} else {
 			super.setDocument(document, modelRangeOffset, modelRangeLength);
+		}
 
-		if (fVerticalRuler != null)
+		if (fVerticalRuler != null) {
 			fVerticalRuler.setModel(fVisualAnnotationModel);
+		}
 
-		if (fOverviewRuler != null)
+		if (fOverviewRuler != null) {
 			fOverviewRuler.setModel(fVisualAnnotationModel);
+		}
 	}
 
 	@Override
 	public IAnnotationModel getAnnotationModel() {
-		if (fVisualAnnotationModel instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension extension= (IAnnotationModelExtension) fVisualAnnotationModel;
+		if (fVisualAnnotationModel instanceof IAnnotationModelExtension extension) {
 			return extension.getAnnotationModel(MODEL_ANNOTATION_MODEL);
 		}
 		return null;
@@ -745,8 +766,9 @@ public class SourceViewer extends TextViewer
 			fContentAssistant.uninstall();
 			fContentAssistantInstalled= false;
 			fContentAssistant= null;
-			if (fContentAssistantFacade != null)
+			if (fContentAssistantFacade != null) {
 				fContentAssistantFacade= null;
+			}
 		}
 
 		if (fQuickAssistAssistant != null) {
@@ -815,20 +837,25 @@ public class SourceViewer extends TextViewer
 	@Override
 	public boolean canDoOperation(int operation) {
 
-		if (getTextWidget() == null || (!redraws() && operation != FORMAT))
+		if (getTextWidget() == null || (!redraws() && operation != FORMAT)) {
 			return false;
+		}
 
-		if (operation == CONTENTASSIST_PROPOSALS)
+		if (operation == CONTENTASSIST_PROPOSALS) {
 			return fContentAssistant != null && fContentAssistantInstalled && isEditable();
+		}
 
-		if (operation == CONTENTASSIST_CONTEXT_INFORMATION)
+		if (operation == CONTENTASSIST_CONTEXT_INFORMATION) {
 			return fContentAssistant != null && fContentAssistantInstalled && isEditable();
+		}
 
-		if (operation == QUICK_ASSIST)
+		if (operation == QUICK_ASSIST) {
 			return fQuickAssistAssistant != null && fQuickAssistAssistantInstalled && isEditable();
+		}
 
-		if (operation == INFORMATION)
+		if (operation == INFORMATION) {
 			return fInformationPresenter != null;
+		}
 
 		if (operation == FORMAT) {
 			return fContentFormatter != null && isEditable();
@@ -920,10 +947,11 @@ public class SourceViewer extends TextViewer
 
 		try {
 			final Position position;
-			if (selection instanceof IBlockTextSelection)
+			if (selection instanceof IBlockTextSelection) {
 				position= new ColumnPosition(selection.getOffset(), selection.getLength(), ((IBlockTextSelection) selection).getStartColumn(), ((IBlockTextSelection) selection).getEndColumn());
-			else
+			} else {
 				position= new Position(selection.getOffset(), selection.getLength());
+			}
 			document.addPosition(fSelectionCategory, position);
 			fSelections.push(position);
 
@@ -961,8 +989,9 @@ public class SourceViewer extends TextViewer
 					}
 				}
 
-				if (fSelections.isEmpty())
+				if (fSelections.isEmpty()) {
 					clearRememberedSelection();
+				}
 			} catch (BadPositionCategoryException exception) {
 				// Should not happen
 			} catch (BadLocationException x) {
@@ -972,8 +1001,9 @@ public class SourceViewer extends TextViewer
 	}
 
 	protected void clearRememberedSelection() {
-		if (!fSelections.isEmpty())
+		if (!fSelections.isEmpty()) {
 			fSelections.clear();
+		}
 
 		IDocument document= getDocument();
 		if (document != null && fSelectionUpdater != null) {
@@ -991,8 +1021,9 @@ public class SourceViewer extends TextViewer
 	@Override
 	public void doOperation(int operation) {
 
-		if (getTextWidget() == null || (!redraws() && operation != FORMAT))
+		if (getTextWidget() == null || (!redraws() && operation != FORMAT)) {
 			return;
+		}
 
 		switch (operation) {
 			case CONTENTASSIST_PROPOSALS:
@@ -1017,8 +1048,7 @@ public class SourceViewer extends TextViewer
 					IFormattingContext context= null;
 					DocumentRewriteSession rewriteSession= null;
 
-					if (document instanceof IDocumentExtension4) {
-						IDocumentExtension4 extension= (IDocumentExtension4) document;
+					if (document instanceof IDocumentExtension4 extension) {
 						DocumentRewriteSessionType type= (selection.y == 0 && document.getLength() > 1000) || selection.y > 1000
 							? DocumentRewriteSessionType.SEQUENTIAL
 							: DocumentRewriteSessionType.UNRESTRICTED_SMALL;
@@ -1034,8 +1064,7 @@ public class SourceViewer extends TextViewer
 
 						try {
 
-							if (fContentFormatter instanceof IContentFormatterExtension) {
-								final IContentFormatterExtension extension= (IContentFormatterExtension) fContentFormatter;
+							if (fContentFormatter instanceof final IContentFormatterExtension extension) {
 								context= createFormattingContext(selection.x, selection.y);
 								if (context == null) {
 									return;
@@ -1067,8 +1096,7 @@ public class SourceViewer extends TextViewer
 
 					} finally {
 
-						if (document instanceof IDocumentExtension4) {
-							IDocumentExtension4 extension= (IDocumentExtension4) document;
+						if (document instanceof IDocumentExtension4 extension) {
 							extension.stopRewriteSession(rewriteSession);
 						} else {
 							target.endCompoundChange();
@@ -1076,8 +1104,9 @@ public class SourceViewer extends TextViewer
 						}
 
 						restoreSelection();
-						if (context != null)
+						if (context != null) {
 							context.dispose();
+						}
 					}
 					return;
 				}
@@ -1095,18 +1124,17 @@ public class SourceViewer extends TextViewer
 	 */
 	protected void updateSlaveDocuments(IDocument masterDocument) {
 		ISlaveDocumentManager manager= getSlaveDocumentManager();
-		if (manager instanceof ISlaveDocumentManagerExtension) {
-			ISlaveDocumentManagerExtension extension= (ISlaveDocumentManagerExtension) manager;
+		if (manager instanceof ISlaveDocumentManagerExtension extension) {
 			IDocument[] slaves= extension.getSlaveDocuments(masterDocument);
 			if (slaves != null) {
 				for (IDocument slave : slaves) {
-					if (slave instanceof ChildDocument) {
-						ChildDocument child= (ChildDocument) slave;
+					if (slave instanceof ChildDocument child) {
 						Position p= child.getParentDocumentRange();
 						try {
 
-							if (!updateSlaveDocument(child, p.getOffset(), p.getLength()))
+							if (!updateSlaveDocument(child, p.getOffset(), p.getLength())) {
 								child.repairLineInformation();
+							}
 
 						} catch (BadLocationException e) {
 							// ignore
@@ -1124,8 +1152,9 @@ public class SourceViewer extends TextViewer
 			case CONTENTASSIST_PROPOSALS:
 			case CONTENTASSIST_CONTEXT_INFORMATION: {
 
-				if (fContentAssistant == null)
+				if (fContentAssistant == null) {
 					return;
+				}
 
 				if (enable) {
 					if (!fContentAssistantInstalled) {
@@ -1140,8 +1169,9 @@ public class SourceViewer extends TextViewer
 			}
 			case QUICK_ASSIST: {
 
-				if (fQuickAssistAssistant == null)
+				if (fQuickAssistAssistant == null) {
 					return;
+				}
 
 				if (enable) {
 					if (!fQuickAssistAssistantInstalled) {
@@ -1169,8 +1199,7 @@ public class SourceViewer extends TextViewer
 			revealRange(start, length);
 		}
 
-		if (fRangeIndicator != null && fVisualAnnotationModel instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension extension= (IAnnotationModelExtension) fVisualAnnotationModel;
+		if (fRangeIndicator != null && fVisualAnnotationModel instanceof IAnnotationModelExtension extension) {
 			extension.modifyAnnotationPosition(fRangeIndicator, new Position(start, length));
 		}
 	}
@@ -1179,8 +1208,9 @@ public class SourceViewer extends TextViewer
 	public IRegion getRangeIndication() {
 		if (fRangeIndicator != null && fVisualAnnotationModel != null) {
 			Position position= fVisualAnnotationModel.getPosition(fRangeIndicator);
-			if (position != null)
+			if (position != null) {
 				return new Region(position.getOffset(), position.getLength());
+			}
 		}
 
 		return null;
@@ -1188,8 +1218,9 @@ public class SourceViewer extends TextViewer
 
 	@Override
 	public void removeRangeIndication() {
-		if (fRangeIndicator != null && fVisualAnnotationModel != null)
+		if (fRangeIndicator != null && fVisualAnnotationModel != null) {
 			fVisualAnnotationModel.removeAnnotation(fRangeIndicator);
+		}
 	}
 
 	@Override
@@ -1197,12 +1228,13 @@ public class SourceViewer extends TextViewer
 		boolean old= fIsVerticalRulerVisible;
 
 		fIsVerticalRulerVisible= (fVerticalRuler != null && (show || !isVerticalRulerOnlyShowingAnnotations()));
-		if (old != fIsVerticalRulerVisible && fComposite != null && !fComposite.isDisposed())
+		if (old != fIsVerticalRulerVisible && fComposite != null && !fComposite.isDisposed()) {
 			fComposite.layout();
+		}
 
-		if (fIsVerticalRulerVisible && show)
+		if (fIsVerticalRulerVisible && show) {
 			ensureAnnotationHoverManagerInstalled();
-		else if (fVerticalRulerHoveringController != null) {
+		} else if (fVerticalRulerHoveringController != null) {
 			fVerticalRulerHoveringController.dispose();
 			fVerticalRulerHoveringController= null;
 		}
@@ -1215,8 +1247,9 @@ public class SourceViewer extends TextViewer
 	 * @since 3.3
 	 */
 	private boolean isVerticalRulerOnlyShowingAnnotations() {
-		if (fVerticalRuler instanceof VerticalRuler)
+		if (fVerticalRuler instanceof VerticalRuler) {
 			return true;
+		}
 
 		if (fVerticalRuler instanceof CompositeRuler) {
 			Iterator<IVerticalRulerColumn> iter= ((CompositeRuler)fVerticalRuler).getDecoratorIterator();
@@ -1243,8 +1276,7 @@ public class SourceViewer extends TextViewer
 	 */
 	public void addVerticalRulerColumn(IVerticalRulerColumn column) {
 		IVerticalRuler ruler= getVerticalRuler();
-		if (ruler instanceof CompositeRuler) {
-			CompositeRuler compositeRuler= (CompositeRuler)ruler;
+		if (ruler instanceof CompositeRuler compositeRuler) {
 			compositeRuler.addDecorator(99, column);
 		}
 	}
@@ -1257,8 +1289,7 @@ public class SourceViewer extends TextViewer
 	 */
 	public void removeVerticalRulerColumn(IVerticalRulerColumn column) {
 		IVerticalRuler ruler= getVerticalRuler();
-		if (ruler instanceof CompositeRuler) {
-			CompositeRuler compositeRuler= (CompositeRuler)ruler;
+		if (ruler instanceof CompositeRuler compositeRuler) {
 			compositeRuler.removeDecorator(column);
 		}
 	}
@@ -1268,8 +1299,9 @@ public class SourceViewer extends TextViewer
 		boolean old= fIsOverviewRulerVisible;
 		fIsOverviewRulerVisible= (show && fOverviewRuler != null);
 		if (old != fIsOverviewRulerVisible) {
-			if (fComposite != null && !fComposite.isDisposed())
+			if (fComposite != null && !fComposite.isDisposed()) {
 				fComposite.layout();
+			}
 			if (fIsOverviewRulerVisible) {
 				ensureOverviewHoverManagerInstalled();
 			} else if (fOverviewRulerHoveringController != null) {
@@ -1281,8 +1313,9 @@ public class SourceViewer extends TextViewer
 
 	@Override
 	public IAnnotationHover getCurrentAnnotationHover() {
-		if (fVerticalRulerHoveringController == null)
+		if (fVerticalRulerHoveringController == null) {
 			return null;
+		}
 		return fVerticalRulerHoveringController.getCurrentAnnotationHover();
 	}
 

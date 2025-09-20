@@ -114,7 +114,9 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		@Override
 		public void start(Rectangle subjectArea) {
 
-			if (fIsActive) return;
+			if (fIsActive) {
+				return;
+			}
 			fIsActive= true;
 
 			fSubjectArea= subjectArea;
@@ -140,8 +142,9 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		@Override
 		public void stop() {
 
-			if (!fIsActive)
+			if (!fIsActive) {
 				return;
+			}
 			fIsActive= false;
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
@@ -176,8 +179,9 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 
 		@Override
 		public void mouseMove(MouseEvent event) {
-			if (!fSubjectArea.contains(event.x, event.y))
+			if (!fSubjectArea.contains(event.x, event.y)) {
 				hideInformationControl();
+			}
 		}
 
 		@Override
@@ -196,14 +200,16 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 
 		@Override
 		public void handleEvent(Event event) {
-			if (event.type == SWT.MouseHorizontalWheel || event.type == SWT.MouseVerticalWheel)
+			if (event.type == SWT.MouseHorizontalWheel || event.type == SWT.MouseVerticalWheel) {
 				hideInformationControl();
+			}
 		}
 
 		@Override
 		public void mouseExit(MouseEvent event) {
-			if (!fAllowMouseExit)
+			if (!fAllowMouseExit) {
 				hideInformationControl();
+			}
 		}
 
 		@Override
@@ -253,11 +259,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	}
 
 	/** The source viewer the manager is connected to */
-	private ISourceViewer fSourceViewer;
+	private final ISourceViewer fSourceViewer;
 	/** The vertical ruler the manager is registered with */
-	private IVerticalRulerInfo fVerticalRulerInfo;
+	private final IVerticalRulerInfo fVerticalRulerInfo;
 	/** The annotation hover the manager uses to retrieve the information to display. Can be <code>null</code>. */
-	private IAnnotationHover fAnnotationHover;
+	private final IAnnotationHover fAnnotationHover;
 	/**
 	 * Indicates whether the mouse cursor is allowed to leave the subject area without closing the hover.
 	 * @since 3.0
@@ -331,15 +337,15 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 
 		int line= getHoverLine(event);
 
-		if (hover instanceof IAnnotationHoverExtension) {
-			IAnnotationHoverExtension extension= (IAnnotationHoverExtension) hover;
+		if (hover instanceof IAnnotationHoverExtension extension) {
 			ILineRange range= extension.getHoverLineRange(fSourceViewer, line);
 			setCustomInformationControlCreator(extension.getHoverControlCreator());
 			range= adaptLineRange(range, line);
-			if (range != null)
+			if (range != null) {
 				setInformation(extension.getHoverInfo(fSourceViewer, range, computeNumberOfVisibleLines()), computeArea(range));
-			else
+			} else {
 				setInformation(null, null);
+			}
 
 		} else {
 			setCustomInformationControlCreator(null);
@@ -373,8 +379,9 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	private ILineRange adaptLineRange(ILineRange lineRange, int line) {
 		if (lineRange != null) {
 			lineRange= adaptLineRangeToFolding(lineRange, line);
-			if (lineRange != null)
+			if (lineRange != null) {
 				return adaptLineRangeToViewport(lineRange);
+			}
 		}
 		return null;
 	}
@@ -390,16 +397,15 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 */
 	private ILineRange adaptLineRangeToFolding(ILineRange lineRange, int line) {
 
-		if (fSourceViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
-
+		if (fSourceViewer instanceof ITextViewerExtension5 extension) {
 			try {
 				IRegion region= convertToRegion(lineRange);
 				IRegion[] coverage= extension.getCoveredModelRanges(region);
 				if (coverage != null && coverage.length > 0) {
 					IRegion container= findRegionContainingLine(coverage, line);
-					if (container != null)
+					if (container != null) {
 						return convertToLineRange(container);
+					}
 				}
 
 			} catch (BadLocationException x) {
@@ -476,8 +482,9 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		IDocument document= fSourceViewer.getDocument();
 		IRegion lineInfo= document.getLineInformation(line);
 		for (IRegion region : regions) {
-			if (TextUtilities.overlaps(region, lineInfo))
+			if (TextUtilities.overlaps(region, lineInfo)) {
 				return region;
+			}
 		}
 		return null;
 	}
@@ -538,18 +545,19 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @since 3.0
 	 */
 	private IAnnotationHover getHover(MouseEvent event) {
-		if (event == null || event.getSource() == null)
+		if (event == null || event.getSource() == null) {
 			return fAnnotationHover;
+		}
 
-		if (fVerticalRulerInfo instanceof CompositeRuler) {
-			CompositeRuler comp= (CompositeRuler) fVerticalRulerInfo;
+		if (fVerticalRulerInfo instanceof CompositeRuler comp) {
 			for (Iterator<IVerticalRulerColumn> it= comp.getDecoratorIterator(); it.hasNext();) {
 				Object o= it.next();
 				if (o instanceof IVerticalRulerInfoExtension && o instanceof IVerticalRulerInfo) {
 					if (((IVerticalRulerInfo) o).getControl() == event.getSource()) {
 						IAnnotationHover hover= ((IVerticalRulerInfoExtension) o).getHover();
-						if (hover != null)
+						if (hover != null) {
 							return hover;
+						}
 					}
 				}
 			}
@@ -576,8 +584,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @throws BadLocationException if <code>line</code> is not valid in the viewer's document
 	 */
 	private int getWidgetLineNumber(int line) throws BadLocationException {
-		if (fSourceViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+		if (fSourceViewer instanceof ITextViewerExtension5 extension) {
 			return extension.modelLine2WidgetLine(line);
 		}
 
@@ -658,8 +665,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		MouseEvent event= getHoverEvent();
 		IAnnotationHover hover= getHover(event);
 
-		if (hover instanceof IAnnotationHoverExtension) {
-			IAnnotationHoverExtension extension= (IAnnotationHoverExtension) hover;
+		if (hover instanceof IAnnotationHoverExtension extension) {
 			boolean allowMouseExit= extension.canHandleMouseCursor();
 			if (allowMouseExit) {
 				return computeLocation(subjectArea, controlSize, ANCHOR_RIGHT);
@@ -674,13 +680,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		IAnnotationHover hover= getHover(event);
 
 		boolean allowMouseExit= false;
-		if (hover instanceof IAnnotationHoverExtension) {
-			IAnnotationHoverExtension extension= (IAnnotationHoverExtension) hover;
+		if (hover instanceof IAnnotationHoverExtension extension) {
 			allowMouseExit= extension.canHandleMouseCursor();
 		}
 		boolean hideOnMouseWheel= true;
-		if (hover instanceof IAnnotationHoverExtension2) {
-			IAnnotationHoverExtension2 extension= (IAnnotationHoverExtension2) hover;
+		if (hover instanceof IAnnotationHoverExtension2 extension) {
 			hideOnMouseWheel= !extension.canHandleMouseWheel();
 		}
 		fHideOnMouseWheel= hideOnMouseWheel;
@@ -690,10 +694,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 
 			Control subjectControl= getSubjectControl();
 			// return a location that just overlaps the annotation on the bar
-			if (anchor == AbstractInformationControlManager.ANCHOR_RIGHT)
+			if (anchor == AbstractInformationControlManager.ANCHOR_RIGHT) {
 				return subjectControl.toDisplay(subjectArea.x - 4, subjectArea.y - 2);
-			else if (anchor == AbstractInformationControlManager.ANCHOR_LEFT)
+			} else if (anchor == AbstractInformationControlManager.ANCHOR_LEFT) {
 				return subjectControl.toDisplay(subjectArea.x + subjectArea.width - controlSize.x + 4, subjectArea.y - 2);
+			}
 		}
 
 		fAllowMouseExit= false;

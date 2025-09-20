@@ -42,8 +42,9 @@ public final class HunkComputer {
 		ILineDiffInfo info= null;
 		for (int line= 0; line < lines; line++) {
 			info= differ.getLineInfo(line);
-			if (info == null)
+			if (info == null) {
 				continue;
+			}
 
 			int changeType= info.getChangeType();
 			switch (changeType) {

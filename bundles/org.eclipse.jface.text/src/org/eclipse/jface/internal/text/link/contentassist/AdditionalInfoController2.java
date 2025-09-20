@@ -69,9 +69,9 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 	/** Object to synchronize initial display of additional info */
 	private Object fStartSignal;
 	/** The table selection listener */
-	private SelectionListener fSelectionListener= new TableSelectionListener();
+	private final SelectionListener fSelectionListener= new TableSelectionListener();
 	/** The delay after which additional information is displayed */
-	private int fDelay;
+	private final int fDelay;
 
 
 	/**
@@ -101,8 +101,9 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 		fProposalTable= (Table) control;
 		fProposalTable.addSelectionListener(fSelectionListener);
 		synchronized (fThreadAccess) {
-	 		if (fThread != null)
-	 			fThread.interrupt();
+	 		if (fThread != null) {
+				fThread.interrupt();
+			}
 			fThread= new Thread(this, ContentAssistMessages.getString("InfoPopup.info_delay_timer_name")); //$NON-NLS-1$
 
 			fStartSignal= new Object();
@@ -156,15 +157,17 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 						fIsReset= false;
 						// Delay before showing the popup.
 						fMutex.wait(fDelay);
-						if (!fIsReset)
+						if (!fIsReset) {
 							break;
+						}
 					}
 				}
 
 				if (fProposalTable != null && !fProposalTable.isDisposed()) {
 					fProposalTable.getDisplay().asyncExec(() -> {
-						if (!fIsReset)
+						if (!fIsReset) {
 							showInformation();
+						}
 					});
 				}
 
@@ -174,8 +177,9 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 
 		synchronized (fThreadAccess) {
 			// only set to 'null' if fThread is us!
-			if (Thread.currentThread() == fThread)
+			if (Thread.currentThread() == fThread) {
 				fThread= null;
+			}
 		}
 	}
 
@@ -195,8 +199,9 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 	@Override
 	protected void computeInformation() {
 
-		if (fProposalTable == null || fProposalTable.isDisposed())
+		if (fProposalTable == null || fProposalTable.isDisposed()) {
 			return;
+		}
 
 		TableItem[] selection= fProposalTable.getSelection();
 		if (selection != null && selection.length > 0) {
@@ -207,15 +212,15 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 			String information= null;
 			Object d= item.getData();
 
-			if (d instanceof ICompletionProposal) {
-				ICompletionProposal p= (ICompletionProposal) d;
+			if (d instanceof ICompletionProposal p) {
 				information= p.getAdditionalProposalInfo();
 			}
 
-			if (d instanceof ICompletionProposalExtension3)
+			if (d instanceof ICompletionProposalExtension3) {
 				setCustomInformationControlCreator(((ICompletionProposalExtension3) d).getInformationControlCreator());
-			else
+			} else {
 				setCustomInformationControlCreator(null);
+			}
 
 			// compute subject area
 			setMargins(4, -1);
@@ -233,10 +238,12 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 		// at least as big as the proposal table
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
 		Point size= subjectControl.getSize();
-		if (sizeConstraint.x < size.x)
+		if (sizeConstraint.x < size.x) {
 			sizeConstraint.x= size.x;
-		if (sizeConstraint.y < size.y)
+		}
+		if (sizeConstraint.y < size.y) {
 			sizeConstraint.y= size.y;
+		}
 		return sizeConstraint;
 	}
 }
