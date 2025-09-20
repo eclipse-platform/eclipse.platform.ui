@@ -93,26 +93,29 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 		} else {
 			setPageComplete(true);
 			setErrorMessage(null);
-			if (severity == RefactoringStatus.OK)
+			if (severity == RefactoringStatus.OK) {
 				setMessage(null, NONE);
-			else
+			} else {
 				setMessage(status.getMessageMatchingSeverity(severity), getCorrespondingIStatusSeverity(severity));
+			}
 		}
 	}
 
 	@Override
 	public void setVisible(boolean visible) {
-		if (visible)
+		if (visible) {
 			getRefactoringWizard().internalSetChange(InternalAPI.INSTANCE, null);
+		}
 		super.setVisible(visible);
 	}
 
 	@Override
 	public IWizardPage getNextPage() {
-		if (fIsLastUserInputPage)
+		if (fIsLastUserInputPage) {
 			return computeSuccessorPage();
-		else
+		} else {
 			return super.getNextPage();
+		}
 	}
 
 	@Override
@@ -137,8 +140,9 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 		Refactoring refactoring= getRefactoring();
 
 		if (activationStatus != null && activationStatus.getSeverity() >= threshold) {
-			if (!activationStatus.hasFatalError())
+			if (!activationStatus.hasFatalError()) {
 				inputStatus= wizard.checkFinalConditions();
+			}
 		} else {
 			CreateChangeOperation create= new CreateChangeOperation(
 				new CheckConditionsOperation(refactoring, CheckConditionsOperation.FINAL_CONDITIONS),
@@ -147,17 +151,20 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 
 			FinishResult result= wizard.internalPerformFinish(InternalAPI.INSTANCE, perform);
 			wizard.internalSetChange(InternalAPI.INSTANCE, create.getChange());
-			if (result.isException())
+			if (result.isException()) {
 				return true;
-			if (result.isInterrupted())
+			}
+			if (result.isInterrupted()) {
 				return false;
+			}
 			inputStatus= new RefactoringStatus();
 			inputStatus.merge(create.getConditionCheckingStatus());
 			RefactoringStatus validationStatus= perform.getValidationStatus();
 			// only merge this in if we have a fatal error. In all other cases
 			// the change got executed
-			if (validationStatus != null && validationStatus.hasFatalError())
+			if (validationStatus != null && validationStatus.hasFatalError()) {
 				inputStatus.merge(perform.getValidationStatus());
+			}
 		}
 
 		status.merge(activationStatus);
@@ -178,14 +185,18 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 	}
 
 	private static int getCorrespondingIStatusSeverity(int severity) {
-		if (severity == RefactoringStatus.FATAL)
+		if (severity == RefactoringStatus.FATAL) {
 			return IStatus.ERROR;
-		if (severity == RefactoringStatus.ERROR)
+		}
+		if (severity == RefactoringStatus.ERROR) {
 			return IStatus.WARNING;
-		if (severity == RefactoringStatus.WARNING)
+		}
+		if (severity == RefactoringStatus.WARNING) {
 			return IStatus.WARNING;
-		if (severity == RefactoringStatus.INFO)
+		}
+		if (severity == RefactoringStatus.INFO) {
 			return IStatus.INFO;
+		}
 		return IStatus.OK;
 	}
 }

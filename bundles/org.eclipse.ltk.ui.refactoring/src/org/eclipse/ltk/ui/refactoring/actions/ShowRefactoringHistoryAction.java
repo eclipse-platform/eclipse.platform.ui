@@ -62,8 +62,9 @@ public final class ShowRefactoringHistoryAction implements IWorkbenchWindowActio
 		Assert.isNotNull(window);
 		final ShowRefactoringHistoryWizard wizard= new ShowRefactoringHistoryWizard();
 		IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (context == null)
+		if (context == null) {
 			context= PlatformUI.getWorkbench().getProgressService();
+		}
 		try {
 			context.run(false, true, monitor -> {
 				final IRefactoringHistoryService service= RefactoringCore.getHistoryService();

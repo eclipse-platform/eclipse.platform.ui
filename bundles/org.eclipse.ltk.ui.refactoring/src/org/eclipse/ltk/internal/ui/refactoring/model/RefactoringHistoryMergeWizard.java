@@ -128,8 +128,9 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
 		Assert.isNotNull(descriptor);
 		final long stamp= descriptor.getTimeStamp();
-		if (stamp >= 0)
+		if (stamp >= 0) {
 			RefactoringHistoryService.getInstance().setOverrideTimeStamp(stamp);
+		}
 		return super.aboutToPerformRefactoring(refactoring, descriptor, monitor);
 	}
 

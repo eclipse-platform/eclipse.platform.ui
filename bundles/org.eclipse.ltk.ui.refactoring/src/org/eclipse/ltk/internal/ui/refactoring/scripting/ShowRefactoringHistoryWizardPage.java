@@ -131,12 +131,14 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 		fHistoryControl.createControl();
 		boolean sortProjects= true;
 		final IDialogSettings settings= fWizard.getDialogSettings();
-		if (settings != null)
+		if (settings != null) {
 			sortProjects= settings.getBoolean(SETTING_SORT);
-		if (sortProjects)
+		}
+		if (sortProjects) {
 			fHistoryControl.sortByProjects();
-		else
+		} else {
 			fHistoryControl.sortByDate();
+		}
 
 		fHistoryControl.setInput(fWizard.getRefactoringHistory());
 
@@ -171,7 +173,8 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 	 */
 	public void performFinish() {
 		final IDialogSettings settings= fWizard.getDialogSettings();
-		if (settings != null)
+		if (settings != null) {
 			settings.put(SETTING_SORT, fHistoryControl.isSortByProjects());
+		}
 	}
 }

@@ -98,12 +98,14 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 		fHistoryControl.createControl();
 		boolean sortProjects= false;
 		final IDialogSettings settings= getWizard().getDialogSettings();
-		if (settings != null)
+		if (settings != null) {
 			sortProjects= settings.getBoolean(SETTING_SORT);
-		if (sortProjects)
+		}
+		if (sortProjects) {
 			fHistoryControl.sortByProjects();
-		else
+		} else {
 			fHistoryControl.sortByDate();
+		}
 		fHistoryControl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
@@ -125,8 +127,9 @@ public final class RefactoringHistoryOverviewPage extends WizardPage {
 	 */
 	public void performFinish() {
 		final IDialogSettings settings= getWizard().getDialogSettings();
-		if (settings != null)
+		if (settings != null) {
 			settings.put(SETTING_SORT, fHistoryControl.isSortByProjects());
+		}
 	}
 
 	@Override

@@ -41,8 +41,8 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 
 public class ChangeExceptionHandler {
 
-	private Shell fParent;
-	private String fName;
+	private final Shell fParent;
+	private final String fName;
 
 	private static class RefactorErrorDialog extends ErrorDialog {
 		public RefactorErrorDialog(Shell parentShell, String dialogTitle, String dialogMessage, IStatus status, int displayMask) {

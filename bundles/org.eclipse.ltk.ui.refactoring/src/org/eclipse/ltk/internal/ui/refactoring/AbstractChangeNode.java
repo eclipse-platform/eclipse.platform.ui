@@ -130,8 +130,9 @@ public abstract class AbstractChangeNode extends PreviewNode {
 
 	@Override
 	boolean hasDerived() {
-		if (hasDerivedResourceChange(fChange))
+		if (hasDerivedResourceChange(fChange)) {
 			return true;
+		}
 		for (PreviewNode child : getChildren()) {
 			if (child.hasDerived()) {
 				return true;
@@ -145,8 +146,9 @@ public abstract class AbstractChangeNode extends PreviewNode {
 		if (fChildren != null) {
 			for (PreviewNode child : fChildren) {
 				result= ACTIVATION_TABLE[child.getActive()][result];
-				if (result == PARTLY_ACTIVE)
+				if (result == PARTLY_ACTIVE) {
 					break;
+				}
 			}
 		}
 		return result;
@@ -157,8 +159,9 @@ public abstract class AbstractChangeNode extends PreviewNode {
 			int result= fChildren[0].getActive();
 			for (int i= 1; i < fChildren.length; i++) {
 				result= ACTIVATION_TABLE[fChildren[i].getActive()][result];
-				if (result == PARTLY_ACTIVE)
+				if (result == PARTLY_ACTIVE) {
 					break;
+				}
 			}
 			return result;
 		} else {
@@ -177,8 +180,7 @@ public abstract class AbstractChangeNode extends PreviewNode {
 		Object modifiedElement= change.getModifiedElement();
 		if (modifiedElement instanceof IResource) {
 			return ((IResource) modifiedElement).isDerived(IResource.CHECK_ANCESTORS);
-		} else if (modifiedElement instanceof IAdaptable) {
-			IAdaptable adaptable= (IAdaptable) modifiedElement;
+		} else if (modifiedElement instanceof IAdaptable adaptable) {
 			IResource resource= adaptable.getAdapter(IResource.class);
 			if (resource != null) {
 				return resource.isDerived(IResource.CHECK_ANCESTORS);

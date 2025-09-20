@@ -59,7 +59,7 @@ import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
  */
 public class RefactoringWizardOpenOperation {
 
-	private RefactoringWizard fWizard;
+	private final RefactoringWizard fWizard;
 	private RefactoringStatus fInitialConditions;
 
 	/**
@@ -180,14 +180,15 @@ public class RefactoringWizardOpenOperation {
 					Dialog dialog= RefactoringUI.createRefactoringWizardDialog(fWizard, parent);
 					dialog.create();
 					IWizardContainer wizardContainer= (IWizardContainer) dialog;
-					if (wizardContainer.getCurrentPage() == null)
+					if (wizardContainer.getCurrentPage() == null) {
 						/*
 						 * Don't show the dialog at all if there are no user
 						 * input pages and change creation was cancelled.
 						 */
 						result[0]= Window.CANCEL;
-					else
+					} else {
 						result[0]= dialog.open();
+					}
 				}
 			} catch (InterruptedException e1) {
 				canceled[0]= e1;
@@ -197,8 +198,9 @@ public class RefactoringWizardOpenOperation {
 				manager.endRule(ResourcesPlugin.getWorkspace().getRoot());
 				refactoring.setValidationContext(null);
 				RefactoringContext refactoringContext= fWizard.getRefactoringContext();
-				if (refactoringContext != null)
+				if (refactoringContext != null) {
 					refactoringContext.dispose();
+				}
 			}
 		};
 
@@ -207,8 +209,9 @@ public class RefactoringWizardOpenOperation {
 			display= parent.getDisplay();
 		}
 		BusyIndicator.showWhile(display, r);
-		if (canceled[0] != null)
+		if (canceled[0] != null) {
 			throw canceled[0];
+		}
 		return result[0];
 	}
 

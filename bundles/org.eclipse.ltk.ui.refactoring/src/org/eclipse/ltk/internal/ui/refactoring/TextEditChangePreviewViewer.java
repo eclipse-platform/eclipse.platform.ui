@@ -69,7 +69,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 	}
 
 	private static class ComparePreviewer extends CompareViewerSwitchingPane {
-		private CompareConfiguration fCompareConfiguration;
+		private final CompareConfiguration fCompareConfiguration;
 		private String fLabel;
 		private ImageDescriptor fDescriptor;
 		private Image fImage;
@@ -81,8 +81,9 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 			fCompareConfiguration.setRightEditable(false);
 			fCompareConfiguration.setRightLabel(RefactoringUIMessages.ComparePreviewer_refactored_source);
 			addDisposeListener(e -> {
-				if (fImage != null && !fImage.isDisposed())
+				if (fImage != null && !fImage.isDisposed()) {
 					fImage.dispose();
+				}
 			});
 			Dialog.applyDialogFont(this);
 		}
@@ -131,9 +132,9 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 	private static class CompareElement implements ITypedElement, IEncodedStreamContentAccessor, IResourceProvider {
 		// we use an encoding that preserves Unicode across the stream
 		private static final String ENCODING= "UTF-8";	//$NON-NLS-1$
-		private String fContent;
-		private String fType;
-		private IResource fResource;
+		private final String fContent;
+		private final String fType;
+		private final IResource fResource;
 		public CompareElement(String content, String type, IResource resource) {
 			fContent= content;
 			fType= type;
@@ -201,8 +202,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 	public void setInput(ChangePreviewViewerInput input) {
 		try {
 			Change change= input.getChange();
-			if (input instanceof TextEditBasedChangeInput) {
-				TextEditBasedChangeInput extended= (TextEditBasedChangeInput)input;
+			if (input instanceof TextEditBasedChangeInput extended) {
 				if (extended.group != null && extended.surroundingLines >= 0) {
 					TextEditBasedChangeGroup group= extended.group;
 					TextEditBasedChange editChange= group.getTextEditChange();
@@ -218,8 +218,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 						editChange.getTextType());
 					return;
 				}
-			} else if (change instanceof TextEditBasedChange) {
-				TextEditBasedChange editChange= (TextEditBasedChange)change;
+			} else if (change instanceof TextEditBasedChange editChange) {
 				setInput(editChange, editChange.getCurrentContent(new NullProgressMonitor()), editChange.getPreviewContent(new NullProgressMonitor()), editChange.getTextType());
 				return;
 			} else {
@@ -238,8 +237,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 	private void setInput(TextEditBasedChange change, String left, String right, String type) {
 		Object element= change.getModifiedElement();
 		IResource resource= null;
-		if (element instanceof IAdaptable) {
-			IAdaptable adaptable= (IAdaptable)element;
+		if (element instanceof IAdaptable adaptable) {
 			IWorkbenchAdapter workbenchAdapter= adaptable.getAdapter(IWorkbenchAdapter.class);
 			if (workbenchAdapter != null) {
 				fViewer.setLabel(workbenchAdapter.getLabel(element));

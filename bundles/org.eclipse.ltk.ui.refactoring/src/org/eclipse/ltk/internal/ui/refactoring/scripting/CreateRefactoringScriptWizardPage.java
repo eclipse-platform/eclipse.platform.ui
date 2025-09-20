@@ -105,19 +105,22 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 			protected final void handleSelectAll() {
 				super.handleSelectAll();
 				final RefactoringHistory history= getInput();
-				if (history != null)
+				if (history != null) {
 					fWizard.setRefactoringDescriptors(history.getDescriptors());
+				}
 			}
 		};
 		fHistoryControl.createControl();
 		boolean sortProjects= true;
 		final IDialogSettings settings= fWizard.getDialogSettings();
-		if (settings != null)
+		if (settings != null) {
 			sortProjects= settings.getBoolean(SETTING_SORT);
-		if (sortProjects)
+		}
+		if (sortProjects) {
 			fHistoryControl.sortByProjects();
-		else
+		} else {
 			fHistoryControl.sortByDate();
+		}
 
 		GridData data= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		data.heightHint= new PixelConverter(parent).convertHeightInCharsToPixels(24);
@@ -141,8 +144,9 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 				file.setFilterExtensions(new String[] { ScriptingMessages.ScriptLocationControl_filter_extension_script, ScriptingMessages.ScriptLocationControl_filter_extension_wildcard});
 				String path= file.open();
 				if (path != null) {
-					if (!path.endsWith(ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension))
+					if (!path.endsWith(ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension)) {
 						path= path + ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension;
+					}
 					fExternalLocationControl.setText(path);
 				}
 			}
@@ -167,8 +171,9 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 			}
 		};
 		fLocationControl.loadHistory();
-		if (history == null || history.isEmpty())
+		if (history == null || history.isEmpty()) {
 			setErrorMessage(ScriptingMessages.CreateRefactoringScriptWizardPage_no_refactorings);
+		}
 		fFirstTime= false;
 		setPageComplete(false);
 		setControl(composite);
@@ -197,16 +202,18 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 	 */
 	public void performFinish() {
 		final IDialogSettings settings= fWizard.getDialogSettings();
-		if (settings != null)
+		if (settings != null) {
 			settings.put(SETTING_SORT, fHistoryControl.isSortByProjects());
+		}
 		fLocationControl.saveHistory();
 	}
 
 	@Override
 	public void setErrorMessage(final String message) {
-		if (!fFirstTime)
+		if (!fFirstTime) {
 			super.setErrorMessage(message);
-		else
+		} else {
 			setMessage(message, NONE);
+		}
 	}
 }

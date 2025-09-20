@@ -36,9 +36,9 @@ import org.eclipse.jface.operation.IThreadListener;
  */
 public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadListener {
 
-	private IWorkspaceRunnable fWorkspaceRunnable;
-	private ISchedulingRule fRule;
-	private boolean fTransfer;
+	private final IWorkspaceRunnable fWorkspaceRunnable;
+	private final ISchedulingRule fRule;
+	private final boolean fTransfer;
 
 	/**
 	 * Runs a workspace runnable with the given lock or <code>null</code>
@@ -76,8 +76,9 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadL
 
 	@Override
 	public void threadChange(Thread thread) {
-		if (fTransfer)
+		if (fTransfer) {
 			Job.getJobManager().transferRule(fRule, thread);
+		}
 	}
 
 	/*

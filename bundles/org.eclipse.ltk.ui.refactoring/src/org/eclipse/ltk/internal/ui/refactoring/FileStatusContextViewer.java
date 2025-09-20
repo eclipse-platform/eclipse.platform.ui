@@ -54,9 +54,9 @@ public class FileStatusContextViewer extends TextStatusContextViewer {
 		updateTitle(file);
 		IDocument document= getDocument(file);
 		IRegion region= fc.getTextRegion();
-		if (region != null && document.getLength() >= region.getOffset() + region.getLength())
+		if (region != null && document.getLength() >= region.getOffset() + region.getLength()) {
 			setInput(document, region);
-		else {
+		} else {
 			setInput(document, new Region(0, 0));
 		}
 	}

@@ -25,39 +25,37 @@ public final class BrowseRefactoringHistoryViewerSorter extends ViewerComparator
 
 	@Override
 	public int category(final Object element) {
-		if (element instanceof RefactoringHistoryProject)
+		if (element instanceof RefactoringHistoryProject) {
 			return 0;
+		}
 		return 1;
 	}
 
 	@Override
 	public int compare(final Viewer viewer, final Object first, final Object second) {
-		if (first instanceof RefactoringHistoryProject && second instanceof RefactoringHistoryProject) {
-			final RefactoringHistoryProject predecessor= (RefactoringHistoryProject) first;
-			final RefactoringHistoryProject successor= (RefactoringHistoryProject) second;
+		if (first instanceof final RefactoringHistoryProject predecessor && second instanceof final RefactoringHistoryProject successor) {
 			return getComparator().compare(predecessor.getProject(), successor.getProject());
-		} else if (first instanceof RefactoringHistoryDate && second instanceof RefactoringHistoryDate) {
-			final RefactoringHistoryDate predecessor= (RefactoringHistoryDate) first;
-			final RefactoringHistoryDate successor= (RefactoringHistoryDate) second;
+		} else if (first instanceof final RefactoringHistoryDate predecessor && second instanceof final RefactoringHistoryDate successor) {
 			final int delta= predecessor.getKind() - successor.getKind();
-			if (delta != 0)
+			if (delta != 0) {
 				return delta;
+			}
 			final long result= successor.getTimeStamp() - predecessor.getTimeStamp();
-			if (result < 0)
+			if (result < 0) {
 				return -1;
-			else if (result > 0)
+			} else if (result > 0) {
 				return 1;
+			}
 			return 0;
-		} else if (first instanceof RefactoringHistoryEntry && second instanceof RefactoringHistoryEntry) {
-			final RefactoringHistoryEntry predecessor= (RefactoringHistoryEntry) first;
-			final RefactoringHistoryEntry successor= (RefactoringHistoryEntry) second;
+		} else if (first instanceof final RefactoringHistoryEntry predecessor && second instanceof final RefactoringHistoryEntry successor) {
 			final long delta= successor.getDescriptor().getTimeStamp() - predecessor.getDescriptor().getTimeStamp();
-			if (delta < 0)
+			if (delta < 0) {
 				return -1;
-			else if (delta > 0)
+			} else if (delta > 0) {
 				return 1;
-			else
+			} else {
 				return 0;
+			}
 		}
 		return super.compare(viewer, first, second);
 	}

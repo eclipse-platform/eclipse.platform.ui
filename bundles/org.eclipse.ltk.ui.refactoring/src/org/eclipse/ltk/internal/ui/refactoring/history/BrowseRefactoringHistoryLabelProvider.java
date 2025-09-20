@@ -53,8 +53,7 @@ public final class BrowseRefactoringHistoryLabelProvider extends RefactoringHist
 
 	@Override
 	public Image getImage(final Object element) {
-		if (element instanceof RefactoringHistoryProject) {
-			final RefactoringHistoryProject project= (RefactoringHistoryProject) element;
+		if (element instanceof final RefactoringHistoryProject project) {
 			return fWorkbenchLabelProvider.getImage(ResourcesPlugin.getWorkspace().getRoot().getProject(project.getProject()));
 		}
 		return fDelegateLabelProvider.getImage(element);
@@ -62,8 +61,7 @@ public final class BrowseRefactoringHistoryLabelProvider extends RefactoringHist
 
 	@Override
 	public String getText(final Object element) {
-		if (element instanceof RefactoringHistoryProject) {
-			final RefactoringHistoryProject project= (RefactoringHistoryProject) element;
+		if (element instanceof final RefactoringHistoryProject project) {
 			return fWorkbenchLabelProvider.getText(ResourcesPlugin.getWorkspace().getRoot().getProject(project.getProject()));
 		}
 		return fDelegateLabelProvider.getText(element);

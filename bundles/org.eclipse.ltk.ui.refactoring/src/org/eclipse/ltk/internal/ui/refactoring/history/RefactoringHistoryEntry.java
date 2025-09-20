@@ -43,8 +43,7 @@ public final class RefactoringHistoryEntry extends RefactoringHistoryNode {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof RefactoringHistoryEntry) {
-			final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) object;
+		if (object instanceof final RefactoringHistoryEntry entry) {
 			return getDescriptor().equals(entry.getDescriptor());
 		}
 		return false;

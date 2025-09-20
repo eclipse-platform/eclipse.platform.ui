@@ -43,16 +43,18 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 
 		@Override
 		public RefactoringDescriptorProxy[] getDescriptors() {
-			if (fRefactoringHistory != null)
+			if (fRefactoringHistory != null) {
 				return fRefactoringHistory.getDescriptors();
+			}
 			return new RefactoringDescriptorProxy[0];
 		}
 
 		@Override
 		public boolean isEmpty() {
 			final RefactoringDescriptorProxy[] proxies= getDescriptors();
-			if (proxies != null)
+			if (proxies != null) {
 				return proxies.length == 0;
+			}
 			return true;
 		}
 
@@ -86,9 +88,9 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_APPLY_SCRIPT);
 		final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 		final IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
-		if (section == null)
+		if (section == null) {
 			fNewSettings= true;
-		else {
+		} else {
 			fNewSettings= false;
 			setDialogSettings(section);
 		}
@@ -139,10 +141,10 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
 		if (selection != null && selection.size() == 1) {
 			final Object element= selection.getFirstElement();
-			if (element instanceof IFile) {
-				final IFile file= (IFile) element;
-				if (ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension.equals(file.getFileExtension()))
+			if (element instanceof final IFile file) {
+				if (ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension.equals(file.getFileExtension())) {
 					fScriptLocation= file.getRawLocationURI();
+				}
 			}
 		}
 	}
@@ -168,8 +170,9 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	public void setRefactoringHistory(final RefactoringHistory history) {
 		fRefactoringHistory= history;
 		final IWizardContainer wizard= getContainer();
-		if (wizard.getCurrentPage() != null)
+		if (wizard.getCurrentPage() != null) {
 			wizard.updateButtons();
+		}
 	}
 
 	/**
@@ -181,7 +184,8 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 	public void setRefactoringScript(final URI uri) {
 		fScriptLocation= uri;
 		final IWizardContainer wizard= getContainer();
-		if (wizard.getCurrentPage() != null)
+		if (wizard.getCurrentPage() != null) {
 			wizard.updateButtons();
+		}
 	}
 }

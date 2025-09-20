@@ -67,11 +67,11 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 				if (!status.isOK()) {
 					final RefactoringStatusEntry entry= status.getEntryWithHighestSeverity();
 					if (entry != null) {
-						if (entry.getSeverity() == RefactoringStatus.INFO && entry.getCode() == RefactoringHistoryWizard.STATUS_CODE_INTERRUPTED)
+						if (entry.getSeverity() == RefactoringStatus.INFO && entry.getCode() == RefactoringHistoryWizard.STATUS_CODE_INTERRUPTED) {
 							return this;
+						}
 						final IErrorWizardPage page= result.getErrorPage();
-						if (page instanceof RefactoringHistoryErrorPage) {
-							final RefactoringHistoryErrorPage extended= (RefactoringHistoryErrorPage) page;
+						if (page instanceof final RefactoringHistoryErrorPage extended) {
 							extended.setStatus(status);
 							extended.setNextPageDisabled(fNextPageDisabled);
 							extended.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
@@ -107,8 +107,9 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	 */
 	protected RefactoringHistoryWizard getRefactoringHistoryWizard() {
 		final IWizard result= getWizard();
-		if (result instanceof RefactoringHistoryWizard)
+		if (result instanceof RefactoringHistoryWizard) {
 			return (RefactoringHistoryWizard) result;
+		}
 		return null;
 	}
 
@@ -185,26 +186,28 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	 */
 	public void setTitle(final RefactoringDescriptorProxy descriptor, final int current, final int total) {
 		final String message;
-		if (descriptor != null)
+		if (descriptor != null) {
 			message= descriptor.getDescription();
-		else
+		} else {
 			message= RefactoringUIMessages.RefactoringHistoryOverviewPage_title;
-		if (total > 1)
+		}
+		if (total > 1) {
 			setTitle(Messages.format(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total)}));
-		else
+		} else {
 			setTitle(message);
+		}
 	}
 
 	@Override
 	protected void setTreeViewerInput() {
-		if (fTreeViewer == null)
+		if (fTreeViewer == null) {
 			return;
+		}
 		PreviewNode input= null;
 		if (fTreeViewerInputChange != null) {
 			input= AbstractChangeNode.createNode(null, fFilter, fTreeViewerInputChange);
 		}
-		if (input instanceof CompositeChangeNode) {
-			final CompositeChangeNode node= (CompositeChangeNode) input;
+		if (input instanceof final CompositeChangeNode node) {
 			final PreviewNode[] nodes= node.getChildren();
 			if (nodes == null || nodes.length == 0) {
 				fTreeViewerPane.setText(RefactoringUIMessages.RefactoringHistoryPreviewPage_no_changes);
@@ -225,8 +228,9 @@ public final class RefactoringHistoryPreviewPage extends PreviewWizardPage {
 	@Override
 	public void setVisible(final boolean visible) {
 		super.setVisible(visible);
-		if (fTreeViewer.getInput() == null)
+		if (fTreeViewer.getInput() == null) {
 			fFilterDropDownAction.setEnabled(false);
+		}
 	}
 
 	@Override

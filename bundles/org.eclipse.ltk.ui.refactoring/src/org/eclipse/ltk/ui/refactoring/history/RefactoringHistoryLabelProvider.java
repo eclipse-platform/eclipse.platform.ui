@@ -108,24 +108,26 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	private Image decorateImage(final Image image, final Object element) {
 		Image result= image;
 		RefactoringDescriptorProxy extended= null;
-		if (element instanceof RefactoringHistoryEntry)
+		if (element instanceof RefactoringHistoryEntry) {
 			extended= ((RefactoringHistoryEntry) element).getDescriptor();
-		else if (element instanceof RefactoringDescriptorProxy)
+		} else if (element instanceof RefactoringDescriptorProxy) {
 			extended= (RefactoringDescriptorProxy) element;
+		}
 		if (extended != null) {
 			final String project= extended.getProject();
 			if (project == null || "".equals(project)) { //$NON-NLS-1$
-				if (image == fElementImage && fDecoratedElementImage != null)
+				if (image == fElementImage && fDecoratedElementImage != null) {
 					result= fDecoratedElementImage;
-				else if (image == fItemImage && fDecoratedItemImage != null)
+				} else if (image == fItemImage && fDecoratedItemImage != null) {
 					result= fDecoratedItemImage;
-				else {
+				} else {
 					final Rectangle bounds= image.getBounds();
 					result= new RefactoringDescriptorImageDescriptor(new RefactoringImageDescriptor(image), RefactoringDescriptorImageDescriptor.WORKSPACE, new Point(bounds.width, bounds.height)).createImage();
-					if (image == fElementImage)
+					if (image == fElementImage) {
 						fDecoratedElementImage= result;
-					else if (image == fItemImage)
+					} else if (image == fItemImage) {
 						fDecoratedItemImage= result;
+					}
 				}
 			}
 		}
@@ -134,18 +136,24 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 
 	@Override
 	public void dispose() {
-		if (fContainerImage != null)
+		if (fContainerImage != null) {
 			fContainerImage.dispose();
-		if (fCollectionImage != null)
+		}
+		if (fCollectionImage != null) {
 			fCollectionImage.dispose();
-		if (fElementImage != null)
+		}
+		if (fElementImage != null) {
 			fElementImage.dispose();
-		if (fItemImage != null)
+		}
+		if (fItemImage != null) {
 			fItemImage.dispose();
-		if (fDecoratedElementImage != null)
+		}
+		if (fDecoratedElementImage != null) {
 			fDecoratedElementImage.dispose();
-		if (fDecoratedItemImage != null)
+		}
+		if (fDecoratedItemImage != null) {
 			fDecoratedItemImage.dispose();
+		}
 	}
 
 	/**
@@ -154,8 +162,9 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	 * @return a cached date format for the current locale
 	 */
 	private DateFormat getDateFormat() {
-		if (fDateFormat == null)
+		if (fDateFormat == null) {
 			fDateFormat= DateFormat.getTimeInstance(DateFormat.SHORT);
+		}
 		return fDateFormat;
 	}
 
@@ -169,8 +178,9 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	private String getDescriptorLabel(final RefactoringDescriptorProxy descriptor) {
 		if (fControlConfiguration.isTimeDisplayed()) {
 			final long stamp= descriptor.getTimeStamp();
-			if (stamp >= 0)
+			if (stamp >= 0) {
 				return Messages.format(fControlConfiguration.getRefactoringPattern(), new String[] { getDateFormat().format(new Date(stamp)), descriptor.getDescription()});
+			}
 		}
 		return descriptor.getDescription();
 	}
@@ -179,25 +189,24 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	public Image getImage(final Object element) {
 		Image image= null;
 		final boolean time= fControlConfiguration.isTimeDisplayed();
-		if (element instanceof RefactoringHistoryEntry || element instanceof RefactoringDescriptorProxy)
+		if (element instanceof RefactoringHistoryEntry || element instanceof RefactoringDescriptorProxy) {
 			image= time ? fElementImage : fItemImage;
-		else
+		} else {
 			image= time ? fContainerImage : fCollectionImage;
+		}
 		return decorateImage(image, element);
 	}
 
 	@SuppressWarnings("incomplete-switch")
 	@Override
 	public String getText(Object element) {
-		if (element instanceof RefactoringHistoryEntry) {
-			final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) element;
+		if (element instanceof final RefactoringHistoryEntry entry) {
 			return getDescriptorLabel(entry.getDescriptor());
 		} else if (element instanceof RefactoringDescriptorProxy) {
 			return getDescriptorLabel((RefactoringDescriptorProxy) element);
 		} else if (element instanceof RefactoringHistory) {
 			return RefactoringUIMessages.RefactoringHistoryControlConfiguration_collection_label;
-		} else if (element instanceof RefactoringHistoryNode) {
-			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
+		} else if (element instanceof final RefactoringHistoryNode node) {
 			final StringBuilder buffer= new StringBuilder(32);
 			final int kind= node.getKind();
 			switch (kind) {
@@ -205,8 +214,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 					buffer.append(fControlConfiguration.getCollectionLabel());
 					break;
 				default: {
-					if (node instanceof RefactoringHistoryDate) {
-						final RefactoringHistoryDate date= (RefactoringHistoryDate) node;
+					if (node instanceof final RefactoringHistoryDate date) {
 						final Date stamp= new Date(date.getTimeStamp());
 						Format format= null;
 						String pattern= ""; //$NON-NLS-1$
@@ -245,8 +253,9 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK) {
 									final SimpleDateFormat simple= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_day_format);
 									buffer.append(Messages.format(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, new String[] { simple.format(stamp), DateFormat.getDateInstance().format(stamp)}));
-								} else
+								} else {
 									format= DateFormat.getDateInstance(DateFormat.DEFAULT);
+								}
 								break;
 							case RefactoringHistoryNode.YESTERDAY:
 								pattern= fControlConfiguration.getYesterdayPattern();
@@ -257,8 +266,9 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 								format= DateFormat.getDateInstance(DateFormat.DEFAULT);
 								break;
 						}
-						if (format != null)
+						if (format != null) {
 							buffer.append(Messages.format(pattern,format.format(stamp)));
+						}
 					}
 				}
 			}

@@ -46,12 +46,12 @@ public final class RefactoringDescriptorCompareInput extends PlatformObject impl
 
 		@Override
 		public String getName() {
-			if (fDescriptor instanceof RefactoringDescriptorSynchronizationProxy) {
-				final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fDescriptor;
-				if (proxy.getDirection() == IThreeWayDiff.INCOMING)
+			if (fDescriptor instanceof final RefactoringDescriptorSynchronizationProxy proxy) {
+				if (proxy.getDirection() == IThreeWayDiff.INCOMING) {
 					return ModelMessages.RefactoringDescriptorCompareInput_pending_refactoring;
-				else
+				} else {
 					return ModelMessages.RefactoringDescriptorCompareInput_performed_refactoring;
+				}
 			}
 			return RefactoringUIMessages.RefactoringWizard_refactoring;
 		}

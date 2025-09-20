@@ -97,8 +97,9 @@ public class RefactoringUIPlugin extends AbstractUIPlugin {
 			for (IWorkbenchPage page : window.getPages()) {
 				for (IEditorReference reference : page.getEditorReferences()) {
 					IEditorPart editor= reference.getEditor(false);
-					if (editor != null)
+					if (editor != null) {
 						result.add(editor);
+					}
 				}
 			}
 		}

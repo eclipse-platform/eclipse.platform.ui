@@ -93,8 +93,9 @@ public class RedoRefactoringAction extends UndoManagerAction {
 			@Override
 			public void redoStackChanged(IUndoManager manager) {
 				IAction action= getAction();
-				if (action == null)
+				if (action == null) {
 					return;
+				}
 				boolean enabled= false;
 				String text= null;
 				if (manager.anythingToRedo()) {
@@ -116,8 +117,9 @@ public class RedoRefactoringAction extends UndoManagerAction {
 			fPatternLength= RefactoringUIMessages.RedoRefactoringAction_extendedLabel.length();
 			IUndoManager undoManager = RefactoringCore.getUndoManager();
 			if (undoManager.anythingToRedo()) {
-				if (undoManager.peekRedoName() != null)
+				if (undoManager.peekRedoName() != null) {
 					action.setText(getActionText());
+				}
 				action.setEnabled(true);
 			} else {
 				action.setEnabled(false);

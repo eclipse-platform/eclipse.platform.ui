@@ -90,16 +90,20 @@ public class RefactoringDescriptorViewer extends Viewer {
 			final RefactoringDescriptor descriptor= proxy.requestDescriptor(new NullProgressMonitor());
 			if (descriptor != null) {
 				final String comment= descriptor.getComment();
-				if (comment != null && !"".equals(comment)) //$NON-NLS-1$
+				if (comment != null && !"".equals(comment)) { //$NON-NLS-1$
 					HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(comment));
+				}
 				HTMLPrinter.startBulletList(buffer);
 				final int flags= descriptor.getFlags();
-				if ((flags & RefactoringDescriptor.BREAKING_CHANGE) > 0)
+				if ((flags & RefactoringDescriptor.BREAKING_CHANGE) > 0) {
 					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_breaking_change_message);
-				if ((flags & RefactoringDescriptor.STRUCTURAL_CHANGE) > 0)
+				}
+				if ((flags & RefactoringDescriptor.STRUCTURAL_CHANGE) > 0) {
 					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_structural_change_message);
-				if ((flags & RefactoringDescriptor.MULTI_CHANGE) > 0)
+				}
+				if ((flags & RefactoringDescriptor.MULTI_CHANGE) > 0) {
 					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_closure_change_message);
+				}
 				HTMLPrinter.endBulletList(buffer);
 			}
 		}
@@ -130,8 +134,9 @@ public class RefactoringDescriptorViewer extends Viewer {
 		if (input instanceof RefactoringDescriptorProxy) {
 			fDescriptor= (RefactoringDescriptorProxy) input;
 			refresh();
-		} else
+		} else {
 			fDescriptor= null;
+		}
 	}
 
 	@Override

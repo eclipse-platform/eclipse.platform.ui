@@ -99,8 +99,9 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	 */
 	protected Refactoring getRefactoring() {
 		RefactoringWizard wizard= getRefactoringWizard();
-		if (wizard == null)
+		if (wizard == null) {
 			return null;
+		}
 		return wizard.getRefactoring();
 	}
 
@@ -112,8 +113,9 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	 */
 	protected RefactoringWizard getRefactoringWizard() {
 		IWizard wizard= getWizard();
-		if (wizard instanceof RefactoringWizard)
+		if (wizard instanceof RefactoringWizard) {
 			return (RefactoringWizard) wizard;
+		}
 		return null;
 	}
 
@@ -139,8 +141,9 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	 */
 	protected IDialogSettings getRefactoringSettings() {
 		IDialogSettings settings= getDialogSettings();
-		if (settings == null)
+		if (settings == null) {
 			return null;
+		}
 		IDialogSettings result= settings.getSection(REFACTORING_SETTINGS);
 		if (result == null) {
 			result= new DialogSettings(REFACTORING_SETTINGS);

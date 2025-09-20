@@ -63,15 +63,14 @@ public final class RefactoringDescriptorCompareViewer extends RefactoringDescrip
 
 	@Override
 	public void setInput(final Object element) {
-		if (element instanceof RefactoringDescriptorCompareInput) {
-			final RefactoringDescriptorCompareInput input= (RefactoringDescriptorCompareInput) element;
+		if (element instanceof final RefactoringDescriptorCompareInput input) {
 			final RefactoringDescriptorProxy descriptor= input.getDescriptor();
-			if (descriptor instanceof RefactoringDescriptorSynchronizationProxy) {
-				final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) descriptor;
-				if (proxy.getDirection() == IThreeWayDiff.INCOMING)
+			if (descriptor instanceof final RefactoringDescriptorSynchronizationProxy proxy) {
+				if (proxy.getDirection() == IThreeWayDiff.INCOMING) {
 					fBrowser.setData(CompareUI.COMPARE_VIEWER_TITLE, ModelMessages.RefactoringDescriptorCompareInput_pending_refactoring);
-				else
+				} else {
 					fBrowser.setData(CompareUI.COMPARE_VIEWER_TITLE, ModelMessages.RefactoringDescriptorCompareInput_performed_refactoring);
+				}
 			}
 			super.setInput(descriptor);
 		}

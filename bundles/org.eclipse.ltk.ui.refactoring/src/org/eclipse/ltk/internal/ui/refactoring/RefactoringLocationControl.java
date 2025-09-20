@@ -113,8 +113,9 @@ public class RefactoringLocationControl extends Composite {
 		final IDialogSettings settings= fWizard.getDialogSettings();
 		if (settings != null) {
 			String[] locations= settings.getArray(fKey);
-			if (locations == null || locations.length == 0)
+			if (locations == null || locations.length == 0) {
 				return;
+			}
 			for (String location : locations) {
 				fCombo.add(location);
 			}
@@ -137,8 +138,9 @@ public class RefactoringLocationControl extends Composite {
 				locations.addFirst(text);
 			}
 			final int size= locations.size();
-			for (int index= 0; index < size - MAX_HISTORY_SIZE; index++)
+			for (int index= 0; index < size - MAX_HISTORY_SIZE; index++) {
 				locations.removeLast();
+			}
 			settings.put(fKey, locations.toArray(new String[locations.size()]));
 		}
 	}

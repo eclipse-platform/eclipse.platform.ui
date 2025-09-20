@@ -19,7 +19,7 @@ package org.eclipse.ltk.internal.ui.refactoring;
  * @since 3.0
  */
 public class FinishResult {
-	private int fValue;
+	private final int fValue;
 
 	private FinishResult(int value) {
 		fValue= value;

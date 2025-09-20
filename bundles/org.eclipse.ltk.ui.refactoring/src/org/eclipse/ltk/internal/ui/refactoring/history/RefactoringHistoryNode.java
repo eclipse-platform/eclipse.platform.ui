@@ -63,8 +63,7 @@ public abstract class RefactoringHistoryNode {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof RefactoringHistoryNode) {
-			final RefactoringHistoryNode node= (RefactoringHistoryNode) object;
+		if (object instanceof final RefactoringHistoryNode node) {
 			final RefactoringHistoryNode parent= getParent();
 			if (!Objects.equals(parent, node.getParent())) {
 				return false;

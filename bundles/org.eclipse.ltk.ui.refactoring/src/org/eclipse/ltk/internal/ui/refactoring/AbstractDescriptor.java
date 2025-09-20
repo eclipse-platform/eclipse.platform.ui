@@ -46,14 +46,16 @@ public abstract class AbstractDescriptor {
 		Expression exp= getExpression();
 		EvaluationContext evaluationContext= new EvaluationContext(null, element);
 		evaluationContext.addVariable(variableName, element);
-		if (exp.evaluate(evaluationContext) == EvaluationResult.FALSE)
+		if (exp.evaluate(evaluationContext) == EvaluationResult.FALSE) {
 			return false;
+		}
 		return true;
 	}
 
 	public Expression getExpression() throws CoreException {
-		if (fExpression == null)
+		if (fExpression == null) {
 			fExpression= createExpression(fConfigurationElement);
+		}
 		return fExpression;
 	}
 
@@ -63,8 +65,9 @@ public abstract class AbstractDescriptor {
 
 	protected Expression createExpression(IConfigurationElement element) throws CoreException {
 		IConfigurationElement[] children= element.getChildren(ExpressionTagNames.ENABLEMENT);
-		if (children.length == 0)
+		if (children.length == 0) {
 			return Expression.FALSE;
+		}
 		// TODO we should add some sort of syntax check and throw an core exception in this case
 		Assert.isTrue(children.length == 1);
 		return ExpressionConverter.getDefault().perform(children[0]);

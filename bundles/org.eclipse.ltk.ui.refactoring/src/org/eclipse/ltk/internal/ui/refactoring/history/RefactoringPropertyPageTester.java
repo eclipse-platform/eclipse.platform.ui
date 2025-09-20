@@ -46,10 +46,12 @@ public final class RefactoringPropertyPageTester extends PropertyTester {
 			if (project.isAccessible()) {
 				if (RefactoringHistoryService.hasSharedRefactoringHistory(project)) {
 					final URI uri= project.getLocationURI();
-					if (uri != null)
+					if (uri != null) {
 						return EFS.getStore(uri).getChild(RefactoringHistoryService.NAME_HISTORY_FOLDER);
-				} else
+					}
+				} else {
 					return store.getChild(project.getName());
+				}
 			}
 		} catch (CoreException exception) {
 			// Do nothing
@@ -60,14 +62,13 @@ public final class RefactoringPropertyPageTester extends PropertyTester {
 	@Override
 	public boolean test(final Object receiver, final String property, final Object[] arguments, final Object expected) {
 		if (PROPERTY_NAME.equals(property)) {
-			if (receiver instanceof IAdaptable) {
-				final IAdaptable adaptable= (IAdaptable) receiver;
+			if (receiver instanceof final IAdaptable adaptable) {
 				final IResource resource= adaptable.getAdapter(IResource.class);
-				if (resource instanceof IProject) {
-					final IProject project= (IProject) resource;
+				if (resource instanceof final IProject project) {
 					final IFileStore store= getHistoryStore(project);
-					if (store != null)
+					if (store != null) {
 						return store.fetchInfo().exists();
+					}
 				}
 			}
 		}

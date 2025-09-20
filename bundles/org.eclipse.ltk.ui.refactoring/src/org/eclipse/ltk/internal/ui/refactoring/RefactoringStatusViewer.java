@@ -118,10 +118,12 @@ public class RefactoringStatusViewer extends SashForm {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			int r1= ((RefactoringStatusEntry)e1).getSeverity();
 			int r2= ((RefactoringStatusEntry)e2).getSeverity();
-			if (r1 < r2)
+			if (r1 < r2) {
 				return 1;
-			if (r2 < r1)
+			}
+			if (r2 < r1) {
 				return -1;
+			}
 			return 0;
 		}
 
@@ -213,7 +215,7 @@ public class RefactoringStatusViewer extends SashForm {
 		fCurrentContextViewer= fNullContextViewer;
 		fCurrentDescriptor= null;
 
-		setWeights(new int[]{35, 65});
+		setWeights(35, 65);
 	}
 
 	private  void createTableViewer(Composite parent) {
@@ -240,13 +242,14 @@ public class RefactoringStatusViewer extends SashForm {
 	//---- Feed status entry into context viewer ---------------------------------------------------------
 
 	private void entrySelected(ISelection s) {
-		if (!(s instanceof IStructuredSelection))
+		if (!(s instanceof IStructuredSelection)) {
 			return;
+		}
 		Object first= ((IStructuredSelection) s).getFirstElement();
-		if (! (first instanceof RefactoringStatusEntry))
+		if (! (first instanceof RefactoringStatusEntry entry)) {
 			return;
+		}
 
-		RefactoringStatusEntry entry= (RefactoringStatusEntry)first;
 		showContextViewer(entry);
 	}
 
@@ -267,8 +270,9 @@ public class RefactoringStatusViewer extends SashForm {
 					}
 					fCurrentDescriptor= descriptor;
 					newViewer.setInput(context);
-					if (fCurrentContextViewer != null && fCurrentContextViewer != fNullContextViewer)
+					if (fCurrentContextViewer != null && fCurrentContextViewer != fNullContextViewer) {
 						fCurrentContextViewer.getControl().dispose();
+					}
 					fCurrentContextViewer= newViewer;
 					fContextViewerContainer.showPage(fCurrentContextViewer.getControl());
 				} else {
@@ -292,8 +296,9 @@ public class RefactoringStatusViewer extends SashForm {
 	//---- Helpers ----------------------------------------------------------------------------------------
 
 	private RefactoringStatusEntry getFirstEntry() {
-		if (fStatus == null || !fStatus.hasEntries())
+		if (fStatus == null || !fStatus.hasEntries()) {
 			return null;
+		}
 		return fStatus.getEntryAt(0);
 	}
 

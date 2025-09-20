@@ -54,7 +54,7 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 public class RefactoringWizardDialog2 extends TrayDialog implements IWizardContainer {
 
-	private RefactoringWizard fWizard;
+	private final RefactoringWizard fWizard;
 	private IWizardPage fCurrentPage;
 	private IWizardPage fVisiblePage;
 
@@ -71,7 +71,7 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	private int fPreviewWidth;
 	private int fPreviewHeight;
 	private IDialogSettings fSettings;
-	private boolean fHasAdditionalPages;
+	private final boolean fHasAdditionalPages;
 	private Rectangle fInitialSize;
 
 	private static final String DIALOG_SETTINGS= "RefactoringWizard.preview"; //$NON-NLS-1$
@@ -79,8 +79,8 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	private static final String HEIGHT= "height"; //$NON-NLS-1$
 
 	private static class MessageBox extends Composite {
-		private Label fImage;
-		private Label fText;
+		private final Label fImage;
+		private final Label fText;
 		public MessageBox(Composite parent, int style) {
 			super(parent, style);
 			GridLayout layout= new GridLayout();
@@ -110,8 +110,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 			if (msg == null || msg.length() == 0) {
 				msg= page.getMessage();
 				type= IMessageProvider.NONE;
-			if (msg != null && page instanceof IMessageProvider)
+			if (msg != null && page instanceof IMessageProvider) {
 				type = ((IMessageProvider)page).getMessageType();
+			}
 			}
 			Image image= null;
 			switch (type) {
@@ -126,11 +127,13 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 					image= RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_ERROR);
 					break;
 			}
-			if (msg == null)
+			if (msg == null) {
 				msg= ""; //$NON-NLS-1$
+			}
 			fText.setText(escapeAmpersands(msg));
-			if (image == null && msg.length() > 0)
+			if (image == null && msg.length() > 0) {
 				image= RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_INFO);
+			}
 			fImage.setImage(image);
 		}
 		private String escapeAmpersands(String message) {
@@ -147,7 +150,7 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	}
 
 	private static class PageBook extends Composite {
-		private StackLayout fLayout;
+		private final StackLayout fLayout;
 		public PageBook(Composite parent, int style) {
 			super(parent, style);
 			fLayout= new StackLayout();
@@ -251,31 +254,37 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 			getShell().layout(new Control[] { previewButton });
 
 			boolean enable= true;
-			if (!previewPage)
+			if (!previewPage) {
 				enable= canFlip;
+			}
 			previewButton.setEnabled(enable);
-			if (enable)
+			if (enable) {
 				defaultButton= previewButton;
+			}
 		}
 
 		Button nextButton= getButton(IDialogConstants.NEXT_ID);
 		if (nextButton != null && !nextButton.isDisposed()) {
 			nextButton.setEnabled(!previewPage);
-			if (!previewPage)
+			if (!previewPage) {
 				nextButton.setEnabled(canFlip);
-			if (nextButton.isEnabled())
+			}
+			if (nextButton.isEnabled()) {
 				defaultButton= nextButton;
+			}
 		}
 
 		Button backButton= getButton(IDialogConstants.BACK_ID);
-		if (backButton != null && !backButton.isDisposed())
+		if (backButton != null && !backButton.isDisposed()) {
 			backButton.setEnabled(!isFirstPage());
+		}
 
 		Button okButton= getButton(IDialogConstants.OK_ID);
 		if (okButton != null && !okButton.isDisposed()) {
 			okButton.setEnabled(ok);
-			if (ok)
+			if (ok) {
 				defaultButton= okButton;
+			}
 		}
 
 		if (defaultButton != null) {
@@ -285,8 +294,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 
 	@Override
 	public void updateMessage() {
-		if (fStatusContainer == null || fStatusContainer.isDisposed())
+		if (fStatusContainer == null || fStatusContainer.isDisposed()) {
 			return;
+		}
 		fStatusContainer.showPage(fMessageBox);
 		fMessageBox.setMessage(fCurrentPage);
 	}
@@ -299,8 +309,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	@Override
 	public void updateWindowTitle() {
 		String title= fWizard.getWindowTitle();
-		if (title == null)
+		if (title == null) {
 			title= ""; //$NON-NLS-1$
+		}
 		getShell().setText(title);
 	}
 
@@ -317,8 +328,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 			ModalContext.run(runnable, false, new NullProgressMonitor(), getShell().getDisplay());
 		} else {
 			Map<String, Object> state = null;
-			if(fActiveRunningOperations == 0)
+			if(fActiveRunningOperations == 0) {
 				state = aboutToStart(fork && cancelable);
+			}
 
 			fActiveRunningOperations++;
 			try {
@@ -326,8 +338,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 			} finally {
 				fActiveRunningOperations--;
 				//Stop if this is the last one
-				if(state!= null)
+				if(state!= null) {
 					stopped(state);
+				}
 			}
 		}
 	}
@@ -338,8 +351,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 		if (shell != null) {
 			// Save focus control
 			Control focusControl = getShell().getDisplay().getFocusControl();
-			if (focusControl != null && focusControl.getShell() != getShell())
+			if (focusControl != null && focusControl.getShell() != getShell()) {
 				focusControl = null;
+			}
 
 			Button cancelButton= getButton(IDialogConstants.CANCEL_ID);
 			// Set the busy cursor to all shells.
@@ -353,12 +367,14 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 
 			// Deactivate shell
 			savedState= saveUIState(false);
-			if (focusControl != null)
+			if (focusControl != null) {
 				savedState.put("focus", focusControl); //$NON-NLS-1$
+			}
 
 			if (hasProgressMonitor) {
-				if (cancelable)
+				if (cancelable) {
 					fProgressMonitorPart.attachToCancelComponent(cancelButton);
+				}
 				fStatusContainer.showPage(fProgressMonitorPart);
 			}
 			// Update the status container since we are blocking the event loop right now.
@@ -396,8 +412,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 		if (shell != null) {
 			Button cancelButton= getButton(IDialogConstants.CANCEL_ID);
 
-			if (fProgressMonitorPart != null)
+			if (fProgressMonitorPart != null) {
 				fProgressMonitorPart.removeFromCancelComponent(cancelButton);
+			}
 
 			fStatusContainer.showPage(fMessageBox);
 			restoreUIState(savedState);
@@ -405,8 +422,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 			setDisplayCursor(shell.getDisplay(), null);
 			cancelButton.setCursor(null);
 			Control focusControl = (Control) savedState.get("focus"); //$NON-NLS-1$
-			if (focusControl != null)
+			if (focusControl != null) {
 				focusControl.setFocus();
+			}
 		}
 	}
 
@@ -423,8 +441,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	private void restoreEnableState(Control w, Map<String, Object> h, String key) {
 		if (w != null) {
 			Boolean b = (Boolean) h.get(key);
-			if (b != null)
+			if (b != null) {
 				w.setEnabled(b);
+			}
 		}
 	}
 
@@ -439,8 +458,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	@Override
 	protected void cancelPressed() {
 		if (fActiveRunningOperations == 0)	{
-			if (fWizard.performCancel())
+			if (fWizard.performCancel()) {
 				super.cancelPressed();
+			}
 		}
 	}
 
@@ -453,8 +473,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 			super.okPressed();
 			return;
 		}
-		if (fCurrentPage == current)
+		if (fCurrentPage == current) {
 			return;
+		}
 		Assert.isTrue(IErrorWizardPage.PAGE_NAME.equals(fCurrentPage.getName()));
 		if (fHasAdditionalPages) {
 			// Show error page as a normal page
@@ -469,8 +490,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	}
 
 	private void showCurrentPage() {
-		if (fCurrentPage.getControl() == null)
+		if (fCurrentPage.getControl() == null) {
 			fCurrentPage.createControl(fPageContainer);
+		}
 		resize();
 		makeVisible(fCurrentPage);
 		updateButtons();
@@ -479,8 +501,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	@Override
 	protected void handleShellCloseEvent() {
 		if (fActiveRunningOperations == 0)	{
-			if (fWizard.performCancel())
+			if (fWizard.performCancel()) {
 				super.handleShellCloseEvent();
+			}
 		}
 	}
 
@@ -492,8 +515,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 		IWizardPage current= fCurrentPage;
 		saveInitialSize();
 		fCurrentPage= fCurrentPage.getNextPage();
-		if (current == fCurrentPage)
+		if (current == fCurrentPage) {
 			return;
+		}
 		if (!fHasAdditionalPages && IErrorWizardPage.PAGE_NAME.equals(fCurrentPage.getName())) {
 			if (showErrorDialog((ErrorWizardPage)fCurrentPage)) {
 				fCurrentPage= fCurrentPage.getNextPage();
@@ -522,8 +546,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	private void backPressed() {
 		IWizardPage current= fCurrentPage;
 		fCurrentPage= fCurrentPage.getPreviousPage();
-		if (current == fCurrentPage)
+		if (current == fCurrentPage) {
 			return;
+		}
 
 		showCurrentPage();
 	}
@@ -587,10 +612,12 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		String title= fWizard.getDefaultPageTitle();
-		if (title == null)
+		if (title == null) {
 			title= fWizard.getWindowTitle();
-		if (title == null)
+		}
+		if (title == null) {
 			title= ""; //$NON-NLS-1$
+		}
 		newShell.setText(title);
 		fWizard.getRefactoring().setValidationContext(newShell);
 	}
@@ -621,8 +648,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(fWizard.getMessageLineWidthInChars());
 		fStatusContainer.setLayoutData(gd);
-		if (fWizard.needsProgressMonitor())
+		if (fWizard.needsProgressMonitor()) {
 			createProgressMonitorPart();
+		}
 		createMessageBox();
 		fStatusContainer.showPage(fMessageBox);
 
@@ -654,10 +682,11 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 
-		if (fHasAdditionalPages)
+		if (fHasAdditionalPages) {
 			createPreviousAndNextButtons(parent);
-		else
+		} else {
 			createPreviewButton(parent);
+		}
 
 		String OK_LABEL= (fHasAdditionalPages) ? IDialogConstants.FINISH_LABEL : IDialogConstants.OK_LABEL;
 		String CANCEL_LABEL= IDialogConstants.CANCEL_LABEL;
@@ -760,10 +789,12 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	}
 
 	private void makeVisible(IWizardPage page) {
-		if (fVisiblePage == page)
+		if (fVisiblePage == page) {
 			return;
-		if (fVisiblePage != null)
+		}
+		if (fVisiblePage != null) {
 			fVisiblePage.setVisible(false);
+		}
 		fVisiblePage= page;
 		fPageContainer.showPage(page.getControl());
 		fVisiblePage.setVisible(true);

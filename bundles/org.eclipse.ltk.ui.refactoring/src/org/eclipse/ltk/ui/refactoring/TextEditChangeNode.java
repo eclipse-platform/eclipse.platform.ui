@@ -155,10 +155,12 @@ public class TextEditChangeNode extends InternalTextEditChangeNode {
 		public int compare(TextEditBasedChangeGroup c1, TextEditBasedChangeGroup c2) {
 			int p1= getOffset(c1);
 			int p2= getOffset(c2);
-			if (p1 < p2)
+			if (p1 < p2) {
 				return -1;
-			if (p1 > p2)
+			}
+			if (p1 > p2) {
 				return 1;
+			}
 			// same offset
 			return 0;
 		}
