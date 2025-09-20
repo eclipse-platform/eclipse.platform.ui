@@ -89,9 +89,9 @@ public abstract class ObservableValueEditingSupport<E, M, T> extends EditingSupp
 
 	private final ColumnViewerEditorActivationListenerHelper activationListener = new ColumnViewerEditorActivationListenerHelper();
 
-	private ColumnViewer viewer;
+	private final ColumnViewer viewer;
 
-	private DataBindingContext dataBindingContext;
+	private final DataBindingContext dataBindingContext;
 
 	boolean dirty = false;
 

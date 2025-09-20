@@ -40,28 +40,33 @@ public class WidgetEnabledProperty<S extends Widget> extends WidgetDelegatingVal
 	@Override
 	protected IValueProperty<S, Boolean> doGetDelegate(S source) {
 		if (source instanceof Control) {
-			if (control == null)
+			if (control == null) {
 				control = new ControlEnabledProperty();
+			}
 			return (IValueProperty<S, Boolean>) control;
 		}
 		if (source instanceof Menu) {
-			if (menu == null)
+			if (menu == null) {
 				menu = new MenuEnabledProperty();
+			}
 			return (IValueProperty<S, Boolean>) menu;
 		}
 		if (source instanceof MenuItem) {
-			if (menuItem == null)
+			if (menuItem == null) {
 				menuItem = new MenuItemEnabledProperty();
+			}
 			return (IValueProperty<S, Boolean>) menuItem;
 		}
 		if (source instanceof ScrollBar) {
-			if (scrollBar == null)
+			if (scrollBar == null) {
 				scrollBar = new ScrollBarEnabledProperty();
+			}
 			return (IValueProperty<S, Boolean>) scrollBar;
 		}
 		if (source instanceof ToolItem) {
-			if (toolItem == null)
+			if (toolItem == null) {
 				toolItem = new ToolItemEnabledProperty();
+			}
 			return (IValueProperty<S, Boolean>) toolItem;
 		}
 		throw notSupported(source);

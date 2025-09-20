@@ -38,8 +38,9 @@ public class WidgetMaximumProperty<S extends Control> extends WidgetDelegatingVa
 	@Override
 	protected IValueProperty<S, Integer> doGetDelegate(Control source) {
 		if (source instanceof Scale) {
-			if (scale == null)
+			if (scale == null) {
 				scale = new ScaleMaximumProperty();
+			}
 			return (IValueProperty<S, Integer>) scale;
 		}
 		if (source instanceof Slider) {
@@ -49,8 +50,9 @@ public class WidgetMaximumProperty<S extends Control> extends WidgetDelegatingVa
 			return (IValueProperty<S, Integer>) slider;
 		}
 		if (source instanceof Spinner) {
-			if (spinner == null)
+			if (spinner == null) {
 				spinner = new SpinnerMaximumProperty();
+			}
 			return (IValueProperty<S, Integer>) spinner;
 		}
 		throw notSupported(source);

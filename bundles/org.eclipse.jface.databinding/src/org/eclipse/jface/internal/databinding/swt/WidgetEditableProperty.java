@@ -39,8 +39,9 @@ public class WidgetEditableProperty<S extends Control> extends WidgetDelegatingV
 	@Override
 	protected IValueProperty<S, Boolean> doGetDelegate(S source) {
 		if (source instanceof Text) {
-			if (text == null)
+			if (text == null) {
 				text = new TextEditableProperty();
+			}
 			return (IValueProperty<S, Boolean>) text;
 		}
 		if (source instanceof CCombo) {

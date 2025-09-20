@@ -47,8 +47,8 @@ import org.eclipse.jface.viewers.StructuredViewer;
  */
 public class ObservableViewerElementSet<E> extends AbstractObservableSet<E> {
 	private Set<E> wrappedSet;
-	private Object elementType;
-	private IElementComparer comparer;
+	private final Object elementType;
+	private final IElementComparer comparer;
 
 	/**
 	 * Constructs an ObservableViewerElementSet on the given {@link Realm} which
@@ -113,8 +113,9 @@ public class ObservableViewerElementSet<E> extends AbstractObservableSet<E> {
 	public boolean add(E o) {
 		getterCalled();
 		boolean changed = wrappedSet.add(o);
-		if (changed)
+		if (changed) {
 			fireSetChange(Diffs.createSetDiff(Collections.singleton(o), Collections.emptySet()));
+		}
 		return changed;
 	}
 
@@ -123,12 +124,14 @@ public class ObservableViewerElementSet<E> extends AbstractObservableSet<E> {
 		getterCalled();
 		Set<E> additions = new ViewerElementSet<>(comparer);
 		for (E element : c) {
-			if (wrappedSet.add(element))
+			if (wrappedSet.add(element)) {
 				additions.add(element);
+			}
 		}
 		boolean changed = !additions.isEmpty();
-		if (changed)
+		if (changed) {
 			fireSetChange(Diffs.createSetDiff(additions, Collections.emptySet()));
+		}
 		return changed;
 	}
 
@@ -137,8 +140,9 @@ public class ObservableViewerElementSet<E> extends AbstractObservableSet<E> {
 	public boolean remove(Object o) {
 		getterCalled();
 		boolean changed = wrappedSet.remove(o);
-		if (changed)
+		if (changed) {
 			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), Collections.singleton((E) o)));
+		}
 		return changed;
 	}
 
@@ -149,12 +153,14 @@ public class ObservableViewerElementSet<E> extends AbstractObservableSet<E> {
 		for (Object e : c) {
 			@SuppressWarnings("unchecked")
 			E element = (E) e;
-			if (wrappedSet.remove(element))
+			if (wrappedSet.remove(element)) {
 				removals.add(element);
+			}
 		}
 		boolean changed = !removals.isEmpty();
-		if (changed)
+		if (changed) {
 			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), removals));
+		}
 		return changed;
 	}
 
@@ -178,8 +184,9 @@ public class ObservableViewerElementSet<E> extends AbstractObservableSet<E> {
 			removals.add(element);
 		}
 		boolean changed = !removals.isEmpty();
-		if (changed)
+		if (changed) {
 			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), removals));
+		}
 		return changed;
 	}
 
@@ -210,8 +217,9 @@ public class ObservableViewerElementSet<E> extends AbstractObservableSet<E> {
 	 *         {@link IElementComparer} for comparisons.
 	 */
 	public static <E> IObservableSet<E> withComparer(Realm realm, Object elementType, IElementComparer comparer) {
-		if (comparer == null)
+		if (comparer == null) {
 			return new WritableSet<>(realm, Collections.emptySet(), elementType);
+		}
 		return new ObservableViewerElementSet<>(realm, elementType, comparer);
 	}
 }

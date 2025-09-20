@@ -41,10 +41,11 @@ public class TreeViewerUpdater {
 	 */
 	public TreeViewerUpdater(AbstractTreeViewer viewer) {
 		this.viewer = viewer;
-		if (viewer instanceof TreeViewer)
+		if (viewer instanceof TreeViewer) {
 			treeViewer = (TreeViewer) viewer;
-		else
+		} else {
 			treeViewer = null;
+		}
 	}
 
 	/**
@@ -157,8 +158,9 @@ public class TreeViewerUpdater {
 
 			// If the moved element is selected (or is an ancestor of a selected
 			// element), restore the selection.
-			if (selectionContains(selection, getPathParent(parent), element))
+			if (selectionContains(selection, getPathParent(parent), element)) {
 				viewer.setSelection(selection);
+			}
 		}
 	}
 
@@ -202,7 +204,7 @@ public class TreeViewerUpdater {
 			// Only TreeViewer has a remove-by-index method.
 			treeViewer.remove(parent, position);
 		} else {
-			viewer.remove(parent, new Object[] { element });
+			viewer.remove(parent, element);
 		}
 	}
 

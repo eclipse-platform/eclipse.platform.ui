@@ -69,8 +69,9 @@ public class ObservableListTreeContentProvider<E> implements ITreeContentProvide
 
 			@Override
 			public void handleListChange(ListChangeEvent<? extends E> event) {
-				if (isViewerDisposed())
+				if (isViewerDisposed()) {
 					return;
+				}
 
 				// Determine which elements are being added and removed
 				final Set<E> localKnownElementAdditions = ViewerElementSet.withComparer(comparer);
@@ -117,8 +118,9 @@ public class ObservableListTreeContentProvider<E> implements ITreeContentProvide
 					getOrCreateNode(element).addParent(parentElement);
 				}
 
-				if (suspendRedraw[0])
+				if (suspendRedraw[0]) {
 					viewer.getControl().setRedraw(false);
+				}
 				try {
 					ListDiffVisitor<Object> viewerUpdateVisitor = new ListDiffVisitor<>() {
 						@Override
@@ -147,8 +149,9 @@ public class ObservableListTreeContentProvider<E> implements ITreeContentProvide
 					};
 					event.diff.accept(viewerUpdateVisitor);
 				} finally {
-					if (suspendRedraw[0])
+					if (suspendRedraw[0]) {
 						viewer.getControl().setRedraw(true);
+					}
 				}
 
 				for (E element : localKnownElementRemovals) {

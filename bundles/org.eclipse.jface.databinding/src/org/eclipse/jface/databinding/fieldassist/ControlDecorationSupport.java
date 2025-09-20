@@ -374,17 +374,19 @@ public class ControlDecorationSupport {
 		targets.addDisposeListener(disposeListener);
 		targets.addListChangeListener(targetsChangeListener);
 
-		for (IObservable target : targets)
+		for (IObservable target : targets) {
 			targetAdded(target);
+		}
 
 		statusChanged(validationStatus.getValue());
 	}
 
 	private void targetAdded(IObservable target) {
 		Control control = findControl(target);
-		if (control != null)
+		if (control != null) {
 			targetDecorations.add(new TargetDecoration(target,
 					new ControlDecoration(control, position, composite)));
+		}
 	}
 
 	private void targetRemoved(IObservable target) {
@@ -400,8 +402,9 @@ public class ControlDecorationSupport {
 	private Control findControl(IObservable target) {
 		if (target instanceof ISWTObservable) {
 			Widget widget = ((ISWTObservable) target).getWidget();
-			if (widget instanceof Control)
+			if (widget instanceof Control) {
 				return (Control) widget;
+			}
 		}
 
 		if (target instanceof IViewerObservable) {
@@ -413,14 +416,16 @@ public class ControlDecorationSupport {
 			IObservable decorated = ((IDecoratingObservable) target)
 					.getDecorated();
 			Control control = findControl(decorated);
-			if (control != null)
+			if (control != null) {
 				return control;
+			}
 		}
 
 		if (target instanceof IObserving) {
 			Object observed = ((IObserving) target).getObserved();
-			if (observed instanceof IObservable)
+			if (observed instanceof IObservable) {
 				return findControl((IObservable) observed);
+			}
 		}
 
 		return null;

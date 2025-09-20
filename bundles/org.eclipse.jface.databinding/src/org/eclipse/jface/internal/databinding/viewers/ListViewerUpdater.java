@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.AbstractListViewer;
  * @since 1.2
  */
 class ListViewerUpdater<E> extends ViewerUpdater<E> {
-	private AbstractListViewer viewer;
+	private final AbstractListViewer viewer;
 
 	ListViewerUpdater(AbstractListViewer viewer) {
 		super(viewer);

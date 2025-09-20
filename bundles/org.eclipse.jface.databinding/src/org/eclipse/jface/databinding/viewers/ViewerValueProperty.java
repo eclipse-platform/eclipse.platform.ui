@@ -52,8 +52,9 @@ public abstract class ViewerValueProperty<S, T> extends SimpleValueProperty<S, T
 	@Override
 	public IObservableValue<T> observe(Realm realm, S source) {
 		IObservableValue<T> observable = super.observe(realm, source);
-		if (source instanceof Viewer)
+		if (source instanceof Viewer) {
 			observable = new ViewerObservableValueDecorator<>(observable, (Viewer) source);
+		}
 		return observable;
 	}
 

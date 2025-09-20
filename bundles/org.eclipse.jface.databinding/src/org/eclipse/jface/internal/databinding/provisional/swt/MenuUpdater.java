@@ -94,10 +94,10 @@ public abstract class MenuUpdater {
 
 	}
 
-	private Runnable updateRunnable = this::updateMenu;
+	private final Runnable updateRunnable = this::updateMenu;
 
-	private PrivateInterface privateInterface = new PrivateInterface();
-	private Menu theMenu;
+	private final PrivateInterface privateInterface = new PrivateInterface();
+	private final Menu theMenu;
 	private IObservable[] dependencies = new IObservable[0];
 	private boolean dirty = false;
 
