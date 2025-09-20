@@ -50,8 +50,7 @@ public class DnDAddon {
 		}
 
 		Object widget = event.getProperty(EventTags.NEW_VALUE);
-		if (widget instanceof Shell && !((Shell) widget).isDisposed()) {
-			Shell shell = (Shell) widget;
+		if (widget instanceof Shell shell && !shell.isDisposed()) {
 			DnDManager theManager = (DnDManager) shell.getData("DnDManager"); //$NON-NLS-1$
 			if (theManager == null) {
 				theManager = new DnDManager((MWindow) changedElement);
