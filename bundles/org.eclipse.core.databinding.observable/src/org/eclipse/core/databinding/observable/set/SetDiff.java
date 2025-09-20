@@ -84,7 +84,7 @@ public abstract class SetDiff<E> implements IDiff {
 	}
 
 	private static class DeltaSet<E> extends AbstractSet<E> {
-		private Set<E> original;
+		private final Set<E> original;
 		private final SetDiff<E> diff;
 
 		public DeltaSet(Set<E> original, SetDiff<E> diff) {
@@ -108,8 +108,9 @@ public abstract class SetDiff<E> implements IDiff {
 
 				@Override
 				public E next() {
-					if (!findNext())
+					if (!findNext()) {
 						throw new NoSuchElementException();
+					}
 					E myNext = next;
 					haveNext = false;
 					next = null;
@@ -117,19 +118,22 @@ public abstract class SetDiff<E> implements IDiff {
 				}
 
 				private boolean findNext() {
-					if (haveNext)
+					if (haveNext) {
 						return true;
+					}
 					while (true) {
 						E candidate;
-						if (orig.hasNext())
+						if (orig.hasNext()) {
 							candidate = orig.next();
-						else if (add.hasNext())
+						} else if (add.hasNext()) {
 							candidate = add.next();
-						else
+						} else {
 							return false;
+						}
 
-						if (diff.getRemovals().contains(candidate))
+						if (diff.getRemovals().contains(candidate)) {
 							continue;
+						}
 
 						haveNext = true;
 						next = candidate;

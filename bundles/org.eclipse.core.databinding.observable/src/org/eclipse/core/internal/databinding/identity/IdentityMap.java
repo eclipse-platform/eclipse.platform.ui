@@ -103,17 +103,21 @@ public class IdentityMap<K, V> implements Map<K, V> {
 
 			@Override
 			public boolean contains(Object o) {
-				for (Entry<K, V> entry : this)
-					if (entry.equals(o))
+				for (Entry<K, V> entry : this) {
+					if (entry.equals(o)) {
 						return true;
+					}
+				}
 				return false;
 			}
 
 			@Override
 			public boolean containsAll(Collection<?> c) {
-				for (Object element : c)
-					if (!contains(element))
+				for (Object element : c) {
+					if (!contains(element)) {
 						return false;
+					}
+				}
 				return true;
 			}
 
@@ -153,10 +157,12 @@ public class IdentityMap<K, V> implements Map<K, V> {
 
 							@Override
 							public boolean equals(Object obj) {
-								if (obj == this)
+								if (obj == this) {
 									return true;
-								if (!(obj instanceof Map.Entry))
+								}
+								if (!(obj instanceof Map.Entry)) {
 									return false;
+								}
 								Map.Entry<?, ?> that = (Map.Entry<?, ?>) obj;
 								return this.getKey() == that.getKey()
 										&& Objects.equals(this.getValue(),
@@ -201,10 +207,12 @@ public class IdentityMap<K, V> implements Map<K, V> {
 
 					@Override
 					public boolean equals(Object obj) {
-						if (obj == this)
+						if (obj == this) {
 							return true;
-						if (obj == null || !(obj instanceof Map.Entry))
+						}
+						if (obj == null || !(obj instanceof Map.Entry)) {
 							return false;
+						}
 						Map.Entry<?, ?> that = (Map.Entry<?, ?>) obj;
 						return Objects.equals(wrappedKey, that.getKey())
 								&& Objects.equals(this.getValue(), that.getValue());
@@ -221,8 +229,9 @@ public class IdentityMap<K, V> implements Map<K, V> {
 			@Override
 			public boolean removeAll(Collection<?> c) {
 				boolean changed = false;
-				for (Object element : c)
+				for (Object element : c) {
 					changed |= remove(element);
+				}
 				return changed;
 			}
 
@@ -270,10 +279,12 @@ public class IdentityMap<K, V> implements Map<K, V> {
 
 			@Override
 			public boolean equals(Object obj) {
-				if (obj == this)
+				if (obj == this) {
 					return true;
-				if (obj == null || !(obj instanceof Set))
+				}
+				if (obj == null || !(obj instanceof Set)) {
 					return false;
+				}
 				Set<?> that = (Set<?>) obj;
 				return this.size() == that.size() && containsAll(that);
 			}
@@ -321,9 +332,11 @@ public class IdentityMap<K, V> implements Map<K, V> {
 
 			@Override
 			public boolean containsAll(Collection<?> c) {
-				for (Object element : c)
-					if (!wrappedKeySet.contains(IdentityWrapper.wrap(element)))
+				for (Object element : c) {
+					if (!wrappedKeySet.contains(IdentityWrapper.wrap(element))) {
 						return false;
+					}
+				}
 				return true;
 			}
 
@@ -362,9 +375,10 @@ public class IdentityMap<K, V> implements Map<K, V> {
 			@Override
 			public boolean removeAll(Collection<?> c) {
 				boolean changed = false;
-				for (Object element : c)
+				for (Object element : c) {
 					changed |= wrappedKeySet.remove(IdentityWrapper
 							.wrap(element));
+				}
 				return changed;
 			}
 
@@ -412,10 +426,12 @@ public class IdentityMap<K, V> implements Map<K, V> {
 
 			@Override
 			public boolean equals(Object obj) {
-				if (obj == this)
+				if (obj == this) {
 					return true;
-				if (obj == null || !(obj instanceof Set))
+				}
+				if (obj == null || !(obj instanceof Set)) {
 					return false;
+				}
 				Set<?> that = (Set<?>) obj;
 				return this.size() == that.size() && containsAll(that);
 			}
@@ -458,10 +474,12 @@ public class IdentityMap<K, V> implements Map<K, V> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (obj == null || !(obj instanceof Map))
+		}
+		if (obj == null || !(obj instanceof Map)) {
 			return false;
+		}
 		Map<?, ?> that = (Map<?, ?>) obj;
 		return this.entrySet().equals(that.entrySet());
 	}

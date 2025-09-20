@@ -66,7 +66,7 @@ public final class CompositeSideEffect implements ISideEffect {
 	 */
 	private List<Consumer<ISideEffect>> disposeListeners;
 
-	private Consumer<ISideEffect> removalConsumer = this::remove;
+	private final Consumer<ISideEffect> removalConsumer = this::remove;
 
 	/**
 	 * Default constructor of an CompositeSideEffect.

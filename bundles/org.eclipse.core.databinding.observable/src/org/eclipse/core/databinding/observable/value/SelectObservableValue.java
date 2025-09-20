@@ -55,7 +55,7 @@ public class SelectObservableValue<T> extends AbstractObservableValue<T> {
 
 	private boolean updating = false;
 
-	private IValueChangeListener<Boolean> listener = event -> {
+	private final IValueChangeListener<Boolean> listener = event -> {
 		if (!updating) {
 			IObservableValue<? extends Boolean> observable = event.getObservableValue();
 			if (Boolean.TRUE.equals(observable.getValue())) {
@@ -169,8 +169,9 @@ public class SelectObservableValue<T> extends AbstractObservableValue<T> {
 
 	private T getLiveValue() {
 		for (Option option : options) {
-			if (option.observable.getValue())
+			if (option.observable.getValue()) {
 				return option.value;
+			}
 		}
 		return null;
 	}
@@ -192,22 +193,27 @@ public class SelectObservableValue<T> extends AbstractObservableValue<T> {
 	}
 
 	private T valueAtIndex(int index) {
-		if (index == -1)
+		if (index == -1) {
 			return null;
+		}
 		return options.get(index).value;
 	}
 
 	private int indexOfValue(Object value) {
-		for (int i = 0; i < options.size(); i++)
-			if (Objects.equals(options.get(i).value, value))
+		for (int i = 0; i < options.size(); i++) {
+			if (Objects.equals(options.get(i).value, value)) {
 				return i;
+			}
+		}
 		return -1;
 	}
 
 	private int indexOfObservable(IObservableValue<? extends Boolean> observable) {
-		for (int i = 0; i < options.size(); i++)
-			if (options.get(i).observable == observable)
+		for (int i = 0; i < options.size(); i++) {
+			if (options.get(i).observable == observable) {
 				return i;
+			}
+		}
 		return -1;
 	}
 }

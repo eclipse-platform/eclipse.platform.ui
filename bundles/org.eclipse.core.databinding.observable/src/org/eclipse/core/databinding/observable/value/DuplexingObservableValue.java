@@ -64,13 +64,16 @@ public abstract class DuplexingObservableValue<T> extends AbstractObservableValu
 		return new DuplexingObservableValue<>(target) {
 			@Override
 			protected T coalesceElements(Collection<T> elements) {
-				if (elements.isEmpty())
+				if (elements.isEmpty()) {
 					return emptyValue;
+				}
 				Iterator<T> it = elements.iterator();
 				T first = it.next();
-				while (it.hasNext())
-					if (!Objects.equals(first, it.next()))
+				while (it.hasNext()) {
+					if (!Objects.equals(first, it.next())) {
 						return multiValue;
+					}
+				}
 				return first;
 			}
 		};
@@ -105,8 +108,9 @@ public abstract class DuplexingObservableValue<T> extends AbstractObservableValu
 	private class PrivateInterface implements IChangeListener, IStaleListener {
 		@Override
 		public void handleChange(ChangeEvent event) {
-			if (!updating)
+			if (!updating) {
 				makeDirty();
+			}
 		}
 
 		@Override
@@ -119,8 +123,9 @@ public abstract class DuplexingObservableValue<T> extends AbstractObservableValu
 
 	@Override
 	protected void firstListenerAdded() {
-		if (privateInterface == null)
+		if (privateInterface == null) {
 			privateInterface = new PrivateInterface();
+		}
 		target.addChangeListener(privateInterface);
 		target.addStaleListener(privateInterface);
 	}
@@ -161,14 +166,16 @@ public abstract class DuplexingObservableValue<T> extends AbstractObservableValu
 
 	@Override
 	protected T doGetValue() {
-		if (!hasListeners())
+		if (!hasListeners()) {
 			return coalesceElements(target);
+		}
 
 		if (dirty) {
 			cachedValue = coalesceElements(target);
 			dirty = false;
-			if (target.isStale())
+			if (target.isStale()) {
 				fireStale();
+			}
 		}
 
 		return cachedValue;
@@ -190,8 +197,9 @@ public abstract class DuplexingObservableValue<T> extends AbstractObservableValu
 		boolean wasUpdating = updating;
 		try {
 			updating = true;
-			for (int i = 0; i < target.size(); i++)
+			for (int i = 0; i < target.size(); i++) {
 				target.set(i, value);
+			}
 		} finally {
 			updating = wasUpdating;
 		}

@@ -138,7 +138,7 @@ public class DecoratingObservableMap<K, V> extends DecoratingObservable
 	}
 
 	private class BackedCollection<E> implements Collection<E> {
-		private Collection<E> collection;
+		private final Collection<E> collection;
 
 		BackedCollection(Collection<E> set) {
 			this.collection = set;

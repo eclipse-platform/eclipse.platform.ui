@@ -38,7 +38,7 @@ import org.eclipse.core.databinding.observable.value.ValueDiff;
  */
 public class Diffs {
 	private static final class UnmodifiableListDiff<E> extends ListDiff<E> {
-		private ListDiff<? extends E> toWrap;
+		private final ListDiff<? extends E> toWrap;
 
 		public UnmodifiableListDiff(ListDiff<? extends E> diff) {
 			this.toWrap = diff;
@@ -56,7 +56,7 @@ public class Diffs {
 	}
 
 	private static final class UnmodifiableSetDiff<E> extends SetDiff<E> {
-		private SetDiff<? extends E> toWrap;
+		private final SetDiff<? extends E> toWrap;
 
 		public UnmodifiableSetDiff(SetDiff<? extends E> diff) {
 			toWrap = diff;
@@ -74,7 +74,7 @@ public class Diffs {
 	}
 
 	private static final class UnmodifiableMapDiff<K, V> extends MapDiff<K, V> {
-		private MapDiff<? extends K, ? extends V> toWrap;
+		private final MapDiff<? extends K, ? extends V> toWrap;
 
 		public UnmodifiableMapDiff(MapDiff<? extends K, ? extends V> diff) {
 			toWrap = diff;
@@ -107,7 +107,7 @@ public class Diffs {
 	}
 
 	private static final class UnmodifiableValueDiff<E> extends ValueDiff<E> {
-		private ValueDiff<? extends E> toWrap;
+		private final ValueDiff<? extends E> toWrap;
 
 		public UnmodifiableValueDiff(ValueDiff<? extends E> diff) {
 			toWrap = diff;

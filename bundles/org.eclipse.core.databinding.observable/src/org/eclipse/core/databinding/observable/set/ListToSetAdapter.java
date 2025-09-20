@@ -50,8 +50,9 @@ public class ListToSetAdapter<E> extends ObservableSet<E> {
 			E element = entry.getElement();
 			if (entry.isAddition()) {
 				if (wrappedSet.add(element)) {
-					if (!removed.remove(element))
+					if (!removed.remove(element)) {
 						added.add(element);
+					}
 				}
 			} else if (wrappedSet.remove(element)) {
 				removed.add(element);

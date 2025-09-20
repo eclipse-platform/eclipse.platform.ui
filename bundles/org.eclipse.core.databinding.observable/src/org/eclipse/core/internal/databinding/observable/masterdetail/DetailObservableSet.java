@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public class DetailObservableSet<M, E> extends ObservableSet<E>implements IObserving {
 
-	private boolean updating = false;
+	private final boolean updating = false;
 
 	private ISetChangeListener<E> innerChangeListener = event -> {
 		if (!updating) {
@@ -85,8 +85,9 @@ public class DetailObservableSet<M, E> extends ObservableSet<E>implements IObser
 	}
 
 	IValueChangeListener<M> outerChangeListener = (ValueChangeEvent<? extends M> event) -> {
-		if (isDisposed())
+		if (isDisposed()) {
 			return;
+		}
 		ObservableTracker.setIgnore(true);
 		try {
 			Set<E> oldSet = new HashSet<>(wrappedSet);
