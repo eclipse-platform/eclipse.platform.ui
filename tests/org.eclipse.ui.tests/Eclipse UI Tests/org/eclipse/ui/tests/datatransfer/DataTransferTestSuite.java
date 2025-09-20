@@ -16,20 +16,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	ImportOperationTest.class,
-	ImportArchiveOperationTest.class,
-	ExportFileSystemOperationTest.class,
-	ExportArchiveFileOperationTest.class,
-	ImportExistingProjectsWizardTest.class,
-		ImportExistingArchiveProjectFilterTest.class,
-	ImportExportWizardsCategoryTests.class,
-	SmartImportTests.class,
-	ZipSlipTests.class,
+@Suite
+@SelectClasses({ //
+		ImportOperationTest.class, //
+		ImportArchiveOperationTest.class, //
+		ExportFileSystemOperationTest.class, //
+		ExportArchiveFileOperationTest.class, //
+		ImportExistingProjectsWizardTest.class, //
+		ImportExistingArchiveProjectFilterTest.class, //
+		ImportExportWizardsCategoryTests.class, //
+		SmartImportTests.class, //
+		ZipSlipTests.class, //
 })
 public class DataTransferTestSuite {
 }
