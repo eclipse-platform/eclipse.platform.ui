@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class DetachedDropAgent extends DropAgent {
 	DnDManager manager;
-	private EModelService modelService;
+	private final EModelService modelService;
 	private Rectangle curRect;
 
 	public DetachedDropAgent(DnDManager manager) {

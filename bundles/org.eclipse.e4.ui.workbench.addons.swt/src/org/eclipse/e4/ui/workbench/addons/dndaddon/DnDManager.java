@@ -51,7 +51,7 @@ class DnDManager {
 	public static final int HOSTED = 1;
 	public static final int GHOSTED = 2;
 	public static final int SIMPLE = 3;
-	private int feedbackStyle = SIMPLE;
+	private final int feedbackStyle = SIMPLE;
 
 	Collection<DragAgent> dragAgents = new ArrayList<>();
 	Collection<DropAgent> dropAgents = new ArrayList<>();
@@ -59,7 +59,7 @@ class DnDManager {
 	DnDInfo info;
 	DragAgent dragAgent;
 
-	private MWindow dragWindow;
+	private final MWindow dragWindow;
 
 	private Shell dragHost;
 	private Control dragCtrl;
@@ -68,7 +68,7 @@ class DnDManager {
 	boolean dragging;
 
 	private Shell overlayFrame;
-	private List<Rectangle> frames = new ArrayList<>();
+	private final List<Rectangle> frames = new ArrayList<>();
 
 	DragDetectListener dragDetector = e -> {
 		if (dragging || e.widget.isDisposed()) {
@@ -93,8 +93,8 @@ class DnDManager {
 		updateOverlay();
 	}
 
-	private List<Image> images = new ArrayList<>();
-	private List<Rectangle> imageRects = new ArrayList<>();
+	private final List<Image> images = new ArrayList<>();
+	private final List<Rectangle> imageRects = new ArrayList<>();
 
 	protected boolean isModified;
 
