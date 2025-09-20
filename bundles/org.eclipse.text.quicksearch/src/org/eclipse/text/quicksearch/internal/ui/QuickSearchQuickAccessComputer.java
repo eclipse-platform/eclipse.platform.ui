@@ -35,7 +35,7 @@ public class QuickSearchQuickAccessComputer extends QuickTextSearchRequestor imp
 
 	private static final int MAX_ENTRIES = 20;
 	private static final long TIMEOUT = 200;
-	private PriorityFunction priorities;
+	private final PriorityFunction priorities;
 
 	public QuickSearchQuickAccessComputer() {
 		priorities = new QuickSearchContext(PlatformUI.getWorkbench().getActiveWorkbenchWindow()).createPriorityFun();

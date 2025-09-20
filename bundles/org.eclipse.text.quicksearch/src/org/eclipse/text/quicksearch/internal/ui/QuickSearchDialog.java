@@ -157,7 +157,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	public static final Styler HIGHLIGHT_STYLE = org.eclipse.search.internal.ui.text.DecoratingFileSearchLabelProvider.HIGHLIGHT_STYLE;
 
-	private UIJob refreshJob = UIJob.create(Messages.QuickSearchDialog_RefreshJob,
+	private final UIJob refreshJob = UIJob.create(Messages.QuickSearchDialog_RefreshJob,
 			(ICoreRunnable) m -> refreshWidgets());
 
 	protected void openSelection() {
@@ -358,7 +358,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	private MenuManager contextMenuManager;
 
-	private boolean multi;
+	private final boolean multi;
 
 	private ToolBar toolBar;
 
@@ -366,7 +366,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	private Label progressLabel;
 
-	private ContentProvider contentProvider;
+	private final ContentProvider contentProvider;
 
 	private String initialPatternText;
 
@@ -393,14 +393,14 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	private ToggleKeepOpenAction toggleKeepOpenAction;
 
 
-	private QuickSearchContext context;
+	private final QuickSearchContext context;
 
 
 	private SashForm sashForm;
 
 	private Label headerLabel;
 
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 	private Combo searchIn;
 	private Label listLabel;
 
@@ -570,10 +570,12 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			showViewHandler.getHandler().dispose();
 			showViewHandler = null;
 		}
-		if (menuManager != null)
+		if (menuManager != null) {
 			menuManager.dispose();
-		if (contextMenuManager != null)
+		}
+		if (contextMenuManager != null) {
 			contextMenuManager.dispose();
+		}
 		storeDialog(getDialogSettings());
 		if (searcher!=null) {
 			searcher.cancel();
@@ -956,7 +958,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		});
 
 		createDetailsArea(sashForm);
-		sashForm.setWeights(new int[] {5,2});
+		sashForm.setWeights(5, 2);
 
 		applyDialogFont(content);
 
@@ -1512,7 +1514,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	 */
 	private class ContentProvider implements IStructuredContentProvider, ILazyContentProvider {
 
-		private List items;
+		private final List items;
 		private Comparator<LineItem> comparator;
 		/**
 		 * Creates new instance of <code>ContentProvider</code>.

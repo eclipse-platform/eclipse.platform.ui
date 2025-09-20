@@ -53,7 +53,7 @@ public class QuickTextSearcher {
 	/**
 	 * Scheduling rule used by Jobs that work on the matches collection.
 	 */
-	private ISchedulingRule matchesRule = new LightSchedulingRule("QuickSearchMatchesRule"); //$NON-NLS-1$
+	private final ISchedulingRule matchesRule = new LightSchedulingRule("QuickSearchMatchesRule"); //$NON-NLS-1$
 
 	private final SearchInFilesWalker walker;
 	private IncrementalUpdateJob incrementalUpdate;

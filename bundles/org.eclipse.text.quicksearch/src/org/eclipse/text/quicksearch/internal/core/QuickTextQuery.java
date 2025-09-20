@@ -46,8 +46,8 @@ public class QuickTextQuery {
 		}
 	}
 
-	private boolean caseInsensitive;
-	private String orgPattern; //Original pattern case preserved even if search is case insensitive.
+	private final boolean caseInsensitive;
+	private final String orgPattern; //Original pattern case preserved even if search is case insensitive.
 	final Pattern pattern;
 
 	/**

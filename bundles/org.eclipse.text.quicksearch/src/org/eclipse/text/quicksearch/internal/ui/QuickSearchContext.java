@@ -54,7 +54,7 @@ public class QuickSearchContext {
 	 */
 	private static Collection<IFile> lastOpenFiles = Arrays.asList(); //Empty list to start with.
 
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	public QuickSearchContext(IWorkbenchWindow window) {
 		this.window = window;
@@ -163,16 +163,14 @@ public class QuickSearchContext {
 		}
 		ISelectionService selectionService = window.getSelectionService();
 		ISelection selection = selectionService.getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection structuredSelection) {
 			if (!structuredSelection.isEmpty()) {
 				Object[] elements = structuredSelection.toArray();
 				List<IResource> resources = new ArrayList<>(elements.length);
 				for (Object e : elements) {
 					if (e instanceof IResource) {
 						resources.add((IResource) e);
-					} else if (e instanceof IAdaptable) {
-						IAdaptable ae = (IAdaptable) e;
+					} else if (e instanceof IAdaptable ae) {
 						IResource r = ae.getAdapter(IResource.class);
 						if (r!=null) {
 							resources.add(r);
