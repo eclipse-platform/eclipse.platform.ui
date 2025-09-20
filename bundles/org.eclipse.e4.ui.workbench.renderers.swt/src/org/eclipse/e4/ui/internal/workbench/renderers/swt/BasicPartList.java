@@ -16,6 +16,7 @@
 package org.eclipse.e4.ui.internal.workbench.renderers.swt;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -129,6 +130,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 		}
 	}
 
+
 	@Override
 	protected TableViewer createTableViewer(Composite parent, int style) {
 		Table table = new Table(parent, SWT.SINGLE | (style & ~SWT.MULTI));
@@ -160,6 +162,21 @@ public class BasicPartList extends AbstractTableInformationControl {
 			}
 		}
 		return list;
+	}
+
+	public List<MPart> getEditorsReversed() {
+		List<MPart> showEditors = new ArrayList<>();
+		for (Object obj : getInput()) {
+			if (obj instanceof MPart) {
+				MPart part = (MPart) obj;
+				CTabItem item = renderer.findItemForPart(part);
+				if (item != null && !item.isShowing()) {
+					showEditors.add(part);
+				}
+			}
+		}
+		Collections.reverse(showEditors);
+		return showEditors;
 	}
 
 	public void setInput() {
