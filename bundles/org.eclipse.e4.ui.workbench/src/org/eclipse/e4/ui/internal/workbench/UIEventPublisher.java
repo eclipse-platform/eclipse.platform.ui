@@ -36,7 +36,7 @@ import org.eclipse.emf.ecore.util.EContentAdapter;
  */
 public class UIEventPublisher extends EContentAdapter {
 
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	public UIEventPublisher(IEclipseContext e4Context) {
 		this.context = e4Context;
@@ -47,8 +47,9 @@ public class UIEventPublisher extends EContentAdapter {
 		super.notifyChanged(notification);
 
 		// Ignore events that did not change the model value
-		if (notification.isTouch())
+		if (notification.isTouch()) {
 			return;
+		}
 
 		// Format the EMF event as an E4 UIEvent
 		Map<String, Object> argMap = new HashMap<>();

@@ -86,11 +86,12 @@ public class ReflectionContributionFactory implements IContributionFactory {
 			String clazz = uri.segment(0);
 			try {
 				Class<?> targetClass = bundle.loadClass(clazz);
-				if (staticContext == null)
+				if (staticContext == null) {
 					contribution = ContextInjectionFactory.make(targetClass, context);
-				else
+				} else {
 					contribution = ContextInjectionFactory
 							.make(targetClass, context, staticContext);
+				}
 
 				if (contribution == null) {
 					String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$

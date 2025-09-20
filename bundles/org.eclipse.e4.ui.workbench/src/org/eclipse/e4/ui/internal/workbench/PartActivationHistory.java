@@ -38,11 +38,11 @@ import org.eclipse.emf.ecore.EObject;
 
 class PartActivationHistory {
 
-	private PartServiceImpl partService;
+	private final PartServiceImpl partService;
 
-	private EModelService modelService;
+	private final EModelService modelService;
 
-	private LinkedList<MPart> generalActivationHistory = new LinkedList<>();
+	private final LinkedList<MPart> generalActivationHistory = new LinkedList<>();
 
 	PartActivationHistory(PartServiceImpl partService, EModelService modelService) {
 		this.partService = partService;
@@ -166,7 +166,7 @@ class PartActivationHistory {
 				// may be null for detached windows
 				parent = (MUIElement) ((EObject) element).eContainer();
 			}
-			return parent instanceof MApplication ? null : parent instanceof MArea ? (MArea) parent
+			return parent instanceof MApplication ? null : parent instanceof MArea m ? m
 					: isInArea(parent);
 		}
 
@@ -175,7 +175,7 @@ class PartActivationHistory {
 			// may be null for detached windows
 			parent = (MUIElement) ((EObject) placeholder).eContainer();
 		}
-		return parent instanceof MApplication ? null : parent instanceof MArea ? (MArea) parent
+		return parent instanceof MApplication ? null : parent instanceof MArea m ? m
 				: isInArea(parent);
 	}
 
@@ -345,7 +345,7 @@ class PartActivationHistory {
 		MPlaceholder placeholder = part.getCurSharedRef();
 		MUIElement candidate = getSiblingSelectionCandidate(part, placeholder == null ? part
 				: placeholder);
-		return (MPart) (candidate instanceof MPlaceholder ? ((MPlaceholder) candidate).getRef()
+		return (MPart) (candidate instanceof MPlaceholder m ? m.getRef()
 				: candidate);
 	}
 

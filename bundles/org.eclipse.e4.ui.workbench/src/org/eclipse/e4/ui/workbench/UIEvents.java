@@ -368,8 +368,9 @@ public class UIEvents {
 	 * @return true if the event is published correctly, false otherwise
 	 */
 	public static boolean publishEvent(String topic, MUIElement changedElement) {
-		if (topic == null || topic.isEmpty() || changedElement == null)
+		if (topic == null || topic.isEmpty() || changedElement == null) {
 			return false;
+		}
 
 		Map<String, Object> argMap = new HashMap<>(1);
 		argMap.put(EventTags.ELEMENT, changedElement);
@@ -388,22 +389,25 @@ public class UIEvents {
 	 * @return true if the event is published correctly, false otherwise
 	 */
 	public static boolean publishEvent(String topic, Map<String, Object> argMap) {
-		if (topic == null || topic.isEmpty() || argMap == null)
+		if (topic == null || topic.isEmpty() || argMap == null) {
 			return false;
+		}
 
 		Object uiElement = argMap.get(EventTags.ELEMENT);
 		if (!(uiElement instanceof MUIElement)) {
 			return false;
 		}
 
-		IEclipseContext context = uiElement instanceof MApplication ? ((MApplication) uiElement)
+		IEclipseContext context = uiElement instanceof MApplication m ? m
 				.getContext() : ModelUtils.getContainingContext((MUIElement) uiElement);
-		if (context == null)
+		if (context == null) {
 			return false;
+		}
 
 		IEventBroker eventBroker = context.get(IEventBroker.class);
-		if (eventBroker == null)
+		if (eventBroker == null) {
 			return false;
+		}
 
 		return eventBroker.send(topic, argMap);
 	}

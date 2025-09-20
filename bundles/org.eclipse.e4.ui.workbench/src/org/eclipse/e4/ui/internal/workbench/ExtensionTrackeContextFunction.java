@@ -37,7 +37,7 @@ public class ExtensionTrackeContextFunction extends ContextFunction implements E
 	@Reference
 	private ILog log;
 
-	private Map<IEclipseContext, IExtensionTracker> createdObjects = new ConcurrentHashMap<>();
+	private final Map<IEclipseContext, IExtensionTracker> createdObjects = new ConcurrentHashMap<>();
 
 	@Override
 	public Object compute(IEclipseContext context, String contextKey) {

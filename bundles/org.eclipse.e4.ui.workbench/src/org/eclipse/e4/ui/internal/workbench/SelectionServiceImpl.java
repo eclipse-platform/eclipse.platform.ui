@@ -22,7 +22,7 @@ import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
 
 public class SelectionServiceImpl implements ESelectionService {
 
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	@Inject
 	SelectionServiceImpl(IEclipseContext context) {
@@ -123,14 +123,17 @@ public class SelectionServiceImpl implements ESelectionService {
 
 	private SelectionAggregator getServiceAggregator() {
 		SelectionAggregator aggregator = context.get(SelectionAggregator.class);
-		if (aggregator != null)
+		if (aggregator != null) {
 			return aggregator;
+		}
 		MApplication app = context.get(MApplication.class);
-		if (app == null)
+		if (app == null) {
 			return null;
+		}
 		IEclipseContext windowContext = findContext(app);
-		if (windowContext == null)
+		if (windowContext == null) {
 			return null;
+		}
 		return windowContext.get(SelectionAggregator.class);
 	}
 

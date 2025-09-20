@@ -56,15 +56,17 @@ public class URIHelper {
 
 	static public String constructPlatformURI(Bundle bundle) {
 		BundleRevision bundleRevision = bundle.adapt(BundleRevision.class);
-		if (bundleRevision == null)
+		if (bundleRevision == null) {
 			return null;
+		}
 
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(PLATFORM_SCHEMA);
-		if ((bundleRevision.getTypes() & BundleRevision.TYPE_FRAGMENT) == BundleRevision.TYPE_FRAGMENT)
+		if ((bundleRevision.getTypes() & BundleRevision.TYPE_FRAGMENT) == BundleRevision.TYPE_FRAGMENT) {
 			tmp.append(FRAGMENT_SEGMENT);
-		else
+		} else {
 			tmp.append(PLUGIN_SEGMENT);
+		}
 		tmp.append(bundle.getSymbolicName());
 		return tmp.toString();
 	}
@@ -72,11 +74,12 @@ public class URIHelper {
 	static public String constructPlatformURI(IContributor contributor) {
 		// registry contributors are singletons
 		String bundleName;
-		if (contributor instanceof RegistryContributor)
+		if (contributor instanceof RegistryContributor) {
 			bundleName = ((RegistryContributor) contributor).getActualName();
-		else
+		} else { // should not happen for the standard registry, but try to make a best guess
 			// should not happen for the standard registry, but try to make a best guess
 			bundleName = contributor.getName();
+		}
 		Bundle bundle = Activator.getDefault().getBundleForName(bundleName);
 		return constructPlatformURI(bundle);
 	}
@@ -89,19 +92,22 @@ public class URIHelper {
 			ILog.get().error("Invalid contributor URI: " + contributorURI); //$NON-NLS-1$
 			return null;
 		}
-		if (!PLATFORM_SCHEMA.equals(uri.getScheme()))
+		if (!PLATFORM_SCHEMA.equals(uri.getScheme())) {
 			return null; // not implemented
+		}
 		return Activator.getDefault().getBundleForName(uri.getPath());
 	}
 
 	static public String EMFtoPlatform(org.eclipse.emf.common.util.URI uri) {
-		if (!PLATFORM_SCHEMA_EMF.equals(uri.scheme()))
+		if (!PLATFORM_SCHEMA_EMF.equals(uri.scheme())) {
 			return null;
+		}
 		// remove all segments but first two - only need bundle/fragment name
 		int segments = uri.segmentCount();
 		// segments: { "plugin", "org.eclipse.platform", "myDir", "model.e4xmi" }
-		if (segments > 2)
+		if (segments > 2) {
 			uri = uri.trimSegments(segments - 2);
+		}
 		return uri.toString();
 	}
 

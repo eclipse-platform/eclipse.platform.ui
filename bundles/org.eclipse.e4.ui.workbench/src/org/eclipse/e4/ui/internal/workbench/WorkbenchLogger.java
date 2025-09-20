@@ -32,7 +32,7 @@ import org.eclipse.osgi.service.debug.DebugTrace;
 public final class WorkbenchLogger extends Logger {
 	protected DebugTrace trace;
 	protected FrameworkLog log;
-	private String bundleName;
+	private final String bundleName;
 
 	/**
 	 * Creates a new workbench logger
@@ -126,8 +126,9 @@ public final class WorkbenchLogger extends Logger {
 			log.log(getLog(status));
 		} else {
 			System.out.println(status.getMessage());
-			if (status.getException() != null)
+			if (status.getException() != null) {
 				status.getException().printStackTrace();
+			}
 		}
 	}
 
@@ -159,8 +160,9 @@ public final class WorkbenchLogger extends Logger {
 			trace.trace(flag, message, t);
 		} else {
 			System.out.println(message);
-			if (t != null)
+			if (t != null) {
 				t.printStackTrace();
+			}
 		}
 	}
 

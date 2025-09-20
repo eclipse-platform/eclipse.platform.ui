@@ -110,8 +110,7 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 				updateLocalization(((MElementContainer) element).getChildren());
 			}
 
-			if (element instanceof MWindow) {
-				MWindow window = (MWindow) element;
+			if (element instanceof MWindow window) {
 				MMenu mainMenu = window.getMainMenu();
 				if (mainMenu != null) {
 					mainMenu.updateLocalization();
@@ -132,8 +131,7 @@ public class LocaleChangeServiceImpl implements ILocaleChangeService {
 				updateLocalization(((MPerspective) element).getWindows());
 			}
 
-			if (element instanceof MPart) {
-				MPart mPart = (MPart) element;
+			if (element instanceof MPart mPart) {
 				MToolBar toolbar = mPart.getToolbar();
 				if (toolbar != null && toolbar.getChildren() != null) {
 					toolbar.updateLocalization();
