@@ -49,7 +49,7 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	/**
 	 * The original creation order of the contribution items.
 	 */
-	private ArrayList<IContributionItem> cbItemsCreationOrder = new ArrayList<>();
+	private final ArrayList<IContributionItem> cbItemsCreationOrder = new ArrayList<>();
 
 	/**
 	 * MenuManager for cool bar pop-up menu, or null if none.

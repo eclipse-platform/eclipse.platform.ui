@@ -77,8 +77,9 @@ public class StructuredTextSegmentListener implements SegmentListener {
 				event.segments[segments.length + 1] = length;
 				event.segmentsChars = new char[event.segments.length];
 				event.segmentsChars[0] = BidiUtils.LRE;
-				for (int i = 1; i < event.segments.length - 1; i++)
+				for (int i = 1; i < event.segments.length - 1; i++) {
 					event.segmentsChars[i] = BidiUtils.LRM;
+				}
 				event.segmentsChars[event.segments.length - 1] = BidiUtils.PDF;
 			} catch (RuntimeException ex) {
 				// Only log the first exception. Logging every exception would make the system unusable.

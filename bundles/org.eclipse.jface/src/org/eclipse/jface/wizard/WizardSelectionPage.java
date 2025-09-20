@@ -39,7 +39,7 @@ public abstract class WizardSelectionPage extends WizardPage {
 	 * List of wizard nodes that have cropped up in the past
 	 * (element type: <code>IWizardNode</code>).
 	 */
-	private List<IWizardNode> selectedWizardNodes = new ArrayList<>();
+	private final List<IWizardNode> selectedWizardNodes = new ArrayList<>();
 
 	/**
 	 * Creates a new wizard selection page with the given name, and

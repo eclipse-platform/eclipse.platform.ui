@@ -32,12 +32,12 @@ public class CheckStateChangedEvent extends EventObject {
 	/**
 	 * The viewer element.
 	 */
-	private Object element;
+	private final Object element;
 
 	/**
 	 * The checked state.
 	 */
-	private boolean state;
+	private final boolean state;
 
 	/**
 	 * Creates a new event for the given source, element, and checked state.

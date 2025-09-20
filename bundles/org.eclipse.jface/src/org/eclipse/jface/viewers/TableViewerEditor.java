@@ -35,9 +35,9 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 	/**
 	 * This viewer's table editor.
 	 */
-	private TableEditor tableEditor;
+	private final TableEditor tableEditor;
 
-	private SWTFocusCellManager focusCellManager;
+	private final SWTFocusCellManager focusCellManager;
 
 	/**
 	 * @param viewer

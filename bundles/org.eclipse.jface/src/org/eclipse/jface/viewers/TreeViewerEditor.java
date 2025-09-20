@@ -35,9 +35,9 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 	/**
 	 * This viewer's tree editor.
 	 */
-	private TreeEditor treeEditor;
+	private final TreeEditor treeEditor;
 
-	private SWTFocusCellManager focusCellManager;
+	private final SWTFocusCellManager focusCellManager;
 
 	/**
 	 * @param viewer

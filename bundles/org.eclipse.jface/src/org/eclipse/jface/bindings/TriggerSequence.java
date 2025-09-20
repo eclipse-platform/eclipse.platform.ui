@@ -112,11 +112,10 @@ public abstract class TriggerSequence {
 		}
 
 		// Check if they're the same type.
-		if (!(object instanceof TriggerSequence)) {
+		if (!(object instanceof final TriggerSequence triggerSequence)) {
 			return false;
 		}
 
-		final TriggerSequence triggerSequence = (TriggerSequence) object;
 		return Arrays.equals(triggers, triggerSequence.triggers);
 	}
 

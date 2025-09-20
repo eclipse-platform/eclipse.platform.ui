@@ -828,7 +828,9 @@ public abstract class Window implements IShellProvider {
 				exceptionHandler.handleException(e);
 			}
 		}
-		if (!display.isDisposed()) display.update();
+		if (!display.isDisposed()) {
+			display.update();
+		}
 	}
 
 	/**

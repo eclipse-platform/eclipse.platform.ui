@@ -226,8 +226,9 @@ public class Policy {
 	 */
 	@Deprecated(forRemoval = true, since = "2025-03")
 	public static AnimatorFactory getAnimatorFactory() {
-		if (animatorFactory == null)
+		if (animatorFactory == null) {
 			animatorFactory = new AnimatorFactory();
+		}
 		return animatorFactory;
 	}
 

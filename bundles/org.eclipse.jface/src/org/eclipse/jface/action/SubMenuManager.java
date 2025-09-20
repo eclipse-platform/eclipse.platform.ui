@@ -46,7 +46,7 @@ public class SubMenuManager extends SubContributionManager implements
 	/**
 	 * List of registered menu listeners (element type: <code>IMenuListener</code>).
 	 */
-	private ListenerList<IMenuListener> menuListeners = new ListenerList<>();
+	private final ListenerList<IMenuListener> menuListeners = new ListenerList<>();
 
 	/**
 	 * The menu listener added to the parent.  Lazily initialized
@@ -154,9 +154,8 @@ public class SubMenuManager extends SubContributionManager implements
 			item = unwrap(item);
 		}
 
-		if (item instanceof IMenuManager) {
+		if (item instanceof IMenuManager menu) {
 			// if it is a menu manager wrap it before returning
-			IMenuManager menu = (IMenuManager) item;
 			item = getWrapper(menu);
 		}
 
@@ -201,8 +200,7 @@ public class SubMenuManager extends SubContributionManager implements
 			rest = path.substring(separator + 1);
 		}
 		IContributionItem item = find(id); // unwraps item
-		if (rest != null && item instanceof IMenuManager) {
-			IMenuManager menu = (IMenuManager) item;
+		if (rest != null && item instanceof IMenuManager menu) {
 			item = menu.findUsingPath(rest);
 		}
 		return item;

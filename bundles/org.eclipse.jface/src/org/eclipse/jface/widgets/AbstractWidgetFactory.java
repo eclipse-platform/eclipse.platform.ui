@@ -32,11 +32,11 @@ import org.eclipse.swt.widgets.Widget;
  */
 @NoExtend
 public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?, ?>, W extends Widget, P extends Widget> {
-	private Class<F> factoryClass;
+	private final Class<F> factoryClass;
 
-	private WidgetSupplier<W, P> widgetCreator;
+	private final WidgetSupplier<W, P> widgetCreator;
 
-	private List<Property<W>> properties = new ArrayList<>();
+	private final List<Property<W>> properties = new ArrayList<>();
 
 	AbstractWidgetFactory(Class<F> factoryClass, WidgetSupplier<W, P> widgetCreator) {
 		this.factoryClass = factoryClass;

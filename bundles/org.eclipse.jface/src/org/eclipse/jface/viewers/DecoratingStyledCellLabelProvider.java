@@ -49,7 +49,7 @@ public class DecoratingStyledCellLabelProvider extends
 
 	private ILabelDecorator decorator;
 	private IDecorationContext decorationContext= DecorationContext.DEFAULT_CONTEXT;
-	private ILabelProviderListener labelProviderListener;
+	private final ILabelProviderListener labelProviderListener;
 
 	/**
 	 * Creates a {@link DecoratingStyledCellLabelProvider} that delegates the
@@ -77,8 +77,9 @@ public class DecoratingStyledCellLabelProvider extends
 
 		this.labelProviderListener = this::fireLabelProviderChanged;
 		labelProvider.addListener(this.labelProviderListener);
-		if (decorator != null)
+		if (decorator != null) {
 			decorator.addListener(this.labelProviderListener);
+		}
 	}
 
 	/**
@@ -105,8 +106,9 @@ public class DecoratingStyledCellLabelProvider extends
 	}
 
 	private boolean waitForPendingDecoration(ViewerCell cell) {
-		if (this.decorator == null)
+		if (this.decorator == null) {
 			return false;
+		}
 
 		Object element = cell.getElement();
 		String oldText = cell.getText();
@@ -139,8 +141,9 @@ public class DecoratingStyledCellLabelProvider extends
 		if (this.decorator instanceof IColorDecorator) {
 			Color foreground = ((IColorDecorator) this.decorator)
 					.decorateForeground(element);
-			if (foreground != null)
+			if (foreground != null) {
 				return foreground;
+			}
 		}
 		return super.getForeground(element);
 	}
@@ -150,8 +153,9 @@ public class DecoratingStyledCellLabelProvider extends
 		if (this.decorator instanceof IColorDecorator) {
 			Color color = ((IColorDecorator) this.decorator)
 					.decorateBackground(element);
-			if (color != null)
+			if (color != null) {
 				return color;
+			}
 		}
 		return super.getBackground(element);
 	}
@@ -160,8 +164,9 @@ public class DecoratingStyledCellLabelProvider extends
 	public Font getFont(Object element) {
 		if (this.decorator instanceof IFontDecorator) {
 			Font font = ((IFontDecorator) this.decorator).decorateFont(element);
-			if (font != null)
+			if (font != null) {
 				return font;
+			}
 		}
 		return super.getFont(element);
 	}
@@ -179,8 +184,9 @@ public class DecoratingStyledCellLabelProvider extends
 		} else {
 			decorated = this.decorator.decorateImage(image, element);
 		}
-		if (decorated != null)
+		if (decorated != null) {
 			return decorated;
+		}
 
 		return image;
 	}
@@ -207,8 +213,9 @@ public class DecoratingStyledCellLabelProvider extends
 		} else {
 			decorated = this.decorator.decorateText(label, element);
 		}
-		if (decorated == null)
+		if (decorated == null) {
 			return styledString;
+		}
 
 		Styler style = getDecorationStyle(element);
 		return StyledCellLabelProvider.styleDecoratedString(decorated, style, styledString);
@@ -255,8 +262,9 @@ public class DecoratingStyledCellLabelProvider extends
 	public void setLabelDecorator(ILabelDecorator newDecorator) {
 		ILabelDecorator oldDecorator = this.decorator;
 		if (oldDecorator != newDecorator) {
-			if (oldDecorator != null)
+			if (oldDecorator != null) {
 				oldDecorator.removeListener(this.labelProviderListener);
+			}
 			this.decorator = newDecorator;
 			if (newDecorator != null) {
 				newDecorator.addListener(this.labelProviderListener);

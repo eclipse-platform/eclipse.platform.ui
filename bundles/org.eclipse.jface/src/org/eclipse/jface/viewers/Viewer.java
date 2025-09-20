@@ -47,7 +47,7 @@ public abstract class Viewer implements IInputSelectionProvider {
 	 *
 	 * @see #fireSelectionChanged
 	 */
-	private ListenerList<ISelectionChangedListener> selectionChangedListeners = new ListenerList<>();
+	private final ListenerList<ISelectionChangedListener> selectionChangedListeners = new ListenerList<>();
 
 	/**
 	 * List of help request listeners (element type: <code>org.eclipse.swt.events.HelpListener</code>).
@@ -55,7 +55,7 @@ public abstract class Viewer implements IInputSelectionProvider {
 	 *
 	 * @see #handleHelpRequest
 	 */
-	private ListenerList<HelpListener> helpListeners = new ListenerList<>();
+	private final ListenerList<HelpListener> helpListeners = new ListenerList<>();
 
 	/**
 	 * The names of this viewer's properties.

@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.TextStyle;
  */
 public final class BoldStylerProvider {
 
-	private Font fFont;
+	private final Font fFont;
 
 	private Font fBoldFont;
 

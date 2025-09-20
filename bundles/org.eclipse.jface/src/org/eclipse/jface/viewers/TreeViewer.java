@@ -76,7 +76,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	/**
 	 * This viewer's control.
 	 */
-	private Tree tree;
+	private final Tree tree;
 
 	/**
 	 * Flag for whether the tree has been disposed of.
@@ -150,8 +150,9 @@ public class TreeViewer extends AbstractTreeViewer {
 			return null;
 		}
 
-		if (getTree().getColumnCount() == 0)// Hang it off the table if it
+		if (getTree().getColumnCount() == 0) { // Hang it off the table if it
 			return getTree();
+		}
 
 		return getTree().getColumn(columnIndex);
 	}
@@ -383,8 +384,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.2
 	 */
 	public void setChildCount(final Object elementOrTreePath, final int count) {
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		preservingSelection(() -> {
 			if (internalIsInputOrEmptyPath(elementOrTreePath)) {
 				getTree().setItemCount(count);
@@ -424,8 +426,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	public void replace(final Object parentElementOrTreePath, final int index,
 			final Object element) {
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		Item[] selectedItems = insidePreservingSelection ? null : getSelection(getControl());
 		TreeSelection selection = insidePreservingSelection ? null : (TreeSelection) getSelection();
 		Widget[] itemsToDisassociate;
@@ -445,8 +448,7 @@ public class TreeViewer extends AbstractTreeViewer {
 				// disassociate any different item that represents the
 				// same element under the same parent (the tree)
 				for (Widget widget : itemsToDisassociate) {
-					if (widget instanceof TreeItem) {
-						TreeItem itemToDisassociate = (TreeItem) widget;
+					if (widget instanceof TreeItem itemToDisassociate) {
 						if (itemToDisassociate != item
 								&& itemToDisassociate.getParentItem() == null) {
 							int indexToDisassociate = getTree().indexOf(
@@ -474,8 +476,7 @@ public class TreeViewer extends AbstractTreeViewer {
 					// disassociate any different item that represents the
 					// same element under the same parent (the tree)
 					for (Widget widgetToDisassociate : itemsToDisassociate) {
-						if (widgetToDisassociate instanceof TreeItem) {
-							TreeItem itemToDisassociate = (TreeItem) widgetToDisassociate;
+						if (widgetToDisassociate instanceof TreeItem itemToDisassociate) {
 							if (itemToDisassociate != item
 									&& itemToDisassociate.getParentItem() == parentItem) {
 								int indexToDisaccociate = parentItem
@@ -615,8 +616,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	protected void internalAdd(Widget widget, Object parentElement,
 			Object[] childElements) {
 		if (contentProviderIsLazy) {
-			if (widget instanceof TreeItem) {
-				TreeItem ti = (TreeItem) widget;
+			if (widget instanceof TreeItem ti) {
 				int count = ti.getItemCount() + childElements.length;
 				ti.setItemCount(count);
 				ti.clearAll(false);
@@ -666,8 +666,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			}
 			int index = 0;
 			Widget parent = null;
-			if (widget instanceof TreeItem) {
-				TreeItem treeItem = (TreeItem) widget;
+			if (widget instanceof TreeItem treeItem) {
 				parent = treeItem.getParentItem();
 				if (parent == null) {
 					parent = treeItem.getParent();
@@ -805,8 +804,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.3
 	 */
 	public void remove(final Object parentOrTreePath, final int index) {
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		// in case preservingSelection() is nested avoid getSelection():
 		final List<TreePath> oldSelection = insidePreservingSelection ? null : new LinkedList<>(
 				Arrays.asList(((TreeSelection) getSelection()).getPaths()));
@@ -832,8 +832,9 @@ public class TreeViewer extends AbstractTreeViewer {
 				Widget[] parentItems = internalFindItems(parentOrTreePath);
 				for (Widget parentWidget : parentItems) {
 					TreeItem parentItem = (TreeItem) parentWidget;
-					if (parentItem.isDisposed())
+					if (parentItem.isDisposed()) {
 						continue;
+					}
 
 					if (getItemsLimit() > 0 && hasLimitedChildrenItems(parentWidget)) {
 						internalRefreshStruct(parentWidget, parentWidget.getData(), false);
@@ -943,8 +944,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.3
 	 */
 	public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren) {
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		preservingSelection(() -> {
 			if (internalIsInputOrEmptyPath(elementOrTreePath)) {
 				if (hasChildren) {

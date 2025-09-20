@@ -37,7 +37,7 @@ public class SubContributionItem implements IContributionItem {
 	/**
 	 * The inner item for this contribution.
 	 */
-	private IContributionItem innerItem;
+	private final IContributionItem innerItem;
 
 	/**
 	 * Creates a new <code>SubContributionItem</code>.

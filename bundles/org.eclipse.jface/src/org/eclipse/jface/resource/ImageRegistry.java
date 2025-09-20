@@ -53,11 +53,11 @@ public class ImageRegistry {
 	 */
 	private Display display;
 
-	private ResourceManager manager;
+	private final ResourceManager manager;
 
 	private Map<String, Entry> table;
 
-	private Runnable disposeRunnable = this::dispose;
+	private final Runnable disposeRunnable = this::dispose;
 
 	/**
 	 * Contains the data for an entry in the registry.
@@ -73,7 +73,7 @@ public class ImageRegistry {
 	private static class OriginalImageDescriptor extends ImageDescriptor {
 		private Image original;
 		private int refCount = 0;
-		private Device originalDisplay;
+		private final Device originalDisplay;
 
 		/**
 		 * @param original the original image

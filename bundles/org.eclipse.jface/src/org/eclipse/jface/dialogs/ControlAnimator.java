@@ -55,8 +55,9 @@ public class ControlAnimator {
 		// Using the SWT visible flag to determine if the control has
 		// already been displayed or hidden. Return if already displayed
 		// and visible is true, or if already hidden and visible is false.
-		if (!(control.isVisible() ^ visible))
+		if (!(control.isVisible() ^ visible)) {
 			return;
+		}
 		control.setVisible(visible);
 		Rectangle parentBounds = control.getParent().getBounds();
 		int bottom = parentBounds.height;

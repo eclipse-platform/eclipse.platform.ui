@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public abstract class EditingSupport {
 
-	private ColumnViewer viewer;
+	private final ColumnViewer viewer;
 
 	/**
 	 * @param viewer

@@ -112,11 +112,11 @@ public class OpenStrategy {
 
 	private Listener eventHandler;
 
-	private ListenerList<IOpenEventListener> openEventListeners = new ListenerList<>();
+	private final ListenerList<IOpenEventListener> openEventListeners = new ListenerList<>();
 
-	private ListenerList<SelectionListener> selectionEventListeners = new ListenerList<>();
+	private final ListenerList<SelectionListener> selectionEventListeners = new ListenerList<>();
 
-	private ListenerList<SelectionListener> postSelectionEventListeners = new ListenerList<>();
+	private final ListenerList<SelectionListener> postSelectionEventListeners = new ListenerList<>();
 
 	final Throttler throttledPostSelection;
 	final PostSelectionEvent postSelectionEvent = new PostSelectionEvent();
@@ -463,15 +463,13 @@ public class OpenStrategy {
 				/*ISSUE: May have to create a interface with method:
 				 setSelection(Point p) so that user's custom widgets
 				 can use this class. If we keep this option. */
-				if (w instanceof Tree) {
-					Tree tree = (Tree) w;
+				if (w instanceof Tree tree) {
 					TreeItem item = tree.getItem(new Point(e.x, e.y));
 					if (item != null) {
 						tree.setSelection(new TreeItem[] { item });
 					}
 					selEvent.item = item;
-				} else if (w instanceof Table) {
-					Table table = (Table) w;
+				} else if (w instanceof Table table) {
 					TableItem item = table.getItem(new Point(e.x, e.y));
 					if (item != null) {
 						table.setSelection(new TableItem[] { item });

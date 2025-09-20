@@ -49,7 +49,7 @@ public abstract class ColumnViewerEditor {
 
 	private MouseListener mouseListener;
 
-	private ColumnViewer viewer;
+	private final ColumnViewer viewer;
 
 	private TraverseListener tabeditingListener;
 
@@ -57,11 +57,11 @@ public abstract class ColumnViewerEditor {
 
 	private ListenerList<ColumnViewerEditorActivationListener> editorActivationListener;
 
-	private ColumnViewerEditorActivationStrategy editorActivationStrategy;
+	private final ColumnViewerEditorActivationStrategy editorActivationStrategy;
 
 	private boolean inEditorDeactivation;
 
-	private DisposeListener disposeListener;
+	private final DisposeListener disposeListener;
 
 	/**
 	 * Tabbing from cell to cell is turned off
@@ -113,7 +113,7 @@ public abstract class ColumnViewerEditor {
 	public static final int TABBING_CYCLE_IN_VIEWER = 1 << 7;
 
 
-	private int feature;
+	private final int feature;
 
 	/**
 	 * @param viewer                   the viewer this editor is attached to

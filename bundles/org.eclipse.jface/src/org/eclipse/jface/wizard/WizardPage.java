@@ -63,7 +63,7 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
 	/**
 	 * This page's name.
 	 */
-	private String name;
+	private final String name;
 
 	/**
 	 * The wizard to which this page belongs; <code>null</code>

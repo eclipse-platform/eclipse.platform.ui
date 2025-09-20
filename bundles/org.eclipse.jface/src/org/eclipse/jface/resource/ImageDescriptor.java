@@ -424,7 +424,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor<Image> {
 	 */
 	public ImageData getImageData(int zoom) {
 		if (zoom == 100) {
-			return getImageData();
+			return getImageData(100);
 		}
 		return null;
 	}

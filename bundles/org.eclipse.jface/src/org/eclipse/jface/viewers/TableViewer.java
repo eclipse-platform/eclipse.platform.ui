@@ -72,7 +72,7 @@ public class TableViewer extends AbstractTableViewer {
 	/**
 	 * This viewer's table control.
 	 */
-	private Table table;
+	private final Table table;
 
 	/**
 	 * The cached row which is reused all over
@@ -364,8 +364,9 @@ public class TableViewer extends AbstractTableViewer {
 	 */
 	public void refresh(final Object element, final boolean updateLabels,
 			boolean reveal) {
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 
 		if (isCellEditorActive()) {
 			cancelEditing();
@@ -404,8 +405,9 @@ public class TableViewer extends AbstractTableViewer {
 	@Override
 	public void remove(Object[] elements) {
 		assertElementsNotNull(elements);
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		if (elements.length == 0) {
 			return;
 		}
@@ -447,8 +449,7 @@ public class TableViewer extends AbstractTableViewer {
 	@Override
 	protected Widget doFindItem(Object element) {
 		IContentProvider contentProvider = getContentProvider();
-		if (contentProvider instanceof IIndexableLazyContentProvider) {
-			IIndexableLazyContentProvider indexable = (IIndexableLazyContentProvider) contentProvider;
+		if (contentProvider instanceof IIndexableLazyContentProvider indexable) {
 			int idx = indexable.findElement(element);
 			if (idx != -1) {
 				return doGetItem(idx);

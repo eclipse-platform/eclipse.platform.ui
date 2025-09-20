@@ -46,7 +46,7 @@ public class PreferenceNode implements IPreferenceNode {
 	/**
 	 * The id of this node.
 	 */
-	private String id;
+	private final String id;
 
 	/**
 	 * Text label for this node. Note that this field is only used prior to the

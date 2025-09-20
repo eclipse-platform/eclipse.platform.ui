@@ -70,7 +70,7 @@ import org.eclipse.jface.viewers.IFilter;
 	/**
 	 * Model that is currently providing input to this content provider.
 	 */
-	private IConcurrentModel model;
+	private final IConcurrentModel model;
 
 	/**
 	 * Current sort order
@@ -85,12 +85,12 @@ import org.eclipse.jface.viewers.IFilter;
 	/**
 	 * Queued changes
 	 */
-	private ChangeQueue changeQueue = new ChangeQueue();
+	private final ChangeQueue changeQueue = new ChangeQueue();
 
 	/**
 	 * Listener that gets callbacks from the model
 	 */
-	private IConcurrentModelListener listener = new IConcurrentModelListener() {
+	private final IConcurrentModelListener listener = new IConcurrentModelListener() {
 
 		@Override
 		public void add(Object[] added) {
@@ -118,9 +118,9 @@ import org.eclipse.jface.viewers.IFilter;
 	 * Object that posts updates to the UI thread. Must synchronize on
 	 * sortMutex when accessing.
 	 */
-	private ConcurrentTableUpdator updator;
+	private final ConcurrentTableUpdator updator;
 
-	private IProgressMonitor sortingProgressMonitor = new NullProgressMonitor();
+	private final IProgressMonitor sortingProgressMonitor = new NullProgressMonitor();
 	private Thread sortThread = null;
 
 	/**
@@ -408,7 +408,7 @@ import org.eclipse.jface.viewers.IFilter;
 	/**
 	 * This lock protects the two boolean variables sortThreadStarted and resortScheduled.
 	 */
-	private Object lock = new Object();
+	private final Object lock = new Object();
 
 	/**
 	 * true if the sort thread is running

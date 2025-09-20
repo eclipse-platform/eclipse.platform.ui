@@ -40,7 +40,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
 	/**
 	 * A list of viewer elements (element type: <code>Object</code>).
 	 */
-	private List<Object> listMap = new ArrayList<>();
+	private final List<Object> listMap = new ArrayList<>();
 
 	/**
 	 * Adds the given string to the underlying widget at the given index
@@ -512,8 +512,9 @@ public abstract class AbstractListViewer extends StructuredViewer {
 		}
 		int size = listMap.size();
 		for (int i = 0; i < size; i++) {
-			if (comparer.equals(element, listMap.get(i)))
+			if (comparer.equals(element, listMap.get(i))) {
 				return i;
+			}
 		}
 		return -1;
 	}

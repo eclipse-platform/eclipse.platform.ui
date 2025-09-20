@@ -267,8 +267,9 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 
 	@Override
 	protected void measure(Event event, Object element) {
-		if (!isOwnerDrawEnabled())
+		if (!isOwnerDrawEnabled()) {
 			return;
+		}
 
 		ViewerCell cell= getViewerCell(event, element);
 		boolean applyColors = useColors(event);
@@ -332,8 +333,9 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 
 	@Override
 	protected void paint(Event event, Object element) {
-		if (!isOwnerDrawEnabled())
+		if (!isOwnerDrawEnabled()) {
 			return;
+		}
 
 		ViewerCell cell= getViewerCell(event, element);
 
@@ -439,8 +441,9 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			return new StyledString(decoratedString); // the decorator did something wild
 		}
 
-		if (decoratedString.length() == label.length())
+		if (decoratedString.length() == label.length()) {
 			return styledString;
+		}
 
 		if (originalStart > 0) {
 			StyledString newString= new StyledString(decoratedString.substring(0, originalStart), decorationStyler);

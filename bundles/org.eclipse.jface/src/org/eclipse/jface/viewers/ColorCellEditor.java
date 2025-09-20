@@ -166,8 +166,7 @@ public class ColorCellEditor extends DialogCellEditor {
 		int yoffset = (height - size) / 2;
 
 		RGB black = new RGB(0, 0, 0);
-		PaletteData dataPalette = new PaletteData(new RGB[] { black, black,
-				color });
+		PaletteData dataPalette = new PaletteData(black, black, color);
 		ImageData data = new ImageData(width, height, 4, dataPalette);
 		data.transparentPixel = 0;
 

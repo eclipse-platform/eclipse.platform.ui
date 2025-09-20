@@ -57,12 +57,12 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	/**
 	 * The menu id.
 	 */
-	private String id;
+	private final String id;
 
 	/**
 	 * List of registered menu listeners (element type: <code>IMenuListener</code>).
 	 */
-	private ListenerList<IMenuListener> listeners = new ListenerList<>();
+	private final ListenerList<IMenuListener> listeners = new ListenerList<>();
 
 	/**
 	 * The menu control; <code>null</code> before creation and after disposal.
@@ -318,8 +318,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 		}
 
 		IContributionItem item = super.find(id);
-		if (item instanceof IMenuManager) {
-			IMenuManager manager = (IMenuManager) item;
+		if (item instanceof IMenuManager manager) {
 			return manager.findUsingPath(rest);
 		}
 		return null;
@@ -839,8 +838,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 		if (recursive) {
 			IContributionItem[] items = getItems();
 			for (IContributionItem ci : items) {
-				if (ci instanceof IMenuManager) {
-					IMenuManager mm = (IMenuManager) ci;
+				if (ci instanceof IMenuManager mm) {
 					if (isChildVisible(mm)) {
 						mm.updateAll(force);
 					}
