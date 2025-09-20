@@ -44,8 +44,7 @@ public class HandlerProcessingAddon {
 	public void postConstruct(MApplication application, EModelService modelService) {
 		List<MHandlerContainer> findElements = modelService.findElements(application, null, MHandlerContainer.class);
 		for (MHandlerContainer mHandlerContainer : findElements) {
-			if (mHandlerContainer instanceof MContext) {
-				MContext mContext = (MContext) mHandlerContainer;
+			if (mHandlerContainer instanceof MContext mContext) {
 				IEclipseContext context = mContext.getContext();
 				if (context != null) {
 					for (MHandler mHandler : mHandlerContainer.getHandlers()) {
@@ -112,10 +111,8 @@ public class HandlerProcessingAddon {
 	public void handleContextEvent(@EventTopic(UIEvents.Context.TOPIC_CONTEXT) Event event) {
 		Object origin = event.getProperty(UIEvents.EventTags.ELEMENT);
 		Object context = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-		if ((origin instanceof MHandlerContainer)
-				&& (UIEvents.EventTypes.SET.equals(event.getProperty(UIEvents.EventTags.TYPE)) && context instanceof IEclipseContext)) {
-			MHandlerContainer handlerContainer = (MHandlerContainer) origin;
-			IEclipseContext castedContext = (IEclipseContext) context;
+		if ((origin instanceof MHandlerContainer handlerContainer)
+				&& (UIEvents.EventTypes.SET.equals(event.getProperty(UIEvents.EventTags.TYPE)) && context instanceof IEclipseContext castedContext)) {
 			for (MHandler mHandler : handlerContainer.getHandlers()) {
 				processActiveHandler(mHandler, castedContext);
 			}

@@ -54,12 +54,14 @@ public class ConfigurationElementAdapter extends ModelHandlerBase implements IAd
 			String constructedName = Util.ZERO_LENGTH_STRING;
 			if (nameVal != null) {
 				constructedName = nameVal;
-				if (idVal != null)
+				if (idVal != null) {
 					constructedName += " [" + idVal + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			} else if (idVal != null) {
 				constructedName = idVal;
-			} else
+			} else {
 				constructedName = ice.getName();
+			}
 
 			return constructedName;
 		} else if (CLASS_IMPL.equals(id)) {

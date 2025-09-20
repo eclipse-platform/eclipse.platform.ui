@@ -75,7 +75,7 @@ public class PartServiceImpl implements EPartService {
 	 */
 	public static final String PART_ACTIVATION_TIME = "partActivationTime"; //$NON-NLS-1$
 
-	private EventHandler selectedHandler = event -> {
+	private final EventHandler selectedHandler = event -> {
 		// no need to do anything if we have no listeners
 		if (!this.listeners.isEmpty()) {
 			Object oldSelected = event.getProperty(UIEvents.EventTags.OLD_VALUE);
@@ -115,7 +115,7 @@ public class PartServiceImpl implements EPartService {
 		}
 	};
 
-	private EventHandler minimizedPartHandler = new EventHandler() {
+	private final EventHandler minimizedPartHandler = new EventHandler() {
 		@Override
 		public void handleEvent(Event event) {
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -145,19 +145,19 @@ public class PartServiceImpl implements EPartService {
 
 		private MPart toPart(MStackElement stackElement) {
 			if (stackElement != null) {
-				return stackElement instanceof MPlaceholder ? (MPart) ((MPlaceholder) stackElement)
+				return stackElement instanceof MPlaceholder m ? (MPart) m
 						.getRef() : (MPart) stackElement;
 			}
 			return null;
 		}
 	};
 
-	private MApplication application;
+	private final MApplication application;
 
 	/**
 	 * Might be null if this part service is created for the application
 	 */
-	private MWindow workbenchWindow;
+	private final MWindow workbenchWindow;
 
 	@Inject
 	private IPresentationEngine engine;
@@ -188,7 +188,7 @@ public class PartServiceImpl implements EPartService {
 
 	private MPart activePart;
 
-	private ListenerList<IPartListener> listeners = new ListenerList<>();
+	private final ListenerList<IPartListener> listeners = new ListenerList<>();
 
 	private boolean constructed = false;
 
@@ -333,13 +333,16 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private MWindow getWindow() {
-		if (workbenchWindow != null)
+		if (workbenchWindow != null) {
 			return workbenchWindow;
-		if (application.getSelectedElement() != null)
+		}
+		if (application.getSelectedElement() != null) {
 			return application.getSelectedElement();
+		}
 		List<MWindow> windows = application.getChildren();
-		if (!windows.isEmpty())
+		if (!windows.isEmpty()) {
 			return windows.get(0);
+		}
 		return null;
 	}
 
@@ -351,8 +354,9 @@ public class PartServiceImpl implements EPartService {
 		} else {
 			while (parent != null) {
 				if (parent instanceof MContext) {
-					if (((MContext) parent).getContext() != null)
+					if (((MContext) parent).getContext() != null) {
 						return (MContext) parent;
+					}
 				}
 				intermediate = parent;
 				parent = parent.getParent();
@@ -363,8 +367,9 @@ public class PartServiceImpl implements EPartService {
 		parent = placeholder.getParent();
 		while (parent != null) {
 			if (parent instanceof MContext) {
-				if (((MContext) parent).getContext() != null)
+				if (((MContext) parent).getContext() != null) {
 					return (MContext) parent;
+				}
 			}
 			parent = parent.getParent();
 		}
@@ -443,10 +448,12 @@ public class PartServiceImpl implements EPartService {
 			if (part == null) {
 				// TBD this should not be necessary; deactivation is missing somewhere
 				IEclipseContext currentActive = parentContext.getActiveChild();
-				if (currentActive != null)
+				if (currentActive != null) {
 					currentActive.deactivate();
-			} else
+				}
+			} else {
 				part.getContext().activate();
+			}
 		}
 	}
 
@@ -505,8 +512,9 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private boolean isInActivePerspective(MUIElement element) {
-		if (modelService.isHostedElement(element, getWindow()))
+		if (modelService.isHostedElement(element, getWindow())) {
 			return true;
+		}
 		MPerspective persp = modelService.getPerspectiveFor(element);
 		if (persp == null) {
 			List<MUIElement> allPerspectiveElements = modelService.findElements(workbenchWindow, null, MUIElement.class,
@@ -517,8 +525,9 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private boolean isInContainer(MUIElement element) {
-		if (modelService.isHostedElement(element, getWindow()))
+		if (modelService.isHostedElement(element, getWindow())) {
 			return true;
+		}
 		List<MUIElement> allPerspectiveElements = modelService.findElements(workbenchWindow, null,
 				MUIElement.class, null, EModelService.PRESENTATION);
 		return allPerspectiveElements.contains(element);
@@ -541,34 +550,34 @@ public class PartServiceImpl implements EPartService {
 						return true;
 					}
 				}
-			} else if (object instanceof MPerspective) {
-				MPerspective persp = (MPerspective) object;
+			} else if (object instanceof MPerspective persp) {
 				for (MWindow dw : persp.getWindows()) {
-					if (isInContainer(dw, element))
+					if (isInContainer(dw, element)) {
 						return true;
+					}
 				}
-			} else if (object instanceof MWindow) {
-				MWindow win = (MWindow) object;
+			} else if (object instanceof MWindow win) {
 				for (MWindow dw : win.getWindows()) {
-					if (isInContainer(dw, element))
+					if (isInContainer(dw, element)) {
 						return true;
+					}
 				}
 			}
 		}
 
-		if (container instanceof MWindow) {
-			MWindow win = (MWindow) container;
+		if (container instanceof MWindow win) {
 			for (MWindow dw : win.getWindows()) {
-				if (isInContainer(dw, element))
+				if (isInContainer(dw, element)) {
 					return true;
+				}
 			}
 		}
 
-		if (container instanceof MPerspective) {
-			MPerspective persp = (MPerspective) container;
+		if (container instanceof MPerspective persp) {
 			for (MWindow dw : persp.getWindows()) {
-				if (isInContainer(dw, element))
+				if (isInContainer(dw, element)) {
 					return true;
+				}
 			}
 		}
 
@@ -1087,8 +1096,7 @@ public class PartServiceImpl implements EPartService {
 					MPlaceholder.class, null, EModelService.PRESENTATION);
 			if (!phList.isEmpty()) {
 				MUIElement phParent = phList.get(0).getParent();
-				if (phParent instanceof MPartStack) {
-					MPartStack theStack = (MPartStack) phParent;
+				if (phParent instanceof MPartStack theStack) {
 					int phIndex = theStack.getChildren().indexOf(phList.get(0));
 					adjustPlaceholder(part);
 					MPlaceholder placeholder = part.getCurSharedRef();
@@ -1152,8 +1160,7 @@ public class PartServiceImpl implements EPartService {
 
 		for (int i = children.size() - 1; i > -1; i--) {
 			Object muiElement = children.get(i);
-			if (muiElement instanceof MElementContainer<?>) {
-				MElementContainer<?> childContainer = (MElementContainer<?>) muiElement;
+			if (muiElement instanceof MElementContainer<?> childContainer) {
 				MElementContainer<?> lastContainer = getLastContainer(childContainer,
 						childContainer.getChildren());
 				if (lastContainer != null) {
@@ -1193,8 +1200,7 @@ public class PartServiceImpl implements EPartService {
 		for (MUIElement child : container.getChildren()) {
 			if (child == element) {
 				return container;
-			} else if (child instanceof MPlaceholder) {
-				MPlaceholder placeholder = (MPlaceholder) child;
+			} else if (child instanceof MPlaceholder placeholder) {
 				MUIElement ref = placeholder.getRef();
 				if (ref == element) {
 					return container;
@@ -1310,8 +1316,9 @@ public class PartServiceImpl implements EPartService {
 			engine.createGui(target);
 		}
 		// ask the engine to create the element
-		if (element.getWidget() == null)
+		if (element.getWidget() == null) {
 			engine.createGui(element);
+		}
 
 		parent = element.getParent();
 		if (parent != null && parent.getChildren().size() == 1) {

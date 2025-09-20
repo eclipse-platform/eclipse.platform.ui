@@ -49,8 +49,9 @@ final class BundleFinder implements BundleTrackerCustomizer<List<Bundle>> {
 	 */
 	public Bundle findBundle(String symbolicName) {
 		List<Bundle> bundlesWithSameSymName = trackedBundles.get(symbolicName);
-		if (bundlesWithSameSymName == null)
+		if (bundlesWithSameSymName == null) {
 			return null;
+		}
 
 		List<Bundle> snapshot = new ArrayList<>(bundlesWithSameSymName);
 

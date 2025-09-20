@@ -44,32 +44,31 @@ public class SelectionAggregator {
 	static final String OUT_SELECTION = "org.eclipse.ui.output.selection"; //$NON-NLS-1$
 	static final String OUT_POST_SELECTION = "org.eclipse.ui.output.postSelection"; //$NON-NLS-1$
 
-	private ListenerList<ISelectionListener> genericListeners = new ListenerList<>();
-	private ListenerList<ISelectionListener> genericPostListeners = new ListenerList<>();
-	private Map<String, ListenerList<ISelectionListener>> targetedListeners = new HashMap<>();
-	private Map<String, ListenerList<ISelectionListener>> targetedPostListeners = new HashMap<>();
-	private Set<IEclipseContext> tracked = new HashSet<>();
+	private final ListenerList<ISelectionListener> genericListeners = new ListenerList<>();
+	private final ListenerList<ISelectionListener> genericPostListeners = new ListenerList<>();
+	private final Map<String, ListenerList<ISelectionListener>> targetedListeners = new HashMap<>();
+	private final Map<String, ListenerList<ISelectionListener>> targetedPostListeners = new HashMap<>();
+	private final Set<IEclipseContext> tracked = new HashSet<>();
 
-	private EventHandler eventHandler = event -> {
+	private final EventHandler eventHandler = event -> {
 		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (element instanceof MPart) {
-			MPart part = (MPart) element;
-
+		if (element instanceof MPart part) {
 			String partId = part.getElementId();
-			if (targetedListeners.containsKey(partId) || targetedPostListeners.containsKey(partId))
+			if (targetedListeners.containsKey(partId) || targetedPostListeners.containsKey(partId)) {
 				track(part);
+			}
 		}
 	};
 
 	private MPart activePart;
 
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
-	private EPartService partService;
+	private final EPartService partService;
 
-	private IEventBroker eventBroker;
+	private final IEventBroker eventBroker;
 
-	private Logger logger;
+	private final Logger logger;
 
 	@Inject
 	SelectionAggregator(IEclipseContext context, EPartService partService,
@@ -301,8 +300,9 @@ public class SelectionAggregator {
 		listeners.add(listener);
 
 		MPart part = partService.findPart(partId);
-		if (part != null)
+		if (part != null) {
 			track(part);
+		}
 	}
 
 	public void addPostSelectionListener(String partId, ISelectionListener listener) {
@@ -314,8 +314,9 @@ public class SelectionAggregator {
 		listeners.add(listener);
 
 		MPart part = partService.findPart(partId);
-		if (part != null)
+		if (part != null) {
 			track(part);
+		}
 	}
 
 	public void removeSelectionListener(String partId, ISelectionListener listener) {

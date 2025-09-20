@@ -54,8 +54,9 @@ public class ModelFragmentComparator implements Comparator<ModelFragmentWrapper>
 
 	@Override
 	public int compare(ModelFragmentWrapper o1, ModelFragmentWrapper o2) {
-		if (o1 == o2)
+		if (o1 == o2) {
 			return 0;
+		}
 
 		PositionDescription posInfo1 = getPositionDescription(o1);
 		PositionDescription posInfo2 = getPositionDescription(o2);
@@ -80,8 +81,9 @@ public class ModelFragmentComparator implements Comparator<ModelFragmentWrapper>
 			switch (posInfo2.getPlace()) {
 			case INDEX:
 				int result = posInfo1.getPositionReferenceAsInteger() - posInfo2.getPositionReferenceAsInteger();
-				if (result == 0)
+				if (result == 0) {
 					return 1;
+				}
 				return result;
 			default:
 				return -1;
@@ -92,24 +94,29 @@ public class ModelFragmentComparator implements Comparator<ModelFragmentWrapper>
 				boolean hasElement = false;
 				for (MApplicationElement element : o2.getModelFragment().getElements()) {
 					hasElement |= ModelUtils.findElementById(element, posInfo1.getReference()) != null;
-					if (hasElement)
+					if (hasElement) {
 						break;
+					}
 				}
-				if (hasElement)
+				if (hasElement) {
 					return 1;
+				}
 
 				hasElement = false;
 				for (MApplicationElement element : o1.getModelFragment().getElements()) {
 					hasElement |= ModelUtils.findElementById(element, posInfo2.getReference()) != null;
-					if (hasElement)
+					if (hasElement) {
 						break;
+					}
 				}
-				if (hasElement)
+				if (hasElement) {
 					return -1;
+				}
 
 				hasElement = ModelUtils.findElementById(application, posInfo1.getReference()) != null;
-				if (hasElement)
+				if (hasElement) {
 					return -1;
+				}
 
 				return 1;
 			default:
@@ -122,15 +129,18 @@ public class ModelFragmentComparator implements Comparator<ModelFragmentWrapper>
 	}
 
 	private PositionDescription getPositionDescription(ModelFragmentWrapper wrapper) {
-		if (!MStringModelFragment.class.isInstance(wrapper.getModelFragment()))
+		if (!MStringModelFragment.class.isInstance(wrapper.getModelFragment())) {
 			return new PositionDescription(PositionPlace.NONE, null);
+		}
 		MStringModelFragment stringFragment = (MStringModelFragment) wrapper.getModelFragment();
-		if (stringFragment.getPositionInList() == null)
+		if (stringFragment.getPositionInList() == null) {
 			return new PositionDescription(PositionPlace.NONE, null);
+		}
 		String posInList = stringFragment.getPositionInList().trim();
 		PositionInfo posInfo = PositionInfo.parse(posInList);
-		if (posInfo == null)
+		if (posInfo == null) {
 			return new PositionDescription(PositionPlace.NONE, null);
+		}
 		switch (posInfo.getPosition()) {
 		case AFTER:
 		case BEFORE:
