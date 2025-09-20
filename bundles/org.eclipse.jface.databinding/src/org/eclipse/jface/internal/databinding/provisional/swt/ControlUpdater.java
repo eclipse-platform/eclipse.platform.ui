@@ -108,10 +108,10 @@ public abstract class ControlUpdater {
 
 	}
 
-	private Runnable updateRunnable = this::updateControl;
+	private final Runnable updateRunnable = this::updateControl;
 
-	private PrivateInterface privateInterface = new PrivateInterface();
-	private Control theControl;
+	private final PrivateInterface privateInterface = new PrivateInterface();
+	private final Control theControl;
 	private IObservable[] dependencies = new IObservable[0];
 	private boolean dirty = false;
 

@@ -145,11 +145,11 @@ public abstract class TableUpdater<E> {
 
 	}
 
-	private PrivateInterface privateInterface = new PrivateInterface();
+	private final PrivateInterface privateInterface = new PrivateInterface();
 
 	private Table table;
 
-	private IListChangeListener<E> listChangeListener = event -> {
+	private final IListChangeListener<E> listChangeListener = event -> {
 		ListDiffEntry<? extends E>[] differences = event.diff.getDifferences();
 		for (ListDiffEntry<? extends E> entry : differences) {
 			if (entry.isAddition()) {

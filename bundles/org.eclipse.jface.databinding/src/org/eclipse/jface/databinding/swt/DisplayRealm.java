@@ -48,7 +48,7 @@ public class DisplayRealm extends Realm {
 		}
 	}
 
-	private Display display;
+	private final Display display;
 
 	private DisplayRealm(Display display) {
 		this.display = display;
@@ -82,12 +82,15 @@ public class DisplayRealm extends Realm {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final DisplayRealm other = (DisplayRealm) obj;
 		return Objects.equals(display, other.display);
 	}

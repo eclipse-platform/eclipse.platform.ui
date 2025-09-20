@@ -37,29 +37,33 @@ public class WidgetTextWithEventsProperty<S extends Widget> extends WidgetDelega
 	}
 
 	private static int[] checkEvents(int[] events) {
-		for (int event : events)
+		for (int event : events) {
 			checkEvent(event);
+		}
 		return events;
 	}
 
 	private static void checkEvent(int event) {
 		if (event != SWT.None && event != SWT.Modify && event != SWT.FocusOut
-				&& event != SWT.DefaultSelection)
+				&& event != SWT.DefaultSelection) {
 			throw new IllegalArgumentException("UpdateEventType [" //$NON-NLS-1$
 					+ event + "] is not supported."); //$NON-NLS-1$
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected IValueProperty<S, String> doGetDelegate(S source) {
 		if (source instanceof StyledText) {
-			if (styledText == null)
+			if (styledText == null) {
 				styledText = (IValueProperty<S, String>) new StyledTextTextProperty(events);
+			}
 			return styledText;
 		}
 		if (source instanceof Text) {
-			if (text == null)
+			if (text == null) {
 				text = (IValueProperty<S, String>) new TextTextProperty(events);
+			}
 			return text;
 		}
 		throw notSupported(source);

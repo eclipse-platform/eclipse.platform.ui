@@ -48,48 +48,57 @@ public final class WidgetSelectionProperty<S extends Widget, T> extends WidgetDe
 	@Override
 	protected IValueProperty<S, T> doGetDelegate(S source) {
 		if (source instanceof Button) {
-			if (button == null)
+			if (button == null) {
 				button = (IValueProperty<S, T>) new ButtonSelectionProperty();
+			}
 			return button;
 		}
 		if (source instanceof CCombo) {
-			if (cCombo == null)
+			if (cCombo == null) {
 				cCombo = (IValueProperty<S, T>) new CComboSelectionProperty();
+			}
 			return cCombo;
 		}
 		if (source instanceof Combo) {
-			if (combo == null)
+			if (combo == null) {
 				combo = (IValueProperty<S, T>) new ComboSelectionProperty();
+			}
 			return combo;
 		}
 		if (source instanceof DateTime) {
-			if (dateTime == null)
+			if (dateTime == null) {
 				dateTime = (IValueProperty<S, T>) new DateTimeSelectionProperty();
+			}
 			return dateTime;
 		}
 		if (source instanceof List) {
-			if (list == null)
+			if (list == null) {
 				list = (IValueProperty<S, T>) new ListSelectionProperty();
+			}
 			return list;
 		}
 		if (source instanceof MenuItem) {
-			if (menuItem == null)
+			if (menuItem == null) {
 				menuItem = (IValueProperty<S, T>) new MenuItemSelectionProperty();
+			}
 			return menuItem;
 		}
 		if (source instanceof Scale) {
-			if (scale == null)
+			if (scale == null) {
 				scale = (IValueProperty<S, T>) new ScaleSelectionProperty();
+			}
 			return scale;
 		}
 		if (source instanceof Slider) {
-			if (slider == null)
+			if (slider == null) {
 				slider = (IValueProperty<S, T>) new SliderSelectionProperty();
+			}
 			return slider;
 		}
 		if (source instanceof Spinner) {
-			if (spinner == null)
+			if (spinner == null) {
 				spinner = (IValueProperty<S, T>) new SpinnerSelectionProperty();
+			}
 			return spinner;
 		}
 		throw notSupported(source);

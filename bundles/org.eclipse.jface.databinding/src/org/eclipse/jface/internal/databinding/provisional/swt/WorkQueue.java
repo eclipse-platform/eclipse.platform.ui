@@ -29,13 +29,13 @@ public class WorkQueue {
 
 	private boolean updateScheduled = false;
 
-	private LinkedList<Object> pendingWork = new LinkedList<>();
+	private final LinkedList<Object> pendingWork = new LinkedList<>();
 
-	private Display d;
+	private final Display d;
 
-	private Set<Object> pendingWorkSet = new HashSet<>();
+	private final Set<Object> pendingWorkSet = new HashSet<>();
 
-	private Runnable updateJob = () -> {
+	private final Runnable updateJob = () -> {
 		doUpdate();
 		updateScheduled = false;
 	};

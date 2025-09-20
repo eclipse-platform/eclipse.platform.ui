@@ -38,18 +38,21 @@ public class WidgetItemsProperty<S extends Control> extends WidgetDelegatingList
 	@Override
 	protected IListProperty<S, String> doGetDelegate(S source) {
 		if (source instanceof CCombo) {
-			if (cCombo == null)
+			if (cCombo == null) {
 				cCombo = (IListProperty<S, String>) new CComboItemsProperty();
+			}
 			return cCombo;
 		}
 		if (source instanceof Combo) {
-			if (combo == null)
+			if (combo == null) {
 				combo = (IListProperty<S, String>) new ComboItemsProperty();
+			}
 			return combo;
 		}
 		if (source instanceof List) {
-			if (list == null)
+			if (list == null) {
 				list = (IListProperty<S, String>) new ListItemsProperty();
+			}
 			return list;
 		}
 		throw notSupported(source);

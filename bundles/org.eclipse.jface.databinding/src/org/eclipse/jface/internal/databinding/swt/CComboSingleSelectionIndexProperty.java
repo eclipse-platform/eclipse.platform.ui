@@ -32,10 +32,11 @@ public class CComboSingleSelectionIndexProperty extends SingleSelectionIndexProp
 
 	@Override
 	protected void doSetIntValue(CCombo source, int value) {
-		if (value == -1)
+		if (value == -1) {
 			source.deselectAll();
-		else
+		} else {
 			source.select(value);
+		}
 	}
 
 	@Override

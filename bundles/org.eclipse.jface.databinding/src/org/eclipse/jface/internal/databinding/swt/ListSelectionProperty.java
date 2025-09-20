@@ -28,8 +28,9 @@ public class ListSelectionProperty extends WidgetStringValueProperty<List> {
 	@Override
 	protected String doGetStringValue(List source) {
 		int index = source.getSelectionIndex();
-		if (index >= 0)
+		if (index >= 0) {
 			return source.getItem(index);
+		}
 		return null;
 	}
 

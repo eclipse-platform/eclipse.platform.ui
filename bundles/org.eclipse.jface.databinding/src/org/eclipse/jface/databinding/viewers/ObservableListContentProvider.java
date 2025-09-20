@@ -80,8 +80,9 @@ public class ObservableListContentProvider<E> implements IStructuredContentProvi
 
 		@Override
 		public void handleListChange(ListChangeEvent<? extends E> event) {
-			if (isViewerDisposed())
+			if (isViewerDisposed()) {
 				return;
+			}
 
 			// Determine which elements were added and removed
 			final Set<E> knownElementAdditions = ViewerElementSet.withComparer(comparer);
@@ -118,8 +119,9 @@ public class ObservableListContentProvider<E> implements IStructuredContentProvi
 				realizedElements.removeAll(knownElementRemovals);
 			}
 
-			if (suspendRedraw[0])
+			if (suspendRedraw[0]) {
 				viewer.getControl().setRedraw(false);
+			}
 			try {
 				event.diff.accept(new ListDiffVisitor<E>() {
 					@Override
@@ -143,8 +145,9 @@ public class ObservableListContentProvider<E> implements IStructuredContentProvi
 					}
 				});
 			} finally {
-				if (suspendRedraw[0])
+				if (suspendRedraw[0]) {
 					viewer.getControl().setRedraw(true);
+				}
 			}
 
 			if (realizedElements != null) {

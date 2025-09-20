@@ -67,8 +67,9 @@ public class SWTDelayedObservableValueDecorator<T> extends SWTObservableValueDec
 	@Override
 	public void handleEvent(Event event) {
 		// When the control loses focus..
-		if (event.type == SWT.FocusOut && isStale())
+		if (event.type == SWT.FocusOut && isStale()) {
 			getValue(); // short-circuit the delay
+		}
 
 		super.handleEvent(event);
 	}

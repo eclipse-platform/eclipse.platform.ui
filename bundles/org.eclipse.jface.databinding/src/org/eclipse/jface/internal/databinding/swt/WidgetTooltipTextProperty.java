@@ -46,38 +46,45 @@ public class WidgetTooltipTextProperty<S extends Widget> extends WidgetDelegatin
 	@Override
 	protected IValueProperty<S, String> doGetDelegate(S source) {
 		if (source instanceof CTabItem) {
-			if (cTabItem == null)
+			if (cTabItem == null) {
 				cTabItem = (IValueProperty<S, String>) new CTabItemTooltipTextProperty();
+			}
 			return cTabItem;
 		}
 		if (source instanceof Control) {
-			if (control == null)
+			if (control == null) {
 				control = (IValueProperty<S, String>) new ControlTooltipTextProperty();
+			}
 			return control;
 		}
 		if (source instanceof TabItem) {
-			if (tabItem == null)
+			if (tabItem == null) {
 				tabItem = (IValueProperty<S, String>) new TabItemTooltipTextProperty();
+			}
 			return tabItem;
 		}
 		if (source instanceof TableColumn) {
-			if (tableColumn == null)
+			if (tableColumn == null) {
 				tableColumn = (IValueProperty<S, String>) new TableColumnTooltipTextProperty();
+			}
 			return tableColumn;
 		}
 		if (source instanceof ToolItem) {
-			if (toolItem == null)
+			if (toolItem == null) {
 				toolItem = (IValueProperty<S, String>) new ToolItemTooltipTextProperty();
+			}
 			return toolItem;
 		}
 		if (source instanceof TrayItem) {
-			if (trayItem == null)
+			if (trayItem == null) {
 				trayItem = (IValueProperty<S, String>) new TrayItemTooltipTextProperty();
+			}
 			return trayItem;
 		}
 		if (source instanceof TreeColumn) {
-			if (treeColumn == null)
+			if (treeColumn == null) {
 				treeColumn = (IValueProperty<S, String>) new TreeColumnTooltipTextProperty();
+			}
 			return treeColumn;
 		}
 		throw notSupported(source);

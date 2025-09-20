@@ -96,8 +96,9 @@ public abstract class WidgetValueProperty<S extends Widget, T> extends SimpleVal
 
 	@Override
 	public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, ValueDiff<? extends T>> listener) {
-		if (changeEvents == null && staleEvents == null)
+		if (changeEvents == null && staleEvents == null) {
 			return null;
+		}
 		return new WidgetListener<>(this, listener, changeEvents, staleEvents);
 	}
 
