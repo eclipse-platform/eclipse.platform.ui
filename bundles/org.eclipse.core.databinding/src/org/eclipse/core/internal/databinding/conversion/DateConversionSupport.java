@@ -43,7 +43,7 @@ public abstract class DateConversionSupport {
 	 * Raw milliseconds are covered as a special case.
 	 */
 	// TODO: These could be shared, but would have to be synchronized.
-	private DateFormat[] formatters = {
+	private final DateFormat[] formatters = {
 			new SimpleDateFormat(BindingMessages.getString(BindingMessages.DATE_FORMAT_DATE_TIME)),
 			new SimpleDateFormat(BindingMessages.getString(BindingMessages.DATEFORMAT_TIME)),
 			DateFormat.getDateTimeInstance(DATE_FORMAT, DateFormat.SHORT),
@@ -102,8 +102,9 @@ public abstract class DateConversionSupport {
 	}
 
 	protected String format(Date date,int formatterIdx) {
-		if (date == null)
+		if (date == null) {
 			return null;
+		}
 		if(formatterIdx>=0) {
 			return formatters[formatterIdx].format(date);
 		}

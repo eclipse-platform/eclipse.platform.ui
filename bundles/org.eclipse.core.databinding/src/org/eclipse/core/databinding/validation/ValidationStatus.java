@@ -122,12 +122,15 @@ public class ValidationStatus extends Status {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final ValidationStatus other = (ValidationStatus) obj;
 
 		return getSeverity() == other.getSeverity() && Objects.equals(getMessage(), other.getMessage())

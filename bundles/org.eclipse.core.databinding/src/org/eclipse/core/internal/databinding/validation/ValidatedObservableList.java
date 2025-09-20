@@ -52,9 +52,10 @@ public class ValidatedObservableList<E> extends ObservableList<E> {
 
 	private boolean updatingTarget = false;
 
-	private IListChangeListener<E> targetChangeListener = event -> {
-		if (updatingTarget)
+	private final IListChangeListener<E> targetChangeListener = event -> {
+		if (updatingTarget) {
 			return;
+		}
 		IStatus status = validationStatus.getValue();
 		if (isValid(status)) {
 			if (stale) {
@@ -80,9 +81,9 @@ public class ValidatedObservableList<E> extends ObservableList<E> {
 		return status.isOK() || status.matches(IStatus.INFO | IStatus.WARNING);
 	}
 
-	private IStaleListener targetStaleListener = staleEvent -> fireStale();
+	private final IStaleListener targetStaleListener = staleEvent -> fireStale();
 
-	private IValueChangeListener<IStatus> validationStatusChangeListener = event -> {
+	private final IValueChangeListener<IStatus> validationStatusChangeListener = event -> {
 		IStatus oldStatus = event.diff.getOldValue();
 		IStatus newStatus = event.diff.getNewValue();
 		if (stale && !isValid(oldStatus) && isValid(newStatus)) {
@@ -197,8 +198,9 @@ public class ValidatedObservableList<E> extends ObservableList<E> {
 	@Override
 	public void clear() {
 		checkRealm();
-		if (isEmpty())
+		if (isEmpty()) {
 			return;
+		}
 		ListDiff<E> diff = Diffs.computeListDiff(wrappedList, Collections.emptyList());
 		wrappedList.clear();
 		updateTargetList(diff);
@@ -315,14 +317,17 @@ public class ValidatedObservableList<E> extends ObservableList<E> {
 	public E move(int oldIndex, int newIndex) {
 		checkRealm();
 		int size = wrappedList.size();
-		if (oldIndex >= size)
+		if (oldIndex >= size) {
 			throw new IndexOutOfBoundsException(
 					"oldIndex: " + oldIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
-		if (newIndex >= size)
+		}
+		if (newIndex >= size) {
 			throw new IndexOutOfBoundsException(
 					"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
-		if (oldIndex == newIndex)
+		}
+		if (oldIndex == newIndex) {
 			return wrappedList.get(oldIndex);
+		}
 		E element = wrappedList.remove(oldIndex);
 		wrappedList.add(newIndex, element);
 		ListDiff<E> diff = Diffs.createListDiff(
@@ -348,8 +353,9 @@ public class ValidatedObservableList<E> extends ObservableList<E> {
 	public boolean remove(Object o) {
 		checkRealm();
 		int index = wrappedList.indexOf(o);
-		if (index == -1)
+		if (index == -1) {
 			return false;
+		}
 		remove(index);
 		return true;
 	}

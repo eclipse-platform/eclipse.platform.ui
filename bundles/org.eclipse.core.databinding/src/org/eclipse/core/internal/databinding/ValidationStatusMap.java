@@ -41,9 +41,9 @@ public class ValidationStatusMap extends ObservableMap<Binding, IStatus> {
 
 	private final WritableList<Binding> bindings;
 
-	private List<IObservableValue<IStatus>> dependencies = new ArrayList<>();
+	private final List<IObservableValue<IStatus>> dependencies = new ArrayList<>();
 
-	private IChangeListener markDirtyChangeListener = event -> markDirty();
+	private final IChangeListener markDirtyChangeListener = event -> markDirty();
 
 	/**
 	 * @param realm    the realm to use; not <code>null</code>

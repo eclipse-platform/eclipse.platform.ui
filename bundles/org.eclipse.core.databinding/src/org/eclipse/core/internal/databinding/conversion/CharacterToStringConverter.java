@@ -31,9 +31,10 @@ public class CharacterToStringConverter extends Converter<Object, String> {
 	public String convert(Object fromObject) {
 		// Null is allowed when the type is not primitive.
 		if (fromObject == null) {
-			if (primitive)
+			if (primitive) {
 				throw new IllegalArgumentException(
 						"'fromObject' is null. Cannot convert to primitive char."); //$NON-NLS-1$
+			}
 			return ""; //$NON-NLS-1$
 		}
 

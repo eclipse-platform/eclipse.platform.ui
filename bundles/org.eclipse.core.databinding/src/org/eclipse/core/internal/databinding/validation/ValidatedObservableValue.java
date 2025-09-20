@@ -65,23 +65,25 @@ public class ValidatedObservableValue<T> extends AbstractObservableValue<T> {
 	private boolean stale;
 	private boolean updatingTarget = false;
 
-	private IValueChangeListener<T> targetChangeListener = event -> {
-		if (updatingTarget)
+	private final IValueChangeListener<T> targetChangeListener = event -> {
+		if (updatingTarget) {
 			return;
+		}
 		IStatus status = validationStatus.getValue();
-		if (isValid(status))
+		if (isValid(status)) {
 			internalSetValue(event.diff.getNewValue(), false);
-		else
+		} else {
 			makeStale();
+		}
 	};
 
 	private static boolean isValid(IStatus status) {
 		return status.isOK() || status.matches(IStatus.INFO | IStatus.WARNING);
 	}
 
-	private IStaleListener targetStaleListener = staleEvent -> fireStale();
+	private final IStaleListener targetStaleListener = staleEvent -> fireStale();
 
-	private IValueChangeListener<IStatus> validationStatusChangeListener = event -> {
+	private final IValueChangeListener<IStatus> validationStatusChangeListener = event -> {
 		IStatus oldStatus = event.diff.getOldValue();
 		IStatus newStatus = event.diff.getNewValue();
 		if (stale && !isValid(oldStatus) && isValid(newStatus)) {
@@ -144,8 +146,9 @@ public class ValidatedObservableValue<T> extends AbstractObservableValue<T> {
 			}
 		}
 		stale = false;
-		if (!Util.equals(oldValue, cachedValue))
+		if (!Util.equals(oldValue, cachedValue)) {
 			fireValueChange(Diffs.createValueDiff(oldValue, cachedValue));
+		}
 	}
 
 	@Override

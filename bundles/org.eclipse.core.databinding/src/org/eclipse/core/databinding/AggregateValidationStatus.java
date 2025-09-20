@@ -59,8 +59,8 @@ public final class AggregateValidationStatus extends ComputedValue<IStatus> {
 	 */
 	public static final int MAX_SEVERITY = 2;
 
-	private int strategy;
-	private IObservableCollection<? extends ValidationStatusProvider> validationStatusProviders;
+	private final int strategy;
+	private final IObservableCollection<? extends ValidationStatusProvider> validationStatusProviders;
 
 	/**
 	 * Creates a new aggregate validation status observable for the given data

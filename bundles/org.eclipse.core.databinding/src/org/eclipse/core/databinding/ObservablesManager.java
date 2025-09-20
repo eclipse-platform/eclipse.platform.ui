@@ -35,9 +35,9 @@ import org.eclipse.core.internal.databinding.IdentitySet;
  */
 public class ObservablesManager {
 
-	private Set<IObservable> managedObservables = new IdentitySet<>();
-	private Set<IObservable> excludedObservables = new IdentitySet<>();
-	private Map<DataBindingContext, ManagerEntry> contexts = new HashMap<>();
+	private final Set<IObservable> managedObservables = new IdentitySet<>();
+	private final Set<IObservable> excludedObservables = new IdentitySet<>();
+	private final Map<DataBindingContext, ManagerEntry> contexts = new HashMap<>();
 
 	/**
 	 * Create a new observables manager.

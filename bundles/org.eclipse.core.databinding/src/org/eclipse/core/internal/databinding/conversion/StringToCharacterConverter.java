@@ -30,22 +30,25 @@ public class StringToCharacterConverter implements IConverter<Object, Character>
 
 	@Override
 	public Character convert(Object source) {
-		if (source != null && !(source instanceof String))
+		if (source != null && !(source instanceof String)) {
 			throw new IllegalArgumentException(
 					"String2Character: Expected type String, got type [" + source.getClass().getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 
 		String s = (String) source;
 		if (source == null || s.isEmpty()) {
-			if (primitiveTarget)
+			if (primitiveTarget) {
 				throw new IllegalArgumentException(
 						"String2Character: cannot convert null/empty string to character primitive"); //$NON-NLS-1$
+			}
 			return null;
 		}
 		Character result;
 
-		if (s.length() > 1)
+		if (s.length() > 1) {
 			throw new IllegalArgumentException(
 					"String2Character: string too long: " + s); //$NON-NLS-1$
+		}
 
 		try {
 			result = Character.valueOf(s.charAt(0));

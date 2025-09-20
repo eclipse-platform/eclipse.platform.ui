@@ -26,9 +26,9 @@ import org.eclipse.core.runtime.Status;
  */
 public class ObjectToPrimitiveValidator implements IValidator<Object> {
 
-	private Class<?> toType;
+	private final Class<?> toType;
 
-	private Class<?>[][] primitiveMap = {
+	private final Class<?>[][] primitiveMap = {
 			{ Integer.TYPE, Integer.class }, { Short.TYPE, Short.class },
 			{ Long.TYPE, Long.class }, { Double.TYPE, Double.class },
 			{ Byte.TYPE, Byte.class }, { Float.TYPE, Float.class },

@@ -66,12 +66,11 @@ public abstract class NumberToNumberValidator implements IValidator<Object> {
 			return Status.OK_STATUS;
 		}
 
-		if (!(value instanceof Number)) {
+		if (!(value instanceof Number number)) {
 			throw new IllegalArgumentException(
 					"Parameter 'value' is not of type Number."); //$NON-NLS-1$
 		}
 
-		Number number = (Number) value;
 		if (inRange(number)) {
 			return Status.OK_STATUS;
 		}

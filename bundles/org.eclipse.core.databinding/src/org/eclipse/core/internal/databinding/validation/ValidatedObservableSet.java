@@ -48,9 +48,10 @@ public class ValidatedObservableSet<E> extends ObservableSet<E> {
 
 	private boolean updatingTarget = false;
 
-	private ISetChangeListener<E> targetChangeListener = event -> {
-		if (updatingTarget)
+	private final ISetChangeListener<E> targetChangeListener = event -> {
+		if (updatingTarget) {
 			return;
+		}
 		IStatus status = validationStatus.getValue();
 		if (isValid(status)) {
 			if (stale) {
@@ -72,9 +73,9 @@ public class ValidatedObservableSet<E> extends ObservableSet<E> {
 		}
 	};
 
-	private IStaleListener targetStaleListener = staleEvent -> fireStale();
+	private final IStaleListener targetStaleListener = staleEvent -> fireStale();
 
-	private IValueChangeListener<IStatus> validationStatusChangeListener = event -> {
+	private final IValueChangeListener<IStatus> validationStatusChangeListener = event -> {
 		IStatus oldStatus = event.diff.getOldValue();
 		IStatus newStatus = event.diff.getNewValue();
 		if (stale && !isValid(oldStatus) && isValid(newStatus)) {
@@ -180,8 +181,9 @@ public class ValidatedObservableSet<E> extends ObservableSet<E> {
 	@Override
 	public void clear() {
 		getterCalled();
-		if (isEmpty())
+		if (isEmpty()) {
 			return;
+		}
 		SetDiff<E> diff = Diffs.createSetDiff(Collections.<E> emptySet(),
 				wrappedSet);
 		wrappedSet = new HashSet<>();

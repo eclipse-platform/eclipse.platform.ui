@@ -49,9 +49,10 @@ public class ValidatedObservableMap<K, V> extends ObservableMap<K, V> {
 
 	private boolean updatingTarget = false;
 
-	private IMapChangeListener<K, V> targetChangeListener = event -> {
-		if (updatingTarget)
+	private final IMapChangeListener<K, V> targetChangeListener = event -> {
+		if (updatingTarget) {
 			return;
+		}
 		IStatus status = validationStatus.getValue();
 		if (isValid(status)) {
 			if (stale) {
@@ -73,9 +74,9 @@ public class ValidatedObservableMap<K, V> extends ObservableMap<K, V> {
 		}
 	};
 
-	private IStaleListener targetStaleListener = staleEvent -> fireStale();
+	private final IStaleListener targetStaleListener = staleEvent -> fireStale();
 
-	private IValueChangeListener<IStatus> validationStatusChangeListener = event -> {
+	private final IValueChangeListener<IStatus> validationStatusChangeListener = event -> {
 		IStatus oldStatus = event.diff.getOldValue();
 		IStatus newStatus = event.diff.getNewValue();
 		if (stale && !isValid(oldStatus) && isValid(newStatus)) {
@@ -156,8 +157,9 @@ public class ValidatedObservableMap<K, V> extends ObservableMap<K, V> {
 	@Override
 	public void clear() {
 		checkRealm();
-		if (isEmpty())
+		if (isEmpty()) {
 			return;
+		}
 		MapDiff<K, V> diff = Diffs.computeMapDiff(wrappedMap, Collections.emptyMap());
 		wrappedMap = new HashMap<>();
 		updateTargetMap(diff);
@@ -199,8 +201,9 @@ public class ValidatedObservableMap<K, V> extends ObservableMap<K, V> {
 	@Override
 	public V remove(Object key) {
 		checkRealm();
-		if (!wrappedMap.containsKey(key))
+		if (!wrappedMap.containsKey(key)) {
 			return null;
+		}
 
 		V oldValue = wrappedMap.remove(key);
 		@SuppressWarnings("unchecked")

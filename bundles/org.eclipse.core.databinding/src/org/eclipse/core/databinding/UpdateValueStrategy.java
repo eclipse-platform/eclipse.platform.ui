@@ -487,7 +487,7 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 
 	private static class ValidatorRegistry {
 
-		private Map<Pair, IValidator<?>> validators = new HashMap<>();
+		private final Map<Pair, IValidator<?>> validators = new HashMap<>();
 
 		/**
 		 * Adds the system-provided validators to the current validator
@@ -553,8 +553,9 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 		 */
 		private IValidator<?> get(Object fromClass, Object toClass) {
 			IValidator<?> result = validators.get(new Pair(fromClass, toClass));
-			if (result != null)
+			if (result != null) {
 				return result;
+			}
 			if (fromClass != null && toClass != null && fromClass == toClass) {
 				return value -> Status.OK_STATUS;
 			}
