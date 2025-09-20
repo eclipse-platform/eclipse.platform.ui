@@ -22,7 +22,7 @@ import org.eclipse.search2.internal.ui.SearchMessages;
 
 public class RemoveSelectedMatchesAction extends Action {
 
-	private AbstractTextSearchViewPage fPage;
+	private final AbstractTextSearchViewPage fPage;
 
 	public RemoveSelectedMatchesAction(AbstractTextSearchViewPage page) {
 		fPage= page;

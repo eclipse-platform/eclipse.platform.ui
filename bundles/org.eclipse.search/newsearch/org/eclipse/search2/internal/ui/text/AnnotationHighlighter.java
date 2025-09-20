@@ -42,9 +42,9 @@ import org.eclipse.search2.internal.ui.SearchMessages;
 
 
 public class AnnotationHighlighter extends Highlighter {
-	private IAnnotationModel fModel;
-	private IDocument fDocument;
-	private Map<Match, Annotation> fMatchesToAnnotations;
+	private final IAnnotationModel fModel;
+	private final IDocument fDocument;
+	private final Map<Match, Annotation> fMatchesToAnnotations;
 
 	public AnnotationHighlighter(IAnnotationModel model, IDocument document) {
 		fModel= model;
@@ -75,11 +75,12 @@ public class AnnotationHighlighter extends Highlighter {
 
 	private Position createPosition(Match match) {
 		Position position= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(match);
-		if (position == null)
+		if (position == null) {
 			position= new Position(match.getOffset(), match.getLength());
-		else
+		} else { // need to clone position, can't have it twice in a document.
 			// need to clone position, can't have it twice in a document.
 			position= new Position(position.getOffset(), position.getLength());
+		}
 		if (match.getBaseUnit() == Match.UNIT_LINE) {
 			if (fDocument != null) {
 				try {
@@ -116,8 +117,7 @@ public class AnnotationHighlighter extends Highlighter {
 	}
 
 	private void addAnnotations(Map<Annotation, Position> annotationToPositionMap) {
-		if (fModel instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension ame= (IAnnotationModelExtension) fModel;
+		if (fModel instanceof IAnnotationModelExtension ame) {
 			ame.replaceAnnotations(new Annotation[0], annotationToPositionMap);
 		} else {
 			Set<Entry<Annotation, Position>> entrySet = annotationToPositionMap.entrySet();
@@ -135,8 +135,7 @@ public class AnnotationHighlighter extends Highlighter {
 	 * 			 @see Annotation
 	 */
 	private void removeAnnotations(Collection<Annotation> annotations) {
-		if (fModel instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension ame= (IAnnotationModelExtension) fModel;
+		if (fModel instanceof IAnnotationModelExtension ame) {
 			Annotation[] annotationArray= new Annotation[annotations.size()];
 			ame.replaceAnnotations(annotations.toArray(annotationArray), Collections.emptyMap());
 		} else {
@@ -148,10 +147,10 @@ public class AnnotationHighlighter extends Highlighter {
 
 	@Override
 	protected void handleContentReplaced(IFileBuffer buffer) {
-		if (!(buffer instanceof ITextFileBuffer))
+		if (!(buffer instanceof ITextFileBuffer textBuffer)) {
 			return;
+		}
 
-		ITextFileBuffer textBuffer= (ITextFileBuffer) buffer;
 		if (fDocument != null && fDocument.equals(textBuffer.getDocument())) {
 			Set<Match> allMatches= fMatchesToAnnotations.keySet();
 			Match[] matchesCopy= allMatches.toArray(new Match[allMatches.size()]);

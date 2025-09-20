@@ -28,7 +28,7 @@ public class MatchFilterSelectionAction extends Action {
 
 	public static final String ACTION_ID= "MatchFilterSelectionAction"; //$NON-NLS-1$
 
-	private AbstractTextSearchViewPage fPage;
+	private final AbstractTextSearchViewPage fPage;
 
 	public MatchFilterSelectionAction(AbstractTextSearchViewPage page) {
 		super(SearchMessages.MatchFilterSelectionAction_label);

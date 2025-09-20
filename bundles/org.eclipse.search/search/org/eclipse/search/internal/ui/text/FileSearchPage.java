@@ -111,18 +111,18 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				return cat1 - cat2;
 			}
 
-			if (e1 instanceof LineElement && e2 instanceof LineElement) {
-				LineElement m1= (LineElement) e1;
-				LineElement m2= (LineElement) e2;
+			if (e1 instanceof LineElement m1 && e2 instanceof LineElement m2) {
 				return m1.getOffset() - m2.getOffset();
 			}
 
 			String name1= fLabelProvider.getText(e1);
 			String name2= fLabelProvider.getText(e2);
-			if (name1 == null)
+			if (name1 == null) {
 				name1 = "";//$NON-NLS-1$
-			if (name2 == null)
+			}
+			if (name2 == null) {
 				name2 = "";//$NON-NLS-1$
+			}
 			int result= getComparator().compare(name1, name2);
 			return result;
 		}
@@ -136,8 +136,8 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	private ActionGroup fActionGroup;
 	private IFileSearchContentProvider fContentProvider;
 	private int fCurrentSortOrder;
-	private SortAction fSortByNameAction;
-	private SortAction fSortByPathAction;
+	private final SortAction fSortByNameAction;
+	private final SortAction fSortByPathAction;
 
 
 	private static final String[] SHOW_IN_TARGETS = new String[] { IPageLayout.ID_PROJECT_EXPLORER };
@@ -266,9 +266,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			return;
 		}
 		Viewer viewer = event.getViewer();
-		if (viewer instanceof TreeViewer) {
-			TreeViewer treeViewer = (TreeViewer) viewer;
-
+		if (viewer instanceof TreeViewer treeViewer) {
 			if (treeViewer.getExpandedState(firstElement)) {
 				autoExpand(treeViewer, firstElement);
 			}
@@ -314,8 +312,9 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	}
 
 	private void addSortActions(IMenuManager mgr) {
-		if (getLayout() != FLAG_LAYOUT_FLAT)
+		if (getLayout() != FLAG_LAYOUT_FLAT) {
 			return;
+		}
 		MenuManager sortMenu= new MenuManager(SearchMessages.FileSearchPage_sort_by_label);
 		sortMenu.add(fSortByNameAction);
 		sortMenu.add(fSortByPathAction);
@@ -347,14 +346,16 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	@Override
 	protected void elementsChanged(Object[] objects) {
-		if (fContentProvider != null)
+		if (fContentProvider != null) {
 			fContentProvider.elementsChanged(objects);
+		}
 	}
 
 	@Override
 	protected void clear() {
-		if (fContentProvider != null)
+		if (fContentProvider != null) {
 			fContentProvider.clear();
+		}
 	}
 
 	public void setSortOrder(int sortOrder) {
@@ -380,12 +381,14 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		}
 		if (memento != null) {
 			Integer value= memento.getInteger(KEY_SORTING);
-			if (value != null)
+			if (value != null) {
 				fCurrentSortOrder= value.intValue();
+			}
 
 			value= memento.getInteger(KEY_LIMIT);
-			if (value != null)
+			if (value != null) {
 				elementLimit= value.intValue();
+			}
 		}
 		setElementLimit(Integer.valueOf(elementLimit));
 	}
@@ -405,8 +408,9 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 		if (adapter == IShowInSource.class) {
 			ISelectionProvider selectionProvider= getSite().getSelectionProvider();
-			if (selectionProvider == null)
+			if (selectionProvider == null) {
 				return null;
+			}
 
 			ISelection selection= selectionProvider.getSelection();
 			if (selection instanceof IStructuredSelection) {
@@ -415,8 +419,9 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				Iterator<?> iter= structuredSelection.iterator();
 				while (iter.hasNext()) {
 					Object element= iter.next();
-					if (element instanceof LineElement)
+					if (element instanceof LineElement) {
 						element= ((LineElement)element).getParent();
+					}
 					newSelection.add(element);
 				}
 
@@ -522,8 +527,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	@Override
 	public int getDisplayedMatchCount(Object element) {
 		if (showLineMatches()) {
-			if (element instanceof LineElement) {
-				LineElement lineEntry= (LineElement) element;
+			if (element instanceof LineElement lineEntry) {
 				IResource res = lineEntry.getParent();
 				if (super.getDisplayedMatchCount(res) > 0) {
 					return lineEntry.getNumberOfMatches(getInput());
@@ -537,8 +541,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	@Override
 	public Match[] getDisplayedMatches(Object element) {
 		if (showLineMatches()) {
-			if (element instanceof LineElement) {
-				LineElement lineEntry= (LineElement) element;
+			if (element instanceof LineElement lineEntry) {
 				IResource res = lineEntry.getParent();
 				if (super.getDisplayedMatchCount(res) > 0) {
 					return lineEntry.getMatches(getInput());

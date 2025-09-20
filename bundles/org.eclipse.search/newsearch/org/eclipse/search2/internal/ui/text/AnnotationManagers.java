@@ -54,8 +54,9 @@ public class AnnotationManagers {
 
 	private static void disposeAnnotationManager(IWorkbenchWindow window) {
 		WindowAnnotationManager mgr = fgManagerMap.remove(window);
-		if (mgr != null)
+		if (mgr != null) {
 			mgr.dispose();
+		}
 	}
 
 	public static void addSearchResult(IWorkbenchWindow window, AbstractTextSearchResult newResult) {

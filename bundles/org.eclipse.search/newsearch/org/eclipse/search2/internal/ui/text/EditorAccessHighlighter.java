@@ -42,8 +42,8 @@ import org.eclipse.search2.internal.ui.SearchMessages;
 
 
 public class EditorAccessHighlighter extends Highlighter {
-	private ISearchEditorAccess fEditorAcess;
-	private Map<Match, Annotation> fMatchesToAnnotations;
+	private final ISearchEditorAccess fEditorAcess;
+	private final Map<Match, Annotation> fMatchesToAnnotations;
 
 	public EditorAccessHighlighter(ISearchEditorAccess editorAccess) {
 		fEditorAcess= editorAccess;
@@ -82,11 +82,12 @@ public class EditorAccessHighlighter extends Highlighter {
 
 	private Position createPosition(Match match) throws BadLocationException {
 		Position position= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(match);
-		if (position == null)
+		if (position == null) {
 			position= new Position(match.getOffset(), match.getLength());
-		else
+		} else { // need to clone position, can't have it twice in a document.
 			// need to clone position, can't have it twice in a document.
 			position= new Position(position.getOffset(), position.getLength());
+		}
 		if (match.getBaseUnit() == Match.UNIT_LINE) {
 			IDocument doc= fEditorAcess.getDocument(match);
 			if (doc != null) {
@@ -101,8 +102,9 @@ public class EditorAccessHighlighter extends Highlighter {
 
 	private Map<Annotation, Position> getMap(Map<IAnnotationModel, HashMap<Annotation, Position>> mapsByAnnotationModel, Match match) {
 		IAnnotationModel model= fEditorAcess.getAnnotationModel(match);
-		if (model == null)
+		if (model == null) {
 			return null;
+		}
 		HashMap<Annotation, Position> map= mapsByAnnotationModel.get(model);
 		if (map == null) {
 			map= new HashMap<>();
@@ -113,8 +115,9 @@ public class EditorAccessHighlighter extends Highlighter {
 
 	private Set<Annotation> getSet(Map<IAnnotationModel, HashSet<Annotation>> setsByAnnotationModel, Match match) {
 		IAnnotationModel model= fEditorAcess.getAnnotationModel(match);
-		if (model == null)
+		if (model == null) {
 			return null;
+		}
 		HashSet<Annotation> set= setsByAnnotationModel.get(model);
 		if (set == null) {
 			set= new HashSet<>();
@@ -130,8 +133,9 @@ public class EditorAccessHighlighter extends Highlighter {
 			Annotation annotation= fMatchesToAnnotations.remove(match);
 			if (annotation != null) {
 				Set<Annotation> annotations= getSet(setsByAnnotationModel, match);
-				if (annotations != null)
+				if (annotations != null) {
 					annotations.add(annotation);
+				}
 			}
 		}
 
@@ -142,8 +146,7 @@ public class EditorAccessHighlighter extends Highlighter {
 	}
 
 	private void addAnnotations(IAnnotationModel model, Map<Annotation, Position> annotationToPositionMap) {
-		if (model instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension ame= (IAnnotationModelExtension) model;
+		if (model instanceof IAnnotationModelExtension ame) {
 			ame.replaceAnnotations(new Annotation[0], annotationToPositionMap);
 		} else {
 			for (Entry<Annotation, Position> entry : annotationToPositionMap.entrySet()) {
@@ -160,8 +163,7 @@ public class EditorAccessHighlighter extends Highlighter {
 	 * 			 @see Annotation
 	 */
 	private void removeAnnotations(IAnnotationModel model, Set<Annotation> annotations) {
-		if (model instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension ame= (IAnnotationModelExtension) model;
+		if (model instanceof IAnnotationModelExtension ame) {
 			Annotation[] annotationArray= new Annotation[annotations.size()];
 			ame.replaceAnnotations(annotations.toArray(annotationArray), Collections.emptyMap());
 		} else {
@@ -180,14 +182,16 @@ public class EditorAccessHighlighter extends Highlighter {
 
 	@Override
 	protected void handleContentReplaced(IFileBuffer buffer) {
-		if (!(buffer instanceof ITextFileBuffer))
+		if (!(buffer instanceof ITextFileBuffer)) {
 			return;
+		}
 		IDocument document= null;
 		ITextFileBuffer textBuffer= (ITextFileBuffer) buffer;
 		for (Match match : fMatchesToAnnotations.keySet()) {
 			document= fEditorAcess.getDocument(match);
-			if (document != null)
+			if (document != null) {
 				break;
+			}
 		}
 
 		if (document != null && document.equals(textBuffer.getDocument())) {

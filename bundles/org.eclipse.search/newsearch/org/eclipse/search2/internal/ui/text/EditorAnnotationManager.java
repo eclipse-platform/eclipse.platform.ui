@@ -45,8 +45,8 @@ import org.eclipse.search.ui.text.RemoveAllEvent;
 
 public class EditorAnnotationManager implements ISearchResultListener {
 
-	private ArrayList<AbstractTextSearchResult> fResults;
-	private IEditorPart fEditor;
+	private final ArrayList<AbstractTextSearchResult> fResults;
+	private final IEditorPart fEditor;
 	private Highlighter fHighlighter; // initialized lazy
 
 	public static final int HIGHLLIGHTER_ANY= 0;
@@ -71,8 +71,9 @@ public class EditorAnnotationManager implements ISearchResultListener {
 
 	void dispose() {
 		removeAllAnnotations();
-		if (fHighlighter != null)
+		if (fHighlighter != null) {
 			fHighlighter.dispose();
+		}
 
 		for (AbstractTextSearchResult result : fResults) {
 			result.removeListener(this);
@@ -121,10 +122,8 @@ public class EditorAnnotationManager implements ISearchResultListener {
 	@Override
 	public synchronized void searchResultChanged(SearchResultEvent e) {
 		ISearchResult searchResult= e.getSearchResult();
-		if (searchResult instanceof AbstractTextSearchResult) {
-			AbstractTextSearchResult result= (AbstractTextSearchResult) searchResult;
-			if (e instanceof MatchEvent) {
-				MatchEvent me= (MatchEvent) e;
+		if (searchResult instanceof AbstractTextSearchResult result) {
+			if (e instanceof MatchEvent me) {
 				Match[] matchesInEditor= getMatchesInEditor(me.getMatches(), result);
 				if (matchesInEditor != null) {
 					if (me.getKind() == MatchEvent.ADDED) {
@@ -172,8 +171,9 @@ public class EditorAnnotationManager implements ISearchResultListener {
 	}
 
 	private void removeAllAnnotations() {
-		if (fHighlighter != null)
+		if (fHighlighter != null) {
 			fHighlighter.removeAll();
+		}
 	}
 
 	private Highlighter createHighlighter() {
@@ -182,16 +182,19 @@ public class EditorAnnotationManager implements ISearchResultListener {
 			return debugCreateHighlighter(editor);
 		}
 		ISearchEditorAccess access= editor.getAdapter(ISearchEditorAccess.class);
-		if (access != null)
+		if (access != null) {
 			return new EditorAccessHighlighter(access);
+		}
 		IAnnotationModel model= getAnnotationModel(editor);
-		if (model != null)
+		if (model != null) {
 			return new AnnotationHighlighter(model, getDocument(editor));
+		}
 		IEditorInput input= editor.getEditorInput();
 		if (input instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput)input).getFile();
-			if (file != null)
+			if (file != null) {
 				return new MarkerHighlighter(file);
+			}
 		}
 		return new Highlighter(); // does nothing
 	}
@@ -199,31 +202,36 @@ public class EditorAnnotationManager implements ISearchResultListener {
 	private static Highlighter debugCreateHighlighter(IEditorPart editor) {
 		if (fgHighlighterType == HIGHLIGHTER_ANNOTATION) {
 			IAnnotationModel model= getAnnotationModel(editor);
-			if (model != null)
+			if (model != null) {
 				return new AnnotationHighlighter(model, getDocument(editor));
+			}
 		} else if (fgHighlighterType == HIGHLIGHTER_MARKER) {
 			IEditorInput input= editor.getEditorInput();
 			if (input instanceof IFileEditorInput) {
 				IFile file= ((IFileEditorInput)input).getFile();
-				if (file != null)
+				if (file != null) {
 					return new MarkerHighlighter(file);
+				}
 			}
 
 		} else if (fgHighlighterType == HIGHLIGHTER_EDITOR_ACCESS) {
 			ISearchEditorAccess access= editor.getAdapter(ISearchEditorAccess.class);
-			if (access != null)
+			if (access != null) {
 				return new EditorAccessHighlighter(access);
+			}
 		}
 		return null;
 	}
 
 	private void addAnnotations(AbstractTextSearchResult result) {
 		IEditorMatchAdapter matchAdapter= result.getEditorMatchAdapter();
-		if (matchAdapter == null)
+		if (matchAdapter == null) {
 			return;
+		}
 		Match[] matches= matchAdapter.computeContainedMatches(result, fEditor);
-		if (matches == null || matches.length == 0)
+		if (matches == null || matches.length == 0) {
 			return;
+		}
 		addAnnotations(matches);
 	}
 
@@ -245,8 +253,9 @@ public class EditorAnnotationManager implements ISearchResultListener {
 	}
 
 	private void removeAnnotations(Match[] matches) {
-		if (fHighlighter != null)
+		if (fHighlighter != null) {
 			fHighlighter.removeHighlights(matches);
+		}
 	}
 
 	private static IAnnotationModel getAnnotationModel(IWorkbenchPart part) {
@@ -259,8 +268,9 @@ public class EditorAnnotationManager implements ISearchResultListener {
 			}
 			if (textEditor != null) {
 				IDocumentProvider dp= textEditor.getDocumentProvider();
-				if (dp != null)
+				if (dp != null) {
 					model= dp.getAnnotationModel(textEditor.getEditorInput());
+				}
 			}
 		}
 		return model;
@@ -276,8 +286,9 @@ public class EditorAnnotationManager implements ISearchResultListener {
 			}
 			if (textEditor != null) {
 				IDocumentProvider dp= textEditor.getDocumentProvider();
-				if (dp != null)
+				if (dp != null) {
 					doc= dp.getDocument(textEditor.getEditorInput());
+				}
 			}
 		}
 		return doc;

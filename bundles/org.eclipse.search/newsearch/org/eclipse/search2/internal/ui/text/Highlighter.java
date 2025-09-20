@@ -22,7 +22,7 @@ import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.search.ui.text.Match;
 
 public class Highlighter {
-	private IFileBufferListener fBufferListener;
+	private final IFileBufferListener fBufferListener;
 
 	public Highlighter() {
 		fBufferListener= new IFileBufferListener() {

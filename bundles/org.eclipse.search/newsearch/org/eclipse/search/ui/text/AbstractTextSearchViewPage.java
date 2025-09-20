@@ -181,7 +181,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private class SelectionProviderAdapter implements ISelectionProvider, ISelectionChangedListener {
-		private ArrayList<ISelectionChangedListener> fListeners= new ArrayList<>(5);
+		private final ArrayList<ISelectionChangedListener> fListeners= new ArrayList<>(5);
 
 		@Override
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
@@ -232,17 +232,17 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private final LinkedBlockingDeque<Object> fBatchedUpdates = new LinkedBlockingDeque<>();
 	private volatile boolean fBatchedClearAll;
 
-	private ISearchResultListener fListener;
+	private final ISearchResultListener fListener;
 	private IQueryListener fQueryListener;
 	private MenuManager fMenu;
 	private AbstractTextSearchResult fInput;
 	// Actions
-	private CopyToClipboardAction fCopyToClipboardAction;
-	private Action fRemoveSelectedMatches;
-	private Action fRemoveCurrentMatch;
-	private Action fRemoveAllResultsAction;
-	private Action fShowNextAction;
-	private Action fShowPreviousAction;
+	private final CopyToClipboardAction fCopyToClipboardAction;
+	private final Action fRemoveSelectedMatches;
+	private final Action fRemoveCurrentMatch;
+	private final Action fRemoveAllResultsAction;
+	private final Action fShowNextAction;
+	private final Action fShowPreviousAction;
 
 	private ExpandAllAction fExpandAllAction;
 	private CollapseAllAction fCollapseAllAction;
@@ -254,7 +254,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private String fId;
 	private final int fSupportedLayouts;
 	private SelectionProviderAdapter fViewerAdapter;
-	private SelectAllAction fSelectAllAction;
+	private final SelectAllAction fSelectAllAction;
 
 	private IAction[] fFilterActions;
 	private Integer fElementLimit;
@@ -263,7 +263,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * The editor opener.
 	 * @since 3.6
 	 */
-	private EditorOpener fEditorOpener= new EditorOpener();
+	private final EditorOpener fEditorOpener= new EditorOpener();
 
 	/**
 	 * Flag (<code>value 1</code>) denoting flat list layout.
@@ -310,10 +310,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private void initLayout() {
-		if (supportsTreeLayout())
+		if (supportsTreeLayout()) {
 			fCurrentLayout = FLAG_LAYOUT_TREE;
-		else
+		} else {
 			fCurrentLayout = FLAG_LAYOUT_FLAT;
+		}
 	}
 
 	/**
@@ -355,8 +356,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				.getDialogSettingsProvider(FrameworkUtil.getBundle(AbstractTextSearchViewPage.class))
 				.getDialogSettings();
 		IDialogSettings settings = parent.getSection(getID());
-		if (settings == null)
+		if (settings == null) {
 			settings = parent.addNewSection(getID());
+		}
 		return settings;
 	}
 
@@ -373,8 +375,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	@Override
 	public String getLabel() {
 		AbstractTextSearchResult result= getInput();
-		if (result == null)
+		if (result == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return result.getLabel();
 	}
 
@@ -529,10 +532,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowPreviousAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_EDIT, fCopyToClipboardAction);
-		if (getCurrentMatch() != null)
+		if (getCurrentMatch() != null) {
 			mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveCurrentMatch);
-		if (canRemoveMatchesWith(getViewer().getSelection()))
+		}
+		if (canRemoveMatchesWith(getViewer().getSelection())) {
 			mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveSelectedMatches);
+		}
 		mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction);
 	}
 
@@ -641,17 +646,19 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private void updateBusyLabel() {
 		AbstractTextSearchResult result = getInput();
 		boolean shouldShowBusy = result != null && NewSearchUI.isQueryRunning(result.getQuery()) && result.getMatchCount() == 0;
-		if (shouldShowBusy == fIsBusyShown)
+		if (shouldShowBusy == fIsBusyShown) {
 			return;
+		}
 		fIsBusyShown = shouldShowBusy;
 		showBusyLabel(fIsBusyShown);
 	}
 
 	private void showBusyLabel(boolean shouldShowBusy) {
-		if (shouldShowBusy)
+		if (shouldShowBusy) {
 			fPagebook.showPage(fBusyLabel);
-		else
+		} else {
 			fPagebook.showPage(fViewerContainer);
+		}
 	}
 
 	/**
@@ -679,10 +686,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	public void setLayout(int layout) {
 		Assert.isTrue(countBits(layout) == 1);
 		Assert.isTrue(isLayoutSupported(layout));
-		if (countBits(fSupportedLayouts) < 2)
+		if (countBits(fSupportedLayouts) < 2) {
 			return;
-		if (fCurrentLayout == layout)
+		}
+		if (fCurrentLayout == layout) {
 			return;
+		}
 		fCurrentLayout = layout;
 		ISelection selection = fViewer.getSelection();
 		disconnectViewer();
@@ -702,10 +711,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private void updateLayoutActions() {
-		if (fFlatAction != null)
+		if (fFlatAction != null) {
 			fFlatAction.setChecked(fCurrentLayout == fFlatAction.getLayout());
-		if (fHierarchicalAction != null)
+		}
+		if (fHierarchicalAction != null) {
 			fHierarchicalAction.setChecked(fCurrentLayout == fHierarchicalAction.getLayout());
+		}
 	}
 
 	/**
@@ -806,8 +817,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	@Override
 	public void setFocus() {
 		Control control = fViewer.getControl();
-		if (control != null && !control.isDisposed())
+		if (control != null && !control.isDisposed()) {
 			control.setFocus();
+		}
 	}
 
 	@Override
@@ -817,8 +829,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	@Override
 	public void setInput(ISearchResult newSearch, Object viewState) {
-		if (newSearch != null && !(newSearch instanceof AbstractTextSearchResult))
+		if (newSearch != null && !(newSearch instanceof AbstractTextSearchResult)) {
 			return; // ignore
+		}
 
 		AbstractTextSearchResult oldSearch= fInput;
 		if (oldSearch != null) {
@@ -834,10 +847,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 			fInput.addListener(fListener);
 			connectViewer(fInput);
-			if (viewState instanceof ISelection)
+			if (viewState instanceof ISelection) {
 				fViewer.setSelection((ISelection) viewState, true);
-			else
+			} else {
 				navigateNext(true);
+			}
 
 			updateBusyLabel();
 			turnOffDecoration();
@@ -926,8 +940,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		ISafeRunnable runnable = new ISafeRunnable() {
 			@Override
 			public void handleException(Throwable exception) {
-				if (exception instanceof PartInitException) {
-					PartInitException pie = (PartInitException) exception;
+				if (exception instanceof PartInitException pie) {
 					ErrorDialog.openError(getSite().getShell(), SearchMessages.DefaultSearchViewPage_show_match, SearchMessages.DefaultSearchViewPage_error_no_editor, pie.getStatus());
 				}
 			}
@@ -1018,8 +1031,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		Object element = getFirstSelectedElement();
 		if (element != null) {
 			Match[] matches = getDisplayedMatches(element);
-			if (fCurrentMatchIndex >= 0 && fCurrentMatchIndex < matches.length)
+			if (fCurrentMatchIndex >= 0 && fCurrentMatchIndex < matches.length) {
 				return matches[fCurrentMatchIndex];
+			}
 		}
 		return null;
 	}
@@ -1041,26 +1055,31 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	public Match[] getDisplayedMatches(Object element) {
 		AbstractTextSearchResult result= getInput();
-		if (result == null)
+		if (result == null) {
 			return EMPTY_MATCH_ARRAY;
+		}
 		Match[] matches= result.getMatches(element);
-		if (result.getActiveMatchFilters() == null) // default behaviour: filter state not used, all matches shown
+		if (result.getActiveMatchFilters() == null) { // default behaviour: filter state not used, all matches shown
 			return matches;
+		}
 
 		int count= 0;
 		for (int i= 0; i < matches.length; i++) {
-			if (matches[i].isFiltered())
+			if (matches[i].isFiltered()) {
 				matches[i]= null;
-			else
+			} else {
 				count++;
+			}
 		}
-		if (count == matches.length)
+		if (count == matches.length) {
 			return matches;
+		}
 
 		Match[] filteredMatches= new Match[count];
 		for (int i= 0, k= 0; i < matches.length; i++) {
-			if (matches[i] != null)
+			if (matches[i] != null) {
 				filteredMatches[k++]= matches[i];
+			}
 		}
 		return filteredMatches;
 	}
@@ -1107,10 +1126,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	public int getDisplayedMatchCount(Object element) {
 		AbstractTextSearchResult result= getInput();
-		if (result == null)
+		if (result == null) {
 			return 0;
-		if (result.getActiveMatchFilters() == null) // default behaviour: filter state not used, all matches shown
+		}
+		if (result.getActiveMatchFilters() == null) { // default behaviour: filter state not used, all matches shown
 			return result.getMatchCount(element);
+		}
 
 		int count= 0;
 		Match[] matches= result.getMatches(element);
@@ -1124,16 +1145,18 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private Object getFirstSelectedElement() {
 		IStructuredSelection selection = fViewer.getStructuredSelection();
-		if (selection.size() > 0)
+		if (selection.size() > 0) {
 			return selection.getFirstElement();
+		}
 		return null;
 	}
 
 	@Override
 	public void dispose() {
 		AbstractTextSearchResult oldSearch = getInput();
-		if (oldSearch != null)
+		if (oldSearch != null) {
 			AnnotationManagers.removeSearchResult(getSite().getWorkbenchWindow(), oldSearch);
+		}
 		super.dispose();
 		NewSearchUI.removeQueryListener(fQueryListener);
 		openAndLinkWithEditorHelper.dispose();
@@ -1183,10 +1206,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private void addLayoutActions(IMenuManager menuManager) {
-		if (fFlatAction != null)
+		if (fFlatAction != null) {
 			menuManager.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fFlatAction);
-		if (fHierarchicalAction != null)
+		}
+		if (fHierarchicalAction != null) {
 			menuManager.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fHierarchicalAction);
+		}
 	}
 
 	/**
@@ -1294,15 +1319,17 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		final Control control = getControl();
 		if (control != null && !control.isDisposed()) {
 			Display currentDisplay = Display.getCurrent();
-			if (currentDisplay == null || !currentDisplay.equals(control.getDisplay()))
+			if (currentDisplay == null || !currentDisplay.equals(control.getDisplay())) {
 				// meaning we're not executing on the display thread of the
 				// control
 				control.getDisplay().asyncExec(() -> {
-					if (!control.isDisposed())
+					if (!control.isDisposed()) {
 						runnable.run();
+					}
 				});
-			else
+			} else {
 				runnable.run();
+			}
 		}
 	}
 
@@ -1316,8 +1343,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			try {
 				fCurrentLayout = getSettings().getInt(KEY_LAYOUT);
 				// workaround because the saved value may be 0
-				if (fCurrentLayout == 0)
+				if (fCurrentLayout == 0) {
 					initLayout();
+				}
 			} catch (NumberFormatException e) {
 				// ignore, signals no value stored.
 			}
@@ -1326,8 +1354,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				if (layout != null) {
 					fCurrentLayout = layout.intValue();
 					// workaround because the saved value may be 0
-					if (fCurrentLayout == 0)
+					if (fCurrentLayout == 0) {
 						initLayout();
+					}
 				}
 			}
 		}
@@ -1352,8 +1381,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	public void internalRemoveSelected() {
 		AbstractTextSearchResult result = getInput();
-		if (result == null)
+		if (result == null) {
 			return;
+		}
 		StructuredViewer viewer = getViewer();
 		IStructuredSelection selection = viewer.getStructuredSelection();
 
@@ -1419,15 +1449,15 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		Viewer viewer= event.getViewer();
 		boolean hasCurrentMatch = showCurrentMatch(OpenStrategy.activateOnOpen());
 		ISelection sel= event.getSelection();
-		if (viewer instanceof TreeViewer && sel instanceof IStructuredSelection) {
-			IStructuredSelection selection= (IStructuredSelection) sel;
+		if (viewer instanceof TreeViewer && sel instanceof IStructuredSelection selection) {
 			TreeViewer tv = (TreeViewer) getViewer();
 			Object element = selection.getFirstElement();
 			if (element != null) {
-				if (!hasCurrentMatch && getDisplayedMatchCount(element) > 0)
+				if (!hasCurrentMatch && getDisplayedMatchCount(element) > 0) {
 					gotoNextMatch(OpenStrategy.activateOnOpen());
-				else
+				} else {
 					tv.setExpandedState(element, !tv.getExpandedState(element));
+				}
 			}
 			return;
 		} else if (!hasCurrentMatch) {

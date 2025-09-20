@@ -215,9 +215,9 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		handleDeletedPerspectives();
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 		String id= store.getString(DEFAULT_PERSPECTIVE);
-		if (id == null || id.isEmpty() || id.equals(NO_DEFAULT_PERSPECTIVE))
+		if (id == null || id.isEmpty() || id.equals(NO_DEFAULT_PERSPECTIVE)) {
 			return null;
-		else if (PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id) == null) {
+		} else if (PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id) == null) {
 			store.putValue(DEFAULT_PERSPECTIVE, id);
 			return null;
 		}
