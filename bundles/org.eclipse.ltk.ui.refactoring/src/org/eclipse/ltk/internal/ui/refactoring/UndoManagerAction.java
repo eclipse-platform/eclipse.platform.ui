@@ -47,8 +47,8 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 	private UndoManagerAdapter fUndoManagerListener;
 
 	protected static abstract class Query implements IValidationCheckResultQuery  {
-		private Shell fParent;
-		private String fTitle;
+		private final Shell fParent;
+		private final String fTitle;
 		public Query(Shell parent, String title) {
 			fParent= parent;
 			fTitle= title;
@@ -94,8 +94,9 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 	}
 
 	protected void hookListener(IAction action) {
-		if (isHooked())
+		if (isHooked()) {
 			return;
+		}
 		fAction= action;
 		fUndoManagerListener= createUndoManagerListener();
 		RefactoringCore.getUndoManager().addListener(fUndoManagerListener);
@@ -104,8 +105,9 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 	protected String shortenText(String text, int patternLength) {
 		int length= text.length();
 		final int finalLength = MAX_LENGTH + patternLength;
-		if (text.length() <= finalLength)
+		if (text.length() <= finalLength) {
 			return text;
+		}
 		StringBuilder result= new StringBuilder();
 		int mid= finalLength / 2;
 		result.append(text.substring(0, mid));
@@ -116,8 +118,9 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 
 	@Override
 	public void dispose() {
-		if (fUndoManagerListener != null)
+		if (fUndoManagerListener != null) {
 			RefactoringCore.getUndoManager().removeListener(fUndoManagerListener);
+		}
 		fWorkbenchWindow= null;
 		fAction= null;
 		fUndoManagerListener= null;

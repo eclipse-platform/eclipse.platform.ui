@@ -59,26 +59,29 @@ public final class EditRefactoringDetailsDialog extends Dialog {
 		super(shell);
 		fTitle= title;
 		fMessage= message;
-		if (details == null)
+		if (details == null) {
 			fDetails= "";//$NON-NLS-1$
-		else
+		} else {
 			fDetails= details;
+		}
 	}
 
 	@Override
 	protected void buttonPressed(final int id) {
-		if (id == IDialogConstants.OK_ID)
+		if (id == IDialogConstants.OK_ID) {
 			fDetails= fDetailsField.getText();
-		else
+		} else {
 			fDetails= null;
+		}
 		super.buttonPressed(id);
 	}
 
 	@Override
 	protected void configureShell(final Shell shell) {
 		super.configureShell(shell);
-		if (fTitle != null)
+		if (fTitle != null) {
 			shell.setText(fTitle);
+		}
 	}
 
 	@Override

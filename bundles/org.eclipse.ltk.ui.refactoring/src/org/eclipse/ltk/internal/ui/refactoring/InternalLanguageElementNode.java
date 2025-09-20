@@ -42,8 +42,9 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 	@Override
 	ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
 		InternalTextEditChangeNode element= getTextEditChangeNode();
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 		return element.getChangePreviewViewerDescriptor();
 	}
 
@@ -82,33 +83,38 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 		for (int i= 1; i < fChildren.size(); i++) {
 			PreviewNode element= fChildren.get(i);
 			result= PreviewNode.ACTIVATION_TABLE[element.getActive()][result];
-			if (result == PreviewNode.PARTLY_ACTIVE)
+			if (result == PreviewNode.PARTLY_ACTIVE) {
 				break;
+			}
 		}
 		return result;
 	}
 
 	@Override
 	PreviewNode[] getChildren() {
-		if (fChildren == null)
+		if (fChildren == null) {
 			return PreviewNode.EMPTY_CHILDREN;
+		}
 		return fChildren.toArray(new PreviewNode[fChildren.size()]);
 	}
 
 	@Override
 	boolean hasOneGroupCategory(List<GroupCategory> categories) {
-		if (fChildren == null)
+		if (fChildren == null) {
 			return false;
+		}
 		return getGroupCategorySet().containsOneCategory(categories);
 	}
 
 	@Override
 	boolean hasDerived() {
-		if (fChildren == null)
+		if (fChildren == null) {
 			return false;
+		}
 		for (PreviewNode node : fChildren) {
-			if (node.hasDerived())
+			if (node.hasDerived()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -132,8 +138,9 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 	}
 
 	protected void internalAddChild(ChildNode child) {
-		if (fChildren == null)
+		if (fChildren == null) {
 			fChildren= new ArrayList<>(2);
+		}
 		fChildren.add(child);
 	}
 
@@ -142,8 +149,9 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 		for (PreviewNode child : getChildren()) {
 			if (child instanceof TextEditGroupNode) {
 				TextEditBasedChangeGroup changeGroup= ((TextEditGroupNode)child).getChangeGroup();
-				if (categories == null || changeGroup.getGroupCategorySet().containsOneCategory(categories))
+				if (categories == null || changeGroup.getGroupCategorySet().containsOneCategory(categories)) {
 					result.add(changeGroup);
+				}
 			} else if (child instanceof InternalLanguageElementNode) {
 				result.addAll(((InternalLanguageElementNode)child).collectTextEditBasedChangeGroups(categories));
 			}

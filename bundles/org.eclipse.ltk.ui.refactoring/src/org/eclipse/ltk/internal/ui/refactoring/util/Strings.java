@@ -27,8 +27,9 @@ public final class Strings {
 		int index= message.indexOf('\n', 0);
 		while (index != -1) {
 			result.append(message.substring(current, index));
-			if (current < index && index != 0)
+			if (current < index && index != 0) {
 				result.append(' ');
+			}
 			current= index + 1;
 			index= message.indexOf('\n', current);
 		}

@@ -89,28 +89,27 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 			final Set<RefactoringDescriptorSynchronizationProxy> result= new HashSet<>();
 			final IResourceDiffTree tree= context.getDiffTree();
 			tree.accept(project.getFolder(RefactoringHistoryService.NAME_HISTORY_FOLDER).getFullPath(), diff -> {
-				if (diff instanceof IThreeWayDiff) {
-					final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
+				if (diff instanceof final IThreeWayDiff threeWay) {
 					final Set<RefactoringDescriptor> localDescriptors= new HashSet<>();
 					final Set<RefactoringDescriptor> remoteDescriptors= new HashSet<>();
 					final ITwoWayDiff localDiff= threeWay.getLocalChange();
-					if (localDiff instanceof IResourceDiff && localDiff.getKind() != IDiff.NO_CHANGE) {
-						final IResourceDiff resourceDiff1= (IResourceDiff) localDiff;
+					if (localDiff instanceof final IResourceDiff resourceDiff1 && localDiff.getKind() != IDiff.NO_CHANGE) {
 						final IFileRevision revision1= resourceDiff1.getAfterState();
 						if (revision1 != null) {
 							final String name1= revision1.getName();
-							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name1))
+							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name1)) {
 								AbstractResourceMappingMerger.getRefactoringDescriptors(revision1, localDescriptors, subMonitor.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
+							}
 						}
 					}
 					final ITwoWayDiff remoteDiff= threeWay.getLocalChange();
-					if (remoteDiff instanceof IResourceDiff && remoteDiff.getKind() != IDiff.NO_CHANGE) {
-						final IResourceDiff resourceDiff2= (IResourceDiff) remoteDiff;
+					if (remoteDiff instanceof final IResourceDiff resourceDiff2 && remoteDiff.getKind() != IDiff.NO_CHANGE) {
 						final IFileRevision revision2= resourceDiff2.getAfterState();
 						if (revision2 != null) {
 							final String name2= revision2.getName();
-							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name2))
+							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name2)) {
 								AbstractResourceMappingMerger.getRefactoringDescriptors(revision2, remoteDescriptors, subMonitor.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
+							}
 						}
 					}
 					final Set<RefactoringDescriptor> local= new HashSet<>(localDescriptors);
@@ -128,8 +127,9 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 			}, IResource.DEPTH_INFINITE);
 
 			for (RefactoringDescriptorSynchronizationProxy proxy : result) {
-				if (!includeDirection(proxy.getDirection()))
+				if (!includeDirection(proxy.getDirection())) {
 					result.remove(proxy);
+				}
 			}
 
 			return new RefactoringHistoryImplementation(result.toArray(new RefactoringDescriptorProxy[result.size()]));

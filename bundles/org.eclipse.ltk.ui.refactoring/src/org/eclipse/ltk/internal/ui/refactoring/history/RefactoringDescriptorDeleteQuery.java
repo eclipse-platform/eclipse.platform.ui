@@ -108,12 +108,14 @@ public final class RefactoringDescriptorDeleteQuery implements IRefactoringDescr
 						fReturnCode= dialog.getReturnCode();
 					}
 				});
-			} else
+			} else {
 				fReturnCode= IDialogConstants.YES_ID;
+			}
 		}
 		fWarned= true;
-		if (fReturnCode == IDialogConstants.YES_ID)
+		if (fReturnCode == IDialogConstants.YES_ID) {
 			return new RefactoringStatus();
+		}
 		return RefactoringStatus.createErrorStatus(IDialogConstants.NO_LABEL);
 	}
 }

@@ -121,10 +121,10 @@ public final class AcceptRefactoringsAction extends Action {
 	public boolean isEnabled() {
 		if (fProxies != null && fProxies.length > 0) {
 			for (RefactoringDescriptorProxy fproxy : fProxies) {
-				if (fproxy instanceof RefactoringDescriptorSynchronizationProxy) {
-					final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fproxy;
-					if (proxy.getDirection() == IThreeWayDiff.INCOMING)
+				if (fproxy instanceof final RefactoringDescriptorSynchronizationProxy proxy) {
+					if (proxy.getDirection() == IThreeWayDiff.INCOMING) {
 						return true;
+					}
 				}
 			}
 		}
@@ -141,14 +141,15 @@ public final class AcceptRefactoringsAction extends Action {
 				IProject project= null;
 				Set<RefactoringDescriptorSynchronizationProxy> proxies= new HashSet<>();
 				for (RefactoringDescriptorProxy fproxy : fProxies) {
-					if (fproxy instanceof RefactoringDescriptorSynchronizationProxy) {
-						final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fproxy;
-						if (proxy.getDirection() == IThreeWayDiff.INCOMING)
+					if (fproxy instanceof final RefactoringDescriptorSynchronizationProxy proxy) {
+						if (proxy.getDirection() == IThreeWayDiff.INCOMING) {
 							proxies.add(proxy);
+						}
 					}
 					String name= fproxy.getProject();
-					if (name != null && !"".equals(name)) //$NON-NLS-1$
+					if (name != null && !"".equals(name)) { //$NON-NLS-1$
 						project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+					}
 				}
 				wizard.setConfiguration(new RefactoringHistoryAcceptConfiguration(project));
 				wizard.setInput(new RefactoringHistoryImplementation(proxies.toArray(new RefactoringDescriptorProxy[proxies.size()])));
@@ -157,8 +158,7 @@ public final class AcceptRefactoringsAction extends Action {
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IRefactoringHelpContextIds.REFACTORING_ACCEPT_REFACTORING_PAGE);
 				result= dialog.open();
 			} finally {
-				if (result != Window.CANCEL && fContext instanceof IMergeContext) {
-					final IMergeContext context= (IMergeContext) fContext;
+				if (result != Window.CANCEL && fContext instanceof final IMergeContext context) {
 					wizard.resolveConflicts(context);
 				}
 			}

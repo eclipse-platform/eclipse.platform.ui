@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 
 class ChangeElementLabelProvider extends LabelProvider implements IFontProvider {
 
-	private Map<ImageDescriptor, Image> fDescriptorImageMap= new HashMap<>();
+	private final Map<ImageDescriptor, Image> fDescriptorImageMap= new HashMap<>();
 
 	public ChangeElementLabelProvider() {
 	}

@@ -77,8 +77,9 @@ public final class RefactoringHistoryEditHelper {
 		final Set<String> set= new HashSet<>();
 		for (RefactoringDescriptorProxy descriptor : descriptors) {
 			final String project= descriptor.getProject();
-			if (project == null || "".equals(project)) //$NON-NLS-1$
+			if (project == null || "".equals(project)) { //$NON-NLS-1$
 				return null;
+			}
 			set.add(project);
 		}
 		final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
@@ -127,8 +128,9 @@ public final class RefactoringHistoryEditHelper {
 							final Throwable throwable= exception.getStatus().getException();
 							if (throwable instanceof IOException) {
 								shell.getDisplay().syncExec(() -> MessageDialog.openError(shell, RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage()));
-							} else
+							} else {
 								throw exception;
+							}
 						}
 						if (query.hasDeletions()) {
 							final RefactoringHistory history= provider.getRefactoringHistory(subMonitor.newChild(20, SubMonitor.SUPPRESS_SUBTASK));

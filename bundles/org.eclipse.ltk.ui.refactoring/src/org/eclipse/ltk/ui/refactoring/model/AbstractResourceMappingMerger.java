@@ -128,8 +128,9 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 		final IWorkbench workbench= PlatformUI.getWorkbench();
 		if (workbench != null) {
 			final IWorkbenchWindow window= workbench.getActiveWorkbenchWindow();
-			if (window != null)
+			if (window != null) {
 				return window.getShell();
+			}
 		}
 		return null;
 	}
@@ -147,10 +148,11 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 		final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		for (RefactoringDescriptorProxy proxy : history.getDescriptors()) {
 			final String name= proxy.getProject();
-			if (name != null && !"".equals(name)) //$NON-NLS-1$
+			if (name != null && !"".equals(name)) { //$NON-NLS-1$
 				set.add(root.getProject(name));
-			else
+			} else {
 				return null;
+			}
 		}
 		final IProject[] projects= new IProject[set.size()];
 		set.toArray(projects);
@@ -213,8 +215,9 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 				final IProject[] projects= getAffectedProjects(history);
 				if (projects != null) {
 					final IProject[] dependencies= getDependencies(projects);
-					if (dependencies.length == 0)
+					if (dependencies.length == 0) {
 						execute= false;
+					}
 				}
 				if (execute) {
 					final Shell shell= getDialogShell();
@@ -227,8 +230,9 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 								wizard.setInput(history);
 								result= new WizardDialog(shell, wizard).open();
 							} finally {
-								if (result != Window.CANCEL)
+								if (result != Window.CANCEL) {
 									wizard.resolveConflicts(context);
+								}
 							}
 						}
 					});
@@ -250,8 +254,9 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 * @return the resulting merge status
 	 */
 	private IStatus createMergeStatus(final IMergeContext context, final IStatus status) {
-		if (status.getCode() == IMergeStatus.CONFLICTS)
+		if (status.getCode() == IMergeStatus.CONFLICTS) {
 			return new MergeStatus(status.getPlugin(), status.getMessage(), context.getScope().getMappings(fModelProvider.getDescriptor().getId()));
+		}
 		return status;
 	}
 
@@ -308,28 +313,27 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 		SubMonitor subMonitor= SubMonitor.convert(monitor, RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, diffs.length * 2);
 		try {
 			for (IDiff diff : diffs) {
-				if (diff instanceof IThreeWayDiff) {
-					final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
+				if (diff instanceof final IThreeWayDiff threeWay) {
 					final Set<RefactoringDescriptor> localDescriptors= new HashSet<>();
 					final Set<RefactoringDescriptor> remoteDescriptors= new HashSet<>();
 					final ITwoWayDiff localDiff= threeWay.getLocalChange();
-					if (localDiff instanceof IResourceDiff && localDiff.getKind() != IDiff.NO_CHANGE) {
-						final IResourceDiff resourceDiff= (IResourceDiff) localDiff;
+					if (localDiff instanceof final IResourceDiff resourceDiff && localDiff.getKind() != IDiff.NO_CHANGE) {
 						final IFileRevision revision= resourceDiff.getAfterState();
 						if (revision != null) {
 							final String name= revision.getName();
-							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name))
+							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name)) {
 								getRefactoringDescriptors(revision, localDescriptors, subMonitor.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
+							}
 						}
 					}
 					final ITwoWayDiff remoteDiff= threeWay.getLocalChange();
-					if (remoteDiff instanceof IResourceDiff && remoteDiff.getKind() != IDiff.NO_CHANGE) {
-						final IResourceDiff resourceDiff= (IResourceDiff) remoteDiff;
+					if (remoteDiff instanceof final IResourceDiff resourceDiff && remoteDiff.getKind() != IDiff.NO_CHANGE) {
 						final IFileRevision revision= resourceDiff.getAfterState();
 						if (revision != null) {
 							final String name= revision.getName();
-							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name))
+							if (RefactoringHistoryService.NAME_HISTORY_FILE.equalsIgnoreCase(name)) {
 								getRefactoringDescriptors(revision, remoteDescriptors, subMonitor.newChild(1, SubMonitor.SUPPRESS_SUBTASK));
+							}
 						}
 					}
 					remoteDescriptors.removeAll(localDescriptors);
@@ -398,8 +402,9 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 				final IDiff[] diffs= getDiffs(context);
 				status= createMergeStatus(context, context.merge(diffs, false, subMonitor.newChild(100)));
 				final int code= status.getCode();
-				if (status.getSeverity() != IStatus.ERROR && code != IMergeStatus.CONFLICTS && code != IMergeStatus.INTERNAL_ERROR)
+				if (status.getSeverity() != IStatus.ERROR && code != IMergeStatus.CONFLICTS && code != IMergeStatus.INTERNAL_ERROR) {
 					status= mergePerformed(context, subMonitor.newChild(25));
+				}
 			}
 		} finally {
 			subMonitor.done();

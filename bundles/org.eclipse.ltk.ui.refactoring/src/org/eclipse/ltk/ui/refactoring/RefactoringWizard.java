@@ -207,8 +207,9 @@ public abstract class RefactoringWizard extends Wizard {
 
 	private RefactoringWizard(RefactoringContext refactoringContext, Refactoring refactoring, int flags) {
 		Assert.isTrue(flags < LAST);
-		if ((flags & DIALOG_BASED_USER_INTERFACE) == 0)
+		if ((flags & DIALOG_BASED_USER_INTERFACE) == 0) {
 			flags |= WIZARD_BASED_USER_INTERFACE;
+		}
 		Assert.isTrue((flags & DIALOG_BASED_USER_INTERFACE) != 0 || (flags & WIZARD_BASED_USER_INTERFACE) != 0);
 		fRefactoringContext= refactoringContext;
 		fRefactoring= refactoring;
@@ -290,8 +291,9 @@ public abstract class RefactoringWizard extends Wizard {
 	public final void setForcePreviewReview(boolean forcePreviewReview) {
 		fForcePreviewReview= forcePreviewReview;
 		IWizardContainer container= getContainer();
-		if (container != null)
+		if (container != null) {
 			container.updateButtons();
+		}
 	}
 
 	/**
@@ -452,12 +454,14 @@ public abstract class RefactoringWizard extends Wizard {
 	}
 
 	private void initializeDefaultPageTitles() {
-		if (fDefaultPageTitle == null)
+		if (fDefaultPageTitle == null) {
 			return;
+		}
 
 		for (IWizardPage page : getPages()) {
-			if (page.getTitle() == null)
+			if (page.getTitle() == null) {
 				page.setTitle(fDefaultPageTitle);
+			}
 		}
 	}
 
@@ -465,8 +469,9 @@ public abstract class RefactoringWizard extends Wizard {
 
 	@Override
 	public IWizardPage getStartingPage() {
-		if (hasUserInput())
+		if (hasUserInput()) {
 			return super.getStartingPage();
+		}
 
 		IRunnableContext context= fRunnableContext != null ? fRunnableContext : PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		/*
@@ -491,11 +496,13 @@ public abstract class RefactoringWizard extends Wizard {
 
 	@Override
 	public IWizardPage getPreviousPage(IWizardPage page) {
-		if (hasUserInput())
+		if (hasUserInput()) {
 			return super.getPreviousPage(page);
+		}
 		if (! IErrorWizardPage.PAGE_NAME.equals(page.getName())){
-			if (fConditionCheckingStatus.isOK())
+			if (fConditionCheckingStatus.isOK()) {
 				return null;
+			}
 		}
 		return super.getPreviousPage(page);
 	}
@@ -514,8 +521,9 @@ public abstract class RefactoringWizard extends Wizard {
 		}
 
 		// Set change if we don't have fatal errors.
-		if (!status.hasFatalError())
+		if (!status.hasFatalError()) {
 			internalSetChange(InternalAPI.INSTANCE, change);
+		}
 
 		if (status.isOK()) {
 			return getPage(IPreviewWizardPage.PAGE_NAME);
@@ -526,8 +534,9 @@ public abstract class RefactoringWizard extends Wizard {
 
 	@Override
 	public boolean canFinish() {
-		if (fForcePreviewReview && !fPreviewShown)
+		if (fForcePreviewReview && !fPreviewShown) {
 			return false;
+		}
 		return super.canFinish();
 	}
 
@@ -561,12 +570,13 @@ public abstract class RefactoringWizard extends Wizard {
 	}
 
 	private void setConditionCheckingStatus(RefactoringStatus status, int style) {
-		if ((style & CheckConditionsOperation.ALL_CONDITIONS) == CheckConditionsOperation.ALL_CONDITIONS)
+		if ((style & CheckConditionsOperation.ALL_CONDITIONS) == CheckConditionsOperation.ALL_CONDITIONS) {
 			setConditionCheckingStatus(status);
-		else if ((style & CheckConditionsOperation.INITIAL_CONDITONS) == CheckConditionsOperation.INITIAL_CONDITONS)
+		} else if ((style & CheckConditionsOperation.INITIAL_CONDITONS) == CheckConditionsOperation.INITIAL_CONDITONS) {
 			setInitialConditionCheckingStatus(status);
-		else if ((style & CheckConditionsOperation.FINAL_CONDITIONS) == CheckConditionsOperation.FINAL_CONDITIONS)
+		} else if ((style & CheckConditionsOperation.FINAL_CONDITIONS) == CheckConditionsOperation.FINAL_CONDITIONS) {
 			setFinalConditionCheckingStatus(status);
+		}
 	}
 
 	private RefactoringStatus getConditionCheckingStatus() {
@@ -580,8 +590,9 @@ public abstract class RefactoringWizard extends Wizard {
 	 */
 	/* package */ final void setConditionCheckingStatus(RefactoringStatus status) {
 		ErrorWizardPage page= (ErrorWizardPage)getPage(IErrorWizardPage.PAGE_NAME);
-		if (page != null)
+		if (page != null) {
 			page.setStatus(status);
+		}
 		fConditionCheckingStatus= status;
 	}
 
@@ -594,8 +605,9 @@ public abstract class RefactoringWizard extends Wizard {
 	 */
 	private void setFinalConditionCheckingStatus(RefactoringStatus status) {
 		RefactoringStatus newStatus= new RefactoringStatus();
-		if (fInitialConditionCheckingStatus != null)
+		if (fInitialConditionCheckingStatus != null) {
 			newStatus.merge(fInitialConditionCheckingStatus);
+		}
 		newStatus.merge(status);
 		setConditionCheckingStatus(newStatus);
 	}
@@ -684,10 +696,11 @@ public abstract class RefactoringWizard extends Wizard {
 			}
 			setConditionCheckingStatus(status, operation.getConditionCheckingStyle());
 		} else {
-			if (exception != null)
+			if (exception != null) {
 				ExceptionHandler.handle(exception, getContainer().getShell(),
 					RefactoringUIMessages.RefactoringWizard_refactoring,
 					RefactoringUIMessages.RefactoringWizard_unexpected_exception);
+			}
 		}
 		Change change= operation.getChange();
 		return change;
@@ -712,8 +725,9 @@ public abstract class RefactoringWizard extends Wizard {
 
 	@Override
 	public boolean performCancel() {
-		if (fChange != null)
+		if (fChange != null) {
 			fChange.dispose();
+		}
 		return super.performCancel();
 	}
 
@@ -772,8 +786,9 @@ public abstract class RefactoringWizard extends Wizard {
 	public final void internalSetChange(InternalAPI api, Change change){
 		Assert.isNotNull(api);
 		IPreviewWizardPage page= (IPreviewWizardPage)getPage(IPreviewWizardPage.PAGE_NAME);
-		if (page != null)
+		if (page != null) {
 			page.setChange(change);
+		}
 		fChange= change;
 	}
 

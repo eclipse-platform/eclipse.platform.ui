@@ -28,13 +28,14 @@ public class RefactoringStatusEntryLabelProvider extends LabelProvider{
 		@Override
 		public Image getImage(Object element){
 			RefactoringStatusEntry entry= (RefactoringStatusEntry)element;
-			if (entry.isFatalError())
+			if (entry.isFatalError()) {
 				return RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_FATAL);
-			else if (entry.isError())
+			} else if (entry.isError()) {
 				return RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_ERROR);
-			else if (entry.isWarning())
+			} else if (entry.isWarning()) {
 				return RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_WARNING);
-			else
+			} else {
 				return RefactoringPluginImages.get(RefactoringPluginImages.IMG_OBJS_REFACTORING_INFO);
+			}
 		}
 }

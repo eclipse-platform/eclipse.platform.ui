@@ -113,10 +113,11 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 	@Override
 	protected TreeViewer createHistoryViewer(final Composite parent) {
 		Assert.isNotNull(parent);
-		if (fControlConfiguration.isCheckableViewer())
+		if (fControlConfiguration.isCheckableViewer()) {
 			return new RefactoringHistoryTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
-		else
+		} else {
 			return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+		}
 	}
 
 	@Override
@@ -173,23 +174,27 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 	@Override
 	protected void handleCheckStateChanged() {
 		super.handleCheckStateChanged();
-		if (fDeleteButton != null)
+		if (fDeleteButton != null) {
 			fDeleteButton.setEnabled(getCheckedDescriptors().length > 0);
+		}
 	}
 
 	@Override
 	protected void handleSelectionChanged(final IStructuredSelection selection) {
 		super.handleSelectionChanged(selection);
-		if (fDeleteButton != null)
+		if (fDeleteButton != null) {
 			fDeleteButton.setEnabled(getCheckedDescriptors().length > 0);
+		}
 	}
 
 	@Override
 	public void setInput(final RefactoringHistory history) {
 		super.setInput(history);
-		if (fDeleteAllButton != null)
+		if (fDeleteAllButton != null) {
 			fDeleteAllButton.setEnabled(history != null && !history.isEmpty());
-		if (fDeleteButton != null)
+		}
+		if (fDeleteButton != null) {
 			fDeleteButton.setEnabled(false);
+		}
 	}
 }

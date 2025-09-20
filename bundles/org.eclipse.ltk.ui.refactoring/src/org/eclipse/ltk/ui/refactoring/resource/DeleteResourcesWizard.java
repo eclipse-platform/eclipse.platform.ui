@@ -86,7 +86,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 
 	private static class DeleteResourcesRefactoringConfigurationPage extends UserInputWizardPage {
 
-		private DeleteResourcesProcessor fRefactoringProcessor;
+		private final DeleteResourcesProcessor fRefactoringProcessor;
 
 		private Button fDeleteContentsButton;
 
@@ -217,8 +217,9 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 				fProjectLocationsLabel.setLayoutData(labelData);
 
 				int style= SWT.MULTI | SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL;
-				if (initialResources.length > 1 || !nestedProjects.isEmpty())
+				if (initialResources.length > 1 || !nestedProjects.isEmpty()) {
 					style |= SWT.BORDER;
+				}
 				fProjectLocationsList= new StyledText(supportArea, style);
 				fProjectLocationsList.setAlwaysShowScrollBars(false);
 				labelData.horizontalIndent= fProjectLocationsList.getLeftMargin();
@@ -239,8 +240,9 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			for (IResource initialResource : initialResources) {
 				String location= getLocation(initialResource);
 				if (location != null) {
-					if (buf.length() > 0)
+					if (buf.length() > 0) {
 						buf.append('\n');
+					}
 					buf.append(location);
 				}
 			}
@@ -254,16 +256,19 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 
 		private static String getLocation(IResource resource) {
 			IPath location= resource.getLocation();
-			if (location != null)
+			if (location != null) {
 				return BasicElementLabels.getPathLabel(location, true);
+			}
 
 			URI uri= resource.getLocationURI();
-			if (uri != null)
+			if (uri != null) {
 				return BasicElementLabels.getURLPart(uri.toString());
+			}
 
 			URI rawLocationURI= resource.getRawLocationURI();
-			if (rawLocationURI != null)
+			if (rawLocationURI != null) {
 				return BasicElementLabels.getURLPart(rawLocationURI.toString());
+			}
 
 			return BasicElementLabels.getResourceName(resource);
 		}

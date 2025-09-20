@@ -94,9 +94,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 		setDefaultPageImageDescriptor(RefactoringPluginImages.DESC_WIZBAN_CREATE_SCRIPT);
 		final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 		final IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
-		if (section == null)
+		if (section == null) {
 			fNewSettings= true;
-		else {
+		} else {
 			fNewSettings= false;
 			setDialogSettings(section);
 		}
@@ -152,13 +152,15 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 					} catch (IOException closeException) {
 						// Do nothing
 					}
-				} else if (result == 2)
+				} else if (result == 2) {
 					return false;
+				}
 			}
 			try {
 				File parentFile= file.getParentFile();
-				if (parentFile != null)
+				if (parentFile != null) {
 					parentFile.mkdirs();
+				}
 				try (OutputStream stream= new BufferedOutputStream(new FileOutputStream(file))) {
 					writeRefactoringDescriptorProxies(writable, stream);
 				}
@@ -189,8 +191,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 							return false;
 						}
 					} finally {
-						if (clipboard != null)
+						if (clipboard != null) {
 							clipboard.dispose();
+						}
 					}
 				} catch (UnsupportedEncodingException exception) {
 					// Does not happen
@@ -237,8 +240,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 		Assert.isNotNull(proxies);
 		fRefactoringDescriptors= proxies;
 		final IWizardContainer wizard= getContainer();
-		if (wizard.getCurrentPage() != null)
+		if (wizard.getCurrentPage() != null) {
 			wizard.updateButtons();
+		}
 	}
 
 	/**
@@ -261,8 +265,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	public void setRefactoringScript(final URI location) {
 		fScriptLocation= location;
 		final IWizardContainer wizard= getContainer();
-		if (wizard.getCurrentPage() != null)
+		if (wizard.getCurrentPage() != null) {
 			wizard.updateButtons();
+		}
 	}
 
 	/**
@@ -276,8 +281,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	public void setUseClipboard(final boolean clipboard) {
 		fUseClipboard= clipboard;
 		final IWizardContainer wizard= getContainer();
-		if (wizard.getCurrentPage() != null)
+		if (wizard.getCurrentPage() != null) {
 			wizard.updateButtons();
+		}
 	}
 
 	/**
@@ -302,8 +308,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 			});
 		} catch (InvocationTargetException exception) {
 			final Throwable throwable= exception.getTargetException();
-			if (throwable instanceof CoreException) {
-				final CoreException extended= (CoreException) throwable;
+			if (throwable instanceof final CoreException extended) {
 				throw extended;
 			} else {
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, ScriptingMessages.CreateRefactoringScriptWizard_unexpected_exception, throwable));

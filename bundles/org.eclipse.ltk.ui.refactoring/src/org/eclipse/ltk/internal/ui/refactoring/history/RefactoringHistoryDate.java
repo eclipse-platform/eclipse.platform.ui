@@ -48,8 +48,7 @@ public final class RefactoringHistoryDate extends RefactoringHistoryNode {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof RefactoringHistoryDate) {
-			final RefactoringHistoryDate node= (RefactoringHistoryDate) object;
+		if (object instanceof final RefactoringHistoryDate node) {
 			return super.equals(object) && getTimeStamp() == node.getTimeStamp() && getKind() == node.getKind();
 		}
 		return false;

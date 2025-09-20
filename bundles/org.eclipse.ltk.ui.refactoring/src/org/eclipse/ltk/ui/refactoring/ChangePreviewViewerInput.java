@@ -29,7 +29,7 @@ import org.eclipse.ltk.core.refactoring.Change;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ChangePreviewViewerInput {
-	private Change fChange;
+	private final Change fChange;
 
 	/**
 	 * Creates a new input object for the given change.

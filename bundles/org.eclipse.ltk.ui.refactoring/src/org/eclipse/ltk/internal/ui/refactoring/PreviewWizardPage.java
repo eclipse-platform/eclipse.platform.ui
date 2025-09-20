@@ -155,9 +155,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	private class FilterAction extends Action {
 
-		private FilterDropDownAction fOwner;
+		private final FilterDropDownAction fOwner;
 
-		private GroupCategory fGroupCategory;
+		private final GroupCategory fGroupCategory;
 
 		public FilterAction(FilterDropDownAction owner, GroupCategory category) {
 			super(category.getName(), IAction.AS_RADIO_BUTTON);
@@ -177,7 +177,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	private class ShowAllAction extends Action {
 
-		private FilterDropDownAction fOwner;
+		private final FilterDropDownAction fOwner;
 
 		public ShowAllAction(FilterDropDownAction owner) {
 			super(RefactoringUIMessages.PreviewWizardPage_showAll_text, IAction.AS_RADIO_BUTTON);
@@ -224,7 +224,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		public void initialize(Collection<GroupCategory> groupCategories) {
 			List<GroupCategory> list= new ArrayList<>(groupCategories);
 			Collections.sort(list, new Comparator<GroupCategory>() {
-				private Collator fCollator= Collator.getInstance();
+				private final Collator fCollator= Collator.getInstance();
 				@Override
 				public final int compare(GroupCategory first, GroupCategory second) {
 					return fCollator.compare(first.getName(), second.getName());
@@ -276,13 +276,15 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			menu.setVisible(true);
 		}
 		public void executed(Action action) {
-			if (fActiveAction == action)
+			if (fActiveAction == action) {
 				return;
+			}
 			fActiveAction.setChecked(false);
 			fActiveAction= action;
 			fActiveAction.setChecked(true);
-			if (fCurrentSelection != null)
+			if (fCurrentSelection != null) {
 				showPreview(fCurrentSelection);
+			}
 		}
 	}
 
@@ -330,8 +332,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 */
 	@Override
 	public void setChange(Change change) {
-		if (fChange == change)
+		if (fChange == change) {
 			return;
+		}
 
 		fChange= change;
 		if (fChange instanceof CompositeChange) {
@@ -403,10 +406,12 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	protected boolean performFinish() {
 		UIPerformChangeOperation operation= new UIPerformChangeOperation(getShell().getDisplay(), fChange, getContainer());
 		FinishResult result= getRefactoringWizard().internalPerformFinish(InternalAPI.INSTANCE, operation);
-		if (result.isException())
+		if (result.isException()) {
 			return true;
-		if (result.isInterrupted())
+		}
+		if (result.isInterrupted()) {
 			return false;
+		}
 		RefactoringStatus fValidationStatus= operation.getValidationStatus();
 		if (fValidationStatus != null && fValidationStatus.hasFatalError()) {
 			RefactoringWizard wizard= getRefactoringWizard();
@@ -451,8 +456,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		tbm.add(fPreviousAction);
 		tbm.add(new Separator());
 		final IDialogSettings settings= getRefactoringSettings();
-		if (settings != null)
+		if (settings != null) {
 			fDerivedFilterActive= settings.getBoolean(PREVIEW_WIZARD_PAGE_HIDE_DERIVED);
+		}
 		fFilterDropDownAction= new FilterDropDownAction();
 		tbm.add(fFilterDropDownAction);
 		tbm.update(true);
@@ -466,8 +472,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			 */
 			@Override
 			public void getName(AccessibleEvent e) {
-				if (e.childID != ACC.CHILDID_SELF)
+				if (e.childID != ACC.CHILDID_SELF) {
 					e.result= toolBar.getItem(e.childID).getToolTipText();
+				}
 			}
 		});
 
@@ -496,7 +503,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		fCurrentPreviewViewer= fNullPreviewer;
 		fCurrentDescriptor= null;
 
-		sashForm.setWeights(new int[]{33, 67});
+		sashForm.setWeights(33, 67);
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		gd.widthHint= convertWidthInCharsToPixels(80);
 		sashForm.setLayoutData(gd);
@@ -543,8 +550,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 					}
 				}
 				updateTreeViewerPaneTitle();
-			} else if (!visible) // dispose the previewer
+			} else if (!visible) { // dispose the previewer
 				fCurrentPreviewViewer.setInput(new ChangePreviewViewerInput(new NullChange()));
+			}
 			((FilterDropDownAction) fFilterDropDownAction).initialize(collectGroupCategories());
 			super.setVisible(visible);
 			fTreeViewer.getControl().setFocus();
@@ -552,8 +560,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			fPageContainer.showPage(fNullPage);
 			super.setVisible(visible);
 		}
-		if (refactoringWizard != null)
+		if (refactoringWizard != null) {
 			refactoringWizard.internalSetPreviewShown(InternalAPI.INSTANCE, visible);
+		}
 	}
 
 	private PreviewNode getFirstNonCompositeChange(ITreeContentProvider provider, ViewerComparator comparator, AbstractChangeNode input) {
@@ -561,20 +570,22 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		Change change= input.getChange();
 		while (change instanceof CompositeChange) {
 			PreviewNode[] children= (PreviewNode[])provider.getElements(focus);
-			if (children == null || children.length == 0)
+			if (children == null || children.length == 0) {
 				return null;
+			}
 			comparator.sort(fTreeViewer, children);
 			focus= children[0];
-			change= (focus instanceof AbstractChangeNode)
-				? ((AbstractChangeNode)focus).getChange()
+			change= (focus instanceof AbstractChangeNode a)
+				? a.getChange()
 				: null;
 		}
 		return focus;
 	}
 
 	protected void setTreeViewerInput() {
-		if (fTreeViewer == null)
+		if (fTreeViewer == null) {
 			return;
+		}
 		PreviewNode input= null;
 		if (fTreeViewerInputChange != null) {
 			input= AbstractChangeNode.createNode(null, fTreeViewerInputChange);
@@ -601,8 +612,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			}
 			private boolean isChild(PreviewNode element, PreviewNode child) {
 				while (child != null) {
-					if (child == element)
+					if (child == element) {
 						return true;
+					}
 					child= child.getParent();
 				}
 				return false;
@@ -683,8 +695,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 					}
 					fCurrentDescriptor= descriptor;
 					element.feedInput(newViewer, fActiveGroupCategories);
-					if (fCurrentPreviewViewer != null && fCurrentPreviewViewer != fNullPreviewer)
+					if (fCurrentPreviewViewer != null && fCurrentPreviewViewer != fNullPreviewer) {
 						fCurrentPreviewViewer.getControl().dispose();
+					}
 					fCurrentPreviewViewer= newViewer;
 					fPreviewContainer.showPage(fCurrentPreviewViewer.getControl());
 				} else {
@@ -712,10 +725,12 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 * @return whether the preview has changes or not
 	 */
 	public boolean hasChanges() {
-		if (fChange == null)
+		if (fChange == null) {
 			return false;
-		if (fChange instanceof CompositeChange)
+		}
+		if (fChange instanceof CompositeChange) {
 			return hasChanges((CompositeChange) fChange);
+		}
 		return true;
 	}
 
@@ -820,7 +835,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	private static final class WizardCompareContainer implements ICompareContainer {
 
-		private IRunnableContext context;
+		private final IRunnableContext context;
 
 		public WizardCompareContainer(IRunnableContext context) {
 			this.context=context;

@@ -94,8 +94,9 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 				imageDescriptor= adapter.getImageDescriptor(element);
 			}
 		}
-		if (title == null || title.length() == 0)
+		if (title == null || title.length() == 0) {
 			title= RefactoringUIMessages.RefactoringStatusViewer_Problem_context;
+		}
 		fLabel.setText(title);
 		if (fPaneImage != null) {
 			fPaneImage.dispose();
@@ -116,11 +117,13 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 	 */
 	protected void setInput(IDocument document, IRegion region) {
 		Control ctrl= getControl();
-		if (ctrl != null && ctrl.isDisposed())
+		if (ctrl != null && ctrl.isDisposed()) {
 			ctrl= null;
+		}
 		try {
-			if (ctrl != null)
+			if (ctrl != null) {
 				ctrl.setRedraw(false);
+			}
 			fSourceViewer.setInput(document);
 			if (region != null && document != null) {
 				int offset= region.getOffset();
@@ -131,8 +134,9 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 				}
 			}
 		} finally {
-			if (ctrl != null)
+			if (ctrl != null) {
 				ctrl.setRedraw(true);
+			}
 		}
 	}
 
@@ -146,8 +150,9 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 		fLabel= new CLabel(fForm, SWT.NONE);
 		fForm.setTopLeft(fLabel);
 		fForm.addDisposeListener(e -> {
-			if (fPaneImage != null)
+			if (fPaneImage != null) {
 				fPaneImage.dispose();
+			}
 		});
 
 		Dialog.applyDialogFont(parent);

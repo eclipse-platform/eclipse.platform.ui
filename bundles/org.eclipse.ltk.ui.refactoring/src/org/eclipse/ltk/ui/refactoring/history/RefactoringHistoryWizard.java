@@ -130,10 +130,11 @@ public class RefactoringHistoryWizard extends Wizard {
 		private NoOverviewWizardPage() {
 			super(PAGE_NAME);
 			final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptors();
-			if (proxies.length > 0)
+			if (proxies.length > 0) {
 				setTitle(proxies[0], 1, proxies.length);
-			else
+			} else {
 				setTitle(fOverviewTitle);
+			}
 			setDescription(RefactoringUIMessages.RefactoringHistoryPreviewPage_description);
 		}
 
@@ -179,14 +180,16 @@ public class RefactoringHistoryWizard extends Wizard {
 		 */
 		public void setTitle(final RefactoringDescriptorProxy descriptor, final int current, final int total) {
 			final String message;
-			if (descriptor != null)
+			if (descriptor != null) {
 				message= descriptor.getDescription();
-			else
+			} else {
 				message= RefactoringUIMessages.RefactoringHistoryOverviewPage_title;
-			if (total > 1)
+			}
+			if (total > 1) {
 				setTitle(Messages.format(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total)}));
-			else
+			} else {
 				setTitle(message);
+			}
 		}
 	}
 
@@ -260,7 +263,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	private final String fOverviewTitle;
 
 	/** The preview change filter */
-	private RefactoringPreviewChangeFilter fPreviewChangeFilter= new RefactoringPreviewChangeFilter() {
+	private final RefactoringPreviewChangeFilter fPreviewChangeFilter= new RefactoringPreviewChangeFilter() {
 
 		@Override
 		public final boolean select(final Change change) {
@@ -278,7 +281,7 @@ public class RefactoringHistoryWizard extends Wizard {
 	private final boolean fShowOverview;
 
 	/** The status entry filter */
-	private RefactoringStatusEntryFilter fStatusEntryFilter= new RefactoringStatusEntryFilter() {
+	private final RefactoringStatusEntryFilter fStatusEntryFilter= new RefactoringStatusEntryFilter() {
 
 		@Override
 		public final boolean select(final RefactoringStatusEntry entry) {
@@ -455,13 +458,15 @@ public class RefactoringHistoryWizard extends Wizard {
 	public boolean canFinish() {
 		final IWizardPage page= getContainer().getCurrentPage();
 		if (page == fErrorPage) {
-			if (fHeadlessErrorStatus)
+			if (fHeadlessErrorStatus) {
 				return true;
+			}
 			final RefactoringStatus status= fErrorPage.getStatus();
 			final boolean fatal= status != null && status.hasFatalError();
 			if (isLastRefactoring() && fDescriptorProxies.length > 1) {
-				if (fatal)
+				if (fatal) {
 					fHeadlessErrorStatus= true;
+				}
 				return true;
 			}
 			return !fatal;
@@ -577,10 +582,12 @@ public class RefactoringHistoryWizard extends Wizard {
 		final Refactoring refactoring= createRefactoring(descriptor, status);
 		if (refactoring != null) {
 			status.merge(aboutToPerformRefactoring(refactoring, descriptor, monitor));
-			if (!status.hasFatalError())
+			if (!status.hasFatalError()) {
 				return refactoring;
-		} else
+			}
+		} else {
 			status.addFatalError(Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_error_instantiate_refactoring, descriptor.getDescription()));
+		}
 		return null;
 	}
 
@@ -613,8 +620,9 @@ public class RefactoringHistoryWizard extends Wizard {
 		if (context != null) {
 			final Refactoring refactoring= context.getRefactoring();
 			status.merge(aboutToPerformRefactoring(refactoring, descriptor, monitor));
-			if (!status.hasFatalError())
+			if (!status.hasFatalError()) {
 				return context;
+			}
 		} else {
 			status.addFatalError(Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_error_instantiate_refactoring, descriptor.getDescription()));
 		}
@@ -634,8 +642,9 @@ public class RefactoringHistoryWizard extends Wizard {
 			public final void run() throws Exception {
 				if (fAboutToPerformFired) {
 					final RefactoringStatusEntry entry= historyPerformed(new NullProgressMonitor()).getEntryWithHighestSeverity();
-					if (entry != null)
+					if (entry != null) {
 						RefactoringUIPlugin.log(entry.toStatus());
+					}
 				}
 			}
 		});
@@ -708,8 +717,9 @@ public class RefactoringHistoryWizard extends Wizard {
 					final MessageDialogWithToggle dialog= new MessageDialogWithToggle(getShell(), wizard.getShell().getText(), null, message, MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false);
 					dialog.open();
 					store.setValue(key, dialog.getToggleState());
-					if (dialog.getReturnCode() == 1)
+					if (dialog.getReturnCode() == 1) {
 						return null;
+					}
 				}
 				fCurrentRefactoring++;
 				return getRefactoringPage();
@@ -747,10 +757,11 @@ public class RefactoringHistoryWizard extends Wizard {
 				fPreviewPage.setChange(null);
 			}
 			final RefactoringDescriptorProxy descriptor= getRefactoringDescriptor();
-			if (descriptor != null)
+			if (descriptor != null) {
 				fPreviewPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
-			else
+			} else {
 				fPreviewPage.setTitle(RefactoringUIMessages.PreviewWizardPage_changes);
+			}
 			fPreviewPage.setStatus(status);
 			fPreviewPage.setNextPageDisabled(isLastRefactoring());
 			return fPreviewPage;
@@ -774,8 +785,9 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	@Override
 	public IWizardPage getPreviousPage(final IWizardPage page) {
-		if (page == fErrorPage || page == fPreviewPage)
+		if (page == fErrorPage || page == fPreviewPage) {
 			return null;
+		}
 		return super.getPreviousPage(page);
 	}
 
@@ -786,8 +798,9 @@ public class RefactoringHistoryWizard extends Wizard {
 	 */
 	private RefactoringDescriptorProxy getRefactoringDescriptor() {
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptors();
-		if (fCurrentRefactoring >= 0 && fCurrentRefactoring < proxies.length)
+		if (fCurrentRefactoring >= 0 && fCurrentRefactoring < proxies.length) {
 			return proxies[fCurrentRefactoring];
+		}
 		return null;
 	}
 
@@ -866,8 +879,9 @@ public class RefactoringHistoryWizard extends Wizard {
 									result[0]= fErrorPage;
 								}
 							} finally {
-								if (context != null)
+								if (context != null) {
 									context.dispose();
+								}
 							}
 						} else {
 							status.merge(RefactoringStatus.createFatalErrorStatus(RefactoringUIMessages.RefactoringHistoryWizard_error_resolving_refactoring));
@@ -964,16 +978,18 @@ public class RefactoringHistoryWizard extends Wizard {
 				final MessageDialogWithToggle dialog= new MessageDialogWithToggle(getShell(), getShell().getText(), null, format.format(new Object[] { Integer.valueOf(fExecutedRefactorings)}), MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false);
 				dialog.open();
 				store.setValue(PREFERENCE_DO_NOT_WARN_UNDO_ON_CANCEL, dialog.getToggleState());
-				if (dialog.getReturnCode() == 1)
+				if (dialog.getReturnCode() == 1) {
 					return false;
+				}
 			}
 			final IRunnableWithProgress runnable= monitor -> {
 				SubMonitor subMonitor= SubMonitor.convert(monitor, fExecutedRefactorings);
 				for (int index= 0; index < fExecutedRefactorings; index++) {
 					try {
 						RefactoringCore.getUndoManager().performUndo(null, subMonitor.newChild(1));
-						if (fExecutedRefactorings > 0)
+						if (fExecutedRefactorings > 0) {
 							fExecutedRefactorings--;
+						}
 					} catch (CoreException exception) {
 						throw new InvocationTargetException(exception);
 					}
@@ -999,16 +1015,19 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		if (fHeadlessErrorStatus)
+		if (fHeadlessErrorStatus) {
 			return true;
-		if (fOverviewPage != null)
+		}
+		if (fOverviewPage != null) {
 			fOverviewPage.performFinish();
+		}
 		final IWizardContainer wizard= getContainer();
 		final RefactoringStatus status= new RefactoringStatus();
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptors();
 		final List<RefactoringDescriptorProxy> list= new ArrayList<>(proxies.length);
-		for (int index= fCurrentRefactoring; index < proxies.length; index++)
+		for (int index= fCurrentRefactoring; index < proxies.length; index++) {
 			list.add(proxies[index]);
+		}
 		final RefactoringDescriptorProxy[] descriptors= new RefactoringDescriptorProxy[list.size()];
 		list.toArray(descriptors);
 		final boolean last= isLastRefactoring();
@@ -1019,8 +1038,9 @@ public class RefactoringHistoryWizard extends Wizard {
 				status.merge(performPreviewChange(change, refactoring));
 				if (!status.isOK()) {
 					final RefactoringStatusEntry entry= status.getEntryWithHighestSeverity();
-					if (entry.getSeverity() == RefactoringStatus.INFO && entry.getCode() == RefactoringHistoryWizard.STATUS_CODE_INTERRUPTED)
+					if (entry.getSeverity() == RefactoringStatus.INFO && entry.getCode() == RefactoringHistoryWizard.STATUS_CODE_INTERRUPTED) {
 						return false;
+					}
 					fErrorPage.setStatus(status);
 					fErrorPage.setNextPageDisabled(true);
 					fErrorPage.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
@@ -1035,8 +1055,9 @@ public class RefactoringHistoryWizard extends Wizard {
 				final MessageDialogWithToggle dialog= new MessageDialogWithToggle(getShell(), wizard.getShell().getText(), null, Messages.format(RefactoringUIMessages.RefactoringHistoryWizard_warning_finish, LegacyActionTools.removeMnemonics(IDialogConstants.FINISH_LABEL)), MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false);
 				dialog.open();
 				store.setValue(PREFERENCE_DO_NOT_WARN_FINISH, dialog.getToggleState());
-				if (dialog.getReturnCode() == IDialogConstants.CANCEL_ID)
+				if (dialog.getReturnCode() == IDialogConstants.CANCEL_ID) {
 					return false;
+				}
 			}
 			final PerformRefactoringHistoryOperation operation= new PerformRefactoringHistoryOperation(new RefactoringHistoryImplementation(descriptors)) {
 
@@ -1089,8 +1110,9 @@ public class RefactoringHistoryWizard extends Wizard {
 				final Throwable throwable= exception.getTargetException();
 				if (throwable != null) {
 					final String message= throwable.getLocalizedMessage();
-					if (message != null && !"".equals(message)) //$NON-NLS-1$
+					if (message != null && !"".equals(message)) { //$NON-NLS-1$
 						status.merge(RefactoringStatus.createFatalErrorStatus(message));
+					}
 					fErrorPage.setStatus(status);
 					fErrorPage.setNextPageDisabled(status.hasFatalError());
 					fErrorPage.setTitle(RefactoringUIMessages.RefactoringHistoryPreviewPage_apply_error_title);
@@ -1144,8 +1166,9 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 		};
 		final RefactoringStatus status= performPreviewChange(operation, refactoring);
-		if (status.isOK())
+		if (status.isOK()) {
 			status.merge(operation.getValidationStatus());
+		}
 		return status;
 	}
 
@@ -1172,10 +1195,11 @@ public class RefactoringHistoryWizard extends Wizard {
 			if (operation.changeExecutionFailed()) {
 				final Change change= operation.getChange();
 				final ChangeExceptionHandler handler= new ChangeExceptionHandler(shell, refactoring);
-				if (throwable instanceof RuntimeException)
+				if (throwable instanceof RuntimeException) {
 					handler.handle(change, (RuntimeException) throwable);
-				else if (throwable instanceof CoreException)
+				} else if (throwable instanceof CoreException) {
 					handler.handle(change, (CoreException) throwable);
+				}
 			}
 			ExceptionHandler.handle(exception, shell, RefactoringUIMessages.RefactoringWizard_refactoring, RefactoringUIMessages.RefactoringWizard_unexpected_exception_1);
 		} catch (InterruptedException exception) {

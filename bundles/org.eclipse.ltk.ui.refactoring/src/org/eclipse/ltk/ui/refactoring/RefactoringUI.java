@@ -133,10 +133,11 @@ public class RefactoringUI {
 	 */
 	/* package */static Dialog createRefactoringWizardDialog(RefactoringWizard wizard, Shell parent) {
 		Dialog result;
-		if (wizard.needsWizardBasedUserInterface())
+		if (wizard.needsWizardBasedUserInterface()) {
 			result= new RefactoringWizardDialog(parent, wizard);
-		else
+		} else {
 			result= new RefactoringWizardDialog2(parent, wizard);
+		}
 		return result;
 	}
 

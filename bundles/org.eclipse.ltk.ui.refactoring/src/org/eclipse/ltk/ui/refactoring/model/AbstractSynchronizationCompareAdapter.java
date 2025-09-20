@@ -45,8 +45,9 @@ public abstract class AbstractSynchronizationCompareAdapter extends Synchronizat
 
 	@Override
 	public ICompareInput asCompareInput(final ISynchronizationContext context, final Object element) {
-		if (element instanceof RefactoringDescriptorProxy)
+		if (element instanceof RefactoringDescriptorProxy) {
 			return new RefactoringDescriptorCompareInput((RefactoringDescriptorProxy) element, getKind(context, (RefactoringDescriptorProxy) element));
+		}
 		return super.asCompareInput(context, element);
 	}
 
@@ -69,13 +70,13 @@ public abstract class AbstractSynchronizationCompareAdapter extends Synchronizat
 	 */
 	protected int getKind(final ISynchronizationContext context, final RefactoringDescriptorProxy proxy) {
 		int kind= Differencer.ADDITION;
-		if (proxy instanceof RefactoringDescriptorSynchronizationProxy) {
-			final RefactoringDescriptorSynchronizationProxy extended= (RefactoringDescriptorSynchronizationProxy) proxy;
+		if (proxy instanceof final RefactoringDescriptorSynchronizationProxy extended) {
 			final int direction= extended.getDirection();
-			if (direction == IThreeWayDiff.OUTGOING)
+			if (direction == IThreeWayDiff.OUTGOING) {
 				kind|= Differencer.LEFT;
-			else if (direction == IThreeWayDiff.INCOMING)
+			} else if (direction == IThreeWayDiff.INCOMING) {
 				kind|= Differencer.RIGHT;
+			}
 		}
 		return kind;
 	}

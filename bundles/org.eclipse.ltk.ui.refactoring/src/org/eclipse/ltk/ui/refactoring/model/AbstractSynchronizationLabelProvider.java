@@ -45,17 +45,19 @@ public abstract class AbstractSynchronizationLabelProvider extends Synchronizati
 
 	@Override
 	protected String decorateText(final String base, final Object element) {
-		if (element instanceof RefactoringDescriptorProxy)
+		if (element instanceof RefactoringDescriptorProxy) {
 			return base;
+		}
 		return super.decorateText(base, element);
 	}
 
 	@Override
 	protected IDiff getDiff(final Object element) {
-		if (element instanceof RefactoringDescriptorProxy)
+		if (element instanceof RefactoringDescriptorProxy) {
 			return new RefactoringDescriptorDiff((RefactoringDescriptorProxy) element, getKind(element), getDirection(element));
-		else if (element instanceof RefactoringHistory)
+		} else if (element instanceof RefactoringHistory) {
 			return new RefactoringHistoryDiff((RefactoringHistory) element, getKind(element), getDirection(element));
+		}
 		return super.getDiff(element);
 	}
 
@@ -75,26 +77,23 @@ public abstract class AbstractSynchronizationLabelProvider extends Synchronizati
 	 * @see IThreeWayDiff#getDirection()
 	 */
 	protected int getDirection(Object element) {
-		if (element instanceof RefactoringHistory) {
-			final RefactoringHistory history= (RefactoringHistory) element;
+		if (element instanceof final RefactoringHistory history) {
 			final RefactoringDescriptorProxy[] descriptors= history.getDescriptors();
 			int direction= 0;
 			if (descriptors.length > 0) {
-				if (descriptors[0] instanceof RefactoringDescriptorSynchronizationProxy) {
-					final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) descriptors[0];
+				if (descriptors[0] instanceof final RefactoringDescriptorSynchronizationProxy proxy) {
 					direction= proxy.getDirection();
 				}
 			}
 			for (int index= 1; index < descriptors.length; index++) {
-				if (descriptors[index] instanceof RefactoringDescriptorSynchronizationProxy) {
-					final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) descriptors[index];
-					if (proxy.getDirection() != direction)
+				if (descriptors[index] instanceof final RefactoringDescriptorSynchronizationProxy proxy) {
+					if (proxy.getDirection() != direction) {
 						return IThreeWayDiff.CONFLICTING;
+					}
 				}
 			}
 			return IDiff.NO_CHANGE;
-		} else if (element instanceof RefactoringDescriptorSynchronizationProxy) {
-			final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) element;
+		} else if (element instanceof final RefactoringDescriptorSynchronizationProxy proxy) {
 			return proxy.getDirection();
 		}
 		return IThreeWayDiff.CONFLICTING;
@@ -116,8 +115,9 @@ public abstract class AbstractSynchronizationLabelProvider extends Synchronizati
 	 * @see IDiff#getKind()
 	 */
 	protected int getKind(Object element) {
-		if (element instanceof RefactoringHistory)
+		if (element instanceof RefactoringHistory) {
 			return IDiff.CHANGE;
+		}
 		return IDiff.ADD;
 	}
 }

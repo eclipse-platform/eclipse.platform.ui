@@ -55,11 +55,11 @@ public final class ApplyRefactoringScriptAction implements IWorkbenchWindowActio
 		Assert.isNotNull(window);
 		final IWorkbenchWizard wizard= new ApplyRefactoringScriptWizard();
 		final ISelection selection= window.getSelectionService().getSelection();
-		if (selection instanceof IStructuredSelection) {
-			final IStructuredSelection structured= (IStructuredSelection) selection;
+		if (selection instanceof final IStructuredSelection structured) {
 			wizard.init(window.getWorkbench(), structured);
-		} else
+		} else {
 			wizard.init(window.getWorkbench(), null);
+		}
 		final WizardDialog dialog= new WizardDialog(window.getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);

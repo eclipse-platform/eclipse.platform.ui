@@ -33,7 +33,7 @@ import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
 
 public final class TextEditGroupNode extends TextEditChangeNode.ChildNode {
 
-	private TextEditBasedChangeGroup fChangeGroup;
+	private final TextEditBasedChangeGroup fChangeGroup;
 
 	public TextEditGroupNode(PreviewNode parent, TextEditBasedChangeGroup changeGroup) {
 		super(parent);
@@ -63,8 +63,9 @@ public final class TextEditGroupNode extends TextEditChangeNode.ChildNode {
 	@Override
 	ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException {
 		InternalTextEditChangeNode element= getTextEditChangeNode();
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 		return element.getChangePreviewViewerDescriptor();
 	}
 
@@ -123,8 +124,9 @@ public final class TextEditGroupNode extends TextEditChangeNode.ChildNode {
 	}
 
 	private static IRegion getTextRange(PreviewNode element) throws CoreException {
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 		if (element instanceof InternalLanguageElementNode) {
 			return ((InternalLanguageElementNode)element).getTextRange();
 		} else if (element instanceof TextEditChangeNode) {

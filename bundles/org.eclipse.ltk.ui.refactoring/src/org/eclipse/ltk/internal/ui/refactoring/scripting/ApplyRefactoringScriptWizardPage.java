@@ -137,8 +137,7 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 				setPageComplete(false);
 				return;
 			}
-			if (contents instanceof String) {
-				final String script= (String) contents;
+			if (contents instanceof final String script) {
 				try {
 					final ByteArrayInputStream stream= new ByteArrayInputStream(script.getBytes(IRefactoringSerializationConstants.OUTPUT_ENCODING));
 					fWizard.setRefactoringHistory(RefactoringCore.getHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE));
@@ -154,8 +153,9 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 				setPageComplete(false);
 			}
 		} finally {
-			if (clipboard != null)
+			if (clipboard != null) {
 				clipboard.dispose();
+			}
 		}
 	}
 
@@ -197,10 +197,11 @@ public final class ApplyRefactoringScriptWizardPage extends WizardPage {
 
 	@Override
 	public void setErrorMessage(final String message) {
-		if (!fFirstTime)
+		if (!fFirstTime) {
 			super.setErrorMessage(message);
-		else
+		} else {
 			setMessage(message, NONE);
+		}
 	}
 
 	@Override

@@ -184,10 +184,11 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 	protected TreeViewer createHistoryViewer(final Composite parent) {
 		Assert.isNotNull(parent);
 		TreeViewer viewer= null;
-		if (fControlConfiguration.isCheckableViewer())
+		if (fControlConfiguration.isCheckableViewer()) {
 			viewer= new RefactoringHistoryTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
-		else
+		} else {
 			viewer= new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+		}
 		return viewer;
 	}
 
@@ -292,10 +293,12 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 		if (history != null) {
 			final int checked= getCheckedDescriptors().length;
 			final int total= history.getDescriptors().length;
-			if (fSelectAllButton != null)
+			if (fSelectAllButton != null) {
 				fSelectAllButton.setEnabled(checked < total);
-			if (fDeselectAllButton != null)
+			}
+			if (fDeselectAllButton != null) {
 				fDeselectAllButton.setEnabled(checked > 0);
+			}
 		}
 	}
 
@@ -311,8 +314,9 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 	 */
 	protected void handleSelectAll() {
 		final RefactoringHistory history= getInput();
-		if (history != null)
+		if (history != null) {
 			setCheckedDescriptors(history.getDescriptors());
+		}
 	}
 
 	@Override
@@ -323,8 +327,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 	@Override
 	public boolean isSortByProjects() {
 		final IContentProvider provider= fHistoryViewer.getContentProvider();
-		if (provider instanceof BrowseRefactoringHistoryContentProvider) {
-			final BrowseRefactoringHistoryContentProvider extended= (BrowseRefactoringHistoryContentProvider) provider;
+		if (provider instanceof final BrowseRefactoringHistoryContentProvider extended) {
 			return extended.isSortProjects();
 		}
 		return false;
@@ -337,8 +340,9 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 		final RefactoringHistory history= (RefactoringHistory) fHistoryViewer.getInput();
 		if (history != null) {
 			final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
-			if (proxies.length > 0)
+			if (proxies.length > 0) {
 				enable= true;
+			}
 		}
 		fSortProjects.setEnabled(enable);
 		fSortTimestamps.setEnabled(enable);
@@ -347,10 +351,12 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 	@Override
 	public void setInput(final RefactoringHistory history) {
 		super.setInput(history);
-		if (fDeselectAllButton != null)
+		if (fDeselectAllButton != null) {
 			fDeselectAllButton.setEnabled(false);
-		if (fSelectAllButton != null)
+		}
+		if (fSelectAllButton != null) {
 			fSelectAllButton.setEnabled(history != null && !history.isEmpty());
+		}
 	}
 
 	@Override

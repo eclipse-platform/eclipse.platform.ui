@@ -33,8 +33,8 @@ import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 
 public class UIPerformChangeOperation extends PerformChangeOperation {
 
-	private Display fDisplay;
-	private IWizardContainer fWizardContainer;
+	private final Display fDisplay;
+	private final IWizardContainer fWizardContainer;
 
 	public UIPerformChangeOperation(Display display, Change change, IWizardContainer container) {
 		super(change);

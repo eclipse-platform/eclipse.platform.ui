@@ -26,7 +26,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public final class RefactoringImageDescriptor extends ImageDescriptor {
 
 	/** The image */
-	private Image fImage;
+	private final Image fImage;
 
 	/**
 	 * Creates a new refactoring image descriptor.

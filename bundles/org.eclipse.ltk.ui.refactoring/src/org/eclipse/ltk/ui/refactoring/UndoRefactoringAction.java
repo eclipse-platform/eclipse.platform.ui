@@ -94,8 +94,9 @@ public class UndoRefactoringAction extends UndoManagerAction {
 			@Override
 			public void undoStackChanged(IUndoManager manager) {
 				IAction action= getAction();
-				if (action == null)
+				if (action == null) {
 					return;
+				}
 				boolean enabled= false;
 				String text= null;
 				if (manager.anythingToUndo()) {
@@ -117,8 +118,9 @@ public class UndoRefactoringAction extends UndoManagerAction {
 			fPatternLength= RefactoringUIMessages.UndoRefactoringAction_extendedLabel.length();
 			IUndoManager undoManager = RefactoringCore.getUndoManager();
 			if (undoManager.anythingToUndo()) {
-				if (undoManager.peekUndoName() != null)
+				if (undoManager.peekUndoName() != null) {
 					action.setText(getActionText());
+				}
 				action.setEnabled(true);
 			} else {
 				action.setEnabled(false);

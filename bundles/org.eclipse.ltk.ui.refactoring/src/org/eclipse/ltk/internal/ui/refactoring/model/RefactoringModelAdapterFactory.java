@@ -29,8 +29,7 @@ public final class RefactoringModelAdapterFactory implements IAdapterFactory {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptable, Class<T> adapter) {
-		if (adaptable instanceof RefactoringDescriptorCompareInput && ResourceMapping.class.equals(adapter)) {
-			final RefactoringDescriptorCompareInput input= (RefactoringDescriptorCompareInput) adaptable;
+		if (adaptable instanceof final RefactoringDescriptorCompareInput input && ResourceMapping.class.equals(adapter)) {
 			final RefactoringDescriptorProxy descriptor= input.getDescriptor();
 			if (descriptor != null) {
 				return (T) descriptor.getAdapter(ResourceMapping.class);

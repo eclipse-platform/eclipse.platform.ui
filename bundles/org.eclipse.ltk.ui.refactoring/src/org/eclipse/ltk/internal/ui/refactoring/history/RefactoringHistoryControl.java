@@ -107,8 +107,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 						final Object element= event.getElement();
 						if (getGrayed(element)) {
 							final RefactoringHistory history= RefactoringHistoryControl.this.getInput();
-							if (history != null)
+							if (history != null) {
 								reconcileCheckState(history);
+							}
 						} else if (getChecked(element)) {
 							setSubTreeGrayed(element, false);
 							setSubtreeChecked(element, true);
@@ -142,8 +143,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			int checkCount= 0;
 			final Collection<RefactoringDescriptorProxy> collection= getCoveredDescriptors(element);
 			for (RefactoringDescriptorProxy proxy : collection) {
-				if (fCheckedDescriptors.contains(proxy))
+				if (fCheckedDescriptors.contains(proxy)) {
 					checkCount++;
+				}
 			}
 			setElementChecked(element, checkCount > 0);
 			setElementGrayed(element, checkCount != 0 && checkCount != collection.size());
@@ -159,19 +161,20 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		 *            <code>false</code> otherwise
 		 */
 		private void reconcileCheckState(final Object element, final boolean checked) {
-			if (element instanceof RefactoringHistoryEntry) {
-				final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) element;
+			if (element instanceof final RefactoringHistoryEntry entry) {
 				final RefactoringDescriptorProxy proxy= entry.getDescriptor();
-				if (checked)
+				if (checked) {
 					fCheckedDescriptors.add(proxy);
-				else
+				} else {
 					fCheckedDescriptors.remove(proxy);
+				}
 			} else if (element instanceof RefactoringHistoryNode) {
 				final Collection<RefactoringDescriptorProxy> collection= getCoveredDescriptors(element);
-				if (checked)
+				if (checked) {
 					fCheckedDescriptors.addAll(collection);
-				else
+				} else {
 					fCheckedDescriptors.removeAll(collection);
+				}
 			}
 			RefactoringHistoryControl.this.reconcileCheckState();
 		}
@@ -187,8 +190,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		 */
 		private void setElementChecked(final Object element, final boolean checked) {
 			final Widget widget= RefactoringHistoryTreeViewer.this.findItem(element);
-			if (widget instanceof TreeItem) {
-				final TreeItem item= (TreeItem) widget;
+			if (widget instanceof final TreeItem item) {
 				item.setChecked(checked);
 			}
 		}
@@ -204,8 +206,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		 */
 		private void setElementGrayed(final Object element, final boolean grayed) {
 			final Widget widget= RefactoringHistoryTreeViewer.this.findItem(element);
-			if (widget instanceof TreeItem) {
-				final TreeItem item= (TreeItem) widget;
+			if (widget instanceof final TreeItem item) {
 				item.setGrayed(grayed);
 			}
 		}
@@ -278,8 +279,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	@Override
 	public final void addCheckStateListener(final ICheckStateListener listener) {
 		Assert.isNotNull(listener);
-		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
-			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
+		if (fHistoryViewer instanceof final RefactoringHistoryTreeViewer viewer) {
 			viewer.addCheckStateListener(listener);
 		}
 	}
@@ -287,8 +287,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	@Override
 	public final void addSelectionChangedListener(final ISelectionChangedListener listener) {
 		Assert.isNotNull(listener);
-		if (fHistoryViewer != null)
+		if (fHistoryViewer != null) {
 			fHistoryViewer.addSelectionChangedListener(listener);
+		}
 	}
 
 	/**
@@ -324,16 +325,18 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		fHistoryPane.setText(getHistoryPaneText());
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
-		if (!fControlConfiguration.isTimeDisplayed())
+		if (!fControlConfiguration.isTimeDisplayed()) {
 			fHistoryViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		}
 		fHistoryViewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer.setUseHashlookup(true);
 		fHistoryViewer.setContentProvider(getContentProvider());
 		fHistoryViewer.setLabelProvider(getLabelProvider());
 		fHistoryViewer.addSelectionChangedListener(event -> {
 			final ISelection selection= event.getSelection();
-			if (selection instanceof IStructuredSelection)
+			if (selection instanceof IStructuredSelection) {
 				handleSelectionChanged((IStructuredSelection) selection);
+			}
 		});
 		fHistoryPane.setContent(fHistoryViewer.getControl());
 		createToolBar(fHistoryPane);
@@ -343,16 +346,18 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			@Override
 			public void mouseDoubleClick(final MouseEvent event) {
 				final Control content= fHistoryPane.getContent();
-				if (content != null && content.getBounds().contains(event.x, event.y))
+				if (content != null && content.getBounds().contains(event.x, event.y)) {
 					return;
+				}
 				final Control control= fHistoryPane.getParent().getParent();
-				if (control instanceof Splitter)
+				if (control instanceof Splitter) {
 					((Splitter) control).setMaximizedControl(fHistoryPane.getParent());
+				}
 			}
 		};
 		addMouseListener(listener);
 		fHistoryPane.getTopLeft().addMouseListener(listener);
-		fSplitterControl.setWeights(new int[] { 65, 35});
+		fSplitterControl.setWeights(65, 35);
 		createBottomButtonBar(this);
 		Dialog.applyDialogFont(this);
 	}
@@ -407,10 +412,11 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	protected TreeViewer createHistoryViewer(final Composite parent) {
 		Assert.isNotNull(parent);
-		if (fControlConfiguration.isCheckableViewer())
+		if (fControlConfiguration.isCheckableViewer()) {
 			return new RefactoringHistoryTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-		else
+		} else {
 			return new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		}
 	}
 
 	/**
@@ -455,8 +461,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 
 	@Override
 	public final RefactoringDescriptorProxy[] getCheckedDescriptors() {
-		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer)
+		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
 			return fCheckedDescriptors.toArray(new RefactoringDescriptorProxy[fCheckedDescriptors.size()]);
+		}
 		return getSelectedDescriptors();
 	}
 
@@ -510,14 +517,14 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		Assert.isNotNull(set);
 		final RefactoringHistoryContentProvider provider= (RefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
 		if (provider != null) {
-			if (element instanceof RefactoringHistoryEntry) {
-				final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) element;
+			if (element instanceof final RefactoringHistoryEntry entry) {
 				final RefactoringDescriptorProxy proxy= entry.getDescriptor();
 				set.add(proxy);
 			} else {
 				for (Object child : provider.getChildren(element)) {
-					if (child instanceof RefactoringHistoryNode)
+					if (child instanceof RefactoringHistoryNode) {
 						getCoveredDescriptors(child, set);
+					}
 				}
 			}
 		}
@@ -540,10 +547,11 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	private String getHistoryPaneText() {
 		String text= null;
 		final IProject project= fControlConfiguration.getProject();
-		if (project != null)
+		if (project != null) {
 			text= Messages.format(fControlConfiguration.getProjectPattern(), BasicElementLabels.getResourceName(project));
-		else
+		} else {
 			text= fControlConfiguration.getWorkspaceCaption();
+		}
 		return text;
 	}
 
@@ -580,12 +588,14 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 				final int total= history.getDescriptors().length;
 				final int checked= fCheckedDescriptors.size();
 				if (fSelectionLabel.isEnabled()) {
-					if (total > 0 && fControlConfiguration.isCheckableViewer())
+					if (total > 0 && fControlConfiguration.isCheckableViewer()) {
 						fSelectionLabel.setText(Messages.format(RefactoringUIMessages.RefactoringHistoryControl_selection_pattern, new String[] { String.valueOf(checked), String.valueOf(total)}));
-					else
+					} else {
 						fSelectionLabel.setText(RefactoringUIMessages.RefactoringHistoryControl_no_selection);
-				} else
+					}
+				} else {
 					fSelectionLabel.setText(""); //$NON-NLS-1$
+				}
 			}
 		}
 	}
@@ -601,17 +611,14 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		fSelectedDescriptors.clear();
 		final Object[] elements= selection.toArray();
 		for (Object element : elements) {
-			if (element instanceof RefactoringHistoryEntry) {
-				final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) element;
+			if (element instanceof final RefactoringHistoryEntry entry) {
 				final RefactoringDescriptorProxy proxy= entry.getDescriptor();
 				fSelectedDescriptors.add(proxy);
-			} else if (element instanceof RefactoringHistoryNode) {
-				final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
+			} else if (element instanceof final RefactoringHistoryNode node) {
 				fSelectedDescriptors.addAll(getCoveredDescriptors(node));
 			}
 		}
-		if (elements.length == 1 && elements[0] instanceof RefactoringHistoryEntry) {
-			final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) elements[0];
+		if (elements.length == 1 && elements[0] instanceof final RefactoringHistoryEntry entry) {
 			final RefactoringDescriptorProxy proxy= entry.getDescriptor();
 			final Job job= new UIJob(RefactoringUIMessages.RefactoringHistoryControl_resolving_information) {
 
@@ -620,8 +627,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 					final RefactoringDescriptor descriptor= proxy.requestDescriptor(monitor);
 					if (descriptor != null) {
 						String comment= descriptor.getComment();
-						if ("".equals(comment)) //$NON-NLS-1$
+						if ("".equals(comment)) { //$NON-NLS-1$
 							comment= RefactoringUIMessages.RefactoringHistoryControl_no_comment;
+						}
 						fDetailField.setText(comment);
 					}
 					return Status.OK_STATUS;
@@ -629,8 +637,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			};
 			job.setSystem(true);
 			job.schedule();
-		} else
+		} else {
 			fDetailField.setText(fControlConfiguration.getCommentCaption());
+		}
 	}
 
 	/**
@@ -638,8 +647,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	 */
 	public void reconcileCheckState() {
 		final RefactoringHistory history= getInput();
-		if (history != null && fHistoryViewer instanceof RefactoringHistoryTreeViewer)
+		if (history != null && fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
 			((RefactoringHistoryTreeViewer) fHistoryViewer).reconcileCheckState(history);
+		}
 	}
 
 	/**
@@ -660,8 +670,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	public final void removeCheckStateListener(final ICheckStateListener listener) {
 		Assert.isNotNull(listener);
 		Assert.isNotNull(listener);
-		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
-			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
+		if (fHistoryViewer instanceof final RefactoringHistoryTreeViewer viewer) {
 			viewer.removeCheckStateListener(listener);
 		}
 	}
@@ -669,23 +678,25 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 	@Override
 	public final void removeSelectionChangedListener(final ISelectionChangedListener listener) {
 		Assert.isNotNull(listener);
-		if (fHistoryViewer != null)
+		if (fHistoryViewer != null) {
 			fHistoryViewer.removeSelectionChangedListener(listener);
+		}
 	}
 
 	@Override
 	public final void setCheckedDescriptors(final RefactoringDescriptorProxy[] descriptors) {
 		Assert.isNotNull(descriptors);
-		if (fHistoryViewer instanceof RefactoringHistoryTreeViewer) {
+		if (fHistoryViewer instanceof final RefactoringHistoryTreeViewer viewer) {
 			fCheckedDescriptors.clear();
 			fCheckedDescriptors.addAll(Arrays.asList(descriptors));
-			final RefactoringHistoryTreeViewer viewer= (RefactoringHistoryTreeViewer) fHistoryViewer;
 			final RefactoringHistory history= RefactoringHistoryControl.this.getInput();
-			if (history != null)
+			if (history != null) {
 				viewer.reconcileCheckState(history);
+			}
 			handleCheckStateChanged();
-		} else
+		} else {
 			setSelectedDescriptors(descriptors);
+		}
 	}
 
 	/**
@@ -715,8 +726,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		final RefactoringHistory history= (RefactoringHistory) fHistoryViewer.getInput();
 		if (history != null) {
 			final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
-			if (proxies.length > 0)
+			if (proxies.length > 0) {
 				enable= true;
+			}
 		}
 		if (fDetailField != null) {
 			fDetailField.setEnabled(enable);
@@ -755,8 +767,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			fSelectedDescriptors.clear();
 			fSelectedDescriptors.addAll(Arrays.asList(descriptors));
 			final RefactoringHistoryNode[] nodes= new RefactoringHistoryNode[descriptors.length];
-			for (int index= 0; index < descriptors.length; index++)
+			for (int index= 0; index < descriptors.length; index++) {
 				nodes[index]= new RefactoringHistoryEntry(null, descriptors[index]);
+			}
 			fHistoryViewer.setSelection(new StructuredSelection(nodes));
 		}
 	}

@@ -28,7 +28,7 @@ import org.eclipse.jface.action.ToolBarManager;
  */
 public final class ViewerPane extends ViewForm {
 
-	private ToolBarManager fToolBarManager;
+	private final ToolBarManager fToolBarManager;
 
 	public ViewerPane(Composite parent, int style) {
 		super(parent, style);

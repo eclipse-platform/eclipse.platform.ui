@@ -77,8 +77,9 @@ public final class RefactoringDescriptorImageDescriptor extends CompositeImageDe
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object == null || !RefactoringDescriptorImageDescriptor.class.equals(object.getClass()))
+		if (object == null || !RefactoringDescriptorImageDescriptor.class.equals(object.getClass())) {
 			return false;
+		}
 		final RefactoringDescriptorImageDescriptor other= (RefactoringDescriptorImageDescriptor) object;
 		return (fImage.equals(other.fImage) && fFlags == other.fFlags && fSize.equals(other.fSize));
 	}

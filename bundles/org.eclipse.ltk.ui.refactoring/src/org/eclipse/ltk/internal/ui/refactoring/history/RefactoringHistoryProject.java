@@ -38,8 +38,7 @@ public final class RefactoringHistoryProject extends RefactoringHistoryNode {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof RefactoringHistoryProject) {
-			final RefactoringHistoryProject node= (RefactoringHistoryProject) object;
+		if (object instanceof final RefactoringHistoryProject node) {
 			return super.equals(object) && getProject().equals(node.getProject()) && getKind() == node.getKind();
 		}
 		return false;

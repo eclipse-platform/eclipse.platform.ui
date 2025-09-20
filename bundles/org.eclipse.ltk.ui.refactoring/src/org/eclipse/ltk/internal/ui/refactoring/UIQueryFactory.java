@@ -22,7 +22,7 @@ import org.eclipse.ltk.core.refactoring.IValidationCheckResultQueryFactory;
 
 public class UIQueryFactory implements IValidationCheckResultQueryFactory {
 
-	private IValidationCheckResultQueryFactory fCoreQueryFactory;
+	private final IValidationCheckResultQueryFactory fCoreQueryFactory;
 
 	public UIQueryFactory(IValidationCheckResultQueryFactory coreFactory) {
 		fCoreQueryFactory= coreFactory;

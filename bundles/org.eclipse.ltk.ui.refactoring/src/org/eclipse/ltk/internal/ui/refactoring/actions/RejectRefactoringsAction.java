@@ -63,10 +63,10 @@ public final class RejectRefactoringsAction extends Action {
 	public boolean isEnabled() {
 		if (fProxies != null && fProxies.length > 0 && fContext instanceof IMergeContext) {
 			for (RefactoringDescriptorProxy fproxy : fProxies) {
-				if (fproxy instanceof RefactoringDescriptorSynchronizationProxy) {
-					final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fproxy;
-					if (proxy.getDirection() == IThreeWayDiff.INCOMING)
+				if (fproxy instanceof final RefactoringDescriptorSynchronizationProxy proxy) {
+					if (proxy.getDirection() == IThreeWayDiff.INCOMING) {
 						return true;
+					}
 				}
 			}
 		}

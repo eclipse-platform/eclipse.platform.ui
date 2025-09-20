@@ -24,8 +24,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 
 public class ValidationCheckResultQuery implements IValidationCheckResultQuery  {
-	private Shell fParent;
-	private String fTitle;
+	private final Shell fParent;
+	private final String fTitle;
 	public ValidationCheckResultQuery(Shell parent, String title) {
 		fParent= parent;
 		fTitle= title;

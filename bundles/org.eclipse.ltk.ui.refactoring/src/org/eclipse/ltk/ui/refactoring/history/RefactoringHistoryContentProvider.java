@@ -72,13 +72,15 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		int median;
 		do {
 			median= (left + right) >>> 1;
-			if (number > array[median])
+			if (number > array[median]) {
 				right= median - 1;
-			else
+			} else {
 				left= median + 1;
+			}
 		} while (number != array[median] && left <= right);
-		if (number == array[median])
+		if (number == array[median]) {
 			return median;
+		}
 		return left;
 	}
 
@@ -93,8 +95,9 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 */
 	private static int getRefactoringRootKindIndex(final long[][] structure, final int kind) {
 		for (int index= structure.length - 1; index >= 0; index--) {
-			if (kind >= structure[index][1])
+			if (kind >= structure[index][1]) {
 				return index;
+			}
 		}
 		return -1;
 	}
@@ -130,8 +133,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	@SuppressWarnings("incomplete-switch")
 	@Override
 	public Object[] getChildren(final Object element) {
-		if (element instanceof RefactoringHistoryNode) {
-			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
+		if (element instanceof final RefactoringHistoryNode node) {
 			final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 			if (proxies.length > 0) {
 				final long[][] structure= getRefactoringRootStructure(proxies[0].getTimeStamp());
@@ -140,8 +142,7 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					case RefactoringHistoryNode.COLLECTION:
 						return getRefactoringHistoryEntries(node);
 					default: {
-						if (node instanceof RefactoringHistoryDate) {
-							final RefactoringHistoryDate date= (RefactoringHistoryDate) node;
+						if (node instanceof final RefactoringHistoryDate date) {
 							final long stamp= date.getTimeStamp();
 							switch (kind) {
 								case RefactoringHistoryNode.TODAY:
@@ -177,26 +178,27 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					}
 				}
 			}
-		} else if (element instanceof RefactoringHistory)
+		} else if (element instanceof RefactoringHistory) {
 			return getElements(element);
+		}
 		return NO_ELEMENTS;
 	}
 
 	@Override
 	public Object[] getElements(final Object element) {
 		if (element instanceof RefactoringHistory) {
-			if (fControlConfiguration.isTimeDisplayed())
+			if (fControlConfiguration.isTimeDisplayed()) {
 				return getRootElements();
-			else if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty())
+			} else if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty()) {
 				return new Object[] { new RefactoringHistoryCollection()};
+			}
 		}
 		return NO_ELEMENTS;
 	}
 
 	@Override
 	public Object getParent(final Object element) {
-		if (element instanceof RefactoringHistoryNode) {
-			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
+		if (element instanceof final RefactoringHistoryNode node) {
 			return node.getParent();
 		}
 		return null;
@@ -210,15 +212,17 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 */
 	private RefactoringDescriptorProxy[] getRefactoringDescriptorProxies() {
 		final RefactoringDescriptorProxy[] proxies;
-		if (fRefactoringHistory == null)
+		if (fRefactoringHistory == null) {
 			proxies= new RefactoringDescriptorProxy[0];
-		else
+		} else {
 			proxies= fRefactoringHistory.getDescriptors();
+		}
 		if (fRefactoringStamps == null) {
 			final int length= proxies.length;
 			fRefactoringStamps= new long[length];
-			for (int index= 0; index < length; index++)
+			for (int index= 0; index < length; index++) {
 				fRefactoringStamps[index]= proxies[index].getTimeStamp();
+			}
 		}
 		return proxies;
 	}
@@ -254,10 +258,11 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					calendar.set(Calendar.MINUTE, 0);
 					calendar.set(Calendar.HOUR_OF_DAY, 0);
 					stamp= calendar.getTimeInMillis();
-					if (stamp < time)
+					if (stamp < time) {
 						list.add(new RefactoringHistoryDate(parent, time, RefactoringHistoryNode.DAY));
-					else
+					} else {
 						list.add(new RefactoringHistoryDate(parent, stamp, RefactoringHistoryNode.DAY));
+					}
 				}
 			}
 		}
@@ -280,8 +285,9 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final int[] range= getRefactoringHistoryRange(start, end);
 		final List<RefactoringHistoryEntry> list= new ArrayList<>(proxies.length);
-		for (int index= range[0]; index <= range[1]; index++)
+		for (int index= range[0]; index <= range[1]; index++) {
 			list.add(new RefactoringHistoryEntry(parent, proxies[index]));
+		}
 		return list.toArray();
 	}
 
@@ -334,10 +340,11 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					calendar.set(Calendar.HOUR_OF_DAY, 0);
 					calendar.set(Calendar.DAY_OF_MONTH, 1);
 					stamp= calendar.getTimeInMillis();
-					if (stamp < time)
+					if (stamp < time) {
 						list.add(new RefactoringHistoryDate(parent, time, RefactoringHistoryNode.MONTH));
-					else
+					} else {
 						list.add(new RefactoringHistoryDate(parent, stamp, RefactoringHistoryNode.MONTH));
+					}
 				}
 			}
 		}
@@ -392,10 +399,11 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					calendar.set(Calendar.HOUR_OF_DAY, 0);
 					calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 					stamp= calendar.getTimeInMillis();
-					if (stamp < time)
+					if (stamp < time) {
 						list.add(new RefactoringHistoryDate(parent, time, RefactoringHistoryNode.WEEK));
-					else
+					} else {
 						list.add(new RefactoringHistoryDate(parent, stamp, RefactoringHistoryNode.WEEK));
+					}
 				}
 			}
 		}
@@ -525,14 +533,17 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 
 	@Override
 	public void inputChanged(final Viewer viewer, final Object predecessor, final Object successor) {
-		if (predecessor == successor || fRefactoringHistory == successor)
+		if (predecessor == successor || fRefactoringHistory == successor) {
 			return;
+		}
 		if (successor instanceof RefactoringHistory) {
-			if (successor.equals(fRefactoringHistory))
+			if (successor.equals(fRefactoringHistory)) {
 				return;
+			}
 			fRefactoringHistory= (RefactoringHistory) successor;
-		} else
+		} else {
 			fRefactoringHistory= null;
+		}
 		fRefactoringRoots= null;
 		fRefactoringStamps= null;
 	}

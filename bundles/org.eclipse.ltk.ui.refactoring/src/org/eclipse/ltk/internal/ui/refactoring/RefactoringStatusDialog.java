@@ -36,9 +36,9 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public class RefactoringStatusDialog extends Dialog {
 
-	private RefactoringStatus fStatus;
-	private String fWindowTitle;
-	private boolean fBackButton;
+	private final RefactoringStatus fStatus;
+	private final String fWindowTitle;
+	private final boolean fBackButton;
 	private boolean fLightWeight;
 
 	public RefactoringStatusDialog(RefactoringStatus status, Shell parent, String windowTitle, boolean backButton) {
@@ -112,10 +112,11 @@ public class RefactoringStatusDialog extends Dialog {
 			messagePane.setForeground(foreground);
 			messagePane.setBackground(background);
 			Label label= new Label(messagePane, SWT.LEFT | SWT.WRAP);
-			if (fStatus.hasFatalError())
+			if (fStatus.hasFatalError()) {
 				label.setText(RefactoringUIMessages.RefactoringStatusDialog_Cannot_proceed);
-			else
+			} else {
 				label.setText(RefactoringUIMessages.RefactoringStatusDialog_Please_look);
+			}
 			label.setForeground(foreground);
 			label.setBackground(background);
 			messagePane.setContent(label);
@@ -140,13 +141,15 @@ public class RefactoringStatusDialog extends Dialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (!fStatus.hasFatalError()) {
-			if (fBackButton)
+			if (fBackButton) {
 				createButton(parent, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, false);
+			}
 			createButton(parent, IDialogConstants.OK_ID, fLightWeight ? IDialogConstants.OK_LABEL : RefactoringUIMessages.RefactoringStatusDialog_Continue, true);
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		} else {
-			if (fBackButton)
+			if (fBackButton) {
 				createButton(parent, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, true);
+			}
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, fBackButton ? false : true);
 		}
 	}

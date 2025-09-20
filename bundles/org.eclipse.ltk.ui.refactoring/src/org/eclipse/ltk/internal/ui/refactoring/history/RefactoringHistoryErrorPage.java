@@ -93,8 +93,9 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 */
 	protected RefactoringHistoryWizard getRefactoringHistoryWizard() {
 		final IWizard result= getWizard();
-		if (result instanceof RefactoringHistoryWizard)
+		if (result instanceof RefactoringHistoryWizard) {
 			return (RefactoringHistoryWizard) result;
+		}
 		return null;
 	}
 
@@ -153,13 +154,15 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 		super.setStatus(status);
 		if (status != null) {
 			final int severity= status.getSeverity();
-			if (severity >= RefactoringStatus.FATAL)
+			if (severity >= RefactoringStatus.FATAL) {
 				setDescription(RefactoringUIMessages.RefactoringHistoryErrorPage_fatal_error);
-			else if (severity >= RefactoringStatus.INFO)
+			} else if (severity >= RefactoringStatus.INFO) {
 				setDescription(Messages.format(RefactoringUIMessages.RefactoringHistoryErrorPage_info_error, new String[] { getLabelAsText(IDialogConstants.NEXT_LABEL), getLabelAsText(IDialogConstants.FINISH_LABEL) }));
+			}
 		}
-		if (fViewer != null)
+		if (fViewer != null) {
 			fViewer.setStatus(status);
+		}
 	}
 
 	/**
@@ -174,23 +177,27 @@ public final class RefactoringHistoryErrorPage extends ErrorWizardPage {
 	 */
 	public void setTitle(final RefactoringDescriptorProxy descriptor, final int current, final int total) {
 		final String message;
-		if (descriptor != null)
+		if (descriptor != null) {
 			message= descriptor.getDescription();
-		else
+		} else {
 			message= RefactoringUIMessages.RefactoringHistoryOverviewPage_title;
-		if (total > 1)
+		}
+		if (total > 1) {
 			setTitle(Messages.format(RefactoringUIMessages.RefactoringHistoryPreviewPage_refactoring_pattern, new String[] { message, String.valueOf(current + 1), String.valueOf(total) }));
-		else
+		} else {
 			setTitle(message);
+		}
 	}
 
 	@Override
 	public void setVisible(final boolean visible) {
 		if (visible) {
-			if (fViewer != null && fViewer.getStatus() != fStatus)
+			if (fViewer != null && fViewer.getStatus() != fStatus) {
 				fViewer.setStatus(fStatus);
-		} else
+			}
+		} else {
 			setPageComplete(!fNextPageDisabled);
+		}
 		getControl().setVisible(visible);
 	}
 

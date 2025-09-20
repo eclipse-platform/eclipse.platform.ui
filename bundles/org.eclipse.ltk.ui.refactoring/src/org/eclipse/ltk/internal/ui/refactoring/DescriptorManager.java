@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.Platform;
 
 public abstract class DescriptorManager {
 
-	private String fExtensionPoint;
-	private String fVariableName;
+	private final String fExtensionPoint;
+	private final String fVariableName;
 	private AbstractDescriptor[] fExtensions;
 
 	public DescriptorManager(String extensionPoint, String variableName) {
@@ -37,8 +37,9 @@ public abstract class DescriptorManager {
 	}
 
 	public AbstractDescriptor getDescriptor(Object element) throws CoreException {
-		if (fExtensions == null)
+		if (fExtensions == null) {
 			init();
+		}
 
 		List<AbstractDescriptor> candidates= new ArrayList<>(1);
 		for (AbstractDescriptor descriptor : fExtensions) {
@@ -47,8 +48,9 @@ public abstract class DescriptorManager {
 			}
 			descriptor.clear();
 		}
-		if (candidates.isEmpty())
+		if (candidates.isEmpty()) {
 			return null;
+		}
 		// No support for conflicts yet.
 		return candidates.get(0);
 	}

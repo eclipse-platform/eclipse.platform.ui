@@ -109,8 +109,9 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 			// the page was not complete if we show a fatal error. In this
 			// case we can finish anyway. To enable the OK and Preview button
 			// on the user input page we have to mark the page as complete again.
-			if (!isPageComplete() && fStatus.hasFatalError())
+			if (!isPageComplete() && fStatus.hasFatalError()) {
 				setPageComplete(true);
+			}
 		}
 		super.setVisible(visible);
 	}
@@ -131,8 +132,9 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 			change= wizard.internalCreateChange(InternalAPI.INSTANCE, new CreateChangeOperation(getRefactoring()), false);
 			wizard.internalSetChange(InternalAPI.INSTANCE, change);
 		}
-		if (change == null)
+		if (change == null) {
 			return this;
+		}
 
 		return super.getNextPage();
 	}
@@ -149,10 +151,12 @@ public class ErrorWizardPage extends RefactoringWizardPage implements IErrorWiza
 			operation= new UIPerformChangeOperation(getShell().getDisplay(), ccop, getContainer());
 		}
 		FinishResult result= wizard.internalPerformFinish(InternalAPI.INSTANCE, operation);
-		if (result.isException())
+		if (result.isException()) {
 			return true;
-		if (result.isInterrupted())
+		}
+		if (result.isInterrupted()) {
 			return false;
+		}
 		RefactoringStatus fValidationStatus= operation.getValidationStatus();
 		if (fValidationStatus != null && fValidationStatus.hasFatalError()) {
 			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(),

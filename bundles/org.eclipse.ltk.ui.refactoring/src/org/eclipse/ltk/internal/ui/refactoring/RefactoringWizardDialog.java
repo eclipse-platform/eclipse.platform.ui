@@ -123,13 +123,16 @@ public class RefactoringWizardDialog extends WizardDialog {
 	@Override
 	public void updateButtons() {
 		super.updateButtons();
-		if (! fMakeNextButtonDefault)
+		if (! fMakeNextButtonDefault) {
 			return;
-		if (getShell() == null)
+		}
+		if (getShell() == null) {
 			return;
+		}
 		Button next= getButton(IDialogConstants.NEXT_ID);
-		if (next.isEnabled())
+		if (next.isEnabled()) {
 			getShell().setDefaultButton(next);
+		}
 	}
 
 	/* usually called in the IWizard#setContainer(IWizardContainer) method

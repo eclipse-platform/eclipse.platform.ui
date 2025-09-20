@@ -82,8 +82,9 @@ public class RefactoringScriptLocationControl extends Composite {
 		setLayout(new GridLayout(3, false));
 		boolean clipboard= false;
 		final IDialogSettings settings= fWizard.getDialogSettings();
-		if (settings != null)
+		if (settings != null) {
 			clipboard= settings.getBoolean(SETTING_CLIPBOARD);
+		}
 		fFromClipboardButton= new Button(this, SWT.RADIO);
 		fFromClipboardButton.setText(ScriptingMessages.ScriptLocationControl_clipboard_label);
 		fFromClipboardButton.setLayoutData(createGridData(GridData.HORIZONTAL_ALIGN_BEGINNING, 3, 0));
@@ -120,8 +121,9 @@ public class RefactoringScriptLocationControl extends Composite {
 				handleExternalLocationChanged();
 			}
 		});
-		if (!clipboard)
+		if (!clipboard) {
 			fExternalLocationControl.setFocus();
+		}
 		fExternalBrowseButton= new Button(this, SWT.PUSH);
 		fExternalBrowseButton.setText(ScriptingMessages.ScriptLocationControl_browse_label);
 		fExternalBrowseButton.setEnabled(!clipboard);
@@ -135,8 +137,9 @@ public class RefactoringScriptLocationControl extends Composite {
 			}
 		});
 		addDisposeListener(event -> {
-			if (settings != null)
+			if (settings != null) {
 				settings.put(SETTING_CLIPBOARD, fFromClipboardButton.getSelection());
+			}
 		});
 	}
 
@@ -178,8 +181,9 @@ public class RefactoringScriptLocationControl extends Composite {
 		file.setFilterNames(new String[] { ScriptingMessages.ScriptLocationControl_filter_name_script, ScriptingMessages.ScriptLocationControl_filter_name_wildcard});
 		file.setFilterExtensions(new String[] { ScriptingMessages.ScriptLocationControl_filter_extension_script, ScriptingMessages.ScriptLocationControl_filter_extension_wildcard});
 		final String path= file.open();
-		if (path != null)
+		if (path != null) {
 			fExternalLocationControl.setText(path);
+		}
 	}
 
 	/**
@@ -194,10 +198,11 @@ public class RefactoringScriptLocationControl extends Composite {
 	 */
 	protected void handleExternalLocationChanged() {
 		final String text= fExternalLocationControl.getText();
-		if (text != null && !"".equals(text)) //$NON-NLS-1$
+		if (text != null && !"".equals(text)) { //$NON-NLS-1$
 			fScriptLocation= new File(text).toURI();
-		else
+		} else {
 			fScriptLocation= null;
+		}
 	}
 
 	/**
@@ -205,8 +210,9 @@ public class RefactoringScriptLocationControl extends Composite {
 	 */
 	public void loadHistory() {
 		fExternalLocationControl.loadHistory();
-		if (fFromClipboardButton.getSelection())
+		if (fFromClipboardButton.getSelection()) {
 			handleClipboardScriptChanged();
+		}
 	}
 
 	/**
@@ -225,17 +231,20 @@ public class RefactoringScriptLocationControl extends Composite {
 	 *            should be taken from the clipboard
 	 */
 	public void setRefactoringScript(final URI uri) {
-		if (fExternalLocationControl != null)
+		if (fExternalLocationControl != null) {
 			fExternalLocationControl.setEnabled(true);
-		if (fExternalBrowseButton != null)
+		}
+		if (fExternalBrowseButton != null) {
 			fExternalBrowseButton.setEnabled(true);
-		if (uri == null)
+		}
+		if (uri == null) {
 			fExternalLocationControl.setText(""); //$NON-NLS-1$
-		else {
+		} else {
 			try {
 				final String path= new File(uri).getCanonicalPath();
-				if (path != null && !"".equals(path)) //$NON-NLS-1$
+				if (path != null && !"".equals(path)) { //$NON-NLS-1$
 					fExternalLocationControl.setText(path);
+				}
 				handleExternalLocationChanged();
 			} catch (IOException exception) {
 				RefactoringUIPlugin.log(exception);

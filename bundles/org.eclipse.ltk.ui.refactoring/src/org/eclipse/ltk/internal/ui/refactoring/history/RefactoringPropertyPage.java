@@ -116,9 +116,9 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		noDefaultAndApplyButton();
 		final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 		final IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
-		if (section == null)
+		if (section == null) {
 			fNewSettings= true;
-		else {
+		} else {
 			fNewSettings= false;
 			fSettings= section;
 		}
@@ -129,10 +129,11 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		initializeDialogUnits(parent);
 
 		final IPreferencePageContainer container= getContainer();
-		if (container instanceof IWorkbenchPreferenceContainer)
+		if (container instanceof IWorkbenchPreferenceContainer) {
 			fManager= ((IWorkbenchPreferenceContainer) container).getWorkingCopyManager();
-		else
+		} else {
 			fManager= new WorkingCopyManager();
+		}
 
 		final Composite composite= new Composite(parent, SWT.NONE);
 		final GridLayout layout= new GridLayout();
@@ -148,12 +149,14 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		fHistoryControl.createControl();
 		boolean sortProjects= true;
 		final IDialogSettings settings= fSettings;
-		if (settings != null)
+		if (settings != null) {
 			sortProjects= settings.getBoolean(SETTING_SORT);
-		if (sortProjects)
+		}
+		if (sortProjects) {
 			fHistoryControl.sortByProjects();
-		else
+		} else {
 			fHistoryControl.sortByDate();
+		}
 
 		fHistoryControl.getDeleteAllButton().addSelectionListener(new SelectionAdapter() {
 
@@ -168,8 +171,9 @@ public final class RefactoringPropertyPage extends PropertyPage {
 						dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_pattern, BasicElementLabels.getResourceName(project)), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 						store.setValue(PREFERENCE_DO_NOT_WARN_DELETE_ALL, dialog.getToggleState());
 					}
-					if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID)
+					if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID) {
 						promptDeleteHistory(context, project);
+					}
 				}
 			}
 		});
@@ -203,8 +207,9 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		final IProject project= getCurrentProject();
 		if (project != null) {
 			IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if (context == null)
+			if (context == null) {
 				context= PlatformUI.getWorkbench().getProgressService();
+			}
 			handleInputEvent(context, project);
 		}
 		applyDialogFont(composite);
@@ -233,8 +238,9 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 */
 	private IEclipsePreferences getPreferences(final IWorkingCopyManager manager, final IScopeContext context) {
 		final IEclipsePreferences preferences= context.getNode(RefactoringCore.ID_PLUGIN);
-		if (manager != null)
+		if (manager != null) {
 			return manager.getWorkingCopy(preferences);
+		}
 		return preferences;
 	}
 
@@ -274,8 +280,9 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 */
 	private boolean hasSharedRefactoringHistory() {
 		final IProject project= getCurrentProject();
-		if (project != null)
+		if (project != null) {
 			return RefactoringHistoryService.hasSharedRefactoringHistory(project);
+		}
 		return false;
 	}
 
@@ -283,15 +290,17 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	protected void performDefaults() {
 		super.performDefaults();
 		final IProject project= getCurrentProject();
-		if (project != null)
+		if (project != null) {
 			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, null);
+		}
 	}
 
 	@Override
 	public boolean performOk() {
 		final IProject project= getCurrentProject();
-		if (project == null || fManager == null)
+		if (project == null || fManager == null) {
 			return true; // not contributed on a project or no control created
+		}
 
 		if (fNewSettings) {
 			final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
@@ -354,8 +363,9 @@ public final class RefactoringPropertyPage extends PropertyPage {
 							final Throwable throwable= exception.getStatus().getException();
 							if (throwable instanceof IOException) {
 								shell.getDisplay().syncExec(() -> MessageDialog.openError(shell, RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage()));
-							} else
+							} else {
 								throw exception;
+							}
 						}
 						final RefactoringHistory history= service.getProjectHistory(project, subMonitor.newChild(50, SubMonitor.SUPPRESS_SUBTASK));
 						shell.getDisplay().syncExec(() -> {
@@ -390,10 +400,11 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 */
 	private void setPreference(final IWorkingCopyManager manager, final IScopeContext context, final String key, final String value) {
 		final IEclipsePreferences preferences= getPreferences(manager, context);
-		if (value != null)
+		if (value != null) {
 			preferences.put(key, value);
-		else
+		} else {
 			preferences.remove(key);
+		}
 	}
 
 	@Override

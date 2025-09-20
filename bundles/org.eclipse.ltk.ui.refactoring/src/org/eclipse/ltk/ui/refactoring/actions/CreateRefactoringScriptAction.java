@@ -64,8 +64,9 @@ public final class CreateRefactoringScriptAction implements IWorkbenchWindowActi
 		final CreateRefactoringScriptWizard wizard= new CreateRefactoringScriptWizard();
 		try {
 			IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if (context == null)
+			if (context == null) {
 				context= PlatformUI.getWorkbench().getProgressService();
+			}
 			context.run(false, true, monitor -> {
 				final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
 				try {

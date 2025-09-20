@@ -110,8 +110,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 			fDestinationField.addFilter(new ViewerFilter() {
 				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
-					if (element instanceof IProject) {
-						IProject project= (IProject) element;
+					if (element instanceof IProject project) {
 						return project.isAccessible();
 					} else if (element instanceof IFolder) {
 						return true;

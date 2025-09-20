@@ -115,11 +115,11 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 */
 	private static void getRefactoring(final ISynchronizationScope scope, final RefactoringDescriptorProxy proxy, final Set<RefactoringDescriptorProxy> set) {
 		final ResourceMapping mapping= proxy.getAdapter(ResourceMapping.class);
-		if (mapping instanceof AbstractRefactoringDescriptorResourceMapping) {
-			final AbstractRefactoringDescriptorResourceMapping extended= (AbstractRefactoringDescriptorResourceMapping) mapping;
+		if (mapping instanceof final AbstractRefactoringDescriptorResourceMapping extended) {
 			final IResource resource= extended.getResource();
-			if (resource != null && scope.contains(resource))
+			if (resource != null && scope.contains(resource)) {
 				set.add(proxy);
+			}
 		}
 	}
 
@@ -137,8 +137,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		Assert.isNotNull(configuration);
 		final Set<RefactoringDescriptorProxy> set= new HashSet<>();
 		final ISelection selection= configuration.getSite().getSelectionProvider().getSelection();
-		if (selection instanceof IStructuredSelection) {
-			final IStructuredSelection structured= (IStructuredSelection) selection;
+		if (selection instanceof final IStructuredSelection structured) {
 			if (!structured.isEmpty()) {
 				final ISynchronizationScope scope= context.getScope();
 				for (Object element : structured.toArray()) {
@@ -167,11 +166,11 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 */
 	private static void getRefactorings(final ISynchronizationScope scope, final RefactoringHistory history, final Set<RefactoringDescriptorProxy> set) {
 		final ResourceMapping mapping= history.getAdapter(ResourceMapping.class);
-		if (mapping instanceof AbstractRefactoringHistoryResourceMapping) {
-			final AbstractRefactoringHistoryResourceMapping extended= (AbstractRefactoringHistoryResourceMapping) mapping;
+		if (mapping instanceof final AbstractRefactoringHistoryResourceMapping extended) {
 			final IResource resource= extended.getResource();
-			if (resource != null && scope.contains(resource))
+			if (resource != null && scope.contains(resource)) {
 				set.addAll(Arrays.asList(history.getDescriptors()));
+			}
 		}
 	}
 
@@ -187,11 +186,11 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 */
 	private static boolean hasRefactoring(final ISynchronizationScope scope, final RefactoringDescriptorProxy proxy) {
 		final ResourceMapping mapping= proxy.getAdapter(ResourceMapping.class);
-		if (mapping instanceof AbstractRefactoringDescriptorResourceMapping) {
-			final AbstractRefactoringDescriptorResourceMapping extended= (AbstractRefactoringDescriptorResourceMapping) mapping;
+		if (mapping instanceof final AbstractRefactoringDescriptorResourceMapping extended) {
 			final IResource resource= extended.getResource();
-			if (resource != null)
+			if (resource != null) {
 				return scope.contains(resource);
+			}
 		}
 		return false;
 	}
@@ -211,8 +210,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		Assert.isNotNull(context);
 		Assert.isNotNull(configuration);
 		final ISelection selection= configuration.getSite().getSelectionProvider().getSelection();
-		if (selection instanceof IStructuredSelection) {
-			final IStructuredSelection structured= (IStructuredSelection) selection;
+		if (selection instanceof final IStructuredSelection structured) {
 			if (!structured.isEmpty()) {
 				final ISynchronizationScope scope= context.getScope();
 				for (Object element : structured.toArray()) {
@@ -242,11 +240,11 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 	 */
 	private static boolean hasRefactorings(final ISynchronizationScope scope, final RefactoringHistory history) {
 		final ResourceMapping mapping= history.getAdapter(ResourceMapping.class);
-		if (mapping instanceof AbstractRefactoringHistoryResourceMapping) {
-			final AbstractRefactoringHistoryResourceMapping extended= (AbstractRefactoringHistoryResourceMapping) mapping;
+		if (mapping instanceof final AbstractRefactoringHistoryResourceMapping extended) {
 			final IResource resource= extended.getResource();
-			if (resource != null)
+			if (resource != null) {
 				return scope.contains(resource);
+			}
 		}
 		return false;
 	}
@@ -277,14 +275,14 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 
 	@Override
 	protected void initializeOpenActions() {
-		if (!hasRefactorings(getSynchronizationContext(), getSynchronizePageConfiguration()))
+		if (!hasRefactorings(getSynchronizationContext(), getSynchronizePageConfiguration())) {
 			super.initializeOpenActions();
+		}
 	}
 
 	private boolean isRefactoringElementSelected() {
 		final ISelection selection= getContext().getSelection();
-		if (selection instanceof IStructuredSelection) {
-			final IStructuredSelection extended= (IStructuredSelection) selection;
+		if (selection instanceof final IStructuredSelection extended) {
 			for (Object element : extended) {
 				if (element instanceof RefactoringDescriptorProxy || element instanceof RefactoringDescriptor || element instanceof RefactoringHistory) {
 					return true;

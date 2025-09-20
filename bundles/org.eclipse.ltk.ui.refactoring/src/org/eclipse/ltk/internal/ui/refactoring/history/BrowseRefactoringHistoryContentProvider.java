@@ -73,14 +73,14 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 
 	@Override
 	public Object[] getChildren(final Object element) {
-		if (fSortProjects && element instanceof RefactoringHistoryNode) {
-			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
-			if (node instanceof RefactoringHistoryProject)
+		if (fSortProjects && element instanceof final RefactoringHistoryNode node) {
+			if (node instanceof RefactoringHistoryProject) {
 				return getRefactoringHistoryEntries((RefactoringHistoryProject) node);
-			else {
+			} else {
 				final RefactoringHistoryContentProvider provider= getRefactoringHistoryContentProvider(node);
-				if (provider != null)
+				if (provider != null) {
 					return provider.getChildren(element);
+				}
 			}
 			return NO_ELEMENTS;
 		}
@@ -89,8 +89,9 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 
 	@Override
 	public Object[] getElements(final Object element) {
-		if (fSortProjects && element instanceof RefactoringHistory)
+		if (fSortProjects && element instanceof RefactoringHistory) {
 			return getRootElements();
+		}
 		return super.getElements(element);
 	}
 
@@ -98,8 +99,9 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	public Object getParent(final Object element) {
 		if (fSortProjects && element instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryContentProvider provider= getRefactoringHistoryContentProvider((RefactoringHistoryNode) element);
-			if (provider != null)
+			if (provider != null) {
 				return provider.getParent(element);
+			}
 			return null;
 		}
 		return super.getParent(element);
@@ -117,8 +119,9 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 			if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty()) {
 				for (RefactoringDescriptorProxy proxy : fRefactoringHistory.getDescriptors()) {
 					String current= proxy.getProject();
-					if (current == null || current.length() == 0)
+					if (current == null || current.length() == 0) {
 						current= WORKSPACE_PROJECT;
+					}
 					Collection<RefactoringDescriptorProxy> collection= projectRefactoringHistories.get(current);
 					if (collection == null) {
 						collection= new HashSet<>();
@@ -128,8 +131,9 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 				}
 				for (String current : new ArrayList<>(projectRefactoringHistories.keySet())) {
 					final Collection<RefactoringDescriptorProxy> collection= projectRefactoringHistories.get(current);
-					if (collection != null)
+					if (collection != null) {
 						fProjectRefactoringHistories.put(current, new RefactoringHistoryImplementation(collection.toArray(new RefactoringDescriptorProxy[collection.size()])));
+					}
 				}
 			}
 		}
@@ -188,8 +192,9 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	 * @return the refactoring history content provider
 	 */
 	private RefactoringHistoryContentProvider getRefactoringHistoryContentProvider(final String project) {
-		if (fProjectContentProviders == null)
+		if (fProjectContentProviders == null) {
 			fProjectContentProviders= new HashMap<>();
+		}
 		RefactoringHistoryContentProvider provider= fProjectContentProviders.get(project);
 		if (provider == null) {
 			provider= fControlConfiguration.getContentProvider();
@@ -216,8 +221,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 					final Object[] elements= provider.getRootElements();
 					if (!WORKSPACE_PROJECT.equals(name)) {
 						for (int index= 0; index < elements.length; index++) {
-							if (elements[index] instanceof RefactoringHistoryDate) {
-								final RefactoringHistoryDate date= (RefactoringHistoryDate) elements[index];
+							if (elements[index] instanceof final RefactoringHistoryDate date) {
 								elements[index]= new RefactoringHistoryDate(project, date.getTimeStamp(), date.getKind());
 							}
 						}
@@ -227,8 +231,9 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 			} else {
 				final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
 				final RefactoringHistoryEntry[] entries= new RefactoringHistoryEntry[proxies.length];
-				for (int index= 0; index < proxies.length; index++)
+				for (int index= 0; index < proxies.length; index++) {
 					entries[index]= new RefactoringHistoryEntry(project, proxies[index]);
+				}
 				return entries;
 			}
 		}
@@ -252,19 +257,22 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 						} else {
 							final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
 							final RefactoringHistoryEntry[] entries= new RefactoringHistoryEntry[proxies.length];
-							for (int index= 0; index < proxies.length; index++)
+							for (int index= 0; index < proxies.length; index++) {
 								entries[index]= new RefactoringHistoryEntry(null, proxies[index]);
+							}
 							list.addAll(Arrays.asList(entries));
 						}
 					}
-				} else
+				} else {
 					list.add(new RefactoringHistoryProject(project));
+				}
 			}
 			return list.toArray();
-		} else if (fControlConfiguration.isTimeDisplayed())
+		} else if (fControlConfiguration.isTimeDisplayed()) {
 			return super.getRootElements();
-		else
+		} else {
 			return new Object[] { new RefactoringHistoryCollection()};
+		}
 	}
 
 	/**
@@ -287,12 +295,14 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	@Override
 	public void inputChanged(final Viewer viewer, final Object predecessor, final Object successor) {
 		super.inputChanged(viewer, predecessor, successor);
-		if (predecessor == successor)
+		if (predecessor == successor) {
 			return;
-		if (successor instanceof RefactoringHistory)
+		}
+		if (successor instanceof RefactoringHistory) {
 			fRefactoringHistory= (RefactoringHistory) successor;
-		else
+		} else {
 			fRefactoringHistory= null;
+		}
 		fProjectRefactoringHistories= null;
 		fProjectContentProviders= null;
 	}
