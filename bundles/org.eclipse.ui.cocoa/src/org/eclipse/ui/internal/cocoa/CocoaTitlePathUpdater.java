@@ -27,10 +27,12 @@ public class CocoaTitlePathUpdater extends TitlePathUpdater {
 
 	@Override
 	public void updateTitlePath(Shell window, String path) {
-		if (window == null || window.isDisposed())
+		if (window == null || window.isDisposed()) {
 			return;
-		if (path == null)
+		}
+		if (path == null) {
 			path = "";
+		}
 		NSWindow nsWindow = window.getShell().view.window();
 		NSString filePathString = NSString.stringWith(path);
 		nsWindow.setRepresentedFilename(filePathString);
