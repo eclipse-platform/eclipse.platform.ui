@@ -73,7 +73,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 	/**
 	 * A named preference that holds the color used to render the text editor inline annotation
-	 * 
+	 *
 	 * @since 3.19
 	 */
 	public final static String EDITOR_INLINE_ANNOTATION_COLOR= "org.eclipse.ui.editors.inlineAnnotationColor"; //$NON-NLS-1$
@@ -227,15 +227,15 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 */
 	public final static String EDITOR_LINE_NUMBER_RULER= "lineNumberRuler"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls whether the find/replace overlay is used in place of the
 	 * dialog.
-	 * 
+	 *
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>
 	 * </p>
-	 * 
+	 *
 	 * @since 3.18
 	 */
 	public final static String EDITOR_USE_FIND_REPLACE_OVERLAY= "useFindReplaceOverlay"; //$NON-NLS-1$
@@ -243,11 +243,11 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	/**
 	 * A named preference that controls whether the editor overlay to access find and replace
 	 * functionality should be aligned to the bottom of the editor page instead of to the top.
-	 * 
+	 *
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>
 	 * </p>
-	 * 
+	 *
 	 * @since 3.18
 	 */
 	public final static String EDITOR_FIND_REPLACE_OVERLAY_AT_BOTTOM= "findReplaceOverlayAtBottom"; //$NON-NLS-1$
@@ -750,14 +750,14 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 	/**
 	 * A named preference that controls if sticky scrolling should be enabled.
-	 * 
+	 *
 	 * @since 3.18
 	 */
 	public static final String EDITOR_STICKY_SCROLLING_ENABLED= "stickyScrollingEnabled"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls the maximum count of sticky lines.
-	 * 
+	 *
 	 * @since 3.18
 	 */
 	public static final String EDITOR_STICKY_SCROLLING_MAXIMUM_COUNT= "stickyScrollingMaximumCount"; //$NON-NLS-1$
@@ -881,18 +881,21 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.3
 	 */
 	private static final int computeStateMask(String modifiers) {
-		if (modifiers == null)
+		if (modifiers == null) {
 			return -1;
+		}
 
-		if (modifiers.isEmpty())
+		if (modifiers.isEmpty()) {
 			return SWT.NONE;
+		}
 
 		int stateMask= 0;
 		StringTokenizer modifierTokenizer= new StringTokenizer(modifiers, ",;.:+-* "); //$NON-NLS-1$
 		while (modifierTokenizer.hasMoreTokens()) {
 			int modifier= findLocalizedModifier(modifierTokenizer.nextToken());
-			if (modifier == 0 || (stateMask & modifier) == modifier)
+			if (modifier == 0 || (stateMask & modifier) == modifier) {
 				return -1;
+			}
 			stateMask= stateMask | modifier;
 		}
 		return stateMask;
@@ -907,25 +910,34 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.3
 	 */
 	private static final int findLocalizedModifier(String modifierName) {
-		if (modifierName == null)
+		if (modifierName == null) {
 			return SWT.NONE;
+		}
 
-		if (modifierName.equalsIgnoreCase("M1")) //$NON-NLS-1$
+		if (modifierName.equalsIgnoreCase("M1")) { //$NON-NLS-1$
 			return SWT.MOD1;
-		if (modifierName.equalsIgnoreCase("M2")) //$NON-NLS-1$
+		}
+		if (modifierName.equalsIgnoreCase("M2")) { //$NON-NLS-1$
 			return SWT.MOD2;
-		if (modifierName.equalsIgnoreCase("M3")) //$NON-NLS-1$
+		}
+		if (modifierName.equalsIgnoreCase("M3")) { //$NON-NLS-1$
 			return SWT.MOD3;
-		if (modifierName.equalsIgnoreCase("M4")) //$NON-NLS-1$
+		}
+		if (modifierName.equalsIgnoreCase("M4")) { //$NON-NLS-1$
 			return SWT.MOD4;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
+		}
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL))) {
 			return SWT.CTRL;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
+		}
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT))) {
 			return SWT.SHIFT;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.ALT)))
+		}
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.ALT))) {
 			return SWT.ALT;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND)))
+		}
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND))) {
 			return SWT.COMMAND;
+		}
 
 		return SWT.NONE;
 	}

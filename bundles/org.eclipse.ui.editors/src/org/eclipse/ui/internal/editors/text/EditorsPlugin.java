@@ -59,8 +59,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	}
 
 	public static void logErrorMessage(String message) {
-		if (message == null)
+		if (message == null) {
 			message= ""; //$NON-NLS-1$
+		}
 		log(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, message, null));
 	}
 
@@ -78,8 +79,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.4
 	 */
 	public static void log(String message, Throwable e) {
-		if (message == null)
+		if (message == null) {
 			message= ""; //$NON-NLS-1$
+		}
 		log(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, message, e));
 	}
 
@@ -123,8 +125,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 */
 	public ISharedTextColors getSharedTextColors() {
-		if (fSharedTextColors == null)
+		if (fSharedTextColors == null) {
 			fSharedTextColors= new SharedTextColors();
+		}
 		return fSharedTextColors;
 	}
 
@@ -135,8 +138,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 */
 	public AnnotationTypeLookup getAnnotationTypeLookup() {
-		if (fAnnotationTypeLookup == null)
+		if (fAnnotationTypeLookup == null) {
 			fAnnotationTypeLookup= new AnnotationTypeLookup();
+		}
 		return fAnnotationTypeLookup;
 	}
 
@@ -147,8 +151,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 */
 	public AnnotationPreferenceLookup getAnnotationPreferenceLookup() {
-		if (fAnnotationPreferenceLookup == null)
+		if (fAnnotationPreferenceLookup == null) {
 			fAnnotationPreferenceLookup= new AnnotationPreferenceLookup();
+		}
 		return fAnnotationPreferenceLookup;
 	}
 
@@ -159,8 +164,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 */
 	public AnnotationTypeHierarchy getAnnotationTypeHierarchy() {
-		if (fAnnotationTypeHierarchy == null)
+		if (fAnnotationTypeHierarchy == null) {
 			fAnnotationTypeHierarchy= new AnnotationTypeHierarchy();
+		}
 		return fAnnotationTypeHierarchy;
 	}
 
@@ -195,8 +201,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
 	public synchronized MarkerAnnotationPreferences getMarkerAnnotationPreferences() {
-		if (!isMarkerAnnotationPreferencesInitialized())
+		if (!isMarkerAnnotationPreferencesInitialized()) {
 			new MarkerAnnotationPreferences().getAnnotationPreferences(); // force creation of shared preferences
+		}
 		return fMarkerAnnotationPreferences;
 	}
 
@@ -206,8 +213,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 
 		if (PlatformUI.isWorkbenchRunning()) {
 			fThemeListener= event -> {
-				if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
+				if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty())) {
 					EditorsPluginPreferenceInitializer.setThemeBasedPreferences(getPreferenceStore(), true);
+				}
 			};
 			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);
 		}
@@ -221,8 +229,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		}
 
 		if (fThemeListener != null) {
-			if (PlatformUI.isWorkbenchRunning())
+			if (PlatformUI.isWorkbenchRunning()) {
 				PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(fThemeListener);
+			}
 			fThemeListener= null;
 		}
 
@@ -242,8 +251,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
 	public SpellingService getSpellingService() {
-		if (fSpellingService == null)
+		if (fSpellingService == null) {
 			fSpellingService= new SpellingService(getPreferenceStore());
+		}
 		return fSpellingService;
 	}
 
@@ -256,8 +266,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.3
 	 */
 	public synchronized HyperlinkDetectorRegistry getHyperlinkDetectorRegistry() {
-		if (fHyperlinkDetectorRegistry == null)
+		if (fHyperlinkDetectorRegistry == null) {
 			fHyperlinkDetectorRegistry= new HyperlinkDetectorRegistry(getPreferenceStore());
+		}
 		return fHyperlinkDetectorRegistry;
 	}
 
@@ -271,8 +282,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.4
 	 */
 	public static final String getAdditionalInfoAffordanceString() {
-		if (!EditorsUI.getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE))
+		if (!EditorsUI.getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) {
 			return null;
+		}
 
 		return TextEditorMessages.EditorsPlugin_additionalInfo_affordance;
 	}

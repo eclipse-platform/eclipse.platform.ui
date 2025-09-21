@@ -47,9 +47,9 @@ public class StickyLinesProviderRegistry {
 	/** <code>true</code> if the extensions have been loaded at least once */
 	private boolean fLoaded = false;
 
-	private IExtensionRegistry fExtensionRegistry;
+	private final IExtensionRegistry fExtensionRegistry;
 
-	private StickyLinesProviderDescriptorFactory descriptorFactory;
+	private final StickyLinesProviderDescriptorFactory descriptorFactory;
 
 	public StickyLinesProviderRegistry() {
 		this(Platform.getExtensionRegistry(), element -> new StickyLinesProviderDescriptor(element));
@@ -121,8 +121,9 @@ public class StickyLinesProviderRegistry {
 	 * Ensures the extensions have been loaded at least once.
 	 */
 	private void ensureExtensionsLoaded() {
-		if (!fLoaded)
+		if (!fLoaded) {
 			reloadExtensions();
+		}
 	}
 
 	public interface StickyLinesProviderDescriptorFactory {

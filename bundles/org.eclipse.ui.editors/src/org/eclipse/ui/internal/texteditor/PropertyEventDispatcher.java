@@ -34,8 +34,9 @@ public final class PropertyEventDispatcher {
 		fStore= store;
 	}
 	public void dispose() {
-		if (!fReverseMap.isEmpty())
+		if (!fReverseMap.isEmpty()) {
 			fStore.removePropertyChangeListener(fListener);
+		}
 		fReverseMap.clear();
 		fHandlerMap.clear();
 	}
@@ -43,18 +44,21 @@ public final class PropertyEventDispatcher {
 	@SuppressWarnings("unchecked")
 	private void firePropertyChange(PropertyChangeEvent event) {
 		Object value= fHandlerMap.get(event.getProperty());
-		if (value instanceof IPropertyChangeListener)
+		if (value instanceof IPropertyChangeListener) {
 			((IPropertyChangeListener) value).propertyChange(event);
-		else if (value instanceof Set)
-			for (IPropertyChangeListener iPropertyChangeListener : ((Set<IPropertyChangeListener>) value))
+		} else if (value instanceof Set) {
+			for (IPropertyChangeListener iPropertyChangeListener : ((Set<IPropertyChangeListener>) value)) {
 				iPropertyChangeListener.propertyChange(event);
+			}
+		}
 	}
 	public void addPropertyChangeListener(String property, IPropertyChangeListener listener) {
 		Assert.isLegal(property != null);
 		Assert.isLegal(listener != null);
 
-		if (fReverseMap.isEmpty())
+		if (fReverseMap.isEmpty()) {
 			fStore.addPropertyChangeListener(fListener);
+		}
 
 		multiMapPut(fHandlerMap, property, listener);
 		multiMapPut(fReverseMap, listener, property);
@@ -88,18 +92,21 @@ public final class PropertyEventDispatcher {
 	@SuppressWarnings("unchecked")
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		Object value= fReverseMap.get(listener);
-		if (value == null)
+		if (value == null) {
 			return;
+		}
 		if (value instanceof String) {
 			fReverseMap.remove(listener);
 			multiMapRemove(fHandlerMap, value, listener);
 		} else if (value instanceof Set) {
 			fReverseMap.remove(listener);
-			for (Object object : ((Set<Object>) value))
+			for (Object object : ((Set<Object>) value)) {
 				multiMapRemove(fHandlerMap, object, listener);
+			}
 		}
 
-		if (fReverseMap.isEmpty())
+		if (fReverseMap.isEmpty()) {
 			fStore.removePropertyChangeListener(fListener);
+		}
 	}
 }

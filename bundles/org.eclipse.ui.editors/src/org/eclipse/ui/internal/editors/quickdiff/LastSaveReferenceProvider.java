@@ -121,8 +121,9 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 
 	@Override
 	public IDocument getReference(IProgressMonitor monitor) {
-		if (!fDocumentRead)
+		if (!fDocumentRead) {
 			readDocument(monitor, true); // force reading it
+		}
 		return fReference;
 	}
 
@@ -136,8 +137,9 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		IDocumentProvider provider= fDocumentProvider;
 
 		synchronized (fLock) {
-			if (provider != null)
+			if (provider != null) {
 				provider.removeElementStateListener(this);
+			}
 			fEditorInput= null;
 			fDocumentProvider= null;
 			fReference= null;
@@ -200,24 +202,24 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		IDocument doc= fReference;
 		ITextEditor editor= fEditor;
 
-		if (prov instanceof IStorageDocumentProvider && inp instanceof IStorageEditorInput) {
+		if (prov instanceof IStorageDocumentProvider provider && inp instanceof IStorageEditorInput input) {
 
-			IStorageEditorInput input= (IStorageEditorInput) inp;
-			IStorageDocumentProvider provider= (IStorageDocumentProvider) prov;
-
-			if (doc == null)
-				if (force || fDocumentRead)
+			if (doc == null) {
+				if (force || fDocumentRead) {
 					doc= new Document();
-				else
+				} else {
 					return;
+				}
+			}
 
 			IJobManager jobMgr= Job.getJobManager();
 
 			try {
 				IStorage storage= input.getStorage();
 				// check for null for backward compatibility (we used to check before...)
-				if (storage == null)
+				if (storage == null) {
 					return;
+				}
 				fProgressMonitor= monitor;
 				ISchedulingRule rule= getSchedulingRule(storage);
 
@@ -234,10 +236,11 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 					lockDocument(monitor, jobMgr, rule);
 
 					String encoding;
-					if (storage instanceof IEncodedStorage)
+					if (storage instanceof IEncodedStorage) {
 						encoding= ((IEncodedStorage) storage).getCharset();
-					else
+					} else {
 						encoding= null;
+					}
 
 					boolean skipUTF8BOM= isUTF8BOM(encoding, storage);
 
@@ -251,8 +254,9 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				return;
 			}
 
-			if (monitor != null && monitor.isCanceled())
+			if (monitor != null && monitor.isCanceled()) {
 				return;
+			}
 
 			// update state
 			synchronized (fLock) {
@@ -268,10 +272,11 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	}
 
 	private ISchedulingRule getSchedulingRule(IStorage storage) {
-		if (storage instanceof ISchedulingRule)
+		if (storage instanceof ISchedulingRule) {
 			return (ISchedulingRule) storage;
-		else if (storage != null)
+		} else if (storage != null) {
 			return storage.getAdapter(ISchedulingRule.class);
+		}
 		return null;
 	}
 
@@ -280,25 +285,29 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	private void lockDocument(IProgressMonitor monitor, IJobManager jobMgr, ISchedulingRule rule) {
 		if (rule != null) {
 			jobMgr.beginRule(rule, monitor);
-		} else synchronized (fDocumentAccessorLock) {
-			while (fDocumentLocked) {
-				try {
-					fDocumentAccessorLock.wait();
-				} catch (InterruptedException e) {
-					// nobody interrupts us!
-					throw new OperationCanceledException();
+		} else {
+			synchronized (fDocumentAccessorLock) {
+				while (fDocumentLocked) {
+					try {
+						fDocumentAccessorLock.wait();
+					} catch (InterruptedException e) {
+						// nobody interrupts us!
+						throw new OperationCanceledException();
+					}
 				}
+				fDocumentLocked= true;
 			}
-			fDocumentLocked= true;
 		}
 	}
 
 	private void unlockDocument(IJobManager jobMgr, ISchedulingRule rule) {
 		if (rule != null) {
 			jobMgr.endRule(rule);
-		} else synchronized (fDocumentAccessorLock) {
-			fDocumentLocked= false;
-			fDocumentAccessorLock.notifyAll();
+		} else {
+			synchronized (fDocumentAccessorLock) {
+				fDocumentLocked= false;
+				fDocumentAccessorLock.notifyAll();
+			}
 		}
 	}
 
@@ -316,9 +325,10 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 
 		Runnable runnable= () -> {
 			synchronized (fLock) {
-				if (fDocumentProvider == provider)
+				if (fDocumentProvider == provider) {
 					// addElementStateListener adds at most once - no problem to call repeatedly
 					provider.addElementStateListener(LastSaveReferenceProvider.this);
+				}
 			}
 		};
 
@@ -329,16 +339,18 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				IWorkbenchWindow window= site.getWorkbenchWindow();
 				if (window != null) {
 					Shell shell= window.getShell();
-					if (shell != null)
+					if (shell != null) {
 						display= shell.getDisplay();
+					}
 				}
 			}
 		}
 
-		if (display != null && !display.isDisposed())
+		if (display != null && !display.isDisposed()) {
 			display.asyncExec(runnable);
-		else
+		} else {
 			runnable.run();
+		}
 	}
 
 	/**
@@ -394,14 +406,14 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	 * 			- byte order mark is not valid for UTF-8
 	 */
 	private static boolean isUTF8BOM(String encoding, IStorage storage) throws CoreException {
-		if (storage instanceof IFile && StandardCharsets.UTF_8.name().equals(encoding)) {
-			IFile file= (IFile) storage;
+		if (storage instanceof IFile file && StandardCharsets.UTF_8.name().equals(encoding)) {
 			IContentDescription description= file.getContentDescription();
 			if (description != null) {
 				byte[] bom= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
 				if (bom != null) {
-					if (bom != IContentDescription.BOM_UTF_8)
+					if (bom != IContentDescription.BOM_UTF_8) {
 						throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, QuickDiffMessages.getString("LastSaveReferenceProvider.LastSaveReferenceProvider.error.wrongByteOrderMark"), null)); //$NON-NLS-1$
+					}
 					return true;
 				}
 			}

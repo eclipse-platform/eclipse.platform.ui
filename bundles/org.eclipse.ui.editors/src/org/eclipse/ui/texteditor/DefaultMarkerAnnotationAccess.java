@@ -165,8 +165,9 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 */
 	private AnnotationPreference getAnnotationPreference(Annotation annotation) {
 		AnnotationPreferenceLookup lookup= getAnnotationPreferenceLookup();
-		if (lookup != null)
+		if (lookup != null) {
 			return lookup.getAnnotationPreference(annotation);
+		}
 		return null;
 	}
 
@@ -231,8 +232,9 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 		}
 
 		AnnotationPreference preference= getAnnotationPreference(annotation);
-		if (preference != null)
+		if (preference != null) {
 			return preference.getPresentationLayer();
+		}
 
 		// backward compatibility, ignore exceptions, just return default layer
 		try {
@@ -286,12 +288,14 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 
 	@Override
 	public boolean isPaintable(Annotation annotation) {
-		if (annotation instanceof IAnnotationPresentation)
+		if (annotation instanceof IAnnotationPresentation) {
 			return true;
+		}
 
 		AnnotationPreference preference= getAnnotationPreference(annotation);
-		if (preference == null)
+		if (preference == null) {
 			return false;
+		}
 
 		Object type= getType(annotation);
 		String annotationType= (type == null ? null : type.toString());
@@ -359,8 +363,9 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	private Image getImage(Annotation annotation, AnnotationPreference preference, String annotationType) {
 
 		if (annotation instanceof AnnotationBag bag) {
-			if (!bag.isEmpty())
+			if (!bag.isEmpty()) {
 				annotation= bag.iterator().next();
+			}
 		}
 
 		ImageRegistry registry= EditorsPlugin.getDefault().getImageRegistry();
@@ -369,8 +374,9 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 		if (annotationImageProvider != null) {
 
 			Image image= annotationImageProvider.getManagedImage(annotation);
-			if (image != null)
+			if (image != null) {
 				return image;
+			}
 
 			String id= annotationImageProvider.getImageDescriptorId(annotation);
 			if (id != null) {
@@ -384,8 +390,9 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 			}
 		}
 
-		if (annotationType == null)
+		if (annotationType == null) {
 			return null;
+		}
 
 		if (hasQuickFix(annotation)) {
 			ImageDescriptor quickFixImageDesc= preference.getQuickFixImageDescriptor();
@@ -395,8 +402,9 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 					registry.put(quickFixImageDesc.toString(), quickFixImageDesc);
 					image= registry.get(quickFixImageDesc.toString());
 				}
-				if (image != null)
+				if (image != null) {
 					return image;
+				}
 			}
 		}
 
@@ -431,8 +439,9 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 */
 	protected boolean hasQuickFix(Annotation annotation) {
 		if (annotation instanceof IQuickFixableAnnotation quickFixableAnnotation) {
-			if (!quickFixableAnnotation.isQuickFixableStateSet())
+			if (!quickFixableAnnotation.isQuickFixableStateSet()) {
 				quickFixableAnnotation.setQuickFixable(fQuickAssistAssistant != null && fQuickAssistAssistant.canFix(annotation));
+			}
 			return quickFixableAnnotation.isQuickFixable();
 		}
 		return false;

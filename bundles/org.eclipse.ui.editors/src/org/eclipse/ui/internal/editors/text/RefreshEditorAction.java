@@ -30,7 +30,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  */
 public class RefreshEditorAction extends RefreshAction implements IUpdate {
 
-	private ITextEditor fTextEditor;
+	private final ITextEditor fTextEditor;
 
 	public RefreshEditorAction(ITextEditor textEditor) {
 		super(textEditor.getSite());
@@ -41,9 +41,10 @@ public class RefreshEditorAction extends RefreshAction implements IUpdate {
 	@Override
 	public void update() {
 		final IResource resource= fTextEditor == null ? null : fTextEditor.getEditorInput().getAdapter(IResource.class);
-		if (resource != null)
+		if (resource != null) {
 			selectionChanged(new StructuredSelection(resource));
-		else
+		} else {
 			selectionChanged(StructuredSelection.EMPTY);
+		}
 	}
 }

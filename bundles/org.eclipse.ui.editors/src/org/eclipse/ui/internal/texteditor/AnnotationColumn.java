@@ -100,8 +100,9 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 	public void columnRemoved() {
 		if (fPropertyListener != null) {
 			IPreferenceStore store= getPreferenceStore();
-			if (store != null)
+			if (store != null) {
 				store.removePropertyChangeListener(fPropertyListener);
+			}
 			fPropertyListener= null;
 		}
 	}
@@ -110,19 +111,21 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 	 * Initializes the given line number ruler column from the preference store.
 	 */
 	private void initialize() {
-		if (fDelegate == null)
+		if (fDelegate == null) {
 			fDelegate= new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, new DefaultMarkerAnnotationAccess());
+		}
 		IPreferenceStore store= getPreferenceStore();
-		if (store != null && fDelegate instanceof AnnotationRulerColumn) {
-			final AnnotationRulerColumn column= (AnnotationRulerColumn) fDelegate;
+		if (store != null && fDelegate instanceof final AnnotationRulerColumn column) {
 			// initial set up
 			for (AnnotationPreference preference : fAnnotationPreferences.getAnnotationPreferences()) {
 				String key= preference.getVerticalRulerPreferenceKey();
 				boolean showAnnotation= true;
-				if (key != null && store.contains(key))
+				if (key != null && store.contains(key)) {
 					showAnnotation= store.getBoolean(key);
-				if (showAnnotation)
+				}
+				if (showAnnotation) {
 					column.addAnnotationType(preference.getAnnotationType());
+				}
 			}
 			column.addAnnotationType(Annotation.TYPE_UNKNOWN);
 
@@ -132,10 +135,11 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 				AnnotationPreference annotationPreference= getVerticalRulerAnnotationPreference(property);
 				if (annotationPreference != null && property.equals(annotationPreference.getVerticalRulerPreferenceKey())) {
 					Object type= annotationPreference.getAnnotationType();
-					if (getPreferenceStore().getBoolean(property))
+					if (getPreferenceStore().getBoolean(property)) {
 						column.addAnnotationType(type);
-					else
+					} else {
 						column.removeAnnotationType(type);
+					}
 					column.redraw();
 				}
 			};
@@ -151,14 +155,16 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 	 * @return the annotation preference or <code>null</code> if none
 	 */
 	private AnnotationPreference getVerticalRulerAnnotationPreference(String preferenceKey) {
-		if (preferenceKey == null)
+		if (preferenceKey == null) {
 			return null;
+		}
 
 		Iterator<AnnotationPreference> e= fAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= e.next();
-			if (info != null && preferenceKey.equals(info.getVerticalRulerPreferenceKey()))
+			if (info != null && preferenceKey.equals(info.getVerticalRulerPreferenceKey())) {
 				return info;
+			}
 		}
 		return null;
 	}
@@ -180,41 +186,47 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 
 	@Override
 	public void addVerticalRulerListener(IVerticalRulerListener listener) {
-		if (fDelegate instanceof IVerticalRulerInfoExtension)
+		if (fDelegate instanceof IVerticalRulerInfoExtension) {
 			((IVerticalRulerInfoExtension) fDelegate).addVerticalRulerListener(listener);
+		}
 	}
 
 	@Override
 	public IAnnotationHover getHover() {
-		if (fDelegate instanceof IVerticalRulerInfoExtension)
+		if (fDelegate instanceof IVerticalRulerInfoExtension) {
 			return ((IVerticalRulerInfoExtension) fDelegate).getHover();
+		}
 		return null;
 	}
 
 	@Override
 	public IAnnotationModel getModel() {
-		if (fDelegate instanceof IVerticalRulerInfoExtension)
+		if (fDelegate instanceof IVerticalRulerInfoExtension) {
 			return ((IVerticalRulerInfoExtension) fDelegate).getModel();
+		}
 		return null;
 	}
 
 	@Override
 	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
-		if (fDelegate instanceof IVerticalRulerInfoExtension)
+		if (fDelegate instanceof IVerticalRulerInfoExtension) {
 			((IVerticalRulerInfoExtension) fDelegate).removeVerticalRulerListener(listener);
+		}
 	}
 
 	@Override
 	public int getLineOfLastMouseButtonActivity() {
-		if (fDelegate instanceof IVerticalRulerInfo)
+		if (fDelegate instanceof IVerticalRulerInfo) {
 			return ((IVerticalRulerInfo)fDelegate).getLineOfLastMouseButtonActivity();
+		}
 		return -1;
 	}
 
 	@Override
 	public int toDocumentLineNumber(int y_coordinate) {
-		if (fDelegate instanceof IVerticalRulerInfo)
+		if (fDelegate instanceof IVerticalRulerInfo) {
 			return ((IVerticalRulerInfo)fDelegate).toDocumentLineNumber(y_coordinate);
+		}
 		return -1;
 	}
 }

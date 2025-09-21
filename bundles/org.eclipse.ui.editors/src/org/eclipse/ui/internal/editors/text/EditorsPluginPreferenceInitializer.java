@@ -47,8 +47,9 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 
 	public static void setThemeBasedPreferences(IPreferenceStore store, boolean fireEvent) {
 		ColorRegistry registry= null;
-		if (PlatformUI.isWorkbenchRunning())
+		if (PlatformUI.isWorkbenchRunning()) {
 			registry= PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
+		}
 
 		setDefault(store,
 				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR,
@@ -101,13 +102,15 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 		}
 
 		RGB oldValue= null;
-		if (store.isDefault(key))
+		if (store.isDefault(key)) {
 			oldValue= PreferenceConverter.getDefaultColor(store, key);
+		}
 
 		PreferenceConverter.setDefault(store, key, newValue);
 
-		if (oldValue != null && !oldValue.equals(newValue))
+		if (oldValue != null && !oldValue.equals(newValue)) {
 			store.firePropertyChangeEvent(key, oldValue, newValue);
+		}
 	}
 
 	/**
@@ -120,12 +123,14 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 	 * @since 3.4
 	 */
 	private static RGB findRGB(ColorRegistry registry, String key, RGB defaultRGB) {
-		if (registry == null)
+		if (registry == null) {
 			return defaultRGB;
+		}
 
 		RGB rgb= registry.getRGB(key);
-		if (rgb != null)
+		if (rgb != null) {
 			return rgb;
+		}
 
 		return defaultRGB;
 	}

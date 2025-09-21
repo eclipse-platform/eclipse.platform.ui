@@ -53,15 +53,15 @@ public class StickyScrollingHandler implements IViewportListener {
 
 	private final static int THROTTLER_DELAY= 100;
 
-	private ISourceViewer sourceViewer;
+	private final ISourceViewer sourceViewer;
 
-	private StickyScrollingControl stickyScrollingControl;
+	private final StickyScrollingControl stickyScrollingControl;
 
 	private IPropertyChangeListener propertyChangeListener;
 
 	private IPreferenceStore preferenceStore;
 
-	private IStickyLinesProvider stickyLinesProvider;
+	private final IStickyLinesProvider stickyLinesProvider;
 
 	private StickyLinesProperties stickyLinesProperties;
 
@@ -69,12 +69,12 @@ public class StickyScrollingHandler implements IViewportListener {
 
 	private int verticalOffset;
 
-	private IEditorPart editorPart;
+	private final IEditorPart editorPart;
 
 	/**
 	 * Creates a StickyScrollingHandler that will be linked to the given source viewer. The sticky
 	 * lines will be provided by the given <code>stickyLinesProvider</code>.
-	 * 
+	 *
 	 * @param sourceViewer The source viewer to link the handler with
 	 * @param verticalRuler The vertical ruler of the source viewer
 	 * @param preferenceStore The preference store

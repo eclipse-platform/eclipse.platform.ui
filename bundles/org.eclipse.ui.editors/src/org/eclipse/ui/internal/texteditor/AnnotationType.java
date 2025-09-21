@@ -23,8 +23,8 @@ import org.eclipse.ui.texteditor.AnnotationPreference;
  * @since 3.0
  */
 public final class AnnotationType {
-	private String fType;
-	private String[] fSuperTypes;
+	private final String fType;
+	private final String[] fSuperTypes;
 	private AnnotationPreference fPreference;
 
 	public AnnotationType(String type, String[] superTypes) {
@@ -65,15 +65,18 @@ public final class AnnotationType {
 	}
 
 	public boolean isSubtype(String superType) {
-		if (fSuperTypes == null || superType == null)
+		if (fSuperTypes == null || superType == null) {
 			return false;
+		}
 
-		if (superType.equals(fType))
+		if (superType.equals(fType)) {
 			return true;
+		}
 
 		for (int i= fSuperTypes.length -1; i > -1; i--) {
-			if (superType.equals(fSuperTypes[i]))
+			if (superType.equals(fSuperTypes[i])) {
 				return true;
+			}
 		}
 
 		return false;

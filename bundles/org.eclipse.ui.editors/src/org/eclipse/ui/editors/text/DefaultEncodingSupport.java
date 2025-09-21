@@ -81,20 +81,22 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 			if (ResourcesPlugin.PREF_ENCODING.equals(event.getKey())) {
 				// null means: use default
 				Runnable runnable= () -> setEncoding(null, false);
-				if (Display.getCurrent() != null)
+				if (Display.getCurrent() != null) {
 					runnable.run();
-				else {
+				} else {
 					// Post runnable into UI thread
 					Shell shell;
-					if (fTextEditor != null)
+					if (fTextEditor != null) {
 						shell= fTextEditor.getSite().getShell();
-					else
+					} else {
 						shell= getActiveWorkbenchShell();
+					}
 					Display display;
-					if (shell != null)
+					if (shell != null) {
 						display= shell.getDisplay();
-					else
+					} else {
 						display= Display.getDefault();
+					}
 					display.asyncExec(runnable);
 				}
 			}
@@ -139,10 +141,11 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 					Runnable encodingSetter=
 							() -> fTextEditor.doRevertToSaved();
 					Display display= fTextEditor.getSite().getShell().getDisplay();
-					if (display != null && !display.isDisposed())
+					if (display != null && !display.isDisposed()) {
 						BusyIndicator.showWhile(display, encodingSetter);
-					else
+					} else {
 						encodingSetter.run();
+					}
 				}
 			}
 		}
@@ -180,11 +183,13 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	public String getStatusHeader(IStatus status) {
 		Throwable t= status.getException();
 
-		if (t instanceof CharConversionException)
+		if (t instanceof CharConversionException) {
 			return TextEditorMessages.Editor_error_unreadable_encoding_header;
+		}
 
-		if (t instanceof UnsupportedEncodingException)
+		if (t instanceof UnsupportedEncodingException) {
 			return TextEditorMessages.Editor_error_unsupported_encoding_header;
+		}
 
 		return null;
 	}
@@ -198,11 +203,13 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	public String getStatusBanner(IStatus status) {
 		Throwable t= status.getException();
 
-		if (t instanceof CharConversionException)
+		if (t instanceof CharConversionException) {
 			return TextEditorMessages.Editor_error_unreadable_encoding_banner;
+		}
 
-		if (t instanceof UnsupportedEncodingException)
+		if (t instanceof UnsupportedEncodingException) {
 			return TextEditorMessages.Editor_error_unsupported_encoding_banner;
+		}
 
 		return null;
 
@@ -219,18 +226,21 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		if (t instanceof CharConversionException || t instanceof UnsupportedEncodingException) {
 
 			String encoding= getEncoding();
-			if (encoding == null)
+			if (encoding == null) {
 				encoding= getDefaultEncoding();
+			}
 
 			if (t instanceof CharConversionException) {
-				if (encoding != null)
+				if (encoding != null) {
 					return NLSUtility.format(TextEditorMessages.Editor_error_unreadable_encoding_message_arg, encoding);
+				}
 				return TextEditorMessages.Editor_error_unreadable_encoding_message;
 			}
 
 			if (t instanceof UnsupportedEncodingException) {
-				if (encoding != null)
+				if (encoding != null) {
 					return NLSUtility.format(TextEditorMessages.Editor_error_unsupported_encoding_message_arg, encoding);
+				}
 				return TextEditorMessages.Editor_error_unsupported_encoding_message;
 			}
 		}
@@ -247,8 +257,9 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	 * @since 3.1
 	 */
 	public boolean isEncodingError(IStatus status) {
-		if (status == null || status.getSeverity() != IStatus.ERROR)
+		if (status == null || status.getSeverity() != IStatus.ERROR) {
 			return false;
+		}
 
 		Throwable t= status.getException();
 		return t instanceof CharConversionException || t instanceof UnsupportedEncodingException;
@@ -265,11 +276,13 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	 */
 	public void createStatusEncodingChangeControl(Composite parent, final IStatus status) {
 		final IAction action= fTextEditor.getAction(ITextEditorActionConstants.CHANGE_ENCODING);
-		if (action instanceof TextEditorAction textEditorAction)
+		if (action instanceof TextEditorAction textEditorAction) {
 			textEditorAction.update();
+		}
 
-		if (action == null || !action.isEnabled())
+		if (action == null || !action.isEnabled()) {
 			return;
+		}
 
 		Shell shell= parent.getShell();
 		Display display= shell.getDisplay();
@@ -301,8 +314,9 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	 */
 	private static Shell getActiveWorkbenchShell() {
 		 IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		 if (window != null)
-		 	return window.getShell();
+		 if (window != null) {
+			return window.getShell();
+		 }
 
 		 return null;
 	}

@@ -75,7 +75,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	private static class ErrorPreferences implements ISpellingPreferenceBlock {
 
 		/** Error message */
-		private String fMessage;
+		private final String fMessage;
 
 		/** Error label */
 		private Label fLabel;
@@ -137,7 +137,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	private static class ForwardingStatusMonitor implements IPreferenceStatusMonitor {
 
 		/** Status monitor to which status changes are forwarded */
-		private IPreferenceStatusMonitor fForwardedMonitor;
+		private final IPreferenceStatusMonitor fForwardedMonitor;
 
 		/** Latest reported status */
 		private IStatus fStatus;
@@ -183,7 +183,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	private final Map<String, ISpellingPreferenceBlock> fProviderPreferences;
 	private final Map<String, Control> fProviderControls;
 
-	private ForwardingStatusMonitor fStatusMonitor;
+	private final ForwardingStatusMonitor fStatusMonitor;
 
 	private ISpellingPreferenceBlock fCurrentBlock;
 
@@ -351,9 +351,10 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection sel= event.getStructuredSelection();
-				if (sel.isEmpty())
+				if (sel.isEmpty()) {
 					return;
-				if (fCurrentBlock != null && fStatusMonitor.getStatus() != null && fStatusMonitor.getStatus().matches(IStatus.ERROR))
+				}
+				if (fCurrentBlock != null && fStatusMonitor.getStatus() != null && fStatusMonitor.getStatus().matches(IStatus.ERROR)) {
 					if (isPerformRevert()) {
 						ISafeRunnable runnable= new ISafeRunnable() {
 							@Override
@@ -369,6 +370,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 						revertSelection();
 						return;
 					}
+				}
 				fStore.setValue(SpellingService.PREFERENCE_SPELLING_ENGINE, ((SpellingEngineDescriptor) sel.getFirstElement()).getId());
 				updateListDependencies();
 			}
@@ -383,8 +385,9 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				try {
 					viewer.removeSelectionChangedListener(this);
 					SpellingEngineDescriptor desc= EditorsUI.getSpellingService().getActiveSpellingEngineDescriptor(fStore);
-					if (desc != null)
+					if (desc != null) {
 						viewer.setSelection(new StructuredSelection(desc), true);
+					}
 				} finally {
 					viewer.addSelectionChangedListener(this);
 				}
@@ -398,8 +401,9 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private void updateCheckboxDependencies() {
 		final boolean enabled= fEnablementCheckbox.getSelection();
-		if (fComboGroup != null)
+		if (fComboGroup != null) {
 			setEnabled(fComboGroup, enabled);
+		}
 		SpellingEngineDescriptor desc= EditorsUI.getSpellingService().getActiveSpellingEngineDescriptor(fStore);
 		String id= desc != null ? desc.getId() : ""; //$NON-NLS-1$
 		final ISpellingPreferenceBlock preferenceBlock= fProviderPreferences.get(id);
@@ -501,8 +505,9 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		SpellingEngineDescriptor desc= EditorsUI.getSpellingService().getActiveSpellingEngineDescriptor(fStore);
 		String id= desc != null ? desc.getId() : ""; //$NON-NLS-1$
 		final ISpellingPreferenceBlock block= fProviderPreferences.get(id);
-		if (block == null)
+		if (block == null) {
 			return true;
+		}
 
 		final Boolean[] result= new Boolean[] { Boolean.TRUE };
 		ISafeRunnable runnable= new ISafeRunnable() {
@@ -568,18 +573,20 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private void restoreFromPreferences() {
-		if (fEnablementCheckbox == null)
+		if (fEnablementCheckbox == null) {
 			return;
+		}
 
 		boolean enabled= fStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED);
 		fEnablementCheckbox.setSelection(enabled);
 
-		if (fProviderViewer == null)
+		if (fProviderViewer == null) {
 			updateListDependencies();
-		else {
+		} else {
 			SpellingEngineDescriptor desc= EditorsUI.getSpellingService().getActiveSpellingEngineDescriptor(fStore);
-			if (desc != null)
+			if (desc != null) {
 				fProviderViewer.setSelection(new StructuredSelection(desc), true);
+			}
 		}
 
 		updateCheckboxDependencies();

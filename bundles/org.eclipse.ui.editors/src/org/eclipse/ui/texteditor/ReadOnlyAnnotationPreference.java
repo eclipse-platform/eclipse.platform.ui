@@ -36,240 +36,274 @@ class ReadOnlyAnnotationPreference extends AnnotationPreference {
 
 	@Override
 	public void merge(AnnotationPreference preference) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.merge(preference);
 	}
 
 	@Override
 	public void setAnnotationImageProvider(IAnnotationImageProvider provider) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setAnnotationImageProvider(provider);
 	}
 
 	@Override
 	public void setAnnotationImageProviderData(IConfigurationElement configurationElement, String annotationImageProviderAttribute) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setAnnotationImageProviderData(configurationElement,
 				annotationImageProviderAttribute);
 	}
 
 	@Override
 	public void setAnnotationType(Object annotationType) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setAnnotationType(annotationType);
 	}
 
 	@Override
 	public void setColorPreferenceKey(String colorKey) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setColorPreferenceKey(colorKey);
 	}
 
 	@Override
 	public void setColorPreferenceValue(RGB colorValue) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setColorPreferenceValue(colorValue);
 	}
 
 	@Override
 	public void setContributesToHeader(boolean contributesToHeader) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setContributesToHeader(contributesToHeader);
 	}
 
 	@Override
 	public void setHighlightPreferenceKey(String highlightKey) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setHighlightPreferenceKey(highlightKey);
 	}
 
 	@Override
 	public void setHighlightPreferenceValue(boolean highlightValue) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setHighlightPreferenceValue(highlightValue);
 	}
 
 	@Override
 	public void setImageDescriptor(ImageDescriptor descriptor) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setImageDescriptor(descriptor);
 	}
 
 	@Override
 	public void setIncludeOnPreferencePage(boolean includeOnPreferencePage) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setIncludeOnPreferencePage(includeOnPreferencePage);
 	}
 
 	@Override
 	public void setIsGoToNextNavigationTarget(boolean isGoToNextNavigationTarget) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setIsGoToNextNavigationTarget(isGoToNextNavigationTarget);
 	}
 
 	@Override
 	public void setIsGoToNextNavigationTargetKey(String isGoToNextNavigationTargetKey) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setIsGoToNextNavigationTargetKey(isGoToNextNavigationTargetKey);
 	}
 
 	@Override
 	public void setIsGoToPreviousNavigationTarget(boolean isGoToPreviousNavigationTarget) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setIsGoToPreviousNavigationTarget(isGoToPreviousNavigationTarget);
 	}
 
 	@Override
 	public void setIsGoToPreviousNavigationTargetKey(String isGoToPreviousNavigationTargetKey) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setIsGoToPreviousNavigationTargetKey(isGoToPreviousNavigationTargetKey);
 	}
 
 	@Override
 	public void setMarkerType(String markerType) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setMarkerType(markerType);
 	}
 
 	@Override
 	public void setOverviewRulerPreferenceKey(String overviewRulerKey) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setOverviewRulerPreferenceKey(overviewRulerKey);
 	}
 
 	@Override
 	public void setOverviewRulerPreferenceValue(boolean overviewRulerValue) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setOverviewRulerPreferenceValue(overviewRulerValue);
 	}
 
 	@Override
 	public void setPreferenceLabel(String label) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setPreferenceLabel(label);
 	}
 
 	@Override
 	public void setPresentationLayer(int presentationLayer) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setPresentationLayer(presentationLayer);
 	}
 
 	@Override
 	public void setQuickFixImageDescriptor(ImageDescriptor descriptor) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setQuickFixImageDescriptor(descriptor);
 	}
 
 	@Override
 	public void setSeverity(int severity) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setSeverity(severity);
 	}
 
 	@Override
 	public void setShowInNextPrevDropdownToolbarAction(boolean showInNextPrevDropdownToolbarAction) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setShowInNextPrevDropdownToolbarAction(showInNextPrevDropdownToolbarAction);
 	}
 
 	@Override
 	public void setShowInNextPrevDropdownToolbarActionKey(String showInNextPrevDropdownToolbarActionKey) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setShowInNextPrevDropdownToolbarActionKey(showInNextPrevDropdownToolbarActionKey);
 	}
 
 	@Override
 	public void setSymbolicImageName(String symbolicImageName) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setSymbolicImageName(symbolicImageName);
 	}
 
 	@Override
 	public void setTextPreferenceKey(String textKey) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setTextPreferenceKey(textKey);
 	}
 
 	@Override
 	public void setTextPreferenceValue(boolean textValue) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setTextPreferenceValue(textValue);
 	}
 
 	@Override
 	public void setTextStylePreferenceKey(String key) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setTextStylePreferenceKey(key);
 	}
 
 	@Override
 	public void setTextStyleValue(String value) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setTextStyleValue(value);
 	}
 
 	@Override
 	protected void setValue(Object attribute, boolean value) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setValue(attribute, value);
 	}
 
 	@Override
 	protected void setValue(Object attribute, int value) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setValue(attribute, value);
 	}
 
 	@Override
 	protected void setValue(Object attribute, Object value) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setValue(attribute, value);
 	}
 
 	@Override
 	public void setVerticalRulerPreferenceKey(String verticalRulerKey) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setVerticalRulerPreferenceKey(verticalRulerKey);
 	}
 
 	@Override
 	public void setVerticalRulerPreferenceValue(boolean verticalRulerValue) {
-		if (fIsReadOnly)
+		if (fIsReadOnly) {
 			throw new UnsupportedOperationException();
+		}
 		super.setVerticalRulerPreferenceValue(verticalRulerValue);
 	}
 

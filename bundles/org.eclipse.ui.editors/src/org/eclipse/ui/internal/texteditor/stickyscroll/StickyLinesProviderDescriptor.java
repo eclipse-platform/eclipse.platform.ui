@@ -50,7 +50,7 @@ public class StickyLinesProviderDescriptor {
 	private static final String ENABLED_WHEN_ATTR= "enabledWhen"; //$NON-NLS-1$
 
 	/** The configuration element describing this extension. */
-	private IConfigurationElement configuration;
+	private final IConfigurationElement configuration;
 
 	/** The value of the <code>id</code> attribute, if read. */
 	private String id;

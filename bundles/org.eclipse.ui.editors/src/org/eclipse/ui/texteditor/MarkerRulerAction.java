@@ -76,23 +76,23 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	private static final int MAX_LABEL_LENGTH= 80;
 
 	/** The vertical ruler info of the editor. */
-	private IVerticalRulerInfo fRuler;
+	private final IVerticalRulerInfo fRuler;
 	/** The associated editor */
-	private ITextEditor fTextEditor;
+	private final ITextEditor fTextEditor;
 	/** The of the marker to be created/removed. */
-	private String fMarkerType;
+	private final String fMarkerType;
 	/** The cached list of markers covering a particular vertical ruler position. */
 	private List<IMarker> fMarkers;
 	/** The flag indicating whether user interaction is required. */
-	private boolean fAskForLabel;
+	private final boolean fAskForLabel;
 	/** The action's resource bundle. */
-	private ResourceBundle fBundle;
+	private final ResourceBundle fBundle;
 	/** The prefix used for resource bundle look ups. */
-	private String fPrefix;
+	private final String fPrefix;
 	/** The cached action label when adding a marker. */
-	private String fAddLabel;
+	private final String fAddLabel;
 	/** The cached action label when removing a marker. */
-	private String fRemoveLabel;
+	private final String fRemoveLabel;
 
 
 	/**
@@ -160,8 +160,9 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	@Deprecated
 	protected IVerticalRuler getVerticalRuler() {
-		if (fRuler instanceof IVerticalRuler verticalRuler)
+		if (fRuler instanceof IVerticalRuler verticalRuler) {
 			return verticalRuler;
+		}
 		return null;
 	}
 
@@ -220,8 +221,9 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	private boolean markersUserEditable(List<IMarker> markers) {
 		Iterator<IMarker> iter= markers.iterator();
 		while (iter.hasNext()) {
-			if (!isUserEditable(iter.next()))
+			if (!isUserEditable(iter.next())) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -239,10 +241,11 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 	@Override
 	public void run() {
-		if (fMarkers.isEmpty())
+		if (fMarkers.isEmpty()) {
 			addMarker();
-		else
+		} else {
 			removeMarkers(fMarkers);
+		}
 	}
 
 	/**
@@ -256,8 +259,9 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 		IResource resource= input.getAdapter(IFile.class);
 
-		if (resource == null)
+		if (resource == null) {
 			resource= input.getAdapter(IResource.class);
+		}
 
 		return resource;
 	}
@@ -270,8 +274,9 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	protected AbstractMarkerAnnotationModel getAnnotationModel() {
 		IDocumentProvider provider= fTextEditor.getDocumentProvider();
 		IAnnotationModel model= provider.getAnnotationModel(fTextEditor.getEditorInput());
-		if (model instanceof AbstractMarkerAnnotationModel markerModel)
+		if (model instanceof AbstractMarkerAnnotationModel markerModel) {
 			return markerModel;
+		}
 		return null;
 	}
 
@@ -298,10 +303,11 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			try {
 				int markerLine= document.getLineOfOffset(position.getOffset());
 				int line= fRuler.getLineOfLastMouseButtonActivity();
-				if (line == markerLine)
+				if (line == markerLine) {
 					return true;
 				// commented because of "1GEUOZ9: ITPJUI:ALL - Confusing UI for multi-line Bookmarks and Tasks"
 				// return (markerLine <= line && line <= document.getLineOfOffset(position.getOffset() + position.getLength()));
+				}
 			} catch (BadLocationException x) {
 			}
 		}
@@ -320,10 +326,11 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
 		ILog log= ILog.of(bundle);
 
-		if (message != null)
+		if (message != null) {
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception));
-		else
+		} else {
 			log.log(exception.getStatus());
+		}
 
 
 		Shell shell= getTextEditor().getSite().getShell();
@@ -370,12 +377,14 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	protected void addMarker() {
 		IResource resource= getResource();
-		if (resource == null)
+		if (resource == null) {
 			return;
+		}
 		Map<String, Object> attributes= getInitialAttributes();
 		if (fAskForLabel) {
-			if (!askForLabel(attributes))
+			if (!askForLabel(attributes)) {
 				return;
+			}
 		}
 		execute(new CreateMarkersOperation(fMarkerType, attributes, resource, getOperationName()));
 	}
@@ -410,15 +419,18 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		AddBookmarkDialog dialog= new AddBookmarkDialog(fTextEditor.getSite().getShell(), title, message, proposal, inputValidator, addButtonText);
 
 		String label= null;
-		if (dialog.open() != Window.CANCEL)
+		if (dialog.open() != Window.CANCEL) {
 			label= dialog.getValue();
+		}
 
-		if (label == null)
+		if (label == null) {
 			return false;
+		}
 
 		label= label.trim();
-		if (label.isEmpty())
+		if (label.isEmpty()) {
 			return false;
+		}
 
 		MarkerUtilities.setMessage(attributes, label);
 		return true;
@@ -492,8 +504,9 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	protected String getLabelProposal(IDocument document, int offset, int length) {
 		try {
 			String label= document.get(offset, length).trim();
-			if (label.length() <= MAX_LABEL_LENGTH)
+			if (label.length() <= MAX_LABEL_LENGTH) {
 				return label;
+			}
 			return label.substring(0, MAX_LABEL_LENGTH);
 		} catch (BadLocationException x) {
 			// don't propose label then
@@ -524,8 +537,9 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <T> T getAdapter(Class<T> adapter) {
-				if (adapter == Shell.class)
+				if (adapter == Shell.class) {
 					return (T) shell;
+				}
 				return null;
 			}
 		};

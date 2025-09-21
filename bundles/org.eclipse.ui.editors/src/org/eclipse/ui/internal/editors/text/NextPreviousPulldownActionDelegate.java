@@ -46,22 +46,22 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	private Menu fMenu;
 
 	/** The preference store */
-	private IPreferenceStore fStore;
+	private final IPreferenceStore fStore;
 
 	/** Action for handling menu item selection. */
 	private static class NavigationEnablementAction extends Action implements Comparable<NavigationEnablementAction> {
 
 		/** The preference store. */
-		private IPreferenceStore fStore;
+		private final IPreferenceStore fStore;
 
 		/** The preference key for the value in the store. */
-		private String fKey;
+		private final String fKey;
 
 		/**
 		 * The display string.
 		 * @since 3.2
 		 */
-		private String fName;
+		private final String fName;
 
 		/**
 		 * Creates a named navigation enablement action.
@@ -100,8 +100,9 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 
 	@Override
 	public Menu getMenu(Control parent) {
-		if (fMenu != null)
+		if (fMenu != null) {
 			fMenu.dispose();
+		}
 
 		fMenu= new Menu(parent);
 		fillMenu(fMenu);
@@ -174,8 +175,9 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 				 */
 				preferenceKey= preference.getIsGoToNextNavigationTargetKey();
 
-				if (preferenceKey != null)
+				if (preferenceKey != null) {
 					containers.add(new NavigationEnablementAction(preference.getPreferenceLabel(), fStore, preferenceKey));
+				}
 			}
 		}
 

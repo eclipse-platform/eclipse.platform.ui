@@ -235,16 +235,19 @@ public final class EditorsUI {
 	 * @since 3.3
 	 */
 	public static final String getTooltipAffordanceString() {
-		if (!getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE))
+		if (!getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) {
 			return null;
+		}
 
 		IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
-		if (bindingService == null)
+		if (bindingService == null) {
 			return null;
+		}
 
 		String keySequence= bindingService.getBestActiveBindingFormattedFor(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
-		if (keySequence == null)
+		if (keySequence == null) {
 			return ""; //$NON-NLS-1$
+		}
 
 		return NLSUtility.format(TextEditorMessages.Editor_toolTip_affordance, keySequence);
 	}

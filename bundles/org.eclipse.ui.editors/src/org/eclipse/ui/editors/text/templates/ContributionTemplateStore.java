@@ -146,10 +146,11 @@ public class ContributionTemplateStore extends TemplateStore {
 					TemplatePersistenceData[] datas= reader.read(stream, bundle);
 					for (TemplatePersistenceData data : datas) {
 						if (data.isCustom()) {
-							if (data.getId() == null)
+							if (data.getId() == null) {
 								EditorsPlugin.logErrorMessage(NLSUtility.format(ContributionTemplateMessages.ContributionTemplateStore_ignore_no_id, data.getTemplate().getName()));
-							else
+							} else {
 								EditorsPlugin.logErrorMessage(NLSUtility.format(ContributionTemplateMessages.ContributionTemplateStore_ignore_deleted, data.getTemplate().getName()));
+							}
 						} else if (validateTemplate(data.getTemplate())) {
 							templates.add(data);
 						}
@@ -171,8 +172,9 @@ public class ContributionTemplateStore extends TemplateStore {
 	 */
 	private boolean validateTemplate(Template template) {
 		String contextTypeId= template.getContextTypeId();
-		if (!contextExists(contextTypeId))
+		if (!contextExists(contextTypeId)) {
 			return false;
+		}
 
 		if (getRegistry() != null) {
 			try {
@@ -216,20 +218,23 @@ public class ContributionTemplateStore extends TemplateStore {
 					if (pattern != null) {
 
 						String desc= element.getAttribute(DESCRIPTION);
-						if (desc == null)
+						if (desc == null) {
 							desc= ""; //$NON-NLS-1$
+						}
 
 						String autoInsert= element.getAttribute(AUTO_INSERT);
 						boolean bAutoInsert;
-						if (autoInsert == null)
+						if (autoInsert == null) {
 							bAutoInsert= true;
-						else
+						} else {
 							bAutoInsert= Boolean.parseBoolean(autoInsert);
+						}
 
 						Template template= new Template(name, desc, contextTypeId, pattern, bAutoInsert);
 						TemplatePersistenceData data= new TemplatePersistenceData(template, true, id);
-						if (validateTemplate(template))
+						if (validateTemplate(template)) {
 							map.add(data);
+						}
 					}
 				}
 			}

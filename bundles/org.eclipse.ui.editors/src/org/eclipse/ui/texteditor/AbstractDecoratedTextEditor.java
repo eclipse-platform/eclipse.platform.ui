@@ -306,7 +306,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	/**
 	 * The editor's goto marker adapter.
 	 */
-	private Object fGotoMarkerAdapter= new GotoMarkerAdapter();
+	private final Object fGotoMarkerAdapter= new GotoMarkerAdapter();
 	/**
 	 * Indicates whether this editor is updating views that show markers.
 	 * @see #updateMarkerViews(Annotation)
@@ -339,7 +339,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	private FocusedInformationPresenter fInformationPresenter;
 	/**
 	 * The handler for sticky scrolling
-	 * 
+	 *
 	 */
 	private StickyScrollingHandler fStickyScrollingHandler;
 
@@ -433,8 +433,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		Iterator<AnnotationPreference> e= fAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference preference= e.next();
-			if (preference.contributesToHeader())
+			if (preference.contributesToHeader()) {
 				ruler.addHeaderAnnotationType(preference.getAnnotationType());
+			}
 		}
 		return ruler;
 	}
@@ -457,8 +458,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
 
 		Iterator<AnnotationPreference> e= fAnnotationPreferences.getAnnotationPreferences().iterator();
-		while (e.hasNext())
+		while (e.hasNext()) {
 			support.setAnnotationPreference(e.next());
+		}
 
 		support.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
 		support.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
@@ -471,25 +473,30 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		if (fSourceViewerDecorationSupport != null)
+		if (fSourceViewerDecorationSupport != null) {
 			fSourceViewerDecorationSupport.install(getPreferenceStore());
+		}
 
 		IColumnSupport columnSupport= getAdapter(IColumnSupport.class);
 
 		if (isLineNumberRulerVisible()) {
 			RulerColumnDescriptor lineNumberColumnDescriptor= RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID);
-			if (lineNumberColumnDescriptor != null)
+			if (lineNumberColumnDescriptor != null) {
 				columnSupport.setColumnVisible(lineNumberColumnDescriptor, true);
+			}
 		}
 
-		if (isPrefQuickDiffAlwaysOn())
+		if (isPrefQuickDiffAlwaysOn()) {
 			showChangeInformation(true);
+		}
 
-		if (fOverviewRuler instanceof IOverviewRulerExtension rulerEx)
+		if (fOverviewRuler instanceof IOverviewRulerExtension rulerEx) {
 			rulerEx.setUseSaturatedColors(isPrefUseSaturatedColorsOn());
+		}
 
-		if (!isOverwriteModeEnabled())
+		if (!isOverwriteModeEnabled()) {
 			enableOverwriteMode(false);
+		}
 
 		if (!isRangeIndicatorEnabled()) {
 			getSourceViewer().removeRangeIndication();
@@ -498,8 +505,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		// Assign the quick assist assistant to the annotation access.
 		ISourceViewer viewer= getSourceViewer();
-		if (fAnnotationAccess instanceof IAnnotationAccessExtension2 annotationEx2 && viewer instanceof ISourceViewerExtension3 viewerEx3)
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension2 annotationEx2 && viewer instanceof ISourceViewerExtension3 viewerEx3) {
 			annotationEx2.setQuickAssistAssistant(viewerEx3.getQuickAssistAssistant());
+		}
 
 		createOverviewRulerContextMenu();
 
@@ -527,11 +535,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.4
 	 */
 	protected void createOverviewRulerContextMenu() {
-		if (fOverviewRulerContextMenuId == null)
+		if (fOverviewRulerContextMenuId == null) {
 			fOverviewRulerContextMenuId= DEFAULT_OVERVIEW_RULER_CONTEXT_MENU_ID;
+		}
 
-		if (fOverviewRuler == null || fOverviewRuler.getControl() == null)
+		if (fOverviewRuler == null || fOverviewRuler.getControl() == null) {
 			return;
+		}
 
 		MenuManager menuManager= new MenuManager(fOverviewRulerContextMenuId, fOverviewRulerContextMenuId);
 		menuManager.setRemoveAllWhenShown(true);
@@ -558,11 +568,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	protected Control createStatusControl(Composite parent, final IStatus status) {
 		Object adapter= getAdapter(IEncodingSupport.class);
 		DefaultEncodingSupport encodingSupport= null;
-		if (adapter instanceof DefaultEncodingSupport enc)
+		if (adapter instanceof DefaultEncodingSupport enc) {
 			encodingSupport= enc;
+		}
 
-		if (encodingSupport == null || !encodingSupport.isEncodingError(status))
+		if (encodingSupport == null || !encodingSupport.isEncodingError(status)) {
 			return super.createStatusControl(parent, status);
+		}
 
 		Shell shell= getSite().getShell();
 		Display display= shell.getDisplay();
@@ -600,16 +612,18 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	@Override
 	public void showChangeInformation(boolean show) {
-		if (show == isChangeInformationShowing())
+		if (show == isChangeInformationShowing()) {
 			return;
+		}
 
 		IColumnSupport columnSupport= getAdapter(IColumnSupport.class);
 
 		// only handle visibility of the combined column, but not the number/change only state
 		if (show && fLineColumn == null) {
 			RulerColumnDescriptor lineNumberColumnDescriptor= RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID);
-			if (lineNumberColumnDescriptor != null)
+			if (lineNumberColumnDescriptor != null) {
 				columnSupport.setColumnVisible(lineNumberColumnDescriptor, true);
+			}
 		} else if (!show && fLineColumn != null && !isLineNumberRulerVisible()) {
 			columnSupport.setColumnVisible(fLineColumn.getDescriptor(), false);
 			fLineColumn= null;
@@ -623,14 +637,17 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	@Override
 	public void showRevisionInformation(RevisionInformation info, String quickDiffProviderId) {
-		if (info.getHoverControlCreator() == null)
+		if (info.getHoverControlCreator() == null) {
 			info.setHoverControlCreator(new RevisionHoverInformationControlCreator(false));
-		if (info.getInformationPresenterControlCreator() == null)
+		}
+		if (info.getInformationPresenterControlCreator() == null) {
 			info.setInformationPresenterControlCreator(new RevisionHoverInformationControlCreator(true));
+		}
 
 		showChangeInformation(true);
-		if (fLineColumn != null)
+		if (fLineColumn != null) {
 			fLineColumn.showRevisionInformation(info, quickDiffProviderId);
+		}
 	}
 
 	/**
@@ -704,8 +721,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		/*
 		 * Left for compatibility. See LineNumberColumn.
 		 */
-		if (fLineColumn != null)
+		if (fLineColumn != null) {
 			fLineColumn.initializeLineNumberRulerColumn(rulerColumn);
+		}
 	}
 
 	/**
@@ -832,16 +850,18 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		try {
 
 			ISourceViewer sourceViewer= getSourceViewer();
-			if (sourceViewer == null)
+			if (sourceViewer == null) {
 				return;
+			}
 
 			String property= event.getProperty();
 
 			if (fSourceViewerDecorationSupport != null && fOverviewRuler != null && OVERVIEW_RULER.equals(property))  {
-				if (isOverviewRulerVisible())
+				if (isOverviewRulerVisible()) {
 					showOverviewRuler();
-				else
+				} else {
 					hideOverviewRuler();
+				}
 				return;
 			}
 
@@ -862,8 +882,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				IColumnSupport columnSupport= getAdapter(IColumnSupport.class);
 				if (isLineNumberRulerVisible() && fLineColumn == null) {
 					RulerColumnDescriptor lineNumberColumnDescriptor= RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID);
-					if (lineNumberColumnDescriptor != null)
+					if (lineNumberColumnDescriptor != null) {
 						columnSupport.setColumnVisible(lineNumberColumnDescriptor, true);
+					}
 				} else if (!isLineNumberRulerVisible() && fLineColumn != null && !fLineColumn.isShowingChangeInformation()) {
 					columnSupport.setColumnVisible(fLineColumn.getDescriptor(), false);
 					fLineColumn= null;
@@ -877,8 +898,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH.equals(property)) {
 				IPreferenceStore store= getPreferenceStore();
-				if (store != null)
+				if (store != null) {
 					sourceViewer.getTextWidget().setTabs(store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+				}
 				if (isTabsToSpacesConversionEnabled()) {
 					uninstallTabsToSpacesConverter();
 					installTabsToSpacesConverter();
@@ -898,17 +920,19 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS.equals(property)
 					|| AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DELETE_SPACES_AS_TABS.equals(property)) {
-				if (isTabsToSpacesConversionEnabled())
+				if (isTabsToSpacesConversionEnabled()) {
 					installTabsToSpacesConverter();
-				else
+				} else {
 					uninstallTabsToSpacesConverter();
+				}
 				return;
 			}
 
 			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE.equals(property) && sourceViewer instanceof ITextViewerExtension6 sourceViewerExt6) {
 				IPreferenceStore store= getPreferenceStore();
-				if (store != null)
+				if (store != null) {
 					sourceViewerExt6.getUndoManager().setMaximalUndoLevel(store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE));
+				}
 				return;
 			}
 
@@ -935,8 +959,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED.equals(property)) {
 				IPreferenceStore store= getPreferenceStore();
-				if (store == null)
+				if (store == null) {
 					return;
+				}
 
 				if (store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_STICKY_SCROLLING_ENABLED)) {
 					IStickyLinesProvider stickyLineProvider= getStickyLinesProvider();
@@ -985,8 +1010,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @return the annotation access
 	 */
 	protected IAnnotationAccess getAnnotationAccess() {
-		if (fAnnotationAccess == null)
+		if (fAnnotationAccess == null) {
 			fAnnotationAccess= createAnnotationAccess();
+		}
 		return fAnnotationAccess;
 	}
 
@@ -1005,8 +1031,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @return the overview ruler
 	 */
 	protected IOverviewRuler getOverviewRuler() {
-		if (fOverviewRuler == null)
+		if (fOverviewRuler == null) {
 			fOverviewRuler= createOverviewRuler(getSharedColors());
+		}
 		return fOverviewRuler;
 	}
 
@@ -1022,8 +1049,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
 
 			// Fix for overridden print margin column, see https://bugs.eclipse.org/468307
-			if (!getPreferenceStore().getBoolean(PRINT_MARGIN_ALLOW_OVERRIDE))
+			if (!getPreferenceStore().getBoolean(PRINT_MARGIN_ALLOW_OVERRIDE)) {
 				fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
+			}
 		}
 		return fSourceViewerDecorationSupport;
 	}
@@ -1049,11 +1077,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	@Deprecated
 	public void gotoMarker(IMarker marker) {
-		if (fIsUpdatingMarkerViews)
+		if (fIsUpdatingMarkerViews) {
 			return;
+		}
 
-		if (getSourceViewer() == null)
+		if (getSourceViewer() == null) {
 			return;
+		}
 
 		int start= MarkerUtilities.getCharStart(marker);
 		int end= MarkerUtilities.getCharEnd(marker);
@@ -1082,9 +1112,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (selectLine) {
 			int line;
 			try {
-				if (start >= 0)
+				if (start >= 0) {
 					line= document.getLineOfOffset(start);
-				else {
+				} else {
 					line= MarkerUtilities.getLineNumber(marker);
 					// Marker line numbers are 1-based
 					-- line;
@@ -1105,15 +1135,17 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	@Override
 	public boolean isEditable() {
-		if (!super.isEditable())
+		if (!super.isEditable()) {
 			return false;
+		}
 		return fIsEditingDerivedFileAllowed;
 	}
 
 	@Override
 	public boolean validateEditorInputState() {
-		if (!super.validateEditorInputState())
+		if (!super.validateEditorInputState()) {
 			return false;
+		}
 
 		return validateEditorInputDerived();
 	}
@@ -1128,21 +1160,24 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.3
 	 */
 	private boolean validateEditorInputDerived() {
-		if (fIsDerivedStateValidated)
+		if (fIsDerivedStateValidated) {
 			return fIsEditingDerivedFileAllowed;
+		}
 
 		if (getDocumentProvider() instanceof IDocumentProviderExtension extension) {
 			IStatus status= extension.getStatus(getEditorInput());
 			String pluginId= status.getPlugin();
 			boolean isDerivedStatus= status.getCode() == IFileBufferStatusCodes.DERIVED_FILE && (FileBuffers.PLUGIN_ID.equals(pluginId) || EditorsUI.PLUGIN_ID.equals(pluginId));
-			if (!isDerivedStatus)
+			if (!isDerivedStatus) {
 				return true;
+			}
 		}
 
 		final String warnKey= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WARN_IF_INPUT_DERIVED;
 		IPreferenceStore store= getPreferenceStore();
-		if (!store.getBoolean(warnKey))
+		if (!store.getBoolean(warnKey)) {
 			return true;
+		}
 
 		MessageDialogWithToggle toggleDialog= MessageDialogWithToggle.openYesNoQuestion(
 				getSite().getShell(),
@@ -1165,11 +1200,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	@Override
 	protected boolean isErrorStatus(IStatus status) {
-		if (!super.isErrorStatus(status))
+		if (!super.isErrorStatus(status)) {
 			return false;
+		}
 
-		if (!status.isMultiStatus())
+		if (!status.isMultiStatus()) {
 			return !isReadOnlyLocalStatus(status);
+		}
 
 		IStatus[] childrenStatus= status.getChildren();
 		for (IStatus childrenStatu : childrenStatus) {
@@ -1255,8 +1292,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.HideRevisionInformationAction.") { //$NON-NLS-1$
 			@Override
 			public void run() {
-				if (fLineColumn != null)
+				if (fLineColumn != null) {
 					fLineColumn.hideRevisionInformation();
+				}
 			}
 		};
 		setAction(ITextEditorActionConstants.REVISION_HIDE_INFO, action);
@@ -1289,16 +1327,18 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		setAction(ITextEditorActionConstants.REVISION_SHOW_ID_TOGGLE, action);
 
 		final Shell shell;
-		if (getSourceViewer() != null)
+		if (getSourceViewer() != null) {
 			shell= getSourceViewer().getTextWidget().getShell();
-		else
+		} else {
 			shell= null;
+		}
 		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.RulerPreferencesAction.") { //$NON-NLS-1$
 			@Override
 			public void run() {
 				String[] preferencePages= collectRulerMenuPreferencePages();
-				if (preferencePages.length > 0 && (shell == null || !shell.isDisposed()))
+				if (preferencePages.length > 0 && (shell == null || !shell.isDisposed())) {
 					PreferencesUtil.createPreferenceDialogOn(shell, preferencePages[0], preferencePages, null).open();
+				}
 			}
 
 		};
@@ -1308,22 +1348,25 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			@Override
 			public void run() {
 				String[] preferencePages= collectContextMenuPreferencePages();
-				if (preferencePages.length > 0 && (shell == null || !shell.isDisposed()))
+				if (preferencePages.length > 0 && (shell == null || !shell.isDisposed())) {
 					PreferencesUtil.createPreferenceDialogOn(shell, preferencePages[0], preferencePages, null).open();
+				}
 			}
 		};
 		setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action);
 
 		IAction showWhitespaceCharactersAction= getAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS);
-		if (showWhitespaceCharactersAction instanceof ShowWhitespaceCharactersAction act)
+		if (showWhitespaceCharactersAction instanceof ShowWhitespaceCharactersAction act) {
 			act.setPreferenceStore(EditorsUI.getPreferenceStore());
+		}
 
 		setAction(ITextEditorActionConstants.REFRESH, new RefreshEditorAction(this));
 		markAsPropertyDependentAction(ITextEditorActionConstants.REFRESH, true);
 
 		// Override print action to provide additional options
-		if (getAction(ITextEditorActionConstants.PRINT).isEnabled() && getSourceViewer() instanceof ITextViewerExtension8)
+		if (getAction(ITextEditorActionConstants.PRINT).isEnabled() && getSourceViewer() instanceof ITextViewerExtension8) {
 			createPrintAction();
+		}
 
 		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ShowChangeRulerInformation.", IAction.AS_PUSH_BUTTON) { //$NON-NLS-1$
 			@Override
@@ -1352,8 +1395,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	private void showChangeRulerInformation() {
 		IVerticalRuler ruler= getVerticalRuler();
-		if (!(ruler instanceof CompositeRuler compositeRuler) || fLineColumn == null)
+		if (!(ruler instanceof CompositeRuler compositeRuler) || fLineColumn == null) {
 			return;
+		}
 
 		// fake a mouse move (some hovers rely on this to determine the hovered line):
 		int x= fLineColumn.getControl().getLocation().x;
@@ -1395,16 +1439,19 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.6
 	 */
 	private void showFocusedRulerHover(IAnnotationHover hover, ISourceViewer sourceViewer, int caretOffset) {
-		if (hover == null)
+		if (hover == null) {
 			return;
+		}
 
 		int modelCaretOffset= widgetOffset2ModelOffset(sourceViewer, caretOffset);
-		if (modelCaretOffset == -1)
+		if (modelCaretOffset == -1) {
 			return;
+		}
 
 		IDocument document= sourceViewer.getDocument();
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		try {
 			int line= document.getLineOfOffset(modelCaretOffset);
@@ -1442,8 +1489,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 					// Compute line number labels
 					options.lineLabels= new String[viewer.getTextWidget().getLineCount()];
-					for (int i= 0; i < options.lineLabels.length; i++)
+					for (int i= 0; i < options.lineLabels.length; i++) {
 						options.lineLabels[i]= String.valueOf(JFaceTextUtil.widgetLine2ModelLine(viewer, i) + 1);
+					}
 				}
 
 				((ITextViewerExtension8)viewer).print(options);
@@ -1458,32 +1506,38 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (IGotoMarker.class.equals(adapter))
+		if (IGotoMarker.class.equals(adapter)) {
 			return (T) fGotoMarkerAdapter;
+		}
 
-		if (IAnnotationAccess.class.equals(adapter))
+		if (IAnnotationAccess.class.equals(adapter)) {
 			return (T) getAnnotationAccess();
+		}
 
 		if (adapter == IShowInSource.class) {
 			return (T) (IShowInSource) () -> {
 				ISelection selection= null;
 				ISelectionProvider selectionProvider= getSelectionProvider();
-				if (selectionProvider != null)
+				if (selectionProvider != null) {
 					selection= selectionProvider.getSelection();
+				}
 				return new ShowInContext(getEditorInput(), selection);
 			};
 		}
 
 		if (IRevisionRulerColumn.class.equals(adapter)) {
-			if (fLineNumberRulerColumn instanceof IRevisionRulerColumn)
+			if (fLineNumberRulerColumn instanceof IRevisionRulerColumn) {
 				return (T) fLineNumberRulerColumn;
+			}
 		}
 
-		if (MarkerAnnotationPreferences.class.equals(adapter))
+		if (MarkerAnnotationPreferences.class.equals(adapter)) {
 			return (T) EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
+		}
 
-		if (IShowInTargetList.class.equals(adapter))
+		if (IShowInTargetList.class.equals(adapter)) {
 			return (T) getShowInTargetList();
+		}
 
 		return super.getAdapter(adapter);
 
@@ -1507,8 +1561,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	@Override
 	public IDocumentProvider getDocumentProvider() {
 		IDocumentProvider provider= super.getDocumentProvider();
-		if (provider == null)
+		if (provider == null) {
 			return fImplicitDocumentProvider;
+		}
 		return provider;
 	}
 
@@ -1529,8 +1584,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		fIsDerivedStateValidated= false;
 		fIsEditingDerivedFileAllowed= true;
 
-		if (fLineColumn != null)
+		if (fLineColumn != null) {
 			fLineColumn.hideRevisionInformation();
+		}
 
 		super.doSetInput(input);
 
@@ -1547,8 +1603,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		IEditorInput input= getEditorInput();
 		if (provider != null && input != null) {
 			if (!isDirty() && input.getAdapter(IFile.class) != null) {
-				if (Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null))
+				if (Platform.getPreferencesService().getBoolean(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false, null)) {
 					return;
+				}
 			}
 		}
 		super.handleEditorInputChanged();
@@ -1578,8 +1635,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 			String path= dialog.open();
 			if (path == null) {
-				if (progressMonitor != null)
+				if (progressMonitor != null) {
 					progressMonitor.setCanceled(true);
+				}
 				return;
 			}
 
@@ -1614,19 +1672,21 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			}
 
 			IFile file= getWorkspaceFile(fileStore);
-			if (file != null)
+			if (file != null) {
 				newInput= new FileEditorInput(file);
-			else
+			} else {
 				newInput= new FileStoreEditorInput(fileStore);
+			}
 
 		} else {
 			SaveAsDialog dialog= new SaveAsDialog(shell);
 
 			IFile original= (input instanceof IFileEditorInput fileEditorInput) ? fileEditorInput.getFile() : null;
-			if (original != null)
+			if (original != null) {
 				dialog.setOriginalFile(original);
-			else
+			} else {
 				dialog.setOriginalName(input.getName());
+			}
 
 			dialog.create();
 
@@ -1637,15 +1697,17 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			}
 
 			if (dialog.open() == Window.CANCEL) {
-				if (progressMonitor != null)
+				if (progressMonitor != null) {
 					progressMonitor.setCanceled(true);
+				}
 				return;
 			}
 
 			IPath filePath= dialog.getResult();
 			if (filePath == null) {
-				if (progressMonitor != null)
+				if (progressMonitor != null) {
 					progressMonitor.setCanceled(true);
+				}
 				return;
 			}
 
@@ -1676,12 +1738,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			}
 		} finally {
 			provider.changed(newInput);
-			if (success)
+			if (success) {
 				setInput(newInput);
+			}
 		}
 
-		if (progressMonitor != null)
+		if (progressMonitor != null) {
 			progressMonitor.setCanceled(!success);
+		}
 	}
 
 	/**
@@ -1715,8 +1779,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			protected void createButtonsForButtonBar(Composite parent) {
 				super.createButtonsForButtonBar(parent);
 				createButton(parent, saveAsUTF8ButtonId, TextEditorMessages.AbstractDecoratedTextEditor_save_error_Dialog_button_saveAsUTF8, false);
-				if (charset != null)
+				if (charset != null) {
 					createButton(parent, selectUnmappableCharButtonId, TextEditorMessages.AbstractDecoratedTextEditor_save_error_Dialog_button_selectUnmappable, false);
+				}
 			}
 
 			@Override
@@ -1724,8 +1789,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				if (id == saveAsUTF8ButtonId || id == selectUnmappableCharButtonId) {
 					setReturnCode(id);
 					close();
-				} else
+				} else {
 					super.buttonPressed(id);
+				}
 			}
 
 			@Override
@@ -1778,8 +1844,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	private Charset getCharset() {
 		IEncodingSupport encodingSupport= getAdapter(IEncodingSupport.class);
-		if (encodingSupport == null)
+		if (encodingSupport == null) {
 			return null;
+		}
 		try {
 			return Charset.forName(encodingSupport.getEncoding());
 		} catch (UnsupportedCharsetException ex) {
@@ -1801,8 +1868,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	private IFile getWorkspaceFile(IFileStore fileStore) {
 		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
 		IFile[] files= workspaceRoot.findFilesForLocationURI(fileStore.toURI());
-		if (files != null && files.length == 1)
+		if (files != null && files.length == 1) {
 			return files[0];
+		}
 		return null;
 	}
 
@@ -1867,14 +1935,16 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		while (iter.hasNext()) {
 			annotation= iter.next();
 			Position p= model.getPosition(annotation);
-			if (p.getOffset() == selection.x && p.getLength() == selection.y)
+			if (p.getOffset() == selection.x && p.getLength() == selection.y) {
 				break;
+			}
 		}
 
 		if (annotation != null) {
 			AnnotationPreference ap= getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
-			if (ap != null)
+			if (ap != null) {
 				return ap.getPreferenceLabel();
+			}
 		}
 
 		return null;
@@ -1917,14 +1987,17 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				revertDeletion.update();
 
 				// only add block action if selection action is not enabled
-				if (revertSelection.isEnabled())
+				if (revertSelection.isEnabled()) {
 					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertSelection);
-				else if (revertBlock.isEnabled())
+				} else if (revertBlock.isEnabled()) {
 					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertBlock);
-				if (revertLine.isEnabled())
+				}
+				if (revertLine.isEnabled()) {
 					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertLine);
-				if (revertDeletion.isEnabled())
+				}
+				if (revertDeletion.isEnabled()) {
 					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertDeletion);
+				}
 			}
 		}
 
@@ -1957,12 +2030,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			revisionMenu.add(new Separator());
 
 			IAction action= getAction(ITextEditorActionConstants.REVISION_SHOW_AUTHOR_TOGGLE);
-			if (action instanceof IUpdate updateAction)
+			if (action instanceof IUpdate updateAction) {
 				updateAction.update();
+			}
 			revisionMenu.add(action);
 			action= getAction(ITextEditorActionConstants.REVISION_SHOW_ID_TOGGLE);
-			if (action instanceof IUpdate updateAction)
+			if (action instanceof IUpdate updateAction) {
 				updateAction.update();
+			}
 			revisionMenu.add(action);
 		}
 
@@ -1987,18 +2062,20 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		IPreferenceStore store= EditorsUI.getPreferenceStore();
 		final RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(store, AbstractTextEditor.PREFERENCE_RULER_CONTRIBUTIONS);
 		for (RulerColumnDescriptor descriptor : RulerColumnRegistry.getDefault().getColumnDescriptors()) {
-			if (!descriptor.isIncludedInMenu() || !support.isColumnSupported(descriptor))
+			if (!descriptor.isIncludedInMenu() || !support.isColumnSupported(descriptor)) {
 				continue;
+			}
 			final boolean isVisible= support.isColumnVisible(descriptor);
 			IAction action= new Action(MessageFormat.format(TextEditorMessages.AbstractDecoratedTextEditor_show_ruler_label, descriptor.getName()), IAction.AS_CHECK_BOX) {
 				@Override
 				public void run() {
-					if (descriptor.isGlobal())
+					if (descriptor.isGlobal()) {
 						// column state is modified via preference listener of AbstractTextEditor
 						adapter.setEnabled(descriptor, !isVisible);
-					else
+					} else { // directly modify column for this editor instance
 						// directly modify column for this editor instance
 						support.setColumnVisible(descriptor, !isVisible);
+					}
 				}
 			};
 			action.setChecked(isVisible);
@@ -2030,10 +2107,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		// toggle the preference if we are in sync.
 		IPreferenceStore store= EditorsUI.getPreferenceStore();
 		boolean current= store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON);
-		if (current == isChangeInformationShowing())
+		if (current == isChangeInformationShowing()) {
 			store.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, !current);
-		else
+		} else {
 			showChangeInformation(current);
+		}
 	}
 
 	@Override
@@ -2086,10 +2164,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		// Support for non-text editor - try IGotoMarker interface
 		final IGotoMarker gotoMarkerTarget;
-		if (editor instanceof IGotoMarker gotoMarker)
+		if (editor instanceof IGotoMarker gotoMarker) {
 			gotoMarkerTarget= gotoMarker;
-		else
+		} else {
 			gotoMarkerTarget= editor != null ? editor.getAdapter(IGotoMarker.class) : null;
+		}
 		if (gotoMarkerTarget != null && editor != null) {
 			final IEditorInput input= editor.getEditorInput();
 			if (input instanceof IFileEditorInput fileInput) {
@@ -2105,8 +2184,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 							gotoMarkerTarget.gotoMarker(marker);
 
 						} finally {
-							if (marker != null)
+							if (marker != null) {
 								marker.delete();
+							}
 						}
 					}
 				};
@@ -2133,11 +2213,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		String keyBinding= null;
 
 		IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
-		if (bindingService != null)
+		if (bindingService != null) {
 			keyBinding= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
+		}
 
-		if (keyBinding == null)
+		if (keyBinding == null) {
 			keyBinding= ""; //$NON-NLS-1$
+		}
 
 		return NLSUtility.format(TextEditorMessages.AbstractDecoratedTextEditor_showIn_menu, keyBinding);
 	}
@@ -2229,8 +2311,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	@Override
 	protected IOperationApprover getUndoRedoOperationApprover(IUndoContext undoContext) {
 		IEditorInput input= getEditorInput();
-		if (input != null && input.getAdapter(IResource.class) != null)
+		if (input != null && input.getAdapter(IResource.class) != null) {
 			return new NonLocalUndoUserApprover(undoContext, this, new Object [] { input }, IResource.class);
+		}
 		return super.getUndoRedoOperationApprover(undoContext);
 	}
 
@@ -2266,8 +2349,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	@Override
 	public Annotation gotoAnnotation(boolean forward) {
 		Annotation annotation= super.gotoAnnotation(forward);
-		if (annotation != null)
+		if (annotation != null) {
 			updateMarkerViews(annotation);
+		}
 		return annotation;
 	}
 
@@ -2288,8 +2372,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		}
 
 		IMarker marker= null;
-		if (annotation instanceof MarkerAnnotation markerAnnotation)
+		if (annotation instanceof MarkerAnnotation markerAnnotation) {
 			marker= markerAnnotation.getMarker();
+		}
 
 		if (marker != null) {
 			try {

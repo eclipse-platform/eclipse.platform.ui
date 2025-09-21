@@ -64,7 +64,7 @@ import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
  * shows the sticky lines that are set via {@link #setStickyLines(List)} on top of the source
  * viewer. The {@link IStickyLine#getLineNumber()} is linked to to corresponding line number in the
  * given source viewer, with index starting at 0.
- * 
+ *
  * As part of its responsibilities, the class handles layout arrangement and styling of the sticky
  * lines along with navigation to the respective sticky line.
  *
@@ -86,9 +86,9 @@ public class StickyScrollingControl {
 
 	private List<IStickyLine> stickyLines;
 
-	private ISourceViewer sourceViewer;
+	private final ISourceViewer sourceViewer;
 
-	private IVerticalRuler verticalRuler;
+	private final IVerticalRuler verticalRuler;
 
 	private StickyScrollingControlSettings settings;
 
@@ -106,7 +106,7 @@ public class StickyScrollingControl {
 
 	private Composite bottomSeparator;
 
-	private StickyScrollingHandler stickyScrollingHandler;
+	private final StickyScrollingHandler stickyScrollingHandler;
 
 	private int maximumVisibleStickyLines= Integer.MAX_VALUE;
 
@@ -129,7 +129,7 @@ public class StickyScrollingControl {
 	/**
 	 * Sets the sticky lines to show. The line numbers are linked to the line number in the
 	 * corresponding source viewer, starting with index 0.
-	 * 
+	 *
 	 * @param stickyLines The sticky lines to show
 	 */
 	public void setStickyLines(List<IStickyLine> stickyLines) {
@@ -435,7 +435,7 @@ public class StickyScrollingControl {
 	 * Checks if the sticky lines are out dated. Specifically, it verifies that the
 	 * line number of the last sticky line does not exceed the total line count of
 	 * the source viewer.
-	 * 
+	 *
 	 * This situation can occur, for example, when an editor is opened via the
 	 * search view and "reuse editor" is enabled. In such cases, the text in the
 	 * source viewer is replaced, but the out dated sticky lines associated with the

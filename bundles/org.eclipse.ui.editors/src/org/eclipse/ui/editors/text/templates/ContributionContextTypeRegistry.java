@@ -121,12 +121,14 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	 */
 	public void addContextType(String id) {
 		Assert.isNotNull(id);
-		if (getContextType(id) != null)
+		if (getContextType(id) != null) {
 			return;
+		}
 
 		TemplateContextType type= createContextType(id);
-		if (type != null)
+		if (type != null) {
 			addContextType(type);
+		}
 
 	}
 
@@ -195,8 +197,9 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 				if (contextTypeId.equals(declaredId)) {
 					try {
 						TemplateVariableResolver resolver = createResolver(extension);
-						if (resolver != null)
+						if (resolver != null) {
 							resolvers.add(resolver);
+						}
 					} catch (CoreException e) {
 						EditorsPlugin.log(e);
 					}
@@ -217,13 +220,16 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 		try {
 			TemplateContextType contextType= (TemplateContextType) element.createExecutableExtension(CLASS);
 			String name= element.getAttribute(NAME);
-			if (name == null)
+			if (name == null) {
 				name= id;
+			}
 
-			if (contextType.getId() == null)
+			if (contextType.getId() == null) {
 				contextType.setId(id);
-			if (contextType.getName() == null)
+			}
+			if (contextType.getName() == null) {
 				contextType.setName(name);
+			}
 
 			return contextType;
 		} catch (ClassCastException e) {

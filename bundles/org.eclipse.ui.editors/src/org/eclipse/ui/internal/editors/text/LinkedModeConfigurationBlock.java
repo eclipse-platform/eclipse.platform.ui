@@ -140,9 +140,9 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	private ComboViewer fDecorationViewer;
 	private FontMetrics fFontMetrics;
 	protected static final int INDENT= 20;
-	private OverlayPreferenceStore fStore;
+	private final OverlayPreferenceStore fStore;
 
-	private ArrayList<SelectionListener> fMasterSlaveListeners= new ArrayList<>();
+	private final ArrayList<SelectionListener> fMasterSlaveListeners= new ArrayList<>();
 
 	private OverlayPreferenceStore getPreferenceStore() {
 		return fStore;
@@ -203,14 +203,18 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 
 	private List<String[]> getStyles(Object type) {
-		if (type.equals(MASTER))
+		if (type.equals(MASTER)) {
 			return Arrays.asList(BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES);
-		if (type.equals(SLAVE))
+		}
+		if (type.equals(SLAVE)) {
 			return Arrays.asList(BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES);
-		if (type.equals(TARGET))
+		}
+		if (type.equals(TARGET)) {
 			return Arrays.asList(BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES);
-		if (type.equals(EXIT))
+		}
+		if (type.equals(EXIT)) {
 			return Arrays.asList(new String[][] { IBEAM });
+		}
 		return new ArrayList<>();
 	}
 
@@ -310,10 +314,11 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 				if (value) {
 					// enable whatever is in the combo
 					String[] decoration= (String[]) fDecorationViewer.getStructuredSelection().getFirstElement();
-					if (Arrays.equals(HIGHLIGHT, decoration))
+					if (Arrays.equals(HIGHLIGHT, decoration)) {
 						getPreferenceStore().setValue(item.highlightKey, true);
-					else
+					} else {
 						getPreferenceStore().setValue(item.textKey, true);
+					}
 				} else {
 					// disable both
 					getPreferenceStore().setValue(item.textKey, false);
@@ -376,8 +381,9 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	 */
 	protected int convertWidthInCharsToPixels(int chars) {
 		// test for failure to initialize for backward compatibility
-		if (fFontMetrics == null)
+		if (fFontMetrics == null) {
 			return 0;
+		}
 		return Dialog.convertWidthInCharsToPixels(fFontMetrics, chars);
 	}
 
@@ -395,8 +401,9 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	 */
 	protected int convertHeightInCharsToPixels(int chars) {
 		// test for failure to initialize for backward compatibility
-		if (fFontMetrics == null)
+		if (fFontMetrics == null) {
 			return 0;
+		}
 		return Dialog.convertHeightInCharsToPixels(fFontMetrics, chars);
 	}
 
@@ -459,8 +466,9 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 			list.addAll(item.validStyles);
 
-			if (getPreferenceStore().getBoolean(item.highlightKey))
+			if (getPreferenceStore().getBoolean(item.highlightKey)) {
 				selection= HIGHLIGHT;
+			}
 
 			// set selection
 			if (selection == null) {
@@ -474,8 +482,9 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 
 			fDecorationViewer.setInput(list.toArray(new Object[list.size()]));
-			if (selection == null)
+			if (selection == null) {
 				selection= list.get(0);
+			}
 			fDecorationViewer.setSelection(new StructuredSelection((Object) selection), true);
 		}
 	}

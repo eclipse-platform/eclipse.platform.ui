@@ -89,16 +89,18 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 	 */
 	public static void initDefaults(IPreferenceStore store) {
 
-		if (fgInitialized)
+		if (fgInitialized) {
 			return;
+		}
 
 		fgInitialized= true;
 
 		Font font= JFaceResources.getTextFont();
 		if (font != null) {
 			FontData[] data= font.getFontData();
-			if (data != null && data.length > 0)
+			if (data != null && data.length > 0) {
 				PreferenceConverter.setDefault(store, JFaceResources.TEXT_FONT, data[0]);
+			}
 		}
 
 		Display display= Display.getDefault();

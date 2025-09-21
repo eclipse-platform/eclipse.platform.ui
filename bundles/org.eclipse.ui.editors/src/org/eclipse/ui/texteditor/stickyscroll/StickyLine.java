@@ -22,7 +22,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 /**
  * Default implementation of {@link IStickyLine}. Information about the text and
  * style ranges are calculated from the given text widget.
- * 
+ *
  * @since 3.20
  */
 public class StickyLine implements IStickyLine {

@@ -53,18 +53,19 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 			IResourceDelta delta= e.getDelta();
 			if (delta != null && fResource != null) {
 				IResourceDelta child= delta.findMember(fResource.getFullPath());
-				if (child != null)
+				if (child != null) {
 					update(child.getMarkerDeltas());
+				}
 			}
 		}
 	}
 
 	/** The workspace. */
-	private IWorkspace fWorkspace;
+	private final IWorkspace fWorkspace;
 	/** The resource. */
-	private IResource fResource;
+	private final IResource fResource;
 	/** The resource change listener. */
-	private IResourceChangeListener fResourceChangeListener= new ResourceChangeListener();
+	private final IResourceChangeListener fResourceChangeListener= new ResourceChangeListener();
 
 
 	/**
@@ -92,8 +93,9 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	@SuppressWarnings("incomplete-switch")
 	protected void update(IMarkerDelta[] markerDeltas) {
 
-		if (markerDeltas.length ==  0)
+		if (markerDeltas.length ==  0) {
 			return;
+		}
 
 		if (markerDeltas.length == 1) {
 			IMarkerDelta delta= markerDeltas[0];
@@ -108,8 +110,9 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 					modifyMarkerAnnotation(delta.getMarker());
 					break;
 			}
-		} else
+		} else {
 			batchedUpdate(markerDeltas);
+		}
 
 		fireModelChanged();
 	}
@@ -138,8 +141,9 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 				}
 		}
 
-		if (modifiedMarkers.isEmpty() && removedMarkers.isEmpty())
+		if (modifiedMarkers.isEmpty() && removedMarkers.isEmpty()) {
 			return;
+		}
 
 		Iterator<Annotation> e= getAnnotationIterator(false);
 		while (e.hasNext()) {
@@ -147,8 +151,9 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 			if (o instanceof MarkerAnnotation a) {
 				IMarker marker= a.getMarker();
 
-				if (removedMarkers.remove(marker))
+				if (removedMarkers.remove(marker)) {
 					removeAnnotation(a, false);
+				}
 
 				if (modifiedMarkers.remove(marker)) {
 					Position p= createPositionFromMarker(marker);
@@ -158,23 +163,26 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 					}
 				}
 
-				if (modifiedMarkers.isEmpty() && removedMarkers.isEmpty())
+				if (modifiedMarkers.isEmpty() && removedMarkers.isEmpty()) {
 					return;
+				}
 
 			}
 		}
 
 		Iterator<IMarker> iter= modifiedMarkers.iterator();
-		while (iter.hasNext())
+		while (iter.hasNext()) {
 			addMarkerAnnotation(iter.next());
+		}
 	}
 
 	@Override
 	protected void listenToMarkerChanges(boolean listen) {
-		if (listen)
+		if (listen) {
 			fWorkspace.addResourceChangeListener(fResourceChangeListener);
-		else
+		} else {
 			fWorkspace.removeResourceChangeListener(fResourceChangeListener);
+		}
 	}
 
 	@Override

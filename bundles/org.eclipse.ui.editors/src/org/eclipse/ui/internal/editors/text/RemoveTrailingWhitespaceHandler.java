@@ -62,8 +62,9 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 	protected IFile[] collectFiles(IResource[] resources) {
 		IFile[] files= super.collectFiles(resources);
 		files= filterUnacceptableFiles(files);
-		if (containsOnlyFiles(resources))
+		if (containsOnlyFiles(resources)) {
 			return files;
+		}
 
 		final IFilter filter= resource -> resource != null && isAcceptableLocation(resource.getFullPath());
 
@@ -87,8 +88,9 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 	 */
 	private boolean containsOnlyFiles(IResource[] resources) {
 		for (IResource resource : resources) {
-			if ((IResource.FILE & resource.getType()) == 0)
+			if ((IResource.FILE & resource.getType()) == 0) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -103,8 +105,9 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 	private IFile[] filterUnacceptableFiles(IFile[] files) {
 		Set<IFile> filtered= new HashSet<>();
 		for (IFile file : files) {
-			if (isAcceptableLocation(file.getFullPath()))
+			if (isAcceptableLocation(file.getFullPath())) {
 				filtered.add(file);
+			}
 		}
 		return filtered.toArray(new IFile[filtered.size()]);
 	}

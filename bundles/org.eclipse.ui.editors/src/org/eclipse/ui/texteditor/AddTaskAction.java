@@ -50,8 +50,9 @@ public class AddTaskAction extends AddMarkerAction {
 	public void run() {
 
 		IResource resource= getResource();
-		if (resource == null)
+		if (resource == null) {
 			return;
+		}
 		Map<String, Object> attributes= getInitialAttributes();
 
 		TaskPropertiesDialog dialog= new TaskPropertiesDialog(getTextEditor().getSite().getShell());

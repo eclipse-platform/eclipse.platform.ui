@@ -61,7 +61,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class FileBufferOperationHandler extends AbstractHandler {
 
-	private IFileBufferOperation fFileBufferOperation;
+	private final IFileBufferOperation fFileBufferOperation;
 	private IWorkbenchWindow fWindow;
 	private IResource[] fResources;
 	private IPath fLocation;
@@ -97,8 +97,9 @@ public class FileBufferOperationHandler extends AbstractHandler {
 	 */
 	protected final void computeSelectedResources() {
 
-		if (fResources != null || fLocation != null)
+		if (fResources != null || fLocation != null) {
 			return;
+		}
 
 		ISelection selection= getSelection();
 		if (selection instanceof IStructuredSelection structuredSelection) {
@@ -107,17 +108,19 @@ public class FileBufferOperationHandler extends AbstractHandler {
 			Iterator<?> e= structuredSelection.iterator();
 			while (e.hasNext()) {
 				Object element= e.next();
-				if (element instanceof IResource)
+				if (element instanceof IResource) {
 					resources.add(element);
-				else if (element instanceof IAdaptable adaptable) {
+				} else if (element instanceof IAdaptable adaptable) {
 					Object adapter= adaptable.getAdapter(IResource.class);
-					if (adapter instanceof IResource)
+					if (adapter instanceof IResource) {
 						resources.add(adapter);
+					}
 				}
 			}
 
-			if (!resources.isEmpty())
+			if (!resources.isEmpty()) {
 				fResources= resources.toArray(new IResource[resources.size()]);
+			}
 
 		} else if (selection instanceof ITextSelection) {
 			IWorkbenchWindow window= getWorkbenchWindow();
@@ -126,9 +129,9 @@ public class FileBufferOperationHandler extends AbstractHandler {
 				if (workbenchPart instanceof IEditorPart editorPart) {
 					IEditorInput input= editorPart.getEditorInput();
 					Object adapter= input.getAdapter(IResource.class);
-					if (adapter instanceof IResource resource)
+					if (adapter instanceof IResource resource) {
 						fResources= new IResource[] { resource };
-					else {
+					} else {
 						adapter= input.getAdapter(ILocationProvider.class);
 						if (adapter instanceof ILocationProvider provider) {
 							fLocation= provider.getPath(input);
@@ -146,8 +149,9 @@ public class FileBufferOperationHandler extends AbstractHandler {
 	 */
 	protected final ISelection getSelection() {
 		IWorkbenchWindow window= getWorkbenchWindow();
-		if (window != null)
+		if (window != null) {
 			return window.getSelectionService().getSelection();
+		}
 		return null;
 	}
 
@@ -157,8 +161,9 @@ public class FileBufferOperationHandler extends AbstractHandler {
 	 * @return the active workbench window or <code>null</code> if not available
 	 */
 	protected final IWorkbenchWindow getWorkbenchWindow() {
-		if (fWindow == null)
+		if (fWindow == null) {
 			fWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		}
 		return fWindow;
 	}
 
@@ -171,8 +176,9 @@ public class FileBufferOperationHandler extends AbstractHandler {
 	protected IFile[] collectFiles(IResource[] resources) {
 		Set<IResource> files= new HashSet<>();
 		for (IResource resource : resources) {
-			if ((IResource.FILE & resource.getType()) > 0)
+			if ((IResource.FILE & resource.getType()) > 0) {
 				files.add(resource);
+			}
 		}
 		return files.toArray(new IFile[files.size()]);
 	}
@@ -198,8 +204,9 @@ public class FileBufferOperationHandler extends AbstractHandler {
 					if (files != null) {
 						ticks-= 30;
 						locations= generateLocations(files, subMonitor.split(30));
-					} else
+					} else {
 						locations= new IPath[] { location };
+					}
 
 					if (locations != null && locations.length > 0) {
 						FileBufferOperationRunner runner= new FileBufferOperationRunner(FileBuffers.getTextFileBufferManager(), getShell());
@@ -243,8 +250,9 @@ public class FileBufferOperationHandler extends AbstractHandler {
 			Set<IPath> locations= new HashSet<>();
 			for (IFile file : files) {
 				IPath fullPath = file.getFullPath();
-				if (isAcceptableLocation(fullPath))
+				if (isAcceptableLocation(fullPath)) {
 					locations.add(fullPath);
+				}
 				progressMonitor.worked(1);
 			}
 			return locations.toArray(new IPath[locations.size()]);
@@ -271,10 +279,12 @@ public class FileBufferOperationHandler extends AbstractHandler {
 
 			if (fResources != null && fResources.length > 0) {
 				IFile[] files= collectFiles(fResources);
-				if (files != null && files.length > 0)
+				if (files != null && files.length > 0) {
 					doRun(files, null, fFileBufferOperation);
-			} else if (isAcceptableLocation(fLocation))
+				}
+			} else if (isAcceptableLocation(fLocation)) {
 				doRun(null, fLocation, fFileBufferOperation);
+			}
 
 			// Standard return value. DO NOT CHANGE.
 			return null;

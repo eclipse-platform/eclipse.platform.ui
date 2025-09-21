@@ -90,13 +90,15 @@ public final class AnnotationTypeLookup {
 	 */
 	public String getAnnotationType(String markerType, int markerSeverity) {
 		String annotationType= lookupAnnotationType(markerType, markerSeverity);
-		if (annotationType != null)
+		if (annotationType != null) {
 			return annotationType;
+		}
 		String[] superTypes= MarkerUtilities.getSuperTypes(markerType);
 		for (String superType : superTypes) {
 			annotationType = lookupAnnotationType(superType, markerSeverity);
-			if (annotationType != null)
+			if (annotationType != null) {
 				return annotationType;
+			}
 		}
 		return null;
 	}
@@ -110,13 +112,15 @@ public final class AnnotationTypeLookup {
 	 * @return the annotation type
 	 */
 	private String lookupAnnotationType(String markerType, int severity) {
-		if (fMapping == null)
+		if (fMapping == null) {
 			initializeMapping();
+		}
 
 		Object value= fMapping.get(markerType);
 
-		if (value instanceof String )
+		if (value instanceof String ) {
 			return (String) value;
+		}
 
 		if (value instanceof Map) {
 			@SuppressWarnings("unchecked")
@@ -180,8 +184,9 @@ public final class AnnotationTypeLookup {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (IConfigurationElement element : elements) {
 				AnnotationTypeMapping mapping = createMapping(element, typeAttributeName);
-				if (mapping != null)
+				if (mapping != null) {
 					annotationTypeMappings.add(mapping);
+				}
 			}
 		}
 	}
@@ -199,16 +204,21 @@ public final class AnnotationTypeLookup {
 		AnnotationTypeMapping mapping= new AnnotationTypeMapping();
 
 		String s= element.getAttribute(typeAttributeName);
-		if (s == null || s.trim().isEmpty()) return null;
+		if (s == null || s.trim().isEmpty()) {
+			return null;
+		}
 		mapping.fAnnotationType= s;
 
 		s= element.getAttribute("markerType");  //$NON-NLS-1$
-		if (s == null || s.trim().isEmpty()) return null;
+		if (s == null || s.trim().isEmpty()) {
+			return null;
+		}
 		mapping.fMarkerType= s;
 
 		s= element.getAttribute("markerSeverity");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			mapping.fMarkerSeverity= StringConverter.asInt(s, AnnotationTypeMapping.UNDEFINED);
+		}
 
 		return mapping;
 	}

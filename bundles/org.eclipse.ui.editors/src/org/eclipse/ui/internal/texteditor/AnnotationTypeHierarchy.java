@@ -34,7 +34,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 public final class AnnotationTypeHierarchy {
 
 	private Map<String, String> fTypeMap;
-	private Map<String, AnnotationType> fTypesCache= new HashMap<>();
+	private final Map<String, AnnotationType> fTypesCache= new HashMap<>();
 
 	public AnnotationTypeHierarchy() {
 	}
@@ -73,16 +73,19 @@ public final class AnnotationTypeHierarchy {
 	}
 
 	private void append(List<String> list, String string) {
-		if (string == null || string.trim().isEmpty())
+		if (string == null || string.trim().isEmpty()) {
 			return;
+		}
 
-		if (!list.contains(string))
+		if (!list.contains(string)) {
 			list.add(string);
+		}
 	}
 
 	private Map<String, String> getTypeMap() {
-		if (fTypeMap == null)
+		if (fTypeMap == null) {
 			fTypeMap= readTypes();
+		}
 		return fTypeMap;
 	}
 
@@ -94,12 +97,14 @@ public final class AnnotationTypeHierarchy {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (IConfigurationElement element : elements) {
 				String name= element.getAttribute("name");  //$NON-NLS-1$
-				if (name == null || name.trim().isEmpty())
+				if (name == null || name.trim().isEmpty()) {
 					continue;
+				}
 
 				String parent= element.getAttribute("super");  //$NON-NLS-1$
-				if (parent == null || parent.trim().isEmpty())
+				if (parent == null || parent.trim().isEmpty()) {
 					parent= ""; //$NON-NLS-1$
+				}
 
 				allTypes.put(name, parent);
 			}

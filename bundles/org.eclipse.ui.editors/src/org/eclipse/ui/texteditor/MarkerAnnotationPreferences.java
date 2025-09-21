@@ -64,30 +64,38 @@ public class MarkerAnnotationPreferences {
 		while (e.hasNext()) {
 			AnnotationPreference info= e.next();
 
-			if (ignoreAnnotationsPrefPage && info.isIncludeOnPreferencePage() && isComplete(info))
+			if (ignoreAnnotationsPrefPage && info.isIncludeOnPreferencePage() && isComplete(info)) {
 				continue;
+			}
 
 			if (ignoreQuickDiffPrefPage && (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffChange") //$NON-NLS-1$
 					|| (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffAddition")) //$NON-NLS-1$
 					|| (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffDeletion")) //$NON-NLS-1$
-				))
+				)) {
 				continue;
+			}
 
 			store.setDefault(info.getTextPreferenceKey(), info.getTextPreferenceValue());
 			store.setDefault(info.getOverviewRulerPreferenceKey(), info.getOverviewRulerPreferenceValue());
-			if (info.getVerticalRulerPreferenceKey() != null)
+			if (info.getVerticalRulerPreferenceKey() != null) {
 				store.setDefault(info.getVerticalRulerPreferenceKey(), info.getVerticalRulerPreferenceValue());
+			}
 			PreferenceConverter.setDefault(store, info.getColorPreferenceKey(), info.getColorPreferenceValue());
-			if (info.getShowInNextPrevDropdownToolbarActionKey() != null)
+			if (info.getShowInNextPrevDropdownToolbarActionKey() != null) {
 				store.setDefault(info.getShowInNextPrevDropdownToolbarActionKey(), info.isShowInNextPrevDropdownToolbarAction());
-			if (info.getIsGoToNextNavigationTargetKey() != null)
+			}
+			if (info.getIsGoToNextNavigationTargetKey() != null) {
 				store.setDefault(info.getIsGoToNextNavigationTargetKey(), info.isGoToNextNavigationTarget());
-			if (info.getIsGoToPreviousNavigationTargetKey() != null)
+			}
+			if (info.getIsGoToPreviousNavigationTargetKey() != null) {
 				store.setDefault(info.getIsGoToPreviousNavigationTargetKey(), info.isGoToPreviousNavigationTarget());
-			if (info.getHighlightPreferenceKey() != null)
+			}
+			if (info.getHighlightPreferenceKey() != null) {
 				store.setDefault(info.getHighlightPreferenceKey(), info.getHighlightPreferenceValue());
-			if (info.getTextStylePreferenceKey() != null)
+			}
+			if (info.getTextStylePreferenceKey() != null) {
 				store.setDefault(info.getTextStylePreferenceKey(), info.getTextStyleValue());
+			}
 		}
 	}
 
@@ -119,24 +127,31 @@ public class MarkerAnnotationPreferences {
 			AnnotationPreference info= e.next();
 
 			// Only reset annotations shown on Annotations preference page
-			if (!info.isIncludeOnPreferencePage() || !isComplete(info))
+			if (!info.isIncludeOnPreferencePage() || !isComplete(info)) {
 				continue;
+			}
 
 			store.setToDefault(info.getTextPreferenceKey());
 			store.setToDefault(info.getOverviewRulerPreferenceKey());
-			if (info.getVerticalRulerPreferenceKey() != null)
+			if (info.getVerticalRulerPreferenceKey() != null) {
 				store.setToDefault(info.getVerticalRulerPreferenceKey());
+			}
 			store.setToDefault(info.getColorPreferenceKey());
-			if (info.getShowInNextPrevDropdownToolbarActionKey() != null)
+			if (info.getShowInNextPrevDropdownToolbarActionKey() != null) {
 				store.setToDefault(info.getShowInNextPrevDropdownToolbarActionKey());
-			if (info.getIsGoToNextNavigationTargetKey() != null)
+			}
+			if (info.getIsGoToNextNavigationTargetKey() != null) {
 				store.setToDefault(info.getIsGoToNextNavigationTargetKey());
-			if (info.getIsGoToPreviousNavigationTargetKey() != null)
+			}
+			if (info.getIsGoToPreviousNavigationTargetKey() != null) {
 				store.setToDefault(info.getIsGoToPreviousNavigationTargetKey());
-			if (info.getHighlightPreferenceKey() != null)
+			}
+			if (info.getHighlightPreferenceKey() != null) {
 				store.setToDefault(info.getHighlightPreferenceKey());
-			if (info.getTextStylePreferenceKey() != null)
+			}
+			if (info.getTextStylePreferenceKey() != null) {
 				store.setToDefault(info.getTextStylePreferenceKey());
+			}
 		}
 	}
 
@@ -172,24 +187,31 @@ public class MarkerAnnotationPreferences {
 			if (!(info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffChange") //$NON-NLS-1$
 				|| (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffAddition")) //$NON-NLS-1$
 				|| (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffDeletion")) //$NON-NLS-1$
-			))
+			)) {
 				continue;
+			}
 
 			store.setToDefault(info.getTextPreferenceKey());
 			store.setToDefault(info.getOverviewRulerPreferenceKey());
-			if (info.getVerticalRulerPreferenceKey() != null)
+			if (info.getVerticalRulerPreferenceKey() != null) {
 				store.setToDefault(info.getVerticalRulerPreferenceKey());
+			}
 			store.setToDefault(info.getColorPreferenceKey());
-			if (info.getShowInNextPrevDropdownToolbarActionKey() != null)
+			if (info.getShowInNextPrevDropdownToolbarActionKey() != null) {
 				store.setToDefault(info.getShowInNextPrevDropdownToolbarActionKey());
-			if (info.getIsGoToNextNavigationTargetKey() != null)
+			}
+			if (info.getIsGoToNextNavigationTargetKey() != null) {
 				store.setToDefault(info.getIsGoToNextNavigationTargetKey());
-			if (info.getIsGoToPreviousNavigationTargetKey() != null)
+			}
+			if (info.getIsGoToPreviousNavigationTargetKey() != null) {
 				store.setToDefault(info.getIsGoToPreviousNavigationTargetKey());
-			if (info.getHighlightPreferenceKey() != null)
+			}
+			if (info.getHighlightPreferenceKey() != null) {
 				store.setToDefault(info.getHighlightPreferenceKey());
-			if (info.getTextStylePreferenceKey() != null)
+			}
+			if (info.getTextStylePreferenceKey() != null) {
 				store.setToDefault(info.getTextStylePreferenceKey());
+			}
 		}
 	}
 
@@ -230,8 +252,9 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.2
 	 */
 	private MarkerAnnotationPreferences(boolean initFromPreferences) {
-		if (initFromPreferences)
+		if (initFromPreferences) {
 			initializeSharedMakerAnnotationPreferences();
+		}
 	}
 
 	/**
@@ -240,8 +263,9 @@ public class MarkerAnnotationPreferences {
 	 * @return all extensions provided for the <code>markerAnnotationSpecification</code> extension point
 	 */
 	public List<AnnotationPreference> getAnnotationPreferences() {
-		if (fPreferences == null)
+		if (fPreferences == null) {
 			initialize();
+		}
 		return fPreferences;
 	}
 
@@ -255,15 +279,17 @@ public class MarkerAnnotationPreferences {
 	 *         extension point including fragments
 	 */
 	public List<AnnotationPreference> getAnnotationPreferenceFragments() {
-		if (fFragments == null)
+		if (fFragments == null) {
 			initialize();
+		}
 		return fFragments;
 	}
 
 	private void initialize() {
 		synchronized (EditorsPlugin.getDefault()) {
-			if (!EditorsPlugin.getDefault().isMarkerAnnotationPreferencesInitialized())
+			if (!EditorsPlugin.getDefault().isMarkerAnnotationPreferencesInitialized()) {
 				EditorsPlugin.getDefault().setMarkerAnnotationPreferences(new MarkerAnnotationPreferences(true));
+			}
 		}
 
 		MarkerAnnotationPreferences sharedPrefs= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
@@ -288,10 +314,12 @@ public class MarkerAnnotationPreferences {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (IConfigurationElement element : elements) {
 				AnnotationPreference spec = createSpec(element);
-				if (spec != null)
+				if (spec != null) {
 					fFragments.add(spec);
-				if (isComplete(spec))
+				}
+				if (isComplete(spec)) {
 					fPreferences.add(spec);
+				}
 			}
 		}
 	}
@@ -304,12 +332,14 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.1
 	 */
 	private List<AnnotationPreference> cloneAnnotationPreferences(List<AnnotationPreference> annotationPreferences) {
-		if (annotationPreferences == null)
+		if (annotationPreferences == null) {
 			return null;
+		}
 		List<AnnotationPreference> clone= new ArrayList<>(annotationPreferences.size());
 		Iterator<AnnotationPreference> iter= annotationPreferences.iterator();
-		while (iter.hasNext())
+		while (iter.hasNext()) {
 			clone.add(clone(iter.next()));
+		}
 		return clone;
 	}
 
@@ -321,8 +351,9 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.1
 	 */
 	private AnnotationPreference clone(AnnotationPreference annotationPreference) {
-		if (annotationPreference == null)
+		if (annotationPreference == null) {
 			return null;
+		}
 
 		AnnotationPreference clone= new AnnotationPreference();
 		if (annotationPreference.getAnnotationType() != null) {
@@ -364,16 +395,20 @@ public class MarkerAnnotationPreferences {
 		ReadOnlyAnnotationPreference info= new ReadOnlyAnnotationPreference();
 
 		s= element.getAttribute("annotationType");  //$NON-NLS-1$
-		if (s == null || s.trim().isEmpty()) return null;
+		if (s == null || s.trim().isEmpty()) {
+			return null;
+		}
 		info.setAnnotationType(s);
 
 		s= element.getAttribute("label");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setPreferenceLabel(s);
+		}
 
 		s= element.getAttribute("markerType");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setMarkerType(s);
+		}
 
 		s= element.getAttribute("markerSeverity");  //$NON-NLS-1$
 		if (s != null && !s.trim().isEmpty()) {
@@ -382,8 +417,9 @@ public class MarkerAnnotationPreferences {
 		}
 
 		s= element.getAttribute("textPreferenceKey");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setTextPreferenceKey(s);
+		}
 
 		s= element.getAttribute("textPreferenceValue");  //$NON-NLS-1$
 		if (s != null && !s.trim().isEmpty()) {
@@ -392,8 +428,9 @@ public class MarkerAnnotationPreferences {
 		}
 
 		s= element.getAttribute("highlightPreferenceKey");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setHighlightPreferenceKey(s);
+		}
 
 		s= element.getAttribute("highlightPreferenceValue");  //$NON-NLS-1$
 		if (s != null && !s.trim().isEmpty()) {
@@ -402,8 +439,9 @@ public class MarkerAnnotationPreferences {
 		}
 
 		s= element.getAttribute("overviewRulerPreferenceKey");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setOverviewRulerPreferenceKey(s);
+		}
 
 		s= element.getAttribute("overviewRulerPreferenceValue");  //$NON-NLS-1$
 		if (s != null && !s.trim().isEmpty()) {
@@ -412,8 +450,9 @@ public class MarkerAnnotationPreferences {
 		}
 
 		s= element.getAttribute("verticalRulerPreferenceKey");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setVerticalRulerPreferenceKey(s);
+		}
 
 		s= element.getAttribute("verticalRulerPreferenceValue");  //$NON-NLS-1$
 		if (s != null && !s.trim().isEmpty()) {
@@ -422,8 +461,9 @@ public class MarkerAnnotationPreferences {
 		}
 
 		s= element.getAttribute("colorPreferenceKey");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setColorPreferenceKey(s);
+		}
 
 		s= element.getAttribute("colorPreferenceValue");  //$NON-NLS-1$
 		if (s != null && !s.trim().isEmpty()) {
@@ -444,8 +484,9 @@ public class MarkerAnnotationPreferences {
 		}
 
 		s= element.getAttribute("showInNextPrevDropdownToolbarActionKey");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setShowInNextPrevDropdownToolbarActionKey(s);
+		}
 
 		s= element.getAttribute("showInNextPrevDropdownToolbarAction");  //$NON-NLS-1$
 		if (s != null && !s.trim().isEmpty()) {
@@ -454,8 +495,9 @@ public class MarkerAnnotationPreferences {
 		}
 
 		s= element.getAttribute("isGoToNextNavigationTargetKey");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setIsGoToNextNavigationTargetKey(s);
+		}
 
 		s= element.getAttribute("isGoToNextNavigationTarget");  //$NON-NLS-1$
 		if (s != null && !s.trim().isEmpty()) {
@@ -464,8 +506,9 @@ public class MarkerAnnotationPreferences {
 		}
 
 		s= element.getAttribute("isGoToPreviousNavigationTargetKey");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setIsGoToPreviousNavigationTargetKey(s);
+		}
 
 		s= element.getAttribute("isGoToPreviousNavigationTarget");  //$NON-NLS-1$
 		if (s != null && !s.trim().isEmpty()) {
@@ -474,24 +517,29 @@ public class MarkerAnnotationPreferences {
 		}
 
 		s= element.getAttribute("symbolicIcon");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setSymbolicImageName(s);
+		}
 
 		s= element.getAttribute("icon");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setImageDescriptor(getImageDescriptor(s, element));
+		}
 
 		s= element.getAttribute("quickFixIcon");  //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setQuickFixImageDescriptor(getImageDescriptor(s, element));
+		}
 
 		s= element.getAttribute("annotationImageProvider"); //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setAnnotationImageProviderData(element, "annotationImageProvider"); //$NON-NLS-1$
+		}
 
 		s= element.getAttribute("textStylePreferenceKey"); //$NON-NLS-1$
-		if (s != null && !s.trim().isEmpty())
+		if (s != null && !s.trim().isEmpty()) {
 			info.setTextStylePreferenceKey(s);
+		}
 
 		s= element.getAttribute("textStylePreferenceValue");  //$NON-NLS-1$
 		if (s != null && !s.trim().isEmpty()) {
@@ -501,10 +549,11 @@ public class MarkerAnnotationPreferences {
 					|| AnnotationPreference.STYLE_IBEAM.equals(s)
 					|| AnnotationPreference.STYLE_SQUIGGLES.equals(s)
 					|| AnnotationPreference.STYLE_PROBLEM_UNDERLINE.equals(s)
-					|| AnnotationPreference.STYLE_UNDERLINE.equals(s))
+					|| AnnotationPreference.STYLE_UNDERLINE.equals(s)) {
 				info.setTextStyleValue(s);
-			else
+			} else {
 				info.setTextStyleValue(AnnotationPreference.STYLE_NONE);
+			}
 
 		}
 
@@ -528,12 +577,14 @@ public class MarkerAnnotationPreferences {
 	private ImageDescriptor getImageDescriptor(String iconPath, IConfigurationElement element) {
 		String pluginId= element.getContributor().getName();
 		Bundle bundle= Platform.getBundle(pluginId);
-		if (bundle == null)
+		if (bundle == null) {
 			return null;
+		}
 
 		URL url= FileLocator.find(bundle, IPath.fromOSString(iconPath), null);
-		if (url != null)
+		if (url != null) {
 			return ImageDescriptor.createFromURL(url);
+		}
 
 		return ImageDescriptor.getMissingImageDescriptor();
 	}

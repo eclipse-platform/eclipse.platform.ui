@@ -122,8 +122,9 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	protected String getStatusHeader(IStatus status) {
 		if (fEncodingSupport != null) {
 			String message= fEncodingSupport.getStatusHeader(status);
-			if (message != null)
+			if (message != null) {
 				return message;
+			}
 		}
 		return super.getStatusHeader(status);
 	}
@@ -132,8 +133,9 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	protected String getStatusBanner(IStatus status) {
 		if (fEncodingSupport != null) {
 			String message= fEncodingSupport.getStatusBanner(status);
-			if (message != null)
+			if (message != null) {
 				return message;
+			}
 		}
 		return super.getStatusBanner(status);
 	}
@@ -142,8 +144,9 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	protected String getStatusMessage(IStatus status) {
 		if (fEncodingSupport != null) {
 			String message= fEncodingSupport.getStatusMessage(status);
-			if (message != null)
+			if (message != null) {
 				return message;
+			}
 		}
 		return super.getStatusMessage(status);
 	}
@@ -151,23 +154,26 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	@Override
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
-		if (fEncodingSupport != null)
+		if (fEncodingSupport != null) {
 			fEncodingSupport.reset();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (IEncodingSupport.class.equals(adapter))
+		if (IEncodingSupport.class.equals(adapter)) {
 			return (T) fEncodingSupport;
+		}
 		return super.getAdapter(adapter);
 	}
 
 	@Override
 	protected void updatePropertyDependentActions() {
 		super.updatePropertyDependentActions();
-		if (fEncodingSupport != null)
+		if (fEncodingSupport != null) {
 			fEncodingSupport.reset();
+		}
 	}
 
 	@Override
@@ -175,19 +181,22 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		if (event.getProperty().equals(SpellingService.PREFERENCE_SPELLING_ENABLED)) {
 			ISourceViewer viewer= getSourceViewer();
 
-			if (!(viewer instanceof ISourceViewerExtension2))
+			if (!(viewer instanceof ISourceViewerExtension2)) {
 				return; // cannot unconfigure - do nothing
+			}
 
 			// XXX: this is pretty heavy-weight
 			((ISourceViewerExtension2)viewer).unconfigure();
 			viewer.configure(getSourceViewerConfiguration());
 
-			if (Boolean.FALSE.equals(event.getNewValue()))
+			if (Boolean.FALSE.equals(event.getNewValue())) {
 				SpellingProblem.removeAll(getSourceViewer(), null);
+			}
 
 			IAction quickAssistAction= getAction(ITextEditorActionConstants.QUICK_ASSIST);
-			if (quickAssistAction instanceof IUpdate)
+			if (quickAssistAction instanceof IUpdate) {
 				((IUpdate)quickAssistAction).update();
+			}
 
 			return;
 		}

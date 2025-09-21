@@ -55,7 +55,7 @@ import org.eclipse.ui.editors.text.FileBufferOperationAction;
  */
 public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 
-	private String fLabel;
+	private final String fLabel;
 	private boolean fStrictCheckIfTextLocation;
 
 	protected ConvertLineDelimitersAction(String lineDelimiter, String label) {
@@ -65,8 +65,9 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 	}
 
 	private static String constructLabel(String label, String lineDelimiter, String platformLineDelimiter) {
-		if (lineDelimiter.equals(platformLineDelimiter))
+		if (lineDelimiter.equals(platformLineDelimiter)) {
 			return label + TextEditorMessages.ConvertLineDelimitersAction_default_label;
+		}
 		return label;
 	}
 
@@ -136,8 +137,9 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 	 */
 	private boolean containsOnlyFiles(IResource[] resources) {
 		for (IResource resource : resources) {
-			if ((IResource.FILE & resource.getType()) == 0)
+			if ((IResource.FILE & resource.getType()) == 0) {
 				return false;
+			}
 		}
 		return true;
 	}

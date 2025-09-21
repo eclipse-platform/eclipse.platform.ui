@@ -22,7 +22,7 @@ import org.eclipse.ui.IEditorPart;
 /**
  * A sticky lines provider calculates the sticky lines for a given source
  * viewer. The sticky lines will be displayed in the top area of the editor.
- * 
+ *
  * @since 3.20
  */
 public interface IStickyLinesProvider {
@@ -31,7 +31,7 @@ public interface IStickyLinesProvider {
 	 * Calculate the sticky lines for the source code of the given sourceViewer. Specific
 	 * properties, such as the <code>tabWidht</code>, can be retrieved from the
 	 * <code>properties</code>.
-	 * 
+	 *
 	 * @param sourceViewer The source viewer containing the source code and gives access to the text
 	 *            widget
 	 * @param lineNumber The line number to calculate the sticky lines for
@@ -42,7 +42,7 @@ public interface IStickyLinesProvider {
 
 	/**
 	 * Additional properties and access in order to calculate the sticky lines.
-	 * 
+	 *
 	 * @param tabWith The with of a tab
 	 * @param editor The editor for which the sticky lines should be provided
 	 */

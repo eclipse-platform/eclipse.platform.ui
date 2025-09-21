@@ -115,8 +115,9 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 				EnumValue enumValue= fDomain.getValueByInteger(value);
 				if (enumValue != null) {
 					int index= fDomain.getIndex(enumValue);
-					if (index >= 0)
+					if (index >= 0) {
 						fControl.select(index);
+					}
 				}
 			}
 		}
@@ -138,11 +139,13 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 	abstract static class Domain {
 		public abstract IStatus validate(Object value);
 		protected int parseInteger(Object val) throws NumberFormatException {
-			if (val instanceof Integer)
+			if (val instanceof Integer) {
 				return ((Integer) val).intValue();
+			}
 
-			if (val instanceof String)
+			if (val instanceof String) {
 				return Integer.parseInt((String) val);
+			}
 
 			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(val)));
 		}
@@ -167,8 +170,9 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 			try {
 				int integer= parseInteger(value);
-				if (!rangeCheck(integer))
+				if (!rangeCheck(integer)) {
 					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(integer)));
+				}
 			} catch (NumberFormatException e) {
 					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value)));
 			}
@@ -215,8 +219,9 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		private final Set<EnumValue> fValueSet= new HashSet<>();
 
 		public void addValue(EnumValue val) {
-			if (fValueSet.contains(val))
+			if (fValueSet.contains(val)) {
 				fItems.remove(val);
+			}
 			fItems.add(val);
 			fValueSet.add(val);
 		}
@@ -224,23 +229,26 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		public int getIndex(EnumValue enumValue) {
 			int i= 0;
 			for (EnumValue ev : fItems) {
-				if (ev.equals(enumValue))
+				if (ev.equals(enumValue)) {
 					return i;
+				}
 				i++;
 			}
 			return -1;
 		}
 
 		public EnumValue getValueByIndex (int index) {
-			if (index >= 0 && fItems.size() > index)
+			if (index >= 0 && fItems.size() > index) {
 				return fItems.get(index);
+			}
 			return null;
 		}
 
 		public EnumValue getValueByInteger(int intValue) {
 			for (EnumValue e : fItems) {
-				if (e.getIntValue() == intValue)
+				if (e.getIntValue() == intValue) {
 					return e;
+				}
 			}
 			return null;
 		}
@@ -250,8 +258,9 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		}
 
 		public void addRange(int from, int to) {
-			while (from <= to)
+			while (from <= to) {
 				addValue(from++);
+			}
 		}
 
 		@Override
@@ -264,8 +273,9 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 			try {
 				EnumValue e= parseEnumValue(value);
-				if (!fValueSet.contains(e))
+				if (!fValueSet.contains(e)) {
 					status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidRange, new String[] {getValueByIndex(0).getLabel(), getValueByIndex(fItems.size() - 1).getLabel()}));
+				}
 			} catch (NumberFormatException e) {
 				status.setError(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value)));
 			}
@@ -274,8 +284,9 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		}
 
 		private EnumValue parseEnumValue(Object value) {
-			if (value instanceof EnumValue)
+			if (value instanceof EnumValue) {
 				return (EnumValue) value;
+			}
 			int integer= parseInteger(value);
 			return getValueByInteger(integer);
 		}
@@ -300,14 +311,17 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		}
 
 		private boolean parseBoolean(Object value) throws NumberFormatException {
-			if (value instanceof Boolean)
+			if (value instanceof Boolean) {
 				return ((Boolean) value).booleanValue();
+			}
 
 			if (value instanceof String) {
-				if (Boolean.TRUE.toString().equalsIgnoreCase((String) value))
+				if (Boolean.TRUE.toString().equalsIgnoreCase((String) value)) {
 					return true;
-				if (Boolean.FALSE.toString().equalsIgnoreCase((String) value))
+				}
+				if (Boolean.FALSE.toString().equalsIgnoreCase((String) value)) {
 					return false;
+				}
 			}
 
 			throw new NumberFormatException(NLSUtility.format(TextEditorMessages.TextEditorPreferencePage_invalidInput, String.valueOf(value)));
@@ -315,9 +329,9 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 	}
 
 	private static class Preference {
-		private String fKey;
-		private String fName;
-		private String fDescription; // for tooltips
+		private final String fKey;
+		private final String fName;
+		private final String fDescription; // for tooltips
 
 		public Preference(String key, String name, String description) {
 			Assert.isNotNull(key);
@@ -345,12 +359,12 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 	 */
 	private boolean fFieldsInitialized= false;
 
-	private java.util.List<Initializer> fInitializers= new ArrayList<>();
+	private final java.util.List<Initializer> fInitializers= new ArrayList<>();
 
-	private InitializerFactory fInitializerFactory= new InitializerFactory();
+	private final InitializerFactory fInitializerFactory= new InitializerFactory();
 
 	private Control fContents;
-	private ArrayList<SelectionListener> fMasterSlaveListeners= new ArrayList<>();
+	private final ArrayList<SelectionListener> fMasterSlaveListeners= new ArrayList<>();
 
 
 	public AccessibilityPreferencePage() {
@@ -497,8 +511,9 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 			public void widgetSelected(SelectionEvent e) {
 				boolean value= checkBox.getSelection();
 				IStatus status= domain.validate(Boolean.valueOf(value));
-				if (!status.matches(IStatus.ERROR))
+				if (!status.matches(IStatus.ERROR)) {
 					fOverlayStore.setValue(preference.getKey(), value);
+				}
 				updateStatus(status);
 			}
 		});
@@ -539,8 +554,9 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 	}
 
 	void updateStatus(IStatus status) {
-		if (!fFieldsInitialized)
+		if (!fFieldsInitialized) {
 			return;
+		}
 
 		setValid(!status.matches(IStatus.ERROR));
 		applyToStatusLine(this, status);

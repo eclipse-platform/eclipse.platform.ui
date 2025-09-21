@@ -28,8 +28,9 @@ public class URLHyperlinkDetector extends org.eclipse.jface.text.hyperlink.URLHy
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 		IHyperlink[] result= super.detectHyperlinks(textViewer, region, canShowMultipleHyperlinks);
-		if (result == null)
+		if (result == null) {
 			return null;
+		}
 
 		for (int i= 0; i < result.length; i++) {
 			org.eclipse.jface.text.hyperlink.URLHyperlink hyperlink= (org.eclipse.jface.text.hyperlink.URLHyperlink)result[i];
