@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
  */
 public class SimpleMarkerAnnotation extends Annotation {
 
-	private IMarker fMarker;
+	private final IMarker fMarker;
 
 	/**
 	 * Creates a new annotation for the given marker.
@@ -72,8 +72,9 @@ public class SimpleMarkerAnnotation extends Annotation {
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if (o != null && o.getClass() == getClass())
+		if (o != null && o.getClass() == getClass()) {
 			return fMarker.equals(((SimpleMarkerAnnotation) o).fMarker);
+		}
 		return false;
 	}
 
@@ -100,8 +101,9 @@ public class SimpleMarkerAnnotation extends Annotation {
 	 */
 	private void updateType() {
 		String annotationType= EditorsPlugin.getDefault().getAnnotationTypeLookup().getAnnotationType(fMarker);
-		if (annotationType != null && !annotationType.equals(getType()))
+		if (annotationType != null && !annotationType.equals(getType())) {
 			setType(annotationType);
+		}
 	}
 
 	@Override

@@ -73,13 +73,13 @@ public class AddMarkerAction extends TextEditorAction {
 	/** The maximum length of an proposed label. */
 	private static final int MAX_LABEL_LENGTH= 80;
 	/** The type for newly created markers. */
-	private String fMarkerType;
+	private final String fMarkerType;
 	/** Should the user be asked for a label? */
-	private boolean fAskForLabel;
+	private final boolean fAskForLabel;
 	/** The action's resource bundle. */
-	private ResourceBundle fBundle;
+	private final ResourceBundle fBundle;
 	/** The prefix used for resource bundle lookup. */
-	private String fPrefix;
+	private final String fPrefix;
 
 
 	/**
@@ -125,12 +125,14 @@ public class AddMarkerAction extends TextEditorAction {
 	@Override
 	public void run() {
 		IResource resource= getResource();
-		if (resource == null)
+		if (resource == null) {
 			return;
+		}
 		Map<String, Object> attributes= getInitialAttributes();
 		if (fAskForLabel) {
-			if (!askForLabel(attributes))
+			if (!askForLabel(attributes)) {
 				return;
+			}
 		}
 
 		String name= getToolTipText();
@@ -141,8 +143,9 @@ public class AddMarkerAction extends TextEditorAction {
 			@SuppressWarnings("unchecked")
 			@Override
 			public <T> T getAdapter(Class<T> adapter) {
-				if (adapter == Shell.class)
+				if (adapter == Shell.class) {
 					return (T) shell;
+				}
 				return null;
 			}
 		};
@@ -183,15 +186,18 @@ public class AddMarkerAction extends TextEditorAction {
 		InputDialog dialog= new InputDialog(getTextEditor().getSite().getShell(), title, message, proposal, inputValidator);
 
 		String label= null;
-		if (dialog.open() != Window.CANCEL)
+		if (dialog.open() != Window.CANCEL) {
 			label= dialog.getValue();
+		}
 
-		if (label == null)
+		if (label == null) {
 			return false;
+		}
 
 		label= label.trim();
-		if (label.isEmpty())
+		if (label.isEmpty()) {
 			return false;
+		}
 
 		attributes.put("message", label); //$NON-NLS-1$
 		return true;
@@ -255,10 +261,12 @@ public class AddMarkerAction extends TextEditorAction {
 				boolean skip= true;
 				while (i < length) {
 					boolean isWhitespace= Character.isWhitespace(document.getChar(offset + i));
-					if (!skip && isWhitespace)
+					if (!skip && isWhitespace) {
 						break;
-					if (skip && !isWhitespace)
+					}
+					if (skip && !isWhitespace) {
 						skip= false;
+					}
 					i++;
 				}
 
@@ -277,8 +285,9 @@ public class AddMarkerAction extends TextEditorAction {
 
 			while (left > limit) {
 				ch= document.getChar(left);
-				if (Character.isWhitespace(ch))
+				if (Character.isWhitespace(ch)) {
 					break;
+				}
 				--left;
 			}
 
@@ -287,13 +296,15 @@ public class AddMarkerAction extends TextEditorAction {
 			// Now get the first letter.
 			while (left <= limit) {
 				ch= document.getChar(left);
-				if (!Character.isWhitespace(ch))
+				if (!Character.isWhitespace(ch)) {
 					break;
+				}
 				++left;
 			}
 
-			if (left > limit)
+			if (left > limit) {
 				return null;
+			}
 
 			limit= Math.min(limit, left + MAX_LABEL_LENGTH);
 
@@ -301,8 +312,9 @@ public class AddMarkerAction extends TextEditorAction {
 			int right= (offset + length > limit ? limit : offset + length);
 			while (right < limit) {
 				ch= document.getChar(right);
-				if (Character.isWhitespace(ch))
+				if (Character.isWhitespace(ch)) {
 					break;
+				}
 				++right;
 			}
 

@@ -35,8 +35,9 @@ public class StatusUtil {
 	 * @return the more severe status
 	 */
 	public static IStatus getMoreSevere(IStatus s1, IStatus s2) {
-		if (s1.getSeverity() > s2.getSeverity())
+		if (s1.getSeverity() > s2.getSeverity()) {
 			return s1;
+		}
 
 		return s2;
 	}

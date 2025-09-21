@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
 abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 
-	private IPreferenceConfigurationBlock fConfigurationBlock;
+	private final IPreferenceConfigurationBlock fConfigurationBlock;
 	private OverlayPreferenceStore fOverlayStore;
 
 
@@ -83,8 +83,9 @@ abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage i
 	@Override
 	public boolean performOk() {
 
-		if (!fConfigurationBlock.canPerformOk())
+		if (!fConfigurationBlock.canPerformOk()) {
 			return false;
+		}
 
 		fConfigurationBlock.performOk();
 

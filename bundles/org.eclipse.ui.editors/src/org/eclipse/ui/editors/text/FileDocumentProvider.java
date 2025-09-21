@@ -98,7 +98,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * The scheduling rule factory.
 	 * @since 3.0
 	 */
-	private IResourceRuleFactory fResourceRuleFactory;
+	private final IResourceRuleFactory fResourceRuleFactory;
 
 	/**
 	 * Runnable encapsulating an element state change. This runnable ensures
@@ -110,7 +110,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected class SafeChange implements Runnable {
 
 		/** The input that changes. */
-		private IFileEditorInput fInput;
+		private final IFileEditorInput fInput;
 
 		/**
 		 * Creates a new safe runnable for the given input.
@@ -211,8 +211,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		public void resourceChanged(IResourceChangeEvent e) {
 			IResourceDelta delta= e.getDelta();
 			try {
-				if (delta != null && fIsInstalled)
+				if (delta != null && fIsInstalled) {
 					delta.accept(this);
+				}
 			} catch (CoreException x) {
 				handleCoreException(x, "FileDocumentProvider.resourceChanged"); //$NON-NLS-1$
 			}
@@ -220,21 +221,24 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
-			if (delta == null)
+			if (delta == null) {
 				return false;
+			}
 
 			delta= delta.findMember(getFile().getFullPath());
 
-			if (delta == null)
+			if (delta == null) {
 				return false;
+			}
 
 			Runnable runnable= null;
 
 			switch (delta.getKind()) {
 				case IResourceDelta.CHANGED:
 					FileInfo info= (FileInfo) getElementInfo(fFileEditorInput);
-					if (info == null || info.fCanBeSaved)
+					if (info == null || info.fCanBeSaved) {
 						break;
+					}
 
 					boolean isSynchronized= computeModificationStamp(getFile()) == info.fModificationStamp;
 					if ((IResourceDelta.ENCODING & delta.getFlags()) != 0 && isSynchronized) {
@@ -281,8 +285,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					break;
 			}
 
-			if (runnable != null)
+			if (runnable != null) {
 				update(runnable);
+			}
 
 			return false;
 		}
@@ -294,8 +299,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 */
 		protected void update(Runnable runnable) {
 
-			if (runnable instanceof SafeChange)
+			if (runnable instanceof SafeChange) {
 				fireElementStateChanging(fFileEditorInput);
+			}
 
 			IWorkbench workbench= PlatformUI.getWorkbench();
 			IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
@@ -375,10 +381,11 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				FileInfo info= (FileInfo)getElementInfo(editorInput);
 				boolean removeBOM= false;
 				if (StandardCharsets.UTF_8.name().equals(encoding)) {
-					if (info != null)
+					if (info != null) {
 						removeBOM= info.fBOM != null;
-					else
+					} else {
 						removeBOM= getBOM(editorInput) != null;
+					}
 				}
 
 				/*
@@ -390,8 +397,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					int n= 0;
 					do {
 						int bytes= contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
-						if (bytes == -1)
+						if (bytes == -1) {
 							throw new IOException();
+						}
 						n += bytes;
 					} while (n < IContentDescription.BOM_UTF_8.length);
 				}
@@ -410,8 +418,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput input) {
 			return new ResourceMarkerAnnotationModel(input.getFile());
 		}
 
@@ -445,8 +452,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		long modificationStamp= resource.getModificationStamp();
 
 		IPath path= resource.getLocation();
-		if (path == null)
+		if (path == null) {
 			return modificationStamp;
+		}
 
 		modificationStamp= path.toFile().lastModified();
 		return modificationStamp;
@@ -455,8 +463,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	@Override
 	public long getModificationStamp(Object element) {
 
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput input) {
 			return computeModificationStamp(input.getFile());
 		}
 
@@ -468,8 +475,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 		if (element instanceof IFileEditorInput) {
 			FileInfo info= (FileInfo) getElementInfo(element);
-			if (info != null)
+			if (info != null) {
 				return info.fModificationStamp;
+			}
 		}
 
 		return super.getSynchronizationStamp(element);
@@ -477,9 +485,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	protected void doSynchronize(Object element, IProgressMonitor monitor)  throws CoreException {
-		if (element instanceof IFileEditorInput) {
-
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput input) {
 
 			FileInfo info= (FileInfo) getElementInfo(element);
 			if (info != null) {
@@ -503,12 +509,11 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	@Override
 	public boolean isDeleted(Object element) {
 
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
-
+		if (element instanceof IFileEditorInput input) {
 			IPath path= input.getFile().getLocation();
-			if (path == null)
+			if (path == null) {
 				return true;
+			}
 
 			return !path.toFile().exists();
 		}
@@ -518,17 +523,17 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
-		if (element instanceof IFileEditorInput) {
+		if (element instanceof IFileEditorInput input) {
 
-			IFileEditorInput input= (IFileEditorInput) element;
 			String encoding= null;
 
 			FileInfo info= (FileInfo) getElementInfo(element);
 			IFile file= input.getFile();
 			encoding= getCharsetForNewFile(file, document, info);
 
-			if (info != null && info.fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16.name().equals(encoding))
+			if (info != null && info.fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16.name().equals(encoding)) {
 				encoding= StandardCharsets.UTF_16LE.name();
+			}
 
 			Charset charset;
 			try {
@@ -552,9 +557,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			try {
 				byte[] bytes;
 				ByteBuffer byteBuffer= encoder.encode(CharBuffer.wrap(document.get()));
-				if (byteBuffer.hasArray())
+				if (byteBuffer.hasArray()) {
 					bytes= byteBuffer.array();
-				else {
+				} else {
 					bytes= new byte[byteBuffer.limit()];
 					byteBuffer.get(bytes);
 				}
@@ -571,16 +576,19 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (info != null && info.fBOM == IContentDescription.BOM_UTF_8 && StandardCharsets.UTF_8.name().equals(encoding))
+			if (info != null && info.fBOM == IContentDescription.BOM_UTF_8 && StandardCharsets.UTF_8.name().equals(encoding)) {
 				stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_8), stream);
+			}
 
-			if (info != null && info.fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16LE.name().equals(encoding))
+			if (info != null && info.fBOM == IContentDescription.BOM_UTF_16LE && StandardCharsets.UTF_16LE.name().equals(encoding)) {
 				stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_16LE), stream);
+			}
 
 			if (file.exists()) {
 
-				if (info != null && !overwrite)
+				if (info != null && !overwrite) {
 					checkSynchronizationState(info.fModificationStamp, file);
+				}
 
 				// inform about the upcoming content change
 				fireElementStateChanging(element);
@@ -602,8 +610,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				if (info != null) {
 
 					ResourceMarkerAnnotationModel model= (ResourceMarkerAnnotationModel) info.fModel;
-					if (model != null)
+					if (model != null) {
 						model.updateMarkers(info.fDocument);
+					}
 
 					info.fModificationStamp= computeModificationStamp(file);
 				}
@@ -631,8 +640,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		} catch (CoreException ex) {
 			encoding= null;
 		}
-		if (encoding != null)
+		if (encoding != null) {
 			return encoding;
+		}
 
 		// Probe content
 		try (Reader reader= new DocumentReader(document)) {
@@ -640,16 +650,18 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, targetFile.getName(), options);
 			if (description != null) {
 				encoding= description.getCharset();
-				if (encoding != null)
+				if (encoding != null) {
 					return encoding;
+				}
 			}
 		} catch (IOException ex) {
 			// continue with next strategy
 		}
 
 		// Use file's encoding if the file has a BOM
-		if (info != null && info.fBOM != null)
+		if (info != null && info.fBOM != null) {
 			return info.fEncoding;
+		}
 
 		// Use parent chain
 		try {
@@ -662,9 +674,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	protected ElementInfo createElementInfo(Object element) throws CoreException {
-		if (element instanceof IFileEditorInput) {
-
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput input) {
 
 			// Note that file.isSynchronized does not require a scheduling rule and thus helps to identify a no-op attempt
 			// to refresh the file. The no-op will otherwise be blocked by a running build or cancel a running build
@@ -691,8 +701,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			// Set the initial line delimiter
 			if (d instanceof IDocumentExtension4) {
 				String initalLineDelimiter= getLineDelimiterPreference(input.getFile());
-				if (initalLineDelimiter != null)
+				if (initalLineDelimiter != null) {
 					((IDocumentExtension4)d).setInitialLineDelimiter(initalLineDelimiter);
+				}
 			}
 
 			IAnnotationModel m= createAnnotationModel(element);
@@ -732,8 +743,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			// project preference
 			scopeContext= new IScopeContext[] { new ProjectScope(file.getProject()) };
 			String lineDelimiter= Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
-			if (lineDelimiter != null)
+			if (lineDelimiter != null) {
 				return lineDelimiter;
+			}
 		}
 		// workspace preference
 		scopeContext= new IScopeContext[] { InstanceScope.INSTANCE };
@@ -742,10 +754,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	protected void disposeElementInfo(Object element, ElementInfo info) {
-		if (info instanceof FileInfo) {
-			FileInfo fileInfo= (FileInfo) info;
-			if (fileInfo.fFileSynchronizer != null)
+		if (info instanceof FileInfo fileInfo) {
+			if (fileInfo.fFileSynchronizer != null) {
 				fileInfo.fFileSynchronizer.uninstall();
+			}
 		}
 
 		super.disposeElementInfo(element, info);
@@ -759,8 +771,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	protected void handleElementContentChanged(IFileEditorInput fileEditorInput) {
 		FileInfo info= (FileInfo) getElementInfo(fileEditorInput);
-		if (info == null)
+		if (info == null) {
 			return;
+		}
 
 		IDocument document= createEmptyDocument();
 		IStatus status= null;
@@ -847,8 +860,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	@Override
 	protected void doValidateState(Object element, Object computationContext) throws CoreException {
 
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput input) {
 			FileInfo info= (FileInfo) getElementInfo(input);
 			if (info != null) {
 				IFile file= input.getFile();
@@ -858,10 +870,11 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				}
 				if (isDerived(file)) {
 					IStatus status= new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, EditorsUI.DERIVED_FILE, TextEditorMessages.FileDocumentProvider_warning_fileIsDerived, null);
-					if (info.fStatus == null || info.fStatus.isOK())
+					if (info.fStatus == null || info.fStatus.isOK()) {
 						info.fStatus= status;
-					else
+					} else {
 						info.fStatus= new MultiStatus(EditorsUI.PLUGIN_ID, EditorsUI.STATE_VALIDATION_FAILED, new IStatus[] {info.fStatus, status}, TextEditorMessages.FileDocumentProvider_stateValidationFailed, null);
+					}
 				}
 			}
 		}
@@ -876,8 +889,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	private boolean isDerived(IResource resource) {
 		while (resource != null) {
-			if (resource.isDerived())
+			if (resource.isDerived()) {
 				return true;
+			}
 			resource= resource.getParent();
 		}
 		return false;
@@ -886,16 +900,16 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	@Override
 	public boolean isModifiable(Object element) {
 		if (!isStateValidated(element)) {
-			if (element instanceof IFileEditorInput)
+			if (element instanceof IFileEditorInput) {
 				return true;
+			}
 		}
 		return super.isModifiable(element);
 	}
 
 	@Override
 	protected void doResetDocument(Object element, IProgressMonitor monitor) throws CoreException {
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput input) {
 			try {
 				refreshFile(input.getFile(), monitor);
 				cacheEncodingState(element);
@@ -907,8 +921,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		super.doResetDocument(element, monitor);
 
 		IAnnotationModel model= getAnnotationModel(element);
-		if (model instanceof AbstractMarkerAnnotationModel) {
-			AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
+		if (model instanceof AbstractMarkerAnnotationModel markerModel) {
 			markerModel.resetMarkers();
 		}
 	}
@@ -955,9 +968,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	public boolean isSynchronized(Object element) {
-		if (element instanceof IFileEditorInput) {
+		if (element instanceof IFileEditorInput input) {
 			if (getElementInfo(element) != null) {
-				IFileEditorInput input= (IFileEditorInput) element;
 				IResource resource= input.getFile();
 				return resource.isSynchronized(IResource.DEPTH_ZERO);
 			}
@@ -969,14 +981,17 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	@Override
 	public IContentType getContentType(Object element) throws CoreException {
 		IContentType contentType= null;
-		if (!canSaveDocument(element) && element instanceof IFileEditorInput)
+		if (!canSaveDocument(element) && element instanceof IFileEditorInput) {
 			contentType= getContentType((IFileEditorInput) element);
+		}
 
-		if (contentType == null)
+		if (contentType == null) {
 			contentType= super.getContentType(element);
+		}
 
-		if (contentType == null && element instanceof IFileEditorInput)
+		if (contentType == null && element instanceof IFileEditorInput) {
 			contentType= getContentType((IFileEditorInput) element);
+		}
 
 		return contentType;
 	}
@@ -993,8 +1008,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	private IContentType getContentType(IFileEditorInput input) throws CoreException {
 		IContentDescription desc= input.getFile().getContentDescription();
-		if (desc != null)
+		if (desc != null) {
 			return desc.getContentType();
+		}
 		return null;
 	}
 
@@ -1024,17 +1040,18 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	@Override
 	protected void persistEncoding(Object element, String encoding) throws CoreException {
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput editorInput= (IFileEditorInput)element;
+		if (element instanceof IFileEditorInput editorInput) {
 			IFile file= editorInput.getFile();
 			if (file != null) {
 				file.setCharset(encoding, getProgressMonitor());
 				StorageInfo info= (StorageInfo)getElementInfo(element);
 				if (info != null) {
-					if (encoding == null)
+					if (encoding == null) {
 						info.fEncoding= file.getCharset();
-					if (info instanceof FileInfo)
+					}
+					if (info instanceof FileInfo) {
 						((FileInfo)info).fBOM= getBOM(element);
+					}
 				}
 			}
 		}
@@ -1042,16 +1059,16 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
-		if (fOperationRunner == null)
+		if (fOperationRunner == null) {
 			fOperationRunner = new WorkspaceOperationRunner();
+		}
 		fOperationRunner.setProgressMonitor(monitor);
 		return fOperationRunner;
 	}
 
 	@Override
 	protected ISchedulingRule getResetRule(Object element) {
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput input) {
 			return fResourceRuleFactory.refreshRule(input.getFile());
 		}
 		return null;
@@ -1070,8 +1087,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		if (element instanceof IResource) {
 			return fResourceRuleFactory.refreshRule((IResource) element);
 		}
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput input) {
 			return fResourceRuleFactory.refreshRule(input.getFile());
 		}
 		return null;
@@ -1079,8 +1095,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	protected ISchedulingRule getSaveRule(Object element) {
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput input) {
 			return computeSchedulingRule(input.getFile());
 		}
 		return null;
@@ -1088,8 +1103,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	protected ISchedulingRule getSynchronizeRule(Object element) {
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput input) {
 			return fResourceRuleFactory.refreshRule(input.getFile());
 		}
 		return null;
@@ -1097,8 +1111,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	protected ISchedulingRule getValidateStateRule(Object element) {
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
+		if (element instanceof IFileEditorInput input) {
 			IFile file= input.getFile();
 			ISchedulingRule validateEditRule= fResourceRuleFactory.validateEditRule(new IResource[] { file });
 			if (validateEditRule == null) {
@@ -1128,8 +1141,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			if (file != null) {
 				try {
 					IContentDescription description= file.getContentDescription();
-					if (description != null)
+					if (description != null) {
 						return (byte[])description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+					}
 				} catch (CoreException ex) {
 					return null;
 				}
@@ -1164,16 +1178,17 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @since 3.1
 	 */
 	protected void cacheEncodingState(Object element) throws CoreException {
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput editorInput= (IFileEditorInput)element;
+		if (element instanceof IFileEditorInput editorInput) {
 			IFile file= editorInput.getFile();
 			if (file != null) {
 				ElementInfo info= getElementInfo(element);
-				if (info instanceof StorageInfo)
+				if (info instanceof StorageInfo) {
 					((StorageInfo)info).fEncoding= getPersistedEncoding(element);
+				}
 
-				if (info instanceof FileInfo)
+				if (info instanceof FileInfo) {
 					((FileInfo)info).fBOM= getBOM(element);
+				}
 			}
 		}
 	}
@@ -1189,8 +1204,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @return the minimal scheduling rule needed to modify or create a resource
 	 */
 	private ISchedulingRule computeSchedulingRule(IResource toCreateOrModify) {
-		if (toCreateOrModify.exists())
+		if (toCreateOrModify.exists()) {
 			return fResourceRuleFactory.modifyRule(toCreateOrModify);
+		}
 
 		IResource parent= toCreateOrModify;
 		do {

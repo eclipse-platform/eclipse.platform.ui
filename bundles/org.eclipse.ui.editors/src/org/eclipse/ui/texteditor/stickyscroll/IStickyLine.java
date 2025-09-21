@@ -17,28 +17,28 @@ import org.eclipse.swt.custom.StyleRange;
 
 /**
  * Representation of a sticky line.
- * 
+ *
  * @since 3.20
  */
 public interface IStickyLine {
 
 	/**
 	 * Returns the line number of the sticky line.
-	 * 
+	 *
 	 * @return the line number of the sticky line
 	 */
 	int getLineNumber();
 
 	/**
 	 * Returns the text of the sticky line.
-	 * 
+	 *
 	 * @return the text of the sticky line
 	 */
 	String getText();
 
 	/**
 	 * Returns the style ranges of the sticky line.
-	 * 
+	 *
 	 * @return the style ranges of the sticky line
 	 */
 	StyleRange[] getStyleRanges();

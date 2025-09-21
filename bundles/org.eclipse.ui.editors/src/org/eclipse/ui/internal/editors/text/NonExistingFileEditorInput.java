@@ -35,8 +35,8 @@ public class NonExistingFileEditorInput implements IEditorInput, ILocationProvid
 
 	private static int fgNonExisting= 0;
 
-	private IFileStore fFileStore;
-	private String fName;
+	private final IFileStore fFileStore;
+	private final String fName;
 
 	public NonExistingFileEditorInput(IFileStore fileStore, String namePrefix) {
 		Assert.isNotNull(fileStore);
@@ -74,15 +74,15 @@ public class NonExistingFileEditorInput implements IEditorInput, ILocationProvid
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (ILocationProvider.class.equals(adapter))
+		if (ILocationProvider.class.equals(adapter)) {
 			return (T) this;
+		}
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	@Override
 	public IPath getPath(Object element) {
-		if (element instanceof NonExistingFileEditorInput) {
-			NonExistingFileEditorInput input= (NonExistingFileEditorInput)element;
+		if (element instanceof NonExistingFileEditorInput input) {
 			return IPath.fromOSString(input.fFileStore.toURI().getPath());
 		}
 		return null;
@@ -90,11 +90,11 @@ public class NonExistingFileEditorInput implements IEditorInput, ILocationProvid
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == this)
+		if (o == this) {
 			return true;
+		}
 
-		if (o instanceof NonExistingFileEditorInput) {
-			NonExistingFileEditorInput input = (NonExistingFileEditorInput) o;
+		if (o instanceof NonExistingFileEditorInput input) {
 			return fFileStore.equals(input.fFileStore);
 		}
 

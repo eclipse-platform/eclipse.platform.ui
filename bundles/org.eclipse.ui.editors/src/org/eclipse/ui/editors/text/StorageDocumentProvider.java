@@ -262,10 +262,11 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
 		ILog log= ILog.of(bundle);
 
-		if (message != null)
+		if (message != null) {
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception));
-		else
+		} else {
 			log.log(exception.getStatus());
+		}
 	}
 
 	/**
@@ -313,11 +314,13 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	@Override
 	public boolean isNotSynchronizedException(Object element, CoreException ex) {
 		IStatus status= ex.getStatus();
-		if (status == null || status instanceof MultiStatus)
+		if (status == null || status instanceof MultiStatus) {
 			return false;
+		}
 
-		if (status.getException() != null)
+		if (status.getException() != null) {
 			return false;
+		}
 
 		return status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL;
 	}
@@ -344,8 +347,9 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	protected void doUpdateStateCache(Object element) throws CoreException {
 		if (element instanceof IStorageEditorInput) {
 			StorageInfo info= (StorageInfo) getElementInfo(element);
-			if (info != null)
+			if (info != null) {
 				info.fUpdateCache= true;
+			}
 		}
 		super.doUpdateStateCache(element);
 	}
@@ -359,8 +363,9 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	public String getEncoding(Object element) {
 		if (element instanceof IStorageEditorInput) {
 			StorageInfo info= (StorageInfo) getElementInfo(element);
-			if (info != null)
+			if (info != null) {
 				return info.fEncoding;
+			}
 			return getPersistedEncoding(element);
 		}
 		return null;
@@ -397,20 +402,23 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 						desc= Platform.getContentTypeManager().getDescriptionFor(stream, storage.getName(), NO_PROPERTIES);
 					}
 				}
-				if (desc != null && desc.getContentType() != null)
+				if (desc != null && desc.getContentType() != null) {
 					return desc.getContentType();
+				}
 			} catch (IOException x) {
 				IPath path= storage.getFullPath();
 				String name;
-				if (path != null)
+				if (path != null) {
 					name= path.toOSString();
-				else
+				} else {
 					name= storage.getName();
+				}
 				String message;
-				if (name != null)
+				if (name != null) {
 					message= NLSUtility.format(TextEditorMessages.StorageDocumentProvider_getContentDescriptionFor, name);
-				else
+				} else {
 					message= TextEditorMessages.StorageDocumentProvider_getContentDescription;
+				}
 				throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, x));
 			}
 		}
@@ -429,8 +437,9 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			IStorage storage;
 			try {
 				storage= ((IStorageEditorInput)element).getStorage();
-				if (storage instanceof IEncodedStorage)
+				if (storage instanceof IEncodedStorage) {
 					return ((IEncodedStorage)storage).getCharset();
+				}
 			} catch (CoreException e) {
 				return null;
 			}

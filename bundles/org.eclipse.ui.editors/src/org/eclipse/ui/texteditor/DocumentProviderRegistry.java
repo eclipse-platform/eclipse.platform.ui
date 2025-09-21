@@ -68,18 +68,19 @@ public class DocumentProviderRegistry {
 	 * @return the default document provider registry
 	 */
 	public static DocumentProviderRegistry getDefault() {
-		if (fgRegistry == null)
+		if (fgRegistry == null) {
 			fgRegistry= new DocumentProviderRegistry();
+		}
 		return fgRegistry;
 	}
 
 
 	/** The mapping between name extensions and configuration elements. */
-	private Map<String, Set<IConfigurationElement>> fExtensionMapping= new HashMap<>();
+	private final Map<String, Set<IConfigurationElement>> fExtensionMapping= new HashMap<>();
 	/** The mapping between editor input type names and configuration elements. */
-	private Map<String, Set<IConfigurationElement>> fInputTypeMapping= new HashMap<>();
+	private final Map<String, Set<IConfigurationElement>> fInputTypeMapping= new HashMap<>();
 	/** The mapping between configuration elements and instantiated document providers. */
-	private Map<IConfigurationElement, IDocumentProvider> fInstances= new HashMap<>();
+	private final Map<IConfigurationElement, IDocumentProvider> fInstances= new HashMap<>();
 
 
 	/**
@@ -272,8 +273,9 @@ public class DocumentProviderRegistry {
 		while (e.hasNext()) {
 			Class<?> c= e.next();
 			Set<IConfigurationElement> mapping= fInputTypeMapping.get(c.getName());
-			if (mapping != null)
+			if (mapping != null) {
 				return mapping;
+			}
 		}
 		return null;
 	}
@@ -288,17 +290,20 @@ public class DocumentProviderRegistry {
 	 */
 	private Set<IConfigurationElement> findInputTypeMapping(Class<?> type) {
 
-		if (type == null)
+		if (type == null) {
 			return null;
+		}
 
 		Set<IConfigurationElement> mapping= fInputTypeMapping.get(type.getName());
-		if (mapping != null)
+		if (mapping != null) {
 			return mapping;
+		}
 
 		List<Class<?>> classList= computeClassList(type);
 		mapping= getFirstInputTypeMapping(classList);
-		if (mapping != null)
+		if (mapping != null) {
 			return mapping;
+		}
 
 		return getFirstInputTypeMapping(computeInterfaceList(classList));
 	}

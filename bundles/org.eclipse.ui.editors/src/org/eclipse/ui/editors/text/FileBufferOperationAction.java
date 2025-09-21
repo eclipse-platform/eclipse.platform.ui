@@ -91,12 +91,13 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 			Iterator<?> e= structuredSelection.iterator();
 			while (e.hasNext()) {
 				Object element= e.next();
-				if (element instanceof IResource)
+				if (element instanceof IResource) {
 					fResources.add(element);
-				else if (element instanceof IAdaptable adaptable) {
+				} else if (element instanceof IAdaptable adaptable) {
 					Object adapter= adaptable.getAdapter(IResource.class);
-					if (adapter instanceof IResource)
+					if (adapter instanceof IResource) {
 						fResources.add(adapter);
+					}
 				}
 			}
 		}
@@ -108,9 +109,9 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 				if (workbenchPart instanceof IEditorPart editorPart) {
 					IEditorInput input= editorPart.getEditorInput();
 					Object adapter= input.getAdapter(IResource.class);
-					if (adapter instanceof IResource)
+					if (adapter instanceof IResource) {
 						fResources.add(adapter);
-					else {
+					} else {
 						adapter= input.getAdapter(ILocationProvider.class);
 						if (adapter instanceof ILocationProvider provider) {
 							fLocation= provider.getPath(input);
@@ -125,8 +126,9 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 	}
 
 	protected final IWorkbenchWindow getWorkbenchWindow() {
-		if (fWindow == null)
+		if (fWindow == null) {
 			fWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		}
 		return fWindow;
 	}
 
@@ -139,10 +141,12 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 	public void run(IAction action) {
 		if (fResources != null && !fResources.isEmpty()) {
 			IFile[] files= collectFiles(fResources.toArray(new IResource[fResources.size()]));
-			if (files != null && files.length > 0)
+			if (files != null && files.length > 0) {
 				doRun(files, null, fFileBufferOperation);
-		} else if (isAcceptableLocation(fLocation))
+			}
+		} else if (isAcceptableLocation(fLocation)) {
 			doRun(null, fLocation, fFileBufferOperation);
+		}
 	}
 
 	/**
@@ -155,8 +159,9 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 	protected IFile[] collectFiles(IResource[] resources) {
 		Set<IResource> files= new HashSet<>();
 		for (IResource resource : resources) {
-			if ((IResource.FILE & resource.getType()) > 0)
+			if ((IResource.FILE & resource.getType()) > 0) {
 				files.add(resource);
+			}
 		}
 		return files.toArray(new IFile[files.size()]);
 	}
@@ -175,8 +180,9 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 					if (files != null) {
 						ticks-= 30;
 						locations= generateLocations(files, subMonitor.split(30));
-					} else
+					} else {
 						locations= new IPath[] { location };
+					}
 
 					if (locations != null && locations.length > 0) {
 						FileBufferOperationRunner runner= new FileBufferOperationRunner(FileBuffers.getTextFileBufferManager(), getShell());
@@ -203,8 +209,9 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 			Set<IPath> locations= new HashSet<>();
 			for (IFile file : files) {
 				IPath fullPath = file.getFullPath();
-				if (isAcceptableLocation(fullPath))
+				if (isAcceptableLocation(fullPath)) {
 					locations.add(fullPath);
+				}
 				progressMonitor.worked(1);
 			}
 			return locations.toArray(new IPath[locations.size()]);

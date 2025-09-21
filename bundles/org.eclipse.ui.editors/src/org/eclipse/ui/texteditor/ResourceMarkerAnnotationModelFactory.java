@@ -33,8 +33,9 @@ public class ResourceMarkerAnnotationModelFactory implements IAnnotationModelFac
 	@Override
 	public IAnnotationModel createAnnotationModel(IPath location) {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
-		if (file != null)
+		if (file != null) {
 			return new ResourceMarkerAnnotationModel(file);
+		}
 		return new AnnotationModel();
 	}
 }

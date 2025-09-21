@@ -142,7 +142,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 
 
-	private OverlayPreferenceStore fStore;
+	private final OverlayPreferenceStore fStore;
 	private ColorSelector fAnnotationForegroundColorEditor;
 
 	private Button fShowInTextCheckBox;
@@ -174,15 +174,19 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			AnnotationPreference info= e.next();
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, info.getColorPreferenceKey()));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getTextPreferenceKey()));
-			if (info.getHighlightPreferenceKey() != null)
+			if (info.getHighlightPreferenceKey() != null) {
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getHighlightPreferenceKey()));
+			}
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getOverviewRulerPreferenceKey()));
-			if (info.getVerticalRulerPreferenceKey() != null)
+			if (info.getVerticalRulerPreferenceKey() != null) {
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getVerticalRulerPreferenceKey()));
-			if (info.getTextStylePreferenceKey() != null)
+			}
+			if (info.getTextStylePreferenceKey() != null) {
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, info.getTextStylePreferenceKey()));
-			if (info.getIsGoToNextNavigationTargetKey() != null)
+			}
+			if (info.getIsGoToNextNavigationTargetKey() != null) {
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getIsGoToNextNavigationTargetKey()));
+			}
 		}
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -309,16 +313,19 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 				if (value) {
 					// enable whatever is in the combo
 					String[] decoration= (String[]) fDecorationViewer.getStructuredSelection().getFirstElement();
-					if (Arrays.equals(HIGHLIGHT, decoration))
+					if (Arrays.equals(HIGHLIGHT, decoration)) {
 						fStore.setValue(item.highlightKey, true);
-					else
+					} else {
 						fStore.setValue(item.textKey, true);
+					}
 				} else {
 					// disable both
-					if (item.textKey != null)
+					if (item.textKey != null) {
 						fStore.setValue(item.textKey, false);
-					if (item.highlightKey != null)
+					}
+					if (item.highlightKey != null) {
 						fStore.setValue(item.highlightKey, false);
+					}
 				}
 				fStore.setValue(item.textKey, value);
 				updateDecorationViewer(item, false);
@@ -391,16 +398,19 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 					fStore.setValue(item.highlightKey, true);
 					if (item.textKey != null) {
 						fStore.setValue(item.textKey, false);
-						if (item.textStyleKey != null)
+						if (item.textStyleKey != null) {
 							fStore.setValue(item.textStyleKey, AnnotationPreference.STYLE_NONE);
+						}
 					}
 				} else {
-					if (item.highlightKey != null)
+					if (item.highlightKey != null) {
 						fStore.setValue(item.highlightKey, false);
+					}
 					if (item.textKey != null) {
 						fStore.setValue(item.textKey, true);
-						if (item.textStyleKey != null)
+						if (item.textStyleKey != null) {
 							fStore.setValue(item.textStyleKey, decoration[1]);
+						}
 					}
 				}
 			}
@@ -431,8 +441,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	 */
 	@Override
 	public void applyData(Object data) {
-		if (!(data instanceof String))
+		if (!(data instanceof String)) {
 			return;
+		}
 
 		for (ListItem element : fListModel) {
 			if (data.equals(element.label)) {
@@ -515,8 +526,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			AnnotationPreference info= e.next();
 			if (info.isIncludeOnPreferencePage()) {
 				String label= info.getPreferenceLabel();
-				if (containsMoreThanOne(preferences.getAnnotationPreferences().iterator(), label))
+				if (containsMoreThanOne(preferences.getAnnotationPreferences().iterator(), label)) {
 					label += " (" + info.getAnnotationType() + ")";  //$NON-NLS-1$//$NON-NLS-2$
+				}
 
 				Image image= getImage(info);
 
@@ -552,15 +564,17 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		ImageRegistry registry= EditorsPlugin.getDefault().getImageRegistry();
 
 		String annotationType= (String) preference.getAnnotationType();
-		if (annotationType == null)
+		if (annotationType == null) {
 			return null;
+		}
 
 		String customImage= annotationType + "__AnnotationsConfigurationBlock_Image"; //$NON-NLS-1$
 
 		Image image;
 		image= registry.get(customImage);
-		if (image != null)
+		if (image != null) {
 			return image;
+		}
 
 		image= registry.get(annotationType);
 		if (image == null) {
@@ -581,8 +595,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 		}
 
-		if (image == null)
+		if (image == null) {
 			return null;
+		}
 
 		// create custom image
 		final int SIZE= 16; // square images
@@ -623,16 +638,19 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private boolean containsMoreThanOne(Iterator<AnnotationPreference> annotationPrefernceIterator, String label) {
-		if (label == null)
+		if (label == null) {
 			return false;
+		}
 
 		int count= 0;
 		while (annotationPrefernceIterator.hasNext()) {
-			if (label.equals(annotationPrefernceIterator.next().getPreferenceLabel()))
+			if (label.equals(annotationPrefernceIterator.next().getPreferenceLabel())) {
 				count++;
+			}
 
-			if (count == 2)
+			if (count == 2) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -665,8 +683,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			// highlighting
 			if (item.highlightKey != null) {
 				list.add(HIGHLIGHT);
-				if (fStore.getBoolean(item.highlightKey))
+				if (fStore.getBoolean(item.highlightKey)) {
 					selection= HIGHLIGHT;
+				}
 			}
 
 			// legacy default= squiggly lines
@@ -693,8 +712,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 
 			fDecorationViewer.setInput(list.toArray(new Object[list.size()]));
-			if (selection != null)
+			if (selection != null) {
 				fDecorationViewer.setSelection(new StructuredSelection((Object) selection), true);
+			}
 		}
 	}
 }

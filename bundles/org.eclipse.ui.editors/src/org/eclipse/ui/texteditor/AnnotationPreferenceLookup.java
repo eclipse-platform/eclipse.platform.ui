@@ -58,8 +58,9 @@ public class AnnotationPreferenceLookup {
 	 * @return the annotation preference for the given annotation type or <code>null</code>
 	 */
 	public AnnotationPreference getAnnotationPreference(String annotationType) {
-		if (annotationType == null || annotationType == Annotation.TYPE_UNKNOWN)
+		if (annotationType == null || annotationType == Annotation.TYPE_UNKNOWN) {
 			return null;
+		}
 
 		AnnotationTypeHierarchy hierarchy= getAnnotationTypeHierarchy();
 		AnnotationType type= hierarchy.getAnnotationType(annotationType);
@@ -110,10 +111,11 @@ public class AnnotationPreferenceLookup {
 				AnnotationPreference fragment= e.next();
 				Object annotationType = fragment.getAnnotationType();
 				AnnotationPreference preference= fFragments.get(annotationType);
-				if (preference == null)
+				if (preference == null) {
 					fFragments.put(annotationType, fragment);
-				else
+				} else {
 					preference.merge(fragment);
+				}
 			}
 		}
 		return fFragments;

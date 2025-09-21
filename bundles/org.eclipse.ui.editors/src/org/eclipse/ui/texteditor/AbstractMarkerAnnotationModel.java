@@ -77,7 +77,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 public abstract class AbstractMarkerAnnotationModel extends AnnotationModel implements IPersistableAnnotationModel {
 
 	/** List of annotations whose text range became invalid because of document changes */
-	private List<Annotation> fDeletedAnnotations= new CopyOnWriteArrayList<>();
+	private final List<Annotation> fDeletedAnnotations= new CopyOnWriteArrayList<>();
 	/** List of registered and instantiated marker updaters */
 	private List<IMarkerUpdater> fInstantiatedMarkerUpdaters= null;
 	/** List of registered but not yet instantiated marker updaters */
@@ -142,8 +142,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * @param markerUpdater the marker updater to be added
 	 */
 	protected void addMarkerUpdater(IMarkerUpdater markerUpdater) {
-		if (!fInstantiatedMarkerUpdaters.contains(markerUpdater))
+		if (!fInstantiatedMarkerUpdaters.contains(markerUpdater)) {
 			fInstantiatedMarkerUpdaters.add(markerUpdater);
+		}
 	}
 
 	/**
@@ -178,10 +179,11 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 
 		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
 		ILog log= ILog.of(bundle);
-		if (message != null)
+		if (message != null) {
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception));
-		else
+		} else {
 			log.log(exception.getStatus());
+		}
 	}
 
 	/**
@@ -216,8 +218,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 			}
 		}
 
-		if (start > -1 && end > -1)
+		if (start > -1 && end > -1) {
 			return new Position(start, end - start);
+		}
 
 		return null;
 	}
@@ -233,14 +236,16 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 
 		if (isAcceptable(marker)) {
 			Position p= createPositionFromMarker(marker);
-			if (p != null)
+			if (p != null) {
 				try {
 					MarkerAnnotation annotation= createMarkerAnnotation(marker);
-					if (annotation != null)
+					if (annotation != null) {
 						addAnnotation(annotation, p, false);
+					}
 				} catch (BadLocationException e) {
 					// ignore invalid position
 				}
+			}
 		}
 	}
 
@@ -256,8 +261,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		try {
 			catchupWithMarkers();
 		} catch (CoreException x) {
-			if (x.getStatus().getCode() != IResourceStatus.RESOURCE_NOT_FOUND)
+			if (x.getStatus().getCode() != IResourceStatus.RESOURCE_NOT_FOUND) {
 				handleCoreException(x, TextEditorMessages.AbstractMarkerAnnotationModel_connected);
+			}
 		}
 
 		fireModelChanged();
@@ -395,8 +401,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 				a.update();
 				modifyAnnotationPosition(a, p, false);
 			}
-		} else
+		} else {
 			addMarkerAnnotation(marker);
+		}
 	}
 
 	@Override
@@ -405,8 +412,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 
 			List<Annotation> markerAnnotations= new ArrayList<>();
 			for (Annotation a : annotations) {
-				if (a instanceof MarkerAnnotation)
+				if (a instanceof MarkerAnnotation) {
 					markerAnnotations.add(a);
+				}
 
 				// remove annotations from annotation model
 				removeAnnotation(a, false);
@@ -438,8 +446,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 				}
 			}
 
-			if (fireModelChanged)
+			if (fireModelChanged) {
 				fireModelChanged();
+			}
 		}
 	}
 
@@ -466,8 +475,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 
 		for (Iterator<Annotation> e=getAnnotationIterator(false); e.hasNext();) {
 			Annotation a= e.next();
-			if (a instanceof MarkerAnnotation)
+			if (a instanceof MarkerAnnotation) {
 				removeAnnotation(a, false);
+			}
 		}
 
 		IMarker[] markers= retrieveMarkers();
@@ -529,8 +539,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 			if (markerType == null || MarkerUtilities.isMarkerType(marker, markerType)) {
 				toBeDeleted.add(spec);
 				IMarkerUpdater updater= createMarkerUpdater(spec);
-				if (updater != null)
+				if (updater != null) {
 					addMarkerUpdater(updater);
+				}
 			}
 		}
 
@@ -560,11 +571,13 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	@Deprecated
 	public boolean updateMarker(IMarker marker, IDocument document, Position position) throws CoreException {
 
-		if (fMarkerUpdaterSpecifications == null)
+		if (fMarkerUpdaterSpecifications == null) {
 			installMarkerUpdaters();
+		}
 
-		if (!fMarkerUpdaterSpecifications.isEmpty())
+		if (!fMarkerUpdaterSpecifications.isEmpty()) {
 			checkMarkerUpdaters(marker);
+		}
 
 		boolean isOK= true;
 
@@ -620,11 +633,13 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 
 		IAnnotationMap annotationMap= getAnnotationMap();
 
-		if (annotationMap.isEmpty() && fDeletedAnnotations.isEmpty())
+		if (annotationMap.isEmpty() && fDeletedAnnotations.isEmpty()) {
 			return;
+		}
 
-		if (fMarkerUpdaterSpecifications == null)
+		if (fMarkerUpdaterSpecifications == null) {
 			installMarkerUpdaters();
+		}
 
 		listenToMarkerChanges(false);
 
@@ -637,8 +652,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 					IMarker marker= a.getMarker();
 					Position position= annotationMap.get(a);
 					if ( !updateMarker(marker, document, position)) {
-						if ( !fDeletedAnnotations.contains(a))
+						if ( !fDeletedAnnotations.contains(a)) {
 							fDeletedAnnotations.add(a);
+						}
 					}
 				}
 			}
@@ -681,12 +697,13 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 			Object o= annotation;
 			if (o instanceof MarkerAnnotation a) {
 				Position p= createPositionFromMarker(a.getMarker());
-				if (p != null)
+				if (p != null) {
 					try {
 						addAnnotation(a, p, false);
 					} catch (BadLocationException e1) {
 						// ignore invalid position
 					}
+				}
 			}
 		}
 		fDeletedAnnotations.clear();

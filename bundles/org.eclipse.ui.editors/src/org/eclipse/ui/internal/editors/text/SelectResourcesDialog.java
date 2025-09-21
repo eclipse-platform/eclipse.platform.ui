@@ -65,10 +65,10 @@ class SelectResourcesDialog extends Dialog {
 	private SelectResourcesBlock fResourceGroup;
 	private List<Object> fAcceptedFileTypes = new ArrayList<>();
 	private IResource[] fInput;
-	private String fTitle;
-	private String fInstruction;
+	private final String fTitle;
+	private final String fInstruction;
 	private Label fCountIndication;
-	private IFilter fAcceptableLocationsFilter;
+	private final IFilter fAcceptableLocationsFilter;
 
 
 	public SelectResourcesDialog(Shell parentShell, String title, String instruction, IFilter acceptableLocationsFilter) {
@@ -101,8 +101,9 @@ class SelectResourcesDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 
-		if (fTitle != null)
+		if (fTitle != null) {
 			newShell.setText(fTitle);
+		}
 	}
 
 	@Override
@@ -138,8 +139,9 @@ class SelectResourcesDialog extends Dialog {
 					HashSet<IResource> projects= new HashSet<>();
 					for (IResource f : fInput) {
 						IResource project = f.getProject();
-						if ((project.getType() & resourceType) > 0)
+						if ((project.getType() & resourceType) > 0) {
 							projects.add(project);
+						}
 					}
 					return projects.toArray();
 				}
@@ -165,8 +167,9 @@ class SelectResourcesDialog extends Dialog {
 				}
 
 				//input element case
-				if (o instanceof ArrayList)
+				if (o instanceof ArrayList) {
 					return ((ArrayList<?>) o).toArray();
+				}
 
 				return new Object[0];
 			}
@@ -252,20 +255,23 @@ class SelectResourcesDialog extends Dialog {
 	}
 
 	protected boolean hasAcceptedFileType(IResource resource) {
-		if (fAcceptedFileTypes == null)
+		if (fAcceptedFileTypes == null) {
 			return true;
+		}
 
 		String resourceName= resource.getName();
 		int separatorIndex= resourceName.lastIndexOf("."); //$NON-NLS-1$
-		if (separatorIndex == -1)
+		if (separatorIndex == -1) {
 			return false;
+		}
 
 		String extension= resourceName.substring(separatorIndex + 1);
 
 		Iterator<Object> e= fAcceptedFileTypes.iterator();
 		while (e.hasNext()) {
-			if (extension.equalsIgnoreCase((String) e.next()))
+			if (extension.equalsIgnoreCase((String) e.next())) {
 				return true;
+			}
 		}
 
 		return false;
@@ -283,16 +289,18 @@ class SelectResourcesDialog extends Dialog {
 				if (filter.accept(resource)) {
 					List<Object> files= null;
 					IContainer parent= resource.getParent();
-					if (selectionMap.containsKey(parent))
+					if (selectionMap.containsKey(parent)) {
 						files= selectionMap.get(parent);
-					else
+					} else {
 						files= new ArrayList<>();
+					}
 
 					files.add(resource);
 					selectionMap.put(parent, files);
 				}
-			} else
+			} else {
 				setSelection(selectionMap, (IContainer) resource, filter);
+			}
 		}
 		fResourceGroup.updateSelections(selectionMap);
 		updateSelectionCount();
@@ -306,15 +314,17 @@ class SelectResourcesDialog extends Dialog {
 
 			for (IResource resource : resources) {
 				if ((resource.getType() & IResource.FILE) > 0) {
-					if (filter.accept(resource))
+					if (filter.accept(resource)) {
 						selections.add(resource);
+					}
 				} else {
 					setSelection(selectionMap, (IContainer) resource, filter);
 				}
 			}
 
-			if (!selections.isEmpty())
+			if (!selections.isEmpty()) {
 				selectionMap.put(parent, selections);
+			}
 
 		} catch (CoreException x) {
 			//Just return if we can't get any info
@@ -324,10 +334,11 @@ class SelectResourcesDialog extends Dialog {
 
 	private void selectAndReveal(IResource resource) {
 		IContainer container= null;
-		if ((IResource.FILE & resource.getType()) > 0)
+		if ((IResource.FILE & resource.getType()) > 0) {
 			container= resource.getParent();
-		else
+		} else {
 			container= (IContainer) resource;
+		}
 		fResourceGroup.selectAndReveal(container);
 	}
 
@@ -348,7 +359,8 @@ class SelectResourcesDialog extends Dialog {
 		fCountIndication.setText(buffer.toString());
 
 		Button okButton= getButton(IDialogConstants.OK_ID);
-		if (okButton != null)
+		if (okButton != null) {
 			okButton.setEnabled(checkedFiles > 0);
+		}
 	}
 }

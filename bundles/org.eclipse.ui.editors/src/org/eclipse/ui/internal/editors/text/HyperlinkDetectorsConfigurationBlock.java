@@ -117,8 +117,9 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 				return ((ListItem) element).name;
 			case 1:
 				String text= ((ListItem) element).modifierKeys;
-				if (text == null)
+				if (text == null) {
 					return fHyperlinkDefaultKeyModifierText.getText();
+				}
 				return text;
 			case 2:
 				return ((ListItem) element).targetName;
@@ -150,7 +151,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	private static final String MODIFIER_DELIMITER= TextEditorMessages.HyperlinkKeyModifier_delimiter;
 
 
-	private OverlayPreferenceStore fStore;
+	private final OverlayPreferenceStore fStore;
 
 	private CheckboxTableViewer fHyperlinkDetectorsViewer;
 	private ListItem[] fListModel;
@@ -161,7 +162,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	private Button fHyperlinksEnabledCheckBox;
 	private StatusInfo fHyperlinkKeyModifierStatus;
 
-	private PreferencePage fPreferencePage;
+	private final PreferencePage fPreferencePage;
 
 
 
@@ -250,14 +251,15 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 					String insertString;
 
-					if (needsPrefixDelimiter && needsPostfixDelimiter)
+					if (needsPrefixDelimiter && needsPostfixDelimiter) {
 						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifierAndDelimiter, Action.findModifierString(e.stateMask));
-					else if (needsPrefixDelimiter)
+					} else if (needsPrefixDelimiter) {
 						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifier, Action.findModifierString(e.stateMask));
-					else if (needsPostfixDelimiter)
+					} else if (needsPostfixDelimiter) {
 						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertModifierAndDelimiter, Action.findModifierString(e.stateMask));
-					else
+					} else {
 						insertString= Action.findModifierString(e.stateMask);
+					}
 
 					fHyperlinkDefaultKeyModifierText.insert(insertString);
 				}
@@ -313,8 +315,9 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 		fHyperlinkDetectorsViewer.addCheckStateListener(event -> {
 			String id= ((ListItem) event.getElement()).id;
-			if (id == null)
+			if (id == null) {
 				return;
+			}
 			fStore.setValue(id, !event.getChecked());
 		});
 
@@ -356,14 +359,15 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 					String insertString;
 
-					if (needsPrefixDelimiter && needsPostfixDelimiter)
+					if (needsPrefixDelimiter && needsPostfixDelimiter) {
 						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifierAndDelimiter, Action.findModifierString(e.stateMask));
-					else if (needsPrefixDelimiter)
+					} else if (needsPrefixDelimiter) {
 						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifier, Action.findModifierString(e.stateMask));
-					else if (needsPostfixDelimiter)
+					} else if (needsPostfixDelimiter) {
 						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertModifierAndDelimiter, Action.findModifierString(e.stateMask));
-					else
+					} else {
 						insertString= Action.findModifierString(e.stateMask);
+					}
 
 					fHyperlinkKeyModifierText.insert(insertString);
 				}
@@ -422,8 +426,9 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 		textControl.addModifyListener(e -> {
 			String value= textControl.getText();
-			if (key != null)
+			if (key != null) {
 				fStore.setValue(key, value);
+			}
 		});
 
 		return new Control[] {labelControl, textControl};
@@ -463,8 +468,9 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		}
 		fHyperlinkKeyModifierText.setEnabled(fHyperlinkDetectorsViewer.getChecked(item));
 		String text= item.modifierKeys;
-		if (text == null)
+		if (text == null) {
 			text= fHyperlinkDefaultKeyModifierText.getText();
+		}
 		fHyperlinkKeyModifierText.setText(text);
 
 	}
@@ -475,12 +481,14 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		if (computeStateMask(modifierString) == -1) {
 			// Fix possible illegal modifier string
 			int stateMask= fStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK);
-			if (stateMask == -1)
+			if (stateMask == -1) {
 				fHyperlinkDefaultKeyModifierText.setText(""); //$NON-NLS-1$
-			else
+			} else {
 				fHyperlinkDefaultKeyModifierText.setText(getModifierString(stateMask));
-		} else
+			}
+		} else {
 			fHyperlinkDefaultKeyModifierText.setText(modifierString);
+		}
 		boolean isEnabled= fStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED);
 		fHyperlinksEnabledCheckBox.setSelection(isEnabled);
 		fHyperlinkKeyModifierText.setEnabled(isEnabled);
@@ -531,17 +539,19 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		int stateMask= computeStateMask(modifiers);
 
 		if (fHyperlinksEnabledCheckBox.getSelection() && (stateMask == -1 || (stateMask & SWT.SHIFT) != 0)) {
-			if (stateMask == -1)
+			if (stateMask == -1) {
 				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_error_modifierIsNotValid, modifiers));
-			else
+			} else {
 				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, TextEditorMessages.HyperlinkKeyModifier_error_shiftIsDisabled);
+			}
 			applyToStatusLine(getHyperlinkKeyModifierStatus());
 			fPreferencePage.setValid(getHyperlinkKeyModifierStatus().isOK());
 		} else {
 			ListItem item= getSelectedItem();
 			if (item != null) {
-				if (item.modifierKeys != null || !modifiers.equalsIgnoreCase(fHyperlinkDefaultKeyModifierText.getText()))
+				if (item.modifierKeys != null || !modifiers.equalsIgnoreCase(fHyperlinkDefaultKeyModifierText.getText())) {
 					item.modifierKeys= modifiers;
+				}
 				fHyperlinkDetectorsViewer.refresh(getSelectedItem());
 				fStore.setValue(item.id + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX, stateMask);
 			}
@@ -557,10 +567,11 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		int stateMask= computeStateMask(modifiers);
 
 		if (fHyperlinksEnabledCheckBox.getSelection() && (stateMask == -1 || (stateMask & SWT.SHIFT) != 0)) {
-			if (stateMask == -1)
+			if (stateMask == -1) {
 				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_error_modifierIsNotValid, modifiers));
-			else
+			} else {
 				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, TextEditorMessages.HyperlinkKeyModifier_error_shiftIsDisabled);
+			}
 			applyToStatusLine(getHyperlinkKeyModifierStatus());
 			fPreferencePage.setValid(getHyperlinkKeyModifierStatus().isOK());
 		} else {
@@ -574,8 +585,9 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	}
 
 	private IStatus getHyperlinkKeyModifierStatus() {
-		if (fHyperlinkKeyModifierStatus == null)
-		fHyperlinkKeyModifierStatus= new StatusInfo();
+		if (fHyperlinkKeyModifierStatus == null) {
+			fHyperlinkKeyModifierStatus= new StatusInfo();
+		}
 		return fHyperlinkKeyModifierStatus;
 	}
 
@@ -586,18 +598,21 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	 * @return the state mask or -1 if the input is invalid
 	 */
 	private static final int computeStateMask(String modifiers) {
-		if (modifiers == null)
+		if (modifiers == null) {
 			return -1;
+		}
 
-		if (modifiers.isEmpty())
+		if (modifiers.isEmpty()) {
 			return SWT.NONE;
+		}
 
 		int stateMask= 0;
 		StringTokenizer modifierTokenizer= new StringTokenizer(modifiers, ",;.:+-* "); //$NON-NLS-1$
 		while (modifierTokenizer.hasMoreTokens()) {
 			int modifier= findLocalizedModifier(modifierTokenizer.nextToken());
-			if (modifier == 0 || (stateMask & modifier) == modifier)
+			if (modifier == 0 || (stateMask & modifier) == modifier) {
 				return -1;
+			}
 			stateMask= stateMask | modifier;
 		}
 		return stateMask;
@@ -611,17 +626,22 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	 * @return the SWT modifier bit, or <code>0</code> if no match was found
 	 */
 	private static final int findLocalizedModifier(String modifierName) {
-		if (modifierName == null)
+		if (modifierName == null) {
 			return 0;
+		}
 
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL))) {
 			return SWT.CTRL;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
+		}
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT))) {
 			return SWT.SHIFT;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.ALT)))
+		}
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.ALT))) {
 			return SWT.ALT;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND)))
+		}
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND))) {
 			return SWT.COMMAND;
+		}
 
 		return 0;
 	}
@@ -634,18 +654,23 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	 * @return the modifier string
 	 */
 	private static final String getModifierString(int stateMask) {
-		if (stateMask == -1)
+		if (stateMask == -1) {
 			return null;
+		}
 
 		String modifierString= ""; //$NON-NLS-1$
-		if ((stateMask & SWT.CTRL) == SWT.CTRL)
+		if ((stateMask & SWT.CTRL) == SWT.CTRL) {
 			modifierString= appendModifierString(modifierString, SWT.CTRL);
-		if ((stateMask & SWT.ALT) == SWT.ALT)
+		}
+		if ((stateMask & SWT.ALT) == SWT.ALT) {
 			modifierString= appendModifierString(modifierString, SWT.ALT);
-		if ((stateMask & SWT.SHIFT) == SWT.SHIFT)
+		}
+		if ((stateMask & SWT.SHIFT) == SWT.SHIFT) {
 			modifierString= appendModifierString(modifierString, SWT.SHIFT);
-		if ((stateMask & SWT.COMMAND) == SWT.COMMAND)
+		}
+		if ((stateMask & SWT.COMMAND) == SWT.COMMAND) {
 			modifierString= appendModifierString(modifierString,  SWT.COMMAND);
+		}
 
 		return modifierString;
 	}
@@ -659,11 +684,13 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	 * @return the concatenated modifier string
 	 */
 	private static final String appendModifierString(String modifierString, int modifier) {
-		if (modifierString == null)
+		if (modifierString == null) {
 			modifierString= ""; //$NON-NLS-1$
+		}
 		String newModifierString= Action.findModifierString(modifier);
-		if (modifierString.isEmpty())
+		if (modifierString.isEmpty()) {
 			return newModifierString;
+		}
 		return NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_concatModifierStrings, new String[] {modifierString, newModifierString});
 	}
 

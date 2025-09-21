@@ -105,8 +105,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 					Iterator<Image> e= map.values().iterator();
 					while (e.hasNext()) {
 						Image image= e.next();
-						if (!image.isDisposed())
+						if (!image.isDisposed()) {
 							image.dispose();
+						}
 					}
 				}
 			});
@@ -215,13 +216,15 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 */
 	@Deprecated
 	public int getLayer() {
-		if (fPresentationLayer != -1)
+		if (fPresentationLayer != -1) {
 			// Backward compatibility
 			return fPresentationLayer;
+		}
 
 		AnnotationPreference preference= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(this);
-		if (preference != null)
+		if (preference != null) {
 			return preference.getPresentationLayer();
+		}
 		return IAnnotationAccessExtension.DEFAULT_LAYER;
 	}
 
@@ -257,8 +260,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	@Deprecated
 	public void paint(GC gc, Canvas canvas, Rectangle r) {
 		Image image= getImage(canvas.getDisplay());
-		if (image != null)
+		if (image != null) {
 			ImageUtilities.drawImage(image, gc, canvas, r, SWT.CENTER, SWT.TOP);
+		}
 	}
 
 	/**
@@ -300,8 +304,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 */
 	@Deprecated
 	protected Image getImage(String name) {
-		if (name != null)
+		if (name != null) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(name);
+		}
 		return null;
 	}
 
@@ -325,13 +330,15 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 				IWorkbenchAdapter adapter= marker.getAdapter(IWorkbenchAdapter.class);
 				if (adapter != null) {
 					ImageDescriptor descriptor= adapter.getImageDescriptor(marker);
-					if (descriptor != null)
+					if (descriptor != null) {
 						fImage= getImage(display, descriptor);
+					}
 				}
 			}
 
-			if (fImage == null)
+			if (fImage == null) {
 				fImage= getImage(fImageName);
+			}
 
 		}
 		return fImage;

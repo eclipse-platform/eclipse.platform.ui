@@ -60,8 +60,9 @@ public class TaskRulerAction extends AbstractRulerActionDelegate {
 		@Override
 		protected void addMarker() {
 			IResource resource= getResource();
-			if (resource == null)
+			if (resource == null) {
 				return;
+			}
 
 			TaskPropertiesDialog dialog = new TaskPropertiesDialog(getTextEditor().getSite().getShell());
 			dialog.setResource(resource);

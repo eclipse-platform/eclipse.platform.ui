@@ -58,10 +58,10 @@ import org.eclipse.ui.texteditor.spelling.SpellingService;
  */
 class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 
-	private OverlayPreferenceStore fStore;
+	private final OverlayPreferenceStore fStore;
 
-	private Map<Button, String> fCheckBoxes= new HashMap<>();
-	private SelectionListener fCheckBoxListener= new SelectionListener() {
+	private final Map<Button, String> fCheckBoxes= new HashMap<>();
+	private final SelectionListener fCheckBoxListener= new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
@@ -81,12 +81,12 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * The reference provider default's list model.
 	 * @since 3.0
 	 */
-	private String[][] fQuickDiffProviderListModel;
+	private final String[][] fQuickDiffProviderListModel;
 	/**
 	 * The quick diff color model.
 	 * @since 3.0
 	 */
-	private String[][] fQuickDiffModel;
+	private final String[][] fQuickDiffModel;
 	/**
 	 * The color editors for quick diff.
 	 * @since 3.0
@@ -149,12 +149,13 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		Iterator<AnnotationPreference> e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= e.next();
-			if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffChange")) //$NON-NLS-1$
+			if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffChange")) { //$NON-NLS-1$
 				items[0]= new String[] { info.getColorPreferenceKey(), info.getOverviewRulerPreferenceKey(), TextEditorMessages.QuickDiffConfigurationBlock_changeColor };
-			else if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffAddition")) //$NON-NLS-1$
+			} else if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffAddition")) { //$NON-NLS-1$
 				items[1]= new String[] { info.getColorPreferenceKey(), info.getOverviewRulerPreferenceKey(), TextEditorMessages.QuickDiffConfigurationBlock_additionColor };
-			else if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffDeletion")) //$NON-NLS-1$
+			} else if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffDeletion")) { //$NON-NLS-1$
 				items[2]= new String[] { info.getColorPreferenceKey(), info.getOverviewRulerPreferenceKey(), TextEditorMessages.QuickDiffConfigurationBlock_deletionColor };
+			}
 		}
 		return items;
 	}

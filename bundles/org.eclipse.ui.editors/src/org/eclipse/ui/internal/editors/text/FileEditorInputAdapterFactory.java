@@ -34,8 +34,7 @@ public class FileEditorInputAdapterFactory implements IAdapterFactory {
 		 */
 		@Override
 		public IPath getPath(Object element) {
-			if (element instanceof IFileEditorInput) {
-				IFileEditorInput input= (IFileEditorInput) element;
+			if (element instanceof IFileEditorInput input) {
 				return input.getFile().getFullPath();
 			}
 			return null;
@@ -46,14 +45,15 @@ public class FileEditorInputAdapterFactory implements IAdapterFactory {
 	private static final Class<?>[] ADAPTER_LIST = { ILocationProvider.class };
 
 	/** The provided location provider */
-	private ILocationProvider fLocationProvider= new LocationProvider();
+	private final ILocationProvider fLocationProvider= new LocationProvider();
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (ILocationProvider.class.equals(adapterType)) {
-			if (adaptableObject instanceof IFile)
+			if (adaptableObject instanceof IFile) {
 				return (T) fLocationProvider;
+			}
 		}
 		return null;
 	}

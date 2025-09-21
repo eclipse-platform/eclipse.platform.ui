@@ -59,7 +59,7 @@ public class ChangeEncodingAction extends TextEditorAction {
 
 	private static final int APPLY_ID= IDialogConstants.OK_ID + IDialogConstants.CANCEL_ID + 1;
 
-	private String fDialogTitle;
+	private final String fDialogTitle;
 	private static final String ENCODING_PREF_KEY= "encoding"; //$NON-NLS-1$
 
 	/**
@@ -87,8 +87,9 @@ public class ChangeEncodingAction extends TextEditorAction {
 		super(bundle, prefix, editor);
 
 		String key= "dialog.title"; //$NON-NLS-1$;
-		if (prefix != null && !prefix.isEmpty())
+		if (prefix != null && !prefix.isEmpty()) {
 			key= prefix + key;
+		}
 
 		fDialogTitle= getString(bundle, key, null);
 	}
@@ -139,8 +140,9 @@ public class ChangeEncodingAction extends TextEditorAction {
 
 					private void setButtonEnabledState(int id, boolean state) {
 						Button button= getButton(id);
-						if (button != null)
+						if (button != null) {
 							button.setEnabled(state);
+						}
 					}
 				};
 
@@ -154,15 +156,17 @@ public class ChangeEncodingAction extends TextEditorAction {
 					String defaultEncoding= encodingSupport.getDefaultEncoding();
 					store.setDefault(ENCODING_PREF_KEY, defaultEncoding);
 					String encoding= encodingSupport.getEncoding();
-					if (encoding != null)
+					if (encoding != null) {
 						store.setValue(ENCODING_PREF_KEY, encoding);
+					}
 					fEncodingEditor.setPreferenceStore(store);
 
 					fEncodingEditor.setPage(page);
 					fEncodingEditor.load();
 
-					if (encoding == null || encoding.equals(defaultEncoding) || encoding.isEmpty())
+					if (encoding == null || encoding.equals(defaultEncoding) || encoding.isEmpty()) {
 						fEncodingEditor.loadDefault();
+					}
 				}
 
 				return composite;
@@ -176,10 +180,11 @@ public class ChangeEncodingAction extends TextEditorAction {
 
 			@Override
 			protected void buttonPressed(int buttonId) {
-				if (buttonId == APPLY_ID)
+				if (buttonId == APPLY_ID) {
 					apply();
-				else
+				} else {
 					super.buttonPressed(buttonId);
+				}
 			}
 
 			@Override
@@ -211,8 +216,9 @@ public class ChangeEncodingAction extends TextEditorAction {
 	 * @return the resource being edited or <code>null</code>s
 	 */
 	private IResource getResource() {
-		if (getTextEditor() != null && getTextEditor().getEditorInput() != null)
+		if (getTextEditor() != null && getTextEditor().getEditorInput() != null) {
 			return getTextEditor().getEditorInput().getAdapter(IResource.class);
+		}
 
 		return null;
 	}
@@ -223,8 +229,9 @@ public class ChangeEncodingAction extends TextEditorAction {
 	 * @return the resource being edited or <code>null</code>s
 	 */
 	private IEncodingSupport getEncodingSupport() {
-		if (getTextEditor() != null)
+		if (getTextEditor() != null) {
 			return getTextEditor().getAdapter(IEncodingSupport.class);
+		}
 
 		return null;
 	}

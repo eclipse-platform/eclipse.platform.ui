@@ -65,8 +65,9 @@ public class UntitledTextFileWizard extends Wizard implements INewWizard {
 		IEditorRegistry editorRegistry= workbench.getEditorRegistry();
 		IContentType textContentType= Platform.getContentTypeManager().getContentType(TEXT_CONTENT_TYPE_ID);
 		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(fileStore.getName(), textContentType);
-		if (descriptor != null)
+		if (descriptor != null) {
 			return descriptor.getId();
+		}
 		return EditorsUI.DEFAULT_TEXT_EDITOR_ID;
 	}
 

@@ -59,13 +59,13 @@ import org.osgi.framework.Bundle;
 public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
 	/** The vertical ruler info of the action's editor. */
-	private IVerticalRulerInfo fRuler;
+	private final IVerticalRulerInfo fRuler;
 	/** The associated editor. */
-	private ITextEditor fTextEditor;
+	private final ITextEditor fTextEditor;
 	/** The action's resource bundle. */
-	private ResourceBundle fBundle;
+	private final ResourceBundle fBundle;
 	/** The prefix for resource bundle lookups. */
-	private String fPrefix;
+	private final String fPrefix;
 
 	/**
 	 * Creates a new action for the given ruler and editor. The action configures
@@ -112,8 +112,9 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	public void run() {
 
 		IMarker marker= chooseMarker(getMarkers());
-		if (marker == null)
+		if (marker == null) {
 			return;
+		}
 
 		IWorkbenchPage page= fTextEditor.getSite().getPage();
 		MarkerViewUtil.showMarker(page, marker, false);
@@ -160,9 +161,9 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		if (selectLine) {
 			int line;
 			try {
-				if (start >= 0)
+				if (start >= 0) {
 					line= document.getLineOfOffset(start);
-				else {
+				} else {
 					line= MarkerUtilities.getLineNumber(marker);
 					// Marker line numbers are 1-based
 					-- line;
@@ -174,8 +175,9 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		}
 
 		int length= document.getLength();
-		if (end - 1 < length && start < length)
+		if (end - 1 < length && start < length) {
 			fTextEditor.selectAndReveal(start, end - start);
+		}
 	}
 
 
@@ -205,8 +207,9 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 				}
 				int l= access.getLayer(a);
 				if (l == maxLayer) {
-					if (marker == null)
+					if (marker == null) {
 						marker= m;
+					}
 				} else if (l > maxLayer) {
 					maxLayer= l;
 					marker= m;
@@ -226,8 +229,9 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	protected final IAnnotationAccessExtension getAnnotationAccessExtension() {
 		Object adapter= fTextEditor.getAdapter(IAnnotationAccess.class);
-		if (adapter instanceof IAnnotationAccessExtension annotationExtension)
+		if (adapter instanceof IAnnotationAccessExtension annotationExtension) {
 			return annotationExtension;
+		}
 
 		return null;
 	}
@@ -243,8 +247,9 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
 		IResource resource= input.getAdapter(IFile.class);
 
-		if (resource == null)
+		if (resource == null) {
 			resource= input.getAdapter(IResource.class);
+		}
 
 		return resource;
 	}
@@ -257,8 +262,9 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	protected final AbstractMarkerAnnotationModel getAnnotationModel() {
 		IDocumentProvider provider= fTextEditor.getDocumentProvider();
 		IAnnotationModel model= provider.getAnnotationModel(fTextEditor.getEditorInput());
-		if (model instanceof AbstractMarkerAnnotationModel annotationModel)
+		if (model instanceof AbstractMarkerAnnotationModel annotationModel) {
 			return annotationModel;
+		}
 		return null;
 	}
 
@@ -285,10 +291,11 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 			try {
 				int markerLine= document.getLineOfOffset(position.getOffset());
 				int line= fRuler.getLineOfLastMouseButtonActivity();
-				if (line == markerLine)
+				if (line == markerLine) {
 					return true;
 				// commented because of "1GEUOZ9: ITPJUI:ALL - Confusing UI for multi-line Bookmarks and Tasks"
 				// return (markerLine <= line && line <= document.getLineOfOffset(position.getOffset() + position.getLength()));
+				}
 			} catch (BadLocationException x) {
 			}
 		}
@@ -310,10 +317,11 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		if (position != null) {
 			try {
 				int markerLine= document.getLineOfOffset(position.getOffset());
-				if (line == markerLine)
+				if (line == markerLine) {
 					return true;
 				// commented because of "1GEUOZ9: ITPJUI:ALL - Confusing UI for multi-line Bookmarks and Tasks"
 				// return (markerLine <= line && line <= document.getLineOfOffset(position.getOffset() + position.getLength()));
+				}
 			} catch (BadLocationException x) {
 			}
 		}
@@ -330,10 +338,11 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	protected final void handleCoreException(CoreException exception, String message) {
 		IStatus status;
-		if (message != null)
+		if (message != null) {
 			status= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception);
-		else
+		} else {
 			status= exception.getStatus();
+		}
 		logException(status);
 
 		Shell shell= fTextEditor.getSite().getShell();
@@ -362,16 +371,19 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	protected final List<IMarker> getMarkers() {
 		final IResource resource= getResource();
-		if (resource == null || !resource.exists())
+		if (resource == null || !resource.exists()) {
 			return Collections.emptyList();
+		}
 
 		final IDocument document= getDocument();
-		if (document == null)
+		if (document == null) {
 			return Collections.emptyList();
+		}
 
 		final AbstractMarkerAnnotationModel model= getAnnotationModel();
-		if (model == null)
+		if (model == null) {
 			return Collections.emptyList();
+		}
 
 		final IMarker[] allMarkers;
 		try {
@@ -381,12 +393,14 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 			return Collections.emptyList();
 		}
 
-		if (allMarkers.length == 0)
+		if (allMarkers.length == 0) {
 			return Collections.emptyList();
+		}
 
 		final int activeLine= fRuler.getLineOfLastMouseButtonActivity();
-		if (activeLine == -1)
+		if (activeLine == -1) {
 			return Collections.emptyList();
+		}
 
 		Iterator<Annotation> it;
 		try {
@@ -405,16 +419,18 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 			if (annotation instanceof MarkerAnnotation markerAnnotation) {
 				Position position= model.getPosition(annotation);
 				if (includesLine(position, document, activeLine)) {
-					if (markers == null)
+					if (markers == null) {
 						markers= new ArrayList<>(10);
+					}
 
 					markers.add(markerAnnotation.getMarker());
 				}
 			}
 		}
 
-		if (markers == null)
+		if (markers == null) {
 			return Collections.emptyList();
+		}
 
 		return Collections.unmodifiableList(markers);
 	}
@@ -427,16 +443,19 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	protected final boolean hasMarkers() {
 		final IResource resource= getResource();
-		if (resource == null || !resource.exists())
+		if (resource == null || !resource.exists()) {
 			return false;
+		}
 
 		final IDocument document= getDocument();
-		if (document == null)
+		if (document == null) {
 			return false;
+		}
 
 		final AbstractMarkerAnnotationModel model= getAnnotationModel();
-		if (model == null)
+		if (model == null) {
 			return false;
+		}
 
 		final IMarker[] allMarkers;
 		try {
@@ -446,12 +465,14 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 			return false;
 		}
 
-		if (allMarkers.length == 0)
+		if (allMarkers.length == 0) {
 			return false;
+		}
 
 		final int activeLine= fRuler.getLineOfLastMouseButtonActivity();
-		if (activeLine == -1)
+		if (activeLine == -1) {
 			return false;
+		}
 
 		Iterator<Annotation> it;
 		try {

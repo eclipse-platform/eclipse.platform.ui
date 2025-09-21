@@ -55,17 +55,19 @@ public class WorkspaceOperationRunner implements IRunnableContext {
 	 * @return the progress monitor
 	 */
 	public IProgressMonitor getProgressMonitor() {
-		if (fProgressMonitor == null)
+		if (fProgressMonitor == null) {
 			fProgressMonitor= new NullProgressMonitor();
+		}
 		return fProgressMonitor;
 	}
 
 	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		if (runnable instanceof ISchedulingRuleProvider)
+		if (runnable instanceof ISchedulingRuleProvider) {
 			run(runnable, ((ISchedulingRuleProvider)runnable).getSchedulingRule());
-		else
+		} else {
 			run(runnable, ResourcesPlugin.getWorkspace().getRoot());
+		}
 	}
 
 	/*

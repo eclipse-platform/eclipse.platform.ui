@@ -29,9 +29,9 @@ import org.eclipse.ui.texteditor.IAnnotationImageProvider;
 
 public class DelegatingAnnotationPreference extends AnnotationPreference {
 
-	private AnnotationType fType;
-	private AnnotationPreferenceLookup fLookup;
-	private Set<Object> fCache= new HashSet<>();
+	private final AnnotationType fType;
+	private final AnnotationPreferenceLookup fLookup;
+	private final Set<Object> fCache= new HashSet<>();
 
 	public DelegatingAnnotationPreference(AnnotationType type, AnnotationPreferenceLookup lookup) {
 		fType= type;
@@ -49,14 +49,16 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 	private AnnotationPreference getDefiningPreference(Object attribute) {
 
 		AnnotationPreference p= fLookup.getAnnotationPreferenceFragment(fType.getType());
-		if (p != null && p.hasValue(attribute))
+		if (p != null && p.hasValue(attribute)) {
 			return p;
+		}
 
 		String[] superTypes= fType.getSuperTypes();
 		for (String superType : superTypes) {
 			p = fLookup.getAnnotationPreferenceFragment(superType);
-			if (p != null && p.hasValue(attribute))
+			if (p != null && p.hasValue(attribute)) {
 				return p;
+			}
 		}
 
 		return null;
@@ -65,8 +67,9 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 	private Object getAttributeValue(Object attribute) {
 		if (!isCached(attribute)) {
 			AnnotationPreference preference= getDefiningPreference(attribute);
-			if (preference != null)
+			if (preference != null) {
 				setValue(attribute, preference.getValue(attribute));
+			}
 			markCached(attribute);
 		}
 		return super.getValue(attribute);
@@ -74,8 +77,9 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 
 	private boolean getBooleanAttributeValue(Object attribute) {
 		Object value= getAttributeValue(attribute);
-		if (value instanceof Boolean)
+		if (value instanceof Boolean) {
 			return ((Boolean) value).booleanValue();
+		}
 		return false;
 	}
 
@@ -161,8 +165,9 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 	@Override
 	public int getPresentationLayer() {
 		Object value= getAttributeValue(PRESENTATION_LAYER);
-		if (value instanceof Integer)
+		if (value instanceof Integer) {
 			return ((Integer) value).intValue();
+		}
 		return IAnnotationAccessExtension.DEFAULT_LAYER;
 	}
 

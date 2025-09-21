@@ -54,8 +54,9 @@ public final class CompositeRevertAction extends Action implements IUpdate, ISel
 		System.arraycopy(actions, 0, fActions, 0, actions.length);
 
 		ISelectionProvider selectionProvider= editor.getSelectionProvider();
-		if (selectionProvider instanceof IPostSelectionProvider)
+		if (selectionProvider instanceof IPostSelectionProvider) {
 			((IPostSelectionProvider)selectionProvider).addPostSelectionChangedListener(this);
+		}
 
 		update();
 	}
@@ -69,8 +70,9 @@ public final class CompositeRevertAction extends Action implements IUpdate, ISel
 		}
 		IAction action= getEnabledAction();
 		setEnabled(getEnabledAction() != null);
-		if (action == null)
+		if (action == null) {
 			return;
+		}
 		setText(action.getText());
 		setToolTipText(action.getToolTipText());
 	}
@@ -83,8 +85,9 @@ public final class CompositeRevertAction extends Action implements IUpdate, ISel
 	@Override
 	public void run() {
 		IAction action= getEnabledAction();
-		if (action != null)
+		if (action != null) {
 			action.run();
+		}
 	}
 
 	/**

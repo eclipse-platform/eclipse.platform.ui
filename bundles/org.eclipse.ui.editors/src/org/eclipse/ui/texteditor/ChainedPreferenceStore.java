@@ -38,13 +38,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public class ChainedPreferenceStore implements IPreferenceStore {
 
 	/** Child preference stores. */
-	private IPreferenceStore[] fPreferenceStores;
+	private final IPreferenceStore[] fPreferenceStores;
 
 	/** Listeners on this chained preference store. */
-	private ListenerList<IPropertyChangeListener> fClientListeners= new ListenerList<>(ListenerList.IDENTITY);
+	private final ListenerList<IPropertyChangeListener> fClientListeners= new ListenerList<>(ListenerList.IDENTITY);
 
 	/** Listeners on the child preference stores. */
-	private List<PropertyChangeListener> fChildListeners= new ArrayList<>();
+	private final List<PropertyChangeListener> fChildListeners= new ArrayList<>();
 
 	/**
 	 * Listener on the chained preference stores. Forwards only the events
@@ -160,104 +160,117 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	@Override
 	public boolean getBoolean(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getBoolean(name);
+		}
 		return BOOLEAN_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public boolean getDefaultBoolean(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getDefaultBoolean(name);
+		}
 		return BOOLEAN_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public double getDefaultDouble(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getDefaultDouble(name);
+		}
 		return DOUBLE_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public float getDefaultFloat(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getDefaultFloat(name);
+		}
 		return FLOAT_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public int getDefaultInt(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getDefaultInt(name);
+		}
 		return INT_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public long getDefaultLong(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getDefaultLong(name);
+		}
 		return LONG_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public String getDefaultString(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getDefaultString(name);
+		}
 		return STRING_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public double getDouble(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getDouble(name);
+		}
 		return DOUBLE_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public float getFloat(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getFloat(name);
+		}
 		return FLOAT_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public int getInt(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getInt(name);
+		}
 		return INT_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public long getLong(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getLong(name);
+		}
 		return LONG_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public String getString(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.getString(name);
+		}
 		return STRING_DEFAULT_DEFAULT;
 	}
 
 	@Override
 	public boolean isDefault(String name) {
 		IPreferenceStore visibleStore= getVisibleStore(name);
-		if (visibleStore != null)
+		if (visibleStore != null) {
 			return visibleStore.isDefault(name);
+		}
 		return false;
 	}
 
@@ -353,14 +366,16 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		 * Assume that the property is there but has no default value (its owner relies on the default-default value)
 		 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=52827
 		 */
-		if (visibleStore == null && newValue != null)
+		if (visibleStore == null && newValue != null) {
 			visibleStore= childPreferenceStore;
+		}
 
 		if (visibleStore == null) {
 			// no visible store
-			if (oldValue != null)
+			if (oldValue != null) {
 				// removal in child, last in chain -> removal in this chained preference store
 				firePropertyChangeEvent(event);
+			}
 		} else if (visibleStore == childPreferenceStore) {
 			// event from visible store
 			if (oldValue != null) {
@@ -375,8 +390,9 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 					// do nothing
 				}
 				while (oldVisibleStore == null && i < length) {
-					if (fPreferenceStores[i].contains(property))
+					if (fPreferenceStores[i].contains(property)) {
 						oldVisibleStore= fPreferenceStores[i];
+					}
 					i++;
 				}
 
@@ -386,18 +402,20 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 				} else {
 					// insertion in child, not first in chain
 					oldValue= getOtherValue(property, oldVisibleStore, newValue);
-					if (!oldValue.equals(newValue))
+					if (!oldValue.equals(newValue)) {
 						// insertion in child, different old value -> change in this chained preference store
 						firePropertyChangeEvent(property, oldValue, newValue);
 					// else: insertion in child, same old value -> no change in this chained preference store
+					}
 				}
 			}
 		} else {
 			// event from other than the visible store
 			boolean eventBeforeVisibleStore= false;
 			for (IPreferenceStore store : fPreferenceStores) {
-				if (store == visibleStore)
+				if (store == visibleStore) {
 					break;
+				}
 				if (store == childPreferenceStore) {
 					eventBeforeVisibleStore= true;
 					break;
@@ -413,10 +431,11 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 				 */
 
 				newValue= getOtherValue(property, visibleStore, oldValue);
-				if (!newValue.equals(oldValue))
+				if (!newValue.equals(oldValue)) {
 					// removal in child, before visible store, different old value -> change in this chained preference store
 					firePropertyChangeEvent(property, oldValue, newValue);
 				// else: removal in child, before visible store, same old value -> no change in this chained preference store
+				}
 			}
 			// else: event behind visible store -> no change in this chained preference store
 		}
@@ -433,18 +452,19 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	 */
 	private Object getOtherValue(String property, IPreferenceStore store, Object thisValue) {
 
-		if (thisValue instanceof Boolean)
+		if (thisValue instanceof Boolean) {
 			return store.getBoolean(property) ? Boolean.TRUE : Boolean.FALSE;
-		else if (thisValue instanceof Double)
+		} else if (thisValue instanceof Double) {
 			return Double.valueOf(store.getDouble(property));
-		else if (thisValue instanceof Float)
+		} else if (thisValue instanceof Float) {
 			return Float.valueOf(store.getFloat(property));
-		else if (thisValue instanceof Integer)
+		} else if (thisValue instanceof Integer) {
 			return Integer.valueOf(store.getInt(property));
-		else if (thisValue instanceof Long)
+		} else if (thisValue instanceof Long) {
 			return Long.valueOf(store.getLong(property));
-		else if (thisValue instanceof String)
+		} else if (thisValue instanceof String) {
 			return store.getString(property);
+		}
 
 		return store.getString(property);
 	}
@@ -462,8 +482,9 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 
 		for (int i= 0, length= fPreferenceStores.length; i < length && visibleStore == null; i++) {
 			IPreferenceStore store= fPreferenceStores[i];
-			if (store.contains(property))
+			if (store.contains(property)) {
 				visibleStore= store;
+			}
 		}
 		return visibleStore;
 	}

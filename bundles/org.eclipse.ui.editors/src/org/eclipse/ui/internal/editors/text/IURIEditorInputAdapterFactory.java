@@ -40,15 +40,15 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 		@Override
 		public IPath getPath(Object element) {
 			URI uri= getURI(element);
-			if (uri != null)
+			if (uri != null) {
 				return URIUtil.toPath(uri);
+			}
 			return null;
 		}
 
 		@Override
 		public URI getURI(Object element) {
-			if (element instanceof IURIEditorInput) {
-				IURIEditorInput input= (IURIEditorInput)element;
+			if (element instanceof IURIEditorInput input) {
 				return input.getURI();
 			}
 			return null;
@@ -60,14 +60,15 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 	private static final Class<?>[] ADAPTER_LIST = { ILocationProvider.class };
 
 	/** The provided location provider */
-	private ILocationProvider fLocationProvider= new LocationProvider();
+	private final ILocationProvider fLocationProvider= new LocationProvider();
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (ILocationProvider.class.equals(adapterType)) {
-			if (adaptableObject instanceof IURIEditorInput)
+			if (adaptableObject instanceof IURIEditorInput) {
 				return (T) fLocationProvider;
+			}
 		}
 		return null;
 	}

@@ -77,10 +77,11 @@ class MessageRegion {
 		GridData imageData = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 		Image sizingImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
 		Rectangle imageBounds;
-		if(sizingImage == null)
+		if(sizingImage == null) {
 			imageBounds = new Rectangle(0,0,IDialogConstants.VERTICAL_MARGIN * 2,IDialogConstants.VERTICAL_MARGIN * 2);
-		else
+		} else {
 			imageBounds = sizingImage.getBounds();
+		}
 		imageData.heightHint = imageBounds.height + IDialogConstants.VERTICAL_SPACING;
 		imageData.widthHint = imageBounds.width + IDialogConstants.HORIZONTAL_SPACING;
 		messageImageLabel.setLayoutData(imageData);
@@ -143,13 +144,14 @@ class MessageRegion {
 		showRegion();
 		// Any more updates required
 		if (newMessage.equals(messageText.getText())
-				&& newImage == messageImageLabel.getImage())
+				&& newImage == messageImageLabel.getImage()) {
 			return;
+		}
 		messageImageLabel.setImage(newImage);
 		messageText.setText(newMessage);
-		if (showingError)
+		if (showingError) {
 			setMessageColors(JFaceColors.getErrorBackground(messageComposite.getDisplay()));
-		else {
+		} else {
 			lastMessageText = newMessage;
 			setMessageColors(JFaceColors.getBannerBackground(messageComposite.getDisplay()));
 		}

@@ -95,9 +95,10 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 		 */
 		private String addCSSToHTMLFragment(String html) {
 			int max= Math.min(100, html.length());
-			if (html.substring(0, max).contains("<html>")) //$NON-NLS-1$
+			if (html.substring(0, max).contains("<html>")) { //$NON-NLS-1$
 				// there is already a header
 				return html;
+			}
 
 			StringBuilder info= new StringBuilder(512 + html.length());
 			HTMLPrinter.insertPageProlog(info, 0, fgStyleSheet);
@@ -108,7 +109,7 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 	}
 
 
-	private boolean fIsFocusable;
+	private final boolean fIsFocusable;
 
 
 	public RevisionHoverInformationControlCreator(boolean isFocusable) {
@@ -117,11 +118,13 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 
 	@Override
 	public boolean canReuse(IInformationControl control) {
-		if (!super.canReuse(control))
+		if (!super.canReuse(control)) {
 			return false;
+		}
 
-		if (control instanceof IInformationControlExtension4 extension4)
+		if (control instanceof IInformationControlExtension4 extension4) {
 			extension4.setStatusText(EditorsUI.getTooltipAffordanceString());
+		}
 
 		return true;
 	}
@@ -129,13 +132,15 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 	@Override
 	protected IInformationControl doCreateInformationControl(Shell parent) {
 		if (BrowserInformationControl.isAvailable(parent)) {
-			if (fIsFocusable)
+			if (fIsFocusable) {
 				return new RevisionInformationControl(parent);
+			}
 			return new RevisionInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 		}
 
-		if (fIsFocusable)
+		if (fIsFocusable) {
 			return new DefaultInformationControl(parent, true);
+		}
 		return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 	}
 

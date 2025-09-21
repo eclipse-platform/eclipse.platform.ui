@@ -49,19 +49,19 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	 * Change encoding action.
 	 * @since 3.1
 	 */
-	private RetargetTextEditorAction fChangeEncodingAction;
+	private final RetargetTextEditorAction fChangeEncodingAction;
 	/**
 	 * Quick assist assistant action.
 	 * @since 3.3
 	 */
-	private RetargetTextEditorAction fQuickAssistAction;
+	private final RetargetTextEditorAction fQuickAssistAction;
 	/**
 	 * Quick assist menu contribution item.
 	 * @since 3.3
 	 */
-	private IContributionItem fQuickAssistMenuEntry;
+	private final IContributionItem fQuickAssistMenuEntry;
 
-	private RetargetTextEditorAction fRetargetShowInformationAction;
+	private final RetargetTextEditorAction fRetargetShowInformationAction;
 
 	/**
 	 * Creates a new contributor.
@@ -85,8 +85,9 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	private void doSetActiveEditor(final IEditorPart part) {
 
 		ITextEditor textEditor= null;
-		if (part instanceof ITextEditor)
+		if (part instanceof ITextEditor) {
 			textEditor= (ITextEditor) part;
+		}
 
 		/** The global actions to be connected with editor actions */
 		IActionBars actionBars= getActionBars();
@@ -109,8 +110,9 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		IAction quickAssistAction= getAction(textEditor, ITextEditorActionConstants.QUICK_ASSIST);
 		fQuickAssistAction.setAction(quickAssistAction);
 
-		if (textEditor == null)
+		if (textEditor == null) {
 			return;
+		}
 
 		// Update Quick Assist menu entry - for now don't show disabled entry
 		IMenuManager menuMgr= textEditor.getEditorSite().getActionBars().getMenuManager();
@@ -154,6 +156,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 
 		IMenuManager menuManager= bars.getMenuManager();
 		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
-		if (editMenu != null)
+		if (editMenu != null) {
 			editMenu.add(fChangeEncodingAction);
+		}
 	}}

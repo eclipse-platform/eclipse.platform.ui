@@ -55,11 +55,13 @@ public final class BasicMarkerUpdater implements IMarkerUpdater {
 	@Override
 	public boolean updateMarker(IMarker marker, IDocument document, Position position) {
 
-		if (position == null)
+		if (position == null) {
 			return true;
+		}
 
-		if (position.isDeleted())
+		if (position.isDeleted()) {
 			return false;
+		}
 
 		boolean offsetsInitialized= false;
 		boolean offsetsChanged= false;

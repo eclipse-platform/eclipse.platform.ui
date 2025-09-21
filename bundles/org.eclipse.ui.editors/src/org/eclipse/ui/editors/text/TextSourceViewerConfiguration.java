@@ -109,12 +109,14 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	protected boolean isShowInVerticalRuler(Annotation annotation) {
 		AnnotationPreference preference= getAnnotationPreference(annotation);
-		if (preference == null)
+		if (preference == null) {
 			return true;
+		}
 		String key= preference.getVerticalRulerPreferenceKey();
 		// backward compatibility
-		if (key != null && !fPreferenceStore.getBoolean(key))
+		if (key != null && !fPreferenceStore.getBoolean(key)) {
 			return false;
+		}
 
 		return true;
 	}
@@ -135,11 +137,13 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	protected boolean isShowInOverviewRuler(Annotation annotation) {
 		AnnotationPreference preference= getAnnotationPreference(annotation);
-		if (preference == null)
+		if (preference == null) {
 			return true;
+		}
 		String key= preference.getOverviewRulerPreferenceKey();
-		if (key == null || !fPreferenceStore.getBoolean(key))
+		if (key == null || !fPreferenceStore.getBoolean(key)) {
 			return false;
+		}
 
 		return true;
 	}
@@ -160,16 +164,19 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	protected boolean isShownInText(Annotation annotation) {
 		AnnotationPreference preference= getAnnotationPreference(annotation);
-		if (preference == null)
+		if (preference == null) {
 			return false;
+		}
 		String key= preference.getTextPreferenceKey();
 		if (key != null) {
-			if (!fPreferenceStore.getBoolean(key))
+			if (!fPreferenceStore.getBoolean(key)) {
 				return false;
+			}
 		} else {
 			key= preference.getHighlightPreferenceKey();
-			if (key == null || !fPreferenceStore.getBoolean(key))
+			if (key == null || !fPreferenceStore.getBoolean(key)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -182,21 +189,23 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.2
 	 */
 	private AnnotationPreference getAnnotationPreference(Annotation annotation) {
-		if (annotation == null || fPreferenceStore == null)
+		if (annotation == null || fPreferenceStore == null) {
 			return null;
+		}
 		return EditorsUI.getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
 	}
 
 	@Override
 	public int getTabWidth(ISourceViewer sourceViewer) {
-		if (fPreferenceStore == null)
+		if (fPreferenceStore == null) {
 			return super.getTabWidth(sourceViewer);
+		}
 		return fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
 	}
 
 	/**
 	 * Returns the lineSpacing for the given source viewer.
-	 * 
+	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return the lineSpacing
 	 *
@@ -224,8 +233,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	@Override
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		String[] indentPrefixes= getIndentPrefixesForTab(getTabWidth(sourceViewer));
-		if (indentPrefixes == null)
+		if (indentPrefixes == null) {
 			return null;
+		}
 
 		int length= indentPrefixes.length;
 		if (length > 2 && fPreferenceStore != null && fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS))  {
@@ -240,11 +250,13 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
-		if (sourceViewer == null || fPreferenceStore == null)
+		if (sourceViewer == null || fPreferenceStore == null) {
 			return super.getHyperlinkDetectors(sourceViewer);
+		}
 
-		if (!fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED))
+		if (!fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED)) {
 			return null;
+		}
 
 		return getRegisteredHyperlinkDetectors(sourceViewer);
 	}
@@ -294,8 +306,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 	@Override
 	public int getHyperlinkStateMask(ISourceViewer sourceViewer) {
-		if (fPreferenceStore == null)
+		if (fPreferenceStore == null) {
 			return super.getHyperlinkStateMask(sourceViewer);
+		}
 
 		String modifiers= fPreferenceStore.getString(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER);
 		int modifierMask= computeStateMask(modifiers);
@@ -308,8 +321,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 	@Override
 	public IHyperlinkPresenter getHyperlinkPresenter(ISourceViewer sourceViewer) {
-		if (fPreferenceStore == null)
+		if (fPreferenceStore == null) {
 			return new MultipleHyperlinkPresenter(new RGB(0, 0, 255));
+		}
 
 		return new MultipleHyperlinkPresenter(fPreferenceStore);
 	}
@@ -323,17 +337,22 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.1
 	 */
 	protected static final int findLocalizedModifier(String modifierName) {
-		if (modifierName == null)
+		if (modifierName == null) {
 			return 0;
+		}
 
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL))) {
 			return SWT.CTRL;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
+		}
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT))) {
 			return SWT.SHIFT;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.ALT)))
+		}
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.ALT))) {
 			return SWT.ALT;
-		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND)))
+		}
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND))) {
 			return SWT.COMMAND;
+		}
 
 		return 0;
 	}
@@ -346,18 +365,21 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.1
 	 */
 	protected static final int computeStateMask(String modifiers) {
-		if (modifiers == null)
+		if (modifiers == null) {
 			return -1;
+		}
 
-		if (modifiers.isEmpty())
+		if (modifiers.isEmpty()) {
 			return SWT.NONE;
+		}
 
 		int stateMask= 0;
 		StringTokenizer modifierTokenizer= new StringTokenizer(modifiers, ",;.:+-* "); //$NON-NLS-1$
 		while (modifierTokenizer.hasMoreTokens()) {
 			int modifier= findLocalizedModifier(modifierTokenizer.nextToken());
-			if (modifier == 0 || (stateMask & modifier) == modifier)
+			if (modifier == 0 || (stateMask & modifier) == modifier) {
 				return -1;
+			}
 			stateMask= stateMask | modifier;
 		}
 		return stateMask;
@@ -365,8 +387,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 	@Override
 	public IUndoManager getUndoManager(ISourceViewer sourceViewer) {
-		if (fPreferenceStore == null || !fPreferenceStore.contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE))
+		if (fPreferenceStore == null || !fPreferenceStore.contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE)) {
 			return super.getUndoManager(sourceViewer);
+		}
 
 		int undoHistorySize= fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE);
 		return new TextViewerUndoManager(undoHistorySize);
@@ -384,12 +407,14 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-		if (fPreferenceStore == null || !fPreferenceStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
+		if (fPreferenceStore == null || !fPreferenceStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED)) {
 			return null;
+		}
 
 		SpellingService spellingService= EditorsUI.getSpellingService();
-		if (spellingService.getActiveSpellingEngineDescriptor(fPreferenceStore) == null)
+		if (spellingService.getActiveSpellingEngineDescriptor(fPreferenceStore) == null) {
 			return null;
+		}
 
 		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, spellingService);
 		MonoReconciler reconciler= new MonoReconciler(strategy, false);
@@ -399,8 +424,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 	@Override
 	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
-		if (fPreferenceStore == null || !fPreferenceStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
+		if (fPreferenceStore == null || !fPreferenceStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED)) {
 			return null;
+		}
 
 		QuickAssistAssistant assistant= new QuickAssistAssistant();
 		assistant.setQuickAssistProcessor(new SpellingCorrectionProcessor());
@@ -429,13 +455,13 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.3
 	 */
 	private IHyperlinkDetector[] merge(IHyperlinkDetector[] array1, IHyperlinkDetector[] array2) {
-		if (array1 == null && array2 == null)
+		if (array1 == null && array2 == null) {
 			return null;
-		else if (array1 == null)
+		} else if (array1 == null) {
 			return array2;
-		else if (array2 == null)
+		} else if (array2 == null) {
 			return array1;
-		else {
+		} else {
 			IHyperlinkDetector[] allHyperlinkDetectors;
 			int size= array1.length + array2.length;
 			allHyperlinkDetectors= new IHyperlinkDetector[size];
