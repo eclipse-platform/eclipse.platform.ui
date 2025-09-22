@@ -115,8 +115,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		}
 
 		protected String notNull(String s) {
-			if (s == null)
+			if (s == null) {
 				return ""; //$NON-NLS-1$
+			}
 			return s;
 		}
 
@@ -185,8 +186,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		data.horizontalSpan = 2;
 		internal.setLayoutData(data);
 
-		if (!WebBrowserUtil.canUseInternalWebBrowser())
+		if (!WebBrowserUtil.canUseInternalWebBrowser()) {
 			internal.setEnabled(false);
+		}
 
 		external = new Button(composite, SWT.RADIO);
 		external.setText(Messages.prefExternalBrowser);
@@ -229,8 +231,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			// browser. That is, don't permit unchecking if no other item
 			// is checked which is supposed to be the case.
 			Object[] obj = tableViewer.getCheckedElements();
-			if (obj.length == 0)
+			if (obj.length == 0) {
 				tableViewer.setChecked(e.getElement(), true);
+			}
 		});
 
 		// set a default, checked browser based on the current browser. If there
@@ -238,12 +241,13 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		// This will work currently until workbench shutdown, because current
 		// browser is not yet persisted.
 		checkedBrowser = BrowserManager.getInstance().getCurrentWebBrowser();
-		if (checkedBrowser != null)
+		if (checkedBrowser != null) {
 			tableViewer.setChecked(checkedBrowser, true);
-		else {
+		} else {
 			Object obj = tableViewer.getElementAt(0);
-			if (obj != null)
+			if (obj != null) {
 				tableViewer.setChecked(obj, true);
+			}
 		}
 
 		tableViewer
@@ -321,11 +325,13 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		final Button add = SWTUtil.createButton(buttonComp, Messages.add);
 		add.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			BrowserDescriptorDialog dialog = new BrowserDescriptorDialog(getShell());
-			if (dialog.open() == Window.CANCEL)
+			if (dialog.open() == Window.CANCEL) {
 				return;
+			}
 			tableViewer.refresh();
-			if (checkedBrowser != null)
+			if (checkedBrowser != null) {
 				tableViewer.setChecked(checkedBrowser, true);
+			}
 		}));
 
 		edit = SWTUtil.createButton(buttonComp, Messages.edit);
@@ -382,8 +388,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			dialog.setText(Messages.directoryDialogTitle);
 
 			String path = dialog.open();
-			if (path == null)
+			if (path == null) {
 				return;
+			}
 
 			final File rootDir = new File(path);
 			ProgressMonitorDialog pm = new ProgressMonitorDialog(getShell());
@@ -405,8 +412,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 				return;
 			}
 
-			if (pm.getProgressMonitor().isCanceled())
+			if (pm.getProgressMonitor().isCanceled()) {
 				return;
+			}
 
 			List<IBrowserDescriptorWorkingCopy> browsersToCreate = foundBrowsers;
 
@@ -422,8 +430,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			}
 			tableViewer.refresh();
 
-			if (checkedBrowser != null)
+			if (checkedBrowser != null) {
 				tableViewer.setChecked(checkedBrowser, true);
+			}
 		}));
 
 		restore = SWTUtil.createButton(buttonComp, Messages.restore);
@@ -465,8 +474,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		if (visible)
+		if (visible) {
 			setTitle(Messages.preferenceWebBrowserTitle);
+		}
 	}
 
 	protected Object getSelection(ISelection sel2) {
@@ -477,15 +487,17 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	// Uncheck all the items except the current one that was just checked
 	protected void checkNewDefaultBrowser(Object browser) {
 		for (TableItem item : tableViewer.getTable().getItems()) {
-			if (!(item.getData().equals(browser)))
+			if (!(item.getData().equals(browser))) {
 				item.setChecked(false);
+			}
 		}
 	}
 
 	protected static void search(File directory, List<String> existingPaths,
 			List<IBrowserDescriptorWorkingCopy> foundBrowsers, Set<String> directoriesVisited, IProgressMonitor monitor) {
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
+		}
 		try {
 			//bug 293159: protect against recursion due to cyclic symbolic link
 			String canonicalPath = directory.getCanonicalPath();
@@ -506,21 +518,25 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			names = new String[0];
 		}
 		for (String name : names) {
-			if (monitor.isCanceled())
+			if (monitor.isCanceled()) {
 				return;
+			}
 
 			File file = new File(directory, name);
 
-			if (existingPaths.contains(file.getAbsolutePath().toLowerCase()))
+			if (existingPaths.contains(file.getAbsolutePath().toLowerCase())) {
 				continue;
+			}
 
 			IBrowserDescriptorWorkingCopy wc = WebBrowserUtil.createExternalBrowser(file);
-			if (wc != null)
+			if (wc != null) {
 				foundBrowsers.add(wc);
+			}
 
 			if (file.isDirectory()) {
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					return;
+				}
 				subDirs.add(file);
 			}
 		}
@@ -546,8 +562,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		tableViewer.refresh();
 
 		checkedBrowser = BrowserManager.getInstance().getCurrentWebBrowser();
-		if (checkedBrowser != null)
+		if (checkedBrowser != null) {
 			tableViewer.setChecked(checkedBrowser, true);
+		}
 
 		super.performDefaults();
 	}
@@ -565,8 +582,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		tableViewer.refresh();
 
 		checkedBrowser = BrowserManager.getInstance().getCurrentWebBrowser();
-		if (checkedBrowser != null)
+		if (checkedBrowser != null) {
 			tableViewer.setChecked(checkedBrowser, true);
+		}
 
 		super.updateApplyButton();
 	}
@@ -577,10 +595,11 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	@Override
 	public boolean performOk() {
 		int choice;
-		if (internal.getSelection())
+		if (internal.getSelection()) {
 			choice = WebBrowserPreference.INTERNAL;
-		else
+		} else {
 			choice = WebBrowserPreference.EXTERNAL;
+		}
 		WebBrowserPreference.setBrowserChoice(choice);
 		if (checkedBrowser != null) {
 			BrowserManager.getInstance().setCurrentWebBrowser(checkedBrowser);

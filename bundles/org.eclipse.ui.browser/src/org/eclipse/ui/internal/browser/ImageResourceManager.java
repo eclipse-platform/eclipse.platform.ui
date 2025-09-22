@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.osgi.framework.FrameworkUtil;
 
 class ImageResourceManager {
-	private LocalResourceManager manager;
+	private final LocalResourceManager manager;
 
 	/**
 	 * The constructor

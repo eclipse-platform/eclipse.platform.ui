@@ -30,8 +30,9 @@ public class ToolbarLayout extends Layout {
 
 	@Override
 	protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
-		if (hHint != SWT.DEFAULT)
+		if (hHint != SWT.DEFAULT) {
 			return new Point(wHint, hHint);
+		}
 
 		Control[] children = composite.getChildren();
 		int h = 0;
@@ -67,13 +68,15 @@ public class ToolbarLayout extends Layout {
 		int tw = r.width - MARGIN * 2 - (size - 1) * SPACING
 				- sizes[size-1].x - EXTRA_BUSY_SPACING;
 		for (int i = 0; i < size - 1; i++) {
-			if (children[i] instanceof Combo)
+			if (children[i] instanceof Combo) {
 				combo = i;
-			else
+			} else {
 				tw -= sizes[i].x;
+			}
 		}
-		if (combo >= 0)
+		if (combo >= 0) {
 			sizes[combo].x = tw;
+		}
 
 		// space out other children with their standard size, give combo all
 		// remaining space (if it exists)

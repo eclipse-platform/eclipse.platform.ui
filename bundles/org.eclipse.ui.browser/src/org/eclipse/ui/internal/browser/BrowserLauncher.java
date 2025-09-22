@@ -32,12 +32,13 @@ public class BrowserLauncher implements IEditorLauncher {
 	public void open(IPath file) {
 		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
 		try {
-			if (WebBrowserPreference.getBrowserChoice()== WebBrowserPreference.INTERNAL)
+			if (WebBrowserPreference.getBrowserChoice()== WebBrowserPreference.INTERNAL) {
 				support.createBrowser(IWorkbenchBrowserSupport.LOCATION_BAR | IWorkbenchBrowserSupport.NAVIGATION_BAR,
 						file.toPortableString(), null, null).openURL(file.toFile().toURI().toURL());
-			else
+			} else {
 				support.createBrowser(IWorkbenchBrowserSupport.LOCATION_BAR | IWorkbenchBrowserSupport.NAVIGATION_BAR,
 						DefaultBrowserSupport.SHARED_ID, null, null).openURL(file.toFile().toURI().toURL());
+			}
 		}
 		catch (MalformedURLException e) {
 			// ignore

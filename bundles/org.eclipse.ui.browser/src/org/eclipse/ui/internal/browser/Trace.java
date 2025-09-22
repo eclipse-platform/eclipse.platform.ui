@@ -45,11 +45,13 @@ public class Trace {
 	 * @param t java.lang.Throwable
 	 */
 	public static void trace(int level, String s, Throwable t) {
-		if (!WebBrowserUIPlugin.getInstance().isDebugging())
+		if (!WebBrowserUIPlugin.getInstance().isDebugging()) {
 			return;
+		}
 
 		System.out.println(s);
-		if (t != null)
+		if (t != null) {
 			t.printStackTrace();
+		}
 	}
 }

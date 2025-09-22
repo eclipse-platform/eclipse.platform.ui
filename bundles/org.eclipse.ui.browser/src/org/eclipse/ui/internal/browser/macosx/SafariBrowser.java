@@ -76,8 +76,9 @@ public class SafariBrowser extends DefaultBrowser {
 			}
 		}
 		// add the url if not substituted already
-		if (!substituted)
+		if (!substituted) {
 			tokenList.add(url);
+		}
 
 		String[] command = new String[tokenList.size()];
 		tokenList.toArray(command);

@@ -74,8 +74,9 @@ public class MozillaBrowser extends AbstractWebBrowser {
 		else {
 			url = ""; //$NON-NLS-1$
 		}
-		if (lastBrowserThread != null)
+		if (lastBrowserThread != null) {
 			lastBrowserThread.exitRequested = true;
+		}
 
 		lastBrowserThread = new BrowserThread(url);
 		lastBrowserThread.setDaemon(true);
@@ -85,7 +86,7 @@ public class MozillaBrowser extends AbstractWebBrowser {
 	private class BrowserThread extends Thread {
 		public boolean exitRequested = false;
 
-		private String url;
+		private final String url;
 
 		public BrowserThread(String urlName) {
 			this.url = urlName;
@@ -162,11 +163,13 @@ public class MozillaBrowser extends AbstractWebBrowser {
 		public void run() {
 			// if browser is opening, wait until it fully opens
 			waitForBrowser();
-			if (exitRequested)
+			if (exitRequested) {
 				return;
+			}
 			if (firstLaunch && Platform.OS_WIN32.equals(Platform.getOS())) {
-				if (openBrowser(executable, WebBrowserUtil.createParameterArray(parameters, url)) == 0)
+				if (openBrowser(executable, WebBrowserUtil.createParameterArray(parameters, url)) == 0) {
 					return;
+				}
 				browserFullyOpenedAt = System.currentTimeMillis() + DELAY;
 				return;
 			}
@@ -174,24 +177,28 @@ public class MozillaBrowser extends AbstractWebBrowser {
 					executable,
 					WebBrowserUtil.createParameterArray(parameters
 							+ " -remote openURL(" + IBrowserDescriptor.URL_PARAMETER + ")", url)) //$NON-NLS-1$ //$NON-NLS-2$
-					== 0)
+					== 0) {
 				return;
+			}
 
-			if (exitRequested)
+			if (exitRequested) {
 				return;
+			}
 			browserFullyOpenedAt = System.currentTimeMillis() + DELAY;
 			openBrowser(executable, WebBrowserUtil.createParameterArray(parameters, url));
 		}
 
 		private void waitForBrowser() {
-			while (System.currentTimeMillis() < browserFullyOpenedAt)
+			while (System.currentTimeMillis() < browserFullyOpenedAt) {
 				try {
-					if (exitRequested)
+					if (exitRequested) {
 						return;
+					}
 					Thread.sleep(100);
 				} catch (InterruptedException ie) {
 					// ignore
 				}
+			}
 		}
 	}
 }

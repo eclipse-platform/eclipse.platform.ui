@@ -29,8 +29,9 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	class Updater implements BrowserViewer.IBackNextListener {
 		@Override
 		public void updateBackNextBusy() {
-			if (back == null)
+			if (back == null) {
 				return;
+			}
 			back.setEnabled(getWebBrowser().isBackEnabled());
 			forward.setEnabled(getWebBrowser().isForwardEnabled());
 			// busy.setBusy(getWebBrowser().loading);
@@ -48,13 +49,15 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 	public void setActiveEditor(IEditorPart targetEditor) {
 		if (targetEditor instanceof WebBrowserEditor) {
 			editor = (WebBrowserEditor) targetEditor;
-		} else
+		} else {
 			editor = null;
+		}
 	}
 
 	protected BrowserViewer getWebBrowser() {
-		if (editor == null)
+		if (editor == null) {
 			return null;
+		}
 
 		return editor.webBrowser;
 	}

@@ -56,8 +56,9 @@ public class SWTUtil {
 	public static Button createButton(Composite comp, String label) {
 		Button b = new Button(comp, SWT.PUSH);
 		b.setText(label);
-		if (fontMetrics == null)
+		if (fontMetrics == null) {
 			initializeDialogUnits(comp);
+		}
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
 		data.widthHint = getButtonWidthHint(b);
 		b.setLayoutData(data);

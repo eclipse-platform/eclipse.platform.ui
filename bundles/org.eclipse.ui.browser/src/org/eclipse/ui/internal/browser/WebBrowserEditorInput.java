@@ -62,9 +62,9 @@ public class WebBrowserEditorInput implements IEditorInput,
 
 	private static final String MEMENTO_TOOLTIP = "tooltip"; //$NON-NLS-1$
 
-	private URL url;
+	private final URL url;
 
-	private int style;
+	private final int style;
 
 	private String id = null;
 
@@ -135,13 +135,14 @@ public class WebBrowserEditorInput implements IEditorInput,
 		// if (input.isToolbarVisible() != isToolbarVisible())
 		// return false;
 		// else
-		if (input.isStatusbarVisible() != isStatusbarVisible())
+		if (input.isStatusbarVisible() != isStatusbarVisible()) {
 			return false;
-		else if (id != null) {
+		} else if (id != null) {
 			String bid = input.getBrowserId();
 			return id.equals(bid);
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	/**
@@ -190,12 +191,12 @@ public class WebBrowserEditorInput implements IEditorInput,
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!(obj instanceof WebBrowserEditorInput))
+		}
+		if (!(obj instanceof WebBrowserEditorInput other)) {
 			return false;
-		WebBrowserEditorInput other = (WebBrowserEditorInput) obj;
-
+		}
 		if (url != null) {
 			if (other.url == null || !url.toExternalForm().equals(other.url.toExternalForm())) {
 				return false;
@@ -211,8 +212,9 @@ public class WebBrowserEditorInput implements IEditorInput,
 	 */
 	@Override
 	public boolean exists() {
-		if ((style & IWorkbenchBrowserSupport.PERSISTENT) != 0)
+		if ((style & IWorkbenchBrowserSupport.PERSISTENT) != 0) {
 			return false;
+		}
 
 		return true;
 	}
@@ -250,27 +252,31 @@ public class WebBrowserEditorInput implements IEditorInput,
 
 	@Override
 	public String getName() {
-		if (name != null)
+		if (name != null) {
 			return name;
+		}
 
 		return Messages.viewWebBrowserTitle;
 	}
 
 	@Override
 	public IPersistableElement getPersistable() {
-		if ((style & IWorkbenchBrowserSupport.PERSISTENT) == 0)
+		if ((style & IWorkbenchBrowserSupport.PERSISTENT) == 0) {
 			return null;
+		}
 
 		return this;
 	}
 
 	@Override
 	public String getToolTipText() {
-		if (tooltip != null)
+		if (tooltip != null) {
 			return tooltip;
+		}
 
-		if (url != null)
+		if (url != null) {
 			return url.toExternalForm();
+		}
 
 		return Messages.viewWebBrowserTitle;
 	}
