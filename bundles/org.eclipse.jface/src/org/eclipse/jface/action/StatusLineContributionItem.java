@@ -45,7 +45,7 @@ public class StatusLineContributionItem extends ContributionItem {
 	 */
 	public static final int CALC_TRUE_WIDTH = -1;
 
-	private int charWidth;
+	private final int charWidth;
 
 	private CLabel label;
 

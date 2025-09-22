@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * @since 3.3
  */
 public final class TableViewerColumn extends ViewerColumn {
-	private TableColumn column;
+	private final TableColumn column;
 
 	/**
 	 * Creates a new viewer column for the given {@link TableViewer} on a new

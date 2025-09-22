@@ -117,7 +117,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *
 	 * @see #fireDoubleClick
 	 */
-	private ListenerList<IDoubleClickListener> doubleClickListeners = new ListenerList<>();
+	private final ListenerList<IDoubleClickListener> doubleClickListeners = new ListenerList<>();
 
 	/**
 	 * List of open listeners (element type:
@@ -125,7 +125,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *
 	 * @see #fireOpen
 	 */
-	private ListenerList<IOpenListener> openListeners = new ListenerList<>();
+	private final ListenerList<IOpenListener> openListeners = new ListenerList<>();
 
 	/**
 	 * List of post selection listeners (element type:
@@ -133,7 +133,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *
 	 * @see #firePostSelectionChanged
 	 */
-	private ListenerList<ISelectionChangedListener> postSelectionChangedListeners = new ListenerList<>();
+	private final ListenerList<ISelectionChangedListener> postSelectionChangedListeners = new ListenerList<>();
 
 	/**
 	 * The colorAndFontCollector is an object used by viewers that
@@ -408,11 +408,11 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * The safe runnable used to update an item.
 	 */
 	class UpdateItemSafeRunnable extends SafeRunnable {
-		private Widget widget;
+		private final Widget widget;
 
-		private Object element;
+		private final Object element;
 
-		private boolean fullMap;
+		private final boolean fullMap;
 
 		UpdateItemSafeRunnable(Widget widget, Object element, boolean fullMap) {
 			this.widget = widget;
@@ -578,8 +578,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			// See bug 2741 for details.
 			mapElement(element, item);
 		}
-		if (associateListener != null)
+		if (associateListener != null) {
 			associateListener.associate(element, item);
+		}
 	}
 
 
@@ -592,8 +593,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            the widget
 	 */
 	protected void disassociate(Item item) {
-		if (associateListener != null)
+		if (associateListener != null) {
 			associateListener.disassociate(item);
+		}
 		Object element = item.getData();
 		Assert.isNotNull(element);
 		//Clear the map before we clear the data
@@ -687,8 +689,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 				}
 				if (add) {
 					filtered.add(element);
-				} else if (associateListener != null)
+				} else if (associateListener != null) {
 					associateListener.filteredOut(element);
+				}
 			}
 			return filtered.toArray();
 		}
@@ -1043,8 +1046,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * 				not an instance of ViewerSorter
 	 */
 	public ViewerSorter getSorter() {
-		if (sorter instanceof ViewerSorter)
+		if (sorter instanceof ViewerSorter) {
 			return (ViewerSorter)sorter;
+		}
 		return null;
 	}
 
@@ -2270,8 +2274,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		super.handleDispose(event);
 		sorter = null;
 		comparer = null;
-		if (filters != null)
+		if (filters != null) {
 			filters.clear();
+		}
 		elementMap = newHashtable(1);
 		openListeners.clear();
 		doubleClickListeners.clear();

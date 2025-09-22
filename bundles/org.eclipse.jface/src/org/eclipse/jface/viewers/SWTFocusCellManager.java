@@ -36,15 +36,15 @@ import org.eclipse.core.runtime.Assert;
  */
 abstract class SWTFocusCellManager {
 
-	private CellNavigationStrategy navigationStrategy;
+	private final CellNavigationStrategy navigationStrategy;
 
-	private ColumnViewer viewer;
+	private final ColumnViewer viewer;
 
 	private ViewerCell focusCell;
 
-	private FocusCellHighlighter cellHighlighter;
+	private final FocusCellHighlighter cellHighlighter;
 
-	private DisposeListener itemDeletionListener = e -> setFocusCell(null);
+	private final DisposeListener itemDeletionListener = e -> setFocusCell(null);
 
 	public SWTFocusCellManager(ColumnViewer viewer,
 			FocusCellHighlighter focusDrawingDelegate,
@@ -158,24 +158,28 @@ abstract class SWTFocusCellManager {
 					@Override
 					public void getName(AccessibleEvent event) {
 						ViewerCell cell = getFocusCell();
-						if (cell == null)
+						if (cell == null) {
 							return;
+						}
 
 						ViewerRow row = cell.getViewerRow();
-						if (row == null)
+						if (row == null) {
 							return;
+						}
 
 						ViewerColumn viewPart = viewer.getViewerColumn(cell
 								.getColumnIndex());
 
-						if (viewPart == null)
+						if (viewPart == null) {
 							return;
+						}
 
 						CellLabelProvider labelProvider = viewPart
 								.getLabelProvider();
 
-						if (labelProvider == null)
+						if (labelProvider == null) {
 							return;
+						}
 						labelProvider.update(cell);
 						event.result = cell.getText();
 					}

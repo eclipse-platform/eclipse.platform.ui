@@ -24,7 +24,7 @@ import org.eclipse.swt.events.SegmentListener;
  */
 /* package */class VisualTextDirectionSegmentListener implements SegmentListener {
 
-	private String textDirection;
+	private final String textDirection;
 
 	/**
 	 * Creates a new segment listener that enforces Visual Text Direction

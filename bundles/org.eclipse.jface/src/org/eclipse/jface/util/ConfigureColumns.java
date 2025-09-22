@@ -73,13 +73,13 @@ public class ConfigureColumns {
 	 */
 	static class ConfigureColumnsDialog extends Dialog {
 
-		private Control targetControl;
+		private final Control targetControl;
 		private ColumnObject[] columnObjects;
 		private Table table;
 		private Button upButton;
 		private Button downButton;
 		private Text text;
-		private boolean moveableColumnsFound;
+		private final boolean moveableColumnsFound;
 
 		static class ColumnObject {
 			Item column;

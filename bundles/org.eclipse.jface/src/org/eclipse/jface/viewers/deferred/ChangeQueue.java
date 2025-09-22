@@ -46,8 +46,8 @@ final class ChangeQueue {
 	 * @since 3.1
 	 */
 	public static final class Change {
-		private int type;
-		private Object[] elements;
+		private final int type;
+		private final Object[] elements;
 
 		/**
 		 * Create a change of the specified type that affects the given elements.

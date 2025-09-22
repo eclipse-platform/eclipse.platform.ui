@@ -59,8 +59,8 @@ public class PlainMessageDialog extends IconAndMessageDialog {
 	 * @since 3.23
 	 */
 	public static class Builder {
-		private Shell shell;
-		private String dialogTitle;
+		private final Shell shell;
+		private final String dialogTitle;
 		private Image titleImage;
 		private Image image;
 

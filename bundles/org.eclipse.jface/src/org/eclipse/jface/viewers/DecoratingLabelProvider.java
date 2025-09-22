@@ -29,12 +29,12 @@ import org.eclipse.swt.graphics.Image;
 public class DecoratingLabelProvider extends LabelProvider implements IViewerLabelProvider, IColorProvider,
 		IFontProvider, ITreePathLabelProvider {
 
-	private ILabelProvider provider;
+	private final ILabelProvider provider;
 
 	private ILabelDecorator decorator;
 
 	// Need to keep our own list of listeners
-	private ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
+	private final ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
 
 	private IDecorationContext decorationContext = DecorationContext.DEFAULT_CONTEXT;
 
@@ -91,8 +91,7 @@ public class DecoratingLabelProvider extends LabelProvider implements IViewerLab
 	public Image getImage(Object element) {
 		Image image = provider.getImage(element);
 		if (decorator != null) {
-			if (decorator instanceof LabelDecorator) {
-				LabelDecorator ld2 = (LabelDecorator) decorator;
+			if (decorator instanceof LabelDecorator ld2) {
 				Image decorated = ld2.decorateImage(image, element, getDecorationContext());
 				if (decorated != null) {
 					return decorated;
@@ -136,8 +135,7 @@ public class DecoratingLabelProvider extends LabelProvider implements IViewerLab
 	public String getText(Object element) {
 		String text = provider.getText(element);
 		if (decorator != null) {
-			if (decorator instanceof LabelDecorator) {
-				LabelDecorator ld2 = (LabelDecorator) decorator;
+			if (decorator instanceof LabelDecorator ld2) {
 				String decorated = ld2.decorateText(text, element, getDecorationContext());
 				if (decorated != null) {
 					return decorated;
@@ -218,8 +216,7 @@ public class DecoratingLabelProvider extends LabelProvider implements IViewerLab
 		ILabelDecorator currentDecorator = getLabelDecorator();
 		String oldText = settings.getText();
 		boolean decorationReady = true;
-		if (currentDecorator instanceof IDelayedLabelDecorator) {
-			IDelayedLabelDecorator delayedDecorator = (IDelayedLabelDecorator) currentDecorator;
+		if (currentDecorator instanceof IDelayedLabelDecorator delayedDecorator) {
 			if (!delayedDecorator.prepareDecoration(element, oldText)) {
 				// The decoration is not ready but has been queued for processing
 				decorationReady = false;
@@ -251,8 +248,7 @@ public class DecoratingLabelProvider extends LabelProvider implements IViewerLab
 	 */
 	protected void updateForDecorationReady(ViewerLabel settings, Object element) {
 
-		if(decorator instanceof IColorDecorator){
-			IColorDecorator colorDecorator = (IColorDecorator) decorator;
+		if(decorator instanceof IColorDecorator colorDecorator){
 			settings.setBackground(colorDecorator.decorateBackground(element));
 			settings.setForeground(colorDecorator.decorateForeground(element));
 		}
@@ -317,14 +313,12 @@ public class DecoratingLabelProvider extends LabelProvider implements IViewerLab
 		String oldText = settings.getText();
 		Object element = elementPath.getLastSegment();
 		boolean decorationReady = true;
-		if (currentDecorator instanceof LabelDecorator) {
-			LabelDecorator labelDecorator = (LabelDecorator) currentDecorator;
+		if (currentDecorator instanceof LabelDecorator labelDecorator) {
 			if (!labelDecorator.prepareDecoration(element, oldText, getDecorationContext())) {
 				// The decoration is not ready but has been queued for processing
 				decorationReady = false;
 			}
-		} else if (currentDecorator instanceof IDelayedLabelDecorator) {
-			IDelayedLabelDecorator delayedDecorator = (IDelayedLabelDecorator) currentDecorator;
+		} else if (currentDecorator instanceof IDelayedLabelDecorator delayedDecorator) {
 			if (!delayedDecorator.prepareDecoration(element, oldText)) {
 				// The decoration is not ready but has been queued for processing
 				decorationReady = false;
@@ -333,8 +327,7 @@ public class DecoratingLabelProvider extends LabelProvider implements IViewerLab
 		settings.setHasPendingDecorations(!decorationReady);
 		// update icon and label
 
-		if (provider instanceof ITreePathLabelProvider) {
-			ITreePathLabelProvider pprov = (ITreePathLabelProvider) provider;
+		if (provider instanceof ITreePathLabelProvider pprov) {
 			if (decorationReady || oldText == null
 					|| settings.getText().isEmpty()) {
 				pprov.updateLabel(settings, elementPath);
@@ -366,37 +359,42 @@ public class DecoratingLabelProvider extends LabelProvider implements IViewerLab
 	private void decorateSettings(ViewerLabel settings, TreePath elementPath) {
 		Object element = elementPath.getLastSegment();
 		if (decorator != null) {
-			if (decorator instanceof LabelDecorator) {
-				LabelDecorator labelDecorator = (LabelDecorator) decorator;
+			if (decorator instanceof LabelDecorator labelDecorator) {
 				String text = labelDecorator.decorateText(settings.getText(), element, getDecorationContext());
-				if (text != null && text.length() > 0)
+				if (text != null && text.length() > 0) {
 					settings.setText(text);
+				}
 				Image image = labelDecorator.decorateImage(settings.getImage(), element, getDecorationContext());
-				if (image != null)
+				if (image != null) {
 					settings.setImage(image);
+				}
 
 			} else {
 				String text = decorator.decorateText(settings.getText(), element);
-				if (text != null && text.length() > 0)
+				if (text != null && text.length() > 0) {
 					settings.setText(text);
+				}
 				Image image = decorator.decorateImage(settings.getImage(), element);
-				if (image != null)
+				if (image != null) {
 					settings.setImage(image);
+				}
 			}
-			if(decorator instanceof IColorDecorator){
-				IColorDecorator colorDecorator = (IColorDecorator) decorator;
+			if(decorator instanceof IColorDecorator colorDecorator){
 				Color background = colorDecorator.decorateBackground(element);
-				if (background != null)
+				if (background != null) {
 					settings.setBackground(background);
+				}
 				Color foreground = colorDecorator.decorateForeground(element);
-				if (foreground != null)
+				if (foreground != null) {
 					settings.setForeground(foreground);
+				}
 			}
 
 			if(decorator instanceof IFontDecorator) {
 				Font font = ((IFontDecorator) decorator).decorateFont(element);
-				if (font != null)
+				if (font != null) {
 					settings.setFont(font);
+				}
 			}
 		}
 	}

@@ -55,20 +55,25 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 	 *            {@link Object}
 	 */
 	public void setProviders(Object provider) {
-		if (provider instanceof ITreePathLabelProvider)
+		if (provider instanceof ITreePathLabelProvider) {
 			treePathLabelProvider = ((ITreePathLabelProvider) provider);
+		}
 
-		if (provider instanceof IViewerLabelProvider)
+		if (provider instanceof IViewerLabelProvider) {
 			viewerLabelProvider = ((IViewerLabelProvider) provider);
+		}
 
-		if (provider instanceof ILabelProvider)
+		if (provider instanceof ILabelProvider) {
 			labelProvider = ((ILabelProvider) provider);
+		}
 
-		if (provider instanceof IColorProvider)
+		if (provider instanceof IColorProvider) {
 			colorProvider = (IColorProvider) provider;
+		}
 
-		if (provider instanceof IFontProvider)
+		if (provider instanceof IFontProvider) {
 			fontProvider = (IFontProvider) provider;
+		}
 
 	}
 
@@ -165,14 +170,17 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 		} else if (viewerLabelProvider != null) {
 			viewerLabelProvider.updateLabel(label, element);
 		}
-		if (!label.hasNewForeground() && colorProvider != null)
+		if (!label.hasNewForeground() && colorProvider != null) {
 			label.setForeground(getForeground(element));
+		}
 
-		if (!label.hasNewBackground() && colorProvider != null)
+		if (!label.hasNewBackground() && colorProvider != null) {
 			label.setBackground(getBackground(element));
+		}
 
-		if (!label.hasNewFont() && fontProvider != null)
+		if (!label.hasNewFont() && fontProvider != null) {
 			label.setFont(getFont(element));
+		}
 
 		applyViewerLabel(cell, label);
 	}

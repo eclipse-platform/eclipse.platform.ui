@@ -40,7 +40,7 @@ package org.eclipse.jface.viewers.deferred;
 	/**
 	 * Map of elements to object indices (inverse of the knownObjects array)
 	 */
-	private IntHashMap knownIndices = new IntHashMap();
+	private final IntHashMap knownIndices = new IntHashMap();
 
 	/**
 	 * Contains all known objects that have been sent here from the background

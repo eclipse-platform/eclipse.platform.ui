@@ -236,11 +236,12 @@ public class TitleAreaDialog extends TrayDialog {
 		// Dialog image @ right
 		titleImageLabel = new Label(parent, SWT.CENTER);
 		titleImageLabel.setBackground(background);
-		if (titleAreaImage == null || titleAreaImage.isDisposed())
+		if (titleAreaImage == null || titleAreaImage.isDisposed()) {
 			titleImageLabel.setImage(JFaceResources
 					.getImage(DLG_IMG_TITLE_BANNER));
-		else
+		} else {
 			titleImageLabel.setImage(titleAreaImage);
+		}
 
 		FormData imageData = new FormData();
 		imageData.top = new FormAttachment(0, 0);
@@ -297,8 +298,9 @@ public class TitleAreaDialog extends TrayDialog {
 		bottomFillerLabel.setBackground(background);
 		setLayoutsForNormalMessage(verticalSpacing, horizontalSpacing);
 		determineTitleImageLargest();
-		if (titleImageLargest)
+		if (titleImageLargest) {
 			return titleImageLabel;
+		}
 		return messageLabel;
 	}
 
@@ -337,9 +339,10 @@ public class TitleAreaDialog extends TrayDialog {
 		messageLabelData.left = new FormAttachment(messageImageLabel,
 				horizontalSpacing);
 		messageLabelData.height = messageLabelHeight;
-		if (titleImageLargest)
+		if (titleImageLargest) {
 			messageLabelData.bottom = new FormAttachment(titleImageLabel, 0,
 					SWT.BOTTOM);
+		}
 		messageLabel.setLayoutData(messageLabelData);
 		FormData fillerData = new FormData();
 		fillerData.left = new FormAttachment(0, horizontalSpacing);
@@ -404,8 +407,9 @@ public class TitleAreaDialog extends TrayDialog {
 	public void setErrorMessage(String newErrorMessage) {
 		// Any change?
 		if (errorMessage == null ? newErrorMessage == null : errorMessage
-				.equals(newErrorMessage))
+				.equals(newErrorMessage)) {
 			return;
+		}
 		errorMessage = newErrorMessage;
 
 		// Clear or set error message.
@@ -418,9 +422,10 @@ public class TitleAreaDialog extends TrayDialog {
 			// avoid calling setMessage in case it is overridden to call
 			// setErrorMessage,
 			// which would result in a recursive infinite loop
-			if (message == null) // this should probably never happen since
+			if (message == null) { // this should probably never happen since
 				// setMessage does this conversion....
 				message = ""; //$NON-NLS-1$
+			}
 			updateMessage(message);
 			messageImageLabel.setImage(messageImage);
 			messageImageLabel.setToolTipText(messageImageTooltip);
@@ -486,9 +491,10 @@ public class TitleAreaDialog extends TrayDialog {
 			messageLabelData.right = new FormAttachment(titleImageLabel);
 			messageLabelData.left = new FormAttachment(messageImageLabel, 0);
 			messageLabelData.height = messageLabelHeight;
-			if (titleImageLargest)
+			if (titleImageLargest) {
 				messageLabelData.bottom = new FormAttachment(titleImageLabel,
 						0, SWT.BOTTOM);
+			}
 			messageLabel.setLayoutData(messageLabelData);
 		}
 
@@ -496,8 +502,9 @@ public class TitleAreaDialog extends TrayDialog {
 			getShell().layout();
 		} else // Do not layout before the dialog area has been created
 		// to avoid incomplete calculations.
-		if (dialogArea != null)
+		if (dialogArea != null) {
 			workArea.getParent().layout(true);
+		}
 
 		int messageLabelUnclippedHeight = messageLabel.computeSize(messageLabel.getSize().x - xTrim, SWT.DEFAULT, true).y;
 		boolean messageLabelClipped = messageLabelUnclippedHeight > messageLabel.getSize().y - yTrim;
@@ -604,8 +611,9 @@ public class TitleAreaDialog extends TrayDialog {
 	 */
 	private void showMessage(String newMessage, Image newImage, String newImageTooltip) {
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=249915
-		if (newMessage == null)
+		if (newMessage == null) {
 			newMessage = ""; //$NON-NLS-1$
+		}
 
 		// Any change?
 		if (message.equals(newMessage) && messageImage == newImage) {
@@ -658,11 +666,13 @@ public class TitleAreaDialog extends TrayDialog {
 	 *            the title show
 	 */
 	public void setTitle(String newTitle) {
-		if (titleLabel == null)
+		if (titleLabel == null) {
 			return;
+		}
 		String title = newTitle;
-		if (title == null)
+		if (title == null) {
 			title = "";//$NON-NLS-1$
+		}
 		titleLabel.setText(title);
 	}
 
@@ -689,10 +699,11 @@ public class TitleAreaDialog extends TrayDialog {
 			titleImageLabel.setImage(newTitleImage);
 			determineTitleImageLargest();
 			Control top;
-			if (titleImageLargest)
+			if (titleImageLargest) {
 				top = titleImageLabel;
-			else
+			} else {
 				top = messageLabel;
+			}
 			resetWorkAreaAttachments(top);
 		}
 	}

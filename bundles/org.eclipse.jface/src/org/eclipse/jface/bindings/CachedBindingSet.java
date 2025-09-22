@@ -216,11 +216,9 @@ final class CachedBindingSet {
 	 */
 	@Override
 	public final boolean equals(final Object object) {
-		if (!(object instanceof CachedBindingSet)) {
+		if (!(object instanceof final CachedBindingSet other)) {
 			return false;
 		}
-
-		final CachedBindingSet other = (CachedBindingSet) object;
 
 		if (!Objects.equals(activeContextTree, other.activeContextTree)) {
 			return false;

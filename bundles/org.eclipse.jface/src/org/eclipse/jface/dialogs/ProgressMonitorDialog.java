@@ -114,7 +114,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	/**
 	 * The progress monitor.
 	 */
-	private ProgressMonitor progressMonitor = new ProgressMonitor();
+	private final ProgressMonitor progressMonitor = new ProgressMonitor();
 
 	/**
 	 * The name of the current task (used by ProgressMonitor).
@@ -247,16 +247,18 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
 		@Override
 		public void clearBlocked() {
-			if (getShell() == null || getShell().isDisposed())
+			if (getShell() == null || getShell().isDisposed()) {
 				return;
+			}
 			locked = false;
 			updateForClearBlocked();
 		}
 
 		@Override
 		public void setBlocked(IStatus reason) {
-			if (getShell() == null || getShell().isDisposed())
+			if (getShell() == null || getShell().isDisposed()) {
 				return;
+			}
 			locked = true;
 			updateForSetBlocked(reason);
 		}
@@ -632,10 +634,11 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		int result = super.open();
 		// update message label just in case beginTask() has been invoked
 		// already
-		if (task == null || task.isEmpty())
+		if (task == null || task.isEmpty()) {
 			setMessage(DEFAULT_TASKNAME, true);
-		else
+		} else {
 			setMessage(task, true);
+		}
 		return result;
 	}
 }

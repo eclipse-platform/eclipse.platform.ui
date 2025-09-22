@@ -96,10 +96,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	private IWizard wizard;
 
 	// Wizards to dispose
-	private ArrayList<IWizard> createdWizards = new ArrayList<>();
+	private final ArrayList<IWizard> createdWizards = new ArrayList<>();
 
 	// Current nested wizards
-	private ArrayList<IWizard> nestedWizards = new ArrayList<>();
+	private final ArrayList<IWizard> nestedWizards = new ArrayList<>();
 
 	// The currently displayed page.
 	private IWizardPage currentPage = null;
@@ -144,13 +144,13 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 
 	private Button helpButton;
 
-	private SelectionListener cancelListener;
+	private final SelectionListener cancelListener;
 
 	private boolean isMovingToPreviousPage = false;
 
 	private Composite pageContainer;
 
-	private PageContainerFillLayout pageContainerLayout = new PageContainerFillLayout(5, 5, 300, 225);
+	private final PageContainerFillLayout pageContainerLayout = new PageContainerFillLayout(5, 5, 300, 225);
 
 	private int pageWidth = SWT.DEFAULT;
 
@@ -168,9 +168,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 
 	private boolean lockedUI = false;
 
-	private ListenerList<IPageChangedListener> pageChangedListeners = new ListenerList<>();
+	private final ListenerList<IPageChangedListener> pageChangedListeners = new ListenerList<>();
 
-	private ListenerList<IPageChangingListener> pageChangingListeners = new ListenerList<>();
+	private final ListenerList<IPageChangingListener> pageChangingListeners = new ListenerList<>();
 
 	/**
 	 * A layout for a container which includes several pages, like a notebook,
@@ -1213,8 +1213,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 		}
 
 		// If page changing evaluation unsuccessful, do not change the page
-		if (!doPageChanging(page))
+		if (!doPageChanging(page)) {
 			return;
+		}
 
 		// Update for the new page in a busy cursor if possible
 		if (getContents() == null) {

@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.5
  */
 public final class RowDataFactory {
-	private RowData data;
+	private final RowData data;
 
 	/**
 	 * Creates a RowDataFactory that creates copies of the given RowData.

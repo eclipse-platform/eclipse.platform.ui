@@ -99,7 +99,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * List of registered tree listeners (element type:
 	 * <code>TreeListener</code>).
 	 */
-	private ListenerList<ITreeViewerListener> treeListeners = new ListenerList<>();
+	private final ListenerList<ITreeViewerListener> treeListeners = new ListenerList<>();
 
 	/**
 	 * The level to which the tree is automatically expanded each time the viewer's
@@ -142,9 +142,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Safe runnable used to update an item.
 	 */
 	class UpdateItemSafeRunnable extends SafeRunnable {
-		private Object element;
+		private final Object element;
 
-		private Item item;
+		private final Item item;
 
 		UpdateItemSafeRunnable(Item item, Object element) {
 			this.item = item;
@@ -185,8 +185,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	public void add(Object parentElementOrTreePath, Object... childElements) {
 		Assert.isNotNull(parentElementOrTreePath);
 		assertElementsNotNull(childElements);
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		Widget[] widgets = internalFindItems(parentElementOrTreePath);
 		// If parent hasn't been realized yet, just ignore the add.
 		if (widgets.length == 0) {
@@ -629,8 +630,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			ViewerComparator comparator) {
 		TreePath path;
 		if (comparator instanceof TreePathViewerSorter
-				&& parent instanceof Item) {
-			Item item = (Item) parent;
+				&& parent instanceof Item item) {
 			path = getTreePathFromItem(item);
 		} else {
 			path = null;
@@ -973,8 +973,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 
 		int columnCount = doGetColumnCount();
-		if (columnCount == 0)// If no columns are created then fake one
+		if (columnCount == 0) { // If no columns are created then fake one
 			columnCount = 1;
+		}
 
 		ViewerRow viewerRowFromItem = getViewerRowFromItem(item);
 
@@ -1153,8 +1154,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @since 3.14
 	 */
 	public void expandToLevel(Object elementOrTreePath, int level, boolean disableRedraw) {
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		Control control = getControl();
 		try {
 			if (disableRedraw) {
@@ -2125,8 +2127,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		for (Widget parentItem : parentItemArray) {
 			// May happen if parent element is a descendent of of a previously
 			// removed element
-			if (parentItem.isDisposed())
+			if (parentItem.isDisposed()) {
 				continue;
+			}
 
 			// Iterate over the child items and remove each one
 			Item[] children = getChildren(parentItem);
@@ -2338,8 +2341,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (elementsOrTreePaths.length == 0) {
 			return;
 		}
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		preservingSelection(() -> internalRemove(elementsOrTreePaths));
 	}
 
@@ -2366,8 +2370,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (elements.length == 0) {
 			return;
 		}
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		preservingSelection(() -> internalRemove(parent, elements));
 	}
 
@@ -2539,7 +2544,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		addTreeListener(autoExpandOnSingleChildListener);
 	}
 
-	private CustomChildrenExpansionFunction singleChildExpansionFunction = (widget, newLevel) -> {
+	private final CustomChildrenExpansionFunction singleChildExpansionFunction = (widget, newLevel) -> {
 		Item[] children = getChildren(widget);
 		boolean hasExactlyOneChild = children != null && children.length == 1;
 		if (hasExactlyOneChild) {
@@ -2638,8 +2643,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setExpandedTreePaths(TreePath... treePaths) {
 		assertElementsNotNull((Object[]) treePaths);
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		final IElementComparer comparer = getComparer();
 		IElementComparer treePathComparer = new IElementComparer() {
 
@@ -2682,8 +2688,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setExpandedState(Object elementOrTreePath, boolean expanded) {
 		Assert.isNotNull(elementOrTreePath);
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		Widget item = internalExpand(elementOrTreePath, false);
 		if (item instanceof Item it) {
 			if (expanded) {
@@ -3312,8 +3319,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			int position) {
 		Assert.isNotNull(parentElementOrTreePath);
 		Assert.isNotNull(element);
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		if (getComparator() != null || hasFilters()) {
 			add(parentElementOrTreePath, new Object[] { element });
 			return;
@@ -3339,8 +3347,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					createTreeItem(item, element, insertionPosition);
 				} else {
 					Object parentElement = parentElementOrTreePath;
-					if (element instanceof TreePath)
+					if (element instanceof TreePath) {
 						parentElement = ((TreePath) parentElement).getLastSegment();
+					}
 					updatePlus(item, parentElement);
 				}
 			} else {
@@ -3434,10 +3443,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @since 3.3
 	 */
 	final protected boolean internalIsInputOrEmptyPath(final Object elementOrTreePath) {
-		if (elementOrTreePath.equals(getRoot()))
+		if (elementOrTreePath.equals(getRoot())) {
 			return true;
-		if (!(elementOrTreePath instanceof TreePath))
+		}
+		if (!(elementOrTreePath instanceof TreePath)) {
 			return false;
+		}
 		return ((TreePath) elementOrTreePath).getSegmentCount() == 0;
 	}
 

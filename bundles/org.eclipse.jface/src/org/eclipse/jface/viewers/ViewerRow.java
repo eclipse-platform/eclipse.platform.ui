@@ -208,8 +208,9 @@ public abstract class ViewerRow implements Cloneable {
 	 * @return {@link ViewerCell} or <code>null</code> if the index is negative.
 	 */
 	public ViewerCell getCell(int column) {
-		if (column >= 0)
+		if (column >= 0) {
 			return new ViewerCell((ViewerRow) clone(), column, getElement());
+		}
 
 		return null;
 	}
@@ -257,12 +258,15 @@ public abstract class ViewerRow implements Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final ViewerRow other = (ViewerRow) obj;
 		return Objects.equals(getItem(), other.getItem());
 	}
@@ -359,8 +363,9 @@ public abstract class ViewerRow implements Cloneable {
 	}
 
 	private String getStyleRangesDataKey(int columnIndex) {
-		if (columnIndex == 0)
+		if (columnIndex == 0) {
 			return KEY_TEXT_LAYOUT_0;
+		}
 
 		if (cachedDataKeys == null) {
 			int size = Math.max(10, columnIndex + 1);

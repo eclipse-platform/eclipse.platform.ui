@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.3
  */
 public abstract class ToolTip {
-	private Control control;
+	private final Control control;
 
 	private int xShift = 3;
 
@@ -46,7 +46,7 @@ public abstract class ToolTip {
 
 	private int hideDelay = 0;
 
-	private ToolTipOwnerControlListener listener;
+	private final ToolTipOwnerControlListener listener;
 
 	private HashMap<String, Object> data;
 
@@ -64,9 +64,9 @@ public abstract class ToolTip {
 	 */
 	public static final int NO_RECREATE = 1 << 1;
 
-	private TooltipHideListener hideListener = new TooltipHideListener();
+	private final TooltipHideListener hideListener = new TooltipHideListener();
 
-	private Listener shellListener;
+	private final Listener shellListener;
 
 	private boolean hideOnMouseDown = true;
 
@@ -74,7 +74,7 @@ public abstract class ToolTip {
 
 	private boolean respectMonitorBounds = true;
 
-	private int style;
+	private final int style;
 
 	private Object currentArea;
 
@@ -629,9 +629,8 @@ public abstract class ToolTip {
 	private class TooltipHideListener implements Listener {
 		@Override
 		public void handleEvent(Event event) {
-			if (event.widget instanceof Control) {
+			if (event.widget instanceof Control c) {
 
-				Control c = (Control) event.widget;
 				Shell shell = c.getShell();
 
 				switch (event.type) {

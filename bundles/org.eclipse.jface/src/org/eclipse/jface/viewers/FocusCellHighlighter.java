@@ -20,7 +20,7 @@ package org.eclipse.jface.viewers;
  * @since 3.3
  */
 public abstract class FocusCellHighlighter {
-	private ColumnViewer viewer;
+	private final ColumnViewer viewer;
 	private SWTFocusCellManager mgr;
 
 	/**

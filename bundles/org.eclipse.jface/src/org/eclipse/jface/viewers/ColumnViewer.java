@@ -72,7 +72,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	private MouseListener mouseListener;
 
-	private Set<ExpandableNode> expandableNodes;
+	private final Set<ExpandableNode> expandableNodes;
 
 	// after logging for the first
 	// time
@@ -510,8 +510,9 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	@Override
 	public void refresh(Object element) {
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 
 		if (isCellEditorActive()) {
 			cancelEditing();
@@ -522,8 +523,9 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	@Override
 	public void refresh(Object element, boolean updateLabels) {
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 
 		if (isCellEditorActive()) {
 			cancelEditing();
@@ -534,8 +536,9 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	@Override
 	public void update(Object element, String[] properties) {
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		super.update(element, properties);
 	}
 

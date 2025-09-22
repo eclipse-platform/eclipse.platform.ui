@@ -45,14 +45,17 @@ public class TableColumnViewerLabelProvider extends WrappedViewerLabelProvider {
 	public TableColumnViewerLabelProvider(IBaseLabelProvider labelProvider) {
 		super(labelProvider);
 
-		if (labelProvider instanceof ITableLabelProvider)
+		if (labelProvider instanceof ITableLabelProvider) {
 			tableLabelProvider = (ITableLabelProvider) labelProvider;
+		}
 
-		if (labelProvider instanceof ITableColorProvider)
+		if (labelProvider instanceof ITableColorProvider) {
 			tableColorProvider = (ITableColorProvider) labelProvider;
+		}
 
-		if (labelProvider instanceof ITableFontProvider)
+		if (labelProvider instanceof ITableFontProvider) {
 			tableFontProvider = (ITableFontProvider) labelProvider;
+		}
 	}
 
 	@Override
@@ -84,10 +87,12 @@ public class TableColumnViewerLabelProvider extends WrappedViewerLabelProvider {
 		}
 
 		if (tableFontProvider == null) {
-			if (getFontProvider() != null)
+			if (getFontProvider() != null) {
 				cell.setFont(getFontProvider().getFont(element));
-		} else
+			}
+		} else {
 			cell.setFont(tableFontProvider.getFont(element, index));
+		}
 
 	}
 

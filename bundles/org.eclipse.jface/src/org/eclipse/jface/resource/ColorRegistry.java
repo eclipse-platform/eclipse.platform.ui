@@ -65,19 +65,19 @@ public class ColorRegistry extends ResourceRegistry {
 	 * Collection of <code>Color</code> that are now stale to be disposed when
 	 * it is safe to do so (i.e. on shutdown).
 	 */
-	private List<Color> staleColors = new ArrayList<>();
+	private final List<Color> staleColors = new ArrayList<>();
 
 	/**
 	 * Table of known colors, keyed by symbolic color name (key type: <code>String</code>,
 	 * value type: <code>org.eclipse.swt.graphics.Color</code>.
 	 */
-	private Map<String, Color> stringToColor = new HashMap<>(7);
+	private final Map<String, Color> stringToColor = new HashMap<>(7);
 
 	/**
 	 * Table of known color data, keyed by symbolic color name (key type:
 	 * <code>String</code>, value type: <code>org.eclipse.swt.graphics.RGB</code>).
 	 */
-	private Map<String, RGB> stringToRGB = new HashMap<>(7);
+	private final Map<String, RGB> stringToRGB = new HashMap<>(7);
 
 	/**
 	 * Runnable that cleans up the manager on disposal of the display.
@@ -219,8 +219,9 @@ public class ColorRegistry extends ResourceRegistry {
 	public ColorDescriptor getColorDescriptor(String symbolicName,
 			ColorDescriptor defaultValue) {
 		RGB rgb = getRGB(symbolicName);
-		if (rgb == null)
+		if (rgb == null) {
 			return defaultValue;
+		}
 		return ColorDescriptor.createFrom(rgb);
 	}
 

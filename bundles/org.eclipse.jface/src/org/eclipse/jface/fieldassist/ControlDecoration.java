@@ -99,7 +99,7 @@ public class ControlDecoration {
 	 * The composite on which to render the decoration and hook mouse events, or
 	 * null if we are hooking all parent composites.
 	 */
-	private Composite composite;
+	private final Composite composite;
 
 	/**
 	 * The associated image.
@@ -113,7 +113,7 @@ public class ControlDecoration {
 	/**
 	 * The position of the decoration.
 	 */
-	private int position;
+	private final int position;
 
 	/**
 	 * The decoration's visibility flag
@@ -140,12 +140,12 @@ public class ControlDecoration {
 	/**
 	 * Registered selection listeners.
 	 */
-	private ListenerList<SelectionListener> selectionListeners = new ListenerList<>();
+	private final ListenerList<SelectionListener> selectionListeners = new ListenerList<>();
 
 	/**
 	 * Registered menu detect listeners.
 	 */
-	private ListenerList<MenuDetectListener> menuDetectListeners = new ListenerList<>();
+	private final ListenerList<MenuDetectListener> menuDetectListeners = new ListenerList<>();
 
 	/**
 	 * The focus listener
@@ -225,22 +225,22 @@ public class ControlDecoration {
 		/**
 		 * Offset of info hover arrow from the left or right side.
 		 */
-		private int hao = 10;
+		private final int hao = 10;
 
 		/**
 		 * Width of info hover arrow.
 		 */
-		private int haw = 8;
+		private final int haw = 8;
 
 		/**
 		 * Height of info hover arrow.
 		 */
-		private int hah = 10;
+		private final int hah = 10;
 
 		/**
 		 * Margin around info hover text.
 		 */
-		private int hm = 2;
+		private final int hm = 2;
 
 		/**
 		 * This info hover's shell.
@@ -696,16 +696,19 @@ public class ControlDecoration {
 			// Notify listeners if any are registered.
 			switch (event.type) {
 			case SWT.MouseDown:
-				if (!selectionListeners.isEmpty())
+				if (!selectionListeners.isEmpty()) {
 					notifySelectionListeners(event);
+				}
 				break;
 			case SWT.MouseDoubleClick:
-				if (!selectionListeners.isEmpty())
+				if (!selectionListeners.isEmpty()) {
 					notifySelectionListeners(event);
+				}
 				break;
 			case SWT.MenuDetect:
-				if (!menuDetectListeners.isEmpty())
+				if (!menuDetectListeners.isEmpty()) {
 					notifyMenuDetectListeners(event);
+				}
 				break;
 			}
 		};
@@ -1054,8 +1057,9 @@ public class ControlDecoration {
 	private void showHoverText(String text, Control hoverNear) {
 		// We do not show the hover if the control is disposed or
 		// invisible.
-		if (control.isDisposed() || !control.isVisible())
+		if (control.isDisposed() || !control.isVisible()) {
 			return;
+		}
 
 		// If we aren't to show a hover, don't do anything.
 		if (!showHover) {

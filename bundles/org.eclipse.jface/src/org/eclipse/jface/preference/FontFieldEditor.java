@@ -71,9 +71,9 @@ public class FontFieldEditor extends FieldEditor {
 	 * Internal font previewer implementation.
 	 */
 	private static class DefaultPreviewer {
-		private Text text;
+		private final Text text;
 
-		private String string;
+		private final String string;
 
 		private Font font;
 

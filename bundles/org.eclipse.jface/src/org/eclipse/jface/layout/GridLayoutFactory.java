@@ -50,7 +50,7 @@ public final class GridLayoutFactory {
 	/**
 	 * Template layout. The factory will create copies of this layout.
 	 */
-	private GridLayout l;
+	private final GridLayout l;
 
 	/**
 	 * Creates a new GridLayoutFactory that will create copies of the given layout.

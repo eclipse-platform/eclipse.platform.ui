@@ -24,7 +24,7 @@ import java.util.HashMap;
  * @since 3.1
  */
 /* package */ class IntHashMap {
-	private HashMap map;
+	private final HashMap map;
 
 	public IntHashMap(int size, float loadFactor) {
 		map = new HashMap(size, loadFactor);

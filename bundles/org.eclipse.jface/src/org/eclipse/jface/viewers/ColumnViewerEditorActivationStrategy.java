@@ -28,7 +28,7 @@ import org.eclipse.swt.events.MouseEvent;
  * @since 3.3
  */
 public class ColumnViewerEditorActivationStrategy {
-	private ColumnViewer viewer;
+	private final ColumnViewer viewer;
 
 	private KeyListener keyboardActivationListener;
 

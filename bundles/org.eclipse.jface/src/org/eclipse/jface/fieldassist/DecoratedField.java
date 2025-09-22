@@ -128,17 +128,17 @@ public class DecoratedField {
 	/**
 	 * Decorations keyed by position.
 	 */
-	private FieldDecorationData[] decDatas = new FieldDecorationData[DECORATION_SLOTS];
+	private final FieldDecorationData[] decDatas = new FieldDecorationData[DECORATION_SLOTS];
 
 	/**
 	 * The associated control
 	 */
-	private Control control;
+	private final Control control;
 
 	/**
 	 * The composite with form layout used to manage decorations.
 	 */
-	private Composite form;
+	private final Composite form;
 
 	/**
 	 * The boolean that indicates whether the maximum decoration width is used
@@ -160,22 +160,22 @@ public class DecoratedField {
 		/**
 		 * Offset of info hover arrow from the left or right side.
 		 */
-		private int hao = 10;
+		private final int hao = 10;
 
 		/**
 		 * Width of info hover arrow.
 		 */
-		private int haw = 8;
+		private final int haw = 8;
 
 		/**
 		 * Height of info hover arrow.
 		 */
-		private int hah = 10;
+		private final int hah = 10;
 
 		/**
 		 * Margin around info hover text.
 		 */
-		private int hm = 2;
+		private final int hm = 2;
 
 		/**
 		 * This info hover's shell.
