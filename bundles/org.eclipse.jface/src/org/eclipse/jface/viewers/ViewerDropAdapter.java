@@ -73,7 +73,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	/**
 	 * The viewer to which this drop support has been added.
 	 */
-	private Viewer viewer;
+	private final Viewer viewer;
 
 	/**
 	 * The current operation.
@@ -166,10 +166,9 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	 * @return one of the <code>LOCATION_* </code>constants defined in this class
 	 */
 	protected int determineLocation(DropTargetEvent event) {
-		if (!(event.item instanceof Item)) {
+		if (!(event.item instanceof Item item)) {
 			return LOCATION_NONE;
 		}
-		Item item = (Item) event.item;
 		Point coordinates = new Point(event.x, event.y);
 		coordinates = viewer.getControl().toControl(coordinates);
 
@@ -213,8 +212,9 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	private void doDropValidation(DropTargetEvent event) {
 		//always remember what was previously requested, but not if it
 		//was overridden
-		if (event.detail != DND.DROP_NONE && overrideOperation == -1)
+		if (event.detail != DND.DROP_NONE && overrideOperation == -1) {
 			lastValidOperation = event.detail;
+		}
 
 		currentOperation = lastValidOperation;
 		currentEvent = event;
@@ -224,10 +224,11 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 		}
 
 		//give the right feedback for the override
-		if (overrideOperation != -1)
+		if (overrideOperation != -1) {
 			event.detail = overrideOperation;
-		else
+		} else {
 			event.detail = currentOperation;
+		}
 		currentEvent = null;
 	}
 
@@ -266,8 +267,9 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 		currentLocation = determineLocation(event);
 		currentEvent = event;
 
-		if (overrideOperation != -1)
+		if (overrideOperation != -1) {
 			currentOperation = overrideOperation;
+		}
 
 		//perform the drop behavior
 		if (!performDrop(event.data)) {
@@ -371,8 +373,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	 */
 	protected Object getSelectedObject() {
 		ISelection selection = viewer.getSelection();
-		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-			IStructuredSelection structured = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection structured && !selection.isEmpty()) {
 			return structured.getFirstElement();
 		}
 		return null;

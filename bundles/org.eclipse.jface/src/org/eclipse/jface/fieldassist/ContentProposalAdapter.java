@@ -686,10 +686,11 @@ public class ContentProposalAdapter {
 
 			// If there has been an adjustment causing the popup to overlap
 			// with the control, then put the popup above the control.
-			if (constrainedBounds.y < initialY)
+			if (constrainedBounds.y < initialY) {
 				getShell().setBounds(initialX, location.y - popupSize.y, popupSize.x, popupSize.y);
-			else
+			} else {
 				getShell().setBounds(initialX, initialY, popupSize.x, popupSize.y);
+			}
 
 			// Now set up a listener to monitor any changes in size.
 			getShell().addListener(SWT.Resize, e -> {
@@ -947,8 +948,9 @@ public class ContentProposalAdapter {
 		 */
 		private void recomputeProposals(String filterText) {
 			IContentProposal[] allProposals = getProposals();
-			if (allProposals == null)
-				 allProposals = getEmptyProposalArray();
+			if (allProposals == null) {
+				allProposals = getEmptyProposalArray();
+			}
 			// If the non-filtered proposal list is empty, we should
 			// close the popup.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=147377
@@ -1102,13 +1104,13 @@ public class ContentProposalAdapter {
 	/*
 	 * The control for which content proposals are provided.
 	 */
-	private Control control;
+	private final Control control;
 
 	/*
 	 * The adapter used to extract the String contents from an arbitrary
 	 * control.
 	 */
-	private IControlContentAdapter controlContentAdapter;
+	private final IControlContentAdapter controlContentAdapter;
 
 	/*
 	 * The popup used to show proposals.
@@ -1118,7 +1120,7 @@ public class ContentProposalAdapter {
 	/*
 	 * The keystroke that signifies content proposals should be shown.
 	 */
-	private KeyStroke triggerKeyStroke;
+	private final KeyStroke triggerKeyStroke;
 
 	/*
 	 * The String containing characters that auto-activate the popup.
@@ -1153,12 +1155,12 @@ public class ContentProposalAdapter {
 	/*
 	 * The list of IContentProposalListener listeners.
 	 */
-	private ListenerList<IContentProposalListener> proposalListeners = new ListenerList<>();
+	private final ListenerList<IContentProposalListener> proposalListeners = new ListenerList<>();
 
 	/*
 	 * The list of IContentProposalListener2 listeners.
 	 */
-	private ListenerList<IContentProposalListener2> proposalListeners2 = new ListenerList<>();
+	private final ListenerList<IContentProposalListener2> proposalListeners2 = new ListenerList<>();
 
 	/*
 	 * Flag that indicates whether the adapter is enabled. In some cases,
@@ -1211,7 +1213,7 @@ public class ContentProposalAdapter {
 	 * Construct a content proposal adapter that can assist the user with
 	 * choosing content for the field.
 	 * Use this constructor if you want to specify a <code>keyStroke</code>
-	 * and still want the content assist to be triggered by any modification 
+	 * and still want the content assist to be triggered by any modification
 	 * to the content.
 	 *
 	 *
@@ -1690,8 +1692,9 @@ public class ContentProposalAdapter {
 						// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=192633
 						// If the popup is open and this is a valid character, we
 						// want to watch for the modified text.
-						if (propagateKeys && e.character != 0)
+						if (propagateKeys && e.character != 0) {
 							watchModify = true;
+						}
 
 						return;
 					}
@@ -1815,8 +1818,9 @@ public class ContentProposalAdapter {
 								// modify event does not involve one of them.  See
 								// if any of the autoactivation characters are left
 								// in the content and close the popup if none remain.
-								if (!shouldPopupRemainOpen())
+								if (!shouldPopupRemainOpen()) {
 									closeProposalPopup();
+								}
 							}
 						}
 						break;
@@ -1876,8 +1880,9 @@ public class ContentProposalAdapter {
 				// Check whether there are any proposals to be shown.
 				recordCursorPosition(); // must be done before getting proposals
 				IContentProposal[] proposals = getProposals();
-				if (proposals == null)
+				if (proposals == null) {
 					return;
+				}
 				if (proposals.length > 0) {
 					if (DEBUG) {
 						System.out.println("POPUP OPENED BY PRECEDING EVENT"); //$NON-NLS-1$
@@ -2142,12 +2147,14 @@ public class ContentProposalAdapter {
 	 */
 	private boolean shouldPopupRemainOpen() {
 		// If we always autoactivate or never autoactivate, it should remain open
-		if (autoActivateString == null || autoActivateString.isEmpty())
+		if (autoActivateString == null || autoActivateString.isEmpty()) {
 			return true;
+		}
 		String content = getControlContentAdapter().getControlContents(getControl());
 		for (int i=0; i<autoActivateString.length(); i++) {
-			if (content.indexOf(autoActivateString.charAt(i)) >= 0)
+			if (content.indexOf(autoActivateString.charAt(i)) >= 0) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -2170,8 +2177,9 @@ public class ContentProposalAdapter {
 	 * @since 3.6
 	 */
 	public void setProposalPopupFocus() {
-		if (isValid() && popup != null)
+		if (isValid() && popup != null) {
 			popup.getShell().setFocus();
+		}
 	}
 
 	/**
@@ -2183,8 +2191,9 @@ public class ContentProposalAdapter {
 	 * @since 3.6
 	 */
 	public boolean isProposalPopupOpen() {
-		if (isValid() && popup != null)
+		if (isValid() && popup != null) {
 			return true;
+		}
 		return false;
 	}
 

@@ -23,9 +23,9 @@ import org.eclipse.jface.action.Action;
 
 public class BooleanPropertyAction extends Action {
 
-	private IPreferenceStore preferenceStore;
+	private final IPreferenceStore preferenceStore;
 
-	private String property;
+	private final String property;
 
 	/**
 	 * Create a new instance of the receiver.

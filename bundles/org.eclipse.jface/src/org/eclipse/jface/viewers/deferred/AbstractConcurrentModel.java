@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.ListenerList;
 public abstract class AbstractConcurrentModel implements
 		IConcurrentModel {
 
-	private ListenerList<IConcurrentModelListener> listeners = new ListenerList<>();
+	private final ListenerList<IConcurrentModelListener> listeners = new ListenerList<>();
 
 	@Override
 	public void addListener(IConcurrentModelListener listener) {

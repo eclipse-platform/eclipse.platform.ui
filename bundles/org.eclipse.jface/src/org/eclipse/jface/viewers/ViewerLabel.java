@@ -44,9 +44,9 @@ public class ViewerLabel {
 	private Font font = null;
 
 	// The initial values for the receiver.
-	private String startText;
+	private final String startText;
 
-	private Image startImage;
+	private final Image startImage;
 
 	private boolean hasPendingDecorations;
 

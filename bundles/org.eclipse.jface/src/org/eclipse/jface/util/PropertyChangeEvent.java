@@ -44,19 +44,19 @@ public class PropertyChangeEvent extends EventObject {
 	/**
 	 * The name of the changed property.
 	 */
-	private String propertyName;
+	private final String propertyName;
 
 	/**
 	 * The old value of the changed property, or <code>null</code> if
 	 * not known or not relevant.
 	 */
-	private Object oldValue;
+	private final Object oldValue;
 
 	/**
 	 * The new value of the changed property, or <code>null</code> if
 	 * not known or not relevant.
 	 */
-	private Object newValue;
+	private final Object newValue;
 
 	/**
 	 * Creates a new property change event.

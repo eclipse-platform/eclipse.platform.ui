@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.Display;
 	/**
 	 * The display.
 	 */
-	private Display display;
+	private final Display display;
 	private static final boolean LOG_BEGIN_TASK = Boolean
 			.getBoolean("AccumulatingProgressMonitor.logBeginTaskViolations"); //$NON-NLS-1$
 
@@ -70,7 +70,7 @@ import org.eclipse.swt.widgets.Display;
 
 		private double worked;
 
-		private IProgressMonitor monitor;
+		private final IProgressMonitor monitor;
 
 		/**
 		 * Create a new collector.

@@ -80,18 +80,14 @@ import org.eclipse.swt.widgets.Scrollable;
 	 * @return a default factory for the control
 	 */
 	public static GridDataFactory defaultsFor(Control control) {
-		if (control instanceof Button) {
-			Button button = (Button) control;
-
+		if (control instanceof Button button) {
 			if (hasStyle(button, SWT.CHECK)) {
 				return nonWrappingLabelData.copy();
 			}
 			return GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).hint(Geometry.max(button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true), LayoutConstants.getMinButtonSize()));
 		}
 
-		if (control instanceof Scrollable) {
-			Scrollable scrollable = (Scrollable) control;
-
+		if (control instanceof Scrollable scrollable) {
 			if (scrollable instanceof Composite) {
 				Composite composite = (Composite) control;
 

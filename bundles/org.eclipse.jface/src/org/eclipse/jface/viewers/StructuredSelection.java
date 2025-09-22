@@ -126,11 +126,9 @@ public class StructuredSelection implements IStructuredSelection {
 			return true;
 		}
 		//null and other classes
-		if (!(o instanceof StructuredSelection)) {
+		if (!(o instanceof StructuredSelection s2)) {
 			return false;
 		}
-		StructuredSelection s2 = (StructuredSelection) o;
-
 		// either or both empty?
 		if (isEmpty()) {
 			return s2.isEmpty();

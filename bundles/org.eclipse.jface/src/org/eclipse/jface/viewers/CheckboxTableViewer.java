@@ -48,7 +48,7 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 	/**
 	 * List of check state listeners (element type: <code>ICheckStateListener</code>).
 	 */
-	private ListenerList<ICheckStateListener> checkStateListeners = new ListenerList<>();
+	private final ListenerList<ICheckStateListener> checkStateListeners = new ListenerList<>();
 
 	/**
 	 * Provides the desired state of the check boxes.
@@ -369,8 +369,9 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 		TableItem[] children = getTable().getItems();
 		for (TableItem item : children) {
 			if (item.getData() != null) {
-				if (item.getChecked() != state)
+				if (item.getChecked() != state) {
 					item.setChecked(state);
+				}
 			}
 		}
 	}
@@ -385,8 +386,9 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 		TableItem[] children = getTable().getItems();
 		for (TableItem item : children) {
 			if (item.getData() != null) {
-				if (item.getGrayed() != state)
+				if (item.getGrayed() != state) {
 					item.setGrayed(state);
+				}
 			}
 		}
 	}
@@ -395,10 +397,10 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 	public boolean setChecked(Object element, boolean state) {
 		Assert.isNotNull(element);
 		Widget widget = findItem(element);
-		if (widget instanceof TableItem) {
-			TableItem item = (TableItem) widget;
-			if (item.getChecked() != state)
+		if (widget instanceof TableItem item) {
+			if (item.getChecked() != state) {
 				item.setChecked(state);
+			}
 			return true;
 		}
 		return false;
@@ -448,10 +450,10 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 	public boolean setGrayed(Object element, boolean state) {
 		Assert.isNotNull(element);
 		Widget widget = findItem(element);
-		if (widget instanceof TableItem) {
-			TableItem item = (TableItem) widget;
-			if (item.getGrayed() != state)
+		if (widget instanceof TableItem item) {
+			if (item.getGrayed() != state) {
 				item.setGrayed(state);
+			}
 			return true;
 		}
 		return false;

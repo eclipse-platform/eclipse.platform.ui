@@ -32,7 +32,7 @@ public final class FillLayoutFactory {
 	/**
 	 * Template layout. The factory will create copies of this layout.
 	 */
-	private FillLayout layout;
+	private final FillLayout layout;
 
 	/**
 	 * Creates a factory that creates copies of the given layout.

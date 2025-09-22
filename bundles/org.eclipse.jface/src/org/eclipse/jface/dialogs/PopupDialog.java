@@ -384,7 +384,7 @@ public class PopupDialog extends Window {
 	 */
 	private String infoText;
 
-	private boolean showPinAction;
+	private final boolean showPinAction;
 
 	/**
 	 * Constructs a new instance of <code>PopupDialog</code>.
@@ -879,11 +879,13 @@ public class PopupDialog extends Window {
 		Display display = parent.getDisplay();
 
 		Color backgroundColor = getBackground();
-		if (backgroundColor == null)
+		if (backgroundColor == null) {
 			backgroundColor = getDefaultBackground();
+		}
 		Color foregroundColor = getForeground();
-		if (foregroundColor == null)
+		if (foregroundColor == null) {
 			foregroundColor = getDefaultForeground();
+		}
 		Color infoColor = new Color(display, blend(
 				backgroundColor.getRGB(), foregroundColor.getRGB(),
 				0.56f));
@@ -1353,12 +1355,14 @@ public class PopupDialog extends Window {
 		// are accustomed to null meaning use the default, so we guard
 		// against this assumption.
 		Color color = getForeground();
-		if (color == null)
+		if (color == null) {
 			color = getDefaultForeground();
+		}
 		applyForegroundColor(color, composite, getForegroundColorExclusions());
 		color = getBackground();
-		if (color == null)
+		if (color == null) {
 			color = getDefaultBackground();
+		}
 		applyBackgroundColor(color, composite, getBackgroundColorExclusions());
 	}
 
@@ -1588,11 +1592,13 @@ public class PopupDialog extends Window {
 			IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
 				String key = getClass().getName() + DIALOG_USE_PERSISTED_SIZE;
-				if (settings.get(key) != null || !isUsing34API)
+				if (settings.get(key) != null || !isUsing34API) {
 					persistSize = settings.getBoolean(key);
+				}
 				key = getClass().getName() + DIALOG_USE_PERSISTED_LOCATION;
-				if (settings.get(key) != null || !isUsing34API)
+				if (settings.get(key) != null || !isUsing34API) {
 					persistLocation = settings.getBoolean(key);
+				}
 			}
 		}
 	}

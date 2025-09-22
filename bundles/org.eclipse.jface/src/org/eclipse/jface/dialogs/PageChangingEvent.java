@@ -29,9 +29,9 @@ public class PageChangingEvent extends EventObject {
 
 	private static final long serialVersionUID = 1L;
 
-	private Object currentPage;
+	private final Object currentPage;
 
-	private Object targetPage;
+	private final Object targetPage;
 
 	/**
 	 * Public field that dictates if the page change will successfully change.

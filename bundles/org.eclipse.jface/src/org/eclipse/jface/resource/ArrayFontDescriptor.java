@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.FontData;
  */
 final class ArrayFontDescriptor extends FontDescriptor {
 
-	private FontData[] data;
+	private final FontData[] data;
 	private Font originalFont = null;
 
 	/**
@@ -80,9 +80,7 @@ final class ArrayFontDescriptor extends FontDescriptor {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ArrayFontDescriptor) {
-			ArrayFontDescriptor descr = (ArrayFontDescriptor)obj;
-
+		if (obj instanceof ArrayFontDescriptor descr) {
 			if (descr.originalFont != originalFont) {
 				return false;
 			}

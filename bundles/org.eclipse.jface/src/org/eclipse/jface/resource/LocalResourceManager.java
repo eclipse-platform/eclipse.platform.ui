@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Control;
  */
 public final class LocalResourceManager extends AbstractResourceManager {
 
-	private ResourceManager parentRegistry;
+	private final ResourceManager parentRegistry;
 
 	/**
 	 * Creates a local registry that delegates to the given global registry

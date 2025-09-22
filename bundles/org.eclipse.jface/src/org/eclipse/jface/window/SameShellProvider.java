@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SameShellProvider implements IShellProvider {
 
-	private Control targetControl;
+	private final Control targetControl;
 
 	/**
 	 * Returns a shell provider that always returns the current

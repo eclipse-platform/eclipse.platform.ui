@@ -97,9 +97,9 @@ import org.eclipse.swt.dnd.TransferData;
  * @since 3.0
  */
 public class DelegatingDragAdapter implements DragSourceListener {
-	private List<TransferDragSourceListener> listeners = new ArrayList<>();
+	private final List<TransferDragSourceListener> listeners = new ArrayList<>();
 
-	private List<TransferDragSourceListener> activeListeners = new ArrayList<>();
+	private final List<TransferDragSourceListener> activeListeners = new ArrayList<>();
 
 	private TransferDragSourceListener currentListener;
 

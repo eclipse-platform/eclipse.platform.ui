@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Assert;
  */
 public class SetModel extends AbstractConcurrentModel {
 
-	private HashSet data = new HashSet();
+	private final HashSet data = new HashSet();
 
 	/**
 	 * Return the contents of the model.

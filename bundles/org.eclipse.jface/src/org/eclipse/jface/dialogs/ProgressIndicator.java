@@ -32,11 +32,11 @@ public class ProgressIndicator extends Composite {
 	// progress bar
 	private boolean animated = true;
 
-	private StackLayout layout;
+	private final StackLayout layout;
 
-	private ProgressBar determinateProgressBar;
+	private final ProgressBar determinateProgressBar;
 
-	private ProgressBar indeterminateProgressBar;
+	private final ProgressBar indeterminateProgressBar;
 
 	private double totalWork;
 
@@ -65,8 +65,9 @@ public class ProgressIndicator extends Composite {
 		super(parent, SWT.NONE);
 
 		// Enforce horizontal only if vertical isn't set
-		if ((style & SWT.VERTICAL) == 0)
+		if ((style & SWT.VERTICAL) == 0) {
 			style |= SWT.HORIZONTAL;
+		}
 
 		determinateProgressBar = new ProgressBar(this, style);
 		indeterminateProgressBar = new ProgressBar(this, style

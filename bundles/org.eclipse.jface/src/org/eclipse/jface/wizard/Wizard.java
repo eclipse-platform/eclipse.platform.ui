@@ -79,7 +79,7 @@ public abstract class Wizard implements IWizard, IShellProvider {
 	/**
 	 * This wizard's list of pages (element type: <code>IWizardPage</code>).
 	 */
-	private List<IWizardPage> pages = new ArrayList<>();
+	private final List<IWizardPage> pages = new ArrayList<>();
 
 	/**
 	 * Indicates whether this wizard needs a progress monitor.

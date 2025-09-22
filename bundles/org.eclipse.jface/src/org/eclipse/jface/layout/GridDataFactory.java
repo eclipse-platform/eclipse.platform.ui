@@ -114,7 +114,7 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.2
  */
 public final class GridDataFactory {
-	private GridData data;
+	private final GridData data;
 
 	/**
 	 * Creates a GridDataFactory that creates copes of the given GridData.

@@ -267,7 +267,7 @@ public class ComboBoxCellEditor extends AbstractComboBoxCellEditor {
 				// 'edit'
 				// combo so format using its text value
 				setErrorMessage(MessageFormat.format(getErrorMessage(),
-						new Object[] { comboBox.getText() }));
+						comboBox.getText()));
 			}
 		}
 

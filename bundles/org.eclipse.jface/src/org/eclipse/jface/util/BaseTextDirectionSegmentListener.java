@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Control;
  */
 /*package*/ class BaseTextDirectionSegmentListener implements SegmentListener {
 
-	private String textDirection;
+	private final String textDirection;
 
 	/**
 	 * Creates a new segment listener that enforces Base Text Direction (BTD) support.
@@ -67,18 +67,20 @@ import org.eclipse.swt.widgets.Control;
 	}
 
 	protected boolean isRTLValue(String stringValue) {
-		if (stringValue == null || stringValue.isEmpty() || BidiUtils.LEFT_TO_RIGHT.equals(textDirection))
+		if (stringValue == null || stringValue.isEmpty() || BidiUtils.LEFT_TO_RIGHT.equals(textDirection)) {
 			return false;
+		}
 
-		if (BidiUtils.RIGHT_TO_LEFT.equals(textDirection))
+		if (BidiUtils.RIGHT_TO_LEFT.equals(textDirection)) {
 			return true;
+		}
 
 		for (int i = 0; i < stringValue.length(); i++) {
 			if (Character.getDirectionality(stringValue.charAt(i)) == Character.DIRECTIONALITY_RIGHT_TO_LEFT
 					|| Character.getDirectionality(stringValue.charAt(i)) == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC
-					|| Character.getDirectionality(stringValue.charAt(i)) == Character.DIRECTIONALITY_ARABIC_NUMBER)
+					|| Character.getDirectionality(stringValue.charAt(i)) == Character.DIRECTIONALITY_ARABIC_NUMBER) {
 				return true;
-			else if (Character.getDirectionality(stringValue.charAt(i)) == Character.DIRECTIONALITY_LEFT_TO_RIGHT) {
+			} else if (Character.getDirectionality(stringValue.charAt(i)) == Character.DIRECTIONALITY_LEFT_TO_RIGHT) {
 				return false;
 			}
 		}

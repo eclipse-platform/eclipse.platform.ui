@@ -164,18 +164,18 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 	 * @since 3.2
 	 */
 	public IElementComparer getElementComparer() {
-		if (element2TreePaths == null)
+		if (element2TreePaths == null) {
 			return null;
+		}
 		return element2TreePaths.getComparer();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof TreeSelection)) {
+		if (!(obj instanceof TreeSelection selection)) {
 			// Fall back to super implementation, see bug 135837.
 			return super.equals(obj);
 		}
-		TreeSelection selection = (TreeSelection) obj;
 		int size = getPaths().length;
 		if (selection.getPaths().length == size) {
 			IElementComparer comparerOrNull = (getElementComparer() == selection

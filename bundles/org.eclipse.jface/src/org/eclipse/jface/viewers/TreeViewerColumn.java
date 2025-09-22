@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  * @since 3.3
  */
 public final class TreeViewerColumn extends ViewerColumn {
-	private TreeColumn column;
+	private final TreeColumn column;
 
 	/**
 	 * Creates a new viewer column for the given {@link TreeViewer} on a new

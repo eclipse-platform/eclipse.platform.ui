@@ -52,7 +52,7 @@ public class DeferredContentProvider implements ILazyContentProvider {
 
 	private static final class TableViewerAdapter extends AbstractVirtualTable {
 
-		private TableViewer viewer;
+		private final TableViewer viewer;
 
 		public TableViewerAdapter(TableViewer viewer) {
 			this.viewer = viewer;

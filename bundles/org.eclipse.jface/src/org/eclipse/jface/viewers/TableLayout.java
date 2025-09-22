@@ -61,7 +61,7 @@ public class TableLayout extends Layout {
 	 * The list of column layout data (element type:
 	 * <code>ColumnLayoutData</code>).
 	 */
-	private List<ColumnLayoutData> columns = new ArrayList<>();
+	private final List<ColumnLayoutData> columns = new ArrayList<>();
 
 	/**
 	 * Indicates whether <code>layout</code> has yet to be called.
@@ -114,14 +114,12 @@ public class TableLayout extends Layout {
 		int size = columns.size();
 		for (int i = 0; i < size; ++i) {
 			ColumnLayoutData layoutData = columns.get(i);
-			if (layoutData instanceof ColumnPixelData) {
-				ColumnPixelData col = (ColumnPixelData) layoutData;
+			if (layoutData instanceof ColumnPixelData col) {
 				width += col.width;
 				if (col.addTrim) {
 					width += COLUMN_TRIM;
 				}
-			} else if (layoutData instanceof ColumnWeightData) {
-				ColumnWeightData col = (ColumnWeightData) layoutData;
+			} else if (layoutData instanceof ColumnWeightData col) {
 				width += col.minimumWidth;
 			} else {
 				Assert.isTrue(false, "Unknown column layout data");//$NON-NLS-1$
@@ -165,16 +163,14 @@ public class TableLayout extends Layout {
 		// First calc space occupied by fixed columns
 		for (int i = 0; i < size; i++) {
 			ColumnLayoutData col = columns.get(i);
-			if (col instanceof ColumnPixelData) {
-				ColumnPixelData cpd = (ColumnPixelData) col;
+			if (col instanceof ColumnPixelData cpd) {
 				int pixels = cpd.width;
 				if (cpd.addTrim) {
 					pixels += COLUMN_TRIM;
 				}
 				widths[i] = pixels;
 				fixedWidth += pixels;
-			} else if (col instanceof ColumnWeightData) {
-				ColumnWeightData cw = (ColumnWeightData) col;
+			} else if (col instanceof ColumnWeightData cw) {
 				numberOfWeightColumns++;
 				// first time, use the weight specified by the column data,
 				// otherwise use the actual width as the weight
@@ -190,16 +186,16 @@ public class TableLayout extends Layout {
 		// Do we have columns that have a weight
 		if (numberOfWeightColumns > 0) {
 
-			if (adjustForScrollBar && c.getVerticalBar() != null)
+			if (adjustForScrollBar && c.getVerticalBar() != null) {
 				width -= c.getVerticalBar().getThumbTrackBounds().width;
+			}
 
 			// Now distribute the rest to the columns with weight.
 			int rest = width - fixedWidth;
 			int totalDistributed = 0;
 			for (int i = 0; i < size; ++i) {
 				ColumnLayoutData col = columns.get(i);
-				if (col instanceof ColumnWeightData) {
-					ColumnWeightData cw = (ColumnWeightData) col;
+				if (col instanceof ColumnWeightData cw) {
 					// calculate weight as above
 					// int weight = firstTime ? cw.weight :
 					// tableColumns[i].getWidth();

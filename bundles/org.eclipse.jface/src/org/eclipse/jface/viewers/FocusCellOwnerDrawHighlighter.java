@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Listener;
  * @since 3.3
  */
 public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
-	private boolean removeNonFocusedSelectionInformation;
+	private final boolean removeNonFocusedSelectionInformation;
 
 	/**
 	 * Create a new instance which can be passed to a

@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Event;
  * @since 3.3
  */
 public class ColumnViewerToolTipSupport extends DefaultToolTip {
-	private ColumnViewer viewer;
+	private final ColumnViewer viewer;
 
 	private static final String VIEWER_CELL_KEY = Policy.JFACE
 			+ "_VIEWER_CELL_KEY"; //$NON-NLS-1$

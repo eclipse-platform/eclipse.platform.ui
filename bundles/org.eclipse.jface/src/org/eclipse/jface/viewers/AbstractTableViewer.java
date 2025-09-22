@@ -249,8 +249,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 */
 	public void add(Object[] elements) {
 		assertElementsNotNull(elements);
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		Object[] filtered = filter(elements);
 
 		final int itemsLimit = getItemsLimit();
@@ -363,8 +364,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				}
 
 				int columnCount = doGetColumnCount();
-				if (columnCount == 0)
+				if (columnCount == 0) {
 					columnCount = 1;// If there are no columns do the first one
+				}
 
 				ViewerRow viewerRowFromItem = getViewerRowFromItem(item);
 
@@ -413,8 +415,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			return null;
 		}
 
-		if (columnCount == 0)// Hang it off the table if it
+		if (columnCount == 0) { // Hang it off the table if it
 			return getControl();
+		}
 
 		return doGetColumn(columnIndex);
 	}
@@ -598,8 +601,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		if (position == -1) {
 			position = doGetItemCount();
 		}
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		createItem(element, position);
 	}
 
@@ -826,8 +830,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 */
 	public void remove(final Object[] elements) {
 		assertElementsNotNull(elements);
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		if (elements.length == 0) {
 			return;
 		}
@@ -1046,8 +1051,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @since 3.1
 	 */
 	public void setItemCount(int count) {
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		int oldCount = doGetItemCount();
 		if (count < oldCount) {
 			// need to disassociate elements that are being disposed
@@ -1077,8 +1083,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @since 3.1
 	 */
 	public void replace(Object element, int index) {
-		if (checkBusy())
+		if (checkBusy()) {
 			return;
+		}
 		Item item = doGetItem(index);
 		refreshItem(item, element);
 	}

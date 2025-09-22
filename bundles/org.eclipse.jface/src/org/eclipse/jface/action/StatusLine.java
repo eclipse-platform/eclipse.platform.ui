@@ -122,7 +122,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	protected static ImageDescriptor fgStopImage = ImageDescriptor
 			.createFromFile(StatusLine.class, "images/stop.svg");//$NON-NLS-1$
 
-	private MenuItem copyMenuItem;
+	private final MenuItem copyMenuItem;
 	static {
 		JFaceResources.getImageRegistry().put(
 				"org.eclipse.jface.parts.StatusLine.stopImage", fgStopImage);//$NON-NLS-1$
@@ -645,10 +645,11 @@ import org.eclipse.swt.widgets.ToolItem;
 	public void subTask(String name) {
 
 		String newName;
-		if (name == null)
+		if (name == null) {
 			newName = Util.ZERO_LENGTH_STRING;
-		else
+		} else {
 			newName = name;
+		}
 
 		String text;
 		if (fTaskName == null || fTaskName.isEmpty()) {

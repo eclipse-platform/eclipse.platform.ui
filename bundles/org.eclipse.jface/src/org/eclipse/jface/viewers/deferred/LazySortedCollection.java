@@ -56,7 +56,7 @@ public class LazySortedCollection {
 	private static final float loadFactor = 0.75f;
 
 	private IntHashMap objectIndices;
-	private Comparator comparator;
+	private final Comparator comparator;
 	private static int counter = 0;
 
 	/**
@@ -67,7 +67,7 @@ public class LazySortedCollection {
 	public boolean enableDebug = false;
 
 	// This object is inserted as the value into any node scheduled for lazy removal
-	private Object lazyRemovalFlag = new Object() {
+	private final Object lazyRemovalFlag = new Object() {
 		@Override
 		public String toString() {
 			return "Lazy removal flag";  //$NON-NLS-1$

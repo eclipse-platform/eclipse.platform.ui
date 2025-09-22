@@ -33,7 +33,7 @@ public final class TreePath {
 	 */
 	public static final TreePath EMPTY = new TreePath(new Object[0]);
 
-	private Object[] segments;
+	private final Object[] segments;
 
 	private int hash;
 

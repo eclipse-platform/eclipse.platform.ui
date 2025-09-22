@@ -71,7 +71,7 @@ public abstract class AbstractColumnLayout extends Layout {
 
 	private boolean adjustForScrollBar = false;
 
-	private Listener resizeListener = event -> {
+	private final Listener resizeListener = event -> {
 		if (!inupdateMode) {
 			updateColumnData(event.widget);
 		}
@@ -136,14 +136,12 @@ public abstract class AbstractColumnLayout extends Layout {
 		int size = getColumnCount(scrollable);
 		for (int i = 0; i < size; ++i) {
 			ColumnLayoutData layoutData = getLayoutData(scrollable, i);
-			if (layoutData instanceof ColumnPixelData) {
-				ColumnPixelData col = (ColumnPixelData) layoutData;
+			if (layoutData instanceof ColumnPixelData col) {
 				width += col.width;
 				if (col.addTrim) {
 					width += getColumnTrim();
 				}
-			} else if (layoutData instanceof ColumnWeightData) {
-				ColumnWeightData col = (ColumnWeightData) layoutData;
+			} else if (layoutData instanceof ColumnWeightData col) {
 				width += col.minimumWidth;
 			} else {
 				Assert.isTrue(false, "Unknown column layout data"); //$NON-NLS-1$
@@ -172,16 +170,14 @@ public abstract class AbstractColumnLayout extends Layout {
 		// First calc space occupied by fixed columns
 		for (int i = 0; i < numberOfColumns; i++) {
 			ColumnLayoutData col = getLayoutData(scrollable, i);
-			if (col instanceof ColumnPixelData) {
-				ColumnPixelData cpd = (ColumnPixelData) col;
+			if (col instanceof ColumnPixelData cpd) {
 				int pixels = cpd.width;
 				if (cpd.addTrim) {
 					pixels += getColumnTrim();
 				}
 				widths[i] = pixels;
 				fixedWidth += pixels;
-			} else if (col instanceof ColumnWeightData) {
-				ColumnWeightData cw = (ColumnWeightData) col;
+			} else if (col instanceof ColumnWeightData cw) {
 				weightColumnIndices[numberOfWeightColumns] = i;
 				numberOfWeightColumns++;
 				totalWeight += cw.weight;
@@ -253,8 +249,9 @@ public abstract class AbstractColumnLayout extends Layout {
 		int trim = computeTrim(table, tableWidth);
 		int width = Math.max(0, area.width - trim);
 
-		if (width > 1)
+		if (width > 1) {
 			layoutTableTree(table, width, area, tableWidth > 0 && tableWidth < area.width);
+		}
 
 		// For the first time we need to relayout because Scrollbars are not
 		// calculate appropriately
