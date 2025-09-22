@@ -80,13 +80,14 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 
 	@Override
 	public StyledString getStyledText(Object element) {
-		if (element instanceof LineElement)
+		if (element instanceof LineElement) {
 			return getLineElementLabel((LineElement) element);
+		}
 
-		if (!(element instanceof IResource))
+		if (!(element instanceof IResource resource)) {
 			return new StyledString();
+		}
 
-		IResource resource= (IResource) element;
 		if (!resource.exists()) {
 			StyledString str = new StyledString(SearchMessages.FileLabelProvider_removed_resource_label);
 			return getColoredLabelWithCounts(resource, str);
@@ -213,12 +214,14 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 
 	private StyledString getColoredLabelWithCounts(Object element, StyledString coloredName) {
 		AbstractTextSearchResult result= fPage.getInput();
-		if (result == null)
+		if (result == null) {
 			return coloredName;
+		}
 
 		int matchCount= result.getMatchCount(element);
-		if (matchCount <= 1)
+		if (matchCount <= 1) {
 			return coloredName;
+		}
 
 		String countInfo= Messages.format(SearchMessages.FileLabelProvider_count_format, Integer.valueOf(matchCount));
 		coloredName.append(' ').append(countInfo, StyledString.COUNTER_STYLER);
@@ -230,10 +233,10 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		if (element instanceof LineElement) {
 			return fLineMatchImage;
 		}
-		if (!(element instanceof IResource))
+		if (!(element instanceof IResource resource)) {
 			return null;
+		}
 
-		IResource resource= (IResource)element;
 		Image image= fLabelProvider.getImage(resource);
 		return image;
 	}

@@ -49,7 +49,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 
 	private Control fContents;
 	private Button fCancelButton;
-	private List<Button> fActionButtons;
+	private final List<Button> fActionButtons;
 	// The number of long running operation executed from the dialog.
 	private long fActiveRunningOperations;
 
@@ -160,12 +160,14 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 			case IDialogConstants.CANCEL_ID:
-				if (fActiveRunningOperations == 0)
+				if (fActiveRunningOperations == 0) {
 					close();
+				}
 				break;
 			default:
-				if (performAction(buttonId))
+				if (performAction(buttonId)) {
 					close();
+				}
 		}
 	}
 
@@ -198,8 +200,9 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 				new ProgressMonitorDialog(getShell()).run(fork, cancelable, runnable);
 			}
 		} finally {
-			if (state != null)
+			if (state != null) {
 				stopped(state);
+			}
 			fActiveRunningOperations--;
 		}
 	}
@@ -219,8 +222,9 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 
 			// Save focus control
 			Control focusControl= d.getFocusControl();
-			if (focusControl != null && focusControl.getShell() != shell)
+			if (focusControl != null && focusControl.getShell() != shell) {
 				focusControl= null;
+			}
 
 			// Set the busy cursor to all shells.
 			setDisplayCursor(d, d.getSystemCursor(SWT.CURSOR_WAIT));
@@ -230,8 +234,9 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 
 			// Deactivate shell
 			savedState= saveUIState(enableCancelButton);
-			if (focusControl != null)
+			if (focusControl != null) {
 				savedState.put(FOCUS_CONTROL, focusControl);
+			}
 
 			if (fUseEmbeddedProgressMonitorPart) {
 				// Attach the progress monitor part to the cancel button
@@ -265,15 +270,17 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 			setDisplayCursor(shell.getDisplay(), null);
 			fCancelButton.setCursor(null);
 			Control focusControl= (Control)state.get(FOCUS_CONTROL);
-			if (focusControl != null && ! focusControl.isDisposed())
+			if (focusControl != null && ! focusControl.isDisposed()) {
 				focusControl.setFocus();
+			}
 		}
 	}
 
 	private void setDisplayCursor(Display d, Cursor c) {
 		Shell[] shells= d.getShells();
-		for (Shell shell2 : shells)
+		for (Shell shell2 : shells) {
 			shell2.setCursor(c);
+		}
 	}
 
 	//---- UI state save and restoring ---------------------------------------------
@@ -293,8 +300,9 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	protected void restoreEnableState(Control w, HashMap<Object, Object> h) {
 		if (!w.isDisposed()) {
 			Boolean b= (Boolean)h.get(w);
-			if (b != null)
+			if (b != null) {
 				w.setEnabled(b.booleanValue());
+			}
 		}
 	}
 
@@ -318,8 +326,9 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 
 	@Override
 	protected void handleShellCloseEvent() {
-		if (okToClose())
+		if (okToClose()) {
 			super.handleShellCloseEvent();
+		}
 	}
 
 	/**

@@ -93,10 +93,10 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private static final String MEMENTO_KEY_IS_PINNED= "isPinned"; //$NON-NLS-1$
 	private static final String MEMENTO_KEY_LAST_ACTIVATION= "org.eclipse.search.lastActivation"; //$NON-NLS-1$
 	private static final String MEMENTO_KEY_RESTORE= "org.eclipse.search.restore"; //$NON-NLS-1$
-	private HashMap<DummyPart, IPageBookViewPage> fPartsToPages;
-	private HashMap<ISearchResultPage, DummyPart> fPagesToParts;
-	private HashMap<ISearchResult, Object> fSearchViewStates;
-	private SearchPageRegistry fSearchViewPageService;
+	private final HashMap<DummyPart, IPageBookViewPage> fPartsToPages;
+	private final HashMap<ISearchResultPage, DummyPart> fPagesToParts;
+	private final HashMap<ISearchResult, Object> fSearchViewStates;
+	private final SearchPageRegistry fSearchViewPageService;
 	private SearchHistoryDropDownAction fSearchesDropDownAction;
 	private ISearchResult fCurrentSearch;
 	private DummyPart fDefaultPart;
@@ -255,8 +255,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 		@Override
 		public void setFocus() {
-			if (fControl != null)
+			if (fControl != null) {
 				fControl.setFocus();
+			}
 		}
 
 		@Override
@@ -439,14 +440,17 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		String helpContextId= null;
 		String pageId= null;
 
-		if (page != null)
+		if (page != null) {
 			pageId= page.getID();
+		}
 
-		if (pageId != null)
+		if (pageId != null) {
 			helpContextId= fSearchViewPageService.getHelpContextId(pageId);
+		}
 
-		if (helpContextId == null)
+		if (helpContextId == null) {
 			helpContextId= ISearchHelpContextIds.New_SEARCH_VIEW;
+		}
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fPageContent.getParent(), helpContextId);
 	}
@@ -677,11 +681,13 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		String keyBinding= null;
 
 		IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
-		if (bindingService != null)
+		if (bindingService != null) {
 			keyBinding= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
+		}
 
-		if (keyBinding == null)
+		if (keyBinding == null) {
 			keyBinding= ""; //$NON-NLS-1$
+		}
 
 		return NLS.bind(SearchMessages.SearchView_showIn_menu, keyBinding);
 	}
@@ -737,8 +743,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	private void showLatestSearch() {
 		ISearchQuery[] queries= InternalSearchUI.getInstance().getSearchManager().getQueries();
-		if (queries.length > 0)
+		if (queries.length > 0) {
 			showSearchResult(queries[0].getSearchResult());
+		}
 	}
 
 	/*
@@ -748,17 +755,19 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	@Override
 	public void setFocus() {
 		IPage currentPage= getCurrentPage();
-		if (currentPage != null)
+		if (currentPage != null) {
 			currentPage.setFocus();
-		else
+		} else {
 			super.setFocus();
+		}
 	}
 
 	@Override
 	public ISearchResultPage getActivePage() {
 		IPage page= getCurrentPage();
-		if (page instanceof ISearchResultPage)
+		if (page instanceof ISearchResultPage) {
 			return (ISearchResultPage) page;
+		}
 		return null;
 	}
 
@@ -766,24 +775,27 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		IWorkbenchSiteProgressService service = null;
 		Object siteService =
 			getSite().getAdapter(IWorkbenchSiteProgressService.class);
-		if(siteService != null)
+		if(siteService != null) {
 			service = (IWorkbenchSiteProgressService) siteService;
+		}
 		return service;
 	}
 
 	@Override
 	public void showBusy(boolean busy) {
 		super.showBusy(busy);
-		if (!busy)
+		if (!busy) {
 			getProgressService().warnOfContentChange();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		Object superAdapter= super.getAdapter(adapter);
-		if (superAdapter != null)
+		if (superAdapter != null) {
 			return (T) superAdapter;
+		}
 		if (adapter == IShowInSource.class) {
 			return (T) (IShowInSource) () -> new ShowInContext(null, getSelectionProvider().getSelection());
 		}

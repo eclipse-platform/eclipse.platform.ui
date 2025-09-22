@@ -47,10 +47,10 @@ import org.eclipse.search.ui.IContextMenuConstants;
  */
 public class NewTextSearchActionGroup extends ActionGroup {
 
-	private ISelectionProvider fSelectionProvider;
-	private IWorkbenchPage fPage;
-	private OpenFileAction fOpenAction;
-	private PropertyDialogAction fOpenPropertiesDialog;
+	private final ISelectionProvider fSelectionProvider;
+	private final IWorkbenchPage fPage;
+	private final OpenFileAction fOpenAction;
+	private final PropertyDialogAction fOpenPropertiesDialog;
 
 	public NewTextSearchActionGroup(IViewPart part) {
 		Assert.isNotNull(part);
@@ -61,10 +61,11 @@ public class NewTextSearchActionGroup extends ActionGroup {
 		fOpenAction= new OpenFileAction(fPage);
 		ISelection selection= fSelectionProvider.getSelection();
 
-		if (selection instanceof IStructuredSelection)
+		if (selection instanceof IStructuredSelection) {
 			fOpenPropertiesDialog.selectionChanged((IStructuredSelection)selection);
-		else
+		} else {
 			fOpenPropertiesDialog.selectionChanged(selection);
+		}
 
 	}
 
@@ -75,15 +76,17 @@ public class NewTextSearchActionGroup extends ActionGroup {
 		ISelection selection= getContext().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			addOpenWithMenu(menu, (IStructuredSelection) selection);
-			if (fOpenPropertiesDialog != null && fOpenPropertiesDialog.isEnabled() && fOpenPropertiesDialog.isApplicableForSelection((IStructuredSelection) selection))
+			if (fOpenPropertiesDialog != null && fOpenPropertiesDialog.isEnabled() && fOpenPropertiesDialog.isApplicableForSelection((IStructuredSelection) selection)) {
 				menu.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, fOpenPropertiesDialog);
+			}
 		}
 
 	}
 
 	private void addOpenWithMenu(IMenuManager menu, IStructuredSelection selection) {
-		if (selection == null)
+		if (selection == null) {
 			return;
+		}
 
 		fOpenAction.selectionChanged(selection);
 		if (fOpenAction.isEnabled()) {
@@ -95,8 +98,9 @@ public class NewTextSearchActionGroup extends ActionGroup {
 		}
 
 		Object o= selection.getFirstElement();
-		if (!(o instanceof IAdaptable))
+		if (!(o instanceof IAdaptable)) {
 			return;
+		}
 
 		// Create menu
 		IMenuManager submenu= new MenuManager(SearchMessages.OpenWithMenu_label);

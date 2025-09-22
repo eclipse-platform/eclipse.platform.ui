@@ -25,7 +25,7 @@ import org.eclipse.search.ui.ISearchQuery;
 
 class QueryManager {
 	private List<ISearchQuery> fQueries;
-	private List<IQueryListener> fListeners;
+	private final List<IQueryListener> fListeners;
 
 	public QueryManager() {
 		super();
@@ -66,8 +66,9 @@ class QueryManager {
 
 	public void addQuery(ISearchQuery query) {
 		synchronized (this) {
-			if (fQueries.contains(query))
+			if (fQueries.contains(query)) {
 				return;
+			}
 			fQueries.add(0, query);
 		}
 		fireAdded(query);

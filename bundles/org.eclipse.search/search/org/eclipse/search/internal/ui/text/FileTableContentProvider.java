@@ -27,7 +27,7 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 
 	private final Object[] EMPTY_ARR= new Object[0];
 
-	private FileSearchPage fPage;
+	private final FileSearchPage fPage;
 
 	public FileTableContentProvider(FileSearchPage page) {
 		fPage= page;
@@ -53,8 +53,7 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof FileSearchResult) {
-			FileSearchResult fileSearchResult = (FileSearchResult) inputElement;
+		if (inputElement instanceof FileSearchResult fileSearchResult) {
 			int elementLimit= getElementLimit();
 			Object[] elements = fileSearchResult.getElements();
 			if (elementLimit != -1 && elements.length > elementLimit) {
@@ -88,14 +87,16 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 		boolean tableLimited= elementLimit != -1;
 		for (Object updatedElement : updatedElements) {
 			if (fPage.getDisplayedMatchCount(updatedElement) > 0) {
-				if (viewer.contains(updatedElement))
+				if (viewer.contains(updatedElement)) {
 					viewer.update(updatedElement, null);
-				else {
-					if (!tableLimited || viewer.getTable().getItemCount() < elementLimit)
+				} else {
+					if (!tableLimited || viewer.getTable().getItemCount() < elementLimit) {
 						viewer.add(updatedElement);
+					}
 				}
-			} else
+			} else {
 				viewer.remove(updatedElement);
+			}
 		}
 	}
 

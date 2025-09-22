@@ -226,10 +226,11 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 
 	private void performFilterListSelectionChanged() {
 		Object selectedElement = fListViewer.getStructuredSelection().getFirstElement();
-		if (selectedElement != null)
+		if (selectedElement != null) {
 			fDescription.setText(((MatchFilter) selectedElement).getDescription());
-		else
+		} else {
 			fDescription.setText(""); //$NON-NLS-1$
+		}
 	}
 
 	private void performFilterListCheckStateChanged() {
@@ -257,10 +258,11 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		} catch (NumberFormatException e) {
 		}
 		fLimitElementCount= value;
-		if (fLimitElementsCheckbox.getSelection() && value <= 0)
+		if (fLimitElementsCheckbox.getSelection() && value <= 0) {
 			updateStatus(createStatus(IStatus.ERROR, SearchMessages.MatchFilterSelectionDialog_error_invalid_limit));
-		else
+		} else {
 			updateStatus(createStatus(IStatus.OK, "")); //$NON-NLS-1$
+		}
 	}
 
 	private IStatus createStatus(int severity, String message) {

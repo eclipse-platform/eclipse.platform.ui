@@ -20,7 +20,7 @@ import org.eclipse.ui.IWorkingSet;
 
 public class WorkingSetComparator implements Comparator<IWorkingSet> {
 
-	private Collator fCollator= Collator.getInstance();
+	private final Collator fCollator= Collator.getInstance();
 
 	@Override
 	public int compare(IWorkingSet o1, IWorkingSet o2) {

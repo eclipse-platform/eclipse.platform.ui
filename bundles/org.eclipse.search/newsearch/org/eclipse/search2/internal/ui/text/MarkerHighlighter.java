@@ -82,8 +82,9 @@ public class MarkerHighlighter extends Highlighter {
 					}
 					IMarker marker;
 					marker = createMarker(match);
-					if (marker != null)
+					if (marker != null) {
 						fMatchesToAnnotations.put(match, marker);
+					}
 				}
 			}, fFile, IWorkspace.AVOID_UPDATE, null);
 		} catch (CoreException e) {
@@ -95,8 +96,9 @@ public class MarkerHighlighter extends Highlighter {
 	private IMarker createMarker(Match match) throws CoreException {
 		Position position= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(match);
 		if (position == null) {
-			if (match.getOffset() < 0 || match.getLength() < 0)
+			if (match.getOffset() < 0 || match.getLength() < 0) {
 				return null;
+			}
 			position= new Position(match.getOffset(), match.getLength());
 		} else {
 			// need to clone position, can't have it twice in a document.
@@ -171,8 +173,9 @@ public class MarkerHighlighter extends Highlighter {
 
 	@Override
 	protected void handleContentReplaced(IFileBuffer buffer) {
-		if (!buffer.getLocation().equals(fFile.getFullPath()))
+		if (!buffer.getLocation().equals(fFile.getFullPath())) {
 			return;
+		}
 		if (fContentReplacedJob == null) {
 			fContentReplacedJob = new MarkerHighlighterWorkspaceJob("Updating search highlights", fFile) { //$NON-NLS-1$
 				@Override

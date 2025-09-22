@@ -27,8 +27,8 @@ import org.eclipse.search.ui.text.MatchFilter;
 
 public class MatchFilterAction extends Action implements IUpdate {
 
-	private MatchFilter fFilter;
-	private AbstractTextSearchViewPage fPage;
+	private final MatchFilter fFilter;
+	private final AbstractTextSearchViewPage fPage;
 
 	public MatchFilterAction(AbstractTextSearchViewPage page, MatchFilter filter) {
 		super(filter.getActionLabel(), IAction.AS_CHECK_BOX);

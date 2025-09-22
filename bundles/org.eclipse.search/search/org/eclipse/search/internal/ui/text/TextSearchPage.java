@@ -112,7 +112,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	 */
 	private static final String STORE_EXTENSIONS= "EXTENSIONS"; //$NON-NLS-1$
 
-	private List<SearchPatternData> fPreviousSearchPatterns= new ArrayList<>(HISTORY_SIZE);
+	private final List<SearchPatternData> fPreviousSearchPatterns= new ArrayList<>(HISTORY_SIZE);
 
 	private boolean fFirstTime= true;
 	private boolean fIsCaseSensitive;
@@ -297,8 +297,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
 				if (view != null) {
 					ISearchResultPage page= view.getActivePage();
-					if (page instanceof FileSearchPage) {
-						FileSearchPage filePage= (FileSearchPage) page;
+					if (page instanceof FileSearchPage filePage) {
 						new ReplaceAction(filePage.getSite().getShell(), (FileSearchResult)filePage.getInput(), null).run();
 					}
 				}
@@ -396,8 +395,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		for (int i= 0; i < size; i++) {
 			SearchPatternData data= fPreviousSearchPatterns.get(i);
 			String text= FileTypeEditor.typesToString(data.fileNamePatterns);
-			if (!extensions.contains(text))
+			if (!extensions.contains(text)) {
 				extensions.add(text);
+			}
 		}
 		return extensions.toArray(new String[extensions.size()]);
 	}
@@ -405,8 +405,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private String[] getPreviousSearchPatterns() {
 		int size= fPreviousSearchPatterns.size();
 		String [] patterns= new String[size];
-		for (int i= 0; i < size; i++)
+		for (int i= 0; i < size; i++) {
 			patterns[i]= fPreviousSearchPatterns.get(i).textPattern;
+		}
 		return patterns;
 	}
 
@@ -591,12 +592,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	private void handleWidgetSelected() {
 		int selectionIndex= fPattern.getSelectionIndex();
-		if (selectionIndex < 0 || selectionIndex >= fPreviousSearchPatterns.size())
+		if (selectionIndex < 0 || selectionIndex >= fPreviousSearchPatterns.size()) {
 			return;
+		}
 
 		SearchPatternData patternData= fPreviousSearchPatterns.get(selectionIndex);
-		if (!fPattern.getText().equals(patternData.textPattern))
+		if (!fPattern.getText().equals(patternData.textPattern)) {
 			return;
+		}
 		fIsCaseSensitiveCheckbox.setSelection(patternData.isCaseSensitive);
 		fIsRegExSearch= patternData.isRegExSearch;
 		fIsRegExCheckbox.setSelection(fIsRegExSearch);
@@ -606,10 +609,11 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fPattern.setText(patternData.textPattern);
 		fPatterFieldContentAssist.setEnabled(fIsRegExSearch);
 		fFileTypeEditor.setFileTypes(patternData.fileNamePatterns);
-		if (patternData.workingSets != null)
+		if (patternData.workingSets != null) {
 			getContainer().setSelectedWorkingSets(patternData.workingSets);
-		else
+		} else {
 			getContainer().setSelectedScope(patternData.scope);
+		}
 	}
 
 	private boolean initializePatternControl() {
@@ -617,19 +621,21 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		if (selection instanceof ITextSelection && !selection.isEmpty() && ((ITextSelection)selection).getLength() > 0) {
 			String text= ((ITextSelection) selection).getText();
 			if (text != null) {
-				if (fIsRegExSearch)
+				if (fIsRegExSearch) {
 					fPattern.setText(FindReplaceDocumentAdapter.escapeForRegExPattern(text));
-				else
+				} else {
 					fPattern.setText(insertEscapeChars(text));
+				}
 
 				if (fPreviousExtensions.length > 0) {
 					fExtensions.setText(fPreviousExtensions[0]);
 				} else {
 					String extension= getExtensionFromEditor();
-					if (extension != null)
+					if (extension != null) {
 						fExtensions.setText(extension);
-					else
+					} else {
 						fExtensions.setText("*"); //$NON-NLS-1$
+					}
 				}
 				return true;
 			}
@@ -645,8 +651,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 //	}
 
 	private String insertEscapeChars(String text) {
-		if (text == null || text.equals("")) //$NON-NLS-1$
+		if (text == null || text.equals("")) { //$NON-NLS-1$
 			return ""; //$NON-NLS-1$
+		}
 		StringBuilder sbIn= new StringBuilder(text);
 		BufferedReader reader= new BufferedReader(new StringReader(text));
 		int lengthOfFirstLine= 0;
@@ -659,8 +666,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		int i= 0;
 		while (i < lengthOfFirstLine) {
 			char ch= sbIn.charAt(i);
-			if (ch == '*' || ch == '?' || ch == '\\')
+			if (ch == '*' || ch == '?' || ch == '\\') {
 				sbOut.append("\\"); //$NON-NLS-1$
+			}
 			sbOut.append(ch);
 			i++;
 		}
@@ -673,8 +681,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			Object elem= ep.getEditorInput();
 			if (elem instanceof IFileEditorInput) {
 				String extension= ((IFileEditorInput)elem).getFile().getFileExtension();
-				if (extension == null)
+				if (extension == null) {
 					return ((IFileEditorInput)elem).getFile().getName();
+				}
 				return "*." + extension; //$NON-NLS-1$
 			}
 		}
@@ -813,14 +822,16 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		if (extensionsSettings != null) {
 			for (int i= 0; i < HISTORY_SIZE; i++) {
 				String extension= extensionsSettings.get(Integer.toString(i));
-				if (extension == null)
+				if (extension == null) {
 					break;
+				}
 				previousExtensions.add(extension);
 			}
 			fPreviousExtensions= new String[previousExtensions.size()];
 			previousExtensions.toArray(fPreviousExtensions);
-		} else
+		} else {
 			fPreviousExtensions= getPreviousExtensionsOldStyle();
+		}
 
 	}
 
@@ -851,8 +862,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		int j= 1;
 		for (int i= 0; i < length; i++) {
 			String extension= fExtensions.getItem(i);
-			if (extensions.add(extension))
+			if (extensions.add(extension)) {
 				extensionsSettings.put(Integer.toString(j++), extension);
+			}
 		}
 
 	}

@@ -16,8 +16,8 @@ package org.eclipse.search.internal.ui.text;
 import org.eclipse.jface.action.Action;
 
 public class SortAction extends Action {
-	private int fSortOrder;
-	private FileSearchPage fPage;
+	private final int fSortOrder;
+	private final FileSearchPage fPage;
 
 	public SortAction(String label, FileSearchPage page, int sortOrder) {
 		super(label);

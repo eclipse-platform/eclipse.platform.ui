@@ -34,10 +34,10 @@ import org.eclipse.search.ui.NewSearchUI;
 
 public class SearchViewManager {
 
-	private IQueryListener fNewQueryListener;
+	private final IQueryListener fNewQueryListener;
 	private int fViewCount= 0;
 
-	private LinkedList<SearchView> fLRUSearchViews;
+	private final LinkedList<SearchView> fLRUSearchViews;
 
 
 	public SearchViewManager(QueryManager queryManager) {
@@ -103,12 +103,14 @@ public class SearchViewManager {
 				}
 				String secondaryId= null;
 				if (viewPart == null) {
-					if (activePage.findViewReference(NewSearchUI.SEARCH_VIEW_ID) != null)
+					if (activePage.findViewReference(NewSearchUI.SEARCH_VIEW_ID) != null) {
 						secondaryId= String.valueOf(++fViewCount); // avoid a secondary ID because of bug 125315
-				} else if (!SearchPreferencePage.isViewBroughtToFront())
+					}
+				} else if (!SearchPreferencePage.isViewBroughtToFront()) {
 					return viewPart;
-				else
+				} else {
 					secondaryId= viewPart.getViewSite().getSecondaryId();
+				}
 
 				return (ISearchResultViewPart) activePage.showView(NewSearchUI.SEARCH_VIEW_ID, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
 			} catch (PartInitException ex) {
