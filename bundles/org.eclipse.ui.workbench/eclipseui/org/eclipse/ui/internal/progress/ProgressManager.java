@@ -971,8 +971,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			// Backward compatible code.
 			final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
 					ProgressManagerUtil.getDefaultParent());
-			if (shouldRunInBackground()) {
-				dialog.setOpenOnRun(false);
+			dialog.setOpenOnRun(false);
+			if (!shouldRunInBackground()) {
+				scheduleProgressMonitorJob(dialog);
 			}
 			dialog.run(fork, cancelable, runnable);
 			return;
