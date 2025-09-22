@@ -25,7 +25,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.search.ui.text.Match;
 
 public class FileMatch extends Match {
-	private LineElement fLineElement;
+	private final LineElement fLineElement;
 	private Region fOriginalLocation;
 
 	public FileMatch(IFile element) {

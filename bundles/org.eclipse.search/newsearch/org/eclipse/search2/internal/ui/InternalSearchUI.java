@@ -48,12 +48,12 @@ public class InternalSearchUI {
 	private static InternalSearchUI fgInstance;
 
 	// contains all running jobs
-	private HashMap<ISearchQuery, SearchJobRecord> fSearchJobs;
+	private final HashMap<ISearchQuery, SearchJobRecord> fSearchJobs;
 
-	private QueryManager fSearchResultsManager;
-	private PositionTracker fPositionTracker;
+	private final QueryManager fSearchResultsManager;
+	private final PositionTracker fPositionTracker;
 
-	private SearchViewManager fSearchViewManager;
+	private final SearchViewManager fSearchViewManager;
 
 	public static final Object FAMILY_SEARCH = new Object();
 
@@ -72,7 +72,7 @@ public class InternalSearchUI {
 
 	private class InternalSearchJob extends Job {
 
-		private SearchJobRecord fSearchJobRecord;
+		private final SearchJobRecord fSearchJobRecord;
 
 		public InternalSearchJob(SearchJobRecord sjr) {
 			super(sjr.query.getLabel());
@@ -138,8 +138,9 @@ public class InternalSearchUI {
 	 * @return returns the shared instance.
 	 */
 	public static InternalSearchUI getInstance() {
-		if (fgInstance ==null)
+		if (fgInstance ==null) {
 			fgInstance= new InternalSearchUI();
+		}
 		return fgInstance;
 	}
 
@@ -151,15 +152,17 @@ public class InternalSearchUI {
 		ISearchResultViewPart view= getSearchView();
 		if (view != null) {
 			IWorkbenchPartSite site= view.getSite();
-			if (site != null)
+			if (site != null) {
 				return view.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+			}
 		}
 		return null;
 	}
 
 	public boolean runSearchInBackground(ISearchQuery query, ISearchResultViewPart view) {
-		if (isQueryRunning(query))
+		if (isQueryRunning(query)) {
 			return false;
+		}
 
 		// prepare view
 		if (view == null) {
@@ -209,8 +212,9 @@ public class InternalSearchUI {
 		SearchJobRecord sjr= new SearchJobRecord(query);
 		fSearchJobs.put(query, sjr);
 
-		if (context == null)
+		if (context == null) {
 			context= new ProgressMonitorDialog(null);
+		}
 
 		return doRunSearchInForeground(sjr, context);
 	}
@@ -247,16 +251,18 @@ public class InternalSearchUI {
 
 	public static void shutdown() {
 		InternalSearchUI instance= fgInstance;
-		if (instance != null)
+		if (instance != null) {
 			instance.doShutdown();
+		}
 	}
 
 	private void doShutdown() {
 		Iterator<SearchJobRecord> jobRecs= fSearchJobs.values().iterator();
 		while (jobRecs.hasNext()) {
 			SearchJobRecord element= jobRecs.next();
-			if (element.job != null)
+			if (element.job != null) {
 				element.job.cancel();
+			}
 		}
 		fPositionTracker.dispose();
 
@@ -266,8 +272,9 @@ public class InternalSearchUI {
 
 	public void cancelSearch(ISearchQuery job) {
 		SearchJobRecord rec= fSearchJobs.get(job);
-		if (rec != null && rec.job != null)
+		if (rec != null && rec.job != null) {
 			rec.job.cancel();
+		}
 	}
 
 
@@ -338,8 +345,9 @@ public class InternalSearchUI {
 	}
 
 	public void showSearchResult(SearchView searchView, ISearchResult result, boolean openInNew) {
-		if (openInNew)
+		if (openInNew) {
 			searchView= (SearchView)getSearchViewManager().activateSearchView(true, openInNew);
+		}
 		showSearchResult(searchView, result);
 	}
 

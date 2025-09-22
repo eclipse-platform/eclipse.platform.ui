@@ -78,14 +78,12 @@ public class CopyToClipboardAction extends Action {
 		Shell shell= SearchPlugin.getActiveWorkbenchShell();
 		if (shell != null) {
 			String sel= null;
-			if (event.widget instanceof Combo) {
-				Combo combo= (Combo) event.widget;
+			if (event.widget instanceof Combo combo) {
 				sel= combo.getText();
 				Point selection= combo.getSelection();
 				sel= sel.substring(selection.x, selection.y);
 			}
-			else if (event.widget instanceof Text) {
-				Text text= (Text) event.widget;
+			else if (event.widget instanceof Text text) {
 				sel= text.getSelectionText();
 			}
 			if (sel != null) {
@@ -105,8 +103,9 @@ public class CopyToClipboardAction extends Action {
 	@Override
 	public void run() {
 		Shell shell= SearchPlugin.getActiveWorkbenchShell();
-		if (shell == null || fViewer == null)
+		if (shell == null || fViewer == null) {
 			return;
+		}
 
 		IBaseLabelProvider labelProvider= fViewer.getLabelProvider();
 		String lineDelim= System.lineSeparator();
@@ -125,12 +124,13 @@ public class CopyToClipboardAction extends Action {
 	}
 
 	private static String getText(IBaseLabelProvider labelProvider, Object object) {
-		if (labelProvider instanceof ILabelProvider)
+		if (labelProvider instanceof ILabelProvider) {
 			return ((ILabelProvider)labelProvider).getText(object);
-		else if (labelProvider instanceof DelegatingStyledCellLabelProvider)
+		} else if (labelProvider instanceof DelegatingStyledCellLabelProvider) {
 			return ((DelegatingStyledCellLabelProvider)labelProvider).getStyledStringProvider().getStyledText(object).toString();
-		else
+		} else {
 			return object.toString();
+		}
 	}
 
 	private void copyToClipboard(String text, Shell shell) {
@@ -145,8 +145,9 @@ public class CopyToClipboardAction extends Action {
 
 	private Iterator<?> getSelection() {
 		ISelection s= fViewer.getSelection();
-		if (s instanceof IStructuredSelection)
+		if (s instanceof IStructuredSelection) {
 			return ((IStructuredSelection)s).iterator();
+		}
 		return Collections.emptyList().iterator();
 	}
 
@@ -154,12 +155,14 @@ public class CopyToClipboardAction extends Action {
 		try {
 			clipboard.setContents(new String[] { str },	new Transfer[] { TextTransfer.getInstance() });
 		} catch (SWTError ex) {
-			if (ex.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+			if (ex.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
 				throw ex;
+			}
 			String title= SearchMessages.CopyToClipboardAction_error_title;
 			String message= SearchMessages.CopyToClipboardAction_error_message;
-			if (MessageDialog.openQuestion(shell, title, message))
+			if (MessageDialog.openQuestion(shell, title, message)) {
 				copyToClipboard(clipboard, str, shell);
+			}
 		}
 	}
 }

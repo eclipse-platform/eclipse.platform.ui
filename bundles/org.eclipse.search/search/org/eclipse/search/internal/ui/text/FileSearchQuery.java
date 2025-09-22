@@ -73,8 +73,9 @@ public class FileSearchQuery implements ISearchQuery {
 
 		@Override
 		public boolean acceptFile(IFile file) throws CoreException {
-			if (fIsLightweightAutoRefresh && !file.exists())
+			if (fIsLightweightAutoRefresh && !file.exists()) {
 				return false;
+			}
 
 			if (fIsFileSearchOnly) {
 				fResult.addMatch(new FileMatch(file));
@@ -201,7 +202,7 @@ public class FileSearchQuery implements ISearchQuery {
 	private final boolean fIsCaseSensitive;
 	private final boolean fIsWholeWord;
 	private FileSearchResult fResult;
-	private boolean fSearchInBinaries;
+	private final boolean fSearchInBinaries;
 
 
 	public FileSearchQuery(String searchText, boolean isRegEx, boolean isCaseSensitive, FileTextSearchScope scope) {
@@ -239,8 +240,9 @@ public class FileSearchQuery implements ISearchQuery {
 
 	private boolean isScopeAllFileTypes() {
 		String[] fileNamePatterns= fScope.getFileNamePatterns();
-		if (fileNamePatterns == null)
+		if (fileNamePatterns == null) {
 			return true;
+		}
 		for (String fileNamePattern : fileNamePatterns) {
 			if ("*".equals(fileNamePattern)) { //$NON-NLS-1$
 				return true;

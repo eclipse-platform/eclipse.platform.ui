@@ -30,7 +30,7 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 
 public class SearchResultUpdater implements IResourceChangeListener, IQueryListener {
-	private AbstractTextSearchResult fResult;
+	private final AbstractTextSearchResult fResult;
 
 	public SearchResultUpdater(AbstractTextSearchResult result) {
 		fResult= result;
@@ -39,8 +39,9 @@ public class SearchResultUpdater implements IResourceChangeListener, IQueryListe
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
-		if (delta != null)
+		if (delta != null) {
 			handleDelta(delta);
+		}
 	}
 
 	@SuppressWarnings("incomplete-switch")

@@ -23,8 +23,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
 public class TreeViewerNavigator implements INavigate {
-	private TreeViewer fViewer;
-	private AbstractTextSearchViewPage fPage;
+	private final TreeViewer fViewer;
+	private final AbstractTextSearchViewPage fPage;
 
 	public TreeViewerNavigator(AbstractTextSearchViewPage page, TreeViewer viewer) {
 		fViewer= viewer;
@@ -34,17 +34,20 @@ public class TreeViewerNavigator implements INavigate {
 	@Override
 	public void navigateNext(boolean forward) {
 		TreeItem currentItem= getCurrentItem(forward);
-		if (currentItem == null)
+		if (currentItem == null) {
 			return;
+		}
 		TreeItem nextItem= null;
 		if (forward) {
 			nextItem= getNextItemForward(currentItem);
-			if (nextItem == null)
+			if (nextItem == null) {
 				nextItem= getFirstItem();
+			}
 		} else {
 			nextItem= getNextItemBackward(currentItem);
-			if (nextItem == null)
+			if (nextItem == null) {
 				nextItem= getLastItem();
+			}
 		}
 		if (nextItem != null) {
 			internalSetSelection(nextItem);
@@ -53,22 +56,26 @@ public class TreeViewerNavigator implements INavigate {
 
 	private TreeItem getFirstItem() {
 		TreeItem[] roots= fViewer.getTree().getItems();
-		if (roots.length == 0)
+		if (roots.length == 0) {
 			return null;
+		}
 		for (TreeItem root : roots) {
-			if (hasMatches(root))
+			if (hasMatches(root)) {
 				return root;
+			}
 			TreeItem firstChild= getFirstChildWithMatches(roots[0]);
-			if (firstChild != null)
+			if (firstChild != null) {
 				return firstChild;
+			}
 		}
 		return null;
 	}
 
 	private TreeItem getLastItem() {
 		TreeItem[] roots= fViewer.getTree().getItems();
-		if (roots.length == 0)
+		if (roots.length == 0) {
 			return null;
+		}
 		return getLastChildWithMatches(roots[roots.length-1]);
 	}
 
@@ -77,16 +84,19 @@ public class TreeViewerNavigator implements INavigate {
 		TreeItem previousSibling= getNextSibling(currentItem, false);
 		if (previousSibling != null) {
 			TreeItem lastChild= getLastChildWithMatches(previousSibling);
-			if (lastChild != null)
+			if (lastChild != null) {
 				return lastChild;
-			if (hasMatches(previousSibling))
+			}
+			if (hasMatches(previousSibling)) {
 				return previousSibling;
+			}
 			return null;
 		}
 		TreeItem parent= currentItem.getParentItem();
 		if (parent != null) {
-			if (hasMatches(parent))
+			if (hasMatches(parent)) {
 				return parent;
+			}
 			return getNextItemBackward(parent);
 		}
 		return null;
@@ -94,30 +104,35 @@ public class TreeViewerNavigator implements INavigate {
 
 	private TreeItem getLastChildWithMatches(TreeItem currentItem) {
 		TreeItem[] children= getChildren(currentItem);
-		if (children.length == 0)
+		if (children.length == 0) {
 			return currentItem;
+		}
 		TreeItem recursiveChild= getLastChildWithMatches(children[children.length-1]);
-		if (recursiveChild == null)
+		if (recursiveChild == null) {
 			return children[children.length-1];
+		}
 		return recursiveChild;
 	}
 
 	private TreeItem getNextItemForward(TreeItem currentItem) {
 		TreeItem child= getFirstChildWithMatches(currentItem);
-		if (child != null)
+		if (child != null) {
 			return child;
+		}
 		TreeItem nextSibling= getNextSibling(currentItem, true);
 		if (nextSibling != null) {
-			if (hasMatches(nextSibling))
+			if (hasMatches(nextSibling)) {
 				return nextSibling;
+			}
 			return getFirstChildWithMatches(nextSibling);
 		}
 		TreeItem parent= currentItem.getParentItem();
 		while (parent != null) {
 			nextSibling= getNextSibling(parent, true);
 			if (nextSibling != null) {
-				if (hasMatches(nextSibling))
+				if (hasMatches(nextSibling)) {
 					return nextSibling;
+				}
 				return getFirstChildWithMatches(nextSibling);
 			}
 			parent= parent.getParentItem();
@@ -127,12 +142,14 @@ public class TreeViewerNavigator implements INavigate {
 
 	private TreeItem getFirstChildWithMatches(TreeItem item) {
 		TreeItem[] children= getChildren(item);
-		if (children.length == 0)
+		if (children.length == 0) {
 			return null;
+		}
 		TreeItem child= children[0];
 
-		if (hasMatches(child))
+		if (hasMatches(child)) {
 			return child;
+		}
 		return getFirstChildWithMatches(child);
 	}
 
@@ -143,8 +160,9 @@ public class TreeViewerNavigator implements INavigate {
 
 	private TreeItem getNextSibling(TreeItem currentItem, boolean forward) {
 		TreeItem[] siblings= getSiblings(currentItem);
-		if (siblings.length < 2)
+		if (siblings.length < 2) {
 			return null;
+		}
 		int index= -1;
 		for (int i= 0; i <siblings.length; i++) {
 			if (siblings[i] == currentItem) {
@@ -163,15 +181,17 @@ public class TreeViewerNavigator implements INavigate {
 	private TreeItem[] getSiblings(TreeItem currentItem) {
 		Tree tree= fViewer.getTree();
 		TreeItem parentItem= currentItem.getParentItem();
-		if (parentItem != null)
+		if (parentItem != null) {
 			return parentItem.getItems();
+		}
 		return tree.getItems();
 	}
 
 	private boolean hasMatches(TreeItem item) {
 		Object element= item.getData();
-		if (element == null)
+		if (element == null) {
 			return false;
+		}
 		return fPage.getDisplayedMatchCount(element) > 0;
 	}
 

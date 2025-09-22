@@ -24,7 +24,7 @@ import org.eclipse.search2.internal.ui.SearchMessages;
 
 public class RemoveMatchAction extends Action {
 
-	private AbstractTextSearchViewPage fPage;
+	private final AbstractTextSearchViewPage fPage;
 
 	public RemoveMatchAction(AbstractTextSearchViewPage page) {
 		fPage= page;
@@ -37,8 +37,9 @@ public class RemoveMatchAction extends Action {
 	public void run() {
 		Match match= fPage.getCurrentMatch();
 		AbstractTextSearchResult result= fPage.getInput();
-		if (match != null && result != null)
+		if (match != null && result != null) {
 			result.removeMatch(match);
+		}
 	}
 
 }

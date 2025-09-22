@@ -48,8 +48,7 @@ public class FindInFileActionDelegate extends FindInRecentScopeActionDelegate {
 		IWorkbenchPage page= getWorkbenchPage();
 		if (page != null) {
 			IWorkbenchPart part= page.getActivePart();
-			if (part instanceof IEditorPart) {
-				IEditorPart editor= (IEditorPart) part;
+			if (part instanceof IEditorPart editor) {
 				if (editor.getEditorInput() instanceof IFileEditorInput) {
 					fEditor= editor;
 				}

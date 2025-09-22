@@ -28,7 +28,7 @@ import org.eclipse.search.ui.NewSearchUI;
 
 
 class SearchAgainAction extends Action {
-	private SearchView fView;
+	private final SearchView fView;
 
 	public SearchAgainAction(SearchView view) {
 		setText(SearchMessages.SearchAgainAction_label);
@@ -44,9 +44,9 @@ class SearchAgainAction extends Action {
 			ISearchQuery query= search.getQuery();
 			NewSearchUI.cancelQuery(query);
 			if (query.canRerun()) {
-				if (query.canRunInBackground())
+				if (query.canRunInBackground()) {
 					NewSearchUI.runQueryInBackground(query, fView);
-				else {
+				} else {
 					Shell shell= fView.getSite().getShell();
 					ProgressMonitorDialog pmd= new ProgressMonitorDialog(shell);
 					IStatus status= NewSearchUI.runQueryInForeground(pmd, query, fView);

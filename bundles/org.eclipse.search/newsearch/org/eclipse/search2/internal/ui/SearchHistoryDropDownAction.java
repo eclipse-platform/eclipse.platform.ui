@@ -33,18 +33,20 @@ import org.eclipse.search.ui.NewSearchUI;
 class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 
 	private class ShowSearchFromHistoryAction extends Action {
-		private ISearchResult fSearch;
+		private final ISearchResult fSearch;
 
 		public ShowSearchFromHistoryAction(ISearchResult search) {
 			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
 			fSearch= search;
 
 			String label= escapeAmp(search.getLabel());
-			if (InternalSearchUI.getInstance().isQueryRunning(search.getQuery()))
+			if (InternalSearchUI.getInstance().isQueryRunning(search.getQuery())) {
 				label= MessageFormat.format(SearchMessages.SearchDropDownAction_running_message, label);
+			}
 			// fix for bug 38049
-			if (label.indexOf('@') >= 0)
+			if (label.indexOf('@') >= 0) {
 				label+= '@';
+			}
 			setText(label);
 			setImageDescriptor(search.getImageDescriptor());
 			setToolTipText(search.getTooltip());
@@ -73,15 +75,16 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 		}
 
 		private void runIfChecked(boolean openNewSearchView) {
-			if (isChecked())
+			if (isChecked()) {
 				InternalSearchUI.getInstance().showSearchResult(fSearchView, fSearch, openNewSearchView);
+			}
 		}
 	}
 
 	public static final int RESULTS_IN_DROP_DOWN= 10;
 
 	private Menu fMenu;
-	private SearchView fSearchView;
+	private final SearchView fSearchView;
 
 	public SearchHistoryDropDownAction(SearchView searchView) {
 		setText(SearchMessages.SearchDropDownAction_label);
@@ -102,8 +105,9 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 	}
 
 	void disposeMenu() {
-		if (fMenu != null)
+		if (fMenu != null) {
 			fMenu.dispose();
+		}
 	}
 
 	@Override

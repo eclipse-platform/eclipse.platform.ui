@@ -129,8 +129,9 @@ public class SearchPlugin extends AbstractUIPlugin {
 	private static void setActiveWorkbenchWindow(WindowRef windowRef) {
 		windowRef.window= null;
 		Display display= Display.getCurrent();
-		if (display == null)
+		if (display == null) {
 			return;
+		}
 		Control shell= display.getActiveShell();
 		while (shell != null) {
 			Object data= shell.getData();
@@ -155,8 +156,9 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 */
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow window= getActiveWorkbenchWindow();
-		if (window != null)
+		if (window != null) {
 			return window.getShell();
+		}
 		return null;
 	}
 
@@ -231,8 +233,9 @@ public class SearchPlugin extends AbstractUIPlugin {
 		List<SearchPageDescriptor> enabledDescriptors= new ArrayList<>(5);
 		while (iter.hasNext()) {
 			SearchPageDescriptor desc= iter.next();
-			if (desc.isEnabled() || desc.getId().equals(pageId))
+			if (desc.isEnabled() || desc.getId().equals(pageId)) {
 				enabledDescriptors.add(desc);
+			}
 		}
 		return enabledDescriptors;
 	}
@@ -285,8 +288,9 @@ public class SearchPlugin extends AbstractUIPlugin {
 	private List<SorterDescriptor> createSorterDescriptors(IConfigurationElement[] elements) {
 		List<SorterDescriptor> result= new ArrayList<>(5);
 		for (IConfigurationElement element : elements) {
-			if (SorterDescriptor.SORTER_TAG.equals(element.getName()))
+			if (SorterDescriptor.SORTER_TAG.equals(element.getName())) {
 				result.add(new SorterDescriptor(element));
+			}
 		}
 		return result;
 	}
@@ -325,8 +329,9 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 */
 	@Deprecated
 	public static void createStandardGroups(IMenuManager menu) {
-		if (!menu.isEmpty())
+		if (!menu.isEmpty()) {
 			return;
+		}
 		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
 		menu.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));

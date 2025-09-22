@@ -85,7 +85,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 		}
 	}
 
-	private IConfigurationElement fElement;
+	private final IConfigurationElement fElement;
 	private List<ExtensionScorePair> fExtensionScorePairs;
 	private int fWildcardScore= ISearchPageScoreComputer.UNKNOWN;
 	private ISearchPage fCreatedPage;
@@ -141,8 +141,9 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	 */
 	public ImageDescriptor getImage() {
 		String imageName= fElement.getAttribute(ICON_ATTRIBUTE);
-		if (imageName == null)
+		if (imageName == null) {
 			return null;
+		}
 		Bundle bundle = Platform.getBundle(getPluginId());
 		return SearchPluginImages.createImageDescriptor(bundle, IPath.fromOSString(imageName), true);
 	}
@@ -192,7 +193,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	 * returns <code>false</code>.
 	 *
 	 * This attribute is optional and defaults to <code>false</code>.
-	 * 
+	 *
 	 * @return Returns if the page can handle searches in opened editors
 	 */
 	public boolean canSearchInOpenedEditors() {
@@ -226,12 +227,13 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	public int getTabPosition() {
 		int position= Integer.MAX_VALUE / 2;
 		String str= fElement.getAttribute(TAB_POSITION_ATTRIBUTE);
-		if (str != null)
+		if (str != null) {
 			try {
 				position= Integer.parseInt(str);
 		} catch (NumberFormatException ex) {
 			ExceptionHandler.log(ex, SearchMessages.Search_Error_createSearchPage_message);
 			// position is Integer.MAX_VALUE;
+		}
 		}
 		return position;
 	}
@@ -252,8 +254,9 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	static void setEnabled(Object[] enabledDescriptors) {
 		fgEnabledPageIds= new ArrayList<>(5);
 		for (Object enabledDescriptor : enabledDescriptors) {
-			if (enabledDescriptor instanceof SearchPageDescriptor)
+			if (enabledDescriptor instanceof SearchPageDescriptor) {
 				fgEnabledPageIds.add(((SearchPageDescriptor)enabledDescriptor).getId());
+			}
 		}
 		storeEnabledPageIds();
 	}
@@ -263,29 +266,33 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 			List<SearchPageDescriptor> descriptors= SearchPlugin.getDefault().getSearchPageDescriptors();
 
 			String[] enabledPageIds= getDialogSettings().getArray(STORE_ENABLED_PAGE_IDS);
-			if (enabledPageIds == null)
+			if (enabledPageIds == null) {
 				fgEnabledPageIds= new ArrayList<>(descriptors.size());
-			else
+			} else {
 				fgEnabledPageIds= new ArrayList<>(Arrays.asList(enabledPageIds));
+			}
 
 
 			List<String> processedPageIds;
 			String[] processedPageIdsArr= getDialogSettings().getArray(STORE_PROCESSED_PAGE_IDS);
-			if (processedPageIdsArr == null)
+			if (processedPageIdsArr == null) {
 				processedPageIds= new ArrayList<>(descriptors.size());
-			else
+			} else {
 				processedPageIds= new ArrayList<>(Arrays.asList(processedPageIdsArr));
+			}
 
 			// Enable pages based on contribution
 			Iterator<SearchPageDescriptor> iter= descriptors.iterator();
 			while (iter.hasNext()) {
 				SearchPageDescriptor desc= iter.next();
-				if (processedPageIds.contains(desc.getId()))
+				if (processedPageIds.contains(desc.getId())) {
 					continue;
+				}
 
 				processedPageIds.add(desc.getId());
-				if (desc.isInitiallyEnabled())
+				if (desc.isInitiallyEnabled()) {
 					fgEnabledPageIds.add(desc.getId());
+				}
 			}
 
 			getDialogSettings().put(STORE_PROCESSED_PAGE_IDS, processedPageIds.toArray(new String[processedPageIds.size()]));
@@ -302,9 +309,10 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 		IDialogSettings settings = PlatformUI
 				.getDialogSettingsProvider(FrameworkUtil.getBundle(SearchPageDescriptor.class)).getDialogSettings();
 		IDialogSettings section= settings.getSection(SECTION_ID);
-		if (section == null)
+		if (section == null) {
 			// create new section
 			section= settings.addNewSection(SECTION_ID);
+		}
 		return section;
 	}
 
@@ -312,8 +320,9 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	public int compareTo(SearchPageDescriptor o) {
 		int myPos= getTabPosition();
 		int objsPos= o.getTabPosition();
-		if (myPos == Integer.MAX_VALUE && objsPos == Integer.MAX_VALUE || myPos == objsPos)
+		if (myPos == Integer.MAX_VALUE && objsPos == Integer.MAX_VALUE || myPos == objsPos) {
 			return getLabel().compareTo(o.getLabel());
+		}
 
 		return myPos - objsPos;
 	}
@@ -330,33 +339,39 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 			int score= ISearchPageScoreComputer.UNKNOWN;
 
 			ISearchPageScoreComputer tester= ((IAdaptable)element).getAdapter(ISearchPageScoreComputer.class);
-			if (tester != null)
+			if (tester != null) {
 				score= tester.computeScore(getId(), element);
+			}
 
 			IResource resource= ((IAdaptable)element).getAdapter(IResource.class);
 			if (resource != null && resource.getType() == IResource.FILE) {
 				String extension= resource.getFileExtension();
-				if (extension != null)
+				if (extension != null) {
 					score= Math.max(score, getScoreForFileExtension(extension));
+				}
 			}
-			if (score != ISearchPageScoreComputer.UNKNOWN)
+			if (score != ISearchPageScoreComputer.UNKNOWN) {
 				return score;
+			}
 		}
-		if (fWildcardScore != ISearchPageScoreComputer.UNKNOWN)
+		if (fWildcardScore != ISearchPageScoreComputer.UNKNOWN) {
 			return fWildcardScore;
+		}
 
 		return ISearchPageScoreComputer.LOWEST;
 	}
 
 	private int getScoreForFileExtension(String extension) {
-		if (fExtensionScorePairs == null)
+		if (fExtensionScorePairs == null) {
 			readExtensionScorePairs();
+		}
 
 		int size= fExtensionScorePairs.size();
 		for (int i= 0; i < size; i++) {
 			ExtensionScorePair p= fExtensionScorePairs.get(i);
-			if (extension.equals(p.extension))
+			if (extension.equals(p.extension)) {
 				return p.score;
+			}
 		}
 
 		return ISearchPageScoreComputer.UNKNOWN;
@@ -365,8 +380,9 @@ class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPage
 	private void readExtensionScorePairs() {
 		fExtensionScorePairs= new ArrayList<>(3);
 		String content= fElement.getAttribute(EXTENSIONS_ATTRIBUTE);
-		if (content == null)
+		if (content == null) {
 			return;
+		}
 		StringTokenizer tokenizer= new StringTokenizer(content, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			String token= tokenizer.nextToken().trim();
