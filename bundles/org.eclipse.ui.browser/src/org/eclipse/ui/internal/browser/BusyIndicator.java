@@ -67,8 +67,9 @@ public class BusyIndicator extends Canvas {
 	 * Creates a thread to animate the image.
 	 */
 	protected synchronized void createBusyThread() {
-		if (busyThread != null)
+		if (busyThread != null) {
 			return;
+		}
 
 		stop = false;
 		busyThread = new Thread() {
@@ -80,11 +81,13 @@ public class BusyIndicator extends Canvas {
 					while (!stop) {
 						Display.getDefault().syncExec(() -> {
 							if (!stop) {
-								if (count < 13)
+								if (count < 13) {
 									setImage(images[count]);
+								}
 								count++;
-								if (count > 12)
+								if (count > 12) {
 									count = 1;
+								}
 							}
 						});
 						try {
@@ -93,8 +96,9 @@ public class BusyIndicator extends Canvas {
 							// ignore
 						}
 					}
-					if (busyThread == null)
+					if (busyThread == null) {
 						Display.getDefault().syncExec(() -> setImage(images[0]));
+					}
 				} catch (Exception e) {
 					Trace.trace(Trace.WARNING, "Busy error", e); //$NON-NLS-1$
 				}
@@ -134,12 +138,14 @@ public class BusyIndicator extends Canvas {
 	 */
 	protected void onPaint(PaintEvent event) {
 		Rectangle rect = getClientArea();
-		if (rect.width == 0 || rect.height == 0)
+		if (rect.width == 0 || rect.height == 0) {
 			return;
+		}
 
 		GC gc = event.gc;
-		if (image != null)
+		if (image != null) {
 			gc.drawImage(image, 2, 2);
+		}
 	}
 
 	/**
@@ -149,8 +155,9 @@ public class BusyIndicator extends Canvas {
 	 */
 	public synchronized void setBusy(boolean busy) {
 		if (busy) {
-			if (busyThread == null)
+			if (busyThread == null) {
 				createBusyThread();
+			}
 		} else if (busyThread != null) {
 			stop = true;
 			busyThread = null;

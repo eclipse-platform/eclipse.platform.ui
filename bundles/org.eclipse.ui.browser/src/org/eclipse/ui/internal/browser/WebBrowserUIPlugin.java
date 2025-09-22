@@ -73,8 +73,9 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 	 * @return a possibly-empty array of browser instances
 	 */
 	public static IBrowserExt[] getBrowsers() {
-		if (browsers == null)
+		if (browsers == null) {
 			loadBrowsers();
+		}
 		IBrowserExt[] c = new IBrowserExt[browsers.size()];
 		browsers.toArray(c);
 		return c;
@@ -82,13 +83,15 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 
 	public static IBrowserExt findBrowsers(String executable) {
 		IBrowserExt[] browsers2 = getBrowsers();
-		if (browsers2 == null || executable == null)
+		if (browsers2 == null || executable == null) {
 			return null;
+		}
 
 		int ind1 = executable.lastIndexOf('/');
 		int ind2 = executable.lastIndexOf('\\');
-		if (ind2 > ind1)
+		if (ind2 > ind1) {
 			ind1 = ind2;
+		}
 		executable = executable.substring(ind1 + 1);
 
 		String os = Platform.getOS();
@@ -97,8 +100,9 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 			if (browsers2[i].getOS().toLowerCase().contains(os)) {
 				if (browsers2[i].isAvailable()) {
 					String executable2 = browsers2[i].getExecutable();
-					if (executable.startsWith(executable2))
+					if (executable.startsWith(executable2)) {
 						return browsers2[i];
+					}
 				}
 			}
 		}
@@ -109,8 +113,9 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 	 * Load the browsers extension point.
 	 */
 	private static synchronized void loadBrowsers() {
-		if (browsers != null)
+		if (browsers != null) {
 			return;
+		}
 		Trace.trace(Trace.CONFIG, "->- Loading .browsers extension point ->-"); //$NON-NLS-1$
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] cf = registry.getConfigurationElementsFor(PLUGIN_ID, "browsers"); //$NON-NLS-1$
@@ -134,8 +139,9 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 	 * already have been called
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
-		if (message == null)
+		if (message == null) {
 			message = ""; //$NON-NLS-1$
+		}
 		WebBrowserUIPlugin.getInstance().getLog().error(message, ex);
 	}
 

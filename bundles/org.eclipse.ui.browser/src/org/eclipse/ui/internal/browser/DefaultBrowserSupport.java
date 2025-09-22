@@ -52,19 +52,18 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		try {
 			Object obj = browserIdMap.get(browserId);
 			IWebBrowser browser = null;
-			if (obj instanceof IWebBrowser)
+			if (obj instanceof IWebBrowser) {
 				browser = (IWebBrowser) obj;
-			else if (obj instanceof HashMap) {
-				@SuppressWarnings("rawtypes")
-				HashMap wmap = (HashMap) obj;
+			} else if (obj instanceof HashMap wmap) {
 				IWorkbenchWindow window = PlatformUI.getWorkbench()
 						.getActiveWorkbenchWindow();
 				if (window != null) {
 					browser = (IWebBrowser) wmap.get(getWindowKey(window));
 				}
 			}
-			if (browser != null)
+			if (browser != null) {
 				return browser;
+			}
 		} catch (Exception e) {
 			// ignore
 		}
@@ -78,12 +77,12 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	@Override
 	public IWebBrowser createBrowser(int style, String browserId, String name,
 			String tooltip) throws PartInitException {
-		if (browserId == null)
+		if (browserId == null) {
 			browserId = getDefaultId();
+		}
 		IWebBrowser browser = getExistingWebBrowser(browserId);
 		if (browser != null) {
-			if (browser instanceof InternalBrowserInstance) {
-				InternalBrowserInstance instance2 = (InternalBrowserInstance) browser;
+			if (browser instanceof InternalBrowserInstance instance2) {
 				instance2.setName(name);
 				instance2.setTooltip(tooltip);
 			}
@@ -101,18 +100,21 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			|| !WebBrowserUtil.canUseInternalWebBrowser()) {
 			IBrowserDescriptor ewb = BrowserManager.getInstance()
 					.getCurrentWebBrowser();
-			if (ewb == null)
+			if (ewb == null) {
 				throw new PartInitException(Messages.errorNoBrowser);
+			}
 
-			if (ewb instanceof SystemBrowserDescriptor)
+			if (ewb instanceof SystemBrowserDescriptor) {
 				webBrowser = new SystemBrowserInstance(browserId);
-			else {
+			} else {
 				IBrowserExt ext = WebBrowserUIPlugin.findBrowsers(ewb.getLocation());
-				if (ext != null)
+				if (ext != null) {
 					webBrowser = ext.createBrowser(browserId,
 							ewb.getLocation(), ewb.getParameters());
-				if (webBrowser == null)
+				}
+				if (webBrowser == null) {
 					webBrowser = new ExternalBrowserInstance(browserId, ewb);
+				}
 			}
 		} else if ((style & IWorkbenchBrowserSupport.AS_VIEW) != 0) {
 			webBrowser = new InternalBrowserViewInstance(browserId, style,
@@ -161,23 +163,24 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			// also remove the window map itself if it is empty.
 			Integer key = ((InternalBrowserInstance) browser).getWindowKey();
 			Object entry = browserIdMap.get(baseId);
-			if (entry != null && entry instanceof HashMap) {
-				@SuppressWarnings("rawtypes")
-				HashMap wmap = (HashMap) entry;
+			if (entry != null && entry instanceof HashMap wmap) {
 				wmap.remove(key);
-				if (wmap.isEmpty())
+				if (wmap.isEmpty()) {
 					browserIdMap.remove(baseId);
+				}
 			}
-		} else
+		} else {
 			browserIdMap.remove(baseId);
+		}
 	}
 
 	private String getDefaultId() {
 		String id = null;
 		for (int i = 0; i < Integer.MAX_VALUE; i++) {
 			id = DEFAULT_ID_BASE + i;
-			if (browserIdMap.get(id) == null)
+			if (browserIdMap.get(id) == null) {
 				break;
+			}
 		}
 		return id;
 	}

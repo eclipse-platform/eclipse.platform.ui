@@ -146,8 +146,9 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 	 */
 	protected WebBrowserEditorInput getWebBrowserEditorInput() {
 		IEditorInput input = getEditorInput();
-		if (input instanceof WebBrowserEditorInput)
+		if (input instanceof WebBrowserEditorInput) {
 			return (WebBrowserEditorInput) input;
+		}
 		return null;
 	}
 
@@ -163,8 +164,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		Trace.trace(Trace.FINEST, "Opening browser: " + input); //$NON-NLS-1$
-		if (input instanceof IPathEditorInput) {
-			IPathEditorInput pei = (IPathEditorInput) input;
+		if (input instanceof IPathEditorInput pei) {
 			final IPath path= pei.getPath();
 			URL url = null;
 			try {
@@ -172,27 +172,30 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 					setPartName(path.lastSegment());
 					url = path.toFile().toURI().toURL();
 				}
-				if (url != null)
+				if (url != null) {
 					initialURL= url.toExternalForm();
+				}
 			} catch (Exception e) {
 				Trace.trace(Trace.SEVERE, "Error getting URL to file"); //$NON-NLS-1$
 			}
 			if (webBrowser != null) {
-				if (initialURL != null)
+				if (initialURL != null) {
 					webBrowser.setURL(initialURL);
+				}
 				site.getWorkbenchWindow().getActivePage().activate(this);
 			}
 
-			if (url != null)
+			if (url != null) {
 				setTitleToolTip(url.getFile());
+			}
 
 			imageDescriptor = ImageResourceManager.getImageDescriptor("$nl$/icons/obj16/" + "internal_browser.svg"); //$NON-NLS-1$ //$NON-NLS-2$
 			//addResourceListener(file);
-		} else if (input instanceof WebBrowserEditorInput) {
-			WebBrowserEditorInput wbei = (WebBrowserEditorInput) input;
+		} else if (input instanceof WebBrowserEditorInput wbei) {
 			initialURL = null;
-			if (wbei.getURL() != null)
+			if (wbei.getURL() != null) {
 				initialURL = wbei.getURL().toExternalForm();
+			}
 			if (webBrowser != null) {
 				webBrowser.setURL(initialURL);
 				site.getWorkbenchWindow().getActivePage().activate(this);
@@ -239,8 +242,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			for (int i = 0; i < size; i++) {
 				if (WEB_BROWSER_EDITOR_ID.equals(editors[i].getId())) {
 					IEditorPart editor = editors[i].getEditor(true);
-					if (editor != null && editor instanceof WebBrowserEditor) {
-						WebBrowserEditor webEditor = (WebBrowserEditor) editor;
+					if (editor != null && editor instanceof WebBrowserEditor webEditor) {
 						WebBrowserEditorInput input2 = webEditor.getWebBrowserEditorInput();
 						if (input2 == null || input.canReplaceInput(input2)) {
 							editor.init(editor.getEditorSite(), input);
@@ -261,8 +263,9 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 	 */
 	@Override
 	public void setFocus() {
-		if (webBrowser != null)
+		if (webBrowser != null) {
 			webBrowser.setFocus();
+		}
 	}
 
 	/**
@@ -299,8 +302,9 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 
 		String editorId = null;
 		for (IEditorDescriptor editor : editors) {
-			if (editor.getId().equals(id))
+			if (editor.getId().equals(id)) {
 				continue;
+			}
 			editorId = editor.getId();
 			break;
 		}
@@ -309,16 +313,18 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 		if (ddesc!=null && ddesc.getId().equals(id)) {
 			int dot = name.lastIndexOf('.');
 			String ext = name;
-			if (dot!= -1)
+			if (dot!= -1) {
 				ext = "*."+name.substring(dot+1); //$NON-NLS-1$
+			}
 			registry.setDefaultEditor(ext, null);
 		}
 
 		if (editorId==null) {
 			// no editor
 			// next check with the OS for an external editor
-			if (registry.isSystemExternalEditorAvailable(name))
+			if (registry.isSystemExternalEditorAvailable(name)) {
 				editorId = IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID;
+			}
 		}
 
 		if (editorId!=null) {

@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Text;
 public class BrowserText {
 	private String url;
 
-	private FallbackScrolledComposite scomp;
+	private final FallbackScrolledComposite scomp;
 
 	private Label title;
 
@@ -46,7 +46,7 @@ public class BrowserText {
 
 	protected Link link;
 
-	private BrowserViewer viewer;
+	private final BrowserViewer viewer;
 
 	private Button button;
 
@@ -54,7 +54,7 @@ public class BrowserText {
 
 	private boolean expanded;
 
-	private Throwable ex;
+	private final Throwable ex;
 
 	class ReflowScrolledComposite extends FallbackScrolledComposite {
 		public ReflowScrolledComposite(Composite parent, int style) {
@@ -140,10 +140,11 @@ public class BrowserText {
 	}
 
 	private void updateButtonText() {
-		if (expanded)
+		if (expanded) {
 			button.setText(Messages.BrowserText_button_collapse);
-		else
+		} else {
 			button.setText(Messages.BrowserText_button_expand);
+		}
 	}
 
 	protected void updateWidth(Composite parent) {
@@ -158,14 +159,16 @@ public class BrowserText {
 
 	private void updateWidth(Control c, int width) {
 		GridData gd = (GridData) c.getLayoutData();
-		if (gd != null)
+		if (gd != null) {
 			gd.widthHint = width - 10;
+		}
 	}
 
 	protected void doOpenExternal() {
 		IBrowserViewerContainer container = viewer.getContainer();
-		if (container != null)
+		if (container != null) {
 			container.openInExternalBrowser(url);
+		}
 	}
 
 	public Control getControl() {

@@ -41,7 +41,7 @@ public class TextAction extends Action {
 	/**
 	 * Copies the selected text to the clipboard.  The text will be put in the
 	 * clipboard in plain text format.
-	 * 
+	 *
 	 * @exception org.eclipse.swt.SWTException <ul>
 	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
@@ -130,13 +130,15 @@ public class TextAction extends Action {
 	 */
 	@Override
 	public void run() {
-		if (browser == null || browser.combo == null)
+		if (browser == null || browser.combo == null) {
 			return;
-		if (type == CUT)
+		}
+		if (type == CUT) {
 			cut();
-		else if (type == COPY)
+		} else if (type == COPY) {
 			copy();
-		else if (type == PASTE)
+		} else if (type == PASTE) {
 			paste();
+		}
 	}
 }
