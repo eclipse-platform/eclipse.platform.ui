@@ -114,7 +114,7 @@ public interface MApplicationElement {
 	 * Tags are a list of Strings that are persistent parts of the UI Model. They can be used to 'refine' a particular
 	 * model element, supplying extra 'meta' information. These tags interact with the CSS engine so that it's
 	 * possible to write CSS specific to a particular tag. The platform currently uses this mechanism to cause the
-	 * color change in the stack comtaining the currently active part
+	 * color change in the stack containing the currently active part
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Tags</em>' attribute list.
@@ -130,7 +130,7 @@ public interface MApplicationElement {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * This field is used to track the bundle (if any) from which the UI element was
-	 * derived in order to faciliate its removal should the bundle go away or be updated.
+	 * derived in order to facilitate its removal should the bundle go away or be updated.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Contributor URI</em>' attribute.
@@ -158,7 +158,7 @@ public interface MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * This is a String to Object map into which any desired runtime information realted to a particular element
+	 * This is a String to Object map into which any desired runtime information related to a particular element
 	 * may be stored. It is <i>not</i> persisted across sessions so it is not necessary that the 'values' be
 	 * serializable.
 	 * </p>

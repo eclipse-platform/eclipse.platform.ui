@@ -919,7 +919,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	/**
 	 * Constructs a page. <code>restoreState(IMemento)</code> should be called to
-	 * restore this page from data stored in a persistance file.
+	 * restore this page from data stored in a persistence file.
 	 *
 	 * @param w     the parent window
 	 * @param input the page input
