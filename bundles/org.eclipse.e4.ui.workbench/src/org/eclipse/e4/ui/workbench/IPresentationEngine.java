@@ -41,11 +41,12 @@ public interface IPresentationEngine {
 	String NO_TITLE = "NoTitle"; //$NON-NLS-1$
 
 	/**
-	 * When applied as a tag to an MPlaceholder inhibits the display of the close affordance. This
-	 * allows a part to be closeable in one perspective but not in a different one.
+	 * When applied as a tag to an MPlaceholder inhibits the display of the close
+	 * affordance. This allows a part to be closable in one perspective but not in a
+	 * different one.
 	 *
-	 * <b>NOTE:</b> If you are not using perspectives then use the MPart's 'isCloseable' attribute
-	 * to control the affordance.
+	 * <b>NOTE:</b> If you are not using perspectives then use the MPart's
+	 * 'isCloseable' attribute to control the affordance.
 	 */
 	String NO_CLOSE = "NoClose"; //$NON-NLS-1$
 

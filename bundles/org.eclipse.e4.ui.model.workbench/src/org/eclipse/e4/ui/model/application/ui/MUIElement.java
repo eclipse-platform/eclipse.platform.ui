@@ -115,7 +115,7 @@ public interface MUIElement extends MApplicationElement, MLocalizable {
 	 * This field controls whether the given UIElement should be displayed within
 	 * the application. Note that due to lazy loading it is possible to have this field
 	 * set to true but to not have actually rendered the element itself (it does show up
-	 * as a tab on the appropiate stack but will only be rendered when that tab is
+	 * as a tab on the appropriate stack but will only be rendered when that tab is
 	 * selected.
 	 * </p>
 	 * <!-- end-model-doc -->
@@ -179,7 +179,7 @@ public interface MUIElement extends MApplicationElement, MLocalizable {
 	 * The MinMaxAddon uses this flag for example when a stack becomes minimized. By
 	 * setting the flag to false the stack's widget is cleanly removed from the UI but
 	 * is still 'rendered'. Once the widget has been cached the minimized stack can then
-	 * display the widget using its own technques.
+	 * display the widget using its own techniques.
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Visible</em>' attribute.
@@ -235,7 +235,7 @@ public interface MUIElement extends MApplicationElement, MLocalizable {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * This is a persistend field that may be used by the <b>parent</b> element's renderer
+	 * This is a persistent field that may be used by the <b>parent</b> element's renderer
 	 * to maintain any data that it needs to control the container. For example this is where
 	 * the SashRenderer stores the 'weight' of a particular element.
 	 * </p> <p>
@@ -267,7 +267,7 @@ public interface MUIElement extends MApplicationElement, MLocalizable {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * This is a transient (i.e. non-persisted) field which is used in conjunction with
-	 * MPlaceholders which are used to share elements actoss multiple perspectives. This
+	 * MPlaceholders which are used to share elements across multiple perspectives. This
 	 * field will point back to the MPlaceholder (if any) currently hosting this one.
 	 * </p>
 	 * <!-- end-model-doc -->

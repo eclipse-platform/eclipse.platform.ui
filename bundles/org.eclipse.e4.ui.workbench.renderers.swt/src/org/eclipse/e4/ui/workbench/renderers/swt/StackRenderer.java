@@ -173,9 +173,9 @@ public class StackRenderer extends LazyStackRenderer {
 	private static final String STACK_SELECTED_PART = "stack_selected_part"; //$NON-NLS-1$
 
 	/**
-	 * Add this tag to prevent the next tab's activation from granting focus toac
-	 * the part. This is used to keep the focus on the CTabFolder when traversing
-	 * the tabs using the keyboard.
+	 * Add this tag to prevent the next tab's activation from granting focus to the
+	 * part. This is used to keep the focus on the CTabFolder when traversing the
+	 * tabs using the keyboard.
 	 */
 	private static final String INHIBIT_FOCUS = "InhibitFocus"; //$NON-NLS-1$
 
@@ -1679,7 +1679,7 @@ public class StackRenderer extends LazyStackRenderer {
 	private List<MPart> getCloseableSiblingParts(MPart part, List<MUIElement> children, final int start,
 			final int end) {
 		// broken out from closeSiblingParts so it can be used to determine how
-		// many closeable siblings are available
+		// many closable siblings are available
 		List<MPart> closeableSiblings = new ArrayList<>();
 		for (int i = start; i < end; i++) {
 			MUIElement child = children.get(i);
