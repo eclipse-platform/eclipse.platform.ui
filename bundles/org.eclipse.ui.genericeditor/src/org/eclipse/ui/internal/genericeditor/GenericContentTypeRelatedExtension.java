@@ -129,7 +129,7 @@ public class GenericContentTypeRelatedExtension<T> {
 
 	/**
 	 * Returns the name of the contribution.
-	 * 
+	 *
 	 * @return the name of the contribution.
 	 */
 	public String getContributionName() {

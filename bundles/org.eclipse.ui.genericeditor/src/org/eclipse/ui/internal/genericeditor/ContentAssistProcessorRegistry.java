@@ -49,7 +49,7 @@ public class ContentAssistProcessorRegistry {
 
 	static class ContentAssistProcessorDelegate implements IContentAssistProcessor {
 		private final IContentAssistProcessor delegate;
-		private IContentType targetContentType;
+		private final IContentType targetContentType;
 
 		public ContentAssistProcessorDelegate(IContentAssistProcessor delegate, IContentType targetContentType) {
 			this.delegate = delegate;
@@ -128,7 +128,7 @@ public class ContentAssistProcessorRegistry {
 		}
 	}
 
-	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IContentAssistProcessor>> extensions = new LinkedHashMap<>();
+	private final Map<IConfigurationElement, GenericContentTypeRelatedExtension<IContentAssistProcessor>> extensions = new LinkedHashMap<>();
 	private boolean outOfSync = true;
 
 	/**

@@ -55,8 +55,8 @@ public class CompositeTextHover implements ITextHover, ITextHoverExtension, ITex
 			if (currentRegion == null) {
 				continue;
 			}
-			Object res = hover instanceof ITextHoverExtension2 ?
-				((ITextHoverExtension2)hover).getHoverInfo2(textViewer, currentRegion) :
+			Object res = hover instanceof ITextHoverExtension2 i ?
+				i.getHoverInfo2(textViewer, currentRegion) :
 				hover.getHoverInfo(textViewer, currentRegion);
 			if (res != null) {
 				this.currentHovers.put(hover, res);
@@ -77,8 +77,8 @@ public class CompositeTextHover implements ITextHover, ITextHoverExtension, ITex
 			return null;
 		} else if (currentHovers.size() == 1) {
 			ITextHover hover = this.currentHovers.keySet().iterator().next();
-			return hover instanceof ITextHoverExtension ?
-				((ITextHoverExtension)hover).getHoverControlCreator():
+			return hover instanceof ITextHoverExtension i ?
+				i.getHoverControlCreator():
 				null;
 		} else {
 			return new CompositeInformationControlCreator(new ArrayList<>(this.currentHovers.keySet()));

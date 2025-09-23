@@ -67,7 +67,7 @@ public class ExtensionBasedTextEditor extends TextEditor {
 	private static final String HIGHLIGHT_BRACKET_AT_CARET_LOCATION = GenericEditorPreferenceConstants.EDITOR_HIGHLIGHT_BRACKET_AT_CARET_LOCATION;
 	private static final String ENCLOSING_BRACKETS = GenericEditorPreferenceConstants.EDITOR_ENCLOSING_BRACKETS;
 
-	private ExtensionBasedTextViewerConfiguration configuration;
+	private final ExtensionBasedTextViewerConfiguration configuration;
 	private Image contentTypeImage;
 	private ImageDescriptor contentTypeImageDescripter;
 
@@ -118,8 +118,9 @@ public class ExtensionBasedTextEditor extends TextEditor {
 			private boolean openFirstHyperlink() {
 				ITextSelection sel = (ITextSelection) this.getSelection();
 				int offset = sel.getOffset();
-				if (offset == -1)
+				if (offset == -1) {
 					return false;
+				}
 
 				IRegion region = new Region(offset, 0);
 				IHyperlink hyperlink = findFirstHyperlink(region);
@@ -134,22 +135,26 @@ public class ExtensionBasedTextEditor extends TextEditor {
 				int activeHyperlinkStateMask = getSourceViewerConfiguration().getHyperlinkStateMask(this);
 				synchronized (fHyperlinkDetectors) {
 					for (IHyperlinkDetector detector : fHyperlinkDetectors) {
-						if (detector == null)
+						if (detector == null) {
 							continue;
+						}
 
 						if (detector instanceof IHyperlinkDetectorExtension2) {
 							int stateMask = ((IHyperlinkDetectorExtension2) detector).getStateMask();
-							if (stateMask != -1 && stateMask != activeHyperlinkStateMask)
+							if (stateMask != -1 && stateMask != activeHyperlinkStateMask) {
 								continue;
-							else if (stateMask == -1 && activeHyperlinkStateMask != fHyperlinkStateMask)
+							} else if (stateMask == -1 && activeHyperlinkStateMask != fHyperlinkStateMask) {
 								continue;
-						} else if (activeHyperlinkStateMask != fHyperlinkStateMask)
+							}
+						} else if (activeHyperlinkStateMask != fHyperlinkStateMask) {
 							continue;
+						}
 
 						boolean canShowMultipleHyperlinks = fHyperlinkPresenter.canShowMultipleHyperlinks();
 						IHyperlink[] hyperlinks = detector.detectHyperlinks(this, region, canShowMultipleHyperlinks);
-						if (hyperlinks == null)
+						if (hyperlinks == null) {
 							continue;
+						}
 
 						Assert.isLegal(hyperlinks.length > 0);
 
@@ -243,12 +248,14 @@ public class ExtensionBasedTextEditor extends TextEditor {
 
 		ISourceViewer sourceViewer = getSourceViewer();
 		IDocument document = sourceViewer.getDocument();
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		IRegion selection = getSignedSelection(sourceViewer);
-		if (fPreviousSelections == null)
+		if (fPreviousSelections == null) {
 			initializePreviousSelectionList();
+		}
 
 		ICharacterPairMatcherExtension fBracketMatcher = (ICharacterPairMatcherExtension) pairMatcher;
 		IRegion region = fBracketMatcher.match(document, selection.getOffset(), selection.getLength());
@@ -283,16 +290,16 @@ public class ExtensionBasedTextEditor extends TextEditor {
 		int offset = region.getOffset();
 		int length = region.getLength();
 
-		if (length < 1)
+		if (length < 1) {
 			return;
+		}
 
 		int anchor = pairMatcher.getAnchor();
 		// http://dev.eclipse.org/bugs/show_bug.cgi?id=34195
 		int targetOffset = (ICharacterPairMatcher.RIGHT == anchor) ? offset + 1 : offset + length - 1;
 
 		boolean visible = false;
-		if (sourceViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension = (ITextViewerExtension5) sourceViewer;
+		if (sourceViewer instanceof ITextViewerExtension5 extension) {
 			visible = (extension.modelOffset2WidgetOffset(targetOffset) > -1);
 		} else {
 			IRegion visibleRegion = sourceViewer.getVisibleRegion();

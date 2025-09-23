@@ -62,9 +62,10 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 
 		if (PlatformUI.isWorkbenchRunning()) {
 			themeListener = event -> {
-				if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
+				if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty())) {
 					GenericEditorPluginPreferenceInitializer
 							.setThemeBasedPreferences(GenericEditorPreferenceConstants.getPreferenceStore(), true);
+				}
 			};
 			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(themeListener);
 		}

@@ -25,7 +25,7 @@ import org.eclipse.jface.text.reconciler.IReconcilerExtension;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 
 public class CompositeReconciler implements IReconciler, IReconcilerExtension {
-	private List<IReconciler> fReconcilers;
+	private final List<IReconciler> fReconcilers;
 
 	public CompositeReconciler(List<IReconciler> reconcilers) {
 		fReconcilers = reconcilers.stream().filter(Objects::nonNull).collect(Collectors.toList());

@@ -26,8 +26,8 @@ import org.eclipse.ui.IEditorMatchingStrategy;
  * "org.eclipse.ui.genericeditor.icons".
  */
 public class GenericEditorWithContentTypeIcon implements IEditorDescriptor {
-	private IEditorDescriptor editorDescriptor;
-	private String fileName;
+	private final IEditorDescriptor editorDescriptor;
+	private final String fileName;
 
 	public GenericEditorWithContentTypeIcon(String fileName, IEditorDescriptor editorDescriptor) {
 		Assert.isNotNull(editorDescriptor);

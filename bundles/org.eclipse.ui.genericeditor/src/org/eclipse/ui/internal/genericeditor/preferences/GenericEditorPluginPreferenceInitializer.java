@@ -32,8 +32,9 @@ public class GenericEditorPluginPreferenceInitializer extends AbstractPreference
 
 	public static void setThemeBasedPreferences(IPreferenceStore store, boolean fireEvent) {
 		ColorRegistry registry = null;
-		if (PlatformUI.isWorkbenchRunning())
+		if (PlatformUI.isWorkbenchRunning()) {
 			registry = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
+		}
 
 		setDefault(store, GenericEditorPreferenceConstants.EDITOR_MATCHING_BRACKETS_COLOR,
 				findRGB(registry, IGenericEditorThemeConstants.EDITOR_MATCHING_BRACKETS_COLOR, new RGB(127, 0, 85)),
@@ -57,13 +58,15 @@ public class GenericEditorPluginPreferenceInitializer extends AbstractPreference
 		}
 
 		RGB oldValue = null;
-		if (store.isDefault(key))
+		if (store.isDefault(key)) {
 			oldValue = PreferenceConverter.getDefaultColor(store, key);
+		}
 
 		PreferenceConverter.setDefault(store, key, newValue);
 
-		if (oldValue != null && !oldValue.equals(newValue))
+		if (oldValue != null && !oldValue.equals(newValue)) {
 			store.firePropertyChangeEvent(key, oldValue, newValue);
+		}
 	}
 
 	/**
@@ -76,12 +79,14 @@ public class GenericEditorPluginPreferenceInitializer extends AbstractPreference
 	 * @since 1.2
 	 */
 	private static RGB findRGB(ColorRegistry registry, String key, RGB defaultRGB) {
-		if (registry == null)
+		if (registry == null) {
 			return defaultRGB;
+		}
 
 		RGB rgb = registry.getRGB(key);
-		if (rgb != null)
+		if (rgb != null) {
 			return rgb;
+		}
 
 		return defaultRGB;
 	}

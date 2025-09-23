@@ -52,8 +52,7 @@ public class MarkerResoltionQuickAssistProcessor implements IQuickAssistProcesso
 		IAnnotationModel annotationModel = invocationContext.getSourceViewer().getAnnotationModel();
 		Collection<MarkerAnnotation> annotations = new HashSet<>();
 		annotationModel.getAnnotationIterator().forEachRemaining(annotation -> {
-			if (annotation instanceof MarkerAnnotation) {
-				MarkerAnnotation markerAnnotation = (MarkerAnnotation) annotation;
+			if (annotation instanceof MarkerAnnotation markerAnnotation) {
 				Position position = annotationModel.getPosition(annotation);
 				int documentOffset = invocationContext.getOffset();
 				int annotationOffset = position.getOffset();

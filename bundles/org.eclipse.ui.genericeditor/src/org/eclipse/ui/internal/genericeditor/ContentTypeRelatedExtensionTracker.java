@@ -34,11 +34,11 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
  */
 final class ContentTypeRelatedExtensionTracker<T> implements ServiceTrackerCustomizer<T, LazyServiceSupplier<T>> {
 
-	private BundleContext bundleContext;
-	private ServiceTracker<T, LazyServiceSupplier<T>> serviceTracker;
+	private final BundleContext bundleContext;
+	private final ServiceTracker<T, LazyServiceSupplier<T>> serviceTracker;
 	private Consumer<LazyServiceSupplier<T>> addAction;
 	private Consumer<LazyServiceSupplier<T>> removeAction;
-	private Display display;
+	private final Display display;
 
 	ContentTypeRelatedExtensionTracker(BundleContext bundleContext, Class<T> serviceType, Display display) {
 		this.bundleContext = bundleContext;
@@ -89,8 +89,8 @@ final class ContentTypeRelatedExtensionTracker<T> implements ServiceTrackerCusto
 	}
 
 	public static final class LazyServiceSupplier<S> implements Supplier<S> {
-		private ServiceReference<S> reference;
-		private BundleContext bundleContext;
+		private final ServiceReference<S> reference;
+		private final BundleContext bundleContext;
 		private boolean disposed;
 		private S serviceObject;
 		private IContentType contentType;

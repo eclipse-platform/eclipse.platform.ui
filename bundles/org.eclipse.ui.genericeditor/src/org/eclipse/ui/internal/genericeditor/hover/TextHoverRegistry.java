@@ -54,9 +54,9 @@ public final class TextHoverRegistry {
 		private static final String IS_BEFORE_ATTRIBUTE = "isBefore"; //$NON-NLS-1$
 		private static final String IS_AFTER_ATTRIBUTE = "isAfter"; //$NON-NLS-1$
 
-		private String id;
-		private String isBefore;
-		private String isAfter;
+		private final String id;
+		private final String isBefore;
+		private final String isAfter;
 
 		public TextHoverExtension(IConfigurationElement extension) throws Exception {
 			super(extension);

@@ -26,7 +26,7 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 
 public class CompositeReconcilerStrategy
 		implements IReconcilingStrategy, IReconcilingStrategyExtension, ITextViewerLifecycle {
-	private List<IReconcilingStrategy> fReconcilingStrategies;
+	private final List<IReconcilingStrategy> fReconcilingStrategies;
 
 	public CompositeReconcilerStrategy(List<IReconcilingStrategy> strategies) {
 		this.fReconcilingStrategies = strategies;
