@@ -89,7 +89,7 @@ public interface IAdvancedUndoableOperation {
 	 * @return the IStatus indicating the validity of the undo. The status
 	 *         severity should be set to <code>OK</code> if the undo can
 	 *         successfully be performed, and <code>ERROR</code> if it
-	 *         cannnot. Any other status is assumed to represent an ambiguous
+	 *         cannot. Any other status is assumed to represent an ambiguous
 	 *         state.
 	 * @throws ExecutionException
 	 *             if an exception occurs while computing the validity.
@@ -119,7 +119,7 @@ public interface IAdvancedUndoableOperation {
 	 * @return the IStatus indicating the validity of the redo. The status
 	 *         severity should be set to <code>OK</code> if the redo can
 	 *         successfully be performed, and <code>ERROR</code> if it
-	 *         cannnot. Any other status is assumed to represent an ambiguous
+	 *         cannot. Any other status is assumed to represent an ambiguous
 	 *         state.
 	 * @throws ExecutionException
 	 *             if an exception occurs while computing the validity.

@@ -434,7 +434,7 @@ public final class ParameterizedCommand implements Comparable {
 	/**
 	 * Executes this command with its parameters. This method will succeed
 	 * regardless of whether the command is enabled or defined. It is
-	 * preferrable to use {@link #executeWithChecks(Object, Object)}.
+	 * preferable to use {@link #executeWithChecks(Object, Object)}.
 	 *
 	 * @param trigger
 	 *            The object that triggered the execution; may be

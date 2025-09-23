@@ -29,7 +29,7 @@ public abstract class NamedHandleObject extends HandleObject {
 	protected String description = null;
 
 	/**
-	 * The name of this handle. This valud should not be <code>null</code>
+	 * The name of this handle. This value should not be <code>null</code>
 	 * unless the handle is undefined.
 	 */
 	protected String name = null;
