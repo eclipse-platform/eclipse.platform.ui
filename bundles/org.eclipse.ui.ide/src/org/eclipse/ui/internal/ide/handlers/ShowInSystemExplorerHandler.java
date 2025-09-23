@@ -202,8 +202,9 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	 */
 	private File getSystemExplorerPath(IResource resource) throws IOException {
 		IPath location = resource.getLocation();
-		if (location == null)
+		if (location == null) {
 			return null;
+		}
 		return location.toFile();
 	}
 

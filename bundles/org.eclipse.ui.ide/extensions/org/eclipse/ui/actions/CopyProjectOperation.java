@@ -58,7 +58,7 @@ public class CopyProjectOperation {
 	/**
 	 * The parent shell used to show any dialogs.
 	 */
-	private Shell parentShell;
+	private final Shell parentShell;
 
 	private String[] modelProviderIds;
 

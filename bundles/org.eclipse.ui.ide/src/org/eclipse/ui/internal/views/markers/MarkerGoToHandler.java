@@ -25,8 +25,9 @@ public class MarkerGoToHandler extends MarkerViewHandler {
 	@Override
 	public Object execute(ExecutionEvent event)  {
 		ExtendedMarkersView view = getView(event);
-		if(view == null)
+		if(view == null) {
 			return this;
+		}
 		view.openSelectedMarkers();
 		return this;
 	}

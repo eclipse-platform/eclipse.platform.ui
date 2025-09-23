@@ -53,8 +53,7 @@ public class ResourceSaveableFilter implements ISaveableFilter {
 		}
 		// For backwards compatibility, we need to check the parts
 		for (IWorkbenchPart workbenchPart : containingParts) {
-			if (workbenchPart instanceof IEditorPart) {
-				IEditorPart editorPart = (IEditorPart) workbenchPart;
+			if (workbenchPart instanceof IEditorPart editorPart) {
 				if (isEditingDescendantOf(editorPart)) {
 					return true;
 				}

@@ -217,8 +217,7 @@ public class WizardArchiveFileResourceImportPage1 extends
 		return new WorkbenchContentProvider() {
 			@Override
 			public Object[] getChildren(Object o) {
-				if (o instanceof MinimizedFileSystemElement) {
-					MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
+				if (o instanceof MinimizedFileSystemElement element) {
 					AdaptableList l = element.getFiles(structureProvider);
 					return l.getChildren(element);
 				}
@@ -275,8 +274,7 @@ public class WizardArchiveFileResourceImportPage1 extends
 		return new WorkbenchContentProvider() {
 			@Override
 			public Object[] getChildren(Object o) {
-				if (o instanceof MinimizedFileSystemElement) {
-					MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
+				if (o instanceof MinimizedFileSystemElement element) {
 					AdaptableList l = element.getFolders(structureProvider);
 					return l.getChildren(element);
 				}
@@ -285,8 +283,7 @@ public class WizardArchiveFileResourceImportPage1 extends
 
 			@Override
 			public boolean hasChildren(Object o) {
-				if (o instanceof MinimizedFileSystemElement) {
-					MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
+				if (o instanceof MinimizedFileSystemElement element) {
 					if (element.isPopulated()) {
 						return getChildren(element).length > 0;
 					}

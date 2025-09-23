@@ -137,8 +137,9 @@ public class MarkerSortUtil {
 		//
 		while (childOffset < len) {
 			if (comparator.compare(array[first + childOffset], array[first
-					+ (childOffset - 1)]) < 0)
+					+ (childOffset - 1)]) < 0) {
 				--childOffset;
+			}
 			array[first + holeOffset] = array[first + childOffset];
 			holeOffset = childOffset++;
 			childOffset *= 2;
@@ -228,12 +229,13 @@ public class MarkerSortUtil {
 	 */
 	private static void heapify(MarkerEntry[] array, int first, int last,
  Comparator<MarkerItem> comparator) {
-		if (last - first < 2)
+		if (last - first < 2) {
 			return;
+		}
 		int parent = (last - first - 2) / 2;
-		do
+		do {
 			adjustHeap(array, first, first + parent, last, comparator);
-		while (parent-- != 0);
+		} while (parent-- != 0);
 	}
 
 	/**
@@ -275,8 +277,9 @@ public class MarkerSortUtil {
 		// check range valid
 		int last = from + k-1;
 		if (entries.length == 0 || from < 0 || from >= to || last < from
-				|| last > to || to > entries.length - 1 || to < 0)
+				|| last > to || to > entries.length - 1 || to < 0) {
 			return;
+		}
 		int n=to-from+1;
 		if (BATCH_SIZE == Integer.MAX_VALUE || (n <= BATCH_SIZE && (((float) n / k) <= MERGE_OR_HEAP_SWITCH))
 				/*|| ((float) n / k) <= MERGE_OR_HEAP_SWITCH*/) {

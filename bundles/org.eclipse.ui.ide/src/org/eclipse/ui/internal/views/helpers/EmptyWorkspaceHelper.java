@@ -297,7 +297,7 @@ public final class EmptyWorkspaceHelper {
 		return action;
 	}
 
-	private Runnable switchTopControlRunnable = () -> {
+	private final Runnable switchTopControlRunnable = () -> {
 		if (switchTopControl()) {
 			displayArea.requestLayout();
 		}

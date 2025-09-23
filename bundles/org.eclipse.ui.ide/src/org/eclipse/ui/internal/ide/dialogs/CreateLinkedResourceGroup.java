@@ -64,11 +64,11 @@ import org.eclipse.ui.internal.ide.filesystem.FileSystemSupportRegistry;
  * @since 2.1
  */
 public class CreateLinkedResourceGroup {
-	private Listener listener;
+	private final Listener listener;
 
 	private String linkTarget = ""; //$NON-NLS-1$
 
-	private int type;
+	private final int type;
 
 	private boolean createLink = false;
 
@@ -223,8 +223,9 @@ public class CreateLinkedResourceGroup {
 		variablesButton.setEnabled(createLink);
 		// Set the required field color if the field is enabled
 		linkTargetField.setEnabled(createLink);
-		if (fileSystemSelectionArea != null)
+		if (fileSystemSelectionArea != null) {
 			fileSystemSelectionArea.setEnabled(createLink);
+		}
 
 		if (listener != null) {
 			listener.handleEvent(new Event());
@@ -419,8 +420,9 @@ public class CreateLinkedResourceGroup {
 	 *         chose not to create a link.
 	 */
 	public URI getLinkTargetURI() {
-		if (!createLink)
+		if (!createLink) {
 			return null;
+		}
 		// linkTarget can contain either:
 		//  1) a URI, ex: 								foo://bar/file.txt
 		//  2) A path, ex: 								c:\foo\bar\file.txt
@@ -428,8 +430,9 @@ public class CreateLinkedResourceGroup {
 		URI uri;
 		try {
 			IPath path = IPath.fromOSString(linkTarget);
-			if (path != null && path.toFile().exists())
+			if (path != null && path.toFile().exists()) {
 				return URIUtil.toURI(path);
+			}
 
 			uri = new URI(linkTarget);
 			URI resolved = getPathVariableManager().resolveURI(uri);
@@ -483,8 +486,9 @@ public class CreateLinkedResourceGroup {
 			} else {
 				URI uri = config.getContributor().browseFileSystem(linkTarget,
 						linkTargetField.getShell());
-				if (uri != null)
+				if (uri != null) {
 					selection = uri.toString();
+				}
 			}
 		} else {
 			String filterPath = null;
@@ -503,17 +507,20 @@ public class CreateLinkedResourceGroup {
 						.getShell(), SWT.SHEET);
 				dialog
 						.setMessage(IDEWorkbenchMessages.CreateLinkedResourceGroup_targetSelectionLabel);
-				if (filterPath != null)
+				if (filterPath != null) {
 					dialog.setFilterPath(filterPath);
+				}
 				selection = dialog.open();
 			} else {
 				String initialPath = IDEResourceInfoUtils.EMPTY_STRING;
-				if (filterPath != null)
+				if (filterPath != null) {
 					initialPath = filterPath;
+				}
 				URI uri = config.getContributor().browseFileSystem(initialPath,
 						linkTargetField.getShell());
-				if (uri != null)
+				if (uri != null) {
 					selection = uri.toString();
+				}
 			}
 		}
 		if (selection != null) {
@@ -535,8 +542,9 @@ public class CreateLinkedResourceGroup {
 	 * @return FileSystemConfiguration or <code>null</code>
 	 */
 	private FileSystemConfiguration getSelectedConfiguration() {
-		if (fileSystemSelectionArea == null)
+		if (fileSystemSelectionArea == null) {
 			return null;
+		}
 		return fileSystemSelectionArea.getSelectedConfiguration();
 	}
 
@@ -601,10 +609,11 @@ public class CreateLinkedResourceGroup {
 		}
 		URI resolvedURI = pathVariableManager.resolveURI(uri);
 		String resolvedString;
-		if (isURL)
+		if (isURL) {
 			resolvedString = resolvedURI.toString();
-		else
+		} else {
 			resolvedString = URIUtil.toPath(resolvedURI).toOSString();
+		}
 
 		if (linkTarget.equals(resolvedString)) {
 			resolvedPathLabelText.setVisible(false);
@@ -621,8 +630,9 @@ public class CreateLinkedResourceGroup {
 	 */
 	private IPathVariableManager getPathVariableManager() {
 		if (updatableResourceName != null
-				&& updatableResourceName.getResource() != null)
+				&& updatableResourceName.getResource() != null) {
 			return updatableResourceName.getResource().getPathVariableManager();
+		}
 		return ResourcesPlugin.getWorkspace().getPathVariableManager();
 	}
 

@@ -28,8 +28,7 @@ public class FileStoreInputAdapterFactory implements IAdapterFactory {
 
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		if (adaptableObject instanceof FileStoreEditorInput && adapterType.isAssignableFrom(IFileStore.class)) {
-			FileStoreEditorInput editorInput = (FileStoreEditorInput) adaptableObject;
+		if (adaptableObject instanceof FileStoreEditorInput editorInput && adapterType.isAssignableFrom(IFileStore.class)) {
 			try {
 				return adapterType.cast(EFS.getStore(editorInput.getURI()));
 			} catch (CoreException e) {

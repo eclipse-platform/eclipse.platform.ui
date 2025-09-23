@@ -52,7 +52,7 @@ class Markers {
 	// the categories
 	private volatile MarkerCategory[] categories = EMPTY_CATEGORY_ARRAY;
 
-	private CachedMarkerBuilder builder;
+	private final CachedMarkerBuilder builder;
 
 	private volatile boolean inChange;
 
@@ -402,10 +402,9 @@ class Markers {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof Markers)) {
+		if (!(obj instanceof Markers other)) {
 			return false;
 		}
-		Markers other = (Markers) obj;
 		return Objects.equals(builder, other.builder);
 	}
 }

@@ -49,11 +49,10 @@ public final class ResourcePathConverter extends
 	@Override
 	public final String convertToString(final Object parameterValue)
 			throws ParameterValueConversionException {
-		if (!(parameterValue instanceof IResource)) {
+		if (!(parameterValue instanceof final IResource resource)) {
 			throw new ParameterValueConversionException(
 					"parameterValue must be an IResource"); //$NON-NLS-1$
 		}
-		final IResource resource = (IResource) parameterValue;
 		return resource.getFullPath().toString();
 	}
 }

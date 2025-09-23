@@ -48,8 +48,9 @@ public abstract class MarkerViewHandler extends AbstractHandler {
 	 */
 	public MarkerSupportView getView(ExecutionEvent event) {
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		if (!(part instanceof MarkerSupportView))
+		if (!(part instanceof MarkerSupportView)) {
 			return null;
+		}
 		return (MarkerSupportView) part;
 	}
 
@@ -96,8 +97,9 @@ public abstract class MarkerViewHandler extends AbstractHandler {
 	 */
 	public IMarker[] getSelectedMarkers(ExecutionEvent event) {
 		final MarkerSupportView view = getView(event);
-		if (view == null)
+		if (view == null) {
 			return EMPTY_MARKER_ARRAY;
+		}
 
 		final IMarker[][] result = new IMarker[1][];
 		view.getSite().getShell().getDisplay().syncExec(() -> result[0] = view.getSelectedMarkers());

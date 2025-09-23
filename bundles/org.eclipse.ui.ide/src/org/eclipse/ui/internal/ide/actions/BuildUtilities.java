@@ -103,8 +103,7 @@ public class BuildUtilities {
 		if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection) {
 			selected = extractProjects(((IStructuredSelection) selection).toArray());
 		} else //see if we can extract a selected project from the active editor
-		if (activePart instanceof IEditorPart) {
-			IEditorPart editor= (IEditorPart)activePart;
+		if (activePart instanceof IEditorPart editor) {
 			IFile file = ResourceUtil.getFile(editor.getEditorInput());
 			if (file != null) {
 				selected = new IProject[] {file.getProject()};

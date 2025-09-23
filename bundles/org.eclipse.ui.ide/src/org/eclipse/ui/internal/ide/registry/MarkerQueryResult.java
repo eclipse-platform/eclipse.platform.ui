@@ -25,7 +25,7 @@ public class MarkerQueryResult {
 	/**
 	 * An ordered collection of marker attribute values.
 	 */
-	private String[] values;
+	private final String[] values;
 
 	/**
 	 * Cached hash code value

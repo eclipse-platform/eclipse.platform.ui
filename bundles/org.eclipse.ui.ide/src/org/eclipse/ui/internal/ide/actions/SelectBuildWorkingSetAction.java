@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  */
 public class SelectBuildWorkingSetAction extends Action implements
 		ActionFactory.IWorkbenchAction {
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	private IActionBarConfigurer actionBars;
 

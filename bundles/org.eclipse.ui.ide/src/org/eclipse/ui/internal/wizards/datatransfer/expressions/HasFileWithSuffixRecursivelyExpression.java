@@ -36,7 +36,7 @@ public class HasFileWithSuffixRecursivelyExpression extends Expression {
 	 */
 	public static final String TAG = "hasFileWithSuffixRecursively"; //$NON-NLS-1$
 
-	private String suffix;
+	private final String suffix;
 
 	/**
 	 * Build expression with a suffix.

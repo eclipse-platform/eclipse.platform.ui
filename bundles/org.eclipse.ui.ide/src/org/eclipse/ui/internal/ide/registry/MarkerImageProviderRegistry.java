@@ -45,7 +45,7 @@ public class MarkerImageProviderRegistry {
 
 	private static final String TAG_PROVIDER = "imageprovider";//$NON-NLS-1$
 
-	private ArrayList<Descriptor> descriptors = new ArrayList<>();
+	private final ArrayList<Descriptor> descriptors = new ArrayList<>();
 
 	static class Descriptor {
 		String id;

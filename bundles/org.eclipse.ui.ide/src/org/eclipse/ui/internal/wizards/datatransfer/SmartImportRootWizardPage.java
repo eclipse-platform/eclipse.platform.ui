@@ -165,7 +165,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 	private Job refreshProposalsJob;
 	private JobMonitor jobMonitor;
 	private DelegateProgressMonitorInUIThreadAndPreservingFocus delegateMonitor;
-	private SelectionListener cancelWorkListener = new SelectionAdapter() {
+	private final SelectionListener cancelWorkListener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			stopAndDisconnectCurrentWork();

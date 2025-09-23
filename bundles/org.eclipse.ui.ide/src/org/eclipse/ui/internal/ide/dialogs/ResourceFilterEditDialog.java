@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  */
 public class ResourceFilterEditDialog extends SelectionDialog {
 
-	private ResourceFilterGroup resourceFilterGroup;
+	private final ResourceFilterGroup resourceFilterGroup;
 
 	/**
 	 * Creates a resource filter edit dialog.
@@ -114,8 +114,9 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 	protected void okPressed() {
 		// Sets the dialog result to the selected path variable name(s).
 		try {
-			if (resourceFilterGroup.performOk())
+			if (resourceFilterGroup.performOk()) {
 				super.okPressed();
+			}
 		} catch (Throwable t) {
 			IDEWorkbenchPlugin.log(t.getMessage(), t);
 		}

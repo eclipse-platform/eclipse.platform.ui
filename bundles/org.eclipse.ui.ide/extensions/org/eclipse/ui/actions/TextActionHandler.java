@@ -56,15 +56,15 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class TextActionHandler {
-	private DeleteActionHandler textDeleteAction = new DeleteActionHandler();
+	private final DeleteActionHandler textDeleteAction = new DeleteActionHandler();
 
-	private CutActionHandler textCutAction = new CutActionHandler();
+	private final CutActionHandler textCutAction = new CutActionHandler();
 
-	private CopyActionHandler textCopyAction = new CopyActionHandler();
+	private final CopyActionHandler textCopyAction = new CopyActionHandler();
 
-	private PasteActionHandler textPasteAction = new PasteActionHandler();
+	private final PasteActionHandler textPasteAction = new PasteActionHandler();
 
-	private SelectAllActionHandler textSelectAllAction = new SelectAllActionHandler();
+	private final SelectAllActionHandler textSelectAllAction = new SelectAllActionHandler();
 
 	private IAction deleteAction;
 
@@ -76,26 +76,26 @@ public class TextActionHandler {
 
 	private IAction selectAllAction;
 
-	private IPropertyChangeListener deleteActionListener = new PropertyChangeListener(
+	private final IPropertyChangeListener deleteActionListener = new PropertyChangeListener(
 			textDeleteAction);
 
-	private IPropertyChangeListener cutActionListener = new PropertyChangeListener(
+	private final IPropertyChangeListener cutActionListener = new PropertyChangeListener(
 			textCutAction);
 
-	private IPropertyChangeListener copyActionListener = new PropertyChangeListener(
+	private final IPropertyChangeListener copyActionListener = new PropertyChangeListener(
 			textCopyAction);
 
-	private IPropertyChangeListener pasteActionListener = new PropertyChangeListener(
+	private final IPropertyChangeListener pasteActionListener = new PropertyChangeListener(
 			textPasteAction);
 
-	private IPropertyChangeListener selectAllActionListener = new PropertyChangeListener(
+	private final IPropertyChangeListener selectAllActionListener = new PropertyChangeListener(
 			textSelectAllAction);
 
-	private Listener textControlListener = new TextControlListener();
+	private final Listener textControlListener = new TextControlListener();
 
 	private Text activeTextControl;
 
-	private IActionBars actionBars;
+	private final IActionBars actionBars;
 
 	/**
 	 * If <code>true</code> the actions (copy, past, ...) are populated from the
@@ -109,14 +109,14 @@ public class TextActionHandler {
 	 */
 	private boolean autoMode = false;
 
-	private MouseAdapter mouseAdapter = new MouseAdapter() {
+	private final MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mouseUp(MouseEvent e) {
 			updateActionsEnableState();
 		}
 	};
 
-	private KeyAdapter keyAdapter = new KeyAdapter() {
+	private final KeyAdapter keyAdapter = new KeyAdapter() {
 		@Override
 		public void keyReleased(KeyEvent e) {
 			updateActionsEnableState();
@@ -143,7 +143,7 @@ public class TextActionHandler {
 	}
 
 	private class PropertyChangeListener implements IPropertyChangeListener {
-		private IAction actionHandler;
+		private final IAction actionHandler;
 
 		protected PropertyChangeListener(IAction actionHandler) {
 			super();

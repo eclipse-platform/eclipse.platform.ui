@@ -26,21 +26,21 @@ import org.osgi.framework.Bundle;
  * Holds the information for an item appearing in the welcome editor
  */
 public class WelcomeItem {
-	private String text;
+	private final String text;
 
-	private int[][] boldRanges;
+	private final int[][] boldRanges;
 
-	private int[][] helpRanges;
+	private final int[][] helpRanges;
 
-	private String[] helpIds;
+	private final String[] helpIds;
 
-	private String[] helpHrefs;
+	private final String[] helpHrefs;
 
-	private int[][] actionRanges;
+	private final int[][] actionRanges;
 
-	private String[] actionPluginIds;
+	private final String[] actionPluginIds;
 
-	private String[] actionClasses;
+	private final String[] actionClasses;
 
 	/**
 	 * Creates a new welcome item

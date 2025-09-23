@@ -114,7 +114,7 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 
 	private Button autoSaveAllButton;
 
-	private IPropertyChangeListener validityChangeListener = event -> {
+	private final IPropertyChangeListener validityChangeListener = event -> {
 		if (event.getProperty().equals(FieldEditor.IS_VALID)) {
 			updateValidState();
 		}

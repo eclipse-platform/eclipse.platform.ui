@@ -88,8 +88,8 @@ public class ImportTypeDialog extends TrayDialog {
 
 	private Button moveButton = null;
 
-	private int operationMask;
-	private String preferredVariable;
+	private final int operationMask;
+	private final String preferredVariable;
 	private IResource receivingResource = null;
 	private Button shadowCopyButton = null;
 	private String variable = null;
@@ -138,19 +138,22 @@ public class ImportTypeDialog extends TrayDialog {
 		this.operationMask = operationMask;
 		currentSelection = 0;
 		String tmp = readContextPreference(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_TYPE);
-		if (tmp.length() > 0)
+		if (tmp.length() > 0) {
 			currentSelection = Integer.parseInt(tmp);
+		}
 		currentSelection = currentSelection & operationMask;
 		if (currentSelection == 0) {
-			if (hasFlag(IMPORT_COPY))
+			if (hasFlag(IMPORT_COPY)) {
 				currentSelection = IMPORT_COPY;
-			else
+			} else {
 				currentSelection = IMPORT_MOVE;
+			}
 		}
 
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		if (store.getBoolean(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE))
+		if (store.getBoolean(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_RELATIVE)) {
 			variable = preferredVariable;
+		}
 	}
 
 	@Override
@@ -191,22 +194,27 @@ public class ImportTypeDialog extends TrayDialog {
 		for (String keyPair : value.split(":")) { //$NON-NLS-1$
 			String [] element = keyPair.split(","); //$NON-NLS-1$
 			if (element.length == 2) {
-				if (element[0].equals(Integer.toString(operationMask)))
+				if (element[0].equals(Integer.toString(operationMask))) {
 					return element[1];
+				}
 			}
 		}
 		return ""; //$NON-NLS-1$
 	}
 
 	private void refreshSelection() {
-		if (copyButton != null)
+		if (copyButton != null) {
 			copyButton.setSelection(currentSelection == IMPORT_COPY);
-		if (shadowCopyButton != null)
+		}
+		if (shadowCopyButton != null) {
 			shadowCopyButton.setSelection(currentSelection == IMPORT_VIRTUAL_FOLDERS_AND_LINKS);
-		if (linkButton != null)
+		}
+		if (linkButton != null) {
 			linkButton.setSelection(currentSelection == IMPORT_LINK);
-		if (moveButton != null)
+		}
+		if (moveButton != null) {
 			moveButton.setSelection(currentSelection == IMPORT_MOVE);
+		}
 		if (relativePathVariableGroup != null) {
 			relativePathVariableGroup.setEnabled((currentSelection & (IMPORT_VIRTUAL_FOLDERS_AND_LINKS | IMPORT_LINK)) != 0);
 		}
@@ -218,21 +226,23 @@ public class ImportTypeDialog extends TrayDialog {
 		String [] keyPairs = oldValue.split(":"); //$NON-NLS-1$
 		boolean found = false;
 		for (int i = 0; i < keyPairs.length; i++) {
-			if (i > 0)
+			if (i > 0) {
 				buffer.append(":"); //$NON-NLS-1$
+			}
 			String [] element = keyPairs[i].split(","); //$NON-NLS-1$
 			if (element.length == 2) {
 				if (element[0].equals(Integer.toString(operationMask))) {
 					buffer.append(element[0] + "," + value); //$NON-NLS-1$
 					found = true;
-				}
-				else
+				} else {
 					buffer.append(keyPairs[i]);
+				}
 			}
 		}
 		if (!found) {
-			if (buffer.length() > 0)
+			if (buffer.length() > 0) {
 				buffer.append(":"); //$NON-NLS-1$
+			}
 			buffer.append(operationMask + "," + value); //$NON-NLS-1$
 		}
 		String newValue = buffer.toString();
@@ -264,8 +274,9 @@ public class ImportTypeDialog extends TrayDialog {
 	protected Control createDialogArea(Composite parent) {
 		boolean linkIsOnlyChoice = hasFlag(IMPORT_LINK) && !(hasFlag(IMPORT_COPY | IMPORT_MOVE) || (hasFlag(IMPORT_VIRTUAL_FOLDERS_AND_LINKS) && !hasFlag(IMPORT_FILES_ONLY)));
 
-		if (!linkIsOnlyChoice)
+		if (!linkIsOnlyChoice) {
 			createMessageArea(parent);
+		}
 		Composite composite = new Composite(parent, 0);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		composite.setLayoutData(gridData);
@@ -379,10 +390,11 @@ public class ImportTypeDialog extends TrayDialog {
 
 			relativePathVariableGroup.createContents(variableGroup);
 			relativePathVariableGroup.setSelection(variable != null);
-			if (variable != null)
+			if (variable != null) {
 				relativePathVariableGroup.selectVariable(variable);
-			else
+			} else {
 				relativePathVariableGroup.selectVariable(preferredVariable);
+			}
 		}
 
 		if (linkIsOnlyChoice) {
@@ -450,8 +462,9 @@ public class ImportTypeDialog extends TrayDialog {
 	 */
 	private static boolean areOnlyFiles(IResource[] resources) {
 		for (IResource resource : resources) {
-			if (resource.getType() != IResource.FILE)
+			if (resource.getType() != IResource.FILE) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -464,8 +477,9 @@ public class ImportTypeDialog extends TrayDialog {
 	private static boolean areOnlyFiles(String[] names) {
 		for (String name : names) {
 			File file = new File(name);
-			if (file.exists() && !file.isFile())
+			if (file.exists() && !file.isFile()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -482,10 +496,12 @@ public class ImportTypeDialog extends TrayDialog {
 	 */
 	private static int selectAppropriateMask(int dropOperation, IResource[] resources, IContainer target) {
 		int mask = ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
-		if (!target.isVirtual() && (dropOperation != DND.DROP_LINK))
+		if (!target.isVirtual() && (dropOperation != DND.DROP_LINK)) {
 			mask |= ImportTypeDialog.IMPORT_COPY;
-		if (areOnlyFiles(resources))
+		}
+		if (areOnlyFiles(resources)) {
 			mask |= ImportTypeDialog.IMPORT_FILES_ONLY;
+		}
 		return mask;
 	}
 
@@ -501,10 +517,12 @@ public class ImportTypeDialog extends TrayDialog {
 	 */
 	private static int selectAppropriateMask(int dropOperation, String[] names, IContainer target) {
 		int mask = ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
-		if (!target.isVirtual() && (dropOperation != DND.DROP_LINK))
+		if (!target.isVirtual() && (dropOperation != DND.DROP_LINK)) {
 			mask |= ImportTypeDialog.IMPORT_COPY;
-		if (areOnlyFiles(names))
+		}
+		if (areOnlyFiles(names)) {
 			mask |= ImportTypeDialog.IMPORT_FILES_ONLY;
+		}
 		return mask;
 	}
 }

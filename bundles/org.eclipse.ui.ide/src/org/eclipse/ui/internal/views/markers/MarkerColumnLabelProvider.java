@@ -30,7 +30,7 @@ import org.eclipse.ui.views.markers.MarkerField;
 public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 
 	MarkerField field;
-	private ResourceManager imageManager;
+	private final ResourceManager imageManager;
 
 	/**
 	 * Create a MarkerViewLabelProvider on a field.

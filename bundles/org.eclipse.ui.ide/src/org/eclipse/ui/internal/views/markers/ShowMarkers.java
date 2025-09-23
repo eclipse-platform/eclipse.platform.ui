@@ -51,10 +51,9 @@ final class ShowMarkers extends OpenAndLinkWithEditorHelper {
 	protected void open(ISelection selection, boolean activate) {
 		IStructuredSelection structured = (IStructuredSelection) selection;
 		Object first = structured.getFirstElement();
-		if (!(first instanceof IMarker)) {
+		if (!(first instanceof IMarker marker)) {
 			return;
 		}
-		IMarker marker = (IMarker) first;
 		if (marker.getResource() instanceof IFile) {
 			try {
 				IDE.openEditor(partSite.getPage(), marker, activate);

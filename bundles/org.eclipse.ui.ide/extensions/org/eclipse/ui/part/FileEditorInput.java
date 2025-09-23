@@ -44,7 +44,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class FileEditorInput extends PlatformObject implements IFileEditorInput, IPathEditorInput, IURIEditorInput,
 		IPersistableElement {
-	private IFile file;
+	private final IFile file;
 
 	/**
 	 * Return whether or not file is local. Only {@link IFile}s with a local value
@@ -57,21 +57,25 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 	public static boolean isLocalFile(IFile file){
 
 		IPath location = file.getLocation();
-		if (location != null)
+		if (location != null) {
 			return true;
+		}
 		//this is not a local file, so try to obtain a local file
 		try {
 			final URI locationURI = file.getLocationURI();
-			if (locationURI == null)
+			if (locationURI == null) {
 				return false;
+			}
 			IFileStore store = EFS.getStore(locationURI);
 			//first try to obtain a local file directly fo1r this store
 			java.io.File localFile = store.toLocalFile(EFS.NONE, null);
 			//if no local file is available, obtain a cached file
-			if (localFile == null)
+			if (localFile == null) {
 				localFile = store.toLocalFile(EFS.CACHE, null);
-			if (localFile == null)
+			}
+			if (localFile == null) {
 				return false;
+			}
 			return true;
 		} catch (CoreException e) {
 			//this can only happen if the file system is not available for this scheme
@@ -88,8 +92,9 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 	 * @param file the file resource
 	 */
 	public FileEditorInput(IFile file) {
-		if (file == null)
+		if (file == null) {
 			throw new IllegalArgumentException();
+		}
 		this.file = file;
 
 	}
@@ -110,10 +115,9 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof IFileEditorInput)) {
+		if (!(obj instanceof IFileEditorInput other)) {
 			return false;
 		}
-		IFileEditorInput other = (IFileEditorInput) obj;
 		return file.equals(other.getFile());
 	}
 
@@ -175,21 +179,25 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 	@Override
 	public IPath getPath() {
 		IPath location = file.getLocation();
-		if (location != null)
+		if (location != null) {
 			return location;
+		}
 		//this is not a local file, so try to obtain a local file
 		try {
 			final URI locationURI = file.getLocationURI();
-			if (locationURI == null)
+			if (locationURI == null) {
 				throw new IllegalArgumentException();
+			}
 			IFileStore store = EFS.getStore(locationURI);
 			//first try to obtain a local file directly fo1r this store
 			java.io.File localFile = store.toLocalFile(EFS.NONE, null);
 			//if no local file is available, obtain a cached file
-			if (localFile == null)
+			if (localFile == null) {
 				localFile = store.toLocalFile(EFS.CACHE, null);
-			if (localFile == null)
+			}
+			if (localFile == null) {
 				throw new IllegalArgumentException();
+			}
 			return IPath.fromOSString(localFile.getAbsolutePath());
 		} catch (CoreException e) {
 			//this can only happen if the file system is not available for this scheme

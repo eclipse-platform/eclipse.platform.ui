@@ -55,7 +55,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * @see org.eclipse.core.resources.IWorkspace#run(ICoreRunnable, IProgressMonitor)
  *  */
 public abstract class WorkspaceModifyOperation implements IRunnableWithProgress, IThreadListener {
-	private ISchedulingRule rule;
+	private final ISchedulingRule rule;
 
 	/**
 	 * Creates a new operation.

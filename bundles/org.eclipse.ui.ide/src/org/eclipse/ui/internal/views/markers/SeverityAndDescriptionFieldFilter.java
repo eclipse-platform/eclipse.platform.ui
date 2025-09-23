@@ -48,13 +48,15 @@ public abstract class SeverityAndDescriptionFieldFilter extends DescriptionField
 		}
 		Object modifier = values
 				.get(MarkerSupportInternalUtilities.CONTAINS_MODIFIER_TOKEN);
-		if (modifier != null && modifier instanceof String)
+		if (modifier != null && modifier instanceof String) {
 			containsModifier = (String) modifier;
+		}
 
 		Object text = values
 				.get(MarkerSupportInternalUtilities.CONTAINS_TEXT_TOKEN);
-		if (text != null && text instanceof String)
+		if (text != null && text instanceof String) {
 			containsText = (String) text;
+		}
 
 	}
 

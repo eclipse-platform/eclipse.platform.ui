@@ -84,10 +84,9 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
 	 */
 	@Override
 	public boolean testAttribute(Object target, String name, String value) {
-		if (!(target instanceof IResource)) {
+		if (!(target instanceof IResource res)) {
 			return false;
 		}
-		IResource res = (IResource) target;
 		switch (name) {
 		case NAME:
 			return SimpleWildcardTester.testWildcardIgnoreCase(value, res
@@ -142,11 +141,10 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
 			final String contentTypeId) {
 		final String expectedValue = contentTypeId.trim();
 
-		if (!(resource instanceof IFile)) {
+		if (!(resource instanceof final IFile file)) {
 			return false;
 		}
 
-		final IFile file = (IFile) resource;
 		String actualValue = null;
 
 		try {

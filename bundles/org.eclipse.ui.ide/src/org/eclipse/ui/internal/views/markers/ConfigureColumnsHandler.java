@@ -28,8 +28,9 @@ public class ConfigureColumnsHandler extends MarkerViewHandler implements IHandl
 	@Override
 	public Object execute(ExecutionEvent event) {
 		ExtendedMarkersView view = getView(event);
-		if (view == null)
+		if (view == null) {
 			return this;
+		}
 		new MarkersViewColumnsDialog(view).open();
 		return this;
 	}

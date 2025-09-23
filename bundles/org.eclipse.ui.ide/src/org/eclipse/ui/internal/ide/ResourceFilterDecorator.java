@@ -39,16 +39,16 @@ public class ResourceFilterDecorator implements ILightweightLabelDecorator {
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 
-		if (!(element instanceof IContainer)) {
+		if (!(element instanceof IContainer container)) {
 			return;
 		}
-		IContainer container = (IContainer) element;
 		IResourceFilterDescription[] filters = null;
 		try {
 			filters = container.getFilters();
-			if ((filters.length > 0) && (descriptorImage != null))
+			if ((filters.length > 0) && (descriptorImage != null)) {
 				decoration
 						.addOverlay(descriptorImage, IDecoration.BOTTOM_RIGHT);
+			}
 		} catch (CoreException e) {
 		}
 	}

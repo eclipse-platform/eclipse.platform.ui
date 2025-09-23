@@ -36,21 +36,21 @@ import org.eclipse.ui.model.IWorkbenchAdapter3;
  */
 public class WorkbenchAdapterFactory implements IAdapterFactory {
 
-	private WorkbenchWorkspace workspaceAdapter = new WorkbenchWorkspace();
+	private final WorkbenchWorkspace workspaceAdapter = new WorkbenchWorkspace();
 
-	private WorkbenchRootResource rootAdapter = new WorkbenchRootResource();
+	private final WorkbenchRootResource rootAdapter = new WorkbenchRootResource();
 
-	private WorkbenchProject projectAdapter = new WorkbenchProject();
+	private final WorkbenchProject projectAdapter = new WorkbenchProject();
 
-	private WorkbenchFolder folderAdapter = new WorkbenchFolder();
+	private final WorkbenchFolder folderAdapter = new WorkbenchFolder();
 
-	private WorkbenchFile fileAdapter = new WorkbenchFile();
+	private final WorkbenchFile fileAdapter = new WorkbenchFile();
 
-	private WorkbenchMarker markerAdapter = new WorkbenchMarker();
+	private final WorkbenchMarker markerAdapter = new WorkbenchMarker();
 
-	private ResourceFactory resourceFactory = new ResourceFactory();
+	private final ResourceFactory resourceFactory = new ResourceFactory();
 
-	private WorkspaceFactory workspaceFactory = new WorkspaceFactory();
+	private final WorkspaceFactory workspaceFactory = new WorkspaceFactory();
 
 	/**
 	 * Returns the IActionFilter for an object.

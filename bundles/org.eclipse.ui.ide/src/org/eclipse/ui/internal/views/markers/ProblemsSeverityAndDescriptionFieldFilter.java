@@ -33,14 +33,17 @@ public class ProblemsSeverityAndDescriptionFieldFilter extends
 	public boolean select(MarkerItem item) {
 
 		IMarker marker = item.getMarker();
-		if (marker == null)
+		if (marker == null) {
 			return false;
+		}
 
 		int markerSeverity = item.getAttributeValue(IMarker.SEVERITY, -1);
-		if (markerSeverity < 0)
+		if (markerSeverity < 0) {
 			return false;
-		if (checkSeverity(markerSeverity))
+		}
+		if (checkSeverity(markerSeverity)) {
 			return super.select(item);
+		}
 		return false;
 
 	}
@@ -61,7 +64,8 @@ public class ProblemsSeverityAndDescriptionFieldFilter extends
 	@Override
 	public void initialize(ProblemFilter problemFilter) {
 		super.initialize(problemFilter);
-		if (problemFilter.getSeverity() > 0)
+		if (problemFilter.getSeverity() > 0) {
 			selectedSeverities = problemFilter.getSeverity();
+		}
 	}
 }

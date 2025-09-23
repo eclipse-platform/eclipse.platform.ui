@@ -115,19 +115,22 @@ public class MarkerViewUtil {
 	 */
 	public static boolean showMarkers(IWorkbenchPage page, IMarker[] markers, boolean showView) {
 
-		if (null == markers || 0 == markers.length || null == markers[0])
+		if (null == markers || 0 == markers.length || null == markers[0]) {
 			return false;
+		}
 		boolean returnValue = false;
 		try {
 			String viewId = getViewId(markers[0]);
 			IMarker[] markersSameView = getMarkersOfView(viewId, markers);
-			if (viewId == null) // Use the problem view by default
+			if (viewId == null) { // Use the problem view by default
 				viewId = IPageLayout.ID_PROBLEM_VIEW;
+			}
 
 			IViewPart view = showView ? page.showView(viewId) : page
 					.findView(viewId);
-			if (view != null)
+			if (view != null) {
 				returnValue = MarkerSupportInternalUtilities.showMarkers(view, markersSameView);
+			}
 		} catch (CoreException e) {
 			Policy.handle(e);
 		}
@@ -147,13 +150,15 @@ public class MarkerViewUtil {
 	 *             if an exception occurs testing the type of the marker
 	 */
 	private static IMarker[] getMarkersOfView(String viewId, IMarker[] markers) throws CoreException {
-		if (null == viewId) // all markers should be shown
+		if (null == viewId) { // all markers should be shown
 			return markers;
+		}
 
 		ArrayList<IMarker> markersOfView = new ArrayList<>();
 		for (IMarker marker : markers) {
-			if (null != marker && viewId.equals(getViewId(marker)))
+			if (null != marker && viewId.equals(getViewId(marker))) {
 				markersOfView.add(marker);
+			}
 		}
 		return markersOfView.toArray(new IMarker[markersOfView.size()]);
 	}

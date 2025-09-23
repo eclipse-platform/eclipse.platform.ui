@@ -34,15 +34,15 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * content of specified zip file entry objects.
  */
 public class ZipFileStructureProvider implements IImportStructureProvider {
-	private ZipFile zipFile;
+	private final ZipFile zipFile;
 
-	private ZipEntry root = new ZipEntry("/");//$NON-NLS-1$
+	private final ZipEntry root = new ZipEntry("/");//$NON-NLS-1$
 
 	private Map<ZipEntry, List<ZipEntry>> children;
 
-	private Map<IPath, ZipEntry> directoryEntryCache = new HashMap<>();
+	private final Map<IPath, ZipEntry> directoryEntryCache = new HashMap<>();
 
-	private Set<String> invalidEntries = new HashSet<>();
+	private final Set<String> invalidEntries = new HashSet<>();
 
 	/**
 	 * Creates a <code>ZipFileStructureProvider</code>, which will operate

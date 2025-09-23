@@ -48,11 +48,12 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 	@Override
 	public void apply(MarkerFieldFilter filter) {
 		DescriptionFieldFilter desc = (DescriptionFieldFilter) filter;
-		if (descriptionCombo.getSelectionIndex() == 0)
+		if (descriptionCombo.getSelectionIndex() == 0) {
 			desc.setContainsModifier(MarkerSupportConstants.CONTAINS_KEY);
-		else
+		} else {
 			desc
 					.setContainsModifier(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY);
+		}
 		desc.setContainsText(descriptionText.getText());
 
 	}
@@ -66,10 +67,11 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 	public void initialize(MarkerFieldFilter filter) {
 		DescriptionFieldFilter desc = (DescriptionFieldFilter) filter;
 		if (desc.getContainsModifier().equals(
-				MarkerSupportConstants.CONTAINS_KEY))
+				MarkerSupportConstants.CONTAINS_KEY)) {
 			descriptionCombo.select(0);
-		else
+		} else {
 			descriptionCombo.select(1);
+		}
 
 		descriptionText.setText(desc.getContainsText());
 

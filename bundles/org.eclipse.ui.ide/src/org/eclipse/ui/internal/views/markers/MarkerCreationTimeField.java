@@ -28,12 +28,13 @@ import org.eclipse.ui.views.markers.MarkerItem;
  */
 public class MarkerCreationTimeField extends MarkerField {
 
-	private DateFormat dateFormat=DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+	private final DateFormat dateFormat=DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
 	@Override
 	public String getValue(MarkerItem item) {
 		long creationTime = ((MarkerSupportItem) item).getCreationTime();
-		if (creationTime < 0)
+		if (creationTime < 0) {
 			return MarkerSupportInternalUtilities.EMPTY_STRING;
+		}
 		return String.valueOf(creationTime);
 
 	}

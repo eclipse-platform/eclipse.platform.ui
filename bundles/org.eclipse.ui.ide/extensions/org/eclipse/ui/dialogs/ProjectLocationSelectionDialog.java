@@ -58,7 +58,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	// widgets
 	private Text projectNameField;
 
-	private IProject project;
+	private final IProject project;
 
 	private ProjectContentsLocationArea locationArea;
 
@@ -116,8 +116,9 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 		}
 
 		updateStatus(new Status(code, IDEWorkbenchPlugin.IDE_WORKBENCH, code, errorMsg, null));
-		if (getOkButton() != null)
+		if (getOkButton() != null) {
 			getOkButton().setEnabled(allowFinish);
+		}
 	}
 
 	/**

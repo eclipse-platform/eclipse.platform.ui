@@ -34,8 +34,8 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 class MarkersChangeListener implements IResourceChangeListener {
 
-	private ExtendedMarkersView view;
-	private CachedMarkerBuilder builder;
+	private final ExtendedMarkersView view;
+	private final CachedMarkerBuilder builder;
 
 	private String[] listeningTypes;
 	private boolean receiving;
@@ -466,15 +466,15 @@ class MarkerUpdateScheduler {
 	static final int LONG_DELAY = 10000;
 	static final long TIME_OUT = 30000;
 
-	private CachedMarkerBuilder builder;
-	private ExtendedMarkersView view;
+	private final CachedMarkerBuilder builder;
+	private final ExtendedMarkersView view;
 
 	private MarkerUpdateJob updateJob;
 	private UIUpdateJob uiUpdateJob;
 
 	private final Object schedulingLock;
 
-	private MarkerUpdateTimer updateTimer;
+	private final MarkerUpdateTimer updateTimer;
 
 	public MarkerUpdateScheduler(ExtendedMarkersView view, CachedMarkerBuilder builder) {
 		this.view = view;

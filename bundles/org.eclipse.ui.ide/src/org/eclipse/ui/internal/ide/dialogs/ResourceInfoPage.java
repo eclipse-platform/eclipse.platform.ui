@@ -440,20 +440,22 @@ public class ResourceInfoPage extends PropertyPage {
 		if (!IDEResourceInfoUtils.exists(resolved.toOSString())) {
 			resolvedLocationValue
 					.setText(IDEWorkbenchMessages.ResourceInfo_undefinedPathVariable);
-			if (sizeValue != null)
+			if (sizeValue != null) {
 				sizeValue.setText(IDEWorkbenchMessages.ResourceInfo_notExist);
+			}
 		} else {
 			resolvedLocationValue.setText(resolved.toPortableString());
 			if (sizeValue != null) {
 				IFileInfo info = IDEResourceInfoUtils.getFileInfo(resolved
 						.toPortableString());
-				if (info != null)
+				if (info != null) {
 					sizeValue.setText(NLS.bind(
 							IDEWorkbenchMessages.ResourceInfo_bytes, Long
 									.toString(info.getLength())));
-				else
+				} else {
 					sizeValue
 							.setText(IDEWorkbenchMessages.ResourceInfo_unknown);
+				}
 			}
 		}
 	}
@@ -500,8 +502,9 @@ public class ResourceInfoPage extends PropertyPage {
 		if (resource.getType() != IResource.PROJECT) {
 			createSeparator(composite);
 			int fsAttributes = getFileSystemAttributes(resource);
-			if (isPermissionsSupport(fsAttributes))
+			if (isPermissionsSupport(fsAttributes)) {
 				previousPermissionsValue = fetchPermissions(resource);
+			}
 			createStateGroup(composite, resource, fsAttributes);
 			if (isPermissionsSupport(fsAttributes)) {
 				createSeparator(composite);
@@ -572,9 +575,10 @@ public class ResourceInfoPage extends PropertyPage {
 		int permissions = EFS.ATTRIBUTE_OWNER_READ | EFS.ATTRIBUTE_OWNER_WRITE
 				| EFS.ATTRIBUTE_GROUP_READ | EFS.ATTRIBUTE_GROUP_WRITE
 				| EFS.ATTRIBUTE_OTHER_READ;
-		if (folder)
+		if (folder) {
 			permissions |= EFS.ATTRIBUTE_OWNER_EXECUTE
 					| EFS.ATTRIBUTE_GROUP_EXECUTE | EFS.ATTRIBUTE_OTHER_EXECUTE;
+		}
 		return permissions;
 	}
 
@@ -588,8 +592,9 @@ public class ResourceInfoPage extends PropertyPage {
 		permissionBoxes[6].setSelection((permissions & EFS.ATTRIBUTE_OTHER_READ) != 0);
 		permissionBoxes[7].setSelection((permissions & EFS.ATTRIBUTE_OTHER_WRITE) != 0);
 		permissionBoxes[8].setSelection((permissions & EFS.ATTRIBUTE_OTHER_EXECUTE) != 0);
-		if (immutableBox != null)
+		if (immutableBox != null) {
 			immutableBox.setSelection((permissions & EFS.ATTRIBUTE_IMMUTABLE) != 0);
+		}
 	}
 
 	private int getPermissionsSelection() {
@@ -603,8 +608,9 @@ public class ResourceInfoPage extends PropertyPage {
 		permissions |= permissionBoxes[6].getSelection() ? EFS.ATTRIBUTE_OTHER_READ : 0;
 		permissions |= permissionBoxes[7].getSelection() ? EFS.ATTRIBUTE_OTHER_WRITE : 0;
 		permissions |= permissionBoxes[8].getSelection() ? EFS.ATTRIBUTE_OTHER_EXECUTE : 0;
-		if (immutableBox != null)
+		if (immutableBox != null) {
 			permissions |= immutableBox.getSelection() ? EFS.ATTRIBUTE_IMMUTABLE : 0;
+		}
 		return permissions;
 	}
 
@@ -616,8 +622,9 @@ public class ResourceInfoPage extends PropertyPage {
 			return false;
 		}
 		IFileInfo fileInfo = store.fetchInfo();
-		if (!fileInfo.exists())
+		if (!fileInfo.exists()) {
 			return false;
+		}
 		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_READ, (permissions & EFS.ATTRIBUTE_OWNER_READ) != 0);
 		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_WRITE, (permissions & EFS.ATTRIBUTE_OWNER_WRITE) != 0);
 		fileInfo.setAttribute(EFS.ATTRIBUTE_OWNER_EXECUTE, (permissions & EFS.ATTRIBUTE_OWNER_EXECUTE) != 0);
@@ -727,10 +734,11 @@ public class ResourceInfoPage extends PropertyPage {
 
 		this.derivedBox = new Button(composite, SWT.CHECK | SWT.RIGHT);
 		this.derivedBox.setAlignment(SWT.LEFT);
-		if (resource.getParent().isDerived(IResource.CHECK_ANCESTORS))
+		if (resource.getParent().isDerived(IResource.CHECK_ANCESTORS)) {
 			this.derivedBox.setText(DERIVED_HAS_DERIVED_ANCESTOR);
-		else
+		} else {
 			this.derivedBox.setText(DERIVED);
+		}
 		this.derivedBox.setSelection(this.previousDerivedValue);
 	}
 
@@ -775,20 +783,25 @@ public class ResourceInfoPage extends PropertyPage {
 
 		if (!resource.isVirtual()) {
 			if ((fsAttributes & EFS.ATTRIBUTE_READ_ONLY) != 0
-					&& !isPermissionsSupport(fsAttributes))
+					&& !isPermissionsSupport(fsAttributes)) {
 				createEditableButton(composite);
+			}
 			if ((fsAttributes & EFS.ATTRIBUTE_EXECUTABLE) != 0
-					&& !isPermissionsSupport(fsAttributes))
+					&& !isPermissionsSupport(fsAttributes)) {
 				createExecutableButton(composite);
-			if ((fsAttributes & EFS.ATTRIBUTE_ARCHIVE) != 0)
+			}
+			if ((fsAttributes & EFS.ATTRIBUTE_ARCHIVE) != 0) {
 				createArchiveButton(composite);
-			if ((fsAttributes & EFS.ATTRIBUTE_IMMUTABLE) != 0)
+			}
+			if ((fsAttributes & EFS.ATTRIBUTE_IMMUTABLE) != 0) {
 				createImmutableButton(composite);
+			}
 		}
 		createDerivedButton(composite, resource);
 		// create warning for executable flag
-		if (executableBox != null && resource.getType() == IResource.FOLDER)
+		if (executableBox != null && resource.getType() == IResource.FOLDER) {
 			createExecutableWarning(composite, font);
+		}
 	}
 
 	private void createPermissionsGroup(Composite parent) {
@@ -875,8 +888,9 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private int getFileSystemAttributes(IResource resource) {
 		URI location = resource.getLocationURI();
-		if (location == null || location.getScheme() == null)
+		if (location == null || location.getScheme() == null) {
 			return 0;
+		}
 		IFileSystem fs;
 		try {
 			fs = EFS.getFileSystem(location.getScheme());
@@ -892,8 +906,9 @@ public class ResourceInfoPage extends PropertyPage {
 				| EFS.ATTRIBUTE_GROUP_READ | EFS.ATTRIBUTE_GROUP_WRITE
 				| EFS.ATTRIBUTE_GROUP_EXECUTE | EFS.ATTRIBUTE_OTHER_READ
 				| EFS.ATTRIBUTE_OTHER_WRITE | EFS.ATTRIBUTE_OTHER_EXECUTE;
-		if ((fsAttributes & unixPermissions) == unixPermissions)
+		if ((fsAttributes & unixPermissions) == unixPermissions) {
 			return true;
+		}
 		return false;
 	}
 
@@ -921,8 +936,9 @@ public class ResourceInfoPage extends PropertyPage {
 
 		IResource resource = Adapters.adapt(getElement(), IResource.class);
 
-		if (resource == null)
+		if (resource == null) {
 			return;
+		}
 
 		if (newResourceLocation != null) {
 			newResourceLocation = null;
@@ -934,8 +950,9 @@ public class ResourceInfoPage extends PropertyPage {
 					.getLocationText(resource));
 			locationValue.setText(locationStr);
 
-			if (sizeValue != null)
+			if (sizeValue != null) {
 				sizeValue.setText(IDEResourceInfoUtils.getSizeString(resource));
+			}
 		}
 
 		// Nothing to update if we never made the box
@@ -992,15 +1009,18 @@ public class ResourceInfoPage extends PropertyPage {
 			@Override
 			public String getMessage() {
 				String message = ""; //$NON-NLS-1$
-				if (changedAttrs[0])
+				if (changedAttrs[0]) {
 					message += getSimpleChangeName(finalAttrs[0],
 							IDEWorkbenchMessages.ResourceInfo_readOnly);
-				if (changedAttrs[1])
+				}
+				if (changedAttrs[1]) {
 					message += getSimpleChangeName(finalAttrs[1],
 							IDEWorkbenchMessages.ResourceInfo_executable);
-				if (changedAttrs[2])
+				}
+				if (changedAttrs[2]) {
 					message += getSimpleChangeName(finalAttrs[2],
 							IDEWorkbenchMessages.ResourceInfo_archive);
+				}
 				return message;
 			}
 
@@ -1008,12 +1028,15 @@ public class ResourceInfoPage extends PropertyPage {
 			public void performChange(IResource resource) throws CoreException {
 				ResourceAttributes attrs = resource.getResourceAttributes();
 				if (attrs != null) {
-					if (changedAttrs[0])
+					if (changedAttrs[0]) {
 						attrs.setReadOnly(finalAttrs[0]);
-					if (changedAttrs[1])
+					}
+					if (changedAttrs[1]) {
 						attrs.setExecutable(finalAttrs[1]);
-					if (changedAttrs[2])
+					}
+					if (changedAttrs[2]) {
 						attrs.setArchive(finalAttrs[2]);
+					}
 					resource.setResourceAttributes(attrs);
 				}
 			}
@@ -1045,17 +1068,19 @@ public class ResourceInfoPage extends PropertyPage {
 						IDEWorkbenchMessages.ResourceInfo_execute };
 
 				StringBuilder message = new StringBuilder(""); //$NON-NLS-1$
-				if ((changedPermissions & EFS.ATTRIBUTE_IMMUTABLE) != 0)
+				if ((changedPermissions & EFS.ATTRIBUTE_IMMUTABLE) != 0) {
 					message.append(getSimpleChangeName(
 							(finalPermissions & EFS.ATTRIBUTE_IMMUTABLE) != 0,
 							IDEWorkbenchMessages.ResourceInfo_locked));
+				}
 
 				for (int j = 0; j < 3; j++) {
 					for (int i = 0; i < 3; i++) {
-						if ((changedPermissions & permissionMasks[j][i]) != 0)
+						if ((changedPermissions & permissionMasks[j][i]) != 0) {
 							message.append(getSimpleChangeName(
 									(finalPermissions & permissionMasks[j][i]) != 0,
 									groupNames[j] + " " + permissionNames[i])); //$NON-NLS-1$
+						}
 					}
 				}
 				return message.toString();
@@ -1154,8 +1179,9 @@ public class ResourceInfoPage extends PropertyPage {
 
 		IResource resource = Adapters.adapt(getElement(), IResource.class);
 
-		if (resource == null)
+		if (resource == null) {
 			return true;
+		}
 
 		if (lineDelimiterEditor != null) {
 			lineDelimiterEditor.store();
@@ -1163,12 +1189,14 @@ public class ResourceInfoPage extends PropertyPage {
 
 		try {
 			if (newResourceLocation != null) {
-				if (resource.getType() == IResource.FILE)
+				if (resource.getType() == IResource.FILE) {
 					((IFile)resource).createLink(newResourceLocation, IResource.REPLACE,
 							new NullProgressMonitor());
-				if (resource.getType() == IResource.FOLDER)
+				}
+				if (resource.getType() == IResource.FOLDER) {
 					((IFolder)resource).createLink(newResourceLocation, IResource.REPLACE,
 							new NullProgressMonitor());
+				}
 			}
 
 			List<IResourceChange> changes = new ArrayList<>();
@@ -1237,8 +1265,9 @@ public class ResourceInfoPage extends PropertyPage {
 				}
 			}
 
-			if (shouldPerformRecursiveChanges(changes))
+			if (shouldPerformRecursiveChanges(changes)) {
 				scheduleRecursiveChangesJob(resource, changes);
+			}
 
 			// Nothing to update if we never made the box
 			if (this.derivedBox != null) {

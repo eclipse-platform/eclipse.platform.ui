@@ -64,8 +64,9 @@ public class CopyBuildIdToClipboardHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		final IProduct product = Platform.getProduct();
-		if (product == null )
+		if (product == null ) {
 			throw new ExecutionException("No product is defined."); //$NON-NLS-1$
+		}
 
 		String aboutText = ProductProperties.getAboutText(product);
 		String lines[] = aboutText.split("\\r?\\n"); //$NON-NLS-1$

@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
  * project for moving.
  */
 public class ProjectLocationMoveDialog extends SelectionDialog {
-	private IProject project;
+	private final IProject project;
 
 	private Label statusMessageLabel;
 

@@ -67,7 +67,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	// widgets
 	Text projectNameField;
 
-	private Listener nameModifyListener = e -> {
+	private final Listener nameModifyListener = e -> {
 		setLocationForSelection();
 		boolean valid = validatePage();
 		setPageComplete(valid);
@@ -154,8 +154,9 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 */
 	public WorkingSetGroup createWorkingSetGroup(Composite composite, IStructuredSelection selection,
 			String[] supportedWorkingSetTypes) {
-		if (workingSetGroup != null)
+		if (workingSetGroup != null) {
 			return workingSetGroup;
+		}
 		workingSetGroup = new WorkingSetGroup(composite, selection, supportedWorkingSetTypes);
 		return workingSetGroup;
 	}
@@ -170,8 +171,9 @@ public class WizardNewProjectCreationPage extends WizardPage {
 			if (infoOnly) {
 				setMessage(errorMessage, IStatus.INFO);
 				setErrorMessage(null);
-			} else
+			} else {
 				setErrorMessage(errorMessage);
+			}
 			boolean valid = errorMessage == null;
 			if (valid) {
 				valid = validatePage();

@@ -30,8 +30,8 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.12
  */
 class DelegateProgressMonitorInUIThreadAndPreservingFocus implements IProgressMonitor {
-	private ProgressMonitorPart delegate;
-	private Display display;
+	private final ProgressMonitorPart delegate;
+	private final Display display;
 
 	public DelegateProgressMonitorInUIThreadAndPreservingFocus(ProgressMonitorPart delegate) {
 		this.delegate = delegate;

@@ -27,8 +27,9 @@ public class MarkerSelectAllHandler extends MarkerViewHandler implements
 	@Override
 	public Object execute(ExecutionEvent event)  {
 		ExtendedMarkersView view = getView(event);
-		if(view != null)
+		if(view != null) {
 			view.selectAll();
+		}
 		return this;
 	}
 

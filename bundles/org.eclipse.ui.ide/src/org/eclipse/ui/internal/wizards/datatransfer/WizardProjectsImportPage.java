@@ -373,10 +373,10 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	private WorkingSetGroup workingSetGroup;
 
-	private IStructuredSelection currentSelection;
+	private final IStructuredSelection currentSelection;
 
 
-	private ConflictingProjectFilter conflictingProjectsFilter = new ConflictingProjectFilter();
+	private final ConflictingProjectFilter conflictingProjectsFilter = new ConflictingProjectFilter();
 
 	/**
 	 * Prevent handling focus lost events during other events which trigger

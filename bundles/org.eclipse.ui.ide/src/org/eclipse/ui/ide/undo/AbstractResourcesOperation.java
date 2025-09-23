@@ -316,8 +316,9 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 		Set<IResource> subResources = new HashSet<>();
 		for (IResource subResource : targetResources) {
 			for (IResource superResource : targetResources) {
-				if (isDescendantOf(subResource, superResource) && !subResources.contains(subResource))
+				if (isDescendantOf(subResource, superResource) && !subResources.contains(subResource)) {
 					subResources.add(subResource);
+				}
 			}
 		}
 		IResource[] nestedResourcesRemoved = new IResource[targetResources.length - subResources.size()];

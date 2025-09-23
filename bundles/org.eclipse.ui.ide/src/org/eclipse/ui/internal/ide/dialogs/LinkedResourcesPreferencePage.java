@@ -51,7 +51,7 @@ public class LinkedResourcesPreferencePage extends PreferencePage implements
 
 	public static String PREF_ID = "org.eclipse.ui.preferencePages.LinkedResources"; //$NON-NLS-1$
 
-	private PathVariablesGroup pathVariablesGroup;
+	private final PathVariablesGroup pathVariablesGroup;
 
 	private ResourceDragAndDropEditor dragAndDropHandlingEditor;
 

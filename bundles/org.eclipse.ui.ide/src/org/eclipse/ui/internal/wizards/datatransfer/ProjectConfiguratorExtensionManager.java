@@ -45,9 +45,9 @@ public class ProjectConfiguratorExtensionManager {
 
 	private static final String EXTENSION_POINT_ID = IDEWorkbenchPlugin.IDE_WORKBENCH + ".projectConfigurators"; //$NON-NLS-1$
 
-	private IConfigurationElement[] extensions;
-	private ExpressionConverter expressionConverter;
-	private Map<IConfigurationElement, ProjectConfigurator> configuratorsByExtension = new HashMap<>();
+	private final IConfigurationElement[] extensions;
+	private final ExpressionConverter expressionConverter;
+	private final Map<IConfigurationElement, ProjectConfigurator> configuratorsByExtension = new HashMap<>();
 
 	/**
 	 * Each instance of this class will have it's own internal registry, that will load (maximum) once each extension class,

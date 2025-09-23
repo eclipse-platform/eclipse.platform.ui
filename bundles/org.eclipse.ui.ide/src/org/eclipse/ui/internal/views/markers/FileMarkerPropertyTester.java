@@ -38,8 +38,9 @@ public class FileMarkerPropertyTester extends PropertyTester {
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 		if (property.equals(FILE_MARKER)) {
-			if (((MarkerEntry) receiver).getMarker().getResource().getType() == IResource.FILE)
+			if (((MarkerEntry) receiver).getMarker().getResource().getType() == IResource.FILE) {
 				return true;
+			}
 		}
 		return false;
 	}

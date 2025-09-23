@@ -108,7 +108,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 	//A boolean to indicate if the user has typed anything
 	private boolean entryChanged = false;
 
-	private FileSystemStructureProvider fileSystemStructureProvider = new FileSystemStructureProvider();
+	private final FileSystemStructureProvider fileSystemStructureProvider = new FileSystemStructureProvider();
 
 	// dialog store id constants
 	private static final String STORE_SOURCE_NAMES_ID = "WizardFileSystemResourceImportPage1.STORE_SOURCE_NAMES_ID";//$NON-NLS-1$
@@ -387,8 +387,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			@Override
 			public IResource getResource() {
 				IPath path = getContainerFullPath();
-				if (path != null)
+				if (path != null) {
 					return ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+				}
 				return null;
 			}
 			@Override
@@ -674,8 +675,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		return new WorkbenchContentProvider() {
 			@Override
 			public Object[] getChildren(Object o) {
-				if (o instanceof MinimizedFileSystemElement) {
-					MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
+				if (o instanceof MinimizedFileSystemElement element) {
 					return element.getFiles(
 							fileSystemStructureProvider).getChildren(
 							element);
@@ -710,8 +710,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		return new WorkbenchContentProvider() {
 			@Override
 			public Object[] getChildren(Object o) {
-				if (o instanceof MinimizedFileSystemElement) {
-					MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
+				if (o instanceof MinimizedFileSystemElement element) {
 					return element.getFolders(
 							fileSystemStructureProvider).getChildren(
 							element);
@@ -721,8 +720,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
 			@Override
 			public boolean hasChildren(Object o) {
-				if (o instanceof MinimizedFileSystemElement) {
-					MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
+				if (o instanceof MinimizedFileSystemElement element) {
 					if (element.isPopulated()) {
 						return getChildren(element).length > 0;
 					}
@@ -855,17 +853,19 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 													(createVirtualFoldersButton != null && !createVirtualFoldersButton.getSelection());
 
 		File sourceDirectory = getSourceDirectory();
-		if (createTopLevelFolderCheckbox.getSelection() && sourceDirectory.getParentFile() != null)
+		if (createTopLevelFolderCheckbox.getSelection() && sourceDirectory.getParentFile() != null) {
 			sourceDirectory = sourceDirectory.getParentFile();
+		}
 
-		if (shouldImportTopLevelFoldersRecursively)
+		if (shouldImportTopLevelFoldersRecursively) {
 			operation = new ImportOperation(getContainerFullPath(),
 					sourceDirectory, fileSystemStructureProvider,
 					this, Arrays.asList(getSourceDirectory()));
-		else
+		} else {
 			operation = new ImportOperation(getContainerFullPath(),
 				sourceDirectory, fileSystemStructureProvider,
 				this, fileSystemObjects);
+		}
 
 		operation.setContext(getShell());
 		return executeImportOperation(operation);
@@ -882,8 +882,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 				relativePathVariableGroup.setupVariableContent();
 				String preferedVariable = RelativePathVariableGroup.getPreferredVariable(
 						new IPath[] { IPath.fromOSString(file.getAbsolutePath()) }, (IContainer) target);
-				if (preferedVariable != null)
+				if (preferedVariable != null) {
 					relativePathVariableGroup.selectVariable(preferedVariable);
+				}
 			}
 		}
 		updateWidgetEnablements();
@@ -900,8 +901,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			op.setCreateLinks(true);
 			op.setVirtualFolders(createVirtualFoldersButton
 					.getSelection());
-			if (relativePathVariableGroup.getSelection())
+			if (relativePathVariableGroup.getSelection()) {
 				op.setRelativeVariable(pathVariable);
+			}
 		}
 	}
 
@@ -944,8 +946,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 				if (target != null) {
 					String variable = RelativePathVariableGroup.getPreferredVariable(
 							new IPath[] { IPath.fromOSString(sourceDirectory.getAbsolutePath()) }, (IContainer) target);
-					if (variable != null)
+					if (variable != null) {
 						relativePathVariableGroup.selectVariable(variable);
+					}
 				}
 			}
 		}
@@ -992,8 +995,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 				relativePathVariableGroup.setSelection(pathVariableSelected);
 
 				pathVariable = settings.get(STORE_PATH_VARIABLE_NAME_ID);
-				if (pathVariable != null)
+				if (pathVariable != null) {
 					relativePathVariableGroup.selectVariable(pathVariable);
+				}
 			}
 			updateWidgetEnablements();
 		}
@@ -1212,8 +1216,9 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			IPath path = getContainerFullPath();
 			if (path != null && relativePathVariableGroup != null) {
 				IResource target = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-				if (target != null && target.isVirtual())
+				if (target != null && target.isVirtual()) {
 					createVirtualFoldersButton.setSelection(true);
+				}
 			}
 			relativePathVariableGroup.setEnabled(createLinksInWorkspaceButton.getSelection());
 			createVirtualFoldersButton.setEnabled(createLinksInWorkspaceButton.getSelection());

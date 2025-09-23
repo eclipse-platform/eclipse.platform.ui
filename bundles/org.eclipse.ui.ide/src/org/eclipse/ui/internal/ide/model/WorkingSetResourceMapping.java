@@ -36,7 +36,7 @@ import org.eclipse.ui.IWorkingSet;
  */
 public class WorkingSetResourceMapping extends ResourceMapping {
 
-	private IWorkingSet set;
+	private final IWorkingSet set;
 
 	/**
 	 * Create the resource mapping

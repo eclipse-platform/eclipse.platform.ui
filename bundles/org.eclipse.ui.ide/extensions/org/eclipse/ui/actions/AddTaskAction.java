@@ -43,7 +43,7 @@ public class AddTaskAction extends SelectionListenerAction {
 	/**
 	 * The IShellProvider in which to show any dialogs.
 	 */
-	private IShellProvider shellProvider;
+	private final IShellProvider shellProvider;
 
 	/**
 	 * Creates a new instance of the receiver.
@@ -91,8 +91,7 @@ public class AddTaskAction extends SelectionListenerAction {
 		Object element = selection.getFirstElement();
 		IResource resource = Adapters.adapt(element, IResource.class);
 
-		if (resource != null && resource instanceof IProject) {
-			IProject project = (IProject) resource;
+		if (resource != null && resource instanceof IProject project) {
 			if (!project.isOpen()) {
 				resource = null;
 			}

@@ -183,19 +183,19 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		return singleton;
 	}
 
-	private Map<String, ProblemFilter> registeredFilters = new HashMap<>();
+	private final Map<String, ProblemFilter> registeredFilters = new HashMap<>();
 
-	private Map<String, MarkerGroup> markerGroups = new HashMap<>();
+	private final Map<String, MarkerGroup> markerGroups = new HashMap<>();
 
-	private Map<String, String> categories = new HashMap<>();
+	private final Map<String, String> categories = new HashMap<>();
 
-	private Map<String, TableComparator> hierarchyOrders = new HashMap<>();
+	private final Map<String, TableComparator> hierarchyOrders = new HashMap<>();
 
 	private MarkerType rootType;
 
-	private Map<String, ContentGeneratorDescriptor> generators = new HashMap<>();
+	private final Map<String, ContentGeneratorDescriptor> generators = new HashMap<>();
 
-	private Map<String, MarkerField> fields = new HashMap<>();
+	private final Map<String, MarkerField> fields = new HashMap<>();
 
 	/**
 	 * Create a new instance of the receiver and read the registry.
@@ -604,14 +604,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				continue;
 			}
 
-			if (object instanceof MarkerGroupingEntry) {
-				MarkerGroupingEntry entry = (MarkerGroupingEntry) object;
+			if (object instanceof MarkerGroupingEntry entry) {
 				entry.getMarkerGroup().remove(entry);
 				continue;
 			}
 
-			if (object instanceof AttributeMarkerGrouping) {
-				AttributeMarkerGrouping entry = (AttributeMarkerGrouping) object;
+			if (object instanceof AttributeMarkerGrouping entry) {
 				entry.unmap();
 				continue;
 			}
@@ -631,8 +629,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				continue;
 			}
 
-			if (object instanceof IConfigurationElement) {
-				IConfigurationElement element = (IConfigurationElement) object;
+			if (object instanceof IConfigurationElement element) {
 				ContentGeneratorDescriptor generatorDesc = generators.get(element.getAttribute(ATTRIBUTE_GENERATOR_ID));
 				generatorDesc.removeExtension(element);
 				continue;

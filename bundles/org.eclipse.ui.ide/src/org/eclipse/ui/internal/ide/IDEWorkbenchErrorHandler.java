@@ -53,7 +53,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 
 	private boolean closing = false;
 
-	private IWorkbenchConfigurer workbenchConfigurer;
+	private final IWorkbenchConfigurer workbenchConfigurer;
 
 	// Pre-load all Strings trying to run as light as possible in case of fatal
 	// errors.
@@ -234,8 +234,9 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 				dialog.close();
 			}
 			//@see WorkbenchAdvisor#getWorkbenchConfigurer()
-			if (workbenchConfigurer != null)
+			if (workbenchConfigurer != null) {
 				workbenchConfigurer.emergencyClose();
+			}
 		} catch (RuntimeException re) {
 			// Workbench may be in such bad shape (no OS handles left, out of
 			// memory, etc)

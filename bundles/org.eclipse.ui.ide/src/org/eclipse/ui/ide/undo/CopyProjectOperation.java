@@ -51,7 +51,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 
 	private URI projectLocation;
 
-	private IProject originalProject;
+	private final IProject originalProject;
 
 	private IResourceSnapshot<? extends IResource> originalProjectDescription;
 

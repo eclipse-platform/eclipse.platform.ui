@@ -67,13 +67,13 @@ public class WelcomeParser extends DefaultHandler {
 
 	private static final char DELIMITER = '\n'; // sax parser replaces crlf with lf
 
-	private SAXParser parser;
+	private final SAXParser parser;
 
 	private String title;
 
 	private WelcomeItem introItem;
 
-	private ArrayList<WelcomeItem> items = new ArrayList<>();
+	private final ArrayList<WelcomeItem> items = new ArrayList<>();
 
 	private String format;
 
@@ -158,23 +158,23 @@ public class WelcomeParser extends DefaultHandler {
 	}
 
 	private class ItemHandler extends WelcomeContentHandler {
-		private ArrayList<int[]> boldRanges = new ArrayList<>();
+		private final ArrayList<int[]> boldRanges = new ArrayList<>();
 
 		protected ArrayList<int[]> wrapRanges = new ArrayList<>();
 
-		private ArrayList<int[]> actionRanges = new ArrayList<>();
+		private final ArrayList<int[]> actionRanges = new ArrayList<>();
 
-		private ArrayList<String> pluginIds = new ArrayList<>();
+		private final ArrayList<String> pluginIds = new ArrayList<>();
 
-		private ArrayList<String> classes = new ArrayList<>();
+		private final ArrayList<String> classes = new ArrayList<>();
 
-		private ArrayList<int[]> helpRanges = new ArrayList<>();
+		private final ArrayList<int[]> helpRanges = new ArrayList<>();
 
-		private ArrayList<String> helpIds = new ArrayList<>();
+		private final ArrayList<String> helpIds = new ArrayList<>();
 
-		private ArrayList<String> helpHrefs = new ArrayList<>();
+		private final ArrayList<String> helpHrefs = new ArrayList<>();
 
-		private StringBuilder text = new StringBuilder();
+		private final StringBuilder text = new StringBuilder();
 
 		protected int offset = 0;
 

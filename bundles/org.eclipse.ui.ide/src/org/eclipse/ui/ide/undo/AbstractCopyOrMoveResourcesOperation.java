@@ -67,13 +67,15 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 			IPath[] destinationPaths, String label) {
 		super(resources, label);
 		// Check for null arguments
-		if (this.resources == null || destinationPaths == null)
+		if (this.resources == null || destinationPaths == null) {
 			throw new IllegalArgumentException("The resource and destination paths may not be null"); //$NON-NLS-1$
+		}
 		// Special case to flag descendants.  Note this would fail on the next check
 		// anyway, so we are first giving a more specific explanation.
 		// See bug #176764
-		if (this.resources.length != resources.length)
+		if (this.resources.length != resources.length) {
 			throw new IllegalArgumentException("The resource list contained descendants that cannot be moved to separate destination paths"); //$NON-NLS-1$
+		}
 		// Check for destination paths corresponding for each resource
 		if (this.resources.length != destinationPaths.length) {
 			throw new IllegalArgumentException("The resource and destination paths must be the same length"); //$NON-NLS-1$

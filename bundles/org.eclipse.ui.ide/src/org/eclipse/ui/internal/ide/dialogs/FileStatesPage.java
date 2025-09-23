@@ -64,12 +64,12 @@ public class FileStatesPage extends PreferencePage implements
 
 	private Button keepDerivedStateButton;
 
-	private ArrayList<Control> dependentControls = new ArrayList<>();
+	private final ArrayList<Control> dependentControls = new ArrayList<>();
 
 	//Choose a maximum to prevent OutOfMemoryErrors
-	private int FILE_STATES_MAXIMUM = 10000;
+	private final int FILE_STATES_MAXIMUM = 10000;
 
-	private long STATE_SIZE_MAXIMUM = 100;
+	private final long STATE_SIZE_MAXIMUM = 100;
 
 	private static final int INDENT = 20;
 
@@ -127,8 +127,9 @@ public class FileStatesPage extends PreferencePage implements
 
 		boolean newState= applyPolicyButton.getSelection();
 		Iterator<Control> iter = dependentControls.iterator();
-		while (iter.hasNext())
+		while (iter.hasNext()) {
 			iter.next().setEnabled(newState);
+		}
 
 		if (validateLongTextEntry(longevityText, DAY_LENGTH) == FAILED_VALUE) {
 			setValid(false);
@@ -347,8 +348,9 @@ public class FileStatesPage extends PreferencePage implements
 		try {
 			String string = text.getText();
 			value = Long.parseLong(string);
-			if (value * scale / scale != value)
+			if (value * scale / scale != value) {
 				throw new NumberFormatException(string);
+			}
 
 		} catch (NumberFormatException exception) {
 			setErrorMessage(MessageFormat.format(IDEWorkbenchMessages.FileHistory_invalid,

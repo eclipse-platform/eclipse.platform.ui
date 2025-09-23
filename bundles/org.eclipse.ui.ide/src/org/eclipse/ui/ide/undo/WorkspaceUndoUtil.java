@@ -339,8 +339,9 @@ public class WorkspaceUndoUtil {
 								&& !source.isVirtual() && !existing.isVirtual())) {
 					IResource[] children = ((IContainer) source).members();
 					// copy only linked resource children (267173)
-					if (source.isLinked() && source.getLocation().equals(existing.getLocation()))
+					if (source.isLinked() && source.getLocation().equals(existing.getLocation())) {
 						children = filterNonLinkedResources(children);
+					}
 					IResourceSnapshot<? extends IResource>[] overwritten = copy(children,
 							destinationPath, resourcesAtDestination,
 							iterationProgress, uiInfo, false,
@@ -366,11 +367,13 @@ public class WorkspaceUndoUtil {
 										createVirtual, createLinks, relativeToVariable)));
 
 							}
-						} else
+						} else {
 							folder.createLink(createRelativePath(source.getLocationURI(), relativeToVariable, folder),
 									0, iterationProgress.split(100));
-					} else
+						}
+					} else {
 						source.copy(destinationPath, IResource.SHALLOW, iterationProgress.split(100));
+					}
 					// Record the copy
 					resourcesAtDestination.add(getWorkspace().getRoot().findMember(destinationPath));
 					overwrittenResources.addAll(Arrays.asList(deleted));
@@ -402,10 +405,11 @@ public class WorkspaceUndoUtil {
 											resourcesAtDestination, iterationProgress.split(99), uiInfo, false,
 											createVirtual, createLinks, relativeToVariable)));
 								}
-							} else
+							} else {
 								folder.createLink(
 										createRelativePath(source.getLocationURI(), relativeToVariable, folder), 0,
 										iterationProgress.split(100));
+							}
 						}
 						resourcesAtDestination.add(getWorkspace().getRoot()
 								.findMember(destinationPath));
@@ -457,13 +461,15 @@ public class WorkspaceUndoUtil {
 											resourcesAtDestination, iterationProgress.split(99), uiInfo, false,
 											createVirtual, createLinks, relativeToVariable)));
 								}
-							} else
+							} else {
 								folder.createLink(
 										createRelativePath(source.getLocationURI(), relativeToVariable, folder), 0,
 										iterationProgress.split(100));
+							}
 						}
-					} else
+					} else {
 						source.copy(destinationPath, IResource.SHALLOW, iterationProgress.split(100));
+					}
 					// Record the copy. If we had to generate a parent
 					// folder, that should be recorded as part of the copy
 					if (generatedParent == null) {
@@ -487,8 +493,9 @@ public class WorkspaceUndoUtil {
 	 * @return an URI that was made relative to a variable
 	 */
 	static private URI createRelativePath(URI locationURI, String relativeVariable, IResource resource) {
-		if (relativeVariable == null)
+		if (relativeVariable == null) {
 			return locationURI;
+		}
 		IPath location = URIUtil.toPath(locationURI);
 		IPath result;
 		try {
@@ -556,8 +563,9 @@ public class WorkspaceUndoUtil {
 				if (resource.isLinked() == existing.isLinked()) {
 					IResource[] children = ((IContainer) resource).members();
 					// move only linked resource children (267173)
-					if (resource.isLinked() && resource.getLocation().equals(existing.getLocation()))
+					if (resource.isLinked() && resource.getLocation().equals(existing.getLocation())) {
 						children = filterNonLinkedResources(children);
+					}
 					IResourceSnapshot<? extends IResource>[] overwritten = move(children, destinationPath,
 							resourcesAtDestination,
 							reverseDestinations, iterationProgress.split(90), uiInfo, false);
@@ -642,8 +650,9 @@ public class WorkspaceUndoUtil {
 	private static IResource[] filterNonLinkedResources(IResource[] resources) {
 		List<IResource> result = new ArrayList<>();
 		for (IResource resource : resources) {
-			if (resource.isLinked())
+			if (resource.isLinked()) {
 				result.add(resource);
+			}
 		}
 		return result.toArray(new IResource[0]);
 	}
@@ -749,10 +758,9 @@ public class WorkspaceUndoUtil {
 	private static IResourceSnapshot<IResource> copyOverExistingResource(
 			IResource source, IResource existing, IProgressMonitor monitor,
 			IAdaptable uiInfo, boolean deleteSourceFile) throws CoreException {
-		if (!(source instanceof IFile && existing instanceof IFile)) {
+		if (!(source instanceof IFile file && existing instanceof IFile)) {
 			return null;
 		}
-		IFile file = (IFile) source;
 		IFile existingFile = (IFile) existing;
 		SubMonitor subMonitor = SubMonitor.convert(monitor,
 				UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress, deleteSourceFile ? 3 : 2);

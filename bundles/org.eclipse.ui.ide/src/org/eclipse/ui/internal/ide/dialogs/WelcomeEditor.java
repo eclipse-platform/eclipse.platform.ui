@@ -83,9 +83,9 @@ public class WelcomeEditor extends EditorPart {
 
 	private WelcomeParser parser;
 
-	private ArrayList<StyleRange> hyperlinkRanges = new ArrayList<>();
+	private final ArrayList<StyleRange> hyperlinkRanges = new ArrayList<>();
 
-	private ArrayList<StyledText> texts = new ArrayList<>();
+	private final ArrayList<StyledText> texts = new ArrayList<>();
 
 	private ScrolledComposite scrolledComposite;
 
@@ -101,7 +101,7 @@ public class WelcomeEditor extends EditorPart {
 
 	private boolean nextTabAbortTraversal, previousTabAbortTraversal = false;
 
-	private WelcomeEditorCopyAction copyAction;
+	private final WelcomeEditorCopyAction copyAction;
 
 	/**
 	 * Create a new instance of the welcome editor

@@ -408,8 +408,9 @@ public final class IDE {
 	 */
 	private static IEditorInput getEditorInput(IFileStore fileStore) {
 		IFile workspaceFile = getWorkspaceFile(fileStore);
-		if (workspaceFile != null)
+		if (workspaceFile != null) {
 			return new FileEditorInput(workspaceFile);
+		}
 		return new FileStoreEditorInput(fileStore);
 	}
 
@@ -426,8 +427,9 @@ public final class IDE {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IFile[] files = root.findFilesForLocationURI(fileStore.toURI());
 		files = filterNonExistentFiles(files);
-		if (files == null || files.length == 0)
+		if (files == null || files.length == 0) {
 			return null;
+		}
 
 		// for now only return the first file
 		return files[0];
@@ -442,14 +444,16 @@ public final class IDE {
 	 * @return The filtered array
 	 */
 	private static IFile[] filterNonExistentFiles(IFile[] files) {
-		if (files == null)
+		if (files == null) {
 			return null;
+		}
 
 		int length = files.length;
 		ArrayList<IFile> existentFiles = new ArrayList<>(length);
 		for (int i = 0; i < length; i++) {
-			if (files[i].exists())
+			if (files[i].exists()) {
 				existentFiles.add(files[i]);
+			}
 		}
 		return existentFiles.toArray(new IFile[existentFiles.size()]);
 	}
@@ -1362,15 +1366,18 @@ public final class IDE {
 	 * @since 3.6
 	 */
 	public static IEditorPart openInternalEditorOnFileStore(IWorkbenchPage page, IFileStore fileStore) throws PartInitException {
-		if (page == null)
+		if (page == null) {
 			throw new IllegalArgumentException();
-		if (fileStore == null)
+		}
+		if (fileStore == null) {
 			throw new IllegalArgumentException();
+		}
 
 		IEditorInput input = getEditorInput(fileStore);
 		String name = fileStore.fetchInfo().getName();
-		if (name == null)
+		if (name == null) {
 			throw new IllegalArgumentException();
+		}
 
 		IContentType[] contentTypes = null;
 		InputStream is = null;
@@ -1394,8 +1401,9 @@ public final class IDE {
 			for (IContentType contentType : contentTypes) {
 				IEditorDescriptor editorDesc = editorReg.getDefaultEditor(name, contentType);
 				editorDesc = overrideDefaultEditorAssociation(input, contentType, editorDesc);
-				if ((editorDesc != null) && (editorDesc.isInternal()))
+				if ((editorDesc != null) && (editorDesc.isInternal())) {
 					return page.openEditor(input, editorDesc.getId());
+				}
 			}
 		}
 
@@ -1404,15 +1412,17 @@ public final class IDE {
 		if (editors != null) {
 			editors = overrideEditorAssociations(input, null, editors);
 			for (IEditorDescriptor editor : editors) {
-				if ((editor != null) && (editor.isInternal()))
+				if ((editor != null) && (editor.isInternal())) {
 					return page.openEditor(input, editor.getId());
+				}
 			}
 		}
 
 		// fallback to the default text editor
 		IEditorDescriptor textEditor = editorReg.findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
-		if (textEditor == null)
+		if (textEditor == null) {
 			throw new PartInitException(IDEWorkbenchMessages.IDE_noFileEditorFound);
+		}
 		return page.openEditor(input, textEditor.getId());
 	}
 
@@ -1449,8 +1459,9 @@ public final class IDE {
 				if (w == null) {
 					IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
 							.getWorkbenchWindows();
-					if (windows.length > 0)
+					if (windows.length > 0) {
 						w = windows[0];
+					}
 				}
 				if (w != null) {
 					result[0] = PlatformUI.getWorkbench().saveAll(w, w,
@@ -1772,8 +1783,7 @@ public final class IDE {
 		if (ignoreModelProviderIds == null) {
 			return false;
 		}
-		if (status instanceof ModelStatus) {
-			ModelStatus ms = (ModelStatus) status;
+		if (status instanceof ModelStatus ms) {
 			for (String id : ignoreModelProviderIds) {
 				if (ms.getModelProviderId().equals(id)) {
 					return true;
@@ -1803,8 +1813,9 @@ public final class IDE {
 	 * @since 3.5
 	 */
 	public static IEditorReference[] openEditors(IWorkbenchPage page, IFile[] inputs) throws MultiPartInitException {
-		if ((page == null) || (inputs == null))
+		if ((page == null) || (inputs == null)) {
 			throw new IllegalArgumentException();
+		}
 
 		String[] editorDescriptions = new String[inputs.length];
 		IEditorInput[] editorInputs = new IEditorInput[inputs.length];

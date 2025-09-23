@@ -124,9 +124,9 @@ public class ResourceTreeAndListGroup extends EventManager {
 		}
 	}
 
-	private CheckListener checkListener = new CheckListener();
-	private SelectionListener selectionListener = new SelectionListener();
-	private TreeListener treeListener = new TreeListener();
+	private final CheckListener checkListener = new CheckListener();
+	private final SelectionListener selectionListener = new SelectionListener();
+	private final TreeListener treeListener = new TreeListener();
 
 	private Object root;
 	private Object currentTreeSelection;
@@ -520,10 +520,12 @@ public class ResourceTreeAndListGroup extends EventManager {
 		//Iterate through the children of the root as the root is not in the store
 		for (Object element : treeContentProvider.getChildren(root)) {
 			if (!whiteCheckedTreeItems.contains(element)) {
-				if (!treeViewer.getGrayed(element))
+				if (!treeViewer.getGrayed(element)) {
 					return false;
-				if (!isEveryChildrenChecked(element))
+				}
+				if (!isEveryChildrenChecked(element)) {
 					return false;
+				}
 			}
 		}
 		return true;
@@ -540,15 +542,18 @@ public class ResourceTreeAndListGroup extends EventManager {
 		List<Object> checked = checkedStateStore.get(treeElement);
 		if (checked != null && (!checked.isEmpty())) {
 			Object[] listItems = listContentProvider.getElements(treeElement);
-			if (listItems.length != checked.size())
+			if (listItems.length != checked.size()) {
 				return false;
+			}
 		}
 		for (Object element : treeContentProvider.getChildren(treeElement)) {
 			if (!whiteCheckedTreeItems.contains(element)) {
-				if (!treeViewer.getGrayed(element))
+				if (!treeViewer.getGrayed(element)) {
 					return false;
-				if (!isEveryChildrenChecked(element))
+				}
+				if (!isEveryChildrenChecked(element)) {
 					return false;
+				}
 			}
 		}
 		return true;

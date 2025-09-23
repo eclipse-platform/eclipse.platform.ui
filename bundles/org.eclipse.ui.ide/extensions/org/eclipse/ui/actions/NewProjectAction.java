@@ -51,7 +51,7 @@ public class NewProjectAction extends Action {
 	/**
 	 * The workbench window this action will run in
 	 */
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	/**
 	 * This default constructor allows the the action to be called from the welcome page.

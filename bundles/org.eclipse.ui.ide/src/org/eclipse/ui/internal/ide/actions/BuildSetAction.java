@@ -34,11 +34,11 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 public class BuildSetAction extends Action {
 	public static BuildSetAction lastBuilt;
 
-	private IWorkingSet workingSet;
+	private final IWorkingSet workingSet;
 
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
-	private IActionBarConfigurer actionBars;
+	private final IActionBarConfigurer actionBars;
 
 	/**
 	 * Creates a new action that builds the provided working set when run

@@ -82,10 +82,11 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 	 */
 	void updateCompletion(int constant, boolean enabled) {
 
-		if (enabled)
+		if (enabled) {
 			completionState = constant | completionState;
-		else
+		} else {
 			completionState = constant ^ completionState;
+		}
 
 	}
 

@@ -59,7 +59,7 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
  */
 public class ResourceSelectionDialog extends SelectionDialog {
 	// the root element to populate the viewer with
-	private IAdaptable root;
+	private final IAdaptable root;
 
 	// the visual selection widget group
 	private CheckboxTreeAndListGroup selectionGroup;

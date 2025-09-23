@@ -69,8 +69,9 @@ public class FileStoreEditorInputFactory implements IElementFactory {
 	public IAdaptable createElement(IMemento memento) {
 		// Get the file name.
 		String uriString = memento.getString(TAG_URI);
-		if (uriString == null)
+		if (uriString == null) {
 			return null;
+		}
 
 		URI uri;
 		try {

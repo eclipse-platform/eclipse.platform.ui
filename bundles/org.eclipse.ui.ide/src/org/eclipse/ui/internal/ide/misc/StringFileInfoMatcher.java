@@ -36,14 +36,16 @@ public class StringFileInfoMatcher extends AbstractFileInfoMatcher {
 
 	@Override
 	public void initialize(IProject project, Object arguments) {
-		if ((arguments instanceof String) && ((String) arguments).length() > 0)
+		if ((arguments instanceof String) && ((String) arguments).length() > 0) {
 			matcher = new StringMatcher((String) arguments, true, false);
+		}
 	}
 
 	@Override
 	public boolean matches(IContainer parent, IFileInfo fileInfo) {
-		if (matcher != null)
+		if (matcher != null) {
 			return matcher.match(fileInfo.getName());
+		}
 		return false;
 	}
 }

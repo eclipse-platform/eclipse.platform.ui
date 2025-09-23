@@ -36,8 +36,7 @@ public class StandardPropertiesAdapterFactory implements IAdapterFactory {
 			return adapterType.cast(o);
 		}
 		if (adapterType == IPropertySource.class) {
-			if (o instanceof IResource) {
-				IResource resource = (IResource) o;
+			if (o instanceof IResource resource) {
 				if (resource.getType() == IResource.FILE) {
 					return adapterType.cast(new FilePropertySource((IFile) o));
 				}

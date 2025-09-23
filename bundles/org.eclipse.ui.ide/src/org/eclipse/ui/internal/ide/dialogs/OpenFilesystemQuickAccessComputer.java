@@ -36,7 +36,7 @@ public class OpenFilesystemQuickAccessComputer implements IQuickAccessComputerEx
 
 	private static class FileElement extends QuickAccessElement {
 
-		private File file;
+		private final File file;
 
 		public FileElement(File file) {
 			this.file = file;

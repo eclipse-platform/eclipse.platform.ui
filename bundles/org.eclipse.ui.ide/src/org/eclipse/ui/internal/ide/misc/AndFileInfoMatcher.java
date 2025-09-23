@@ -28,8 +28,9 @@ public class AndFileInfoMatcher extends CompoundFileInfoMatcher {
 	@Override
 	public boolean matches(IContainer parent, IFileInfo fileInfo) throws CoreException {
 		for (AbstractFileInfoMatcher matcher : matchers) {
-			if (!matcher.matches(parent, fileInfo))
+			if (!matcher.matches(parent, fileInfo)) {
 				return false;
+			}
 		}
 		return true;
 	}

@@ -44,7 +44,7 @@ public class OpenSystemEditorAction extends SelectionListenerAction {
 	/**
 	 * The workbench page to open the editor in.
 	 */
-	private IWorkbenchPage workbenchPage;
+	private final IWorkbenchPage workbenchPage;
 
 	/**
 	 * Creates a new action that will open system editors on the then-selected file

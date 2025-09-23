@@ -94,10 +94,9 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 
-		if (!(element instanceof IResource)) {
+		if (!(element instanceof IResource resource)) {
 			return;
 		}
-		IResource resource = (IResource) element;
 		if (resource.isLinked() && !resource.isVirtual()) {
 			IFileInfo fileInfo = null;
 			URI location = resource.getLocationURI();

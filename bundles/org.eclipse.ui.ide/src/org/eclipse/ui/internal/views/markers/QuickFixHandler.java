@@ -72,8 +72,9 @@ public class QuickFixHandler extends MarkerViewHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		final ExtendedMarkersView view = getView(event);
-		if (view == null)
+		if (view == null) {
 			return this;
+		}
 
 		final Map<IMarkerResolution, Collection<IMarker>> resolutionsMap = new LinkedHashMap<>();
 		final IMarker[] selectedMarkers = view.getSelectedMarkers();

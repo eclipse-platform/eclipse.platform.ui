@@ -116,8 +116,9 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 
 	@Override
 	protected String getOperationMessage() {
-		if (getActionResources().size() > 1)
+		if (getActionResources().size() > 1) {
 			return IDEWorkbenchMessages.OpenResourceAction_operationMessage_plural;
+		}
 		return IDEWorkbenchMessages.OpenResourceAction_operationMessage;
 	}
 
@@ -139,8 +140,9 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		//count the closed projects in the selection
 		int closedInSelection = 0;
 		for (IResource project : getSelectedResources()) {
-			if (!((IProject) project).isOpen())
+			if (!((IProject) project).isOpen()) {
 				closedInSelection++;
+			}
 		}
 		//there are other closed projects if the selection does
 		//not contain all closed projects in the workspace
@@ -250,8 +252,9 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 							//remember that we have prompted to avoid repeating the analysis
 							hasPrompted = true;
 						});
-						if (canceled)
+						if (canceled) {
 							throw new OperationCanceledException();
+						}
 					}
 				}
 				if (openProjectReferences) {
@@ -268,11 +271,10 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 				// at most we can only open all projects currently closed
 				subMonitor.setTaskName(getOperationMessage());
 				for (IResource resource : resources) {
-					if (!(resource instanceof IProject)) {
+					if (!(resource instanceof IProject project)) {
 						continue;
 					}
 
-					IProject project = (IProject) resource;
 					if (!project.exists() || project.isOpen()) {
 						continue;
 					}

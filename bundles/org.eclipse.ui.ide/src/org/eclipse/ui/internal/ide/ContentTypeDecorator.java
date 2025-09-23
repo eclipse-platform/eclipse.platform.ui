@@ -42,19 +42,22 @@ public class ContentTypeDecorator implements ILightweightLabelDecorator {
 
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
-		if (!(element instanceof IFile))
+		if (!(element instanceof IFile)) {
 			return;
+		}
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		if (workbench.isClosing())
+		if (workbench.isClosing()) {
 			return;
+		}
 
 		IFile file = (IFile) element;
 		ImageDescriptor image = null;
 
 		if (hasEditorAssociationOverrides()) {
 			IEditorDescriptor d = IDE.getDefaultEditor(file);
-			if (d != null)
+			if (d != null) {
 				image = d.getImageDescriptor();
+			}
 		} else {
 			IContentDescription contentDescription= null;
 			try {
@@ -81,13 +84,15 @@ public class ContentTypeDecorator implements ILightweightLabelDecorator {
 		// add the image descriptor as a session property so that it will be
 		// picked up by the workbench label provider upon the next update.
 		try {
-			if (file.getSessionProperty(WorkbenchFile.IMAGE_CACHE_KEY) != image)
+			if (file.getSessionProperty(WorkbenchFile.IMAGE_CACHE_KEY) != image) {
 				file.setSessionProperty(WorkbenchFile.IMAGE_CACHE_KEY, image);
+			}
 		} catch (CoreException e) {
 			// ignore - not being able to cache the image is not fatal
 		}
-		if (image != null)
+		if (image != null) {
 			decoration.addOverlay(image);
+		}
 	}
 
 	@Override

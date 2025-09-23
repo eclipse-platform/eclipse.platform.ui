@@ -67,7 +67,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 
 	static class DeleteProjectDialog extends MessageDialog {
 
-		private List<? extends IResource> projects;
+		private final List<? extends IResource> projects;
 
 		private boolean deleteContent;
 
@@ -179,7 +179,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			return composite;
 		}
 
-		private SelectionListener selectionListener = new SelectionAdapter() {
+		private final SelectionListener selectionListener = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Button button = (Button) e.widget;

@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class InternalErrorDialog extends MessageDialog {
 
-	private Throwable detail;
+	private final Throwable detail;
 
 	private int detailButtonID = -1;
 

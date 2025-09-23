@@ -32,7 +32,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 class UIUpdateJob extends WorkbenchJob {
 
-	private ExtendedMarkersView view;
+	private final ExtendedMarkersView view;
 
 	private boolean updating;
 
@@ -72,13 +72,15 @@ class UIUpdateJob extends WorkbenchJob {
 			if (view.getBuilder().isShowingHierarchy()
 					&& view.getCategoriesToExpand().isEmpty()) {
 				MarkerCategory[] categories = clone.getCategories();
-				if (categories != null && categories.length == 1)
+				if (categories != null && categories.length == 1) {
 					view.getCategoriesToExpand().add(
 							categories[0].getDescription());
+				}
 			}
 
-			if (monitor.isCanceled())
+			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
+			}
 			/*
 			 * always use a clone for Thread safety. We avoid setting the clone
 			 * as new input as we would offset the benefits of optimization in

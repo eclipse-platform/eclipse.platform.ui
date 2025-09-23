@@ -117,10 +117,10 @@ public class PathVariablesGroup {
 	private FontMetrics fontMetrics;
 
 	// create a multi select table
-	private boolean multiSelect;
+	private final boolean multiSelect;
 
 	// IResource.FILE and/or IResource.FOLDER
-	private int variableType;
+	private final int variableType;
 
 	// External listener called when the table selection changes
 	private Listener selectionListener;
@@ -251,12 +251,13 @@ public class PathVariablesGroup {
 
 		// layout the table & its buttons
 		variableLabel = new Label(pageComponent, SWT.LEFT);
-		if (currentResource == null)
+		if (currentResource == null) {
 			variableLabel.setText(IDEWorkbenchMessages.PathVariablesBlock_variablesLabel);
-		else
+		} else {
 			variableLabel.setText(NLS.bind(
 									IDEWorkbenchMessages.PathVariablesBlock_variablesLabelForResource,
 									currentResource.getName()));
+		}
 
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
@@ -313,8 +314,9 @@ public class PathVariablesGroup {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				int itemsSelectedCount = variableTable.getTable().getSelectionCount();
-				if (itemsSelectedCount == 1 && canChangeSelection())
+				if (itemsSelectedCount == 1 && canChangeSelection()) {
 					editSelectedVariable();
+				}
 			}
 			@Override
 			public void mouseDown(MouseEvent e) { }
@@ -369,10 +371,11 @@ public class PathVariablesGroup {
 			URI resolvedURI = pathVariableManager.resolveURI(URIUtil.toURI(value));
 			IPath resolvedValue = URIUtil.toPath(resolvedURI);
 			IFileInfo file = IDEResourceInfoUtils.getFileInfo(resolvedValue);
-			if (!isBuiltInVariable(varName))
+			if (!isBuiltInVariable(varName)) {
 				cell.setImage(file.exists() ? (file.isDirectory() ? FOLDER_IMG : FILE_IMG) : imageUnknown);
-			else
+			} else {
 				cell.setImage(BUILTIN_IMG);
+			}
 		}
 
 	}
@@ -589,8 +592,9 @@ public class PathVariablesGroup {
 		tempPathVariables.clear();
 		for (String varName : pathVariableManager.getPathVariableNames()) {
 			// hide the PARENT variable
-			if (varName.equals(PARENT_VARIABLE_NAME))
+			if (varName.equals(PARENT_VARIABLE_NAME)) {
 				continue;
+			}
 			try {
 				URI uri = pathVariableManager.getURIValue(varName);
 				// the value may not exist any more
@@ -659,8 +663,9 @@ public class PathVariablesGroup {
 			for (Entry<String, IPath> entry : tempPathVariables.entrySet()) {
 				String variableName = entry.getKey();
 				IPath variableValue = entry.getValue();
-				if (!isBuiltInVariable(variableName))
+				if (!isBuiltInVariable(variableName)) {
 					pathVariableManager.setURIValue(variableName, URIUtil.toURI(variableValue));
+				}
 			}
 			// re-initialize temporary state
 			initTemporaryState();
@@ -692,8 +697,9 @@ public class PathVariablesGroup {
 		for (int selectedIndex : variableTable.getTable().getSelectionIndices()) {
 			TableItem selectedItem = variableTable.getTable().getItem(selectedIndex);
 			String varName = (String) selectedItem.getData();
-			if (isBuiltInVariable(varName))
+			if (isBuiltInVariable(varName)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -761,10 +767,11 @@ public class PathVariablesGroup {
 
 	public void setResource(IResource resource) {
 		currentResource = resource;
-		if (resource != null)
+		if (resource != null) {
 			pathVariableManager = resource.getPathVariableManager();
-		else
+		} else {
 			pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
+		}
 		removedVariableNames = new HashSet<>();
 		tempPathVariables = new TreeMap<>();
 		// initialize internal model
@@ -778,7 +785,8 @@ public class PathVariablesGroup {
 		removedVariableNames = new HashSet<>();
 		tempPathVariables = new TreeMap<>();
 		initTemporaryState();
-		if (variableTable != null)
+		if (variableTable != null) {
 			updateWidgetState();
+		}
 	}
 }

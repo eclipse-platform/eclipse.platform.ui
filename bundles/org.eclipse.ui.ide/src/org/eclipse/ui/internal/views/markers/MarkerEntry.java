@@ -404,10 +404,9 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof MarkerEntry)) {
+		if (!(obj instanceof MarkerEntry other)) {
 			return false;
 		}
-		MarkerEntry other = (MarkerEntry) obj;
 		return Objects.equals(marker, other.marker);
 	}
 

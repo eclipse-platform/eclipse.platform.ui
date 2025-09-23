@@ -52,7 +52,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	/**
 	 * The IShellProvider in which to show any dialogs.
 	 */
-	private IShellProvider shellProvider;
+	private final IShellProvider shellProvider;
 
 	/**
 	 * Creates a new bookmark action. By default, prompts the user for the
@@ -107,8 +107,9 @@ public class AddBookmarkAction extends SelectionListenerAction {
 
 	@Override
 	public void run() {
-		if (getSelectedResources().isEmpty())
+		if (getSelectedResources().isEmpty()) {
 			return;
+		}
 
 		IResource resource= getSelectedResources().get(0);
 		if (resource != null) {

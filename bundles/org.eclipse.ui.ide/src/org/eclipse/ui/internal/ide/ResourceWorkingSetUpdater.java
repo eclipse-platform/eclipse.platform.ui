@@ -40,9 +40,9 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 	 * Utility class used to help process incoming resource deltas.
 	 */
 	private static class WorkingSetDelta {
-		private IWorkingSet fWorkingSet;
+		private final IWorkingSet fWorkingSet;
 
-		private List<IAdaptable> fElements;
+		private final List<IAdaptable> fElements;
 
 		private boolean fChanged;
 
@@ -105,7 +105,7 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 		}
 	}
 
-	private List<IWorkingSet> fWorkingSets;
+	private final List<IWorkingSet> fWorkingSets;
 
 	/**
 	 * Create a new instance of this updater.
@@ -212,11 +212,9 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 		for (Iterator<IAdaptable> iter = elements.iterator(); iter.hasNext();) {
 			IAdaptable element = iter.next();
 			boolean remove = false;
-			if (element instanceof IProject) {
-				IProject project = (IProject) element;
+			if (element instanceof IProject project) {
 				remove = !project.exists();
-			} else if (element instanceof IResource) {
-				IResource resource = (IResource) element;
+			} else if (element instanceof IResource resource) {
 				IProject project = resource.getProject();
 				remove = (project != null ? project.isOpen() : true)
 						&& !resource.exists();

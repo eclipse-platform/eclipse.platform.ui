@@ -68,11 +68,11 @@ import org.eclipse.ui.views.markers.internal.Util;
  */
 public class QuickFixPage extends WizardPage {
 
-	private Map<IMarkerResolution, Collection<IMarker>> resolutions;
+	private final Map<IMarkerResolution, Collection<IMarker>> resolutions;
 
 	private TableViewer resolutionsList;
 	private CheckboxTableViewer markersTable;
-	private IMarker[] selectedMarkers;
+	private final IMarker[] selectedMarkers;
 	private final Consumer<StructuredViewer> showMarkers;
 	private final Consumer<Control> bindHelp;
 
@@ -217,7 +217,7 @@ public class QuickFixPage extends WizardPage {
 
 			@Override
 			public Image getImage(Object element) {
-				return element instanceof IMarkerResolution2 ? ((IMarkerResolution2)element).getImage() : null;
+				return element instanceof IMarkerResolution2 i ? i.getImage() : null;
 			}
 		});
 
@@ -307,8 +307,9 @@ public class QuickFixPage extends WizardPage {
 
 			@Override
 			public Image getColumnImage(Object element, int columnIndex) {
-				if (columnIndex == 0)
+				if (columnIndex == 0) {
 					return Util.getImage(((IMarker) element).getAttribute(IMarker.SEVERITY, -1));
+				}
 				return null;
 			}
 
@@ -326,11 +327,12 @@ public class QuickFixPage extends WizardPage {
 				// No override so use line number
 				int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, -1);
 				String lineNumberString=null;
-				if (lineNumber < 0)
+				if (lineNumber < 0) {
 					lineNumberString = MarkerMessages.Unknown;
-				else
+				} else {
 					lineNumberString = NLS.bind(MarkerMessages.label_lineNumber,
 							Integer.toString(lineNumber));
+				}
 
 				return lineNumberString;
 			}
@@ -397,8 +399,9 @@ public class QuickFixPage extends WizardPage {
 		IStructuredSelection selection = markersTable.getStructuredSelection();
 		if (!selection.isEmpty()) {
 			IStructuredSelection struct = selection;
-			if (struct.size() == 1)
+			if (struct.size() == 1) {
 				return (IMarker) struct.getFirstElement();
+			}
 		}
 		return null;
 	}

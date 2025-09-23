@@ -98,10 +98,9 @@ public class WorkbenchProject extends WorkbenchResource implements IProjectActio
 	 */
 	@Override
 	public boolean testAttribute(Object target, String name, String value) {
-		if (!(target instanceof IProject)) {
+		if (!(target instanceof IProject proj)) {
 			return false;
 		}
-		IProject proj = (IProject) target;
 		if (name.equals(NATURE)) {
 			try {
 				return proj.isAccessible() && proj.hasNature(value);

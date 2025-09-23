@@ -151,8 +151,9 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 
 	@Override
 	protected String getOperationMessage() {
-		if (getActionResources().size() > 1)
+		if (getActionResources().size() > 1) {
 			return IDEWorkbenchMessages.CloseResourceAction_operationMessage_plural;
+		}
 		return IDEWorkbenchMessages.CloseResourceAction_operationMessage;
 	}
 
@@ -318,8 +319,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
 		List<? extends IResource> resources = getActionResources();
 		for (IResource resource : resources) {
-			if (resource instanceof IProject) {
-				IProject project = (IProject) resource;
+			if (resource instanceof IProject project) {
 				factory.close(project);
 			}
 		}

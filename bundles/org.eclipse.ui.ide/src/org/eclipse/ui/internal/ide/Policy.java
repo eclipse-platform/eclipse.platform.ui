@@ -66,9 +66,10 @@ public class Policy {
 	 */
 	public static void handle(CoreException exception) {
 		// Only log if in debug mode
-		if (DEBUG_CORE_EXCEPTIONS)
+		if (DEBUG_CORE_EXCEPTIONS) {
 			StatusManager.getManager().handle(exception,
 					IDEWorkbenchPlugin.IDE_WORKBENCH);
+		}
 
 	}
 }

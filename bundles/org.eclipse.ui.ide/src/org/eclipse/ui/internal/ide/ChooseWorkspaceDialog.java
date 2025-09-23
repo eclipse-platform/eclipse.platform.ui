@@ -89,7 +89,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 
 	private static final String DIALOG_SETTINGS_SECTION = "ChooseWorkspaceDialogSettings"; //$NON-NLS-1$
 
-	private ChooseWorkspaceData launchData;
+	private final ChooseWorkspaceData launchData;
 
 	private Combo pathCombo;
 

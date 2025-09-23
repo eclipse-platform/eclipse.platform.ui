@@ -75,7 +75,7 @@ public class MarkerContentGenerator {
 	private final Collection<MarkerFieldFilterGroup> FILTERS_CHANGED = Collections.emptySet();
 
 	//Carries the description for the generator, as coded in the given extension point
-	private ContentGeneratorDescriptor generatorDescriptor;
+	private final ContentGeneratorDescriptor generatorDescriptor;
 
 	// fields
 	private MarkerField[] visibleFields;
@@ -268,8 +268,9 @@ public class MarkerContentGenerator {
 		for (MarkerField visibleField : visibleFields) {
 			FilterConfigurationArea area = MarkerSupportInternalUtilities
 					.generateFilterArea(visibleField);
-			if (area != null)
+			if (area != null) {
 				result.add(area);
+			}
 
 		}
 		return result;

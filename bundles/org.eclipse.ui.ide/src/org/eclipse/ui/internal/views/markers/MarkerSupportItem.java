@@ -33,8 +33,9 @@ abstract class MarkerSupportItem extends MarkerItem {
 	@Override
 	public String getAttributeValue(String attribute, String defaultValue) {
 		// All items have messages
-		if (attribute == IMarker.MESSAGE)
+		if (attribute == IMarker.MESSAGE) {
 			return getDescription();
+		}
 		return super.getAttributeValue(attribute, defaultValue);
 
 	}

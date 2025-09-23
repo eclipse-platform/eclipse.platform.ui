@@ -45,12 +45,11 @@ public class FieldCategory extends AbstractField {
 	@Override
 	public String getValue(Object obj) {
 
-		if (obj instanceof ConcreteMarker) {
-			ConcreteMarker marker = (ConcreteMarker) obj;
-
+		if (obj instanceof ConcreteMarker marker) {
 			if (marker.getGroup() == null) {
-				if (!marker.getMarker().exists())
+				if (!marker.getMarker().exists()) {
 					return MarkerMessages.FieldCategory_Uncategorized;
+				}
 				String groupName = MarkerSupportRegistry.getInstance()
 						.getCategory(marker.getMarker());
 				if (groupName == null) {

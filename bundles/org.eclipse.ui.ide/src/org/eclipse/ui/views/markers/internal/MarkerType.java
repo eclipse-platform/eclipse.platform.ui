@@ -21,13 +21,13 @@ import java.util.List;
  * Represents a marker type.
  */
 public class MarkerType {
-	private MarkerTypesModel model;
+	private final MarkerTypesModel model;
 
-	private String id;
+	private final String id;
 
-	private String label;
+	private final String label;
 
-	private String[] supertypeIds;
+	private final String[] supertypeIds;
 
 	/**
 	 * Creates a new marker type.

@@ -47,7 +47,7 @@ import org.eclipse.ui.part.DrillDownComposite;
  */
 public class ContainerSelectionGroup extends Composite {
 	// The listener to notify of events
-	private Listener listener;
+	private final Listener listener;
 
 	// Enable user to type in new container name
 	private boolean allowNewContainerName = true;
@@ -303,8 +303,9 @@ public class ContainerSelectionGroup extends Composite {
 			return (IPath.fromOSString(TextProcessor.deprocess(pathName))).makeAbsolute();
 
 		}
-		if (selectedContainer == null)
+		if (selectedContainer == null) {
 			return null;
+		}
 		return selectedContainer.getFullPath();
 
 	}

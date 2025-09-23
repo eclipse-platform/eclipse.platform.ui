@@ -250,14 +250,18 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 
 	@Override
 	public void setEnabled(boolean enabled, Composite parent) {
-		if (container != null)
+		if (container != null) {
 			container.setEnabled(enabled);
-		if (defaultEncodingButton != null)
+		}
+		if (defaultEncodingButton != null) {
 			defaultEncodingButton.setEnabled(enabled);
-		if (otherEncodingButton != null)
+		}
+		if (otherEncodingButton != null) {
 			otherEncodingButton.setEnabled(enabled);
-		if (encodingCombo != null)
+		}
+		if (encodingCombo != null) {
 			encodingCombo.setEnabled(enabled && otherEncodingButton.getSelection());
+		}
 
 	}
 

@@ -100,10 +100,10 @@ public class CleanDialog extends MessageDialog {
 
 	private Object[] selection;
 
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	private Text filterText;
-	private SearchPattern searchPattern = new SearchPattern();
+	private final SearchPattern searchPattern = new SearchPattern();
 
 	/**
 	 * Gets the text of the clean dialog, depending on whether the
@@ -310,10 +310,9 @@ public class CleanDialog extends MessageDialog {
 			private final IProject[] projectHolder = new IProject[1];
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (!(element instanceof IProject)) {
+				if (!(element instanceof IProject project)) {
 					return false;
 				}
-				IProject project = (IProject) element;
 				boolean isProjectNameMatchingPattern = searchPattern.matches(project.getName());
 				if (!project.isAccessible() || !isProjectNameMatchingPattern) {
 					if (!filterText.getText().equals(IDEWorkbenchMessages.CleanDialog_typeFilterText)) {

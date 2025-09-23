@@ -40,7 +40,7 @@ public class MarkerPriorityField extends MarkerField {
 
 	private static class PriorityEditingSupport extends EditingSupport {
 
-		private ComboBoxCellEditor editor;
+		private final ComboBoxCellEditor editor;
 
 		/**
 		 * Create a new instance of the receiver.
@@ -53,9 +53,10 @@ public class MarkerPriorityField extends MarkerField {
 
 		@Override
 		protected boolean canEdit(Object element) {
-			if (element instanceof MarkerEntry)
+			if (element instanceof MarkerEntry) {
 				return ((MarkerEntry) element).getAttributeValue(
 						IMarker.USER_EDITABLE, false);
+			}
 			return false;
 		}
 

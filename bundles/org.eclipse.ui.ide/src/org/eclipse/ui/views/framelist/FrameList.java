@@ -38,9 +38,9 @@ public class FrameList extends EventManager {
 	/** Property name constant for the current frame. */
 	public static final String P_CURRENT_FRAME = "currentFrame"; //$NON-NLS-1$
 
-	private IFrameSource source;
+	private final IFrameSource source;
 
-	private List<Frame> frames;
+	private final List<Frame> frames;
 
 	private int current;
 

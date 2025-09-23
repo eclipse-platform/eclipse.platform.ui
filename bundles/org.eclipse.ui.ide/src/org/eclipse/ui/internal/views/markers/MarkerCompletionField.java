@@ -37,7 +37,7 @@ public class MarkerCompletionField extends MarkerField {
 
 	private static class CompletionEditingSupport extends EditingSupport {
 
-		private CheckboxCellEditor editor;
+		private final CheckboxCellEditor editor;
 
 		/**
 		 * Create a new instance of the receiver.
@@ -50,9 +50,10 @@ public class MarkerCompletionField extends MarkerField {
 
 		@Override
 		protected boolean canEdit(Object element) {
-			if (element instanceof MarkerEntry)
+			if (element instanceof MarkerEntry) {
 				return ((MarkerEntry) element).getAttributeValue(
 						IMarker.USER_EDITABLE, false);
+			}
 			return false;
 		}
 

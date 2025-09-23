@@ -85,7 +85,7 @@ public class ProjectContentsLocationArea {
 
 	private Button browseButton;
 
-	private IErrorMessageReporter errorReporter;
+	private final IErrorMessageReporter errorReporter;
 
 	private String projectName = IDEResourceInfoUtils.EMPTY_STRING;
 
@@ -304,8 +304,9 @@ public class ProjectContentsLocationArea {
 			IFileInfo info;
 			info = IDEResourceInfoUtils.getFileInfo(dirName);
 
-			if (info == null || !(info.exists()))
+			if (info == null || !(info.exists())) {
 				dirName = IDEResourceInfoUtils.EMPTY_STRING;
+			}
 		} else {
 			String value = getDialogSettings().get(SAVED_LOCATION_ATTR);
 			if (value != null) {
@@ -329,8 +330,9 @@ public class ProjectContentsLocationArea {
 		} else {
 			URI uri = getSelectedConfiguration().getContributor()
 					.browseFileSystem(dirName, browseButton.getShell());
-			if (uri != null)
+			if (uri != null) {
 				selectedDirectory = uri.toString();
+			}
 		}
 
 		if (selectedDirectory != null) {

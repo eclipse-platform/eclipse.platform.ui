@@ -61,7 +61,7 @@ public class AutoSavePreferencePage extends PreferencePage implements IWorkbench
 
 	private Label noteMessage;
 
-	private IPropertyChangeListener validityChangeListener = event -> {
+	private final IPropertyChangeListener validityChangeListener = event -> {
 		if (event.getProperty().equals(FieldEditor.IS_VALID)) {
 			updateValidState();
 		}

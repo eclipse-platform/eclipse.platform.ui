@@ -98,14 +98,12 @@ class MarkerCategory extends MarkerSupportItem {
 		int limit = generator.getMarkerLimits();
 
 		if (limitsEnabled && size > limit) {
-			return NLS.bind(MarkerMessages.Category_Limit_Label, new Object[] {
-					name,
-					String.valueOf(limit),
-					String.valueOf(getChildrenCount()) });
+			return NLS.bind(MarkerMessages.Category_Limit_Label, name, String.valueOf(limit), String.valueOf(getChildrenCount()));
 		}
-		if (size == 1)
+		if (size == 1) {
 			return NLS.bind(MarkerMessages.Category_One_Item_Label,
 					new Object[] { name });
+		}
 
 		return NLS.bind(MarkerMessages.Category_Label, new Object[] { name,
 				String.valueOf(size) });
@@ -118,16 +116,19 @@ class MarkerCategory extends MarkerSupportItem {
 	 * @return int
 	 */
 	int getHighestSeverity() {
-		if (severity >= 0)
+		if (severity >= 0) {
 			return severity;
+		}
 		severity = 0;// Reset to info
 		for (MarkerSupportItem supportItem : getChildren()) {
 			if (supportItem.isConcrete()) {
 				int elementSeverity = supportItem.getAttributeValue(IMarker.SEVERITY, -1);
-				if (elementSeverity > severity)
+				if (elementSeverity > severity) {
 					severity = elementSeverity;
-				if (severity == IMarker.SEVERITY_ERROR)// As bad as it gets
+				}
+				if (severity == IMarker.SEVERITY_ERROR) { // As bad as it gets
 					return severity;
+				}
 			}
 		}
 		return severity;
@@ -173,12 +174,15 @@ class MarkerCategory extends MarkerSupportItem {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		MarkerCategory other = (MarkerCategory) obj;
 		return Objects.equals(markers, other.markers) && Objects.equals(name, other.name);
 	}

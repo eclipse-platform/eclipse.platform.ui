@@ -269,8 +269,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		final boolean hasRename = numMovedFrom > 0 && numMovedTo > 0;
 
 		Runnable addAndRemove = () -> {
-			if (viewer instanceof AbstractTreeViewer) {
-				AbstractTreeViewer treeViewer = (AbstractTreeViewer) viewer;
+			if (viewer instanceof AbstractTreeViewer treeViewer) {
 				// Disable redraw until the operation is finished so we don't
 				// get a flash of both the new and old item (in the case of
 				// rename)

@@ -53,8 +53,9 @@ public class IDESelectionConversionService implements
 
 				ResourceMapping mapping = ResourceUtil
 						.getResourceMapping(currentElement);
-				if (mapping == null)
+				if (mapping == null) {
 					continue;
+				}
 
 				ResourceTraversal[] traversals = null;
 				try {
@@ -74,8 +75,9 @@ public class IDESelectionConversionService implements
 					}
 				}
 
-			} else
+			} else {
 				result.add(resource);
+			}
 		}
 
 		// all that can be converted are done, answer new selection

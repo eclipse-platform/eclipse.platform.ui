@@ -42,9 +42,9 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 class QuickFixWizard extends Wizard {
 
-	private IMarker[] selectedMarkers;
-	private Map<IMarkerResolution, Collection<IMarker>> resolutionMap;
-	private String description;
+	private final IMarker[] selectedMarkers;
+	private final Map<IMarkerResolution, Collection<IMarker>> resolutionMap;
+	private final String description;
 	private final Consumer<StructuredViewer> showMarkers;
 	private final Consumer<Control> bindHelp;
 	private final Consumer<Throwable> reporter;

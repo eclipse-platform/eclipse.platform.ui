@@ -67,30 +67,38 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 
 
 	public static String[] getOperatorsForKey(String key) {
-		if (key.equals(KEY_NAME) || key.equals(KEY_PROPJECT_RELATIVE_PATH) || key.equals(KEY_LOCATION))
-				return new String[] {OPERATOR_MATCHES};
-		if (key.equals(KEY_IS_SYMLINK) || key.equals(KEY_IS_READONLY))
+		if (key.equals(KEY_NAME) || key.equals(KEY_PROPJECT_RELATIVE_PATH) || key.equals(KEY_LOCATION)) {
+			return new String[] {OPERATOR_MATCHES};
+		}
+		if (key.equals(KEY_IS_SYMLINK) || key.equals(KEY_IS_READONLY)) {
 			return new String[] {OPERATOR_EQUALS};
-		if (key.equals(KEY_LAST_MODIFIED) || key.equals(KEY_CREATED))
+		}
+		if (key.equals(KEY_LAST_MODIFIED) || key.equals(KEY_CREATED)) {
 			return new String[] {OPERATOR_EQUALS, OPERATOR_BEFORE, OPERATOR_AFTER, OPERATOR_WITHIN};
-		if (key.equals(KEY_LENGTH))
+		}
+		if (key.equals(KEY_LENGTH)) {
 			return new String[] {OPERATOR_EQUALS, OPERATOR_LARGER_THAN, OPERATOR_SMALLER_THAN};
+		}
 
 		return new String[] {OPERATOR_NONE};
 	}
 
 	public static Class<?> getTypeForKey(String key, String operator) {
-		if (key.equals(KEY_NAME) || key.equals(KEY_PROPJECT_RELATIVE_PATH) || key.equals(KEY_LOCATION))
+		if (key.equals(KEY_NAME) || key.equals(KEY_PROPJECT_RELATIVE_PATH) || key.equals(KEY_LOCATION)) {
 			return String.class;
-		if (key.equals(KEY_IS_SYMLINK) || key.equals(KEY_IS_READONLY))
+		}
+		if (key.equals(KEY_IS_SYMLINK) || key.equals(KEY_IS_READONLY)) {
 			return Boolean.class;
+		}
 		if (key.equals(KEY_LAST_MODIFIED) || key.equals(KEY_CREATED)) {
-			if (operator.equals(OPERATOR_WITHIN))
+			if (operator.equals(OPERATOR_WITHIN)) {
 				return Integer.class;
+			}
 			return Date.class;
 		}
-		if (key.equals(KEY_LENGTH))
+		if (key.equals(KEY_LENGTH)) {
 			return Integer.class;
+		}
 		return String.class;
 	}
 
@@ -124,43 +132,50 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 
 	public static Argument decodeArguments(String argument)  {
 		Argument result = new Argument();
-		if (argument == null)
+		if (argument == null) {
 			return result;
+		}
 
 		int index = argument.indexOf(DELIMITER);
-		if (index == -1)
+		if (index == -1) {
 			return result;
+		}
 
 		String version = argument.substring(0, index);
 		argument = argument.substring(index + 1);
 
-		if (!version.equals(VERSION_IMPLEMENTATION))
+		if (!version.equals(VERSION_IMPLEMENTATION)) {
 			return result;
+		}
 
 		index = argument.indexOf(DELIMITER);
-		if (index == -1)
+		if (index == -1) {
 			return result;
+		}
 
 		result.key = argument.substring(0, index);
 		argument = argument.substring(index + 1);
 
 		index = argument.indexOf(DELIMITER);
-		if (index == -1)
+		if (index == -1) {
 			return result;
+		}
 
 		result.operator = argument.substring(0, index);
 		argument = argument.substring(index + 1);
 
 		index = argument.indexOf(DELIMITER);
-		if (index == -1)
+		if (index == -1) {
 			return result;
+		}
 
 		result.caseSensitive = Boolean.parseBoolean(argument.substring(0, index));
 		argument = argument.substring(index + 1);
 
 		index = argument.indexOf(DELIMITER);
-		if (index == -1)
+		if (index == -1) {
 			return result;
+		}
 
 		result.regularExpression = Boolean.parseBoolean(argument.substring(0, index));
 		result.pattern = argument.substring(index + 1);
@@ -187,17 +202,18 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 	}
 
 	MatcherCache matcher = null;
-	private boolean fSupportsCreatedKey;
+	private final boolean fSupportsCreatedKey;
 
 	class MatcherCache {
 		public MatcherCache(String arguments) {
 			argument = decodeArguments(arguments);
 			type = getTypeForKey(argument.key, argument.operator);
 			if (type.equals(String.class)) {
-				if (!argument.regularExpression)
+				if (!argument.regularExpression) {
 					stringMatcher = new StringMatcher(argument.pattern, !argument.caseSensitive, false);
-				else
+				} else {
 					regExPattern = Pattern.compile(argument.pattern, argument.caseSensitive ? 0:Pattern.CASE_INSENSITIVE);
+				}
 			}
 		}
 
@@ -210,15 +226,19 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 		public boolean match(IContainer parent, IFileInfo fileInfo) {
 			if (type.equals(String.class)) {
 				String value = ""; //$NON-NLS-1$
-				if (argument.key.equals(KEY_NAME))
+				if (argument.key.equals(KEY_NAME)) {
 					value = fileInfo.getName();
-				if (argument.key.equals(KEY_PROPJECT_RELATIVE_PATH))
+				}
+				if (argument.key.equals(KEY_PROPJECT_RELATIVE_PATH)) {
 					value = parent.getProjectRelativePath().append(fileInfo.getName()).toPortableString();
-				if (argument.key.equals(KEY_LOCATION))
+				}
+				if (argument.key.equals(KEY_LOCATION)) {
 					value = parent.getLocation().append(fileInfo.getName()).toOSString();
+				}
 
-				if (stringMatcher != null)
+				if (stringMatcher != null) {
 					return stringMatcher.match(value);
+				}
 				if (regExPattern != null) {
 					Matcher m = regExPattern.matcher(value);
 					return m.matches();
@@ -236,13 +256,15 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 					long time = 0;
 					if (argument.key.equals(KEY_LAST_MODIFIED)) {
 						IFileInfo info = fetchInfo(parent, fileInfo);
-						if (!info.exists())
+						if (!info.exists()) {
 							return false;
+						}
 						time = info.getLastModified();
 					}
 					if (argument.key.equals(KEY_CREATED)) {
-						if (!fSupportsCreatedKey)
+						if (!fSupportsCreatedKey) {
 							return false;
+						}
 						time = getFileCreationTime(parent.getLocation().append(fileInfo.getName()).toOSString());
 					}
 					GregorianCalendar gc = new GregorianCalendar();
@@ -253,14 +275,18 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 				}
 				if (argument.key.equals(KEY_LENGTH)) {
 					IFileInfo info = fetchInfo(parent, fileInfo);
-					if (!info.exists())
+					if (!info.exists()) {
 						return false;
-					if (argument.operator.equals(OPERATOR_EQUALS))
+					}
+					if (argument.operator.equals(OPERATOR_EQUALS)) {
 						return info.getLength() == amount;
-					if (argument.operator.equals(OPERATOR_LARGER_THAN))
+					}
+					if (argument.operator.equals(OPERATOR_LARGER_THAN)) {
 						return info.getLength() > amount;
-					if (argument.operator.equals(OPERATOR_SMALLER_THAN))
+					}
+					if (argument.operator.equals(OPERATOR_SMALLER_THAN)) {
 						return info.getLength() < amount;
+					}
 				}
 			}
 			if (type.equals(Date.class)) {
@@ -269,37 +295,44 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 					long time = 0;
 					if (argument.key.equals(KEY_LAST_MODIFIED)) {
 						IFileInfo info = fetchInfo(parent, fileInfo);
-						if (!info.exists())
+						if (!info.exists()) {
 							return false;
+						}
 						time = info.getLastModified();
 					}
 					if (argument.key.equals(KEY_CREATED)) {
-						if (!fSupportsCreatedKey)
+						if (!fSupportsCreatedKey) {
 							return false;
+						}
 						time = getFileCreationTime(parent.getLocation().append(fileInfo.getName()).toOSString());
 					}
 					Date when = new Date(parameter);
 					Date then = new Date(time);
-					if (argument.operator.equals(OPERATOR_EQUALS))
+					if (argument.operator.equals(OPERATOR_EQUALS)) {
 						return roundToOneDay(time) == roundToOneDay(parameter);
-					if (argument.operator.equals(OPERATOR_BEFORE))
+					}
+					if (argument.operator.equals(OPERATOR_BEFORE)) {
 						return then.before(when);
-					if (argument.operator.equals(OPERATOR_AFTER))
+					}
+					if (argument.operator.equals(OPERATOR_AFTER)) {
 						return then.after(when);
+					}
 				}
 			}
 			if (type.equals(Boolean.class)) {
 				boolean parameter = Boolean.parseBoolean(argument.pattern);
 				if (argument.key.equals(KEY_IS_READONLY)) {
 					IFileInfo info = fetchInfo(parent, fileInfo);
-					if (!info.exists())
+					if (!info.exists()) {
 						return false;
+					}
 					return info.getAttribute(EFS.ATTRIBUTE_READ_ONLY) == parameter;
 				}
 				if (argument.key.equals(KEY_IS_SYMLINK)) {
 					IFileInfo info = fetchInfo(parent, fileInfo);
-					if (!info.exists())
+					if (!info.exists()) {
 						return false;
+					}
 					return info.getAttribute(EFS.ATTRIBUTE_SYMLINK) == parameter;
 				}
 			}
@@ -331,8 +364,9 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 	@Override
 	public void initialize(IProject project, Object arguments) throws CoreException {
 		try {
-			if ((arguments instanceof String) && ((String) arguments).length() > 0)
+			if ((arguments instanceof String) && ((String) arguments).length() > 0) {
 				matcher = new MatcherCache((String) arguments);
+			}
 		} catch (PatternSyntaxException | NumberFormatException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, Platform.PLUGIN_ERROR, e.getMessage(), e));
 		}

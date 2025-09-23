@@ -71,8 +71,9 @@ public class ResourceDragAndDropEditor {
 		}
 		private void updateState(String value) {
 			for (int i = 0; i < labels.length; i++) {
-				if (value.equals(buttons[i].getData()))
+				if (value.equals(buttons[i].getData())) {
 					buttons[i].setSelection(true);
+				}
 			}
 		}
 
@@ -88,8 +89,9 @@ public class ResourceDragAndDropEditor {
 		 */
 		public String getStoredValue(boolean useDefault) {
 			IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-			if (useDefault)
+			if (useDefault) {
 				return store.getDefaultString(preferenceKey);
+			}
 			return store.getString(preferenceKey);
 		}
 
@@ -98,8 +100,9 @@ public class ResourceDragAndDropEditor {
 		 */
 		private String getSelection() {
 			for (int i = 0; i < labels.length; i++) {
-				if (buttons[i].getSelection())
+				if (buttons[i].getSelection()) {
 					return (String) buttons[i].getData();
+				}
 			}
 			return values[0];
 		}
@@ -112,8 +115,9 @@ public class ResourceDragAndDropEditor {
 		public void setEnabled(boolean enableLinking) {
 			group.setEnabled(enableLinking);
 			for (int i = 0; i < labels.length; i++) {
-				if (buttons[i] != null && !buttons[i].isDisposed())
+				if (buttons[i] != null && !buttons[i].isDisposed()) {
 					buttons[i].setEnabled(enableLinking);
+				}
 			}
 
 		}

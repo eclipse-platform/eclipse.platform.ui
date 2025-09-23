@@ -58,8 +58,9 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 
 		CompatibilityMarkerFieldFilterGroup clone = new CompatibilityMarkerFieldFilterGroup(
 				this.problemFilter, this.generator);
-		if (populateClone(clone))
+		if (populateClone(clone)) {
 			return clone;
+		}
 		return null;
 
 	}
@@ -69,8 +70,9 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 		super.calculateFilters();
 		// Now initialize with the ProblemFilter
 		for (MarkerFieldFilter fieldFilter : fieldFilters) {
-			if (fieldFilter instanceof CompatibilityFieldFilter)
+			if (fieldFilter instanceof CompatibilityFieldFilter) {
 				((CompatibilityFieldFilter) fieldFilter).initialize(problemFilter);
+			}
 		}
 	}
 

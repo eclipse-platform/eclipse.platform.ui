@@ -36,7 +36,7 @@ public class MarkerDescriptionField extends MarkerField {
 
 	private static class DescriptionEditingSupport extends EditingSupport {
 
-		private TextCellEditor editor;
+		private final TextCellEditor editor;
 
 		/**
 		 * Create a new instance of the receiver.
@@ -48,14 +48,14 @@ public class MarkerDescriptionField extends MarkerField {
 
 		@Override
 		protected boolean canEdit(Object element) {
-			if (element instanceof MarkerEntry) {
+			if (element instanceof MarkerEntry entry) {
 
-				MarkerEntry entry = (MarkerEntry) element;
 				// Bookmarks are a special case
 				try {
 					if (entry.getMarker() != null
-							&& entry.getMarker().isSubtypeOf(IMarker.BOOKMARK))
+							&& entry.getMarker().isSubtypeOf(IMarker.BOOKMARK)) {
 						return true;
+					}
 				} catch (CoreException e) {
 					Policy.handle(e);
 					return false;
@@ -112,9 +112,10 @@ public class MarkerDescriptionField extends MarkerField {
 	 * @return CollationKey
 	 */
 	private CollationKey getDescriptionKey(Object element) {
-		if (element instanceof MarkerEntry)
+		if (element instanceof MarkerEntry) {
 			return ((MarkerEntry) element).getCollationKey(IMarker.MESSAGE,
 					MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING);
+		}
 		return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 	}
 

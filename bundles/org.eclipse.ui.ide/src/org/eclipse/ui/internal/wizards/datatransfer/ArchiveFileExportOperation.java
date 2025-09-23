@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 public class ArchiveFileExportOperation implements IRunnableWithProgress {
 	private IFileExporter exporter;
 
-	private String destinationFilename;
+	private final String destinationFilename;
 
 	private IProgressMonitor monitor;
 
@@ -50,7 +50,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 
 	private IResource resource;
 
-	private List<IStatus> errorTable = new ArrayList<>(1); // IStatus
+	private final List<IStatus> errorTable = new ArrayList<>(1); // IStatus
 
 	private boolean useCompression = true;
 

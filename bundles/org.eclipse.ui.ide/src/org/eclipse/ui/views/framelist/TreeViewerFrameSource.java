@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  */
 public class TreeViewerFrameSource implements IFrameSource {
 
-	private AbstractTreeViewer viewer;
+	private final AbstractTreeViewer viewer;
 
 	/**
 	 * Constructs a new tree viewer frame source for the specified tree viewer.

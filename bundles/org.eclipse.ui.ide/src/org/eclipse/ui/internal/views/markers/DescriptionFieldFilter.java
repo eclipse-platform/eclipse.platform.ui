@@ -45,11 +45,13 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 	@Override
 	public void loadSettings(IMemento memento) {
 		String modifier = memento.getString(TAG_CONTAINS_MODIFIER);
-		if (modifier == null)
+		if (modifier == null) {
 			return;
+		}
 		String contains = memento.getString(TAG_CONTAINS_TEXT);
-		if (contains == null)
+		if (contains == null) {
 			return;
+		}
 		containsText = contains;
 		containsModifier = modifier;
 
@@ -83,12 +85,14 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 
 	@Override
 	public boolean select(MarkerItem item) {
-		if (containsText.isEmpty())
+		if (containsText.isEmpty()) {
 			return true;
+		}
 
 		String value = getField().getValue(item);
-		if (containsModifier.equals(MarkerSupportConstants.CONTAINS_KEY))
+		if (containsModifier.equals(MarkerSupportConstants.CONTAINS_KEY)) {
 			return value.contains(containsText);
+		}
 		return !value.contains(containsText);
 
 	}

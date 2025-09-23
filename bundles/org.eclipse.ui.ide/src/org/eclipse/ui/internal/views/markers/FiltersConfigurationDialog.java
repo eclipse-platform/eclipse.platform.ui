@@ -78,13 +78,13 @@ public class FiltersConfigurationDialog extends TrayDialog {
 	private static final String PREV_SELECTED_ELEMENTS = "PREV_SELECTED_ELEMENTS"; //$NON-NLS-1$
 	private static int DEFAULTS_BUTTON_ID = 25;
 
-	private Collection<MarkerFieldFilterGroup> filterGroups;
+	private final Collection<MarkerFieldFilterGroup> filterGroups;
 
 	private CheckboxTableViewer configsTable;
 
 	private MarkerFieldFilterGroup selectedFilterGroup;
 
-	private MarkerContentGenerator generator;
+	private final MarkerContentGenerator generator;
 
 	private boolean andFilters = false;
 
@@ -96,7 +96,7 @@ public class FiltersConfigurationDialog extends TrayDialog {
 	private Button limitButton;
 	private Text limitText;
 
-	private GroupFilterConfigurationArea scopeArea = createScopeArea();
+	private final GroupFilterConfigurationArea scopeArea = createScopeArea();
 	private ScrolledForm form;
 
 	private Collection<FilterConfigurationArea> configAreas;
@@ -216,8 +216,9 @@ public class FiltersConfigurationDialog extends TrayDialog {
 	}
 
 	private void updateConfigComposite(boolean enabled) {
-		if (enabled)
+		if (enabled) {
 			updateButtonEnablement(getSelectionFromTable());
+		}
 	}
 
 	/** Update the enablement of limitText */

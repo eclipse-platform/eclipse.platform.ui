@@ -30,11 +30,11 @@ import org.eclipse.core.runtime.CoreException;
  *	Exports resources to a .zip file
  */
 public class ZipFileExporter implements IFileExporter {
-	private ZipOutputStream outputStream;
+	private final ZipOutputStream outputStream;
 
 	private boolean useCompression = true;
 
-	private boolean resolveLinks;
+	private final boolean resolveLinks;
 
 	/**
 	 * Create an instance of this class.
@@ -91,8 +91,9 @@ public class ZipFileExporter implements IFileExporter {
 
 		// set the timestamp
 		long localTimeStamp = contents.getLocalTimeStamp();
-		if(localTimeStamp != IResource.NULL_STAMP)
+		if(localTimeStamp != IResource.NULL_STAMP) {
 			entry.setTime(localTimeStamp);
+		}
 
 		outputStream.putNextEntry(entry);
 		try (InputStream contentStream = contents.getContents(false)) {

@@ -50,14 +50,17 @@ abstract class MarkersContribution extends CompoundContributionItem {
 	ExtendedMarkersView getView() {
 		IWorkbenchWindow active = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
-		if (active == null)
+		if (active == null) {
 			return null;
+		}
 		IWorkbenchPage page = active.getActivePage();
-		if (page == null)
+		if (page == null) {
 			return null;
+		}
 		IWorkbenchPart part = page.getActivePart();
-		if (!(part instanceof ExtendedMarkersView))
+		if (!(part instanceof ExtendedMarkersView)) {
 			return null;
+		}
 
 		return (ExtendedMarkersView) part;
 	}

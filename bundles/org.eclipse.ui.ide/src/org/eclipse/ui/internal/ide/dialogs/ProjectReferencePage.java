@@ -76,8 +76,9 @@ public class ProjectReferencePage extends PropertyPage {
 		listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP
 				| SWT.BORDER);
 
-		if(!project.isOpen())
+		if(!project.isOpen()) {
 			listViewer.getControl().setEnabled(false);
+		}
 
 		listViewer.setLabelProvider(WorkbenchLabelProvider
 				.getDecoratingWorkbenchLabelProvider());

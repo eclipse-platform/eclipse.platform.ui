@@ -51,8 +51,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 
 		@Override
 		public Image getImage(Object element) {
-			if (element instanceof IFileStore) {
-				IFileStore curr = (IFileStore) element;
+			if (element instanceof IFileStore curr) {
 				if (curr.fetchInfo().isDirectory()) {
 					return IMG_FOLDER;
 				}
@@ -153,9 +152,9 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 	 */
 	private static class FileSelectionValidator implements
 			ISelectionStatusValidator {
-		private boolean multiSelect;
+		private final boolean multiSelect;
 
-		private boolean acceptFolders;
+		private final boolean acceptFolders;
 
 		/**
 		 * Creates a new instance of the receiver.
@@ -182,8 +181,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 						IDEResourceInfoUtils.EMPTY_STRING, null);
 			}
 			for (Object currentSelection : selection) {
-				if (currentSelection instanceof IFileStore) {
-					IFileStore file = (IFileStore) currentSelection;
+				if (currentSelection instanceof IFileStore file) {
 					if (!acceptFolders && file.fetchInfo().isDirectory()) {
 						return new Status(IStatus.ERROR, pluginId,
 								IStatus.ERROR,

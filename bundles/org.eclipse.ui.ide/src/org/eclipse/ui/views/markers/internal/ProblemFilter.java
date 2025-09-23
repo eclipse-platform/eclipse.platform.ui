@@ -109,11 +109,9 @@ public class ProblemFilter extends MarkerFilter {
 
 	@Override
 	public boolean selectMarker(ConcreteMarker marker) {
-		if (!(marker instanceof ProblemMarker)) {
+		if (!(marker instanceof ProblemMarker problemMarker)) {
 			return false;
 		}
-
-		ProblemMarker problemMarker = (ProblemMarker) marker;
 
 		return !isEnabled()
 				|| (super.selectMarker(problemMarker)
