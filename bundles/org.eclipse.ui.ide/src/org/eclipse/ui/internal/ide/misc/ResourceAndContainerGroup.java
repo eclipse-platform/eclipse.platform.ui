@@ -87,7 +87,7 @@ public class ResourceAndContainerGroup implements Listener {
 	public static final int PROBLEM_PATH_OCCUPIED = 8;
 
 	// the client to notify of changes
-	private Listener client;
+	private final Listener client;
 
 	// whether to allow existing resources
 	private boolean allowExistingResources = false;

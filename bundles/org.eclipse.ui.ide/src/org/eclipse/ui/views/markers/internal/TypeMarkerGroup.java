@@ -31,7 +31,7 @@ import org.eclipse.ui.views.markers.MarkerItem;
  */
 public class TypeMarkerGroup extends MarkerGroup {
 
-	private Map<String, TypesMarkerGroupingEntry> entries=new HashMap<>();
+	private final Map<String, TypesMarkerGroupingEntry> entries=new HashMap<>();
 	/**
 	 * TypeMarkerField is the MarkerField used for MarkerGroupungs
 	 *
@@ -52,8 +52,9 @@ public class TypeMarkerGroup extends MarkerGroup {
 
 			if (item.getMarker() != null) {
 				IMarker marker = item.getMarker();
-				if (marker == null || !marker.exists())
+				if (marker == null || !marker.exists()) {
 					return MarkerMessages.FieldCategory_Uncategorized;
+				}
 				String groupName = MarkerSupportRegistry.getInstance()
 						.getCategory(marker);
 				if (groupName == null) {
@@ -82,7 +83,7 @@ public class TypeMarkerGroup extends MarkerGroup {
 
 	}
 
-	private String name;
+	private final String name;
 
 	/**
 	 * Create a new instance of the receiver.

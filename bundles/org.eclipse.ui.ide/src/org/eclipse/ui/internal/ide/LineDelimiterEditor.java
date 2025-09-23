@@ -55,7 +55,7 @@ public class LineDelimiterEditor {
 	 * will be used to edit project preferences. If project is null, then we
 	 * are editing workspace preferences.
 	 */
-	private IProject project;
+	private final IProject project;
 
 	private Group group;
 
@@ -190,8 +190,9 @@ public class LineDelimiterEditor {
 	private String getStoredValue(Preferences node) {
 		try {
 			// be careful looking up for our node so not to create any nodes as side effect
-			if (node.nodeExists(Platform.PI_RUNTIME))
+			if (node.nodeExists(Platform.PI_RUNTIME)) {
 				return node.node(Platform.PI_RUNTIME).get(Platform.PREF_LINE_SEPARATOR, null);
+			}
 		} catch (BackingStoreException e) {
 			// ignore
 		}

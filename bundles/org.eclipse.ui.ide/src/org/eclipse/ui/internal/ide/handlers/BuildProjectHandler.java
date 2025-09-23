@@ -80,8 +80,7 @@ public class BuildProjectHandler extends AbstractHandler {
 	@Override
 	public void setEnabled(Object evaluationContext) {
 		boolean enabled = false;
-		if ((evaluationContext instanceof IEvaluationContext)) {
-			IEvaluationContext context = (IEvaluationContext) evaluationContext;
+		if ((evaluationContext instanceof IEvaluationContext context)) {
 			Object object = context.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
 			if (object instanceof IWorkbenchWindow) {
 				BuildAction buildAction = newBuildAction((IWorkbenchWindow) object);

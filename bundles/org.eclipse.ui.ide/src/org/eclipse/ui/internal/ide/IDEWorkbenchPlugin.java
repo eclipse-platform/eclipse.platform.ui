@@ -336,8 +336,9 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
-		if (resourceManager != null)
+		if (resourceManager != null) {
 			resourceManager.dispose();
+		}
 	}
 
 	@Override
@@ -356,8 +357,9 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 			@Override
 			public void run() {
 				IWorkbench workbench = PlatformUI.isWorkbenchRunning() ? PlatformUI.getWorkbench() : null;
-				if (workbench != null && (workbench.getDisplay().isDisposed() || workbench.isClosing()))
+				if (workbench != null && (workbench.getDisplay().isDisposed() || workbench.isClosing())) {
 					return;
+				}
 
 				if (workbench == null || workbench.isStarting()) {
 					Display.getCurrent().timerExec(PROBLEMS_VIEW_CREATION_DELAY, this);
@@ -374,15 +376,17 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 				}
 				for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
 					IWorkbenchPage activePage= window.getActivePage();
-					if (activePage == null)
+					if (activePage == null) {
 						continue;
+					}
 					for (IViewReference viewReference : activePage.getViewReferences()) {
-						if (IPageLayout.ID_PROBLEM_VIEW.equals(viewReference.getId()))
+						if (IPageLayout.ID_PROBLEM_VIEW.equals(viewReference.getId())) {
 							try {
 								activePage.showView(viewReference.getId(), viewReference.getSecondaryId(), IWorkbenchPage.VIEW_CREATE);
 							} catch (PartInitException e) {
 								log("Could not create Problems view", e.getStatus()); //$NON-NLS-1$
 							}
+						}
 					}
 				}
 			}

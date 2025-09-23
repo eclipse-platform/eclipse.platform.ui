@@ -20,7 +20,7 @@ package org.eclipse.ui.internal.wizards.datatransfer;
  */
 public class TarEntry implements Cloneable
 {
-	private String name;
+	private final String name;
 	private long mode, time, size;
 	private int type;
 	long filepos;

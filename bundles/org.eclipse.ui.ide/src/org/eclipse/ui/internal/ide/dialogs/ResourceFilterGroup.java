@@ -154,7 +154,7 @@ public class ResourceFilterGroup {
 	private Image inheritableIcon;
 	private boolean tableViewCellEditorAdequatlyUsable;
 	private Shell shell;
-	private IContainer nonExistantResource = getNonExistantResource();
+	private final IContainer nonExistantResource = getNonExistantResource();
 	private IContainer resource = nonExistantResource;
 
 	public ResourceFilterGroup() {
@@ -175,10 +175,12 @@ public class ResourceFilterGroup {
 	}
 
 	Image getImage(String string, int i) {
-		if (string.equals(FilterTypeUtil.MODE))
+		if (string.equals(FilterTypeUtil.MODE)) {
 			return new Image[] { includeIcon, excludeIcon, inheritableIcon }[i];
-		if (string.equals(FilterTypeUtil.TARGET))
+		}
+		if (string.equals(FilterTypeUtil.TARGET)) {
 			return new Image[] { fileIcon, folderIcon, fileFolderIcon }[i];
+		}
 		return null;
 	}
 
@@ -225,16 +227,18 @@ public class ResourceFilterGroup {
 		public Filters(IResourceFilterDescription filters[]) {
 			children = new LinkedList<>();
 			if (filters != null) {
-				for (IResourceFilterDescription filter : filters)
+				for (IResourceFilterDescription filter : filters) {
 					addChild(new FilterCopy(UIResourceFilterDescription.wrap(filter)));
+				}
 			}
 		}
 
 		public Filters(UIResourceFilterDescription filters[]) {
 			children = new LinkedList<>();
 			if (filters != null) {
-				for (UIResourceFilterDescription filter : filters)
+				for (UIResourceFilterDescription filter : filters) {
 					addChild(new FilterCopy(filter));
+				}
 			}
 		}
 
@@ -248,8 +252,9 @@ public class ResourceFilterGroup {
 
 		public void remove(FilterCopy filter) {
 			super.removeChild(filter);
-			if (filter.original != null)
+			if (filter.original != null) {
 				trash.add(filter);
+			}
 			changed = true;
 		}
 
@@ -291,26 +296,30 @@ public class ResourceFilterGroup {
 
 		@Override
 		public boolean hasChanged() {
-			if (changed)
+			if (changed) {
 				return true;
+			}
 			Iterator<FilterCopy> it = children.iterator();
 			while (it.hasNext()) {
 				FilterCopy filter = it.next();
-				if (filter.hasChanged())
+				if (filter.hasChanged()) {
 					return true;
+				}
 			}
 			return false;
 		}
 
 		public boolean isFirst(FilterCopy o) {
-			if (children.size() > 0)
+			if (children.size() > 0) {
 				return children.getFirst().equals(o);
+			}
 			return false;
 		}
 
 		public boolean isLast(FilterCopy o) {
-			if (children.size() > 0)
+			if (children.size() > 0) {
 				return children.getLast().equals(o);
+			}
 			return false;
 		}
 
@@ -332,8 +341,9 @@ public class ResourceFilterGroup {
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement == filters) {
-				if (filters.getChildren().length > 0)
+				if (filters.getChildren().length > 0) {
 					return new Object[] {includeOnlyGroup, excludeAllGroup};
+				}
 				return new Object[0];
 			}
 			if (parentElement instanceof String) {
@@ -341,24 +351,27 @@ public class ResourceFilterGroup {
 				int mask = parentElement.equals(includeOnlyGroup) ? IResourceFilterDescription.INCLUDE_ONLY:
 								IResourceFilterDescription.EXCLUDE_ALL;
 				for (FilterCopy filterCopy : filters.getChildren()) {
-					if ((filterCopy.getType() & mask) != 0)
+					if ((filterCopy.getType() & mask) != 0) {
 						list.add(filterCopy);
+					}
 				}
 				return list.toArray();
 			}
-			if (parentElement instanceof FilterCopy)
+			if (parentElement instanceof FilterCopy) {
 				return ((FilterCopy) parentElement).getChildren();
+			}
 			return null;
 		}
 
 		@Override
 		public Object getParent(Object element) {
-			if (element instanceof String)
+			if (element instanceof String) {
 				return filters;
-			if (element instanceof FilterCopy) {
-				FilterCopy filterCopy = (FilterCopy) element;
-				if (filterCopy.getParent() != null && filterCopy.getParent() != filters)
+			}
+			if (element instanceof FilterCopy filterCopy) {
+				if (filterCopy.getParent() != null && filterCopy.getParent() != filters) {
 					return filterCopy.getParent();
+				}
 				return ((filterCopy.getType() & IResourceFilterDescription.INCLUDE_ONLY) != 0) ? includeOnlyGroup: excludeAllGroup;
 			}
 			return null;
@@ -415,8 +428,9 @@ public class ResourceFilterGroup {
 
 		ICustomFilterArgumentUI getUI(String descriptorID) {
 			ICustomFilterArgumentUI result = customfilterArgumentMap.get(descriptorID);
-			if (result == null)
+			if (result == null) {
 				return result = customfilterArgumentMap.get(""); //default ui //$NON-NLS-1$
+			}
 			return result;
 		}
 
@@ -441,10 +455,11 @@ public class ResourceFilterGroup {
 					cell.setImage(getImage(FilterTypeUtil.MODE, element.equals(includeOnlyGroup) ? 0:1));
 				}
 				if (column.equals(FilterTypeUtil.MODE)) {
-					if (element.equals(includeOnlyGroup))
+					if (element.equals(includeOnlyGroup)) {
 						cell.setText(IDEWorkbenchMessages.ResourceFilterPage_includeOnlyColumn);
-					else
+					} else {
 						cell.setText(IDEWorkbenchMessages.ResourceFilterPage_excludeAllColumn);
+					}
 				}
 			}
 			else {
@@ -454,8 +469,9 @@ public class ResourceFilterGroup {
 					StyledString styledString = getStyleColumnText(filter);
 					if (!isPartialFilter(filter)) {
 						Object isInheritable = FilterTypeUtil.getValue(filter, FilterTypeUtil.INHERITABLE);
-						if (((Boolean)isInheritable).booleanValue())
+						if (((Boolean)isInheritable).booleanValue()) {
 							styledString.append("   " + IDEWorkbenchMessages.ResourceFilterPage_recursive); //$NON-NLS-1$
+						}
 
 					}
 					cell.setText(styledString.toString());
@@ -494,8 +510,9 @@ public class ResourceFilterGroup {
 					}
 				}
 				if (children.length < 2 && !isUnaryOperator) {
-					if (children.length == 1)
+					if (children.length == 1) {
 						buffer.append(whiteSpace, fPlainStyler);
+					}
 					buffer.append(expression, fBoldStyler);
 				}
 				buffer.append(")", fBoldStyler); //$NON-NLS-1$
@@ -513,8 +530,9 @@ public class ResourceFilterGroup {
 		private String getFilterTypeName(FilterCopy filter) {
 			IFilterMatcherDescriptor desc = FilterTypeUtil.getDescriptor(filter
 					.getId());
-			if (desc != null)
+			if (desc != null) {
 				return desc.getName();
+			}
 			return ""; //$NON-NLS-1$
 		}
 	}
@@ -524,8 +542,9 @@ public class ResourceFilterGroup {
 		public boolean canModify(Object element, String property) {
 			FilterCopy filter = (FilterCopy) element;
 			if (property.equals(FilterTypeUtil.ARGUMENTS)
-					&& !filter.hasStringArguments())
+					&& !filter.hasStringArguments()) {
 				return false;
+			}
 			return true;
 		}
 
@@ -563,10 +582,11 @@ public class ResourceFilterGroup {
 			return label;
 		}
 
-		if (resource == nonExistantResource)
+		if (resource == nonExistantResource) {
 			filters = new Filters(initialFilters);
-		else
+		} else {
 			filters = new Filters(resource);
+		}
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -782,8 +802,7 @@ public class ResourceFilterGroup {
 	private void handleAdd(boolean createGroupOnly) {
 		Object selectedObject = null;
 		ISelection selection = filterView.getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = ((IStructuredSelection) selection);
+		if (selection instanceof IStructuredSelection structuredSelection) {
 			selectedObject = structuredSelection.getFirstElement();
 		}
 		handleAdd(selectedObject, createGroupOnly);
@@ -799,8 +818,7 @@ public class ResourceFilterGroup {
 				refreshAndSelect(newFilter);
 			}
 		}
-		else if (selection instanceof FilterCopy) {
-			FilterCopy filter = (FilterCopy) selection;
+		else if (selection instanceof FilterCopy filter) {
 			if (filter.getChildrenLimit() > 0) {
 				FilterCopy newFilter = new FilterCopy();
 				newFilter.setParent(filter);
@@ -840,14 +858,15 @@ public class ResourceFilterGroup {
 	}
 
 	private boolean isAddEnabled(Object selection) {
-		if (selection == null)
+		if (selection == null) {
 			return true;
-		if (selection instanceof FilterCopy) {
-			FilterCopy filter = (FilterCopy) selection;
+		}
+		if (selection instanceof FilterCopy filter) {
 			return filter.getChildrenLimit() > 0;
 		}
-		if (selection instanceof String)
+		if (selection instanceof String) {
 			return true;
+		}
 		return false;
 	}
 
@@ -856,8 +875,9 @@ public class ResourceFilterGroup {
 		Object[] existingChildren = filterViewContentProvider.getChildren(value == 0? includeOnlyGroup:excludeAllGroup);
 		filters.add(newFilter);
 		filterView.refresh();
-		if (existingChildren.length == 0)
+		if (existingChildren.length == 0) {
 			filterView.setExpandedState(newFilter, true);
+		}
 	}
 
 	Action addSubGroupFilterAction = new AddSubFilterAction(true);
@@ -870,26 +890,31 @@ public class ResourceFilterGroup {
 		@Override
 		public boolean performDrop(Object data) {
 			Object target = getCurrentTarget();
-			if (target == null)
+			if (target == null) {
 				target = filters;
+			}
 			FilterCopy[] toDrop = (FilterCopy[]) data;
 
 			if (target instanceof FilterCopy) {
-				for (FilterCopy filterToDrop : toDrop)
+				for (FilterCopy filterToDrop : toDrop) {
 					if (filterToDrop.equals(target)
-							|| ((FilterCopy) target).hasParent(filterToDrop))
+							|| ((FilterCopy) target).hasParent(filterToDrop)) {
 						return false;
+					}
+				}
 			}
 
 			for (FilterCopy filterToDrop : toDrop) {
-				if (target instanceof Filters)
+				if (target instanceof Filters) {
 					filters.add(filterToDrop);
+				}
 				if (target instanceof String) {
 					FilterTypeUtil.setValue(filterToDrop, FilterTypeUtil.MODE, target.equals(includeOnlyGroup) ? 0 : 1);
 					addToTopLevelFilters(filterToDrop);
 				}
-				if (target instanceof FilterCopy)
+				if (target instanceof FilterCopy) {
 					((FilterCopy) target).addChild(filterToDrop);
+				}
 				filterView.refresh();
 				filterView.reveal(filterToDrop);
 			}
@@ -900,8 +925,9 @@ public class ResourceFilterGroup {
 		public boolean validateDrop(Object target, int operation,
 				TransferData transferType) {
 			if (filterCopyTransfer.isSupportedType(transferType)) {
-				if (target instanceof FilterCopy)
+				if (target instanceof FilterCopy) {
 					return ((FilterCopy) target).canAcceptDrop();
+				}
 				return true;
 			}
 			return false;
@@ -926,8 +952,9 @@ public class ResourceFilterGroup {
 
 		@Override
 		public void dragStart(DragSourceEvent event) {
-			if (getFilterCopySelection().length == 0)
+			if (getFilterCopySelection().length == 0) {
 				event.doit = false;
+			}
 		}
 	}
 
@@ -996,21 +1023,24 @@ public class ResourceFilterGroup {
 		if (addButton != null) {
 			ISelection selection = filterView.getSelection();
 			IStructuredSelection structuredSelection = null;
-			if (selection instanceof IStructuredSelection)
+			if (selection instanceof IStructuredSelection) {
 				structuredSelection = ((IStructuredSelection) selection);
+			}
 			removeButton.setEnabled(structuredSelection != null
 					&& structuredSelection.size() > 0 && !(structuredSelection.getFirstElement() instanceof String));
 			editButton.setEnabled(structuredSelection != null
 					&& structuredSelection.size() == 1
 					&& (structuredSelection.getFirstElement() instanceof FilterCopy));
-			if (upButton != null)
+			if (upButton != null) {
 				upButton.setEnabled(structuredSelection != null
 						&& (structuredSelection.size() > 0)
 						&& !isFirst(structuredSelection.getFirstElement()));
-			if (downButton != null)
+			}
+			if (downButton != null) {
 				downButton.setEnabled(structuredSelection != null
 						&& (structuredSelection.size() > 0)
 						&& !isLast(structuredSelection.getFirstElement()));
+			}
 		}
 	}
 
@@ -1031,8 +1061,7 @@ public class ResourceFilterGroup {
 				handleAdd(firstElement, false);
 				return true;
 			}
-			if (firstElement instanceof FilterCopy) {
-				FilterCopy filter = (FilterCopy) firstElement;
+			if (firstElement instanceof FilterCopy filter) {
 				FilterCopy copy = new FilterCopy(filter);
 				copy.setParent(filter.getParent());
 				boolean isGroup = filter.getChildrenLimit() > 0;
@@ -1066,16 +1095,16 @@ public class ResourceFilterGroup {
 		ISelection selection = filterView.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			for (Object element : (IStructuredSelection) selection) {
-				if (element instanceof FilterCopy) {
-					FilterCopy filter = (FilterCopy) element;
+				if (element instanceof FilterCopy filter) {
 					filter.getParent().removeChild(filter);
 				}
 				else {
 					int mask = element.equals(includeOnlyGroup) ? IResourceFilterDescription.INCLUDE_ONLY:
 						IResourceFilterDescription.EXCLUDE_ALL;
 					for (FilterCopy filterCopy : filters.getChildren()) {
-						if ((filterCopy.getType() & mask) != 0)
+						if ((filterCopy.getType() & mask) != 0) {
 							filters.removeChild(filterCopy);
+						}
 					}
 				}
 			}
@@ -1112,8 +1141,9 @@ public class ResourceFilterGroup {
 	 * Apply the default state of the resource.
 	 */
 	public void performDefaults() {
-		if (resource == null)
+		if (resource == null) {
 			return;
+		}
 		filters = new Filters(resource);
 		filters.removeAll();
 		filterView.setInput(filters);
@@ -1132,8 +1162,9 @@ public class ResourceFilterGroup {
 
 	public void setFilters(IResourceFilterDescription[] filters) {
 		initialFilters = new UIResourceFilterDescription[filters.length];
-		for (int i = 0; i < filters.length; i++)
+		for (int i = 0; i < filters.length; i++) {
 			initialFilters[i] = UIResourceFilterDescription.wrap(filters[i]);
+		}
 	}
 
 	public void setFilters(UIResourceFilterDescription[] filters) {
@@ -1202,7 +1233,7 @@ public class ResourceFilterGroup {
 		}
 	}
 
-	private FilterCopyTransfer filterCopyTransfer = new FilterCopyTransfer();
+	private final FilterCopyTransfer filterCopyTransfer = new FilterCopyTransfer();
 
 	class FilterCopyTransfer extends ByteArrayTransfer {
 
@@ -1211,17 +1242,18 @@ public class ResourceFilterGroup {
 
 		@Override
 		public void javaToNative(Object object, TransferData transferData) {
-			if (object == null || !(object instanceof FilterCopy[]))
+			if (object == null || !(object instanceof FilterCopy[] myTypes)) {
 				return;
+			}
 			if (isSupportedType(transferData)) {
-				FilterCopy[] myTypes = (FilterCopy[]) object;
 				try {
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					byte[] buffer;
 					try (DataOutputStream writeOut = new DataOutputStream(out)) {
 						writeOut.writeInt(myTypes.length);
-						for (FilterCopy myType : myTypes)
+						for (FilterCopy myType : myTypes) {
 							writeOut.writeInt(myType.getSerialNumber());
+						}
 						buffer = out.toByteArray();
 					}
 					super.javaToNative(buffer, transferData);
@@ -1234,8 +1266,9 @@ public class ResourceFilterGroup {
 		public Object nativeToJava(TransferData transferData) {
 			if (isSupportedType(transferData)) {
 				byte[] buffer = (byte[]) super.nativeToJava(transferData);
-				if (buffer == null)
+				if (buffer == null) {
 					return null;
+				}
 				FilterCopy[] myData;
 				try {
 					ByteArrayInputStream in = new ByteArrayInputStream(buffer);
@@ -1247,8 +1280,9 @@ public class ResourceFilterGroup {
 						int serialNumber = readIn.readInt();
 						FilterCopy tmp = filters
 							.findBySerialNumber(serialNumber);
-						if (tmp != null)
-						droppedFilters.add(tmp);
+						if (tmp != null) {
+							droppedFilters.add(tmp);
+						}
 					}
 					myData = droppedFilters
 						.toArray(new FilterCopy[0]);
@@ -1298,38 +1332,45 @@ class FilterTypeUtil {
 			if (value instanceof Integer) {
 				int selection = ((Integer) value).intValue();
 				descriptor = FilterTypeUtil.getDescriptorFromIndex(selection);
-			} else
+			} else {
 				descriptor = FilterTypeUtil.getDescriptorByName((String) value);
-			if (descriptor != null)
+			}
+			if (descriptor != null) {
 				filter.setId(descriptor.getId());
+			}
 		}
 		if (property.equals(FilterTypeUtil.MODE)) {
 			int selection = ((Integer) value).intValue();
 			int type = filter.getType()
 					& ~(IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.EXCLUDE_ALL);
-			if (selection == 0)
+			if (selection == 0) {
 				filter.setType(type | IResourceFilterDescription.INCLUDE_ONLY);
-			else
+			} else {
 				filter.setType(type | IResourceFilterDescription.EXCLUDE_ALL);
+			}
 		}
 		if (property.equals(FilterTypeUtil.TARGET)) {
 			int selection = ((Integer) value).intValue();
 			int type = filter.getType()
 					& ~(IResourceFilterDescription.FILES | IResourceFilterDescription.FOLDERS);
-			if (selection == 0)
+			if (selection == 0) {
 				filter.setType(type | IResourceFilterDescription.FILES);
-			if (selection == 1)
+			}
+			if (selection == 1) {
 				filter.setType(type | IResourceFilterDescription.FOLDERS);
-			if (selection == 2)
+			}
+			if (selection == 2) {
 				filter.setType(type | IResourceFilterDescription.FILES
 						| IResourceFilterDescription.FOLDERS);
+			}
 		}
 		if (property.equals(FilterTypeUtil.INHERITABLE)) {
 			int type = filter.getType() & ~IResourceFilterDescription.INHERITABLE;
-			if (((Boolean) value).booleanValue())
+			if (((Boolean) value).booleanValue()) {
 				filter.setType(type | IResourceFilterDescription.INHERITABLE);
-			else
+			} else {
 				filter.setType(type);
+			}
 		}
 		if (property.equals(FilterTypeUtil.ARGUMENTS)) {
 			filter.setArguments(value.equals("") ? null : value); //$NON-NLS-1$
@@ -1340,8 +1381,9 @@ class FilterTypeUtil {
 		IFilterMatcherDescriptor[] descriptors = ResourcesPlugin.getWorkspace()
 				.getFilterMatcherDescriptors();
 		for (IFilterMatcherDescriptor descriptor : descriptors) {
-			if (descriptor.getId().equals(id))
+			if (descriptor.getId().equals(id)) {
 				return descriptor;
+			}
 		}
 		return null;
 	}
@@ -1350,8 +1392,9 @@ class FilterTypeUtil {
 		IFilterMatcherDescriptor descriptors[] = ResourcesPlugin.getWorkspace()
 				.getFilterMatcherDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
-			if (descriptors[i].getId().equals(id))
+			if (descriptors[i].getId().equals(id)) {
 				return i;
+			}
 		}
 		return -1;
 	}
@@ -1362,26 +1405,32 @@ class FilterTypeUtil {
 			return getDescriptorIndex(id);
 		}
 		if (property.equals(MODE)) {
-			if ((filter.getType() & IResourceFilterDescription.INCLUDE_ONLY) != 0)
+			if ((filter.getType() & IResourceFilterDescription.INCLUDE_ONLY) != 0) {
 				return 0;
+			}
 			return 1;
 		}
 		if (property.equals(TARGET)) {
 			boolean includeFiles = (filter.getType() & IResourceFilterDescription.FILES) != 0;
 			boolean includeFolders = (filter.getType() & IResourceFilterDescription.FOLDERS) != 0;
-			if (includeFiles && includeFolders)
+			if (includeFiles && includeFolders) {
 				return 2;
-			if (includeFiles)
+			}
+			if (includeFiles) {
 				return 0;
-			if (includeFolders)
+			}
+			if (includeFolders) {
 				return 1;
+			}
 		}
-		if (property.equals(INHERITABLE))
+		if (property.equals(INHERITABLE)) {
 			return Boolean.valueOf(
 					(filter.getType() & IResourceFilterDescription.INHERITABLE) != 0);
+		}
 
-		if (property.equals(ARGUMENTS))
+		if (property.equals(ARGUMENTS)) {
 			return filter.getFileInfoMatcherDescription().getArguments() != null ? filter.getFileInfoMatcherDescription().getArguments() : ""; //$NON-NLS-1$
+		}
 		return null;
 	}
 
@@ -1398,26 +1447,31 @@ class FilterTypeUtil {
 		LinkedList<String> names = new LinkedList<>();
 		for (IFilterMatcherDescriptor descriptor : descriptors) {
 			// remove legacy filters
-			if (descriptor.getId().equals(DefaultCustomFilterArgumentUI.REGEX_FILTER_ID))
+			if (descriptor.getId().equals(DefaultCustomFilterArgumentUI.REGEX_FILTER_ID)) {
 				continue;
-			if (descriptor.getId().equals(StringFileInfoMatcher.ID))
+			}
+			if (descriptor.getId().equals(StringFileInfoMatcher.ID)) {
 				continue;
+			}
 			boolean isGroup = descriptor.getArgumentType().equals(
 					IFilterMatcherDescriptor.ARGUMENT_TYPE_FILTER_MATCHER)
 					|| descriptor.getArgumentType().equals(
 							IFilterMatcherDescriptor.ARGUMENT_TYPE_FILTER_MATCHERS);
-			if (isGroup == groupOnly)
+			if (isGroup == groupOnly) {
 				names.add(descriptor.getName());
+			}
 		}
 		return names.toArray(new String[0]);
 	}
 
 	private static void sortDescriptors(IFilterMatcherDescriptor[] descriptors) {
 		Arrays.sort(descriptors, (arg0, arg1) -> {
-			if (arg0.getId().equals(FileInfoAttributesMatcher.ID))
+			if (arg0.getId().equals(FileInfoAttributesMatcher.ID)) {
 				return -1;
-			if (arg1.getId().equals(FileInfoAttributesMatcher.ID))
+			}
+			if (arg1.getId().equals(FileInfoAttributesMatcher.ID)) {
 				return 1;
+			}
 			return arg0.getId().compareTo(arg1.getId());
 		});
 	}
@@ -1428,8 +1482,9 @@ class FilterTypeUtil {
 		sortDescriptors(descriptors);
 		for (IFilterMatcherDescriptor descriptor : descriptors) {
 			if (descriptor.getArgumentType().equals(
-					IFilterMatcherDescriptor.ARGUMENT_TYPE_STRING))
+					IFilterMatcherDescriptor.ARGUMENT_TYPE_STRING)) {
 				return descriptor.getId();
+			}
 		}
 		return descriptors[0].getId();
 	}
@@ -1444,8 +1499,9 @@ class FilterTypeUtil {
 		IFilterMatcherDescriptor[] descriptors = ResourcesPlugin.getWorkspace()
 				.getFilterMatcherDescriptors();
 		for (IFilterMatcherDescriptor descriptor : descriptors) {
-			if (descriptor.getName().equals(name))
+			if (descriptor.getName().equals(name)) {
 				return descriptor;
+			}
 		}
 		return null;
 	}
@@ -1490,8 +1546,9 @@ class FilterCopy extends UIResourceFilterDescription {
 		Iterator<FilterCopy> it = children.iterator();
 		while (it.hasNext()) {
 			FilterCopy child = it.next();
-			if (child.parent == this)
+			if (child.parent == this) {
 				child.parent = null;
+			}
 		}
 		children.clear();
 		serializeChildren();
@@ -1513,8 +1570,9 @@ class FilterCopy extends UIResourceFilterDescription {
 	public boolean hasParent(FilterCopy filterCopy) {
 		FilterCopy filter = this;
 		do {
-			if (filter.equals(filterCopy))
+			if (filter.equals(filterCopy)) {
 				return true;
+			}
 			filter = filter.getParent();
 		} while (filter != null);
 		return false;
@@ -1536,11 +1594,11 @@ class FilterCopy extends UIResourceFilterDescription {
 		project = filter.getProject();
 		type = filter.getType();
 		arguments = filter.getFileInfoMatcherDescription().getArguments();
-		if (arguments instanceof FileInfoMatcherDescription[]) {
-			FileInfoMatcherDescription[] descs = (FileInfoMatcherDescription[]) arguments;
+		if (arguments instanceof FileInfoMatcherDescription[] descs) {
 			FilterCopy [] tmp = new FilterCopy[descs.length];
-			for (int i = 0; i < tmp.length; i++)
+			for (int i = 0; i < tmp.length; i++) {
 				tmp[i] = new FilterCopy(this, descs[i]);
+			}
 			arguments = tmp;
 		}
 	}
@@ -1569,11 +1627,11 @@ class FilterCopy extends UIResourceFilterDescription {
 		project = parent.getProject();
 		type = parent.getType();
 		arguments = description.getArguments();
-		if (arguments instanceof FileInfoMatcherDescription[]) {
-			FileInfoMatcherDescription[] descs = (FileInfoMatcherDescription[]) arguments;
+		if (arguments instanceof FileInfoMatcherDescription[] descs) {
 			FilterCopy [] tmp = new FilterCopy[descs.length];
-			for (int i = 0; i < tmp.length; i++)
+			for (int i = 0; i < tmp.length; i++) {
 				tmp[i] = new FilterCopy(parent, descs[i]);
+			}
 			arguments = tmp;
 		}
 	}
@@ -1624,9 +1682,10 @@ class FilterCopy extends UIResourceFilterDescription {
 
 	public boolean hasStringArguments() {
 		IFilterMatcherDescriptor descriptor = FilterTypeUtil.getDescriptor(id);
-		if (descriptor != null)
+		if (descriptor != null) {
 			return descriptor.getArgumentType().equals(
 					IFilterMatcherDescriptor.ARGUMENT_TYPE_STRING);
+		}
 		return false;
 	}
 
@@ -1634,20 +1693,22 @@ class FilterCopy extends UIResourceFilterDescription {
 		IFilterMatcherDescriptor descriptor = FilterTypeUtil.getDescriptor(id);
 		if (descriptor != null) {
 			if (descriptor.getArgumentType().equals(
-					IFilterMatcherDescriptor.ARGUMENT_TYPE_FILTER_MATCHER))
+					IFilterMatcherDescriptor.ARGUMENT_TYPE_FILTER_MATCHER)) {
 				return 1;
+			}
 			if (descriptor.getArgumentType().equals(
-					IFilterMatcherDescriptor.ARGUMENT_TYPE_FILTER_MATCHERS))
+					IFilterMatcherDescriptor.ARGUMENT_TYPE_FILTER_MATCHERS)) {
 				return Integer.MAX_VALUE;
+			}
 		}
 		return 0;
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof FilterCopy))
+		if (!(o instanceof FilterCopy filter)) {
 			return false;
-		FilterCopy filter = (FilterCopy) o;
+		}
 		return serialNumber == filter.serialNumber;
 	}
 
@@ -1666,11 +1727,13 @@ class FilterCopy extends UIResourceFilterDescription {
 		while (!pending.isEmpty()) {
 			FilterCopy filter = pending.getFirst();
 			pending.removeFirst();
-			if (filter.serialNumber == number)
+			if (filter.serialNumber == number) {
 				return filter;
+			}
 			FilterCopy[] tmp = filter.getChildren();
-			if (tmp != null)
+			if (tmp != null) {
 				pending.addAll(Arrays.asList(tmp));
+			}
 		}
 		return null;
 	}
@@ -1695,12 +1758,13 @@ class FilterCopy extends UIResourceFilterDescription {
 					}
 				}
 				if (getArguments() instanceof FilterCopy[] filters) {
-					if (filters != null)
+					if (filters != null) {
 						for (FilterCopy filter : filters) {
 							FilterCopy child = filter;
 							child.parent = this;
 							children.add(child);
 						}
+					}
 				}
 			}
 		}
@@ -1708,8 +1772,9 @@ class FilterCopy extends UIResourceFilterDescription {
 
 	protected void addChild(FilterCopy child) {
 		initializeChildren();
-		if (child.getParent() != null)
+		if (child.getParent() != null) {
 			child.getParent().removeChild(child);
+		}
 		children.add(child);
 		child.parent = this;
 		serializeChildren();
@@ -1718,8 +1783,9 @@ class FilterCopy extends UIResourceFilterDescription {
 	protected void removeChild(FilterCopy child) {
 		initializeChildren();
 		children.remove(child);
-		if (child.parent == this)
+		if (child.parent == this) {
 			child.parent = null;
+		}
 		serializeChildren();
 	}
 
@@ -1730,8 +1796,9 @@ class FilterCopy extends UIResourceFilterDescription {
 
 	protected void argumentsChanged() {
 		initializeChildren();
-		if (children != null)
+		if (children != null) {
 			arguments = children.toArray(new FilterCopy[0]);
+		}
 		FilterCopy up = parent;
 		while (up != null) {
 			up.serializeChildren();
@@ -1743,8 +1810,9 @@ class FilterCopy extends UIResourceFilterDescription {
 		// a partial filter is a filter that is located under a group, but not
 		// the root group
 		if (parent != null) {
-			if ((parent.getChildrenLimit() > 0) && (parent.getParent() != null))
+			if ((parent.getChildrenLimit() > 0) && (parent.getParent() != null)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -1754,11 +1822,11 @@ class FilterCopy extends UIResourceFilterDescription {
 
 
 		Object arg = FilterCopy.this.getArguments();
-		if (arg instanceof FilterCopy []) {
-			FilterCopy [] filterCopies = (FilterCopy []) arg;
+		if (arg instanceof FilterCopy [] filterCopies) {
 			FileInfoMatcherDescription[] descriptions = new FileInfoMatcherDescription[filterCopies.length];
-			for (int i = 0; i < descriptions.length; i++)
+			for (int i = 0; i < descriptions.length; i++) {
 				descriptions[i] = filterCopies[i].getFileInfoMatcherDescription();
+			}
 			arg = descriptions;
 		}
 
@@ -1768,7 +1836,7 @@ class FilterCopy extends UIResourceFilterDescription {
 
 class FilterEditDialog extends TrayDialog {
 
-	private FilterCopy filter;
+	private final FilterCopy filter;
 
 	protected Button filesButton;
 	protected Button foldersButton;
@@ -2027,8 +2095,9 @@ class FilterEditDialog extends TrayDialog {
 			public void widgetSelected(SelectionEvent e) {
 				FilterTypeUtil.setValue(filter, FilterTypeUtil.ID, idCombo
 						.getItem(idCombo.getSelectionIndex()));
-				if (filter.hasStringArguments())
+				if (filter.hasStringArguments()) {
 					filter.setArguments(""); //$NON-NLS-1$
+				}
 				setupPatternLine();
 				currentCustomFilterArgumentUI.selectionChanged();
 				getShell().layout(true);
@@ -2049,8 +2118,9 @@ class FilterEditDialog extends TrayDialog {
 
 	ICustomFilterArgumentUI getUI(String descriptorID) {
 		ICustomFilterArgumentUI result = customfilterArgumentMap.get(descriptorID);
-		if (result == null)
+		if (result == null) {
 			return result = customfilterArgumentMap.get(""); //default ui //$NON-NLS-1$
+		}
 		return result;
 	}
 
@@ -2059,9 +2129,9 @@ class FilterEditDialog extends TrayDialog {
 		if (createGroupOnly) {
 			String item = idCombo.getItem(idCombo.getSelectionIndex());
 			descriptor = FilterTypeUtil.getDescriptorByName(item);
-		}
-		else
+		} else {
 			descriptor = FilterTypeUtil.getDescriptor(filter.getId());
+		}
 		Font font = idComposite.getFont();
 		ICustomFilterArgumentUI customFilterArgumentUI = getUI(descriptor.getId());
 		if (!currentCustomFilterArgumentUI.getID().equals(customFilterArgumentUI.getID())) {
@@ -2173,10 +2243,11 @@ class FilterEditDialog extends TrayDialog {
 
 	public void updateFinishControls() {
 		if (getButton(OK) != null) {
-			if (currentCustomFilterArgumentUI != null)
+			if (currentCustomFilterArgumentUI != null) {
 				getButton(OK).setEnabled(currentCustomFilterArgumentUI.validate() == null);
-			else
+			} else {
 				getButton(OK).setEnabled(true);
+			}
 		}
 	}
 	@Override
@@ -2188,13 +2259,14 @@ class FilterEditDialog extends TrayDialog {
 	protected void configureShell(Shell newShell) {
 		String title = null;
 		if (creatingNewFilter) {
-			if (resource.getType() == IResource.PROJECT)
+			if (resource.getType() == IResource.PROJECT) {
 				title = NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_newFilterDialogTitleProject, resource.getName());
-			else
+			} else {
 				title = NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_newFilterDialogTitleFolder, resource.getName());
-		}
-		else
+			}
+		} else {
 			title = IDEWorkbenchMessages.ResourceFilterPage_editFilterDialogTitle;
+		}
 		newShell.setText(title);
 		super.configureShell(newShell);
 	}
@@ -2401,8 +2473,9 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				BufferedReader reader = new BufferedReader(new StringReader(errorString));
 				try {
 					String tmp = reader.readLine();
-					if (tmp != null)
+					if (tmp != null) {
 						errorString = tmp;
+					}
 				} catch (IOException e) {
 				}
 
@@ -2416,14 +2489,16 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 						selectedOperator);
 				description.setText(""); //$NON-NLS-1$
 				if (selectedKeyOperatorType.equals(String.class)) {
-					if (!argumentsRegularExpresion.getSelection())
+					if (!argumentsRegularExpresion.getSelection()) {
 						description.setText(IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_Matcher);
+					}
 				}
 				if (selectedKeyOperatorType.equals(Integer.class)) {
-					if (selectedKey.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || selectedKey.equals(FileInfoAttributesMatcher.KEY_CREATED))
+					if (selectedKey.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || selectedKey.equals(FileInfoAttributesMatcher.KEY_CREATED)) {
 						description.setText(IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_TimeInterval);
-					else
+					} else {
 						description.setText(IDEWorkbenchMessages.ResourceFilterPage_multiMatcher_FileLength);
+					}
 				}
 			}
 			shell.layout(true, true);
@@ -2485,10 +2560,11 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
 		String local = MultiMatcherLocalization.getLocalMultiMatcherKey(argument.key);
 		int index = multiKey.indexOf(local);
-		if (index != -1)
+		if (index != -1) {
 			multiKey.select(index);
-		else
+		} else {
 			multiKey.select(0);
+		}
 
 		setupMultiOperatorAndField(true);
 	}
@@ -2502,10 +2578,11 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
 			String local = MultiMatcherLocalization.getLocalMultiMatcherKey(argument.operator);
 			int index = multiOperator.indexOf(local);
-			if (index != -1)
+			if (index != -1) {
 				multiOperator.select(index);
-			else
+			} else {
 				multiOperator.select(0);
+			}
 		}
 		String selectedOperator = MultiMatcherLocalization.getMultiMatcherKey(multiOperator.getText());
 
@@ -2552,8 +2629,9 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
 			valueCache.put(intiantiatedKeyOperatorType.getName(), argument.pattern);
 			argument.pattern = valueCache.get(selectedKeyOperatorType.getName());
-			if (argument.pattern == null)
+			if (argument.pattern == null) {
 				argument.pattern = ""; //$NON-NLS-1$
+			}
 			filter.setArguments(FileInfoAttributesMatcher.encodeArguments(argument));
 		}
 
@@ -2619,8 +2697,9 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				public void widgetSelected(SelectionEvent e) {
 					setupDescriptionText(null);
 					storeMultiSelection();
-					if (fContentAssistField != null)
+					if (fContentAssistField != null) {
 						fContentAssistField.setEnabled(argumentsRegularExpresion.getSelection());
+					}
 				}
 			});
 			argumentsCaseSensitive.addSelectionListener(new SelectionAdapter() {
@@ -2651,10 +2730,11 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
 			if (filter.hasStringArguments()) {
 				FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
-				if (selectedKey.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || selectedKey.equals(FileInfoAttributesMatcher.KEY_CREATED))
+				if (selectedKey.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || selectedKey.equals(FileInfoAttributesMatcher.KEY_CREATED)) {
 					arguments.setText(convertToEditableTimeInterval(argument.pattern));
-				else
+				} else {
 					arguments.setText(convertToEditableLength(argument.pattern));
+				}
 			}
 
 			arguments.addModifyListener(e -> storeMultiSelection());
@@ -2704,16 +2784,18 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			});
 			if (filter.hasStringArguments()) {
 				FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
-				if (argument.pattern.isEmpty())
+				if (argument.pattern.isEmpty()) {
 					argumentsBoolean.select(0);
-				else
+				} else {
 					argumentsBoolean.select(Boolean.parseBoolean(argument.pattern) ? 0:1);
+				}
 			}
 		}
 		intiantiatedKeyOperatorType = selectedKeyOperatorType;
 
-		if (fContentAssistField != null)
+		if (fContentAssistField != null) {
 			fContentAssistField.setEnabled(isUsingRegularExpression);
+		}
 
 		shell.layout(true, true);
 		if (initializationComplete) {
@@ -2721,8 +2803,9 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			Point shellSize = shell.getSize();
 			size.x = Math.max(size.x, shellSize.x);
 			size.y = Math.max(size.y, shellSize.y);
-			if ((size.x > shellSize.x) || (size.y > shellSize.y))
+			if ((size.x > shellSize.x) || (size.y > shellSize.y)) {
 				shell.setSize(size);
+			}
 		}
 		shell.redraw();
 		setupDescriptionText(null);
@@ -2732,32 +2815,37 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	private static final long[] TIME_INTERVAL_SCALE = { 60, 60, 24 };
 
 	private String convertToEditableTimeInterval(String string) {
-		if (string.isEmpty())
+		if (string.isEmpty()) {
 			return string;
+		}
 		long value;
 		try {
 			value = Long.parseLong(string);
 		} catch (NumberFormatException e) {
 			value = 0;
 		}
-		if (value == 0)
+		if (value == 0) {
 			return Long.toString(0);
+		}
 		for (int i = 0; i < TIME_INTERVAL_PREFIXES.length - 1; i++) {
-			if (value % TIME_INTERVAL_SCALE[i] != 0)
+			if (value % TIME_INTERVAL_SCALE[i] != 0) {
 				return Long.toString(value) + TIME_INTERVAL_PREFIXES[i];
+			}
 			value /= TIME_INTERVAL_SCALE[i];
 		}
 		return Long.toString(value) + TIME_INTERVAL_PREFIXES[TIME_INTERVAL_PREFIXES.length - 1];
 	}
 
 	private String convertFromEditableTimeInterval(String string) {
-		if (string.isEmpty())
+		if (string.isEmpty()) {
 			return string;
+		}
 		for (int i = 1; i < TIME_INTERVAL_PREFIXES.length; i++) {
 			if (string.endsWith(TIME_INTERVAL_PREFIXES[i])) {
 				long value = Long.parseLong(string.substring(0, string.length() - 1));
-				for (int j = 0; j < i; j++)
+				for (int j = 0; j < i; j++) {
 					value *= TIME_INTERVAL_SCALE[j];
+				}
 				return Long.toString(value);
 			}
 		}
@@ -2770,29 +2858,34 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
 	// converts "32768" to "32k"
 	private String convertToEditableLength(String string) {
-		if (string.isEmpty())
+		if (string.isEmpty()) {
 			return string;
+		}
 		long value;
 		try {
 			value = Long.parseLong(string);
 		} catch (NumberFormatException e) {
 			value = 0;
 		}
-		if (value == 0)
+		if (value == 0) {
 			return Long.toString(0);
+		}
 		for (int i = 0; i < METRIC_PREFIXES.length; i++) {
-			if (value % 1024 != 0)
+			if (value % 1024 != 0) {
 				return Long.toString(value) + METRIC_PREFIXES[i];
-			if ((i + 1) < METRIC_PREFIXES.length)
+			}
+			if ((i + 1) < METRIC_PREFIXES.length) {
 				value /= 1024;
+			}
 		}
 		return Long.toString(value) + METRIC_PREFIXES[METRIC_PREFIXES.length - 1];
 	}
 
 	// converts "32k" to "32768"
 	private String convertFromEditableLength(String string) throws NumberFormatException {
-		if (string.isEmpty())
+		if (string.isEmpty()) {
 			return string;
+		}
 		for (int i = 1; i < METRIC_PREFIXES.length; i++) {
 			if (string.endsWith(METRIC_PREFIXES[i])) {
 				long value = Long.parseLong(string.substring(0, string.length() - 1));
@@ -2843,23 +2936,27 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			}
 			if (intiantiatedKeyOperatorType.equals(String.class) && arguments != null) {
 				argument.pattern = arguments.getText();
-				if (argumentsRegularExpresion != null)
+				if (argumentsRegularExpresion != null) {
 					argument.regularExpression = argumentsRegularExpresion.getSelection();
-				if (argumentsCaseSensitive != null)
+				}
+				if (argumentsCaseSensitive != null) {
 					argument.caseSensitive = argumentsCaseSensitive.getSelection();
+				}
 			}
 			if (intiantiatedKeyOperatorType.equals(Integer.class) && arguments != null) {
 				try {
-					if (selectedKey.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || selectedKey.equals(FileInfoAttributesMatcher.KEY_CREATED))
+					if (selectedKey.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || selectedKey.equals(FileInfoAttributesMatcher.KEY_CREATED)) {
 						argument.pattern = convertFromEditableTimeInterval(arguments.getText());
-					else
+					} else {
 						argument.pattern = convertFromEditableLength(arguments.getText());
+					}
 				} catch (NumberFormatException e) {
 					argument.pattern = arguments.getText();
 				}
 			}
-			if (intiantiatedKeyOperatorType.equals(Boolean.class) && argumentsBoolean != null)
+			if (intiantiatedKeyOperatorType.equals(Boolean.class) && argumentsBoolean != null) {
 				argument.pattern = MultiMatcherLocalization.getMultiMatcherKey(argumentsBoolean.getText());
+			}
 			String encodedArgument = FileInfoAttributesMatcher.encodeArguments(argument);
 			FilterTypeUtil.setValue(filter, FilterTypeUtil.ARGUMENTS, encodedArgument);
 		}
@@ -2868,8 +2965,9 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	private String[] getLocalOperatorsForKey(String key) {
 		String [] operators = FileInfoAttributesMatcher.getOperatorsForKey(key);
 		String[] result = new String[operators.length];
-		for (int i = 0; i < operators.length; i++)
+		for (int i = 0; i < operators.length; i++) {
 			result[i] = MultiMatcherLocalization.getLocalMultiMatcherKey(operators[i]);
+		}
 		return result;
 	}
 
@@ -2879,12 +2977,14 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		list.add(MultiMatcherLocalization.getLocalMultiMatcherKey(FileInfoAttributesMatcher.KEY_PROPJECT_RELATIVE_PATH));
 		list.add(MultiMatcherLocalization.getLocalMultiMatcherKey(FileInfoAttributesMatcher.KEY_LOCATION));
 		list.add(MultiMatcherLocalization.getLocalMultiMatcherKey(FileInfoAttributesMatcher.KEY_LAST_MODIFIED));
-		if (FileInfoAttributesMatcher.supportCreatedKey())
+		if (FileInfoAttributesMatcher.supportCreatedKey()) {
 			list.add(MultiMatcherLocalization.getLocalMultiMatcherKey(FileInfoAttributesMatcher.KEY_CREATED));
+		}
 		list.add(MultiMatcherLocalization.getLocalMultiMatcherKey(FileInfoAttributesMatcher.KEY_LENGTH));
 		list.add(MultiMatcherLocalization.getLocalMultiMatcherKey(FileInfoAttributesMatcher.KEY_IS_READONLY));
-		if (!Platform.getOS().equals(Platform.OS_WIN32))
+		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
 			list.add(MultiMatcherLocalization.getLocalMultiMatcherKey(FileInfoAttributesMatcher.KEY_IS_SYMLINK));
+		}
 		return list.toArray(new String[0]);
 	}
 
@@ -2910,10 +3010,12 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
 			if (intiantiatedKeyOperatorType.equals(String.class) && arguments != null) {
 				argument.pattern = arguments.getText();
-				if (argumentsRegularExpresion != null)
+				if (argumentsRegularExpresion != null) {
 					argument.regularExpression = argumentsRegularExpresion.getSelection();
-				if (argumentsCaseSensitive != null)
+				}
+				if (argumentsCaseSensitive != null) {
 					argument.caseSensitive = argumentsCaseSensitive.getSelection();
+				}
 				String encodedArgument = FileInfoAttributesMatcher.encodeArguments(argument);
 				FilterCopy copy = new FilterCopy(filter);
 				FilterTypeUtil.setValue(copy, FilterTypeUtil.ARGUMENTS, encodedArgument);
@@ -2969,18 +3071,22 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		builder.append(MultiMatcherLocalization.getLocalMultiMatcherKey(argument.operator));
 		builder.append(' ');
 		Class<?> type = FileInfoAttributesMatcher.getTypeForKey(argument.key, argument.operator);
-		if (type.equals(String.class))
+		if (type.equals(String.class)) {
 			builder.append(argument.pattern);
-		if (type.equals(Boolean.class))
-			builder.append(MultiMatcherLocalization.getLocalMultiMatcherKey(argument.pattern));
-		if (type.equals(Integer.class)) {
-			if (argument.key.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || argument.key.equals(FileInfoAttributesMatcher.KEY_CREATED))
-				builder.append(convertToEditableTimeInterval(argument.pattern));
-			else
-				builder.append(convertToEditableLength(argument.pattern));
 		}
-		if (type.equals(Date.class))
+		if (type.equals(Boolean.class)) {
+			builder.append(MultiMatcherLocalization.getLocalMultiMatcherKey(argument.pattern));
+		}
+		if (type.equals(Integer.class)) {
+			if (argument.key.equals(FileInfoAttributesMatcher.KEY_LAST_MODIFIED) || argument.key.equals(FileInfoAttributesMatcher.KEY_CREATED)) {
+				builder.append(convertToEditableTimeInterval(argument.pattern));
+			} else {
+				builder.append(convertToEditableLength(argument.pattern));
+			}
+		}
+		if (type.equals(Date.class)) {
 			builder.append(DateFormat.getDateInstance().format(new Date(Long.parseLong(argument.pattern))));
+		}
 
 		return builder.toString();
 	}
@@ -3033,13 +3139,15 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		argumentComposite.setLayoutData(data);
 		argumentComposite.setFont(font);
-		if (filter.hasStringArguments())
+		if (filter.hasStringArguments()) {
 			createArgumentsArea(font, argumentComposite);
+		}
 
 		createDescriptionArea(font, argumentComposite);
 
-		if (fContentAssistField != null)
+		if (fContentAssistField != null) {
 			fContentAssistField.setEnabled(filter.getId().equals(REGEX_FILTER_ID));
+		}
 		argumentComposite.layout(true);
 	}
 
@@ -3052,9 +3160,10 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		arguments.setFont(font);
 		arguments.addModifyListener(e -> FilterTypeUtil.setValue(filter, FilterTypeUtil.ARGUMENTS,
 				arguments.getText()));
-		if (filter.hasStringArguments())
+		if (filter.hasStringArguments()) {
 			arguments.setText((String) FilterTypeUtil.getValue(filter,
 					FilterTypeUtil.ARGUMENTS));
+		}
 		arguments.setEnabled(filter.hasStringArguments());
 		setArgumentLabelEnabled();
 
@@ -3091,11 +3200,13 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
 	@Override
 	public void selectionChanged() {
-		if (arguments != null)
+		if (arguments != null) {
 			arguments.setEnabled(filter.hasStringArguments());
+		}
 		setArgumentLabelEnabled();
-		if (fContentAssistField != null)
+		if (fContentAssistField != null) {
 			fContentAssistField.setEnabled(filter.getId().equals(REGEX_FILTER_ID));
+		}
 		description.setText(FilterTypeUtil
 				.getDescriptor(filter.getId()).getDescription());
 	}
@@ -3151,16 +3262,18 @@ class MultiMatcherLocalization {
 
 	static public String getLocalMultiMatcherKey(String key) {
 		for (String[] matcherKey : multiMatcherKey) {
-			if (matcherKey[0].equals(key))
+			if (matcherKey[0].equals(key)) {
 				return matcherKey[1];
+			}
 		}
 		return null;
 	}
 
 	static public String getMultiMatcherKey(String local) {
 		for (String[] matcherKey : multiMatcherKey) {
-			if (matcherKey[1].equals(local))
+			if (matcherKey[1].equals(local)) {
 				return matcherKey[0];
+			}
 		}
 		return null;
 	}

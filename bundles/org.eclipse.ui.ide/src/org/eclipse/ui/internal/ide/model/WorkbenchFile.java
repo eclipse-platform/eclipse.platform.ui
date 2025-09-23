@@ -48,8 +48,7 @@ public class WorkbenchFile extends WorkbenchResource {
 	protected ImageDescriptor getBaseImage(IResource resource) {
 		IContentType contentType = null;
 		// do we need to worry about checking here?
-		if (resource instanceof IFile) {
-			IFile file = (IFile)resource;
+		if (resource instanceof IFile file) {
 			// cached images come from ContentTypeDecorator
 			ImageDescriptor cached;
 			try {

@@ -408,8 +408,9 @@ public class RenameResourceAction extends WorkspaceAction {
 				resource.getName(), validator);
 		dialog.setBlockOnOpen(true);
 		int result = dialog.open();
-		if (result == Window.OK)
+		if (result == Window.OK) {
 			return dialog.getValue();
+		}
 		return null;
 	}
 

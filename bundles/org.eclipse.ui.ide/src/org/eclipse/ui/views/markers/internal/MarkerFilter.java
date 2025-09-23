@@ -114,7 +114,7 @@ public class MarkerFilter implements Cloneable {
 	private Set<String> cachedWorkingSet;
 
 	// The human readable name for the filter
-	private String name;
+	private final String name;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -225,8 +225,7 @@ public class MarkerFilter implements Cloneable {
 	private void addResourcesAndChildren(HashSet<String> result, IResource[] resources) {
 		for (IResource currentResource : resources) {
 			result.add(currentResource.getFullPath().toString());
-			if (currentResource instanceof IContainer) {
-				IContainer cont = (IContainer) currentResource;
+			if (currentResource instanceof IContainer cont) {
 				try {
 					addResourcesAndChildren(result, cont.members());
 				} catch (CoreException e) {

@@ -44,8 +44,9 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 	private void writeInstalledIUs(PrintWriter writer) {
 		ServiceCaller.callOnce(getClass(), IProfileRegistry.class, (registry) -> {
 			IProfile profile = registry.getProfile(IProfileRegistry.SELF);
-			if (profile == null)
+			if (profile == null) {
 				return;
+			}
 
 			writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_installConfiguration);
 			writer.println(" " + NLS.bind(IDEWorkbenchMessages.ConfigurationLogUpdateSection_lastChangedOn, DateFormat.getDateInstance().format(new Date(profile.getTimestamp())))); //$NON-NLS-1$
@@ -63,8 +64,9 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 			if (!sorted.isEmpty()) {
 				writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_IUHeader);
 				writer.println();
-				for (String string : sorted)
+				for (String string : sorted) {
 					writer.println(string);
+				}
 			}
 		});
 	}
@@ -80,16 +82,18 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 		SortedSet<String> sorted = new TreeSet<>();
 		for (Bundle bundle : bundleContext.getBundles()) {
 			String name = bundle.getSymbolicName();
-			if (name == null)
+			if (name == null) {
 				name = bundle.getLocation();
-			String message = NLS.bind(IDEWorkbenchMessages.ConfigurationLogUpdateSection_bundle, new Object[] {name, bundle.getVersion(), bundle.getLocation()});
+			}
+			String message = NLS.bind(IDEWorkbenchMessages.ConfigurationLogUpdateSection_bundle, name, bundle.getVersion(), bundle.getLocation());
 			sorted.add(message);
 		}
 		if (!sorted.isEmpty()) {
 			writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_bundleHeader);
 			writer.println();
-			for (String string : sorted)
+			for (String string : sorted) {
 				writer.println(string);
+			}
 		}
 	}
 

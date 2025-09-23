@@ -40,8 +40,9 @@ public class DeleteHandler extends MarkerViewHandler {
 	public Object execute(ExecutionEvent event) {
 
 		final MarkerSupportView view = getView(event);
-		if (view == null)
+		if (view == null) {
 			return this;
+		}
 
 		final IMarker[] selected = getSelectedMarkers(event);
 

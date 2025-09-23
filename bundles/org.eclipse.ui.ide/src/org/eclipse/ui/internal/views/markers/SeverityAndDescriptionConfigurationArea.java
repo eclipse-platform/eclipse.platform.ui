@@ -133,10 +133,11 @@ public class SeverityAndDescriptionConfigurationArea extends
 	 *            one of {@link IMarker#SEVERITY_ERROR},{@link IMarker#SEVERITY_WARNING},{@link IMarker#SEVERITY_INFO}
 	 */
 	private void updateSeverities(int constant, boolean enabled) {
-		if (enabled)
+		if (enabled) {
 			severities = constant | severities;
-		else
+		} else {
 			severities = constant ^ severities;
+		}
 
 	}
 

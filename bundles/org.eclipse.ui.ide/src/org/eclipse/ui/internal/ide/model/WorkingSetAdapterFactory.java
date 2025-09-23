@@ -38,8 +38,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 
 		@Override
 		public ResourceMapping getAdaptedResourceMapping(IAdaptable adaptable) {
-			if (adaptable instanceof IWorkingSet) {
-				IWorkingSet workingSet = (IWorkingSet) adaptable;
+			if (adaptable instanceof IWorkingSet workingSet) {
 				for (IAdaptable currentAdaptable : workingSet.getElements()) {
 					ResourceMapping mapping = getContributedResourceMapping(currentAdaptable);
 					if (mapping == null) {
@@ -65,8 +64,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 
 		@Override
 		public Object[] getChildren(Object o) {
-			if (o instanceof IWorkingSet) {
-				IWorkingSet set = (IWorkingSet) o;
+			if (o instanceof IWorkingSet set) {
 				return set.getElements();
 			}
 			return null;
@@ -74,8 +72,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 
 		@Override
 		public ImageDescriptor getImageDescriptor(Object o) {
-			if (o instanceof IWorkingSet) {
-				IWorkingSet set = (IWorkingSet) o;
+			if (o instanceof IWorkingSet set) {
 				return set.getImageDescriptor();
 			}
 			return null;
@@ -83,8 +80,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 
 		@Override
 		public String getLabel(Object o) {
-			if (o instanceof IWorkingSet) {
-				IWorkingSet set = (IWorkingSet) o;
+			if (o instanceof IWorkingSet set) {
 				return set.getLabel();
 			}
 			return null;
@@ -97,13 +93,13 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 
 	}
 
-	private IContributorResourceAdapter2 contributorResourceAdapter = new ContributorResourceAdapter();
+	private final IContributorResourceAdapter2 contributorResourceAdapter = new ContributorResourceAdapter();
 
-	private IWorkbenchAdapter workbenchAdapter = new WorkbenchAdapter();
+	private final IWorkbenchAdapter workbenchAdapter = new WorkbenchAdapter();
 
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		if (adaptableObject instanceof IWorkingSet) {
+		if (adaptableObject instanceof IWorkingSet workingSet) {
 			if (adapterType == IContributorResourceAdapter.class) {
 				return adapterType.cast(contributorResourceAdapter);
 			}
@@ -111,7 +107,6 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 				return adapterType.cast(workbenchAdapter);
 			}
 			if (adapterType == ResourceMapping.class) {
-				IWorkingSet workingSet = (IWorkingSet) adaptableObject;
 				for (IAdaptable adaptable : workingSet.getElements()) {
 					ResourceMapping mapping = getResourceMapping(adaptable);
 					if (mapping != null) {
@@ -148,9 +143,8 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 	static ResourceMapping getContributedResourceMapping(IAdaptable element) {
 		IContributorResourceAdapter resourceAdapter = Adapters.adapt(element, IContributorResourceAdapter.class);
 		if (resourceAdapter != null) {
-			if (resourceAdapter instanceof IContributorResourceAdapter2) {
+			if (resourceAdapter instanceof IContributorResourceAdapter2 mappingAdapter) {
 				// First, use the mapping contributor adapter to get the mapping
-				IContributorResourceAdapter2 mappingAdapter = (IContributorResourceAdapter2) resourceAdapter;
 				ResourceMapping mapping = mappingAdapter.getAdaptedResourceMapping(element);
 				if (mapping != null) {
 					return mapping;

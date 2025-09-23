@@ -60,11 +60,11 @@ import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
 public final class PathVariableSelectionDialog extends SelectionDialog {
 	private static final int EXTEND_ID = IDialogConstants.CLIENT_ID + 1;
 
-	private PathVariablesGroup pathVariablesGroup;
+	private final PathVariablesGroup pathVariablesGroup;
 
 	private IResource currentResource = null;
 
-	private int variableType;
+	private final int variableType;
 
 	/**
 	 * Creates a path variable selection dialog.
@@ -101,9 +101,10 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 			// XXX This only works for variables that refer to local file
 			// system locations
 			IPath selectionPath = selection.path;
-			if (currentResource != null)
+			if (currentResource != null) {
 				selectionPath = URIUtil.toPath(currentResource.getPathVariableManager()
 						.resolveURI(URIUtil.toURI(selectionPath)));
+			}
 			try {
 					dialog.setInput(EFS.getStore(URIUtil.toURI(selectionPath)));
 			} catch (CoreException e) {
@@ -182,8 +183,9 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 			PathVariablesGroup.PathVariableElement variable, IFileStore extensionFile) {
 		IPath extensionPath = IPath.fromOSString(extensionFile.toString());
 		IPath selectionPath = variable.path;
-		if (currentResource != null)
+		if (currentResource != null) {
 			selectionPath = URIUtil.toPath(currentResource.getPathVariableManager().resolveURI(URIUtil.toURI(selectionPath)));
+		}
 		int matchCount = extensionPath.matchingFirstSegments(selectionPath);
 		IPath resultPath = IPath.fromOSString(variable.name);
 
@@ -206,8 +208,9 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 		}
 		if (selection.length == 1) {
 			IPath selectionPath = selection[0].path;
-			if (currentResource != null)
+			if (currentResource != null) {
 				selectionPath = URIUtil.toPath(currentResource.getPathVariableManager().resolveURI(URIUtil.toURI(selectionPath)));
+			}
 			IFileInfo info = IDEResourceInfoUtils.getFileInfo(selectionPath);
 //			IPathVariable pathVariable = null;
 //			if (currentResource != null)

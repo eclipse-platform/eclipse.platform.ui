@@ -48,7 +48,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
 	/**
 	 * The editor to open.
 	 */
-	private IEditorDescriptor editorDescriptor;
+	private final IEditorDescriptor editorDescriptor;
 
 	/**
 	 * Creates a new action that will open editors on the then-selected file

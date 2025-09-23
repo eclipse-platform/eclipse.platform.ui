@@ -30,14 +30,12 @@ public class PagePropertyTester extends PropertyTester {
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		if (receiver instanceof Shell) {
-			Shell shell = (Shell) receiver;
+		if (receiver instanceof Shell shell) {
 			if (shell.isDisposed()) {
 				return false;
 			}
 			Object shellData = shell.getData();
-			if (shellData instanceof FilteredPreferenceDialog) {
-				FilteredPreferenceDialog propertyDialog = (FilteredPreferenceDialog) shellData;
+			if (shellData instanceof FilteredPreferenceDialog propertyDialog) {
 				IPreferencePage currentPage = propertyDialog.getCurrentPage();
 				if (currentPage != null) {
 					return currentPage.getClass().getName().equals(expectedValue);

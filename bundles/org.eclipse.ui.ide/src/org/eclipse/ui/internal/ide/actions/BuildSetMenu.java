@@ -38,7 +38,7 @@ public class BuildSetMenu extends ContributionItem {
 
 	boolean dirty = true;
 
-	private IMenuListener menuListener = manager -> {
+	private final IMenuListener menuListener = manager -> {
 		manager.markDirty();
 		dirty = true;
 	};

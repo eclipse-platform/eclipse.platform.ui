@@ -43,15 +43,15 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
 
 	private IProgressMonitor monitor;
 
-	private FileSystemExporter exporter = new FileSystemExporter();
+	private final FileSystemExporter exporter = new FileSystemExporter();
 
 	private List<IResource> resourcesToExport;
 
-	private IOverwriteQuery overwriteCallback;
+	private final IOverwriteQuery overwriteCallback;
 
-	private IResource resource;
+	private final IResource resource;
 
-	private List<IStatus> errorTable = new ArrayList<>(1);
+	private final List<IStatus> errorTable = new ArrayList<>(1);
 
 	//The constants for the overwrite 3 state
 	private static final int OVERWRITE_NOT_SET = 0;

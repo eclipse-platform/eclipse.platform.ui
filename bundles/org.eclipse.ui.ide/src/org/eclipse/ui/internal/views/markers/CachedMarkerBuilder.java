@@ -47,9 +47,9 @@ public class CachedMarkerBuilder {
 	private MarkerContentGenerator generator;
 	private MarkerUpdateJob updateJob;
 	private MarkersChangeListener markerListener;
-	private MarkerUpdateScheduler scheduler;
+	private final MarkerUpdateScheduler scheduler;
 
-	private Markers markers;
+	private final Markers markers;
 	private Markers markersClone;
 
 	final Object MARKER_INCREMENTAL_UPDATE_FAMILY = new Object();
@@ -62,7 +62,7 @@ public class CachedMarkerBuilder {
 
 	private MarkerComparator comparator;
 
-	private boolean[] changeFlags;
+	private final boolean[] changeFlags;
 
 	private IPropertyChangeListener workingSetListener;
 

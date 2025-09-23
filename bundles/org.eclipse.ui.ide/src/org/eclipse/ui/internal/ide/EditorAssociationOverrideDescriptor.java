@@ -46,7 +46,7 @@ public final class EditorAssociationOverrideDescriptor {
 	private static final String DESCRIPTION_ATTRIBUTE= "description"; //$NON-NLS-1$
 	private static final String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
 
-	private IConfigurationElement fElement;
+	private final IConfigurationElement fElement;
 
 
 	/**
@@ -102,8 +102,9 @@ public final class EditorAssociationOverrideDescriptor {
 
 		SafeRunner.run(code);
 
-		if (exception[0] == null)
+		if (exception[0] == null) {
 			return result[0];
+		}
 		throw new CoreException(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.OK, message, exception[0]));
 
 	}
@@ -139,8 +140,9 @@ public final class EditorAssociationOverrideDescriptor {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !obj.getClass().equals(this.getClass()) || getId() == null)
+		if (obj == null || !obj.getClass().equals(this.getClass()) || getId() == null) {
 			return false;
+		}
 		return getId().equals(((EditorAssociationOverrideDescriptor)obj).getId());
 	}
 

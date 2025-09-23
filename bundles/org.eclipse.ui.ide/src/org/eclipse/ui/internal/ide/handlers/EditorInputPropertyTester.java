@@ -37,10 +37,9 @@ public class EditorInputPropertyTester extends PropertyTester {
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		if (!(receiver instanceof IEditorPart)) {
+		if (!(receiver instanceof IEditorPart editor)) {
 			return false;
 		}
-		IEditorPart editor = (IEditorPart) receiver;
 		IEditorInput input = editor.getEditorInput();
 		if (input instanceof IFileEditorInput) {
 			return true;

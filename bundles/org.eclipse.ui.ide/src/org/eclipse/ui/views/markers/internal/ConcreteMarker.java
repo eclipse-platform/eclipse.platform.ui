@@ -51,7 +51,7 @@ public class ConcreteMarker extends MarkerNode{
 
 	private String type;
 
-	private IMarker marker;
+	private final IMarker marker;
 
 	/**
 	 * Cache for the marker ID.
@@ -169,11 +169,9 @@ public class ConcreteMarker extends MarkerNode{
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof ConcreteMarker)) {
+		if (!(object instanceof ConcreteMarker other)) {
 			return false;
 		}
-
-		ConcreteMarker other = (ConcreteMarker) object;
 
 		return other.getMarker().equals(getMarker());
 	}

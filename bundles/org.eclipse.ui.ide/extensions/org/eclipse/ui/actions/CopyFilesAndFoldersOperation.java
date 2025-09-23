@@ -101,7 +101,7 @@ public class CopyFilesAndFoldersOperation {
 	/**
 	 * The parent shell used to show any dialogs.
 	 */
-	private Shell messageShell;
+	private final Shell messageShell;
 
 	/**
 	 * Whether or not the copy has been canceled by the user.
@@ -477,14 +477,17 @@ public class CopyFilesAndFoldersOperation {
 							if (createVirtualFoldersAndLinks) {
 								folder.create(IResource.VIRTUAL, true, iterationMonitor.split(1));
 								IResource[] members = ((IContainer) resource).members();
-								if (members.length > 0)
+								if (members.length > 0) {
 									copy(members, destinationPath, iterationMonitor.split(99));
-							} else
+								}
+							} else {
 								folder.createLink(createRelativePath(resource.getLocationURI(), folder), 0,
 										iterationMonitor.split(100));
+							}
 						}
-					} else
+					} else {
 						resource.copy(destinationPath, IResource.SHALLOW, iterationMonitor.split(100));
+					}
 				}
 			}
 		}
@@ -498,8 +501,9 @@ public class CopyFilesAndFoldersOperation {
 	 * @return an URI that was made relative to a variable
 	 */
 	private URI createRelativePath(URI locationURI, IResource resource) {
-		if (relativeVariable == null)
+		if (relativeVariable == null) {
 			return locationURI;
+		}
 		IPath location = URIUtil.toPath(locationURI);
 		IPath result;
 		try {
@@ -752,9 +756,9 @@ public class CopyFilesAndFoldersOperation {
 		String variable= null;
 
 		//check if resource linking is disabled
-		if (ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING))
+		if (ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {
 			mode= ImportTypeDialog.IMPORT_COPY;
-		else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT)) {
+		} else if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT)) {
 			ImportTypeDialog dialog= new ImportTypeDialog(messageShell, dropOperation, fileNames, destination);
 			dialog.setResource(destination);
 			if (dialog.open() == Window.OK) {
@@ -774,13 +778,15 @@ public class CopyFilesAndFoldersOperation {
 				copyFiles(fileNames, destination);
 				break;
 			case ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS:
-				if (variable != null)
+				if (variable != null) {
 					setRelativeVariable(variable);
+				}
 				createVirtualFoldersAndLinks(fileNames, destination);
 				break;
 			case ImportTypeDialog.IMPORT_LINK:
-				if (variable != null)
+				if (variable != null) {
 					setRelativeVariable(variable);
+				}
 				linkFiles(fileNames, destination);
 				break;
 			case ImportTypeDialog.IMPORT_NONE:
@@ -1239,8 +1245,7 @@ public class CopyFilesAndFoldersOperation {
 			AbstractWorkspaceOperation op = getUndoableCopyOrMoveOperation(
 					resources, destination);
 			op.setModelProviderIds(getModelProviderIds());
-			if (op instanceof CopyResourcesOperation) {
-				CopyResourcesOperation copyMoveOp = (CopyResourcesOperation) op;
+			if (op instanceof CopyResourcesOperation copyMoveOp) {
 				copyMoveOp.setCreateVirtualFolders(createVirtualFoldersAndLinks);
 				copyMoveOp.setCreateLinks(createLinks);
 				copyMoveOp.setRelativeVariable(relativeVariable);
@@ -1574,8 +1579,9 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private String validateImportDestinationInternal(IContainer destination,
 			IFileStore[] sourceStores) {
-		if (!isAccessible(destination))
+		if (!isAccessible(destination)) {
 			return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationAccessError;
+		}
 
 		if (!destination.isVirtual()) {
 			IFileStore destinationStore;

@@ -249,8 +249,9 @@ public class LinkedResourceEditor {
 		fTree.getTree().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				if (getSelectedResource().length == 1)
+				if (getSelectedResource().length == 1) {
 					editLocation();
+				}
 			}
 		});
 		fTree.getTree().addKeyListener(new KeyAdapter() {
@@ -258,8 +259,9 @@ public class LinkedResourceEditor {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.DEL) {
 					e.doit = false;
-					if (getSelectedResource().length > 0)
+					if (getSelectedResource().length > 0) {
 						removeSelection();
+					}
 				}
 			}
 		});
@@ -291,20 +293,21 @@ public class LinkedResourceEditor {
 
 		@Override
 		public String getColumnText(Object obj, int index) {
-			if (obj instanceof IResource) {
-				IResource resource = (IResource) obj;
-				if (index == NAME_COLUMN)
+			if (obj instanceof IResource resource) {
+				if (index == NAME_COLUMN) {
 					return resource.getName();
-				else if (index == PATH_COLUMN)
+				} else if (index == PATH_COLUMN) {
 					return resource.getParent()
 							.getProjectRelativePath().toPortableString();
-				else {
+				} else {
 					IPath rawLocation = resource.getRawLocation();
-					if (rawLocation != null)
+					if (rawLocation != null) {
 						return resource.getPathVariableManager().convertToUserEditableFormat(rawLocation.toOSString(), true);
+					}
 				}
-			} else if ((obj instanceof String) && index == 0)
+			} else if ((obj instanceof String) && index == 0) {
 				return (String) obj;
+			}
 			return null;
 		}
 
@@ -312,10 +315,12 @@ public class LinkedResourceEditor {
 		public Image getColumnImage(Object obj, int index) {
 			if (index == NAME_COLUMN) {
 				if (obj instanceof String) {
-					if (obj.equals(BROKEN))
+					if (obj.equals(BROKEN)) {
 						return brokenImg;
-					if (obj.equals(ABSOLUTE))
+					}
+					if (obj.equals(ABSOLUTE)) {
 						return absoluteImg;
+					}
 					return fixedImg;
 				}
 				return stockProvider.getImage(obj);
@@ -369,15 +374,18 @@ public class LinkedResourceEditor {
 				Object[] objs = { BROKEN, ABSOLUTE, FIXED };
 				for (Object obj : objs) {
 					Object[] children = getChildren(obj);
-					if (children != null && children.length > 0)
+					if (children != null && children.length > 0) {
 						list.add(obj);
+					}
 				}
 				return list.toArray(new Object[0]);
 			} else if (parentElement instanceof String) {
-				if (((String) parentElement).equals(BROKEN))
+				if (((String) parentElement).equals(BROKEN)) {
 					return fBrokenResources.values().toArray();
-				if (((String) parentElement).equals(ABSOLUTE))
+				}
+				if (((String) parentElement).equals(ABSOLUTE)) {
 					return fAbsoluteResources.values().toArray();
+				}
 				return fFixedResources.values().toArray();
 			}
 			return null;
@@ -388,13 +396,16 @@ public class LinkedResourceEditor {
 			if (element instanceof IResource) {
 				String fullPath = ((IResource) element).getFullPath()
 						.toPortableString();
-				if (fBrokenResources.containsKey(fullPath))
+				if (fBrokenResources.containsKey(fullPath)) {
 					return BROKEN;
-				if (fAbsoluteResources.containsKey(fullPath))
+				}
+				if (fAbsoluteResources.containsKey(fullPath)) {
 					return ABSOLUTE;
+				}
 				return FIXED;
-			} else if (element instanceof String)
+			} else if (element instanceof String) {
 				return this;
+			}
 			return null;
 		}
 
@@ -403,10 +414,12 @@ public class LinkedResourceEditor {
 			if (element instanceof LinkedResourceEditor) {
 				return true;
 			} else if (element instanceof String) {
-				if (((String) element).equals(BROKEN))
+				if (((String) element).equals(BROKEN)) {
 					return !fBrokenResources.isEmpty();
-				if (((String) element).equals(ABSOLUTE))
+				}
+				if (((String) element).equals(ABSOLUTE)) {
 					return !fAbsoluteResources.isEmpty();
+				}
 				return !fFixedResources.isEmpty();
 			}
 			return false;
@@ -424,8 +437,9 @@ public class LinkedResourceEditor {
 			final LinkedList<IResource> resources = new LinkedList<>();
 			try {
 				fProject.accept(resource -> {
-					if (resource.isLinked() && !resource.isVirtual())
+					if (resource.isLinked() && !resource.isVirtual()) {
 						resources.add(resource);
+					}
 					return true;
 				});
 			} catch (CoreException e) {
@@ -447,12 +461,14 @@ public class LinkedResourceEditor {
 			String fullPath = resource.getFullPath().toPortableString();
 			try {
 				if (exists(resource)) {
-					if (isAbsolute(resource))
+					if (isAbsolute(resource)) {
 						fAbsoluteResources.put(fullPath, resource);
-					else
+					} else {
 						fFixedResources.put(fullPath, resource);
-				} else
+					}
+				} else {
 					fBrokenResources.put(fullPath, resource);
+				}
 			} catch (CoreException e) {
 				fBrokenResources.put(fullPath, resource);
 			}
@@ -493,8 +509,9 @@ public class LinkedResourceEditor {
 	boolean areFixed(IResource[] res) {
 		for (IResource resource : res) {
 			String fullPath = resource.getFullPath().toPortableString();
-			if (!fFixedResources.containsKey(fullPath))
+			if (!fFixedResources.containsKey(fullPath)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -522,10 +539,11 @@ public class LinkedResourceEditor {
 			ArrayList<IResource> resources = new ArrayList<>();
 			IResource[] selectedResources = getSelectedResource();
 			resources.addAll(Arrays.asList(selectedResources));
-			if (areFixed(selectedResources))
+			if (areFixed(selectedResources)) {
 				convertToAbsolute(resources, selectedResources);
-			else
+			} else {
 				convertToRelative(resources, selectedResources);
+			}
 		}
 	}
 
@@ -574,8 +592,7 @@ public class LinkedResourceEditor {
 			try {
 				setLinkLocation(res, location);
 				report.add(NLS.bind(IDEWorkbenchMessages.LinkedResourceEditor_changedTo,
-						new Object[] { res.getProjectRelativePath().toPortableString(),
-								res.getRawLocation().toOSString(), location.toOSString() }));
+						res.getProjectRelativePath().toPortableString(), res.getRawLocation().toOSString(), location.toOSString()));
 			} catch (CoreException e) {
 				report.add(NLS.bind(IDEWorkbenchMessages.LinkedResourceEditor_unableToSetLinkLocationForResource,
 						res.getProjectRelativePath().toPortableString()));
@@ -589,12 +606,14 @@ public class LinkedResourceEditor {
 	}
 
 	private void setLinkLocation(IResource res, IPath location) throws CoreException {
-		if (res.getType() == IResource.FILE)
+		if (res.getType() == IResource.FILE) {
 			((IFile)res).createLink(location, IResource.REPLACE,
 					new NullProgressMonitor());
-		if (res.getType() == IResource.FOLDER)
+		}
+		if (res.getType() == IResource.FOLDER) {
 			((IFolder)res).createLink(location, IResource.REPLACE,
 					new NullProgressMonitor());
+		}
 	}
 
 	private void reportResult(IResource[] selectedResources,
@@ -603,8 +622,9 @@ public class LinkedResourceEditor {
 		Iterator<String> stringIt = report.iterator();
 		while (stringIt.hasNext()) {
 			message.append(stringIt.next());
-			if (stringIt.hasNext())
+			if (stringIt.hasNext()) {
 				message.append("\n"); //$NON-NLS-1$
+			}
 		}
 		final String resultMessage = message.toString();
 		MessageDialog dialog = new MessageDialog(fConvertAbsoluteButton.getShell(), title, null,
@@ -661,13 +681,12 @@ public class LinkedResourceEditor {
 			IPath location = res.getLocation();
 			try {
 				IPath newLocation = URIUtil.toPath(res.getPathVariableManager().convertToRelative(URIUtil.toURI(location), true, null));
-				if (newLocation == null || newLocation.equals(location))
+				if (newLocation == null || newLocation.equals(location)) {
 					remaining.add(res);
-				else {
+				} else {
 					setLinkLocation(res, newLocation);
 					report.add(NLS.bind(IDEWorkbenchMessages.LinkedResourceEditor_changedTo,
-							new Object[] { res.getProjectRelativePath().toPortableString(), location.toOSString(),
-									newLocation.toOSString() }));
+							res.getProjectRelativePath().toPortableString(), location.toOSString(), newLocation.toOSString()));
 				}
 			} catch (CoreException e) {
 				remaining.add(res);
@@ -709,13 +728,10 @@ public class LinkedResourceEditor {
 							.add(NLS
 									.bind(
 											IDEWorkbenchMessages.LinkedResourceEditor_changedTo,
-											new Object[] {
-													res
-															.getProjectRelativePath()
-															.toPortableString(),
-													location.toOSString(),
-													newLocation
-															.toOSString() }));
+											res
+													.getProjectRelativePath()
+													.toPortableString(), location.toOSString(), newLocation
+													.toOSString()));
 				} catch (CoreException e) {
 					variable = -1;
 				}
@@ -736,17 +752,19 @@ public class LinkedResourceEditor {
 				IResource res = it.next();
 				IPath location = res.getLocation();
 
-				if (commonPath == null)
+				if (commonPath == null) {
 					commonPath = location;
-				else {
+				} else {
 					int count = commonPath.matchingFirstSegments(location);
-					if (count < commonPath.segmentCount())
+					if (count < commonPath.segmentCount()) {
 						commonPath = commonPath.removeLastSegments(commonPath
 								.segmentCount()
 								- count);
+					}
 				}
-				if (commonPath.segmentCount() == 0)
+				if (commonPath.segmentCount() == 0) {
 					break;
+				}
 			}
 			if (commonPath.segmentCount() > 1) {
 				String variableName = getSuitablePathVariable(commonPath);
@@ -775,14 +793,11 @@ public class LinkedResourceEditor {
 								.add(NLS
 										.bind(
 												IDEWorkbenchMessages.LinkedResourceEditor_changedTo,
-												new Object[] {
-														res
-																.getProjectRelativePath()
-																.toPortableString(),
-														location
-																.toOSString(),
-														newLocation
-																.toOSString() }));
+												res
+														.getProjectRelativePath()
+														.toPortableString(), location
+														.toOSString(), newLocation
+														.toOSString()));
 					} catch (CoreException e) {
 						report
 								.add(NLS
@@ -826,11 +841,8 @@ public class LinkedResourceEditor {
 						.add(NLS
 								.bind(
 										IDEWorkbenchMessages.LinkedResourceEditor_changedTo,
-										new Object[] {
-												res.getProjectRelativePath()
-														.toPortableString(),
-												location.toOSString(),
-												newLocation.toOSString() }));
+										res.getProjectRelativePath()
+												.toPortableString(), location.toOSString(), newLocation.toOSString()));
 			} catch (CoreException e) {
 				report
 						.add(NLS
@@ -850,18 +862,20 @@ public class LinkedResourceEditor {
 		String variableName = commonPath.lastSegment();
 		if (variableName == null) {
 			variableName = commonPath.getDevice();
-			if (variableName == null)
+			if (variableName == null) {
 				variableName = "ROOT"; //$NON-NLS-1$
-			else
+			} else {
 				variableName = variableName.substring(0, variableName.length() -1); // remove the tailing ':'
+			}
 		}
 		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < variableName.length(); i++) {
 			char c = variableName.charAt(i);
-			if (Character.isLetterOrDigit(c) || (c == '_'))
+			if (Character.isLetterOrDigit(c) || (c == '_')) {
 				buf.append(c);
-			else
+			} else {
 				buf.append('_');
+			}
 
 		}
 		int index = 1;
@@ -881,8 +895,9 @@ public class LinkedResourceEditor {
 				fConvertAbsoluteButton.getShell(),
 				PathVariableDialog.EDIT_LINK_LOCATION, resource.getType(),
 				resource.getPathVariableManager(), null);
-		if (location != null)
+		if (location != null) {
 			dialog.setLinkLocation(location);
+		}
 		dialog.setResource(resource);
 		if (dialog.open() == Window.CANCEL) {
 			return;
@@ -907,12 +922,13 @@ public class LinkedResourceEditor {
 				isBroken = true;
 			}
 			TreeMap<String, IResource> container = null;
-			if (isBroken)
+			if (isBroken) {
 				container = fBrokenResources;
-			else if (isAbsolute(resource))
+			} else if (isAbsolute(resource)) {
 				container = fAbsoluteResources;
-			else
+			} else {
 				container = fFixedResources;
+			}
 			String fullPath = resource.getFullPath().toPortableString();
 
 			if (!container.containsKey(fullPath)) {
@@ -924,8 +940,9 @@ public class LinkedResourceEditor {
 				changed = true;
 			}
 		}
-		if (changed)
+		if (changed) {
 			fTree.refresh();
+		}
 	}
 
 	boolean initialized = false;

@@ -70,7 +70,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
 	private Object source;
 
-	private IPath destinationPath;
+	private final IPath destinationPath;
 
 	private IContainer destinationContainer;
 
@@ -78,19 +78,19 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
 	private List<IPath> rejectedFiles;
 
-	private IImportStructureProvider provider;
+	private final IImportStructureProvider provider;
 
 	protected IOverwriteQuery overwriteCallback;
 
 	private Shell context;
 
-	private List<IStatus> errorTable = new ArrayList<>();
+	private final List<IStatus> errorTable = new ArrayList<>();
 
 	private boolean createVirtualFolder = false;
 
 	private boolean createLinks = false;
 
-	private boolean createLinkFilesOnly = false;
+	private final boolean createLinkFilesOnly = false;
 
 	private String relativeVariable = null;
 
@@ -318,14 +318,15 @@ public class ImportOperation extends WorkspaceModifyOperation {
 		for (int i = 0; i < segmentCount; i++) {
 			currentFolder = currentFolder.getFolder(IPath.fromOSString(path.segment(i)));
 			if (!currentFolder.exists()) {
-				if (createVirtualFolder)
+				if (createVirtualFolder) {
 					((IFolder) currentFolder).create(IResource.VIRTUAL, true,
 							null);
-				else if (createLinks)
+				} else if (createLinks) {
 					((IFolder) currentFolder).createLink(createRelativePath(
 							path, currentFolder), 0, null);
-				else
+				} else {
 					((IFolder) currentFolder).create(false, true, null);
+				}
 			}
 		}
 
@@ -539,8 +540,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			}
 
 			if (createVirtualFolder || createLinks || createLinkFilesOnly) {
-				if (targetResource.exists())
+				if (targetResource.exists()) {
 					targetResource.delete(true, subMonitor.split(50));
+				}
 				targetResource.createLink(
 						createRelativePath(IPath.fromOSString(provider.getFullPath(fileObject)), targetResource), 0,
 						subMonitor.split(50));
@@ -548,10 +550,12 @@ public class ImportOperation extends WorkspaceModifyOperation {
 				if (targetResource.isLinked()) {
 					targetResource.delete(true, subMonitor.split(50));
 					targetResource.create(contentStream, false, subMonitor.split(50));
-				} else
+				} else {
 					targetResource.setContents(contentStream, IResource.KEEP_HISTORY, subMonitor.split(100));
-			} else
+				}
+			} else {
 				targetResource.create(contentStream, false, subMonitor.split(100));
+			}
 			setResourceAttributes(targetResource, fileObject);
 
 			if (provider instanceof TarLeveledStructureProvider) {
@@ -613,8 +617,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			}
 		}else if (fileObject instanceof ZipEntry) {
 			long zipTimeStamp = ((ZipEntry)fileObject).getTime();
-			if(zipTimeStamp != -1)
+			if(zipTimeStamp != -1) {
 				timeStamp = zipTimeStamp;
+			}
 		}
 
 		if(timeStamp!= 0) {
@@ -701,22 +706,24 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			IFolder folder = workspace.getRoot().getFolder(resourcePath);
 			if (createVirtualFolder || createLinks || folder.isVirtual() || folder.isLinked()) {
 				folder.delete(true, null);
-			} else
+			} else {
 				return POLICY_FORCE_OVERWRITE;
+			}
 		}
 
 		try {
-			if (createVirtualFolder)
+			if (createVirtualFolder) {
 				workspace.getRoot().getFolder(resourcePath).create(
 						IResource.VIRTUAL, true, null);
-			else if (createLinks) {
+			} else if (createLinks) {
 				IFolder newFolder = workspace.getRoot().getFolder(resourcePath);
 				newFolder.createLink(
 						createRelativePath(IPath.fromOSString(provider.getFullPath(folderObject)), newFolder),
 						0, null);
 				policy = POLICY_SKIP_CHILDREN;
-			} else
+			} else {
 				workspace.getRoot().getFolder(resourcePath).create(false, true, null);
+			}
 		} catch (CoreException e) {
 			errorTable.add(e.getStatus());
 		}
@@ -732,10 +739,12 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 * @return an URI that was made relative to a variable
 	 */
 	private IPath createRelativePath(IPath location, IResource resource) {
-		if (relativeVariable == null)
+		if (relativeVariable == null) {
 			return location;
-		if (relativeVariable.equals(ABSOLUTE_PATH))
+		}
+		if (relativeVariable.equals(ABSOLUTE_PATH)) {
 			return location;
+		}
 		IPathVariableManager pathVariableManager = resource.getPathVariableManager();
 		try {
 			return URIUtil.toPath(pathVariableManager.convertToRelative(URIUtil.toURI(location), true, relativeVariable));

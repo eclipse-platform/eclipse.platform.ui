@@ -261,9 +261,9 @@ public class MarkerGroup {
 
 	protected MarkerField markerField;
 
-	private Map<String, Set<EntryMapping>> typesToMappings = new LinkedHashMap<>();
+	private final Map<String, Set<EntryMapping>> typesToMappings = new LinkedHashMap<>();
 
-	private IConfigurationElement configurationElement;
+	private final IConfigurationElement configurationElement;
 
 	private String id;
 

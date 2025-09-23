@@ -107,8 +107,9 @@ public final class Util {
 	 */
 	public static String getContainerName(IMarker marker) {
 
-		if (!marker.exists())
+		if (!marker.exists()) {
 			return Util.EMPTY_STRING;
+		}
 
 		try {
 			Object pathAttribute = marker

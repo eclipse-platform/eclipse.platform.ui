@@ -144,8 +144,9 @@ public class MarkerSupportInternalUtilities {
 	static final Image createImage(String completeImagePath, ResourceManager manager) {
 		URL url = BundleUtility.find(IDEWorkbenchPlugin.getDefault()
 				.getBundle().getSymbolicName(), completeImagePath);
-		if (url == null)
+		if (url == null) {
 			return null;
+		}
 		return manager.createImageWithDefault(ImageDescriptor.createFromURL(url));
 	}
 
@@ -172,12 +173,14 @@ public class MarkerSupportInternalUtilities {
 		IConfigurationElement configurationElement = field
 				.getConfigurationElement();
 		try {
-			if (configurationElement.getAttribute(ATTRIBUTE_FILTER_CLASS) == null)
+			if (configurationElement.getAttribute(ATTRIBUTE_FILTER_CLASS) == null) {
 				return null;
+			}
 			Object filter = IDEWorkbenchPlugin.createExtension(
 					configurationElement, ATTRIBUTE_FILTER_CLASS);
-			if (filter == null)
+			if (filter == null) {
 				return null;
+			}
 			MarkerFieldFilter fieldFilter = (MarkerFieldFilter) filter;
 			fieldFilter.setField(field);
 			return fieldFilter;
@@ -199,13 +202,15 @@ public class MarkerSupportInternalUtilities {
 				.getConfigurationElement();
 		try {
 			if (configurationElement
-					.getAttribute(ATTRIBUTE_FILTER_CONFIGURATION_CLASS) == null)
+					.getAttribute(ATTRIBUTE_FILTER_CONFIGURATION_CLASS) == null) {
 				return null;
+			}
 			FilterConfigurationArea area = (FilterConfigurationArea) IDEWorkbenchPlugin
 					.createExtension(configurationElement,
 							ATTRIBUTE_FILTER_CONFIGURATION_CLASS);
-			if (area != null)
+			if (area != null) {
 				area.setField(field);
+			}
 			return area;
 		} catch (CoreException e) {
 			Policy.handle(e);
@@ -244,8 +249,9 @@ public class MarkerSupportInternalUtilities {
 	 * @return String
 	 */
 	public static final String  getGroupValue(MarkerGroup group, MarkerItem item) {
-		if (item.getMarker() == null)
+		if (item.getMarker() == null) {
 			return ((MarkerSupportItem) item).getDescription();
+		}
 		try {
 			MarkerGroupingEntry groupingEntry = group.findGroupValue(item
 					.getMarker().getType(), item.getMarker());
@@ -263,8 +269,7 @@ public class MarkerSupportInternalUtilities {
 	 * @return the severity
 	 */
 	public static final int getHighestSeverity(MarkerItem markerItem) {
-		if (markerItem instanceof MarkerCategory) {
-			MarkerCategory category = (MarkerCategory) markerItem;
+		if (markerItem instanceof MarkerCategory category) {
 			return category.getHighestSeverity();
 		}
 		IMarker marker = markerItem.getMarker();
@@ -356,9 +361,8 @@ public class MarkerSupportInternalUtilities {
 	 *         otherwise
 	 */
 	public static boolean showMarkers(IViewPart view, IMarker[] markers) {
-		if (view instanceof ExtendedMarkersView) {
+		if (view instanceof ExtendedMarkersView markerView) {
 			StructuredSelection selection = new StructuredSelection(markers);
-			ExtendedMarkersView markerView = (ExtendedMarkersView) view;
 			markerView.setSelection(selection, true);
 			return true;
 		}
@@ -394,10 +398,11 @@ public class MarkerSupportInternalUtilities {
 				status = ((CoreException) exception).getStatus();
 			}
 
-			if (status == null)
+			if (status == null) {
 				StatusManager.getManager().handle(StatusUtil.newError(exception), handlingMethod);
-			else
+			} else {
 				StatusManager.getManager().handle(status, handlingMethod);
+			}
 			return;
 		}
 		StatusManager.getManager().handle(StatusUtil.newError(exception), handlingMethod);

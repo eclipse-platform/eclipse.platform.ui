@@ -85,13 +85,13 @@ public class WorkspaceUndoMonitor {
 	 * Resource listener used to determine how often to validate the workspace
 	 * undo history.
 	 */
-	private IResourceChangeListener resourceListener;
+	private final IResourceChangeListener resourceListener;
 
 	/**
 	 * Operation history listener used to determine whether there is an undoable
 	 * operation in progress.
 	 */
-	private IOperationHistoryListener historyListener;
+	private final IOperationHistoryListener historyListener;
 
 	/**
 	 * Construct an instance. Should only be called by {@link #getInstance()}

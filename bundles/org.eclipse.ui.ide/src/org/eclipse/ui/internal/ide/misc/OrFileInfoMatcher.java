@@ -29,8 +29,9 @@ public class OrFileInfoMatcher extends CompoundFileInfoMatcher {
 	public boolean matches(IContainer parent, IFileInfo fileInfo) throws CoreException {
 		if (matchers.length > 0) {
 			for (AbstractFileInfoMatcher matcher : matchers) {
-				if (matcher.matches(parent, fileInfo))
+				if (matcher.matches(parent, fileInfo)) {
 					return true;
+				}
 			}
 			return false;
 		}

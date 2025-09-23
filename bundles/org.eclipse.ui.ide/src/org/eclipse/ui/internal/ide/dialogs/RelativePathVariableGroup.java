@@ -46,7 +46,7 @@ public class RelativePathVariableGroup {
 
 	private Shell shell;
 
-	private IModel content;
+	private final IModel content;
 
 	private String label;
 
@@ -57,7 +57,7 @@ public class RelativePathVariableGroup {
 
 		String getVariable();
 	}
-	
+
 	public RelativePathVariableGroup(IModel content) {
 		this.content = content;
 	}
@@ -109,17 +109,19 @@ public class RelativePathVariableGroup {
 		variableCombo.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				if (variableCombo.getSelectionIndex() == (variableCombo.getItemCount() -1))
+				if (variableCombo.getSelectionIndex() == (variableCombo.getItemCount() -1)) {
 					editVariables();
-				else
+				} else {
 					selectVariable(variableCombo.getItem(variableCombo.getSelectionIndex()));
+				}
 			}
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (variableCombo.getSelectionIndex() == (variableCombo.getItemCount() -1))
+				if (variableCombo.getSelectionIndex() == (variableCombo.getItemCount() -1)) {
 					editVariables();
-				else
+				} else {
 					selectVariable(variableCombo.getItem(variableCombo.getSelectionIndex()));
+				}
 			}
 		});
 		setupVariableContent();
@@ -129,15 +131,17 @@ public class RelativePathVariableGroup {
 
 	public void setupVariableContent() {
 		IPathVariableManager pathVariableManager;
-		if (content.getResource() != null)
+		if (content.getResource() != null) {
 			pathVariableManager = content.getResource().getPathVariableManager();
-		else
+		} else {
 			pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
+		}
 
 		ArrayList<String> items = new ArrayList<>();
 		for (String variableName : pathVariableManager.getPathVariableNames()) {
-			if (variableName.equals("PARENT")) //$NON-NLS-1$
+			if (variableName.equals("PARENT")) { //$NON-NLS-1$
 				continue;
+			}
 			items.add(variableName);
 		}
 		items.add(IDEWorkbenchMessages.ImportTypeDialog_editVariables);
@@ -146,10 +150,11 @@ public class RelativePathVariableGroup {
 
 	private void setupVariableCheckboxToolTip() {
 		if (variableCheckbox != null) {
-			if (variableCheckbox.getSelection())
+			if (variableCheckbox.getSelection()) {
 				variableCheckbox.setToolTipText(IDEWorkbenchMessages.ImportTypeDialog_importElementsAsTooltipSet);
-			else
+			} else {
 				variableCheckbox.setToolTipText(IDEWorkbenchMessages.ImportTypeDialog_importElementsAsTooltip);
+			}
 		}
 	}
 
@@ -229,13 +234,14 @@ public class RelativePathVariableGroup {
 		IPath commonRoot = null;
 		for (IPath path : paths) {
 			if (path != null) {
-				if (commonRoot == null)
+				if (commonRoot == null) {
 					commonRoot = path;
-				else  {
+				} else  {
 					int count = commonRoot.matchingFirstSegments(path);
 					int remainingSegments = commonRoot.segmentCount() - count;
-					if (remainingSegments <= 0)
+					if (remainingSegments <= 0) {
 						return null;
+					}
 					commonRoot = commonRoot.removeLastSegments(remainingSegments);
 				}
 			}
@@ -277,8 +283,9 @@ public class RelativePathVariableGroup {
 		}
 
 		if (mostAppropriate == null) {
-			if (mostAppropriateToParent == null)
+			if (mostAppropriateToParent == null) {
 				return "PROJECT_LOC"; //$NON-NLS-1$
+			}
 			return mostAppropriateToParent;
 		}
 		return mostAppropriate;

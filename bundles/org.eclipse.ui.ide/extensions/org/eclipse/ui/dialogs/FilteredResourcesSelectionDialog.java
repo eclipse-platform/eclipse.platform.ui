@@ -118,15 +118,15 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 	private ShowDerivedResourcesAction showDerivedResourcesAction;
 
-	private ResourceItemLabelProvider resourceItemLabelProvider;
+	private final ResourceItemLabelProvider resourceItemLabelProvider;
 
-	private ResourceItemDetailsLabelProvider resourceItemDetailsLabelProvider;
+	private final ResourceItemDetailsLabelProvider resourceItemDetailsLabelProvider;
 
 	private WorkingSetFilterActionGroup workingSetFilterActionGroup;
 
-	private CustomWorkingSetFilter workingSetFilter = new CustomWorkingSetFilter();
+	private final CustomWorkingSetFilter workingSetFilter = new CustomWorkingSetFilter();
 
-	private FilterResourcesByLocation filterResourceByLocation = new FilterResourcesByLocation();
+	private final FilterResourcesByLocation filterResourceByLocation = new FilterResourcesByLocation();
 	private GroupResourcesByLocationAction groupResourcesByLocationAction;
 
 	private String title;
@@ -137,7 +137,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	 * the root of the tree that spans the search space. Often, this is the
 	 * workspace root.
 	 */
-	private IContainer container;
+	private final IContainer container;
 
 	/**
 	 * The container to use as starting point for relative search, or
@@ -147,7 +147,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	 */
 	private IContainer searchContainer;
 
-	private int typeMask;
+	private final int typeMask;
 
 	private boolean isDerived;
 
@@ -202,8 +202,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 					resource = ResourceUtil.getResource(editorInput);
 				} else {
 					ISelection selection = ww.getSelectionService().getSelection();
-					if (selection instanceof IStructuredSelection) {
-						IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+					if (selection instanceof IStructuredSelection structuredSelection) {
 						if (structuredSelection.size() == 1) {
 							resource = ResourceUtil.getResource(structuredSelection.getFirstElement());
 						}
@@ -371,8 +370,9 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	public Object[] getResult() {
 		Object[] result = super.getResult();
 
-		if (result == null)
+		if (result == null) {
 			return null;
+		}
 
 		List<Object> resultToReturn = new ArrayList<>();
 
@@ -487,14 +487,16 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 			}
 
 			int comparability = collator.compare(n1, n2);
-			if (comparability != 0)
+			if (comparability != 0) {
 				return comparability;
+			}
 
 			// Compare full names
 			if (s1Dot != -1 || s2Dot != -1) {
 				comparability = collator.compare(s1, s2);
-				if (comparability != 0)
+				if (comparability != 0) {
 					return comparability;
+				}
 			}
 
 			// Search for resource relative paths
@@ -504,8 +506,9 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 				// Return paths 'closer' to the searchContainer first
 				comparability = pathDistance(c11) - pathDistance(c21);
-				if (comparability != 0)
+				if (comparability != 0) {
 					return comparability;
+				}
 			}
 
 			// Finally compare full path segments
@@ -516,8 +519,9 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 			int c22 = p2.segmentCount() - 1;
 			for (int i = 0; i < c12 && i < c22; i++) {
 				comparability = collator.compare(p1.segment(i), p2.segment(i));
-				if (comparability != 0)
+				if (comparability != 0) {
 					return comparability;
+				}
 			}
 			comparability = c12 - c22;
 
@@ -563,12 +567,14 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		// /a/x/e/f ==> Integer.MAX_VALUE/4 + 2
 		// /g/h ==> Integer.MAX_VALUE/2
 		IPath itemPath = item.getFullPath();
-		if (itemPath.equals(containerPath))
+		if (itemPath.equals(containerPath)) {
 			return 0;
+		}
 
 		int matching = containerPath.matchingFirstSegments(itemPath);
-		if (matching == 0)
+		if (matching == 0) {
 			return Integer.MAX_VALUE / 2;
+		}
 
 		int containerSegmentCount = containerPath.segmentCount();
 		if (matching == containerSegmentCount) {
@@ -593,11 +599,13 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 			if (visitor.visit(container.createProxy())) {
 				for (IResource member : members) {
-					if (member.isAccessible())
+					if (member.isAccessible()) {
 						member.accept(visitor, IResource.NONE);
+					}
 					progressMonitor.worked(1);
-					if (progressMonitor.isCanceled())
+					if (progressMonitor.isCanceled()) {
 						break;
+					}
 				}
 			}
 
@@ -662,7 +670,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 			implements ILabelProviderListener, IStyledLabelProvider {
 
 		// Need to keep our own list of listeners
-		private ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
+		private final ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
 
 		ILabelProvider provider = WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider();
 
@@ -676,22 +684,19 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 		@Override
 		public Image getImage(Object element) {
-			if (!(element instanceof IResource)) {
+			if (!(element instanceof IResource res)) {
 				return super.getImage(element);
 			}
-
-			IResource res = (IResource) element;
 
 			return provider.getImage(res);
 		}
 
 		@Override
 		public String getText(Object element) {
-			if (!(element instanceof IResource)) {
+			if (!(element instanceof IResource res)) {
 				return super.getText(element);
 			}
 
-			IResource res = (IResource) element;
 			StringBuilder str = new StringBuilder(res.getName());
 			if (!parentIsRoot(res)) {
 				str.append(" - "); //$NON-NLS-1$
@@ -703,11 +708,10 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 		@Override
 		public StyledString getStyledText(Object element) {
-			if (!(element instanceof IResource)) {
+			if (!(element instanceof IResource resource)) {
 				return new StyledString(super.getText(element));
 			}
 
-			IResource resource = (IResource) element;
 			String searchFieldString = ((Text) getPatternControl()).getText();
 
 			// We highlight just the matches in resource name, so cut off path if any
@@ -848,11 +852,9 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	private class ResourceItemDetailsLabelProvider extends ResourceItemLabelProvider {
 		@Override
 		public Image getImage(Object element) {
-			if (!(element instanceof IResource)) {
+			if (!(element instanceof final IResource resource)) {
 				return super.getImage(element);
 			}
-
-			final IResource resource = (IResource) element;
 
 			if (parentIsRoot(resource)) {
 				return provider.getImage(resource);
@@ -891,7 +893,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	 * Viewer filter which filters resources due to current working set
 	 */
 	private static class CustomWorkingSetFilter extends ViewerFilter {
-		private ResourceWorkingSetFilter resourceWorkingSetFilter = new ResourceWorkingSetFilter();
+		private final ResourceWorkingSetFilter resourceWorkingSetFilter = new ResourceWorkingSetFilter();
 
 		/**
 		 * Sets the active working set.
@@ -915,11 +917,11 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	 */
 	private static class ResourceProxyVisitor implements IResourceProxyVisitor {
 
-		private AbstractContentProvider proxyContentProvider;
+		private final AbstractContentProvider proxyContentProvider;
 
-		private ResourceFilter resourceFilter;
+		private final ResourceFilter resourceFilter;
 
-		private IProgressMonitor progressMonitor;
+		private final IProgressMonitor progressMonitor;
 
 		/**
 		 * Creates new ResourceProxyVisitor instance.
@@ -935,8 +937,9 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		@Override
 		public boolean visit(IResourceProxy proxy) {
 
-			if (progressMonitor.isCanceled())
+			if (progressMonitor.isCanceled()) {
 				return false;
+			}
 
 			IResource resource = proxy.requestResource();
 
@@ -963,7 +966,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 		private boolean showDerived = false;
 
-		private IContainer filterContainer;
+		private final IContainer filterContainer;
 
 		/**
 		 * Container path pattern. Is <code>null</code> when only a file name pattern is
@@ -995,7 +998,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		 */
 		SearchPattern extensionPattern;
 
-		private int filterTypeMask;
+		private final int filterTypeMask;
 
 		/**
 		 * Creates new ResourceFilter instance
@@ -1033,8 +1036,9 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 				filenamePattern = stringPattern.substring(sep + 1, stringPattern.length());
 
 				if (sep > 0) {
-					if (filenamePattern.isEmpty()) // relative patterns don't need a file name
+					if (filenamePattern.isEmpty()) { // relative patterns don't need a file name
 						filenamePattern = "**"; //$NON-NLS-1$
+					}
 
 					String newContainerPattern = stringPattern.substring(isMatchPrefix(stringPattern) ? 1 : 0, sep);
 
@@ -1098,12 +1102,12 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		 */
 		@Override
 		public boolean isConsistentItem(Object item) {
-			if (!(item instanceof IResource)) {
+			if (!(item instanceof IResource resource)) {
 				return false;
 			}
-			IResource resource = (IResource) item;
-			if (this.filterContainer.findMember(resource.getFullPath()) != null)
+			if (this.filterContainer.findMember(resource.getFullPath()) != null) {
 				return true;
+			}
 			return false;
 		}
 
@@ -1114,10 +1118,9 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		 */
 		@Override
 		public boolean matchItem(Object item) {
-			if (!(item instanceof IResource)) {
+			if (!(item instanceof IResource resource)) {
 				return false;
 			}
-			IResource resource = (IResource) item;
 			return (this.filterTypeMask & resource.getType()) != 0 && matchName(resource)
 					&& (this.showDerived || !resource.isDerived());
 		}
@@ -1128,12 +1131,14 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 				if (containerPattern != null) {
 					// match full container path:
 					String containerPath = resource.getParent().getFullPath().toString();
-					if (containerPattern.matches(containerPath))
+					if (containerPattern.matches(containerPath)) {
 						return true;
+					}
 					// match path relative to current selection:
-					if (relativeContainerPattern != null)
+					if (relativeContainerPattern != null) {
 						return relativeContainerPattern.matches(containerPath);
 				// match direct parency
+					}
 
 					return false;
 				}
@@ -1156,10 +1161,10 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 		@Override
 		public boolean isSubFilter(ItemsFilter filter) {
-			if (!super.isSubFilter(filter))
+			if (!super.isSubFilter(filter)) {
 				return false;
-			if (filter instanceof ResourceFilter) {
-				ResourceFilter resourceFilter = (ResourceFilter) filter;
+			}
+			if (filter instanceof ResourceFilter resourceFilter) {
 				if (this.showDerived == resourceFilter.showDerived) {
 					if (containerPattern == null) {
 						return resourceFilter.containerPattern == null;
@@ -1175,10 +1180,10 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 
 		@Override
 		public boolean equalsFilter(ItemsFilter iFilter) {
-			if (!super.equalsFilter(iFilter))
+			if (!super.equalsFilter(iFilter)) {
 				return false;
-			if (iFilter instanceof ResourceFilter) {
-				ResourceFilter resourceFilter = (ResourceFilter) iFilter;
+			}
+			if (iFilter instanceof ResourceFilter resourceFilter) {
 				if (this.showDerived == resourceFilter.showDerived) {
 					if (containerPattern == null) {
 						return resourceFilter.containerPattern == null;
@@ -1218,8 +1223,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 			}
 			Map<IPath, IResource> bestResourceForPath = new LinkedHashMap<>();
 			for (Object item : elements) {
-				if (item instanceof IResource) {
-					IResource currentResource = (IResource) item;
+				if (item instanceof IResource currentResource) {
 					IResource otherResource = bestResourceForPath.get(currentResource.getLocation());
 					if (otherResource == null || otherResource.getFullPath().segmentCount() > currentResource
 							.getFullPath().segmentCount()) {

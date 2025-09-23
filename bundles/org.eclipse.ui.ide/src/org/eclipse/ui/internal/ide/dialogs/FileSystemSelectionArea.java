@@ -80,8 +80,7 @@ public class FileSystemSelectionArea {
 	public FileSystemConfiguration getSelectedConfiguration() {
 		ISelection selection = fileSystems.getSelection();
 
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structured = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection structured) {
 			if (structured.size() == 1) {
 				return (FileSystemConfiguration) structured.getFirstElement();
 			}

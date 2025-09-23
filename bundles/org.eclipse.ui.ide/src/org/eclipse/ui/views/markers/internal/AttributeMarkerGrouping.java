@@ -34,16 +34,16 @@ public class AttributeMarkerGrouping {
 
 	private static final String ATTRIBUTE = "attribute"; //$NON-NLS-1$
 
-	private String attribute;
+	private final String attribute;
 
-	private String markerType;
+	private final String markerType;
 
-	private String defaultGroupingEntry;
+	private final String defaultGroupingEntry;
 
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
 	// A list of groups we are associated with for unloading
-	private Collection<MarkerGroup> groups = new HashSet<>();
+	private final Collection<MarkerGroup> groups = new HashSet<>();
 
 	/**
 	 * Create a new instance of the receiver from element.

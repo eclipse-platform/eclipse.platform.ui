@@ -98,7 +98,7 @@ import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private static final int SIZING_CONTAINER_GROUP_HEIGHT = 250;
 
-	private IStructuredSelection currentSelection;
+	private final IStructuredSelection currentSelection;
 
 	private IFolder newFolder;
 
@@ -233,12 +233,13 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				if (isFilteredByParent()) {
 					URI existingLink = linkedResourceGroup.getLinkTargetURI();
 					boolean setDefaultLinkValue = false;
-					if (existingLink == null)
+					if (existingLink == null) {
 						setDefaultLinkValue = true;
-					else {
+					} else {
 						IPath path = URIUtil.toPath(existingLink);
-						if (path != null)
+						if (path != null) {
 							setDefaultLinkValue = path.toPortableString().length() > 0;
+						}
 					}
 
 					if (setDefaultLinkValue) {
@@ -362,8 +363,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	 * @since 3.6
 	 */
 	protected IContainer createContainerHandle(IPath containerPath) {
-		if (containerPath.segmentCount() == 1)
+		if (containerPath.segmentCount() == 1) {
 			return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getProject(containerPath.segment(0));
+		}
 		return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFolder(containerPath);
 	}
 
@@ -423,8 +425,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 					if (result == Window.OK) {
 						store.mkdir(0, new NullProgressMonitor());
 					}
-					if (result == 2)
+					if (result == 2) {
 						return null;
+					}
 				}
 			} catch (CoreException e) {
 				MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(),
@@ -646,8 +649,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private void handleEditFilterSelect() {
 		ResourceFilterEditDialog dialog = new ResourceFilterEditDialog(getShell());
 		dialog.setFilters(filterList);
-		if (dialog.open() == Window.OK)
+		if (dialog.open() == Window.OK) {
 			filterList = dialog.getFilters();
+		}
 	}
 
 	/**
@@ -764,20 +768,25 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 	private boolean isFilteredByParent() {
 		boolean createVirtualFolder = useVirtualFolder != null && useVirtualFolder.getSelection();
-		if (createVirtualFolder)
+		if (createVirtualFolder) {
 			return false;
-		if ((linkedResourceGroup == null) || linkedResourceGroup.isEnabled())
+		}
+		if ((linkedResourceGroup == null) || linkedResourceGroup.isEnabled()) {
 			return false;
+		}
 		IPath containerPath = resourceGroup.getContainerFullPath();
-		if (containerPath == null)
+		if (containerPath == null) {
 			return false;
+		}
 		String resourceName = resourceGroup.getResource();
-		if (resourceName == null)
+		if (resourceName == null) {
 			return false;
+		}
 		if (resourceName.length() > 0) {
 			IPath newFolderPath = containerPath.append(resourceName);
-			if (newFolderPath.segmentCount() < 2)
+			if (newFolderPath.segmentCount() < 2) {
 				return false;
+			}
 			IFolder newFolderHandle = createFolderHandle(newFolderPath);
 			IWorkspace workspace = newFolderHandle.getWorkspace();
 			return !workspace.validateFiltered(newFolderHandle).isOK();

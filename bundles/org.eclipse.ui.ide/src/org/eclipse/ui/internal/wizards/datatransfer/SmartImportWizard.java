@@ -66,8 +66,8 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 	 * @since 3.12
 	 */
 	private static final class ExpandArchiveIntoFilesystemOperation implements IRunnableWithProgress {
-		private File archive;
-		private File destination;
+		private final File archive;
+		private final File destination;
 
 		private ExpandArchiveIntoFilesystemOperation(File archive, File destination) {
 			this.archive = archive;

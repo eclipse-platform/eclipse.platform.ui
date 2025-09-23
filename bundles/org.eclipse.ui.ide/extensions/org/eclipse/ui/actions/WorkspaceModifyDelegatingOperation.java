@@ -35,7 +35,7 @@ public class WorkspaceModifyDelegatingOperation extends
 	/**
 	 * The runnable to delegate work to at execution time.
 	 */
-	private IRunnableWithProgress content;
+	private final IRunnableWithProgress content;
 
 	/**
 	 * Creates a new operation which will delegate its work to the given

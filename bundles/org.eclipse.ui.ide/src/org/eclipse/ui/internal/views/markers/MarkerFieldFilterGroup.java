@@ -105,7 +105,7 @@ public class MarkerFieldFilterGroup {
 
 	private IConfigurationElement element;
 
-	private Map<String, String> EMPTY_MAP = new HashMap<>();
+	private final Map<String, String> EMPTY_MAP = new HashMap<>();
 	private boolean enabled = true;
 	protected MarkerFieldFilter[] fieldFilters;
 	private int scope;

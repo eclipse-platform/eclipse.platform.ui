@@ -68,7 +68,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
  */
 public class WizardExternalProjectImportPage extends WizardPage {
 
-	private FileFilter projectFilter = pathName -> pathName.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME);
+	private final FileFilter projectFilter = pathName -> pathName.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME);
 
 	// Keep track of the directory that we browsed to last time
 	// the wizard was invoked.
@@ -83,7 +83,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
 	private IProjectDescription description;
 
-	private Listener locationModifyListener = e -> setPageComplete(validatePage());
+	private final Listener locationModifyListener = e -> setPageComplete(validatePage());
 
 	// constants
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;

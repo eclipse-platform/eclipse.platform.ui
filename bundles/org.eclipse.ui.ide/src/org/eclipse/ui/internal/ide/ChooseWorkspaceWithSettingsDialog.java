@@ -82,7 +82,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_HELP_CONTEXT = "helpContext"; //$NON-NLS-1$
 
-	private Collection<IConfigurationElement> selectedSettings = new HashSet<>();
+	private final Collection<IConfigurationElement> selectedSettings = new HashSet<>();
 
 	/**
 	 * Open a new instance of the receiver.
@@ -151,8 +151,9 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 		Composite sectionClient = toolkit.createComposite(copySettingsExpandable);
 		sectionClient.setBackground(workArea.getBackground());
 
-		if (createButtons(toolkit, sectionClient))
+		if (createButtons(toolkit, sectionClient)) {
 			copySettingsExpandable.setExpanded(true);
+		}
 
 		copySettingsExpandable.setClient(sectionClient);
 
@@ -189,8 +190,9 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 
 			String helpId = settingsTransfer.getAttribute(ATT_HELP_CONTEXT);
 
-			if (helpId != null)
+			if (helpId != null) {
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(button, helpId);
+			}
 
 			if (enabledSettings != null && enabledSettings.length > 0) {
 
@@ -241,8 +243,9 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 	 */
 	private String[] getEnabledSettings(IDialogSettings section) {
 
-		if (section == null)
+		if (section == null) {
 			return null;
+		}
 
 		return section.getArray(ENABLED_TRANSFERS);
 
@@ -290,9 +293,10 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 				.getDialogSettings();
 		IDialogSettings settings = dialogSettings.getSection(WORKBENCH_SETTINGS);
 
-		if (settings == null)
+		if (settings == null) {
 			settings = dialogSettings
 					.addNewSection(WORKBENCH_SETTINGS);
+		}
 
 		settings.put(ENABLED_TRANSFERS, selectionIDs);
 	}
@@ -335,8 +339,9 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 			}
 		});
 
-		if (exceptions[0] != null)
+		if (exceptions[0] != null) {
 			return exceptions[0];
+		}
 
 		return Status.OK_STATUS;
 

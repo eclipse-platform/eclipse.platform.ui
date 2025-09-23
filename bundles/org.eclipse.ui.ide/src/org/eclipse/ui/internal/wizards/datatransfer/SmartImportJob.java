@@ -67,12 +67,12 @@ public class SmartImportJob extends Job {
 	/*
 	 * Input parameters
 	 */
-	private File rootDirectory;
+	private final File rootDirectory;
 	private Set<File> directoriesToImport;
 	private Set<File> excludedDirectories;
 	private boolean discardRootProject;
 	private boolean deepChildrenDetection;
-	private boolean configureProjects;
+	private final boolean configureProjects;
 	private boolean closeProjectsAfterImport;
 	private boolean reconfigureEclipseProjects;
 	private IWorkingSet[] workingSets;
@@ -81,15 +81,15 @@ public class SmartImportJob extends Job {
 	 * working fields
 	 */
 	private IProject rootProject;
-	private IWorkspaceRoot workspaceRoot;
+	private final IWorkspaceRoot workspaceRoot;
 	private ProjectConfiguratorExtensionManager configurationManager;
 	private RecursiveImportListener listener;
 
 	protected Map<File, List<ProjectConfigurator>> importProposals;
-	private Map<IProject, List<ProjectConfigurator>> report;
-	private Map<IPath, Exception> errors;
+	private final Map<IProject, List<ProjectConfigurator>> report;
+	private final Map<IPath, Exception> errors;
 
-	private JobGroup crawlerJobGroup;
+	private final JobGroup crawlerJobGroup;
 
 	/**
 	 * Builds a new instance of the job

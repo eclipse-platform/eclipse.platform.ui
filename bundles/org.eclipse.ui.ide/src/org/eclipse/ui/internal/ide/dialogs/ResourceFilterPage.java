@@ -42,7 +42,7 @@ public class ResourceFilterPage extends PropertyPage {
 				IIDEHelpContextIds.RESOURCE_FILTER_PROPERTY_PAGE);
 
 		IResource resource = Adapters.adapt(getElement(), IResource.class);
-		IContainer container = resource instanceof IContainer ? (IContainer) resource
+		IContainer container = resource instanceof IContainer i ? i
 				: null;
 		groupWidget.setContainer(container);
 

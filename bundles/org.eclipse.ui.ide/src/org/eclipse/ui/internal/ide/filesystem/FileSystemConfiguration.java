@@ -28,7 +28,7 @@ public class FileSystemConfiguration {
 
 	FileSystemContributor contributor;
 
-	private String scheme;
+	private final String scheme;
 
 
 	/**

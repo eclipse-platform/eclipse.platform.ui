@@ -38,7 +38,7 @@ public class UpdateMarkersOperation extends AbstractMarkersOperation {
 
 	// Whether attributes should be merged with existing attributes when
 	// updated, or considered to be complete replacements.
-	private boolean mergeAttributes;
+	private final boolean mergeAttributes;
 
 	/**
 	 * Create an undoable operation that can update the specified marker with

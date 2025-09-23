@@ -46,13 +46,15 @@ public class SortFieldContribution extends MarkersContribution {
 	@Override
 	protected IContributionItem[] getContributionItems() {
 		ExtendedMarkersView view = getView();
-		if (view == null)
+		if (view == null) {
 			return new IContributionItem[0];
+		}
 
 		MarkerField[] fields = view.getVisibleFields();
 
-		if (fields.length == 0)
+		if (fields.length == 0) {
 			return new IContributionItem[0];
+		}
 
 		IContributionItem[] items = new IContributionItem[fields.length + 2];
 
@@ -81,12 +83,14 @@ public class SortFieldContribution extends MarkersContribution {
 				final ExtendedMarkersView view = getView();
 				item.addListener(SWT.Selection, event -> {
 
-					if (view != null)
+					if (view != null) {
 						view.toggleSortDirection();
+					}
 				});
 
-				if (view != null)
+				if (view != null) {
 					item.setSelection(view.getSortAscending());
+				}
 
 			}
 
@@ -110,8 +114,9 @@ public class SortFieldContribution extends MarkersContribution {
 				item.addListener(SWT.Selection,
 						getMenuItemListener(field, view));
 
-				if (view != null)
+				if (view != null) {
 					item.setSelection(view.isPrimarySortField(field));
+				}
 
 			}
 
@@ -126,8 +131,9 @@ public class SortFieldContribution extends MarkersContribution {
 
 					MenuItem item = (MenuItem) event.widget;
 
-					if (item.getSelection() && view != null)
+					if (item.getSelection() && view != null) {
 						view.setPrimarySortField(markerField);
+					}
 				};
 			}
 		};

@@ -657,8 +657,9 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 		sep.setVisible(!Util.isMac());
 		menu.add(sep);
 
-		if(Util.isCocoa())
+		if(Util.isCocoa()) {
 			menu.add(arrangeWindowsItem);
+		}
 
 		// See the comment for quit in createFileMenu
 		ActionContributionItem openPreferencesItem = new ActionContributionItem(openPreferencesAction);
@@ -671,8 +672,9 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 
 	private void addMacWindowMenuItems(MenuManager windowMenu) {
 
-		if (!Util.isCocoa())
+		if (!Util.isCocoa()) {
 			return;
+		}
 
 		windowMenu.add(minimizeItem);
 		windowMenu.add(zoomItem);
@@ -1329,12 +1331,11 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 						.getCoolBarManager();
 				IContributionItem cbItem = coolBarManager
 						.find(IWorkbenchActionConstants.TOOLBAR_FILE);
-				if (!(cbItem instanceof IToolBarContributionItem)) {
+				if (!(cbItem instanceof IToolBarContributionItem toolBarItem)) {
 					// This should not happen
 					IDEWorkbenchPlugin.log("File toolbar contribution item is missing"); //$NON-NLS-1$
 					return;
 				}
-				IToolBarContributionItem toolBarItem = (IToolBarContributionItem) cbItem;
 				IToolBarManager toolBarManager = toolBarItem.getToolBarManager();
 				if (toolBarManager == null) {
 					// error if this happens, file toolbar assumed to always exist
@@ -1386,13 +1387,12 @@ public class WorkbenchActionBuilder extends ActionBarAdvisor {
 				.getCoolBarManager();
 		IContributionItem cbItem = coolBarManager
 				.find(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
-		if (!(cbItem instanceof IToolBarContributionItem)) {
+		if (!(cbItem instanceof IToolBarContributionItem toolBarItem)) {
 			// This should not happen
 			IDEWorkbenchPlugin
 					.log("Navigation toolbar contribution item is missing"); //$NON-NLS-1$
 			return;
 		}
-		IToolBarContributionItem toolBarItem = (IToolBarContributionItem) cbItem;
 		IToolBarManager toolBarManager = toolBarItem.getToolBarManager();
 		if (toolBarManager == null) {
 			// error if this happens, navigation toolbar assumed to always exist

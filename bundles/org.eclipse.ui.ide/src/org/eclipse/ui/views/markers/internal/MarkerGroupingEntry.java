@@ -29,9 +29,9 @@ public class MarkerGroupingEntry {
 	private static final String PRIORITY = "priority"; //$NON-NLS-1$
 
 	private MarkerGroup markerGroup;
-	private String label;
+	private final String label;
 	private String id;
-	private int sortPriority;
+	private final int sortPriority;
 
 	/**
 	 * Create a new instance of the receiver from element.

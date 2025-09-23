@@ -36,13 +36,13 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  */
 public class TarLeveledStructureProvider implements
 		ILeveledImportStructureProvider {
-	private TarFile tarFile;
+	private final TarFile tarFile;
 
-	private TarEntry root = new TarEntry("/");//$NON-NLS-1$
+	private final TarEntry root = new TarEntry("/");//$NON-NLS-1$
 
 	private Map<TarEntry, List<TarEntry>> children;
 
-	private Map<IPath, TarEntry> directoryEntryCache = new HashMap<>();
+	private final Map<IPath, TarEntry> directoryEntryCache = new HashMap<>();
 
 	private int stripLevel;
 

@@ -91,10 +91,11 @@ public class PriorityConfigurationArea extends FilterConfigurationArea {
 	 */
 	void updatePriorities(int constant, boolean enabled) {
 
-		if (enabled)
+		if (enabled) {
 			priorities = constant | priorities;
-		else
+		} else {
 			priorities = constant ^ priorities;
+		}
 
 	}
 

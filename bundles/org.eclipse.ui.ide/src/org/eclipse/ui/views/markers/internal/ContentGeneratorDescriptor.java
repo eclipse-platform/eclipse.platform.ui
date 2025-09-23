@@ -44,7 +44,7 @@ public class ContentGeneratorDescriptor {
 	private static final String ELEMENT_MARKER_FIELD_CONFIGURATION = "markerFieldConfiguration"; //$NON-NLS-1$;
 	private static final String MARKER_FIELD_REFERENCE = "markerFieldReference"; //$NON-NLS-1$
 
-	private IConfigurationElement configurationElement;
+	private final IConfigurationElement configurationElement;
 	private MarkerField[] allFields;
 	private MarkerField[] allFieldsWithExtensions;
 	private Collection<MarkerType> markerTypes;

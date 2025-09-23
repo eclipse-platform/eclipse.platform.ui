@@ -60,8 +60,7 @@ public class ContainerContentProvider implements ITreeContentProvider {
 				}
 			}
 			return accessibleProjects.toArray();
-		} else if (element instanceof IContainer) {
-			IContainer container = (IContainer) element;
+		} else if (element instanceof IContainer container) {
 			if (container.isAccessible()) {
 				try {
 					List<IResource> children = new ArrayList<>();

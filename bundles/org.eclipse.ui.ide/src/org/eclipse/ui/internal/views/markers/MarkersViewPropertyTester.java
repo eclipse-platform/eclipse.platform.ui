@@ -43,17 +43,19 @@ public class MarkersViewPropertyTester extends PropertyTester {
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 
-		if (!(receiver instanceof ExtendedMarkersView))
+		if (!(receiver instanceof ExtendedMarkersView view)) {
 			return false;
+		}
 
-		ExtendedMarkersView view = (ExtendedMarkersView) receiver;
-
-		if (property.equals(ATTRIBUTE_CONTENT_GENERATOR))
+		if (property.equals(ATTRIBUTE_CONTENT_GENERATOR)) {
 			return testContentGenerator(view, args);
-		if (property.equals(ATTRIBUTE_HAS_FILTERS))
+		}
+		if (property.equals(ATTRIBUTE_HAS_FILTERS)) {
 			return view.getAllFilters().size() > 0;
-		if (property.equals(ATTRIBUTE_HAS_GROUPS))
+		}
+		if (property.equals(ATTRIBUTE_HAS_GROUPS)) {
 			return view.getBuilder().getGenerator().getMarkerGroups().size() > 0;
+		}
 
 		return false;
 	}
@@ -67,12 +69,14 @@ public class MarkersViewPropertyTester extends PropertyTester {
 
 		String currentGenerator = view.getBuilder().getGenerator().getId();
 		for (Object arg : args) {
-			if (arg.equals(currentGenerator))
+			if (arg.equals(currentGenerator)) {
 				return true;
+			}
 
 			// The value 'any' works for any content generator
-			if (arg.equals(ANY_CONTENT_GENERATOR))
+			if (arg.equals(ANY_CONTENT_GENERATOR)) {
 				return true;
+			}
 		}
 		return false;
 	}

@@ -53,8 +53,8 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 
 	private static class CategoryEntry extends TypesEntry {
 
-		private Collection<MarkerTypeEntry> children = new ArrayList<>();
-		private String name;
+		private final Collection<MarkerTypeEntry> children = new ArrayList<>();
+		private final String name;
 
 		/**
 		 * Create a new instance of the receiver.
@@ -105,7 +105,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 	private static class MarkerTypeEntry extends TypesEntry {
 
 		private CategoryEntry category;
-		private MarkerType markerType;
+		private final MarkerType markerType;
 
 		/**
 		 * Create an instance of the receiver.
@@ -198,7 +198,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 
 	private static Collection<MarkerTypeEntry> EMPTY_COLLECTION = new HashSet<>();
 
-	private HashMap<MarkerFieldFilterGroup, List<TypesEntry>> models = new HashMap<>(0);
+	private final HashMap<MarkerFieldFilterGroup, List<TypesEntry>> models = new HashMap<>(0);
 
 	private CheckboxTreeViewer typesViewer;
 

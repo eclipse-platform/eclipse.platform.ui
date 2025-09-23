@@ -470,12 +470,13 @@ public class WizardFileSystemResourceExportPage1 extends
 		if (conflictingContainer == null) {
 			// no error message, but warning may exists
 			String threatenedContainer = getOverlappingProjectName(destinationValue);
-			if(threatenedContainer == null)
+			if(threatenedContainer == null) {
 				setMessage(null);
-			else
+			} else {
 				setMessage(
 					NLS.bind(DataTransferMessages.FileExport_damageWarning, threatenedContainer),
 					WARNING);
+			}
 
 		} else {
 			setErrorMessage(NLS.bind(DataTransferMessages.FileExport_conflictingContainer, conflictingContainer));
@@ -519,14 +520,16 @@ public class WizardFileSystemResourceExportPage1 extends
 		IPath rootPath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		IPath testPath = IPath.fromOSString(targetDirectory);
 		// cannot export into workspace root
-		if(testPath.equals(rootPath))
+		if(testPath.equals(rootPath)) {
 			return rootPath.lastSegment();
+		}
 
 		//Are they the same?
 		if(testPath.matchingFirstSegments(rootPath) == rootPath.segmentCount()){
 			String firstSegment = testPath.removeFirstSegments(rootPath.segmentCount()).segment(0);
-			if(!Character.isLetterOrDigit(firstSegment.charAt(0)))
+			if(!Character.isLetterOrDigit(firstSegment.charAt(0))) {
 				return firstSegment;
+			}
 		}
 
 		return null;

@@ -50,8 +50,9 @@ public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 	@Override
 	public void loadSettings(IMemento memento) {
 		Integer priority = memento.getInteger(TAG_SELECTED_PRIORITIES);
-		if (priority == null)
+		if (priority == null) {
 			return;
+		}
 		selectedPriorities = priority.intValue();
 	}
 
@@ -86,11 +87,13 @@ public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 	@Override
 	public boolean select(MarkerItem item) {
 
-		if (selectedPriorities == 0)
+		if (selectedPriorities == 0) {
 			return true;
+		}
 		IMarker marker = item.getMarker();
-		if (marker == null)
+		if (marker == null) {
 			return false;
+		}
 		int markerPriority = 1 << marker.getAttribute(IMarker.PRIORITY,
 				IMarker.PRIORITY_NORMAL);
 

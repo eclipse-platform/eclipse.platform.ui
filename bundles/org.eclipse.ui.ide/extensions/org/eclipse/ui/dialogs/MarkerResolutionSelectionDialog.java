@@ -54,7 +54,7 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
 	/**
 	 * The marker resolutions.
 	 */
-	private IMarkerResolution[] resolutions;
+	private final IMarkerResolution[] resolutions;
 
 	/**
 	 * List to display the resolutions.

@@ -38,8 +38,9 @@ public class DeleteCompletedHandler extends MarkerViewHandler {
 	public Object execute(ExecutionEvent event) {
 
 		ExtendedMarkersView view = getView(event);
-		if (view == null)
+		if (view == null) {
 			return this;
+		}
 
 		final List<IMarker> completed = getCompletedTasks(view);
 		// Check if there is anything to do

@@ -46,8 +46,9 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 	@Override
 	public void loadSettings(IMemento memento) {
 		Integer completionValue = memento.getInteger(COMPLETION_ATTRIBUTE);
-		if (completionValue == null)
+		if (completionValue == null) {
 			return;
+		}
 		completion = completionValue.intValue();
 
 	}
@@ -79,12 +80,14 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 	@Override
 	public boolean select(MarkerItem item) {
 
-		if (completion == ALL_SELECTED)
+		if (completion == ALL_SELECTED) {
 			return true;
+		}
 
 		if (item.getAttributeValue(IMarker.USER_EDITABLE, true)) {
-			if (item.getAttributeValue(IMarker.DONE, false))
+			if (item.getAttributeValue(IMarker.DONE, false)) {
 				return (completion & COMPLETED) > 0;
+			}
 			return (completion & NOT_COMPLETED) > 0;
 		}
 

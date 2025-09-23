@@ -40,7 +40,7 @@ public class FileInPlaceEditorInput extends FileEditorInput implements
 	 * A resource listener to update the input and in-place
 	 * editor if the input's file resource changes.
 	 */
-	private IResourceChangeListener resourceListener = new IResourceChangeListener() {
+	private final IResourceChangeListener resourceListener = new IResourceChangeListener() {
 		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			IResourceDelta mainDelta = event.getDelta();

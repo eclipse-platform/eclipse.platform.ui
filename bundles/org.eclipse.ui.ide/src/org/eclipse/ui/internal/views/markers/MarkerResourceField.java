@@ -28,8 +28,9 @@ public class MarkerResourceField extends MarkerField {
 
 	@Override
 	public String getValue(MarkerItem item) {
-		if (item.getMarker() == null)
+		if (item.getMarker() == null) {
 			return MarkerSupportInternalUtilities.EMPTY_STRING;
+		}
 
 		return TextProcessor.process(item.getAttributeValue(MarkerViewUtil.NAME_ATTRIBUTE,
 				item.getMarker().getResource().getName()));

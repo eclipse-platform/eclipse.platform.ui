@@ -62,7 +62,7 @@ public class FileStoreEditorInput implements IURIEditorInput, IPersistableElemen
 		}
 	}
 
-	private IFileStore fileStore;
+	private final IFileStore fileStore;
 	private WorkbenchAdapter workbenchAdapter = new WorkbenchAdapter();
 
 	/**
@@ -109,11 +109,11 @@ public class FileStoreEditorInput implements IURIEditorInput, IPersistableElemen
 
 	@Override
 	public boolean equals(Object o) {
-		if (o == this)
+		if (o == this) {
 			return true;
+		}
 
-		if (o instanceof FileStoreEditorInput) {
-			FileStoreEditorInput input = (FileStoreEditorInput) o;
+		if (o instanceof FileStoreEditorInput input) {
 			return fileStore.equals(input.fileStore);
 		}
 

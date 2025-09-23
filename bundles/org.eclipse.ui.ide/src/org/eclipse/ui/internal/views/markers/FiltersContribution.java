@@ -72,8 +72,9 @@ public class FiltersContribution extends MarkersContribution {
 				private Listener getMenuItemListener(final MarkerFieldFilterGroup filter,
 						final ExtendedMarkersView extendedView) {
 					return event -> {
-						if (extendedView != null)
+						if (extendedView != null) {
 							extendedView.toggleFilter(filter);
+						}
 					};
 				}
 			};

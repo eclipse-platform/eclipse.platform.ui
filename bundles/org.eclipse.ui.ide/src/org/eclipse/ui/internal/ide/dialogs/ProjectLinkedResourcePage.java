@@ -47,8 +47,8 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 
 	private Label topLabel;
 
-	private PathVariablesGroup pathVariablesGroup;
-	private LinkedResourceEditor linkedResourceEditor;
+	private final PathVariablesGroup pathVariablesGroup;
+	private final LinkedResourceEditor linkedResourceEditor;
 
 	public ProjectLinkedResourcePage() {
 		pathVariablesGroup = new PathVariablesGroup(true, IResource.FILE | IResource.FOLDER);
@@ -91,10 +91,11 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				CTabFolder source = (CTabFolder) e.getSource();
-				if (source.getSelectionIndex() == 1)
+				if (source.getSelectionIndex() == 1) {
 					switchToLinkedResources();
-				else
+				} else {
 					switchToPathVariables();
+				}
 			}
 		});
 

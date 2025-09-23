@@ -161,11 +161,13 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 			//			String path = projectName + IPath.SEPARATOR + ResourcesPlugin.PI_RESOURCES;
 			//			return node.nodeExists(path) ? node.node(path).getBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, false) : false;
 			// for now, take the long way
-			if (!node.nodeExists(projectName))
+			if (!node.nodeExists(projectName)) {
 				return DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS;
+			}
 			node = node.node(projectName);
-			if (!node.nodeExists(ResourcesPlugin.PI_RESOURCES))
+			if (!node.nodeExists(ResourcesPlugin.PI_RESOURCES)) {
 				return DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS;
+			}
 			node = node.node(ResourcesPlugin.PI_RESOURCES);
 			return node.getBoolean(
 					ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS,
@@ -243,10 +245,11 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 					Preferences prefs = new ProjectScope((IProject) resource).getNode(ResourcesPlugin.PI_RESOURCES);
 					boolean newValue = !getStoredSeparateDerivedEncodingsValue();
 					// Remove the pref if it's the default, otherwise store it.
-					if (newValue == DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS)
+					if (newValue == DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS) {
 						prefs.remove(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS);
-					else
+					} else {
 						prefs.putBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, newValue);
+					}
 					prefs.flush();
 				}
 				return Status.OK_STATUS;
@@ -291,8 +294,9 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 	@Override
 	protected void doLoadDefault() {
 		super.doLoadDefault();
-		if (separateDerivedEncodingsButton != null)
+		if (separateDerivedEncodingsButton != null) {
 			separateDerivedEncodingsButton.setSelection(DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS);
+		}
 	}
 
 	@Override

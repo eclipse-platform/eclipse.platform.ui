@@ -48,7 +48,7 @@ import org.eclipse.ui.part.ResourceTransfer;
  * and <code>ResourceTransfer</code>.
  */
 public class EditorAreaDropAdapter extends DropTargetAdapter {
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	/**
 	 * Constructs a new EditorAreaDropAdapter.
@@ -115,11 +115,10 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
 		else if (ResourceTransfer.getInstance().isSupportedType(event.currentDataType)) {
 			Assert.isTrue(event.data instanceof IResource[]);
 			for (IResource resource : (IResource[]) event.data) {
-				if (resource instanceof IFile) {
-					IFile file = (IFile) resource;
-
-					if (!file.isPhantom())
+				if (resource instanceof IFile file) {
+					if (!file.isPhantom()) {
 						openNonExternalEditor(page, file);
+					}
 				}
 			}
 		}

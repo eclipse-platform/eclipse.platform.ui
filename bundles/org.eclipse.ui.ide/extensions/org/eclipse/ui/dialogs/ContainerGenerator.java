@@ -55,7 +55,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ContainerGenerator {
-	private IPath containerFullPath;
+	private final IPath containerFullPath;
 
 	private IContainer generatedContainer;
 

@@ -110,11 +110,9 @@ public class ProjectEncodingMarkerResolutionGenerator implements IMarkerResoluti
 				return;
 			}
 			IResource resource = marker.getResource();
-			if (resource instanceof IProject) {
-				IProject project = (IProject) resource;
+			if (resource instanceof IProject project) {
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				if (workspace instanceof Workspace) {
-					Workspace ws = (Workspace) workspace;
+				if (workspace instanceof Workspace ws) {
 					CharsetManager charsetManager = ws.getCharsetManager();
 					try {
 						charsetManager.setCharsetFor(project.getFullPath(), charset);

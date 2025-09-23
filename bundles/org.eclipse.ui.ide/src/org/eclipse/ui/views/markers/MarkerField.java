@@ -50,7 +50,7 @@ public abstract class MarkerField {
 
 	private IConfigurationElement configurationElement;
 	private ResourceManager imageManager;
-	private boolean helpContextAvailabilityCheck;
+	private final boolean helpContextAvailabilityCheck;
 
 	public MarkerField() {
 		helpContextAvailabilityCheck = Platform.getPreferencesService().getBoolean(IDEWorkbenchPlugin.IDE_WORKBENCH,
@@ -76,9 +76,9 @@ public abstract class MarkerField {
 			if (marker != null) {
 				String contextId = IDE.getMarkerHelpRegistry().getHelp(marker);
 				if (contextId != null && (!helpContextAvailabilityCheck || HelpSystem.getContext(contextId) != null)) {
-					if (image == null)
+					if (image == null) {
 						image = JFaceResources.getImage(Dialog.DLG_IMG_HELP);
-					else {
+					} else {
 						descriptors[IDecoration.TOP_RIGHT] = IDEWorkbenchPlugin
 								.getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_HELP_DECORATION_PATH);
 					}
@@ -99,8 +99,9 @@ public abstract class MarkerField {
 						image = sharedImages.getImage(IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED);
 					}
 				}
-				if (descriptors[IDecoration.TOP_RIGHT] != null || descriptors[IDecoration.BOTTOM_RIGHT] != null)
+				if (descriptors[IDecoration.TOP_RIGHT] != null || descriptors[IDecoration.BOTTOM_RIGHT] != null) {
 					image = getImageManager().create(new DecorationOverlayIcon(image, descriptors));
+				}
 			}
 		}
 		return image;
@@ -134,12 +135,14 @@ public abstract class MarkerField {
 	public Image getColumnHeaderImage() {
 		String path = configurationElement
 				.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ICON);
-		if (path == null)
+		if (path == null) {
 			return null;
+		}
 		URL url = BundleUtility.find(configurationElement.getContributor()
 				.getName(), path);
-		if (url == null)
+		if (url == null) {
 			return null;
+		}
 		return getImageManager().createImageWithDefault(
 				ImageDescriptor.createFromURL(url));
 	}
@@ -214,8 +217,9 @@ public abstract class MarkerField {
 	 * @return ResourceManager
 	 */
 	protected ResourceManager getImageManager() {
-		if (imageManager == null)
+		if (imageManager == null) {
 			return IDEWorkbenchPlugin.getDefault().getResourceManager();
+		}
 		return imageManager;
 	}
 

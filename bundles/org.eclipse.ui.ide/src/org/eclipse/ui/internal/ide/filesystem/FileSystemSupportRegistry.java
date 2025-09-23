@@ -69,7 +69,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 		return singleton;
 	}
 
-	private Collection<FileSystemConfiguration> registeredContributions = new HashSet<>(0);
+	private final Collection<FileSystemConfiguration> registeredContributions = new HashSet<>(0);
 
 	FileSystemConfiguration defaultConfiguration = new FileSystemConfiguration(
 			FileSystemMessages.DefaultFileSystem_name, new FileSystemContributor() {

@@ -81,13 +81,13 @@ public class PathVariableDialog extends TitleAreaDialog {
 	 * This dialog type: <code>NEW_VARIABLE</code> or
 	 * <code>EXISTING_VARIABLE</code>.
 	 */
-	private int type;
+	private final int type;
 
 	/**
 	 * The type of variable that can be edited in this dialog.
 	 * <code>IResource.FILE</code> or <code>IResource.FOLDER</code>
 	 */
-	private int variableType;
+	private final int variableType;
 
 	/**
 	 * The name of the variable being edited.
@@ -115,13 +115,13 @@ public class PathVariableDialog extends TitleAreaDialog {
 	 * Reference to the path variable manager. It is used for validating
 	 * variable names.
 	 */
-	private IPathVariableManager pathVariableManager;
+	private final IPathVariableManager pathVariableManager;
 
 	/**
 	 * Set of variable names currently in use. Used when warning the user that
 	 * the currently selected name is already in use by another variable.
 	 */
-	private Set<String> namesInUse;
+	private final Set<String> namesInUse;
 
 	/**
 	 * The current validation status. Its value can be one of the following:<ul>
@@ -396,8 +396,9 @@ public class PathVariableDialog extends TitleAreaDialog {
 	}
 
 	private IPathVariableManager getPathVariableManager() {
-		if (currentResource != null)
+		if (currentResource != null) {
 			return currentResource.getPathVariableManager();
+		}
 		return ResourcesPlugin.getWorkspace().getPathVariableManager();
 	}
 
@@ -454,8 +455,9 @@ public class PathVariableDialog extends TitleAreaDialog {
 		validationStatus = IMessageProvider.NONE;
 		okButton.setEnabled(validateVariableValue() && validateVariableName());
 		locationEntered = true;
-		if (variableResolvedValueField != null)
+		if (variableResolvedValueField != null) {
 			variableResolvedValueField.setText(TextProcessor.process(getVariableResolvedValue()));
+		}
 	}
 
 	/**
@@ -537,8 +539,9 @@ public class PathVariableDialog extends TitleAreaDialog {
 	private boolean validateVariableName() {
 		boolean allowFinish = false;
 
-		if (operationMode == EDIT_LINK_LOCATION)
+		if (operationMode == EDIT_LINK_LOCATION) {
 			return true;
+		}
 
 		// if the current validationStatus is ERROR, no additional validation applies
 		if (validationStatus == IMessageProvider.ERROR) {
@@ -629,10 +632,11 @@ public class PathVariableDialog extends TitleAreaDialog {
 						(!info.isDirectory() && ((variableType & IResource.FILE) == 0))){
 					allowFinish = false;
 					newValidationStatus = IMessageProvider.ERROR;
-					if (((variableType & IResource.FOLDER) != 0))
+					if (((variableType & IResource.FOLDER) != 0)) {
 						message = IDEWorkbenchMessages.PathVariableDialog_variableValueIsWrongTypeFolder;
-					else
+					} else {
 						message = IDEWorkbenchMessages.PathVariableDialog_variableValueIsWrongTypeFile;
+					}
 				}
 			}
 		} else if (!IPath.EMPTY.isValidPath(variableValue)) {

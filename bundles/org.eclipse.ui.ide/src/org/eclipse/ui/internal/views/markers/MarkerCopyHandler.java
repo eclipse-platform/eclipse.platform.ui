@@ -34,8 +34,9 @@ public class MarkerCopyHandler extends MarkerViewHandler {
 	@Override
 	public Object execute(ExecutionEvent event) {
 		ExtendedMarkersView view = getView(event);
-		if (view == null)
+		if (view == null) {
 			return null;
+		}
 
 		setClipboard(view);
 		return this;

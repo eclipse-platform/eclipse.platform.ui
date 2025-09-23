@@ -31,9 +31,9 @@ import org.eclipse.core.runtime.IPath;
 public class RecursiveFileFinder implements IResourceVisitor {
 
 	private IFile firstFoundFile = null;
-	private Set<IFile> foundFiles = new HashSet<>();
-	private String fileName;
-	private Set<IPath> ignoredDirectories;
+	private final Set<IFile> foundFiles = new HashSet<>();
+	private final String fileName;
+	private final Set<IPath> ignoredDirectories;
 
 	/**
 	 *

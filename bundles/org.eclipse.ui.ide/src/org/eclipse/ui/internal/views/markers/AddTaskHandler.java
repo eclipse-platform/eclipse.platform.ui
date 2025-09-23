@@ -29,8 +29,9 @@ public class AddTaskHandler extends MarkerViewHandler {
 	public Object execute(ExecutionEvent event) {
 
 		final ExtendedMarkersView view = getView(event);
-		if (view == null)
+		if (view == null) {
 			return this;
+		}
 
 		DialogTaskProperties dialog = new DialogTaskProperties(view.getSite()
 				.getShell(), MarkerMessages.addGlobalTaskDialog_title);

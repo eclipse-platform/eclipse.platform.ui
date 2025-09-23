@@ -158,8 +158,8 @@ public class DirectoryProposalContentAssist {
 
 	private static class DirectoryProposalAutoCompleteField {
 
-		private FileNameSubstringMatchContentProposalProvider proposalProvider;
-		private OpenableContentProposalAdapter adapter;
+		private final FileNameSubstringMatchContentProposalProvider proposalProvider;
+		private final OpenableContentProposalAdapter adapter;
 
 		public DirectoryProposalAutoCompleteField(Control control, IControlContentAdapter controlContentAdapter) {
 			proposalProvider = new FileNameSubstringMatchContentProposalProvider();
@@ -204,7 +204,7 @@ public class DirectoryProposalContentAssist {
 	 * after the proposals have been updated by the asynchronous job.
 	 */
 	private boolean popupActivated = false;
-	private List<CompletableFuture<Void>> proposalUpdateFutures = Collections.synchronizedList(new ArrayList<>());
+	private final List<CompletableFuture<Void>> proposalUpdateFutures = Collections.synchronizedList(new ArrayList<>());
 
 	/**
 	 * Applies auto-completion to a Combo that is intended to be used to choose a

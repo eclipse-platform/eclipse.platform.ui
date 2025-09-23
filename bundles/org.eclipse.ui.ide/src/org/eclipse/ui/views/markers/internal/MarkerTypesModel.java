@@ -46,7 +46,7 @@ public class MarkerTypesModel {
 	/**
 	 * Maps from marker type id to MarkerType.
 	 */
-	private HashMap<String, MarkerType> types;
+	private final HashMap<String, MarkerType> types;
 
 	/**
 	 * Creates a new marker types model.

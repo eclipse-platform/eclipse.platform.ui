@@ -55,7 +55,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	/**
 	 * Table of queries for marker F1 help.
 	 */
-	private Map<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> helpQueries;
+	private final Map<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> helpQueries;
 
 	/**
 	 * Sorted list of help queries. Used to ensure that the "most specific"
@@ -66,7 +66,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	/**
 	 * Table of queries for marker resolutions
 	 */
-	private Map<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> resolutionQueries;
+	private final Map<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> resolutionQueries;
 
 	/**
 	 * Help context id attribute in configuration element
@@ -112,12 +112,12 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	/**
 	 * Map of known marker resolution generators
 	 */
-	private Map<IConfigurationElement, IMarkerResolutionGenerator> generatorMap;
+	private final Map<IConfigurationElement, IMarkerResolutionGenerator> generatorMap;
 
 	/**
 	 * Map of known marker help context providers
 	 */
-	private Map<IConfigurationElement, IMarkerHelpContextProvider> helpProviderMap;
+	private final Map<IConfigurationElement, IMarkerHelpContextProvider> helpProviderMap;
 
 	/**
 	 * Resolution class attribute name in configuration element

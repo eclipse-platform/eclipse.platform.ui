@@ -32,19 +32,19 @@ public class MarkerQuery {
 	 * The marker type targetted by this query.
 	 * May be <code>null</code>.
 	 */
-	private String type;
+	private final String type;
 
 	/**
 	 * A sorted list of the attributes targetted by this query.
 	 * The list is sorted from least to greatest according to
 	 * <code>Sting.compare</code>
 	 */
-	private String[] attributes;
+	private final String[] attributes;
 
 	/**
 	 * Whether this query also targets all children of {@link #type}.
 	 */
-	private boolean matchTypeChildren;
+	private final boolean matchTypeChildren;
 
 	/**
 	 * Cached hash code value

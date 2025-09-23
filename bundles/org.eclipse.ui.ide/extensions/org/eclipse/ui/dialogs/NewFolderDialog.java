@@ -75,7 +75,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 
 	private CreateLinkedResourceGroup linkedResourceGroup;
 
-	private IContainer container;
+	private final IContainer container;
 
 	private boolean firstLinkCheck = true;
 

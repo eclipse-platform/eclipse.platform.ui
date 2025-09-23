@@ -59,7 +59,7 @@ import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 public class WizardNewLinkPage extends WizardPage {
 	private String initialLinkTarget;
 
-	private int type;
+	private final int type;
 
 	private boolean createLink = false;
 

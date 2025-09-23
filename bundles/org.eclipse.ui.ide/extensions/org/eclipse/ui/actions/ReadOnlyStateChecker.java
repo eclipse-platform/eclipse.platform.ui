@@ -36,11 +36,11 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * not they wish to continue the operation on it.
  */
 public class ReadOnlyStateChecker {
-	private Shell shell;
+	private final Shell shell;
 
-	private String titleMessage;
+	private final String titleMessage;
 
-	private String mainMessage;
+	private final String mainMessage;
 
 	private boolean yesToAllSelected = false;
 
@@ -48,7 +48,7 @@ public class ReadOnlyStateChecker {
 
 	private boolean ignoreLinkedResources = false;
 
-	private String READ_ONLY_EXCEPTION_MESSAGE = IDEWorkbenchMessages.ReadOnlyCheck_problems;
+	private final String READ_ONLY_EXCEPTION_MESSAGE = IDEWorkbenchMessages.ReadOnlyCheck_problems;
 
 	/**
 	 * Create a new checker that parents the dialog off of parent using the supplied

@@ -201,8 +201,8 @@ public class ProjectNaturesPage extends PropertyPage {
 	}
 
 	private static class NatureLabelProvider extends LabelProvider {
-		private IWorkspace workspace;
-		private Map<String, Image> natureImages;
+		private final IWorkspace workspace;
+		private final Map<String, Image> natureImages;
 
 		public NatureLabelProvider(IWorkspace workspace) {
 			this.workspace = workspace;
@@ -214,8 +214,7 @@ public class ProjectNaturesPage extends PropertyPage {
 			IProjectNatureDescriptor nature = null;
 			if (element instanceof IProjectNatureDescriptor) {
 				nature = (IProjectNatureDescriptor) element;
-			} else if (element instanceof String) {
-				String natureId = (String) element;
+			} else if (element instanceof String natureId) {
 				nature = this.workspace.getNatureDescriptor(natureId);
 				if (nature == null) {
 					return getMissingNatureLabel(natureId);
@@ -259,8 +258,9 @@ public class ProjectNaturesPage extends PropertyPage {
 		protected String getNatureDescriptorLabel(
 				IProjectNatureDescriptor natureDescriptor) {
 			String label = natureDescriptor.getLabel();
-			if (label.trim().isEmpty())
+			if (label.trim().isEmpty()) {
 				return natureDescriptor.getNatureId();
+			}
 			return label;
 		}
 

@@ -77,7 +77,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * </ul>
  */
 public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
-	private IStructuredSelection initialResourceSelection;
+	private final IStructuredSelection initialResourceSelection;
 
 	private List<Object> selectedTypes = new ArrayList<>();
 
@@ -337,8 +337,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
 	private static class ResourceProvider extends WorkbenchContentProvider {
 		private static final Object[] EMPTY = new Object[0];
-		private int resourceType;
-		private boolean showLinkedResources;
+		private final int resourceType;
+		private final boolean showLinkedResources;
 
 		public ResourceProvider(int resourceType, boolean showLinkedResources) {
 			super();
@@ -348,8 +348,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 
 		@Override
 		public Object[] getChildren(Object o) {
-			if (o instanceof IContainer) {
-				IContainer container = (IContainer) o;
+			if (o instanceof IContainer container) {
 				if (!showLinkedResources && container.isLinked(IResource.CHECK_ANCESTORS)) {
 					// just return an empty set of children
 					return EMPTY;

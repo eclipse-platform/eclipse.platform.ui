@@ -65,11 +65,11 @@ import org.eclipse.ui.part.FileEditorInput;
  */
 public class OpenWithMenu extends ContributionItem {
 
-	private IWorkbenchPage page;
+	private final IWorkbenchPage page;
 
-	private IAdaptable adaptable;
+	private final IAdaptable adaptable;
 
-	private IEditorRegistry registry;
+	private final IEditorRegistry registry;
 
 	/**
 	 * The id of this action.
@@ -86,7 +86,7 @@ public class OpenWithMenu extends ContributionItem {
 	 * Compares the labels from two IEditorDescriptor objects
 	 */
 	private static final Comparator<IEditorDescriptor> comparer = new Comparator<>() {
-		private Collator collator = Collator.getInstance();
+		private final Collator collator = Collator.getInstance();
 
 		@Override
 		public int compare(IEditorDescriptor arg0, IEditorDescriptor arg1) {

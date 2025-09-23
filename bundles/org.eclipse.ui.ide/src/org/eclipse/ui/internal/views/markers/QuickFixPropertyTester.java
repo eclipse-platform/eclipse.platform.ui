@@ -35,9 +35,10 @@ public class QuickFixPropertyTester extends PropertyTester {
 	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
-		if (property.equals(QUICK_FIX))
+		if (property.equals(QUICK_FIX)) {
 			return IDE.getMarkerHelpRegistry().hasResolutions(
 					((MarkerEntry) receiver).getMarker());
+		}
 		return false;
 	}
 

@@ -57,23 +57,23 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 
 	private Object currentTreeSelection;
 
-	private List<Object> expandedTreeNodes = new ArrayList<>();
+	private final List<Object> expandedTreeNodes = new ArrayList<>();
 
-	private Map<Object, List<Object>> checkedStateStore = new HashMap<>(9);
+	private final Map<Object, List<Object>> checkedStateStore = new HashMap<>(9);
 
-	private List<Object> whiteCheckedTreeItems = new ArrayList<>();
+	private final List<Object> whiteCheckedTreeItems = new ArrayList<>();
 
-	private ITreeContentProvider treeContentProvider;
+	private final ITreeContentProvider treeContentProvider;
 
-	private IStructuredContentProvider listContentProvider;
+	private final IStructuredContentProvider listContentProvider;
 
-	private ILabelProvider treeLabelProvider;
+	private final ILabelProvider treeLabelProvider;
 
-	private ILabelProvider listLabelProvider;
+	private final ILabelProvider listLabelProvider;
 
-	private ViewerComparator treeComparator;
+	private final ViewerComparator treeComparator;
 
-	private ViewerComparator listComparator;
+	private final ViewerComparator listComparator;
 
 	// widgets
 	private CheckboxTreeViewer treeViewer;

@@ -707,10 +707,9 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof TestData)) {
+			if (!(obj instanceof TestData other)) {
 				return false;
 			}
-			TestData other = (TestData) obj;
 			return Objects.equals(key, other.key) && keyIndex == other.keyIndex;
 		}
 

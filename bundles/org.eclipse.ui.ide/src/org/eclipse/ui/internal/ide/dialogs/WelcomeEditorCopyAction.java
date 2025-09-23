@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * Global copy action for the welcome editor.
  */
 public class WelcomeEditorCopyAction extends Action {
-	private WelcomeEditor editorPart;
+	private final WelcomeEditor editorPart;
 
 	public WelcomeEditorCopyAction(WelcomeEditor editor) {
 		editorPart = editor;

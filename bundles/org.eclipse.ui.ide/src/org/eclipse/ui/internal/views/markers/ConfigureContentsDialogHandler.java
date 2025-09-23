@@ -28,8 +28,9 @@ public class ConfigureContentsDialogHandler extends MarkerViewHandler implements
 	@Override
 	public Object execute(ExecutionEvent event) {
 		ExtendedMarkersView view = getView(event);
-		if (view == null)
+		if (view == null) {
 			return this;
+		}
 		view.openFiltersDialog();
 		return this;
 	}

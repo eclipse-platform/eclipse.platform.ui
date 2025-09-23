@@ -440,8 +440,7 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 		// activities other than those that the wizard itself maps to.
 		IPerspectiveDescriptor finalPersp = reg
 				.findPerspectiveWithId(finalPerspId);
-		if (finalPersp != null && finalPersp instanceof IPluginContribution) {
-			IPluginContribution contribution = (IPluginContribution) finalPersp;
+		if (finalPersp != null && finalPersp instanceof IPluginContribution contribution) {
 			if (contribution.getPluginId() != null) {
 				IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
 				IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
@@ -558,13 +557,14 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 		}
 		String desc = finalPersp.getDescription();
 		String message;
-		if (desc == null || desc.isEmpty())
+		if (desc == null || desc.isEmpty()) {
 			message = NLS.bind(ResourceMessages.NewProject_perspSwitchMessage,
 					finalPersp.getLabel());
-		else
+		} else {
 			message = NLS.bind(
 					ResourceMessages.NewProject_perspSwitchMessageWithDesc,
 					new String[] { finalPersp.getLabel(), desc });
+		}
 
 		LinkedHashMap<String, Integer> buttonLabelToId = new LinkedHashMap<>();
 		buttonLabelToId.put(ResourceMessages.NewProject_perspSwitchButtonLabel, IDialogConstants.YES_ID);

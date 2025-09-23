@@ -43,11 +43,13 @@ public class AllMarkersSeverityAndDescriptionFieldFilter extends
 		if (filterOnSeverity) {
 
 			IMarker marker = item.getMarker();
-			if (marker == null)
+			if (marker == null) {
 				return false;
+			}
 
-			if (!checkSeverity(item.getAttributeValue(IMarker.SEVERITY, -1)))
+			if (!checkSeverity(item.getAttributeValue(IMarker.SEVERITY, -1))) {
 				return false;
+			}
 		}
 		return super.select(item);
 	}
@@ -74,8 +76,9 @@ public class AllMarkersSeverityAndDescriptionFieldFilter extends
 		super.loadSettings(memento);
 
 		Boolean filtering = memento.getBoolean(FILTER_ON_SEVERITY);
-		if (filtering != null)
+		if (filtering != null) {
 			filterOnSeverity = filtering.booleanValue();
+		}
 	}
 
 	@Override

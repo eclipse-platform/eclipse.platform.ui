@@ -70,9 +70,9 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 	 */
 	class WorkspaceMRUAction extends Action {
 
-		private ChooseWorkspaceData data;
+		private final ChooseWorkspaceData data;
 
-		private String location;
+		private final String location;
 
 		WorkspaceMRUAction(String location, ChooseWorkspaceData data) {
 			this.location = location; // preserve the location directly -

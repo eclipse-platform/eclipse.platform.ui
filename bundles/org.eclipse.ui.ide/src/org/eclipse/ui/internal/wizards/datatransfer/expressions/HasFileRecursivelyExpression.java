@@ -39,7 +39,7 @@ public class HasFileRecursivelyExpression extends Expression {
 	 */
 	public static final String TAG = "hasFileRecursively"; //$NON-NLS-1$
 
-	private String filename;
+	private final String filename;
 
 	/**
 	 * Build expression with a filename.

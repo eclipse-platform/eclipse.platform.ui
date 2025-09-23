@@ -60,7 +60,7 @@ public class ContainerSelectionDialog extends SelectionDialog {
 	ContainerSelectionGroup group;
 
 	// the root resource to populate the viewer with
-	private IContainer initialSelection;
+	private final IContainer initialSelection;
 
 	// allow the user to type in a new container name
 	private boolean allowNewContainerName = true;

@@ -61,8 +61,7 @@ public class SubdirectoryOrSameNameSchedulingRule implements ISchedulingRule {
 
 	@Override
 	public boolean isConflicting(ISchedulingRule rule) {
-		if (rule instanceof SubdirectoryOrSameNameSchedulingRule) {
-			SubdirectoryOrSameNameSchedulingRule otherRule = (SubdirectoryOrSameNameSchedulingRule)rule;
+		if (rule instanceof SubdirectoryOrSameNameSchedulingRule otherRule) {
 			return
 			otherRule.path.startsWith(this.path) || otherRule.name.equals(this.name);
 		} else if (rule instanceof IResource) {

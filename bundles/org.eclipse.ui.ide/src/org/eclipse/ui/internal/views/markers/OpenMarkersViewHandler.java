@@ -36,8 +36,9 @@ public class OpenMarkersViewHandler extends MarkerViewHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ExtendedMarkersView part = getView(event);
-		if (part == null)
+		if (part == null) {
 			return null;
+		}
 		try {
 			String count = ExtendedMarkersView.newSecondaryID(part);
 				String defaultName = NLS.bind(MarkerMessages.newViewTitle,
@@ -50,8 +51,9 @@ public class OpenMarkersViewHandler extends MarkerViewHandler {
 					MarkerMessages.NewViewHandler_dialogMessage, defaultName,
 					getValidator());
 
-			if (dialog.open() != Window.OK)
+			if (dialog.open() != Window.OK) {
 				return this;
+			}
 
 			IViewPart newPart = part.getSite().getPage()
 					.showView(part.getSite().getId(), count,
@@ -74,8 +76,9 @@ public class OpenMarkersViewHandler extends MarkerViewHandler {
 	 */
 	private IInputValidator getValidator() {
 		return newText -> {
-			if (newText.length() > 0)
+			if (newText.length() > 0) {
 				return null;
+			}
 			return MarkerMessages.MarkerFilterDialog_emptyMessage;
 		};
 	}

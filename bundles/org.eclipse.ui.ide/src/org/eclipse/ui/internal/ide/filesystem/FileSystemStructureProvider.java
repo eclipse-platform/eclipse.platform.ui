@@ -45,8 +45,9 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
 
 		for (int i = 0; i < childrenLength; i++) {
 			File file = new File(folder, children[i]);
-			if(isRecursiveLink(file))
+			if(isRecursiveLink(file)) {
 				continue;
+			}
 			result.add(file);
 		}
 
@@ -109,7 +110,8 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
 	 * Clears the visited dir information
 	 */
 	public void clearVisitedDirs() {
-		if(visitedDirs!=null)
+		if(visitedDirs!=null) {
 			visitedDirs.clear();
+		}
 	}
 }

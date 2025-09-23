@@ -40,17 +40,17 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  */
 public class ZipLeveledStructureProvider implements
 		ILeveledImportStructureProvider {
-	private ZipFile zipFile;
+	private final ZipFile zipFile;
 
-	private ZipEntry root = new ZipEntry("/");//$NON-NLS-1$
+	private final ZipEntry root = new ZipEntry("/");//$NON-NLS-1$
 
 	private Map<ZipEntry, List<ZipEntry>> children;
 
-	private Map<IPath, ZipEntry> directoryEntryCache = new HashMap<>();
+	private final Map<IPath, ZipEntry> directoryEntryCache = new HashMap<>();
 
 	private int stripLevel;
 
-	private Set<String> invalidEntries = new HashSet<>();
+	private final Set<String> invalidEntries = new HashSet<>();
 
 	/**
 	 * Creates a <code>ZipFileStructureProvider</code>, which will operate on

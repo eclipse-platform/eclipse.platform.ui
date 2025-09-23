@@ -99,8 +99,9 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 						MessageDialog.open(MessageDialog.ERROR,workbenchWindow.getShell(), IDEWorkbenchMessages.OpenLocalFileAction_title, msg, SWT.SHEET);
 					}
 				} else {
-					if (++numberOfFilesNotFound > 1)
+					if (++numberOfFilesNotFound > 1) {
 						notFound.append('\n');
+					}
 					notFound.append(fileStore.getName());
 				}
 			}

@@ -178,8 +178,9 @@ public class IDEResourceInfoUtils {
 	 * @return String or <code>null</code>
 	 */
 	public static IFileInfo getFileInfo(URI location) {
-		if (location.getScheme() == null)
+		if (location.getScheme() == null) {
 			return null;
+		}
 		IFileStore store = getFileStore(location);
 		if (store == null) {
 			return null;
@@ -224,8 +225,9 @@ public class IDEResourceInfoUtils {
 	 * @return String the text to display the location
 	 */
 	public static String getLocationText(IResource resource) {
-		if (resource.isVirtual())
+		if (resource.isVirtual()) {
 			return VIRTUAL_FOLDER_TEXT;
+		}
 		if (!resource.isLocal(IResource.DEPTH_ZERO)) {
 			return NOT_LOCAL_TEXT;
 		}
@@ -240,8 +242,9 @@ public class IDEResourceInfoUtils {
 			return NOT_EXIST_TEXT;
 		}
 
-		if (resolvedLocation.getScheme() == null)
+		if (resolvedLocation.getScheme() == null) {
 			return location.toString();
+		}
 
 		IFileStore store = getFileStore(resolvedLocation);
 		// don't access the file system for closed projects (bug 151089)
@@ -287,8 +290,9 @@ public class IDEResourceInfoUtils {
 			return NOT_EXIST_TEXT;
 		}
 
-		if (location.getScheme() == null)
+		if (location.getScheme() == null) {
 			return UNKNOWN_LABEL;
+		}
 
 		IFileStore store = getFileStore(location);
 		if (store == null) {

@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  */
 public class PathVariableEditDialog extends SelectionDialog {
 
-	private PathVariablesGroup pathVariablesGroup;
+	private final PathVariablesGroup pathVariablesGroup;
 
 	/**
 	 * Creates a path variable selection dialog.

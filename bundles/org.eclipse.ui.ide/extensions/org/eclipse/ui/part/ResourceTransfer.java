@@ -85,7 +85,7 @@ public class ResourceTransfer extends ByteArrayTransfer {
 
 	private static final int TYPEID = registerType(TYPE_NAME);
 
-	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	private final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 	/**
 	 * Creates a new transfer object.
@@ -114,11 +114,11 @@ public class ResourceTransfer extends ByteArrayTransfer {
 
 	@Override
 	protected void javaToNative(Object data, TransferData transferData) {
-		if (!(data instanceof IResource[])) {
+		if (!(data instanceof IResource[] resources)) {
 			return;
 		}
 
-		IResource[] resources = (IResource[]) data;
+		
 		/**
 		 * The resource serialization format is:
 		 *  (int) number of resources

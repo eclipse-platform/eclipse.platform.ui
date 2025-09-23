@@ -51,16 +51,19 @@ public class MarkerProblemSeverityAndMessageField extends
 		MarkerSupportItem supportItem = (MarkerSupportItem) item;
 
 		int severity = -1;
-		if (supportItem.isConcrete())
+		if (supportItem.isConcrete()) {
 			severity = MarkerSupportInternalUtilities.getSeverity(item);
-		else
+		} else {
 			severity = ((MarkerCategory) supportItem).getHighestSeverity();
+		}
 
-		if (severity >= 0)
+		if (severity >= 0) {
 			return MarkerSupportInternalUtilities.getSeverityImage(severity);
+		}
 		try {
-			if (supportItem.isConcrete())
+			if (supportItem.isConcrete()) {
 				return null;
+			}
 			return JFaceResources
 					.getResources()
 					.createImageWithDefault(

@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * A simple editor input for the welcome editor
  */
 public class WelcomeEditorInput implements IEditorInput {
-	private AboutInfo aboutInfo;
+	private final AboutInfo aboutInfo;
 
 	private static final String FACTORY_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory"; //$NON-NLS-1$
 

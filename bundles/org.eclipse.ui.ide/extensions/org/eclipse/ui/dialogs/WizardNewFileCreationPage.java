@@ -97,7 +97,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	private static final int SIZING_CONTAINER_GROUP_HEIGHT = 250;
 
 	// the current resource selection
-	private IStructuredSelection currentSelection;
+	private final IStructuredSelection currentSelection;
 
 	// cache of newly-created file
 	private IFile newFile;
@@ -379,8 +379,9 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 									// only try to open
 								}
 							}
-							if (result == 2)
+							if (result == 2) {
 								return null;
+							}
 						}
 					}
 				} catch (CoreException | IOException e) {
@@ -576,12 +577,13 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 				if (isFilteredByParent()) {
 					URI existingLink = linkedResourceGroup.getLinkTargetURI();
 					boolean setDefaultLinkValue = false;
-					if (existingLink == null)
+					if (existingLink == null) {
 						setDefaultLinkValue = true;
-					else {
+					} else {
 						IPath path = URIUtil.toPath(existingLink);
-						if (path != null)
+						if (path != null) {
 							setDefaultLinkValue = path.toPortableString().length() > 0;
+						}
 					}
 
 					if (setDefaultLinkValue) {
@@ -813,18 +815,22 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	}
 
 	private boolean isFilteredByParent() {
-		if ((linkedResourceGroup == null) || linkedResourceGroup.isEnabled())
+		if ((linkedResourceGroup == null) || linkedResourceGroup.isEnabled()) {
 			return false;
+		}
 		IPath containerPath = resourceGroup.getContainerFullPath();
-		if (containerPath == null)
+		if (containerPath == null) {
 			return false;
+		}
 		String resourceName = resourceGroup.getResource();
-		if (resourceName == null)
+		if (resourceName == null) {
 			return false;
+		}
 		if (resourceName.length() > 0) {
 			IPath newFilePath = containerPath.append(resourceName);
-			if (newFilePath.segmentCount() < 2)
+			if (newFilePath.segmentCount() < 2) {
 				return false;
+			}
 			IFile newFileHandle = createFileHandle(newFilePath);
 			IWorkspace workspace = newFileHandle.getWorkspace();
 			return !workspace.validateFiltered(newFileHandle).isOK();

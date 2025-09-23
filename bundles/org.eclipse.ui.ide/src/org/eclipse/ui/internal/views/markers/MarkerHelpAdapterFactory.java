@@ -32,11 +32,9 @@ public class MarkerHelpAdapterFactory implements IAdapterFactory {
 
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		if (!(adaptableObject instanceof ExtendedMarkersView)) {
+		if (!(adaptableObject instanceof final ExtendedMarkersView view)) {
 			return null;
 		}
-
-		final ExtendedMarkersView view = (ExtendedMarkersView) adaptableObject;
 
 		return adapterType.cast(new IContextProvider() {
 

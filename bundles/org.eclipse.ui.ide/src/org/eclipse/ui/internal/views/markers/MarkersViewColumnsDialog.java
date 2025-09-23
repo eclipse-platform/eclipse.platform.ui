@@ -38,7 +38,7 @@ import org.eclipse.ui.views.markers.MarkerField;
  */
 public class MarkersViewColumnsDialog extends ViewerColumnsDialog<FieldEntry> {
 
-	private ExtendedMarkersView extendedView;
+	private final ExtendedMarkersView extendedView;
 
 	/**
 	 * Create a new instance of the receiver.

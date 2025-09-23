@@ -24,7 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 
 public class ProjectImageRegistry {
-	private Map<String, ImageDescriptor> map = new HashMap<>(10);
+	private final Map<String, ImageDescriptor> map = new HashMap<>(10);
 
 	/**
 	 * Returns the image for the given nature id or
