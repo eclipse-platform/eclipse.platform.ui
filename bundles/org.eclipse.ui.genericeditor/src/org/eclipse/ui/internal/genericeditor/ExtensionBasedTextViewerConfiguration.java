@@ -97,7 +97,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewerConfiguration
 		implements IDocumentPartitioningListener {
 
-	private ITextEditor editor;
+	private final ITextEditor editor;
 	private Set<IContentType> resolvedContentTypes;
 	private Set<IContentType> fallbackContentTypes = Set.of();
 	private IDocument watchedDocument;
@@ -386,8 +386,8 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 		public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 			currentHovers = new LinkedHashMap<>();
 			for (ITextHover hover : this.fHovers) {
-				Object res = hover instanceof ITextHoverExtension2
-						? ((ITextHoverExtension2) hover).getHoverInfo2(textViewer, subject)
+				Object res = hover instanceof ITextHoverExtension2 i
+						? i.getHoverInfo2(textViewer, subject)
 						: hover.getHoverInfo(textViewer, subject);
 				if (res != null) {
 					currentHovers.put(hover, res);
@@ -432,7 +432,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 				return null;
 			} else if (currentHovers.size() == 1) {
 				ITextHover hover = this.currentHovers.keySet().iterator().next();
-				return hover instanceof ITextHoverExtension ? ((ITextHoverExtension) hover).getHoverControlCreator()
+				return hover instanceof ITextHoverExtension i ? i.getHoverControlCreator()
 						: new AbstractReusableInformationControlCreator() {
 							@Override
 							protected IInformationControl doCreateInformationControl(Shell parent) {

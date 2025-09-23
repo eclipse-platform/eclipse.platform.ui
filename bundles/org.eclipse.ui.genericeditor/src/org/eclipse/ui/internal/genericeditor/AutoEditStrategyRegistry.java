@@ -40,7 +40,7 @@ public class AutoEditStrategyRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".autoEditStrategies"; //$NON-NLS-1$
 
-	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IAutoEditStrategy>> extensions = new LinkedHashMap<>();
+	private final Map<IConfigurationElement, GenericContentTypeRelatedExtension<IAutoEditStrategy>> extensions = new LinkedHashMap<>();
 	private boolean outOfSync = true;
 
 	/**

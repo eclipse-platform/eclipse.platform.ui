@@ -48,9 +48,9 @@ public class ReconcilerRegistry {
 	private static final String FOLDING_EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".foldingReconcilers"; //$NON-NLS-1$
 	private static final String FOLDING_RECONCILING_STRATEGY_ELT_NAME = "foldingReconcilingStrategy"; //$NON-NLS-1$
 
-	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IReconciler>> extensions = new HashMap<>();
-	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IReconciler>> highlightExtensions = new HashMap<>();
-	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IReconciler>> foldingExtensions = new HashMap<>();
+	private final Map<IConfigurationElement, GenericContentTypeRelatedExtension<IReconciler>> extensions = new HashMap<>();
+	private final Map<IConfigurationElement, GenericContentTypeRelatedExtension<IReconciler>> highlightExtensions = new HashMap<>();
+	private final Map<IConfigurationElement, GenericContentTypeRelatedExtension<IReconciler>> foldingExtensions = new HashMap<>();
 	private boolean outOfSync = true;
 	private boolean highlightOutOfSync = true;
 	private boolean foldingOutOfSync = true;

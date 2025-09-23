@@ -11,8 +11,8 @@ import org.eclipse.ui.IMarkerResolution2;
 
 public class MarkerResolutionCompletionProposal implements ICompletionProposal {
 
-	private IMarkerResolution markerResolution;
-	private IMarker marker;
+	private final IMarkerResolution markerResolution;
+	private final IMarker marker;
 
 	public MarkerResolutionCompletionProposal(IMarker marker, IMarkerResolution markerResolution) {
 		this.marker = marker;

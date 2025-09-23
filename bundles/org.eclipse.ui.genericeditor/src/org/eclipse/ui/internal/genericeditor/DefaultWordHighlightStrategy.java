@@ -66,13 +66,12 @@ public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReco
 
 	private Annotation[] fOccurrenceAnnotations = null;
 
-	private ISelectionChangedListener editorSelectionChangedListener = event -> applyHighlights(event.getSelection());
+	private final ISelectionChangedListener editorSelectionChangedListener = event -> applyHighlights(event.getSelection());
 
 	private void applyHighlights(ISelection selection) {
-		if (!(selection instanceof ITextSelection)) {
+		if (!(selection instanceof ITextSelection textSelection)) {
 			return;
 		}
-		ITextSelection textSelection = (ITextSelection) selection;
 		if (sourceViewer == null || !enabled) {
 			removeOccurrenceAnnotations();
 			return;
@@ -140,10 +139,12 @@ public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReco
 		if (m.lookingAt()) {
 			wordEnd = m.group();
 		}
-		if (wordStart != null && wordEnd != null)
+		if (wordStart != null && wordEnd != null) {
 			return wordStart + wordEnd;
-		if (wordStart != null)
+		}
+		if (wordStart != null) {
 			return wordStart;
+		}
 		return wordEnd;
 	}
 

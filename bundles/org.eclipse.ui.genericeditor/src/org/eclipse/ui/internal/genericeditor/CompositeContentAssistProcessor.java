@@ -33,11 +33,11 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
  */
 public class CompositeContentAssistProcessor implements IContentAssistProcessorExtension, IContentAssistProcessor {
 
-	private List<IContentAssistProcessor> fContentAssistProcessors;
+	private final List<IContentAssistProcessor> fContentAssistProcessors;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param contentAssistProcessors the children that will actually populate the
 	 *                                output of this content assist processor.
 	 */

@@ -45,12 +45,14 @@ public class MarkerAnnotationHover implements ITextHoverExtension, ITextHoverExt
 		}
 		String key = preference.getTextPreferenceKey();
 		if (key != null) {
-			if (!EditorsUI.getPreferenceStore().getBoolean(key))
+			if (!EditorsUI.getPreferenceStore().getBoolean(key)) {
 				return false;
+			}
 		} else {
 			key = preference.getHighlightPreferenceKey();
-			if (key == null || !EditorsUI.getPreferenceStore().getBoolean(key))
+			if (key == null || !EditorsUI.getPreferenceStore().getBoolean(key)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -64,10 +66,9 @@ public class MarkerAnnotationHover implements ITextHoverExtension, ITextHoverExt
 	}
 
 	@Override public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
-		if (!(textViewer instanceof ISourceViewerExtension2)) {
+		if (!(textViewer instanceof ISourceViewerExtension2 viewer)) {
 			return null;
 		}
-		ISourceViewerExtension2 viewer = (ISourceViewerExtension2) textViewer;
 		List<MarkerAnnotation> annotations = findMarkerAnnotations(viewer, new Region(offset, 0));
 		if (annotations.isEmpty()) {
 			return null;

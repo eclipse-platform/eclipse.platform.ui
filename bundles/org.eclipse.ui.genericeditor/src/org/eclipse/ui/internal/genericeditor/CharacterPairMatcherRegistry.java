@@ -37,7 +37,7 @@ public class CharacterPairMatcherRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".characterPairMatchers"; //$NON-NLS-1$
 
-	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<ICharacterPairMatcher>> extensions = new HashMap<>();
+	private final Map<IConfigurationElement, GenericContentTypeRelatedExtension<ICharacterPairMatcher>> extensions = new HashMap<>();
 	private boolean outOfSync = true;
 
 	/**

@@ -31,7 +31,7 @@ import org.eclipse.jface.text.source.Annotation;
  */
 public class CompositeQuickAssistProcessor implements IQuickAssistProcessor {
 
-	private List<IQuickAssistProcessor> fProcessors;
+	private final List<IQuickAssistProcessor> fProcessors;
 
 	public CompositeQuickAssistProcessor(List<IQuickAssistProcessor> processors) {
 		this.fProcessors = processors;

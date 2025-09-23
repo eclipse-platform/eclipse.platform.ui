@@ -29,7 +29,7 @@ import org.eclipse.ui.ide.IEditorAssociationOverride;
  */
 public class GenericEditorWithIconAssociationOverride implements IEditorAssociationOverride {
 
-	private Map<String, IEditorDescriptor> descriptorMap = new HashMap<>();
+	private final Map<String, IEditorDescriptor> descriptorMap = new HashMap<>();
 
 	@Override
 	public IEditorDescriptor[] overrideEditors(IEditorInput editorInput, IContentType contentType,

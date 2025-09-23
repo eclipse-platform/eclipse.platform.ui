@@ -19,7 +19,7 @@ import org.eclipse.jface.text.reconciler.Reconciler;
 
 public class DefaultWordHighlightReconciler extends Reconciler {
 
-	private DefaultWordHighlightStrategy fStrategy;
+	private final DefaultWordHighlightStrategy fStrategy;
 
 	public DefaultWordHighlightReconciler() {
 		fStrategy = new DefaultWordHighlightStrategy();

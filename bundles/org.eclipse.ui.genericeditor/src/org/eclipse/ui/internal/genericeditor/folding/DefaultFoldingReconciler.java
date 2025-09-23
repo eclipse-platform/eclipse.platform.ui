@@ -31,8 +31,7 @@ public class DefaultFoldingReconciler extends AbstractReconciler {
 
 	@Override public void install(ITextViewer textViewer) {
 		super.install(textViewer);
-		if (textViewer instanceof ProjectionViewer) {
-			ProjectionViewer viewer = (ProjectionViewer) textViewer;
+		if (textViewer instanceof ProjectionViewer viewer) {
 			foldingStrategy.setViewer(viewer);
 		}
 	}

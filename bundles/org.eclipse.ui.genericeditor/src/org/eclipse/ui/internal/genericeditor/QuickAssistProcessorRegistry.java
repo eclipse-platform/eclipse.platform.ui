@@ -32,7 +32,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class QuickAssistProcessorRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".quickAssistProcessors"; //$NON-NLS-1$
-	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IQuickAssistProcessor>> extensions = new HashMap<>();
+	private final Map<IConfigurationElement, GenericContentTypeRelatedExtension<IQuickAssistProcessor>> extensions = new HashMap<>();
 	private boolean outOfSync = true;
 
 	/**

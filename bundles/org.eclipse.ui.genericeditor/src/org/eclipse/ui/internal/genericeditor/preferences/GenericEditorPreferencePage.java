@@ -185,8 +185,9 @@ public class GenericEditorPreferencePage extends PreferencePage implements IWork
 		}
 		try {
 			int integer = parseInteger(value);
-			if (integer < 0)
+			if (integer < 0) {
 				return NLS.bind(Messages.ContentAssistant_autoActivationDelay_InvalidInput, integer);
+			}
 		} catch (NumberFormatException e) {
 			return NLS.bind(Messages.ContentAssistant_autoActivationDelay_InvalidInput, value);
 		}

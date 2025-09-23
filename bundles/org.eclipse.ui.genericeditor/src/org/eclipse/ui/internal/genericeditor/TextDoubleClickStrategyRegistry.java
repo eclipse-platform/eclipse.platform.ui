@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2022 Avaloq Group AG (http://www.avaloq.com).
- * 
+ *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -31,7 +31,7 @@ public class TextDoubleClickStrategyRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".textDoubleClickStrategies"; //$NON-NLS-1$
 
-	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<ITextDoubleClickStrategy>> extensions = new LinkedHashMap<>();
+	private final Map<IConfigurationElement, GenericContentTypeRelatedExtension<ITextDoubleClickStrategy>> extensions = new LinkedHashMap<>();
 	private boolean outOfSync = true;
 
 	/**

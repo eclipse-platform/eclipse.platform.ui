@@ -32,7 +32,7 @@ import org.eclipse.jface.resource.ResourceLocator;
 public class IconsRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".icons"; //$NON-NLS-1$
-	private Map<IContentType, ImageDescriptor> extensions = new LinkedHashMap<>();
+	private final Map<IContentType, ImageDescriptor> extensions = new LinkedHashMap<>();
 	private boolean outOfSync = true;
 
 	public IconsRegistry() {

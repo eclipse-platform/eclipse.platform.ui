@@ -42,16 +42,19 @@ public class AnnotationHoverDelegate implements ITextHover {
 						return false;
 					}
 					AnnotationPreference preference= EditorsUI.getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
-					if (preference == null)
+					if (preference == null) {
 						return false;
+					}
 					String key= preference.getTextPreferenceKey();
 					if (key != null) {
-						if (!EditorsUI.getPreferenceStore().getBoolean(key))
+						if (!EditorsUI.getPreferenceStore().getBoolean(key)) {
 							return false;
+						}
 					} else {
 						key= preference.getHighlightPreferenceKey();
-						if (key == null || !EditorsUI.getPreferenceStore().getBoolean(key))
+						if (key == null || !EditorsUI.getPreferenceStore().getBoolean(key)) {
 							return false;
+						}
 					}
 					return true;
 				}

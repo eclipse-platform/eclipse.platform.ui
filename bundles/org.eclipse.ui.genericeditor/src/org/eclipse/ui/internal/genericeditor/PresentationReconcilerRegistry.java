@@ -39,7 +39,7 @@ public class PresentationReconcilerRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".presentationReconcilers"; //$NON-NLS-1$
 
-	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IPresentationReconciler>> extensions = new HashMap<>();
+	private final Map<IConfigurationElement, GenericContentTypeRelatedExtension<IPresentationReconciler>> extensions = new HashMap<>();
 	private boolean outOfSync = true;
 
 	/**
@@ -52,7 +52,7 @@ public class PresentationReconcilerRegistry {
 	/**
 	 * Get the contributed {@link IPresentationReconciler}s that are relevant to
 	 * hook on source viewer according to document content types.
-	 * 
+	 *
 	 * @param sourceViewer the source viewer we're hooking completion to.
 	 * @param editor the text editor
 	 * @param contentTypes the content types of the document we're editing.

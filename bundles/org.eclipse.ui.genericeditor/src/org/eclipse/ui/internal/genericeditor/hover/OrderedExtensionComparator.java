@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.genericeditor.hover.TextHoverRegistry.TextHoverEx
  */
 class OrderedExtensionComparator implements Comparator<TextHoverExtension> {
 
-	private Map<String, TextHoverExtension> extensionsById;
+	private final Map<String, TextHoverExtension> extensionsById;
 
 	public OrderedExtensionComparator(Collection<TextHoverExtension> extensions) {
 		Assert.isNotNull(extensions);

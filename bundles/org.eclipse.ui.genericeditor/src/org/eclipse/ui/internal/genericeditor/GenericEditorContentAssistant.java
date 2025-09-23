@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPreference
  * <li>Using a ContentTypeRelatedExtensionTracker to dynamically track
  * IContentAssistProcessor in the OSGi service registry
  * </ul>
- * 
+ *
  * @author christoph
  */
 public class GenericEditorContentAssistant extends ContentAssistant implements IPropertyChangeListener {
@@ -55,7 +55,7 @@ public class GenericEditorContentAssistant extends ContentAssistant implements I
 	/**
 	 * Creates a new GenericEditorContentAssistant instance for the given content
 	 * types and contentAssistProcessorTracker
-	 * 
+	 *
 	 * @param contentAssistProcessorTracker the tracker to use for tracking
 	 *                                      additional
 	 *                                      {@link IContentAssistProcessor}s in the
@@ -74,7 +74,7 @@ public class GenericEditorContentAssistant extends ContentAssistant implements I
 	/**
 	 * Creates a new GenericEditorContentAssistant instance for the given content
 	 * types and contentAssistProcessorTracker
-	 * 
+	 *
 	 * @param contentAssistProcessorTracker the tracker to use for tracking
 	 *                                      additional
 	 *                                      {@link IContentAssistProcessor}s in the
@@ -118,7 +118,7 @@ public class GenericEditorContentAssistant extends ContentAssistant implements I
 	/**
 	 * Updates the {@link IContentAssistProcessor} registrations according to the
 	 * documents content-type tokens
-	 * 
+	 *
 	 * @param document the document to use for updating the tokens
 	 */
 	public void updateTokens(IDocument document) {

@@ -111,8 +111,9 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 		public void markCollapsed() {
 			/* workaround for BUG85874 */
 			// do not mark collapsed if annotation is not visible
-			if (visible)
+			if (visible) {
 				super.markCollapsed();
+			}
 		}
 	}
 
@@ -401,8 +402,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 	 */
 	protected void updateAnnotations(Annotation existingAnnotation, Position newPos, List<Annotation> modifications,
 			List<FoldingAnnotation> deletions) {
-		if (existingAnnotation instanceof FoldingAnnotation) {
-			FoldingAnnotation foldingAnnotation = (FoldingAnnotation) existingAnnotation;
+		if (existingAnnotation instanceof FoldingAnnotation foldingAnnotation) {
 			Position oldPos = projectionAnnotationModel.getPosition(foldingAnnotation);
 
 			// if a new position can be calculated then update the position of
@@ -441,8 +441,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 		if (iter != null) {
 			while (iter.hasNext()) {
 				Annotation anno = iter.next();
-				if (anno instanceof FoldingAnnotation) {
-					FoldingAnnotation folding = (FoldingAnnotation) anno;
+				if (anno instanceof FoldingAnnotation folding) {
 					Position pos = projectionAnnotationModel.getPosition(anno);
 					if (pos.length == 0) {
 						deletions.add(folding);
