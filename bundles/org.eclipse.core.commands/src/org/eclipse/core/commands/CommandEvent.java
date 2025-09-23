@@ -172,26 +172,26 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	 * @param command
 	 *            the instance of the interface that changed.
 	 * @param categoryChanged
-	 *            <code>true</code>, iff the category property changed.
+	 *            <code>true</code>, if the category property changed.
 	 * @param definedChanged
-	 *            <code>true</code>, iff the defined property changed.
+	 *            <code>true</code>, if the defined property changed.
 	 * @param descriptionChanged
-	 *            <code>true</code>, iff the description property changed.
+	 *            <code>true</code>, if the description property changed.
 	 * @param handledChanged
-	 *            <code>true</code>, iff the handled property changed.
+	 *            <code>true</code>, if the handled property changed.
 	 * @param nameChanged
-	 *            <code>true</code>, iff the name property changed.
+	 *            <code>true</code>, if the name property changed.
 	 * @param parametersChanged
 	 *            <code>true</code> if the parameters have changed;
 	 *            <code>false</code> otherwise.
 	 * @param returnTypeChanged
-	 *            <code>true</code> iff the return type property changed;
+	 *            <code>true</code> if the return type property changed;
 	 *            <code>false</code> otherwise.
 	 * @param helpContextIdChanged
-	 *            <code>true</code> iff the help context identifier changed;
+	 *            <code>true</code> if the help context identifier changed;
 	 *            <code>false</code> otherwise.
 	 * @param enabledChanged
-	 *            <code>true</code> iff the comand enablement changed;
+	 *            <code>true</code> if the command enablement changed;
 	 *            <code>false</code> otherwise.
 	 * @since 3.3
 	 */
@@ -287,7 +287,7 @@ public final class CommandEvent extends AbstractNamedHandleEvent {
 	/**
 	 * Return whether the enable property changed.
 	 *
-	 * @return <code>true</code> iff the comand enablement changed
+	 * @return <code>true</code> if the command enablement changed
 	 * @since 3.3
 	 */
 	public final boolean isEnabledChanged() {

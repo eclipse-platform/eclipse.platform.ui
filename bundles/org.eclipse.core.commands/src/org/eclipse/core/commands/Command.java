@@ -42,8 +42,8 @@ import org.eclipse.core.runtime.SafeRunner;
  * defined if it is declared in the XML of a resolved plug-in. If the plug-in is
  * unloaded or the command is simply not declared, then it is undefined. Trying
  * to reference an undefined command will succeed, but trying to access any of
- * its functionality will fail with a <code>NotDefinedException</code>. If
- * you need to know when a command changes from defined to undefined (or vice
+ * its functionality will fail with a <code>NotDefinedException</code>. If you
+ * need to know when a command changes from defined to undefined (or vice
  * versa), then attach a command listener.
  * </p>
  * <p>

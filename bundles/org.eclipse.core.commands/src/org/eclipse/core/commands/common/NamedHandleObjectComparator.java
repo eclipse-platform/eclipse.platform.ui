@@ -32,7 +32,7 @@ public class NamedHandleObjectComparator implements Comparator {
 	 * useful is they are display to an end user.
 	 *
 	 * @param left
-	 *            The first obect to compare; may be <code>null</code>.
+	 *            The first object to compare; may be <code>null</code>.
 	 * @param right
 	 *            The second object to compare; may be <code>null</code>.
 	 * @return <code>-1</code> if <code>left</code> is <code>null</code>
