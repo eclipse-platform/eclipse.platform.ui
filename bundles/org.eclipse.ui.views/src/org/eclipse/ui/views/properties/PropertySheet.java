@@ -119,7 +119,7 @@ public class PropertySheet extends PageBookView
 	/**
 	 * Message to show on the default page.
 	 */
-	private String defaultText = PropertiesMessages.PropertyViewer_noProperties;
+	private final String defaultText = PropertiesMessages.PropertyViewer_noProperties;
 
 	/**
 	 * The initial selection when the property sheet opens
@@ -410,8 +410,9 @@ public class PropertySheet extends PageBookView
 	@Override
 	public void partClosed(IWorkbenchPart part) {
 		if (part.equals(currentPart)) {
-			if (isPinned())
+			if (isPinned()) {
 				pinPropertySheetAction.setChecked(false);
+			}
 			currentSelection = null;
 			currentPart = null;
 		}
@@ -656,8 +657,7 @@ public class PropertySheet extends PageBookView
 	@Override
 	public boolean show(ShowInContext aContext) {
 		if (!isPinned()
-				&& aContext instanceof PropertyShowInContext) {
-			PropertyShowInContext context = (PropertyShowInContext) aContext;
+				&& aContext instanceof PropertyShowInContext context) {
 			IWorkbenchPart part = context.getPart();
 			if (part != null) {
 				partActivated(part);
@@ -689,8 +689,9 @@ public class PropertySheet extends PageBookView
 					for (IConfigurationElement element : elements) {
 						if ("excludeSources".equalsIgnoreCase(element.getName())) { //$NON-NLS-1$
 							String id = element.getAttribute("id"); //$NON-NLS-1$
-							if (id != null)
+							if (id != null) {
 								ignoredViews.add(id);
+							}
 						}
 					}
 				}

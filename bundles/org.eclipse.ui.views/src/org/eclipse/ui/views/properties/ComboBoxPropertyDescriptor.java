@@ -48,7 +48,7 @@ public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
 	/**
 	 * The labels to display in the combo box
 	 */
-	private String[] labels;
+	private final String[] labels;
 
 	/**
 	 * Creates an property descriptor with the given id, display name, and list

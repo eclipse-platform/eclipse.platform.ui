@@ -21,7 +21,7 @@ import java.util.List;
  * entries so they are displayed together.
  */
 /*package*/class PropertySheetCategory {
-	private String categoryName;
+	private final String categoryName;
 
 	private List<IPropertySheetEntry> entries = new ArrayList<>();
 

@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.views.properties.PropertiesMessages;
 	/**
 	 * System clipboard
 	 */
-	private Clipboard clipboard;
+	private final Clipboard clipboard;
 
 	/**
 	 * Creates the action.
