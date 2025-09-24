@@ -34,7 +34,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 public class NavigatorExtensionStateService {
 
 	private final Object lock = new Object();
-	private INavigatorContentService contentService;
+	private final INavigatorContentService contentService;
 
 	/**
 	 * Create an ExtensionStateServie that will keep track of the state models
@@ -64,9 +64,10 @@ public class NavigatorExtensionStateService {
 		synchronized (lock) {
 			IExtensionStateModel model = (IExtensionStateModel) stateModels
 					.get(aDescriptor);
-			if (model == null)
+			if (model == null) {
 				stateModels.put(aDescriptor, model = new ExtensionStateModel(
 						aDescriptor.getId(), contentService.getViewerId()));
+			}
 			return model;
 		}
 	}

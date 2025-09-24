@@ -221,8 +221,9 @@ public class CommonViewer extends TreeViewer {
 		if (changed != null) {
 			List<Object> others = new ArrayList<>();
 			for (Object changedElement : changed) {
-				if (changedElement == null)
+				if (changedElement == null) {
 					continue;
+				}
 
 				if (_mapper != null) {
 					if (_mapper.handlesObject(changedElement)) {
@@ -445,8 +446,9 @@ public class CommonViewer extends TreeViewer {
 	 */
 	@Override
 	protected void unmapAllElements() {
-		if (_mapper != null)
+		if (_mapper != null) {
 			_mapper.clearMap();
+		}
 		super.unmapAllElements();
 	}
 

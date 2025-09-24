@@ -37,7 +37,7 @@ import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConsta
  */
 public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
 	private Expression parentExpression;
 
@@ -102,8 +102,9 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 				sorter[0] = createComparatorInstance();
 			}
 		});
-		if (sorter[0] != null)
+		if (sorter[0] != null) {
 			return sorter[0];
+		}
 		return SkeletonViewerSorter.INSTANCE;
 	}
 

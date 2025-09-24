@@ -67,7 +67,7 @@ public class StructuredViewerManager {
 	 * provided the element.
 	 */
 	// Map<element, NavigatorContentDescriptor>
-	private Map viewerDataMap;
+	private final Map viewerDataMap;
 
 	static class StructuredViewerAccess extends StructuredViewerInternals {
 		static class Listener implements StructuredViewerInternals.AssociateListener {
@@ -83,20 +83,23 @@ public class StructuredViewerManager {
 				contentService.forgetContribution(element);
 				synchronized (viewerDataMap) {
 					if (viewerDataMap.containsKey(element)) {
-						if (Policy.DEBUG_VIEWER_MAP)
+						if (Policy.DEBUG_VIEWER_MAP) {
 							System.out.println("associate: SKIPPED " + element + " item: " + item + " desc: " + desc + " FOUND"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+						}
 						return;
 					}
 					viewerDataMap.put(element, desc);
-					if (Policy.DEBUG_VIEWER_MAP)
+					if (Policy.DEBUG_VIEWER_MAP) {
 						System.out.println("associate: " + element + " item: " + item + " desc: " + desc); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					}
 				}
 			}
 			@Override
 			public void disassociate(Item item) {
 				synchronized (viewerDataMap) {
-					if (Policy.DEBUG_VIEWER_MAP)
+					if (Policy.DEBUG_VIEWER_MAP) {
 						System.out.println("disassociate:  item: " + item + " object: " + item.getData()); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 					viewerDataMap.remove(item.getData());
 				}
 			}
@@ -105,8 +108,9 @@ public class StructuredViewerManager {
 			public void filteredOut(Object element) {
 				contentService.forgetContribution(element);
 				synchronized (viewerDataMap) {
-					if (Policy.DEBUG_VIEWER_MAP)
+					if (Policy.DEBUG_VIEWER_MAP) {
 						System.out.println("filteredOut: object: " + element); //$NON-NLS-1$
+					}
 					viewerDataMap.remove(element);
 				}
 			}
@@ -130,8 +134,9 @@ public class StructuredViewerManager {
 	 */
 	public void resetViewerData() {
 		synchronized (viewerDataMap) {
-			if (Policy.DEBUG_VIEWER_MAP)
+			if (Policy.DEBUG_VIEWER_MAP) {
 				System.out.println("viewer map RESET"); //$NON-NLS-1$
+			}
 			viewerDataMap.clear();
 		}
 	}
@@ -184,14 +189,17 @@ public class StructuredViewerManager {
 
 		final Viewer localViewer = viewer;
 
-		if (localViewer == null || localViewer.getControl().isDisposed())
+		if (localViewer == null || localViewer.getControl().isDisposed()) {
 			return;
+		}
 		Display display = localViewer.getControl().getDisplay();
-		if (display.isDisposed())
+		if (display.isDisposed()) {
 			return;
+		}
 		display.syncExec(() -> {
-			if (localViewer.getControl().isDisposed())
+			if (localViewer.getControl().isDisposed()) {
 				return;
+			}
 			SafeRunner.run(new NavigatorSafeRunnable() {
 				@Override
 				public void run() throws Exception {

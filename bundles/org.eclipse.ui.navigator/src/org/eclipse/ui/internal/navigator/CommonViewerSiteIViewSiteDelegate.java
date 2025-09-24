@@ -32,7 +32,7 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
  */
 public class CommonViewerSiteIViewSiteDelegate implements ICommonViewerWorkbenchSite {
 
-	private IViewSite viewSite;
+	private final IViewSite viewSite;
 
 	public CommonViewerSiteIViewSiteDelegate(IViewSite aViewSite) {
 		viewSite = aViewSite;

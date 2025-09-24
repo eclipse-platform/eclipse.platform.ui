@@ -55,8 +55,9 @@ public abstract class NavigatorSafeRunnable extends SafeRunnable {
 	@Override
 	public void handleException(Throwable e) {
 		String msg = _message;
-		if (msg == null)
+		if (msg == null) {
 			msg = e.getMessage() != null ? e.getMessage() : e.toString();
+		}
 		if (_element != null) {
 			msg += ": " + //$NON-NLS-1$
 					NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] {

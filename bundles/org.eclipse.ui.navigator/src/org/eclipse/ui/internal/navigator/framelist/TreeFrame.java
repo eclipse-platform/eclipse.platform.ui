@@ -44,7 +44,7 @@ public class TreeFrame extends Frame {
 
 	private static final String TAG_FACTORY_ID = "factoryID"; //$NON-NLS-1$
 
-	private AbstractTreeViewer viewer;
+	private final AbstractTreeViewer viewer;
 
 	private Object input;
 

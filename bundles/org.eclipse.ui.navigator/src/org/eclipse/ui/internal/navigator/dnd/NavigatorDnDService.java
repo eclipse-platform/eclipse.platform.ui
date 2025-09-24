@@ -48,7 +48,7 @@ public class NavigatorDnDService implements INavigatorDnDService {
 
 	private static final CommonDropAdapterAssistant[] NO_ASSISTANTS = new CommonDropAdapterAssistant[0];
 
-	private INavigatorContentService contentService;
+	private final INavigatorContentService contentService;
 
 	private CommonDragAdapterAssistant[] dragAssistants;
 
@@ -77,8 +77,9 @@ public class NavigatorDnDService implements INavigatorDnDService {
 	@Override
 	public synchronized CommonDragAdapterAssistant[] getCommonDragAssistants() {
 
-		if (dragAssistants == null)
+		if (dragAssistants == null) {
 			initializeDragAssistants();
+		}
 		return dragAssistants;
 	}
 
@@ -98,8 +99,9 @@ public class NavigatorDnDService implements INavigatorDnDService {
 
 	@Override
 	public synchronized void bindDragAssistant(CommonDragAdapterAssistant anAssistant) {
-		if(dragAssistants == null)
+		if(dragAssistants == null) {
 			initializeDragAssistants();
+		}
 		CommonDragAdapterAssistant[] newDragAssistants = new CommonDragAdapterAssistant[dragAssistants.length + 1];
 		System.arraycopy(dragAssistants, 0, newDragAssistants, 0, dragAssistants.length);
 		newDragAssistants[dragAssistants.length] = anAssistant;
@@ -180,10 +182,12 @@ public class NavigatorDnDService implements INavigatorDnDService {
 			// always be first on the list of drop assistant, if a conflict ever
 			// occurs.
 			String id = "org.eclipse.ui.navigator.resources."; //$NON-NLS-1$
-			if (a.getClass().getName().startsWith(id))
+			if (a.getClass().getName().startsWith(id)) {
 				return -1;
-			if (b.getClass().getName().startsWith(id))
+			}
+			if (b.getClass().getName().startsWith(id)) {
 				return 1;
+			}
 			return a.getClass().getName().compareTo(b.getClass().getName());
 		});
 		return array;

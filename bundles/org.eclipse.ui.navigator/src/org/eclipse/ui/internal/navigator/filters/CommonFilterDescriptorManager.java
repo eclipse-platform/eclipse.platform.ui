@@ -73,8 +73,9 @@ public class CommonFilterDescriptorManager {
 
 		List<CommonFilterDescriptor> visibleFilters = new ArrayList<>();
 		for (CommonFilterDescriptor descriptor : filters.values()) {
-			if (forUI && !descriptor.isVisibleInUi())
+			if (forUI && !descriptor.isVisibleInUi()) {
 				continue;
+			}
 			if (contentService.isVisible(descriptor.getId())) {
 				visibleFilters.add(descriptor);
 			}

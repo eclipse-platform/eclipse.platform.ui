@@ -57,8 +57,8 @@ public class FilterActionGroup extends ActionGroup implements IMementoAware {
 	private IMenuManager menuManager;
 	private IMenuListener menuListener;
 	private IMenuManager filtersMenu;
-	private CommonViewer commonViewer;
-	private INavigatorViewerDescriptor viewerDescriptor;
+	private final CommonViewer commonViewer;
+	private final INavigatorViewerDescriptor viewerDescriptor;
 
 	private Deque<ICommonFilterDescriptor> lruFilterDescriptorStack = new ArrayDeque<>();
 
@@ -179,8 +179,9 @@ public class FilterActionGroup extends ActionGroup implements IMementoAware {
 		length = Math.min(lruFilterDescriptorStack.size(), MAX_FILTER_MENU_ENTRIES - oldestFirstStack.size());
 		for (int i = 0; i < length; i++) {
 			ICommonFilterDescriptor filter = lruFilterDescriptorStack.pollFirst();
-			if (!oldestFirstStack.contains(filter))
+			if (!oldestFirstStack.contains(filter)) {
 				oldestFirstStack.push(filter);
+			}
 		}
 		lruFilterDescriptorStack = oldestFirstStack;
 	}

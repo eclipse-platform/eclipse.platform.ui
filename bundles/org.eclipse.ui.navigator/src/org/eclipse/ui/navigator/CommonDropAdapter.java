@@ -93,8 +93,9 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	@Override
 	public void dragEnter(DropTargetEvent event) {
 
-		if (event.detail == DND.DROP_NONE)
+		if (event.detail == DND.DROP_NONE) {
 			return;
+		}
 
 		if (Policy.DEBUG_DND) {
 			System.out.println("CommonDropAdapter.dragEnter: " + event); //$NON-NLS-1$
@@ -190,8 +191,9 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 					}
 				}
 			});
-			if (retValue[0])
+			if (retValue[0]) {
 				return true;
+			}
 		}
 
 		return false;

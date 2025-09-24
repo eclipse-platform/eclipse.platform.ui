@@ -151,12 +151,13 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				public void run() throws Exception {
 					if (!isOverridingExtensionInSet(foundExtension.getDescriptor(),
 							enabledExtensions)) {
-						if (elements)
+						if (elements) {
 							contributedChildren = foundExtension.internalGetContentProvider()
 									.getElements(aParentElementOrPath);
-						else
+						} else {
 							contributedChildren = foundExtension.internalGetContentProvider()
 									.getChildren(aParentElementOrPath);
+						}
 						overridingExtensions = foundExtension
 								.getOverridingExtensionsForTriggerPoint(aParentElement);
 						INavigatorContentDescriptor foundDescriptor = foundExtension
@@ -494,8 +495,7 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 	 * @return the element
 	 */
 	private Object internalAsElement(Object parentElementOrPath) {
-		if (parentElementOrPath instanceof TreePath) {
-			TreePath tp = (TreePath) parentElementOrPath;
+		if (parentElementOrPath instanceof TreePath tp) {
 			if (tp.getSegmentCount() > 0) {
 				return tp.getLastSegment();
 			}
@@ -605,10 +605,11 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 					String msg = cpe.getMessage() != null ? cpe.getMessage() : cpe.toString();
 					NavigatorPlugin.logError(0, msg, cpe);
 				}
-				if (foundPaths.isEmpty())
+				if (foundPaths.isEmpty()) {
 					parentPaths.add(c);
-				else
+				} else {
 					parentPaths.addAll(foundPaths);
+				}
 			}
 		}
 		return parentPaths;
@@ -638,15 +639,17 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 							for (TreePath parentTreePath : parentTreePaths) {
 
 								parent = parentTreePath.getLastSegment();
-								if ((parent = findParent(foundExtension, anElement, parent)) != null)
+								if ((parent = findParent(foundExtension, anElement, parent)) != null) {
 									parents.add(parent);
+								}
 							}
 
 						} else {
 							parent = foundExtension.internalGetContentProvider().getParent(
 									anElement);
-							if ((parent = findParent(foundExtension, anElement, parent)) != null)
+							if ((parent = findParent(foundExtension, anElement, parent)) != null) {
 								parents.add(parent);
+							}
 						}
 					}
 				}
@@ -678,8 +681,9 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 				piplineContentProvider = overridingExtension.internalGetContentProvider();
 				suggestedOverriddenParent = piplineContentProvider.getPipelinedParent(anElement, lastValidParent);
 
-				if (suggestedOverriddenParent != null && !suggestedOverriddenParent.equals(aSuggestedParent))
+				if (suggestedOverriddenParent != null && !suggestedOverriddenParent.equals(aSuggestedParent)) {
 					lastValidParent = suggestedOverriddenParent;
+				}
 
 				// should never return null
 				lastValidParent = findParent(overridingExtension, anElement, lastValidParent);

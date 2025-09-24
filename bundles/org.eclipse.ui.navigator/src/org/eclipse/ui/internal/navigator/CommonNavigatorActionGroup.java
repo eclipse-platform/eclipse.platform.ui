@@ -61,7 +61,7 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 
 	private final CommonViewer commonViewer;
 
-	private CommonNavigator commonNavigator;
+	private final CommonNavigator commonNavigator;
 
 	private final LinkHelperService linkHelperService;
 

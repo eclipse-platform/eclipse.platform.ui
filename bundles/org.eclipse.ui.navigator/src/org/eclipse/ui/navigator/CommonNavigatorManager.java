@@ -67,7 +67,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 	private UpdateActionBarsJob updateActionBars;
 
-	private ISelectionChangedListener statusBarListener = anEvent -> updateStatusBar(anEvent.getSelection());
+	private final ISelectionChangedListener statusBarListener = anEvent -> updateStatusBar(anEvent.getSelection());
 
 
 
@@ -186,8 +186,9 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 		};
 
-		if(memento != null)
+		if(memento != null) {
 			restoreState(memento);
+		}
 
 		initContextMenu();
 		initViewMenu();

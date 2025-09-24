@@ -54,7 +54,7 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants, 
 
 	private Expression enablement;
 
-	private IConfigurationElement configElement;
+	private final IConfigurationElement configElement;
 
 	/**
 	 * @param aConfigElement The configuration element from the extension point.

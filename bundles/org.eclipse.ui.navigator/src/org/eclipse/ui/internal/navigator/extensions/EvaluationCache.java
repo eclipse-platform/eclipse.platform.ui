@@ -120,8 +120,9 @@ public class EvaluationCache implements VisibilityListener {
 	 */
 	public final NavigatorContentDescriptor[] getDescriptors(Object anElement, boolean toComputeOverrides) {
 		cleanUpStaleEntries();
-		if (anElement == null)
+		if (anElement == null) {
 			return null;
+		}
 
 		if (toComputeOverrides) {
 			return getDescriptorsFromMap(anElement, evaluations);

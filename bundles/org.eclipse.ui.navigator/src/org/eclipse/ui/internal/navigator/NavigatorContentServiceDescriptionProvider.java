@@ -46,9 +46,8 @@ public final class NavigatorContentServiceDescriptionProvider implements
 
 		Object target;
 
-		if (anElement instanceof IStructuredSelection) {
+		if (anElement instanceof IStructuredSelection structuredSelection) {
 
-			IStructuredSelection structuredSelection = (IStructuredSelection) anElement;
 			if (structuredSelection.size() > 1) {
 				return getDefaultStatusBarMessage(structuredSelection.size());
 			}

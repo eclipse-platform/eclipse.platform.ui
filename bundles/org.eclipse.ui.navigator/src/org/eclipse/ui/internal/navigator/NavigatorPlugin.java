@@ -65,7 +65,7 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	private static class LogJob extends Job {
 
 
-		private ListenerList messages = new ListenerList() {
+		private final ListenerList messages = new ListenerList() {
 
 			@Override
 			public synchronized Object[] getListeners() {
@@ -111,7 +111,7 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	/** The id of the orge.eclipse.ui.navigator plugin. */
 	public static String PLUGIN_ID = "org.eclipse.ui.navigator"; //$NON-NLS-1$
 
-	private BundleListener bundleListener = NavigatorSaveablesService::bundleChanged;
+	private final BundleListener bundleListener = NavigatorSaveablesService::bundleChanged;
 
 	/**
 	 * This constant can be used via {@link CommonViewer#setData(String, Object)} to set/get the lisst

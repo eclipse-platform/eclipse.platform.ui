@@ -27,11 +27,11 @@ import org.eclipse.ui.navigator.ICommonFilterDescriptor;
  */
 public class ToggleFilterAction extends Action {
 
-	private ICommonFilterDescriptor descriptor;
+	private final ICommonFilterDescriptor descriptor;
 
-	private NavigatorFilterService filterService;
+	private final NavigatorFilterService filterService;
 
-	private CommonViewer commonViewer;
+	private final CommonViewer commonViewer;
 
 	protected ToggleFilterAction(CommonViewer aCommonViewer,
 			NavigatorFilterService aFilterService,

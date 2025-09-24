@@ -37,7 +37,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  */
 public class UpdateActiveFiltersOperation extends AbstractOperation {
 
-	private String[] filterIdsToActivate;
+	private final String[] filterIdsToActivate;
 
 	private final CommonViewer commonViewer;
 

@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  */
 public class TreeViewerFrameSource implements IFrameSource {
 
-	private AbstractTreeViewer viewer;
+	private final AbstractTreeViewer viewer;
 
 	/**
 	 * Constructs a new tree viewer frame source for the specified tree viewer.
@@ -64,8 +64,9 @@ public class TreeViewerFrameSource implements IFrameSource {
 	protected void frameChanged(TreeFrame frame) {
 		viewer.getControl().setRedraw(false);
 		viewer.setInput(frame.getInput());
-		if (frame.getExpandedElements() != null)
+		if (frame.getExpandedElements() != null) {
 			viewer.setExpandedElements(frame.getExpandedElements());
+		}
 		viewer.setSelection(frame.getSelection(), true);
 		viewer.getControl().setRedraw(true);
 	}
@@ -111,8 +112,9 @@ public class TreeViewerFrameSource implements IFrameSource {
 		ITreeContentProvider provider = (ITreeContentProvider) viewer
 				.getContentProvider();
 		Object parent = provider.getParent(input);
-		if (parent == null)
+		if (parent == null) {
 			return null;
+		}
 		TreeFrame frame = createFrame(parent);
 		if ((flags & IFrameSource.FULL_CONTEXT) != 0) {
 			frame.setSelection(viewer.getSelection());

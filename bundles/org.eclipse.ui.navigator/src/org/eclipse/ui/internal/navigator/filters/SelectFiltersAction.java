@@ -34,7 +34,7 @@ import org.eclipse.ui.navigator.CommonViewer;
 public class SelectFiltersAction extends Action {
 
 	private final CommonViewer commonViewer;
-	private FilterActionGroup filterGroup;
+	private final FilterActionGroup filterGroup;
 
 	/**
 	 * Create an action to drive the Filter selection dialog

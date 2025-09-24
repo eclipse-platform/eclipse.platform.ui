@@ -106,8 +106,9 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 			// synchronize in the same order as in the init method.
 			synchronized (instances) {
 				synchronized (NavigatorSaveablesService.this) {
-					if (isDisposed())
+					if (isDisposed()) {
 						return;
+					}
 					switch (event.getEventType()) {
 					case SaveablesLifecycleEvent.POST_OPEN:
 						recomputeSaveablesAndNotify(false, null);
@@ -410,8 +411,9 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private SaveablesProvider[] getSaveablesProviders() {
 		// TODO optimize this
 		if (saveablesProviders == null) {
-			if (isDisposed())
+			if (isDisposed()) {
 				return null;
+			}
 			inactivePluginsWithSaveablesProviders = new HashMap<>();
 			saveablesProviderMap = new TreeMap<>(ExtensionSequenceNumberComparator.INSTANCE);
 			INavigatorContentDescriptor[] descriptors = contentService

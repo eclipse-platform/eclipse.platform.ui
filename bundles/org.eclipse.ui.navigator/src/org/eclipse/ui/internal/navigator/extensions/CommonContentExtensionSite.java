@@ -26,11 +26,11 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 public class CommonContentExtensionSite extends CommonExtensionSite implements
 		ICommonContentExtensionSite {
 
-	private NavigatorContentExtension extension;
+	private final NavigatorContentExtension extension;
 
-	private IMemento memento;
+	private final IMemento memento;
 
-	private NavigatorContentService contentService;
+	private final NavigatorContentService contentService;
 
 	/**
 	 * Create a config element for the initialization of Content Extensions.

@@ -34,7 +34,7 @@ public class ContributorTrackingSet extends LinkedHashSet {
 
 	private INavigatorContentDescriptor contributor;
 	private INavigatorContentDescriptor firstClassContributor;
-	private NavigatorContentService contentService;
+	private final NavigatorContentService contentService;
 
 	/**
 	 * Construct a tracking set.
@@ -71,8 +71,9 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	@Override
 	public void clear() {
 		Iterator it = iterator();
-		while (it.hasNext())
+		while (it.hasNext()) {
 			contentService.forgetContribution(it.next());
+		}
 		super.clear();
 	}
 
@@ -104,8 +105,9 @@ public class ContributorTrackingSet extends LinkedHashSet {
 
 	public void setContents(Object[] contents) {
 		super.clear();
-		if(contents != null)
+		if(contents != null) {
 			addAll(Arrays.asList(contents));
+		}
 
 	}
 

@@ -47,7 +47,7 @@ public class CommonWizardDescriptorManager {
 	 */
 	public static final String WIZARD_TYPE_NEW = "new"; //$NON-NLS-1$
 
-	private Map<String, Set> commonWizardDescriptors = new HashMap<>();
+	private final Map<String, Set> commonWizardDescriptors = new HashMap<>();
 
 	/**
 	 * @return the singleton instance of the registry
@@ -206,8 +206,9 @@ public class CommonWizardDescriptorManager {
 							retValue[0] = true;
 						}
 					});
-					if (!retValue[0])
+					if (!retValue[0]) {
 						break;
+					}
 				}
 				return retValue[0];
 			}

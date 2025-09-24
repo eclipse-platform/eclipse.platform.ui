@@ -69,8 +69,9 @@ public class NavigatorDecoratingLabelProvider extends DecoratingStyledCellLabelP
 				return ((IStyledLabelProvider) provider).getStyledText(element);
 			}
 			String text= provider.getText(element);
-			if (text == null)
+			if (text == null) {
 				text= ""; //$NON-NLS-1$
+			}
 			return new StyledString(text);
 		}
 

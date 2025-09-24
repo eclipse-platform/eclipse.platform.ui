@@ -22,9 +22,9 @@ package org.eclipse.ui.navigator;
  * @since 3.2
  */
 public final class MenuInsertionPoint {
-	private String name;
+	private final String name;
 
-	private boolean isSeparator;
+	private final boolean isSeparator;
 
 	private String toString;
 

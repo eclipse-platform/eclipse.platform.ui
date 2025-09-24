@@ -276,9 +276,7 @@ public final class NavigatorViewerDescriptor implements
 								NLS
 										.bind(
 												CommonNavigatorMessages.NavigatorViewerDescriptor_Popup_Menu_Overridden,
-												new Object[] { getViewerId(),
-														popupMenuId,
-														newPopupMenuId }), null);
+												getViewerId(), popupMenuId, newPopupMenuId), null);
 			}
 			popupMenuId = newPopupMenuId;
 		}
@@ -318,11 +316,8 @@ public final class NavigatorViewerDescriptor implements
 		} else if (includesElement.length >= 1) {
 			NavigatorPlugin.logError(0, NLS.bind(
 					CommonNavigatorMessages.Too_many_elements_Warning,
-					new Object[] {
-							TAG_INCLUDES,
-							element.getDeclaringExtension()
-									.getUniqueIdentifier(),
-							element.getDeclaringExtension().getContributor().getName() }),
+					TAG_INCLUDES, element.getDeclaringExtension()
+							.getUniqueIdentifier(), element.getDeclaringExtension().getContributor().getName()),
 					null);
 		}
 
@@ -339,11 +334,8 @@ public final class NavigatorViewerDescriptor implements
 		} else if (excludesElement.length >= 1) {
 			NavigatorPlugin.logError(0, NLS.bind(
 					CommonNavigatorMessages.Too_many_elements_Warning,
-					new Object[] {
-							TAG_EXCLUDES,
-							element.getDeclaringExtension()
-									.getUniqueIdentifier(),
-							element.getDeclaringExtension().getContributor().getName() }),
+					TAG_EXCLUDES, element.getDeclaringExtension()
+							.getUniqueIdentifier(), element.getDeclaringExtension().getContributor().getName()),
 					null);
 		}
 	}
