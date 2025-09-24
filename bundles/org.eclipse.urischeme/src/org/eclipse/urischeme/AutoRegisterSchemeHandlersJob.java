@@ -38,9 +38,9 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 	private static final String PROCESSED_SCHEMES_PREFERENCE = "processedSchemes"; //$NON-NLS-1$
 	private static final String SCHEME_LIST_PREFERENCE_SEPARATOR = ","; //$NON-NLS-1$
 	private static boolean alreadyTriggered = false;
-	private IEclipsePreferences testPreferenceNode;
-	private IUriSchemeExtensionReader testExtensionReader;
-	private IOperatingSystemRegistration testOsRegistration;
+	private final IEclipsePreferences testPreferenceNode;
+	private final IUriSchemeExtensionReader testExtensionReader;
+	private final IOperatingSystemRegistration testOsRegistration;
 
 	public AutoRegisterSchemeHandlersJob() {
 		// all defaults for lazy init NOT on UI thread

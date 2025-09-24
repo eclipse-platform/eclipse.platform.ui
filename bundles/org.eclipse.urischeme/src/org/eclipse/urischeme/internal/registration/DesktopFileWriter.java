@@ -36,7 +36,7 @@ public class DesktopFileWriter {
 	private static final String KEY_MIME_TYPE = "MimeType"; //$NON-NLS-1$
 	private static final String KEY_EXEC = "Exec"; //$NON-NLS-1$
 	private static final String EXEC_URI_PLACEHOLDER = " %u"; //$NON-NLS-1$
-	private Map<String, String> properties;
+	private final Map<String, String> properties;
 
 	/**
 	 * Creates an instance of the DekstopFileWriter. Throws an

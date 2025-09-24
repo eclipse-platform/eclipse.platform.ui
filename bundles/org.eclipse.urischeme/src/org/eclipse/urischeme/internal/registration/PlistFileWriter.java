@@ -171,7 +171,7 @@ public class PlistFileWriter {
 	public interface IOSupplier<T> {
 		T get() throws IOException;
 	}
-	
+
 	/**
 	 * Writes the content (xml) of the .plist file to the supplied {@link Writer}
 	 *
