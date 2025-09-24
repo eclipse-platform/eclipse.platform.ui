@@ -65,8 +65,9 @@ public abstract class ObjectSegment extends ParagraphSegment {
 		}
 		if (wHint != SWT.DEFAULT && !nowrap && loc.x + iwidth + loc.marginWidth > wHint) {
 			// new line
-			if (computeHeightOnly)
+			if (computeHeightOnly) {
 				loc.collectHeights();
+			}
 			loc.resetCaret();
 			loc.x += iwidth;
 			loc.y += loc.rowHeight;
@@ -84,14 +85,16 @@ public abstract class ObjectSegment extends ParagraphSegment {
 
 	@Override
 	public boolean contains(int x, int y) {
-		if (bounds==null)
+		if (bounds==null) {
 			return false;
+		}
 		return bounds.contains(x, y);
 	}
 	@Override
 	public boolean intersects(Rectangle rect) {
-		if (bounds==null)
+		if (bounds==null) {
 			return false;
+		}
 		return bounds.intersects(rect);
 	}
 
@@ -129,8 +132,9 @@ public abstract class ObjectSegment extends ParagraphSegment {
 		if (size != null) {
 			objWidth = size.x + (isSelectable()?2:0);
 			objHeight = size.y + (isSelectable()?2:0);
-		} else
+		} else {
 			return;
+		}
 		loc.width = objWidth;
 
 		if (!nowrap && loc.x + objWidth + loc.marginWidth > width) {
@@ -141,10 +145,11 @@ public abstract class ObjectSegment extends ParagraphSegment {
 		int ix = loc.x;
 		int iy = loc.y;
 
-		if (alignment==MIDDLE)
+		if (alignment==MIDDLE) {
 			iy = loc.getMiddle(objHeight, false);
-		else if (alignment==BOTTOM)
+		} else if (alignment==BOTTOM) {
 			iy = loc.getBaseline(objHeight, false);
+		}
 		loc.x += objWidth;
 		loc.rowHeight = Math.max(loc.rowHeight, objHeight);
 		bounds = new Rectangle(ix, iy, objWidth, objHeight);

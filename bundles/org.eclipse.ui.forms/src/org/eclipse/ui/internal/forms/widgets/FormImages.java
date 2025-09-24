@@ -36,12 +36,13 @@ public class FormImages {
 	private static FormImages instance;
 
 	public static FormImages getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new FormImages();
+		}
 		return instance;
 	}
 
-	private ResourceManagerManger manager = new ResourceManagerManger();
+	private final ResourceManagerManger manager = new ResourceManagerManger();
 	private Map<Integer, AbstractImageDescriptor> descriptors;
 
 	private FormImages() {
@@ -62,8 +63,7 @@ public class FormImages {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof AbstractImageDescriptor) {
-				AbstractImageDescriptor id = (AbstractImageDescriptor)obj;
+			if (obj instanceof AbstractImageDescriptor id) {
 				return fLength == id.fLength && Arrays.equals(fRGBs, id.fRGBs);
 			}
 			return false;
@@ -72,15 +72,16 @@ public class FormImages {
 		@Override
 		public int hashCode() {
 			int hash = 0;
-			for (RGB fRGB : fRGBs)
+			for (RGB fRGB : fRGBs) {
 				hash = hash * 7 + fRGB.hashCode();
+			}
 			return hash * 7 + fLength;
 		}
 	}
 
 	private class SimpleImageDescriptor extends AbstractImageDescriptor{
-		private int fTheight;
-		private int fMarginHeight;
+		private final int fTheight;
+		private final int fMarginHeight;
 
 		SimpleImageDescriptor (Color color1, Color color2,
 				int realtheight, int theight, int marginHeight) {
@@ -91,11 +92,11 @@ public class FormImages {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof SimpleImageDescriptor) {
-				SimpleImageDescriptor id = (SimpleImageDescriptor) obj;
+			if (obj instanceof SimpleImageDescriptor id) {
 				if (super.equals(obj)  &&
-						id.fTheight == fTheight && id.fMarginHeight == fMarginHeight)
+						id.fTheight == fTheight && id.fMarginHeight == fMarginHeight) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -147,8 +148,7 @@ public class FormImages {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof ComplexImageDescriptor) {
-				ComplexImageDescriptor id = (ComplexImageDescriptor) obj;
+			if (obj instanceof ComplexImageDescriptor id) {
 				if (super.equals(obj)  &&
 						id.fVertical == fVertical && Arrays.equals(id.fPercents, fPercents)) {
 					if (Objects.equals(fBgRGB, id.fBgRGB)) {
@@ -157,10 +157,12 @@ public class FormImages {
 					// if the only thing that isn't the same is the background color
 					// still return true if it does not matter (percents add up to 100)
 					int sum = 0;
-					for (int fPercent : fPercents)
+					for (int fPercent : fPercents) {
 						sum += fPercent;
-					if (sum >= 100)
+					}
+					if (sum >= 100) {
 						return true;
+					}
 				}
 			}
 			return false;
@@ -187,8 +189,9 @@ public class FormImages {
 			int height = fVertical ? fLength : 1;
 			final ImageGcDrawer imageGcDrawer = (gc, iWidth, iHeight) -> {
 				Color[] colors = new Color[fRGBs.length];
-				for (int i = 0; i < colors.length; i++)
+				for (int i = 0; i < colors.length; i++) {
 					colors[i] = new Color(device, fRGBs[i]);
+				}
 				Color bg = fBgRGB == null ? null : new Color(device, fBgRGB);
 				drawTextGradient(gc, iWidth, iHeight, colors, fPercents, fVertical, bg);
 			};
@@ -201,20 +204,23 @@ public class FormImages {
 				int[] percents, boolean vertical, Color bg) {
 			final Color oldBackground = gc.getBackground();
 			if (colors.length == 1) {
-				if (colors[0] != null)
+				if (colors[0] != null) {
 					gc.setBackground(colors[0]);
+				}
 				gc.fillRectangle(0, 0, width, height);
 			} else {
 				final Color oldForeground = gc.getForeground();
 				Color lastColor = colors[0];
-				if (lastColor == null)
+				if (lastColor == null) {
 					lastColor = oldBackground;
+				}
 				int pos = 0;
 				for (int i = 0; i < percents.length; ++i) {
 					gc.setForeground(lastColor);
 					lastColor = colors[i + 1];
-					if (lastColor == null)
+					if (lastColor == null) {
 						lastColor = oldBackground;
+					}
 					gc.setBackground(lastColor);
 					if (vertical) {
 						int gradientHeight = percents[i] * height / 100;
@@ -231,13 +237,15 @@ public class FormImages {
 					}
 				}
 				if (vertical && pos < height) {
-					if (bg != null)
+					if (bg != null) {
 						gc.setBackground(bg);
+					}
 					gc.fillRectangle(0, pos, width, height - pos);
 				}
 				if (!vertical && pos < width) {
-					if (bg != null)
+					if (bg != null) {
 						gc.setBackground(bg);
+					}
 					gc.fillRectangle(pos, 0, width - pos, height);
 				}
 				gc.setForeground(oldForeground);
@@ -257,10 +265,10 @@ public class FormImages {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof SimpleSectionImageDescriptor) {
-				SimpleSectionImageDescriptor id = (SimpleSectionImageDescriptor) obj;
-				if (super.equals(obj) && id.fTheight == fTheight && id.fMarginHeight == fMarginHeight)
+			if (obj instanceof SimpleSectionImageDescriptor id) {
+				if (super.equals(obj) && id.fTheight == fTheight && id.fMarginHeight == fMarginHeight) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -322,8 +330,9 @@ public class FormImages {
 
 	public Image getSectionGradientImage(Color color1, Color color2, int realtheight, int theight, int marginHeight,
 			Display display) {
-		if (color1 == null || color1.isDisposed())
+		if (color1 == null || color1.isDisposed()) {
 			return null;
+		}
 		AbstractImageDescriptor desc = new SimpleSectionGradientImageDescriptor(color1, color2,
 				realtheight, theight, marginHeight);
 		return getGradient(desc, display);
@@ -331,21 +340,26 @@ public class FormImages {
 
 	public Image getGradient(Color color1, Color color2,
 			int realtheight, int theight, int marginHeight, Display display) {
-		if (color1 == null || color1.isDisposed() || color2 == null || color2.isDisposed())
+		if (color1 == null || color1.isDisposed() || color2 == null || color2.isDisposed()) {
 			return null;
+		}
 		AbstractImageDescriptor desc = new SimpleImageDescriptor(color1, color2, realtheight, theight, marginHeight);
 		return getGradient(desc, display);
 	}
 
 	public Image getGradient(Color[] colors, int[] percents,
 			int length, boolean vertical, Color bg, Display display) {
-		if (colors.length == 0)
+		if (colors.length == 0) {
 			return null;
-		for (Color color : colors)
-			if (color == null || color.isDisposed())
+		}
+		for (Color color : colors) {
+			if (color == null || color.isDisposed()) {
 				return null;
-		if (bg != null && bg.isDisposed())
+			}
+		}
+		if (bg != null && bg.isDisposed()) {
 			return null;
+		}
 		AbstractImageDescriptor desc = new ComplexImageDescriptor(colors, length, percents, vertical, bg);
 		return getGradient(desc, display);
 	}
@@ -377,12 +391,14 @@ public class FormImages {
 	}
 
 	private void checkHashMaps() {
-		if (descriptors == null)
+		if (descriptors == null) {
 			descriptors = new HashMap<>();
+		}
 	}
 
 	private void validateHashMaps() {
-		if (descriptors.isEmpty())
+		if (descriptors.isEmpty()) {
 			descriptors = null;
+		}
 	}
 }

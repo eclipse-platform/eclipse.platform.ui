@@ -201,7 +201,7 @@ public class FormText extends Canvas {
 
 	private ListenerList<IHyperlinkListener> listeners;
 
-	private Hashtable<String, Object> resourceTable = new Hashtable<>();
+	private final Hashtable<String, Object> resourceTable = new Hashtable<>();
 
 	private IHyperlinkSegment entered;
 
@@ -238,11 +238,13 @@ public class FormText extends Canvas {
 				boolean changed) {
 			long start = 0;
 
-			if (DEBUG_TEXT)
+			if (DEBUG_TEXT) {
 				start = System.currentTimeMillis();
+			}
 			int innerWidth = wHint;
-			if (innerWidth != SWT.DEFAULT)
+			if (innerWidth != SWT.DEFAULT) {
 				innerWidth -= marginWidth * 2;
+			}
 			Point textSize = computeTextSize(innerWidth);
 			int textWidth = textSize.x + 2 * marginWidth;
 			int textHeight = textSize.y + 2 * marginHeight;
@@ -270,8 +272,9 @@ public class FormText extends Canvas {
 			for (int i = 0; i < paragraphs.length; i++) {
 				Paragraph p = paragraphs[i];
 				if (i > 0 && getParagraphsSeparated()
-						&& p.getAddVerticalSpace())
+						&& p.getAddVerticalSpace()) {
 					loc.y += getParagraphSpacing(lineHeight);
+				}
 				loc.rowHeight = 0;
 				loc.indent = p.getIndent();
 				loc.x = p.getIndent();
@@ -286,11 +289,13 @@ public class FormText extends Canvas {
 						} else {
 							pwidth = Math.max(pwidth, loc.width);
 						}
-						if (segment instanceof IFocusSelectable)
+						if (segment instanceof IFocusSelectable) {
 							selectableInTheLastRow = true;
+						}
 					}
-					if (wHint == SWT.DEFAULT)
+					if (wHint == SWT.DEFAULT) {
 						width = Math.max(width, pwidth);
+					}
 					loc.y += loc.rowHeight;
 				} else {
 					// empty new line
@@ -298,8 +303,9 @@ public class FormText extends Canvas {
 				}
 			}
 			gc.dispose();
-			if (selectableInTheLastRow)
+			if (selectableInTheLastRow) {
 				loc.y += 1;
+			}
 			return new Point(width, loc.y);
 		}
 
@@ -332,8 +338,9 @@ public class FormText extends Canvas {
 			IHyperlinkSegment selectedLink = getSelectedLink();
 			for (int i = 0; i < paragraphs.length; i++) {
 				Paragraph p = paragraphs[i];
-				if (i > 0 && paragraphsSeparated && p.getAddVerticalSpace())
+				if (i > 0 && paragraphsSeparated && p.getAddVerticalSpace()) {
 					loc.y += getParagraphSpacing(lineHeight);
+				}
 				loc.indent = p.getIndent();
 				loc.resetCaret();
 				loc.rowHeight = 0;
@@ -376,8 +383,9 @@ public class FormText extends Canvas {
 			}
 		});
 		addListener(SWT.Traverse, e -> {
-			if (DEBUG_FOCUS)
+			if (DEBUG_FOCUS) {
 				System.out.println("Traversal: " + e); //$NON-NLS-1$
+			}
 			switch (e.detail) {
 			case SWT.TRAVERSE_PAGE_NEXT:
 			case SWT.TRAVERSE_PAGE_PREVIOUS:
@@ -390,12 +398,13 @@ public class FormText extends Canvas {
 				e.doit = true;
 				return;
 			}
-			if (e.detail == SWT.TRAVERSE_TAB_NEXT)
+			if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
 				e.doit = advance(true);
-			else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
+			} else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
 				e.doit = advance(false);
-			else if (e.detail != SWT.TRAVERSE_RETURN)
+			} else if (e.detail != SWT.TRAVERSE_RETURN) {
 				e.doit = true;
+			}
 		});
 		addFocusListener(new FocusListener() {
 			@Override
@@ -418,8 +427,9 @@ public class FormText extends Canvas {
 				}
 				if (hasFocus) {
 					hasFocus = false;
-					if (!controlFocusTransfer)
+					if (!controlFocusTransfer) {
 						handleFocusChange();
+					}
 				}
 			}
 		});
@@ -572,10 +582,11 @@ public class FormText extends Canvas {
 	 */
 	public void setColor(String key, Color color) {
 		String fullKey = "c." + key; //$NON-NLS-1$
-		if (color == null)
+		if (color == null) {
 			resourceTable.remove(fullKey);
-		else
+		} else {
 			resourceTable.put(fullKey, color);
+		}
 	}
 
 	/**
@@ -594,10 +605,11 @@ public class FormText extends Canvas {
 	 */
 	public void setFont(String key, Font font) {
 		String fullKey = "f." + key; //$NON-NLS-1$
-		if (font == null)
+		if (font == null) {
 			resourceTable.remove(fullKey);
-		else
+		} else {
 			resourceTable.put(fullKey, font);
+		}
 		model.clearCache(fullKey);
 	}
 
@@ -619,10 +631,11 @@ public class FormText extends Canvas {
 	 */
 	public void setControl(String key, Control control) {
 		String fullKey = "o." + key; //$NON-NLS-1$
-		if (control == null)
+		if (control == null) {
 			resourceTable.remove(fullKey);
-		else
+		} else {
 			resourceTable.put(fullKey, control);
+		}
 	}
 
 	/**
@@ -662,10 +675,11 @@ public class FormText extends Canvas {
 	public void setText(String text, boolean parseTags, boolean expandURLs) {
 		disposeResourceTable(false);
 		entered = null;
-		if (parseTags)
+		if (parseTags) {
 			model.parseTaggedText(text, expandURLs);
-		else
+		} else {
 			model.parseRegularText(text, expandURLs);
+		}
 		hookControlSegmentFocus();
 		layout();
 		redraw();
@@ -693,17 +707,20 @@ public class FormText extends Canvas {
 
 	private void hookControlSegmentFocus() {
 		Paragraph[] paragraphs = model.getParagraphs();
-		if (paragraphs == null)
+		if (paragraphs == null) {
 			return;
+		}
 		Listener listener = e -> {
 			switch (e.type) {
 			case SWT.FocusIn:
-				if (!controlFocusTransfer)
+				if (!controlFocusTransfer) {
 					syncControlSegmentFocus((Control) e.widget);
+				}
 				break;
 			case SWT.Traverse:
-				if (DEBUG_FOCUS)
+				if (DEBUG_FOCUS) {
 					System.out.println("Control traversal: " + e); //$NON-NLS-1$
+				}
 				switch (e.detail) {
 				case SWT.TRAVERSE_PAGE_NEXT:
 				case SWT.TRAVERSE_PAGE_PREVIOUS:
@@ -714,20 +731,21 @@ public class FormText extends Canvas {
 				}
 				Control c = (Control) e.widget;
 				ControlSegment segment = (ControlSegment) c.getData(CONTROL_KEY);
-				if (e.detail == SWT.TRAVERSE_TAB_NEXT)
+				if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
 					e.doit = advanceControl(c, segment, true);
-				else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
+				} else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
 					e.doit = advanceControl(c, segment, false);
-				if (!e.doit)
+				}
+				if (!e.doit) {
 					e.detail = SWT.TRAVERSE_NONE;
+				}
 				break;
 			}
 		};
 		for (Paragraph p : paragraphs) {
 			ParagraphSegment[] segments = p.getSegments();
 			for (ParagraphSegment segment : segments) {
-				if (segment instanceof ControlSegment) {
-					ControlSegment cs = (ControlSegment) segment;
+				if (segment instanceof ControlSegment cs) {
 					Control c = cs.getControl(resourceTable);
 					if (c != null) {
 						if (c.getData(CONTROL_KEY) == null) {
@@ -742,8 +760,7 @@ public class FormText extends Canvas {
 	}
 
 	private void attachTraverseListener(Control c, Listener listener) {
-		if (c instanceof Composite) {
-			Composite parent = (Composite) c;
+		if (c instanceof Composite parent) {
 			Control[] children = parent.getChildren();
 			for (Control element : children) {
 				attachTraverseListener(element, listener);
@@ -774,27 +791,32 @@ public class FormText extends Canvas {
 
 		while (control != null) {
 			cs = (ControlSegment) control.getData(CONTROL_KEY);
-			if (cs != null)
+			if (cs != null) {
 				break;
+			}
 			control = control.getParent();
 		}
-		if (cs == null)
+		if (cs == null) {
 			return;
+		}
 		IFocusSelectable current = model.getSelectedSegment();
 		// If the model and the control match, all is well
-		if (current == cs)
+		if (current == cs) {
 			return;
+		}
 		IHyperlinkSegment oldLink = null;
 		if (current != null && current instanceof IHyperlinkSegment) {
 			oldLink = (IHyperlinkSegment) current;
 			exitLink(oldLink, SWT.NULL);
 		}
-		if (DEBUG_FOCUS)
+		if (DEBUG_FOCUS) {
 			System.out.println("Sync control: " + cs + ", oldLink=" + oldLink); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		model.select(cs);
-		if (oldLink != null)
+		if (oldLink != null) {
 			paintFocusTransfer(oldLink, null);
 		// getAccessible().setFocus(model.getSelectedSegmentIndex());
+		}
 	}
 
 	private boolean advanceControl(Control c, ControlSegment segment,
@@ -813,8 +835,9 @@ public class FormText extends Canvas {
 			// nowhere to go
 			return setFocusToNextSibling(this, next);
 		}
-		if (setFocusToNextSibling(c, next))
+		if (setFocusToNextSibling(c, next)) {
 			return true;
+		}
 		// still here - must go one level up
 		segment = (ControlSegment) parent.getData(CONTROL_KEY);
 		return advanceControl(parent, segment, next);
@@ -830,14 +853,16 @@ public class FormText extends Canvas {
 				if (next) {
 					for (int j = i + 1; j < children.length; j++) {
 						Control nc = children[j];
-						if (nc.setFocus())
+						if (nc.setFocus()) {
 							return false;
+						}
 					}
 				} else {
 					for (int j = i - 1; j >= 0; j--) {
 						Control pc = children[j];
-						if (pc.setFocus())
+						if (pc.setFocus()) {
 							return false;
+						}
 					}
 				}
 			}
@@ -895,8 +920,9 @@ public class FormText extends Canvas {
 				currentMenu.dispose();
 				super.setMenu(menu);
 			}
-		} else
+		} else {
 			super.setMenu(menu);
+		}
 	}
 
 	private void createMenu() {
@@ -954,8 +980,9 @@ public class FormText extends Canvas {
 	 *            the listener to add
 	 */
 	public void addHyperlinkListener(IHyperlinkListener listener) {
-		if (listeners == null)
+		if (listeners == null) {
 			listeners = new ListenerList<>();
+		}
 		listeners.add(listener);
 	}
 
@@ -966,8 +993,9 @@ public class FormText extends Canvas {
 	 *            the listener to remove
 	 */
 	public void removeHyperlinkListener(IHyperlinkListener listener) {
-		if (listeners == null)
+		if (listeners == null) {
 			return;
+		}
 		listeners.remove(listener);
 	}
 
@@ -1035,8 +1063,9 @@ public class FormText extends Canvas {
 
 	public String getSelectionText() {
 		checkWidget();
-		if (selData != null)
+		if (selData != null) {
 			return selData.getSelectionText();
+		}
 		return ""; //$NON-NLS-1$
 	}
 
@@ -1059,8 +1088,9 @@ public class FormText extends Canvas {
 	 */
 
 	public void copy() {
-		if (!canCopy())
+		if (!canCopy()) {
 			return;
+		}
 		Clipboard clipboard = new Clipboard(getDisplay());
 		Object[] o = new Object[] { getSelectionText() };
 		Transfer[] t = new Transfer[] { TextTransfer.getInstance() };
@@ -1098,8 +1128,9 @@ public class FormText extends Canvas {
 
 	private IHyperlinkSegment getSelectedLink() {
 		IFocusSelectable segment = model.getSelectedSegment();
-		if (segment != null && segment instanceof IHyperlinkSegment)
+		if (segment != null && segment instanceof IHyperlinkSegment) {
 			return (IHyperlinkSegment) segment;
+		}
 		return null;
 	}
 
@@ -1108,9 +1139,9 @@ public class FormText extends Canvas {
 		accessible.addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
-				if (e.childID == ACC.CHILDID_SELF)
+				if (e.childID == ACC.CHILDID_SELF) {
 					e.result = model.getAccessibleText();
-				else {
+				} else {
 					int linkCount = model.getHyperlinkCount();
 					if (e.childID >= 0 && e.childID < linkCount) {
 						IHyperlinkSegment link = model.getHyperlink(e.childID);
@@ -1134,10 +1165,11 @@ public class FormText extends Canvas {
 			public void getChildAtPoint(AccessibleControlEvent e) {
 				Point pt = toControl(new Point(e.x, e.y));
 				IHyperlinkSegment link = model.findHyperlinkAt(pt.x, pt.y);
-				if (link != null)
+				if (link != null) {
 					e.childID = model.indexOf(link);
-				else
+				} else {
 					e.childID = ACC.CHILDID_SELF;
+				}
 			}
 
 			@Override
@@ -1256,17 +1288,19 @@ public class FormText extends Canvas {
 		selData = new SelectionData(e);
 		redraw();
 		Form form = FormUtil.getForm(this);
-		if (form != null)
+		if (form != null) {
 			form.setSelectionText(this);
+		}
 	}
 
 	private void endSelection(MouseEvent e) {
 		inSelection = false;
 		if (selData != null) {
-			if (!selData.isEnclosed())
+			if (!selData.isEnclosed()) {
 				selData = null;
-			else
+			} else {
 				computeSelection();
+			}
 		}
 		notifySelectionChanged();
 	}
@@ -1275,8 +1309,9 @@ public class FormText extends Canvas {
 		GC gc = new GC(this);
 		Paragraph[] paragraphs = model.getParagraphs();
 		IHyperlinkSegment selectedLink = getSelectedLink();
-		if (getDisplay().getFocusControl() != this)
+		if (getDisplay().getFocusControl() != this) {
 			selectedLink = null;
+		}
 		for (Paragraph p : paragraphs) {
 			p.computeSelection(gc, resourceTable, selectedLink, selData);
 		}
@@ -1315,8 +1350,9 @@ public class FormText extends Canvas {
 	}
 
 	private void handleMouseClick(MouseEvent e, boolean down) {
-		if (DEBUG_FOCUS)
+		if (DEBUG_FOCUS) {
 			System.out.println("FormText: mouse click(" + down + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		if (down) {
 			// select a hyperlink
 			mouseFocus = true;
@@ -1339,7 +1375,9 @@ public class FormText extends Canvas {
 		} else {
 			if (e.button == 1) {
 				endSelection(e);
-				if (isDisposed()) return;
+				if (isDisposed()) {
+					return;
+				}
 				IHyperlinkSegment segmentUnder = model
 						.findHyperlinkAt(e.x, e.y);
 				if (segmentUnder != null && armed == segmentUnder && selData == null) {
@@ -1362,8 +1400,9 @@ public class FormText extends Canvas {
 		String currentTooltipText = getToolTipText();
 
 		if ((currentTooltipText != null && tooltipText == null)
-				|| (currentTooltipText == null && tooltipText != null))
+				|| (currentTooltipText == null && tooltipText != null)) {
 			setToolTipText(tooltipText);
+		}
 	}
 
 	private void handleMouseMove(MouseEvent e) {
@@ -1380,8 +1419,7 @@ public class FormText extends Canvas {
 				entered = null;
 			}
 			setCursor(null);
-		} else if (segmentUnder instanceof IHyperlinkSegment) {
-			IHyperlinkSegment linkUnder = (IHyperlinkSegment) segmentUnder;
+		} else if (segmentUnder instanceof IHyperlinkSegment linkUnder) {
 			if (entered!=null && linkUnder!=entered) {
 				// Special case: links are so close that there are 0 pixels between.
 				// Must exit the link before entering the next one.
@@ -1401,43 +1439,52 @@ public class FormText extends Canvas {
 				paintLinkHover(entered, false);
 				entered = null;
 			}
-			if (segmentUnder instanceof TextSegment)
+			if (segmentUnder instanceof TextSegment) {
 				setCursor(model.getHyperlinkSettings().getTextCursor());
-			else
+			} else {
 				setCursor(null);
+			}
 		}
 	}
 
 	private boolean advance(boolean next) {
-		if (DEBUG_FOCUS)
+		if (DEBUG_FOCUS) {
 			System.out.println("Advance: next=" + next); //$NON-NLS-1$
+		}
 		IFocusSelectable current = model.getSelectedSegment();
-		if (current != null && current instanceof IHyperlinkSegment)
+		if (current != null && current instanceof IHyperlinkSegment) {
 			exitLink((IHyperlinkSegment) current, SWT.NULL);
+		}
 		IFocusSelectable newSegment = null;
 		boolean valid = false;
 		// get the next segment that can accept focus. Links
 		// can always accept focus but controls may not
 		while (!valid) {
-			if (!model.traverseFocusSelectableObjects(next))
+			if (!model.traverseFocusSelectableObjects(next)) {
 				break;
+			}
 			newSegment = model.getSelectedSegment();
-			if (newSegment == null)
+			if (newSegment == null) {
 				break;
+			}
 			valid = setControlFocus(next, newSegment);
 		}
-		IHyperlinkSegment newLink = newSegment instanceof IHyperlinkSegment ? (IHyperlinkSegment) newSegment
+		IHyperlinkSegment newLink = newSegment instanceof IHyperlinkSegment i ? i
 				: null;
-		if (valid)
+		if (valid) {
 			enterLink(newLink, SWT.NULL);
-		IHyperlinkSegment oldLink = current instanceof IHyperlinkSegment ? (IHyperlinkSegment) current
+		}
+		IHyperlinkSegment oldLink = current instanceof IHyperlinkSegment i ? i
 				: null;
-		if (oldLink != null || newLink != null)
+		if (oldLink != null || newLink != null) {
 			paintFocusTransfer(oldLink, newLink);
-		if (newLink != null)
+		}
+		if (newLink != null) {
 			ensureVisible(newLink);
-		if (newLink != null)
+		}
+		if (newLink != null) {
 			getAccessible().setFocus(model.getSelectedSegmentIndex());
+		}
 		return !valid;
 	}
 
@@ -1460,15 +1507,18 @@ public class FormText extends Canvas {
 				boolean valid = false;
 				IFocusSelectable selectable = null;
 				while (!valid) {
-					if (!model.traverseFocusSelectableObjects(advance))
+					if (!model.traverseFocusSelectableObjects(advance)) {
 						break;
+					}
 					selectable = model.getSelectedSegment();
-					if (selectable == null)
+					if (selectable == null) {
 						break;
+					}
 					valid = setControlFocus(advance, selectable);
 				}
-				if (selectable != null)
+				if (selectable != null) {
 					ensureVisible(selectable);
+				}
 				if (selectable instanceof IHyperlinkSegment) {
 					enterLink((IHyperlinkSegment) selectable, SWT.NULL);
 					paintFocusTransfer(null, (IHyperlinkSegment) selectable);
@@ -1478,13 +1528,15 @@ public class FormText extends Canvas {
 			paintFocusTransfer(getSelectedLink(), null);
 			model.selectLink(null);
 		}
-		if (!model.hasFocusSegments())
+		if (!model.hasFocusSegments()) {
 			redraw();
+		}
 	}
 
 	private void enterLink(IHyperlinkSegment link, int stateMask) {
-		if (link == null || listeners == null)
+		if (link == null || listeners == null) {
 			return;
+		}
 		HyperlinkEvent he = new HyperlinkEvent(this, link.getHref(), link
 				.getText(), stateMask);
 		for (IHyperlinkListener listener : listeners) {
@@ -1493,8 +1545,9 @@ public class FormText extends Canvas {
 	}
 
 	private void exitLink(IHyperlinkSegment link, int stateMask) {
-		if (link == null || listeners == null)
+		if (link == null || listeners == null) {
 			return;
+		}
 		HyperlinkEvent he = new HyperlinkEvent(this, link.getHref(), link
 				.getText(), stateMask);
 		for (IHyperlinkListener listener : listeners) {
@@ -1507,8 +1560,9 @@ public class FormText extends Canvas {
 		HyperlinkSettings settings = getHyperlinkSettings();
 		Color newFg = hover ? settings.getActiveForeground() : settings
 				.getForeground();
-		if (newFg != null)
+		if (newFg != null) {
 			gc.setForeground(newFg);
+		}
 		gc.setBackground(getBackground());
 		gc.setFont(getFont());
 		boolean selected = (link == getSelectedLink());
@@ -1519,8 +1573,9 @@ public class FormText extends Canvas {
 
 	private void activateSelectedLink() {
 		IHyperlinkSegment link = getSelectedLink();
-		if (link != null)
+		if (link != null) {
 			activateLink(link, SWT.NULL);
+		}
 	}
 
 	private void activateLink(IHyperlinkSegment link, int stateMask) {
@@ -1542,8 +1597,9 @@ public class FormText extends Canvas {
 
 	private void ensureBoldFontPresent(Font regularFont) {
 		Font boldFont = (Font) resourceTable.get(FormTextModel.BOLD_FONT_ID);
-		if (boldFont != null)
+		if (boldFont != null) {
 			return;
+		}
 		boldFont = FormFonts.getInstance().getBoldFont(getDisplay(), regularFont);
 		resourceTable.put(FormTextModel.BOLD_FONT_ID, boldFont);
 	}
@@ -1619,12 +1675,14 @@ public class FormText extends Canvas {
 			mouseFocus = false;
 			return;
 		}
-		if (segment == null)
+		if (segment == null) {
 			return;
+		}
 		Rectangle bounds = segment.getBounds();
 		ScrolledComposite scomp = FormUtil.getScrolledComposite(this);
-		if (scomp == null)
+		if (scomp == null) {
 			return;
+		}
 		Point origin = FormUtil.getControlLocation(scomp, this);
 		origin.x += bounds.x;
 		origin.y += bounds.y;
@@ -1651,8 +1709,9 @@ public class FormText extends Canvas {
 			size = new Point(wHint, hHint);
 		}
 		Rectangle trim = computeTrim(0, 0, size.x, size.y);
-		if (DEBUG_TEXTSIZE)
+		if (DEBUG_TEXTSIZE) {
 			System.out.println("FormText Computed size: "+trim); //$NON-NLS-1$
+		}
 		return new Point(trim.width, trim.height);
 	}
 
@@ -1670,8 +1729,7 @@ public class FormText extends Canvas {
 			String key = enm.nextElement();
 			if (key.startsWith(ImageSegment.SEL_IMAGE_PREFIX)) {
 				Object obj = resourceTable.get(key);
-				if (obj instanceof Image) {
-					Image image = (Image) obj;
+				if (obj instanceof Image image) {
 					if (!image.isDisposed()) {
 						image.dispose();
 						imagesToRemove.add(key);

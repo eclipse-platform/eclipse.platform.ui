@@ -175,8 +175,9 @@ public class FormColors {
 	 * keys to ensure they are available.
 	 */
 	public void initializeSectionToolBarColors() {
-		if (colorRegistry.containsKey(IFormColors.TB_BG))
+		if (colorRegistry.containsKey(IFormColors.TB_BG)) {
 			return;
+		}
 		createTitleBarGradientColors();
 		createTitleBarOutlineColors();
 		createTwistieColors();
@@ -194,8 +195,9 @@ public class FormColors {
 	 * @since 3.3
 	 */
 	protected void initializeFormHeaderColors() {
-		if (colorRegistry.containsKey(IFormColors.H_BOTTOM_KEYLINE2))
+		if (colorRegistry.containsKey(IFormColors.H_BOTTOM_KEYLINE2)) {
 			return;
+		}
 		createFormHeaderColors();
 	}
 
@@ -226,8 +228,9 @@ public class FormColors {
 	public Color createColor(String key, RGB rgb) {
 		Color c = getResourceManager().createColor(rgb);
 		Color prevC = colorRegistry.get(key);
-		if (prevC != null && !prevC.isDisposed())
+		if (prevC != null && !prevC.isDisposed()) {
 			getResourceManager().destroyColor(prevC.getRGB());
+		}
 		colorRegistry.put(key, c);
 		return c;
 	}
@@ -282,15 +285,16 @@ public class FormColors {
 	 * background color will be used.
 	 */
 	protected void updateBorderColor() {
-		if (isWhiteBackground())
+		if (isWhiteBackground()) {
 			border = getColor(IFormColors.BORDER);
-		else {
+		} else {
 			border = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			Color bg = getImpliedBackground();
 			if (border.getRed() == bg.getRed()
 					&& border.getGreen() == bg.getGreen()
-					&& border.getBlue() == bg.getBlue())
+					&& border.getBlue() == bg.getBlue()) {
 				border = display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW);
+			}
 		}
 	}
 
@@ -368,10 +372,11 @@ public class FormColors {
 	 * @return color object if found, or <samp>null </samp> if not.
 	 */
 	public Color getColor(String key) {
-		if (key.startsWith(IFormColors.TB_PREFIX))
+		if (key.startsWith(IFormColors.TB_PREFIX)) {
 			initializeSectionToolBarColors();
-		else if (key.startsWith(IFormColors.H_PREFIX))
+		} else if (key.startsWith(IFormColors.H_PREFIX)) {
 			initializeFormHeaderColors();
+		}
 		return colorRegistry.get(key);
 	}
 
@@ -379,8 +384,9 @@ public class FormColors {
 	 * Disposes all the colors in the registry.
 	 */
 	public void dispose() {
-		if (resources != null)
+		if (resources != null) {
 			resources.dispose();
+		}
 		resources = null;
 		colorRegistry = null;
 	}
@@ -436,12 +442,15 @@ public class FormColors {
 	 * @since 3.1
 	 */
 	public static boolean testAnyPrimaryColor(RGB rgb, int from, int to) {
-		if (testPrimaryColor(rgb.red, from, to))
+		if (testPrimaryColor(rgb.red, from, to)) {
 			return true;
-		if (testPrimaryColor(rgb.green, from, to))
+		}
+		if (testPrimaryColor(rgb.green, from, to)) {
 			return true;
-		if (testPrimaryColor(rgb.blue, from, to))
+		}
+		if (testPrimaryColor(rgb.blue, from, to)) {
 			return true;
+		}
 		return false;
 	}
 
@@ -461,12 +470,15 @@ public class FormColors {
 	 */
 	public static boolean testTwoPrimaryColors(RGB rgb, int from, int to) {
 		int total = 0;
-		if (testPrimaryColor(rgb.red, from, to))
+		if (testPrimaryColor(rgb.red, from, to)) {
 			total++;
-		if (testPrimaryColor(rgb.green, from, to))
+		}
+		if (testPrimaryColor(rgb.green, from, to)) {
 			total++;
-		if (testPrimaryColor(rgb.blue, from, to))
+		}
+		if (testPrimaryColor(rgb.blue, from, to)) {
 			total++;
+		}
 		return total >= 2;
 	}
 
@@ -487,8 +499,9 @@ public class FormColors {
 	}
 
 	private Color getImpliedBackground() {
-		if (getBackground() != null)
+		if (getBackground() != null) {
 			return getBackground();
+		}
 		return getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	}
 
@@ -641,8 +654,9 @@ public class FormColors {
 	}
 
 	private LocalResourceManager getResourceManager() {
-		if (resources == null)
+		if (resources == null) {
 			resources = new LocalResourceManager(JFaceResources.getResources());
+		}
 		return resources;
 	}
 }

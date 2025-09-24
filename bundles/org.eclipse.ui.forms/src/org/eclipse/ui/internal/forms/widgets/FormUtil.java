@@ -195,8 +195,9 @@ public class FormUtil {
 		 * The recursive call proved to be the only thing that worked in all cases. Some attempts can be made
 		 * to estimate the height, but the algorithm needs to be run again to be sure.
 		 */
-		if (maxWidth > wHint)
+		if (maxWidth > wHint) {
 			return computeWrapSize(gc, text, maxWidth);
+		}
 		return new Point(maxWidth, height);
 	}
 
@@ -264,16 +265,18 @@ public class FormUtil {
 		ScrolledComposite scomp = getScrolledComposite(c);
 		if (scomp != null) {
 			Object data = scomp.getData(FOCUS_SCROLLING);
-			if (data == null || !data.equals(Boolean.FALSE))
+			if (data == null || !data.equals(Boolean.FALSE)) {
 				FormUtil.ensureVisible(scomp, c);
+			}
 		}
 	}
 
 	public static void ensureVisible(ScrolledComposite scomp, Control control) {
 		// if the control is a FormText we do not need to scroll since it will
 		// ensure visibility of its segments as necessary
-		if (control instanceof FormText)
+		if (control instanceof FormText) {
 			return;
+		}
 		Point controlSize = control.getSize();
 		Point controlOrigin = getControlLocation(scomp, control);
 		ensureVisible(scomp, controlOrigin, controlSize);
@@ -297,10 +300,11 @@ public class FormUtil {
 		// horizontal left - make sure the left edge of
 		// the control is showing
 		if (controlOrigin.x < x) {
-			if (controlSize.x < area.width)
+			if (controlSize.x < area.width) {
 				x = controlOrigin.x + controlSize.x - area.width;
-			else
+			} else {
 				x = controlOrigin.x;
+			}
 		}
 		// vertical bottom
 		if (controlSize.y < area.height
@@ -311,10 +315,11 @@ public class FormUtil {
 		// vertical top - make sure the top of
 		// the control is showing
 		if (controlOrigin.y < y) {
-			if (controlSize.y < area.height)
+			if (controlSize.y < area.height) {
 				y = controlOrigin.y + controlSize.y - area.height;
-			else
+			} else {
 				y = controlOrigin.y;
+			}
 		}
 
 		if (scompOrigin.x != x || scompOrigin.y != y) {
@@ -366,8 +371,9 @@ public class FormUtil {
 		Control content = scomp.getContent();
 		Control currentControl = control;
 		for (;;) {
-			if (currentControl == content)
+			if (currentControl == content) {
 				break;
+			}
 			Point location = currentControl.getLocation();
 			// if (location.x > 0)
 			// x += location.x;
@@ -427,16 +433,19 @@ public class FormUtil {
 		}
 		ScrolledComposite scomp = FormUtil.getScrolledComposite(c);
 		if (scomp != null) {
-			if (c instanceof Combo)
+			if (c instanceof Combo) {
 				return;
+			}
 			switch (keyCode) {
 			case SWT.ARROW_DOWN:
-				if (scomp.getData("novarrows") == null) //$NON-NLS-1$
+				if (scomp.getData("novarrows") == null) { //$NON-NLS-1$
 					FormUtil.scrollVertical(scomp, false);
+				}
 				break;
 			case SWT.ARROW_UP:
-				if (scomp.getData("novarrows") == null) //$NON-NLS-1$
+				if (scomp.getData("novarrows") == null) { //$NON-NLS-1$
 					FormUtil.scrollVertical(scomp, true);
+				}
 				break;
 			case SWT.ARROW_LEFT:
 				FormUtil.scrollHorizontal(scomp, true);
@@ -457,8 +466,9 @@ public class FormUtil {
 	public static int getHeightHint(int hHint, Control c) {
 		if (c instanceof Composite) {
 			Layout layout = ((Composite) c).getLayout();
-			if (layout instanceof ColumnLayout)
+			if (layout instanceof ColumnLayout) {
 				return hHint;
+			}
 		}
 		return SWT.DEFAULT;
 	}
@@ -498,8 +508,9 @@ public class FormUtil {
 
 	public static boolean mnemonicMatch(String text, char key) {
 		char mnemonic = findMnemonic(text);
-		if (mnemonic == '\0')
+		if (mnemonic == '\0') {
 			return false;
+		}
 		return Character.toUpperCase(key) == Character.toUpperCase(mnemonic);
 	}
 
@@ -507,12 +518,15 @@ public class FormUtil {
 		int index = 0;
 		int length = string.length();
 		do {
-			while (index < length && string.charAt(index) != '&')
+			while (index < length && string.charAt(index) != '&') {
 				index++;
-			if (++index >= length)
+			}
+			if (++index >= length) {
 				return '\0';
-			if (string.charAt(index) != '&')
+			}
+			if (string.charAt(index) != '&') {
 				return string.charAt(index);
+			}
 			index++;
 		} while (index < length);
 		return '\0';
@@ -521,19 +535,22 @@ public class FormUtil {
 	public static void setFocusScrollingEnabled(Control c, boolean enabled) {
 		ScrolledComposite scomp = null;
 
-		if (c instanceof ScrolledComposite)
+		if (c instanceof ScrolledComposite) {
 			scomp = (ScrolledComposite)c;
-		else
+		} else {
 			scomp = getScrolledComposite(c);
-		if (scomp!=null)
+		}
+		if (scomp!=null) {
 			scomp.setData(FormUtil.FOCUS_SCROLLING, enabled?null:Boolean.FALSE);
+		}
 	}
 
 	public static void setAntialias(GC gc, int style) {
 		if (!gc.getAdvanced()) {
 			gc.setAdvanced(true);
-			if (!gc.getAdvanced())
+			if (!gc.getAdvanced()) {
 				return;
+			}
 		}
 		gc.setAntialias(style);
 	}

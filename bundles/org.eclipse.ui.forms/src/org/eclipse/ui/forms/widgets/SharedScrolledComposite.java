@@ -46,7 +46,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 
 	private boolean expandVertical = false;
 
-	private SizeCache contentCache = new SizeCache();
+	private final SizeCache contentCache = new SizeCache();
 
 	private boolean reflowPending = false;
 
@@ -79,8 +79,9 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	@Override
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		if (getContent() != null)
+		if (getContent() != null) {
 			getContent().setForeground(fg);
+		}
 	}
 
 	/**
@@ -92,8 +93,9 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	@Override
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		if (getContent() != null)
+		if (getContent() != null) {
 			getContent().setBackground(bg);
+		}
 	}
 
 	/**
@@ -103,8 +105,9 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	@Override
 	public void setFont(Font font) {
 		super.setFont(font);
-		if (getContent() != null)
+		if (getContent() != null) {
 			getContent().setFont(font);
+		}
 	}
 
 	/**
@@ -127,10 +130,11 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	public boolean setFocus() {
 		boolean result;
 		FormUtil.setFocusScrollingEnabled(this, false);
-		if (getContent() != null)
+		if (getContent() != null) {
 			result = getContent().setFocus();
-		else
+		} else {
 			result = super.setFocus();
+		}
 		FormUtil.setFocusScrollingEnabled(this, true);
 		return result;
 	}
@@ -170,8 +174,9 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	public void reflow(boolean flushCache) {
 		Composite c = (Composite) getContent();
 		Rectangle clientArea = getClientArea();
-		if (c == null)
+		if (c == null) {
 			return;
+		}
 		if (clientArea.width == getSize().x) {
 			ScrollBar bar = getVerticalBar();
 			if (bar != null) {
@@ -202,10 +207,11 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		// reduce vertical scroll increment if necessary
 		ScrollBar vbar = getVerticalBar();
 		if (vbar != null) {
-			if (getClientArea().height - 5 < V_SCROLL_INCREMENT)
+			if (getClientArea().height - 5 < V_SCROLL_INCREMENT) {
 				getVerticalBar().setIncrement(getClientArea().height - 5);
-			else
+			} else {
 				getVerticalBar().setIncrement(V_SCROLL_INCREMENT);
+			}
 		}
 
 		ignoreLayouts = false;
@@ -230,11 +236,13 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 			reflowPending = true;
 			getDisplay().asyncExec(() -> {
 				reflowPending = false;
-				if (!isDisposed())
+				if (!isDisposed()) {
 					reflow(flushCache);
+				}
 			});
-		} else
+		} else {
 			reflow(flushCache);
+		}
 	}
 
 	private void initializeScrollBars() {

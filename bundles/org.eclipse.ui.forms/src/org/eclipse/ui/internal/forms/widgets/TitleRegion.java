@@ -65,9 +65,9 @@ public class TitleRegion extends Canvas {
 	private Image image;
 	private BusyIndicator busyLabel;
 	private Control currentTitleControl;
-	private Label titleLabel;
-	private StyledText titleText;
-	private SizeCache titleCache;
+	private final Label titleLabel;
+	private final StyledText titleText;
+	private final SizeCache titleCache;
 	private int fontHeight = -1;
 	private int fontBaselineHeight = -1;
 	private MenuHyperlink menuHyperlink;
@@ -97,10 +97,11 @@ public class TitleRegion extends Canvas {
 
 		@Override
 		public void mouseMove(MouseEvent e) {
-			if (e.button > 0)
+			if (e.button > 0) {
 				setHoverState(STATE_NORMAL);
-			else
+			} else {
 				setHoverState(STATE_HOVER_FULL);
+			}
 		}
 	}
 
@@ -153,17 +154,21 @@ public class TitleRegion extends Canvas {
 			if (menuManager != null) {
 				menuHyperlink.setVisible(!menuManager.isEmpty()
 						&& currentTitleControl.getVisible());
-				if (menuHyperlink.getVisible())
+				if (menuHyperlink.getVisible()) {
 					msize = menuHyperlink.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				}
 			}
-			if (flushCache)
+			if (flushCache) {
 				titleCache.flush();
+			}
 			titleCache.setControl(currentTitleControl);
 			int twidth = iwidth == SWT.DEFAULT ? iwidth : iwidth - SPACING * 2;
-			if (bsize != null && twidth != SWT.DEFAULT)
+			if (bsize != null && twidth != SWT.DEFAULT) {
 				twidth -= bsize.x + SPACING;
-			if (msize != null && twidth != SWT.DEFAULT)
+			}
+			if (msize != null && twidth != SWT.DEFAULT) {
 				twidth -= msize.x + SPACING;
+			}
 			if (currentTitleControl.getVisible()) {
 				tsize = titleCache.computeSize(twidth, SWT.DEFAULT);
 				if (twidth != SWT.DEFAULT) {
@@ -176,8 +181,9 @@ public class TitleRegion extends Canvas {
 					// System.out.println("twidth="+twidth+",
 					// tsize.x="+tsize.x); //$NON-NLS-1$//$NON-NLS-2$
 				}
-			} else
+			} else {
 				tsize = new Point(0, 0);
+			}
 			Point size = new Point(width, height);
 			if (!move) {
 				// compute size
@@ -191,10 +197,11 @@ public class TitleRegion extends Canvas {
 					size.x += msize.x + SPACING;
 					size.y = Math.max(size.y, msize.y);
 				}
-				if (size.y > 0)
+				if (size.y > 0) {
 					size.y += VMARGIN * 2;
 				// System.out.println("Compute size: width="+width+",
 				// size.x="+size.x); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			} else {
 				// position controls
 				int xloc = x + HMARGIN + SPACING;
@@ -212,10 +219,12 @@ public class TitleRegion extends Canvas {
 					if (Constants.OS_LINUX.equalsIgnoreCase(os)) {
 						tw += 1; // See Bug 342610
 					}
-					if (bsize != null)
+					if (bsize != null) {
 						tw -= bsize.x + SPACING;
-					if (msize != null)
+					}
+					if (msize != null) {
 						tw -= msize.x + SPACING;
+					}
 					currentTitleControl.setBounds(xloc,
 					// yloc + height / 2 - tsize.y / 2,
 							yloc, tw, tsize.y);
@@ -276,8 +285,9 @@ public class TitleRegion extends Canvas {
 	}
 
 	private void onPaint(PaintEvent e) {
-		if (hoverState == STATE_NORMAL)
+		if (hoverState == STATE_NORMAL) {
 			return;
+		}
 		GC gc = e.gc;
 		Rectangle carea = getClientArea();
 		gc.setBackground(getHoverBackground());
@@ -289,33 +299,38 @@ public class TitleRegion extends Canvas {
 	}
 
 	private Color getHoverBackground() {
-		if (hoverState == STATE_NORMAL)
+		if (hoverState == STATE_NORMAL) {
 			return null;
+		}
 		Color color = getColor(hoverState == STATE_HOVER_FULL ? IFormColors.H_HOVER_FULL
 				: IFormColors.H_HOVER_LIGHT);
-		if (color == null)
+		if (color == null) {
 			color = getDisplay()
 					.getSystemColor(
 							hoverState == STATE_HOVER_FULL ? SWT.COLOR_WIDGET_BACKGROUND
 									: SWT.COLOR_WIDGET_LIGHT_SHADOW);
+		}
 		return color;
 	}
 
 	public void setHoverState(int state) {
-		if (dragSource == null || this.hoverState == state)
+		if (dragSource == null || this.hoverState == state) {
 			return;
+		}
 		this.hoverState = state;
 		Color color = getHoverBackground();
 		titleLabel.setBackground(color != null ? color
 				: getColor(FormHeading.COLOR_BASE_BG));
 		titleText.setBackground(color != null ? color
 				: getColor(FormHeading.COLOR_BASE_BG));
-		if (busyLabel != null)
+		if (busyLabel != null) {
 			busyLabel.setBackground(color != null ? color
 					: getColor(FormHeading.COLOR_BASE_BG));
-		if (menuHyperlink != null)
+		}
+		if (menuHyperlink != null) {
 			menuHyperlink.setBackground(color != null ? color
 					: getColor(FormHeading.COLOR_BASE_BG));
+		}
 		redraw();
 	}
 
@@ -355,13 +370,15 @@ public class TitleRegion extends Canvas {
 		if (busyLabel != null) {
 			busyLabel.setImage(theImage);
 		}
-		if (doLayout)
+		if (doLayout) {
 			layout();
+		}
 	}
 
 	public void updateToolTip(String toolTip) {
-		if (busyLabel != null)
+		if (busyLabel != null) {
 			busyLabel.setToolTipText(toolTip);
+		}
 	}
 
 	@Override
@@ -369,10 +386,12 @@ public class TitleRegion extends Canvas {
 		super.setBackground(bg);
 		titleLabel.setBackground(bg);
 		titleText.setBackground(bg);
-		if (busyLabel != null)
+		if (busyLabel != null) {
 			busyLabel.setBackground(bg);
-		if (menuHyperlink != null)
+		}
+		if (menuHyperlink != null) {
 			menuHyperlink.setBackground(bg);
+		}
 	}
 
 	@Override
@@ -380,8 +399,9 @@ public class TitleRegion extends Canvas {
 		super.setForeground(fg);
 		titleLabel.setForeground(fg);
 		titleText.setForeground(fg);
-		if (menuHyperlink != null)
+		if (menuHyperlink != null) {
 			menuHyperlink.setForeground(fg);
+		}
 	}
 
 	public void setText(String text) {
@@ -438,14 +458,17 @@ public class TitleRegion extends Canvas {
 			HoverListener listener = new HoverListener();
 			busyLabel.addMouseTrackListener(listener);
 			busyLabel.addMouseMoveListener(listener);
-			if (menuManager != null)
+			if (menuManager != null) {
 				busyLabel.setMenu(menuManager.createContextMenu(this));
-			if (dragSupport)
+			}
+			if (dragSupport) {
 				addDragSupport(busyLabel, dragOperations, dragTransferTypes, dragListener);
+			}
 			IMessageToolTipManager mng = ((FormHeading) getParent())
 					.getMessageToolTipManager();
-			if (mng != null)
+			if (mng != null) {
 				mng.createToolTip(busyLabel, true);
+			}
 		}
 	}
 
@@ -457,8 +480,9 @@ public class TitleRegion extends Canvas {
 		HoverListener listener = new HoverListener();
 		menuHyperlink.addMouseTrackListener(listener);
 		menuHyperlink.addMouseMoveListener(listener);
-		if (dragSupport)
+		if (dragSupport) {
 			addDragSupport(menuHyperlink, dragOperations, dragTransferTypes, dragListener);
+		}
 	}
 
 	/**
@@ -469,12 +493,14 @@ public class TitleRegion extends Canvas {
 	 *            the form's busy state
 	 */
 	public boolean setBusy(boolean busy) {
-		if (busy)
+		if (busy) {
 			ensureBusyLabelExists();
-		else if (busyLabel == null)
+		} else if (busyLabel == null) {
 			return false;
-		if (busy == busyLabel.isBusy())
+		}
+		if (busy == busyLabel.isBusy()) {
 			return false;
+		}
 		busyLabel.setBusy(busy);
 		if (busyLabel.getImage() == null) {
 			layout();
@@ -525,8 +551,9 @@ public class TitleRegion extends Canvas {
 			setMenu(menu);
 			titleLabel.setMenu(menu);
 			titleText.setMenu(menu);
-			if (busyLabel != null)
+			if (busyLabel != null) {
 				busyLabel.setMenu(menu);
+			}
 			createMenuHyperlink();
 		}
 		return menuManager;
@@ -541,10 +568,12 @@ public class TitleRegion extends Canvas {
 		dragSource = addDragSupport(titleLabel, operations, transferTypes,
 				listener);
 		addDragSupport(this, operations, transferTypes, listener);
-		if (busyLabel != null)
+		if (busyLabel != null) {
 			addDragSupport(busyLabel, operations, transferTypes, listener);
-		if (menuHyperlink != null)
+		}
+		if (menuHyperlink != null) {
 			addDragSupport(menuHyperlink, operations, transferTypes, listener);
+		}
 	}
 
 	private DragSource addDragSupport(Control control, int operations,

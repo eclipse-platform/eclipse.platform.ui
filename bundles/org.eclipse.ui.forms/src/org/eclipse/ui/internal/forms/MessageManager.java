@@ -46,12 +46,12 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class MessageManager implements IMessageManager {
 	private static final DefaultPrefixProvider DEFAULT_PREFIX_PROVIDER = new DefaultPrefixProvider();
-	private ArrayList<Message> messages = new ArrayList<>();
+	private final ArrayList<Message> messages = new ArrayList<>();
 	private ArrayList<Message> oldMessages;
-	private Hashtable<Control, ControlDecorator> decorators = new Hashtable<>();
+	private final Hashtable<Control, ControlDecorator> decorators = new Hashtable<>();
 	private Hashtable<Object, ControlDecorator> oldDecorators;
 	private boolean autoUpdate = true;
-	private Form form;
+	private final Form form;
 	private IMessagePrefixProvider prefixProvider = DEFAULT_PREFIX_PROVIDER;
 	private int decorationPosition = SWT.LEFT | SWT.BOTTOM;
 	private static FieldDecoration standardError = FieldDecorationRegistry
@@ -129,9 +129,9 @@ public class MessageManager implements IMessageManager {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof Message))
+			if (!(obj instanceof Message msg)) {
 				return false;
-			Message msg = (Message) obj;
+			}
 			return (msg.getPrefix() == null ? getPrefix() == null : msg.getPrefix().equals(getPrefix())) &&
 					(msg.getControl() == null ? getControl() == null : msg.getControl().equals(getControl())) &&
 					(msg.getMessageType() == getMessageType()) &&
@@ -161,8 +161,9 @@ public class MessageManager implements IMessageManager {
 							ltext = ((CLabel) label).getText();
 						}
 						if (ltext != null) {
-							if (!ltext.endsWith(":")) //$NON-NLS-1$
+							if (!ltext.endsWith(":")) { //$NON-NLS-1$
 								return ltext + ": "; //$NON-NLS-1$
+							}
 							return ltext + " "; //$NON-NLS-1$
 						}
 					}
@@ -175,7 +176,7 @@ public class MessageManager implements IMessageManager {
 
 	class ControlDecorator {
 		private ControlDecoration decoration;
-		private ArrayList<Message> controlMessages = new ArrayList<>();
+		private final ArrayList<Message> controlMessages = new ArrayList<>();
 		private String prefix;
 
 		ControlDecorator(Control control) {
@@ -206,8 +207,9 @@ public class MessageManager implements IMessageManager {
 		}
 
 		String getPrefix() {
-			if (prefix == null)
+			if (prefix == null) {
 				createPrefix();
+			}
 			return prefix;
 		}
 
@@ -217,9 +219,10 @@ public class MessageManager implements IMessageManager {
 				return;
 			}
 			prefix = prefixProvider.getPrefix(decoration.getControl());
-			if (prefix == null)
+			if (prefix == null) {
 				// make a prefix anyway
 				prefix = ""; //$NON-NLS-1$
+			}
 		}
 
 		void addAll(ArrayList<Message> target) {
@@ -230,26 +233,30 @@ public class MessageManager implements IMessageManager {
 			Message message = MessageManager.this.addMessage(getPrefix(), key,
 					text, data, type, controlMessages);
 			message.control = decoration.getControl();
-			if (isAutoUpdate())
+			if (isAutoUpdate()) {
 				update();
+			}
 		}
 
 		boolean removeMessage(Object key) {
 			Message message = findMessage(key, controlMessages);
 			if (message != null) {
 				controlMessages.remove(message);
-				if (isAutoUpdate())
+				if (isAutoUpdate()) {
 					update();
+				}
 			}
 			return message != null;
 		}
 
 		boolean removeMessages() {
-			if (controlMessages.isEmpty())
+			if (controlMessages.isEmpty()) {
 				return false;
+			}
 			controlMessages.clear();
-			if (isAutoUpdate())
+			if (isAutoUpdate()) {
 				update();
+			}
 			return true;
 		}
 
@@ -261,12 +268,13 @@ public class MessageManager implements IMessageManager {
 				ArrayList<Message> peers = createPeers(controlMessages);
 				int type = peers.get(0).getMessageType();
 				String description = createDetails(createPeers(peers), true);
-				if (type == IMessageProvider.ERROR)
+				if (type == IMessageProvider.ERROR) {
 					decoration.setImage(standardError.getImage());
-				else if (type == IMessageProvider.WARNING)
+				} else if (type == IMessageProvider.WARNING) {
 					decoration.setImage(standardWarning.getImage());
-				else if (type == IMessageProvider.INFORMATION)
+				} else if (type == IMessageProvider.INFORMATION) {
 					decoration.setImage(standardInformation.getImage());
+				}
 				decoration.setDescriptionText(description);
 				decoration.show();
 			}
@@ -274,19 +282,22 @@ public class MessageManager implements IMessageManager {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof ControlDecorator))
+			if (!(obj instanceof ControlDecorator cd)) {
 				return false;
-			ControlDecorator cd = (ControlDecorator) obj;
-			if (!cd.decoration.equals(decoration))
+			}
+			if (!cd.decoration.equals(decoration)) {
 				return false;
+			}
 			return cd.getPrefix().equals(getPrefix());
 		}
 
 		boolean hasSameMessages(ControlDecorator cd) {
-			if (cd.controlMessages.size() != controlMessages.size())
+			if (cd.controlMessages.size() != controlMessages.size()) {
 				return false;
-			if (!cd.controlMessages.containsAll(controlMessages))
+			}
+			if (!cd.controlMessages.containsAll(controlMessages)) {
 				return false;
+			}
 			return true;
 		}
 	}
@@ -317,8 +328,9 @@ public class MessageManager implements IMessageManager {
 	@Override
 	public void addMessage(Object key, String messageText, Object data, int type) {
 		addMessage(null, key, messageText, data, type, messages);
-		if (isAutoUpdate())
+		if (isAutoUpdate()) {
 			updateForm();
+		}
 	}
 
 	@Override
@@ -331,8 +343,9 @@ public class MessageManager implements IMessageManager {
 			decorators.put(control, dec);
 		}
 		dec.addMessage(key, messageText, data, type);
-		if (isAutoUpdate())
+		if (isAutoUpdate()) {
 			updateForm();
+		}
 	}
 
 	@Override
@@ -340,8 +353,9 @@ public class MessageManager implements IMessageManager {
 		Message message = findMessage(key, messages);
 		if (message != null) {
 			messages.remove(message);
-			if (isAutoUpdate())
+			if (isAutoUpdate()) {
 				updateForm();
+			}
 		}
 	}
 
@@ -349,19 +363,23 @@ public class MessageManager implements IMessageManager {
 	public void removeMessages() {
 		if (!messages.isEmpty()) {
 			messages.clear();
-			if (isAutoUpdate())
+			if (isAutoUpdate()) {
 				updateForm();
+			}
 		}
 	}
 
 	@Override
 	public void removeMessage(Object key, Control control) {
 		ControlDecorator dec = decorators.get(control);
-		if (dec == null)
+		if (dec == null) {
 			return;
-		if (dec.removeMessage(key))
-			if (isAutoUpdate())
+		}
+		if (dec.removeMessage(key)) {
+			if (isAutoUpdate()) {
 				updateForm();
+			}
+		}
 	}
 
 	@Override
@@ -369,8 +387,9 @@ public class MessageManager implements IMessageManager {
 		ControlDecorator dec = decorators.get(control);
 		if (dec != null) {
 			if (dec.removeMessages()) {
-				if (isAutoUpdate())
+				if (isAutoUpdate()) {
 					updateForm();
+				}
 			}
 		}
 	}
@@ -380,15 +399,17 @@ public class MessageManager implements IMessageManager {
 		boolean needsUpdate = false;
 		for (Enumeration<ControlDecorator> enm = decorators.elements(); enm.hasMoreElements();) {
 			ControlDecorator control = enm.nextElement();
-			if (control.removeMessages())
+			if (control.removeMessages()) {
 				needsUpdate = true;
+			}
 		}
 		if (!messages.isEmpty()) {
 			messages.clear();
 			needsUpdate = true;
 		}
-		if (needsUpdate && isAutoUpdate())
+		if (needsUpdate && isAutoUpdate()) {
 			updateForm();
+		}
 	}
 
 	/*
@@ -414,8 +435,9 @@ public class MessageManager implements IMessageManager {
 	 */
 	private Message findMessage(Object key, ArrayList<Message> list) {
 		for (Message message : list) {
-			if (message.getKey().equals(key))
+			if (message.getKey().equals(key)) {
 				return message;
+			}
 		}
 		return null;
 	}
@@ -464,19 +486,21 @@ public class MessageManager implements IMessageManager {
 		} else {
 			// show a summary message for the message
 			// and list of errors for the details
-			if (peers.size() > 1)
+			if (peers.size() > 1) {
 				messageText = NLS.bind(
 						MULTIPLE_MESSAGE_SUMMARY_KEYS[maxType],
 						new String[] { Integer.toString(peers.size()) });
-			else
+			} else {
 				messageText = SINGLE_MESSAGE_SUMMARY_KEYS[maxType];
+			}
 			form.setMessage(messageText, maxType, array);
 		}
 	}
 
 	private static String getFullMessage(IMessage message) {
-		if (message.getPrefix() == null)
+		if (message.getPrefix() == null) {
 			return message.getMessage();
+		}
 		return message.getPrefix() + message.getMessage();
 	}
 
@@ -489,8 +513,9 @@ public class MessageManager implements IMessageManager {
 				peers.clear();
 				maxType = message.type;
 			}
-			if (message.type == maxType)
+			if (message.type == maxType) {
 				peers.add(message);
+			}
 		}
 		return peers;
 	}
@@ -500,8 +525,9 @@ public class MessageManager implements IMessageManager {
 		PrintWriter out = new PrintWriter(sw);
 
 		for (int i = 0; i < messages.size(); i++) {
-			if (i > 0)
+			if (i > 0) {
 				out.println();
+			}
 			IMessage m = messages.get(i);
 			out.print(excludePrefix ? m.getMessage() : getFullMessage(m));
 		}
@@ -510,14 +536,16 @@ public class MessageManager implements IMessageManager {
 	}
 
 	public static String createDetails(IMessage[] messages) {
-		if (messages == null || messages.length == 0)
+		if (messages == null || messages.length == 0) {
 			return null;
+		}
 		StringWriter sw = new StringWriter();
 		PrintWriter out = new PrintWriter(sw);
 
 		for (int i = 0; i < messages.length; i++) {
-			if (i > 0)
+			if (i > 0) {
 				out.println();
+			}
 			out.print(getFullMessage(messages[i]));
 		}
 		out.flush();
@@ -532,8 +560,9 @@ public class MessageManager implements IMessageManager {
 	private void pruneControlDecorators() {
 		for (Iterator<ControlDecorator> iter = decorators.values().iterator(); iter.hasNext();) {
 			ControlDecorator dec = iter.next();
-			if (dec.isDisposed())
+			if (dec.isDisposed()) {
 				iter.remove();
+			}
 		}
 	}
 
@@ -573,12 +602,14 @@ public class MessageManager implements IMessageManager {
 		boolean needsCaching = this.autoUpdate && !autoUpdate;
 		boolean needsUpdate = !this.autoUpdate && autoUpdate;
 		this.autoUpdate = autoUpdate;
-		if (needsUpdate && isCacheChanged())
+		if (needsUpdate && isCacheChanged()) {
 			update();
+		}
 		if (needsCaching) {
 			oldMessages = new ArrayList<>();
-			for (Message message : messages)
+			for (Message message : messages) {
 				oldMessages.add(new Message(message));
+			}
 			oldDecorators = new Hashtable<>();
 			for (Enumeration<Control> e = decorators.keys(); e.hasMoreElements();) {
 				Object key = e.nextElement();
@@ -597,23 +628,28 @@ public class MessageManager implements IMessageManager {
 	}
 
 	private boolean checkMessageCache() {
-		if (oldMessages == null)
+		if (oldMessages == null) {
 			return false;
-		if (messages.size() != oldMessages.size())
+		}
+		if (messages.size() != oldMessages.size()) {
 			return true;
-		if (!oldMessages.containsAll(messages))
+		}
+		if (!oldMessages.containsAll(messages)) {
 			return true;
+		}
 		return false;
 	}
 
 	private boolean checkDecoratorCache() {
-		if (oldDecorators == null)
+		if (oldDecorators == null) {
 			return false;
+		}
 		for (Entry<Control, ControlDecorator> next : decorators.entrySet()) {
 			ControlDecorator cd = next.getValue();
 			ControlDecorator oldCd = oldDecorators.get(cd.decoration.getControl());
-			if ((oldCd == null && cd.controlMessages.size() > 0) || (oldCd != null && !cd.hasSameMessages(oldCd)))
+			if ((oldCd == null && cd.controlMessages.size() > 0) || (oldCd != null && !cd.hasSameMessages(oldCd))) {
 				return true;
+			}
 		}
 		return false;
 	}

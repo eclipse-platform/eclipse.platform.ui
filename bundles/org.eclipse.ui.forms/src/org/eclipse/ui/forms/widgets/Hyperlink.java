@@ -74,8 +74,9 @@ public class Hyperlink extends AbstractHyperlink {
 			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = getText();
-				if (e.result == null)
+				if (e.result == null) {
 					getHelp(e);
+				}
 			}
 
 			@Override
@@ -119,8 +120,9 @@ public class Hyperlink extends AbstractHyperlink {
 			@Override
 			public void getState(AccessibleControlEvent e) {
 				int state = ACC.STATE_NORMAL;
-				if (Hyperlink.this.getSelection())
+				if (Hyperlink.this.getSelection()) {
 					state = ACC.STATE_SELECTED | ACC.STATE_FOCUSED;
+				}
 				e.detail = state;
 			}
 		});
@@ -158,14 +160,16 @@ public class Hyperlink extends AbstractHyperlink {
 		int innerWidth = wHint;
 		if (innerWidth != SWT.DEFAULT) {
 			innerWidth -= marginWidth * 2;
-			if (innerWidth < 0)
+			if (innerWidth < 0) {
 				innerWidth = 0;
+			}
 		}
 		int innerHeight = hHint;
 		if (innerHeight != SWT.DEFAULT) {
 			innerHeight -= marginHeight * 2;
-			if (innerHeight < 0)
+			if (innerHeight < 0) {
 				innerHeight = 0;
+			}
 		}
 		Point textSize = computeTextSize(innerWidth, innerHeight);
 		int textWidth = textSize.x + 2 * marginWidth;
@@ -209,10 +213,11 @@ public class Hyperlink extends AbstractHyperlink {
 	 *            the hyperlink text
 	 */
 	public void setText(String text) {
-		if (text != null)
+		if (text != null) {
 			this.text = text;
-		else
+		} else {
 			this.text = ""; //$NON-NLS-1$
+		}
 		redraw();
 	}
 
@@ -274,14 +279,20 @@ public class Hyperlink extends AbstractHyperlink {
 	}
 
 	protected String shortenText(GC gc, String t, int width) {
-		if (t == null) return null;
+		if (t == null) {
+			return null;
+		}
 		int w = gc.textExtent(ELLIPSIS).x;
-		if (width<=w) return t;
+		if (width<=w) {
+			return t;
+		}
 		int l = t.length();
 		int max = l/2;
 		int min = 0;
 		int mid = (max+min)/2 - 1;
-		if (mid <= 0) return t;
+		if (mid <= 0) {
+			return t;
+		}
 		while (min < mid && mid < max) {
 			String s1 = t.substring(0, mid);
 			String s2 = t.substring(l-mid, l);
@@ -297,7 +308,9 @@ public class Hyperlink extends AbstractHyperlink {
 				min = max;
 			}
 		}
-		if (mid == 0) return t;
+		if (mid == 0) {
+			return t;
+		}
 		return t.substring(0, mid)+ELLIPSIS+t.substring(l-mid, l);
 	}
 
@@ -309,8 +322,9 @@ public class Hyperlink extends AbstractHyperlink {
 			extent = FormUtil.computeWrapSize(gc, getText(), wHint);
 		} else {
 			extent = gc.textExtent(getText());
-			if ((getStyle() & SWT.WRAP)==0 && wHint!=SWT.DEFAULT)
+			if ((getStyle() & SWT.WRAP)==0 && wHint!=SWT.DEFAULT) {
 				extent.x = wHint;
+			}
 		}
 		gc.dispose();
 		return extent;

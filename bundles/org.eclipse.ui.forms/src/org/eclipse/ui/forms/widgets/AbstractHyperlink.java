@@ -138,8 +138,9 @@ public abstract class AbstractHyperlink extends Canvas {
 	 *            the event listener to add
 	 */
 	public void addHyperlinkListener(IHyperlinkListener listener) {
-		if (listeners == null)
+		if (listeners == null) {
 			listeners = new ListenerList<>();
+		}
 		listeners.add(listener);
 	}
 
@@ -150,8 +151,9 @@ public abstract class AbstractHyperlink extends Canvas {
 	 *            the event listener to remove
 	 */
 	public void removeHyperlinkListener(IHyperlinkListener listener) {
-		if (listeners == null)
+		if (listeners == null) {
 			return;
+		}
 		listeners.remove(listener);
 	}
 
@@ -173,8 +175,9 @@ public abstract class AbstractHyperlink extends Canvas {
 	 */
 	protected void handleEnter(Event e) {
 		redraw();
-		if (listeners == null)
+		if (listeners == null) {
 			return;
+		}
 		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(),
 				e.stateMask);
 		for (IHyperlinkListener listener : listeners) {
@@ -190,8 +193,9 @@ public abstract class AbstractHyperlink extends Canvas {
 		// disarm the link; won't activate on mouseup
 		armed = false;
 		redraw();
-		if (listeners == null)
+		if (listeners == null) {
 			return;
+		}
 		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(),
 				e.stateMask);
 		for (IHyperlinkListener listener : listeners) {
@@ -206,8 +210,9 @@ public abstract class AbstractHyperlink extends Canvas {
 	protected void handleActivate(Event e) {
 		// disarm link, back to normal state
 		armed = false;
-		if (listeners == null)
+		if (listeners == null) {
 			return;
+		}
 		setCursor(FormsResources.getBusyCursor());
 		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(),
 				e.stateMask);
@@ -273,8 +278,9 @@ public abstract class AbstractHyperlink extends Canvas {
 	protected void paint(PaintEvent e) {
 		GC gc = e.gc;
 		Rectangle clientArea = getClientArea();
-		if (clientArea.width == 0 || clientArea.height == 0)
+		if (clientArea.width == 0 || clientArea.height == 0) {
 			return;
+		}
 		paintHyperlink(gc);
 		if (paintFocus && hasFocus) {
 			Rectangle carea = getClientArea();
@@ -284,28 +290,34 @@ public abstract class AbstractHyperlink extends Canvas {
 	}
 
 	private void handleMouseDown(Event e) {
-		if (e.button != 1)
+		if (e.button != 1) {
 			return;
+		}
 		// armed and ready to activate on mouseup
 		armed = true;
 	}
 
 	private void handleMouseUp(Event e) {
-		if (!armed || e.button != 1)
+		if (!armed || e.button != 1) {
 			return;
+		}
 		Point size = getSize();
 		// Filter out mouse up events outside
 		// the link. This can happen when mouse is
 		// clicked, dragged outside the link, then
 		// released.
-		if (e.x < 0)
+		if (e.x < 0) {
 			return;
-		if (e.y < 0)
+		}
+		if (e.y < 0) {
 			return;
-		if (e.x >= size.x)
+		}
+		if (e.x >= size.x) {
 			return;
-		if (e.y >= size.y)
+		}
+		if (e.y >= size.y) {
 			return;
+		}
 		handleActivate(e);
 	}
 
@@ -321,7 +333,8 @@ public abstract class AbstractHyperlink extends Canvas {
 	public void setEnabled (boolean enabled) {
 		boolean needsRedraw = enabled != getEnabled();
 		super.setEnabled(enabled);
-		if (needsRedraw)
+		if (needsRedraw) {
 			redraw();
+		}
 	}
 }

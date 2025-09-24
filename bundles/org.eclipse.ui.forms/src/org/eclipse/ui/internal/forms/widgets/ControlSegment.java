@@ -44,10 +44,10 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 
 	public Control getControl(Hashtable<String, Object> resourceTable) {
 		Object obj = resourceTable.get(getObjectId());
-		if (obj instanceof Control) {
-			Control c = (Control)obj;
-			if (!c.isDisposed())
+		if (obj instanceof Control c) {
+			if (!c.isDisposed()) {
 				return c;
+			}
 		}
 		return null;
 	}
@@ -55,15 +55,19 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 	@Override
 	protected Point getObjectSize(Hashtable<String, Object> resourceTable, int widthHint) {
 		Control control = getControl(resourceTable);
-		if (control==null)
+		if (control==null) {
 			return new Point(0,0);
+		}
 		Point size = control.computeSize(widthHint, SWT.DEFAULT);
-		if (widthHint!=SWT.DEFAULT && fill)
+		if (widthHint!=SWT.DEFAULT && fill) {
 			size.x = Math.max(size.x, widthHint);
-		if (width != SWT.DEFAULT)
+		}
+		if (width != SWT.DEFAULT) {
 			size.x = width;
-		if (height != SWT.DEFAULT)
+		}
+		if (height != SWT.DEFAULT) {
 			size.y = height;
+		}
 		return size;
 	}
 
@@ -72,8 +76,9 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 			boolean selected) {
 		super.layout(gc, width, loc, resourceTable, selected);
 		Control control = getControl(resourceTable);
-		if (control!=null)
+		if (control!=null) {
 			control.setBounds(getBounds());
+		}
 	}
 
 	@Override
@@ -86,23 +91,25 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 	}
 
 	private boolean setFocus(Control c, boolean direction) {
-		if (c instanceof Composite) {
-			Composite comp = (Composite)c;
+		if (c instanceof Composite comp) {
 			Control [] tabList = comp.getTabList();
 			if (direction) {
 				for (Control element : tabList) {
-					if (setFocus(element, direction))
+					if (setFocus(element, direction)) {
 						return true;
+					}
 				}
 			}
 			else {
 				for (int i=tabList.length-1; i>=0; i--) {
-					if (setFocus(tabList[i], direction))
+					if (setFocus(tabList[i], direction)) {
 						return true;
+					}
 				}
 			}
-			if (!(c instanceof Canvas))
+			if (!(c instanceof Canvas)) {
 				return false;
+			}
 		}
 		return c.setFocus();
 	}
@@ -110,8 +117,9 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 	@Override
 	public boolean isFocusSelectable(Hashtable<String, Object> resourceTable) {
 		Control c = getControl(resourceTable);
-		if (c!=null)
+		if (c!=null) {
 			return true;
+		}
 		return false;
 	}
 }

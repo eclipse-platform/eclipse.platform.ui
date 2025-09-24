@@ -53,8 +53,9 @@ public class Locator implements Cloneable {
 			int [] rdata = heights.get(rowCounter);
 			int rheight = rdata[0];
 			int rleading = rdata[1];
-			if (text)
+			if (text) {
 				return y + rheight/2 - segmentHeight/2 - rleading;
+			}
 			return y + rheight/2 - segmentHeight/2;
 		}
 		return y;
@@ -64,8 +65,9 @@ public class Locator implements Cloneable {
 			int [] rdata = heights.get(rowCounter);
 			int rheight = rdata[0];
 			int rleading = rdata[1];
-			if (text)
+			if (text) {
 				return y + rheight - segmentHeight - rleading;
+			}
 			return y + rheight - segmentHeight;
 		}
 		return y;

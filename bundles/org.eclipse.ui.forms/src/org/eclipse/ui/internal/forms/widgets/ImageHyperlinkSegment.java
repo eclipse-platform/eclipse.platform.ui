@@ -42,8 +42,9 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 	public void paintFocus(GC gc, Color bg, Color fg, boolean selected,
 			Rectangle repaintRegion) {
 		Rectangle bounds = getBounds();
-		if (bounds == null)
+		if (bounds == null) {
 			return;
+		}
 		if (selected) {
 			gc.setBackground(bg);
 			gc.setForeground(fg);

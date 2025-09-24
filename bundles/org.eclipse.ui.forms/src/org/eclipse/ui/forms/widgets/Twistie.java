@@ -64,23 +64,25 @@ public class Twistie extends ToggleHyperlink {
 		int as = gc.getAntialias();
 		gc.setAntialias(SWT.ON);
 		Color bg;
-		if (!isEnabled())
+		if (!isEnabled()) {
 			bg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-		else if (hover && getHoverDecorationColor() != null)
+		} else if (hover && getHoverDecorationColor() != null) {
 			bg = getHoverDecorationColor();
-		else if (getDecorationColor() != null)
+		} else if (getDecorationColor() != null) {
 			bg = getDecorationColor();
-		else
+		} else {
 			bg = getForeground();
+		}
 		gc.setBackground(bg);
 		int[] data;
 		Point size = getSize();
 		int x = (size.x - 9) / 2;
 		int y = (size.y - 9) / 2;
-		if (isExpanded())
+		if (isExpanded()) {
 			data = translate(onPoints, x, y);
-		else
+		} else {
 			data = translate(offPoints, x, y);
+		}
 		gc.fillPolygon(data);
 		gc.setBackground(getBackground());
 		gc.setAntialias(as);

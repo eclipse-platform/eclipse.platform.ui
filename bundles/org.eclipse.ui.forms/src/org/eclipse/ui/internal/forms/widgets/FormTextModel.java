@@ -88,15 +88,17 @@ public class FormTextModel {
 	 * @see ITextModel#getParagraphs()
 	 */
 	public Paragraph[] getParagraphs() {
-		if (paragraphs == null)
+		if (paragraphs == null) {
 			return new Paragraph[0];
+		}
 		return paragraphs
 				.toArray(new Paragraph[paragraphs.size()]);
 	}
 
 	public String getAccessibleText() {
-		if (paragraphs == null)
+		if (paragraphs == null) {
 			return ""; //$NON-NLS-1$
+		}
 		StringBuilder sbuf = new StringBuilder();
 		for (Paragraph paragraph : paragraphs) {
 			String text = paragraph.getAccessibleText();
@@ -172,12 +174,14 @@ public class FormTextModel {
 				String tag = child.getNodeName().toLowerCase();
 				if (tag.equals("p")) { //$NON-NLS-1$
 					Paragraph p = processParagraph(child, expandURLs);
-					if (p != null)
+					if (p != null) {
 						plist.add(p);
+					}
 				} else if (tag.equals("li")) { //$NON-NLS-1$
 					Paragraph p = processListItem(child, expandURLs);
-					if (p != null)
+					if (p != null) {
 						plist.add(p);
+					}
 				}
 			}
 		}
@@ -189,8 +193,9 @@ public class FormTextModel {
 		Node addSpaceAtt = atts.getNamedItem("addVerticalSpace"); //$NON-NLS-1$
 		boolean addSpace = true;
 
-		if (addSpaceAtt == null)
+		if (addSpaceAtt == null) {
 			addSpaceAtt = atts.getNamedItem("vspace"); //$NON-NLS-1$
+		}
 
 		if (addSpaceAtt != null) {
 			String value = addSpaceAtt.getNodeValue();
@@ -232,8 +237,9 @@ public class FormTextModel {
 		}
 		if (valueAtt != null) {
 			text = valueAtt.getNodeValue();
-			if (style == BulletParagraph.IMAGE)
+			if (style == BulletParagraph.IMAGE) {
 				text = "i." + text; //$NON-NLS-1$
+			}
 		}
 		if (indentAtt != null) {
 			String value = indentAtt.getNodeValue();
@@ -302,10 +308,12 @@ public class FormTextModel {
 	private boolean isIgnorableWhiteSpace(String text, boolean ignoreSpaces) {
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
-			if (ignoreSpaces && c == ' ')
+			if (ignoreSpaces && c == ' ') {
 				continue;
-			if (c == '\n' || c == '\r' || c == '\f')
+			}
+			if (c == '\n' || c == '\r' || c == '\f') {
 				continue;
+			}
 			return false;
 		}
 		return true;
@@ -373,9 +381,9 @@ public class FormTextModel {
 	}
 
 	private void appendText(String value, StringBuilder buf, int[] spaceCounter) {
-		if (!whitespaceNormalized)
+		if (!whitespaceNormalized) {
 			buf.append(value);
-		else {
+		} else {
 			for (int j = 0; j < value.length(); j++) {
 				char c = value.charAt(j);
 				switch (c) {
@@ -408,21 +416,25 @@ public class FormTextModel {
 		int[] spaceCounter = new int[1];
 		StringBuilder buf = new StringBuilder();
 
-		if (text == null)
+		if (text == null) {
 			return null;
+		}
 		appendText(text, buf, spaceCounter);
 		return buf.toString();
 	}
 
 	private String getSingleNodeText(Node node) {
 		String text = getNormalizedText(node.getNodeValue());
-		if (!whitespaceNormalized)
+		if (!whitespaceNormalized) {
 			return text;
-		if (text.length() > 0 && node.getPreviousSibling() == null && isIgnorableWhiteSpace(text.substring(0, 1), true))
+		}
+		if (text.length() > 0 && node.getPreviousSibling() == null && isIgnorableWhiteSpace(text.substring(0, 1), true)) {
 			return text.substring(1);
+		}
 		if (text.length() > 1 && node.getNextSibling() == null
-				&& isIgnorableWhiteSpace(text.substring(text.length() - 1), true))
+				&& isIgnorableWhiteSpace(text.substring(text.length() - 1), true)) {
 			return text.substring(0, text.length() - 1);
+		}
 		return text;
 	}
 
@@ -462,32 +474,34 @@ public class FormTextModel {
 		Node nowrap = atts.getNamedItem("nowrap"); //$NON-NLS-1$
 		if (nowrap != null) {
 			String value = nowrap.getNodeValue();
-			if (value != null && value.equalsIgnoreCase("true")) //$NON-NLS-1$
+			if (value != null && value.equalsIgnoreCase("true")) { //$NON-NLS-1$
 				wrapAllowed = false;
+			}
 		}
 		Object status = checkChildren(link);
-		if (status instanceof Node) {
-			Node child = (Node)status;
+		if (status instanceof Node child) {
 			ImageHyperlinkSegment segment = new ImageHyperlinkSegment();
 			segment.setHref(href);
 			segment.setWordWrapAllowed(wrapAllowed);
 			Node alt = child.getAttributes().getNamedItem("alt"); //$NON-NLS-1$
-			if (alt!=null)
+			if (alt!=null) {
 				segment.setTooltipText(alt.getNodeValue());
+			}
 			Node text = child.getAttributes().getNamedItem("text"); //$NON-NLS-1$
-			if (text!=null)
+			if (text!=null) {
 				segment.setText(text.getNodeValue());
+			}
 			processObjectSegment(segment, child, "i."); //$NON-NLS-1$
 			return segment;
-		}  else if (status instanceof String) {
-			String text = (String) status;
+		}  else if (status instanceof String text) {
 			TextHyperlinkSegment segment = new TextHyperlinkSegment(text,
 					settings, null);
 			segment.setHref(href);
 			segment.setFontId(boldFontId);
 			Node alt = atts.getNamedItem("alt"); //$NON-NLS-1$
-			if (alt!=null)
+			if (alt!=null) {
 				segment.setTooltipText(alt.getNodeValue());
+			}
 			segment.setWordWrapAllowed(wrapAllowed);
 			return segment;
 		} else {
@@ -501,8 +515,9 @@ public class FormTextModel {
 					TextHyperlinkSegment ts = new TextHyperlinkSegment(
 							getNormalizedText(value), settings, null);
 					Node alt = atts.getNamedItem("alt"); //$NON-NLS-1$
-					if (alt!=null)
+					if (alt!=null) {
 						ts.setTooltipText(alt.getNodeValue());
+					}
 					ts.setWordWrapAllowed(wrapAllowed);
 					parent.add(ts);
 				} else if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -511,8 +526,9 @@ public class FormTextModel {
 						ImageHyperlinkSegment is = new ImageHyperlinkSegment();
 						processObjectSegment(is, child, "i."); //$NON-NLS-1$
 						Node alt = child.getAttributes().getNamedItem("alt"); //$NON-NLS-1$
-						if (alt!=null)
+						if (alt!=null) {
 							is.setTooltipText(alt.getNodeValue());
+						}
 						parent.add(is);
 						is.setWordWrapAllowed(wrapAllowed);
 					}
@@ -530,18 +546,20 @@ public class FormTextModel {
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
-			if (child.getNodeType() == Node.TEXT_NODE)
+			if (child.getNodeType() == Node.TEXT_NODE) {
 				text = true;
-			else if (child.getNodeType() == Node.ELEMENT_NODE
+			} else if (child.getNodeType() == Node.ELEMENT_NODE
 					&& child.getNodeName().equalsIgnoreCase("img")) { //$NON-NLS-1$
 				imgNode = child;
 			}
 		}
-		if (text && imgNode == null)
+		if (text && imgNode == null) {
 			return getNodeText(node);
-		else if (!text && imgNode != null)
+		} else if (!text && imgNode != null) {
 			return imgNode;
-		else return null;
+		} else {
+			return null;
+		}
 	}
 
 	private void processTextSegment(Paragraph p, boolean expandURLs,
@@ -555,8 +573,9 @@ public class FormTextModel {
 		Node nowrap = atts.getNamedItem("nowrap"); //$NON-NLS-1$
 		if (nowrap != null) {
 			String value = nowrap.getNodeValue();
-			if (value != null && value.equalsIgnoreCase("true")) //$NON-NLS-1$
+			if (value != null && value.equalsIgnoreCase("true")) { //$NON-NLS-1$
 				wrapAllowed = false;
+			}
 		}
 		String fontId = null;
 		String colorId = null;
@@ -573,8 +592,9 @@ public class FormTextModel {
 	public void parseRegularText(String regularText, boolean convertURLs) {
 		reset();
 
-		if (regularText == null)
+		if (regularText == null) {
 			return;
+		}
 
 		regularText = getNormalizedText(regularText);
 
@@ -605,8 +625,9 @@ public class FormTextModel {
 
 	public HyperlinkSettings getHyperlinkSettings() {
 		// #132723 cannot have null settings
-		if (hyperlinkSettings==null)
+		if (hyperlinkSettings==null) {
 			hyperlinkSettings = new HyperlinkSettings(SWTUtil.getStandardDisplay());
+		}
 		return hyperlinkSettings;
 	}
 
@@ -615,8 +636,9 @@ public class FormTextModel {
 	}
 
 	private void reset() {
-		if (paragraphs == null)
+		if (paragraphs == null) {
 			paragraphs = new Vector<>();
+		}
 		paragraphs.clear();
 		selectedSegmentIndex = -1;
 		savedSelectedLinkIndex = -1;
@@ -624,14 +646,16 @@ public class FormTextModel {
 	}
 
 	IFocusSelectable[] getFocusSelectableSegments() {
-		if (selectableSegments != null || paragraphs == null)
+		if (selectableSegments != null || paragraphs == null) {
 			return selectableSegments;
+		}
 		Vector<ParagraphSegment> result = new Vector<>();
 		for (Paragraph paragraph : paragraphs) {
 			ParagraphSegment[] segments = paragraph.getSegments();
 			for (ParagraphSegment segment : segments) {
-				if (segment instanceof IFocusSelectable)
+				if (segment instanceof IFocusSelectable) {
 					result.add(segment);
+				}
 			}
 		}
 		selectableSegments = result
@@ -643,8 +667,9 @@ public class FormTextModel {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
 		if (selectables.length>index) {
 			IFocusSelectable link = selectables[index];
-			if (link instanceof IHyperlinkSegment)
+			if (link instanceof IHyperlinkSegment) {
 				return (IHyperlinkSegment)link;
+			}
 		}
 		return null;
 	}
@@ -652,10 +677,10 @@ public class FormTextModel {
 	public IHyperlinkSegment findHyperlinkAt(int x, int y) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
 		for (IFocusSelectable segment : selectables) {
-			if (segment instanceof IHyperlinkSegment) {
-				IHyperlinkSegment link = (IHyperlinkSegment)segment;
-				if (link.contains(x, y))
+			if (segment instanceof IHyperlinkSegment link) {
+				if (link.contains(x, y)) {
 					return link;
+				}
 			}
 		}
 		return null;
@@ -669,10 +694,10 @@ public class FormTextModel {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
 		for (int i = 0; i < selectables.length; i++) {
 			IFocusSelectable segment = selectables[i];
-			if (segment instanceof IHyperlinkSegment) {
-				IHyperlinkSegment l = (IHyperlinkSegment)segment;
-				if (link==l)
+			if (segment instanceof IHyperlinkSegment l) {
+				if (link==l) {
 					return i;
+				}
 			}
 		}
 		return -1;
@@ -681,8 +706,9 @@ public class FormTextModel {
 	public ParagraphSegment findSegmentAt(int x, int y) {
 		for (Paragraph paragraph : paragraphs) {
 			ParagraphSegment segment = paragraph.findSegmentAt(x, y);
-			if (segment != null)
+			if (segment != null) {
 				return segment;
+			}
 		}
 		return null;
 	}
@@ -694,8 +720,9 @@ public class FormTextModel {
 	}
 
 	public IFocusSelectable getSelectedSegment() {
-		if (selectableSegments==null || selectedSegmentIndex == -1)
+		if (selectableSegments==null || selectedSegmentIndex == -1) {
 			return null;
+		}
 		return selectableSegments[selectedSegmentIndex];
 	}
 
@@ -704,24 +731,28 @@ public class FormTextModel {
 	}
 
 	public boolean linkExists(IHyperlinkSegment link) {
-		if (selectableSegments==null)
+		if (selectableSegments==null) {
 			return false;
+		}
 		for (IFocusSelectable selectableSegment : selectableSegments) {
-			if (selectableSegment==link)
+			if (selectableSegment==link) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	public boolean traverseFocusSelectableObjects(boolean next) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
-		if (selectables == null)
+		if (selectables == null) {
 			return false;
+		}
 		int size = selectables.length;
 		if (next) {
 			selectedSegmentIndex++;
-		} else
+		} else {
 			selectedSegmentIndex--;
+		}
 
 		if (selectedSegmentIndex < 0 || selectedSegmentIndex > size - 1) {
 			selectedSegmentIndex = -1;
@@ -731,8 +762,9 @@ public class FormTextModel {
 
 	public IFocusSelectable getNextFocusSegment(boolean next) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
-		if (selectables == null)
+		if (selectables == null) {
 			return null;
+		}
 		int nextIndex = next?selectedSegmentIndex+1:selectedSegmentIndex-1;
 
 		if (nextIndex < 0 || nextIndex > selectables.length - 1) {
@@ -763,8 +795,9 @@ public class FormTextModel {
 	public void select(IFocusSelectable selectable) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
 		selectedSegmentIndex = -1;
-		if (selectables == null)
+		if (selectables == null) {
 			return;
+		}
 		for (int i = 0; i < selectables.length; i++) {
 			if (selectables[i].equals(selectable)) {
 				selectedSegmentIndex = i;
@@ -775,8 +808,9 @@ public class FormTextModel {
 
 	public boolean hasFocusSegments() {
 		IFocusSelectable[] segments = getFocusSelectableSegments();
-		if (segments.length > 0)
+		if (segments.length > 0) {
 			return true;
+		}
 		return false;
 	}
 

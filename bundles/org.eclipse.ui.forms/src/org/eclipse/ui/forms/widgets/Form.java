@@ -96,13 +96,13 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class Form extends Composite {
-	private FormHeading head;
+	private final FormHeading head;
 
-	private Composite body;
+	private final Composite body;
 
-	private SizeCache bodyCache = new SizeCache();
+	private final SizeCache bodyCache = new SizeCache();
 
-	private SizeCache headCache = new SizeCache();
+	private final SizeCache headCache = new SizeCache();
 
 	private FormText selectionText;
 
@@ -134,10 +134,11 @@ public class Form extends Composite {
 			boolean ignoreBody=getData(FormUtil.IGNORE_BODY)!=null;
 
 			Point bsize;
-			if (ignoreBody)
+			if (ignoreBody) {
 				bsize = new Point(0,0);
-			else
+			} else {
 				bsize = bodyCache.computeSize(wHint, SWT.DEFAULT);
+			}
 			width = Math.max(bsize.x, width);
 			height += bsize.y;
 			return new Point(width, height);
@@ -814,8 +815,9 @@ public class Form extends Composite {
 	 * @since org.eclipse.ui.forms 3.4
 	 */
 	public IMessageManager getMessageManager() {
-		if (messageManager == null)
+		if (messageManager == null) {
 			messageManager = new MessageManager(this);
+		}
 		return messageManager;
 	}
 }

@@ -66,10 +66,12 @@ public class TextSegment extends ParagraphSegment {
 		}
 
 		public String getText() {
-			if (from == 0 && to == -1)
+			if (from == 0 && to == -1) {
 				return TextSegment.this.getText();
-			if (from > 0 && to == -1)
+			}
+			if (from > 0 && to == -1) {
 				return TextSegment.this.getText().substring(from);
+			}
 			return TextSegment.this.getText().substring(from, to);
 		}
 	}
@@ -120,10 +122,12 @@ public class TextSegment extends ParagraphSegment {
 		for (int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
 			if (c == '\n' || c == '\r' || c == '\f') {
-				if (i > 0)
+				if (i > 0) {
 					buf.append(' ');
-			} else
+				}
+			} else {
 				buf.append(c);
+			}
 		}
 		return buf.toString();
 	}
@@ -166,8 +170,9 @@ public class TextSegment extends ParagraphSegment {
 	public boolean contains(int x, int y) {
 		for (int i = 0; i < areaRectangles.size(); i++) {
 			AreaRectangle ar = areaRectangles.get(i);
-			if (ar.contains(x, y))
+			if (ar.contains(x, y)) {
 				return true;
+			}
 			if (i<areaRectangles.size()-1) {
 				// test the gap
 				Rectangle top = ar.rect;
@@ -189,8 +194,9 @@ public class TextSegment extends ParagraphSegment {
 	public boolean intersects(Rectangle rect) {
 		for (int i = 0; i < areaRectangles.size(); i++) {
 			AreaRectangle ar = areaRectangles.get(i);
-			if (ar.intersects(rect))
+			if (ar.intersects(rect)) {
 				return true;
+			}
 			if (i<areaRectangles.size()-1) {
 				// test the gap
 				Rectangle top = ar.rect;
@@ -201,8 +207,9 @@ public class TextSegment extends ParagraphSegment {
 					int left = Math.max(top.x, bot.x);
 					int right = Math.min(top.x+top.width, bot.x+bot.width);
 					Rectangle gap = new Rectangle(left, y, right-left, height);
-					if (gap.intersects(rect))
+					if (gap.intersects(rect)) {
 						return true;
+					}
 				}
 			}
 		}
@@ -210,8 +217,9 @@ public class TextSegment extends ParagraphSegment {
 	}
 
 	public Rectangle getBounds() {
-		if (areaRectangles.isEmpty())
+		if (areaRectangles.isEmpty()) {
 			return new Rectangle(0, 0, 0, 0);
+		}
 
 		AreaRectangle ar0 = areaRectangles.get(0);
 		Rectangle bounds = Geometry.copy(ar0.rect);
@@ -229,8 +237,9 @@ public class TextSegment extends ParagraphSegment {
 		if (fontId != null) {
 			oldFont = gc.getFont();
 			Font newFont = (Font) objectTable.get(fontId);
-			if (newFont != null)
+			if (newFont != null) {
 				gc.setFont(newFont);
+			}
 		}
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
@@ -239,22 +248,25 @@ public class TextSegment extends ParagraphSegment {
 		if (wHint == SWT.DEFAULT || !wrapAllowed) {
 			Point extent = gc.textExtent(text);
 			int totalExtent = locator.x+extent.x;
-			if (isSelectable())
+			if (isSelectable()) {
 				totalExtent+=1;
+			}
 
 			if (wHint != SWT.DEFAULT && totalExtent + locator.marginWidth > wHint) {
 				// new line
 				locator.resetCaret();
 				locator.y += locator.rowHeight;
-				if (computeHeightOnly)
+				if (computeHeightOnly) {
 					locator.collectHeights();
+				}
 				locator.rowHeight = 0;
 				locator.leading = 0;
 				newLine = true;
 			}
 			int width = extent.x;
-			if (isSelectable())
+			if (isSelectable()) {
 				width += 1;
+			}
 			locator.x += width;
 			locator.width = locator.x;
 			locator.rowHeight = Math.max(locator.rowHeight, extent.y);
@@ -271,8 +283,9 @@ public class TextSegment extends ParagraphSegment {
 			TextFragment textFragment = textFragments[i];
 			int currentExtent = locator.x + lineExtent.x;
 
-			if (isSelectable())
+			if (isSelectable()) {
 				currentExtent += 1;
+			}
 
 			// i != 0 || locator.x > locator.getStartX() + (isSelectable() ? 1 : 0) means:
 			// only wrap on the first fragment if we are not at the start of a line
@@ -281,8 +294,9 @@ public class TextSegment extends ParagraphSegment {
 				int lineWidth = currentExtent;
 				locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
 				locator.leading = Math.max(locator.leading, fm.getLeading());
-				if (computeHeightOnly)
+				if (computeHeightOnly) {
 					locator.collectHeights();
+				}
 				locator.x = locator.indent;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
@@ -297,8 +311,9 @@ public class TextSegment extends ParagraphSegment {
 			width = Math.max (width, locator.x + lineExtent.x);
 		}
 		int lineWidth = lineExtent.x;
-		if (isSelectable())
+		if (isSelectable()) {
 			lineWidth += 1;
+		}
 		locator.x += lineWidth;
 		locator.width = width;
 		locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
@@ -313,8 +328,9 @@ public class TextSegment extends ParagraphSegment {
 			boolean selected, FontMetrics fm, int lineHeight, int descent) {
 		Point extent = gc.textExtent(text);
 		int ewidth = extent.x;
-		if (isSelectable())
+		if (isSelectable()) {
 			ewidth += 1;
+		}
 		if (locator.x + ewidth > width-locator.marginWidth) {
 			// new line
 			locator.resetCaret();
@@ -345,8 +361,9 @@ public class TextSegment extends ParagraphSegment {
 
 	public void paintFocus(GC gc, Color bg, Color fg, boolean selected,
 			Rectangle repaintRegion) {
-		if (areaRectangles == null)
+		if (areaRectangles == null) {
 			return;
+		}
 		for (AreaRectangle areaRectangle : areaRectangles) {
 			Rectangle br = areaRectangle.rect;
 			int bx = br.x;
@@ -382,14 +399,16 @@ public class TextSegment extends ParagraphSegment {
 		if (fontId != null) {
 			oldFont = gc.getFont();
 			Font newFont = (Font) resourceTable.get(fontId);
-			if (newFont != null)
+			if (newFont != null) {
 				gc.setFont(newFont);
+			}
 		}
 		if (!hover && colorId != null) {
 			oldColor = gc.getForeground();
 			Color newColor = (Color) resourceTable.get(colorId);
-			if (newColor != null)
+			if (newColor != null) {
 				gc.setForeground(newColor);
+			}
 		}
 		Color oldBg = gc.getBackground();
 
@@ -441,8 +460,9 @@ public class TextSegment extends ParagraphSegment {
 		if (fontId != null) {
 			oldFont = gc.getFont();
 			Font newFont = (Font) resourceTable.get(fontId);
-			if (newFont != null)
+			if (newFont != null) {
 				gc.setFont(newFont);
+			}
 		}
 
 		for (AreaRectangle areaRectangle : areaRectangles) {
@@ -569,8 +589,9 @@ public class TextSegment extends ParagraphSegment {
 			clipY -= repaintRegion.y;
 			clipLineY -= repaintRegion.y;
 		}
-		if (rolloverMode && !hover)
+		if (rolloverMode && !hover) {
 			reverse = true;
+		}
 		if (reverse) {
 			drawUnderline(gc, swidth, clipX, clipLineY, hover, rolloverMode);
 			drawText(gc, s, clipX, clipY);
@@ -593,8 +614,9 @@ public class TextSegment extends ParagraphSegment {
 				gc.setForeground(gc.getBackground());
 			}
 			gc.drawLine(x, y, x + swidth-1, y);
-			if (saved != null)
+			if (saved != null) {
 				gc.setForeground(saved);
+			}
 		}
 	}
 
@@ -608,8 +630,9 @@ public class TextSegment extends ParagraphSegment {
 		if (fontId != null) {
 			oldFont = gc.getFont();
 			Font newFont = (Font) resourceTable.get(fontId);
-			if (newFont != null)
+			if (newFont != null) {
 				gc.setFont(newFont);
+			}
 		}
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
@@ -627,8 +650,9 @@ public class TextSegment extends ParagraphSegment {
 			for (int i = 0; i < textFragments.length; i++) {
 				TextFragment fragment = textFragments[i];
 				int breakLoc = fragment.index;
-				if (breakLoc == 0)
+				if (breakLoc == 0) {
 					continue;
+				}
 				// (i != 0 || locator.x > locator.getStartX() + (isSelectable() ? 1 : 0)) means:
 				// only wrap on the first fragment if we are not at the start of a line
 				if ((i != 0 || locator.x > locator.getStartX() + (isSelectable() ? 1 : 0)) && locator.x + lineExtent.x + fragment.length > rightEdge) {
@@ -645,8 +669,9 @@ public class TextSegment extends ParagraphSegment {
 					locator.rowHeight = Math.max(locator.rowHeight,
 							lineExtent.y);
 					locator.resetCaret();
-					if (isSelectable())
+					if (isSelectable()) {
 						locator.x += 1;
+					}
 					locator.y += locator.rowHeight;
 					locator.rowCounter++;
 					locator.rowHeight = 0;
@@ -661,8 +686,9 @@ public class TextSegment extends ParagraphSegment {
 			//String lastLine = text.substring(lineStart, lastLoc);
 			int ly = locator.getBaseline(lineHeight - fm.getLeading());
 			int lastWidth = lineExtent.x;
-			if (isSelectable())
+			if (isSelectable()) {
 				lastWidth += 1;
+			}
 			Rectangle br = new Rectangle(isSelectable()?locator.x - 1:locator.x, ly,
 					isSelectable()?lineExtent.x + 1:lineExtent.x,
 					lineHeight - descent + 3);
@@ -677,15 +703,17 @@ public class TextSegment extends ParagraphSegment {
 	}
 
 	private void computeTextFragments(GC gc) {
-		if (textFragments != null)
+		if (textFragments != null) {
 			return;
+		}
 		ArrayList<TextFragment> list = new ArrayList<>();
 		BreakIterator wb = BreakIterator.getLineInstance();
 		wb.setText(getText());
 		int cursor = 0;
 		for (int loc = wb.first(); loc != BreakIterator.DONE; loc = wb.next()) {
-			if (loc == 0)
+			if (loc == 0) {
 				continue;
+			}
 			String word = text.substring(cursor, loc);
 			Point extent = gc.textExtent(word);
 			list.add(new TextFragment((short) loc, (short) extent.x));
@@ -697,9 +725,10 @@ public class TextSegment extends ParagraphSegment {
 
 	@Override
 	public void clearCache(String fontId) {
-		if (fontId==null && (this.fontId==null||this.fontId.equals(FormTextModel.BOLD_FONT_ID)))
+		if (fontId==null && (this.fontId==null||this.fontId.equals(FormTextModel.BOLD_FONT_ID))) {
 			textFragments = null;
-		else if (fontId!=null && this.fontId!=null && fontId.equals(this.fontId))
+		} else if (fontId!=null && this.fontId!=null && fontId.equals(this.fontId)) {
 			textFragments = null;
+		}
 	}
 }

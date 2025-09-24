@@ -31,8 +31,9 @@ public class WrappedPageBook extends Composite {
 		@Override
 		protected Point computeSize(Composite composite, int wHint, int hHint,
 				boolean flushCache) {
-			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
+			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
 				return new Point(wHint, hHint);
+			}
 			Point result = null;
 			if (currentPage != null) {
 				result = currentPage.computeSize(wHint, hHint, flushCache);
@@ -86,10 +87,12 @@ public class WrappedPageBook extends Composite {
 	 *            the page to show
 	 */
 	public void showPage(Control page) {
-		if (page == currentPage)
+		if (page == currentPage) {
 			return;
-		if (page.getParent() != this)
+		}
+		if (page.getParent() != this) {
 			return;
+		}
 		Control oldPage = currentPage;
 		currentPage = page;
 		// show new page
@@ -100,8 +103,9 @@ public class WrappedPageBook extends Composite {
 		}
 		// hide old *after* new page has been made visible in order to avoid
 		// flashing
-		if (oldPage != null && !oldPage.isDisposed())
+		if (oldPage != null && !oldPage.isDisposed()) {
 			oldPage.setVisible(false);
+		}
 	}
 
 	@Override

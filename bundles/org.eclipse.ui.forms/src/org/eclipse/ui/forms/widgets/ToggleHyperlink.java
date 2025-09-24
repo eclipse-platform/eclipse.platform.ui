@@ -148,10 +148,12 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		int width = innerWidth + 2 * marginWidth;
 		int height = innerHeight + 2 * marginHeight;
-		if (wHint != SWT.DEFAULT)
+		if (wHint != SWT.DEFAULT) {
 			width = wHint;
-		if (hHint != SWT.DEFAULT)
+		}
+		if (hHint != SWT.DEFAULT) {
 			height = hHint;
+		}
 
 		Rectangle trim = computeTrim(0, 0, width, height);
 		return new Point(trim.width, trim.height);
@@ -210,14 +212,16 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 					}
 					@Override
 					public void getSelection (AccessibleControlEvent e) {
-						if (ToggleHyperlink.this.getSelection())
+						if (ToggleHyperlink.this.getSelection()) {
 							e.childID = ACC.CHILDID_SELF;
+						}
 					}
 
 					@Override
 					public void getFocus (AccessibleControlEvent e) {
-						if (ToggleHyperlink.this.getSelection())
+						if (ToggleHyperlink.this.getSelection()) {
 							e.childID = ACC.CHILDID_SELF;
+						}
 					}
 					@Override
 					public void getChildCount(AccessibleControlEvent e) {

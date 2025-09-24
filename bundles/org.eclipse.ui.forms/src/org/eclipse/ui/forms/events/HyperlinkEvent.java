@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Widget;
  */
 public final class HyperlinkEvent extends TypedEvent {
 	private static final long serialVersionUID = 6009335074727417445L;
-	private String label;
-	private int stateMask;
+	private final String label;
+	private final int stateMask;
 	/**
 	 * Creates a new hyperlink
 	 *

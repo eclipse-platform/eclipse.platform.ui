@@ -28,7 +28,7 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 		IHyperlinkSegment {
 	private String href;
 
-	private Vector<ParagraphSegment> segments = new Vector<>();
+	private final Vector<ParagraphSegment> segments = new Vector<>();
 
 	public AggregateHyperlinkSegment() {
 	}
@@ -47,8 +47,9 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 		boolean newLine = false;
 		for (ParagraphSegment segment : segments) {
 			if (segment.advanceLocator(gc, wHint, loc, objectTable,
-					computeHeightOnly))
+					computeHeightOnly)) {
 				newLine = true;
+			}
 		}
 		return newLine;
 	}
@@ -99,8 +100,9 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 
 	@Override
 	public Rectangle getBounds() {
-		if (segments.isEmpty())
+		if (segments.isEmpty()) {
 			return new Rectangle(Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 0);
+		}
 
 		IHyperlinkSegment segment0 = (IHyperlinkSegment) segments.get(0);
 		Rectangle bounds = segment0.getBounds();
@@ -116,8 +118,9 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 	public boolean contains(int x, int y) {
 		for (ParagraphSegment psegment : segments) {
 			IHyperlinkSegment segment = (IHyperlinkSegment) psegment;
-			if (segment.contains(x, y))
+			if (segment.contains(x, y)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -126,8 +129,9 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 	public boolean intersects(Rectangle rect) {
 		for (ParagraphSegment psegment : segments) {
 			IHyperlinkSegment segment = (IHyperlinkSegment) psegment;
-			if (segment.intersects(rect))
+			if (segment.intersects(rect)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -157,8 +161,9 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 
 	@Override
 	public String getTooltipText() {
-		if (segments.size() > 0)
+		if (segments.size() > 0) {
 			return segments.get(0).getTooltipText();
+		}
 		return super.getTooltipText();
 	}
 

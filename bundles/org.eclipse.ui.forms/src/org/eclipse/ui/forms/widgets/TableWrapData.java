@@ -185,25 +185,31 @@ public final class TableWrapData {
 	 */
 	public TableWrapData(int align, int valign, int rowspan, int colspan) {
 		if (align != LEFT && align != CENTER && align != RIGHT && align != FILL
-				&& align != FILL_GRAB)
+				&& align != FILL_GRAB) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, " \"align\""); //$NON-NLS-1$
+		}
 		if (valign != TOP && valign != MIDDLE && valign != BOTTOM
-				&& valign != FILL && valign != FILL_GRAB)
+				&& valign != FILL && valign != FILL_GRAB) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, " \"valign\""); //$NON-NLS-1$
-		if (rowspan < 1)
+		}
+		if (rowspan < 1) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, " \"rowspan\""); //$NON-NLS-1$
-		if (colspan < 1)
+		}
+		if (colspan < 1) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, " \"colspan\""); //$NON-NLS-1$
+		}
 		if (align == FILL_GRAB) {
 			this.align = FILL;
 			grabHorizontal = true;
-		} else
+		} else {
 			this.align = align;
+		}
 		if (valign == FILL_GRAB) {
 			this.valign = FILL;
 			grabVertical = true;
-		} else
+		} else {
 			this.valign = valign;
+		}
 		this.rowspan = rowspan;
 		this.colspan = colspan;
 	}

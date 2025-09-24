@@ -34,7 +34,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * @since 3.0
  */
 public class SectionPart extends AbstractFormPart {
-	private Section section;
+	private final Section section;
 
 	/**
 	 * Creates a new section part based on the provided section.
@@ -115,7 +115,8 @@ public class SectionPart extends AbstractFormPart {
 	@Override
 	public void setFocus() {
 		Control client = section.getClient();
-		if (client != null)
+		if (client != null) {
 			client.setFocus();
+		}
 	}
 }

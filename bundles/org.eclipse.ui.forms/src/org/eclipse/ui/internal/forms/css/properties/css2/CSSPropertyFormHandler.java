@@ -57,11 +57,10 @@ public class CSSPropertyFormHandler extends AbstractCSSPropertySWTHandler {
 	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (!(control instanceof Form)) {
+		if (!(control instanceof Form form)) {
 			return;
 		}
 
-		Form form = (Form) control;
 		if (TEXT_BACKGROUND_COLOR.equals(property)) {
 			if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 				Color color = (Color) engine.convert(value, Color.class, form.getDisplay());

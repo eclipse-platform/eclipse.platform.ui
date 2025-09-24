@@ -50,7 +50,7 @@ import org.eclipse.ui.forms.IMessageManager;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ScrolledForm extends SharedScrolledComposite {
-	private Form content;
+	private final Form content;
 
 	private boolean customMenu;
 
@@ -71,8 +71,9 @@ public class ScrolledForm extends SharedScrolledComposite {
 		super.setContent(content);
 		content.setMenu(getMenu());
 		addDisposeListener(e -> {
-			if (!customMenu)
+			if (!customMenu) {
 				setMenu(null);
+			}
 		});
 	}
 
@@ -85,8 +86,9 @@ public class ScrolledForm extends SharedScrolledComposite {
 	public void setMenu(Menu menu) {
 		customMenu = true;
 		super.setMenu(menu);
-		if (content != null)
+		if (content != null) {
 			content.setMenu(menu);
+		}
 	}
 
 	/**

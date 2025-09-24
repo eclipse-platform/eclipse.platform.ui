@@ -40,7 +40,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	private FormEditor editor;
 	private PageForm mform;
 	private int index;
-	private String id;
+	private final String id;
 
 	private static class PageForm extends ManagedForm {
 		public PageForm(FormPage page, ScrolledForm form) {
@@ -57,8 +57,9 @@ public class FormPage extends EditorPart implements IFormPage {
 		}
 		@Override
 		public void staleStateChanged() {
-			if (getPage().isActive())
+			if (getPage().isActive()) {
 				refresh();
+			}
 		}
 	}
 	/**
@@ -135,8 +136,9 @@ public class FormPage extends EditorPart implements IFormPage {
 		if (active) {
 			// We are switching to this page - refresh it
 			// if needed.
-			if (mform != null)
+			if (mform != null) {
 				mform.refresh();
+			}
 		}
 	}
 	/**
@@ -188,8 +190,9 @@ public class FormPage extends EditorPart implements IFormPage {
 	 */
 	@Override
 	public void dispose() {
-		if (mform != null)
+		if (mform != null) {
 			mform.dispose();
+		}
 	}
 	/**
 	 * Returns the unique identifier that can be used to reference this page.
@@ -215,16 +218,18 @@ public class FormPage extends EditorPart implements IFormPage {
 	 */
 	@Override
 	public void setFocus() {
-		if (mform != null)
+		if (mform != null) {
 			mform.setFocus();
+		}
 	}
 	/**
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		if (mform != null)
+		if (mform != null) {
 			mform.commit(true);
+		}
 	}
 	/**
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
@@ -291,8 +296,9 @@ public class FormPage extends EditorPart implements IFormPage {
 	 */
 	@Override
 	public boolean selectReveal(Object object) {
-		if (mform != null)
+		if (mform != null) {
 			return mform.setInput(object);
+		}
 		return false;
 	}
 	/**
