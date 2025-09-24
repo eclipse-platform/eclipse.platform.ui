@@ -132,7 +132,7 @@ public class EventLoopMonitorThread extends Thread {
 		 * {@link SWT#PreExternalEventDispatch PreExternalEventDispatch} event and popped from
 		 * the stack on {@link SWT#PostExternalEventDispatch PostExternalEventDispatch} event.
 		 */
-		private int[] nestingLevelStack = new int[64];
+		private final int[] nestingLevelStack = new int[64];
 		private int nestingLevelStackSize;
 
 		@Override
@@ -727,9 +727,7 @@ public class EventLoopMonitorThread extends Thread {
 				} else {
 					MonitoringPlugin.logWarning(NLS.bind(
 							Messages.EventLoopMonitorThread_invalid_logger_type_error_4,
-							new Object[] { object.getClass().getName(),
-									IUiFreezeEventLogger.class.getClass().getSimpleName(),
-									EXTENSION_ID, element.getContributor().getName() }));
+							object.getClass().getName(), IUiFreezeEventLogger.class.getClass().getSimpleName(), EXTENSION_ID, element.getContributor().getName()));
 				}
 			} catch (CoreException e) {
 				MonitoringPlugin.logError(e.getMessage(), e);

@@ -46,7 +46,7 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 	private IntegerEditor longEventWarningThreshold;
 	private IntegerEditor longEventErrorThreshold;
 	private IntegerEditor deadlockThreshold;
-	private Map<FieldEditor, Composite> editors;
+	private final Map<FieldEditor, Composite> editors;
 
 	private class IntegerEditor extends IntegerFieldEditor {
 		public IntegerEditor(String name, String labelText, Composite parent, int min, int max) {

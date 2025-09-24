@@ -136,8 +136,7 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 			} else {
 				threadText.append(NLS.bind(
 						Messages.DefaultUiFreezeEventLogger_waiting_for_with_lock_owner_3,
-						new Object[] { getClassAndHashCode(lock), lockOwnerName,
-								thread.getLockOwnerId() }));
+						getClassAndHashCode(lock), lockOwnerName, thread.getLockOwnerId()));
 			}
 		}
 
