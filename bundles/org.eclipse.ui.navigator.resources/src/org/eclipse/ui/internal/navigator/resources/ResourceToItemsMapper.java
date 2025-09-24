@@ -38,10 +38,10 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 	private static final int NUMBER_LIST_REUSE = 10;
 
 	// map from resource to item. Value can be single Item of List<Item>
-	private HashMap<IResource, Object> _resourceToItem;
-	private Stack<List<Item>> _reuseLists;
+	private final HashMap<IResource, Object> _resourceToItem;
+	private final Stack<List<Item>> _reuseLists;
 
-	private CommonViewer _commonViewer;
+	private final CommonViewer _commonViewer;
 
 	public ResourceToItemsMapper(CommonViewer viewer) {
 		_resourceToItem = new HashMap<>();

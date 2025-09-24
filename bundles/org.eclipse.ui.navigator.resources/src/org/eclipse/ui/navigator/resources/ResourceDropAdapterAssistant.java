@@ -94,7 +94,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 	public IStatus validateDrop(Object target, int aDropOperation,
 			TransferData transferType) {
 
-		if (!(target instanceof IResource)) {
+		if (!(target instanceof IResource resource)) {
 			return WorkbenchNavigatorPlugin
 					.createStatus(
 							IStatus.INFO,
@@ -102,7 +102,6 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 							WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource,
 							null);
 		}
-		IResource resource = (IResource) target;
 		if (!resource.isAccessible()) {
 			return WorkbenchNavigatorPlugin
 					.createErrorStatus(
@@ -236,7 +235,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 	@Override
 	public IStatus validatePluginTransferDrop(
 			IStructuredSelection aDragSelection, Object aDropTarget) {
-		if (!(aDropTarget instanceof IResource)) {
+		if (!(aDropTarget instanceof IResource resource)) {
 			return WorkbenchNavigatorPlugin
 					.createStatus(
 							IStatus.INFO,
@@ -244,7 +243,6 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 							WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource,
 							null);
 		}
-		IResource resource = (IResource) aDropTarget;
 		if (!resource.isAccessible()) {
 			return WorkbenchNavigatorPlugin
 					.createErrorStatus(
@@ -396,20 +394,25 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 					ImportTypeDialog dialog = new ImportTypeDialog(getShell(), dropAdapter.getCurrentOperation(), sources, target);
 					dialog.setResource(target);
 					if (dialog.open() == Window.OK) {
-						if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS)
+						if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS) {
 							operation.setVirtualFolders(true);
-						if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK)
+						}
+						if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK) {
 							operation.setCreateLinks(true);
-						if (dialog.getVariable() != null)
+						}
+						if (dialog.getVariable() != null) {
 							operation.setRelativeVariable(dialog.getVariable());
+						}
 						operation.copyResources(sources, target);
-					} else
+					} else {
 						return problems;
-				}
-				else
+					}
+				} else {
 					operation.copyResources(sources, target);
-			} else
+				}
+			} else {
 				operation.copyResources(sources, target);
+			}
 		}
 
 		return problems;
@@ -481,8 +484,9 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				if (refactoringStatus.hasEntries()) {
 					Dialog dialog= RefactoringUI.createLightWeightStatusDialog(refactoringStatus, getShell(), WorkbenchNavigatorMessages.MoveResourceAction_title);
 					int result = dialog.open();
-					if (result != IStatus.OK)
+					if (result != IStatus.OK) {
 						return Status.CANCEL_STATUS;
+					}
 				}
 
 				final PerformRefactoringOperation op = new PerformRefactoringOperation(refactoring,
@@ -549,11 +553,10 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 	 */
 	private IStatus validateTarget(Object target, TransferData transferType,
 			int dropOperation) {
-		if (!(target instanceof IResource)) {
+		if (!(target instanceof IResource resource)) {
 			return WorkbenchNavigatorPlugin
 					.createInfoStatus(WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource);
 		}
-		IResource resource = (IResource) target;
 		if (!resource.isAccessible()) {
 			return WorkbenchNavigatorPlugin
 					.createErrorStatus(WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject);

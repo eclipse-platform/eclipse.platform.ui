@@ -53,12 +53,12 @@ import org.eclipse.ui.part.ResourceTransfer;
 	/**
 	 * The shell in which to show any dialogs.
 	 */
-	private Shell shell;
+	private final Shell shell;
 
 	/**
 	 * System clipboard
 	 */
-	private Clipboard clipboard;
+	private final Clipboard clipboard;
 
 	/**
 	 * Creates a new action.

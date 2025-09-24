@@ -44,13 +44,15 @@ public class ResourceLinkHelper implements ILinkHelper {
 	@Override
 	public void activateEditor(IWorkbenchPage aPage,
 			IStructuredSelection aSelection) {
-		if (aSelection == null || aSelection.isEmpty())
+		if (aSelection == null || aSelection.isEmpty()) {
 			return;
+		}
 		if (aSelection.getFirstElement() instanceof IFile) {
 			IEditorInput fileInput = new FileEditorInput((IFile) aSelection.getFirstElement());
 			IEditorPart editor = null;
-			if ((editor = aPage.findEditor(fileInput)) != null)
+			if ((editor = aPage.findEditor(fileInput)) != null) {
 				aPage.bringToTop(editor);
+			}
 		}
 
 	}
