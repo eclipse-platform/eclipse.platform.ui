@@ -196,10 +196,9 @@ public final class ContributionsAnalyzer {
 	}
 
 	public static void collectInfo(ExpressionInfo info, MExpression exp) {
-		if (!(exp instanceof MCoreExpression)) {
+		if (!(exp instanceof MCoreExpression expr)) {
 			return;
 		}
-		MCoreExpression expr = (MCoreExpression) exp;
 		Expression ref = null;
 		if (expr.getCoreExpression() instanceof Expression) {
 			ref = (Expression) expr.getCoreExpression();
@@ -232,8 +231,7 @@ public final class ContributionsAnalyzer {
 	}
 
 	public static boolean isVisible(MExpression exp, final ExpressionContext eContext) {
-		if (exp instanceof MCoreExpression) {
-			MCoreExpression coreExpression = (MCoreExpression) exp;
+		if (exp instanceof MCoreExpression coreExpression) {
 			return isCoreExpressionVisible(coreExpression, eContext);
 		} else if (exp instanceof MImperativeExpression) {
 			return isImperativeExpressionVisible((MImperativeExpression) exp, eContext);
@@ -472,10 +470,10 @@ public final class ContributionsAnalyzer {
 	static class Key {
 		private int tag = -1;
 		private int hc = -1;
-		private String parentId;
-		private String position;
-		private MCoreExpression vexp;
-		private Object factory;
+		private final String parentId;
+		private final String position;
+		private final MCoreExpression vexp;
+		private final Object factory;
 
 		public Key(String parentId, String position, List<String> tags, MCoreExpression vexp,
 				Object factory) {
@@ -500,10 +498,9 @@ public final class ContributionsAnalyzer {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof Key)) {
+			if (!(obj instanceof Key other)) {
 				return false;
 			}
-			Key other = (Key) obj;
 			Object exp1 = vexp == null ? null : vexp.getCoreExpression();
 			Object exp2 = other.vexp == null ? null : other.vexp.getCoreExpression();
 			return Objects.equals(parentId, other.parentId) && Objects.equals(position, other.position)
@@ -533,7 +530,7 @@ public final class ContributionsAnalyzer {
 
 	static class MenuKey extends Key {
 		static final String FACTORY = "ContributionFactory"; //$NON-NLS-1$
-		private MMenuContribution contribution;
+		private final MMenuContribution contribution;
 
 		public MenuKey(MMenuContribution mc) {
 			super(mc.getParentId(), mc.getPositionInParent(), mc.getTags(), (MCoreExpression) mc
@@ -549,7 +546,7 @@ public final class ContributionsAnalyzer {
 
 	static class ToolBarKey extends Key {
 		static final String FACTORY = "ToolBarContributionFactory"; //$NON-NLS-1$
-		private MToolBarContribution contribution;
+		private final MToolBarContribution contribution;
 
 		public ToolBarKey(MToolBarContribution mc) {
 			super(mc.getParentId(), mc.getPositionInParent(), mc.getTags(), (MCoreExpression) mc
@@ -564,7 +561,7 @@ public final class ContributionsAnalyzer {
 	}
 
 	static class TrimKey extends Key {
-		private MTrimContribution contribution;
+		private final MTrimContribution contribution;
 
 		public TrimKey(MTrimContribution mc) {
 			super(mc.getParentId(), mc.getPositionInParent(), mc.getTags(), (MCoreExpression) mc

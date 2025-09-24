@@ -19,8 +19,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 
 public class ActiveChildLookupFunction extends ContextFunction {
 
-	private String localVar;
-	private String var;
+	private final String localVar;
+	private final String var;
 
 	public ActiveChildLookupFunction(String var, String localVar) {
 		this.var = var;

@@ -100,16 +100,14 @@ public class ContextProcessingAddon {
 				if (UIEvents.isADD(event)) {
 					for (Object newObj : UIEvents.asIterable(event,
 							UIEvents.EventTags.NEW_VALUE)) {
-						if (newObj instanceof MBindingContext) {
-							MBindingContext newCtx = (MBindingContext) newObj;
+						if (newObj instanceof MBindingContext newCtx) {
 							defineContexts((MBindingContext) elementObj, newCtx);
 						}
 					}
 				} else if (UIEvents.isREMOVE(event)) {
 					for (Object oldObj : UIEvents.asIterable(event,
 							UIEvents.EventTags.OLD_VALUE)) {
-						if (oldObj instanceof MBindingContext) {
-							MBindingContext oldCtx = (MBindingContext) oldObj;
+						if (oldObj instanceof MBindingContext oldCtx) {
 							undefineContext(oldCtx);
 						}
 					}

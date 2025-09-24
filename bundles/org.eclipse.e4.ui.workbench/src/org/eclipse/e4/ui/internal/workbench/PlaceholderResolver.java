@@ -36,8 +36,9 @@ import org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver;
 public class PlaceholderResolver implements EPlaceholderResolver {
 	@Override
 	public void resolvePlaceholderRef(MPlaceholder ph, MWindow refWin) {
-		if (ph.getRef() != null)
+		if (ph.getRef() != null) {
 			return;
+		}
 
 		// Must give us the window that you are resolving for...
 		Assert.isLegal(refWin != null);

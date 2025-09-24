@@ -42,11 +42,13 @@ public class ActivePartLookupFunction extends ContextFunction {
 			return null;
 		}
 		MPart part = current.getActiveLeaf().get(MPart.class);
-		if (part == null)
+		if (part == null) {
 			return null;
+		}
 		MUIElement parent = part.getCurSharedRef() != null ? part.getCurSharedRef().getParent() : part.getParent();
-		if (parent == null)
+		if (parent == null) {
 			return part;
+		}
 		List<String> parentTags = parent.getTags();
 		if (parentTags.contains(IPresentationEngine.MINIMIZED) && !parentTags.contains(IPresentationEngine.ACTIVE)
 				&& !part.getTags().contains(IPresentationEngine.ACTIVE)) {

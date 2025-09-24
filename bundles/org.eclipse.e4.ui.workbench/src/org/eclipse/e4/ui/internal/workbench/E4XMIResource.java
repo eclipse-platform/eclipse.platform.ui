@@ -30,8 +30,8 @@ public class E4XMIResource extends XMIResourceImpl {
 
 	public static final String OPTION_FILTER_PERSIST_STATE = "E4_FILTER_PERSISTED_STATE"; //$NON-NLS-1$
 
-	private Map<EObject, String> objectMap = new WeakHashMap<>();
-	private Set<String> knownIds = new HashSet<>();
+	private final Map<EObject, String> objectMap = new WeakHashMap<>();
+	private final Set<String> knownIds = new HashSet<>();
 
 	public E4XMIResource() {
 	}

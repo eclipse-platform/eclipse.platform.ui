@@ -83,12 +83,12 @@ public class ResourceHandler implements IModelResourceHandler {
 	@Inject
 	@Optional
 	@Named(IWorkbench.PERSIST_STATE)
-	private boolean saveAndRestore;
+	private final boolean saveAndRestore;
 
 	@Inject
 	@Optional
 	@Named(IWorkbench.CLEAR_PERSISTED_STATE)
-	private boolean clearPersistedState;
+	private final boolean clearPersistedState;
 
 	/**
 	 * Constructor.

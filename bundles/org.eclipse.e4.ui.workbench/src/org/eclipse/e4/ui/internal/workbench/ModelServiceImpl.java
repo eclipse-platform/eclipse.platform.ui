@@ -89,10 +89,10 @@ public class ModelServiceImpl implements EModelService {
 
 	static String HOSTED_ELEMENT = "HostedElement"; //$NON-NLS-1$
 
-	private IEclipseContext appContext;
+	private final IEclipseContext appContext;
 
 	/** Factory which is able to create {@link MApplicationElement}s in a generic way. */
-	private GenericMApplicationElementFactoryImpl mApplicationElementFactory;
+	private final GenericMApplicationElementFactoryImpl mApplicationElementFactory;
 
 	private ServiceRegistration<?> handlerRegistration;
 
@@ -184,9 +184,7 @@ public class ModelServiceImpl implements EModelService {
 			T element = (T) searchRoot;
 			elements.add(element);
 		}
-		if (searchRoot instanceof MApplication && (searchFlags == ANYWHERE)) {
-			MApplication app = (MApplication) searchRoot;
-
+		if (searchRoot instanceof MApplication app && (searchFlags == ANYWHERE)) {
 			List<MApplicationElement> children = new ArrayList<>();
 			if (clazz != null) {
 				if (clazz.equals(MHandler.class)) {
@@ -212,22 +210,20 @@ public class ModelServiceImpl implements EModelService {
 			}
 		}
 
-		if (searchRoot instanceof MBindingContext && (searchFlags == ANYWHERE)) {
-			MBindingContext bindingContext = (MBindingContext) searchRoot;
+		if (searchRoot instanceof MBindingContext bindingContext && (searchFlags == ANYWHERE)) {
 			for (MBindingContext child : bindingContext.getChildren()) {
 				findElementsRecursive(child, clazz, matcher, elements, searchFlags);
 			}
 		}
 
-		if (searchRoot instanceof MBindingTable) {
-			MBindingTable bindingTable = (MBindingTable) searchRoot;
+		if (searchRoot instanceof MBindingTable bindingTable) {
 			for (MKeyBinding child : bindingTable.getBindings()) {
 				findElementsRecursive(child, clazz, matcher, elements, searchFlags);
 			}
 		}
 
 		// Check regular containers
-		if (searchRoot instanceof MElementContainer<?>) {
+		if (searchRoot instanceof MElementContainer<?> searchContainer) {
 			/*
 			 * Bug 455281: If given a window with a primary perspective stack,
 			 * and we're not told to look outside of the perspectives (i.e.,
@@ -236,7 +232,6 @@ public class ModelServiceImpl implements EModelService {
 			 * like the compat layer's stack holding the Help, CheatSheets, and
 			 * Intro.
 			 */
-			MElementContainer<?> searchContainer = (MElementContainer<?>) searchRoot;
 			MPerspectiveStack primaryStack = null;
 			if (searchRoot instanceof MWindow ) {
 				if((searchFlags & IN_SHARED_ELEMENTS) != 0) {
@@ -283,8 +278,7 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		// Search Trim
-		if (searchRoot instanceof MTrimmedWindow && (searchFlags & IN_TRIM) != 0) {
-			MTrimmedWindow tw = (MTrimmedWindow) searchRoot;
+		if (searchRoot instanceof MTrimmedWindow tw && (searchFlags & IN_TRIM) != 0) {
 			List<MTrimBar> bars = tw.getTrimBars();
 			for (MTrimBar bar : bars) {
 				findElementsRecursive(bar, clazz, matcher, elements, searchFlags);
@@ -292,8 +286,7 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		// Search Detached Windows
-		if (searchRoot instanceof MWindow) {
-			MWindow window = (MWindow) searchRoot;
+		if (searchRoot instanceof MWindow window) {
 			for (MWindow dw : window.getWindows()) {
 				findElementsRecursive(dw, clazz, matcher, elements, searchFlags);
 			}
@@ -310,16 +303,13 @@ public class ModelServiceImpl implements EModelService {
 			}
 		}
 
-		if (searchRoot instanceof MPerspective) {
-			MPerspective persp = (MPerspective) searchRoot;
+		if (searchRoot instanceof MPerspective persp) {
 			for (MWindow dw : persp.getWindows()) {
 				findElementsRecursive(dw, clazz, matcher, elements, searchFlags);
 			}
 		}
 		// Search shared elements
-		if (searchRoot instanceof MPlaceholder) {
-			MPlaceholder ph = (MPlaceholder) searchRoot;
-
+		if (searchRoot instanceof MPlaceholder ph) {
 			// Don't search in shared areas unless the flag is set
 			if (ph.getRef() != null
 					&& (!(ph.getRef() instanceof MArea) || (searchFlags & IN_SHARED_AREA) != 0)) {
@@ -327,9 +317,7 @@ public class ModelServiceImpl implements EModelService {
 			}
 		}
 
-		if (searchRoot instanceof MPart && (searchFlags & IN_PART) != 0) {
-			MPart part = (MPart) searchRoot;
-
+		if (searchRoot instanceof MPart part && (searchFlags & IN_PART) != 0) {
 			for (MMenu menu : part.getMenus()) {
 				findElementsRecursive(menu, clazz, matcher, elements, searchFlags);
 			}
@@ -479,8 +467,7 @@ public class ModelServiceImpl implements EModelService {
 			}
 		}
 
-		if (element instanceof MPerspective) {
-			MPerspective perspective = (MPerspective) element;
+		if (element instanceof MPerspective perspective) {
 			for (MWindow window : perspective.getWindows()) {
 				if (window.isToBeRendered()) {
 					count++;
@@ -568,8 +555,7 @@ public class ModelServiceImpl implements EModelService {
 			} else if ((!resolveAlways) && (ph.getRef() == null)) {
 				resolver.resolvePlaceholderRef(ph, refWin);
 				MUIElement partElement = ph.getRef();
-				if (partElement instanceof MPart) {
-					MPart part = (MPart) partElement;
+				if (partElement instanceof MPart part) {
 					if (part.getIconURI() == null) {
 						MPartDescriptor desc = getPartDescriptor(part.getElementId());
 						if (desc != null) {
@@ -1053,15 +1039,16 @@ public class ModelServiceImpl implements EModelService {
 		MUIElement curElement = element;
 		while (curElement != null) {
 			Object container = ((EObject) curElement).eContainer();
-			if (!(container instanceof MUIElement))
+			if (!(container instanceof MUIElement)) {
 				return NOT_IN_UI;
+			}
 
 			if (container instanceof MApplication) {
-				if (location != NOT_IN_UI)
+				if (location != NOT_IN_UI) {
 					return location;
+				}
 				return OUTSIDE_PERSPECTIVE;
-			} else if (container instanceof MPerspective) {
-				MPerspective perspective = (MPerspective) container;
+			} else if (container instanceof MPerspective perspective) {
 				MUIElement perspParent = perspective.getParent();
 				if (perspParent == null) {
 					location = NOT_IN_UI;

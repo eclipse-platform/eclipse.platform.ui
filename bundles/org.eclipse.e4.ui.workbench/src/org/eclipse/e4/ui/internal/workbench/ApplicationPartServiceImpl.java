@@ -38,9 +38,9 @@ public class ApplicationPartServiceImpl implements EPartService {
 	private static final Supplier<RuntimeException> NO_VALID_PARTSERVICE = () -> new IllegalStateException(
 			"No valid PartService can be acquired from the current context"); //$NON-NLS-1$
 
-	private MApplication application;
+	private final MApplication application;
 
-	private EModelService modelService;
+	private final EModelService modelService;
 
 	@Inject
 	ApplicationPartServiceImpl(MApplication application, EModelService modelService) {

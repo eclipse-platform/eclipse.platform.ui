@@ -47,20 +47,23 @@ public class EObjModelHandler extends ModelHandlerBase implements IAdapterFactor
 	@Override
 	public Object getProperty(Object element, String id) {
 		EObject eObj = (EObject) element;
-		if (eObj == null)
+		if (eObj == null) {
 			return null;
+		}
 
 		EStructuralFeature eFeature = eObj.eClass().getEStructuralFeature(id);
-		if (eFeature == null)
+		if (eFeature == null) {
 			return null;
+		}
 
 		return eObj.eGet(eFeature);
 	}
 
 	@Override
 	public String[] getPropIds(Object element) {
-		if (element == null)
+		if (element == null) {
 			return new String[0];
+		}
 
 		EObject eObj = (EObject) element;
 		EList<EStructuralFeature> features = eObj.eClass().getEAllStructuralFeatures();
@@ -77,12 +80,14 @@ public class EObjModelHandler extends ModelHandlerBase implements IAdapterFactor
 	@Override
 	public void setProperty(Object element, String id, Object value) {
 		EObject eObj = (EObject) element;
-		if (eObj == null)
+		if (eObj == null) {
 			return;
+		}
 
 		EStructuralFeature eFeature = eObj.eClass().getEStructuralFeature(id);
-		if (eFeature == null)
+		if (eFeature == null) {
 			return;
+		}
 
 		eObj.eSet(eFeature, value);
 	}
