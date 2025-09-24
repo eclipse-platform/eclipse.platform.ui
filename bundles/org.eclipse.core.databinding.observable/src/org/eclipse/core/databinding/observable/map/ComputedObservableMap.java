@@ -77,7 +77,7 @@ public abstract class ComputedObservableMap<K, V> extends AbstractObservableMap<
 		fireMapChange(Diffs.createMapDiff(addedKeys, removedKeys, changedKeys, oldValues, newValues));
 	};
 
-	private IStaleListener staleListener = staleEvent -> fireStale();
+	private final IStaleListener staleListener = staleEvent -> fireStale();
 
 	private Set<Map.Entry<K, V>> entrySet = new EntrySet();
 
@@ -250,8 +250,9 @@ public abstract class ComputedObservableMap<K, V> extends AbstractObservableMap<
 	@Override
 	final public V get(Object key) {
 		getterCalled();
-		if (!keySet.contains(key))
+		if (!keySet.contains(key)) {
 			return null;
+		}
 		return doGet((K) key);
 	}
 
@@ -262,8 +263,9 @@ public abstract class ComputedObservableMap<K, V> extends AbstractObservableMap<
 	@Override
 	final public V put(K key, V value) {
 		checkRealm();
-		if (!keySet.contains(key))
+		if (!keySet.contains(key)) {
 			return null;
+		}
 		return doPut(key, value);
 	}
 

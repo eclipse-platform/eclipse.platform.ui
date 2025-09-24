@@ -183,14 +183,16 @@ public abstract class ComputedList<E> extends AbstractObservableList<E> {
 		@Override
 		public void run() {
 			cachedList = calculate();
-			if (cachedList == null)
+			if (cachedList == null) {
 				cachedList = Collections.EMPTY_LIST;
+			}
 		}
 
 		@Override
 		public void handleStale(StaleEvent event) {
-			if (!dirty)
+			if (!dirty) {
 				makeStale();
+			}
 		}
 
 		@Override
@@ -199,7 +201,7 @@ public abstract class ComputedList<E> extends AbstractObservableList<E> {
 		}
 	}
 
-	private PrivateInterface privateInterface = new PrivateInterface();
+	private final PrivateInterface privateInterface = new PrivateInterface();
 
 	private Object elementType;
 

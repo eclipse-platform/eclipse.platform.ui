@@ -168,8 +168,9 @@ public class BidiObservableMap<K, V> extends DecoratingObservableMap<K, V> {
 	 */
 	public Set<K> getKeys(Object value) {
 		// valuesToSingleKeys is null when no listeners are registered
-		if (valuesToSingleKeys == null)
+		if (valuesToSingleKeys == null) {
 			return findKeys(value);
+		}
 
 		if (valuesToSingleKeys.containsKey(value)) {
 			return Collections.singleton(valuesToSingleKeys.get(value));
@@ -191,8 +192,9 @@ public class BidiObservableMap<K, V> extends DecoratingObservableMap<K, V> {
 	private Set<K> findKeys(Object value) {
 		Set<K> keys = new HashSet<>();
 		for (Entry<K, V> entry : entrySet()) {
-			if (Objects.equals(entry.getValue(), value))
+			if (Objects.equals(entry.getValue(), value)) {
 				keys.add(entry.getKey());
+			}
 		}
 		return keys;
 	}

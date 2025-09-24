@@ -44,7 +44,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
  */
 public class IdentityObservableSet<E> extends AbstractObservableSet<E> {
 	private Set<E> wrappedSet;
-	private Object elementType;
+	private final Object elementType;
 
 	/**
 	 * Constructs an IdentityObservableSet on the given {@link Realm}.
@@ -116,8 +116,9 @@ public class IdentityObservableSet<E> extends AbstractObservableSet<E> {
 		getterCalled();
 		Set<E> additions = new IdentitySet<>();
 		for (E element : c) {
-			if (wrappedSet.add(element))
+			if (wrappedSet.add(element)) {
 				additions.add(element);
+			}
 		}
 		boolean changed = !additions.isEmpty();
 		if (changed) {

@@ -38,7 +38,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 public class MapEntryObservableValue<K, V> extends AbstractObservableValue<V> {
 	private IObservableMap<K, V> map;
 	private K key;
-	private Object valueType;
+	private final Object valueType;
 
 	private IMapChangeListener<K, V> changeListener = event -> {
 		if (event.diff.getAddedKeys().contains(key)) {

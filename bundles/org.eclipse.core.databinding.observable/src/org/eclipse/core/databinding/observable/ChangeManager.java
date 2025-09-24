@@ -91,11 +91,15 @@ import org.eclipse.core.runtime.ListenerList;
 	}
 
 	protected boolean hasListeners() {
-		if (listenerTypes != null)
-			for (int i = 0; i < listenerTypes.length; i++)
-				if (listenerTypes[i] != DisposeEvent.TYPE)
-					if (listenerLists[i].size() > 0)
+		if (listenerTypes != null) {
+			for (int i = 0; i < listenerTypes.length; i++) {
+				if (listenerTypes[i] != DisposeEvent.TYPE) {
+					if (listenerLists[i].size() > 0) {
 						return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 
