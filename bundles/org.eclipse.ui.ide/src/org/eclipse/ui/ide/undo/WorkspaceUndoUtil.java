@@ -758,10 +758,9 @@ public class WorkspaceUndoUtil {
 	private static IResourceSnapshot<IResource> copyOverExistingResource(
 			IResource source, IResource existing, IProgressMonitor monitor,
 			IAdaptable uiInfo, boolean deleteSourceFile) throws CoreException {
-		if (!(source instanceof IFile file && existing instanceof IFile)) {
+		if (!(source instanceof IFile file && existing instanceof IFile existingFile)) {
 			return null;
 		}
-		IFile existingFile = (IFile) existing;
 		SubMonitor subMonitor = SubMonitor.convert(monitor,
 				UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress, deleteSourceFile ? 3 : 2);
 		if (file != null) {
