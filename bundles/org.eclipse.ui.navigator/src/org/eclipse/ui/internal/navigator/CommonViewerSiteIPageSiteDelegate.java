@@ -27,9 +27,9 @@ import org.eclipse.ui.part.IPageSite;
  */
 public class CommonViewerSiteIPageSiteDelegate implements ICommonViewerSite {
 
-	private IPageSite pageSite;
+	private final IPageSite pageSite;
 
-	private String viewerId;
+	private final String viewerId;
 
 	public CommonViewerSiteIPageSiteDelegate(String aViewerId,
 			IPageSite aPageSite) {

@@ -68,10 +68,12 @@ public class ReusableViewerLabel extends ViewerLabel {
 
 		boolean changed = false;
 		if(original != null) {
-			if(original.getText() == null ^ getText() != null)
+			if(original.getText() == null ^ getText() != null) {
 				changed |= getText() != null;
-			if(original.getText() != null && getImage() != null)
+			}
+			if(original.getText() != null && getImage() != null) {
 				changed |= !getImage().equals(original.getImage());
+			}
 		}
 		return changed;
 	}

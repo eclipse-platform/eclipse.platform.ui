@@ -97,8 +97,9 @@ public class CommonActionDescriptorManager {
 	private int findId(List<CommonActionProviderDescriptor> list, String id) {
 		for (int i= 0, len = list.size(); i< len; i++) {
 			CommonActionProviderDescriptor desc = list.get(i);
-			if (desc.getId().equals(id))
+			if (desc.getId().equals(id)) {
 				return i;
+			}
 		}
 		return -1;
 	}
@@ -254,8 +255,9 @@ public class CommonActionDescriptorManager {
 				for (Iterator iter = actionDescriptor.overridingDescriptors(); iter.hasNext();) {
 					CommonActionProviderDescriptor descriptor = (CommonActionProviderDescriptor) iter.next();
 					if(addProviderIfRelevant(aContentService, structuredSelection, descriptor, providers, blockedProviders)) {
-						while(iter.hasNext())
+						while(iter.hasNext()) {
 							blockedProviders.add(iter.next());
+						}
 						return true;
 					}
 
@@ -338,10 +340,10 @@ public class CommonActionDescriptorManager {
 
 		private class AddProviderSafeRunner implements ISafeRunnable {
 
-			private IConfigurationElement parentElement;
-			private IConfigurationElement defaultEnablement;
-			private IConfigurationElement actionProvider;
-			private Priority defaultPriority;
+			private final IConfigurationElement parentElement;
+			private final IConfigurationElement defaultEnablement;
+			private final IConfigurationElement actionProvider;
+			private final Priority defaultPriority;
 
 			protected AddProviderSafeRunner(IConfigurationElement actionProvider,
 											 IConfigurationElement defaultEnablement,

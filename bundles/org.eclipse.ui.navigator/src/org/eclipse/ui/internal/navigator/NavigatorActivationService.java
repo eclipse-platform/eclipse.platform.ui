@@ -68,7 +68,7 @@ public final class NavigatorActivationService implements
 
 	private final ListenerList<IExtensionActivationListener> listeners = new ListenerList<>();
 
-	private INavigatorContentService contentService;
+	private final INavigatorContentService contentService;
 
 	/**
 	 * Create an instance of the service.
@@ -94,16 +94,19 @@ public final class NavigatorActivationService implements
 	@Override
 	public boolean isNavigatorExtensionActive(String aNavigatorExtensionId) {
 		Boolean b = activatedExtensionsMap.get(aNavigatorExtensionId);
-		if(b != null)
+		if(b != null) {
 			return b.booleanValue();
+		}
 		synchronized (activatedExtensionsMap) {
 			NavigatorContentDescriptor descriptor = CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(aNavigatorExtensionId);
-			if (descriptor == null)
+			if (descriptor == null) {
 				return false;
-			if(descriptor.isActiveByDefault())
+			}
+			if(descriptor.isActiveByDefault()) {
 				activatedExtensionsMap.put(aNavigatorExtensionId, Boolean.TRUE);
-			else
+			} else {
 				activatedExtensionsMap.put(aNavigatorExtensionId, Boolean.FALSE);
+			}
 			return descriptor.isActiveByDefault();
 		}
 	}
@@ -241,8 +244,9 @@ public final class NavigatorActivationService implements
 			boolean toEnable) {
 
 		if(navigatorExtensionIds != null) { // should really never be null, but just in case
-			if(navigatorExtensionIds.length > 1)
+			if(navigatorExtensionIds.length > 1) {
 				Arrays.sort(navigatorExtensionIds);
+			}
 
 			for (IExtensionActivationListener element : listeners) {
 				element.onExtensionActivation(contentService.getViewerId(), navigatorExtensionIds, toEnable);
@@ -275,8 +279,9 @@ public final class NavigatorActivationService implements
 				} else {
 					// IS THIS THE RIGHT WAY TO HANDLE THIS CASE?
 					NavigatorContentDescriptor descriptor = CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(contentExtensionId);
-					if(descriptor != null)
+					if(descriptor != null) {
 						activatedExtensionsMap.put(id, Boolean.valueOf(descriptor.isActiveByDefault()));
+					}
 				}
 			}
 

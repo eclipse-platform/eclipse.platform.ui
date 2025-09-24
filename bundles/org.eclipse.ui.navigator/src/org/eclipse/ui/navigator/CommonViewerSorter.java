@@ -64,8 +64,9 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 
 	@Override
 	public int category(Object element) {
-		if (contentService == null)
+		if (contentService == null) {
 			return 0;
+		}
 
 		INavigatorContentDescriptor source = getSource(element);
 		return source != null ? source.getSequenceNumber() : Priority.NORMAL_PRIORITY_VALUE;
@@ -78,8 +79,9 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 
 	@Override
 	public int compare(Viewer viewer, TreePath parentPath, Object e1, Object e2) {
-		if (contentService == null)
+		if (contentService == null) {
 			return -1;
+		}
 		INavigatorContentDescriptor sourceOfLvalue = getSource(e1);
 		INavigatorContentDescriptor sourceOfRvalue = getSource(e2);
 
@@ -144,8 +146,9 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		NavigatorContentServiceContentProvider cp = (NavigatorContentServiceContentProvider) contentService.createCommonContentProvider();
 		TreePath[] parentPaths = cp.getParents(element);
 		for (TreePath parentPath : parentPaths) {
-			if (isSorterProperty(parentPath, element, property))
+			if (isSorterProperty(parentPath, element, property)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -153,11 +156,13 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 	@Override
 	public boolean isSorterProperty(TreePath parentPath, Object element, String property) {
 		INavigatorContentDescriptor contentDesc = getSource(element);
-		if (parentPath.getSegmentCount() == 0)
+		if (parentPath.getSegmentCount() == 0) {
 			return false;
+		}
 		ViewerComparator sorter = sorterService.findComparator(contentDesc, parentPath.getLastSegment(), element, null);
-		if (sorter != null)
+		if (sorter != null) {
 			return sorter.isSorterProperty(element, property);
+		}
 		return false;
 	}
 
@@ -166,20 +171,23 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 		// Fast path - just an optimization for the common case
 		INavigatorContentDescriptor ncd = contentService.getSourceOfContribution(o);
 		if (ncd != null) {
-			if (Policy.DEBUG_SORT)
+			if (Policy.DEBUG_SORT) {
 				System.out.println("sort: " + ncd + " object: " + o); //$NON-NLS-1$//$NON-NLS-2$
+			}
 			return ncd;
 		}
 
 		Set descriptors = contentService.findDescriptorsByTriggerPoint(o, NavigatorContentService.CONSIDER_OVERRIDES);
 		if (descriptors != null && descriptors.size() > 0) {
 			ncd = (INavigatorContentDescriptor) descriptors.iterator().next();
-			if (Policy.DEBUG_SORT)
+			if (Policy.DEBUG_SORT) {
 				System.out.println("sort: " + ncd + " object: " + o); //$NON-NLS-1$//$NON-NLS-2$
+			}
 			return ncd;
 		}
-		if (Policy.DEBUG_SORT)
+		if (Policy.DEBUG_SORT) {
 			System.out.println("sort: NULL object: " + o); //$NON-NLS-1$
+		}
 		return null;
 	}
 

@@ -78,8 +78,7 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	@Override
 	public String getDescription(Object element) {
 		/* The following few lines were contributed as part of a patch. */
-		if (delegateLabelProvider instanceof IDescriptionProvider) {
-			IDescriptionProvider provider = (IDescriptionProvider) delegateLabelProvider;
+		if (delegateLabelProvider instanceof IDescriptionProvider provider) {
 			return provider.getDescription(element);
 		}
 		return null;
@@ -116,8 +115,9 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 			return ((IStyledLabelProvider)delegateLabelProvider).getStyledText(element);
 		}
 		String text= getText(element);
-		if (text == null)
+		if (text == null) {
 			text= ""; //$NON-NLS-1$
+		}
 		return new StyledString(text);
 	}
 
@@ -169,22 +169,25 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 
 	@Override
 	public void updateLabel(ViewerLabel label, TreePath elementPath) {
-		if (delegateLabelProvider instanceof ITreePathLabelProvider) {
-			ITreePathLabelProvider tplp = (ITreePathLabelProvider) delegateLabelProvider;
+		if (delegateLabelProvider instanceof ITreePathLabelProvider tplp) {
 			String text = label.getText() != null ? label.getText() : ""; //$NON-NLS-1$
 			Image image = label.getImage();
 			tplp.updateLabel(label, elementPath);
-			if(label.getText() == null)
+			if(label.getText() == null) {
 				label.setText(text);
-			if(label.getImage() == null && image != null)
+			}
+			if(label.getImage() == null && image != null) {
 				label.setImage(image);
+			}
 		} else {
 			Image image = getImage(elementPath.getLastSegment());
-			if(image != null)
+			if(image != null) {
 				label.setImage(image);
+			}
 			String text = getText(elementPath.getLastSegment());
-			if(text != null)
+			if(text != null) {
 				label.setText(text);
+			}
 		}
 	}
 

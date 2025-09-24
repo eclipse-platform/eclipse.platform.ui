@@ -40,9 +40,9 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * @since 3.2
  */
 public class WizardShortcutAction extends Action implements IPluginContribution {
-	private IWizardDescriptor descriptor;
+	private final IWizardDescriptor descriptor;
 
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	/**
 	 *

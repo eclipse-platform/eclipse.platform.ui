@@ -49,13 +49,13 @@ public class CommonFiltersTab extends CustomizationTab {
 
 	private Text filterText;
 
-	private ILabelProvider filterLabelProvider = new CommonFilterLabelProvider();
+	private final ILabelProvider filterLabelProvider = new CommonFilterLabelProvider();
 
-	private CommonFilterContentProvider filterContentProvider = new CommonFilterContentProvider();
+	private final CommonFilterContentProvider filterContentProvider = new CommonFilterContentProvider();
 
-	private TablePatternFilter patternFilter = new TablePatternFilter();
+	private final TablePatternFilter patternFilter = new TablePatternFilter();
 
-	private Deque<ICommonFilterDescriptor> filterDescriptorChangeHistory = new ArrayDeque<>();
+	private final Deque<ICommonFilterDescriptor> filterDescriptorChangeHistory = new ArrayDeque<>();
 
 	protected CommonFiltersTab(Composite parent,
 			INavigatorContentService aContentService) {

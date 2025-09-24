@@ -123,8 +123,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * to record the object/description associations which are when stored
 	 * in the Tree associated with the viewer.
 	 */
-	private Map<Object, INavigatorContentDescriptor> contributionMemory;
-	private Map<Object, INavigatorContentDescriptor> contributionMemoryFirstClass;
+	private final Map<Object, INavigatorContentDescriptor> contributionMemory;
+	private final Map<Object, INavigatorContentDescriptor> contributionMemoryFirstClass;
 
 	private ILabelProvider labelProvider;
 
@@ -338,8 +338,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		// Prevents the world from being started again once we have been disposed.  In
 		// the dispose process, the ContentViewer will call setInput() on the
 		// NavigatorContentServiceContentProvider, which gets us here
-		if (isDisposed)
+		if (isDisposed) {
 			return;
+		}
 		NavigatorContentDescriptorManager.getInstance().clearCache();
 		synchronized (this) {
 			if (structuredViewerManager == null) {
@@ -579,8 +580,9 @@ public class NavigatorContentService implements IExtensionActivationListener,
 			String anExtensionId) {
 		NavigatorContentDescriptor descriptor = CONTENT_DESCRIPTOR_REGISTRY
 				.getContentDescriptor(anExtensionId);
-		if (descriptor != null)
+		if (descriptor != null) {
 			return getExtension(descriptor);
+		}
 		return null;
 	}
 
@@ -667,9 +669,10 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		synchronized (this) {
 			if (contributionMemory.get(element) == null
 					|| contributionMemoryFirstClass.get(element) == firstClassSource) {
-				if (Policy.DEBUG_RESOLUTION)
+				if (Policy.DEBUG_RESOLUTION) {
 					System.out
 							.println("rememberContribution: " + Policy.getObjectString(element) + " source: " + source); //$NON-NLS-1$//$NON-NLS-2$
+				}
 				contributionMemory.put(element, source);
 				contributionMemoryFirstClass.put(element, firstClassSource);
 			}
@@ -719,17 +722,20 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @see #findContentExtensionsByTriggerPoint(Object)
 	 */
 	public synchronized NavigatorContentDescriptor getSourceOfContribution(Object element) {
-		if (element == null)
+		if (element == null) {
 			return null;
-		if (structuredViewerManager == null)
+		}
+		if (structuredViewerManager == null) {
 			return null;
+		}
 		// Try here first because it might not yet be in the tree
 		NavigatorContentDescriptor src;
 		synchronized (this) {
 			src = (NavigatorContentDescriptor) contributionMemory.get(element);
 		}
-		if (src != null)
+		if (src != null) {
 			return src;
+		}
 		return (NavigatorContentDescriptor) structuredViewerManager.getData(element);
 	}
 	public static final boolean CONSIDER_OVERRIDES = true;

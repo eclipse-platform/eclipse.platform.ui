@@ -152,10 +152,11 @@ public class CommonActionProviderDescriptor implements
 
 			if(priority == null) {
 				String prio = configurationElement.getAttribute(ATT_PRIORITY);
-				if(prio != null)
+				if(prio != null) {
 					priority = Priority.get(prio);
-				else
+				} else {
 					priority = Priority.NORMAL;
+				}
 			}
 
 			IConfigurationElement[] children = configurationElement
@@ -202,8 +203,9 @@ public class CommonActionProviderDescriptor implements
 			}
 		});
 
-		if (provider[0] != null)
+		if (provider[0] != null) {
 			return provider[0];
+		}
 		hasLoadingFailed = true;
 		return SkeletonActionProvider.INSTANCE;
 	}
@@ -342,12 +344,15 @@ public class CommonActionProviderDescriptor implements
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!super.equals(obj))
+		}
+		if (!super.equals(obj)) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final CommonActionProviderDescriptor other = (CommonActionProviderDescriptor) obj;
 		return Objects.equals(definedId, other.definedId) && Objects.equals(visibilityId, other.visibilityId);
 	}
@@ -423,20 +428,25 @@ public class CommonActionProviderDescriptor implements
 		public int compare(Object o1, Object o2) {
 			CommonActionProviderDescriptor lvalue= null, rvalue= null;
 
-			if(o1 instanceof CommonActionProviderDescriptor)
+			if(o1 instanceof CommonActionProviderDescriptor) {
 				lvalue = (CommonActionProviderDescriptor) o1;
+			}
 
-			if(o2 instanceof CommonActionProviderDescriptor)
+			if(o2 instanceof CommonActionProviderDescriptor) {
 				rvalue = (CommonActionProviderDescriptor) o2;
+			}
 
-			if(lvalue == null || rvalue == null)
+			if(lvalue == null || rvalue == null) {
 				return LESS_THAN;
-			if(lvalue.equals(rvalue))
+			}
+			if(lvalue.equals(rvalue)) {
 				return EQUALS;
+			}
 
 			int comparison = lvalue.getPriority().getValue() - rvalue.getPriority().getValue();
-			if(comparison == 0)
+			if(comparison == 0) {
 				return lvalue.getDefinedId().compareTo(rvalue.getDefinedId());
+			}
 			return comparison;
 
 		}

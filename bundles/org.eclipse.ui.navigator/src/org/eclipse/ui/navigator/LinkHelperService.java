@@ -39,7 +39,7 @@ public class LinkHelperService {
 
 	private static final ILinkHelper[] CANT_GET_NO_HELP = new ILinkHelper[0];
 
-	private NavigatorContentService contentService;
+	private final NavigatorContentService contentService;
 
 	private final Map linkHelpers = new HashMap();
 
@@ -70,8 +70,9 @@ public class LinkHelperService {
 		for (LinkHelperDescriptor descriptor : descriptors) {
 			helpers.add(getLinkHelper(descriptor));
 		}
-		if (helpers.isEmpty())
+		if (helpers.isEmpty()) {
 			return CANT_GET_NO_HELP;
+		}
 		return (ILinkHelper[]) helpers.toArray(new ILinkHelper[helpers.size()]);
 
 	}
@@ -94,8 +95,9 @@ public class LinkHelperService {
 		for (LinkHelperDescriptor descriptor : descriptors) {
 			helpers.add(getLinkHelper(descriptor));
 		}
-		if (helpers.isEmpty())
+		if (helpers.isEmpty()) {
 			return CANT_GET_NO_HELP;
+		}
 		return (ILinkHelper[]) helpers.toArray(new ILinkHelper[helpers.size()]);
 	}
 

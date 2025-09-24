@@ -29,7 +29,7 @@ import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 public class FilterDialogSelectionListener implements ISelectionChangedListener {
 
 
-	private Label descriptionText;
+	private final Label descriptionText;
 
 	protected FilterDialogSelectionListener(Label aDescriptionText) {
 		descriptionText = aDescriptionText;
@@ -40,20 +40,19 @@ public class FilterDialogSelectionListener implements ISelectionChangedListener 
 	public void selectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection structuredSelection = event.getStructuredSelection();
 		Object element = structuredSelection.getFirstElement();
-		if (element instanceof INavigatorContentDescriptor) {
-			INavigatorContentDescriptor ncd = (INavigatorContentDescriptor) element;
+		if (element instanceof INavigatorContentDescriptor ncd) {
 			String desc = NLS
 					.bind(
 							CommonNavigatorMessages.CommonFilterSelectionDialog_Hides_all_content_associated,
 							new Object[] { ncd.getName() });
 			descriptionText.setText(desc);
-		} else if (element instanceof ICommonFilterDescriptor) {
-			ICommonFilterDescriptor cfd = (ICommonFilterDescriptor) element;
+		} else if (element instanceof ICommonFilterDescriptor cfd) {
 			String description = 	cfd.getDescription();
-			if(description != null)
+			if(description != null) {
 				descriptionText.setText(description);
-			else
+			} else {
 				descriptionText.setText(NLS.bind(CommonNavigatorMessages.FilterDialogSelectionListener_Enable_the_0_filter_, cfd.getName()));
+			}
 		}
 
 	}

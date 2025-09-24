@@ -133,16 +133,19 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	@Override
 	public String getColumnText(Object anElement, int aColumn) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
-		if (labelProviders.length == 0)
+		if (labelProviders.length == 0) {
 			return NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement));
+		}
 		String text = null;
 		for (ILabelProvider labelProvider : labelProviders) {
-			if (labelProvider instanceof ITableLabelProvider && aColumn != -1)
+			if (labelProvider instanceof ITableLabelProvider && aColumn != -1) {
 				text = ((ITableLabelProvider)labelProvider).getColumnText(anElement, aColumn);
-			else
+			} else {
 				text = labelProvider.getText(anElement);
-			if (text != null && text.length() > 0)
+			}
+			if (text != null && text.length() > 0) {
 				return text;
+			}
 		}
 		return text;
 	}
@@ -150,8 +153,9 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	@Override
 	public StyledString getStyledText(Object anElement) {
 		Collection extensions = contentService.findPossibleLabelExtensions(anElement);
-		if (extensions.isEmpty())
+		if (extensions.isEmpty()) {
 			return new StyledString(NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement)));
+		}
 
 		StyledString text = null;
 		for (Iterator itr = extensions.iterator(); itr.hasNext() && text == null; ) {
@@ -184,8 +188,9 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	}
 
 	private String makeSmallString(Object obj) {
-		if (obj == null)
+		if (obj == null) {
 			return "null"; //$NON-NLS-1$
+		}
 		String str = obj.toString();
 		int len = str.length();
 		return str.substring(0, len < 50 ? len : 49);
@@ -198,10 +203,11 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	private Image findImage(NavigatorContentExtension foundExtension, Object anElement, int aColumn) {
 		Image image = null;
 		ICommonLabelProvider provider = foundExtension.getLabelProvider();
-		if (provider instanceof ITableLabelProvider && aColumn >= 0)
+		if (provider instanceof ITableLabelProvider && aColumn >= 0) {
 			image = ((ITableLabelProvider)provider).getColumnImage(anElement, aColumn);
-		else
+		} else {
 			image = provider.getImage(anElement);
+		}
 
 		return image;
 	}
@@ -210,8 +216,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	public Font getFont(Object anElement) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
 		for (ILabelProvider provider : labelProviders) {
-			if (provider instanceof IFontProvider) {
-				IFontProvider fontProvider = (IFontProvider) provider;
+			if (provider instanceof IFontProvider fontProvider) {
 				Font font = fontProvider.getFont(anElement);
 				if (font != null) {
 					return font;
@@ -225,8 +230,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	public Color getForeground(Object anElement) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
 		for (ILabelProvider provider : labelProviders) {
-			if (provider instanceof IColorProvider) {
-				IColorProvider colorProvider = (IColorProvider) provider;
+			if (provider instanceof IColorProvider colorProvider) {
 				Color color = colorProvider.getForeground(anElement);
 				if (color != null) {
 					return color;
@@ -240,8 +244,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	public Color getBackground(Object anElement) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
 		for (ILabelProvider provider : labelProviders) {
-			if (provider instanceof IColorProvider) {
-				IColorProvider colorProvider = (IColorProvider) provider;
+			if (provider instanceof IColorProvider colorProvider) {
 				Color color = colorProvider.getBackground(anElement);
 				if (color != null) {
 					return color;
@@ -255,8 +258,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	public String getToolTipText(Object anElement) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
 		for (ILabelProvider provider : labelProviders) {
-			if (provider instanceof IToolTipProvider) {
-				IToolTipProvider tooltipProvider = (IToolTipProvider) provider;
+			if (provider instanceof IToolTipProvider tooltipProvider) {
 				String tooltip = tooltipProvider.getToolTipText(anElement);
 				if (tooltip != null && !tooltip.isEmpty()) {
 					return tooltip;
@@ -379,8 +381,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	private void findUpdateLabel(NavigatorContentExtension foundExtension, ReusableViewerLabel label, TreePath elementPath) {
 
 		ILabelProvider labelProvider = foundExtension.getLabelProvider();
-		if (labelProvider instanceof ITreePathLabelProvider) {
-			ITreePathLabelProvider tplp = (ITreePathLabelProvider) labelProvider;
+		if (labelProvider instanceof ITreePathLabelProvider tplp) {
 			tplp.updateLabel(label, elementPath);
 		} else {
 			label.setImage(labelProvider.getImage(elementPath.getLastSegment()));

@@ -73,13 +73,19 @@ public class EvaluationReference<T> extends SoftReference<T> {
 			Object myObj = get();
 			// If the inner object is null, then the only EvaluationReference
 			// that is equal is itself (checked above).
-			if (myObj == null) return false;
+			if (myObj == null) {
+				return false;
+			}
 			EvaluationReference<?> otherRef = (EvaluationReference<?>) obj;
-			if (hashCode != otherRef.hashCode) return false;
+			if (hashCode != otherRef.hashCode) {
+				return false;
+			}
 			// Not comparing type; it is valid for two objects of different
 			// types to be equal.
 			Object otherObj = otherRef.get();
-			if (otherObj == null) return false;
+			if (otherObj == null) {
+				return false;
+			}
 			return myObj == otherObj || myObj.equals(otherObj);
 		}
 		return false;

@@ -254,8 +254,9 @@ public class NavigatorFilterService implements INavigatorFilterService {
 			// We don't turn of non-UI visible filters here, they have to be manipulated
 			// explicitly
 			if (!visibleFilterDescriptor.isVisibleInUi()) {
-				if (nonUiVisible == null)
+				if (nonUiVisible == null) {
 					nonUiVisible = new ArrayList<>();
+				}
 				nonUiVisible.add(visibleFilterDescriptor.getId());
 			}
 		}
@@ -310,10 +311,11 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		synchronized (activeFilters) {
 			boolean isActive = activeFilters.contains(aFilterId);
 			if(isActive ^ toMakeActive) {
-				if(toMakeActive)
+				if(toMakeActive) {
 					activeFilters.add(aFilterId);
-				else
+				} else {
 					activeFilters.remove(aFilterId);
+				}
 
 			}
 

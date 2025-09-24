@@ -32,7 +32,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 public class CommonFilterContentProvider implements IStructuredContentProvider {
 
 	private INavigatorContentService contentService;
-	private Object[] NO_ELEMENTS = new Object[0];
+	private final Object[] NO_ELEMENTS = new Object[0];
 
 
 	@Override

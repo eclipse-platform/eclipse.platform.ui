@@ -45,8 +45,9 @@ public class CustomAndExpression extends Expression {
 		Assert.isNotNull(element);
 
 		final IConfigurationElement[] children = element.getChildren();
-		if (children.length == 0)
+		if (children.length == 0) {
 			return;
+		}
 		SafeRunner.run(new NavigatorSafeRunnable() {
 			@Override
 			public void run() throws Exception {

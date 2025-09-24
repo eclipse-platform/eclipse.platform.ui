@@ -94,8 +94,9 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 	 *         Skeleton Link Helper.
 	 */
 	public ILinkHelper createLinkHelper() {
-		if (hasLinkHelperFailedCreation)
+		if (hasLinkHelperFailedCreation) {
 			return SkeletonLinkHelper.INSTANCE;
+		}
 		final ILinkHelper[] helper = new ILinkHelper[1];
 		SafeRunner.run(new NavigatorSafeRunnable(configElement) {
 			@Override
@@ -103,8 +104,9 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 				helper[0] = (ILinkHelper) configElement.createExecutableExtension(ATT_CLASS);
 			}
 		});
-		if (helper[0] != null)
+		if (helper[0] != null) {
 			return helper[0];
+		}
 		hasLinkHelperFailedCreation = true;
 		return SkeletonLinkHelper.INSTANCE;
 	}

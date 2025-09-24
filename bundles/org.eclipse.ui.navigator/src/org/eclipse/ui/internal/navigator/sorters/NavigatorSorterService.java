@@ -151,10 +151,11 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 
 		int count = 0;
 		for (CommonSorterDescriptor descriptor : descriptors) {
-			if(descriptor.getId() != null && descriptor.getId().length() > 0)
+			if(descriptor.getId() != null && descriptor.getId().length() > 0) {
 				sorters.put(descriptor.getId(), getComparator(descriptor));
-			else
+			} else {
 				sorters.put(theSource.getId() + ".sorter." + (++count), getComparator(descriptor)); //$NON-NLS-1$
+			}
 		}
 		return sorters;
 	}

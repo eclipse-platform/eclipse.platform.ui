@@ -41,7 +41,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  */
 public class UpdateActiveExtensionsOperation extends AbstractOperation {
 
-	private String[] contentExtensionsToActivate;
+	private final String[] contentExtensionsToActivate;
 
 	private final CommonViewer commonViewer;
 

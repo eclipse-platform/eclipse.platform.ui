@@ -68,11 +68,13 @@ public class Policy {
 	 * @return a String
 	 */
 	public static String getObjectString(Object obj) {
-		if (obj == null)
+		if (obj == null) {
 			return "(null)"; //$NON-NLS-1$
+		}
 		String elemStr = obj.toString();
-		if (elemStr.length() > 30)
+		if (elemStr.length() > 30) {
 			elemStr = elemStr.substring(0, 29);
+		}
 		return "(" + obj.getClass().getName() + "): " + elemStr;  //$NON-NLS-1$//$NON-NLS-2$
 	}
 

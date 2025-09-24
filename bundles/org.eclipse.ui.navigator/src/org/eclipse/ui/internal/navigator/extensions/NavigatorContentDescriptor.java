@@ -58,7 +58,7 @@ public final class NavigatorContentDescriptor implements
 
 	private String name;
 
-	private IConfigurationElement configElement;
+	private final IConfigurationElement configElement;
 
 	private int priority = Priority.NORMAL_PRIORITY_VALUE;
 
@@ -208,11 +208,8 @@ public final class NavigatorContentDescriptor implements
 		if (id == null) {
 			throw new WorkbenchException(NLS.bind(
 					CommonNavigatorMessages.Attribute_Missing_Warning,
-					new Object[] {
-							ATT_ID,
-							id,
-							configElement.getDeclaringExtension()
-									.getContributor().getName() }));
+					ATT_ID, id, configElement.getDeclaringExtension()
+							.getContributor().getName()));
 		}
 
 		contribution = new IPluginContribution() {
@@ -237,14 +234,13 @@ public final class NavigatorContentDescriptor implements
 				initialActivation = new CustomAndExpression(children[0]);
 			} else {
 				throw new WorkbenchException(NLS.bind(
-						CommonNavigatorMessages.Attribute_Missing_Warning, new Object[] {
-								TAG_INITIAL_ACTIVATION, id,
-								configElement.getDeclaringExtension().getContributor().getName() }));
+						CommonNavigatorMessages.Attribute_Missing_Warning, TAG_INITIAL_ACTIVATION, id, configElement.getDeclaringExtension().getContributor().getName()));
 			}
 		}
 
-		if (sortOnly)
+		if (sortOnly) {
 			return;
+		}
 
 		children = configElement.getChildren(TAG_ENABLEMENT);
 		if (children.length == 0) {
@@ -255,11 +251,8 @@ public final class NavigatorContentDescriptor implements
 			} else {
 				throw new WorkbenchException(NLS.bind(
 						CommonNavigatorMessages.Attribute_Missing_Warning,
-						new Object[] {
-								TAG_TRIGGER_POINTS,
-								id,
-								configElement.getDeclaringExtension()
-										.getContributor().getName() }));
+						TAG_TRIGGER_POINTS, id, configElement.getDeclaringExtension()
+								.getContributor().getName()));
 			}
 
 			children = configElement.getChildren(TAG_POSSIBLE_CHILDREN);
@@ -268,11 +261,8 @@ public final class NavigatorContentDescriptor implements
 			} else if(children.length > 1){
 				throw new WorkbenchException(NLS.bind(
 						CommonNavigatorMessages.Attribute_Missing_Warning,
-						new Object[] {
-								TAG_POSSIBLE_CHILDREN,
-								id,
-								configElement.getDeclaringExtension()
-										.getContributor().getName() }));
+						TAG_POSSIBLE_CHILDREN, id, configElement.getDeclaringExtension()
+								.getContributor().getName()));
 			}
 		} else if (children.length == 1) {
 			try {
@@ -284,11 +274,8 @@ public final class NavigatorContentDescriptor implements
 		} else if (children.length > 1) {
 			throw new WorkbenchException(NLS.bind(
 					CommonNavigatorMessages.Attribute_Missing_Warning,
-					new Object[] {
-							TAG_ENABLEMENT,
-							id,
-							configElement.getDeclaringExtension()
-									.getContributor().getName() }));
+					TAG_ENABLEMENT, id, configElement.getDeclaringExtension()
+							.getContributor().getName()));
 		}
 
 		children = configElement.getChildren(TAG_OVERRIDE);
@@ -302,10 +289,8 @@ public final class NavigatorContentDescriptor implements
 		} else if (children.length > 1) {
 			throw new WorkbenchException(NLS.bind(
 					CommonNavigatorMessages.Too_many_elements_Warning,
-					new Object[] {
-							TAG_OVERRIDE,
-							id,configElement.getDeclaringExtension()
-									.getContributor().getName() }));
+					TAG_OVERRIDE, id, configElement.getDeclaringExtension()
+							.getContributor().getName()));
 		}
 
 	}
@@ -360,8 +345,9 @@ public final class NavigatorContentDescriptor implements
 	 *             created for any reason
 	 */
 	public ITreeContentProvider createContentProvider() throws CoreException {
-		if (Policy.DEBUG_EXTENSION_SETUP)
+		if (Policy.DEBUG_EXTENSION_SETUP) {
 			System.out.println("createContentProvider: " + this); //$NON-NLS-1$
+		}
 		return (ITreeContentProvider) configElement
 				.createExecutableExtension(ATT_CONTENT_PROVIDER);
 	}
@@ -377,18 +363,21 @@ public final class NavigatorContentDescriptor implements
 	 *             created for any reason
 	 */
 	public ILabelProvider createLabelProvider() throws CoreException {
-		if (Policy.DEBUG_EXTENSION_SETUP)
+		if (Policy.DEBUG_EXTENSION_SETUP) {
 			System.out.println("createLabelProvider: " + this); //$NON-NLS-1$
+		}
 		return (ILabelProvider) configElement
 				.createExecutableExtension(ATT_LABEL_PROVIDER);
 	}
 
 	@Override
 	public boolean isActiveByDefault() {
-		if (activeByDefault)
+		if (activeByDefault) {
 			return true;
-		if (initialActivation == null)
+		}
+		if (initialActivation == null) {
 			return false;
+		}
 		IEvaluationContext context = NavigatorPlugin.getEvalContext(new Object());
 		return NavigatorPlugin.safeEvaluate(initialActivation, context) == EvaluationResult.TRUE;
 	}
@@ -497,11 +486,13 @@ public final class NavigatorContentDescriptor implements
 	 *         by ExtensionPriorityComparator.DESCENDING
 	 */
 	public ListIterator getOverridingExtensionsListIterator(boolean fromStart) {
-		if (overridingExtensions == null)
+		if (overridingExtensions == null) {
 			return Collections.EMPTY_LIST.listIterator();
+		}
 
-		if (overridingExtensionsList == null)
+		if (overridingExtensionsList == null) {
 			overridingExtensionsList = new ArrayList(overridingExtensions);
+		}
 
 		return overridingExtensionsList.listIterator(fromStart ? 0 : overridingExtensionsList.size());
 	}
@@ -516,8 +507,9 @@ public final class NavigatorContentDescriptor implements
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			String hashCodeString = configElement.getNamespaceIdentifier() + getId();
 			hashCode = hashCodeString.hashCode();
-			if (hashCode == HASH_CODE_NOT_COMPUTED)
+			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
+			}
 		}
 		return hashCode;
 	}

@@ -59,7 +59,7 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 
 	private CommonDragAdapterAssistant setDataAssistant;
 
-	private List<CommonDragAdapterAssistant> assistantsToUse;
+	private final List<CommonDragAdapterAssistant> assistantsToUse;
 
 	/**
 	 * Create a DragAdapter that drives the configuration of the drag data.
@@ -134,8 +134,9 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 						INavigatorDnDService dndService = contentService.getDnDService();
 						CommonDragAdapterAssistant[] assistants = dndService
 								.getCommonDragAssistants();
-						if (assistants.length == 0)
+						if (assistants.length == 0) {
 							doIt = true;
+						}
 						for (CommonDragAdapterAssistant assistant : assistants) {
 							if (Policy.DEBUG_DND) {
 								System.out
@@ -228,8 +229,9 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 								}
 							}
 						});
-						if (getOut[0])
+						if (getOut[0]) {
 							return;
+						}
 					}
 				}
 			}
@@ -258,8 +260,9 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 
 		ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
 
-		if (event.doit && selection instanceof IStructuredSelection && setDataAssistant != null)
+		if (event.doit && selection instanceof IStructuredSelection && setDataAssistant != null) {
 			setDataAssistant.dragFinished(event, (IStructuredSelection) selection);
+		}
 
 		setDataAssistant = null;
 

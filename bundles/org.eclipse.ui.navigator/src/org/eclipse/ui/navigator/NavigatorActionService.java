@@ -362,8 +362,9 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 					}
 				});
 				// This could happen in the exception case
-				if (retProvider[0] == null)
+				if (retProvider[0] == null) {
 					retProvider[0] = SkeletonActionProvider.INSTANCE;
+				}
 				actionProviderInstances.put(aProviderDescriptor, retProvider[0]);
 				provider = retProvider[0];
 			}

@@ -58,7 +58,7 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 	private boolean ignoreSelectionChanged;
 	private boolean ignoreEditorActivation;
 
-	private UIJob activateEditorJob = new UIJob(CommonNavigatorMessages.Link_With_Editor_Job_) {
+	private final UIJob activateEditorJob = new UIJob(CommonNavigatorMessages.Link_With_Editor_Job_) {
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
@@ -85,7 +85,7 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 		}
 	};
 
-	private UIJob updateSelectionJob = new UIJob(CommonNavigatorMessages.Link_With_Editor_Job_) {
+	private final UIJob updateSelectionJob = new UIJob(CommonNavigatorMessages.Link_With_Editor_Job_) {
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 

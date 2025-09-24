@@ -28,7 +28,7 @@ import org.eclipse.ui.navigator.CommonDragAdapterAssistant;
  */
 public final class CommonDragAssistantDescriptor implements IViewerExtPtConstants {
 
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
 
 	/* package */ CommonDragAssistantDescriptor(IConfigurationElement aConfigElement) {
@@ -53,8 +53,9 @@ public final class CommonDragAssistantDescriptor implements IViewerExtPtConstant
 				da[0] = (CommonDragAdapterAssistant) element.createExecutableExtension(ATT_CLASS);
 			}
 		});
-		if (da[0] != null)
+		if (da[0] != null) {
 			return da[0];
+		}
 		return SkeletonCommonDragAssistant.INSTANCE;
 
 	}

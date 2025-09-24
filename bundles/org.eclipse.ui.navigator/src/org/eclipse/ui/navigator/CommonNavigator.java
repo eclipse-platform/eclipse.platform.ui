@@ -156,7 +156,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	private boolean isLinkingEnabled;
 
-	private String LINKING_ENABLED = "CommonNavigator.LINKING_ENABLED"; //$NON-NLS-1$
+	private final String LINKING_ENABLED = "CommonNavigator.LINKING_ENABLED"; //$NON-NLS-1$
 
 	private LinkHelperService linkService;
 
@@ -244,8 +244,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		commonViewer.addSelectionChangedListener(event -> firePropertyChange(PROP_DIRTY));
 
 		String helpContext = commonViewer.getNavigatorContentService().getViewerDescriptor().getHelpContext();
-		if (helpContext == null)
+		if (helpContext == null) {
 			helpContext = HELP_CONTEXT;
+		}
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(commonViewer.getControl(), helpContext);
 
 		boolean enableToolTipSupport = commonViewer.getNavigatorContentService().getViewerDescriptor()
@@ -285,8 +286,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * @since 3.4
 	 */
 	public String getFrameToolTipText(Object anElement) {
-		if (commonViewer == null)
+		if (commonViewer == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return ((ILabelProvider) commonViewer.getLabelProvider())
 					.getText(anElement);
 	}
@@ -671,8 +673,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	@Override
 	public boolean show(ShowInContext context) {
-		if (context == null)
+		if (context == null) {
 			return false;
+		}
 		ISelection selection = context.getSelection();
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			selectReveal(selection);
@@ -703,8 +706,9 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * @since 3.4
 	 */
 	protected synchronized LinkHelperService getLinkHelperService() {
-		if (linkService == null)
+		if (linkService == null) {
 			linkService = new LinkHelperService((NavigatorContentService)getCommonViewer().getNavigatorContentService());
+		}
 		return linkService;
 	}
 

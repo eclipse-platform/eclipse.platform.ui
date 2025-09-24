@@ -37,13 +37,13 @@ import org.eclipse.ui.navigator.ICommonViewerSite;
 public final class CommonActionExtensionSite extends CommonExtensionSite
 		implements ICommonActionExtensionSite {
 
-	private String extensionId;
+	private final String extensionId;
 
-	private String pluginId;
+	private final String pluginId;
 
-	private ICommonViewerSite commonViewerSite;
+	private final ICommonViewerSite commonViewerSite;
 
-	private StructuredViewer structuredViewer;
+	private final StructuredViewer structuredViewer;
 
 	/**
 	 * Create a config element for the initialization of Common Action

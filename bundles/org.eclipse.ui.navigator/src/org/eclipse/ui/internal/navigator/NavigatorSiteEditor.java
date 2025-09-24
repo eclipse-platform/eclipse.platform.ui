@@ -36,13 +36,13 @@ import org.eclipse.ui.navigator.CommonViewer;
  */
 public class NavigatorSiteEditor implements INavigatorSiteEditor {
 
-	private Tree navigatorTree;
-	private TreeEditor treeEditor;
+	private final Tree navigatorTree;
+	private final TreeEditor treeEditor;
 	private Text textEditor;
 	private Composite textEditorParent;
 	private TextActionHandler textActionHandler;
 	private String text; // the text being edited
-	private CommonViewer commonViewer;
+	private final CommonViewer commonViewer;
 
 
 	/**

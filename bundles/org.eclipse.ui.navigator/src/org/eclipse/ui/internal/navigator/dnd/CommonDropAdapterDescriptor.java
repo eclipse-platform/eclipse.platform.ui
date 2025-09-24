@@ -108,8 +108,9 @@ public final class CommonDropAdapterDescriptor implements
 						.createExecutableExtension(ATT_CLASS);
 			}
 		});
-		if (retValue[0] != null)
+		if (retValue[0] != null) {
 			return retValue[0];
+		}
 		return SkeletonCommonDropAssistant.INSTANCE;
 	}
 

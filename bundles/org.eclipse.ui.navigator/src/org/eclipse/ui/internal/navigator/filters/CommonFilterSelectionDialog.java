@@ -69,7 +69,7 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 
 	private ISelectionChangedListener updateDescriptionSelectionListener;
 
-	private String helpContext;
+	private final String helpContext;
 
 	private UserFiltersTab userFiltersTab;
 

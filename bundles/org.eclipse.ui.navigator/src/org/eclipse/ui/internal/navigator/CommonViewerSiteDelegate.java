@@ -27,9 +27,9 @@ import org.eclipse.ui.navigator.ICommonViewerSite;
 public class CommonViewerSiteDelegate implements ICommonViewerSite {
 
 
-	private String id;
+	private final String id;
 	private ISelectionProvider selectionProvider;
-	private Shell shell;
+	private final Shell shell;
 
 	public CommonViewerSiteDelegate(String anId,  ISelectionProvider aSelectionProvider, Shell aShell) {
 		Assert.isNotNull(anId);

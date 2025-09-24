@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.navigator.NavigatorPlugin;
  */
 public class CoreExpressionFilter extends ViewerFilter {
 
-	private Expression filterExpression;
+	private final Expression filterExpression;
 
 	/**
 	 * Creates a filter which hides all elements that match the given

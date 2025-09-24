@@ -403,8 +403,9 @@ public class NavigatorContentDescriptorManager {
 	private int findId(List<NavigatorContentDescriptor> list, String id) {
 		for (int i = 0, len = list.size(); i < len; i++) {
 			NavigatorContentDescriptor desc = list.get(i);
-			if (desc.getId().equals(id))
+			if (desc.getId().equals(id)) {
 				return i;
+			}
 		}
 		// Do not require content descriptor to exist in workspace
 		NavigatorPlugin.log(IStatus.WARNING, 0,

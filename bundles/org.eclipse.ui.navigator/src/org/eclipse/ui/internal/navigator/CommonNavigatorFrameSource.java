@@ -22,7 +22,7 @@ import org.eclipse.ui.navigator.CommonNavigator;
  */
 public class CommonNavigatorFrameSource extends TreeViewerFrameSource {
 
-	private CommonNavigator navigator;
+	private final CommonNavigator navigator;
 
 	/**
 	 * Constructs a new frame source for the specified common navigator.

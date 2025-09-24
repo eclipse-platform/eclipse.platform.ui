@@ -41,9 +41,9 @@ public class NavigatorContentExtension implements IMementoAware,
 
 	private static final NavigatorContentExtension[] NO_EXTENSIONS = new NavigatorContentExtension[0];
 
-	private NavigatorContentService contentService;
+	private final NavigatorContentService contentService;
 
-	private NavigatorContentDescriptor descriptor;
+	private final NavigatorContentDescriptor descriptor;
 
 	private SafeDelegateTreeContentProvider contentProvider;
 
@@ -57,7 +57,7 @@ public class NavigatorContentExtension implements IMementoAware,
 
 	private IMemento appliedMemento;
 
-	private StructuredViewerManager viewerManager;
+	private final StructuredViewerManager viewerManager;
 
 	/**
 	 * Create an object to manage the instantiated elements from the extension.

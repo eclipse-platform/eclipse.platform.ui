@@ -88,8 +88,7 @@ public class SafeDelegateTreeContentProvider implements
 
 	@Override
 	public Object[] getChildren(Object aParentElement) {
-		if (aParentElement instanceof TreePath) {
-			TreePath tp = (TreePath) aParentElement;
+		if (aParentElement instanceof TreePath tp) {
 			return getChildren(tp);
 		}
 		return contentProvider.getChildren(aParentElement);
@@ -231,8 +230,7 @@ public class SafeDelegateTreeContentProvider implements
 
 	@Override
 	public Object[] getChildren(TreePath parentPath) {
-		if (contentProvider instanceof ITreePathContentProvider) {
-			ITreePathContentProvider tpcp = (ITreePathContentProvider) contentProvider;
+		if (contentProvider instanceof ITreePathContentProvider tpcp) {
 			return tpcp.getChildren(parentPath);
 		}
 		return getChildren(parentPath.getLastSegment());
@@ -240,8 +238,7 @@ public class SafeDelegateTreeContentProvider implements
 
 	@Override
 	public boolean hasChildren(TreePath path) {
-		if (contentProvider instanceof ITreePathContentProvider) {
-			ITreePathContentProvider tpcp = (ITreePathContentProvider) contentProvider;
+		if (contentProvider instanceof ITreePathContentProvider tpcp) {
 			return tpcp.hasChildren(path);
 		}
 		return hasChildren(path.getLastSegment());
@@ -249,16 +246,16 @@ public class SafeDelegateTreeContentProvider implements
 
 	@Override
 	public TreePath[] getParents(Object element) {
-		if (contentProvider instanceof ITreePathContentProvider) {
-			ITreePathContentProvider tpcp = (ITreePathContentProvider) contentProvider;
+		if (contentProvider instanceof ITreePathContentProvider tpcp) {
 			return tpcp.getParents(element);
 		}
 		ArrayList segments = new ArrayList();
 		Object parent = element;
 		do {
 			parent = contentProvider.getParent(parent);
-			if (parent != null && parent != viewer.getInput())
+			if (parent != null && parent != viewer.getInput()) {
 				segments.add(0, parent);
+			}
 		} while (parent != null && parent != viewer.getInput());
 		if (!segments.isEmpty()) {
 			// Loop backwards over the array to create the path.

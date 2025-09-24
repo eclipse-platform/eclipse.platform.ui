@@ -35,7 +35,7 @@ import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 		INavigatorContentExtPtConstants {
 
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
 	private Expression filterExpression;
 
@@ -103,8 +103,9 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 	 */
 	public boolean isVisibleInUi() {
 		String attr = element.getAttribute(ATT_VISIBLE_IN_UI);
-		if (attr == null)
+		if (attr == null) {
 			return true;
+		}
 		return Boolean.parseBoolean(attr);
 	}
 
@@ -141,8 +142,9 @@ public class CommonFilterDescriptor implements ICommonFilterDescriptor,
 			}
 		});
 
-		if (filter[0] != null)
+		if (filter[0] != null) {
 			return filter[0];
+		}
 		return SkeletonViewerFilter.INSTANCE;
 	}
 

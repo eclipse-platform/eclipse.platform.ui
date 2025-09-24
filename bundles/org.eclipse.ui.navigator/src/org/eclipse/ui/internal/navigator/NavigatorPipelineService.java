@@ -33,7 +33,7 @@ import org.eclipse.ui.navigator.PipelinedViewerUpdate;
  */
 public class NavigatorPipelineService implements INavigatorPipelineService {
 
-	private NavigatorContentService contentService;
+	private final NavigatorContentService contentService;
 
 	/**
 	 * Create a pipeline assistant for the given content service.
@@ -115,8 +115,9 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 
 			}
 		}
-		for (Iterator overridingExtensionsIter = interestedExtensions.iterator(); overridingExtensionsIter.hasNext();)
+		for (Iterator overridingExtensionsIter = interestedExtensions.iterator(); overridingExtensionsIter.hasNext();) {
 			pipelineInterceptRemove(aRemoveModification, trackedSet, (NavigatorContentExtension) overridingExtensionsIter.next());
+		}
 		return aRemoveModification;
 	}
 
@@ -151,8 +152,9 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 				});
 			}
 			trackedSet.setContributor(null, null);
-			if (overridingExtension.getDescriptor().hasOverridingExtensions())
+			if (overridingExtension.getDescriptor().hasOverridingExtensions()) {
 				pipelineInterceptRemove(aRemoveModification, trackedSet, overridingExtension);
+			}
 		}
 
 	}
@@ -192,9 +194,10 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 								.internalGetContentProvider()
 								.interceptRefresh(aRefreshSynchronization);
 
-						if (nceLocal.getDescriptor().hasOverridingExtensions())
+						if (nceLocal.getDescriptor().hasOverridingExtensions()) {
 							intercepted[0] |= pipelineInterceptRefresh(nceLocal,
 									aRefreshSynchronization, refreshable);
+						}
 					}
 
 					@Override
@@ -245,9 +248,10 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 								.internalGetContentProvider()
 								.interceptUpdate(anUpdateSynchronization);
 
-						if (nceLocal.getDescriptor().hasOverridingExtensions())
+						if (nceLocal.getDescriptor().hasOverridingExtensions()) {
 							intercepted[0] |= pipelineInterceptUpdate(nceLocal,
 									anUpdateSynchronization, refreshable);
+						}
 					}
 
 					@Override

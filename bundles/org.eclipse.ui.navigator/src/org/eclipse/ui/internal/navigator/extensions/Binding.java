@@ -135,14 +135,11 @@ class Binding {
 								NLS
 										.bind(
 												CommonNavigatorMessages.Attribute_Missing_Warning,
-												new Object[] {
-														NavigatorViewerDescriptor.ATT_PATTERN,
-														element
-																.getDeclaringExtension()
-																.getUniqueIdentifier(),
-														element
-																.getDeclaringExtension()
-																.getContributor().getName() }),
+												NavigatorViewerDescriptor.ATT_PATTERN, element
+														.getDeclaringExtension()
+														.getUniqueIdentifier(), element
+														.getDeclaringExtension()
+														.getContributor().getName()),
 								null);
 			} else {
 				compiledPattern = Pattern.compile(patternString);
@@ -174,14 +171,11 @@ class Binding {
 								NLS
 										.bind(
 												CommonNavigatorMessages.Attribute_Missing_Warning,
-												new Object[] {
-														NavigatorViewerDescriptor.ATT_PATTERN,
-														element
-																.getDeclaringExtension()
-																.getUniqueIdentifier(),
-														element
-																.getDeclaringExtension()
-																.getContributor().getName() }),
+												NavigatorViewerDescriptor.ATT_PATTERN, element
+														.getDeclaringExtension()
+														.getUniqueIdentifier(), element
+														.getDeclaringExtension()
+														.getContributor().getName()),
 								null);
 			} else {
 				compiledPattern = Pattern.compile(patternString);
