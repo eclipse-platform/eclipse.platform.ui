@@ -19,8 +19,8 @@ import org.eclipse.urischeme.ISchemeInformation;
  */
 public class SchemeInformation implements ISchemeInformation {
 
-	private String name;
-	private String description;
+	private final String name;
+	private final String description;
 	private boolean handled;
 	private String handlerInstanceLocation;
 

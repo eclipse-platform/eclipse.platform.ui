@@ -35,9 +35,9 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 
 	private static final String X_SCHEME_HANDLER_PREFIX = "x-scheme-handler/"; //$NON-NLS-1$
 
-	private IFileProvider fileProvider;
-	private IProcessExecutor processExecutor;
-	private String productName;
+	private final IFileProvider fileProvider;
+	private final IProcessExecutor processExecutor;
+	private final String productName;
 
 	public RegistrationLinux() {
 		this(new FileProvider(), new ProcessExecutor(), getProductName());

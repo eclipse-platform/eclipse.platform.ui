@@ -32,8 +32,8 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 	private static final String TRAILING_HEX_VALUE_WITH_BRACKETS = "\\s\\(0x\\w*\\)"; //$NON-NLS-1$
 	private static final String PATH_WITH_CAPTURING_GROUP = "path:\\s*(.*)"; //$NON-NLS-1$
 
-	private IFileProvider fileProvider;
-	private IProcessExecutor processExecutor;
+	private final IFileProvider fileProvider;
+	private final IProcessExecutor processExecutor;
 
 	private String[] lsRegisterOutput = null;
 

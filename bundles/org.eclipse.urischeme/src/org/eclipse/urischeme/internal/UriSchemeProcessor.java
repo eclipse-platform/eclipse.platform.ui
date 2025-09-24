@@ -28,7 +28,7 @@ import org.eclipse.urischeme.IUriSchemeProcessor;
  */
 public class UriSchemeProcessor implements IUriSchemeProcessor {
 
-	private Map<String, IUriSchemeHandler> createdHandlers = new HashMap<>();
+	private final Map<String, IUriSchemeHandler> createdHandlers = new HashMap<>();
 	IUriSchemeExtensionReader reader = IUriSchemeExtensionReader.newInstance();
 
 	/**

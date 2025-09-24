@@ -98,8 +98,8 @@ public class UriSchemeExtensionReader implements IUriSchemeExtensionReader {
 
 	private static class Scheme implements IScheme {
 
-		private String uriScheme;
-		private String uriSchemeDescription;
+		private final String uriScheme;
+		private final String uriSchemeDescription;
 
 		public Scheme(String uriScheme, String uriSchemeDescription) {
 			this.uriScheme = uriScheme;
