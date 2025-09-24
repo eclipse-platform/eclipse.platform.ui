@@ -219,8 +219,9 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 				Object[] contexts;
 				contexts = (Object[]) helpContext;
 
-				if (contexts.length > 0)
+				if (contexts.length > 0) {
 					return contexts[0];
+				}
 				return null;
 			}
 		});

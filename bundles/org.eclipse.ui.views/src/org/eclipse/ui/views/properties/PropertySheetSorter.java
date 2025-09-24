@@ -31,7 +31,7 @@ public class PropertySheetSorter  {
 	/**
 	 * The collator used to sort strings.
 	 */
-	private Collator collator;
+	private final Collator collator;
 
 	/**
 	 * Creates a new sorter, which uses the default collator to sort strings.

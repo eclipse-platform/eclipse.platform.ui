@@ -91,7 +91,7 @@ public class PropertySheetEntry extends EventManager implements IPropertySheetEn
 	 * Create the CellEditorListener for this entry. It listens for value
 	 * changes in the CellEditor, and cancel and finish requests.
 	 */
-	private ICellEditorListener cellEditorListener = new ICellEditorListener() {
+	private final ICellEditorListener cellEditorListener = new ICellEditorListener() {
 		@Override
 		public void editorValueChanged(boolean oldValidState,
 				boolean newValidState) {
@@ -438,8 +438,9 @@ public class PropertySheetEntry extends EventManager implements IPropertySheetEn
 	 * @since 3.1 (was previously private)
 	 */
 	protected IPropertySource getPropertySource(Object object) {
-		if (sources.containsKey(object))
+		if (sources.containsKey(object)) {
 			return sources.get(object);
+		}
 
 		IPropertySource result = null;
 		IPropertySourceProvider provider = propertySourceProvider;
@@ -608,8 +609,7 @@ public class PropertySheetEntry extends EventManager implements IPropertySheetEn
 			IPropertySource source = getPropertySource(object);
 			if (source.isPropertySet(descriptor.getId())) {
 				// fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=21756
-				if (source instanceof IPropertySource2) {
-					IPropertySource2 extendedSource = (IPropertySource2) source;
+				if (source instanceof IPropertySource2 extendedSource) {
 					// continue with next if property is not resettable
 					if (!extendedSource.isPropertyResettable(descriptor.getId())) {
 						continue;

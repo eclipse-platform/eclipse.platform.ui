@@ -53,7 +53,7 @@ import org.eclipse.ui.part.Page;
  * </p>
  */
 public abstract class ContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
-	private ListenerList<ISelectionChangedListener> selectionChangedListeners = new ListenerList<>();
+	private final ListenerList<ISelectionChangedListener> selectionChangedListeners = new ListenerList<>();
 
 	private TreeViewer treeViewer;
 

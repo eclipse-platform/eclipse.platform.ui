@@ -85,7 +85,7 @@ class PropertySheetViewer extends Viewer {
 	 * corresponding TreeItem. This is used in 'findItem' to
 	 * greatly increase the performance.
 	 */
-	private HashMap<Object, TreeItem> entryToItemMap = new HashMap<>();
+	private final HashMap<Object, TreeItem> entryToItemMap = new HashMap<>();
 
 	private TreeEditor treeEditor;
 
@@ -95,7 +95,7 @@ class PropertySheetViewer extends Viewer {
 	private static String MISCELLANEOUS_CATEGORY_NAME = PropertiesMessages.PropertyViewer_misc;
 
 	// Cell editor support.
-	private int columnToEdit = 1;
+	private final int columnToEdit = 1;
 
 	private CellEditor cellEditor;
 
@@ -113,7 +113,7 @@ class PropertySheetViewer extends Viewer {
 	private IStatusLineManager statusLineManager;
 
 	// Cell editor activation listeners
-	private ListenerList<ICellEditorActivationListener> activationListeners = new ListenerList<>();
+	private final ListenerList<ICellEditorActivationListener> activationListeners = new ListenerList<>();
 
 	// the property sheet sorter
 	private PropertySheetSorter sorter = new PropertySheetSorter();
@@ -382,8 +382,9 @@ class PropertySheetViewer extends Viewer {
 		// removed from the cache
 		item.addDisposeListener(e -> {
 			Object possibleEntry = e.widget.getData();
-			if (possibleEntry != null)
+			if (possibleEntry != null) {
 				entryToItemMap.remove(possibleEntry);
+			}
 		});
 
 		// add our listener
@@ -713,10 +714,8 @@ class PropertySheetViewer extends Viewer {
 			setErrorMessage(null);
 		} else {
 			Object object = selection.getData();
-			if (object instanceof IPropertySheetEntry) {
+			if (object instanceof IPropertySheetEntry activeEntry) {
 				// get the entry for this item
-				IPropertySheetEntry activeEntry = (IPropertySheetEntry) object;
-
 				// display the description for the item
 				setMessage(activeEntry.getDescription());
 
@@ -795,8 +794,9 @@ class PropertySheetViewer extends Viewer {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				if (e.item instanceof TreeItem)
+				if (e.item instanceof TreeItem) {
 					handleSelect((TreeItem) e.item);
+				}
 			}
 		});
 		// Part2: handle single click activation of cell editor
@@ -1326,9 +1326,7 @@ class PropertySheetViewer extends Viewer {
 			item.setImage(1, image);
 		}
 
-		if (entry instanceof PropertySheetEntry) {
-			PropertySheetEntry entry2 = (PropertySheetEntry) entry;
-
+		if (entry instanceof PropertySheetEntry entry2) {
 			Color color = entry2.getForeground();
 			if (item.getForeground() != color) {
 				item.setForeground(color);

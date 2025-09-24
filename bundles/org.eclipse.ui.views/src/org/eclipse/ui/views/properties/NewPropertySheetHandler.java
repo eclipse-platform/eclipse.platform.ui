@@ -62,8 +62,7 @@ public class NewPropertySheetHandler extends AbstractHandler {
 		try {
 			PropertySheet sheet = findPropertySheet(event, context);
 			sheet.show(context);
-			if (activePart instanceof PropertySheet) {
-				PropertySheet parent = (PropertySheet) activePart;
+			if (activePart instanceof PropertySheet parent) {
 				parent.setPinned(true);
 			} else if(!sheet.isPinned()) {
 				sheet.setPinned(PIN_NEW_PROPERTY_VIEW);
@@ -84,8 +83,7 @@ public class NewPropertySheetHandler extends AbstractHandler {
 	protected PropertyShowInContext getShowInContext(ExecutionEvent event)
 			throws ExecutionException {
 		IWorkbenchPart activePart = HandlerUtil.getActivePartChecked(event);
-		if (activePart instanceof PropertySheet) {
-			PropertySheet sheet = (PropertySheet) activePart;
+		if (activePart instanceof PropertySheet sheet) {
 			return (PropertyShowInContext) sheet.getShowInContext();
 		}
 		IShowInSource adapter = Adapters.adapt(activePart, IShowInSource.class);

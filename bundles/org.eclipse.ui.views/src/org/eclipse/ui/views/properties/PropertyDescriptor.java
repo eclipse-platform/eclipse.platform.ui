@@ -56,12 +56,12 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 	/**
 	 * The property id.
 	 */
-	private Object id;
+	private final Object id;
 
 	/**
 	 * The name to display for the property.
 	 */
-	private String display;
+	private final String display;
 
 	/**
 	 * Category name, or <code>null</code> if none (the default).

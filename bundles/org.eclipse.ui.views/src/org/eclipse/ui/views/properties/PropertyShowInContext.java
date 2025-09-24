@@ -75,12 +75,15 @@ public class PropertyShowInContext extends ShowInContext {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		PropertyShowInContext other = (PropertyShowInContext) obj;
 		if (Objects.equals(part, other.part) && Objects.equals(getSelection(), other.getSelection())) {
 			// input needs to be equal, but only if both are really set.
