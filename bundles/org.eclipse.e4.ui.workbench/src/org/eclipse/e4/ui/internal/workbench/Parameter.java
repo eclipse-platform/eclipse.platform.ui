@@ -101,7 +101,7 @@ public final class Parameter implements IParameter, ITypedParameter {
 	 */
 	private transient IParameterValues values = null;
 
-	private IConfigurationElement valuesConfigurationElement;
+	private final IConfigurationElement valuesConfigurationElement;
 
 	/**
 	 * Constructs a new instance of <code>Parameter</code> with all of its values pre-defined.
@@ -149,11 +149,10 @@ public final class Parameter implements IParameter, ITypedParameter {
 			return true;
 		}
 
-		if (!(object instanceof Parameter)) {
+		if (!(object instanceof final Parameter parameter)) {
 			return false;
 		}
 
-		final Parameter parameter = (Parameter) object;
 		if (!Objects.equals(id, parameter.id)) {
 			return false;
 		}

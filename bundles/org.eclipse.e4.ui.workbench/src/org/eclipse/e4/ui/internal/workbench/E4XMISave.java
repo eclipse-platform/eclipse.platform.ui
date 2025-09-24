@@ -37,15 +37,13 @@ public class E4XMISave extends XMISaveImpl {
 	 */
 	@Override
 	protected void saveElement(InternalEObject o, EStructuralFeature f) {
-		if (o instanceof MApplicationElement) {
-			MApplicationElement appElement = (MApplicationElement) o;
+		if (o instanceof MApplicationElement appElement) {
 			String persists = appElement.getPersistedState().get(IWorkbench.PERSIST_STATE);
 			if (persists != null && !Boolean.parseBoolean(persists)) {
 				return;
 			}
 		}
-		if (o instanceof MUIElement) {
-			MUIElement uiElement = (MUIElement) o;
+		if (o instanceof MUIElement uiElement) {
 			if (OpaqueElementUtil.isOpaqueElement(uiElement) || RenderedElementUtil.isRenderedElement(uiElement)) {
 				return;
 			}

@@ -108,8 +108,7 @@ public class PartOnTopManager {
 			oldElement = ((MPlaceholder) oldElement).getRef();
 		}
 
-		if (oldElement instanceof MPart) {
-			MPart contextElement = (MPart) oldElement;
+		if (oldElement instanceof MPart contextElement) {
 			if (contextElement.getContext() != null) {
 				contextElement.getContext().set(IWorkbench.ON_TOP, Boolean.FALSE);
 			}
@@ -121,8 +120,7 @@ public class PartOnTopManager {
 			newElement = ((MPlaceholder) newElement).getRef();
 		}
 
-		if (newElement instanceof MPart) {
-			MPart contextElement = (MPart) newElement;
+		if (newElement instanceof MPart contextElement) {
 			if (contextElement.getContext() != null) {
 				contextElement.getContext().set(IWorkbench.ON_TOP, Boolean.TRUE);
 			}

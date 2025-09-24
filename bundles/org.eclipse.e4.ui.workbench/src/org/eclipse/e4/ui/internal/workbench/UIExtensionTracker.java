@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
  * @since 3.1
  */
 public class UIExtensionTracker extends ExtensionTracker {
-	private Executor executor;
-	private ILog log;
+	private final Executor executor;
+	private final ILog log;
 
 	public UIExtensionTracker(Executor executor, ILog log) {
 		this.executor = executor;

@@ -69,8 +69,9 @@ final class GenericMApplicationElementFactoryImpl {
 	 *             if the given Eclipse ExtensionRegistry is {@code null}
 	 */
 	GenericMApplicationElementFactoryImpl(IExtensionRegistry extensionRegistry) {
-		if (extensionRegistry == null)
+		if (extensionRegistry == null) {
 			throw new NullPointerException("No ExtensionRegistry given!"); //$NON-NLS-1$
+		}
 
 		emfGeneratedPackages = new MApplicationElementClassToEClass();
 
@@ -278,16 +279,15 @@ final class GenericMApplicationElementFactoryImpl {
 		 */
 		private final Map<Class<? extends MApplicationElement>, EClass> buildMapping(
 				EPackage ePackage) {
-			if (ePackage == null)
+			if (ePackage == null) {
 				return null;
+			}
 
 			List<EClassifier> eClassifiers = ePackage.getEClassifiers();
 			Map<Class<? extends MApplicationElement>, EClass> mapping = new HashMap<>();
 
 			for (EClassifier eClassifier : eClassifiers) {
-				if (eClassifier instanceof EClass) {
-					EClass eClass = (EClass) eClassifier;
-
+				if (eClassifier instanceof EClass eClass) {
 					if (mApplicationElementEClass.isSuperTypeOf(eClass) && !eClass.isAbstract()
 							&& !eClass.isInterface()) {
 						@SuppressWarnings("unchecked")

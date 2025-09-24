@@ -37,8 +37,9 @@ public class PartServiceCreationFunction extends ContextFunction {
 		IEclipseContext current = context;
 		do {
 			MContext model = current.get(MContext.class);
-			if (model instanceof MWindow)
+			if (model instanceof MWindow) {
 				window = (MWindow) model;
+			}
 			current = current.getParent();
 		} while (current != null);
 
