@@ -160,8 +160,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private final Listener closeListener = event -> {
 		boolean doExit = IDEWorkbenchWindowAdvisor.promptOnExit(null);
 		event.doit = doExit;
-		if (!doExit)
+		if (!doExit) {
 			event.type = SWT.None;
+		}
 	};
 
 	/**
@@ -298,8 +299,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		Object proxyService = null;
 		if (bundle != null) {
 			ServiceReference<IProxyService> ref = bundle.getBundleContext().getServiceReference(IProxyService.class);
-			if (ref != null)
+			if (ref != null) {
 				proxyService = bundle.getBundleContext().getService(ref);
+			}
 		}
 		if (proxyService == null) {
 			IDEWorkbenchPlugin.log("Proxy service could not be found."); //$NON-NLS-1$
@@ -317,8 +319,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 			@Override
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-				if (Display.getCurrent().getHighContrast() == currentHighContrast)
+				if (Display.getCurrent().getHighContrast() == currentHighContrast) {
 					return;
+				}
 
 				currentHighContrast = !currentHighContrast;
 
@@ -444,8 +447,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		// We should try to use RefreshManager which avoids multiple refresh requests
 		// for same objects
-		if (workspace instanceof Workspace) {
-			Workspace wsp = (Workspace) workspace;
+		if (workspace instanceof Workspace wsp) {
 			if (!wsp.isCrashed()) {
 				// Only refresh if no crash happened before: the workspace itself
 				// triggers refresh in that case, see Workspace.open()
@@ -467,7 +469,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	protected static class CancelableProgressMonitorWrapper extends
 			ProgressMonitorWrapper {
 		private double total = 0;
-		private ProgressMonitorJobsDialog dialog;
+		private final ProgressMonitorJobsDialog dialog;
 
 		CancelableProgressMonitorWrapper(IProgressMonitor monitor,
 				ProgressMonitorJobsDialog dialog) {
@@ -549,8 +551,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 			IRunnableWithProgress runnable = monitor -> {
 				try {
-					if (applyPolicy)
+					if (applyPolicy) {
 						monitor = new CancelableProgressMonitorWrapper(monitor, p);
+					}
 
 					status.merge(((Workspace) ResourcesPlugin.getWorkspace()).save(true, true, monitor));
 				} catch (CoreException e) {
@@ -681,14 +684,17 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	protected static void setWorkspaceNameDefault() {
 		IPreferenceStore preferences = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		String workspaceNameDefault = preferences.getDefaultString(IDEInternalPreferences.WORKSPACE_NAME);
-		if (workspaceNameDefault != null && !workspaceNameDefault.isEmpty())
+		if (workspaceNameDefault != null && !workspaceNameDefault.isEmpty()) {
 			return; // Default is set in a plugin customization file - don't change it.
+		}
 		IPath workspaceDir = Platform.getLocation();
-		if (workspaceDir == null)
+		if (workspaceDir == null) {
 			return;
+		}
 		String workspaceName = workspaceDir.lastSegment();
-		if (workspaceName == null)
+		if (workspaceName == null) {
 			return;
+		}
 		preferences.setDefault(IDEInternalPreferences.WORKSPACE_NAME, workspaceName);
 	}
 
@@ -970,8 +976,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	@Override
 	public void eventLoopIdle(Display display) {
-		if (delayedEventsProcessor != null)
+		if (delayedEventsProcessor != null) {
 			delayedEventsProcessor.catchUp(display);
+		}
 		super.eventLoopIdle(display);
 	}
 }

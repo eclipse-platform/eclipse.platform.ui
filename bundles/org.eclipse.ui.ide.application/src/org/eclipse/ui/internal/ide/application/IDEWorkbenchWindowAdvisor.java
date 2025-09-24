@@ -97,15 +97,15 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"; //$NON-NLS-1$
 
-	private IDEWorkbenchAdvisor wbAdvisor;
+	private final IDEWorkbenchAdvisor wbAdvisor;
 	private boolean editorsAndIntrosOpened = false;
 	private IEditorPart lastActiveEditor = null;
 	private IPerspectiveDescriptor lastPerspective = null;
 
 	private IWorkbenchPage lastActivePage;
-	private String lastEditorTitleTooltip = ""; //$NON-NLS-1$
+	private final String lastEditorTitleTooltip = ""; //$NON-NLS-1$
 
-	private IPropertyListener editorPropertyListener = (source, propId) -> {
+	private final IPropertyListener editorPropertyListener = (source, propId) -> {
 		if (propId == IWorkbenchPartConstants.PROP_TITLE) {
 			if (lastActiveEditor != null) {
 				String newTitle = lastActiveEditor.getTitleToolTip();
@@ -125,7 +125,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 */
 	private IPropertyChangeListener propertyChangeListener;
 
-	private TitlePathUpdater titlePathUpdater;
+	private final TitlePathUpdater titlePathUpdater;
 
 	/**
 	 * Crates a new IDE workbench window advisor.

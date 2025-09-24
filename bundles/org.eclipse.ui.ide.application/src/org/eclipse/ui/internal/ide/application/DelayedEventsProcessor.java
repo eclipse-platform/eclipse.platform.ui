@@ -78,8 +78,8 @@ public class DelayedEventsProcessor implements Listener {
 	private static final String TEXTEDITOR_BUNDLE_NAME = "org.eclipse.ui.workbench.texteditor"; //$NON-NLS-1$
 	private static final String TEXTEDITOR_CLASS_NAME = "org.eclipse.ui.texteditor.ITextEditor"; //$NON-NLS-1$
 
-	private ArrayList<String> filesToOpen = new ArrayList<>(1);
-	private ArrayList<Event> urlsToOpen = new ArrayList<>(1);
+	private final ArrayList<String> filesToOpen = new ArrayList<>(1);
+	private final ArrayList<Event> urlsToOpen = new ArrayList<>(1);
 
 	/**
 	 * Constructor.
@@ -94,8 +94,9 @@ public class DelayedEventsProcessor implements Listener {
 	@Override
 	public void handleEvent(Event event) {
 		final String path = event.text;
-		if (path == null)
+		if (path == null) {
 			return;
+		}
 		// If we start supporting events that can arrive on a non-UI thread, the
 		// following lines will need to be in a "synchronized" block:
 		if (event.type == SWT.OpenUrl) {
@@ -111,8 +112,9 @@ public class DelayedEventsProcessor implements Listener {
 	 * @param display display associated with the workbench
 	 */
 	public void catchUp(Display display) {
-		if (filesToOpen.isEmpty() && urlsToOpen.isEmpty())
+		if (filesToOpen.isEmpty() && urlsToOpen.isEmpty()) {
 			return;
+		}
 
 		// If we start supporting events that can arrive on a non-UI thread, the
 		// following
@@ -195,8 +197,9 @@ public class DelayedEventsProcessor implements Listener {
 			@Override
 			public void run() {
 				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-				if (window == null)
+				if (window == null) {
 					return;
+				}
 				FileLocationDetails details = FileLocationDetails.resolve(initialPath);
 				if (details == null || !details.fileInfo.exists()) {
 					String msg = NLS.bind(IDEWorkbenchMessages.OpenDelayedFileAction_message_fileNotFound, initialPath);
@@ -214,8 +217,9 @@ public class DelayedEventsProcessor implements Listener {
 				}
 				Shell shell = window.getShell();
 				if (shell != null) {
-					if (shell.getMinimized())
+					if (shell.getMinimized()) {
 						shell.setMinimized(false);
+					}
 					shell.forceActive();
 				}
 				try {
