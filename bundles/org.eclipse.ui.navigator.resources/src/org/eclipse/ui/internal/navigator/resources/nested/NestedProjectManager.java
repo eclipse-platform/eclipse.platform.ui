@@ -47,7 +47,7 @@ public class NestedProjectManager {
 	 * ones) are the immediately following items in the map.</li>
 	 * </ul>
 	 */
-	private SortedMap<IPath, IProject> locationsToProjects = new TreeMap<>(new PathComparator());
+	private final SortedMap<IPath, IProject> locationsToProjects = new TreeMap<>(new PathComparator());
 
 	private NestedProjectManager() {
 		refreshProjectsList();
@@ -172,8 +172,7 @@ public class NestedProjectManager {
 	 * @return the direct children projects for given container
 	 */
 	public IProject[] getDirectChildrenProjects(IContainer container) {
-		if (container instanceof IWorkspaceRoot) {
-			IWorkspaceRoot root = (IWorkspaceRoot) container;
+		if (container instanceof IWorkspaceRoot root) {
 			return root.getProjects();
 		}
 		Set<IProject> res = new HashSet<>();
@@ -202,8 +201,7 @@ public class NestedProjectManager {
 	 * @return whether the container has some projects as direct children
 	 */
 	public boolean hasDirectChildrenProjects(IContainer container) {
-		if (container instanceof IWorkspaceRoot) {
-			IWorkspaceRoot root = (IWorkspaceRoot) container;
+		if (container instanceof IWorkspaceRoot root) {
 			return root.getProjects().length > 0;
 		}
 		IPath containerLocation = container.getLocation();

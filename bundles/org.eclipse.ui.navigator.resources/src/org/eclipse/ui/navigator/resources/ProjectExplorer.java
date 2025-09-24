@@ -141,10 +141,9 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 		if (data instanceof Collection) {
 			Collection<?> dataAsFilters = (Collection<?>) data;
 			for (Object object : dataAsFilters) {
-				if (!(object instanceof UserFilter)) {
+				if (!(object instanceof UserFilter filter)) {
 					continue;
 				}
-				UserFilter filter = (UserFilter) object;
 				IMemento memento = aMemento.createChild(MEMENTO_REGEXP_FILTER_ELEMENT);
 				memento.putString(MEMENTO_REGEXP_FILTER_REGEXP_ATTRIBUTE, filter.getRegexp());
 				memento.putBoolean(MEMENTO_REGEXP_FILTER_ENABLED_ATTRIBUTE, filter.isEnabled());
@@ -186,7 +185,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 			return;
 		}
 
-		if (!(input instanceof IResource)) {
+		if (!(input instanceof IResource res)) {
 			String label = ((ILabelProvider) getCommonViewer().getLabelProvider()).getText(input);
 			if (label != null) {
 				setContentDescription(label);
@@ -201,7 +200,6 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 			return;
 		}
 
-		IResource res = (IResource) input;
 		setContentDescription(res.getName());
 	}
 
@@ -233,10 +231,12 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 		}
 
 		if (rootMode == PROJECTS) {
-			if (workingSetLabel == null)
+			if (workingSetLabel == null) {
 				return result;
-			if (result.isEmpty())
+			}
+			if (result.isEmpty()) {
 				return NLS.bind(WorkbenchNavigatorMessages.ProjectExplorer_toolTip, new String[] { workingSetLabel });
+			}
 			return NLS.bind(WorkbenchNavigatorMessages.ProjectExplorer_toolTip2,
 					new String[] { result, workingSetLabel });
 		}
@@ -246,8 +246,9 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 		if (element != null && !(element instanceof IWorkingSet) && getCommonViewer() != null) {
 			FrameList frameList = getCommonViewer().getFrameList();
 			// Happens during initialization
-			if (frameList == null)
+			if (frameList == null) {
 				return result;
+			}
 			int index = frameList.getCurrentIndex();
 			IWorkingSet ws = null;
 			while (index >= 0) {
@@ -344,7 +345,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 		if (!hasSaveablesProvider()) {
 			IEditorPart saveablePart = getActiveEditor();
 			return saveablePart != null
-					? saveablePart instanceof ISaveablesSource ? ((ISaveablesSource) saveablePart).getSaveables()
+					? saveablePart instanceof ISaveablesSource i ? i.getSaveables()
 							: new Saveable[] { new DefaultSaveable(saveablePart) }
 					: new Saveable[] {};
 		}
@@ -356,7 +357,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 		if (!hasSaveablesProvider()) {
 			IEditorPart saveablePart = getActiveEditor();
 			return saveablePart != null
-					? saveablePart instanceof ISaveablesSource ? ((ISaveablesSource) saveablePart).getActiveSaveables()
+					? saveablePart instanceof ISaveablesSource i ? i.getActiveSaveables()
 							: new Saveable[] { new DefaultSaveable(saveablePart) }
 					: new Saveable[] {};
 		}
@@ -392,8 +393,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 						return;
 					}
 					Object data = item.getData();
-					if (data instanceof IProject) {
-						IProject project = (IProject) data;
+					if (data instanceof IProject project) {
 						CloseResourceAction cra = new CloseResourceAction(() -> null);
 						cra.selectionChanged(new StructuredSelection(project));
 						cra.run();

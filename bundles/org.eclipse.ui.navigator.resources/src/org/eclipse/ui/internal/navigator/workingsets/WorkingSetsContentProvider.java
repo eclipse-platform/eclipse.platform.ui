@@ -74,13 +74,13 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	private CommonNavigator projectExplorer;
 	private CommonViewer viewer;
 
-	private IPropertyChangeListener rootModeListener = event -> {
+	private final IPropertyChangeListener rootModeListener = event -> {
 		if(SHOW_TOP_LEVEL_WORKING_SETS.equals(event.getProperty())) {
 			updateRootMode();
 		}
 	};
 
-	private IPropertyChangeListener workingSetManagerListener = event -> {
+	private final IPropertyChangeListener workingSetManagerListener = event -> {
 		if (helper != null) {
 			helper.refreshWorkingSetTreeState();
 		}
@@ -113,8 +113,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof IWorkingSet) {
-			IWorkingSet workingSet = (IWorkingSet) parentElement;
+		if (parentElement instanceof IWorkingSet workingSet) {
 			if (workingSet.isAggregateWorkingSet() && projectExplorer != null) {
 				switch (projectExplorer.getRootMode()) {
 					case ProjectExplorer.WORKING_SETS :
@@ -143,16 +142,18 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		IAdaptable[] children = workingSet.getElements();
 		for (int i = 0; i < children.length; i++) {
 			IResource resource = Adapters.adapt(children[i], IResource.class);
-			if (resource instanceof IProject)
+			if (resource instanceof IProject) {
 				children[i] = resource;
+			}
 		}
 		return children;
 	}
 
 	@Override
 	public Object getParent(Object element) {
-		if (helper != null && projectExplorer.getRootMode() == ProjectExplorer.WORKING_SETS)
+		if (helper != null && projectExplorer.getRootMode() == ProjectExplorer.WORKING_SETS) {
 			return helper.getParent(element);
+		}
 		return null;
 	}
 
@@ -178,8 +179,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput instanceof IWorkingSet) {
-			IWorkingSet rootSet = (IWorkingSet) newInput;
+		if (newInput instanceof IWorkingSet rootSet) {
 			helper = new WorkingSetHelper(rootSet);
 		}
 	}
@@ -188,10 +188,11 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		if (projectExplorer == null) {
 			return;
 		}
-		if( extensionStateModel.getBooleanProperty(SHOW_TOP_LEVEL_WORKING_SETS) )
+		if( extensionStateModel.getBooleanProperty(SHOW_TOP_LEVEL_WORKING_SETS) ) {
 			projectExplorer.setRootMode(ProjectExplorer.WORKING_SETS);
-		else
+		} else {
 			projectExplorer.setRootMode(ProjectExplorer.PROJECTS);
+		}
 	}
 
 	protected class WorkingSetHelper {
@@ -215,8 +216,9 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 			parents = new WeakHashMap<>();
 			if (workingSet.isAggregateWorkingSet()) {
 				IAggregateWorkingSet aggregateSet = (IAggregateWorkingSet) workingSet;
-				if (workingSetRoot == null)
+				if (workingSetRoot == null) {
 					workingSetRoot = aggregateSet;
+				}
 
 				IWorkingSet[] components = aggregateSet.getComponents();
 
@@ -255,8 +257,9 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		 * @return The parent associated with the element, if any.
 		 */
 		public Object getParent(Object element) {
-			if (element instanceof IWorkingSet && element != workingSetRoot)
+			if (element instanceof IWorkingSet && element != workingSetRoot) {
 				return workingSetRoot;
+			}
 			Object res = parents.get(element);
 			if (res != null) {
 				return res;

@@ -46,7 +46,7 @@ public class NestedProjectsContentProvider implements ITreeContentProvider, IRes
 	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 
-	private Command projectPresetionCommand;
+	private final Command projectPresetionCommand;
 	private CommonViewer viewer;
 
 	public NestedProjectsContentProvider() {
@@ -99,17 +99,15 @@ public class NestedProjectsContentProvider implements ITreeContentProvider, IRes
 
 	@Override
 	public IProject[] getChildren(Object parentElement) {
-		if (! (parentElement instanceof IContainer)) {
+		if (! (parentElement instanceof IContainer container)) {
 			return EMPTY_PROJECT_ARRAY;
 		}
-		IContainer container = (IContainer)parentElement;
 		return NestedProjectManager.getInstance().getDirectChildrenProjects(container);
 	}
 
 	@Override
 	public IContainer getParent(Object element) {
-		if (element instanceof IProject) {
-			IProject project = (IProject)element;
+		if (element instanceof IProject project) {
 			if (NestedProjectManager.getInstance().isShownAsNested(project)) {
 				return NestedProjectManager.getInstance().getMostDirectOpenContainer(project);
 			}
@@ -135,9 +133,8 @@ public class NestedProjectsContentProvider implements ITreeContentProvider, IRes
 		if (delta.getKind() == IResourceDelta.CHANGED && delta.getResource() instanceof IWorkspaceRoot) {
 			for (IResourceDelta childDelta : event.getDelta().getAffectedChildren()) {
 				IResource childResource = childDelta.getResource();
-				if (childResource instanceof IProject && (childDelta.getKind() == IResourceDelta.ADDED
+				if (childResource instanceof IProject affectedProject && (childDelta.getKind() == IResourceDelta.ADDED
 						|| childDelta.getKind() == IResourceDelta.REMOVED)) {
-					IProject affectedProject = (IProject) childResource;
 					IContainer parent = getParent(affectedProject);
 					if (parent != null) {
 						parentsToRefresh.add(parent);

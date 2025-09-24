@@ -46,7 +46,7 @@ public class EditActionGroup extends ActionGroup {
 
 	private TextActionHandler textActionHandler;
 
-	private Shell shell;
+	private final Shell shell;
 
 	public EditActionGroup(Shell aShell) {
 		shell = aShell;

@@ -32,10 +32,11 @@ public class TabbedPropertySheetAdapterFactory
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adaptableObject instanceof ProjectExplorer) {
-			if (IPropertySheetPage.class == adapterType)
+			if (IPropertySheetPage.class == adapterType) {
 				return (T) new TabbedPropertySheetPage(
 					new TabbedPropertySheetProjectExplorerContributor(
 						(CommonNavigator) adaptableObject));
+			}
 		}
 		return null;
 	}

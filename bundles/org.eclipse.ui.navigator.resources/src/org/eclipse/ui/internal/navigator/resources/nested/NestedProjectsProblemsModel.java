@@ -86,7 +86,7 @@ public class NestedProjectsProblemsModel {
 	private void removeFromCache(Set<IResource> toRemove) {
 		Set<IContainer> dirtyLeafContainers = new LinkedHashSet<>();
 		for (IResource resource : toRemove) {
-			final IContainer currentContainer = resource instanceof IContainer ? (IContainer) resource
+			final IContainer currentContainer = resource instanceof IContainer i ? i
 					: resource.getParent();
 			if (currentContainer == null) {
 				continue;

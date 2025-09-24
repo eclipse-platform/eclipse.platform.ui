@@ -35,8 +35,7 @@ public class ProjectPresentationHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		if (part instanceof CommonNavigator) {
-			CommonNavigator navigator = (CommonNavigator)part;
+		if (part instanceof CommonNavigator navigator) {
 			String newNestParam = event.getParameter(ProjectPresentationHandler.NEST_PARAMETER);
 			boolean newNest = false;
 			if (newNestParam != null) {

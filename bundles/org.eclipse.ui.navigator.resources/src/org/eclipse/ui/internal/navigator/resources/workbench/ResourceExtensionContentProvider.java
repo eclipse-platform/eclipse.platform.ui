@@ -54,18 +54,19 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 
 	@Override
 	public Object[] getChildren(Object element) {
-		if(element instanceof IResource)
+		if(element instanceof IResource) {
 			return super.getChildren(element);
+		}
 		return NO_CHILDREN;
 	}
 
 	@Override
 	public boolean hasChildren(Object element) {
 		try {
-			if (element instanceof IContainer) {
-				IContainer c = (IContainer) element;
-				if (!c.isAccessible())
+			if (element instanceof IContainer c) {
+				if (!c.isAccessible()) {
 					return false;
+				}
 				return c.members().length > 0;
 			}
 		} catch (CoreException ex) {
@@ -97,7 +98,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 
 		final Collection<Runnable> runnables = new ArrayList<>();
 		final SortedSet<IResource> resourcesToRefresh = new TreeSet<>(new Comparator<IResource>() {
-			private PathComparator pathComparator = new PathComparator();
+			private final PathComparator pathComparator = new PathComparator();
 			@Override
 			public int compare(IResource arg0, IResource arg1) {
 				return pathComparator.compare(arg0.getFullPath(), arg1.getFullPath());
@@ -255,8 +256,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 		final boolean hasRename = numMovedFrom > 0 && numMovedTo > 0;
 
 		Runnable addAndRemove = () -> {
-			if (viewer instanceof AbstractTreeViewer) {
-				AbstractTreeViewer treeViewer = (AbstractTreeViewer) viewer;
+			if (viewer instanceof AbstractTreeViewer treeViewer) {
 				// Disable redraw until the operation is finished so we don't
 				// get a flash of both the new and old item (in the case of
 				// rename)

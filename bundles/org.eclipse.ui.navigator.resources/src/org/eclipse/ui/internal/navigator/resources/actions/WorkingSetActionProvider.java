@@ -63,7 +63,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 	private WorkingSetFilterActionGroup workingSetActionGroup;
 	private WorkingSetRootModeActionGroup workingSetRootModeActionGroup;
 
-	private Object originalViewerInput = ResourcesPlugin.getWorkspace().getRoot();
+	private final Object originalViewerInput = ResourcesPlugin.getWorkspace().getRoot();
 
 	private IExtensionStateModel extensionStateModel;
 
@@ -110,8 +110,9 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 				}
 			}
 			if (viewer != null) {
-				if (newLabel != null)
+				if (newLabel != null) {
 					viewer.getCommonNavigator().setWorkingSetLabel(newLabel);
+				}
 				viewer.getFrameList().reset();
 				viewer.refresh();
 			}
@@ -138,10 +139,11 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		}
 	}
 
-	private IPropertyChangeListener filterChangeListener = event -> {
+	private final IPropertyChangeListener filterChangeListener = event -> {
 
-		if (ignoreFilterChangeEvents)
+		if (ignoreFilterChangeEvents) {
 			return;
+		}
 
 		IWorkingSet newWorkingSet = (IWorkingSet) event.getNewValue();
 
@@ -163,8 +165,9 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 				} else {
 					viewer.getCommonNavigator().setWorkingSetLabel(null);
 				}
-			} else
+			} else {
 				viewer.getCommonNavigator().setWorkingSetLabel(workingSet.getLabel());
+			}
 		} else {
 			viewer.getCommonNavigator().setWorkingSetLabel(null);
 		}
@@ -172,9 +175,9 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		viewer.getFrameList().reset();
 	};
 
-	private WorkingSetManagerListener managerChangeListener = new WorkingSetManagerListener();
+	private final WorkingSetManagerListener managerChangeListener = new WorkingSetManagerListener();
 
-	private IExtensionActivationListener activationListener = new IExtensionActivationListener() {
+	private final IExtensionActivationListener activationListener = new IExtensionActivationListener() {
 
 		private IWorkingSet savedWorkingSet;
 

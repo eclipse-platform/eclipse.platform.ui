@@ -51,11 +51,10 @@ public class GotoResourceAction extends Action {
 		dialog.open();
 		Object[] result = dialog.getResult();
 		if (result == null || result.length == 0
-				|| !(result[0] instanceof IResource)) {
+				|| !(result[0] instanceof IResource selection)) {
 			return;
 		}
 
-		IResource selection = (IResource) result[0];
 		viewer.setSelection(new StructuredSelection(selection), true);
 	}
 }

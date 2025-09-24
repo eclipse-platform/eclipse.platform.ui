@@ -43,9 +43,9 @@ public class RefactorActionGroup extends ActionGroup {
 
 	private MoveResourceAction moveAction;
 
-	private Shell shell;
+	private final Shell shell;
 
-	private Tree tree;
+	private final Tree tree;
 
 	private TextActionHandler textActionHandler;
 

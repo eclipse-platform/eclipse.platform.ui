@@ -27,7 +27,7 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
  */
 public class ResourceExtensionComparator extends ResourceComparator {
 
-	private Collator icuCollator;
+	private final Collator icuCollator;
 
 	/**
 	 * Construct a sorter that uses the name of the resource as its sorting

@@ -26,7 +26,7 @@ import org.eclipse.ui.navigator.CommonViewer;
 public class ProjectExplorerFilterActionGroup extends FilterActionGroup {
 
 	private SelectFiltersAction selectFiltersAction;
-	private CommonViewer commonViewer;
+	private final CommonViewer commonViewer;
 
 	public ProjectExplorerFilterActionGroup(CommonViewer aCommonViewer) {
 		super(aCommonViewer);

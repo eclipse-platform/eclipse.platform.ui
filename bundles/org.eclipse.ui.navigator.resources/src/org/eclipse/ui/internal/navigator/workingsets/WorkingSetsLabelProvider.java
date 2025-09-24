@@ -38,8 +38,9 @@ public class WorkingSetsLabelProvider implements ILabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof IWorkingSet)
+		if (element instanceof IWorkingSet) {
 			return labelProvider.getImage(element);
+		}
 		if (element == WorkingSetsContentProvider.OTHERS_WORKING_SET) {
 			return getWorkingSetImage();
 		}
@@ -58,8 +59,9 @@ public class WorkingSetsLabelProvider implements ILabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof IWorkingSet)
+		if (element instanceof IWorkingSet) {
 			return ((IWorkingSet) element).getLabel();
+		}
 		if (element == WorkingSetsContentProvider.OTHERS_WORKING_SET) {
 			return WorkbenchNavigatorMessages.workingSet_others;
 		}

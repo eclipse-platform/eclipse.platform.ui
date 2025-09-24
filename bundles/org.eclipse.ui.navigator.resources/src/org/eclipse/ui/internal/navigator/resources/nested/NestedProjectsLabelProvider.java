@@ -105,10 +105,9 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 	@Override
 	protected String decorateText(String input, Object element) {
 		super.decorateText(input, element);
-		if (! (element instanceof IProject)) {
+		if (! (element instanceof IProject project)) {
 			return input;
 		}
-		IProject project = (IProject)element;
 		IPath location = project.getLocation();
 		if (location == null) {
 			return input;

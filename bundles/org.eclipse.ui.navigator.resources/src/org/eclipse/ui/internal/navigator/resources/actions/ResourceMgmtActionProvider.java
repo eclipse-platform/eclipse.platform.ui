@@ -168,8 +168,7 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 		}
 		List<IProject> resources = new ArrayList<>();
 		for (Object currentObject : selection) {
-			if (currentObject instanceof IWorkingSet) {
-				IWorkingSet workingSet = (IWorkingSet) currentObject;
+			if (currentObject instanceof IWorkingSet workingSet) {
 				for (IAdaptable element : workingSet.getElements()) {
 					IProject project = element.getAdapter(IProject.class);
 					if (project != null) {

@@ -52,7 +52,7 @@ import org.eclipse.ui.navigator.IExtensionStateModel;
 public class WorkingSetRootModeActionGroup extends ActionGroup {
 
 	private IExtensionStateModel stateModel;
-	private StructuredViewer structuredViewer;
+	private final StructuredViewer structuredViewer;
 
 	private boolean hasContributedToViewMenu = false;
 	private IAction workingSetsAction = null;
@@ -108,8 +108,9 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
-		if (hasContributedToViewMenu)
+		if (hasContributedToViewMenu) {
 			return;
+		}
 		IMenuManager topLevelSubMenu = new MenuManager(
 				WorkbenchNavigatorMessages.WorkingSetRootModeActionGroup_Top_Level_Element_);
 		addActions(topLevelSubMenu);
@@ -121,8 +122,9 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	 * Adds the actions to the given menu manager.
 	 */
 	protected void addActions(IMenuManager viewMenu) {
-		if (actions == null)
+		if (actions == null) {
 			actions = createActions();
+		}
 
 		viewMenu.add(new Separator());
 		items = new MenuItem[actions.length];
@@ -136,8 +138,9 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 				public void fill(Menu menu, int index) {
 
 					int style = SWT.CHECK;
-					if ((action.getStyle() & IAction.AS_RADIO_BUTTON) != 0)
+					if ((action.getStyle() & IAction.AS_RADIO_BUTTON) != 0) {
 						style = SWT.RADIO;
+					}
 
 					final MenuItem mi = new MenuItem(menu, style, index);
 					items[j] = mi;
@@ -207,8 +210,9 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	 * collapse to just show their contents.
 	 */
 	public void setShowTopLevelWorkingSets(boolean showTopLevelWorkingSets) {
-		if (actions == null)
+		if (actions == null) {
 			actions = createActions();
+		}
 
 		currentRadioSelection = showTopLevelWorkingSets ? 1 : 0;
 		workingSetsAction.setChecked(showTopLevelWorkingSets);
@@ -216,8 +220,9 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 
 		if (items != null) {
 			for (int i = 0; i < items.length; i++) {
-				if(items[i] != null && actions[i] != null)
+				if(items[i] != null && actions[i] != null) {
 					items[i].setSelection(actions[i].isChecked());
+				}
 			}
 		}
 		if (stateModel != null) {

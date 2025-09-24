@@ -78,7 +78,7 @@ public class PropertiesActionProvider extends CommonActionProvider {
 
 	private static class DelegateIAdaptable implements IAdaptable {
 
-		private Object delegate;
+		private final Object delegate;
 
 		private DelegateIAdaptable(Object o) {
 			delegate = o;
@@ -96,7 +96,7 @@ public class PropertiesActionProvider extends CommonActionProvider {
 
 	private static class DelegateSelectionProvider implements ISelectionProvider {
 
-		private ISelectionProvider delegate;
+		private final ISelectionProvider delegate;
 
 		private DelegateSelectionProvider(ISelectionProvider s) {
 			delegate = s;
