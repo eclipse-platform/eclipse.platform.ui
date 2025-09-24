@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.List;
  * Displays the list of stack frames used as a filter.
  */
 public class FilterListEditor extends ListEditor {
-	private String dialogMessage;
+	private final String dialogMessage;
 
 	FilterListEditor(String name, String label, String addButtonLabel, String removeButtonLabel,
 			String dialogMessage, Composite parent) {
