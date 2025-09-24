@@ -30,7 +30,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 public class TabbedPropertyComposite
 	extends Composite {
 
-	private TabbedPropertySheetWidgetFactory factory;
+	private final TabbedPropertySheetWidgetFactory factory;
 
 	private Composite mainComposite;
 
@@ -44,7 +44,7 @@ public class TabbedPropertyComposite
 
 	private TabbedPropertyList listComposite;
 
-	private boolean displayTitle;
+	private final boolean displayTitle;
 
 	/**
 	 * Constructor for a TabbedPropertyComposite

@@ -41,12 +41,11 @@ public class TabbedPropertyTitleCssPropertyHandler extends AbstractCSSPropertySW
 	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (!(control instanceof TabbedPropertyTitle) || value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE
+		if (!(control instanceof TabbedPropertyTitle title) || value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE
 				|| property == null || !cssPropertyToSWTProperty.containsKey(property)) {
 			return;
 		}
 
-		TabbedPropertyTitle title = (TabbedPropertyTitle) control;
 		title.setColor(cssPropertyToSWTProperty.get(property), CSSSWTColorHelper.getRGBA(value));
 	}
 

@@ -99,13 +99,13 @@ public class TabbedPropertySheetPage
 
 	private Map<ITabDescriptor, TabContents> descriptorToTab;
 
-	private Map<TabContents, Composite> tabToComposite;
+	private final Map<TabContents, Composite> tabToComposite;
 
-	private List<String> selectionQueue;
+	private final List<String> selectionQueue;
 
 	private boolean selectionQueueLocked;
 
-	private List<ITabSelectionListener> tabSelectionListeners;
+	private final List<ITabSelectionListener> tabSelectionListeners;
 
 	private IWorkbenchWindow cachedWorkbenchWindow;
 
@@ -114,7 +114,7 @@ public class TabbedPropertySheetPage
 	/**
 	 * a listener that is interested in part activation events.
 	 */
-	private IPartListener partActivationListener = new IPartListener() {
+	private final IPartListener partActivationListener = new IPartListener() {
 
 		@Override
 		public void partActivated(IWorkbenchPart part) {
@@ -141,7 +141,7 @@ public class TabbedPropertySheetPage
 	private static class TabbedPropertySheetPageContributorFromSelection
 		implements ITabbedPropertySheetPageContributor {
 
-		private String contributorId;
+		private final String contributorId;
 
 		/**
 		 * Constructor that takes in a contributor id taken from a selection.
@@ -522,11 +522,9 @@ public class TabbedPropertySheetPage
 		// Override the undo and redo global action handlers
 		// to use the contributor action handlers
 		IActionBars partActionBars = null;
-		if (contributor instanceof IEditorPart) {
-			IEditorPart editorPart = (IEditorPart) contributor;
+		if (contributor instanceof IEditorPart editorPart) {
 			partActionBars = editorPart.getEditorSite().getActionBars();
-		} else if (contributor instanceof IViewPart) {
-			IViewPart viewPart = (IViewPart) contributor;
+		} else if (contributor instanceof IViewPart viewPart) {
 			partActionBars = viewPart.getViewSite().getActionBars();
 		}
 
@@ -812,8 +810,7 @@ public class TabbedPropertySheetPage
 	 * @since 3.4
 	 */
 	public void overrideTabs() {
-		if (tabListContentProvider instanceof IOverridableTabListContentProvider) {
-			IOverridableTabListContentProvider overridableTabListContentProvider = (IOverridableTabListContentProvider) tabListContentProvider;
+		if (tabListContentProvider instanceof IOverridableTabListContentProvider overridableTabListContentProvider) {
 			overridableTabListContentProvider.overrideTabs();
 		}
 	}
@@ -883,11 +880,10 @@ public class TabbedPropertySheetPage
 			return;
 		}
 
-		if (!(selection instanceof IStructuredSelection)) {
+		if (!(selection instanceof IStructuredSelection structuredSelection)) {
 			return;
 		}
 
-		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 		if (structuredSelection.isEmpty()) {
 			return;
 		}
