@@ -118,7 +118,7 @@ public class ResourceTransfer extends ByteArrayTransfer {
 			return;
 		}
 
-		
+
 		/**
 		 * The resource serialization format is:
 		 *  (int) number of resources

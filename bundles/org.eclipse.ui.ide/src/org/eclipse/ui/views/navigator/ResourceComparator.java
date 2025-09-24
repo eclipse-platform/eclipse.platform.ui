@@ -86,11 +86,9 @@ public class ResourceComparator extends ViewerComparator {
 		// have to deal with non-resources in navigator
 		// if one or both objects are not resources, returned a comparison
 		// based on class.
-		if (!(o1 instanceof IResource r1 && o2 instanceof IResource)) {
+		if (!(o1 instanceof IResource r1 && o2 instanceof IResource r2)) {
 			return compareClass(o1, o2);
 		}
-		IResource r2 = (IResource) o2;
-
 		if (r1 instanceof IContainer && r2 instanceof IContainer) {
 			return compareNames(r1, r2);
 		} else if (r1 instanceof IContainer) {
