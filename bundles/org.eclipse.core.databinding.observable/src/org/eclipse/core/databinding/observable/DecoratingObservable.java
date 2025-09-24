@@ -32,7 +32,7 @@ public class DecoratingObservable extends AbstractObservable implements
 
 	private IStaleListener staleListener;
 
-	private boolean disposedDecoratedOnDispose;
+	private final boolean disposedDecoratedOnDispose;
 
 	/**
 	 * Constructs a DecoratingObservable which decorates the given observable.
@@ -97,10 +97,12 @@ public class DecoratingObservable extends AbstractObservable implements
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
+		}
 		if (getClass() == obj.getClass()) {
 			DecoratingObservable other = (DecoratingObservable) obj;
 			return Objects.equals(this.decorated, other.decorated);
@@ -119,8 +121,9 @@ public class DecoratingObservable extends AbstractObservable implements
 			decorated.removeStaleListener(staleListener);
 		}
 		if (decorated != null) {
-			if (disposedDecoratedOnDispose)
+			if (disposedDecoratedOnDispose) {
 				decorated.dispose();
+			}
 			decorated = null;
 		}
 		staleListener = null;

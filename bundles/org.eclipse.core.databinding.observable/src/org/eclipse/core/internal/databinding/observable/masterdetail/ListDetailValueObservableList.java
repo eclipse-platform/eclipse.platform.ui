@@ -56,7 +56,7 @@ public class ListDetailValueObservableList<M, E> extends
 	private Object detailType;
 
 	// The list of detail observables.
-	private ArrayList<IObservableValue<E>> detailList;
+	private final ArrayList<IObservableValue<E>> detailList;
 
 	// Maps every master to a DetailEntry containing the detail observable. This
 	// map is used to avoid that multiple detail observables are created for the
@@ -74,9 +74,9 @@ public class ListDetailValueObservableList<M, E> extends
 		handleDetailValueChange(event);
 	};
 
-	private IStaleListener masterStaleListener = staleEvent -> fireStale();
+	private final IStaleListener masterStaleListener = staleEvent -> fireStale();
 
-	private IStaleListener detailStaleListener = staleEvent -> {
+	private final IStaleListener detailStaleListener = staleEvent -> {
 		boolean wasStale = isStale();
 		staleDetailObservables.add((staleEvent.getObservable()));
 		if (!wasStale) {

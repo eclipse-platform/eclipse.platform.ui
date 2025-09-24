@@ -198,8 +198,9 @@ public class ObservableTracker {
 		int newCount = (lastCount == null ? 0 : lastCount.intValue())
 				+ (ignore ? 1 : -1);
 
-		if (newCount < 0)
+		if (newCount < 0) {
 			throw new IllegalStateException("Ignore count is already zero"); //$NON-NLS-1$
+		}
 
 		if (newCount == 0) {
 			currentIgnoreCount.remove();
@@ -250,26 +251,31 @@ public class ObservableTracker {
 	 * @param observable the observable whose getter was called
 	 */
 	public static void getterCalled(IObservable observable) {
-		if (observable.isDisposed())
+		if (observable.isDisposed()) {
 			Assert.isTrue(false, "Getter called on disposed observable " //$NON-NLS-1$
 					+ toString(observable));
+		}
 		Realm realm = observable.getRealm();
-		if (!realm.isCurrent())
+		if (!realm.isCurrent()) {
 			Assert.isTrue(false, "Getter called outside realm of observable " //$NON-NLS-1$
 					+ toString(observable));
+		}
 
-		if (isIgnore())
+		if (isIgnore()) {
 			return;
+		}
 
 		Set<IObservable> getterCalledSet = currentGetterCalledSet.get();
 		if (getterCalledSet != null && getterCalledSet.add(observable)) {
 			// If anyone is listening for observable usage...
 			IChangeListener changeListener = currentChangeListener.get();
-			if (changeListener != null)
+			if (changeListener != null) {
 				observable.addChangeListener(changeListener);
+			}
 			IStaleListener staleListener = currentStaleListener.get();
-			if (staleListener != null)
+			if (staleListener != null) {
 				observable.addStaleListener(staleListener);
+			}
 		}
 	}
 
@@ -281,8 +287,9 @@ public class ObservableTracker {
 	 * @since 1.2
 	 */
 	public static void observableCreated(IObservable observable) {
-		if (isIgnore())
+		if (isIgnore()) {
 			return;
+		}
 		Set<IObservable> observableCreatedSet = currentObservableCreatedSet.get();
 		if (observableCreatedSet != null) {
 			observableCreatedSet.add(observable);

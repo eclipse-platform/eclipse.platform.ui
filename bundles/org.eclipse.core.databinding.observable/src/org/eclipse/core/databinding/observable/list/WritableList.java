@@ -148,14 +148,17 @@ public class WritableList<E> extends ObservableList<E> {
 	public E move(int oldIndex, int newIndex) {
 		checkRealm();
 		int size = wrappedList.size();
-		if (oldIndex < 0 || oldIndex >= size)
+		if (oldIndex < 0 || oldIndex >= size) {
 			throw new IndexOutOfBoundsException(
 					"oldIndex: " + oldIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
-		if (newIndex < 0 || newIndex >= size)
+		}
+		if (newIndex < 0 || newIndex >= size) {
 			throw new IndexOutOfBoundsException(
 					"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
-		if (oldIndex == newIndex)
+		}
+		if (oldIndex == newIndex) {
 			return wrappedList.get(oldIndex);
+		}
 		E element = wrappedList.remove(oldIndex);
 		wrappedList.add(newIndex, element);
 		fireListChange(Diffs.createListDiff(
@@ -250,8 +253,9 @@ public class WritableList<E> extends ObservableList<E> {
 						removedElement));
 			}
 		}
-		if (entries.size() > 0)
+		if (entries.size() > 0) {
 			fireListChange(Diffs.createListDiff(entries));
+		}
 		return entries.size() > 0;
 	}
 
@@ -271,8 +275,9 @@ public class WritableList<E> extends ObservableList<E> {
 				removeIndex++;
 			}
 		}
-		if (entries.size() > 0)
+		if (entries.size() > 0) {
 			fireListChange(Diffs.createListDiff(entries));
+		}
 		return entries.size() > 0;
 	}
 

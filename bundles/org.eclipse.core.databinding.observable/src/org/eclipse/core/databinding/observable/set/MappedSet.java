@@ -51,9 +51,9 @@ public class MappedSet extends ObservableSet {
 	/*
 	 * Map from values (range elements) to Integer ref counts
 	 */
-	private Map valueCounts = new HashMap();
+	private final Map valueCounts = new HashMap();
 
-	private ISetChangeListener domainListener = new ISetChangeListener() {
+	private final ISetChangeListener domainListener = new ISetChangeListener() {
 		@Override
 		public void handleSetChange(SetChangeEvent event) {
 			Set additions = new HashSet();
@@ -74,7 +74,7 @@ public class MappedSet extends ObservableSet {
 		}
 	};
 
-	private IMapChangeListener mapChangeListener = (MapChangeEvent event) -> {
+	private final IMapChangeListener mapChangeListener = (MapChangeEvent event) -> {
 		MapDiff diff = event.diff;
 		Set additions = new HashSet();
 		Set removals = new HashSet();
@@ -103,7 +103,7 @@ public class MappedSet extends ObservableSet {
 		fireSetChange(Diffs.createSetDiff(additions, removals));
 	};
 
-	private IObservableSet input;
+	private final IObservableSet input;
 
 	/**
 	 * @param input input set with keys from the map

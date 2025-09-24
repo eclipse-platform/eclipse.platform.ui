@@ -65,7 +65,7 @@ public class MapDetailValueObservableMap<K, M, E> extends
 
 	private IdentitySet<IObservableValue<E>> staleDetailObservables = new IdentitySet<>();
 
-	private IMapChangeListener<K, M> masterMapListener = event -> handleMasterMapChange(event.diff);
+	private final IMapChangeListener<K, M> masterMapListener = event -> handleMasterMapChange(event.diff);
 
 	private IStaleListener masterStaleListener = staleEvent -> fireStale();
 
@@ -384,12 +384,15 @@ public class MapDetailValueObservableMap<K, M, E> extends
 		@Override
 		public boolean equals(Object o) {
 			MapDetailValueObservableMap.this.getterCalled();
-			if (o == this)
+			if (o == this) {
 				return true;
-			if (o == null)
+			}
+			if (o == null) {
 				return false;
-			if (!(o instanceof Map.Entry))
+			}
+			if (!(o instanceof Map.Entry)) {
 				return false;
+			}
 			Map.Entry<?, ?> that = (Map.Entry<?, ?>) o;
 			return Objects.equals(this.getKey(), that.getKey()) && Objects.equals(this.getValue(), that.getValue());
 		}

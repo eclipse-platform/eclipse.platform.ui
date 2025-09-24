@@ -69,13 +69,14 @@ public class DelayedObservableValue<T> extends AbstractObservableValue<T>
 
 		@Override
 		public void run() {
-			if (!cancel)
+			if (!cancel) {
 				try {
 					running = true;
 					internalFireValueChange(oldValue);
 				} finally {
 					running = false;
 				}
+			}
 		}
 	}
 
@@ -111,14 +112,16 @@ public class DelayedObservableValue<T> extends AbstractObservableValue<T>
 
 	@Override
 	public void handleValueChange(ValueChangeEvent<? extends T> event) {
-		if (!updating)
+		if (!updating) {
 			makeDirty();
+		}
 	}
 
 	@Override
 	public void handleStale(StaleEvent staleEvent) {
-		if (!updating)
+		if (!updating) {
 			fireStale();
+		}
 	}
 
 	private T internalGetValue() {
@@ -160,8 +163,9 @@ public class DelayedObservableValue<T> extends AbstractObservableValue<T>
 			// passed to setValue(). Make sure we cache whatever is set.
 			cachedValue = internalGetValue();
 
-			if (!Objects.equals(oldValue, cachedValue))
+			if (!Objects.equals(oldValue, cachedValue)) {
 				fireValueChange(Diffs.createValueDiff(oldValue, cachedValue));
+			}
 		} finally {
 			updating = false;
 		}

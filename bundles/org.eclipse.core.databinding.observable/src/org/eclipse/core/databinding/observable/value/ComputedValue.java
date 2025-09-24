@@ -182,7 +182,7 @@ public abstract class ComputedValue<T> extends AbstractObservableValue<T> {
 		}
 	}
 
-	private PrivateInterface privateInterface = new PrivateInterface();
+	private final PrivateInterface privateInterface = new PrivateInterface();
 
 	private Object valueType;
 

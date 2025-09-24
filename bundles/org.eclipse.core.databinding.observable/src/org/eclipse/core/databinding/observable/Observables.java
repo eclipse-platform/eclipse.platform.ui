@@ -704,8 +704,9 @@ public class Observables {
 	 */
 	public static <K, V> IObservableValue<V> observeMapEntry(
 			IObservableMap<K, V> map, K key, Object valueType) {
-		if (valueType == null)
+		if (valueType == null) {
 			valueType = map.getValueType();
+		}
 		return new MapEntryObservableValue<>(map, key, valueType);
 	}
 

@@ -316,12 +316,14 @@ public abstract class ObservableList<E> extends AbstractObservable implements
 	public E move(int oldIndex, int newIndex) {
 		checkRealm();
 		int size = wrappedList.size();
-		if (oldIndex < 0 || oldIndex >= size)
+		if (oldIndex < 0 || oldIndex >= size) {
 			throw new IndexOutOfBoundsException(
 					"oldIndex: " + oldIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
-		if (newIndex < 0 || newIndex >= size)
+		}
+		if (newIndex < 0 || newIndex >= size) {
 			throw new IndexOutOfBoundsException(
 					"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		E element = remove(oldIndex);
 		add(newIndex, element);
 		return element;

@@ -44,7 +44,7 @@ public class ListChangeEvent<E> extends ObservableEvent {
 	 * Always identical to <code>EventObject.source</code> but the type
 	 * information is maintained.
 	 */
-	private IObservableList<E> typedSource;
+	private final IObservableList<E> typedSource;
 
 	/**
 	 * Creates a new list change event.

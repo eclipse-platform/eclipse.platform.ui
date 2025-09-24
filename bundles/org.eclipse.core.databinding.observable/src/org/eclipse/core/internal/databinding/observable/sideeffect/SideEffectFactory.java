@@ -29,7 +29,7 @@ import org.eclipse.core.databinding.observable.sideeffect.ISideEffectFactory;
  */
 public final class SideEffectFactory implements ISideEffectFactory {
 
-	private Consumer<ISideEffect> sideEffectConsumer;
+	private final Consumer<ISideEffect> sideEffectConsumer;
 
 	/**
 	 * Creates a new factory which will pass all created side-effects to the
