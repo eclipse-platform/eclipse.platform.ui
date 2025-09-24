@@ -201,8 +201,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 				display.dispose();
 			}
 			Location instanceLoc = Platform.getInstanceLocation();
-			if (instanceLoc != null)
+			if (instanceLoc != null) {
 				instanceLoc.release();
+			}
 		}
 	}
 
@@ -562,8 +563,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	@SuppressWarnings("rawtypes")
 	private static boolean isDevLaunchMode(Map args) {
 		// see org.eclipse.pde.internal.core.PluginPathFinder.isDevLaunchMode()
-		if (Boolean.getBoolean("eclipse.pde.launch")) //$NON-NLS-1$
+		if (Boolean.getBoolean("eclipse.pde.launch")) { //$NON-NLS-1$
 			return true;
+		}
 		return args.containsKey("-pdelaunch"); //$NON-NLS-1$
 	}
 
@@ -917,12 +919,14 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	@Override
 	public void stop() {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
-		if (workbench == null)
+		if (workbench == null) {
 			return;
+		}
 		final Display display = workbench.getDisplay();
 		display.syncExec(() -> {
-			if (!display.isDisposed())
+			if (!display.isDisposed()) {
 				workbench.close();
+			}
 		});
 	}
 }

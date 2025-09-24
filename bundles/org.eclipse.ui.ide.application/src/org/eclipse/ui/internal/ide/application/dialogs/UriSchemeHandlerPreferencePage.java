@@ -344,8 +344,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof UiSchemeInformation) {
-				UiSchemeInformation schemeInfo = (UiSchemeInformation) element;
+			if (element instanceof UiSchemeInformation schemeInfo) {
 				switch (columnIndex) {
 				case 0:
 					return schemeInfo.getName();
@@ -354,9 +353,9 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 					return schemeInfo.getDescription();
 				case 2:
 					String text = ""; //$NON-NLS-1$
-					if (UrlHandlerPreferencePage_LoadingText.equals(schemeInfo.getHandlerInstanceLocation()))
+					if (UrlHandlerPreferencePage_LoadingText.equals(schemeInfo.getHandlerInstanceLocation())) {
 						text = schemeInfo.getHandlerInstanceLocation();
-					else if (schemeInfo.isChecked()) {
+					} else if (schemeInfo.isChecked()) {
 						text = UrlHandlerPreferencePage_Column_Handler_Text_Current_Application;
 					} else if (schemeInfo.information.schemeIsHandledByOther()) {
 						text = UrlHandlerPreferencePage_Column_Handler_Text_Other_Application;
@@ -377,7 +376,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 
 	static class UiSchemeInformation {
 		private boolean checked;
-		private ISchemeInformation information;
+		private final ISchemeInformation information;
 
 		public UiSchemeInformation(boolean checked, ISchemeInformation information) {
 			this.checked = checked;
@@ -403,7 +402,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 
 	static final class LoadingSchemeInformation extends UiSchemeInformation {
 
-		private IScheme scheme;
+		private final IScheme scheme;
 
 		public LoadingSchemeInformation(IScheme scheme) {
 			super(false, null);
