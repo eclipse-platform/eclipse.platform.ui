@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyRegist
  */
 public abstract class AbstractSectionDescriptor implements ISectionDescriptor {
 
-	private TabbedPropertyRegistryClassSectionFilter classFilter;
+	private final TabbedPropertyRegistryClassSectionFilter classFilter;
 
 	/**
 	 * Constructor for AbstractSectionDescriptor.

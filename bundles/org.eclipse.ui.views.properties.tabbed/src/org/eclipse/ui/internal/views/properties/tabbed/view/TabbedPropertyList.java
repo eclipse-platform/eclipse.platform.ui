@@ -88,9 +88,9 @@ public class TabbedPropertyList
 
 	private int bottomVisibleIndex = NONE;
 
-	private TopNavigationElement topNavigationElement;
+	private final TopNavigationElement topNavigationElement;
 
-	private BottomNavigationElement bottomNavigationElement;
+	private final BottomNavigationElement bottomNavigationElement;
 
 	private int widestLabelIndex = NONE;
 
@@ -124,16 +124,16 @@ public class TabbedPropertyList
 
 	private Color bottomNavigationElementShadowStroke2;
 
-	private TabbedPropertySheetWidgetFactory factory;
+	private final TabbedPropertySheetWidgetFactory factory;
 
 	/**
 	 * One of the tabs in the tabbed property list.
 	 */
 	public class ListElement extends Canvas {
 
-		private ITabItem tab;
+		private final ITabItem tab;
 
-		private int index;
+		private final int index;
 
 		private boolean selected;
 

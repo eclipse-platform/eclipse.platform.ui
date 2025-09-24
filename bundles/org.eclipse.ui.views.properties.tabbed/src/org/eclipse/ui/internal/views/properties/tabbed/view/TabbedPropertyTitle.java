@@ -51,7 +51,7 @@ public class TabbedPropertyTitle
 
 	private static final String TITLE_FONT = "org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyTitle"; //$NON-NLS-1$
 
-	private TabbedPropertySheetWidgetFactory factory;
+	private final TabbedPropertySheetWidgetFactory factory;
 
 	/**
 	 * Constructor for TabbedPropertyTitle.

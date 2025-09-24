@@ -57,11 +57,11 @@ public class SectionDescriptor extends AbstractSectionDescriptor {
 
 	private static final String ELEMENT_INPUT = "input"; //$NON-NLS-1$
 
-	private String id;
+	private final String id;
 
-	private String targetTab;
+	private final String targetTab;
 
-	private String afterSection;
+	private final String afterSection;
 
 	private List<String> inputTypes;
 
@@ -69,7 +69,7 @@ public class SectionDescriptor extends AbstractSectionDescriptor {
 
 	private int enablesFor = ENABLES_FOR_ANY;
 
-	private IConfigurationElement configurationElement;
+	private final IConfigurationElement configurationElement;
 
 	/**
 	 * Constructor for the section descriptor.

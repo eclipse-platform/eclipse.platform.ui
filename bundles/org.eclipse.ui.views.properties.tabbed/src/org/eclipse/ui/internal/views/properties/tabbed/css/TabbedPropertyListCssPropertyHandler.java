@@ -30,12 +30,11 @@ public class TabbedPropertyListCssPropertyHandler extends AbstractCSSPropertySWT
 	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (!(control instanceof TabbedPropertyList) || property == null
+		if (!(control instanceof TabbedPropertyList list) || property == null
 				|| value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
 			return;
 		}
 
-		TabbedPropertyList list = (TabbedPropertyList) control;
 		Color color = CSSSWTColorHelper.getSWTColor(value, control.getDisplay());
 
 		switch (property) {

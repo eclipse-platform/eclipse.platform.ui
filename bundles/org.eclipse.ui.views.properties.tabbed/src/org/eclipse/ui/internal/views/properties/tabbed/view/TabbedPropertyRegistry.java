@@ -519,8 +519,9 @@ public class TabbedPropertyRegistry {
 
 		if (tabDescriptors != null) {
 			for (ITabDescriptor tabDescriptor : tabDescriptors) {
-				if (tabDescriptor instanceof TabDescriptor)
+				if (tabDescriptor instanceof TabDescriptor) {
 					((TabDescriptor)tabDescriptor).dispose();
+				}
 			}
 		}
 	}
