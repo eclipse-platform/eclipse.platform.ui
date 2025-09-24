@@ -37,14 +37,14 @@ public class ImportLogAction extends Action implements IMenuCreator {
 	 */
 	private final LogView logView;
 	private ImportConfigurationLogAction[] actions;
-	private IMemento fMemento;
+	private final IMemento fMemento;
 
 	/**
 	 * Action imports log file from given location to Log View.
 	 */
 	private class ImportConfigurationLogAction extends Action {
-		private String name;
-		private String location;
+		private final String name;
+		private final String location;
 
 		public ImportConfigurationLogAction(String name, String location) {
 			super(name, AS_RADIO_BUTTON);
@@ -69,8 +69,7 @@ public class ImportLogAction extends Action implements IMenuCreator {
 
 		@Override
 		public boolean equals(Object o) {
-			if (o instanceof ImportConfigurationLogAction) {
-				ImportConfigurationLogAction action = (ImportConfigurationLogAction) o;
+			if (o instanceof ImportConfigurationLogAction action) {
 				return name.equals(action.name) && location.equals(action.name);
 			}
 

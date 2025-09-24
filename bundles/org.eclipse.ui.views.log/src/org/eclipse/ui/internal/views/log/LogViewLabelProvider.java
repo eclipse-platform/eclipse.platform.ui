@@ -26,14 +26,14 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 
 	private static int MAX_LABEL_LENGTH = 200;
 
-	private Image infoImage;
-	private Image okImage;
-	private Image errorImage;
-	private Image warningImage;
-	private Image errorWithStackImage;
-	private Image hierarchicalImage;
+	private final Image infoImage;
+	private final Image okImage;
+	private final Image errorImage;
+	private final Image warningImage;
+	private final Image errorWithStackImage;
+	private final Image hierarchicalImage;
 	ArrayList<Object> consumers = new ArrayList<>();
-	private LogView logView;
+	private final LogView logView;
 
 	public LogViewLabelProvider(LogView logView) {
 		errorImage = SharedImages.getImage(SharedImages.DESC_ERROR_ST_OBJ);
@@ -73,10 +73,10 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-		if ((element instanceof LogSession) && (columnIndex == 2)) {
-			LogSession session = (LogSession) element;
-			if (session.getDate() == null)
+		if ((element instanceof LogSession session) && (columnIndex == 2)) {
+			if (session.getDate() == null) {
 				return ""; //$NON-NLS-1$
+			}
 
 			return session.getFormattedDate();
 		}
@@ -85,8 +85,7 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 			return element.toString();
 		}
 
-		if (element instanceof LogEntry) {
-			LogEntry entry = (LogEntry) element;
+		if (element instanceof LogEntry entry) {
 			switch (columnIndex) {
 				case 0 :
 					if (entry.getMessage() != null) {
@@ -100,8 +99,9 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 						return entry.getMessage();
 					}
 				case 1 :
-					if (entry.getPluginId() != null)
+					if (entry.getPluginId() != null) {
 						return entry.getPluginId();
+					}
 				case 2 :
 					return entry.getFormattedDate();
 			}
@@ -111,8 +111,9 @@ public class LogViewLabelProvider extends LabelProvider implements ITableLabelPr
 	}
 
 	public void connect(Object consumer) {
-		if (!consumers.contains(consumer))
+		if (!consumers.contains(consumer)) {
 			consumers.add(consumer);
+		}
 	}
 
 	public void disconnect(Object consumer) {

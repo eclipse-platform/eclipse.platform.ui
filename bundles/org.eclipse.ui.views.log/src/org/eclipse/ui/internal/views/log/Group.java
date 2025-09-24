@@ -23,7 +23,7 @@ import java.io.PrintWriter;
  */
 public class Group extends AbstractEntry {
 
-	private String name;
+	private final String name;
 
 	public Group(String name) {
 		this.name = name;

@@ -28,15 +28,15 @@ import org.eclipse.ui.actions.SelectionProviderAction;
  */
 public class EventDetailsDialogAction extends SelectionProviderAction {
 
-	private LogView logView;
+	private final LogView logView;
 	/**
 	 * The control that the dialog should appear on top of.
 	 */
-	private Control control;
-	private ISelectionProvider provider;
+	private final Control control;
+	private final ISelectionProvider provider;
 	private EventDetailsDialog propertyDialog;
 	private Comparator comparator;
-	private IMemento memento;
+	private final IMemento memento;
 
 	/**
 	 * Creates a new action for opening a property dialog
@@ -57,8 +57,9 @@ public class EventDetailsDialogAction extends SelectionProviderAction {
 
 	public boolean resetSelection(byte sortType, int sortOrder) {
 		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
-		if (element == null)
+		if (element == null) {
 			return false;
+		}
 		if (propertyDialog != null && propertyDialog.isOpen()) {
 			propertyDialog.resetSelection(element, sortType, sortOrder);
 			return true;
@@ -68,21 +69,25 @@ public class EventDetailsDialogAction extends SelectionProviderAction {
 
 	public void resetSelection() {
 		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
-		if ((element == null) || (!(element instanceof LogEntry)))
+		if ((element == null) || (!(element instanceof LogEntry))) {
 			return;
-		if (propertyDialog != null && propertyDialog.isOpen())
+		}
+		if (propertyDialog != null && propertyDialog.isOpen()) {
 			propertyDialog.resetSelection(element);
+		}
 	}
 
 	public void resetDialogButtons() {
-		if (propertyDialog != null && propertyDialog.isOpen())
+		if (propertyDialog != null && propertyDialog.isOpen()) {
 			propertyDialog.resetButtons();
+		}
 	}
 
 	public void setComparator(Comparator comparator) {
 		this.comparator = comparator;
-		if (propertyDialog != null && propertyDialog.isOpen())
+		if (propertyDialog != null && propertyDialog.isOpen()) {
 			propertyDialog.setComparator(comparator);
+		}
 	}
 
 	@Override
@@ -99,8 +104,9 @@ public class EventDetailsDialogAction extends SelectionProviderAction {
 
 		//get initial selection
 		IAdaptable element = (IAdaptable) getStructuredSelection().getFirstElement();
-		if ((element == null) || (!(element instanceof LogEntry)))
+		if ((element == null) || (!(element instanceof LogEntry))) {
 			return;
+		}
 
 		propertyDialog = new EventDetailsDialog(control.getShell(), logView, element, provider, comparator, memento);
 		propertyDialog.create();

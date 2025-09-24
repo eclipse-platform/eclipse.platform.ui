@@ -32,13 +32,13 @@ import org.osgi.framework.FrameworkUtil;
  */
 public final class OpenLogDialog extends TrayDialog {
 	// input log file
-	private File logFile;
+	private final File logFile;
 	// location/size configuration
 	private IDialogSettings dialogSettings;
 	private Point dialogLocation;
 	private Point dialogSize;
-	private int DEFAULT_WIDTH = 750;
-	private int DEFAULT_HEIGHT = 800;
+	private final int DEFAULT_WIDTH = 750;
+	private final int DEFAULT_HEIGHT = 800;
 
 	public OpenLogDialog(Shell parentShell, File logFile) {
 		super(parentShell);
@@ -63,13 +63,15 @@ public final class OpenLogDialog extends TrayDialog {
 	public void create() {
 		super.create();
 		// dialog location
-		if (dialogLocation != null)
+		if (dialogLocation != null) {
 			getShell().setLocation(dialogLocation);
+		}
 		// dialog size
-		if (dialogSize != null)
+		if (dialogSize != null) {
 			getShell().setSize(dialogSize);
-		else
+		} else {
 			getShell().setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		}
 		getButton(IDialogConstants.CLOSE_ID).setFocus();
 	}
 
@@ -127,8 +129,9 @@ public final class OpenLogDialog extends TrayDialog {
 		IDialogSettings settings = PlatformUI.getDialogSettingsProvider(FrameworkUtil.getBundle(OpenLogDialog.class))
 				.getDialogSettings();
 		dialogSettings = settings.getSection(getClass().getName());
-		if (dialogSettings == null)
+		if (dialogSettings == null) {
 			dialogSettings = settings.addNewSection(getClass().getName());
+		}
 		return dialogSettings;
 	}
 
@@ -179,15 +182,19 @@ public final class OpenLogDialog extends TrayDialog {
 			random.seek(logFile.length() - LogReader.MAX_FILE_LENGTH);
 			for (;;) {
 				String line = random.readLine();
-				if (line == null)
+				if (line == null) {
 					break;
+				}
 				line = line.trim();
-				if (line.isEmpty())
+				if (line.isEmpty()) {
 					continue;
-				if (!hasStarted && (line.startsWith("!ENTRY") || line.startsWith(LogSession.SESSION))) //$NON-NLS-1$
+				}
+				if (!hasStarted && (line.startsWith("!ENTRY") || line.startsWith(LogSession.SESSION))) { //$NON-NLS-1$
 					hasStarted = true;
-				if (hasStarted)
+				}
+				if (hasStarted) {
 					writer.println(line);
+				}
 				continue;
 			}
 		}

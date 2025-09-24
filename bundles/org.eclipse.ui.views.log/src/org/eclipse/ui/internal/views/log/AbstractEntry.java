@@ -29,7 +29,7 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 	/**
 	 * The collection of direct children of this entry
 	 */
-	private List<AbstractEntry> children = new ArrayList<>();
+	private final List<AbstractEntry> children = new ArrayList<>();
 	protected Object parent;
 
 	/**

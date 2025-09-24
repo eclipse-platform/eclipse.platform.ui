@@ -28,7 +28,7 @@ import org.eclipse.ui.ide.IDE;
  */
 public class OpenIDELogFileAction extends Action {
 
-	private LogView fView;
+	private final LogView fView;
 
 	public OpenIDELogFileAction(LogView logView) {
 		fView = logView;

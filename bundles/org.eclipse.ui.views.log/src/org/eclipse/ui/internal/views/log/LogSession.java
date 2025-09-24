@@ -48,7 +48,7 @@ public class LogSession extends Group {
 
 	/**
 	 * Returns a pretty-print formatting for the date for this entry
-	 * 
+	 *
 	 * @return the formatted date for this entry
 	 */
 	public String getFormattedDate() {

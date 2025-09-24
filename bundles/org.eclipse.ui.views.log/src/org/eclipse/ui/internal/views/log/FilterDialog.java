@@ -52,7 +52,7 @@ public class FilterDialog extends TrayDialog {
 	private Button removeFilter;
 	private List filterList;
 
-	private IMemento memento;
+	private final IMemento memento;
 
 	public FilterDialog(Shell parentShell, IMemento memento) {
 		super(parentShell);
@@ -127,8 +127,9 @@ public class FilterDialog extends TrayDialog {
 		});
 		limitText.addModifyListener(e -> {
 			try {
-				if (okButton == null)
+				if (okButton == null) {
 					return;
+				}
 				int value = Integer.parseInt(limitText.getText());
 				okButton.setEnabled(value > 0);
 			} catch (NumberFormatException e1) {
@@ -151,8 +152,9 @@ public class FilterDialog extends TrayDialog {
 
 		maxLogTailSizeText.addModifyListener(e -> {
 			try {
-				if (okButton == null)
+				if (okButton == null) {
 					return;
+				}
 				int value = Integer.parseInt(maxLogTailSizeText.getText());
 				okButton.setEnabled(value > 0);
 			} catch (NumberFormatException e1) {
