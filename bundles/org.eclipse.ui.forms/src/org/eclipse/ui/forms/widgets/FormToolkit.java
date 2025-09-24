@@ -120,30 +120,35 @@ public class FormToolkit {
 				Control c = element;
 				boolean inactiveBorder = false;
 				boolean textBorder = false;
-				if (!c.isVisible())
+				if (!c.isVisible()) {
 					continue;
+				}
 				/*
 				 * if (c.getEnabled() == false && !(c instanceof CCombo))
 				 * continue;
 				 */
-				if (c instanceof Hyperlink)
+				if (c instanceof Hyperlink) {
 					continue;
+				}
 				Object flag = c.getData(KEY_DRAW_BORDER);
 				if (flag != null) {
-					if (flag.equals(Boolean.FALSE))
+					if (flag.equals(Boolean.FALSE)) {
 						continue;
-					if (flag.equals(TREE_BORDER))
+					}
+					if (flag.equals(TREE_BORDER)) {
 						inactiveBorder = true;
-					else if (flag.equals(TEXT_BORDER))
+					} else if (flag.equals(TEXT_BORDER)) {
 						textBorder = true;
+					}
 				}
 				if (getBorderStyle() == SWT.BORDER) {
 					if (!inactiveBorder && !textBorder) {
 						continue;
 					}
 					if (c instanceof Text || c instanceof Table
-							|| c instanceof Tree)
+							|| c instanceof Tree) {
 						continue;
+					}
 				}
 				if (!inactiveBorder
 						&& (c instanceof Text || c instanceof CCombo || textBorder)) {
@@ -155,12 +160,13 @@ public class FormToolkit {
 					// gc.setForeground(getBorderStyle() == SWT.BORDER ? colors
 					// .getBorderColor() : colors.getForeground());
 					gc.setForeground(colors.getBorderColor());
-					if (c instanceof CCombo)
+					if (c instanceof CCombo) {
 						gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1,
 								b.height + 1);
-					else
+					} else {
 						gc.drawRectangle(b.x - 1, b.y - 2, b.width + 1,
 								b.height + 3);
+					}
 				} else if (inactiveBorder || c instanceof Table
 						|| c instanceof Tree) {
 					Rectangle b = c.getBounds();
@@ -202,8 +208,9 @@ public class FormToolkit {
 		public void keyPressed(KeyEvent e) {
 			Widget w = e.widget;
 			if (w instanceof Control) {
-				if (e.doit)
+				if (e.doit) {
 					FormUtil.processKey(e.keyCode, (Control) w);
+				}
 			}
 		}
 	}
@@ -288,8 +295,9 @@ public class FormToolkit {
 	public Button createButton(Composite parent, String text, int style) {
 		checkDisposed();
 		Button button = new Button(parent, style | SWT.FLAT | orientation);
-		if (text != null)
+		if (text != null) {
 			button.setText(text);
+		}
 		adapt(button, true, true);
 		return button;
 	}
@@ -334,17 +342,20 @@ public class FormToolkit {
 		checkDisposed();
 		final Composite composite = new Composite(parent, orientation);
 		composite.addListener(SWT.Paint, e -> {
-			if (composite.isDisposed())
+			if (composite.isDisposed()) {
 				return;
+			}
 			Rectangle bounds = composite.getBounds();
 			GC gc = e.gc;
 			gc.setForeground(colors.getColor(IFormColors.SEPARATOR));
-			if (colors.getBackground() != null)
+			if (colors.getBackground() != null) {
 				gc.setBackground(colors.getBackground());
+			}
 			gc.fillGradientRectangle(0, 0, bounds.width, bounds.height, false);
 		});
-		if (parent instanceof Section)
+		if (parent instanceof Section) {
 			((Section) parent).setSeparatorControl(composite);
+		}
 		return composite;
 	}
 
@@ -375,8 +386,9 @@ public class FormToolkit {
 	public Label createLabel(Composite parent, String text, int style) {
 		checkDisposed();
 		Label label = new Label(parent, style | orientation);
-		if (text != null)
+		if (text != null) {
 			label.setText(text);
+		}
 		adapt(label, false, false);
 		return label;
 	}
@@ -396,8 +408,9 @@ public class FormToolkit {
 	public Hyperlink createHyperlink(Composite parent, String text, int style) {
 		checkDisposed();
 		Hyperlink hyperlink = new Hyperlink(parent, style | orientation);
-		if (text != null)
+		if (text != null) {
 			hyperlink.setText(text);
+		}
 		hyperlink.addFocusListener(visibilityHandler);
 		hyperlink.addKeyListener(keyboardHandler);
 		hyperlinkGroup.add(hyperlink);
@@ -475,26 +488,31 @@ public class FormToolkit {
 		if (colors.getForeground() != null) {
 			control.setForeground(colors.getForeground());
 		}
-		if (control instanceof ExpandableComposite) {
-			ExpandableComposite ec = (ExpandableComposite) control;
+		if (control instanceof ExpandableComposite ec) {
 			if (ec.toggle != null) {
-				if (trackFocus)
+				if (trackFocus) {
 					ec.toggle.addFocusListener(visibilityHandler);
-				if (trackKeyboard)
+				}
+				if (trackKeyboard) {
 					ec.toggle.addKeyListener(keyboardHandler);
+				}
 			}
 			if (ec.textLabel != null) {
-				if (trackFocus)
+				if (trackFocus) {
 					ec.textLabel.addFocusListener(visibilityHandler);
-				if (trackKeyboard)
+				}
+				if (trackKeyboard) {
 					ec.textLabel.addKeyListener(keyboardHandler);
+				}
 			}
 			return;
 		}
-		if (trackFocus)
+		if (trackFocus) {
 			control.addFocusListener(visibilityHandler);
-		if (trackKeyboard)
+		}
+		if (trackKeyboard) {
 			control.addKeyListener(keyboardHandler);
+		}
 	}
 
 	/**
@@ -516,8 +534,9 @@ public class FormToolkit {
 				}
 			}
 		});
-		if (composite.getParent() != null)
+		if (composite.getParent() != null) {
 			composite.setMenu(composite.getParent().getMenu());
+		}
 	}
 
 	/**
@@ -649,8 +668,9 @@ public class FormToolkit {
 	public Text createText(Composite parent, String value, int style) {
 		checkDisposed();
 		Text text = new Text(parent, borderStyle | style | orientation);
-		if (value != null)
+		if (value != null) {
 			text.setText(value);
+		}
 		text.setForeground(colors.getForeground());
 		text.setBackground(colors.getBackground());
 		text.addFocusListener(visibilityHandler);
@@ -847,8 +867,9 @@ public class FormToolkit {
 		checkDisposed();
 		// if (borderStyle == SWT.BORDER)
 		// return;
-		if (borderPainter == null)
+		if (borderPainter == null) {
 			borderPainter = new BorderPainter();
+		}
 		parent.addPaintListener(borderPainter);
 	}
 
@@ -922,8 +943,9 @@ public class FormToolkit {
 	 */
 	public static void setControlVisible(Control c, boolean verticalOnly) {
 		ScrolledComposite scomp = FormUtil.getScrolledComposite(c);
-		if (scomp == null)
+		if (scomp == null) {
 			return;
+		}
 		Point location = FormUtil.getControlLocation(scomp, c);
 		scomp.setOrigin(location);
 	}
@@ -946,10 +968,12 @@ public class FormToolkit {
 			// (6.0))
 			// Check for Windows Classic. If not used, set the style to BORDER
 			RGB rgb = colors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-			if (rgb.red != 212 || rgb.green != 208 || rgb.blue != 200)
+			if (rgb.red != 212 || rgb.green != 208 || rgb.blue != 200) {
 				borderStyle = SWT.BORDER;
-		} else if (osname.startsWith("Mac")) //$NON-NLS-1$
+			}
+		} else if (osname.startsWith("Mac")) { //$NON-NLS-1$
 			borderStyle = SWT.BORDER;
+		}
 	}
 
 	private int compareVersion(String version, int... numbers) {
@@ -957,17 +981,21 @@ public class FormToolkit {
 			scanner.useDelimiter("\\."); //$NON-NLS-1$
 
 			for (int number : numbers) {
-				if (!scanner.hasNextInt())
+				if (!scanner.hasNextInt()) {
 					return -1;
+				}
 
 				int result = Integer.compare(scanner.nextInt(), number);
-				if (result != 0)
+				if (result != 0) {
 					return result;
+				}
 			}
 
-			while (scanner.hasNextInt())
-				if (scanner.nextInt() > 0)
+			while (scanner.hasNextInt()) {
+				if (scanner.nextInt() > 0) {
 					return 1;
+				}
+			}
 		}
 
 		return 0;

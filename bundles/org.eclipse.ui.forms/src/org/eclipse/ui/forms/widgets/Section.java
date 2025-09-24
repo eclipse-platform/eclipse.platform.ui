@@ -111,8 +111,9 @@ public class Section extends ExpandableComposite {
 	protected void internalSetExpanded(boolean expanded) {
 		super.internalSetExpanded(expanded);
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
-			if (!expanded)
+			if (!expanded) {
 				super.setBackgroundImage(null);
+			}
 		}
 		reflow();
 	}
@@ -133,8 +134,9 @@ public class Section extends ExpandableComposite {
 	 * @param description new description text; not <code>null</code>
 	 */
 	public void setDescription(String description) {
-		if (descriptionControl instanceof Label)
+		if (descriptionControl instanceof Label) {
 			((Label) descriptionControl).setText(description);
+		}
 	}
 
 	/**
@@ -144,8 +146,9 @@ public class Section extends ExpandableComposite {
 	 *         not used to create the control.
 	 */
 	public String getDescription() {
-		if (descriptionControl instanceof Label)
+		if (descriptionControl instanceof Label) {
 			return ((Label) descriptionControl).getText();
+		}
 		return null;
 	}
 
@@ -184,8 +187,9 @@ public class Section extends ExpandableComposite {
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		if (descriptionControl != null
-				&& (getExpansionStyle() & DESCRIPTION) != 0)
+				&& (getExpansionStyle() & DESCRIPTION) != 0) {
 			descriptionControl.setBackground(bg);
+		}
 	}
 
 	/**
@@ -197,8 +201,9 @@ public class Section extends ExpandableComposite {
 	@Override
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		if (descriptionControl != null)
+		if (descriptionControl != null) {
 			descriptionControl.setForeground(fg);
+		}
 	}
 
 	/**
@@ -275,8 +280,9 @@ public class Section extends ExpandableComposite {
 	 * @return the title bar border color
 	 */
 	public Color getTitleBarBorderColor() {
-		if (titleColors == null)
+		if (titleColors == null) {
 			return null;
+		}
 		return titleColors.get(COLOR_BORDER);
 	}
 
@@ -287,10 +293,12 @@ public class Section extends ExpandableComposite {
 	 * @return the title bar gradient background
 	 */
 	public Color getTitleBarGradientBackground() {
-		if (titleColors == null)
+		if (titleColors == null) {
 			return null;
-		if ((getExpansionStyle() & SHORT_TITLE_BAR) != 0)
+		}
+		if ((getExpansionStyle() & SHORT_TITLE_BAR) != 0) {
 			return getBackground();
+		}
 		return titleColors.get(COLOR_GBG);
 	}
 
@@ -300,16 +308,19 @@ public class Section extends ExpandableComposite {
 	 * @return the title bar background
 	 */
 	public Color getTitleBarBackground() {
-		if (titleColors == null)
+		if (titleColors == null) {
 			return null;
+		}
 		return titleColors.get(COLOR_BG);
 	}
 
 	private void putTitleBarColor(String key, Color color) {
-		if (color == null)
+		if (color == null) {
 			return;
-		if (titleColors == null)
+		}
+		if (titleColors == null) {
 			titleColors = new Hashtable<>();
+		}
 		titleColors.put(key, color);
 	}
 
@@ -336,13 +347,16 @@ public class Section extends ExpandableComposite {
 				int theight = 5;
 				Point tsize = null;
 				Point tcsize = null;
-				if (toggle != null)
+				if (toggle != null) {
 					tsize = toggle.getSize();
-				if (getTextClient() != null)
+				}
+				if (getTextClient() != null) {
 					tcsize = getTextClient().getSize();
+				}
 				Point size = textLabel == null ? new Point(0, 0) : textLabel.getSize();
-				if (tsize != null)
+				if (tsize != null) {
 					theight += Math.max(theight, tsize.y);
+				}
 				gradientheight = theight;
 				if (tcsize != null) {
 					theight = Math.max(theight, tcsize.y);
@@ -353,8 +367,9 @@ public class Section extends ExpandableComposite {
 				gradientheight += tvmargin + tvmargin;
 
 				// Background
-				if (getBackgroundImage() == null)
+				if (getBackgroundImage() == null) {
 					updateHeaderImage(bg, bounds, gradientheight, theight);
+				}
 				iGc.setBackground(getBackground());
 				iGc.fillRectangle(bounds.x, bounds.y, width, height);
 				drawBackground(iGc, bounds.x, bounds.y, width, theight - 2);

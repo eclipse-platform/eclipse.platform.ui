@@ -41,18 +41,18 @@ import org.eclipse.ui.forms.widgets.ScrolledPageBook;
  */
 public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	private IManagedForm managedForm;
-	private ScrolledPageBook pageBook;
+	private final ScrolledPageBook pageBook;
 	private IFormPart masterPart;
 	private IStructuredSelection currentSelection;
-	private Hashtable<Object, PageBag> pages;
+	private final Hashtable<Object, PageBag> pages;
 	private IDetailsPageProvider pageProvider;
 	private int pageLimit=Integer.MAX_VALUE;
 
 	private static class PageBag {
 		private static int counter;
-		private int ticket;
+		private final int ticket;
 		private IDetailsPage page;
-		private boolean fixed;
+		private final boolean fixed;
 
 		public PageBag(IDetailsPage page, boolean fixed) {
 			this.page= page;
@@ -127,8 +127,9 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	@Override
 	public void commit(boolean onSave) {
 		IDetailsPage page = getCurrentPage();
-		if (page != null)
+		if (page != null) {
 			page.commit(onSave);
+		}
 	}
 /**
  * Returns the current page visible in the part.
@@ -138,8 +139,9 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 		Control control = pageBook.getCurrentPage();
 		if (control != null && !control.isDisposed()) {
 			Object data = control.getData();
-			if (data instanceof IDetailsPage)
+			if (data instanceof IDetailsPage) {
 				return (IDetailsPage) data;
+			}
 		}
 		return null;
 	}
@@ -163,8 +165,9 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	@Override
 	public boolean isDirty() {
 		IDetailsPage page = getCurrentPage();
-		if (page != null)
+		if (page != null) {
 			return page.isDirty();
+		}
 		return false;
 	}
 /**
@@ -174,8 +177,9 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	@Override
 	public boolean isStale() {
 		IDetailsPage page = getCurrentPage();
-		if (page != null)
+		if (page != null) {
 			return page.isStale();
+		}
 		return false;
 	}
 
@@ -185,8 +189,9 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	@Override
 	public void refresh() {
 		IDetailsPage page = getCurrentPage();
-		if (page != null)
+		if (page != null) {
 			page.refresh();
+		}
 	}
 /**
  * Sets the focus to the currently visible page.
@@ -194,8 +199,9 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	@Override
 	public void setFocus() {
 		IDetailsPage page = getCurrentPage();
-		if (page != null)
+		if (page != null) {
 			page.setFocus();
+		}
 	}
 
 	@Override
@@ -208,19 +214,20 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 		this.masterPart = part;
 		if (currentSelection != null) {
 		}
-		if (selection instanceof IStructuredSelection)
+		if (selection instanceof IStructuredSelection) {
 			currentSelection = (IStructuredSelection) selection;
-		else
+		} else {
 			currentSelection = null;
+		}
 		update();
 	}
 	private void update() {
 		Object key = null;
 		if (currentSelection != null) {
 			for (Object obj : currentSelection) {
-				if (key == null)
+				if (key == null) {
 					key = getKey(obj);
-				else if (!getKey(obj).equals(key)) {
+				} else if (!getKey(obj).equals(key)) {
 					key = null;
 					break;
 				}
@@ -231,8 +238,9 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	private Object getKey(Object object) {
 		if (pageProvider!=null) {
 			Object key = pageProvider.getPageKey(object);
-			if (key!=null)
+			if (key!=null) {
 				return key;
+			}
 		}
 		return object.getClass();
 	}
@@ -260,11 +268,13 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 						parent.setData(fpage);
 					}
 					//commit the current page
-					if (oldPage!=null && oldPage.isDirty())
+					if (oldPage!=null && oldPage.isDirty()) {
 						oldPage.commit(false);
+					}
 					//refresh the new page
-					if (fpage.isStale())
+					if (fpage.isStale()) {
 						fpage.refresh();
+					}
 					fpage.selectionChanged(masterPart, currentSelection);
 					pageBook.showPage(key);
 				});
@@ -273,12 +283,15 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 		}
 		// If we are switching from an old page to nothing,
 		// don't loose data
-		if (oldPage!=null && oldPage.isDirty())
+		if (oldPage!=null && oldPage.isDirty()) {
 			oldPage.commit(false);
+		}
 		pageBook.showEmptyPage();
 	}
 	private void checkLimit() {
-		if (pages.size() <= getPageLimit()) return;
+		if (pages.size() <= getPageLimit()) {
+			return;
+		}
 		// overflow
 		int currentTicket = PageBag.getCurrentTicket();
 		int cutoffTicket = currentTicket - getPageLimit();

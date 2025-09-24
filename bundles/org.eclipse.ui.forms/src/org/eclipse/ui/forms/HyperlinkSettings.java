@@ -74,8 +74,9 @@ public class HyperlinkSettings {
 	public void initializeDefaultForegrounds(Display display) {
 		Color fg = JFaceColors.getHyperlinkText(display);
 		Color afg = JFaceColors.getActiveHyperlinkText(display);
-		if (fg == null)
+		if (fg == null) {
 			fg = display.getSystemColor(SWT.COLOR_LINK_FOREGROUND);
+		}
 		setForeground(fg);
 		setActiveForeground(afg);
 	}

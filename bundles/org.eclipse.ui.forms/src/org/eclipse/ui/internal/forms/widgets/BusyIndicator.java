@@ -60,11 +60,17 @@ public final class BusyIndicator extends Canvas {
 		timer = new Runnable() {
 			@Override
 			public void run () {
-				if (isDisposed()) return;
+				if (isDisposed()) {
+					return;
+				}
 				redraw();
-				if (!BusyIndicator.this.busy) return;
+				if (!BusyIndicator.this.busy) {
+					return;
+				}
 				update();
-				if (isDisposed()) return;
+				if (isDisposed()) {
+					return;
+				}
 				imageIndex = (imageIndex + 1) % IMAGE_COUNT;
 				dpy.timerExec(MILLISECONDS_OF_DELAY, this);
 			}
@@ -120,8 +126,9 @@ public final class BusyIndicator extends Canvas {
 	 */
 	void onPaint(PaintEvent event) {
 		Rectangle rect = getClientArea();
-		if (rect.width == 0 || rect.height == 0)
+		if (rect.width == 0 || rect.height == 0) {
 			return;
+		}
 
 		Image activeImage;
 		if (isBusy()) {
@@ -146,7 +153,9 @@ public final class BusyIndicator extends Canvas {
 	 *            boolean
 	 */
 	public synchronized void setBusy(boolean busy) {
-		if (this.busy == busy) return;
+		if (this.busy == busy) {
+			return;
+		}
 		this.busy = busy;
 		imageIndex = 0;
 		dpy.asyncExec(timer);
@@ -165,7 +174,9 @@ public final class BusyIndicator extends Canvas {
 	private ImageDescriptor createImageDescriptor(String relativePath) {
 		Bundle bundle = FrameworkUtil.getBundle(this.getClass());
 		URL url = FileLocator.find(bundle, IPath.fromOSString(relativePath),null);
-		if (url == null) return null;
+		if (url == null) {
+			return null;
+		}
 		try {
 			url = FileLocator.resolve(url);
 			return ImageDescriptor.createFromURL(url);

@@ -25,9 +25,9 @@ public class SelectionData {
 	public Display display;
 	public Color bg;
 	public Color fg;
-	private Point start;
-	private Point stop;
-	private ArrayList<String> segments;
+	private final Point start;
+	private final Point stop;
+	private final ArrayList<String> segments;
 
 	public SelectionData(MouseEvent e) {
 		display = e.display;
@@ -100,40 +100,46 @@ public class SelectionData {
 	}
 
 	public boolean isSelectedRow(Locator locator) {
-		if (!isEnclosed())
+		if (!isEnclosed()) {
 			return false;
+		}
 		int rowHeight = locator.heights.get(locator.rowCounter)[0];
 		return isSelectedRow(locator.y, rowHeight);
 	}
 	public boolean isSelectedRow(int y, int rowHeight) {
-		if (!isEnclosed())
+		if (!isEnclosed()) {
 			return false;
+		}
 		return (y + rowHeight >= getTopOffset() &&
 				y <= getBottomOffset());
 	}
 	public boolean isFirstSelectionRow(Locator locator) {
-		if (!isEnclosed())
+		if (!isEnclosed()) {
 			return false;
+		}
 		int rowHeight = locator.heights.get(locator.rowCounter)[0];
 		return (locator.y + rowHeight >= getTopOffset() &&
 				locator.y <= getTopOffset());
 	}
 	public boolean isFirstSelectionRow(int y, int rowHeight) {
-		if (!isEnclosed())
+		if (!isEnclosed()) {
 			return false;
+		}
 		return (y + rowHeight >= getTopOffset() &&
 				y <= getTopOffset());
 	}
 	public boolean isLastSelectionRow(Locator locator) {
-		if (!isEnclosed())
+		if (!isEnclosed()) {
 			return false;
+		}
 		int rowHeight = locator.heights.get(locator.rowCounter)[0];
 		return (locator.y + rowHeight >=getBottomOffset() &&
 				locator.y <= getBottomOffset());
 	}
 	public boolean isLastSelectionRow(int y, int rowHeight) {
-		if (!isEnclosed())
+		if (!isEnclosed()) {
 			return false;
+		}
 		return (y + rowHeight >=getBottomOffset() &&
 				y <= getBottomOffset());
 	}

@@ -72,8 +72,9 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	 */
 	public ScrolledFormText(Composite parent, int style, boolean createFormText) {
 		super(parent, style);
-		if (createFormText)
+		if (createFormText) {
 			setFormText(new FormText(this, SWT.NULL));
+		}
 	}
 	/**
 	 * Sets the form text to be managed by this scrolled form text. The
@@ -88,8 +89,9 @@ public class ScrolledFormText extends SharedScrolledComposite {
 		this.content = formText;
 		super.setContent(content);
 		content.setMenu(getMenu());
-		if (text != null)
+		if (text != null) {
 			loadText(text);
+		}
 	}
 	/**
 	 * Sets the foreground color of the scrolled form text.
@@ -100,8 +102,9 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	@Override
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		if (content != null)
+		if (content != null) {
 			content.setForeground(fg);
+		}
 	}
 	/**
 	 * Sets the background color of the scrolled form text.
@@ -112,8 +115,9 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	@Override
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		if (content != null)
+		if (content != null) {
 			content.setBackground(bg);
+		}
 	}
 	/**
 	 * The class sets the content widget. This method should not be called by
@@ -162,8 +166,9 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	private void loadText(String text) {
 		if (content != null) {
 			String markup = text;
-			if (!markup.startsWith("<form>")) //$NON-NLS-1$
+			if (!markup.startsWith("<form>")) { //$NON-NLS-1$
 				markup = "<form>" + text + "</form>";  //$NON-NLS-1$//$NON-NLS-2$
+			}
 			content.setText(markup, true, false);
 		}
 	}

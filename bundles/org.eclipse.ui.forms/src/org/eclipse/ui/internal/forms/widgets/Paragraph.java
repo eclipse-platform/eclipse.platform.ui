@@ -48,15 +48,17 @@ public class Paragraph {
 	}
 
 	public ParagraphSegment[] getSegments() {
-		if (segments == null)
+		if (segments == null) {
 			return new ParagraphSegment[0];
+		}
 		return segments
 				.toArray(new ParagraphSegment[segments.size()]);
 	}
 
 	public void addSegment(ParagraphSegment segment) {
-		if (segments == null)
+		if (segments == null) {
 			segments = new Vector<>();
+		}
 		segments.add(segment);
 	}
 
@@ -67,14 +69,15 @@ public class Paragraph {
 
 	public void parseRegularText(String text, boolean expandURLs, boolean wrapAllowed,
 			HyperlinkSettings settings, String fontId, String colorId) {
-		if (text.isEmpty())
+		if (text.isEmpty()) {
 			return;
+		}
 		if (expandURLs) {
 			int loc = findUrl(text,0);
 
-			if (loc == -1)
+			if (loc == -1) {
 				addSegment(new TextSegment(text, fontId, colorId, wrapAllowed));
-			else {
+			} else {
 				int textLoc = 0;
 				while (loc != -1) {
 					addSegment(new TextSegment(text.substring(textLoc, loc),
@@ -109,12 +112,15 @@ public class Paragraph {
 
 	private int findUrl(String text, int startIndex) {
 		int[] locs = new int[PROTOCOLS.length];
-		for (int i = 0; i < PROTOCOLS.length; i++)
+		for (int i = 0; i < PROTOCOLS.length; i++) {
 			locs[i] = text.indexOf(PROTOCOLS[i], startIndex);
+		}
 		Arrays.sort(locs);
-		for (int i = 0; i < PROTOCOLS.length; i++)
-			if (locs[i] != -1)
+		for (int i = 0; i < PROTOCOLS.length; i++) {
+			if (locs[i] != -1) {
 				return locs[i];
+			}
+		}
 		return -1;
 	}
 
@@ -158,12 +164,14 @@ public class Paragraph {
 				loc.x += 1;
 			*/
 			// compute heights
-			if (loc.heights == null)
+			if (loc.heights == null) {
 				computeRowHeights(gc, width, loc, lineHeight, resourceTable);
+			}
 			for (ParagraphSegment segment : segments) {
 				boolean doSelect = false;
-				if (selectedLink instanceof ParagraphSegment sl && segment.equals(sl))
+				if (selectedLink instanceof ParagraphSegment sl && segment.equals(sl)) {
 					doSelect = true;
+				}
 				segment.layout(gc, width, loc, resourceTable, doSelect);
 			}
 			loc.heights = null;
@@ -179,11 +187,13 @@ public class Paragraph {
 		ParagraphSegment[] segments = getSegments();
 
 		for (ParagraphSegment segment : segments) {
-			if (!segment.intersects(repaintRegion))
+			if (!segment.intersects(repaintRegion)) {
 				continue;
+			}
 			boolean doSelect = false;
-			if (selectedLink instanceof ParagraphSegment sl && segment.equals(sl))
+			if (selectedLink instanceof ParagraphSegment sl && segment.equals(sl)) {
 				doSelect = true;
+			}
 			segment.paint(gc, false, resourceTable, doSelect, selData, repaintRegion);
 		}
 	}
@@ -218,8 +228,9 @@ public class Paragraph {
 	public ParagraphSegment findSegmentAt(int x, int y) {
 		if (segments != null) {
 			for (ParagraphSegment segment : segments) {
-				if (segment.contains(x, y))
+				if (segment.contains(x, y)) {
 					return segment;
+				}
 			}
 		}
 		return null;

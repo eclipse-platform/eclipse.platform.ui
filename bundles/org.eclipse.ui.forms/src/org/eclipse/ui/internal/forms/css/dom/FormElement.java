@@ -24,7 +24,7 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.Form;
 
 public class FormElement extends CompositeElement {
-	private Map<String, Color> headerColors = new HashMap<>();
+	private final Map<String, Color> headerColors = new HashMap<>();
 	private static final String[] headerColorKeys = { IFormColors.H_BOTTOM_KEYLINE1, IFormColors.H_BOTTOM_KEYLINE2,
 			IFormColors.H_GRADIENT_END, IFormColors.H_GRADIENT_START, IFormColors.H_HOVER_FULL,
 			IFormColors.H_HOVER_LIGHT, IFormColors.H_PREFIX };

@@ -87,13 +87,13 @@ public class FormHeading extends Canvas {
 
 	private ToolBarManager toolBarManager;
 
-	private SizeCache toolbarCache = new SizeCache();
+	private final SizeCache toolbarCache = new SizeCache();
 
-	private SizeCache clientCache = new SizeCache();
+	private final SizeCache clientCache = new SizeCache();
 
-	private SizeCache messageCache = new SizeCache();
+	private final SizeCache messageCache = new SizeCache();
 
-	private SizeCache titleRegionCache = new SizeCache();
+	private final SizeCache titleRegionCache = new SizeCache();
 
 	private TitleRegion titleRegion;
 
@@ -113,11 +113,13 @@ public class FormHeading extends Canvas {
 		public void update() {
 			String details = getMessageType() == 0 ? null : MessageManager
 					.createDetails(getChildrenMessages());
-			if (messageRegion != null)
+			if (messageRegion != null) {
 				messageRegion.updateToolTip(details);
+			}
 			if (getMessageType() > 0
-					&& (details == null || details.isEmpty()))
+					&& (details == null || details.isEmpty())) {
 				details = getMessage();
+			}
 			titleRegion.updateToolTip(details);
 		}
 	}
@@ -181,8 +183,9 @@ public class FormHeading extends Canvas {
 				int clientWidthHint = width;
 				if (clientWidthHint != SWT.DEFAULT && clientWidthHint != MIN_WIDTH) {
 					clientWidthHint -= HMARGIN * 2;
-					if (tbsize != null && getToolBarAlignment() == SWT.BOTTOM)
+					if (tbsize != null && getToolBarAlignment() == SWT.BOTTOM) {
 						clientWidthHint -= tbsize.x + SPACING;
+					}
 				}
 				clsize = computeSize(clientCache, clientWidthHint);
 			}
@@ -192,11 +195,13 @@ public class FormHeading extends Canvas {
 				totalFlexWidth -= TITLE_HMARGIN * 2;
 				// complete right margin
 				if (hasToolBar() && getToolBarAlignment() == SWT.TOP
-						|| hasMessageRegion())
+						|| hasMessageRegion()) {
 					totalFlexWidth -= SPACING;
+				}
 				// subtract tool bar
-				if (hasToolBar() && getToolBarAlignment() == SWT.TOP && tbsize != null)
+				if (hasToolBar() && getToolBarAlignment() == SWT.TOP && tbsize != null) {
 					totalFlexWidth -= tbsize.x + SPACING;
+				}
 				flexWidth = totalFlexWidth;
 				if (hasMessageRegion()) {
 					// remove message region spacing and divide by 2
@@ -254,49 +259,62 @@ public class FormHeading extends Canvas {
 				// compute sizes
 				int width1 = 2 * TITLE_HMARGIN;
 				width1 += tsize.x;
-				if (msize != null)
+				if (msize != null) {
 					width1 += SPACING + msize.x;
-				if (tbsize != null && getToolBarAlignment() == SWT.TOP)
+				}
+				if (tbsize != null && getToolBarAlignment() == SWT.TOP) {
 					width1 += SPACING + tbsize.x;
+				}
 				if (msize != null
-						|| (tbsize != null && getToolBarAlignment() == SWT.TOP))
+						|| (tbsize != null && getToolBarAlignment() == SWT.TOP)) {
 					width1 += SPACING;
+				}
 				size.x = width1;
 				if (clsize != null) {
 					int width2 = clsize.x;
-					if (tbsize != null && getToolBarAlignment() == SWT.BOTTOM)
+					if (tbsize != null && getToolBarAlignment() == SWT.BOTTOM) {
 						width2 += SPACING + tbsize.x;
+					}
 					width2 += 2 * HMARGIN;
 					size.x = Math.max(width1, width2);
 				}
 				// height, first row
 				size.y = tsize.y;
-				if (msize != null)
+				if (msize != null) {
 					size.y = Math.max(msize.y, size.y);
-				if (tbsize != null && getToolBarAlignment() == SWT.TOP)
+				}
+				if (tbsize != null && getToolBarAlignment() == SWT.TOP) {
 					size.y = Math.max(tbsize.y, size.y);
-				if (size.y > 0)
+				}
+				if (size.y > 0) {
 					size.y += VMARGIN * 2;
+				}
 				// add second row
 				int height2 = 0;
-				if (tbsize != null && getToolBarAlignment() == SWT.BOTTOM)
+				if (tbsize != null && getToolBarAlignment() == SWT.BOTTOM) {
 					height2 = tbsize.y;
-				if (clsize != null)
+				}
+				if (clsize != null) {
 					height2 = Math.max(height2, clsize.y);
-				if (height2 > 0)
+				}
+				if (height2 > 0) {
 					size.y += VSPACING + height2 + CLIENT_MARGIN;
+				}
 				// add separator
-				if (size.y > 0 && isSeparatorVisible())
+				if (size.y > 0 && isSeparatorVisible()) {
 					size.y += SEPARATOR_HEIGHT;
+				}
 			} else {
 				// position controls
 				int xloc = x;
 				int yloc = y + VMARGIN;
 				int row1Height = tsize.y;
-				if (hasMessageRegion() && msize != null)
+				if (hasMessageRegion() && msize != null) {
 					row1Height = Math.max(row1Height, msize.y);
-				if (hasToolBar() && getToolBarAlignment() == SWT.TOP && tbsize != null)
+				}
+				if (hasToolBar() && getToolBarAlignment() == SWT.TOP && tbsize != null) {
 					row1Height = Math.max(row1Height, tbsize.y);
+				}
 				titleRegion.setBounds(xloc,
 				// yloc + row1Height / 2 - tsize.y / 2,
 						yloc, tsize.x, tsize.y);
@@ -324,9 +342,10 @@ public class FormHeading extends Canvas {
 									msize.x, msize.y);
 					xloc += msize.x;
 				}
-				if (toolBarManager != null)
+				if (toolBarManager != null) {
 					toolBarManager.getControl().setVisible(
 							!toolBarManager.isEmpty());
+				}
 				if (tbsize != null && getToolBarAlignment() == SWT.TOP) {
 					ToolBar tbar = toolBarManager.getControl();
 					tbar.setBounds(x + width - 1 - tbsize.x - HMARGIN, yloc
@@ -403,16 +422,18 @@ public class FormHeading extends Canvas {
 
 		public boolean isEmpty() {
 			Control c = getMessageControl();
-			if (c == null)
+			if (c == null) {
 				return true;
+			}
 			return !c.getVisible();
 		}
 
 		public int getFontHeight() {
 			if (fontHeight == -1) {
 				Control c = getMessageControl();
-				if (c == null)
+				if (c == null) {
 					return 0;
+				}
 				GC gc = new GC(c.getDisplay());
 				gc.setFont(c.getFont());
 				fontHeight = gc.getFontMetrics().getHeight();
@@ -424,8 +445,9 @@ public class FormHeading extends Canvas {
 		public int getFontBaselineHeight() {
 			if (fontBaselineHeight == -1) {
 				Control c = getMessageControl();
-				if (c == null)
+				if (c == null) {
 					return 0;
+				}
 				GC gc = new GC(c.getDisplay());
 				gc.setFont(c.getFont());
 				FontMetrics fm = gc.getFontMetrics();
@@ -444,10 +466,12 @@ public class FormHeading extends Canvas {
 			this.messages = messages;
 			if (newMessage == null) {
 				// clearing of the message
-				if (oldControl != null && oldControl.getVisible())
+				if (oldControl != null && oldControl.getVisible()) {
 					oldControl.setVisible(false);
-				if (oldType != newType)
+				}
+				if (oldType != newType) {
 					updateForeground();
+				}
 				return;
 			}
 			ensureControlExists();
@@ -457,14 +481,16 @@ public class FormHeading extends Canvas {
 			} else {
 				messageLabel.setText(newMessage);
 			}
-			if (oldType != newType)
+			if (oldType != newType) {
 				updateForeground();
+			}
 		}
 
 		public void updateToolTip(String toolTip) {
 			Control control = getMessageControl();
-			if (control != null)
+			if (control != null) {
 				control.setToolTipText(toolTip);
+			}
 		}
 
 		public String getMessage() {
@@ -480,8 +506,9 @@ public class FormHeading extends Canvas {
 		}
 
 		public Control getMessageControl() {
-			if (needHyperlink() && messageHyperlink != null)
+			if (needHyperlink() && messageHyperlink != null) {
 				return messageHyperlink;
+			}
 			return messageLabel;
 		}
 
@@ -499,44 +526,53 @@ public class FormHeading extends Canvas {
 		}
 
 		public void addMessageHyperlinkListener(IHyperlinkListener listener) {
-			if (listeners == null)
+			if (listeners == null) {
 				listeners = new ListenerList<>();
+			}
 			listeners.add(listener);
 			ensureControlExists();
-			if (messageHyperlink != null)
+			if (messageHyperlink != null) {
 				messageHyperlink.addHyperlinkListener(listener);
-			if (listeners.size() == 1)
+			}
+			if (listeners.size() == 1) {
 				updateForeground();
+			}
 		}
 
 		private void removeMessageHyperlinkListener(IHyperlinkListener listener) {
 			if (listeners != null) {
 				listeners.remove(listener);
-				if (messageHyperlink != null)
+				if (messageHyperlink != null) {
 					messageHyperlink.removeHyperlinkListener(listener);
-				if (listeners.isEmpty())
+				}
+				if (listeners.isEmpty()) {
 					listeners = null;
+				}
 				ensureControlExists();
-				if (listeners == null && !isDisposed())
+				if (listeners == null && !isDisposed()) {
 					updateForeground();
+				}
 			}
 		}
 
 		private void ensureControlExists() {
 			if (needHyperlink()) {
-				if (messageLabel != null)
+				if (messageLabel != null) {
 					messageLabel.setVisible(false);
+				}
 				if (messageHyperlink == null) {
 					messageHyperlink = new Hyperlink(FormHeading.this, SWT.NULL);
 					messageHyperlink.setUnderlined(true);
 					messageHyperlink.setBackground(getBackground());
 					messageHyperlink.setText(message);
 					messageHyperlink.setHref(messages);
-					for (IHyperlinkListener element : listeners)
+					for (IHyperlinkListener element : listeners) {
 						messageHyperlink
 								.addHyperlinkListener(element);
-					if (messageToolTipManager != null)
+					}
+					if (messageToolTipManager != null) {
 						messageToolTipManager.createToolTip(messageHyperlink, false);
+					}
 				} else if (!messageHyperlink.getVisible()) {
 					messageHyperlink.setText(message);
 					messageHyperlink.setHref(messages);
@@ -544,14 +580,16 @@ public class FormHeading extends Canvas {
 				}
 			} else {
 				// need a label
-				if (messageHyperlink != null)
+				if (messageHyperlink != null) {
 					messageHyperlink.setVisible(false);
+				}
 				if (messageLabel == null) {
 					messageLabel = new CLabel(FormHeading.this, SWT.NULL);
 					messageLabel.setBackground(getBackground());
 					messageLabel.setText(message);
-					if (messageToolTipManager != null)
+					if (messageToolTipManager != null) {
 						messageToolTipManager.createToolTip(messageLabel, false);
+					}
 				} else if (!messageLabel.getVisible()) {
 					messageLabel.setText(message);
 					messageLabel.setVisible(true);
@@ -566,10 +604,12 @@ public class FormHeading extends Canvas {
 		}
 
 		public void setBackground(Color bg) {
-			if (messageHyperlink != null)
+			if (messageHyperlink != null) {
 				messageHyperlink.setBackground(bg);
-			if (messageLabel != null)
+			}
+			if (messageLabel != null) {
 				messageLabel.setBackground(bg);
+			}
 		}
 
 		public void setForeground(Color fg) {
@@ -616,8 +656,9 @@ public class FormHeading extends Canvas {
 			}
 		});
 		addListener(SWT.Resize, e -> {
-			if (gradientInfo != null || (backgroundImage != null && !isBackgroundImageTiled()))
+			if (gradientInfo != null || (backgroundImage != null && !isBackgroundImageTiled())) {
 				updateGradientImage();
+			}
 		});
 		addMouseMoveListener(this::updateTitleRegionHoverState);
 		addMouseTrackListener(new MouseTrackListener() {
@@ -685,10 +726,12 @@ public class FormHeading extends Canvas {
 
 	private void internalSetBackground(Color bg) {
 		titleRegion.setBackground(bg);
-		if (messageRegion != null)
+		if (messageRegion != null) {
 			messageRegion.setBackground(bg);
-		if (toolBarManager != null)
+		}
+		if (toolBarManager != null) {
 			toolBarManager.getControl().setBackground(bg);
+		}
 		putColor(COLOR_BASE_BG, bg);
 	}
 
@@ -699,8 +742,9 @@ public class FormHeading extends Canvas {
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
 		titleRegion.setForeground(fg);
-		if (messageRegion != null)
+		if (messageRegion != null) {
 			messageRegion.setForeground(fg);
+		}
 	}
 
 	/**
@@ -742,10 +786,11 @@ public class FormHeading extends Canvas {
 	 */
 	public void setImage(Image image) {
 		titleRegion.setImage(image);
-		if (messageRegion != null)
+		if (messageRegion != null) {
 			titleRegion.updateImage(messageRegion.getMessageImage(), true);
-		else
+		} else {
 			titleRegion.updateImage(null, true);
+		}
 	}
 
 	public void setTextBackground(Color[] gradientColors, int[] percents,
@@ -770,12 +815,14 @@ public class FormHeading extends Canvas {
 
 	public void setHeadingBackgroundImage(Image image) {
 		this.backgroundImage = image;
-		if (image != null)
+		if (image != null) {
 			setBackground(null);
+		}
 		if (isBackgroundImageTiled()) {
 			setBackgroundImage(image);
-		} else
+		} else {
 			updateGradientImage();
+		}
 	}
 
 	public Image getHeadingBackgroundImage() {
@@ -783,10 +830,11 @@ public class FormHeading extends Canvas {
 	}
 
 	public void setBackgroundImageTiled(boolean tiled) {
-		if (tiled)
+		if (tiled) {
 			flags |= BACKGROUND_IMAGE_TILED;
-		else
+		} else {
 			flags &= ~BACKGROUND_IMAGE_TILED;
+		}
 		setHeadingBackgroundImage(this.backgroundImage);
 	}
 
@@ -842,13 +890,15 @@ public class FormHeading extends Canvas {
 	 * bar manager has not been created yet.
 	 */
 	public void updateToolBar() {
-		if (toolBarManager != null)
+		if (toolBarManager != null) {
 			toolBarManager.update(false);
+		}
 	}
 
 	private void onPaint(GC gc) {
-		if (!isSeparatorVisible() && getBackgroundImage() == null)
+		if (!isSeparatorVisible() && getBackgroundImage() == null) {
 			return;
+		}
 		Rectangle carea = getClientArea();
 		if (carea.width == 0 || carea.height == 0) {
 			return;
@@ -857,9 +907,9 @@ public class FormHeading extends Canvas {
 			igc.setBackground(getBackground());
 			igc.fillRectangle(0, 0, width, height);
 			if (getBackgroundImage() != null) {
-				if (gradientInfo != null)
+				if (gradientInfo != null) {
 					drawBackground(igc, carea.x, carea.y, width, height);
-				else {
+				} else {
 					Image bgImage = getBackgroundImage();
 					Rectangle ibounds = bgImage.getBounds();
 					drawBackground(igc, carea.x, carea.y, ibounds.width, ibounds.height);
@@ -868,15 +918,17 @@ public class FormHeading extends Canvas {
 
 			if (isSeparatorVisible()) {
 				// bg separator
-				if (hasColor(IFormColors.H_BOTTOM_KEYLINE1))
+				if (hasColor(IFormColors.H_BOTTOM_KEYLINE1)) {
 					igc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE1));
-				else
+				} else {
 					igc.setForeground(getBackground());
+				}
 				igc.drawLine(carea.x, height - 2, carea.x + width - 1, height - 2);
-				if (hasColor(IFormColors.H_BOTTOM_KEYLINE2))
+				if (hasColor(IFormColors.H_BOTTOM_KEYLINE2)) {
 					igc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE2));
-				else
+				} else {
 					igc.setForeground(getForeground());
+				}
 				igc.drawLine(carea.x, height - 1, carea.x + width - 1, height - 1);
 			}
 		};
@@ -892,10 +944,11 @@ public class FormHeading extends Canvas {
 		titleRect.height += titleRect.y + 15;
 		titleRect.x = 0;
 		titleRect.y = 0;
-		if (titleRect.contains(e.x, e.y))
+		if (titleRect.contains(e.x, e.y)) {
 			titleRegion.setHoverState(TitleRegion.STATE_HOVER_LIGHT);
-		else
+		} else {
 			titleRegion.setHoverState(TitleRegion.STATE_NORMAL);
+		}
 	}
 
 	private void updateGradientImage() {
@@ -924,17 +977,19 @@ public class FormHeading extends Canvas {
 	}
 
 	public void setSeparatorVisible(boolean addSeparator) {
-		if (addSeparator)
+		if (addSeparator) {
 			flags |= SEPARATOR;
-		else
+		} else {
 			flags &= ~SEPARATOR;
+		}
 	}
 
 	public void setToolBarAlignment(int alignment) {
-		if (alignment == SWT.BOTTOM)
+		if (alignment == SWT.BOTTOM) {
 			flags |= BOTTOM_TOOLBAR;
-		else
+		} else {
 			flags &= ~BOTTOM_TOOLBAR;
+		}
 	}
 
 	public int getToolBarAlignment() {
@@ -947,8 +1002,9 @@ public class FormHeading extends Canvas {
 	}
 
 	public void removeMessageHyperlinkListener(IHyperlinkListener listener) {
-		if (messageRegion != null)
+		if (messageRegion != null) {
 			messageRegion.removeMessageHyperlinkListener(listener);
+		}
 	}
 
 	public String getMessage() {
@@ -966,22 +1022,26 @@ public class FormHeading extends Canvas {
 
 	private void ensureMessageRegionExists() {
 		// ensure message region exists
-		if (messageRegion == null)
+		if (messageRegion == null) {
 			messageRegion = new MessageRegion();
+		}
 	}
 
 	public void showMessage(String newMessage, int type, IMessage[] messages) {
 		if (messageRegion == null) {
 			// check the trivial case
-			if (newMessage == null)
+			if (newMessage == null) {
 				return;
-		} else if (messageRegion.isDisposed())
+			}
+		} else if (messageRegion.isDisposed()) {
 			return;
+		}
 		ensureMessageRegionExists();
 		messageRegion.showMessage(newMessage, type, messages);
 		titleRegion.updateImage(messageRegion.getMessageImage(), false);
-		if (messageToolTipManager != null)
+		if (messageToolTipManager != null) {
 			messageToolTipManager.update();
+		}
 		layout();
 		redraw();
 	}
@@ -1005,8 +1065,9 @@ public class FormHeading extends Canvas {
 	 */
 
 	public void setBusy(boolean busy) {
-		if (titleRegion.setBusy(busy))
+		if (titleRegion.setBusy(busy)) {
 			layout();
+		}
 	}
 
 	public Control getHeadClient() {
@@ -1014,17 +1075,19 @@ public class FormHeading extends Canvas {
 	}
 
 	public void setHeadClient(Control headClient) {
-		if (headClient != null)
+		if (headClient != null) {
 			Assert.isTrue(headClient.getParent() == this);
+		}
 		this.headClient = headClient;
 		layout();
 	}
 
 	public void putColor(String key, Color color) {
-		if (color == null)
+		if (color == null) {
 			colors.remove(key);
-		else
+		} else {
 			colors.put(key, color);
+		}
 	}
 
 	public Color getColor(String key) {

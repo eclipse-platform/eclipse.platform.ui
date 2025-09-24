@@ -41,8 +41,9 @@ public abstract class SharedHeaderFormEditor extends FormEditor {
 		public HeaderForm(FormEditor editor, ScrolledForm form) {
 			super(editor.getToolkit(), form);
 			setContainer(editor);
-			if (editor.getEditorInput() != null)
+			if (editor.getEditorInput() != null) {
 				setInput(editor.getEditorInput());
+			}
 		}
 
 		private FormEditor getEditor() {
@@ -120,14 +121,15 @@ public abstract class SharedHeaderFormEditor extends FormEditor {
 	@Override
 	public void setFocus() {
 		installActivationListener();
-		if (wasHeaderActive)
+		if (wasHeaderActive) {
 			((ManagedForm) getHeaderForm()).setFocus();
-		else {
+		} else {
 			int index= getActivePage();
-			if (index == -1)
+			if (index == -1) {
 				((ManagedForm) getHeaderForm()).setFocus();
-			else
+			} else {
 				super.setFocus();
+			}
 		}
 	}
 
@@ -173,8 +175,9 @@ public abstract class SharedHeaderFormEditor extends FormEditor {
 
 	@Override
 	protected void commitPages(boolean onSave) {
-		if (headerForm != null && headerForm.isDirty())
+		if (headerForm != null && headerForm.isDirty()) {
 			headerForm.commit(onSave);
+		}
 		super.commitPages(onSave);
 	}
 

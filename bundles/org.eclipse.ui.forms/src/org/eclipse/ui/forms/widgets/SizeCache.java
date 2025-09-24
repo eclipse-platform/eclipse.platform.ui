@@ -382,9 +382,8 @@ public class SizeCache {
 	 * dimension.
 	 */
 	private void computeHintOffset(Control control) {
-		if (control instanceof Scrollable) {
+		if (control instanceof Scrollable scrollable) {
 			// For scrollables, subtract off the trim size
-			Scrollable scrollable = (Scrollable) control;
 			Rectangle trim = scrollable.computeTrim(0, 0, 0, 0);
 
 			widthAdjustment = trim.width;

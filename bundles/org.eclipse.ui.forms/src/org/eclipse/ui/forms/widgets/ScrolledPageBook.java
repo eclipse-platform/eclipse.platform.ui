@@ -29,8 +29,8 @@ import org.eclipse.ui.internal.forms.widgets.WrappedPageBook;
  * @since 3.0
  */
 public class ScrolledPageBook extends SharedScrolledComposite {
-	private WrappedPageBook pageBook;
-	private Hashtable<Object, Control> pages;
+	private final WrappedPageBook pageBook;
+	private final Hashtable<Object, Control> pages;
 	private Composite emptyPage;
 	private Control currentPage;
 
@@ -164,8 +164,9 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 		if (page != null) {
 			pages.remove(key);
 			page.dispose();
-			if (showEmptyPage)
+			if (showEmptyPage) {
 				showEmptyPage();
+			}
 		}
 	}
 	/**
@@ -181,8 +182,9 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 			pageBook.showPage(page);
 			if (currentPage != null && currentPage != page) {
 				// switching pages - force layout
-				if (page instanceof Composite)
+				if (page instanceof Composite) {
 					((Composite) page).layout(false);
+				}
 			}
 			currentPage = page;
 		} else {
@@ -208,8 +210,9 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	 */
 	@Override
 	public boolean setFocus() {
-		if (currentPage != null)
+		if (currentPage != null) {
 			return currentPage.setFocus();
+		}
 		return super.setFocus();
 	}
 	/**

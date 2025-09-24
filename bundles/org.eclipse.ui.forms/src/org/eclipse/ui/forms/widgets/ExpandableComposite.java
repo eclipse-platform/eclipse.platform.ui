@@ -224,7 +224,7 @@ public class ExpandableComposite extends Canvas {
 
 	private Control client;
 
-	private ListenerList<IExpansionListener> listeners = new ListenerList<>();
+	private final ListenerList<IExpansionListener> listeners = new ListenerList<>();
 
 	private Color titleBarForeground;
 
@@ -232,15 +232,15 @@ public class ExpandableComposite extends Canvas {
 
 		private static final int MIN_WIDTH = -2;
 
-		private SizeCache toggleCache = new SizeCache();
+		private final SizeCache toggleCache = new SizeCache();
 
-		private SizeCache textClientCache = new SizeCache();
+		private final SizeCache textClientCache = new SizeCache();
 
-		private SizeCache textLabelCache = new SizeCache();
+		private final SizeCache textLabelCache = new SizeCache();
 
-		private SizeCache descriptionCache = new SizeCache();
+		private final SizeCache descriptionCache = new SizeCache();
 
-		private SizeCache clientCache = new SizeCache();
+		private final SizeCache clientCache = new SizeCache();
 
 		private void initCache(boolean shouldFlush) {
 			toggleCache.setControl(toggle);
@@ -276,8 +276,9 @@ public class ExpandableComposite extends Canvas {
 			Point toggleSize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
 			int width = clientArea.width - marginWidth - marginWidth - thmargin - thmargin;
-			if (toggleSize.x > 0)
+			if (toggleSize.x > 0) {
 				width -= toggleSize.x + IGAP;
+			}
 
 			// TODO: This code is common between computeSize and layout
 			int gapBetweenTcAndLabel = (textClient != null && textLabel != null) ? IGAP : 0;
@@ -343,9 +344,10 @@ public class ExpandableComposite extends Canvas {
 			if (textLabel != null) {
 				int ty = y;
 				if (leftAlignment) {
-					if (size.y < tcsize.y)
+					if (size.y < tcsize.y) {
 						ty = (tcsize.y - size.y) / 2 + marginHeight
 								+ tvmargin;
+					}
 				}
 
 				int gap = 0;
@@ -360,13 +362,16 @@ public class ExpandableComposite extends Canvas {
 
 			if (textClient != null) {
 				int tcwidth = clientArea.width - marginWidth - marginWidth - thmargin - thmargin;
-				if (toggleSize.x > 0)
+				if (toggleSize.x > 0) {
 					tcwidth -= toggleSize.x + IGAP;
-				if (size.x > 0)
+				}
+				if (size.x > 0) {
 					tcwidth -= size.x + IGAP;
+				}
 				tcwidth = Math.min(tcsize.x, tcwidth);
-				if (tcwidth < 0)
+				if (tcwidth < 0) {
 					tcwidth = 0;
+				}
 				int tcx;
 				if ((expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0) {
 					tcx = x + ((size.x > 0) ? size.x + IGAP : 0);
@@ -377,8 +382,9 @@ public class ExpandableComposite extends Canvas {
 			}
 
 			y += height;
-			if (hasTitleBar())
+			if (hasTitleBar()) {
 				y += tvmargin;
+			}
 			Control separatorControl = getSeparatorControl();
 			if (separatorControl != null) {
 				y += VSPACE;
@@ -479,14 +485,17 @@ public class ExpandableComposite extends Canvas {
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				int cwHint = wHint;
 				int clientIndent = 0;
-				if ((expansionStyle & CLIENT_INDENT) != 0)
+				if ((expansionStyle & CLIENT_INDENT) != 0) {
 					clientIndent = toggleWidthPlusGap;
+				}
 
 				if (cwHint != SWT.DEFAULT && cwHint != MIN_WIDTH) {
 					cwHint -= marginWidth + marginWidth + thmargin + thmargin;
-					if ((expansionStyle & CLIENT_INDENT) != 0)
-						if (tcsize.x > 0)
+					if ((expansionStyle & CLIENT_INDENT) != 0) {
+						if (tcsize.x > 0) {
 							cwHint -= toggleWidthPlusGap;
+						}
+					}
 				}
 				Point dsize = null;
 				Point csize;
@@ -500,8 +509,9 @@ public class ExpandableComposite extends Canvas {
 					int dwHint = cwHint;
 					if (dwHint == SWT.DEFAULT || dwHint == MIN_WIDTH) {
 						dwHint = csize.x;
-						if ((expansionStyle & CLIENT_INDENT) != 0)
+						if ((expansionStyle & CLIENT_INDENT) != 0) {
 							dwHint -= toggleWidthPlusGap;
+						}
 					}
 					dsize = descriptionCache.computeSize(dwHint, SWT.DEFAULT);
 					width = Math.max(width, dsize.x + clientIndent);
@@ -572,8 +582,9 @@ public class ExpandableComposite extends Canvas {
 	public ExpandableComposite(Composite parent, int style, int expansionStyle) {
 		super(parent, style);
 		this.expansionStyle = expansionStyle;
-		if ((expansionStyle & TITLE_BAR) != 0)
+		if ((expansionStyle & TITLE_BAR) != 0) {
 			setBackgroundMode(SWT.INHERIT_DEFAULT);
+		}
 		super.setLayout(new ExpandableLayout());
 		if (hasTitleBar()) {
 			this.addPaintListener(e -> {
@@ -582,14 +593,16 @@ public class ExpandableComposite extends Canvas {
 				}
 			});
 		}
-		if ((expansionStyle & TWISTIE) != 0)
+		if ((expansionStyle & TWISTIE) != 0) {
 			toggle = new Twistie(this, SWT.NULL);
-		else if ((expansionStyle & TREE_NODE) != 0)
+		} else if ((expansionStyle & TREE_NODE) != 0) {
 			toggle = new TreeNode(this, SWT.NULL);
-		else
+		} else {
 			expanded = true;
-		if ((expansionStyle & EXPANDED) != 0)
+		}
+		if ((expansionStyle & EXPANDED) != 0) {
 			expanded = true;
+		}
 		if (toggle != null) {
 			toggle.setExpanded(expanded);
 			toggle.addHyperlinkListener(new HyperlinkAdapter() {
@@ -599,12 +612,13 @@ public class ExpandableComposite extends Canvas {
 				}
 			});
 			toggle.addPaintListener(e -> {
-				if (textLabel instanceof Label && !isFixedStyle())
+				if (textLabel instanceof Label && !isFixedStyle()) {
 					if (toggle.hover) {
 						textLabel.setForeground(toggle.getHoverDecorationColor());
 					} else {
 						textLabel.setForeground(getTitleBarForeground());
 					}
+				}
 			});
 			toggle.addKeyListener(new KeyAdapter() {
 				@Override
@@ -653,8 +667,9 @@ public class ExpandableComposite extends Canvas {
 				Listener listener = e -> {
 					switch (e.type) {
 					case SWT.MouseDown:
-						if (toggle != null)
+						if (toggle != null) {
 							toggle.setFocus();
+						}
 						break;
 					case SWT.MouseUp:
 						label.setCursor(FormsResources.getBusyCursor());
@@ -695,8 +710,9 @@ public class ExpandableComposite extends Canvas {
 			textLabel.addTraverseListener(e -> {
 				if (e.detail == SWT.TRAVERSE_MNEMONIC) {
 					// steal the mnemonic
-					if (!isVisible() || !isEnabled())
+					if (!isVisible() || !isEnabled()) {
 						return;
+					}
 					if (FormUtil.mnemonicMatch(getText(), e.character)) {
 						e.doit = false;
 						if (!isFixedStyle()) {
@@ -723,8 +739,9 @@ public class ExpandableComposite extends Canvas {
 
 	@Override
 	public void setMenu(Menu menu) {
-		if (textLabel != null)
+		if (textLabel != null) {
 			textLabel.setMenu(menu);
+		}
 		super.setMenu(menu);
 	}
 
@@ -743,10 +760,12 @@ public class ExpandableComposite extends Canvas {
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		if ((getExpansionStyle() & TITLE_BAR) == 0) {
-			if (textLabel != null)
+			if (textLabel != null) {
 				textLabel.setBackground(bg);
-			if (toggle != null)
+			}
+			if (toggle != null) {
 				toggle.setBackground(bg);
+			}
 		}
 	}
 
@@ -756,10 +775,12 @@ public class ExpandableComposite extends Canvas {
 	@Override
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		if (textLabel != null)
+		if (textLabel != null) {
 			textLabel.setForeground(fg);
-		if (toggle != null)
+		}
+		if (toggle != null) {
 			toggle.setForeground(fg);
+		}
 	}
 
 	/**
@@ -769,8 +790,9 @@ public class ExpandableComposite extends Canvas {
 	 *            the color object
 	 */
 	public void setToggleColor(Color c) {
-		if (toggle != null)
+		if (toggle != null) {
 			toggle.setDecorationColor(c);
+		}
 	}
 
 	/**
@@ -781,8 +803,9 @@ public class ExpandableComposite extends Canvas {
 	 *            the active color object
 	 */
 	public void setActiveToggleColor(Color c) {
-		if (toggle != null)
+		if (toggle != null) {
 			toggle.setHoverDecorationColor(c);
+		}
 	}
 
 	/**
@@ -791,18 +814,22 @@ public class ExpandableComposite extends Canvas {
 	@Override
 	public void setFont(Font font) {
 		super.setFont(font);
-		if (textLabel != null)
+		if (textLabel != null) {
 			textLabel.setFont(font);
-		if (toggle != null)
+		}
+		if (toggle != null) {
 			toggle.setFont(font);
+		}
 	}
 
 	@Override
 	public void setEnabled(boolean enabled) {
-		if (textLabel != null)
+		if (textLabel != null) {
 			textLabel.setEnabled(enabled);
-		if (toggle != null)
+		}
+		if (toggle != null) {
 			toggle.setEnabled(enabled);
+		}
 		super.setEnabled(enabled);
 	}
 
@@ -865,12 +892,13 @@ public class ExpandableComposite extends Canvas {
 	 * @see #setText(String)
 	 */
 	public String getText() {
-		if (textLabel instanceof Label)
+		if (textLabel instanceof Label) {
 			return ((Label) textLabel).getText();
-		else if (textLabel instanceof Hyperlink)
+		} else if (textLabel instanceof Hyperlink) {
 			return ((Hyperlink) textLabel).getText();
-		else
+		} else {
 			return ""; //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -929,10 +957,12 @@ public class ExpandableComposite extends Canvas {
 	protected void internalSetExpanded(boolean expanded) {
 		if (this.expanded != expanded) {
 			this.expanded = expanded;
-			if (getDescriptionControl() != null)
+			if (getDescriptionControl() != null) {
 				getDescriptionControl().setVisible(expanded);
-			if (client != null)
+			}
+			if (client != null) {
 				client.setVisible(expanded);
+			}
 			reflow();
 		}
 	}
@@ -1044,8 +1074,9 @@ public class ExpandableComposite extends Canvas {
 	 *            more.
 	 */
 	public void setTextClient(Control textClient) {
-		if (this.textClient != null)
+		if (this.textClient != null) {
 			this.textClient.dispose();
+		}
 		this.textClient = textClient;
 	}
 
@@ -1063,8 +1094,9 @@ public class ExpandableComposite extends Canvas {
 	 * @since 3.3
 	 */
 	public int getTextClientHeightDifference() {
-		if (textClient == null || textLabel == null)
+		if (textClient == null || textLabel == null) {
 			return 0;
+		}
 		int theight = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		int tcheight = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		return Math.max(tcheight - theight, 0);
@@ -1090,8 +1122,9 @@ public class ExpandableComposite extends Canvas {
 	 */
 	public void setTitleBarForeground(Color color) {
 		titleBarForeground = color;
-		if (textLabel != null)
+		if (textLabel != null) {
 			textLabel.setForeground(color);
+		}
 	}
 
 	/**
@@ -1108,8 +1141,9 @@ public class ExpandableComposite extends Canvas {
 	private void toggleState() {
 		boolean newState = !isExpanded();
 		internalSetExpanded(newState, true);
-		if (newState)
+		if (newState) {
 			FormUtil.ensureVisible(this);
+		}
 	}
 
 	/**
@@ -1134,14 +1168,16 @@ public class ExpandableComposite extends Canvas {
 
 	private void fireExpanding(boolean state, boolean before) {
 		int size = listeners.size();
-		if (size == 0)
+		if (size == 0) {
 			return;
+		}
 		ExpansionEvent e = new ExpansionEvent(this, state);
 		for (IExpansionListener listener : listeners) {
-			if (before)
+			if (before) {
 				listener.expansionStateChanging(e);
-			else
+			} else {
 				listener.expansionStateChanged(e);
+			}
 		}
 	}
 
@@ -1165,16 +1201,18 @@ public class ExpandableComposite extends Canvas {
 		int loc = down ? index + 1 : index - 1;
 		while (loc >= 0 && loc < children.length) {
 			Control c = children[loc];
-			if (c instanceof ExpandableComposite && c.isVisible())
+			if (c instanceof ExpandableComposite && c.isVisible()) {
 				return (ExpandableComposite) c;
+			}
 			loc = down ? loc + 1 : loc - 1;
 		}
 		return null;
 	}
 
 	private void programmaticToggleState() {
-		if (toggle != null)
+		if (toggle != null) {
 			toggle.setExpanded(!toggle.isExpanded());
+		}
 		toggleState();
 	}
 
@@ -1182,8 +1220,9 @@ public class ExpandableComposite extends Canvas {
 		Point size = textLabel.getSize();
 		gc.setBackground(textLabel.getBackground());
 		gc.setForeground(textLabel.getForeground());
-		if (toggle.isFocusControl())
+		if (toggle.isFocusControl()) {
 			gc.drawFocus(0, 0, size.x, size.y);
+		}
 	}
 
 	void reflow() {

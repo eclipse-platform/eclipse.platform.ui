@@ -29,19 +29,20 @@ public class FormFonts {
 	private static FormFonts instance;
 
 	public static FormFonts getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new FormFonts();
+		}
 		return instance;
 	}
 
-	private ResourceManagerManger manager = new ResourceManagerManger();
+	private final ResourceManagerManger manager = new ResourceManagerManger();
 	private HashMap<Font, BoldFontDescriptor> descriptors;
 
 	private FormFonts() {
 	}
 
 	private static class BoldFontDescriptor extends FontDescriptor {
-		private FontData[] fFontData;
+		private final FontData[] fFontData;
 
 		BoldFontDescriptor (Font font) {
 			fFontData = font.getFontData();
@@ -52,8 +53,7 @@ public class FormFonts {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof BoldFontDescriptor) {
-				BoldFontDescriptor desc = (BoldFontDescriptor)obj;
+			if (obj instanceof BoldFontDescriptor desc) {
 				return Arrays.equals(fFontData, desc.fFontData);
 			}
 			return false;
@@ -102,12 +102,14 @@ public class FormFonts {
 	}
 
 	private void checkHashMaps() {
-		if (descriptors == null)
+		if (descriptors == null) {
 			descriptors = new HashMap<>();
+		}
 	}
 
 	private void validateHashMaps() {
-		if (descriptors.isEmpty())
+		if (descriptors.isEmpty()) {
 			descriptors = null;
+		}
 	}
 }

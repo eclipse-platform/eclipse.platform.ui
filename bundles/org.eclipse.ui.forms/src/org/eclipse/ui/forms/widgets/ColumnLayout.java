@@ -75,7 +75,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 	 */
 	public int rightMargin = 5;
 
-	private LayoutCache cache = new LayoutCache();
+	private final LayoutCache cache = new LayoutCache();
 
 	private static final int MIN_SIZE = -2;
 
@@ -185,8 +185,9 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 				}
 				colHeight = heights[ncol];
 			}
-			if (colHeight > 0)
+			if (colHeight > 0) {
 				colHeight += verticalSpacing;
+			}
 			colHeight += childHeight;
 		}
 		heights[ncol] = Math.max(heights[ncol],colHeight);
@@ -279,8 +280,9 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 				}
 				colHeight = heights[ncol];
 			}
-			if (colHeight > 0)
+			if (colHeight > 0) {
 				colHeight += verticalSpacing;
+			}
 
 
 			switch (align) {

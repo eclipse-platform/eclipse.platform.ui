@@ -34,10 +34,10 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
  */
 
 public final class HyperlinkGroup extends HyperlinkSettings {
-	private ArrayList<Hyperlink> links = new ArrayList<>();
+	private final ArrayList<Hyperlink> links = new ArrayList<>();
 	private Hyperlink lastActivated;
 	private Hyperlink lastEntered;
-	private GroupListener listener;
+	private final GroupListener listener;
 	private boolean isActiveBackgroundSet;
 	private boolean isActiveForegroundSet;
 	private boolean isBackgroundSet;
@@ -69,22 +69,28 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 			Hyperlink link = (Hyperlink) e.widget;
 			previousBackground = link.getBackground();
 			previousForeground = link.getForeground();
-			if (isActiveBackgroundSet)
+			if (isActiveBackgroundSet) {
 				link.setBackground(getActiveBackground());
-			if (isActiveForegroundSet)
+			}
+			if (isActiveForegroundSet) {
 				link.setForeground(getActiveForeground());
-			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER)
+			}
+			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER) {
 				link.setUnderlined(true);
+			}
 			link.setCursor(getHyperlinkCursor());
 		}
 		private void onMouseExit(Event e) {
 			Hyperlink link = (Hyperlink) e.widget;
-			if (isActiveBackgroundSet)
+			if (isActiveBackgroundSet) {
 				link.setBackground(previousBackground);
-			if (isActiveForegroundSet)
+			}
+			if (isActiveForegroundSet) {
 				link.setForeground(previousForeground);
-			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER)
+			}
+			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER) {
 				link.setUnderlined(false);
+			}
 		}
 		@Override
 		public void linkActivated(HyperlinkEvent e) {
@@ -105,8 +111,9 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 		}
 		private void linkExited(Hyperlink link) {
 			link.setCursor(null);
-			if (lastEntered == link)
+			if (lastEntered == link) {
 				lastEntered = null;
+			}
 		}
 	}
 
@@ -139,12 +146,15 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	 */
 
 	public void add(Hyperlink link) {
-		if (isBackgroundSet)
+		if (isBackgroundSet) {
 			link.setBackground(getBackground());
-		if (isForegroundSet)
+		}
+		if (isForegroundSet) {
 			link.setForeground(getForeground());
-		if (getHyperlinkUnderlineMode() == UNDERLINE_ALWAYS)
+		}
+		if (getHyperlinkUnderlineMode() == UNDERLINE_ALWAYS) {
 			link.setUnderlined(true);
+		}
 		hook(link);
 	}
 
@@ -237,16 +247,19 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 		link.removeHyperlinkListener(listener);
 		link.removeListener(SWT.MouseEnter, listener);
 		link.removeListener(SWT.MouseExit, listener);
-		if (lastActivated == link)
+		if (lastActivated == link) {
 			lastActivated = null;
-		if (lastEntered == link)
+		}
+		if (lastEntered == link) {
 			lastEntered = null;
+		}
 		links.remove(link);
 	}
 
 	private void onMouseDown(Event e) {
-		if (e.button == 1)
+		if (e.button == 1) {
 			return;
+		}
 		lastActivated = (Hyperlink) e.widget;
 	}
 }

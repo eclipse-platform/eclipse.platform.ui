@@ -32,9 +32,9 @@ public class BulletParagraph extends Paragraph {
 
 	private String text;
 
-	private int CIRCLE_DIAM = 5;
+	private final int CIRCLE_DIAM = 5;
 
-	private int SPACING = 10;
+	private final int SPACING = 10;
 
 	private int indent = -1;
 
@@ -52,8 +52,9 @@ public class BulletParagraph extends Paragraph {
 	@Override
 	public int getIndent() {
 		int ivalue = indent;
-		if (ivalue != -1)
+		if (ivalue != -1) {
 			return ivalue;
+		}
 		switch (style) {
 		case CIRCLE:
 			ivalue = CIRCLE_DIAM + SPACING;
@@ -66,8 +67,9 @@ public class BulletParagraph extends Paragraph {
 	}
 
 	public int getBulletIndent() {
-		if (bindent != -1)
+		if (bindent != -1) {
 			return bindent;
+		}
 		return 0;
 	}
 
@@ -137,8 +139,9 @@ public class BulletParagraph extends Paragraph {
 
 	public void paintBullet(GC gc, Rectangle repaintRegion,
 			Hashtable<String, Object> resourceTable) {
-		if (bbounds == null)
+		if (bbounds == null) {
 			return;
+		}
 		int x = bbounds.x;
 		int y = bbounds.y;
 		if (repaintRegion != null) {
@@ -156,8 +159,9 @@ public class BulletParagraph extends Paragraph {
 			gc.drawText(text, x, y);
 		} else if (style == IMAGE && text != null) {
 			Image image = (Image) resourceTable.get(text);
-			if (image != null)
+			if (image != null) {
 				gc.drawImage(image, x, y);
+			}
 		}
 	}
 }

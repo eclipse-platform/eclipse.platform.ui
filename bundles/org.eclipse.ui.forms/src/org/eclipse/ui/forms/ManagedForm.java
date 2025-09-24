@@ -41,9 +41,9 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class ManagedForm implements IManagedForm {
 	private Object input;
 
-	private ScrolledForm form;
+	private final ScrolledForm form;
 
-	private FormToolkit toolkit;
+	private final FormToolkit toolkit;
 
 	private Object container;
 
@@ -51,7 +51,7 @@ public class ManagedForm implements IManagedForm {
 
 	private boolean initialized;
 
-	private Vector<IFormPart> parts = new Vector<>();
+	private final Vector<IFormPart> parts = new Vector<>();
 
 	/**
 	 * Creates a managed form in the provided parent. Form toolkit and widget
@@ -122,8 +122,9 @@ public class ManagedForm implements IManagedForm {
 	public void fireSelectionChanged(IFormPart part, ISelection selection) {
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart cpart = parts.get(i);
-			if (part.equals(cpart))
+			if (part.equals(cpart)) {
 				continue;
+			}
 			if (cpart instanceof IPartSelectionListener) {
 				((IPartSelectionListener) cpart).selectionChanged(part,
 						selection);
@@ -137,8 +138,9 @@ public class ManagedForm implements IManagedForm {
 	 */
 	@Override
 	public void initialize() {
-		if (initialized)
+		if (initialized) {
 			return;
+		}
 		for (IFormPart part : parts) {
 			part.initialize(this);
 		}
@@ -167,9 +169,9 @@ public class ManagedForm implements IManagedForm {
 	public void refresh() {
 		Thread t = Thread.currentThread();
 		Thread dt = toolkit.getColors().getDisplay().getThread();
-		if (t.equals(dt))
+		if (t.equals(dt)) {
 			doRefresh();
-		else {
+		} else {
 			toolkit.getColors().getDisplay().asyncExec(this::doRefresh);
 		}
 	}
@@ -182,15 +184,17 @@ public class ManagedForm implements IManagedForm {
 				nrefreshed++;
 			}
 		}
-		if (nrefreshed > 0)
+		if (nrefreshed > 0) {
 			form.reflow(true);
+		}
 	}
 
 	@Override
 	public void commit(boolean onSave) {
 		for (IFormPart part : parts) {
-			if (part.isDirty())
+			if (part.isDirty()) {
 				part.commit(onSave);
+			}
 		}
 	}
 
@@ -201,8 +205,9 @@ public class ManagedForm implements IManagedForm {
 		this.input = input;
 		for (IFormPart part : parts) {
 			boolean result = part.setFormInput(input);
-			if (result)
+			if (result) {
 				pageResult = true;
+			}
 		}
 		return pageResult;
 	}
@@ -228,8 +233,9 @@ public class ManagedForm implements IManagedForm {
 	@Override
 	public boolean isDirty() {
 		for (IFormPart part : parts) {
-			if (part.isDirty())
+			if (part.isDirty()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -237,8 +243,9 @@ public class ManagedForm implements IManagedForm {
 	@Override
 	public boolean isStale() {
 		for (IFormPart part : parts) {
-			if (part.isStale())
+			if (part.isStale()) {
 				return true;
+			}
 		}
 		return false;
 	}

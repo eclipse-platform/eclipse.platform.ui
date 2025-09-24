@@ -32,13 +32,16 @@ public class ImageSegment extends ObjectSegment {
 	}
 
 	private Image getImage(String key, Hashtable<String, Object> objectTable) {
-		if (key == null)
+		if (key == null) {
 			return null;
+		}
 		Object obj = objectTable.get(key);
-		if (obj == null)
+		if (obj == null) {
 			return null;
-		if (obj instanceof Image)
+		}
+		if (obj instanceof Image) {
 			return (Image) obj;
+		}
 		return null;
 	}
 
@@ -47,8 +50,9 @@ public class ImageSegment extends ObjectSegment {
 		Image image = getImage(key, objectTable);
 		if (image==null) {
 			image = FormUtil.createAlphaMashImage(selData.display, getImage(objectTable));
-			if (image!=null)
+			if (image!=null) {
 				objectTable.put(key, image);
+			}
 		}
 		return image;
 	}
@@ -69,8 +73,9 @@ public class ImageSegment extends ObjectSegment {
 			Rectangle rect = image.getBounds();
 			iwidth = rect.width + (isSelectable()?2:0);
 			iheight = rect.height + (isSelectable()?2:0);
-		} else
+		} else {
 			return;
+		}
 		Rectangle bounds = getBounds();
 		int ix = bounds.x+(isSelectable()?1:0);
 		int iy = bounds.y+(isSelectable()?1:0);
@@ -103,11 +108,12 @@ public class ImageSegment extends ObjectSegment {
 					gc.drawImage(selImage, sx, sy);
 					gc.setBackground(savedBg);
 				}
-			}
-			else
+			} else {
 				drawClipImage(gc, image, ix, iy, repaintRegion);
-		} else
+			}
+		} else {
 			drawClipImage(gc, image, ix, iy, repaintRegion);
+		}
 		if (selected) {
 			int fx = bounds.x;
 			int fy = bounds.y;
@@ -136,8 +142,9 @@ public class ImageSegment extends ObjectSegment {
 	@Override
 	protected Point getObjectSize(Hashtable<String, Object> resourceTable, int wHint) {
 		Image image = getImage(resourceTable);
-		if (image==null)
+		if (image==null) {
 			return new Point(0, 0);
+		}
 		Rectangle ibounds = image.getBounds();
 		return new Point(ibounds.width, ibounds.height);
 	}

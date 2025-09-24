@@ -114,10 +114,10 @@ public abstract class MasterDetailsBlock {
 			purgeSashes();
 			Control [] children = getChildren();
 			for (Control element : children) {
-				if (element instanceof Sash) {
-					Sash sash = (Sash)element;
-					if (sashes.contains(sash))
+				if (element instanceof Sash sash) {
+					if (sashes.contains(sash)) {
 						continue;
+					}
 					sash.addListener(SWT.Paint, listener);
 					sash.addListener(SWT.MouseEnter, listener);
 					sash.addListener(SWT.MouseExit, listener);
@@ -128,8 +128,9 @@ public abstract class MasterDetailsBlock {
 		private void purgeSashes() {
 			for (Iterator<Sash> iter=sashes.iterator(); iter.hasNext();) {
 				Sash sash = iter.next();
-				if (sash.isDisposed())
+				if (sash.isDisposed()) {
 					iter.remove();
+				}
 			}
 		}
 	}
@@ -213,7 +214,9 @@ public abstract class MasterDetailsBlock {
 		Listener listener = ((MDSashForm)sashForm).listener;
 		Control [] children = sashForm.getChildren();
 		for (Control element : children) {
-			if (element instanceof Sash) continue;
+			if (element instanceof Sash) {
+				continue;
+			}
 			element.addListener(SWT.Resize, listener);
 		}
 	}
@@ -266,13 +269,15 @@ public abstract class MasterDetailsBlock {
 		gc.setForeground(colors.getColor(IFormColors.TB_BORDER));
 		Point size = sash.getSize();
 		if (vertical) {
-			if (hover!=null)
+			if (hover!=null) {
 				gc.fillRectangle(0, 0, size.x, size.y);
 			//else
 				//gc.drawLine(1, 0, 1, size.y-1);
-		} else if (hover!=null)
+			}
+		} else if (hover!=null) {
 			gc.fillRectangle(0, 0, size.x, size.y);
 		//else
 			//gc.drawLine(0, 1, size.x-1, 1);
+		}
 	}
 }

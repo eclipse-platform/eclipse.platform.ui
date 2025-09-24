@@ -79,8 +79,9 @@ public class ImageHyperlink extends Hyperlink {
 		super(parent, removeAlignment(style));
 		extractAlignment(style);
 		addDisposeListener(e -> {
-			if (disabledImage != null)
+			if (disabledImage != null) {
 				disabledImage.dispose();
+			}
 		});
 	}
 
@@ -96,12 +97,14 @@ public class ImageHyperlink extends Hyperlink {
 			image = disabledImage;
 		}
 		else {
-			if ((state & ACTIVE) != 0)
+			if ((state & ACTIVE) != 0) {
 				image = activeImage;
-			else if ((state & HOVER) != 0)
+			} else if ((state & HOVER) != 0) {
 				image = hoverImage;
-			if (image == null)
+			}
+			if (image == null) {
 				image = this.image;
+			}
 		}
 		Rectangle ibounds = image != null ? image.getBounds() : new Rectangle(0, 0, 0, 0);
 		Point maxsize = computeMaxImageSize();
@@ -113,18 +116,21 @@ public class ImageHyperlink extends Hyperlink {
 		if (horizontalAlignment == SWT.LEFT) {
 			int x = bounds.x+marginWidth + maxsize.x / 2 - ibounds.width / 2;
 			int textX = bounds.x + marginWidth + maxsize.x + spacing;
-			if (image != null)
+			if (image != null) {
 				gc.drawImage(image, x, y);
-			if (getText() != null)
+			}
+			if (getText() != null) {
 				drawText(gc, bounds, textX, textWidth);
+			}
 		} else if (horizontalAlignment == SWT.RIGHT) {
 			int x = bounds.x+marginWidth;
 			if (getText() != null) {
 				x += drawText(gc, bounds, x, textWidth);
 			}
 			x += maxsize.x / 2 - ibounds.width / 2 + spacing;
-			if (image != null)
+			if (image != null) {
 				gc.drawImage(image, x, y);
+			}
 		}
 	}
 
@@ -185,10 +191,12 @@ public class ImageHyperlink extends Hyperlink {
 		width += 2 * marginWidth;
 		height += 2 * marginHeight;
 
-		if (wHint != SWT.DEFAULT)
+		if (wHint != SWT.DEFAULT) {
 			width = wHint;
-		if (hHint != SWT.DEFAULT)
+		}
+		if (hHint != SWT.DEFAULT) {
 			height = hHint;
+		}
 
 		return new Point(width + trim.width, height + trim.height);
 	}
@@ -211,8 +219,9 @@ public class ImageHyperlink extends Hyperlink {
 		redraw();
 		super.handleActivate(e);
 		state &= ~ACTIVE;
-		if (!isDisposed())
+		if (!isDisposed()) {
 			redraw();
+		}
 	}
 
 	/**
@@ -335,8 +344,9 @@ public class ImageHyperlink extends Hyperlink {
 
 	@Override
 	public void setEnabled(boolean enabled) {
-		if (!enabled)
+		if (!enabled) {
 			createDisabledImage();
+		}
 		super.setEnabled(enabled);
 		if (enabled && disabledImage != null) {
 			disabledImage.dispose();
