@@ -58,6 +58,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.CursorLinePainter;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.CompositeRuler;
@@ -688,7 +689,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		progressLabel = new Label(labels, SWT.RIGHT);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		progressLabel.setLayoutData(gd);
-		createButton(labels, REFRESH_BUTTON_ID, Messages.QuickSearchDialog_Refresh, false);
 
 		labels.setLayoutData(gd);
 		return listLabel;
@@ -813,13 +813,19 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		GridDataFactory.fillDefaults().span(6,1).grab(true, false).applyTo(pattern);
 
 		Composite searchInComposite = createNestedComposite(inputRow, 2, false);
-		GridDataFactory.fillDefaults().span(4,1).grab(true, false).applyTo(searchInComposite);
+		GridDataFactory.fillDefaults().span(3,1).grab(true, false).applyTo(searchInComposite);
 		Label searchInLabel = new Label(searchInComposite, SWT.NONE);
 		searchInLabel.setText(Messages.QuickSearchDialog_In);
 		GridDataFactory.swtDefaults().indent(5, 0).applyTo(searchInLabel);
 		searchIn = new Combo(searchInComposite, SWT.SINGLE | SWT.BORDER | SWT.ICON_CANCEL);
 		searchIn.setToolTipText(Messages.QuickSearchDialog_InTooltip);
 		GridDataFactory.fillDefaults().grab(true, false).indent(5, 0).applyTo(searchIn);
+
+		// Refresh button next to pattern field towards extreme right
+		Button refreshButton = new Button(inputRow, SWT.PUSH);
+		refreshButton.setText(Messages.QuickSearchDialog_Refresh);
+		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).grab(false, false).applyTo(refreshButton);
+		refreshButton.addListener(SWT.Selection, e -> refreshButtonPressed());
 
 		listLabel = createLabels(content);
 
@@ -1173,6 +1179,9 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 							viewer.revealRange(rangeStart, rangeEnd - rangeStart);
 
 							var targetLineFirstMatch = getQuery().findFirst(document.get(item.getOffset(), contextLenght - (item.getOffset() - start)));
+							if (targetLineFirstMatch == null) {
+							    return; // nothing to refresh
+							}
 							int targetLineFirstMatchStart = item.getOffset() + targetLineFirstMatch.getOffset();
 							// sets caret position
 							viewer.setSelectedRange(targetLineFirstMatchStart, 0);
@@ -1289,6 +1298,10 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				//element is available in the list.
 				openButton.setEnabled(itemCount>0);
 			}
+			//Auto-select the first search result for preview to be shown.
+			if (itemCount >= 1 && list.getSelection().isEmpty()) {
+	            list.getTable().select(0);
+	        }
 			refreshDetails();
 		}
 	}
@@ -1484,6 +1497,14 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		} else {
 			//The QuickTextSearcher is already active update the query
 			this.searcher.setQuery(newFilter, force);
+			if(newFilter.getPatternString().trim().isEmpty()) {
+				//When pattern is cleared, clear the preview section
+				viewer.setDocument(new Document("")); //$NON-NLS-1$
+			    if (lineNumberColumn != null) {
+			        viewer.removeVerticalRulerColumn(lineNumberColumn);
+			        viewer.addVerticalRulerColumn(lineNumberColumn);
+			    }
+			}
 		}
 		if (progressJob!=null) {
 			progressJob.schedule();
