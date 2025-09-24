@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 202 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -519,30 +519,30 @@ public class FormColors {
 		// title bar outline - border color
 		RGB tbBorder = getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		RGB bg = getImpliedBackground().getRGB();
-		// Group 1
-		// Rule: If at least 2 of the RGB values are equal to or between 180 and
-		// 255, then apply specified opacity for Group 1
-		// Examples: Vista, XP Silver, Wn High Con #2
-		// Keyline = TITLE_BACKGROUND @ 70% Opacity over LIST_BACKGROUND
-		if (testTwoPrimaryColors(tbBorder, 179, 256))
+		if (testTwoPrimaryColors(tbBorder, 179, 256)) {
+			// Group 1
+			// Rule: If at least 2 of the RGB values are equal to or between 180 and
+			// 255, then apply specified opacity for Group 1
+			// Examples: Vista, XP Silver, Wn High Con #2
+			// Keyline = TITLE_BACKGROUND @ 70% Opacity over LIST_BACKGROUND
 			tbBorder = blend(tbBorder, bg, 70);
 
-		// Group 2
-		// Rule: If at least 2 of the RGB values are equal to or between 121 and
-		// 179, then apply specified opacity for Group 2
-		// Examples: XP Olive, OSX Graphite, Linux GTK, Wn High Con Black
+		} else if (testTwoPrimaryColors(tbBorder, 120, 180)) {
+			// Group 2
+			// Rule: If at least 2 of the RGB values are equal to or between 121 and
+			// 179, then apply specified opacity for Group 2
+			// Examples: XP Olive, OSX Graphite, Linux GTK, Wn High Con Black
 
-		// Keyline = TITLE_BACKGROUND @ 50% Opacity over LIST_BACKGROUND
-		else if (testTwoPrimaryColors(tbBorder, 120, 180))
+			// Keyline = TITLE_BACKGROUND @ 50% Opacity over LIST_BACKGROUND
 			tbBorder = blend(tbBorder, bg, 50);
 
-		// Group 3
-		// Rule: Everything else
-		// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
-		// Aqua, Wn High Con White, Wn High Con #1
+		} else {
+			// Group 3
+			// Rule: Everything else
+			// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
+			// Aqua, Wn High Con White, Wn High Con #1
 
-		// Keyline = TITLE_BACKGROUND @ 30% Opacity over LIST_BACKGROUND
-		else {
+			// Keyline = TITLE_BACKGROUND @ 30% Opacity over LIST_BACKGROUND
 			tbBorder = blend(tbBorder, bg, 30);
 		}
 		createColor(FormColors.TB_BORDER, tbBorder);
@@ -586,32 +586,33 @@ public class FormColors {
 		// H_BOTTOM_KEYLINE1
 		createColor(IFormColors.H_BOTTOM_KEYLINE1, new RGB(255, 255, 255));
 
-		// H_BOTTOM_KEYLINE2
-		// Group 1
-		// Rule: If at least 2 of the RGB values are equal to or between 180 and
-		// 255, then apply specified opacity for Group 1
-		// Examples: Vista, XP Silver, Wn High Con #2
-		// Keyline = TITLE_BACKGROUND @ 70% Opacity over LIST_BACKGROUND
-		if (testTwoPrimaryColors(titleBg, 179, 256))
+		if (testTwoPrimaryColors(titleBg, 179, 256)) {
+			// H_BOTTOM_KEYLINE2
+			// Group 1
+			// Rule: If at least 2 of the RGB values are equal to or between 180 and
+			// 255, then apply specified opacity for Group 1
+			// Examples: Vista, XP Silver, Wn High Con #2
+			// Keyline = TITLE_BACKGROUND @ 70% Opacity over LIST_BACKGROUND
 			keyline2 = blend(titleBg, bg, 70);
 
-		// Group 2
-		// Rule: If at least 2 of the RGB values are equal to or between 121 and
-		// 179, then apply specified opacity for Group 2
-		// Examples: XP Olive, OSX Graphite, Linux GTK, Wn High Con Black
-		// Keyline = TITLE_BACKGROUND @ 50% Opacity over LIST_BACKGROUND
-		else if (testTwoPrimaryColors(titleBg, 120, 180))
+		} else if (testTwoPrimaryColors(titleBg, 120, 180)) {
+			// Group 2
+			// Rule: If at least 2 of the RGB values are equal to or between 121 and
+			// 179, then apply specified opacity for Group 2
+			// Examples: XP Olive, OSX Graphite, Linux GTK, Wn High Con Black
+			// Keyline = TITLE_BACKGROUND @ 50% Opacity over LIST_BACKGROUND
 			keyline2 = blend(titleBg, bg, 50);
 
-		// Group 3
-		// Rule: If at least 2 of the RGB values are equal to or between 0 and
-		// 120, then apply specified opacity for Group 3
-		// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
-		// Aqua, Wn High Con White, Wn High Con #1
+		} else {
+			// Group 3
+			// Rule: If at least 2 of the RGB values are equal to or between 0 and
+			// 120, then apply specified opacity for Group 3
+			// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
+			// Aqua, Wn High Con White, Wn High Con #1
 
-		// Keyline = TITLE_BACKGROUND @ 30% Opacity over LIST_BACKGROUND
-		else
+			// Keyline = TITLE_BACKGROUND @ 30% Opacity over LIST_BACKGROUND
 			keyline2 = blend(titleBg, bg, 30);
+		}
 		// H_BOTTOM_KEYLINE2
 		createColor(IFormColors.H_BOTTOM_KEYLINE2, keyline2);
 	}
