@@ -37,12 +37,14 @@ class LogReader {
 
 	public static LogSession parseLogFile(File file, long maxLogTailSizeInMegaByte, List<LogEntry> entries,
 			IMemento memento) {
-		if (!file.exists())
+		if (!file.exists()) {
 			return null;
+		}
 
 		if (memento.getString(LogView.P_USE_LIMIT).equals("true") //$NON-NLS-1$
-				&& memento.getInteger(LogView.P_LOG_LIMIT).intValue() == 0)
+				&& memento.getInteger(LogView.P_LOG_LIMIT).intValue() == 0) {
 			return null;
+		}
 
 		ArrayList<LogEntry> parents = new ArrayList<>();
 		LogEntry current = null;
@@ -58,8 +60,9 @@ class LogReader {
 				new InputStreamReader(new TailInputStream(file, maxTailSizeInBytes), StandardCharsets.UTF_8))) {
 			for (;;) {
 				String line0 = reader.readLine();
-				if (line0 == null)
+				if (line0 == null) {
 					break;
+				}
 				String line = line0.trim();
 
 				if (line.startsWith(LogSession.SESSION)) {
@@ -72,13 +75,15 @@ class LogReader {
 					state = MESSAGE_STATE;
 				} else if (line.startsWith("!STACK")) { //$NON-NLS-1$
 					state = STACK_STATE;
-				} else
+				} else {
 					state = TEXT_STATE;
+				}
 
 				if (state == TEXT_STATE) {
 					if (writer != null) {
-						if (swriter.getBuffer().length() > 0)
+						if (swriter.getBuffer().length() > 0) {
 							writer.println();
+						}
 						writer.print(line0);
 					}
 					continue;
@@ -106,8 +111,9 @@ class LogReader {
 					writerState = SESSION_STATE;
 					currentSession = updateCurrentSession(currentSession, session);
 					// if current session is most recent and not showing all sessions
-					if (currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) //$NON-NLS-1$
+					if (currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) { //$NON-NLS-1$
 						entries.clear();
+					}
 					break;
 				case ENTRY_STATE:
 					if (currentSession == null) { // create fake session if there was no any
@@ -143,10 +149,12 @@ class LogReader {
 					swriter = new StringWriter();
 					writer = new PrintWriter(swriter, true);
 					String message = ""; //$NON-NLS-1$
-					if (line.length() > 8)
+					if (line.length() > 8) {
 						message = line.substring(9);
-					if (current != null)
+					}
+					if (current != null) {
 						current.setMessage(message);
+					}
 					writerState = MESSAGE_STATE;
 					break;
 				default:
@@ -191,8 +199,9 @@ class LogReader {
 		} else if (writerState == MESSAGE_STATE && current != null) {
 			StringBuilder sb = new StringBuilder(current.getMessage());
 			String continuation = swriter.toString();
-			if (continuation.length() > 0)
+			if (continuation.length() > 0) {
 				sb.append(System.lineSeparator()).append(continuation);
+			}
 			current.setMessage(sb.toString());
 		}
 	}
@@ -206,12 +215,13 @@ class LogReader {
 		}
 		Date currentDate = currentSession.getDate();
 		Date sessionDate = session.getDate();
-		if (currentDate == null && sessionDate != null)
+		if (currentDate == null && sessionDate != null) {
 			return session;
-		else if (currentDate != null && sessionDate == null)
+		} else if (currentDate != null && sessionDate == null) {
 			return session;
-		else if (currentDate != null && sessionDate != null && sessionDate.after(currentDate))
+		} else if (currentDate != null && sessionDate != null && sessionDate.after(currentDate)) {
 			return session;
+		}
 
 		return currentSession;
 	}
@@ -254,9 +264,10 @@ class LogReader {
 	}
 
 	private static void setNewParent(ArrayList<LogEntry> parents, LogEntry entry, int depth) {
-		if (depth + 1 > parents.size())
+		if (depth + 1 > parents.size()) {
 			parents.add(entry);
-		else
+		} else {
 			parents.set(depth, entry);
+		}
 	}
 }

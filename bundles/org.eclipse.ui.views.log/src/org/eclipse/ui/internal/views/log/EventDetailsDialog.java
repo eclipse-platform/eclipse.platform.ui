@@ -54,15 +54,15 @@ public class EventDetailsDialog extends TrayDialog {
 	public static final String FILTER_ENABLED = "detailsStackFilterEnabled"; //$NON-NLS-1$
 	public static final String FILTER_LIST = "detailsStackFilterList"; //$NON-NLS-1$
 
-	private LogView logView;
-	private IMemento memento;
+	private final LogView logView;
+	private final IMemento memento;
 
 	private AbstractEntry entry;
 	private AbstractEntry parentEntry; // parent of the entry
 	private AbstractEntry[] entryChildren; // children of the entry
 
-	private LogViewLabelProvider labelProvider;
-	private TreeViewer provider;
+	private final LogViewLabelProvider labelProvider;
+	private final TreeViewer provider;
 
 	private static int COPY_ID = 22;
 
@@ -151,15 +151,14 @@ public class EventDetailsDialog extends TrayDialog {
 	}
 
 	private void resetChildIndex() {
-		if (entryChildren == null)
+		if (entryChildren == null) {
 			return;
+		}
 
 		LogEntry thisEntry = (LogEntry) entry;
 
 		for (int i = 0; i < entryChildren.length; i++) {
-			if (entryChildren[i] instanceof LogEntry) {
-
-				LogEntry logEntry = (LogEntry) entryChildren[i];
+			if (entryChildren[i] instanceof LogEntry logEntry) {
 
 				if (logEntry == thisEntry) {
 					childIndex = i;
@@ -215,14 +214,16 @@ public class EventDetailsDialog extends TrayDialog {
 		super.create();
 
 		// dialog location
-		if (dialogLocation != null)
+		if (dialogLocation != null) {
 			getShell().setLocation(dialogLocation);
+		}
 
 		// dialog size
-		if (dialogSize != null)
+		if (dialogSize != null) {
 			getShell().setSize(dialogSize);
-		else
+		} else {
 			getShell().setSize(500, 550);
+		}
 
 		applyDialogFont(buttonBar);
 		getButton(IDialogConstants.OK_ID).setFocus();
@@ -231,16 +232,17 @@ public class EventDetailsDialog extends TrayDialog {
 
 	@Override
 	protected void buttonPressed(int buttonId) {
-		if (IDialogConstants.OK_ID == buttonId)
+		if (IDialogConstants.OK_ID == buttonId) {
 			okPressed();
-		else if (IDialogConstants.CANCEL_ID == buttonId)
+		} else if (IDialogConstants.CANCEL_ID == buttonId) {
 			cancelPressed();
-		else if (IDialogConstants.BACK_ID == buttonId)
+		} else if (IDialogConstants.BACK_ID == buttonId) {
 			backPressed();
-		else if (IDialogConstants.NEXT_ID == buttonId)
+		} else if (IDialogConstants.NEXT_ID == buttonId) {
 			nextPressed();
-		else if (COPY_ID == buttonId)
+		} else if (COPY_ID == buttonId) {
 			copyPressed();
+		}
 	}
 
 	protected void backPressed() {
@@ -303,8 +305,9 @@ public class EventDetailsDialog extends TrayDialog {
 			comparator = (e1, e2) -> {
 				Date date1 = ((LogEntry) e1).getDate();
 				Date date2 = ((LogEntry) e2).getDate();
-				if (sortOrder == LogView.ASCENDING)
+				if (sortOrder == LogView.ASCENDING) {
 					return date1.getTime() < date2.getTime() ? LogView.DESCENDING : LogView.ASCENDING;
+				}
 				return date1.getTime() > date2.getTime() ? LogView.DESCENDING : LogView.ASCENDING;
 			};
 		} else if (sortType == LogView.PLUGIN) {
@@ -354,13 +357,12 @@ public class EventDetailsDialog extends TrayDialog {
 			parentEntry = (AbstractEntry) entry.getParent(entry);
 			setEntryChildren(parentEntry);
 			resetChildIndex();
-			if (childIndex == entryChildren.length - 1)
+			if (childIndex == entryChildren.length - 1) {
 				isLastChild = true;
+			}
 		}
 
-		if (entry instanceof LogEntry) {
-			LogEntry logEntry = (LogEntry) entry;
-
+		if (entry instanceof LogEntry logEntry) {
 			String strDate = MessageFormat.format("{0}, {1}", //$NON-NLS-1$
 					dateFormat.format(logEntry.getDate().toInstant()), //
 					timeFormat.format(logEntry.getDate().toInstant()));
@@ -496,8 +498,9 @@ public class EventDetailsDialog extends TrayDialog {
 	private void setEntryChildren() {
 		AbstractEntry[] children = getElements();
 
-		if (comparator != null)
+		if (comparator != null) {
 			Arrays.sort(children, comparator);
+		}
 		entryChildren = new AbstractEntry[children.length];
 
 		System.arraycopy(children, 0, entryChildren, 0, children.length);
@@ -510,8 +513,9 @@ public class EventDetailsDialog extends TrayDialog {
 	private void setEntryChildren(AbstractEntry entry) {
 		Object[] children = entry.getChildren(entry);
 
-		if (comparator != null)
+		if (comparator != null) {
 			Arrays.sort(children, comparator);
+		}
 
 		List<AbstractEntry> result = new ArrayList<>();
 		for (Object element : children) {
@@ -826,8 +830,9 @@ public class EventDetailsDialog extends TrayDialog {
 		IDialogSettings settings = PlatformUI
 				.getDialogSettingsProvider(FrameworkUtil.getBundle(EventDetailsDialog.class)).getDialogSettings();
 		IDialogSettings dialogSettings = settings.getSection(getClass().getName());
-		if (dialogSettings == null)
+		if (dialogSettings == null) {
 			dialogSettings = settings.addNewSection(getClass().getName());
+		}
 		return dialogSettings;
 	}
 

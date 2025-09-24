@@ -17,7 +17,7 @@ package org.eclipse.ui.internal.views.log;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 public class LogViewContentProvider implements ITreeContentProvider {
-	private LogView logView;
+	private final LogView logView;
 
 	public LogViewContentProvider(LogView logView) {
 		this.logView = logView;

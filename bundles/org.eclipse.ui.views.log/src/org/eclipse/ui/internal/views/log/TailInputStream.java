@@ -17,9 +17,9 @@ import java.io.*;
 
 public class TailInputStream extends InputStream {
 
-	private RandomAccessFile fRaf;
+	private final RandomAccessFile fRaf;
 
-	private long fTail;
+	private final long fTail;
 
 	public TailInputStream(File file, long maxLength) throws IOException {
 		super();
