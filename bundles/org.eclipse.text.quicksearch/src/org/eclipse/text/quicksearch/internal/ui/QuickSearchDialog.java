@@ -58,6 +58,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.CursorLinePainter;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.CompositeRuler;
@@ -1173,6 +1174,9 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 							viewer.revealRange(rangeStart, rangeEnd - rangeStart);
 
 							var targetLineFirstMatch = getQuery().findFirst(document.get(item.getOffset(), contextLenght - (item.getOffset() - start)));
+							if (targetLineFirstMatch == null) {
+							    return; // nothing to refresh
+							}
 							int targetLineFirstMatchStart = item.getOffset() + targetLineFirstMatch.getOffset();
 							// sets caret position
 							viewer.setSelectedRange(targetLineFirstMatchStart, 0);
@@ -1289,6 +1293,10 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				//element is available in the list.
 				openButton.setEnabled(itemCount>0);
 			}
+			//Auto-select the first search result for preview to be shown.
+			if (itemCount >= 1 && list.getSelection().isEmpty()) {
+	            list.getTable().select(0);
+	        }
 			refreshDetails();
 		}
 	}
@@ -1484,6 +1492,14 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		} else {
 			//The QuickTextSearcher is already active update the query
 			this.searcher.setQuery(newFilter, force);
+			if(newFilter.getPatternString().trim().isEmpty()) {
+				//When pattern is cleared, clear the preview section
+				viewer.setDocument(new Document("")); //$NON-NLS-1$
+			    if (lineNumberColumn != null) {
+			        viewer.removeVerticalRulerColumn(lineNumberColumn);
+			        viewer.addVerticalRulerColumn(lineNumberColumn);
+			    }
+			}
 		}
 		if (progressJob!=null) {
 			progressJob.schedule();
