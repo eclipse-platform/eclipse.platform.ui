@@ -46,7 +46,7 @@ public class GlobalNextPrevSearchEntryHandler extends AbstractHandler implements
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		ICommandService cs = (ICommandService) window.getService(ICommandService.class);
+		ICommandService cs = window.getService(ICommandService.class);
 
 		// Show the Search view
 		Command showView = cs.getCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
