@@ -38,7 +38,7 @@ public class SWTObservableListDecorator<E> extends DecoratingObservableList<E> i
 				disposeListener);
 	}
 
-	private Listener disposeListener = event -> SWTObservableListDecorator.this.dispose();
+	private final Listener disposeListener = event -> SWTObservableListDecorator.this.dispose();
 
 	@Override
 	public synchronized void dispose() {

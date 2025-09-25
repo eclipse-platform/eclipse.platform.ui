@@ -59,8 +59,9 @@ public class ObservableSetTreeContentProvider<E> implements ITreeContentProvider
 
 			@Override
 			public void handleSetChange(SetChangeEvent<? extends E> event) {
-				if (isViewerDisposed())
+				if (isViewerDisposed()) {
 					return;
+				}
 
 				Set<? extends E> localAdditions = event.diff.getAdditions();
 				Set<? extends E> localRemovals = event.diff.getRemovals();
@@ -86,8 +87,9 @@ public class ObservableSetTreeContentProvider<E> implements ITreeContentProvider
 
 				for (E element : localRemovals) {
 					TreeNode childNode = getExistingNode(element);
-					if (childNode != null)
+					if (childNode != null) {
 						childNode.removeParent(parentElement);
+					}
 				}
 
 				if (realizedElements != null) {

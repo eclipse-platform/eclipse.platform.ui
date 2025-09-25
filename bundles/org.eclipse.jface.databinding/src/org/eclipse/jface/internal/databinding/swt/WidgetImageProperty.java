@@ -41,23 +41,27 @@ public class WidgetImageProperty<S extends Widget> extends WidgetDelegatingValue
 	@Override
 	protected IValueProperty<S, Image> doGetDelegate(S source) {
 		if (source instanceof Button) {
-			if (button == null)
+			if (button == null) {
 				button = (IValueProperty<S, Image>) new ButtonImageProperty();
+			}
 			return button;
 		}
 		if (source instanceof CLabel) {
-			if (cLabel == null)
+			if (cLabel == null) {
 				cLabel = (IValueProperty<S, Image>) new CLabelImageProperty();
+			}
 			return cLabel;
 		}
 		if (source instanceof Item) {
-			if (item == null)
+			if (item == null) {
 				item = (IValueProperty<S, Image>) new ItemImageProperty();
+			}
 			return item;
 		}
 		if (source instanceof Label) {
-			if (label == null)
+			if (label == null) {
 				label = (IValueProperty<S, Image>) new LabelImageProperty();
+			}
 			return label;
 		}
 		throw notSupported(source);

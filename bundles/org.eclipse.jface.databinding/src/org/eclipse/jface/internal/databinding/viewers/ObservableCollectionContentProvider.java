@@ -95,8 +95,9 @@ public abstract class ObservableCollectionContentProvider<E> implements IStructu
 
 		elementSetFactory = target -> {
 			IElementComparer comparer = null;
-			if (target instanceof StructuredViewer)
+			if (target instanceof StructuredViewer) {
 				comparer = ((StructuredViewer) target).getComparer();
+			}
 			return ObservableViewerElementSet.withComparer(DisplayRealm.getRealm(display), null, comparer);
 		};
 		knownElements = MasterDetailObservables.detailSet(viewerObservable, elementSetFactory, null);
@@ -107,8 +108,9 @@ public abstract class ObservableCollectionContentProvider<E> implements IStructu
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (observableCollection == null)
+		if (observableCollection == null) {
 			return new Object[0];
+		}
 
 		if (realizedElements != null) {
 			if (!realizedElements.equals(knownElements)) {
@@ -120,8 +122,9 @@ public abstract class ObservableCollectionContentProvider<E> implements IStructu
 	}
 
 	private void asyncUpdateRealizedElements() {
-		if (realizedElements == null)
+		if (realizedElements == null) {
 			return;
+		}
 		display.asyncExec(() -> {
 			if (realizedElements != null) {
 				realizedElements.addAll(knownElements);
@@ -131,8 +134,9 @@ public abstract class ObservableCollectionContentProvider<E> implements IStructu
 
 	@Override
 	public void dispose() {
-		if (observableCollection != null)
+		if (observableCollection != null) {
 			removeCollectionChangeListener(observableCollection);
+		}
 
 		if (viewerObservable != null) {
 			viewerObservable.dispose();
@@ -159,20 +163,25 @@ public abstract class ObservableCollectionContentProvider<E> implements IStructu
 	}
 
 	private static IElementComparer getElementComparer(Viewer viewer) {
-		if (viewer instanceof StructuredViewer)
+		if (viewer instanceof StructuredViewer) {
 			return ((StructuredViewer) viewer).getComparer();
+		}
 		return null;
 	}
 
 	IViewerUpdater<E> createViewerUpdater(Viewer viewer) {
-		if (explicitViewerUpdater != null)
+		if (explicitViewerUpdater != null) {
 			return explicitViewerUpdater;
-		if (viewer instanceof AbstractListViewer)
+		}
+		if (viewer instanceof AbstractListViewer) {
 			return new ListViewerUpdater<>((AbstractListViewer) viewer);
-		if (viewer instanceof CheckboxTableViewer)
+		}
+		if (viewer instanceof CheckboxTableViewer) {
 			return new CheckboxTableViewerUpdater<>((CheckboxTableViewer) viewer);
-		if (viewer instanceof AbstractTableViewer)
+		}
+		if (viewer instanceof AbstractTableViewer) {
 			return new TableViewerUpdater<>((AbstractTableViewer) viewer);
+		}
 		throw new IllegalArgumentException(
 				"This content provider only works with AbstractTableViewer or AbstractListViewer"); //$NON-NLS-1$
 	}
@@ -185,8 +194,9 @@ public abstract class ObservableCollectionContentProvider<E> implements IStructu
 		}
 
 		knownElements.clear();
-		if (realizedElements != null)
+		if (realizedElements != null) {
 			realizedElements.clear();
+		}
 
 		if (input != null) {
 			checkInput(input);

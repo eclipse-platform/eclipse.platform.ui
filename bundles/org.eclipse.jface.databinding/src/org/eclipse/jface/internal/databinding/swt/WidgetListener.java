@@ -47,19 +47,23 @@ public class WidgetListener<S, D extends IDiff> extends NativePropertyListener<S
 	@SuppressWarnings("unchecked")
 	@Override
 	public void handleEvent(Event event) {
-		if (staleEvents != null)
-			for (int staleEvent : staleEvents)
+		if (staleEvents != null) {
+			for (int staleEvent : staleEvents) {
 				if (event.type == staleEvent) {
 					fireStale((S) event.widget);
 					break;
 				}
+			}
+		}
 
-		if (changeEvents != null)
-			for (int changeEvent : changeEvents)
+		if (changeEvents != null) {
+			for (int changeEvent : changeEvents) {
 				if (event.type == changeEvent) {
 					fireChange((S) event.widget, null);
 					break;
 				}
+			}
+		}
 	}
 
 	@Override
@@ -85,8 +89,9 @@ public class WidgetListener<S, D extends IDiff> extends NativePropertyListener<S
 		if (!((Widget) source).isDisposed()) {
 			if (changeEvents != null) {
 				for (int event : changeEvents) {
-					if (event != SWT.None)
+					if (event != SWT.None) {
 						WidgetListenerUtil.asyncRemoveListener((Widget) source, event, this);
+					}
 				}
 			}
 			if (staleEvents != null) {

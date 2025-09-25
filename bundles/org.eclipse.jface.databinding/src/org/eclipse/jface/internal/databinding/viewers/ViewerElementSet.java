@@ -80,9 +80,10 @@ public class ViewerElementSet<E> implements Set<E> {
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		boolean changed = false;
-		for (E name : c)
+		for (E name : c) {
 			changed |= wrappedSet.add(new ViewerElementWrapper<>(name,
 					comparer));
+		}
 		return changed;
 	}
 
@@ -100,9 +101,11 @@ public class ViewerElementSet<E> implements Set<E> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		for (Object name : c)
-			if (!wrappedSet.contains(new ViewerElementWrapper<>((E) name, comparer)))
+		for (Object name : c) {
+			if (!wrappedSet.contains(new ViewerElementWrapper<>((E) name, comparer))) {
 				return false;
+			}
+		}
 		return true;
 	}
 
@@ -141,8 +144,9 @@ public class ViewerElementSet<E> implements Set<E> {
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		boolean changed = false;
-		for (Object name : c)
+		for (Object name : c) {
 			changed |= remove(name);
+		}
 		return changed;
 	}
 
@@ -189,17 +193,20 @@ public class ViewerElementSet<E> implements Set<E> {
 			result = (T[]) Array.newInstance(a.getClass()
 					.getComponentType(), size);
 		}
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < size; i++) {
 			result[i] = wrappedArray[i].unwrap();
+		}
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (!(obj instanceof Set))
+		}
+		if (!(obj instanceof Set)) {
 			return false;
+		}
 		Set<?> that = (Set<?>) obj;
 		return size() == that.size() && containsAll(that);
 	}
@@ -225,8 +232,9 @@ public class ViewerElementSet<E> implements Set<E> {
 	 *         {@link IElementComparer} for comparisons.
 	 */
 	public static <E> Set<E> withComparer(IElementComparer comparer) {
-		if (comparer == null)
+		if (comparer == null) {
 			return new HashSet<>();
+		}
 		return new ViewerElementSet<>(comparer);
 	}
 }

@@ -39,8 +39,9 @@ public class ViewerElementWrapper<T> {
 	 *            the comparer to use for computing equality and hash codes.
 	 */
 	public ViewerElementWrapper(T element, IElementComparer comparer) {
-		if (comparer == null)
+		if (comparer == null) {
 			throw new NullPointerException();
+		}
 		this.element = element;
 		this.comparer = comparer;
 	}

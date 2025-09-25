@@ -54,10 +54,12 @@ public abstract class CheckboxViewerCheckedElementsProperty<S extends ICheckable
 
 	@Override
 	protected void doUpdateSet(S source, SetDiff<E> diff) {
-		for (E e : diff.getAdditions())
+		for (E e : diff.getAdditions()) {
 			source.setChecked(e, true);
-		for (E e : diff.getRemovals())
+		}
+		for (E e : diff.getRemovals()) {
 			source.setChecked(e, false);
+		}
 	}
 
 	@Override
@@ -97,8 +99,9 @@ public abstract class CheckboxViewerCheckedElementsProperty<S extends ICheckable
 	@Override
 	public String toString() {
 		String s = "ICheckable.checkedElements{}"; //$NON-NLS-1$
-		if (elementType != null)
+		if (elementType != null) {
 			s += " <" + elementType + ">"; //$NON-NLS-1$//$NON-NLS-2$
+		}
 		return s;
 	}
 }

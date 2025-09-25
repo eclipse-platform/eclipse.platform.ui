@@ -67,21 +67,24 @@ public class ObservableSetContentProvider<E> implements IStructuredContentProvid
 		@SuppressWarnings("unchecked")
 		@Override
 		public void handleSetChange(SetChangeEvent<? extends E> event) {
-			if (isViewerDisposed())
+			if (isViewerDisposed()) {
 				return;
+			}
 
 			Set<? extends E> removals = event.diff.getRemovals();
 			Set<? extends E> additions = event.diff.getAdditions();
 
 			knownElements.addAll(additions);
-			if (realizedElements != null)
+			if (realizedElements != null) {
 				realizedElements.removeAll(removals);
+			}
 
 			viewerUpdater.remove((E[]) removals.toArray());
 			viewerUpdater.add((E[]) additions.toArray());
 
-			if (realizedElements != null)
+			if (realizedElements != null) {
 				realizedElements.addAll(additions);
+			}
 			knownElements.removeAll(removals);
 		}
 	}

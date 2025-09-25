@@ -41,8 +41,9 @@ public class ViewerObservableValueDecorator<T> extends DecoratingObservableValue
 
 	@Override
 	public void handleEvent(Event event) {
-		if (event.type == SWT.Dispose)
+		if (event.type == SWT.Dispose) {
 			dispose();
+		}
 	}
 
 	@Override

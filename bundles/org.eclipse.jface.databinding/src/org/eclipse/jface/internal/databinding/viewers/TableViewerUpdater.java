@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.AbstractTableViewer;
  * @since 1.2
  */
 class TableViewerUpdater<E> extends ViewerUpdater<E> {
-	private AbstractTableViewer viewer;
+	private final AbstractTableViewer viewer;
 
 	TableViewerUpdater(AbstractTableViewer viewer) {
 		super(viewer);
@@ -45,9 +45,9 @@ class TableViewerUpdater<E> extends ViewerUpdater<E> {
 
 	@Override
 	public void replace(E oldElement, E newElement, int position) {
-		if (isElementOrderPreserved())
+		if (isElementOrderPreserved()) {
 			viewer.replace(newElement, position);
-		else {
+		} else {
 			super.replace(oldElement, newElement, position);
 		}
 	}

@@ -32,10 +32,11 @@ public class TableSingleSelectionIndexProperty extends SingleSelectionIndexPrope
 
 	@Override
 	protected void doSetIntValue(Table source, int value) {
-		if (value == -1)
+		if (value == -1) {
 			source.deselectAll();
-		else
+		} else {
 			source.setSelection(value);
+		}
 	}
 
 	@Override

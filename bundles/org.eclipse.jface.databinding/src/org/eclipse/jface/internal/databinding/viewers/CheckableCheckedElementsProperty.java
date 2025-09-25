@@ -60,10 +60,12 @@ public class CheckableCheckedElementsProperty<S extends ICheckable, E> extends S
 
 	@Override
 	protected void doUpdateSet(S source, SetDiff<E> diff) {
-		for (Object e : diff.getAdditions())
+		for (Object e : diff.getAdditions()) {
 			source.setChecked(e, true);
-		for (Object e : diff.getRemovals())
+		}
+		for (Object e : diff.getRemovals()) {
 			source.setChecked(e, false);
+		}
 	}
 
 	@Override
@@ -77,13 +79,15 @@ public class CheckableCheckedElementsProperty<S extends ICheckable, E> extends S
 	@Override
 	public IObservableSet<E> observe(Realm realm, S source) {
 		IElementComparer comparer = null;
-		if (source instanceof StructuredViewer)
+		if (source instanceof StructuredViewer) {
 			comparer = ((StructuredViewer) source).getComparer();
+		}
 		Set<E> wrappedSet = ViewerElementSet.withComparer(comparer);
 		IObservableSet<E> observable = new CheckableCheckedElementsObservableSet<>(realm, wrappedSet, elementType,
 				comparer, source);
-		if (source instanceof Viewer)
+		if (source instanceof Viewer) {
 			observable = new ViewerObservableSetDecorator<>(observable, (Viewer) source);
+		}
 		return observable;
 	}
 }

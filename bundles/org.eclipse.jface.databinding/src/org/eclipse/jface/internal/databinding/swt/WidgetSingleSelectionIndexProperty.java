@@ -41,23 +41,27 @@ public final class WidgetSingleSelectionIndexProperty<S extends Widget>
 	@Override
 	protected IValueProperty<S, Integer> doGetDelegate(S source) {
 		if (source instanceof CCombo) {
-			if (cCombo == null)
+			if (cCombo == null) {
 				cCombo = (IValueProperty<S, Integer>) new CComboSingleSelectionIndexProperty();
+			}
 			return cCombo;
 		}
 		if (source instanceof Combo) {
-			if (combo == null)
+			if (combo == null) {
 				combo = (IValueProperty<S, Integer>) new ComboSingleSelectionIndexProperty();
+			}
 			return combo;
 		}
 		if (source instanceof List) {
-			if (list == null)
+			if (list == null) {
 				list = (IValueProperty<S, Integer>) new ListSingleSelectionIndexProperty();
+			}
 			return list;
 		}
 		if (source instanceof Table) {
-			if (table == null)
+			if (table == null) {
 				table = (IValueProperty<S, Integer>) new TableSingleSelectionIndexProperty();
+			}
 			return table;
 		}
 		throw notSupported(source);

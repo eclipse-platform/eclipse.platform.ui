@@ -36,7 +36,7 @@ import org.eclipse.swt.graphics.Image;
 public class ViewerLabelProvider implements IViewerLabelProvider,
 		ILabelProvider {
 
-	private List<ILabelProviderListener> listeners = new ArrayList<>();
+	private final List<ILabelProviderListener> listeners = new ArrayList<>();
 
 	/**
 	 * Subclasses should override this method. They should not call the base
