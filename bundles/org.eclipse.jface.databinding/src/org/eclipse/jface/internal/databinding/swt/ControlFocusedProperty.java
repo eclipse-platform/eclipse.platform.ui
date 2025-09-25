@@ -41,8 +41,9 @@ public class ControlFocusedProperty<S extends Control> extends WidgetBooleanValu
 
 	@Override
 	protected void doSetBooleanValue(S source, boolean value) {
-		if (value)
+		if (value) {
 			source.setFocus();
+		}
 	}
 
 	@Override

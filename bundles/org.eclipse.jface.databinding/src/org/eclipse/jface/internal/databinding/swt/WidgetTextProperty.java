@@ -55,58 +55,69 @@ public class WidgetTextProperty<S extends Widget> extends WidgetDelegatingValueP
 	@Override
 	protected IValueProperty<S, String> doGetDelegate(S source) {
 		if (source instanceof Button) {
-			if (button == null)
+			if (button == null) {
 				button = (IValueProperty<S, String>) new ButtonTextProperty();
+			}
 			return button;
 		}
 		if (source instanceof CCombo) {
-			if (cCombo == null)
+			if (cCombo == null) {
 				cCombo = (IValueProperty<S, String>) new CComboTextProperty();
+			}
 			return cCombo;
 		}
 		if (source instanceof CLabel) {
-			if (cLabel == null)
+			if (cLabel == null) {
 				cLabel = (IValueProperty<S, String>) new CLabelTextProperty();
+			}
 			return cLabel;
 		}
 		if (source instanceof Combo) {
-			if (combo == null)
+			if (combo == null) {
 				combo = (IValueProperty<S, String>) new ComboTextProperty();
+			}
 			return combo;
 		}
 		if (source instanceof Item) {
-			if (item == null)
+			if (item == null) {
 				item = (IValueProperty<S, String>) new ItemTextProperty();
+			}
 			return item;
 		}
 		if (source instanceof Label) {
-			if (label == null)
+			if (label == null) {
 				label = (IValueProperty<S, String>) new LabelTextProperty();
+			}
 			return label;
 		}
 		if (source instanceof Link) {
-			if (link == null)
+			if (link == null) {
 				link = (IValueProperty<S, String>) new LinkTextProperty();
+			}
 			return link;
 		}
 		if (source instanceof Shell) {
-			if (shell == null)
+			if (shell == null) {
 				shell = (IValueProperty<S, String>) new ShellTextProperty();
+			}
 			return shell;
 		}
 		if (source instanceof StyledText) {
-			if (styledText == null)
+			if (styledText == null) {
 				styledText = (IValueProperty<S, String>) new StyledTextTextProperty();
+			}
 			return styledText;
 		}
 		if (source instanceof Text) {
-			if (text == null)
+			if (text == null) {
 				text = (IValueProperty<S, String>) new TextTextProperty();
+			}
 			return text;
 		}
 		if (source instanceof Group) {
-			if (group == null)
+			if (group == null) {
 				group = (IValueProperty<S, String>) new GroupTextProperty();
+			}
 			return group;
 		}
 		throw notSupported(source);

@@ -48,8 +48,9 @@ public abstract class WidgetBooleanValueProperty<S extends Widget> extends Widge
 
 	@Override
 	protected void doSetValue(S source, Boolean value) {
-		if (value == null)
+		if (value == null) {
 			value = false;
+		}
 		doSetBooleanValue(source, value);
 	}
 

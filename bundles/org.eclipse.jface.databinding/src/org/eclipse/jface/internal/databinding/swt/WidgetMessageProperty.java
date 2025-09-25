@@ -36,13 +36,15 @@ public class WidgetMessageProperty<S extends Widget> extends WidgetDelegatingVal
 	@Override
 	protected IValueProperty<S, String> doGetDelegate(S source) {
 		if (source instanceof Text) {
-			if (text == null)
+			if (text == null) {
 				text = (IValueProperty<S, String>) new TextMessageProperty();
+			}
 			return text;
 		}
 		if (source instanceof ToolTip) {
-			if (toolTip == null)
+			if (toolTip == null) {
 				toolTip = (IValueProperty<S, String>) new ToolTipMessageProperty();
+			}
 			return toolTip;
 		}
 		throw notSupported(source);

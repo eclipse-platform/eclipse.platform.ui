@@ -25,36 +25,42 @@ import org.eclipse.swt.widgets.Widget;
 public class WidgetListenerUtil {
 	public static void asyncAddListener(final Widget widget, final int event,
 			final Listener listener) {
-		if (widget == null)
+		if (widget == null) {
 			return;
-		if (widget.isDisposed())
+		}
+		if (widget.isDisposed()) {
 			return;
+		}
 
 		Display display = widget.getDisplay();
 		if (display == Display.getCurrent()) {
 			widget.addListener(event, listener);
 		} else {
 			DisplayRealm.getRealm(display).exec(() -> {
-				if (!widget.isDisposed())
+				if (!widget.isDisposed()) {
 					widget.addListener(event, listener);
+				}
 			});
 		}
 	}
 
 	public static void asyncRemoveListener(final Widget widget,
 			final int event, final Listener listener) {
-		if (widget == null)
+		if (widget == null) {
 			return;
-		if (widget.isDisposed())
+		}
+		if (widget.isDisposed()) {
 			return;
+		}
 
 		Display display = widget.getDisplay();
 		if (display == Display.getCurrent()) {
 			widget.removeListener(event, listener);
 		} else {
 			DisplayRealm.getRealm(display).exec(() -> {
-				if (!widget.isDisposed())
+				if (!widget.isDisposed()) {
 					widget.removeListener(event, listener);
+				}
 			});
 		}
 	}

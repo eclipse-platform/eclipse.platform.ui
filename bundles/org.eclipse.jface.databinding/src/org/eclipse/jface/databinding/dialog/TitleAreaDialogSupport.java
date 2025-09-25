@@ -167,8 +167,9 @@ public class TitleAreaDialogSupport {
 	}
 
 	private void handleStatusChanged() {
-		if (dialog.getShell() == null || dialog.getShell().isDisposed())
+		if (dialog.getShell() == null || dialog.getShell().isDisposed()) {
 			return;
+		}
 		String message = messageProvider.getMessage(currentStatusProvider);
 		int type = messageProvider.getMessageType(currentStatusProvider);
 		if (type == IMessageProvider.ERROR) {
@@ -188,9 +189,7 @@ public class TitleAreaDialogSupport {
 		if (currentStatus.getException() != null) {
 			hasException = true;
 		}
-		if (currentStatus instanceof MultiStatus) {
-			MultiStatus multiStatus = (MultiStatus) currentStatus;
-
+		if (currentStatus instanceof MultiStatus multiStatus) {
 			for (int i = 0; i < multiStatus.getChildren().length; i++) {
 				IStatus status = multiStatus.getChildren()[i];
 				if (status.getException() != null) {
@@ -209,8 +208,7 @@ public class TitleAreaDialogSupport {
 	private void handleStatusException() {
 		if (currentStatus.getException() != null) {
 			logThrowable(currentStatus.getException());
-		} else if (currentStatus instanceof MultiStatus) {
-			MultiStatus multiStatus = (MultiStatus) currentStatus;
+		} else if (currentStatus instanceof MultiStatus multiStatus) {
 			for (int i = 0; i < multiStatus.getChildren().length; i++) {
 				IStatus status = multiStatus.getChildren()[i];
 				if (status.getException() != null) {
@@ -236,8 +234,9 @@ public class TitleAreaDialogSupport {
 	 * it may have attached.
 	 */
 	public void dispose() {
-		if (aggregateStatusProvider != null)
+		if (aggregateStatusProvider != null) {
 			aggregateStatusProvider.dispose();
+		}
 		if (dbc != null && !uiChanged) {
 			for (ValidationStatusProvider provider : dbc.getValidationStatusProviders()) {
 				IObservableList<IObservable> targets = provider.getTargets();

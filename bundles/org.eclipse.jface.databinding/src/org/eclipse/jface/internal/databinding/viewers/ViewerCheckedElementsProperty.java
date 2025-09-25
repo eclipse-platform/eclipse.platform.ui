@@ -45,10 +45,12 @@ public class ViewerCheckedElementsProperty<S, E> extends DelegatingSetProperty<S
 
 	@Override
 	protected ISetProperty<S, E> doGetDelegate(S source) {
-		if (source instanceof CheckboxTableViewer)
+		if (source instanceof CheckboxTableViewer) {
 			return checkboxTableViewer;
-		if (source instanceof CheckboxTreeViewer)
+		}
+		if (source instanceof CheckboxTreeViewer) {
 			return checkboxTreeViewer;
+		}
 		return checkable;
 	}
 

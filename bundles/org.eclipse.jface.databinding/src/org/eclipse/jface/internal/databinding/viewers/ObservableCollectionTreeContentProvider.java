@@ -54,9 +54,9 @@ import org.eclipse.swt.widgets.Display;
  * @since 1.2
  */
 public abstract class ObservableCollectionTreeContentProvider<E> implements ITreeContentProvider {
-	private Realm realm;
+	private final Realm realm;
 
-	private Display display;
+	private final Display display;
 
 	private IObservableValue<Viewer> viewerObservable;
 
@@ -65,7 +65,7 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 	 */
 	protected IElementComparer comparer;
 
-	private IObservableFactory<Viewer, IObservableSet<E>> elementSetFactory;
+	private final IObservableFactory<Viewer, IObservableSet<E>> elementSetFactory;
 
 	/**
 	 * Interfaces for sending updates to the viewer.
@@ -94,7 +94,7 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 
 	private Map<E, TreeNode> elementNodes;
 
-	private TreeStructureAdvisor<? super E> structureAdvisor;
+	private final TreeStructureAdvisor<? super E> structureAdvisor;
 
 	/**
 	 * Constructs an ObservableCollectionTreeContentProvider using the given
@@ -131,8 +131,9 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 			@SuppressWarnings("unchecked")
 			TreeNode[] oldNodes = new ObservableCollectionTreeContentProvider.TreeNode[elementNodes.size()];
 			elementNodes.values().toArray(oldNodes);
-			for (TreeNode oldNode : oldNodes)
+			for (TreeNode oldNode : oldNodes) {
 				oldNode.dispose();
+			}
 			elementNodes.clear();
 			elementNodes = null;
 		}
@@ -140,8 +141,9 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 		setViewer(viewer);
 
 		knownElements.clear();
-		if (realizedElements != null)
+		if (realizedElements != null) {
 			realizedElements.clear();
+		}
 
 		if (newInput != null) {
 			getElements(newInput);
@@ -157,16 +159,19 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 	}
 
 	private static IElementComparer getElementComparer(Viewer viewer) {
-		if (viewer instanceof StructuredViewer)
+		if (viewer instanceof StructuredViewer) {
 			return ((StructuredViewer) viewer).getComparer();
+		}
 		return null;
 	}
 
 	private static TreeViewerUpdater createViewerUpdater(Viewer viewer) {
-		if (viewer instanceof CheckboxTreeViewer)
+		if (viewer instanceof CheckboxTreeViewer) {
 			return new CheckboxTreeViewerUpdater((CheckboxTreeViewer) viewer);
-		if (viewer instanceof AbstractTreeViewer)
+		}
+		if (viewer instanceof AbstractTreeViewer) {
 			return new TreeViewerUpdater((AbstractTreeViewer) viewer);
+		}
 		throw new IllegalArgumentException(
 				"This content provider only works with AbstractTreeViewer"); //$NON-NLS-1$
 	}
@@ -182,8 +187,9 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 		}
 		@SuppressWarnings("unchecked")
 		TreeNode node = getExistingNode((E) element);
-		if (node != null)
+		if (node != null) {
 			return node.getParent();
+		}
 		return null;
 	}
 
@@ -212,10 +218,12 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 	Runnable asyncUpdateRunnable;
 
 	private void asyncUpdateRealizedElements() {
-		if (realizedElements == null)
+		if (realizedElements == null) {
 			return;
-		if (asyncUpdatePending)
+		}
+		if (asyncUpdatePending) {
 			return;
+		}
 		if (!realizedElements.equals(knownElements)) {
 			if (asyncUpdateRunnable == null) {
 				asyncUpdateRunnable = () -> {
@@ -257,8 +265,9 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 			elementNodes.put(element, node);
 		}
 		// In case the input element is also a visible node in the tree.
-		if (!input)
+		if (!input) {
 			knownElements.add(element);
+		}
 		return node;
 	}
 
@@ -401,8 +410,9 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 			IObservableCollection<E> collection, IObservablesListener listener);
 
 	protected boolean equal(Object left, Object right) {
-		if (comparer == null)
+		if (comparer == null) {
 			return Objects.equals(left, right);
+		}
 		return comparer.equals(left, right);
 	}
 
@@ -440,8 +450,9 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 		public void removeParent(Object oldParent) {
 			if (parentSet != null) {
 				parentSet.remove(oldParent);
-				if (parentSet.isEmpty())
+				if (parentSet.isEmpty()) {
 					parentSet = null;
+				}
 			}
 
 			if (equal(parent, oldParent)) {
@@ -462,10 +473,12 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 		}
 
 		public Set<E> getParents() {
-			if (parentSet != null)
+			if (parentSet != null) {
 				return parentSet;
-			if (parent != null)
+			}
+			if (parent != null) {
 				return Collections.singleton(parent);
+			}
 			return Collections.EMPTY_SET;
 		}
 
@@ -503,11 +516,13 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 			if (children != null && !children.isDisposed()) {
 				for (E elem : children) {
 					TreeNode child = getExistingNode(elem);
-					if (child != null)
+					if (child != null) {
 						child.removeParent(element);
+					}
 				}
-				if (listener != null)
+				if (listener != null) {
 					removeCollectionChangeListener(children, listener);
+				}
 				children.dispose();
 				children = null;
 			}

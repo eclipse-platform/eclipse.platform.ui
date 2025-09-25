@@ -32,10 +32,11 @@ public class ComboSingleSelectionIndexProperty extends SingleSelectionIndexPrope
 
 	@Override
 	protected void doSetIntValue(Combo source, int value) {
-		if (value == -1)
+		if (value == -1) {
 			source.deselectAll();
-		else
+		} else {
 			source.select(value);
+		}
 	}
 
 	@Override

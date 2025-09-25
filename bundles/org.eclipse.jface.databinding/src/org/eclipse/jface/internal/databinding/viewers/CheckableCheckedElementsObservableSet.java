@@ -35,9 +35,9 @@ import org.eclipse.jface.viewers.IElementComparer;
  */
 public class CheckableCheckedElementsObservableSet<E> extends AbstractObservableSet<E> {
 	private ICheckable checkable;
-	private Set<E> wrappedSet;
-	private Object elementType;
-	private IElementComparer elementComparer;
+	private final Set<E> wrappedSet;
+	private final Object elementType;
+	private final IElementComparer elementComparer;
 	private ICheckStateListener listener;
 
 	/**
@@ -68,10 +68,12 @@ public class CheckableCheckedElementsObservableSet<E> extends AbstractObservable
 			@SuppressWarnings("unchecked")
 			E element = (E) event.getElement();
 			if (event.getChecked()) {
-				if (wrappedSet.add(element))
+				if (wrappedSet.add(element)) {
 					fireSetChange(Diffs.createSetDiff(Collections.singleton(element), Collections.emptySet()));
-			} else if (wrappedSet.remove(element))
+				}
+			} else if (wrappedSet.remove(element)) {
 				fireSetChange(Diffs.createSetDiff(Collections.emptySet(), Collections.singleton(element)));
+			}
 		};
 		checkable.addCheckStateListener(listener);
 	}
@@ -124,8 +126,9 @@ public class CheckableCheckedElementsObservableSet<E> extends AbstractObservable
 			}
 		}
 		boolean changed = !additions.isEmpty();
-		if (changed)
+		if (changed) {
 			fireSetChange(Diffs.createSetDiff(additions, Collections.emptySet()));
+		}
 		return changed;
 	}
 
@@ -141,8 +144,9 @@ public class CheckableCheckedElementsObservableSet<E> extends AbstractObservable
 			}
 		}
 		boolean changed = !removals.isEmpty();
-		if (changed)
+		if (changed) {
 			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), removals));
+		}
 		return changed;
 	}
 
@@ -165,8 +169,9 @@ public class CheckableCheckedElementsObservableSet<E> extends AbstractObservable
 			}
 		}
 		boolean changed = !removals.isEmpty();
-		if (changed)
+		if (changed) {
 			fireSetChange(Diffs.createSetDiff(Collections.emptySet(), removals));
+		}
 		return changed;
 	}
 

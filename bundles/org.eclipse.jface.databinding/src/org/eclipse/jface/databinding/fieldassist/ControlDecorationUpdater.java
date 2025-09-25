@@ -79,8 +79,9 @@ public class ControlDecorationUpdater {
 	 *         the given status.
 	 */
 	protected Image getImage(IStatus status) {
-		if (status == null)
+		if (status == null) {
 			return null;
+		}
 
 		String fieldDecorationID = null;
 		switch (status.getSeverity()) {

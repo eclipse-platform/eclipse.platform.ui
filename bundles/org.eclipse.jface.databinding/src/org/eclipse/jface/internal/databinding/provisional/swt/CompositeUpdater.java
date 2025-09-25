@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Widget;
 public abstract class CompositeUpdater<E> {
 
 	private class UpdateRunnable implements Runnable, IChangeListener {
-		private Widget widget;
+		private final Widget widget;
 		E element;
 
 		private boolean dirty = true;
@@ -99,7 +99,7 @@ public abstract class CompositeUpdater<E> {
 
 	private class LayoutRunnable implements Runnable {
 		private boolean posted = false;
-		private Set<Control> controlsToLayout = new HashSet<>();
+		private final Set<Control> controlsToLayout = new HashSet<>();
 
 		void add(Control toLayout) {
 			controlsToLayout.add(toLayout);
@@ -117,7 +117,7 @@ public abstract class CompositeUpdater<E> {
 		}
 	}
 
-	private LayoutRunnable layoutRunnable = new LayoutRunnable();
+	private final LayoutRunnable layoutRunnable = new LayoutRunnable();
 
 	/**
 	 * To be called from {@link #updateWidget(Widget, Object)} or
@@ -152,11 +152,11 @@ public abstract class CompositeUpdater<E> {
 
 	}
 
-	private PrivateInterface privateInterface = new PrivateInterface();
+	private final PrivateInterface privateInterface = new PrivateInterface();
 
-	private Composite theComposite;
+	private final Composite theComposite;
 
-	private IObservableList<? extends E> model;
+	private final IObservableList<? extends E> model;
 
 	/**
 	 * Creates an updater for the given control and list. For each element of

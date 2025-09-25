@@ -69,16 +69,18 @@ public class ViewerSupport {
 	public static <E> void bind(StructuredViewer viewer, IObservableList<E> input,
 			IValueProperty<? super E, ?>... labelProperties) {
 		ObservableListContentProvider<E> contentProvider = new ObservableListContentProvider<>();
-		if (viewer.getInput() != null)
+		if (viewer.getInput() != null) {
 			viewer.setInput(null);
+		}
 		viewer.setContentProvider(contentProvider);
 
 		// Use <?, ?> in parameter type but cast to object to avoid
 		// being too inconvenient to callers
 		viewer.setLabelProvider(new ObservableMapLabelProvider(
 				Properties.observeEach(contentProvider.getKnownElements(), labelProperties)));
-		if (input != null)
+		if (input != null) {
 			viewer.setInput(input);
+		}
 	}
 
 	/**
@@ -115,14 +117,16 @@ public class ViewerSupport {
 	public static <E> void bind(StructuredViewer viewer, IObservableSet<E> input,
 			IValueProperty<? super E, ?>... labelProperties) {
 		ObservableSetContentProvider<E> contentProvider = new ObservableSetContentProvider<>();
-		if (viewer.getInput() != null)
+		if (viewer.getInput() != null) {
 			viewer.setInput(null);
+		}
 		viewer.setContentProvider(contentProvider);
 
 		viewer.setLabelProvider(new ObservableMapLabelProvider(
 				Properties.observeEach(contentProvider.getKnownElements(), labelProperties)));
-		if (input != null)
+		if (input != null) {
 			viewer.setInput(input);
+		}
 	}
 
 	/**
@@ -168,13 +172,15 @@ public class ViewerSupport {
 
 		ObservableListTreeContentProvider<? extends E> contentProvider = new ObservableListTreeContentProvider<>(
 				childrenProperty.listFactory(realm), null);
-		if (viewer.getInput() != null)
+		if (viewer.getInput() != null) {
 			viewer.setInput(null);
+		}
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new ObservableMapLabelProvider(
 				Properties.observeEach(contentProvider.getKnownElements(), labelProperties)));
-		if (input != null)
+		if (input != null) {
 			viewer.setInput(input);
+		}
 	}
 
 	/**
@@ -221,14 +227,16 @@ public class ViewerSupport {
 
 		ObservableSetTreeContentProvider<? extends E> contentProvider = new ObservableSetTreeContentProvider<>(
 				childrenProperty.setFactory(realm), null);
-		if (viewer.getInput() != null)
+		if (viewer.getInput() != null) {
 			viewer.setInput(null);
+		}
 		viewer.setContentProvider(contentProvider);
 
 
 		viewer.setLabelProvider(new ObservableMapLabelProvider(
 				Properties.observeEach(contentProvider.getKnownElements(), labelProperties)));
-		if (input != null)
+		if (input != null) {
 			viewer.setInput(input);
+		}
 	}
 }

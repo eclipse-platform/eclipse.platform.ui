@@ -110,17 +110,21 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 
 			@Override
 			public boolean contains(Object o) {
-				for (Object element : this)
-					if (element.equals(o))
+				for (Object element : this) {
+					if (element.equals(o)) {
 						return true;
+					}
+				}
 				return false;
 			}
 
 			@Override
 			public boolean containsAll(Collection<?> c) {
-				for (Object element : c)
-					if (!contains(element))
+				for (Object element : c) {
+					if (!contains(element)) {
 						return false;
+					}
+				}
 				return true;
 			}
 
@@ -159,10 +163,12 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 
 							@Override
 							public boolean equals(Object obj) {
-								if (obj == this)
+								if (obj == this) {
 									return true;
-								if (obj == null || !(obj instanceof Map.Entry))
+								}
+								if (obj == null || !(obj instanceof Map.Entry)) {
 									return false;
+								}
 								Entry<?, ?> that = (Entry<?, ?>) obj;
 								return comparer.equals(this.getKey(), that.getKey())
 										&& Objects.equals(this.getValue(), that.getValue());
@@ -205,10 +211,12 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 
 					@Override
 					public boolean equals(Object obj) {
-						if (obj == this)
+						if (obj == this) {
 							return true;
-						if (obj == null || !(obj instanceof Map.Entry))
+						}
+						if (obj == null || !(obj instanceof Map.Entry)) {
 							return false;
+						}
 						Entry<?, ?> that = (Entry<?, ?>) obj;
 						return Objects.equals(wrappedKey, that.getKey())
 								&& Objects.equals(this.getValue(), that.getValue());
@@ -225,8 +233,9 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 			@Override
 			public boolean removeAll(Collection<?> c) {
 				boolean changed = false;
-				for (Object element : c)
+				for (Object element : c) {
 					changed |= remove(element);
+				}
 				return changed;
 			}
 
@@ -274,10 +283,12 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 
 			@Override
 			public boolean equals(Object obj) {
-				if (obj == this)
+				if (obj == this) {
 					return true;
-				if (obj == null || !(obj instanceof Set))
+				}
+				if (obj == null || !(obj instanceof Set)) {
 					return false;
+				}
 				Set<?> that = (Set<?>) obj;
 				return this.size() == that.size() && containsAll(that);
 			}
@@ -325,9 +336,11 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 
 			@Override
 			public boolean containsAll(Collection<?> c) {
-				for (Object element : c)
-					if (!wrappedKeySet.contains(new ViewerElementWrapper<>(element, comparer)))
+				for (Object element : c) {
+					if (!wrappedKeySet.contains(new ViewerElementWrapper<>(element, comparer))) {
 						return false;
+					}
+				}
 				return true;
 			}
 
@@ -365,8 +378,9 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 			@Override
 			public boolean removeAll(Collection<?> c) {
 				boolean changed = false;
-				for (Object element : c)
+				for (Object element : c) {
 					changed |= wrappedKeySet.remove(new ViewerElementWrapper<>(element, comparer));
+				}
 				return changed;
 			}
 
@@ -406,17 +420,20 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 				if (a.length < size) {
 					result = (T[]) Array.newInstance(a.getClass().getComponentType(), size);
 				}
-				for (int i = 0; i < size; i++)
+				for (int i = 0; i < size; i++) {
 					result[i] = wrappedArray[i].unwrap();
+				}
 				return result;
 			}
 
 			@Override
 			public boolean equals(Object obj) {
-				if (obj == this)
+				if (obj == this) {
 					return true;
-				if (obj == null || !(obj instanceof Set))
+				}
+				if (obj == null || !(obj instanceof Set)) {
 					return false;
+				}
 				Set<?> that = (Set<?>) obj;
 				return this.size() == that.size() && containsAll(that);
 			}
@@ -457,10 +474,12 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (!(obj instanceof Map))
+		}
+		if (!(obj instanceof Map)) {
 			return false;
+		}
 		Map<?, ?> that = (Map<?, ?>) obj;
 		return this.entrySet().equals(that.entrySet());
 	}
@@ -482,8 +501,9 @@ public class ViewerElementMap<K, V> implements Map<K, V> {
 	 *         given {@link IElementComparer} for key comparisons.
 	 */
 	public static <K, V> Map<K, V> withComparer(IElementComparer comparer) {
-		if (comparer == null)
+		if (comparer == null) {
 			return new HashMap<>();
+		}
 		return new ViewerElementMap<>(comparer);
 	}
 }

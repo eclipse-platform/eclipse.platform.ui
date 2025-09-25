@@ -31,7 +31,7 @@ public class SWTVetoableValueDecorator extends DecoratingVetoableValue<String> i
 	private Widget widget;
 	private WidgetStringValueProperty<Widget> property;
 
-	private Listener verifyListener = event -> {
+	private final Listener verifyListener = event -> {
 		String currentText = property.getValue(widget);
 		String newText = currentText.substring(0, event.start) + event.text + currentText.substring(event.end);
 		if (!fireValueChanging(Diffs.createValueDiff(currentText, newText))) {
@@ -39,7 +39,7 @@ public class SWTVetoableValueDecorator extends DecoratingVetoableValue<String> i
 		}
 	};
 
-	private Listener disposeListener = event -> SWTVetoableValueDecorator.this.dispose();
+	private final Listener disposeListener = event -> SWTVetoableValueDecorator.this.dispose();
 
 	@SuppressWarnings("unchecked")
 	public SWTVetoableValueDecorator(Widget widget,

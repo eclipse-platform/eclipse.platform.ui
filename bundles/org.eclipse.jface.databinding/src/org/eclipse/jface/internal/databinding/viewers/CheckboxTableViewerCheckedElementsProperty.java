@@ -58,8 +58,9 @@ public class CheckboxTableViewerCheckedElementsProperty<S extends ICheckable, E>
 	@Override
 	public String toString() {
 		String s = "CheckboxTableViewer.checkedElements{}"; //$NON-NLS-1$
-		if (getElementType() != null)
+		if (getElementType() != null) {
 			s += " <" + getElementType() + ">"; //$NON-NLS-1$//$NON-NLS-2$
+		}
 		return s;
 	}
 }

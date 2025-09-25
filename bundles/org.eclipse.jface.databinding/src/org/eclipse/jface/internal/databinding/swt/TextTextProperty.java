@@ -34,24 +34,30 @@ public class TextTextProperty extends WidgetStringValueProperty<Text> {
 	}
 
 	private static int[] checkEvents(int[] events) {
-		if (events != null)
-			for (int event : events)
+		if (events != null) {
+			for (int event : events) {
 				checkEvent(event);
+			}
+		}
 		return events;
 	}
 
 	private static void checkEvent(int event) {
 		if (event != SWT.None && event != SWT.Modify && event != SWT.FocusOut
-				&& event != SWT.DefaultSelection)
+				&& event != SWT.DefaultSelection) {
 			throw new IllegalArgumentException("UpdateEventType [" //$NON-NLS-1$
 					+ event + "] is not supported."); //$NON-NLS-1$
+		}
 	}
 
 	private static int[] staleEvents(int[] changeEvents) {
-		if (changeEvents != null)
-			for (int changeEvent : changeEvents)
-				if (changeEvent == SWT.Modify)
+		if (changeEvents != null) {
+			for (int changeEvent : changeEvents) {
+				if (changeEvent == SWT.Modify) {
 					return null;
+				}
+			}
+		}
 		return new int[] { SWT.Modify };
 	}
 
