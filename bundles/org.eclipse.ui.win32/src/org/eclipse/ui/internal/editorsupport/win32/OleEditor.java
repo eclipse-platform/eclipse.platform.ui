@@ -74,17 +74,19 @@ public class OleEditor extends EditorPart {
 	 * The resource listener updates the receiver when
 	 * a change has occurred.
 	 */
-	private IResourceChangeListener resourceListener = new IResourceChangeListener() {
+	private final IResourceChangeListener resourceListener = new IResourceChangeListener() {
 
 		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			IResourceDelta mainDelta = event.getDelta();
-			if (mainDelta == null)
+			if (mainDelta == null) {
 				return;
+			}
 			IResourceDelta affectedElement = mainDelta.findMember(resource
 					.getFullPath());
-			if (affectedElement != null)
+			if (affectedElement != null) {
 				processDelta(affectedElement);
+			}
 		}
 
 		/*
@@ -115,8 +117,9 @@ public class OleEditor extends EditorPart {
 				break;
 			}
 
-			if (changeRunnable != null)
+			if (changeRunnable != null) {
 				update(changeRunnable);
+			}
 
 			return true; // because we are sitting on files anyway
 		}
@@ -191,8 +194,9 @@ public class OleEditor extends EditorPart {
 
 	private void createClientSite() {
 		//If there was an OLE Error or nothing has been created yet
-		if (clientFrame == null || clientFrame.isDisposed())
+		if (clientFrame == null || clientFrame.isDisposed()) {
 			return;
+		}
 		// Create a OLE client site.
 		try {
 			clientSite = new OleClientSite(clientFrame, SWT.NONE, source);
@@ -215,8 +219,9 @@ public class OleEditor extends EditorPart {
 	 */
 	private void displayErrorDialog(String title, String message) {
 		Shell parent = null;
-		if (getClientSite() != null)
+		if (getClientSite() != null) {
 			parent = getClientSite().getShell();
+		}
 		MessageDialog.openError(parent, title, message);
 	}
 
@@ -242,8 +247,9 @@ public class OleEditor extends EditorPart {
 	 *	Print this object's contents
 	 */
 	public void doPrint() {
-		if (clientSite == null)
+		if (clientSite == null) {
 			return;
+		}
 		BusyIndicator.showWhile(clientSite.getDisplay(),
 				() -> clientSite.exec(OLE.OLECMDID_PRINT, OLE.OLECMDEXECOPT_PROMPTUSER, null, null));
 	}
@@ -253,8 +259,9 @@ public class OleEditor extends EditorPart {
 	 */
 	@Override
 	public void doSave(final IProgressMonitor monitor) {
-		if (clientSite == null)
+		if (clientSite == null) {
 			return;
+		}
 		BusyIndicator.showWhile(clientSite.getDisplay(), () -> {
 
 			// Do not try and use the component provided save if the source has
@@ -277,13 +284,15 @@ public class OleEditor extends EditorPart {
 			}
 			if (saveFile(source)) {
 				try {
-					if (resource != null)
+					if (resource != null) {
 						resource.refreshLocal(IResource.DEPTH_ZERO, monitor);
+					}
 				} catch (CoreException ex2) {
 					// Do nothing on a failed refresh
 				}
-			} else
+			} else {
 				displayErrorDialog(SAVE_ERROR_TITLE, SAVE_ERROR_MESSAGE + source.getName());
+			}
 		});
 	}
 
@@ -292,8 +301,9 @@ public class OleEditor extends EditorPart {
 	 */
 	@Override
 	public void doSaveAs() {
-		if (clientSite == null)
+		if (clientSite == null) {
 			return;
+		}
 		WorkspaceModifyOperation op = saveNewFileOperation();
 		Shell shell = clientSite.getShell();
 		try {
@@ -375,18 +385,20 @@ public class OleEditor extends EditorPart {
 	private boolean validatePathEditorInput(IEditorInput input) throws PartInitException {
 		// Check input type.
 		IPathEditorInput pathEditorInput = Adapters.adapt(input, IPathEditorInput.class);
-		if (pathEditorInput == null)
+		if (pathEditorInput == null) {
 			throw new PartInitException(OleMessages.format(
 					"OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
+		}
 
 		IPath path = pathEditorInput.getPath();
 
 		//Cannot create this with a file and no physical location
-		if (!(new File(path.toOSString()).exists()))
+		if (!(new File(path.toOSString()).exists())) {
 			throw new PartInitException(
 					OleMessages
 							.format(
 									"OleEditor.noFileInput", new Object[] { path.toOSString() })); //$NON-NLS-1$
+		}
 		return true;
 	}
 
@@ -395,8 +407,9 @@ public class OleEditor extends EditorPart {
 	 */
 	protected void initializeWorkbenchMenus() {
 		//If there was an OLE Error or nothing has been created yet
-		if (clientFrame == null || clientFrame.isDisposed())
+		if (clientFrame == null || clientFrame.isDisposed()) {
 			return;
+		}
 		// Get the browser menu bar.  If one does not exist then
 		// create it.
 		Shell shell = clientFrame.getShell();
@@ -416,13 +429,14 @@ public class OleEditor extends EditorPart {
 		for (int i = 0; i < menuBar.getItemCount(); i++) {
 			MenuItem item = menuBar.getItem(i);
 			String id = ""; //$NON-NLS-1$
-			if (item.getData() instanceof IMenuManager)
+			if (item.getData() instanceof IMenuManager) {
 				id = ((IMenuManager) item.getData()).getId();
-			if (id.equals(IWorkbenchActionConstants.M_FILE))
+			}
+			if (id.equals(IWorkbenchActionConstants.M_FILE)) {
 				fileMenu[0] = item;
-			else if (id.equals(IWorkbenchActionConstants.M_WINDOW))
+			} else if (id.equals(IWorkbenchActionConstants.M_WINDOW)) {
 				windowMenu[0] = item;
-			else {
+			} else {
 				if (window.isApplicationMenu(id)) {
 					containerItems.addElement(item);
 				}
@@ -499,8 +513,9 @@ public class OleEditor extends EditorPart {
 					dialog.open();
 
 					IPath newPath = dialog.getResult();
-					if (newPath == null)
+					if (newPath == null) {
 						return;
+					}
 
 					if (dialog.getReturnCode() == Window.OK) {
 						String projectName = newPath.segment(0);
@@ -531,8 +546,9 @@ public class OleEditor extends EditorPart {
 
 	@Override
 	public void setFocus() {
-		if (clientSite != null)
+		if (clientSite != null) {
 			clientSite.setFocus();
+		}
 	}
 
 	/**
@@ -541,8 +557,9 @@ public class OleEditor extends EditorPart {
 	private void oleActivate() {
 		//If there was an OLE Error or nothing has been created yet
 		if (clientSite == null || clientFrame == null
-				|| clientFrame.isDisposed())
+				|| clientFrame.isDisposed()) {
 			return;
+		}
 
 		clientSite.doVerb(OLE.OLEIVERB_SHOW);
 		String progId = clientSite.getProgramID();
@@ -554,12 +571,14 @@ public class OleEditor extends EditorPart {
 	@Override
 	protected void setInputWithNotify(IEditorInput input) {
 		IPathEditorInput pathEditorInput = Adapters.adapt(input, IPathEditorInput.class);
-		if (pathEditorInput != null)
+		if (pathEditorInput != null) {
 			source = new File(pathEditorInput.getPath().toOSString());
+		}
 
 		if (input instanceof IFileEditorInput) {
-			if (resource == null)
+			if (resource == null) {
 				ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener);
+			}
 			resource = ((IFileEditorInput)input).getFile();
 		} else if (resource != null) {
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
@@ -611,8 +630,9 @@ public class OleEditor extends EditorPart {
 		if (windows != null && windows.length > 0) {
 			Display display = windows[0].getShell().getDisplay();
 			display.asyncExec(runnable);
-		} else
+		} else {
 			runnable.run();
+		}
 	}
 
 	private boolean isDirty = false;
@@ -620,7 +640,9 @@ public class OleEditor extends EditorPart {
 		final Runnable dirtyFlagUpdater = new Runnable() {
 			@Override
 			public void run() {
-				if (clientSite == null || resource == null) return;
+				if (clientSite == null || resource == null) {
+					return;
+				}
 				boolean dirty = isDirty();
 				if (isDirty != dirty) {
 					isDirty = dirty;
