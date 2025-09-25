@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,8 @@ package org.eclipse.ui.internal.dialogs;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.preference.FieldEditor;
@@ -80,6 +82,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	private Button showInlineRenameButton;
 
+	private Button enableAutocompleteButton;
+
 	protected static int MAX_SAVE_INTERVAL = 9999;
 	protected static int MAX_VIEW_LIMIT = 1_000_000;
 
@@ -112,6 +116,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		createStickyCyclePref(composite);
 		createHeapStatusPref(composite);
 		createLargeViewLimitPref(composite);
+		createAutocompletePref(composite);
 	}
 
 	/**
@@ -386,6 +391,25 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	@Override
 	protected IPreferenceStore doGetPreferenceStore() {
 		return WorkbenchPlugin.getDefault().getPreferenceStore();
+	}
+
+	protected void createAutocompletePref(Composite parent) {
+		enableAutocompleteButton = new Button(parent, SWT.CHECK);
+		enableAutocompleteButton.setText(WorkbenchMessages.Preference_Enable_Autocomplete_ChevronPopUp);
+		enableAutocompleteButton.setToolTipText(WorkbenchMessages.Preference_Enable_Autocomplete_ChevronPopUp_ToolTip);
+
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode("org.eclipse.ui.workbench"); //$NON-NLS-1$
+		boolean enabled = prefs.getBoolean(WorkbenchMessages.Preference_Autocomplete, false);
+		enableAutocompleteButton.setSelection(enabled);
+
+		enableAutocompleteButton.addListener(SWT.Selection, e -> {
+			prefs.putBoolean(WorkbenchMessages.Preference_Autocomplete, enableAutocompleteButton.getSelection());
+			try {
+				prefs.flush();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
 	}
 
 	/**
