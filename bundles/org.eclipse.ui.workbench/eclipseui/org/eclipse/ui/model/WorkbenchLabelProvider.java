@@ -67,7 +67,7 @@ public class WorkbenchLabelProvider extends LabelProvider
 	 * when it changes, since many workbench adapters derive their icon from the
 	 * file associations in the registry.
 	 */
-	private IPropertyListener editorRegistryListener = (source, propId) -> {
+	private final IPropertyListener editorRegistryListener = (source, propId) -> {
 		if (propId == IEditorRegistry.PROP_CONTENTS) {
 			fireLabelProviderChanged(new LabelProviderChangedEvent(WorkbenchLabelProvider.this));
 		}
@@ -114,8 +114,9 @@ public class WorkbenchLabelProvider extends LabelProvider
 	@Override
 	public void dispose() {
 		PlatformUI.getWorkbench().getEditorRegistry().removePropertyListener(editorRegistryListener);
-		if (resourceManager != null)
+		if (resourceManager != null) {
 			resourceManager.dispose();
+		}
 		resourceManager = null;
 		super.dispose();
 	}

@@ -53,11 +53,11 @@ public class SaveablesLifecycleEvent extends EventObject {
 	 */
 	public static final int DIRTY_CHANGED = 4;
 
-	private int eventType;
+	private final int eventType;
 
-	private Saveable[] saveables;
+	private final Saveable[] saveables;
 
-	private boolean force;
+	private final boolean force;
 
 	private boolean veto = false;
 

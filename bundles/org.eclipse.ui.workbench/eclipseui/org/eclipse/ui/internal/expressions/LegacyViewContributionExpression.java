@@ -77,8 +77,7 @@ public final class LegacyViewContributionExpression extends WorkbenchWindowExpre
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof LegacyViewContributionExpression) {
-			final LegacyViewContributionExpression that = (LegacyViewContributionExpression) object;
+		if (object instanceof final LegacyViewContributionExpression that) {
 			return equals(this.activePartId, that.activePartId) && equals(this.getWindow(), that.getWindow());
 		}
 

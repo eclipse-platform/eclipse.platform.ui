@@ -93,8 +93,7 @@ public final class WorkbenchActivityHelper {
 		if (triggerPoint == null) {
 			return true;
 		}
-		if (object instanceof IPluginContribution) {
-			IPluginContribution contribution = (IPluginContribution) object;
+		if (object instanceof IPluginContribution contribution) {
 			IIdentifier identifier = getIdentifier(contribution);
 			return allow(triggerPoint, identifier);
 		}
@@ -197,8 +196,7 @@ public final class WorkbenchActivityHelper {
 	 * @see #createUnifiedId(IPluginContribution)
 	 */
 	public static boolean filterItem(Object object) {
-		if (object instanceof IPluginContribution) {
-			IPluginContribution contribution = (IPluginContribution) object;
+		if (object instanceof IPluginContribution contribution) {
 			IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
 			IIdentifier identifier = workbenchActivitySupport.getActivityManager()
 					.getIdentifier(createUnifiedId(contribution));

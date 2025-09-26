@@ -68,7 +68,7 @@ public class WorkbenchStatusDialogManager {
 
 	static final QualifiedName HINT = new QualifiedName(IStatusAdapterConstants.PROPERTY_PREFIX, "hint"); //$NON-NLS-1$
 
-	private WorkbenchStatusDialogManagerImpl manager;
+	private final WorkbenchStatusDialogManagerImpl manager;
 
 	/**
 	 * Creates workbench status dialog.

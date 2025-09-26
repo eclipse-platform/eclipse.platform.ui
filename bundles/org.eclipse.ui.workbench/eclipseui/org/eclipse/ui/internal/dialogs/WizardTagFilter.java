@@ -27,7 +27,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  */
 public class WizardTagFilter extends ViewerFilter {
 
-	private String[] myTags;
+	private final String[] myTags;
 
 	/**
 	 * Create a new instance of this filter
@@ -40,8 +40,7 @@ public class WizardTagFilter extends ViewerFilter {
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (element instanceof IWizardDescriptor) {
-			IWizardDescriptor desc = (IWizardDescriptor) element;
+		if (element instanceof IWizardDescriptor desc) {
 			for (String tag : desc.getTags()) {
 				for (String myTag : myTags) {
 					if (tag.equals(myTag)) {

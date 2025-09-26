@@ -52,21 +52,21 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CellEditorActionHandler {
-	private CutActionHandler cellCutAction = new CutActionHandler();
+	private final CutActionHandler cellCutAction = new CutActionHandler();
 
-	private CopyActionHandler cellCopyAction = new CopyActionHandler();
+	private final CopyActionHandler cellCopyAction = new CopyActionHandler();
 
-	private PasteActionHandler cellPasteAction = new PasteActionHandler();
+	private final PasteActionHandler cellPasteAction = new PasteActionHandler();
 
-	private DeleteActionHandler cellDeleteAction = new DeleteActionHandler();
+	private final DeleteActionHandler cellDeleteAction = new DeleteActionHandler();
 
-	private SelectAllActionHandler cellSelectAllAction = new SelectAllActionHandler();
+	private final SelectAllActionHandler cellSelectAllAction = new SelectAllActionHandler();
 
-	private FindActionHandler cellFindAction = new FindActionHandler();
+	private final FindActionHandler cellFindAction = new FindActionHandler();
 
-	private UndoActionHandler cellUndoAction = new UndoActionHandler();
+	private final UndoActionHandler cellUndoAction = new UndoActionHandler();
 
-	private RedoActionHandler cellRedoAction = new RedoActionHandler();
+	private final RedoActionHandler cellRedoAction = new RedoActionHandler();
 
 	private IAction cutAction;
 
@@ -84,29 +84,29 @@ public class CellEditorActionHandler {
 
 	private IAction redoAction;
 
-	private IPropertyChangeListener cutActionListener = new ActionEnabledChangeListener(cellCutAction);
+	private final IPropertyChangeListener cutActionListener = new ActionEnabledChangeListener(cellCutAction);
 
-	private IPropertyChangeListener copyActionListener = new ActionEnabledChangeListener(cellCopyAction);
+	private final IPropertyChangeListener copyActionListener = new ActionEnabledChangeListener(cellCopyAction);
 
-	private IPropertyChangeListener pasteActionListener = new ActionEnabledChangeListener(cellPasteAction);
+	private final IPropertyChangeListener pasteActionListener = new ActionEnabledChangeListener(cellPasteAction);
 
-	private IPropertyChangeListener deleteActionListener = new ActionEnabledChangeListener(cellDeleteAction);
+	private final IPropertyChangeListener deleteActionListener = new ActionEnabledChangeListener(cellDeleteAction);
 
-	private IPropertyChangeListener selectAllActionListener = new ActionEnabledChangeListener(cellSelectAllAction);
+	private final IPropertyChangeListener selectAllActionListener = new ActionEnabledChangeListener(cellSelectAllAction);
 
-	private IPropertyChangeListener findActionListener = new ActionEnabledChangeListener(cellFindAction);
+	private final IPropertyChangeListener findActionListener = new ActionEnabledChangeListener(cellFindAction);
 
-	private IPropertyChangeListener undoActionListener = new ActionEnabledChangeListener(cellUndoAction);
+	private final IPropertyChangeListener undoActionListener = new ActionEnabledChangeListener(cellUndoAction);
 
-	private IPropertyChangeListener redoActionListener = new ActionEnabledChangeListener(cellRedoAction);
+	private final IPropertyChangeListener redoActionListener = new ActionEnabledChangeListener(cellRedoAction);
 
 	private CellEditor activeEditor;
 
-	private IPropertyChangeListener cellListener = new CellChangeListener();
+	private final IPropertyChangeListener cellListener = new CellChangeListener();
 
-	private Listener controlListener = new ControlListener();
+	private final Listener controlListener = new ControlListener();
 
-	private HashMap<Control, CellEditor> controlToEditor = new HashMap<>();
+	private final HashMap<Control, CellEditor> controlToEditor = new HashMap<>();
 
 	private class ControlListener implements Listener {
 		@Override
@@ -133,7 +133,7 @@ public class CellEditorActionHandler {
 	}
 
 	private class ActionEnabledChangeListener implements IPropertyChangeListener {
-		private IAction actionHandler;
+		private final IAction actionHandler;
 
 		protected ActionEnabledChangeListener(IAction actionHandler) {
 			super();

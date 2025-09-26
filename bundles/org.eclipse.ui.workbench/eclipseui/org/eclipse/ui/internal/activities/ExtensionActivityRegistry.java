@@ -53,7 +53,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
 	private List<String> extensionDefaultEnabledActivities;
 
-	private IExtensionRegistry extensionRegistry;
+	private final IExtensionRegistry extensionRegistry;
 
 	ExtensionActivityRegistry(IExtensionRegistry extensionRegistry) {
 		if (extensionRegistry == null) {
@@ -178,11 +178,13 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		for (ActivityDefinition activityDef : extensionActivityDefinitions) {
 			String id = activityDef.getId();
 			String preferenceKey = createPreferenceKey(id);
-			if ("".equals(store.getDefaultString(preferenceKey))) //$NON-NLS-1$
+			if ("".equals(store.getDefaultString(preferenceKey))) { //$NON-NLS-1$
 				continue;
+			}
 			if (store.getDefaultBoolean(preferenceKey)) {
-				if (!extensionDefaultEnabledActivities.contains(id) && activityDef.getEnabledWhen() == null)
+				if (!extensionDefaultEnabledActivities.contains(id) && activityDef.getEnabledWhen() == null) {
 					extensionDefaultEnabledActivities.add(id);
+				}
 			} else {
 				extensionDefaultEnabledActivities.remove(id);
 			}

@@ -316,10 +316,11 @@ public class MenuHelper {
 			String disabledIconURI = null;
 
 			toolItem.setType(ItemType.PUSH);
-			if (data.style == CommandContributionItem.STYLE_CHECK)
+			if (data.style == CommandContributionItem.STYLE_CHECK) {
 				toolItem.setType(ItemType.CHECK);
-			else if (data.style == CommandContributionItem.STYLE_RADIO)
+			} else if (data.style == CommandContributionItem.STYLE_RADIO) {
 				toolItem.setType(ItemType.RADIO);
+			}
 
 			if (data.icon != null) {
 				iconURI = getIconURI(data.icon, application.getContext());

@@ -105,7 +105,7 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 	private void createBidiPreferencesGroup(Composite composite) {
 
 		layoutDirectionCombo = addComboBox(composite, WorkbenchMessages.GlobalizationPreference_layoutDirection, 0);
-		layoutDirectionCombo.setItems(new String[] { DEFAULT_DIR, LTR_DIR, RTL_DIR });
+		layoutDirectionCombo.setItems(DEFAULT_DIR, LTR_DIR, RTL_DIR);
 		layoutDirectionCombo.select(getLayoutDirectionIndex(layoutDirection));
 		layoutDirectionCombo.addSelectionListener(widgetSelectedAdapter(
 				e -> layoutDirection = getLayoutDirectionInteger(layoutDirectionCombo.getSelectionIndex())));
@@ -121,7 +121,7 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 
 		textDirectionCombo = addComboBox(composite, WorkbenchMessages.GlobalizationPreference_textDirection,
 				LayoutConstants.getIndent());
-		textDirectionCombo.setItems(new String[] { DEFAULT_DIR, LTR_DIR, AUTO_DIR, RTL_DIR });
+		textDirectionCombo.setItems(DEFAULT_DIR, LTR_DIR, AUTO_DIR, RTL_DIR);
 		textDirectionCombo.setEnabled(bidiSupport);
 		textDirectionCombo.select(getTextDirectionIndex(textDirection));
 		textDirectionCombo.addSelectionListener(widgetSelectedAdapter(

@@ -100,7 +100,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 	 * <code>enabledWhenExpression</code>. This value may be <code>null</code> only
 	 * if the <code>enabledWhenExpression</code> is <code>null</code>.
 	 */
-	private IEvaluationService evaluationService;
+	private final IEvaluationService evaluationService;
 
 	private IPropertyChangeListener enablementListener;
 
@@ -108,7 +108,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 
 	private boolean proxyEnabled;
 
-	private String commandId;
+	private final String commandId;
 
 	//
 	// state to support checked or radio commands.
@@ -194,8 +194,9 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 	public static void updateStaleCEs(IConfigurationElement[] replacements) {
 		for (IConfigurationElement replacement : replacements) {
 			HandlerProxy proxy = CEToProxyMap.get(replacement);
-			if (proxy != null)
+			if (proxy != null) {
 				proxy.configurationElement = replacement;
+			}
 		}
 	}
 
@@ -206,10 +207,9 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 
 	@Override
 	public void setEnabled(Object evaluationContext) {
-		if (!(evaluationContext instanceof IEvaluationContext)) {
+		if (!(evaluationContext instanceof IEvaluationContext context)) {
 			return;
 		}
-		IEvaluationContext context = (IEvaluationContext) evaluationContext;
 		if (enabledWhenExpression != null) {
 			try {
 				setProxyEnabled(enabledWhenExpression.evaluate(context) == EvaluationResult.TRUE);
@@ -277,8 +277,9 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 			return handler.execute(event);
 		}
 
-		if (loadException != null)
+		if (loadException != null) {
 			throw new ExecutionException("Exception occurred when loading the handler", loadException); //$NON-NLS-1$
+		}
 
 		return null;
 	}
@@ -409,8 +410,9 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 	}
 
 	private boolean isOkToLoad() {
-		if (PlatformUI.getWorkbench().isClosing())
+		if (PlatformUI.getWorkbench().isClosing()) {
 			return handler != null;
+		}
 
 		if (configurationElement != null && handler == null) {
 			final String bundleId = configurationElement.getContributor().getName();

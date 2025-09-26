@@ -22,7 +22,7 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.ui.IViewLayout;
 
 public class ModeledViewLayout implements IViewLayout {
-	private MUIElement viewME;
+	private final MUIElement viewME;
 
 	public ModeledViewLayout(MPart view) {
 		viewME = view;
@@ -55,18 +55,20 @@ public class ModeledViewLayout implements IViewLayout {
 
 	@Override
 	public void setCloseable(boolean closeable) {
-		if (closeable)
+		if (closeable) {
 			viewME.getTags().remove(IPresentationEngine.NO_CLOSE);
-		else
+		} else {
 			viewME.getTags().add(IPresentationEngine.NO_CLOSE);
+		}
 	}
 
 	@Override
 	public void setMoveable(boolean moveable) {
-		if (moveable)
+		if (moveable) {
 			viewME.getTags().remove(IPresentationEngine.NO_MOVE);
-		else
+		} else {
 			viewME.getTags().add(IPresentationEngine.NO_MOVE);
+		}
 	}
 
 }

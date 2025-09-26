@@ -232,7 +232,7 @@ public class WorkbenchProperties {
 	 */
 	public static <S extends IPartService> IValueProperty<S, IEditorReference> activePartAsEditorReference() {
 		return WorkbenchProperties.<S>activePartReference().value(Properties.convertedValue(IEditorReference.class,
-						part -> part instanceof IEditorReference ? (IEditorReference) part : null));
+						part -> part instanceof IEditorReference i ? i : null));
 	}
 
 	/**

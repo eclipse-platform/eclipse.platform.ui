@@ -104,8 +104,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof LegacyHandlerSubmissionExpression) {
-			final LegacyHandlerSubmissionExpression that = (LegacyHandlerSubmissionExpression) object;
+		if (object instanceof final LegacyHandlerSubmissionExpression that) {
 			return equals(this.activePartId, that.activePartId) && equals(this.activeShell, that.activeShell)
 					&& equals(this.activeSite, that.activeSite);
 		}

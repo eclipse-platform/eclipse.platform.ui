@@ -79,8 +79,9 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(title);
-		if (helpContextId != null)
+		if (helpContextId != null) {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, helpContextId);
+		}
 	}
 
 	@Override

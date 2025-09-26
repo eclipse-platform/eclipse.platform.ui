@@ -71,8 +71,9 @@ public class NullEditorInput implements IEditorInput {
 
 	@Override
 	public String getToolTipText() {
-		if (editorReference != null)
+		if (editorReference != null) {
 			return editorReference.getTitleToolTip();
+		}
 		return ""; //$NON-NLS-1$
 	}
 

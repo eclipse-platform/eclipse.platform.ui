@@ -607,8 +607,7 @@ public final class ContextAuthority extends ExpressionAuthority {
 			while (changedContextIdItr.hasNext()) {
 				final String contextId = changedContextIdItr.next();
 				final Object value = contextActivationsByContextId.get(contextId);
-				if (value instanceof IContextActivation) {
-					final IContextActivation activation = (IContextActivation) value;
+				if (value instanceof final IContextActivation activation) {
 					updateContext(contextId, evaluate(activation));
 				} else if (value instanceof Collection<?>) {
 					updateContext(contextId, containsActive((Collection<IContextActivation>) value));

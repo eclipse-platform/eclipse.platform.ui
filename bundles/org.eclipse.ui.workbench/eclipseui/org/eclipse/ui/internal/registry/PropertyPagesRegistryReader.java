@@ -84,9 +84,9 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 
 	private static final String CHILD_ENABLED_WHEN = "enabledWhen"; //$NON-NLS-1$ ;
 
-	private Collection<RegistryPageContributor> pages = new ArrayList<>();
+	private final Collection<RegistryPageContributor> pages = new ArrayList<>();
 
-	private PropertyPageContributorManager manager;
+	private final PropertyPageContributorManager manager;
 
 	static class PropertyCategoryNode extends CategoryNode {
 
@@ -223,8 +223,9 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 		Iterator<RegistryPageContributor> iterator = pages.iterator();
 		while (iterator.hasNext()) {
 			RegistryPageContributor next = iterator.next();
-			if (next.getPageId().equals(id))
+			if (next.getPageId().equals(id)) {
 				return next;
+			}
 		}
 		return null;
 	}

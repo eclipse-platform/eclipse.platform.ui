@@ -33,17 +33,17 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable, IW
 
 	private static final String INITIALLY_HIDDEN_PREF_ID_PREFIX = "actionSet.initiallyHidden."; //$NON-NLS-1$
 
-	private String id;
+	private final String id;
 
-	private String pluginId;
+	private final String pluginId;
 
-	private String label;
+	private final String label;
 
 	private boolean visible;
 
-	private String description;
+	private final String description;
 
-	private IConfigurationElement configElement;
+	private final IConfigurationElement configElement;
 
 	/**
 	 * Create a descriptor from a configuration element.
@@ -205,11 +205,9 @@ public class ActionSetDescriptor implements IActionSetDescriptor, IAdaptable, IW
 
 	@Override
 	public boolean equals(Object arg0) {
-		if (!(arg0 instanceof ActionSetDescriptor)) {
+		if (!(arg0 instanceof ActionSetDescriptor descr)) {
 			return false;
 		}
-
-		ActionSetDescriptor descr = (ActionSetDescriptor) arg0;
 
 		return id.equals(descr.id) && descr.pluginId.equals(pluginId);
 	}

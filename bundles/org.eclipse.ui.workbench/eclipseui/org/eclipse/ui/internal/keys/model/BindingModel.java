@@ -214,8 +214,7 @@ public class BindingModel extends CommonModel {
 		while (i.hasNext()) {
 			BindingElement be = (BindingElement) i.next();
 			Object obj = be.getModelObject();
-			if (obj instanceof Binding) {
-				Binding b = (Binding) obj;
+			if (obj instanceof Binding b) {
 				if (!activeManagerBindings.contains(b)) {
 					ParameterizedCommand cmd = b.getParameterizedCommand();
 					if (cmd != null) {
@@ -283,8 +282,7 @@ public class BindingModel extends CommonModel {
 						continue;
 					}
 					Object modelObject = be.getModelObject();
-					if (modelObject instanceof Binding) {
-						Binding binding = (Binding) modelObject;
+					if (modelObject instanceof Binding binding) {
 						if (binding.getType() != Binding.SYSTEM) {
 							continue;
 						}

@@ -70,8 +70,7 @@ public final class ActivePartExpression extends Expression {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof ActivePartExpression) {
-			final ActivePartExpression that = (ActivePartExpression) object;
+		if (object instanceof final ActivePartExpression that) {
 			return equals(this.activePart, that.activePart);
 		}
 

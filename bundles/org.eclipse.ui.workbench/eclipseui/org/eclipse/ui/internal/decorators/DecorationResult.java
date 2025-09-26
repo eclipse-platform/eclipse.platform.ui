@@ -30,17 +30,17 @@ import org.eclipse.swt.graphics.Rectangle;
  */
 public class DecorationResult {
 
-	private List prefixes;
+	private final List prefixes;
 
-	private List suffixes;
+	private final List suffixes;
 
 	private ImageDescriptor[] descriptors;
 
-	private Color foregroundColor;
+	private final Color foregroundColor;
 
-	private Color backgroundColor;
+	private final Color backgroundColor;
 
-	private Font font;
+	private final Font font;
 
 	DecorationResult(List prefixList, List suffixList, ImageDescriptor[] imageDescriptors, Color resultForegroundColor,
 			Color resultBackgroundColor, Font resultFont) {

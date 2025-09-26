@@ -28,12 +28,12 @@ import org.eclipse.ui.services.IDisposable;
  */
 public class SlaveSelectionService implements ISelectionService, IDisposable {
 
-	private ListenerList<ISelectionListener> postListeners = new ListenerList<>(ListenerList.IDENTITY);
-	private ListenerList<ISelectionListener> listeners = new ListenerList<>(ListenerList.IDENTITY);
-	private Map<ISelectionListener, String> listenersToPartId = new HashMap<>();
-	private Map<ISelectionListener, String> postListenersToPartId = new HashMap<>();
+	private final ListenerList<ISelectionListener> postListeners = new ListenerList<>(ListenerList.IDENTITY);
+	private final ListenerList<ISelectionListener> listeners = new ListenerList<>(ListenerList.IDENTITY);
+	private final Map<ISelectionListener, String> listenersToPartId = new HashMap<>();
+	private final Map<ISelectionListener, String> postListenersToPartId = new HashMap<>();
 
-	private ISelectionService parentSelectionService;
+	private final ISelectionService parentSelectionService;
 
 	public SlaveSelectionService(ISelectionService parentSelectionService) {
 		if (parentSelectionService == null) {

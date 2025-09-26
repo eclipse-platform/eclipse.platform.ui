@@ -49,13 +49,13 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 		String actionSetId;
 	}
 
-	private ArrayList<ActionSetDescriptor> children = new ArrayList<>();
+	private final ArrayList<ActionSetDescriptor> children = new ArrayList<>();
 
-	private Map<String, ArrayList<String>> mapPartToActionSetIds = new HashMap<>();
+	private final Map<String, ArrayList<String>> mapPartToActionSetIds = new HashMap<>();
 
-	private Map<String, ArrayList<IActionSetDescriptor>> mapPartToActionSets = new HashMap<>();
+	private final Map<String, ArrayList<IActionSetDescriptor>> mapPartToActionSets = new HashMap<>();
 
-	private IContextService contextService;
+	private final IContextService contextService;
 
 	/**
 	 * Creates the action set registry.
@@ -275,8 +275,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 
 	private void removeActionSetPartAssociations(Object[] objects) {
 		for (Object object : objects) {
-			if (object instanceof ActionSetPartAssociation) {
-				ActionSetPartAssociation association = (ActionSetPartAssociation) object;
+			if (object instanceof ActionSetPartAssociation association) {
 				String actionSetId = association.actionSetId;
 				ArrayList<String> actionSets = mapPartToActionSetIds.get(association.partId);
 				if (actionSets == null) {
@@ -295,8 +294,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 
 	private void removeActionSets(Object[] objects) {
 		for (Object object : objects) {
-			if (object instanceof IActionSetDescriptor) {
-				IActionSetDescriptor desc = (IActionSetDescriptor) object;
+			if (object instanceof IActionSetDescriptor desc) {
 				removeActionSet(desc);
 
 				// now clean up the part associations

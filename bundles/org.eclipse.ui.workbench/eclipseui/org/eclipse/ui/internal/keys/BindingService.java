@@ -92,7 +92,7 @@ public final class BindingService implements IBindingService {
 
 	private BindingPersistence bp;
 
-	private Map<String, MBindingContext> bindingContexts = new HashMap<>();
+	private final Map<String, MBindingContext> bindingContexts = new HashMap<>();
 
 	private String[] activeSchemeIds;
 
@@ -530,15 +530,18 @@ public final class BindingService implements IBindingService {
 
 	static private boolean isSameBinding(MKeyBinding existingBinding, MCommand cmd, Binding binding) {
 		// see org.eclipse.jface.bindings.Binding#equals(final Object object)
-		if (!cmd.equals(existingBinding.getCommand()))
+		if (!cmd.equals(existingBinding.getCommand())) {
 			return false;
+		}
 		String existingKeySequence = existingBinding.getKeySequence();
-		if (existingKeySequence == null)
+		if (existingKeySequence == null) {
 			return false;
+		}
 		try {
 			final KeySequence existingSequence = KeySequence.getInstance(existingKeySequence);
-			if (!existingSequence.equals(binding.getTriggerSequence()))
+			if (!existingSequence.equals(binding.getTriggerSequence())) {
 				return false;
+			}
 		} catch (ParseException e) {
 			return false;
 		}
@@ -548,22 +551,26 @@ public final class BindingService implements IBindingService {
 
 		String schemeId = binding.getSchemeId();
 		if (schemeId != null && !schemeId.equals(BindingPersistence.getDefaultSchemeId())) {
-			if (!modelTags.contains(EBindingService.SCHEME_ID_ATTR_TAG + ":" + schemeId)) //$NON-NLS-1$
+			if (!modelTags.contains(EBindingService.SCHEME_ID_ATTR_TAG + ":" + schemeId)) { //$NON-NLS-1$
 				return false;
+			}
 		}
 		String locale = binding.getLocale();
 		if (locale != null) {
-			if (!modelTags.contains(EBindingService.LOCALE_ATTR_TAG + ":" + locale)) //$NON-NLS-1$
+			if (!modelTags.contains(EBindingService.LOCALE_ATTR_TAG + ":" + locale)) { //$NON-NLS-1$
 				return false;
+			}
 		}
 		String platform = binding.getPlatform();
 		if (platform != null) {
-			if (!modelTags.contains(EBindingService.PLATFORM_ATTR_TAG + ":" + platform)) //$NON-NLS-1$
+			if (!modelTags.contains(EBindingService.PLATFORM_ATTR_TAG + ":" + platform)) { //$NON-NLS-1$
 				return false;
+			}
 		}
 		if (binding.getType() == Binding.USER) {
-			if (!modelTags.contains(EBindingService.TYPE_ATTR_TAG + ":user")) //$NON-NLS-1$
+			if (!modelTags.contains(EBindingService.TYPE_ATTR_TAG + ":user")) { //$NON-NLS-1$
 				return false;
+			}
 		}
 		return true;
 	}
@@ -607,8 +614,9 @@ public final class BindingService implements IBindingService {
 				Map.Entry<String, String> entry = (Map.Entry<String, String>) obj;
 
 				String paramID = entry.getKey();
-				if (paramID == null)
+				if (paramID == null) {
 					continue;
+				}
 				List<MParameter> bindingParams = keyBinding.getParameters();
 				MParameter p = null;
 				for (MParameter param : bindingParams) {

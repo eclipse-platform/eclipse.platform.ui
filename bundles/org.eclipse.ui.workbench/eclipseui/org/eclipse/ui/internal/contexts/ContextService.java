@@ -45,7 +45,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public final class ContextService implements IContextService {
 
-	private HashMap<IContextActivation, UpdateExpression> activationToRat = new HashMap<>();
+	private final HashMap<IContextActivation, UpdateExpression> activationToRat = new HashMap<>();
 
 	/**
 	 * The central authority for determining which context we should use.
@@ -56,7 +56,7 @@ public final class ContextService implements IContextService {
 	 * The context manager that supports this service. This value is never
 	 * <code>null</code>.
 	 */
-	private ContextManager contextManager;
+	private final ContextManager contextManager;
 
 	@Inject
 	private EContextService contextService;
@@ -100,7 +100,7 @@ public final class ContextService implements IContextService {
 	private class UpdateExpression extends RunAndTrack {
 		boolean updating = true;
 
-		private String contextId;
+		private final String contextId;
 		private Expression expression;
 
 		EvaluationResult cached = null;

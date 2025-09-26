@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 public class AdaptableForwarder implements IAdaptable {
 
-	private Object element;
+	private final Object element;
 
 	/**
 	 * Create a new instance of the receiver.

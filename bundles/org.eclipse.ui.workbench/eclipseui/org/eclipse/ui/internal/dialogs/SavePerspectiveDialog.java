@@ -55,7 +55,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 
 	private Button okButton;
 
-	private PerspectiveRegistry perspReg;
+	private final PerspectiveRegistry perspReg;
 
 	private String perspName;
 

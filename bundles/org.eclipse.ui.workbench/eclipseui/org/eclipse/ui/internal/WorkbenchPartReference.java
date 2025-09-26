@@ -124,7 +124,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * Current state of the reference. Used to detect recursive creation errors,
 	 * disposed references, etc.
 	 */
-	private int state = STATE_LAZY;
+	private final int state = STATE_LAZY;
 
 	protected IWorkbenchPart legacyPart;
 	private boolean pinned = false;
@@ -132,27 +132,27 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	/**
 	 * API listener list
 	 */
-	private ListenerList<IPropertyListener> propChangeListeners = new ListenerList<>();
+	private final ListenerList<IPropertyListener> propChangeListeners = new ListenerList<>();
 
 	/**
 	 * Internal listener list. Listens to the INTERNAL_PROPERTY_* property change
 	 * events that are not yet API. TODO: Make these properties API in 3.2
 	 */
-	private ListenerList<IPropertyListener> internalPropChangeListeners = new ListenerList<>();
+	private final ListenerList<IPropertyListener> internalPropChangeListeners = new ListenerList<>();
 
-	private ListenerList<IPropertyChangeListener> partChangeListeners = new ListenerList<>();
+	private final ListenerList<IPropertyChangeListener> partChangeListeners = new ListenerList<>();
 
 	protected Map<String, String> propertyCache = new HashMap<>();
 
-	private IPropertyListener propertyChangeListener = this::partPropertyChanged;
+	private final IPropertyListener propertyChangeListener = this::partPropertyChanged;
 
-	private IPropertyChangeListener partPropertyChangeListener = this::partPropertyChanged;
+	private final IPropertyChangeListener partPropertyChangeListener = this::partPropertyChanged;
 
 	private IWorkbenchPage page;
 
-	private MPart part;
+	private final MPart part;
 
-	private IEclipseContext windowContext;
+	private final IEclipseContext windowContext;
 
 	private EventHandler contextEventHandler;
 
@@ -292,8 +292,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	@Override
 	public String getTitleToolTip() {
 		String toolTip = (String) part.getTransientData().get(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY);
-		if (toolTip == null || toolTip.isEmpty())
+		if (toolTip == null || toolTip.isEmpty()) {
 			toolTip = part.getLocalizedTooltip();
+		}
 		return Util.safeString(toolTip);
 	}
 
@@ -453,10 +454,11 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 		pinned = newPinned;
 
 		immediateFirePropertyChange(IWorkbenchPartConstants.PROP_TITLE);
-		if (pinned)
+		if (pinned) {
 			part.getTags().add(IPresentationEngine.ADORNMENT_PIN);
-		else
+		} else {
 			part.getTags().remove(IPresentationEngine.ADORNMENT_PIN);
+		}
 
 		fireInternalPropertyChange(INTERNAL_PROPERTY_PINNED);
 	}

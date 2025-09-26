@@ -42,8 +42,9 @@ public class PreferencesContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof PreferenceTransferElement[])
+		if (inputElement instanceof PreferenceTransferElement[]) {
 			return (PreferenceTransferElement[]) inputElement;
+		}
 		return new PreferenceTransferElement[0];
 	}
 

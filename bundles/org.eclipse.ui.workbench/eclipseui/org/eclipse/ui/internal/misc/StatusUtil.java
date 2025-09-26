@@ -88,8 +88,7 @@ public class StatusUtil {
 		// Workaround for the fact that CoreException does not implement a
 		// getLocalizedMessage() method.
 		// Remove this branch when and if CoreException implements getLocalizedMessage()
-		if (exception instanceof CoreException) {
-			CoreException ce = (CoreException) exception;
+		if (exception instanceof CoreException ce) {
 			return ce.getStatus().getMessage();
 		}
 

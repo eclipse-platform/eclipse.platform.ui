@@ -148,7 +148,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private BundleContext bundleContext;
 
 	// The set of currently starting bundles
-	private Collection<Bundle> startingBundles = new HashSet<>();
+	private final Collection<Bundle> startingBundles = new HashSet<>();
 
 	/**
 	 * Global workbench ui plugin flag. Only workbench implementation is allowed to
@@ -311,15 +311,18 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	public static boolean hasExecutableExtension(IConfigurationElement element, String extensionName) {
 
-		if (element.getAttribute(extensionName) != null)
+		if (element.getAttribute(extensionName) != null) {
 			return true;
+		}
 		String elementText = element.getValue();
-		if (elementText != null && !elementText.isEmpty())
+		if (elementText != null && !elementText.isEmpty()) {
 			return true;
+		}
 		IConfigurationElement[] children = element.getChildren(extensionName);
 		if (children.length == 1) {
-			if (children[0].getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) != null)
+			if (children[0].getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) != null) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -345,8 +348,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	public static boolean isBundleLoadedForExecutableExtension(IConfigurationElement element, String extensionName) {
 		Bundle bundle = getBundleForExecutableExtension(element, extensionName);
 
-		if (bundle == null)
+		if (bundle == null) {
 			return true;
+		}
 		return bundle.getState() == Bundle.ACTIVE;
 	}
 
@@ -375,39 +379,44 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		String contributorName = null;
 		int i;
 
-		if (extensionName != null)
+		if (extensionName != null) {
 			prop = element.getAttribute(extensionName);
-		else {
+		} else {
 			// property not specified, try as element value
 			prop = element.getValue();
 			if (prop != null) {
 				prop = prop.trim();
-				if (prop.isEmpty())
+				if (prop.isEmpty()) {
 					prop = null;
+				}
 			}
 		}
 
 		if (prop == null) {
 			// property not defined, try as a child element
 			IConfigurationElement[] exec = element.getChildren(extensionName);
-			if (exec.length != 0)
+			if (exec.length != 0) {
 				contributorName = exec[0].getAttribute("plugin"); //$NON-NLS-1$
+			}
 		} else {
 			// simple property or element value, parse it into its components
 			i = prop.indexOf(':');
-			if (i != -1)
+			if (i != -1) {
 				executable = prop.substring(0, i).trim();
-			else
+			} else {
 				executable = prop;
+			}
 
 			i = executable.indexOf('/');
-			if (i != -1)
+			if (i != -1) {
 				contributorName = executable.substring(0, i).trim();
+			}
 
 		}
 
-		if (contributorName == null)
+		if (contributorName == null) {
 			contributorName = element.getContributor().getName();
+		}
 
 		return Platform.getBundle(contributorName);
 	}
@@ -662,8 +671,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 		// If this was a CoreException, keep the original plugin ID and error
 		// code
-		if (t instanceof CoreException) {
-			CoreException ce = (CoreException) t;
+		if (t instanceof CoreException ce) {
 			pluginId = ce.getStatus().getPlugin();
 			errorCode = ce.getStatus().getCode();
 		}
@@ -764,8 +772,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			// of the ui bundle. Using the bundle activator class here because it is a
 			// class that needs to be loaded anyway so it should not cause extra classes
 			// to be loaded.s
-			if (uiBundle != null)
+			if (uiBundle != null) {
 				uiBundle.start(Bundle.START_TRANSIENT);
+			}
 		} catch (BundleException e) {
 			WorkbenchPlugin.log("Unable to load UI activator", e); //$NON-NLS-1$
 		}
@@ -867,8 +876,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private Boolean isBidiMessageText() {
 		// Check if the user installed the NLS packs for bidi
 		String message = WorkbenchMessages.Startup_Loading_Workbench;
-		if (message == null)
+		if (message == null) {
 			return null;
+		}
 
 		try {
 			// use qualified class name to avoid import statement
@@ -899,18 +909,21 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// Check if the user property is set. If not, do not rely on the VM.
 		if (System.getProperty(NL_USER_PROPERTY) == null) {
 			Boolean needRTL = isBidiMessageText();
-			if (needRTL != null && needRTL.booleanValue())
+			if (needRTL != null && needRTL.booleanValue()) {
 				return SWT.RIGHT_TO_LEFT;
+			}
 		} else {
 			String lang = Locale.getDefault().getLanguage();
 			boolean bidiLangauage = "iw".equals(lang) || "he".equals(lang) || "ar".equals(lang) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					"fa".equals(lang) || "ur".equals(lang); //$NON-NLS-1$ //$NON-NLS-2$
 			if (bidiLangauage) {
 				Boolean needRTL = isBidiMessageText();
-				if (needRTL == null)
+				if (needRTL == null) {
 					return SWT.RIGHT_TO_LEFT;
-				if (needRTL.booleanValue())
+				}
+				if (needRTL.booleanValue()) {
 					return SWT.RIGHT_TO_LEFT;
+				}
 			}
 		}
 		return SWT.NONE;
@@ -1210,8 +1223,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	public static void unsetSplashShell(Display display) {
 		Shell splashShell = (Shell) display.getData(DATA_SPLASH_SHELL);
 		if (splashShell != null) {
-			if (!splashShell.isDisposed())
+			if (!splashShell.isDisposed()) {
 				splashShell.dispose();
+			}
 			display.setData(DATA_SPLASH_SHELL, null);
 		}
 
@@ -1389,8 +1403,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * Return the debug options service, if available.
 	 */
 	public DebugOptions getDebugOptions() {
-		if (bundleContext == null)
+		if (bundleContext == null) {
 			return null;
+		}
 		if (debugTracker == null) {
 			debugTracker = new ServiceTracker(bundleContext, DebugOptions.class.getName(), null);
 			debugTracker.open();
@@ -1412,8 +1427,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @return TestableObject provided via service or <code>null</code>
 	 */
 	public TestableObject getTestableObject() {
-		if (bundleContext == null)
+		if (bundleContext == null) {
 			return null;
+		}
 		if (testableTracker == null) {
 			testableTracker = new ServiceTracker(bundleContext, TestableObject.class.getName(), null);
 			testableTracker.open();

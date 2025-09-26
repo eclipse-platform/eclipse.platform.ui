@@ -65,12 +65,12 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class ListSelectionDialog extends SelectionDialog {
 	// the root element to populate the viewer with
-	private Object inputElement;
+	private final Object inputElement;
 
 	// providers for populating this dialog
-	private ILabelProvider labelProvider;
+	private final ILabelProvider labelProvider;
 
-	private IStructuredContentProvider contentProvider;
+	private final IStructuredContentProvider contentProvider;
 
 	// the visual selection widget group
 	CheckboxTableViewer listViewer;

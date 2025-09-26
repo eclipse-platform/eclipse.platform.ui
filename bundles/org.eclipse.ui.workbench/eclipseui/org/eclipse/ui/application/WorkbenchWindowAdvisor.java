@@ -66,7 +66,7 @@ import org.eclipse.ui.intro.IIntroManager;
  */
 public class WorkbenchWindowAdvisor {
 
-	private IWorkbenchWindowConfigurer windowConfigurer;
+	private final IWorkbenchWindowConfigurer windowConfigurer;
 
 	/**
 	 * Creates a new workbench window advisor for configuring a workbench window via

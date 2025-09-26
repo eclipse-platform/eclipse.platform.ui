@@ -51,7 +51,7 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 	}
 
 	private class ToggleWorkingSetAction extends Action {
-		private IWorkingSet set;
+		private final IWorkingSet set;
 
 		ToggleWorkingSetAction(IWorkingSet set) {
 			super(set.getLabel(), IAction.AS_CHECK_BOX);
@@ -72,8 +72,9 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 				boolean modified = (event.stateMask
 						& KeyLookupFactory.getDefault().formalModifierLookup(IKeyLookup.M1_NAME)) != 0;
 
-				if (modified)
+				if (modified) {
 					newList.clear();
+				}
 				newList.add(set);
 			} else {
 				newList.remove(set);
@@ -131,7 +132,7 @@ public class SelectWorkingSetsAction extends AbstractWorkingSetPulldownDelegate 
 
 class ConfigureWindowWorkingSetsDialog extends SimpleWorkingSetSelectionDialog {
 
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	protected ConfigureWindowWorkingSetsDialog(IWorkbenchWindow window) {
 		super(window.getShell(), null, window.getActivePage().getWorkingSets(), true);

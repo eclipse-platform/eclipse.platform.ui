@@ -78,13 +78,13 @@ public class AboutDialog extends TrayDialog {
 
 	private String productName;
 
-	private IProduct product;
+	private final IProduct product;
 
-	private AboutBundleGroupData[] bundleGroupInfos;
+	private final AboutBundleGroupData[] bundleGroupInfos;
 
-	private ArrayList<Image> images = new ArrayList<>();
+	private final ArrayList<Image> images = new ArrayList<>();
 
-	private AboutFeaturesButtonManager buttonManager = new AboutFeaturesButtonManager();
+	private final AboutFeaturesButtonManager buttonManager = new AboutFeaturesButtonManager();
 
 	private StyledText text;
 

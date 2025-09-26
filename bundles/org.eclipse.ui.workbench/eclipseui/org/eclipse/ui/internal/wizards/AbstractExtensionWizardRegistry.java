@@ -152,12 +152,10 @@ public abstract class AbstractExtensionWizardRegistry extends AbstractWizardRegi
 			return;
 		}
 		for (Object object : objects) {
-			if (object instanceof WizardCollectionElement) {
+			if (object instanceof WizardCollectionElement collection) {
 				// TODO: should we move child wizards to the "other" node?
-				WizardCollectionElement collection = (WizardCollectionElement) object;
 				collection.getParentCollection().remove(collection);
-			} else if (object instanceof WorkbenchWizardElement) {
-				WorkbenchWizardElement wizard = (WorkbenchWizardElement) object;
+			} else if (object instanceof WorkbenchWizardElement wizard) {
 				WizardCollectionElement parent = wizard.getCollectionElement();
 				if (parent != null) {
 					parent.remove(wizard);

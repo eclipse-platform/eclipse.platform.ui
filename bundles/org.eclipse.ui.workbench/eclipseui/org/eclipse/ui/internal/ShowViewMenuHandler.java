@@ -66,13 +66,11 @@ public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 				if (partContainer != null) {
 					Composite parent = partContainer.getParent();
 					while (parent != null) {
-						if (parent instanceof CTabFolder) {
-							CTabFolder ctf = (CTabFolder) parent;
+						if (parent instanceof CTabFolder ctf) {
 							final Control topRight = ctf.getTopRight();
 							if (topRight instanceof Composite) {
 								for (Control child : ((Composite) topRight).getChildren()) {
-									if (child instanceof ToolBar && "ViewMenu".equals(child.getData())) { //$NON-NLS-1$
-										ToolBar tb = (ToolBar) child;
+									if (child instanceof ToolBar tb && "ViewMenu".equals(child.getData())) { //$NON-NLS-1$
 										ToolItem ti = tb.getItem(0);
 										Event sevent = new Event();
 										sevent.type = SWT.Selection;
@@ -116,8 +114,9 @@ public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 		menu.setVisible(true);
 
 		while (!menu.isDisposed() && menu.isVisible()) {
-			if (!display.readAndDispatch())
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 		}
 
 		if (!(menu.getData() instanceof MenuManager)) {

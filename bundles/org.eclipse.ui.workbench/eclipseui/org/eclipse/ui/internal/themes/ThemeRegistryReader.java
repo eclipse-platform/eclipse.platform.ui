@@ -40,17 +40,17 @@ public class ThemeRegistryReader extends RegistryReader {
 	 */
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(ThemeRegistryReader.class.getName());
 
-	private Collection<ThemeElementCategory> categoryDefinitions = new HashSet<>();
+	private final Collection<ThemeElementCategory> categoryDefinitions = new HashSet<>();
 
-	private Collection<ColorDefinition> colorDefinitions = new HashSet<>();
+	private final Collection<ColorDefinition> colorDefinitions = new HashSet<>();
 
-	private Collection<FontDefinition> fontDefinitions = new HashSet<>();
+	private final Collection<FontDefinition> fontDefinitions = new HashSet<>();
 
 	private ThemeDescriptor themeDescriptor = null;
 
 	private ThemeRegistry themeRegistry;
 
-	private Map<String, String> dataMap = new HashMap<>();
+	private final Map<String, String> dataMap = new HashMap<>();
 
 	/**
 	 * ThemeRegistryReader constructor comment.

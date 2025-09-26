@@ -59,7 +59,7 @@ public class PageSite implements IPageSite, INestable {
 	/**
 	 * The "parent" view site
 	 */
-	private IViewSite parentSite;
+	private final IViewSite parentSite;
 
 	/**
 	 * A selection provider set by the page. Value is <code>null</code> until set.
@@ -75,9 +75,9 @@ public class PageSite implements IPageSite, INestable {
 	/**
 	 * The action bars for this site
 	 */
-	private SubActionBars subActionBars;
+	private final SubActionBars subActionBars;
 
-	private IEclipseContext e4Context;
+	private final IEclipseContext e4Context;
 
 	private NestableContextService contextService;
 

@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
  */
 public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginContribution {
 
-	private String id;
+	private final String id;
 	private String label;
 	private ImageDescriptor image;
 	private IConfigurationElement configElement;

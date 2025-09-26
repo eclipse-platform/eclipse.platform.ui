@@ -41,12 +41,12 @@ public final class PerspectiveLabelProvider extends LabelProvider implements ITa
 	/**
 	 * List of all Image objects this label provider is responsible for.
 	 */
-	private HashMap<ImageDescriptor, Image> imageCache = new HashMap<>(5);
+	private final HashMap<ImageDescriptor, Image> imageCache = new HashMap<>(5);
 
 	/**
 	 * Indicates whether the default perspective is visually marked.
 	 */
-	private boolean markDefault;
+	private final boolean markDefault;
 
 	/**
 	 * Creates a new label provider for perspectives. The default perspective is
@@ -70,8 +70,7 @@ public final class PerspectiveLabelProvider extends LabelProvider implements ITa
 
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof IPerspectiveDescriptor) {
-			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
+		if (element instanceof IPerspectiveDescriptor desc) {
 			ImageDescriptor imageDescriptor = desc.getImageDescriptor();
 			if (imageDescriptor == null) {
 				imageDescriptor = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
@@ -96,8 +95,7 @@ public final class PerspectiveLabelProvider extends LabelProvider implements ITa
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof IPerspectiveDescriptor) {
-			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
+		if (element instanceof IPerspectiveDescriptor desc) {
 			String label = desc.getLabel();
 			if (markDefault) {
 				String def = PlatformUI.getWorkbench().getPerspectiveRegistry().getDefaultPerspective();

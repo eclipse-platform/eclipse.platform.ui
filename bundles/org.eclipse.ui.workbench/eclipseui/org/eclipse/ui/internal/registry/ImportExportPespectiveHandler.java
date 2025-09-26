@@ -90,8 +90,8 @@ public class ImportExportPespectiveHandler {
 	private IPreferenceChangeListener preferenceListener;
 	private boolean ignoreEvents;
 
-	private List<MPerspective> exportedPersps = new ArrayList<>();
-	private List<String> importedPersps = new ArrayList<>();
+	private final List<MPerspective> exportedPersps = new ArrayList<>();
+	private final List<String> importedPersps = new ArrayList<>();
 	private Map<String, String> minMaxPersistedState;
 
 	@PostConstruct
@@ -139,8 +139,9 @@ public class ImportExportPespectiveHandler {
 
 	private String getOriginalId(String id) {
 		int index = id.lastIndexOf('.');
-		if (index == -1)
+		if (index == -1) {
 			return id;
+		}
 		return id.substring(0, index);
 	}
 
@@ -255,8 +256,7 @@ public class ImportExportPespectiveHandler {
 
 	private void copyPerspsToPreferences() {
 		for (MUIElement snippet : application.getSnippets()) {
-			if (snippet instanceof MPerspective) {
-				MPerspective persp = (MPerspective) snippet;
+			if (snippet instanceof MPerspective persp) {
 				exportedPersps.add(persp);
 			}
 		}

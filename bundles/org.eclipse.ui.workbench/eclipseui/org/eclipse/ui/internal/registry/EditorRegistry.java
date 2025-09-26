@@ -126,8 +126,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 
 	}
 
-	private Map<IContentType, IEditorDescriptor[]> contentTypeToEditorMappingsFromPlugins = new HashMap<>();
-	private Map<IContentType, LinkedHashSet<IEditorDescriptor>> contentTypeToEditorMappingsFromUser = new HashMap<>();
+	private final Map<IContentType, IEditorDescriptor[]> contentTypeToEditorMappingsFromPlugins = new HashMap<>();
+	private final Map<IContentType, LinkedHashSet<IEditorDescriptor>> contentTypeToEditorMappingsFromUser = new HashMap<>();
 
 	/**
 	 * Cached images - these include images from registered editors (via plugins)
@@ -162,7 +162,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * Compares the labels from two IEditorDescriptor objects
 	 */
 	private static final Comparator<IEditorDescriptor> comparer = new Comparator<>() {
-		private Collator collator = Collator.getInstance();
+		private final Collator collator = Collator.getInstance();
 
 		@Override
 		public int compare(IEditorDescriptor arg0, IEditorDescriptor arg1) {
@@ -172,7 +172,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		}
 	};
 
-	private RelatedRegistry relatedRegistry;
+	private final RelatedRegistry relatedRegistry;
 
 	private final IContentTypeManager contentTypeManager;
 
@@ -1239,9 +1239,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	@Override
 	public void removeExtension(IExtension source, Object[] objects) {
 		for (Object object : objects) {
-			if (object instanceof IEditorDescriptor) {
-				IEditorDescriptor desc = (IEditorDescriptor) object;
-
+			if (object instanceof IEditorDescriptor desc) {
 				sortedEditorsFromPlugins.remove(desc);
 				mapIDtoInternalEditor.values().remove(desc);
 				removeEditorFromMapping(typeEditorMappings.defaultMap, desc);
@@ -1648,9 +1646,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 
 class MockMapping implements IFileEditorMapping {
 
-	private IContentType contentType;
-	private String extension;
-	private String filename;
+	private final IContentType contentType;
+	private final String extension;
+	private final String filename;
 
 	MockMapping(IContentType type, String name, String ext) {
 		this.contentType = type;
@@ -1711,11 +1709,10 @@ class MockMapping implements IFileEditorMapping {
 			return true;
 		}
 
-		if (!(obj instanceof MockMapping)) {
+		if (!(obj instanceof MockMapping mapping)) {
 			return false;
 		}
 
-		MockMapping mapping = (MockMapping) obj;
 		return this.filename.equals(mapping.filename) && this.extension.equals(mapping.extension)
 				&& Arrays.equals(this.getEditors(), mapping.getEditors())
 				&& Arrays.equals(this.getDeletedEditors(), mapping.getDeletedEditors());

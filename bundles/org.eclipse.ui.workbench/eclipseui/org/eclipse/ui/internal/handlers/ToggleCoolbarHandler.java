@@ -38,8 +38,7 @@ public class ToggleCoolbarHandler extends AbstractHandler implements IElementUpd
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-		if (activeWorkbenchWindow instanceof WorkbenchWindow) {
-			WorkbenchWindow window = (WorkbenchWindow) activeWorkbenchWindow;
+		if (activeWorkbenchWindow instanceof WorkbenchWindow window) {
 			window.toggleToolbarVisibility();
 		}
 
@@ -50,8 +49,9 @@ public class ToggleCoolbarHandler extends AbstractHandler implements IElementUpd
 	public void updateElement(UIElement element, Map parameters) {
 		IWorkbenchLocationService wls = element.getServiceLocator().getService(IWorkbenchLocationService.class);
 		IWorkbenchWindow window = wls.getWorkbenchWindow();
-		if (window == null || !(window instanceof WorkbenchWindow))
+		if (window == null || !(window instanceof WorkbenchWindow)) {
 			return;
+		}
 		element.setText(
 				isCoolbarVisible((WorkbenchWindow) window) ? WorkbenchMessages.ToggleCoolbarVisibilityAction_hide_text
 						: WorkbenchMessages.ToggleCoolbarVisibilityAction_show_text);

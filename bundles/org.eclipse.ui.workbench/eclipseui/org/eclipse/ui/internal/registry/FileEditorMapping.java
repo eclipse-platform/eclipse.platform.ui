@@ -110,10 +110,9 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof FileEditorMapping)) {
+		if (!(obj instanceof FileEditorMapping mapping)) {
 			return false;
 		}
-		FileEditorMapping mapping = (FileEditorMapping) obj;
 		return Objects.equals(name, mapping.name) && Objects.equals(extension, mapping.extension)
 				&& Objects.equals(editors, mapping.editors)
 				&& Objects.equals(declaredDefaultEditors, mapping.declaredDefaultEditors)

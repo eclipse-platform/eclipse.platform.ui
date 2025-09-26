@@ -62,17 +62,20 @@ public class SaveAllHandler extends AbstractSaveHandler {
 
 		IWorkbenchWindow window = InternalHandlerUtil.getActiveWorkbenchWindow(context);
 		// no window? not active
-		if (window == null)
+		if (window == null) {
 			return EvaluationResult.FALSE;
+		}
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 
 		// no page? not active
-		if (page == null)
+		if (page == null) {
 			return EvaluationResult.FALSE;
+		}
 
 		// if at least one dirty part, then we are active
-		if (page.getDirtyParts().length > 0)
+		if (page.getDirtyParts().length > 0) {
 			return EvaluationResult.TRUE;
+		}
 
 		EPartService partService = getPartService(window);
 		if (partService != null && (partService.getDirtyParts().size() > 0)) {

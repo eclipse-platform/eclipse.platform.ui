@@ -44,7 +44,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
 	private IWorkbenchWindow window;
 
-	private ArrayList<ActionSetContribution> adjunctContributions = new ArrayList<>(0);
+	private final ArrayList<ActionSetContribution> adjunctContributions = new ArrayList<>(0);
 
 	/**
 	 * Used by the workbench window extension handler to unhook action sets from
@@ -280,9 +280,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 	 * element.
 	 */
 	private static class ActionSetContribution extends BasicContribution {
-		private String actionSetId;
+		private final String actionSetId;
 
-		private WorkbenchWindow window;
+		private final WorkbenchWindow window;
 
 		protected ArrayList<ActionDescriptor> adjunctActions = new ArrayList<>(0);
 

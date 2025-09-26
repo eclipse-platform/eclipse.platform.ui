@@ -58,7 +58,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 	 * methods. If there are no searchContexts this will be the search context.
 	 * (along with the "default" context)
 	 */
-	private IScopeContext storeContext;
+	private final IScopeContext storeContext;
 
 	/**
 	 * The searchContext is the array of contexts that will be used by the get
@@ -81,7 +81,7 @@ public class ScopedPreferenceStore extends EventManager implements IPreferenceSt
 	 * The default context is the context where getDefault and setDefault methods
 	 * will search. This context is also used in the search.
 	 */
-	private IScopeContext defaultContext = DefaultScope.INSTANCE;
+	private final IScopeContext defaultContext = DefaultScope.INSTANCE;
 
 	/**
 	 * The nodeQualifer is the string used to look up the node in the contexts.

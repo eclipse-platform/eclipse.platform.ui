@@ -85,13 +85,15 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 			Object[] objs = ((IStructuredSelection) object).toArray();
 			for (Object obj : objs) {
 				List contribs = getContributors(obj);
-				if (result == null)
+				if (result == null) {
 					result = new LinkedHashSet(contribs);
-				else
+				} else {
 					result.retainAll(contribs);
+				}
 			}
-		} else
+		} else {
 			result = getContributors(object);
+		}
 
 		if (result == null || result.isEmpty()) {
 			return false;
@@ -125,11 +127,13 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 			while (resultIterator.hasNext()) {
 				CategorizedPageNode next = (CategorizedPageNode) resultIterator.next();
 				PreferenceNode child = (PreferenceNode) catPageNodeToPages.get(next);
-				if (child == null)
+				if (child == null) {
 					continue;
+				}
 				PreferenceNode parent = null;
-				if (next.parent != null)
+				if (next.parent != null) {
 					parent = (PreferenceNode) catPageNodeToPages.get(next.parent);
+				}
 
 				if (parent == null) {
 					manager.addToRoot(child);
@@ -215,14 +219,16 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	 * @return Collection of PropertyPageContribution
 	 */
 	public Collection getApplicableContributors(Object element) {
-		if (element instanceof IStructuredSelection)
+		if (element instanceof IStructuredSelection) {
 			return getApplicableContributors((IStructuredSelection) element);
+		}
 		Collection contributors = getContributors(element);
 		Collection result = new ArrayList();
 		for (Iterator iter = contributors.iterator(); iter.hasNext();) {
 			RegistryPageContributor contributor = (RegistryPageContributor) iter.next();
-			if (contributor.isApplicableTo(element))
+			if (contributor.isApplicableTo(element)) {
 				result.add(contributor);
+			}
 
 		}
 		return result;

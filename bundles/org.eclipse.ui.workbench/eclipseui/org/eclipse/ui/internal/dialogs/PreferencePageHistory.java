@@ -57,7 +57,7 @@ class PreferencePageHistory {
 	 * A list of preference history domain elements that stores the history of the
 	 * visited preference pages.
 	 */
-	private List<PreferenceHistoryEntry> history = new ArrayList<>();
+	private final List<PreferenceHistoryEntry> history = new ArrayList<>();
 
 	/**
 	 * Stores the current entry into <code>history</code> and
@@ -73,7 +73,7 @@ class PreferencePageHistory {
 	/**
 	 * The handler submission for these controls.
 	 */
-	private Set<IHandlerActivation> activations = new HashSet<>();
+	private final Set<IHandlerActivation> activations = new HashSet<>();
 
 	/**
 	 * Creates a new history for the given dialog.

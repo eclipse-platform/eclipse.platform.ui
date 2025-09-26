@@ -37,7 +37,7 @@ public class GlobalKeyAssistDialog extends KeyAssistDialog {
 	/**
 	 * Context for this dialog, used to open services
 	 */
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	/**
 	 * ID of the key binding preference page

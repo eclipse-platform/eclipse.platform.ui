@@ -30,13 +30,13 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * when the user selects the page will it be loaded.
  */
 public class PropertyPageNode extends WorkbenchPreferenceExtensionNode {
-	private RegistryPageContributor contributor;
+	private final RegistryPageContributor contributor;
 
 	private IPreferencePage page;
 
 	private Image icon;
 
-	private Object element;
+	private final Object element;
 
 	/**
 	 * Create a new instance of the receiver.

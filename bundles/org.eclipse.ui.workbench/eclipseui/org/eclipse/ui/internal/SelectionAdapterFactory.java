@@ -65,8 +65,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		if (sel.isEmpty()) {
 			return ICOUNT_0;
 		}
-		if (sel instanceof IStructuredSelection) {
-			final IStructuredSelection ss = (IStructuredSelection) sel;
+		if (sel instanceof final IStructuredSelection ss) {
 			return (ICountable) ss::size;
 		}
 		return ICOUNT_1;

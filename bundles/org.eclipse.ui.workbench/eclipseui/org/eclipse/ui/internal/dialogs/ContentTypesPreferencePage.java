@@ -114,7 +114,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 
 	private Button addEditorAssociationButton;
 
-	private Collection<Image> disposableEditorIcons = new ArrayList<>();
+	private final Collection<Image> disposableEditorIcons = new ArrayList<>();
 
 	private static class Spec {
 		/**
@@ -381,10 +381,9 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 		addEditorAssociationButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (editorRegistry instanceof EditorRegistry) {
+				if (editorRegistry instanceof EditorRegistry registry) {
 					EditorSelectionDialog dialog = new EditorSelectionDialog(getShell());
 					dialog.setEditorsToFilter(getAssociatedEditors());
-					EditorRegistry registry = (EditorRegistry) editorRegistry;
 					IContentType contentType = (IContentType) editorAssociationsViewer.getInput();
 					if (dialog.open() == IDialogConstants.OK_ID) {
 						registry.addUserAssociation(contentType, dialog.getSelectedEditor());
@@ -397,8 +396,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 		removeEditorButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (editorRegistry instanceof EditorRegistry) {
-					EditorRegistry registry = (EditorRegistry) editorRegistry;
+				if (editorRegistry instanceof EditorRegistry registry) {
 					IEditorDescriptor editor = (IEditorDescriptor) editorAssociationsViewer.getStructuredSelection()
 							.getFirstElement();
 					IContentType contentType = (IContentType) editorAssociationsViewer.getInput();
@@ -410,8 +408,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 		removeEditorButton.setText(WorkbenchMessages.ContentTypes_editorAssociationRemoveLabel);
 		setButtonLayoutData(removeEditorButton);
 		editorAssociationsViewer.addSelectionChangedListener(event -> {
-			if (editorRegistry instanceof EditorRegistry) {
-				EditorRegistry registry = (EditorRegistry) editorRegistry;
+			if (editorRegistry instanceof EditorRegistry registry) {
 				IEditorDescriptor editor = (IEditorDescriptor) editorAssociationsViewer.getStructuredSelection()
 						.getFirstElement();
 				IContentType contentType = (IContentType) editorAssociationsViewer.getInput();
@@ -511,8 +508,9 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 			String errorMessage = null;
 			String text = charsetField.getText();
 			try {
-				if (text.length() != 0 && !Charset.isSupported(text))
+				if (text.length() != 0 && !Charset.isSupported(text)) {
 					errorMessage = WorkbenchMessages.ContentTypes_unsupportedEncoding;
+				}
 			} catch (IllegalCharsetNameException ex) {
 				errorMessage = WorkbenchMessages.ContentTypes_unsupportedEncoding;
 			}

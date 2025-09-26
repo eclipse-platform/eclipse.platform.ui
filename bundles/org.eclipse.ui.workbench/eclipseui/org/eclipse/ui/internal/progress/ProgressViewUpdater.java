@@ -38,7 +38,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 * if the collector wants to collect updates for finished jobs
 	 * (<code>true</code>) or not.
 	 */
-	private Map<IProgressUpdateCollector, Boolean> collectors;
+	private final Map<IProgressUpdateCollector, Boolean> collectors;
 
 	final UpdatesInfo currentInfo = new UpdatesInfo();
 

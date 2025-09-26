@@ -49,13 +49,13 @@ public class Theme extends EventManager implements ITheme {
 
 	private CascadingFontRegistry themeFontRegistry;
 
-	private IThemeDescriptor descriptor;
+	private final IThemeDescriptor descriptor;
 
 	private IPropertyChangeListener themeListener;
 
 	private CascadingMap dataMap;
 
-	private ThemeRegistry themeRegistry;
+	private final ThemeRegistry themeRegistry;
 
 	private IPropertyChangeListener propertyListener;
 
@@ -105,16 +105,18 @@ public class Theme extends EventManager implements ITheme {
 					if (oldColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
 						// If the preference is set to default, but there is no actual default value,
 						// then the preference state is inconsistent. Do nothing.
-					} else if (!newColor.equals(oldColor))
+					} else if (!newColor.equals(oldColor)) {
 						PreferenceConverter.setValue(store, key, newColor);
+					}
 				} else {
 					RGB oldColor = PreferenceConverter.getColor(store, key);
 					if (!newColor.equals(oldColor)) {
 						oldColor = PreferenceConverter.getDefaultColor(store, key);
-						if (oldColor != PreferenceConverter.COLOR_DEFAULT_DEFAULT && newColor.equals(oldColor))
+						if (oldColor != PreferenceConverter.COLOR_DEFAULT_DEFAULT && newColor.equals(oldColor)) {
 							store.setToDefault(key);
-						else
+						} else {
 							PreferenceConverter.setValue(store, key, newColor);
+						}
 					}
 				}
 			}

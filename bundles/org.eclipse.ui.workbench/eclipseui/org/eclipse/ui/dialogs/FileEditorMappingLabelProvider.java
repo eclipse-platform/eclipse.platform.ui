@@ -46,7 +46,7 @@ public class FileEditorMappingLabelProvider extends LabelProvider implements ITa
 	/**
 	 * Images that will require disposal.
 	 */
-	private List<Image> imagesToDispose = new ArrayList<>();
+	private final List<Image> imagesToDispose = new ArrayList<>();
 
 	/**
 	 * Creates an instance of this class. The private visibility of this constructor

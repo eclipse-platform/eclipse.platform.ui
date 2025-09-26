@@ -39,7 +39,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * Opens a specific new wizard.
  */
 public class NewWizardShortcutAction extends Action implements IPluginContribution {
-	private IWizardDescriptor wizardElement;
+	private final IWizardDescriptor wizardElement;
 
 	/**
 	 * The wizard dialog width
@@ -51,7 +51,7 @@ public class NewWizardShortcutAction extends Action implements IPluginContributi
 	 */
 	private static final int SIZING_WIZARD_HEIGHT = 500;
 
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	/**
 	 * Create an instance of this class.

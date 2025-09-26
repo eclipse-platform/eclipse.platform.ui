@@ -50,8 +50,9 @@ public abstract class WorkbenchSettingsTransfer extends SettingsTransfer {
 
 		IPath dataLocation = WorkbenchPlugin.getDefault().getDataLocation();
 
-		if (dataLocation == null)
+		if (dataLocation == null) {
 			return null;
+		}
 		int segmentsToRemove = dataLocation.matchingFirstSegments(currentWorkspaceRoot);
 
 		// Strip it down to the extension

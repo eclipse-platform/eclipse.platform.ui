@@ -48,8 +48,7 @@ public class ResetPerspectiveHandler extends AbstractHandler {
 				IPerspectiveDescriptor descriptor = page.getPerspective();
 				if (descriptor != null) {
 					boolean offerRevertToBase = false;
-					if (descriptor instanceof PerspectiveDescriptor) {
-						PerspectiveDescriptor desc = (PerspectiveDescriptor) descriptor;
+					if (descriptor instanceof PerspectiveDescriptor desc) {
 						offerRevertToBase = desc.isPredefined() && desc.hasCustomDefinition();
 					}
 

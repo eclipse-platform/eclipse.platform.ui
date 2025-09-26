@@ -38,7 +38,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 	// @issue this is an IDE specific working set page!
 	private static final String DEFAULT_PAGE_ID = "org.eclipse.ui.resourceWorkingSetPage"; //$NON-NLS-1$
 
-	private HashMap<String, WorkingSetDescriptor> workingSetDescriptors = new HashMap<>();
+	private final HashMap<String, WorkingSetDescriptor> workingSetDescriptors = new HashMap<>();
 
 	public WorkingSetRegistry() {
 		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
@@ -152,8 +152,9 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 	}
 
 	public WorkingSetDescriptor[] getElementAdapterDescriptorsForNamespace(String namespace) {
-		if (namespace == null) // fix for Bug 84225
+		if (namespace == null) { // fix for Bug 84225
 			return new WorkingSetDescriptor[0];
+		}
 		Collection<WorkingSetDescriptor> descriptors = workingSetDescriptors.values();
 		List<WorkingSetDescriptor> result = new ArrayList<>();
 		for (Iterator<WorkingSetDescriptor> iter = descriptors.iterator(); iter.hasNext();) {
@@ -199,8 +200,7 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
 		for (Object object : objects) {
-			if (object instanceof WorkingSetDescriptor) {
-				WorkingSetDescriptor desc = (WorkingSetDescriptor) object;
+			if (object instanceof WorkingSetDescriptor desc) {
 				workingSetDescriptors.remove(desc.getId());
 			}
 		}

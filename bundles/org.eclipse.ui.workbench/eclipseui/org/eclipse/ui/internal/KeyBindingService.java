@@ -64,13 +64,13 @@ public final class KeyBindingService implements INestableKeyBindingService {
 	 * The site within the workbench at which this service is provided. This value
 	 * should not be <code>null</code>.
 	 */
-	private IWorkbenchPartSite workbenchPartSite;
+	private final IWorkbenchPartSite workbenchPartSite;
 
-	private KeyBindingService parent;
+	private final KeyBindingService parent;
 
 	private IKeyBindingService activeService;
 
-	private Map<IAction, IHandlerActivation> actionToProxy = new HashMap<>();
+	private final Map<IAction, IHandlerActivation> actionToProxy = new HashMap<>();
 
 	/**
 	 * Constructs a new instance of <code>KeyBindingService</code> on a given

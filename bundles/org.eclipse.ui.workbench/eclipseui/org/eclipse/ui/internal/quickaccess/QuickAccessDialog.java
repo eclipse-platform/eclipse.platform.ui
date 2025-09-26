@@ -198,7 +198,7 @@ public class QuickAccessDialog extends PopupDialog {
 				@Override
 				protected void handleElementSelected(String text, Object selectedElement) {
 					lastSelectionFilter = text;
-					if (selectedElement instanceof QuickAccessElement) {
+					if (selectedElement instanceof final QuickAccessElement element) {
 						addPreviousPick(text, (QuickAccessElement) selectedElement);
 						storeDialog(getDialogSettings());
 
@@ -206,7 +206,6 @@ public class QuickAccessDialog extends PopupDialog {
 						 * Execute after the dialog has been fully closed/disposed and the correct
 						 * EclipseContext is in place.
 						 */
-						final QuickAccessElement element = (QuickAccessElement) selectedElement;
 						window.getShell().getDisplay().asyncExec(element::execute);
 					}
 				}
@@ -272,8 +271,9 @@ public class QuickAccessDialog extends PopupDialog {
 					KeySequence keySequence = KeySequence
 							.getInstance(SWTKeySupport.convertAcceleratorToKeyStroke(accelerator));
 					TriggerSequence[] sequences = getInvokingCommandKeySequences();
-					if (sequences == null)
+					if (sequences == null) {
 						return;
+					}
 					for (TriggerSequence sequence : sequences) {
 						if (sequence.equals(keySequence)) {
 							e.doit = false;

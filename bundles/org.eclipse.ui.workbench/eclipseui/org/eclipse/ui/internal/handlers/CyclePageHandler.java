@@ -131,8 +131,9 @@ public class CyclePageHandler extends FilteredTableBaseHandler {
 
 	@Override
 	protected void setDialogLocation(final Shell dialog, IWorkbenchPart activePart) {
-		if (dialog == null)
+		if (dialog == null) {
 			return;
+		}
 
 		// Default to center on the display
 		Point dlgAnchor = Geometry.centerPoint(dialog.getDisplay().getBounds());

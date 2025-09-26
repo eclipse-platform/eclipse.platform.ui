@@ -77,11 +77,11 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	boolean animationRunning;
 
 	// ProgressBar flags
-	private int flags;
+	private final int flags;
 
 	private AccessibleListener currentAccessibleListener;
 
-	private Throttler throttledRefresh = new Throttler(PlatformUI.getWorkbench().getDisplay(), Duration.ofMillis(100),
+	private final Throttler throttledRefresh = new Throttler(PlatformUI.getWorkbench().getDisplay(), Duration.ofMillis(100),
 			this::refresh);
 
 	/**
@@ -109,8 +109,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		JobTreeElement[] jobTreeElements = FinishedJobs.getInstance().getKeptElements();
 		// search from end (youngest)
 		for (int i = jobTreeElements.length - 1; i >= 0; i--) {
-			if (jobTreeElements[i] instanceof JobInfo) {
-				JobInfo ji = (JobInfo) jobTreeElements[i];
+			if (jobTreeElements[i] instanceof JobInfo ji) {
 				Job job = ji.getJob();
 				if (job != null) {
 
@@ -118,8 +117,9 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 					if (status != null && status.getSeverity() == IStatus.ERROR) {
 						StatusAdapter statusAdapter = StatusAdapterHelper.getInstance().getStatusAdapter(ji);
 
-						if (statusAdapter == null)
+						if (statusAdapter == null) {
 							statusAdapter = new StatusAdapter(status);
+						}
 
 						StatusManager.getManager().handle(statusAdapter, StatusManager.SHOW);
 
@@ -146,16 +146,14 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	private boolean execute(JobInfo ji, Job job) {
 
 		Object prop = job.getProperty(IProgressConstants.ACTION_PROPERTY);
-		if (prop instanceof IAction && ((IAction) prop).isEnabled()) {
-			IAction action = (IAction) prop;
+		if (prop instanceof IAction action && action.isEnabled()) {
 			action.run();
 			removeTopElement(ji);
 			return true;
 		}
 
 		prop = job.getProperty(IProgressConstants2.COMMAND_PROPERTY);
-		if (prop instanceof ParameterizedCommand) {
-			ParameterizedCommand command = (ParameterizedCommand) prop;
+		if (prop instanceof ParameterizedCommand command) {
 			IWorkbenchWindow window = getWindow();
 			IHandlerService service = window.getService(IHandlerService.class);
 			Exception exception = null;
@@ -227,8 +225,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		JobTreeElement[] jobTreeElements = FinishedJobs.getInstance().getKeptElements();
 		// search from end (youngest)
 		for (int i = jobTreeElements.length - 1; i >= 0; i--) {
-			if (jobTreeElements[i] instanceof JobInfo) {
-				JobInfo ji = (JobInfo) jobTreeElements[i];
+			if (jobTreeElements[i] instanceof JobInfo ji) {
 				Job job = ji.getJob();
 				if (job != null) {
 					IStatus status = job.getResult();
@@ -269,8 +266,9 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		toolbar.setVisible(true);
 		toolbar.getParent().requestLayout(); // must layout
 
-		if (currentAccessibleListener != null)
+		if (currentAccessibleListener != null) {
 			toolbar.getAccessible().removeAccessibleListener(currentAccessibleListener);
+		}
 		currentAccessibleListener = new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
@@ -302,8 +300,9 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		boolean isCarbon = Util.isMac();
 
 		GridLayout gl = new GridLayout();
-		if (isHorizontal())
+		if (isHorizontal()) {
 			gl.numColumns = isCarbon ? 3 : 2;
+		}
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
 		if (isHorizontal()) {

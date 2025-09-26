@@ -46,13 +46,13 @@ import org.eclipse.ui.internal.services.RegistryPersistence;
  */
 final public class MenuPersistence extends RegistryPersistence {
 
-	private MApplication application;
-	private IEclipseContext appContext;
-	private ArrayList<MenuAdditionCacheEntry> cacheEntries = new ArrayList<>();
+	private final MApplication application;
+	private final IEclipseContext appContext;
+	private final ArrayList<MenuAdditionCacheEntry> cacheEntries = new ArrayList<>();
 
-	private ArrayList<MMenuContribution> menuContributions = new ArrayList<>();
-	private ArrayList<MToolBarContribution> toolBarContributions = new ArrayList<>();
-	private ArrayList<MTrimContribution> trimContributions = new ArrayList<>();
+	private final ArrayList<MMenuContribution> menuContributions = new ArrayList<>();
+	private final ArrayList<MToolBarContribution> toolBarContributions = new ArrayList<>();
+	private final ArrayList<MTrimContribution> trimContributions = new ArrayList<>();
 
 	private final Comparator<IConfigurationElement> comparer = (c1, c2) -> c1.getContributor().getName()
 			.compareToIgnoreCase(c2.getContributor().getName());

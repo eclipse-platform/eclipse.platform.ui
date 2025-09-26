@@ -21,7 +21,7 @@ package org.eclipse.ui;
  */
 public abstract class NavigationLocation implements INavigationLocation {
 
-	private IWorkbenchPage page;
+	private final IWorkbenchPage page;
 
 	private IEditorInput input;
 

@@ -269,9 +269,10 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
 	@Override
 	public boolean close() {
-		if (getReturnCode() != CANCEL)
+		if (getReturnCode() != CANCEL) {
 			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.RUN_IN_BACKGROUND,
 					showDialog);
+		}
 
 		return super.close();
 	}

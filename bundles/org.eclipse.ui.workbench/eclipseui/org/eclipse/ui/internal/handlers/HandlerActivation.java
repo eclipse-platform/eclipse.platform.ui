@@ -48,12 +48,12 @@ import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
  */
 final class HandlerActivation implements IHandlerActivation {
 	IEclipseContext context;
-	private String commandId;
-	private IHandler handler;
+	private final String commandId;
+	private final IHandler handler;
 	E4HandlerProxy proxy;
-	private Expression activeWhen;
+	private final Expression activeWhen;
 	private boolean active;
-	private int sourcePriority;
+	private final int sourcePriority;
 	boolean participating = true;
 
 	public HandlerActivation(IEclipseContext context, String cmdId, IHandler handler, E4HandlerProxy handlerProxy,

@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.Assert;
  * @since 3.1
  */
 final class PreferenceHistoryEntry {
-	private String id;
-	private String label;
-	private Object argument;
+	private final String id;
+	private final String label;
+	private final Object argument;
 
 	/**
 	 * Creates a new entry.
@@ -79,8 +79,7 @@ final class PreferenceHistoryEntry {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof PreferenceHistoryEntry) {
-			PreferenceHistoryEntry other = (PreferenceHistoryEntry) obj;
+		if (obj instanceof PreferenceHistoryEntry other) {
 			return id.equals(other.id)
 					&& Objects.equals(argument, other.argument);
 		}

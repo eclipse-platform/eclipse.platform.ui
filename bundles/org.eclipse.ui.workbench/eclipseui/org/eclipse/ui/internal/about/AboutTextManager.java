@@ -56,16 +56,18 @@ public class AboutTextManager {
 			do {
 				urlOffset--;
 				ch = ' ';
-				if (urlOffset > -1)
+				if (urlOffset > -1) {
 					ch = aboutText.charAt(urlOffset);
+				}
 				startDoubleQuote = ch == '"';
 			} while (Character.isUnicodeIdentifierStart(ch));
 			urlOffset++;
 
 			// Right to "://"
 			StringTokenizer tokenizer = new StringTokenizer(aboutText.substring(urlSeparatorOffset + 3), " \t\n\r\f<>", false); //$NON-NLS-1$
-			if (!tokenizer.hasMoreTokens())
+			if (!tokenizer.hasMoreTokens()) {
 				return null;
+			}
 
 			int urlLength = tokenizer.nextToken().length() + 3 + urlSeparatorOffset - urlOffset;
 
@@ -73,14 +75,16 @@ public class AboutTextManager {
 				int endOffset = -1;
 				int nextDoubleQuote = aboutText.indexOf('"', urlOffset);
 				int nextWhitespace = aboutText.indexOf(' ', urlOffset);
-				if (nextDoubleQuote != -1 && nextWhitespace != -1)
+				if (nextDoubleQuote != -1 && nextWhitespace != -1) {
 					endOffset = Math.min(nextDoubleQuote, nextWhitespace);
-				else if (nextDoubleQuote != -1)
+				} else if (nextDoubleQuote != -1) {
 					endOffset = nextDoubleQuote;
-				else if (nextWhitespace != -1)
+				} else if (nextWhitespace != -1) {
 					endOffset = nextWhitespace;
-				if (endOffset != -1)
+				}
+				if (endOffset != -1) {
 					urlLength = endOffset - urlOffset;
+				}
 			}
 
 			linkRanges.add(new int[] { urlOffset, urlLength });
@@ -92,7 +96,7 @@ public class AboutTextManager {
 				links.toArray(new String[links.size()]));
 	}
 
-	private StyledText styledText;
+	private final StyledText styledText;
 
 	private boolean mouseDown = false;
 

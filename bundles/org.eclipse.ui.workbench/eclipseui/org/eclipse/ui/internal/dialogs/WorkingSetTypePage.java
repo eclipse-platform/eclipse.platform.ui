@@ -52,7 +52,7 @@ public class WorkingSetTypePage extends WizardPage {
 
 	private TableViewer typesListViewer;
 
-	private WorkingSetDescriptor[] descriptors;
+	private final WorkingSetDescriptor[] descriptors;
 
 	/**
 	 * Creates a new instance of the receiver
@@ -111,7 +111,7 @@ public class WorkingSetTypePage extends WizardPage {
 		typesListViewer.addDoubleClickListener(event -> handleDoubleClick());
 		typesListViewer.setContentProvider(ArrayContentProvider.getInstance());
 		typesListViewer.setLabelProvider(new LabelProvider() {
-			private ResourceManager images = new LocalResourceManager(JFaceResources.getResources());
+			private final ResourceManager images = new LocalResourceManager(JFaceResources.getResources());
 
 			@Override
 			public String getText(Object element) {
@@ -151,8 +151,9 @@ public class WorkingSetTypePage extends WizardPage {
 	 */
 	public String getSelection() {
 		WorkingSetDescriptor descriptor = getSelectedWorkingSet();
-		if (descriptor != null)
+		if (descriptor != null) {
 			return descriptor.getId();
+		}
 
 		return null;
 	}

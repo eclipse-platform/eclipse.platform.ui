@@ -45,13 +45,13 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  */
 public class WorkbenchWizardElement extends WorkbenchAdapter
 		implements IAdaptable, IPluginContribution, IWizardDescriptor {
-	private String id;
+	private final String id;
 
 	private ImageDescriptor imageDescriptor;
 
 	private SelectionEnabler selectionEnabler;
 
-	private IConfigurationElement configurationElement;
+	private final IConfigurationElement configurationElement;
 
 	private ImageDescriptor descriptionImage;
 

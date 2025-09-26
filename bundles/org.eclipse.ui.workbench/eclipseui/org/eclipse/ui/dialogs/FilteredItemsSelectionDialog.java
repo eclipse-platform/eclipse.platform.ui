@@ -181,7 +181,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 	private MenuManager contextMenuManager;
 
-	private boolean multi;
+	private final boolean multi;
 
 	private ToolBar toolBar;
 
@@ -197,17 +197,17 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 	private IStatus status;
 
-	private RefreshCacheJob refreshCacheJob;
+	private final RefreshCacheJob refreshCacheJob;
 
-	private RefreshProgressMessageJob refreshProgressMessageJob = new RefreshProgressMessageJob();
+	private final RefreshProgressMessageJob refreshProgressMessageJob = new RefreshProgressMessageJob();
 
 	private Object[] currentSelection;
 
-	private ContentProvider contentProvider;
+	private final ContentProvider contentProvider;
 
-	private FilterHistoryJob filterHistoryJob;
+	private final FilterHistoryJob filterHistoryJob;
 
-	private FilterJob filterJob;
+	private final FilterJob filterJob;
 
 	private ItemsFilter filter;
 
@@ -394,10 +394,12 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			showViewHandler.getHandler().dispose();
 			showViewHandler = null;
 		}
-		if (menuManager != null)
+		if (menuManager != null) {
 			menuManager.dispose();
-		if (contextMenuManager != null)
+		}
+		if (contextMenuManager != null) {
 			contextMenuManager.dispose();
+		}
 		storeDialog(getDialogSettings());
 		return super.close();
 	}
@@ -680,8 +682,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 							break;
 						}
 					}
-					if (isSelectedHistory)
+					if (isSelectedHistory) {
 						removeSelectedItems(selectedElements);
+					}
 
 				}
 
@@ -693,8 +696,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 						if (element.equals(tableViewer.getElementAt(0))) {
 							pattern.setFocus();
 						}
-						if (tableViewer.getElementAt(tableViewer.getTable().getSelectionIndex() - 1) instanceof ItemsListSeparator)
+						if (tableViewer.getElementAt(tableViewer.getTable().getSelectionIndex() - 1) instanceof ItemsListSeparator) {
 							tableViewer.getTable().setSelection(tableViewer.getTable().getSelectionIndex() - 1);
+						}
 						tableViewer.getTable().notifyListeners(SWT.Selection, new Event());
 
 					}
@@ -702,8 +706,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 				if (e.keyCode == SWT.ARROW_DOWN && (e.stateMask & SWT.SHIFT) != 0 && (e.stateMask & SWT.CTRL) != 0) {
 
-					if (tableViewer.getElementAt(tableViewer.getTable().getSelectionIndex() + 1) instanceof ItemsListSeparator)
+					if (tableViewer.getElementAt(tableViewer.getTable().getSelectionIndex() + 1) instanceof ItemsListSeparator) {
 						tableViewer.getTable().setSelection(tableViewer.getTable().getSelectionIndex() + 1);
+					}
 					tableViewer.getTable().notifyListeners(SWT.Selection, new Event());
 				}
 
@@ -1055,8 +1060,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			}
 		}
 
-		if (itemToRemove == null)
+		if (itemToRemove == null) {
 			return new StructuredSelection(selectedItems);
+		}
 		// Create a new selection without the collision
 		List<?> newItems = new ArrayList<>(selectedItems);
 		newItems.remove(itemToRemove);
@@ -1190,8 +1196,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * @param selectionHistory the history
 	 */
 	protected void setSelectionHistory(SelectionHistory selectionHistory) {
-		if (this.contentProvider != null)
+		if (this.contentProvider != null) {
 			this.contentProvider.setSelectionHistory(selectionHistory);
+		}
 	}
 
 	/**
@@ -1297,8 +1304,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-			if (monitor.isCanceled())
+			if (monitor.isCanceled()) {
 				return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH, IStatus.OK, EMPTY_STRING, null);
+			}
 
 			if (FilteredItemsSelectionDialog.this != null) {
 				FilteredItemsSelectionDialog.this.refresh();
@@ -1369,7 +1377,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	private class RefreshCacheJob extends Job {
 
-		private RefreshJob refreshJob = new RefreshJob();
+		private final RefreshJob refreshJob = new RefreshJob();
 
 		/**
 		 * Creates a new instance of the class.
@@ -1440,7 +1448,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		private ILabelDecorator selectionDecorator;
 
 		// Need to keep our own list of listeners
-		private ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
+		private final ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
 
 		/**
 		 * Creates a new instance of the class.
@@ -1520,8 +1528,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		private boolean isSelected(Object element) {
 			if (element != null && currentSelection != null) {
 				for (Object entry : currentSelection) {
-					if (element.equals(entry))
+					if (element.equals(entry)) {
 						return true;
+					}
 				}
 			}
 			return false;
@@ -1555,8 +1564,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		public void update(ViewerCell cell) {
 			Object element = cell.getElement();
 
-			if (!(element instanceof ItemsListSeparator) && provider instanceof IStyledLabelProvider) {
-				IStyledLabelProvider styledLabelProvider = (IStyledLabelProvider) provider;
+			if (!(element instanceof ItemsListSeparator) && provider instanceof IStyledLabelProvider styledLabelProvider) {
 				StyledString styledString = getStyledText(element, styledLabelProvider);
 
 				cell.setText(styledString.getString());
@@ -1680,7 +1688,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	private static class ItemsListSeparator {
 
-		private String name;
+		private final String name;
 
 		/**
 		 * Creates a new instance of the class.
@@ -1753,8 +1761,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		@Override
 		public void beginTask(String name, int totalWork) {
 			super.beginTask(name, totalWork);
-			if (this.name == null)
+			if (this.name == null) {
 				this.name = name;
+			}
 			this.totalWork = totalWork;
 			refreshProgressMessageJob.scheduleProgressRefresh(this);
 		}
@@ -1783,8 +1792,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		}
 
 		private String getMessage() {
-			if (done)
+			if (done) {
 				return ""; //$NON-NLS-1$
+			}
 
 			String message;
 
@@ -1795,8 +1805,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 						: NLS.bind(WorkbenchMessages.FilteredItemsSelectionDialog_subtaskProgressMessage,
 								new Object[] { name, subName });
 			}
-			if (totalWork == 0)
+			if (totalWork == 0) {
 				return message;
+			}
 
 			return NLS.bind(WorkbenchMessages.FilteredItemsSelectionDialog_taskProgressMessage,
 					new Object[] { message, Integer.valueOf((int) ((worked * 100) / totalWork)) });
@@ -1834,8 +1845,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 			contentProvider.addHistoryItems(itemsFilter);
 
-			if (!(lastCompletedFilter != null && lastCompletedFilter.isSubFilter(this.itemsFilter)))
+			if (!(lastCompletedFilter != null && lastCompletedFilter.isSubFilter(this.itemsFilter))) {
 				contentProvider.refresh();
+			}
 
 			filterJob.schedule();
 
@@ -1900,8 +1912,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 */
 		private void internalRun(GranualProgressMonitor monitor) throws CoreException {
 			try {
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					return;
+				}
 
 				this.itemsFilter = filter;
 
@@ -1909,8 +1922,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 					filterContent(monitor);
 				}
 
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					return;
+				}
 
 				contentProvider.refresh();
 			} finally {
@@ -1934,8 +1948,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				for (int pos = 0; pos < lastCompletedResult.size(); pos++) {
 
 					Object item = lastCompletedResult.get(pos);
-					if (monitor.isCanceled())
+					if (monitor.isCanceled()) {
 						break;
+					}
 					contentProvider.add(item, itemsFilter);
 
 					if ((pos % 500) == 0) {
@@ -2256,8 +2271,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			String prefix = patternMatcher.getPattern();
 			String text = getElementName(item);
 
-			if (text == null)
+			if (text == null) {
 				return false;
+			}
 
 			int textLength = text.length();
 			int prefixLength = prefix.length();
@@ -2265,8 +2281,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				return false;
 			}
 			for (int i = prefixLength - 1; i >= 0; i--) {
-				if (Character.toLowerCase(prefix.charAt(i)) != Character.toLowerCase(text.charAt(i)))
+				if (Character.toLowerCase(prefix.charAt(i)) != Character.toLowerCase(text.charAt(i))) {
 					return false;
+				}
 			}
 			return true;
 		}
@@ -2335,12 +2352,12 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Standard object flow:
 		 * {@code items -> lastSortedItems -> lastFilteredItems}
 		 */
-		private Set<Object> items;
+		private final Set<Object> items;
 
 		/**
 		 * Items that are duplicates.
 		 */
-		private Set<Object> duplicates;
+		private final Set<Object> duplicates;
 
 		/**
 		 * List of <code>ViewerFilter</code>s to be used during filtering
@@ -2361,7 +2378,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Standard object flow:
 		 * {@code items -> lastSortedItems -> lastFilteredItems}
 		 */
-		private List<Object> lastSortedItems;
+		private final List<Object> lastSortedItems;
 
 		/**
 		 * Used for <code>getFilteredItems()</code> method canceling (when the job that
@@ -2474,8 +2491,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * @return removed item
 		 */
 		public Object removeHistoryElement(Object item) {
-			if (this.selectionHistory != null)
+			if (this.selectionHistory != null) {
 				this.selectionHistory.remove(item);
+			}
 			if (filter == null || filter.getPattern().isEmpty()) {
 				items.remove(item);
 				duplicates.remove(item);
@@ -2494,8 +2512,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * @param item to add
 		 */
 		public void addHistoryElement(Object item) {
-			if (this.selectionHistory != null)
+			if (this.selectionHistory != null) {
 				this.selectionHistory.accessed(item);
+			}
 			if (filter == null || !filter.matchItem(item)) {
 				this.items.remove(item);
 				this.duplicates.remove(item);
@@ -2527,10 +2546,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 */
 		public void setDuplicateElement(Object item, boolean isDuplicate) {
 			if (this.items.contains(item)) {
-				if (isDuplicate)
+				if (isDuplicate) {
 					this.duplicates.add(item);
-				else
+				} else {
 					this.duplicates.remove(item);
+				}
 			}
 		}
 
@@ -2663,8 +2683,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 						lastFilteredItems.size());
 				HashMap<String, Object> helperMap = new HashMap<>();
 				for (Object item : lastFilteredItems) {
-					if (reset || subMonitor.isCanceled())
+					if (reset || subMonitor.isCanceled()) {
 						return;
+					}
 
 					if (!(item instanceof ItemsListSeparator)) {
 						Object previousItem = helperMap.put(getElementName(item), item);
@@ -2799,14 +2820,14 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	private class DetailsContentViewer extends ContentViewer {
 
-		private CLabel label;
+		private final CLabel label;
 
 		/**
 		 * Unfortunately, it was impossible to delegate displaying border to label. The
 		 * <code>ViewForm</code> is used because <code>CLabel</code> displays shadow
 		 * when border is present.
 		 */
-		private ViewForm viewForm;
+		private final ViewForm viewForm;
 
 		/**
 		 * Constructs a new instance of this class given its parent and a style value

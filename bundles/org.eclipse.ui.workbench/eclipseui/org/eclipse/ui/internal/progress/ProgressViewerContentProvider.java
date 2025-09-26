@@ -24,7 +24,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	/** Viewer to show content. */
 	protected AbstractProgressViewer progressViewer;
 
-	private boolean showFinished;
+	private final boolean showFinished;
 
 	/** flag if we need a full refresh */
 	private boolean refreshNeeded;

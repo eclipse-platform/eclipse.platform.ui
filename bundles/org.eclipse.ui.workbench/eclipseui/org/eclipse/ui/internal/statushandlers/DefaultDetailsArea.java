@@ -66,7 +66,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	/*
 	 * All statuses should be displayed.
 	 */
-	private int mask;
+	private final int mask;
 
 	/*
 	 * New child entry in the list will be shifted by a number of pixels
@@ -78,9 +78,9 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	 */
 	private StyledText text;
 
-	private boolean handleOkStatuses;
+	private final boolean handleOkStatuses;
 
-	private Map<Object, Object> dialogState;
+	private final Map<Object, Object> dialogState;
 
 	private MenuItem copyAction;
 
@@ -232,7 +232,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	 */
 	private void createDNDSource() {
 		DragSource ds = new DragSource(text, DND.DROP_COPY);
-		ds.setTransfer(new Transfer[] { TextTransfer.getInstance() });
+		ds.setTransfer(TextTransfer.getInstance());
 		ds.addDragListener(new DragSourceListener() {
 			@Override
 			public void dragFinished(DragSourceEvent event) {
@@ -278,8 +278,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 		// Look for a nested core exception
 		Throwable t = status.getException();
-		if (t instanceof CoreException) {
-			CoreException ce = (CoreException) t;
+		if (t instanceof CoreException ce) {
 			populateList(text, ce.getStatus(), nesting + 1, lineNumber);
 		} else if (t != null) {
 			// Include low-level exception message

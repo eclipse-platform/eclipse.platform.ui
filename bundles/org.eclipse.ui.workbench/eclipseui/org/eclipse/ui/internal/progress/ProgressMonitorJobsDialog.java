@@ -210,8 +210,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
 	@Override
 	protected void updateForSetBlocked(IStatus reason) {
-		if (alreadyClosed)
+		if (alreadyClosed) {
 			return;
+		}
 
 		super.updateForSetBlocked(reason);
 		enableDetails(true);

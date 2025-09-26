@@ -101,9 +101,9 @@ public abstract class QuickAccessContents {
 
 	protected Text filterText;
 
-	private QuickAccessProvider[] providers;
+	private final QuickAccessProvider[] providers;
 	private Map<String, QuickAccessProvider> providerMap = new HashMap<>();
-	private Map<QuickAccessElement, QuickAccessProvider> elementsToProviders = new HashMap<>();
+	private final Map<QuickAccessElement, QuickAccessProvider> elementsToProviders = new HashMap<>();
 
 	protected Table table;
 	protected Label infoLabel;
@@ -573,8 +573,9 @@ public abstract class QuickAccessContents {
 			StringBuilder sb = new StringBuilder();
 			sb.append("^(:?"); //$NON-NLS-1$
 			for (int i = 0; i < providers.length; i++) {
-				if (i != 0)
+				if (i != 0) {
 					sb.append("|"); //$NON-NLS-1$
+				}
 				sb.append(providers[i].getName());
 			}
 			sb.append("):\\s?(.*)"); //$NON-NLS-1$
@@ -790,17 +791,20 @@ public abstract class QuickAccessContents {
 			@Override
 			public void mouseUp(MouseEvent e) {
 
-				if (table.getSelectionCount() < 1)
+				if (table.getSelectionCount() < 1) {
 					return;
+				}
 
-				if (e.button != 1)
+				if (e.button != 1) {
 					return;
+				}
 
 				if (table.equals(e.getSource())) {
 					Object o = table.getItem(new Point(e.x, e.y));
 					TableItem selection = table.getSelection()[0];
-					if (selection.equals(o))
+					if (selection.equals(o)) {
 						handleSelection();
+					}
 				}
 			}
 		});

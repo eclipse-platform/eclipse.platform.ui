@@ -210,7 +210,7 @@ public final class KeySequence implements Comparable {
 	/**
 	 * The list of key strokes for this key sequence.
 	 */
-	private List<KeyStroke> keyStrokes;
+	private final List<KeyStroke> keyStrokes;
 
 	/**
 	 * Constructs an instance of <code>KeySequence</code> given a list of key

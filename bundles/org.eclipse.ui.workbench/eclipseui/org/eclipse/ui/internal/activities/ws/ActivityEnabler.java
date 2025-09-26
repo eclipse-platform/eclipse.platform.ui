@@ -70,7 +70,7 @@ public class ActivityEnabler {
 	/**
 	 * The Set of activities that belong to at least one category.
 	 */
-	private Set<String> managedActivities = new HashSet<>(7);
+	private final Set<String> managedActivities = new HashSet<>(7);
 
 	/**
 	 * The content provider.
@@ -82,13 +82,13 @@ public class ActivityEnabler {
 	 */
 	protected Text descriptionText;
 
-	private Properties strings;
+	private final Properties strings;
 
-	private IMutableActivityManager activitySupport;
+	private final IMutableActivityManager activitySupport;
 
 	private TableViewer dependantViewer;
 
-	private ISelectionChangedListener selectionListener = event -> {
+	private final ISelectionChangedListener selectionListener = event -> {
 		Object element = event.getStructuredSelection().getFirstElement();
 		try {
 			if (element instanceof ICategory) {
@@ -104,7 +104,7 @@ public class ActivityEnabler {
 	/**
 	 * Listener that manages the grey/check state of categories.
 	 */
-	private ICheckStateListener checkListener = new ICheckStateListener() {
+	private final ICheckStateListener checkListener = new ICheckStateListener() {
 
 		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
@@ -423,7 +423,7 @@ public class ActivityEnabler {
 		Object[] elements = provider.getElements(activitySupport);
 
 		// reset grey state to null
-		dualViewer.setGrayedElements(new Object[0]);
+		dualViewer.setGrayedElements();
 
 		// enable all categories
 		for (Object element : elements) {

@@ -86,7 +86,7 @@ public class FilteredList extends Composite {
 		}
 	}
 
-	private Table fList;
+	private final Table fList;
 
 	ILabelProvider fLabelProvider;
 
@@ -98,7 +98,7 @@ public class FilteredList extends Composite {
 
 	private String fFilter = ""; //$NON-NLS-1$
 
-	private TwoArrayQuickSorter fSorter;
+	private final TwoArrayQuickSorter fSorter;
 
 	Object[] fElements = new Object[0];
 
@@ -175,7 +175,7 @@ public class FilteredList extends Composite {
 	}
 
 	private final class LabelComparator implements Comparator {
-		private boolean labelIgnoreCase;
+		private final boolean labelIgnoreCase;
 
 		LabelComparator(boolean ignoreCase) {
 			labelIgnoreCase = ignoreCase;

@@ -55,13 +55,13 @@ public final class CategoryActivityBindingDefinition {
 		return map;
 	}
 
-	private String activityId;
+	private final String activityId;
 
-	private String categoryId;
+	private final String categoryId;
 
 	private transient int hashCode = HASH_INITIAL;
 
-	private String sourceId;
+	private final String sourceId;
 
 	private transient String string;
 
@@ -88,11 +88,10 @@ public final class CategoryActivityBindingDefinition {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof CategoryActivityBindingDefinition)) {
+		if (!(object instanceof final CategoryActivityBindingDefinition castedObject)) {
 			return false;
 		}
 
-		final CategoryActivityBindingDefinition castedObject = (CategoryActivityBindingDefinition) object;
 		return Objects.equals(activityId, castedObject.activityId)
 				&& Objects.equals(categoryId, castedObject.categoryId)
 				&& Objects.equals(sourceId, castedObject.sourceId);

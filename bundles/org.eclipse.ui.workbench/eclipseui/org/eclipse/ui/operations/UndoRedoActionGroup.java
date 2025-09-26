@@ -32,9 +32,9 @@ import org.eclipse.ui.actions.ActionGroup;
  */
 public final class UndoRedoActionGroup extends ActionGroup {
 
-	private UndoActionHandler undoActionHandler;
+	private final UndoActionHandler undoActionHandler;
 
-	private RedoActionHandler redoActionHandler;
+	private final RedoActionHandler redoActionHandler;
 
 	/**
 	 * Construct an undo redo action group for the specified workbench part site,

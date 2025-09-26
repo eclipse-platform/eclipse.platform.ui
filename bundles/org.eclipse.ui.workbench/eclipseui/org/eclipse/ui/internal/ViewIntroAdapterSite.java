@@ -31,9 +31,9 @@ import org.eclipse.ui.intro.IIntroSite;
  * @since 3.0
  */
 final class ViewIntroAdapterSite implements IIntroSite {
-	private IntroDescriptor descriptor;
+	private final IntroDescriptor descriptor;
 
-	private IViewSite viewSite;
+	private final IViewSite viewSite;
 
 	public ViewIntroAdapterSite(IViewSite viewSite, IntroDescriptor descriptor) {
 		this.viewSite = viewSite;

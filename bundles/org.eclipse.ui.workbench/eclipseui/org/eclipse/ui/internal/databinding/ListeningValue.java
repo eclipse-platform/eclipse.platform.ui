@@ -38,8 +38,9 @@ abstract class ListeningValue<T> extends AbstractObservableValue<T> {
 	 */
 	protected final void protectedSetValue(T value) {
 		checkRealm();
-		if (!isListening)
+		if (!isListening) {
 			throw new IllegalStateException();
+		}
 		if (this.value != value) {
 			fireValueChange(Diffs.createValueDiff(this.value, this.value = value));
 		}

@@ -104,7 +104,7 @@ public class WorkingSetConfigurationBlock {
 	private Button newButton;
 
 	private IWorkingSet[] selectedWorkingSets;
-	private List<String> selectionHistory;
+	private final List<String> selectionHistory;
 	private final IDialogSettings dialogSettings;
 	private final String[] workingSetTypeIds;
 

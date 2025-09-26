@@ -55,7 +55,7 @@ public class RetargetAction extends PartEventAction implements ActionFactory.IWo
 
 	private IAction handler;
 
-	private IPropertyChangeListener propertyChangeListener = RetargetAction.this::propagateChange;
+	private final IPropertyChangeListener propertyChangeListener = RetargetAction.this::propagateChange;
 
 	/**
 	 * Constructs a RetargetAction with the given action id and text.

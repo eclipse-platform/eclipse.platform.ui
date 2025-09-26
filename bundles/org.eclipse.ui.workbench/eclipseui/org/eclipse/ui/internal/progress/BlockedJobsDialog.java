@@ -51,7 +51,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	private Button cancelSelected;
 
-	private IProgressMonitor blockingMonitor;
+	private final IProgressMonitor blockingMonitor;
 
 	/**
 	 * Creates a progress monitor dialog under the given shell. It also sets the
@@ -117,8 +117,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * @param monitor The monitor that is now cleared.
 	 */
 	public static void clear(IProgressMonitor monitor) {
-		if (singleton != null)
+		if (singleton != null) {
 			singleton.close(monitor);
+		}
 	}
 
 	/**

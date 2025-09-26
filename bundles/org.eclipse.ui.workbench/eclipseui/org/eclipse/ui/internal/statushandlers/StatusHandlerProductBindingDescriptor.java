@@ -30,13 +30,13 @@ class StatusHandlerProductBindingDescriptor implements IPluginContribution {
 	 */
 	private static String ATT_HANDLER_ID = "handlerId"; //$NON-NLS-1$
 
-	private String id;
+	private final String id;
 
-	private String pluginId;
+	private final String pluginId;
 
-	private String productId;
+	private final String productId;
 
-	private String handlerId;
+	private final String handlerId;
 
 	public StatusHandlerProductBindingDescriptor(IConfigurationElement configElement) {
 		super();

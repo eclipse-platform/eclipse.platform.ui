@@ -54,7 +54,7 @@ public abstract class WorkbenchWizardListSelectionPage extends WorkbenchWizardSe
 
 	private TableViewer viewer;
 
-	private String message;
+	private final String message;
 
 	/**
 	 * Creates a <code>WorkbenchWizardListSelectionPage</code>.

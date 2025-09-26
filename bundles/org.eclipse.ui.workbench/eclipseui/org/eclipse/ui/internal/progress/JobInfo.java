@@ -41,9 +41,9 @@ public class JobInfo extends JobTreeElement {
 
 	private volatile Optional<TaskInfo> taskInfo;
 
-	private ProgressManager progressManager;
+	private final ProgressManager progressManager;
 
-	private FinishedJobs finishedJobs;
+	private final FinishedJobs finishedJobs;
 
 	// Default to no progress
 	private int ticks = -1;

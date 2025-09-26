@@ -38,8 +38,8 @@ import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog.DisplayIte
 class UnavailableContributionItemCheckListener implements ICheckStateListener {
 
 	private final CustomizePerspectiveDialog dialog;
-	private CheckboxTreeViewer viewer;
-	private ICheckStateListener originalListener;
+	private final CheckboxTreeViewer viewer;
+	private final ICheckStateListener originalListener;
 
 	/**
 	 * @param viewer           the viewer being listened to
@@ -101,8 +101,7 @@ class UnavailableContributionItemCheckListener implements ICheckStateListener {
 						WorkbenchMessages.HideItemsCannotMakeVisible_unavailableCommandGroupText, item.getLabel(),
 						item.getActionSet());
 				final String message = NLS.bind("{0}{1}{1}{2}", //$NON-NLS-1$
-						new Object[] { errorExplanation, CustomizePerspectiveDialog.NEW_LINE,
-								WorkbenchMessages.HideItemsCannotMakeVisible_switchToCommandGroupTab });
+						errorExplanation, CustomizePerspectiveDialog.NEW_LINE, WorkbenchMessages.HideItemsCannotMakeVisible_switchToCommandGroupTab);
 				mb.setMessage(message);
 			}
 			if (mb.open() == SWT.YES) {

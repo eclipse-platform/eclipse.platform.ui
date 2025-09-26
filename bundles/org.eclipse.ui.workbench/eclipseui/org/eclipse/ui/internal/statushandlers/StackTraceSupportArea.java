@@ -89,7 +89,7 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 	 */
 	private void createDNDSource() {
 		DragSource ds = new DragSource(list, DND.DROP_COPY);
-		ds.setTransfer(new Transfer[] { TextTransfer.getInstance() });
+		ds.setTransfer(TextTransfer.getInstance());
 		ds.addDragListener(new DragSourceListener() {
 			@Override
 			public void dragFinished(DragSourceEvent event) {

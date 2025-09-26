@@ -48,7 +48,7 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
 	private String desiredBrowserSupportId;
 
-	private IExtensionChangeHandler handler = new IExtensionChangeHandler() {
+	private final IExtensionChangeHandler handler = new IExtensionChangeHandler() {
 
 		@Override
 		public void addExtension(IExtensionTracker tracker, IExtension extension) {

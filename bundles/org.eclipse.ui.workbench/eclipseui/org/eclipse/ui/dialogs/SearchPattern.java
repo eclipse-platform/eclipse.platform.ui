@@ -130,9 +130,9 @@ public class SearchPattern {
 
 	private static final char BLANK = ' ';
 
-	private int allowedRules;
+	private final int allowedRules;
 
-	private boolean substringSearch;
+	private final boolean substringSearch;
 
 	private boolean matchPrefix;
 
@@ -295,11 +295,13 @@ public class SearchPattern {
 	private boolean startsWithIgnoreCase(String text, String prefix) {
 		int textLength = text.length();
 		int prefixLength = prefix.length();
-		if (textLength < prefixLength)
+		if (textLength < prefixLength) {
 			return false;
+		}
 		for (int i = prefixLength - 1; i >= 0; i--) {
-			if (Character.toLowerCase(prefix.charAt(i)) != Character.toLowerCase(text.charAt(i)))
+			if (Character.toLowerCase(prefix.charAt(i)) != Character.toLowerCase(text.charAt(i))) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -311,8 +313,9 @@ public class SearchPattern {
 	private boolean endsWithIgnoreCase(String text, String suffix) {
 		int textLength = text.length();
 		int suffixLength = suffix.length();
-		if (textLength < suffixLength)
+		if (textLength < suffixLength) {
 			return false;
+		}
 		return startsWithIgnoreCase(text.substring(textLength - suffixLength), suffix);
 	}
 
@@ -371,10 +374,12 @@ public class SearchPattern {
 	 * @return true if the pattern matches the given name, false otherwise
 	 */
 	private boolean camelCaseMatch(String pattern, String name) {
-		if (pattern == null)
+		if (pattern == null) {
 			return true; // null pattern is equivalent to '*'
-		if (name == null)
+		}
+		if (name == null) {
 			return false; // null name cannot match
+		}
 
 		return camelCaseMatch(pattern, 0, pattern.length(), name, 0, name.length());
 	}
@@ -480,19 +485,25 @@ public class SearchPattern {
 	 */
 	private boolean camelCaseMatch(String pattern, int patternStart, int patternEnd, String name, int nameStart,
 			int nameEnd) {
-		if (name == null)
+		if (name == null) {
 			return false; // null name cannot match
-		if (pattern == null)
+		}
+		if (pattern == null) {
 			return true; // null pattern is equivalent to '*'
-		if (patternEnd < 0)
+		}
+		if (patternEnd < 0) {
 			patternEnd = pattern.length();
-		if (nameEnd < 0)
+		}
+		if (nameEnd < 0) {
 			nameEnd = name.length();
+		}
 
-		if (patternEnd <= patternStart)
+		if (patternEnd <= patternStart) {
 			return nameEnd <= nameStart;
-		if (nameEnd <= nameStart)
+		}
+		if (nameEnd <= nameStart) {
 			return false;
+		}
 		// check first pattern char
 		if (name.charAt(nameStart) != pattern.charAt(patternStart)) {
 			// first char must strictly match (upper/lower)
@@ -543,8 +554,9 @@ public class SearchPattern {
 
 			// If characters are not equals, then it's not a match if
 			// patternChar is lowercase
-			if (!isPatternCharAllowed(patternChar))
+			if (!isPatternCharAllowed(patternChar)) {
 				return false;
+			}
 
 			// patternChar is uppercase, so let's find the next patternChar-matching uppercase in
 			// name
@@ -559,8 +571,9 @@ public class SearchPattern {
 				if (Character.isDigit(nameChar)) {
 					// nameChar is digit => break if the digit is current pattern character
 					// otherwise consume it
-					if (patternChar == nameChar)
+					if (patternChar == nameChar) {
 						break;
+					}
 					iName++;
 				} else if (!isNameCharAllowed(nameChar)) {
 					// nameChar is lowercase

@@ -43,9 +43,7 @@ public class PluginContributionAdapterFactory implements IAdapterFactory {
 		if (adapterType != ContributionInfo.class) {
 			return null;
 		}
-		if (adaptableObject instanceof IPluginContribution) {
-			IPluginContribution contribution = (IPluginContribution) adaptableObject;
-
+		if (adaptableObject instanceof IPluginContribution contribution) {
 			String elementType;
 
 			if (contribution instanceof EditorDescriptor) {
@@ -78,8 +76,7 @@ public class PluginContributionAdapterFactory implements IAdapterFactory {
 
 			return adapterType.cast(new ContributionInfo(contribution.getPluginId(), elementType, null));
 		}
-		if (adaptableObject instanceof JobInfo) {
-			JobInfo jobInfo = (JobInfo) adaptableObject;
+		if (adaptableObject instanceof JobInfo jobInfo) {
 			Job job = jobInfo.getJob();
 			if (job != null) {
 				Bundle bundle = FrameworkUtil.getBundle(job.getClass());

@@ -29,7 +29,7 @@ import org.eclipse.ui.browser.IWebBrowser;
  * @since 3.1
  */
 public class DefaultWorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
-	private Map<String, IWebBrowser> browsers;
+	private final Map<String, IWebBrowser> browsers;
 	private static final String DEFAULT_BROWSER_ID_BASE = "org.eclipse.ui.defaultBrowser"; //$NON-NLS-1$
 
 	/**
@@ -72,8 +72,9 @@ public class DefaultWorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupp
 		String id = null;
 		for (int i = 0; i < Integer.MAX_VALUE; i++) {
 			id = DEFAULT_BROWSER_ID_BASE + i;
-			if (browsers.get(id) == null)
+			if (browsers.get(id) == null) {
 				break;
+			}
 		}
 		return id;
 	}

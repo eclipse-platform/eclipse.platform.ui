@@ -78,7 +78,7 @@ public abstract class WorkbenchPart extends EventManager
 
 	private String contentDescription = ""; //$NON-NLS-1$
 
-	private ListenerList<IPropertyChangeListener> partChangeListeners = new ListenerList<>();
+	private final ListenerList<IPropertyChangeListener> partChangeListeners = new ListenerList<>();
 
 	/**
 	 * Creates a new workbench part.
@@ -421,8 +421,7 @@ public abstract class WorkbenchPart extends EventManager
 		}
 		this.contentDescription = description;
 
-		if (partSite instanceof PartSite) {
-			PartSite site = (PartSite) partSite;
+		if (partSite instanceof PartSite site) {
 			ContributedPartRenderer.setDescription(site.getModel(), description);
 		}
 		firePropertyChange(IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION);
@@ -473,7 +472,7 @@ public abstract class WorkbenchPart extends EventManager
 		}
 	}
 
-	private Map<String, String> partProperties = new HashMap<>();
+	private final Map<String, String> partProperties = new HashMap<>();
 
 	@Override
 	public void setPartProperty(String key, String value) {

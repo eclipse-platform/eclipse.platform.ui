@@ -56,12 +56,11 @@ import java.util.List;
 		}
 
 		// Compare class.
-		if (!(obj instanceof DrillFrame)) {
+		if (!(obj instanceof DrillFrame oOther)) {
 			return false;
 		}
 
 		// Compare contents.
-		DrillFrame oOther = (DrillFrame) obj;
 		return ((fElement == oOther.fElement) && (fPropertyName.equals(oOther.fPropertyName)));
 	}
 

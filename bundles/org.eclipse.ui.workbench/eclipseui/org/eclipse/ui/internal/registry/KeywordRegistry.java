@@ -55,7 +55,7 @@ public final class KeywordRegistry implements IExtensionChangeHandler {
 	/**
 	 * Map of id-&gt;labels.
 	 */
-	private Map internalKeywordMap = new HashMap();
+	private final Map internalKeywordMap = new HashMap();
 
 	/**
 	 * Private constructor.

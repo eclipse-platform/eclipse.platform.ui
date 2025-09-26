@@ -44,7 +44,7 @@ import org.eclipse.ui.keys.IBindingService;
 @Deprecated
 public class ContentAssistField extends DecoratedField {
 
-	private ContentAssistCommandAdapter adapter;
+	private final ContentAssistCommandAdapter adapter;
 
 	private static final String CONTENT_ASSIST_DECORATION_ID = "org.eclipse.ui.fieldAssist.ContentAssistField"; //$NON-NLS-1$
 

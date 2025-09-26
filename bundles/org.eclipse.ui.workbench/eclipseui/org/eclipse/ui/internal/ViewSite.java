@@ -43,8 +43,9 @@ public class ViewSite extends PartSite implements IViewSite {
 		MPart part = getModel();
 
 		int colonIndex = part.getElementId().indexOf(':');
-		if (colonIndex == -1 || colonIndex == (part.getElementId().length() - 1))
+		if (colonIndex == -1 || colonIndex == (part.getElementId().length() - 1)) {
 			return null;
+		}
 
 		return part.getElementId().substring(colonIndex + 1);
 	}

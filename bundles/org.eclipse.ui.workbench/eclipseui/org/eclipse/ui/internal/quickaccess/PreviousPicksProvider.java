@@ -29,7 +29,7 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
 class PreviousPicksProvider extends QuickAccessProvider {
 
 	LinkedList<QuickAccessElement> elements;
-	private int maxNumberOfElements;
+	private final int maxNumberOfElements;
 	private Supplier<List<QuickAccessElement>> initializer;
 	private Collection<QuickAccessProvider> initialProviders;
 

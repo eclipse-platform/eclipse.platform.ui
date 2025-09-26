@@ -75,8 +75,7 @@ public class SaveHandler extends AbstractSaveHandler {
 		}
 
 		// if editor
-		if (saveablePart instanceof IEditorPart) {
-			IEditorPart editorPart = (IEditorPart) saveablePart;
+		if (saveablePart instanceof IEditorPart editorPart) {
 			IWorkbenchPage page = editorPart.getSite().getPage();
 			page.saveEditor(editorPart, false);
 			return null;
@@ -95,8 +94,9 @@ public class SaveHandler extends AbstractSaveHandler {
 
 		IWorkbenchWindow window = InternalHandlerUtil.getActiveWorkbenchWindow(context);
 		// no window? not active
-		if (window == null)
+		if (window == null) {
 			return EvaluationResult.FALSE;
+		}
 
 		boolean enabled = evaluateEnabled(context, window);
 		if (window != null) {
@@ -114,8 +114,9 @@ public class SaveHandler extends AbstractSaveHandler {
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 
 		// no page? not active
-		if (page == null)
+		if (page == null) {
 			return false;
+		}
 
 		MPart activeMPart = getActivePart(window);
 
@@ -127,19 +128,22 @@ public class SaveHandler extends AbstractSaveHandler {
 
 		// get saveable part
 		ISaveablePart saveablePart = getSaveablePart(context);
-		if (saveablePart == null && activeMPart == null)
+		if (saveablePart == null && activeMPart == null) {
 			return false;
-
-		if (saveablePart instanceof ISaveablesSource) {
-			ISaveablesSource modelSource = (ISaveablesSource) saveablePart;
-			if (SaveableHelper.needsSave(modelSource))
-				return true;
-			if (activeMPart == null)
-				return false;
 		}
 
-		if (saveablePart != null && saveablePart.isDirty())
+		if (saveablePart instanceof ISaveablesSource modelSource) {
+			if (SaveableHelper.needsSave(modelSource)) {
+				return true;
+			}
+			if (activeMPart == null) {
+				return false;
+			}
+		}
+
+		if (saveablePart != null && saveablePart.isDirty()) {
 			return true;
+		}
 
 		if (activeMPart != null && activeMPart.isDirty()) {
 			return true;

@@ -44,13 +44,13 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 
 	private static final String P_TRUE = "true"; //$NON-NLS-1$
 
-	private IConfigurationElement config;
+	private final IConfigurationElement config;
 
 	private boolean configRead = false;
 
 	private boolean adaptable = false;
 
-	private String objectClass;
+	private final String objectClass;
 
 	/**
 	 * The constructor.
@@ -111,11 +111,9 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 
 		// Get a structured selection.
 		ISelection sel = selProv.getSelection();
-		if ((sel == null) || !(sel instanceof IStructuredSelection)) {
+		if ((sel == null) || !(sel instanceof IStructuredSelection ssel)) {
 			return false;
 		}
-		IStructuredSelection ssel = (IStructuredSelection) sel;
-
 		if (canAdapt()) {
 			IStructuredSelection newSelection = LegacyResourceSupport.adaptSelection(ssel, getObjectClass());
 			if (newSelection.size() != ssel.size()) {

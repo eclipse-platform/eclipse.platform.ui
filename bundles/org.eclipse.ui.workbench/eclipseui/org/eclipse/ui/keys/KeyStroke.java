@@ -215,7 +215,7 @@ public final class KeyStroke implements Comparable {
 	/**
 	 * The set of modifier keys for this key stroke.
 	 */
-	private SortedSet<ModifierKey> modifierKeys;
+	private final SortedSet<ModifierKey> modifierKeys;
 
 	/**
 	 * The set of modifier keys for this key stroke in the form of an array. Used
@@ -226,7 +226,7 @@ public final class KeyStroke implements Comparable {
 	/**
 	 * The natural key for this key stroke.
 	 */
-	private NaturalKey naturalKey;
+	private final NaturalKey naturalKey;
 
 	/**
 	 * Constructs an instance of <code>KeyStroke</code> given a set of modifier keys
@@ -261,11 +261,9 @@ public final class KeyStroke implements Comparable {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof KeyStroke)) {
+		if (!(object instanceof KeyStroke castedObject)) {
 			return false;
 		}
-
-		KeyStroke castedObject = (KeyStroke) object;
 
 		if (!modifierKeys.equals(castedObject.modifierKeys)) {
 			return false;

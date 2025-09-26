@@ -403,8 +403,7 @@ public final class LegacyResourceSupport {
 		if (resourceClass.isInstance(object)) {
 			return null;
 		}
-		if (object instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) object;
+		if (object instanceof IAdaptable adaptable) {
 			Class<?> contributorResourceAdapterClass = LegacyResourceSupport.getIContributorResourceAdapterClass();
 			if (contributorResourceAdapterClass == null) {
 				return adaptable.getAdapter(resourceClass);
@@ -441,7 +440,7 @@ public final class LegacyResourceSupport {
 		Class<?> c = getIContributorResourceAdapterClass();
 		if (c != null) {
 			try {
-				getAdaptedResourceMethod = c.getDeclaredMethod("getAdaptedResource", new Class[] { IAdaptable.class }); //$NON-NLS-1$
+				getAdaptedResourceMethod = c.getDeclaredMethod("getAdaptedResource", IAdaptable.class); //$NON-NLS-1$
 				return getAdaptedResourceMethod;
 			} catch (SecurityException | NoSuchMethodException e) {
 				// shouldn't happen - but play it safe
@@ -461,7 +460,7 @@ public final class LegacyResourceSupport {
 		if (c != null) {
 			try {
 				getAdaptedResourceMappingMethod = c.getDeclaredMethod("getAdaptedResourceMapping", //$NON-NLS-1$
-						new Class<?>[] { IAdaptable.class });
+						IAdaptable.class);
 				return getAdaptedResourceMappingMethod;
 			} catch (SecurityException | NoSuchMethodException e) {
 				// do nothing - play it safe
@@ -492,8 +491,7 @@ public final class LegacyResourceSupport {
 		if (resourceMappingClass.isInstance(object)) {
 			return null;
 		}
-		if (object instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) object;
+		if (object instanceof IAdaptable adaptable) {
 			Class<?> contributorResourceAdapterClass = LegacyResourceSupport.getIContributorResourceAdapterClass();
 			if (contributorResourceAdapterClass == null) {
 				return adaptable.getAdapter(resourceMappingClass);

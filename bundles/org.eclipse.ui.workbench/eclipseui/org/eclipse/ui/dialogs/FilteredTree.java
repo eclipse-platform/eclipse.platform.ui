@@ -443,8 +443,9 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 					if (items.length > 0 && getViewer().getTree().getSelectionCount() == 0) {
 						treeViewer.getTree().setTopItem(items[0]);
 					}
-					if (quickSelectionMode)
+					if (quickSelectionMode) {
 						updateTreeSelection(false);
+					}
 					redrawFalseControl.setRedraw(true);
 				}
 				return Status.OK_STATUS;
@@ -583,8 +584,9 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 	protected void updateTreeSelection(boolean setFocus) {
 		Tree tree = getViewer().getTree();
 		if (tree.getItemCount() == 0) {
-			if (setFocus)
+			if (setFocus) {
 				Display.getCurrent().beep();
+			}
 		} else {
 			// if the initial filter text hasn't changed, do not try
 			// to match
@@ -592,10 +594,11 @@ public class FilteredTree extends AbstractFilteredViewerComposite<PatternFilter>
 			boolean textChanged = !getInitialText().equals(filterText.getText().trim());
 			if (hasFocus && textChanged && filterText.getText().trim().length() > 0) {
 				TreeItem item;
-				if (tree.getSelectionCount() > 0)
+				if (tree.getSelectionCount() > 0) {
 					item = getFirstMatchingItem(tree.getSelection());
-				else
+				} else {
 					item = getFirstMatchingItem(tree.getItems());
+				}
 				if (item != null) {
 					tree.setSelection(new TreeItem[] { item });
 					ISelection sel = getViewer().getSelection();

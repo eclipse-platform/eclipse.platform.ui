@@ -22,8 +22,9 @@ public final class AdaptedValueProperty<S, T> extends SimpleValueProperty<S, T> 
 
 	@Override
 	protected T doGetValue(S source) {
-		if (adapter.isInstance(source))
+		if (adapter.isInstance(source)) {
 			return (T) source;
+		}
 		return adapterManager.getAdapter(source, adapter);
 	}
 

@@ -43,9 +43,9 @@ import org.eclipse.ui.themes.IThemeManager;
 
 class ExtensionEventHandler implements IRegistryChangeListener {
 
-	private Workbench workbench;
+	private final Workbench workbench;
 
-	private List<?> changeList = new ArrayList<>(10);
+	private final List<?> changeList = new ArrayList<>(10);
 
 	public ExtensionEventHandler(Workbench workbench) {
 		this.workbench = workbench;

@@ -35,7 +35,7 @@ import org.eclipse.ui.Saveable;
  */
 public class DefaultSaveable extends Saveable {
 
-	private IWorkbenchPart part;
+	private final IWorkbenchPart part;
 
 	/**
 	 * Creates a new DefaultSaveable.
@@ -92,18 +92,23 @@ public class DefaultSaveable extends Saveable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final DefaultSaveable other = (DefaultSaveable) obj;
 		if (part == null) {
-			if (other.part != null)
+			if (other.part != null) {
 				return false;
-		} else if (!part.equals(other.part))
+			}
+		} else if (!part.equals(other.part)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -114,8 +119,7 @@ public class DefaultSaveable extends Saveable {
 			page.activate(part);
 			return true;
 		}
-		if (part instanceof IViewPart) {
-			IViewPart viewPart = (IViewPart) part;
+		if (part instanceof IViewPart viewPart) {
 			try {
 				page.showView(viewPart.getViewSite().getId(), viewPart.getViewSite().getSecondaryId(),
 						IWorkbenchPage.VIEW_ACTIVATE);

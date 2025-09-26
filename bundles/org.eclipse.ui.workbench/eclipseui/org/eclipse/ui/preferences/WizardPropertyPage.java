@@ -77,18 +77,19 @@ public abstract class WizardPropertyPage extends PropertyPage {
 			IWizardPage page = getCurrentPage();
 
 			String message = fPage.getMessage();
-			if (message != null && fMessage == null)
+			if (message != null && fMessage == null) {
 				fMessage = message;
+			}
 
 			if (page.getErrorMessage() != null) {
 				fPage.setMessage(page.getErrorMessage(), ERROR);
-			} else if (page instanceof IMessageProvider) {
-				IMessageProvider messageProvider = (IMessageProvider) page;
+			} else if (page instanceof IMessageProvider messageProvider) {
 				if (messageProvider.getMessageType() != IMessageProvider.NONE) {
 					fPage.setMessage(messageProvider.getMessage(), messageProvider.getMessageType());
 				} else {
-					if (messageProvider.getMessage() != null && fMessage == null)
+					if (messageProvider.getMessage() != null && fMessage == null) {
 						fMessage = messageProvider.getMessage();
+					}
 
 					fPage.setMessage(fMessage, NONE);
 				}
@@ -101,8 +102,9 @@ public abstract class WizardPropertyPage extends PropertyPage {
 		public void updateTitleBar() {
 			IWizardPage page = getCurrentPage();
 			String name = page.getTitle();
-			if (name == null)
+			if (name == null) {
 				name = page.getName();
+			}
 
 			fPage.setMessage(name);
 		}
@@ -166,8 +168,9 @@ public abstract class WizardPropertyPage extends PropertyPage {
 
 	private void createWizardPageContent(Composite parent) {
 		fWizard = createWizard();
-		if (fWizard == null)
+		if (fWizard == null) {
 			return;
+		}
 
 		fWizard.addPages();
 
@@ -190,8 +193,9 @@ public abstract class WizardPropertyPage extends PropertyPage {
 		fWizard.createPageControls(parent);
 
 		IWizardPage page = fWizard.getPages()[0];
-		if (page.getControl() == null)
+		if (page.getControl() == null) {
 			page.createControl(parent);
+		}
 
 		Control pageControl = page.getControl();
 		pageControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -206,8 +210,9 @@ public abstract class WizardPropertyPage extends PropertyPage {
 
 	private void setPageName(IWizardPage page) {
 		String name = page.getTitle();
-		if (name == null)
+		if (name == null) {
 			name = page.getName();
+		}
 
 		setMessage(name);
 	}
@@ -216,8 +221,7 @@ public abstract class WizardPropertyPage extends PropertyPage {
 		String description = null;
 		if (page.getDescription() != null) {
 			description = page.getDescription();
-		} else if (page instanceof IMessageProvider) {
-			IMessageProvider messageProvider = (IMessageProvider) page;
+		} else if (page instanceof IMessageProvider messageProvider) {
 			if (messageProvider.getMessageType() == IMessageProvider.NONE) {
 				description = messageProvider.getMessage();
 			}

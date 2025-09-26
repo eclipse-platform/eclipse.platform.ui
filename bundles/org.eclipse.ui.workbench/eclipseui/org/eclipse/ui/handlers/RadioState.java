@@ -66,16 +66,16 @@ public final class RadioState extends PersistentState implements IExecutableExte
 		boolean shouldPersist = true; // persist by default
 		if (data instanceof String) {
 			setValue(data);
-		} else if (data instanceof Hashtable) {
-			final Hashtable parameters = (Hashtable) data;
+		} else if (data instanceof final Hashtable parameters) {
 			final Object defaultObject = parameters.get("default"); //$NON-NLS-1$
 			if (defaultObject instanceof String) {
 				setValue(defaultObject);
 			}
 
 			final Object persistedObject = parameters.get("persisted"); //$NON-NLS-1$
-			if (persistedObject instanceof String && "false".equalsIgnoreCase(((String) persistedObject))) //$NON-NLS-1$
+			if (persistedObject instanceof String && "false".equalsIgnoreCase(((String) persistedObject))) { //$NON-NLS-1$
 				shouldPersist = false;
+			}
 		}
 		setShouldPersist(shouldPersist);
 
@@ -83,17 +83,20 @@ public final class RadioState extends PersistentState implements IExecutableExte
 
 	@Override
 	public void load(IPreferenceStore store, String preferenceKey) {
-		if (!shouldPersist())
+		if (!shouldPersist()) {
 			return;
+		}
 		final String value = store.getString(preferenceKey);
-		if (value.length() != 0)
+		if (value.length() != 0) {
 			setValue(value);
+		}
 	}
 
 	@Override
 	public void save(IPreferenceStore store, String preferenceKey) {
-		if (!shouldPersist())
+		if (!shouldPersist()) {
 			return;
+		}
 		final Object value = getValue();
 		if (value instanceof String) {
 			store.setValue(preferenceKey, (String) value);
@@ -102,8 +105,9 @@ public final class RadioState extends PersistentState implements IExecutableExte
 
 	@Override
 	public void setValue(Object value) {
-		if (!(value instanceof String))
+		if (!(value instanceof String)) {
 			return; // we set only String values
+		}
 		super.setValue(value);
 	}
 

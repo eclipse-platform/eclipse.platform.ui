@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class TriggerPointManager implements ITriggerPointManager, IExtensionChangeHandler {
 
-	private HashMap<String, AbstractTriggerPoint> triggerMap = new HashMap<>();
+	private final HashMap<String, AbstractTriggerPoint> triggerMap = new HashMap<>();
 
 	public TriggerPointManager() {
 		super();

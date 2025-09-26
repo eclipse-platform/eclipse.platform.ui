@@ -46,14 +46,15 @@ public class ToggleStatusBarHandler extends AbstractHandler implements IElementU
 	private static final String BOTTOM_TRIM_ID = "org.eclipse.ui.trim.status"; //$NON-NLS-1$
 
 	// keep references of event handlers and brokers per each window
-	private HashMap<IWorkbenchWindow, EventHandler> eventHandlers = new HashMap<>();
-	private HashMap<IWorkbenchWindow, IEventBroker> eventBrokers = new HashMap<>();
+	private final HashMap<IWorkbenchWindow, EventHandler> eventHandlers = new HashMap<>();
+	private final HashMap<IWorkbenchWindow, IEventBroker> eventBrokers = new HashMap<>();
 
 	@Override
 	public Object execute(ExecutionEvent event) {
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-		if (!(window instanceof WorkbenchWindow))
+		if (!(window instanceof WorkbenchWindow)) {
 			return null;
+		}
 		// initialize event handler
 		if (!eventHandlers.containsKey(window)) {
 			initializeEventHandler(window);
@@ -104,8 +105,9 @@ public class ToggleStatusBarHandler extends AbstractHandler implements IElementU
 	public void updateElement(UIElement element, Map parameters) {
 		IWorkbenchLocationService wls = element.getServiceLocator().getService(IWorkbenchLocationService.class);
 		IWorkbenchWindow window = wls.getWorkbenchWindow();
-		if (!(window instanceof WorkbenchWindow))
+		if (!(window instanceof WorkbenchWindow)) {
 			return;
+		}
 		MUIElement trimStatus = getTrimStatus((WorkbenchWindow) window);
 		if (trimStatus != null) {
 			element.setText(trimStatus.isVisible() ? WorkbenchMessages.ToggleStatusBarVisibilityAction_hide_text

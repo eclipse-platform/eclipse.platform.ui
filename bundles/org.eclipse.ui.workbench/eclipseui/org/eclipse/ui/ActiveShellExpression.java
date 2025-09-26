@@ -78,8 +78,7 @@ public final class ActiveShellExpression extends Expression {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof ActiveShellExpression) {
-			final ActiveShellExpression that = (ActiveShellExpression) object;
+		if (object instanceof final ActiveShellExpression that) {
 			return equals(this.activeShell, that.activeShell);
 		}
 

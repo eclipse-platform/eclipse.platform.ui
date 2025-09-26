@@ -26,9 +26,9 @@ import org.eclipse.ui.themes.ITheme;
  */
 public class ThemeAdapter extends PropertyMapAdapter {
 
-	private ITheme targetTheme;
+	private final ITheme targetTheme;
 
-	private IPropertyChangeListener listener = event -> firePropertyChange(event.getProperty());
+	private final IPropertyChangeListener listener = event -> firePropertyChange(event.getProperty());
 
 	public ThemeAdapter(ITheme targetTheme) {
 		this.targetTheme = targetTheme;

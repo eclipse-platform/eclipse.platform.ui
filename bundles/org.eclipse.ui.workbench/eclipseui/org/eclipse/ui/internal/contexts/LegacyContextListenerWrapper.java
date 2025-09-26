@@ -112,13 +112,11 @@ public class LegacyContextListenerWrapper implements IContextListener, IContextM
 
 	@Override
 	public final boolean equals(final Object object) {
-		if (object instanceof LegacyContextListenerWrapper) {
-			final LegacyContextListenerWrapper other = (LegacyContextListenerWrapper) object;
+		if (object instanceof final LegacyContextListenerWrapper other) {
 			return wrappedListener.equals(other.wrappedListener);
 		}
 
-		if (object instanceof org.eclipse.ui.contexts.IContextListener) {
-			final org.eclipse.ui.contexts.IContextListener other = (org.eclipse.ui.contexts.IContextListener) object;
+		if (object instanceof final org.eclipse.ui.contexts.IContextListener other) {
 			return wrappedListener.equals(other);
 		}
 

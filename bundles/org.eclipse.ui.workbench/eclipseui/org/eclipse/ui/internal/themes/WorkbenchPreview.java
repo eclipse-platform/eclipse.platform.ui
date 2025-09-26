@@ -57,7 +57,7 @@ public class WorkbenchPreview implements IThemePreview {
 
 	private ViewForm viewForm;
 
-	private IPropertyChangeListener fontAndColorListener = event -> {
+	private final IPropertyChangeListener fontAndColorListener = event -> {
 		if (!disposed) {
 			setColorsAndFonts();
 			// viewMessage.setSize(viewMessage.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));

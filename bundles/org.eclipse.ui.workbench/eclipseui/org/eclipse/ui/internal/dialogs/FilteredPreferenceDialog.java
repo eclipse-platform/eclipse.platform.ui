@@ -155,7 +155,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 
 	IWorkingCopyManager workingCopyManager;
 
-	private Collection<Job> updateJobs = new ArrayList<>();
+	private final Collection<Job> updateJobs = new ArrayList<>();
 
 	/**
 	 * The preference page history.
@@ -211,8 +211,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 			filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 			tree = filteredTree.getViewer();
-		} else
+		} else {
 			tree = new TreeViewer(parent, styleBits);
+		}
 
 		setContentAndLabelProviders(tree);
 		tree.setInput(getPreferenceManager());
@@ -344,9 +345,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 
 	protected void addButtonsToHelpControl(Control control) {
 		Composite parent = control.getParent();
-		if (control instanceof ToolBar) {
-			ToolBar toolBar = (ToolBar) control;
-
+		if (control instanceof ToolBar toolBar) {
 			ToolItem importButton = new ToolItem(toolBar, SWT.PUSH);
 			importImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_PREF_IMPORT).createImage();
 			importButton.setImage(importImage);
@@ -554,10 +553,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	void activeKeyScrolling() {
 		if (keyScrollingFilter == null) {
 			Composite pageParent = getPageContainer().getParent();
-			if (!(pageParent instanceof ScrolledComposite)) {
+			if (!(pageParent instanceof final ScrolledComposite sc)) {
 				return;
 			}
-			final ScrolledComposite sc = (ScrolledComposite) pageParent;
 			keyScrollingFilter = event -> {
 				if (!keyScrollingEnabled || sc.isDisposed()) {
 					return;
@@ -632,10 +630,12 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		}
 		removeKeyScrolling();
 		history.dispose();
-		if (importImage != null)
+		if (importImage != null) {
 			importImage.dispose();
-		if (exportImage != null)
+		}
+		if (exportImage != null) {
 			exportImage.dispose();
+		}
 		return super.close();
 	}
 

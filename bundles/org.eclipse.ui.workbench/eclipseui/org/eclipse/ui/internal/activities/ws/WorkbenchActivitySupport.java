@@ -107,9 +107,7 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 					final IWorkbench workbench = PlatformUI.getWorkbench();
 					IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 					for (IWorkbenchWindow wWindow : windows) {
-						if (wWindow instanceof WorkbenchWindow) {
-							final WorkbenchWindow window = (WorkbenchWindow) wWindow;
-
+						if (wWindow instanceof final WorkbenchWindow window) {
 							final ProgressMonitorDialog dialog = new ProgressMonitorDialog(window.getShell());
 
 							final IRunnableWithProgress runnable = new IRunnableWithProgress() {

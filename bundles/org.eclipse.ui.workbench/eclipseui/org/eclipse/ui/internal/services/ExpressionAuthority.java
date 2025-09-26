@@ -169,8 +169,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 		if (currentState == null) {
 			final Object defaultVariable = context.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 			final IEvaluationContext contextWithDefaultVariable;
-			if (defaultVariable instanceof IStructuredSelection) {
-				final IStructuredSelection selection = (IStructuredSelection) defaultVariable;
+			if (defaultVariable instanceof final IStructuredSelection selection) {
 				contextWithDefaultVariable = new EvaluationContext(context, selection.toList());
 			} else if ((defaultVariable instanceof ISelection) && (!((ISelection) defaultVariable).isEmpty())) {
 				contextWithDefaultVariable = new EvaluationContext(context, Collections.singleton(defaultVariable));

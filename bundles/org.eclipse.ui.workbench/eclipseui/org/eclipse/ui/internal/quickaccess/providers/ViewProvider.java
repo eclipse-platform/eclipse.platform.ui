@@ -46,10 +46,10 @@ public class ViewProvider extends QuickAccessProvider {
 	 * bundleclass://org.eclipse.pde.spy.bundle/org.eclipse.pde.spy.bundle.BundleSpyPart
 	 */
 	private static final String BUNDLE_CLASS_SCHEME = "bundleclass://"; //$NON-NLS-1$
-	private MApplication application;
-	private MWindow window;
-	private Map<String, QuickAccessElement> idToElement = new HashMap<>();
-	private IViewRegistry viewRegistry;
+	private final MApplication application;
+	private final MWindow window;
+	private final Map<String, QuickAccessElement> idToElement = new HashMap<>();
+	private final IViewRegistry viewRegistry;
 
 	public ViewProvider(MApplication application, MWindow window) {
 		this.application = application;
@@ -86,8 +86,9 @@ public class ViewProvider extends QuickAccessProvider {
 						if (uri.equals(CompatibilityPart.COMPATIBILITY_VIEW_URI)) {
 							IViewDescriptor viewDescriptor = viewRegistry.find(element.getId());
 							// Ignore if restricted
-							if (viewDescriptor == null)
+							if (viewDescriptor == null) {
 								continue;
+							}
 							// Ignore if filtered
 							if (!WorkbenchActivityHelper.filterItem(viewDescriptor)) {
 								idToElement.put(element.getId(), element);

@@ -61,8 +61,9 @@ public class ActionProvider extends QuickAccessProvider {
 				collectContributions(menu, result);
 				ActionContributionItem[] actions = result.toArray(new ActionContributionItem[result.size()]);
 				for (ActionContributionItem action : actions) {
-					if (!action.isVisible())
+					if (!action.isVisible()) {
 						continue;
+					}
 
 					ActionElement actionElement = new ActionElement(action);
 					idToElement.put(actionElement.getId(), actionElement);

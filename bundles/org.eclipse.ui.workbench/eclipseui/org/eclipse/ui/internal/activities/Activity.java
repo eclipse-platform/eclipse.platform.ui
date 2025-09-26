@@ -51,7 +51,7 @@ final class Activity implements IActivity {
 
 	private transient int hashCode = HASH_INITIAL;
 
-	private String id;
+	private final String id;
 
 	private String name;
 
@@ -120,11 +120,10 @@ final class Activity implements IActivity {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof Activity)) {
+		if (!(object instanceof final Activity castedObject)) {
 			return false;
 		}
 
-		final Activity castedObject = (Activity) object;
 		return Objects.equals(activityRequirementBindings, castedObject.activityRequirementBindings)
 				&& Objects.equals(activityPatternBindings, castedObject.activityPatternBindings)
 				&& defined == castedObject.defined && enabled == castedObject.enabled

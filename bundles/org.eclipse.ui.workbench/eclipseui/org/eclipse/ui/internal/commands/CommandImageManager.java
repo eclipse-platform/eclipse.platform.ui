@@ -119,12 +119,10 @@ public final class CommandImageManager extends EventManager {
 		if (style == null) {
 			if ((typedImage == null) || (typedImage instanceof ImageDescriptor)) {
 				images[type] = descriptor;
-			} else if (typedImage instanceof Map) {
-				final Map styleMap = (Map) typedImage;
+			} else if (typedImage instanceof final Map styleMap) {
 				styleMap.put(style, descriptor);
 			}
-		} else if (typedImage instanceof Map) {
-			final Map styleMap = (Map) typedImage;
+		} else if (typedImage instanceof final Map styleMap) {
 			styleMap.put(style, descriptor);
 		} else if (typedImage instanceof ImageDescriptor || typedImage == null) {
 			final Map styleMap = new HashMap();
@@ -185,8 +183,7 @@ public final class CommandImageManager extends EventManager {
 		for (final Object styledImages : existingImages) {
 			if (styledImages instanceof ImageDescriptor) {
 				existingStyles.add(null);
-			} else if (styledImages instanceof Map) {
-				final Map styleMap = (Map) styledImages;
+			} else if (styledImages instanceof final Map styleMap) {
 				existingStyles.addAll(styleMap.keySet());
 			}
 		}
@@ -265,8 +262,7 @@ public final class CommandImageManager extends EventManager {
 			return (ImageDescriptor) typedImage;
 		}
 
-		if (typedImage instanceof Map) {
-			final Map styleMap = (Map) typedImage;
+		if (typedImage instanceof final Map styleMap) {
 			Object styledImage = styleMap.get(style);
 			if (styledImage instanceof ImageDescriptor) {
 				return (ImageDescriptor) styledImage;

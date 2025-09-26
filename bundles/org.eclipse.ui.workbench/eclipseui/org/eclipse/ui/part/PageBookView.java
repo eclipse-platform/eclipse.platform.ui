@@ -147,7 +147,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	/**
 	 * The action bar property listener.
 	 */
-	private IPropertyChangeListener actionBarPropListener = event -> {
+	private final IPropertyChangeListener actionBarPropListener = event -> {
 		if (event.getProperty().equals(SubActionBars.P_ACTION_HANDLERS) && activeRec != null
 				&& event.getSource() == activeRec.subActionBars) {
 			refreshGlobalActionHandlers();
@@ -157,17 +157,17 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	/**
 	 * Selection change listener to listen for page selection changes
 	 */
-	private ISelectionChangedListener selectionChangedListener = this::pageSelectionChanged;
+	private final ISelectionChangedListener selectionChangedListener = this::pageSelectionChanged;
 
 	/**
 	 * Selection change listener to listen for page selection changes
 	 */
-	private ISelectionChangedListener postSelectionListener = this::postSelectionChanged;
+	private final ISelectionChangedListener postSelectionListener = this::postSelectionChanged;
 
 	/**
 	 * Selection provider for this view's site
 	 */
-	private SelectionProvider selectionProvider = new SelectionProvider();
+	private final SelectionProvider selectionProvider = new SelectionProvider();
 
 	/**
 	 * A data structure used to store the information about a single page within a
@@ -252,9 +252,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 */
 	protected class SelectionProvider implements IPostSelectionProvider {
 
-		private SelectionManager fSelectionListener = new SelectionManager();
+		private final SelectionManager fSelectionListener = new SelectionManager();
 
-		private SelectionManager fPostSelectionListeners = new SelectionManager();
+		private final SelectionManager fPostSelectionListeners = new SelectionManager();
 
 		@Override
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
@@ -987,7 +987,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		return selectionProvider;
 	}
 
-	private IPartListener2 partListener = new IPartListener2() {
+	private final IPartListener2 partListener = new IPartListener2() {
 		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {
 			if (partRef == null) {

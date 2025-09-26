@@ -139,13 +139,13 @@ public class CommandContributionItem extends ContributionItem {
 
 	private ImageDescriptor hoverIcon;
 
-	private String mnemonic;
+	private final String mnemonic;
 
 	private IElementReference elementRef;
 
 	private boolean checkedState;
 
-	private int style;
+	private final int style;
 
 	private ICommandListener commandListener;
 
@@ -161,14 +161,14 @@ public class CommandContributionItem extends ContributionItem {
 	 * This is <code>true</code> when the menu contribution's visibleWhen
 	 * checkEnabled attribute is <code>true</code>.
 	 */
-	private boolean visibleEnabled;
+	private final boolean visibleEnabled;
 
-	private Display display;
+	private final Display display;
 
 	// items contributed
-	private String contributedLabel;
+	private final String contributedLabel;
 
-	private String contributedTooltip;
+	private final String contributedTooltip;
 
 	private ImageDescriptor contributedIcon;
 
@@ -279,12 +279,15 @@ public class CommandContributionItem extends ContributionItem {
 			disabledIcon = service.getImageDescriptor(command.getId(), ICommandImageService.TYPE_DISABLED, iconStyle);
 			hoverIcon = service.getImageDescriptor(command.getId(), ICommandImageService.TYPE_HOVER, iconStyle);
 
-			if (contributedIcon == null)
+			if (contributedIcon == null) {
 				contributedIcon = icon;
-			if (contributedDisabledIcon == null)
+			}
+			if (contributedDisabledIcon == null) {
 				contributedDisabledIcon = disabledIcon;
-			if (contributedHoverIcon == null)
+			}
+			if (contributedHoverIcon == null) {
 				contributedHoverIcon = hoverIcon;
+			}
 		}
 	}
 
@@ -336,15 +339,16 @@ public class CommandContributionItem extends ContributionItem {
 
 		// if no handler or handler doesn't implement IElementUpdater,
 		// restore the contributed elements
-		if (handler == null)
+		if (handler == null) {
 			return true;
+		}
 
-		if (!(handler instanceof IElementUpdater))
+		if (!(handler instanceof IElementUpdater)) {
 			return true;
+		}
 
 		// special case, if its HandlerProxy, then check the actual handler
-		if (handler instanceof HandlerProxy) {
-			HandlerProxy handlerProxy = (HandlerProxy) handler;
+		if (handler instanceof HandlerProxy handlerProxy) {
 			IHandler actualHandler = handlerProxy.getHandler();
 			return shouldRestoreAppearance(actualHandler);
 		}
@@ -394,8 +398,9 @@ public class CommandContributionItem extends ContributionItem {
 
 		// Menus don't support the pulldown style
 		int tmpStyle = style;
-		if (tmpStyle == STYLE_PULLDOWN)
+		if (tmpStyle == STYLE_PULLDOWN) {
 			tmpStyle = STYLE_PUSH;
+		}
 
 		MenuItem item = null;
 		if (index >= 0) {
@@ -428,8 +433,9 @@ public class CommandContributionItem extends ContributionItem {
 
 		// Buttons don't support the pulldown style
 		int tmpStyle = style;
-		if (tmpStyle == STYLE_PULLDOWN)
+		if (tmpStyle == STYLE_PULLDOWN) {
 			tmpStyle = STYLE_PUSH;
+		}
 
 		Button item = new Button(parent, tmpStyle);
 		item.setData(this);
@@ -627,11 +633,13 @@ public class CommandContributionItem extends ContributionItem {
 
 	private String getToolTipText(String text) {
 		String tooltipText = tooltip;
-		if (tooltip == null)
-			if (text != null)
+		if (tooltip == null) {
+			if (text != null) {
 				tooltipText = text;
-			else
+			} else {
 				tooltipText = ""; //$NON-NLS-1$
+			}
+		}
 
 		TriggerSequence activeBinding = bindingService.getBestActiveBindingFor(command);
 		if (activeBinding != null && !activeBinding.isEmpty()) {
@@ -669,8 +677,9 @@ public class CommandContributionItem extends ContributionItem {
 	@Override
 	public void setParent(IContributionManager parent) {
 		super.setParent(parent);
-		if (parent == null)
+		if (parent == null) {
 			disconnectReferences();
+		}
 	}
 
 	private void establishReferences() {
@@ -786,8 +795,9 @@ public class CommandContributionItem extends ContributionItem {
 
 	private void handleWidgetSelection(Event event) {
 		// Special check for ToolBar dropdowns...
-		if (openDropDownMenu(event))
+		if (openDropDownMenu(event)) {
 			return;
+		}
 
 		if ((style & (SWT.TOGGLE | SWT.CHECK)) != 0) {
 			if (event.widget instanceof ToolItem) {
@@ -867,8 +877,7 @@ public class CommandContributionItem extends ContributionItem {
 	}
 
 	private void updateIcons() {
-		if (widget instanceof MenuItem) {
-			MenuItem item = (MenuItem) widget;
+		if (widget instanceof MenuItem item) {
 			LocalResourceManager m = new LocalResourceManager(JFaceResources.getResources());
 			try {
 				item.setImage(icon == null ? null : m.create(icon));
@@ -881,8 +890,7 @@ public class CommandContributionItem extends ContributionItem {
 			}
 			disposeOldImages();
 			localResourceManager = m;
-		} else if (widget instanceof ToolItem) {
-			ToolItem item = (ToolItem) widget;
+		} else if (widget instanceof ToolItem item) {
 			LocalResourceManager m = new LocalResourceManager(JFaceResources.getResources());
 			item.setDisabledImage(disabledIcon == null ? null : m.create(disabledIcon));
 			item.setHotImage(hoverIcon == null ? null : m.create(hoverIcon));
@@ -946,7 +954,7 @@ public class CommandContributionItem extends ContributionItem {
 		return super.isVisible();
 	}
 
-	private IBindingManagerListener bindingManagerListener = event -> {
+	private final IBindingManagerListener bindingManagerListener = event -> {
 		if (event.isActiveBindingsChanged() && event.isActiveBindingsChangedFor(getCommand())) {
 			update();
 		}

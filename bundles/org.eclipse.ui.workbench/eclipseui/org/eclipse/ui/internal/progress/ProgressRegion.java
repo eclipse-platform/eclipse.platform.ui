@@ -94,9 +94,9 @@ public class ProgressRegion {
 			@Override
 			public Point computeSize(int wHint, int hHint, boolean changed) {
 				Point size = super.computeSize(wHint, hHint, changed);
-				if (isHorizontal())
+				if (isHorizontal()) {
 					size.y = TrimUtil.TRIM_DEFAULT_HEIGHT;
-				else {
+				} else {
 					size.x = TrimUtil.TRIM_DEFAULT_HEIGHT;
 				}
 				return size;
@@ -106,8 +106,9 @@ public class ProgressRegion {
 		GridLayout gl = new GridLayout();
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
-		if (isHorizontal())
+		if (isHorizontal()) {
 			gl.numColumns = 3;
+		}
 		region.setLayout(gl);
 
 		viewer = new ProgressCanvasViewer(region, SWT.NO_FOCUS, 1, 36, isHorizontal() ? SWT.HORIZONTAL : SWT.VERTICAL);
@@ -171,8 +172,7 @@ public class ProgressRegion {
 		viewer.addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof JobInfo) {
-					JobInfo info = (JobInfo) element;
+				if (element instanceof JobInfo info) {
 					if (info.isBlocked() || info.getJob().getState() == Job.WAITING) {
 						return false;
 					}
@@ -215,8 +215,9 @@ public class ProgressRegion {
 	 * @return <code>true</code> if the side is horizontal
 	 */
 	private boolean isHorizontal() {
-		if (forceHorizontal)
+		if (forceHorizontal) {
 			return true;
+		}
 		SideValue loc = getLocation();
 		return loc == SideValue.TOP || loc == SideValue.BOTTOM;
 	}

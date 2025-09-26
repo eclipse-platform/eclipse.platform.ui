@@ -26,13 +26,13 @@ import org.eclipse.ui.themes.ITheme;
  */
 public class CascadingTheme extends EventManager implements ITheme {
 
-	private CascadingFontRegistry fontRegistry;
+	private final CascadingFontRegistry fontRegistry;
 
-	private CascadingColorRegistry colorRegistry;
+	private final CascadingColorRegistry colorRegistry;
 
-	private ITheme currentTheme;
+	private final ITheme currentTheme;
 
-	private IPropertyChangeListener listener = this::fire;
+	private final IPropertyChangeListener listener = this::fire;
 
 	public CascadingTheme(ITheme currentTheme, CascadingColorRegistry colorRegistry,
 			CascadingFontRegistry fontRegistry) {

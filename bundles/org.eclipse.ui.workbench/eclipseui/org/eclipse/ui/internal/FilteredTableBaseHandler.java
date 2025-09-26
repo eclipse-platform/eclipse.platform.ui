@@ -151,10 +151,12 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 		Shell shell = null;
 		selection = null;
 
-		if (activePart != null)
+		if (activePart != null) {
 			shell = activePart.getSite().getShell();
-		if (shell == null)
+		}
+		if (shell == null) {
 			shell = window.getShell();
+		}
 		dialog = new Shell(shell, SWT.MODELESS);
 		dialog.setBackground(getBackground());
 		dialog.setMinimumSize(new Point(120, 50));
@@ -338,7 +340,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	 * the listener check if focus is still on one of the active components. If not,
 	 * closes the dialog.
 	 */
-	private FocusAdapter fAdapter = new FocusAdapter() {
+	private final FocusAdapter fAdapter = new FocusAdapter() {
 		@Override
 		public void focusLost(FocusEvent e) {
 			PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
@@ -713,8 +715,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 				// the if conditions below do not need to be checked then
 				return;
 			}
-			if (selectedItem instanceof IPerspectiveDescriptor) {
-				IPerspectiveDescriptor persp = (IPerspectiveDescriptor) selectedItem;
+			if (selectedItem instanceof IPerspectiveDescriptor persp) {
 				page.setPerspective(persp);
 				IWorkbenchPart activePart = page.getActivePart();
 				if (activePart != null) {
@@ -836,8 +837,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 					return ((FilteredTableItem) element).text;
 				} else if (element instanceof WorkbenchPartReference) {
 					return getWorkbenchPartReferenceText((WorkbenchPartReference) element);
-				} else if (element instanceof IPerspectiveDescriptor) {
-					IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
+				} else if (element instanceof IPerspectiveDescriptor desc) {
 					String text = getPerspectiveLabelProvider().getText(desc);
 					return (text == null) ? "" : text; //$NON-NLS-1$
 				}
@@ -850,8 +850,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 					return ((FilteredTableItem) element).image;
 				} else if (element instanceof WorkbenchPartReference) {
 					return ((WorkbenchPartReference) element).getTitleImage();
-				} else if (element instanceof IPerspectiveDescriptor) {
-					IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
+				} else if (element instanceof IPerspectiveDescriptor desc) {
 					return getPerspectiveLabelProvider().getImage(desc);
 				}
 				return super.getImage(element);

@@ -30,8 +30,8 @@ public class EditorElement extends QuickAccessElement {
 
 	private static final String DIRTY_MARK = "*"; //$NON-NLS-1$
 
-	private IEditorReference editorReference;
-	private boolean dirty;
+	private final IEditorReference editorReference;
+	private final boolean dirty;
 
 	/* package */ EditorElement(IEditorReference editorReference) {
 		this.editorReference = editorReference;
@@ -80,12 +80,15 @@ public class EditorElement extends QuickAccessElement {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final EditorElement other = (EditorElement) obj;
 		return Objects.equals(editorReference, other.editorReference);
 	}

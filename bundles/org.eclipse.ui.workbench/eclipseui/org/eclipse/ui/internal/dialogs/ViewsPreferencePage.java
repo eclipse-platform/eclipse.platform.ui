@@ -499,8 +499,9 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 				colorFontsDecorator.setImage(decorationImage);
 				colorFontsDecorator.setDescriptionText(WorkbenchMessages.ThemeChangeWarningText);
 				colorFontsDecorator.show();
-			} else
+			} else {
 				colorFontsDecorator.hide();
+			}
 			setColorsAndFontsTheme(colorsAndFontsTheme);
 		});
 	}
@@ -592,8 +593,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	private static class ColorsAndFontsTheme {
-		private String label;
-		private String id;
+		private final String label;
+		private final String id;
 
 		public ColorsAndFontsTheme(String id, String label) {
 			this.id = id;
@@ -615,12 +616,15 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			ColorsAndFontsTheme other = (ColorsAndFontsTheme) obj;
 			return Objects.equals(id, other.id);
 		}

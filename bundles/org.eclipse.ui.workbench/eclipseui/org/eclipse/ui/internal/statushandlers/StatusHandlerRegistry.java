@@ -42,11 +42,11 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 
 	private static final String STATUSHANDLER_ARG = "-statushandler"; //$NON-NLS-1$
 
-	private ArrayList<StatusHandlerDescriptor> statusHandlerDescriptors = new ArrayList<>();
+	private final ArrayList<StatusHandlerDescriptor> statusHandlerDescriptors = new ArrayList<>();
 
-	private ArrayList<StatusHandlerProductBindingDescriptor> productBindingDescriptors = new ArrayList<>();
+	private final ArrayList<StatusHandlerProductBindingDescriptor> productBindingDescriptors = new ArrayList<>();
 
-	private StatusHandlerDescriptorsMap statusHandlerDescriptorsMap;
+	private final StatusHandlerDescriptorsMap statusHandlerDescriptorsMap;
 
 	private StatusHandlerDescriptor defaultHandlerDescriptor;
 

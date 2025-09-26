@@ -31,8 +31,8 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  * @since 3.1
  */
 public class ImageBindingRegistry implements IExtensionChangeHandler {
-	private String tag;
-	private ImageRegistry registry = new ImageRegistry();
+	private final String tag;
+	private final ImageRegistry registry = new ImageRegistry();
 
 	public ImageBindingRegistry(String tag) {
 		super();

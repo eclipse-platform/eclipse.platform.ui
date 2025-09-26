@@ -102,10 +102,9 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 			} else if (object instanceof IContext) {
 				// already resolved context (pre 2.0)
 				context = (IContext) object;
-			} else if (object instanceof Object[]) {
+			} else if (object instanceof Object[] helpContexts) {
 				// mixed array of String or IContext (pre 2.0) - extract the
 				// first entry
-				Object[] helpContexts = (Object[]) object;
 				// extract the first entry
 				if (helpContexts.length > 0) {
 					Object primaryEntry = helpContexts[0];
@@ -161,7 +160,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	 *
 	 * @since 3.1
 	 */
-	private IExtensionChangeHandler handler = new IExtensionChangeHandler() {
+	private final IExtensionChangeHandler handler = new IExtensionChangeHandler() {
 
 		@Override
 		public void addExtension(IExtensionTracker tracker, IExtension extension) {
@@ -305,8 +304,8 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	 * @since 3.1
 	 */
 	private static class ContextWithTitle implements IContext2 {
-		private IContext context;
-		private String title;
+		private final IContext context;
+		private final String title;
 
 		ContextWithTitle(IContext context, String title) {
 			this.context = context;
@@ -765,8 +764,9 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 
 	@Override
 	public void setHelp(final IAction action, final String contextId) {
-		if (WorkbenchPlugin.DEBUG)
+		if (WorkbenchPlugin.DEBUG) {
 			setHelpTrace(contextId);
+		}
 		action.setHelpListener(event -> {
 			if (getHelpUI() != null) {
 				IContext context = HelpSystem.getContext(contextId);
@@ -781,8 +781,9 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 
 	@Override
 	public void setHelp(Control control, String contextId) {
-		if (WorkbenchPlugin.DEBUG)
+		if (WorkbenchPlugin.DEBUG) {
 			setHelpTrace(contextId);
+		}
 		control.setData(HELP_KEY, contextId);
 		// ensure that the listener is only registered once
 		control.removeHelpListener(getHelpListener());
@@ -791,8 +792,9 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 
 	@Override
 	public void setHelp(Menu menu, String contextId) {
-		if (WorkbenchPlugin.DEBUG)
+		if (WorkbenchPlugin.DEBUG) {
 			setHelpTrace(contextId);
+		}
 		menu.setData(HELP_KEY, contextId);
 		// ensure that the listener is only registered once
 		menu.removeHelpListener(getHelpListener());
@@ -802,8 +804,9 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	@Override
 	public void setHelp(MenuItem item, String contextId) {
 
-		if (WorkbenchPlugin.DEBUG)
+		if (WorkbenchPlugin.DEBUG) {
 			setHelpTrace(contextId);
+		}
 
 		item.setData(HELP_KEY, contextId);
 		// ensure that the listener is only registered once
@@ -828,12 +831,13 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 			}
 		}
 
-		if (registeredIDTable == null)
+		if (registeredIDTable == null) {
 			registeredIDTable = new Hashtable<>();
+		}
 
-		if (!registeredIDTable.containsKey(contextId))
+		if (!registeredIDTable.containsKey(contextId)) {
 			registeredIDTable.put(contextId, currentElement);
-		else if (!registeredIDTable.get(contextId).equals(currentElement)) {
+		} else if (!registeredIDTable.get(contextId).equals(currentElement)) {
 			StackTraceElement initialElement = registeredIDTable.get(contextId);
 			String error = "UI Duplicate Context ID found: '" + contextId + "'\n" + //$NON-NLS-1$ //$NON-NLS-2$
 					" 1 at " + initialElement + '\n' + //$NON-NLS-1$

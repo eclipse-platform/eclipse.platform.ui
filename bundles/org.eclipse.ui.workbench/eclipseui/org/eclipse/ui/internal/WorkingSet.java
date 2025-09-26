@@ -91,8 +91,7 @@ public class WorkingSet extends AbstractWorkingSet {
 		if (this == object) {
 			return true;
 		}
-		if (object instanceof WorkingSet) {
-			WorkingSet workingSet = (WorkingSet) object;
+		if (object instanceof WorkingSet workingSet) {
 			return Objects.equals(workingSet.getName(), getName())
 					&& Objects.equals(workingSet.getId(), getId())
 					&& Objects.equals(workingSet.getElementsArray(), getElementsArray());
@@ -273,10 +272,12 @@ public class WorkingSet extends AbstractWorkingSet {
 	private WorkingSetDescriptor getDescriptor(String defaultId) {
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 		String id = getId();
-		if (id == null)
+		if (id == null) {
 			id = defaultId;
-		if (id == null)
+		}
+		if (id == null) {
 			return null;
+		}
 
 		return registry.getWorkingSetDescriptor(id);
 	}

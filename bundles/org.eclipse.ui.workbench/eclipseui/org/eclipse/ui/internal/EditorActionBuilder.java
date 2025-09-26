@@ -85,7 +85,7 @@ public class EditorActionBuilder extends PluginActionBuilder {
 	 * contributions.
 	 */
 	public static class ExternalContributor implements IEditorActionBarContributor {
-		private ArrayList<Object> cache;
+		private final ArrayList<Object> cache;
 
 		public ExternalContributor(ArrayList<Object> cache) {
 			this.cache = cache;

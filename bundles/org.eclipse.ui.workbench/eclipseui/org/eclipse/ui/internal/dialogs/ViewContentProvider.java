@@ -39,10 +39,10 @@ public class ViewContentProvider implements ITreeContentProvider {
 	 * Child cache. Map from Object-&gt;Object[]. Our hasChildren() method is expensive
 	 * so it's better to cache the results of getChildren().
 	 */
-	private Map<Object, Object[]> childMap = new HashMap<>();
+	private final Map<Object, Object[]> childMap = new HashMap<>();
 
 	private MApplication application;
-	private IViewRegistry viewRegistry;
+	private final IViewRegistry viewRegistry;
 
 	public ViewContentProvider(MApplication application) {
 		this.application = application;

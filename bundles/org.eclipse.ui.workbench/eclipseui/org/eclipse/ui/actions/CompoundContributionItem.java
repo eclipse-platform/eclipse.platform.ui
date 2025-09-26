@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Menu;
  */
 public abstract class CompoundContributionItem extends ContributionItem {
 
-	private IMenuListener menuListener = IMenuManager::markDirty;
+	private final IMenuListener menuListener = IMenuManager::markDirty;
 
 	private IContributionItem[] oldItems;
 
@@ -109,8 +109,7 @@ public abstract class CompoundContributionItem extends ContributionItem {
 			IMenuManager menuMgr = (IMenuManager) getParent();
 			menuMgr.removeMenuListener(menuListener);
 		}
-		if (parent instanceof IMenuManager) {
-			IMenuManager menuMgr = (IMenuManager) parent;
+		if (parent instanceof IMenuManager menuMgr) {
 			menuMgr.addMenuListener(menuListener);
 		}
 		super.setParent(parent);

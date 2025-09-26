@@ -49,9 +49,9 @@ public class ContentTypeFilenameAssociationDialog extends TitleAreaDialog {
 
 	private Button okButton;
 
-	private String title;
+	private final String title;
 
-	private String helpContextId;
+	private final String helpContextId;
 
 	private final String headerTitle;
 
@@ -206,8 +206,9 @@ public class ContentTypeFilenameAssociationDialog extends TitleAreaDialog {
 				.getDialogSettingsProvider(FrameworkUtil.getBundle(ContentTypeFilenameAssociationDialog.class))
 				.getDialogSettings();
 		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
-		if (section == null)
+		if (section == null) {
 			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
+		}
 		return section;
 	}
 

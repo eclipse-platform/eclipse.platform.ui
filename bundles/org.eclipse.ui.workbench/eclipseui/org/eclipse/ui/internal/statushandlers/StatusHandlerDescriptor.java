@@ -33,11 +33,11 @@ public class StatusHandlerDescriptor implements IPluginContribution {
 
 	private static final String PREFIX = "prefix"; //$NON-NLS-1$
 
-	private IConfigurationElement configElement;
+	private final IConfigurationElement configElement;
 
-	private String id;
+	private final String id;
 
-	private String pluginId;
+	private final String pluginId;
 
 	private String prefix;
 

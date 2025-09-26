@@ -68,9 +68,9 @@ public class SelectPerspectiveDialog extends Dialog implements ISelectionChanged
 
 	private IPerspectiveDescriptor perspDesc;
 
-	private IPerspectiveRegistry perspReg;
+	private final IPerspectiveRegistry perspReg;
 
-	private ActivityViewerFilter activityViewerFilter = new ActivityViewerFilter();
+	private final ActivityViewerFilter activityViewerFilter = new ActivityViewerFilter();
 
 	private Label descriptionHint;
 

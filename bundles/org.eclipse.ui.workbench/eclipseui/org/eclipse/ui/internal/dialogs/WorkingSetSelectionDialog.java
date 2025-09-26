@@ -59,13 +59,13 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 	private static final int SIZING_SELECTION_WIDGET_WIDTH = 50;
 
-	private ILabelProvider labelProvider;
+	private final ILabelProvider labelProvider;
 
-	private IStructuredContentProvider contentProvider;
+	private final IStructuredContentProvider contentProvider;
 
 	private CheckboxTableViewer listViewer;
 
-	private boolean multiSelect;
+	private final boolean multiSelect;
 
 	private IWorkbenchWindow workbenchWindow;
 
@@ -229,8 +229,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 			listViewer.setCheckedElements(initialElementSelections.toArray());
 		} else if (!initialElementSelections.isEmpty()) {
 			IWorkingSet set = (IWorkingSet) initialElementSelections.get(0);
-			if (set instanceof AggregateWorkingSet) {
-				AggregateWorkingSet aggregate = (AggregateWorkingSet) set;
+			if (set instanceof AggregateWorkingSet aggregate) {
 				listViewer.setCheckedElements(aggregate.getComponents());
 			} else {
 				listViewer.setCheckedElements(initialElementSelections.toArray());

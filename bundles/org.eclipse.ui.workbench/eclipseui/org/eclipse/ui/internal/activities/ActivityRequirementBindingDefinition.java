@@ -58,13 +58,13 @@ public final class ActivityRequirementBindingDefinition {
 		return map;
 	}
 
-	private String requiredActivityId;
+	private final String requiredActivityId;
 
 	private transient int hashCode = HASH_INITIAL;
 
-	private String activityId;
+	private final String activityId;
 
-	private String sourceId;
+	private final String sourceId;
 
 	private transient String string;
 
@@ -91,11 +91,10 @@ public final class ActivityRequirementBindingDefinition {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityRequirementBindingDefinition)) {
+		if (!(object instanceof final ActivityRequirementBindingDefinition castedObject)) {
 			return false;
 		}
 
-		final ActivityRequirementBindingDefinition castedObject = (ActivityRequirementBindingDefinition) object;
 		return Objects.equals(requiredActivityId, castedObject.requiredActivityId)
 				&& Objects.equals(activityId, castedObject.activityId)
 				&& Objects.equals(sourceId, castedObject.sourceId);

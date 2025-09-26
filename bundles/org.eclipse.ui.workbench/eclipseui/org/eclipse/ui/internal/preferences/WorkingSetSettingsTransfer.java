@@ -44,8 +44,9 @@ public class WorkingSetSettingsTransfer extends WorkbenchSettingsTransfer {
 	public IStatus transferSettings(IPath newWorkspaceRoot) {
 		IPath dataLocation = getNewWorkbenchStateLocation(newWorkspaceRoot);
 
-		if (dataLocation == null)
+		if (dataLocation == null) {
 			return noWorkingSettingsStatus();
+		}
 
 		dataLocation = dataLocation.append(WorkingSetManager.WORKING_SET_STATE_FILENAME);
 
@@ -53,11 +54,12 @@ public class WorkingSetSettingsTransfer extends WorkbenchSettingsTransfer {
 
 		try {
 			IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
-			if (manager instanceof AbstractWorkingSetManager)
+			if (manager instanceof AbstractWorkingSetManager) {
 				((AbstractWorkingSetManager) manager).saveState(stateFile);
-			else
+			} else {
 				return new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
 						WorkbenchMessages.WorkingSets_CannotSave);
+			}
 		} catch (IOException e) {
 			new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
 					WorkbenchMessages.ProblemSavingWorkingSetState_message, e);

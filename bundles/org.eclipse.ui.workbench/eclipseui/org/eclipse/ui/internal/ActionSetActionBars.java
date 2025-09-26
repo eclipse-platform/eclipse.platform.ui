@@ -36,7 +36,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 
 	private IActionBarConfigurer2 actionBarConfigurer = null;
 
-	private String actionSetId;
+	private final String actionSetId;
 
 	private ArrayList<IContributionItem> adjunctContributions = new ArrayList<>();
 
@@ -94,8 +94,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 		// removeAll since other items from other actions sets may be in
 		// the action bar's cool item
 		for (IContributionItem item : coolItemToolBarMgr.getItems()) {
-			if (item instanceof PluginActionCoolBarContributionItem) {
-				PluginActionCoolBarContributionItem actionSetItem = (PluginActionCoolBarContributionItem) item;
+			if (item instanceof PluginActionCoolBarContributionItem actionSetItem) {
 				if (actionSetItem.getActionSetId().equals(actionSetId)) {
 					coolItemToolBarMgr.remove(item);
 					item.dispose();
@@ -222,9 +221,8 @@ public class ActionSetActionBars extends SubActionBars2 {
 		// tool bar
 		// id then create one. Otherwise retrieve the tool bar contribution
 		// item
-		if (cbItem instanceof IToolBarContributionItem) {
+		if (cbItem instanceof IToolBarContributionItem tbcbItem) {
 
-			IToolBarContributionItem tbcbItem = (IToolBarContributionItem) cbItem;
 			coolItemToolBarMgr = tbcbItem.getToolBarManager();
 			// If this not an adjuct type then we can cashe the tool bar
 			// contribution type
@@ -279,8 +277,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 		// 1. Need to set visibility for all non-adjunct actions
 		if (coolItemToolBarMgr != null) {
 			for (IContributionItem item : coolItemToolBarMgr.getItems()) {
-				if (item instanceof PluginActionCoolBarContributionItem) {
-					PluginActionCoolBarContributionItem actionSetItem = (PluginActionCoolBarContributionItem) item;
+				if (item instanceof PluginActionCoolBarContributionItem actionSetItem) {
 					// Only if the action set id for this contribution item is
 					// the same
 					// as this object

@@ -24,7 +24,7 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
 
 	private PropertyListenerList listeners;
 	private int ignoreCount = 0;
-	private ArrayList<String> queuedEvents = new ArrayList<>();
+	private final ArrayList<String> queuedEvents = new ArrayList<>();
 
 	@Override
 	public final void addListener(IPropertyMapListener listener) {

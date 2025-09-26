@@ -130,22 +130,22 @@ public class CellLayout extends Layout {
 	 * Number of columns in this layout, or 0 indicating that the whole layout
 	 * should be on a single row.
 	 */
-	private int numCols;
+	private final int numCols;
 
 	/**
 	 * List of IColumnInfo. The nth object is used to compute the width of the nth
 	 * column, or null indicating that the default column should be used.
 	 */
-	private List<Row> cols;
+	private final List<Row> cols;
 
 	/**
 	 * List of RowInfo. The nth object is used to compute the height of the nth row,
 	 * or null indicating that the default row should be used.
 	 */
-	private List<Row> rows = new ArrayList<>(16);
+	private final List<Row> rows = new ArrayList<>(16);
 
 	// Cached information
-	private GridInfo gridInfo = new GridInfo();
+	private final GridInfo gridInfo = new GridInfo();
 
 	private int[] cachedRowMin = null;
 
@@ -155,7 +155,7 @@ public class CellLayout extends Layout {
 
 	public static int cacheHits;
 
-	private LayoutCache cache = new LayoutCache();
+	private final LayoutCache cache = new LayoutCache();
 
 	// End of cached control sizes
 

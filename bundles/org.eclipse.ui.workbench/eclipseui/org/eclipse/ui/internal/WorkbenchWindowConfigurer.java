@@ -60,7 +60,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	/**
 	 * The workbench window associated with this configurer.
 	 */
-	private WorkbenchWindow window;
+	private final WorkbenchWindow window;
 
 	/**
 	 * The shell style bits to use when the window's shell is being created.
@@ -103,12 +103,12 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 *
 	 * @see #setData
 	 */
-	private Map extraData = new HashMap(1);
+	private final Map extraData = new HashMap(1);
 
 	/**
 	 * Holds the list drag and drop <code>Transfer</code> for the editor area
 	 */
-	private ArrayList transferTypes = new ArrayList(3);
+	private final ArrayList transferTypes = new ArrayList(3);
 
 	/**
 	 * The <code>DropTargetListener</code> implementation for handling a drop into

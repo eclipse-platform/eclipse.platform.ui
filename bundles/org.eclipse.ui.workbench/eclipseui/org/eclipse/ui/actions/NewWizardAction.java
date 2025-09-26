@@ -84,7 +84,7 @@ public class NewWizardAction extends Action implements ActionFactory.IWorkbenchA
 	/**
 	 * Tracks perspective activation, to update this action's enabled state.
 	 */
-	private PerspectiveTracker tracker;
+	private final PerspectiveTracker tracker;
 
 	/**
 	 * Create a new instance of this class.

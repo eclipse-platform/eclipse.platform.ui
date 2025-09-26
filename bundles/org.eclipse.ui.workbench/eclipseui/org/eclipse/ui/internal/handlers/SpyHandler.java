@@ -59,8 +59,7 @@ public class SpyHandler extends AbstractHandler {
 		ContributionInfo contributionInfo = null;
 		Point offset = new Point(0, 0);
 		while (control != null) {
-			if (control instanceof Table) {
-				Table table = (Table) control;
+			if (control instanceof Table table) {
 				if (table.getSelectionCount() == 1) {
 					TableItem tableItem = table.getSelection()[0];
 					contributionInfo = getContributionInfo(tableItem.getData(),
@@ -71,8 +70,7 @@ public class SpyHandler extends AbstractHandler {
 						break;
 					}
 				}
-			} else if (control instanceof Tree) {
-				Tree tree = (Tree) control;
+			} else if (control instanceof Tree tree) {
 				if (tree.getSelectionCount() == 1) {
 					TreeItem treeItem = tree.getSelection()[0];
 					contributionInfo = getContributionInfo(treeItem.getData(),
@@ -87,10 +85,11 @@ public class SpyHandler extends AbstractHandler {
 			String optionalElementType;
 
 			// "force" a contribution info if we are at a shell
-			if (control instanceof Shell)
+			if (control instanceof Shell) {
 				optionalElementType = ContributionInfoMessages.ContributionInfo_Window;
-			else
+			} else {
 				optionalElementType = null;
+			}
 
 			contributionInfo = getContributionInfo(control.getData(), optionalElementType);
 

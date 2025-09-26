@@ -77,9 +77,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 
 	private String defaultPerspectiveId;
 
-	private ArrayList<IPerspectiveDescriptor> perspToDelete = new ArrayList<>();
+	private final ArrayList<IPerspectiveDescriptor> perspToDelete = new ArrayList<>();
 
-	private ArrayList<IPerspectiveDescriptor> perspToRevert = new ArrayList<>();
+	private final ArrayList<IPerspectiveDescriptor> perspToRevert = new ArrayList<>();
 
 	private Table perspectivesTable;
 
@@ -106,8 +106,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	/**
 	 * <code>Comparator</code> to compare two perspective descriptors
 	 */
-	private Comparator<IPerspectiveDescriptor> comparator = new Comparator<>() {
-		private Collator collator = Collator.getInstance();
+	private final Comparator<IPerspectiveDescriptor> comparator = new Comparator<>() {
+		private final Collator collator = Collator.getInstance();
 
 		@Override
 		public int compare(IPerspectiveDescriptor d1, IPerspectiveDescriptor d2) {
@@ -407,8 +407,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		MApplication application = ((Workbench) workbench).getApplication();
 		EModelService modelService = application.getContext().get(EModelService.class);
 
-		if (modelService.findElements(application, desc.getId(), MPerspective.class).isEmpty())
+		if (modelService.findElements(application, desc.getId(), MPerspective.class).isEmpty()) {
 			return true;
+		}
 
 		Builder builder = PlainMessageDialog.getBuilder(getShell(),
 				WorkbenchMessages.PerspectivesPreference_perspectiveopen_title);

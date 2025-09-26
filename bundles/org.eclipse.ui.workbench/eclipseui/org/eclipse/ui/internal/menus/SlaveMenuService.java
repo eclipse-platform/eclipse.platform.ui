@@ -28,7 +28,7 @@ import org.eclipse.ui.menus.IMenuService;
  * @since 3.105
  */
 public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
-	private IMenuService parentService;
+	private final IMenuService parentService;
 
 	/**
 	 * @see org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
@@ -101,8 +101,7 @@ public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 	 */
 	@Override
 	public void clearContributions(PartSite site, MPart part) {
-		if (parentService instanceof IMenuServiceWorkaround) {
-			IMenuServiceWorkaround service = (IMenuServiceWorkaround) parentService;
+		if (parentService instanceof IMenuServiceWorkaround service) {
 			service.clearContributions(site, part);
 		}
 	}
@@ -121,7 +120,7 @@ public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 		this.model = model;
 	}
 
-	private MApplicationElement model;
+	private final MApplicationElement model;
 
 	public MApplicationElement getModel() {
 		return model;

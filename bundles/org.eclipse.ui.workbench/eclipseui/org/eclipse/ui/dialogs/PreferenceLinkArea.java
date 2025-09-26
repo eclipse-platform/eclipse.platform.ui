@@ -35,7 +35,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  */
 public class PreferenceLinkArea extends Object {
 
-	private Link pageLink;
+	private final Link pageLink;
 
 	/**
 	 * Create a new instance of the receiver

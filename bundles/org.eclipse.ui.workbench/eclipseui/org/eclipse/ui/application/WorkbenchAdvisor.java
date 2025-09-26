@@ -766,18 +766,20 @@ public abstract class WorkbenchAdvisor {
 
 		while (true) {
 			if (!display.readAndDispatch()) {
-				if (initDone)
+				if (initDone) {
 					break;
+				}
 				display.sleep();
 			}
 
 		}
 
 		// can only be a runtime or error
-		if (error[0] instanceof Error)
+		if (error[0] instanceof Error) {
 			throw (Error) error[0];
-		else if (error[0] instanceof RuntimeException)
+		} else if (error[0] instanceof RuntimeException) {
 			throw (RuntimeException) error[0];
+		}
 
 		return result[0];
 	}

@@ -139,10 +139,11 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	public void fillActionBars(IActionBars actionBars) {
 		menuManager = actionBars.getMenuManager();
 
-		if (menuManager.find(IWorkbenchActionConstants.MB_ADDITIONS) != null)
+		if (menuManager.find(IWorkbenchActionConstants.MB_ADDITIONS) != null) {
 			menuManager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(WORKING_SET_ACTION_GROUP));
-		else
+		} else {
 			menuManager.add(new Separator(WORKING_SET_ACTION_GROUP));
+		}
 
 		menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, selectWorkingSetAction);
 		menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, clearWorkingSetAction);

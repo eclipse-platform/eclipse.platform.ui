@@ -104,10 +104,11 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	 */
 	private static String getName(Object element) {
 		Object[] elements;
-		if (element instanceof IStructuredSelection)
+		if (element instanceof IStructuredSelection) {
 			elements = ((IStructuredSelection) element).toArray();
-		else
+		} else {
 			elements = new Object[] { element };
+		}
 		StringBuilder sb = new StringBuilder();
 		// Print at most 3 entries...
 		for (int i = 0; i < elements.length; i++) {
@@ -118,8 +119,9 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 			}
 			IWorkbenchAdapter adapter = Adapters.adapt(element, IWorkbenchAdapter.class);
 			if (adapter != null) {
-				if (sb.length() > 0)
+				if (sb.length() > 0) {
 					sb.append(", "); //$NON-NLS-1$
+				}
 				sb.append(adapter.getLabel(element));
 			}
 		}

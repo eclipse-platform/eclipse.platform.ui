@@ -72,7 +72,7 @@ public class SearchField {
 	private ParameterizedCommand quickAccessCommand;
 	private TriggerSequence triggerSequence = null;
 
-	private Listener previousFocusListener = e -> {
+	private final Listener previousFocusListener = e -> {
 		if (e.widget instanceof Control && e.widget != quickAccessButton) {
 			previousFocusControl = (Control) e.widget;
 		}
@@ -198,8 +198,9 @@ public class SearchField {
 		} else {
 			quickAccessToolItem.setText(""); //$NON-NLS-1$
 		}
-		if (quickAccessButton != null)
+		if (quickAccessButton != null) {
 			quickAccessButton.getParent().requestLayout();
+		}
 	}
 
 	private void updateQuickAccessText() {

@@ -42,7 +42,7 @@ public class JobSnapshot implements Comparable<JobSnapshot> {
 		this.hashCode = reference.hashCode();
 		this.displayString = reference.getDisplayString();
 
-		JobInfo jobInfo = (reference instanceof JobInfo) ? (JobInfo) reference : null;
+		JobInfo jobInfo = (reference instanceof JobInfo j) ? j : null;
 		this.isBlocked = jobInfo == null ? false : jobInfo.isBlocked();
 		this.isCanceled = jobInfo == null ? false : jobInfo.isCanceled();
 
@@ -109,8 +109,9 @@ public class JobSnapshot implements Comparable<JobSnapshot> {
 			return 1;
 		}
 		int n = getName().compareTo(other.getName());
-		if (n != 0)
+		if (n != 0) {
 			return n;
+		}
 		return getDisplayString().compareTo(other.getDisplayString());
 	}
 

@@ -95,7 +95,7 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 
 	private ITheme currentTheme;
 
-	private IPropertyChangeListener currentThemeListener = event -> {
+	private final IPropertyChangeListener currentThemeListener = event -> {
 		firePropertyChange(event);
 		if (event.getSource() instanceof FontRegistry) {
 			JFaceResources.getFontRegistry().put(event.getProperty(), (FontData[]) event.getNewValue());
@@ -110,11 +110,11 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 
 	private IThemeRegistry themeRegistry;
 
-	private Map<IThemeDescriptor, ITheme> themes = new HashMap<>(7);
+	private final Map<IThemeDescriptor, ITheme> themes = new HashMap<>(7);
 
-	private EventHandler themeChangedHandler = new WorkbenchThemeChangedHandler();
+	private final EventHandler themeChangedHandler = new WorkbenchThemeChangedHandler();
 
-	private EventHandler themeRegistryModifiedHandler = new ThemeRegistryModifiedHandler();
+	private final EventHandler themeRegistryModifiedHandler = new ThemeRegistryModifiedHandler();
 
 	private boolean initialized = false;
 
@@ -148,8 +148,9 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 				.getDefaultString(IWorkbenchPreferenceConstants.CURRENT_THEME_ID);
 
 		// If not set, use default
-		if (themeId.isEmpty())
+		if (themeId.isEmpty()) {
 			themeId = IThemeManager.DEFAULT_THEME;
+		}
 
 		final boolean highContrast = Display.getCurrent().getHighContrast();
 
@@ -157,8 +158,9 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 
 		// If in HC, *always* use the system default.
 		// This ignores any default theme set via plugin_customization.ini
-		if (highContrast)
+		if (highContrast) {
 			themeId = SYSTEM_DEFAULT_THEME;
+		}
 
 		PrefUtil.getAPIPreferenceStore().setDefault(IWorkbenchPreferenceConstants.CURRENT_THEME_ID, themeId);
 
@@ -257,9 +259,9 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 		if (currentTheme == null) {
 			String themeId = PrefUtil.getAPIPreferenceStore().getString(IWorkbenchPreferenceConstants.CURRENT_THEME_ID);
 
-			if (themeId == null) // missing preference
+			if (themeId == null) { // missing preference
 				setCurrentTheme(IThemeManager.DEFAULT_THEME);
-			else {
+			} else {
 				setCurrentTheme(themeId);
 				if (currentTheme == null) { // still null - the preference
 											// didn't resolve to a proper theme

@@ -359,8 +359,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 			@Override
 			public void update(ViewerCell cell) {
 				Object element = cell.getElement();
-				if (element instanceof WorkbenchPartReference) {
-					WorkbenchPartReference ref = (WorkbenchPartReference) element;
+				if (element instanceof WorkbenchPartReference ref) {
 					String text = editorReferenceColumnLabelTexts.get(ref);
 					cell.setText(text);
 					cell.setImage(ref.getTitleImage());
@@ -381,8 +380,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
 			@Override
 			public String getToolTipText(Object element) {
-				if (element instanceof WorkbenchPartReference) {
-					WorkbenchPartReference ref = (WorkbenchPartReference) element;
+				if (element instanceof WorkbenchPartReference ref) {
 					return ref.getTitleToolTip();
 				}
 				return super.getToolTipText(element);

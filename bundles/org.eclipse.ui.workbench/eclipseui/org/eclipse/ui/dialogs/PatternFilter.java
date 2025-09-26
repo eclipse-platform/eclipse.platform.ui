@@ -39,12 +39,12 @@ public class PatternFilter extends ViewerFilter {
 	/*
 	 * Cache of filtered elements in the tree
 	 */
-	private Map cache = new HashMap();
+	private final Map cache = new HashMap();
 
 	/*
 	 * Maps parent elements to TRUE or FALSE
 	 */
-	private Map foundAnyCache = new HashMap();
+	private final Map foundAnyCache = new HashMap();
 
 	private boolean useCache = false;
 
@@ -168,8 +168,9 @@ public class PatternFilter extends ViewerFilter {
 			matcher = null;
 		} else {
 			String pattern = patternString;
-			if (!patternString.endsWith(" ")) //$NON-NLS-1$
+			if (!patternString.endsWith(" ")) { //$NON-NLS-1$
 				pattern += "*"; //$NON-NLS-1$
+			}
 			if (includeLeadingWildcard) {
 				pattern = "*" + pattern; //$NON-NLS-1$
 			}

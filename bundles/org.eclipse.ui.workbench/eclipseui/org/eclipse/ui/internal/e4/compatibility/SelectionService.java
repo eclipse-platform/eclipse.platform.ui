@@ -63,21 +63,21 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 
 	private IWorkbenchPart activePart;
 
-	private ListenerList<ISelectionListener> listeners = new ListenerList<>();
-	private ListenerList<ISelectionListener> postSelectionListeners = new ListenerList<>();
-	private Map<String, Set<ISelectionListener>> targetedListeners = new HashMap<>();
-	private Map<String, Set<ISelectionListener>> targetedPostSelectionListeners = new HashMap<>();
+	private final ListenerList<ISelectionListener> listeners = new ListenerList<>();
+	private final ListenerList<ISelectionListener> postSelectionListeners = new ListenerList<>();
+	private final Map<String, Set<ISelectionListener>> targetedListeners = new HashMap<>();
+	private final Map<String, Set<ISelectionListener>> targetedPostSelectionListeners = new HashMap<>();
 
-	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener listener = (part,
+	private final org.eclipse.e4.ui.workbench.modeling.ISelectionListener listener = (part,
 			selection) -> handleSelectionChanged(part, selection, false);
 
-	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener targetedListener = (part,
+	private final org.eclipse.e4.ui.workbench.modeling.ISelectionListener targetedListener = (part,
 			selection) -> handleSelectionChanged(part, selection, true);
 
-	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener postListener = (part,
+	private final org.eclipse.e4.ui.workbench.modeling.ISelectionListener postListener = (part,
 			selection) -> handlePostSelectionChanged(part, selection, false);
 
-	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener targetedPostListener = (part,
+	private final org.eclipse.e4.ui.workbench.modeling.ISelectionListener targetedPostListener = (part,
 			selection) -> handlePostSelectionChanged(part, selection, true);
 
 	private void handleSelectionChanged(MPart part, Object selection, boolean targeted) {
@@ -205,13 +205,11 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 		Object objElement = event.getProperty(UIEvents.EventTags.ELEMENT);
 
 		// Ensure that this event is for a MMenuItem
-		if (!(objElement instanceof MPart)) {
+		if (!(objElement instanceof MPart part)) {
 			return;
 		}
-		MPart part = (MPart) objElement;
 		Object wrapperPart = part.getTransientData().get(E4PartWrapper.E4_WRAPPER_KEY);
-		if (wrapperPart instanceof E4PartWrapper) {
-			E4PartWrapper wrapper = (E4PartWrapper) wrapperPart;
+		if (wrapperPart instanceof E4PartWrapper wrapper) {
 			try {
 				wrapper.addPropertyListener(AbstractSaveHandler.getDirtyStateTracker());
 			} catch (IllegalArgumentException e) {

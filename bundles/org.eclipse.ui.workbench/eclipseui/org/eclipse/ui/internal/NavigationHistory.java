@@ -49,11 +49,11 @@ public class NavigationHistory implements INavigationHistory {
 
 	private int ignoreEntries;
 
-	private ArrayList<NavigationHistoryEntry> history = new ArrayList<>(CAPACITY);
+	private final ArrayList<NavigationHistoryEntry> history = new ArrayList<>(CAPACITY);
 
 	Map<Object, PerTabHistory> perTabHistoryMap = new HashMap<>();
 
-	private ArrayList<NavigationHistoryEditorInfo> editors = new ArrayList<>(CAPACITY);
+	private final ArrayList<NavigationHistoryEditorInfo> editors = new ArrayList<>(CAPACITY);
 
 	private IWorkbenchPage page;
 
@@ -165,8 +165,9 @@ public class NavigationHistory implements INavigationHistory {
 					 * Promote the entry of the last closed editor to be the active one, see:
 					 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=154431
 					 */
-					if (!isEntryDisposed && page.getActiveEditor() == null && activeEntry < history.size())
+					if (!isEntryDisposed && page.getActiveEditor() == null && activeEntry < history.size()) {
 						activeEntry++;
+					}
 
 					updateActions();
 				}
@@ -672,8 +673,7 @@ public class NavigationHistory implements INavigationHistory {
 	private Object getCookieForTab(IEditorPart part) {
 		if (part != null) {
 			IWorkbenchPartSite site = part.getSite();
-			if (site instanceof PartSite) {
-				PartSite partSite = (PartSite) site;
+			if (site instanceof PartSite partSite) {
 				WorkbenchPartReference ref = (WorkbenchPartReference) partSite.getPartReference();
 				if (!ref.isDisposed()) {
 					return partSite.getModel().getWidget();
@@ -884,23 +884,29 @@ public class NavigationHistory implements INavigationHistory {
 
 	public boolean updateActive(IEditorPart editor) {
 		NavigationHistoryEntry e = getEntry(activeEntry);
-		if (e == null)
+		if (e == null) {
 			return false;
+		}
 		// 1) check if editor ID matches
 		IWorkbenchPartSite site = editor.getSite();
-		if (site == null) // might happen if site has not being initialized yet
+		if (site == null) { // might happen if site has not being initialized yet
 			return false;
+		}
 		String editorID = site.getId();
-		if (editorID == null) // should not happen for an editor
+		if (editorID == null) { // should not happen for an editor
 			return false;
-		if (!editorID.equals(e.editorInfo.editorID))
+		}
+		if (!editorID.equals(e.editorInfo.editorID)) {
 			return false;
+		}
 		// 2) check that input matches
 		IEditorInput input = editor.getEditorInput();
-		if (input == null)
+		if (input == null) {
 			return false;
-		if (!input.equals(e.editorInfo.editorInput))
+		}
+		if (!input.equals(e.editorInfo.editorInput)) {
 			return false;
+		}
 		updateEntry(e);
 		return true;
 	}

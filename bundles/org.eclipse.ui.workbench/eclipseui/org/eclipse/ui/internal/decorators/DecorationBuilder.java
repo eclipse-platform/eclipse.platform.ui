@@ -32,9 +32,9 @@ public class DecorationBuilder implements IDecoration {
 
 	private static int DECORATOR_ARRAY_SIZE = 6;
 
-	private List<String> prefixes = new ArrayList<>();
+	private final List<String> prefixes = new ArrayList<>();
 
-	private List<String> suffixes = new ArrayList<>();
+	private final List<String> suffixes = new ArrayList<>();
 
 	private ImageDescriptor[] descriptors = new ImageDescriptor[DECORATOR_ARRAY_SIZE];
 

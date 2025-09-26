@@ -46,15 +46,15 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 	 */
 	private static final String FOLDER_ICON = "org.eclipse.e4.descriptor.folder"; //$NON-NLS-1$
 
-	private Map<String, Image> imageMap = new HashMap<>();
-	private IEclipseContext context;
+	private final Map<String, Image> imageMap = new HashMap<>();
+	private final IEclipseContext context;
 	private final Color dimmedForeground;
 
-	private EModelService modelService;
+	private final EModelService modelService;
 
-	private MWindow window;
+	private final MWindow window;
 
-	private EPartService partService;
+	private final EPartService partService;
 
 	/**
 	 * @param window           the workbench window

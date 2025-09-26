@@ -321,9 +321,8 @@ public class SizeCache {
 	 * one dimension of a control's size given the other known dimension.
 	 */
 	private void computeHintOffset(Control control) {
-		if (control instanceof Composite) {
+		if (control instanceof Composite composite) {
 			// For composites, subtract off the trim size
-			Composite composite = (Composite) control;
 			Rectangle trim = composite.computeTrim(0, 0, 0, 0);
 
 			widthAdjustment = trim.width;

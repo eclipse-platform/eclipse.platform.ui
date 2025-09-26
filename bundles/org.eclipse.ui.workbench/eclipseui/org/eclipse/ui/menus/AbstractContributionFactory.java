@@ -61,7 +61,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public abstract class AbstractContributionFactory {
 	private String location = null;
-	private String namespace;
+	private final String namespace;
 
 	/**
 	 * The contribution factories must be instantiated with their location, which

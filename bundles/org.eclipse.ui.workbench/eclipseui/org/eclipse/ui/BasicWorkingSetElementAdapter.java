@@ -93,8 +93,9 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 		List<IAdaptable> adaptedElements = new ArrayList<>();
 		for (IAdaptable element : elements) {
 			IAdaptable adaptable = adapt(element);
-			if (adaptable != null)
+			if (adaptable != null) {
 				adaptedElements.add(adaptable);
+			}
 		}
 
 		return adaptedElements.toArray(new IAdaptable[adaptedElements.size()]);
@@ -111,8 +112,9 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 	private IAdaptable adapt(IAdaptable adaptable) {
 		for (Type preferredType : preferredTypes) {
 			IAdaptable adaptedAdaptable = adapt(preferredType, adaptable);
-			if (adaptedAdaptable != null)
+			if (adaptedAdaptable != null) {
 				return adaptedAdaptable;
+			}
 		}
 		return null;
 	}
@@ -129,14 +131,16 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 		IAdapterManager adapterManager = Platform.getAdapterManager();
 		Class<?>[] directClasses = adapterManager.computeClassOrder(adaptable.getClass());
 		for (Class<?> clazz : directClasses) {
-			if (clazz.getName().equals(type.className))
+			if (clazz.getName().equals(type.className)) {
 				return adaptable;
+			}
 		}
 
 		if ((type.flags & Type.ADAPT) != 0) {
 			Object adapted = adapterManager.getAdapter(adaptable, type.className);
-			if (adapted instanceof IAdaptable)
+			if (adapted instanceof IAdaptable) {
 				return (IAdaptable) adapted;
+			}
 
 			PackageAdmin admin = getPackageAdmin();
 			if (admin != null) {
@@ -155,8 +159,9 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 								// object directly
 								adapted = adaptable
 										.getAdapter(packages[0].getExportingBundle().loadClass(type.className));
-								if (adapted instanceof IAdaptable)
+								if (adapted instanceof IAdaptable) {
 									return (IAdaptable) adapted;
+								}
 
 							} catch (ClassNotFoundException e) {
 								WorkbenchPlugin.log(e);
@@ -171,8 +176,9 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 
 	@Override
 	public void dispose() {
-		if (packageTracker != null)
+		if (packageTracker != null) {
 			packageTracker.close();
+		}
 	}
 
 	@Override
@@ -200,9 +206,9 @@ public final class BasicWorkingSetElementAdapter implements IWorkingSetElementAd
 	private void parseOptions(String classNameAndOptions, Type record) {
 		for (StringTokenizer toker = new StringTokenizer(classNameAndOptions, ";"); toker.hasMoreTokens();) { //$NON-NLS-1$
 			String token = toker.nextToken();
-			if (record.className == null)
+			if (record.className == null) {
 				record.className = token;
-			else {
+			} else {
 				for (StringTokenizer pair = new StringTokenizer(token, "="); pair.hasMoreTokens();) {//$NON-NLS-1$
 					if (pair.countTokens() == 2) {
 						String param = pair.nextToken();

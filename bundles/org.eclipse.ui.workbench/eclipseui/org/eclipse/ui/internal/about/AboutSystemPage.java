@@ -128,8 +128,9 @@ public final class AboutSystemPage extends ProductInfoPage {
 		try {
 			clipboard = new Clipboard(text.getShell().getDisplay());
 			String contents = text.getSelectionText();
-			if (contents.isEmpty())
+			if (contents.isEmpty()) {
 				contents = text.getText();
+			}
 			clipboard.setContents(new Object[] { contents }, new Transfer[] { TextTransfer.getInstance() });
 		} finally {
 			if (clipboard != null) {

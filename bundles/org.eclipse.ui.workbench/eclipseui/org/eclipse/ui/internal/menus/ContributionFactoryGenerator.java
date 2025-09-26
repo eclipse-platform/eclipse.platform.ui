@@ -37,7 +37,7 @@ import org.eclipse.ui.menus.AbstractContributionFactory;
 public class ContributionFactoryGenerator extends ContextFunction {
 	private AbstractContributionFactory factoryImpl;
 	private IConfigurationElement configElement;
-	private int type;
+	private final int type;
 
 	public ContributionFactoryGenerator(AbstractContributionFactory factory, int type) {
 		this.factoryImpl = factory;
@@ -76,8 +76,7 @@ public class ContributionFactoryGenerator extends ContextFunction {
 		final Map<IContributionItem, Expression> itemsToExpression = root.getVisibleWhen();
 		List<MUIElement> menuElements = new ArrayList<>();
 		for (Object obj : contributionItems) {
-			if (obj instanceof IContributionItem) {
-				IContributionItem ici = (IContributionItem) obj;
+			if (obj instanceof IContributionItem ici) {
 				MUIElement opaqueItem = createUIElement(ici);
 				if (opaqueItem != null) {
 					if (itemsToExpression.containsKey(ici)) {

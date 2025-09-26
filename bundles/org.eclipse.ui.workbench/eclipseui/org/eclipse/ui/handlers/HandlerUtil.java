@@ -582,10 +582,12 @@ public class HandlerUtil {
 	 */
 	public static boolean toggleCommandState(Command command) throws ExecutionException {
 		State state = command.getState(RegistryToggleState.STATE_ID);
-		if (state == null)
+		if (state == null) {
 			throw new ExecutionException("The command does not have a toggle state"); //$NON-NLS-1$
-		if (!(state.getValue() instanceof Boolean))
+		}
+		if (!(state.getValue() instanceof Boolean)) {
 			throw new ExecutionException("The command's toggle state doesn't contain a boolean value"); //$NON-NLS-1$
+		}
 
 		boolean oldValue = ((Boolean) state.getValue()).booleanValue();
 		state.setValue(Boolean.valueOf(!oldValue));
@@ -607,15 +609,18 @@ public class HandlerUtil {
 	public static boolean matchesRadioState(ExecutionEvent event) throws ExecutionException {
 
 		String parameter = event.getParameter(RadioState.PARAMETER_ID);
-		if (parameter == null)
+		if (parameter == null) {
 			throw new ExecutionException("The event does not have the radio state parameter"); //$NON-NLS-1$
+		}
 
 		Command command = event.getCommand();
 		State state = command.getState(RadioState.STATE_ID);
-		if (state == null)
+		if (state == null) {
 			throw new ExecutionException("The command does not have a radio state"); //$NON-NLS-1$
-		if (!(state.getValue() instanceof String))
+		}
+		if (!(state.getValue() instanceof String)) {
 			throw new ExecutionException("The command's radio state doesn't contain a String value"); //$NON-NLS-1$
+		}
 
 		return parameter.equals(state.getValue());
 	}
@@ -632,8 +637,9 @@ public class HandlerUtil {
 	public static void updateRadioState(Command command, String newState) throws ExecutionException {
 
 		State state = command.getState(RadioState.STATE_ID);
-		if (state == null)
+		if (state == null) {
 			throw new ExecutionException("The command does not have a radio state"); //$NON-NLS-1$
+		}
 		state.setValue(newState);
 	}
 

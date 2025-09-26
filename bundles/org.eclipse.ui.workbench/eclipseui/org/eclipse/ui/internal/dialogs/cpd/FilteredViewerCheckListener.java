@@ -29,8 +29,8 @@ import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog.DisplayIte
  * @since 3.5
  */
 class FilteredViewerCheckListener implements ICheckStateListener {
-	private ITreeContentProvider contentProvider;
-	private ViewerFilter filter;
+	private final ITreeContentProvider contentProvider;
+	private final ViewerFilter filter;
 
 	public FilteredViewerCheckListener(ITreeContentProvider contentProvider, ViewerFilter filter) {
 		this.contentProvider = contentProvider;

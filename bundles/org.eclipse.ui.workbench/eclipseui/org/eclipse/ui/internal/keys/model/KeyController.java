@@ -281,8 +281,7 @@ public class KeyController {
 		}
 		String activeSchemeId = fSchemeModel.getSelectedElement().getId();
 		Object obj = activeBinding.getModelObject();
-		if (obj instanceof KeyBinding) {
-			KeyBinding keyBinding = (KeyBinding) obj;
+		if (obj instanceof KeyBinding keyBinding) {
 			if (!keyBinding.getContextId().equals(context.getId())) {
 				final KeyBinding binding = new KeyBinding(keyBinding.getKeySequence(),
 						keyBinding.getParameterizedCommand(), activeSchemeId, context.getId(), null, null, null,
@@ -307,8 +306,7 @@ public class KeyController {
 			return;
 		}
 		Object obj = activeBinding.getModelObject();
-		if (obj instanceof KeyBinding) {
-			KeyBinding keyBinding = (KeyBinding) obj;
+		if (obj instanceof KeyBinding keyBinding) {
 			if (!keyBinding.getKeySequence().equals(keySequence)) {
 				if (keySequence != null && !keySequence.isEmpty()) {
 					String activeSchemeId = fSchemeModel.getSelectedElement().getId();
@@ -344,8 +342,7 @@ public class KeyController {
 					activeBinding.fill(keyBinding.getParameterizedCommand());
 				}
 			}
-		} else if (obj instanceof ParameterizedCommand) {
-			ParameterizedCommand cmd = (ParameterizedCommand) obj;
+		} else if (obj instanceof ParameterizedCommand cmd) {
 			if (keySequence != null && !keySequence.isEmpty()) {
 				String activeSchemeId = fSchemeModel.getSelectedElement().getId();
 				ModelElement selectedElement = contextModel.getSelectedElement();

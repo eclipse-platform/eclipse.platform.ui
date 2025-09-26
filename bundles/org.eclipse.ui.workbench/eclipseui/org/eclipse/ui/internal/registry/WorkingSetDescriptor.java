@@ -37,17 +37,17 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 2.0
  */
 public class WorkingSetDescriptor implements IPluginContribution {
-	private String id;
+	private final String id;
 
-	private String name;
+	private final String name;
 
-	private String icon;
+	private final String icon;
 
-	private String pageClassName;
+	private final String pageClassName;
 
-	private String updaterClassName;
+	private final String updaterClassName;
 
-	private IConfigurationElement configElement;
+	private final IConfigurationElement configElement;
 
 	private String[] classTypes;
 
@@ -93,10 +93,12 @@ public class WorkingSetDescriptor implements IPluginContribution {
 			List<String> byAdapterList = new ArrayList<>(containsChildren.length);
 			for (IConfigurationElement child : containsChildren) {
 				String className = child.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
-				if (className != null)
+				if (className != null) {
 					byClassList.add(className);
-				if ("true".equals(child.getAttribute(IWorkbenchRegistryConstants.ATT_ADAPTABLE))) //$NON-NLS-1$
+				}
+				if ("true".equals(child.getAttribute(IWorkbenchRegistryConstants.ATT_ADAPTABLE))) { //$NON-NLS-1$
 					byAdapterList.add(className);
+				}
 			}
 			if (!byClassList.isEmpty()) {
 				classTypes = byClassList.toArray(new String[byClassList.size()]);
@@ -221,8 +223,9 @@ public class WorkingSetDescriptor implements IPluginContribution {
 	 *         declared
 	 */
 	public IWorkingSetElementAdapter createWorkingSetElementAdapter() {
-		if (!WorkbenchPlugin.hasExecutableExtension(configElement, ATT_ELEMENT_ADAPTER_CLASS))
+		if (!WorkbenchPlugin.hasExecutableExtension(configElement, ATT_ELEMENT_ADAPTER_CLASS)) {
 			return null;
+		}
 		IWorkingSetElementAdapter result = null;
 		try {
 			result = (IWorkingSetElementAdapter) WorkbenchPlugin.createExtension(configElement,
@@ -302,8 +305,9 @@ public class WorkingSetDescriptor implements IPluginContribution {
 	 */
 	public String getDescription() {
 		String description = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_DESCRIPTION);
-		if (description == null)
+		if (description == null) {
 			description = ""; //$NON-NLS-1$
+		}
 		return description;
 	}
 

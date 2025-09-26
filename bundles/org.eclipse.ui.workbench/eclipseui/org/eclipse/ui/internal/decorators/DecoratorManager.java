@@ -77,20 +77,20 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	 */
 	public static final Object FAMILY_DECORATE = new Object();
 
-	private DecorationScheduler scheduler;
+	private final DecorationScheduler scheduler;
 
 	private LightweightDecoratorManager lightweightManager;
 
 	// Hold onto the list of listeners to be told if a change has occurred
-	private ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
+	private final ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
 
 	// The full definitions read from the registry.
 	// Initialize to an empty collection as this is rarely used now.
 	private FullDecoratorDefinition[] fullDefinitions;
 
-	private FullTextDecoratorRunnable fullTextRunnable = new FullTextDecoratorRunnable();
+	private final FullTextDecoratorRunnable fullTextRunnable = new FullTextDecoratorRunnable();
 
-	private FullImageDecoratorRunnable fullImageRunnable = new FullImageDecoratorRunnable();
+	private final FullImageDecoratorRunnable fullImageRunnable = new FullImageDecoratorRunnable();
 
 	private static final FullDecoratorDefinition[] EMPTY_FULL_DEF = new FullDecoratorDefinition[0];
 
@@ -1010,8 +1010,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 
 		boolean shouldClear = false;
 		for (Object object : objects) {
-			if (object instanceof DecoratorDefinition) {
-				DecoratorDefinition definition = (DecoratorDefinition) object;
+			if (object instanceof DecoratorDefinition definition) {
 				if (definition.isFull()) {
 					int idx = getFullDecoratorDefinitionIdx(definition.getId());
 					if (idx != -1) {

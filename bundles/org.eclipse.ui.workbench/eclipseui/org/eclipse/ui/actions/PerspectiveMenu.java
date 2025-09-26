@@ -78,7 +78,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 	@Deprecated
 	protected static final String SHOW_PERSP_ID = IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE;
 
-	private IPerspectiveRegistry reg;
+	private final IPerspectiveRegistry reg;
 
 	private IWorkbenchWindow window;
 
@@ -86,13 +86,13 @@ public abstract class PerspectiveMenu extends ContributionItem {
 
 	private boolean dirty = true;
 
-	private IMenuListener menuListener = manager -> {
+	private final IMenuListener menuListener = manager -> {
 		manager.markDirty();
 		dirty = true;
 	};
 
-	private Comparator<IPerspectiveDescriptor> comparator = new Comparator<>() {
-		private Collator collator = Collator.getInstance();
+	private final Comparator<IPerspectiveDescriptor> comparator = new Comparator<>() {
+		private final Collator collator = Collator.getInstance();
 
 		@Override
 		public int compare(IPerspectiveDescriptor ob1, IPerspectiveDescriptor ob2) {
@@ -114,14 +114,14 @@ public abstract class PerspectiveMenu extends ContributionItem {
 	 *
 	 * @since 3.1
 	 */
-	private Map<String, IAction> actions = new HashMap<>();
+	private final Map<String, IAction> actions = new HashMap<>();
 
 	/**
 	 * The action for that allows the user to choose any perspective to open.
 	 *
 	 * @since 3.1
 	 */
-	private Action openOtherAction = new Action(WorkbenchMessages.PerspectiveMenu_otherItem) {
+	private final Action openOtherAction = new Action(WorkbenchMessages.PerspectiveMenu_otherItem) {
 		@Override
 		public final void runWithEvent(final Event event) {
 			runOther(new SelectionEvent(event));

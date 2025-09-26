@@ -39,9 +39,9 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public class ViewElement extends QuickAccessElement {
 
-	private MWindow window;
-	private MPartDescriptor viewDescriptor;
-	private ImageDescriptor imageDescriptor;
+	private final MWindow window;
+	private final MPartDescriptor viewDescriptor;
+	private final ImageDescriptor imageDescriptor;
 	private String viewLabel;
 
 	public ViewElement(MWindow window, MPartDescriptor descriptor) {
@@ -128,12 +128,15 @@ public class ViewElement extends QuickAccessElement {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final ViewElement other = (ViewElement) obj;
 		return Objects.equals(viewDescriptor, other.viewDescriptor);
 	}

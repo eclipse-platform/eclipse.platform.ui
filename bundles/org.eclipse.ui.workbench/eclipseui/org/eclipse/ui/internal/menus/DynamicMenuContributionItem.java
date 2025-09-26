@@ -46,7 +46,7 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	private final IServiceLocator locator;
 	private boolean alreadyFailed;
 	private ContributionItem loadedDynamicContribution;
-	private IContributionFactory factory;
+	private final IContributionFactory factory;
 
 	/**
 	 * Creates a DynamicMenuContributionItem
@@ -211,8 +211,9 @@ public class DynamicMenuContributionItem extends ContributionItem {
 	}
 
 	private IContributionItem getContributionItem() {
-		if (loadedDynamicContribution == null && !alreadyFailed)
+		if (loadedDynamicContribution == null && !alreadyFailed) {
 			createContributionItem();
+		}
 		return loadedDynamicContribution;
 	}
 

@@ -227,8 +227,7 @@ public class LargeFileLimitsPreferenceHandler {
 	 *         for the given document type
 	 */
 	public Optional<String> getEditorForInput(IEditorInput editorInput) {
-		if (editorInput instanceof IPathEditorInput) {
-			IPathEditorInput pathEditorInput = (IPathEditorInput) editorInput;
+		if (editorInput instanceof IPathEditorInput pathEditorInput) {
 			try {
 				IPath inputPath = pathEditorInput.getPath();
 				return getEditorForPath(inputPath);
@@ -308,8 +307,9 @@ public class LargeFileLimitsPreferenceHandler {
 	 * {@link IPreferenceConstants#LARGE_DOC_SIZE_FOR_EDITORS}
 	 */
 	boolean isLargeDocumentFromLegacy(IPath path) {
-		if (!legacyCheckDocumentSize)
+		if (!legacyCheckDocumentSize) {
 			return false;
+		}
 
 		try {
 			File file = new File(path.toOSString());
@@ -477,7 +477,7 @@ public class LargeFileLimitsPreferenceHandler {
 		if (values.length % 2 != 0) {
 			String errorMessage = NLS.bind(
 					"Expected pairs of values separated by \"{0}\" for preference \"{1}\" but got: \"{2}\"", //$NON-NLS-1$
-					new String[] { PREFERENCE_VALUE_SEPARATOR, preferenceName, Arrays.toString(values) });
+					PREFERENCE_VALUE_SEPARATOR, preferenceName, Arrays.toString(values));
 			WorkbenchPlugin.log(new IllegalArgumentException(errorMessage));
 			values = new String[0];
 		}
@@ -496,7 +496,7 @@ public class LargeFileLimitsPreferenceHandler {
 			} catch (NumberFormatException e) {
 				String errorMessage = NLS.bind(
 						"Skipped invalid file size value \"{0}\" stored in preference \"{1}\" with value \"{2}\"", //$NON-NLS-1$
-						new String[] { sizeString, preferenceName, Arrays.toString(preferenceValues) });
+						sizeString, preferenceName, Arrays.toString(preferenceValues));
 				WorkbenchPlugin.log(new IllegalArgumentException(errorMessage, e));
 			}
 		}

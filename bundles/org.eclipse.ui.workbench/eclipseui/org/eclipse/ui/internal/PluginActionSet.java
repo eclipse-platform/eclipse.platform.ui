@@ -28,9 +28,9 @@ import org.eclipse.ui.services.IDisposable;
  * PluginAction for each action and does the required cleanup on dispose.
  */
 public class PluginActionSet implements IActionSet {
-	private ActionSetDescriptor desc;
+	private final ActionSetDescriptor desc;
 
-	private ArrayList<IAction> pluginActions = new ArrayList<>(4);
+	private final ArrayList<IAction> pluginActions = new ArrayList<>(4);
 
 	private ActionSetActionBars bars;
 

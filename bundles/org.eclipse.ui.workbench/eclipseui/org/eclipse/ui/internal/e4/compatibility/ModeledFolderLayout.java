@@ -40,8 +40,9 @@ public class ModeledFolderLayout extends ModeledPlaceholderFolderLayout implemen
 			}
 			folderModel.setToBeRendered(true);
 			boolean isFiltered = layout.isViewFiltered(viewId);
-			if (isFiltered)
+			if (isFiltered) {
 				layout.addViewActivator(viewModel);
+			}
 			viewModel.setToBeRendered(!isFiltered);
 			folderModel.getChildren().add(viewModel);
 		}

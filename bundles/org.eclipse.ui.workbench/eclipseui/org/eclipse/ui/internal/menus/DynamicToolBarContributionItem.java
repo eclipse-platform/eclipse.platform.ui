@@ -125,13 +125,15 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 	@Override
 	public void fill(CoolBar parent, int index) {
 		IContributionItem contributionItem = getContributionItem();
-		if (contributionItem != null)
+		if (contributionItem != null) {
 			contributionItem.fill(parent, index);
+		}
 	}
 
 	private WorkbenchWindowControlContribution getContributionItem() {
-		if (loadedDynamicContribution == null && !alreadyFailed)
+		if (loadedDynamicContribution == null && !alreadyFailed) {
 			createContributionItem();
+		}
 		return loadedDynamicContribution;
 	}
 
@@ -205,8 +207,9 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 	public Control createControl(Composite parent) {
 
 		WorkbenchWindowControlContribution contributionItem = getContributionItem();
-		if (contributionItem != null)
+		if (contributionItem != null) {
 			return contributionItem.delegateCreateControl(parent);
+		}
 		return null;
 	}
 

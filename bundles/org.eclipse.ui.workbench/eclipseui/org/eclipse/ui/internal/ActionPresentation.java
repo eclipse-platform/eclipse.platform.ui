@@ -34,11 +34,11 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
  * Manage the configurable actions for one window.
  */
 public class ActionPresentation {
-	private WorkbenchWindow window;
+	private final WorkbenchWindow window;
 
-	private Map<IActionSetDescriptor, SetRec> mapDescToRec = new HashMap<>(3);
+	private final Map<IActionSetDescriptor, SetRec> mapDescToRec = new HashMap<>(3);
 
-	private Map<IActionSetDescriptor, SetRec> invisibleBars = new HashMap<>(3);
+	private final Map<IActionSetDescriptor, SetRec> invisibleBars = new HashMap<>(3);
 
 	private static class SetRec {
 		public SetRec(IActionSet set, SubActionBars bars) {
@@ -153,8 +153,7 @@ public class ActionPresentation {
 								desc.getId());
 						rec = new SetRec(set, bars);
 						set.init(window, bars);
-						if (set instanceof PluginActionSet) {
-							PluginActionSet pluginActionSet = (PluginActionSet) set;
+						if (set instanceof PluginActionSet pluginActionSet) {
 							sets.add(pluginActionSet);
 						} else {
 							String pattern = "Ignored unexpected IActionSet implementation for descriptor {0}: {1}"; //$NON-NLS-1$

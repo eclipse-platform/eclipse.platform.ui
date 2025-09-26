@@ -75,7 +75,7 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class WorkbenchEditorsDialog extends SelectionDialog {
 
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	private Table editorsTable;
 
@@ -95,11 +95,11 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
 	private List<Adapter> elements = new ArrayList<>();
 
-	private HashMap<ImageDescriptor, Image> disabledImageCache = new HashMap<>(11);
+	private final HashMap<ImageDescriptor, Image> disabledImageCache = new HashMap<>(11);
 
 	private boolean reverse = false;
 
-	private Collator collator = Collator.getInstance();
+	private final Collator collator = Collator.getInstance();
 
 	private Rectangle bounds;
 
@@ -113,7 +113,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
 	private static final String COLUMNS = "columns"; //$NON-NLS-1$
 
-	private SelectionListener headerListener = widgetSelectedAdapter(e -> {
+	private final SelectionListener headerListener = widgetSelectedAdapter(e -> {
 		TableColumn column = (TableColumn) e.widget;
 		int index = editorsTable.indexOf(column);
 		if (index == sortColumn) {
@@ -493,8 +493,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		item.setData(editor);
 		item.setText(editor.getText());
 		Image image = editor.getImage();
-		if (image != null)
+		if (image != null) {
 			item.setImage(0, image);
+		}
 	}
 
 	/**

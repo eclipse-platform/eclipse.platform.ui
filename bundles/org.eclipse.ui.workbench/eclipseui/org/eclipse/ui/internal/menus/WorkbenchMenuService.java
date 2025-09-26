@@ -75,12 +75,12 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 
 	private static final String POPULATED_TOOL_BARS = "populatedToolBars"; //$NON-NLS-1$
 	private static final String POPULATED_MENUS = "populatedMenus"; //$NON-NLS-1$
-	private IEclipseContext e4Context;
-	private ServiceLocator serviceLocator;
+	private final IEclipseContext e4Context;
+	private final ServiceLocator serviceLocator;
 	private ExpressionContext legacyContext;
-	private MenuPersistence persistence;
-	private Map<AbstractContributionFactory, Object> factoriesToContributions = new HashMap<>();
-	private EModelService modelService;
+	private final MenuPersistence persistence;
+	private final Map<AbstractContributionFactory, Object> factoriesToContributions = new HashMap<>();
+	private final EModelService modelService;
 
 	public WorkbenchMenuService(ServiceLocator serviceLocator, IEclipseContext e4Context) {
 		this.serviceLocator = serviceLocator;
@@ -181,8 +181,9 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 		Object contribution;
 		if ((contribution = factoriesToContributions.remove(factory)) != null) {
 			MApplication app = e4Context.get(MApplication.class);
-			if (app == null)
+			if (app == null) {
 				return;
+			}
 			if (contribution instanceof MMenuContribution) {
 				app.getMenuContributions().remove(contribution);
 			} else if (contribution instanceof MToolBarContribution) {
@@ -193,8 +194,9 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 	}
 
 	protected IWorkbenchWindow getWindow() {
-		if (serviceLocator == null)
+		if (serviceLocator == null) {
 			return null;
+		}
 
 		IWorkbenchLocationService wls = serviceLocator.getService(IWorkbenchLocationService.class);
 
@@ -230,8 +232,7 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 		MenuLocationURI uri = new MenuLocationURI(location);
 
 		// Now handle registering dynamic additions by querying E4 model
-		if (mgr instanceof MenuManager) {
-			MenuManager menu = (MenuManager) mgr;
+		if (mgr instanceof MenuManager menu) {
 			MMenu mMenu = getMenuModel(model, menu, uri);
 			if (mMenu == null) {
 				return;
@@ -239,8 +240,7 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 
 			IRendererFactory factory = e4Context.get(IRendererFactory.class);
 			AbstractPartRenderer obj = factory.getRenderer(mMenu, null);
-			if (obj instanceof MenuManagerRenderer) {
-				MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
+			if (obj instanceof MenuManagerRenderer renderer) {
 				mMenu.setRenderer(renderer);
 				renderer.reconcileManagerToModel(menu, mMenu);
 				renderer.processContributions(mMenu, uri.getPath(), false, "popup".equals(uri.getScheme())); //$NON-NLS-1$
@@ -254,8 +254,7 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 				}
 				MenuManagerRendererFilter.updateElementVisibility(mMenu, renderer, menu, evalContext, 2, true);
 			}
-		} else if (mgr instanceof ToolBarManager) {
-			ToolBarManager toolbar = (ToolBarManager) mgr;
+		} else if (mgr instanceof ToolBarManager toolbar) {
 			MToolBar mToolBar = getToolbarModel(model, toolbar, uri);
 			if (mToolBar == null) {
 				return;
@@ -263,8 +262,7 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 
 			IRendererFactory factory = e4Context.get(IRendererFactory.class);
 			AbstractPartRenderer obj = factory.getRenderer(mToolBar, null);
-			if (obj instanceof ToolBarManagerRenderer) {
-				ToolBarManagerRenderer renderer = (ToolBarManagerRenderer) obj;
+			if (obj instanceof ToolBarManagerRenderer renderer) {
 				mToolBar.setRenderer(renderer);
 				renderer.reconcileManagerToModel(toolbar, mToolBar);
 				renderer.processContribution(mToolBar, uri.getPath());
@@ -280,10 +278,9 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 			MenuLocationURI location) {
 		final IRendererFactory factory = e4Context.get(IRendererFactory.class);
 		final AbstractPartRenderer obj = factory.getRenderer(MenuFactoryImpl.eINSTANCE.createToolBar(), null);
-		if (!(obj instanceof ToolBarManagerRenderer)) {
+		if (!(obj instanceof ToolBarManagerRenderer renderer)) {
 			return null;
 		}
-		ToolBarManagerRenderer renderer = (ToolBarManagerRenderer) obj;
 		MToolBar mToolBar = renderer.getToolBarModel(toolbarManager);
 		if (mToolBar != null) {
 			String tag = "toolbar:" + location.getPath(); //$NON-NLS-1$
@@ -340,10 +337,9 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 		final IRendererFactory factory = e4Context.get(IRendererFactory.class);
 		final AbstractPartRenderer obj = factory.getRenderer(((WorkbenchWindow) getWindow()).getModel().getMainMenu(),
 				null);
-		if (!(obj instanceof MenuManagerRenderer)) {
+		if (!(obj instanceof MenuManagerRenderer renderer)) {
 			return null;
 		}
-		MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
 		MMenu mMenu = renderer.getMenuModel(menuManager);
 		if (mMenu != null) {
 			final String tag;
@@ -388,11 +384,9 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 
 	@Override
 	public void releaseContributions(ContributionManager mgr) {
-		if (mgr instanceof MenuManager) {
-			MenuManager menu = (MenuManager) mgr;
+		if (mgr instanceof MenuManager menu) {
 			releaseContributionManager(menu);
-		} else if (mgr instanceof ToolBarManager) {
-			ToolBarManager toolbar = (ToolBarManager) mgr;
+		} else if (mgr instanceof ToolBarManager toolbar) {
 			releaseContributionManager(toolbar);
 		} else {
 			WorkbenchPlugin.log("releaseContributions: Unhandled manager: " + mgr); //$NON-NLS-1$
@@ -402,10 +396,9 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 	private void releaseContributionManager(ToolBarManager toolbarManager) {
 		final IRendererFactory factory = e4Context.get(IRendererFactory.class);
 		final AbstractPartRenderer obj = factory.getRenderer(MenuFactoryImpl.eINSTANCE.createToolBar(), null);
-		if (!(obj instanceof ToolBarManagerRenderer)) {
+		if (!(obj instanceof ToolBarManagerRenderer renderer)) {
 			return;
 		}
-		ToolBarManagerRenderer renderer = (ToolBarManagerRenderer) obj;
 		MToolBar mToolBar = renderer.getToolBarModel(toolbarManager);
 		if (mToolBar == null) {
 			return;
@@ -431,10 +424,9 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 		final IRendererFactory factory = e4Context.get(IRendererFactory.class);
 		final AbstractPartRenderer obj = factory.getRenderer(((WorkbenchWindow) getWindow()).getModel().getMainMenu(),
 				null);
-		if (!(obj instanceof MenuManagerRenderer)) {
+		if (!(obj instanceof MenuManagerRenderer renderer)) {
 			return;
 		}
-		MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
 		MMenu mMenu = renderer.getMenuModel(menuManager);
 		if (mMenu == null) {
 			return;
@@ -469,9 +461,8 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 			for (MToolBar mToolBar : toolbars) {
 				((Notifier) mToolBar).eAdapters().clear();
 				AbstractPartRenderer apr = rendererFactory.getRenderer(mToolBar, null);
-				if (apr instanceof ToolBarManagerRenderer) {
+				if (apr instanceof ToolBarManagerRenderer tbmr) {
 					ToolBarManager tbm = (ToolBarManager) actionBars.getToolBarManager();
-					ToolBarManagerRenderer tbmr = (ToolBarManagerRenderer) apr;
 					tbmr.clearModelToManager(mToolBar, tbm);
 					CompatibilityView.clearOpaqueToolBarItems(tbmr, mToolBar);
 				}
@@ -486,9 +477,8 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 			for (MMenu mMenu : menus) {
 				((Notifier) mMenu).eAdapters().clear();
 				AbstractPartRenderer apr = rendererFactory.getRenderer(mMenu, null);
-				if (apr instanceof MenuManagerRenderer) {
+				if (apr instanceof MenuManagerRenderer tbmr) {
 					MenuManager tbm = (MenuManager) actionBars.getMenuManager();
-					MenuManagerRenderer tbmr = (MenuManagerRenderer) apr;
 					tbmr.clearModelToManager(mMenu, tbm);
 					CompatibilityView.clearOpaqueMenuItems(tbmr, mMenu);
 				}

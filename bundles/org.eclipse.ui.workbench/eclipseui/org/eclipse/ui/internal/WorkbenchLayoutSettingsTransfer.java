@@ -45,9 +45,10 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 			IPath currentLocation = getNewWorkbenchStateLocation(Platform.getLocation());
 			File workspaceFile = createFileAndDirectories(newWorkspaceRoot);
 
-			if (workspaceFile == null)
+			if (workspaceFile == null) {
 				return new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
 						WorkbenchMessages.WorkbenchSettings_CouldNotCreateDirectories);
+			}
 
 			File deltas = new File(currentLocation.toOSString(), "deltas.xml"); //$NON-NLS-1$
 			if (deltas.exists()) {
@@ -96,8 +97,9 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 		IPath newWorkspaceLocation = getNewWorkbenchStateLocation(newWorkspaceRoot);
 		File workspaceFile = new File(newWorkspaceLocation.toOSString());
 		if (!workspaceFile.exists()) {
-			if (!workspaceFile.mkdirs())
+			if (!workspaceFile.mkdirs()) {
 				return null;
+			}
 		}
 
 		return workspaceFile;

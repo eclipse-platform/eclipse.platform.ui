@@ -140,9 +140,9 @@ public class InternalDialog extends TrayDialog {
 	 */
 	private SupportTray supportTray;
 
-	private DetailsAreaManager detailsManager;
+	private final DetailsAreaManager detailsManager;
 
-	private Map<Object, Object> dialogState;
+	private final Map<Object, Object> dialogState;
 
 	public InternalDialog(final Map<Object, Object> dialogState, boolean modal) {
 		super(ProgressManagerUtil.getDefaultParent());
@@ -494,8 +494,9 @@ public class InternalDialog extends TrayDialog {
 
 	/** opens the tray without changing any flag */
 	private void silentTrayOpen() {
-		if (getTray() == null)
+		if (getTray() == null) {
 			super.openTray(supportTray);
+		}
 	}
 
 	/**
@@ -571,8 +572,9 @@ public class InternalDialog extends TrayDialog {
 		}
 		Button button = createButton(parent, GOTO_ACTION_ID, text == null ? "" : text, //$NON-NLS-1$
 				false);
-		if (text == null)
+		if (text == null) {
 			hideButton(button, true);
+		}
 
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 
@@ -673,8 +675,9 @@ public class InternalDialog extends TrayDialog {
 
 				((GridData) gotoButton.getLayoutData()).widthHint = gotoButton.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 				gotoButton.getParent().layout();
-			} else
+			} else {
 				hideButton(gotoButton, true);
+			}
 		}
 		// and tray enablement button
 		if (providesSupport() && !getBooleanValue(IStatusDialogConstants.HIDE_SUPPORT_BUTTON)) {
@@ -740,8 +743,9 @@ public class InternalDialog extends TrayDialog {
 	 */
 	private void refreshSingleStatusArea() {
 		String description = getLabelProviderWrapper().getColumnText(getCurrentStatusAdapter(), 0);
-		if (description.equals(singleStatusLabel.getText()))
+		if (description.equals(singleStatusLabel.getText())) {
 			singleStatusLabel.setText(" "); //$NON-NLS-1$
+		}
 		singleStatusLabel.setText(description);
 		singleStatusDisplayArea.layout();
 		getShell().setText(getString(IStatusDialogConstants.TITLE));

@@ -51,14 +51,14 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class SlaveCommandService implements ICommandService, IUpdateService {
 
-	private Collection fExecutionListeners = new ArrayList();
+	private final Collection fExecutionListeners = new ArrayList();
 
 	/**
 	 * The collection of ICallbackReferences added through this service.
 	 *
 	 * @since 3.3
 	 */
-	private Set fCallbackCache = new HashSet();
+	private final Set fCallbackCache = new HashSet();
 
 	private ICommandService fParentService;
 
@@ -68,7 +68,7 @@ public class SlaveCommandService implements ICommandService, IUpdateService {
 	 *
 	 * @since 3.3
 	 */
-	private String fScopingName;
+	private final String fScopingName;
 
 	/**
 	 * The object to scope. In theory, the service locator that would find this

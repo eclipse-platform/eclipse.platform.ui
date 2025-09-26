@@ -70,21 +70,21 @@ public class SlaveContextService implements IContextService {
 	 * activated/deactivated, but they will be removed when this service is
 	 * disposed.
 	 */
-	private Collection<IContextManagerListener> fContextManagerListeners;
+	private final Collection<IContextManagerListener> fContextManagerListeners;
 
 	/**
 	 * A collection of source providers. The listeners are not
 	 * activated/deactivated, but they will be removed when this service is
 	 * disposed.
 	 */
-	private Collection<ISourceProvider> fSourceProviders;
+	private final Collection<ISourceProvider> fSourceProviders;
 
 	/**
 	 * A collection of shells registered through this service. The listeners are not
 	 * activated/deactivated, but they will be removed when this service is
 	 * disposed.
 	 */
-	private Collection<Shell> fRegisteredShells;
+	private final Collection<Shell> fRegisteredShells;
 
 	/**
 	 * Construct the new slave.

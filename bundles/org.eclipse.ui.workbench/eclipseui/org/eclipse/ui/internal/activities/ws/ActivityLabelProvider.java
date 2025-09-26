@@ -28,7 +28,7 @@ import org.eclipse.ui.activities.NotDefinedException;
  */
 public class ActivityLabelProvider extends LabelProvider {
 
-	private IActivityManager activityManager;
+	private final IActivityManager activityManager;
 
 	/**
 	 * Create a new instance of the receiver.

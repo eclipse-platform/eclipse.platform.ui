@@ -219,8 +219,7 @@ public final class SelectionEnabler {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof SelectionEnabler) {
-			final SelectionEnabler that = (SelectionEnabler) object;
+		if (object instanceof final SelectionEnabler that) {
 			return Objects.equals(this.classes, that.classes)
 					&& Objects.equals(this.enablementExpression, that.enablementExpression)
 					&& this.mode == that.mode;
@@ -268,8 +267,7 @@ public final class SelectionEnabler {
 		if (classes.isEmpty()) {
 			return true;
 		}
-		if (obj instanceof IAdaptable) {
-			IAdaptable element = (IAdaptable) obj;
+		if (obj instanceof IAdaptable element) {
 			if (!verifyElement(element)) {
 				return false;
 			}
@@ -327,8 +325,7 @@ public final class SelectionEnabler {
 			return true;
 		}
 		for (Object obj : ssel) {
-			if (obj instanceof IAdaptable) {
-				IAdaptable element = (IAdaptable) obj;
+			if (obj instanceof IAdaptable element) {
 				if (!verifyElement(element)) {
 					return false;
 				}

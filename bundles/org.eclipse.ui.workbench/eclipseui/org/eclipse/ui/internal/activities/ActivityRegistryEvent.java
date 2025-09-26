@@ -15,7 +15,7 @@
 package org.eclipse.ui.internal.activities;
 
 final class ActivityRegistryEvent {
-	private IActivityRegistry activityRegistry;
+	private final IActivityRegistry activityRegistry;
 
 	ActivityRegistryEvent(IActivityRegistry activityRegistry) {
 		if (activityRegistry == null) {

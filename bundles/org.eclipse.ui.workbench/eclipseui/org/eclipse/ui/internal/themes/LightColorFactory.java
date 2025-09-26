@@ -63,8 +63,7 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 
-		if (data instanceof Hashtable) {
-			Hashtable table = (Hashtable) data;
+		if (data instanceof Hashtable table) {
 			baseColorName = (String) table.get("base"); //$NON-NLS-1$
 			definitionId = (String) table.get("definitionId"); //$NON-NLS-1$
 		}
@@ -76,12 +75,15 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 	 */
 	protected int valuesInRange(RGB test, int lower, int upper) {
 		int hits = 0;
-		if (test.red >= lower && test.red <= upper)
+		if (test.red >= lower && test.red <= upper) {
 			hits++;
-		if (test.blue >= lower && test.blue <= upper)
+		}
+		if (test.blue >= lower && test.blue <= upper) {
 			hits++;
-		if (test.green >= lower && test.green <= upper)
+		}
+		if (test.green >= lower && test.green <= upper) {
 			hits++;
+		}
 
 		return hits;
 	}
@@ -92,16 +94,19 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 	 */
 	private RGB getLightenedColor(RGB sample) {
 		// Group 1
-		if (valuesInRange(sample, 180, 255) >= 2)
+		if (valuesInRange(sample, 180, 255) >= 2) {
 			return sample;
+		}
 
 		// Group 2
-		if (valuesInRange(sample, 100, 179) >= 2)
+		if (valuesInRange(sample, 100, 179) >= 2) {
 			return ColorUtil.blend(white, sample, 40);
+		}
 
 		// Group 3
-		if (valuesInRange(sample, 0, 99) >= 2)
+		if (valuesInRange(sample, 0, 99) >= 2) {
 			return ColorUtil.blend(white, sample, 60);
+		}
 
 		// Group 4
 		return ColorUtil.blend(white, sample, 30);
@@ -111,8 +116,9 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 	 * Return the Start (top of tab) color as an RGB
 	 */
 	private RGB getActiveFocusStartColor() {
-		if (Display.getCurrent().getDepth() < 15)
+		if (Display.getCurrent().getDepth() < 15) {
 			return getActiveFocusEndColor();
+		}
 
 		return ColorUtil.blend(white, getActiveFocusEndColor(), 75);
 	}
@@ -121,8 +127,9 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 	 * Return the End (top of tab) color as an RGB
 	 */
 	private RGB getActiveFocusEndColor() {
-		if (Display.getCurrent().getDepth() < 15)
+		if (Display.getCurrent().getDepth() < 15) {
 			return ColorUtil.getColorValue(baseColorName);
+		}
 
 		return getLightenedColor(ColorUtil.getColorValue(baseColorName));
 	}
@@ -131,8 +138,9 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 	 * Return the active focus tab text color as an RGB
 	 */
 	private RGB getActiveFocusTextColor() {
-		if (Display.getCurrent().getDepth() < 15)
+		if (Display.getCurrent().getDepth() < 15) {
 			return ColorUtil.getColorValue(baseColorName); // typically TITLE_FOREGROUND
+		}
 
 		return ColorUtil.getColorValue("COLOR_BLACK"); //$NON-NLS-1$
 	}
@@ -142,8 +150,9 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 	 */
 	private RGB getActiveNofocusStartColor() {
 		RGB base = ColorUtil.getColorValue(baseColorName);
-		if (Display.getCurrent().getDepth() < 15)
+		if (Display.getCurrent().getDepth() < 15) {
 			return base;
+		}
 
 		return ColorUtil.blend(white, base, 40);
 	}
@@ -151,17 +160,22 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 	@Override
 	public RGB createColor() {
 		// should have base, otherwise error in the xml
-		if (baseColorName == null || definitionId == null)
+		if (baseColorName == null || definitionId == null) {
 			return white;
+		}
 
-		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START")) //$NON-NLS-1$
+		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START")) { //$NON-NLS-1$
 			return getActiveFocusStartColor();
-		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END")) //$NON-NLS-1$
+		}
+		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END")) { //$NON-NLS-1$
 			return getActiveFocusEndColor();
-		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")) //$NON-NLS-1$
+		}
+		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")) { //$NON-NLS-1$
 			return getActiveFocusTextColor();
-		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_START")) //$NON-NLS-1$
+		}
+		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_START")) { //$NON-NLS-1$
 			return getActiveNofocusStartColor();
+		}
 
 		// should be one of start or end, otherwise error in the xml
 		return white;

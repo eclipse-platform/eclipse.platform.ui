@@ -70,7 +70,7 @@ public final class ActivitiesPreferencePage extends PreferencePage
 
 	private ActivityEnabler enabler;
 
-	private Properties strings = new Properties();
+	private final Properties strings = new Properties();
 
 	private IMutableActivityManager workingCopy;
 

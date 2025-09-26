@@ -93,15 +93,15 @@ public abstract class AbstractWorkingSetManager extends EventManager
 		}
 	}
 
-	private SortedSet<AbstractWorkingSet> workingSets = new TreeSet<>(
+	private final SortedSet<AbstractWorkingSet> workingSets = new TreeSet<>(
 			(o1, o2) -> o1.getUniqueId().compareTo(o2.getUniqueId()));
 
-	private List<IWorkingSet> recentWorkingSets = new ArrayList<>();
+	private final List<IWorkingSet> recentWorkingSets = new ArrayList<>();
 
-	private BundleContext bundleContext;
-	private Map<String, IWorkingSetUpdater> updaters = new HashMap<>();
+	private final BundleContext bundleContext;
+	private final Map<String, IWorkingSetUpdater> updaters = new HashMap<>();
 
-	private Map<String, IWorkingSetElementAdapter> elementAdapters = new HashMap<>();
+	private final Map<String, IWorkingSetElementAdapter> elementAdapters = new HashMap<>();
 
 	private static final IWorkingSetUpdater NULL_UPDATER = new IWorkingSetUpdater() {
 		@Override
@@ -876,8 +876,9 @@ public abstract class AbstractWorkingSetManager extends EventManager
 
 	@Override
 	public void setRecentWorkingSetsLength(int length) {
-		if (length < 1 || length > 99)
+		if (length < 1 || length > 99) {
 			throw new IllegalArgumentException("Invalid recent working sets length: " + length); //$NON-NLS-1$
+		}
 		IPreferenceStore store = PrefUtil.getAPIPreferenceStore();
 		store.setValue(IWorkbenchPreferenceConstants.RECENTLY_USED_WORKINGSETS_SIZE, length);
 		// adjust length

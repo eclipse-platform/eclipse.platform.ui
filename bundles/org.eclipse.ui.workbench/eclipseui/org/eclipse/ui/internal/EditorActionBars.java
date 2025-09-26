@@ -100,9 +100,9 @@ public class EditorActionBars extends SubActionBars2 {
 
 	private IToolBarContributionItem toolBarContributionItem = null;
 
-	private String type;
+	private final String type;
 
-	private WorkbenchPage page;
+	private final WorkbenchPage page;
 
 	/**
 	 * Constructs the EditorActionBars for an editor.
@@ -172,11 +172,9 @@ public class EditorActionBars extends SubActionBars2 {
 		if (toolBarContributionItem != null) {
 			// Create a placeholder and place it in the cool bar manager.
 			ICoolBarManager coolBarManager = getCoolBarManager();
-			if (coolBarManager instanceof SubContributionManager) {
-				SubContributionManager subManager = (SubContributionManager) coolBarManager;
+			if (coolBarManager instanceof SubContributionManager subManager) {
 				IContributionManager manager = subManager.getParent();
-				if (manager instanceof CoolBarToTrimManager) {
-					CoolBarToTrimManager trimManager = (CoolBarToTrimManager) manager;
+				if (manager instanceof CoolBarToTrimManager trimManager) {
 					trimManager.remove(toolBarContributionItem);
 				} else if (manager instanceof ContributionManager) {
 					final IContributionItem replacementItem = new PlaceholderContributionItem(toolBarContributionItem);
@@ -274,8 +272,7 @@ public class EditorActionBars extends SubActionBars2 {
 			} else {
 				coolItemToolBarMgr = new ToolBarManager2(SWT.FLAT);
 				if ((coolBarManager instanceof ContributionManager)
-						&& (foundItem instanceof PlaceholderContributionItem)) {
-					PlaceholderContributionItem placeholder = (PlaceholderContributionItem) foundItem;
+						&& (foundItem instanceof PlaceholderContributionItem placeholder)) {
 					toolBarContributionItem = createToolBarContributionItem(coolItemToolBarMgr, placeholder);
 					// Restore from a placeholder
 					((ContributionManager) coolBarManager).replaceItem(type, toolBarContributionItem);
@@ -329,8 +326,7 @@ public class EditorActionBars extends SubActionBars2 {
 	@Override
 	public void partChanged(IWorkbenchPart part) {
 		super.partChanged(part);
-		if (part instanceof IEditorPart) {
-			IEditorPart editor = (IEditorPart) part;
+		if (part instanceof IEditorPart editor) {
 			if (editorContributor != null) {
 				editorContributor.setActiveEditor(editor);
 			}

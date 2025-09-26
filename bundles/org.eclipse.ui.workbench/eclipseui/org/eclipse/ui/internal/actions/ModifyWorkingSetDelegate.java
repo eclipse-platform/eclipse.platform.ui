@@ -89,9 +89,9 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 
 	private class ModifyAction extends Action {
 
-		private IWorkingSet set;
+		private final IWorkingSet set;
 
-		private IAdaptable[] selectedElements;
+		private final IAdaptable[] selectedElements;
 
 		private ModifyAction(IWorkingSet set, IAdaptable[] selectedElements) {
 			super(set.getLabel(), IAction.AS_CHECK_BOX);
@@ -116,7 +116,7 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 		}
 	}
 
-	private QuickMenuCreator contextMenuCreator = new QuickMenuCreator() {
+	private final QuickMenuCreator contextMenuCreator = new QuickMenuCreator() {
 		@Override
 		protected void fillMenu(IMenuManager menu) {
 			ModifyWorkingSetDelegate.this.fillMenu(menu);
@@ -125,7 +125,7 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 
 	private boolean add = true;
 
-	private IPropertyChangeListener listener = new IPropertyChangeListener() {
+	private final IPropertyChangeListener listener = new IPropertyChangeListener() {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
@@ -149,8 +149,9 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 
 	@Override
 	public void runWithEvent(IAction action, Event event) {
-		if (event.type == SWT.KeyDown || event.type == SWT.KeyUp)
+		if (event.type == SWT.KeyDown || event.type == SWT.KeyUp) {
 			run(action);
+		}
 	}
 
 	@Override
@@ -297,8 +298,9 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 			}
 			actionProxy.setEnabled(minimallyOkay);
 
-		} else
+		} else {
 			actionProxy.setEnabled(false);
+		}
 	}
 
 	@Override

@@ -26,24 +26,27 @@ public class E4Util {
 
 	static {
 		WorkbenchPlugin activator = WorkbenchPlugin.getDefault();
-		if (activator == null)
+		if (activator == null) {
 			DEBUG_E4 = false;
-		else {
+		} else {
 			DebugOptions debugOptions = activator.getDebugOptions();
-			if (debugOptions == null)
+			if (debugOptions == null) {
 				DEBUG_E4 = false;
-			else
+			} else {
 				DEBUG_E4 = debugOptions.getBooleanOption(OPTION_DEBUG_E4, false);
+			}
 		}
 	}
 
 	public static void unsupported(String msg) throws UnsupportedOperationException {
-		if (DEBUG_E4)
+		if (DEBUG_E4) {
 			WorkbenchPlugin.log("unsupported: " + msg); //$NON-NLS-1$
+		}
 	}
 
 	public static void message(String msg) throws UnsupportedOperationException {
-		if (DEBUG_E4)
+		if (DEBUG_E4) {
 			WorkbenchPlugin.log(msg);
+		}
 	}
 }

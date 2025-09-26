@@ -149,8 +149,7 @@ public class WWinPluginPulldown extends WWinPluginAction {
 		public Menu getMenu(Menu parent) {
 			IWorkbenchWindowPulldownDelegate delegate = getPulldownDelegate();
 
-			if (delegate instanceof IWorkbenchWindowPulldownDelegate2) {
-				IWorkbenchWindowPulldownDelegate2 delegate2 = (IWorkbenchWindowPulldownDelegate2) delegate;
+			if (delegate instanceof IWorkbenchWindowPulldownDelegate2 delegate2) {
 				final MenuLoader menuLoader = new MenuLoader(delegate2, parent);
 				SafeRunner.run(menuLoader);
 				return menuLoader.getMenu();

@@ -24,7 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.0
  */
 public class ProductInfo {
-	private IProduct product;
+	private final IProduct product;
 
 	private String productName;
 

@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
  */
 public class ExternalProgramImageDescriptor extends ImageDescriptor implements IAdaptable {
 
-	private Program program;
+	private final Program program;
 
 	/**
 	 * Creates a new ImageDescriptor. The image is loaded from a file with the given

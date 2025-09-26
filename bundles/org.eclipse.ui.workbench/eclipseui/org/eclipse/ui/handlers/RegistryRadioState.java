@@ -82,9 +82,7 @@ public final class RegistryRadioState extends RadioState implements IExecutableE
 			setValue(Boolean.FALSE);
 			setShouldPersist(true);
 
-		} else if (data instanceof Hashtable) {
-			final Hashtable parameters = (Hashtable) data;
-
+		} else if (data instanceof final Hashtable parameters) {
 			final Object defaultObject = parameters.get("default"); //$NON-NLS-1$
 			if (defaultObject instanceof String) {
 				readDefault((String) defaultObject);

@@ -185,8 +185,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 		final String commandId = getActionDefinitionId();
 		final IBindingService bindingService = serviceLocator.getService(IBindingService.class);
 		final TriggerSequence triggerSequence = bindingService.getBestActiveBindingFor(commandId);
-		if (triggerSequence instanceof KeySequence) {
-			final KeySequence keySequence = (KeySequence) triggerSequence;
+		if (triggerSequence instanceof final KeySequence keySequence) {
 			final KeyStroke[] keyStrokes = keySequence.getKeyStrokes();
 			if (keyStrokes.length == 1) {
 				final KeyStroke keyStroke = keyStrokes[0];

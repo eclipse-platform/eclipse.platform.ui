@@ -29,9 +29,9 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public class PreferenceElement extends QuickAccessElement {
 
-	private IPreferenceNode preferenceNode;
+	private final IPreferenceNode preferenceNode;
 
-	private String prefix;
+	private final String prefix;
 
 	private String matchLabelCache;
 
@@ -95,12 +95,15 @@ public class PreferenceElement extends QuickAccessElement {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final PreferenceElement other = (PreferenceElement) obj;
 		return Objects.equals(preferenceNode, other.preferenceNode);
 	}

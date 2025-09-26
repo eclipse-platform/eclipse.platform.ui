@@ -54,7 +54,7 @@ public class QuickAccessEntry {
 	 * the filter string was an exact match to the label or that there is no filter
 	 * being applied.
 	 */
-	private int matchQuality;
+	private final int matchQuality;
 
 	/**
 	 * Indicates the filter string was a perfect match to the label or there is no
@@ -209,8 +209,7 @@ public class QuickAccessEntry {
 			break;
 		case 1:
 			String label = element.getLabel();
-			if (element instanceof CommandElement) {
-				CommandElement commandElement = (CommandElement) element;
+			if (element instanceof CommandElement commandElement) {
 				String binding = commandElement.getBinding();
 				if (binding != null) {
 					StyledString styledString = StyledCellLabelProvider.styleDecoratedString(label,
@@ -248,8 +247,9 @@ public class QuickAccessEntry {
 			break;
 		}
 		if (lastInCategory) {
-			if (grayColor != null)
+			if (grayColor != null) {
 				event.gc.setForeground(grayColor);
+			}
 			Rectangle bounds = ((TableItem) event.item).getBounds(event.index);
 			event.gc.drawLine(Math.max(0, bounds.x - 1), bounds.y + bounds.height - 1, bounds.x + bounds.width,
 					bounds.y + bounds.height - 1);

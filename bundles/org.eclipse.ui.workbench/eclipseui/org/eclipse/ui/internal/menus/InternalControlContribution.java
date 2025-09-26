@@ -67,8 +67,9 @@ public abstract class InternalControlContribution extends ControlContribution {
 	}
 
 	public int getOrientation() {
-		if (getCurSide() == SWT.LEFT || getCurSide() == SWT.RIGHT)
+		if (getCurSide() == SWT.LEFT || getCurSide() == SWT.RIGHT) {
 			return SWT.VERTICAL;
+		}
 
 		return SWT.HORIZONTAL;
 	}

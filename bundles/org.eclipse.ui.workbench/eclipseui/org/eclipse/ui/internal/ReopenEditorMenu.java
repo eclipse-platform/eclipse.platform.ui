@@ -42,7 +42,7 @@ public class ReopenEditorMenu extends ContributionItem {
 
 	private EditorHistory history;
 
-	private boolean showSeparator;
+	private final boolean showSeparator;
 
 	// the maximum length for a file name; must be >= 4
 	private static final int MAX_TEXT_LENGTH = 40;

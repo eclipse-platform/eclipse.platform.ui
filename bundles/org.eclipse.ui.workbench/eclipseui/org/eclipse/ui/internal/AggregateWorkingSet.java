@@ -95,10 +95,12 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregat
 					elements.addAll(Arrays.asList(componentElements));
 				} catch (IllegalStateException e) { // an invalid component; remove it
 					IWorkingSet[] tmp = new IWorkingSet[components.length - 1];
-					if (i > 0)
+					if (i > 0) {
 						System.arraycopy(components, 0, tmp, 0, i);
-					if (components.length - i - 1 > 0)
+					}
+					if (components.length - i - 1 > 0) {
 						System.arraycopy(components, i + 1, tmp, i, components.length - i - 1);
+					}
 					components = tmp;
 					workingSetMemento = null; // toss cached info
 					fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null);
@@ -179,8 +181,9 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregat
 	@Override
 	public void disconnect() {
 		IWorkingSetManager connectedManager = getManager();
-		if (connectedManager != null)
+		if (connectedManager != null) {
 			connectedManager.removePropertyChangeListener(this);
+		}
 		super.disconnect();
 	}
 
@@ -254,9 +257,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregat
 		if (this == object) {
 			return true;
 		}
-		if (object instanceof AggregateWorkingSet) {
-			AggregateWorkingSet workingSet = (AggregateWorkingSet) object;
-
+		if (object instanceof AggregateWorkingSet workingSet) {
 			return Objects.equals(workingSet.getName(), getName())
 					&& Arrays.equals(workingSet.getComponentsInternal(), getComponentsInternal());
 		}

@@ -109,8 +109,9 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 
 	boolean persist() {
 		XMLMemento persistedState = (XMLMemento) getEditorState();
-		if (persistedState == null)
+		if (persistedState == null) {
 			return false;
+		}
 
 		StringWriter writer = new StringWriter();
 		try {
@@ -262,18 +263,18 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
 		if (factory == null) {
 			throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_bad_element_factory,
-					new Object[] { factoryID, editorId, editorName }));
+					factoryID, editorId, editorName));
 		}
 
 		// Get the input element.
 		input = factory.createElement(inputMem);
 		if (input == null) {
 			throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_create_element_returned_null,
-					new Object[] { factoryID, editorId, editorName }));
+					factoryID, editorId, editorName));
 		}
 		if (!(input instanceof IEditorInput)) {
 			throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_wrong_createElement_result,
-					new Object[] { factoryID, editorId, editorName }));
+					factoryID, editorId, editorName));
 		}
 		return (IEditorInput) input;
 	}
@@ -424,8 +425,9 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			candidates = new HashSet<>(3);
 			candidates.add(actionBars);
 			actionCache.put(type, candidates);
-		} else
+		} else {
 			candidates.add(actionBars);
+		}
 
 		// Read base contributor.
 		IEditorActionBarContributor contr = desc.createActionBarContributor();

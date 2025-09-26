@@ -33,7 +33,7 @@ public class WorkingCopyManager implements IWorkingCopyManager {
 
 	private static final String EMPTY_STRING = "";//$NON-NLS-1$
 	// all working copies - maps absolute path to PreferencesWorkingCopy instance
-	private Map<String, IEclipsePreferences> workingCopies = new HashMap<>();
+	private final Map<String, IEclipsePreferences> workingCopies = new HashMap<>();
 
 	@Override
 	public IEclipsePreferences getWorkingCopy(IEclipsePreferences original) {
@@ -54,8 +54,9 @@ public class WorkingCopyManager implements IWorkingCopyManager {
 		Collection<IEclipsePreferences> values = workingCopies.values();
 		WorkingCopyPreferences[] valuesArray = values.toArray(new WorkingCopyPreferences[values.size()]);
 		for (WorkingCopyPreferences prefs : valuesArray) {
-			if (prefs.nodeExists(EMPTY_STRING))
+			if (prefs.nodeExists(EMPTY_STRING)) {
 				prefs.flush();
+			}
 		}
 	}
 

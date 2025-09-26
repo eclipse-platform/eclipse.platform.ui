@@ -149,7 +149,7 @@ public class LabelProviderWrapper extends ViewerComparator implements ITableLabe
 	 */
 	private ILabelDecorator messageDecorator;
 
-	private Map<Object, Object> dialogState;
+	private final Map<Object, Object> dialogState;
 
 	public LabelProviderWrapper(Map<Object, Object> dialogState) {
 		this.dialogState = dialogState;
@@ -301,8 +301,7 @@ public class LabelProviderWrapper extends ViewerComparator implements ITableLabe
 	public String getPrimaryMessage(StatusAdapter statusAdapter) {
 		// if there was nonempty title set, display the title
 		Object property = statusAdapter.getProperty(IStatusAdapterConstants.TITLE_PROPERTY);
-		if (property instanceof String) {
-			String header = (String) property;
+		if (property instanceof String header) {
 			if (header.trim().length() > 0) {
 				return decorate(header, statusAdapter);
 			}

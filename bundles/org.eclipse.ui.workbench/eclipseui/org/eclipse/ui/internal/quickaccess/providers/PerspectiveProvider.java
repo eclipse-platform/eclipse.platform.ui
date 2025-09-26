@@ -33,7 +33,7 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
 public class PerspectiveProvider extends QuickAccessProvider {
 
 	private QuickAccessElement[] cachedElements;
-	private Map<String, PerspectiveElement> idToElement = new HashMap<>();
+	private final Map<String, PerspectiveElement> idToElement = new HashMap<>();
 
 	@Override
 	public String getId() {

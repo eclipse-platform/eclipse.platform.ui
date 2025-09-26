@@ -78,15 +78,15 @@ public final class CategoryDefinition implements Comparable<CategoryDefinition> 
 
 	private transient int hashCode = HASH_INITIAL;
 
-	private String id;
+	private final String id;
 
-	private String name;
+	private final String name;
 
-	private String sourceId;
+	private final String sourceId;
 
 	private transient String string;
 
-	private String description;
+	private final String description;
 
 	public CategoryDefinition(String id, String name, String sourceId, String description) {
 		this.id = id;
@@ -112,11 +112,10 @@ public final class CategoryDefinition implements Comparable<CategoryDefinition> 
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof CategoryDefinition)) {
+		if (!(object instanceof final CategoryDefinition castedObject)) {
 			return false;
 		}
 
-		final CategoryDefinition castedObject = (CategoryDefinition) object;
 		return Objects.equals(id, castedObject.id) && Objects.equals(name, castedObject.name)
 				&& Objects.equals(sourceId, castedObject.sourceId);
 	}

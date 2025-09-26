@@ -27,15 +27,15 @@ package org.eclipse.ui.activities;
  * @see ICategoryListener#categoryChanged(CategoryEvent)
  */
 public final class CategoryEvent {
-	private ICategory category;
+	private final ICategory category;
 
-	private boolean categoryActivityBindingsChanged;
+	private final boolean categoryActivityBindingsChanged;
 
-	private boolean definedChanged;
+	private final boolean definedChanged;
 
-	private boolean nameChanged;
+	private final boolean nameChanged;
 
-	private boolean descriptionChanged;
+	private final boolean descriptionChanged;
 
 	/**
 	 * Creates a new instance of this class.

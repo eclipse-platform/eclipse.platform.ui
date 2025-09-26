@@ -72,8 +72,7 @@ public class LegacyEditorActionBarExpression extends Expression {
 
 	@Override
 	public final boolean equals(final Object object) {
-		if (object instanceof LegacyEditorActionBarExpression) {
-			final LegacyEditorActionBarExpression that = (LegacyEditorActionBarExpression) object;
+		if (object instanceof final LegacyEditorActionBarExpression that) {
 			return activeEditorId.equals(that.activeEditorId);
 		}
 

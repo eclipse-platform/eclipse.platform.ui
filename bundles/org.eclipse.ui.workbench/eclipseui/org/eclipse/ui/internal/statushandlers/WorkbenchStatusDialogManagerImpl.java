@@ -73,7 +73,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 		}
 	}
 
-	private DisposeListener disposeListener = new StatusDialogDisposeListener();
+	private final DisposeListener disposeListener = new StatusDialogDisposeListener();
 
 	/**
 	 * This field stores the real dialog that appears to the user.
@@ -338,8 +338,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	public boolean shouldBeModal() {
 		Map<?, ?> modals = (Map<?, ?>) dialogState.get(IStatusDialogConstants.STATUS_MODALS);
 		for (Object value : modals.values()) {
-			if (value instanceof Boolean) {
-				Boolean b = (Boolean) value;
+			if (value instanceof Boolean b) {
 				if (b.booleanValue()) {
 					return true;
 				}
@@ -370,8 +369,9 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 * @return Shell or null
 	 */
 	public Shell getShell() {
-		if (this.dialog == null)
+		if (this.dialog == null) {
 			return null;
+		}
 		return this.dialog.getShell();
 	}
 
@@ -504,8 +504,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 
 	@Override
 	public void removed(JobTreeElement jte) {
-		if (jte instanceof JobInfo) {
-			JobInfo jobInfo = (JobInfo) jte;
+		if (jte instanceof JobInfo jobInfo) {
 			StatusAdapter statusAdapter = StatusAdapterHelper.getInstance().getStatusAdapter(jobInfo);
 			if (statusAdapter != null) {
 				getErrors().remove(statusAdapter);

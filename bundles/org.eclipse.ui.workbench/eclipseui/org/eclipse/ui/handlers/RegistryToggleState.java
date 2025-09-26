@@ -84,8 +84,7 @@ public final class RegistryToggleState extends ToggleState implements IExecutabl
 			readDefault((String) data);
 			setShouldPersist(true);
 
-		} else if (data instanceof Hashtable) {
-			final Hashtable parameters = (Hashtable) data;
+		} else if (data instanceof final Hashtable parameters) {
 			final Object defaultObject = parameters.get("default"); //$NON-NLS-1$
 			if (defaultObject instanceof String) {
 				readDefault((String) defaultObject);

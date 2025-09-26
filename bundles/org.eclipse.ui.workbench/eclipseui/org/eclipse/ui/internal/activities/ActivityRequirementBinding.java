@@ -23,11 +23,11 @@ public final class ActivityRequirementBinding implements IActivityRequirementBin
 
 	private static final int HASH_INITIAL = ActivityRequirementBinding.class.getName().hashCode();
 
-	private String requiredActivityId;
+	private final String requiredActivityId;
 
 	private transient int hashCode = HASH_INITIAL;
 
-	private String activityId;
+	private final String activityId;
 
 	private transient String string;
 
@@ -54,11 +54,10 @@ public final class ActivityRequirementBinding implements IActivityRequirementBin
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityRequirementBinding)) {
+		if (!(object instanceof final ActivityRequirementBinding castedObject)) {
 			return false;
 		}
 
-		final ActivityRequirementBinding castedObject = (ActivityRequirementBinding) object;
 		return Objects.equals(requiredActivityId, castedObject.requiredActivityId)
 				&& Objects.equals(activityId, castedObject.activityId);
 	}

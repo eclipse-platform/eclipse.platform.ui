@@ -61,7 +61,7 @@ import org.eclipse.swt.widgets.Layout;
 public class CacheWrapper {
 	private Composite proxy;
 
-	private SizeCache cache = new SizeCache();
+	private final SizeCache cache = new SizeCache();
 
 	private Rectangle lastBounds = new Rectangle(0, 0, 0, 0);
 

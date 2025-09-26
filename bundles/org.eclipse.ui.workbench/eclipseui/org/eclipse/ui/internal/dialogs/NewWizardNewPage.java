@@ -73,14 +73,14 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
 	private static final String STORE_SELECTED_ID = DIALOG_SETTING_SECTION_NAME + "STORE_SELECTED_ID"; //$NON-NLS-1$
 
-	private NewWizardSelectionPage page;
+	private final NewWizardSelectionPage page;
 
 	private FilteredTree filteredTree;
 
 	private WizardPatternFilter filteredTreeFilter;
 
 	// Keep track of the wizards we have previously selected
-	private Hashtable<IWizardDescriptor, WorkbenchWizardNode> selectedWizards = new Hashtable<>();
+	private final Hashtable<IWizardDescriptor, WorkbenchWizardNode> selectedWizards = new Hashtable<>();
 
 	private IDialogSettings settings;
 
@@ -92,17 +92,17 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
 	private CLabel descImageCanvas;
 
-	private Map<ImageDescriptor, Image> imageTable = new HashMap<>();
+	private final Map<ImageDescriptor, Image> imageTable = new HashMap<>();
 
 	private IWizardDescriptor selectedElement;
 
-	private WizardActivityFilter filter = new WizardActivityFilter();
+	private final WizardActivityFilter filter = new WizardActivityFilter();
 
 	private boolean needShowAll;
 
-	private boolean projectsOnly;
+	private final boolean projectsOnly;
 
-	private ViewerFilter projectFilter = new WizardTagFilter(new String[] { WorkbenchWizardElement.TAG_PROJECT });
+	private final ViewerFilter projectFilter = new WizardTagFilter(new String[] { WorkbenchWizardElement.TAG_PROJECT });
 
 	/**
 	 * Create an instance of this class

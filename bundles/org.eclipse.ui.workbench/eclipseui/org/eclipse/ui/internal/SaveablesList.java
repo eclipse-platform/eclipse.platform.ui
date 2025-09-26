@@ -68,18 +68,18 @@ import org.eclipse.ui.model.WorkbenchPartLabelProvider;
  */
 public class SaveablesList implements ISaveablesLifecycleListener {
 
-	private ListenerList<ISaveablesLifecycleListener> listeners = new ListenerList<>();
+	private final ListenerList<ISaveablesLifecycleListener> listeners = new ListenerList<>();
 
 	// event source (mostly ISaveablesSource) -> Set of Saveable
-	private Map<Object, Set<Saveable>> modelMap = new LinkedHashMap<>();
+	private final Map<Object, Set<Saveable>> modelMap = new LinkedHashMap<>();
 
 	// reference counting map
-	private Map<Saveable, Integer> modelRefCounts = new LinkedHashMap<>();
+	private final Map<Saveable, Integer> modelRefCounts = new LinkedHashMap<>();
 
 	// lists contain "equal" saveables as many times as we have counted them above
-	private Map<Saveable, List<Saveable>> equalKeys = new IdentityHashMap<>();
+	private final Map<Saveable, List<Saveable>> equalKeys = new IdentityHashMap<>();
 
-	private Set<ISaveablesSource> nonPartSources = new HashSet<>();
+	private final Set<ISaveablesSource> nonPartSources = new HashSet<>();
 
 	/**
 	 * Returns the list of open models managed by this model manager.
@@ -464,8 +464,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				}
 			}
 			Saveable[] saveables = getSaveables(part);
-			if (save && saveable instanceof ISaveablePart2) {
-				ISaveablePart2 saveablePart2 = (ISaveablePart2) saveable;
+			if (save && saveable instanceof ISaveablePart2 saveablePart2) {
 				// TODO show saveablePart2 before prompting, see
 				// EditorManager.saveAll
 				boolean confirm = true;
@@ -733,8 +732,9 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				if (SaveableHelper.testGetAutomatedResponse() == SaveableHelper.USER_RESPONSE) {
 					int result = dlg.open();
 					// Just return null to prevent the operation continuing
-					if (result == IDialogConstants.CANCEL_ID)
+					if (result == IDialogConstants.CANCEL_ID) {
 						return true;
+					}
 
 					if (dlg.getCheckboxValue()) {
 						apiPreferenceStore.setValue(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN,
@@ -796,8 +796,9 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 					continue;
 				}
 				SaveableHelper.doSaveModel(model, subMonitor.split(1), shellProvider, blockUntilSaved);
-				if (subMonitor.isCanceled())
+				if (subMonitor.isCanceled()) {
 					break;
+				}
 			}
 			monitorWrap.done();
 		};
@@ -807,11 +808,11 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	}
 
 	private static class PostCloseInfo {
-		private List<IWorkbenchPart> partsClosing = new ArrayList<>();
+		private final List<IWorkbenchPart> partsClosing = new ArrayList<>();
 
-		private Map<Saveable, Integer> modelsDecrementing = new HashMap<>();
+		private final Map<Saveable, Integer> modelsDecrementing = new HashMap<>();
 
-		private Set<Saveable> modelsClosing = new HashSet<>();
+		private final Set<Saveable> modelsClosing = new HashSet<>();
 	}
 
 	public void postClose(Object postCloseInfoObject) {
@@ -844,8 +845,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @return the saveable models
 	 */
 	private Saveable[] getSaveables(IWorkbenchPart part) {
-		if (part instanceof ISaveablesSource) {
-			ISaveablesSource source = (ISaveablesSource) part;
+		if (part instanceof ISaveablesSource source) {
 			return source.getSaveables();
 		} else if (SaveableHelper.isSaveable(part)) {
 			return new Saveable[] { new DefaultSaveable(part) };

@@ -36,7 +36,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 
 public class ViewReference extends WorkbenchPartReference implements IViewReference {
 
-	private ViewDescriptor descriptor;
+	private final ViewDescriptor descriptor;
 	private IMemento memento;
 
 	public ViewReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part, ViewDescriptor descriptor) {
@@ -78,8 +78,9 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		MPart part = getModel();
 
 		int colonIndex = part.getElementId().indexOf(':');
-		if (colonIndex == -1 || colonIndex == (part.getElementId().length() - 1))
+		if (colonIndex == -1 || colonIndex == (part.getElementId().length() - 1)) {
 			return null;
+		}
 
 		return part.getElementId().substring(colonIndex + 1);
 	}

@@ -47,13 +47,13 @@ public class NewWizardDropDownAction extends Action implements ActionFactory.IWo
 	/**
 	 * Tracks perspective activation, to update this action's enabled state.
 	 */
-	private PerspectiveTracker tracker;
+	private final PerspectiveTracker tracker;
 
-	private ActionFactory.IWorkbenchAction showDlgAction;
+	private final ActionFactory.IWorkbenchAction showDlgAction;
 
-	private IContributionItem newWizardMenu;
+	private final IContributionItem newWizardMenu;
 
-	private IMenuCreator menuCreator = new IMenuCreator() {
+	private final IMenuCreator menuCreator = new IMenuCreator() {
 
 		private MenuManager dropDownMenuMgr;
 

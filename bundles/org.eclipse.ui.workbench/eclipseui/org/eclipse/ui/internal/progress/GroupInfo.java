@@ -26,8 +26,8 @@ import org.eclipse.osgi.util.NLS;
  */
 
 class GroupInfo extends JobTreeElement implements IProgressMonitor {
-	private List<JobInfo> infos = new ArrayList<>();
-	private Object lock = new Object();
+	private final List<JobInfo> infos = new ArrayList<>();
+	private final Object lock = new Object();
 	private String taskName = ProgressMessages.SubTaskInfo_UndefinedTaskName;
 	boolean isActive;
 	double total = -1;
