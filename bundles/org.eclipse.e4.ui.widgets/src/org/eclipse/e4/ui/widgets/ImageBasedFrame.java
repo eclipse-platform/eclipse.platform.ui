@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 
 
@@ -71,6 +72,7 @@ public class ImageBasedFrame extends Canvas {
 		});
 
 		toWrap.addListener(SWT.ZoomChanged, event -> {
+			Shell shell = parent.getShell();
 			final AtomicReference<Listener> scaleOnParentResize = new AtomicReference<>();
 			scaleOnParentResize.set(e -> {
 				if (isDisposed()) {
@@ -79,9 +81,9 @@ public class ImageBasedFrame extends Canvas {
 				toWrap.pack(true);
 				setFramedControlLocation();
 				parent.layout();
-				parent.removeListener(SWT.Resize, scaleOnParentResize.get());
+				shell.removeListener(SWT.Resize, scaleOnParentResize.get());
 			});
-			parent.addListener(SWT.Resize, scaleOnParentResize.get());
+			shell.addListener(SWT.Resize, scaleOnParentResize.get());
 		});
 
 		addMouseMoveListener(e -> {
