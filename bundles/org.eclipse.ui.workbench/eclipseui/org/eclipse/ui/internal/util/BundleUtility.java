@@ -37,8 +37,9 @@ public class BundleUtility {
 	}
 
 	public static boolean isActivated(Bundle bundle) {
-		if (bundle != null && (bundle.getState() & Bundle.STARTING) != 0)
+		if (bundle != null && (bundle.getState() & Bundle.STARTING) != 0) {
 			return WorkbenchPlugin.getDefault().isStarting(bundle);
+		}
 		return bundle != null && (bundle.getState() & (Bundle.ACTIVE | Bundle.STOPPING)) != 0;
 	}
 

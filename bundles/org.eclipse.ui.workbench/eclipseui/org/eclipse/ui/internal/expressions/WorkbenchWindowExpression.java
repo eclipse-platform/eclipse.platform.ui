@@ -69,8 +69,7 @@ public class WorkbenchWindowExpression extends Expression {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof WorkbenchWindowExpression) {
-			final WorkbenchWindowExpression that = (WorkbenchWindowExpression) object;
+		if (object instanceof final WorkbenchWindowExpression that) {
 			return equals(this.window, that.window);
 		}
 

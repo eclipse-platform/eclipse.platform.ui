@@ -33,7 +33,7 @@ public interface IThemeRegistry {
 	 */
 	public static class HierarchyComparator implements Comparator<IHierarchalThemeElementDefinition> {
 
-		private IHierarchalThemeElementDefinition[] definitions;
+		private final IHierarchalThemeElementDefinition[] definitions;
 
 		/**
 		 * Create a new comparator.

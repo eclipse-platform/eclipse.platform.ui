@@ -45,10 +45,10 @@ public class StatusPart {
 
 	private static final String LOG_VIEW_ID = "org.eclipse.pde.runtime.LogView"; //$NON-NLS-1$
 	boolean showingDetails = false;
-	private Button detailsButton;
-	private Composite detailsArea;
+	private final Button detailsButton;
+	private final Composite detailsArea;
 	private Control details = null;
-	private IStatus reason;
+	private final IStatus reason;
 
 	public StatusPart(final Composite parent, IStatus reason_) {
 		Color bgColor = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);

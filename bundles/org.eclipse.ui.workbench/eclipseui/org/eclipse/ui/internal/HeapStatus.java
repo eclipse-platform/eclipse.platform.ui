@@ -50,11 +50,19 @@ import org.eclipse.ui.internal.util.PrefUtil;
 public class HeapStatus extends Composite {
 
 	private boolean armed;
-	private Image gcImage;
+	private final Image gcImage;
 	private Image disabledGcImage;
-	private Color bgCol, usedMemCol, lowMemCol, freeMemCol, topLeftCol, bottomRightCol, sepCol, textCol, markCol,
-			armCol;
-	private Canvas canvas;
+	private Color bgCol;
+	private final Color usedMemCol;
+	private final Color lowMemCol;
+	private final Color freeMemCol;
+	private Color topLeftCol;
+	private final Color bottomRightCol;
+	private final Color sepCol;
+	private Color textCol;
+	private Color markCol;
+	private Color armCol;
+	private final Canvas canvas;
 	private IPreferenceStore prefStore;
 	private int updateInterval;
 	private boolean showMax;
@@ -67,9 +75,9 @@ public class HeapStatus extends Composite {
 	// start with 12x12
 	private Rectangle imgBounds = new Rectangle(0, 0, 12, 12);
 	private final long maxMem;
-	private boolean maxMemKnown;
-	private float lowMemThreshold = 0.05f;
-	private boolean showLowMemThreshold = true;
+	private final boolean maxMemKnown;
+	private final float lowMemThreshold = 0.05f;
+	private final boolean showLowMemThreshold = true;
 	private boolean updateTooltip = false;
 
 	protected volatile boolean isInGC = false;
@@ -168,8 +176,9 @@ public class HeapStatus extends Composite {
 					if (event.widget == HeapStatus.this) {
 						setMark();
 					} else if (event.widget == canvas) {
-						if (!isInGC)
+						if (!isInGC) {
 							arm(true);
+						}
 					}
 				}
 				break;
@@ -502,7 +511,7 @@ public class HeapStatus extends Composite {
 		String maxStr = maxMemKnown ? convertToMegString(maxMem) : WorkbenchMessages.HeapStatus_maxUnknown;
 		String markStr = mark == -1 ? WorkbenchMessages.HeapStatus_noMark : convertToMegString(mark);
 		String toolTip = NLS.bind(WorkbenchMessages.HeapStatus_memoryToolTip,
-				new Object[] { usedStr, totalStr, maxStr, markStr });
+				usedStr, totalStr, maxStr, markStr);
 		if (!toolTip.equals(getToolTipText())) {
 			setToolTipText(toolTip);
 		}

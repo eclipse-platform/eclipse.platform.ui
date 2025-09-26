@@ -117,8 +117,8 @@ public class FullScreenHandler extends AbstractHandler {
 
 	private static class FullScreenInfoPopup extends PopupDialog {
 
-		private String message;
-		private String messageDoNotShowAgain;
+		private final String message;
+		private final String messageDoNotShowAgain;
 
 		public FullScreenInfoPopup(Shell parent, int shellStyle, boolean takeFocusOnOpen, boolean persistSize,
 				boolean persistLocation, boolean showDialogMenu, boolean showPersistActions, String titleText,

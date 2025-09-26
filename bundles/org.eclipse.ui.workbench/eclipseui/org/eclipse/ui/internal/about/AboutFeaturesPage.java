@@ -115,11 +115,11 @@ public class AboutFeaturesPage extends ProductInfoPage {
 
 	private Composite infoArea;
 
-	private Map<ImageDescriptor, Image> cachedImages = new HashMap<>();
+	private final Map<ImageDescriptor, Image> cachedImages = new HashMap<>();
 
 	private AboutBundleGroupData[] bundleGroupInfos;
 
-	private String columnTitles[] = { WorkbenchMessages.AboutFeaturesDialog_provider,
+	private final String columnTitles[] = { WorkbenchMessages.AboutFeaturesDialog_provider,
 			WorkbenchMessages.AboutFeaturesDialog_featureName, WorkbenchMessages.AboutFeaturesDialog_version,
 			WorkbenchMessages.AboutFeaturesDialog_featureId, };
 
@@ -289,8 +289,9 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		table.addSelectionListener(widgetSelectedAdapter(e -> {
 			// If there is no item, nothing we can do.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=266177
-			if (e.item == null)
+			if (e.item == null) {
 				return;
+			}
 			AboutBundleGroupData info = (AboutBundleGroupData) e.item.getData();
 			updateInfoArea(info);
 			updateButtons(info);
@@ -492,8 +493,9 @@ public class AboutFeaturesPage extends ProductInfoPage {
 	}
 
 	protected Collection<Object> getSelectionValue() {
-		if (table == null || table.isDisposed())
+		if (table == null || table.isDisposed()) {
 			return null;
+		}
 		TableItem[] items = table.getSelection();
 		if (items.length <= 0) {
 			return null;

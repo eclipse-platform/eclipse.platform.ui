@@ -55,7 +55,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	/**
 	 * Provides the shell in which to open the property dialog.
 	 */
-	private IShellProvider shellProvider;
+	private final IShellProvider shellProvider;
 
 	/**
 	 * The id of the page to open up on.
@@ -164,8 +164,9 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * @since 3.1
 	 */
 	public PreferenceDialog createDialog() {
-		if (getStructuredSelection().isEmpty())
+		if (getStructuredSelection().isEmpty()) {
 			return null;
+		}
 
 		return PropertyDialog.createDialogOn(shellProvider.getShell(), initialPageId, getStructuredSelection());
 	}

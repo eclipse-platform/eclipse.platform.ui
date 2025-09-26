@@ -27,8 +27,8 @@ import org.eclipse.ui.menus.UIElement;
  */
 public class ElementReference implements IElementReference {
 
-	private String commandId;
-	private UIElement element;
+	private final String commandId;
+	private final UIElement element;
 	private HashMap parameters;
 
 	/**

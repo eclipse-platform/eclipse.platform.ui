@@ -42,7 +42,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public abstract class AbstractElementListSelectionDialog extends SelectionStatusDialog {
 
-	private ILabelProvider fRenderer;
+	private final ILabelProvider fRenderer;
 
 	private boolean fIgnoreCase = true;
 
@@ -201,8 +201,9 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	protected void handleElementsChanged() {
 		boolean enabled = !fFilteredList.isEmpty();
 
-		if (fMessage != null && !fMessage.isDisposed())
+		if (fMessage != null && !fMessage.isDisposed()) {
 			fMessage.setEnabled(enabled);
+		}
 
 		fFilteredList.setEnabled(enabled);
 		updateOkState();

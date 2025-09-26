@@ -24,7 +24,7 @@ import java.util.Map;
  * image identity.
  */
 public class AboutFeaturesButtonManager {
-	private Map<Key, List<AboutBundleGroupData>> providerMap = new HashMap<>();
+	private final Map<Key, List<AboutBundleGroupData>> providerMap = new HashMap<>();
 
 	private static class Key {
 		public String providerName;
@@ -41,10 +41,9 @@ public class AboutFeaturesButtonManager {
 
 		@Override
 		public boolean equals(Object o) {
-			if (!(o instanceof Key)) {
+			if (!(o instanceof Key other)) {
 				return false;
 			}
-			Key other = (Key) o;
 			if (!providerName.equals(other.providerName)) {
 				return false;
 			}

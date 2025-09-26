@@ -78,7 +78,7 @@ public class PerspectiveBuilder {
 
 	private List<String> defaultFastViews;
 
-	private Map<String, MPlaceholder> viewPlaceholders = new HashMap<>();
+	private final Map<String, MPlaceholder> viewPlaceholders = new HashMap<>();
 
 	private Map<String, ViewLayoutReader> viewLayouts;
 

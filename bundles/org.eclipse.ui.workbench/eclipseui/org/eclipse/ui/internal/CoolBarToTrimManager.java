@@ -90,12 +90,12 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	public static final String OBJECT = "coolbar.object"; //$NON-NLS-1$
 	private static final String PREV_CHILD_VISIBLE = "prevChildVisible"; //$NON-NLS-1$
 	private MTrimBar topTrim;
-	private List<MTrimElement> workbenchTrimElements;
-	private List<ToolBarContributionItemExtension> toolbarExtensions;
+	private final List<MTrimElement> workbenchTrimElements;
+	private final List<ToolBarContributionItemExtension> toolbarExtensions;
 	private IRendererFactory rendererFactory;
 	private ToolBarManagerRenderer renderer;
-	private MApplication application;
-	private MTrimmedWindow window;
+	private final MApplication application;
+	private final MTrimmedWindow window;
 	private IContributionManagerOverrides toolbarOverrides;
 
 	/**
@@ -103,7 +103,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	 * or not. They should only ever be added once.
 	 */
 	private boolean trimBarsAdded;
-	private EModelService modelService;
+	private final EModelService modelService;
 
 	public CoolBarToTrimManager(MApplication app, MTrimmedWindow window, List<MTrimElement> workbenchTrimElements,
 			IRendererFactory rf) {
@@ -143,14 +143,11 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			}
 		}
 
-		if (item instanceof IToolBarContributionItem) {
-			IToolBarContributionItem tbc = (IToolBarContributionItem) item;
+		if (item instanceof IToolBarContributionItem tbc) {
 			IToolBarManager mgr = tbc.getToolBarManager();
-			if (!(mgr instanceof ToolBarManager)) {
+			if (!(mgr instanceof ToolBarManager manager)) {
 				return;
 			}
-			ToolBarManager manager = (ToolBarManager) mgr;
-
 			if (renderer.getToolBarModel(manager) != null) {
 				return;
 			}
@@ -327,8 +324,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 		ArrayList<MToolBarElement> toRemove = new ArrayList<>();
 		for (MTrimElement child : topTrim.getChildren()) {
-			if (child instanceof MToolBar) {
-				MToolBar toolbar = (MToolBar) child;
+			if (child instanceof MToolBar toolbar) {
 				for (MToolBarElement element : toolbar.getChildren()) {
 					if (OpaqueElementUtil.isOpaqueToolItem(element)) {
 						toRemove.add(element);
@@ -688,12 +684,11 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				HandledContributionItem ci = ContextInjectionFactory.make(HandledContributionItem.class,
 						window.getContext());
 
-				if (manager instanceof ContributionManager) {
+				if (manager instanceof ContributionManager cm) {
 					// set basic attributes to the item before adding to the manager
 					ci.setId(toolItem.getElementId());
 					ci.setVisible(toolItem.isVisible());
 
-					ContributionManager cm = (ContributionManager) manager;
 					cm.insert(index, ci);
 					cm.remove(item);
 

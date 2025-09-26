@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.dialogs.PropertyDialog;
 
 public class PropertyDialogHandler extends AbstractHandler {
 
-	private String initialPageId = null;
+	private final String initialPageId = null;
 
 	@Override
 	public Object execute(ExecutionEvent event) {

@@ -28,8 +28,8 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public class PropertiesElement extends QuickAccessElement {
 
-	private Object selectedElement;
-	private IPreferenceNode preferenceNode;
+	private final Object selectedElement;
+	private final IPreferenceNode preferenceNode;
 
 	/* package */ PropertiesElement(Object selectedElement, IPreferenceNode preferenceNode) {
 		this.selectedElement = selectedElement;
@@ -72,12 +72,15 @@ public class PropertiesElement extends QuickAccessElement {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final PropertiesElement other = (PropertiesElement) obj;
 		return Objects.equals(preferenceNode, other.preferenceNode);
 	}

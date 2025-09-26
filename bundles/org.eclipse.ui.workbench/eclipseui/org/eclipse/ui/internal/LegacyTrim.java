@@ -39,8 +39,9 @@ public class LegacyTrim {
 	@PostConstruct
 	void createWidget(IWorkbenchWindow iwbw, Composite parent, MToolControl toolControl) {
 		IConfigurationElement ice = ((WorkbenchWindow) iwbw).getICEFor(toolControl);
-		if (ice == null)
+		if (ice == null) {
 			return;
+		}
 
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new RowLayout());

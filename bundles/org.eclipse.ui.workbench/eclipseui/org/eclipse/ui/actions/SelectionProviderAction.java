@@ -45,7 +45,7 @@ public abstract class SelectionProviderAction extends Action implements ISelecti
 	/**
 	 * The selection provider that is the target of this action.
 	 */
-	private ISelectionProvider provider;
+	private final ISelectionProvider provider;
 
 	/**
 	 * Creates a new action with the given text that monitors selection changes

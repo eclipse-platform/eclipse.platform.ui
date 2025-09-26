@@ -47,7 +47,7 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	 *
 	 * @see #setData
 	 */
-	private Map extraData = new HashMap();
+	private final Map extraData = new HashMap();
 
 	/**
 	 * Indicates whether workbench state should be saved on close and restored on

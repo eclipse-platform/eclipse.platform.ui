@@ -24,13 +24,13 @@ import org.eclipse.core.runtime.Assert;
  */
 /* package */class TwoArrayQuickSorter {
 
-	private Comparator fComparator;
+	private final Comparator fComparator;
 
 	/**
 	 * Default comparator.
 	 */
 	public static final class StringComparator implements Comparator<String> {
-		private boolean fIgnoreCase;
+		private final boolean fIgnoreCase;
 
 		StringComparator(boolean ignoreCase) {
 			fIgnoreCase = ignoreCase;

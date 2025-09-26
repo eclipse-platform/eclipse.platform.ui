@@ -60,7 +60,7 @@ import org.osgi.framework.FrameworkUtil;
 public class InstallationDialog extends TrayDialog implements IInstallationPageContainer {
 	class ButtonManager {
 
-		private Composite composite;
+		private final Composite composite;
 		HashMap<String, List<Button>> buttonMap = new HashMap<>(); // page id->Collection of page
 
 		// buttons
@@ -74,8 +74,9 @@ public class InstallationDialog extends TrayDialog implements IInstallationPageC
 		}
 
 		public void update(String currentPageId) {
-			if (composite == null || composite.isDisposed())
+			if (composite == null || composite.isDisposed()) {
 				return;
+			}
 			GC metricsGC = new GC(composite);
 			FontMetrics metrics = metricsGC.getFontMetrics();
 			metricsGC.dispose();
@@ -86,9 +87,9 @@ public class InstallationDialog extends TrayDialog implements IInstallationPageC
 			Button closeButton = getButton(IDialogConstants.CLOSE_ID);
 
 			for (Control control : children) {
-				if (closeButton == control)
+				if (closeButton == control) {
 					closeButton.dispose();
-				else {
+				} else {
 					control.setVisible(false);
 					setButtonLayoutData(metrics, control, false);
 				}
@@ -140,7 +141,7 @@ public class InstallationDialog extends TrayDialog implements IInstallationPageC
 	private CTabFolder folder;
 	IServiceLocator serviceLocator;
 	private ButtonManager buttonManager;
-	private Map<InstallationPage, String> pageToId = new HashMap<>();
+	private final Map<InstallationPage, String> pageToId = new HashMap<>();
 	private Dialog modalParent;
 
 	public InstallationDialog(Shell parentShell, IServiceLocator locator) {
@@ -154,8 +155,9 @@ public class InstallationDialog extends TrayDialog implements IInstallationPageC
 		super.configureShell(newShell);
 		String productName = ""; //$NON-NLS-1$
 		IProduct product = Platform.getProduct();
-		if (product != null && product.getName() != null)
+		if (product != null && product.getName() != null) {
 			productName = product.getName();
+		}
 		newShell.setText(NLS.bind(WorkbenchMessages.InstallationDialog_ShellTitle, productName));
 	}
 
@@ -202,16 +204,18 @@ public class InstallationDialog extends TrayDialog implements IInstallationPageC
 		if (folder.getItemCount() > 0) {
 			if (lastSelectedTabId != null) {
 				CTabItem[] items = folder.getItems();
-				for (int i = 0; i < items.length; i++)
+				for (int i = 0; i < items.length; i++) {
 					if (items[i].getData(ID).equals(lastSelectedTabId)) {
 						folder.setSelection(i);
 						tabSelected(items[i]);
 						selected = true;
 						break;
 					}
+				}
 			}
-			if (!selected)
+			if (!selected) {
 				tabSelected(folder.getItem(0));
+			}
 		}
 		// need to reapply the dialog font now that we've created new
 		// tab items
@@ -317,8 +321,9 @@ public class InstallationDialog extends TrayDialog implements IInstallationPageC
 	@Override
 	public void closeModalContainers() {
 		close();
-		if (modalParent != null)
+		if (modalParent != null) {
 			modalParent.close();
+		}
 	}
 
 	@Override

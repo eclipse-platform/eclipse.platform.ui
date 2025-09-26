@@ -28,7 +28,7 @@ class StatusHandlerDescriptorsMap {
 
 	private static final String ASTERISK = "*"; //$NON-NLS-1$
 
-	private HashMap map;
+	private final HashMap map;
 
 	/**
 	 * Creates a new instance of the class

@@ -116,11 +116,11 @@ public class StatusManager {
 
 	private volatile AbstractStatusHandler statusHandler;
 
-	private List<IStatus> loggedStatuses = new Vector<>();
+	private final List<IStatus> loggedStatuses = new Vector<>();
 
-	private ListenerList<INotificationListener> listeners = new ListenerList<>();
+	private final ListenerList<INotificationListener> listeners = new ListenerList<>();
 
-	private StatusManagerLogListener statusManagerLogListener;
+	private final StatusManagerLogListener statusManagerLogListener;
 
 	/**
 	 * Returns StatusManager singleton instance.

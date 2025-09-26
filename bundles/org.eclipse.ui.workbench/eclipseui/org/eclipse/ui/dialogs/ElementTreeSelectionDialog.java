@@ -55,9 +55,9 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	private TreeViewer fViewer;
 
-	private IBaseLabelProvider fLabelProvider;
+	private final IBaseLabelProvider fLabelProvider;
 
-	private ITreeContentProvider fContentProvider;
+	private final ITreeContentProvider fContentProvider;
 
 	private ISelectionStatusValidator fValidator = null;
 

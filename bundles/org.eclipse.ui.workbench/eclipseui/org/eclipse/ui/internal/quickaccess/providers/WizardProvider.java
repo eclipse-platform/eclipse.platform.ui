@@ -37,7 +37,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 public class WizardProvider extends QuickAccessProvider {
 
 	private QuickAccessElement[] cachedElements;
-	private Map<String, WizardElement> idToElement = new HashMap<>();
+	private final Map<String, WizardElement> idToElement = new HashMap<>();
 
 	@Override
 	public QuickAccessElement findElement(String id, String filter) {

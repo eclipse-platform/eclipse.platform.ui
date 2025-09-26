@@ -67,8 +67,7 @@ public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof LegacyActionSetExpression) {
-			final LegacyActionSetExpression that = (LegacyActionSetExpression) object;
+		if (object instanceof final LegacyActionSetExpression that) {
 			return equals(this.actionSetId, that.actionSetId) && equals(this.getWindow(), that.getWindow());
 		}
 

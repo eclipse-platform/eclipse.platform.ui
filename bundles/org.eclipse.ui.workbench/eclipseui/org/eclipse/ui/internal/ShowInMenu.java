@@ -79,7 +79,7 @@ public class ShowInMenu extends ContributionItem implements IWorkbenchContributi
 
 	private boolean dirty = true;
 
-	private IMenuListener menuListener = manager -> {
+	private final IMenuListener menuListener = manager -> {
 		manager.markDirty();
 		dirty = true;
 	};
@@ -317,8 +317,9 @@ public class ShowInMenu extends ContributionItem implements IWorkbenchContributi
 	protected IWorkbenchPart getSourcePart() {
 		IWorkbenchWindow window = getWindow();
 
-		if (window == null)
+		if (window == null) {
 			return null;
+		}
 
 		IWorkbenchPage page = window.getActivePage();
 		return page != null ? page.getActivePart() : null;
@@ -377,8 +378,9 @@ public class ShowInMenu extends ContributionItem implements IWorkbenchContributi
 	}
 
 	protected IWorkbenchWindow getWindow() {
-		if (locator == null)
+		if (locator == null) {
 			return null;
+		}
 
 		IWorkbenchLocationService wls = locator.getService(IWorkbenchLocationService.class);
 

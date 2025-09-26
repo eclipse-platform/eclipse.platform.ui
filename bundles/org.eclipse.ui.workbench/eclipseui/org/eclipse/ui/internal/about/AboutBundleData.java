@@ -32,9 +32,9 @@ import org.osgi.framework.Constants;
  */
 public class AboutBundleData extends AboutData {
 
-	private Bundle bundle;
+	private final Bundle bundle;
 
-	private ExtendedSigningInfo info;
+	private final ExtendedSigningInfo info;
 
 	private boolean isSignedDetermined = false;
 
@@ -103,8 +103,9 @@ public class AboutBundleData extends AboutData {
 	}
 
 	public boolean isSigned() throws IllegalStateException {
-		if (isSignedDetermined)
+		if (isSignedDetermined) {
 			return isSigned;
+		}
 		SignedContent signedContent = getSignedContent();
 		isSigned = signedContent != null && signedContent.isSigned();
 		if (!isSigned && info != null) {

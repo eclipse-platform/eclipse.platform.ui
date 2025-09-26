@@ -59,13 +59,13 @@ public final class EvaluationService implements IEvaluationService {
 	private IEclipseContext ratContext;
 	private int notifying = 0;
 
-	private ListenerList<IPropertyChangeListener> serviceListeners = new ListenerList<>(ListenerList.IDENTITY);
+	private final ListenerList<IPropertyChangeListener> serviceListeners = new ListenerList<>(ListenerList.IDENTITY);
 	ArrayList<ISourceProvider> sourceProviders = new ArrayList<>();
 	LinkedList<EvaluationReference> refs = new LinkedList<>();
 	private ISourceProviderListener contextUpdater;
 
-	private HashSet<String> ratVariables = new HashSet<>();
-	private RunAndTrack ratUpdater = new RunAndTrack() {
+	private final HashSet<String> ratVariables = new HashSet<>();
+	private final RunAndTrack ratUpdater = new RunAndTrack() {
 		@Override
 		public boolean changed(IEclipseContext context) {
 			context.get(RE_EVAL);
@@ -85,7 +85,7 @@ public final class EvaluationService implements IEvaluationService {
 		}
 	};
 
-	private HashSet<String> variableFilter = new HashSet<>();
+	private final HashSet<String> variableFilter = new HashSet<>();
 	private IEventBroker eventBroker;
 
 	public EvaluationService(IEclipseContext c) {
@@ -100,8 +100,7 @@ public final class EvaluationService implements IEvaluationService {
 					return defaultVariable;
 				}
 				defaultVariable = context.getActive(IServiceConstants.ACTIVE_SELECTION);
-				if (defaultVariable instanceof IStructuredSelection) {
-					final IStructuredSelection selection = (IStructuredSelection) defaultVariable;
+				if (defaultVariable instanceof final IStructuredSelection selection) {
 					return selection.toList();
 				} else if ((defaultVariable instanceof ISelection) && (!((ISelection) defaultVariable).isEmpty())) {
 					return Collections.singleton(defaultVariable);
@@ -125,11 +124,7 @@ public final class EvaluationService implements IEvaluationService {
 				}
 			}
 		};
-		variableFilter.addAll(Arrays.asList(new String[] { ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
-				ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, ISources.ACTIVE_EDITOR_ID_NAME,
-				ISources.ACTIVE_EDITOR_INPUT_NAME, ISources.SHOW_IN_INPUT, ISources.SHOW_IN_SELECTION,
-				ISources.ACTIVE_PART_NAME, ISources.ACTIVE_PART_ID_NAME, ISources.ACTIVE_SITE_NAME,
-				ISources.ACTIVE_CONTEXT_NAME, ISources.ACTIVE_CURRENT_SELECTION_NAME }));
+		variableFilter.addAll(Arrays.asList(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, ISources.ACTIVE_EDITOR_ID_NAME, ISources.ACTIVE_EDITOR_INPUT_NAME, ISources.SHOW_IN_INPUT, ISources.SHOW_IN_SELECTION, ISources.ACTIVE_PART_NAME, ISources.ACTIVE_PART_ID_NAME, ISources.ACTIVE_SITE_NAME, ISources.ACTIVE_CONTEXT_NAME, ISources.ACTIVE_CURRENT_SELECTION_NAME));
 		context.runAndTrack(ratUpdater);
 	}
 

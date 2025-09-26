@@ -23,7 +23,7 @@ import org.eclipse.jface.action.SubMenuManager;
  * an editor so that they always appear after the action sets.
  */
 public class ActionSetMenuManager extends SubMenuManager {
-	private String actionSetId;
+	private final String actionSetId;
 
 	/**
 	 * Constructs a new editor manager.
@@ -45,9 +45,8 @@ public class ActionSetMenuManager extends SubMenuManager {
 			item = unwrap(item);
 		}
 
-		if (item instanceof IMenuManager) {
+		if (item instanceof IMenuManager menu) {
 			// if it is a menu manager wrap it before returning
-			IMenuManager menu = (IMenuManager) item;
 			if (menu instanceof SubMenuManager) {
 				// it it is already wrapped then remover the wrapper and
 				// rewrap. We have a table of wrappers so we reuse wrappers

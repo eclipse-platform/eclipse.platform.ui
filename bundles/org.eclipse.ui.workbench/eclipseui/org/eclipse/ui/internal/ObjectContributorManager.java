@@ -373,7 +373,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 		// Fetch the unique adapters
 		List adapters = new ArrayList(
 				Arrays.asList(Platform.getAdapterManager().computeAdapterTypes(object.getClass())));
-		removeCommonAdapters(adapters, Arrays.asList(new Class[] { object.getClass() }));
+		removeCommonAdapters(adapters, Arrays.asList(object.getClass()));
 
 		List contributors = new ArrayList();
 
@@ -543,8 +543,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	@Override
 	public void removeExtension(IExtension source, Object[] objects) {
 		for (Object object : objects) {
-			if (object instanceof ContributorRecord) {
-				ContributorRecord contributorRecord = (ContributorRecord) object;
+			if (object instanceof ContributorRecord contributorRecord) {
 				unregisterContributor((contributorRecord).contributor, (contributorRecord).objectClassName);
 				contributorRecordSet.remove(contributorRecord);
 			}
@@ -782,8 +781,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	 */
 	private boolean allSameClass(List objects) {
 		int size = objects.size();
-		if (size <= 1)
+		if (size <= 1) {
 			return true;
+		}
 		Class clazz = objects.get(0).getClass();
 		for (int i = 1; i < size; ++i) {
 			if (!objects.get(i).getClass().equals(clazz)) {

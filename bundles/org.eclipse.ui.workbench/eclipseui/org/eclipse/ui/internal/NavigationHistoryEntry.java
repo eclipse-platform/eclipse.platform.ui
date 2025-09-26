@@ -28,7 +28,7 @@ import org.eclipse.ui.XMLMemento;
  */
 public class NavigationHistoryEntry {
 
-	private IWorkbenchPage page;
+	private final IWorkbenchPage page;
 
 	NavigationHistoryEditorInfo editorInfo;
 

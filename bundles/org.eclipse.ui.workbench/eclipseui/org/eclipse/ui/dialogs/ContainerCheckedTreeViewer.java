@@ -93,8 +93,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 	 */
 	protected void doCheckStateChanged(Object element) {
 		Widget item = findItem(element);
-		if (item instanceof TreeItem) {
-			TreeItem treeItem = (TreeItem) item;
+		if (item instanceof TreeItem treeItem) {
 			treeItem.setGrayed(false);
 			updateChildrenItems(treeItem);
 			updateParentItems(treeItem.getParentItem());
@@ -113,8 +112,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 		HashSet<TreeItem> parents = new HashSet<>();
 		for (Object element : elements) {
 			Widget item = findItem(element);
-			if (item instanceof TreeItem) {
-				TreeItem treeItem = (TreeItem) item;
+			if (item instanceof TreeItem treeItem) {
 				treeItem.setGrayed(false);
 				updateChildrenItems(treeItem);
 				TreeItem parentItem = treeItem.getParentItem();

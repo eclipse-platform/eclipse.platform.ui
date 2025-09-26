@@ -37,7 +37,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * IWorkbenchAdapter adapter used for navigation and display in the workbench.
  */
 public class FileSystemElement implements IAdaptable {
-	private String name;
+	private final String name;
 
 	private Object fileSystemObject;
 
@@ -54,7 +54,7 @@ public class FileSystemElement implements IAdaptable {
 
 	private FileSystemElement parent;
 
-	private IWorkbenchAdapter workbenchAdapter = new IWorkbenchAdapter() {
+	private final IWorkbenchAdapter workbenchAdapter = new IWorkbenchAdapter() {
 		/**
 		 * Answer the children property of this element
 		 */

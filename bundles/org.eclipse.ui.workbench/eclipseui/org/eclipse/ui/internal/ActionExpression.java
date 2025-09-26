@@ -110,8 +110,7 @@ public class ActionExpression {
 
 		@Override
 		public final boolean equals(final Object object) {
-			if (object instanceof AndExpression) {
-				final AndExpression that = (AndExpression) object;
+			if (object instanceof final AndExpression that) {
 				return Objects.equals(this.list, that.list);
 			}
 
@@ -314,8 +313,7 @@ public class ActionExpression {
 
 		@Override
 		public final boolean equals(final Object object) {
-			if (object instanceof ObjectClassExpression) {
-				final ObjectClassExpression that = (ObjectClassExpression) object;
+			if (object instanceof final ObjectClassExpression that) {
 				return Objects.equals(this.className, that.className) && Objects.equals(this.extracted, that.extracted);
 			}
 
@@ -386,9 +384,9 @@ public class ActionExpression {
 	}
 
 	private static class ObjectStateExpression extends AbstractExpression {
-		private String name;
+		private final String name;
 
-		private String value;
+		private final String value;
 
 		/**
 		 * Creates and populates the expression from the attributes and sub- elements of
@@ -411,8 +409,7 @@ public class ActionExpression {
 
 		@Override
 		public final boolean equals(final Object object) {
-			if (object instanceof ObjectStateExpression) {
-				final ObjectStateExpression that = (ObjectStateExpression) object;
+			if (object instanceof final ObjectStateExpression that) {
 				return Objects.equals(this.name, that.name) && Objects.equals(this.value, that.value);
 			}
 
@@ -510,8 +507,7 @@ public class ActionExpression {
 
 		@Override
 		public final boolean equals(final Object object) {
-			if (object instanceof OrExpression) {
-				final OrExpression that = (OrExpression) object;
+			if (object instanceof final OrExpression that) {
 				return Objects.equals(this.list, that.list);
 			}
 
@@ -532,9 +528,9 @@ public class ActionExpression {
 	}
 
 	private static class PluginStateExpression extends AbstractExpression {
-		private String id;
+		private final String id;
 
-		private String value;
+		private final String value;
 
 		/**
 		 * Creates and populates the expression from the attributes and sub- elements of
@@ -557,8 +553,7 @@ public class ActionExpression {
 
 		@Override
 		public final boolean equals(final Object object) {
-			if (object instanceof PluginStateExpression) {
-				final PluginStateExpression that = (PluginStateExpression) object;
+			if (object instanceof final PluginStateExpression that) {
 				return Objects.equals(this.id, that.id) && Objects.equals(this.value, that.value);
 			}
 
@@ -639,8 +634,7 @@ public class ActionExpression {
 
 		@Override
 		public final boolean equals(final Object object) {
-			if (object instanceof SingleExpression) {
-				final SingleExpression that = (SingleExpression) object;
+			if (object instanceof final SingleExpression that) {
 				return Objects.equals(this.child, that.child);
 			}
 
@@ -686,9 +680,9 @@ public class ActionExpression {
 	}
 
 	private static class SystemPropertyExpression extends AbstractExpression {
-		private String name;
+		private final String name;
 
-		private String value;
+		private final String value;
 
 		/**
 		 * Creates and populates the expression from the attributes and sub- elements of
@@ -720,8 +714,7 @@ public class ActionExpression {
 
 		@Override
 		public final boolean equals(final Object object) {
-			if (object instanceof SystemPropertyExpression) {
-				final SystemPropertyExpression that = (SystemPropertyExpression) object;
+			if (object instanceof final SystemPropertyExpression that) {
 				return Objects.equals(this.name, that.name) && Objects.equals(this.value, that.value);
 			}
 
@@ -884,8 +877,7 @@ public class ActionExpression {
 
 	@Override
 	public final boolean equals(final Object object) {
-		if (object instanceof ActionExpression) {
-			final ActionExpression that = (ActionExpression) object;
+		if (object instanceof final ActionExpression that) {
 			return Objects.equals(this.root, that.root);
 		}
 

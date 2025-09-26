@@ -39,11 +39,11 @@ public class NavigationHistoryAction extends PageEventAction {
 
 	private boolean recreateMenu;
 
-	private boolean forward;
+	private final boolean forward;
 
 	private Menu historyMenu;
 
-	private int MAX_HISTORY_LENGTH = 9;
+	private final int MAX_HISTORY_LENGTH = 9;
 
 	private class MenuCreator implements IMenuCreator {
 		@Override

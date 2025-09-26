@@ -40,7 +40,7 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 	 */
 	public static final String ATT_OVERRIDE_ACTION_ID = "overrideActionId";//$NON-NLS-1$
 
-	private String overrideActionId;
+	private final String overrideActionId;
 
 	private IWorkbenchPart activePart;
 
@@ -56,8 +56,7 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 	public void partClosed(IWorkbenchPartReference partRef) {
 		IWorkbenchPart part = partRef.getPart(false);
 		// FIX 543745
-		if (part instanceof MultiPageEditorPart && activePart instanceof IEditorPart) {
-			MultiPageEditorPart mulitPageEditorPart = (MultiPageEditorPart) part;
+		if (part instanceof MultiPageEditorPart mulitPageEditorPart && activePart instanceof IEditorPart) {
 			IEditorPart[] editorsForActivePart = mulitPageEditorPart
 					.findEditors(((IEditorPart) activePart).getEditorInput());
 			if (editorsForActivePart != null && editorsForActivePart.length > 0) {
@@ -115,8 +114,7 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 	protected void initDelegate() {
 		super.initDelegate();
 		final IActionDelegate actionDelegate = getDelegate();
-		if (actionDelegate instanceof IObjectActionDelegate && activePart != null) {
-			final IObjectActionDelegate objectActionDelegate = (IObjectActionDelegate) actionDelegate;
+		if (actionDelegate instanceof final IObjectActionDelegate objectActionDelegate && activePart != null) {
 			final ISafeRunnable runnable = new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -152,8 +150,7 @@ public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 		}
 		activePart = targetPart;
 		IActionDelegate delegate = getDelegate();
-		if (delegate instanceof IObjectActionDelegate && activePart != null) {
-			final IObjectActionDelegate objectActionDelegate = (IObjectActionDelegate) delegate;
+		if (delegate instanceof final IObjectActionDelegate objectActionDelegate && activePart != null) {
 			final ISafeRunnable runnable = new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {

@@ -36,11 +36,11 @@ import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 public class WorkingSetMenuContributionItem extends ContributionItem {
 	private Image image;
 
-	private int id;
+	private final int id;
 
-	private IWorkingSet workingSet;
+	private final IWorkingSet workingSet;
 
-	private WorkingSetFilterActionGroup actionGroup;
+	private final WorkingSetFilterActionGroup actionGroup;
 
 	/**
 	 * Returns the id of this menu contribution item
@@ -87,8 +87,9 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 			if (imageDescriptor != null) {
 				image = imageDescriptor.createImage();
 				mi.addDisposeListener(e -> {
-					if (image != null && !image.isDisposed())
+					if (image != null && !image.isDisposed()) {
 						image.dispose();
+					}
 				});
 			}
 		}
@@ -110,8 +111,9 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 	 */
 	@Override
 	public void dispose() {
-		if (image != null && !image.isDisposed())
+		if (image != null && !image.isDisposed()) {
 			image.dispose();
+		}
 		image = null;
 
 		super.dispose();

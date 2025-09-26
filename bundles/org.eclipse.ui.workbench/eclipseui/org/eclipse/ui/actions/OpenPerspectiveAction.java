@@ -79,6 +79,6 @@ public final class OpenPerspectiveAction extends Action implements IPluginContri
 
 	@Override
 	public String getPluginId() {
-		return descriptor instanceof IPluginContribution ? ((IPluginContribution) descriptor).getPluginId() : null;
+		return descriptor instanceof IPluginContribution i ? i.getPluginId() : null;
 	}
 }

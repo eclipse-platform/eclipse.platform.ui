@@ -159,7 +159,7 @@ public class DecorationScheduler {
 
 	private UIJob updateJob;
 
-	private Collection<ILabelProviderListener> removedListeners = Collections.synchronizedSet(new HashSet<>());
+	private final Collection<ILabelProviderListener> removedListeners = Collections.synchronizedSet(new HashSet<>());
 
 	private Job clearJob;
 

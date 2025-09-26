@@ -43,9 +43,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public final class LinearUndoViolationUserApprover extends LinearUndoViolationDetector {
 
-	private IWorkbenchPart part;
+	private final IWorkbenchPart part;
 
-	private IUndoContext context;
+	private final IUndoContext context;
 
 	/**
 	 * Create a LinearUndoViolationUserApprover associated with the specified

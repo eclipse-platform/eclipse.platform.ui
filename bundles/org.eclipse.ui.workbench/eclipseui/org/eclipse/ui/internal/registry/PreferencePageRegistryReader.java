@@ -36,7 +36,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 	private List<WorkbenchPreferenceNode> nodes;
 
-	private IWorkbench workbench;
+	private final IWorkbench workbench;
 
 	static class PreferencesCategoryNode extends CategoryNode {
 
@@ -154,8 +154,9 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		WorkbenchPreferenceNode node = createNode(element);
 		if (node != null) {
 			if (workbench instanceof Workbench) {
-				if (node.getId().equals(((Workbench) workbench).getMainPreferencePageId()))
+				if (node.getId().equals(((Workbench) workbench).getMainPreferencePageId())) {
 					node.setPriority(-1);
+				}
 			}
 			nodes.add(node);
 		}

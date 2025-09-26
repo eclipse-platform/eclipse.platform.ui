@@ -42,13 +42,13 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * Instances also store a list of wizards.
  */
 public class WizardCollectionElement extends AdaptableList implements IPluginContribution, IWizardCategory {
-	private String id;
+	private final String id;
 
 	private String pluginId;
 
 	private String name;
 
-	private WizardCollectionElement parent;
+	private final WizardCollectionElement parent;
 
 	private AdaptableList wizards = new AdaptableList();
 
@@ -249,8 +249,9 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 		int size = wizardDescriptors.length;
 		List<IWizardDescriptor> result = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
-			if (!WorkbenchActivityHelper.restrictUseOf(wizardDescriptors[i]))
+			if (!WorkbenchActivityHelper.restrictUseOf(wizardDescriptors[i])) {
 				result.add(wizardDescriptors[i]);
+			}
 		}
 		return result.toArray(new IWizardDescriptor[result.size()]);
 	}
@@ -279,8 +280,9 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 		List<WorkbenchWizardElement> result = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
 			WorkbenchWizardElement element = workbenchWizardElements[i];
-			if (!WorkbenchActivityHelper.restrictUseOf(element))
+			if (!WorkbenchActivityHelper.restrictUseOf(element)) {
 				result.add(element);
+			}
 		}
 		return result.toArray(new WorkbenchWizardElement[result.size()]);
 	}
@@ -303,10 +305,9 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 		if (obj == this) {
 			return true;
 		}
-		if (!(obj instanceof WizardCollectionElement)) {
+		if (!(obj instanceof WizardCollectionElement other)) {
 			return false;
 		}
-		WizardCollectionElement other = (WizardCollectionElement) obj;
 		return Objects.equals(this.getId(), other.getId()) && Objects.equals(this.name, other.name)
 				&& Objects.equals(this.getPluginId(), other.getPluginId());
 	}

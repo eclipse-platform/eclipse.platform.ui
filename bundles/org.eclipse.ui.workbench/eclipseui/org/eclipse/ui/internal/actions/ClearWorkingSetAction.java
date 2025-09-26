@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @since 2.1
  */
 public class ClearWorkingSetAction extends Action {
-	private WorkingSetFilterActionGroup actionGroup;
+	private final WorkingSetFilterActionGroup actionGroup;
 
 	/**
 	 * Creates a new instance of the receiver.

@@ -85,7 +85,7 @@ public class EditorMenuManager extends SubMenuManager {
 		}
 	}
 
-	private Overrides overrides = new Overrides();
+	private final Overrides overrides = new Overrides();
 
 	/**
 	 * Constructs a new editor manager.

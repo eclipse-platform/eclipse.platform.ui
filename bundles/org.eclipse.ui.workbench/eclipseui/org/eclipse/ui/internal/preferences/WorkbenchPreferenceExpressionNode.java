@@ -65,8 +65,9 @@ public class WorkbenchPreferenceExpressionNode extends PreferenceNode implements
 	 *         Expressions check.
 	 */
 	public static IPreferenceNode getNodeExpression(IPreferenceNode prefNode) {
-		if (prefNode == null)
+		if (prefNode == null) {
 			return null;
+		}
 		if (prefNode instanceof WorkbenchPreferenceExtensionNode) {
 			WorkbenchPreferenceExpressionNode node = (WorkbenchPreferenceExtensionNode) prefNode;
 			if (WorkbenchActivityHelper.restrictUseOf(node)) {

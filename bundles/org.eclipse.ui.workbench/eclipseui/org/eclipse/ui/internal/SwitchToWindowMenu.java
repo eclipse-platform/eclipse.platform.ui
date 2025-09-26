@@ -31,7 +31,7 @@ public class SwitchToWindowMenu extends ContributionItem {
 
 	private IWorkbenchWindow workbenchWindow;
 
-	private boolean showSeparator;
+	private final boolean showSeparator;
 
 	/**
 	 * Creates a new instance of this class.

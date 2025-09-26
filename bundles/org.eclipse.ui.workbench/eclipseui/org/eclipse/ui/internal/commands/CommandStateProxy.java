@@ -55,12 +55,12 @@ public final class CommandStateProxy extends PersistentState {
 	/**
 	 * The key in the preference store to locate the persisted state.
 	 */
-	private String preferenceKey;
+	private final String preferenceKey;
 
 	/**
 	 * The preference store containing the persisted state, if any.
 	 */
-	private IPreferenceStore preferenceStore;
+	private final IPreferenceStore preferenceStore;
 
 	/**
 	 * The real state. This value is <code>null</code> until the proxy is forced to
@@ -121,8 +121,7 @@ public final class CommandStateProxy extends PersistentState {
 	public void dispose() {
 		if (state != null) {
 			state.dispose();
-			if (state instanceof PersistentState) {
-				final PersistentState persistableState = (PersistentState) state;
+			if (state instanceof final PersistentState persistableState) {
 				if (persistableState.shouldPersist() && preferenceStore != null && preferenceKey != null) {
 					persistableState.save(preferenceStore, preferenceKey);
 				}
@@ -141,8 +140,7 @@ public final class CommandStateProxy extends PersistentState {
 
 	@Override
 	public void load(final IPreferenceStore store, final String preferenceKey) {
-		if (loadState() && state instanceof PersistentState) {
-			final PersistentState persistableState = (PersistentState) state;
+		if (loadState() && state instanceof final PersistentState persistableState) {
 			if (persistableState.shouldPersist() && preferenceStore != null && preferenceKey != null) {
 				persistableState.load(preferenceStore, preferenceKey);
 			}
@@ -179,8 +177,7 @@ public final class CommandStateProxy extends PersistentState {
 				configurationElement = null;
 
 				// Try to load the persistent state, if possible.
-				if (readPersistence && state instanceof PersistentState) {
-					final PersistentState persistentState = (PersistentState) state;
+				if (readPersistence && state instanceof final PersistentState persistentState) {
 					persistentState.setShouldPersist(true);
 				}
 				load(preferenceStore, preferenceKey);

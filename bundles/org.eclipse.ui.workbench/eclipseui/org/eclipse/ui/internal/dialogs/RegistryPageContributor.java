@@ -61,13 +61,13 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class RegistryPageContributor implements IPropertyPageContributor, IAdaptable, IPluginContribution {
 	private static final String CHILD_ENABLED_WHEN = "enabledWhen"; //$NON-NLS-1$
 
-	private String pageId;
+	private final String pageId;
 
 	/**
 	 * The list of subpages (immediate children) of this node (element type:
 	 * <code>RegistryPageContributor</code>).
 	 */
-	private Collection<RegistryPageContributor> subPages = new ArrayList<>();
+	private final Collection<RegistryPageContributor> subPages = new ArrayList<>();
 
 	private boolean adaptable = false;
 
@@ -76,7 +76,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 */
 	private final boolean supportsMultiSelect;
 
-	private IConfigurationElement pageElement;
+	private final IConfigurationElement pageElement;
 
 	private SoftReference<Map<String, String>> filterProperties;
 
@@ -100,8 +100,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	@Override
 	public PreferenceNode contributePropertyPage(PropertyPageManager mng, Object element) {
 		PropertyPageNode node = new PropertyPageNode(this, element);
-		if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(node.getId()))
+		if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(node.getId())) {
 			node.setPriority(-1);
+		}
 		return node;
 	}
 
@@ -135,14 +136,16 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 		}
 
 		if (supportsMultiSelect) {
-			if ((ppage instanceof IWorkbenchPropertyPageMulti))
+			if ((ppage instanceof IWorkbenchPropertyPageMulti)) {
 				((IWorkbenchPropertyPageMulti) ppage).setElements(adapt);
-			else
+			} else {
 				throw new CoreException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR,
 						"Property page must implement IWorkbenchPropertyPageMulti: " + getPageName(), //$NON-NLS-1$
 						null));
-		} else
+			}
+		} else {
 			((IWorkbenchPropertyPage) ppage).setElement(adapt[0]);
+		}
 
 		return ppage;
 	}
@@ -154,8 +157,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 */
 	private Object getAdaptedElement(Object element) {
 		Object adapted = LegacyResourceSupport.getAdapter(element, getObjectClass());
-		if (adapted != null)
+		if (adapted != null) {
 			return adapted;
+		}
 
 		return null;
 	}
@@ -220,11 +224,13 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 		Object[] objs = getObjects(object);
 
 		// If not a multi-select page not applicable to multiple selection
-		if (objs.length > 1 && !supportsMultiSelect)
+		if (objs.length > 1 && !supportsMultiSelect) {
 			return false;
+		}
 
-		if (failsEnablement(objs))
+		if (failsEnablement(objs)) {
 			return false;
+		}
 
 		// Test name filter
 		String nameFilter = pageElement.getAttribute(PropertyPagesRegistryReader.ATT_NAME_FILTER);
@@ -241,13 +247,15 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 						objectName = elementName;
 					}
 				}
-				if (!SelectionEnabler.verifyNameMatch(objectName, nameFilter))
+				if (!SelectionEnabler.verifyNameMatch(objectName, nameFilter)) {
 					return false;
+				}
 			}
 
 			// Test custom filter
-			if (getFilterProperties() == null)
+			if (getFilterProperties() == null) {
 				return true;
+			}
 			IActionFilter filter = null;
 
 			// Do the free IResource adapting
@@ -258,8 +266,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 
 			filter = Adapters.adapt(object, IActionFilter.class);
 
-			if (filter != null && !testCustom(object, filter))
+			if (filter != null && !testCustom(object, filter)) {
 				return false;
+			}
 		}
 
 		return true;
@@ -273,8 +282,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 * @return boolean <code>true</code> if it fails the enablement test
 	 */
 	private boolean failsEnablement(Object[] objs) {
-		if (enablementExpression == null)
+		if (enablementExpression == null) {
 			return false;
+		}
 		try {
 			// If multi-select property page, always pass a collection for iteration
 			Object object = (supportsMultiSelect) ? Arrays.asList(objs) : objs[0];
@@ -295,8 +305,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 * @return an object array representing the passed in object
 	 */
 	private Object[] getObjects(Object obj) {
-		if (obj instanceof IStructuredSelection)
+		if (obj instanceof IStructuredSelection) {
 			return ((IStructuredSelection) obj).toArray();
+		}
 		return new Object[] { obj };
 	}
 
@@ -306,13 +317,15 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	protected void initializeEnablement(IConfigurationElement definingElement) {
 		IConfigurationElement[] elements = definingElement.getChildren(CHILD_ENABLED_WHEN);
 
-		if (elements.length == 0)
+		if (elements.length == 0) {
 			return;
+		}
 
 		try {
 			IConfigurationElement[] enablement = elements[0].getChildren();
-			if (enablement.length == 0)
+			if (enablement.length == 0) {
 				return;
+			}
 			enablementExpression = ExpressionConverter.getDefault().perform(enablement[0]);
 		} catch (CoreException e) {
 			WorkbenchPlugin.log(e);
@@ -327,13 +340,15 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	private boolean testCustom(Object object, IActionFilter filter) {
 		Map<String, String> filterProperties = getFilterProperties();
 
-		if (filterProperties == null)
+		if (filterProperties == null) {
 			return false;
+		}
 		for (Entry<String, String> entry : filterProperties.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
-			if (!filter.testAttribute(object, key, value))
+			if (!filter.testAttribute(object, key, value)) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -403,8 +418,9 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 		if (tag.equals(PropertyPagesRegistryReader.TAG_FILTER)) {
 			String key = element.getAttribute(PropertyPagesRegistryReader.ATT_FILTER_NAME);
 			String value = element.getAttribute(PropertyPagesRegistryReader.ATT_FILTER_VALUE);
-			if (key == null || value == null)
+			if (key == null || value == null) {
 				return;
+			}
 			map.put(key, value);
 		}
 	}

@@ -126,7 +126,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		}
 	}
 
-	private IWorkbenchPartReference partReference;
+	private final IWorkbenchPartReference partReference;
 
 	private IWorkbenchPart part;
 
@@ -154,7 +154,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	protected MPart model;
 
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
 	private IEclipseContext e4Context;
 

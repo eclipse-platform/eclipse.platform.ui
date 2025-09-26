@@ -25,10 +25,10 @@ import org.eclipse.swt.widgets.Listener;
  * @since 3.5
  */
 public class WorkbenchKeyboard {
-	private KeyBindingDispatcher delegate;
+	private final KeyBindingDispatcher delegate;
 
 	static class KeyDownFilter implements Listener {
-		private KeyBindingDispatcher.KeyDownFilter delegate;
+		private final KeyBindingDispatcher.KeyDownFilter delegate;
 
 		@Override
 		public void handleEvent(Event event) {

@@ -31,7 +31,7 @@ public class CloseAllSavedAction extends PageEventAction implements IPropertyLis
 	 * List of parts (element type: <code>IWorkbenchPart</code>) against which this
 	 * class has outstanding property listeners registered.
 	 */
-	private List<IWorkbenchPart> partsWithListeners = new ArrayList<>(1);
+	private final List<IWorkbenchPart> partsWithListeners = new ArrayList<>(1);
 
 	/**
 	 * Create an instance of this class.

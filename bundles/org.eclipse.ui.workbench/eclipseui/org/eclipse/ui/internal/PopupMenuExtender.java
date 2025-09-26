@@ -93,15 +93,15 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 	 */
 	private int bitSet = 0;
 
-	private ArrayList<PluginActionContributionItem> actionContributionCache = new ArrayList<>();
+	private final ArrayList<PluginActionContributionItem> actionContributionCache = new ArrayList<>();
 	private boolean cleanupNeeded = false;
 
-	private MPart modelPart;
+	private final MPart modelPart;
 
 	/**
 	 * The context that will be used to create the popup menu's context under.
 	 */
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
 	/**
 	 * Construct a new menu extender.
@@ -262,8 +262,7 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 
 			@Override
 			public ISelection getSelection() {
-				if (part instanceof IEditorPart) {
-					final IEditorPart editorPart = (IEditorPart) part;
+				if (part instanceof final IEditorPart editorPart) {
 					return new StructuredSelection(new Object[] { editorPart.getEditorInput() });
 				}
 
@@ -337,13 +336,11 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 		final IWorkbenchPartSite site = part.getSite();
 		if (site != null) {
 			final IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
-			if (workbench instanceof Workbench) {
-				final Workbench realWorkbench = (Workbench) workbench;
+			if (workbench instanceof final Workbench realWorkbench) {
 				runCleanUp(realWorkbench);
 				ISelection input = null;
 				if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
-					if (part instanceof IEditorPart) {
-						final IEditorPart editorPart = (IEditorPart) part;
+					if (part instanceof final IEditorPart editorPart) {
 						input = new StructuredSelection(new Object[] { editorPart.getEditorInput() });
 					}
 				}
@@ -374,8 +371,7 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 	private void addMenuContributions() {
 		IRendererFactory factory = modelPart.getContext().get(IRendererFactory.class);
 		AbstractPartRenderer obj = factory.getRenderer(menuModel, null);
-		if (obj instanceof MenuManagerRenderer) {
-			MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
+		if (obj instanceof MenuManagerRenderer renderer) {
 			renderer.reconcileManagerToModel(menu, menuModel);
 			renderer.processContributions(menuModel, menuModel.getElementId(), false, true);
 			// double cast because we're bad people
@@ -447,8 +443,7 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 			IRendererFactory factory = modelContext.get(IRendererFactory.class);
 			if (factory != null) {
 				AbstractPartRenderer obj = factory.getRenderer(menuModel, null);
-				if (obj instanceof MenuManagerRenderer) {
-					MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
+				if (obj instanceof MenuManagerRenderer renderer) {
 					renderer.cleanUp(menuModel);
 				}
 			}
@@ -509,8 +504,7 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 			// unlink ourselves from the renderer
 			IRendererFactory factory = modelPart.getContext().get(IRendererFactory.class);
 			AbstractPartRenderer obj = factory.getRenderer(menuModel, null);
-			if (obj instanceof MenuManagerRenderer) {
-				MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
+			if (obj instanceof MenuManagerRenderer renderer) {
 				unlink(renderer, menuModel);
 				renderer.clearModelToManager(menuModel, menu);
 			}
@@ -535,8 +529,7 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 					renderer.clearModelToContribution(menuElement, (IContributionItem) item);
 					OpaqueElementUtil.clearOpaqueItem(menuElement);
 				}
-			} else if (menuElement instanceof MMenu) {
-				MMenu subMenu = (MMenu) menuElement;
+			} else if (menuElement instanceof MMenu subMenu) {
 				unlink(renderer, subMenu);
 				MenuManager manager = renderer.getManager(subMenu);
 				if (manager != null) {

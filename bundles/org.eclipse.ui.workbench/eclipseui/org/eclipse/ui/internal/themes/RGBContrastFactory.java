@@ -155,8 +155,7 @@ public class RGBContrastFactory implements IColorFactory, IExecutableExtension {
 	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
-		if (data instanceof Hashtable) {
-			Hashtable table = (Hashtable) data;
+		if (data instanceof Hashtable table) {
 			fg = (String) table.get("foreground"); //$NON-NLS-1$
 			bg1 = (String) table.get("background1"); //$NON-NLS-1$
 			bg2 = (String) table.get("background2"); //$NON-NLS-1$

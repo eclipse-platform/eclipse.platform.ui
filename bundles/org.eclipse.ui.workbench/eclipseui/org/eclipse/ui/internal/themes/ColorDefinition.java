@@ -37,7 +37,7 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 
 	private String defaultsTo;
 
-	private String pluginId;
+	private final String pluginId;
 
 	private String rawValue;
 

@@ -22,7 +22,7 @@ import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.IIdentifier;
 
 public final class ProxyActivityManager extends AbstractActivityManager {
-	private IActivityManager activityManager;
+	private final IActivityManager activityManager;
 
 	public ProxyActivityManager(IActivityManager activityManager) {
 		if (activityManager == null) {

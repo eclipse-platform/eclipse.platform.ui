@@ -40,9 +40,9 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = { IModelProcessorContribution.class, CommandToModelProcessor.class })
 public class CommandToModelProcessor implements IModelProcessorContribution {
 
-	private Map<String, MCategory> categories = new HashMap<>();
+	private final Map<String, MCategory> categories = new HashMap<>();
 
-	private Map<String, MCommand> commands = new HashMap<>();
+	private final Map<String, MCommand> commands = new HashMap<>();
 
 	private EModelService modelService;
 
@@ -87,8 +87,9 @@ public class CommandToModelProcessor implements IModelProcessorContribution {
 					if (!cmdName.equals(mCommand.getCommandName())) {
 						mCommand.setCommandName(cmdName);
 						String cmdDesc = cmd.getDescription();
-						if (cmdDesc != null)
+						if (cmdDesc != null) {
 							mCommand.setDescription(cmdDesc);
+						}
 					}
 				} catch (NotDefinedException e) {
 					// Since we asked for defined commands, this shouldn't be an issue

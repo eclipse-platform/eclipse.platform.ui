@@ -174,11 +174,11 @@ public final class Persistence {
 	}
 
 	static public void log(IMemento memento, String elementName, String msg) {
-		if (memento instanceof ConfigurationElementMemento) {
-			ConfigurationElementMemento cMemento = (ConfigurationElementMemento) memento;
+		if (memento instanceof ConfigurationElementMemento cMemento) {
 			log(elementName, msg, cMemento.getContributorName(), cMemento.getExtensionID());
-		} else
+		} else {
 			log(elementName, msg, null, null);
+		}
 	}
 
 	static public void log(IConfigurationElement element, String elementName, String msg) {
@@ -189,10 +189,11 @@ public final class Persistence {
 
 	static public void log(String elementName, String msg, String contributorName, String extensionID) {
 		String msgInContext = elementName + ": " + msg; //$NON-NLS-1$ ;
-		if (contributorName != null && extensionID != null)
+		if (contributorName != null && extensionID != null) {
 			msgInContext += NLS.bind(fullContextTemplate, contributorName, extensionID);
-		else if (contributorName != null)
+		} else if (contributorName != null) {
 			msgInContext += NLS.bind(shortContextTemplate, contributorName);
+		}
 		WorkbenchPlugin.log(msgInContext);
 	}
 }

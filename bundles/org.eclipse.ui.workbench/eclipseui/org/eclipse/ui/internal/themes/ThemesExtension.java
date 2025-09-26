@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class ThemesExtension implements IThemesExtension {
 	public static final String DEFAULT_CATEGORY_ID = "org.eclipse.ui.themes.CssTheme"; //$NON-NLS-1$
 
-	private List<IThemeElementDefinitionOverridable<?>> definitions = new ArrayList<>();
+	private final List<IThemeElementDefinitionOverridable<?>> definitions = new ArrayList<>();
 
 	@Override
 	public void addFontDefinition(String symbolicName) {

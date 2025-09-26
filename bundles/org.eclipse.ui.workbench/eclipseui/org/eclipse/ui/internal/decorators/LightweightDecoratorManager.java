@@ -117,7 +117,7 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
 		}
 	}
 
-	private LightweightRunnable runnable = new LightweightRunnable();
+	private final LightweightRunnable runnable = new LightweightRunnable();
 
 	// The lightweight definitions read from the registry
 	private LightweightDecoratorDefinition[] lightweightDefinitions;

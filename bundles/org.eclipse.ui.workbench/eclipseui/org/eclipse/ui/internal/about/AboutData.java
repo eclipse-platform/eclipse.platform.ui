@@ -31,13 +31,13 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.0
  */
 public abstract class AboutData {
-	private String providerName;
+	private final String providerName;
 
-	private String name;
+	private final String name;
 
-	private String version;
+	private final String version;
 
-	private String id;
+	private final String id;
 
 	private String versionedId = null;
 

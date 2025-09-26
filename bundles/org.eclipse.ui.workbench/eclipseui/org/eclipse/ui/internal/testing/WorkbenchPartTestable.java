@@ -25,7 +25,7 @@ import org.eclipse.ui.testing.IWorkbenchPartTestable;
  */
 public class WorkbenchPartTestable implements IWorkbenchPartTestable {
 
-	private Composite composite;
+	private final Composite composite;
 
 	/**
 	 * Create a new instance of this class based on the provided part.

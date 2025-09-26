@@ -82,7 +82,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 
 	private Set<String> workingSetIds;
 
-	private boolean canEdit;
+	private final boolean canEdit;
 
 	protected AbstractWorkingSetDialog(Shell parentShell, String[] workingSetIds, boolean canEdit) {
 		super(parentShell);
@@ -334,8 +334,9 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog implement
 
 		newButton.setEnabled(registry.hasNewPageWorkingSetDescriptor());
 
-		if (canEdit)
+		if (canEdit) {
 			removeButton.setEnabled(hasSelection);
+		}
 
 		IWorkingSet selectedWorkingSet = null;
 		if (hasSelection) {

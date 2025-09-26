@@ -43,7 +43,7 @@ final class Category implements ICategory {
 
 	private transient int hashCode = HASH_INITIAL;
 
-	private String id;
+	private final String id;
 
 	private String name;
 
@@ -98,11 +98,10 @@ final class Category implements ICategory {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof Category)) {
+		if (!(object instanceof final Category castedObject)) {
 			return false;
 		}
 
-		final Category castedObject = (Category) object;
 		return Objects.equals(categoryActivityBindings, castedObject.categoryActivityBindings)
 				&& defined == castedObject.defined && Objects.equals(id, castedObject.id)
 				&& Objects.equals(name, castedObject.name);

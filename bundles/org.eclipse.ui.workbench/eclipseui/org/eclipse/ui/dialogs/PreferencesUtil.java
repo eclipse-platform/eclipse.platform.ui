@@ -254,8 +254,9 @@ public final class PreferencesUtil {
 	public static PreferenceDialog createPropertyDialogOn(Shell shell, final Object element, String propertyPageId,
 			String[] displayedIds, Object data, int options) {
 		FilteredPreferenceDialog dialog = PropertyDialog.createDialogOn(shell, propertyPageId, element);
-		if (dialog == null)
+		if (dialog == null) {
 			return null;
+		}
 		applyOptions(data, displayedIds, dialog, options);
 		return dialog;
 	}
@@ -269,8 +270,9 @@ public final class PreferencesUtil {
 	 * @since 3.4
 	 */
 	public static boolean hasPropertiesContributors(Object element) {
-		if (element == null || !(element instanceof IAdaptable))
+		if (element == null || !(element instanceof IAdaptable)) {
 			return false;
+		}
 		Collection contributors = PropertyPageContributorManager.getManager().getApplicableContributors(element);
 		return contributors != null && contributors.size() > 0;
 	}

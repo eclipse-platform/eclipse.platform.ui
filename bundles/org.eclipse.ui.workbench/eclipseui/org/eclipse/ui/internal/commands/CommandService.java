@@ -87,9 +87,9 @@ public final class CommandService implements ICommandService, IUpdateService {
 	 */
 	private final CommandPersistence commandPersistence;
 
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
-	private ICommandHelpService commandHelpService;
+	private final ICommandHelpService commandHelpService;
 
 	/**
 	 * Constructs a new instance of <code>CommandService</code> using a command
@@ -137,8 +137,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 			final String[] stateIds = command.getStateIds();
 			for (final String stateId : stateIds) {
 				final State state = command.getState(stateId);
-				if (state instanceof PersistentState) {
-					final PersistentState persistentState = (PersistentState) state;
+				if (state instanceof final PersistentState persistentState) {
 					if (persistentState.shouldPersist()) {
 						persistentState.save(PrefUtil.getInternalPreferenceStore(),
 								createPreferenceKey(command, stateId));
@@ -318,8 +317,9 @@ public final class CommandService implements ICommandService, IUpdateService {
 
 	@Override
 	public void unregisterElement(IElementReference elementReference) {
-		if (commandCallbacks == null)
+		if (commandCallbacks == null) {
 			return;
+		}
 		List<IElementReference> parameterizedCommands = commandCallbacks.get(elementReference.getCommandId());
 		if (parameterizedCommands != null) {
 			parameterizedCommands.remove(elementReference);

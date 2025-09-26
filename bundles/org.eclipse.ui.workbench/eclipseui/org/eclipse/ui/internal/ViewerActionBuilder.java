@@ -105,7 +105,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 	 * element.
 	 */
 	private static class ViewerContribution extends BasicContribution implements ISelectionChangedListener {
-		private ISelectionProvider selProvider;
+		private final ISelectionProvider selProvider;
 
 		private ActionExpression visibilityTest;
 

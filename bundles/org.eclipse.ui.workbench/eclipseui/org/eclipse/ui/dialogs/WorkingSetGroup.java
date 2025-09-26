@@ -33,7 +33,7 @@ import org.osgi.framework.FrameworkUtil;
  */
 public final class WorkingSetGroup {
 
-	private WorkingSetConfigurationBlock workingSetBlock;
+	private final WorkingSetConfigurationBlock workingSetBlock;
 
 	/**
 	 * Create a new instance of this class.

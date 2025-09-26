@@ -26,7 +26,7 @@ import org.eclipse.ui.WorkbenchException;
  * with the view part in which the action is intended to run.
  */
 public final class ViewPluginAction extends PartPluginAction {
-	private IViewPart viewPart;
+	private final IViewPart viewPart;
 
 	/**
 	 * This class adds the requirement that action delegates loaded on demand

@@ -49,9 +49,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * </p>
  */
 public class DrillDownAdapter implements ISelectionChangedListener {
-	private TreeViewer fChildTree;
+	private final TreeViewer fChildTree;
 
-	private DrillStack fDrillStack;
+	private final DrillStack fDrillStack;
 
 	private Action homeAction;
 

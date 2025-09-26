@@ -51,8 +51,9 @@ public class CloseOthersHandler extends AbstractEvaluationHandler {
 				IEditorReference[] otherEditors = new IEditorReference[refArray.length - 1];
 				IEditorReference activeEditor = (IEditorReference) page.getReference(page.getActiveEditor());
 				for (int i = 0; i < refArray.length; i++) {
-					if (refArray[i] != activeEditor)
+					if (refArray[i] != activeEditor) {
 						continue;
+					}
 					System.arraycopy(refArray, 0, otherEditors, 0, i);
 					System.arraycopy(refArray, i + 1, otherEditors, i, refArray.length - 1 - i);
 					break;

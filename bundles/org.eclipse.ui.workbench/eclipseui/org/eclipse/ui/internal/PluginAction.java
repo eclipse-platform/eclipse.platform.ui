@@ -61,9 +61,9 @@ public abstract class PluginAction extends Action
 
 	private ISelection selection;
 
-	private IConfigurationElement configElement;
+	private final IConfigurationElement configElement;
 
-	private String pluginId;
+	private final String pluginId;
 
 	private String runAttribute = IWorkbenchRegistryConstants.ATT_CLASS;
 

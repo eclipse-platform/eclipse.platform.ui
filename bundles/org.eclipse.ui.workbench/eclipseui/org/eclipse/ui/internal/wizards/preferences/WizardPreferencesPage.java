@@ -793,10 +793,11 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 		if (shouldSaveTransferAll() && settings != null) {
 
 			boolean transferAll;
-			if (settings.get(TRANSFER_ALL_PREFERENCES_ID) == null)
+			if (settings.get(TRANSFER_ALL_PREFERENCES_ID) == null) {
 				transferAll = true;
-			else
+			} else {
 				transferAll = settings.getBoolean(TRANSFER_ALL_PREFERENCES_ID);
+			}
 			transferAllButton.setSelection(transferAll);
 			if (!transferAll) {
 				String[] preferenceIds = settings.getArray(TRANSFER_PREFERENCES_NAMES_ID);

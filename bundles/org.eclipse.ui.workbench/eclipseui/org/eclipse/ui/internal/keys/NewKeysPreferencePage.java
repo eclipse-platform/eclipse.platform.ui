@@ -216,7 +216,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 	 */
 	protected static class CategoryFilterTree extends FilteredTree {
 
-		private CategoryPatternFilter filter;
+		private final CategoryPatternFilter filter;
 
 		/**
 		 * Constructor for PatternFilteredTree.
@@ -238,7 +238,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	private final class BindingModelComparator extends ViewerComparator {
-		private LinkedList<Integer> sortColumns = new LinkedList<>();
+		private final LinkedList<Integer> sortColumns = new LinkedList<>();
 		private boolean ascending = true;
 
 		public BindingModelComparator() {
@@ -290,8 +290,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 				return sortUser(a, b);
 			}
 			IBaseLabelProvider baseLabel = ((TreeViewer) viewer).getLabelProvider();
-			if (baseLabel instanceof ITableLabelProvider) {
-				ITableLabelProvider tableProvider = (ITableLabelProvider) baseLabel;
+			if (baseLabel instanceof ITableLabelProvider tableProvider) {
 				String e1p = tableProvider.getColumnText(a, columnNumber);
 				String e2p = tableProvider.getColumnText(b, columnNumber);
 				if (e1p != null && e2p != null) {

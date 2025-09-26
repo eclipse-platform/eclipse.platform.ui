@@ -34,12 +34,12 @@ public class CategorizedActivity implements IActivity {
 	/**
 	 * The real <code>IActivity</code>.
 	 */
-	private IActivity activity;
+	private final IActivity activity;
 
 	/**
 	 * The <code>ICategory</code> under which this proxy will be rendered.
 	 */
-	private ICategory category;
+	private final ICategory category;
 
 	/**
 	 * Create a new instance.

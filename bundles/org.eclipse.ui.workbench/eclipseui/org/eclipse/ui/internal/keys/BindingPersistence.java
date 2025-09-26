@@ -532,16 +532,18 @@ public class BindingPersistence extends PreferencePersistence {
 
 		// the local cache for the sequence modifiers
 		IConfigurationElement[] sequenceModifiers = new IConfigurationElement[0];
-		if (configurationElementCount > 0)
+		if (configurationElementCount > 0) {
 			sequenceModifiers = getSequenceModifierElements(configurationElements[0]);
+		}
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
 			// different extension. update the cache ...
 			if (i > 0 && !configurationElement.getDeclaringExtension()
-					.equals(configurationElements[i - 1].getDeclaringExtension()))
+					.equals(configurationElements[i - 1].getDeclaringExtension())) {
 				sequenceModifiers = getSequenceModifierElements(configurationElement);
+			}
 
 			/*
 			 * Read out the command id. Doing this before determining if the key binding is
@@ -568,8 +570,9 @@ public class BindingPersistence extends PreferencePersistence {
 
 			// Read out the scheme id.
 			String schemeId = readSchemeId(configurationElement, warningsToLog, commandId);
-			if (isEmpty(schemeId))
+			if (isEmpty(schemeId)) {
 				continue;
+			}
 
 			// Read out the context id.
 			String contextId = readContextId(configurationElement);
@@ -584,8 +587,9 @@ public class BindingPersistence extends PreferencePersistence {
 
 			// Read out the key sequence.
 			KeySequence keySequence = readKeySequence(configurationElement, warningsToLog, commandId, keySequenceText);
-			if (keySequence == null)
+			if (keySequence == null) {
 				continue;
+			}
 
 			// Read out the locale and platform.
 
@@ -731,8 +735,9 @@ public class BindingPersistence extends PreferencePersistence {
 		IExtension extension = configurationElement.getDeclaringExtension();
 		List<IConfigurationElement> modifierElements = new ArrayList<>();
 		for (final IConfigurationElement configElement : extension.getConfigurationElements()) {
-			if (TAG_SEQUENCE_MODIFIER.equals(configElement.getName()))
+			if (TAG_SEQUENCE_MODIFIER.equals(configElement.getName())) {
 				modifierElements.add(configElement);
+			}
 		}
 		return modifierElements.toArray(new IConfigurationElement[modifierElements.size()]);
 	}
@@ -753,8 +758,9 @@ public class BindingPersistence extends PreferencePersistence {
 		if (isEmpty(keySequenceText)) {
 			keySequenceText = configurationElement.getAttribute(ATT_KEY_SEQUENCE);
 		}
-		if (isEmpty(keySequenceText))
+		if (isEmpty(keySequenceText)) {
 			keySequenceText = configurationElement.getAttribute(ATT_STRING);
+		}
 
 		return keySequenceText;
 

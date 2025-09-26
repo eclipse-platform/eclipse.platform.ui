@@ -77,7 +77,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 */
 	private final IHandlerService handlerService;
 
-	private IEvaluationService evaluationService;
+	private final IEvaluationService evaluationService;
 
 	/**
 	 * Constructs a new instance of <code>HandlerPersistence</code>.

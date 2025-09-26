@@ -45,10 +45,11 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		page.setBundleGroupInfos(bundleGroupInfos);
 		page.setInitialSelection(initialSelection);
 		String title;
-		if (productName != null)
+		if (productName != null) {
 			title = NLS.bind(WorkbenchMessages.AboutFeaturesDialog_shellTitle, productName);
-		else
+		} else {
 			title = WorkbenchMessages.AboutFeaturesDialog_SimpleTitle;
+		}
 		initializeDialog(page, title, IWorkbenchHelpContextIds.ABOUT_FEATURES_DIALOG);
 	}
 }

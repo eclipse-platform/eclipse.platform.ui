@@ -26,7 +26,7 @@ import org.eclipse.ui.IPageLayout;
 
 public class ModeledPageLayoutUtils {
 
-	private EModelService modelService;
+	private final EModelService modelService;
 
 	public ModeledPageLayoutUtils(EModelService modelService) {
 		this.modelService = modelService;
@@ -53,8 +53,9 @@ public class ModeledPageLayoutUtils {
 	}
 
 	public void insert(MUIElement toInsert, MUIElement relTo, int swtSide, int ratio) {
-		if (toInsert == null || relTo == null)
+		if (toInsert == null || relTo == null) {
 			return;
+		}
 
 		MElementContainer<MUIElement> relParent = relTo.getParent();
 		if (relParent != null) {

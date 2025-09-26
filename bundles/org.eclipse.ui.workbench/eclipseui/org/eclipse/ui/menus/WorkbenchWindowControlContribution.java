@@ -81,8 +81,9 @@ public abstract class WorkbenchWindowControlContribution extends InternalControl
 
 	@Override
 	public final int getOrientation() {
-		if (getCurSide() == SWT.LEFT || getCurSide() == SWT.RIGHT)
+		if (getCurSide() == SWT.LEFT || getCurSide() == SWT.RIGHT) {
 			return SWT.VERTICAL;
+		}
 
 		return SWT.HORIZONTAL;
 	}

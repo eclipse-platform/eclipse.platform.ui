@@ -147,7 +147,7 @@ public class EditorSelectionDialog extends Dialog {
 
 	private IEditorDescriptor[] editorsToFilter;
 
-	private DialogListener listener = new DialogListener();
+	private final DialogListener listener = new DialogListener();
 
 	private ResourceManager resourceManager;
 

@@ -35,7 +35,7 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(service = { IModelProcessorContribution.class, ContextToModelProcessor.class })
 public class ContextToModelProcessor implements IModelProcessorContribution {
-	private Map<String, MBindingContext> contexts = new HashMap<>();
+	private final Map<String, MBindingContext> contexts = new HashMap<>();
 
 	@Execute
 	void process(MApplication application, IEclipseContext context) {

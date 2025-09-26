@@ -38,10 +38,12 @@ public class ContextMenuHandler extends AbstractHandler {
 			event.y = pt.y;
 			event.detail = SWT.MENU_KEYBOARD;
 			focusControl.notifyListeners(SWT.MenuDetect, event);
-			if (focusControl.isDisposed())
+			if (focusControl.isDisposed()) {
 				return null;
-			if (!event.doit)
+			}
+			if (!event.doit) {
 				return null;
+			}
 			Menu menu = focusControl.getMenu();
 
 			if (menu != null && !menu.isDisposed()) {

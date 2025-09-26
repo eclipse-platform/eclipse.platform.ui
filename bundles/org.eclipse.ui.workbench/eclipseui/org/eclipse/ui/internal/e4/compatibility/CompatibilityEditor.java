@@ -45,7 +45,7 @@ public class CompatibilityEditor extends CompatibilityPart {
 
 	public static final String MODEL_ELEMENT_ID = "org.eclipse.e4.ui.compatibility.editor"; //$NON-NLS-1$
 
-	private EditorReference reference;
+	private final EditorReference reference;
 
 	@Inject
 	private EModelService modelService;

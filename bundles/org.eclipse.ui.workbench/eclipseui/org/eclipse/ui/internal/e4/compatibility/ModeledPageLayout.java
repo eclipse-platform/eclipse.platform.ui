@@ -98,27 +98,27 @@ public class ModeledPageLayout implements IPageLayout {
 		return result;
 	}
 
-	private MApplication application;
+	private final MApplication application;
 	// private MWindow window;
-	private EModelService modelService;
+	private final EModelService modelService;
 
 	EPartService partService;
 	WorkbenchPage page;
 	MPerspective perspModel;
-	private IPerspectiveDescriptor descriptor;
+	private final IPerspectiveDescriptor descriptor;
 
-	private MPlaceholder eaRef;
+	private final MPlaceholder eaRef;
 
 	private MPartStack editorStack;
 
 	boolean createReferences;
 
-	private IViewRegistry viewRegistry;
+	private final IViewRegistry viewRegistry;
 
-	private ModeledPageLayoutUtils layoutUtils;
+	private final ModeledPageLayoutUtils layoutUtils;
 
 	private static class ViewActivator implements IIdentifierListener {
-		private MUIElement element;
+		private final MUIElement element;
 
 		public ViewActivator(MUIElement element) {
 			this.element = element;
@@ -129,8 +129,9 @@ public class ModeledPageLayout implements IPageLayout {
 			IIdentifier identifier = identifierEvent.getIdentifier();
 
 			// Not activated, do nothing
-			if (!identifier.isEnabled())
+			if (!identifier.isEnabled()) {
 				return;
+			}
 
 			// stop listening for activations
 			identifier.removeIdentifierListener(this);
@@ -249,8 +250,7 @@ public class ModeledPageLayout implements IPageLayout {
 	@Override
 	public void addStandaloneView(String viewId, boolean showTitle, int relationship, float ratio, String refId) {
 		MUIElement newElement = insertView(viewId, relationship, ratio, refId, true, showTitle);
-		if (newElement instanceof MPartStack) {
-			MPartStack stack = (MPartStack) newElement;
+		if (newElement instanceof MPartStack stack) {
 			stack.getTags().add(IPresentationEngine.STANDALONE);
 			stack.getChildren().get(0).getTags().add(IPresentationEngine.NO_MOVE);
 		} else {
@@ -262,8 +262,7 @@ public class ModeledPageLayout implements IPageLayout {
 	public void addStandaloneViewPlaceholder(String viewId, int relationship, float ratio, String refId,
 			boolean showTitle) {
 		MUIElement newElement = insertView(viewId, relationship, ratio, refId, false, showTitle);
-		if (newElement instanceof MPartStack) {
-			MPartStack stack = (MPartStack) newElement;
+		if (newElement instanceof MPartStack stack) {
 			stack.getTags().add(IPresentationEngine.STANDALONE);
 			stack.getChildren().get(0).getTags().add(IPresentationEngine.NO_MOVE);
 		} else {
@@ -285,10 +284,12 @@ public class ModeledPageLayout implements IPageLayout {
 
 	protected boolean isViewFiltered(String viewID) {
 		IViewDescriptor viewDescriptor = viewRegistry.find(viewID);
-		if (viewDescriptor == null)
+		if (viewDescriptor == null) {
 			return false;
-		if (WorkbenchActivityHelper.restrictUseOf(viewDescriptor))
+		}
+		if (WorkbenchActivityHelper.restrictUseOf(viewDescriptor)) {
 			return true;
+		}
 		return WorkbenchActivityHelper.filterItem(viewDescriptor);
 	}
 
@@ -335,12 +336,14 @@ public class ModeledPageLayout implements IPageLayout {
 	@Override
 	public IPlaceholderFolderLayout getFolderForView(String id) {
 		MPart view = findPart(perspModel, id);
-		if (view == null)
+		if (view == null) {
 			return null;
+		}
 
 		MUIElement stack = view.getParent();
-		if (stack == null || !(stack instanceof MPartStack))
+		if (stack == null || !(stack instanceof MPartStack)) {
 			return null;
+		}
 
 		return new ModeledPlaceholderFolderLayout(this, application, (MPartStack) stack);
 	}
@@ -348,12 +351,14 @@ public class ModeledPageLayout implements IPageLayout {
 	@Override
 	public IViewLayout getViewLayout(String id) {
 		MPart view = findPart(perspModel, id);
-		if (view != null)
+		if (view != null) {
 			return new ModeledViewLayout(view);
+		}
 
 		MPlaceholder placeholder = findPlaceholder(perspModel, id);
-		if (placeholder != null)
+		if (placeholder != null) {
 			return new ModeledViewLayout(placeholder);
+		}
 
 		return null;
 	}
@@ -454,8 +459,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	private MUIElement getLastElement(MUIElement element) {
-		if (element instanceof MElementContainer<?>) {
-			MElementContainer<?> container = (MElementContainer<?>) element;
+		if (element instanceof MElementContainer<?> container) {
 			List<?> children = container.getChildren();
 			return children.isEmpty() ? container : getLastElement((MUIElement) children.get(children.size() - 1));
 		}
@@ -516,24 +520,28 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public static void replace(MUIElement relTo, MElementContainer<MUIElement> newParent) {
-		if (relTo == null || newParent == null)
+		if (relTo == null || newParent == null) {
 			return;
+		}
 
 		MElementContainer<MUIElement> parent = relTo.getParent();
-		if (parent == null)
+		if (parent == null) {
 			return;
+		}
 
 		List<MUIElement> kids = parent.getChildren();
-		if (kids == null)
+		if (kids == null) {
 			return;
+		}
 
 		kids.add(kids.indexOf(relTo), newParent);
 		kids.remove(relTo);
 	}
 
 	public static void insertParent(MElementContainer<MUIElement> newParent, MUIElement relTo) {
-		if (newParent == null || relTo == null)
+		if (newParent == null || relTo == null) {
 			return;
+		}
 
 		MPart curParent = (MPart) relTo.getParent();
 		if (curParent != null) {
@@ -546,20 +554,21 @@ public class ModeledPageLayout implements IPageLayout {
 
 	MUIElement findElement(MUIElement toSearch, String id) {
 		List<Object> found = modelService.findElements(toSearch, id, null, null, EModelService.IN_ANY_PERSPECTIVE);
-		if (found.size() > 0)
+		if (found.size() > 0) {
 			return (MUIElement) found.get(0);
+		}
 
 		return modelService.find(id, toSearch);
 	}
 
 	private MPart findPart(MUIElement toSearch, String id) {
 		MUIElement element = modelService.find(id, toSearch);
-		return element instanceof MPart ? (MPart) element : null;
+		return element instanceof MPart m ? m : null;
 	}
 
 	private MPlaceholder findPlaceholder(MUIElement toSearch, String id) {
 		MUIElement element = modelService.find(id, toSearch);
-		return element instanceof MPlaceholder ? (MPlaceholder) element : null;
+		return element instanceof MPlaceholder m ? m : null;
 	}
 
 	public void addHiddenMenuItemId(String id) {
@@ -642,12 +651,14 @@ public class ModeledPageLayout implements IPageLayout {
 	public void addEditorOnboardingCommandId(String commandId) {
 		long numberOfOnboardingCommands = perspModel.getTags().stream()
 				.filter(t -> t.startsWith(EDITOR_ONBOARDING_COMMAND)).count();
-		if (numberOfOnboardingCommands >= 5)
+		if (numberOfOnboardingCommands >= 5) {
 			return;
+		}
 
 		IContributionFactory contributionFactory = application.getContext().get(IContributionFactory.class);
-		if (!contributionFactory.isEnabled(commandId))
+		if (!contributionFactory.isEnabled(commandId)) {
 			return;
+		}
 
 		Predicate<MKeyBinding> commandWithEqualId = b -> Optional.of(b).map(MKeyBinding::getCommand)
 				.map(MCommand::getElementId).filter(elementId -> elementId.equals(commandId)).isPresent();

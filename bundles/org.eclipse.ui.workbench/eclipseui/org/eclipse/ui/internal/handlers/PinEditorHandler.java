@@ -44,9 +44,7 @@ public class PinEditorHandler extends AbstractHandler implements IElementUpdater
 			return null;
 		}
 		IWorkbenchPartReference ref = window.getActivePage().getReference(editor);
-		if (ref instanceof WorkbenchPartReference) {
-			WorkbenchPartReference concreteRef = (WorkbenchPartReference) ref;
-
+		if (ref instanceof WorkbenchPartReference concreteRef) {
 			concreteRef.setPinned(!concreteRef.isPinned());
 			ICommandService commandService = window.getService(ICommandService.class);
 			commandService.refreshElements(event.getCommand().getId(), null);
@@ -69,8 +67,7 @@ public class PinEditorHandler extends AbstractHandler implements IElementUpdater
 			return;
 		}
 		IWorkbenchPartReference ref = page.getReference(editor);
-		if (ref instanceof WorkbenchPartReference) {
-			WorkbenchPartReference concreteRef = (WorkbenchPartReference) ref;
+		if (ref instanceof WorkbenchPartReference concreteRef) {
 			element.setChecked(concreteRef.isPinned());
 		}
 	}

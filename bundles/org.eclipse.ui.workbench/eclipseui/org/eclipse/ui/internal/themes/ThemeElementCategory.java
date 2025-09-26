@@ -25,17 +25,17 @@ import org.eclipse.ui.themes.IThemePreview;
  */
 public class ThemeElementCategory implements IPluginContribution, IThemeElementDefinition {
 
-	private String description;
+	private final String description;
 
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
-	private String id;
+	private final String id;
 
-	private String parentId;
+	private final String parentId;
 
-	private String label;
+	private final String label;
 
-	private String pluginId;
+	private final String pluginId;
 
 	public ThemeElementCategory(String label, String id, String parentId, String description, String pluginId,
 			IConfigurationElement element) {

@@ -23,9 +23,9 @@ import org.eclipse.ui.internal.WorkbenchImages;
  * An image descriptor that loads its data from a program file.
  */
 public class ProgramImageDescriptor extends ImageDescriptor {
-	private String filename;
+	private final String filename;
 
-	private int offset;
+	private final int offset;
 
 	/**
 	 * Creates a new ImageDescriptor. The image is loaded from a file with the given
@@ -41,10 +41,9 @@ public class ProgramImageDescriptor extends ImageDescriptor {
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof ProgramImageDescriptor)) {
+		if (!(o instanceof ProgramImageDescriptor other)) {
 			return false;
 		}
-		ProgramImageDescriptor other = (ProgramImageDescriptor) o;
 		return filename.equals(other.filename) && offset == other.offset;
 	}
 

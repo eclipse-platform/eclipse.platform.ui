@@ -61,7 +61,7 @@ import org.eclipse.ui.testing.ContributionInfo;
 
 public class CompatibilityView extends CompatibilityPart {
 
-	private ViewReference reference;
+	private final ViewReference reference;
 
 	@Inject
 	EModelService modelService;
@@ -123,8 +123,7 @@ public class CompatibilityView extends CompatibilityPart {
 
 		}
 		AbstractPartRenderer apr = rendererFactory.getRenderer(menu, parent);
-		if (apr instanceof MenuManagerRenderer) {
-			MenuManagerRenderer renderer = (MenuManagerRenderer) apr;
+		if (apr instanceof MenuManagerRenderer renderer) {
 			renderer.linkModelToManager(menu, mm);
 		}
 
@@ -164,8 +163,7 @@ public class CompatibilityView extends CompatibilityPart {
 		toolBarParent.dispose();
 
 		apr = rendererFactory.getRenderer(menu, parent);
-		if (apr instanceof MenuManagerRenderer) {
-			MenuManagerRenderer renderer = (MenuManagerRenderer) apr;
+		if (apr instanceof MenuManagerRenderer renderer) {
 			// create opaque items for any contribution items that were added
 			// directly to the manager
 			renderer.reconcileManagerToModel(mm, menu);
@@ -241,8 +239,7 @@ public class CompatibilityView extends CompatibilityPart {
 			} else if (OpaqueElementUtil.isOpaqueMenuItem(child)) {
 				OpaqueElementUtil.clearOpaqueItem(child);
 				it.remove();
-			} else if (child instanceof MMenu) {
-				MMenu submenu = (MMenu) child;
+			} else if (child instanceof MMenu submenu) {
 				MenuManager manager = renderer.getManager(submenu);
 				if (manager != null) {
 					renderer.clearModelToManager(submenu, manager);
@@ -265,8 +262,7 @@ public class CompatibilityView extends CompatibilityPart {
 		for (MMenu menu : part.getMenus()) {
 			if (menu.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
 				AbstractPartRenderer apr = rendererFactory.getRenderer(menu, null);
-				if (apr instanceof MenuManagerRenderer) {
-					MenuManagerRenderer renderer = (MenuManagerRenderer) apr;
+				if (apr instanceof MenuManagerRenderer renderer) {
 					MenuManager mm = (MenuManager) actionBars.getMenuManager();
 					renderer.clearModelToManager(menu, mm);
 					clearOpaqueMenuItems(renderer, menu);
@@ -278,9 +274,8 @@ public class CompatibilityView extends CompatibilityPart {
 		MToolBar toolbar = part.getToolbar();
 		if (toolbar != null) {
 			AbstractPartRenderer apr = rendererFactory.getRenderer(toolbar, null);
-			if (apr instanceof ToolBarManagerRenderer) {
+			if (apr instanceof ToolBarManagerRenderer tbmr) {
 				ToolBarManager tbm = (ToolBarManager) actionBars.getToolBarManager();
-				ToolBarManagerRenderer tbmr = (ToolBarManagerRenderer) apr;
 				tbmr.clearModelToManager(toolbar, tbm);
 				clearOpaqueToolBarItems(tbmr, toolbar);
 			}
@@ -293,10 +288,9 @@ public class CompatibilityView extends CompatibilityPart {
 
 	private static void clearMenuServiceContributions(PartSite site, MPart part) {
 		IMenuService menuService = site.getService(IMenuService.class);
-		if (!(menuService instanceof IMenuServiceWorkaround)) {
+		if (!(menuService instanceof IMenuServiceWorkaround service)) {
 			return;
 		}
-		IMenuServiceWorkaround service = (IMenuServiceWorkaround) menuService;
 		service.clearContributions(site, part);
 	}
 

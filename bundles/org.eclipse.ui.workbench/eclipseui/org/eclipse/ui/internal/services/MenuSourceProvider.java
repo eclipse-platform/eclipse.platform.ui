@@ -49,7 +49,7 @@ public final class MenuSourceProvider extends AbstractSourceProvider {
 	 * The menu ids that are currently showing, as known by this source provider.
 	 * This value may be <code>null</code>.
 	 */
-	private Set menuIds = new HashSet();
+	private final Set menuIds = new HashSet();
 
 	/**
 	 * Adds all of the given menu identifiers as being shown.

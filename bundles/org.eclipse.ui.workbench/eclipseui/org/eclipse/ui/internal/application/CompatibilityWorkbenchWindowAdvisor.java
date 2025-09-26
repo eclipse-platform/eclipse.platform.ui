@@ -31,7 +31,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
  */
 public class CompatibilityWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
-	private WorkbenchAdvisor wbAdvisor;
+	private final WorkbenchAdvisor wbAdvisor;
 
 	/**
 	 * Creates a new compatibility workbench window advisor.

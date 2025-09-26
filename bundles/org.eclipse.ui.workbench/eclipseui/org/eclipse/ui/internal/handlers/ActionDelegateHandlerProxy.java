@@ -84,13 +84,13 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 	 * The identifier of the actions to create as a wrapper to the command
 	 * architecture. This value may be <code>null</code>.
 	 */
-	private String actionId;
+	private final String actionId;
 
 	/**
 	 * The command that will back the dummy actions exposed to this delegate. This
 	 * value is never <code>null</code>.
 	 */
-	private ParameterizedCommand command;
+	private final ParameterizedCommand command;
 
 	/**
 	 * This is the current selection, as seen by this proxy.
@@ -117,14 +117,14 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 	 * The name of the configuration element attribute which contains the
 	 * information necessary to instantiate the real handler.
 	 */
-	private String delegateAttributeName;
+	private final String delegateAttributeName;
 
 	/**
 	 * The configuration element from which the handler can be created. This value
 	 * will exist until the element is converted into a real class -- at which point
 	 * this value will be set to <code>null</code>.
 	 */
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
 	/**
 	 * The <code>enabledWhen</code> expression for the handler. Only if this
@@ -238,11 +238,9 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 
 	private void disposeDelegate() {
 		final IActionDelegate actDel = getDelegate();
-		if (actDel instanceof IWorkbenchWindowActionDelegate) {
-			final IWorkbenchWindowActionDelegate workbenchWindowDelegate = (IWorkbenchWindowActionDelegate) actDel;
+		if (actDel instanceof final IWorkbenchWindowActionDelegate workbenchWindowDelegate) {
 			workbenchWindowDelegate.dispose();
-		} else if (actDel instanceof IActionDelegate2) {
-			final IActionDelegate2 delegate2 = (IActionDelegate2) actDel;
+		} else if (actDel instanceof final IActionDelegate2 delegate2) {
 			delegate2.dispose();
 		}
 		delegate = null;
@@ -261,8 +259,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 
 			// Attempt to update the selection.
 			final Object applicationContext = event.getApplicationContext();
-			if (applicationContext instanceof IEvaluationContext) {
-				final IEvaluationContext context = (IEvaluationContext) applicationContext;
+			if (applicationContext instanceof final IEvaluationContext context) {
 				updateDelegate(action, context);
 			}
 
@@ -271,15 +268,11 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 			}
 
 			// Decide what type of delegate we have.
-			if ((delegate instanceof IActionDelegate2) && (trigger instanceof Event)) {
+			if ((delegate instanceof final IActionDelegate2 delegate2) && (trigger instanceof final Event triggeringEvent)) {
 				// This supports Eclipse 2.1 to Eclipse 3.1.
-				final IActionDelegate2 delegate2 = (IActionDelegate2) delegate;
-				final Event triggeringEvent = (Event) trigger;
 				delegate2.runWithEvent(action, triggeringEvent);
-			} else if ((delegate instanceof IActionDelegateWithEvent) && (trigger instanceof Event)) {
+			} else if ((delegate instanceof final IActionDelegateWithEvent delegateWithEvent) && (trigger instanceof final Event triggeringEvent)) {
 				// This supports Eclipse 2.0
-				final IActionDelegateWithEvent delegateWithEvent = (IActionDelegateWithEvent) delegate;
-				final Event triggeringEvent = (Event) trigger;
 				delegateWithEvent.runWithEvent(action, triggeringEvent);
 			} else {
 				delegate.run(action);
@@ -434,8 +427,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 			@Override
 			public void run() {
 				// Handle IActionDelegate2
-				if (delegate instanceof IActionDelegate2) {
-					final IActionDelegate2 delegate2 = (IActionDelegate2) delegate;
+				if (delegate instanceof final IActionDelegate2 delegate2) {
 					delegate2.init(action);
 				}
 
@@ -460,11 +452,10 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener, ISe
 
 	@Override
 	public void setEnabled(Object evaluationContext) {
-		if (!(evaluationContext instanceof IEvaluationContext)) {
+		if (!(evaluationContext instanceof IEvaluationContext context)) {
 			return;
 		}
 
-		IEvaluationContext context = (IEvaluationContext) evaluationContext;
 		final CommandLegacyActionWrapper action = getAction();
 		if (enabledWhenExpression != null) {
 			try {

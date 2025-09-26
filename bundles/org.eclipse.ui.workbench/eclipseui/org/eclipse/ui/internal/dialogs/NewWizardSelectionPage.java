@@ -35,14 +35,14 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * currently aware of activity categories.
  */
 class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
-	private IWizardCategory wizardCategories;
+	private final IWizardCategory wizardCategories;
 
 	// widgets
 	private NewWizardNewPage newResourcePage;
 
-	private IWizardDescriptor[] primaryWizards;
+	private final IWizardDescriptor[] primaryWizards;
 
-	private boolean projectsOnly;
+	private final boolean projectsOnly;
 
 	private boolean canFinishEarly = false, hasPages = true;
 

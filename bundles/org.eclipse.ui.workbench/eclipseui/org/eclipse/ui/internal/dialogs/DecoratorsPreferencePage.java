@@ -120,7 +120,7 @@ public class DecoratorsPreferencePage extends PreferencePage implements IWorkben
 
 		checkboxViewer.setContentProvider(new IStructuredContentProvider() {
 			private final Comparator comparer = new Comparator() {
-				private Collator collator = Collator.getInstance();
+				private final Collator collator = Collator.getInstance();
 
 				@Override
 				public int compare(Object arg0, Object arg1) {

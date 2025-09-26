@@ -57,8 +57,7 @@ public class ShowPartPaneMenuHandler extends AbstractEvaluationHandler {
 				if (partContainer != null) {
 					Composite parent = partContainer.getParent();
 					while (parent != null) {
-						if (parent instanceof CTabFolder) {
-							CTabFolder ctf = (CTabFolder) parent;
+						if (parent instanceof CTabFolder ctf) {
 							final CTabItem item = ctf.getSelection();
 							if (item != null) {
 								final Display disp = item.getDisplay();

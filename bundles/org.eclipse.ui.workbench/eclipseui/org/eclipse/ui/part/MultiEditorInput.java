@@ -109,10 +109,9 @@ public class MultiEditorInput implements IEditorInput {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof MultiEditorInput)) {
+		if (!(obj instanceof MultiEditorInput other)) {
 			return false;
 		}
-		MultiEditorInput other = (MultiEditorInput) obj;
 		return Arrays.equals(this.editors, other.editors) && Arrays.equals(this.input, other.input);
 	}
 

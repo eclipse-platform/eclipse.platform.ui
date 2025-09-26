@@ -34,8 +34,8 @@ import org.eclipse.ui.activities.NotDefinedException;
  */
 public class ActivityCategoryLabelProvider extends LabelProvider {
 
-	private LocalResourceManager manager;
-	private Map<Object, ImageDescriptor> descriptorMap = new HashMap<>();
+	private final LocalResourceManager manager;
+	private final Map<Object, ImageDescriptor> descriptorMap = new HashMap<>();
 
 	/**
 	 * Create a new instance of this class.
@@ -63,14 +63,12 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
 			return descriptor;
 		}
 
-		if (element instanceof ICategory) {
-			ICategory category = (ICategory) element;
+		if (element instanceof ICategory category) {
 			descriptor = PlatformUI.getWorkbench().getActivitySupport().getImageDescriptor(category);
 			if (descriptor != null) {
 				descriptorMap.put(element, descriptor);
 			}
-		} else if (element instanceof IActivity) {
-			IActivity activity = (IActivity) element;
+		} else if (element instanceof IActivity activity) {
 			descriptor = PlatformUI.getWorkbench().getActivitySupport().getImageDescriptor(activity);
 			if (descriptor != null) {
 				descriptorMap.put(element, descriptor);
@@ -81,15 +79,13 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof IActivity) {
-			IActivity activity = (IActivity) element;
+		if (element instanceof IActivity activity) {
 			try {
 				return activity.getName();
 			} catch (NotDefinedException e) {
 				return activity.getId();
 			}
-		} else if (element instanceof ICategory) {
-			ICategory category = ((ICategory) element);
+		} else if (element instanceof ICategory category) {
 			try {
 				return category.getName();
 			} catch (NotDefinedException e) {

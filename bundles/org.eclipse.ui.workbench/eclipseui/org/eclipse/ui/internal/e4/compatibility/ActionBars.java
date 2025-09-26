@@ -37,7 +37,7 @@ public class ActionBars extends SubActionBars {
 
 	private IMenuManager menuManager;
 
-	private MPart part;
+	private final MPart part;
 
 	public ActionBars(final IActionBars parent, final IServiceLocator serviceLocator, MPart part) {
 		super(parent, serviceLocator);

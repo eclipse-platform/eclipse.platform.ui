@@ -178,16 +178,14 @@ abstract class NameAndDescriptionToolTip extends ToolTip {
 	abstract protected void addContent(Composite destination, Object modelElement);
 
 	static String getDescription(IContributionItem item) {
-		if (item instanceof ActionContributionItem) {
-			ActionContributionItem aci = (ActionContributionItem) item;
+		if (item instanceof ActionContributionItem aci) {
 			IAction action = aci.getAction();
 			if (action == null) {
 				return null;
 			}
 			return action.getDescription();
 		}
-		if (item instanceof ActionSetContributionItem) {
-			ActionSetContributionItem asci = (ActionSetContributionItem) item;
+		if (item instanceof ActionSetContributionItem asci) {
 			IContributionItem subitem = asci.getInnerItem();
 			return getDescription(subitem);
 		}
@@ -195,9 +193,7 @@ abstract class NameAndDescriptionToolTip extends ToolTip {
 	}
 
 	static String getDescription(Object object) {
-		if (object instanceof DisplayItem) {
-			DisplayItem item = (DisplayItem) object;
-
+		if (object instanceof DisplayItem item) {
 			if (CustomizePerspectiveDialog.isNewWizard(item)) {
 				ShortcutItem shortcut = (ShortcutItem) item;
 				IWizardDescriptor descriptor = (IWizardDescriptor) shortcut.getDescriptor();
@@ -224,8 +220,7 @@ abstract class NameAndDescriptionToolTip extends ToolTip {
 			return NameAndDescriptionToolTip.getDescription(contrib);
 		}
 
-		if (object instanceof ActionSet) {
-			ActionSet actionSet = (ActionSet) object;
+		if (object instanceof ActionSet actionSet) {
 			return actionSet.descriptor.getDescription();
 		}
 

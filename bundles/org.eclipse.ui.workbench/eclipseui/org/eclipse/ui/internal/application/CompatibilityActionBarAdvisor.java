@@ -25,7 +25,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
  */
 public class CompatibilityActionBarAdvisor extends ActionBarAdvisor {
 
-	private WorkbenchAdvisor wbAdvisor;
+	private final WorkbenchAdvisor wbAdvisor;
 
 	/**
 	 * Creates a new compatibility action bar advisor.

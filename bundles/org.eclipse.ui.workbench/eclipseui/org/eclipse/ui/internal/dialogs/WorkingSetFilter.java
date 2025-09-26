@@ -29,8 +29,7 @@ public class WorkingSetFilter extends ViewerFilter {
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (element instanceof IWorkingSet) {
-			IWorkingSet workingSet = (IWorkingSet) element;
+		if (element instanceof IWorkingSet workingSet) {
 			String id = workingSet.getId();
 			// if (!workingSet.isVisible())
 			// return false;

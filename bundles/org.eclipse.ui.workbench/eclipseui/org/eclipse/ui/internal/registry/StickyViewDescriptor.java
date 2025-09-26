@@ -27,9 +27,9 @@ import org.eclipse.ui.views.IStickyViewDescriptor;
  */
 public class StickyViewDescriptor implements IStickyViewDescriptor, IPluginContribution {
 
-	private IConfigurationElement configurationElement;
+	private final IConfigurationElement configurationElement;
 
-	private String id;
+	private final String id;
 
 	/**
 	 * Folder constant for right sticky views.

@@ -40,7 +40,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 
 	private Collection<String> keywordReferences;
 
-	private IConfigurationElement configurationElement;
+	private final IConfigurationElement configurationElement;
 
 	private ImageDescriptor imageDescriptor;
 
@@ -50,7 +50,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 
 	private int priority;
 
-	private String pluginId;
+	private final String pluginId;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -188,8 +188,9 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (adapter == IConfigurationElement.class)
+		if (adapter == IConfigurationElement.class) {
 			return adapter.cast(getConfigurationElement());
+		}
 		return null;
 	}
 

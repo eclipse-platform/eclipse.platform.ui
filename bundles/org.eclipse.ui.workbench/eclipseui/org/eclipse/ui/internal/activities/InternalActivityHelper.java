@@ -43,8 +43,9 @@ public final class InternalActivityHelper {
 		Set<String> activityIds = new HashSet<>();
 		for (ICategoryActivityBinding binding : bindings) {
 			String id = binding.getActivityId();
-			if (activityManager.getActivity(id).getExpression() == null)
+			if (activityManager.getActivity(id).getExpression() == null) {
 				activityIds.add(id);
+			}
 		}
 		return activityIds;
 	}

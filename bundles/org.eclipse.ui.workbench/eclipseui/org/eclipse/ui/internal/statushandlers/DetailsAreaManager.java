@@ -27,7 +27,7 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
  */
 public class DetailsAreaManager {
 
-	private Map<Object, Object> dialogState;
+	private final Map<Object, Object> dialogState;
 	private Control control = null;
 
 	public DetailsAreaManager(Map<Object, Object> dialogState) {

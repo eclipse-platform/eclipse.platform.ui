@@ -28,11 +28,11 @@ package org.eclipse.ui.activities;
  * @see IIdentifierListener#identifierChanged(IdentifierEvent)
  */
 public final class IdentifierEvent {
-	private boolean activityIdsChanged;
+	private final boolean activityIdsChanged;
 
-	private boolean enabledChanged;
+	private final boolean enabledChanged;
 
-	private IIdentifier identifier;
+	private final IIdentifier identifier;
 
 	/**
 	 * Creates a new instance of this class.

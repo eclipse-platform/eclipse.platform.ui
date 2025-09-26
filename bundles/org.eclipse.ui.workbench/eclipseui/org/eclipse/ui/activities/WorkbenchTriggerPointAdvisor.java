@@ -69,7 +69,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor, IExec
 	 */
 	public static String NO_DETAILS = "noDetails"; //$NON-NLS-1$
 
-	private Properties strings = new Properties();
+	private final Properties strings = new Properties();
 
 	/**
 	 * Create a new instance of this advisor.
@@ -88,10 +88,11 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor, IExec
 				String id = iterator.next();
 				IActivity activity = activityManager.getActivity(id);
 				if (activity.getExpression() != null) {
-					if (!activity.isEnabled())
+					if (!activity.isEnabled()) {
 						// if we have any disabled expression activities we
 						// should disallow immediately
 						return null;
+					}
 				}
 			}
 			// if we have no disabled expression activities just return the

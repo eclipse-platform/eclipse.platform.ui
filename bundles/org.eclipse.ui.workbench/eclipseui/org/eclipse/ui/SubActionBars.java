@@ -88,7 +88,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 	private SubMenuManager menuMgr;
 
-	private IActionBars parent;
+	private final IActionBars parent;
 
 	/**
 	 * A service locator appropriate for this action bar. This value is never
@@ -100,7 +100,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 	private SubToolBarManager toolBarMgr;
 
-	private Map<String, String> actionIdByCommandId = new HashMap<>();
+	private final Map<String, String> actionIdByCommandId = new HashMap<>();
 
 	/**
 	 * Construct a new <code>SubActionBars</code> object. The service locator will
@@ -514,8 +514,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 						activationsByActionIdByServiceLocator.put(serviceLocator, activationsByActionId);
 					} else if (activationsByActionId.containsKey(actionID)) {
 						final Object value = activationsByActionId.remove(actionID);
-						if (value instanceof IHandlerActivation) {
-							final IHandlerActivation activation = (IHandlerActivation) value;
+						if (value instanceof final IHandlerActivation activation) {
 							actionIdByCommandId.remove(activation.getCommandId());
 							if (service != null) {
 								service.deactivateHandler(activation);
@@ -524,8 +523,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 						}
 					} else if (commandId != null && actionIdByCommandId.containsKey(commandId)) {
 						final Object value = activationsByActionId.remove(actionIdByCommandId.remove(commandId));
-						if (value instanceof IHandlerActivation) {
-							final IHandlerActivation activation = (IHandlerActivation) value;
+						if (value instanceof final IHandlerActivation activation) {
 							if (service != null) {
 								service.deactivateHandler(activation);
 							}
@@ -566,8 +564,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 							.get(serviceLocator);
 					if ((activationsByActionId != null) && (activationsByActionId.containsKey(actionID))) {
 						final Object value = activationsByActionId.remove(actionID);
-						if (value instanceof IHandlerActivation) {
-							final IHandlerActivation activation = (IHandlerActivation) value;
+						if (value instanceof final IHandlerActivation activation) {
 							actionIdByCommandId.remove(activation.getCommandId());
 							service.deactivateHandler(activation);
 							activation.getHandler().dispose();

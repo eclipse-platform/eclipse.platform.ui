@@ -39,9 +39,9 @@ public class SlavePartService implements IPartService, IDisposable {
 	 * The parent part service to which all listeners are routed. This value is
 	 * never <code>null</code>.
 	 */
-	private IPartService parent;
+	private final IPartService parent;
 
-	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
+	private final ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 
 	/**
 	 * Constructs a new instance.

@@ -56,8 +56,8 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class ShowKeysUI implements IDisposable {
 
-	private IPreferenceStore preferenceStore;
-	private IServiceLocator serviceLocator;
+	private final IPreferenceStore preferenceStore;
+	private final IServiceLocator serviceLocator;
 	private ShowKeysPopup shortcutPopup;
 
 	public ShowKeysUI(IServiceLocator serviceLocator, IPreferenceStore preferenceStore) {

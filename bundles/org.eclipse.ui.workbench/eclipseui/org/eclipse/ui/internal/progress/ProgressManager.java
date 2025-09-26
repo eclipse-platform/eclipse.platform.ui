@@ -106,7 +106,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			.synchronizedMap(new LinkedHashMap<>());
 
 	// list of IJobProgressManagerListener
-	private ListenerList<IJobProgressManagerListener> listeners = new ListenerList<>();
+	private final ListenerList<IJobProgressManagerListener> listeners = new ListenerList<>();
 
 	final IJobChangeListener changeListener;
 
@@ -138,7 +138,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	final Map<Job, JobMonitor> runnableMonitors = new HashMap<>();
 
 	// A table that maps families to keys in the Jface image table
-	private Hashtable<Object, String> imageKeyTable = new Hashtable<>();
+	private final Hashtable<Object, String> imageKeyTable = new Hashtable<>();
 
 	/**
 	 * Lock object for synchronizing updates of {@code pendingJobUpdates},
@@ -508,8 +508,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 			@Override
 			public void sleeping(IJobChangeEvent event) {
-				if (managedJobs.contains(event.getJob()))// Are we showing this?
+				if (managedJobs.contains(event.getJob())) { // Are we showing this?
 					sleepJobInfo(progressFor(event.getJob()).getJobInfo());
+				}
 			}
 		};
 	}
@@ -528,8 +529,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 		for (IJobProgressManagerListener listener : listeners) {
 			// Is this one the user never sees?
-			if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
+			if (isNeverDisplaying(info.getJob(), listener.showsDebug())) {
 				continue;
+			}
 			if (listener.showsDebug()) {
 				listener.refreshJobInfo(info);
 			} else {
@@ -543,8 +545,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	private void sleepGroup(GroupInfo group, JobInfo info) {
 		for (IJobProgressManagerListener listener : listeners) {
-			if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
+			if (isNeverDisplaying(info.getJob(), listener.showsDebug())) {
 				continue;
+			}
 
 			if (listener.showsDebug() || group.isActive()) {
 				listener.refreshGroup(group);
@@ -731,8 +734,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * @return boolean
 	 */
 	boolean isNeverDisplaying(Job job, boolean debug) {
-		if (debug)
+		if (debug) {
 			return false;
+		}
 
 		return job.isSystem();
 	}
@@ -887,8 +891,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	@Override
 	public IProgressMonitor createMonitor(Job job, IProgressMonitor group, int ticks) {
 		JobMonitor monitor = progressFor(job);
-		if (group instanceof GroupInfo) {
-			GroupInfo groupInfo = (GroupInfo) group;
+		if (group instanceof GroupInfo groupInfo) {
 			JobInfo jobInfo = monitor.getJobInfo();
 			jobInfo.setGroupInfo(groupInfo);
 			jobInfo.setTicks(ticks);
@@ -1122,8 +1125,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		 * @return the monitor on the event loop
 		 */
 		private IProgressMonitor getEventLoopMonitor() {
-			if (PlatformUI.getWorkbench().isStarting())
+			if (PlatformUI.getWorkbench().isStarting()) {
 				return new NullProgressMonitor();
+			}
 
 			return new EventLoopProgressMonitor(new NullProgressMonitor()) {
 				@Override

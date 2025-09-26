@@ -27,7 +27,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  */
 public class WizardElement extends QuickAccessElement {
 
-	private IWizardDescriptor wizardDescriptor;
+	private final IWizardDescriptor wizardDescriptor;
 
 	/* package */ WizardElement(IWizardDescriptor wizardDescriptor) {
 		this.wizardDescriptor = wizardDescriptor;
@@ -64,12 +64,15 @@ public class WizardElement extends QuickAccessElement {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final WizardElement other = (WizardElement) obj;
 		return Objects.equals(wizardDescriptor, other.wizardDescriptor);
 	}

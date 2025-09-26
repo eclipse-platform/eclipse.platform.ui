@@ -50,7 +50,7 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 	 */
 	private Comparator fLowerListComparator = null;
 
-	private ILabelProvider fQualifierRenderer;
+	private final ILabelProvider fQualifierRenderer;
 
 	private Object[] fElements = new Object[0];
 

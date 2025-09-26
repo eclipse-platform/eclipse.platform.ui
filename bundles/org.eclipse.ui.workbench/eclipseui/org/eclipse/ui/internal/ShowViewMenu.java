@@ -73,24 +73,24 @@ public class ShowViewMenu extends ContributionItem {
 
 	private static final String NO_TARGETS_MSG = WorkbenchMessages.Workbench_showInNoTargets;
 
-	private Comparator<CommandContributionItemParameter> actionComparator = (o1, o2) -> {
+	private final Comparator<CommandContributionItemParameter> actionComparator = (o1, o2) -> {
 		if (collator == null) {
 			collator = Collator.getInstance();
 		}
 		return collator.compare(o1.label, o2.label);
 	};
 
-	private Action showDlgAction;
+	private final Action showDlgAction;
 
-	private Map<String, ?> actions = new HashMap<>(21);
+	private final Map<String, ?> actions = new HashMap<>(21);
 
 	// Maps pages to a list of opened views
-	private Map<IWorkbenchPage, ArrayList<String>> openedViews = new HashMap<>();
+	private final Map<IWorkbenchPage, ArrayList<String>> openedViews = new HashMap<>();
 
 	private MenuManager menuManager;
 
-	private IMenuListener menuListener = IMenuManager::markDirty;
-	private boolean makeFast;
+	private final IMenuListener menuListener = IMenuManager::markDirty;
+	private final boolean makeFast;
 
 	private static Collator collator;
 
@@ -206,8 +206,8 @@ public class ShowViewMenu extends ContributionItem {
 
 	static class PluginCCIP extends CommandContributionItemParameter implements IPluginContribution {
 
-		private String localId;
-		private String pluginId;
+		private final String localId;
+		private final String pluginId;
 
 		public PluginCCIP(IViewDescriptor v, IServiceLocator serviceLocator, String id, String commandId, int style) {
 			super(serviceLocator, id, commandId, style);

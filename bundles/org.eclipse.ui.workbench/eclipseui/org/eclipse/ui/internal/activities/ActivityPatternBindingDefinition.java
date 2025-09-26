@@ -55,13 +55,13 @@ public final class ActivityPatternBindingDefinition {
 		return map;
 	}
 
-	private String activityId;
+	private final String activityId;
 
 	private transient int hashCode = HASH_INITIAL;
 
-	private String pattern;
+	private final String pattern;
 
-	private String sourceId;
+	private final String sourceId;
 
 	private transient String string;
 
@@ -69,7 +69,7 @@ public final class ActivityPatternBindingDefinition {
 	 * If the string is taken "as is", without interpreting it as a regular
 	 * expression.
 	 */
-	private boolean isEqualityPattern;
+	private final boolean isEqualityPattern;
 
 	public ActivityPatternBindingDefinition(String activityId, String pattern, String sourceId) {
 		this(activityId, pattern, sourceId, false);
@@ -93,8 +93,9 @@ public final class ActivityPatternBindingDefinition {
 			if (compareTo == 0) {
 				compareTo = Util.compare(isEqualityPattern, castedObject.isEqualityPattern);
 
-				if (compareTo == 0)
+				if (compareTo == 0) {
 					compareTo = Util.compare(sourceId, castedObject.sourceId);
+				}
 			}
 		}
 
@@ -103,11 +104,10 @@ public final class ActivityPatternBindingDefinition {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityPatternBindingDefinition)) {
+		if (!(object instanceof final ActivityPatternBindingDefinition castedObject)) {
 			return false;
 		}
 
-		final ActivityPatternBindingDefinition castedObject = (ActivityPatternBindingDefinition) object;
 		return Objects.equals(activityId, castedObject.activityId) && Objects.equals(pattern, castedObject.pattern)
 				&& isEqualityPattern == castedObject.isEqualityPattern
 				&& Objects.equals(sourceId, castedObject.sourceId);

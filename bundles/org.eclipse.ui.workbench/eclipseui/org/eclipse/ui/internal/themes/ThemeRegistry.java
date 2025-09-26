@@ -31,15 +31,15 @@ import org.eclipse.ui.themes.IThemeManager;
  */
 public class ThemeRegistry implements IThemeRegistry {
 
-	private List<IThemeDescriptor> themes;
+	private final List<IThemeDescriptor> themes;
 
-	private List<ColorDefinition> colors;
+	private final List<ColorDefinition> colors;
 
-	private List<FontDefinition> fonts;
+	private final List<FontDefinition> fonts;
 
-	private List<ThemeElementCategory> categories;
+	private final List<ThemeElementCategory> categories;
 
-	private Map<Object, Object> dataMap;
+	private final Map<Object, Object> dataMap;
 
 	/**
 	 * Create a new ThemeRegistry.
@@ -178,12 +178,10 @@ public class ThemeRegistry implements IThemeRegistry {
 	 * @return the overlayed element
 	 */
 	private IThemeElementDefinition overlay(IThemeElementDefinition original, IThemeElementDefinition overlay) {
-		if (original instanceof ColorDefinition) {
-			ColorDefinition originalColor = (ColorDefinition) original;
+		if (original instanceof ColorDefinition originalColor) {
 			ColorDefinition overlayColor = (ColorDefinition) overlay;
 			return new ColorDefinition(originalColor, overlayColor.getValue());
-		} else if (original instanceof FontDefinition) {
-			FontDefinition originalFont = (FontDefinition) original;
+		} else if (original instanceof FontDefinition originalFont) {
 			FontDefinition overlayFont = (FontDefinition) overlay;
 			return new FontDefinition(originalFont, overlayFont.getValue());
 		}

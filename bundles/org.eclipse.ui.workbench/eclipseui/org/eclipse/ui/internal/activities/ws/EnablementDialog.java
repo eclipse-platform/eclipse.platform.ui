@@ -55,9 +55,9 @@ public class EnablementDialog extends Dialog {
 
 	private Button dontAskButton;
 
-	private Set<String> activitiesToEnable = new HashSet<>(7);
+	private final Set<String> activitiesToEnable = new HashSet<>(7);
 
-	private Collection<String> activityIds;
+	private final Collection<String> activityIds;
 
 	private boolean dontAsk;
 
@@ -73,7 +73,7 @@ public class EnablementDialog extends Dialog {
 
 	private Text detailsText;
 
-	private Properties strings;
+	private final Properties strings;
 
 	/**
 	 * Create a new instance of the receiver.

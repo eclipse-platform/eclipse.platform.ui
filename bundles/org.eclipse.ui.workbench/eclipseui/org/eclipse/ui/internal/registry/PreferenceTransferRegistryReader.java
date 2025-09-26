@@ -36,7 +36,7 @@ import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 public class PreferenceTransferRegistryReader extends RegistryReader {
 	private List<PreferenceTransferElement> preferenceTransfers;
 
-	private String pluginPoint;
+	private final String pluginPoint;
 
 	/**
 	 * Create an instance of this class.
@@ -94,8 +94,9 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 		if (element.getName().equals(IWorkbenchRegistryConstants.TAG_TRANSFER)) {
 
 			PreferenceTransferElement transfer = createPreferenceTransferElement(element);
-			if (transfer != null)
+			if (transfer != null) {
 				preferenceTransfers.add(transfer);
+			}
 			return true;
 		}
 

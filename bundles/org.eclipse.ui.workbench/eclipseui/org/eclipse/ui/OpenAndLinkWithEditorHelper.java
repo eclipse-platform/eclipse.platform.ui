@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
  */
 public abstract class OpenAndLinkWithEditorHelper {
 
-	private StructuredViewer viewer;
+	private final StructuredViewer viewer;
 
 	private boolean isLinkingEnabled;
 
@@ -51,15 +51,17 @@ public abstract class OpenAndLinkWithEditorHelper {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			final ISelection selection = event.getSelection();
-			if (isLinkingEnabled && !selection.equals(lastOpenSelection) && viewer.getControl().isFocusControl())
+			if (isLinkingEnabled && !selection.equals(lastOpenSelection) && viewer.getControl().isFocusControl()) {
 				linkToEditor(selection);
+			}
 			lastOpenSelection = null;
 		}
 
 		@Override
 		public void doubleClick(DoubleClickEvent event) {
-			if (!OpenStrategy.activateOnOpen())
+			if (!OpenStrategy.activateOnOpen()) {
 				activate(event.getSelection());
+			}
 		}
 
 	}

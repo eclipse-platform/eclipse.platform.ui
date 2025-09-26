@@ -28,7 +28,7 @@ class CategoryPatternFilter extends PatternFilter {
 	private boolean filterCategories;
 	final Category uncategorized;
 
-	private IActivityManager activityManager;
+	private final IActivityManager activityManager;
 
 	public CategoryPatternFilter(boolean filterCategories, Category c, IActivityManager activityManager) {
 		uncategorized = c;

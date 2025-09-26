@@ -192,14 +192,16 @@ public class WorkbenchIntroManager implements IIntroManager {
 		}
 
 		MPartStack introStack = getIntroStack(viewIntroAdapterPart);
-		if (introStack == null)
+		if (introStack == null) {
 			return;
+		}
 
 		boolean isMaximized = isIntroMaximized(viewIntroAdapterPart);
-		if (!isMaximized && !standby)
+		if (!isMaximized && !standby) {
 			introStack.getTags().add(IPresentationEngine.MAXIMIZED);
-		else if (isMaximized && standby)
+		} else if (isMaximized && standby) {
 			introStack.getTags().remove(IPresentationEngine.MAXIMIZED);
+		}
 	}
 
 	private MPartStack getIntroStack(ViewIntroAdapterPart introAdapter) {
@@ -218,8 +220,9 @@ public class WorkbenchIntroManager implements IIntroManager {
 
 	private boolean isIntroMaximized(ViewIntroAdapterPart introAdapter) {
 		MPartStack introStack = getIntroStack(introAdapter);
-		if (introStack == null)
+		if (introStack == null) {
 			return false;
+		}
 
 		return introStack.getTags().contains(IPresentationEngine.MAXIMIZED);
 	}
@@ -251,14 +254,14 @@ public class WorkbenchIntroManager implements IIntroManager {
 		for (IWorkbenchWindow iWorkbenchWindow : this.workbench.getWorkbenchWindows()) {
 			WorkbenchWindow window = (WorkbenchWindow) iWorkbenchWindow;
 			MUIElement introPart = window.modelService.find(IIntroConstants.INTRO_VIEW_ID, window.getModel());
-			if (introPart instanceof MPlaceholder) {
-				MPlaceholder introPH = (MPlaceholder) introPart;
+			if (introPart instanceof MPlaceholder introPH) {
 				MPart introModelPart = (MPart) introPH.getRef();
 				CompatibilityView compatView = (CompatibilityView) introModelPart.getObject();
 				if (compatView != null) {
 					Object obj = compatView.getPart();
-					if (obj instanceof ViewIntroAdapterPart)
+					if (obj instanceof ViewIntroAdapterPart) {
 						return (ViewIntroAdapterPart) obj;
+					}
 				}
 			}
 		}

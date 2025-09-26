@@ -31,8 +31,8 @@ import org.eclipse.ui.internal.intro.IntroMessages;
  */
 public class IntroHandler extends AbstractHandler {
 
-	private Workbench workbench;
-	private IntroDescriptor introDescriptor;
+	private final Workbench workbench;
+	private final IntroDescriptor introDescriptor;
 
 	public IntroHandler() {
 		workbench = (Workbench) PlatformUI.getWorkbench();

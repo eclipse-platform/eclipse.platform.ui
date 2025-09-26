@@ -41,7 +41,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public class NewContentTypeDialog extends TitleAreaDialog {
 
 	private String name;
-	private IContentTypeManager manager;
+	private final IContentTypeManager manager;
 	private ControlDecoration decorator;
 
 	protected NewContentTypeDialog(Shell parentShell, IContentTypeManager manager, IContentType parent) {

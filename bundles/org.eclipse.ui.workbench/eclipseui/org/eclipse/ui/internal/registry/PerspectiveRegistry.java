@@ -75,7 +75,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	@Inject
 	Logger logger;
 
-	private Map<String, PerspectiveDescriptor> descriptors = new HashMap<>();
+	private final Map<String, PerspectiveDescriptor> descriptors = new HashMap<>();
 
 	@PostConstruct
 	void postConstruct(MApplication application) {
@@ -87,8 +87,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
 		List<MUIElement> snippets = application.getSnippets();
 		for (MUIElement snippet : snippets) {
-			if (snippet instanceof MPerspective) {
-				MPerspective perspective = (MPerspective) snippet;
+			if (snippet instanceof MPerspective perspective) {
 				String id = perspective.getElementId();
 
 				// See if the clone is customizing an a predefined perspective without changing
@@ -155,8 +154,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	@Override
 	public void deletePerspective(IPerspectiveDescriptor toDelete) {
 		PerspectiveDescriptor perspective = (PerspectiveDescriptor) toDelete;
-		if (perspective.isPredefined())
+		if (perspective.isPredefined()) {
 			return;
+		}
 
 		descriptors.remove(perspective.getId());
 		removeSnippet(application, perspective.getId());
@@ -164,8 +164,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
 	private MUIElement removeSnippet(MSnippetContainer snippetContainer, String id) {
 		MUIElement snippet = modelService.findSnippet(snippetContainer, id);
-		if (snippet != null)
+		if (snippet != null) {
 			snippetContainer.getSnippets().remove(snippet);
+		}
 		return snippet;
 	}
 
@@ -254,8 +255,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	@Override
 	public void revertPerspective(IPerspectiveDescriptor perspToRevert) {
 		PerspectiveDescriptor perspective = (PerspectiveDescriptor) perspToRevert;
-		if (!perspective.isPredefined())
+		if (!perspective.isPredefined()) {
 			return;
+		}
 
 		perspective.setHasCustomDefinition(false);
 		removeSnippet(application, perspective.getId());

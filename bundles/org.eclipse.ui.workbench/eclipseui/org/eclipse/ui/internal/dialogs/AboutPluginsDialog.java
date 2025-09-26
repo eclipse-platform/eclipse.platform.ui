@@ -35,8 +35,9 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		page.setHelpContextId(helpContextId);
 		page.setBundles(bundles);
 		page.setMessage(message);
-		if (title == null && page.getProductName() != null)
+		if (title == null && page.getProductName() != null) {
 			title = NLS.bind(WorkbenchMessages.AboutPluginsDialog_shellTitle, productName);
+		}
 		initializeDialog(page, title, helpContextId);
 	}
 }

@@ -38,7 +38,7 @@ public class PreferencePatternFilter extends PatternFilter {
 	 * WorkbenchPreferenceExtensionNode.getKeywordLabels() is expensive. When it
 	 * tracks keyword changes effectively than this cache can be removed.
 	 */
-	private Map<WorkbenchPreferenceExtensionNode, Collection<String>> keywordCache = new HashMap<>();
+	private final Map<WorkbenchPreferenceExtensionNode, Collection<String>> keywordCache = new HashMap<>();
 
 	/**
 	 * Create a new instance of a PreferencePatternFilter
@@ -53,9 +53,7 @@ public class PreferencePatternFilter extends PatternFilter {
 	 * pages.
 	 */
 	private String[] getKeywords(Object element) {
-		if (element instanceof WorkbenchPreferenceExtensionNode) {
-			WorkbenchPreferenceExtensionNode workbenchNode = (WorkbenchPreferenceExtensionNode) element;
-
+		if (element instanceof WorkbenchPreferenceExtensionNode workbenchNode) {
 			Collection<String> keywordCollection = keywordCache.get(element);
 			if (keywordCollection == null) {
 				keywordCollection = workbenchNode.getKeywordLabels();
@@ -73,8 +71,9 @@ public class PreferencePatternFilter extends PatternFilter {
 
 	@Override
 	public boolean isElementVisible(Viewer viewer, Object element) {
-		if (WorkbenchActivityHelper.restrictUseOf(element))
+		if (WorkbenchActivityHelper.restrictUseOf(element)) {
 			return false;
+		}
 
 		// Preference nodes are not differentiated based on category since
 		// categories are selectable nodes.

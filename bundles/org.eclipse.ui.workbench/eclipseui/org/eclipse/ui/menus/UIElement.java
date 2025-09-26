@@ -32,7 +32,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public abstract class UIElement {
 
-	private IServiceLocator serviceLocator;
+	private final IServiceLocator serviceLocator;
 
 	/**
 	 * Construct a new instance of this class keyed off of the provided service
@@ -41,8 +41,9 @@ public abstract class UIElement {
 	 * @param serviceLocator the locator. May not be <code>null</code>.
 	 */
 	protected UIElement(IServiceLocator serviceLocator) throws IllegalArgumentException {
-		if (serviceLocator == null)
+		if (serviceLocator == null) {
 			throw new IllegalArgumentException();
+		}
 		this.serviceLocator = serviceLocator;
 	}
 

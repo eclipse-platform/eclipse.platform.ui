@@ -79,13 +79,13 @@ public final class ActivityDefinition implements Comparable<ActivityDefinition> 
 
 	private transient int hashCode = HASH_INITIAL;
 
-	private String id;
+	private final String id;
 
-	private String name;
+	private final String name;
 
-	private String sourceId;
+	private final String sourceId;
 
-	private String description;
+	private final String description;
 
 	private transient String string;
 
@@ -115,11 +115,10 @@ public final class ActivityDefinition implements Comparable<ActivityDefinition> 
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityDefinition)) {
+		if (!(object instanceof final ActivityDefinition castedObject)) {
 			return false;
 		}
 
-		final ActivityDefinition castedObject = (ActivityDefinition) object;
 		return Objects.equals(id, castedObject.id) && Objects.equals(name, castedObject.name)
 				&& Objects.equals(sourceId, castedObject.sourceId);
 	}

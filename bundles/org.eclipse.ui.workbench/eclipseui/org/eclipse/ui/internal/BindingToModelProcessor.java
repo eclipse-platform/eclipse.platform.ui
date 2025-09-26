@@ -45,10 +45,10 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = IModelProcessorContribution.class)
 public class BindingToModelProcessor implements IModelProcessorContribution {
 
-	private Map<String, MBindingContext> contexts = new HashMap<>();
-	private Map<String, MCommand> commands = new HashMap<>();
-	private Map<String, MBindingTable> tables = new HashMap<>();
-	private Set<MKeyBinding> keys = new HashSet<>();
+	private final Map<String, MBindingContext> contexts = new HashMap<>();
+	private final Map<String, MCommand> commands = new HashMap<>();
+	private final Map<String, MBindingTable> tables = new HashMap<>();
+	private final Set<MKeyBinding> keys = new HashSet<>();
 
 	// define dependencies to CommandToModelProcessor and ContextToModelProcessor to
 	// ensure these two IModelProcessorContributions are registered before this
@@ -119,8 +119,7 @@ public class BindingToModelProcessor implements IModelProcessorContribution {
 		for (MKeyBinding key : keys) {
 			if (!key.getTags().contains("type:user")) { //$NON-NLS-1$
 				EObject obj = ((EObject) key).eContainer();
-				if (obj instanceof MBindingTable) {
-					MBindingTable table = (MBindingTable) obj;
+				if (obj instanceof MBindingTable table) {
 					table.getBindings().remove(key);
 				}
 			}

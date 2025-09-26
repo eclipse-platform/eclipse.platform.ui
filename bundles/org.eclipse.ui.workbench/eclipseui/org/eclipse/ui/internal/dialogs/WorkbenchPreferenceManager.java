@@ -67,8 +67,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements IEx
 		Iterator iterator = pageContributions.iterator();
 		while (iterator.hasNext()) {
 			Object next = iterator.next();
-			if (next instanceof WorkbenchPreferenceNode) {
-				WorkbenchPreferenceNode wNode = (WorkbenchPreferenceNode) next;
+			if (next instanceof WorkbenchPreferenceNode wNode) {
 				addToRoot(wNode);
 				registerNode(wNode);
 			}
@@ -131,8 +130,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements IEx
 	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
 		for (Object object : objects) {
-			if (object instanceof IPreferenceNode) {
-				IPreferenceNode wNode = (IPreferenceNode) object;
+			if (object instanceof IPreferenceNode wNode) {
 				wNode.disposeResources();
 				deepRemove(getRoot(), wNode);
 			}

@@ -35,19 +35,19 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  * as view's pulldown and local tool bar.
  */
 public class ActionDescriptor implements IPluginContribution {
-	private PluginAction action;
+	private final PluginAction action;
 
-	private String toolbarId;
+	private final String toolbarId;
 
-	private String menuPath;
+	private final String menuPath;
 
-	private String id;
+	private final String id;
 
-	private String pluginId;
+	private final String pluginId;
 
-	private String menuGroup;
+	private final String menuGroup;
 
-	private String toolbarGroupId;
+	private final String toolbarGroupId;
 
 	private int mode = 0;
 

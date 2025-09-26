@@ -31,9 +31,9 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class ShowKeysListener implements IExecutionListener, IPropertyChangeListener, IDisposable {
 
-	private IPreferenceStore preferenceStore;
-	private IServiceLocator serviceLocator;
-	private ShowKeysUI showKeysUI;
+	private final IPreferenceStore preferenceStore;
+	private final IServiceLocator serviceLocator;
+	private final ShowKeysUI showKeysUI;
 
 	public ShowKeysListener(IServiceLocator serviceLocator, IPreferenceStore preferenceStore) {
 		this.serviceLocator = serviceLocator;

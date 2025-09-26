@@ -81,8 +81,7 @@ public class PlatformUIPreferenceListener implements IEclipsePreferences.IPrefer
 		// Update the file associations if they have changed due to an import
 		if (IPreferenceConstants.RESOURCES.equals(propertyName)) {
 			IEditorRegistry registry = WorkbenchPlugin.getDefault().getEditorRegistry();
-			if (registry instanceof EditorRegistry) {
-				EditorRegistry editorRegistry = (EditorRegistry) registry;
+			if (registry instanceof EditorRegistry editorRegistry) {
 				IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 				String xmlString = store.getString(IPreferenceConstants.RESOURCES);
 				if (xmlString != null && xmlString.length() > 0) {

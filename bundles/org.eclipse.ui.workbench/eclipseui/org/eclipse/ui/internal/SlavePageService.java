@@ -26,9 +26,9 @@ import org.eclipse.ui.services.IDisposable;
  */
 public class SlavePageService implements IPageService, IDisposable {
 
-	private IPageService parent;
-	private ListenerList<IPageListener> pageListeners = new ListenerList<>(ListenerList.IDENTITY);
-	private ListenerList<IPerspectiveListener> perspectiveListeners = new ListenerList<>(ListenerList.IDENTITY);
+	private final IPageService parent;
+	private final ListenerList<IPageListener> pageListeners = new ListenerList<>(ListenerList.IDENTITY);
+	private final ListenerList<IPerspectiveListener> perspectiveListeners = new ListenerList<>(ListenerList.IDENTITY);
 
 	public SlavePageService(IPageService parent) {
 		if (parent == null) {

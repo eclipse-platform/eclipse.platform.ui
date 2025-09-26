@@ -93,16 +93,13 @@ public abstract class QuickMenuCreator {
 		Point cursorLocation = focus.getDisplay().getCursorLocation();
 		Rectangle clientArea = null;
 		Point result = null;
-		if (focus instanceof StyledText) {
-			StyledText styledText = (StyledText) focus;
+		if (focus instanceof StyledText styledText) {
 			clientArea = styledText.getClientArea();
 			result = computeMenuLocation(styledText);
-		} else if (focus instanceof Tree) {
-			Tree tree = (Tree) focus;
+		} else if (focus instanceof Tree tree) {
 			clientArea = tree.getClientArea();
 			result = computeMenuLocation(tree);
-		} else if (focus instanceof Table) {
-			Table table = (Table) focus;
+		} else if (focus instanceof Table table) {
 			clientArea = table.getClientArea();
 			result = computeMenuLocation(table);
 		}

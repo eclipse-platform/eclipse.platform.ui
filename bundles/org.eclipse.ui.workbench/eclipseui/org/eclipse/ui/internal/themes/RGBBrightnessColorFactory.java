@@ -34,10 +34,12 @@ public class RGBBrightnessColorFactory implements IColorFactory, IExecutableExte
 		float scale = Float.parseFloat(scaleFactor);
 		float[] hsb = rgb.getHSB();
 		float b = hsb[2] * scale;
-		if (b < 0)
+		if (b < 0) {
 			b = 0;
-		if (b > 1)
+		}
+		if (b > 1) {
 			b = 1;
+		}
 		return new RGB(hsb[0], hsb[1], b);
 	}
 
@@ -55,8 +57,7 @@ public class RGBBrightnessColorFactory implements IColorFactory, IExecutableExte
 	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
-		if (data instanceof Hashtable) {
-			Hashtable table = (Hashtable) data;
+		if (data instanceof Hashtable table) {
 			color = (String) table.get("color"); //$NON-NLS-1$
 			scaleFactor = (String) table.get("scaleFactor"); //$NON-NLS-1$
 		}

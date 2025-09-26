@@ -51,7 +51,7 @@ public final class SourceProviderService implements ISourceProviderService, IDis
 	 */
 	private final Set<ISourceProvider> sourceProviders = new HashSet<>();
 
-	private IServiceLocator locator;
+	private final IServiceLocator locator;
 
 	public SourceProviderService(final IServiceLocator locator) {
 		this.locator = locator;

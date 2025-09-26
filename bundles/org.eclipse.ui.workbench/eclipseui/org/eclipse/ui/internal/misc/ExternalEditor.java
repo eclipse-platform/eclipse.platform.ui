@@ -32,9 +32,9 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.osgi.framework.Bundle;
 
 public class ExternalEditor {
-	private IPath filePath;
+	private final IPath filePath;
 
-	private EditorDescriptor descriptor;
+	private final EditorDescriptor descriptor;
 
 	/**
 	 * Create an external editor.

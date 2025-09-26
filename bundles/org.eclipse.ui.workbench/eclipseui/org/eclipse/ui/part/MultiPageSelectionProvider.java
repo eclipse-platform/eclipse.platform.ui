@@ -43,17 +43,17 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
 	 * Registered selection changed listeners (element type:
 	 * <code>ISelectionChangedListener</code>).
 	 */
-	private ListenerList<ISelectionChangedListener> listeners = new ListenerList<>();
+	private final ListenerList<ISelectionChangedListener> listeners = new ListenerList<>();
 
 	/**
 	 * Registered post selection changed listeners.
 	 */
-	private ListenerList<ISelectionChangedListener> postListeners = new ListenerList<>();
+	private final ListenerList<ISelectionChangedListener> postListeners = new ListenerList<>();
 
 	/**
 	 * The multi-page editor.
 	 */
-	private MultiPageEditorPart multiPageEditor;
+	private final MultiPageEditorPart multiPageEditor;
 
 	/**
 	 * Creates a selection provider for the given multi-page editor.

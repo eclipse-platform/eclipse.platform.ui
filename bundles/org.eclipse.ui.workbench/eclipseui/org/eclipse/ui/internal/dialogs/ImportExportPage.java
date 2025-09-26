@@ -62,8 +62,8 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 	protected static class CategorizedWizardSelectionTree {
 		private static final int SIZING_LISTS_HEIGHT = 200;
 
-		private IWizardCategory wizardCategories;
-		private String message;
+		private final IWizardCategory wizardCategories;
+		private final String message;
 		private TreeViewer viewer;
 
 		/**
@@ -277,8 +277,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage {
 		setErrorMessage(null);
 		IStructuredSelection ss = (IStructuredSelection) selection;
 		Object sel = ss.getFirstElement();
-		if (sel instanceof WorkbenchWizardElement) {
-			WorkbenchWizardElement currentWizardSelection = (WorkbenchWizardElement) sel;
+		if (sel instanceof WorkbenchWizardElement currentWizardSelection) {
 			updateSelectedNode(currentWizardSelection);
 		} else {
 			updateSelectedNode(null);

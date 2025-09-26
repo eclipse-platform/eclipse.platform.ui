@@ -43,15 +43,15 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class TaskBarProgressManager {
 
-	private IJobProgressManagerListener listener;
+	private final IJobProgressManagerListener listener;
 
-	private WorkbenchJob animationUpdateJob;
+	private final WorkbenchJob animationUpdateJob;
 
 	private boolean isAnimated = false;
 
-	private List<Job> jobs = Collections.synchronizedList(new ArrayList<>());
+	private final List<Job> jobs = Collections.synchronizedList(new ArrayList<>());
 
-	private Map<Job, JobInfo> jobInfoMap = Collections.synchronizedMap(new HashMap<>());
+	private final Map<Job, JobInfo> jobInfoMap = Collections.synchronizedMap(new HashMap<>());
 
 	private final TaskItem taskItem;
 
@@ -154,8 +154,9 @@ public class TaskBarProgressManager {
 	}
 
 	private void updateImage(Job job) {
-		if (taskItem == null || taskItem.isDisposed())
+		if (taskItem == null || taskItem.isDisposed()) {
 			return;
+		}
 
 		if (job == null) {
 			disposeOverlay();

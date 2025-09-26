@@ -34,8 +34,7 @@ public class PartTaggedAsEditorPropertyTester extends PropertyTester {
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		if (receiver instanceof E4PartWrapper) {
-			E4PartWrapper partWrapper = (E4PartWrapper) receiver;
+		if (receiver instanceof E4PartWrapper partWrapper) {
 			if (partWrapper.wrappedPart != null) {
 				List<String> partTags = partWrapper.wrappedPart.getTags();
 				return partTags == null || partTags.isEmpty() ? false

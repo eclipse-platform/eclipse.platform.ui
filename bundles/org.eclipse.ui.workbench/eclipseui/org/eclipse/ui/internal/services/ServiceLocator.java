@@ -38,8 +38,8 @@ public final class ServiceLocator implements IDisposable, INestable, IServiceLoc
 	boolean activated = false;
 
 	private static class ParentLocator implements IServiceLocator {
-		private IServiceLocator locator;
-		private Class<?> key;
+		private final IServiceLocator locator;
+		private final Class<?> key;
 
 		public ParentLocator(IServiceLocator parent, Class<?> serviceInterface) {
 			locator = parent;

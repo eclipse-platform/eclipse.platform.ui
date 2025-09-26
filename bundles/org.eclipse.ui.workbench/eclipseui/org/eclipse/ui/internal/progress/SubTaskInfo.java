@@ -50,10 +50,11 @@ class SubTaskInfo extends JobTreeElement {
 	 * Sets the taskName of the receiver.
 	 */
 	void setTaskName(String name) {
-		if (name == null)
+		if (name == null) {
 			taskName = ProgressMessages.SubTaskInfo_UndefinedTaskName;
-		else
+		} else {
 			this.taskName = name;
+		}
 	}
 
 	/**

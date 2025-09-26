@@ -225,8 +225,7 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 	@Override
 	public void removeExtension(IExtension extension, Object[] objects) {
 		for (Object object : objects) {
-			if (object instanceof ServiceFactoryHandle) {
-				ServiceFactoryHandle handle = (ServiceFactoryHandle) object;
+			if (object instanceof ServiceFactoryHandle handle) {
 				ServiceLocator[] locators = handle.serviceLocators.toArray(ServiceLocator[]::new);
 				Arrays.sort(locators, (loc1, loc2) -> {
 					int l1 = loc1.getService(IWorkbenchLocationService.class).getServiceLevel();

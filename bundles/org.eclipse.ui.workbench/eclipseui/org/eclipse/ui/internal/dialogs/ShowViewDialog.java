@@ -82,19 +82,19 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 
 	private Button okButton;
 
-	private MApplication application;
+	private final MApplication application;
 
 	private MPartDescriptor[] viewDescs = new MPartDescriptor[0];
 
 	private Label descriptionHint;
 
-	private IEclipseContext context;
+	private final IEclipseContext context;
 
-	private EModelService modelService;
+	private final EModelService modelService;
 
-	private MWindow window;
+	private final MWindow window;
 
-	private EPartService partService;
+	private final EPartService partService;
 
 	/**
 	 * Constructs a new ShowViewDialog.
@@ -307,11 +307,13 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 		IDialogSettings settings = getDialogSettings();
 
 		String[] expandedCategoryIds = settings.getArray(STORE_EXPANDED_CATEGORIES_ID);
-		if (expandedCategoryIds == null)
+		if (expandedCategoryIds == null) {
 			return;
+		}
 
-		if (expandedCategoryIds.length > 0)
+		if (expandedCategoryIds.length > 0) {
 			filteredTree.getViewer().setExpandedElements((Object[]) expandedCategoryIds);
+		}
 
 		String selectedPartId = settings.get(STORE_SELECTED_VIEW_ID);
 		if (selectedPartId != null) {
@@ -336,10 +338,11 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 		Object[] expandedElements = filteredTree.getViewer().getExpandedElements();
 		String[] expandedCategoryIds = new String[expandedElements.length];
 		for (int i = 0; i < expandedElements.length; ++i) {
-			if (expandedElements[i] instanceof MPartDescriptor)
+			if (expandedElements[i] instanceof MPartDescriptor) {
 				expandedCategoryIds[i] = ((MPartDescriptor) expandedElements[i]).getElementId();
-			else
+			} else {
 				expandedCategoryIds[i] = expandedElements[i].toString();
+			}
 		}
 
 		// Save them for next time.
@@ -412,8 +415,9 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 				if (o instanceof MPartDescriptor) {
 					String description = ((MPartDescriptor) o).getTooltip();
 					description = LocalizationHelper.getLocalized(description, (MPartDescriptor) o, context);
-					if (description != null && description.isEmpty())
+					if (description != null && description.isEmpty()) {
 						description = WorkbenchMessages.ShowView_noDesc;
+					}
 					popUp(description);
 				}
 			}

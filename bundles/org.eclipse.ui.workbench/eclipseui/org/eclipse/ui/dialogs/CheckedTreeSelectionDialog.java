@@ -54,9 +54,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	private CheckboxTreeViewer fViewer;
 
-	private ILabelProvider fLabelProvider;
+	private final ILabelProvider fLabelProvider;
 
-	private ITreeContentProvider fContentProvider;
+	private final ITreeContentProvider fContentProvider;
 
 	private ISelectionStatusValidator fValidator = null;
 

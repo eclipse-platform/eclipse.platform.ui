@@ -43,8 +43,9 @@ public class SaveAsHandler extends AbstractSaveHandler {
 
 		ISaveablePart saveablePart = getSaveablePart(event);
 
-		if (saveablePart != null)
+		if (saveablePart != null) {
 			saveablePart.doSaveAs();
+		}
 
 		return null;
 	}
@@ -54,13 +55,15 @@ public class SaveAsHandler extends AbstractSaveHandler {
 
 		IWorkbenchWindow window = InternalHandlerUtil.getActiveWorkbenchWindow(context);
 		// no window? not active
-		if (window == null)
+		if (window == null) {
 			return EvaluationResult.FALSE;
+		}
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 
 		// no page? not active
-		if (page == null)
+		if (page == null) {
 			return EvaluationResult.FALSE;
+		}
 
 		MPart activeMPart = getActivePart(window);
 
@@ -72,8 +75,9 @@ public class SaveAsHandler extends AbstractSaveHandler {
 
 		// get saveable part
 		ISaveablePart saveablePart = getSaveablePart(context);
-		if (saveablePart == null)
+		if (saveablePart == null) {
 			return EvaluationResult.FALSE;
+		}
 
 		// if its available, return whatever it says
 		return saveablePart.isSaveAsAllowed() ? EvaluationResult.TRUE : EvaluationResult.FALSE;

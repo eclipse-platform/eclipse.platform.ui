@@ -119,11 +119,11 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 
 	private class CategoryLabelProvider extends LabelProvider implements ITableLabelProvider, IActivityManagerListener {
 
-		private LocalResourceManager manager = new LocalResourceManager(JFaceResources.getResources());
+		private final LocalResourceManager manager = new LocalResourceManager(JFaceResources.getResources());
 
-		private Optional<ImageDescriptor> lockDescriptor;
+		private final Optional<ImageDescriptor> lockDescriptor;
 
-		private boolean decorate;
+		private final boolean decorate;
 
 		/**
 		 * @param decorate true if the label image may be decorated
@@ -223,7 +223,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 
 	private boolean allowAdvanced = false;
 
-	private Properties strings = new Properties();
+	private final Properties strings = new Properties();
 
 	private ActivityEnabler enabler;
 

@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.util.Util;
  */
 public class MenuLocationURI {
 
-	private String rawString;
+	private final String rawString;
 
 	public MenuLocationURI(String uriDef) {
 		rawString = uriDef;
@@ -62,8 +62,9 @@ public class MenuLocationURI {
 	public String getPath() {
 		// Trim off the scheme
 		String[] vals = Util.split(rawString, ':');
-		if (vals.length < 2)
+		if (vals.length < 2) {
 			return null;
+		}
 
 		// Now, trim off any query
 		vals = Util.split(vals[1], '?');

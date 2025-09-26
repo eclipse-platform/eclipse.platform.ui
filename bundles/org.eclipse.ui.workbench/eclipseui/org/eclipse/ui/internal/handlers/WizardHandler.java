@@ -328,8 +328,9 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 	public void updateElement(UIElement element, Map parameters) {
 
 		String wizardId = (String) parameters.get(getWizardIdParameterId());
-		if (wizardId == null)
+		if (wizardId == null) {
 			return;
+		}
 		IWizardDescriptor wizard = getWizardRegistry().findWizard(wizardId);
 		if (wizard != null) {
 			element.setText(NLS.bind(WorkbenchMessages.WizardHandler_menuLabel, wizard.getLabel()));

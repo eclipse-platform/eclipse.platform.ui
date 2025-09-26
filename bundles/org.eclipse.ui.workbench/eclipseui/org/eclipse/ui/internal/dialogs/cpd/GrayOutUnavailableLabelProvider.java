@@ -36,9 +36,9 @@ import org.eclipse.ui.internal.dialogs.cpd.CustomizePerspectiveDialog.DisplayIte
  * @since 3.5
  */
 class GrayOutUnavailableLabelProvider extends TreeManager.TreeItemLabelProvider implements IColorProvider {
-	private Display display;
-	private ViewerFilter filter;
-	private Set<Image> toDispose;
+	private final Display display;
+	private final ViewerFilter filter;
+	private final Set<Image> toDispose;
 
 	public GrayOutUnavailableLabelProvider(ViewerFilter filter) {
 		this.display = PlatformUI.getWorkbench().getDisplay();
@@ -70,8 +70,7 @@ class GrayOutUnavailableLabelProvider extends TreeManager.TreeItemLabelProvider 
 	public Image getImage(Object element) {
 		Image actual = super.getImage(element);
 
-		if (element instanceof DisplayItem && actual != null) {
-			DisplayItem item = (DisplayItem) element;
+		if (element instanceof DisplayItem item && actual != null) {
 			if (!CustomizePerspectiveDialog.isEffectivelyAvailable(item, filter)) {
 				ImageDescriptor original = ImageDescriptor.createFromImage(actual);
 				ImageDescriptor disable = ImageDescriptor.createWithFlags(original, SWT.IMAGE_DISABLE);

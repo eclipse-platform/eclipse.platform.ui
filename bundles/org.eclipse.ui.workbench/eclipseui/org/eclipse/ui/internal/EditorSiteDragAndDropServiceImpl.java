@@ -66,15 +66,15 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 	 * @since 3.3
 	 */
 	private static class MergedDropTarget {
-		private DropTarget realDropTarget;
+		private final DropTarget realDropTarget;
 
-		private Transfer[] secondaryTransfers;
-		private DropTargetListener secondaryListener;
-		private int secondaryOps;
+		private final Transfer[] secondaryTransfers;
+		private final DropTargetListener secondaryListener;
+		private final int secondaryOps;
 
-		private Transfer[] primaryTransfers;
-		private DropTargetListener primaryListener;
-		private int primaryOps;
+		private final Transfer[] primaryTransfers;
+		private final DropTargetListener primaryListener;
+		private final int primaryOps;
 
 		public MergedDropTarget(Control control, int priOps, Transfer[] priTransfers, DropTargetListener priListener,
 				int secOps, Transfer[] secTransfers, DropTargetListener secListener) {
@@ -152,8 +152,9 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 
 		private boolean isSupportedType(Transfer[] transfers, TransferData transferType) {
 			for (Transfer transfer : transfers) {
-				if (transfer.isSupportedType(transferType))
+				if (transfer.isSupportedType(transferType)) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -199,8 +200,9 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 	 * @return The DropTarget for that control (could be null
 	 */
 	private DropTarget getCurrentDropTarget(Control control) {
-		if (control == null)
+		if (control == null) {
 			return null;
+		}
 
 		Object curDT = control.getData(DND.DROP_TARGET_KEY);
 		return (DropTarget) curDT;

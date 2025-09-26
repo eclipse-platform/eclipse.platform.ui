@@ -221,8 +221,7 @@ public class DeferredTreeContentManager {
 
 			@Override
 			public boolean belongsTo(Object family) {
-				if (family instanceof DeferredContentFamily) {
-					DeferredContentFamily contentFamily = (DeferredContentFamily) family;
+				if (family instanceof DeferredContentFamily contentFamily) {
 					if (contentFamily.manager == DeferredTreeContentManager.this) {
 						return isParent(contentFamily, parent);
 					}

@@ -86,8 +86,9 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 
 	@Override
 	public void dispose() {
-		if (lastWindow != null)
+		if (lastWindow != null) {
 			lastWindow.getSelectionService().removeSelectionListener(this);
+		}
 		workbench.removeWindowListener(windowListener);
 		display.removeFilter(SWT.Activate, listener);
 		hookListener(lastActiveWorkbenchWindow, null);
@@ -122,8 +123,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 		int sources = 0;
 		currentState.put(ISources.ACTIVE_CURRENT_SELECTION_NAME, IEvaluationContext.UNDEFINED_VARIABLE);
 		Object object = currentState.get(ISources.ACTIVE_PART_NAME);
-		if (object instanceof IWorkbenchPart) {
-			IWorkbenchPart part = (IWorkbenchPart) object;
+		if (object instanceof IWorkbenchPart part) {
 			if (part.getSite() != null && part.getSite().getSelectionProvider() != null) {
 				sources = ISources.ACTIVE_CURRENT_SELECTION;
 				ISelection currentSelection = part.getSite().getSelectionProvider().getSelection();
@@ -136,8 +136,9 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 	@Override
 	public final void selectionChanged(final IWorkbenchPart part, final ISelection newSelection) {
 
-		if (Objects.equals(selection, newSelection))
+		if (Objects.equals(selection, newSelection)) {
 			return; // we have already handled the change
+		}
 
 		selection = newSelection;
 
@@ -550,8 +551,9 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 	private final IPropertyChangeListener propertyListener = event -> {
 		if (WorkbenchWindow.PROP_COOLBAR_VISIBLE.equals(event.getProperty())) {
 			Object newValue1 = event.getNewValue();
-			if (newValue1 == null || !(newValue1 instanceof Boolean))
+			if (newValue1 == null || !(newValue1 instanceof Boolean)) {
 				return;
+			}
 			if (!lastCoolbarVisibility.equals(newValue1)) {
 				fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE,
 						ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME, newValue1);
@@ -559,8 +561,9 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 			}
 		} else if (WorkbenchWindow.PROP_PERSPECTIVEBAR_VISIBLE.equals(event.getProperty())) {
 			Object newValue2 = event.getNewValue();
-			if (newValue2 == null || !(newValue2 instanceof Boolean))
+			if (newValue2 == null || !(newValue2 instanceof Boolean)) {
 				return;
+			}
 			if (!lastPerspectiveBarVisibility.equals(newValue2)) {
 				fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE,
 						ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME, newValue2);
@@ -568,8 +571,9 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 			}
 		} else if (WorkbenchWindow.PROP_STATUS_LINE_VISIBLE.equals(event.getProperty())) {
 			Object newValue3 = event.getNewValue();
-			if (newValue3 == null || !(newValue3 instanceof Boolean))
+			if (newValue3 == null || !(newValue3 instanceof Boolean)) {
 				return;
+			}
 			if (!lastStatusLineVisibility.equals(newValue3)) {
 				fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE,
 						ISources.ACTIVE_WORKBENCH_WINDOW_NAME + ".isStatusLineVisible", newValue3); //$NON-NLS-1$
@@ -599,7 +603,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 		}
 	};
 
-	private IPropertyListener editorListener = (source, propId) -> {
+	private final IPropertyListener editorListener = (source, propId) -> {
 		if (propId == IEditorPart.PROP_INPUT) {
 			handleInputChanged((IEditorPart) source);
 		}
@@ -809,8 +813,9 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements I
 		}
 
 		final int shellType = contextService.getShellType(newActiveShell);
-		if (shellType == IContextService.TYPE_DIALOG)
+		if (shellType == IContextService.TYPE_DIALOG) {
 			return;
+		}
 
 		final WorkbenchWindow newActiveWorkbenchWindow = (WorkbenchWindow) workbench.getActiveWorkbenchWindow();
 		final Shell newActiveWorkbenchWindowShell;

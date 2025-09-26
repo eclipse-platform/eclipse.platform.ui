@@ -37,11 +37,11 @@ import org.osgi.framework.FrameworkUtil;
 public class HelpSearchContributionItem extends ControlContribution {
 	private static final String ID = "org.eclipse.ui.helpSearch"; //$NON-NLS-1$
 
-	private IWorkbenchWindow window;
+	private final IWorkbenchWindow window;
 
 	private Combo combo;
 
-	private int MAX_ITEM_COUNT = 10;
+	private final int MAX_ITEM_COUNT = 10;
 
 	/**
 	 * Creates the contribution item.

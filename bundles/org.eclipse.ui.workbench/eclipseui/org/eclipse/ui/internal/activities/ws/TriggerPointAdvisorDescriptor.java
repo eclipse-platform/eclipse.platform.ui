@@ -26,9 +26,9 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  */
 public final class TriggerPointAdvisorDescriptor {
 
-	private String id;
+	private final String id;
 
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
 	/**
 	 * Create a new instance of this class.

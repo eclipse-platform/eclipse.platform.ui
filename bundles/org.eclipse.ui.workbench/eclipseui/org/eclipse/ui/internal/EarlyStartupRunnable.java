@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.misc.UIStats;
  */
 public class EarlyStartupRunnable extends SafeRunnable {
 
-	private IExtension extension;
+	private final IExtension extension;
 
 	/**
 	 * @param extension must not be null

@@ -192,8 +192,9 @@ public class Policy {
 			DEBUG_MPE = getDebugOption("/trace/multipageeditor"); //$NON-NLS-1$
 			DEBUG_WORKING_SETS = getDebugOption("/debug/workingSets"); //$NON-NLS-1$
 
-			if (DEBUG_SWT_DEBUG_GLOBAL)
+			if (DEBUG_SWT_DEBUG_GLOBAL) {
 				Device.DEBUG = true;
+			}
 		}
 	}
 

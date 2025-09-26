@@ -40,7 +40,7 @@ public class WorkingSetNewWizard extends Wizard implements IWorkingSetNewWizard 
 
 	private IWorkingSet workingSet;
 
-	private WorkingSetDescriptor[] descriptors;
+	private final WorkingSetDescriptor[] descriptors;
 
 	/**
 	 * Creates a new instance of the receiver.

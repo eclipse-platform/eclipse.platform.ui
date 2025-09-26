@@ -195,8 +195,9 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
 	 */
 	protected Method getMethodToExecute() {
 		Display display = Display.getCurrent();
-		if (display == null)
+		if (display == null) {
 			return null;
+		}
 		final Control focusControl = display.getFocusControl();
 		Method method = null;
 

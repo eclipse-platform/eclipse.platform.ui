@@ -25,10 +25,10 @@ import org.eclipse.ui.views.IViewDescriptor;
 
 public class ViewCategory implements IViewCategory {
 
-	private String id;
-	private String label;
-	private IPath path;
-	private List<IViewDescriptor> descriptors = new ArrayList<>();
+	private final String id;
+	private final String label;
+	private final IPath path;
+	private final List<IViewDescriptor> descriptors = new ArrayList<>();
 
 	public ViewCategory(String id, String label) {
 		this.id = id;

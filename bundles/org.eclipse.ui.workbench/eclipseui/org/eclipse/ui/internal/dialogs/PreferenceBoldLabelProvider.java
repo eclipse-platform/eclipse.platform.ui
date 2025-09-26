@@ -25,9 +25,9 @@ import org.eclipse.ui.dialogs.PatternFilter;
  */
 public class PreferenceBoldLabelProvider extends PreferenceLabelProvider implements IFontProvider {
 
-	private FilteredTree filterTree;
+	private final FilteredTree filterTree;
 
-	private PatternFilter filterForBoldElements;
+	private final PatternFilter filterForBoldElements;
 
 	PreferenceBoldLabelProvider(FilteredTree filterTree) {
 		this.filterTree = filterTree;

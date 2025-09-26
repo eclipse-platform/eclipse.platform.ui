@@ -62,7 +62,7 @@ import org.eclipse.ui.services.IEvaluationService;
 public final class MutableActivityManager extends AbstractActivityManager
 		implements IMutableActivityManager, Cloneable {
 
-	private Map<String, Activity> activitiesById = new HashMap<>();
+	private final Map<String, Activity> activitiesById = new HashMap<>();
 
 	private Map<String, Set<IActivityRequirementBinding>> activityRequirementBindingsByActivityId = new HashMap<>();
 
@@ -70,9 +70,9 @@ public final class MutableActivityManager extends AbstractActivityManager
 
 	private Map<String, Set<IActivityPatternBinding>> activityPatternBindingsByActivityId = new HashMap<>();
 
-	private IActivityRegistry activityRegistry;
+	private final IActivityRegistry activityRegistry;
 
-	private Map<String, Category> categoriesById = new HashMap<>();
+	private final Map<String, Category> categoriesById = new HashMap<>();
 
 	private Map<String, Set<ICategoryActivityBinding>> categoryActivityBindingsByCategoryId = new HashMap<>();
 
@@ -84,7 +84,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 
 	private Set<String> enabledActivityIds = new HashSet<>();
 
-	private Map<String, Identifier> identifiersById = new HashMap<>();
+	private final Map<String, Identifier> identifiersById = new HashMap<>();
 
 	/**
 	 * Avoid endless circular referencing of re-adding activity to evaluation
@@ -96,7 +96,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 	 * A list of identifiers that need to have their activity sets reconciled in the
 	 * background job.
 	 */
-	private List<Identifier> deferredIdentifiers = Collections.synchronizedList(new LinkedList<>());
+	private final List<Identifier> deferredIdentifiers = Collections.synchronizedList(new LinkedList<>());
 
 	/**
 	 * The identifier update job. Lazily initialized.
@@ -105,9 +105,9 @@ public final class MutableActivityManager extends AbstractActivityManager
 
 	private final IActivityRegistryListener activityRegistryListener = activityRegistryEvent -> readRegistry(false);
 
-	private Map<ActivityDefinition, IEvaluationReference> refsByActivityDefinition = new HashMap<>();
+	private final Map<ActivityDefinition, IEvaluationReference> refsByActivityDefinition = new HashMap<>();
 
-	private IEventBroker eventBroker;
+	private final IEventBroker eventBroker;
 
 	/**
 	 * Create a new instance of this class using the platform extension registry.
@@ -607,7 +607,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 		return activityEventsByActivityId;
 	}
 
-	private IPropertyChangeListener enabledWhenListener = event -> {
+	private final IPropertyChangeListener enabledWhenListener = event -> {
 		if (addingEvaluationListener || isDisposed()) {
 			return;
 		}
@@ -625,7 +625,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 		}
 	};
 
-	private ITriggerPointAdvisor advisor;
+	private final ITriggerPointAdvisor advisor;
 
 	private ActivityEvent updateActivity(Activity activity) {
 		Set<IActivityRequirementBinding> activityRequirementBindings = activityRequirementBindingsByActivityId

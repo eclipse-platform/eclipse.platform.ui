@@ -32,9 +32,9 @@ import org.eclipse.ui.menus.IContributionRoot;
  */
 final class ContributionRoot implements IContributionRoot {
 
-	private List<IContributionItem> topLevelItems = new ArrayList<>();
-	private Map<IContributionItem, Expression> itemsToExpressions = new HashMap<>();
-	private AbstractContributionFactory factory;
+	private final List<IContributionItem> topLevelItems = new ArrayList<>();
+	private final Map<IContributionItem, Expression> itemsToExpressions = new HashMap<>();
+	private final AbstractContributionFactory factory;
 
 	public ContributionRoot(AbstractContributionFactory factory) {
 		this.factory = factory;
@@ -42,11 +42,13 @@ final class ContributionRoot implements IContributionRoot {
 
 	@Override
 	public void addContributionItem(IContributionItem item, Expression visibleWhen) {
-		if (item == null)
+		if (item == null) {
 			throw new IllegalArgumentException();
+		}
 		topLevelItems.add(item);
-		if (visibleWhen == null)
+		if (visibleWhen == null) {
 			visibleWhen = AlwaysEnabledExpression.INSTANCE;
+		}
 
 		// menuService.registerVisibleWhen(item, visibleWhen, restriction,
 		// createIdentifierId(item));
@@ -91,10 +93,12 @@ final class ContributionRoot implements IContributionRoot {
 
 	@Override
 	public void registerVisibilityForChild(IContributionItem item, Expression visibleWhen) {
-		if (item == null)
+		if (item == null) {
 			throw new IllegalArgumentException();
-		if (visibleWhen == null)
+		}
+		if (visibleWhen == null) {
 			visibleWhen = AlwaysEnabledExpression.INSTANCE;
+		}
 		// menuService.registerVisibleWhen(item, visibleWhen, restriction,
 		// createIdentifierId(item));
 		itemsToExpressions.put(item, visibleWhen);

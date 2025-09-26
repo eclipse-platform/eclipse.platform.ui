@@ -46,7 +46,7 @@ public class WorkingCopyPreferences extends EventManager implements IEclipsePref
 	private final Map<String, Object> temporarySettings;
 	private final IEclipsePreferences original;
 	private boolean removed = false;
-	private org.eclipse.ui.preferences.WorkingCopyManager manager;
+	private final org.eclipse.ui.preferences.WorkingCopyManager manager;
 
 	/**
 	 * @param original the underlying preference node

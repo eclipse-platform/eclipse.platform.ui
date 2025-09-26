@@ -96,7 +96,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	/**
 	 * This handler will be notified when the part's widget has been un/set.
 	 */
-	private EventHandler widgetSetHandler = event -> {
+	private final EventHandler widgetSetHandler = event -> {
 		// check that we're looking at our own part and that the widget is
 		// being unset
 		if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
@@ -118,7 +118,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	/**
 	 * This handler will be notified when the part's client object has been un/set.
 	 */
-	private EventHandler objectSetHandler = event -> {
+	private final EventHandler objectSetHandler = event -> {
 		// check that we're looking at our own part and that the object is
 		// being set
 		if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
@@ -129,7 +129,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 		}
 	};
 
-	private ISelectionChangedListener postListener = e -> {
+	private final ISelectionChangedListener postListener = e -> {
 		ESelectionService selectionService = part.getContext().get(ESelectionService.class);
 		selectionService.setPostSelection(e.getSelection());
 	};

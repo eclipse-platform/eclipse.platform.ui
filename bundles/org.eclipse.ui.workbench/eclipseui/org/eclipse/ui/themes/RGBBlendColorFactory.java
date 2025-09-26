@@ -81,8 +81,7 @@ public class RGBBlendColorFactory implements IColorFactory, IExecutableExtension
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
 			throws CoreException {
 
-		if (data instanceof Hashtable) {
-			Hashtable table = (Hashtable) data;
+		if (data instanceof Hashtable table) {
 			color1 = (String) table.get("color1"); //$NON-NLS-1$
 			color2 = (String) table.get("color2"); //$NON-NLS-1$
 		}

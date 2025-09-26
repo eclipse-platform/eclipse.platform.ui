@@ -57,13 +57,13 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public final class NonLocalUndoUserApprover implements IOperationApprover {
 
-	private IUndoContext context;
+	private final IUndoContext context;
 
-	private IEditorPart part;
+	private final IEditorPart part;
 
-	private Object[] elements;
+	private final Object[] elements;
 
-	private Class<?> affectedObjectsClass;
+	private final Class<?> affectedObjectsClass;
 
 	private ArrayList elementsAndAdapters;
 

@@ -52,7 +52,7 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
  */
 public class SupportTray extends DialogTray implements ISelectionChangedListener {
 
-	private Map<Object, Object> dialogState;
+	private final Map<Object, Object> dialogState;
 
 	public SupportTray(Map<Object, Object> dialogState, Listener listener) {
 		this.closeListener = listener;
@@ -62,8 +62,8 @@ public class SupportTray extends DialogTray implements ISelectionChangedListener
 	}
 
 	private IContributionItem closeAction;
-	private Listener closeListener;
-	private boolean hideSupportButtons;
+	private final Listener closeListener;
+	private final boolean hideSupportButtons;
 	private Image normal;
 	private Image hover;
 	private static final int[] closeButtonPolygon = new int[] { 3, 3, 5, 3, 7, 5, 8, 5, 10, 3, 12, 3, 12, 5, 10, 7, 10,
@@ -126,8 +126,9 @@ public class SupportTray extends DialogTray implements ISelectionChangedListener
 		gd.grabExcessVerticalSpace = true;
 		supportArea.setLayoutData(gd);
 
-		if (lastSelectedStatus != null)
+		if (lastSelectedStatus != null) {
 			createSupportArea(supportArea, lastSelectedStatus);
+		}
 
 		Point shellSize = supportArea.getShell().getSize();
 		Point desiredSize = supportArea.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -196,10 +197,12 @@ public class SupportTray extends DialogTray implements ISelectionChangedListener
 	}
 
 	private void destroyImages() {
-		if (normal != null)
+		if (normal != null) {
 			normal.dispose();
-		if (hover != null)
+		}
+		if (hover != null) {
 			hover.dispose();
+		}
 	}
 
 	/**
@@ -214,11 +217,13 @@ public class SupportTray extends DialogTray implements ISelectionChangedListener
 		ErrorSupportProvider provider = getSupportProvider();
 
 		// default support area was disabled
-		if (provider == null)
+		if (provider == null) {
 			return;
+		}
 
-		if (supportAreaContent != null)
+		if (supportAreaContent != null) {
 			supportAreaContent.dispose();
+		}
 
 		supportAreaContent = new Composite(parent, SWT.FILL);
 
@@ -257,8 +262,7 @@ public class SupportTray extends DialogTray implements ISelectionChangedListener
 
 		ISelection selection = event.getSelection();
 
-		if (selection instanceof StructuredSelection) {
-			StructuredSelection structuredSelection = (StructuredSelection) selection;
+		if (selection instanceof StructuredSelection structuredSelection) {
 			Object element = structuredSelection.getFirstElement();
 			if (element instanceof StatusAdapter) {
 				return (StatusAdapter) element;
@@ -276,8 +280,7 @@ public class SupportTray extends DialogTray implements ISelectionChangedListener
 	 */
 	public ErrorSupportProvider providesSupport(StatusAdapter adapter) {
 		ErrorSupportProvider provider = getSupportProvider();
-		if (provider instanceof AbstractStatusAreaProvider) {
-			AbstractStatusAreaProvider areaProvider = (AbstractStatusAreaProvider) provider;
+		if (provider instanceof AbstractStatusAreaProvider areaProvider) {
 			if (areaProvider.validFor(adapter)) {
 				return areaProvider;
 			}

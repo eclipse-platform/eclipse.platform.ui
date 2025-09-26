@@ -65,12 +65,12 @@ import org.eclipse.ui.keys.IBindingService;
  * @since 3.5
  */
 class ItemDetailToolTip extends NameAndDescriptionToolTip {
-	private Tree tree;
-	private boolean showActionSet;
-	private boolean showKeyBindings;
-	private ViewerFilter filter;
-	private TreeViewer v;
-	private CustomizePerspectiveDialog dialog;
+	private final Tree tree;
+	private final boolean showActionSet;
+	private final boolean showKeyBindings;
+	private final ViewerFilter filter;
+	private final TreeViewer v;
+	private final CustomizePerspectiveDialog dialog;
 
 	/**
 	 * @param tree   The tree for the tooltip to hover over
@@ -275,8 +275,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 		}
 
 		// Show dynamic menu item info
-		if (item instanceof DynamicContributionItem) {
-			DynamicContributionItem dynamic = ((DynamicContributionItem) item);
+		if (item instanceof DynamicContributionItem dynamic) {
 			StringBuilder text = new StringBuilder();
 			final List<MenuItem> currentItems = dynamic.getCurrentItems();
 

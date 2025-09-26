@@ -135,11 +135,11 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 	@Override
 	public void javaToNative(Object data, TransferData transferData) {
 
-		if (!(data instanceof EditorInputData[])) {
+		if (!(data instanceof EditorInputData[] editorInputs)) {
 			return;
 		}
 
-		EditorInputData[] editorInputs = (EditorInputData[]) data;
+		
 		/**
 		 * The editor input serialization format is: (int) number of editor inputs Then,
 		 * the following for each editor input: (String) editorId (String) factoryId

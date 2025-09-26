@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @see org.eclipse.ui.dialogs.IWorkingSetPage
  */
 public class WorkingSetEditWizard extends Wizard implements IWorkingSetEditWizard {
-	private IWorkingSetPage workingSetEditPage;
+	private final IWorkingSetPage workingSetEditPage;
 
 	private IWorkingSet workingSet;
 

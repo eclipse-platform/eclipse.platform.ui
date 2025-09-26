@@ -37,7 +37,7 @@ public abstract class PerspectiveAction extends Action implements ActionFactory.
 	/**
 	 * Tracks perspective activation, to update this action's enabled state.
 	 */
-	private PerspectiveTracker tracker;
+	private final PerspectiveTracker tracker;
 
 	/**
 	 * Constructs a new perspective action for the given window.

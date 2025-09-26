@@ -547,8 +547,9 @@ public abstract class AbstractUIPlugin extends Plugin {
 			// saveDialogSettings(); -> now done by DialogSettingsProvider
 			savePreferenceStore();
 			preferenceStore = null;
-			if (imageRegistry != null)
+			if (imageRegistry != null) {
 				imageRegistry.dispose();
+			}
 			imageRegistry = null;
 		} finally {
 			super.stop(context);

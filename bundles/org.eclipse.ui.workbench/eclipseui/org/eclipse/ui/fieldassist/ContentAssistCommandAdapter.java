@@ -72,11 +72,11 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	// a platform UI preference.
 	private static final int DEFAULT_AUTO_ACTIVATION_DELAY = 500;
 
-	private IHandlerService handlerService;
+	private final IHandlerService handlerService;
 
 	private IHandlerActivation activeHandler;
 
-	private IHandler proposalHandler = new AbstractHandler() {
+	private final IHandler proposalHandler = new AbstractHandler() {
 		@Override
 		public Object execute(ExecutionEvent event) {
 			openProposalPopup();

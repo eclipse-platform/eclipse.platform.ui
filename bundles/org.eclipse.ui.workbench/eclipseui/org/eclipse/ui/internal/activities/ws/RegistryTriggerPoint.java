@@ -24,9 +24,9 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class RegistryTriggerPoint extends AbstractTriggerPoint {
 
-	private String id;
+	private final String id;
 
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
 	private Map<String, String> hints;
 

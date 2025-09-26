@@ -467,8 +467,9 @@ public class ProgressManagerUtil {
 		}
 
 		Shell nonModalShell = getNonModalShell();
-		if (nonModalShell != null && nonModalShell.isVisible())
+		if (nonModalShell != null && nonModalShell.isVisible()) {
 			return nonModalShell;
+		}
 
 		Shell splashShell = WorkbenchPlugin.getSplashShell(PlatformUI.getWorkbench().getDisplay());
 		if (splashShell != null && splashShell.isVisible()) {

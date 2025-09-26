@@ -81,7 +81,7 @@ public class TreeManager {
 	 * {@link CheckboxTreeViewer}.
 	 */
 	public static class ModelListenerForCheckboxTree implements CheckListener {
-		private CheckboxTreeViewer treeViewer;
+		private final CheckboxTreeViewer treeViewer;
 
 		public ModelListenerForCheckboxTree(TreeManager manager, CheckboxTreeViewer treeViewer) {
 			this.treeViewer = treeViewer;
@@ -99,7 +99,7 @@ public class TreeManager {
 	 * {@link CheckboxTableViewer}.
 	 */
 	public static class ModelListenerForCheckboxTable implements CheckListener {
-		private CheckboxTableViewer tableViewer;
+		private final CheckboxTableViewer tableViewer;
 
 		public ModelListenerForCheckboxTable(TreeManager manager, CheckboxTableViewer tableViewer) {
 			this.tableViewer = tableViewer;
@@ -222,8 +222,9 @@ public class TreeManager {
 	 *         content in tree format.
 	 */
 	public static ITreeContentProvider getTreeContentProvider() {
-		if (treeContentProvider == null)
+		if (treeContentProvider == null) {
 			treeContentProvider = new TreeItemContentProvider();
+		}
 		return treeContentProvider;
 	}
 
@@ -232,8 +233,9 @@ public class TreeManager {
 	 *         {@link CheckStateChangedEvent}s by updating the model to reflect them
 	 */
 	public ICheckStateListener getViewerCheckStateListener() {
-		if (viewerCheckListener == null)
+		if (viewerCheckListener == null) {
 			viewerCheckListener = new ViewerCheckStateListener();
+		}
 		return viewerCheckListener;
 	}
 
@@ -245,7 +247,7 @@ public class TreeManager {
 		private ImageDescriptor imageDescriptor;
 		private Image image;
 		private TreeItem parent;
-		private List<TreeItem> children;
+		private final List<TreeItem> children;
 		private int checkState;
 		private boolean changedByUser;
 
@@ -299,8 +301,9 @@ public class TreeManager {
 		 * any iterative synchronization to take place.
 		 */
 		private void internalSetCheckState(int newState) {
-			if (newState == checkState)
+			if (newState == checkState) {
 				return;
+			}
 
 			checkState = newState;
 			fireListeners(this);
@@ -313,8 +316,9 @@ public class TreeManager {
 		 */
 		public void setCheckState(boolean checked) {
 			int newState = checked ? CHECKSTATE_CHECKED : CHECKSTATE_UNCHECKED;
-			if (checkState == newState)
+			if (checkState == newState) {
 				return;
+			}
 			// Actually set the state and fire the CheckChangeEvent
 			internalSetCheckState(newState);
 
@@ -365,8 +369,9 @@ public class TreeManager {
 		 * </ul>
 		 */
 		private void synchParents(TreeItem changedItem) {
-			if (changedItem.parent == null)
+			if (changedItem.parent == null) {
 				return;
+			}
 
 			int newState = changedItem.checkState;
 
@@ -468,10 +473,12 @@ public class TreeManager {
 	 * @return The created {@link CheckListener}.
 	 */
 	public CheckListener getCheckListener(ICheckable viewer) {
-		if (viewer instanceof CheckboxTreeViewer)
+		if (viewer instanceof CheckboxTreeViewer) {
 			return new ModelListenerForCheckboxTree(this, (CheckboxTreeViewer) viewer);
-		if (viewer instanceof CheckboxTableViewer)
+		}
+		if (viewer instanceof CheckboxTableViewer) {
 			return new ModelListenerForCheckboxTable(this, (CheckboxTableViewer) viewer);
+		}
 		return null;
 	}
 

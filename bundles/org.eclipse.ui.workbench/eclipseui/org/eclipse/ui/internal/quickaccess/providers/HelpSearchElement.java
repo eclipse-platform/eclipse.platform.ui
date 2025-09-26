@@ -29,7 +29,7 @@ public class HelpSearchElement extends QuickAccessElement {
 	/** identifier */
 	private static final String SEARCH_IN_HELP_ID = "search.in.help"; //$NON-NLS-1$
 
-	private String searchText;
+	private final String searchText;
 
 	public HelpSearchElement(String filter) {
 		this.searchText = filter;

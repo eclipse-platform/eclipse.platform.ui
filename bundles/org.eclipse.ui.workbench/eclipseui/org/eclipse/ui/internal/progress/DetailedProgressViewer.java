@@ -58,9 +58,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	Composite control;
 
-	private ScrolledComposite scrolled;
+	private final ScrolledComposite scrolled;
 
-	private Composite noEntryArea;
+	private final Composite noEntryArea;
 
 	/**
 	 * Map to find existing controls for job items. Only elements with a control are
@@ -389,8 +389,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 				if (item == null) {
 					// Is the parent showing?
 					JobTreeElement parent = element.getParent();
-					if (parent != null && parent != element)
+					if (parent != null && parent != element) {
 						remove(parent);
+					}
 				}
 				items.remove(element);
 				unmapElement(element);

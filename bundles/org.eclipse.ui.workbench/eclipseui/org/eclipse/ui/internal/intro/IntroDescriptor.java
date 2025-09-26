@@ -32,7 +32,7 @@ import org.eclipse.ui.intro.IntroContentDetector;
  */
 public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 
-	private IConfigurationElement element;
+	private final IConfigurationElement element;
 
 	private ImageDescriptor imageDescriptor;
 

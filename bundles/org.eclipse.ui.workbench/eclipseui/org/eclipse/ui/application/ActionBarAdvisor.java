@@ -81,9 +81,9 @@ public class ActionBarAdvisor {
 	 */
 	public static final int FILL_STATUS_LINE = 0x08;
 
-	private IActionBarConfigurer actionBarConfigurer;
+	private final IActionBarConfigurer actionBarConfigurer;
 
-	private Map<String, IAction> actions = new HashMap<>();
+	private final Map<String, IAction> actions = new HashMap<>();
 
 	private boolean menuCreated;
 

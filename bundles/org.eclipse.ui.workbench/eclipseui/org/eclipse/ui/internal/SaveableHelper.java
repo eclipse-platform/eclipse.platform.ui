@@ -260,8 +260,9 @@ public class SaveableHelper {
 		IRunnableWithProgress runnable = monitor -> {
 			progressOp.run(monitor);
 			// Only indicate success if the monitor wasn't canceled
-			if (!monitor.isCanceled())
+			if (!monitor.isCanceled()) {
 				success[0] = true;
+			}
 		};
 
 		try {

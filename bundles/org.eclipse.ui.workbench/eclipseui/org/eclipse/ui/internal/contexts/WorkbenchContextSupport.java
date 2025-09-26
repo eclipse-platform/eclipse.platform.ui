@@ -47,17 +47,17 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 	/**
 	 * The binding service for the workbench. This value is never <code>null</code>.
 	 */
-	private IBindingService bindingService;
+	private final IBindingService bindingService;
 
 	/**
 	 * The context service for the workbench. This value is never <code>null</code>.
 	 */
-	private IContextService contextService;
+	private final IContextService contextService;
 
 	/**
 	 * The legacy context manager supported by this application.
 	 */
-	private ContextManagerLegacyWrapper contextManagerWrapper;
+	private final ContextManagerLegacyWrapper contextManagerWrapper;
 
 	/**
 	 * The workbench for which context support is being provided. This value must
@@ -132,8 +132,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 		}
 
 		final Object value = activationsBySubmission.remove(enabledSubmission);
-		if (value instanceof IContextActivation) {
-			final IContextActivation activation = (IContextActivation) value;
+		if (value instanceof final IContextActivation activation) {
 			contextService.deactivateContext(activation);
 		}
 	}

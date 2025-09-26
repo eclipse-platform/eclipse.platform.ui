@@ -66,7 +66,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover, IOper
 	 */
 	public static boolean AUTOMATED_MODE = false;
 
-	private IUndoContext context;
+	private final IUndoContext context;
 
 	private static final int EXECUTING = 1;
 

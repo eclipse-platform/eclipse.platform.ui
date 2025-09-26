@@ -91,18 +91,18 @@ public class AboutPluginsPage extends ProductInfoPage {
 		/**
 		 * Queue containing bundle signing info to be resolved.
 		 */
-		private LinkedList<AboutBundleData> resolveQueue = new LinkedList<>();
+		private final LinkedList<AboutBundleData> resolveQueue = new LinkedList<>();
 
 		/**
 		 * Queue containing bundle data that's been resolve and needs updating.
 		 */
-		private List<AboutBundleData> updateQueue = new ArrayList<>();
+		private final List<AboutBundleData> updateQueue = new ArrayList<>();
 
 		/*
 		 * this job will attempt to discover the signing state of a given bundle and
 		 * then send it along to the update job
 		 */
-		private Job resolveJob = new Job(AboutPluginsPage.class.getName()) {
+		private final Job resolveJob = new Job(AboutPluginsPage.class.getName()) {
 			{
 				setSystem(true);
 				setPriority(Job.SHORT);
@@ -112,18 +112,21 @@ public class AboutPluginsPage extends ProductInfoPage {
 			protected IStatus run(IProgressMonitor monitor) {
 				while (true) {
 					// If the UI has not been created, nothing to do.
-					if (vendorInfo == null)
+					if (vendorInfo == null) {
 						return Status.OK_STATUS;
+					}
 					// If the UI has been disposed since we were asked to
 					// render, nothing to do.
 					Table table = vendorInfo.getTable();
 					// the table has been disposed since we were asked to render
-					if (table == null || table.isDisposed())
+					if (table == null || table.isDisposed()) {
 						return Status.OK_STATUS;
+					}
 					AboutBundleData data = null;
 					synchronized (resolveQueue) {
-						if (resolveQueue.isEmpty())
+						if (resolveQueue.isEmpty()) {
 							return Status.OK_STATUS;
+						}
 						data = resolveQueue.removeFirst();
 					}
 					try {
@@ -147,7 +150,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 		 * this job is responsible for feeding label change events into the viewer as
 		 * they become available from the resolve job
 		 */
-		private Job updateJob = new WorkbenchJob(PlatformUI.getWorkbench().getDisplay(),
+		private final Job updateJob = new WorkbenchJob(PlatformUI.getWorkbench().getDisplay(),
 				AboutPluginsPage.class.getName()) {
 			{
 				setSystem(true);
@@ -159,12 +162,14 @@ public class AboutPluginsPage extends ProductInfoPage {
 				while (true) {
 					Control page = getControl();
 					// the page has gone down since we were asked to render
-					if (page == null || page.isDisposed())
+					if (page == null || page.isDisposed()) {
 						return Status.OK_STATUS;
+					}
 					AboutBundleData[] data = null;
 					synchronized (updateQueue) {
-						if (updateQueue.isEmpty())
+						if (updateQueue.isEmpty()) {
 							return Status.OK_STATUS;
+						}
 
 						data = updateQueue.toArray(new AboutBundleData[updateQueue.size()]);
 						updateQueue.clear();
@@ -178,8 +183,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0) {
-				if (element instanceof AboutBundleData) {
-					final AboutBundleData data = (AboutBundleData) element;
+				if (element instanceof final AboutBundleData data) {
 					if (data.isSignedDetermined()) {
 						return WorkbenchImages.getImage(data.isSigned() ? IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_YES
 								: IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_NO);
@@ -200,8 +204,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof AboutBundleData) {
-				AboutBundleData data = (AboutBundleData) element;
+			if (element instanceof AboutBundleData data) {
 				switch (columnIndex) {
 				case 0:
 					if (!data.isSignedDetermined()) {
@@ -254,7 +257,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 	private String helpContextId = IWorkbenchHelpContextIds.ABOUT_PLUGINS_DIALOG;
 
-	private String columnTitles[] = { WorkbenchMessages.AboutPluginsDialog_signed,
+	private final String columnTitles[] = { WorkbenchMessages.AboutPluginsDialog_signed,
 			WorkbenchMessages.AboutPluginsDialog_provider, WorkbenchMessages.AboutPluginsDialog_pluginName,
 			WorkbenchMessages.AboutPluginsDialog_version, WorkbenchMessages.AboutPluginsDialog_pluginId,
 
@@ -283,7 +286,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 			signingArea.setData(bundleInfo);
 
 			signingArea.createContents(sashForm);
-			sashForm.setWeights(new int[] { 100 - SIGNING_AREA_PERCENTAGE, SIGNING_AREA_PERCENTAGE });
+			sashForm.setWeights(100 - SIGNING_AREA_PERCENTAGE, SIGNING_AREA_PERCENTAGE);
 			signingInfo.setText(WorkbenchMessages.AboutPluginsDialog_signingInfo_hide);
 
 		} else {
@@ -291,7 +294,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 			signingInfo.setText(WorkbenchMessages.AboutPluginsDialog_signingInfo_show);
 			signingArea.dispose();
 			signingArea = null;
-			sashForm.setWeights(new int[] { 100 });
+			sashForm.setWeights(100);
 		}
 	}
 
@@ -559,8 +562,9 @@ public class AboutPluginsPage extends ProductInfoPage {
 			return;
 		}
 
-		if (vendorInfo.getSelection().isEmpty())
+		if (vendorInfo.getSelection().isEmpty()) {
 			return;
+		}
 
 		AboutBundleData bundleInfo = (AboutBundleData) vendorInfo.getStructuredSelection().getFirstElement();
 
@@ -585,20 +589,17 @@ class TableComparator extends ViewerComparator {
 
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
-		if (sortColumn == 0 && e1 instanceof AboutBundleData && e2 instanceof AboutBundleData) {
-			AboutBundleData d1 = (AboutBundleData) e1;
-			AboutBundleData d2 = (AboutBundleData) e2;
+		if (sortColumn == 0 && e1 instanceof AboutBundleData d1 && e2 instanceof AboutBundleData d2) {
 			int diff = Long.compare(getSignedSortValue(d1), getSignedSortValue(d2));
 			// If values are different, or there is no secondary column defined,
 			// we are done
-			if (diff != 0 || lastSortColumn == 0)
+			if (diff != 0 || lastSortColumn == 0) {
 				return ascending ? diff : -diff;
+			}
 			// try a secondary sort
-			if (viewer instanceof TableViewer) {
-				TableViewer tableViewer = (TableViewer) viewer;
+			if (viewer instanceof TableViewer tableViewer) {
 				IBaseLabelProvider baseLabel = tableViewer.getLabelProvider();
-				if (baseLabel instanceof ITableLabelProvider) {
-					ITableLabelProvider tableProvider = (ITableLabelProvider) baseLabel;
+				if (baseLabel instanceof ITableLabelProvider tableProvider) {
 					String e1p = tableProvider.getColumnText(e1, lastSortColumn);
 					String e2p = tableProvider.getColumnText(e2, lastSortColumn);
 					int result = getComparator().compare(e1p, e2p);
@@ -608,11 +609,9 @@ class TableComparator extends ViewerComparator {
 			// we couldn't determine a secondary sort, call it equal
 			return 0;
 		}
-		if (viewer instanceof TableViewer) {
-			TableViewer tableViewer = (TableViewer) viewer;
+		if (viewer instanceof TableViewer tableViewer) {
 			IBaseLabelProvider baseLabel = tableViewer.getLabelProvider();
-			if (baseLabel instanceof ITableLabelProvider) {
-				ITableLabelProvider tableProvider = (ITableLabelProvider) baseLabel;
+			if (baseLabel instanceof ITableLabelProvider tableProvider) {
 				String e1p = tableProvider.getColumnText(e1, sortColumn);
 				String e2p = tableProvider.getColumnText(e2, sortColumn);
 				int result = getComparator().compare(e1p, e2p);
@@ -624,9 +623,7 @@ class TableComparator extends ViewerComparator {
 						result = getComparator().compare(e1p, e2p);
 						return lastAscending ? result : (-1) * result;
 					} // secondary sort is by column 0
-					if (e1 instanceof AboutBundleData && e2 instanceof AboutBundleData) {
-						AboutBundleData d1 = (AboutBundleData) e1;
-						AboutBundleData d2 = (AboutBundleData) e2;
+					if (e1 instanceof AboutBundleData d1 && e2 instanceof AboutBundleData d2) {
 						int diff = Long.compare(getSignedSortValue(d1), getSignedSortValue(d2));
 						return lastAscending ? diff : -diff;
 					}
@@ -706,8 +703,7 @@ class BundlePatternFilter extends ViewerFilter {
 			return true;
 		}
 
-		if (element instanceof AboutBundleData) {
-			AboutBundleData data = (AboutBundleData) element;
+		if (element instanceof AboutBundleData data) {
 			return matcher.matchWords(data.getName()) || matcher.matchWords(data.getProviderName())
 					|| matcher.matchWords(data.getId());
 		}

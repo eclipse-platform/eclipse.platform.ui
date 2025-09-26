@@ -32,7 +32,7 @@ public class WorkbenchLocationService implements IWorkbenchLocationService, IDis
 	private String serviceScope;
 	private IWorkbench workbench;
 	private IWorkbenchWindow window;
-	private int level;
+	private final int level;
 
 	public WorkbenchLocationService(String serviceScope, IWorkbench workbench, IWorkbenchWindow window,
 			IWorkbenchPartSite partSite, IEditorSite mpepSite, IPageSite pageSite, int level) {

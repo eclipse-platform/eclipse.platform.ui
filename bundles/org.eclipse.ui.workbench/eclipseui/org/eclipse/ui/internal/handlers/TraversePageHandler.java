@@ -47,10 +47,12 @@ public class TraversePageHandler extends WidgetMethodHandler {
 					traversalDirection = translateToTraversalDirection(!forward); // we are in the second-to-last item in the given
 					// direction. Now, use the Traverse-event to move back by one
 				}
-				if (control.traverse(traversalDirection))
+				if (control.traverse(traversalDirection)) {
 					return null;
-				if (control instanceof Shell)
+				}
+				if (control instanceof Shell) {
 					return null;
+				}
 				control = control.getParent();
 			} while (control != null);
 		}
@@ -64,7 +66,7 @@ public class TraversePageHandler extends WidgetMethodHandler {
 	private int translateToTraversalDirection(boolean forward) {
 		return forward ? SWT.TRAVERSE_PAGE_NEXT : SWT.TRAVERSE_PAGE_PREVIOUS;
 	}
-	
+
 	/**
 	 * Sets the current selection to the first or last item the given direction.
 	 *

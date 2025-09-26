@@ -85,14 +85,14 @@ public class MenuAdditionCacheEntry {
 				|| TRIM_VERTICAL1.equals(path) || TRIM_VERTICAL2.equals(path) || TRIM_STATUS.equals(path);
 	}
 
-	private MApplication application;
+	private final MApplication application;
 	// private IEclipseContext appContext;
-	private IConfigurationElement configElement;
-	private MenuLocationURI location;
+	private final IConfigurationElement configElement;
+	private final MenuLocationURI location;
 
-	private String namespaceIdentifier;
+	private final String namespaceIdentifier;
 
-	private IActivityManager activityManager;
+	private final IActivityManager activityManager;
 
 	public MenuAdditionCacheEntry(MApplication application, IEclipseContext appContext,
 			IConfigurationElement configElement, String attribute, String namespaceIdentifier) {
@@ -289,7 +289,7 @@ public class MenuAdditionCacheEntry {
 		}
 	}
 
-	private IdListener idUpdater = new IdListener();
+	private final IdListener idUpdater = new IdListener();
 
 	private void createIdentifierTracker(MApplicationElement item) {
 		if (item.getElementId() != null && item.getElementId().length() > 0) {

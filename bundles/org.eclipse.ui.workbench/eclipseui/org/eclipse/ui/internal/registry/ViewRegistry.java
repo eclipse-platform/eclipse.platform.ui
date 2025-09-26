@@ -78,13 +78,13 @@ public class ViewRegistry implements IViewRegistry {
 	@Inject
 	Logger logger;
 
-	private Map<String, IViewDescriptor> descriptors = new HashMap<>();
+	private final Map<String, IViewDescriptor> descriptors = new HashMap<>();
 
-	private List<IStickyViewDescriptor> stickyDescriptors = new ArrayList<>();
+	private final List<IStickyViewDescriptor> stickyDescriptors = new ArrayList<>();
 
-	private HashMap<String, ViewCategory> categories = new HashMap<>();
+	private final HashMap<String, ViewCategory> categories = new HashMap<>();
 
-	private Category miscCategory = new Category();
+	private final Category miscCategory = new Category();
 
 	@PostConstruct
 	void postConstruct() {

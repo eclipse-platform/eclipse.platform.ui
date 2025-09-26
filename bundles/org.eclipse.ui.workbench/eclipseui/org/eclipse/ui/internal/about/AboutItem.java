@@ -17,11 +17,11 @@ package org.eclipse.ui.internal.about;
  * Holds the information for text appearing in the about dialog
  */
 public class AboutItem {
-	private String text;
+	private final String text;
 
-	private int[][] linkRanges;
+	private final int[][] linkRanges;
 
-	private String[] hrefs;
+	private final String[] hrefs;
 
 	/**
 	 * Creates a new about item

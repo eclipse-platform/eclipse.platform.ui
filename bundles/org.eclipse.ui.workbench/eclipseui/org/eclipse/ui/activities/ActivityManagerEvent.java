@@ -34,13 +34,13 @@ import org.eclipse.ui.internal.util.Util;
  * @see IActivityManagerListener#activityManagerChanged(ActivityManagerEvent)
  */
 public final class ActivityManagerEvent {
-	private IActivityManager activityManager;
+	private final IActivityManager activityManager;
 
-	private boolean definedActivityIdsChanged;
+	private final boolean definedActivityIdsChanged;
 
-	private boolean definedCategoryIdsChanged;
+	private final boolean definedCategoryIdsChanged;
 
-	private boolean enabledActivityIdsChanged;
+	private final boolean enabledActivityIdsChanged;
 
 	/**
 	 * Indicates whether enabled IDs of non-expression-controlled activities have

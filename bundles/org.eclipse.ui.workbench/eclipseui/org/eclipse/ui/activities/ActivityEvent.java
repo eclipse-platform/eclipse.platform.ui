@@ -26,21 +26,21 @@ package org.eclipse.ui.activities;
  * @see IActivityListener#activityChanged(ActivityEvent)
  */
 public final class ActivityEvent {
-	private IActivity activity;
+	private final IActivity activity;
 
-	private boolean activityRequirementBindingsChanged;
+	private final boolean activityRequirementBindingsChanged;
 
-	private boolean activityPatternBindingsChanged;
+	private final boolean activityPatternBindingsChanged;
 
-	private boolean definedChanged;
+	private final boolean definedChanged;
 
-	private boolean enabledChanged;
+	private final boolean enabledChanged;
 
-	private boolean defaultEnabledChanged;
+	private final boolean defaultEnabledChanged;
 
-	private boolean nameChanged;
+	private final boolean nameChanged;
 
-	private boolean descriptionChanged;
+	private final boolean descriptionChanged;
 
 	/**
 	 * Creates a new instance of this class. Since 3.1 this method will assume that

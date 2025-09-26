@@ -28,8 +28,7 @@ public class OpenPerspectivePropertyTester extends PropertyTester {
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		if (args.length == 0 && receiver instanceof WorkbenchWindow) {
-			final WorkbenchWindow window = (WorkbenchWindow) receiver;
+		if (args.length == 0 && receiver instanceof final WorkbenchWindow window) {
 			if (PROPERTY_IS_PERSPECTIVE_OPEN.equals(property)) {
 				IWorkbenchPage page = window.getActivePage();
 				if (page != null) {

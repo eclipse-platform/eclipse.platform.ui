@@ -34,7 +34,7 @@ public class ThemeElementDefinition {
 		int MODIFIED_BY_USER = 4;
 	}
 
-	private String id;
+	private final String id;
 
 	private String label;
 

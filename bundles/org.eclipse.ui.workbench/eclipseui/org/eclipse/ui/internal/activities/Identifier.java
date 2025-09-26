@@ -40,7 +40,7 @@ final class Identifier implements IIdentifier {
 
 	private transient int hashCode = HASH_INITIAL;
 
-	private String id;
+	private final String id;
 
 	private ListenerList<IIdentifierListener> identifierListeners;
 
@@ -86,11 +86,10 @@ final class Identifier implements IIdentifier {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof Identifier)) {
+		if (!(object instanceof final Identifier castedObject)) {
 			return false;
 		}
 
-		final Identifier castedObject = (Identifier) object;
 		return Objects.equals(activityIds, castedObject.activityIds) && enabled == castedObject.enabled
 				&& Objects.equals(id, castedObject.id);
 	}

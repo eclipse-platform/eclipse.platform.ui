@@ -23,7 +23,7 @@ import java.util.Set;
  */
 public class CascadingMap {
 
-	private Map base, override;
+	private final Map base, override;
 
 	/**
 	 * @param base     the base (default) map

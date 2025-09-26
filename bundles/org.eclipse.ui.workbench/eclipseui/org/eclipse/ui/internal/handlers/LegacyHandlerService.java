@@ -115,8 +115,9 @@ public class LegacyHandlerService implements IHandlerService {
 			HandlerActivation conflictBest = null;
 			HandlerActivation conflictOther = null;
 			for (HandlerActivation handlerActivation : activationSet) {
-				if (!handlerActivation.participating)
+				if (!handlerActivation.participating) {
 					continue;
+				}
 				if (handlerActivation.evaluate(legacyEvalContext)) {
 					if (bestActivation == null) {
 						bestActivation = handlerActivation;

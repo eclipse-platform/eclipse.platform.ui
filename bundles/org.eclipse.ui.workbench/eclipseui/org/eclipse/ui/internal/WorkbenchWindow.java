@@ -259,11 +259,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private MMenu mainMenu;
 
-	private PageListenerList pageListeners = new PageListenerList();
+	private final PageListenerList pageListeners = new PageListenerList();
 
-	private PerspectiveListenerList perspectiveListeners = new PerspectiveListenerList();
+	private final PerspectiveListenerList perspectiveListeners = new PerspectiveListenerList();
 
-	private PartService partService = new WWinPartService();
+	private final PartService partService = new WWinPartService();
 
 	private WWinActionBars actionBars;
 
@@ -275,9 +275,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	ProgressRegion progressRegion = null;
 
-	private List<MTrimElement> workbenchTrimElements = new ArrayList<>();
+	private final List<MTrimElement> workbenchTrimElements = new ArrayList<>();
 
-	private Map<MToolControl, IConfigurationElement> iceMap = new HashMap<>();
+	private final Map<MToolControl, IConfigurationElement> iceMap = new HashMap<>();
 
 	public IConfigurationElement getICEFor(MToolControl mtc) {
 		return iceMap.get(mtc);
@@ -311,13 +311,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 *
 	 * @since 3.3
 	 */
-	private ListenerList<IPropertyChangeListener> genericPropertyListeners = new ListenerList<>();
+	private final ListenerList<IPropertyChangeListener> genericPropertyListeners = new ListenerList<>();
 
-	private IAdaptable input;
+	private final IAdaptable input;
 
 	private IPerspectiveDescriptor perspective;
 
-	private EventHandler windowWidgetHandler = event -> {
+	private final EventHandler windowWidgetHandler = event -> {
 		if (event.getProperty(UIEvents.EventTags.ELEMENT) == model
 				&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
 			// HandledContributionItem.toolItemUpdater.removeWindowRunnable(menuUpdater);
@@ -710,9 +710,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 				private boolean isSaveOnCloseNotNeededSplitEditorPart(MPart part) {
 					boolean notNeeded = false;
-					if (part instanceof MCompositePart
+					if (part instanceof MCompositePart compPart
 							&& SplitHost.SPLIT_HOST_CONTRIBUTOR_URI.equals(part.getContributionURI())) {
-						MCompositePart compPart = (MCompositePart) part;
 						List<MPart> elements = modelService.findElements(compPart, null, MPart.class);
 						if (elements != null && elements.size() > 1) {
 							elements.remove(0);
@@ -1147,10 +1146,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	@Optional
 	private void hideQuickAccess(@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
 		Object origin = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (!(origin instanceof MToolControl)) {
+		if (!(origin instanceof MToolControl control)) {
 			return;
 		}
-		MToolControl control = (MToolControl) origin;
 		if (!QUICK_ACCESS_ID.equals(control.getElementId())) {
 			return;
 		}
@@ -1186,8 +1184,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @param element          the element to move
 	 */
 	private void moveControl(MElementContainer<MUIElement> elementContainer, MUIElement element) {
-		if (element == null || elementContainer == null)
+		if (element == null || elementContainer == null) {
 			return;
+		}
 
 		PositionInfo positionInfo = findMovePositionInfo(element);
 
@@ -1253,8 +1252,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 *         element wasn't found
 	 */
 	private int indexOfElementWithID(List<MUIElement> elements, String id) {
-		if (elements == null || id == null)
+		if (elements == null || id == null) {
 			return -1;
+		}
 
 		int index = 0;
 		for (MUIElement element : elements) {
@@ -1332,8 +1332,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 		}
 
-		if (items.isEmpty())
+		if (items.isEmpty()) {
 			return;
+		}
 
 		// Iterate over the items until they've all been placed or until
 		// an iteration doesn't place anything
@@ -1363,8 +1364,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 								if (orders.length > 0) {
 									boolean isBefore = "before".equals(orders[0].getAttribute("position")); //$NON-NLS-1$//$NON-NLS-2$
 									String relTo = orders[0].getAttribute("relativeTo"); //$NON-NLS-1$
-									if ("status".equals(relTo)) //$NON-NLS-1$
+									if ("status".equals(relTo)) { //$NON-NLS-1$
 										relTo = STATUS_LINE_ID;
+									}
 
 									createdTrim = addTrimElement(bottomTrim, item, id, isBefore, relTo, classSpec);
 								}
@@ -1395,11 +1397,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		int insertIndex = bottomTrim.getChildren().size();
 		if (relTo != null) {
 			MUIElement foundRel = modelService.find(relTo, bottomTrim);
-			if (foundRel == null)
+			if (foundRel == null) {
 				return null;
+			}
 			insertIndex = bottomTrim.getChildren().indexOf(foundRel);
-			if (!isBefore)
+			if (!isBefore) {
 				insertIndex++;
+			}
 		}
 
 		MToolControl newTrimElement = modelService.createModelElement(MToolControl.class);
@@ -1502,7 +1506,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * <code>ActionHandler</code>. This map is never <code>null</code>, and is never
 	 * empty as long as at least one global action has been registered.
 	 */
-	private Map<String, ActionHandler> globalActionHandlersByCommandId = new HashMap<>();
+	private final Map<String, ActionHandler> globalActionHandlersByCommandId = new HashMap<>();
 
 	/**
 	 * The list of handler submissions submitted to the workbench command support.
@@ -1537,9 +1541,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		if (commandId != null) {
 			final Object value = globalActionHandlersByCommandId.remove(commandId);
-			if (value instanceof ActionHandler) {
+			if (value instanceof final ActionHandler handler) {
 				// This handler is about to get clobbered, so dispose it.
-				final ActionHandler handler = (ActionHandler) value;
 				handler.dispose();
 			}
 
@@ -1970,8 +1973,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		List<MPart> sharedPartsToRemove = new ArrayList<>();
 		List<MPlaceholder> phList = modelService.findElements(model, null, MPlaceholder.class, null);
 		for (MPlaceholder ph : phList) {
-			if (!(ph.getRef() instanceof MPart))
+			if (!(ph.getRef() instanceof MPart)) {
 				continue;
+			}
 
 			String partId = ph.getElementId();
 
@@ -1985,8 +1989,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				MElementContainer<MUIElement> phParent = ph.getParent();
 				if (colonIndex != -1) {
 					// if it's a multi-instance part remove it (and its MPart)
-					if (!sharedPartsToRemove.contains(ph.getRef()))
+					if (!sharedPartsToRemove.contains(ph.getRef())) {
 						sharedPartsToRemove.add((MPart) ph.getRef());
+					}
 					ph.getParent().getChildren().remove(ph);
 				} else if (ph.isToBeRendered()) {
 					// just hide it (so we remember where to open it again
@@ -1996,8 +2001,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				// We need to do our own cleanup here...
 				int vc = modelService.countRenderableChildren(phParent);
 				if (vc == 0) {
-					if (!isLastEditorStack(phParent))
+					if (!isLastEditorStack(phParent)) {
 						phParent.setToBeRendered(false);
+					}
 				}
 			}
 		}
@@ -2297,8 +2303,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					enableMainMenu = true;
 				}
 
-				if (keyFilterEnabled)
+				if (keyFilterEnabled) {
 					bs.setKeyFilterEnabled(false);
+				}
 
 				// disable all other shells
 				for (Shell childShell : display.getShells()) {
@@ -2319,8 +2326,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					MUIElement statusLine = modelService.find(STATUS_LINE_ID, model);
 					Object slCtrl = statusLine != null ? statusLine.getWidget() : null;
 					for (Control bottomCtrl : tpl.bottom.getChildren()) {
-						if (bottomCtrl != slCtrl)
+						if (bottomCtrl != slCtrl) {
 							disableControl(bottomCtrl, toEnable);
+						}
 					}
 				}
 
@@ -2356,13 +2364,15 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					mainMenu.setEnabled(true);
 				}
 
-				if (keyFilterEnabled)
+				if (keyFilterEnabled) {
 					bs.setKeyFilterEnabled(true);
+				}
 
 				// Re-enable any disabled controls
 				for (Control ctrl : toEnable) {
-					if (!ctrl.isDisposed() && !ctrl.isEnabled())
+					if (!ctrl.isDisposed() && !ctrl.isEnabled()) {
 						ctrl.setEnabled(true);
+					}
 				}
 
 				MPart activePart = partService.getActivePart();
@@ -2397,7 +2407,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		}
 	}
 
-	private Set<Object> menuRestrictions = new HashSet<>();
+	private final Set<Object> menuRestrictions = new HashSet<>();
 
 	private Boolean valueOf(boolean result) {
 		return result ? Boolean.TRUE : Boolean.FALSE;
@@ -2572,7 +2582,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private ListenerList<IActionSetsListener> actionSetListeners = null;
 
-	private ListenerList<IBackgroundSaveListener> backgroundSaveListeners = new ListenerList<>(ListenerList.IDENTITY);
+	private final ListenerList<IBackgroundSaveListener> backgroundSaveListeners = new ListenerList<>(ListenerList.IDENTITY);
 
 	private SelectionService selectionService;
 
@@ -2995,7 +3005,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return statusLineManager;
 	}
 
-	private CoolBarManager2 oldCBM = new CoolBarManager2();
+	private final CoolBarManager2 oldCBM = new CoolBarManager2();
 	private CoolBarToTrimManager coolbarToTrim;
 
 	public ICoolBarManager getCoolBarManager2() {
@@ -3014,7 +3024,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	static class ToolbarOverrides implements IContributionManagerOverrides {
 
-		private WorkbenchPage page;
+		private final WorkbenchPage page;
 
 		ToolbarOverrides(WorkbenchPage page) {
 			this.page = page;
@@ -3042,17 +3052,20 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		@Override
 		public Boolean getVisible(IContributionItem item) {
-			if (page == null)
+			if (page == null) {
 				return null;
+			}
 
 			MPerspective curPersp = page.getCurrentPerspective();
-			if (curPersp == null)
+			if (curPersp == null) {
 				return null;
+			}
 
 			// Find the command ID
 			String id = CustomizePerspectiveDialog.getIDFromIContributionItem(item);
-			if (id == null)
+			if (id == null) {
 				return null;
+			}
 
 			String hiddenToolItems = page.getHiddenItems();
 			if (hiddenToolItems.contains(ModeledPageLayout.HIDDEN_TOOLBAR_PREFIX + id + ",")) { //$NON-NLS-1$
@@ -3076,7 +3089,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	static class MenuOverrides implements IContributionManagerOverrides {
 
-		private WorkbenchPage page;
+		private final WorkbenchPage page;
 
 		MenuOverrides(WorkbenchPage page) {
 			this.page = page;
@@ -3104,17 +3117,20 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		@Override
 		public Boolean getVisible(IContributionItem item) {
-			if (page == null)
+			if (page == null) {
 				return null;
+			}
 
 			MPerspective curPersp = page.getCurrentPerspective();
-			if (curPersp == null)
+			if (curPersp == null) {
 				return null;
+			}
 
 			// Find the command ID
 			String id = CustomizePerspectiveDialog.getIDFromIContributionItem(item);
-			if (id == null)
+			if (id == null) {
 				return null;
+			}
 
 			String hiddenToolItems = page.getHiddenItems();
 			if (hiddenToolItems.contains(ModeledPageLayout.HIDDEN_MENU_PREFIX + id + ",")) { //$NON-NLS-1$

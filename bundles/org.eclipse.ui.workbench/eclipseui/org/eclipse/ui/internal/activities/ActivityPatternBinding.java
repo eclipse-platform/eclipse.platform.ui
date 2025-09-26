@@ -24,7 +24,7 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
 
 	private static final int HASH_INITIAL = ActivityPatternBinding.class.getName().hashCode();
 
-	private String activityId;
+	private final String activityId;
 
 	private transient int hashCode = HASH_INITIAL;
 
@@ -32,7 +32,7 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
 
 	private String patternString;
 
-	private boolean isEqualityPattern;
+	private final boolean isEqualityPattern;
 
 	private transient String string;
 
@@ -88,8 +88,9 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
 		if (compareTo == 0) {
 			compareTo = Util.compare(isEqualityPattern, castedObject.isEqualityPattern);
 
-			if (compareTo == 0)
+			if (compareTo == 0) {
 				compareTo = Util.compare(getPattern().pattern(), castedObject.getPattern().pattern());
+			}
 		}
 
 		return compareTo;
@@ -97,11 +98,10 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityPatternBinding)) {
+		if (!(object instanceof final ActivityPatternBinding castedObject)) {
 			return false;
 		}
 
-		final ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
 		return Objects.equals(activityId, castedObject.activityId)
 				&& isEqualityPattern == castedObject.isEqualityPattern
 				&& Objects.equals(getPattern(), castedObject.getPattern());

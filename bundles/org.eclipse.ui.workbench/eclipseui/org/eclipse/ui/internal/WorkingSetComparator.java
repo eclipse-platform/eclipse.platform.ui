@@ -33,7 +33,7 @@ public class WorkingSetComparator implements Comparator<IWorkingSet> {
 		return INSTANCES.get();
 	}
 
-	private Collator fCollator = Collator.getInstance();
+	private final Collator fCollator = Collator.getInstance();
 
 	/**
 	 * Implements Comparator.

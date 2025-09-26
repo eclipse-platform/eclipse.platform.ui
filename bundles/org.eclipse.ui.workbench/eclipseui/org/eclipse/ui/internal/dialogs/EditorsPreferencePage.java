@@ -66,7 +66,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private IntegerFieldEditor recentFilesEditor;
 
-	private IPropertyChangeListener validityChangeListener = event -> {
+	private final IPropertyChangeListener validityChangeListener = event -> {
 		if (event.getProperty().equals(FieldEditor.IS_VALID)) {
 			updateValidState();
 		}

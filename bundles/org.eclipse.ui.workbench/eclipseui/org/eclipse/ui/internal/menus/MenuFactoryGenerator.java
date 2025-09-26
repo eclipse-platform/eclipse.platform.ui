@@ -32,9 +32,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 3.102.0
  */
 public class MenuFactoryGenerator {
-	private MApplication application;
-	private IConfigurationElement configElement;
-	private MenuLocationURI location;
+	private final MApplication application;
+	private final IConfigurationElement configElement;
+	private final MenuLocationURI location;
 
 	public MenuFactoryGenerator(MApplication application, IEclipseContext appContext,
 			IConfigurationElement configElement, String attribute) {

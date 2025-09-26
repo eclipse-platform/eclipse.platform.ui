@@ -135,12 +135,14 @@ public abstract class OperationHistoryActionHandler extends Action
 		@Override
 		public void historyNotification(final OperationHistoryEvent event) {
 			IWorkbenchWindow workbenchWindow = getWorkbenchWindow();
-			if (workbenchWindow == null)
+			if (workbenchWindow == null) {
 				return;
+			}
 
 			Display display = workbenchWindow.getWorkbench().getDisplay();
-			if (display == null)
+			if (display == null) {
 				return;
+			}
 
 			switch (event.getEventType()) {
 			case OperationHistoryEvent.OPERATION_ADDED:
@@ -183,9 +185,9 @@ public abstract class OperationHistoryActionHandler extends Action
 
 	private boolean pruning = false;
 
-	private IPartListener partListener = new PartListener();
+	private final IPartListener partListener = new PartListener();
 
-	private IOperationHistoryListener historyListener = new HistoryListener();
+	private final IOperationHistoryListener historyListener = new HistoryListener();
 
 	private TimeTriggeredProgressMonitorDialog progressDialog;
 
@@ -313,8 +315,8 @@ public abstract class OperationHistoryActionHandler extends Action
 						&& schedulableOperation instanceof TriggeredOperations) {
 					schedulableOperation = ((TriggeredOperations) schedulableOperation).getTriggeringOperation();
 				}
-				final ISchedulingRule rule = (schedulableOperation instanceof ISchedulableOperation)
-						? ((ISchedulableOperation) schedulableOperation).getSchedulingRule()
+				final ISchedulingRule rule = (schedulableOperation instanceof ISchedulableOperation i)
+						? i.getSchedulingRule()
 						: null;
 				if (rule == null) {
 					progressDialog.run(runInBackground, true, runnable);

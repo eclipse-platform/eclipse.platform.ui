@@ -73,8 +73,9 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		public void beginTask(final String name, final int totalWork) {
 
 			updateUI(() -> {
-				if (isDisposed())
+				if (isDisposed()) {
 					return;
+				}
 				AbsolutePositionProgressMonitorPart.super.beginTask(name, totalWork);
 			});
 
@@ -84,8 +85,9 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		public void done() {
 
 			updateUI(() -> {
-				if (isDisposed())
+				if (isDisposed()) {
 					return;
+				}
 				AbsolutePositionProgressMonitorPart.super.done();
 			});
 
@@ -95,8 +97,9 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		public void internalWorked(final double work) {
 
 			updateUI(() -> {
-				if (isDisposed())
+				if (isDisposed()) {
 					return;
+				}
 				AbsolutePositionProgressMonitorPart.super.internalWorked(work);
 			});
 
@@ -106,8 +109,9 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		public void setFont(final Font font) {
 
 			updateUI(() -> {
-				if (isDisposed())
+				if (isDisposed()) {
 					return;
+				}
 				AbsolutePositionProgressMonitorPart.super.setFont(font);
 			});
 
@@ -117,8 +121,9 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		protected void updateLabel() {
 
 			updateUI(() -> {
-				if (isDisposed())
+				if (isDisposed()) {
 					return;
+				}
 				AbsolutePositionProgressMonitorPart.super.updateLabel();
 			});
 
@@ -138,18 +143,21 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 			parent.setBounds(new Rectangle(0, 0, size.x, size.y));
 			monitor = new AbsolutePositionProgressMonitorPart(parent);
 			monitor.setSize(size);
-			if (progressRect != null)
+			if (progressRect != null) {
 				monitor.getProgressIndicator().setBounds(progressRect);
-			else
+			} else {
 				monitor.getProgressIndicator().setVisible(false);
+			}
 
-			if (messageRect != null)
+			if (messageRect != null) {
 				monitor.getProgressText().setBounds(messageRect);
-			else
+			} else {
 				monitor.getProgressText().setVisible(false);
+			}
 
-			if (foreground != null)
+			if (foreground != null) {
 				monitor.getProgressText().setForeground(foreground);
+			}
 			monitor.setBackgroundMode(SWT.INHERIT_FORCE);
 			monitor.setBackgroundImage(getSplash().getShell().getBackgroundImage());
 		}
@@ -163,8 +171,9 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	 * @param foregroundRGB the color
 	 */
 	protected void setForeground(RGB foregroundRGB) {
-		if (monitor != null)
+		if (monitor != null) {
 			return;
+		}
 		this.foreground = new Color(getSplash().getShell().getDisplay(), foregroundRGB);
 	}
 
@@ -231,14 +240,15 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	 */
 	private void updateUI(final Runnable r) {
 		Shell splashShell = getSplash();
-		if (splashShell == null || splashShell.isDisposed())
+		if (splashShell == null || splashShell.isDisposed()) {
 			return;
+		}
 
 		Display display = splashShell.getDisplay();
 
-		if (Thread.currentThread() == display.getThread())
+		if (Thread.currentThread() == display.getThread()) {
 			r.run(); // run immediatley if we're on the UI thread
-		else {
+		} else {
 			// wrapper with a StartupRunnable to ensure that it will run before
 			// the UI is fully initialized
 			StartupRunnable startupRunnable = new StartupRunnable() {

@@ -35,11 +35,11 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  * @since 3.1
  */
 public class PreferenceTransferElement extends WorkbenchAdapter implements IPluginContribution {
-	private String id;
+	private final String id;
 
 	private ImageDescriptor imageDescriptor;
 
-	private IConfigurationElement configurationElement;
+	private final IConfigurationElement configurationElement;
 
 	private IPreferenceFilter filter;
 
@@ -136,8 +136,8 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements IPlug
 
 	static class PreferenceFilter implements IPreferenceFilter {
 
-		private String[] scopes;
-		private Map<String, Map<String, PreferenceFilterEntry[]>> mappings;
+		private final String[] scopes;
+		private final Map<String, Map<String, PreferenceFilterEntry[]>> mappings;
 
 		public PreferenceFilter(String[] scopes, Map<String, Map<String, PreferenceFilterEntry[]>> mappings) {
 			this.scopes = scopes;

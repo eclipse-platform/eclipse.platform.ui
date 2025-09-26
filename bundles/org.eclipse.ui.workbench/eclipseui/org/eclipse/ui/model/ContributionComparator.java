@@ -47,11 +47,13 @@ public class ContributionComparator extends ViewerComparator implements Comparat
 	public int compare(Object o1, Object o2) {
 		IComparableContribution c1 = null, c2 = null;
 
-		if (o1 instanceof IComparableContribution)
+		if (o1 instanceof IComparableContribution) {
 			c1 = (IComparableContribution) o1;
+		}
 
-		if (o2 instanceof IComparableContribution)
+		if (o2 instanceof IComparableContribution) {
 			c2 = (IComparableContribution) o2;
+		}
 
 		// neither are comparable contributions, we need to be consistent
 		if (c1 == null && c2 == null) {
@@ -62,10 +64,12 @@ public class ContributionComparator extends ViewerComparator implements Comparat
 		}
 
 		// if we're in a mixed scenario the comparable contribution wins.
-		if (c1 == null)
+		if (c1 == null) {
 			return 1;
-		if (c2 == null)
+		}
+		if (c2 == null) {
 			return -1;
+		}
 		return compare(c1, c2);
 	}
 

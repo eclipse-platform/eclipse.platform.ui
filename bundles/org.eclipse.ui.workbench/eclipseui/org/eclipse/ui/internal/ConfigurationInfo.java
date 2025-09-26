@@ -94,8 +94,7 @@ public final class ConfigurationInfo {
 			writer.println(
 					NLS.bind(WorkbenchMessages.SystemSummary_sectionTitle, element.getAttribute("sectionTitle"))); //$NON-NLS-1$
 
-			if (obj instanceof ISystemSummarySection) {
-				ISystemSummarySection logSection = (ISystemSummarySection) obj;
+			if (obj instanceof ISystemSummarySection logSection) {
 				logSection.write(writer);
 			} else {
 				writer.println(WorkbenchMessages.SystemSummary_sectionError);

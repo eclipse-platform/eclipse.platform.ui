@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.TableItem;
  * @since 3.5
  */
 class TableToolTip extends NameAndDescriptionToolTip {
-	private Table table;
+	private final Table table;
 
 	public TableToolTip(Table table) {
 		super(table, RECREATE);

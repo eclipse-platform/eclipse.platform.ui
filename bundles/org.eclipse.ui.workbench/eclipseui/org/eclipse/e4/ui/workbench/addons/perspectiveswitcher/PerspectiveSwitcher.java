@@ -194,11 +194,9 @@ public class PerspectiveSwitcher {
 	void handleLabelEvent(@UIEventTopic(UIEvents.UILabel.TOPIC_ALL) Event event) {
 
 		Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (!(changedObj instanceof MPerspective) || (ignoreEvent(changedObj))) {
+		if (!(changedObj instanceof MPerspective perspective) || (ignoreEvent(changedObj))) {
 			return;
 		}
-
-		MPerspective perspective = (MPerspective) changedObj;
 
 		if (!perspective.isToBeRendered())
 		{
@@ -222,11 +220,9 @@ public class PerspectiveSwitcher {
 	void handleSelectionEvent(@UIEventTopic(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT) Event event) {
 
 		Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (!(changedObj instanceof MPerspectiveStack) || (ignoreEvent(changedObj))) {
+		if (!(changedObj instanceof MPerspectiveStack perspStack) || (ignoreEvent(changedObj))) {
 			return;
 		}
-
-		MPerspectiveStack perspStack = (MPerspectiveStack) changedObj;
 
 		if (!perspStack.isToBeRendered()) {
 			return;
@@ -259,8 +255,7 @@ public class PerspectiveSwitcher {
 		perspSwitcherToolControl = toolControl;
 		MUIElement meParent = perspSwitcherToolControl.getParent();
 		int orientation = SWT.HORIZONTAL;
-		if (meParent instanceof MTrimBar) {
-			MTrimBar bar = (MTrimBar) meParent;
+		if (meParent instanceof MTrimBar bar) {
 			if (bar.getSide() == SideValue.RIGHT || bar.getSide() == SideValue.LEFT) {
 				orientation = SWT.VERTICAL;
 			}

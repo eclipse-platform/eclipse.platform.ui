@@ -26,9 +26,9 @@ import org.osgi.service.log.LogLevel;
  */
 public class LogThrottle {
 
-	private LinkedBlockingQueue<String> fThrottleQueue;
-	private HashMap<String, MutableInt> fActiveMessages = new HashMap<>();
-	private String fThrottleMessage;
+	private final LinkedBlockingQueue<String> fThrottleQueue;
+	private final HashMap<String, MutableInt> fActiveMessages = new HashMap<>();
+	private final String fThrottleMessage;
 	private int fThrottleValue;
 
 	/**

@@ -35,7 +35,7 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
 public class PreferenceProvider extends QuickAccessProvider {
 
 	private QuickAccessElement[] cachedElements;
-	private Map<String, PreferenceElement> idToElement = new HashMap<>();
+	private final Map<String, PreferenceElement> idToElement = new HashMap<>();
 
 	@Override
 	public String getId() {

@@ -224,8 +224,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		// Remove myself from the list of nested key binding services.
 		if (service != null) {
 			IKeyBindingService parentService = getMultiPageEditor().getEditorSite().getKeyBindingService();
-			if (parentService instanceof INestableKeyBindingService) {
-				INestableKeyBindingService nestableParent = (INestableKeyBindingService) parentService;
+			if (parentService instanceof INestableKeyBindingService nestableParent) {
 				nestableParent.removeKeyBindingService(this);
 			}
 			if (service instanceof KeyBindingService) {
@@ -311,8 +310,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	public IKeyBindingService getKeyBindingService() {
 		if (service == null) {
 			service = getMultiPageEditor().getEditorSite().getKeyBindingService();
-			if (service instanceof INestableKeyBindingService) {
-				INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
+			if (service instanceof INestableKeyBindingService nestableService) {
 				service = nestableService.getKeyBindingService(this);
 
 			} else {
@@ -469,9 +467,8 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 */
 	protected void handlePostSelectionChanged(SelectionChangedEvent event) {
 		ISelectionProvider parentProvider = getNestedEditorSite().getSelectionProvider();
-		if (parentProvider instanceof MultiPageSelectionProvider) {
+		if (parentProvider instanceof MultiPageSelectionProvider prov) {
 			SelectionChangedEvent newEvent = new SelectionChangedEvent(parentProvider, event.getSelection());
-			MultiPageSelectionProvider prov = (MultiPageSelectionProvider) parentProvider;
 			prov.firePostSelectionChanged(newEvent);
 		}
 	}
@@ -489,9 +486,8 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 */
 	protected void handleSelectionChanged(SelectionChangedEvent event) {
 		ISelectionProvider parentProvider = getNestedEditorSite().getSelectionProvider();
-		if (parentProvider instanceof MultiPageSelectionProvider) {
+		if (parentProvider instanceof MultiPageSelectionProvider prov) {
 			SelectionChangedEvent newEvent = new SelectionChangedEvent(parentProvider, event.getSelection());
-			MultiPageSelectionProvider prov = (MultiPageSelectionProvider) parentProvider;
 			prov.fireSelectionChanged(newEvent);
 		}
 	}

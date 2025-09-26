@@ -53,8 +53,9 @@ public abstract class ProductInfoPage extends InstallationPage implements IShell
 	private String productName;
 
 	protected IProduct getProduct() {
-		if (product == null)
+		if (product == null) {
 			product = Platform.getProduct();
+		}
 		return product;
 	}
 

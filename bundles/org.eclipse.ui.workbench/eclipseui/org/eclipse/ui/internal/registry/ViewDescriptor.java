@@ -35,9 +35,9 @@ import org.eclipse.ui.views.IViewDescriptor;
 
 public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 
-	private MApplication application;
-	private MPartDescriptor descriptor;
-	private IConfigurationElement element;
+	private final MApplication application;
+	private final MPartDescriptor descriptor;
+	private final IConfigurationElement element;
 	private String[] categoryPath;
 	private ImageDescriptor imageDescriptor;
 

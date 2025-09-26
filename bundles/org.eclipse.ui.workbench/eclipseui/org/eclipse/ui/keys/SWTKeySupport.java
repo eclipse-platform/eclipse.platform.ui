@@ -336,9 +336,7 @@ public final class SWTKeySupport {
 
 		if (naturalKey instanceof CharacterKey) {
 			accelerator |= ((CharacterKey) naturalKey).getCharacter();
-		} else if (naturalKey instanceof SpecialKey) {
-			final SpecialKey specialKey = (SpecialKey) naturalKey;
-
+		} else if (naturalKey instanceof final SpecialKey specialKey) {
 			if (specialKey == SpecialKey.ARROW_DOWN) {
 				accelerator |= SWT.ARROW_DOWN;
 			} else if (specialKey == SpecialKey.ARROW_LEFT) {

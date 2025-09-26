@@ -36,7 +36,7 @@ public class EditorHistory {
 	/**
 	 * The list of editor entries, in FIFO order.
 	 */
-	private ArrayList<EditorHistoryItem> fifoList = new ArrayList<>(MAX_SIZE);
+	private final ArrayList<EditorHistoryItem> fifoList = new ArrayList<>(MAX_SIZE);
 
 	/**
 	 * Constructs a new history.

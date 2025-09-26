@@ -39,8 +39,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public final class WorkbenchPartLabelProvider extends LabelProvider implements ITableLabelProvider {
 
-	private ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
-	private HashMap images = new HashMap();
+	private final ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
+	private final HashMap images = new HashMap();
 
 	/**
 	 * Creates a new label provider for workbench parts.
@@ -54,8 +54,7 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements I
 		if (element instanceof IWorkbenchPart) {
 			return ((IWorkbenchPart) element).getTitleImage();
 		}
-		if (element instanceof Saveable) {
-			Saveable model = (Saveable) element;
+		if (element instanceof Saveable model) {
 			ImageDescriptor imageDesc = model.getImageDescriptor();
 			// convert from ImageDescriptor to Image
 			if (imageDesc == null) {
@@ -77,16 +76,14 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements I
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof IWorkbenchPart) {
-			IWorkbenchPart part = (IWorkbenchPart) element;
+		if (element instanceof IWorkbenchPart part) {
 			String path = part.getTitleToolTip();
 			if (path == null || path.trim().isEmpty()) {
 				return part.getTitle();
 			}
 			return part.getTitle() + "  [" + path + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (element instanceof Saveable) {
-			Saveable model = (Saveable) element;
+		if (element instanceof Saveable model) {
 			String path = model.getToolTipText();
 			if (path == null || path.trim().isEmpty()) {
 				return model.getName();

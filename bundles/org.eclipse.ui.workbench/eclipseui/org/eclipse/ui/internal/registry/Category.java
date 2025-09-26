@@ -44,7 +44,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution, IAdapta
 	 */
 	public static final String MISC_ID = "org.eclipse.ui.internal.otherCategory"; //$NON-NLS-1$
 
-	private String id;
+	private final String id;
 
 	private String name;
 

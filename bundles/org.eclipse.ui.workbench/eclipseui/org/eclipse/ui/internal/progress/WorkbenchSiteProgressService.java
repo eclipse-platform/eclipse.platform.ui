@@ -62,17 +62,17 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	 * requested.</li>
 	 * </ul>
 	 */
-	private Map<Job, Boolean> busyJobs = new HashMap<>();
+	private final Map<Job, Boolean> busyJobs = new HashMap<>();
 
-	private Object busyLock = new Object();
+	private final Object busyLock = new Object();
 
 	IPropertyChangeListener[] changeListeners = new IPropertyChangeListener[0];
 
 	private int waitCursorJobCount;
 
-	private Object waitCursorLock = new Object();
+	private final Object waitCursorLock = new Object();
 
-	private SiteUpdateJob updateJob;
+	private final SiteUpdateJob updateJob;
 
 	/**
 	 * Flag that keeps state from calls to {@link #incrementBusy()} and
@@ -229,8 +229,9 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 		Object halfBusyCursorState;
 		synchronized (busyLock) {
 			halfBusyCursorState = busyJobs.get(job);
-			if (useHalfBusyCursor || halfBusyCursorState != Boolean.TRUE)
+			if (useHalfBusyCursor || halfBusyCursorState != Boolean.TRUE) {
 				busyJobs.put(job, Boolean.valueOf(useHalfBusyCursor));
+			}
 		}
 		if (useHalfBusyCursor && halfBusyCursorState != Boolean.TRUE) {
 			// want to set busy cursor and it has not been set before

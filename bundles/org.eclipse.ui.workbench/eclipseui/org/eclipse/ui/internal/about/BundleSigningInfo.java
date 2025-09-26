@@ -118,8 +118,9 @@ public class BundleSigningInfo {
 	}
 
 	private void startJobs() {
-		if (!isOpen())
+		if (!isOpen()) {
 			return;
+		}
 		certificate.setText(WorkbenchMessages.BundleSigningTray_Working);
 		date.setText(WorkbenchMessages.BundleSigningTray_Working);
 
@@ -127,20 +128,23 @@ public class BundleSigningInfo {
 		final Job signerJob = Job.create(
 				NLS.bind(WorkbenchMessages.BundleSigningTray_Determine_Signer_For, myData.getId()),
 				(IJobFunction) monitor -> {
-					if (myData != data)
+					if (myData != data) {
 						return Status.OK_STATUS;
+					}
 					SignedContent signedContent = myData.getSignedContent();
 					if (signedContent == null) {
 						StatusManager.getManager().handle(new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
 								WorkbenchMessages.BundleSigningTray_Cant_Find_Service), StatusManager.LOG);
 						return Status.OK_STATUS;
 					}
-					if (myData != data)
+					if (myData != data) {
 						return Status.OK_STATUS;
+					}
 					SignerInfo[] signers = signedContent.getSignerInfos();
 					final String signerText, dateText, signingTypeText;
-					if (!isOpen() && BundleSigningInfo.this.data == myData)
+					if (!isOpen() && BundleSigningInfo.this.data == myData) {
 						return Status.OK_STATUS;
+					}
 
 					if (signers.length == 0) {
 						AboutBundleData.ExtendedSigningInfo info = data.getInfo();
@@ -156,26 +160,28 @@ public class BundleSigningInfo {
 						}
 					} else {
 						Properties[] certs = parseCerts(signers[0].getCertificateChain());
-						if (certs.length == 0)
+						if (certs.length == 0) {
 							signerText = WorkbenchMessages.BundleSigningTray_Unknown;
-						else {
+						} else {
 							StringBuilder buffer = new StringBuilder();
 							for (Iterator<Entry<Object, Object>> i = certs[0].entrySet().iterator(); i.hasNext();) {
 								Entry<Object, Object> entry = i.next();
 								buffer.append(entry.getKey());
 								buffer.append('=');
 								buffer.append(entry.getValue());
-								if (i.hasNext())
+								if (i.hasNext()) {
 									buffer.append('\n');
+								}
 							}
 							signerText = buffer.toString();
 						}
 
 						Date signDate = signedContent.getSigningTime(signers[0]);
-						if (signDate != null)
+						if (signDate != null) {
 							dateText = DateFormat.getDateTimeInstance().format(signDate);
-						else
+						} else {
 							dateText = WorkbenchMessages.BundleSigningTray_Unknown;
+						}
 						signingTypeText = WorkbenchMessages.BundleSigningTray_X509Certificate;
 					}
 
@@ -183,8 +189,9 @@ public class BundleSigningInfo {
 						// check to see if the tray is still visible
 						// and if
 						// we're still looking at the same item
-						if (!isOpen() && BundleSigningInfo.this.data != myData)
+						if (!isOpen() && BundleSigningInfo.this.data != myData) {
 							return;
+						}
 						certificate.setText(signerText);
 						date.setText(dateText);
 						signingType.setText(signingTypeText);
@@ -208,8 +215,9 @@ public class BundleSigningInfo {
 				continue;
 			}
 			Properties cert = parseCert(((X509Certificate) e).getSubjectX500Principal().getName());
-			if (cert != null)
+			if (cert != null) {
 				certs.add(cert);
+			}
 		}
 		return certs.toArray(new Properties[certs.size()]);
 
@@ -225,11 +233,13 @@ public class BundleSigningInfo {
 				String key = pair.substring(0, idx).trim();
 				String value = pair.substring(idx + 1).trim();
 				if (value.length() > 2) {
-					if (value.charAt(0) == '\"')
+					if (value.charAt(0) == '\"') {
 						value = value.substring(1);
+					}
 
-					if (value.charAt(value.length() - 1) == '\"')
+					if (value.charAt(value.length() - 1) == '\"') {
 						value = value.substring(0, value.length() - 1);
+					}
 				}
 				cert.setProperty(key, value);
 			}

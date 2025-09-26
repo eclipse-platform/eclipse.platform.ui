@@ -33,11 +33,11 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class LightweightActionDescriptor implements IAdaptable, IWorkbenchAdapter {
 	private static final Object[] NO_CHILDREN = new Object[0];
 
-	private String id;
+	private final String id;
 
-	private String label;
+	private final String label;
 
-	private String description;
+	private final String description;
 
 	private ImageDescriptor image;
 

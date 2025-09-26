@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @since 3.1
  */
 public class DefaultWebBrowser extends AbstractWebBrowser {
-	private DefaultWorkbenchBrowserSupport support;
+	private final DefaultWorkbenchBrowserSupport support;
 
 	private String webBrowser;
 

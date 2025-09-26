@@ -174,9 +174,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	WorkbenchWindow window;
 
-	private WorkbenchPage windowPage;
+	private final WorkbenchPage windowPage;
 
-	private Perspective perspective;
+	private final Perspective perspective;
 
 	private TabFolder tabFolder;
 
@@ -187,7 +187,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	private final String shortcutMenuColumnHeaders[] = { WorkbenchMessages.ActionSetSelection_menuColumnHeader,
 			WorkbenchMessages.ActionSetSelection_descriptionColumnHeader };
 
-	private int[] shortcutMenuColumnWidths = { 125, 300 };
+	private final int[] shortcutMenuColumnWidths = { 125, 300 };
 
 	ImageDescriptor menuImageDescriptor;
 
@@ -197,7 +197,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	ImageDescriptor warningImageDescriptor;
 
-	private TreeManager treeManager;
+	private final TreeManager treeManager;
 
 	private DisplayItem menuItems;
 
@@ -215,7 +215,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private final List<ActionSet> actionSets = new ArrayList<>();
 
-	private IWorkbenchWindowConfigurer configurer;
+	private final IWorkbenchWindowConfigurer configurer;
 
 	private TabItem actionSetTab;
 
@@ -235,11 +235,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private CustomizeActionBars customizeActionBars;
 
-	private MenuManagerRenderer menuMngrRenderer;
-	private ToolBarManagerRenderer toolbarMngrRenderer;
+	private final MenuManagerRenderer menuMngrRenderer;
+	private final ToolBarManagerRenderer toolbarMngrRenderer;
 
-	private ISWTResourceUtilities resUtils;
-	private IEclipseContext context;
+	private final ISWTResourceUtilities resUtils;
+	private final IEclipseContext context;
 
 	/**
 	 * Represents a menu item or a toolbar item.
@@ -248,7 +248,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 */
 	class DisplayItem extends TreeItem {
 		/** The logic item represented */
-		private IContributionItem item;
+		private final IContributionItem item;
 
 		/** The action set this item belongs to (optional) */
 		ActionSet actionSet;
@@ -286,7 +286,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @since 3.5
 	 */
 	class DynamicContributionItem extends DisplayItem {
-		private List<MenuItem> preview;
+		private final List<MenuItem> preview;
 
 		public DynamicContributionItem(String label, IContributionItem item) {
 			super(WorkbenchMessages.HideItems_dynamicItemName + " - " + label, item); //$NON-NLS-1$
@@ -344,7 +344,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		/** The category this shortcut is in (should be set) */
 		private Category category;
 
-		private Object descriptor;
+		private final Object descriptor;
 
 		public ShortcutItem(String label, IWizardDescriptor descriptor) {
 			super(label, CustomizePerspectiveDialog.getIContributionItem(descriptor, window));
@@ -393,7 +393,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	class Category extends TreeItem {
 
 		/** ShortcutItems which are contributed in this Category */
-		private List<ShortcutItem> contributionItems;
+		private final List<ShortcutItem> contributionItems;
 
 		public Category(String label) {
 			treeManager.super(label == null ? null : LegacyActionTools.removeMnemonics(removeShortcut(label)));
@@ -463,7 +463,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		ActionSetDescriptor descriptor;
 
 		/** ContributionItems contributed by this action set */
-		private List<DisplayItem> contributionItems;
+		private final List<DisplayItem> contributionItems;
 
 		private boolean active;
 
@@ -651,8 +651,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		treeManager.addListener(changedItem -> {
 			if (changedItem instanceof Category) {
 				menuCategoriesViewer.update(changedItem, null);
-			} else if (changedItem instanceof ShortcutItem) {
-				ShortcutItem item = (ShortcutItem) changedItem;
+			} else if (changedItem instanceof ShortcutItem item) {
 				if (item.getCategory() != null) {
 					item.getCategory().update();
 					updateCategoryAndParents(menuCategoriesViewer, item.getCategory());
@@ -720,7 +719,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			tc.setText(shortcutMenuColumnHeaders[i]);
 			tc.setWidth(columnWidths[i]);
 		}
-		sashComposite.setWeights(new int[] { 30, 70 });
+		sashComposite.setWeights(30, 70);
 
 		menusViewer.setInput(shortcuts);
 
@@ -877,7 +876,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			actionSetToolbarViewer.setInput(toolBarItems);
 		});
 
-		sashComposite.setWeights(new int[] { 30, 70 });
+		sashComposite.setWeights(30, 70);
 
 		return actionSetsComposite;
 	}
@@ -1008,7 +1007,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		});
 
 		book.showPage(simpleComposite);
-		advancedComposite.setWeights(new int[] { 30, 70 });
+		advancedComposite.setWeights(30, 70);
 
 		return hideMenuItemsComposite;
 	}
@@ -1143,7 +1142,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		});
 
 		book.showPage(simpleComposite);
-		advancedComposite.setWeights(new int[] { 30, 70 });
+		advancedComposite.setWeights(30, 70);
 
 		return hideToolbarItemsComposite;
 	}
@@ -1555,8 +1554,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		MenuManager menuManager = customizeActionBars.menuManager;
 		IContributionItem[] items = menuManager.getItems();
 		for (IContributionItem item : items) {
-			if (item instanceof ActionSetContributionItem) {
-				ActionSetContributionItem asci = (ActionSetContributionItem) item;
+			if (item instanceof ActionSetContributionItem asci) {
 				menuManager.add(asci.getInnerItem());
 			}
 		}
@@ -1614,8 +1612,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @throws IllegalArgumentException if object is not one of the listed types
 	 */
 	public static String getIDFromIContributionItem(Object object) {
-		if (object instanceof ActionContributionItem) {
-			ActionContributionItem item = (ActionContributionItem) object;
+		if (object instanceof ActionContributionItem item) {
 			IAction action = item.getAction();
 			if (action == null) {
 				return null;
@@ -1632,13 +1629,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			}
 			return action.getId();
 		}
-		if (object instanceof ActionSetContributionItem) {
-			ActionSetContributionItem item = (ActionSetContributionItem) object;
+		if (object instanceof ActionSetContributionItem item) {
 			IContributionItem subitem = item.getInnerItem();
 			return getIDFromIContributionItem(subitem);
 		}
-		if (object instanceof CommandContributionItem) {
-			CommandContributionItem item = (CommandContributionItem) object;
+		if (object instanceof CommandContributionItem item) {
 			ParameterizedCommand command = item.getCommand();
 			if (command == null) {
 				return null;
@@ -1665,9 +1660,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	static String getParamID(DisplayItem object) {
-		if (object instanceof ShortcutItem) {
-			ShortcutItem shortcutItem = (ShortcutItem) object;
-
+		if (object instanceof ShortcutItem shortcutItem) {
 			if (isNewWizard(shortcutItem)) {
 				ActionContributionItem item = (ActionContributionItem) object.getIContributionItem();
 				NewWizardShortcutAction nwsa = (NewWizardShortcutAction) item.getAction();
@@ -1891,8 +1884,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				}
 
 				return dynamicEntry;
-			} else if (contributionItem instanceof CommandContributionItem) {
-				CommandContributionItem cci = (CommandContributionItem) contributionItem;
+			} else if (contributionItem instanceof CommandContributionItem cci) {
 				CommandContributionItemParameter data = cci.getData();
 				DisplayItem menuEntry = new DisplayItem(data.label, contributionItem);
 				menuEntry.setImageDescriptor(data.icon);
@@ -1908,8 +1900,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
 				parent.addChild(menuEntry);
 				processedOpaqueItems.put(contributionItem, menuEntry);
-			} else if (contributionItem instanceof MenuManager) {
-				MenuManager manager = (MenuManager) contributionItem;
+			} else if (contributionItem instanceof MenuManager manager) {
 				DisplayItem menuEntry = new DisplayItem(manager.getMenuText(), contributionItem);
 				menuEntry.setImageDescriptor(manager.getImageDescriptor());
 				menuEntry.setActionSet(idToActionSet.get(getActionSetID(contributionItem)));
@@ -1937,10 +1928,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			menuEntry.setActionSet(idToActionSet.get(getActionSetID(menuItem)));
 			menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
 			parent.addChild(menuEntry);
-		} else if (menuItem instanceof MHandledMenuItem) {
+		} else if (menuItem instanceof MHandledMenuItem hmi) {
 			IContributionItem contributionItem = menuMngrRenderer.getContribution(menuItem);
 
-			MHandledMenuItem hmi = (MHandledMenuItem) menuItem;
 			String text = hmi.getLocalizedLabel();
 			if (text == null && hmi.getWbCommand() != null) {
 				try {
@@ -2010,10 +2000,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			return root;
 		}
 		for (MTrimElement trimElement : trimBar.getChildren()) {
-			if (!(trimElement instanceof MToolBar)) {
+			if (!(trimElement instanceof MToolBar toolBar)) {
 				continue;
 			}
-			MToolBar toolBar = (MToolBar) trimElement;
 			ToolBarManager manager = toolbarMngrRenderer.getManager(toolBar);
 			if (manager != null) {
 				IContributionItem contributionItem = (IContributionItem) toolBar.getTransientData()
@@ -2068,7 +2057,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		if (element instanceof MItem) {
 			text = getToolTipText((MItem) element);
 		}
-		ImageDescriptor iconDescriptor = element instanceof MItem ? getIconDescriptor((MItem) element) : null;
+		ImageDescriptor iconDescriptor = element instanceof MItem m ? getIconDescriptor(m) : null;
 		if (element.getWidget() instanceof ToolItem) {
 			ToolItem item = (ToolItem) element.getWidget();
 			if (text == null) {
@@ -2122,8 +2111,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private String getToolTipText(MItem item) {
 		String text = item.getLocalizedTooltip();
-		if (item instanceof MHandledItem) {
-			MHandledItem handledItem = (MHandledItem) item;
+		if (item instanceof MHandledItem handledItem) {
 			EBindingService bs = context.get(EBindingService.class);
 			ParameterizedCommand cmd = handledItem.getWbCommand();
 			if (cmd == null) {

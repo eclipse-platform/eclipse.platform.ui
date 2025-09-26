@@ -50,8 +50,9 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		}
 
 		private boolean isCompatible(IWorkingSet set) {
-			if (set.isAggregateWorkingSet())
+			if (set.isAggregateWorkingSet()) {
 				return false;
+			}
 
 			// original JDT code had the catch for self-updating sets that no
 			// one can explain. There doesn't seem to
@@ -61,15 +62,18 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 			// if (set.isAggregateWorkingSet() || !set.isSelfUpdating())
 			// return false;
 
-			if (!set.isVisible())
+			if (!set.isVisible()) {
 				return false;
+			}
 
-			if (!set.isEditable())
+			if (!set.isEditable()) {
 				return false;
+			}
 
 			Set<String> workingSetTypeIds = getSupportedWorkingSetIds();
-			if (workingSetTypeIds == null)
+			if (workingSetTypeIds == null) {
 				return true;
+			}
 			for (String workingSetTypeId : workingSetTypeIds) {
 				if (workingSetTypeId.equals(set.getId())) {
 					return true;
@@ -82,7 +86,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
 	private CheckboxTableViewer viewer;
 
-	private IWorkingSet[] initialSelection;
+	private final IWorkingSet[] initialSelection;
 
 	/**
 	 * Create a new instance of this class.

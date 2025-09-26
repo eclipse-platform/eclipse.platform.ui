@@ -86,12 +86,15 @@ public class PerspectiveElement extends QuickAccessElement {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final PerspectiveElement other = (PerspectiveElement) obj;
 		return Objects.equals(descriptor, other.descriptor);
 	}

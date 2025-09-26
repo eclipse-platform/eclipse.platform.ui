@@ -28,7 +28,7 @@ import org.eclipse.ui.branding.IBundleGroupConstants;
  * @since 3.0
  */
 public class AboutBundleGroupData extends AboutData {
-	private IBundleGroup bundleGroup;
+	private final IBundleGroup bundleGroup;
 
 	private URL licenseUrl;
 

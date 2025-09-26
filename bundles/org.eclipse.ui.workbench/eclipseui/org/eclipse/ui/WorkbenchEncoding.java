@@ -37,7 +37,7 @@ public class WorkbenchEncoding {
 
 	private static class EncodingsRegistryReader extends RegistryReader {
 
-		private List<String> encodings;
+		private final List<String> encodings;
 		/**
 		 * Create a new instance of the receiver.
 		 *

@@ -71,8 +71,7 @@ public class RGBInfoColorFactory implements IColorFactory, IExecutableExtension 
 
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
-		if (data instanceof Hashtable<?, ?>) {
-			Hashtable<?, ?> map = (Hashtable<?, ?>) data;
+		if (data instanceof Hashtable<?, ?> map) {
 			color = (String) map.get("color"); //$NON-NLS-1$
 		}
 	}

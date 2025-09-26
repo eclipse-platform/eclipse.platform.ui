@@ -19,7 +19,7 @@ import org.eclipse.ui.IMemento;
 
 public final class ConfigurationElementMemento implements IMemento {
 
-	private IConfigurationElement configurationElement;
+	private final IConfigurationElement configurationElement;
 
 	public ConfigurationElementMemento(IConfigurationElement configurationElement) {
 		if (configurationElement == null) {

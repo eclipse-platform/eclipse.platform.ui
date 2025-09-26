@@ -79,8 +79,7 @@ public final class LegacySelectionEnablerWrapper extends WorkbenchWindowExpressi
 
 	@Override
 	public boolean equals(final Object object) {
-		if (object instanceof LegacySelectionEnablerWrapper) {
-			final LegacySelectionEnablerWrapper that = (LegacySelectionEnablerWrapper) object;
+		if (object instanceof final LegacySelectionEnablerWrapper that) {
 			return equals(this.enabler, that.enabler) && equals(this.getWindow(), that.getWindow());
 		}
 
@@ -95,8 +94,7 @@ public final class LegacySelectionEnablerWrapper extends WorkbenchWindowExpressi
 		}
 
 		final Object defaultVariable = context.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
-		if (defaultVariable instanceof ISelection) {
-			final ISelection selection = (ISelection) defaultVariable;
+		if (defaultVariable instanceof final ISelection selection) {
 			if (enabler.isEnabledForSelection(selection)) {
 				return EvaluationResult.TRUE;
 			}

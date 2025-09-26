@@ -24,7 +24,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.services.IServiceLocator;
 
 public class WWinActionBars implements IActionBars2 {
-	private WorkbenchWindow window;
+	private final WorkbenchWindow window;
 
 	/**
 	 * PerspActionBars constructor comment.

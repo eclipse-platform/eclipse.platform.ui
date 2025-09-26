@@ -53,16 +53,19 @@ public final class ViewIntroAdapterPart extends ViewPart {
 
 	private IEventBroker eventBroker;
 
-	private EventHandler zoomChangeListener = event -> {
-		if (!handleZoomEvents)
+	private final EventHandler zoomChangeListener = event -> {
+		if (!handleZoomEvents) {
 			return;
+		}
 
 		Object changedObj = event.getProperty(EventTags.ELEMENT);
-		if (!(changedObj instanceof MPartStack))
+		if (!(changedObj instanceof MPartStack)) {
 			return;
+		}
 
-		if (changedObj != getIntroStack())
+		if (changedObj != getIntroStack()) {
 			return;
+		}
 
 		if (UIEvents.isADD(event)
 				&& UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE, IPresentationEngine.MAXIMIZED)) {
@@ -79,8 +82,9 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	private void addZoomListener() {
 		ViewSite site = (ViewSite) getViewSite();
 		MPart introModelPart = site.getModel();
-		if (introModelPart == null || introModelPart.getContext() == null)
+		if (introModelPart == null || introModelPart.getContext() == null) {
 			return;
+		}
 
 		eventBroker = introModelPart.getContext().get(IEventBroker.class);
 		eventBroker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS, zoomChangeListener);

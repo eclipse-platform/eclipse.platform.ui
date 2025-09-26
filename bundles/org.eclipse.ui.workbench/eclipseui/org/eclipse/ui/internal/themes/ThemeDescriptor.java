@@ -33,17 +33,17 @@ public class ThemeDescriptor implements IThemeDescriptor {
 
 	private static final String ATT_NAME = "name";//$NON-NLS-1$
 
-	private Collection<ColorDefinition> colors = new HashSet<>();
+	private final Collection<ColorDefinition> colors = new HashSet<>();
 
 	private String description;
 
-	private Collection<FontDefinition> fonts = new HashSet<>();
+	private final Collection<FontDefinition> fonts = new HashSet<>();
 
-	private String id;
+	private final String id;
 
 	private String name;
 
-	private Map<String, Object> dataMap = new HashMap<>();
+	private final Map<String, Object> dataMap = new HashMap<>();
 
 	/**
 	 * Create a new ThemeDescriptor
@@ -116,8 +116,9 @@ public class ThemeDescriptor implements IThemeDescriptor {
 
 	@Override
 	public String getName() {
-		if (name == null)
+		if (name == null) {
 			return getId();
+		}
 		return name;
 	}
 

@@ -26,7 +26,7 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public class ActionElement extends QuickAccessElement {
 
-	private ActionContributionItem item;
+	private final ActionContributionItem item;
 
 	/* package */ ActionElement(ActionContributionItem item) {
 		this.item = item;
@@ -63,12 +63,15 @@ public class ActionElement extends QuickAccessElement {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final ActionElement other = (ActionElement) obj;
 		return Objects.equals(item, other.item);
 	}

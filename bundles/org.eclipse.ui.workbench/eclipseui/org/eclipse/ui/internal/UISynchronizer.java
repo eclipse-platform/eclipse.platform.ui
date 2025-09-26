@@ -48,8 +48,9 @@ public class UISynchronizer extends Synchronizer {
 
 		@Override
 		public void set(Boolean value) {
-			if (value != Boolean.TRUE && value != Boolean.FALSE)
+			if (value != Boolean.TRUE && value != Boolean.FALSE) {
 				throw new IllegalArgumentException();
+			}
 			super.set(value);
 		}
 	};
@@ -62,8 +63,9 @@ public class UISynchronizer extends Synchronizer {
 
 		@Override
 		public void set(Boolean value) {
-			if (value != Boolean.TRUE && value != Boolean.FALSE)
+			if (value != Boolean.TRUE && value != Boolean.FALSE) {
 				throw new IllegalArgumentException();
+			}
 			if (value == Boolean.TRUE && startupThread.get().booleanValue()) {
 				throw new IllegalStateException();
 			}
@@ -78,8 +80,9 @@ public class UISynchronizer extends Synchronizer {
 
 	public void started() {
 		synchronized (this) {
-			if (!isStarting)
+			if (!isStarting) {
 				throw new IllegalStateException();
+			}
 			isStarting = false;
 			for (Iterator<Runnable> i = pendingStartup.iterator(); i.hasNext();) {
 				Runnable runnable = i.next();

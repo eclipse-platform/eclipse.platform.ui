@@ -45,7 +45,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
 	private boolean defaultEnabled;
 
-	private String id;
+	private final String id;
 
 	protected IConfigurationElement definingElement;
 

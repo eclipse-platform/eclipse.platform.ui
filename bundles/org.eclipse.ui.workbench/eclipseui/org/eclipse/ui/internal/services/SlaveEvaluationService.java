@@ -28,13 +28,13 @@ import org.eclipse.ui.services.IEvaluationService;
  */
 public class SlaveEvaluationService implements IEvaluationService {
 
-	private IEvaluationService parentService;
+	private final IEvaluationService parentService;
 
-	private Collection sourceProviders = new ArrayList();
+	private final Collection sourceProviders = new ArrayList();
 
-	private Collection serviceListeners = new ArrayList();
+	private final Collection serviceListeners = new ArrayList();
 
-	private Collection evaluationReferences = new ArrayList();
+	private final Collection evaluationReferences = new ArrayList();
 
 	public SlaveEvaluationService(IEvaluationService parent) {
 		parentService = parent;
