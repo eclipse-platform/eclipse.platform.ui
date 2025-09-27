@@ -100,7 +100,7 @@ public class MinMaxAddon {
 	@Inject
 	MApplication app;
 
-	private CTabFolder2Adapter CTFButtonListener = new CTabFolder2Adapter() {
+	private final CTabFolder2Adapter CTFButtonListener = new CTabFolder2Adapter() {
 		private MUIElement getElementToChange(CTabFolderEvent event) {
 			CTabFolder ctf = (CTabFolder) event.widget;
 			MUIElement element = (MUIElement) ctf.getData(AbstractPartRenderer.OWNING_ME);
@@ -136,7 +136,7 @@ public class MinMaxAddon {
 		}
 	};
 
-	private MouseListener CTFDblClickListener = new MouseAdapter() {
+	private final MouseListener CTFDblClickListener = new MouseAdapter() {
 		@Override
 		public void mouseDown(MouseEvent e) {
 			// HACK! If this is an empty stack treat it as though it was the editor area
@@ -238,8 +238,7 @@ public class MinMaxAddon {
 		}
 
 		MUIElement stateElement = changedElement;
-		if (changedElement instanceof MPartStack) {
-			MPartStack stack = (MPartStack) changedElement;
+		if (changedElement instanceof MPartStack stack) {
 			MArea area = MinMaxAddonUtil.getAreaFor(stack);
 			if (area != null && !(area.getWidget() instanceof CTabFolder)) {
 				stateElement = area.getCurSharedRef();
@@ -320,17 +319,15 @@ public class MinMaxAddon {
 		}
 
 		final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
-		if (!(changedElement instanceof MPerspectiveStack)) {
+		if (!(changedElement instanceof MPerspectiveStack ps)) {
 			return;
 		}
 
-		MPerspectiveStack ps = (MPerspectiveStack) changedElement;
 		MWindow window = modelService.getTopLevelWindowFor(ps);
 		Object widget = window.getWidget();
-		if (!(widget instanceof Shell)) {
+		if (!(widget instanceof final Shell winShell)) {
 			return;
 		}
-		final Shell winShell = (Shell) widget;
 		List<MToolControl> tcList = modelService.findElements(window, null, MToolControl.class);
 
 		final MPerspective curPersp = ps.getSelectedElement();
@@ -391,11 +388,9 @@ public class MinMaxAddon {
 
 		Object changedObj = event.getProperty(EventTags.ELEMENT);
 
-		if (!(changedObj instanceof MUIElement)) {
+		if (!(changedObj instanceof final MUIElement changedElement)) {
 			return;
 		}
-
-		final MUIElement changedElement = (MUIElement) changedObj;
 
 		if (UIEvents.isADD(event)) {
 			if (UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE, MINIMIZED)) {
@@ -432,11 +427,9 @@ public class MinMaxAddon {
 		Object changedObject = event.getProperty(EventTags.ELEMENT);
 
 		// Only care about MPerspective id changes
-		if (!(changedObject instanceof MPerspective)) {
+		if (!(changedObject instanceof MPerspective perspective)) {
 			return;
 		}
-
-		MPerspective perspective = (MPerspective) changedObject;
 
 		String newID = (String) event.getProperty(UIEvents.EventTags.NEW_VALUE);
 		String oldID = (String) event.getProperty(UIEvents.EventTags.OLD_VALUE);
@@ -622,8 +615,7 @@ public class MinMaxAddon {
 			}
 		} else if (element.getWidget() instanceof CTabFolder) {
 			return (CTabFolder) element.getWidget();
-		} else if (element instanceof MPlaceholder) {
-			MPlaceholder ph = (MPlaceholder) element;
+		} else if (element instanceof MPlaceholder ph) {
 			if (ph.getRef() instanceof MArea) {
 				return getCTFFor(ph.getRef());
 			}
@@ -632,10 +624,9 @@ public class MinMaxAddon {
 	}
 
 	boolean isEmptyPerspectiveStack(MUIElement element) {
-		if (!(element instanceof MPerspectiveStack)) {
+		if (!(element instanceof MPerspectiveStack ps)) {
 			return false;
 		}
-		MPerspectiveStack ps = (MPerspectiveStack) element;
 		return ps.getChildren().isEmpty();
 	}
 
@@ -989,11 +980,10 @@ public class MinMaxAddon {
 
 	private void createTrim(MUIElement element) {
 		MWindow win = MinMaxAddonUtil.getWindowFor(element);
-		if (!(win instanceof MTrimmedWindow)) {
+		if (!(win instanceof MTrimmedWindow window)) {
 			return;
 		}
 
-		MTrimmedWindow window = (MTrimmedWindow) win;
 		Shell winShell = (Shell) window.getWidget();
 
 		// Is there already a TrimControl there ?

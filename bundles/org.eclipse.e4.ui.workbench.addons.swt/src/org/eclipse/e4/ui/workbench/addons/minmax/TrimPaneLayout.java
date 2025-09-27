@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Layout;
 public class TrimPaneLayout extends Layout {
 	private static int BORDER_WIDTH = 4;
 	private static final Rectangle EMPTY_RECT = new Rectangle(0, 0, 0, 0);
-	private int fixedCorner;
+	private final int fixedCorner;
 
 	public Rectangle hSizingRect = EMPTY_RECT;
 	public Rectangle vSizingRect = EMPTY_RECT;
@@ -43,7 +43,7 @@ public class TrimPaneLayout extends Layout {
 
 	int trackState = SWT.NONE;
 	protected Point curPos;
-	private MToolControl toolControl;
+	private final MToolControl toolControl;
 
 	public TrimPaneLayout(MToolControl toolControl, int barSide) {
 		this.toolControl = toolControl;

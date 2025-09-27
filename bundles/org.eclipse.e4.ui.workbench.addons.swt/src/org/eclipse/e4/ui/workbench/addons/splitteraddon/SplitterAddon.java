@@ -61,11 +61,9 @@ public class SplitterAddon {
 
 		Object changedObj = event.getProperty(EventTags.ELEMENT);
 
-		if (!(changedObj instanceof MPart)) {
+		if (!(changedObj instanceof MPart part)) {
 			return;
 		}
-
-		MPart part = (MPart) changedObj;
 
 		if (UIEvents.isADD(event)) {
 			if (UIEvents.contains(event, UIEvents.EventTags.NEW_VALUE,
