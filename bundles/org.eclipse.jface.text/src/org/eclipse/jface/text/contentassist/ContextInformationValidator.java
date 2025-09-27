@@ -26,7 +26,7 @@ import org.eclipse.jface.text.ITextViewer;
 public final class ContextInformationValidator implements IContextInformationValidator {
 
 	/** The content assist processor. */
-	private IContentAssistProcessor fProcessor;
+	private final IContentAssistProcessor fProcessor;
 	/** The context information to be validated. */
 	private IContextInformation fContextInformation;
 	/** The associated text viewer. */
@@ -52,9 +52,11 @@ public final class ContextInformationValidator implements IContextInformationVal
 	public boolean isContextInformationValid(int offset) {
 		IContextInformation[] infos= fProcessor.computeContextInformation(fViewer, offset);
 		if (infos != null && infos.length > 0) {
-			for (IContextInformation info : infos)
-				if (fContextInformation.equals(info))
+			for (IContextInformation info : infos) {
+				if (fContextInformation.equals(info)) {
 					return true;
+				}
+			}
 		}
 		return false;
 	}

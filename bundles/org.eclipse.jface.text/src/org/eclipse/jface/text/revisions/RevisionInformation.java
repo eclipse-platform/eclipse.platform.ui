@@ -122,8 +122,9 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 	 */
 	public void applyDiff(Hunk[] hunks) {
 		fRanges= null; // mark for recomputation
-		for (Revision revision : getRevisions())
+		for (Revision revision : getRevisions()) {
 			revision.applyDiff(hunks);
+		}
 	}
 
 	@Override

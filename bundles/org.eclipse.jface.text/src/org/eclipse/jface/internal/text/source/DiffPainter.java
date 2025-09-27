@@ -148,8 +148,9 @@ public final class DiffPainter {
 	 */
 	public void paint(GC gc, ILineRange visibleModelLines) {
 		connectIfNeeded();
-		if (!isConnected())
+		if (!isConnected()) {
 			return;
+		}
 
 		// draw diff info
 		final int lastLine= end(visibleModelLines);
@@ -165,20 +166,24 @@ public final class DiffPainter {
 	 * visible.
 	 */
 	private void connectIfNeeded() {
-		if (isConnected() || fParentRuler == null)
+		if (isConnected() || fParentRuler == null) {
 			return;
+		}
 
 		fViewer= fParentRuler.getTextViewer();
-		if (fViewer == null)
+		if (fViewer == null) {
 			return;
+		}
 
 		fWidget= fViewer.getTextWidget();
-		if (fWidget == null)
+		if (fWidget == null) {
 			return;
+		}
 
 		fControl= fColumn.getControl();
-		if (fControl == null)
+		if (fControl == null) {
 			return;
+		}
 
 		fControl.addDisposeListener(e -> handleDispose());
 		fDisplay= fControl.getDisplay();
@@ -213,8 +218,9 @@ public final class DiffPainter {
 	 */
 	private void paintLine(int line, GC gc, int width, Color deletionColor) {
 		int widgetLine= JFaceTextUtil.modelLineToWidgetLine(fViewer, line);
-		if (widgetLine == -1)
+		if (widgetLine == -1) {
 			return;
+		}
 
 		ILineDiffInfo info= getDiffInfo(line);
 
@@ -234,10 +240,12 @@ public final class DiffPainter {
 			if (delBefore > 0 || delBelow > 0) {
 				gc.setForeground(deletionColor);
 				gc.setLineWidth(1);
-				if (delBefore > 0)
+				if (delBefore > 0) {
 					gc.drawLine(0, y, width, y);
-				if (delBelow > 0)
+				}
+				if (delBelow > 0) {
 					gc.drawLine(0, y + lineHeight - 1, width, y + lineHeight - 1);
+				}
 			}
 		}
 	}
@@ -261,8 +269,9 @@ public final class DiffPainter {
 	 * @return the <code>ILineDiffInfo</code> for <code>line</code>, or <code>null</code>.
 	 */
 	private ILineDiffInfo getDiffInfo(int line) {
-		if (fLineDiffer != null)
+		if (fLineDiffer != null) {
 			return fLineDiffer.getLineInfo(line);
+		}
 
 		return null;
 	}
@@ -303,21 +312,24 @@ public final class DiffPainter {
 	 * @return the shaded color
 	 */
 	private Color getShadedColor(Color color) {
-		if (color == null)
+		if (color == null) {
 			return null;
+		}
 
-		if (fSharedColors == null)
+		if (fSharedColors == null) {
 			return color;
+		}
 
 		RGB baseRGB= color.getRGB();
 		RGB background= getBackground().getRGB();
 
 		boolean darkBase= isDark(baseRGB);
 		boolean darkBackground= isDark(background);
-		if (darkBase && darkBackground)
+		if (darkBase && darkBackground) {
 			background= new RGB(255, 255, 255);
-		else if (!darkBase && !darkBackground)
+		} else if (!darkBase && !darkBackground) {
 			background= new RGB(0, 0, 0);
+		}
 
 		return fSharedColors.getColor(interpolate(baseRGB, background, 0.6));
 	}
@@ -330,10 +342,11 @@ public final class DiffPainter {
 	 */
 	public void setModel(IAnnotationModel model) {
 		IAnnotationModel newModel;
-		if (model instanceof IAnnotationModelExtension)
+		if (model instanceof IAnnotationModelExtension) {
 			newModel= ((IAnnotationModelExtension) model).getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
-		else
+		} else {
 			newModel= model;
+		}
 
 		setDiffer(newModel);
 	}
@@ -346,8 +359,9 @@ public final class DiffPainter {
 	private void setDiffer(IAnnotationModel differ) {
 		if (differ instanceof ILineDiffer) {
 			if (fLineDiffer != differ) {
-				if (fLineDiffer != null)
+				if (fLineDiffer != null) {
 					((IAnnotationModel) fLineDiffer).removeAnnotationModelListener(fAnnotationListener);
+				}
 				fLineDiffer= (ILineDiffer) differ;
 				((IAnnotationModel) fLineDiffer).addAnnotationModelListener(fAnnotationListener);
 			}
@@ -400,8 +414,9 @@ public final class DiffPainter {
 	 * @return the System background color for list widgets
 	 */
 	private Color getBackground() {
-		if (fBackground == null)
+		if (fBackground == null) {
 			return fWidget.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		}
 		return fBackground;
 	}
 
@@ -463,8 +478,9 @@ public final class DiffPainter {
 	 * @return the character indication for <code>info</code>
 	 */
 	private String getDisplayCharacter(ILineDiffInfo info) {
-		if (info == null)
+		if (info == null) {
 			return " "; //$NON-NLS-1$
+		}
 		switch (info.getChangeType()) {
 			case ILineDiffInfo.CHANGED:
 				return "~"; //$NON-NLS-1$
@@ -494,8 +510,9 @@ public final class DiffPainter {
 	 * @return the grey-scale value
 	 */
 	private static double greyLevel(RGB rgb) {
-		if (rgb.red == rgb.green && rgb.green == rgb.blue)
+		if (rgb.red == rgb.green && rgb.green == rgb.blue) {
 			return rgb.red;
+		}
 		return (0.299 * rgb.red + 0.587 * rgb.green + 0.114 * rgb.blue + 0.5);
 	}
 
@@ -516,8 +533,9 @@ public final class DiffPainter {
 	 * @since 3.3
 	 */
 	public boolean hasInformation() {
-		if (fLineDiffer instanceof ILineDifferExtension2)
+		if (fLineDiffer instanceof ILineDifferExtension2) {
 			return !((ILineDifferExtension2) fLineDiffer).isSuspended();
+		}
 		return fLineDiffer != null;
 	}
 

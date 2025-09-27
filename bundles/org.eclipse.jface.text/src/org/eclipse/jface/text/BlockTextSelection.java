@@ -79,8 +79,9 @@ public class BlockTextSelection extends TextSelection implements IBlockTextSelec
 			int offsetInLine= Math.min(column, lineInfo.getLength());
 			return lineInfo.getOffset() + offsetInLine;
 		} catch (BadLocationException x) {
-			if (line < 0)
+			if (line < 0) {
 				return 0;
+			}
 			return document.getLength();
 		}
 	}
@@ -131,19 +132,25 @@ public class BlockTextSelection extends TextSelection implements IBlockTextSelec
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!super.equals(obj))
+		}
+		if (!super.equals(obj)) {
 			return false;
+		}
 		final BlockTextSelection other= (BlockTextSelection) obj;
-		if (fEndColumn != other.fEndColumn)
+		if (fEndColumn != other.fEndColumn) {
 			return false;
-		if (fEndLine != other.fEndLine)
+		}
+		if (fEndLine != other.fEndLine) {
 			return false;
-		if (fStartColumn != other.fStartColumn)
+		}
+		if (fStartColumn != other.fStartColumn) {
 			return false;
-		if (fStartLine != other.fStartLine)
+		}
+		if (fStartLine != other.fStartLine) {
 			return false;
+		}
 		return true;
 	}
 

@@ -30,7 +30,7 @@ import org.eclipse.jface.text.source.ISourceViewerExtension2;
 public class DefaultTextHover implements ITextHover {
 
 	/** This hover's source viewer */
-	private ISourceViewer fSourceViewer;
+	private final ISourceViewer fSourceViewer;
 
 	/**
 	 * Creates a new annotation hover.
@@ -51,8 +51,9 @@ public class DefaultTextHover implements ITextHover {
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		IAnnotationModel model= getAnnotationModel(fSourceViewer);
-		if (model == null)
+		if (model == null) {
 			return null;
+		}
 
 		Iterator<Annotation> e= model.getAnnotationIterator();
 		while (e.hasNext()) {
@@ -61,8 +62,9 @@ public class DefaultTextHover implements ITextHover {
 				Position p= model.getPosition(a);
 				if (p != null && p.overlapsWith(hoverRegion.getOffset(), hoverRegion.getLength())) {
 					String msg= a.getText();
-					if (msg != null && !msg.trim().isEmpty())
+					if (msg != null && !msg.trim().isEmpty()) {
 						return msg;
+					}
 				}
 			}
 		}
@@ -104,8 +106,9 @@ public class DefaultTextHover implements ITextHover {
 
 			while (pos >= 0) {
 				c= document.getChar(pos);
-				if (!Character.isUnicodeIdentifierPart(c))
+				if (!Character.isUnicodeIdentifierPart(c)) {
 					break;
+				}
 				--pos;
 			}
 
@@ -116,8 +119,9 @@ public class DefaultTextHover implements ITextHover {
 
 			while (pos < length) {
 				c= document.getChar(pos);
-				if (!Character.isUnicodeIdentifierPart(c))
+				if (!Character.isUnicodeIdentifierPart(c)) {
 					break;
+				}
 				++pos;
 			}
 
@@ -127,12 +131,13 @@ public class DefaultTextHover implements ITextHover {
 		}
 
 		if (start >= -1 && end > -1) {
-			if (start == offset && end == offset)
+			if (start == offset && end == offset) {
 				return new Region(offset, 0);
-			else if (start == offset)
+			} else if (start == offset) {
 				return new Region(start, end - start);
-			else
+			} else {
 				return new Region(start + 1, end - start - 1);
+			}
 		}
 
 		return null;

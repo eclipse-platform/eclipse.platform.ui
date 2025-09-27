@@ -91,7 +91,9 @@ public final class Colors {
 				}
 			}
 			hue *= 60;
-			if (hue < 0) hue += 360;
+			if (hue < 0) {
+				hue += 360;
+			}
 		}
 		return new float[] {hue, saturation, intensity};
 	}
@@ -112,7 +114,9 @@ public final class Colors {
 		} else {
 			float temp2= intensity < 0.5f ? intensity * (1.0f + saturation) : (intensity + saturation) - (intensity * saturation);
 			float temp1= 2f * intensity - temp2;
-			if (hue == 360) hue = 0;
+			if (hue == 360) {
+				hue = 0;
+			}
 			hue /= 360;
 
 			r= hue2RGB(temp1, temp2, hue + 1f/3f);
@@ -127,16 +131,20 @@ public final class Colors {
 	}
 
 	private static float hue2RGB(float t1, float t2, float hue) {
-		if (hue < 0)
+		if (hue < 0) {
 			hue += 1;
-		else if (hue > 1)
+		} else if (hue > 1) {
 			hue -= 1;
-		if (6f * hue < 1)
+		}
+		if (6f * hue < 1) {
 			return t1 +(t2 - t1) * 6f * hue;
-		if (2f * hue < 1)
+		}
+		if (2f * hue < 1) {
 			return t2;
-		if (3f * hue < 2)
+		}
+		if (3f * hue < 2) {
 			return t1 + (t2 - t1) * (2f/3f - hue) * 6f;
+		}
 		return t1;
 	}
 
@@ -180,13 +188,15 @@ public final class Colors {
 		Assert.isLegal(end != null);
 		Assert.isLegal(steps > 0);
 
-		if (steps == 1)
+		if (steps == 1) {
 			return new RGB[] { start };
+		}
 
 		float step= 1.0f / (steps - 1);
 		RGB[] gradient= new RGB[steps];
-		for (int i= 0; i < steps; i++)
+		for (int i= 0; i < steps; i++) {
 			gradient[i]= blend(start, end, step * i);
+		}
 
 		return gradient;
 	}
@@ -215,8 +225,9 @@ public final class Colors {
 		Assert.isLegal(steps >= 2);
 
 		RGB[] rainbow= new RGB[steps];
-		for (int i= 0; i < steps; i++)
+		for (int i= 0; i < steps; i++) {
 			rainbow[i]= new RGB(computeHue(i), 1f, 1f);
+		}
 
 		return rainbow;
 	}

@@ -39,7 +39,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  */
 public class TemplateStore extends TemplateStoreCore {
 	/** The preference store. */
-	private IPreferenceStore fPreferenceStore;
+	private final IPreferenceStore fPreferenceStore;
 
 	/**
 	 * The property listener, if any is registered, <code>null</code> otherwise.
@@ -116,12 +116,13 @@ public class TemplateStore extends TemplateStoreCore {
 				 * save operation, and clients may trigger reloading by listening to preference store
 				 * updates.
 				 */
-				if (!fIgnorePreferenceStoreChanges && getKey().equals(event.getProperty()))
+				if (!fIgnorePreferenceStoreChanges && getKey().equals(event.getProperty())) {
 					try {
 						load();
 					} catch (IOException x) {
 						handleException(x);
 					}
+				}
 			};
 			fPreferenceStore.addPropertyChangeListener(fPropertyListener);
 		}
@@ -151,8 +152,9 @@ public class TemplateStore extends TemplateStoreCore {
 	public void save() throws IOException {
 		ArrayList<TemplatePersistenceData> custom= new ArrayList<>();
 		for (TemplatePersistenceData data : internalGetTemplates()) {
-			if (data.isCustom() && !(data.isUserAdded() && data.isDeleted())) // don't save deleted user-added templates
+			if (data.isCustom() && !(data.isUserAdded() && data.isDeleted())) { // don't save deleted user-added templates
 				custom.add(data);
+			}
 		}
 
 		StringWriter output= new StringWriter();
@@ -162,8 +164,9 @@ public class TemplateStore extends TemplateStoreCore {
 		fIgnorePreferenceStoreChanges= true;
 		try {
 			fPreferenceStore.setValue(getKey(), output.toString());
-			if (fPreferenceStore instanceof IPersistentPreferenceStore)
+			if (fPreferenceStore instanceof IPersistentPreferenceStore) {
 				((IPersistentPreferenceStore)fPreferenceStore).save();
+			}
 		} finally {
 			fIgnorePreferenceStoreChanges= false;
 		}
@@ -178,8 +181,9 @@ public class TemplateStore extends TemplateStoreCore {
 	@Override
 	public void restoreDefaults(boolean doSave) {
 		String oldValue= null;
-		if (!doSave)
+		if (!doSave) {
 			oldValue= fPreferenceStore.getString(getKey());
+		}
 
 		try {
 			fIgnorePreferenceStoreChanges= true;

@@ -48,8 +48,9 @@ public class HTMLPrinter {
 				});
 			} catch (SWTError err) {
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=45294
-				if (err.code != SWT.ERROR_DEVICE_DISPOSED)
+				if (err.code != SWT.ERROR_DEVICE_DISPOSED) {
 					throw err;
+				}
 			}
 		}
 	}

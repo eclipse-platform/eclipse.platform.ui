@@ -36,20 +36,20 @@ package org.eclipse.jface.text;
 public class TextEvent {
 
 	/** Start offset of the change */
-	private int fOffset;
+	private final int fOffset;
 	/** The length of the change */
-	private int fLength;
+	private final int fLength;
 	/** Inserted text */
-	private String fText;
+	private final String fText;
 	/** Replaced text */
-	private String fReplacedText;
+	private final String fReplacedText;
 	/** The original document event, may by null */
-	private DocumentEvent fDocumentEvent;
+	private final DocumentEvent fDocumentEvent;
 	/**
 	 * The redraw state of the viewer issuing this event
 	 * @since 2.0
 	 */
-	private boolean fViewerRedrawState;
+	private final boolean fViewerRedrawState;
 
 	/**
 	 * Creates a new <code>TextEvent</code> based on the specification.
