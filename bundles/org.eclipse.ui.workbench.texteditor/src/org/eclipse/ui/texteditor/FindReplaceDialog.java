@@ -1069,10 +1069,8 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void addDecorationMargin(Control control) {
 		Object layoutData = control.getLayoutData();
-		if (!(layoutData instanceof GridData))
+		if (!(layoutData instanceof GridData gd))
 			return;
-		GridData gd = (GridData) layoutData;
-
 		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()
 				.getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
 		gd.horizontalIndent = fieldDecoration.getImage().getBounds().width;

@@ -219,8 +219,7 @@ public class GotoLineAction extends TextEditorAction {
 
 		String currentLineStr= ""; //$NON-NLS-1$
 		ISelection selection= editor.getSelectionProvider().getSelection();
-		if (selection instanceof ITextSelection) {
-			ITextSelection textSelection= (ITextSelection)selection;
+		if (selection instanceof ITextSelection textSelection) {
 			Control textWidget= editor.getAdapter(Control.class);
 			boolean caretAtStartOfSelection= false;
 			if (textWidget instanceof StyledText)

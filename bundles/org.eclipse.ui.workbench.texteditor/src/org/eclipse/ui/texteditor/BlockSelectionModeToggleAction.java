@@ -39,8 +39,7 @@ final class BlockSelectionModeToggleAction extends TextEditorAction {
 	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
-		if (editor instanceof ITextEditorExtension5) {
-			ITextEditorExtension5 ext5= (ITextEditorExtension5) editor;
+		if (editor instanceof ITextEditorExtension5 ext5) {
 			ext5.setBlockSelectionMode(!ext5.isBlockSelectionModeEnabled());
 		}
 		update(); // update in case anyone else has directly accessed the widget
@@ -49,8 +48,7 @@ final class BlockSelectionModeToggleAction extends TextEditorAction {
 	@Override
 	public void update() {
 		ITextEditor editor= getTextEditor();
-		if (editor instanceof ITextEditorExtension5) {
-			ITextEditorExtension5 ext5= (ITextEditorExtension5) editor;
+		if (editor instanceof ITextEditorExtension5 ext5) {
 			setEnabled(true);
 			setChecked(ext5.isBlockSelectionModeEnabled());
 			return;

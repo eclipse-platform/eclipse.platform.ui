@@ -172,8 +172,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 
 		ISelectionProvider provider= part.getSite().getSelectionProvider();
 		ISelection selection= provider.getSelection();
-		if (selection instanceof ITextSelection) {
-			ITextSelection textSelection= (ITextSelection) selection;
+		if (selection instanceof ITextSelection textSelection) {
 			if (textSelection.getOffset() == fPosition.offset && textSelection.getLength() == fPosition.length) {
 				String text= textSelection.getText();
 				if (text != null) {

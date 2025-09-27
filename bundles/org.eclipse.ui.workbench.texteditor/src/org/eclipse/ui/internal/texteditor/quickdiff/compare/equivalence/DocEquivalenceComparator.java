@@ -74,8 +74,7 @@ public final class DocEquivalenceComparator implements IRangeComparator {
 	 */
 	@Override
 	public boolean rangesEqual(int thisIndex, IRangeComparator other, int otherIndex) {
-		if (other instanceof DocEquivalenceComparator) {
-			DocEquivalenceComparator dec= (DocEquivalenceComparator) other;
+		if (other instanceof DocEquivalenceComparator dec) {
 			try {
 				Hash ourHash= getHash(thisIndex);
 				Hash otherHash= dec.getHash(otherIndex);

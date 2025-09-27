@@ -123,8 +123,7 @@ public class FocusedInformationPresenter extends InformationPresenter {
 		try {
 			// compute the hover information
 			Object hoverInfo;
-			if (annotationHover instanceof IAnnotationHoverExtension) {
-				IAnnotationHoverExtension extension= (IAnnotationHoverExtension) annotationHover;
+			if (annotationHover instanceof IAnnotationHoverExtension extension) {
 				ILineRange hoverLineRange= extension.getHoverLineRange(fSourceViewer, line);
 				if (hoverLineRange == null)
 					return false;

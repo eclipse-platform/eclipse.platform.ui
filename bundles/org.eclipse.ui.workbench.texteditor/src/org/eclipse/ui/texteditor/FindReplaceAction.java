@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
@@ -79,20 +78,15 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		return !atBottom;
 	}
 
-	private IPreferenceChangeListener overlayDialogPreferenceListener = new IPreferenceChangeListener() {
-
-		@Override
-		public void preferenceChange(PreferenceChangeEvent event) {
-			if (overlay == null) {
-				return;
-			}
-			if (event.getKey().equals(USE_FIND_REPLACE_OVERLAY)) {
-				overlay.close();
-			} else if (event.getKey().equals(FIND_REPLACE_OVERLAY_AT_BOTTOM)) {
-				overlay.setPositionToTop(shouldPositionOverlayOnTop());
-			}
+	private IPreferenceChangeListener overlayDialogPreferenceListener = event -> {
+		if (this.overlay == null) {
+			return;
 		}
-
+		if (event.getKey().equals(USE_FIND_REPLACE_OVERLAY)) {
+			this.overlay.close();
+		} else if (event.getKey().equals(FIND_REPLACE_OVERLAY_AT_BOTTOM)) {
+			this.overlay.setPositionToTop(shouldPositionOverlayOnTop());
+		}
 	};
 
 	/**
@@ -163,8 +157,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 				fPreviousTarget= target;
 				if (fDialog != null) {
 					boolean isEditable= false;
-					if (fPart instanceof ITextEditorExtension2) {
-						ITextEditorExtension2 extension= (ITextEditorExtension2) fPart;
+					if (fPart instanceof ITextEditorExtension2 extension) {
 						isEditable= extension.isEditorInputModifiable();
 					} else if (target != null)
 						isEditable= target.isEditable();

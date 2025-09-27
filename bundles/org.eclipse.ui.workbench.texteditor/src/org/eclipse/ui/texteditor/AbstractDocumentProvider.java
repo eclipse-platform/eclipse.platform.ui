@@ -128,8 +128,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			 */
 			@Override
 			public boolean equals(Object o) {
-				if (o instanceof ElementInfo) {
-					ElementInfo e= (ElementInfo) o;
+				if (o instanceof ElementInfo e) {
 					return fDocument.equals(e.fDocument);
 				}
 				return false;
@@ -873,8 +872,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		Iterator<IElementStateListener> e= new ArrayList<>(fElementStateListeners).iterator();
 		while (e.hasNext()) {
 			Object o= e.next();
-			if (o instanceof IElementStateListenerExtension) {
-				IElementStateListenerExtension l= (IElementStateListenerExtension) o;
+			if (o instanceof IElementStateListenerExtension l) {
 				l.elementStateValidationChanged(element, isStateValidated);
 			}
 		}
@@ -892,8 +890,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		Iterator<IElementStateListener> e= new ArrayList<>(fElementStateListeners).iterator();
 		while (e.hasNext()) {
 			Object o= e.next();
-			if (o instanceof IElementStateListenerExtension) {
-				IElementStateListenerExtension l= (IElementStateListenerExtension) o;
+			if (o instanceof IElementStateListenerExtension l) {
 				l.elementStateChanging(element);
 			}
 		}
@@ -911,8 +908,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		Iterator<IElementStateListener> e= new ArrayList<>(fElementStateListeners).iterator();
 		while (e.hasNext()) {
 			Object o= e.next();
-			if (o instanceof IElementStateListenerExtension) {
-				IElementStateListenerExtension l= (IElementStateListenerExtension) o;
+			if (o instanceof IElementStateListenerExtension l) {
 				l.elementStateChangeFailed(element);
 			}
 		}

@@ -260,8 +260,7 @@ public final class HippieCompletionEngine {
 
 		for (IEditorReference editor : editorsArray) {
 			IEditorPart realEditor = editor.getEditor(false);
-			if (realEditor instanceof ITextEditor && !realEditor.equals(currentTextEditor)) {
-				ITextEditor textEditor= (ITextEditor)realEditor;
+			if (realEditor instanceof ITextEditor textEditor && !realEditor.equals(currentTextEditor)) {
 				provider= textEditor.getDocumentProvider();
 				if (provider == null) {
 					continue;

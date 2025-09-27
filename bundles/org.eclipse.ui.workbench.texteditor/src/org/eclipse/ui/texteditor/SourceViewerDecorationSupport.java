@@ -696,12 +696,11 @@ public class SourceViewerDecorationSupport {
 	 */
 	private void showMatchingCharacters() {
 		if (fMatchingCharacterPainter == null) {
-			if (fSourceViewer instanceof ITextViewerExtension2) {
+			if (fSourceViewer instanceof ITextViewerExtension2 extension) {
 				fMatchingCharacterPainter= new MatchingCharacterPainter(fSourceViewer, fCharacterPairMatcher);
 				fMatchingCharacterPainter.setColor(getColor(fMatchingCharacterPainterColorKey));
 				fMatchingCharacterPainter.setHighlightCharacterAtCaretLocation(isCharacterAtCaretLocationShown());
 				fMatchingCharacterPainter.setHighlightEnclosingPeerCharacters(areEnclosingPeerCharactersShown());
-				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.addPainter(fMatchingCharacterPainter);
 			}
 		}
@@ -712,8 +711,7 @@ public class SourceViewerDecorationSupport {
 	 */
 	private void hideMatchingCharacters() {
 		if (fMatchingCharacterPainter != null) {
-			if (fSourceViewer instanceof ITextViewerExtension2) {
-				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
+			if (fSourceViewer instanceof ITextViewerExtension2 extension) {
 				extension.removePainter(fMatchingCharacterPainter);
 				fMatchingCharacterPainter.deactivate(true);
 				fMatchingCharacterPainter.dispose();
@@ -760,10 +758,9 @@ public class SourceViewerDecorationSupport {
 	 */
 	private void showCursorLine() {
 		if (fCursorLinePainter == null) {
-			if (fSourceViewer instanceof ITextViewerExtension2) {
+			if (fSourceViewer instanceof ITextViewerExtension2 extension) {
 				fCursorLinePainter= new CursorLinePainter(fSourceViewer);
 				fCursorLinePainter.setHighlightColor(getColor(fCursorLinePainterColorKey));
-				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.addPainter(fCursorLinePainter);
 			}
 		}
@@ -774,8 +771,7 @@ public class SourceViewerDecorationSupport {
 	 */
 	private void hideCursorLine() {
 		if (fCursorLinePainter != null) {
-			if (fSourceViewer instanceof ITextViewerExtension2) {
-				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
+			if (fSourceViewer instanceof ITextViewerExtension2 extension) {
 				extension.removePainter(fCursorLinePainter);
 				fCursorLinePainter.deactivate(true);
 				fCursorLinePainter.dispose();
@@ -800,12 +796,11 @@ public class SourceViewerDecorationSupport {
 	 */
 	private void showMargin() {
 		if (fMarginPainter == null) {
-			if (fSourceViewer instanceof ITextViewerExtension2) {
+			if (fSourceViewer instanceof ITextViewerExtension2 extension) {
 				fMarginPainter= new MarginPainter(fSourceViewer);
 				fMarginPainter.setMarginRulerColor(getColor(fMarginPainterColorKey));
 				if (fPreferenceStore != null)
 					fMarginPainter.setMarginRulerColumn(fPreferenceStore.getInt(fMarginPainterColumnKey));
-				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.addPainter(fMarginPainter);
 			}
 		}
@@ -816,8 +811,7 @@ public class SourceViewerDecorationSupport {
 	 */
 	private void hideMargin() {
 		if (fMarginPainter != null) {
-			if (fSourceViewer instanceof ITextViewerExtension2) {
-				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
+			if (fSourceViewer instanceof ITextViewerExtension2 extension) {
 				extension.removePainter(fMarginPainter);
 				fMarginPainter.deactivate(true);
 				fMarginPainter.dispose();
@@ -845,12 +839,11 @@ public class SourceViewerDecorationSupport {
 	 * @since 3.0
 	 */
 	private void showAnnotations(Object annotationType, boolean updatePainter) {
-		if (fSourceViewer instanceof ITextViewerExtension2) {
+		if (fSourceViewer instanceof ITextViewerExtension2 extension) {
 			if (fAnnotationPainter == null) {
 				fAnnotationPainter= createAnnotationPainter();
 				if (fSourceViewer instanceof ITextViewerExtension4)
 					((ITextViewerExtension4)fSourceViewer).addTextPresentationListener(fAnnotationPainter);
-				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.addPainter(fAnnotationPainter);
 				if (fSourceViewer instanceof ISourceViewerExtension5)
 					((ISourceViewerExtension5) fSourceViewer).setCodeMiningAnnotationPainter(fAnnotationPainter);
@@ -910,8 +903,7 @@ public class SourceViewerDecorationSupport {
 
 		fAnnotationPainter.paint(IPainter.CONFIGURATION);
 		if (!fAnnotationPainter.isPaintingAnnotations()) {
-			if (fSourceViewer instanceof ITextViewerExtension2) {
-				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
+			if (fSourceViewer instanceof ITextViewerExtension2 extension) {
 				extension.removePainter(fAnnotationPainter);
 			}
 			if (fSourceViewer instanceof ITextViewerExtension4)

@@ -40,20 +40,18 @@ public class ToMultiSelectionHandler extends AbstractHandler {
 			return null;
 		}
 		ISelection selection = textEditor.getSelectionProvider().getSelection();
-		if (!(selection instanceof IBlockTextSelection)) {
+		if (!(selection instanceof IBlockTextSelection blockSelection)) {
 			return null;
 		}
-		IBlockTextSelection blockSelection = (IBlockTextSelection) selection;
 		IRegion[] initialRegions = ((IMultiTextSelection) blockSelection).getRegions();
 		IDocument document = textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
 		if (document == null) {
 			return null;
 		}
 		IMultiTextSelection newSelection = new MultiTextSelection(document, initialRegions);
-		if (!(editor instanceof ITextEditorExtension5)) {
+		if (!(editor instanceof ITextEditorExtension5 ext)) {
 			return null;
 		}
-		ITextEditorExtension5 ext = (ITextEditorExtension5) editor;
 		ext.setBlockSelectionMode(false);
 		textEditor.getSelectionProvider().setSelection(newSelection);
 		return newSelection;

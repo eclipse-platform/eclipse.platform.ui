@@ -151,8 +151,7 @@ public class QuickDiff {
 	 * @since 3.2
 	 */
 	public Object getConfiguredQuickDiffProvider(IAnnotationModel differ) {
-		if (differ instanceof DocumentLineDiffer) {
-			DocumentLineDiffer lineDiffer= (DocumentLineDiffer) differ;
+		if (differ instanceof DocumentLineDiffer lineDiffer) {
 			IQuickDiffReferenceProvider provider= lineDiffer.getReferenceProvider();
 			if (provider != null)
 				return provider.getId();

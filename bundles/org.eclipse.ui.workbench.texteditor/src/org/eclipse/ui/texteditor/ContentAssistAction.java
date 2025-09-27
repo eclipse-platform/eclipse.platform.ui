@@ -106,8 +106,7 @@ public final class ContentAssistAction extends TextEditorAction {
 			return;
 		}
 
-		if (fOperationTarget instanceof ITextOperationTargetExtension) {
-			ITextOperationTargetExtension targetExtension= (ITextOperationTargetExtension) fOperationTarget;
+		if (fOperationTarget instanceof ITextOperationTargetExtension targetExtension) {
 			targetExtension.enableOperation(ISourceViewer.CONTENTASSIST_PROPOSALS, canModifyEditor());
 		}
 

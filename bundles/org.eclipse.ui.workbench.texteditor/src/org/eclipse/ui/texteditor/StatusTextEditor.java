@@ -242,8 +242,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 	@Override
 	protected void updateStatusField(String category) {
 		IDocumentProvider provider= getDocumentProvider();
-		if (provider instanceof IDocumentProviderExtension) {
-			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+		if (provider instanceof IDocumentProviderExtension extension) {
 			IStatus status= extension.getStatus(getEditorInput());
 			if (isErrorStatus(status)) {
 				IStatusField field= getStatusField(category);

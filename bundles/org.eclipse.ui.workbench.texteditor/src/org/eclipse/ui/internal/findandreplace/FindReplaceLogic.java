@@ -183,11 +183,9 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 			resetIncrementalBaseLocation();
 		}
 
-		if (target == null || !(target instanceof IFindReplaceTargetExtension)) {
+		if (target == null || !(target instanceof IFindReplaceTargetExtension extensionTarget)) {
 			return;
 		}
-
-		IFindReplaceTargetExtension extensionTarget = (IFindReplaceTargetExtension) target;
 
 		IRegion scope;
 		Point lineSelection = extensionTarget.getLineSelection();
@@ -204,11 +202,9 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 * Unsets the search scope for a "Scoped"-Search.
 	 */
 	private void unsetSearchScope() {
-		if (target == null || !(target instanceof IFindReplaceTargetExtension)) {
+		if (target == null || !(target instanceof IFindReplaceTargetExtension extensionTarget)) {
 			return;
 		}
-
-		IFindReplaceTargetExtension extensionTarget = (IFindReplaceTargetExtension) target;
 
 		extensionTarget.setScope(null);
 	}
@@ -309,8 +305,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 *         otherwise
 	 */
 	private boolean prepareTargetForEditing() {
-		if (target instanceof IFindReplaceTargetExtension2) {
-			IFindReplaceTargetExtension2 extension = (IFindReplaceTargetExtension2) target;
+		if (target instanceof IFindReplaceTargetExtension2 extension) {
 			if (!extension.validateTargetState()) {
 				status = new FindStatus(FindStatus.StatusCode.READONLY);
 				return false;

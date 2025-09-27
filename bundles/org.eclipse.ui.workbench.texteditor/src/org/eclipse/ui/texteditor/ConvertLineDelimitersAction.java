@@ -92,9 +92,8 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 				return;
 
 			Object adapter= editor.getAdapter(IRewriteTarget.class);
-			if (adapter instanceof IRewriteTarget) {
+			if (adapter instanceof IRewriteTarget target) {
 
-				IRewriteTarget target= (IRewriteTarget) adapter;
 				IDocument document= target.getDocument();
 				if (document != null) {
 					Shell shell= getTextEditor().getSite().getShell();

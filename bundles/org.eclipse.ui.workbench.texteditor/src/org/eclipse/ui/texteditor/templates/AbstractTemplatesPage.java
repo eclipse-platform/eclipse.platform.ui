@@ -340,8 +340,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof TemplatePersistenceData)
 				return new Object[0];
-			else if (parentElement instanceof TemplateContextType) {
-				TemplateContextType contextType= (TemplateContextType) parentElement;
+			else if (parentElement instanceof TemplateContextType contextType) {
 				return getTemplates(contextType.getId());
 			}
 			return null;
@@ -361,8 +360,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		@Override
 		public Object getParent(Object element) {
-			if (element instanceof TemplatePersistenceData) {
-				TemplatePersistenceData templateData= (TemplatePersistenceData) element;
+			if (element instanceof TemplatePersistenceData templateData) {
 				return getContextTypeRegistry().getContextType(
 						templateData.getTemplate().getContextTypeId());
 			}
@@ -1599,8 +1597,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private int getOffset(IDocument document, StyledText textWidget, Point point)
 			throws BadLocationException {
 		int widgetCaret= fViewer.getTextWidget().getCaretOffset();
-		if (fViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 ext= (ITextViewerExtension5) fViewer;
+		if (fViewer instanceof ITextViewerExtension5 ext) {
 			int widgetOffset = textWidget.getOffsetAtPoint(point);
 			int offset = widgetOffset != -1 ? ext.widgetOffset2ModelOffset(textWidget.getOffsetAtPoint(point)) : -1;
 			if (offset == -1) {

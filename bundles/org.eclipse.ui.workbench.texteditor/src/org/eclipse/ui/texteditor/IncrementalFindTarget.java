@@ -760,8 +760,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	public void selectionChanged(SelectionChangedEvent e) {
 		boolean ignore= false;
 		ISelection selection= e.getSelection();
-		if (selection instanceof ITextSelection) {
-			ITextSelection textSelection= (ITextSelection)selection;
+		if (selection instanceof ITextSelection textSelection) {
 			Point range= getSelection();
 			ignore= textSelection.getOffset() + textSelection.getLength() == range.x + range.y;
 		}
