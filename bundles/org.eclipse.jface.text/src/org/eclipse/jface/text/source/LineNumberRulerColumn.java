@@ -147,8 +147,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				final StyledText textWidget= fCachedTextViewer.getTextWidget();
 				if (textWidget != null && !textWidget.isFocusControl())
 					textWidget.setFocus();
-				if (expandExistingSelection && fCachedTextViewer instanceof ITextViewerExtension5 && textWidget != null) {
-					ITextViewerExtension5 extension5= ((ITextViewerExtension5)fCachedTextViewer);
+				if (expandExistingSelection && fCachedTextViewer instanceof ITextViewerExtension5 extension5 && textWidget != null) {
 					// Find model cursor position
 					int widgetCaret= textWidget.getCaretOffset();
 					int modelCaret= extension5.widgetOffset2ModelOffset(widgetCaret);
@@ -217,8 +216,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 						}
 
 						// Convert to model offset
-						if (fCachedTextViewer instanceof ITextViewerExtension5) {
-							ITextViewerExtension5 extension= (ITextViewerExtension5)fCachedTextViewer;
+						if (fCachedTextViewer instanceof ITextViewerExtension5 extension) {
 							offset= extension.widgetOffset2ModelOffset(widgetOffset);
 						} else {
 							offset= widgetOffset + fCachedTextViewer.getVisibleRegion().getOffset();
@@ -228,8 +226,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 						// Convert to widget offset
 						int lineEndWidgetOffset;
-						if (fCachedTextViewer instanceof ITextViewerExtension5) {
-							ITextViewerExtension5 extension= (ITextViewerExtension5)fCachedTextViewer;
+						if (fCachedTextViewer instanceof ITextViewerExtension5 extension) {
 							lineEndWidgetOffset= extension.modelOffset2WidgetOffset(lineEndOffset);
 						} else
 							lineEndWidgetOffset= lineEndOffset - fCachedTextViewer.getVisibleRegion().getOffset();
@@ -530,11 +527,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 
 		fRelayoutRequired= false;
-		if (fCachedTextViewer instanceof ITextViewerExtension) {
-			ITextViewerExtension extension= (ITextViewerExtension) fCachedTextViewer;
+		if (fCachedTextViewer instanceof ITextViewerExtension extension) {
 			Control control= extension.getControl();
-			if (control instanceof Composite && !control.isDisposed()) {
-				Composite composite= (Composite) control;
+			if (control instanceof Composite composite && !control.isDisposed()) {
 				composite.layout(true);
 			}
 		}
@@ -1027,8 +1022,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.10
 	 */
 	void handleMouseScrolled(MouseEvent e) {
-		if (fCachedTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
+		if (fCachedTextViewer instanceof ITextViewerExtension5 extension) {
 			StyledText textWidget= fCachedTextViewer.getTextWidget();
 			int topIndex= textWidget.getTopIndex();
 			int newTopIndex= Math.max(0, topIndex - e.count);

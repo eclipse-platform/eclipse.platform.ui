@@ -108,10 +108,8 @@ public class TextAttribute {
 		if (object == this)
 			return true;
 
-		if (!(object instanceof TextAttribute))
+		if (!(object instanceof TextAttribute a))
 			return false;
-		TextAttribute a= (TextAttribute)object;
-
 		return (a.style == style && equals(a.foreground, foreground) && equals(a.background, background) && equals(a.font, font));
 	}
 

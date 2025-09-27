@@ -199,9 +199,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 				else if (!fAdditionalInfoController.getInternalAccessor().isReplaceInProgress()) {
 					IInformationControl infoControl= fAdditionalInfoController.getCurrentInformationControl2();
 					// During isReplaceInProgress(), events can come from the replacing information control
-					if (event.widget instanceof Control && infoControl instanceof IInformationControlExtension5) {
-						Control control= (Control) event.widget;
-						IInformationControlExtension5 iControl5= (IInformationControlExtension5) infoControl;
+					if (event.widget instanceof Control control && infoControl instanceof IInformationControlExtension5 iControl5) {
 						if (!(iControl5.containsControl(control)))
 							fAdditionalInfoController.hideInformationControl();
 						else if (event.type == SWT.MouseVerticalWheel)
@@ -217,14 +215,11 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 			case SWT.MouseUp:
 				if (fAdditionalInfoController == null || fAdditionalInfoController.getInternalAccessor().isReplaceInProgress())
 					break;
-				if (event.widget instanceof Control) {
-					Control control= (Control) event.widget;
+				if (event.widget instanceof Control control) {
 					IInformationControl infoControl= fAdditionalInfoController.getCurrentInformationControl2();
-					if (infoControl instanceof IInformationControlExtension5) {
-						final IInformationControlExtension5 iControl5= (IInformationControlExtension5) infoControl;
+					if (infoControl instanceof final IInformationControlExtension5 iControl5) {
 						if (iControl5.containsControl(control)) {
-							if (infoControl instanceof IDelayedInputChangeProvider) {
-								final IDelayedInputChangeProvider delayedICP= (IDelayedInputChangeProvider) infoControl;
+							if (infoControl instanceof final IDelayedInputChangeProvider delayedICP) {
 								final IInputChangedListener inputChangeListener= new DelayedInputChangeListener(delayedICP, fAdditionalInfoController.getInternalAccessor().getInformationControlReplacer());
 								delayedICP.setDelayedInputChangeListener(inputChangeListener);
 								// cancel automatic input updating after a small timeout:
@@ -244,9 +239,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 				InformationControlReplacer replacer= fAdditionalInfoController.getInternalAccessor().getInformationControlReplacer();
 				if (replacer != null && fContentAssistant != null) {
 					IInformationControl iControl= replacer.getCurrentInformationControl2();
-					if (event.widget instanceof Control && iControl instanceof IInformationControlExtension5) {
-						Control control= (Control) event.widget;
-						IInformationControlExtension5 iControl5= (IInformationControlExtension5) iControl;
+					if (event.widget instanceof Control control && iControl instanceof IInformationControlExtension5 iControl5) {
 						if (iControl5.containsControl(control)) {
 							control.getDisplay().asyncExec(() -> {
 								if (fContentAssistant != null && !fContentAssistant.hasProposalPopupFocus())

@@ -126,8 +126,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 * @since 3.0
 	 */
 	private void repairLineInformation(IDocument document) {
-		if (document instanceof IRepairableDocument) {
-			IRepairableDocument repairable= (IRepairableDocument) document;
+		if (document instanceof IRepairableDocument repairable) {
 			repairable.repairLineInformation();
 		}
 	}

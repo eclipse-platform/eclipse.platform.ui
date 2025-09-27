@@ -65,8 +65,7 @@ public class ProjectionSupport {
 
 		@Override
 		protected IAnnotationModel findAnnotationModel(ISourceViewer sourceViewer) {
-			if (sourceViewer instanceof ProjectionViewer) {
-				ProjectionViewer projectionViewer= (ProjectionViewer) sourceViewer;
+			if (sourceViewer instanceof ProjectionViewer projectionViewer) {
 				return projectionViewer.getProjectionAnnotationModel();
 			}
 			return null;
@@ -84,8 +83,7 @@ public class ProjectionSupport {
 	private static class ProjectionDrawingStrategy implements AnnotationPainter.IDrawingStrategy {
 		@Override
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
-			if (annotation instanceof ProjectionAnnotation) {
-				ProjectionAnnotation projectionAnnotation= (ProjectionAnnotation) annotation;
+			if (annotation instanceof ProjectionAnnotation projectionAnnotation) {
 				if (projectionAnnotation.isCollapsed()) {
 
 					if (gc != null) {
@@ -351,8 +349,7 @@ public class ProjectionSupport {
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(ISourceViewer viewer, Class<T> required) {
 		if (ProjectionAnnotationModel.class.equals(required)) {
-			if (viewer instanceof ProjectionViewer) {
-				ProjectionViewer projectionViewer= (ProjectionViewer) viewer;
+			if (viewer instanceof ProjectionViewer projectionViewer) {
 				return (T) projectionViewer.getProjectionAnnotationModel();
 			}
 		}

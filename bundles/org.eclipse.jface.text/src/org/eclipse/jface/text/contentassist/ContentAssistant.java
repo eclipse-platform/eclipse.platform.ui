@@ -1711,17 +1711,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		switch (type) {
 			case CONTEXT_SELECTOR:
 			case PROPOSAL_SELECTOR:
-				if (fContentAssistSubjectControl instanceof IWidgetTokenOwnerExtension) {
-					IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fContentAssistSubjectControl;
+				if (fContentAssistSubjectControl instanceof IWidgetTokenOwnerExtension extension) {
 					return extension.requestWidgetToken(this, WIDGET_PRIORITY);
-				} else if (fContentAssistSubjectControl instanceof IWidgetTokenOwner) {
-					IWidgetTokenOwner owner= (IWidgetTokenOwner) fContentAssistSubjectControl;
+				} else if (fContentAssistSubjectControl instanceof IWidgetTokenOwner owner) {
 					return owner.requestWidgetToken(this);
-				} else if (fViewer instanceof IWidgetTokenOwnerExtension) {
-					IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fViewer;
+				} else if (fViewer instanceof IWidgetTokenOwnerExtension extension) {
 					return extension.requestWidgetToken(this, WIDGET_PRIORITY);
-				} else if (fViewer instanceof IWidgetTokenOwner) {
-					IWidgetTokenOwner owner= (IWidgetTokenOwner) fViewer;
+				} else if (fViewer instanceof IWidgetTokenOwner owner) {
 					return owner.requestWidgetToken(this);
 				}
 		}

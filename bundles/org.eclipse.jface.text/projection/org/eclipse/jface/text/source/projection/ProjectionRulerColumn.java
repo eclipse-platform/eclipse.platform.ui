@@ -119,8 +119,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 			Iterator<Annotation> e= model.getAnnotationIterator();
 			while (e.hasNext()) {
 				Object next= e.next();
-				if (next instanceof ProjectionAnnotation) {
-					ProjectionAnnotation annotation= (ProjectionAnnotation) next;
+				if (next instanceof ProjectionAnnotation annotation) {
 					Position p= model.getPosition(annotation);
 					if (p == null)
 						continue;
@@ -235,8 +234,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 
 	@Override
 	public void setModel(IAnnotationModel model) {
-		if (model instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
+		if (model instanceof IAnnotationModelExtension extension) {
 			model= extension.getAnnotationModel(ProjectionSupport.PROJECTION);
 		}
 		super.setModel(model);

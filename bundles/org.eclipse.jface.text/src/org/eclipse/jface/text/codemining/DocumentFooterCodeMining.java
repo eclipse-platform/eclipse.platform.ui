@@ -10,7 +10,6 @@
 ******************************************************************************/
 package org.eclipse.jface.text.codemining;
 
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.custom.StyledText;
@@ -35,12 +34,6 @@ public class DocumentFooterCodeMining extends AbstractCodeMining {
 
 	@Override
 	public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
-		return LineHeaderCodeMining.draw(getLabel(), gc, textWidget, x, y, new Callable<Point>() {
-
-			@Override
-			public Point call() throws Exception {
-				return DocumentFooterCodeMining.super.draw(gc, textWidget, color, x, y);
-			}
-		});
+		return LineHeaderCodeMining.draw(getLabel(), gc, textWidget, x, y, () -> DocumentFooterCodeMining.super.draw(gc, textWidget, color, x, y));
 	}
 }

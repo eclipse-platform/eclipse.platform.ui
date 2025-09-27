@@ -221,8 +221,7 @@ class ProjectionSummary {
 		}
 
 		if (!additions.isEmpty()) {
-			if (visualAnnotationModel instanceof IAnnotationModelExtension) {
-				IAnnotationModelExtension extension= (IAnnotationModelExtension)visualAnnotationModel;
+			if (visualAnnotationModel instanceof IAnnotationModelExtension extension) {
 				if (!isCanceled(monitor))
 					extension.replaceAnnotations(null, additions);
 			} else {
@@ -279,8 +278,7 @@ class ProjectionSummary {
 
 	private AnnotationBag findBagForType(Map<String, AnnotationBag> bagMap, String annotationType) {
 		AnnotationBag bag= bagMap.get(annotationType);
-		if (bag == null && fAnnotationAccess instanceof IAnnotationAccessExtension) {
-			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+		if (bag == null && fAnnotationAccess instanceof IAnnotationAccessExtension extension) {
 			Object[] superTypes= extension.getSupertypes(annotationType);
 			for (int i= 0; i < superTypes.length && bag == null; i++) {
 				bag= bagMap.get(superTypes[i]);

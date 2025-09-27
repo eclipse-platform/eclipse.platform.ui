@@ -822,8 +822,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 			if (fViewer != null && fAutoAssistListener == null) {
 				fAutoAssistListener= new AutoAssistListener();
-				if (fViewer instanceof ITextViewerExtension) {
-					ITextViewerExtension extension= (ITextViewerExtension) fViewer;
+				if (fViewer instanceof ITextViewerExtension extension) {
 					extension.appendVerifyKeyListener(fAutoAssistListener);
 				} else {
 					StyledText textWidget= fViewer.getTextWidget();
@@ -834,8 +833,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 		} else if (fAutoAssistListener != null) {
 
-			if (fViewer instanceof ITextViewerExtension) {
-				ITextViewerExtension extension= (ITextViewerExtension) fViewer;
+			if (fViewer instanceof ITextViewerExtension extension) {
 				extension.removeVerifyKeyListener(fAutoAssistListener);
 			} else {
 				StyledText textWidget= fViewer.getTextWidget();
@@ -1096,11 +1094,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		switch (type) {
 			case CONTEXT_SELECTOR:
 			case PROPOSAL_SELECTOR:
-				if (fViewer instanceof IWidgetTokenOwner) {
-					IWidgetTokenOwner owner= (IWidgetTokenOwner) fViewer;
+				if (fViewer instanceof IWidgetTokenOwner owner) {
 					return owner.requestWidgetToken(this);
-				} else if (fViewer instanceof IWidgetTokenOwnerExtension)  {
-					IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fViewer;
+				} else if (fViewer instanceof IWidgetTokenOwnerExtension extension)  {
 					return extension.requestWidgetToken(this, WIDGET_PRIORITY);
 				}
 		}
@@ -1149,8 +1145,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			StyledText text= fViewer.getTextWidget();
 			if (isValid(text)) {
 
-				if (fViewer instanceof ITextViewerExtension) {
-					ITextViewerExtension e= (ITextViewerExtension) fViewer;
+				if (fViewer instanceof ITextViewerExtension e) {
 					e.prependVerifyKeyListener(fInternalListener);
 				} else {
 					text.addVerifyKeyListener(fInternalListener);
@@ -1177,8 +1172,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 */
 	private void releaseWidgetToken(int type) {
 		if (fListeners[CONTEXT_SELECTOR] == null && fListeners[PROPOSAL_SELECTOR] == null) {
-			if (fViewer instanceof IWidgetTokenOwner) {
-				IWidgetTokenOwner owner= (IWidgetTokenOwner) fViewer;
+			if (fViewer instanceof IWidgetTokenOwner owner) {
 				owner.releaseWidgetToken(this);
 			}
 		}
@@ -1217,8 +1211,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			StyledText text= fViewer.getTextWidget();
 			if (isValid(text)) {
 
-				if (fViewer instanceof ITextViewerExtension) {
-					ITextViewerExtension e= (ITextViewerExtension) fViewer;
+				if (fViewer instanceof ITextViewerExtension e) {
 					e.removeVerifyKeyListener(fInternalListener);
 				} else {
 					text.removeVerifyKeyListener(fInternalListener);

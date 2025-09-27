@@ -863,8 +863,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 		decoration.fPosition= position;
 		decoration.fColor= color;
-		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
-			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension extension) {
 			decoration.fLayer= extension.getLayer(annotation);
 		} else {
 			decoration.fLayer= IAnnotationAccessExtension.DEFAULT_LAYER;
@@ -893,8 +892,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			return strategy;
 		}
 
-		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
-			IAnnotationAccessExtension ext = (IAnnotationAccessExtension) fAnnotationAccess;
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension ext) {
 			Object[] sts = ext.getSupertypes(type);
 			for (Object st : sts) {
 				strategy= fPaintingStrategyId2PaintingStrategy.get(fAnnotationType2PaintingStrategyId.get(st));
@@ -928,8 +926,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			return color;
 		}
 
-		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
-			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension extension) {
 			Object[] superTypes= extension.getSupertypes(annotationType);
 			if (superTypes != null) {
 				for (Object superType : superTypes) {
@@ -1012,8 +1009,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					continue;
 
 				Position p= pp.fPosition;
-				if (fSourceViewer instanceof ITextViewerExtension5) {
-					ITextViewerExtension5 extension3= (ITextViewerExtension5) fSourceViewer;
+				if (fSourceViewer instanceof ITextViewerExtension5 extension3) {
 					if (null == extension3.modelRange2WidgetRange(new Region(p.getOffset(), p.getLength())))
 						continue;
 				} else if (!fSourceViewer.overlapsWithVisibleRegion(p.offset, p.length)) {
@@ -1401,10 +1397,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		if (clippingRegion == null)
 			return;
 
-		if (!(pp.fPaintingStrategy instanceof IDrawingStrategy))
+		if (!(pp.fPaintingStrategy instanceof IDrawingStrategy drawingStrategy))
 			return;
-
-		IDrawingStrategy drawingStrategy= (IDrawingStrategy)pp.fPaintingStrategy;
 
 		int clippingOffset= clippingRegion.getOffset();
 		int clippingLength= clippingRegion.getLength();
@@ -1545,8 +1539,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		if (modelOffset == Integer.MAX_VALUE)
 			return null;
 
-		if (fSourceViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+		if (fSourceViewer instanceof ITextViewerExtension5 extension) {
 			fReusableRegion.setOffset(modelOffset);
 			fReusableRegion.setLength(modelLength);
 			return extension.modelRange2WidgetRange(fReusableRegion);
@@ -1579,8 +1572,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		if (offset == Integer.MAX_VALUE)
 			return null;
 
-		if (fSourceViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+		if (fSourceViewer instanceof ITextViewerExtension5 extension) {
 			return extension.widgetRange2ModelRange(new Region(offset, length));
 		}
 

@@ -60,8 +60,7 @@ public final class ContextInformation implements IContextInformation {
 
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof IContextInformation) {
-			IContextInformation contextInformation= (IContextInformation) object;
+		if (object instanceof IContextInformation contextInformation) {
 			boolean equals= fInformationDisplayString.equalsIgnoreCase(contextInformation.getInformationDisplayString());
 			if (fContextDisplayString != null)
 				equals= equals && fContextDisplayString.equalsIgnoreCase(contextInformation.getContextDisplayString());

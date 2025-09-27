@@ -671,8 +671,7 @@ public class SourceViewer extends TextViewer
 			fVisualAnnotationModel= createVisualAnnotationModel(annotationModel);
 
 			// Make sure the visual model uses the same lock as the underlying model
-			if (annotationModel instanceof ISynchronizable && fVisualAnnotationModel instanceof ISynchronizable) {
-				ISynchronizable sync= (ISynchronizable)fVisualAnnotationModel;
+			if (annotationModel instanceof ISynchronizable && fVisualAnnotationModel instanceof ISynchronizable sync) {
 				sync.setLockObject(((ISynchronizable)annotationModel).getLockObject());
 			}
 
@@ -693,8 +692,7 @@ public class SourceViewer extends TextViewer
 
 	@Override
 	public IAnnotationModel getAnnotationModel() {
-		if (fVisualAnnotationModel instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension extension= (IAnnotationModelExtension) fVisualAnnotationModel;
+		if (fVisualAnnotationModel instanceof IAnnotationModelExtension extension) {
 			return extension.getAnnotationModel(MODEL_ANNOTATION_MODEL);
 		}
 		return null;
@@ -1017,8 +1015,7 @@ public class SourceViewer extends TextViewer
 					IFormattingContext context= null;
 					DocumentRewriteSession rewriteSession= null;
 
-					if (document instanceof IDocumentExtension4) {
-						IDocumentExtension4 extension= (IDocumentExtension4) document;
+					if (document instanceof IDocumentExtension4 extension) {
 						DocumentRewriteSessionType type= (selection.y == 0 && document.getLength() > 1000) || selection.y > 1000
 							? DocumentRewriteSessionType.SEQUENTIAL
 							: DocumentRewriteSessionType.UNRESTRICTED_SMALL;
@@ -1034,8 +1031,7 @@ public class SourceViewer extends TextViewer
 
 						try {
 
-							if (fContentFormatter instanceof IContentFormatterExtension) {
-								final IContentFormatterExtension extension= (IContentFormatterExtension) fContentFormatter;
+							if (fContentFormatter instanceof final IContentFormatterExtension extension) {
 								context= createFormattingContext(selection.x, selection.y);
 								if (context == null) {
 									return;
@@ -1067,8 +1063,7 @@ public class SourceViewer extends TextViewer
 
 					} finally {
 
-						if (document instanceof IDocumentExtension4) {
-							IDocumentExtension4 extension= (IDocumentExtension4) document;
+						if (document instanceof IDocumentExtension4 extension) {
 							extension.stopRewriteSession(rewriteSession);
 						} else {
 							target.endCompoundChange();
@@ -1095,13 +1090,11 @@ public class SourceViewer extends TextViewer
 	 */
 	protected void updateSlaveDocuments(IDocument masterDocument) {
 		ISlaveDocumentManager manager= getSlaveDocumentManager();
-		if (manager instanceof ISlaveDocumentManagerExtension) {
-			ISlaveDocumentManagerExtension extension= (ISlaveDocumentManagerExtension) manager;
+		if (manager instanceof ISlaveDocumentManagerExtension extension) {
 			IDocument[] slaves= extension.getSlaveDocuments(masterDocument);
 			if (slaves != null) {
 				for (IDocument slave : slaves) {
-					if (slave instanceof ChildDocument) {
-						ChildDocument child= (ChildDocument) slave;
+					if (slave instanceof ChildDocument child) {
 						Position p= child.getParentDocumentRange();
 						try {
 
@@ -1169,8 +1162,7 @@ public class SourceViewer extends TextViewer
 			revealRange(start, length);
 		}
 
-		if (fRangeIndicator != null && fVisualAnnotationModel instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension extension= (IAnnotationModelExtension) fVisualAnnotationModel;
+		if (fRangeIndicator != null && fVisualAnnotationModel instanceof IAnnotationModelExtension extension) {
 			extension.modifyAnnotationPosition(fRangeIndicator, new Position(start, length));
 		}
 	}
@@ -1243,8 +1235,7 @@ public class SourceViewer extends TextViewer
 	 */
 	public void addVerticalRulerColumn(IVerticalRulerColumn column) {
 		IVerticalRuler ruler= getVerticalRuler();
-		if (ruler instanceof CompositeRuler) {
-			CompositeRuler compositeRuler= (CompositeRuler)ruler;
+		if (ruler instanceof CompositeRuler compositeRuler) {
 			compositeRuler.addDecorator(99, column);
 		}
 	}
@@ -1257,8 +1248,7 @@ public class SourceViewer extends TextViewer
 	 */
 	public void removeVerticalRulerColumn(IVerticalRulerColumn column) {
 		IVerticalRuler ruler= getVerticalRuler();
-		if (ruler instanceof CompositeRuler) {
-			CompositeRuler compositeRuler= (CompositeRuler)ruler;
+		if (ruler instanceof CompositeRuler compositeRuler) {
 			compositeRuler.removeDecorator(column);
 		}
 	}

@@ -200,8 +200,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		if (length < 1)
 			return;
 
-		if (fSourceViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+		if (fSourceViewer instanceof ITextViewerExtension5 extension) {
 			IRegion widgetRange= extension.modelRange2WidgetRange(new Region(offset, length));
 			if (widgetRange == null)
 				return;
@@ -303,8 +302,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		IRegion pair;
 		boolean characterPresentAtCaretLocation;
 
-		if (fMatcher instanceof ICharacterPairMatcherExtension) {
-			ICharacterPairMatcherExtension matcher= (ICharacterPairMatcherExtension)fMatcher;
+		if (fMatcher instanceof ICharacterPairMatcherExtension matcher) {
 			pair= matcher.match(document, selection.getOffset(), selection.getLength());
 			characterPresentAtCaretLocation= (pair != null);
 			if (pair == null && fHighlightEnclosingPeerCharacters) {

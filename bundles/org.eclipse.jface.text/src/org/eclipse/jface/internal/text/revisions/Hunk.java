@@ -67,8 +67,7 @@ public final class Hunk {
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
-		if (obj instanceof Hunk) {
-			Hunk other= (Hunk) obj;
+		if (obj instanceof Hunk other) {
 			return other.line == this.line && other.delta == this.delta && other.changed == this.changed;
 		}
 		return false;

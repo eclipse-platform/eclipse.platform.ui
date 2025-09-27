@@ -107,8 +107,7 @@ public class InlinedAnnotationSupport {
 			((IAnnotationModelExtension2) annotationModel)
 					.getAnnotationIterator(region.getOffset(), region.getLength(), true, true)
 					.forEachRemaining(annotation -> {
-						if (annotation instanceof LineContentAnnotation) {
-							LineContentAnnotation ann= (LineContentAnnotation) annotation;
+						if (annotation instanceof LineContentAnnotation ann) {
 							StyleRange style= ann.updateStyle(null, fFontMetrics, fViewer, isAfterPosition(ann));
 							if (style != null) {
 								if (fViewer instanceof ITextViewerExtension5 projectionViewer) {

@@ -980,25 +980,21 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		try {
 			IDocument document= fContentAssistSubjectControlAdapter.getDocument();
-			if (fViewer instanceof ITextViewerExtension) {
-				ITextViewerExtension extension= (ITextViewerExtension) fViewer;
+			if (fViewer instanceof ITextViewerExtension extension) {
 				target= extension.getRewriteTarget();
 			}
 
 			if (target != null)
 				target.beginCompoundChange();
 
-			if (fViewer instanceof IEditingSupportRegistry) {
-				IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
+			if (fViewer instanceof IEditingSupportRegistry registry) {
 				registry.register(helper);
 			}
 
 
-			if (p instanceof ICompletionProposalExtension2 && fViewer != null) {
-				ICompletionProposalExtension2 e= (ICompletionProposalExtension2) p;
+			if (p instanceof ICompletionProposalExtension2 e && fViewer != null) {
 				e.apply(fViewer, trigger, stateMask, offset);
-			} else if (p instanceof ICompletionProposalExtension) {
-				ICompletionProposalExtension e= (ICompletionProposalExtension) p;
+			} else if (p instanceof ICompletionProposalExtension e) {
 				e.apply(document, trigger, offset);
 			} else {
 				p.apply(document);
@@ -1015,8 +1011,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (info != null) {
 
 				int contextInformationOffset;
-				if (p instanceof ICompletionProposalExtension) {
-					ICompletionProposalExtension e= (ICompletionProposalExtension) p;
+				if (p instanceof ICompletionProposalExtension e) {
 					contextInformationOffset= e.getContextInformationPosition();
 				} else {
 					if (selection == null)
@@ -1033,8 +1028,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (target != null)
 				target.endCompoundChange();
 
-			if (fViewer instanceof IEditingSupportRegistry) {
-				IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
+			if (fViewer instanceof IEditingSupportRegistry registry) {
 				registry.unregister(helper);
 			}
 			fInserting= false;
@@ -1079,8 +1073,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		unregister();
 
-		if (fViewer instanceof IEditingSupportRegistry) {
-			IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
+		if (fViewer instanceof IEditingSupportRegistry registry) {
 			registry.unregister(fFocusHelper);
 		}
 
@@ -1130,8 +1123,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 
 		if (fLastProposal != null) {
-			if (fLastProposal instanceof ICompletionProposalExtension2 && fViewer != null) {
-				ICompletionProposalExtension2 extension= (ICompletionProposalExtension2) fLastProposal;
+			if (fLastProposal instanceof ICompletionProposalExtension2 extension && fViewer != null) {
 				extension.unselected(fViewer);
 			}
 			fLastProposal= null;
@@ -1266,8 +1258,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			};
 		}
 
-		if (fViewer instanceof IEditingSupportRegistry) {
-			IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
+		if (fViewer instanceof IEditingSupportRegistry registry) {
 			registry.register(fFocusHelper);
 		}
 
@@ -1413,8 +1404,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			default:
 				if (fContentAssistant.isCompletionProposalTriggerCharsEnabled()) {
 					ICompletionProposal p= getSelectedProposal();
-					if (p instanceof ICompletionProposalExtension) {
-						ICompletionProposalExtension t= (ICompletionProposalExtension) p;
+					if (p instanceof ICompletionProposalExtension t) {
 						char[] triggers= t.getTriggerCharacters();
 						if (contains(triggers, key)) {
 							e.doit= false;
@@ -1563,18 +1553,16 @@ class CompletionProposalPopup implements IContentAssistListener {
 		List<ICompletionProposal> filtered= new ArrayList<>(length);
 		for (ICompletionProposal proposal : proposals) {
 
-			if (proposal instanceof ICompletionProposalExtension2) {
+			if (proposal instanceof ICompletionProposalExtension2 p) {
 
-				ICompletionProposalExtension2 p= (ICompletionProposalExtension2) proposal;
 				try {
 					if (p.validate(document, offset, event))
 						filtered.add(proposal);
 				} catch (RuntimeException e) {
 					// Make sure that poorly behaved completion proposers do not break filtering.
 				}
-			} else if (proposal instanceof ICompletionProposalExtension) {
+			} else if (proposal instanceof ICompletionProposalExtension p) {
 
-				ICompletionProposalExtension p= (ICompletionProposalExtension) proposal;
 				try {
 					if (p.isValidFor(document, offset))
 						filtered.add(proposal);
@@ -1616,8 +1604,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	boolean canAutoInsert(ICompletionProposal proposal) {
 		if (fContentAssistant.isAutoInserting()) {
-			if (proposal instanceof ICompletionProposalExtension4) {
-				ICompletionProposalExtension4 ext= (ICompletionProposalExtension4) proposal;
+			if (proposal instanceof ICompletionProposalExtension4 ext) {
 				return ext.isAutoInsertable();
 			}
 			return true; // default behavior before ICompletionProposalExtension4 was introduced

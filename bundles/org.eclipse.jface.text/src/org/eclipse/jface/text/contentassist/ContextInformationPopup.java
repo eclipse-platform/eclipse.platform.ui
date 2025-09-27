@@ -94,8 +94,7 @@ class ContextInformationPopup implements IContentAssistListener {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof ContextFrame) {
-				ContextFrame frame= (ContextFrame) obj;
+			if (obj instanceof ContextFrame frame) {
 				return fInformation.equals(frame.fInformation) && fBeginOffset == frame.fBeginOffset;
 			}
 			return super.equals(obj);
@@ -291,7 +290,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		IContextInformationValidator validator= fContentAssistSubjectControlAdapter.getContextInformationValidator(fContentAssistant, offset);
 
 		if (validator != null) {
-			int beginOffset= (information instanceof IContextInformationExtension) ? ((IContextInformationExtension) information).getContextInformationPosition() : offset;
+			int beginOffset= (information instanceof IContextInformationExtension i) ? i.getContextInformationPosition() : offset;
 			if (beginOffset == -1) beginOffset= offset;
 			int visibleOffset= fContentAssistSubjectControlAdapter.getWidgetSelectionRange().x - (offset - beginOffset);
 			IContextInformationPresenter presenter = fContentAssistSubjectControlAdapter.getContextInformationPresenter(fContentAssistant, offset);
@@ -531,8 +530,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		});
 
 
-		if (fViewer instanceof ITextViewerExtension) {
-			final ITextViewerExtension textViewerExtension= (ITextViewerExtension)fViewer;
+		if (fViewer instanceof final ITextViewerExtension textViewerExtension) {
 			final StyledText textWidget= fViewer.getTextWidget();
 
 			final VerifyKeyListener verifyListener= event -> {

@@ -207,9 +207,8 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 					return;
 
 				IInformationControl infoControl= getCurrentInformationControl2();
-				if (infoControl != null && !infoControl.isFocusControl() && infoControl instanceof IInformationControlExtension3) {
+				if (infoControl != null && !infoControl.isFocusControl() && infoControl instanceof IInformationControlExtension3 iControl3) {
 //					if (DEBUG) System.out.println("StickyHoverManager.Closer.handleEvent(): activeShell= " + fDisplay.getActiveShell()); //$NON-NLS-1$
-					IInformationControlExtension3 iControl3= (IInformationControlExtension3) infoControl;
 					Rectangle controlBounds= iControl3.getBounds();
 					if (controlBounds != null) {
 						Point mouseLoc= event.display.map((Control) event.widget, null, event.x, event.y);
@@ -319,8 +318,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 	@Override
 	public boolean setFocus(IWidgetTokenOwner owner) {
 		IInformationControl iControl= getCurrentInformationControl2();
-		if (iControl instanceof IInformationControlExtension5) {
-			IInformationControlExtension5 iControl5= (IInformationControlExtension5) iControl;
+		if (iControl instanceof IInformationControlExtension5 iControl5) {
 			if (iControl5.isVisible()) {
 				iControl.setFocus();
 				return iControl.isFocusControl();

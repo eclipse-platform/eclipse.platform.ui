@@ -393,8 +393,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 			IDocument document= fViewer.getDocument();
 
-			if (fViewer instanceof ITextViewerExtension) {
-				ITextViewerExtension extension= (ITextViewerExtension) fViewer;
+			if (fViewer instanceof ITextViewerExtension extension) {
 				target= extension.getRewriteTarget();
 			}
 
@@ -406,11 +405,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				registry.register(fModificationEditingSupport);
 			}
 
-			if (p instanceof ICompletionProposalExtension2) {
-				ICompletionProposalExtension2 e= (ICompletionProposalExtension2) p;
+			if (p instanceof ICompletionProposalExtension2 e) {
 				e.apply(fViewer, trigger, stateMask, offset);
-			} else if (p instanceof ICompletionProposalExtension) {
-				ICompletionProposalExtension e= (ICompletionProposalExtension) p;
+			} else if (p instanceof ICompletionProposalExtension e) {
 				e.apply(document, trigger, offset);
 			} else {
 				p.apply(document);
@@ -426,8 +423,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			if (info != null) {
 
 				int position;
-				if (p instanceof ICompletionProposalExtension) {
-					ICompletionProposalExtension e= (ICompletionProposalExtension) p;
+				if (p instanceof ICompletionProposalExtension e) {
 					position= e.getContextInformationPosition();
 				} else {
 					if (selection == null)
@@ -470,8 +466,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		unregister();
 
-		if (fViewer instanceof IEditingSupportRegistry) {
-			IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
+		if (fViewer instanceof IEditingSupportRegistry registry) {
 			registry.unregister(fFocusEditingSupport);
 		}
 
@@ -504,8 +499,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			styledText.removeKeyListener(fKeyListener);
 
 		if (fLastProposal != null) {
-			if (fLastProposal instanceof ICompletionProposalExtension2) {
-				ICompletionProposalExtension2 extension= (ICompletionProposalExtension2) fLastProposal;
+			if (fLastProposal instanceof ICompletionProposalExtension2 extension) {
 				extension.unselected(fViewer);
 			}
 
@@ -629,12 +623,10 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 	private boolean validateProposal(IDocument document, ICompletionProposal p, int offset, DocumentEvent event) {
 		// detect selected
-		if (p instanceof ICompletionProposalExtension2) {
-			ICompletionProposalExtension2 e= (ICompletionProposalExtension2) p;
+		if (p instanceof ICompletionProposalExtension2 e) {
 			if (e.validate(document, offset, event))
 				return true;
-		} else if (p instanceof ICompletionProposalExtension) {
-			ICompletionProposalExtension e= (ICompletionProposalExtension) p;
+		} else if (p instanceof ICompletionProposalExtension e) {
 			if (e.isValidFor(document, offset))
 				return true;
 		}
@@ -684,8 +676,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				document.addDocumentListener(fDocumentListener);
 
 
-			if (fViewer instanceof IEditingSupportRegistry) {
-				IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
+			if (fViewer instanceof IEditingSupportRegistry registry) {
 				registry.register(fFocusEditingSupport);
 			}
 
@@ -787,8 +778,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 				default:
 					ICompletionProposal p= getSelectedProposal();
-				if (p instanceof ICompletionProposalExtension) {
-					ICompletionProposalExtension t= (ICompletionProposalExtension) p;
+				if (p instanceof ICompletionProposalExtension t) {
 					char[] triggers= t.getTriggerCharacters();
 					if (contains(triggers, key)) {
 						hide();
@@ -931,15 +921,13 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		List<Object> filtered= new ArrayList<>(length);
 		for (int i= 0; i < length; i++) {
 
-			if (proposals[i] instanceof ICompletionProposalExtension2) {
+			if (proposals[i] instanceof ICompletionProposalExtension2 p) {
 
-				ICompletionProposalExtension2 p= (ICompletionProposalExtension2) proposals[i];
 				if (p.validate(document, offset, event))
 					filtered.add(p);
 
-			} else if (proposals[i] instanceof ICompletionProposalExtension) {
+			} else if (proposals[i] instanceof ICompletionProposalExtension p) {
 
-				ICompletionProposalExtension p= (ICompletionProposalExtension) proposals[i];
 				if (p.isValidFor(document, offset))
 					filtered.add(p);
 

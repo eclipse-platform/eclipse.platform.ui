@@ -204,13 +204,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 	@Override
 	public void draw(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
 		int singleLineHeight= super.getHeight();
-		draw(fMinings, fBounds, singleLineHeight, fResolvedMinings, gc, textWidget, color, x, y, new Runnable() {
-
-			@Override
-			public void run() {
-				redraw();
-			}
-		});
+		draw(fMinings, fBounds, singleLineHeight, fResolvedMinings, gc, textWidget, color, x, y, this::redraw);
 	}
 
 	static void draw(List<ICodeMining> pMinings, List<Rectangle> fBounds, int singleLineHeight, ICodeMining[] fResolvedMinings, GC gc, StyledText textWidget, Color color,

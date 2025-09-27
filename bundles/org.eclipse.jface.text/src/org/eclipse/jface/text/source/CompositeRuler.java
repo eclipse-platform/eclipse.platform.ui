@@ -583,8 +583,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 
 		Control parent= fTextViewer.getTextWidget();
 
-		if (fTextViewer instanceof ITextViewerExtension) {
-			ITextViewerExtension extension= (ITextViewerExtension) fTextViewer;
+		if (fTextViewer instanceof ITextViewerExtension extension) {
 			parent= extension.getControl();
 		}
 
@@ -712,8 +711,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	 */
 	protected final static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
 
-		if (viewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+		if (viewer instanceof ITextViewerExtension5 extension) {
 			return extension.widgetLine2ModelLine(widgetLine);
 		}
 

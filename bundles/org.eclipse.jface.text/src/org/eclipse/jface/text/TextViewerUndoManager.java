@@ -378,8 +378,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	 * @param length the length of the range
 	 */
 	private void selectAndReveal(int offset, int length) {
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
+		if (fTextViewer instanceof ITextViewerExtension5 extension) {
 			extension.exposeModelRange(new Region(offset, length));
 		} else if (!fTextViewer.overlapsWithVisibleRegion(offset, length))
 			fTextViewer.resetVisibleRegion();

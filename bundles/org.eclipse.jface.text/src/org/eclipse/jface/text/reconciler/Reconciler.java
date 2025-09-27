@@ -103,8 +103,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 			fStrategies.remove(contentType);
 		else {
 			fStrategies.put(contentType, strategy);
-			if (strategy instanceof IReconcilingStrategyExtension && getProgressMonitor() != null) {
-				IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) strategy;
+			if (strategy instanceof IReconcilingStrategyExtension extension && getProgressMonitor() != null) {
 				extension.setProgressMonitor(getProgressMonitor());
 			}
 		}
@@ -200,8 +199,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 			Iterator<IReconcilingStrategy> e= fStrategies.values().iterator();
 			while (e.hasNext()) {
 				IReconcilingStrategy strategy= e.next();
-				if (strategy instanceof IReconcilingStrategyExtension) {
-					IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) strategy;
+				if (strategy instanceof IReconcilingStrategyExtension extension) {
 					extension.setProgressMonitor(monitor);
 				}
 			}
@@ -218,8 +216,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 				continue;
 			contentTypes.add(contentType);
 			IReconcilingStrategy s= getReconcilingStrategy(contentType);
-			if (s instanceof IReconcilingStrategyExtension) {
-				IReconcilingStrategyExtension e= (IReconcilingStrategyExtension) s;
+			if (s instanceof IReconcilingStrategyExtension e) {
 				e.initialReconcile();
 			}
 		}

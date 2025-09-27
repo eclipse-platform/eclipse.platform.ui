@@ -91,11 +91,9 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 	private String getProjectionTextAtLine(ISourceViewer viewer, int line, int numberOfLines) {
 
 		IAnnotationModel model= null;
-		if (viewer instanceof ISourceViewerExtension2) {
-			ISourceViewerExtension2 viewerExtension= (ISourceViewerExtension2) viewer;
+		if (viewer instanceof ISourceViewerExtension2 viewerExtension) {
 			IAnnotationModel visual= viewerExtension.getVisualAnnotationModel();
-			if (visual instanceof IAnnotationModelExtension) {
-				IAnnotationModelExtension modelExtension= (IAnnotationModelExtension) visual;
+			if (visual instanceof IAnnotationModelExtension modelExtension) {
 				model= modelExtension.getAnnotationModel(ProjectionSupport.PROJECTION);
 			}
 		}

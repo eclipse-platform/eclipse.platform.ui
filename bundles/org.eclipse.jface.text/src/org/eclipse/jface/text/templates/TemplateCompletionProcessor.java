@@ -44,8 +44,8 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	private static final class ProposalComparator implements Comparator<ICompletionProposal> {
 		@Override
 		public int compare(ICompletionProposal o1, ICompletionProposal o2) {
-			int r1= o1 instanceof TemplateProposal ? ((TemplateProposal) o1).getRelevance() : 0;
-			int r2= o2 instanceof TemplateProposal ? ((TemplateProposal) o2).getRelevance() : 0;
+			int r1= o1 instanceof TemplateProposal t ? t.getRelevance() : 0;
+			int r2= o2 instanceof TemplateProposal t ? t.getRelevance() : 0;
 			return r2 - r1;
 		}
 	}

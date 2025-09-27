@@ -513,8 +513,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 				TableItem item= selection[0];
 
 				Object d= item.getData();
-				if (d instanceof ICompletionProposal) {
-					ICompletionProposal p= (ICompletionProposal) d;
+				if (d instanceof ICompletionProposal p) {
 					Timer timer= fTimer;
 					if (timer != null) {
 						timer.reset(p);
