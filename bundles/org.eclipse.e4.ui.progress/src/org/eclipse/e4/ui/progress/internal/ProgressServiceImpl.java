@@ -302,7 +302,7 @@ public class ProgressServiceImpl implements IProgressService {
 				}
 			}
 		} else {
-			// Deactive shells in reverse order
+			// Deactivate shells in reverse order
 			for (int i = shells.length - 1; i >= 0; i--) {
 				if (!shells[i].isDisposed()) {
 					shells[i].setEnabled(active);

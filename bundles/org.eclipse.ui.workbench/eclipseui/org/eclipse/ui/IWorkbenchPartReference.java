@@ -68,7 +68,7 @@ public interface IWorkbenchPartReference {
 	void addPropertyListener(IPropertyListener listener);
 
 	/**
-	 * @param listener the poperty listener to remove
+	 * @param listener the property listener to remove
 	 * @see IWorkbenchPart#removePropertyListener
 	 */
 	void removePropertyListener(IPropertyListener listener);

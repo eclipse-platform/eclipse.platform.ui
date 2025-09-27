@@ -1852,8 +1852,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/**
 	 * Removes all elements from the map.
 	 * <p>
-	 * This method is internal to the framework; subclassers should not call
-	 * this method.
+	 * This method is internal to the framework; subclasses should not call this
+	 * method.
 	 * </p>
 	 */
 	protected void unmapAllElements() {
@@ -1881,17 +1881,16 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	}
 
 	/**
-	 * Removes the given association from the internal element to widget map.
-	 * Does nothing if mapping is disabled, or if the given element does not map
-	 * to the given item.
+	 * Removes the given association from the internal element to widget map. Does
+	 * nothing if mapping is disabled, or if the given element does not map to the
+	 * given item.
 	 * <p>
-	 * This method is internal to the framework; subclassers should not call
-	 * this method.
+	 * This method is internal to the framework; subclasses should not call this
+	 * method.
 	 * </p>
 	 *
-	 * @param element
-	 *            the element
-	 * @param item the item to unmap
+	 * @param element the element
+	 * @param item    the item to unmap
 	 * @since 2.0
 	 */
 	protected void unmapElement(Object element, Widget item) {
@@ -2101,14 +2100,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/**
 	 * Copies attributes of the given element into the given widget.
 	 * <p>
-	 * This method is internal to the framework; subclassers should not call
-	 * this method. Calls <code>doUpdateItem(widget, element, true)</code>.
+	 * This method is internal to the framework; subclasses should not call this
+	 * method. Calls <code>doUpdateItem(widget, element, true)</code>.
 	 * </p>
 	 *
-	 * @param widget
-	 *            the widget
-	 * @param element
-	 *            the element
+	 * @param widget  the widget
+	 * @param element the element
 	 */
 	protected final void updateItem(Widget widget, Object element) {
 		SafeRunnable.run(new UpdateItemSafeRunnable(widget, element, true));
