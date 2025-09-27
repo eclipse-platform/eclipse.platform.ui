@@ -140,12 +140,14 @@ public class DeleteLineAction extends TextEditorAction {
 	private static IDocument getDocument(ITextEditor editor) {
 
 		IDocumentProvider documentProvider= editor.getDocumentProvider();
-		if (documentProvider == null)
+		if (documentProvider == null) {
 			return null;
+		}
 
 		IDocument document= documentProvider.getDocument(editor.getEditorInput());
-		if (document == null)
+		if (document == null) {
 			return null;
+		}
 
 		return document;
 	}
@@ -159,12 +161,14 @@ public class DeleteLineAction extends TextEditorAction {
 	private static ITextSelection getSelection(ITextEditor editor) {
 
 		ISelectionProvider selectionProvider= editor.getSelectionProvider();
-		if (selectionProvider == null)
+		if (selectionProvider == null) {
 			return null;
+		}
 
 		ISelection selection= selectionProvider.getSelection();
-		if (!(selection instanceof ITextSelection))
+		if (!(selection instanceof ITextSelection)) {
 			return null;
+		}
 
 		return (ITextSelection) selection;
 	}
@@ -172,29 +176,35 @@ public class DeleteLineAction extends TextEditorAction {
 	@Override
 	public void run() {
 
-		if (fTarget == null)
+		if (fTarget == null) {
 			return;
+		}
 
 		ITextEditor editor= getTextEditor();
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 
-		if (!validateEditorInputState())
+		if (!validateEditorInputState()) {
 			return;
+		}
 
 		IDocument document= getDocument(editor);
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		ITextSelection selection= getSelection(editor);
-		if (selection == null)
+		if (selection == null) {
 			return;
+		}
 
 		try {
-			if (fTarget instanceof TextViewerDeleteLineTarget)
+			if (fTarget instanceof TextViewerDeleteLineTarget) {
 				((TextViewerDeleteLineTarget) fTarget).deleteLine(document, selection, fType, fCopyToClipboard);
-			else
+			} else {
 				fTarget.deleteLine(document, selection.getOffset(), selection.getLength(), fType, fCopyToClipboard);
+			}
 		} catch (BadLocationException e) {
 			// should not happen
 		}
@@ -204,8 +214,9 @@ public class DeleteLineAction extends TextEditorAction {
 	public void update() {
 
 		super.update();
-		if (!isEnabled())
+		if (!isEnabled()) {
 			return;
+		}
 
 		if (!canModifyEditor()) {
 			setEnabled(false);
@@ -213,10 +224,11 @@ public class DeleteLineAction extends TextEditorAction {
 		}
 
 		ITextEditor editor= getTextEditor();
-		if (editor != null)
+		if (editor != null) {
 			fTarget= editor.getAdapter(IDeleteLineTarget.class);
-		else
+		} else {
 			fTarget= null;
+		}
 
 		setEnabled(fTarget != null);
 	}

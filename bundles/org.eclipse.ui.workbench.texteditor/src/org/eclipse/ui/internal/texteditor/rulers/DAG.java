@@ -50,8 +50,9 @@ public final class DAG<E> {
 				values= new LinkedHashSet<>();
 				fMap.put(key, values);
 			}
-			if (val != null)
+			if (val != null) {
 				values.add(val);
+			}
 		}
 
 		/**
@@ -90,8 +91,9 @@ public final class DAG<E> {
 		 */
 		public void remove(K key, V val) {
 			Set<V> values= fMap.get(key);
-			if (values != null)
+			if (values != null) {
 				values.remove(val);
+			}
 		}
 
 		@Override
@@ -118,8 +120,9 @@ public final class DAG<E> {
 		Assert.isLegal(origin != null);
 		Assert.isLegal(target != null);
 
-		if (hasPath(target, origin))
+		if (hasPath(target, origin)) {
 			return false;
+		}
 
 		fOut.put(origin, target);
 		fOut.put(target, null);
@@ -147,11 +150,13 @@ public final class DAG<E> {
 	 */
 	public void removeVertex(E vertex) {
 		Set<E> targets= fOut.removeAll(vertex);
-		for (E e : targets)
+		for (E e : targets) {
 			fIn.remove(e, vertex);
+		}
 		Set<E> origins= fIn.removeAll(vertex);
-		for (E e : origins)
+		for (E e : origins) {
 			fOut.remove(e, vertex);
+		}
 	}
 
 	/**
@@ -178,8 +183,9 @@ public final class DAG<E> {
 		Set<T> candidates= map.keySet();
 		Set<T> roots= new LinkedHashSet<>(candidates.size());
 		for (T candidate : candidates) {
-			if (map.get(candidate).isEmpty())
+			if (map.get(candidate).isEmpty()) {
 				roots.add(candidate);
+			}
 		}
 		return roots;
 	}
@@ -196,13 +202,16 @@ public final class DAG<E> {
 
 	private boolean hasPath(E start, E end) {
 		// break condition
-		if (start == end)
+		if (start == end) {
 			return true;
+		}
 
-		for (E e : fOut.get(start))
+		for (E e : fOut.get(start)) {
 			// recursion
-			if (hasPath(e, end))
+			if (hasPath(e, end)) {
 				return true;
+			}
+		}
 		return false;
 	}
 

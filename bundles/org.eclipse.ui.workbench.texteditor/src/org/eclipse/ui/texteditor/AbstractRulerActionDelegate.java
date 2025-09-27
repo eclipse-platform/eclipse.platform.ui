@@ -68,12 +68,14 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 			IVerticalRulerInfo rulerInfo= fEditor.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
 				Control control= rulerInfo.getControl();
-				if (control != null && !control.isDisposed())
+				if (control != null && !control.isDisposed()) {
 					control.removeMouseListener(this);
+				}
 			}
 
-			if (fEditor instanceof ITextEditorExtension)
+			if (fEditor instanceof ITextEditorExtension) {
 				((ITextEditorExtension) fEditor).removeRulerContextMenuListener(this);
+			}
 		}
 
 		fEditor= targetEditor == null ? null : targetEditor.getAdapter(ITextEditor.class);
@@ -81,8 +83,9 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 		fAction= null;
 
 		if (fEditor != null) {
-			if (fEditor instanceof ITextEditorExtension)
+			if (fEditor instanceof ITextEditorExtension) {
 				((ITextEditorExtension) fEditor).addRulerContextMenuListener(this);
+			}
 
 			IVerticalRulerInfo rulerInfo= fEditor.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
@@ -90,16 +93,18 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 				update();
 
 				Control control= rulerInfo.getControl();
-				if (control != null && !control.isDisposed())
+				if (control != null && !control.isDisposed()) {
 					control.addMouseListener(this);
+				}
 			}
 		}
 	}
 
 	@Override
 	public void run(IAction callerAction) {
-		if (fAction != null)
+		if (fAction != null) {
 			fAction.run();
+		}
 	}
 
 	/*
@@ -108,8 +113,9 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 	 */
 	@Override
 	public void runWithEvent(IAction action, Event event) {
-		if (fAction != null)
+		if (fAction != null) {
 			fAction.runWithEvent(event);
+		}
 	}
 
 	@Override

@@ -146,8 +146,9 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 
 	protected boolean allRegionsEmpty() {
 		IRegion[] selectedRegions = getSelectedRegions();
-		if (selectedRegions == null)
+		if (selectedRegions == null) {
 			return true;
+		}
 		return isEmpty(selectedRegions[0]) && allRegionsHaveSameText(selectedRegions);
 	}
 
@@ -179,8 +180,9 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	}
 
 	private boolean allRegionsHaveSameText(IRegion[] regions) {
-		if (regions == null || regions.length == 1)
+		if (regions == null || regions.length == 1) {
 			return true;
+		}
 
 		try {
 			return allRegionsHaveText(regions, regionAsString(regions[0]));
@@ -209,8 +211,9 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	}
 
 	protected IRegion[] removeLastRegionButOne(IRegion[] regions) {
-		if (regions == null || regions.length == 0)
+		if (regions == null || regions.length == 0) {
 			return null;
+		}
 		if (regions.length == 1) {
 			return regions;
 		}
@@ -219,8 +222,9 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	}
 
 	protected IRegion[] removeFirstRegionButOne(IRegion[] regions) {
-		if (regions == null || regions.length == 0)
+		if (regions == null || regions.length == 0) {
 			return null;
+		}
 		if (regions.length == 1) {
 			return regions;
 		}
@@ -273,8 +277,9 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	}
 
 	protected IRegion createRegionIfValid(int offset, int length) {
-		if ((offset < 0) || (offset > document.getLength()))
+		if ((offset < 0) || (offset > document.getLength())) {
 			return null;
+		}
 
 		return new Region(offset, Math.min(length, document.getLength() - offset));
 	}
@@ -312,8 +317,9 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 
 	private int moveOffsetByLines(int offset, int lineDelta) throws BadLocationException {
 		int newLineNo = document.getLineOfOffset(offset) + lineDelta;
-		if ((newLineNo < 0) || (newLineNo >= document.getNumberOfLines()))
+		if ((newLineNo < 0) || (newLineNo >= document.getNumberOfLines())) {
 			return -1;
+		}
 
 		int newOffset;
 		if (sourceViewer == null) {
@@ -344,8 +350,9 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	private boolean initFrom(ExecutionEvent executionEvent) {
 		this.event = executionEvent;
 		initTextEditor();
-		if (textEditor == null)
+		if (textEditor == null) {
 			return false;
+		}
 		initDocument();
 		initSourceViewer();
 		initAnchorRegion();
@@ -433,28 +440,32 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 
 	protected boolean selectionIsAboveAnchorRegion() {
 		IRegion[] selectedRegions = getSelectedRegions();
-		if (selectedRegions == null || selectedRegions.length == 1)
+		if (selectedRegions == null || selectedRegions.length == 1) {
 			return false;
+		}
 		return isLastRegion(getAnchorRegion(), selectedRegions);
 	}
 
 	protected boolean selectionIsBelowAnchorRegion() {
 		IRegion[] selectedRegions = getSelectedRegions();
-		if (selectedRegions == null || selectedRegions.length == 1)
+		if (selectedRegions == null || selectedRegions.length == 1) {
 			return false;
+		}
 		return isFirstRegion(getAnchorRegion(), selectedRegions);
 	}
 
 	private boolean isLastRegion(IRegion region, IRegion[] regions) {
-		if (region == null || regions == null || regions.length == 0)
+		if (region == null || regions == null || regions.length == 0) {
 			return false;
+		}
 
 		return region.equals(regions[regions.length - 1]);
 	}
 
 	private boolean isFirstRegion(IRegion region, IRegion[] regions) {
-		if (region == null || regions == null || regions.length == 0)
+		if (region == null || regions == null || regions.length == 0) {
 			return false;
+		}
 
 		return region.equals(regions[0]);
 	}

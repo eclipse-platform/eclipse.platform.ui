@@ -68,8 +68,9 @@ public class QuickDiffExtensionsRegistry {
 	 * Ensures that the extensions are read and stored in <code>fDescriptors</code>.
 	 */
 	private void ensureRegistered() {
-		if (fDescriptors == null)
+		if (fDescriptors == null) {
 			reloadExtensions();
+		}
 	}
 
 	/**
@@ -87,8 +88,9 @@ public class QuickDiffExtensionsRegistry {
 		IConfigurationElement[] elements= registry.getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, TextEditorPlugin.REFERENCE_PROVIDER_EXTENSION_POINT);
 		for (IConfigurationElement element : elements) {
 			ReferenceProviderDescriptor desc = new ReferenceProviderDescriptor(element);
-			if (desc.getId().equals("org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider")) //$NON-NLS-1$
+			if (desc.getId().equals("org.eclipse.ui.internal.editors.quickdiff.LastSaveReferenceProvider")) { //$NON-NLS-1$
 				fDefaultDescriptor= desc;
+			}
 			list.add(desc);
 		}
 

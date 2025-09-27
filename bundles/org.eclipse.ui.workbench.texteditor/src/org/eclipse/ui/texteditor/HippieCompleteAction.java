@@ -264,11 +264,13 @@ final class HippieCompleteAction extends TextEditorAction {
 	 */
 	private IDocument getCurrentDocument() {
 		ITextEditor editor= getTextEditor();
-		if (editor == null)
+		if (editor == null) {
 			return null;
+		}
 		IDocumentProvider provider= editor.getDocumentProvider();
-		if (provider == null)
+		if (provider == null) {
 			return null;
+		}
 
 		IDocument document= provider.getDocument(editor.getEditorInput());
 		return document;
@@ -323,14 +325,17 @@ final class HippieCompleteAction extends TextEditorAction {
 
 	@Override
 	public void run() {
-		if (!validateEditorInputState())
+		if (!validateEditorInputState()) {
 			return;
+		}
 
-		if (!isStateValid())
+		if (!isStateValid()) {
 			updateState();
+		}
 
-		if (isStateValid())
+		if (isStateValid()) {
 			completeNext();
+		}
 	}
 
 	@Override
@@ -385,8 +390,9 @@ final class HippieCompleteAction extends TextEditorAction {
 			}
 
 			IRewriteTarget target= getTextEditor().getAdapter(IRewriteTarget.class);
-			if (target != null)
+			if (target != null) {
 				target.beginCompoundChange();
+			}
 
 			fLastCompletion= completionState;
 		}
@@ -399,8 +405,9 @@ final class HippieCompleteAction extends TextEditorAction {
 	 */
 	private void log(BadLocationException e) {
 		String msg= e.getLocalizedMessage();
-		if (msg == null)
+		if (msg == null) {
 			msg= "unable to access the document"; //$NON-NLS-1$
+		}
 		TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, msg, e));
 	}
 }

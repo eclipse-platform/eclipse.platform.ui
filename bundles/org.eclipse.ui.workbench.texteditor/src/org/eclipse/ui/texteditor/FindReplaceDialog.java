@@ -85,7 +85,7 @@ class FindReplaceDialog extends Dialog {
 	public static final String ID_DATA_KEY = "org.eclipse.ui.texteditor.FindReplaceDialog.id"; //$NON-NLS-1$
 
 	private static final int CLOSE_BUTTON_ID = 101;
-	private IFindReplaceLogic findReplaceLogic;
+	private final IFindReplaceLogic findReplaceLogic;
 
 	/**
 	 * Updates the find replace dialog on activation changes.
@@ -96,8 +96,9 @@ class FindReplaceDialog extends Dialog {
 			fActiveShell = (Shell) e.widget;
 			updateButtonState();
 
-			if (fGiveFocusToFindField && getShell() == fActiveShell && okToUse(fFindField))
+			if (fGiveFocusToFindField && getShell() == fActiveShell && okToUse(fFindField)) {
 				fFindField.setFocus();
+			}
 
 		}
 
@@ -127,7 +128,7 @@ class FindReplaceDialog extends Dialog {
 	 *
 	 * @since 2.0
 	 */
-	private class InputModifyListener implements ModifyListener {
+	private static class InputModifyListener implements ModifyListener {
 
 		private final Runnable logicUpdateHandler;
 		private final Runnable uiUpdateHandler;
@@ -209,7 +210,7 @@ class FindReplaceDialog extends Dialog {
 	 *
 	 * @since 3.7
 	 */
-	private HashMap<Character, Button> fMnemonicButtonMap = new HashMap<>();
+	private final HashMap<Character, Button> fMnemonicButtonMap = new HashMap<>();
 
 	/**
 	 * Creates a new dialog with the given shell as parent.
@@ -278,8 +279,9 @@ class FindReplaceDialog extends Dialog {
 		initFindString();
 
 		// set dialog position
-		if (fDialogPositionInit != null)
+		if (fDialogPositionInit != null) {
 			shell.setBounds(fDialogPositionInit);
+		}
 
 		shell.setText(FindReplaceMessages.FindReplace_Dialog_Title);
 
@@ -456,8 +458,9 @@ class FindReplaceDialog extends Dialog {
 			if (e.detail == SWT.TRAVERSE_RETURN) {
 				if (!Util.isMac()) {
 					Control controlWithFocus = getShell().getDisplay().getFocusControl();
-					if (controlWithFocus != null && (controlWithFocus.getStyle() & SWT.PUSH) == SWT.PUSH)
+					if (controlWithFocus != null && (controlWithFocus.getStyle() & SWT.PUSH) == SWT.PUSH) {
 						return;
+					}
 				}
 				Event event1 = new Event();
 				event1.type = SWT.Selection;
@@ -476,8 +479,9 @@ class FindReplaceDialog extends Dialog {
 						if ((button.getStyle() & SWT.RADIO) != 0) {
 							Composite buttonParent = button.getParent();
 							if (buttonParent != null) {
-								for (Control child : buttonParent.getChildren())
+								for (Control child : buttonParent.getChildren()) {
 									((Button) child).setSelection(false);
+								}
 							}
 							button.setSelection(true);
 						} else {
@@ -821,8 +825,9 @@ class FindReplaceDialog extends Dialog {
 	 */
 	@Override
 	protected void buttonPressed(int buttonID) {
-		if (buttonID == 101)
+		if (buttonID == 101) {
 			close();
+		}
 	}
 
 	// ------- action invocation ---------------------------------------
@@ -833,8 +838,9 @@ class FindReplaceDialog extends Dialog {
 	 * @return the dialog's boundaries
 	 */
 	private Rectangle getDialogBoundaries() {
-		if (okToUse(getShell()))
+		if (okToUse(getShell())) {
 			return getShell().getBounds();
+		}
 		return fDialogPositionInit;
 	}
 
@@ -877,10 +883,11 @@ class FindReplaceDialog extends Dialog {
 	private String getFirstLine(String selection) {
 		if (!selection.isEmpty()) {
 			int delimiterOffset = TextUtilities.nextDelimiter(selection, 0).delimiterIndex;
-			if (delimiterOffset > 0)
+			if (delimiterOffset > 0) {
 				return selection.substring(0, delimiterOffset);
-			else if (delimiterOffset == -1)
+			} else if (delimiterOffset == -1) {
 				return selection;
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -929,8 +936,9 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void writeSelection() {
 		String selection = getCurrentSelection();
-		if (selection == null)
+		if (selection == null) {
 			return;
+		}
 
 		IDialogSettings s = getDialogSettings();
 		s.put("selection", selection); //$NON-NLS-1$
@@ -1029,8 +1037,9 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void storeButtonWithMnemonicInMap(Button button) {
 		char mnemonic = LegacyActionTools.extractMnemonic(button.getText());
-		if (mnemonic != LegacyActionTools.MNEMONIC_NONE)
+		if (mnemonic != LegacyActionTools.MNEMONIC_NONE) {
 			fMnemonicButtonMap.put(Character.valueOf(Character.toLowerCase(mnemonic)), button);
+		}
 	}
 
 	// ------- UI creation ---------------------------------------
@@ -1069,8 +1078,9 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void addDecorationMargin(Control control) {
 		Object layoutData = control.getLayoutData();
-		if (!(layoutData instanceof GridData gd))
+		if (!(layoutData instanceof GridData gd)) {
 			return;
+		}
 		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()
 				.getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
 		gd.horizontalIndent = fieldDecoration.getImage().getBounds().width;
@@ -1095,8 +1105,9 @@ class FindReplaceDialog extends Dialog {
 
 			boolean hasActiveSelection = false;
 			String selection = getCurrentSelection();
-			if (selection != null)
+			if (selection != null) {
 				hasActiveSelection = !selection.isEmpty();
+			}
 
 			// using short-circuit-evaluation, evaluate all expressions to false
 			// (disabling the corresponding button) if we cannot evaluate the other
@@ -1254,8 +1265,9 @@ class FindReplaceDialog extends Dialog {
 	public void setParentShell(Shell shell) {
 		if (shell != fParentShell) {
 
-			if (fParentShell != null)
+			if (fParentShell != null) {
 				fParentShell.removeShellListener(fActivationListener);
+			}
 
 			fParentShell = shell;
 			fParentShell.addShellListener(fActivationListener);
@@ -1284,8 +1296,9 @@ class FindReplaceDialog extends Dialog {
 		IDialogSettings settings = PlatformUI
 				.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceAction.class)).getDialogSettings();
 		fDialogSettings = settings.getSection(FindReplaceAction.class.getClass().getName());
-		if (fDialogSettings == null)
+		if (fDialogSettings == null) {
 			fDialogSettings = settings.addNewSection(FindReplaceAction.class.getClass().getName());
+		}
 		return fDialogSettings;
 	}
 
@@ -1295,8 +1308,9 @@ class FindReplaceDialog extends Dialog {
 		IDialogSettings settings = PlatformUI
 				.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceDialog.class)).getDialogSettings();
 		IDialogSettings section = settings.getSection(sectionName);
-		if (section == null)
+		if (section == null) {
 			section = settings.addNewSection(sectionName);
+		}
 		return section;
 	}
 
@@ -1383,8 +1397,9 @@ class FindReplaceDialog extends Dialog {
 
 	private String getCurrentSelection() {
 		IFindReplaceTarget target = findReplaceLogic.getTarget();
-		if (target == null)
+		if (target == null) {
 			return null;
+		}
 		return target.getSelectionText();
 	}
 

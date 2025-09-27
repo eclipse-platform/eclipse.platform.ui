@@ -168,8 +168,9 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 
 		if (last != null && getDependentActions() != null) {
 			Iterator<IAction> iter = getDependentActions().iterator();
-			while (iter.hasNext())
+			while (iter.hasNext()) {
 				iter.next().setEnabled(true);
+			}
 			setDependentActions(null);
 		}
 	}
@@ -241,13 +242,16 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 
 	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
-		if (fQuickDiffExtensionRegistry != null && event.getExtensionDeltas(PLUGIN_ID, REFERENCE_PROVIDER_EXTENSION_POINT).length > 0)
+		if (fQuickDiffExtensionRegistry != null && event.getExtensionDeltas(PLUGIN_ID, REFERENCE_PROVIDER_EXTENSION_POINT).length > 0) {
 			fQuickDiffExtensionRegistry.reloadExtensions();
-		if (fSpellingEngineRegistry != null && event.getExtensionDeltas(PLUGIN_ID, SpellingEngineRegistry.SPELLING_ENGINE_EXTENSION_POINT).length > 0)
+		}
+		if (fSpellingEngineRegistry != null && event.getExtensionDeltas(PLUGIN_ID, SpellingEngineRegistry.SPELLING_ENGINE_EXTENSION_POINT).length > 0) {
 			fSpellingEngineRegistry.reloadExtensions();
+		}
 		if (fCodeMiningProviderRegistry != null && event.getExtensionDeltas(PLUGIN_ID,
-				CodeMiningProviderRegistry.CODEMINING_PROVIDERS_EXTENSION_POINT).length > 0)
+				CodeMiningProviderRegistry.CODEMINING_PROVIDERS_EXTENSION_POINT).length > 0) {
 			fCodeMiningProviderRegistry.reloadExtensions();
+		}
 	}
 
 	/**

@@ -156,8 +156,9 @@ public class StatusTextEditor extends AbstractTextEditor {
 
 	@Override
 	public boolean validateEditorInputState() {
-		if (!super.validateEditorInputState())
+		if (!super.validateEditorInputState()) {
 			return false;
+		}
 
 		if (getDocumentProvider() instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension)getDocumentProvider();

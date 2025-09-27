@@ -78,7 +78,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		return !atBottom;
 	}
 
-	private IPreferenceChangeListener overlayDialogPreferenceListener = event -> {
+	private final IPreferenceChangeListener overlayDialogPreferenceListener = event -> {
 		if (this.overlay == null) {
 			return;
 		}
@@ -159,8 +159,9 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 					boolean isEditable= false;
 					if (fPart instanceof ITextEditorExtension2 extension) {
 						isEditable= extension.isEditorInputModifiable();
-					} else if (target != null)
+					} else if (target != null) {
 						isEditable= target.isEditable();
+					}
 					fDialog.updateTarget(target, isEditable, false);
 				}
 			}
@@ -173,8 +174,9 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 
 		@Override
 		public void pageChanged(PageChangedEvent event) {
-			if (event.getSource() instanceof IWorkbenchPart)
+			if (event.getSource() instanceof IWorkbenchPart) {
 				partActivated((IWorkbenchPart)event.getSource());
+			}
 		}
 
 		@Override
@@ -185,18 +187,21 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 				fPreviousTarget= null;
 			}
 
-			if (part == fPart)
+			if (part == fPart) {
 				partActivated((IWorkbenchPart)null);
+			}
 		}
 
 		@Override
 		public void widgetDisposed(DisposeEvent event) {
 
-			if (fgFindReplaceDialogStub == this)
+			if (fgFindReplaceDialogStub == this) {
 				fgFindReplaceDialogStub= null;
+			}
 
-			if(fgFindReplaceDialogStubShell == this)
+			if(fgFindReplaceDialogStubShell == this) {
 				fgFindReplaceDialogStubShell= null;
+			}
 
 			if (fWindow != null) {
 				fWindow.getPartService().removePartListener(this);
@@ -241,11 +246,13 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		 */
 		public void checkShell(Shell shell) {
 			if (fDialog != null && shell != fDialog.getParentShell()) {
-				if (fgFindReplaceDialogStub == this)
+				if (fgFindReplaceDialogStub == this) {
 					fgFindReplaceDialogStub= null;
+				}
 
-				if (fgFindReplaceDialogStubShell == this)
+				if (fgFindReplaceDialogStubShell == this) {
 					fgFindReplaceDialogStubShell= null;
+				}
 
 				fDialog.close();
 			}
@@ -381,13 +388,15 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 				Shell shell= fWorkbenchPart.getSite().getShell();
 				fgFindReplaceDialogStub.checkShell(shell);
 			}
-			if (fgFindReplaceDialogStub == null)
+			if (fgFindReplaceDialogStub == null) {
 				fgFindReplaceDialogStub= new FindReplaceDialogStub(fWorkbenchPart.getSite());
+			}
 
-			if (fWorkbenchPart instanceof ITextEditorExtension2)
+			if (fWorkbenchPart instanceof ITextEditorExtension2) {
 				isEditable= ((ITextEditorExtension2) fWorkbenchPart).isEditorInputModifiable();
-			else
+			} else {
 				isEditable= fTarget.isEditable();
+			}
 
 			dialog= fgFindReplaceDialogStub.getDialog();
 
@@ -395,8 +404,9 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			if (fgFindReplaceDialogStubShell != null) {
 				fgFindReplaceDialogStubShell.checkShell(fShell);
 			}
-			if (fgFindReplaceDialogStubShell == null)
+			if (fgFindReplaceDialogStubShell == null) {
 				fgFindReplaceDialogStubShell= new FindReplaceDialogStub(fShell);
+			}
 
 			isEditable= fTarget.isEditable();
 			dialog= fgFindReplaceDialogStubShell.getDialog();
@@ -429,13 +439,15 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	public void update() {
 
 		if(fShell == null){
-			if (fWorkbenchPart == null && fWorkbenchWindow != null)
+			if (fWorkbenchPart == null && fWorkbenchWindow != null) {
 				fWorkbenchPart= fWorkbenchWindow.getPartService().getActivePart();
+			}
 
-			if (fWorkbenchPart != null)
+			if (fWorkbenchPart != null) {
 				fTarget= fWorkbenchPart.getAdapter(IFindReplaceTarget.class);
-			else
+			} else {
 				fTarget= null;
+			}
 		}
 		setEnabled(fTarget != null && fTarget.canPerformFind());
 	}

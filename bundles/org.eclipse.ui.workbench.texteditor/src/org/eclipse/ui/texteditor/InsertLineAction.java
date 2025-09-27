@@ -74,8 +74,9 @@ public class InsertLineAction extends TextEditorAction {
 	@Override
 	public void update() {
 		super.update();
-		if (isEnabled())
+		if (isEnabled()) {
 			setEnabled(canModifyEditor());
+		}
 	}
 
 	@Override
@@ -90,24 +91,29 @@ public class InsertLineAction extends TextEditorAction {
 		 */
 
 		ITextEditor ed= getTextEditor();
-		if (!(ed instanceof AbstractTextEditor))
+		if (!(ed instanceof AbstractTextEditor)) {
 			return;
+		}
 
-		if (!validateEditorInputState())
+		if (!validateEditorInputState()) {
 			return;
+		}
 
 		AbstractTextEditor editor= (AbstractTextEditor) ed;
 		ISourceViewer sv= editor.getSourceViewer();
-		if (sv == null)
+		if (sv == null) {
 			return;
+		}
 
 		IDocument document= sv.getDocument();
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		StyledText st= sv.getTextWidget();
-		if (st == null || st.isDisposed())
+		if (st == null || st.isDisposed()) {
 			return;
+		}
 
 		try {
 			// get current line
@@ -136,8 +142,9 @@ public class InsertLineAction extends TextEditorAction {
 				widgetInsertionOffset= AbstractTextEditor.modelOffset2WidgetOffset(sv, insertionOffset);
 				updateCaret= false;
 			}
-			if (widgetInsertionOffset == -1)
+			if (widgetInsertionOffset == -1) {
 				return;
+			}
 
 			// mark caret
 			Position caret= new Position(insertionOffset, 0);
@@ -152,8 +159,9 @@ public class InsertLineAction extends TextEditorAction {
 			document.removePosition(caret);
 			if (updateCaret && st.getSelection().x == widgetInsertionOffset) {
 				int widgetCaret= AbstractTextEditor.modelOffset2WidgetOffset(sv, caret.getOffset());
-				if (widgetCaret != -1)
+				if (widgetCaret != -1) {
 					st.setSelectionRange(widgetCaret, 0);
+				}
 				st.showSelection();
 			}
 
@@ -175,8 +183,9 @@ public class InsertLineAction extends TextEditorAction {
 		int pos= line.getOffset();
 		int max= pos + line.getLength();
 		while (pos < max) {
-			if (!Character.isWhitespace(document.getChar(pos)))
+			if (!Character.isWhitespace(document.getChar(pos))) {
 				break;
+			}
 			pos++;
 		}
 		return pos - line.getOffset();

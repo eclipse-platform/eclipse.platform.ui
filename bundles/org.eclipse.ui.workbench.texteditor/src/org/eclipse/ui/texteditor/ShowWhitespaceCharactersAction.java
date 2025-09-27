@@ -95,8 +95,9 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 	@Override
 	public void run() {
 		togglePainterState(isChecked());
-		if (fStore != null)
+		if (fStore != null) {
 			fStore.setValue(AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS, isChecked());
+		}
 	}
 
 	@Override
@@ -127,12 +128,14 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 	 * Remove the painter from the current editor.
 	 */
 	private void uninstallPainter() {
-		if (fWhitespaceCharPainter == null)
+		if (fWhitespaceCharPainter == null) {
 			return;
+		}
 
 		ITextViewer viewer= getTextViewer();
-		if (viewer instanceof ITextViewerExtension2)
+		if (viewer instanceof ITextViewerExtension2) {
 			((ITextViewerExtension2)viewer).removePainter(fWhitespaceCharPainter);
+		}
 
 		fWhitespaceCharPainter.deactivate(true);
 		fWhitespaceCharPainter= null;
@@ -145,8 +148,9 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 	 */
 	private ITextViewer getTextViewer() {
 		ITextEditor editor= getTextEditor();
-		if (editor instanceof AbstractTextEditor)
+		if (editor instanceof AbstractTextEditor) {
 			return ((AbstractTextEditor)editor).getSourceViewer();
+		}
 
 		return null;
 	}
@@ -187,9 +191,10 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 	 * @param newState <code>true</code> if the painter should be installed
 	 */
 	private void togglePainterState(boolean newState) {
-		if (newState)
+		if (newState) {
 			installPainter();
-		else
+		} else {
 			uninstallPainter();
+		}
 	}
 }

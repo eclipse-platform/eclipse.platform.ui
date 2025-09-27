@@ -31,9 +31,9 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		IFindReplaceTargetExtension3, IFindReplaceTargetExtension4 {
 
 	/** The editor */
-	private AbstractTextEditor fEditor;
+	private final AbstractTextEditor fEditor;
 	/** The find/replace target */
-	private IFindReplaceTarget fTarget;
+	private final IFindReplaceTarget fTarget;
 
 	/**
 	 * Creates a new find/replace target.
@@ -61,56 +61,64 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 	 * @return the find/replace target extension
 	 */
 	private IFindReplaceTargetExtension getExtension() {
-		if (fTarget instanceof IFindReplaceTargetExtension)
+		if (fTarget instanceof IFindReplaceTargetExtension) {
 			return (IFindReplaceTargetExtension) fTarget;
+		}
 		return null;
 	}
 
 	@Override
 	public boolean canPerformFind() {
-		if (getTarget() != null)
+		if (getTarget() != null) {
 			return getTarget().canPerformFind();
+		}
 		return false;
 	}
 
 	@Override
 	public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
-		if (getTarget() != null)
+		if (getTarget() != null) {
 			return getTarget().findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
+		}
 		return -1;
 	}
 
 	@Override
 	public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
-		if (getTarget() instanceof IFindReplaceTargetExtension3)
+		if (getTarget() instanceof IFindReplaceTargetExtension3) {
 			return ((IFindReplaceTargetExtension3)getTarget()).findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord, regExSearch);
+		}
 
 		// fallback
-		if (!regExSearch && getTarget() != null)
+		if (!regExSearch && getTarget() != null) {
 			return getTarget().findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
+		}
 
 		return -1;
 	}
 
 	@Override
 	public Point getSelection() {
-		if (getTarget() != null)
+		if (getTarget() != null) {
 			return getTarget().getSelection();
+		}
 		return new Point(-1, -1);
 	}
 
 	@Override
 	public String getSelectionText() {
-		if (getTarget() != null)
+		if (getTarget() != null) {
 			return getTarget().getSelectionText();
+		}
 		return ""; //$NON-NLS-1$
 	}
 
 	@Override
 	public boolean isEditable() {
 		if (getTarget() != null) {
-			if (getTarget().isEditable())
+			if (getTarget().isEditable()) {
 				return true;
+			}
 			return fEditor.isEditorInputModifiable();
 		}
 		return false;
@@ -118,8 +126,9 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 
 	@Override
 	public void replaceSelection(String text) {
-		if (getTarget() != null)
+		if (getTarget() != null) {
 			getTarget().replaceSelection(text);
+		}
 	}
 
 	@Override
@@ -130,46 +139,53 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		}
 
 		// fallback
-		if (!regExReplace && getTarget() != null)
+		if (!regExReplace && getTarget() != null) {
 			getTarget().replaceSelection(text);
+		}
 	}
 
 	@Override
 	public void beginSession() {
-		if (getExtension() != null)
+		if (getExtension() != null) {
 			getExtension().beginSession();
+		}
 	}
 
 	@Override
 	public void endSession() {
-		if (getExtension() != null)
+		if (getExtension() != null) {
 			getExtension().endSession();
+		}
 	}
 
 	@Override
 	public IRegion getScope() {
-		if (getExtension() != null)
+		if (getExtension() != null) {
 			return getExtension().getScope();
+		}
 		return null;
 	}
 
 	@Override
 	public void setScope(IRegion scope) {
-		if (getExtension() != null)
+		if (getExtension() != null) {
 			getExtension().setScope(scope);
+		}
 	}
 
 	@Override
 	public Point getLineSelection() {
-		if (getExtension() != null)
+		if (getExtension() != null) {
 			return getExtension().getLineSelection();
+		}
 		return null;
 	}
 
 	@Override
 	public void setSelection(int offset, int length) {
-		if (getExtension() != null)
+		if (getExtension() != null) {
 			getExtension().setSelection(offset, length);
+		}
 	}
 
 	@Override
@@ -181,14 +197,16 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 
 	@Override
 	public void setScopeHighlightColor(Color color) {
-		if (getExtension() != null)
+		if (getExtension() != null) {
 			getExtension().setScopeHighlightColor(color);
+		}
 	}
 
 	@Override
 	public void setReplaceAllMode(boolean replaceAll) {
-		if (getExtension() != null)
+		if (getExtension() != null) {
 			getExtension().setReplaceAllMode(replaceAll);
+		}
 	}
 
 	@Override

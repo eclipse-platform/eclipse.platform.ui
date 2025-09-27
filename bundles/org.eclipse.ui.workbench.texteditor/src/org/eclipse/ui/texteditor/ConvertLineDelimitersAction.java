@@ -85,11 +85,13 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		try {
 
 			ITextEditor editor= getTextEditor();
-			if (editor == null)
+			if (editor == null) {
 				return;
+			}
 
-			if (!validateEditorInputState())
+			if (!validateEditorInputState()) {
 				return;
+			}
 
 			Object adapter= editor.getAdapter(IRewriteTarget.class);
 			if (adapter instanceof IRewriteTarget target) {
@@ -146,16 +148,18 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			monitor.beginTask(EditorMessages.Editor_ConvertLineDelimiter_title, lineCount);
 
 			final boolean isLargeUpdate= lineCount > 50;
-			if (isLargeUpdate)
+			if (isLargeUpdate) {
 				fRewriteTarget.setRedraw(false);
+			}
 			fRewriteTarget.beginCompoundChange();
 
 			Map<String, IDocumentPartitioner> partitioners= TextUtilities.removeDocumentPartitioners(document);
 
 			try {
 				for (int i= 0; i < lineCount; i++) {
-					if (monitor.isCanceled())
+					if (monitor.isCanceled()) {
 						throw new InterruptedException();
+					}
 
 					final String delimiter= document.getLineDelimiter(i);
 					if (delimiter != null && !delimiter.isEmpty() && !delimiter.equals(fLineDelimiter)) {
@@ -171,12 +175,14 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 
 			} finally {
 
-				if (partitioners != null)
+				if (partitioners != null) {
 					TextUtilities.addDocumentPartitioners(document, partitioners);
+				}
 
 				fRewriteTarget.endCompoundChange();
-				if (isLargeUpdate)
+				if (isLargeUpdate) {
 					fRewriteTarget.setRedraw(true);
+				}
 
 				monitor.done();
 			}
@@ -229,25 +235,31 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	private static String getLabelKey(String lineDelimiter, String platformLineDelimiter) {
 		if (lineDelimiter.equals(platformLineDelimiter)) {
 
-			if (lineDelimiter.equals("\r\n")) //$NON-NLS-1$
+			if (lineDelimiter.equals("\r\n")) { //$NON-NLS-1$
 				return "Editor.ConvertLineDelimiter.toWindows.default.label"; //$NON-NLS-1$
+			}
 
-			if (lineDelimiter.equals("\n")) //$NON-NLS-1$
+			if (lineDelimiter.equals("\n")) { //$NON-NLS-1$
 				return "Editor.ConvertLineDelimiter.toUNIX.default.label"; //$NON-NLS-1$
+			}
 
-			if (lineDelimiter.equals("\r")) //$NON-NLS-1$
+			if (lineDelimiter.equals("\r")) { //$NON-NLS-1$
 				return "Editor.ConvertLineDelimiter.toMac.default.label"; //$NON-NLS-1$
+			}
 
 		} else {
 
-			if (lineDelimiter.equals("\r\n")) //$NON-NLS-1$
+			if (lineDelimiter.equals("\r\n")) { //$NON-NLS-1$
 				return "Editor.ConvertLineDelimiter.toWindows.label"; //$NON-NLS-1$
+			}
 
-			if (lineDelimiter.equals("\n")) //$NON-NLS-1$
+			if (lineDelimiter.equals("\n")) { //$NON-NLS-1$
 				return "Editor.ConvertLineDelimiter.toUNIX.label"; //$NON-NLS-1$
+			}
 
-			if (lineDelimiter.equals("\r")) //$NON-NLS-1$
+			if (lineDelimiter.equals("\r")) { //$NON-NLS-1$
 				return "Editor.ConvertLineDelimiter.toMac.label"; //$NON-NLS-1$
+			}
 		}
 
 		return null;

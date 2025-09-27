@@ -81,10 +81,10 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 */
 	private static class StatusFieldDef {
 
-		private String category;
-		private String actionId;
-		private boolean visible;
-		private int widthInChars;
+		private final String category;
+		private final String actionId;
+		private final boolean visible;
+		private final int widthInChars;
 
 		private StatusFieldDef(String category, String actionId, boolean visible, int widthInChars) {
 			Assert.isNotNull(category);
@@ -114,36 +114,36 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * The find next action.
 	 * @since 2.0
 	 */
-	private RetargetTextEditorAction fFindNext;
+	private final RetargetTextEditorAction fFindNext;
 	/**
 	 * The find previous action.
 	 * @since 2.0
 	 */
-	private RetargetTextEditorAction fFindPrevious;
+	private final RetargetTextEditorAction fFindPrevious;
 	/**
 	 * The incremental find action.
 	 * @since 2.0
 	 */
-	private RetargetTextEditorAction fIncrementalFind;
+	private final RetargetTextEditorAction fIncrementalFind;
 	/**
 	 * The reverse incremental find action.
 	 * @since 2.1
 	 */
-	private RetargetTextEditorAction fIncrementalFindReverse;
+	private final RetargetTextEditorAction fIncrementalFindReverse;
 	/**
 	 * The go to line action.
 	 */
-	private RetargetTextEditorAction fGotoLine;
+	private final RetargetTextEditorAction fGotoLine;
 	/**
 	 * The word completion action.
 	 * @since 3.1
 	 */
-	private RetargetTextEditorAction fHippieCompletion;
+	private final RetargetTextEditorAction fHippieCompletion;
 	/**
 	 * The map of status fields.
 	 * @since 2.0
 	 */
-	private Map<StatusFieldDef, StatusLineContributionItem> fStatusFields;
+	private final Map<StatusFieldDef, StatusLineContributionItem> fStatusFields;
 
 
 	/**
@@ -203,24 +203,28 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 */
 	private void doSetActiveEditor(IEditorPart part) {
 
-		if (fActiveEditorPart == part)
+		if (fActiveEditorPart == part) {
 			return;
+		}
 
 		if (fActiveEditorPart instanceof ITextEditorExtension extension) {
-			for (StatusFieldDef element : STATUS_FIELD_DEFS)
+			for (StatusFieldDef element : STATUS_FIELD_DEFS) {
 				extension.setStatusField(null, element.category);
+			}
 		}
 
 		fActiveEditorPart= part;
 		ITextEditor editor= (part instanceof ITextEditor i) ? i : null;
 
 		IActionBars actionBars= getActionBars();
-		for (String element : ACTIONS)
+		for (String element : ACTIONS) {
 			actionBars.setGlobalActionHandler(element, getAction(editor, element));
+		}
 		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS, getAction(editor, ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS));
 		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.BLOCK_SELECTION_MODE, getAction(editor, ITextEditorActionConstants.BLOCK_SELECTION_MODE));
-		if (editor instanceof AbstractTextEditor && ((AbstractTextEditor)editor).isWordWrapSupported())
+		if (editor instanceof AbstractTextEditor && ((AbstractTextEditor)editor).isWordWrapSupported()) {
 			actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.WORD_WRAP, getAction(editor, ITextEditorActionConstants.WORD_WRAP));
+		}
 
 		fFindNext.setAction(getAction(editor, ITextEditorActionConstants.FIND_NEXT));
 		fFindPrevious.setAction(getAction(editor, ITextEditorActionConstants.FIND_PREVIOUS));
@@ -290,17 +294,19 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 */
 	private void addOrInsert(IContributionManager menu, IContributionItem item) {
 		String id= item.getId();
-		if (menu.find(id) == null)
+		if (menu.find(id) == null) {
 			menu.add(item);
-		else
+		} else {
 			menu.insertAfter(id, item);
+		}
 	}
 
 	@Override
 	public void contributeToStatusLine(IStatusLineManager statusLineManager) {
 		super.contributeToStatusLine(statusLineManager);
-		for (StatusFieldDef element : STATUS_FIELD_DEFS)
+		for (StatusFieldDef element : STATUS_FIELD_DEFS) {
 			statusLineManager.add(fStatusFields.get(element));
+		}
 	}
 
 	@Override

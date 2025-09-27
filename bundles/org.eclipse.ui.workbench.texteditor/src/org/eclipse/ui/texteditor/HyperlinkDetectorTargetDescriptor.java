@@ -44,7 +44,7 @@ public final class HyperlinkDetectorTargetDescriptor {
 	private static final String CONTEXT_ELEMENT= "context"; //$NON-NLS-1$
 	private static final String TYPE_ATTRIBUTE= "type"; //$NON-NLS-1$
 
-	private IConfigurationElement fElement;
+	private final IConfigurationElement fElement;
 
 
 	/**
@@ -98,8 +98,9 @@ public final class HyperlinkDetectorTargetDescriptor {
 	public String[] getTypes() {
 		IConfigurationElement[] contexts= fElement.getChildren(CONTEXT_ELEMENT);
 		String[] types= new String[contexts.length];
-		for (int i= 0; i < contexts.length; i++)
+		for (int i= 0; i < contexts.length; i++) {
 			types[i]= contexts[i].getAttribute(TYPE_ATTRIBUTE);
+		}
 		return types;
 	}
 
@@ -115,8 +116,9 @@ public final class HyperlinkDetectorTargetDescriptor {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !obj.getClass().equals(this.getClass()) || getId() == null)
+		if (obj == null || !obj.getClass().equals(this.getClass()) || getId() == null) {
 			return false;
+		}
 		return getId().equals(((HyperlinkDetectorTargetDescriptor)obj).getId());
 	}
 
@@ -130,9 +132,9 @@ public final class HyperlinkDetectorTargetDescriptor {
 		for (IConfigurationElement element : elements) {
 			if (TARGET_ELEMENT.equals(element.getName())) {
 				HyperlinkDetectorTargetDescriptor desc= new HyperlinkDetectorTargetDescriptor(element);
-				if (desc.isValid())
+				if (desc.isValid()) {
 					result.add(desc);
-				else {
+				} else {
 					String message= NLSUtility.format(EditorMessages.Editor_error_HyperlinkDetectorTarget_invalidExtension_message, new String[] {desc.getId(), element.getContributor().getName()});
 					TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, null));
 				}

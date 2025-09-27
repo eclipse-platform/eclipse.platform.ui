@@ -102,20 +102,23 @@ public class SpellingEngineRegistry {
 			SpellingEngineDescriptor descriptor = new SpellingEngineDescriptor(element);
 			descriptors.add(descriptor);
 			fDescriptorsMap.put(descriptor.getId(), descriptor);
-			if (fDefaultDescriptor == null && descriptor.isDefault())
+			if (fDefaultDescriptor == null && descriptor.isDefault()) {
 				fDefaultDescriptor= descriptor;
+			}
 		}
 		fDescriptors= descriptors.toArray(new SpellingEngineDescriptor[descriptors.size()]);
 		fLoaded= true;
-		if (fDefaultDescriptor == null && fDescriptors.length > 0)
+		if (fDefaultDescriptor == null && fDescriptors.length > 0) {
 			fDefaultDescriptor= fDescriptors[0];
+		}
 	}
 
 	/**
 	 * Ensures the extensions have been loaded at least once.
 	 */
 	private void ensureExtensionsLoaded() {
-		if (!fLoaded)
+		if (!fLoaded) {
 			reloadExtensions();
+		}
 	}
 }

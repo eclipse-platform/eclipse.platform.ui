@@ -79,16 +79,19 @@ public class GotoNextEditPositionAction extends Action implements IWorkbenchWind
 		EditPosition editPosition = TextEditorPlugin.getDefault().getNextEditPosition();
 		try {
 
-			if (editPosition == null)
+			if (editPosition == null) {
 				return;
+			}
 
 			final Position pos = editPosition.getPosition();
-			if (pos == null || pos.isDeleted)
+			if (pos == null || pos.isDeleted) {
 				return;
+			}
 
 			IWorkbenchWindow window = getWindow();
-			if (window == null)
+			if (window == null) {
 				return;
+			}
 
 			IWorkbenchPage page = window.getActivePage();
 
@@ -114,12 +117,14 @@ public class GotoNextEditPositionAction extends Action implements IWorkbenchWind
 			 */
 			if (editor != null) {
 				IEditorSite site = editor.getEditorSite();
-				if (site == null)
+				if (site == null) {
 					return;
+				}
 
 				ISelectionProvider provider = editor.getEditorSite().getSelectionProvider();
-				if (provider == null)
+				if (provider == null) {
 					return;
+				}
 
 				provider.setSelection(new TextSelection(pos.offset, pos.length));
 			}
@@ -150,8 +155,9 @@ public class GotoNextEditPositionAction extends Action implements IWorkbenchWind
 	 * @return the workbench window
 	 */
 	private IWorkbenchWindow getWindow() {
-		if (fWindow == null)
+		if (fWindow == null) {
 			fWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		}
 		return fWindow;
 	}
 

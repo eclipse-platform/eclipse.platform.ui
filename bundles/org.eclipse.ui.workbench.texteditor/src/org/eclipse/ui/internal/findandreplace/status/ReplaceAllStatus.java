@@ -14,7 +14,7 @@
 package org.eclipse.ui.internal.findandreplace.status;
 
 public class ReplaceAllStatus implements IFindReplaceStatus {
-	private int replaceCount;
+	private final int replaceCount;
 
 	public ReplaceAllStatus(int replaceCount) {
 		this.replaceCount = replaceCount;

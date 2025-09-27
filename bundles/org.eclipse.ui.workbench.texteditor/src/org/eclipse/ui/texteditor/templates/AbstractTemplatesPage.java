@@ -197,8 +197,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		 */
 		private boolean contextTypeChanged(String[] contextTypes) {
 			for (int i= 0; i < contextTypes.length; i++) {
-				if (!contextTypes[i].equals(fCurrentContextTypeIds[i]))
+				if (!contextTypes[i].equals(fCurrentContextTypeIds[i])) {
 					return true;
+				}
 			}
 			return false;
 		}
@@ -213,37 +214,42 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private final class EditorDropTargetListener extends DropTargetAdapter {
 		@Override
 		public void dragEnter(DropTargetEvent event) {
-			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
+			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType)) {
 				return;
+			}
 
 			event.detail= DND.DROP_COPY;
 		}
 
 		@Override
 		public void dragOperationChanged(DropTargetEvent event) {
-			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
+			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType)) {
 				return;
+			}
 
 			event.detail= DND.DROP_COPY;
 		}
 
 		@Override
 		public void dragOver(DropTargetEvent event) {
-			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
+			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType)) {
 				return;
+			}
 
 			event.feedback |= DND.FEEDBACK_SCROLL | DND.FEEDBACK_SELECT;
 			event.detail= DND.DROP_NONE;
 			TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
 			if (fTextEditor instanceof ITextEditorExtension2 && ((ITextEditorExtension2)fTextEditor).isEditorInputModifiable() && selectedTemplates.length == 1 &&
-					isTemplateValidAtLocation(selectedTemplates[0].getTemplate(), new Point(event.x, event.y)))
+					isTemplateValidAtLocation(selectedTemplates[0].getTemplate(), new Point(event.x, event.y))) {
 				event.detail= DND.DROP_COPY;
+			}
 		}
 
 		@Override
 		public void drop(DropTargetEvent event) {
-			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
+			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType)) {
 				return;
+			}
 
 			TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
 			insertTemplate(selectedTemplates[0].getTemplate());
@@ -267,8 +273,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				Template left= ((TemplatePersistenceData) object1).getTemplate();
 				Template right= ((TemplatePersistenceData) object2).getTemplate();
 				int result= Collator.getInstance().compare(left.getName(), right.getName());
-				if (result != 0)
+				if (result != 0) {
 					return result;
+				}
 				return Collator.getInstance()
 						.compare(left.getDescription(), right.getDescription());
 			}
@@ -294,17 +301,20 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			if (columnIndex != 0)
+			if (columnIndex != 0) {
 				return null;
-			if (element instanceof TemplateContextType)
+			}
+			if (element instanceof TemplateContextType) {
 				return TemplatesPageImages.get(TemplatesPageImages.IMG_OBJ_CONTEXT);
+			}
 			return AbstractTemplatesPage.this.getImage(((TemplatePersistenceData) element).getTemplate());
 		}
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof TemplatePersistenceData)
+			if (element instanceof TemplatePersistenceData) {
 				return getTemplateColumnText((TemplatePersistenceData) element, columnIndex);
+			}
 			return getContextColumnText((TemplateContextType) element, columnIndex);
 		}
 
@@ -338,9 +348,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof TemplatePersistenceData)
+			if (parentElement instanceof TemplatePersistenceData) {
 				return new Object[0];
-			else if (parentElement instanceof TemplateContextType contextType) {
+			} else if (parentElement instanceof TemplateContextType contextType) {
 				return getTemplates(contextType.getId());
 			}
 			return null;
@@ -369,14 +379,15 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		@Override
 		public boolean hasChildren(Object parentElement) {
-			if (parentElement instanceof TemplatePersistenceData)
+			if (parentElement instanceof TemplatePersistenceData) {
 				return false;
-			else if (parentElement instanceof TemplateContextType) {
+			} else if (parentElement instanceof TemplateContextType) {
 				String contextId= ((TemplateContextType) parentElement).getId();
 
 				TemplatePersistenceData[] datas= getTemplateStore().getTemplateData(false);
-				if (datas.length <= 0)
+				if (datas.length <= 0) {
 					return false;
+				}
 
 				for (TemplatePersistenceData data : datas) {
 					if (data.isEnabled() && data.getTemplate().getContextTypeId().equals(contextId)) {
@@ -394,8 +405,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 			for (Iterator<TemplateContextType> iterator= getContextTypeRegistry().contextTypes(); iterator.hasNext();) {
 				TemplateContextType contextType= iterator.next();
-				if (!fLinkWithEditorAction.isChecked() || isActiveContext(contextType))
+				if (!fLinkWithEditorAction.isChecked() || isActiveContext(contextType)) {
 					contextTypes.add(contextType);
+				}
 			}
 			return contextTypes.toArray(new TemplateContextType[contextTypes.size()]);
 		}
@@ -504,7 +516,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		updateButtons();
 
 		int sashSize= fPreferenceStore.getInt(SASH_SIZE_PREF_ID);
-		fControl.setWeights(new int[] { sashSize, 100 - sashSize });
+		fControl.setWeights(sashSize, 100 - sashSize);
 		fTemplateChangeListener = event -> getShell().getDisplay().asyncExec(this::refresh);
 		getTemplatePreferenceStore().addPropertyChangeListener(fTemplateChangeListener);
 		updateContextTypes(getEditorContextTypeIds());
@@ -522,15 +534,18 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	@Override
 	public void dispose() {
 		ISelectionProvider selectionProvider= fViewer.getSelectionProvider();
-		if (selectionProvider instanceof IPostSelectionProvider)
+		if (selectionProvider instanceof IPostSelectionProvider) {
 			((IPostSelectionProvider) selectionProvider).removePostSelectionChangedListener(fSelectionChangedListener);
-		else
+		} else {
 			selectionProvider.removeSelectionChangedListener(fSelectionChangedListener);
+		}
 		fTextEditor.setAction(ITextEditorActionConstants.PASTE, fEditorOldPasteAction);
-		if (fContextMenu != null && !fContextMenu.isDisposed())
+		if (fContextMenu != null && !fContextMenu.isDisposed()) {
 			fContextMenu.dispose();
-		if (fTemplateChangeListener != null)
+		}
+		if (fTemplateChangeListener != null) {
 			getTemplatePreferenceStore().removePropertyChangeListener(fTemplateChangeListener);
+		}
 		super.dispose();
 	}
 
@@ -572,8 +587,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable) {
 		EditTemplateDialog dialog= new EditTemplateDialog(getShell(), template, edit, isNameModifiable, getContextTypeRegistry());
-		if (dialog.open() == Window.OK)
+		if (dialog.open() == Window.OK) {
 			return dialog.getTemplate();
+		}
 		return null;
 	}
 
@@ -619,8 +635,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * @param event The event
 	 */
 	private void updateCopyAction(SelectionChangedEvent event) {
-		if (fPatternViewerCopyAction != null)
+		if (fPatternViewerCopyAction != null) {
 			fPatternViewerCopyAction.update();
+		}
 	}
 
 	/**
@@ -641,8 +658,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	private void updateContextTypes(String[] ids) {
 		fActiveTypes= Arrays.asList(ids);
-		if (fLinkWithEditorAction != null && fLinkWithEditorAction.isChecked())
+		if (fLinkWithEditorAction != null && fLinkWithEditorAction.isChecked()) {
 			refresh();
+		}
 	}
 
 	/**
@@ -741,10 +759,11 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				Clipboard clipboard= new Clipboard(getShell().getDisplay());
 				try {
 					Template template= getTemplateFromClipboard(clipboard);
-					if (template != null)
+					if (template != null) {
 						insertTemplate(template);
-					else
+					} else {
 						fEditorOldPasteAction.run();
+					}
 				} finally {
 					clipboard.dispose();
 				}
@@ -764,8 +783,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			private Template getTemplateFromClipboard(Clipboard clipboard) {
 				TemplatePersistenceData[] contents= (TemplatePersistenceData[])clipboard
 						.getContents(TemplatesTransfer.getInstance());
-				if (contents != null && contents.length == 1)
+				if (contents != null && contents.length == 1) {
 					return contents[0].getTemplate();
+				}
 				return null;
 			}
 		};
@@ -779,11 +799,12 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private void setupSelectionProvider() {
 		ISelectionProvider selectionProvider= fViewer.getSelectionProvider();
 		fSelectionChangedListener= new SelectionChangedListener();
-		if (selectionProvider instanceof IPostSelectionProvider)
+		if (selectionProvider instanceof IPostSelectionProvider) {
 			((IPostSelectionProvider) selectionProvider)
 					.addPostSelectionChangedListener(fSelectionChangedListener);
-		else
+		} else {
 			selectionProvider.addSelectionChangedListener(fSelectionChangedListener);
+		}
 	}
 
 	/**
@@ -791,12 +812,14 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	private void setupEditorDropTarget() {
 		Control control= fTextEditor.getAdapter(Control.class);
-		if (control == null)
+		if (control == null) {
 			return;
+		}
 
 		DropTarget dropTarget= (DropTarget)control.getData(DND.DROP_TARGET_KEY);
-		if (dropTarget == null)
+		if (dropTarget == null) {
 			dropTarget= new DropTarget(control, DND.DROP_COPY);
+		}
 
 		Transfer[] currentTransfers= dropTarget.getTransfer();
 		int currentLength= currentTransfers.length;
@@ -942,8 +965,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 						return;
 					}
 					TemplatePersistenceData[] templates= (TemplatePersistenceData[])clipboard.getContents(TemplatesTransfer.getInstance());
-					if (templates != null)
+					if (templates != null) {
 						copyTemplates(templates, getContextTypeId());
+					}
 				} finally {
 					clipboard.dispose();
 				}
@@ -1101,8 +1125,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		fTreeViewer.addDoubleClickListener(e -> {
 			updateSelectedItems();
 			TemplatePersistenceData[] selectedTemplates = getSelectedTemplates();
-			if (selectedTemplates.length > 0)
+			if (selectedTemplates.length > 0) {
 				insertTemplate(selectedTemplates[0].getTemplate());
+			}
 		});
 
 		fTreeViewer.addSelectionChangedListener(e -> {
@@ -1187,16 +1212,19 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		StyledText textWidget= (StyledText) fTextEditor.getAdapter(Control.class);
 		IDocument document= fTextEditor.getDocumentProvider().getDocument(fTextEditor.getEditorInput());
 		try {
-			if (location.equals(fCachedPosition))
+			if (location.equals(fCachedPosition)) {
 				return fCachedResult;
+			}
 			fCachedPosition= location;
 			int offset= getOffset(document, textWidget, textWidget.toControl(location.x,
 					location.y));
-			if (fCachedOffset == offset)
+			if (fCachedOffset == offset) {
 				return fCachedResult;
+			}
 			fCachedOffset= offset;
-			if (isValidTemplate(document, template, offset, 0))
+			if (isValidTemplate(document, template, offset, 0)) {
 				return fCachedResult= true;
+			}
 		} catch (BadLocationException e) {
 		}
 		return fCachedResult= false;
@@ -1209,10 +1237,11 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		setSelectedTemplates();
 		TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
 
-		if (selectedTemplates.length == 1)
+		if (selectedTemplates.length == 1) {
 			updatePatternViewer(selectedTemplates[0].getTemplate());
-		else
+		} else {
 			updatePatternViewer(null);
+		}
 	}
 
 	/**
@@ -1244,9 +1273,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		int i= 0;
 		while (it.hasNext()) {
 			Object o= it.next();
-			if (o instanceof TemplatePersistenceData)
+			if (o instanceof TemplatePersistenceData) {
 				data[i++]= (TemplatePersistenceData) o;
-			else {
+			} else {
 				fSelectedTemplates= new TemplatePersistenceData[0];
 				return;
 			}
@@ -1287,24 +1316,27 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		Object item;
 
-		if (selection.size() == 0)
+		if (selection.size() == 0) {
 			return getContextTypeRegistry().contextTypes().next().getId();
+		}
 
 		if (selection.size() == 1) {
 			item= selection.getFirstElement();
-			if (item instanceof TemplatePersistenceData)
+			if (item instanceof TemplatePersistenceData) {
 				return ((TemplatePersistenceData) item).getTemplate().getContextTypeId();
+			}
 			return ((TemplateContextType) item).getId();
 		}
 		Iterator<?> it= selection.iterator();
 		String contextId= null;
 		while (it.hasNext()) {
 			item= it.next();
-			if (contextId == null)
+			if (contextId == null) {
 				contextId= getContextId(item);
-			else if (!contextId.equals(getContextId(item)))
+			} else if (!contextId.equals(getContextId(item))) {
 				return getContextTypeRegistry().contextTypes().next()
 						.getId();
+			}
 		}
 		return contextId;
 	}
@@ -1317,10 +1349,11 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	private String getContextId(Object item) {
 		String contextId;
-		if (item instanceof TemplatePersistenceData)
+		if (item instanceof TemplatePersistenceData) {
 			contextId= ((TemplatePersistenceData) item).getTemplate().getContextTypeId();
-		else
+		} else {
 			contextId= ((TemplateContextType) item).getId();
+		}
 		return contextId;
 	}
 
@@ -1421,18 +1454,21 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private void removeTemplates() {
 		String title;
 		TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
-		if (selectedTemplates.length == 1)
+		if (selectedTemplates.length == 1) {
 			title= TemplatesMessages.TemplatesPage_remove_title_single;
-		else
+		} else {
 			title= TemplatesMessages.TemplatesPage_remove_title_multi;
+		}
 		String message;
-		if (selectedTemplates.length == 1)
+		if (selectedTemplates.length == 1) {
 			message= TemplatesMessages.TemplatesPage_remove_message_single;
-		else
+		} else {
 			message= NLSUtility.format(TemplatesMessages.TemplatesPage_remove_message_multi,
 					new Object[] { Integer.valueOf(selectedTemplates.length) });
-		if (!MessageDialog.openQuestion(getShell(), title, message))
+		}
+		if (!MessageDialog.openQuestion(getShell(), title, message)) {
 			return;
+		}
 		for (TemplatePersistenceData selectedTemplate : selectedTemplates) {
 			getTemplateStore().delete(selectedTemplate);
 		}
@@ -1467,14 +1503,16 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 			@Override
 			public void dragEnter(DropTargetEvent event) {
-				if (event.detail == DND.DROP_DEFAULT)
+				if (event.detail == DND.DROP_DEFAULT) {
 					event.detail= DND.DROP_COPY;
+				}
 			}
 
 			@Override
 			public void dragOperationChanged(DropTargetEvent event) {
-				if (event.detail == DND.DROP_DEFAULT)
+				if (event.detail == DND.DROP_DEFAULT) {
 					event.detail= DND.DROP_COPY;
+				}
 			}
 
 			@Override
@@ -1498,22 +1536,25 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				}
 				if (index < event.dataTypes.length) {
 					event.currentDataType= event.dataTypes[index];
-					if (event.detail == DND.DROP_DEFAULT || !isTemplateTransfer)
+					if (event.detail == DND.DROP_DEFAULT || !isTemplateTransfer) {
 						event.detail= DND.DROP_COPY;
+					}
 					return;
 				}
 			}
 
 			@Override
 			public void drop(DropTargetEvent event) {
-				if (event.item == null)
+				if (event.item == null) {
 					return;
+				}
 				Object object= event.item.getData();
 				final String contextId;
-				if (object instanceof TemplateContextType)
+				if (object instanceof TemplateContextType) {
 					contextId= ((TemplateContextType) object).getId();
-				else
+				} else {
 					contextId= ((TemplatePersistenceData) object).getTemplate().getContextTypeId();
+				}
 				if (textTransfer.isSupportedType(event.currentDataType)) {
 					String text= ((String) event.data).replaceAll("\\$", "\\$\\$"); //$NON-NLS-1$ //$NON-NLS-2$
 					final Template template= new Template(createTemplateName(),
@@ -1526,10 +1567,11 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 					final TemplatePersistenceData[] templates= (TemplatePersistenceData[]) event.data;
 					final int dropType= event.detail;
 					getShell().getDisplay().asyncExec(() -> {
-						if (dropType == DND.DROP_COPY)
+						if (dropType == DND.DROP_COPY) {
 							copyTemplates(templates, contextId);
-						else
+						} else {
 							moveTemplates(templates, contextId);
+						}
 					});
 				}
 			}
@@ -1547,8 +1589,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private String createTemplateName() {
 		for (int i= 1; i < Integer.MAX_VALUE; i++) {
 			String name= TemplatesMessages.TemplatesPage_snippet + i;
-			if (getTemplateStore().findTemplate(name) == null)
+			if (getTemplateStore().findTemplate(name) == null) {
 				return name;
+			}
 		}
 		return null;
 	}

@@ -44,8 +44,9 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	private class Listener extends MouseAdapter {
 		@Override
 		public void mouseDoubleClick(MouseEvent e) {
-			if (fActionHandler != null && fActionHandler.isEnabled())
+			if (fActionHandler != null && fActionHandler.isEnabled()) {
 				fActionHandler.run();
+			}
 		}
 	}
 
@@ -92,7 +93,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 * Number of characters that should fit into the item.
 	 * @since 3.0
 	 */
-	private int fWidthInChars;
+	private final int fWidthInChars;
 	/** The status line label widget */
 	private CLabel fLabel;
 	/**
@@ -185,8 +186,9 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 
 	public void setActionHandler(IAction actionHandler) {
 		if (fActionHandler != null && actionHandler == null && fMouseListener != null) {
-			if (!fLabel.isDisposed())
+			if (!fLabel.isDisposed()) {
 				fLabel.removeMouseListener(fMouseListener);
+			}
 			fMouseListener= null;
 		}
 
@@ -246,24 +248,26 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 				fLabel.setForeground(JFaceColors.getErrorText(display));
 				fLabel.setText(escapedErrorText);
 				fLabel.setImage(fErrorImage);
-				if (fToolTipText != null)
+				if (fToolTipText != null) {
 					fLabel.setToolTipText(escape(fToolTipText));
-				else if (fErrorText.length() > fWidthInChars)
+				} else if (fErrorText.length() > fWidthInChars) {
 					fLabel.setToolTipText(escapedErrorText);
-				else
+				} else {
 					fLabel.setToolTipText(null);
+				}
 
 			} else {
 				String escapedText= escape(fText);
 				fLabel.setForeground(fLabel.getParent().getForeground());
 				fLabel.setText(escapedText);
 				fLabel.setImage(fImage);
-				if (fToolTipText != null)
+				if (fToolTipText != null) {
 					fLabel.setToolTipText(escape(fToolTipText));
-				else if (fText != null && fText.length() > fWidthInChars)
+				} else if (fText != null && fText.length() > fWidthInChars) {
 					fLabel.setToolTipText(escapedText);
-				else
+				} else {
 					fLabel.setToolTipText(null);
+				}
 			}
 		}
 	}
@@ -276,8 +280,9 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 * @since 3.4
 	 */
 	private String escape(String text) {
-		if (text == null)
+		if (text == null) {
 			return text;
+		}
 		return LegacyActionTools.escapeMnemonics(text);
 	}
 

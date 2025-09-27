@@ -35,7 +35,7 @@ public class GotoAnnotationAction extends TextEditorAction {
 	 * The navigation direction.
 	 * <code>true</code> to go to next and <code>false</code> to go to previous annotation.
 	 */
-	private boolean fForward;
+	private final boolean fForward;
 
 	/**
 	 * Creates a new action for the given text editor. The action configures its
@@ -70,8 +70,9 @@ public class GotoAnnotationAction extends TextEditorAction {
 	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
-		if (editor instanceof ITextEditorExtension4)
+		if (editor instanceof ITextEditorExtension4) {
 			((ITextEditorExtension4)editor).gotoAnnotation(fForward);
+		}
 	}
 
 	@Override

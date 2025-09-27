@@ -109,8 +109,9 @@ public final class CompoundEditExitStrategy {
 		public void verifyKey(VerifyEvent event) {
 			// any key press that is not a modifier combo ends the compound change
 			final int maskWithoutShift= SWT.MODIFIER_MASK & ~SWT.SHIFT;
-			if ((event.keyCode & SWT.MODIFIER_MASK) == 0 && (event.stateMask & maskWithoutShift) == 0)
+			if ((event.keyCode & SWT.MODIFIER_MASK) == 0 && (event.stateMask & maskWithoutShift) == 0) {
 				fireEndCompoundEdit();
+			}
 		}
 
 	}
@@ -130,8 +131,9 @@ public final class CompoundEditExitStrategy {
 	 * @param commandId the command id of the repeatable command
 	 */
 	public CompoundEditExitStrategy(String commandId) {
-		if (commandId == null)
+		if (commandId == null) {
 			throw new NullPointerException("commandId"); //$NON-NLS-1$
+		}
 		fCommandIds= new String[] {commandId};
 	}
 
@@ -143,8 +145,9 @@ public final class CompoundEditExitStrategy {
 	 */
 	public CompoundEditExitStrategy(String[] commandIds) {
 		for (int i= 0; i < commandIds.length; i++) {
-			if (commandIds[i] == null)
+			if (commandIds[i] == null) {
 				throw new NullPointerException("commandIds[" + i + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		fCommandIds= new String[commandIds.length];
 		System.arraycopy(commandIds, 0, fCommandIds, 0, commandIds.length);
@@ -158,8 +161,9 @@ public final class CompoundEditExitStrategy {
 	 */
 	public void arm(ITextViewer viewer) {
 		disarm();
-		if (viewer == null)
+		if (viewer == null) {
 			throw new NullPointerException("editor"); //$NON-NLS-1$
+		}
 		fViewer= viewer;
 		addListeners(fViewer);
 	}
@@ -189,14 +193,16 @@ public final class CompoundEditExitStrategy {
 		}
 
 		ICommandService commandService= PlatformUI.getWorkbench().getAdapter(ICommandService.class);
-		if (commandService != null)
+		if (commandService != null) {
 			commandService.addExecutionListener(fEventListener);
+		}
 	}
 
 	private void removeListeners() {
 		ICommandService commandService= PlatformUI.getWorkbench().getAdapter(ICommandService.class);
-		if (commandService != null)
+		if (commandService != null) {
 			commandService.removeExecutionListener(fEventListener);
+		}
 
 		if (fWidgetEventSource != null) {
 			fWidgetEventSource.removeFocusListener(fEventListener);

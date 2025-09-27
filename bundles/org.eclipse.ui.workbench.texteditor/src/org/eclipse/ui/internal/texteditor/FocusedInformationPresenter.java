@@ -47,9 +47,9 @@ public class FocusedInformationPresenter extends InformationPresenter {
 	 */
 	public final static class InformationProvider implements IInformationProvider, IInformationProviderExtension, IInformationProviderExtension2 {
 
-		private IRegion fHoverRegion;
-		private Object fHoverInfo;
-		private IInformationControlCreator fControlCreator;
+		private final IRegion fHoverRegion;
+		private final Object fHoverInfo;
+		private final IInformationControlCreator fControlCreator;
 
 		public InformationProvider(IRegion hoverRegion, Object hoverInfo, IInformationControlCreator controlCreator) {
 			fHoverRegion= hoverRegion;
@@ -125,8 +125,9 @@ public class FocusedInformationPresenter extends InformationPresenter {
 			Object hoverInfo;
 			if (annotationHover instanceof IAnnotationHoverExtension extension) {
 				ILineRange hoverLineRange= extension.getHoverLineRange(fSourceViewer, line);
-				if (hoverLineRange == null)
+				if (hoverLineRange == null) {
 					return false;
+				}
 				final int maxVisibleLines= Integer.MAX_VALUE; // allow any number of lines being displayed, as we support scrolling
 				hoverInfo= extension.getHoverInfo(fSourceViewer, hoverLineRange, maxVisibleLines);
 			} else {
@@ -139,10 +140,11 @@ public class FocusedInformationPresenter extends InformationPresenter {
 			String contentType= TextUtilities.getContentType(document, fSourceViewerConfiguration.getConfiguredDocumentPartitioning(fSourceViewer), offset, true);
 
 			IInformationControlCreator controlCreator= null;
-			if (annotationHover instanceof IInformationProviderExtension2) // this is undocumented, but left here for backwards compatibility
+			if (annotationHover instanceof IInformationProviderExtension2) { // this is undocumented, but left here for backwards compatibility
 				controlCreator= ((IInformationProviderExtension2) annotationHover).getInformationPresenterControlCreator();
-			else if (annotationHover instanceof IAnnotationHoverExtension)
+			} else if (annotationHover instanceof IAnnotationHoverExtension) {
 				controlCreator= ((IAnnotationHoverExtension) annotationHover).getHoverControlCreator();
+			}
 
 			IInformationProvider informationProvider= new InformationProvider(new Region(offset, 0), hoverInfo, controlCreator);
 

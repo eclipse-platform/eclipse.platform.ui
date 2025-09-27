@@ -58,8 +58,9 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 		fIsRulerAction= isRulerAction;
 
 		ISelectionProvider selectionProvider= editor.getSelectionProvider();
-		if (selectionProvider instanceof IPostSelectionProvider)
+		if (selectionProvider instanceof IPostSelectionProvider) {
 			((IPostSelectionProvider)selectionProvider).addPostSelectionChangedListener(this);
+		}
 	}
 
 	/**
@@ -73,14 +74,17 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
-		if (editor == null || !validateEditorInputState())
+		if (editor == null || !validateEditorInputState()) {
 			return;
+		}
 		IRewriteTarget target= editor.getAdapter(IRewriteTarget.class);
-		if (target != null)
+		if (target != null) {
 			target.beginCompoundChange();
+		}
 		runCompoundChange();
-		if (target != null)
+		if (target != null) {
 			target.endCompoundChange();
+		}
 
 	}
 
@@ -107,11 +111,13 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 	 *         if it is not
 	 */
 	protected boolean computeEnablement() {
-		if (!super.isEnabled())
+		if (!super.isEnabled()) {
 			return false;
+		}
 
-		if (!canModifyEditor())
+		if (!canModifyEditor()) {
 			return false;
+		}
 
 		fLastLine= computeLine(fIsRulerAction);
 		return true;
@@ -123,14 +129,17 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 	 * @return the editor's selection, or <code>null</code>
 	 */
 	protected ITextSelection getSelection() {
-		if (getTextEditor() == null)
+		if (getTextEditor() == null) {
 			return null;
+		}
 		ISelectionProvider sp= getTextEditor().getSelectionProvider();
-		if (sp == null)
+		if (sp == null) {
 			return null;
+		}
 		ISelection s= sp.getSelection();
-		if (s instanceof ITextSelection)
+		if (s instanceof ITextSelection) {
 			return (ITextSelection)s;
+		}
 		return null;
 	}
 
@@ -155,16 +164,18 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 		int lastLine;
 		if (useRulerInfo) {
 			IVerticalRulerInfo ruler= getRuler();
-			if (ruler == null)
+			if (ruler == null) {
 				lastLine= -1;
-			else
+			} else {
 				lastLine= ruler.getLineOfLastMouseButtonActivity();
+			}
 		} else {
 			ITextSelection selection= getSelection();
-			if (selection == null)
+			if (selection == null) {
 				lastLine= -1;
-			else
+			} else {
 				lastLine= selection.getEndLine();
+			}
 		}
 		return lastLine;
 	}
@@ -176,13 +187,15 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 	 * @return the displayed document's annotation model if it is an <code>IAnnotationModelExtension</code>, or <code>null</code>
 	 */
 	private IAnnotationModelExtension getModel() {
-		if (getTextEditor() == null)
+		if (getTextEditor() == null) {
 			return null;
+		}
 		IDocumentProvider provider= getTextEditor().getDocumentProvider();
 		IEditorInput editorInput= getTextEditor().getEditorInput();
 		IAnnotationModel m= provider.getAnnotationModel(editorInput);
-		if (m instanceof IAnnotationModelExtension)
+		if (m instanceof IAnnotationModelExtension) {
 			return (IAnnotationModelExtension)m;
+		}
 		return null;
 	}
 
@@ -194,8 +207,9 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 	 */
 	protected ILineDiffer getDiffer() {
 		IAnnotationModelExtension extension= getModel();
-		if (extension != null)
+		if (extension != null) {
 			return (ILineDiffer)extension.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
+		}
 		return null;
 	}
 
@@ -205,8 +219,9 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 	 * @return the <code>IVerticalRulerInfo</code> for the editor's vertical ruler, or <code>null</code>
 	 */
 	protected IVerticalRulerInfo getRuler() {
-		if (getTextEditor() != null)
+		if (getTextEditor() != null) {
 			return getTextEditor().getAdapter(IVerticalRulerInfo.class);
+		}
 		return null;
 	}
 

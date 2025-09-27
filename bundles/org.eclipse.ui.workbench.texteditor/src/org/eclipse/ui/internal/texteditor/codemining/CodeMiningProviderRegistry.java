@@ -89,8 +89,9 @@ public class CodeMiningProviderRegistry {
 	 * Ensures the extensions have been loaded at least once.
 	 */
 	private void ensureExtensionsLoaded() {
-		if (!fLoaded)
+		if (!fLoaded) {
 			reloadExtensions();
+		}
 	}
 
 	/**

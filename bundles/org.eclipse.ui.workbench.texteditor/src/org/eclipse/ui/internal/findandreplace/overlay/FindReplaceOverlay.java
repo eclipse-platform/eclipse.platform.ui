@@ -83,7 +83,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
 public class FindReplaceOverlay {
-	private final class KeyboardShortcuts {
+	private static final class KeyboardShortcuts {
 		private static final List<KeyStroke> SEARCH_FORWARD = List.of( //
 				KeyStroke.getInstance(SWT.CR), KeyStroke.getInstance(SWT.KEYPAD_CR));
 		private static final List<KeyStroke> SEARCH_BACKWARD = List.of( //
@@ -154,7 +154,7 @@ public class FindReplaceOverlay {
 	private ControlDecoration searchBarDecoration;
 	private ContentAssistCommandAdapter contentAssistSearchField, contentAssistReplaceField;
 
-	private FocusListener targetActionActivationHandling = new FocusListener() {
+	private final FocusListener targetActionActivationHandling = new FocusListener() {
 		private DeactivateGlobalActionHandlers globalActionHandlerDeaction;
 
 		@Override
@@ -348,7 +348,7 @@ public class FindReplaceOverlay {
 		searchBar.storeHistory();
 	}
 
-	private ControlListener targetMovementListener = ControlListener
+	private final ControlListener targetMovementListener = ControlListener
 			.controlResizedAdapter(__ -> asyncExecIfOpen(FindReplaceOverlay.this::updatePlacementAndVisibility));
 
 	private void asyncExecIfOpen(Runnable operation) {
@@ -361,12 +361,12 @@ public class FindReplaceOverlay {
 		}
 	}
 
-	private FocusListener targetFocusListener = FocusListener.focusGainedAdapter(__ ->  {
+	private final FocusListener targetFocusListener = FocusListener.focusGainedAdapter(__ ->  {
 			removeSearchScope();
 			searchBar.storeHistory();
 	});
 
-	private KeyListener closeOnTargetEscapeListener = KeyListener.keyPressedAdapter(c -> {
+	private final KeyListener closeOnTargetEscapeListener = KeyListener.keyPressedAdapter(c -> {
 		if (c.keyCode == SWT.ESC) {
 			this.close();
 		}
@@ -382,8 +382,9 @@ public class FindReplaceOverlay {
 		IDialogSettings settings = PlatformUI
 				.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceAction.class)).getDialogSettings();
 		IDialogSettings dialogSettings = settings.getSection(FindReplaceAction.class.getClass().getName());
-		if (dialogSettings == null)
+		if (dialogSettings == null) {
 			dialogSettings = settings.addNewSection(FindReplaceAction.class.getClass().getName());
+		}
 		return dialogSettings;
 	}
 
@@ -515,7 +516,7 @@ public class FindReplaceOverlay {
 	 * A composite with a fixed background color, not adapting to theming.
 	 */
 	private class FixedColorComposite extends Composite {
-		private Color fixColor;
+		private final Color fixColor;
 
 		public FixedColorComposite(Composite parent, int style, Color backgroundColor) {
 			super(parent, style);

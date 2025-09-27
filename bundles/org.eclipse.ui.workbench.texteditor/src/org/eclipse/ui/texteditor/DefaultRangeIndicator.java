@@ -23,7 +23,6 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Control;
@@ -67,16 +66,18 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 		int h= bounds.height;
 		int b= 1;
 
-		if (y + h > canvasSize.y)
+		if (y + h > canvasSize.y) {
 			h= canvasSize.y - y;
+		}
 
 		if (y < 0) {
 			h= h + y;
 			y= 0;
 		}
 
-		if (h <= 0)
+		if (h <= 0) {
 			return;
+		}
 
 		Color currentRangeIndicatorColor= JFaceResources.getColorRegistry().get(RANGE_INDICATOR_COLOR);
 		Image image= getImage(canvas, currentRangeIndicatorColor);
@@ -168,7 +169,6 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 	 * @return the new color palette data
 	 */
 	private static PaletteData createPalette(Display display, Color rangeIndicatorColor) {
-		return new PaletteData(new RGB[] { rangeIndicatorColor.getRGB(),
-				display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB() });
+		return new PaletteData(rangeIndicatorColor.getRGB(), display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
 	}
 }

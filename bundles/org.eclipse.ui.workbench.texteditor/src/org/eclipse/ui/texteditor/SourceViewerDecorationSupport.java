@@ -195,13 +195,13 @@ public class SourceViewerDecorationSupport {
 
 
 	/** The viewer */
-	private ISourceViewer fSourceViewer;
+	private final ISourceViewer fSourceViewer;
 	/** The viewer's overview ruler */
 	private IOverviewRuler fOverviewRuler;
 	/** The annotation access */
-	private IAnnotationAccess fAnnotationAccess;
+	private final IAnnotationAccess fAnnotationAccess;
 	/** The shared color manager */
-	private ISharedTextColors fSharedTextColors;
+	private final ISharedTextColors fSharedTextColors;
 
 	/** The editor's line painter */
 	private CursorLinePainter fCursorLinePainter;
@@ -217,7 +217,7 @@ public class SourceViewerDecorationSupport {
 	private String fInlineAnnotationColorKey;
 
 	/** Map with annotation type preference per annotation type */
-	private Map<Object, AnnotationPreference> fAnnotationTypeKeyMap= new LinkedHashMap<>();
+	private final Map<Object, AnnotationPreference> fAnnotationTypeKeyMap= new LinkedHashMap<>();
 	/** Preference key for the cursor line highlighting */
 	private String fCursorLinePainterEnableKey;
 	/** Preference key for the cursor line background color */
@@ -281,31 +281,36 @@ public class SourceViewerDecorationSupport {
 	private void updateTextDecorations() {
 
 		StyledText widget= fSourceViewer.getTextWidget();
-		if (widget == null || widget.isDisposed())
+		if (widget == null || widget.isDisposed()) {
 			return;
+		}
 
-		if (areMatchingCharactersShown())
+		if (areMatchingCharactersShown()) {
 			showMatchingCharacters();
-		else
+		} else {
 			hideMatchingCharacters();
+		}
 
-		if (isCursorLineShown())
+		if (isCursorLineShown()) {
 			showCursorLine();
-		else
+		} else {
 			hideCursorLine();
+		}
 
-		if (isMarginShown())
+		if (isMarginShown()) {
 			showMargin();
-		else
+		} else {
 			hideMargin();
+		}
 
 		Iterator<Object> e= fAnnotationTypeKeyMap.keySet().iterator();
 		while (e.hasNext()) {
 			Object type= e.next();
-			if (areAnnotationsHighlighted(type) || areAnnotationsShown(type))
+			if (areAnnotationsHighlighted(type) || areAnnotationsShown(type)) {
 				showAnnotations(type, false);
-			else
+			} else {
 				hideAnnotations(type, false);
+			}
 
 		}
 		updateAnnotationPainter();
@@ -320,15 +325,17 @@ public class SourceViewerDecorationSupport {
 	 * @since 3.0
 	 */
 	private Object getAnnotationDecorationType(Object annotationType) {
-		if (areAnnotationsHighlighted(annotationType))
+		if (areAnnotationsHighlighted(annotationType)) {
 			return null;
+		}
 
 		if (areAnnotationsShown(annotationType) && fPreferenceStore != null) {
 			AnnotationPreference info= fAnnotationTypeKeyMap.get(annotationType);
 			if (info != null) {
 				String key= info.getTextStylePreferenceKey();
-				if (key != null)
+				if (key != null) {
 					return fPreferenceStore.getString(key);
+				}
 				// legacy
 				return AnnotationPreference.STYLE_SQUIGGLES;
 			}
@@ -344,10 +351,11 @@ public class SourceViewerDecorationSupport {
 			Iterator<Object> e= fAnnotationTypeKeyMap.keySet().iterator();
 			while (e.hasNext()) {
 				Object type= e.next();
-				if (isAnnotationOverviewShown(type))
+				if (isAnnotationOverviewShown(type)) {
 					showAnnotationOverview(type, false);
-				else
+				} else {
 					hideAnnotationOverview(type, false);
+				}
 			}
 			fOverviewRuler.update();
 		}
@@ -388,8 +396,9 @@ public class SourceViewerDecorationSupport {
 		fCursorLinePainter= null;
 		fMarginPainter= null;
 
-		if (fAnnotationTypeKeyMap != null)
+		if (fAnnotationTypeKeyMap != null) {
 			fAnnotationTypeKeyMap.clear();
+		}
 	}
 
 	/**
@@ -511,8 +520,9 @@ public class SourceViewerDecorationSupport {
 		Iterator<AnnotationPreference> e= fAnnotationTypeKeyMap.values().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference info= e.next();
-			if (info != null && info.isPreferenceKey(preferenceKey))
+			if (info != null && info.isPreferenceKey(preferenceKey)) {
 				return info;
+			}
 		}
 		return null;
 	}
@@ -526,10 +536,11 @@ public class SourceViewerDecorationSupport {
 		String p= event.getProperty();
 
 		if (fMatchingCharacterPainterEnableKey != null && fMatchingCharacterPainterEnableKey.equals(p) && fCharacterPairMatcher != null) {
-			if (areMatchingCharactersShown())
+			if (areMatchingCharactersShown()) {
 				showMatchingCharacters();
-			else
+			} else {
 				hideMatchingCharacters();
+			}
 			return;
 		}
 
@@ -558,10 +569,11 @@ public class SourceViewerDecorationSupport {
 		}
 
 		if (fCursorLinePainterEnableKey != null && fCursorLinePainterEnableKey.equals(p)) {
-			if (isCursorLineShown())
+			if (isCursorLineShown()) {
 				showCursorLine();
-			else
+			} else {
 				hideCursorLine();
+			}
 			return;
 		}
 
@@ -574,10 +586,11 @@ public class SourceViewerDecorationSupport {
 		}
 
 		if (fMarginPainterEnableKey != null && fMarginPainterEnableKey.equals(p)) {
-			if (isMarginShown())
+			if (isMarginShown()) {
 				showMargin();
-			else
+			} else {
 				hideMargin();
+			}
 			return;
 		}
 
@@ -613,18 +626,20 @@ public class SourceViewerDecorationSupport {
 			Object type= info.getAnnotationType();
 			if ((info.getTextPreferenceKey().equals(p) || info.getTextStylePreferenceKey() != null && info.getTextStylePreferenceKey().equals(p)) ||
 					(info.getHighlightPreferenceKey() != null && info.getHighlightPreferenceKey().equals(p))) {
-				if (areAnnotationsHighlighted(type) || areAnnotationsShown(type))
+				if (areAnnotationsHighlighted(type) || areAnnotationsShown(type)) {
 					showAnnotations(type, true);
-				else
+				} else {
 					hideAnnotations(type, true);
+				}
 				return;
 			}
 
 			if (info.getOverviewRulerPreferenceKey().equals(p)) {
-				if (isAnnotationOverviewShown(info.getAnnotationType()))
+				if (isAnnotationOverviewShown(info.getAnnotationType())) {
 					showAnnotationOverview(info.getAnnotationType(), true);
-				else
+				} else {
 					hideAnnotationOverview(info.getAnnotationType(), true);
+				}
 				return;
 			}
 		}
@@ -671,8 +686,9 @@ public class SourceViewerDecorationSupport {
 	 */
 	private Color getAnnotationTypeColor(Object annotationType) {
 		AnnotationPreference info= fAnnotationTypeKeyMap.get(annotationType);
-		if (info != null)
+		if (info != null) {
 			return getColor( info.getColorPreferenceKey());
+		}
 		return null;
 	}
 
@@ -686,8 +702,9 @@ public class SourceViewerDecorationSupport {
 	 */
 	private int getAnnotationTypeLayer(Object annotationType) {
 		AnnotationPreference info= fAnnotationTypeKeyMap.get(annotationType);
-		if (info != null)
+		if (info != null) {
 			return info.getPresentationLayer();
+		}
 		return 0;
 	}
 
@@ -726,8 +743,9 @@ public class SourceViewerDecorationSupport {
 	 * @return <code>true</code> if the matching characters are shown
 	 */
 	private boolean areMatchingCharactersShown() {
-		if (fPreferenceStore != null && fMatchingCharacterPainterEnableKey != null)
+		if (fPreferenceStore != null && fMatchingCharacterPainterEnableKey != null) {
 			return fPreferenceStore.getBoolean(fMatchingCharacterPainterEnableKey);
+		}
 		return false;
 	}
 
@@ -737,8 +755,9 @@ public class SourceViewerDecorationSupport {
 	 * @return <code>true</code> if character at caret location is shown
 	 */
 	private boolean isCharacterAtCaretLocationShown() {
-		if (fPreferenceStore != null && fMatchingCharacterPainterHighlightCharacterAtCaretLocationKey != null)
+		if (fPreferenceStore != null && fMatchingCharacterPainterHighlightCharacterAtCaretLocationKey != null) {
 			return fPreferenceStore.getBoolean(fMatchingCharacterPainterHighlightCharacterAtCaretLocationKey);
+		}
 		return false;
 	}
 
@@ -748,8 +767,9 @@ public class SourceViewerDecorationSupport {
 	 * @return <code>true</code> if the enclosing peer characters are shown
 	 */
 	private boolean areEnclosingPeerCharactersShown() {
-		if (fPreferenceStore != null && fMatchingCharacterPainterEnclosingPeerCharactersKey != null)
+		if (fPreferenceStore != null && fMatchingCharacterPainterEnclosingPeerCharactersKey != null) {
 			return fPreferenceStore.getBoolean(fMatchingCharacterPainterEnclosingPeerCharactersKey);
+		}
 		return false;
 	}
 
@@ -786,8 +806,9 @@ public class SourceViewerDecorationSupport {
 	 * @return <code>true</code> if the cursor line is shown
 	 */
 	private boolean isCursorLineShown() {
-		if (fPreferenceStore != null && fCursorLinePainterEnableKey != null)
+		if (fPreferenceStore != null && fCursorLinePainterEnableKey != null) {
 			return fPreferenceStore.getBoolean(fCursorLinePainterEnableKey);
+		}
 		return false;
 	}
 
@@ -799,8 +820,9 @@ public class SourceViewerDecorationSupport {
 			if (fSourceViewer instanceof ITextViewerExtension2 extension) {
 				fMarginPainter= new MarginPainter(fSourceViewer);
 				fMarginPainter.setMarginRulerColor(getColor(fMarginPainterColorKey));
-				if (fPreferenceStore != null)
+				if (fPreferenceStore != null) {
 					fMarginPainter.setMarginRulerColumn(fPreferenceStore.getInt(fMarginPainterColumnKey));
+				}
 				extension.addPainter(fMarginPainter);
 			}
 		}
@@ -826,8 +848,9 @@ public class SourceViewerDecorationSupport {
 	 * @return <code>true</code> if the margin is shown
 	 */
 	private boolean isMarginShown() {
-		if (fPreferenceStore != null && fMarginPainterEnableKey != null)
+		if (fPreferenceStore != null && fMarginPainterEnableKey != null) {
 			return fPreferenceStore.getBoolean(fMarginPainterEnableKey);
+		}
 		return false;
 	}
 
@@ -842,21 +865,25 @@ public class SourceViewerDecorationSupport {
 		if (fSourceViewer instanceof ITextViewerExtension2 extension) {
 			if (fAnnotationPainter == null) {
 				fAnnotationPainter= createAnnotationPainter();
-				if (fSourceViewer instanceof ITextViewerExtension4)
+				if (fSourceViewer instanceof ITextViewerExtension4) {
 					((ITextViewerExtension4)fSourceViewer).addTextPresentationListener(fAnnotationPainter);
+				}
 				extension.addPainter(fAnnotationPainter);
-				if (fSourceViewer instanceof ISourceViewerExtension5)
+				if (fSourceViewer instanceof ISourceViewerExtension5) {
 					((ISourceViewerExtension5) fSourceViewer).setCodeMiningAnnotationPainter(fAnnotationPainter);
+				}
 			}
 			fAnnotationPainter.setAnnotationTypeColor(annotationType, getAnnotationTypeColor(annotationType));
 			Object decorationType= getAnnotationDecorationType(annotationType);
-			if (decorationType != null)
+			if (decorationType != null) {
 				fAnnotationPainter.addAnnotationType(annotationType, decorationType);
-			else
+			} else {
 				fAnnotationPainter.addHighlightAnnotationType(annotationType);
+			}
 
-			if (updatePainter)
+			if (updatePainter) {
 				updateAnnotationPainter();
+			}
 		}
 	}
 
@@ -898,16 +925,18 @@ public class SourceViewerDecorationSupport {
 	 * @since 3.0
 	 */
 	private void updateAnnotationPainter() {
-		if (fAnnotationPainter == null)
+		if (fAnnotationPainter == null) {
 			return;
+		}
 
 		fAnnotationPainter.paint(IPainter.CONFIGURATION);
 		if (!fAnnotationPainter.isPaintingAnnotations()) {
 			if (fSourceViewer instanceof ITextViewerExtension2 extension) {
 				extension.removePainter(fAnnotationPainter);
 			}
-			if (fSourceViewer instanceof ITextViewerExtension4)
+			if (fSourceViewer instanceof ITextViewerExtension4) {
 				((ITextViewerExtension4)fSourceViewer).removeTextPresentationListener(fAnnotationPainter);
+			}
 
 			fAnnotationPainter.deactivate(true);
 			fAnnotationPainter.dispose();
@@ -959,8 +988,9 @@ public class SourceViewerDecorationSupport {
 	private boolean areAnnotationsHighlighted(Object annotationType) {
 		if (fPreferenceStore != null) {
 			AnnotationPreference info= fAnnotationTypeKeyMap.get(annotationType);
-			if (info != null)
+			if (info != null) {
 				return info.getHighlightPreferenceKey() != null && fPreferenceStore.getBoolean(info.getHighlightPreferenceKey());
+			}
 		}
 		return false;
 	}
@@ -974,8 +1004,9 @@ public class SourceViewerDecorationSupport {
 	private boolean isAnnotationOverviewShown(Object annotationType) {
 		if (fPreferenceStore != null && fOverviewRuler != null) {
 			AnnotationPreference info= fAnnotationTypeKeyMap.get(annotationType);
-			if (info != null)
+			if (info != null) {
 				return fPreferenceStore.getBoolean(info.getOverviewRulerPreferenceKey());
+			}
 		}
 		return false;
 	}
@@ -991,8 +1022,9 @@ public class SourceViewerDecorationSupport {
 			fOverviewRuler.setAnnotationTypeColor(annotationType, getAnnotationTypeColor(annotationType));
 			fOverviewRuler.setAnnotationTypeLayer(annotationType, getAnnotationTypeLayer(annotationType));
 			fOverviewRuler.addAnnotationType(annotationType);
-			if (update)
+			if (update) {
 				fOverviewRuler.update();
+			}
 		}
 	}
 
@@ -1004,8 +1036,9 @@ public class SourceViewerDecorationSupport {
 	private void hideAnnotationOverview(Object annotationType, boolean update) {
 		if (fOverviewRuler != null) {
 			fOverviewRuler.removeAnnotationType(annotationType);
-			if (update)
+			if (update) {
 				fOverviewRuler.update();
+			}
 		}
 	}
 
@@ -1015,8 +1048,9 @@ public class SourceViewerDecorationSupport {
 	public void hideAnnotationOverview() {
 		if (fOverviewRuler != null) {
 			Iterator<Object> e= fAnnotationTypeKeyMap.keySet().iterator();
-			while (e.hasNext())
+			while (e.hasNext()) {
 				fOverviewRuler.removeAnnotationType(e.next());
+			}
 			fOverviewRuler.update();
 		}
 	}

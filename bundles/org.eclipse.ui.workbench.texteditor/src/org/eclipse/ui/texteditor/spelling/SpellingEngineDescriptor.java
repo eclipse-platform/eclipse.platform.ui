@@ -45,7 +45,7 @@ public class SpellingEngineDescriptor {
 	private static final String PREFERENCES_CLASS_ATTRIBUTE= "preferencesClass"; //$NON-NLS-1$
 
 	/** The configuration element describing this extension. */
-	private IConfigurationElement fConfiguration;
+	private final IConfigurationElement fConfiguration;
 	/** The value of the <code>label</code> attribute, if read. */
 	private String fLabel;
 	/** The value of the <code>id</code> attribute, if read. */
@@ -114,11 +114,13 @@ public class SpellingEngineDescriptor {
 	 *         specified for this engine
 	 */
 	private boolean hasPreferences() {
-		if (fHasPreferences == null)
-			if (fConfiguration.getAttribute(PREFERENCES_CLASS_ATTRIBUTE) == null)
+		if (fHasPreferences == null) {
+			if (fConfiguration.getAttribute(PREFERENCES_CLASS_ATTRIBUTE) == null) {
 				fHasPreferences= Boolean.FALSE;
-			else
+			} else {
 				fHasPreferences= Boolean.TRUE;
+			}
+		}
 		return fHasPreferences.booleanValue();
 	}
 
@@ -129,8 +131,9 @@ public class SpellingEngineDescriptor {
 	 * @throws CoreException if the creation failed
 	 */
 	public ISpellingPreferenceBlock createPreferences() throws CoreException {
-		if (hasPreferences())
+		if (hasPreferences()) {
 			return (ISpellingPreferenceBlock) fConfiguration.createExecutableExtension(PREFERENCES_CLASS_ATTRIBUTE);
+		}
 		return new EmptySpellingPreferenceBlock();
 	}
 
@@ -140,8 +143,9 @@ public class SpellingEngineDescriptor {
 	 * @return <code>true</code> if the extension point's plug-in has been loaded, <code>false</code> otherwise.
 	 */
 	public boolean isPluginLoaded() {
-		if (fBundle == null)
+		if (fBundle == null) {
 			fBundle= Platform.getBundle(fConfiguration.getContributor().getName());
+		}
 		return (fBundle != null && fBundle.getState() == Bundle.ACTIVE);
 	}
 
@@ -153,10 +157,11 @@ public class SpellingEngineDescriptor {
 	public boolean isDefault() {
 		if (fDefault == null) {
 			String def= fConfiguration.getAttribute(DEFAULT_ATTRIBUTE);
-			if ("true".equalsIgnoreCase(def)) //$NON-NLS-1$
+			if ("true".equalsIgnoreCase(def)) { //$NON-NLS-1$
 				fDefault= Boolean.TRUE;
-			else
+			} else {
 				fDefault= Boolean.FALSE;
+			}
 		}
 		return fDefault.booleanValue();
 	}

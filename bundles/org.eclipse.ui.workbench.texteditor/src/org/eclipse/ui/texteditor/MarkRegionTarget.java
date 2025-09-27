@@ -52,8 +52,9 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 	@Override
 	public void setMarkAtCursor(boolean set) {
 
-		if (!(fViewer instanceof ITextViewerExtension viewerExtension))
+		if (!(fViewer instanceof ITextViewerExtension viewerExtension)) {
 			return;
+		}
 
 		if (set) {
 			Point selection= fViewer.getSelectedRange();
@@ -73,8 +74,9 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 	@Override
 	public void swapMarkAndCursor() {
 
-		if (!(fViewer instanceof ITextViewerExtension viewerExtension))
+		if (!(fViewer instanceof ITextViewerExtension viewerExtension)) {
 			return;
+		}
 
 		int markPosition= viewerExtension.getMark();
 		if (markPosition == -1) {

@@ -209,13 +209,15 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		try {
 			String prefix= getPrefix(viewer, offset);
-			if (prefix == null || prefix.isEmpty())
+			if (prefix == null || prefix.isEmpty()) {
 				return NO_PROPOSALS;
+			}
 
 			List<ICompletionProposal> result= new ArrayList<>();
 			for (String string : getSuggestions(viewer, offset, prefix)) {
-				if (!string.isEmpty())
+				if (!string.isEmpty()) {
 					result.add(createProposal(string, prefix, offset));
+				}
 			}
 
 			return result.toArray(new ICompletionProposal[result.size()]);
@@ -228,12 +230,14 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 
 	private String getPrefix(ITextViewer viewer, int offset) throws BadLocationException {
 		IDocument doc= viewer.getDocument();
-		if (doc == null || offset > doc.getLength())
+		if (doc == null || offset > doc.getLength()) {
 			return null;
+		}
 
 		int length= 0;
-		while (--offset >= 0 && Character.isJavaIdentifierPart(doc.getChar(offset)))
+		while (--offset >= 0 && Character.isJavaIdentifierPart(doc.getChar(offset))) {
 			length++;
+		}
 
 		return doc.get(offset + 1, length);
 	}

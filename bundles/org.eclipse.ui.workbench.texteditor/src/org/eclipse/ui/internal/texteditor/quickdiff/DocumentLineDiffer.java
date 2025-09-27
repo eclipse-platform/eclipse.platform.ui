@@ -176,11 +176,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	private boolean fUpdateNeeded;
 	/** The listeners on this annotation model. */
-	private List<IAnnotationModelListener> fAnnotationModelListeners= new ArrayList<>();
+	private final List<IAnnotationModelListener> fAnnotationModelListeners= new ArrayList<>();
 	/** The job currently initializing the differ, or <code>null</code> if there is none. */
 	private Job fInitializationJob;
 	/** Stores <code>DocumentEvents</code> while an initialization is going on. */
-	private List<DocumentEvent> fStoredEvents= new ArrayList<>();
+	private final List<DocumentEvent> fStoredEvents= new ArrayList<>();
 	/**
 	 * The differences between <code>fLeftDocument</code> and <code>fRightDocument</code>.
 	 * This is the model we work on.
@@ -190,17 +190,17 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * The differences removed in one iteration. Stored to be able to send out differentiated
 	 * annotation events.
 	 */
-	private List<QuickDiffRangeDifference> fRemoved= new ArrayList<>();
+	private final List<QuickDiffRangeDifference> fRemoved= new ArrayList<>();
 	/**
 	 * The differences added in one iteration. Stored to be able to send out differentiated
 	 * annotation events.
 	 */
-	private List<QuickDiffRangeDifference> fAdded= new ArrayList<>();
+	private final List<QuickDiffRangeDifference> fAdded= new ArrayList<>();
 	/**
 	 * The differences changed in one iteration. Stored to be able to send out differentiated
 	 * annotation events.
 	 */
-	private List<QuickDiffRangeDifference> fChanged= new ArrayList<>();
+	private final List<QuickDiffRangeDifference> fChanged= new ArrayList<>();
 	/** The first line affected by a document event. */
 	private int fFirstLine;
 	/** The number of lines affected by a document event. */
@@ -229,8 +229,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		@Override
 		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
-			if (event.getSession().getSessionType() == DocumentRewriteSessionType.UNRESTRICTED_SMALL)
+			if (event.getSession().getSessionType() == DocumentRewriteSessionType.UNRESTRICTED_SMALL) {
 				return;
+			}
 			if (DocumentRewriteSessionEvent.SESSION_START.equals(event.getChangeType())) {
 				fResumeOnRewriteSessionStop = !isSuspended();
 				suspend();
@@ -247,7 +248,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	private Thread fThread;
 	private DocumentEvent fLastUIEvent;
 
-	private RangeDifferenceFactory fRangeDiffFactory= new RangeDifferenceFactory();
+	private final RangeDifferenceFactory fRangeDiffFactory= new RangeDifferenceFactory();
 
 
 	/**
@@ -261,30 +262,35 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	@Override
 	public ILineDiffInfo getLineInfo(int line) {
 
-		if (isSuspended())
+		if (isSuspended()) {
 			return fLineChangeInfo;
+		}
 
 		// try cache first / speeds up linear search
 		QuickDiffRangeDifference last= fLastDifference;
-		if (last != null && last.rightStart() <= line && last.rightEnd() > line)
+		if (last != null && last.rightStart() <= line && last.rightEnd() > line) {
 			return new DiffRegion(last, line - last.rightStart(), fDifferences, fLeftDocument);
+		}
 
 		fLastDifference= getRangeDifferenceForRightLine(line);
 		last= fLastDifference;
-		if (last != null)
+		if (last != null) {
 			return new DiffRegion(last, line - last.rightStart(), fDifferences, fLeftDocument);
+		}
 
 		return null;
 	}
 
 	@Override
 	public synchronized void revertLine(int line) throws BadLocationException {
-		if (!isInitialized())
+		if (!isInitialized()) {
 			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized);
+		}
 
 		DiffRegion region= (DiffRegion) getLineInfo(line);
-		if (region == null || fRightDocument == null || fLeftDocument == null)
+		if (region == null || fRightDocument == null || fLeftDocument == null) {
 			return;
+		}
 
 		QuickDiffRangeDifference diff= region.getDifference();
 		int rOffset= fRightDocument.getLineOffset(line);
@@ -296,9 +302,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 		int leftLine= diff.leftStart() + region.getOffset();
 		String replacement;
-		if (leftLine >= diff.leftEnd()) // restoring a deleted line?
+		if (leftLine >= diff.leftEnd()) { // restoring a deleted line?
 			replacement= ""; //$NON-NLS-1$
-		else {
+		} else {
 			int lOffset= fLeftDocument.getLineOffset(leftLine);
 			int lLength= fLeftDocument.getLineLength(leftLine);
 			replacement= fLeftDocument.get(lOffset, lLength);
@@ -308,21 +314,23 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 	@Override
 	public synchronized void revertBlock(int line) throws BadLocationException {
-		if (!isInitialized())
+		if (!isInitialized()) {
 			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized);
+		}
 
 		DiffRegion region= (DiffRegion) getLineInfo(line);
-		if (region == null || fRightDocument == null || fLeftDocument == null)
+		if (region == null || fRightDocument == null || fLeftDocument == null) {
 			return;
+		}
 
 		QuickDiffRangeDifference diff= region.getDifference();
 		int rOffset= fRightDocument.getLineOffset(diff.rightStart());
 		int rLength= fRightDocument.getLineOffset(diff.rightEnd() - 1) + fRightDocument.getLineLength(diff.rightEnd() - 1) - rOffset;
 		int leftStartLine= diff.leftStart();
 		int lOffset;
-		if (leftStartLine < fLeftDocument.getNumberOfLines())
+		if (leftStartLine < fLeftDocument.getNumberOfLines()) {
 			lOffset= fLeftDocument.getLineOffset(leftStartLine);
-		else {
+		} else {
 			lOffset= fLeftDocument.getLineOffset(leftStartLine - 1) + fLeftDocument.getLineLength(leftStartLine - 1);
 			String lineDelim= fRightDocument.getLineDelimiter(diff.leftEnd());
 			int lineDelimLength= lineDelim != null ? lineDelim.length() : 0;
@@ -332,21 +340,24 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		int leftEndLine= diff.leftEnd();
 		int lLength;
-		if (leftEndLine > 0)
+		if (leftEndLine > 0) {
 			lLength= fLeftDocument.getLineOffset(diff.leftEnd() - 1) + fLeftDocument.getLineLength(diff.leftEnd() - 1) - lOffset;
-		else
+		} else {
 			lLength= fLeftDocument.getLength() - lOffset;
+		}
 
 		fRightDocument.replace(rOffset, rLength, fLeftDocument.get(lOffset, lLength));
 	}
 
 	@Override
 	public synchronized void revertSelection(int line, int nLines) throws BadLocationException {
-		if (!isInitialized())
+		if (!isInitialized()) {
 			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized);
+		}
 
-		if (fRightDocument == null || fLeftDocument == null)
+		if (fRightDocument == null || fLeftDocument == null) {
 			return;
+		}
 
 		int rOffset= -1, rLength= -1, lOffset= -1, lLength= -1;
 		QuickDiffRangeDifference diff= null;
@@ -365,8 +376,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				}
 			}
 
-			if (rOffset == -1 || lOffset == -1)
+			if (rOffset == -1 || lOffset == -1) {
 				return;
+			}
 
 			// get end / length
 			int to= line + nLines - 1;
@@ -383,23 +395,27 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			}
 		}
 
-		if (rLength == -1 || lLength == -1)
+		if (rLength == -1 || lLength == -1) {
 			return;
+		}
 
 		fRightDocument.replace(rOffset, rLength, fLeftDocument.get(lOffset, lLength));
 	}
 
 	@Override
 	public synchronized int restoreAfterLine(int line) throws BadLocationException {
-		if (!isInitialized())
+		if (!isInitialized()) {
 			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized);
+		}
 
 		DiffRegion region= (DiffRegion) getLineInfo(line);
-		if (region == null || fRightDocument == null || fLeftDocument == null)
+		if (region == null || fRightDocument == null || fLeftDocument == null) {
 			return 0;
+		}
 
-		if (region.getRemovedLinesBelow() < 1)
+		if (region.getRemovedLinesBelow() < 1) {
 			return 0;
+		}
 
 		QuickDiffRangeDifference diff= null;
 		final List<QuickDiffRangeDifference> differences= fDifferences;
@@ -407,15 +423,17 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			for (Iterator<QuickDiffRangeDifference> it= differences.iterator(); it.hasNext();) {
 				diff= it.next();
 				if (line >= diff.rightStart() && line < diff.rightEnd()) {
-					if (diff.kind() == RangeDifference.NOCHANGE && it.hasNext())
+					if (diff.kind() == RangeDifference.NOCHANGE && it.hasNext()) {
 						diff= it.next();
+					}
 					break;
 				}
 			}
 		}
 
-		if (diff == null)
+		if (diff == null) {
 			return 0;
+		}
 
 		int rOffset= fRightDocument.getLineOffset(diff.rightEnd());
 		int rLength= 0;
@@ -464,8 +482,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	public void setReferenceProvider(IQuickDiffReferenceProvider provider) {
 		Assert.isNotNull(provider);
 		if (provider != fReferenceProvider) {
-			if (fReferenceProvider != null)
+			if (fReferenceProvider != null) {
 				fReferenceProvider.dispose();
+			}
 			fReferenceProvider= provider;
 			initialize();
 		}
@@ -489,8 +508,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// make new incoming changes go into the queue of stored events, plus signal we can't restore.
 		fState= INITIALIZING;
 
-		if (fRightDocument == null)
+		if (fRightDocument == null) {
 			return;
+		}
 
 		// there is no point in receiving updates before the job we get a new copy of the document for diffing
 		fIgnoreDocumentEvents= true;
@@ -525,13 +545,14 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 				// 1:	wait for any previous job that was canceled to avoid job flooding
 				// It will return relatively quickly as RangeDifferencer supports canceling
-				if (oldJob != null)
+				if (oldJob != null) {
 					try {
 						oldJob.join();
 					} catch (InterruptedException e) {
 						// will not happen as no one interrupts our thread
 						Assert.isTrue(false);
 					}
+				}
 
 
 				// 2:	get the reference document
@@ -541,8 +562,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					left= provider == null ? null : provider.getReference(monitor);
 				} catch (CoreException e) {
 					synchronized (DocumentLineDiffer.this) {
-						if (isCanceled(monitor))
+						if (isCanceled(monitor)) {
 							return Status.CANCEL_STATUS;
+						}
 
 						clearModel();
 						fireModelChanged();
@@ -564,8 +586,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				synchronized (DocumentLineDiffer.this) {
 					// 4: take an early exit if the documents are not valid
 					if (left == null || right == null) {
-						if (isCanceled(monitor))
+						if (isCanceled(monitor)) {
 							return Status.CANCEL_STATUS;
+						}
 
 						clearModel();
 						fireModelChanged();
@@ -585,22 +608,25 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				// create the reference copy - note that any changes on the
 				// reference will trigger re-initialization anyway
 				reference= createCopy(left);
-				if (reference == null)
+				if (reference == null) {
 					return Status.CANCEL_STATUS;
+				}
 
 				// create the actual copy
 
 				Object lock= null;
-				if (right instanceof ISynchronizable)
+				if (right instanceof ISynchronizable) {
 					lock= ((ISynchronizable) right).getLockObject();
+				}
 
 				if (lock != null) {
 					// a) if we can, acquire locks in proper order and copy
 					// the document
 					synchronized (lock) {
 						synchronized (DocumentLineDiffer.this) {
-							if (isCanceled(monitor))
+							if (isCanceled(monitor)) {
 								return Status.CANCEL_STATUS;
+							}
 							fStoredEvents.clear();
 							actual= createUnprotectedCopy(right);
 						}
@@ -615,12 +641,14 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					int i= 0;
 					do {
 						// this is an arbitrary emergency exit in case a referenced document goes nuts
-						if (i++ == 100)
+						if (i++ == 100) {
 							return new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(QuickDiffMessages.quickdiff_error_getting_document_content, new Object[] {left.getClass(), right.getClass()}), null);
+						}
 
 						synchronized (DocumentLineDiffer.this) {
-							if (isCanceled(monitor))
+							if (isCanceled(monitor)) {
 								return Status.CANCEL_STATUS;
+							}
 
 							fStoredEvents.clear();
 						}
@@ -630,10 +658,12 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 						actual= createCopy(right);
 
 						synchronized (DocumentLineDiffer.this) {
-							if (isCanceled(monitor))
+							if (isCanceled(monitor)) {
 								return Status.CANCEL_STATUS;
-							if (fStoredEvents.isEmpty() && actual != null)
+							}
+							if (fStoredEvents.isEmpty() && actual != null) {
 								break;
+							}
 						}
 					} while (true);
 					Objects.requireNonNull(actual); // fulfilled by break condition
@@ -651,8 +681,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				// 7:	Reset the model to the just gotten differences
 				// 		re-inject stored events to get up to date.
 				synchronized (DocumentLineDiffer.this) {
-					if (isCanceled(monitor))
+					if (isCanceled(monitor)) {
 						return Status.CANCEL_STATUS;
+					}
 
 					// set the new differences so we can operate on them
 					fDifferences= diffs;
@@ -663,8 +694,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					do {
 						DocumentEvent event;
 						synchronized (DocumentLineDiffer.this) {
-							if (isCanceled(monitor))
+							if (isCanceled(monitor)) {
 								return Status.CANCEL_STATUS;
+							}
 
 							if (fStoredEvents.isEmpty()) {
 								// we are back in sync with the life documents
@@ -684,12 +716,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 						// access documents non synchronized:
 						IDocument copy= null;
-						if (event.fDocument == right)
+						if (event.fDocument == right) {
 							copy= actual;
-						else if (event.fDocument == left)
+						} else if (event.fDocument == left) {
 							copy= reference;
-						else
+						} else {
 							Assert.isTrue(false);
+						}
 
 						// copy the event to inject it into our diff copies
 						// don't modify the original event! See https://bugs.eclipse.org/bugs/show_bug.cgi?id=134227
@@ -768,8 +801,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 	@Override
 	public synchronized void documentAboutToBeChanged(DocumentEvent event) {
-		if (fIgnoreDocumentEvents)
+		if (fIgnoreDocumentEvents) {
 			return;
+		}
 
 		if (event.getDocument() == fLeftDocument) { // TODO twoside
 			initialize();
@@ -778,8 +812,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		// if a initialization is going on, we just store the events in the meantime
 		if (!isInitialized()) {
-			if (fInitializationJob != null)
+			if (fInitializationJob != null) {
 				fStoredEvents.add(event);
+			}
 			return;
 		}
 
@@ -822,8 +857,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		IDocument doc= event.getDocument();
 		DocumentEquivalenceClass rightEquivalent= fRightEquivalent;
 
-		if (doc == null || rightEquivalent == null)
+		if (doc == null || rightEquivalent == null) {
 			return;
+		}
 
 		// store size of replaced region (never synchronized -> not a problem)
 		fFirstLine= doc.getLineOfOffset(event.getOffset()); // store change bounding lines
@@ -836,8 +872,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		final Thread lastCurrentThread= fThread;
 		fThread= null;
 
-		if (fIgnoreDocumentEvents)
+		if (fIgnoreDocumentEvents) {
 			return;
+		}
 
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=44692
 		// don't allow incremental update for changes from the reference document
@@ -853,8 +890,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 		fLastUIEvent= null;
 
-		if (!isInitialized())
+		if (!isInitialized()) {
 			return;
+		}
 
 		try {
 			fThread= lastCurrentThread;
@@ -903,8 +941,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @param e the exception thrown, which is logged in debug mode
 	 */
 	private void reinitOnError(Exception e) {
-		if (DEBUG)
+		if (DEBUG) {
 			System.err.println("reinitializing quickdiff:\n" + e.getLocalizedMessage() + "\n" + Arrays.toString(e.getStackTrace()));  //$NON-NLS-1$//$NON-NLS-2$
+		}
 		initialize();
 	}
 
@@ -922,14 +961,16 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		IDocument left= fLeftDocument;
 		DocumentEquivalenceClass leftEquivalent= fLeftEquivalent;
 		DocumentEquivalenceClass rightEquivalent= fRightEquivalent;
-		if (left == null || leftEquivalent == null || rightEquivalent == null)
+		if (left == null || leftEquivalent == null || rightEquivalent == null) {
 			return;
+		}
 
 		// documents: left, right; modified and unchanged are either of both
 		IDocument right= event.getDocument(); // TODO two-side
 		IDocument modified= event.getDocument();
-		if (modified != left && modified != right)
+		if (modified != left && modified != right) {
 			Assert.isTrue(false);
+		}
 
 		boolean leftToRight= modified == left;
 
@@ -974,10 +1015,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		int shiftBefore= 0;
 		if (consistentBefore.kind() == RangeDifference.NOCHANGE) {
 			int unchanged;
-			if (leftToRight)
+			if (leftToRight) {
 				unchanged= Math.min(fFirstLine, consistentBefore.leftEnd()) - consistentBefore.leftStart();
-			else
+			} else {
 				unchanged=  Math.min(fFirstLine, consistentBefore.rightEnd()) - consistentBefore.rightStart();
+			}
 
 			shiftBefore= Math.max(0, unchanged - size);
 		}
@@ -985,10 +1027,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		int shiftAfter= 0;
 		if (consistentAfter.kind() == RangeDifference.NOCHANGE) {
 			int unchanged;
-			if (leftToRight)
+			if (leftToRight) {
 				unchanged= consistentAfter.leftEnd() - Math.max(lastLine + 1, consistentAfter.leftStart());
-			else
+			} else {
 				unchanged= consistentAfter.rightEnd() - Math.max(lastLine + 1, consistentAfter.rightStart());
+			}
 
 			shiftAfter= Math.max(0, unchanged - size);
 		}
@@ -998,8 +1041,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// left (reference) document
 		int leftStartLine= consistentBefore.leftStart() + shiftBefore;
 		int leftLine= consistentAfter.leftEnd();
-		if (leftToRight)
+		if (leftToRight) {
 			leftLine += lineDelta;
+		}
 		int leftEndLine= leftLine - shiftAfter;
 		ILineRange leftRange= new LineRange(leftStartLine, leftEndLine - leftStartLine);
 		IRangeComparator reference= new DocEquivalenceComparator(leftEquivalent, leftRange);
@@ -1007,8 +1051,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// right (actual) document
 		int rightStartLine= consistentBefore.rightStart() + shiftBefore;
 		int rightLine= consistentAfter.rightEnd();
-		if (!leftToRight)
+		if (!leftToRight) {
 			rightLine += lineDelta;
+		}
 		int rightEndLine= rightLine - shiftAfter;
 		ILineRange rightRange= new LineRange(rightStartLine, rightEndLine - rightStartLine);
 		IRangeComparator change= new DocEquivalenceComparator(rightEquivalent, rightRange);
@@ -1039,18 +1084,20 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// undo optimization shifting
 		if (shiftBefore > 0) {
 			QuickDiffRangeDifference first= diffs.get(0);
-			if (first.kind() == RangeDifference.NOCHANGE)
+			if (first.kind() == RangeDifference.NOCHANGE) {
 				first.extendStart(-shiftBefore);
-			else
+			} else {
 				diffs.add(0, new QuickDiffRangeDifference(RangeDifference.NOCHANGE, first.rightStart() - shiftBefore, shiftBefore, first.leftStart() - shiftBefore, shiftBefore));
+			}
 		}
 
 		QuickDiffRangeDifference last= diffs.get(diffs.size() - 1);
 		if (shiftAfter > 0) {
-			if (last.kind() == RangeDifference.NOCHANGE)
+			if (last.kind() == RangeDifference.NOCHANGE) {
 				last.extendEnd(shiftAfter);
-			else
+			} else {
 				diffs.add(new QuickDiffRangeDifference(RangeDifference.NOCHANGE, last.rightEnd(), shiftAfter, last.leftEnd(), shiftAfter));
+			}
 		}
 
 		// replace changed diff range
@@ -1126,10 +1173,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					init= false;
 					leftShift= last.leftEnd() - current.leftStart();
 					rightShift= last.rightEnd() - current.rightStart();
-					if (leftShift != 0 || rightShift != 0)
+					if (leftShift != 0 || rightShift != 0) {
 						changed= true;
-					else
+					} else {
 						break;
+					}
 				}
 //				fChanged.add(current); // not needed since positional shifting is not handled by an annotation model
 				current.shiftLeft(leftShift);
@@ -1169,11 +1217,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			QuickDiffRangeDifference difference= it.next();
 			if (found == null || difference.kind() == RangeDifference.NOCHANGE
 					&& (difference.leftEnd() < line && difference.leftLength() >= size
-							|| difference.leftEnd() >= line && line - difference.leftStart() >= size))
+							|| difference.leftEnd() >= line && line - difference.leftStart() >= size)) {
 				found= difference;
+			}
 
-			if (difference.leftEnd() >= line)
+			if (difference.leftEnd() >= line) {
 				break;
+			}
 		}
 
 		return found;
@@ -1193,11 +1243,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			QuickDiffRangeDifference difference= it.previous();
 			if (found == null || difference.kind() == RangeDifference.NOCHANGE
 					&& (difference.leftStart() > line && difference.leftLength() >= size
-							|| difference.leftStart() <= line && difference.leftEnd() - line >= size))
+							|| difference.leftStart() <= line && difference.leftEnd() - line >= size)) {
 				found= difference;
+			}
 
-			if (difference.leftStart() <= line)
+			if (difference.leftStart() <= line) {
 				break;
+			}
 
 		}
 
@@ -1217,16 +1269,18 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		int unchanged= -1; // the number of unchanged lines before line
 		for (ListIterator<QuickDiffRangeDifference> it= fDifferences.listIterator(); it.hasNext();) {
 			QuickDiffRangeDifference difference= it.next();
-			if (found == null)
+			if (found == null) {
 				found= difference;
-			else if (difference.kind() == RangeDifference.NOCHANGE) {
+			} else if (difference.kind() == RangeDifference.NOCHANGE) {
 				unchanged= Math.min(line, difference.rightEnd()) - difference.rightStart();
-				if (unchanged >= size)
+				if (unchanged >= size) {
 					found= difference;
+				}
 			}
 
-			if (difference.rightEnd() >= line)
+			if (difference.rightEnd() >= line) {
 				break;
+			}
 		}
 
 		return found;
@@ -1245,16 +1299,18 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		int unchanged= -1; // the number of unchanged lines after line
 		for (ListIterator<QuickDiffRangeDifference> it= fDifferences.listIterator(fDifferences.size()); it.hasPrevious();) {
 			QuickDiffRangeDifference difference= it.previous();
-			if (found == null)
+			if (found == null) {
 				found= difference;
-			else if (difference.kind() == RangeDifference.NOCHANGE) {
+			} else if (difference.kind() == RangeDifference.NOCHANGE) {
 				unchanged= difference.rightEnd() - Math.max(line + 1, difference.rightStart()); // + 1 to step over the changed line
-				if (unchanged >= size)
+				if (unchanged >= size) {
 					found= difference;
+				}
 			}
 
-			if (difference.rightStart() <= line)
+			if (difference.rightStart() <= line) {
 				break;
+			}
 		}
 
 		return found;
@@ -1320,10 +1376,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			} else {
 				// no repetition, add if there is room
 				// otherwise return
-				if (window.size() < size)
+				if (window.size() < size) {
 					window.addLast(current);
-				else
+				} else {
 					break;
+				}
 			}
 
 			l++;
@@ -1342,8 +1399,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	private int getLeftLine(int rightLine) {
 		QuickDiffRangeDifference d= getRangeDifferenceForRightLine(rightLine);
-		if (d == null)
+		if (d == null) {
 			return -1;
+		}
 		return Math.min(d.leftEnd() - 1, d.leftStart() + rightLine - d.rightStart());
 	}
 
@@ -1355,8 +1413,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	private int getRightLine(int leftLine) {
 		QuickDiffRangeDifference d= getRangeDifferenceForLeftLine(leftLine);
-		if (d == null)
+		if (d == null) {
 			return -1;
+		}
 		return Math.min(d.rightEnd() - 1, d.rightStart() + leftLine - d.leftStart());
 	}
 
@@ -1424,8 +1483,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		--fOpenConnections;
 
-		if (fOpenConnections == 0)
+		if (fOpenConnections == 0) {
 			uninstall();
+		}
 	}
 
 	/**
@@ -1433,16 +1493,18 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	private void uninstall() {
 		Job job= fInitializationJob;
-		if (job != null)
+		if (job != null) {
 			job.cancel();
+		}
 
 		synchronized (this) {
 			fState= SUSPENDED;
 			fIgnoreDocumentEvents= true;
 			fInitializationJob= null;
 
-			if (fLeftDocument != null)
+			if (fLeftDocument != null) {
 				fLeftDocument.removeDocumentListener(this);
+			}
 			fLeftDocument= null;
 			fLeftEquivalent= null;
 
@@ -1537,25 +1599,29 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		Iterator<IAnnotationModelListener> e= v.iterator();
 		while (e.hasNext()) {
 			IAnnotationModelListener l= e.next();
-			if (l instanceof IAnnotationModelListenerExtension)
-				 ((IAnnotationModelListenerExtension)l).modelChanged(event);
-			else
+			if (l instanceof IAnnotationModelListenerExtension) {
+				((IAnnotationModelListenerExtension)l).modelChanged(event);
+			} else {
 				l.modelChanged(this);
+			}
 		}
 	}
 
 	@Override
 	public void suspend() {
 		Job job= fInitializationJob;
-		if (job != null)
+		if (job != null) {
 			job.cancel();
+		}
 
 		synchronized (this) {
 			fInitializationJob= null;
-			if (fRightDocument != null)
+			if (fRightDocument != null) {
 				fRightDocument.removeDocumentListener(this);
-			if (fLeftDocument != null)
+			}
+			if (fLeftDocument != null) {
 				fLeftDocument.removeDocumentListener(this);
+			}
 			fLeftDocument= null;
 			fLeftEquivalent= null;
 
@@ -1571,8 +1637,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 	@Override
 	public synchronized void resume() {
-		if (fRightDocument != null)
+		if (fRightDocument != null) {
 			fRightDocument.addDocumentListener(this);
+		}
 		initialize();
 	}
 }

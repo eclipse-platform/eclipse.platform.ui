@@ -45,9 +45,9 @@ public class InfoForm {
 	/** The form's root widget */
 	private ScrolledComposite fScrolledComposite;
 	/** The background color */
-	private Color fBackgroundColor;
+	private final Color fBackgroundColor;
 	/** The foreground color */
-	private Color fForegroundColor;
+	private final Color fForegroundColor;
 	/** The separator's color */
 	private Color fSeparatorColor;
 	/** The form header */
@@ -57,7 +57,7 @@ public class InfoForm {
 	/** The form text */
 	private StyledText fText;
 	/** The preference change listener */
-	private IPropertyChangeListener fPropertyChangeListener;
+	private final IPropertyChangeListener fPropertyChangeListener;
 
 	/**
 	 * Creates a new info form.
@@ -155,11 +155,13 @@ public class InfoForm {
 	 */
 	protected void handlePropertyChange(PropertyChangeEvent event) {
 
-		if (fHeader != null)
+		if (fHeader != null) {
 			fHeader.setFont(JFaceResources.getHeaderFont());
+		}
 
-		if (fBanner != null)
+		if (fBanner != null) {
 			fBanner.setFont(JFaceResources.getBannerFont());
+		}
 
 		Control control= fScrolledComposite.getContent();
 		fScrolledComposite.setMinSize(control.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -195,8 +197,9 @@ public class InfoForm {
 		GridData data= new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);
 
-		if (text != null)
+		if (text != null) {
 			label.setText(text);
+		}
 		label.setBackground(fBackgroundColor);
 		label.setForeground(fForegroundColor);
 		return label;
@@ -207,8 +210,9 @@ public class InfoForm {
 		GridData data= new GridData(GridData.FILL_HORIZONTAL);
 		widget.setLayoutData(data);
 
-		if (text != null)
+		if (text != null) {
 			widget.setText(text);
+		}
 		widget.setBackground(fBackgroundColor);
 		widget.setForeground(fForegroundColor);
 		widget.setCaret(null);
@@ -223,8 +227,9 @@ public class InfoForm {
 		GridData data= new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(data);
 
-		if (text != null)
+		if (text != null) {
 			label.setText(text);
+		}
 		label.setBackground(fBackgroundColor);
 		label.setForeground(fForegroundColor);
 		label.setFont(JFaceResources.getHeaderFont());
@@ -236,8 +241,9 @@ public class InfoForm {
 	 */
 	private Label createBanner(Composite parent, String text) {
 		Label label = new Label(parent, SWT.NONE);
-		if (text != null)
+		if (text != null) {
 			label.setText(text);
+		}
 		label.setBackground(fBackgroundColor);
 		label.setForeground(fForegroundColor);
 		label.setFont(JFaceResources.getBannerFont());

@@ -116,14 +116,15 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	 */
 	protected boolean canModifyEditor() {
 		ITextEditor editor= getTextEditor();
-		if (editor instanceof ITextEditorExtension2)
+		if (editor instanceof ITextEditorExtension2) {
 			return ((ITextEditorExtension2) editor).isEditorInputModifiable();
-		else if (editor instanceof ITextEditorExtension)
+		} else if (editor instanceof ITextEditorExtension) {
 			return !((ITextEditorExtension) editor).isEditorInputReadOnly();
-		else if (editor != null)
+		} else if (editor != null) {
 			return editor.isEditable();
-		else
+		} else {
 			return false;
+		}
 	}
 
 	/**
@@ -143,13 +144,14 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	 */
 	protected boolean validateEditorInputState() {
 		ITextEditor editor= getTextEditor();
-		if (editor instanceof ITextEditorExtension2)
+		if (editor instanceof ITextEditorExtension2) {
 			return ((ITextEditorExtension2) editor).validateEditorInputState();
-		else if (editor instanceof ITextEditorExtension)
+		} else if (editor instanceof ITextEditorExtension) {
 			return !((ITextEditorExtension) editor).isEditorInputReadOnly();
-		else if (editor != null)
+		} else if (editor != null) {
 			return editor.isEditable();
-		else
+		} else {
 			return false;
+		}
 	}
 }

@@ -32,9 +32,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 public class TextNavigationAction extends Action {
 
 	/** The text widget */
-	private StyledText fTextWidget;
+	private final StyledText fTextWidget;
 	/** The styled text action id */
-	private int fAction;
+	private final int fAction;
 
 
 	/**
@@ -89,8 +89,9 @@ public class TextNavigationAction extends Action {
 	 */
 	protected void fireSelectionChanged(Point oldSelection) {
 		Point selection= fTextWidget.getSelection();
-		if (oldSelection == null || !selection.equals(oldSelection))
+		if (oldSelection == null || !selection.equals(oldSelection)) {
 			doFireSelectionChanged(selection);
+		}
 	}
 
 	@Override

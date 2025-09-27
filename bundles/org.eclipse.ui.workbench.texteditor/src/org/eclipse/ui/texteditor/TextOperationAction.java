@@ -110,22 +110,26 @@ public final class TextOperationAction extends TextEditorAction {
 	 */
 	@Override
 	public void run() {
-		if (fOperationCode == -1 || fOperationTarget == null)
+		if (fOperationCode == -1 || fOperationTarget == null) {
 			return;
+		}
 
 		ITextEditor editor= getTextEditor();
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 
-		if (!fRunsOnReadOnly && !validateEditorInputState())
+		if (!fRunsOnReadOnly && !validateEditorInputState()) {
 			return;
+		}
 
 		Display display= null;
 
 		IWorkbenchPartSite site= editor.getSite();
 		Shell shell= site.getShell();
-		if (shell != null && !shell.isDisposed())
+		if (shell != null && !shell.isDisposed()) {
 			display= shell.getDisplay();
+		}
 
 		BusyIndicator.showWhile(display, () -> fOperationTarget.doOperation(fOperationCode));
 	}
@@ -138,8 +142,9 @@ public final class TextOperationAction extends TextEditorAction {
 	 */
 	@Override
 	public void update() {
-		if (!fAllowUpdate)
+		if (!fAllowUpdate) {
 			return;
+		}
 
 		super.update();
 
@@ -149,8 +154,9 @@ public final class TextOperationAction extends TextEditorAction {
 		}
 
 		ITextEditor editor= getTextEditor();
-		if (fOperationTarget == null && editor!= null && fOperationCode != -1)
+		if (fOperationTarget == null && editor!= null && fOperationCode != -1) {
 			fOperationTarget= editor.getAdapter(ITextOperationTarget.class);
+		}
 
 		boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 		setEnabled(isEnabled);

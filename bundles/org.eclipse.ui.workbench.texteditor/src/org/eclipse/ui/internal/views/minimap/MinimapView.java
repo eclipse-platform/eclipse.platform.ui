@@ -30,7 +30,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class MinimapView extends PageBookView {
 
-	private String defaultText;
+	private final String defaultText;
 
 	public MinimapView() {
 		this.defaultText = MinimapMessages.MinimapViewNoMinimap;

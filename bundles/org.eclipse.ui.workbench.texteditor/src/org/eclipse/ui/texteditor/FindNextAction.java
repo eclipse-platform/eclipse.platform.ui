@@ -63,11 +63,11 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	/** The dialog settings to retrieve the last search */
 	private IDialogSettings fDialogSettings;
 	/** The find history as initially given in the dialog settings. */
-	private List<String> fFindHistory= new ArrayList<>();
+	private final List<String> fFindHistory= new ArrayList<>();
 	/** The find string as initially given in the dialog settings. */
 	private String fFindString;
 	/** The search direction as initially given in the dialog settings. */
-	private boolean fForward;
+	private final boolean fForward;
 	/** The wrapping flag as initially given in the dialog settings. */
 	private boolean fWrapInit;
 	/** The case flag as initially given in the dialog settings. */
@@ -137,12 +137,13 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private String getFindString() {
 		String fullSelection= fTarget.getSelectionText();
 		String firstLine= getFirstLine(fullSelection);
-		if ((firstLine.isEmpty() || fRegExSearch && fullSelection.equals(fSelection)) && !fFindHistory.isEmpty())
+		if ((firstLine.isEmpty() || fRegExSearch && fullSelection.equals(fSelection)) && !fFindHistory.isEmpty()) {
 			return fFindHistory.get(0);
-		else if (fRegExSearch && !fullSelection.isEmpty())
+		} else if (fRegExSearch && !fullSelection.isEmpty()) {
 			return FindReplaceDocumentAdapter.escapeForRegExPattern(fullSelection);
-		else
+		} else {
 			return firstLine;
+		}
 	}
 
 	/**
@@ -151,8 +152,9 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 */
 	private IStatusLineManager getStatusLineManager() {
 		IEditorPart editor= fWorkbenchPart.getSite().getPage().getActiveEditor();
-		if (editor == null)
+		if (editor == null) {
 			return null;
+		}
 
 		return editor.getEditorSite().getActionBars().getStatusLineManager();
 	}
@@ -166,8 +168,9 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		fWorkbenchPart.getSite().getShell().getDisplay().beep();
 
 		IStatusLineManager manager= getStatusLineManager();
-		if (manager == null)
+		if (manager == null) {
 			return;
+		}
 
 		String msg= NLSUtility.format(EditorMessages.FindNext_Status_noMatch_label, fFindString);
 		manager.setMessage(msg);
@@ -178,8 +181,9 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 */
 	private void statusClear() {
 		IStatusLineManager manager= getStatusLineManager();
-		if (manager == null)
+		if (manager == null) {
 			return;
+		}
 
 		manager.setErrorMessage(""); //$NON-NLS-1$
 		manager.setMessage(""); //$NON-NLS-1$
@@ -199,8 +203,9 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 			boolean wholeWord= fWholeWordInit && !fRegExSearch && isWord(fFindString);
 
 			statusClear();
-			if (!findNext(fFindString, fForward, fCaseInit, fWrapInit, wholeWord, fRegExSearch))
+			if (!findNext(fFindString, fForward, fCaseInit, fWrapInit, wholeWord, fRegExSearch)) {
 				statusNotFound();
+			}
 
 			writeConfiguration();
 		}
@@ -214,12 +219,14 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @since 3.2
 	 */
 	private boolean isWord(String str) {
-		if (str == null || str.isEmpty())
+		if (str == null || str.isEmpty()) {
 			return false;
+		}
 
 		for (int i= 0; i < str.length(); i++) {
-			if (!Character.isJavaIdentifierPart(str.charAt(i)))
+			if (!Character.isJavaIdentifierPart(str.charAt(i))) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -227,13 +234,15 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	@Override
 	public void update() {
 
-		if (fWorkbenchPart == null && fWorkbenchWindow != null)
+		if (fWorkbenchPart == null && fWorkbenchWindow != null) {
 			fWorkbenchPart= fWorkbenchWindow.getPartService().getActivePart();
+		}
 
-		if (fWorkbenchPart != null)
+		if (fWorkbenchPart != null) {
 			fTarget= fWorkbenchPart.getAdapter(IFindReplaceTarget.class);
-		else
+		} else {
 			fTarget= null;
+		}
 
 		setEnabled(fTarget != null && fTarget.canPerformFind());
 	}
@@ -284,26 +293,30 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 
 		Point r= fTarget.getSelection();
 		int findReplacePosition= r.x;
-		if (forwardSearch)
+		if (forwardSearch) {
 			findReplacePosition += r.y;
+		}
 
 		int index= findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord, regExSearch);
 
-		if (index != -1)
+		if (index != -1) {
 			return true;
+		}
 
 		return false;
 	}
 
 	private void beep() {
 		Shell shell= null;
-		if (fWorkbenchPart != null)
+		if (fWorkbenchPart != null) {
 			shell= fWorkbenchPart.getSite().getShell();
-		else if (fWorkbenchWindow != null)
+		} else if (fWorkbenchWindow != null) {
 			shell= fWorkbenchWindow.getShell();
+		}
 
-		if (shell != null && !shell.isDisposed())
+		if (shell != null && !shell.isDisposed()) {
 			shell.getDisplay().beep();
+		}
 	}
 
 	/**
@@ -343,8 +356,9 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		IDialogSettings settings = PlatformUI
 				.getDialogSettingsProvider(FrameworkUtil.getBundle(FindReplaceAction.class)).getDialogSettings();
 		fDialogSettings = settings.getSection(FindReplaceAction.class.getClass().getName());
-		if (fDialogSettings == null)
+		if (fDialogSettings == null) {
 			fDialogSettings = settings.addNewSection(FindReplaceAction.class.getClass().getName());
+		}
 		return fDialogSettings;
 	}
 	/**
@@ -371,22 +385,26 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * Stores its current configuration in the dialog store.
 	 */
 	private void writeConfiguration() {
-		if (fFindString == null)
+		if (fFindString == null) {
 			return;
+		}
 
 		IDialogSettings s= getDialogSettings();
 		s.put("selection", fTarget.getSelectionText()); //$NON-NLS-1$
 
-		if (!fFindHistory.isEmpty() && fFindString.equals(fFindHistory.get(0)))
+		if (!fFindHistory.isEmpty() && fFindString.equals(fFindHistory.get(0))) {
 			return;
+		}
 
 		int index= fFindHistory.indexOf(fFindString);
-		if (index != -1)
+		if (index != -1) {
 			fFindHistory.remove(index);
+		}
 		fFindHistory.add(0, fFindString);
 
-		while (fFindHistory.size() > 8)
+		while (fFindHistory.size() > 8) {
 			fFindHistory.remove(8);
+		}
 		String[] names= new String[fFindHistory.size()];
 		fFindHistory.toArray(names);
 		s.put("findhistory", names); //$NON-NLS-1$
@@ -401,8 +419,9 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private String getFirstLine(String selection) {
 		if (!selection.isEmpty()) {
 			int delimiterOffset = TextUtilities.nextDelimiter(selection, 0).delimiterIndex;
-			if (delimiterOffset > 0)
+			if (delimiterOffset > 0) {
 				return selection.substring(0, delimiterOffset);
+			}
 		}
 		return selection;
 	}

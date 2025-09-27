@@ -27,7 +27,7 @@ public class SpellingAnnotation extends Annotation implements IQuickFixableAnnot
 	public static final String TYPE= "org.eclipse.ui.workbench.texteditor.spelling"; //$NON-NLS-1$
 
 	/** The spelling problem. */
-	private SpellingProblem fSpellingProblem;
+	private final SpellingProblem fSpellingProblem;
 
 
 	/**

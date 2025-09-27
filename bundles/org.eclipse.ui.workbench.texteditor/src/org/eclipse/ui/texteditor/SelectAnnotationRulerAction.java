@@ -55,14 +55,16 @@ public class SelectAnnotationRulerAction extends TextEditorAction implements IVe
 	public void setEditor(ITextEditor editor) {
 		if (getTextEditor() != null) {
 			IVerticalRulerInfo service= getTextEditor().getAdapter(IVerticalRulerInfo.class);
-			if (service instanceof IVerticalRulerInfoExtension)
+			if (service instanceof IVerticalRulerInfoExtension) {
 				((IVerticalRulerInfoExtension) service).removeVerticalRulerListener(this);
+			}
 		}
 		super.setEditor(editor);
 		if (getTextEditor() != null) {
 			IVerticalRulerInfo service= getTextEditor().getAdapter(IVerticalRulerInfo.class);
-			if (service instanceof IVerticalRulerInfoExtension)
+			if (service instanceof IVerticalRulerInfoExtension) {
 				((IVerticalRulerInfoExtension) service).addVerticalRulerListener(this);
+			}
 		}
 	}
 
@@ -85,8 +87,9 @@ public class SelectAnnotationRulerAction extends TextEditorAction implements IVe
 		Annotation a= event.getSelectedAnnotation();
 		IAnnotationModel model= getAnnotationModel();
 		Position position= model.getPosition(a);
-		if (position == null)
+		if (position == null) {
 			return;
+		}
 
 		getTextEditor().selectAndReveal(position.offset, position.length);
 	}

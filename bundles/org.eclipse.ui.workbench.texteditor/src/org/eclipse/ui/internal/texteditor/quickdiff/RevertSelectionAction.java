@@ -45,22 +45,26 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 
 	@Override
 	public boolean computeEnablement() {
-		if (!super.computeEnablement())
+		if (!super.computeEnablement()) {
 			return false;
+		}
 
 		ITextSelection selection= getSelection();
-		if (selection == null)
+		if (selection == null) {
 			return false;
+		}
 		fStartLine= selection.getStartLine();
 		fEndLine= selection.getEndLine();
 		// only enable if mouse activity is inside line range
 		int activityLine= getLastLine();
-		if (activityLine == -1 || activityLine < fStartLine || activityLine > fEndLine + 1)
+		if (activityLine == -1 || activityLine < fStartLine || activityLine > fEndLine + 1) {
 			// + 1 to cover the case where the selection goes to the offset of the next line
 			return false;
+		}
 		ILineDiffer differ= getDiffer();
-		if (differ == null)
+		if (differ == null) {
 			return false;
+		}
 		// only enable if selection covers at least two lines
 		if (fEndLine > fStartLine) {
 			for (int i= fStartLine; i <= fEndLine; i++) {
@@ -76,8 +80,9 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 	@Override
 	public void runCompoundChange() {
 		// recheck if run without being enabled
-		if (!isEnabled())
+		if (!isEnabled()) {
 			return;
+		}
 
 		ILineDiffer differ= getDiffer();
 		if (differ != null) {

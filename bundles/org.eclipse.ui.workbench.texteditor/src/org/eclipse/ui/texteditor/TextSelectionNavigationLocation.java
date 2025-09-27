@@ -68,8 +68,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 				return;
 			}
 			ISelection s= part.getSelectionProvider().getSelection();
-			if(s == null || s.isEmpty())
+			if(s == null || s.isEmpty()) {
 				return;
+			}
 
 			ITextSelection selection= (ITextSelection) s;
 
@@ -78,8 +79,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 			if (installOnDocument(document, position)) {
 				fDocument= document;
 				fPosition= position;
-				if (!part.isDirty())
+				if (!part.isDirty()) {
 					fSavedPosition= new Position(fPosition.offset, fPosition.length);
+				}
 			}
 		}
 	}
@@ -164,11 +166,13 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	 */
 	private boolean equalsLocationOf(ITextEditor part) {
 
-		if (fPosition == null)
+		if (fPosition == null) {
 			return true;
+		}
 
-		if (fPosition.isDeleted)
+		if (fPosition.isDeleted) {
 			return false;
+		}
 
 		ISelectionProvider provider= part.getSite().getSelectionProvider();
 		ISelection selection= provider.getSelection();
@@ -219,14 +223,17 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	@Override
 	public boolean mergeInto(INavigationLocation location) {
 
-		if (location == null)
+		if (location == null) {
 			return false;
+		}
 
-		if (getClass() != location.getClass())
+		if (getClass() != location.getClass()) {
 			return false;
+		}
 
-		if (fPosition == null || fPosition.isDeleted)
+		if (fPosition == null || fPosition.isDeleted) {
 			return true;
+		}
 
 		TextSelectionNavigationLocation s= (TextSelectionNavigationLocation) location;
 		if (s.fPosition == null || s.fPosition.isDeleted) {
@@ -253,8 +260,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	 */
 	@Override
 	public void restoreLocation() {
-		if (fPosition == null || fPosition.isDeleted)
+		if (fPosition == null || fPosition.isDeleted) {
 			return;
+		}
 
 		IEditorPart part= getEditorPart();
 		if (part instanceof ITextEditor) {
@@ -283,14 +291,16 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 
 			if (offset != null && length != null) {
 				Position p= new Position(offset.intValue(), length.intValue());
-				if (deleted != null)
+				if (deleted != null) {
 					p.isDeleted= INFO_DELETED.equals(deleted) ? true : false;
+				}
 
 				// activate
 				if (installOnDocument(fDocument, p)) {
 					fPosition= p;
-					if (!part.isDirty())
+					if (!part.isDirty()) {
 						fSavedPosition= new Position(fPosition.offset, fPosition.length);
+					}
 				}
 			}
 		}
@@ -317,10 +327,11 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	 */
 	public void partSaved(IEditorPart part) {
 		// http://dev.eclipse.org/bugs/show_bug.cgi?id=25440
-		if (fPosition == null || fPosition.isDeleted())
+		if (fPosition == null || fPosition.isDeleted()) {
 			fSavedPosition= null;
-		else
+		} else {
 			fSavedPosition= new Position(fPosition.offset, fPosition.length);
+		}
 	}
 
 	/**
@@ -332,23 +343,27 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		if (part instanceof ITextEditor) {
 			ITextEditor textEditor= (ITextEditor) getEditorPart();
 
-			if(equalsLocationOf(textEditor))
+			if(equalsLocationOf(textEditor)) {
 				return;
+			}
 
 			ISelection s= textEditor.getSelectionProvider().getSelection();
-			if(s == null || s.isEmpty())
+			if(s == null || s.isEmpty()) {
 				return;
+			}
 
 			ITextSelection selection= (ITextSelection) s;
-			if(selection.getOffset() == 0 && selection.getLength() == 0)
+			if(selection.getOffset() == 0 && selection.getLength() == 0) {
 				return;
+			}
 
 			fPosition.offset= selection.getOffset();
 			fPosition.length= selection.getLength();
 			fPosition.isDeleted= false;
 
-			if (!part.isDirty())
+			if (!part.isDirty()) {
 				fSavedPosition= new Position(fPosition.offset, fPosition.length);
+			}
 		}
 	}
 }

@@ -44,7 +44,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 public class CaseAction extends TextEditorAction {
 
 	/** <code>true</code> if this action converts to upper case, <code>false</code> otherwise. */
-	private boolean fToUpper;
+	private final boolean fToUpper;
 
 	/**
 	 * Creates and initializes the action for the given text editor.
@@ -68,34 +68,41 @@ public class CaseAction extends TextEditorAction {
 	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 
-		if (!validateEditorInputState())
+		if (!validateEditorInputState()) {
 			return;
+		}
 
 		ISourceViewer viewer= ((AbstractTextEditor) editor).getSourceViewer();
-		if (viewer == null)
+		if (viewer == null) {
 			return;
+		}
 
 		IDocument document= viewer.getDocument();
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		StyledText st= viewer.getTextWidget();
-		if (st == null)
+		if (st == null) {
 			return;
+		}
 
 		ITextSelection selection= (ITextSelection) viewer.getSelectionProvider().getSelection();
 
 		try {
-			if (JFaceTextUtil.isEmpty(viewer, selection))
+			if (JFaceTextUtil.isEmpty(viewer, selection)) {
 				return;
+			}
 
 			IRegion[] ranges= JFaceTextUtil.getCoveredRanges(viewer, selection);
 			List<IRegion> newRanges = new ArrayList<>(ranges.length);
-			if (ranges.length > 1 && viewer instanceof ITextViewerExtension)
+			if (ranges.length > 1 && viewer instanceof ITextViewerExtension) {
 				((ITextViewerExtension) viewer).getRewriteTarget().beginCompoundChange();
+			}
 			int offsetShift = 0;
 			for (IRegion region : ranges) {
 				int newOffset = region.getOffset() + offsetShift;
@@ -110,8 +117,9 @@ public class CaseAction extends TextEditorAction {
 				offsetShift += currentAdjustment;
 				newRanges.add(new Region(newOffset, region.getLength() + currentAdjustment));
 			}
-			if (ranges.length > 1 && viewer instanceof ITextViewerExtension)
+			if (ranges.length > 1 && viewer instanceof ITextViewerExtension) {
 				((ITextViewerExtension) viewer).getRewriteTarget().endCompoundChange();
+			}
 
 			// reinstall selection and move it into view
 			if (!(selection instanceof IBlockTextSelection)) {

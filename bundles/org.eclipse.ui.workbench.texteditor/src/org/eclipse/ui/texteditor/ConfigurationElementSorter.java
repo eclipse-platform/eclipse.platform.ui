@@ -86,11 +86,13 @@ public abstract class ConfigurationElementSorter {
 		@Override
 		public int compare(Object object0, Object object1) {
 
-			if (dependsOn(object0, object1))
+			if (dependsOn(object0, object1)) {
 				return -1;
+			}
 
-			if (dependsOn(object1, object0))
+			if (dependsOn(object1, object0)) {
 				return +1;
+			}
 
 			return 0;
 		}
@@ -105,15 +107,17 @@ public abstract class ConfigurationElementSorter {
 		 * @since 2.0
 		 */
 		private boolean dependsOn(Object element0, Object element1) {
-			if (element0 == null || element1 == null)
+			if (element0 == null || element1 == null) {
 				return false;
+			}
 
 			String pluginDesc0= fDescriptorMapping.get(element0);
 			String pluginDesc1= fDescriptorMapping.get(element1);
 
 			// performance tuning - code below would give same result
-			if (pluginDesc0.equals(pluginDesc1))
+			if (pluginDesc0.equals(pluginDesc1)) {
 				return false;
+			}
 
 			Set<String> prereqUIds0= fPrereqsMapping.get(pluginDesc0);
 
@@ -158,8 +162,9 @@ public abstract class ConfigurationElementSorter {
 					continue;
 				}
 
-				if (manifestElements == null)
+				if (manifestElements == null) {
 					continue;
+				}
 
 				int i= 0;
 				while (i < manifestElements.length && !toTest.isEmpty()) {
@@ -169,8 +174,9 @@ public abstract class ConfigurationElementSorter {
 						if (toTest_j.getSymbolicName().equals(prereqUId)) {
 							toTest.remove(toTest_j);
 							prereqUIds.add(toTest_j.getSymbolicName());
-						} else
+						} else {
 							j++;
+						}
 					}
 					i++;
 				}

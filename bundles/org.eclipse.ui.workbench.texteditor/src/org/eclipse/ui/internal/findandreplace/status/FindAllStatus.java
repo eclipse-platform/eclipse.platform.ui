@@ -14,7 +14,7 @@
 package org.eclipse.ui.internal.findandreplace.status;
 
 public class FindAllStatus implements IFindReplaceStatus {
-	private int selectCount;
+	private final int selectCount;
 
 	public FindAllStatus(int selectCount) {
 		this.selectCount = selectCount;

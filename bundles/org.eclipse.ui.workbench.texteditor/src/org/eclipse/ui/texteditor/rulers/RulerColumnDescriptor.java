@@ -232,11 +232,13 @@ public final class RulerColumnDescriptor {
 		RulerColumnTarget target= getTarget();
 
 		IWorkbenchPartSite site= editor.getSite();
-		if (site != null && target.matchesEditorId(site.getId()))
+		if (site != null && target.matchesEditorId(site.getId())) {
 			return true;
+		}
 
-		if (target.matchesClass(editor.getClass()))
+		if (target.matchesClass(editor.getClass())) {
 			return true;
+		}
 
 		IContentType contentType= getContentType(editor);
 		return contentType != null && target.matchesContentType(contentType);
@@ -276,12 +278,15 @@ public final class RulerColumnDescriptor {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final RulerColumnDescriptor other= (RulerColumnDescriptor) obj;
 		if (!Objects.equals(fId, other.fId)) {
 			return false;
@@ -299,8 +304,9 @@ public final class RulerColumnDescriptor {
 	 */
 	private IContentType getContentType(ITextEditor editor) {
 		IEditorInput input= editor.getEditorInput();
-		if (input == null)
+		if (input == null) {
 			return null;
+		}
 		IDocumentProvider provider= editor.getDocumentProvider();
 		if (provider instanceof IDocumentProviderExtension4 ext) {
 			try {

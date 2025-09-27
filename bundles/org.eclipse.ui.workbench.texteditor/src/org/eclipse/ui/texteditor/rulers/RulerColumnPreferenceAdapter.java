@@ -71,10 +71,11 @@ public final class RulerColumnPreferenceAdapter {
 		boolean shouldMark= enabled ^ descriptor.getDefaultEnablement();
 		boolean isMarked= marked.contains(id);
 		if (isMarked != shouldMark) {
-			if (shouldMark)
+			if (shouldMark) {
 				marked.add(id);
-			else
+			} else {
 				marked.remove(id);
+			}
 			fStore.setValue(fKey, StringSetSerializer.serialize(marked));
 		}
 	}

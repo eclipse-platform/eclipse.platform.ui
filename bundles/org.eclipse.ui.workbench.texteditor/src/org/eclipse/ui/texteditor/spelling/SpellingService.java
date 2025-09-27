@@ -57,7 +57,7 @@ public class SpellingService {
 	public static final String PREFERENCE_SPELLING_ENGINE= "spellingEngine"; //$NON-NLS-1$
 
 	/** Preferences */
-	private IPreferenceStore fPreferences;
+	private final IPreferenceStore fPreferences;
 
 	/**
 	 * Initializes the spelling service with the given preferences.
@@ -98,7 +98,7 @@ public class SpellingService {
 	public void check(final IDocument document, final IRegion[] regions, final SpellingContext context, final ISpellingProblemCollector collector, final IProgressMonitor monitor) {
 		try {
 			collector.beginCollecting();
-			if (fPreferences.getBoolean(PREFERENCE_SPELLING_ENABLED))
+			if (fPreferences.getBoolean(PREFERENCE_SPELLING_ENABLED)) {
 				try {
 					final ISpellingEngine engine= createEngine(fPreferences);
 					if (engine != null) {
@@ -116,6 +116,7 @@ public class SpellingService {
 				} catch (CoreException x) {
 					TextEditorPlugin.getDefault().getLog().log(x.getStatus());
 				}
+			}
 		} finally {
 			collector.endCollecting();
 		}
@@ -129,8 +130,9 @@ public class SpellingService {
 	 */
 	public SpellingEngineDescriptor[] getSpellingEngineDescriptors() {
 		SpellingEngineRegistry registry= getSpellingEngineRegistry();
-		if (registry == null)
+		if (registry == null) {
 			return new SpellingEngineDescriptor[0];
+		}
 		return registry.getDescriptors();
 	}
 
@@ -143,8 +145,9 @@ public class SpellingService {
 	 */
 	public SpellingEngineDescriptor getDefaultSpellingEngineDescriptor() {
 		SpellingEngineRegistry registry= getSpellingEngineRegistry();
-		if (registry == null)
+		if (registry == null) {
 			return null;
+		}
 		return registry.getDefaultDescriptor();
 	}
 
@@ -160,14 +163,17 @@ public class SpellingService {
 	 */
 	public SpellingEngineDescriptor getActiveSpellingEngineDescriptor(IPreferenceStore preferences) {
 		SpellingEngineRegistry registry= getSpellingEngineRegistry();
-		if (registry == null)
+		if (registry == null) {
 			return null;
+		}
 
 		SpellingEngineDescriptor descriptor= null;
-		if (preferences.contains(PREFERENCE_SPELLING_ENGINE))
+		if (preferences.contains(PREFERENCE_SPELLING_ENGINE)) {
 			descriptor= registry.getDescriptor(preferences.getString(PREFERENCE_SPELLING_ENGINE));
-		if (descriptor == null)
+		}
+		if (descriptor == null) {
 			descriptor= registry.getDefaultDescriptor();
+		}
 		return descriptor;
 	}
 
@@ -184,8 +190,9 @@ public class SpellingService {
 	 */
 	private ISpellingEngine createEngine(IPreferenceStore preferences) throws CoreException {
 		SpellingEngineDescriptor descriptor= getActiveSpellingEngineDescriptor(preferences);
-		if (descriptor != null)
+		if (descriptor != null) {
 			return descriptor.createEngine();
+		}
 		return null;
 	}
 

@@ -67,22 +67,26 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 	 */
 	@Override
 	public void run() {
-		if (fOperationCode == -1 || fOperationTarget == null)
+		if (fOperationCode == -1 || fOperationTarget == null) {
 			return;
+		}
 
 		ITextEditor editor= getTextEditor();
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 
-		if (!validateEditorInputState())
+		if (!validateEditorInputState()) {
 			return;
+		}
 
 		Display display= null;
 
 		IWorkbenchPartSite site= editor.getSite();
 		Shell shell= site.getShell();
-		if (shell != null && !shell.isDisposed())
+		if (shell != null && !shell.isDisposed()) {
 			display= shell.getDisplay();
+		}
 
 		BusyIndicator.showWhile(display, () -> fOperationTarget.doOperation(fOperationCode));
 	}
@@ -90,8 +94,9 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 	@Override
 	public void update() {
 		super.update();
-		if (!isEnabled())
+		if (!isEnabled()) {
 			return;
+		}
 
 		if (!canModifyEditor()) {
 			setEnabled(false);
@@ -99,8 +104,9 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		}
 
 		ITextEditor editor= getTextEditor();
-		if (fOperationTarget == null && editor != null && fOperationCode != -1)
+		if (fOperationTarget == null && editor != null && fOperationCode != -1) {
 			fOperationTarget= editor.getAdapter(ITextOperationTarget.class);
+		}
 
 	}
 
@@ -119,8 +125,9 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 			}
 
 			ITextEditor editor= getTextEditor();
-			if (fOperationTarget == null && editor != null && fOperationCode != -1)
+			if (fOperationTarget == null && editor != null && fOperationCode != -1) {
 				fOperationTarget= editor.getAdapter(ITextOperationTarget.class);
+			}
 
 			boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 			setEnabled(isEnabled);
@@ -137,8 +144,9 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 	@Override
 	public boolean isEnabled(boolean isWritable) {
 
-		if (!isWritable)
+		if (!isWritable) {
 			return false;
+		}
 
 		/*
 		 * Note that this implementation still honors the result returned by canDoOperation.
@@ -146,8 +154,9 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		 * It covers the case in which the viewer is also writable.
 		 */
 		ITextEditor editor= getTextEditor();
-		if (fOperationTarget == null && editor!= null && fOperationCode != -1)
+		if (fOperationTarget == null && editor!= null && fOperationCode != -1) {
 			fOperationTarget= editor.getAdapter(ITextOperationTarget.class);
+		}
 
 		return (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 	}

@@ -55,7 +55,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	private static class SpellingProblemCollector implements ISpellingProblemCollector {
 
 		/** Annotation model. */
-		private IAnnotationModel fAnnotationModel;
+		private final IAnnotationModel fAnnotationModel;
 
 		/** Annotations to add. */
 		private Map<Annotation, Position> fAddAnnotations;
@@ -71,10 +71,11 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		public SpellingProblemCollector(IAnnotationModel annotationModel) {
 			Assert.isLegal(annotationModel != null);
 			fAnnotationModel= annotationModel;
-			if (fAnnotationModel instanceof ISynchronizable)
+			if (fAnnotationModel instanceof ISynchronizable) {
 				fLockObject= ((ISynchronizable)fAnnotationModel).getLockObject();
-			else
+			} else {
 				fLockObject= fAnnotationModel;
+			}
 		}
 
 		@Override
@@ -96,14 +97,15 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 				Iterator<Annotation> iter= fAnnotationModel.getAnnotationIterator();
 				while (iter.hasNext()) {
 					Annotation annotation= iter.next();
-					if (SpellingAnnotation.TYPE.equals(annotation.getType()))
+					if (SpellingAnnotation.TYPE.equals(annotation.getType())) {
 						toRemove.add(annotation);
+					}
 				}
 				Annotation[] annotationsToRemove= toRemove.toArray(new Annotation[toRemove.size()]);
 
-				if (fAnnotationModel instanceof IAnnotationModelExtension)
+				if (fAnnotationModel instanceof IAnnotationModelExtension) {
 					((IAnnotationModelExtension)fAnnotationModel).replaceAnnotations(annotationsToRemove, fAddAnnotations);
-				else {
+				} else {
 					for (Annotation element : annotationsToRemove) {
 						fAnnotationModel.removeAnnotation(element);
 					}
@@ -122,7 +124,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	private static final IContentType TEXT_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 
 	/** The text editor to operate on. */
-	private ISourceViewer fViewer;
+	private final ISourceViewer fViewer;
 
 	/** The document to operate on. */
 	private IDocument fDocument;
@@ -130,18 +132,18 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	/** The progress monitor. */
 	private IProgressMonitor fProgressMonitor;
 
-	private SpellingService fSpellingService;
+	private final SpellingService fSpellingService;
 
 	private ISpellingProblemCollector fSpellingProblemCollector;
 
 	/** The spelling context containing the Java source content type. */
-	private SpellingContext fSpellingContext;
+	private final SpellingContext fSpellingContext;
 
 	/**
 	 * Region array, used to prevent us from creating a new array on each reconcile pass.
 	 * @since 3.4
 	 */
-	private IRegion[] fRegions= new IRegion[1];
+	private final IRegion[] fRegions= new IRegion[1];
 
 
 	/**
@@ -170,10 +172,11 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		try {
 			IRegion startLineInfo= fDocument.getLineInformationOfOffset(subRegion.getOffset());
 			IRegion endLineInfo= fDocument.getLineInformationOfOffset(subRegion.getOffset() + Math.max(0, subRegion.getLength() - 1));
-			if (startLineInfo.getOffset() == endLineInfo.getOffset())
+			if (startLineInfo.getOffset() == endLineInfo.getOffset()) {
 				subRegion= startLineInfo;
-			else
+			} else {
 				subRegion= new Region(startLineInfo.getOffset(), endLineInfo.getOffset() + Math.max(0, endLineInfo.getLength() - 1) - startLineInfo.getOffset());
+			}
 
 		} catch (BadLocationException e) {
 			subRegion= new Region(0, fDocument.getLength());
@@ -183,8 +186,9 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 
 	@Override
 	public void reconcile(IRegion region) {
-		if (getAnnotationModel() == null || fSpellingProblemCollector == null)
+		if (getAnnotationModel() == null || fSpellingProblemCollector == null) {
 			return;
+		}
 
 		fRegions[0]= region;
 		fSpellingService.check(fDocument, fRegions, fSpellingContext, fSpellingProblemCollector, fProgressMonitor);
@@ -222,8 +226,9 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	 */
 	protected ISpellingProblemCollector createSpellingProblemCollector() {
 		IAnnotationModel model= getAnnotationModel();
-		if (model == null)
+		if (model == null) {
 			return null;
+		}
 		return new SpellingProblemCollector(model);
 	}
 

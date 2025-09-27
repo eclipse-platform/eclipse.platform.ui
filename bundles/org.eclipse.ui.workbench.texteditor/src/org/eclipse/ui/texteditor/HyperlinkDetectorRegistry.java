@@ -65,8 +65,9 @@ public final class HyperlinkDetectorRegistry {
 
 		@Override
 		public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
-			if (!isEnabled())
+			if (!isEnabled()) {
 				return null;
+			}
 
 			if (!fFailedDuringCreation && fHyperlinkDetector == null) {
 				try {
@@ -74,11 +75,13 @@ public final class HyperlinkDetectorRegistry {
 				} catch (CoreException ex) {
 					fFailedDuringCreation= true;
 				}
-				if (fContext != null && fHyperlinkDetector instanceof AbstractHyperlinkDetector)
+				if (fContext != null && fHyperlinkDetector instanceof AbstractHyperlinkDetector) {
 					((AbstractHyperlinkDetector)fHyperlinkDetector).setContext(fContext);
+				}
 			}
-			if (fHyperlinkDetector != null)
+			if (fHyperlinkDetector != null) {
 				return fHyperlinkDetector.detectHyperlinks(textViewer, region, canShowMultipleHyperlinks);
+			}
 
 			return null;
 		}
@@ -93,8 +96,9 @@ public final class HyperlinkDetectorRegistry {
 
 		@Override
 		public void dispose() {
-			if (fHyperlinkDetector instanceof AbstractHyperlinkDetector)
+			if (fHyperlinkDetector instanceof AbstractHyperlinkDetector) {
 				((AbstractHyperlinkDetector)fHyperlinkDetector).dispose();
+			}
 
 			fHyperlinkDetector= null;
 			fHyperlinkDescriptor= null;
@@ -150,8 +154,9 @@ public final class HyperlinkDetectorRegistry {
 	 * Initializes the hyperlink detector descriptors.
 	 */
 	private synchronized void initHyperlinkDetectorDescriptors() {
-		if (fHyperlinkDetectorDescriptors == null)
+		if (fHyperlinkDetectorDescriptors == null) {
 			fHyperlinkDetectorDescriptors= HyperlinkDetectorDescriptor.getContributedHyperlinkDetectors();
+		}
 	}
 
 	/*

@@ -81,8 +81,9 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 	public void run() {
 
 		DocumentLineDiffer differ= getDiffer(true); // create if needed, so the user does not have to toggle display when he selects a reference
-		if (differ == null)
+		if (differ == null) {
 			return;
+		}
 
 		if (fEditor instanceof ITextEditorExtension3 extension) {
 			IQuickDiffReferenceProvider provider= getProvider();
@@ -92,8 +93,9 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 					differ.setReferenceProvider(provider);
 					extension.showChangeInformation(true);
 					setEnabled(true);
-				} else
+				} else {
 					setEnabled(false);
+				}
 			}
 		}
 	}
@@ -140,13 +142,15 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 	 */
 	private DocumentLineDiffer getDiffer(boolean createIfNeeded) {
 		// get annotation model
-		if (fEditor == null)
+		if (fEditor == null) {
 			return null;
+		}
 
 		IDocumentProvider provider= fEditor.getDocumentProvider();
 		IEditorInput editorInput= fEditor.getEditorInput();
-		if (provider == null || editorInput == null)
+		if (provider == null || editorInput == null) {
 			return null;
+		}
 
 		IAnnotationModel m= provider.getAnnotationModel(editorInput);
 		IAnnotationModelExtension model= null;

@@ -50,15 +50,17 @@ public final class ExtensionPointHelper {
 
 	public String getNonNullAttribute(String attribute) throws InvalidRegistryObjectException, CoreException {
 		String value= fElement.getAttribute(attribute);
-		if (value == null)
+		if (value == null) {
 			fail(MessageFormat.format(RulerColumnMessages.ExtensionPointHelper_missing_attribute_msg, fName, attribute));
+		}
 		return value;
 	}
 
 	public float getDefaultAttribute(String attribute, float dflt) throws CoreException {
 		String value= getDefaultAttribute(attribute, null);
-		if (value == null)
+		if (value == null) {
 			return dflt;
+		}
 
 		try {
 			return Float.parseFloat(value);
@@ -71,8 +73,9 @@ public final class ExtensionPointHelper {
 
 	public boolean getDefaultAttribute(String attribute, boolean dflt) throws CoreException {
 		String value= getDefaultAttribute(attribute, null);
-		if (value == null)
+		if (value == null) {
 			return dflt;
+		}
 
 		try {
 			return Boolean.parseBoolean(value);
@@ -97,8 +100,9 @@ public final class ExtensionPointHelper {
 		String id= null;
 		while (element != null) {
 			id= element.getAttribute("id"); //$NON-NLS-1$
-			if (id != null)
+			if (id != null) {
 				break;
+			}
 			Object parent= element.getParent();
 			if (parent instanceof IExtension) {
 				id= ((IExtension) parent).getUniqueIdentifier();
@@ -114,12 +118,14 @@ public final class ExtensionPointHelper {
 
 	public URL getDefaultResourceURL(String attribute, URL dflt) {
 		String value= getDefaultAttribute(attribute, null);
-		if (value == null)
+		if (value == null) {
 			return dflt;
+		}
 
 		Bundle bundle= getBundle();
-		if (bundle == null)
+		if (bundle == null) {
 			return dflt;
+		}
 
 		IPath path = IPath.fromOSString(value);
 		return FileLocator.find(bundle, path, null);

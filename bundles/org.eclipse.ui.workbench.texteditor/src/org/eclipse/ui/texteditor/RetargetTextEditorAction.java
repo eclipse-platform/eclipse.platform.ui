@@ -38,14 +38,14 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	/** The target action. */
 	private IAction fAction;
 	/** The default label if there is no target action. */
-	private String fDefaultText;
+	private final String fDefaultText;
 	/**
 	 * The local help listener
 	 * @since 2.1
 	 */
 	private HelpListener fLocalHelpListener;
 	/** The listener to pick up changes of the target action. */
-	private IPropertyChangeListener fListener= this::update;
+	private final IPropertyChangeListener fListener= this::update;
 
 	/**
 	 * Creates a new action. The action configures its initial visual
@@ -149,11 +149,11 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		if (ENABLED.equals(event.getProperty())) {
 			Boolean bool= (Boolean) event.getNewValue();
 			setEnabled(bool.booleanValue());
-		} else if (TEXT.equals(event.getProperty()))
+		} else if (TEXT.equals(event.getProperty())) {
 			setText((String) event.getNewValue());
-		else if (TOOL_TIP_TEXT.equals(event.getProperty()))
+		} else if (TOOL_TIP_TEXT.equals(event.getProperty())) {
 			setToolTipText((String) event.getNewValue());
-		else if (CHECKED.equals(event.getProperty())) {
+		} else if (CHECKED.equals(event.getProperty())) {
 			Boolean bool= (Boolean) event.getNewValue();
 			setChecked(bool.booleanValue());
 		}
@@ -176,16 +176,18 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		if (fAction == null) {
 
 			setEnabled(false);
-			if (getStyle() == AS_CHECK_BOX || getStyle() == AS_RADIO_BUTTON)
+			if (getStyle() == AS_CHECK_BOX || getStyle() == AS_RADIO_BUTTON) {
 				setChecked(false);
+			}
 			setText(fDefaultText);
 			setToolTipText(""); //$NON-NLS-1$
 
 		} else {
 
 			setEnabled(fAction.isEnabled());
-			if (fAction.getStyle() == AS_CHECK_BOX || fAction.getStyle() ==  AS_RADIO_BUTTON)
+			if (fAction.getStyle() == AS_CHECK_BOX || fAction.getStyle() ==  AS_RADIO_BUTTON) {
 				super.setChecked(fAction.isChecked());
+			}
 			setText(fAction.getText());
 			setToolTipText(fAction.getToolTipText());
 			fAction.addPropertyChangeListener(fListener);
@@ -203,13 +205,15 @@ public final class RetargetTextEditorAction extends ResourceAction {
 			if (fAction != null) {
 				// if we have a handler, see if it has a help listener
 				listener= fAction.getHelpListener();
-				if (listener == null)
+				if (listener == null) {
 					// use our own help listener
 					listener= fLocalHelpListener;
+				}
 			}
-			if (listener != null)
+			if (listener != null) {
 				// pass on the event
 				listener.helpRequested(e);
+			}
 		});
 	}
 
@@ -228,7 +232,8 @@ public final class RetargetTextEditorAction extends ResourceAction {
 
 	@Override
 	public void run() {
-		if (fAction != null)
+		if (fAction != null) {
 			fAction.run();
+		}
 	}
 }
