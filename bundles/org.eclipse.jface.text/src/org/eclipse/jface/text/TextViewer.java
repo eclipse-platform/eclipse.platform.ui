@@ -172,8 +172,7 @@ public class TextViewer extends Viewer implements
 			if (length != 0) {
 				try {
 
-					if (e instanceof SlaveDocumentEvent) {
-						SlaveDocumentEvent slave= (SlaveDocumentEvent) e;
+					if (e instanceof SlaveDocumentEvent slave) {
 						DocumentEvent master= slave.getMasterEvent();
 						if (master != null)
 							preservedText= master.getDocument().get(master.getOffset(), master.getLength());
@@ -956,8 +955,7 @@ public class TextViewer extends Viewer implements
 
 			if (replaceAll) {
 
-				if (document instanceof IDocumentExtension4) {
-					IDocumentExtension4 extension= (IDocumentExtension4) document;
+				if (document instanceof IDocumentExtension4 extension) {
 					fRewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.SEQUENTIAL);
 				} else {
 					TextViewer.this.setRedraw(false);
@@ -971,8 +969,7 @@ public class TextViewer extends Viewer implements
 
 			} else {
 
-				if (document instanceof IDocumentExtension4) {
-					IDocumentExtension4 extension= (IDocumentExtension4) document;
+				if (document instanceof IDocumentExtension4 extension) {
 					extension.stopRewriteSession(fRewriteSession);
 				} else {
 					TextViewer.this.setRedraw(true);
@@ -1162,8 +1159,7 @@ public class TextViewer extends Viewer implements
 			if (isConnected())
 				disconnect();
 			if (fSelections != null && fSelections.length > 0) {
-				if (fSelections[0] instanceof ColumnPosition) {
-					ColumnPosition cp= (ColumnPosition) fSelections[0];
+				if (fSelections[0] instanceof ColumnPosition cp) {
 					IDocument document= fDocument;
 					try {
 						int startLine= document.getLineOfOffset(cp.getOffset());
@@ -1233,13 +1229,11 @@ public class TextViewer extends Viewer implements
 				fUpdaterDocument.addPositionUpdater(fUpdater);
 
 				ISelection selection= TextViewer.this.getSelection();
-				if (selection instanceof IBlockTextSelection) {
-					IBlockTextSelection bts= (IBlockTextSelection) selection;
+				if (selection instanceof IBlockTextSelection bts) {
 					int startVirtual= Math.max(0, bts.getStartColumn() - document.getLineInformationOfOffset(bts.getOffset()).getLength());
 					int endVirtual= Math.max(0, bts.getEndColumn() - document.getLineInformationOfOffset(bts.getOffset() + bts.getLength()).getLength());
 					fSelections= new Position[] { new ColumnPosition(bts.getOffset(), bts.getLength(), startVirtual, endVirtual) };
-				} else if (selection instanceof IMultiTextSelection && ((IMultiTextSelection) selection).getRegions().length > 1) {
-					IMultiTextSelection multiSelection= (IMultiTextSelection) selection;
+				} else if (selection instanceof IMultiTextSelection multiSelection && multiSelection.getRegions().length > 1) {
 					fSelections= Arrays.stream(multiSelection.getRegions())
 							.map(region -> new Position(region.getOffset(), region.getLength()))
 							.toArray(Position[]::new);
@@ -2234,8 +2228,7 @@ public class TextViewer extends Viewer implements
 					return true;
 
 				boolean accepted= false;
-				if (fWidgetTokenKeeper instanceof IWidgetTokenKeeperExtension)  {
-					IWidgetTokenKeeperExtension extension= (IWidgetTokenKeeperExtension) fWidgetTokenKeeper;
+				if (fWidgetTokenKeeper instanceof IWidgetTokenKeeperExtension extension)  {
 					accepted= extension.requestWidgetToken(this, priority);
 				} else  {
 					accepted= fWidgetTokenKeeper.requestWidgetToken(this);
@@ -2432,9 +2425,7 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public void setSelection(ISelection selection, boolean reveal) {
-		if (selection instanceof IBlockTextSelection && getTextWidget().getBlockSelection()) {
-			IBlockTextSelection s= (IBlockTextSelection) selection;
-
+		if (selection instanceof IBlockTextSelection s && getTextWidget().getBlockSelection()) {
 			try {
 				int startLine= s.getStartLine();
 				int endLine= s.getEndLine();
@@ -2471,16 +2462,14 @@ public class TextViewer extends Viewer implements
 			}
 			if (reveal)
 				revealRange(s.getOffset(), s.getLength());
-		} else if (selection instanceof IMultiTextSelection && ((IMultiTextSelection) selection).getRegions().length > 1) {
-			IMultiTextSelection multiSelection= (IMultiTextSelection) selection;
+		} else if (selection instanceof IMultiTextSelection multiSelection && multiSelection.getRegions().length > 1) {
 			setSelectedRanges(Arrays.stream(multiSelection.getRegions())
 					.map(region -> new Region(region.getOffset(), region.getLength()))
 					.toArray(IRegion[]::new));
 			if (reveal && multiSelection.getRegions().length > 0) {
 				revealRange(multiSelection.getRegions()[0].getOffset(), multiSelection.getRegions()[0].getLength());
 			}
-		} else if (selection instanceof ITextSelection) {
-			ITextSelection s= (ITextSelection) selection;
+		} else if (selection instanceof ITextSelection s) {
 			setSelectedRange(s.getOffset(), s.getLength());
 			if (reveal)
 				revealRange(s.getOffset(), s.getLength());
@@ -2956,9 +2945,7 @@ public class TextViewer extends Viewer implements
 	 */
 	@Deprecated
 	protected boolean updateVisibleDocument(IDocument visibleDocument, int visibleRegionOffset, int visibleRegionLength) throws BadLocationException {
-		if (visibleDocument instanceof ChildDocument) {
-			ChildDocument childDocument= (ChildDocument) visibleDocument;
-
+		if (visibleDocument instanceof ChildDocument childDocument) {
 			IDocument document= childDocument.getParentDocument();
 			int line= document.getLineOfOffset(visibleRegionOffset);
 			int offset= document.getLineOffset(line);
@@ -3557,8 +3544,7 @@ public class TextViewer extends Viewer implements
 	protected int _getVisibleRegionOffset() {
 
 		IDocument document= getVisibleDocument();
-		if (document instanceof ChildDocument) {
-			ChildDocument cdoc= (ChildDocument) document;
+		if (document instanceof ChildDocument cdoc) {
 			return cdoc.getParentDocumentRange().getOffset();
 		}
 
@@ -3580,8 +3566,7 @@ public class TextViewer extends Viewer implements
 	@Override
 	public boolean overlapsWithVisibleRegion(int start, int length) {
 		IDocument document= getVisibleDocument();
-		if (document instanceof ChildDocument) {
-			ChildDocument cdoc= (ChildDocument) document;
+		if (document instanceof ChildDocument cdoc) {
 			return cdoc.getParentDocumentRange().overlapsWith(start, length);
 		} else if (document != null) {
 			int size= document.getLength();
@@ -4108,8 +4093,7 @@ public class TextViewer extends Viewer implements
 		fIgnoreAutoIndent= ignore;
 
 		IDocument document= getDocument();
-		if (document instanceof IDocumentExtension2) {
-			IDocumentExtension2 extension= (IDocumentExtension2) document;
+		if (document instanceof IDocumentExtension2 extension) {
 			if (ignore)
 				extension.ignorePostNotificationReplaces();
 			else
@@ -4329,8 +4313,7 @@ public class TextViewer extends Viewer implements
 				lineCount += lines[j + 1] - lines[j] + 1;
 			}
 
-			if (d instanceof IDocumentExtension4) {
-				IDocumentExtension4 extension= (IDocumentExtension4) d;
+			if (d instanceof IDocumentExtension4 extension) {
 				rewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.SEQUENTIAL);
 			} else {
 				setRedraw(false);
@@ -4360,8 +4343,7 @@ public class TextViewer extends Viewer implements
 			if (partitioners != null)
 				TextUtilities.addDocumentPartitioners(d, partitioners);
 
-			if (d instanceof IDocumentExtension4) {
-				IDocumentExtension4 extension= (IDocumentExtension4) d;
+			if (d instanceof IDocumentExtension4 extension) {
 				extension.stopRewriteSession(rewriteSession);
 			} else {
 				stopSequentialRewriteMode();
@@ -4973,15 +4955,13 @@ public class TextViewer extends Viewer implements
 
 		fMarkPosition= null;
 
-		if (oldDocument instanceof IDocumentExtension4) {
-			IDocumentExtension4 document= (IDocumentExtension4) oldDocument;
+		if (oldDocument instanceof IDocumentExtension4 document) {
 			document.removeDocumentRewriteSessionListener(fDocumentRewriteSessionListener);
 		}
 
 		super.inputChanged(newInput, oldInput);
 
-		if (newInput instanceof IDocumentExtension4) {
-			IDocumentExtension4 document= (IDocumentExtension4) newInput;
+		if (newInput instanceof IDocumentExtension4 document) {
 			document.addDocumentRewriteSessionListener(fDocumentRewriteSessionListener);
 		}
 
@@ -5018,8 +4998,7 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	protected void enabledRedrawing(int topIndex) {
-		if (fDocumentAdapter instanceof IDocumentAdapterExtension) {
-			IDocumentAdapterExtension extension= (IDocumentAdapterExtension) fDocumentAdapter;
+		if (fDocumentAdapter instanceof IDocumentAdapterExtension extension) {
 			StyledText textWidget= getTextWidget();
 			if (textWidget != null && !textWidget.isDisposed()) {
 				extension.resumeForwardingDocumentChanges();
@@ -5052,8 +5031,7 @@ public class TextViewer extends Viewer implements
 		if (fViewerState == null)
 			fViewerState= new ViewerState();
 
-		if (fDocumentAdapter instanceof IDocumentAdapterExtension) {
-			IDocumentAdapterExtension extension= (IDocumentAdapterExtension) fDocumentAdapter;
+		if (fDocumentAdapter instanceof IDocumentAdapterExtension extension) {
 			extension.stopForwardingDocumentChanges();
 		}
 
@@ -5118,8 +5096,7 @@ public class TextViewer extends Viewer implements
 	@Deprecated
 	protected final void startSequentialRewriteMode(boolean normalized) {
 		IDocument document= getDocument();
-		if (document instanceof IDocumentExtension) {
-			IDocumentExtension extension= (IDocumentExtension) document;
+		if (document instanceof IDocumentExtension extension) {
 			extension.startSequentialRewrite(normalized);
 		}
 	}
@@ -5133,8 +5110,7 @@ public class TextViewer extends Viewer implements
 	@Deprecated
 	protected final void stopSequentialRewriteMode() {
 		IDocument document= getDocument();
-		if (document instanceof IDocumentExtension) {
-			IDocumentExtension extension= (IDocumentExtension) document;
+		if (document instanceof IDocumentExtension extension) {
 			extension.stopSequentialRewrite();
 		}
 	}
@@ -5521,8 +5497,7 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public boolean moveFocusToWidgetToken() {
-		if (fWidgetTokenKeeper instanceof IWidgetTokenKeeperExtension) {
-			IWidgetTokenKeeperExtension extension= (IWidgetTokenKeeperExtension) fWidgetTokenKeeper;
+		if (fWidgetTokenKeeper instanceof IWidgetTokenKeeperExtension extension) {
 			return extension.setFocus(this);
 		}
 		return false;

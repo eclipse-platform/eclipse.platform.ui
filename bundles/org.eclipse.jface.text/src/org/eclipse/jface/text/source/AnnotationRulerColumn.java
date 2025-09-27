@@ -414,8 +414,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @param event the mouse scrolled event
 	 */
 	private void handleMouseScrolled(MouseEvent event) {
-		if (fCachedTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
+		if (fCachedTextViewer instanceof ITextViewerExtension5 extension) {
 			StyledText textWidget= fCachedTextViewer.getTextWidget();
 			int topIndex= textWidget.getTopIndex();
 			int newTopIndex= Math.max(0, topIndex - event.count);

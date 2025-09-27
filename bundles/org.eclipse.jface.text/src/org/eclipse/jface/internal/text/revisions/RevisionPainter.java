@@ -1054,8 +1054,7 @@ public final class RevisionPainter {
 	private ILineRange modelLinesToWidgetLines(ILineRange range) {
 		int widgetStartLine= -1;
 		int widgetEndLine= -1;
-		if (fViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
+		if (fViewer instanceof ITextViewerExtension5 extension) {
 			int modelEndLine= end(range);
 			for (int modelLine= range.getStartLine(); modelLine < modelEndLine; modelLine++) {
 				int widgetLine= extension.modelLine2WidgetLine(modelLine);
@@ -1130,8 +1129,7 @@ public final class RevisionPainter {
 			}
 		}
 
-		if (fAnnotationModel instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension ext= (IAnnotationModelExtension) fAnnotationModel;
+		if (fAnnotationModel instanceof IAnnotationModelExtension ext) {
 			ext.replaceAnnotations(fAnnotations.toArray(new Annotation[fAnnotations.size()]), added);
 		} else {
 			for (Annotation annotation : fAnnotations) {

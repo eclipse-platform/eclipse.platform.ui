@@ -1278,8 +1278,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 * @since 3.0
 	 */
 	protected void selectAndReveal(int offset, int length) {
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
+		if (fTextViewer instanceof ITextViewerExtension5 extension) {
 			extension.exposeModelRange(new Region(offset, length));
 		} else if (!fTextViewer.overlapsWithVisibleRegion(offset, length))
 			fTextViewer.resetVisibleRegion();

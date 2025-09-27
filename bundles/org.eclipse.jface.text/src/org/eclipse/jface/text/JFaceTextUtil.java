@@ -216,8 +216,7 @@ public final class JFaceTextUtil {
 	 */
 	public static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
 		int modelLine;
-		if (viewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+		if (viewer instanceof ITextViewerExtension5 extension) {
 			modelLine= extension.widgetLine2ModelLine(widgetLine);
 		} else {
 			try {
@@ -245,8 +244,7 @@ public final class JFaceTextUtil {
 	 */
 	public static int modelLineToWidgetLine(ITextViewer viewer, final int modelLine) {
 		int widgetLine;
-		if (viewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+		if (viewer instanceof ITextViewerExtension5 extension) {
 			widgetLine= extension.modelLine2WidgetLine(modelLine);
 		} else {
 			IRegion region= viewer.getVisibleRegion();
@@ -365,8 +363,7 @@ public final class JFaceTextUtil {
 	 * @since 3.4
 	 */
 	private static IRegion modelRange2WidgetRange(IRegion region, ITextViewer textViewer) {
-		if (textViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) textViewer;
+		if (textViewer instanceof ITextViewerExtension5 extension) {
 			return extension.modelRange2WidgetRange(region);
 		}
 
@@ -451,8 +448,7 @@ public final class JFaceTextUtil {
 				widgetOffset--;
 			}
 
-			if (viewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5)viewer;
+			if (viewer instanceof ITextViewerExtension5 extension) {
 				return extension.widgetOffset2ModelOffset(widgetOffset);
 			}
 

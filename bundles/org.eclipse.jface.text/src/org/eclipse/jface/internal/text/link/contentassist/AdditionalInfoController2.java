@@ -207,8 +207,7 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 			String information= null;
 			Object d= item.getData();
 
-			if (d instanceof ICompletionProposal) {
-				ICompletionProposal p= (ICompletionProposal) d;
+			if (d instanceof ICompletionProposal p) {
 				information= p.getAdditionalProposalInfo();
 			}
 

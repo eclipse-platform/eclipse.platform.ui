@@ -802,8 +802,7 @@ public final class SelectionProcessor {
 	 */
 	public SelectionProcessor(ITextViewer viewer) {
 		this(viewer.getDocument(), viewer.getTextWidget().getTabs());
-		if (viewer instanceof ITextViewerExtension) {
-			ITextViewerExtension ext= (ITextViewerExtension)viewer;
+		if (viewer instanceof ITextViewerExtension ext) {
 			fRewriteTarget= ext.getRewriteTarget();
 		}
 		fSelectionProvider= viewer.getSelectionProvider();

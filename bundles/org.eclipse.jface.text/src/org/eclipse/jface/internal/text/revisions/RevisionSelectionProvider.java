@@ -57,8 +57,7 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection selection= event.getSelection();
-			if (selection instanceof ITextSelection) {
-				ITextSelection ts= (ITextSelection) selection;
+			if (selection instanceof ITextSelection ts) {
 				int offset= ts.getOffset();
 				setSelectedRevision(fPainter.getRevision(offset));
 			}
@@ -144,8 +143,7 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 		fViewer= viewer;
 		if (fViewer != null) {
 			ISelectionProvider provider= fViewer.getSelectionProvider();
-			if (provider instanceof IPostSelectionProvider) {
-				IPostSelectionProvider postProvider= (IPostSelectionProvider) provider;
+			if (provider instanceof IPostSelectionProvider postProvider) {
 				fSelectionListener= new PostSelectionListener(postProvider);
 			}
 		}

@@ -299,8 +299,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 */
 	protected final int getReplaceOffset() {
 		int start;
-		if (fContext instanceof DocumentTemplateContext) {
-			DocumentTemplateContext docContext = (DocumentTemplateContext)fContext;
+		if (fContext instanceof DocumentTemplateContext docContext) {
 			start= docContext.getStart();
 		} else {
 			start= fRegion.getOffset();
@@ -318,8 +317,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 */
 	protected final int getReplaceEndOffset() {
 		int end;
-		if (fContext instanceof DocumentTemplateContext) {
-			DocumentTemplateContext docContext = (DocumentTemplateContext)fContext;
+		if (fContext instanceof DocumentTemplateContext docContext) {
 			end= docContext.getEnd();
 		} else {
 			end= fRegion.getOffset() + fRegion.getLength();

@@ -610,8 +610,7 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.0
 	 */
 	protected void setCustomInformationControlCreator(IInformationControlCreator informationControlCreator)  {
-		if (informationControlCreator != null && fCustomInformationControlCreator  instanceof IInformationControlCreatorExtension) {
-			IInformationControlCreatorExtension extension= (IInformationControlCreatorExtension) fCustomInformationControlCreator;
+		if (informationControlCreator != null && fCustomInformationControlCreator instanceof IInformationControlCreatorExtension extension) {
 			if (extension.canReplace(informationControlCreator))
 				return;
 		}
@@ -734,8 +733,7 @@ abstract public class AbstractInformationControlManager {
 	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
 
 		if (fSizeConstraints == null) {
-			if (informationControl instanceof IInformationControlExtension5) {
-				IInformationControlExtension5 iControl5= (IInformationControlExtension5) informationControl;
+			if (informationControl instanceof IInformationControlExtension5 iControl5) {
 				fSizeConstraints= iControl5.computeSizeConstraints(fWidthConstraint, fHeightConstraint);
 				if (fSizeConstraints != null)
 					return Geometry.copy(fSizeConstraints);
@@ -811,8 +809,7 @@ abstract public class AbstractInformationControlManager {
 		} else  {
 
 			creator= fCustomInformationControlCreator;
-			if (creator instanceof IInformationControlCreatorExtension)  {
-				IInformationControlCreatorExtension extension= (IInformationControlCreatorExtension) creator;
+			if (creator instanceof IInformationControlCreatorExtension extension)  {
 				if (fInformationControl != null && extension.canReuse(fInformationControl))
 					return fInformationControl;
 			}
@@ -1139,8 +1136,7 @@ abstract public class AbstractInformationControlManager {
 		if (informationControl != null) {
 
 			Point sizeConstraints= computeSizeConstraints(fSubjectControl, fSubjectArea, informationControl);
-			if (informationControl instanceof IInformationControlExtension3) {
-				IInformationControlExtension3 iControl3= (IInformationControlExtension3) informationControl;
+			if (informationControl instanceof IInformationControlExtension3 iControl3) {
 				Rectangle trim= iControl3.computeTrim();
 				sizeConstraints.x += trim.width;
 				sizeConstraints.y += trim.height;
@@ -1152,8 +1148,7 @@ abstract public class AbstractInformationControlManager {
 			else
 				informationControl.setInformation(information.toString());
 
-			if (informationControl instanceof IInformationControlExtension) {
-				IInformationControlExtension extension= (IInformationControlExtension)informationControl;
+			if (informationControl instanceof IInformationControlExtension extension) {
 				if (!extension.hasContents())
 					return;
 			}

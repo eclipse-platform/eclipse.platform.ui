@@ -330,8 +330,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @param model the model to which the projection annotation model is added
 	 */
 	private void addProjectionAnnotationModel(IAnnotationModel model) {
-		if (model instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
+		if (model instanceof IAnnotationModelExtension extension) {
 			extension.addAnnotationModel(ProjectionSupport.PROJECTION, fProjectionAnnotationModel);
 			model.addAnnotationModelListener(fAnnotationModelListener);
 		}
@@ -344,9 +343,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @return the removed projection annotation model or <code>null</code> if there was none
 	 */
 	private IAnnotationModel removeProjectionAnnotationModel(IAnnotationModel model) {
-		if (model instanceof IAnnotationModelExtension) {
+		if (model instanceof IAnnotationModelExtension extension) {
 			model.removeAnnotationModelListener(fAnnotationModelListener);
-			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
 			return extension.removeAnnotationModel(ProjectionSupport.PROJECTION);
 		}
 		return null;
@@ -387,8 +385,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	public ProjectionAnnotationModel getProjectionAnnotationModel() {
 		IAnnotationModel model= getVisualAnnotationModel();
-		if (model instanceof IAnnotationModelExtension) {
-			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
+		if (model instanceof IAnnotationModelExtension extension) {
 			return (ProjectionAnnotationModel) extension.getAnnotationModel(ProjectionSupport.PROJECTION);
 		}
 		return null;
@@ -401,9 +398,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 	@Override
 	protected boolean updateSlaveDocument(IDocument slaveDocument, int modelRangeOffset, int modelRangeLength) throws BadLocationException {
-		if (slaveDocument instanceof ProjectionDocument) {
-			ProjectionDocument projection= (ProjectionDocument) slaveDocument;
-
+		if (slaveDocument instanceof ProjectionDocument projection) {
 			int offset= modelRangeOffset;
 			int length= modelRangeLength;
 
@@ -814,9 +809,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	private void expand(int offset, int length, boolean fireRedraw) throws BadLocationException {
 		IDocument slave= getVisibleDocument();
-		if (slave instanceof ProjectionDocument) {
-			ProjectionDocument projection= (ProjectionDocument) slave;
-
+		if (slave instanceof ProjectionDocument projection) {
 			// expand
 			addMasterDocumentRange(projection, offset, length);
 
@@ -1100,8 +1093,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			if (document == null)
 				return null;
 
-			if (position instanceof IProjectionPosition) {
-				IProjectionPosition projPosition= (IProjectionPosition) position;
+			if (position instanceof IProjectionPosition projPosition) {
 				return projPosition.computeProjectionRegions(document);
 			}
 
@@ -1308,9 +1300,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	@Override
 	protected void handleVisibleDocumentChanged(DocumentEvent event) {
-		if (fHandleProjectionChanges && event instanceof ProjectionDocumentEvent && isProjectionMode()) {
-			ProjectionDocumentEvent e= (ProjectionDocumentEvent) event;
-
+		if (fHandleProjectionChanges && event instanceof ProjectionDocumentEvent e && isProjectionMode()) {
 			DocumentEvent master= e.getMasterEvent();
 			if (master != null)
 				fReplaceVisibleDocumentExecutionTrigger= master.getDocument();
@@ -1355,8 +1345,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (fInformationMapping == null)
 			return new IRegion[] { new Region(modelRange.getOffset(), modelRange.getLength()) };
 
-		if (fInformationMapping instanceof IDocumentInformationMappingExtension) {
-			IDocumentInformationMappingExtension extension= (IDocumentInformationMappingExtension) fInformationMapping;
+		if (fInformationMapping instanceof IDocumentInformationMappingExtension extension) {
 			try {
 				return extension.getExactCoverage(modelRange);
 			} catch (BadLocationException x) {

@@ -47,7 +47,7 @@ public class TemplatePersistenceData extends org.eclipse.text.templates.Template
 	 */
 	public TemplatePersistenceData(org.eclipse.text.templates.TemplatePersistenceData data) {
 		super(data.getTemplate(), data.isEnabled(), data.getId()); // these are ignored
-		this.ref= data instanceof TemplatePersistenceData ? ((TemplatePersistenceData) data).ref : data; // no double wrapping
+		this.ref= data instanceof TemplatePersistenceData t ? t.ref : data; // no double wrapping
 	}
 
 	public TemplatePersistenceData(Template template, boolean enabled) {

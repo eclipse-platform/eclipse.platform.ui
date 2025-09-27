@@ -462,9 +462,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		int topLine;
 		IRegion coverage;
 
-		if (fCachedTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
-
+		if (fCachedTextViewer instanceof ITextViewerExtension5 extension) {
 			// ITextViewer.getTopIndex returns the fully visible line, but we want the partially
 			// visible one
 			int widgetTopLine= JFaceTextUtil.getPartialTopIndex(fCachedTextWidget);

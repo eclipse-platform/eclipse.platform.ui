@@ -259,8 +259,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 				widgetOffset--;
 			}
 
-			if (fTextViewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
+			if (fTextViewer instanceof ITextViewerExtension5 extension) {
 				return extension.widgetOffset2ModelOffset(widgetOffset);
 			}
 

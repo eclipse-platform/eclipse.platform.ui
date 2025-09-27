@@ -137,8 +137,7 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 	 */
 	private int getModelCaret() {
 		int widgetCaret= fViewer.getTextWidget().getCaretOffset();
-		if (fViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
+		if (fViewer instanceof ITextViewerExtension5 extension) {
 			return extension.widgetOffset2ModelOffset(widgetCaret);
 		}
 		IRegion visible= fViewer.getVisibleRegion();
@@ -157,9 +156,8 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 			return;
 
 		int widgetOffset= 0;
-		if (fViewer instanceof ITextViewerExtension5) {
+		if (fViewer instanceof ITextViewerExtension5 extension) {
 
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
 			widgetOffset= extension.modelOffset2WidgetOffset(position.getOffset());
 			if (widgetOffset == -1)
 				return;

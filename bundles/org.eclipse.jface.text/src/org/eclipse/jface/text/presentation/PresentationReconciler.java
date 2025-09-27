@@ -231,8 +231,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 			String text= e.getText();
 			int length= text == null ? 0 : text.length();
 
-			if (fViewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5) fViewer;
+			if (fViewer instanceof ITextViewerExtension5 extension) {
 				return extension.widgetRange2ModelRange(new Region(e.getOffset(), length));
 			}
 

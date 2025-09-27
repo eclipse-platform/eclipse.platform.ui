@@ -80,13 +80,7 @@ public abstract class LineHeaderCodeMining extends AbstractCodeMining {
 
 	@Override
 	public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
-		return draw(getLabel(), gc, textWidget, x, y, new Callable<Point>() {
-
-			@Override
-			public Point call() throws Exception {
-				return LineHeaderCodeMining.super.draw(gc, textWidget, color, x, y);
-			}
-		});
+		return draw(getLabel(), gc, textWidget, x, y, () -> LineHeaderCodeMining.super.draw(gc, textWidget, color, x, y));
 	}
 
 	static Point draw(String label, GC gc, StyledText textWidget, int x, int y, Callable<Point> superDrawCallable) {

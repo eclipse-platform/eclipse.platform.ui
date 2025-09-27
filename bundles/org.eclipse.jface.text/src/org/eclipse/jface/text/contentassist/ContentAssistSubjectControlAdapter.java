@@ -164,8 +164,7 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	public boolean prependVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.prependVerifyKeyListener(verifyKeyListener);
-		} else if (fViewer instanceof ITextViewerExtension) {
-			ITextViewerExtension e= (ITextViewerExtension) fViewer;
+		} else if (fViewer instanceof ITextViewerExtension e) {
 			e.prependVerifyKeyListener(verifyKeyListener);
 			return true;
 		} else {
@@ -183,8 +182,7 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	public boolean appendVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.appendVerifyKeyListener(verifyKeyListener);
-		else if (fViewer instanceof ITextViewerExtension) {
-			ITextViewerExtension extension= (ITextViewerExtension)fViewer;
+		else if (fViewer instanceof ITextViewerExtension extension) {
 			extension.appendVerifyKeyListener(verifyKeyListener);
 			return true;
 		} else {
@@ -201,8 +199,7 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		if (fContentAssistSubjectControl != null) {
 			fContentAssistSubjectControl.removeVerifyKeyListener(verifyKeyListener);
-		} else if (fViewer instanceof ITextViewerExtension) {
-			ITextViewerExtension extension= (ITextViewerExtension) fViewer;
+		} else if (fViewer instanceof ITextViewerExtension extension) {
 			extension.removeVerifyKeyListener(verifyKeyListener);
 		} else {
 			StyledText textWidget= fViewer.getTextWidget();

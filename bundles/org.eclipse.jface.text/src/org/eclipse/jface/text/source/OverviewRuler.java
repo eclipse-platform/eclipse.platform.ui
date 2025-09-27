@@ -203,8 +203,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 		}
 
 		private boolean isSubtype(Object annotationType) {
-			if (fAnnotationAccess instanceof  IAnnotationAccessExtension) {
-				IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+			if (fAnnotationAccess instanceof IAnnotationAccessExtension extension) {
 				return extension.isSubtype(annotationType, fType);
 			}
 			return fType.equals(annotationType);
@@ -1007,8 +1006,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 		if (lines[1] > infos.maxLines)
 			lines[1]= infos.maxLines;
 
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
+		if (fTextViewer instanceof ITextViewerExtension5 extension) {
 			lines[0]= extension.widgetLine2ModelLine(lines[0]);
 			lines[1]= extension.widgetLine2ModelLine(lines[1]);
 		} else {
@@ -1154,8 +1152,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 * @param event the mouse scrolled event
 	 */
 	private void handleMouseScrolled(MouseEvent event) {
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
+		if (fTextViewer instanceof ITextViewerExtension5 extension) {
 			StyledText textWidget= fTextViewer.getTextWidget();
 			int topIndex= textWidget.getTopIndex();
 			int newTopIndex= Math.max(0, topIndex - event.count);
@@ -1268,8 +1265,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 * @since 3.0
 	 */
 	private boolean isCovered(Object annotationType, Set<Object> configured) {
-		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
-			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension extension) {
 			Iterator<Object> e= configured.iterator();
 			while (e.hasNext()) {
 				if (extension.isSubtype(annotationType,e.next()))
@@ -1356,8 +1352,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 		if (color != null)
 			return color;
 
-		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
-			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
+		if (fAnnotationAccess instanceof IAnnotationAccessExtension extension) {
 			Object[] superTypes= extension.getSupertypes(annotationType);
 			if (superTypes != null) {
 				for (Object superType : superTypes) {

@@ -108,9 +108,8 @@ public class DocumentCommand {
 		private boolean isEqual(Object object) {
 			if (object == this)
 				return true;
-			if (!(object instanceof Command))
+			if (!(object instanceof final Command command))
 				return false;
-			final Command command= (Command) object;
 			return command.fOffset == fOffset && command.fLength == fLength;
 		}
 	}

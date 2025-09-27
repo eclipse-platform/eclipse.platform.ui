@@ -87,8 +87,7 @@ public class DefaultTextHover implements ITextHover {
 	}
 
 	private IAnnotationModel getAnnotationModel(ISourceViewer viewer) {
-		if (viewer instanceof ISourceViewerExtension2) {
-			ISourceViewerExtension2 extension= (ISourceViewerExtension2) viewer;
+		if (viewer instanceof ISourceViewerExtension2 extension) {
 			return extension.getVisualAnnotationModel();
 		}
 		return viewer.getAnnotationModel();

@@ -157,8 +157,7 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 	}
 
 	private IAnnotationModel getAnnotationModel(ISourceViewer viewer) {
-		if (viewer instanceof ISourceViewerExtension2) {
-			ISourceViewerExtension2 extension= (ISourceViewerExtension2) viewer;
+		if (viewer instanceof ISourceViewerExtension2 extension) {
 			return extension.getVisualAnnotationModel();
 		}
 		return viewer.getAnnotationModel();
@@ -216,8 +215,7 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 			if (!isRulerLine(position, document, line))
 				continue;
 
-			if (annotation instanceof AnnotationBag) {
-				AnnotationBag bag= (AnnotationBag) annotation;
+			if (annotation instanceof AnnotationBag bag) {
 				Iterator<Annotation> e= bag.iterator();
 				while (e.hasNext()) {
 					annotation= e.next();

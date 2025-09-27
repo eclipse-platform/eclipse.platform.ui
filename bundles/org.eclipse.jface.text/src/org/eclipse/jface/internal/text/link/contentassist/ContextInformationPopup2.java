@@ -164,7 +164,7 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 		if (validator != null) {
 			ContextFrame current= new ContextFrame();
 			current.fInformation= information;
-			current.fBeginOffset= (information instanceof IContextInformationExtension) ? ((IContextInformationExtension) information).getContextInformationPosition() : offset;
+			current.fBeginOffset= (information instanceof IContextInformationExtension i) ? i.getContextInformationPosition() : offset;
 			if (current.fBeginOffset == -1) current.fBeginOffset= offset;
 			current.fOffset= offset;
 			current.fVisibleOffset= fViewer.getTextWidget().getSelectionRange().x - (offset - current.fBeginOffset);

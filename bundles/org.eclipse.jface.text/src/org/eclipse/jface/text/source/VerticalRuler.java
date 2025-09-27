@@ -542,8 +542,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 */
 	protected final static int widgetLine2ModelLine(ITextViewer viewer, int widgetLine) {
 
-		if (viewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+		if (viewer instanceof ITextViewerExtension5 extension) {
 			return extension.widgetLine2ModelLine(widgetLine);
 		}
 

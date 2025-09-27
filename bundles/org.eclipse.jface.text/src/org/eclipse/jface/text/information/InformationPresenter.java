@@ -305,8 +305,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			return;
 
 		Object info;
-		if (provider instanceof IInformationProviderExtension) {
-			IInformationProviderExtension extension= (IInformationProviderExtension) provider;
+		if (provider instanceof IInformationProviderExtension extension) {
 			info= extension.getInformation2(fTextViewer, subject);
 		} else {
 			// backward compatibility code
@@ -361,8 +360,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * @since 2.1
 	 */
 	private IRegion modelRange2WidgetRange(IRegion region) {
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
+		if (fTextViewer instanceof ITextViewerExtension5 extension) {
 			return extension.modelRange2WidgetRange(region);
 		}
 
@@ -388,12 +386,10 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 
 	@Override
 	protected void showInformationControl(Rectangle subjectArea) {
-		if (fTextViewer instanceof IWidgetTokenOwnerExtension && fTextViewer instanceof IWidgetTokenOwner) {
-			IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fTextViewer;
+		if (fTextViewer instanceof IWidgetTokenOwnerExtension extension && fTextViewer instanceof IWidgetTokenOwner) {
 			if (extension.requestWidgetToken(this, WIDGET_PRIORITY))
 				super.showInformationControl(subjectArea);
-		} else if (fTextViewer instanceof IWidgetTokenOwner) {
-			IWidgetTokenOwner owner= (IWidgetTokenOwner) fTextViewer;
+		} else if (fTextViewer instanceof IWidgetTokenOwner owner) {
 			if (owner.requestWidgetToken(this))
 				super.showInformationControl(subjectArea);
 
@@ -406,8 +402,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		try {
 			super.hideInformationControl();
 		} finally {
-			if (fTextViewer instanceof IWidgetTokenOwner) {
-				IWidgetTokenOwner owner= (IWidgetTokenOwner) fTextViewer;
+			if (fTextViewer instanceof IWidgetTokenOwner owner) {
 				owner.releaseWidgetToken(this);
 			}
 		}
@@ -418,8 +413,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		try {
 			super.handleInformationControlDisposed();
 		} finally {
-			if (fTextViewer instanceof IWidgetTokenOwner) {
-				IWidgetTokenOwner owner= (IWidgetTokenOwner) fTextViewer;
+			if (fTextViewer instanceof IWidgetTokenOwner owner) {
 				owner.releaseWidgetToken(this);
 			}
 		}

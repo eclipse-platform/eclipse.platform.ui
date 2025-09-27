@@ -122,8 +122,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.addMouseMoveListener(this);
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addKeyListener(this);
-				if (fSubjectControl instanceof Scrollable) {
-					Scrollable scrollable= (Scrollable) fSubjectControl;
+				if (fSubjectControl instanceof Scrollable scrollable) {
 					ScrollBar vBar= scrollable.getVerticalBar();
 					if (vBar != null)
 						vBar.addSelectionListener(this);
@@ -164,8 +163,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.removeMouseMoveListener(this);
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
-				if (fSubjectControl instanceof Scrollable) {
-					Scrollable scrollable= (Scrollable) fSubjectControl;
+				if (fSubjectControl instanceof Scrollable scrollable) {
 					ScrollBar vBar= scrollable.getVerticalBar();
 					if (vBar != null)
 						vBar.removeSelectionListener(this);
@@ -257,9 +255,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 					else if (!isReplaceInProgress()) {
 						IInformationControl infoControl= getCurrentInformationControl();
 						// During isReplaceInProgress(), events can come from the replacing information control
-						if (event.widget instanceof Control && infoControl instanceof IInformationControlExtension5) {
-							Control control= (Control) event.widget;
-							IInformationControlExtension5 iControl5= (IInformationControlExtension5) infoControl;
+						if (event.widget instanceof Control control && infoControl instanceof IInformationControlExtension5 iControl5) {
 							if (!(iControl5.containsControl(control)))
 								hideInformationControl();
 							else if (event.type == SWT.MouseVerticalWheel && cancelReplacingDelay())
@@ -276,16 +272,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 						hideInformationControl();
 					else if (!isReplaceInProgress()) {
 						IInformationControl infoControl= getCurrentInformationControl();
-						if (event.widget instanceof Control && infoControl instanceof IInformationControlExtension5) {
-							Control control= (Control) event.widget;
-							final IInformationControlExtension5 iControl5= (IInformationControlExtension5) infoControl;
+						if (event.widget instanceof Control control && infoControl instanceof final IInformationControlExtension5 iControl5) {
 							if (!(iControl5.containsControl(control))) {
 								hideInformationControl();
 							} else if (cancelReplacingDelay()) {
 								if (event.type == SWT.MouseUp) {
 									stop(); // avoid that someone else replaces the info control before the async is exec'd
-									if (infoControl instanceof IDelayedInputChangeProvider) {
-										final IDelayedInputChangeProvider delayedICP= (IDelayedInputChangeProvider) infoControl;
+									if (infoControl instanceof final IDelayedInputChangeProvider delayedICP) {
 										final IInputChangedListener inputChangeListener= new DelayedInputChangeListener(delayedICP, getInformationControlReplacer());
 										delayedICP.setDelayedInputChangeListener(inputChangeListener);
 										// cancel automatic input updating after a small timeout:
@@ -328,10 +321,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 //			if (DEBUG)
 //				System.out.println("AbstractHoverInformationControl.Closer.handleMouseMove():" + event); //$NON-NLS-1$
 
-			if (!(event.widget instanceof Control))
+			if (!(event.widget instanceof Control eventControl))
 				return;
-			Control eventControl= (Control) event.widget;
-
 			//transform coordinates to subject control:
 			Point mouseLoc= event.display.map(eventControl, fSubjectControl, event.x, event.y);
 
@@ -680,9 +671,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				}
 			}
 		}
-		if (iControl instanceof IInformationControlExtension3) {
-			IInformationControlExtension3 iControl3= (IInformationControlExtension3) iControl;
-
+		if (iControl instanceof IInformationControlExtension3 iControl3) {
 			Rectangle iControlBounds= subjectControl.getDisplay().map(null, subjectControl, iControl3.getBounds());
 			Rectangle totalBounds= Geometry.copy(iControlBounds);
 			if (blowUp && isReplaceInProgress()) {

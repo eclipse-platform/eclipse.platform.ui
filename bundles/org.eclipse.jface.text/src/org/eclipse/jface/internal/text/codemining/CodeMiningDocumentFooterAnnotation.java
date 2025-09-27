@@ -114,13 +114,7 @@ public class CodeMiningDocumentFooterAnnotation extends LineFooterAnnotation imp
 	@Override
 	public void draw(GC gc, StyledText textWidget, int offset, int length, Color color, int x, int y) {
 		int singleLineHeight= super.getHeight();
-		CodeMiningLineHeaderAnnotation.draw(fMinings, fBounds, singleLineHeight, fResolvedMinings, gc, textWidget, color, x, y, new Runnable() {
-
-			@Override
-			public void run() {
-				redraw();
-			}
-		});
+		CodeMiningLineHeaderAnnotation.draw(fMinings, fBounds, singleLineHeight, fResolvedMinings, gc, textWidget, color, x, y, this::redraw);
 	}
 
 	@Override

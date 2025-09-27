@@ -580,8 +580,7 @@ public class LinkedModeUI {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection selection= event.getSelection();
-			if (selection instanceof ITextSelection) {
-				ITextSelection textsel= (ITextSelection) selection;
+			if (selection instanceof ITextSelection textsel) {
 				if (event.getSelectionProvider() instanceof ITextViewer) {
 					IDocument doc= ((ITextViewer) event.getSelectionProvider()).getDocument();
 					if (doc != null) {
@@ -855,8 +854,7 @@ public class LinkedModeUI {
 
 	/** Trigger content assist on choice positions */
 	private void triggerContentAssist() {
-		if (fFramePosition instanceof ProposalPosition) {
-			ProposalPosition pp= (ProposalPosition) fFramePosition;
+		if (fFramePosition instanceof ProposalPosition pp) {
 			ICompletionProposal[] choices= pp.getChoices();
 			if (choices != null && choices.length > 0) {
 				fAssistant.setCompletions(choices);
@@ -909,11 +907,9 @@ public class LinkedModeUI {
 		LinkedPositionAnnotations lpa= fCurrentTarget.fAnnotationModel;
 		if (lpa != null) {
 			ITextViewer viewer= fCurrentTarget.getViewer();
-			if (viewer instanceof ISourceViewer) {
-				ISourceViewer sv= (ISourceViewer) viewer;
+			if (viewer instanceof ISourceViewer sv) {
 				IAnnotationModel model= sv.getAnnotationModel();
-				if (model instanceof IAnnotationModelExtension) {
-					IAnnotationModelExtension ext= (IAnnotationModelExtension) model;
+				if (model instanceof IAnnotationModelExtension ext) {
 					IAnnotationModel ourModel= ext.getAnnotationModel(getUniqueKey());
 					if (ourModel == null) {
 						ext.addAnnotationModel(getUniqueKey(), lpa);
@@ -925,11 +921,9 @@ public class LinkedModeUI {
 
 	private void uninstallAnnotationModel(LinkedModeUITarget target) {
 		ITextViewer viewer= target.getViewer();
-		if (viewer instanceof ISourceViewer) {
-			ISourceViewer sv= (ISourceViewer) viewer;
+		if (viewer instanceof ISourceViewer sv) {
 			IAnnotationModel model= sv.getAnnotationModel();
-			if (model instanceof IAnnotationModelExtension) {
-				IAnnotationModelExtension ext= (IAnnotationModelExtension) model;
+			if (model instanceof IAnnotationModelExtension ext) {
 				ext.removeAnnotationModel(getUniqueKey());
 			}
 		}
@@ -966,8 +960,7 @@ public class LinkedModeUI {
 
 	private void select() {
 		ITextViewer viewer= fCurrentTarget.getViewer();
-		if (viewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension5= (ITextViewerExtension5) viewer;
+		if (viewer instanceof ITextViewerExtension5 extension5) {
 			extension5.exposeModelRange(new Region(fFramePosition.offset, fFramePosition.length));
 		} else if (!viewer.overlapsWithVisibleRegion(fFramePosition.offset, fFramePosition.length)) {
 			viewer.resetVisibleRegion();
@@ -1056,8 +1049,7 @@ public class LinkedModeUI {
 	private void registerAutoEditVetoer(ITextViewer viewer) {
 		try {
 			String[] contentTypes= getContentTypes(viewer.getDocument());
-			if (viewer instanceof ITextViewerExtension2) {
-				ITextViewerExtension2 vExtension= ((ITextViewerExtension2) viewer);
+			if (viewer instanceof ITextViewerExtension2 vExtension) {
 				for (String contentType : contentTypes) {
 					vExtension.prependAutoEditStrategy(fAutoEditVetoer, contentType);
 				}
@@ -1073,8 +1065,7 @@ public class LinkedModeUI {
 	private void unregisterAutoEditVetoer(ITextViewer viewer) {
 		try {
 			String[] contentTypes= getContentTypes(viewer.getDocument());
-			if (viewer instanceof ITextViewerExtension2) {
-				ITextViewerExtension2 vExtension= ((ITextViewerExtension2) viewer);
+			if (viewer instanceof ITextViewerExtension2 vExtension) {
 				for (String contentType : contentTypes) {
 					vExtension.removeAutoEditStrategy(fAutoEditVetoer, contentType);
 				}
@@ -1095,8 +1086,7 @@ public class LinkedModeUI {
 	 * @since 3.1
 	 */
 	private String[] getContentTypes(IDocument document) throws BadPartitioningException {
-		if (document instanceof IDocumentExtension3) {
-			IDocumentExtension3 ext= (IDocumentExtension3) document;
+		if (document instanceof IDocumentExtension3 ext) {
 			String[] partitionings= ext.getPartitionings();
 			Set<String> contentTypes= new HashSet<>(20);
 			for (String partitioning : partitionings) {

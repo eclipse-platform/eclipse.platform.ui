@@ -153,8 +153,7 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 	private Rectangle computeBoundsFromContent(IInformationControl informationControl, Rectangle controlBounds) {
 		Rectangle result= Geometry.copy(controlBounds);
 
-		if (informationControl instanceof IInformationControlExtension3) {
-			IInformationControlExtension3 iControl3= (IInformationControlExtension3) informationControl;
+		if (informationControl instanceof IInformationControlExtension3 iControl3) {
 			Rectangle trim= iControl3.computeTrim();
 			result= Geometry.add(result, trim);
 

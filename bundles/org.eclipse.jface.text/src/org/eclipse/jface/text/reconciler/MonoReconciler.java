@@ -53,8 +53,7 @@ public class MonoReconciler extends AbstractReconciler {
 	public MonoReconciler(IReconcilingStrategy strategy, boolean isIncremental) {
 		Assert.isNotNull(strategy);
 		fStrategy= strategy;
-		if (fStrategy instanceof IReconcilingStrategyExtension) {
-			IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension)fStrategy;
+		if (fStrategy instanceof IReconcilingStrategyExtension extension) {
 			extension.setProgressMonitor(getProgressMonitor());
 		}
 
@@ -87,16 +86,14 @@ public class MonoReconciler extends AbstractReconciler {
 	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		super.setProgressMonitor(monitor);
-		if (fStrategy instanceof IReconcilingStrategyExtension) {
-			IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) fStrategy;
+		if (fStrategy instanceof IReconcilingStrategyExtension extension) {
 			extension.setProgressMonitor(monitor);
 		}
 	}
 
 	@Override
 	protected void initialProcess() {
-		if (fStrategy instanceof IReconcilingStrategyExtension) {
-			IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) fStrategy;
+		if (fStrategy instanceof IReconcilingStrategyExtension extension) {
 			extension.initialReconcile();
 		}
 	}

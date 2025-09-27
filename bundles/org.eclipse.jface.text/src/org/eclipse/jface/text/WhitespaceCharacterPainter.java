@@ -478,8 +478,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @return <code>true</code> if the line is folded
 	 */
 	private boolean isFoldedLine(int widgetLine) {
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5)fTextViewer;
+		if (fTextViewer instanceof ITextViewerExtension5 extension) {
 			int modelLine= extension.widgetLine2ModelLine(widgetLine);
 			int widgetLine2= extension.modelLine2WidgetLine(modelLine + 1);
 			return widgetLine2 == -1;
