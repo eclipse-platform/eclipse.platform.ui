@@ -139,7 +139,7 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 			return;
 		}
 
-		
+
 		/**
 		 * The editor input serialization format is: (int) number of editor inputs Then,
 		 * the following for each editor input: (String) editorId (String) factoryId
