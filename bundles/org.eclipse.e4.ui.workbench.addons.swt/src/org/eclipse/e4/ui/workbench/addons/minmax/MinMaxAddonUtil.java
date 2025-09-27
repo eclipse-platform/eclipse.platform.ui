@@ -55,10 +55,9 @@ public class MinMaxAddonUtil {
 		if (!element.getTags().contains(MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG)) {
 			return false;
 		}
-		if (!(element instanceof MArea)) {
+		if (!(element instanceof MArea area)) {
 			return false;
 		}
-		MArea area = (MArea) element;
 		if (area.getChildren().isEmpty()) {
 			return false;
 		}

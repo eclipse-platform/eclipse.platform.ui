@@ -224,8 +224,7 @@ public class CleanupAddon {
 				if (parent.getRenderer() != null) {
 					Object myParent = ((AbstractPartRenderer) parent.getRenderer())
 							.getUIContainer(changedObj);
-					if (myParent instanceof Composite) {
-						Composite parentComp = (Composite) myParent;
+					if (myParent instanceof Composite parentComp) {
 						ctrl.setParent(parentComp);
 
 						Control prevControl = null;
