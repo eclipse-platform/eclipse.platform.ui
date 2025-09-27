@@ -1797,7 +1797,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @since 3.1
 	 */
 	private void fireWindowClosed() {
-		// let the application do further deconfiguration
+		// let the application do further reconfiguration
 		getWindowAdvisor().postWindowClose();
 		getWorkbenchImpl().fireWindowClosed(this);
 	}
@@ -2034,7 +2034,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				hideNonRestorableViews();
 			}
 
-			// clear some lables
+			// clear some labels
 			// Remove the handler submissions. Bug 64024.
 			final IWorkbench workbench = getWorkbench();
 			LegacyHandlerService windowHs = (LegacyHandlerService) model.getContext().get(IHandlerService.class);
@@ -2547,7 +2547,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	/**
 	 * Update the visible action sets. This method is typically called from a page
-	 * when the user changes the visible action sets within the prespective.
+	 * when the user changes the visible action sets within the perspective.
 	 */
 	public void updateActionSets() {
 		if (updateDisabled) {

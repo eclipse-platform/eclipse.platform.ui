@@ -65,7 +65,7 @@ public class EditorMenuManager extends SubMenuManager {
 			if (getEnabled(item) == null) {
 				return getParentMenuManager().getOverrides().getAccelerator(item);
 			}
-			// no acclerator if the item is disabled
+			// no accelerator if the item is disabled
 			return Integer.valueOf(0);
 		}
 
