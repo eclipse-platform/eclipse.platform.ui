@@ -13,19 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.adaptable;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
- * The AdaptableTestSuite is the TestSuite for the
- * adaptable support in the UI.
+ * The AdaptableTestSuite is the TestSuite for the adaptable support in the UI.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	AdaptableDecoratorTestCase.class,
-	MarkerImageProviderTest.class,
-	WorkingSetTestCase.class,
-	SelectionAdapterTest.class,
+@Suite
+@SelectClasses({ //
+		AdaptableDecoratorTestCase.class, //
+		MarkerImageProviderTest.class, //
+		WorkingSetTestCase.class, //
+		SelectionAdapterTest.class, //
 })
 public class AdaptableTestSuite {
 }

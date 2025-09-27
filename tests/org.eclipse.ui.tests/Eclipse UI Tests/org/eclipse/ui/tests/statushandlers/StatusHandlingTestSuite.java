@@ -14,21 +14,21 @@
 
 package org.eclipse.ui.tests.statushandlers;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Tests the status handling facility
  *
  * @since 3.3
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	StatusDialogManagerTest.class,
-	LabelProviderWrapperTest.class,
-	SupportTrayTest.class,
-	WorkbenchStatusDialogManagerImplTest.class,
-	WizardsStatusHandlingTestCase.class,
+@Suite
+@SelectClasses({ //
+		StatusDialogManagerTest.class, //
+		LabelProviderWrapperTest.class, //
+		SupportTrayTest.class, //
+		WorkbenchStatusDialogManagerImplTest.class, //
+		WizardsStatusHandlingTestCase.class, //
 })
 public class StatusHandlingTestSuite {
 	//
