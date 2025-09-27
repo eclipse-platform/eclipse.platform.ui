@@ -18,6 +18,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.custom.StyledText;
@@ -53,6 +54,9 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
  */
 public class GotoLineTest {
 
+	@Rule
+	public TestUtil.CleanupRule cleanup = new TestUtil.CleanupRule();
+
 	private static final String ORIGINAL_CONTENT= "line1\nline2\nline3";
 
 	private IFile fFile;
@@ -71,7 +75,6 @@ public class GotoLineTest {
 	public void tearDown() throws Exception {
 		ResourceHelper.deleteProject("GoToLineTestProject");
 		fFile= null;
-		TestUtil.cleanUp();
 	}
 
 	@Test
