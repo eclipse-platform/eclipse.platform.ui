@@ -206,14 +206,13 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		if (fActiveEditorPart == part)
 			return;
 
-		if (fActiveEditorPart instanceof ITextEditorExtension) {
-			ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
+		if (fActiveEditorPart instanceof ITextEditorExtension extension) {
 			for (StatusFieldDef element : STATUS_FIELD_DEFS)
 				extension.setStatusField(null, element.category);
 		}
 
 		fActiveEditorPart= part;
-		ITextEditor editor= (part instanceof ITextEditor) ? (ITextEditor) part : null;
+		ITextEditor editor= (part instanceof ITextEditor i) ? i : null;
 
 		IActionBars actionBars= getActionBars();
 		for (String element : ACTIONS)
@@ -231,10 +230,9 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fHippieCompletion.setAction(getAction(editor, ITextEditorActionConstants.HIPPIE_COMPLETION));
 
 		for (StatusFieldDef element : STATUS_FIELD_DEFS) {
-			if (fActiveEditorPart instanceof ITextEditorExtension) {
+			if (fActiveEditorPart instanceof ITextEditorExtension extension) {
 				StatusLineContributionItem statusField= fStatusFields.get(element);
 				statusField.setActionHandler(getAction(editor, element.actionId));
-				ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
 				extension.setStatusField(statusField, element.category);
 			}
 		}

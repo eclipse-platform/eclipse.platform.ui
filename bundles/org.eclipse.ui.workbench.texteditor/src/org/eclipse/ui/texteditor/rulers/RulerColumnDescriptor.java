@@ -302,8 +302,7 @@ public final class RulerColumnDescriptor {
 		if (input == null)
 			return null;
 		IDocumentProvider provider= editor.getDocumentProvider();
-		if (provider instanceof IDocumentProviderExtension4) {
-			IDocumentProviderExtension4 ext= (IDocumentProviderExtension4) provider;
+		if (provider instanceof IDocumentProviderExtension4 ext) {
 			try {
 				return ext.getContentType(input);
 			} catch (CoreException x) {

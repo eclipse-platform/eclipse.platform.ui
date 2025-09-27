@@ -52,10 +52,8 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 	@Override
 	public void setMarkAtCursor(boolean set) {
 
-		if (!(fViewer instanceof ITextViewerExtension))
+		if (!(fViewer instanceof ITextViewerExtension viewerExtension))
 			return;
-
-		ITextViewerExtension viewerExtension= ((ITextViewerExtension) fViewer);
 
 		if (set) {
 			Point selection= fViewer.getSelectedRange();
@@ -75,10 +73,8 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 	@Override
 	public void swapMarkAndCursor() {
 
-		if (!(fViewer instanceof ITextViewerExtension))
+		if (!(fViewer instanceof ITextViewerExtension viewerExtension))
 			return;
-
-		ITextViewerExtension viewerExtension= ((ITextViewerExtension) fViewer);
 
 		int markPosition= viewerExtension.getMark();
 		if (markPosition == -1) {
@@ -113,8 +109,7 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 	 * @since 2.1
 	 */
 	protected final static boolean isVisible(ITextViewer viewer, int offset) {
-		if (viewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
+		if (viewer instanceof ITextViewerExtension5 extension) {
 			return extension.modelOffset2WidgetOffset(offset) >= 0;
 		}
 		IRegion region= viewer.getVisibleRegion();

@@ -84,8 +84,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 		if (differ == null)
 			return;
 
-		if (fEditor instanceof ITextEditorExtension3) {
-			ITextEditorExtension3 extension= (ITextEditorExtension3) fEditor;
+		if (fEditor instanceof ITextEditorExtension3 extension) {
 			IQuickDiffReferenceProvider provider= getProvider();
 			if (provider != null) {
 				provider.setActiveEditor(fEditor);

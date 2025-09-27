@@ -1411,8 +1411,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (fOpenConnections == 1) {
 			fRightDocument= document;
 			fRightDocument.addDocumentListener(this);
-			if (document instanceof IDocumentExtension4) {
-				IDocumentExtension4 ext= (IDocumentExtension4) document;
+			if (document instanceof IDocumentExtension4 ext) {
 				ext.addDocumentRewriteSessionListener(fSessionListener);
 			}
 			initialize();
@@ -1449,8 +1448,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 			if (fRightDocument != null) {
 				fRightDocument.removeDocumentListener(this);
-				if (fRightDocument instanceof IDocumentExtension4) {
-					IDocumentExtension4 ext= (IDocumentExtension4) fRightDocument;
+				if (fRightDocument instanceof IDocumentExtension4 ext) {
 					ext.removeDocumentRewriteSessionListener(fSessionListener);
 				}
 			}

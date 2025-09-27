@@ -425,10 +425,9 @@ abstract class AbstractMultiSelectionHandler extends AbstractHandler {
 	}
 
 	private void setBlockSelectionMode(boolean blockSelectionMode) {
-		if (!(textEditor instanceof ITextEditorExtension5)) {
+		if (!(textEditor instanceof ITextEditorExtension5 ext)) {
 			return;
 		}
-		ITextEditorExtension5 ext = (ITextEditorExtension5) textEditor;
 		ext.setBlockSelectionMode(blockSelectionMode);
 	}
 

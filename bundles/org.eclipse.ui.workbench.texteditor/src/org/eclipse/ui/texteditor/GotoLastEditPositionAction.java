@@ -103,8 +103,7 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 			}
 
 			// Optimization - could also use else branch
-			if (editor instanceof ITextEditor) {
-				ITextEditor textEditor = (ITextEditor) editor;
+			if (editor instanceof ITextEditor textEditor) {
 				textEditor.selectAndReveal(pos.offset, pos.length);
 				return;
 			}

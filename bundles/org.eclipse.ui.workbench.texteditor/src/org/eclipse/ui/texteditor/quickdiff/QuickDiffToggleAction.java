@@ -177,8 +177,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		if (fEditor == null)
 			return;
 
-		if (fEditor instanceof ITextEditorExtension3) {
-			ITextEditorExtension3 extension= (ITextEditorExtension3)fEditor;
+		if (fEditor instanceof ITextEditorExtension3 extension) {
 			extension.showChangeInformation(!extension.isChangeInformationShowing());
 		}
 	}

@@ -129,8 +129,7 @@ public class MinimapWidget {
 		}
 
 		private IRegion modelRange2WidgetRange(IRegion region) {
-			if (fEditorViewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension = (ITextViewerExtension5) fEditorViewer;
+			if (fEditorViewer instanceof ITextViewerExtension5 extension) {
 				return extension.modelRange2WidgetRange(region);
 			}
 			if (fEditorViewer instanceof TextViewer) {
