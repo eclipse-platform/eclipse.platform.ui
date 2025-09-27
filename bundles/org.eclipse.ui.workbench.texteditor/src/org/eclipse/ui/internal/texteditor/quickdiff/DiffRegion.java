@@ -67,10 +67,11 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 				int r= fDifference.rightLength();
 				int l= fDifference.leftLength();
 				int c= Math.min(r, l);
-				if (c == 0 && r - l < 0)
+				if (c == 0 && r - l < 0) {
 					return "org.eclipse.ui.workbench.texteditor.quickdiffDeletion"; //$NON-NLS-1$
-				else
+				} else {
 					return "org.eclipse.ui.workbench.texteditor.quickdiffChange"; //$NON-NLS-1$
+				}
 			case ADDED:
 				return "org.eclipse.ui.workbench.texteditor.quickdiffAddition"; //$NON-NLS-1$
 			case UNCHANGED:
@@ -84,16 +85,18 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 	public int getRemovedLinesBelow() {
 		if (fOffset == fDifference.rightLength() - 1) {
 
-			if (getChangeType() != UNCHANGED)
+			if (getChangeType() != UNCHANGED) {
 				return Math.max(fDifference.leftLength() - fDifference.rightLength(), 0);
+			}
 
 			synchronized (fList) {
 				for (ListIterator<QuickDiffRangeDifference> it= fList.listIterator(); it.hasNext();) {
 					if (fDifference.equals(it.next())) {
 						if (it.hasNext()) {
 							QuickDiffRangeDifference next= it.next();
-							if (next.rightLength() == 0)
+							if (next.rightLength() == 0) {
 								return Math.max(next.leftLength() - next.rightLength(), 0);
+							}
 						}
 						break;
 					}
@@ -105,10 +108,12 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 
 	@Override
 	public int getChangeType() {
-		if (fDifference.kind() == RangeDifference.NOCHANGE)
+		if (fDifference.kind() == RangeDifference.NOCHANGE) {
 			return UNCHANGED;
-		if (fOffset >= fDifference.leftLength())
+		}
+		if (fOffset >= fDifference.leftLength()) {
 			return ADDED;
+		}
 		return CHANGED;
 	}
 
@@ -140,13 +145,15 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		IDocument doc= fDocument;
 		if (doc != null) {
 			int startLine= fDifference.leftStart() + fOffset;
-			if (startLine >= fDifference.leftEnd())
+			if (startLine >= fDifference.leftEnd()) {
 				return new String[0]; // original text of an added line is
 									  // empty
+			}
 
 			int endLine= startLine + getRemovedLinesBelow();
-			if (getChangeType() == UNCHANGED)
+			if (getChangeType() == UNCHANGED) {
 				startLine++;
+			}
 			String[] ret= new String[endLine - startLine + 1];
 			for (int i= 0; i < ret.length; i++) {
 				try {
@@ -170,12 +177,13 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		int a= r - l;
 		String changed= c > 0 ? NLSUtility.format(QuickDiffMessages.quickdiff_annotation_changed, Integer.valueOf(c)) : null;
 		String added;
-		if (a > 0)
+		if (a > 0) {
 			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_added, Integer.valueOf(a));
-		else if (a < 0)
+		} else if (a < 0) {
 			added= NLSUtility.format(QuickDiffMessages.quickdiff_annotation_deleted, Integer.valueOf(-a));
-		else
+		} else {
 			added= null;
+		}
 		String line= c > 1 || c == 0 && Math.abs(a) > 1 ? QuickDiffMessages.quickdiff_annotation_line_plural : QuickDiffMessages.quickdiff_annotation_line_singular;
 
 		String ret= (changed != null ? changed : "") + (changed != null ? " " + line : "")   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$

@@ -38,10 +38,12 @@ public abstract class RulerColumnTarget {
 
 	public static RulerColumnTarget createOrTarget(RulerColumnTarget either, RulerColumnTarget or) {
 		Assert.isLegal(or != null || either != null);
-		if (either == null)
+		if (either == null) {
 			return or;
-		if (or == null)
+		}
+		if (or == null) {
 			return either;
+		}
 		return new OrTarget(either, or);
 	}
 
@@ -167,8 +169,9 @@ final class ClassTarget extends RulerColumnTarget {
 		Assert.isLegal(clazz != null);
 
 		do {
-			if (clazz.getName().equals(fClassName))
+			if (clazz.getName().equals(fClassName)) {
 				return true;
+			}
 			clazz= clazz.getSuperclass();
 		} while (clazz != null);
 

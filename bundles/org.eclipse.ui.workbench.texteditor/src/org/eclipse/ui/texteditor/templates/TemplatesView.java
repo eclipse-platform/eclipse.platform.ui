@@ -132,10 +132,12 @@ public final class TemplatesView extends PageBookView {
 	protected PageRec doCreatePage(IWorkbenchPart part) {
 		// Try to get template page.
 		ITemplatesPage page= part.getAdapter(ITemplatesPage.class);
-		if (page == null)
+		if (page == null) {
 			page = Adapters.adapt(part, ITemplatesPage.class);
-		if (page == null)
+		}
+		if (page == null) {
 			return null; // There is no template page
+		}
 
 		initPage(page);
 		page.createControl(getPageBook());
@@ -152,8 +154,9 @@ public final class TemplatesView extends PageBookView {
 	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		IWorkbenchPage page= getSite().getPage();
-		if (page != null)
+		if (page != null) {
 			return page.getActiveEditor();
+		}
 		return null;
 	}
 
@@ -185,8 +188,9 @@ public final class TemplatesView extends PageBookView {
 	 */
 	public TemplateStore getTemplateStore() {
 		IPage currentPage= getCurrentPage();
-		if (currentPage instanceof ITemplatesPageExtension)
+		if (currentPage instanceof ITemplatesPageExtension) {
 			return ((ITemplatesPageExtension)currentPage).getTemplateStore();
+		}
 		return null;
 	}
 
@@ -199,8 +203,9 @@ public final class TemplatesView extends PageBookView {
 	 */
 	public TemplatePersistenceData[] getSelectedTemplates() {
 		IPage currentPage= getCurrentPage();
-		if (currentPage instanceof ITemplatesPageExtension)
+		if (currentPage instanceof ITemplatesPageExtension) {
 			return ((ITemplatesPageExtension)currentPage).getSelectedTemplates();
+		}
 		return null;
 	}
 

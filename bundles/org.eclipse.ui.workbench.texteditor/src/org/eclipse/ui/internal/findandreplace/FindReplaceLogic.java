@@ -53,7 +53,7 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 
 	private boolean isTargetSupportingRegEx;
 	private boolean isTargetEditable;
-	private Set<SearchOptions> searchOptions = new HashSet<>();
+	private final Set<SearchOptions> searchOptions = new HashSet<>();
 
 	private String findString = ""; //$NON-NLS-1$
 	private String replaceString = ""; //$NON-NLS-1$
@@ -465,11 +465,12 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	 * @return the selection after replacing, i.e. the inserted text
 	 */
 	private Point replaceSelection() {
-		if (target instanceof IFindReplaceTargetExtension3)
+		if (target instanceof IFindReplaceTargetExtension3) {
 			((IFindReplaceTargetExtension3) target).replaceSelection(replaceString,
 					isAvailableAndActive(SearchOptions.REGEX));
-		else
+		} else {
 			target.replaceSelection(replaceString);
+		}
 
 		return target.getSelection();
 	}
@@ -575,8 +576,9 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 		this.isTargetEditable = canEditTarget;
 
 		if (this.target != newTarget) {
-			if (this.target instanceof IFindReplaceTargetExtension)
+			if (this.target instanceof IFindReplaceTargetExtension) {
 				((IFindReplaceTargetExtension) this.target).endSession();
+			}
 
 			this.target = newTarget;
 			isTargetSupportingRegEx = newTarget instanceof IFindReplaceTargetExtension3;

@@ -26,9 +26,9 @@ import org.eclipse.jface.dialogs.IDialogSettings;
  * the nodes using the DialogSettings mechanism.
  */
 public class HistoryStore {
-	private IDialogSettings settingsManager;
-	private int historySize;
-	private String sectionName;
+	private final IDialogSettings settingsManager;
+	private final int historySize;
+	private final String sectionName;
 
 	/**
 	 * @param settingsManager manager for DialogSettings

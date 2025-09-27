@@ -120,8 +120,9 @@ public class MoveLinesAction extends TextEditorAction {
 	 */
 	private void beginCompoundEdit() {
 		ITextEditor editor= getTextEditor();
-		if (fEditInProgress || fTextViewer == null || editor == null)
+		if (fEditInProgress || fTextViewer == null || editor == null) {
 			return;
+		}
 
 		fEditInProgress= true;
 
@@ -148,16 +149,18 @@ public class MoveLinesAction extends TextEditorAction {
 		IDocument document= viewer.getDocument();
 
 		IRegion visible;
-		if (viewer instanceof ITextViewerExtension5)
+		if (viewer instanceof ITextViewerExtension5) {
 			visible= ((ITextViewerExtension5) viewer).getModelCoverage();
-		else
+		} else {
 			visible= viewer.getVisibleRegion();
+		}
 
 		int visOffset= visible.getOffset();
 		try {
 			if (visOffset > min) {
-				if (document.getLineOfOffset(visOffset) != selection.getStartLine())
+				if (document.getLineOfOffset(visOffset) != selection.getStartLine()) {
 					return false;
+				}
 				if (!isWhitespace(document.get(min, visOffset - min))) {
 					showStatus();
 					return false;
@@ -165,8 +168,9 @@ public class MoveLinesAction extends TextEditorAction {
 			}
 			int visEnd= visOffset + visible.getLength();
 			if (visEnd < max) {
-				if (document.getLineOfOffset(visEnd) != selection.getEndLine())
+				if (document.getLineOfOffset(visEnd) != selection.getEndLine()) {
 					return false;
+				}
 				if (!isWhitespace(document.get(visEnd, max - visEnd))) {
 					showStatus();
 					return false;
@@ -183,8 +187,9 @@ public class MoveLinesAction extends TextEditorAction {
 	 */
 	private void endCompoundEdit() {
 		ITextEditor editor= getTextEditor();
-		if (!fEditInProgress || editor == null)
+		if (!fEditInProgress || editor == null) {
 			return;
+		}
 
 		IRewriteTarget target= editor.getAdapter(IRewriteTarget.class);
 		if (target != null) {
@@ -220,16 +225,18 @@ public class MoveLinesAction extends TextEditorAction {
 
 		// get everything up to last line without its delimiter
 		String delim= document.getLineDelimiter(endLine);
-		if (delim != null)
+		if (delim != null) {
 			high -= delim.length();
+		}
 
 		// the new selection will cover the entire lines being moved, except for the last line's
 		// delimiter. The exception to this rule is an empty last line, which will stay covered
 		// including its delimiter
-		if (delim != null && document.getLineLength(endLine) == delim.length())
+		if (delim != null && document.getLineLength(endLine) == delim.length()) {
 			fAddDelimiter= true;
-		else
+		} else {
 			fAddDelimiter= false;
+		}
 
 		return new TextSelection(document, low, high - low);
 	}
@@ -245,11 +252,13 @@ public class MoveLinesAction extends TextEditorAction {
 	 */
 	private ITextSelection getSkippedLine(IDocument document, ITextSelection selection) {
 		int skippedLineN= (fUpwards ? selection.getStartLine() - 1 : selection.getEndLine() + 1);
-		if (skippedLineN > document.getNumberOfLines() || (!fCopy && (skippedLineN < 0 ||  skippedLineN == document.getNumberOfLines())))
+		if (skippedLineN > document.getNumberOfLines() || (!fCopy && (skippedLineN < 0 ||  skippedLineN == document.getNumberOfLines()))) {
 			return null;
+		}
 		try {
-			if (fCopy && skippedLineN == -1)
+			if (fCopy && skippedLineN == -1) {
 				skippedLineN= 0;
+			}
 			IRegion line= document.getLineInformation(skippedLineN);
 			return new TextSelection(document, line.getOffset(), line.getLength());
 		} catch (BadLocationException e) {
@@ -274,30 +283,36 @@ public class MoveLinesAction extends TextEditorAction {
 	 */
 	@Override
 	public void runWithEvent(Event event) {
-		if (fTextViewer == null)
+		if (fTextViewer == null) {
 			return;
+		}
 
-		if (!validateEditorInputState())
+		if (!validateEditorInputState()) {
 			return;
+		}
 
 		// get involved objects
 
 		IDocument document= fTextViewer.getDocument();
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		StyledText widget= fTextViewer.getTextWidget();
-		if (widget == null)
+		if (widget == null) {
 			return;
+		}
 
 		// get selection
 		ITextSelection sel= (ITextSelection) fTextViewer.getSelectionProvider().getSelection();
-		if (sel.isEmpty())
+		if (sel.isEmpty()) {
 			return;
+		}
 
 		ITextSelection skippedLine= getSkippedLine(document, sel);
-		if (skippedLine == null)
+		if (skippedLine == null) {
 			return;
+		}
 
 		try {
 
@@ -305,14 +320,16 @@ public class MoveLinesAction extends TextEditorAction {
 
 			// if either the skipped line or the moving lines are outside the widget's
 			// visible area, bail out
-			if (!containedByVisibleRegion(movingArea, fTextViewer) || !containedByVisibleRegion(skippedLine, fTextViewer))
+			if (!containedByVisibleRegion(movingArea, fTextViewer) || !containedByVisibleRegion(skippedLine, fTextViewer)) {
 				return;
+			}
 
 			// get the content to be moved around: the moving (selected) area and the skipped line
 			String moving= movingArea.getText();
 			String skipped= skippedLine.getText();
-			if (moving == null || skipped == null || document.getLength() == 0)
+			if (moving == null || skipped == null || document.getLength() == 0) {
 				return;
+			}
 
 			String delim;
 			String insertion;
@@ -362,9 +379,9 @@ public class MoveLinesAction extends TextEditorAction {
 			// move the selection along
 			int selOffset= movingArea.getOffset() + deviation;
 			int selLength= movingArea.getLength() + (fAddDelimiter ? delim.length() : 0);
-			if (! (fTextViewer instanceof ITextViewerExtension5))
+			if (! (fTextViewer instanceof ITextViewerExtension5)) {
 				selLength= Math.min(selLength, fTextViewer.getVisibleRegion().getOffset() + fTextViewer.getVisibleRegion().getLength() - selOffset);
-			else {
+			} else {
 				// TODO need to check what is necessary in the projection case
 			}
 			selectAndReveal(fTextViewer, selOffset, selLength);
@@ -387,8 +404,9 @@ public class MoveLinesAction extends TextEditorAction {
 		viewer.setSelectedRange(offset + length, -length);
 		//viewer.revealRange(offset, length); // will trigger jumping
 		StyledText st= viewer.getTextWidget();
-		if (st != null)
+		if (st != null) {
 			st.showSelection(); // only minimal scrolling
+		}
 	}
 
 	/**
@@ -396,12 +414,14 @@ public class MoveLinesAction extends TextEditorAction {
 	 */
 	private void showStatus() {
 		ITextEditor editor= getTextEditor();
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 
 		IEditorStatusLine status= editor.getAdapter(IEditorStatusLine.class);
-		if (status == null)
+		if (status == null) {
 			return;
+		}
 		status.setMessage(false, EditorMessages.Editor_MoveLines_IllegalMove_status, null);
 	}
 
@@ -409,10 +429,11 @@ public class MoveLinesAction extends TextEditorAction {
 	public void setEditor(ITextEditor editor) {
 		ITextEditor currentEditor= getTextEditor();
 		if (currentEditor != editor && currentEditor != null && editor != null) {
-			if (editor instanceof AbstractTextEditor)
+			if (editor instanceof AbstractTextEditor) {
 				fTextViewer= ((AbstractTextEditor)editor).getSourceViewer();
-			else
+			} else {
 				fTextViewer= null;
+			}
 		}
 		super.setEditor(editor);
 	}
@@ -421,8 +442,9 @@ public class MoveLinesAction extends TextEditorAction {
 	public void update() {
 		super.update();
 
-		if (isEnabled())
+		if (isEnabled()) {
 			setEnabled(canModifyEditor() && fTextViewer != null);
+		}
 
 	}
 }

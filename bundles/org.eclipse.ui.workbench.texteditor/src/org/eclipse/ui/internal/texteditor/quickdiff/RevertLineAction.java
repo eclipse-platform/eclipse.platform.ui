@@ -43,30 +43,36 @@ public class RevertLineAction extends QuickDiffRestoreAction {
 
 	@Override
 	public boolean computeEnablement() {
-		if (!super.computeEnablement())
+		if (!super.computeEnablement()) {
 			return false;
+		}
 
 		fLine= getLastLine();
-		if (fLine == -1)
+		if (fLine == -1) {
 			return false;
+		}
 		ILineDiffer differ= getDiffer();
-		if (differ == null)
+		if (differ == null) {
 			return false;
+		}
 		ILineDiffInfo info= differ.getLineInfo(fLine);
-		if (info == null || info.getChangeType() == ILineDiffInfo.UNCHANGED)
+		if (info == null || info.getChangeType() == ILineDiffInfo.UNCHANGED) {
 			return false;
+		}
 
-		if (info.getChangeType() == ILineDiffInfo.ADDED)
+		if (info.getChangeType() == ILineDiffInfo.ADDED) {
 			setText(QuickDiffMessages.RevertLineAction_delete_label);
-		else
+		} else {
 			setText(QuickDiffMessages.RevertLineAction_label);
+		}
 		return true;
 	}
 
 	@Override
 	public void runCompoundChange() {
-		if (!isEnabled())
+		if (!isEnabled()) {
 			return;
+		}
 		ILineDiffer differ= getDiffer();
 		if (differ != null) {
 			try {

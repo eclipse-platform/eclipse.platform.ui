@@ -188,9 +188,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 
 	/** Element information of all connected elements */
-	private Map<Object, ElementInfo> fElementInfoMap= new HashMap<>();
+	private final Map<Object, ElementInfo> fElementInfoMap= new HashMap<>();
 	/** The element state listeners */
-	private List<IElementStateListener> fElementStateListeners= new ArrayList<>();
+	private final List<IElementStateListener> fElementStateListeners= new ArrayList<>();
 	/**
 	 * The current progress monitor
 	 * @since 2.1
@@ -354,8 +354,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @param info the element info object
 	 */
 	protected void addUnchangedElementListeners(Object element, ElementInfo info) {
-		if (info.fDocument != null)
+		if (info.fDocument != null) {
 			info.fDocument.addDocumentListener(info);
+		}
 	}
 
 	/**
@@ -369,8 +370,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @param info the element info object
 	 */
 	protected void removeUnchangedElementListeners(Object element, ElementInfo info) {
-		if (info.fDocument != null)
+		if (info.fDocument != null) {
 			info.fDocument.removeDocumentListener(info);
+		}
 	}
 
 	/**
@@ -381,8 +383,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected Iterator<Object> getConnectedElements() {
 		Set<Object> s= new HashSet<>();
 		Set<Object> keys= fElementInfoMap.keySet();
-		if (keys != null)
+		if (keys != null) {
 			s.addAll(keys);
+		}
 		return s.iterator();
 	}
 
@@ -392,16 +395,18 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (info == null) {
 
 			info= createElementInfo(element);
-			if (info == null)
+			if (info == null) {
 				info= new ElementInfo(null, null);
+			}
 
 			info.fElement= element;
 
 			addUnchangedElementListeners(element, info);
 
 			fElementInfoMap.put(element, info);
-			if (fElementInfoMap.size() == 1)
+			if (fElementInfoMap.size() == 1) {
 				connected();
+			}
 		}
 		++ info.fCount;
 	}
@@ -422,8 +427,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	public final void disconnect(Object element) {
 		ElementInfo info= fElementInfoMap.get(element);
 
-		if (info == null)
+		if (info == null) {
 			return;
+		}
 
 		if (info.fCount == 1) {
 
@@ -431,11 +437,13 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			removeUnchangedElementListeners(element, info);
 			disposeElementInfo(element, info);
 
-			if (fElementInfoMap.isEmpty())
+			if (fElementInfoMap.isEmpty()) {
 				disconnected();
+			}
 
-		} else
-		 	-- info.fCount;
+		} else {
+			-- info.fCount;
+		}
 	}
 
 	/**
@@ -450,8 +458,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	@Override
 	public IDocument getDocument(Object element) {
 
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 
 		ElementInfo info= fElementInfoMap.get(element);
 		return (info != null ? info.fDocument : null);
@@ -460,8 +469,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	@Override
 	public boolean mustSaveDocument(Object element) {
 
-		if (element == null)
+		if (element == null) {
 			return false;
+		}
 
 		ElementInfo info= fElementInfoMap.get(element);
 		return (info != null ? info.fCount == 1 && info.fCanBeSaved : false);
@@ -470,8 +480,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	@Override
 	public IAnnotationModel getAnnotationModel(Object element) {
 
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 
 		ElementInfo info= fElementInfoMap.get(element);
 		return (info != null ? info.fModel : null);
@@ -480,8 +491,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	@Override
 	public boolean canSaveDocument(Object element) {
 
-		if (element == null)
+		if (element == null) {
 			return false;
+		}
 
 		ElementInfo info= fElementInfoMap.get(element);
 		return (info != null ? info.fCanBeSaved : false);
@@ -534,14 +546,16 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected void executeOperation(DocumentProviderOperation operation, IProgressMonitor monitor) throws CoreException {
 		try {
 			IRunnableContext runner= getOperationRunner(monitor);
-			if (runner != null)
+			if (runner != null) {
 				runner.run(false, false, operation);
-			else
+			} else {
 				operation.run(monitor);
+			}
 		} catch (InvocationTargetException x) {
 			Throwable e= x.getTargetException();
-			if (e instanceof CoreException)
+			if (e instanceof CoreException) {
 				throw (CoreException) e;
+			}
 			String message= (e.getMessage() != null ? e.getMessage() : ""); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, message, e));
 		} catch (InterruptedException x) {
@@ -553,8 +567,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	@Override
 	public final void resetDocument(final Object element) throws CoreException {
 
-		if (element == null)
+		if (element == null) {
 			return;
+		}
 
 		class ResetOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
 
@@ -576,8 +591,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	@Override
 	public final void saveDocument(IProgressMonitor monitor, final Object element, final IDocument document, final boolean overwrite) throws CoreException {
 
-		if (element == null)
+		if (element == null) {
 			return;
+		}
 
 		class SaveOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
 
@@ -592,8 +608,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 					doSaveDocument(pm, element, document, overwrite);
 
-					if (pm != null && pm.isCanceled())
+					if (pm != null && pm.isCanceled()) {
 						return;
+					}
 
 					info.fCanBeSaved= false;
 					addUnchangedElementListeners(element, info);
@@ -638,8 +655,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	@Override
 	public void addElementStateListener(IElementStateListener listener) {
 		Assert.isNotNull(listener);
-		if (!fElementStateListeners.contains(listener))
+		if (!fElementStateListeners.contains(listener)) {
 			fElementStateListeners.add(listener);
+		}
 	}
 
 	@Override
@@ -760,8 +778,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	@Override
 	public boolean isStateValidated(Object element) {
 		ElementInfo info= fElementInfoMap.get(element);
-		if (info != null)
+		if (info != null) {
 			return info.fIsStateValidated;
+		}
 		return false;
 	}
 
@@ -779,16 +798,18 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 	@Override
 	public void validateState(final Object element, final Object computationContext) throws CoreException {
-		if (element == null)
+		if (element == null) {
 			return;
+		}
 
 		class ValidateStateOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
 
 			@Override
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				ElementInfo info= fElementInfoMap.get(element);
-				if (info == null)
+				if (info == null) {
 					return;
+				}
 
 				doValidateState(element, computationContext);
 
@@ -829,8 +850,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected boolean invalidatesState(Object element, boolean wasReadOnly) {
 		Assert.isTrue(PR10806_UC5_ENABLED != PR14469_ENABLED);
 		boolean readOnlyChanged= (isReadOnly(element) != wasReadOnly && !wasReadOnly);
-		if (PR14469_ENABLED)
+		if (PR14469_ENABLED) {
 			return readOnlyChanged && !canSaveDocument(element);
+		}
 		return readOnlyChanged;
 	}
 
@@ -918,8 +940,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	public IStatus getStatus(Object element) {
 		ElementInfo info= fElementInfoMap.get(element);
 		if (info != null) {
-			if (info.fStatus != null)
+			if (info.fStatus != null) {
 				return info.fStatus;
+			}
 			return (info.fDocument == null ? STATUS_ERROR : Status.OK_STATUS);
 		}
 
@@ -940,8 +963,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	@Override
 	public final void synchronize(final Object element) throws CoreException {
 
-		if (element == null)
+		if (element == null) {
 			return;
+		}
 
 		class SynchronizeOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
 

@@ -30,8 +30,9 @@ public final class StringSetSerializer {
 		StringBuilder buf= new StringBuilder(strings.size() * 20);
 		for (Iterator<String> it= strings.iterator(); it.hasNext();) {
 			buf.append(it.next());
-			if (it.hasNext())
+			if (it.hasNext()) {
 				buf.append(DELIM);
+			}
 		}
 		return buf.toString();
 	}
@@ -40,8 +41,9 @@ public final class StringSetSerializer {
 		Assert.isLegal(serialized != null);
 		Set<String> marked= new HashSet<>();
 		StringTokenizer tok= new StringTokenizer(serialized, DELIM);
-		while (tok.hasMoreTokens())
+		while (tok.hasMoreTokens()) {
 			marked.add(tok.nextToken());
+		}
 		return marked;
 	}
 

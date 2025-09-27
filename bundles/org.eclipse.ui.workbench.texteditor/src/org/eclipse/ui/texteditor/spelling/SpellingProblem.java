@@ -66,24 +66,29 @@ public abstract class SpellingProblem {
 	 */
 	@Deprecated
 	public static void removeAllInActiveEditor(ITextEditor editor, String word) {
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 
 		IDocumentProvider documentProvider= editor.getDocumentProvider();
-		if (documentProvider == null)
+		if (documentProvider == null) {
 			return;
+		}
 
 		IEditorInput editorInput= editor.getEditorInput();
-		if (editorInput == null)
+		if (editorInput == null) {
 			return;
+		}
 
 		IAnnotationModel model= documentProvider.getAnnotationModel(editorInput);
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 
 		IDocument document= documentProvider.getDocument(editorInput);
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		boolean supportsBatchReplace= (model instanceof IAnnotationModelExtension);
 		List<Annotation> toBeRemovedAnnotations= new ArrayList<>();
@@ -92,9 +97,9 @@ public abstract class SpellingProblem {
 			Annotation annotation= iter.next();
 			if (SpellingAnnotation.TYPE.equals(annotation.getType())) {
 				boolean doRemove= word == null;
-				if (word == null)
+				if (word == null) {
 					doRemove= true;
-				else {
+				} else {
 					String annotationWord= null;
 					Position pos= model.getPosition(annotation);
 					try {
@@ -105,10 +110,11 @@ public abstract class SpellingProblem {
 					doRemove= word.equals(annotationWord);
 				}
 				if (doRemove) {
-					if (supportsBatchReplace)
+					if (supportsBatchReplace) {
 						toBeRemovedAnnotations.add(annotation);
-					else
+					} else {
 						model.removeAnnotation(annotation);
+					}
 				}
 			}
 		}
@@ -131,12 +137,14 @@ public abstract class SpellingProblem {
 		Assert.isNotNull(sourceViewer);
 
 		IAnnotationModel model= sourceViewer.getAnnotationModel();
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 
 		IDocument document= sourceViewer.getDocument();
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		boolean supportsBatchReplace= (model instanceof IAnnotationModelExtension);
 		List<Annotation> toBeRemovedAnnotations= new ArrayList<>();
@@ -145,9 +153,9 @@ public abstract class SpellingProblem {
 			Annotation annotation= iter.next();
 			if (SpellingAnnotation.TYPE.equals(annotation.getType())) {
 				boolean doRemove= word == null;
-				if (word == null)
+				if (word == null) {
 					doRemove= true;
-				else {
+				} else {
 					String annotationWord= null;
 					Position pos= model.getPosition(annotation);
 					try {
@@ -158,10 +166,11 @@ public abstract class SpellingProblem {
 					doRemove= word.equals(annotationWord);
 				}
 				if (doRemove) {
-					if (supportsBatchReplace)
+					if (supportsBatchReplace) {
 						toBeRemovedAnnotations.add(annotation);
-					else
+					} else {
 						model.removeAnnotation(annotation);
+					}
 				}
 			}
 		}

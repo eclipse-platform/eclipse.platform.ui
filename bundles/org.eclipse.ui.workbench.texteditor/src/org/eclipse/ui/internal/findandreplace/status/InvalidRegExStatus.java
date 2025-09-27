@@ -21,7 +21,7 @@ import java.util.regex.PatternSyntaxException;
  */
 public class InvalidRegExStatus implements IFindReplaceStatus {
 
-	private PatternSyntaxException regExException;
+	private final PatternSyntaxException regExException;
 
 	public InvalidRegExStatus(PatternSyntaxException regExException) {
 		this.regExException = regExException;

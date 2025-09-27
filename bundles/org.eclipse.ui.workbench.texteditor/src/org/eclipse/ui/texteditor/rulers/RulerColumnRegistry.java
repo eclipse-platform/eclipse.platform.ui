@@ -133,8 +133,9 @@ public final class RulerColumnRegistry {
 			reload= !fLoaded;
 			fLoaded= true;
 		}
-		if (reload)
+		if (reload) {
 			reload();
+		}
 	}
 
 	/**
@@ -219,22 +220,26 @@ public final class RulerColumnRegistry {
 					noteUnknownTarget(desc, id);
 				} else {
 					boolean success;
-					if (constraint.isBefore())
+					if (constraint.isBefore()) {
 						success= dag.addEdge(desc, target);
-					else
+					} else {
 						success= dag.addEdge(target, desc);
-					if (!success)
+					}
+					if (!success) {
 						noteCycle(desc, target);
+					}
 				}
 			}
 		}
 
 		Comparator<RulerColumnDescriptor> gravityComp = (o1, o2) -> {
 			float diff = o1.getPlacement().getGravity() - o2.getPlacement().getGravity();
-			if (diff == 0)
+			if (diff == 0) {
 				return 0;
-			if (diff < 0)
+			}
+			if (diff < 0) {
 				return -1;
+			}
 			return 1;
 		};
 

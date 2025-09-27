@@ -57,12 +57,14 @@ public class MarkAction extends TextEditorAction {
 	public void run() {
 
 		ITextEditor editor= getTextEditor();
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 
 		IMarkRegionTarget target= editor.getAdapter(IMarkRegionTarget.class);
-		if (target == null)
+		if (target == null) {
 			return;
+		}
 
 		switch (fType) {
 		case SET_MARK:

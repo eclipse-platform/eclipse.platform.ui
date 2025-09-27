@@ -63,7 +63,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		};
 
 	/** The menu listener that adds the ruler context menu. */
-	private IMenuListener fListener= new IMenuListener() {
+	private final IMenuListener fListener= new IMenuListener() {
 		/** Group name for additions, in CompilationUnitEditor... */
 		private static final String GROUP_ADD= "add"; //$NON-NLS-1$
 		/** Group name for debug contributions */
@@ -87,22 +87,27 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 				 * don't add themselves to MB_ADDITIONS or alike, but rather to the end, too. So
 				 * we pre-install their respective menu groups here.
 				 */
-				if (manager.find(GROUP_DEBUB) == null)
+				if (manager.find(GROUP_DEBUB) == null) {
 					manager.insertBefore(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(GROUP_DEBUB));
-				if (manager.find(GROUP_ADD) == null)
+				}
+				if (manager.find(GROUP_ADD) == null) {
 					manager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(GROUP_ADD));
-				if (manager.find(GROUP_RESTORE) == null)
+				}
+				if (manager.find(GROUP_RESTORE) == null) {
 					manager.insertAfter(GROUP_ADD, new Separator(GROUP_RESTORE));
-				if (manager.find(GROUP_QUICKDIFF) == null)
+				}
+				if (manager.find(GROUP_QUICKDIFF) == null) {
 					manager.insertAfter(GROUP_RESTORE, new Separator(GROUP_QUICKDIFF));
+				}
 
 				// create quickdiff menu
 				menu= new MenuManager(QuickDiffMessages.quickdiff_menu_label, MENU_ID);
 				List<ReferenceProviderDescriptor> descriptors= new QuickDiff().getReferenceProviderDescriptors();
 				for (ReferenceProviderDescriptor desc : descriptors) {
 					ReferenceSelectionAction action= new ReferenceSelectionAction(desc, fEditor);
-					if (action.isEnabled())
+					if (action.isEnabled()) {
 						menu.add(action);
+					}
 				}
 				manager.appendToGroup(GROUP_QUICKDIFF, menu);
 
@@ -112,14 +117,17 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 						fRestoreAction.update();
 					}
 					// only add block action if selection action is not enabled
-					if (fRestoreActions[0].isEnabled())
+					if (fRestoreActions[0].isEnabled()) {
 						manager.appendToGroup(GROUP_RESTORE, fRestoreActions[0]);
-					else if (fRestoreActions[1].isEnabled())
+					} else if (fRestoreActions[1].isEnabled()) {
 						manager.appendToGroup(GROUP_RESTORE, fRestoreActions[1]);
-					if (fRestoreActions[2].isEnabled())
+					}
+					if (fRestoreActions[2].isEnabled()) {
 						manager.appendToGroup(GROUP_RESTORE, fRestoreActions[2]);
-					if (fRestoreActions[3].isEnabled())
+					}
+					if (fRestoreActions[3].isEnabled()) {
 						manager.appendToGroup(GROUP_RESTORE, fRestoreActions[3]);
+					}
 				}
 			}
 		}
@@ -131,8 +139,9 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		removePopupMenu();
 		if (targetEditor instanceof ITextEditor) {
 			fEditor= (ITextEditor)targetEditor;
-		} else
+		} else {
 			fEditor= null;
+		}
 		for (QuickDiffRestoreAction fRestoreAction : fRestoreActions) {
 			fRestoreAction.setEditor(fEditor);
 		}
@@ -143,8 +152,9 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	 * Removes the ruler context menu listener from the current editor.
 	 */
 	private void removePopupMenu() {
-		if (!(fEditor instanceof ITextEditorExtension))
+		if (!(fEditor instanceof ITextEditorExtension)) {
 			return;
+		}
 		((ITextEditorExtension)fEditor).removeRulerContextMenuListener(fListener);
 	}
 
@@ -154,8 +164,9 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	 * quick diff has been enabled.
 	 */
 	private void setPopupMenu() {
-		if (!(fEditor instanceof ITextEditorExtension))
+		if (!(fEditor instanceof ITextEditorExtension)) {
 			return;
+		}
 		((ITextEditorExtension)fEditor).addRulerContextMenuListener(fListener);
 	}
 
@@ -166,16 +177,18 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	 * @return <code>true</code> if a differ has been installed on <code>fEditor</code>.
 	 */
 	boolean isConnected() {
-		if (!(fEditor instanceof ITextEditorExtension3))
+		if (!(fEditor instanceof ITextEditorExtension3)) {
 			return false;
+		}
 		return ((ITextEditorExtension3)fEditor).isChangeInformationShowing();
 	}
 
 	@Override
 	public void run(IAction action) {
 		fProxy= action;
-		if (fEditor == null)
+		if (fEditor == null) {
 			return;
+		}
 
 		if (fEditor instanceof ITextEditorExtension3 extension) {
 			extension.showChangeInformation(!extension.isChangeInformationShowing());
@@ -189,12 +202,14 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 
 	@Override
 	public void update() {
-		if (fProxy == null)
+		if (fProxy == null) {
 			return;
-		if (isConnected())
+		}
+		if (isConnected()) {
 			fProxy.setText(QuickDiffMessages.quickdiff_toggle_disable);
-		else
+		} else {
 			fProxy.setText(QuickDiffMessages.quickdiff_toggle_enable);
+		}
 	}
 
 }

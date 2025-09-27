@@ -55,7 +55,7 @@ class CodeMiningProviderDescriptor {
 	private static final String ENABLED_WHEN_ATTR = "enabledWhen"; //$NON-NLS-1$
 
 	/** The configuration element describing this extension. */
-	private IConfigurationElement fConfiguration;
+	private final IConfigurationElement fConfiguration;
 	/** The value of the <code>label</code> attribute, if read. */
 	private String fLabel;
 	/** The value of the <code>id</code> attribute, if read. */

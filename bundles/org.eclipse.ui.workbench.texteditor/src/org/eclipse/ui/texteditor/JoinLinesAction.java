@@ -55,26 +55,31 @@ public class JoinLinesAction extends TextEditorAction {
 	public void run() {
 
 		ITextEditor editor= getTextEditor();
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 
-		if (!validateEditorInputState())
+		if (!validateEditorInputState()) {
 			return;
+		}
 
 		IDocument document= getDocument(editor);
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		ITextSelection selection= getSelection(editor);
-		if (selection == null)
+		if (selection == null) {
 			return;
+		}
 
 		int startLine= selection.getStartLine();
 		int endLine= selection.getEndLine();
 		try {
 			int caretOffset= joinLines(document, startLine, endLine);
-			if (caretOffset > -1)
+			if (caretOffset > -1) {
 				editor.selectAndReveal(caretOffset, 0);
+			}
 		} catch (BadLocationException e) {
 			// should not happen
 		}
@@ -90,12 +95,14 @@ public class JoinLinesAction extends TextEditorAction {
 	private static IDocument getDocument(ITextEditor editor) {
 
 		IDocumentProvider documentProvider= editor.getDocumentProvider();
-		if (documentProvider == null)
+		if (documentProvider == null) {
 			return null;
+		}
 
 		IDocument document= documentProvider.getDocument(editor.getEditorInput());
-		if (document == null)
+		if (document == null) {
 			return null;
+		}
 
 		return document;
 	}
@@ -109,12 +116,14 @@ public class JoinLinesAction extends TextEditorAction {
 	private static ITextSelection getSelection(ITextEditor editor) {
 
 		ISelectionProvider selectionProvider= editor.getSelectionProvider();
-		if (selectionProvider == null)
+		if (selectionProvider == null) {
 			return null;
+		}
 
 		ISelection selection= selectionProvider.getSelection();
-		if (!(selection instanceof ITextSelection))
+		if (!(selection instanceof ITextSelection)) {
 			return null;
+		}
 
 		return (ITextSelection) selection;
 	}
@@ -122,8 +131,9 @@ public class JoinLinesAction extends TextEditorAction {
 	@Override
 	public void update() {
 		super.update();
-		if (!isEnabled())
+		if (!isEnabled()) {
 			return;
+		}
 
 		if (!canModifyEditor()) {
 			setEnabled(false);
@@ -149,14 +159,16 @@ public class JoinLinesAction extends TextEditorAction {
 			return -1;
 		}
 
-		if (startLine == endLine)
+		if (startLine == endLine) {
 			endLine++; // append join with the next line
+		}
 
 		StringBuilder buffer= new StringBuilder();
 		for (int line= startLine; line <= endLine; line++) {
 			buffer.append(trim(document, line, line == startLine));
-			if (line != endLine)
+			if (line != endLine) {
 				buffer.append(fJoint);
+			}
 		}
 
 		int startLineOffset= document.getLineOffset(startLine);
@@ -170,11 +182,13 @@ public class JoinLinesAction extends TextEditorAction {
 		int lineOffset= document.getLineOffset(line);
 		int lineLength= document.getLineLength(line);
 		lineLength= lineLength - getLineDelimiterLength(document, line);
-		if (!ignoreLeadingWhitespace)
+		if (!ignoreLeadingWhitespace) {
 			return document.get(lineOffset, lineLength).trim();
+		}
 
-		while (lineLength > 0 && Character.isWhitespace(document.getChar(lineOffset + lineLength - 1)))
+		while (lineLength > 0 && Character.isWhitespace(document.getChar(lineOffset + lineLength - 1))) {
 			lineLength--;
+		}
 
 		return document.get(lineOffset, lineLength);
 	}

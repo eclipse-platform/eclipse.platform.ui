@@ -37,10 +37,10 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
  */
 final class TemplateVariableProposal implements ICompletionProposal {
 
-	private TemplateVariableResolver fVariable;
-	private int fOffset;
-	private int fLength;
-	private ITextViewer fViewer;
+	private final TemplateVariableResolver fVariable;
+	private final int fOffset;
+	private final int fLength;
+	private final ITextViewer fViewer;
 
 	private Point fSelection;
 

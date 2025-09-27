@@ -78,8 +78,9 @@ public final class ContentAssistAction extends TextEditorAction {
 
 				IWorkbenchPartSite site= editor.getSite();
 				Shell shell= site.getShell();
-				if (shell != null && !shell.isDisposed())
+				if (shell != null && !shell.isDisposed()) {
 					display= shell.getDisplay();
+				}
 
 				BusyIndicator.showWhile(display,
 						() -> fOperationTarget.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS));
@@ -98,8 +99,9 @@ public final class ContentAssistAction extends TextEditorAction {
 
 		ITextEditor editor= getTextEditor();
 
-		if (fOperationTarget == null && editor!= null)
+		if (fOperationTarget == null && editor!= null) {
 			fOperationTarget= editor.getAdapter(ITextOperationTarget.class);
+		}
 
 		if (fOperationTarget == null) {
 			setEnabled(false);

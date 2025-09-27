@@ -320,7 +320,7 @@ public class AnnotationPreference {
 	 * The map of attributes.
 	 * @since 3.0
 	 */
-	private Map<Object, Object> fAttributes= new HashMap<>();
+	private final Map<Object, Object> fAttributes= new HashMap<>();
 
 
 
@@ -392,8 +392,9 @@ public class AnnotationPreference {
 	 */
 	protected String getStringValue(Object attribute) {
 		Object value= fAttributes.get(attribute);
-		if (value instanceof String)
+		if (value instanceof String) {
 			return (String) value;
+		}
 		return null;
 	}
 
@@ -406,8 +407,9 @@ public class AnnotationPreference {
 	 */
 	protected boolean getBooleanValue(Object attribute) {
 		Object value= fAttributes.get(attribute);
-		if (value instanceof Boolean)
+		if (value instanceof Boolean) {
 			return ((Boolean) value).booleanValue();
+		}
 		return false;
 	}
 
@@ -420,8 +422,9 @@ public class AnnotationPreference {
 	 */
 	protected int getIntegerValue(Object attribute) {
 		Object value= fAttributes.get(attribute);
-		if (value instanceof Integer)
+		if (value instanceof Integer) {
 			return ((Integer) value).intValue();
+		}
 		return 0;
 	}
 
@@ -454,8 +457,9 @@ public class AnnotationPreference {
 	 * @return <code>true</code> if the string is a preference key
 	 */
 	public boolean isPreferenceKey(String key) {
-		if (key == null)
+		if (key == null) {
 			return false;
+		}
 
 		return key.equals(getStringValue(COLOR_PREFERENCE_KEY)) ||
 				key.equals(getStringValue(OVERVIEW_RULER_PREFERENCE_KEY)) ||
@@ -935,8 +939,9 @@ public class AnnotationPreference {
 	public void setTextStyleValue(String value) {
 		if (!STYLE_NONE.equals(value) && !STYLE_BOX.equals(value) && !STYLE_DASHED_BOX.equals(value)
 				&& !STYLE_IBEAM.equals(value) && !STYLE_SQUIGGLES.equals(value)
-				&& !STYLE_PROBLEM_UNDERLINE.equals(value) && !STYLE_UNDERLINE.equals(value))
+				&& !STYLE_PROBLEM_UNDERLINE.equals(value) && !STYLE_UNDERLINE.equals(value)) {
 			throw new IllegalArgumentException();
+		}
 
 		setValue(TEXT_STYLE_PREFERENCE_VALUE, value);
 	}
@@ -1056,8 +1061,9 @@ public class AnnotationPreference {
 	 */
 	public boolean isIncludeOnPreferencePage() {
 		Object value= fAttributes.get(INCLUDE_ON_PREFERENCE_PAGE);
-		if (value instanceof Boolean)
+		if (value instanceof Boolean) {
 			return ((Boolean) value).booleanValue();
+		}
 		return true;
 	}
 
@@ -1069,20 +1075,25 @@ public class AnnotationPreference {
 	 * @since 3.0
 	 */
 	public void merge(AnnotationPreference preference) {
-		if (!getAnnotationType().equals(preference.getAnnotationType()))
+		if (!getAnnotationType().equals(preference.getAnnotationType())) {
 			return;
-
-		for (Object element : ATTRIBUTES) {
-			if (!hasValue(element))
-				setValue(element, preference.getValue(element));
 		}
 
-		if (fAnnotationImageProvider == null)
+		for (Object element : ATTRIBUTES) {
+			if (!hasValue(element)) {
+				setValue(element, preference.getValue(element));
+			}
+		}
+
+		if (fAnnotationImageProvider == null) {
 			fAnnotationImageProvider= preference.fAnnotationImageProvider;
-		if (fConfigurationElement == null)
+		}
+		if (fConfigurationElement == null) {
 			fConfigurationElement= preference.fConfigurationElement;
-		if (fAnnotationImageProviderAttribute == null)
+		}
+		if (fAnnotationImageProviderAttribute == null) {
 			fAnnotationImageProviderAttribute= preference.fAnnotationImageProviderAttribute;
+		}
 	}
 
 	/**

@@ -57,12 +57,14 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 
 
 		IAnnotationModel model= viewer.getAnnotationModel();
-		if (model == null)
+		if (model == null) {
 			return fgNoSuggestionsProposal;
+		}
 
 		List<ICompletionProposal> proposals= computeProposals(context, model);
-		if (proposals.isEmpty())
+		if (proposals.isEmpty()) {
 			return fgNoSuggestionsProposal;
+		}
 
 		return proposals.toArray(ICompletionProposal[]::new);
 	}
@@ -89,8 +91,9 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 	}
 
 	private void collectSpellingProblems(Annotation annotation, List<SpellingProblem> problems) {
-		if (annotation instanceof SpellingAnnotation)
+		if (annotation instanceof SpellingAnnotation) {
 			problems.add(((SpellingAnnotation)annotation).getSpellingProblem());
+		}
 	}
 
 	private List<ICompletionProposal> computeProposals(IQuickAssistInvocationContext context, SpellingProblem[] spellingProblems) {

@@ -58,7 +58,7 @@ public final class HyperlinkDetectorDescriptor {
 	private static final String ACTIVATE_PLUG_IN_ATTRIBUTE= "activate"; //$NON-NLS-1$
 	private static final String MODIFIER_KEYS= "modifierKeys"; //$NON-NLS-1$
 
-	private IConfigurationElement fElement;
+	private final IConfigurationElement fElement;
 	private HyperlinkDetectorTargetDescriptor fTarget;
 
 
@@ -112,8 +112,9 @@ public final class HyperlinkDetectorDescriptor {
 			public void run() throws Exception {
 		 		String pluginId = fElement.getContributor().getName();
 				boolean isPlugInActivated= Platform.getBundle(pluginId).getState() == Bundle.ACTIVE;
-				if (isPlugInActivated || canActivatePlugIn())
+				if (isPlugInActivated || canActivatePlugIn()) {
 					result[0]= (IHyperlinkDetector)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
+				}
 			}
 			@Override
 			public void handleException(Throwable ex) {
@@ -125,15 +126,17 @@ public final class HyperlinkDetectorDescriptor {
 
 		SafeRunner.run(code);
 
-		if (exception[0] == null)
+		if (exception[0] == null) {
 			return result[0];
+		}
 		throw new CoreException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, exception[0]));
 
 	}
 
 	private boolean isValid(HyperlinkDetectorTargetDescriptor[] targets) {
-		if (getId() == null || getName() == null || getTargetId() == null)
+		if (getId() == null || getName() == null || getTargetId() == null) {
 			return false;
+		}
 
 		String targetId= getTargetId();
 		for (HyperlinkDetectorTargetDescriptor target : targets) {
@@ -205,15 +208,17 @@ public final class HyperlinkDetectorDescriptor {
 
 	public boolean canActivatePlugIn() {
 		String value= fElement.getAttribute(ACTIVATE_PLUG_IN_ATTRIBUTE);
-		if (value == null)
+		if (value == null) {
 			return true;
+		}
 		return Boolean.parseBoolean(value);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !obj.getClass().equals(this.getClass()) || getId() == null)
+		if (obj == null || !obj.getClass().equals(this.getClass()) || getId() == null) {
 			return false;
+		}
 		return getId().equals(((HyperlinkDetectorDescriptor)obj).getId());
 	}
 
@@ -228,9 +233,9 @@ public final class HyperlinkDetectorDescriptor {
 		for (IConfigurationElement element : elements) {
 			if (HYPERLINK_DETECTOR_ELEMENT.equals(element.getName())) {
 				HyperlinkDetectorDescriptor desc= new HyperlinkDetectorDescriptor(element);
-				if (desc.isValid(targets))
+				if (desc.isValid(targets)) {
 					result.add(desc);
-				else {
+				} else {
 					String message= NLSUtility.format(EditorMessages.Editor_error_HyperlinkDetector_invalidExtension_message, new String[] {desc.getId(), element.getContributor().getName()});
 					TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, null));
 				}

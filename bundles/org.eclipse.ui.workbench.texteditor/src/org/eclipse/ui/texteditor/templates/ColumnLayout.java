@@ -65,7 +65,7 @@ final class ColumnLayout extends Layout {
 			COLUMN_TRIM = 3;
 		}
 	}
-	private List<ColumnLayoutData> columns= new ArrayList<>();
+	private final List<ColumnLayoutData> columns= new ArrayList<>();
 
 	/**
 	 * Adds a new column of data to this table layout.
@@ -94,8 +94,9 @@ final class ColumnLayout extends Layout {
 				Assert.isTrue(false, "Unknown column layout data"); //$NON-NLS-1$
 			}
 		}
-		if (width > result.x)
+		if (width > result.x) {
 			result.x= width;
+		}
 		return result;
 	}
 
@@ -189,8 +190,9 @@ final class ColumnLayout extends Layout {
 		int trim= computeTrim(area, table, tableWidth);
 		int width= Math.max(0, area.width - trim);
 
-		if (width > 1)
+		if (width > 1) {
 			layoutTable(table, width, area, tableWidth < area.width);
+		}
 
 		if( composite.getData(RECALCULATE_LAYOUT) == null ) {
 			composite.setData(RECALCULATE_LAYOUT, Boolean.FALSE);

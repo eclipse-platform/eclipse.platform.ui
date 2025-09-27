@@ -42,7 +42,7 @@ public class ReferenceProviderDescriptor {
 	private static final String DEFAULT_ATTRIBUTE= "default"; //$NON-NLS-1$
 
 	/** The configuration element describing this extension. */
-	private IConfigurationElement fConfiguration;
+	private final IConfigurationElement fConfiguration;
 	/** The value of the <code>label</code> attribute, if read. */
 	private String fLabel;
 	/** The value of the <code>id</code> attribute, if read. */
@@ -111,8 +111,9 @@ public class ReferenceProviderDescriptor {
 	 * @return <code>true</code> if the extension point's plug-in has been loaded, <code>false</code> otherwise.
 	 */
 	public boolean isPluginLoaded() {
-		if (fBundle == null)
+		if (fBundle == null) {
 			fBundle= Platform.getBundle(fConfiguration.getContributor().getName());
+		}
 		return (fBundle != null && fBundle.getState() == Bundle.ACTIVE);
 	}
 
@@ -126,10 +127,11 @@ public class ReferenceProviderDescriptor {
 	public boolean getDefault() {
 		if (fDefault == null) {
 			String def= fConfiguration.getAttribute(DEFAULT_ATTRIBUTE);
-			if ("true".equalsIgnoreCase(def)) //$NON-NLS-1$
+			if ("true".equalsIgnoreCase(def)) { //$NON-NLS-1$
 				fDefault= Boolean.TRUE;
-			else
+			} else {
 				fDefault= Boolean.FALSE;
+			}
 		}
 		return fDefault.booleanValue();
 	}

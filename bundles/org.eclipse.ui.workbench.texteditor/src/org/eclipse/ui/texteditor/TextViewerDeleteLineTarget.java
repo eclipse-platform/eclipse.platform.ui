@@ -130,8 +130,9 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 
 			if (fClipboard == null) {
 				StyledText text= fViewer.getTextWidget();
-				if (text == null)
+				if (text == null) {
 					return;
+				}
 
 				fViewer.getSelectionProvider().addSelectionChangedListener(this);
 				text.addFocusListener(this);
@@ -164,12 +165,14 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 		 */
 		private void uninstall() {
 
-			if (fClipboard == null)
+			if (fClipboard == null) {
 				return;
+			}
 
 			StyledText text= fViewer.getTextWidget();
-			if (text == null)
+			if (text == null) {
 				return;
+			}
 
 			fViewer.getSelectionProvider().removeSelectionChangedListener(this);
 			text.removeFocusListener(this);
@@ -319,10 +322,11 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 	private IRegion clipToVisibleRegion(int startOffset, int endOffset) {
 		ITextViewer viewer= fClipboard.getViewer();
 		IRegion visibleRegion;
-		if (viewer instanceof ITextViewerExtension5)
+		if (viewer instanceof ITextViewerExtension5) {
 			visibleRegion= ((ITextViewerExtension5) viewer).getModelCoverage();
-		else
+		} else {
 			visibleRegion= viewer.getVisibleRegion();
+		}
 
 		int visibleStart= visibleRegion.getOffset();
 		int visibleLength= visibleRegion.getLength();
@@ -353,8 +357,9 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 		int deleteOffset= deleteRegion.getOffset();
 		int deleteLength= deleteRegion.getLength();
 
-		if (deleteLength == 0)
+		if (deleteLength == 0) {
 			return;
+		}
 
 		if (copyToClipboard) {
 
@@ -362,10 +367,11 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 			try {
 				fClipboard.append(document.get(deleteOffset, deleteLength));
 			} catch (SWTError e) {
-				if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+				if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
 					throw e;
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=59459
 				// don't delete if copy to clipboard fails, rather log & abort
+				}
 
 				// log
 				Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, e.code, EditorMessages.Editor_error_clipboard_copy_failed_message, e);

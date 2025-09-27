@@ -52,7 +52,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 
 		private IHandler handler;
 
-		private Command command;
+		private final Command command;
 
 		ReplacedCommand(String commandId, ICommandService commandService) {
 			this.command= commandService.getCommand(commandId);
@@ -70,8 +70,9 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 				 *  Next check ensures that we don't overwrite newly activated editor contributions.
 				 *  For details see https://bugs.eclipse.org/bugs/show_bug.cgi?id=297834.
 				 */
-				if (!handler.getClass().isInstance(command.getHandler()))
+				if (!handler.getClass().isInstance(command.getHandler())) {
 					command.setHandler(handler);
+				}
 			}
 		}
 
@@ -107,8 +108,9 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	public KeyBindingSupportForAssistant(ISourceViewerExtension4 sourceViewerExtension) {
 		Assert.isLegal(sourceViewerExtension != null);
 		fContentAssistantFacade= sourceViewerExtension.getContentAssistantFacade();
-		if (fContentAssistantFacade != null)
+		if (fContentAssistantFacade != null) {
 			fContentAssistantFacade.addCompletionListener(this);
+		}
 	}
 
 	/**
@@ -161,21 +163,25 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	 * @return the handler for the given command identifier
 	 */
 	private IHandler getHandler(String commandId) {
-		if (fContentAssistantFacade != null)
+		if (fContentAssistantFacade != null) {
 			return fContentAssistantFacade.getHandler(commandId);
-		if (fQuickAssistAssistant instanceof IQuickAssistAssistantExtension)
+		}
+		if (fQuickAssistAssistant instanceof IQuickAssistAssistantExtension) {
 			return ((IQuickAssistAssistantExtension)fQuickAssistAssistant).getHandler(commandId);
+		}
 		return null;
 	}
 
 	@Override
 	public void assistSessionEnded(ContentAssistEvent event) {
-		if (fReplacedCommands == null)
+		if (fReplacedCommands == null) {
 			return;
+		}
 
 		Iterator<ReplacedCommand> iter= fReplacedCommands.iterator();
-		while (iter.hasNext())
+		while (iter.hasNext()) {
 			iter.next().activate();
+		}
 		fReplacedCommands= null;
 	}
 

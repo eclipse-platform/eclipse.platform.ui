@@ -20,7 +20,7 @@ public class FindStatus implements IFindReplaceStatus {
 		WRAPPED, READONLY,
 	}
 
-	private StatusCode messageCode;
+	private final StatusCode messageCode;
 
 	public FindStatus(StatusCode errorCode) {
 		this.messageCode = errorCode;

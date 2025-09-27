@@ -166,8 +166,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		private StatusInfo fValidationStatus;
 		private boolean fSuppressError= true; // #4354
-		private Map<String, TextViewerAction> fGlobalActions= new HashMap<>(10);
-		private List<String> fSelectionActions = new ArrayList<>(3);
+		private final Map<String, TextViewerAction> fGlobalActions= new HashMap<>(10);
+		private final List<String> fSelectionActions = new ArrayList<>(3);
 		private String[][] fContextTypes;
 
 		private ContextTypeRegistry fContextTypeRegistry;
@@ -427,9 +427,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			viewer.setEditable(true);
 
 			IDocument document= viewer.getDocument();
-			if (document != null)
+			if (document != null) {
 				document.set(pattern);
-			else {
+			} else {
 				document= new Document(pattern);
 				viewer.setDocument(document);
 			}
@@ -448,8 +448,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			control.setLayoutData(data);
 
 			viewer.addTextListener(event -> {
-				if (event.getDocumentEvent() != null)
+				if (event.getDocumentEvent() != null) {
 					doSourceChanged(event.getDocumentEvent().getDocument());
+				}
 			});
 
 			viewer.addSelectionChangedListener(event -> updateSelectionDependentActions());
@@ -569,20 +570,23 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		private void updateSelectionDependentActions() {
 			Iterator<String> iterator= fSelectionActions.iterator();
-			while (iterator.hasNext())
+			while (iterator.hasNext()) {
 				updateAction(iterator.next());
+			}
 		}
 
 		private void updateAction(String actionId) {
 			IAction action= fGlobalActions.get(actionId);
-			if (action instanceof IUpdate)
+			if (action instanceof IUpdate) {
 				((IUpdate) action).update();
+			}
 		}
 
 		private int getIndex(String contextid) {
 
-			if (contextid == null)
+			if (contextid == null) {
 				return -1;
+			}
 
 			for (int i= 0; i < fContextTypes.length; i++) {
 				if (contextid.equals(fContextTypes[i][0])) {
@@ -598,12 +602,14 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			boolean valid= fNameText == null || !fNameText.getText().trim().isEmpty();
 			if (!valid) {
 				status = new StatusInfo();
-				if (!fSuppressError)
+				if (!fSuppressError) {
 					status.setError(TemplatesMessages.EditTemplateDialog_error_noname);
+				}
 			} else if (!isValidPattern(fPatternEditor.getDocument().get())) {
 				status = new StatusInfo();
-				if (!fSuppressError)
+				if (!fSuppressError) {
 					status.setError(TemplatesMessages.EditTemplateDialog_error_invalidPattern);
+				}
 	 		} else {
 	 			status= fValidationStatus;
 	 		}
@@ -623,8 +629,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		protected boolean isValidPattern(String pattern) {
 			for (int i= 0; i < pattern.length(); i++) {
 				char ch= pattern.charAt(i);
-				if (!(ch == 9 || ch == 10 || ch == 13 || ch >= 32))
+				if (!(ch == 9 || ch == 10 || ch == 13 || ch >= 32)) {
 					return false;
+				}
 			}
 			return true;
 		}
@@ -668,8 +675,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 					.getDialogSettingsProvider(FrameworkUtil.getBundle(TemplatePreferencePage.class))
 					.getDialogSettings();
 			IDialogSettings section= settings.getSection(sectionName);
-			if (section == null)
+			if (section == null) {
 				section= settings.addNewSection(sectionName);
+			}
 			return section;
 		}
 
@@ -696,8 +704,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 					return template.getName();
 				case 1:
 					TemplateContextType type= fContextTypeRegistry.getContextType(template.getContextTypeId());
-					if (type != null)
+					if (type != null) {
 						return type.getName();
+					}
 					return template.getContextTypeId();
 				case 2:
 					return template.getDescription();
@@ -1057,8 +1066,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @param event The event
 	 */
 	private void updateCopyAction(SelectionChangedEvent event) {
-		if (fPatternViewerCopyAction != null)
+		if (fPatternViewerCopyAction != null) {
 			fPatternViewerCopyAction.update();
+		}
 	}
 
 	/**
@@ -1191,8 +1201,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 
 		Object[] objects= selection.toArray();
-		if ((objects == null) || (objects.length != 1))
+		if ((objects == null) || (objects.length != 1)) {
 			return;
+		}
 
 		TemplatePersistenceData data= (TemplatePersistenceData) selection.getFirstElement();
 		edit(data);
@@ -1225,8 +1236,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		dialog.setFilterExtensions(new String[] {TemplatesMessages.TemplatePreferencePage_import_extension});
 		String path= dialog.open();
 
-		if (path == null)
+		if (path == null) {
 			return;
+		}
 
 		try {
 			ArrayList<TemplatePersistenceData> selection= new ArrayList<>();
@@ -1268,8 +1280,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		Object[] templates= selection.toArray();
 
 		TemplatePersistenceData[] datas= new TemplatePersistenceData[templates.length];
-		for (int i= 0; i != templates.length; i++)
+		for (int i= 0; i != templates.length; i++) {
 			datas[i]= (TemplatePersistenceData) templates[i];
+		}
 
 		export(datas);
 	}
@@ -1281,8 +1294,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		dialog.setFileName(TemplatesMessages.TemplatePreferencePage_export_filename);
 		String path= dialog.open();
 
-		if (path == null)
+		if (path == null) {
 			return;
+		}
 
 		File file= new File(path);
 
@@ -1358,8 +1372,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		if (visible)
+		if (visible) {
 			setTitle(TemplatesMessages.TemplatePreferencePage_title);
+		}
 	}
 
 	@Override

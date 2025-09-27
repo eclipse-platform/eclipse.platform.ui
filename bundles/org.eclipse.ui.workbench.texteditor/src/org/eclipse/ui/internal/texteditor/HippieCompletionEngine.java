@@ -127,8 +127,9 @@ public final class HippieCompletionEngine {
 			}
 			out.append(ch);
 		}
-		if (quoting)
+		if (quoting) {
 			out.append("\\E"); //$NON-NLS-1$
+		}
 
 		return out.toString();
 	}
@@ -623,7 +624,7 @@ public final class HippieCompletionEngine {
 		 * <code>true</code> is good for searching in the currently open document and
 		 * <code>false</code> is good for searching in other documents.
 		 */
-		private boolean fCurrentWordLast;
+		private final boolean fCurrentWordLast;
 
 
 		/** The completion for the current word -- fix bug 132533 */
@@ -813,8 +814,9 @@ public final class HippieCompletionEngine {
 	 */
 	private void log(BadLocationException e) {
 		String msg= e.getLocalizedMessage();
-		if (msg == null)
+		if (msg == null) {
 			msg= "unable to access the document"; //$NON-NLS-1$
+		}
 		TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, msg, e));
 	}
 

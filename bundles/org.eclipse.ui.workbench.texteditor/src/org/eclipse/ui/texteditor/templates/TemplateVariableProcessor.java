@@ -68,8 +68,9 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,	int documentOffset) {
 
-		if (fContextType == null)
+		if (fContextType == null) {
 			return null;
+		}
 
 		List<TemplateVariableProposal> proposals= new ArrayList<>();
 
@@ -88,8 +89,9 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 		for (Iterator<TemplateVariableResolver> iterator= fContextType.resolvers(); iterator.hasNext(); ) {
 			TemplateVariableResolver variable= iterator.next();
 
-			if (prefix == null || variable.getType().startsWith(prefix))
+			if (prefix == null || variable.getType().startsWith(prefix)) {
 				proposals.add(new TemplateVariableProposal(variable, offset, length, viewer));
+			}
 		}
 
 		Collections.sort(proposals, fgTemplateVariableProposalComparator);
@@ -100,14 +102,17 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 	private int getStart(String string, int end) {
 		int start= end;
 
-		if (start >= 1 && string.charAt(start - 1) == '$')
+		if (start >= 1 && string.charAt(start - 1) == '$') {
 			return start - 1;
+		}
 
-		while ((start != 0) && Character.isUnicodeIdentifierPart(string.charAt(start - 1)))
+		while ((start != 0) && Character.isUnicodeIdentifierPart(string.charAt(start - 1))) {
 			start--;
+		}
 
-		if (start >= 2 && string.charAt(start - 1) == '{' && string.charAt(start - 2) == '$')
+		if (start >= 2 && string.charAt(start - 1) == '{' && string.charAt(start - 2) == '$') {
 			return start - 2;
+		}
 
 		return end;
 	}

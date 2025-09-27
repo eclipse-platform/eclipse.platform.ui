@@ -76,13 +76,15 @@ public class GotoLineAction extends TextEditorAction {
 		@Override
 		public String isValid(String input) {
 
-			if (input == null || input.isEmpty())
+			if (input == null || input.isEmpty()) {
 				return " "; //$NON-NLS-1$
+			}
 
 			try {
 				int i= Integer.parseInt(input);
-				if (i <= 0 || fLastLine < i)
+				if (i <= 0 || fLastLine < i) {
 					return fBundle.getString(fPrefix + "dialog.invalid_range"); //$NON-NLS-1$
+				}
 
 			} catch (NumberFormatException x) {
 				return fBundle.getString(fPrefix + "dialog.invalid_input"); //$NON-NLS-1$
@@ -109,8 +111,9 @@ public class GotoLineAction extends TextEditorAction {
 			IDialogSettings settings = PlatformUI
 					.getDialogSettingsProvider(FrameworkUtil.getBundle(GotoLineAction.class)).getDialogSettings();
 			IDialogSettings section= settings.getSection(sectionName);
-			if (section == null)
+			if (section == null) {
 				section= settings.addNewSection(sectionName);
+			}
 			return section;
 		}
 
@@ -131,10 +134,10 @@ public class GotoLineAction extends TextEditorAction {
 	private int fLastLine;
 
 	/** This action's resource bundle */
-	private ResourceBundle fBundle;
+	private final ResourceBundle fBundle;
 
 	/** This action's prefix used for accessing the resource bundle */
-	private String fPrefix;
+	private final String fPrefix;
 
 
 	/**
@@ -195,16 +198,19 @@ public class GotoLineAction extends TextEditorAction {
 	public void run() {
 		ITextEditor editor= getTextEditor();
 
-		if (editor == null)
+		if (editor == null) {
 			return;
+		}
 
 		IDocumentProvider docProvider= editor.getDocumentProvider();
-		if (docProvider == null)
+		if (docProvider == null) {
 			return;
+		}
 
 		IDocument document= docProvider.getDocument(editor.getEditorInput());
-		if (document == null)
+		if (document == null) {
 			return;
+		}
 
 		try {
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
@@ -222,12 +228,13 @@ public class GotoLineAction extends TextEditorAction {
 		if (selection instanceof ITextSelection textSelection) {
 			Control textWidget= editor.getAdapter(Control.class);
 			boolean caretAtStartOfSelection= false;
-			if (textWidget instanceof StyledText)
+			if (textWidget instanceof StyledText) {
 				caretAtStartOfSelection= ((StyledText)textWidget).getSelection().x == ((StyledText)textWidget).getCaretOffset();
+			}
 			int currentLine;
-			if (caretAtStartOfSelection)
+			if (caretAtStartOfSelection) {
 				currentLine= textSelection.getStartLine();
-			else {
+			} else {
 				int endOffset= textSelection.getOffset() + textSelection.getLength();
 				try {
 					currentLine= document.getLineOfOffset(endOffset);
@@ -235,8 +242,9 @@ public class GotoLineAction extends TextEditorAction {
 					currentLine= -1;
 				}
 			}
-			if (currentLine > -1)
+			if (currentLine > -1) {
 				currentLineStr= Integer.toString(currentLine + 1);
+			}
 		}
 
 		GotoLineDialog d= new GotoLineDialog(editor.getSite().getShell(), title, message, currentLineStr, new NumberValidator());

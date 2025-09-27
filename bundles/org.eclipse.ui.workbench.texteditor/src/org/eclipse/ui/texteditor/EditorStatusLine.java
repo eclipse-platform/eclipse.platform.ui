@@ -89,19 +89,20 @@ class EditorStatusLine implements IEditorStatusLine {
 	@Override
 	public void setMessage(boolean error, String message, Image image) {
 
-		if (error)
+		if (error) {
 			fStatusLineManager.setErrorMessage(image, message);
-		else {
+		} else {
 			// Clear error message
 			fStatusLineManager.setErrorMessage(null, null);
 
 			fStatusLineManager.setMessage(image, message);
 		}
 
-		if (isMessageEmpty(message))
+		if (isMessageEmpty(message)) {
 			uninstallStatusLineClearer();
-		else
+		} else {
 			installStatusLineClearer();
+		}
 	}
 
 	/**
@@ -118,8 +119,9 @@ class EditorStatusLine implements IEditorStatusLine {
 	 * Uninstalls the status line clearer.
 	 */
 	private void uninstallStatusLineClearer() {
-		if (fStatusLineClearer == null)
+		if (fStatusLineClearer == null) {
 			return;
+		}
 
 		fSelectionProvider.removeSelectionChangedListener(fStatusLineClearer);
 		fStatusLineClearer= null;
@@ -129,8 +131,9 @@ class EditorStatusLine implements IEditorStatusLine {
 	 * Installs the status line clearer.
 	 */
 	private void installStatusLineClearer() {
-		if (fStatusLineClearer != null)
+		if (fStatusLineClearer != null) {
 			return;
+		}
 
 		StatusLineClearer statusLineClearer= new StatusLineClearer();
 		fSelectionProvider.addSelectionChangedListener(statusLineClearer);

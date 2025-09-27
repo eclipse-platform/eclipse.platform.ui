@@ -10,7 +10,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 public class TextViewerAction extends Action implements IUpdate {
 
 	private int fOperationCode = -1;
-	private ITextOperationTarget fOperationTarget;
+	private final ITextOperationTarget fOperationTarget;
 
 	/**
 	 * Creates a new action.
@@ -33,8 +33,9 @@ public class TextViewerAction extends Action implements IUpdate {
 	@Override
 	public void update() {
 		// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=206111
-		if (fOperationCode == ITextOperationTarget.UNDO || fOperationCode == ITextOperationTarget.REDO)
+		if (fOperationCode == ITextOperationTarget.UNDO || fOperationCode == ITextOperationTarget.REDO) {
 			return;
+		}
 
 		boolean wasEnabled = isEnabled();
 		boolean isEnabled = (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));

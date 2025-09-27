@@ -53,8 +53,9 @@ public final class RulerColumnPlacement {
 		ExtensionPointHelper helper= new ExtensionPointHelper(element);
 
 		fGravity= helper.getDefaultAttribute(GRAVITY, 1f);
-		if (fGravity < 0 || fGravity > 1)
+		if (fGravity < 0 || fGravity > 1) {
 			helper.fail(RulerColumnMessages.RulerColumnPlacement_illegal_gravity_msg);
+		}
 		fConstraints= readIds(element.getChildren());
 	}
 

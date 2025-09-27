@@ -55,7 +55,7 @@ abstract class AbstractTextZoomHandler extends AbstractHandler {
 
 	private static Map<String, Set<String>> fgDefaultToFonts;
 
-	private int fFontSizeOffset;
+	private final int fFontSizeOffset;
 
 	/**
 	 * Implementations of this class have to specify in the constructor how much the font would

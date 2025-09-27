@@ -144,7 +144,8 @@ public abstract class ResourceAction extends Action {
 		setDescription(getString(bundle, descriptionKey, null));
 
 		String file= getString(bundle, imageKey, null);
-		if (file != null && !file.isBlank())
+		if (file != null && !file.isBlank()) {
 			setImageDescriptor(ImageDescriptor.createFromFile(getClass(), file));
+		}
 	}
 }

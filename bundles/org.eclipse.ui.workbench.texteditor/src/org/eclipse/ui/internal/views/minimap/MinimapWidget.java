@@ -138,8 +138,9 @@ public class MinimapWidget {
 			IRegion visibleRegion = fEditorViewer.getVisibleRegion();
 			int start = region.getOffset() - visibleRegion.getOffset();
 			int end = start + region.getLength();
-			if (end > visibleRegion.getLength())
+			if (end > visibleRegion.getLength()) {
 				end = visibleRegion.getLength();
+			}
 
 			return new Region(start, end - start);
 		}
@@ -171,8 +172,9 @@ public class MinimapWidget {
 
 			} else {
 				IRegion region = modelRange2WidgetRange(presentation.getCoverage());
-				if (region == null)
+				if (region == null) {
 					return;
+				}
 
 				List<StyleRange> list = new ArrayList<>(presentation.getDenumerableRanges());
 				Iterator<StyleRange> e = presentation.getAllStyleRangeIterator();

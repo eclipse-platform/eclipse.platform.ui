@@ -45,8 +45,9 @@ public final class DocumentEquivalenceClass {
 		Hash[] nulls= new Hash[fDocument.getNumberOfLines()];
 		fHashes= new ArrayList<>(Arrays.asList(nulls));
 
-		if (hashFunction == null)
+		if (hashFunction == null) {
 			throw new NullPointerException("hashFunction"); //$NON-NLS-1$
+		}
 		fHashFunction= hashFunction;
 	}
 
@@ -72,8 +73,9 @@ public final class DocumentEquivalenceClass {
 	private Hash internalGetHash(int line) throws BadLocationException {
 		Hash hash= fHashes.get(line);
 		if (hash == null) {
-			if (fDocument == null)
+			if (fDocument == null) {
 				throw new AssertionError("hash cannot be null after loadAndForget"); //$NON-NLS-1$
+			}
 
 			IRegion lineRegion= fDocument.getLineInformation(line);
 			String lineContents= fDocument.get(lineRegion.getOffset(), lineRegion.getLength());
@@ -92,8 +94,9 @@ public final class DocumentEquivalenceClass {
 	 * @param event the document event
 	 */
 	public void update(DocumentEvent event) {
-		if (fDocument == null)
+		if (fDocument == null) {
 			throw new IllegalStateException("update must not be called after loadAndForget"); //$NON-NLS-1$
+		}
 		try {
 			internalUpdate(event);
 		} catch (BadLocationException x) {
@@ -128,8 +131,9 @@ public final class DocumentEquivalenceClass {
 
 	public void setDocument(IDocument document) {
 		Assert.isNotNull(document);
-		if (DEBUG)
+		if (DEBUG) {
 			Assert.isTrue(document.get().equals(fDocument.get()));
+		}
 		fDocument= document;
 	}
 
@@ -139,8 +143,9 @@ public final class DocumentEquivalenceClass {
 	 */
 	public void loadAndForget() {
 		int count= getCount();
-		for (int line= 0; line < count; line++)
+		for (int line= 0; line < count; line++) {
 			getHash(line);
+		}
 
 		fDocument= null;
 	}

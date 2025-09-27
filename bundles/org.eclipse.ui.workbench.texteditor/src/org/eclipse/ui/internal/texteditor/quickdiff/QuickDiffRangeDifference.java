@@ -121,8 +121,9 @@ public class QuickDiffRangeDifference extends org.eclipse.compare.rangedifferenc
 	 * @return a <code>DiffRegion</code> corresponding to this difference
 	 */
 	public DiffRegion getDiffRegion(List<QuickDiffRangeDifference> differences, IDocument source) {
-		if (fRegion == null)
+		if (fRegion == null) {
 			fRegion= new DiffRegion(this, 0, differences, source);
+		}
 		return fRegion;
 	}
 }

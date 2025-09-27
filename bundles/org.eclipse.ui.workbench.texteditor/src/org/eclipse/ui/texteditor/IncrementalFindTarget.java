@@ -181,12 +181,14 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	private void restoreState() {
 
 		StyledText text= fTextViewer.getTextWidget();
-		if (text == null || text.isDisposed())
+		if (text == null || text.isDisposed()) {
 			return;
+		}
 
 		SearchResult searchResult= null;
-		if (!fSessionStack.empty())
+		if (!fSessionStack.empty()) {
 			searchResult= fSessionStack.pop();
+		}
 
 		if (searchResult == null) {
 			text.getDisplay().beep();
@@ -203,10 +205,12 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fForward= searchResult.forward;
 
 		// Recalculate the indices
-		if (fFindString.length() <= fCasePosition)
+		if (fFindString.length() <= fCasePosition) {
 			fCasePosition= -1;
-		if (fSessionStack.size() < fWrapPosition)
+		}
+		if (fSessionStack.size() < fWrapPosition) {
 			fWrapPosition= -1;
+		}
 	}
 
 	/**
@@ -295,25 +299,28 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		// Set the mark
 		if (fTextViewer instanceof ITextViewerExtension) {
 			int modelOffset;
-			if (fTextViewer instanceof ITextViewerExtension5)
+			if (fTextViewer instanceof ITextViewerExtension5) {
 				modelOffset= fCurrentIndex == -1 ? -1 : ((ITextViewerExtension5)fTextViewer).widgetOffset2ModelOffset(fCurrentIndex);
-			else
+			} else {
 				modelOffset= fCurrentIndex;
+			}
 			((ITextViewerExtension)fTextViewer).setMark(modelOffset);
 		}
 
 		updateStatus();
 
-		if (fTarget instanceof IFindReplaceTargetExtension)
+		if (fTarget instanceof IFindReplaceTargetExtension) {
 			((IFindReplaceTargetExtension) fTarget).beginSession();
+		}
 
 		fSearching= false;
 	}
 
 	@Override
 	public void endSession() {
-		if (fTarget instanceof IFindReplaceTargetExtension)
+		if (fTarget instanceof IFindReplaceTargetExtension) {
 			((IFindReplaceTargetExtension) fTarget).endSession();
+		}
 
 		// will uninstall itself
 	}
@@ -336,29 +343,34 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 */
 	private void install() {
 
-		if (fInstalled)
+		if (fInstalled) {
 			return;
+		}
 
 		StyledText text= fTextViewer.getTextWidget();
-		if (text == null)
+		if (text == null) {
 			return;
+		}
 
 		text.addMouseListener(this);
 		text.addFocusListener(this);
 		fTextViewer.addTextListener(this);
 
 		ISelectionProvider selectionProvider= fTextViewer.getSelectionProvider();
-		if (selectionProvider != null)
+		if (selectionProvider != null) {
 			selectionProvider.addSelectionChangedListener(this);
+		}
 
-		if (fTextViewer instanceof ITextViewerExtension)
+		if (fTextViewer instanceof ITextViewerExtension) {
 			((ITextViewerExtension) fTextViewer).prependVerifyKeyListener(this);
-		else
+		} else {
 			text.addVerifyKeyListener(this);
+		}
 
 		ICommandService commandService= PlatformUI.getWorkbench().getAdapter(ICommandService.class);
-		if (commandService != null)
+		if (commandService != null) {
 			commandService.addExecutionListener(this);
+		}
 
 		fInstalled= true;
 	}
@@ -371,8 +383,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fTextViewer.removeTextListener(this);
 
 		ISelectionProvider selectionProvider= fTextViewer.getSelectionProvider();
-		if (selectionProvider != null)
+		if (selectionProvider != null) {
 			selectionProvider.removeSelectionChangedListener(this);
+		}
 
 		StyledText text= fTextViewer.getTextWidget();
 		if (text != null) {
@@ -384,13 +397,15 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			((ITextViewerExtension) fTextViewer).removeVerifyKeyListener(this);
 
 		} else {
-			if (text != null)
+			if (text != null) {
 				text.removeVerifyKeyListener(this);
+			}
 		}
 
 		ICommandService commandService= PlatformUI.getWorkbench().getAdapter(ICommandService.class);
-		if (commandService != null)
+		if (commandService != null) {
 			commandService.removeExecutionListener(this);
+		}
 
 		fInstalled= false;
 	}
@@ -401,8 +416,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 */
 	private void updateStatus() {
 
-		if (!fInstalled)
+		if (!fInstalled) {
 			return;
+		}
 
 		String string= fFindString.toString();
 		String wrapPrefix= fWrapPosition == -1 ? "" : WRAPPED; //$NON-NLS-1$
@@ -413,10 +429,11 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			statusError(NLSUtility.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
 
 		} else if (string.isEmpty()) {
-			if (fForward)
+			if (fForward) {
 				statusMessage(FIELD_NAME);
-			else
+			} else {
 				statusMessage(REVERSE_FIELD_NAME);
+			}
 		} else if (!fForward || fWrapPosition > -1) {
 			String pattern= EditorMessages.Editor_FindIncremental_found_pattern;
 			statusMessage(NLSUtility.format(pattern, new Object[] { reversePrefix, wrapPrefix, string }));
@@ -429,8 +446,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	@Override
 	public void verifyKey(VerifyEvent event) {
 
-		if (!event.doit)
+		if (!event.doit) {
 			return;
+		}
 
 		fSearching= true;
 		if (event.character == 0) {
@@ -521,14 +539,16 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		// Cannot use fTarget.getSelection since that does not return which side of the
 		// selection the caret is on.
 		int startIndex= text.getCaretOffset();
-		if (!forward)
+		if (!forward) {
 			startIndex -= 1;
+		}
 
 		// Check to see if a wrap is necessary
 		if (!fFound && (fForward == forward)) {
 			startIndex= -1;
-			if (fWrapPosition == -1)
+			if (fWrapPosition == -1) {
 				fWrapPosition= fSessionStack.size();
+			}
 		}
 		fForward = forward;
 
@@ -548,12 +568,14 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		boolean found = (index != -1);
 		if (!found && fFound) {
 			text= fTextViewer.getTextWidget();
-			if (text != null && !text.isDisposed())
+			if (text != null && !text.isDisposed()) {
 				text.getDisplay().beep();
+			}
 		}
 
-		if (found)
+		if (found) {
 			fCurrentIndex= startIndex;
+		}
 
 		fFound= found;
 		return found;
@@ -568,8 +590,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 */
 	private boolean addCharSearch(char c) {
 		// Add char to pattern
-		if (fCasePosition == -1 && Character.isUpperCase(c) && Character.toLowerCase(c) != c)
+		if (fCasePosition == -1 && Character.isUpperCase(c) && Character.toLowerCase(c) != c) {
 			fCasePosition= fFindString.length();
+		}
 
 		fFindString.append(c);
 		String string= fFindString.toString();
@@ -589,8 +612,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		boolean found = (index != -1);
 		if (!found && fFound) {
 			text= fTextViewer.getTextWidget();
-			if (text != null && !text.isDisposed())
+			if (text != null && !text.isDisposed()) {
 				text.getDisplay().beep();
+			}
 		}
 
 		fFound= found;
@@ -612,8 +636,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 	@Override
 	public void textChanged(TextEvent event) {
-		if (event.getDocumentEvent() != null)
+		if (event.getDocumentEvent() != null) {
 			leave();
+		}
 	}
 
 	/*
@@ -740,16 +765,18 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 	@Override
 	public Point getLineSelection() {
-		if (fTarget instanceof IFindReplaceTargetExtension)
+		if (fTarget instanceof IFindReplaceTargetExtension) {
 			return ((IFindReplaceTargetExtension) fTarget).getLineSelection();
+		}
 
 		return null; // XXX: should not return null
 	}
 
 	@Override
 	public void setSelection(int offset, int length) {
-		if (fTarget instanceof IFindReplaceTargetExtension)
+		if (fTarget instanceof IFindReplaceTargetExtension) {
 			((IFindReplaceTargetExtension) fTarget).setSelection(offset, length);
+		}
 	}
 
 	@Override
@@ -764,8 +791,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 			Point range= getSelection();
 			ignore= textSelection.getOffset() + textSelection.getLength() == range.x + range.y;
 		}
-		if (!fSearching && !ignore)
+		if (!fSearching && !ignore) {
 			leave();
+		}
 	}
 
 	/**
@@ -794,8 +822,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	@Override
 	public void preExecute(String commandId, ExecutionEvent event) {
 		if (IWorkbenchActionDefinitionIds.FIND_INCREMENTAL.equals(commandId)
-				|| IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE.equals(commandId))
+				|| IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE.equals(commandId)) {
 			return;
+		}
 		leave();
 	}
 }

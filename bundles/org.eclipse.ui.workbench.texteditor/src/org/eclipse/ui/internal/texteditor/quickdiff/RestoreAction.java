@@ -46,18 +46,22 @@ public class RestoreAction extends QuickDiffRestoreAction {
 
 	@Override
 	public boolean computeEnablement() {
-		if (!super.computeEnablement())
+		if (!super.computeEnablement()) {
 			return false;
+		}
 
 		fLine= getLastLine();
-		if (fLine == -1)
+		if (fLine == -1) {
 			return false;
+		}
 		ILineDiffer differ= getDiffer();
-		if (differ == null)
+		if (differ == null) {
 			return false;
+		}
 		ILineDiffInfo info= differ.getLineInfo(fLine);
-		if (info == null || (info.getRemovedLinesAbove() <= 0 && info.getRemovedLinesBelow() <= 0))
+		if (info == null || (info.getRemovedLinesAbove() <= 0 && info.getRemovedLinesBelow() <= 0)) {
 			return false;
+		}
 
 		if (info.getRemovedLinesBelow() == 0) {
 			fLine--;
@@ -65,19 +69,22 @@ public class RestoreAction extends QuickDiffRestoreAction {
 			// take the line below
 		}
 		info= differ.getLineInfo(fLine);
-		if (info == null)
+		if (info == null) {
 			return false;
-		if (info.getRemovedLinesBelow() == 1)
+		}
+		if (info.getRemovedLinesBelow() == 1) {
 			setText(QuickDiffMessages.RestoreAction_label);
-		else
+		} else {
 			setText(NLSUtility.format(QuickDiffMessages.RestoreAction_multiple_label, String.valueOf(info.getRemovedLinesBelow())));
+		}
 		return true;
 	}
 
 	@Override
 	public void runCompoundChange() {
-		if (!isEnabled())
+		if (!isEnabled()) {
 			return;
+		}
 		ILineDiffer differ= getDiffer();
 		if (differ != null) {
 			try {

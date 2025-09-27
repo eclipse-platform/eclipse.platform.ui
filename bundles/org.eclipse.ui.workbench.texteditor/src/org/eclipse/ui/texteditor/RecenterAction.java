@@ -54,16 +54,19 @@ public class RecenterAction extends TextEditorAction {
 	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
-		if (!(editor instanceof AbstractTextEditor))
+		if (!(editor instanceof AbstractTextEditor)) {
 			return;
+		}
 
 		ISourceViewer viewer= ((AbstractTextEditor)editor).getSourceViewer();
-		if (viewer == null)
+		if (viewer == null) {
 			return;
+		}
 
 		StyledText st= viewer.getTextWidget();
-		if (st == null)
+		if (st == null) {
 			return;
+		}
 
 		// compute the number of lines displayed
 		int height= st.getClientArea().height;

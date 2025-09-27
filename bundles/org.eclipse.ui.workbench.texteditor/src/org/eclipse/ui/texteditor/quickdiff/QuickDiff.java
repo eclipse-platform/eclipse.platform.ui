@@ -53,8 +53,9 @@ public class QuickDiff {
 	 */
 	public ReferenceProviderDescriptor getDefaultProvider() {
 		QuickDiffExtensionsRegistry registry= TextEditorPlugin.getDefault().getQuickDiffExtensionRegistry();
-		if (registry != null)
+		if (registry != null) {
 			return registry.getDefaultProvider();
+		}
 
 		return null;
 	}
@@ -70,8 +71,9 @@ public class QuickDiff {
 	 */
 	public List<ReferenceProviderDescriptor> getReferenceProviderDescriptors() {
 		QuickDiffExtensionsRegistry registry= TextEditorPlugin.getDefault().getQuickDiffExtensionRegistry();
-		if (registry != null)
+		if (registry != null) {
 			return registry.getReferenceProviderDescriptors();
+		}
 
 		return Collections.emptyList();
 	}
@@ -100,8 +102,9 @@ public class QuickDiff {
 				IQuickDiffReferenceProvider provider= desc.createProvider();
 				if (provider != null) {
 					provider.setActiveEditor(editor);
-					if (provider.isEnabled())
+					if (provider.isEnabled()) {
 						return provider;
+					}
 					provider.dispose();
 					provider= null;
 				}
@@ -113,8 +116,9 @@ public class QuickDiff {
 			IQuickDiffReferenceProvider provider= desc.createProvider();
 			if (provider != null) {
 				provider.setActiveEditor(editor);
-				if (provider.isEnabled())
+				if (provider.isEnabled()) {
 					return provider;
+				}
 				provider.dispose();
 				provider= null;
 			}
@@ -153,8 +157,9 @@ public class QuickDiff {
 	public Object getConfiguredQuickDiffProvider(IAnnotationModel differ) {
 		if (differ instanceof DocumentLineDiffer lineDiffer) {
 			IQuickDiffReferenceProvider provider= lineDiffer.getReferenceProvider();
-			if (provider != null)
+			if (provider != null) {
 				return provider.getId();
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}
