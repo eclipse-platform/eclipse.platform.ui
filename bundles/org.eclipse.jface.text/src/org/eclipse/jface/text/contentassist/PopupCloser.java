@@ -101,8 +101,9 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 			fShell.addShellListener(this);
 			fTable.addFocusListener(this);
 			fScrollbar= fTable.getVerticalBar();
-			if (fScrollbar != null)
+			if (fScrollbar != null) {
 				fScrollbar.addSelectionListener(this);
+			}
 
 			fDisplay.addFilter(SWT.Activate, this);
 			fDisplay.addFilter(SWT.MouseVerticalWheel, this);
@@ -120,13 +121,16 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 	 */
 	public void uninstall() {
 		fContentAssistant= null;
-		if (isValid(fShell))
+		if (isValid(fShell)) {
 			fShell.removeShellListener(this);
+		}
 		fShell= null;
-		if (isValid(fScrollbar))
+		if (isValid(fScrollbar)) {
 			fScrollbar.removeSelectionListener(this);
-		if (isValid(fTable))
+		}
+		if (isValid(fTable)) {
 			fTable.removeFocusListener(this);
+		}
 		if (fDisplay != null && ! fDisplay.isDisposed()) {
 			fDisplay.removeFilter(SWT.Activate, this);
 			fDisplay.removeFilter(SWT.MouseVerticalWheel, this);
@@ -158,8 +162,9 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 		fScrollbarClicked= false;
 		Display d= fTable.getDisplay();
 		d.asyncExec(() -> {
-			if (isValid(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null)
+			if (isValid(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null) {
 				fContentAssistant.popupFocusLost(e);
+			}
 		});
 	}
 
@@ -171,8 +176,9 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 				 * The asyncExec is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=235556 :
 				 * fContentAssistant.hasProposalPopupFocus() is still true during the shellDeactivated(..) event.
 				 */
-				if (fContentAssistant != null && !fContentAssistant.hasProposalPopupFocus())
+				if (fContentAssistant != null && !fContentAssistant.hasProposalPopupFocus()) {
 					fContentAssistant.hide();
+				}
 			});
 		}
 	}
@@ -180,8 +186,9 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 
 	@Override
 	public void shellClosed(ShellEvent e) {
-		if (fContentAssistant != null)
+		if (fContentAssistant != null) {
 			fContentAssistant.hide();
+		}
 	}
 
 	@Override
@@ -189,21 +196,24 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 		switch (event.type) {
 			case SWT.Activate:
 			case SWT.MouseVerticalWheel:
-				if (fAdditionalInfoController == null)
+				if (fAdditionalInfoController == null) {
 					return;
-				if (event.widget == fShell || event.widget == fTable || event.widget == fScrollbar)
+				}
+				if (event.widget == fShell || event.widget == fTable || event.widget == fScrollbar) {
 					return;
+				}
 
-				if (fAdditionalInfoController.getInternalAccessor().getInformationControlReplacer() == null)
+				if (fAdditionalInfoController.getInternalAccessor().getInformationControlReplacer() == null) {
 					fAdditionalInfoController.hideInformationControl();
-				else if (!fAdditionalInfoController.getInternalAccessor().isReplaceInProgress()) {
+				} else if (!fAdditionalInfoController.getInternalAccessor().isReplaceInProgress()) {
 					IInformationControl infoControl= fAdditionalInfoController.getCurrentInformationControl2();
 					// During isReplaceInProgress(), events can come from the replacing information control
 					if (event.widget instanceof Control control && infoControl instanceof IInformationControlExtension5 iControl5) {
-						if (!(iControl5.containsControl(control)))
+						if (!(iControl5.containsControl(control))) {
 							fAdditionalInfoController.hideInformationControl();
-						else if (event.type == SWT.MouseVerticalWheel)
+						} else if (event.type == SWT.MouseVerticalWheel) {
 							fAdditionalInfoController.getInternalAccessor().replaceInformationControl(false);
+						}
 					} else if (infoControl != null && infoControl.isFocusControl()) {
 						fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
 					}
@@ -213,8 +223,9 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 			case SWT.MouseEnter:
 			case SWT.MouseMove:
 			case SWT.MouseUp:
-				if (fAdditionalInfoController == null || fAdditionalInfoController.getInternalAccessor().isReplaceInProgress())
+				if (fAdditionalInfoController == null || fAdditionalInfoController.getInternalAccessor().isReplaceInProgress()) {
 					break;
+				}
 				if (event.widget instanceof Control control) {
 					IInformationControl infoControl= fAdditionalInfoController.getCurrentInformationControl2();
 					if (infoControl instanceof final IInformationControlExtension5 iControl5) {
@@ -234,16 +245,18 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 				break;
 
 			case SWT.Deactivate:
-				if (fAdditionalInfoController == null)
+				if (fAdditionalInfoController == null) {
 					break;
+				}
 				InformationControlReplacer replacer= fAdditionalInfoController.getInternalAccessor().getInformationControlReplacer();
 				if (replacer != null && fContentAssistant != null) {
 					IInformationControl iControl= replacer.getCurrentInformationControl2();
 					if (event.widget instanceof Control control && iControl instanceof IInformationControlExtension5 iControl5) {
 						if (iControl5.containsControl(control)) {
 							control.getDisplay().asyncExec(() -> {
-								if (fContentAssistant != null && !fContentAssistant.hasProposalPopupFocus())
+								if (fContentAssistant != null && !fContentAssistant.hasProposalPopupFocus()) {
 									fContentAssistant.hide();
+								}
 							});
 						}
 					}

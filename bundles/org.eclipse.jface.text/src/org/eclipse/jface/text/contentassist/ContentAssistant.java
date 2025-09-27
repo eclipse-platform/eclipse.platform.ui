@@ -183,8 +183,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		protected void uninstall() {
 			Control shell= fShell;
 			fShell= null;
-			if (isValid(shell))
+			if (isValid(shell)) {
 				shell.removeControlListener(this);
+			}
 
 			Control control= fControl;
 			fControl= null;
@@ -241,8 +242,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				Display d= control.getDisplay();
 				if (d != null) {
 					d.asyncExec(() -> {
-						if (!fProposalPopup.hasFocus() && (fContextInfoPopup == null || !fContextInfoPopup.hasFocus()))
+						if (!fProposalPopup.hasFocus() && (fContextInfoPopup == null || !fContextInfoPopup.hasFocus())) {
 							hide();
+						}
 					});
 				}
 			}
@@ -285,7 +287,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		private Thread fThread;
 		private boolean fIsReset= false;
-		private Object fMutex= new Object();
+		private final Object fMutex= new Object();
 		private int fShowStyle;
 
 		private final static int SHOW_PROPOSALS= 1;
@@ -305,8 +307,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			try {
 				while (true) {
 					synchronized (fMutex) {
-						if (fAutoActivationDelay != 0)
+						if (fAutoActivationDelay != 0) {
 							fMutex.wait(fAutoActivationDelay);
+						}
 						if (fIsReset) {
 							fIsReset= false;
 							continue;
@@ -330,18 +333,21 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		protected void stop() {
 			Thread threadToStop= fThread;
-			if (threadToStop != null && threadToStop.isAlive())
+			if (threadToStop != null && threadToStop.isAlive()) {
 				threadToStop.interrupt();
+			}
 		}
 
 		@Override
 		public void keyPressed(KeyEvent e) {
 			// Only act on typed characters and ignore modifier-only events
-			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0)
+			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0) {
 				return;
+			}
 
-			if (e.character != 0 && (e.stateMask == SWT.ALT || e.stateMask == SWT.CONTROL || e.stateMask == SWT.COMMAND))
+			if (e.character != 0 && (e.stateMask == SWT.ALT || e.stateMask == SWT.CONTROL || e.stateMask == SWT.COMMAND)) {
 				return;
+			}
 
 			TriggerType triggerType= getAutoActivationTriggerType(e.character);
 
@@ -353,21 +359,22 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			}
 
 			int showStyle;
-			if (triggerType == TriggerType.COMPLETION_PROPOSAL && !isProposalPopupActive())
+			if (triggerType == TriggerType.COMPLETION_PROPOSAL && !isProposalPopupActive()) {
 				showStyle= SHOW_PROPOSALS;
-			else {
-				if (triggerType == TriggerType.CONTEXT_INFORMATION && !isContextInfoPopupActive())
+			} else {
+				if (triggerType == TriggerType.CONTEXT_INFORMATION && !isContextInfoPopupActive()) {
 					showStyle= SHOW_CONTEXT_INFO;
-				else {
+				} else {
 					stop();
 					return;
 				}
 			}
 
-			if (fThread != null && fThread.isAlive())
+			if (fThread != null && fThread.isAlive()) {
 				reset(showStyle);
-			else
+			} else {
 				start(showStyle);
+			}
 		}
 
 		@Override
@@ -376,27 +383,33 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 
 		protected void showAssist(final int showStyle) {
-			if (fContentAssistSubjectControlAdapter == null)
+			if (fContentAssistSubjectControlAdapter == null) {
 				return;
+			}
 			final Control control= fContentAssistSubjectControlAdapter.getControl();
-			if (control == null)
+			if (control == null) {
 				return;
+			}
 
 			final Display d= control.getDisplay();
-			if (d == null)
+			if (d == null) {
 				return;
+			}
 
 			try {
 				d.syncExec(() -> {
-					if (isProposalPopupActive())
+					if (isProposalPopupActive()) {
 						return;
+					}
 
-					if (control.isDisposed() || !control.isFocusControl())
+					if (control.isDisposed() || !control.isFocusControl()) {
 						return;
+					}
 
 					if (showStyle == SHOW_PROPOSALS) {
-						if (!prepareToShowCompletions(true))
+						if (!prepareToShowCompletions(true)) {
 							return;
+						}
 						fProposalPopup.showProposals(true);
 						fLastAutoActivation= System.currentTimeMillis();
 					} else if (showStyle == SHOW_CONTEXT_INFO && fContextInfoPopup != null) {
@@ -433,15 +446,17 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			checkType(type);
 
 			if (fShells[type] != shell) {
-				if (fShells[type] != null)
+				if (fShells[type] != null) {
 					fShells[type].removeListener(SWT.Dispose, this);
+				}
 				shell.addListener(SWT.Dispose, this);
 				fShells[type]= shell;
 			}
 
 			fPopups[type]= popup;
-			if (type == LAYOUT_CONTEXT_SELECTOR || type == LAYOUT_CONTEXT_INFO_POPUP)
+			if (type == LAYOUT_CONTEXT_SELECTOR || type == LAYOUT_CONTEXT_INFO_POPUP) {
 				fContextType= type;
+			}
 
 			layout(type, offset);
 			adjustListeners(type);
@@ -472,8 +487,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 				case LAYOUT_CONTEXT_SELECTOR:
 					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
-						if (fProposalPopupOrientation == PROPOSAL_STACKED)
+						if (fProposalPopupOrientation == PROPOSAL_STACKED) {
 							layout(LAYOUT_PROPOSAL_SELECTOR, getSelectionOffset());
+						}
 						// Restore event notification to the proposal popup.
 						addContentAssistListener((IContentAssistListener) fPopups[LAYOUT_PROPOSAL_SELECTOR], PROPOSAL_SELECTOR);
 					}
@@ -482,8 +498,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 				case LAYOUT_CONTEXT_INFO_POPUP:
 					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
-						if (fContextInfoPopupOrientation == CONTEXT_INFO_BELOW)
+						if (fContextInfoPopupOrientation == CONTEXT_INFO_BELOW) {
 							layout(LAYOUT_PROPOSAL_SELECTOR, getSelectionOffset());
+						}
 					}
 					fContextType= LAYOUT_CONTEXT_SELECTOR;
 					break;
@@ -492,8 +509,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		protected int getShellType(Widget shell) {
 			for (int i= 0; i < fShells.length; i++) {
-				if (fShells[i] == shell)
+				if (fShells[i] == shell) {
 					return i;
+				}
 			}
 			return -1;
 		}
@@ -620,28 +638,35 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * @since 3.3
 		 */
 		protected void constrainLocation(Point point, Point shellSize, Rectangle bounds) {
-			if (point.x + shellSize.x > bounds.x + bounds.width)
+			if (point.x + shellSize.x > bounds.x + bounds.width) {
 				point.x= bounds.x + bounds.width - shellSize.x;
+			}
 
-			if (point.x < bounds.x)
+			if (point.x < bounds.x) {
 				point.x= bounds.x;
+			}
 
-			if (point.y + shellSize.y > bounds.y + bounds.height)
+			if (point.y + shellSize.y > bounds.y + bounds.height) {
 				point.y= bounds.y + bounds.height - shellSize.y;
+			}
 
-			if (point.y < bounds.y)
+			if (point.y < bounds.y) {
 				point.y= bounds.y;
+			}
 		}
 
 		protected Rectangle constrainHorizontally(Rectangle rect, Rectangle bounds) {
 			// clip width
-			if (rect.width > bounds.width)
+			if (rect.width > bounds.width) {
 				rect.width= bounds.width;
+			}
 
-			if (rect.x + rect.width > bounds.x + bounds.width)
+			if (rect.x + rect.width > bounds.x + bounds.width) {
 				rect.x= bounds.x + bounds.width - rect.width;
-			if (rect.x < bounds.x)
+			}
+			if (rect.x < bounds.x) {
 				rect.x= bounds.x;
+			}
 
 			return rect;
 		}
@@ -669,15 +694,15 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			int caretLowerY= caret.y + caret.height;
 			int spaceBelow= bounds.y + bounds.height - caretLowerY;
 			Rectangle rect;
-			if (spaceAbove >= preferred.y)
+			if (spaceAbove >= preferred.y) {
 				rect= new Rectangle(caret.x, caret.y - preferred.y, preferred.x, preferred.y);
-			else if (spaceBelow >= preferred.y)
+			} else if (spaceBelow >= preferred.y) {
 				rect= new Rectangle(caret.x, caretLowerY, preferred.x, preferred.y);
-			// we can't fit in the preferred size - squeeze into larger area
-			else if (spaceBelow <= spaceAbove)
+			} else if (spaceBelow <= spaceAbove) {
 				rect= new Rectangle(caret.x, bounds.y, preferred.x, spaceAbove);
-			else
+			} else {
 				rect= new Rectangle(caret.x, caretLowerY, preferred.x, spaceBelow);
+			}
 
 			return constrainHorizontally(rect, bounds);
 		}
@@ -707,12 +732,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			int spaceBelow= bounds.y + bounds.height - (caret.y + caret.height);
 			Rectangle rect;
 			boolean switched= false;
-			if (spaceBelow >= preferred.y)
+			if (spaceBelow >= preferred.y) {
 				rect= new Rectangle(caret.x, caret.y + caret.height, preferred.x, preferred.y);
-			// squeeze in below if we have at least threshold space
-			else if (spaceBelow >= threshold)
+			} else if (spaceBelow >= threshold) {
 				rect= new Rectangle(caret.x, caret.y + caret.height, preferred.x, spaceBelow);
-			else if (spaceAbove >= preferred.y) {
+			} else if (spaceAbove >= preferred.y) {
 				rect= new Rectangle(caret.x, caret.y - preferred.y, preferred.x, preferred.y);
 				switched= true;
 			} else if (spaceBelow >= spaceAbove) {
@@ -723,8 +747,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				switched= true;
 			}
 
-			if (popup != null)
+			if (popup != null) {
 				popup.switchedPositionToAbove(switched);
+			}
 
 			return constrainHorizontally(rect, bounds);
 		}
@@ -759,14 +784,16 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			switch (type) {
 				case LAYOUT_PROPOSAL_SELECTOR:
 					if (fContextType == LAYOUT_CONTEXT_SELECTOR &&
-							isValid(fShells[LAYOUT_CONTEXT_SELECTOR]))
+							isValid(fShells[LAYOUT_CONTEXT_SELECTOR])) {
 						// Disable event notification to the tip selector.
 						removeContentAssistListener((IContentAssistListener) fPopups[LAYOUT_CONTEXT_SELECTOR], CONTEXT_SELECTOR);
+					}
 					break;
 				case LAYOUT_CONTEXT_SELECTOR:
-					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR]))
+					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						// Disable event notification to the proposal selector.
 						removeContentAssistListener((IContentAssistListener) fPopups[LAYOUT_PROPOSAL_SELECTOR], PROPOSAL_SELECTOR);
+					}
 					break;
 				case LAYOUT_CONTEXT_INFO_POPUP:
 					break;
@@ -831,8 +858,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 					}
 				}
 			}
-			if (fAutoAssistListener != null)
+			if (fAutoAssistListener != null) {
 				fAutoAssistListener.keyPressed(e);
+			}
 		}
 
 		/*
@@ -847,8 +875,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			for (IContentAssistListener listener : listeners) {
 				if (listener != null) {
 					listener.processEvent(event);
-					if (!event.doit)
+					if (!event.doit) {
 						return;
+					}
 				}
 			}
 		}
@@ -968,7 +997,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	private boolean fVerifyKeyListenerHooked= false;
-	private IContentAssistListener[] fListeners= new IContentAssistListener[4];
+	private final IContentAssistListener[] fListeners= new IContentAssistListener[4];
 	/**
 	 * The content assist subject control.
 	 *
@@ -1010,7 +1039,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.2
 	 */
-	private ListenerList<ICompletionListener> fCompletionListeners= new ListenerList<>(ListenerList.IDENTITY);
+	private final ListenerList<ICompletionListener> fCompletionListeners= new ListenerList<>(ListenerList.IDENTITY);
 	/**
 	 * The message to display at the bottom of the proposal popup.
 	 *
@@ -1075,7 +1104,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.12
 	 */
-	private boolean fAsynchronous;
+	private final boolean fAsynchronous;
 
 	private boolean fCompletionProposalTriggerCharsEnabled= true;
 
@@ -1144,13 +1173,15 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		Assert.isNotNull(contentType);
 
-		if (fProcessors == null)
+		if (fProcessors == null) {
 			fProcessors= new HashMap<>();
+		}
 
-		if (processor == null)
+		if (processor == null) {
 			fProcessors.remove(contentType);
-		else
+		} else {
 			fProcessors.put(contentType, Collections.singleton(processor));
+		}
 	}
 
 	/**
@@ -1165,8 +1196,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public void addContentAssistProcessor(IContentAssistProcessor processor, String contentType) {
 		Assert.isNotNull(contentType);
 
-		if (fProcessors == null)
+		if (fProcessors == null) {
 			fProcessors= new HashMap<>();
+		}
 
 		if (processor == null) {
 			fProcessors.remove(contentType);
@@ -1195,8 +1227,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	@Override
 	public IContentAssistProcessor getContentAssistProcessor(String contentType) {
-		if (fProcessors == null)
+		if (fProcessors == null) {
 			return null;
+		}
 
 		Set<IContentAssistProcessor> res = fProcessors.get(contentType);
 		if (res == null || res.isEmpty()) {
@@ -1216,8 +1249,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.12
 	 */
 	Set<IContentAssistProcessor> getContentAssistProcessors(String contentType) {
-		if (fProcessors == null)
+		if (fProcessors == null) {
 			return null;
+		}
 
 		Set<IContentAssistProcessor> res = fProcessors.get(contentType);
 		if (res == null || res.isEmpty()) {
@@ -1232,8 +1266,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.15
 	 */
 	TriggerType getAutoActivationTriggerType(char c) {
-		if (fProcessors == null)
+		if (fProcessors == null) {
 			return TriggerType.NONE;
+		}
 		int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
 		Set<IContentAssistProcessor> processors= fContentAssistSubjectControlAdapter.getContentAssistProcessors(this, offset);
 		if (processors == null) {
@@ -1301,18 +1336,20 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			if ((fContentAssistSubjectControlAdapter != null) && fAutoAssistListener == null) {
 				fAutoAssistListener= createAutoAssistListener();
 				// For details see https://bugs.eclipse.org/bugs/show_bug.cgi?id=49212
-				if (fContentAssistSubjectControlAdapter.supportsVerifyKeyListener())
+				if (fContentAssistSubjectControlAdapter.supportsVerifyKeyListener()) {
 					fContentAssistSubjectControlAdapter.appendVerifyKeyListener(fAutoAssistListener);
-				else
+				} else {
 					fContentAssistSubjectControlAdapter.addKeyListener(fAutoAssistListener);
+				}
 			}
 
 		} else if (fAutoAssistListener != null) {
 			// For details see https://bugs.eclipse.org/bugs/show_bug.cgi?id=49212
-			if (fContentAssistSubjectControlAdapter.supportsVerifyKeyListener())
+			if (fContentAssistSubjectControlAdapter.supportsVerifyKeyListener()) {
 				fContentAssistSubjectControlAdapter.removeVerifyKeyListener(fAutoAssistListener);
-			else
+			} else {
 				fContentAssistSubjectControlAdapter.removeKeyListener(fAutoAssistListener);
+			}
 			fAutoAssistListener= null;
 		}
 	}
@@ -1580,8 +1617,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		fInternalListener= new InternalListener();
 
 		AdditionalInfoController controller= null;
-		if (fInformationControlCreator != null)
+		if (fInformationControlCreator != null) {
 			controller= new AdditionalInfoController(fInformationControlCreator, OpenStrategy.getPostSelectionDelay());
+		}
 
 		fContextInfoPopup= fContentAssistSubjectControlAdapter.createContextInfoPopup(this);
 		fProposalPopup= fContentAssistSubjectControlAdapter.createCompletionProposalPopup(this, controller, fAsynchronous);
@@ -1593,8 +1631,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (isValid(fContentAssistSubjectControlAdapter.getControl())) {
 			fContentAssistSubjectControlShell= fContentAssistSubjectControlAdapter.getControl().getShell();
 			fCASCSTraverseListener= e -> {
-				if (e.detail == SWT.TRAVERSE_ESCAPE && isProposalPopupActive())
+				if (e.detail == SWT.TRAVERSE_ESCAPE && isProposalPopupActive()) {
 					e.doit= false;
+				}
 			};
 			fContentAssistSubjectControlShell.addTraverseListener(fCASCSTraverseListener);
 		}
@@ -1626,8 +1665,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			fCloser= null;
 		}
 
-		if (isValid(fContentAssistSubjectControlShell))
+		if (isValid(fContentAssistSubjectControlShell)) {
 			fContentAssistSubjectControlShell.removeTraverseListener(fCASCSTraverseListener);
+		}
 		fCASCSTraverseListener= null;
 		fContentAssistSubjectControlShell= null;
 
@@ -1750,8 +1790,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				fCloser.install();
 				fContentAssistSubjectControlAdapter.setEventConsumer(fInternalListener);
 				installKeyListener();
-			} else
+			} else {
 				promoteKeyListener();
+			}
 			return true;
 		}
 
@@ -1797,12 +1838,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private void releaseWidgetToken(int type) {
 		if (fListeners[CONTEXT_SELECTOR] == null && fListeners[PROPOSAL_SELECTOR] == null) {
 			IWidgetTokenOwner owner= null;
-			if (fContentAssistSubjectControl instanceof IWidgetTokenOwner)
+			if (fContentAssistSubjectControl instanceof IWidgetTokenOwner) {
 				owner= (IWidgetTokenOwner) fContentAssistSubjectControl;
-			else if (fViewer instanceof IWidgetTokenOwner)
+			} else if (fViewer instanceof IWidgetTokenOwner) {
 				owner= (IWidgetTokenOwner) fViewer;
-			if (owner != null)
+			}
+			if (owner != null) {
 				owner.releaseWidgetToken(this);
+			}
 		}
 	}
 
@@ -1837,8 +1880,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	private void uninstallVerifyKeyListener() {
 		if (fVerifyKeyListenerHooked) {
-			if (isValid(fContentAssistSubjectControlAdapter.getControl()))
+			if (isValid(fContentAssistSubjectControlAdapter.getControl())) {
 				fContentAssistSubjectControlAdapter.removeVerifyKeyListener(fInternalListener);
+			}
 			fVerifyKeyListenerHooked= false;
 		}
 	}
@@ -1852,8 +1896,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private int getNumberOfListeners() {
 		int count= 0;
 		for (int i= 0; i <= CONTEXT_INFO_POPUP; i++) {
-			if (fListeners[i] != null)
+			if (fListeners[i] != null) {
 				++count;
+			}
 		}
 		return count;
 	}
@@ -1863,17 +1908,20 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	@Override
 	public String showPossibleCompletions() {
-		if (!prepareToShowCompletions(false))
+		if (!prepareToShowCompletions(false)) {
 			return null;
-		if (fIsPrefixCompletionEnabled)
+		}
+		if (fIsPrefixCompletionEnabled) {
 			return fProposalPopup.incrementalComplete();
+		}
 		return fProposalPopup.showProposals(false);
 	}
 
 	@Override
 	public String completePrefix() {
-		if (!prepareToShowCompletions(false))
+		if (!prepareToShowCompletions(false)) {
 			return null;
+		}
 		return fProposalPopup.incrementalComplete();
 	}
 
@@ -1916,8 +1964,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	@Override
 	public String showContextInformation() {
 		promoteKeyListener();
-		if (fContextInfoPopup != null)
+		if (fContextInfoPopup != null) {
 			return fContextInfoPopup.showContextProposals(false);
+		}
 		return null;
 	}
 
@@ -1938,8 +1987,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 2.0
 	 */
 	void showContextInformation(IContextInformation contextInformation, int offset) {
-		if (fContextInfoPopup != null)
+		if (fContextInfoPopup != null) {
 			fContextInfoPopup.showContextInformation(contextInformation, offset);
+		}
 	}
 
 	/**
@@ -1986,10 +2036,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 			IDocument document= contentAssistSubjectControl.getDocument();
 			String type;
-			if (document != null)
+			if (document != null) {
 				type= TextUtilities.getContentType(document, getDocumentPartitioning(), offset, true);
-			else
+			} else {
 				type= IDocument.DEFAULT_CONTENT_TYPE;
+			}
 
 			return getContentAssistProcessors(type);
 
@@ -2210,8 +2261,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	IContextInformationPresenter getContextInformationPresenter(ITextViewer viewer, int offset) {
 		IContextInformationValidator validator= getContextInformationValidator(viewer, offset);
-		if (validator instanceof IContextInformationPresenter)
+		if (validator instanceof IContextInformationPresenter) {
 			return (IContextInformationPresenter) validator;
+		}
 		return null;
 	}
 
@@ -2226,8 +2278,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	IContextInformationPresenter getContextInformationPresenter(IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
 		IContextInformationValidator validator= getContextInformationValidator(contentAssistSubjectControl, offset);
-		if (validator instanceof IContextInformationPresenter)
+		if (validator instanceof IContextInformationPresenter) {
 			return (IContextInformationPresenter) validator;
+		}
 		return null;
 	}
 
@@ -2260,11 +2313,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	protected void hide() {
-		if (fProposalPopup != null)
+		if (fProposalPopup != null) {
 			fProposalPopup.hide();
+		}
 
-		if (fContextInfoPopup != null)
+		if (fContextInfoPopup != null) {
 			fContextInfoPopup.hide();
+		}
 	}
 
 	// ------ control's size handling dialog settings ------
@@ -2300,12 +2355,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Stores the content assist's proposal pop-up size.
 	 */
 	protected void storeCompletionProposalPopupSize() {
-		if (fDialogSettings == null || fProposalPopup == null)
+		if (fDialogSettings == null || fProposalPopup == null) {
 			return;
+		}
 
 		Point size= fProposalPopup.getSize();
-		if (size == null)
+		if (size == null) {
 			return;
+		}
 
 		fDialogSettings.put(STORE_SIZE_X, size.x);
 		fDialogSettings.put(STORE_SIZE_Y, size.y);
@@ -2317,12 +2374,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.9
 	 */
 	protected void storeContextSelectorPopupSize() {
-		if (fDialogSettings == null || fContextInfoPopup == null)
+		if (fDialogSettings == null || fContextInfoPopup == null) {
 			return;
+		}
 
 		Point size= fContextInfoPopup.getContextSelectorPopupSize();
-		if (size == null)
+		if (size == null) {
 			return;
+		}
 
 		fDialogSettings.put(STORE_CONTEXT_SELECTOR_POPUP_SIZE_X, size.x);
 		fDialogSettings.put(STORE_CONTEXT_SELECTOR_POPUP_SIZE_Y, size.y);
@@ -2335,8 +2394,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	protected Point restoreCompletionProposalPopupSize() {
-		if (fDialogSettings == null)
+		if (fDialogSettings == null) {
 			return null;
+		}
 
 		Point size= new Point(-1, -1);
 
@@ -2348,19 +2408,22 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 
 		// sanity check
-		if (size.x == -1 && size.y == -1)
+		if (size.x == -1 && size.y == -1) {
 			return null;
+		}
 
 		Rectangle maxBounds= null;
-		if (fContentAssistSubjectControl != null && isValid(fContentAssistSubjectControl.getControl()))
+		if (fContentAssistSubjectControl != null && isValid(fContentAssistSubjectControl.getControl())) {
 			maxBounds= fContentAssistSubjectControl.getControl().getDisplay().getBounds();
-		else {
+		} else {
 			// fallback
 			Display display= Display.getCurrent();
-			if (display == null)
+			if (display == null) {
 				display= Display.getDefault();
-			if (display != null && !display.isDisposed())
+			}
+			if (display != null && !display.isDisposed()) {
 				maxBounds= display.getBounds();
+			}
 		}
 
 		if (size.x > -1 && size.y > -1) {
@@ -2384,8 +2447,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.9
 	 */
 	protected Point restoreContextSelectorPopupSize() {
-		if (fDialogSettings == null)
+		if (fDialogSettings == null) {
 			return null;
+		}
 
 		Point size= new Point(-1, -1);
 
@@ -2397,15 +2461,18 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 
 		// sanity check
-		if (size.x == -1 && size.y == -1)
+		if (size.x == -1 && size.y == -1) {
 			return null;
+		}
 
 		Rectangle maxBounds= null;
 		Display display= Display.getCurrent();
-		if (display == null)
+		if (display == null) {
 			display= Display.getDefault();
-		if (display != null && !display.isDisposed())
+		}
+		if (display != null && !display.isDisposed()) {
 			maxBounds= display.getBounds();
+		}
 
 		if (size.x > -1 && size.y > -1) {
 			if (maxBounds != null) {
@@ -2495,8 +2562,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				processors.forEach(processor -> {
 					ContentAssistEvent event= new ContentAssistEvent(this, processor);
 					for (ICompletionListener listener : fCompletionListeners) {
-						if (listener instanceof ICompletionListenerExtension)
+						if (listener instanceof ICompletionListenerExtension) {
 							((ICompletionListenerExtension)listener).assistSessionRestarted(event);
+						}
 					}
 				});
 			}
@@ -2559,8 +2627,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	@Override
 	public void setStatusLineVisible(boolean show) {
 		fIsStatusLineVisible= show;
-		if (fProposalPopup != null)
+		if (fProposalPopup != null) {
 			fProposalPopup.setStatusLineVisible(show);
+		}
 	}
 
 	/**
@@ -2579,8 +2648,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public void setStatusMessage(String message) {
 		Assert.isLegal(message != null);
 		fMessage= message;
-		if (fProposalPopup != null)
+		if (fProposalPopup != null) {
 			fProposalPopup.setMessage(message);
+		}
 	}
 
 	/**
@@ -2596,8 +2666,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	@Override
 	public void setEmptyMessage(String message) {
 		Assert.isLegal(message != null);
-		if (fProposalPopup != null)
+		if (fProposalPopup != null) {
 			fProposalPopup.setEmptyMessage(message);
+		}
 	}
 
 	/**
@@ -2621,8 +2692,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	void fireAppliedEvent(ICompletionProposal proposal) {
 		for (ICompletionListener listener : fCompletionListeners) {
-			if (listener instanceof ICompletionListenerExtension2)
+			if (listener instanceof ICompletionListenerExtension2) {
 				((ICompletionListenerExtension2)listener).applied(proposal);
+			}
 		}
 	}
 
@@ -2672,12 +2744,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	@Override
 	public final IHandler getHandler(String commandId) {
-		if (fHandlers == null)
+		if (fHandlers == null) {
 			throw new IllegalStateException();
+		}
 
 		IHandler handler= fHandlers.get(commandId);
-		if (handler != null)
+		if (handler != null) {
 			return handler;
+		}
 
 		Assert.isLegal(false);
 		return null;
@@ -2691,8 +2765,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.4
 	 */
 	protected final void registerHandler(String commandId, IHandler handler) {
-		if (fHandlers == null)
+		if (fHandlers == null) {
 			fHandlers= new HashMap<>(2);
+		}
 		fHandlers.put(commandId, handler);
 	}
 

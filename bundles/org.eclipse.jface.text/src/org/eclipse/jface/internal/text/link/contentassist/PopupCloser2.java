@@ -65,8 +65,9 @@ class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListe
 			}
 			fTable.addFocusListener(this);
 			fScrollbar= fTable.getVerticalBar();
-			if (fScrollbar != null)
+			if (fScrollbar != null) {
 				fScrollbar.addSelectionListener(this);
+			}
 		}
 	}
 
@@ -75,13 +76,16 @@ class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListe
 	 */
 	public void uninstall() {
 		fContentAssistant= null;
-		if (isValid(fShell))
+		if (isValid(fShell)) {
 			fShell.removeShellListener(this);
+		}
 		fShell= null;
-		if (isValid(fScrollbar))
+		if (isValid(fScrollbar)) {
 			fScrollbar.removeSelectionListener(this);
-		if (isValid(fTable))
+		}
+		if (isValid(fTable)) {
 			fTable.removeFocusListener(this);
+		}
 	}
 
 	@Override
@@ -103,21 +107,24 @@ class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListe
 		fScrollbarClicked= false;
 		Display d= fTable.getDisplay();
 		d.asyncExec(() -> {
-			if (isValid(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null)
+			if (isValid(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null) {
 				fContentAssistant.popupFocusLost(e);
+			}
 		});
 	}
 
 	@Override
 	public void shellDeactivated(ShellEvent e) {
-		if (fContentAssistant != null)
+		if (fContentAssistant != null) {
 			fContentAssistant.hide();
+		}
 	}
 
 
 	@Override
 	public void shellClosed(ShellEvent e) {
-		if (fContentAssistant != null)
+		if (fContentAssistant != null) {
 			fContentAssistant.hide();
+		}
 	}
 }

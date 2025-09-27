@@ -78,9 +78,11 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		 */
 		@Override
 		public void mouseDown(MouseEvent e) {
-			if (e.button == 1)
-				if (isConnected())
+			if (e.button == 1) {
+				if (isConnected()) {
 					fDocumentUndoManager.commit();
+				}
+			}
 		}
 
 		/*
@@ -141,42 +143,51 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 
 		@Override
 		public void documentUndoNotification(DocumentUndoEvent event ){
-			if (!isConnected()) return;
+			if (!isConnected()) {
+				return;
+			}
 
 			int eventType= event.getEventType();
 			if (((eventType & DocumentUndoEvent.ABOUT_TO_UNDO) != 0) || ((eventType & DocumentUndoEvent.ABOUT_TO_REDO) != 0))  {
 				if (event.isCompound()) {
 					ITextViewerExtension extension= null;
-					if (fTextViewer instanceof ITextViewerExtension)
+					if (fTextViewer instanceof ITextViewerExtension) {
 						extension= (ITextViewerExtension) fTextViewer;
+					}
 
-					if (extension != null)
+					if (extension != null) {
 						extension.setRedraw(false);
+					}
 				}
 				fTextViewer.getTextWidget().getDisplay().syncExec(() -> {
-					if (fTextViewer instanceof TextViewer)
+					if (fTextViewer instanceof TextViewer) {
 						((TextViewer) fTextViewer).ignoreAutoEditStrategies(true);
+					}
 				});
 
 			} else if (((eventType & DocumentUndoEvent.UNDONE) != 0) || ((eventType & DocumentUndoEvent.REDONE) != 0))  {
 				fTextViewer.getTextWidget().getDisplay().syncExec(() -> {
-					if (fTextViewer instanceof TextViewer)
+					if (fTextViewer instanceof TextViewer) {
 						((TextViewer) fTextViewer).ignoreAutoEditStrategies(false);
+					}
 				});
 				if (event.isCompound()) {
 					ITextViewerExtension extension= null;
-					if (fTextViewer instanceof ITextViewerExtension)
+					if (fTextViewer instanceof ITextViewerExtension) {
 						extension= (ITextViewerExtension) fTextViewer;
+					}
 
-					if (extension != null)
+					if (extension != null) {
 						extension.setRedraw(true);
+					}
 				}
 
 				// Reveal the change if this manager's viewer has the focus.
 				if (fTextViewer != null) {
 					StyledText widget= fTextViewer.getTextWidget();
-					if (widget != null && !widget.isDisposed() && (widget.isFocusControl()) && (widget.getSelectionRanges().length <= 2))// || fTextViewer.getTextWidget() == control))
+					if (widget != null && !widget.isDisposed() && (widget.isFocusControl()) && (widget.getSelectionRanges().length <= 2)) { // || fTextViewer.getTextWidget() == control))
 						selectAndReveal(event.getOffset(), event.getText() == null ? 0 : event.getText().length());
+					}
 				}
 			}
 		}
@@ -285,18 +296,20 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		Shell shell= null;
 		if (isConnected()) {
 			StyledText st= fTextViewer.getTextWidget();
-			if (st != null && !st.isDisposed())
+			if (st != null && !st.isDisposed()) {
 				shell= st.getShell();
+			}
 		}
-		if (Display.getCurrent() != null)
+		if (Display.getCurrent() != null) {
 			MessageDialog.openError(shell, title, ex.getLocalizedMessage());
-		else {
+		} else {
 			Display display;
 			final Shell finalShell= shell;
-			if (finalShell != null)
+			if (finalShell != null) {
 				display= finalShell.getDisplay();
-			else
+			} else {
 				display= Display.getDefault();
+			}
 			display.syncExec(() -> MessageDialog.openError(finalShell, title, ex.getLocalizedMessage()));
 		}
 	}
@@ -330,22 +343,25 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 
 	@Override
 	public void reset() {
-		if (isConnected())
+		if (isConnected()) {
 			fDocumentUndoManager.reset();
+		}
 
 	}
 
 	@Override
 	public boolean redoable() {
-		if (isConnected())
+		if (isConnected()) {
 			return fDocumentUndoManager.redoable();
+		}
 		return false;
 	}
 
 	@Override
 	public boolean undoable() {
-		if (isConnected())
+		if (isConnected()) {
 			return fDocumentUndoManager.undoable();
+		}
 		return false;
 	}
 
@@ -380,8 +396,9 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	private void selectAndReveal(int offset, int length) {
 		if (fTextViewer instanceof ITextViewerExtension5 extension) {
 			extension.exposeModelRange(new Region(offset, length));
-		} else if (!fTextViewer.overlapsWithVisibleRegion(offset, length))
+		} else if (!fTextViewer.overlapsWithVisibleRegion(offset, length)) {
 			fTextViewer.resetVisibleRegion();
+		}
 
 		fTextViewer.setSelectedRange(offset, length);
 		fTextViewer.revealRange(offset, length);

@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.StyledString.Styler;
  */
 public final class BoldStylerProvider {
 
-	private Font fFont;
+	private final Font fFont;
 
 	private Font fBoldFont;
 

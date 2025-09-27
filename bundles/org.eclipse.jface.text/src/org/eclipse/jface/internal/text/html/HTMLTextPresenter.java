@@ -43,7 +43,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 
 	private static final String LINE_DELIM= System.lineSeparator();
 
-	private boolean fEnforceUpperLineLimit;
+	private final boolean fEnforceUpperLineLimit;
 
 	public HTMLTextPresenter(boolean enforceUpperLineLimit) {
 		fEnforceUpperLineLimit= enforceUpperLineLimit;
@@ -70,8 +70,9 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 	@Override
 	public String updatePresentation(Drawable drawable, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
 
-		if (hoverInfo == null)
+		if (hoverInfo == null) {
 			return null;
+		}
 
 		if (!fEnforceUpperLineLimit) {
 			maxHeight= Integer.MAX_VALUE;
