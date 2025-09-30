@@ -833,6 +833,77 @@ public class FindReplaceLogicTest {
 		findReplaceLogic.resetIncrementalBaseLocation();
 		findReplaceLogic.performSearch();
 		assertThat(textViewer.getSelectedRange(), is(new Point(5, 4)));
+
+		textViewer.setSelectedRange(7, 0);
+		findReplaceLogic.resetIncrementalBaseLocation();
+		findReplaceLogic.performSearch();
+		assertThat(textViewer.getSelectedRange(), is(new Point(10, 4)));
+
+		textViewer.setSelectedRange(10, 0);
+		findReplaceLogic.resetIncrementalBaseLocation();
+		findReplaceLogic.performSearch();
+		assertThat(textViewer.getSelectedRange(), is(new Point(10, 4)));
+		assertThat(((FindReplaceLogic) findReplaceLogic).getRestoreBaseLocation(), is(new Point(10, 0)));
+	}
+
+	@Test
+	public void testRestoreBaseLocationCapturedOnNewSearch() {
+		String setupString= "alpha beta gamma";
+		TextViewer textViewer= setupTextViewer(setupString);
+		textViewer.setSelectedRange(6, 0); // caret after 'alpha '
+		IFindReplaceLogic logic= setupFindReplaceLogicObject(textViewer);
+		logic.activate(SearchOptions.FORWARD);
+		logic.activate(SearchOptions.INCREMENTAL);
+
+		// Initially empty find string
+		logic.setFindString("");
+		// Now start a new search (transition empty -> non-empty)
+		logic.setFindString("beta");
+		// Expect the stored restore location to match the caret before search started
+		assertThat(((FindReplaceLogic) logic).getRestoreBaseLocation(), is(new Point(6, 0)));
+	}
+
+	@Test
+	public void testCaretRestoredWhenSearchCleared() {
+		String setupString= "alpha beta gamma";
+		TextViewer textViewer= setupTextViewer(setupString);
+		textViewer.setSelectedRange(0, 0);
+		IFindReplaceLogic logic= setupFindReplaceLogicObject(textViewer);
+		logic.activate(SearchOptions.FORWARD);
+		logic.activate(SearchOptions.INCREMENTAL);
+
+		logic.setFindString("beta");
+		assertThat(textViewer.getSelectedRange(), is(new Point(6, 4))); // found "beta"
+
+		// Clear the search field - should restore caret
+		logic.setFindString("");
+		logic.performSearch();
+		// Expect caret restored to starting location (0,0)
+		assertThat(textViewer.getSelectedRange(), is(new Point(0, 0)));
+	}
+
+	@Test
+	public void testRestoreBaseLocationRefreshedBetweenSessions() {
+		String setupString= "alpha beta gamma";
+		TextViewer textViewer= setupTextViewer(setupString);
+		IFindReplaceLogic logic= setupFindReplaceLogicObject(textViewer);
+		logic.activate(SearchOptions.FORWARD);
+		logic.activate(SearchOptions.INCREMENTAL);
+
+		// First search session
+		textViewer.setSelectedRange(0, 0);
+		logic.setFindString("alpha");
+		assertThat(((FindReplaceLogic) logic).getRestoreBaseLocation(), is(new Point(0, 0)));
+
+		// Clear the search (simulate reopen of overlay)
+		logic.setFindString("");
+		logic.performSearch();
+
+		// Move caret and start new search session
+		textViewer.setSelectedRange(6, 0);
+		logic.setFindString("beta");
+		// Verify that restoreBaseLocation updated to the new caret position
+		assertThat(((FindReplaceLogic) logic).getRestoreBaseLocation(), is(new Point(6, 0)));
 	}
 
 	@Test
