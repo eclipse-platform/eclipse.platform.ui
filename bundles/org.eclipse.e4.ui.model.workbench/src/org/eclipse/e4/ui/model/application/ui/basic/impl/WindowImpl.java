@@ -1428,29 +1428,25 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		result.append(", x: "); //$NON-NLS-1$
 		if (xESet) {
 			result.append(x);
-		}
-		else {
+		} else {
 			result.append("<unset>"); //$NON-NLS-1$
 		}
 		result.append(", y: "); //$NON-NLS-1$
 		if (yESet) {
 			result.append(y);
-		}
-		else {
+		} else {
 			result.append("<unset>"); //$NON-NLS-1$
 		}
 		result.append(", width: "); //$NON-NLS-1$
 		if (widthESet) {
 			result.append(width);
-		}
-		else {
+		} else {
 			result.append("<unset>"); //$NON-NLS-1$
 		}
 		result.append(", height: "); //$NON-NLS-1$
 		if (heightESet) {
 			result.append(height);
-		}
-		else {
+		} else {
 			result.append("<unset>"); //$NON-NLS-1$
 		}
 		result.append(')');

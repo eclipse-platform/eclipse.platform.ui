@@ -67,18 +67,18 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tags" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;Tags are a list of Strings that are persistent parts of the UI Model. They can be used to 'refine' a particular&#xD;&#xA;model element, supplying extra 'meta' information. These tags interact with the CSS engine so that it's&#xD;&#xA;possible to write CSS specific to a particular tag. The platform currently uses this mechanism to cause the&#xD;&#xA;color change in the stack comtaining the currently active part&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xA;Tags are a list of Strings that are persistent parts of the UI Model. They can be used to 'refine' a particular&#xA;model element, supplying extra 'meta' information. These tags interact with the CSS engine so that it's&#xA;possible to write CSS specific to a particular tag. The platform currently uses this mechanism to cause the&#xA;color change in the stack containing the currently active part&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributorURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This field is used to track the bundle (if any) from which the UI element was&#xD;&#xA;derived in order to faciliate its removal should the bundle go away or be updated.&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xA;This field is used to track the bundle (if any) from which the UI element was&#xA;derived in order to facilitate its removal should the bundle go away or be updated.&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="transientData" upperBound="-1"
         eType="#//StringToObjectMap" transient="true" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;p>&#xD;&#xA;This is a String to Object map into which any desired runtime information realted to a particular element&#xD;&#xA;may be stored. It is &lt;i>not&lt;/i> persisted across sessions so it is not necessary that the 'values' be&#xD;&#xA;serializable.&#xD;&#xA;&lt;/p>"/>
+        <details key="documentation" value="&lt;p>&#xA;This is a String to Object map into which any desired runtime information related to a particular element&#xA;may be stored. It is &lt;i>not&lt;/i> persisted across sessions so it is not necessary that the 'values' be&#xA;serializable.&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -418,7 +418,7 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="toBeRendered" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This field controls whether the given UIElement should be displayed within&#xD;&#xA;the application. Note that due to lazy loading it is possible to have this field&#xD;&#xA;set to true but to not have actually rendered the element itself (it does show up&#xD;&#xA;as a tab on the appropiate stack but will only be rendered when that tab is&#xD;&#xA;selected.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xA;This field controls whether the given UIElement should be displayed within&#xA;the application. Note that due to lazy loading it is possible to have this field&#xA;set to true but to not have actually rendered the element itself (it does show up&#xA;as a tab on the appropriate stack but will only be rendered when that tab is&#xA;selected.&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="onTop" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
@@ -429,7 +429,7 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="visible" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This field determines whether or not the given UIElement appears in the presentation&#xD;&#xA;or whether it should be 'cached' for specialized use. Under normal circumstances&#xD;&#xA;this flag should always be 'true'.&#xD;&#xA;&lt;/p>&lt;p>&#xD;&#xA;The MinMaxAddon uses this flag for example when a stack becomes minimized. By&#xD;&#xA;setting the flag to false the stack's widget is cleanly removed from the UI but&#xD;&#xA;is still 'rendered'. Once the widget has been cached the minimized stack can then&#xD;&#xA;display the widget using its own technques.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xA;This field determines whether or not the given UIElement appears in the presentation&#xA;or whether it should be 'cached' for specialized use. Under normal circumstances&#xA;this flag should always be 'true'.&#xA;&lt;/p>&lt;p>&#xA;The MinMaxAddon uses this flag for example when a stack becomes minimized. By&#xA;setting the flag to false the stack's widget is cleanly removed from the UI but&#xA;is still 'rendered'. Once the widget has been cached the minimized stack can then&#xA;display the widget using its own techniques.&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eOpposite="#//ui/ElementContainer/children">
@@ -442,13 +442,13 @@
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="containerData" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a persistend field that may be used by the &lt;b>parent&lt;/b> element's renderer&#xD;&#xA;to maintain any data that it needs to control the container. For example this is where&#xD;&#xA;the SashRenderer stores the 'weight' of a particular element.&#xD;&#xA;&lt;/p> &lt;p>&#xD;&#xA;&lt;b>NOTE:&lt;/b> This field is effectively deprecated in favor of the parent renderer&#xD;&#xA;simply adding a new keyed value to the UIElement's 'persistentData' map.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xA;This is a persistent field that may be used by the &lt;b>parent&lt;/b> element's renderer&#xA;to maintain any data that it needs to control the container. For example this is where&#xA;the SashRenderer stores the 'weight' of a particular element.&#xA;&lt;/p> &lt;p>&#xA;&lt;b>NOTE:&lt;/b> This field is effectively deprecated in favor of the parent renderer&#xA;simply adding a new keyed value to the UIElement's 'persistentData' map.&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EReference" name="curSharedRef" eType="#//ui/advanced/Placeholder"
           transient="true" derived="true">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-          <details key="documentation" value="&lt;p>&#xD;&#xA;This is a transient (i.e. non-persisted) field which is used in conjunction with&#xD;&#xA;MPlaceholders which are used to share elements actoss multiple perspectives. This&#xD;&#xA;field will point back to the MPlaceholder (if any) currently hosting this one.&#xD;&#xA;&lt;/p>"/>
+          <details key="documentation" value="&lt;p>&#xA;This is a transient (i.e. non-persisted) field which is used in conjunction with&#xA;MPlaceholders which are used to share elements across multiple perspectives. This&#xA;field will point back to the MPlaceholder (if any) currently hosting this one.&#xA;&lt;/p>"/>
         </eAnnotations>
       </eStructuralFeatures>
       <eStructuralFeatures xsi:type="ecore:EReference" name="visibleWhen" eType="#//ui/Expression"

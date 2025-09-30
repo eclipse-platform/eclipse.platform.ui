@@ -1334,8 +1334,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * If the method {@link #toStringGen()} below changes, please ensure that this is updated.
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String toString() {
@@ -1382,4 +1383,41 @@ public class PartImpl extends UIElementImpl implements MPart {
 		return result.toString();
 	}
 
-} //PartImpl
+	/**
+	 * <!-- begin-user-doc -->
+	 * If the method below changes, please ensure that {@link #toString()} is updated.
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toStringGen() {
+		if (eIsProxy()) {
+			return super.toString();
+		}
+
+		StringBuilder result = new StringBuilder(super.toString());
+		result.append(" (contributionURI: "); //$NON-NLS-1$
+		result.append(contributionURI);
+		result.append(", object: "); //$NON-NLS-1$
+		result.append(object);
+		result.append(", context: "); //$NON-NLS-1$
+		result.append(context);
+		result.append(", variables: "); //$NON-NLS-1$
+		result.append(variables);
+		result.append(", label: "); //$NON-NLS-1$
+		result.append(label);
+		result.append(", iconURI: "); //$NON-NLS-1$
+		result.append(iconURI);
+		result.append(", tooltip: "); //$NON-NLS-1$
+		result.append(tooltip);
+		result.append(", dirty: "); //$NON-NLS-1$
+		result.append(dirty);
+		result.append(", closeable: "); //$NON-NLS-1$
+		result.append(closeable);
+		result.append(", description: "); //$NON-NLS-1$
+		result.append(description);
+		result.append(')');
+		return result.toString();
+	}
+
+} // PartImpl
