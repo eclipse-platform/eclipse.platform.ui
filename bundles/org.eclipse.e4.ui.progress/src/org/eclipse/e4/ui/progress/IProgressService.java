@@ -105,7 +105,7 @@ public interface IProgressService extends IRunnableContext {
 	 * @throws InvocationTargetException wraps any exception or error which occurs
 	 *                                   while running the runnable
 	 * @throws InterruptedException      propagated by the context if the runnable
-	 *                                   acknowledges cancelation by throwing this
+	 *                                   acknowledges cancellation by throwing this
 	 *                                   exception.
 	 */
 	public void runInUI(IRunnableContext context,
