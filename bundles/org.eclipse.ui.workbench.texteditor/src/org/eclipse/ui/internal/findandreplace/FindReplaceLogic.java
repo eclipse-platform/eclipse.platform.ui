@@ -324,6 +324,9 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 	private boolean performSearch(boolean updateFromIncrementalBaseLocation) {
 		resetStatus();
 		if (findString.isEmpty()) {
+			if (isAvailableAndActive(SearchOptions.INCREMENTAL)) {
+				restoreSelectionIfEmpty();
+			}
 			return false;
 		}
 
@@ -336,6 +339,19 @@ public class FindReplaceLogic implements IFindReplaceLogic {
 			// we don't keep state in this dialog
 		}
 		return somethingFound;
+	}
+
+	/**
+	 * Restores the original caret/selection position when the search field becomes
+	 * empty.
+	 */
+	private void restoreSelectionIfEmpty() {
+		if (incrementalBaseLocation == null) {
+			return;
+		}
+		if (target instanceof IFindReplaceTargetExtension extension) {
+			extension.setSelection(incrementalBaseLocation.x, incrementalBaseLocation.y);
+		}
 	}
 
 	/**
