@@ -72,7 +72,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 
 	@Override
 	public void copyDefaultStyleDeclarations(CSSStylableElement stylableElement) {
-		// Copy default style decalaration
+		// Copy default style declaration
 		this.setDefaultStyleDeclaration(null, stylableElement
 				.getDefaultStyleDeclaration(null));
 		// Copy all static pseudo instances

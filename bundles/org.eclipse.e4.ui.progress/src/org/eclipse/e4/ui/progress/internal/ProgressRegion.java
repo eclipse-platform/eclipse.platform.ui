@@ -214,7 +214,7 @@ public class ProgressRegion {
 	}
 
 	/**
-	 * Answer true if the side is a horizonal one
+	 * Answer true if the side is a horizontal one
 	 *
 	 * @return <code>true</code> if the side is horizontal
 	 */
@@ -227,9 +227,9 @@ public class ProgressRegion {
 
 
 	/**
-	 * Answer true if the side is a horizonal one
+	 * Answer true if the side is a vertical one
 	 *
-	 * @return <code>true</code> if the side is horizontal
+	 * @return <code>true</code> if the side is vertical
 	 */
 	private boolean isVertical(int dropSide) {
 		if (forceHorizontal) {

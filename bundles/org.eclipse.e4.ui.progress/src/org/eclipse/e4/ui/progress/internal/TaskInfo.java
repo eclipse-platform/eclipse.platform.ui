@@ -49,15 +49,12 @@ public class TaskInfo extends SubTaskInfo {
 	}
 
 	/**
-	 * Add the amount of work to the recevier. Update a parent monitor by the
+	 * Add the amount of work to the receiver. Update a parent monitor by the
 	 * increment scaled to the amount of ticks this represents.
 	 *
-	 * @param workIncrement
-	 *            int the amount of work in the receiver
-	 * @param parentMonitor
-	 *            The IProgressMonitor that is also listening
-	 * @param parentTicks
-	 *            the number of ticks this monitor represents
+	 * @param workIncrement int the amount of work in the receiver
+	 * @param parentMonitor The IProgressMonitor that is also listening
+	 * @param parentTicks   the number of ticks this monitor represents
 	 */
 	void addWork(double workIncrement, IProgressMonitor parentMonitor,
 			int parentTicks) {

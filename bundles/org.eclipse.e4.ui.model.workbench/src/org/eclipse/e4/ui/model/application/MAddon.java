@@ -26,7 +26,7 @@ package org.eclipse.e4.ui.model.application;
  * </p><p>
  * Addons are expected to be capable of being removed without damage to the
  * original UI. While not yet implemented there will be an uninstall protocol defined
- * In the future allowing an addon to remove any model elements specific to the
+ * in the future allowing an addon to remove any model elements specific to the
  * addon (i.e. The MinMaxAddon's TrimElements.
  * </p>
  * @since 1.0
