@@ -5,7 +5,7 @@
     modelPluginID="org.eclipse.e4.ui.model.workbench" modelName="ModelFragment" updateClasspath="false"
     nonNLSMarkers="true" rootExtendsInterface="" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container"
     suppressEMFTypes="true" suppressEMFMetaData="true" codeFormatting="true" testsDirectory=""
-    importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" copyrightFields="false"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="21.0" copyrightFields="false"
     usedGenPackages="UIElements.genmodel#//application" interfaceNamePattern="M{0}"
     operationReflection="true" importOrganizing="true" cleanup="true">
   <foreignModel>ModelFragment.ecore</foreignModel>

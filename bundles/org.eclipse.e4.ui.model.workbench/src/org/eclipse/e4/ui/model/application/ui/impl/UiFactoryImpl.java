@@ -143,8 +143,7 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 	 */
 	public SideValue createSideValueFromString(EDataType eDataType, String initialValue) {
 		SideValue result = SideValue.get(initialValue);
-		if (result == null)
-		 {
+		if (result == null) {
 			throw new IllegalArgumentException(
 					"The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}

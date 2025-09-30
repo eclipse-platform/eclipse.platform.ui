@@ -400,8 +400,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	public void setParent(MElementContainer<MUIElement> newParent) {
 		if (newParent != eInternalContainer()
 				|| (eContainerFeatureID() != UiPackageImpl.UI_ELEMENT__PARENT && newParent != null)) {
-			if (EcoreUtil.isAncestor(this, (EObject) newParent))
-			 {
+			if (EcoreUtil.isAncestor(this, (EObject) newParent)) {
 				throw new IllegalArgumentException("Recursive containment not allowed for " + toString()); //$NON-NLS-1$
 			}
 			NotificationChain msgs = null;
@@ -850,8 +849,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * If the method {@link #toStringGen()} below changes, please ensure that this is updated.
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String toString() {
@@ -882,6 +882,36 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			result.append(", accessibilityPhrase: "); //$NON-NLS-1$
 			result.append(accessibilityPhrase);
 		}
+		result.append(')');
+		return result.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * If the method below changes, please ensure that {@link #toString()} is updated.
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String toStringGen() {
+		if (eIsProxy()) {
+			return super.toString();
+		}
+
+		StringBuilder result = new StringBuilder(super.toString());
+		result.append(" (widget: "); //$NON-NLS-1$
+		result.append(widget);
+		result.append(", renderer: "); //$NON-NLS-1$
+		result.append(renderer);
+		result.append(", toBeRendered: "); //$NON-NLS-1$
+		result.append(toBeRendered);
+		result.append(", onTop: "); //$NON-NLS-1$
+		result.append(onTop);
+		result.append(", visible: "); //$NON-NLS-1$
+		result.append(visible);
+		result.append(", containerData: "); //$NON-NLS-1$
+		result.append(containerData);
+		result.append(", accessibilityPhrase: "); //$NON-NLS-1$
+		result.append(accessibilityPhrase);
 		result.append(')');
 		return result.toString();
 	}
