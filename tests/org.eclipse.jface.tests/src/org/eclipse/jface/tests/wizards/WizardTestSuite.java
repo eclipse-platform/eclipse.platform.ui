@@ -15,11 +15,12 @@
 package org.eclipse.jface.tests.wizards;
 
 import org.junit.runner.JUnitCore;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ ButtonAlignmentTest.class, WizardTest.class, WizardProgressMonitorTest.class })
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({ ButtonAlignmentTest.class, WizardTest.class, WizardProgressMonitorTest.class })
 public class WizardTestSuite {
 
 	public static void main(String[] args) {

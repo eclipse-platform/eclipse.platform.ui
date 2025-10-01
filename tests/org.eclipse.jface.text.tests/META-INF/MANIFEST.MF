@@ -28,4 +28,6 @@ Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.jface.text.tests
 Import-Package: org.mockito,
  org.mockito.invocation,
- org.mockito.stubbing
+ org.mockito.stubbing,
+ org.junit.jupiter.api,
+ org.junit.platform.suite.api

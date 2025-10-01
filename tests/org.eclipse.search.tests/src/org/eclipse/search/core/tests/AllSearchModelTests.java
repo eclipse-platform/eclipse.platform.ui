@@ -13,16 +13,15 @@
  *******************************************************************************/
 package org.eclipse.search.core.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 		QueryManagerTest.class,
 		TestSearchResult.class,
 		LineConversionTest.class
 })
 public class AllSearchModelTests {
-	// see @SuiteClasses
+	// see @SelectClasses
 }

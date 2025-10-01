@@ -13,18 +13,16 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.rulers;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * @since 3.0
  */
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 		DAGTest.class
 })
 public class RulerTestSuite {
-	// see @SuiteClasses
+	// see @SelectClasses
 }

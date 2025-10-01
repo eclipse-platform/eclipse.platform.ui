@@ -19,6 +19,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.e4.core.contexts,
  org.eclipse.ui.navigator,
  org.eclipse.ui.navigator.resources
+Import-Package: org.junit.jupiter.api,
+ org.junit.platform.suite.api
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Localization: plugin

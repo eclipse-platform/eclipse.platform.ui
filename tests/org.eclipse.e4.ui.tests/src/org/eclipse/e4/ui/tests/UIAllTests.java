@@ -56,15 +56,15 @@ import org.eclipse.e4.ui.workbench.renderers.swt.StackRendererTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.TabStateHandlerTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.ThemeDefinitionChangedHandlerTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRendererTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * All E4 UI-related tests
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 		StartupTestSuite.class,
 		UIEventTypesTest.class,
 		Bug299755Test.class,

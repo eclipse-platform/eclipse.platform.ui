@@ -1,11 +1,10 @@
 package org.eclipse.jface.tests.labelProviders;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({ ColorAndFontLabelProviderTest.class, //
+@Suite
+@SelectClasses({ ColorAndFontLabelProviderTest.class, //
 		ColorAndFontViewerLabelProviderTest.class, //
 		ColumnLabelProviderLambdaTest.class, //
 		CompositeLabelProviderTableTest.class, //

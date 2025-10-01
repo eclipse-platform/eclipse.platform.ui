@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Tests for all areas of the key support for the platform.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 	BindingInteractionsTest.class,
 	BindingManagerTest.class,
 	DispatcherTest.class,

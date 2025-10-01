@@ -14,14 +14,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.commands;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Tests for all areas of command support for the platform.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 	CommandExecutionTest.class,
 	Bug73756Test.class,
 	Bug125792Test.class,

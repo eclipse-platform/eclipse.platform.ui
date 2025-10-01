@@ -14,14 +14,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.forms.util;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Tests forms utility (automated).
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 	FormColorsTest.class,
 	FormFontsTest.class,
 	FormImagesTest.class,

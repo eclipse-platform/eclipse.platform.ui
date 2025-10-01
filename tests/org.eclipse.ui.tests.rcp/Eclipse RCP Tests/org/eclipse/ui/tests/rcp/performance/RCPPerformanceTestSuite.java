@@ -14,14 +14,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.rcp.performance;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * @since 3.1
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({PlatformUIPerfTest.class , EmptyWorkbenchPerfTest.class})
+@Suite
+@SelectClasses({PlatformUIPerfTest.class , EmptyWorkbenchPerfTest.class})
 public class RCPPerformanceTestSuite {
 
 }

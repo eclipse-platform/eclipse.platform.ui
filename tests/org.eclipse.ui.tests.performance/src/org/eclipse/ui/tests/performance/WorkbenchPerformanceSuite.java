@@ -15,12 +15,12 @@
 package org.eclipse.ui.tests.performance;
 
 import org.eclipse.ui.tests.performance.layout.ResizeTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({ //
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+
+@Suite
+@SelectClasses({ //
 		ResizeTest.class, //
 })
 class WorkbenchPerformanceSuite {

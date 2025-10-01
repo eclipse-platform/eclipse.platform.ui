@@ -15,11 +15,12 @@
 package org.eclipse.ui.tests.dialogs;
 
 import org.eclipse.ui.tests.compare.UIComparePreferencesAuto;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ UIDialogsAuto.class, DeprecatedUIDialogsAuto.class, UIWizardsAuto.class,
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({ UIDialogsAuto.class, DeprecatedUIDialogsAuto.class, UIWizardsAuto.class,
 		DeprecatedUIWizardsAuto.class, UIPreferencesAuto.class, UIComparePreferencesAuto.class,
 		DeprecatedUIPreferencesAuto.class, UIMessageDialogsAuto.class, UINewWorkingSetWizardAuto.class,
 		UIEditWorkingSetWizardAuto.class, SearchPatternAuto.class, InfixSearchPatternAuto.class,

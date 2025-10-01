@@ -13,15 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * Test all areas of the UI API.
  */
-@RunWith(Suite.class)
-@SuiteClasses({ //
+@Suite
+@SelectClasses({ //
 		GenerateIdentifiersTest.class, //
 		WorkbenchPerformanceSuite.class, //
 		OpenClosePerspectiveTest.class, //

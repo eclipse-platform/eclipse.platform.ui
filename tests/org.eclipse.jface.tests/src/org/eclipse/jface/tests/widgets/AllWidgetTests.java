@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.widgets;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({ TestUnitButtonFactory.class, //
+@Suite
+@SelectClasses({ TestUnitButtonFactory.class, //
 		TestUnitCompositeFactory.class, //
 		TestUnitControlFactory.class, //
 		TestUnitGroupFactory.class, //
