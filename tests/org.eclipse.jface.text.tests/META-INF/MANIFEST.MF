@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.jface.text.tests
-Bundle-Version: 3.13.1000.qualifier
+Bundle-Version: 3.13.1100.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: 
@@ -28,4 +28,6 @@ Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.jface.text.tests
 Import-Package: org.mockito,
  org.mockito.invocation,
- org.mockito.stubbing
+ org.mockito.stubbing,
+ org.junit.jupiter.api,
+ org.junit.platform.suite.api
