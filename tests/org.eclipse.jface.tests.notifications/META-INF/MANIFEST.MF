@@ -4,6 +4,8 @@ Bundle-Name: Jface notifications tests
 Bundle-SymbolicName: org.eclipse.jface.tests.notifications
 Bundle-Vendor: Eclipse.org
 Bundle-Version: 0.2.0.qualifier
+Import-Package: org.junit.jupiter.api,
+ org.junit.platform.suite.api
 Automatic-Module-Name: org.eclipse.jface.notifications.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.junit,
