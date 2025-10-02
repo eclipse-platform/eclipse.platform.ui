@@ -63,9 +63,9 @@ The usage of SWT and JFace is demonstrated in the following snippets:
 Text Editor Examples
 --------------------
 
-The [RCP text editor examples](http://www.eclipse.org/eclipse/platform-text/development/rcp/examples/index.html) are available from the [Platform Text Component Development Resources page](http://www.eclipse.org/eclipse/platform-text/development/dev.html).
+The [RCP text editor examples](https://www.eclipse.org/eclipse/platform-text/development/rcp/examples/index.html) are available from the [Platform Text Component Development Resources page](https://www.eclipse.org/eclipse/platform-text/development/dev.html).
 
-It illustrates how to use the [Platform Text](http://www.eclipse.org/eclipse/platform-text/index.php) components in a Rich Client Platform application.
+It illustrates how to use the [Platform Text](https://www.eclipse.org/eclipse/platform-text/index.php) components in a Rich Client Platform application.
 
 
 

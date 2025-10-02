@@ -450,7 +450,7 @@ Every getter on an observable object must make a call to ObservableTracker.gette
 
 This enables abstractions like ComputedValue or ComputedList: All you have to write is a piece of code that computes a value, or a list. As long as this code only accesses other observables, the framework will manager listeners for you automatically.
 
-For example, assume that your UI has text fields for the first name and the last name of a person, but you want to display a formatted version of the full name elsewhere in the UI. This is what you can write (see [Snippet008](http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet008ComputedValue.java?view=markup) for a complete example):
+For example, assume that your UI has text fields for the first name and the last name of a person, but you want to display a formatted version of the full name elsewhere in the UI. This is what you can write (see [Snippet008](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet008ComputedValue.java) for a complete example):
 
     final IObservableValue firstName = SWTObservables.observeText(firstNameField, SWT.Modify);
     final IObservableValue lastName = SWTObservables.observeText(lastNameField, SWT.Modify);
