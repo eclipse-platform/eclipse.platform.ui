@@ -65,7 +65,7 @@ StatusManager is the entry point for all statuses to be reported in the user int
 
 
 The following methods are the API entry points to the StatusManager
-
+```java
     StatusManager#handle(IStatus)
 
     StatusManager#handle(IStatus, int)
@@ -73,16 +73,12 @@ The following methods are the API entry points to the StatusManager
     StatusManager#handle(StatusAdapter)
 
     StatusManager#handle(StatusAdapter, int)
-
-
-
+```
 
 The StatusManager singleton is accessed using
-
+```java
     StatusManager.getManager()
-
-
-
+```
 
 The `int` parameter are for supplying style for handling. See [Acceptable styles](#styles).
 
@@ -166,30 +162,20 @@ Platform is still under refactoring aimed at introducing the status handling fac
 
 The old code
 
-
-
+```java
       ErrorDialog.openError(...);
-
-
-
+```
 
 or
-
-
-
+```java
       MessageDialog.openError(...);
-
-
-
+```
 
 should be refactored into
 
-
-
+```java
       StatusManager.getManager().handle(..., StatusManager.SHOW);
-
-
-
+```
 
 WorkbenchStatusHandler and IDEWorkbenchStatusHandler
 ----------------------------------------------------

@@ -46,7 +46,6 @@ Each of the IActionDelegates has a slightly different initialization interface. 
 
 Creating an equivalent IHandler for IWorkbenchWindowActionDelegate that has access to the window is straightforward. ex:
 
-
 ```java
 	public class SampleAction extends AbstractHandler {
 		public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -68,12 +67,13 @@ Creating an equivalent IHandler for IWorkbenchWindowActionDelegate that has acce
 			return null;
 		}
 	}
-
+```
 
 At the moment, a wrapper for an existing **I*ActionDelegate** is the ActionDelegateHandlerProxy.
 
 Similarly, an IEditorActionDelegate equivalent (same applies to IViewActionDelegate, except it would use the active part) can access the active editor:
 
+```java
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IEditorPart activeEditor = null;
 		ISelection selection = null;
@@ -88,10 +88,11 @@ Similarly, an IEditorActionDelegate equivalent (same applies to IViewActionDeleg
 		// ... execute the event.
 		return null;
 	}
-
+```
 
 Also note that IHandlers are not handed an IAction, but the IHandler can return its own **isEnabled()** state directly. For Handlers that want to programmatically report their enablement change, they must remember to fire an event.
 
+```java
 	public class SampleEnabledHandler extends AbstractHandler {
 		private boolean enabled = true;
 
@@ -127,6 +128,7 @@ Also note that IHandlers are not handed an IAction, but the IHandler can return 
 			return null;
 		}
 	}
+```
 
 ### IObjectActionDelegate
 
@@ -162,6 +164,7 @@ Action Sets are visible in the main menu and coolbar.
 Their visibility can be updated by the user using **Customize Perspective**.
 Here is a sample actionSet distributed with Eclipse SDK.
 
+```xml
 	<extension
 	      point="org.eclipse.ui.actionSets">
 	   <actionSet
@@ -186,6 +189,7 @@ Here is a sample actionSet distributed with Eclipse SDK.
 	      </action>
 	   </actionSet>
 	</extension>
+```
 
 The `<actionSet/>` element defines the group of elements that can be shown or hidden.
 The `<menu/>` elements create menus and groups.
@@ -199,6 +203,7 @@ Using the org.eclipse.ui.actionSetPartAssociation extension with an org.eclipse.
 
 Here is an action example adapted as an editor action:
 
+```xml
 	<extension
 	      point="org.eclipse.ui.editorActions">
 	   <editorContribution
@@ -222,7 +227,7 @@ Here is an action example adapted as an editor action:
 	      </action>
 	   </editorContribution>
 	</extension>
-
+```
 
 The `<editorContribution/>` element ties the editor action to a specific editor type.
 Other than that, it is almost identical to org.eclipse.ui.actionSets.
@@ -233,6 +238,7 @@ org.eclipse.ui.viewActions
 View actions are placed in the view menu or view toolbar, but the extension point looks almost identical to org.eclipse.ui.editorActions.
 The delegate for views is IViewActionDelegate.
 
+```xml
 	<extension
 	      point="org.eclipse.ui.viewActions">
 	   <viewContribution
@@ -256,6 +262,7 @@ The delegate for views is IViewActionDelegate.
 	      </action>
 	   </viewContribution>
 	</extension>
+```
 
 Here, the Sample Menu will show up in the view menu, the dropdown from the top of the view's CTabFolder.
 
@@ -266,6 +273,7 @@ Popup menu contributions are actions contributed to the various popup menus in e
 
 Here is an example of each:
 
+```xml
 	<extension
 	      point="org.eclipse.ui.popupMenus">
 	   <objectContribution
@@ -293,6 +301,7 @@ Here is an example of each:
 	      </action>
 	   </viewerContribution>
 	</extension>
+```
 
 Framework Enhancements for 3.3
 ==============================
@@ -312,6 +321,7 @@ Does this become an issue if we replace our menuing abstraction?
 
 Commands are an abstraction of behaviour, an have a lot in common with RetargetableActions. Certain kinds of RetargetableActions provide the ability to switch the labels, like switching **Undo** to **Redo**. This can be accomodated by adding text state to the command:
 
+```xml
 	<extension
 	      point="org.eclipse.ui.commands">
 	   <command
@@ -323,6 +333,7 @@ Commands are an abstraction of behaviour, an have a lot in common with Retargeta
 	            id="NAME"/>
 	   </command>
 	</extension>
+```
 
 Currently, command states that have meaning are in [org.eclipse.jface.menus.IMenuStateIds](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/menus/IMenuStateIds.html) and [org.eclipse.core.commands.INamedHandleStateIds](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/commands/INamedHandleStateIds.html).
 
@@ -444,6 +455,7 @@ We can do this by re-using the existing extension points; tweaking as necessary 
 
 The menu extension can declaratively specify that the menu item is a dynamic menu, and provide a dynamic menu callback class that implements `IDynamicMenu`. When the menu item is about to show, the callback class will be handed an `IMenuCollection`, which contains a modifiable list of menu elements. As an example:
 
+```java
 	public interface IDynamicMenu {
 		/**
 		 * Called just before the given menu is about to show. This allows the
@@ -456,10 +468,12 @@ The menu extension can declaratively specify that the menu item is a dynamic men
 		 */
 		public void aboutToShow(IMenuCollection menu);
 	}
+```
 
 And the `IMenuCollection` allows the modification of the menu that's about to show.
 Assume that `MenuElement` is the new flavour of `IContributionItem`/`IContributionManager`
 
+```java
 	public interface IMenuCollection {
 		/**
 		 * Appends a menu element to the end of the collection.
@@ -520,6 +534,7 @@ Assume that `MenuElement` is the new flavour of `IContributionItem`/`IContributi
 		 */
 		public int size();
 	}
+```
 
 This is a change from the `IMenuCreator` interface, which directly references an SWT Control or SWT Menu.
 
