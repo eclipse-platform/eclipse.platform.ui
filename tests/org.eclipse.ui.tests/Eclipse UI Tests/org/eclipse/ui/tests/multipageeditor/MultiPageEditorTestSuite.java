@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The suite of tests for multi-page editors.
  *
  * @since 3.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 	MultiEditorInputTest.class,
 	MultiPageEditorPartTest.class,
 	MultiVariablePageTest.class,

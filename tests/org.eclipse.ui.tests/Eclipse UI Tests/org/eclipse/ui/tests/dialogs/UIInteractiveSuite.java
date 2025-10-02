@@ -14,14 +14,15 @@
 package org.eclipse.ui.tests.dialogs;
 
 import org.eclipse.ui.tests.compare.UIComparePreferences;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test all areas of the UI.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 	UIPreferences.class,
 	UIComparePreferences.class,
 	DeprecatedUIPreferences.class,
