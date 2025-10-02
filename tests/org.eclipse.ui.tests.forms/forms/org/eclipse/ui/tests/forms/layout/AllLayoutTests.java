@@ -17,14 +17,15 @@ package org.eclipse.ui.tests.forms.layout;
 
 import org.eclipse.ui.tests.forms.widgets.HintAdjustmentTest;
 import org.eclipse.ui.tests.forms.widgets.SizeCacheTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test all form layouts
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 	HintAdjustmentTest.class,
 	SizeCacheTest.class,
 	TestColumnWrapLayout.class,
