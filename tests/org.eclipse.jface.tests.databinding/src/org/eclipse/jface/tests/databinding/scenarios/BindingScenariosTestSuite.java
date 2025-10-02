@@ -14,10 +14,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * To run this test suite, right-click and select "Run As JUnit Plug-in Test".
@@ -26,8 +24,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * Mode" as the application to run. You can also run this class as an SWT
  * application.
  */
-@RunWith(Suite.class)
-@SuiteClasses({ ButtonControlScenario.class, ComboScenarios.class, ComboUpdatingTest.class, ComboViewerScenario.class,
+@Suite
+@SelectClasses({ ButtonControlScenario.class, ComboScenarios.class, ComboUpdatingTest.class, ComboViewerScenario.class,
 		CustomConverterScenarios.class, CustomScenarios.class, ListViewerScenario.class, MasterDetailScenarios.class,
 		NewTableScenarios.class, NPETestScenario.class, PropertyScenarios.class, SpinnerControlScenario.class,
 		TableScenarios.class, TextControlScenario.class })
