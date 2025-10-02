@@ -179,27 +179,31 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			fKeyListener= new KeyListener() {
 				@Override
 				public void keyPressed(KeyEvent e) {
-					if (!isValid(fProposalShell))
+					if (!isValid(fProposalShell)) {
 						return;
+					}
 
 					if (e.character == 0 && e.keyCode == SWT.CTRL) {
 						// http://dev.eclipse.org/bugs/show_bug.cgi?id=34754
 						int index= fProposalTable.getSelectionIndex();
-						if (index >= 0)
+						if (index >= 0) {
 							selectProposal(index, true);
+						}
 					}
 				}
 
 				@Override
 				public void keyReleased(KeyEvent e) {
-					if (!isValid(fProposalShell))
+					if (!isValid(fProposalShell)) {
 						return;
+					}
 
 					if (e.character == 0 && e.keyCode == SWT.CTRL) {
 						// http://dev.eclipse.org/bugs/show_bug.cgi?id=34754
 						int index= fProposalTable.getSelectionIndex();
-						if (index >= 0)
+						if (index >= 0) {
 							selectProposal(index, false);
+						}
 					}
 				}
 			};
@@ -257,8 +261,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 * Creates the proposal selector.
 	 */
 	private void createProposalSelector() {
-		if (isValid(fProposalShell))
+		if (isValid(fProposalShell)) {
 			return;
+		}
 
 		Control control= fViewer.getTextWidget();
 		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP);
@@ -268,12 +273,14 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 
 		fIsColoredLabelsSupportEnabled= fContentAssistant.isColoredLabelsSupportEnabled();
-		if (fIsColoredLabelsSupportEnabled)
+		if (fIsColoredLabelsSupportEnabled) {
 			TableOwnerDrawSupport.install(fProposalTable);
+		}
 
 		fProposalTable.setLocation(0, 0);
-		if (fAdditionalInfoController != null)
+		if (fAdditionalInfoController != null) {
 			fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
+		}
 
 		GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
@@ -288,8 +295,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		// set location
 		Point currentLocation= fProposalShell.getLocation();
 		Point newLocation= getLocation();
-		if ((newLocation.x < currentLocation.x && newLocation.y == currentLocation.y) || newLocation.y < currentLocation.y)
+		if ((newLocation.x < currentLocation.x && newLocation.y == currentLocation.y) || newLocation.y < currentLocation.y) {
 			fProposalShell.setLocation(newLocation);
+		}
 
 		if (fAdditionalInfoController != null) {
 			fProposalShell.addControlListener(new ControlListener() {
@@ -347,8 +355,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 */
 	private ICompletionProposal getSelectedProposal() {
 		int i= fProposalTable.getSelectionIndex();
-		if (i < 0 || i >= fFilteredProposals.length)
+		if (i < 0 || i >= fFilteredProposals.length) {
 			return null;
+		}
 		return fFilteredProposals[i];
 	}
 
@@ -360,9 +369,11 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 * @since 2.1
 	 */
 	private boolean selectProposalWithMask(int stateMask) {
-		if (fInvocationCounter != fInvocationProcessedCounter)
-			if (!doFilterProposals())
+		if (fInvocationCounter != fInvocationProcessedCounter) {
+			if (!doFilterProposals()) {
 				return false;
+			}
+		}
 
 		ICompletionProposal p= getSelectedProposal();
 		hide();
@@ -397,8 +408,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				target= extension.getRewriteTarget();
 			}
 
-			if (target != null)
+			if (target != null) {
 				target.beginCompoundChange();
+			}
 
 			if (fViewer instanceof IEditingSupportRegistry) {
 				registry= (IEditingSupportRegistry) fViewer;
@@ -426,8 +438,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				if (p instanceof ICompletionProposalExtension e) {
 					position= e.getContextInformationPosition();
 				} else {
-					if (selection == null)
+					if (selection == null) {
 						selection= fViewer.getSelectedRange();
+					}
 					position= selection.x + selection.y;
 				}
 
@@ -437,11 +450,13 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			fContentAssistant.fireProposalChosen(p);
 
 		} finally {
-			if (target != null)
+			if (target != null) {
 				target.endCompoundChange();
+			}
 
-			if (registry != null)
+			if (registry != null) {
 				registry.unregister(fModificationEditingSupport);
+			}
 
 			fInserting= false;
 		}
@@ -453,8 +468,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 * @return <code>true</code> if the popup has the focus
 	 */
 	public boolean hasFocus() {
-		if (isValid(fProposalShell))
+		if (isValid(fProposalShell)) {
 			return (fProposalShell.isFocusControl() || fProposalTable.isFocusControl());
+		}
 
 		return false;
 	}
@@ -488,15 +504,17 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	private void unregister() {
 		if (fDocumentListener != null) {
 			IDocument document= fViewer.getDocument();
-			if (document != null)
+			if (document != null) {
 				document.removeDocumentListener(fDocumentListener);
+			}
 			fDocumentListener= null;
 		}
 		fDocumentEvents.clear();
 
 		StyledText styledText= fViewer.getTextWidget();
-		if (fKeyListener != null && styledText != null && !styledText.isDisposed())
+		if (fKeyListener != null && styledText != null && !styledText.isDisposed()) {
 			styledText.removeKeyListener(fKeyListener);
+		}
 
 		if (fLastProposal != null) {
 			if (fLastProposal instanceof ICompletionProposalExtension2 extension) {
@@ -529,8 +547,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		if (isValid(fProposalTable)) {
 
 			ICompletionProposal oldProposal= getSelectedProposal();
-			if (oldProposal instanceof ICompletionProposalExtension2)
+			if (oldProposal instanceof ICompletionProposalExtension2) {
 				((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
+			}
 
 			fFilteredProposals= proposals;
 
@@ -544,16 +563,18 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				endOffset= selection.x + selection.y;
 				IDocument document= fViewer.getDocument();
 				boolean validate= false;
-				if (selection.y != 0 && document != null)
+				if (selection.y != 0 && document != null) {
 					validate= true;
+				}
 
 				TableItem item;
 				ICompletionProposal p;
 				for (int i= 0; i < proposals.length; i++) {
 					p= proposals[i];
 					item= new TableItem(fProposalTable, SWT.NULL);
-					if (p.getImage() != null)
+					if (p.getImage() != null) {
 						item.setImage(p.getImage());
+					}
 
 					String displayString;
 					StyleRange[] styleRanges= null;
@@ -561,12 +582,14 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 						StyledString styledString= ((ICompletionProposalExtension6)p).getStyledDisplayString();
 						displayString= styledString.getString();
 						styleRanges= styledString.getStyleRanges();
-					} else
+					} else {
 						displayString= p.getDisplayString();
+					}
 
 					item.setText(displayString);
-					if (fIsColoredLabelsSupportEnabled)
+					if (fIsColoredLabelsSupportEnabled) {
 						TableOwnerDrawSupport.storeStyleRanges(item, 0, styleRanges);
+					}
 
 					item.setData(p);
 
@@ -610,11 +633,13 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 * @return the height hint for <code>table</code>
 	 */
 	private int getTableHeightHint(Table table, int rows) {
-		if (table.getFont().equals(JFaceResources.getDefaultFont()))
+		if (table.getFont().equals(JFaceResources.getDefaultFont())) {
 			table.setFont(JFaceResources.getDialogFont());
+		}
 		int result= table.getItemHeight() * rows;
-		if (table.getLinesVisible())
+		if (table.getLinesVisible()) {
 			result+= table.getGridLineWidth() * (rows - 1);
+		}
 
 		// TODO adjust to correct size. +4 works on windows, but not others
 //		return result + 4;
@@ -624,11 +649,13 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	private boolean validateProposal(IDocument document, ICompletionProposal p, int offset, DocumentEvent event) {
 		// detect selected
 		if (p instanceof ICompletionProposalExtension2 e) {
-			if (e.validate(document, offset, event))
+			if (e.validate(document, offset, event)) {
 				return true;
+			}
 		} else if (p instanceof ICompletionProposalExtension e) {
-			if (e.isValidFor(document, offset))
+			if (e.isValidFor(document, offset)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -643,8 +670,12 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		Point selection= text.getSelection();
 		Point p= text.getLocationAtOffset(selection.x);
 		p.x -= fProposalShell.getBorderWidth();
-		if (p.x < 0) p.x= 0;
-		if (p.y < 0) p.y= 0;
+		if (p.x < 0) {
+			p.x= 0;
+		}
+		if (p.y < 0) {
+			p.y= 0;
+		}
 		p= new Point(p.x, p.y + text.getLineHeight(selection.x));
 		p= text.toDisplay(p);
 		return p;
@@ -657,23 +688,27 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	private void displayProposals() {
 		if (fContentAssistant.addContentAssistListener(this, ContentAssistant2.PROPOSAL_SELECTOR)) {
 
-			if (fDocumentListener == null)
+			if (fDocumentListener == null) {
 				fDocumentListener=  new IDocumentListener()  {
 					@Override
 					public void documentAboutToBeChanged(DocumentEvent event) {
-						if (!fInserting)
+						if (!fInserting) {
 							fDocumentEvents.add(event);
+						}
 					}
 
 					@Override
 					public void documentChanged(DocumentEvent event) {
-						if (!fInserting)
+						if (!fInserting) {
 							filterProposals();
+						}
 					}
 				};
+			}
 			IDocument document= fViewer.getDocument();
-			if (document != null)
+			if (document != null) {
 				document.addDocumentListener(fDocumentListener);
+			}
 
 
 			if (fViewer instanceof IEditingSupportRegistry registry) {
@@ -684,8 +719,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			// see bug 47511: setVisible may run the event loop on GTK
 			// and trigger a rentrant call - have to check whether we are still
 			// visible
-			if (!isValid(fProposalShell))
+			if (!isValid(fProposalShell)) {
 				return;
+			}
 
 
 			if (fAdditionalInfoController != null) {
@@ -697,8 +733,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		@Override
 		public boolean verifyKey(VerifyEvent e) {
-			if (!isValid(fProposalShell))
+			if (!isValid(fProposalShell)) {
 				return true;
+			}
 
 			char key= e.character;
 			if (key == 0) {
@@ -713,26 +750,30 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 					case SWT.ARROW_UP :
 						newSelection -= 1;
-						if (newSelection < 0)
+						if (newSelection < 0) {
 							newSelection= fProposalTable.getItemCount() - 1;
+						}
 						break;
 
 					case SWT.ARROW_DOWN :
 						newSelection += 1;
-						if (newSelection > fProposalTable.getItemCount() - 1)
+						if (newSelection > fProposalTable.getItemCount() - 1) {
 							newSelection= 0;
+						}
 						break;
 
 					case SWT.PAGE_DOWN :
 						newSelection += visibleRows;
-						if (newSelection >= fProposalTable.getItemCount())
+						if (newSelection >= fProposalTable.getItemCount()) {
 							newSelection= fProposalTable.getItemCount() - 1;
+						}
 						break;
 
 					case SWT.PAGE_UP :
 						newSelection -= visibleRows;
-						if (newSelection < 0)
+						if (newSelection < 0) {
 							newSelection= 0;
+						}
 						break;
 
 					case SWT.HOME :
@@ -744,8 +785,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 						break;
 
 					default :
-						if (e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4)
+						if (e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4) {
 							hide();
+						}
 						return true;
 				}
 
@@ -802,19 +844,22 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	private void selectProposal(int index, boolean smartToggle) {
 
 		ICompletionProposal oldProposal= getSelectedProposal();
-		if (oldProposal instanceof ICompletionProposalExtension2)
+		if (oldProposal instanceof ICompletionProposalExtension2) {
 			((ICompletionProposalExtension2) oldProposal).unselected(fViewer);
+		}
 
 		ICompletionProposal proposal= fFilteredProposals[index];
-		if (proposal instanceof ICompletionProposalExtension2)
+		if (proposal instanceof ICompletionProposalExtension2) {
 			((ICompletionProposalExtension2) proposal).selected(fViewer, smartToggle);
+		}
 
 		fLastProposal= proposal;
 
 		fProposalTable.setSelection(index);
 		fProposalTable.showSelection();
-		if (fAdditionalInfoController != null)
+		if (fAdditionalInfoController != null) {
 			fAdditionalInfoController.handleTableSelectionChanged();
+		}
 	}
 
 	/**
@@ -828,12 +873,14 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 */
 	private boolean contains(char[] characters, char c) {
 
-		if (characters == null)
+		if (characters == null) {
 			return false;
+		}
 
 		for (char character : characters) {
-			if (c == character)
+			if (c == character) {
 				return true;
+			}
 		}
 
 		return false;
@@ -851,10 +898,12 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		Control control= fViewer.getTextWidget();
 		long fCounter= fInvocationCounter;
 		control.getDisplay().asyncExec(() -> {
-			if (fCounter != fInvocationCounter)
+			if (fCounter != fInvocationCounter) {
 				return;
-			if (fInvocationProcessedCounter == fInvocationCounter)
+			}
+			if (fInvocationProcessedCounter == fInvocationCounter) {
 				return;
+			}
 
 			doFilterProposals();
 		});
@@ -902,19 +951,22 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 */
 	private ICompletionProposal[] computeFilteredProposals(int offset, DocumentEvent event) {
 
-		if (offset == fInvocationOffset && event == null)
+		if (offset == fInvocationOffset && event == null) {
 			return fComputedProposals;
+		}
 
 		if (offset < fInvocationOffset) {
 			return null;
 		}
 
 		ICompletionProposal[] proposals= fComputedProposals;
-		if (offset > fFilterOffset)
+		if (offset > fFilterOffset) {
 			proposals= fFilteredProposals;
+		}
 
-		if (proposals == null)
+		if (proposals == null) {
 			return null;
+		}
 
 		IDocument document= fViewer.getDocument();
 		int length= proposals.length;
@@ -923,13 +975,15 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 			if (proposals[i] instanceof ICompletionProposalExtension2 p) {
 
-				if (p.validate(document, offset, event))
+				if (p.validate(document, offset, event)) {
 					filtered.add(p);
+				}
 
 			} else if (proposals[i] instanceof ICompletionProposalExtension p) {
 
-				if (p.isValidFor(document, offset))
+				if (p.isValidFor(document, offset)) {
 					filtered.add(p);
+				}
 
 			} else {
 				// restore original behavior
@@ -950,7 +1004,8 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 * @since 3.0
 	 */
 	public void setFocus() {
-		if (isValid(fProposalShell))
+		if (isValid(fProposalShell)) {
 			fProposalShell.setFocus();
+		}
 	}
 }

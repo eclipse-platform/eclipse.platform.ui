@@ -84,8 +84,9 @@ public final class ChangeRegion {
 	 * @return the line coverage of the adjusted ranges
 	 */
 	public ILineRange getAdjustedCoverage() {
-		if (fAdjusted.isEmpty())
+		if (fAdjusted.isEmpty()) {
 			return new LineRange(fLines.getStartLine(), 0);
+		}
 
 		Range first= fAdjusted.get(0);
 		Range last= fAdjusted.get(fAdjusted.size() - 1);
@@ -113,8 +114,9 @@ public final class ChangeRegion {
 			// do we need a split?
 			int unchanged= getUnchanged(hunk, range.start());
 			if (unchanged > 0) {
-				if (unchanged >= range.length())
+				if (unchanged >= range.length()) {
 					continue;
+				}
 				range= range.split(unchanged);
 				it.add(range);
 				it.previous(); it.next(); // needed so we can remove below
@@ -148,8 +150,9 @@ public final class ChangeRegion {
 
 		int deltaLine= hunk.line + hunk.changed;
 		if (hunk.delta >= 0) {
-			if (deltaLine <= line)
+			if (deltaLine <= line) {
 				return 0;
+			}
 			return deltaLine - line;
 		}
 

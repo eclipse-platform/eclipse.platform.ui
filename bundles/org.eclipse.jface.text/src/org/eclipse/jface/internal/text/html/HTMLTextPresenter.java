@@ -70,8 +70,9 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 	@Override
 	public String updatePresentation(Drawable drawable, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
 
-		if (hoverInfo == null)
+		if (hoverInfo == null) {
 			return null;
+		}
 
 		if (!fEnforceUpperLineLimit) {
 			maxHeight= Integer.MAX_VALUE;

@@ -106,8 +106,9 @@ public class HTML2TextReader extends SubstitutionReader {
 	@Override
 	public int read() throws IOException {
 		int c= super.read();
-		if (c != -1)
+		if (c != -1) {
 			++ fCounter;
+		}
 		return c;
 	}
 
@@ -185,29 +186,33 @@ public class HTML2TextReader extends SubstitutionReader {
 	@Override
 	protected String computeSubstitution(int c) throws IOException {
 
-		if (c == '<')
+		if (c == '<') {
 			return  processHTMLTag();
-		else if (fIgnore)
+		} else if (fIgnore) {
 			return EMPTY_STRING;
-		else if (c == '&')
+		} else if (c == '&') {
 			return processEntity();
+		}
 
 		return null;
 	}
 
 	private String html2Text(String html) {
 
-		if (html == null || html.isEmpty())
+		if (html == null || html.isEmpty()) {
 			return EMPTY_STRING;
+		}
 
 		html= html.toLowerCase();
 
 		String tag= html;
-		if ('/' == tag.charAt(0))
+		if ('/' == tag.charAt(0)) {
 			tag= tag.substring(1);
+		}
 
-		if (!fgTags.contains(tag))
+		if (!fgTags.contains(tag)) {
 			return EMPTY_STRING;
+		}
 
 
 		if ("pre".equals(html)) { //$NON-NLS-1$
@@ -245,15 +250,18 @@ public class HTML2TextReader extends SubstitutionReader {
 			return EMPTY_STRING;
 		}
 
-		if ("dl".equals(html)) //$NON-NLS-1$
+		if ("dl".equals(html)) { //$NON-NLS-1$
 			return LINE_DELIM;
+		}
 
-		if ("dd".equals(html)) //$NON-NLS-1$
+		if ("dd".equals(html)) { //$NON-NLS-1$
 			return "\t"; //$NON-NLS-1$
+		}
 
-		if ("li".equals(html)) //$NON-NLS-1$
+		if ("li".equals(html)) { //$NON-NLS-1$
 			// FIXME: this hard-coded prefix does not work for RTL languages, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=91682
 			return LINE_DELIM + HTMLMessages.getString("HTML2TextReader.listItemPrefix"); //$NON-NLS-1$
+		}
 
 		if ("/b".equals(html) || "/strong".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$
 			stopBold();
@@ -270,8 +278,9 @@ public class HTML2TextReader extends SubstitutionReader {
 			return LINE_DELIM;
 		}
 
-		if ("br".equals(html) || "br/".equals(html) || "div".equals(html)) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if ("br".equals(html) || "br/".equals(html) || "div".equals(html)) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return LINE_DELIM;
+		}
 
 		if ("/p".equals(html))  { //$NON-NLS-1$
 			boolean inParagraph= fInParagraph;
@@ -284,8 +293,9 @@ public class HTML2TextReader extends SubstitutionReader {
 			return LINE_DELIM;
 		}
 
-		if ("/dd".equals(html)) //$NON-NLS-1$
+		if ("/dd".equals(html)) { //$NON-NLS-1$
 			return LINE_DELIM;
+		}
 
 		if ("head".equals(html) && !fHeaderDetected) { //$NON-NLS-1$
 			fHeaderDetected= true;
@@ -329,8 +339,9 @@ public class HTML2TextReader extends SubstitutionReader {
 				}
 			}
 
-			if (ch == -1)
+			if (ch == -1) {
 				return null;
+			}
 
 			if (!isInComment(buf) || isCommentEnd(buf)) {
 				break;
@@ -388,12 +399,14 @@ public class HTML2TextReader extends SubstitutionReader {
 			ch= nextChar();
 		}
 
-		if (ch == ';')
+		if (ch == ';') {
 			return entity2Text(buf.toString());
+		}
 
 		buf.insert(0, '&');
-		if (ch != -1)
+		if (ch != -1) {
 			buf.append((char) ch);
+		}
 		return buf.toString();
 	}
 }
