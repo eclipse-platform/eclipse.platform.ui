@@ -66,8 +66,9 @@ class ProjectionSummary {
 		public void run() {
 			while (true) {
 				synchronized (fLock) {
-					if (!fReset)
+					if (!fReset) {
 						break;
+					}
 					fReset= false;
 					fProgressMonitor.setCanceled(false);
 				}
@@ -112,8 +113,9 @@ class ProjectionSummary {
 			if (fConfiguredAnnotationTypes == null) {
 				fConfiguredAnnotationTypes= new ArrayList<>();
 				fConfiguredAnnotationTypes.add(annotationType);
-			} else if (!fConfiguredAnnotationTypes.contains(annotationType))
+			} else if (!fConfiguredAnnotationTypes.contains(annotationType)) {
 				fConfiguredAnnotationTypes.add(annotationType);
+			}
 		}
 	}
 
@@ -127,8 +129,9 @@ class ProjectionSummary {
 		synchronized (fLock) {
 			if (fConfiguredAnnotationTypes != null) {
 				fConfiguredAnnotationTypes.remove(annotationType);
-				if (fConfiguredAnnotationTypes.isEmpty())
+				if (fConfiguredAnnotationTypes.isEmpty()) {
 					fConfiguredAnnotationTypes= null;
+				}
 			}
 		}
 	}
@@ -139,8 +142,9 @@ class ProjectionSummary {
 	public void updateSummaries() {
 		synchronized (fLock) {
 			if (fConfiguredAnnotationTypes != null) {
-				if (fSummarizer == null)
+				if (fSummarizer == null) {
 					fSummarizer= new Summarizer();
+				}
 				fSummarizer.reset();
 			}
 		}
@@ -148,13 +152,15 @@ class ProjectionSummary {
 
 	private void internalUpdateSummaries(IProgressMonitor monitor) {
 		IAnnotationModel visualAnnotationModel= fProjectionViewer.getVisualAnnotationModel();
-		if (visualAnnotationModel == null)
+		if (visualAnnotationModel == null) {
 			return;
+		}
 
 		removeSummaries(monitor, visualAnnotationModel);
 
-		if (isCanceled(monitor))
+		if (isCanceled(monitor)) {
 			return;
+		}
 
 		createSummaries(monitor, visualAnnotationModel);
 	}
@@ -176,28 +182,32 @@ class ProjectionSummary {
 		while (e.hasNext()) {
 			Annotation annotation= e.next();
 			if (annotation instanceof AnnotationBag) {
-				if (bags == null)
+				if (bags == null) {
 					visualAnnotationModel.removeAnnotation(annotation);
-				else
+				} else {
 					bags.add(annotation);
+				}
 			}
 
-			if (isCanceled(monitor))
+			if (isCanceled(monitor)) {
 				return;
+			}
 		}
 
 		if (bags != null && !bags.isEmpty() && extension != null) {
 			Annotation[] deletions= new Annotation[bags.size()];
 			bags.toArray(deletions);
-			if (!isCanceled(monitor))
+			if (!isCanceled(monitor)) {
 				extension.replaceAnnotations(deletions, null);
+			}
 		}
 	}
 
 	private void createSummaries(IProgressMonitor monitor, IAnnotationModel visualAnnotationModel) {
 		ProjectionAnnotationModel model= fProjectionViewer.getProjectionAnnotationModel();
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 
 		Map<Annotation, Position> additions= new HashMap<>();
 
@@ -210,26 +220,30 @@ class ProjectionSummary {
 					IRegion[] summaryRegions= fProjectionViewer.computeCollapsedRegions(position);
 					if (summaryRegions != null) {
 						Position summaryAnchor= fProjectionViewer.computeCollapsedRegionAnchor(position);
-						if (summaryAnchor != null)
+						if (summaryAnchor != null) {
 							createSummary(additions, summaryRegions, summaryAnchor);
+						}
 					}
 				}
 			}
 
-			if (isCanceled(monitor))
+			if (isCanceled(monitor)) {
 				return;
+			}
 		}
 
 		if (!additions.isEmpty()) {
 			if (visualAnnotationModel instanceof IAnnotationModelExtension extension) {
-				if (!isCanceled(monitor))
+				if (!isCanceled(monitor)) {
 					extension.replaceAnnotations(null, additions);
+				}
 			} else {
 				for (Entry<Annotation, Position> entry : additions.entrySet()) {
 					AnnotationBag bag= (AnnotationBag) entry.getKey();
 					Position position= entry.getValue();
-					if (isCanceled(monitor))
+					if (isCanceled(monitor)) {
 						return;
+					}
 					visualAnnotationModel.addAnnotation(bag, position);
 				}
 			}
@@ -252,27 +266,31 @@ class ProjectionSummary {
 			}
 		}
 
-		if (map == null)
+		if (map == null) {
 			return;
+		}
 
 		IAnnotationModel model= fProjectionViewer.getAnnotationModel();
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 		Iterator<Annotation> e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Annotation annotation= e.next();
 			AnnotationBag bag= findBagForType(map, annotation.getType());
 			if (bag != null) {
 				Position position= model.getPosition(annotation);
-				if (includes(summaryRegions, position))
+				if (includes(summaryRegions, position)) {
 					bag.add(annotation);
+				}
 			}
 		}
 
 		for (int i= 0; i < size; i++) {
 			AnnotationBag bag= map.get(fConfiguredAnnotationTypes.get(i));
-			if (!bag.isEmpty())
+			if (!bag.isEmpty()) {
 				additions.put(bag, new Position(summaryAnchor.getOffset(), summaryAnchor.getLength()));
+			}
 		}
 	}
 
@@ -290,8 +308,9 @@ class ProjectionSummary {
 	private boolean includes(IRegion[] regions, Position position) {
 		for (IRegion region : regions) {
 			if (position != null && !position.isDeleted()
-					&& region.getOffset() <= position.getOffset() &&  position.getOffset() + position.getLength() <= region.getOffset() + region.getLength())
+					&& region.getOffset() <= position.getOffset() &&  position.getOffset() + position.getLength() <= region.getOffset() + region.getLength()) {
 				return true;
+			}
 		}
 		return false;
 	}
