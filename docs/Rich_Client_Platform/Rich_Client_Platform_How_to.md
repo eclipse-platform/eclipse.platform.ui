@@ -9,7 +9,7 @@ This was tested on Eclipse 3.5 (Galileo).
 IDE
 ---
 
-[Eclipse Download site](http://www.eclipse.org/downloads/)
+[Eclipse Download site](https://www.eclipse.org/downloads/)
 
 Link "Eclipse for RCP/Plug-in Developers"
 
@@ -32,7 +32,7 @@ Create directory _target_ in a folder of your choice.
 Download and unzip in _target_: eclipse-RCP-SDK-*.zip, eclipse-*-delta-pack.zip
 
 *   Delta pack is needed for building to other platforms, or for automated [build](#Build).
-*   If Help or Update feature is needed, either replace RCP-SDK with platform-SDK, or download individual features from [here](http://www.eclipse.org/platform/)
+*   If Help or Update feature is needed, either replace RCP-SDK with platform-SDK, or download individual features from [here](https://www.eclipse.org/platform/)
 *   eclipse-RCP-SDK-*.zip is needed rather than eclipse-RCP-*.zip else extensions won't work in plug-in editor.
 
 Window > Preferences > Plug-in Development > Target Platform > Browse > _target_/eclipse > OK > Reload

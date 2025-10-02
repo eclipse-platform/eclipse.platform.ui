@@ -106,7 +106,7 @@ They also show pseudo selectors which can be used to choose styling based on wid
 | setMaximized(boolean) | swt-maximized | CTabFolder { swt-maximized: true } |
 | setMinimized(boolean) | swt-minimized | CTabFolder { swt-minimized: true } |
 | setMaximizeVisible(boolean) | swt-maximize-visible | CTabFolder { swt-maximize-visible: true } |
-| setMinimizeVisible(boolean) | swt-minimize-visible | CTabFolder {swt- minimize-visible: true } |
+| setMinimizeVisible(boolean) | swt-minimize-visible | CTabFolder {swt-minimize-visible: true } |
 | setMRUVisible(boolean) | swt-mru-visible | CTabFolder { swt-mru-visible: true } |
 | setSimple(boolean) | swt-simple | CTabFolder { swt-simple: true } |
 | setSingle(boolean) | swt-single | CTabFolder { swt-single: true } |
