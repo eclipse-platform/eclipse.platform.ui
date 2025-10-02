@@ -188,12 +188,12 @@ import org.eclipse.jface.tests.internal.databinding.viewers.ObservableCollection
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementMapTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementSetTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementWrapperTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({ AbstractObservableListTest.class, AbstractObservableMapTest.class, AbstractObservableTest.class,
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+
+@Suite
+@SelectClasses({ AbstractObservableListTest.class, AbstractObservableMapTest.class, AbstractObservableTest.class,
 		AbstractObservableValueTest.class, AbstractStringToNumberValidatorTest.class, AbstractVetoableValueTest.class,
 		AggregateValidationStatusTest.class, AnonymousBeanValuePropertyTest.class, AnonymousPojoValuePropertyTest.class,
 		BeanPropertiesTest.class,
