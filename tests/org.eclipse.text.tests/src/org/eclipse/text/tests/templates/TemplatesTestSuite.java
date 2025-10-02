@@ -16,19 +16,18 @@
 
 package org.eclipse.text.tests.templates;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * Test Suite for the org.eclipse.text plug-in
  */
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 		TemplateTranslatorTest.class,
 		TemplateVariablesWordSelectionTest.class,
 		GlobalTemplateVariablesDateTest.class
 })
 public class TemplatesTestSuite {
-	// see @SuiteClasses
+	// see @SelectClasses
 }
