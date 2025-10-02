@@ -22,12 +22,12 @@ import org.eclipse.urischeme.internal.registration.TestUnitRegistrationMacOsX;
 import org.eclipse.urischeme.internal.registration.TestUnitRegistrationWindows;
 import org.eclipse.urischeme.internal.registration.TestUnitRegistryWriter;
 import org.eclipse.urischeme.internal.registration.TestUnitWinRegistry;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({ UriSchemeProcessorUnitTest.class, //
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+
+@Suite
+@SelectClasses({ UriSchemeProcessorUnitTest.class, //
 		TestUnitPlistFileWriter.class, //
 		TestUnitDesktopFileWriter.class, //
 		TestUnitRegistrationMacOsX.class, //

@@ -9,7 +9,7 @@ Placement examples that describe the proposed new way of placing menu items for 
 Placement and visibility
 ========================
 
-The 4 extension points that deal with menus now org.eclipse.ui.actionSets, org.eclipse.ui.viewActions, org.eclipse.ui.editorActions, and org.eclipse.ui.popupMenus specify both menu placement and their visibility criteria. 
+The 4 extension points that deal with menus now org.eclipse.ui.actionSets, org.eclipse.ui.viewActions, org.eclipse.ui.editorActions, and org.eclipse.ui.popupMenus specify both menu placement and their visibility criteria.
 In the new menu mechanism they are separate concepts, placement and visibility.
 
 Example Matrix
@@ -58,26 +58,26 @@ Menus cannot be re-used, and so they have an intrinsic id value. Separators are 
 
 ### Menu URIs
 
-For location placement we need a path and placement modifier, and to specify how the paths are built. 
+For location placement we need a path and placement modifier, and to specify how the paths are built.
 First pass we are going to look at URIs.
 
 *   `<scheme>:<menu-id>[?<placement-modifier>]`
 
-scheme is about how to interpret the URI path. 
+scheme is about how to interpret the URI path.
 For example, `menu`, `toolbar`, `popup`, `status` (although status may be deprecated).
 
 #### menu:
 
-For `menu:` valid root ids will be any viewId for that view's menu, and **org.eclipse.ui.main.menu** for the main menu. 
-Then specify the id of the menu this contribution applies to. 
-The placement modifier helps position the menu contribution. ex: `after=<id>`, where `<id>` can be a separator name, menu id, or item id. 
+For `menu:` valid root ids will be any viewId for that view's menu, and **org.eclipse.ui.main.menu** for the main menu.
+Then specify the id of the menu this contribution applies to.
+The placement modifier helps position the menu contribution. ex: `after=<id>`, where `<id>` can be a separator name, menu id, or item id.
 An example of a path: `menu:org.eclipse.search.menu?after=contextMenuActionsGroup`
 
 Since menu ids must be unique, you can specify your menu location relative to an existing id: `menu:org.eclipse.search.menu?after=contextMenuActionsGroup`
 
 #### toolbar:
 
-For `toolbar:` valid root ids will be any viewId for that view's toolbar, **org.eclipse.ui.main.toolbar** for the main toolbar, and any toolbar id that is contained in the main toolbar. 
+For `toolbar:` valid root ids will be any viewId for that view's toolbar, **org.eclipse.ui.main.toolbar** for the main toolbar, and any toolbar id that is contained in the main toolbar.
 Toolbars can support **invisible** separators. Toolbars in the main toolbar (technically a coolbar) can have ids as well as separators, but only one level. For example: `toolbar:org.eclipse.ui.edit.text.actionSet.presentation?after=Presentation`
 
 In this example, **Presentation** is an invisible separator in the **org.eclipse.ui.edit.text.actionSet.presentation** toolbar.
@@ -86,7 +86,7 @@ The use of **org.eclipse.ui.main.toolbar** might change if all "main" toolbars h
 
 #### popup:
 
-For `popup:` valid root ids are any registered context id (which defaults to the part id if no context menu id was given at registration time) and **org.eclipse.ui.popup.any** for all registered context menus. 
+For `popup:` valid root ids are any registered context id (which defaults to the part id if no context menu id was given at registration time) and **org.eclipse.ui.popup.any** for all registered context menus.
 For example, to add to the default Text Editor context menu: `popup:#TextEditorContext?after=additions`
 
 Popup submenus are treated like menu submenus, except the form continues to be `popup:submenuId`.
@@ -95,9 +95,10 @@ There will be constants defined for the ids that the eclipse workbench provides,
 
 ### Using Expressions in `<visibleWhen/>`
 
-In **3.3M6** an org.eclipse.core.expressions.definitions extension point was added. 
+In **3.3M6** an org.eclipse.core.expressions.definitions extension point was added.
 Used to define a [core expression](./Platform_Expression_Framework.md), the definition can then be referenced from other locations.
 
+```xml
     <extension point="org.eclipse.core.expressions.definitions">
       <definition id="com.example.context">
         <with variable="activeContexts">
@@ -107,10 +108,12 @@ Used to define a [core expression](./Platform_Expression_Framework.md), the defi
         </with>
       </definition>
     </extension>
+```
 
 This can be called in a core expression like activeWhen, enabledWhen, visibleWhen, etc using the reference element:
-
+```xml
     <reference definitionId="com.example.context"/>
+```
 
 ### Ideas that were considered but not implemented
 
@@ -120,13 +123,13 @@ These ideas were considered but not implemented.
 
 **Note:** for novelty purposes only.
 
-For comparison, there is a JSR describing how IDEs can contribute menus. 
+For comparison, there is a JSR describing how IDEs can contribute menus.
 Below is a sample for 2 items:
 
 *   org.eclipse.ui.views.problems.sorting.item from menu:org.eclipse.ui.views.ProblemView
 *   org.eclipse.ui.views.problems.resolveMarker.item from popup:org.eclipse.ui.views.ProblemView
 
-````
+```xml
     <menu-hook>
       <actions>
         <action id="org.eclipse.ui.views.problems.sorting.item">
@@ -162,7 +165,7 @@ Below is a sample for 2 items:
         </popup>
       </menus>
     </menu-hook>
-````
+```
 
 Some thoughts:
 
@@ -174,10 +177,10 @@ Some thoughts:
 
 **Note:** for novelty purposes only.
 
-  
-For comparison, with Mozilla everywhere there is the probability eclipse will include xulrunner. 
-Menu definitions that are consistent with XUL look like:
 
+For comparison, with Mozilla everywhere there is the probability eclipse will include xulrunner.
+Menu definitions that are consistent with XUL look like:
+```xml
     <keyset>
       <key id="paste-key" modifiers="accel" key="V" />
     </keyset>
@@ -197,19 +200,21 @@ Menu definitions that are consistent with XUL look like:
         </menu>
       </menupopup>
     </menubar>
+```
 
-XUL supports everything as a flavour of a DOM, and javascripting can drive your buttons to perform commands. 
+XUL supports everything as a flavour of a DOM, and javascripting can drive your buttons to perform commands.
 I suspect the scripting would allow you to dynamically update menus (dynamic menus) on popup, depending on what events the DOM would report to you.
 
-  
+
 
 #### Expression Templates original suggestion
 
-You can see that the `<activeWhen/>`, `<enabledWhen/>`, and probably the `<visibleWhen/>` are likely to be replicated over and over again. 
+You can see that the `<activeWhen/>`, `<enabledWhen/>`, and probably the `<visibleWhen/>` are likely to be replicated over and over again.
 A possible option is some kind of expression template markup ... either in its own extension or supported by our UI extensions that can use core expressions.
 
 Here's an example of using expression templates in its own extension point.
 
+```xml
     <extension point="org.eclipse.core.expression.templates">
       <expression id="isPartActive">
         <parameter id="partId" />
@@ -239,9 +244,10 @@ Here's an example of using expression templates in its own extension point.
         </not>
       </expression>
     </extension>
+```
 
 This could be used to simplify the handler definitions:
-
+```xml
     <extension point="org.eclipse.ui.handlers">
       <handler commandId="org.eclipse.ui.edit.copy"
           class="org.eclipse.ui.views.markers.internal.CopyMarkerHandler">
@@ -255,9 +261,9 @@ This could be used to simplify the handler definitions:
         </activeWhen>
       </handler>
     </extension>
-
+```
 If we allow recursive template definitions, that would allow you to specify the concrete expression once and then reference it throughout your view.
-
+```xml
     <extension point="org.eclipse.core.expression.templates">
       <expression id="isProblemViewActive">
         <evaluate ref="isPartActive">
@@ -276,13 +282,15 @@ If we allow recursive template definitions, that would allow you to specify the 
         </activeWhen>
       </handler>
     </extension>
+```
 
 This reduces the handler definition even more.
 
-  
-A similar option to reuse expressions as much as possible without turning them into their own procedural language would be to allow global definitions and then reuse them. 
+
+A similar option to reuse expressions as much as possible without turning them into their own procedural language would be to allow global definitions and then reuse them.
 No parameters and no expression composition:
 
+```xml
     <extension point="org.eclipse.core.expression.templates">
       <expression id="isProblemViewActive">
         <with variable="activePartId">
@@ -302,11 +310,12 @@ No parameters and no expression composition:
         <activeWhen ref="isProblemViewActive" />
       </handler>
     </extension>
+```
 
 #### Another Expression Alternative: Specify Context at Extension Level
 
 Since `enabledWhen` and `activeWhen` specify context and the simple way to specify context in XML is enclosure, how about scoping context to the extension point rather than the handler:
-
+```xml
     <extension point="org.eclipse.ui.handlers">
       <enabledWhen>  <!-- context of all  handlers in this extension -->
         <not>
@@ -331,8 +340,9 @@ Since `enabledWhen` and `activeWhen` specify context and the simple way to speci
       <handler commandId="org.eclipse.ui.file.properties"
           class="org.eclipse.ui.views.markers.internal.ProblemPropertiesHandler" />
     </extension>
+```
 
-This gives compact markup without inventing a new language. 
+This gives compact markup without inventing a new language.
 Elements nested in the handler element could override the extension-wide settings.
 
 Updating the menu and toolbar appearance
@@ -350,9 +360,9 @@ In 3.3 the enablement is tied to the command, and for the other behaviours we've
 UIElements represent each UI visible instance of a command
 ----------------------------------------------------------
 
-The command service keeps a list of registered UI elements, which can be updated by the active handler. 
+The command service keeps a list of registered UI elements, which can be updated by the active handler.
 The checked state can be updated through UIElement#setChecked(boolean); (note that updateElement below is from IElementUpdater):
-
+```java
     private boolean isChecked() {
         return getStore().getBoolean(
                 PreferenceConstants.EDITOR_MARK_OCCURRENCES);
@@ -361,20 +371,23 @@ The checked state can be updated through UIElement#setChecked(boolean); (note th
     public void updateElement(UIElement element, Map parameters) {
         element.setChecked(isChecked());
     }
+```
 
 When the toggle handler runs, it can request that any UI elements have their appearance updated from its execute(*) method:
-
+```java
     ICommandService service = (ICommandService) serviceLocator
             .getService(ICommandService.class);
     service.refreshElements(IJavaEditorActionDefinitionIds.TOGGLE_MARK_OCCURRENCES, null);
+```
 
 State associated with the command is propagated to UI visible elements
 ----------------------------------------------------------------------
 
-First define the toggle mark occurrences command. 
-Pretty straight forward, although it needs a "STYLE" state since it can be toggled. 
+First define the toggle mark occurrences command.
+Pretty straight forward, although it needs a "STYLE" state since it can be toggled.
 To allow handlers to update the label for the menu/toolbar items, we also add the "NAME" state.
 
+```xml
     <extension point="org.eclipse.ui.commands">
       <command categoryId="org.eclipse.jdt.ui.category.source"
           description="%jdt.ui.ToggleMarkOccurrences.description"
@@ -384,4 +397,4 @@ To allow handlers to update the label for the menu/toolbar items, we also add th
         <state id="STYLE" class="org.eclipse.jface.commands.ToggleState:true" />
       </command>
     </extension>
-
+```

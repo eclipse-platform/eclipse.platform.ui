@@ -5,7 +5,7 @@ Platform Command Framework
 Eclipse Commands Tutorial
 =========================
 
-[Tutorial about using Eclipse Commands](https://www.vogella.com/tutorials/EclipseCommands/article.html) 
+[Tutorial about using Eclipse Commands](https://www.vogella.com/tutorials/EclipseCommands/article.html)
 
 Other Resources
 ===============
@@ -21,6 +21,7 @@ Commands are managed by the **org.eclipse.ui.commands** extension point and the 
 
 An example of using the extension point to create a command:
 
+```xml
     <extension
            point="org.eclipse.ui.commands">
         <category
@@ -35,9 +36,11 @@ An example of using the extension point to create a command:
               name="Eat That Taco">
         </command>
     </extension>
+```
 
 You can programmatically create commands as well. From within a view:
 
+```java
     ICommandService cmdService = (ICommandService) getSite().getService(
         ICommandService.class);
     Category lunch = cmdService
@@ -50,18 +53,20 @@ You can programmatically create commands as well. From within a view:
     if (!eatTaco.isDefined()) {
       eatTaco.define("Eat That Taco", "Go for the taco.", lunch);
     }
+```
 
 Note, however, that a plugin that programmatically defines commands is responsible for cleaning them up if the plugin is ever unloaded.
 
 Also, like IAction you can execute a command directly ... but to get the proper environment it's better to execute it through the IHandlerService. See [#Handlers](#Handlers).
 
-  
+
 
 Executing a command with parameters
 -----------------------------------
 
 When a Command specifies its parameters, it can also specify a parameter type and/or some valid values. For example, the showView command.
 
+```xml
     <command
           name="%command.showView.name"
           description="%command.showView.description"
@@ -73,9 +78,11 @@ When a Command specifies its parameters, it can also specify a parameter type an
             name="%command.showView.viewIdParameter"
             values="org.eclipse.ui.internal.registry.ViewParameterValues" />
     </command>
+```
 
 To execute this command, you need to create a ParameterizedCommand with a Parameterization (an instance of a parameter and its value).
 
+```java
      		ICommandService commandService = ...;
      		IHandlerService handlerService = ...;
      		Command showView = commandService
@@ -103,18 +110,21 @@ To execute this command, you need to create a ParameterizedCommand with a Parame
      				showView, new Parameterization[] { parm });
      
      		handlerService.executeCommand(parmCommand, null);
+```
 
 This executes the showView command with the problem view id. This is done for us when declaratively specifying a keybinding.
 
+```xml
     <key
           sequence="M2+M3+Q X"
           contextId="org.eclipse.ui.contexts.window"
           commandId="org.eclipse.ui.views.showView"
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
-        <parameter 
+        <parameter
             id="org.eclipse.ui.views.showView.viewId"
             value="org.eclipse.ui.views.ProblemView" />
     </key>
+```
 
 Using an IActionDelegate to execute a command
 ---------------------------------------------
@@ -130,15 +140,16 @@ We need to do these things to wire our command to a menu item:
 
 For example, in the above section we saw the showView command takes one parameter, the view id. Here is how we create an Action to execute it:
 
+```xml
     <action
       id="org.eclipse.ui.examples.actions.showOutlineView"
       label="Show View:Outline"
       menubarPath="org.eclipse.ui.examples.actions.showViewMenu/additions"
       style="push">
       <class class="org.eclipse.ui.tests.api.GenericCommandActionDelegate">
-         <parameter name="commandId" 
+         <parameter name="commandId"
                               value="org.eclipse.ui.views.showView"/>
-         <parameter name="org.eclipse.ui.views.showView.viewId" 
+         <parameter name="org.eclipse.ui.views.showView.viewId"
                               value="org.eclipse.ui.views.ContentOutline"/>
       </class>
     </action>
@@ -148,12 +159,13 @@ For example, in the above section we saw the showView command takes one paramete
       menubarPath="org.eclipse.ui.examples.actions.showViewMenu/additions"
       style="push">
       <class class="org.eclipse.ui.tests.api.GenericCommandActionDelegate">
-          <parameter name="commandId" 
+          <parameter name="commandId"
                               value="org.eclipse.ui.views.showView"/>
-          <parameter name="org.eclipse.ui.views.showView.viewId" 
+          <parameter name="org.eclipse.ui.views.showView.viewId"
                               value="org.eclipse.ui.views.BookmarkView"/>
       </class>
     </action>
+```
 
 **Notes:**
 
@@ -174,12 +186,13 @@ When you start up eclipse you'll get warnings about your actions not having a cl
 
 You'll also see the actions in the Uncategorized section of the keybindings page. You can bind keys to them but they won't work from the keybinding. That's OK, you should be binding keys to the command not the action.
 
-  
+
 
 ### Generic Command Action Delegate
 
 We'll need a more robust implementation, but in 3.2 your action delegate needs to look something like the class below. I've only tested this with org.eclipse.ui.actionSets, but it should work with the viewActions, editorActions, and popupMenus extension points as well. The latest version of the code lives in HEAD in the org.eclipse.ui.tests plugin: [GenericCommandActionDelegate.java](https://git.eclipse.org/c/platform/eclipse.platform.ui.git/tree/tests/org.eclipse.ui.tests/Eclipse%20UI%20Tests/org/eclipse/ui/tests/api/GenericCommandActionDelegate.java)
 
+```java
      /*******************************************************************************
       * Copyright (c) 2006 IBM Corporation and others.
       * All rights reserved. This program and the accompanying materials
@@ -236,14 +249,14 @@ We'll need a more robust implementation, but in 3.2 your action delegate needs t
      
          private IHandlerService handlerService = null;
      
-         @Override 
+         @Override
          public void dispose() {
              handlerService = null;
              parameterizedCommand = null;
              parameterMap = null;
          }
      
-         @Override 
+         @Override
          public void run(IAction action) {
              if (handlerService == null) {
                  // what, no handler service ... no problem
@@ -264,7 +277,7 @@ We'll need a more robust implementation, but in 3.2 your action delegate needs t
      
          /*
           * (non-Javadoc)
-          * 
+          *
           * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
           *      org.eclipse.jface.viewers.ISelection)
           */
@@ -273,7 +286,7 @@ We'll need a more robust implementation, but in 3.2 your action delegate needs t
              // ExecutionEvent application context
          }
      
-         @Override 
+         @Override
          public void setInitializationData(IConfigurationElement config,
                  String propertyName, Object data) throws CoreException {
              String id = config.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
@@ -302,7 +315,7 @@ We'll need a more robust implementation, but in 3.2 your action delegate needs t
      
          /**
           * Build a command from the executable extension information.
-          * 
+          *
           * @param commandService
           *            to get the Command object
           */
@@ -344,7 +357,7 @@ We'll need a more robust implementation, but in 3.2 your action delegate needs t
              }
          }
      
-         @Override 
+         @Override
          public void init(IWorkbenchWindow window) {
              if (handlerService != null) {
                  // already initialized
@@ -360,12 +373,12 @@ We'll need a more robust implementation, but in 3.2 your action delegate needs t
              }
          }
      
-         @Override 
+         @Override
          public void init(IViewPart view) {
              init(view.getSite().getWorkbenchWindow());
          }
      
-         @Override 
+         @Override
          public void setActiveEditor(IAction action, IEditorPart targetEditor) {
              // we don't actually care about the active editor, since that
              // information is in the ExecutionEvent application context
@@ -375,7 +388,7 @@ We'll need a more robust implementation, but in 3.2 your action delegate needs t
              }
          }
      
-         @Override 
+         @Override
          public void setActivePart(IAction action, IWorkbenchPart targetPart) {
              // we don't actually care about the active part, since that
              // information is in the ExecutionEvent application context
@@ -385,16 +398,18 @@ We'll need a more robust implementation, but in 3.2 your action delegate needs t
              }
          }
      }
+```
 
 Handlers
 ========
 
-Handlers are managed by the **org.eclipse.ui.handlers** extension point and the IHandlerService. 
-Many Handlers can register for a command. At any give time, either 0 or 1 handlers will be active for the command. 
-A handler's active state and enabled state can be controlled declaratively. 
-See [Command Core Expressions](Command_Core_Expressions.md) for a more complex description of the declarative expressions. 
+Handlers are managed by the **org.eclipse.ui.handlers** extension point and the IHandlerService.
+Many Handlers can register for a command. At any give time, either 0 or 1 handlers will be active for the command.
+A handler's active state and enabled state can be controlled declaratively.
+See [Command Core Expressions](Command_Core_Expressions.md) for a more complex description of the declarative expressions.
 Handlers are responsible for interpreting any optional command parameters using the ExecutionEvent parameter.
 
+```xml
     <extension
            point="org.eclipse.ui.handlers">
         <handler
@@ -409,6 +424,7 @@ Handlers are responsible for interpreting any optional command parameters using 
            </activeWhen>
         </handler>
     </extension>
+```
 
 Here the handler is checking the activeContexts variable (See [org.eclipse.ui.ISources](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ISources.html)) and if the "taco" context is active, the handler is active.
 
@@ -416,6 +432,7 @@ The handler itself, **TacoHandler**, must implement IHandler but would usually b
 
 You can create and activate a handler programmatically:
 
+```java
     IHandlerService handlerService = (IHandlerService) getSite()
         .getService(IHandlerService.class);
     IHandler handler = new AbstractHandler() {
@@ -427,19 +444,25 @@ You can create and activate a handler programmatically:
     };
     handlerService
         .activateHandler("z.ex.view.keybindings.eatTaco", handler);
+```
 
 As of 3.2 (and later releases) we should be calling the IHandlerService to run commands. We should not call the Command object execute method itself.
 
+```java
      handlerService.executeCommand("z.ex.view.keybindings.eatTaco", null);
+```
 
 In 3.1 it is still necessary to call the Command object directly since the IHandlerService didn't support executeCommand(*). But you can provide almost the same execution environment.
 
+```java
     Command eatTaco = cmdService
        .getCommand("z.ex.view.keybindings.eatTaco");
     eatTaco.execute(new ExecutionEvent(Collections.EMPTY_MAP, null, handlerService.getCurrentState()));
+```
 
 If you want the handler to evaluate an enablement expression you can do that using the expression parameter of the activateHandler() method. Here is how you need to setup your expression in order to properly work tracking selection changes:
 
+```java
     Expression expr = new Expression() {
         public final EvaluationResult evaluate(final IEvaluationContext context) {
             Object sel = context.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
@@ -450,12 +473,14 @@ If you want the handler to evaluate an enablement expression you can do that usi
              info.markDefaultVariableAccessed();
         }
     };
+```
 
 KeyBindings
 ===========
 
 KeyBindings are managed by the **org.eclipse.ui.bindings** extension point and the IBindingService. Keybindings cannot be updated programmatically.
 
+```xml
     <extension
            point="org.eclipse.ui.bindings">
         <key
@@ -465,6 +490,7 @@ KeyBindings are managed by the **org.eclipse.ui.bindings** extension point and t
               sequence="CTRL+3">
         </key>
     </extension>
+```
 
 A key binding is active when the context is active. A keybinding is associated with a command (with optional parameters specified by parameter id and value). If a command has a handler while the keybinding is invoked, the handler extracts the command parameters specified by the keybinding from the ExecutionEvent and invokes the appropriate action.
 
@@ -475,6 +501,7 @@ Contexts are managed by the **org.eclipse.ui.contexts** extension point and the 
 
 Most contexts are created by the extension point, and activated programmatically when appropriate. But you can create contexts programmatically as well. The active contexts usually form a tree, although in the case of keybindings this tree is narrowed down to a branch.
 
+```xml
     <extension
            point="org.eclipse.ui.contexts">
         <context
@@ -484,23 +511,27 @@ Most contexts are created by the extension point, and activated programmatically
               parentId="org.eclipse.ui.contexts.window">
         </context>
     </extension>
+```
 
 For a context that was attached to a view, it would normally be activated in the view's createPartControl(*) method.
-
+```java
     IContextService contextService = (IContextService) getSite()
       .getService(IContextService.class);
     IContextActivation contextActivation = contextService.activateContext("z.ex.view.keybindings.contexts.taco");
+```
 
 You can only de-activate a context that you are responsible for activating.
 
 Programmatically, you can create contexts:
 
+```java
     Context tacos = contextService
         .getContext("z.ex.view.keybindings.contexts.taco");
     if (!tacos.isDefined()) {
       tacos.define("Mexican Food", "To allow the consumption of Tacos",
           "org.eclipse.ui.contexts.window");
     }
+```
 
 Note, however, that a plugin that programmatically defines contexts is responsible for cleaning them up if the plugin is ever unloaded.
 
@@ -526,7 +557,7 @@ To help track down the problem, you can run with debug tracing options. For exam
     org.eclipse.ui/trace/handlers.verbose.commandId=org.eclipse.jdt.ui.navigate.open.type
     org.eclipse.ui/trace/contexts=true
     org.eclipse.ui/trace/contexts.verbose=true
-  
+
 I put these options in a **debug.options** file and run eclipse using:
 
     bash$ eclipse -debug debug.options -data /opt/local/pw_workspace >debug.log 2>&1

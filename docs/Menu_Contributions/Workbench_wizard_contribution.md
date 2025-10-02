@@ -10,6 +10,7 @@ Workbench Wizard Contribution
 
 You can add your new/import/export wizards to a menu/toolbar via Command contributions. You need to use the standard command ids (org.eclipse.ui.newWizard, org.eclipse.ui.file.import and org.eclipse.ui.file.export) with the wizard id as the parameter. Eg:
 
+```xml
          <extension
       point="org.eclipse.ui.menus">
             <menuContribution
@@ -51,6 +52,7 @@ You can add your new/import/export wizards to a menu/toolbar via Command contrib
                   </command>
                </menu>
             </menuContribution>
+```
 
 Would result in:
 

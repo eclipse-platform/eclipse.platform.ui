@@ -14,38 +14,33 @@ In 3.3 the enablement is tied to the command, and for the other behaviours we al
 
 The command service keeps a list of registered UI elements, which can be updated by the active handler. The checked state can be updated through UIElement#setChecked(boolean);
 
-    private boolean isChecked() {
+```java
+   private boolean isChecked() {
     	return getStore().getBoolean(
     			PreferenceConstants.EDITOR_MARK_OCCURRENCES);
-    }
-    
-    public void updateElement(UIElement element, Map parameters) {
-    	element.setChecked(isChecked());
-    }
-    
+   }
 
- 
+   public void updateElement(UIElement element, Map parameters) {
+    	element.setChecked(isChecked());
+   }
+```
 
 When the toggle handler runs, it can request that any UI elements have their appearance updated from its execute(*) method:
 
- 
-
+```java
     	ICommandService service = (ICommandService) serviceLocator
     			.getService(ICommandService.class);
     	service.refreshElements(
     			IJavaEditorActionDefinitionIds.TOGGLE_MARK_OCCURRENCES,
     			null);
-    
-
- 
-
-  
+```
 
 Handlers
 --------
 
 This command doesn't have a default handler, as it only applies to specific editors that are provided. So we would provide the handler for the java editor.
 
+```xml
     <extension
           point="org.eclipse.ui.handlers">
        <handler
@@ -67,22 +62,18 @@ This command doesn't have a default handler, as it only applies to specific edit
           </activeWhen>
        </handler>
     </extension>
-    
+```
 
- 
-
-  
 We're active for both the Java editor and the Class File editor. There is also the option to programmatically install the handler.
 
+```java
     AndExpression expr = new AndExperssion();
     expr.add(new ActivePartIdExpression("org.eclipse.jdt.ui.CompilationUnitEditor"));
     expr.add(new ActivePartIdExpression("org.eclipse.jdt.ui.ClassFileEditor"));
     IHandlerService handlerServ = (IHandlerService)getSite().getWorkbenchWindow().getService(IHandlerService.class);
     toggleOccurrencesHandler = new ToggleMarkOccurrencesHandler();
     handlerServ.activateHandler("org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences", toggleOccurrencesHandler, expr);
-    
-
- 
+```
 
 Since the same handler is valid for both editors, we install it with a specific expression and **don't** tie the activation to the part site. But as written, the `toggleOccurrencesHandler` will exist as long as the workbench window exists.
 
@@ -91,10 +82,7 @@ Menus
 
 In **3.3M5** ActionSets generate and update active contexts.
 
-  
-
- 
-
+```xml
       <extension
             point="org.eclipse.ui.menus">
          <menuContribution
@@ -126,11 +114,8 @@ In **3.3M5** ActionSets generate and update active contexts.
             </toolbar>
          </menuContribution>
       </extension>
-    
+```
 
- 
-
-  
 This item is also tied to an actionSet.
 
 Menus API
@@ -138,6 +123,7 @@ Menus API
 
 The above XML can be done using the menus API:
 
+```java
     public static void createToggleMarkOccurrences() {
         final IMenuService menuService = (IMenuService) PlatformUI
                 .getWorkbench().getService(IMenuService.class);
@@ -147,7 +133,7 @@ The above XML can be done using the menus API:
         final ImageDescriptor disabledMarkOccurDesc = AbstractUIPlugin
                 .imageDescriptorFromPlugin("org.eclipse.ui.tests",
                         "icons/full/dtool16/mark_occurrences.gif");
-    
+
         AbstractContributionFactory contribution = new AbstractContributionFactory(
                 "toolbar:org.eclipse.ui.edit.text.actionSet.presentation?after=Presentation") {
             public void createContributionItems(IMenuService menuService,
@@ -164,21 +150,18 @@ The above XML can be done using the menus API:
                                         "org.eclipse.jdt.ui.text.java.actionSet.presentation"));
                 additions.add(item);
             }
-    
+
             public void releaseContributionItems(IMenuService menuService,
                     List items) {
             }
         };
         menuService.addContributionFactory(contribution);
     }
-    
+```
 
- 
-
-  
 This asks for a toolbar root in the org.eclipse.ui.edit.text.actionSet.presentation toolbar after the Presentation id.
 
 It's contributed with a visibleWhen clause `ActiveActionSetExpression("org.eclipse.jdt.ui.text.java.actionSet.presentation")`, so it will be visible when the actionSet is active.
 
-The registerVisibleWhen() method might be changing in **3.3M6**
+The `registerVisibleWhen()` method might be changing in **3.3M6**
 

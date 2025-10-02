@@ -1,10 +1,10 @@
 Rich Client Platform/FAQ
-======================== 
+========================
 
-The following are **Frequently Asked Questions** (**FAQs**) about the Eclipse Rich Client Platform. 
+The following are **Frequently Asked Questions** (**FAQs**) about the Eclipse Rich Client Platform.
 For relevant tutorials, help topics, newsgroups, examples, and other resources, see the main [RCP page](Rich_Client_Platform.md).
 
-or general Eclipse FAQs, which address many RCP issues, see [The Official Eclipse FAQs](https://wiki.eclipse.org/The_Official_Eclipse_FAQs).  
+or general Eclipse FAQs, which address many RCP issues, see [The Official Eclipse FAQs](https://wiki.eclipse.org/The_Official_Eclipse_FAQs).
 For Eclipse 4, see the [Eclipse 4 RCP FAQ](Eclipse4_RCP_FAQ.md).
 
 
@@ -49,7 +49,7 @@ Is the resources plug-in (org.eclipse.core.resources) considered part of the Ric
 
 No. The workspace resource model provided by the org.eclipse.core.resources plug-in is not considered part of the Rich Client Platform. While this is the underlying data model for the Eclipse IDE, the RCP makes no assumptions about the underlying data model of the application being built. The data model could just as well be files in the local filesystem, a remote database, an RDF data store, or anything else. If it makes sense for the application, **org.eclipse.core.resources** can be included and used as the application's data model, but this is not required. Much effort was put into Eclipse 3.0 to remove the dependencies on **org.eclipse.core.resources** from the generic workbench. Any resource dependencies (for example, the New Project, Folder and File wizards, and the Resource Navigator, Tasks and Problems views), were considered IDE-specific and factored out into the IDE plugin (**org.eclipse.ui.ide**).
 
-  
+
 
 Is the IDE plug-in (org.eclipse.ui.ide) considered part of the Rich Client Platform?
 ------------------------------------------------------------------------------------
@@ -80,17 +80,17 @@ Here is a list of some of the reusable components in the broader Eclipse codebas
 How do I get started with RCP?
 ------------------------------
 
-The [Eclipse RCP tutorials](Rich_Client_Platform.md) are a good starting points. 
+The [Eclipse RCP tutorials](Rich_Client_Platform.md) are a good starting points.
 See also the [examples](Rich_Client_Platform.md#Examples) and the [suggested help topics](Rich_Client_Platform.md#Help-Topics).
 
 What is the recommended target platform setup? Or: How can I build and run my RCP app against a different version of the Eclipse base?
 --------------------------------------------------------------------------------------------------------------------------------------
 
-With the default setup of the Eclipse SDK, plug-ins are developed against the same plug-in configuration used by the IDE itself. 
-However, it is possible to configure the IDE to build, run and deploy against a different version of the eclipse base, via the Plug-in Development > Target Platform preference page. 
+With the default setup of the Eclipse SDK, plug-ins are developed against the same plug-in configuration used by the IDE itself.
+However, it is possible to configure the IDE to build, run and deploy against a different version of the eclipse base, via the Plug-in Development > Target Platform preference page.
 Configuring the target platform is highly recommended in order to avoid introducing unwanted dependencies on IDE plug-ins into your RCP app.
 
-For more details, see the ["Target Platform Preferences"](http://help.eclipse.org/ganymede/topic/org.eclipse.pde.doc.user/guide/tools/preference_pages/target_platform.htm) help topic in the PDE Guide. 
+For more details, see the ["Target Platform Preferences"](http://help.eclipse.org/ganymede/topic/org.eclipse.pde.doc.user/guide/tools/preference_pages/target_platform.htm) help topic in the PDE Guide.
 The tutorial in the [RCP Book](Rich_Client_Platform/Rich_Client_Platform_Book.md) also walks you through this process.
 
 For a recommended setup, use the following steps. We assume the Eclipse SDK (aka the IDE) is already installed, e.g. in c:\\eclipse.
@@ -123,6 +123,7 @@ It is best to specify both, since a 16x16 icon is typically used in the window t
 
 For example, the [Browser Example](/RCP_Browser_Example "RCP Browser Example") has the following in its plugin.xml:
 
+```xml
     <extension point="org.eclipse.core.runtime.products" id="product">
       <product
         name="%productName"
@@ -133,6 +134,7 @@ For example, the [Browser Example](/RCP_Browser_Example "RCP Browser Example") h
         ...
       </product>
     </extension>
+```
 
 For more details, see the [Branding Your Application](http://eclipse.org/articles/Article-Branding/branding-your-application.html) article.
 
@@ -148,21 +150,27 @@ Several UI settings such as the perspective bar location, fast view bar location
 
 [Define a product](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/product_def.htm) via the [products extension point](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/product_def_extpt.htm) and add the following property:
 
+```xml
     <property
       name="preferenceCustomization"
       value="plugin_customization.ini"/>
+```
 
 Then create a file called `plugin_customization.ini`, in the same directory as the `plugin.xml` file, with contents of the form:
 
+```xml
     <pluginId>/<preferenceName>=<preferenceValue>
+```
 
 For example, to show the perspective bar and fast view bar on the left, and to use curvy tabs, add the following to the `plugin_customization.ini` file:
 
+```ini
     org.eclipse.ui/DOCK_PERSPECTIVE_BAR=left
     org.eclipse.ui/SHOW_TEXT_ON_PERSPECTIVE_BAR=false
     org.eclipse.ui/initialFastViewBarLocation=left
     org.eclipse.ui/SHOW_TRADITIONAL_STYLE_TABS=false
-    
+```
+
 For a list of public preferences available on the UI plug-in and their valid values, see the interface [org.eclipse.ui.IWorkbenchPreferenceConstants](http://help.eclipse.org/galileo/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IWorkbenchPreferenceConstants.html).
 
 For more details, see the [Branding Your Application](http://eclipse.org/articles/Article-Branding/branding-your-application.html) article and the [Customizing a product](http://help.eclipse.org/galileo/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/product_configproduct.htm) section in Help.
@@ -172,9 +180,11 @@ How can I get action set menus to appear in the right order, between my app's ma
 
 When adding main menus to the menu manager in your WorkbenchAdvisor's fillActionBars method, add an "additions" group marker where you'd like action sets to appear.
 
+```java
     menuBar.add(fileMenu);
     menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
     menuBar.add(helpMenu);
+```
 
 Can multiple instances of the same view be made to appear at the same time?
 ---------------------------------------------------------------------------
@@ -192,7 +202,7 @@ Note that views with a secondaryId will not match placeholders specifying just t
 How can I deploy my RCP app?
 ----------------------------
 
-The currently best way to deploy your RCP app is to use [Tycho](https://github.com/eclipse-tycho/tycho). 
+The currently best way to deploy your RCP app is to use [Tycho](https://github.com/eclipse-tycho/tycho).
 See [Tycho tutorial](https://www.vogella.com/tutorials/EclipseTycho/article.html) for an example.
 
 
@@ -235,12 +245,12 @@ If you're using a feature only for the plug-ins you write, the update manager do
 Are editors tied to the workspace resource model or to the broader notion of files?
 -----------------------------------------------------------------------------------
 
-No. 
-The concept of an editor in the workbench and the corresponding types (IEditorPart, EditorPart, IEditorInput) are not tied to the workspace resource model, or even to the notion of files (whether in the workspace or the file system). 
+No.
+The concept of an editor in the workbench and the corresponding types (IEditorPart, EditorPart, IEditorInput) are not tied to the workspace resource model, or even to the notion of files (whether in the workspace or the file system).
 Editors can be used for any kind of model, and can be textual or graphical.
 
-The Text component provides support for text editors. 
-See the entry for the Text component in the list of optional components above. 
+The Text component provides support for text editors.
+See the entry for the Text component in the list of optional components above.
 See also the [RCP text editor example](Rich_Client_Platform.md#Examples).
 
 How can I integrate my existing Swing components into an RCP application?
@@ -253,22 +263,24 @@ Also take a look at [SwingWT](http://swingwt.sourceforge.net/), an SWT-based imp
 How can I define key bindings for commands?
 -------------------------------------------
 
-As of 3.3, the preferred means of binding keys is to use commands, handlers, and contexts. 
+As of 3.3, the preferred means of binding keys is to use commands, handlers, and contexts.
 See [Platform Command Framework#KeyBindings](PlatformCommandFramework.md#KeyBindings) for the extension points.
 
-There are some wrinkles for the RCP case. 
+There are some wrinkles for the RCP case.
 See [Keybindings for Eclipse Commands](https://www.vogella.com/tutorials/EclipseCommands/article.html) for a tutorial.
 
-The key binding system is designed with the general idea that it is under the control of the user, not the program. 
+The key binding system is designed with the general idea that it is under the control of the user, not the program.
 If you want to control key bindings in an RCP application, you have to decide whether to expose the preference system or whether to be inflexible.
 
 To begin with, note that each org.eclipse.ui.binding is a member of a scheme. Unless you interact with the preference system, or replace the BindingService with your own class, you must put all your bindings in org.eclipse.ui.defaultAcceleratorConfiguration. If you put them in some other scheme, you will find that here is no simple API to activate your scheme.
 
 The other obscure detail you will want is context management. If you want some commands (and thus bindings) to be active only in some parts, you will want to associate a context with your part. In createPartControl, write something like:
 
+```java
     	IContextService contextService = (IContextService) getSite()
     		.getService(IContextService.class);
     	contextService.activateContext(CONTEXT_ID);
+```
 
 At the lowest level, you can obtain the IBindingService has no 'set' functions, and BindingService is a final class in an internal package. So, if you want to get complete control, you would have to create your own implementation of IBindingService that wraps the standards one.
 
@@ -279,22 +291,26 @@ You can also track part activation and other lifecycle using [IPartService](http
 
 To track part lifecycle from within an existing view or editor, use the part service on the part's containing IWorkbenchPage:
 
+```java
     getSite().getPage().addPartListener(listener);
+```
 
 From outside the page (e.g. from an action added to the window in the ActionBarAdvisor), use the part service on the IWorkbenchWindow:
 
+```java
     IWorkbenchWindow window = actionBarAdvisor.getActionBarConfigurer().getWindowConfigurer().getWindow();
     window.getPartService().addPartListener(listener);
+```
 
 Be sure to remove the part listener in the appropriate dispose method.
 
 Which plug-ins are needed for the Eclipse Help system?
 ------------------------------------------------------
 
-See ["What other Eclipse components can be used in constructing RCP applications?"](Rich_Client_Platform/Rich_Client_Platform_FAQ.md#What-other-Eclipse-components-can-be-used-in-constructing-RCP-applications). 
-Be sure to include the **org.eclipse.tomcat** plug-in since the dependency on it is indirect. 
-The **org.eclipse.help.ui** plug-in requires the **org.eclipse.help.appserver** plug-in, which defines the **org.eclipse.help.appserver.server** extension point. 
-The **org.eclipse.tomcat** plug-in adds an extension to this extension point. 
+See ["What other Eclipse components can be used in constructing RCP applications?"](Rich_Client_Platform/Rich_Client_Platform_FAQ.md#What-other-Eclipse-components-can-be-used-in-constructing-RCP-applications).
+Be sure to include the **org.eclipse.tomcat** plug-in since the dependency on it is indirect.
+The **org.eclipse.help.ui** plug-in requires the **org.eclipse.help.appserver** plug-in, which defines the **org.eclipse.help.appserver.server** extension point.
+The **org.eclipse.tomcat** plug-in adds an extension to this extension point.
 So although **org.eclipse.tomcat** is required, it's not found by adding all prerequisites of **org.eclipse.help.ui**, and needs to be added manually.
 
 See also the ["Plugging in help"](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/help.htm) help topic.
@@ -313,11 +329,11 @@ See also the "Adding Update" chapter of the [RCP Book](/RCP_Book "RCP Book").
 What is ICU4J and is it required?
 ---------------------------------
 
-ICU4J is a set of Java libraries that provides more comprehensive support for Unicode, software globalization, and internationalization. 
-In order to provide this functionality to the Eclipse community, ICU4J was added to the Eclipse platform in 3.2. 
+ICU4J is a set of Java libraries that provides more comprehensive support for Unicode, software globalization, and internationalization.
+In order to provide this functionality to the Eclipse community, ICU4J was added to the Eclipse platform in 3.2.
 You will see it in the build as a plug-in named com.ibm.icu.
 
-The ICU4J plug-in has a non-negligable footprint of ~3M, which is a significant fraction of the RCP base footprint. 
+The ICU4J plug-in has a non-negligable footprint of ~3M, which is a significant fraction of the RCP base footprint.
 If reduced footprint is more important for your application than the enhancements provided by ICU4J, it can be replaced with a plug-in that is about 100KB in size and that simply calls through to the java.* packages (default JDK implementation) of the most commonly used classes and APIs in ICU4J.
 
 How to bundle the JRE's for Windows and for Linux in my RCP application?
@@ -325,19 +341,23 @@ How to bundle the JRE's for Windows and for Linux in my RCP application?
 
 I edited the build.properties of my product's "Feature", and I put the lines bellow:
 
+```ini
     bin.includes = feature.xml
     root.linux.gtk.x86=jre_linux/
     root.linux.gtk.x86.permissions.755=jre_linux/
     root.win32.win32.x86=jre_win/
-    
+```
+
 The second line `root.linux.gtk.x86=jre_linux/`, tells the builder to take the contents of the "jre_linux/" directory and copy it to the root of my distribution.
 
 The third line `root.linux.gtk.x86.permissions.755=jre_linux/` applies the chmod 755 over all the files under jre_linux/ after they are copied to the destination directory. Without it the java executable cannot be run, since it is chmod'ed to 644 (no execution permission).
 
 Note: The above permissions line didn't work for me. Maybe this is because root.linux.gtk.x86 has already been set to jre_linux/ in the line before? When I change it to
 
+```ini
      root.linux.gtk.x86.permissions.755=jre/bin/java
-    
+```
+
 (only) the jre/bin/java executable is being set +x. Could someone check this, please?
 
 TIP: the contents of the `jre_linux/` directory is a single directory called `jre`. Inside this directory are the jre's subdirectories "bin", "lib", etc. Calling it "jre" is extremely important because the launcher executable, at the absence of the `-vm path\_to\_java_executable` option will search by default for the java executable at the directory `./jre/bin`, being this directory relative from the directory where the executable was installed.
@@ -377,10 +397,11 @@ MANIFEST.MF
      Bundle-Vendor: sample
      Bundle-RequiredExecutionEnvironment: JavaSE-1.6
      Require-Bundle: org.eclipse.ui
-    
+
 
 plugin.xml
 
+```xml
     <?xml version="1.0" encoding="UTF-8"?>
     <?eclipse version="3.4"?>
     <plugin>
@@ -410,9 +431,11 @@ plugin.xml
           </handler>
        </extension>
     </plugin>
+```
 
 Handler – sample implementation showing a message
 
+```java
     package sample;
      
     import org.eclipse.core.commands.AbstractHandler;
@@ -430,11 +453,13 @@ Handler – sample implementation showing a message
     		return null;
     	}
     }
+```
 
 How can I show line numbers by default in my RCP application?
 -------------------------------------------------------------
 
 Add the following line to your plugin_customization.ini file:
 
+```ini
     org.eclipse.ui.editors/lineNumberRuler=true
-
+```

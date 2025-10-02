@@ -22,7 +22,7 @@ Open PDE (Plug-in Development Environment) perspective: Window > Open Perspectiv
 Target
 ------
 
-Target Platform is used to run the applications/plugins you build with Eclipse RCP. 
+Target Platform is used to run the applications/plugins you build with Eclipse RCP.
 Although it is possible to run your applications/plugins using your Eclipse IDE installation, this is not recommended.
 
 Create directory _target_ in a folder of your choice.
@@ -54,15 +54,19 @@ Perspective
 
 plugin.xml > Extensions > org.eclipse.ui.perspectives > perspective > class
 
+```java
      public void createInitialLayout (IPageLayout layout) {
        layout.addView ("view_id", IPageLayout.LEFT, 0.5f, layout.getEditorArea ());
        layout.getViewLayout ("view_id").setCloseable (false);
      }
-    
+```
+
 WorkbenchWindowAdvisor.preWindowOpen:
 
+```java
      configurer.setShowPerspectiveBar (true);
      configurer.setShowCoolBar (true);
+```
 
 Editor
 ------
@@ -70,17 +74,20 @@ Editor
 plugin.xml > Extensions > Add > org.eclipse.ui.editors > id, class, icon
 
 To open editor:
-
+```java
      IWorkbenchPage page;
      IEditorInput input;
      page = PlatformUI.getWorkbench ().getActiveWorkbenchWindow ().getActivePage ();
      // else if in ViewPart // page = getSite ().getPage ();
      page.openEditor (input, "editor_id");
-    
+```
+
 EditorPart.init:
 
+```java
      setSite (site);
      setInput (input);
+```
 
 Debug
 -----
@@ -112,12 +119,14 @@ plugin.xml > Extensions > org.eclipse.ui.menus > right-click > New > menuContrib
 
 ViewPart.createPartControl:
 
+```java
      Viewer viewer;
      MenuManager menuManager = new MenuManager ();
      Menu menu = menuManager.createContextMenu (viewer.getControl ());
      viewer.getControl ().setMenu (menu);
      getSite ().registerContextMenu (menuManager, viewer);
-    
+```
+
 Toolbar
 -------
 
@@ -125,7 +134,9 @@ plugin.xml > Extensions > org.eclipse.ui.menus > right-click > New > menuContrib
 
 WorkbenchWindowAdvisor.preWindowOpen:
 
+```java
      configurer.setShowCoolBar (true);
+```
 
 View Toolbar
 ------------
@@ -151,9 +162,9 @@ File > New > Product Configuration > File name > _product_name_.product > Initia
 *   Use an existing product (_plugin_id_.product) if applying (if "Add branding" was checked)
 *   Use a launch configuration (_plugin_id_.application) if applying (if application was launched)
 
-If no existing product: _product_name_.product > Overview > Specify the product identifier > New > Defining plug-in  
-_product_name_.product > Overview > Testing > Synchronize (updates plugin.xml)  
-_product_name_.product > Overview > Testing > Launch  
+If no existing product: _product_name_.product > Overview > Specify the product identifier > New > Defining plug-in
+_product_name_.product > Overview > Testing > Synchronize (updates plugin.xml)
+_product_name_.product > Overview > Testing > Launch
 _product_name_.product > Overview > Eclipse Product export wizard
 
 Feature
@@ -161,11 +172,11 @@ Feature
 
 Creating a feature is required for [update](#Update).
 
-File > New > Project > Feature Project > Next > Project name > _feature_id_  
+File > New > Project > Feature Project > Next > Project name > _feature_id_
 feature.xml > Plug-ins > Add > _plugin_id_
 
-_product_name_.product > Overview > The product configuration is based on > Features  
-_product_name_.product > Configuration > Add > org.eclipse.rcp  
+_product_name_.product > Overview > The product configuration is based on > Features
+_product_name_.product > Configuration > Add > org.eclipse.rcp
 _product_name_.product > Configuration > Add > _feature_id_
 
 Localization
@@ -179,12 +190,13 @@ plugin.properties:
 
      key=Default value
 
+
 Create for each language _xx_ (ISO 639 language code) a file plugin__xx_.properties
 
 plugin__xx_.properties:
 
      key=Translated value
-    
+
 Add this line in MANIFEST.MF:
 
      Bundle-Localization: plugin
@@ -222,19 +234,22 @@ See [User Settings FAQ](https://eclipse.dev/eclipse/platform-core/documents/user
 
 Get preference value:
 
+```java
      Activator.getDefault ().getPluginPreferences ().getString ("preference_id");
-    
+```
+
 Preference page: plugin.xml > Extensions > Add > org.eclipse.ui.preferencePages > right-click > New > page > class > Superclass > FieldEditorPreferencePage
 
 FieldEditorPreferencePage:
 
+```java
      protected IPreferenceStore doGetPreferenceStore () {
        return Activator.getDefault ().getPreferenceStore ();
      }
      protected void createFieldEditors () {
        addField (new StringFieldEditor ("preference_id", "label", getFieldEditorParent ()));
      }
-    
+```
 
 Command org.eclipse.ui.window.preferences
 
@@ -267,6 +282,7 @@ Add command IHandler
 
 IHandler.execute:
 
+```java
      BusyIndicator.showWhile (HandlerUtil.getActiveShell (event).getDisplay (),
      new Runnable () {
        public void run () {
@@ -276,10 +292,13 @@ IHandler.execute:
          new UpdateJob (label, false, false));
        }
      });
-    
+```
+
 WorkbenchWindowAdvisor.preWindowOpen:
 
+```java
      configurer.setShowProgressIndicator (true);
+```
 
 Test with exported product, not with product launched from IDE
 
@@ -300,7 +319,7 @@ ActionBarAdvisor.makeActions:
 
      IAction helpAction = ActionFactory.HELP_CONTENTS.create (window);
      register (helpAction);
-    
+
 
 Build
 -----
@@ -313,15 +332,17 @@ Copy build.properties and customTargets.xml from: eclipse/plugins/org.eclipse.pd
 
 build.properties (edit with properties file editor):
 
+```ini
      product=/plugin_id/product_name.product
      archivePrefix
      configs=win32,win32,x86 & linux,gtk,x86 (*,*,* does not work)
      buildDirectory=${builder}/build
      base=path_to_target
-    
+```
 
 customTargets.xml:
 
+```xml
      <target name="preSetup">
        <copy todir="${buildDirectory}/plugins/plugin_id">
          <fileset dir="${builder}/path_to_plugin" />
@@ -330,7 +351,7 @@ customTargets.xml:
          <fileset dir="${builder}/path_to_feature" />
        </copy>
      </target>
-    
+```
 
 _product_name_.product > Program Launcher > Launcher Name
 
@@ -342,22 +363,23 @@ Customization
 Create file plugin_customization.ini in plug-in
 
 plugin_customization.ini:
-
+```ini
      org.eclipse.ui/DOCK_PERSPECTIVE_BAR=topRight
      org.eclipse.ui/SHOW_TRADITIONAL_STYLE_TABS=false
-    
+```
+
 Status Line
 -----------
 
 WorkbenchWindowAdvisor.preWindowOpen:
-
+```java
      getWindowConfigurer ().setShowStatusLine (true);
- 
+```
 
 ViewPart:
-
+```java
      getViewSite ().getActionBars ().getStatusLineManager ().setMessage ("message");
- 
+```
 
 Extension Point
 ---------------
@@ -375,14 +397,14 @@ _point_id_.exsd > Definition > extension > New Choice > right-click > New > _ele
 plugin.xml > Runtime > Exported Packages > Add > _package_name_
 
 Activator.start (for example):
-
+```java
      IConfigurationElement[] elements = Platform.getExtensionRegistry ().getConfigurationElementsFor ("plugin_id.point_id");
      for (IConfigurationElement e : elements) {
        Object o = e.createExecutableExtension ("class_name");
        if (o instanceof InterfaceName) {
        }
      }
-    
+```
 
 Plug-in with extension:
 
@@ -394,7 +416,7 @@ Add plug-in with extension to run configuration.
 
 Progress
 --------
-
+```java
      Job job = new Job ("Job name") {
        public IStatus run (IProgressMonitor monitor) {
          final int duration = 10;
@@ -415,10 +437,10 @@ Progress
        }
      }
      job.schedule ();
-    
+```
 
 WorkbenchWindowAdvisor.preWindowOpen:
-
+```java
      IWorkbenchWindowConfigurer configurer = getWindowConfigurer ();
      configurer.setShowProgressIndicator (true);
-
+```
