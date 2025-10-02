@@ -37,7 +37,7 @@ The Eclipse Rich Client Platform consists of the following components:
 | Workbench | The Workbench builds on top of the Runtime, SWT and JFace to provide a highly scalable, open-ended, multi-window environment for managing views, editors, perspectives (task-oriented layouts), actions, wizards, preference pages, and more.    The Workbench is sometimes called the Generic Workbench, to distinguish it from the IDE Workbench facilities defined in the org.eclipse.ui.ide plug-in.   | org.eclipse.ui    org.eclipse.ui.workbench   | Dev guide: [Plugging into the workbench](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/workbench.htm),[Dialogs and wizards](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/dialogs.htm), [Advanced workbench concepts](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/wrkAdv.htm)      |
 |   Other prerequisites for the Workbench   | Support for XML expressions language, commands, and help core content model.    | org.eclipse.core.expressions    org.eclipse.core.commands   org.eclipse.help   |     |
 
-Note that as of Eclipse 3.3M6, org.eclipse.help requires [com.ibm.icu](Rich_Client_Platform/Rich_Client_Platform_FAQ.md#What-is-ICU4J-and-is-it-required) which takes a sizeable amount of footprint (that [can be reduced](Rich_Client_Platform/Rich_Client_Platform_FAQ.md#What-is-ICU4J-and-is-it-required)). [Bug 183761](https://bugs.eclipse.org/bugs/show_bug.cgi?id=183761) has been filed to investigate removing this dependency from org.eclipse.help.
+Note that as of Eclipse 3.3M6, org.eclipse.help requires [com.ibm.icu](#What-is-ICU4J-and-is-it-required) which takes a sizeable amount of footprint (that [can be reduced](#What-is-ICU4J-and-is-it-required)). [Bug 183761](https://bugs.eclipse.org/bugs/show_bug.cgi?id=183761) has been filed to investigate removing this dependency from org.eclipse.help.
 
 What is the disk footprint for the Rich Client Platform?
 --------------------------------------------------------
@@ -254,7 +254,7 @@ How can I define key bindings for commands?
 -------------------------------------------
 
 As of 3.3, the preferred means of binding keys is to use commands, handlers, and contexts. 
-See [Platform Command Framework#KeyBindings](PlatformCommandFramework.md#KeyBindings) for the extension points.
+See [Platform Command Framework#KeyBindings](../PlatformCommandFramework.md#KeyBindings) for the extension points.
 
 There are some wrinkles for the RCP case. 
 See [Keybindings for Eclipse Commands](https://www.vogella.com/tutorials/EclipseCommands/article.html) for a tutorial.
