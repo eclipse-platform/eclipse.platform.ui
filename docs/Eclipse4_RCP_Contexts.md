@@ -77,11 +77,13 @@ There are many active branches in a context tree, but there is only ever a singl
 A node can be made active in two ways. 
 Calling _#activate()_ makes the receiver the active child of its parent node, but does not otherwise disturb the rest of the tree. 
 Calling _#activateBranch()_ on the other hand effectively the same as:
+```java
 
        void activateBranch() {
           activate();
           if(getParent() != null) getParent().activateBranch(); 
        }
+```
 
 It makes the receiver the active child of its parent, and then recursively calls _#activateBranch()_ on its parent.
 
