@@ -82,6 +82,9 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		DisplayHelper.waitForCondition(display, 3000, () -> !getSelectedItems(dialog).isEmpty());
+
 		List<Object> selected = getSelectedItems(dialog);
 
 		assertFalse("One file should be selected by default", selected.isEmpty());
@@ -99,6 +102,10 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialElementSelections(asList(FILES.get("foo.txt")));
 		dialog.open();
 		dialog.refresh();
+
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		DisplayHelper.waitForCondition(display, 3000,
+				() -> asList(FILES.get("foo.txt")).equals(getSelectedItems(dialog)));
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -174,6 +181,10 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		DisplayHelper.waitForCondition(display, 3000,
+				() -> asList(FILES.get("foo.txt")).equals(getSelectedItems(dialog)));
+
 		List<Object> selected = getSelectedItems(dialog);
 
 		assertEquals("The first file should be selected by default", asList(FILES.get("foo.txt")), selected);
@@ -191,6 +202,9 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialPattern("**");
 		dialog.open();
 		dialog.refresh();
+
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		DisplayHelper.waitForCondition(display, 3000, () -> !getSelectedItems(dialog).isEmpty());
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -210,6 +224,10 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialElementSelections(asList(FILES.get("foo.txt")));
 		dialog.open();
 		dialog.refresh();
+
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		DisplayHelper.waitForCondition(display, 3000,
+				() -> asList(FILES.get("foo.txt")).equals(getSelectedItems(dialog)));
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -266,8 +284,12 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
-		List<Object> selected = getSelectedItems(dialog);
+		Display display = PlatformUI.getWorkbench().getDisplay();
 		Set<IFile> expectedSelection = new HashSet<>(asList(FILES.get("bar.txt"), FILES.get("foofoo")));
+		DisplayHelper.waitForCondition(display, 3000,
+				() -> expectedSelection.equals(new HashSet<>(getSelectedItems(dialog))));
+
+		List<Object> selected = getSelectedItems(dialog);
 		boolean allInitialElementsAreSelected = expectedSelection.equals(new HashSet<>(selected));
 
 		assertTrue("Two files should be selected by default", allInitialElementsAreSelected);
@@ -287,6 +309,12 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialElementSelections(initialSelection);
 		dialog.open();
 		dialog.refresh();
+
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		DisplayHelper.waitForCondition(display, 3000, () -> {
+			List<Object> selected = getSelectedItems(dialog);
+			return selected.containsAll(initialSelection) && initialSelection.containsAll(selected);
+		});
 
 		List<Object> selected = getSelectedItems(dialog);
 		boolean initialElementsAreSelected = selected.containsAll(initialSelection)
@@ -310,8 +338,14 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
-		List<Object> selected = getSelectedItems(dialog);
+		Display display = PlatformUI.getWorkbench().getDisplay();
 		List<IFile> expectedSelection = asList(FILES.get("foo.txt"), FILES.get("bar.txt"));
+		DisplayHelper.waitForCondition(display, 3000, () -> {
+			List<Object> selected = getSelectedItems(dialog);
+			return selected.containsAll(expectedSelection) && expectedSelection.containsAll(selected);
+		});
+
+		List<Object> selected = getSelectedItems(dialog);
 		boolean initialElementsAreSelected = selected.containsAll(expectedSelection)
 				&& expectedSelection.containsAll(selected);
 
