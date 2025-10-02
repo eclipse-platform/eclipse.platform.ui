@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({ TabbedPropertySheetPageTest.class, TabbedPropertySheetPageDynamicTest.class,
+@Suite
+@SelectClasses({ TabbedPropertySheetPageTest.class, TabbedPropertySheetPageDynamicTest.class,
 		TabbedPropertySheetPageTextTest.class, TabbedPropertySheetPageOverrideTest.class,
 		TabbedPropertySheetPageDecorationsTest.class })
 public class AllTests {
