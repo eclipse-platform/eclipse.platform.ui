@@ -126,6 +126,14 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		// Wait for table to be populated (even if selection remains empty)
+		DisplayHelper.waitForCondition(display, 3000, () -> {
+			Table table = (Table) ((Composite) ((Composite) ((Composite) dialog.getShell().getChildren()[0])
+					.getChildren()[0]).getChildren()[0]).getChildren()[3];
+			return table.getItemCount() > 0;
+		});
+
 		List<Object> selected = getSelectedItems(dialog);
 
 		assertTrue("No file should be selected by default", selected.isEmpty());
@@ -142,6 +150,14 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialElementSelections(asList(FILES.get("foo.txt")));
 		dialog.open();
 		dialog.refresh();
+
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		// Wait for table to be populated (even if selection remains empty)
+		DisplayHelper.waitForCondition(display, 3000, () -> {
+			Table table = (Table) ((Composite) ((Composite) ((Composite) dialog.getShell().getChildren()[0])
+					.getChildren()[0]).getChildren()[0]).getChildren()[3];
+			return table.getItemCount() > 0;
+		});
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -161,6 +177,14 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialElementSelections(asList(FILES.get("foofoo")));
 		dialog.open();
 		dialog.refresh();
+
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		// Wait for table to be populated (even if selection remains empty)
+		DisplayHelper.waitForCondition(display, 3000, () -> {
+			Table table = (Table) ((Composite) ((Composite) ((Composite) dialog.getShell().getChildren()[0])
+					.getChildren()[0]).getChildren()[0]).getChildren()[3];
+			return table.getItemCount() > 0;
+		});
 
 		List<Object> selected = getSelectedItems(dialog);
 
@@ -246,6 +270,14 @@ public class ResourceInitialSelectionTest {
 		dialog.open();
 		dialog.refresh();
 
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		// Wait for table to be populated (even if selection remains empty)
+		DisplayHelper.waitForCondition(display, 3000, () -> {
+			Table table = (Table) ((Composite) ((Composite) ((Composite) dialog.getShell().getChildren()[0])
+					.getChildren()[0]).getChildren()[0]).getChildren()[3];
+			return table.getItemCount() > 0;
+		});
+
 		List<Object> selected = getSelectedItems(dialog);
 
 		assertTrue("No file should be selected by default", selected.isEmpty());
@@ -264,6 +296,14 @@ public class ResourceInitialSelectionTest {
 		dialog.setInitialElementSelections(asList("not an available item", "still not an available item"));
 		dialog.open();
 		dialog.refresh();
+
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		// Wait for table to be populated (even if selection remains empty)
+		DisplayHelper.waitForCondition(display, 3000, () -> {
+			Table table = (Table) ((Composite) ((Composite) ((Composite) dialog.getShell().getChildren()[0])
+					.getChildren()[0]).getChildren()[0]).getChildren()[3];
+			return table.getItemCount() > 0;
+		});
 
 		List<Object> selected = getSelectedItems(dialog);
 
