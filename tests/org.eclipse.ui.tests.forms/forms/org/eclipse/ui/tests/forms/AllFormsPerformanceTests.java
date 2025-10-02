@@ -15,14 +15,15 @@
 package org.eclipse.ui.tests.forms;
 
 import org.eclipse.ui.tests.forms.performance.FormsPerformanceTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /*
  * Tests forms performance (automated).
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ FormsPerformanceTest.class })
+@Suite
+@SelectClasses({ FormsPerformanceTest.class })
 public class AllFormsPerformanceTests {
 
 }

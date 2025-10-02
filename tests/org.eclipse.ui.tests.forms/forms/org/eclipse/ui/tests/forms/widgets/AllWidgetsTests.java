@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.forms.widgets;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Tests forms widgets (automated).
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ ExpandableCompositeTest.class, FormTextModelTest.class, ScrolledFormTest.class })
+@Suite
+@SelectClasses({ ExpandableCompositeTest.class, FormTextModelTest.class, ScrolledFormTest.class })
 public class AllWidgetsTests {
 
 }
