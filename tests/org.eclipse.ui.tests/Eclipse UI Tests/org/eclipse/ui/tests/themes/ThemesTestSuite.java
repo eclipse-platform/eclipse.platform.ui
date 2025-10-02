@@ -14,14 +14,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.themes;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * @since 3.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 	 ThemeAPITest.class,
 	 JFaceThemeTest.class,
 	 WorkbenchThemeChangedHandlerTest.class,

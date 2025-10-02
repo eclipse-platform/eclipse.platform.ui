@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * The suite of tests related to concurrency and deadlock.
  *
  * @since 3.1
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 	ModalContextCrashTest.class,
 	NestedSyncExecDeadlockTest.class,
 	SyncExecWhileUIThreadWaitsForRuleTest.class,

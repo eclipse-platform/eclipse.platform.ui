@@ -14,15 +14,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Tests for all code related to menus. This includes the
  * <code>popupMenus</code> extension point, and others.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 		DynamicToolbarTest.class,
 		ObjectContributionTest.class,
 		MenuVisibilityTest.class,

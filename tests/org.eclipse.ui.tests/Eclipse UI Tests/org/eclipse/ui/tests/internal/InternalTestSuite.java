@@ -30,11 +30,12 @@ import org.eclipse.ui.tests.markers.MarkerViewTests;
 import org.eclipse.ui.tests.markers.MarkerViewUtilTest;
 import org.eclipse.ui.tests.markers.ResourceMappingMarkersTest;
 import org.eclipse.ui.tests.markers.ScopeAreaTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({
 	EditorActionBarsTest.class,
 	ActionSetExpressionTest.class,
 	PopupMenuExpressionTest.class,

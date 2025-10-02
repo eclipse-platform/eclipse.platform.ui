@@ -13,15 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * Test suite for dynamic plug-in support.
  */
-@RunWith(Suite.class)
-@SuiteClasses({ //
+@Suite
+@SelectClasses({ //
 		StatusHandlerTests.class, //
 		AcceleratorConfigurationsExtensionDynamicTest.class, //
 		AcceleratorScopesExtensionDynamicTest.class, //

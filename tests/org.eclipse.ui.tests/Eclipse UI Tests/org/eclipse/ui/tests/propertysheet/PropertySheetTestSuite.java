@@ -14,14 +14,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.propertysheet;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Test areas of the Property Sheet API.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 	PropertyShowInContextTest.class,
 	MultiInstancePropertySheetTest.class,
 	ShowInPropertySheetTest.class,
