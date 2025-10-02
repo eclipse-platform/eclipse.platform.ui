@@ -35,8 +35,9 @@ public abstract class BrowserInput {
 	 */
 	public BrowserInput(BrowserInput previous) {
 		fPrevious= previous;
-		if (previous != null)
+		if (previous != null) {
 			previous.fNext= this;
+		}
 	}
 
 	/**

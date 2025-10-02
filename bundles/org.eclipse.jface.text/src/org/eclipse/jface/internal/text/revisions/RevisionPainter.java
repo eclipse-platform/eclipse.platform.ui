@@ -167,8 +167,9 @@ public final class RevisionPainter {
 			fFocusColors.clear();
 			fGradientStart= null;
 			fGradientStop= null;
-			if (info == null)
+			if (info == null) {
 				return;
+			}
 			List<Long> revisions= new ArrayList<>();
 			for (Revision revision : info.getRevisions()) {
 				revisions.add(Long.valueOf(computeAge(revision)));
@@ -212,10 +213,11 @@ public final class RevisionPainter {
 				int size= fRevisions.size();
 				// relative age: newest is 0, oldest is 1
 				// if there is only one revision, use an intermediate value to avoid extreme coloring
-				if (index == -1 || size < 2)
+				if (index == -1 || size < 2) {
 					scale= 0.5f;
-				else
+				} else {
 					scale= (float) index / (size - 1);
+				}
 			} else {
 				Assert.isTrue(false);
 				return null; // dummy
@@ -269,8 +271,9 @@ public final class RevisionPainter {
 		public RGB getColor(Revision revision, boolean focus) {
 			Map<Revision, RGB> map= focus ? fFocusColors : fColors;
 			RGB color= map.get(revision);
-			if (color != null)
+			if (color != null) {
 				return color;
+			}
 
 			color= adaptColor(revision, focus);
 			map.put(revision, color);
@@ -293,16 +296,18 @@ public final class RevisionPainter {
 
 				if (upRegion == downRegion) {
 					Revision revision= upRegion == null ? null : upRegion.getRevision();
-					if (revision == fSelectedRevision)
+					if (revision == fSelectedRevision) {
 						revision= null; // deselect already selected revision
+					}
 					handleRevisionSelected(revision);
 				}
 			}
 		}
 
 		private void handleMouseDown(Event e) {
-			if (e.button == 3)
+			if (e.button == 3) {
 				updateFocusRevision(null); // kill any focus as the ctx menu is going to show
+			}
 			if (e.button == 1) {
 				fMouseDownRegion= fFocusRange;
 				postRedraw();
@@ -393,9 +398,10 @@ public final class RevisionPainter {
 					 */
 					private String addCSSToHTMLFragment(String html) {
 						int max= Math.min(100, html.length());
-						if (html.substring(0, max).contains("<html>")) //$NON-NLS-1$
+						if (html.substring(0, max).contains("<html>")) { //$NON-NLS-1$
 							// there is already a header
 							return html;
+						}
 
 						StringBuilder info= new StringBuilder(512 + html.length());
 						HTMLPrinter.insertPageProlog(info, 0, fgStyleSheet);
@@ -464,8 +470,9 @@ public final class RevisionPainter {
 			RevisionInformation revisionInfo= fRevisionInfo;
 			if (revisionInfo != null) {
 				IInformationControlCreator creator= revisionInfo.getHoverControlCreator();
-				if (creator != null)
+				if (creator != null) {
 					return creator;
+				}
 			}
 			return new HoverInformationControlCreator(false);
 		}
@@ -498,8 +505,9 @@ public final class RevisionPainter {
 			RevisionInformation revisionInfo= fRevisionInfo;
 			if (revisionInfo != null) {
 				IInformationControlCreator creator= revisionInfo.getInformationPresenterControlCreator();
-				if (creator != null)
+				if (creator != null) {
 					return creator;
+				}
 			}
 			return new HoverInformationControlCreator(true);
 		}
@@ -718,8 +726,9 @@ public final class RevisionPainter {
 	 */
 	public void paint(GC gc, ILineRange visibleLines) {
 		connectIfNeeded();
-		if (!isConnected())
+		if (!isConnected()) {
 			return;
+		}
 
 		// compute the horizontal indent of the author for the case that we show revision
 		// and author
@@ -752,20 +761,24 @@ public final class RevisionPainter {
 	 * visible.
 	 */
 	private void connectIfNeeded() {
-		if (isConnected() || fParentRuler == null)
+		if (isConnected() || fParentRuler == null) {
 			return;
+		}
 
 		fViewer= fParentRuler.getTextViewer();
-		if (fViewer == null)
+		if (fViewer == null) {
 			return;
+		}
 
 		fWidget= fViewer.getTextWidget();
-		if (fWidget == null)
+		if (fWidget == null) {
 			return;
+		}
 
 		fControl= fColumn.getControl();
-		if (fControl == null)
+		if (fControl == null) {
 			return;
+		}
 
 		fControl.addMouseTrackListener(fMouseHandler);
 		fControl.addMouseMoveListener(fMouseHandler);
@@ -793,10 +806,11 @@ public final class RevisionPainter {
 	 */
 	public void setModel(IAnnotationModel model) {
 		IAnnotationModel diffModel;
-		if (model instanceof IAnnotationModelExtension)
+		if (model instanceof IAnnotationModelExtension) {
 			diffModel= ((IAnnotationModelExtension) model).getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
-		else
+		} else {
 			diffModel= model;
+		}
 
 		setDiffer(diffModel);
 		setAnnotationModel(model);
@@ -808,8 +822,9 @@ public final class RevisionPainter {
 	 * @param model the annotation model.
 	 */
 	private void setAnnotationModel(IAnnotationModel model) {
-		if (fAnnotationModel != model)
+		if (fAnnotationModel != model) {
 			fAnnotationModel= model;
+		}
 	}
 
 	/**
@@ -820,11 +835,13 @@ public final class RevisionPainter {
 	private void setDiffer(IAnnotationModel differ) {
 		if (differ instanceof ILineDiffer || differ == null) {
 			if (fLineDiffer != differ) {
-				if (fLineDiffer != null)
+				if (fLineDiffer != null) {
 					((IAnnotationModel) fLineDiffer).removeAnnotationModelListener(fAnnotationListener);
+				}
 				fLineDiffer= (ILineDiffer) differ;
-				if (fLineDiffer != null)
+				if (fLineDiffer != null) {
 					((IAnnotationModel) fLineDiffer).addAnnotationModelListener(fAnnotationListener);
+				}
 			}
 		}
 	}
@@ -851,8 +868,9 @@ public final class RevisionPainter {
 	 */
 	private void paintRange(RevisionRange range, GC gc) {
 		ILineRange widgetRange= modelLinesToWidgetLines(range);
-		if (widgetRange == null)
+		if (widgetRange == null) {
 			return;
+		}
 
 		Revision revision= range.getRevision();
 		boolean drawArmedFocus= range == fMouseHandler.fMouseDownRegion;
@@ -907,8 +925,9 @@ public final class RevisionPainter {
 	 * @since 3.3
 	 */
 	private int getBaselineBias(GC gc, int widgetLine) {
-		if (widgetLine == fWidget.getLineCount())
+		if (widgetLine == fWidget.getLineCount()) {
 			widgetLine--;
+		}
 
 		/*
 		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=62951
@@ -946,18 +965,21 @@ public final class RevisionPainter {
 	private RevisionRange getRange(int line) {
 		List<RevisionRange> ranges= getRangeCache();
 
-		if (ranges.isEmpty() || line == -1)
+		if (ranges.isEmpty() || line == -1) {
 			return null;
+		}
 
 		for (RevisionRange range : ranges) {
-			if (contains(range, line))
+			if (contains(range, line)) {
 				return range;
+			}
 		}
 
 		// line may be right after the last region
 		RevisionRange lastRegion= ranges.get(ranges.size() - 1);
-		if (line == end(lastRegion))
+		if (line == end(lastRegion)) {
 			return lastRegion;
+		}
 		return null;
 	}
 
@@ -976,17 +998,20 @@ public final class RevisionPainter {
 		for (int i= 0; i < ranges.size(); i++) {
 			RevisionRange range= ranges.get(i);
 			int rangeEnd= end(range);
-			if (first == -1 && rangeEnd > lines.getStartLine())
+			if (first == -1 && rangeEnd > lines.getStartLine()) {
 				first= i;
+			}
 			if (first != -1 && rangeEnd > end) {
 				last= i;
 				break;
 			}
 		}
-		if (first == -1)
+		if (first == -1) {
 			return Collections.emptyList();
-		if (last == -1)
+		}
+		if (last == -1) {
 			last= ranges.size() - 1; // bottom index may be one too much
+		}
 
 		return ranges.subList(first, last + 1);
 	}
@@ -1059,8 +1084,9 @@ public final class RevisionPainter {
 			for (int modelLine= range.getStartLine(); modelLine < modelEndLine; modelLine++) {
 				int widgetLine= extension.modelLine2WidgetLine(modelLine);
 				if (widgetLine != -1) {
-					if (widgetStartLine == -1)
+					if (widgetStartLine == -1) {
 						widgetStartLine= widgetLine;
+					}
 					widgetEndLine= widgetLine;
 				}
 			}
@@ -1076,8 +1102,9 @@ public final class RevisionPainter {
 				// ignore and return null
 			}
 		}
-		if (widgetStartLine == -1 || widgetEndLine == -1)
+		if (widgetStartLine == -1 || widgetEndLine == -1) {
 			return null;
+		}
 		return new LineRange(widgetStartLine, widgetEndLine - widgetStartLine + 1);
 	}
 
@@ -1109,8 +1136,9 @@ public final class RevisionPainter {
 	 * Shows (or hides) the overview annotations.
 	 */
 	private void updateOverviewAnnotations() {
-		if (fAnnotationModel == null)
+		if (fAnnotationModel == null) {
 			return;
+		}
 
 		Revision revision= fFocusRevision != null ? fFocusRevision : fSelectedRevision;
 
@@ -1142,8 +1170,9 @@ public final class RevisionPainter {
 			}
 		}
 		fAnnotations.clear();
-		if (added != null)
+		if (added != null) {
 			fAnnotations.addAll(added.keySet());
+		}
 
 	}
 
@@ -1159,10 +1188,11 @@ public final class RevisionPainter {
 		int offset= document.getLineOffset(lines.getStartLine());
 		int nextLine= end(lines);
 		int endOffset;
-		if (nextLine >= document.getNumberOfLines())
+		if (nextLine >= document.getNumberOfLines()) {
 			endOffset= document.getLength();
-		else
+		} else {
 			endOffset= document.getLineOffset(nextLine);
+		}
 		return new Region(offset, endOffset - offset);
 	}
 
@@ -1175,8 +1205,9 @@ public final class RevisionPainter {
 		fSelectedRevision= revision;
 		fRevisionSelectionProvider.revisionSelected(revision);
 
-		if (isConnected())
+		if (isConnected()) {
 			updateOverviewAnnotations();
+		}
 
 		postRedraw();
 	}
@@ -1188,8 +1219,9 @@ public final class RevisionPainter {
 	 */
 	void handleRevisionSelected(String id) {
 		Assert.isLegal(id != null);
-		if (fRevisionInfo == null)
+		if (fRevisionInfo == null) {
 			return;
+		}
 
 		for (Revision revision : fRevisionInfo.getRevisions()) {
 			if (id.equals(revision.getId())) {
@@ -1217,8 +1249,9 @@ public final class RevisionPainter {
 	 * @param line the new focus line, -1 for no focus
 	 */
 	private void updateFocusLine(int line) {
-		if (fFocusLine != line)
+		if (fFocusLine != line) {
 			onFocusLineChanged(fFocusLine, line);
+		}
 	}
 
 	/**
@@ -1228,8 +1261,9 @@ public final class RevisionPainter {
 	 * @param nextLine the new focus line (-1 for no focus)
 	 */
 	private void onFocusLineChanged(int previousLine, int nextLine) {
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("line: " + previousLine + " > " + nextLine); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		fFocusLine= nextLine;
 		RevisionRange region= getRange(nextLine);
 		updateFocusRange(region);
@@ -1241,8 +1275,9 @@ public final class RevisionPainter {
 	 * @param range the new focus range, <code>null</code> for no focus
 	 */
 	private void updateFocusRange(RevisionRange range) {
-		if (range != fFocusRange)
+		if (range != fFocusRange) {
 			onFocusRangeChanged(fFocusRange, range);
+		}
 	}
 
 	/**
@@ -1252,16 +1287,18 @@ public final class RevisionPainter {
 	 * @param nextRange the new focus range (<code>null</code> for no focus)
 	 */
 	private void onFocusRangeChanged(RevisionRange previousRange, RevisionRange nextRange) {
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("range: " + previousRange + " > " + nextRange); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		fFocusRange= nextRange;
 		Revision revision= nextRange == null ? null : nextRange.getRevision();
 		updateFocusRevision(revision);
 	}
 
 	private void updateFocusRevision(Revision revision) {
-		if (fFocusRevision != revision)
+		if (fFocusRevision != revision) {
 			onFocusRevisionChanged(fFocusRevision, revision);
+		}
 	}
 
 	/**
@@ -1271,8 +1308,9 @@ public final class RevisionPainter {
 	 * @param nextRevision the new focus revision (<code>null</code> for no focus)
 	 */
 	private void onFocusRevisionChanged(Revision previousRevision, Revision nextRevision) {
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("revision: " + previousRevision + " > " + nextRevision); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		fFocusRevision= nextRevision;
 		uninstallWheelHandler();
 		installWheelHandler();
@@ -1329,8 +1367,9 @@ public final class RevisionPainter {
 					nextWidgetRange= last;
 					break;
 				}
-				if (widgetRange != null)
+				if (widgetRange != null) {
 					last= widgetRange;
+				}
 			}
 		} else {
 			for (ListIterator<RevisionRange> it= ranges.listIterator(ranges.size()); it.hasPrevious();) {
@@ -1340,13 +1379,15 @@ public final class RevisionPainter {
 					nextWidgetRange= last;
 					break;
 				}
-				if (widgetRange != null)
+				if (widgetRange != null) {
 					last= widgetRange;
+				}
 			}
 		}
 
-		if (nextWidgetRange == null)
+		if (nextWidgetRange == null) {
 			return;
+		}
 
 		int widgetCurrentFocusLine= modelLinesToWidgetLines(new LineRange(documentHoverLine, 1)).getStartLine();
 		int widgetNextFocusLine= nextWidgetRange.getStartLine();
@@ -1421,8 +1462,9 @@ public final class RevisionPainter {
 	 * @return the System background color for list widgets
 	 */
 	private Color getBackground() {
-		if (fBackground == null)
+		if (fBackground == null) {
 			return fWidget.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		}
 		return fBackground;
 	}
 
@@ -1461,8 +1503,9 @@ public final class RevisionPainter {
 		}
 		if (line != -1) {
 			RevisionRange range= getRange(line);
-			if (range != null)
+			if (range != null) {
 				return range.getRevision();
+			}
 		}
 		return null;
 	}
@@ -1492,12 +1535,13 @@ public final class RevisionPainter {
 					authorWidth= Math.max(authorWidth, revision.getAuthor().length());
 				}
 				fRevisionIdChars= revisionWidth + 1;
-				if (fShowAuthor && fShowRevision)
+				if (fShowAuthor && fShowRevision) {
 					fRequiredWidth= revisionWidth + authorWidth + 2;
-				else if (fShowAuthor)
+				} else if (fShowAuthor) {
 					fRequiredWidth= authorWidth + 1;
-				else
+				} else {
 					fRequiredWidth= revisionWidth + 1;
+				}
 			} else {
 				fRequiredWidth= 0;
 			}
@@ -1559,8 +1603,9 @@ public final class RevisionPainter {
 	 * @since 3.3
 	 */
 	private void informListeners() {
-		if (fRevisionInfo == null || fRevisionListeners.isEmpty())
+		if (fRevisionInfo == null || fRevisionListeners.isEmpty()) {
 			return;
+		}
 
 		RevisionEvent event= new RevisionEvent(fRevisionInfo);
 		for (IRevisionListener listener : fRevisionListeners) {

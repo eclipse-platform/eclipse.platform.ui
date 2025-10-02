@@ -121,8 +121,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		protected void uninstall() {
 			Shell shell= fShell;
 			fShell= null;
-			if (isValid(shell))
+			if (isValid(shell)) {
 				shell.removeControlListener(this);
+			}
 
 			Control w= fViewer.getTextWidget();
 			if (isValid(w)) {
@@ -175,8 +176,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 					Display d= control.getDisplay();
 					if (d != null) {
 						d.asyncExec(() -> {
-							if (!hasFocus())
+							if (!hasFocus()) {
 								hide();
+							}
 						});
 					}
 				}
@@ -196,8 +198,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 		@Override
 		public void viewportChanged(int topIndex) {
-			if (System.currentTimeMillis() > fViewportListenerStartTime)
+			if (System.currentTimeMillis() > fViewportListenerStartTime) {
 				hide();
+			}
 		}
 	}
 
@@ -234,8 +237,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			try {
 				while (true) {
 					synchronized (fMutex) {
-						if (fAutoActivationDelay != 0)
+						if (fAutoActivationDelay != 0) {
 							fMutex.wait(fAutoActivationDelay);
+						}
 						if (fIsReset) {
 							fIsReset= false;
 							continue;
@@ -259,18 +263,21 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 		protected void stop() {
 			Thread threadToStop= fThread;
-			if (threadToStop != null)
+			if (threadToStop != null) {
 				threadToStop.interrupt();
+			}
 		}
 
 		@Override
 		public void verifyKey(VerifyEvent e) {
 			// Only act on typed characters and ignore modifier-only events
-			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0)
+			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0) {
 				return;
+			}
 
-			if (e.character != 0 && (e.stateMask == SWT.ALT))
+			if (e.character != 0 && (e.stateMask == SWT.ALT)) {
 				return;
+			}
 
 
 
@@ -285,22 +292,24 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 
 
-			if (p.isCompletionProposalAutoActivation(e.character, fViewer, pos) && !fProposalPopup.isActive())
+			if (p.isCompletionProposalAutoActivation(e.character, fViewer, pos) && !fProposalPopup.isActive()) {
 				showStyle= SHOW_PROPOSALS;
-			else {
-				if (p.isContextInformationAutoActivation(e.character, fViewer, pos) && !fContextInfoPopup.isActive())
+			} else {
+				if (p.isContextInformationAutoActivation(e.character, fViewer, pos) && !fContextInfoPopup.isActive()) {
 					showStyle= SHOW_CONTEXT_INFO;
-				else {
-					if (fThread != null && fThread.isAlive())
+				} else {
+					if (fThread != null && fThread.isAlive()) {
 						stop();
+					}
 					return;
 				}
 			}
 
-			if (fThread != null && fThread.isAlive())
+			if (fThread != null && fThread.isAlive()) {
 				reset(showStyle);
-			else
+			} else {
 				start(showStyle);
+			}
 		}
 
 		protected void showAssist(final int showStyle) {
@@ -309,10 +318,11 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			if (d != null) {
 				try {
 					d.syncExec(() -> {
-						if (showStyle == SHOW_PROPOSALS)
+						if (showStyle == SHOW_PROPOSALS) {
 							fProposalPopup.showProposals(true);
-						else if (showStyle == SHOW_CONTEXT_INFO)
+						} else if (showStyle == SHOW_CONTEXT_INFO) {
 							fContextInfoPopup.showContextProposals(true);
+						}
 					});
 				} catch (SWTError e) {
 				}
@@ -345,15 +355,17 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			checkType(type);
 
 			if (fShells[type] != shell) {
-				if (fShells[type] != null)
+				if (fShells[type] != null) {
 					fShells[type].removeListener(SWT.Dispose, this);
+				}
 				shell.addListener(SWT.Dispose, this);
 				fShells[type]= shell;
 			}
 
 			fPopups[type]= popup;
-			if (type == LAYOUT_CONTEXT_SELECTOR || type == LAYOUT_CONTEXT_INFO_POPUP)
+			if (type == LAYOUT_CONTEXT_SELECTOR || type == LAYOUT_CONTEXT_INFO_POPUP) {
 				fContextType= type;
+			}
 
 			layout(type, offset);
 			adjustListeners(type);
@@ -384,8 +396,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 				case LAYOUT_CONTEXT_SELECTOR:
 					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
-						if (fProposalPopupOrientation == PROPOSAL_STACKED)
+						if (fProposalPopupOrientation == PROPOSAL_STACKED) {
 							layout(LAYOUT_PROPOSAL_SELECTOR, getSelectionOffset());
+						}
 						// Restore event notification to the proposal popup.
 						addContentAssistListener((IContentAssistListener2) fPopups[LAYOUT_PROPOSAL_SELECTOR], PROPOSAL_SELECTOR);
 					}
@@ -394,8 +407,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 				case LAYOUT_CONTEXT_INFO_POPUP:
 					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
-						if (fContextInfoPopupOrientation == CONTEXT_INFO_BELOW)
+						if (fContextInfoPopupOrientation == CONTEXT_INFO_BELOW) {
 							layout(LAYOUT_PROPOSAL_SELECTOR, getSelectionOffset());
+						}
 					}
 					fContextType= LAYOUT_CONTEXT_SELECTOR;
 					break;
@@ -404,8 +418,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 		protected int getShellType(Widget shell) {
 			for (int i=0; i<fShells.length; i++) {
-				if (fShells[i] == shell)
+				if (fShells[i] == shell) {
 					return i;
+				}
 			}
 			return -1;
 		}
@@ -515,19 +530,23 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		}
 
 		protected void shiftHorizontalLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
-			if (location.x + shellBounds.width > displayBounds.width)
+			if (location.x + shellBounds.width > displayBounds.width) {
 				location.x= displayBounds.width - shellBounds.width;
+			}
 
-			if (location.x < displayBounds.x)
+			if (location.x < displayBounds.x) {
 				location.x= displayBounds.x;
+			}
 		}
 
 		protected void shiftVerticalLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
-			if (location.y + shellBounds.height > displayBounds.height)
+			if (location.y + shellBounds.height > displayBounds.height) {
 				location.y= displayBounds.height - shellBounds.height;
+			}
 
-			if (location.y < displayBounds.y)
+			if (location.y < displayBounds.y) {
 				location.y= displayBounds.y;
+			}
 		}
 
 		protected Point getAboveLocation(Shell shell, int offset) {
@@ -549,8 +568,12 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		protected Point getBelowLocation(Shell shell, int offset) {
 			StyledText text= fViewer.getTextWidget();
 			Point location= text.getLocationAtOffset(offset);
-			if (location.x < 0) location.x= 0;
-			if (location.y < 0) location.y= 0;
+			if (location.x < 0) {
+				location.x= 0;
+			}
+			if (location.y < 0) {
+				location.y= 0;
+			}
 			location= text.toDisplay(location);
 
 			Rectangle shellBounds= shell.getBounds();
@@ -583,14 +606,16 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			switch (type) {
 				case LAYOUT_PROPOSAL_SELECTOR:
 					if (fContextType == LAYOUT_CONTEXT_SELECTOR &&
-							isValid(fShells[LAYOUT_CONTEXT_SELECTOR]))
+							isValid(fShells[LAYOUT_CONTEXT_SELECTOR])) {
 						// Disable event notification to the tip selector.
 						removeContentAssistListener((IContentAssistListener2) fPopups[LAYOUT_CONTEXT_SELECTOR], CONTEXT_SELECTOR);
+					}
 					break;
 				case LAYOUT_CONTEXT_SELECTOR:
-					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR]))
+					if (isValid(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						// Disable event notification to the proposal selector.
 						removeContentAssistListener((IContentAssistListener2) fPopups[LAYOUT_PROPOSAL_SELECTOR], PROPOSAL_SELECTOR);
+					}
 					break;
 				case LAYOUT_CONTEXT_INFO_POPUP:
 					break;
@@ -635,8 +660,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			for (IContentAssistListener2 listener : listeners) {
 				if (listener != null) {
 					listener.processEvent(event);
-					if (!event.doit)
+					if (!event.doit) {
 						return;
+					}
 				}
 			}
 		}
@@ -756,13 +782,15 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 		Assert.isNotNull(contentType);
 
-		if (fProcessors == null)
+		if (fProcessors == null) {
 			fProcessors= new HashMap<>();
+		}
 
-		if (processor == null)
+		if (processor == null) {
 			fProcessors.remove(contentType);
-		else
+		} else {
 			fProcessors.put(contentType, processor);
+		}
 	}
 
 	/*
@@ -770,8 +798,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 */
 	@Override
 	public IContentAssistProcessor getContentAssistProcessor(String contentType) {
-		if (fProcessors == null)
+		if (fProcessors == null) {
 			return null;
+		}
 
 		return fProcessors.get(contentType);
 	}
@@ -826,8 +855,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 					extension.appendVerifyKeyListener(fAutoAssistListener);
 				} else {
 					StyledText textWidget= fViewer.getTextWidget();
-					if (isValid(textWidget))
+					if (isValid(textWidget)) {
 						textWidget.addVerifyKeyListener(fAutoAssistListener);
+					}
 				}
 			}
 
@@ -837,8 +867,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 				extension.removeVerifyKeyListener(fAutoAssistListener);
 			} else {
 				StyledText textWidget= fViewer.getTextWidget();
-				if (isValid(textWidget))
+				if (isValid(textWidget)) {
 					textWidget.removeVerifyKeyListener(fAutoAssistListener);
+				}
 			}
 
 			fAutoAssistListener= null;
@@ -999,8 +1030,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		fInternalListener= new InternalListener();
 
 		AdditionalInfoController2 controller= null;
-		if (fInformationControlCreator != null)
+		if (fInformationControlCreator != null) {
 			controller= new AdditionalInfoController2(fInformationControlCreator, OpenStrategy.getPostSelectionDelay());
+		}
 
 		fContextInfoPopup= new ContextInformationPopup2(this, fViewer);
 		fProposalPopup= new CompletionProposalPopup2(this, fViewer, controller);
@@ -1014,11 +1046,13 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	@Override
 	public void uninstall() {
 
-		if (fProposalPopup != null)
+		if (fProposalPopup != null) {
 			fProposalPopup.hide();
+		}
 
-		if (fContextInfoPopup != null)
+		if (fContextInfoPopup != null) {
 			fContextInfoPopup.hide();
+		}
 
 		manageAutoActivation(false);
 
@@ -1231,8 +1265,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	private int getNumberOfListeners() {
 		int count= 0;
 		for (int i= 0; i <= CONTEXT_INFO_POPUP; i++) {
-			if (fListeners[i] != null)
+			if (fListeners[i] != null) {
 				++ count;
+			}
 		}
 		return count;
 	}
@@ -1249,18 +1284,21 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 * Hides the proposal popup.
 	 */
 	public void hidePossibleCompletions() {
-		if (fProposalPopup != null)
+		if (fProposalPopup != null) {
 			fProposalPopup.hide();
+		}
 	}
 
 	/**
 	 * Hides any open pop-ups.
 	 */
 	protected void hide() {
-		if (fProposalPopup != null)
+		if (fProposalPopup != null) {
 			fProposalPopup.hide();
-		if (fContextInfoPopup != null)
+		}
+		if (fContextInfoPopup != null) {
 			fContextInfoPopup.hide();
+		}
 	}
 
 	/**
@@ -1343,7 +1381,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 				result[i]= new CompletionProposal(fProposalStrings[i], position, fProposalStrings[i].length(), fProposalStrings[i].length());
 			}
 			return result;
-		} else return null;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -1400,8 +1440,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 */
 	IContextInformationPresenter getContextInformationPresenter(ITextViewer textViewer, int offset) {
 		IContextInformationValidator validator= getContextInformationValidator(textViewer, offset);
-		if (validator instanceof IContextInformationPresenter)
+		if (validator instanceof IContextInformationPresenter) {
 			return (IContextInformationPresenter) validator;
+		}
 		return null;
 	}
 

@@ -168,7 +168,8 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 	public void removeSelectionListener(SelectionListener selectionListener) {
 		fCombo.removeSelectionListener(selectionListener);
 		Listener listener= fModifyListeners.get(selectionListener);
-		if (listener != null)
+		if (listener != null) {
 			fCombo.removeListener(SWT.Modify, listener);
+		}
 	}
 }

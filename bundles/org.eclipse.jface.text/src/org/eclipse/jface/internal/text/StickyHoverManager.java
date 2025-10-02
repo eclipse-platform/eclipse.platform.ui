@@ -100,8 +100,9 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		@Override
 		public void start(Rectangle informationArea) {
 
-			if (fIsActive)
+			if (fIsActive) {
 				return;
+			}
 			fIsActive= true;
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
@@ -113,8 +114,9 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 			fTextViewer.addViewportListener(this);
 
 			IInformationControl fInformationControlToClose= getCurrentInformationControl2();
-			if (fInformationControlToClose != null)
+			if (fInformationControlToClose != null) {
 				fInformationControlToClose.addFocusListener(this);
+			}
 
 			fDisplay= fSubjectControl.getDisplay();
 			if (!fDisplay.isDisposed()) {
@@ -126,8 +128,9 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		@Override
 		public void stop() {
 
-			if (!fIsActive)
+			if (!fIsActive) {
 				return;
+			}
 			fIsActive= false;
 
 			fTextViewer.removeViewportListener(this);
@@ -139,8 +142,9 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 			}
 
 			IInformationControl fInformationControlToClose= getCurrentInformationControl2();
-			if (fInformationControlToClose != null)
+			if (fInformationControlToClose != null) {
 				fInformationControlToClose.removeFocusListener(this);
+			}
 
 			if (fDisplay != null && !fDisplay.isDisposed()) {
 				fDisplay.removeFilter(SWT.MouseMove, this);
@@ -194,7 +198,9 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 
 		@Override
 		public void focusLost(FocusEvent e) {
-			if (DEBUG) System.out.println("StickyHoverManager.Closer.focusLost(): " + e); //$NON-NLS-1$
+			if (DEBUG) {
+				System.out.println("StickyHoverManager.Closer.focusLost(): " + e); //$NON-NLS-1$
+			}
 			Display d= fSubjectControl.getDisplay();
 			// Without the asyncExec, mouse clicks to the workbench window are swallowed.
 			d.asyncExec(() -> hideInformationControl());
@@ -203,8 +209,9 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		@Override
 		public void handleEvent(Event event) {
 			if (event.type == SWT.MouseMove) {
-				if (!(event.widget instanceof Control) || event.widget.isDisposed())
+				if (!(event.widget instanceof Control) || event.widget.isDisposed()) {
 					return;
+				}
 
 				IInformationControl infoControl= getCurrentInformationControl2();
 				if (infoControl != null && !infoControl.isFocusControl() && infoControl instanceof IInformationControlExtension3 iControl3) {
@@ -224,15 +231,19 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 					 * TODO: need better understanding of why/if this is needed.
 					 * Looks like the same panic code we have in org.eclipse.jface.text.AbstractHoverInformationControlManager.Closer.handleMouseMove(Event)
 					 */
-					if (fDisplay != null && !fDisplay.isDisposed())
+					if (fDisplay != null && !fDisplay.isDisposed()) {
 						fDisplay.removeFilter(SWT.MouseMove, this);
+					}
 				}
 
 			} else if (event.type == SWT.FocusOut) {
-				if (DEBUG) System.out.println("StickyHoverManager.Closer.handleEvent(): focusOut: " + event); //$NON-NLS-1$
+				if (DEBUG) {
+					System.out.println("StickyHoverManager.Closer.handleEvent(): focusOut: " + event); //$NON-NLS-1$
+				}
 				IInformationControl iControl= getCurrentInformationControl2();
-				if (iControl != null && ! iControl.isFocusControl())
+				if (iControl != null && ! iControl.isFocusControl()) {
 					hideInformationControl();
+				}
 			}
 		}
 	}
@@ -257,11 +268,12 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 
 	@Override
 	protected void showInformationControl(Rectangle subjectArea) {
-		if (fTextViewer != null && fTextViewer.requestWidgetToken(this, WIDGET_PRIORITY))
+		if (fTextViewer != null && fTextViewer.requestWidgetToken(this, WIDGET_PRIORITY)) {
 			super.showInformationControl(subjectArea);
-		else
-			if (DEBUG)
+		} else
+			if (DEBUG) {
 				System.out.println("cancelled StickyHoverManager.showInformationControl(..): did not get widget token (with prio)"); //$NON-NLS-1$
+			}
 	}
 
 	@Override
@@ -269,8 +281,9 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		try {
 			super.hideInformationControl();
 		} finally {
-			if (fTextViewer != null)
+			if (fTextViewer != null) {
 				fTextViewer.releaseWidgetToken(this);
+			}
 		}
 	}
 
@@ -279,16 +292,18 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		try {
 			super.handleInformationControlDisposed();
 		} finally {
-			if (fTextViewer != null)
+			if (fTextViewer != null) {
 				fTextViewer.releaseWidgetToken(this);
+			}
 		}
 	}
 
 	@Override
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		hideInformationControl();
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("StickyHoverManager gave up widget token (no prio)"); //$NON-NLS-1$
+		}
 		return true;
 	}
 
@@ -296,22 +311,26 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
 		if (getCurrentInformationControl2() != null) {
 			if (getCurrentInformationControl2().isFocusControl()) {
-				if (DEBUG)
+				if (DEBUG) {
 					System.out.println("StickyHoverManager kept widget token (focused)"); //$NON-NLS-1$
+				}
 				return false;
 			} else if (priority > WIDGET_PRIORITY) {
 				hideInformationControl();
-				if (DEBUG)
+				if (DEBUG) {
 					System.out.println("StickyHoverManager gave up widget token (prio)"); //$NON-NLS-1$
+				}
 				return true;
 			} else {
-				if (DEBUG)
+				if (DEBUG) {
 					System.out.println("StickyHoverManager kept widget token (prio)"); //$NON-NLS-1$
+				}
 				return false;
 			}
 		}
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println("StickyHoverManager gave up widget token (no iControl)"); //$NON-NLS-1$
+		}
 		return true;
 	}
 

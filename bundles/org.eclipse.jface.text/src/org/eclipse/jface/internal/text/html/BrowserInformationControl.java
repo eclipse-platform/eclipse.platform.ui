@@ -281,13 +281,15 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		fInput= (BrowserInformationControlInput)input;
 
 		String content= null;
-		if (fInput != null)
+		if (fInput != null) {
 			content= fInput.getHtml();
+		}
 
 		fBrowserHasContent= content != null && !content.isEmpty();
 
-		if (!fBrowserHasContent)
+		if (!fBrowserHasContent) {
 			content= "<html><body ></html>"; //$NON-NLS-1$
+		}
 
 		boolean RTL= (getShell().getStyle() & SWT.RIGHT_TO_LEFT) != 0;
 		boolean resizable= isResizable();
@@ -300,16 +302,17 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		// The default "overflow:auto" would not result in a predictable width for the client area
 		// and the re-wrapping would cause visual noise
 		String[] styles= null;
-		if (RTL && resizable)
+		if (RTL && resizable) {
 			styles= new String[] { "direction:rtl;", scrollbarStyle, "word-wrap:break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$
-		else if (RTL && !resizable)
+		} else if (RTL && !resizable) {
 			styles= new String[] { "direction:rtl;", "overflow:hidden;", "word-wrap:break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		else if (!resizable)
+		} else if (!resizable) {
 			//XXX: In IE, "word-wrap: break-word;" causes bogus wrapping even in non-broken words :-(see e.g. Javadoc of String).
 			// Re-check whether we really still need this now that the Javadoc Hover header already sets this style.
 			styles= new String[] { "overflow:hidden;"/*, "word-wrap: break-word;"*/}; //$NON-NLS-1$
-		else
+		} else {
 			styles= new String[] { scrollbarStyle };
+		}
 
 		StringBuilder buffer= new StringBuilder(content);
 		HTMLPrinter.insertStyles(buffer, styles);
@@ -340,8 +343,9 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 			return;
 		}
 
-		if (shell.isVisible() == visible)
+		if (shell.isVisible() == visible) {
 			return;
+		}
 		/*
 		 * The Browser widget flickers when made visible while it is not completely loaded.
 		 * The fix is to delay the call to setVisible until either loading is completed
@@ -360,15 +364,17 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		}
 
 		shell= getShell();
-		if (shell == null || shell.isDisposed())
+		if (shell == null || shell.isDisposed()) {
 			return;
+		}
 
 		/*
 		 * Avoids flickering when replacing hovers, especially on Vista in ON_CLICK mode.
 		 * Causes flickering on GTK. Carbon does not care.
 		 */
-		if (Util.isWin32()) 
+		if (Util.isWin32()) {
 			shell.moveAbove(null);
+		}
 
 		super.setVisible(true);
 	}
@@ -440,8 +446,9 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		Iterator<StyleRange> iter= presentation.getAllStyleRangeIterator();
 		while (iter.hasNext()) {
 			StyleRange sr= iter.next();
-			if (sr.fontStyle == SWT.BOLD)
+			if (sr.fontStyle == SWT.BOLD) {
 				fTextLayout.setStyle(fBoldStyle, sr.start, sr.start + sr.length - 1);
+			}
 		}
 
 		Rectangle bounds= fTextLayout.getBounds(); // does not return minimum width, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=217446
@@ -450,8 +457,9 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		for (int i= 0; i < lineCount; i++) {
 			Rectangle rect= fTextLayout.getLineBounds(i);
 			int lineWidth= rect.x + rect.width;
-			if (i == 0)
+			if (i == 0) {
 				lineWidth+= fInput.getLeadingImageWidth();
+			}
 			textWidth= Math.max(textWidth, lineWidth);
 		}
 		bounds.width= textWidth;
@@ -467,10 +475,12 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 		// Apply max size constraints
 		if (sizeConstraints != null) {
-			if (sizeConstraints.x != SWT.DEFAULT)
+			if (sizeConstraints.x != SWT.DEFAULT) {
 				minWidth= Math.min(sizeConstraints.x, minWidth + trim.width);
-			if (sizeConstraints.y != SWT.DEFAULT)
+			}
+			if (sizeConstraints.y != SWT.DEFAULT) {
 				height= Math.min(sizeConstraints.y, height);
+			}
 		}
 
 		// Ensure minimal size
@@ -568,8 +578,9 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	 * @since 3.4
 	 */
 	public void notifyDelayedInputChange(Object newInput) {
-		if (fDelayedInputChangeListener != null)
+		if (fDelayedInputChangeListener != null) {
 			fDelayedInputChangeListener.inputChanged(newInput);
+		}
 	}
 
 	@Override
@@ -587,8 +598,9 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 
 	@Override
 	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
-		if (fSymbolicFontName == null)
+		if (fSymbolicFontName == null) {
 			return null;
+		}
 
 		GC gc= new GC(fBrowser);
 		Font font= JFaceResources.getFont(fSymbolicFontName);

@@ -57,8 +57,9 @@ public final class NonDeletingPositionUpdater implements IPositionUpdater {
 
 				Position position= positions[i];
 
-				if (position.isDeleted())
+				if (position.isDeleted()) {
 					continue;
+				}
 
 				int offset= position.getOffset();
 				int length= position.getLength();
