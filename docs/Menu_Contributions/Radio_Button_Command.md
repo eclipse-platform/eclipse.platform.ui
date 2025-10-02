@@ -12,6 +12,7 @@ Command Definition
 
 Define a command with a state and a parameter. The state id should be org.eclipse.ui.commands.radioState and the parameter id should be org.eclipse.ui.commands.radioStateParameter.
 
+```xml
     <command
     defaultHandler="com.example.RadioHandler"
     id="z.ex.dropdown.internal.RadioHandler"
@@ -26,31 +27,34 @@ Define a command with a state and a parameter. The state id should be org.eclips
     id="org.eclipse.ui.commands.radioState">
       </state>
     </command>
+```
 
 Alternatively, the state can be initialized with a default value, which will be checked initially in the Menu. Persistence and default value can be set by parameters for org.eclipse.ui.handlers.RadioState class. The above state section would then be replaced by the following.
 
-    <state 
-    id="org.eclipse.ui.commands.radioState"> 
-      <class 
-    class="org.eclipse.ui.handlers.RadioState"> 
-          <parameter 
-    name="default" 
-    value="Moe"> 
-          </parameter> 
-          <parameter 
-    name="persisted" 
-    value="false"> 
-          </parameter> 
-      </class> 
+```xml
+    <state
+    id="org.eclipse.ui.commands.radioState">
+      <class
+    class="org.eclipse.ui.handlers.RadioState">
+          <parameter
+    name="default"
+    value="Moe">
+          </parameter>
+          <parameter
+    name="persisted"
+    value="false">
+          </parameter>
+      </class>
     </state>
+```
 
-  
 
 Handler
 -------
 
 The handler will receive the parameter. It can then update its model (in my example my **model** is a local variable, but that might not be appropriate in command that can have multiple handlers).
 
+```java
     package com.example;
      
     public class RadioHandler extends AbstractHandler{
@@ -67,16 +71,18 @@ The handler will receive the parameter. It can then update its model (in my exam
         // and finally update the current state
         HandlerUtil.updateRadioState(event.getCommand(), currentState);
      
-        return null;  
+        return null;
       }
      
     }
+```
 
 Menu Contribution
 -----------------
 
 Then you add menu contributions with the specific parameters that you want:
 
+```xml
     <menuContribution
     locationURI="menu:help?after=additions">
         <separator
@@ -118,6 +124,7 @@ Then you add menu contributions with the specific parameters that you want:
     visible="true">
         </separator>
     </menuContribution>
+```
 
 Eclipse 3.4 or earlier
 ======================
@@ -129,6 +136,7 @@ Command Definition
 
 You want to create a command that will be executed with a paramter. The parameter in this example matches which of the radio buttons is selected.
 
+```xml
     <command
     categoryId="org.eclipse.ui.category.help"
     defaultHandler="z.ex.dropdown.internal.RadioHandler"
@@ -140,12 +148,14 @@ You want to create a command that will be executed with a paramter. The paramete
     optional="false">
         </commandParameter>
     </command>
+```
 
 Handler
 -------
 
 The handler will receive the parameter. It can then update its model (in my example my **model** is a local variable, but that might not be appropriate in command that can have multiple handlers).
 
+```java
     package com.example.handlers.internal;
      
     import java.util.Map;
@@ -192,12 +202,14 @@ The handler will receive the parameter. It can then update its model (in my exam
       }
     }
     }
+```
 
 Menu Contribution
 -----------------
 
 Then you add menu contributions with the specific parameters that you want:
 
+```xml
     <menuContribution
     locationURI="menu:help?after=additions">
         <separator
@@ -239,12 +251,14 @@ Then you add menu contributions with the specific parameters that you want:
     visible="true">
         </separator>
     </menuContribution>
+```
 
 Initializing the Handler
 ------------------------
 
 It may happen that your radio menu contributions are not initialized the first time the menu is displayed. This is because at this time, your Handler might not yet have been instantiated (this is due to Eclipse's lazy loading policy). If this is the case, you can enforce the instantiation of your Handler within the Activator of your plug-in. Just add the following code to the start(BundleContext) method:
 
+```java
     UIJob job = new UIJob("InitCommandsWorkaround") {
      
         public IStatus runInUIThread(@SuppressWarnings("unused") IProgressMonitor monitor) {
@@ -261,4 +275,4 @@ It may happen that your radio menu contributions are not initialized the first t
      
     };
     job.schedule();
-
+```

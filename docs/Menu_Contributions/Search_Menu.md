@@ -14,8 +14,7 @@ ActionSet context
 
 For something to go in an actionSet, then we would define the actionSet context. ActionSet contexts are only partially supported in **3.3M5**.
 
- 
-
+```xml
      <extension point="org.eclipse.ui.contexts">
        <context description="%JavaSearchActionSet.description"
                 id="org.eclipse.jdt.ui.SearchActionSet"
@@ -23,17 +22,15 @@ For something to go in an actionSet, then we would define the actionSet context.
                 parentId="org.eclipse.ui.contexts.actionSet">
        </context>
      </extension>
-    
+```
 
- 
 
 Commands
 --------
 
 Also, a number of the items were retargetable actions that allow label updates. The active handler can update their appearance with an ICommandService@refreshElements(*) call.
 
- 
-
+```xml
      <extension point="org.eclipse.ui.commands">
        <command name="%ActionDefinition.readAccessInworkspace.name"
                 description="%ActionDefinition.readAccessInWorkspace.description"
@@ -76,17 +73,14 @@ Also, a number of the items were retargetable actions that allow label updates. 
                 id="org.eclipse.jdt.ui.edit.text.java.search.write.access.in.working.set">
        </command>
      </extension>
-    
-
- 
+```
 
 Menus
 -----
 
 We'll assume that the Search menu is globally defined elsewhere by the org.eclipse.search plugin.
 
- 
-
+```xml
       <extension point="org.eclipse.ui.menus">
          <menuContribution locationURI="menu:org.eclipse.ui.main.menu?after=navigate">
             <menu label="%searchMenu.label"
@@ -102,16 +96,11 @@ We'll assume that the Search menu is globally defined elsewhere by the org.eclip
             </menu>
          </menuContribution>
       </extension>
-    
-
- 
+```
 
 Then the JDT plugin would contribute the menu items to search, where the menuContribution location specifies the starting point for adding the menus. For groups of actions like the Write Access or Read Access shown here, they can just be specified in order. The <visibleWhen/> clauses must be specified on the items contributed if they want to belong to the actionSet, but if the contribute items are contain in a contributed menu, it can just be specified on the <menu/> element.
 
-  
-
- 
-
+```xml
       <extension point="org.eclipse.ui.menus">
          <menuContribution locationURI="menu:org.eclipse.search.menu?after=dialogGroup">
             <command commandId="org.eclipse.jdt.internal.ui.search.openJavaSearchPage"
@@ -203,13 +192,11 @@ Then the JDT plugin would contribute the menu items to search, where the menuCon
             </command>
          </menuContribution>
       </extension>
-    
+```
 
- 
-
-  
 Currently, the java search menus are in the Java Search actionSet, that is dynamically enabled/disabled. This could also be done by specifying a visibleWhen like:
 
+```xml
     <visibleWhen>
       <with variable="activeEditorId">
         <or>
@@ -218,9 +205,7 @@ Currently, the java search menus are in the Java Search actionSet, that is dynam
         </or>
       </with>
     </visibleWhen>
-    
-
- 
+```
 
 This would make the visible if either the Java or Class File editor was the active editor, and they would disappear otherwise.
 
@@ -229,55 +214,51 @@ Menus API
 
 The API can be used to contribute to the main menu bar:
 
- 
-
+```java
        public static void addSearchMenu() {
            IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
                    .getService(IMenuService.class);
-    
+
            AbstractContributionFactory searchContribution = new AbstractContributionFactory(
                    "menu:org.eclipse.ui.main.menu?after=navigate") {
                public void createContributionItems(IMenuService menuService,
                        List additions) {
                    MenuManager search = new MenuManager("Se&arch",
                            "org.eclipse.search.menu");
-    
+
                    search.add(new GroupMarker("internalDialogGroup"));
                    search.add(new GroupMarker("dialogGroup"));
                    search.add(new Separator("fileSearchContextMenuActionsGroup"));
                    search.add(new Separator("contextMenuActionsGroup"));
                    search.add(new Separator("occurencesActionsGroup"));
                    search.add(new Separator("extraSearchGroup"));
-    
+
                    additions.add(search);
                }
-    
+
                public void releaseContributionItems(IMenuService menuService,
                        List items) {
                    // nothing to do here
                }
            };
-    
+
            menuService.addContributionFactory(searchContribution);
        }
-    
+```
 
- 
-
-  
 It's just a menu inserted at the menu root location.
 
-  
+
 Then another plugin can contribute to the search menu:
 
- 
 
+```java
        public static void addToSearchMenu() {
            final IMenuService menuService = (IMenuService) PlatformUI
                    .getWorkbench().getService(IMenuService.class);
            final ActiveActionSetExpression activeSearchActionSet = new ActiveActionSetExpression(
                    "org.eclipse.jdt.ui.SearchActionSet");
-    
+
            final ImageDescriptor searchIcon = AbstractUIPlugin
                    .imageDescriptorFromPlugin("org.eclipse.ui.tests",
                            "icons/full/obj16/jsearch_obj.gif");
@@ -293,13 +274,13 @@ Then another plugin can contribute to the search menu:
                    menuService.registerVisibleWhen(item, activeSearchActionSet);
                    additions.add(item);
                }
-    
+
                public void releaseContributionItems(IMenuService menuService,
                        List items) {
                }
            };
            menuService.addContributionFactory(factory);
-    
+
            factory = new AbstractContributionFactory(
                    "menu:org.eclipse.search.menu?after=contextMenuActionsGroup") {
                public void createContributionItems(IMenuService menuService,
@@ -309,9 +290,9 @@ Then another plugin can contribute to the search menu:
                    menuService
                            .registerVisibleWhen(readMenu, activeSearchActionSet);
                    additions.add(readMenu);
-    
+
                    readMenu.add(new GroupMarker("group1"));
-    
+
                    CommandContributionItem item = new CommandContributionItem(
                            "org.eclipse.jdt.ui.edit.text.java.search.read.access.in.workspace",
                            "org.eclipse.jdt.ui.edit.text.java.search.read.access.in.workspace",
@@ -336,15 +317,15 @@ Then another plugin can contribute to the search menu:
                            null, null, null, null, null, "S", null,
                            CommandContributionItem.STYLE_PUSH);
                    readMenu.add(item);
-    
+
                    MenuManager writeMenu = new MenuManager("&Write Access",
                            "writeAccessSubMenu");
                    menuService.registerVisibleWhen(writeMenu,
                            activeSearchActionSet);
                    additions.add(writeMenu);
-    
+
                    writeMenu.add(new GroupMarker("group1"));
-    
+
                    item = new CommandContributionItem(
                            "org.eclipse.jdt.ui.edit.text.java.search.write.access.in.workspace",
                            "org.eclipse.jdt.ui.edit.text.java.search.write.access.in.workspace",
@@ -370,18 +351,14 @@ Then another plugin can contribute to the search menu:
                            CommandContributionItem.STYLE_PUSH);
                    writeMenu.add(item);
                }
-    
+
                public void releaseContributionItems(IMenuService menuService,
                        List items) {
                }
            };
            menuService.addContributionFactory(factory);
        }
-    
-
- 
-
-  
+```
 
 When the main menu is populated, these contribution factories will be called.
 

@@ -1,4 +1,4 @@
-Eclipse 
+Eclipse
 ======
 
 
@@ -21,6 +21,7 @@ Sample
 
 The sample code below creates a simple Label within a Shell but the Label's foreground colour is styled to a blue colour by the CSS engine.
 
+```java
     Display display = new Display();
     Shell shell = new Shell();
     shell.setLayout(new GridLayout());
@@ -50,15 +51,16 @@ The sample code below creates a simple Label within a Shell but the Label's fore
       }
     }
     display.dispose();
+```
 
 SWT Mapping
 -----------
 
-CSS style sheets can be used to modify SWT widget properties. 
+CSS style sheets can be used to modify SWT widget properties.
 
 
-Many SWT property setting methods can be accessed via CSS. 
-These tables show the equivalent mapping from SWT method to CSS property. 
+Many SWT property setting methods can be accessed via CSS.
+These tables show the equivalent mapping from SWT method to CSS property.
 They also show pseudo selectors which can be used to choose styling based on widget state.
 
 
@@ -78,7 +80,7 @@ They also show pseudo selectors which can be used to choose styling based on wid
 |  | font-style    font-size   font-weight    font-family | Label { font-style: italic;              font-size: 12;             font-weight: bold;              font-family: "Terminal"; } |
 | setForeground(Color) | color | Button { color: #FF0000 } |
 
-  
+
 
 ### Widget: Button
 
@@ -86,7 +88,7 @@ They also show pseudo selectors which can be used to choose styling based on wid
 | --- | --- | --- |
 | setAlignment(int) | swt-alignment | Label { swt-alignment: up; } /* if pushbutton mode */ |
 
-  
+
 
 ### Widget: Label
 
@@ -94,7 +96,7 @@ They also show pseudo selectors which can be used to choose styling based on wid
 | --- | --- | --- |
 | setAlignment(int) | swt-alignment | Label { swt-alignment: center; } |
 
-  
+
 
 ### Widget: CTabFolder
 
@@ -115,7 +117,7 @@ They also show pseudo selectors which can be used to choose styling based on wid
 | setBackground(Color\[\],int\[\]) | swt-unselected-tabs-color | CTabFolder { swt-unselected-tabs-color: #FF0000 #FFFFFF 100%; } |
 | setTabHeight(int) | swt-tab-height | CTabFolder { swt-tab-height: 10px; } |
 
-  
+
 
 ### Widget: CTabItem
 
@@ -123,7 +125,7 @@ They also show pseudo selectors which can be used to choose styling based on wid
 | --- | --- | --- |
 | setShowClose(boolean) | swt-show-close | CTabItem { swt-show-close: true } |
 
-  
+
 
 ### Widget: CTabFolder with e4Renderer
 
@@ -138,7 +140,7 @@ Note: The following examples assume that you have first set the tab-renderer to 
 | setSelectedTabFill(Color) | swt-selected-tab-fill | CTabFolder { swt-selected-tab-fill: #F79402; } |
 | setTabOutline(Color) | swt-tab-outline | CTabFolder { swt-tab-outline: #F79402; } |
 
-  
+
 
 ### Pseudo classes which can be used in CSS to style SWT widgets
 
@@ -153,7 +155,7 @@ Note: The following examples assume that you have first set the tab-renderer to 
 | CTabFolder | :selected | CTabFolder:selected { background-color: #FF0000; } |
 | CTabItem | :selected | CTabItem:selected { font-weight: bold; } |
 
-  
+
 † As of yet styles are only applied when SWT UI is initially loaded, if widget state is changed afterwards, changes will not take effect
 
 
@@ -164,89 +166,74 @@ E4/CSS/Add Selector
 
 This is a "how-to" that will explain the steps needed to add a CSS Selector in E4.
 
-  
+
 \- Create a class in org.eclipse.e4.ui.css.swt.selectors, and name it "DynamicPseudoClassesSWTxxxxHandler" where "xxxx" is the name of the selector
 
-  
+
 \- Make this new class extend "AbstractDynamicPseudoClassesControlHandler"
-
-
+```java
          public class DynamicPseudoClassesSWTActiveHandler extends AbstractDynamicPseudoClassesControlHandler
-    
+```
 
- 
-
-  
 \- Within the class, create a IDynamicPseudoClassesHandler and set it equal to an instance of DynamicPseudoClassesSWTxxxxHandler
-
+```java
          public static final IDynamicPseudoClassesHandler INSTANCE = new DynamicPseudoClassesSWTxxxxHandler();
-    
+```
 
- 
 
-  
+
+
 \- Add the following two methods:
-
+```java
          protected void intialize(final Control control, final CSSEngine engine) {}
          protected void dispose(Control control, CSSEngine engine) {}
-    
+```
+
+* Note: method name is intilize is not initialize
 
 
-         Note: method name is intilize is not initialize
-    
 
- 
 
-  
+
 \- In the intialize method, add the code needed (most likely listeners to look for change of state). For an example, see org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTActiveHandler
 
-  
-\- Make use of the setData() method on the widget (to get information about the widget in another class), as well as applying the styles to the engine. For example, in a listener's method, you can do the following:
 
+\- Make use of the setData() method on the widget (to get information about the widget in another class), as well as applying the styles to the engine. For example, in a listener's method, you can do the following:
+```java
          try {
               control.setData("Some Qualified String", Boolean.TRUE);
               engine.applyStyles(control, false, true);
          } catch (Exception ex) {
               engine.handleExceptions(ex);
          }
-    
-        
-    
-
- 
+```
 
 \- It is preferable to use a qualified string, and to keep it in org.eclipse.e4.ui.css.swt.CSSSWTConstants
 
-  
+
 \- In the dispose method, get rid of all listeners that were created in the above intialize method
 
-  
+
 \- In org.eclipse.e4.ui.css.swt.dom.SWTElement#isPseudoInstanceOf add the new selector with the use of an "if" statement
+```java
          if ("xxxx".equals(s)) {}
-    
+```
 
- 
-
-  
 \- Within the if statement, return the appropriate boolean value based on the setData() you used in your listener, and add any other conditional statements that may be necessary
-
+```java
          if ("xxxx".equals(s)) {
              Widget widget = getNativeWidget();
              if (widget != null) {
                 return widget.getData("Some Qualified String") == null;
              }
          }
-    
+```
 
- 
 
-  
 \- Now, we must go in org.eclipse.e4.ui.css.swt.engine.AbstractCSSSWTEngineImpl , and register the name of the selector and the instance of the above class just created:
-
+```java
          super.registerDynamicPseudoClassHandler("xxxx", DynamicPseudoClassesSWTxxxxHandler.INSTANCE);
-    
-
- 
+```
 
 E4/CSS/Add Styleable Property
 =============================
@@ -262,30 +249,25 @@ Create the Property Handler Class
 
 Create a class in org.eclipse.e4.ui.css.swt.properties.custom and name it "CSSPropertyXXXXSWTHandler", where XXXX is the name of the property
 
-  
+
 \- Make this new class extend "AbstractCSSPropertySWTHandler"
-
+```java
         public class CSSPropertyXXXXSWTHandler extends AbstractCSSPropertySWTHandler
-    
+```
 
- 
-
-  
 \- Add the following two methods:
-
+```java
          public void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine) throws Exception {}
-    
+
 
          public String retrieveCSSProperty(Control control, String property, String pseudo, CSSEngine engine) throws Exception {}
-    
-
- 
+```
 
 Implement Property Setting
 --------------------------
 
-Within the applyCSSProperty method, write the code needed to apply the wanted styles. For example, for the border-visible property (CTabFolder) we write the following: 
-
+Within the applyCSSProperty method, write the code needed to apply the wanted styles. For example, for the border-visible property (CTabFolder) we write the following:
+```java
          public void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine) throws Exception {
                 boolean isBorderVisible = (Boolean)engine.convert(value, Boolean.class, null);
                 if (control instanceof CTabFolder) {
@@ -293,24 +275,21 @@ Within the applyCSSProperty method, write the code needed to apply the wanted st
                     folder.setBorderVisible(isBorderVisible);
                 }
          }
-    
-
- 
+```
 
 Implement Property Retrieval
 ----------------------------
 
 Within the retrieveCSSProperty method, write the code needed to retrieve the value of the applied property. Again, for border-visible, we write the following:
 
+```java
          public String retrieveCSSProperty(Control control, String property, String pseudo, CSSEngine engine) throws Exception {
                 if (control instanceof CTabFolder) {
                     CTabFolder folder = (CTabFolder) control;
                     return Boolean.toString( folder.getBorderVisible() );
                 }
          }
-    
-
- 
+```
 
 Expose the Property
 -------------------
@@ -320,9 +299,10 @@ Finally we must wire in the property handler to the CSS Engine. There are two ap
 *   Configure the property using the org.eclipse.e4.ui.css.core.propertyHandler extension point.
 *   Explicitly configure the CSS engine instance in the initializeCSSPropertyHandlers() method. In this case, we must first register the name of the property and the above class just created. We must also register the CSSPropertyHandler created in the class:
 
+```java
          super.registerCSSProperty("xxxx", CSSPropertyXXXXSWTHandler.class);
          super.registerCSSPropertyHandler(CSSPropertyXXXXSWTHandler.class, new CSSPropertyXXXXSWTHandler());
-
+```
 
 Using CSS in Eclipse 3.6
 ------------------------

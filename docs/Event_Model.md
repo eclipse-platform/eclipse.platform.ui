@@ -6,8 +6,8 @@ Eclipse4/RCP/Event Model
 Introduction
 ============
 
-Eclipse 4 uses a single global event bus with a publish and subscribe event model. 
-The rationale for using this strategy is described in [Event Processing in E4](/E4/Event_Processing "E4/Event Processing"). 
+Eclipse 4 uses a single global event bus with a publish and subscribe event model.
+The rationale for using this strategy is described in [Event Processing in E4](/E4/Event_Processing "E4/Event Processing").
 The global event bus is implemented on top of the OSGi eventing engine and is accessed using org.eclipse.e4.core.services.events.IEventBroker.
 
 Getting an IEventBroker
@@ -16,16 +16,18 @@ Getting an IEventBroker
 IEventBroker is model after the [OSGi EventAdmin](http://www.osgi.org/javadoc/r4v41/org/osgi/service/event/EventAdmin.html) service and provides methods for subscribing and unsubscribing to events on the bus, as well as methods for posting events to the bus.
 
 An instance of the IEventBroker is typically available in the EclipseContext
-
+```java
     …
     private IEclipseContext eclipseContext;
     …
     IEventBroker eventBroker = eclipseContext.get(IEventBroker.class);
+```
 
 or is provided via dependency injection.
-
+```java
     @Inject
     IEventBroker eventBroker;
+```
 
 Posting an Event
 ================
@@ -63,8 +65,8 @@ Whenever possible you should use dependency injection to register and respond to
 
 A quick note on the visibility of the injected handler methods.
 
-A best practice would be to mark your handler methods as private. 
-This makes it clear to users that the method should not be called directly. 
+A best practice would be to mark your handler methods as private.
+This makes it clear to users that the method should not be called directly.
 The dependency injection mechanism can inject into private fields and methods so this does not cause a problem.
 
 Subscribing Using IEventBroker

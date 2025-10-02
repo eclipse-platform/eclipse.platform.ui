@@ -5,16 +5,17 @@ Menu Contributions/Problems View Example
 Add ProblemView menus
 =====================
 
-Add the Problems view menus. 
-The Problems view has one toolbar action and in the view menu, 3 actions and 2 dynamic submenus. 
+Add the Problems view menus.
+The Problems view has one toolbar action and in the view menu, 3 actions and 2 dynamic submenus.
 It also has a dynamic menu and another bunch of actions in its context menu.
 
 Commands
 --------
 
-First define commands that are specific to the view. 
+First define commands that are specific to the view.
 Since these are view commands, we can specify a default handler ... we're unlikely to replace it.
 
+```xml
         <extension point="org.eclipse.ui.commands">
             <category id="org.eclipse.ui.views.problems"
         name="%ProblemView.category.name">
@@ -51,14 +52,16 @@ Since these are view commands, we can specify a default handler ... we're unlike
         id="org.eclipse.ui.views.problems.goTo"
         name="%ProblemView.GoTo.name" />
         </extension>
+```
 
 Handlers
 --------
 
-We can also use a number of global commands, like copy, paste, delete, quick fix, and properties. 
-For these, we just need to define our handlers. 
+We can also use a number of global commands, like copy, paste, delete, quick fix, and properties.
+For these, we just need to define our handlers.
 We need to add them with `<activeWhen/>` clauses to restrict them to being active when the view is active.
 
+```xml
         <extension point="org.eclipse.ui.handlers">
             <handler commandId="org.eclipse.ui.edit.copy"
         class="org.eclipse.ui.views.markers.internal.CopyMarkerHandler">
@@ -139,23 +142,27 @@ We need to add them with `<activeWhen/>` clauses to restrict them to being activ
                 </activeWhen>
             </handler>
         </extension>
+```
 
 Or we can programmatically activate them through the IHandlerService which we would retrieve from the ProblemView site.
 
+```java
 		IHandlerService handlerServ = (IHandlerService)getSite().getService(IHandlerService.class);
 		CopyMarkerHandler copy = new CopyMarkerHandler();
 		handlerServ.activateHandler("org.eclipse.ui.edit.copy", copy);
+```
 
 Using the ProblemView site to access the IHandlerService handles the `<activeWhen/>` clause for us, and our programmatic handler would manage its own enablement state.
 
 Menus
 -----
 
-Then we would define the ProblemView menu structures. 
-We are using 3 **roots**: the view menu, the view toolbar, and the view context menu. 
-This is an example of an "in-place" menu definition. The `<menuContribution/>` location attribute is a URI that defines the starting point for inserting the menu elements. 
+Then we would define the ProblemView menu structures.
+We are using 3 **roots**: the view menu, the view toolbar, and the view context menu.
+This is an example of an "in-place" menu definition. The `<menuContribution/>` location attribute is a URI that defines the starting point for inserting the menu elements.
 The XML hierarchy mirrors the menu hierarchy, in that you can define items and menus within the body of other menus.
 
+```xml
         <extension point="org.eclipse.ui.menus">
             <menuContribution locationURI="menu:org.eclipse.ui.views.ProblemView">
                 <command commandId="org.eclipse.ui.views.problems.sorting"
@@ -249,6 +256,7 @@ The XML hierarchy mirrors the menu hierarchy, in that you can define items and m
         mnemonic="%ProblemView.Properties.mnemonic" />
             </menuContribution>
         </extension>
+```
 
 Menus API
 ---------
@@ -257,6 +265,7 @@ We can contribute menu definitions through the IMenuService API.
 
 The above example can be done for the view menus:
 
+```java
         public void addProblemsViewMenuContribution() {
             IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
                     .getService(IMenuService.class);
@@ -348,7 +357,8 @@ The above example can be done for the view menus:
             };
             menuService.addContributionFactory(viewMenuAddition);
         }
+```
 
-The `AbstractContributionFactory` creates new contribution items every time `createContributionItems(List)` is called. 
+The `AbstractContributionFactory` creates new contribution items every time `createContributionItems(List)` is called.
 The factory location tells the framework where to insert the contributions when populating `ContributionManager`s.
 

@@ -6,6 +6,7 @@ Widget in the main toolbar
 
 You can use the extension point to contribute a control to the toolbar. You use the <control/> element instead of the <command/> element.
 
+```java
         <extension point="org.eclipse.ui.menus">
             <menuContribution locationURI="toolbar:org.eclipse.search.toolbar">
                 <control id="org.eclipse.ui.examples.menus.searchBar"
@@ -20,10 +21,11 @@ You can use the extension point to contribute a control to the toolbar. You use 
                 </control>
             </menuContribution>
         </extension>
+```
 
 The control class must implement WorkbenchWindowControlContribution as of **3.3M5**.
 
-  
+
 I'm not sure how far to go with IWorkbenchWidget. We already use this interface for adding controls to the trim, and there are open bug requests about adding arbitrary controls to the toolbars. It looks like we'll deprecate it in favour of WorkbenchWindowControlContribution.
 
 Also, there are risks associated with this like eager plugin activation. Maybe we allow widget activation but restrict it to programmatic API only (after the plugin has been instantiated) or still allow declarative contributions but only with certain types of `<visibleWhen/>` clauses.

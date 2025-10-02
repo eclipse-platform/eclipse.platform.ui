@@ -63,35 +63,35 @@ Status manager & Status handlers
 
 StatusManager is the entry point for all statuses to be reported in the user interface. Handlers are not intended to be used directly. They should be referenced via the StatusManager which selects the handler corresponding to the product to apply. Right now it is impossible to have more than one handler per product because of scalability issues.
 
-  
+
 The following methods are the API entry points to the StatusManager
 
     StatusManager#handle(IStatus)
-    
-    StatusManager#handle(IStatus, int)
-    
-    StatusManager#handle(StatusAdapter)
-    
-    StatusManager#handle(StatusAdapter, int)
-    
 
- 
+    StatusManager#handle(IStatus, int)
+
+    StatusManager#handle(StatusAdapter)
+
+    StatusManager#handle(StatusAdapter, int)
+
+
+
 
 The StatusManager singleton is accessed using
 
     StatusManager.getManager()
-    
 
- 
+
+
 
 The `int` parameter are for supplying style for handling. See [Acceptable styles](#styles).
 
-**NOTE!** the style is a suggestion and may not be honored by the current handler. 
-For instance a handler may choose to not show the user anything when the SHOW flag is sent. 
+**NOTE!** the style is a suggestion and may not be honored by the current handler.
+For instance a handler may choose to not show the user anything when the SHOW flag is sent.
 See [Status handlers](#Status_handlers) for more details.
 
-The StatusManager gets it's list of handlers from the extension point `org.eclipse.ui.statusHandlers`. 
-Should none of those handlers process the status it will fall through to the default handler (the the SDk this is `WorkbenchAdvisor#getWorkbenchErrorHandler()`). 
+The StatusManager gets it's list of handlers from the extension point `org.eclipse.ui.statusHandlers`.
+Should none of those handlers process the status it will fall through to the default handler (the the SDk this is `WorkbenchAdvisor#getWorkbenchErrorHandler()`).
 If a handler is associated with a product, it is used instead of this defined in advisor.
 
 ### Styles
@@ -105,11 +105,11 @@ Below is a list of StatusManager styles which can be combined with logical OR.
 
 ### Status handlers
 
-Status handlers are part of the status handling facility. 
-The handlers are responsible for presenting statuses by logging or showing appropriate feedback to the user (generally dialogs). 
-All status handlers extend `org.eclipse.ui.statushandlers.AbstractStatusHandler` which requires each handler to implement `handle(StatusAdapter status, int style)`. 
-This method handles statuses based on a handling style. 
-The style indicates how status handler should handle a status. 
+Status handlers are part of the status handling facility.
+The handlers are responsible for presenting statuses by logging or showing appropriate feedback to the user (generally dialogs).
+All status handlers extend `org.eclipse.ui.statushandlers.AbstractStatusHandler` which requires each handler to implement `handle(StatusAdapter status, int style)`.
+This method handles statuses based on a handling style.
+The style indicates how status handler should handle a status.
 See [Acceptable styles](#Styles).
 
 There are two ways for adding handlers to the handling flow.
@@ -119,37 +119,32 @@ There are two ways for adding handlers to the handling flow.
 
 If a handler is associated with a product, it is used instead of this defined in advisor.
 
-  
+
 A status handler has the id and a set of parameters. The handler can use them during handling. If the handler is added as an extension, both are set during initialization of the handler using elements and attributes of `statusHandler` element.
 
-  
-**WARNING!** We have to take the extra action when something has to be logged using the default logging mechanism, because the facility is hooked into it. 
-See [Hooking the facility into Platform](#Hooking_the_facility_into_Platform). 
+
+**WARNING!** We have to take the extra action when something has to be logged using the default logging mechanism, because the facility is hooked into it.
+See [Hooking the facility into Platform](#Hooking_the_facility_into_Platform).
 For this special case the status manager provides API.
 
- 
-
+```java
       StatusManager#addLoggedStatus(IStatus status)
-    
-
- 
+```
 
 And below is the example of `addLoggedStatus(IStatus status)` proper usage.
 
- 
 
+```java
       public void handle(final StatusAdapter statusAdapter, int style) {
-      
+
         ...
-    
+
         if ((style & StatusManager.LOG) == StatusManager.LOG) {
           StatusManager.getManager().addLoggedStatus(statusAdapter.getStatus());
             WorkbenchPlugin.getDefault().getLog().log(statusAdapter.getStatus());
         }
       }
-    
-
- 
+```
 
 ### StatusAdapter
 
@@ -166,35 +161,35 @@ The places where the facility is hooked in
 
 Platform is still under refactoring aimed at introducing the status handling facility.
 
-  
+
 **WARNING!** The facility isn't hooked into JFace ErrorDialog or MessageDialog in any way. The code has to be refactored if the facility is to be used.
 
 The old code
 
- 
+
 
       ErrorDialog.openError(...);
-    
 
- 
+
+
 
 or
 
- 
+
 
       MessageDialog.openError(...);
-    
 
- 
+
+
 
 should be refactored into
 
- 
+
 
       StatusManager.getManager().handle(..., StatusManager.SHOW);
-    
 
- 
+
+
 
 WorkbenchStatusHandler and IDEWorkbenchStatusHandler
 ----------------------------------------------------
@@ -365,7 +360,7 @@ To be done
 
 #### Usage
 
-**Note for WorkbenchStatusDialog clients**  
+**Note for WorkbenchStatusDialog clients**
 Please note that WorkbenchStatusDialog#getPrimaryMessage & WorkbenchStatusDialog#getSecondaryMessage begin searching for the message from StatusAdapter title. It means that when we are handling job statuses we display:
 
 *   single status

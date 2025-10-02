@@ -7,11 +7,11 @@ Core expressions are declarative or programmatic expressions based on the org.ec
 Expressions and the Command Framework
 =====================================
 
-The [Platform Command Framework](PlatformCommandFramework.md) uses [core expressions](Platform_Expression_Framework.md) for enabledWhen and activeWhen for handlers, programmatic activation of contexts, and for visibleWhen for menu contributions. 
+The [Platform Command Framework](PlatformCommandFramework.md) uses [core expressions](Platform_Expression_Framework.md) for enabledWhen and activeWhen for handlers, programmatic activation of contexts, and for visibleWhen for menu contributions.
 The command framework provides the IEvaluationContext that command core expressions are evaluate against.
 
-The IEvaluationContext provides a default variable for evaluations, and a number of named variables. 
-In the command framework, we provide the global selection as a `java.util.Collection` as the default variable. 
+The IEvaluationContext provides a default variable for evaluations, and a number of named variables.
+In the command framework, we provide the global selection as a `java.util.Collection` as the default variable.
 It can either be empty, have one entry (if the ISelection was something like an ITextSelection), or have the contents of an IStructuredSelection.
 
 The <with/> element can be used to change which variable the child expression elements are evaluating against.
@@ -50,12 +50,12 @@ Note: All these variables can be used with <test/> and a `org.eclipse.common.exp
 Property Testers
 ================
 
-The Eclipse SDK provides a couple of property testers that can be used in core expressions. 
-The expression defines a property attribute and then takes a combination of args and a value that is tester implementation dependent. 
-The property attribute is the combination of the namespace and property name. 
+The Eclipse SDK provides a couple of property testers that can be used in core expressions.
+The expression defines a property attribute and then takes a combination of args and a value that is tester implementation dependent.
+The property attribute is the combination of the namespace and property name.
 For example, to test an IResource name the property would be `org.eclipse.core.resources.name`.
 
-  
+
 
 ||||
 | --- | --- | --- |
@@ -112,24 +112,26 @@ Here are some examples. I'll pretend all of the examples are deciding when a han
 Basic IStructuredSelection
 --------------------------
 
-A view provides a structured selection through its selection provider. 
-An example would be the InfoView in **org.eclipse.ui.examples.contributions**. 
-You can browse the [plugin.xml](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/tree/examples/org.eclipse.ui.examples.contributions/plugin.xml) and [InfoView.java](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/tree/examples/org.eclipse.ui.examples.contributions/src/org/eclipse/ui/examples/contributions/view/InfoView.java) files. 
+A view provides a structured selection through its selection provider.
+An example would be the InfoView in **org.eclipse.ui.examples.contributions**.
+You can browse the [plugin.xml](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/tree/examples/org.eclipse.ui.examples.contributions/plugin.xml) and [InfoView.java](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/tree/examples/org.eclipse.ui.examples.contributions/src/org/eclipse/ui/examples/contributions/view/InfoView.java) files.
 The InfoView provides an `IStructuredSelection` with 0 or more `org.eclipse.ui.examples.contributions.model.Person`.
 
-When using the default variable, you must treat it as an `java.util.Collection`. 
+When using the default variable, you must treat it as an `java.util.Collection`.
 That means using <count> or <iterate>
 
+```xml
     <activeWhen>
         <iterate>
            <instanceof value="org.eclipse.ui.examples.contributions.model.Person"/>
         </iterate>
     </activeWhen>
+```
 
 Package Explorer IStructuredSelection
 -------------------------------------
 
-The Package Explorer is a mixture of `org.eclipse.core.resources.IResource`, `org.eclipse.jdt.core.IJavaElement` and other classes. 
+The Package Explorer is a mixture of `org.eclipse.core.resources.IResource`, `org.eclipse.jdt.core.IJavaElement` and other classes.
 If you are trying to find all of the *.java files, you would need to:
 
 1.  Iterate through the default variable
@@ -137,32 +139,34 @@ If you are trying to find all of the *.java files, you would need to:
 3.  use one of the org.eclipse.core.resources property testers to test the IResource property
 
 For example:
-
+```xml
     <activeWhen>
         <iterate>
            <adapt type="org.eclipse.core.resources.IResource">
-              <test property="org.eclipse.core.resources.name" 
+              <test property="org.eclipse.core.resources.name"
                     value="*.java"/>
            </adapt>
         </iterate>
     </activeWhen>
+```
 
 Active editor type
 ------------------
 
 If you want your handler to be active for a specific type of editor, you can use **activeEditorId** to target your handler.
-
+```xml
     <activeWhen>
         <with variable="activeEditorId">
            <equals value="org.eclipse.ui.DefaultTextEditor"/>
         </with>
     </activeWhen>
+```
 
 Complex nested boolean expressions
 ----------------------------------
 
 You can also write complex nested boolean expressions, like **(a & b & (c | d | (!e)))**:
-
+```xml
     <and>
       <test args="a" property="rcpAuthActivitiesExample.test" />
       <test args="b" property="rcpAuthActivitiesExample.test" />
@@ -174,8 +178,9 @@ You can also write complex nested boolean expressions, like **(a & b & (c | d | 
         </not>
       </or>
     </and>
+```
 
-You can build the complete boolean expression out of arbitrary single boolean expressions. 
+You can build the complete boolean expression out of arbitrary single boolean expressions.
 Not only property testers like in this example.
 
 New Core Expressions in 3.3
@@ -186,8 +191,8 @@ In 3.3 there were 2 additions to the core expressions framework.
 count and iterate
 -----------------
 
-Count and iterate have always worked against `java.util.Collection`. 
-The <count/> and <iterate> elements can now be used on any variable that adapts to `org.eclipse.core.expressions.ICountable` and `org.eclipse.core.expressions.IIterable` or implements the interfaces directly. 
+Count and iterate have always worked against `java.util.Collection`.
+The <count/> and <iterate> elements can now be used on any variable that adapts to `org.eclipse.core.expressions.ICountable` and `org.eclipse.core.expressions.IIterable` or implements the interfaces directly.
 It wasn't possible to use the java 1.5 constructs for iterable.
 
 The workbench provides an adapter for `ISelection` and `IStructuredSelection`.
@@ -195,9 +200,10 @@ The workbench provides an adapter for `ISelection` and `IStructuredSelection`.
 definitions
 -----------
 
-The **org.eclipse.core.expressions.definitions** extension point was introduced. 
+The **org.eclipse.core.expressions.definitions** extension point was introduced.
 You can create core expression definitions, and then reference them from other core expressions.
 
+```xml
     <extension point="org.eclipse.core.expressions.definitions">
         <definition id="org.eclipse.ui.examples.contributions.view.inView">
            <with variable="activePartId">
@@ -205,12 +211,14 @@ You can create core expression definitions, and then reference them from other c
            </with>
         </definition>
     </extension>
+```
 
 Then:
-
+```xml
     <activeWhen>
         <reference definitionId="org.eclipse.ui.examples.contributions.view.inView"/>
     </activeWhen>
+```
 
 The referenced expression will be evaluated at this point.
 
