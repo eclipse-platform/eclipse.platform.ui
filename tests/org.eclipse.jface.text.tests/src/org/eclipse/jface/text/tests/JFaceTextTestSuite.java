@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 import org.eclipse.jface.text.tests.codemining.CodeMiningLineHeaderAnnotationTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningProjectionViewerTest;
@@ -37,14 +36,13 @@ import org.eclipse.jface.text.tests.source.inlined.AnnotationOnTabTest;
 import org.eclipse.jface.text.tests.source.inlined.LineContentBoundsDrawingTest;
 import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDataTest;
 
-
 /**
  * Test Suite for org.eclipse.jface.text.
  *
  * @since 3.0
  */
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 		AnnotationRulerColumnTest.class,
 		LineNumberRulerColumnTest.class,
 		HTML2TextReaderTest.class,
@@ -84,5 +82,5 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		TestWhitespaceCharacterPainter.class
 })
 public class JFaceTextTestSuite {
-	// see @SuiteClasses
+	// see @SelectClasses
 }
