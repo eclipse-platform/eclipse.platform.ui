@@ -14,14 +14,14 @@
 
 package org.eclipse.jface.tests.fieldassist;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 /**
  * Tests for the platform operations support.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ // disabled, see bug 275393...
+@Suite
+@SelectClasses({ // disabled, see bug 275393...
 		// TextFieldAssistTests.class, ComboFieldAssistTests.class,
 		ControlDecorationTests.class, FieldAssistAPITests.class })
 public class FieldAssistTestSuite {

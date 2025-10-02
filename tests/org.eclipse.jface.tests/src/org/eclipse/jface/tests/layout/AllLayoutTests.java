@@ -14,11 +14,12 @@
 package org.eclipse.jface.tests.layout;
 
 import org.junit.runner.JUnitCore;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ GeometryTest.class, AbstractColumnLayoutTest.class, GridDataFactoryTest.class,
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({ GeometryTest.class, AbstractColumnLayoutTest.class, GridDataFactoryTest.class,
 		GridLayoutFactoryTest.class, TreeColumnLayoutTest.class })
 public class AllLayoutTests {
 

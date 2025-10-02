@@ -15,11 +15,12 @@
 package org.eclipse.jface.tests.resources;
 
 import org.junit.runner.JUnitCore;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ FontRegistryTest.class, JFaceResourcesTest.class })
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({ FontRegistryTest.class, JFaceResourcesTest.class })
 public class AllResourcesTests {
 
 	public static void main(String[] args) {

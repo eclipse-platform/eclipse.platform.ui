@@ -14,11 +14,12 @@
 package org.eclipse.jface.tests.viewers;
 
 import org.junit.runner.JUnitCore;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ TreeSelectionTest.class, MultipleEqualElementsTreeViewerTest.class,
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({ TreeSelectionTest.class, MultipleEqualElementsTreeViewerTest.class,
 		LazySortedCollectionTest.class, TreeViewerTest.class, VirtualTreeViewerTest.class, SimpleTreeViewerTest.class,
 		SimpleTableViewerTest.class, SimpleVirtualLazyTreeViewerTest.class, VirtualLazyTreeViewerTest.class,
 		TableViewerTest.class, TreeViewerColumnTest.class, VirtualTableViewerTest.class,

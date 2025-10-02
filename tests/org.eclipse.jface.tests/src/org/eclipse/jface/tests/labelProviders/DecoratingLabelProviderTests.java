@@ -14,11 +14,12 @@
 package org.eclipse.jface.tests.labelProviders;
 
 import org.junit.runner.JUnitCore;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ CompositeLabelProviderTableTest.class, DecoratingLabelProviderTreePathTest.class,
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({ CompositeLabelProviderTableTest.class, DecoratingLabelProviderTreePathTest.class,
 		DecoratingLabelProviderTreeTest.class, ColorAndFontLabelProviderTest.class,
 		ColorAndFontViewerLabelProviderTest.class, DecoratingStyledCellLabelProviderTest.class,
 		IDecorationContextTest.class })

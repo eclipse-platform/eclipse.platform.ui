@@ -15,11 +15,12 @@
 package org.eclipse.jface.tests.window;
 
 import org.junit.runner.JUnitCore;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ //
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({ //
 		ApplicationWindowTest.class, //
 		WindowTest.class, //
 })

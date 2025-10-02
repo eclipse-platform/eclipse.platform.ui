@@ -15,11 +15,12 @@
 package org.eclipse.jface.tests.images;
 
 import org.junit.runner.JUnitCore;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ ImageRegistryTest.class, ResourceManagerTest.class, FileImageDescriptorTest.class,
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({ ImageRegistryTest.class, ResourceManagerTest.class, FileImageDescriptorTest.class,
 		UrlImageDescriptorTest.class, DecorationOverlayIconTest.class, DeferredImageDescriptorTest.class })
 public class AllImagesTests {
 
