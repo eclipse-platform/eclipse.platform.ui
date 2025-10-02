@@ -4,7 +4,7 @@ JFace Data Binding/FAQ
 
 ### Where can I ask a question?
 
-You can ask questions on the [Eclipse JFace newsgroup](http://www.eclipse.org/newsportal/thread.php?group=eclipse.platform.jface). When you post please prefix the title with "\[DataBinding\]".
+You can ask questions on the [Eclipse JFace newsgroup](https://www.eclipse.org/newsportal/thread.php?group=eclipse.platform.jface). When you post please prefix the title with "\[DataBinding\]".
 
 ### How do I report a bug?
 

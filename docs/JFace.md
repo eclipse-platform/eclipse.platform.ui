@@ -87,7 +87,7 @@ To do this:
 In this step, we will create one project that will point to all of the JAR files needed for SWT and JFace development. 
 Here are the steps:
 
-1.  Download the SWT stable release for your Eclipse version and your operating system from [Eclipse SWT Project Page](http://www.eclipse.org/swt/). For example, for Eclipse version 3.3 and Windows, select the Windows link under Releases / Stable, as shown in the screenshot below.
+1.  Download the SWT stable release for your Eclipse version and your operating system from [Eclipse SWT Project Page](https://www.eclipse.org/swt/). For example, for Eclipse version 3.3 and Windows, select the Windows link under Releases / Stable, as shown in the screenshot below.
     
     ![Swt web page.png](images/Swt_web_page.png)
     
@@ -206,7 +206,7 @@ Deploying a SWT / JFace application is similar to deploying any Java application
 #### Step by Step Instructions
 
 1.  Create a runtime folder for the desired runtime target on your system (e.g., c:\\jface\\runtime-linux). Note that the target platform does not need to be the same as your development platform.
-2.  Find the correct SWT JAR file for the desired target platform. You can download the desired ZIP file from [the SWT Project Page](http://www.eclipse.org/swt). For example, for Eclipse 3.3 and a target platform of Linux, download the file swt-3.3.1.1-gtk-linux-x86.zip. Expand this ZIP file and copy the swt.jar file to the runtime folder.
+2.  Find the correct SWT JAR file for the desired target platform. You can download the desired ZIP file from [the SWT Project Page](https://www.eclipse.org/swt). For example, for Eclipse 3.3 and a target platform of Linux, download the file swt-3.3.1.1-gtk-linux-x86.zip. Expand this ZIP file and copy the swt.jar file to the runtime folder.
 3.  Copy the JAR files that JFace needs to the runtime folder. They are found in the Eclipse plugins subfolder under your Eclipse installation. For Eclipse version 3.3, these files are as follows:
     *   org.eclipse.core.commands_<version info>.jar
     *   org.eclipse.equinox.common_<version info>.jar
