@@ -365,10 +365,24 @@ public class ResourceInitialSelectionTest {
 			dialog.close();
 		}
 		if (project != null) {
+			// Process any pending UI events before cleanup
+			processUIEvents();
+			
 			try {
+				// Wait for decorator jobs to finish
 				Job.getJobManager().wakeUp(DecoratorManager.FAMILY_DECORATE);
 				Job.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
-				project.delete(true, null);
+				
+				// Wait for any resource jobs that might be running
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_REFRESH, null);
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
+				
+				// Process UI events again after joining jobs
+				processUIEvents();
+				
+				// Try to delete with proper progress monitor and retry mechanism
+				deleteProjectWithRetry(project);
+				
 			} catch (Exception e) {
 				// try to get a stacktrace which jobs still has project open so that it can not
 				// be deleted:
@@ -379,6 +393,51 @@ public class ResourceInitialSelectionTest {
 				}
 				throw e;
 			}
+		}
+	}
+
+	/**
+	 * Process any pending UI events.
+	 */
+	private void processUIEvents() {
+		Display display = Display.getCurrent();
+		if (display != null) {
+			while (display.readAndDispatch()) {
+				// Process all pending events
+			}
+		}
+	}
+
+	/**
+	 * Delete project with retry mechanism to handle cases where background jobs
+	 * are still using the project resources.
+	 */
+	private void deleteProjectWithRetry(IProject projectToDelete) throws CoreException {
+		final int MAX_RETRY = 5;
+		CoreException lastException = null;
+		
+		for (int i = 0; i < MAX_RETRY; i++) {
+			try {
+				projectToDelete.delete(true, true, new NullProgressMonitor());
+				return; // Success
+			} catch (CoreException e) {
+				lastException = e;
+				if (i < MAX_RETRY - 1) {
+					// Process UI events and wait before retrying
+					processUIEvents();
+					try {
+						Thread.sleep(1000); // Wait 1 second before retry
+					} catch (InterruptedException ie) {
+						Thread.currentThread().interrupt();
+						break;
+					}
+				}
+			}
+		}
+		
+		// If we get here, all retries failed
+		if (lastException != null) {
+			throw lastException;
 		}
 	}
 }
