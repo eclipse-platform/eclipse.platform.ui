@@ -12,18 +12,21 @@ Commands
 
 First define the command and its handler.
 
+```xml
         <extension point="org.eclipse.ui.commands">
             <command id="org.eclipse.ui.examples.menus.scramble.text"
         defaultHandler="org.eclipse.ui.examples.menus.internal.ScrambleTextHandler"
         name="%ScrambleText.name"
         description="%ScrambleText.description" />
         </extension>
+```
 
 Menus
 -----
 
 Placing the action (which is specifically a menu or button linked to a command) can be accomplished with the org.eclipse.ui.menus extension point.
 
+```xml
         <extension point="org.eclipse.ui.menus">
             <menuContribution locationURI="popup:#TextEditorContext?after=additions">
                 <command commandId="org.eclipse.ui.examples.menus.scramble.text"
@@ -31,12 +34,14 @@ Placing the action (which is specifically a menu or button linked to a command) 
         icon="$nl$/icons/full/eobj16/scramble.gif" />
             </menuContribution>
         </extension>
+```
 
 Menus API
 ---------
 
 Programmatically do this, you would have to go through the IMenuService.
 
+```java
         public static void addTextMenuContribition() {
             final IMenuService menuService = (IMenuService) PlatformUI
                     .getWorkbench().getService(IMenuService.class);
@@ -62,4 +67,4 @@ Programmatically do this, you would have to go through the IMenuService.
             };
             menuService.addContributionFactory(factory);
         }
-
+```

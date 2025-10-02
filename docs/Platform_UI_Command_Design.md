@@ -1,8 +1,8 @@
 Platform UI Command Design
 ==========================
 
-Starting point for menu and toolbar placement of commands in 3.3. 
-Please contribute comments and suggestions in the discussion area or on [Bug 154130 -KeyBindings- Finish re-work of commands and key bindings](https://bugs.eclipse.org/bugs/show_bug.cgi?id=154130). 
+Starting point for menu and toolbar placement of commands in 3.3.
+Please contribute comments and suggestions in the discussion area or on [Bug 154130 -KeyBindings- Finish re-work of commands and key bindings](https://bugs.eclipse.org/bugs/show_bug.cgi?id=154130).
 Here is a page with concrete example cases: [Menu Item Placement Examples](./Menu_Contributions.md)
 
 
@@ -17,12 +17,12 @@ Menus and ToolBars
 Menu and toolbar placement is managed by 4 extension points, and through programmatic contributions at a number of locations: IActionBars, IViewSite, IEditorSite, EditorActionBarContributor ... more to follow
 
 I'm not sure of an appropriate way to wrap [org.eclipse.ui.IActionDelegate](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IActionDelegate.html). It is the base class and provides 2 methods to all of the **I*ActionDelegates**.
-
+```java
 	public void run(IAction action);
 	public void selectionChanged(IAction action, ISelection selection);
-
-`run(*)` is the execution method, so that is pretty straight forward. 
-The `selectionChanged(*)` method is called as the workbench selection changes, often times it updates the IAction enablement ... but moving forward there is no IAction enablement. 
+```
+`run(*)` is the execution method, so that is pretty straight forward.
+The `selectionChanged(*)` method is called as the workbench selection changes, often times it updates the IAction enablement ... but moving forward there is no IAction enablement.
 However, an IHandler can be a selection listener and update its own enablement state directly.
 
 The current action delegate proxy, ActionDelegateHandlerProxy, creates a bogus IAction. It allows the action delegates to continue working, but it is disconnected from any state.
@@ -31,14 +31,14 @@ Of course, there is also IActionDelegate2 :-)
 
 Managing menus through the suggested **org.eclipse.ui.menus** extension maps one menu item to one [org.eclipse.core.commands.ParameterizedCommand](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/commands/ParameterizedCommand.html). This contains both the command and appropriate parameters needed to execute it.
 
-  
+
 
 Programmatic Contributions and Delegates
 ----------------------------------------
 
 Contributing menus through IActionBars, EditorActionBarContributor, IWorkbenchPartSite#registerContextMenu(*), etc
 
-  
+
 
 ### I*ActionDelegate
 
@@ -46,13 +46,13 @@ Each of the IActionDelegates has a slightly different initialization interface. 
 
 Creating an equivalent IHandler for IWorkbenchWindowActionDelegate that has access to the window is straightforward. ex:
 
-  
 
+```java
 	public class SampleAction extends AbstractHandler {
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			IWorkbenchWindow window = null;
 			ISelection selection = null;
-	
+
 			Object appContextObj = event.getApplicationContext();
 			if (appContextObj instanceof IEvaluationContext) {
 				IEvaluationContext appContext = (IEvaluationContext) appContextObj;
@@ -69,7 +69,7 @@ Creating an equivalent IHandler for IWorkbenchWindowActionDelegate that has acce
 		}
 	}
 
-  
+
 At the moment, a wrapper for an existing **I*ActionDelegate** is the ActionDelegateHandlerProxy.
 
 Similarly, an IEditorActionDelegate equivalent (same applies to IViewActionDelegate, except it would use the active part) can access the active editor:
@@ -89,12 +89,12 @@ Similarly, an IEditorActionDelegate equivalent (same applies to IViewActionDeleg
 		return null;
 	}
 
-  
+
 Also note that IHandlers are not handed an IAction, but the IHandler can return its own **isEnabled()** state directly. For Handlers that want to programmatically report their enablement change, they must remember to fire an event.
 
 	public class SampleEnabledHandler extends AbstractHandler {
 		private boolean enabled = true;
-	
+
 		private void setEnabled(boolean b) {
 			if (enabled != b) {
 				enabled = b;
@@ -102,16 +102,16 @@ Also note that IHandlers are not handed an IAction, but the IHandler can return 
 				fireHandlerChanged(handlerEvent);
 			}
 		}
-	
+
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
 		 */
 		public boolean isEnabled() {
 			return enabled;
 		}
-	
+
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			IEditorPart activeEditor = null;
 			ISelection selection = null;
@@ -136,11 +136,11 @@ Handlers are the implementation of behaviour, and so there is no one to one equi
 
 ### EditorActionBars
 
-These are the editor specific IActionBars. 
-They add some functionality, but most specifically the ability to add two IEditorActionBarContributors. 
+These are the editor specific IActionBars.
+They add some functionality, but most specifically the ability to add two IEditorActionBarContributors.
 The editor action bar contributor and the extension action bar contributor (which is an ExternalContributor provided by the EditorActionBuilder).
 
-One of the advantages of EditorActionBars is the lifecycle of the actions that are added. 
+One of the advantages of EditorActionBars is the lifecycle of the actions that are added.
 They're created when the first editor of that type is loaded and exist until the last editor of that type is closed.
 
 ### PluginActionBuilder subclasses
@@ -153,13 +153,13 @@ They're created when the first editor of that type is loaded and exist until the
 *   ViewerActionBuilder - this is part of the org.eclipse.ui.popupMenus extension point. This is used after IPartSite#registerContextMenu(\*) creates a PopupMenuExtender. It creates a ViewerContribution and stores ActionDescriptors with ActionDescriptor.T\_EDITOR or ActionDescriptor.T\_VIEW. It's contributed to the popup menu by PopupMenuExtender#menuAboutToShow(\*) - viewerContributions are called "static" contributions.
 *   ObjectActionContributor - also for org.eclipse.ui.popupMenus, it stores the ActionDescriptions of type ActionDescriptor.T_POPUP in an ObjectContribution. This goes back to the ObjectActionContributorManager, which is called into from PopupMenuExtender#menuAboutToShow(\*).
 
-  
+
 
 org.eclipse.ui.actionSets
 -------------------------
 
-Action Sets are visible in the main menu and coolbar. 
-Their visibility can be updated by the user using **Customize Perspective**. 
+Action Sets are visible in the main menu and coolbar.
+Their visibility can be updated by the user using **Customize Perspective**.
 Here is a sample actionSet distributed with Eclipse SDK.
 
 	<extension
@@ -187,14 +187,14 @@ Here is a sample actionSet distributed with Eclipse SDK.
 	   </actionSet>
 	</extension>
 
-The `<actionSet/>` element defines the group of elements that can be shown or hidden. 
-The `<menu/>` elements create menus and groups. 
+The `<actionSet/>` element defines the group of elements that can be shown or hidden.
+The `<menu/>` elements create menus and groups.
 The `<action/>` elements define individual "actions" ... they contain rendering information (label, icon), menu placement (menubarPath, toolbarPath) and behaviour (the class attribute, in this case an IWorkbenchWindowActionDelegate).
 
 org.eclipse.ui.editorActions
 ----------------------------
 
-Editor Actions appear in the main menu and coolbar as long as an editor of that type is the active editor. 
+Editor Actions appear in the main menu and coolbar as long as an editor of that type is the active editor.
 Using the org.eclipse.ui.actionSetPartAssociation extension with an org.eclipse.ui.actionSet works similarly, except all editor actions are IEditorActionDelegates instead of IWorkbenchWindowActionDelegates.
 
 Here is an action example adapted as an editor action:
@@ -223,14 +223,14 @@ Here is an action example adapted as an editor action:
 	   </editorContribution>
 	</extension>
 
-  
-The `<editorContribution/>` element ties the editor action to a specific editor type. 
+
+The `<editorContribution/>` element ties the editor action to a specific editor type.
 Other than that, it is almost identical to org.eclipse.ui.actionSets.
 
 org.eclipse.ui.viewActions
 --------------------------
 
-View actions are placed in the view menu or view toolbar, but the extension point looks almost identical to org.eclipse.ui.editorActions. 
+View actions are placed in the view menu or view toolbar, but the extension point looks almost identical to org.eclipse.ui.editorActions.
 The delegate for views is IViewActionDelegate.
 
 	<extension
@@ -330,7 +330,7 @@ The NAME state can be updated, and also supports state change notification. Our 
 
 States are also the proposed way to handle information like toggled state (for check boxes or toggle buttons) and radio state (for a group of radio buttons).
 
-  
+
 
 ### Issue 103 - Menu items map to ParameterizedCommands
 
@@ -351,7 +351,7 @@ The appropriate IAction returns an IMenuCreator. This means that it must be inst
 Menu Proposal 1
 ---------------
 
-Replace the entire thing with something really simple (haha). 
+Replace the entire thing with something really simple (haha).
 This should most closely resemble the design described in the original RFC in [Historical Information Section](#Historical-Information).
 
 Menu placements would be controlled by a tree of data.
@@ -374,54 +374,54 @@ The each menu item would be able to specify some order constraints.
 
 Dynamic menus would have a simpler form. They would also be included in the declarative extension point (as much as possible) [See Issue 104](#Issue-104---Dynamic-menus-need-a-good-story).
 
-There would be a product level visibility (similar to the way Customize Perspective works for ActionSets). 
+There would be a product level visibility (similar to the way Customize Perspective works for ActionSets).
 Would we also provide product level ability to customize other prospective menu item attributes? For example, a product level way to override menu order?
 
-  
-This would mean an out-and-out replacement of most of the internal classes to do with PluginActions and the ActionSetRegistry. 
+
+This would mean an out-and-out replacement of most of the internal classes to do with PluginActions and the ActionSetRegistry.
 For RCP support, we would continue to allow MenuManager and contribution items to be added, but those structures would need to be used to populate the tree structures. This is hard :-)
 
-  
+
 The new system would have to manage the interaction between 4 properties: Enabled, Active, Visible, Showing. Enabled is the state of the command (from the active handler), Active is the state of the handler, Visible is the state of the menu item, and Showing (and internal state) describes if the menu item can currently be seen by the user. Showing is a new concept designed to help with lazy loading and lazy creation of sub-menus. It's not in the current menu behaviour.
 
 We would have to provide a visibility engine of somekind that would update the menu item structure visibility as state changed.
 
-From an menu visibility/enablement point of view, Enabled is the state that matters. 
+From an menu visibility/enablement point of view, Enabled is the state that matters.
 If no handler is active, Enabled will be false. If a handler is active, the Enabled will be the handler Enabled state.
 
 Menu Proposal 2
 ---------------
 
-We need a relatively straight forward model to represent our menu and toolbar structures. 
-But JFace already provides decent coverage for that using MenuManager, ToolBarManager, and IContributionItems. 
+We need a relatively straight forward model to represent our menu and toolbar structures.
+But JFace already provides decent coverage for that using MenuManager, ToolBarManager, and IContributionItems.
 As part of providing our rendering, we would be changing from ActionContributionItems that are currently used to some kind of CommandContributionItem.
 
-IActions would still be used (mostly), but really our IAction would be the focal point of the rendering data model. 
-For example, we'll provide a `CommandBridgeAction`. 
-Knowledge of the command will allow the `CommandBridgeAction` to provide label, description, icons (from the ICommandImageService). 
+IActions would still be used (mostly), but really our IAction would be the focal point of the rendering data model.
+For example, we'll provide a `CommandBridgeAction`.
+Knowledge of the command will allow the `CommandBridgeAction` to provide label, description, icons (from the ICommandImageService).
 Its `runWithEvent(*)` method will simply be `handlerService.executeCommand("commandId", event)`.
 
-As an alternative option, we could skip IActions and just use the CommandContributionItem. 
+As an alternative option, we could skip IActions and just use the CommandContributionItem.
 Why build an IAction as the intermediary when the CommandContributionItem can fetch things like the label, icon, etc for us.
 
-  
+
 We would still have to deal with [Issue 104](#Issue-104---Dynamic-menus-need-a-good-story) and improve dynamic menu creation.
 
-Perhaps IContributionManagerOverrides could be enhanced and used as the _product override_ mechanism. 
+Perhaps IContributionManagerOverrides could be enhanced and used as the _product override_ mechanism.
 There would have to be some API to update and list the product level list of overrides.
 
 We would get rid of the PluginAction and ActionSet code.
 
 We would need to provide a "visibility" engine to update the visibility of contribution items or IActions as the sources changed.
 
-This still needs a good story for replacing EditorActionBarContributor and the IActionBar stuff ... providing the same functionality in an alternate place. 
+This still needs a good story for replacing EditorActionBarContributor and the IActionBar stuff ... providing the same functionality in an alternate place.
 I don't think providing the functionality is too much of a problem, but finding the correct place for it will require more thought.
 
-  
+
 
 ### Proposal "A" (Eric's World...;-):
 
-The basic idea is to provide a single menu/action/command(+binding)/handler 'best practices' path. 
+The basic idea is to provide a single menu/action/command(+binding)/handler 'best practices' path.
 We can do this by re-using the existing extension points; tweaking as necessary to provide complete functionality and deprecating EP's that are no longer necessary.
 
 1.  Move the current 'ActionSet.action' and 'ActionSet.menu' out from under the ActionSet extension point and make them their own EPs. This allows the definition of actions and menu structure independent of any particular action set and/or each other.
@@ -438,7 +438,7 @@ We can do this by re-using the existing extension points; tweaking as necessary 
 
 *   "any context menu" - Replacement for the current ObjectContribution mechanism. The 'visibleWhen' core expression can determine whether the selection context is appropriate...
 
-  
+
 
 #### Proposal "A" - item 3 - Dynamic Menu interface
 
@@ -449,30 +449,30 @@ The menu extension can declaratively specify that the menu item is a dynamic men
 		 * Called just before the given menu is about to show. This allows the
 		 * implementor of this interface to modify the list of menu elements before
 		 * the menu is actually shown.
-		 * 
+		 *
 		 * @param menu
 		 *            The menu that is about to show. This value is never
 		 *            null.
-		 */ 
-		public void aboutToShow(IMenuCollection menu); 
+		 */
+		public void aboutToShow(IMenuCollection menu);
 	}
 
-And the `IMenuCollection` allows the modification of the menu that's about to show. 
+And the `IMenuCollection` allows the modification of the menu that's about to show.
 Assume that `MenuElement` is the new flavour of `IContributionItem`/`IContributionManager`
 
 	public interface IMenuCollection {
 		/**
 		 * Appends a menu element to the end of the collection.
-		 * 
+		 *
 		 * @param element
 		 *            The element to append. Must not be null, and
 		 *            must be of the appropriate type for the type of collection.
 		 */
 		public void add(MenuElement element);
-	
+
 		/**
 		 * Adds a menu element at the given index.
-		 * 
+		 *
 		 * @param index
 		 *            The index at which to insert.
 		 * @param element
@@ -480,42 +480,42 @@ Assume that `MenuElement` is the new flavour of `IContributionItem`/`IContributi
 		 *            must be of the appropriate type for the type of collection.
 		 */
 		public void add(int index, MenuElement element);
-	
+
 		/**
 		 * Removes all elements from the collection.
 		 */
 		public void clear();
-	
+
 		/**
 		 * Gets the element at a given index.
-		 * 
+		 *
 		 * @param index
 		 *            The index at which to retrieve the element.
 		 * @return The element at the index.
 		 */
 		public MenuElement get(int index);
-	
+
 		/**
 		 * Removes the element at a given index.
-		 * 
+		 *
 		 * @param index
 		 *            The index at which to remove the element.
 		 * @return The element that has been removed.
 		 */
 		public MenuElement remove(int index);
-	
+
 		/**
 		 * Removes the given menu element, if it exists.
-		 * 
+		 *
 		 * @param element
 		 *            The element to remove.
 		 * @return true if the object was removed; false if it could not be found.
 		 */
 		public boolean remove(MenuElement element);
-	
+
 		/**
 		 * Returns the number of elements in the collection.
-		 * 
+		 *
 		 * @return The size of the collection.
 		 */
 		public int size();
@@ -525,7 +525,7 @@ This is a change from the `IMenuCreator` interface, which directly references an
 
 ### Menu Proposal 2 UseCases
 
-Visibility controls if the user can see the menu item in the menubar or toolbar or context menu. 
+Visibility controls if the user can see the menu item in the menubar or toolbar or context menu.
 There are 3 levels of visibility that are checked in order:
 
 1.  Overrides
@@ -541,33 +541,33 @@ If the check at a level returns false, the item won't be visible. If it returns 
 We'll support 7 **root** types to start with:
 
 1.  SBar.MENU
-    
+
     The main menu.
-    
+
 2.  SBar.TOOLBAR
-    
+
     The main toolbar.
-    
+
 3.  SBar.VIEW_MENU
-    
+
     A view menu. The first path segment will be the view id.
-    
+
 4.  SBar.VIEW_TOOLBAR
-    
+
     A view toolbar. The first path segment will be the view id.
-    
+
 5.  SBar.CONTEXT_MENU
-    
+
     A context menu. The first path segment will be the context menu id, or `org.eclipse.ui.menus.context.any` to apply to all context menus
-    
+
 6.  SBar.TRIM
-    
+
     Contribute a piece of trim. This is already implemented
-    
+
 7.  SBar.STATUS
-    
+
     Contribute information to the status line manager ... I'm not sure about this one, is it no longer necessary since they can contribute trim?
-    
+
 
 For describing menu locations as strings, we have a couple of options.
 
@@ -593,13 +593,13 @@ Just use paths of the form `/type/id/path`. They'll be IPath elements within ecl
 *   The text editor context menu additions group marker: `/popup/#EditorContext/additions`
 *   An object contribution additions group marker: `/popup/org.eclipse.ui.menu.any/additions`
 
-  
+
 The usecases are being moved to [Menu Item Placement Examples](./Menu_Contributions.md)
 
 Menu Proposal 3
 ---------------
 
-In this proposal we don't seek to address most of what the RFC is talking about. 
+In this proposal we don't seek to address most of what the RFC is talking about.
 Leave dynamic menus alone. The current extension points are fine, they just need to be backed by a single implementation.
 
 It would involve cleaning up some of the workbench code, and wiring up the underlying framework like in [Issue 101](#Issue-101---PluginActions-disconnected-from-Handlers).
@@ -618,7 +618,7 @@ There are discussions in a number of places:
 *   [Bug 36968 -Contributions- Improve action contributions](https://bugs.eclipse.org/bugs/show_bug.cgi?id=36968)
 *   [Bug 80725 -Contributions- -RCP- Allow action sets to be shown when no perspective open](https://bugs.eclipse.org/bugs/show_bug.cgi?id=80725)
 
-  
+
 
 Original Requirements
 ---------------------
@@ -647,10 +647,10 @@ Original Requirements
 Rational
 --------
 
-The Eclipse Platform has always provided a mechanism for contributing items to the menus and tool bars in Eclipse. 
+The Eclipse Platform has always provided a mechanism for contributing items to the menus and tool bars in Eclipse.
 This mechanism has – up until now – been based on instances of IAction.
 
-Actions suffered from a few key deficiencies. 
+Actions suffered from a few key deficiencies.
 First of all, the interaction with the application model (e.g., the handling of the run method) was tightly coupled with its presentation elements (e.g., icon, label, etc.). Also, there was no easy way to provide user-configurable keyboard shortcuts. Actions were not initially designed with a way to identify two actions as sharing the same semantic behaviour. To further confuse matters, there were action delegates. Action delegates were not actions, but could handle action behaviour in some circumstances.
 
 Actions were defined in XML using several extension points. This XML syntax had several problems. First of all, there were too many extension points, which made the syntax hard to learn and caused maintenance problems. Features added to one extension point, would have to be copied into other extension points. Ultimately, what ended up happening is that for any given feature, it was possible that only a subset of the extension points would actually support it (e.g., dynamic menus). Partly due to this and partly due to the tight coupling mentioned above, this lead to an overly verbose syntax containing duplicate XML elements. If an action was required in a view menu and in a context menu, then the XML would need to be copied and contributed to two different extension points. This also led to multiple instances of the action in memory.

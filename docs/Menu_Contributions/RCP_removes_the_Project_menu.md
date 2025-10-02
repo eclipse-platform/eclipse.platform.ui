@@ -8,12 +8,11 @@ Product removes the Project menu
 
 An RCP product wishes to remove the Project menu. It should be possible to override the visibility of menu contributions.
 
- 
-
+```java
        public void addOverride() {
            // the RCP app would already have its product key
            Object productKey = null;
-    
+
            IMenuService menuServ = (IMenuService) PlatformUI.getWorkbench()
                    .getActiveWorkbenchWindow().getService(IMenuService.class);
            menuServ.addOverride(productKey, "menu:project", new OverrideAdapter() {
@@ -22,11 +21,7 @@ An RCP product wishes to remove the Project menu. It should be possible to overr
                }
            });
        }
-    
-
- 
-
-  
+```
 
 The idea is to provide this ability at the product level. For example, an RCP app should be able to hide any menu items that it doesn't want but picked up through the inclusion of a plugin.
 

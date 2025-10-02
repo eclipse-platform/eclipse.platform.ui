@@ -4,18 +4,21 @@ Menu Contributions/Populating a dynamic submenu
 Add a dynamic submenu to the ProblemView menu
 =============================================
 
-In [Menu Contributions/Problems View Example](./Problems_View_Example.md "Menu Contributions/Problems View Example") we added 2 dynamic menus. 
+In [Menu Contributions/Problems View Example](./Problems_View_Example.md "Menu Contributions/Problems View Example") we added 2 dynamic menus.
 You then have to extend the abstract [CompoundContributionItem](http://help.eclipse.org/latest/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/actions/CompoundContributionItem.html) class in your provided class.
 
+```xml
         <menu id="org.eclipse.ui.views.problems.groupBy.menu"
         label="%ProblemView.GroupBy.label"
         mnemonic="%ProblemView.GroupBy.mnemonic">
         <dynamic class="org.eclipse.ui.views.markers.internal.GroupByItems"
         id="org.eclipse.ui.views.problems.groupBy.items"/>
         </menu>
+```
 
 When your menu is populated, you'll have your getContributionItems() method called:
 
+```java
         protected IContributionItem[] getContributionItems() {
             IContributionItem[] list = new IContributionItem[2];
             Map parms = new HashMap();
@@ -33,4 +36,4 @@ When your menu is populated, you'll have your getContributionItems() method call
                     CommandContributionItem.STYLE_PUSH);
             return list;
         }
-
+```

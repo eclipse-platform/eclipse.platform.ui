@@ -5,7 +5,7 @@ Eclipse Plug-in Development FAQ
 
 This page is a collection of FAQs that is intended to help a developer write Eclipse plug-ins.
 
-This FAQ is intended to be complimentary to the [RCP FAQ](Rich_Client_Platform/Rich_Client_Platform_FAQ.md), the [Eclipse 4 RCP FAQ](Eclipse4_RCP_FAQ.md) and the [FAQ](https://wiki.eclipse.org/The_Official_Eclipse_FAQs) pages. 
+This FAQ is intended to be complimentary to the [RCP FAQ](Rich_Client_Platform/Rich_Client_Platform_FAQ.md), the [Eclipse 4 RCP FAQ](Eclipse4_RCP_FAQ.md) and the [FAQ](https://wiki.eclipse.org/The_Official_Eclipse_FAQs) pages.
 
 
 General Development
@@ -40,15 +40,17 @@ In case you are curious, this works by creating in your workspace a Java project
 
 They are meant to mark a string literal as not needing to be externalized (as in, translated / localized). You will often see something like...
 
+```java
     if (string.equals("")) { //$NON-NLS-1$
         // do stuff
     }
+```
 
 ...this would be a scenario where a string wouldn't need to be localized because it is a string for the code to "manipulate", per se, over it being part of a message to the user at the UI level.
 
 ### I need help debugging my plug-in...
 
-Are you getting errors like "Unhandled loop event exception" messages in your console with nothing useful after it? Make sure you have [-consoleLog](http://wiki.eclipse.org/Graphical_Eclipse_FAQs#I_get_an_unhandled_event_loop_exception_in_my_console._What_gives.3F) as a **Program Argument** in your launch configuration. 
+Are you getting errors like "Unhandled loop event exception" messages in your console with nothing useful after it? Make sure you have [-consoleLog](http://wiki.eclipse.org/Graphical_Eclipse_FAQs#I_get_an_unhandled_event_loop_exception_in_my_console._What_gives.3F) as a **Program Argument** in your launch configuration.
 
 ### I'm using third party jar files and my plug-in is not working
 
@@ -71,7 +73,7 @@ Prior to 3.2.1, you had to make modifications to the build.properties file. See 
 
 **Common mistakes for option 2**
 
-One common mistake is to forget to add the '.' to the classpath after adding your library. If you fail to do this, your plug-in will crash with a message like this: 
+One common mistake is to forget to add the '.' to the classpath after adding your library. If you fail to do this, your plug-in will crash with a message like this:
 
            java.lang.ClassNotFoundException: lib.foo.Bar
            at org.eclipse.osgi.internal.loader.BundleLoader.findClassInternal(BundleLoader.java:513)
@@ -80,9 +82,9 @@ One common mistake is to forget to add the '.' to the classpath after adding you
            at org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.loadClass(DefaultClassLoader.java:107)
            at java.lang.ClassLoader.loadClass(Unknown Source)
            ...
-    
 
- 
+
+
 
 Example of META-INF/MANIFEST.MF:
 
@@ -99,16 +101,16 @@ Example of META-INF/MANIFEST.MF:
            Export-Package: lib.foo
            Bundle-ClassPath: lib/someRandomDep.jar  <--- WRONG
            Bundle-ClassPath: .,lib/someRandomDep.jar  <--- CORRECT
-    
 
- 
+
+
 
 Also check whether your build.properties file now lists the '.' and the 'lib'-directory (or whatever you named it) in 'bin.includes':
 
            bin.includes = META-INF/,\
                   lib/,\
                   .
-                  
+
 Check out [bug 108781](https://bugs.eclipse.org/bugs/show_bug.cgi?id=108781).
 
 It talks about how adding a 3rd party jar removes the default "." classpath, and the need to add it back.
@@ -123,9 +125,10 @@ The articles below may be of your interest.
 
 ### How do I read from a file that I've included in my bundle/plug-in?
 
-The [FileLocator](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/FileLocator.html) class should be able to do most of the things that you want. It can open up a java.io.InputStream as well as provide a java.io.File. 
+The [FileLocator](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/FileLocator.html) class should be able to do most of the things that you want. It can open up a java.io.InputStream as well as provide a java.io.File.
 You should keep in mind that the java.io.File approach is not going to work if your bundle is packaged as a jar file. To get a reference to your bundle's [Bundle](https://docs.osgi.org/javadoc/r4v43/core/org/osgi/framework/Bundle.html) instance, you can use the [Platform](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Platform.html) [getBundle(String)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Platform.html#getBundle(java.lang.String)) method. Alternatively, if your bundle's activator subclasses [Plugin](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Plugin.html) or [AbstractUIPlugin](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/plugin/AbstractUIPlugin.html), then you can just call [getBundle()](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/Plugin.html#getBundle()) from it directly. If your activator simply implements the [BundleActivator](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleActivator.html) interface, then from your implementation of the [start(BundleContext)](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleActivator.html#start(org.osgi.framework.BundleContext)) method, you can just call [getBundle()](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleContext.html#getBundle()) on the passed in [BundleContext](http://www.osgi.org/javadoc/r4v41/org/osgi/framework/BundleContext.html) to store the Bundle instance in a field for retrieval later. You can also query for Bundle instances from the [PackageAdmin](http://www.osgi.org/javadoc/r4v41/org/osgi/service/packageadmin/PackageAdmin.html) service.
 
+```java
     // your BundleActivator implementation will probably look something
     // like the following
     public class Activator implements BundleActivator {
@@ -154,6 +157,7 @@ You should keep in mind that the java.io.File approach is not going to work if y
     // code to retrieve an java.io.InputStream
     InputStream inputStream = FileLocator.openStream(
         Activator.getDefault().getBundle(), new Path("resources/setup.xml"), false);
+```
 
 ### Where do I find the javadoc for the Eclipse API locally? I don't always want to load stuff up in a browser.
 
@@ -173,9 +177,9 @@ If you wish to include the natives in your bundle, continue reading.
 
 Edit your MANIFEST.MF manually by adding the following lines
 
-    Bundle-NativeCode: 
-     /libs/yourlib.dll; 
-     /libs/someotherlib.dll; 
+    Bundle-NativeCode:
+     /libs/yourlib.dll;
+     /libs/someotherlib.dll;
      osname=win32; processor=x86
 
 Afterwards, explicitly load all libraries manually using System.loadLibrary().
@@ -189,6 +193,7 @@ Afterwards, explicitly load all libraries manually using System.loadLibrary().
 
 **Caution:** If you get an UnsatisfiedLinkError when you load a library which depends on a library which hasn't been loaded yet. To overcome this automatically, you can iterate over a list of the required libraries, and throw all out which could be loaded, until the list is empty. Like this, you can compute the correct ordering for loading your libraries.
 
+```java
     /**
      * Iterate through the list of libraries and remove all libraries from the list
      * that could be loaded. Repeat this step until all libraries are loaded.
@@ -218,6 +223,7 @@ Afterwards, explicitly load all libraries manually using System.loadLibrary().
     	}
     	i--;
     }
+```
 
 Please note that for debugging, e.getMessage() may give you more information for debugging. It can assist you if you mistyped some of the library names for instance.
 
@@ -256,6 +262,7 @@ You can also invoke the "Plug-in Spy" with the Alt+Shift+F1 keybinding to retrie
 
 In your [IWorkbenchPart](https://help.eclipse.org/latest/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IWorkbenchPart.html) implementation, you should override the [getAdapter(Class)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/IAdaptable.html#getAdapter(java.lang.Class)) method and return your own implementation of [IContentOutlinePage](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/views/contentoutline/IContentOutlinePage.html) or you can choose to subclass [ContentOutlinePage](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/views/contentoutline/ContentOutlinePage.html).
 
+```java
     public Object getAdapter(Class adapter) {
         if (adapter.equals(IContentOutlinePage.class)) {
             return page;
@@ -263,6 +270,7 @@ In your [IWorkbenchPart](https://help.eclipse.org/latest/nftopic/org.eclipse.pla
         // do NOT forget this line
         return super.getAdapter(adapter);
     }
+```
 
 ### How can I show the perspective bar in my RCP application?
 
@@ -274,31 +282,38 @@ The code below will demonstrate this.
 
 PlatformUI.getPreferenceStore().setValue(IWorkbenchPreferenceConstants.DOCK\_PERSPECTIVE\_BAR, IWorkbenchPreferenceConstants.TOP_RIGHT);
 
+```java
     PlatformUI.getPreferenceStore().setValue(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, IWorkbenchPreferenceConstants.TOP_RIGHT);
+```
 
 ### How do I warn the user that a workbench part that is not currently visible has changed?
 
 From your [WorkbenchPart](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/part/WorkbenchPart.html) subclass, you can use the code below. Please note that the code below currently only works on views. For notification support in editors, please see [bug 86221](https://bugs.eclipse.org/bugs/show_bug.cgi?id=86221).
 
+```java
     IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) part.getSite().getService(IWorkbenchSiteProgressService.class);
     // notify the user by turning the workbench part's title bold
     service.warnOfContentChange();
+```
 
 ### How can I make use of the workbench's browser capabilities?
 
 To leverage the workbench's browser capabilities, you will have to interact with the [IWorkbenchBrowserSupport](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/browser/IWorkbenchBrowserSupport.html) class. The code below will show you how to retrieve an implementation of this interface and open a website with the external browser:
 
+```java
     try {
         IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
         browserSupport.getExternalBrowser().openURL(new URL("http://www.eclipse.org"));
     } catch (PartInitException e) {
         // handle the exception
     }
+```
 
 ### How do I retrieve the id of a preference page?
 
 You can try the following code below:
 
+```java
     public String getId(IPreferencePage page) {
         PreferenceManager pm = PlatformUI.getWorkbench().getPreferenceManager();
         List list = pm.getElements(PreferenceManager.PRE_ORDER);
@@ -313,36 +328,40 @@ You can try the following code below:
         }
         return null;
     }
+```
 
 ### How do I ask my decorator to decorate items?
 
 You can try the following code below:
-
+```java
     PlatformUI.getWorkbench().getDecoratorManager().update("com.mycompany.product.ui.decoratorId");
+```
 
 ### How do I get the icon associated with a file or content type?
 
 You can try the following code below:
-
+```java
     IContentType contentType = IDE.getContentType(file);
     ImageDescriptor imageDescriptor =
         PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(file.getName(), contentType);
+```
 
 ### How do I set the selection of an editor or view?
 
 You can retrieve the selection provider from a workbench part from its site.
-
+```java
     IWorkbenchPartSite site = workbenchPart.getSite();
     ISelectionProvider provider = site.getSelectionProvider();
     // this can be null if the workbench part hasn't set one, better safe than sorry
     if (provider != null) {
         provider.setSelection(...);
     }
+```
 
 ### How do I get the selection of an editor or view?
 
 You can retrieve the selection from the ISelectionService or get it directly from the selection provider of the part from its site.
-
+```java
     ISelectionService selectionService = (ISelectionService) serviceLocator.get(ISelectionService.class);
     ISelection selection = selectionService.getSelection(partId);
     /* ... */
@@ -354,14 +373,17 @@ You can retrieve the selection from the ISelectionService or get it directly fro
         ISelection selection = provider.getSelection();
         /* ... */
     }
+```
 
 ### How do I get progress feedback in the status bar in my RCP application?
 
 Try adding the following piece of code in your [WorkbenchWindowAdvisor](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html)'s [preWindow()](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/application/WorkbenchWindowAdvisor.html#preWindowOpen%28%29) implementation:
 
+```java
     public void preWindowOpen() {
         getWindowConfigurer().setShowProgressIndicator(true);
     }
+```
 
 ### How do I make a New / Import / Export Wizard appear in the context menu of the Project Explorer?
 
@@ -371,7 +393,7 @@ Add an extension to the extension point [org.eclipse.ui.navigator.navigatorConte
 
 Often when catching exceptions, it's puzzling as to what one is suppose to do with them.
 
-The following code solves this dilemma. 
+The following code solves this dilemma.
 It is recomended to put this into your activator.
 
 It produces a message box as such:
@@ -383,7 +405,7 @@ The details show the stack trace.
 It then logs the caught exception in the error-logging framework.
 
 To use the code, call it as following:
-
+```java
              try {
                 throw new EmptyStackException();
             }
@@ -417,6 +439,7 @@ To use the code, call it as following:
                 }
             });
         }
+```
 
 (It gets the default instance and calls the method).
 
@@ -435,8 +458,8 @@ In a U.I thread, you typically have access to a shell. In a background process, 
 The way around this is to create a runnable object and make the UI thread run it. Also, you use 'syncExec' (as oppose to asyncExec), which forces the current code to wait until the runnable has completed execution.
 
 Example source code:
-
-            //define some final variable outside the runnable. This should have a getter/setter method. 
+```java
+            //define some final variable outside the runnable. This should have a getter/setter method.
             final AtomicBoolean userChoice = new AtomicBoolean(false);
      
             //To generate U.I, we make sure to call the U.I thread,
@@ -445,7 +468,7 @@ Example source code:
                 @Override
                 public void run() {
      
-                    Shell parent = PlatformUI.getWorkbench().getDisplay().getActiveShell();  //get shell. 
+                    Shell parent = PlatformUI.getWorkbench().getDisplay().getActiveShell();  //get shell.
                     boolean okPressed = MessageDialog.openConfirm(parent, "prof err",
                             "Flag is not set in options. Would you like to add/rebuild?");
      
@@ -456,10 +479,10 @@ Example source code:
                     }
             });
      
-            //Retrieve the value that the runnable changed. 
+            //Retrieve the value that the runnable changed.
             return userChoice.get();
+```
 
-  
 
 ### How do I make a title area dialogue with radio buttons?
 
@@ -480,17 +503,21 @@ JDT's implementing class is named 'org.eclipse.jdt.internal.ui.text.JavaOutlineI
 
 Since you cannot access the editor's [ITextViewer](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/text/ITextViewer.html), you will have to try using the code below.
 
+```java
     StyledText text = (StyledText) editor.getAdapter(Control.class);
+```
 
 ### How can I get the [IDocument](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/jface/text/IDocument.html) from an editor?
 
 Assuming the editor adapts to the [ITextEditor](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/texteditor/ITextEditor.html) interface, you can try the code below.
 
+```java
     ITextEditor editor = (ITextEditor) editorPart.getAdapter(ITextEditor.class):
     if (editor != null) {
       IDocumentProvider provider = editor.getDocumentProvider();
       IDocument document = provider.getDocument(editor.getEditorInput());
     }
+```
 
 This code should work on most text editors.
 
@@ -498,10 +525,12 @@ This code should work on most text editors.
 
 The code below will demonstrate how to do this.
 
+```java
     IFile file = (IFile) editorPart.getEditorInput().getAdapter(IFile.class);
     if (file != null) {
         // do stuff
     }
+```
 
 Note that [IFile](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IFile.html)s are meant to represent files within the workspace and will not work if the file that has been opened is not contained within the workspace. Instead, a [FileStoreEditorInput](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/FileStoreEditorInput.html) is usually passed into the editor when the editor is opening a file outside the workspace.
 
@@ -509,6 +538,7 @@ Note that [IFile](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.d
 
 Adding the code below into your MultiPageEditorPart's subclass should do the trick.
 
+```java
     protected void createPages() {
         super.createPages();
         if (getPageCount() == 1) {
@@ -518,23 +548,28 @@ Adding the code below into your MultiPageEditorPart's subclass should do the tri
             }
         }
     }
+```
 
 ### How do I change the editor that is being opened when a marker has been opened?
 
 You can associate the string ID of your editor onto your marker with [IMarker](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IMarker.html)'s [setAttribute(String, Object)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/resources/IMarker.html#setAttribute(java.lang.String,%20java.lang.Object)) method by using the [EDITOR\_ID\_ATTR](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IDE.html#EDITOR_ID_ATTR) string constant defined in the [IDE](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IDE.html) class as the attribute name.
 
+```java
     marker.setAttribute(IDE.EDITOR_ID_ATTR, "com.example.xyz.editorID");
+```
 
 ### How can I make my editor respond to a user opening a marker?
 
 When a marker has been opened, the Eclipse Platform tries to help the user out via the [IGotoMarker](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IGotoMarker.html) interface. Your editor should either implement the interface or respond to this class by returning an implementation via the [getAdapter(Class)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/core/runtime/IAdaptable.html#getAdapter(java.lang.Class)) method.
 
+```java
     public Object getAdapter(Class adapter) {
         if (adapter.equals(IGotoMarker.class)) {
             return gotoMarker;
         }
         return super.getAdapter(adapter);
     }
+```
 
 IGotoMarker's [gotoMarker(IMarker)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/ide/IGotoMarker.html#gotoMarker(org.eclipse.core.resources.IMarker)) method will be called accordingly on the corresponding interface implementation and it is in that method implementation that you can react to a user opening a marker.
 
@@ -551,14 +586,14 @@ You should return true when you receive the proper notifications through [Abstra
 ### How do I close one/all of my editors upon workbench shutdown so that it won't appear upon workbench restart?
 
 The snippet below will close all Editors in the workbench when you close the eclipse application.
-
+```java
     IWorkbench workbench = PlatformUI.getWorkbench();
     final IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
      
     workbench.addWorkbenchListener( new IWorkbenchListener()
     {
         public boolean preShutdown( IWorkbench workbench, boolean forced )
-        {                            
+        {
             activePage.closeEditors( activePage.getEditorReferences(), true);
             return true;
         }
@@ -568,17 +603,17 @@ The snippet below will close all Editors in the workbench when you close the ecl
      
         }
     });
+```
 
-  
 The example below shows how to close an editor that is programmatically opened.
-
+```java
     IWorkbench workbench = PlatformUI.getWorkbench();
     final IWorkbenchPage activePage = workbench.getActiveWorkbenchWindow().getActivePage();
      
     final IEditorPart editorPart = IDE.openEditorOnFileStore( activePage, fileStore );
      
     workbench.addWorkbenchListener( new IWorkbenchListener() {
-        public boolean preShutdown( IWorkbench workbench, boolean forced )     {                            
+        public boolean preShutdown( IWorkbench workbench, boolean forced )     {
             activePage.closeEditor(editorPart, true);
             return true;
         }
@@ -588,7 +623,7 @@ The example below shows how to close an editor that is programmatically opened.
      
         }
     });
-
+```
 
 
 ### How do I prevent a particular editor from being restored on the next workbench startup?
@@ -606,12 +641,14 @@ Use [DebugPlugin](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.d
 
 Your [IProcess](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IProcess.html) implementation must return a valid string that corresponds to the [IProcess.ATTR_CMDLINE](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/model/IProcess.html#ATTR_CMDLINE) attribute. The sample code below will demonstrate how this is done with the [DebugPlugin](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html)'s [newProcess(ILaunch, Process, String, Map)](https://help.eclipse.org/stable/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/DebugPlugin.html#newProcess(org.eclipse.debug.core.ILaunch,%20java.lang.Process,%20java.lang.String,%20java.util.Map)) method.
 
+```java
     String commandLine = "/usr/bin/make";
     Map attributes = new HashMap();
     attributes.put(IProcess.ATTR_CMDLINE, commandLine);
     Process process = Runtime.getRuntime().exec(commandLine);
     // this assumes that 'launch' is a non-null reference to an ILaunch implementation
     DebugPlugin.newProcess(launch, process, "make", attributes);
+```
 
 ### How do I capture the output of my launched application like the 'Console' view?
 
@@ -619,14 +656,16 @@ If the underlying [IProcess](https://help.eclipse.org/stable/nftopic/org.eclipse
 
 The sample code below will demonstrate how to read the [InputStream](http://java.sun.com/j2se/1.4.2/docs/api/java/io/InputStream.html) of an executed process:
 
+```java
     String commandLine = "/usr/bin/make";
     Process process = Runtime.getRuntime().exec(commandLine);
     IProcess iProcess = DebugPlugin.newProcess(launch, process, "make", attributes);
     iProcess.getStreamsProxy().getOutputStreamMonitor().addListener(new IStreamListener(){
         public void streamAppended (String text, IStreamMonitor monitor){
-           //TODO: As per user requirement. 
+           //TODO: As per user requirement.
         }
     });
+```
 
 ### How do I run Eclipse launch configurations programmatically?
 
@@ -634,11 +673,14 @@ Let us say you want to contribute to the PackageExplorer and run a CompilationUn
 
 First, an [ILaunchConfiguration](https://help.eclipse.org/galileo/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/ILaunchConfiguration.html) is created by using its [ILaunchConfigurationType](https://help.eclipse.org/galileo/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/ILaunchConfigurationType.html). Already existing types can be obtained via the [ILaunchManager](https://help.eclipse.org/galileo/nftopic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/debug/core/ILaunchManager.html):
 
+```java
     ILaunchConfigurationType javaType = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
     ILaunchConfigurationWorkingCopy config = javaType.newInstance(null, name);
+```
 
 Then you need so set each attribute to complete your launch configuration. Check out [JavaRuntime](https://help.eclipse.org/ganymede/index.jsp?topic=/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/launching/JavaRuntime.html) for further methods, e.g. variable entries.
 
+```java
     List<String> classpath = new ArrayList<String>();
     classpath.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path("/project.web/src/main/java")).getMemento());
     classpath.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path("/lib/dev-2.0.0.jar")).getMemento());
@@ -664,15 +706,17 @@ Then you need so set each attribute to complete your launch configuration. Check
     config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "-startupUrl index.html");
     config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "project.web");
     config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xmx256M");
+```
 
 Now you can either run it directly in Eclipse...
-
+```java
     DebugUITools.launch(config, ILaunchManager.RUN_MODE);
+```
 
 ...or save this configuration, which is great for verifying the attributes.
-
+```java
     config.doSave();
-
+```
 
 
 JDT has support for launching Java programs. First, add the following plug-ins to your dependent list:
@@ -682,25 +726,26 @@ JDT has support for launching Java programs. First, add the following plug-ins t
 *   org.eclipse.jdt.core
 *   org.eclipse.jdt.launching
 
-With those plug-ins added to your dependent plug-in list, your Java program can be launched using the JDT in two ways. In the first approach, an IVMRunner uses the currently installed VM, sets up its classpath, and asks the VM runner to run the program: 
+With those plug-ins added to your dependent plug-in list, your Java program can be launched using the JDT in two ways. In the first approach, an IVMRunner uses the currently installed VM, sets up its classpath, and asks the VM runner to run the program:
 
+```java
        void launch(IJavaProject proj, String main) {
           IVMInstall vm = JavaRuntime.getVMInstall(proj);
           if (vm == null) vm = JavaRuntime.getDefaultVMInstall();
           IVMRunner vmr = vm.getVMRunner(ILaunchManager.RUN_MODE);
           String[] cp = JavaRuntime.
              computeDefaultRuntimeClassPath(proj);
-          VMRunnerConfiguration config = 
+          VMRunnerConfiguration config =
              new VMRunnerConfiguration(main, cp);
-          ILaunch launch = new Launch(null, 
+          ILaunch launch = new Launch(null,
              ILaunchManager.RUN_MODE, null);
           vmr.run(config, launch, null);
        }
-    
+```
 
 The second approach is to create a new launch configuration, save it, and run it. The cfg parameter to this method is the name of the launch configuration to use:
 
-
+```java
        void launch(IJavaProject proj, String cfg, String main) {
           DebugPlugin plugin = DebugPlugin.getDefault();
           ILaunchManager lm = plugin.getLaunchManager();
@@ -709,17 +754,15 @@ The second approach is to create a new launch configuration, save it, and run it
           ILaunchConfigurationWorkingCopy wc = t.newInstance(
             null, cfg);
           wc.setAttribute(
-            IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, 
+            IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME,
             proj.getElementName());
           wc.setAttribute(
-            IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, 
+            IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
             main);
-          ILaunchConfiguration config = wc.doSave();   
+          ILaunchConfiguration config = wc.doSave();
           config.launch(ILaunchManager.RUN_MODE, null);
        }
-    
-
-
+```
 
 More information is available at **Help > Help Contents > JDT Plug-in Developer Guide** \> JDT Debug > Running Java code**.**
 
@@ -755,6 +798,7 @@ This is not the only way to create a repository, and it may not be the best way,
 
 Here is the Ant build file for generating artifacts.xml
 
+```xml
     <?xml version="1.0" encoding="UTF-8"?>
     <project name="project" default="artifacts">
       <target name="artifacts">
@@ -762,13 +806,14 @@ Here is the Ant build file for generating artifacts.xml
         <delete file="content.xml"/>
         <delete file="artifacts.jar"/>
         <delete file="content.jar"/>
-        <p2.publish.featuresAndBundles 
-          repository="file:${basedir}" 
+        <p2.publish.featuresAndBundles
+          repository="file:${basedir}"
           repositoryname="My Update Site"
-          source="${basedir}" 
+          source="${basedir}"
           compress="true" />
       </target>
     </project>
+```
 
 ### How do I add files to the root of the installation directory?
 

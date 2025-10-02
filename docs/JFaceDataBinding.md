@@ -97,10 +97,11 @@ Copy the following example code - consisting of three parts - into the new class
 
 Save the file and then select 'Run > Run As > Java Application'. Enter a numeric value in the text field and observe how the label is updated automatically. Click on the button to double the amount. You can also try entering a non-numeric value.
 
+```java
 	public class GettingStarted {
 
 	static Model model = new Model();
-	
+
 	static void init(Shell shell) {
 		Text text = new Text(shell, SWT.BORDER);
 		Label label = new Label(shell, SWT.NONE);
@@ -112,16 +113,17 @@ Save the file and then select 'Run > Run As > Java Application'. Enter a numeric
 				model.setAmount(model.getAmount() * 2);
 			}
 		});
-		
+
 		DataBindingContext dbc = new DataBindingContext();
 
 		IObservableValue modelObservable = BeansObservables.observeValue(model, "amount");
 
 		dbc.bindValue(SWTObservables.observeText(text, SWT.Modify), modelObservable, null, null);
 		dbc.bindValue(SWTObservables.observeText(label), modelObservable, null, null);
-		
+
 		GridLayoutFactory.swtDefaults().generateLayout(shell);
 	}
+```
 
 The above code assumes that a SWT Shell has already been created, and that there is a model object with an 'amount' property. Both will be implemented in the remaining two code pieces.
 
@@ -129,6 +131,7 @@ A text widget, a label, and a button are created within the shell. When the butt
 
 A data binding context is created. This is an object that will hold on to the bindings that you create. Bindings can be created between observable objects. In our example, we create one observable for our model object's property, and two observables on the UI side, one for the text, and another one for the label. The two 'null' arguments are for configuring validators or converters; by passing null, we will get default validators and converters. Note that the model property is of a numeric type while the text widget holds strings. Clearly, some kind of conversion is needed here.
 
+```java
 	static class Model {
 		private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 		public void addPropertyChangeListener(String propertyName,
@@ -149,9 +152,11 @@ A data binding context is created. This is an object that will hold on to the bi
 			return amount;
 		}
 	}
- 
+```
+
 This is a pretty basic model class that conforms to the JavaBeans specification by delegating listener management to a PropertyChangeSupport object. For convenience, it is implemented as a static inner class. You can easily add more properties to the model class, but don't forget to implement public getters and setters for them, and to make appropriate calls to changeSupport.firePropertyChange() from all setters.
 
+```java
 	public static void main(String\[\] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
@@ -169,27 +174,31 @@ This is a pretty basic model class that conforms to the JavaBeans specification 
 		display.dispose();
 	}
 }
+```
 
-This is the standard SWT event loop with one complication - a SWT _Realm_ is created and made the default realm for our application. Think of a Realm as an abstraction of SWT's UI thread. If everything in your application happens in the UI thread, you don't have to deal with Realms in your binding code. 
+This is the standard SWT event loop with one complication - a SWT _Realm_ is created and made the default realm for our application. Think of a Realm as an abstraction of SWT's UI thread. If everything in your application happens in the UI thread, you don't have to deal with Realms in your binding code.
 For more details on this, see the [FAQ](JFaceDataBindingFAQ.md) or the section that explains in detail what a [Realm](#Realm) is. If you are writing a plug-in for the Eclipse Platform, or a RCP application, you don't have to do this setup yourself - as of Eclipse 3.3, it is already part of the initialization code in **PlatformUI.createAndRunWorkbench()**.
 
 ### Validation Results
 
 To see the results of the default validation, add the following to the GettingStarted class.
 
+```java
 	Label errorLabel = new Label(shell, SWT.NONE);
 	dbc.bindValue(SWTObservables.observeText(errorLabel),
 			new AggregateValidationStatus(dbc.getBindings(),
 					AggregateValidationStatus.MAX_SEVERITY), null, null);
- 
+```
+
 This code adds another label for the validation message and binds it to an aggregated status obtained from all the bindings in the data binding context. You can also look at validation results for individual bindings if you keep a reference to the binding object returned from bindValue:
 
+```java
 	// updated line follows:
 	Binding b = dbc.bindValue(SWTObservables.observeText(text, SWT.Modify), modelObservable, null, null);
 
 	Label individualErrorLabel = new Label(shell, SWT.NONE);
 	dbc.bindValue(SWTObservables.observeText(individualErrorLabel), b.getValidationStatus(), null, null);
-
+```
 
 Note that b.getValidationStatus() returns an IObservableValue, not an IStatus object. It is a live value which can be observed; in this example, we are using it directly in another call to bindValue().
 
@@ -197,12 +206,14 @@ Note that b.getValidationStatus() returns an IObservableValue, not an IStatus ob
 
 To configure your own converters and/or validators instead of the default ones, you would pass an instance of UpdateValueStrategy for each direction (UI>Model, Model>UI) instead of the null arguments to bindValue():
 
+```java
 	// this is just an example of configuring an existing validator and converter:
 	dbc.bindValue(SWTObservables.observeText(text, SWT.Modify), modelObservable,
 		// UI to model:
 		new UpdateValueStrategy().setAfterConvertValidator(anIntValidator),
 		// model to UI:
 		new UpdateValueStrategy().setConverter(anIntToStringConverter));
+```
 
 # Snippets
 
@@ -265,11 +276,11 @@ Use the following URL to clone the repository via File -> Import -> Git reposito
 
 *   [http://anonymous@git.eclipse.org/gitroot/platform/eclipse.platform.ui.git](http://anonymous@git.eclipse.org/gitroot/platform/eclipse.platform.ui.git)
 
-After you cloned the project the clone wizard will allow you to import the included projects. 
-For the databinding examples you only have to import the "org.eclipse.jface.examples.databinding" project. 
+After you cloned the project the clone wizard will allow you to import the included projects.
+For the databinding examples you only have to import the "org.eclipse.jface.examples.databinding" project.
 For an introduction into EGit please see [EGit](https://www.vogella.com/tutorials/EclipseGit/article.html)
 
-Most of the examples provide a main method, you can run it as a Java Application to see what happens.  
+Most of the examples provide a main method, you can run it as a Java Application to see what happens.
 
 You can also copy any of the snippets (see below) into a scratch project within Eclipse. If you are copying single snippets into a scratch project, make sure that it is set up with the correct dependencies. You will need org.eclipse.core.databinding, org.eclipse.core.databinding.beans, and org.eclipse.jface.databinding.
 
@@ -384,35 +395,36 @@ Unit Testing
 
 When writing unit tests for observables or bindings it is difficult to set the default Realm without wrapping the test code in a `Runnable` and invoking `Realm.runWithDefault(Realm realm, Runnable runnable)`. The following implementation can be used as a stub Realm for unit testing purposes and fits into the `setUp()` and `tearDown()` testing paradigm.
 
+```java
     /**
      * Simple realm implementation that will set itself as default when constructed. Invoke
      * {@link #dispose()} to remove the realm from being the default. Does not support asyncExec(...).
      */
     public class DefaultRealm extends Realm {
         private Realm previousRealm;
-    
+
         public DefaultRealm() {
             previousRealm = super.setDefault(this);
         }
-    
+
         /**
          * @return always returns true
          */
         public boolean isCurrent() {
             return true;
         }
-    
+
         protected void syncExec(Runnable runnable) {
             runnable.run();
         }
-    
+
         /**
          * @throws UnsupportedOperationException
          */
         public void asyncExec(Runnable runnable) {
             throw new UnsupportedOperationException("asyncExec is unsupported");
         }
-    
+
         /**
          * Removes the realm from being the current and sets the previous realm to the default.
          */
@@ -426,7 +438,7 @@ When writing unit tests for observables or bindings it is difficult to set the d
 
     public class SampleTestCase extends TestCase {
         private DefaultRealm realm;
-        
+
         /**
          * Creates a new default realm for every test.
          */
@@ -434,7 +446,7 @@ When writing unit tests for observables or bindings it is difficult to set the d
             super.setUp();
             realm = new DefaultRealm();
         }
-        
+
         /**
          * Removes the default realm.
          */
@@ -443,7 +455,8 @@ When writing unit tests for observables or bindings it is difficult to set the d
             realm.dispose();
         }
     }
-    
+```
+
 # TrackedGetter
 
 Every getter on an observable object must make a call to ObservableTracker.getterCalled(). Why?
@@ -452,13 +465,15 @@ This enables abstractions like ComputedValue or ComputedList: All you have to wr
 
 For example, assume that your UI has text fields for the first name and the last name of a person, but you want to display a formatted version of the full name elsewhere in the UI. This is what you can write (see [Snippet008](http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet008ComputedValue.java?view=markup) for a complete example):
 
+```java
     final IObservableValue firstName = SWTObservables.observeText(firstNameField, SWT.Modify);
     final IObservableValue lastName = SWTObservables.observeText(lastNameField, SWT.Modify);
     IObservableValue formattedName = new ComputedValue() {
       protected Object calculate() {
         return lastName.getValue() + firstName.getValue();
       }
-    }; 
+    };
+```
 
 Note that without having to register any listeners from client code, the 'formattedName' observable will always change whenever one of the observables referenced in its calculate() method changes. We didn't even have to pass a list of observables to the framework - just by calling lastName.getValue(), or firstName.getValue(), it will figure out that it has to listen for changes to lastName and firstName for you.
 
@@ -518,49 +533,50 @@ The TCK tests don't assert the observed object state. Because the observed objec
 
 ### Delegates
 
-In order to take advantage of the tests developers will need to create a contract delegate. 
-The delegates allow for implementation specific details to be provided to the TCK. 
+In order to take advantage of the tests developers will need to create a contract delegate.
+The delegates allow for implementation specific details to be provided to the TCK.
 The IObservableContractDelegate is provided below as an example:
 
+```java
     public interface IObservableContractDelegate {
     	/**
     	 * Notifies the delegate of the start of a test.
     	 */
     	public void setUp();
-    
+
     	/**
     	 * Notifies the delegate of the end of a test.
     	 */
     	public void tearDown();
-    
+
     	/**
     	 * Invokes an operation to set the stale state of the provided
     	 * observable.
-    	 * 
+    	 *
     	 * @param observable
     	 * @param stale
     	 */
     	public void setStale(IObservable observable, boolean stale);
-    
+
     	/**
     	 * Creates a new observable.
-    	 * 
+    	 *
     	 * @param realm realm of the observable
     	 * @return observable
     	 */
     	public IObservable createObservable(Realm realm);
-    
+
     	/**
     	 * Invokes a change operation on the observable resulting in a change event
     	 * being fired from the observable.
-    	 * 
+    	 *
     	 * @param observable
     	 */
     	public void change(IObservable observable);
     }
-    
+```
 
- 
+
 
 The delegate API follows the standard JUnit conventions of setUp() and tearDown(). The other methods will be invoked when necessary by the tests.
 
@@ -578,51 +594,53 @@ Since the tests are JUnit3 tests you can integrate them into your tests in stand
 
 #### Subclassing
 
+```java
     public class ButtonObservableValueTest extends SWTObservableValueContractTest {
     	public ButtonObservableValueTest() {
     		super(new Delegate());
     	}
-    	
+
     	/* package */ static class Delegate extends AbstractObservableValueContractDelegate {
     		private Shell shell;
     		private Button button;
-    
+
     		public void setUp() {
     			shell = new Shell();
     			button = new Button(shell, SWT.CHECK);
     		}
-    		
+
     		public void tearDown() {
     			shell.dispose();
     		}
-    		
+
     		public IObservableValue createObservableValue(Realm realm) {
     			return new ButtonObservableValue(realm, button);
     		}
-    		
+
     		public void change(IObservable observable) {
     			boolean value = button.getSelection();
     			button.setSelection(!value);
     			button.notifyListeners(SWT.Selection, null);
     		}
-    		
+
     		public Object createValue(IObservableValue observable) {
     			return (Boolean.TRUE.equals(observable.getValue()) ? Boolean.FALSE : Boolean.TRUE);
     		}
-    		
+
     		public Object getValueType(IObservableValue observable) {
     			return Boolean.TYPE;
     		}
     	}
     }
-    
+```
 
- 
+
 
 When subclassing, because of single inheritance, you will have to create multiple implementations to test the mutable and immutable use cases (e.g. there would need to be a ButtonMutableObservableValueTest as well to test the mutable cases). The rest of the implementation should be straightforward. The only thing we ask is that you don't depend upon API other than the constructors. Tests are public because JUnit requires them to be, not because we want to commit to them as API. Over time we would like to have the opportunity to rename, add, remove, or optimize the test methods to ensure that we're getting the best coverage as possible. Because of the issues outlined above the preferred method is creating a JUnit suite.
 
 #### JUnit suite()
 
+```java
     public class ButtonObservableValueTest extends TestCase {
     	public static Test suite() {
     		TestSuite suite = new TestSuite(ButtonObservableValueTest.class.getName());
@@ -630,49 +648,44 @@ When subclassing, because of single inheritance, you will have to create multipl
     		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate());
     		return suite;
     	}
-    
+
     	/* package */ static class Delegate extends AbstractObservableValueContractDelegate {
     		private Shell shell;
     		private Button button;
-    
+
     		public void setUp() {
     			shell = new Shell();
     			button = new Button(shell, SWT.CHECK);
     		}
-    		
+
     		public void tearDown() {
     			shell.dispose();
     		}
-    		
+
     		public IObservableValue createObservableValue(Realm realm) {
     			return new ButtonObservableValue(realm, button);
     		}
-    		
+
     		public void change(IObservable observable) {
     			boolean value = button.getSelection();
     			button.setSelection(!value);
     			button.notifyListeners(SWT.Selection, null);
     		}
-    		
+
     		public Object createValue(IObservableValue observable) {
     			return (Boolean.TRUE.equals(observable.getValue()) ? Boolean.FALSE : Boolean.TRUE);
     		}
-    		
+
     		public Object getValueType(IObservableValue observable) {
     			return Boolean.TYPE;
     		}
     	}
-    } 
-    
+    }
+```
 
-
-By creating a suite() method you can create a custom suite of tests to run. 
-This will allow you to run multiple TestCases from a single test eliminating the need to create multiple implementations for the mutable and immutable cases. 
-The `SuiteBuilder` implementation allows for a straightforward way to build these suites. 
-The downside to building tests in this fashion is that when ran they don't contain the context of a parent class. 
-In the JUnit view in Eclipse they are children of a junit.framework.TestSuite rather than a named test. 
+By creating a suite() method you can create a custom suite of tests to run.
+This will allow you to run multiple TestCases from a single test eliminating the need to create multiple implementations for the mutable and immutable cases.
+The `SuiteBuilder` implementation allows for a straightforward way to build these suites.
+The downside to building tests in this fashion is that when ran they don't contain the context of a parent class.
+In the JUnit view in Eclipse they are children of a junit.framework.TestSuite rather than a named test.
 As a way around this the failure message contains information about the context of the failure (e.g. Test class name and delegate name).
-
-
-
-

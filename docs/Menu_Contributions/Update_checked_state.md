@@ -8,6 +8,7 @@ The active handler can update any UI elements registered against the its command
 
 As a handler becomes active and implement IElementUpdater like org.eclipse.ui.tests.menus.ToggleContextHandler, the command service calls `public void updateElement(UIElement element, Map parameters)` for every UIElement registered against the command.
 
+```java
     public class ToggleContextHandler extends AbstractHandler implements
         IElementUpdater {
       private static final String TOGGLE_ID = "toggleContext.contextId";
@@ -19,4 +20,4 @@ As a handler becomes active and implement IElementUpdater like org.eclipse.ui.te
         element.setChecked(contextActivations.get(contextId) != null);
       }
     }
-
+```

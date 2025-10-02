@@ -23,7 +23,7 @@ Eclipse 4 has no formal notion of an 'editor', though one could be defined by vi
 
 Most classes referenced by model objects are immediately instantiated on the rendering of the model. This means that bundles contributing to the UI will be invariably activated on startup.
 
-  
+
 
 ### How would I accomplish X in Eclipse 4?
 
@@ -75,15 +75,17 @@ Unlike EMF's _xmi:id_ identifiers, which are expected by EMF to be unique, Eclip
 
 In the following example, notice the (anonymous) handler has a reference to the command instance. The command instance's _elementId_ is used as the Eclipse command identifier.
 
+```xml
       <handlers xmi:id="_385TQr5EEeGzleFI7lW1Fg"
           contributorURI="platform:/plugin/org.eclipse.platform"
           contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.ExitHandler"
           command="_385TTr5EEeGzleFI7lW1Fg"/>
       <commands xmi:id="_385TTr5EEeGzleFI7lW1Fg"
-          elementId="e4.exit" 
+          elementId="e4.exit"
           contributorURI="platform:/plugin/org.eclipse.platform"
           commandName="%command.name.exit"
           description=""/>
+```
 
 ### How do I reference an object defined in another .e4xmi?
 
@@ -105,7 +107,7 @@ It depends on the context in which the elementIds are being used. In practice, s
 
 The E4 model does not require that elementIds be unique. Otherwise every "File" menu in different windows would require a different identifier, which would be very annoying. But each MCommand defined on an MApplication is _expected_ to have a unique identifier. (Note: command-identifier uniqueness is not actually enforced, but could lead to unexpected UI behaviours since there will be multiple possible command objects.) If you are attempting to import an object into a fragment, then it's important that the elementIds are unique for that type.
 
-  
+
 
 ### How do I use MPlaceholders?
 
@@ -125,24 +127,27 @@ E4AP products require having the following plugins:
 
 Note that org.eclipse.equinox.ds and org.eclipse.equinox.event _must_ be explicitly started. In your product file, you should have a section like the following:
 
+```xml
       <configurations>
          <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="2" />
          <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="3" />
          <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="3" />
       </configurations>
-    
-or
+```
 
+or
+```xml
       <configurations>
          <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="2" />
          <plugin id="org.apache.felix.scr" autoStart="true" startLevel="3" />
          <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="3" />
       </configurations>
-    
+```
+
 Failure to set the auto-start levels usually manifest as runtime errors like
 
       Unable to acquire application service. Ensure that the org.eclipse.core.runtime bundle is resolved and started (see config.ini)
-    
+
 See also [\[1\]](https://www.eclipse.org/eclipse/news/4.7/platform_isv.php#equinox-ds-felix-scr)
 
 ### I modified my App.e4xmi/fragment.e4xmi but the changes aren't being loaded. Why?
@@ -164,16 +169,16 @@ There are typically two reasons why injection fails.
 
 #### Cause #1: Mismatched Annotations
 
-Note: As of Eclipse Neon (4.6), the advice, to place a package-version on javax.annotation, is no longer required. See [bug 463292](https://bugs.eclipse.org/bugs/show_bug.cgi?id=463292) for details.  
+Note: As of Eclipse Neon (4.6), the advice, to place a package-version on javax.annotation, is no longer required. See [bug 463292](https://bugs.eclipse.org/bugs/show_bug.cgi?id=463292) for details.
 
-  
+
 Ensure your bundles use Import-Package with a package version to pull in the standard annotations rather than a Require-Bundle on the javax.annotation bundle.
 
     Import-Package: javax.annotation; version="1.1.0"
 
 Basically the injector is resolving to a different PostConstruct class from your code. You can try "packages javax.annotation" from the OSGi console to see if your bundle is bound to a different package version than org.eclipse.e4.core.di. The reasons behind this are complex (see [bug 348155](https://bugs.eclipse.org/bugs/show_bug.cgi?id=348155) for a long discussion about the issue and the problems with various solutions. A workaround was committed for Kepler SR2 for bundles that require the org.eclipse.core.runtime bundle (see [bug 424274](https://bugs.eclipse.org/bugs/show_bug.cgi?id=424274)). The real solution is for the OSGi Framework to annotate the VM definitions with their respective versions ([bug 348630](https://bugs.eclipse.org/bugs/show_bug.cgi?id=348630)), but it's a hard problem.
 
-  
+
 
 #### Cause #2: Unresolvable Injections
 
@@ -208,9 +213,10 @@ The injector attempts to resolve objects in the context. If they are not found i
 
 This behaviour can be a bit confusing, so let's walk through a somewhat subtle example that frequently causes confusion to new developers with E4 and DI. Consider an E4 RCP app with two MParts, OverviewPart and DetailPart. Since the OverviewPart provides an overview of the contents shown by DetailPart, it needs to get ahold of the DetailPart. A first attempt at writing OverviewPart and DetailPart might be:
 
+```java
     public class OverviewPart {
        @Inject private Composite detail;
-       @Inject private DetailPart detail; 
+       @Inject private DetailPart detail;
      
        @PostConstruct private void init() { /* ... */ }
     }
@@ -220,6 +226,7 @@ This behaviour can be a bit confusing, so let's walk through a somewhat subtle e
      
        @PostConstruct private void init() { /* ... */ }
     }
+```
 
 If you try to run with this code, it seems to work — but somehow the OverviewPart and DetailPart receive the same Composite! What's wrong?
 
@@ -251,6 +258,7 @@ So the flow looks something like this.
 
 This type of problem is another symptom of the [DI autogeneration issue](#Why-am-I-getting-a-new-instance-of-an-object), and usually occurs with code like the following:
 
+```java
     class ShowDialogHandler {
      
        @Execute
@@ -258,13 +266,16 @@ This type of problem is another symptom of the [DI autogeneration issue](#Why-am
           dialog = new Dialog(shell, ...);
        }
     }
+```
 
 As there is no Shell in the DI context, but [Shell](http://help.eclipse.org/indigo/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/widgets/Shell.html) has a 0-argument constructor, the DI will create a new Shell for the purpose of injection.
 
 The fix is to annotate the Shell request with "@Named(ACTIVE_SHELL)" to fetch the shell for the active window, as in:
 
+```java
        @Execute
        private void showDialog(@Named(ACTIVE_SHELL) Shell shell) { ... }
+```
 
 This value is set in the context for each window.
 
@@ -274,6 +285,7 @@ Typically null values are only injected when an argument or field is marked as @
 
 For example, the valueChanged() method will be injected with null:
 
+```java
     @PostConstruct
     public void init(IEclipseContext context) {
        context.set("value", null);
@@ -283,6 +295,7 @@ For example, the valueChanged() method will be injected with null:
     public void valueChanged(@Named("value") String selection) {
        // ...
     }
+```
 
 ### Why aren't my parts being injected with my value set from my bundle activator?
 
@@ -290,6 +303,7 @@ The context obtained using `EclipseContextFactory.getServiceContext(bundleContex
 
 ### What is the difference between IEclipseContext#set and IEclipseContext#modify?
 
+```java
     public class MyPart {
         @Inject IEclipseContext context;
      
@@ -300,13 +314,14 @@ The context obtained using `EclipseContextFactory.getServiceContext(bundleContex
             // this part and any children
             context.set("repository", repository);
      
-            // search up the context stack to see if the variable exists in one of the the context's 
+            // search up the context stack to see if the variable exists in one of the the context's
             // ancestors; otherwise it does a set in the specified context
             context.modify("repository", repository);
         }
      
         ...
     }
+```
 
 A placeholder can be made for _#modify_ with _IEclipseContext#declareModifiable()_ or a _<variable>_ declaration in an _Application.e4xmi_.
 
@@ -331,9 +346,10 @@ The confusion arises as each _binding_ parameter (an instance of _MParameter_) a
 
 For example, consider defining a command to perform a CSS theme switch, where the theme identifier is provided as a command parameter _themeId_. We might configure the command (programmatically) as follows:
 
+```java
     MCommand switchThemeCommand = MCommandsFactory.INSTANCE.createCommand();
     // set the unique command id
-    switchThemeCommand.setElementId("command.switchTheme");   
+    switchThemeCommand.setElementId("command.switchTheme");
     MCommandParameter themeId = MCommandsFactory.INSTANCE.createCommandParameter();
     themeId.setElementId("themeId");
     themeId.setName("The Theme Identifier");
@@ -341,9 +357,11 @@ For example, consider defining a command to perform a CSS theme switch, where th
     switchThemeCommand.getParameters().add(themeId);
     // make the command known
     app.getCommands().add(switchThemeCommand);
+```
 
 To configure a menu item to trigger a theme switch:
 
+```java
     // somehow find the MCommand definition
     MCommand switchThemeCommand = helper.findCommand("command.switchTheme");
     MMenu themeMenu = ...;
@@ -359,8 +377,8 @@ To configure a menu item to trigger a theme switch:
        menuItem.getParameters().add(parameter);
        themeMenu.getChildren().add(menuItem);
     }
+```
 
-  
 
 ### Why does org.eclipse.core.commands.Command's isEnabled() and getHandler() not work?
 

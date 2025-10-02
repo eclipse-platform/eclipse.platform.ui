@@ -9,6 +9,7 @@ We also have to provide object contributions (which in the past were scoped by o
 
 Here's an example from one of our plugin.xml:
 
+```xml
       <objectContribution adaptable="true"
       objectClass="org.eclipse.core.resources.IFile"
       nameFilter="*.xml"
@@ -21,6 +22,7 @@ Here's an example from one of our plugin.xml:
       class="org.eclipse.jdt.internal.ui.CreateJavadocActionDelegate"
       enablesFor="1" id="LaunchJavadocWizard"/>
       </objectContribution>
+```
 
 **enablesFor** is now a property of the active handler, not the visible GUI element.
 
@@ -29,6 +31,7 @@ Menus
 
 There will be a reserved popup ID, "org.eclipse.ui.popup.any" that will allow contributions to any popup menu.
 
+```xml
       <extension point="org.eclipse.core.expressions.definitions">
          <definition id="org.eclipse.ui.example.antFile">
             <iterate ifEmpty="false">
@@ -55,8 +58,8 @@ There will be a reserved popup ID, "org.eclipse.ui.popup.any" that will allow co
             </command>
          </menuContribution>
       </extension>
+```
 
-  
 The default variable for visibleWhen/activeWhen/enabledWhen expressions is **selection**. But it's better to be specific and use `<with variable="selection".../>` if that's what you need.
 
 Menus API
@@ -64,6 +67,7 @@ Menus API
 
 Here is a similar example programmatically.
 
+```java
       public static void addFileContribution() {
          final IMenuService menuService = (IMenuService) PlatformUI
                   .getWorkbench().getService(IMenuService.class);
@@ -104,6 +108,7 @@ Here is a similar example programmatically.
          };
          menuService.addContributionFactory(factory);
       }
+```
 
 The location of org.eclipse.ui.popup.any specifies any context menu, and the expression ties it to a specific objectClass. Using the new expression syntax you can make your conditions more complex.
 
