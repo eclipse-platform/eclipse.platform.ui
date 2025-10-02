@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
 import org.eclipse.ltk.core.refactoring.tests.history.RefactoringHistoryTests;
 import org.eclipse.ltk.core.refactoring.tests.participants.ParticipantTests;
@@ -22,8 +22,8 @@ import org.eclipse.ltk.core.refactoring.tests.resource.ResourceRefactoringTests;
 import org.eclipse.ltk.core.refactoring.tests.resource.ResourceRefactoringUndoTests;
 import org.eclipse.ltk.core.refactoring.tests.scripting.RefactoringScriptingTests;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
 	RefactoringContextTest.class,
 	ParticipantTests.class,
 	RefactoringHistoryTests.class,
