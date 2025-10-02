@@ -2,10 +2,10 @@ Rich Client Platform/FAQ
 ======================== 
 
 The following are **Frequently Asked Questions** (**FAQs**) about the Eclipse Rich Client Platform. 
-For relevant tutorials, help topics, newsgroups, examples, and other resources, see the main [RCP page](Rich_Client_Platform.md).
+For relevant tutorials, help topics, newsgroups, examples, and other resources, see the main [RCP page](../Rich_Client_Platform.md).
 
-or general Eclipse FAQs, which address many RCP issues, see [The Official Eclipse FAQs](https://wiki.eclipse.org/The_Official_Eclipse_FAQs).  
-For Eclipse 4, see the [Eclipse 4 RCP FAQ](Eclipse4_RCP_FAQ.md).
+For general Eclipse FAQs, which address many RCP issues, see [The Official Eclipse FAQs](https://wiki.eclipse.org/The_Official_Eclipse_FAQs).  
+For Eclipse 4, see the [Eclipse 4 RCP FAQ](../Eclipse4_RCP_FAQ.md).
 
 
 What is the Eclipse Rich Client Platform?
@@ -13,7 +13,7 @@ What is the Eclipse Rich Client Platform?
 
 While the Eclipse platform is designed to serve as an open tools platform, it is architected so that its components could be used to build just about any client application. The minimal set of plug-ins needed to build a rich client application is collectively known as the **Rich Client Platform**.
 
-For more details, see the main [RCP page](Rich_Client_Platform.md).
+For more details, see the main [RCP page](../Rich_Client_Platform.md).
 
 Why should I build my application on the Eclipse Rich Client Platform?
 ----------------------------------------------------------------------
@@ -33,7 +33,7 @@ The Eclipse Rich Client Platform consists of the following components:
 | --- | --- | --- | --- |
 | Eclipse Runtime    | Provides the foundational support for plug-ins, extension points and extensions (among other facilities).  The Eclipse runtime is built on top of the [OSGi framework](https://www.osgi.org/resources/where-to-start/). | org.eclipse.core.runtime    org.eclipse.osgi   org.eclipse.osgi.services   | Dev guide: [Runtime overview](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/runtime.htm)   Article: [Notes on the Eclipse Plug-in Architecture](http://eclipse.org/articles/Article-Plug-in-architecture/plugin_architecture.html)      |
 | SWT    | The Standard Widget Toolkit. SWT is designed to provide efficient, portable access to the user-interface facilities of the operating systems on which it is implemented | org.eclipse.swt    \+ platform-specific fragments      | [Platform SWT home page](https://www.eclipse.org/swt/) |
-| JFace    | A UI framework, layered on top of SWT, for handling many common UI programming tasks. | org.eclipse.jface | [JFace](JFace.md) |
+| JFace    | A UI framework, layered on top of SWT, for handling many common UI programming tasks. | org.eclipse.jface | [JFace](../JFace.md) |
 | Workbench | The Workbench builds on top of the Runtime, SWT and JFace to provide a highly scalable, open-ended, multi-window environment for managing views, editors, perspectives (task-oriented layouts), actions, wizards, preference pages, and more.    The Workbench is sometimes called the Generic Workbench, to distinguish it from the IDE Workbench facilities defined in the org.eclipse.ui.ide plug-in.   | org.eclipse.ui    org.eclipse.ui.workbench   | Dev guide: [Plugging into the workbench](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/workbench.htm),[Dialogs and wizards](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/dialogs.htm), [Advanced workbench concepts](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/wrkAdv.htm)      |
 |   Other prerequisites for the Workbench   | Support for XML expressions language, commands, and help core content model.    | org.eclipse.core.expressions    org.eclipse.core.commands   org.eclipse.help   |     |
 
@@ -80,8 +80,8 @@ Here is a list of some of the reusable components in the broader Eclipse codebas
 How do I get started with RCP?
 ------------------------------
 
-The [Eclipse RCP tutorials](Rich_Client_Platform.md) are a good starting points. 
-See also the [examples](Rich_Client_Platform.md#Examples) and the [suggested help topics](Rich_Client_Platform.md#Help-Topics).
+The [Eclipse RCP tutorials](../Rich_Client_Platform.md) are a good starting points. 
+See also the [examples](../Rich_Client_Platform.md#Examples) and the [suggested help topics](../Rich_Client_Platform.md#Help-Topics).
 
 What is the recommended target platform setup? Or: How can I build and run my RCP app against a different version of the Eclipse base?
 --------------------------------------------------------------------------------------------------------------------------------------
@@ -241,7 +241,7 @@ Editors can be used for any kind of model, and can be textual or graphical.
 
 The Text component provides support for text editors. 
 See the entry for the Text component in the list of optional components above. 
-See also the [RCP text editor example](Rich_Client_Platform.md#Examples).
+See also the [RCP text editor example](../Rich_Client_Platform.md#Examples).
 
 How can I integrate my existing Swing components into an RCP application?
 -------------------------------------------------------------------------
