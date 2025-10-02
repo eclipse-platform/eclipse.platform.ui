@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 import org.eclipse.ui.internal.findandreplace.FindReplaceLogicTest;
 import org.eclipse.ui.internal.findandreplace.overlay.FindReplaceOverlayTest;
@@ -27,14 +26,13 @@ import org.eclipse.ui.workbench.texteditor.tests.revisions.HunkComputerTest;
 import org.eclipse.ui.workbench.texteditor.tests.revisions.RangeTest;
 import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 
-
 /**
  * Test Suite for org.eclipse.ui.workbench.texteditor.
  *
  * @since 3.0
  */
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 		HippieCompletionTest.class,
 		RangeTest.class,
 		ChangeRegionTest.class,
@@ -52,5 +50,5 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 		FindReplaceLogicTest.class,
 })
 public class WorkbenchTextEditorTestSuite {
-	// see @SuiteClasses
+	// see @SelectClasses
 }
