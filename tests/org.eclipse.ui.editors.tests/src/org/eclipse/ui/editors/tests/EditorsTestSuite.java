@@ -15,9 +15,8 @@
  ************************************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 import org.eclipse.jface.text.tests.codemining.CodeMiningTest;
 
@@ -33,8 +32,8 @@ import org.eclipse.ui.texteditor.stickyscroll.StickyLineTest;
  *
  * @since 3.0
  */
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 		ChainedPreferenceStoreTest.class,
 		DocumentProviderRegistryTest.class,
 		EncodingChangeTests.class,
@@ -60,5 +59,5 @@ import org.eclipse.ui.texteditor.stickyscroll.StickyLineTest;
 		CodeMiningTest.class,
 })
 public class EditorsTestSuite {
-	// see @SuiteClasses
+	// see @SelectClasses
 }
