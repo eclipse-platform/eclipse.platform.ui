@@ -14,11 +14,12 @@
 package org.eclipse.jface.tests.action;
 
 import org.junit.runner.JUnitCore;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ ContributionItemTest.class, ToolBarManagerTest.class, CoolBarManagerTest.class,
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({ ContributionItemTest.class, ToolBarManagerTest.class, CoolBarManagerTest.class,
 		MenuManagerTest.class })
 public class AllActionTests {
 

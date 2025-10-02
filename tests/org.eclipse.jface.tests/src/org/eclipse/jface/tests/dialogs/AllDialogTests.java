@@ -14,11 +14,12 @@
 package org.eclipse.jface.tests.dialogs;
 
 import org.junit.runner.JUnitCore;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ DialogTest.class, StatusDialogTest.class, DialogSettingsTest.class, InputDialogTest.class,
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@Suite
+@SelectClasses({ DialogTest.class, StatusDialogTest.class, DialogSettingsTest.class, InputDialogTest.class,
 		TitleAreaDialogTest.class, SafeRunnableErrorTest.class, ProgressIndicatorStyleTest.class,
 		ProgressMonitorDialogTest.class, PlainMessageDialogTest.class })
 public class AllDialogTests {

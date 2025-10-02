@@ -23,12 +23,12 @@ import org.eclipse.jface.tests.viewers.AllViewersTests;
 import org.eclipse.jface.tests.widgets.AllWidgetTests;
 import org.eclipse.jface.tests.window.AllWindowTests;
 import org.eclipse.jface.tests.wizards.WizardTestSuite;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({ AllActionTests.class, AllDialogTests.class, AllImagesTests.class, AllLabelProviderTests.class,
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+
+@Suite
+@SelectClasses({ AllActionTests.class, AllDialogTests.class, AllImagesTests.class, AllLabelProviderTests.class,
 		AllLayoutTests.class, AllPrefsTests.class, AllResourcesTests.class, AllViewersTests.class, AllWidgetTests.class,
 		AllWindowTests.class, DecoratingLabelProviderTests.class, FieldAssistTestSuite.class, WizardTestSuite.class })
 public class AllTests {
