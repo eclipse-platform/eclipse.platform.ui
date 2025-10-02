@@ -139,8 +139,9 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 			@Override
 			public void keyPressed(KeyEvent e)  {
-				if (e.character == 0x1B) // ESC
+				if (e.character == 0x1B) { // ESC
 					fShell.dispose();
+				}
 			}
 
 			@Override
@@ -208,10 +209,11 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 * @param input the input object
 	 */
 	public void setInput(Object input) {
-		if (input instanceof String)
+		if (input instanceof String) {
 			setInformation((String)input);
-		else
+		} else {
 			setInformation(null);
+		}
 	}
 
 	@Override
@@ -232,8 +234,9 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 	@Override
 	public void widgetDisposed(DisposeEvent event) {
-		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
+		if (fStatusTextFont != null && !fStatusTextFont.isDisposed()) {
 			fStatusTextFont.dispose();
+		}
 		fStatusTextFont= null;
 
 		fTextFont= null;
@@ -243,10 +246,11 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 	@Override
 	public final void dispose() {
-		if (fShell != null && !fShell.isDisposed())
+		if (fShell != null && !fShell.isDisposed()) {
 			fShell.dispose();
-		else
+		} else {
 			widgetDisposed(null);
+		}
 	}
 
 	@Override
@@ -260,8 +264,9 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		}
 		fShell.setSize(width, height);
 
-		if (fStatusField != null)
+		if (fStatusField != null) {
 			fShell.pack(true);
+		}
 	}
 
 	@Override
@@ -281,14 +286,17 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		int x= SWT.DEFAULT;
 		int y= SWT.DEFAULT;
 		Point size= fShell.computeSize(x, y);
-		if (size.x > fMaxWidth)
+		if (size.x > fMaxWidth) {
 			x= fMaxWidth;
-		if (size.y > fMaxHeight)
+		}
+		if (size.y > fMaxHeight) {
 			y= fMaxHeight;
+		}
 
 		// recompute using the constraints if the preferred size is larger than the constraints
-		if (x != SWT.DEFAULT || y != SWT.DEFAULT)
+		if (x != SWT.DEFAULT || y != SWT.DEFAULT) {
 			size= fShell.computeSize(x, y, false);
+		}
 
 		return size;
 	}
@@ -382,10 +390,12 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	@Override
 	public boolean containsControl(Control control) {
 		do {
-			if (control == fShell)
+			if (control == fShell) {
 				return true;
-			if (control instanceof Shell)
+			}
+			if (control instanceof Shell) {
 				return false;
+			}
 			control= control.getParent();
 		} while (control != null);
 		return false;

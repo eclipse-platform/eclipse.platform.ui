@@ -47,8 +47,9 @@ public class AnnotationBag extends Annotation {
 	 * @param annotation the annotation to add
 	 */
 	public void add(Annotation annotation) {
-		if (fAnnotations == null)
+		if (fAnnotations == null) {
 			fAnnotations= new HashSet<>(2);
+		}
 		fAnnotations.add(annotation);
 	}
 
@@ -60,8 +61,9 @@ public class AnnotationBag extends Annotation {
 	public void remove(Annotation annotation) {
 		if (fAnnotations != null) {
 			fAnnotations.remove(annotation);
-			if (fAnnotations.isEmpty())
+			if (fAnnotations.isEmpty()) {
 				fAnnotations= null;
+			}
 		}
 	}
 
@@ -82,8 +84,9 @@ public class AnnotationBag extends Annotation {
 	 * @since 3.1
 	 */
 	public Iterator<Annotation> iterator() {
-		if (!isEmpty())
+		if (!isEmpty()) {
 			return fAnnotations.iterator();
+		}
 		return null;
 	}
 }

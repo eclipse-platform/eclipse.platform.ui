@@ -117,12 +117,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		private void processModelChanged(IAnnotationModel model, AnnotationModelEvent event) {
 			if (model == fProjectionAnnotationModel) {
 
-				if (fProjectionSummary != null)
+				if (fProjectionSummary != null) {
 					fProjectionSummary.updateSummaries();
+				}
 				processCatchupRequest(event);
 
-			} else if (model == getAnnotationModel() && fProjectionSummary != null)
+			} else if (model == getAnnotationModel() && fProjectionSummary != null) {
 				fProjectionSummary.updateSummaries();
+			}
 		}
 	}
 
@@ -245,14 +247,16 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 
 		boolean passedRedrawCostsThreshold() {
-			if (fExpectedExecutionCosts == -1)
+			if (fExpectedExecutionCosts == -1) {
 				computeExpectedExecutionCosts();
+			}
 			return fExpectedExecutionCosts > REDRAW_COSTS;
 		}
 
 		boolean passedInvalidationCostsThreshold() {
-			if (fExpectedExecutionCosts == -1)
+			if (fExpectedExecutionCosts == -1) {
 				computeExpectedExecutionCosts();
+			}
 			return fExpectedExecutionCosts > INVALIDATION_COSTS;
 		}
 
@@ -265,8 +269,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				while (e.hasNext()) {
 					command= e.next();
 					fExpectedExecutionCosts += command.computeExpectedCosts();
-					if (fExpectedExecutionCosts > max_costs)
+					if (fExpectedExecutionCosts > max_costs) {
 						break;
+					}
 				}
 			}
 		}
@@ -365,8 +370,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 		super.setDocument(document, annotationModel, modelRangeOffset, modelRangeLength);
 
-		if (wasProjectionEnabled && document != null)
+		if (wasProjectionEnabled && document != null) {
 			enableProjection();
+		}
 
 
 	}
@@ -433,11 +439,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 		Assert.isNotNull(listener);
 
-		if (fProjectionListeners == null)
+		if (fProjectionListeners == null) {
 			fProjectionListeners= new ArrayList<>();
+		}
 
-		if (!fProjectionListeners.contains(listener))
+		if (!fProjectionListeners.contains(listener)) {
 			fProjectionListeners.add(listener);
+		}
 	}
 
 	/**
@@ -453,8 +461,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 		if (fProjectionListeners != null) {
 			fProjectionListeners.remove(listener);
-			if (fProjectionListeners.isEmpty())
+			if (fProjectionListeners.isEmpty()) {
 				fProjectionListeners= null;
+			}
 		}
 	}
 
@@ -538,11 +547,12 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				if (annotation.isCollapsed()) {
 					Position position= fProjectionAnnotationModel.getPosition(annotation);
 					// take the first most fine grained match
-					if (position != null && touches(selection, position))
+					if (position != null && touches(selection, position)) {
 						if (found == null || position.includes(found.offset) && position.includes(found.offset + found.length)) {
 							found= position;
 							bestMatch= annotation;
 						}
+					}
 				}
 			}
 
@@ -567,11 +577,12 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				if (!annotation.isCollapsed()) {
 					Position position= fProjectionAnnotationModel.getPosition(annotation);
 					// take the first most fine grained match
-					if (position != null && touches(selection, position))
+					if (position != null && touches(selection, position)) {
 						if (found == null || found.includes(position.offset) && found.includes(position.offset + position.length)) {
 							found= position;
 							bestMatch= annotation;
 						}
+					}
 				}
 			}
 
@@ -667,11 +678,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @since 3.2
 	 */
 	private int toLineStart(IDocument document, int offset, boolean testLastLine) throws BadLocationException {
-		if (document == null)
+		if (document == null) {
 			return offset;
+		}
 
-		if (testLastLine && offset >= document.getLineInformationOfOffset(document.getLength() - 1).getOffset())
+		if (testLastLine && offset >= document.getLineInformationOfOffset(document.getLength() - 1).getOffset()) {
 			return offset;
+		}
 
 		return document.getLineInformationOfOffset(offset).getOffset();
 	}
@@ -699,16 +712,18 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	@Override
 	public void resetVisibleRegion() {
 		super.resetVisibleRegion();
-		if (fWasProjectionEnabled)
+		if (fWasProjectionEnabled) {
 			enableProjection();
+		}
 	}
 
 	@Override
 	public IRegion getVisibleRegion() {
 		disableProjection();
 		IRegion visibleRegion= getModelCoverage();
-		if (visibleRegion == null)
+		if (visibleRegion == null) {
 			visibleRegion= new Region(0, 0);
+		}
 
 		return visibleRegion;
 	}
@@ -717,8 +732,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	public boolean overlapsWithVisibleRegion(int offset, int length) {
 		disableProjection();
 		IRegion coverage= getModelCoverage();
-		if (coverage == null)
+		if (coverage == null) {
 			return false;
+		}
 
 		boolean appending= (offset == coverage.getOffset() + coverage.getLength()) && length == 0;
 		return appending || TextUtilities.overlaps(coverage, new Region(offset, length));
@@ -734,28 +750,32 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (fReplaceVisibleDocumentExecutionTrigger != null) {
 			ReplaceVisibleDocumentExecutor executor= new ReplaceVisibleDocumentExecutor(slave);
 			executor.install(fReplaceVisibleDocumentExecutionTrigger);
-		} else
+		} else {
 			executeReplaceVisibleDocument(slave);
+		}
 	}
 
 
 	private void executeReplaceVisibleDocument(IDocument visibleDocument) {
 		StyledText textWidget= getTextWidget();
 		try {
-			if (textWidget != null && !textWidget.isDisposed())
+			if (textWidget != null && !textWidget.isDisposed()) {
 				textWidget.setRedraw(false);
+			}
 
 			int topIndex= getTopIndex();
 			Point selection= getSelectedRange();
 			setVisibleDocument(visibleDocument);
 			Point currentSelection= getSelectedRange();
-			if (currentSelection.x != selection.x || currentSelection.y != selection.y)
+			if (currentSelection.x != selection.x || currentSelection.y != selection.y) {
 				setSelectedRange(selection.x, selection.y);
+			}
 			setTopIndex(topIndex);
 
 		} finally {
-			if (textWidget != null && !textWidget.isDisposed())
+			if (textWidget != null && !textWidget.isDisposed()) {
 				textWidget.setRedraw(true);
+			}
 		}
 	}
 
@@ -771,9 +791,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		ProjectionDocument projection= null;
 
 		IDocument visibleDocument= getVisibleDocument();
-		if (visibleDocument instanceof ProjectionDocument)
+		if (visibleDocument instanceof ProjectionDocument) {
 			projection= (ProjectionDocument) visibleDocument;
-		else {
+		} else {
 			IDocument master= getDocument();
 			IDocument slave= createSlaveDocument(getDocument());
 			if (slave instanceof ProjectionDocument) {
@@ -783,8 +803,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 		}
 
-		if (projection != null)
+		if (projection != null) {
 			removeMasterDocumentRange(projection, offset, length);
+		}
 
 		if (projection != null && fireRedraw) {
 			// repaint line above to get the folding box
@@ -827,8 +848,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 
 			// redraw if requested
-			if (fireRedraw)
+			if (fireRedraw) {
 				internalInvalidateTextPresentation(offset, length);
+			}
 		}
 	}
 
@@ -852,8 +874,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					throw new IllegalArgumentException(x);
 				}
 
-			} else
+			} else {
 				postCatchupRequest(event);
+			}
 		} else {
 			postCatchupRequest(event);
 		}
@@ -877,8 +900,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 								while (true) {
 									AnnotationModelEvent ame= null;
 									synchronized (fLock) {
-										if (fPendingRequests.isEmpty())
+										if (fPendingRequests.isEmpty()) {
 											return;
+										}
 										ame= fPendingRequests.remove(0);
 									}
 									catchupWithProjectionAnnotationModel(ame);
@@ -934,8 +958,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			if (event.isValid()) {
 				fPendingAnnotationWorldChange= false;
 				reinitializeProjection();
-			} else
+			} else {
 				fPendingAnnotationWorldChange= true;
+			}
 
 		} else if (fPendingAnnotationWorldChange) {
 			if (event.isValid()) {
@@ -974,8 +999,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				try {
 					boolean fireRedraw= !commandQueue.passedInvalidationCostsThreshold();
 					executeProjectionCommands(commandQueue, fireRedraw);
-					if (!fireRedraw)
+					if (!fireRedraw) {
 						invalidateTextPresentation();
+					}
 				} catch (IllegalArgumentException x) {
 					reinitializeProjection();
 				}
@@ -997,8 +1023,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					removeMasterDocumentRange(command.fProjection, command.fOffset, command.fLength);
 					break;
 				case ProjectionCommand.INVALIDATE_PRESENTATION:
-					if (fireRedraw)
+					if (fireRedraw) {
 						invalidateTextPresentation(command.fOffset, command.fLength);
+					}
 					break;
 			}
 		}
@@ -1063,15 +1090,17 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	public IRegion computeCollapsedRegion(Position position) {
 		try {
 			IDocument document= getDocument();
-			if (document == null)
+			if (document == null) {
 				return null;
+			}
 
 			int line= document.getLineOfOffset(position.getOffset());
 			int offset= document.getLineOffset(line + 1);
 
 			int length= position.getLength() - (offset - position.getOffset());
-			if (length > 0)
+			if (length > 0) {
 				return new Region(offset, length);
+			}
 		} catch (BadLocationException x) {
 		}
 
@@ -1090,8 +1119,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	IRegion[] computeCollapsedRegions(Position position) {
 		try {
 			IDocument document= getDocument();
-			if (document == null)
+			if (document == null) {
 				return null;
+			}
 
 			if (position instanceof IProjectionPosition projPosition) {
 				return projPosition.computeProjectionRegions(document);
@@ -1101,8 +1131,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			int offset= document.getLineOffset(line + 1);
 
 			int length= position.getLength() - (offset - position.getOffset());
-			if (length > 0)
+			if (length > 0) {
 				return new IRegion[] {new Region(offset, length)};
+			}
 
 			return null;
 		} catch (BadLocationException x) {
@@ -1122,12 +1153,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	public Position computeCollapsedRegionAnchor(Position position) {
 		try {
 			IDocument document= getDocument();
-			if (document == null)
+			if (document == null) {
 				return null;
+			}
 
 			int captionOffset= position.getOffset();
-			if (position instanceof IProjectionPosition)
+			if (position instanceof IProjectionPosition) {
 				captionOffset+= ((IProjectionPosition) position).computeCaptionOffset(document);
+			}
 
 			IRegion lineInfo= document.getLineInformationOfOffset(captionOffset);
 			return new Position(lineInfo.getOffset() + lineInfo.getLength(), 0);
@@ -1141,8 +1174,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			ProjectionAnnotation annotation = (ProjectionAnnotation) a;
 			Position position= fProjectionAnnotationModel.getPosition(annotation);
 
-			if (position == null)
+			if (position == null) {
 				continue;
+			}
 
 			if (!covers(coverage, position)) {
 				if (annotation.isCollapsed()) {
@@ -1164,8 +1198,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		Iterator<Position> e= coverage.iterator();
 		while (e.hasNext()) {
 			Position p= e.next();
-			if (p.getOffset() <= position.getOffset() && position.getOffset() + position.getLength() <= p.getOffset() + p.getLength())
+			if (p.getOffset() <= position.getOffset() && position.getOffset() + position.getLength() <= p.getOffset() + p.getLength()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -1200,9 +1235,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					Position position= fProjectionAnnotationModel.getPosition(annotation);
 					if (position != null) {
 						IRegion[] regions= computeCollapsedRegions(position);
-						if (regions != null)
+						if (regions != null) {
 							for (IRegion region : regions) {
 								removeMasterDocumentRange(projection, region.getOffset(), region.getLength());
+						}
 						}
 					}
 				}
@@ -1217,8 +1253,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	protected void handleVerifyEvent(VerifyEvent e) {
 		if (getTextWidget().getBlockSelection()) {
 			ITextSelection selection= (ITextSelection) getSelection();
-			if (exposeModelRange(new Region(selection.getOffset(), selection.getLength())))
+			if (exposeModelRange(new Region(selection.getOffset(), selection.getLength()))) {
 				setSelection(selection);
+			}
 			super.handleVerifyEvent(e);
 			return;
 		}
@@ -1230,22 +1267,25 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			try {
 				if (selection.y == 0 && e.text.length() <= 1 && modelRange.getLength() == 1) {
 					selection.y= 1;
-					if (selection.x - 1 == modelRange.getOffset())
+					if (selection.x - 1 == modelRange.getOffset()) {
 						selection.x--;
+					}
 				}
 				getDocument().replace(selection.x, selection.y, e.text);
 				setSelectedRange(selection.x + e.text.length(), 0);
 			} catch (BadLocationException e1) {
 				// ignore as nothing bad happens (no log at this level)
 			}
-		} else
+		} else {
 			super.handleVerifyEvent(e);
+		}
 	}
 
 	@Override
 	public boolean exposeModelRange(IRegion modelRange) {
-		if (isProjectionMode())
+		if (isProjectionMode()) {
 			return fProjectionAnnotationModel.expandAll(modelRange.getOffset(), modelRange.getLength());
+		}
 
 		if (!overlapsWithVisibleRegion(modelRange.getOffset(), modelRange.getLength())) {
 			resetVisibleRegion();
@@ -1264,28 +1304,33 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			Iterator<Annotation> iterator= fProjectionAnnotationModel.getAnnotationIterator();
 			while (iterator.hasNext()) {
 				ProjectionAnnotation annotation= (ProjectionAnnotation)iterator.next();
-				if (annotation.isCollapsed() && willAutoExpand(fProjectionAnnotationModel.getPosition(annotation), offset, length))
+				if (annotation.isCollapsed() && willAutoExpand(fProjectionAnnotationModel.getPosition(annotation), offset, length)) {
 					expand.add(annotation);
+				}
 			}
 
 			if (!expand.isEmpty()) {
 				Iterator<ProjectionAnnotation> e= expand.iterator();
-				while (e.hasNext())
+				while (e.hasNext()) {
 					fProjectionAnnotationModel.expand(e.next());
+				}
 			}
 		}
 		super.setRangeIndication(offset, length, moveCursor);
 	}
 
 	private boolean willAutoExpand(Position position, int offset, int length) {
-		if (position == null || position.isDeleted())
+		if (position == null || position.isDeleted()) {
 			return false;
+		}
 		// right or left boundary
-		if (position.getOffset() == offset || position.getOffset() + position.getLength() == offset + length)
+		if (position.getOffset() == offset || position.getOffset() + position.getLength() == offset + length) {
 			return true;
+		}
 		// completely embedded in given position
-		if (position.getOffset() < offset && offset + length < position.getOffset() + position.getLength())
+		if (position.getOffset() < offset && offset + length < position.getOffset() + position.getLength()) {
 			return true;
+		}
 		return false;
 	}
 
@@ -1302,20 +1347,23 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	protected void handleVisibleDocumentChanged(DocumentEvent event) {
 		if (fHandleProjectionChanges && event instanceof ProjectionDocumentEvent e && isProjectionMode()) {
 			DocumentEvent master= e.getMasterEvent();
-			if (master != null)
+			if (master != null) {
 				fReplaceVisibleDocumentExecutionTrigger= master.getDocument();
+			}
 
 			try {
 
 				int replaceLength= e.getText() == null ? 0 : e.getText().length();
 				if (ProjectionDocumentEvent.PROJECTION_CHANGE == e.getChangeType()) {
-					if (e.getLength() == 0 && replaceLength != 0)
+					if (e.getLength() == 0 && replaceLength != 0) {
 						fProjectionAnnotationModel.expandAll(e.getMasterOffset(), e.getMasterLength());
+					}
 				} else if (master != null && (replaceLength > 0 || fDeletedLines > 1)) {
 					try {
 						int numberOfLines= e.getDocument().getNumberOfLines(e.getOffset(), replaceLength);
-						if (numberOfLines > 1 || fDeletedLines > 1)
+						if (numberOfLines > 1 || fDeletedLines > 1) {
 							fProjectionAnnotationModel.expandAll(master.getOffset(), replaceLength);
+						}
 					} catch (BadLocationException x) {
 					}
 				}
@@ -1342,8 +1390,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 	@Override
 	public IRegion[] getCoveredModelRanges(IRegion modelRange) {
-		if (fInformationMapping == null)
+		if (fInformationMapping == null) {
 			return new IRegion[] { new Region(modelRange.getOffset(), modelRange.getLength()) };
+		}
 
 		if (fInformationMapping instanceof IDocumentInformationMappingExtension extension) {
 			try {
@@ -1376,8 +1425,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 
 		StyledText textWidget= getTextWidget();
-		if (textWidget == null)
+		if (textWidget == null) {
 			return;
+		}
 
 		ITextSelection selection= null;
 		switch (operation) {
@@ -1386,13 +1436,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 				if (redraws()) {
 					selection= (ITextSelection) getSelection();
-					if (exposeModelRange(new Region(selection.getOffset(), selection.getLength())))
+					if (exposeModelRange(new Region(selection.getOffset(), selection.getLength()))) {
 						setSelection(selection);
+					}
 
-					if (selection.getLength() == 0)
+					if (selection.getLength() == 0) {
 						copyMarkedRegion(true);
-					else
+					} else {
 						copyToClipboard(selection, true, textWidget);
+					}
 
 					Point range= textWidget.getSelectionRange();
 					fireSelectionChanged(range.x, range.y);
@@ -1403,10 +1455,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 				if (redraws()) {
 					selection= (ITextSelection) getSelection();
-					if (selection.getLength() == 0)
+					if (selection.getLength() == 0) {
 						copyMarkedRegion(false);
-					else
+					} else {
 						copyToClipboard(selection, false, textWidget);
+					}
 				}
 				break;
 
@@ -1416,10 +1469,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					try {
 						selection= (ITextSelection) getSelection();
 						int length= selection.getLength();
-						if (!textWidget.getBlockSelection() && (length == 0 || length == textWidget.getSelectionRange().y))
+						if (!textWidget.getBlockSelection() && (length == 0 || length == textWidget.getSelectionRange().y)) {
 							getTextWidget().invokeAction(ST.DELETE_NEXT);
-						else
+						} else {
 							deleteSelection(selection, textWidget);
+						}
 
 						Point range= textWidget.getSelectionRange();
 						fireSelectionChanged(range.x, range.y);
@@ -1432,8 +1486,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 
 			case EXPAND_ALL:
-				if (redraws())
+				if (redraws()) {
 					expandAll();
+				}
 				break;
 
 			case EXPAND:
@@ -1443,8 +1498,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				break;
 
 			case COLLAPSE_ALL:
-				if (redraws())
+				if (redraws()) {
 					collapseAll();
+				}
 				break;
 
 			case COLLAPSE:
@@ -1483,11 +1539,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 
 	private IRegion getMarkedRegion() {
-		if (getTextWidget() == null)
+		if (getTextWidget() == null) {
 			return null;
+		}
 
-		if (fMarkPosition == null || fMarkPosition.isDeleted())
+		if (fMarkPosition == null || fMarkPosition.isDeleted()) {
 			return null;
+		}
 
 		int start= fMarkPosition.getOffset();
 		int end= getSelectedRange().x;
@@ -1498,15 +1556,17 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	@Override
 	protected void copyMarkedRegion(boolean delete) {
 		IRegion markedRegion= getMarkedRegion();
-		if (markedRegion != null)
+		if (markedRegion != null) {
 			copyToClipboard(new TextSelection(getDocument(), markedRegion.getOffset(), markedRegion.getLength()), delete, getTextWidget());
+		}
 	}
 
 	private void copyToClipboard(ITextSelection selection, boolean delete, StyledText textWidget) {
 
 		String copyText= selection.getText();
-		if (copyText == null) // selection.getText failed - backup using widget
+		if (copyText == null) { // selection.getText failed - backup using widget
 			textWidget.copy();
+		}
 
 		if (copyText != null && copyText.equals(textWidget.getSelectionText())) {
 			/*
@@ -1524,8 +1584,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				try {
 					clipboard.setContents(data, dataTypes);
 				} catch (SWTError e) {
-					if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+					if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
 						throw e;
+					}
 					/*
 					 * TODO see https://bugs.eclipse.org/bugs/show_bug.cgi?id=59459
 					 * we should either log and/or inform the user
@@ -1569,8 +1630,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	@Override
 	protected Point widgetSelection2ModelSelection(Point widgetSelection) {
 
-		if (!isProjectionMode())
+		if (!isProjectionMode()) {
 			return super.widgetSelection2ModelSelection(widgetSelection);
+		}
 
 		/*
 		 * There is one requirement that governs preservation of logical
@@ -1599,33 +1661,36 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		 * overlaps with the widget selection
 		 */
 		IRegion modelSelection= widgetRange2ModelRange(new Region(widgetSelection.x, widgetSelection.y));
-		if (modelSelection == null)
+		if (modelSelection == null) {
 			return null;
+		}
 
 		int modelOffset= modelSelection.getOffset();
 		int modelEndOffset= modelOffset + modelSelection.getLength();
 
 		/* Case A: never expand a zero-length selection. S is *behind* P. */
-		if (widgetSelection.y == 0)
+		if (widgetSelection.y == 0) {
 			return new Point(modelEndOffset, 0);
+		}
 
 		int widgetSelectionExclusiveEnd= widgetSelection.x + widgetSelection.y;
 		Position[] annotationPositions= computeOverlappingAnnotationPositions(modelSelection);
 		for (Position annotationPosition : annotationPositions) {
 			IRegion[] regions = computeCollapsedRegions(annotationPosition);
-			if (regions == null)
+			if (regions == null) {
 				continue;
+			}
 			for (IRegion modelRange : regions) {
 				IRegion widgetRange= modelRange2ClosestWidgetRange(modelRange);
 				// only take collapsed ranges, i.e. widget length is 0
 				if (widgetRange != null && widgetRange.getLength() == 0) {
 					int widgetOffset= widgetRange.getOffset();
 					// D) region is collapsed at S.widget_offset
-					if (widgetOffset == widgetSelection.x)
+					if (widgetOffset == widgetSelection.x) {
 						modelOffset= Math.min(modelOffset, modelRange.getOffset());
-					// C) region is collapsed at S.widget_end
-					else if (widgetOffset == widgetSelectionExclusiveEnd)
+					} else if (widgetOffset == widgetSelectionExclusiveEnd) {
 						modelEndOffset= Math.max(modelEndOffset, modelRange.getOffset() + modelRange.getLength());
+					}
 				}
 			}
 		}
@@ -1645,8 +1710,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		for (Iterator<Annotation> e= fProjectionAnnotationModel.getAnnotationIterator(); e.hasNext();) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 			Position position= fProjectionAnnotationModel.getPosition(annotation);
-			if (position != null && position.overlapsWith(modelSelection.getOffset(), modelSelection.getLength()) && modelRange2WidgetRange(position) != null)
+			if (position != null && position.overlapsWith(modelSelection.getOffset(), modelSelection.getLength()) && modelRange2WidgetRange(position) != null) {
 				positions.add(position);
+			}
 		}
 		return positions.toArray(new Position[positions.size()]);
 	}
@@ -1663,12 +1729,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	@Override
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 
-		if (!isProjectionMode())
+		if (!isProjectionMode()) {
 			return super.findAndSelect(startPosition, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+		}
 
 		StyledText textWidget= getTextWidget();
-		if (textWidget == null)
+		if (textWidget == null) {
 			return -1;
+		}
 
 		try {
 
@@ -1689,12 +1757,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	@Override
 	protected int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength, boolean regExSearch) {
 
-		if (!isProjectionMode())
+		if (!isProjectionMode()) {
 			return super.findAndSelectInRange(startPosition, findString, forwardSearch, caseSensitive, wholeWord, rangeOffset, rangeLength, regExSearch);
+		}
 
 		StyledText textWidget= getTextWidget();
-		if (textWidget == null)
+		if (textWidget == null) {
 			return -1;
+		}
 
 		try {
 

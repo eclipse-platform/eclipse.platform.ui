@@ -72,8 +72,9 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 	@Override
 	protected void mouseClicked(int line) {
 		clearCurrentAnnotation();
-		if (fMouseDownLine != line)
+		if (fMouseDownLine != line) {
 			return;
+		}
 		ProjectionAnnotation annotation= findAnnotation(line, true);
 		if (annotation != null) {
 			ProjectionAnnotationModel model= (ProjectionAnnotationModel) getModel();
@@ -88,8 +89,9 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 
 	@Override
 	protected void mouseDoubleClicked(int rulerLine) {
-		if (findAnnotation(rulerLine, true) != null)
+		if (findAnnotation(rulerLine, true) != null) {
 			return;
+		}
 
 		ProjectionAnnotation annotation= findAnnotation(rulerLine, false);
 		if (annotation != null) {
@@ -121,12 +123,14 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 				Object next= e.next();
 				if (next instanceof ProjectionAnnotation annotation) {
 					Position p= model.getPosition(annotation);
-					if (p == null)
+					if (p == null) {
 						continue;
+					}
 
 					int distance= getDistance(annotation, p, document, line);
-					if (distance == -1)
+					if (distance == -1) {
 						continue;
+					}
 
 					if (!exact) {
 						if (distance < previousDistance) {
@@ -167,14 +171,16 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 					if (line < endLine) {
 						if (annotation.isCollapsed()) {
 							int captionOffset;
-							if (position instanceof IProjectionPosition)
+							if (position instanceof IProjectionPosition) {
 								captionOffset= ((IProjectionPosition) position).computeCaptionOffset(document);
-							else
+							} else {
 								captionOffset= 0;
+							}
 
 							int captionLine= document.getLineOfOffset(position.getOffset() + captionOffset);
-							if (startLine <= captionLine && captionLine < endLine)
+							if (startLine <= captionLine && captionLine < endLine) {
 								return Math.abs(line - captionLine);
+							}
 						}
 						return line - startLine;
 					}
@@ -206,8 +212,9 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 		control.addMouseTrackListener(new MouseTrackAdapter() {
 			@Override
 			public void mouseExit(MouseEvent e) {
-				if (clearCurrentAnnotation())
+				if (clearCurrentAnnotation()) {
 					redraw();
+				}
 			}
 		});
 
@@ -226,8 +233,9 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 					redraw= true;
 				}
 			}
-			if (redraw)
+			if (redraw) {
 				redraw();
+			}
 		});
 		return control;
 	}

@@ -73,8 +73,9 @@ public class ProjectionSupport {
 
 		@Override
 		protected boolean skip(Annotation annotation) {
-			if (annotation instanceof ProjectionAnnotation)
+			if (annotation instanceof ProjectionAnnotation) {
 				return !((ProjectionAnnotation) annotation).isCollapsed();
+			}
 
 			return super.skip(annotation);
 		}
@@ -186,8 +187,9 @@ public class ProjectionSupport {
 		if (fSummarizableTypes == null) {
 			fSummarizableTypes= new ArrayList<>();
 			fSummarizableTypes.add(annotationType);
-		} else if (!fSummarizableTypes.contains(annotationType))
+		} else if (!fSummarizableTypes.contains(annotationType)) {
 			fSummarizableTypes.add(annotationType);
+		}
 	}
 
 	/**
@@ -206,8 +208,9 @@ public class ProjectionSupport {
 	public void removeSummarizableAnnotationType(String annotationType) {
 		if (fSummarizableTypes != null) {
 			fSummarizableTypes.remove(annotationType);
-			if (fSummarizableTypes.isEmpty())
+			if (fSummarizableTypes.isEmpty()) {
 				fSummarizableTypes= null;
+			}
 		}
 	}
 
@@ -254,8 +257,9 @@ public class ProjectionSupport {
 	 * @since 3.1
 	 */
 	private AnnotationPainter.IDrawingStrategy getDrawingStrategy() {
-		if (fDrawingStrategy == null)
+		if (fDrawingStrategy == null) {
 			fDrawingStrategy= new ProjectionDrawingStrategy();
+		}
 		return fDrawingStrategy;
 	}
 
@@ -325,8 +329,9 @@ public class ProjectionSupport {
 		ProjectionSummary summary= new ProjectionSummary(fViewer, fAnnotationAccess);
 		if (fSummarizableTypes != null) {
 			int size= fSummarizableTypes.size();
-			for (int i= 0; i < size; i++)
+			for (int i= 0; i < size; i++) {
 				summary.addAnnotationType(fSummarizableTypes.get(i));
+			}
 		}
 		return summary;
 	}
