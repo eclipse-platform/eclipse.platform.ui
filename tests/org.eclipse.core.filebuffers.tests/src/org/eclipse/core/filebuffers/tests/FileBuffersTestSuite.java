@@ -15,18 +15,16 @@
 
 package org.eclipse.core.filebuffers.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * Test Suite for org.eclipse.core.filebuffers.
  *
  * @since 3.0
  */
-@RunWith(Suite.class)
-@SuiteClasses({ FileBufferCreation.class,
+@Suite
+@SelectClasses({ FileBufferCreation.class,
 		FileBuffersForWorkspaceFiles.class,
 		FileBuffersForExternalFiles.class,
 		FileBuffersForLinkedFiles.class,
@@ -42,5 +40,5 @@ import org.junit.runners.Suite.SuiteClasses;
 		ResourceTextFileManagerDocCreationTests.class
 })
 public class FileBuffersTestSuite {
-	// see @SuiteClasses
+	// see @SelectClasses
 }
