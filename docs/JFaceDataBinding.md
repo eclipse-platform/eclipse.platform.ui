@@ -232,49 +232,49 @@ Running the Snippets
 
 ### Basic
 
-*   [Hello World](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet000HelloWorld.java) \- the most basic of bindings
+*   [Hello World](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet000HelloWorld.java) \- the most basic of bindings
 
 ### WizardPage
 
-*   [Wizard Dialog](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet014WizardDialog.java) \- Shows how to use data binding in a wizard dialog so that validation results are displayed in the dialog's title area
+*   [Wizard Dialog](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet014WizardDialog.java) \- Shows how to use data binding in a wizard dialog so that validation results are displayed in the dialog's title area
 
 ### ComputedValue
 
-*   [Spreadsheet](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet006Spreadsheet.java) \- fills a Table updating cells upon change
-*   [Name Formatter](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet008ComputedValue.java) \- observable value that updates when the first or last name changes
+*   [Spreadsheet](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet006Spreadsheet.java) \- fills a Table updating cells upon change
+*   [Name Formatter](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet008ComputedValue.java) \- observable value that updates when the first or last name changes
 
 ### Bindings
 
-*   [Bind validation status to a Label](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet004DataBindingContextErrorLabel.java)
-*   [Validate observables across Bindings](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet011ValidateMultipleBindingsSnippet.java?view=markup)
+*   [Bind validation status to a Label](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet004DataBindingContextErrorLabel.java)
+*   [Validate observables across Bindings](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet011ValidateMultipleBindingsSnippet.java)
 
 ### Master Detail
 
-*   [Master detail](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet010MasterDetail.java) \- display the detail of the selection of a ListViewer in a Text widget
-*   [Nested Selection With ComboViewer](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet001NestedSelectionWithCombo.java)
+*   [Master detail](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet010MasterDetail.java) \- display the detail of the selection of a ListViewer in a Text widget
+*   [Nested Selection With ComboViewer](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet001NestedSelectionWithCombo.java)
 
 ### SWT
 
-*   [MenuUpdater](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet005MenuUpdater.java)
-*   [CompositeUpdater](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet012CompositeUpdater.java)
+*   [MenuUpdater](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet005MenuUpdater.java)
+*   [CompositeUpdater](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet012CompositeUpdater.java)
 
 ### Viewers
 
-*   [Model to TableViewer binding](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet009TableViewer.java) \- basic binding to a TableViewer
-*   [TableViewer binding with colors](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet007ColorLabelProvider.java) \- label provider that provides Colors and auto updates the viewer
-*   [TableViewer inline editing](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet013TableViewerEditing.java) \- TableViewer editing with the Eclipse 3.3 JFace viewer APIs. _(requires Eclipse 3.3)_
-*   [ComputedList and Combo](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet022ComputedListCombo.java) \- Filter the elements in one viewer based on the selection in another
-*   [ComboViewer and Java enum](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet034ComboViewerAndEnum.java) \- Demonstrates binding the list of a ComboViewer to the values of an enum and the selected value to a simple model property.
+*   [Model to TableViewer binding](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet009TableViewer.java) \- basic binding to a TableViewer
+*   [TableViewer binding with colors](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet007ColorLabelProvider.java) \- label provider that provides Colors and auto updates the viewer
+*   [TableViewer inline editing](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet013TableViewerEditing.java) \- TableViewer editing with the Eclipse 3.3 JFace viewer APIs. _(requires Eclipse 3.3)_
+*   [ComputedList and Combo](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet022ComputedListCombo.java) \- Filter the elements in one viewer based on the selection in another
+*   [ComboViewer and Java enum](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet034ComboViewerAndEnum.java) \- Demonstrates binding the list of a ComboViewer to the values of an enum and the selected value to a simple model property.
 
 ### Additional Run Options
 
 A great way to learn is to look at concrete examples that you can run and experiment with.
 
-You can clone the [eclipse.platform.ui git repository](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/) which contains the "org.eclipse.jface.examples.databinding" project with the JFace Databinding examples. For cloning a git repository you can use the [EGit](http://eclipse.org/egit/) tooling of Eclipse.
+You can clone the [eclipse.platform.ui git repository](https://github.com/eclipse-platform/eclipse.platform.ui) which contains the "org.eclipse.jface.examples.databinding" project with the JFace Databinding examples. For cloning a git repository you can use the [EGit](https://eclipse.org/egit/) tooling of Eclipse.
 
 Use the following URL to clone the repository via File -> Import -> Git repository
 
-*   [http://anonymous@git.eclipse.org/gitroot/platform/eclipse.platform.ui.git](http://anonymous@git.eclipse.org/gitroot/platform/eclipse.platform.ui.git)
+*   [https://github.com/eclipse-platform/eclipse.platform.ui.git](https://github.com/eclipse-platform/eclipse.platform.ui.git)
 
 After you cloned the project the clone wizard will allow you to import the included projects.
 For the databinding examples you only have to import the "org.eclipse.jface.examples.databinding" project.
@@ -463,7 +463,7 @@ Every getter on an observable object must make a call to ObservableTracker.gette
 
 This enables abstractions like ComputedValue or ComputedList: All you have to write is a piece of code that computes a value, or a list. As long as this code only accesses other observables, the framework will manager listeners for you automatically.
 
-For example, assume that your UI has text fields for the first name and the last name of a person, but you want to display a formatted version of the full name elsewhere in the UI. This is what you can write (see [Snippet008](http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet008ComputedValue.java?view=markup) for a complete example):
+For example, assume that your UI has text fields for the first name and the last name of a person, but you want to display a formatted version of the full name elsewhere in the UI. This is what you can write (see [Snippet008](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/examples/org.eclipse.jface.examples.databinding/src/org/eclipse/jface/examples/databinding/snippets/Snippet008ComputedValue.java) for a complete example):
 
 ```java
     final IObservableValue firstName = SWTObservables.observeText(firstNameField, SWT.Modify);

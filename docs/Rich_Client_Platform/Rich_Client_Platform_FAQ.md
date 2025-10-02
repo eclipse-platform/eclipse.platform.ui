@@ -1,11 +1,11 @@
 Rich Client Platform/FAQ
 ========================
 
-The following are **Frequently Asked Questions** (**FAQs**) about the Eclipse Rich Client Platform.
-For relevant tutorials, help topics, newsgroups, examples, and other resources, see the main [RCP page](Rich_Client_Platform.md).
+The following are **Frequently Asked Questions** (**FAQs**) about the Eclipse Rich Client Platform. 
+For relevant tutorials, help topics, newsgroups, examples, and other resources, see the main [RCP page](../Rich_Client_Platform.md).
 
-or general Eclipse FAQs, which address many RCP issues, see [The Official Eclipse FAQs](https://wiki.eclipse.org/The_Official_Eclipse_FAQs).
-For Eclipse 4, see the [Eclipse 4 RCP FAQ](Eclipse4_RCP_FAQ.md).
+For general Eclipse FAQs, which address many RCP issues, see [The Official Eclipse FAQs](https://wiki.eclipse.org/The_Official_Eclipse_FAQs).  
+For Eclipse 4, see the [Eclipse 4 RCP FAQ](../Eclipse4_RCP_FAQ.md).
 
 
 What is the Eclipse Rich Client Platform?
@@ -13,7 +13,7 @@ What is the Eclipse Rich Client Platform?
 
 While the Eclipse platform is designed to serve as an open tools platform, it is architected so that its components could be used to build just about any client application. The minimal set of plug-ins needed to build a rich client application is collectively known as the **Rich Client Platform**.
 
-For more details, see the main [RCP page](Rich_Client_Platform.md).
+For more details, see the main [RCP page](../Rich_Client_Platform.md).
 
 Why should I build my application on the Eclipse Rich Client Platform?
 ----------------------------------------------------------------------
@@ -31,18 +31,18 @@ The Eclipse Rich Client Platform consists of the following components:
 
 | Component    | Description    | Plug-ins    | Documentation    |
 | --- | --- | --- | --- |
-| Eclipse Runtime    | Provides the foundational support for plug-ins, extension points and extensions (among other facilities).  The Eclipse runtime is built on top of the [OSGi framework](https://www.osgi.org/resources/where-to-start/). | org.eclipse.core.runtime    org.eclipse.osgi   org.eclipse.osgi.services   | Dev guide: [Runtime overview](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/runtime.htm)   Article: [Notes on the Eclipse Plug-in Architecture](http://eclipse.org/articles/Article-Plug-in-architecture/plugin_architecture.html)      |
+| Eclipse Runtime    | Provides the foundational support for plug-ins, extension points and extensions (among other facilities).  The Eclipse runtime is built on top of the [OSGi framework](https://www.osgi.org/resources/where-to-start/). | org.eclipse.core.runtime    org.eclipse.osgi   org.eclipse.osgi.services   | Dev guide: [Runtime overview](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/runtime.htm)   Article: [Notes on the Eclipse Plug-in Architecture](https://eclipse.org/articles/Article-Plug-in-architecture/plugin_architecture.html)      |
 | SWT    | The Standard Widget Toolkit. SWT is designed to provide efficient, portable access to the user-interface facilities of the operating systems on which it is implemented | org.eclipse.swt    \+ platform-specific fragments      | [Platform SWT home page](https://www.eclipse.org/swt/) |
-| JFace    | A UI framework, layered on top of SWT, for handling many common UI programming tasks. | org.eclipse.jface | [JFace](JFace.md) |
+| JFace    | A UI framework, layered on top of SWT, for handling many common UI programming tasks. | org.eclipse.jface | [JFace](../JFace.md) |
 | Workbench | The Workbench builds on top of the Runtime, SWT and JFace to provide a highly scalable, open-ended, multi-window environment for managing views, editors, perspectives (task-oriented layouts), actions, wizards, preference pages, and more.    The Workbench is sometimes called the Generic Workbench, to distinguish it from the IDE Workbench facilities defined in the org.eclipse.ui.ide plug-in.   | org.eclipse.ui    org.eclipse.ui.workbench   | Dev guide: [Plugging into the workbench](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/workbench.htm),[Dialogs and wizards](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/dialogs.htm), [Advanced workbench concepts](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/wrkAdv.htm)      |
 |   Other prerequisites for the Workbench   | Support for XML expressions language, commands, and help core content model.    | org.eclipse.core.expressions    org.eclipse.core.commands   org.eclipse.help   |     |
 
-Note that as of Eclipse 3.3M6, org.eclipse.help requires [com.ibm.icu](Rich_Client_Platform/Rich_Client_Platform_FAQ.md#What-is-ICU4J-and-is-it-required) which takes a sizeable amount of footprint (that [can be reduced](Rich_Client_Platform/Rich_Client_Platform_FAQ.md#What-is-ICU4J-and-is-it-required)). [Bug 183761](https://bugs.eclipse.org/bugs/show_bug.cgi?id=183761) has been filed to investigate removing this dependency from org.eclipse.help.
+Note that as of Eclipse 3.3M6, org.eclipse.help requires [com.ibm.icu](#What-is-ICU4J-and-is-it-required) which takes a sizeable amount of footprint (that [can be reduced](#What-is-ICU4J-and-is-it-required)). [Bug 183761](https://bugs.eclipse.org/bugs/show_bug.cgi?id=183761) has been filed to investigate removing this dependency from org.eclipse.help.
 
 What is the disk footprint for the Rich Client Platform?
 --------------------------------------------------------
 
-As of Eclipse 3.7, the disk footprint is about 20 Meg.
+The disk footprint for the Rich Client Platform varies depending on the included components and platform. A minimal RCP application can be around 11 MB, while typical applications with more components may require 30-50 MB or more, depending on the selection of dependencies and libraries.
 
 Is the resources plug-in (org.eclipse.core.resources) considered part of the Rich Client Platform?
 --------------------------------------------------------------------------------------------------
@@ -68,14 +68,14 @@ Here is a list of some of the reusable components in the broader Eclipse codebas
 | Help    | Web-app-based Help UI, with support for dynamic content.    | org.apache.lucene    org.eclipse.help.appserver   org.eclipse.help.base   org.eclipse.help.ui   org.eclipse.help.webapp   org.eclipse.tomcat   org.eclipse.ui.forms   | Dev guide: [Plugging in help](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/help.htm)      |
 | Update Manager    | Allows users to discover and install updated versions of products and extensions. | org.eclipse.update.configurator    org.eclipse.update.core   org.eclipse.update.scheduler   org.eclipse.update.ui   \+ platform-specific fragments      | Dev guide: [Updating a product or extension](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/product_update.htm)      |
 | Text    | Framework for building high-function text editors.    | org.eclipse.text    org.eclipse.jface.text   org.eclipse.workbench.texteditor   | Dev guide: [Text editors and platform text](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/editors_jface.htm)      |
-| Forms    | Flat look control library and multi-page editor framework (used in PDE editors).    | org.eclipse.ui.forms | Article: [Eclipse Forms: Rich UI for the Rich Client](http://www.eclipse.org/articles/Article-Forms/article.html) |
+| Forms    | Flat look control library and multi-page editor framework (used in PDE editors).    | org.eclipse.ui.forms | Article: [Eclipse Forms: Rich UI for the Rich Client](https://www.eclipse.org/articles/Article-Forms/article.html) |
 | Welcome Page (aka Intro) | Initial welcome experience and guided assistance.    | org.eclipse.ui.intro    | Dev guide: [Intro support](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/workbench_advext_intro.htm) |
 | Cheat Sheets    | A Cheat Sheet guides the user through a long-running, multi-step task.    | org.eclipse.ui.cheatsheets    | Dev guide: [Cheat Sheets](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/workbench_advext_cheatsheets.htm) |
-| Resources    | Workspace resource model, with managed projects, folders and files.    | org.eclipse.core.resources    | [Platform Core home page](http://www.eclipse.org/eclipse/platform-core/)   Dev guide: [Resources overview](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/resInt.htm) |
+| Resources    | Workspace resource model, with managed projects, folders and files.    | org.eclipse.core.resources    | [Platform Core home page](https://www.eclipse.org/eclipse/platform-core/)   Dev guide: [Resources overview](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/guide/resInt.htm) |
 | Console | Extensible console view.    | org.eclipse.ui.console    | Javadoc: [org.eclipse.ui.console](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/console/package-summary.html), [org.eclipse.ui.console.actions](http://help.eclipse.org/help31/topic/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/console/actions/package-summary.html) |
 | Outline and Properties views | Outline and Properties views    | org.eclipse.ui.views    | TBD |
-| Graphical Editing Framework (GEF) | Framework for building graphical editors. Includes Draw2D, a vector graphics framework.    | org.eclipse.draw2d    org.eclipse.gef      | [GEF home page](http://www.eclipse.org/gef)      |
-| Eclipse Modeling Framework (EMF) and Service Data Objects (SDO) | EMF is a modeling framework and code generation facility for building tools and other applications based on a structured data model.  SDO is a framework that simplifies and unifies data application development in a service oriented architecture (SOA). | [EMF plug-in list from CVS](http://dev.eclipse.org/viewcvs/indextools.cgi/org.eclipse.emf/plugins/)    | [EMF home page](http://www.eclipse.org/emf/)   Overviews:[EMF, EMF Edit, EMF Validation ...](http://www.eclipse.org/modeling/emf/docs/#overviews), [SDO](http://www-106.ibm.com/developerworks/java/library/j-sdo/) |
+| Graphical Editing Framework (GEF) | Framework for building graphical editors. Includes Draw2D, a vector graphics framework.    | org.eclipse.draw2d    org.eclipse.gef      | [GEF home page](https://www.eclipse.org/gef)      |
+| Eclipse Modeling Framework (EMF) and Service Data Objects (SDO) | EMF is a modeling framework and code generation facility for building tools and other applications based on a structured data model.  SDO is a framework that simplifies and unifies data application development in a service oriented architecture (SOA). | [EMF plug-in list from CVS](http://dev.eclipse.org/viewcvs/indextools.cgi/org.eclipse.emf/plugins/)    | [EMF home page](https://www.eclipse.org/emf/)   Overviews:[EMF, EMF Edit, EMF Validation ...](https://www.eclipse.org/modeling/emf/docs/#overviews), [SDO](http://www-106.ibm.com/developerworks/java/library/j-sdo/) |
 
 How do I get started with RCP?
 ------------------------------
@@ -136,7 +136,7 @@ For example, the [Browser Example](/RCP_Browser_Example "RCP Browser Example") h
     </extension>
 ```
 
-For more details, see the [Branding Your Application](http://eclipse.org/articles/Article-Branding/branding-your-application.html) article.
+For more details, see the [Branding Your Application](https://eclipse.org/articles/Article-Branding/branding-your-application.html) article.
 
 How can I change the embedded app icon in my application?
 ---------------------------------------------------------
@@ -173,7 +173,7 @@ For example, to show the perspective bar and fast view bar on the left, and to u
 
 For a list of public preferences available on the UI plug-in and their valid values, see the interface [org.eclipse.ui.IWorkbenchPreferenceConstants](http://help.eclipse.org/galileo/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/ui/IWorkbenchPreferenceConstants.html).
 
-For more details, see the [Branding Your Application](http://eclipse.org/articles/Article-Branding/branding-your-application.html) article and the [Customizing a product](http://help.eclipse.org/galileo/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/product_configproduct.htm) section in Help.
+For more details, see the [Branding Your Application](https://eclipse.org/articles/Article-Branding/branding-your-application.html) article and the [Customizing a product](http://help.eclipse.org/galileo/index.jsp?topic=/org.eclipse.platform.doc.isv/guide/product_configproduct.htm) section in Help.
 
 How can I get action set menus to appear in the right order, between my app's main menus?
 -----------------------------------------------------------------------------------------
@@ -209,9 +209,9 @@ See [Tycho tutorial](https://www.vogella.com/tutorials/EclipseTycho/article.html
 When I try running, nothing happens, or it complains that the application could not be found in the registry, or that other plug-ins are missing. How can I track the problem down?
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Try running first from within Eclipse using the Runtime Workbench (3.0 and 3.0.1) or Eclipse Application (3.1) launch configuration (Run > Debug...). Ensure that the application's plug-in(s) and all its prerequisites are selected in the Plug-ins tab. The easiest way is to select "Choose plug-ins and fragments to launch from the list", press Deselect All, check off the application's plug-in(s), and press Add Required Plug-ins. In 3.1, there is also a Validate Plug-in Set button to check that all prerequisites have been satisfied, without having to launch first. On the Main tab, be sure that the correct product or application is selected (using a product is preferred -- see the [Branding Your Application](http://eclipse.org/articles/Article-Branding/branding-your-application.html) article).
+Try running first from within Eclipse using the Runtime Workbench (3.0 and 3.0.1) or Eclipse Application (3.1) launch configuration (Run > Debug...). Ensure that the application's plug-in(s) and all its prerequisites are selected in the Plug-ins tab. The easiest way is to select "Choose plug-ins and fragments to launch from the list", press Deselect All, check off the application's plug-in(s), and press Add Required Plug-ins. In 3.1, there is also a Validate Plug-in Set button to check that all prerequisites have been satisfied, without having to launch first. On the Main tab, be sure that the correct product or application is selected (using a product is preferred -- see the [Branding Your Application](https://eclipse.org/articles/Article-Branding/branding-your-application.html) article).
 
-When running a deployed RCP application (not running from within Eclipse), ensure that the config.ini file in the configuration directory points to the correct product or application extension via the eclipse.product or eclipse.application entry (using a product is preferred -- see the [Branding Your Application](http://eclipse.org/articles/Article-Branding/branding-your-application.html) article). Either all plug-ins need to be specified in the osgi.bundles entry of the config.ini, or the **org.eclipse.update.configurator** plug-in should be included to discover all available plug-ins the first time the application is run.
+When running a deployed RCP application (not running from within Eclipse), ensure that the config.ini file in the configuration directory points to the correct product or application extension via the eclipse.product or eclipse.application entry (using a product is preferred -- see the [Branding Your Application](https://eclipse.org/articles/Article-Branding/branding-your-application.html) article). Either all plug-ins need to be specified in the osgi.bundles entry of the config.ini, or the **org.eclipse.update.configurator** plug-in should be included to discover all available plug-ins the first time the application is run.
 
 If eclipse fails silently, look in the configuration and/or workspace directories for a .log file. If you use the eclipse.exe launcher (or equivalent on other platforms) it will tell you where to find any relevant log file.
 
@@ -232,7 +232,7 @@ or
 
 While these options are helpful for debugging, note that there is a performance penalty for -debug and -clean, so it is not recommended that they be used in the final product.
 
-For other troubleshooting hints, see the **Troubleshooting** section of the [RCP Tutorial, part 1](http://eclipse.org/articles/Article-RCP-1/tutorial1.html).
+For other troubleshooting hints, see the **Troubleshooting** section of the [RCP Tutorial, part 1](https://eclipse.org/articles/Article-RCP-1/tutorial1.html).
 
 My own RCP plug-ins are contributed by a feature. Why is the update manager complaining that my configuration is invalid?
 -------------------------------------------------------------------------------------------------------------------------
@@ -251,12 +251,12 @@ Editors can be used for any kind of model, and can be textual or graphical.
 
 The Text component provides support for text editors.
 See the entry for the Text component in the list of optional components above.
-See also the [RCP text editor example](Rich_Client_Platform.md#Examples).
+See also the [RCP text editor example](../Rich_Client_Platform.md#Examples).
 
 How can I integrate my existing Swing components into an RCP application?
 -------------------------------------------------------------------------
 
-See [this SWT FAQ entry](http://www.eclipse.org/swt/faq.php#swinginswt). Note, however, that the SWT_AWT bridge does not currently work on all platforms, e.g. Mac ([bug 67384](https://bugs.eclipse.org/bugs/show_bug.cgi?id=67384)).
+See [this SWT FAQ entry](https://www.eclipse.org/swt/faq.php#swinginswt). Note, however, that the SWT_AWT bridge does not currently work on all platforms, e.g. Mac ([bug 67384](https://bugs.eclipse.org/bugs/show_bug.cgi?id=67384)).
 
 Also take a look at [SwingWT](http://swingwt.sourceforge.net/), an SWT-based implementation of the Swing API.
 
@@ -264,7 +264,7 @@ How can I define key bindings for commands?
 -------------------------------------------
 
 As of 3.3, the preferred means of binding keys is to use commands, handlers, and contexts.
-See [Platform Command Framework#KeyBindings](PlatformCommandFramework.md#KeyBindings) for the extension points.
+See [Platform Command Framework#KeyBindings](../PlatformCommandFramework.md#KeyBindings) for the extension points.
 
 There are some wrinkles for the RCP case.
 See [Keybindings for Eclipse Commands](https://www.vogella.com/tutorials/EclipseCommands/article.html) for a tutorial.
@@ -389,6 +389,7 @@ How to add menu item, command and handler?
 
 MANIFEST.MF
 
+```
      Manifest-Version: 1.0
      Bundle-ManifestVersion: 2
      Bundle-Name: Sample Handler
@@ -397,7 +398,7 @@ MANIFEST.MF
      Bundle-Vendor: sample
      Bundle-RequiredExecutionEnvironment: JavaSE-1.6
      Require-Bundle: org.eclipse.ui
-
+```
 
 plugin.xml
 

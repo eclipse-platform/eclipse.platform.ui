@@ -109,7 +109,7 @@ UI Model Events
 
 The Eclipse 4 UI is a model based UI with an underlying EMF Model. Part of the UI framework, UIEventPublisher, listens to EMF events and publishes corresponding OSGi Events on the global event bus.
 
-The constants used to subscribe to and work with the UI model events are defined in [org.eclipse.e4.ui.workbench.UIEvents](http://git.eclipse.org/c/platform/eclipse.platform.ui.git/tree/bundles/org.eclipse.e4.ui.workbench/src/org/eclipse/e4/ui/workbench/UIEvents.java). The bulk of the constants in this class are generated directly from the EMF model at development time using the utility org.eclipse.e4.ui.internal.workbench.swt.GenTopic. There are a few hand-crafted constants for non UI events such as the life cycle events.
+The constants used to subscribe to and work with the UI model events are defined in [org.eclipse.e4.ui.workbench.UIEvents](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/bundles/org.eclipse.e4.ui.workbench/src/org/eclipse/e4/ui/workbench/UIEvents.java). The bulk of the constants in this class are generated directly from the EMF model at development time using the utility org.eclipse.e4.ui.internal.workbench.swt.GenTopic. There are a few hand-crafted constants for non UI events such as the life cycle events.
 
 Late in the 4.2M4 milestone the hierarchy and usage pattern of UIEvents was significantly changed. This page discusses the new mechanism. For a discussion of the old mechanism and the changes you need to make to migrate from the old style to the new style take a look at [Eclipse4/UI/Event/Migration](/Eclipse4/UI/Event/Migration "Eclipse4/UI/Event/Migration").
 

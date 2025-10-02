@@ -63,9 +63,9 @@ The usage of SWT and JFace is demonstrated in the following snippets:
 Text Editor Examples
 --------------------
 
-The [RCP text editor examples](http://www.eclipse.org/eclipse/platform-text/development/rcp/examples/index.html) are available from the [Platform Text Component Development Resources page](http://www.eclipse.org/eclipse/platform-text/development/dev.html).
+The [RCP text editor examples](https://www.eclipse.org/eclipse/platform-text/development/rcp/examples/index.html) are available from the [Platform Text Component Development Resources page](https://www.eclipse.org/eclipse/platform-text/development/dev.html).
 
-It illustrates how to use the [Platform Text](http://www.eclipse.org/eclipse/platform-text/index.php) components in a Rich Client Platform application.
+It illustrates how to use the [Platform Text](https://www.eclipse.org/eclipse/platform-text/index.php) components in a Rich Client Platform application.
 
 
 
@@ -74,8 +74,8 @@ Applications
 
 Several applications have been built using the Rich Client Platform.
 
-*   The RCP Catalog section of the [Eclipse Community page](http://eclipse.org/community) lists several apps, including case studies of a few.
-*   NASA/JPL is using Eclipse RCP as the foundation of their next version of Maestro, and more. See the [case study](http://eclipse.org/community/casestudies/NASAfinal.pdf). Jeff Norris from NASA/JPL also wrote a nice foreword to the [RCP Book](Rich_Client_Platform/Rich_Client_Platform_Book.md).
+*   The RCP Catalog section of the [Eclipse Community page](https://eclipse.org/community) lists several apps, including case studies of a few.
+*   NASA/JPL is using Eclipse RCP as the foundation of their next version of Maestro, and more. See the [case study](https://eclipse.org/community/casestudies/NASAfinal.pdf). Jeff Norris from NASA/JPL also wrote a nice foreword to the [RCP Book](Rich_Client_Platform/Rich_Client_Platform_Book.md).
 
 Blogs and other Resources
 -------------------------

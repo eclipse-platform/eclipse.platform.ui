@@ -121,7 +121,7 @@ Also, Eclipse can handle jars within jars. It expands them into a temporary loca
 
 The articles below may be of your interest.
 
-*   [Adapters](http://www.eclipse.org/articles/article.php?file=Article-Adapters/index.html)
+*   [Adapters](https://www.eclipse.org/articles/article.php?file=Article-Adapters/index.html)
 
 ### How do I read from a file that I've included in my bundle/plug-in?
 
@@ -303,7 +303,7 @@ To leverage the workbench's browser capabilities, you will have to interact with
 ```java
     try {
         IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
-        browserSupport.getExternalBrowser().openURL(new URL("http://www.eclipse.org"));
+        browserSupport.getExternalBrowser().openURL(new URL("https://www.eclipse.org"));
     } catch (PartInitException e) {
         // handle the exception
     }
