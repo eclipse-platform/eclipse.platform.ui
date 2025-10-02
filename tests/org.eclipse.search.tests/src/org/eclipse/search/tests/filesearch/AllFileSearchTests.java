@@ -14,12 +14,12 @@
 package org.eclipse.search.tests.filesearch;
 
 import org.junit.ClassRule;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
+
+@Suite
+@SelectClasses({
 		AnnotationManagerTest.class,
 		FileSearchTests.class,
 		LineAnnotationManagerTest.class,

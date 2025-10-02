@@ -13,19 +13,18 @@
  *******************************************************************************/
 package org.eclipse.search.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 import org.eclipse.search.core.tests.AllSearchModelTests;
 import org.eclipse.search.tests.filesearch.AllFileSearchTests;
 
-@RunWith(Suite.class)
-@SuiteClasses({
+@Suite
+@SelectClasses({
 		AllFileSearchTests.class,
 		AllSearchModelTests.class,
 		TextSearchRegistryTest.class
 })
 public class AllSearchTests {
-	// see @SuiteClasses
+	// see @SelectClasses
 }
