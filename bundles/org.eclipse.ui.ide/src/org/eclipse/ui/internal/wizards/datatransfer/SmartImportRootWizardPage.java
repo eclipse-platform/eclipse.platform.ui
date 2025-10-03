@@ -31,8 +31,10 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -711,8 +713,14 @@ public class SmartImportRootWizardPage extends WizardPage {
 	}
 
 	protected boolean isExistingProjectName(File element) {
-		String name = element.getName();
-		return !name.isEmpty() && ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists();
+		try {
+			String name = SmartImportJob.getOptionalProjectDescription(element).map(IProjectDescription::getName)
+					.orElse(""); //$NON-NLS-1$
+			return !name.isEmpty() && ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists();
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG | StatusManager.SHOW);
+			return false;
+		}
 	}
 
 	protected void validatePage() {
