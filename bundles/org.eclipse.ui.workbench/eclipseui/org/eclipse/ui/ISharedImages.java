@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -772,7 +773,7 @@ public interface ISharedImages {
 	/**
 	 * Identifies the lef arrow cursor. For cursor construction see:
 	 *
-	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
+	 * @see Cursor#Cursor(Device, ImageDataProvider, int, int)
 	 * @since 3.133
 	 */
 	String IMG_OBJS_DND_LEFT = "IMG_OBJS_DND_LEFT"; //$NON-NLS-1$
@@ -780,7 +781,7 @@ public interface ISharedImages {
 	/**
 	 * Identifies the right arrow cursor. For cursor construction see:
 	 *
-	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
+	 * @see Cursor#Cursor(Device, ImageDataProvider, int, int)
 	 * @since 3.133
 	 */
 	String IMG_OBJS_DND_RIGHT = "IMG_OBJS_DND_RIGHT"; //$NON-NLS-1$
@@ -804,7 +805,7 @@ public interface ISharedImages {
 	/**
 	 * Identifies the 'no drop' arrow cursor. For cursor construction see:
 	 *
-	 * @see Cursor#Cursor(Device, ImageData, ImageData, int, int)
+	 * @see Cursor#Cursor(Device, ImageDataProvider, int, int)
 	 * @since 3.133
 	 */
 	String IMG_OBJS_DND_INVALID = "IMG_OBJS_DND_INVALID"; //$NON-NLS-1$
