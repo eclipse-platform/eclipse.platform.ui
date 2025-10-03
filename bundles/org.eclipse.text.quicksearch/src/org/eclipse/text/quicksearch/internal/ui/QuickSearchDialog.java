@@ -58,6 +58,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.CursorLinePainter;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.CompositeRuler;
@@ -153,7 +154,6 @@ import org.osgi.framework.FrameworkUtil;
 public class QuickSearchDialog extends SelectionStatusDialog {
 
 	private static final int OPEN_BUTTON_ID = IDialogConstants.OK_ID;
-	private static final int REFRESH_BUTTON_ID = IDialogConstants.RETRY_ID;
 
 	public static final Styler HIGHLIGHT_STYLE = org.eclipse.search.internal.ui.text.DecoratingFileSearchLabelProvider.HIGHLIGHT_STYLE;
 
@@ -666,7 +666,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		Composite labels = new Composite(parent, SWT.NONE);
 
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		labels.setLayout(layout);
@@ -688,7 +688,20 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		progressLabel = new Label(labels, SWT.RIGHT);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		progressLabel.setLayoutData(gd);
-		createButton(labels, REFRESH_BUTTON_ID, Messages.QuickSearchDialog_Refresh, false);
+		ToolBar toolBar = new ToolBar(labels, SWT.FLAT | SWT.RIGHT);
+		ToolItem refreshItem = new ToolItem(toolBar, SWT.PUSH);
+		Image refreshIcon = new Image(Display.getCurrent(),getClass().
+				getClassLoader().getResourceAsStream("icons/elcl16/refresh.svg")); //$NON-NLS-1$
+
+		refreshItem.setImage(refreshIcon);
+		refreshItem.setToolTipText(Messages.QuickSearchDialog_Refresh);
+
+		refreshItem.addDisposeListener(e -> {
+			if (refreshIcon != null && !refreshIcon.isDisposed()) {
+				refreshIcon.dispose();
+			}
+		});
+		refreshItem.addListener(SWT.Selection, e -> refreshButtonPressed());
 
 		labels.setLayoutData(gd);
 		return listLabel;
@@ -1289,6 +1302,10 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				//element is available in the list.
 				openButton.setEnabled(itemCount>0);
 			}
+			//Auto-select the first search result for preview when greater than 1 result exists.
+			if (itemCount >= 1 && list.getSelection().isEmpty()) {
+	            list.getTable().select(0);
+	        }
 			refreshDetails();
 		}
 	}
@@ -1342,15 +1359,6 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		if (!toggleKeepOpenAction.isChecked()) {
 			setReturnCode(OK);
 			close();
-		}
-	}
-
-	@Override
-	protected void buttonPressed(int buttonId) {
-		if (buttonId == REFRESH_BUTTON_ID) {
-			refreshButtonPressed();
-		} else {
-			super.buttonPressed(buttonId);
 		}
 	}
 
@@ -1484,6 +1492,14 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		} else {
 			//The QuickTextSearcher is already active update the query
 			this.searcher.setQuery(newFilter, force);
+			if(newFilter.getPatternString().trim().isEmpty()) {
+				//When pattern is cleared, clear the preview section
+				viewer.setDocument(new Document("")); //$NON-NLS-1$
+			    if (lineNumberColumn != null) {
+			        viewer.removeVerticalRulerColumn(lineNumberColumn);
+			        viewer.addVerticalRulerColumn(lineNumberColumn);
+			    }
+			}
 		}
 		if (progressJob!=null) {
 			progressJob.schedule();
