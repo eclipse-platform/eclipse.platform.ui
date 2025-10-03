@@ -54,11 +54,9 @@ public class StackDropAgent extends DropAgent {
 		}
 
 		// We have to be over a stack ourselves
-		if (!(info.curElement instanceof MPartStack)) {
+		if (!(info.curElement instanceof MPartStack stack)) {
 			return false;
 		}
-
-		MPartStack stack = (MPartStack) info.curElement;
 
 		if (stack.getTags().contains(IPresentationEngine.STANDALONE)) {
 			return false;
@@ -416,7 +414,7 @@ public class StackDropAgent extends DropAgent {
 		if (dndManager.getFeedbackStyle() != DnDManager.HOSTED) {
 			int dropIndex = getDropIndex(info);
 			if (dropIndex != -1) {
-				MUIElement toActivate = dragElement instanceof MPartStack ? ((MPartStack) dragElement)
+				MUIElement toActivate = dragElement instanceof MPartStack m ? m
 						.getSelectedElement() : dragElement;
 				dock(dragElement, dropIndex);
 				reactivatePart(toActivate);

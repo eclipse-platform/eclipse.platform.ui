@@ -121,7 +121,7 @@ public class TrimStack {
 	/**
 	 * A map of created images from a part's icon URI path.
 	 */
-	private Map<String, Image> imageMap = new HashMap<>();
+	private final Map<String, Image> imageMap = new HashMap<>();
 
 	ControlListener caResizeListener = new ControlAdapter() {
 		@Override
@@ -149,7 +149,7 @@ public class TrimStack {
 	protected IEventBroker eventBroker;
 
 	// Listens to ESC and closes the active fast view
-	private Listener escapeListener = event -> {
+	private final Listener escapeListener = event -> {
 		if (event.character == SWT.ESC) {
 			showStack(false);
 			partService.requestActivation();
@@ -162,11 +162,10 @@ public class TrimStack {
 			@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) org.osgi.service.event.Event event) {
 		Object changedObj = event.getProperty(EventTags.ELEMENT);
 
-		if (!(changedObj instanceof MToolControl)) {
+		if (!(changedObj instanceof final MToolControl changedElement)) {
 			return;
 		}
 
-		final MToolControl changedElement = (MToolControl) changedObj;
 		if (changedElement.getObject() != this) {
 			return;
 		}
@@ -290,7 +289,7 @@ public class TrimStack {
 	 * by handleTransientDataEvents() and described in the article at
 	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
 	 */
-	private EventHandler closeHandler = event -> {
+	private final EventHandler closeHandler = event -> {
 		if (!isShowing) {
 			return;
 		}
@@ -321,7 +320,7 @@ public class TrimStack {
 	};
 
 	// Close any open stacks before shutting down
-	private EventHandler shutdownHandler = event -> showStack(false);
+	private final EventHandler shutdownHandler = event -> showStack(false);
 
 	private void fixToolItemSelection() {
 		if (trimStackTB == null || trimStackTB.isDisposed()) {
@@ -358,11 +357,10 @@ public class TrimStack {
 	}
 
 	private boolean isEditorStack() {
-		if (!(minimizedElement instanceof MPlaceholder)) {
+		if (!(minimizedElement instanceof MPlaceholder ph)) {
 			return false;
 		}
 
-		MPlaceholder ph = (MPlaceholder) minimizedElement;
 		return ph.getRef() instanceof MArea;
 	}
 
@@ -391,7 +389,7 @@ public class TrimStack {
 	 * by handleTransientDataEvents() and described in the article at
 	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
 	 */
-	private EventHandler openHandler = event -> {
+	private final EventHandler openHandler = event -> {
 		if (isShowing) {
 			return;
 		}
@@ -432,7 +430,7 @@ public class TrimStack {
 	 * by handleTransientDataEvents() and described in the article at
 	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
 	 */
-	private EventHandler toBeRenderedHandler = event -> {
+	private final EventHandler toBeRenderedHandler = event -> {
 		if (minimizedElement == null || trimStackTB == null) {
 			return;
 		}
@@ -457,7 +455,7 @@ public class TrimStack {
 	 * by handleTransientDataEvents() and described in the article at
 	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
 	 */
-	private EventHandler childrenHandler = event -> {
+	private final EventHandler childrenHandler = event -> {
 		if (minimizedElement == null || trimStackTB == null) {
 			return;
 		}
@@ -475,7 +473,7 @@ public class TrimStack {
 	 * by handleTransientDataEvents() and described in the article at
 	 * http://wiki.eclipse.org/Eclipse4/RCP/Event_Model
 	 */
-	private EventHandler widgetHandler = event -> {
+	private final EventHandler widgetHandler = event -> {
 		Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 		if (changedObj != minimizedElement) {
 			return;
@@ -493,7 +491,7 @@ public class TrimStack {
 	 */
 	// Listener attached to every ToolItem in a TrimStack. Responsible for activating the
 	// appropriate part.
-	private SelectionListener toolItemSelectionListener = new SelectionListener() {
+	private final SelectionListener toolItemSelectionListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			ToolItem toolItem = (ToolItem) e.widget;
@@ -580,8 +578,7 @@ public class TrimStack {
 
 		MUIElement meParent = me.getParent();
 		int orientation = SWT.HORIZONTAL;
-		if (meParent instanceof MTrimBar) {
-			MTrimBar bar = (MTrimBar) meParent;
+		if (meParent instanceof MTrimBar bar) {
 			if (bar.getSide() == SideValue.RIGHT || bar.getSide() == SideValue.LEFT) {
 				orientation = SWT.VERTICAL;
 			}
@@ -847,8 +844,7 @@ public class TrimStack {
 			ti.setToolTipText(Messages.TrimStack_SharedAreaTooltip);
 			ti.setImage(getLayoutImage());
 			ti.addSelectionListener(toolItemSelectionListener);
-		} else if (minimizedElement instanceof MPlaceholder) {
-			MPlaceholder ph = (MPlaceholder) minimizedElement;
+		} else if (minimizedElement instanceof MPlaceholder ph) {
 			if (ph.getRef() instanceof MPart) {
 				MPart part = (MPart) ph.getRef();
 				ToolItem ti = new ToolItem(trimStackTB, SWT.CHECK);
@@ -857,10 +853,8 @@ public class TrimStack {
 				ti.setToolTipText(getLabelText(part));
 				ti.addSelectionListener(toolItemSelectionListener);
 			}
-		} else if (minimizedElement instanceof MGenericStack<?>) {
+		} else if (minimizedElement instanceof MGenericStack<?> theStack) {
 			// Handle *both* PartStacks and PerspectiveStacks here...
-			MGenericStack<?> theStack = (MGenericStack<?>) minimizedElement;
-
 			// check to see if this stack has any valid elements
 			boolean hasRenderedElements = false;
 			for (MUIElement stackElement : theStack.getChildren()) {
@@ -906,8 +900,7 @@ public class TrimStack {
 		minimizedElement.getTags().remove(IPresentationEngine.MINIMIZED);
 
 		// Activate the part that is being brought up...
-		if (minimizedElement instanceof MPartStack) {
-			MPartStack theStack = (MPartStack) minimizedElement;
+		if (minimizedElement instanceof MPartStack theStack) {
 			MStackElement curSel = theStack.getSelectedElement();
 			Control ctrl = (Control) minimizedElement.getWidget();
 
@@ -937,7 +930,7 @@ public class TrimStack {
 		if (ctrl == null) {
 			return;
 		}
-		CTabFolder ctf = ctrl instanceof CTabFolder? (CTabFolder) ctrl: null;
+		CTabFolder ctf = ctrl instanceof CTabFolder c? c: null;
 
 		Composite clientAreaComposite = getCAComposite();
 		if (clientAreaComposite == null || clientAreaComposite.isDisposed()) {
@@ -985,8 +978,7 @@ public class TrimStack {
 			toolControl.getTags().add(MINIMIZED_AND_SHOWING);
 
 			// Activate the part that is being brought up...
-			if (minimizedElement instanceof MPartStack) {
-				MPartStack theStack = (MPartStack) minimizedElement;
+			if (minimizedElement instanceof MPartStack theStack) {
 				MStackElement curSel = theStack.getSelectedElement();
 
 				// Hack for elems that are lazy initialized
@@ -997,8 +989,7 @@ public class TrimStack {
 
 				if (curSel instanceof MPart) {
 					partService.activate((MPart) curSel);
-				} else if (curSel instanceof MPlaceholder) {
-					MPlaceholder ph = (MPlaceholder) curSel;
+				} else if (curSel instanceof MPlaceholder ph) {
 					if (ph.getRef() instanceof MPart) {
 						partService.activate((MPart) ph.getRef());
 					}
@@ -1012,15 +1003,13 @@ public class TrimStack {
 				while (partToActivate == null && selectedElement != null) {
 					if (selectedElement instanceof MPart) {
 						partToActivate = (MPart) selectedElement;
-					} else if (selectedElement instanceof MPlaceholder) {
-						MPlaceholder ph = (MPlaceholder) selectedElement;
+					} else if (selectedElement instanceof MPlaceholder ph) {
 						if (ph.getRef() instanceof MPart) {
 							partToActivate = (MPart) ph.getRef();
 						} else {
 							selectedElement = null;
 						}
-					} else if (selectedElement instanceof MElementContainer<?>) {
-						MElementContainer<?> container = (MElementContainer<?>) selectedElement;
+					} else if (selectedElement instanceof MElementContainer<?> container) {
 						selectedElement = container.getSelectedElement();
 					}
 				}
@@ -1039,8 +1028,7 @@ public class TrimStack {
 				if (partToActivate != null) {
 					partService.activate(partToActivate);
 				}
-			} else if (minimizedElement instanceof MPlaceholder) {
-				MPlaceholder ph = (MPlaceholder) minimizedElement;
+			} else if (minimizedElement instanceof MPlaceholder ph) {
 				if (ph.getRef() instanceof MPart) {
 					MPart part = (MPart) ph.getRef();
 					partService.activate(part);
@@ -1166,10 +1154,9 @@ public class TrimStack {
 
 	private int getFixedSides() {
 		MUIElement tcParent = toolControl.getParent();
-		if (!(tcParent instanceof MTrimBar)) {
+		if (!(tcParent instanceof MTrimBar bar)) {
 			return 0;
 		}
-		MTrimBar bar = (MTrimBar) tcParent;
 		Composite trimComp = (Composite) bar.getWidget();
 		Rectangle trimBounds = trimComp.getBounds();
 		Point trimCenter = new Point(trimBounds.width / 2, trimBounds.height / 2); // adjusted to

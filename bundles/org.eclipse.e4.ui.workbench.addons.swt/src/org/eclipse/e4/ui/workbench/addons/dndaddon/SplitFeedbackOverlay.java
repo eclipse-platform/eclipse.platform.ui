@@ -30,13 +30,13 @@ public class SplitFeedbackOverlay {
 
 	private Shell feedbackShell;
 	private int curSide = 0;
-	private float ratio;
+	private final float ratio;
 
-	private List<Rectangle> rects = new ArrayList<>();
-	private Rectangle outerRect;
+	private final List<Rectangle> rects = new ArrayList<>();
+	private final Rectangle outerRect;
 
 	Boolean isModified = null;
-	private IStylingEngine stylingEngine;
+	private final IStylingEngine stylingEngine;
 
 	public SplitFeedbackOverlay(Shell dragShell, Rectangle rect, int side, float pct,
 			boolean enclosed, boolean modified) {
@@ -119,9 +119,7 @@ public class SplitFeedbackOverlay {
 		// shadows will end up being drawn on top of the shadows for the parent
 		// shell rather than in the middle of the workbench window.
 		Composite parent = feedbackShell.getParent();
-		if (parent instanceof Shell) {
-			Shell parentShell = (Shell) parent;
-
+		if (parent instanceof Shell parentShell) {
 			Rectangle bounds = parentShell.getBounds();
 			rgn.add(bounds.width - 1, bounds.height - 1, 1, 1);
 		}
