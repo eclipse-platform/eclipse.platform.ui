@@ -127,8 +127,7 @@ class DnDInfo {
 		Control ctrl = (Control) curElement.getWidget();
 
 		// KLUDGE!! Should delegate to curElement's renderer
-		if (ctrl instanceof CTabFolder) {
-			CTabFolder ctf = (CTabFolder) ctrl;
+		if (ctrl instanceof CTabFolder ctf) {
 			Point localPos = display.map(null, ctf, cursorPos);
 			curItem = ctf.getItem(localPos);
 			if (curItem != null) {
@@ -137,8 +136,7 @@ class DnDInfo {
 					itemRect = display.map(ctf, ctf.getShell(), ((CTabItem) curItem).getBounds());
 				}
 			}
-		} else if (ctrl instanceof ToolBar) {
-			ToolBar tb = (ToolBar) ctrl;
+		} else if (ctrl instanceof ToolBar tb) {
 			Point localPos = display.map(null, tb, cursorPos);
 			ToolItem curItem = tb.getItem(localPos);
 			if (curItem != null) {

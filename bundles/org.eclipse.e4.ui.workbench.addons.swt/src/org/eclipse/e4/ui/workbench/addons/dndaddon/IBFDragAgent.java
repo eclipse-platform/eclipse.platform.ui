@@ -65,8 +65,7 @@ public class IBFDragAgent extends DragAgent {
 	public void dragStart(DnDInfo info) {
 		super.dragStart(info);
 
-		if (dragElement instanceof MToolControl) {
-			MToolControl tc = (MToolControl) dragElement;
+		if (dragElement instanceof MToolControl tc) {
 			if (tc.getObject() instanceof TrimStack) {
 				TrimStack ts = (TrimStack) tc.getObject();
 				ts.showStack(false);

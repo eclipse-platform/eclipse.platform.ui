@@ -42,13 +42,11 @@ abstract class DropAgent {
 		MPart partToActivate = null;
 		if (dragElement instanceof MPart) {
 			partToActivate = (MPart) dragElement;
-		} else if (dragElement instanceof MPlaceholder) {
-			MPlaceholder ph = (MPlaceholder) dragElement;
+		} else if (dragElement instanceof MPlaceholder ph) {
 			if (ph.getRef() instanceof MPart) {
 				partToActivate = (MPart) ph.getRef();
 			}
-		} else if (dragElement instanceof MPartStack) {
-			MPartStack stack = (MPartStack) dragElement;
+		} else if (dragElement instanceof MPartStack stack) {
 			if (stack.getSelectedElement() instanceof MPart) {
 				partToActivate = (MPart) stack.getSelectedElement();
 			} else if (stack.getSelectedElement() instanceof MPlaceholder) {

@@ -58,8 +58,7 @@ public class SplitHost {
 		MPart innerActive = null;
 		MUIElement curParent = outer;
 		while (innerActive == null && curParent != null) {
-			if (curParent instanceof MElementContainer<?>) {
-				MElementContainer<?> container = (MElementContainer<?>) curParent;
+			if (curParent instanceof MElementContainer<?> container) {
 				if (container.getSelectedElement() instanceof MPart) {
 					innerActive = (MPart) container.getSelectedElement();
 				} else if (container.getSelectedElement() instanceof MElementContainer<?>) {

@@ -308,19 +308,17 @@ public class SplitDropAgent2 extends DropAgent {
 		}
 
 		// Adjust the relToElement based on the location of the dragElement
-		if (relToElement instanceof MArea) {
+		if (relToElement instanceof MArea area) {
 			// make it difficult to drag outside parts into the shared area
 			boolean fromSharedArea = dragElementLocation == EModelService.IN_SHARED_AREA;
 			// if from shared area and no modifier, is ok
 			// if not from shared area and modifier is on, then ok
 			boolean shouldBePlacedInSharedArea = fromSharedArea == !isModified();
 			if (shouldBePlacedInSharedArea) {
-				MArea area = (MArea) relToElement;
 				relToElement = area.getChildren().get(0);
 			}
-		} else if (relToElement instanceof MPerspective) {
+		} else if (relToElement instanceof MPerspective persp) {
 			if (dragElementLocation == EModelService.IN_ACTIVE_PERSPECTIVE) {
-				MPerspective persp = (MPerspective) relToElement;
 				relToElement = persp.getChildren().get(0);
 			}
 		}

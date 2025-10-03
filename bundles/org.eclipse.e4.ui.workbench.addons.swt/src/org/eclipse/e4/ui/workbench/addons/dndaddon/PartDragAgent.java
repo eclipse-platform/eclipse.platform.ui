@@ -32,11 +32,9 @@ public class PartDragAgent extends DragAgent {
 
 	@Override
 	public MUIElement getElementToDrag(DnDInfo info) {
-		if (!(info.curElement instanceof MPartStack)) {
+		if (!(info.curElement instanceof MPartStack stack)) {
 			return null;
 		}
-
-		MPartStack stack = (MPartStack) info.curElement;
 
 		// Drag a part that is in a stack
 		if (info.itemElement instanceof MStackElement) {
