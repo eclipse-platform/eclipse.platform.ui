@@ -51,7 +51,7 @@ class DnDManager {
 	public static final int HOSTED = 1;
 	public static final int GHOSTED = 2;
 	public static final int SIMPLE = 3;
-	private int feedbackStyle;
+	private final int feedbackStyle;
 
 	Collection<DragAgent> dragAgents = new ArrayList<>();
 	Collection<DropAgent> dropAgents = new ArrayList<>();
