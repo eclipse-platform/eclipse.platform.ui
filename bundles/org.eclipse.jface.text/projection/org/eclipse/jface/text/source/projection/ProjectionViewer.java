@@ -133,7 +133,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	private class ReplaceVisibleDocumentExecutor implements IDocumentListener {
 
-		private IDocument fSlaveDocument;
+		private final IDocument fSlaveDocument;
 		private IDocument fExecutionTrigger;
 
 		/**
@@ -280,7 +280,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	/** The projection annotation model used by this viewer. */
 	private ProjectionAnnotationModel fProjectionAnnotationModel;
 	/** The annotation model listener */
-	private IAnnotationModelListener fAnnotationModelListener= new AnnotationModelListener();
+	private final IAnnotationModelListener fAnnotationModelListener= new AnnotationModelListener();
 	/** The projection summary. */
 	private ProjectionSummary fProjectionSummary;
 	/** Indication that an annotation world change has not yet been processed. */
@@ -290,9 +290,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	/** The list of projection listeners. */
 	private List<IProjectionListener> fProjectionListeners;
 	/** Internal lock for protecting the list of pending requests */
-	private Object fLock= new Object();
+	private final Object fLock= new Object();
 	/** The list of pending requests */
-	private List<AnnotationModelEvent> fPendingRequests= new ArrayList<>();
+	private final List<AnnotationModelEvent> fPendingRequests= new ArrayList<>();
 	/** The replace-visible-document execution trigger */
 	private IDocument fReplaceVisibleDocumentExecutionTrigger;
 	/** <code>true</code> if projection was on the last time we switched to segmented mode. */

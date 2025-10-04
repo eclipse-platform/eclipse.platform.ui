@@ -106,8 +106,9 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		@Override
 		public void start(Rectangle informationArea) {
 
-			if (fIsActive)
+			if (fIsActive) {
 				return;
+			}
 			fIsActive= true;
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
@@ -117,8 +118,9 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 				fSubjectControl.addKeyListener(this);
 			}
 
-			if (fInformationControlToClose != null)
+			if (fInformationControlToClose != null) {
 				fInformationControlToClose.addFocusListener(this);
+			}
 
 			fTextViewer.addViewportListener(this);
 		}
@@ -126,14 +128,16 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		@Override
 		public void stop() {
 
-			if (!fIsActive)
+			if (!fIsActive) {
 				return;
+			}
 			fIsActive= false;
 
 			fTextViewer.removeViewportListener(this);
 
-			if (fInformationControlToClose != null)
+			if (fInformationControlToClose != null) {
 				fInformationControlToClose.removeFocusListener(this);
+			}
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeControlListener(this);
@@ -176,8 +180,9 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			Display d= fSubjectControl.getDisplay();
 			// Without the asyncExec, mouse clicks to the workbench window are swallowed.
 			d.asyncExec(() -> {
-				if (fInformationControlToClose == null || !fInformationControlToClose.isFocusControl())
+				if (fInformationControlToClose == null || !fInformationControlToClose.isFocusControl()) {
 					hideInformationControl();
+				}
 			});
 		}
 
@@ -255,19 +260,22 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 
 		Assert.isNotNull(contentType);
 
-		if (fProviders == null)
+		if (fProviders == null) {
 			fProviders= new HashMap<>();
+		}
 
-		if (provider == null)
+		if (provider == null) {
 			fProviders.remove(contentType);
-		else
+		} else {
 			fProviders.put(contentType, provider);
+		}
 	}
 
 	@Override
 	public IInformationProvider getInformationProvider(String contentType) {
-		if (fProviders == null)
+		if (fProviders == null) {
 			return null;
+		}
 
 		return fProviders.get(contentType);
 	}
@@ -286,8 +294,9 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	protected void computeInformation() {
 
 		int offset= fOffset < 0 ? fTextViewer.getSelectedRange().x : fOffset;
-		if (offset == -1)
+		if (offset == -1) {
 			return;
+		}
 
 		fOffset= -1;
 
@@ -297,12 +306,14 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			provider= getInformationProvider(contentType);
 		} catch (BadLocationException x) {
 		}
-		if (provider == null)
+		if (provider == null) {
 			return;
+		}
 
 		IRegion subject= provider.getSubject(fTextViewer, offset);
-		if (subject == null)
+		if (subject == null) {
 			return;
+		}
 
 		Object info;
 		if (provider instanceof IInformationProviderExtension extension) {
@@ -312,10 +323,11 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			info= provider.getInformation(fTextViewer, subject);
 		}
 
-		if (provider instanceof IInformationProviderExtension2)
+		if (provider instanceof IInformationProviderExtension2) {
 			setCustomInformationControlCreator(((IInformationProviderExtension2) provider).getInformationPresenterControlCreator());
-		else
+		} else {
 			setCustomInformationControlCreator(null);
+		}
 
 		setInformation(info, computeArea(subject));
 	}
@@ -339,9 +351,9 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 
 		StyledText styledText= fTextViewer.getTextWidget();
 		Rectangle bounds;
-		if (end > 0 && start < end)
+		if (end > 0 && start < end) {
 			bounds= styledText.getTextBounds(start, end - 1);
-		else {
+		} else {
 			Point loc= styledText.getLocationAtOffset(start);
 			bounds= new Rectangle(loc.x, loc.y, 0, styledText.getLineHeight(start));
 		}
@@ -367,8 +379,9 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		IRegion visibleRegion= fTextViewer.getVisibleRegion();
 		int start= region.getOffset() - visibleRegion.getOffset();
 		int end= start + region.getLength();
-		if (end > visibleRegion.getLength())
+		if (end > visibleRegion.getLength()) {
 			end= visibleRegion.getLength();
+		}
 
 		return new Region(start, end - start);
 	}
@@ -387,14 +400,17 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	@Override
 	protected void showInformationControl(Rectangle subjectArea) {
 		if (fTextViewer instanceof IWidgetTokenOwnerExtension extension && fTextViewer instanceof IWidgetTokenOwner) {
-			if (extension.requestWidgetToken(this, WIDGET_PRIORITY))
+			if (extension.requestWidgetToken(this, WIDGET_PRIORITY)) {
 				super.showInformationControl(subjectArea);
+			}
 		} else if (fTextViewer instanceof IWidgetTokenOwner owner) {
-			if (owner.requestWidgetToken(this))
+			if (owner.requestWidgetToken(this)) {
 				super.showInformationControl(subjectArea);
+			}
 
-		} else
+		} else {
 			super.showInformationControl(subjectArea);
+		}
 	}
 
 	@Override

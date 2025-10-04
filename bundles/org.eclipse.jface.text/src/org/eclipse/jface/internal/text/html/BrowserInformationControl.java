@@ -161,7 +161,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	 * The listeners to be notified when the input changed.
 	 * @since 3.4
 	 */
-	private ListenerList<IInputChangedListener> fInputChangeListeners= new ListenerList<>(ListenerList.IDENTITY);
+	private final ListenerList<IInputChangedListener> fInputChangeListeners= new ListenerList<>(ListenerList.IDENTITY);
 
 	/**
 	 * The symbolic name of the font used for size computations, or <code>null</code> to use dialog font.

@@ -60,8 +60,9 @@ public class DefaultIndentLineAutoEditStrategy implements IAutoEditStrategy {
 	 */
 	private void autoIndentAfterNewLine(IDocument d, DocumentCommand c) {
 
-		if (c.offset == -1 || d.getLength() == 0)
+		if (c.offset == -1 || d.getLength() == 0) {
 			return;
+		}
 
 		try {
 			// find start of line
@@ -87,7 +88,8 @@ public class DefaultIndentLineAutoEditStrategy implements IAutoEditStrategy {
 
 	@Override
 	public void customizeDocumentCommand(IDocument d, DocumentCommand c) {
-		if (c.length == 0 && c.text != null && TextUtilities.endsWith(d.getLegalLineDelimiters(), c.text) != -1)
+		if (c.length == 0 && c.text != null && TextUtilities.endsWith(d.getLegalLineDelimiters(), c.text) != -1) {
 			autoIndentAfterNewLine(d, c);
+		}
 	}
 }

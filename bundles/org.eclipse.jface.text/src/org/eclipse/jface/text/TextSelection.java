@@ -49,9 +49,9 @@ public class TextSelection implements IMultiTextSelection {
 	/** Document which delivers the data of the selection, possibly <code>null</code>. */
 	private final IDocument fDocument;
 	/** Offset of the selection */
-	private int fOffset;
+	private final int fOffset;
 	/** Length of the selection */
-	private int fLength;
+	private final int fLength;
 
 
 	/**
@@ -123,8 +123,9 @@ public class TextSelection implements IMultiTextSelection {
 	public int getStartLine() {
 
 		try {
-			if (fDocument != null)
+			if (fDocument != null) {
 				return fDocument.getLineOfOffset(fOffset);
+			}
 		} catch (BadLocationException x) {
 			// ignore
 		}
@@ -137,8 +138,9 @@ public class TextSelection implements IMultiTextSelection {
 		try {
 			if (fDocument != null) {
 				int endOffset= fOffset + fLength;
-				if (fLength != 0)
+				if (fLength != 0) {
 					endOffset--;
+				}
 				return fDocument.getLineOfOffset(endOffset);
 			}
 		} catch (BadLocationException x) {
@@ -151,8 +153,9 @@ public class TextSelection implements IMultiTextSelection {
 	@Override
 	public String getText() {
 		try {
-			if (fDocument != null)
+			if (fDocument != null) {
 				return fDocument.get(fOffset, fLength);
+			}
 		} catch (BadLocationException x) {
 			// ignore
 		}
@@ -162,20 +165,24 @@ public class TextSelection implements IMultiTextSelection {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
+		}
 
-		if (obj == null || getClass() != obj.getClass())
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
+		}
 
 		TextSelection s= (TextSelection) obj;
 		boolean sameRange= (s.fOffset == fOffset && s.fLength == fLength);
 		if (sameRange) {
 
-			if (s.fDocument == null && fDocument == null)
+			if (s.fDocument == null && fDocument == null) {
 				return true;
-			if (s.fDocument == null || fDocument == null)
+			}
+			if (s.fDocument == null || fDocument == null) {
 				return false;
+			}
 
 			try {
 				String sContent= s.fDocument.get(fOffset, fLength);
