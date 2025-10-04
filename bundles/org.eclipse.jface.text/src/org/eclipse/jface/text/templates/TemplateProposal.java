@@ -56,7 +56,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	private final TemplateContext fContext;
 	private final Image fImage;
 	private final IRegion fRegion;
-	private int fRelevance;
+	private final int fRelevance;
 
 	private IRegion fSelectedRegion; // initialized by apply()
 	private String fDisplayString;
@@ -183,8 +183,9 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 			for (int i= 0; i != variables.length; i++) {
 				TemplateVariable variable= variables[i];
 
-				if (variable.isUnambiguous())
+				if (variable.isUnambiguous()) {
 					continue;
+				}
 
 				LinkedPositionGroup group= new LinkedPositionGroup();
 
@@ -202,17 +203,20 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 						proposals[j]= new PositionBasedCompletionProposal(values[j], pos, length);
 					}
 
-					if (proposals.length > 1)
+					if (proposals.length > 1) {
 						first= new ProposalPosition(document, offsets[0] + start, length, proposals);
-					else
+					} else {
 						first= new LinkedPosition(document, offsets[0] + start, length);
+					}
 				}
 
-				for (int j= 0; j != offsets.length; j++)
-					if (j == 0)
+				for (int j= 0; j != offsets.length; j++) {
+					if (j == 0) {
 						group.addPosition(first);
-					else
+					} else {
 						group.addPosition(new LinkedPosition(document, offsets[j] + start, length));
+					}
+				}
 
 				model.addGroup(group);
 				hasPositions= true;
@@ -282,8 +286,9 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		TemplateVariable[] variables= buffer.getVariables();
 		for (int i= 0; i != variables.length; i++) {
 			TemplateVariable variable= variables[i];
-			if (variable.getType().equals(GlobalTemplateVariables.Cursor.NAME))
+			if (variable.getType().equals(GlobalTemplateVariables.Cursor.NAME)) {
 				return variable.getOffsets()[0];
+			}
 		}
 
 		return buffer.getString().length();

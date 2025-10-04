@@ -164,8 +164,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		setHyperlinkStateMask(eventStateMask);
 
 		StyledText text= fTextViewer.getTextWidget();
-		if (text == null || text.isDisposed())
+		if (text == null || text.isDisposed()) {
 			return;
+		}
 
 		text.getDisplay().addFilter(SWT.KeyUp, this);
 		text.addKeyListener(this);
@@ -190,9 +191,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 */
 	public void setHyperlinkDetectors(IHyperlinkDetector[] hyperlinkDetectors) {
 		Assert.isTrue(hyperlinkDetectors != null && hyperlinkDetectors.length > 0);
-		if (fHyperlinkDetectors == null)
+		if (fHyperlinkDetectors == null) {
 			fHyperlinkDetectors= hyperlinkDetectors;
-		else {
+		} else {
 			synchronized (fHyperlinkDetectors) {
 				fHyperlinkDetectors= hyperlinkDetectors;
 			}
@@ -255,8 +256,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 */
 	protected IHyperlink[] findHyperlinks() {
 		int offset= getCurrentTextOffset();
-		if (offset == -1)
+		if (offset == -1) {
 			return null;
+		}
 
 		IRegion region= new Region(offset, 0);
 		return findHyperlinks(region);
@@ -273,49 +275,57 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		List<IHyperlink> allHyperlinks= new ArrayList<>(fHyperlinkDetectors.length * 2);
 		synchronized (fHyperlinkDetectors) {
 			for (IHyperlinkDetector detector : fHyperlinkDetectors) {
-				if (detector == null)
+				if (detector == null) {
 					continue;
+				}
 
 				if (detector instanceof IHyperlinkDetectorExtension2) {
 					int stateMask= ((IHyperlinkDetectorExtension2)detector).getStateMask();
-					if (stateMask != -1 && stateMask != fActiveHyperlinkStateMask)
+					if (stateMask != -1 && stateMask != fActiveHyperlinkStateMask) {
 						continue;
-					else if (stateMask == -1 && fActiveHyperlinkStateMask != fHyperlinkStateMask)
+					} else if (stateMask == -1 && fActiveHyperlinkStateMask != fHyperlinkStateMask) {
+						continue;
+					}
+				} else if (fActiveHyperlinkStateMask != fHyperlinkStateMask) {
 					continue;
-				} else if (fActiveHyperlinkStateMask != fHyperlinkStateMask)
-					continue;
+				}
 
 				boolean canShowMultipleHyperlinks= fHyperlinkPresenter.canShowMultipleHyperlinks();
 				IHyperlink[] hyperlinks= detector.detectHyperlinks(fTextViewer, region, canShowMultipleHyperlinks);
-				if (hyperlinks == null)
+				if (hyperlinks == null) {
 					continue;
+				}
 
 				Assert.isLegal(hyperlinks.length > 0);
 
 				if (fDetectionStrategy == FIRST) {
-					if (hyperlinks.length == 1)
+					if (hyperlinks.length == 1) {
 						return hyperlinks;
+					}
 					return new IHyperlink[] {hyperlinks[0]};
 				}
 				allHyperlinks.addAll(Arrays.asList(hyperlinks));
 			}
 		}
 
-		if (allHyperlinks.isEmpty())
+		if (allHyperlinks.isEmpty()) {
 			return null;
+		}
 
 		if (fDetectionStrategy != ALL) {
 			int maxLength= computeLongestHyperlinkLength(allHyperlinks);
 			Iterator<IHyperlink> iter= new ArrayList<>(allHyperlinks).iterator();
 			while (iter.hasNext()) {
 				IHyperlink hyperlink= iter.next();
-				if (hyperlink.getHyperlinkRegion().getLength() < maxLength)
+				if (hyperlink.getHyperlinkRegion().getLength() < maxLength) {
 					allHyperlinks.remove(hyperlink);
+				}
 			}
 		}
 
-		if (fDetectionStrategy == LONGEST_REGION_FIRST)
+		if (fDetectionStrategy == LONGEST_REGION_FIRST) {
 			return new IHyperlink[] {allHyperlinks.get(0)};
+		}
 
 		return allHyperlinks.toArray(new IHyperlink[allHyperlinks.size()]);
 
@@ -333,8 +343,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		int length= Integer.MIN_VALUE;
 		while (iter.hasNext()) {
 			IRegion region= iter.next().getHyperlinkRegion();
-			if (region.getLength() < length)
+			if (region.getLength() < length) {
 				continue;
+			}
 			length= region.getLength();
 		}
 		return length;
@@ -375,13 +386,15 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	public void mouseDown(MouseEvent event) {
 
 		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension) {
-			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks())
+			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks()) {
 				return;
+			}
 		}
 
 		if (!isRegisteredStateMask(event.stateMask)) {
-			if (fActive)
+			if (fActive) {
 				deactivate();
+			}
 
 			return;
 		}
@@ -417,25 +430,29 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			return;
 		}
 
-		if (e.button != 1)
+		if (e.button != 1) {
 			fActiveHyperlinks= null;
+		}
 
 		deactivate();
 
-		if (fActiveHyperlinks != null)
+		if (fActiveHyperlinks != null) {
 			fActiveHyperlinks[0].open();
+		}
 	}
 
 	@Override
 	public void mouseMove(MouseEvent event) {
 		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension) {
-			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks())
+			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks()) {
 				return;
+			}
 		}
 
 		if (!isRegisteredStateMask(event.stateMask)) {
-			if (fActive)
+			if (fActive) {
 				deactivate();
+			}
 
 			return;
 		}
@@ -466,14 +483,16 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 * @since 3.3
 	 */
 	private boolean isRegisteredStateMask(int stateMask) {
-		if (stateMask == fHyperlinkStateMask)
+		if (stateMask == fHyperlinkStateMask) {
 			return true;
+		}
 
 		synchronized (fHyperlinkDetectors) {
 			for (IHyperlinkDetector fHyperlinkDetector : fHyperlinkDetectors) {
 				if (fHyperlinkDetector instanceof IHyperlinkDetectorExtension2) {
-					if (stateMask == ((IHyperlinkDetectorExtension2)fHyperlinkDetector).getStateMask())
+					if (stateMask == ((IHyperlinkDetectorExtension2)fHyperlinkDetector).getStateMask()) {
 						return true;
+					}
 				}
 			}
 		}
@@ -496,8 +515,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 	@Override
 	public void textChanged(TextEvent event) {
-		if (event.getDocumentEvent() != null)
+		if (event.getDocumentEvent() != null) {
 			deactivate();
+		}
 	}
 
 	/**
@@ -508,8 +528,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	@Override
 	public void mouseExit(MouseEvent e) {
 		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension) {
-			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks())
+			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks()) {
 				return;
+			}
 		}
 		deactivate();
 	}
@@ -552,10 +573,11 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		if (fActiveHyperlinks.length == 1 && takesFocusWhenVisible) {
 			fActiveHyperlinks[0].open();
 		} else {
-			if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension2)
+			if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension2) {
 				((IHyperlinkPresenterExtension2)fHyperlinkPresenter).showHyperlinks(fActiveHyperlinks, takesFocusWhenVisible);
-			else
+			} else {
 				fHyperlinkPresenter.showHyperlinks(fActiveHyperlinks);
+			}
 		}
 		return true;
 
@@ -573,13 +595,15 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		fActiveHyperlinkStateMask= fHyperlinkStateMask;
 
 		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension) {
-			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks())
+			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks()) {
 				return false;
+			}
 		}
 		ITextSelection sel= (ITextSelection)((TextViewer)fTextViewer).getSelection();
 		int offset= sel.getOffset();
-		if (offset == -1)
+		if (offset == -1) {
 			return false;
+		}
 
 		IRegion region= new Region(offset, 0);
 		fActiveHyperlinks= findHyperlinks(region);

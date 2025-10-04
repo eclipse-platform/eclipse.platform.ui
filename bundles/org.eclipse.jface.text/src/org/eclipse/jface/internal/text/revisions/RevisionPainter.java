@@ -367,7 +367,7 @@ public final class RevisionPainter {
 	 * The information control creator.
 	 */
 	private static final class HoverInformationControlCreator extends AbstractReusableInformationControlCreator {
-		private boolean fIsFocusable;
+		private final boolean fIsFocusable;
 
 		public HoverInformationControlCreator(boolean isFocusable) {
 			fIsFocusable= isFocusable;
@@ -562,7 +562,7 @@ public final class RevisionPainter {
 	/** The cached list of ranges adapted to quick diff. */
 	private List<RevisionRange> fRevisionRanges= null;
 	/** The annotations created for the overview ruler temporary display. */
-	private List<Annotation> fAnnotations= new ArrayList<>();
+	private final List<Annotation> fAnnotations= new ArrayList<>();
 
 	/* State */
 

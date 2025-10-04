@@ -107,8 +107,9 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	protected int endOfLineOf(int offset) throws BadLocationException {
 
 		IRegion info= fDocument.getLineInformationOfOffset(offset);
-		if (offset <= info.getOffset() + info.getLength())
+		if (offset <= info.getOffset() + info.getLength()) {
 			return info.getOffset() + info.getLength();
+		}
 
 		int line= fDocument.getLineOfOffset(offset);
 		try {
@@ -143,8 +144,9 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 				if (info.getOffset() <= end && end <= info.getOffset() + info.getLength()) {
 					// optimize the case of the same line
 					end= info.getOffset() + info.getLength();
-				} else
+				} else {
 					end= endOfLineOf(end);
+				}
 
 				end= Math.min(partition.getOffset() + partition.getLength(), end);
 				return new Region(start, end - start);
@@ -177,16 +179,18 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 
 		while (true) {
 			IToken token= fScanner.nextToken();
-			if (token.isEOF())
+			if (token.isEOF()) {
 				break;
+			}
 
 			TextAttribute attribute= getTokenTextAttribute(token);
 			if (lastAttribute != null && lastAttribute.equals(attribute)) {
 				length += fScanner.getTokenLength();
 				firstToken= false;
 			} else {
-				if (!firstToken)
+				if (!firstToken) {
 					addRange(presentation, lastStart, length, lastAttribute);
+				}
 				firstToken= false;
 				lastToken= token;
 				lastAttribute= attribute;
@@ -209,8 +213,9 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	 */
 	protected TextAttribute getTokenTextAttribute(IToken token) {
 		Object data= token.getData();
-		if (data instanceof TextAttribute)
+		if (data instanceof TextAttribute) {
 			return (TextAttribute) data;
+		}
 		return fDefaultTextAttribute;
 	}
 

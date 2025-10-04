@@ -49,7 +49,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 */
 	private IDocument fActiveDocument;
 	/** The registered text change listeners */
-	private List<TextChangeListener> fTextChangeListeners= new ArrayList<>(1);
+	private final List<TextChangeListener> fTextChangeListeners= new ArrayList<>(1);
 	/**
 	 * The remembered document event
 	 * @since 2.0
@@ -76,7 +76,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 * The data of the event at receipt of <code>documentAboutToBeChanged</code>
 	 * @since 2.1
 	 */
-	private  DocumentEvent fOriginalEvent= new DocumentEvent();
+	private final  DocumentEvent fOriginalEvent= new DocumentEvent();
 
 
 	/**
@@ -94,22 +94,25 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	@Override
 	public void setDocument(IDocument document) {
 
-		if (fDocument != null)
+		if (fDocument != null) {
 			fDocument.removePrenotifiedDocumentListener(this);
+		}
 
 		fDocument= document;
 		fActiveDocument= fDocument;
 		fLineDelimiter= null;
 
-		if (fDocument != null)
+		if (fDocument != null) {
 			fDocument.addPrenotifiedDocumentListener(this);
+		}
 	}
 
 	@Override
 	public void addTextChangeListener(TextChangeListener listener) {
 		Assert.isNotNull(listener);
-		if (!fTextChangeListeners.contains(listener))
+		if (!fTextChangeListeners.contains(listener)) {
 			fTextChangeListeners.add(listener);
+		}
 	}
 
 	@Override
@@ -237,23 +240,26 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 
 	@Override
 	public String getLineDelimiter() {
-		if (fLineDelimiter == null)
+		if (fLineDelimiter == null) {
 			fLineDelimiter= TextUtilities.getDefaultLineDelimiter(fDocument);
+		}
 		return fLineDelimiter;
 	}
 
 	@Override
 	public void documentChanged(DocumentEvent event) {
 		// check whether the given event is the one which was remembered
-		if (fEvent == null || event != fEvent)
+		if (fEvent == null || event != fEvent) {
 			return;
+		}
 
 		if (isPatchedEvent(event) || (event.getOffset() == 0 && event.getLength() == fRememberedLengthOfDocument)) {
 			fLineDelimiter= null;
 			fireTextSet();
 		} else {
-			if (event.getOffset() < fRememberedLengthOfFirstLine)
+			if (event.getOffset() < fRememberedLengthOfFirstLine) {
 				fLineDelimiter= null;
+			}
 			fireTextChanged();
 		}
 	}
@@ -303,15 +309,17 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 */
 	private void fireTextChanged() {
 
-		if (!fIsForwarding)
+		if (!fIsForwarding) {
 			return;
+		}
 
 		TextChangedEvent event= new TextChangedEvent(this);
 
 		if (fTextChangeListeners != null && !fTextChangeListeners.isEmpty()) {
 			Iterator<TextChangeListener> e= new ArrayList<>(fTextChangeListeners).iterator();
-			while (e.hasNext())
+			while (e.hasNext()) {
 				e.next().textChanged(event);
+			}
 		}
 	}
 
@@ -320,15 +328,17 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 */
 	private void fireTextSet() {
 
-		if (!fIsForwarding)
+		if (!fIsForwarding) {
 			return;
+		}
 
 		TextChangedEvent event = new TextChangedEvent(this);
 
 		if (fTextChangeListeners != null && !fTextChangeListeners.isEmpty()) {
 			Iterator<TextChangeListener> e= new ArrayList<>(fTextChangeListeners).iterator();
-			while (e.hasNext())
+			while (e.hasNext()) {
 				e.next().textSet(event);
+			}
 		}
 	}
 
@@ -337,13 +347,15 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 */
 	private void fireTextChanging() {
 
-		if (!fIsForwarding)
+		if (!fIsForwarding) {
 			return;
+		}
 
 		try {
 			IDocument document= fEvent.getDocument();
-			if (document == null)
+			if (document == null) {
 				return;
+			}
 
 			TextChangingEvent event= new TextChangingEvent(this);
 			event.start= fEvent.fOffset;
@@ -355,8 +367,9 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 
 			if (fTextChangeListeners != null && !fTextChangeListeners.isEmpty()) {
 				Iterator<TextChangeListener> e= new ArrayList<>(fTextChangeListeners).iterator();
-				while (e.hasNext())
-					 e.next().textChanging(event);
+				while (e.hasNext()) {
+					e.next().textChanging(event);
+				}
 			}
 
 		} catch (BadLocationException e) {

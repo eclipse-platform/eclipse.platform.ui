@@ -60,7 +60,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		/**
 		 * Updates this document with changes in {@link #fCombo}.
 		 */
-		private ModifyListener fModifyListener;
+		private final ModifyListener fModifyListener;
 
 		private InternalDocument() {
 			super(fCombo.getText());
@@ -80,8 +80,8 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 	/**
 	 * The combo widget.
 	 */
-	private Combo fCombo;
-	private HashMap<SelectionListener, Listener> fModifyListeners;
+	private final Combo fCombo;
+	private final HashMap<SelectionListener, Listener> fModifyListeners;
 
 	/**
 	 * Creates a content assist subject control adapter for the given combo.

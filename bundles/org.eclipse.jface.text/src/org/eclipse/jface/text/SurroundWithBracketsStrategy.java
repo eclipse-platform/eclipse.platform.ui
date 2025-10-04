@@ -25,7 +25,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public class SurroundWithBracketsStrategy implements IAutoEditStrategy {
 
-	private ISourceViewer sourceViewer;
+	private final ISourceViewer sourceViewer;
 
 	@SuppressWarnings("nls")
 	private final Map<String, String> bracketsMap= Map.of("(", ")", "[", "]", "{", "}", "<", ">", "\"", "\"", "'", "'", "`", "`");
