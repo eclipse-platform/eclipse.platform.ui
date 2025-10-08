@@ -1480,6 +1480,12 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	@Override
 	protected void handleDispose() {
 		fWasProjectionEnabled= false;
+		if (fUpdateDocumentListener != null) {
+			IDocument document= getDocument();
+			if (document != null) {
+				document.removeDocumentListener(fUpdateDocumentListener);
+			}
+		}
 		super.handleDispose();
 	}
 
