@@ -13,6 +13,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.codemining;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.codemining.LineContentCodeMining;
@@ -26,9 +33,11 @@ import org.eclipse.jface.text.codemining.LineContentCodeMining;
 class ZeroWidthCharactersLineContentCodeMining extends LineContentCodeMining {
 
 	private static final String ZW_CHARACTERS_MINING = "ZWSP"; //$NON-NLS-1$
+	private Color fgColor;
 
 	public ZeroWidthCharactersLineContentCodeMining(int offset, ICodeMiningProvider provider) {
 		super(new Position(offset, 1), true, provider);
+		fgColor = Display.getCurrent().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 	}
 
 	@Override
@@ -39,5 +48,13 @@ class ZeroWidthCharactersLineContentCodeMining extends LineContentCodeMining {
 	@Override
 	public String getLabel() {
 		return ZW_CHARACTERS_MINING;
+	}
+
+	@Override
+	public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
+		gc.setForeground(fgColor);
+		Point point = super.draw(gc, textWidget, fgColor, x, y);
+		gc.setForeground(color);
+		return point;
 	}
 }
