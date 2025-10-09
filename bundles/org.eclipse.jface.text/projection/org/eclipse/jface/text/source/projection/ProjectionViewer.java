@@ -400,6 +400,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 
 		if (fProjectionAnnotationModel != null) {
+			removeDocumentUpdateListener();
 			wasProjectionEnabled= removeProjectionAnnotationModel(getVisualAnnotationModel()) != null;
 			fProjectionAnnotationModel= null;
 		}
@@ -411,6 +412,15 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 
 
+	}
+
+	private void removeDocumentUpdateListener() {
+		if (fUpdateDocumentListener != null) {
+			IDocument document= getDocument();
+			if (document != null) {
+				document.removeDocumentListener(fUpdateDocumentListener);
+			}
+		}
 	}
 
 	@Override
@@ -554,10 +564,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				super.setVisibleRegion(fVisibleRegionDuringProjection.getOffset(), fVisibleRegionDuringProjection.getLength());
 				fVisibleRegionDuringProjection= null;
 			}
-			IDocument document= getDocument();
-			if (document != null) {
-				document.removeDocumentListener(fUpdateDocumentListener);
-			}
+			removeDocumentUpdateListener();
 		}
 	}
 
@@ -1480,12 +1487,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	@Override
 	protected void handleDispose() {
 		fWasProjectionEnabled= false;
-		if (fUpdateDocumentListener != null) {
-			IDocument document= getDocument();
-			if (document != null) {
-				document.removeDocumentListener(fUpdateDocumentListener);
-			}
-		}
+		removeDocumentUpdateListener();
 		super.handleDispose();
 	}
 
