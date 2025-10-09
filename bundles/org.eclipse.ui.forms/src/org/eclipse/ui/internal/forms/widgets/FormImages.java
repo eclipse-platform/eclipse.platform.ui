@@ -315,7 +315,7 @@ public class FormImages {
 			Color color2 = new Color(device, fRGBs[1]);
 			final ImageGcDrawer imageGcDrawer = (gc, width, height) -> {
 				gc.setBackground(color1);
-				gc.fillRectangle(0, 0, width, width);
+				gc.fillRectangle(0, 0, width, height);
 				gc.setForeground(color2);
 				gc.setBackground(color1);
 				gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
