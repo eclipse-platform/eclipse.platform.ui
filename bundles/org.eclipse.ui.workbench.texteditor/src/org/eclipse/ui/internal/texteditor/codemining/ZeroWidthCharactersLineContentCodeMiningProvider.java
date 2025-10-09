@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.codemining;
 
+import static org.eclipse.ui.texteditor.AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS;
+import static org.eclipse.ui.texteditor.AbstractTextEditor.PREFERENCE_SHOW_ZW_CHARACTERS;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +32,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.codemining.AbstractCodeMiningProvider;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.source.ISourceViewerExtension5;
-
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * A code mining provider that draws zero-width characters (like zero-width
@@ -76,7 +77,8 @@ public class ZeroWidthCharactersLineContentCodeMiningProvider extends AbstractCo
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(AbstractTextEditor.PREFERENCE_SHOW_ZW_CHARACTERS)) {
+		if (PREFERENCE_SHOW_ZW_CHARACTERS.equals(event.getProperty())
+				|| PREFERENCE_SHOW_WHITESPACE_CHARACTERS.equals(event.getProperty())) {
 			readShowZwspFromStore();
 			updateCodeMinings();
 		}
@@ -88,6 +90,7 @@ public class ZeroWidthCharactersLineContentCodeMiningProvider extends AbstractCo
 			codeMiningExtension.updateCodeMinings();
 		}
 	}
+
 
 	@Override
 	public void dispose() {
@@ -106,6 +109,7 @@ public class ZeroWidthCharactersLineContentCodeMiningProvider extends AbstractCo
 	}
 
 	private void readShowZwspFromStore() {
-		showZwsp = store.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_ZW_CHARACTERS);
+		showZwsp = store.getBoolean(PREFERENCE_SHOW_ZW_CHARACTERS)
+				&& store.getBoolean(PREFERENCE_SHOW_WHITESPACE_CHARACTERS);
 	}
 }
