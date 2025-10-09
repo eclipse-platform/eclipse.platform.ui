@@ -11,17 +11,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 @import url("common.css");
 
 /* for IDs see the class: org.eclipse.e4.demo.cssbridge.ui.views.Theme.Shell */
 ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-shell-background {
 	color: #eef5ff;
 }
-ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-shell-seletion-foreground {
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-shell-selection-foreground {
 	color: yellow;
 }
-ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-shell-seletion-background {
+ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-shell-selection-background {
 	color: #00a8ff;
 }
 ColorDefinition#org-eclipse-e4-demo-cssbridge-ui-views-theme-shell-text-and-label-foreground {
