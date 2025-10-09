@@ -1077,7 +1077,7 @@
           id="org.eclipse.ui.editors.lineNumberRulerColor"
           isEditable="false"
           label="%dummy"
-          value="120,120,120">
+          value="115,115,115">
        </colorDefinition>
        <colorDefinition
           id="org.eclipse.ui.editors.hyperlinkColor"
