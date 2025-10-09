@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
-Import-Package: org.junit.jupiter.api,
- org.junit.platform.suite.api
+Import-Package: org.junit.jupiter.api;version="[5.14.0,6.0.0)",
+ org.junit.platform.suite.api;version="[1.14.0,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-SymbolicName: org.eclipse.ui.monitoring.tests;singleton:=true
 Bundle-Vendor: %Bundle-Vendor
