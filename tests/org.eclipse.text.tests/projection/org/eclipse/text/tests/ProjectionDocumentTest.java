@@ -27,6 +27,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
@@ -2651,5 +2652,40 @@ public class ProjectionDocumentTest {
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
+	}
+
+	@Test
+	public void testFullDocumentRangeRemovedAtOnce() throws BadLocationException {
+		fSlaveDocument.addMasterDocumentRange(0, fMasterDocument.getLength());
+		fSlaveDocument.removeMasterDocumentRange(0, fMasterDocument.getLength());
+		Assertions.assertEquals("", fSlaveDocument.get());
+		Position[] fragments = fSlaveDocument.getFragments2();
+		Assertions.assertEquals(1, fragments.length);
+		Assertions.assertEquals(new Position(fMasterDocument.getLength(), 0), fragments[0]);
+	}
+
+	@Test
+	public void testFullDocumentRangeRemovedInTwoParts() throws BadLocationException {
+		fSlaveDocument.addMasterDocumentRange(0, fMasterDocument.getLength());
+		fSlaveDocument.removeMasterDocumentRange(0, 10);
+		Assertions.assertEquals(fMasterDocument.getLength() - 10, fSlaveDocument.getLength());
+		fSlaveDocument.removeMasterDocumentRange(10, fMasterDocument.getLength() - 10);
+		Assertions.assertEquals("", fSlaveDocument.get());
+		Position[] fragments = fSlaveDocument.getFragments2();
+		Assertions.assertEquals(1, fragments.length);
+		Assertions.assertEquals(new Position(10, 0), fragments[0]);
+	}
+
+	@Test
+	public void testRemovePartsOfDocument() throws BadLocationException {
+		fSlaveDocument.addMasterDocumentRange(0, fMasterDocument.getLength());
+		fSlaveDocument.removeMasterDocumentRange(0, 10);
+		Assertions.assertEquals(fMasterDocument.getLength() - 10, fSlaveDocument.getLength());
+		fSlaveDocument.removeMasterDocumentRange(10, fMasterDocument.getLength() - 20);
+		Assertions.assertEquals(fMasterDocument.get(fMasterDocument.getLength() - 10, 10),
+				fSlaveDocument.get());
+		Position[] fragments = fSlaveDocument.getFragments2();
+		Assertions.assertEquals(1, fragments.length);
+		Assertions.assertEquals(new Position(fMasterDocument.getLength() - 10, 10), fragments[0]);
 	}
 }

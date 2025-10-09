@@ -417,6 +417,9 @@ public class ProjectionDocument extends AbstractDocument {
 			if (fragment.getOffset() == offsetInMaster) {
 				fragment.setOffset(offsetInMaster + lengthInMaster);
 				fragment.setLength(fragment.getLength() - lengthInMaster);
+				if (fragment.getLength() == 0 && offsetInMaster != 0 && offsetInMaster + lengthInMaster == getMasterDocument().getLength()) {
+					fragment.setOffset(offsetInMaster);
+				}
 			} else {
 				// split fragment into three fragments, let position updater remove it
 
