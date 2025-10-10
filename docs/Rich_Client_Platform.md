@@ -14,8 +14,9 @@ For more details on what is included in the Rich Client Platform, see the [RCP F
 Case Studies
 ------------
 
-The Eclipse community has put together a set of [case studies](https://www.eclipse.org/community/) highlighting the use of RCP technology in a variety of real-world settings. 
-More are being added all the time so visit page from time to time to see what's new.
+The Eclipse community has put together a set of [case studies](RCP_Case_Studies.md) highlighting the use of RCP technology in a variety of real-world settings. 
+
+For current information, you can also visit the [Eclipse Community page](https://www.eclipse.org/community/).
 
 FAQs
 ----
