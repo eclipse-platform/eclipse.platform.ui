@@ -1732,7 +1732,7 @@ public class ContentProposalAdapter {
 							// We never propagate the keystroke for an explicit
 							// keystroke invocation of the popup
 							e.doit = false;
-							openProposalPopup(false);
+							openProposalPopup0(false);
 							return;
 						}
 					}
@@ -1874,7 +1874,7 @@ public class ContentProposalAdapter {
 	 *            a boolean indicating whether the popup was autoactivated. If
 	 *            false, a beep will sound when no proposals can be shown.
 	 */
-	private void openProposalPopup(boolean autoActivated) {
+	private void openProposalPopup0(boolean autoActivated) {
 		if (isValid()) {
 			if (popup == null) {
 				// Check whether there are any proposals to be shown.
@@ -1910,7 +1910,22 @@ public class ContentProposalAdapter {
 	 * @since 3.22
 	 */
 	public void openProposalPopup() {
-		openProposalPopup(false);
+		openProposalPopup(true);
+	}
+
+	/**
+	 * Open the proposal popup and display the proposals provided by the proposal
+	 * provider. This method returns immediately. That is, it does not wait for a
+	 * proposal to be selected. This method is used to explicitly invoke the opening
+	 * of the popup. If there are no proposals to show, the popup will not open. If
+	 * {@code beep} is true, a beep will be sounded when there are no proposals.
+	 *
+	 * @param beep
+	 *            a boolean indicating whether to beep if no proposals can be shown
+	 * @since 3.23
+	 */
+	public void openProposalPopup(boolean beep) {
+		openProposalPopup0(!beep);
 	}
 
 	/**
@@ -2052,7 +2067,7 @@ public class ContentProposalAdapter {
 				if (!isValid() || receivedKeyDown) {
 					return;
 				}
-				getControl().getDisplay().syncExec(() -> openProposalPopup(true));
+				getControl().getDisplay().syncExec(() -> openProposalPopup0(true));
 			};
 			Thread t = new Thread(runnable);
 			t.start();
@@ -2065,7 +2080,7 @@ public class ContentProposalAdapter {
 			// event occurring.
 			getControl().getDisplay().asyncExec(() -> {
 				if (isValid()) {
-					openProposalPopup(true);
+					openProposalPopup0(true);
 				}
 			});
 		}
