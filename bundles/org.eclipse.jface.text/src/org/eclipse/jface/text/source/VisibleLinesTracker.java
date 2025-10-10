@@ -91,7 +91,7 @@ class VisibleLinesTracker implements PaintListener {
 	 */
 	static void track(ITextViewer viewer, Consumer<StyledText> handler) {
 		StyledText textWidget= viewer != null ? viewer.getTextWidget() : null;
-		if (textWidget == null) {
+		if (textWidget == null || textWidget.isDisposed()) {
 			return;
 		}
 		VisibleLinesTracker tracker= (VisibleLinesTracker) textWidget.getData(DATA_KEY);
@@ -111,7 +111,7 @@ class VisibleLinesTracker implements PaintListener {
 	 */
 	static void untrack(ITextViewer viewer, Consumer<StyledText> handler) {
 		StyledText textWidget= viewer != null ? viewer.getTextWidget() : null;
-		if (textWidget == null) {
+		if (textWidget == null || textWidget.isDisposed()) {
 			return;
 		}
 		VisibleLinesTracker tracker= (VisibleLinesTracker) textWidget.getData(DATA_KEY);
