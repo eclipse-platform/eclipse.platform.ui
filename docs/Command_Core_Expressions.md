@@ -19,7 +19,7 @@ The <with/> element can be used to change which variable the child expression el
 Variables and the Command Framework
 ===================================
 
-The variables used for command framework evaluation are listed in [ISources.java](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/bundles/org.eclipse.ui.workbench/Eclipse%20UI/org/eclipse/ui/ISources.java)
+The variables used for command framework evaluation are listed in [ISources.java](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/bundles/org.eclipse.ui.workbench/eclipseui/org/eclipse/ui/ISources.java)
 
 Some of the variables may not be set, depending on the current application context when they are evaluated.
 
@@ -42,7 +42,7 @@ Some of the variables may not be set, depending on the current application conte
 | activeMenu | A `java.util.Collection` of `java.lang.String` |   This is the list of IDs of the showing context menu. Examples are like #TextEditorRuler or a part ID. Most commonly used with <iterate/>, <count/>, and <test/> with a combined `org.eclipse.common.expressions.PropertyTester`.   | 3.2 |
 | activeMenuSelection | `org.eclipse.jface.viewers.ISelection` |   This is a selection that is available while a context menu is showing. It is the selection from the selection provider used to register the context menu, usually from `getSite().registerContextMenu(*)`. It is usually the same as the `selection`variable, but not always. This is more for legacy compatibility.   | 3.3 |
 | activeMenuEditorInput | `org.eclipse.jface.viewers.ISelection` |   This is a selection that is available while a context menu is showing. It is the selection from the editor input, usually if includeEditorInput was set to `true` during `getEditorSite().registerContextMenu(*)`. This is more for legacy compatibility.   | 3.3 |
-| activeFocusControl | `org.eclipse.swt.widgets.Control` |   A control that has focus and has been registered with the [IFocusService](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/bundles/org.eclipse.ui.workbench/Eclipse%20UI/org/eclipse/ui/swt/IFocusService.java).   | 3.3 |
+| activeFocusControl | `org.eclipse.swt.widgets.Control` |   A control that has focus and has been registered with the [IFocusService](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/bundles/org.eclipse.ui.workbench/eclipseui/org/eclipse/ui/swt/IFocusService.java).   | 3.3 |
 | activeFocusControlId | `java.lang.String` |   The ID of a control that has focus and has been registered with the `org.eclipse.ui.swt.IFocusService`.   | 3.3 |
 
 Note: All these variables can be used with <test/> and a `org.eclipse.common.expressions.PropertyTester`.
@@ -94,13 +94,13 @@ For example, to test an IResource name the property would be `org.eclipse.core.r
 |   projectPersistentProperty   |   A property indicating a persistent property on the selected resource's project. (value `"projectPersistentProperty"`). If two arguments are given, this treats the first as the property name, and the second as the expected property value. If only one argument (or just the expected value) is given, this treats it as the property name, and simply tests for existence of the property on the resource.   |  |
 |  |  |  |
 | **Namespace** | **Type** | **Implementation** |
-| org.eclipse.ui |   `org.eclipse.ui.IWorkbench`   |   [ActivityPropertyTester.java](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/bundles/org.eclipse.ui.workbench/Eclipse%20UI/org/eclipse/ui/internal/activities/ActivityPropertyTester.java)   |
+| org.eclipse.ui |   `org.eclipse.ui.IWorkbench`   |   [ActivityPropertyTester.java](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/bundles/org.eclipse.ui.workbench/eclipseui/org/eclipse/ui/internal/activities/ActivityPropertyTester.java)   |
 | **Property** | **Description** |  |
 |   isActivityEnabled   |   Test if the activity in args is enabled.   |  |
 |   isCategoryEnabled   |   Test if the category in args is enabled.   |  |
 |  |  |  |
 | **Namespace** | **Type** | **Implementation** |
-| org.eclipse.ui.workbenchWindow |   `org.eclipse.ui.IWorkbenchWindow`   |   [OpenPerspectivePropertyTester.java](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/bundles/org.eclipse.ui.workbench/Eclipse%20UI/org/eclipse/ui/internal/OpenPerspectivePropertyTester.java)   |
+| org.eclipse.ui.workbenchWindow |   `org.eclipse.ui.IWorkbenchWindow`   |   [OpenPerspectivePropertyTester.java](https://github.com/eclipse-platform/eclipse.platform.ui/blob/master/bundles/org.eclipse.ui.workbench/eclipseui/org/eclipse/ui/internal/OpenPerspectivePropertyTester.java)   |
 | **Property** | **Description** |  |
 |   isPerspectiveOpen   |   Tests if any perspective is open.   |  |
 

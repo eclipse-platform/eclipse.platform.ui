@@ -42,7 +42,7 @@ Note that as of Eclipse 3.3M6, org.eclipse.help requires [com.ibm.icu](#What-is-
 What is the disk footprint for the Rich Client Platform?
 --------------------------------------------------------
 
-The disk footprint for the Rich Client Platform varies depending on the included components and platform. As of recent Eclipse releases, a minimal RCP application typically requires around 30-50 MB, though this can be reduced through careful selection of dependencies and using stripped-down versions of required libraries.
+The disk footprint for the Rich Client Platform varies depending on the included components and platform. A minimal RCP application can be around 11 MB, while typical applications with more components may require 30-50 MB or more, depending on the selection of dependencies and libraries.
 
 Is the resources plug-in (org.eclipse.core.resources) considered part of the Rich Client Platform?
 --------------------------------------------------------------------------------------------------
