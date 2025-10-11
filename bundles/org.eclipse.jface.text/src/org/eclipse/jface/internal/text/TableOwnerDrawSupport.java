@@ -36,7 +36,7 @@ public class TableOwnerDrawSupport implements Listener {
 	private static final String STYLED_RANGES_KEY= "styled_ranges"; //$NON-NLS-1$
 
 	// shared text layout
-	private TextLayout fSharedLayout;
+	private final TextLayout fSharedLayout;
 
 	private int fDeltaOfLastMeasure;
 

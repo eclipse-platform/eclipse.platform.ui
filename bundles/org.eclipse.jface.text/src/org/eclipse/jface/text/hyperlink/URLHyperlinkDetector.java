@@ -53,16 +53,18 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
-		if (region == null || textViewer == null)
+		if (region == null || textViewer == null) {
 			return null;
+		}
 
 		IDocument document= textViewer.getDocument();
 
 		int offset= region.getOffset();
 
 		String urlString= null;
-		if (document == null)
+		if (document == null) {
 			return null;
+		}
 
 		IRegion lineInfo;
 		String line;
@@ -89,10 +91,12 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 			do {
 				urlOffsetInLine--;
 				ch= ' ';
-				if (urlOffsetInLine > -1)
+				if (urlOffsetInLine > -1) {
 					ch= line.charAt(urlOffsetInLine);
-				if (ch == '"' || ch == '\'')
+				}
+				if (ch == '"' || ch == '\'') {
 					quote= ch;
+				}
 			} while (Character.isUnicodeIdentifierStart(ch));
 			urlOffsetInLine++;
 			// Handle prefixes like "scm:https://foo": scan further back
@@ -129,21 +133,24 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 			urlSeparatorOffset= line.indexOf("://", afterSeparator); //$NON-NLS-1$
 		}
 
-		if (urlSeparatorOffset < 0)
+		if (urlSeparatorOffset < 0) {
 			return null;
+		}
 
 		if (quote != 0) {
 			int endOffset= -1;
 			int nextQuote= line.indexOf(quote, urlOffsetInLine);
 			int nextWhitespace= line.indexOf(' ', urlOffsetInLine);
-			if (nextQuote != -1 && nextWhitespace != -1)
+			if (nextQuote != -1 && nextWhitespace != -1) {
 				endOffset= Math.min(nextQuote, nextWhitespace);
-			else if (nextQuote != -1)
+			} else if (nextQuote != -1) {
 				endOffset= nextQuote;
-			else if (nextWhitespace != -1)
+			} else if (nextWhitespace != -1) {
 				endOffset= nextWhitespace;
-			if (endOffset != -1)
+			}
+			if (endOffset != -1) {
 				urlLength= endOffset - urlOffsetInLine;
+			}
 		}
 
 		if (urlOffsetInLine + urlLength == urlSeparatorOffset + 3) {

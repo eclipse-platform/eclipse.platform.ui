@@ -75,7 +75,7 @@ public interface ITextViewerExtension8 {
 		public static final EnrichMode ON_CLICK= new EnrichMode("on click"); //$NON-NLS-1$;
 
 
-		private String fName;
+		private final String fName;
 
 		private EnrichMode(String name) {
 			fName= name;

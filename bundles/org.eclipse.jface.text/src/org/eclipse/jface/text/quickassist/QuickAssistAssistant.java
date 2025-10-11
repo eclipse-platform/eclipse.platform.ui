@@ -56,7 +56,7 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 
 	private static final class ContentAssistProcessor implements IContentAssistProcessor {
 
-		private IQuickAssistProcessor fQuickAssistProcessor;
+		private final IQuickAssistProcessor fQuickAssistProcessor;
 
 		ContentAssistProcessor(IQuickAssistProcessor processor) {
 			fQuickAssistProcessor= processor;
@@ -65,8 +65,9 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 		@Override
 		public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 			// panic code - should not happen
-			if (!(viewer instanceof ISourceViewer))
+			if (!(viewer instanceof ISourceViewer)) {
 				return null;
+			}
 
 			return fQuickAssistProcessor.computeQuickAssistProposals(new TextInvocationContext((ISourceViewer)viewer, offset, -1));
 		}
@@ -98,7 +99,7 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 
 	}
 
-	private QuickAssistAssistantImpl fQuickAssistAssistantImpl;
+	private final QuickAssistAssistantImpl fQuickAssistAssistantImpl;
 	private IQuickAssistProcessor fQuickAssistProcessor;
 
 	public QuickAssistAssistant() {

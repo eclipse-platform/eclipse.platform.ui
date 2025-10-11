@@ -450,8 +450,9 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.4
 	 */
 	void setInformationControlReplacer(InformationControlReplacer replacer) {
-		if (fInformationControlReplacer != null)
+		if (fInformationControlReplacer != null) {
 			fInformationControlReplacer.dispose();
+		}
 		fInformationControlReplacer= replacer;
 	}
 
@@ -599,8 +600,9 @@ abstract public class AbstractInformationControlManager {
 		if (fallbackAnchors != null) {
 			fFallbackAnchors= new Anchor[fallbackAnchors.length];
 			System.arraycopy(fallbackAnchors, 0, fFallbackAnchors, 0, fallbackAnchors.length);
-		} else
+		} else {
 			fFallbackAnchors= null;
+		}
 	}
 
 	/**
@@ -611,8 +613,9 @@ abstract public class AbstractInformationControlManager {
 	 */
 	protected void setCustomInformationControlCreator(IInformationControlCreator informationControlCreator)  {
 		if (informationControlCreator != null && fCustomInformationControlCreator instanceof IInformationControlCreatorExtension extension) {
-			if (extension.canReplace(informationControlCreator))
+			if (extension.canReplace(informationControlCreator)) {
 				return;
+			}
 		}
 		fCustomInformationControlCreator= informationControlCreator;
 	}
@@ -654,16 +657,19 @@ abstract public class AbstractInformationControlManager {
 	 * @param subjectControl the subject control
 	 */
 	public void install(Control subjectControl) {
-		if (fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControlDisposeListener != null)
+		if (fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControlDisposeListener != null) {
 			fSubjectControl.removeDisposeListener(fSubjectControlDisposeListener);
+		}
 
 		fSubjectControl= subjectControl;
 
-		if (fSubjectControl != null)
+		if (fSubjectControl != null) {
 			fSubjectControl.addDisposeListener(getSubjectControlDisposeListener());
+		}
 
-		if (fInformationControlCloser != null)
+		if (fInformationControlCloser != null) {
 			fInformationControlCloser.setSubjectControl(subjectControl);
+		}
 
 		setEnabled(true);
 		fDisposed= false;
@@ -735,11 +741,13 @@ abstract public class AbstractInformationControlManager {
 		if (fSizeConstraints == null) {
 			if (informationControl instanceof IInformationControlExtension5 iControl5) {
 				fSizeConstraints= iControl5.computeSizeConstraints(fWidthConstraint, fHeightConstraint);
-				if (fSizeConstraints != null)
+				if (fSizeConstraints != null) {
 					return Geometry.copy(fSizeConstraints);
+				}
 			}
-			if (subjectControl == null)
+			if (subjectControl == null) {
 				return null;
+			}
 
 			GC gc= new GC(subjectControl);
 			gc.setFont(subjectControl.getFont());
@@ -774,8 +782,9 @@ abstract public class AbstractInformationControlManager {
 
 		storeInformationControlBounds();
 
-		if (fInformationControl instanceof IInformationControlExtension5)
+		if (fInformationControl instanceof IInformationControlExtension5) {
 			fSizeConstraints= null;
+		}
 		fInformationControl= null;
 		if (fInformationControlCloser != null) {
 			fInformationControlCloser.setInformationControl(null); //XXX: null is against the spec
@@ -791,16 +800,18 @@ abstract public class AbstractInformationControlManager {
 	 */
 	protected IInformationControl getInformationControl() {
 
-		if (fDisposed)
+		if (fDisposed) {
 			return fInformationControl;
+		}
 
 		IInformationControlCreator creator= null;
 
 		if (fCustomInformationControlCreator == null) {
 			creator= fInformationControlCreator;
 			if (fIsCustomInformationControl && fInformationControl != null) {
-				if (fInformationControl instanceof IInformationControlExtension5)
+				if (fInformationControl instanceof IInformationControlExtension5) {
 					fSizeConstraints= null;
+				}
 				fInformationControl.dispose();
 				fInformationControl= null;
 			}
@@ -810,12 +821,14 @@ abstract public class AbstractInformationControlManager {
 
 			creator= fCustomInformationControlCreator;
 			if (creator instanceof IInformationControlCreatorExtension extension)  {
-				if (fInformationControl != null && extension.canReuse(fInformationControl))
+				if (fInformationControl != null && extension.canReuse(fInformationControl)) {
 					return fInformationControl;
+				}
 			}
 			if (fInformationControl != null)  {
-				if (fInformationControl instanceof IInformationControlExtension5)
+				if (fInformationControl instanceof IInformationControlExtension5) {
 					fSizeConstraints= null;
+				}
 				fInformationControl.dispose();
 				fInformationControl= null;
 			}
@@ -826,8 +839,9 @@ abstract public class AbstractInformationControlManager {
 			fInformationControl= creator.createInformationControl(fSubjectControl.getShell());
 			fInformationControl.addDisposeListener(e -> handleInformationControlDisposed());
 
-			if (fInformationControlCloser != null)
+			if (fInformationControlCloser != null) {
 				fInformationControlCloser.setInformationControl(fInformationControl);
+			}
 		}
 
 		return fInformationControl;
@@ -870,8 +884,9 @@ abstract public class AbstractInformationControlManager {
 		}
 
 		boolean isRTL= fSubjectControl != null && (fSubjectControl.getStyle() & SWT.RIGHT_TO_LEFT) != 0;
-		if (isRTL)
+		if (isRTL) {
 			xShift += controlSize.x;
+		}
 
 		return  fSubjectControl.toDisplay(new Point(subjectArea.x + xShift, subjectArea.y + yShift));
 	}
@@ -942,40 +957,48 @@ abstract public class AbstractInformationControlManager {
 		if (ANCHOR_BOTTOM == anchor || ANCHOR_TOP == anchor) {
 
 			if (ANCHOR_BOTTOM == anchor) {
-				if (lowerRightY > displayLowerRightY)
+				if (lowerRightY > displayLowerRightY) {
 					return false;
+				}
 			} else {
-				if (location.y < displayArea.y)
+				if (location.y < displayArea.y) {
 					return false;
+				}
 			}
 
-			if (lowerRightX > displayLowerRightX)
+			if (lowerRightX > displayLowerRightX) {
 				location.x= location.x - (lowerRightX - displayLowerRightX);
+			}
 
 			return (location.x >= displayArea.x && location.y >= displayArea.y);
 
 		} else if (ANCHOR_RIGHT == anchor || ANCHOR_LEFT == anchor) {
 
 			if (ANCHOR_RIGHT == anchor) {
-				if (lowerRightX > displayLowerRightX)
+				if (lowerRightX > displayLowerRightX) {
 					return false;
+				}
 			} else {
-				if (location.x < displayArea.x)
+				if (location.x < displayArea.x) {
 					return false;
+				}
 			}
 
-			if (lowerRightY > displayLowerRightY)
+			if (lowerRightY > displayLowerRightY) {
 				location.y= location.y - (lowerRightY - displayLowerRightY);
+			}
 
 			return (location.x >= displayArea.x && location.y >= displayArea.y);
 
 		} else if (ANCHOR_GLOBAL == anchor) {
 
-			if (lowerRightX > displayLowerRightX)
+			if (lowerRightX > displayLowerRightX) {
 				location.x= location.x - (lowerRightX - displayLowerRightX);
+			}
 
-			if (lowerRightY > displayLowerRightY)
+			if (lowerRightY > displayLowerRightY) {
 				location.y= location.y - (lowerRightY - displayLowerRightY);
+			}
 
 			return (location.x >= displayArea.x && location.y >= displayArea.y);
 		}
@@ -1002,12 +1025,14 @@ abstract public class AbstractInformationControlManager {
 	 */
 	protected Anchor getNextFallbackAnchor(Anchor anchor) {
 
-		if (anchor == null || fFallbackAnchors == null)
+		if (anchor == null || fFallbackAnchors == null) {
 			return null;
+		}
 
 		for (int i= 0; i < fFallbackAnchors.length; i++) {
-			if (fFallbackAnchors[i] == anchor)
+			if (fFallbackAnchors[i] == anchor) {
 				return fFallbackAnchors[i + 1 == fFallbackAnchors.length ? 0 : i + 1];
+			}
 		}
 
 		return null;
@@ -1036,8 +1061,9 @@ abstract public class AbstractInformationControlManager {
 
 			upperLeft= computeLocation(subjectArea, controlSize, testAnchor);
 			Monitor monitor= getClosestMonitor(subjectAreaDisplayRelative, testAnchor);
-			if (updateLocation(upperLeft, controlSize, monitor.getClientArea(), testAnchor))
+			if (updateLocation(upperLeft, controlSize, monitor.getClientArea(), testAnchor)) {
 				return upperLeft;
+			}
 
 			// compute available area for this anchor and update if better than best
 			Rectangle available= computeAvailableArea(subjectAreaDisplayRelative, monitor.getClientArea(), testAnchor);
@@ -1055,8 +1081,9 @@ abstract public class AbstractInformationControlManager {
 		} while (testAnchor != fAnchor && testAnchor != null);
 
 		// no anchor is perfect - select the one with larges area and set the size to not overlap with the subjectArea
-		if (bestAnchor != ANCHOR_GLOBAL)
+		if (bestAnchor != ANCHOR_GLOBAL) {
 			Geometry.set(controlSize, Geometry.getSize(bestBounds));
+		}
 		return Geometry.getLocation(bestBounds);
 	}
 
@@ -1071,10 +1098,11 @@ abstract public class AbstractInformationControlManager {
 	 */
 	private Monitor getClosestMonitor(Rectangle area, Anchor anchor) {
 		Point center;
-		if (ANCHOR_GLOBAL == anchor)
+		if (ANCHOR_GLOBAL == anchor) {
 			center= Geometry.centerPoint(area);
-		else
+		} else {
 			center= Geometry.centerPoint(Geometry.getExtrudedEdge(area, 0, anchor.getSWTFlag()));
+		}
 		return Util.getClosestMonitor(fSubjectControl.getDisplay(), center);
 	}
 
@@ -1084,8 +1112,9 @@ abstract public class AbstractInformationControlManager {
 	 * This happens only if this controller is enabled.
 	 */
 	public void showInformation() {
-		if (fEnabled)
+		if (fEnabled) {
 			doShowInformation();
+		}
 	}
 
 	/**
@@ -1108,15 +1137,17 @@ abstract public class AbstractInformationControlManager {
 	 */
 	protected void presentInformation() {
 		boolean hasContents= false;
-		if (fInformation instanceof String)
+		if (fInformation instanceof String) {
 			hasContents= !((String)fInformation).trim().isEmpty();
-		else
+		} else {
 			hasContents= (fInformation != null);
+		}
 
-		if (fSubjectArea != null && hasContents)
+		if (fSubjectArea != null && hasContents) {
 			internalShowInformationControl(fSubjectArea, fInformation);
-		else
+		} else {
 			hideInformationControl();
+		}
 	}
 
 	/**
@@ -1143,14 +1174,16 @@ abstract public class AbstractInformationControlManager {
 			}
 			informationControl.setSizeConstraints(sizeConstraints.x, sizeConstraints.y);
 
-			if (informationControl instanceof IInformationControlExtension2)
+			if (informationControl instanceof IInformationControlExtension2) {
 				((IInformationControlExtension2)informationControl).setInput(information);
-			else
+			} else {
 				informationControl.setInformation(information.toString());
+			}
 
 			if (informationControl instanceof IInformationControlExtension extension) {
-				if (!extension.hasContents())
+				if (!extension.hasContents()) {
 					return;
+				}
 			}
 
 			Point size= null;
@@ -1158,23 +1191,29 @@ abstract public class AbstractInformationControlManager {
 			Rectangle bounds= restoreInformationControlBounds();
 
 			if (bounds != null) {
-				if (bounds.x > -1 && bounds.y > -1)
+				if (bounds.x > -1 && bounds.y > -1) {
 					location= Geometry.getLocation(bounds);
+				}
 
-				if (bounds.width > -1 && bounds.height > -1)
+				if (bounds.width > -1 && bounds.height > -1) {
 					size= Geometry.getSize(bounds);
+				}
 			}
 
-			if (size == null)
+			if (size == null) {
 				size= informationControl.computeSizeHint();
+			}
 
-			if (fEnforceAsMinimalSize)
+			if (fEnforceAsMinimalSize) {
 				size= Geometry.max(size, sizeConstraints);
-			if (fEnforceAsMaximalSize)
+			}
+			if (fEnforceAsMaximalSize) {
 				size= Geometry.min(size, sizeConstraints);
+			}
 
-			if (location == null)
+			if (location == null) {
 				location= computeInformationControlLocation(subjectArea, size);
+			}
 
 			Rectangle controlBounds= Geometry.createRectangle(location, size);
 			cropToClosestMonitor(controlBounds);
@@ -1205,8 +1244,9 @@ abstract public class AbstractInformationControlManager {
 		if (fInformationControl != null) {
 			storeInformationControlBounds();
 			fInformationControl.setVisible(false);
-			if (fInformationControlCloser != null)
+			if (fInformationControlCloser != null) {
 				fInformationControlCloser.stop();
+			}
 		}
 		if (canClearDataOnHide()) {
 			fSubjectArea= null;
@@ -1234,14 +1274,17 @@ abstract public class AbstractInformationControlManager {
 	protected void showInformationControl(Rectangle subjectArea) {
 		fInformationControl.setVisible(true);
 
-		if (fInformationControl == null)
+		if (fInformationControl == null) {
 			return; // could already be disposed if setVisible(..) runs the display loop
+		}
 
-		if (fTakesFocusWhenVisible)
+		if (fTakesFocusWhenVisible) {
 			fInformationControl.setFocus();
+		}
 
-		if (fInformationControlCloser != null)
+		if (fInformationControlCloser != null) {
 			fInformationControlCloser.start(subjectArea);
+		}
 	}
 
 	/**
@@ -1292,8 +1335,9 @@ abstract public class AbstractInformationControlManager {
 				fInformationControlReplacer= null;
 			}
 
-			if (fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControlDisposeListener != null)
+			if (fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControlDisposeListener != null) {
 				fSubjectControl.removeDisposeListener(fSubjectControlDisposeListener);
+			}
 			fSubjectControl= null;
 			fSubjectControlDisposeListener= null;
 
@@ -1312,18 +1356,21 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.0
 	 */
 	protected void storeInformationControlBounds() {
-		if (fDialogSettings == null || fInformationControl == null || !(fIsRestoringLocation || fIsRestoringSize))
+		if (fDialogSettings == null || fInformationControl == null || !(fIsRestoringLocation || fIsRestoringSize)) {
 			return;
+		}
 
-		if (!(fInformationControl instanceof IInformationControlExtension3))
+		if (!(fInformationControl instanceof IInformationControlExtension3)) {
 			throw new UnsupportedOperationException();
+		}
 
 		boolean controlRestoresSize= ((IInformationControlExtension3)fInformationControl).restoresSize();
 		boolean controlRestoresLocation= ((IInformationControlExtension3)fInformationControl).restoresLocation();
 
 		Rectangle bounds= ((IInformationControlExtension3)fInformationControl).getBounds();
-		if (bounds == null)
+		if (bounds == null) {
 			return;
+		}
 
 		if (fIsRestoringSize && controlRestoresSize) {
 			fDialogSettings.put(STORE_SIZE_WIDTH, bounds.width);
@@ -1341,11 +1388,13 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.0
 	 */
 	protected Rectangle restoreInformationControlBounds() {
-		if (fDialogSettings == null || !(fIsRestoringLocation || fIsRestoringSize))
+		if (fDialogSettings == null || !(fIsRestoringLocation || fIsRestoringSize)) {
 			return null;
+		}
 
-		if (!(fInformationControl instanceof IInformationControlExtension3))
+		if (!(fInformationControl instanceof IInformationControlExtension3)) {
 			throw new UnsupportedOperationException();
+		}
 
 		boolean controlRestoresSize= ((IInformationControlExtension3)fInformationControl).restoresSize();
 		boolean controlRestoresLocation= ((IInformationControlExtension3)fInformationControl).restoresLocation();
@@ -1373,19 +1422,22 @@ abstract public class AbstractInformationControlManager {
 		}
 
 		// sanity check
-		if (bounds.x == -1 && bounds.y == -1 && bounds.width == -1 && bounds.height == -1)
+		if (bounds.x == -1 && bounds.y == -1 && bounds.width == -1 && bounds.height == -1) {
 			return null;
+		}
 
 		Rectangle maxBounds= null;
-		if (fSubjectControl != null && !fSubjectControl.isDisposed())
+		if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 			maxBounds= fSubjectControl.getDisplay().getBounds();
-		else {
+		} else {
 			// fallback
 			Display display= Display.getCurrent();
-			if (display == null)
+			if (display == null) {
 				display= Display.getDefault();
-			if (display != null && !display.isDisposed())
+			}
+			if (display != null && !display.isDisposed()) {
 				maxBounds= display.getBounds();
+			}
 		}
 
 
