@@ -44,8 +44,9 @@ public abstract class AbstractHyperlinkDetector implements IHyperlinkDetector, I
 	 */
 	public final void setContext(IAdaptable context) throws IllegalStateException, IllegalArgumentException {
 		Assert.isLegal(context != null);
-		if (fContext != null)
+		if (fContext != null) {
 			throw new IllegalStateException();
+		}
 		fContext= context;
 	}
 
@@ -65,8 +66,9 @@ public abstract class AbstractHyperlinkDetector implements IHyperlinkDetector, I
 	 */
 	protected final <T> T getAdapter(Class<T> adapterClass) {
 		Assert.isLegal(adapterClass != null);
-		if (fContext != null)
+		if (fContext != null) {
 			return fContext.getAdapter(adapterClass);
+		}
 		return null;
 	}
 

@@ -43,7 +43,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 
 	private static final String LINE_DELIM= System.lineSeparator();
 
-	private boolean fEnforceUpperLineLimit;
+	private final boolean fEnforceUpperLineLimit;
 
 	public HTMLTextPresenter(boolean enforceUpperLineLimit) {
 		fEnforceUpperLineLimit= enforceUpperLineLimit;

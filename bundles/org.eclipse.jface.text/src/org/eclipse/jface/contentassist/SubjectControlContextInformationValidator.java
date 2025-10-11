@@ -32,7 +32,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 public final class SubjectControlContextInformationValidator implements ISubjectControlContextInformationValidator {
 
 	/** The content assist processor. */
-	private IContentAssistProcessor fProcessor;
+	private final IContentAssistProcessor fProcessor;
 	/** The context information to be validated. */
 	private IContextInformation fContextInformation;
 	/** The content assist subject control. */

@@ -78,10 +78,11 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 
 			boolean isEscape= false;
 			esc: for (int i= position - 1; i >= 0; i--) {
-				if (fExpression.charAt(i) == '\\')
+				if (fExpression.charAt(i) == '\\') {
 					isEscape= !isEscape;
-				else
+				} else {
 					break esc;
+				}
 			}
 			fIsEscape= isEscape;
 		}
@@ -105,8 +106,9 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 			addBsProposal("\\e", RegExMessages.getString("displayString_bs_e"), RegExMessages.getString("additionalInfo_bs_e")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			addBracketProposal("\\c", 2, RegExMessages.getString("displayString_bs_c"), RegExMessages.getString("additionalInfo_bs_c")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-			if (! fIsEscape)
+			if (! fIsEscape) {
 				addBracketProposal(".", 1, RegExMessages.getString("displayString_dot"), RegExMessages.getString("additionalInfo_dot")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
 			addBsProposal("\\d", RegExMessages.getString("displayString_bs_d"), RegExMessages.getString("additionalInfo_bs_d")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			addBsProposal("\\D", RegExMessages.getString("displayString_bs_D"), RegExMessages.getString("additionalInfo_bs_D")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			addBsProposal("\\s", RegExMessages.getString("displayString_bs_s"), RegExMessages.getString("additionalInfo_bs_s")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -211,8 +213,9 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 			if (fDocumentOffset > 0 && '$' == fExpression.charAt(fDocumentOffset - 1)) {
 				addProposal("", RegExMessages.getString("displayString_dollar"), RegExMessages.getString("additionalInfo_dollar")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else {
-				if (! fIsEscape)
+				if (! fIsEscape) {
 					addProposal("$", RegExMessages.getString("displayString_dollar"), RegExMessages.getString("additionalInfo_dollar")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
 				addBsProposal("\\", RegExMessages.getString("displayString_replace_cap"), RegExMessages.getString("additionalInfo_replace_cap")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				addBsProposal("\\", RegExMessages.getString("displayString_replace_bs"), RegExMessages.getString("additionalInfo_replace_bs")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				addBsProposal("\\R", RegExMessages.getString("displayString_replace_bs_R"), RegExMessages.getString("additionalInfo_replace_bs_R")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -333,8 +336,9 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 
 	@Override
 	public IContentProposal [] getProposals(String contents, int position) {
-		if (fIsFind)
+		if (fIsFind) {
 			return new ProposalComputer(contents, position).computeFindProposals();
+		}
 		return new ProposalComputer(contents, position).computeReplaceProposals();
 	}
 }

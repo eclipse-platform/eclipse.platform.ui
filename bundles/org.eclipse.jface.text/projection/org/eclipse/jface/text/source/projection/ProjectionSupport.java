@@ -143,9 +143,9 @@ public class ProjectionSupport {
 		}
 	}
 
-	private ProjectionViewer fViewer;
-	private IAnnotationAccess fAnnotationAccess;
-	private ISharedTextColors fSharedTextColors;
+	private final ProjectionViewer fViewer;
+	private final IAnnotationAccess fAnnotationAccess;
+	private final ISharedTextColors fSharedTextColors;
 	private List<String> fSummarizableTypes;
 	private IInformationControlCreator fInformationControlCreator;
 	private IInformationControlCreator fInformationPresenterControlCreator;
