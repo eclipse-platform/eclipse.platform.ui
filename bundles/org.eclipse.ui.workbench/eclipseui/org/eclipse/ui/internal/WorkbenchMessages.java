@@ -455,6 +455,11 @@ public class WorkbenchMessages extends NLS {
 	public static String PreferenceExportWarning_continue;
 	public static String PreferenceExportWarning_applyAndContinue;
 
+	public static String Preference_Enable_Autocomplete_ChevronPopUp;
+	public static String Preference_Autocomplete;
+
+	public static String Preference_Enable_Autocomplete_ChevronPopUp_ToolTip;
+
 	// --- Workbench ---
 	public static String WorkbenchPreference_allowInplaceEditingButton;
 	public static String WorkbenchPreference_useIPersistableEditorButton;
