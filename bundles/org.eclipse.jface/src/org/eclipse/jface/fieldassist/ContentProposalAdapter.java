@@ -865,7 +865,9 @@ public class ContentProposalAdapter {
 		 */
 		@Override
 		public boolean close() {
-			popupCloser.removeListeners();
+			if (popupCloser != null) {
+				popupCloser.removeListeners();
+			}
 			if (infoPopup != null) {
 				infoPopup.close();
 			}
