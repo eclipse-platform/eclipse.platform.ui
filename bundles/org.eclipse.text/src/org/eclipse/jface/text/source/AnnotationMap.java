@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.ILog;
+
 import org.eclipse.jface.text.Position;
 
 
@@ -54,11 +56,38 @@ class AnnotationMap implements IAnnotationMap {
 		fInternalMap= new HashMap<>(capacity);
 	}
 
+	/**
+	 * Sets the lock object for this object. Subsequent calls to specified methods of this object
+	 * are synchronized on this lock object. Which methods are synchronized is specified by the
+	 * implementer.
+	 * <p>
+	 * If the lock object is not explicitly set by this method, the annotation map uses its internal
+	 * lock object for synchronization.
+	 * </p>
+	 * 
+	 * <p>
+	 * <em>You should not override an existing lock object unless you own that lock object yourself.
+	 * Use the existing lock object instead.</em>
+	 * </p>
+	 *
+	 * @param lockObject the lock object. If <code>null</code> is given, internal lock object is
+	 *            used for locking.
+	 */
 	@Override
 	public synchronized void setLockObject(Object lockObject) {
+		if(fLockObject != null && fLockObject != lockObject) {
+			ILog log= ILog.of(AnnotationMap.class);
+			String message = "Attempt to override existing lock object of AnnotationMap."; //$NON-NLS-1$
+			log.warn(message, new IllegalStateException(message));
+		}
 		fLockObject= lockObject;
 	}
 
+	/**
+	 * Lock object used to synchronize concurrent access to the internal map data.
+	 * 
+	 * @return <b>never</b> returns null
+	 */
 	@Override
 	public synchronized Object getLockObject() {
 		if (fLockObject == null) {
