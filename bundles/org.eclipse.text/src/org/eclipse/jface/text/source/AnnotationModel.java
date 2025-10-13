@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.runtime.Assert;
@@ -338,11 +339,30 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		return (IAnnotationMap) fAnnotations;
 	}
 
+	/**
+	 * Subclasses should <b>never</b> return null. Clients should use the lock
+	 * object in order to synchronize concurrent access to the internal map data.
+	 * 
+	 * @return <b>never</b> returns null
+	 */
 	@Override
 	public Object getLockObject() {
-		return getAnnotationMap().getLockObject();
+		return Objects.requireNonNull(getAnnotationMap().getLockObject());
 	}
 
+	/**
+	 * Sets the lock object for this object. Subsequent calls to specified methods of this object
+	 * are synchronized on this lock object. Which methods are synchronized is specified by the
+	 * implementer.
+	 * 
+	 * <p>
+	 * <em>You should not override an existing lock object unless you own that lock object yourself.
+	 * Use the existing lock object instead.</em>
+	 * </p>
+	 *
+	 * @param lockObject the lock object. If <code>null</code> is given, default implementation uses
+	 *            the internal lock object for locking.
+	 */
 	@Override
 	public void setLockObject(Object lockObject) {
 		getAnnotationMap().setLockObject(lockObject);
@@ -661,23 +681,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			IAnnotationMap annotations= getAnnotationMap();
 			Object mapLock = annotations.getLockObject();
 
-			if (mapLock == null) {
-				Iterator<Annotation> e= annotations.keySetIterator();
-				while (e.hasNext()) {
-					Annotation a= e.next();
-					Position p= annotations.get(a);
+			synchronized (mapLock) {
+				annotations.forEach((a, p) -> {
 					if (p == null || p.isDeleted()) {
 						deleted.add(a);
 					}
-				}
-			} else {
-				synchronized (mapLock) {
-					annotations.forEach((a, p) -> {
-						if (p == null || p.isDeleted()) {
-							deleted.add(a);
-						}
-					});
-				}
+				});
 			}
 
 			if (fireModelChanged && forkNotification) {
