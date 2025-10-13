@@ -33,11 +33,9 @@ import org.eclipse.jface.text.codemining.LineContentCodeMining;
 class ZeroWidthCharactersLineContentCodeMining extends LineContentCodeMining {
 
 	private static final String ZW_CHARACTERS_MINING = "ZWSP"; //$NON-NLS-1$
-	private Color fgColor;
 
 	public ZeroWidthCharactersLineContentCodeMining(int offset, ICodeMiningProvider provider) {
 		super(new Position(offset, 1), true, provider);
-		fgColor = Display.getCurrent().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 	}
 
 	@Override
@@ -52,9 +50,14 @@ class ZeroWidthCharactersLineContentCodeMining extends LineContentCodeMining {
 
 	@Override
 	public Point draw(GC gc, StyledText textWidget, Color color, int x, int y) {
-		gc.setForeground(fgColor);
-		Point point = super.draw(gc, textWidget, fgColor, x, y);
+		gc.setForeground(getColor(color));
+		Point point = super.draw(gc, textWidget, color, x, y);
 		gc.setForeground(color);
 		return point;
+	}
+
+	private Color getColor(Color predefinedColor) {
+		return Display.getCurrent() != null ? Display.getCurrent().getSystemColor(SWT.COLOR_LIST_FOREGROUND)
+				: predefinedColor;
 	}
 }
