@@ -256,7 +256,7 @@ public interface MWindow
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * The heigfht of this window
+	 * The height of this window
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Height</em>' attribute.

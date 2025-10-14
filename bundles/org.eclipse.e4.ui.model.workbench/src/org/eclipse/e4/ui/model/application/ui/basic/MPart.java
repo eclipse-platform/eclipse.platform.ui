@@ -68,7 +68,7 @@ public interface MPart extends MPartSashContainerElement, MStackElement, MContri
 	 * <li>If the menu is the part's id prefixed with "menu:" then it will appear as the
 	 * drop down menu available from the view's toolbar.</li>
 	 * <li>If the menu is the part's id prefixed with "popup:" then it will appear as the
-	 * ddefault context menu for this view.</li>
+	 * default context menu for this view.</li>
 	 * </ul>
 	 * <p>
 	 * Other menus can be added here but have to be managed by the part itself...
@@ -86,7 +86,7 @@ public interface MPart extends MPartSashContainerElement, MStackElement, MContri
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * This is the Toolbar associated with tihs Part (if any).
+	 * This is the Toolbar associated with this Part (if any).
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Toolbar</em>' containment reference.

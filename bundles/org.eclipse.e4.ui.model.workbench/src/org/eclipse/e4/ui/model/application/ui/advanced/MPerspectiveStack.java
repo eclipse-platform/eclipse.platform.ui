@@ -24,7 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
  *
  * <!-- begin-model-doc -->
  * <p>
- * The PerspectiveStack is a collectin of Perspectives. Only one perspective may be
+ * The PerspectiveStack is a collection of Perspectives. Only one perspective may be
  * visible at a time and is determined by the container's 'selectedElement'.
  * </p>
  * @since 1.0
