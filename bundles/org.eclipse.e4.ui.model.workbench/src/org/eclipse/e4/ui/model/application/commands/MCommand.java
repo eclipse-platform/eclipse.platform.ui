@@ -24,7 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.MLocalizable;
  *
  * <!-- begin-model-doc -->
  * <p>
- * A Command represents a logical operation within the applicaiton. The implementation
+ * A Command represents a logical operation within the application. The implementation
  * is provided by an MHandler chosen by examining all the candidate's enablement.
  * </p>
  * @since 1.0
@@ -109,7 +109,7 @@ public interface MCommand extends MApplicationElement, MLocalizable {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * This list defines the ste of parameters that this command expects to have defined
+	 * This list defines the set of parameters that this command expects to have defined
 	 * during execution.
 	 * </p>
 	 * <!-- end-model-doc -->

@@ -30,7 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
  *
  * <!-- begin-model-doc -->
  * <p>
- * The Persepctive defines a part of the UI presentation that can be switched independently
+ * The Perspective defines a part of the UI presentation that can be switched independently
  * of the rest of the UI. By using Placeholders it's possible to share elements between
  * different perspectives.
  * </p>

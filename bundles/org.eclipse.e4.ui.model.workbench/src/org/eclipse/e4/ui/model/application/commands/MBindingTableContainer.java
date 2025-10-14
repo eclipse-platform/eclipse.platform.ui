@@ -23,8 +23,8 @@ import java.util.List;
  * <!-- begin-model-doc -->
  * <p>
  * This type contains the list of binding 'tables', representing the various sets of bindings
- * based on the applicaiton's current running 'context'. Here the 'context' represents
- * the applicaiton's UI state (i.e. whenther a Dialog is open...).
+ * based on the application's current running 'context'. Here the 'context' represents
+ * the application's UI state (i.e. whether a Dialog is open...).
  * </p>
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.

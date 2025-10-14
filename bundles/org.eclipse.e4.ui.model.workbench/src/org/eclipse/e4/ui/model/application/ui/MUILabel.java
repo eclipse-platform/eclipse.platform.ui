@@ -21,7 +21,7 @@ package org.eclipse.e4.ui.model.application.ui;
  * <!-- begin-model-doc -->
  * <p>
  * This is a mix in that will be used for UI Elements that are capable of showing label
- * information in the GUI (e.g. Parts, Menus / Toolbars, Persepectives...)
+ * information in the GUI (e.g. Parts, Menus / Toolbars, Perspectives...)
  * </p>
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.

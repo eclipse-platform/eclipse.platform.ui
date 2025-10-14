@@ -145,7 +145,7 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * This is the Toolbar associated with tihs Part (if any).
+	 * This is the Toolbar associated with this Part (if any).
 	 * </p>
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Toolbar</em>' containment reference.
