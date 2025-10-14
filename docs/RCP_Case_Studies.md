@@ -8,11 +8,11 @@ We have also prepared some case studies of organizations that are using Eclipse 
 
 We'd like these pages to be useful to you - so please email us your pointers and comments!
 
-## Breadcrumbs
-
 ## Commercial RCP Applications
 
 ### AB ZealCore System Debugger
+
+![AB ZealCore System Debugger Screenshot](images/rcp_case_studies/abzealcoreThumb.png)
 
 **Website:** [http://www.zealcore.com/products.html](http://www.zealcore.com/products.html)
 
@@ -25,6 +25,8 @@ The ZealCore System Debugger collects and refines information contained in logs.
 The Actuate BIRT Report Designer is a powerful tool for designing and deploying reports against data sources ranging from typical business SQL databases, to XML data sources, to in-memory Java objects. The Actuate BIRT Report Designer provides a complete visual report design environment and is based on the Eclipse Open Source BIRT and RCP projects. Utilizing the benefits of RCP, this tool focuses on the needs of the typical report developer who wants an easy to use tool for creating reports. The Actuate BIRT Report Designer is part of an integrated family of reporting tools that range from the Actuate BusinessReport Studio, a web based report design tool for business users, to the Actuate BIRT Report Designer Pro, aimed at professional developers. Actuate products also include a variety of deployment choices for reports, from an embedded Java engine, to the enterprise class iServer, with report scheduling, distribution and a full high-availability, clustered server.
 
 ### AlterPoint DeviceAuthority
+
+![AlterPoint DeviceAuthority Screenshot](images/rcp_case_studies/deviceAuthorityThumb.jpg)
 
 **Website:** [http://www.alterpoint.com/](http://www.alterpoint.com/)
 
@@ -44,11 +46,15 @@ Sequence Scanner Software is a freely available program for viewing, editing, pr
 
 ### Atante eye.CRM
 
+![Atante eye.CRM Screenshot](images/rcp_case_studies/atanteThumb.jpg)
+
 **Website:** [http://www.atante.pl/](http://www.atante.pl/)
 
 eye.CRM is a CRM (Customer Relation Management) application software, which enables the users to manage their relationships with customers, including finding, winning and activating new customers, as well as subsequent actions connected with the trade procedure. By using a central data source, the software provides an effective exchange of information between employees dealing with a particular customer and enables a quick response to all the events regarding this customer. Shared documents' system give all the entitled the access to the current customer documentary. Advanced privileges system gives administrators total control over users' access to modules of the application, as well as to the particular data. The software was prepared to handle any size of groups of users and to enable managers to monitor the subordinates� work. An inappreciable support for supervisors is a reporting system BIRT, which was made the most of. The extended calendar views (created in GEF), which are used by the software, help the users in their everyday work and provide the control over their scheduled events. MySQL database management system, applied in the software, has been fully used, with its advanced facilities, such as: a database transactions, table partitioning, and many others, which gives the program invaluable stability. The application software was designed to maximize the benefits coming from RCP, such as the possibility to split the functionalities between a number of plug-ins. Thanks to such a software architecture, changes done in the final product are neither time- nor source-consuming.
 
 ### Bay Breeze Software - SQL Edge
+
+![Bay Breeze Software - SQL Edge Screenshot](images/rcp_case_studies/sqlEdgeThumb.jpg)
 
 **Website:** [http://www.baybreezesoft.com/](http://www.baybreezesoft.com/)
 
@@ -56,11 +62,15 @@ SQL Edge allows users to execute SQL queries, browse schema information and visu
 
 ### BaZaa
 
+![BaZaa Screenshot](images/rcp_case_studies/bazaaThumb.png)
+
 **Website:** [http://bazaanetworks.com/](http://bazaanetworks.com/)
 
 BaZaa is a real-time peer-to-peer search, listing and notification system that automatically pushes relevant matches to your desktop based on your personal preferences. With BaZaa you list or search items quickly and buy and sell with no commissions and assured privacy No wasted time Assured privacy No Commissions No irrelevant information No more endless searching of multiple websites Information pushed to your desktop in real-time based on your preferences
 
 ### BigBlogZoo
+
+![BigBlogZoo Screenshot](images/rcp_case_studies/bigBlogZooThumb.png)
 
 **Website:** [http://www.bigblogzoo.com/](http://www.bigblogzoo.com/)
 
@@ -68,11 +78,15 @@ The BigBlogZoo is a Semantic Web Browser. Nearly 80,000 newsfeeds and blogs have
 
 ### BSI CRM on Eclipse
 
+![BSI CRM on Eclipse Screenshot](images/rcp_case_studies/bsiORSThumb.png)
+
 **Website:** [http://www.bsiag.com/](http://www.bsiag.com/)
 
 BSI CRM with ORS - Your CRM Solution on Eclipse. This customer relationship management (CRM) solution is a fully configured RCP application to support the whole customer contact process from first contact to the successful project implementation and also retention management. This RCP solution is currently in daily use at PostFinance, one of the major financial solution provider of Switzerland. Consultants manage their contacts, tasks, projects, marketing campaigns with ORS. BSI Business Systems Integration AG (www.bsiag.com) has integrated the standard ORS into the Eclipse framework thus providing all benefits of RCP.
 
 ### CCTVnet
+
+![CCTVnet Screenshot](images/rcp_case_studies/cctvnetThumb.jpg)
 
 **Website:** [http://www.cctvnet.biz/](http://www.cctvnet.biz/)
 
@@ -80,11 +94,15 @@ CCTVnet is a comprehensive video monitoring/recording software for network-based
 
 ### CoreFiling SpiderMonkey
 
+![CoreFiling SpiderMonkey Screenshot](images/rcp_case_studies/spidermonkeyThumb.jpg)
+
 **Website:** [http://www.corefiling.com/products/spidermonkey.html](http://www.corefiling.com/products/spidermonkey.html)
 
 SpiderMonkey is a powerful multi-user XBRL taxonomy editor built on the Eclipse platform. XBRL, the eXtensible Business Reporting Language, offers an open system standard for the reporting of financial and statistical information. SpiderMonkey is a flexible modelling tool that allows business users to create, refine and extend XBRL taxonomies, the �dictionaries� which specify the precise definitions of terms used in financial documents. The XBRL standard is considered by many as a successful market-based implementation of semantic web concepts. XBRL taxonomies can be easily understood as ontologies by those working in that sphere. As an RCP application, SpiderMonkey can provide an effective cross-platform user experience and customers can readily take advantage of plug-ins to extend the application. There is a fully functional, free version of the tool available for download. A supported single user version, as well as a full multi-user edition, is also available.
 
 ### Crypto Intelligence - CodeSigner
+
+![Crypto Intelligence - CodeSigner Screenshot](images/rcp_case_studies/codesignerThumb.jpg)
 
 **Website:** [http://www.cryptointel.com/codesigner.html](http://www.cryptointel.com/codesigner.html)
 
@@ -98,11 +116,15 @@ DeltaLearn Advanced Editor is an e-learning content generation tool based on the
 
 ### DeltaWalker
 
+![DeltaWalker Screenshot](images/rcp_case_studies/deltawalkerThumb.png)
+
 **Website:** [http://www.deltopia.com/](http://www.deltopia.com/)
 
 DeltaWaker is a file and folder comparison application by Deltopia Inc. DeltaWalker lets you compare, edit, and merge files and synchronize folders. It runs on Windows, Mac OS X and Linux. DeltaWalker is a compelling choice for software, web, and legal professionals, as well as scientists, engineers and anyone who works with text, documents, and folders that change over time. Highlights: Finely tuned and optimized file and folder comparison engine Unicode support with character encoding auto-detection, when character encoding information is available Structure comparison and visualization of XML files Ergonomic file and folder comparison integration Extensive in-place text editing capabilities, where changes are instantly processed by the differencing engine. Two and three-way file and folder comparison, incl. vertical, horizontal, and ancestor on top layouts Manual and automatic (three-way comparison only) merging of differences Unlimited, intelligent undo/redo Color highlighted differences and changes (QuickDiffs) Birds-eye difference view and navigation Print/print-preview Patch creation capabilities Command-line interface Notification mechanism for local disk changes of files and folders loaded in DW Automatic software updates
 
 ### eClarus - Business Process Modeler for Business Analysts
+
+![eClarus - Business Process Modeler for Business Analysts Screenshot](images/rcp_case_studies/eclarusbpmThumb.jpg)
 
 **Website:** [http://www.eclarus.com/products_business.html](http://www.eclarus.com/products_business.html)
 
@@ -110,11 +132,15 @@ eClarus Business Process Modeler for Business Analysts is a business process dia
 
 ### Eiswind Book Publishing Software
 
+![Eiswind Book Publishing Software Screenshot](images/rcp_case_studies/parisThumb.jpg)
+
 **Website:** [http://www.book-publishing-software.com/](http://www.book-publishing-software.com/)
 
 Eiswind Book Publishing Software is an easy to learn and use solution, that's highly adaptable to your individual needs. Our Solution is a multi-user system. Data and documents are stored on a central server, that may be installed at your site or hosted by Eiswind. We communicate through a secure SSL layer, so that you can access your data from wherever you are on the internet without any hassle. It's based on a modular system, with an open interface concept. Eiswind Publishing Software grows with your needs. Eiswind Book Publishing Software is available in Mac OS/X and Windows versions.
 
 ### Embarcadero Change Manager - CM/Data, CM/Config
+
+![Embarcadero Change Manager - CM/Data, CM/Config Screenshot](images/rcp_case_studies/changemanagerThumb.png)
 
 **Website:** [http://www.embarcadero.com/products/changemanager/index.html](http://www.embarcadero.com/products/changemanager/index.html)
 
@@ -122,13 +148,19 @@ Embarcadero Change Manager 4.0 is a professional-grade database change managemen
 
 ### Embarcadero Technologies EA/Studio Community Edition
 
+![Embarcadero Technologies EA/Studio Community Edition Screenshot](images/rcp_case_studies/ea_studio_communityThumb.png)
+
 Embarcadero Technologies EA/Studio Community Edition Embarcadero Technologies EA/Studio Community Edition is a free business process modeling (BPM) tool built on the Eclipse framework. Business process modelers and database architects can use it to engage in more productive and efficient enterprise architecture modeling, including documenting business processes for regulatory compliance purposes. EA/Studio Community Edition supports XML and the business process modeling notation (BPMN), includes standard process modeling elements, and offers the ability to easily import Visio diagrams. When additional functionality is required, users can upgrade to the commercial version of EA/Studio , which includes conceptual modeling, impact analysis and usage reporting. Users of both EA/Studio Community Edition and the commercial version of EA/Studio can seamlessly collaborate and share files between the two versions. EA/Studio Community Edition is available free of charge and can be accessed by visiting www.embarcadero.com/products/eastudio/communityedition .
 
 ### Ember - Insight Desktop
 
+![Ember - Insight Desktop Screenshot](images/rcp_case_studies/insightdesktopThumb.jpg)
+
 Ember - Insight Desktop Ember's InSight Desktop is the most integrated ZigBee application debugging tool available. By providing developers with a complete view of their network in a graphical manner, InSight Desktop greatly reduces debugging effort and time to market. From within InSight Desktop, developers can automatically discover and connect to their target devices over a TCP/IP network using InSight Adpaters and Ember�s unrivaled Ethernet backchannel technology.
 
 ### ezMgt
+
+![ezMgt Screenshot](images/rcp_case_studies/ezMgtThumb.jpg)
 
 **Website:** [http://www.ezmgt.com/](http://www.ezmgt.com/)
 
@@ -136,11 +168,15 @@ EzMgt provides a set of tools developed to help you monitor your network. Our fr
 
 ### Future Management - Logic MindGuide
 
+![Future Management - Logic MindGuide Screenshot](images/rcp_case_studies/logicMindGuideThumb.jpg)
+
 **Website:** [http://www.logicmindguide.com/](http://www.logicmindguide.com/)
 
 Logic MindGuide is a software tool (in German language) that supports the user in planning and deciding complex tasks frequently seen in customer-oriented product development, strategy development and evaluation tasks. Using RCP, it provides table-based, Excel-like interfaces based on the custom table widget KTable as well as figures built with GEF. It writes reports in RTF and XLS format utilizing plugin-ed versions of iText and JExcelApi.
 
 ### Global Vision Systems - EasyMonitoring
+
+![Global Vision Systems - EasyMonitoring Screenshot](images/rcp_case_studies/easyMonitoringThumb.jpg)
 
 **Website:** [http://www.global-vision-systems.com/](http://www.global-vision-systems.com/)
 
@@ -148,11 +184,15 @@ EasyMonitoring� is a 4D visualisation platform that makes easier to supervise 
 
 ### IBM Lotus Expeditor
 
+![IBM Lotus Expeditor Screenshot](images/rcp_case_studies/lotusThumb.png)
+
 **Website:** [http://www-306.ibm.com/software/lotus/products/expeditor/](http://www-306.ibm.com/software/lotus/products/expeditor/)
 
 IBM Lotus� Expeditor software is the IBM SOA client integration platform. It can assist developers in integrating information from a wide variety of client (RCP, Java�, Web, AJAX and Microsoft .NET) and server (Java EE, Web Services, Portlets, and 3270 / 5250 host emulation sessions) applications. This can enable I/T organizations to fine tune the user interface and tie it to the business process in order to increase end user effectiveness. Integrated middleware and encryption also can assist developers to extend applications for off line use, to enhance employee productivity, regardless of network connection. This can also be used to reduce the network latency typically found in web applications.
 
 ### IBM Lotus Symphony
+
+![IBM Lotus Symphony Screenshot](images/rcp_case_studies/lotussymphonyThumb.jpg)
 
 **Website:** [http://symphony.lotus.com/](http://symphony.lotus.com/)
 
@@ -160,11 +200,15 @@ IBM� Lotus� Symphony� is a richly-featured set of productivity tools that 
 
 ### IBM Cloudscape Workbench
 
+![IBM Cloudscape Workbench Screenshot](images/rcp_case_studies/ibmCloudScapeThumb.jpg)
+
 **Website:** [http://www.ibm.com/developerworks/db2/downloads/csworkbench/](http://www.ibm.com/developerworks/db2/downloads/csworkbench/)
 
 Logic MindGuide is a software tool (in German language) that supports the user in planning and deciding complex tasks frequently seen in customer-oriented product development, strategy development and evaluation tasks. Using RCP, it provides table-based, Excel-like interfaces based on the custom table widget KTable as well as figures built with GEF. It writes reports in RTF and XLS format utilizing plugin-ed versions of iText and JExcelApi.
 
 ### Incremental Ltd.
+
+![Incremental Ltd. Screenshot](images/rcp_case_studies/incrementalEpicThumb.png)
 
 **Website:** [http://www.incremental.eu.com/](http://www.incremental.eu.com/)
 
@@ -172,11 +216,15 @@ Software for ship repair. Management software for niche markets in made-to-order
 
 ### Infonoia SA (WHO HIV/AIDS Toolkits)
 
+![Infonoia SA (WHO HIV/AIDS Toolkits) Screenshot](images/rcp_case_studies/infonoiaWHOThumb.jpg)
+
 **Website:** [http://www.infonoia.com/en/content.jsp?d=inf.04.01](http://www.infonoia.com/en/content.jsp?d=inf.04.01)
 
 This RCP application by Infonoia SA is to allow 4000 partners and clients of the World Health Organization - many of them in developing countries - to consult and search document collections on HIV/AIDS initiatives ("toolkits") in offline mode. The Eclipse update manager infrastructure allows to provision users with up-to-date documents and new application features via low bandwidth connections. A previous version of the application received a Fraunhofer and Linux Association award in 2004.
 
 ### iMEDIC - Open X
+
+![iMEDIC - Open X Screenshot](images/rcp_case_studies/iMedicThumb.jpg)
 
 **Website:** [http://www.imedic.de/projekt_open_it.php](http://www.imedic.de/projekt_open_it.php)
 
@@ -184,17 +232,23 @@ iMEDIC's Open X is a framework for workflow applications focused on decision mak
 
 ### Innovation Gate - WGA Eclipse
 
+![Innovation Gate - WGA Eclipse Screenshot](images/rcp_case_studies/innovationThumb.jpg)
+
 **Website:** [http://www2.innovationgate.de/WebGatePublisher/ig/html/default/ebrn-6abjyf.en.0](http://www2.innovationgate.de/WebGatePublisher/ig/html/default/ebrn-6abjyf.en.0)
 
 WGA Eclipse is an Eclipse v. 3.1 Rich Client Application that communicates via WebServices with the WebGate Anywhere server system. Features include a flexible workspace for individual users, intuitive handling of the client controls and tools, a compact installation on client systems, and the live update site that enables updating the clients thoughout the Enterprise.
 
 ### Inventage AG and Infometis AG
 
+![Inventage AG and Infometis AG Screenshot](images/rcp_case_studies/inventageThumb.jpg)
+
 **Website:** [http://www.inventage.com/invweb/gencontent?page=solutions_capri&amp;lang=en](http://www.inventage.com/invweb/gencontent?page=solutions_capri&amp;lang=en)
 
 Capri is an effective CRM solution for financial advisors and private bankers. It integrates all client data in one application and allows seamless management of client services through a single user interface. Its open multi-tier architecture provides a highly extendable platform with various integration levels. Sophisticated security technologies satisfy even the most demanding Swiss banking privacy and confidentiality requirements.
 
 ### ITscope GbR
+
+![ITscope GbR Screenshot](images/rcp_case_studies/itScopeThumb.jpg)
 
 **Website:** [http://www.itscope.de/](http://www.itscope.de/)
 
@@ -220,11 +274,15 @@ eclipse based platform for rapid bio-imaging software development LabImaging is 
 
 ### Load Tester PRO
 
+![Load Tester PRO Screenshot](images/rcp_case_studies/WebAnalyzerThumb.png)
+
 **Website:** [http://www.webperformance.com/load-testing](http://www.webperformance.com/load-testing)
 
 Spot web performance problems in your operating system or application server quickly with Load Tester PRO. The automated record and configuration process means no complicated hand-coding, and no scripting languages to learn. Load Tester PRO� analyzes your test case and configures dynamic variables for most websites automatically. At the push of a button you can generate load from outside your network to test the entire application stack, including the firewall, or generate load from inside your test lab. With our detailed, configurable reports, you'll find the hidden bottlenecks quickly and dramatically cut your load testing time.
 
 ### Mango Software - XMIND
+
+![Mango Software - XMIND Screenshot](images/rcp_case_studies/xmindThumb.png)
 
 **Website:** [http://www.xmind.org/](http://www.xmind.org/)
 
@@ -232,11 +290,15 @@ XMIND is an Eclipse RCP based visual thinking/mind mapping software. It helps pe
 
 ### Market Contours
 
+![Market Contours Screenshot](images/rcp_case_studies/marketContoursThumb.jpg)
+
 **Website:** [http://www.marketcontours.com/](http://www.marketcontours.com/)
 
 Market Contours is a trading strategy development tool for non-programmers. Visual editors and analysis tools make it easy for traders to express their ideas using familiar concepts. The Eclipse RCP was instrumental in creating an easy-to-use product. Perspectives, form-based editors and other features give Market Contours a valuable competitive advantage.
 
 ### MyEclipse - SNAPs
+
+![MyEclipse - SNAPs Screenshot](images/rcp_case_studies/snapsThumb.gif)
 
 **Website:** [http://www.myeclipseide.com/](http://www.myeclipseide.com/)
 
@@ -244,11 +306,15 @@ Lightweight, Individual, Task-Based Developement Tools FREE as Part of the MyEcl
 
 ### Nulogy - PackMan
 
+![Nulogy - PackMan Screenshot](images/rcp_case_studies/packmanThumb.png)
+
 **Website:** [http://www.nulogy.com/content/view/42/59/](http://www.nulogy.com/content/view/42/59/)
 
 PackMan is the most comprehensive production management system available for contract packaging. It provides operational intelligence to contract packagers and logistics service providers performing co-packing operations (also known as kitting or secondary packaging), allowing them to run their businesses more competitively and profitably. In particular, PackMan helps reduce costs, improve accuracy, and raise productivity by automating and streamlining processes such as budgeting, quoting, scheduling, bill-of-materials planning, and billing. PackMan�s real-time tracking and costing of labour also permits live performance measurement, production monitoring, and on-demand reporting. PackMan is robust enterprise software designed to be usable in an industrial environment by both basic and expert users.
 
 ### Osmosis Filios
+
+![Osmosis Filios Screenshot](images/rcp_case_studies/osmosisThumb.png)
 
 **Website:** [http://www.osmosis.gr/software/filios.html](http://www.osmosis.gr/software/filios.html)
 
@@ -256,11 +322,15 @@ Osmosis Filios is a fully manageable and complete application made specialy for 
 
 ### Phurnace Deliver
 
+![Phurnace Deliver Screenshot](images/rcp_case_studies/phurnaceThumb.png)
+
 **Website:** [http://www.phurnace.com/](http://www.phurnace.com/)
 
 Phurnace Deliver troubleshoots configuration problems and accelerates deployments of Java EE applications. It eliminates the error-prone, repetitive processes and headaches associated with troubleshooting, configuring, installing, and migrating of software running on web application servers -- regardless of vendor or version. Developers and system administrators use Phurnace to eliminate errors, save time, and reduce overall deployment costs.
 
 ### PlanningForce
+
+![PlanningForce Screenshot](images/rcp_case_studies/planningForceThumb.png)
 
 **Website:** [http://www.planningforce.com%20/](http://www.planningforce.com%20/)
 
@@ -268,17 +338,23 @@ PlanningForce is a project planning tool that helps you select, plan and balance
 
 ### Plum Canary - Chirp
 
+![Plum Canary - Chirp Screenshot](images/rcp_case_studies/plumChirpThumb.jpg)
+
 **Website:** [http://www.plumcanary.com/](http://www.plumcanary.com/)
 
 Chirp is a team collaboration software application based on open standards that transforms how you assign, track, and analyze the activities of teams with whom you work. It helps you keep your finger on the pulse of work being done by teammates in one or many projects. Enter task assignments both big and small, then use the dashboard to identify trouble areas, or create reports to provide to your managers. Chirp is multi-user by design, automatically synchronizing task assignments and status updates between everyone on your team (within or between organizations) using your Plum Canary Sync Service subscription. As a rich client application, Chirp works both offline and online, using SyncML and other open standards to update your entire project team with changes made while you are offline. And being based on Eclipse and SWT, Chirp is cross-platform, with versions available for both Windows and OS X. Chirp is available for 30-day free trial prior to purchase.
 
 ### PROGMATE DOCs
 
+![PROGMATE DOCs Screenshot](images/rcp_case_studies/progmateThumb.jpg)
+
 **Website:** [http://www.progmate.pl/en/products/home](http://www.progmate.pl/en/products/home)
 
 PROGMATE DOCs is a new generation system that organizes documentation in every company. Documents contain information necessary for your company to function in a proper way. If you want to have an easy access to these documents, know where they are all the time, and make work with documentation easier and faster it is time for you to use 21st century solution! PROGMATE DOCs in a very practical way solves creation, management and documents organization problems. Moreover, the system enables coordination of all processes connected with working on documents and guarantees stability no matter how intense the usage of the system is. PROGMATE DOCs is an example of an overall approach to a problem that gives a chance for a detailed analysis of various aspects of document management. Elements that create PROGMATE DOCs: Document Management - manages documentation and makes information search easier Waiting Room - coordinates channels through which documents come in the system Warehouse - manages paper versions of the documents Integration - delivers data from other systems Process - streamlines and speeds up documentation workflow The system was created for users, so thanks to intuitive solutions it does not require complex IT knowledge. Software is available in various languages.
 
 ### Recursa Software
+
+![Recursa Software Screenshot](images/rcp_case_studies/aimeGridThumb.png)
 
 **Website:** [http://www.recursa.com/](http://www.recursa.com/)
 
@@ -298,11 +374,15 @@ CORE Business System is a project centric Enterprise Resource Planning tool that
 
 ### SilverCurve - ForeFlight
 
+![SilverCurve - ForeFlight Screenshot](images/rcp_case_studies/foreFlightThumb.jpg)
+
 **Website:** [http://www.foreflight.com/](http://www.foreflight.com/)
 
 ForeFlight is an Eclipse RCP-based desktop application designed to streamline weather-based preflight decisions for general aviation pilots. ForeFlight displays critical information graphically and prominently for a quick sense of the environmental conditions and displays alerts when conditions are near or exceeding the user's preferred limits. ForeFlight connects via the web to weather and information services to acquire current observations (METARs) and forecasts (TAFs), then integrates this up-to-the-minute information with the FAA airport listing for the the selected U.S. airport. The software offers multiple ergonomic views of the weather that affects the go/no-go flight decision, including cloud-base layers, winds and crosswinds, weather phenomena (like thunderstorms), and an assessment of the flight rules (such as VFR or IFR).
 
 ### Sophora CMS
+
+![Sophora CMS Screenshot](images/rcp_case_studies/sophoraThumb.gif)
 
 **Website:** [http://www.sophoracms.com/](http://www.sophoracms.com/)
 
@@ -310,11 +390,15 @@ Sophora is: Fast. Powerful. Flexible. Easy to use. Comfortable. We built Sophora
 
 ### SkyWalker Software - DtvBMS(DTV Broadcasting Management System)
 
+![SkyWalker Software - DtvBMS(DTV Broadcasting Management System) Screenshot](images/rcp_case_studies/DtvBMSThumb.jpg)
+
 **Website:** [http://www.skywalkersoft.com.cn/english/scheduling.html](http://www.skywalkersoft.com.cn/english/scheduling.html)
 
 DtvBMS is an enterprise software product for Digital Broadcasting Traffic Control System that integrates different subsystems for the whole lifecycle of digital media and facilitates broadcaster's everyday operation. SkyWalker Software utilizes Eclipse RCP as the basing block for their whole product suite, and builds their own XUL engine for rapid application development. DtvBMS uses GEF and various eclipse subprojects for complicated GUI and business logic operations.
 
 ### SnapXT Studio
+
+![SnapXT Studio Screenshot](images/rcp_case_studies/snapxtThumb.jpg)
 
 **Website:** [http://www.snapxt.com/](http://www.snapxt.com/)
 
@@ -322,17 +406,23 @@ SnapXT Studio can be used to rapidly build applications that require: the aggreg
 
 ### Sphere Networks - Arena Network Manager
 
+![Sphere Networks - Arena Network Manager Screenshot](images/rcp_case_studies/arenanetworkThumb.jpg)
+
 **Website:** [http://www.sphere.ae/products.php?prd_id=2](http://www.sphere.ae/products.php?prd_id=2)
 
 Arena Network Manager is Sphere Networks next generation of Pro Active Management solutions. Arena Network Manager is built from the ground up using the latest technologies to meet and respond to your ever growing, ever changing enterprise environment. Arena Network Manager is built on our reliable, robust and extremely flexible Arena Platform, and provides a single point to manage your enterprise; covering active Network devices, Firewalls, Databases and Enterprise software.
 
 ### SysChecker Desktop
 
+![SysChecker Desktop Screenshot](images/rcp_case_studies/syscheckerThumb.png)
+
 **Website:** [http://www.kdpsoftware.co.uk/monitoring_system_i/](http://www.kdpsoftware.co.uk/monitoring_system_i/)
 
 Syschecker Desktop is an RCP application built using Eclipse. The product proactively monitors various operational aspects of a number of System i servers and reports back to the user any problems that may exist on any of the systems being monitored. Alerts are by e-mail or audio or visual from the desktop. As with most Eclipse applications there is embedded help and the product will run on Windows or Linux desktops. The e-mail support requires use of an SMTP server and has been tested with Exchange,Sendmail and Lotus notes. A free version is available for testing purposes and allows the user to monitor 5 objects on a given server, three are predefined system objects and the user is able to define two more.
 
 ### Tasktop
+
+![Tasktop Screenshot](images/rcp_case_studies/tasktopThumb.png)
 
 **Website:** [http://www.tasktop.com/](http://www.tasktop.com/)
 
@@ -352,11 +442,15 @@ Third Brigade is a leader in the emerging IT security field of Host Intrusion Pr
 
 ### Xactium
 
+![Xactium Screenshot](images/rcp_case_studies/xactiumThumb.png)
+
 **Website:** [http://www.xactium.com/](http://www.xactium.com/)
 
 Xactium is a world leader in advanced software and systems modelling tool. Xactium's flagship product XMF-Mosaic is a next generation meta-modelling tool and meta-programming environment that supports the rapid construction of powerful development environments to support a diverse range of development paradigms (Language Driven Development, MDA, Software Factories, Executable Modelling and whatever the next *big* paradigm is!) The Mosaic component of XMF-Mosaic is completely based on Eclipse RCP.
 
 ### XtremeJ - Operations Console
+
+![XtremeJ - Operations Console Screenshot](images/rcp_case_studies/xtremeJThumb.png)
 
 **Website:** [http://www.xtremej.com/product.php](http://www.xtremej.com/product.php)
 
@@ -364,11 +458,15 @@ XtremeJ Operations Console, part of XtremeJ Management Suite, is a monitoring an
 
 ### yalips
 
+![yalips Screenshot](images/rcp_case_studies/yalipsThumb.png)
+
 **Website:** [http://www.yalips.com/](http://www.yalips.com/)
 
 yalips is an Eclipse RCP based software integrating Brainstorming, Learning, Project Management, and UML Software Modeling in a single tool. It provides features that are usually spread among software tools from various vendors. Although yalips is based on Eclipse RCP and especially GEF and Draw2D, it also utilizes the Eclipse framework to provide custom dialogs for a unique rich user experience.
 
 ### Yoxos Install Manager
+
+![Yoxos Install Manager Screenshot](images/rcp_case_studies/YoxosThumb.png)
 
 **Website:** [http://www.yoxos.com/](http://www.yoxos.com/)
 
