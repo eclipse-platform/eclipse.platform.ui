@@ -1216,7 +1216,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 *                 Will also skip saving the model to the disk since that is
 	 *                 done later in shutdown.
 	 */
-	private void persist(final boolean shutdown) {
+	void persist(final boolean shutdown) {
 		// persist editors that can be and possibly close the others
 		SafeRunner.run(new SafeRunnable() {
 			@Override

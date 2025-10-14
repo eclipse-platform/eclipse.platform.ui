@@ -1437,6 +1437,12 @@
             id="org.eclipse.ui.toggleShowKeys"
             name="%command.showKeysToggle.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            description="%command.persistWorkbenchState.description"
+            id="org.eclipse.ui.persistWorkbenchState"
+            name="%command.persistWorkbenchState.name">
+      </command>
    </extension>
    
    <extension

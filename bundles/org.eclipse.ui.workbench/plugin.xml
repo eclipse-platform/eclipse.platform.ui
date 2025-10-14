@@ -26,5 +26,9 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.eclipse.ui.internal.PersistWorkbenchHandler"
+            commandId="org.eclipse.ui.persistWorkbenchState">
+      </handler>
    </extension>
 </plugin>
