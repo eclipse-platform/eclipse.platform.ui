@@ -117,6 +117,8 @@ public/* final */class WorkbenchImages {
 	 */
 	@SuppressWarnings("removal")
 	private static final void declareImages() {
+		declareImage(ISharedImages.IMG_DEF_MISSING, ImageDescriptor.getMissingImageDescriptor(), true);
+
 		// Overlays
 		declareImage(ISharedImages.IMG_DEC_FIELD_ERROR, PATH_OVERLAY + "error_ovr.svg", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_DEC_FIELD_WARNING, PATH_OVERLAY + "warning_ovr.svg", true); //$NON-NLS-1$
