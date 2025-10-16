@@ -835,6 +835,13 @@ public interface ISharedImages {
 	String IMG_OBJS_DND_TOFASTVIEW = "IMG_OBJS_DND_TOFASTVIEW"; //$NON-NLS-1$
 
 	/**
+	 * Identifies the default 'missing' image.
+	 *
+	 * @since 3.137
+	 */
+	String IMG_DEF_MISSING = "IMG_DEF_MISSING"; //$NON-NLS-1$
+
+	/**
 	 * Retrieves the specified image from the workbench plugin's image registry.
 	 * Note: The returned <code>Image</code> is managed by the workbench; clients
 	 * must <b>not</b> dispose of the returned image.

@@ -144,6 +144,7 @@ import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IShowEditorInput;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewPart;
@@ -4038,7 +4039,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(part.getContributionURI())
 					&& part.getIconURI() == null) {
 				part.getTransientData().put(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY,
-						ImageDescriptor.getMissingImageDescriptor().createImage());
+						ISharedImages.get().getImage(ISharedImages.IMG_DEF_MISSING));
 			}
 		}
 
@@ -4055,7 +4056,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		MPart part = modelService.createModelElement(MPart.class);
 		part.setElementId(ph.getElementId());
 		part.getTransientData().put(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY,
-				ImageDescriptor.getMissingImageDescriptor().createImage());
+				ISharedImages.get().getImage(ISharedImages.IMG_DEF_MISSING));
 		String label = (String) ph.getTransientData().get(IWorkbenchConstants.TAG_LABEL);
 		if (label != null) {
 			part.setLabel(label);
