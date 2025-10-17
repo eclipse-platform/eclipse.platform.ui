@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *  Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Add CodeMining support in SourceViewer - Bug 527515
+ *  Dietrich Travkin <dietrich.travkin@solunar.de> - Fix code mining redrawing - Issue 3405
  */
 package org.eclipse.jface.text.examples.codemining;
 
@@ -34,7 +35,9 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension5;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -45,13 +48,21 @@ import org.eclipse.swt.widgets.Text;
 public class CodeMiningDemo {
 
 	private static boolean showWhitespaces = false;
+	private static AtomicReference<Boolean> useInLineCodeMinings = new AtomicReference<>(false);
+
+	private static String LINE_HEADER = "Line header";
+	private static String IN_LINE = "In-line";
 
 	public static void main(String[] args) throws Exception {
 
 		Display display = new Display();
 		Shell shell = new Shell(display);
-		shell.setLayout(new GridLayout());
+		shell.setLayout(new GridLayout(2, false));
 		shell.setText("Code Mining demo");
+
+		Button toggleInLineButton = new Button(shell, SWT.PUSH);
+		toggleInLineButton.setText(LINE_HEADER);
+		GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.FILL).grab(false, false).applyTo(toggleInLineButton);
 
 		AtomicReference<String> endOfLineString = new AtomicReference<>("End of line");
 		Text endOfLineText = new Text(shell, SWT.NONE);
@@ -70,7 +81,9 @@ public class CodeMiningDemo {
 						+ "// Name class with a number N to emulate Nms before resolving the references CodeMining\n"
 						+ "// Empty lines show a header annotating they're empty.\n"
 						+ "// The word `echo` is echoed.\n"
-						+ "// Lines containing `end` get an annotation at their end\n\n"
+						+ "// Lines containing `end` get an annotation at their end\n"
+						+ "// Press the toggle button in the upper left  corner to switch between\n"
+						+ "// showing reference titles in-line and showing them in additional lines.\n\n"
 						+ "class A\n" //
 						+ "new A\n" //
 						+ "new A\n\n" //
@@ -79,29 +92,39 @@ public class CodeMiningDemo {
 						+ "class 5\n" //
 						+ "new 5\n" //
 						+ "new 5\n" //
-						+ "new 5\n" //
+						+ "new 5\n\n" //
+						+ "Text with some references like [REF-X]\n" + "and [REF-Y] in it.\n\n"
 						+ "multiline \n" //
 						+ "multiline \n\n" //
 						+ "suffix \n"),
 				new AnnotationModel());
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(sourceViewer.getTextWidget());
+		GridDataFactory.fillDefaults().span(2, 1).grab(true, true).applyTo(sourceViewer.getTextWidget());
 		// Add AnnotationPainter (required by CodeMining)
 		addAnnotationPainter(sourceViewer);
+
+		toggleInLineButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			useInLineCodeMinings.set(!useInLineCodeMinings.get());
+			toggleInLineButton.setText(useInLineCodeMinings.get() ? IN_LINE : LINE_HEADER);
+			sourceViewer.updateCodeMinings();
+		}));
+
 		// Initialize codemining providers
-		((ISourceViewerExtension5) sourceViewer).setCodeMiningProviders(new ICodeMiningProvider[] {
+		sourceViewer.setCodeMiningProviders(new ICodeMiningProvider[] {
 				new ClassReferenceCodeMiningProvider(), //
 				new ClassImplementationsCodeMiningProvider(), //
 				new ToEchoWithHeaderAndInlineCodeMiningProvider("echo"), //
 				new MultilineCodeMiningProvider(), //
 				new EmptyLineCodeMiningProvider(), //
 				new EchoAtEndOfLineCodeMiningProvider(endOfLineString), //
-				new LineContentCodeMiningAfterPositionProvider() });
+				new LineContentCodeMiningAfterPositionProvider(), //
+				new ReferenceCodeMiningProvider(useInLineCodeMinings) });
+
 		// Execute codemining in a reconciler
 		MonoReconciler reconciler = new MonoReconciler(new IReconcilingStrategy() {
 
 			@Override
 			public void setDocument(IDocument document) {
-				((ISourceViewerExtension5) sourceViewer).updateCodeMinings();
+				sourceViewer.updateCodeMinings();
 			}
 
 			@Override
@@ -111,14 +134,14 @@ public class CodeMiningDemo {
 
 			@Override
 			public void reconcile(IRegion partition) {
-				((ISourceViewerExtension5) sourceViewer).updateCodeMinings();
+				sourceViewer.updateCodeMinings();
 			}
 		}, false);
 		reconciler.install(sourceViewer);
 
 		endOfLineText.addModifyListener(event -> {
 			endOfLineString.set(endOfLineText.getText());
-			((ISourceViewerExtension5) sourceViewer).updateCodeMinings();
+			sourceViewer.updateCodeMinings();
 		});
 
 		shell.open();

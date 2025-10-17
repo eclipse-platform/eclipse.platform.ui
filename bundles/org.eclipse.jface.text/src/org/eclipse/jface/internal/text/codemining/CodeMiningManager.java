@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *  Angelo Zerr <angelo.zerr@gmail.com> - [CodeMining] Provide CodeMining support with CodeMiningManager - Bug 527720
+ *  Dietrich Travkin <dietrich.travkin@solunar.de> - Fix code mining redrawing - Issue 3405
  */
 package org.eclipse.jface.internal.text.codemining;
 
@@ -230,6 +231,41 @@ public class CodeMiningManager implements Runnable {
 				Collectors.mapping(Function.identity(), Collectors.toList())));
 	}
 
+	private static enum CodeMiningMode {
+		InLine(LineContentCodeMining.class, CodeMiningLineContentAnnotation.class),
+		HeaderLine(LineHeaderCodeMining.class, CodeMiningLineHeaderAnnotation.class),
+		FooterLine(DocumentFooterCodeMining.class, CodeMiningDocumentFooterAnnotation.class);
+
+		public final Class<? extends ICodeMining> codeMiningType;
+		public final Class<? extends AbstractInlinedAnnotation> annotationType;
+
+		CodeMiningMode(Class<? extends ICodeMining> codeMiningType,
+				Class<? extends AbstractInlinedAnnotation> annotationType) {
+			this.codeMiningType= codeMiningType;
+			this.annotationType= annotationType;
+		}
+
+		public static CodeMiningMode createFor(List<ICodeMining> minings) {
+			Assert.isNotNull(minings);
+
+			CodeMiningMode mode= CodeMiningMode.HeaderLine;
+			if (!minings.isEmpty()) {
+				ICodeMining first= minings.get(0);
+
+				if (CodeMiningMode.InLine.codeMiningType.isInstance(first)) {
+					mode= CodeMiningMode.InLine;
+				} else if (CodeMiningMode.HeaderLine.codeMiningType.isInstance(first)) {
+					mode= CodeMiningMode.HeaderLine;
+				} else if (CodeMiningMode.FooterLine.codeMiningType.isInstance(first)) {
+					mode= CodeMiningMode.FooterLine;
+				} else {
+					mode= CodeMiningMode.InLine;
+				}
+			}
+			return mode;
+		}
+	}
+
 	/**
 	 * Render the codemining grouped by line position.
 	 *
@@ -257,11 +293,13 @@ public class CodeMiningManager implements Runnable {
 			Position pos= new Position(g.getKey().offset, g.getKey().length);
 			List<ICodeMining> minings= g.getValue();
 			ICodeMining first= minings.get(0);
-			boolean inLineHeader= !minings.isEmpty() ? (first instanceof LineHeaderCodeMining) : true;
+
+			CodeMiningMode mode= CodeMiningMode.createFor(minings);
+
 			// Try to find existing annotation
 			AbstractInlinedAnnotation ann= fInlinedAnnotationSupport.findExistingAnnotation(pos);
-			if (ann == null) {
-				// The annotation doesn't exists, create it.
+			if (ann == null || !mode.annotationType.isInstance(ann)) {
+				// The annotation doesn't exists or has wrong type => create a new one.
 				boolean afterPosition= false;
 				if (first instanceof LineContentCodeMining m) {
 					afterPosition= m.isAfterPosition();
@@ -274,16 +312,14 @@ public class CodeMiningManager implements Runnable {
 					mouseOut= first.getMouseOut();
 					mouseMove= first.getMouseMove();
 				}
-				if (inLineHeader) {
-					ann= new CodeMiningLineHeaderAnnotation(pos, viewer, mouseHover, mouseOut, mouseMove);
-				} else {
-					boolean inFooter= !minings.isEmpty() ? (first instanceof DocumentFooterCodeMining) : false;
-					if (inFooter) {
-						ann= new CodeMiningDocumentFooterAnnotation(pos, viewer, mouseHover, mouseOut, mouseMove);
-					} else {
-						ann= new CodeMiningLineContentAnnotation(pos, viewer, afterPosition, mouseHover, mouseOut, mouseMove);
-					}
-				}
+
+				ann= switch (mode) {
+					case InLine -> new CodeMiningLineContentAnnotation(pos, viewer, afterPosition, mouseHover, mouseOut, mouseMove);
+					case HeaderLine -> new CodeMiningLineHeaderAnnotation(pos, viewer, mouseHover, mouseOut, mouseMove);
+					case FooterLine -> new CodeMiningDocumentFooterAnnotation(pos, viewer, mouseHover, mouseOut, mouseMove);
+
+					default -> throw new IllegalStateException("Found unexpected code mining display mode: " + mode); //$NON-NLS-1$
+				};
 			} else if (ann instanceof ICodeMiningAnnotation && ((ICodeMiningAnnotation) ann).isInVisibleLines()) {
 				// annotation is in visible lines
 				annotationsToRedraw.add((ICodeMiningAnnotation) ann);
