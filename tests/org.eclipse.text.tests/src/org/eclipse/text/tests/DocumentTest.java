@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -47,7 +47,7 @@ public class DocumentTest {
 
 	}
 
-	@Before
+	@BeforeEach
 	public void setUp() throws BadLocationException {
 
 		fDocument= new Document();
@@ -78,7 +78,7 @@ public class DocumentTest {
 
 	}
 
-	@After
+	@AfterEach
 	public void tearDown () {
 		fDocument= null;
 	}

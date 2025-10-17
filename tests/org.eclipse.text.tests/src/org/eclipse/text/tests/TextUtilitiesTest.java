@@ -13,15 +13,15 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.AbstractLineTracker.DelimiterInfo;
 import org.eclipse.jface.text.BadLocationException;
@@ -132,7 +132,7 @@ public class TextUtilitiesTest {
 			try {
 				flush();
 			} catch (BadLocationException e) {
-				Assert.fail("bad implementation");
+				Assertions.fail("bad implementation");
 			}
 			return super.get();
 		}
@@ -169,7 +169,7 @@ public class TextUtilitiesTest {
 			check(reference, testee);
 
 		} catch (BadLocationException e) {
-			Assert.fail("bad location exception");
+			Assertions.fail("bad location exception");
 		}
 	}
 
@@ -220,7 +220,7 @@ public class TextUtilitiesTest {
 //			System.out.println("[" + testee.get() + "]");
 
 		} catch (BadLocationException e) {
-			Assert.fail("bad location exception");
+			Assertions.fail("bad location exception");
 		}
 	}
 
@@ -263,12 +263,12 @@ public class TextUtilitiesTest {
 			check(reference, testee);
 
 		} catch (BadLocationException e) {
-			Assert.fail("bad location exception");
+			Assertions.fail("bad location exception");
 		}
 	}
 
 	private static void check(IDocument reference, IDocument testee) {
-		Assert.assertEquals(reference.get(), testee.get());
+		Assertions.assertEquals(reference.get(), testee.get());
 	}
 
 	@Test

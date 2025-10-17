@@ -15,22 +15,22 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.PatternSyntaxException;
 
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -49,7 +49,7 @@ public class FindReplaceDocumentAdapterTest {
 
 	private Document fDocument;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 
 		fDocument= new Document();
@@ -72,7 +72,7 @@ public class FindReplaceDocumentAdapterTest {
 		fDocument.set(text);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown () {
 		fDocument= null;
 	}
@@ -96,7 +96,7 @@ public class FindReplaceDocumentAdapterTest {
 			assertEquals(r, result);
 
 		} catch (BadLocationException e) {
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 	}
 
@@ -114,7 +114,7 @@ public class FindReplaceDocumentAdapterTest {
 			assertNull(r);
 
 		} catch (BadLocationException e) {
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 	}
 
@@ -128,7 +128,7 @@ public class FindReplaceDocumentAdapterTest {
 			assertEquals(new Region(8, 11), r);
 
 		} catch (BadLocationException e) {
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 	}
 
@@ -142,7 +142,7 @@ public class FindReplaceDocumentAdapterTest {
 			assertEquals(new Region(8, 11), r);
 
 		} catch (BadLocationException e) {
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 	}
 
@@ -157,7 +157,7 @@ public class FindReplaceDocumentAdapterTest {
 			assertEquals(new Region(6, 1), r);
 
 		} catch (BadLocationException e) {
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 	}
 
@@ -171,7 +171,7 @@ public class FindReplaceDocumentAdapterTest {
 			IRegion result= adapter.find(0, ".", true, false, true, false);
 			assertNull(result);
 		} catch (BadLocationException e) {
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 	}
 
@@ -194,7 +194,7 @@ public class FindReplaceDocumentAdapterTest {
 			assertEquals(result, r);
 
 		} catch (BadLocationException e) {
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 	}
 
@@ -239,12 +239,12 @@ public class FindReplaceDocumentAdapterTest {
 			assertEquals(text, fDocument.get());
 
 		} catch (BadLocationException e) {
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void _testRegexReplace() throws Exception {
 		fDocument.set(
 				"UnixWindowsMacInferred\n" +
@@ -412,7 +412,7 @@ public class FindReplaceDocumentAdapterTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void _testRegexFindLinebreak2() throws Exception {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		String contents= "+[\\R]\\R\r\n";
@@ -482,18 +482,18 @@ public class FindReplaceDocumentAdapterTest {
 		try {
 			findReplaceDocumentAdapter.replace("TestPackage", false); //$NON-NLS-1$
 		} catch (IllegalStateException e) {
-			Assert.assertTrue(true);
+			Assertions.assertTrue(true);
 		} catch (BadLocationException e) {
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 
 		findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
 			findReplaceDocumentAdapter.replace("TestPackage", true); //$NON-NLS-1$
 		} catch (IllegalStateException e) {
-			Assert.assertTrue(true);
+			Assertions.assertTrue(true);
 		} catch (BadLocationException e) {
-			Assert.assertTrue(false);
+			Assertions.assertTrue(false);
 		}
 	}
 
