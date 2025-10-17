@@ -33,6 +33,6 @@ package org.eclipse.e4.ui.model.application.ui.basic;
  * @model
  * @generated
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2025-12")
 public interface MWizardDialog extends MDialog {
 } // MWizardDialog

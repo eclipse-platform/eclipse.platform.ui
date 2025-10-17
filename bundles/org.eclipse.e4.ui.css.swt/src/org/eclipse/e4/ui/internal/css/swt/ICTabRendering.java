@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.css.swt;
 
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.swt.graphics.Color;
 
 public interface ICTabRendering {
@@ -39,17 +38,7 @@ public interface ICTabRendering {
 
 	void setOuterKeyline(Color color);
 
-	@Deprecated(forRemoval = true)
-	default void setShadowColor(Color color) {
-		ILog.of(ICTabRendering.class).info("setShadowColor not supported anymore in platform renderer");
-	}
-
 	void setCornerRadius(int radius);
-
-	@Deprecated(forRemoval = true)
-	default void setShadowVisible(boolean visible) {
-		ILog.of(ICTabRendering.class).info("setShadowVisible not supported anymore in platform renderer");
-	}
 
 	/**
 	 * Sets whether to use a custom tab background (reusing tab colors and

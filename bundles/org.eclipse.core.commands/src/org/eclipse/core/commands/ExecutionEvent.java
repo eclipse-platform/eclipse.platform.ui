@@ -89,7 +89,7 @@ public final class ExecutionEvent {
 	 * @deprecated use
 	 *             {@link ExecutionEvent#ExecutionEvent(Command, Map, Object, Object)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public ExecutionEvent(@SuppressWarnings("rawtypes") final Map parameters, final Object trigger,
 			final Object applicationContext) {
 		this(null, parameters, trigger, applicationContext);

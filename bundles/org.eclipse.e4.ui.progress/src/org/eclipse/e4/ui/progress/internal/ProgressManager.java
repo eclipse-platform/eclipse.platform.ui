@@ -67,7 +67,7 @@ public class ProgressManager extends ProgressProvider {
 	 *
 	 * @deprecated use IProgressConstants#PROPERTY_IN_DIALOG instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static final QualifiedName PROPERTY_IN_DIALOG = IProgressConstants.PROPERTY_IN_DIALOG;
 
 	private static final String ERROR_JOB = "errorstate.svg"; //$NON-NLS-1$
@@ -622,7 +622,7 @@ public class ProgressManager extends ProgressProvider {
 	 * @deprecated use the more thread safe {@link #removeJob(Job)} instead. See bug
 	 *             558655.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public void removeJobInfo(JobInfo info) {
 		removeJob(info.getJob());
 	}
