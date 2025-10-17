@@ -12,10 +12,10 @@ package org.eclipse.jface.text.tests.source.inlined;
 
 import java.util.Collections;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -102,12 +102,12 @@ public class LineContentBoundsDrawingTest {
 
 	private Shell fParent;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		fParent= new Shell();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() {
 		fParent.dispose();
 		fParent = null;
@@ -135,7 +135,7 @@ public class LineContentBoundsDrawingTest {
 		support.updateAnnotations(Collections.singleton(annotation));
 		fParent.open();
 		StyledText textWidget= sourceViewer.getTextWidget();
-		Assert.assertTrue(new DisplayHelper() {
+		Assertions.assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				return textWidget.isVisible() && painter.wasPainted();
@@ -145,7 +145,7 @@ public class LineContentBoundsDrawingTest {
 		Rectangle textBounds= textWidget.getTextBounds(0, textWidget.getText().length() - 1);
 		int supposedMostRightPaintedPixel = textBounds.x + textBounds.width - 1;
 		int mostRightPaintedPixel= getMostRightPaintedPixel(textWidget);
-		Assert.assertEquals(supposedMostRightPaintedPixel, mostRightPaintedPixel, 1.5); // use double comparison with delta to tolerate variation from a system to the other
+		Assertions.assertEquals(supposedMostRightPaintedPixel, mostRightPaintedPixel, 1.5); // use double comparison with delta to tolerate variation from a system to the other
 	}
 
 	public int getMostRightPaintedPixel(StyledText widget) {

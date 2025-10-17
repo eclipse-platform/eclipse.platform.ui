@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.eclipse.jface.text.DefaultTextDoubleClickStrategy;
 import org.eclipse.jface.text.Document;
@@ -48,11 +48,11 @@ public class DefaultTextDoubleClickStrategyTest {
 		IDocument document= new Document(content);
 		TestSpecificDefaultTextDoubleClickStrategy doubleClickStrategy= new TestSpecificDefaultTextDoubleClickStrategy();
 		IRegion selection= doubleClickStrategy.findWord(document, 11);
-		assertNotNull("Should have selected a word", selection);
-		assertEquals("Unexpected selection", "world", document.get(selection.getOffset(), selection.getLength()));
+		assertNotNull(selection, "Should have selected a word");
+		assertEquals("world", document.get(selection.getOffset(), selection.getLength()), "Unexpected selection");
 		selection= doubleClickStrategy.findWord(document, document.getLength());
-		assertNotNull("Should have selected a word", selection);
-		assertEquals("Unexpected selection", "you", document.get(selection.getOffset(), selection.getLength()));
+		assertNotNull(selection, "Should have selected a word");
+		assertEquals("you", document.get(selection.getOffset(), selection.getLength()), "Unexpected selection");
 	}
 
 	private static final class TestSpecificDefaultTextDoubleClickStrategy extends DefaultTextDoubleClickStrategy {
