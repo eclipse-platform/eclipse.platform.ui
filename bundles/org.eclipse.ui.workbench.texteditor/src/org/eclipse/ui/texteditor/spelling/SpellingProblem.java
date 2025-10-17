@@ -64,7 +64,7 @@ public abstract class SpellingProblem {
 	 * @since 3.3
 	 * @deprecated As of 3.4, replaced by {@link #removeAll(ISourceViewer, String)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public static void removeAllInActiveEditor(ITextEditor editor, String word) {
 		if (editor == null) {
 			return;

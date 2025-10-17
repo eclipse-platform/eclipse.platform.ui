@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IStatus;
  * @deprecated No longer used, create a {@link CoreException} instead
  * @since 2.1
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "2025-12")
 public class ValidateStateException extends CoreException {
 
 	/**

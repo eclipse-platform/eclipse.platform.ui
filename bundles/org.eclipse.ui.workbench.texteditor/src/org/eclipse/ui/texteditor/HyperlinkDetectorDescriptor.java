@@ -91,7 +91,7 @@ public final class HyperlinkDetectorDescriptor {
 	 * @throws CoreException if a failure occurred during creation
 	 * @deprecated As of 3.9, replaced by {@link #createHyperlinkDetectorImplementation()}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2025-12")
 	public AbstractHyperlinkDetector createHyperlinkDetector() throws CoreException {
 		return (AbstractHyperlinkDetector)createHyperlinkDetectorImplementation();
 	}
